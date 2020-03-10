@@ -2,80 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB10D1804F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 18:37:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFF571804F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 18:37:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbgCJRhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 13:37:21 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:40793 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbgCJRhU (ORCPT
+        id S1726463AbgCJRhn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 13:37:43 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50767 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbgCJRhm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 13:37:20 -0400
-Received: by mail-il1-f193.google.com with SMTP id g6so12781155ilc.7
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 10:37:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=h0+d0eT8j3D9V9+Zx4d1oKQcV5JrUFhrom1z+SABDyU=;
-        b=ZQzkv1fuhdNWzNE9ifob6BaqbjKkH+6SvNYg3ZHUJWbXFc2R8Q8yfRGE79wig81mbI
-         0L6uhUFunuYMloqncXL2v1cRg8PwRaoDMUUkmqkskmhVlcccgO/rb/5TFeFn2ieyc5di
-         GMfxh6/HBCaccjioU6QPT1B1Oy4FWfObqxttf4IAutbqt70EwJqnnf8T4sP+9JWxW3Qm
-         14tIcuh+2zL6Kpe8cY8/zRbLvSbNNgVKmVOvvOaU0sOywOSvdvs5y4xRyveDVIXeQyF3
-         YjtjBFeb/ixJD9zhNf+jqdwNwCa/IxhX3QLZchV+Tjwd5ReRp6IFEGUBic/dF9D2wy3w
-         008g==
+        Tue, 10 Mar 2020 13:37:42 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a5so2382547wmb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 10:37:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=h0+d0eT8j3D9V9+Zx4d1oKQcV5JrUFhrom1z+SABDyU=;
-        b=svGpr4JA/8EEIu3Rsr/Egvw2xWNgkMBqgvPKrS71XYxgtq2f/uQOdFLXqrUx2Q3nEW
-         CIOku/CT7/Idw28gr1mKOkM5ZUNe1Zwz+JQXa2oYPcyobPvEU/jpFUHVZcZ+ReeoIjlP
-         aMTd39eqiBPAyYFM1eV3CnNmJwkr9dIslJaINhcgXvQAZiTQpwS5k1/bQbDr1CplMe10
-         UA5aE9G2yeVSaExDcWsZwJO8GsGiVtiXsMS7TP5YKjsiv2XeNCYfXKRQ2fnIk9lfn8sW
-         KYkKFH5tLbrtlNIdAD6L/+eOBt+sUo6LC3Vgte+GvpI7hiZJGsejLLHWJHIerBmh/rvn
-         NTFQ==
-X-Gm-Message-State: ANhLgQ18tTiJ13dqkcGZWzXZ3kLcEyoU+lxcTvNgp0psJYjlirAahQR+
-        hMOezKySzx38udFYN26the2eKE2RiveSxw==
-X-Google-Smtp-Source: ADFU+vu4ZQEDYZQhLz6BySvD3vrhwTsXPiIoQaSW5wd/Cx6rry+V3kDO9EzE5KgAJKOXTnWygYgxBw==
-X-Received: by 2002:a92:3d42:: with SMTP id k63mr20711214ila.219.1583861839332;
-        Tue, 10 Mar 2020 10:37:19 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id s82sm2523530ili.87.2020.03.10.10.37.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Mar 2020 10:37:18 -0700 (PDT)
-Subject: Re: [PATCH block/for-5.6-fixes] blk-iocost: fix incorrect vtime
- comparison in iocg_is_idle()
-To:     Tejun Heo <tj@kernel.org>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200310170746.GD79873@mtj.duckdns.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e3980b91-7a43-2493-48d0-081ef4158d2e@kernel.dk>
-Date:   Tue, 10 Mar 2020 11:37:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jugY1Nf3CufQZkDFT05apdS40zYN+FeXe0bfIW9g3ro=;
+        b=kvy2ho9JbdRRAA5QWQBLCOSA6uLYrXtkTRgOL2rGqnBNG4Iww0ew5bIzfW6gBw69G5
+         CmyHneK5eET5U9w9Vrwwbulsx+7gaRle3fVkLjyQ8DZGfVxSq+UDIOs4PaGz8nCQDswb
+         oiCoUb6uz9d1tFVBQkSojcCN8vIQ6sj511dXJAO6QD2Z2CQOcCgpFbdzsbr6H3LiCz7/
+         Ws+TuinlQA7YccxevTaI9PTZFJ88R0MIgVw0P+iXGJ3G7qgIRVCDpZcZEju3PuZfZlie
+         OOSgFD0fOvAYVrtgyiNYN6RYk6RWqZB8LRRgZel62Id/LbSNSztvxvGN5CkgjOa5RUd2
+         s20w==
+X-Gm-Message-State: ANhLgQ3NLcHIGR1lmFGgdh8HD9+Ldgc7XFw7eRqHr0/zAQxgI6WpLsM2
+        c9fF8lzhQG3by99XdJS0KSw=
+X-Google-Smtp-Source: ADFU+vvZ2CQS4ziwKXm0n/KU6Q4DJKoDwZEqBReNJdls11/tAY8wRDLKYKcwxqmow79W57+WuhldhQ==
+X-Received: by 2002:a05:600c:2:: with SMTP id g2mr3129868wmc.18.1583861861293;
+        Tue, 10 Mar 2020 10:37:41 -0700 (PDT)
+Received: from localhost (ip-37-188-253-35.eurotel.cz. [37.188.253.35])
+        by smtp.gmail.com with ESMTPSA id q1sm25472778wrx.19.2020.03.10.10.37.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 10:37:40 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 18:37:38 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        kernel-team@fb.com, linux-kernel@vger.kernel.org,
+        Rik van Riel <riel@surriel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: Re: [PATCH v2] mm: hugetlb: optionally allocate gigantic hugepages
+ using cma
+Message-ID: <20200310173738.GW8447@dhcp22.suse.cz>
+References: <20200310002524.2291595-1-guro@fb.com>
+ <20200310084544.GY8447@dhcp22.suse.cz>
+ <20200310172559.GA85000@carbon.dhcp.thefacebook.com>
 MIME-Version: 1.0
-In-Reply-To: <20200310170746.GD79873@mtj.duckdns.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310172559.GA85000@carbon.dhcp.thefacebook.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/10/20 11:07 AM, Tejun Heo wrote:
-> vtimes may wrap and time_before/after64() should be used to determine
-> whether a given vtime is before or after another. iocg_is_idle() was
-> incorrectly using plain "<" comparison do determine whether done_vtime
-> is before vtime. Here, the only thing we're interested in is whether
-> done_vtime matches vtime which indicates that there's nothing in
-> flight. Let's test for inequality instead.
+On Tue 10-03-20 10:25:59, Roman Gushchin wrote:
+> Hello, Michal!
+> 
+> On Tue, Mar 10, 2020 at 09:45:44AM +0100, Michal Hocko wrote:
+[...]
+> > > +	for_each_node_state(nid, N_ONLINE) {
+> > > +		unsigned long min_pfn = 0, max_pfn = 0;
+> > > +
+> > > +		for_each_mem_pfn_range(i, nid, &start_pfn, &end_pfn, NULL) {
+> > > +			if (!min_pfn)
+> > > +				min_pfn = start_pfn;
+> > > +			max_pfn = end_pfn;
+> > > +		}
+> > 
+> > Do you want to compare the range to the size?
+> 
+> You mean add a check that the range is big enough?
 
-Applied, thanks.
+Yes, size and forgot to mention alignment.
 
+> > But besides that, I
+> > believe this really needs to be much more careful. I believe you do not
+> > want to eat a considerable part of the kernel memory because the
+> > resulting configuration will really struggle (yeah all the low mem/high
+> > mem problems all over again).
+> 
+> Well, so far I was focused on a particular case when the target cma size
+> is significantly smaller than the total RAM size (~5-10%). What is the right
+> thing to do here? Fallback to the current behavior if the requested size is
+> more than x% of total memory? 1/2? How do you think?
+
+I would start by excluding restricted kernel zones (<ZONE_NORMAL).
+Cutting off 1G of ZONE_DMA32 might be a real problem.
+ 
+> We've discussed it with Rik in private, and he expressed an idea to start
+> with ~50% always and then shrink it on-demand. Something that we might
+> have here long-term.
+
+I would start simple. Simply make it a documented behavior. And if
+somebody really cares enough then we can make something more clever.
+Until then just avoid zone as mentioned above. This would require that
+you do few changes 1) allow fallback from CMA allocation failure 2) do
+not bail out initialization on CMA reservation failure.
 -- 
-Jens Axboe
-
+Michal Hocko
+SUSE Labs
