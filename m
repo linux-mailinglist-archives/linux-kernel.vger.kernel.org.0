@@ -2,98 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C89F3180AD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:47:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2816C180AEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:53:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbgCJVr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 17:47:57 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42499 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbgCJVr4 (ORCPT
+        id S1727673AbgCJVxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 17:53:33 -0400
+Received: from mail-oi1-f179.google.com ([209.85.167.179]:35674 "EHLO
+        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726325AbgCJVxd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 17:47:56 -0400
-Received: by mail-lf1-f65.google.com with SMTP id t21so12228116lfe.9
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 14:47:55 -0700 (PDT)
+        Tue, 10 Mar 2020 17:53:33 -0400
+Received: by mail-oi1-f179.google.com with SMTP id c1so15572624oiy.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 14:53:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+ppVh7LyRFIl1A+ELQ+dNJ6Ueqe7YDWhaCMx5Yyl/CY=;
-        b=KpyfUwT0etYAj8+912O82nlR5HeLTpn4SDsTonOMcnn6Bd+D1ADvt7zQ/ZV6TMQH7k
-         eOHDcGUHKwWB4kmeeO9si7StiS7ATtguh9IW2vUN6FfyLnkrtaG/hLlw/V3tOD6UJ7HC
-         vgQx7S0Yjy+AZ7lit98JPffg4rZ7IJBRwdcDo=
+        bh=28amOXdcgZ1tgbIjzoT1unfXPJs97/xVZ1Q2OiQ+6Jg=;
+        b=utAh3QrVVsP59y4SPip+7/1ssGzl80dGiqWjfte5x5SdG00BBhDOBE4EuZG8BfyRo1
+         So7NTUQq/NcOj4DC8vNG3FFcs18hqCogTLIO7apdCBLldxwFlTGWzFKmgGqQsv52Ty2D
+         oONi77phJwslRWog4zvNFEetHTP4AlzmX1BNVrzR6KKMm7NGM7y/qKcXpCMuu/PISI3z
+         /DvGLkZUvJdvcnBL40vZnQqOqRCOGt6P8LmiPdiqHtxHD/gXVvb8BAZixjNPGsLhMbbn
+         SDpGZMeh1blnemUG37moJtlrM0r0xKga9cKxUBSuypbG/B3i92LvAlZ3UuMaSo4PyRaF
+         GnQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+ppVh7LyRFIl1A+ELQ+dNJ6Ueqe7YDWhaCMx5Yyl/CY=;
-        b=ViK+zHGUU9q9wdNvNSlxfZ5vrnuuamnZ6H6AJxXeqRUOSA1JfX0MB4nPPPNrr+r8Iq
-         28Cq/Au68gaRqdQ+s6i5ZG6pdR06CRpKHb015MEpC2NXmrTMtlJTs9oPzPBWECRF8vaN
-         T2Y2n/6BAcGvqm5eGjQXIJ9Dw5yxdntcWt4DfxSuM7dlT3EFHCgE8Z4eRTi3S3kPgcKo
-         s8yAV2k8DK7tPv05KdbD58cn3XitEz83xy0VSLMkcotu+sqReKalP/zAL5l97HCBzu4/
-         +IjDt1s1NoqAxQ4Ejl+XUSpZrjmeHLcLZ6ZbwmgPtdHq1x7mazrF80Jv4eZ2bcrwgTk6
-         wj2g==
-X-Gm-Message-State: ANhLgQ3OCceaDdCoUDhukgQDhYbnNbALXLhvsB61xrc5QLZKS5O8ooEf
-        n9RQ2Y3Btr2x1Z2ApBqw6GP7NQF2XBo=
-X-Google-Smtp-Source: ADFU+vuqVavq1gvVUp1gjk7E1booUuoe3mljNWKCFZvyvd/ITloAPJ96a2hGCoVVqsE4bMW/CVmhaQ==
-X-Received: by 2002:a05:6512:202:: with SMTP id a2mr111732lfo.108.1583876872609;
-        Tue, 10 Mar 2020 14:47:52 -0700 (PDT)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id s7sm5962055lfp.51.2020.03.10.14.47.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Mar 2020 14:47:51 -0700 (PDT)
-Received: by mail-lf1-f42.google.com with SMTP id q10so11495018lfo.8
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 14:47:50 -0700 (PDT)
-X-Received: by 2002:ac2:5508:: with SMTP id j8mr99474lfk.31.1583876870571;
- Tue, 10 Mar 2020 14:47:50 -0700 (PDT)
+        bh=28amOXdcgZ1tgbIjzoT1unfXPJs97/xVZ1Q2OiQ+6Jg=;
+        b=b/XJgiF1nQ6laJtf9zyVq/OMKkDxcpS1CVMwbEOmNVfddqs2DXtUMKCoKJ62Fdj1Ki
+         SNezFUJuK7O+Y7HTmaJRfM6wg2YM1KV7nhTGI4ghy7V0e36onR5nyleqJz8jBMC3hdrD
+         xgnZ8Kytq+eqh5iBxByyLNaxtU3qlvANnuOah3H8svh1rBHZNUxsssTkNghGT4GUQ3YB
+         wR3NkZlFyG8kAVHD/J3wGBTST+PJXo7MD7pFMUvGa2AppO6XiE4vU/u4l+Iy/BqoQgOg
+         NPHjGocxpIFSwBN/uOU18+eGYD+4WdupIMnlKypOV1GLPFE5ycZ8CKbfpjws8Gtm9AZi
+         +RRA==
+X-Gm-Message-State: ANhLgQ1ZFQNA/Wwbo6oCuvTTcDHI1VrSbRepg66Ro0f6mK1ybKmcgpi8
+        rYQa2nrBoRaxme4NMYJUbbEIAd8a0FazRRhkYGX06Q==
+X-Google-Smtp-Source: ADFU+vs/PynMMOdJ4xb1jh1/YKI8pt7pcS0qS8D/NxIHOFOj0Sv8txvnm32MO24awX4H5b9p3Vg3n3q0D+H75nlWAdE=
+X-Received: by 2002:a05:6808:abc:: with SMTP id r28mr2766071oij.161.1583877211932;
+ Tue, 10 Mar 2020 14:53:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200308140314.GQ5972@shao2-debian> <e3783d060c778cb41b77380ad3e278133b52f57e.camel@kernel.org>
- <CAHk-=whGK712fPqmQ3FSHxqe3Aqny4bEeWEvfaytLeLV2+ijCQ@mail.gmail.com>
- <34355c4fe6c3968b1f619c60d5ff2ca11a313096.camel@kernel.org>
- <1bfba96b4bf0d3ca9a18a2bced3ef3a2a7b44dad.camel@kernel.org>
- <87blp5urwq.fsf@notabene.neil.brown.name> <41c83d34ae4c166f48e7969b2b71e43a0f69028d.camel@kernel.org>
- <ed73fb5d-ddd5-fefd-67ae-2d786e68544a@huawei.com> <923487db2c9396c79f8e8dd4f846b2b1762635c8.camel@kernel.org>
- <36c58a6d07b67aac751fca27a4938dc1759d9267.camel@kernel.org>
- <878sk7vs8q.fsf@notabene.neil.brown.name> <c4ef31a663fbf7a3de349696e9f00f2f5c4ec89a.camel@kernel.org>
- <875zfbvrbm.fsf@notabene.neil.brown.name>
-In-Reply-To: <875zfbvrbm.fsf@notabene.neil.brown.name>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 10 Mar 2020 14:47:34 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg8N4fDRC3M21QJokoU+TQrdnv7HqoaFW-Z-ZT8z_Bi7Q@mail.gmail.com>
-Message-ID: <CAHk-=wg8N4fDRC3M21QJokoU+TQrdnv7HqoaFW-Z-ZT8z_Bi7Q@mail.gmail.com>
-Subject: Re: [locks] 6d390e4b5d: will-it-scale.per_process_ops -96.6% regression
-To:     NeilBrown <neilb@suse.de>
-Cc:     Jeff Layton <jlayton@kernel.org>, yangerkun <yangerkun@huawei.com>,
-        kernel test robot <rong.a.chen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        Bruce Fields <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
+References: <CAG48ez0G3JkMq61gUmyQAaCq=_TwHbi1XKzWRooxZkv08PQKuw@mail.gmail.com>
+ <20200310184814.GA8447@dhcp22.suse.cz> <CAKOZueua_v8jHCpmEtTB6f3i9e2YnmX4mqdYVWhV4E=Z-n+zRQ@mail.gmail.com>
+ <CAG48ez2EWzn_xm0Q3YaPjSXrhVAAOUUvNDyDQ+jpgavmN6wLvQ@mail.gmail.com>
+In-Reply-To: <CAG48ez2EWzn_xm0Q3YaPjSXrhVAAOUUvNDyDQ+jpgavmN6wLvQ@mail.gmail.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Tue, 10 Mar 2020 14:52:55 -0700
+Message-ID: <CAKOZues-ejm8kKOp9YaZwDy_HNhvWK12x2cqtqHBYj4DCQtXpQ@mail.gmail.com>
+Subject: Re: interaction of MADV_PAGEOUT with CoW anonymous mappings?
+To:     Jann Horn <jannh@google.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, Minchan Kim <minchan@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 2:22 PM NeilBrown <neilb@suse.de> wrote:
+On Tue, Mar 10, 2020 at 2:40 PM Jann Horn <jannh@google.com> wrote:
 >
-> A compiler barrier() is probably justified.  Memory barriers delay reads
-> and expedite writes so they cannot be needed.
+> On Tue, Mar 10, 2020 at 9:19 PM Daniel Colascione <dancol@google.com> wrote:
+> > On Tue, Mar 10, 2020 at 11:48 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > > On Tue 10-03-20 19:08:28, Jann Horn wrote:
+> > > > >From looking at the source code, it looks to me as if using
+> > > > MADV_PAGEOUT on a CoW anonymous mapping will page out the page if
+> > > > possible, even if other processes still have the same page mapped. Is
+> > > > that correct?
+> > > >
+> > > > If so, that's probably bad in environments where many processes (with
+> > > > different privileges) are forked from a single zygote process (like
+> > > > Android and Chrome), I think? If you accidentally call it on a CoW
+> > > > anonymous mapping with shared pages, you'll degrade the performance of
+> > > > other processes. And if an attacker does it intentionally, they could
+> > > > use that to aid with exploiting race conditions or weird
+> > > > microarchitectural stuff (e.g. the new https://lviattack.eu/lvi.pdf
+> > > > talks about "the assumption that attackers can provoke page faults or
+> > > > microcode assists for (arbitrary) load operations in the victim
+> > > > domain").
+> > > >
+> > > > Should madvise_cold_or_pageout_pte_range() maybe refuse to operate on
+> > > > pages with mapcount>1, or something like that? Or does it already do
+> > > > that, and I just missed the check?
+> > >
+> > > I have brought up side channel attacks earlier [1] but only in the
+> > > context of shared page cache pages. I didn't really consider shared
+> > > anonymous pages to be a real problem. I was under impression that CoW
+> > > pages shouldn't be a real problem because any security sensible
+> > > applications shouldn't allow untrusted code to be forked and CoW
+> > > anything really important. I believe we have made this assumption
+> > > in other places - IIRC on gup with FOLL_FORCE but I admit I have
+> > > very happily forgot most details.
+> >
+> > I'm more worried about the performance implications. Consider
+> > libc.so's data section: that's a COW mapping, and we COW it during
+> > zygote initialization as we load and relocate libc.so. Child processes
+> > shouldn't be dirtying and re-COWing those relocated pages. If I
+> > understand Jann's message correctly, MADV_PAGEOUT would force the
+> > pages corresponding to the libc.so data segment out to zram just
+> > because we MADV_PAGEOUT-ed a single process that happened to use libc.
+> > We should leave those pages in memory, IMHO.
+>
+> Actually, the libc.so data section is a file mapping, so I think
+> can_do_pageout() would decide whether the caller is allowed to force
+> pageout based on whether the caller is the owner of (or capable over)
+> libc (in other words, root, basically). But I think the bss section,
+> as well as heap memory, could have pageout forced by anyone.
 
-That's not at all guaranteed. Weakly ordered memory things can
-actually have odd orderings, and not just "writes delayed, reads done
-early". Reads may be delayed too by cache misses, and memory barriers
-can thus expedite reads as well (by forcing the missing read to happen
-before later non-missing ones).
-
-So don't assume that a memory barrier would only delay reads and
-expedite writes. Quite the reverse: assume that there is no ordering
-at all unless you impose one with a memory barrier (*).
-
-             Linus
-
-(*) it's a bit more complex than that, in that we do assume that
-control dependencies end up gating writes, for example, but those
-kinds of implicit ordering things should *not* be what you depend on
-in the code unless you're doing some seriously subtle memory ordering
-work and comment on it extensively.
+lmkd would have that capability though, right? But the point stands
+regardless. It sounds like both security and performance suggest a
+behavior change here. Thanks for bringing it up!
