@@ -2,164 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0C9F17EDAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 02:08:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18F9C17EDC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 02:10:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbgCJBHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 21:07:53 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:57727 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726115AbgCJBHx (ORCPT
+        id S1726475AbgCJBJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 21:09:45 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44300 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbgCJBJo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 21:07:53 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Ts9xOdL_1583802470;
-Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0Ts9xOdL_1583802470)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 10 Mar 2020 09:07:50 +0800
-Subject: Re: [PATCH][next] ocfs2: ocfs2_fs.h: Replace zero-length array with
- flexible-array member
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-References: <20200309202155.GA8432@embeddedor>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-Message-ID: <bbaead13-d6aa-5820-ce2f-05cb11305f8c@linux.alibaba.com>
-Date:   Tue, 10 Mar 2020 09:07:50 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
- Gecko/20100101 Thunderbird/68.5.0
+        Mon, 9 Mar 2020 21:09:44 -0400
+Received: by mail-lf1-f65.google.com with SMTP id i10so9407633lfg.11
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 18:09:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=VH46Ehb61wn3Nsa+EuwV9XgSdGbIry8HRNC2P/68lZA=;
+        b=rjHPi4hI9ySmdHPWP2/oYPXAfsvI7hQS1hNA1n1D8e0DkQcrAIlfGTtDtKyzW7VohF
+         x5okkNCqm1mdZCnmEifVd7HToQapaHAq5jl0zPMTSDxxwsesGLmhHpehIuBLdhCPYDB5
+         KVCiXQeg7q662Us88wInsQ1InY5bRPOEDRrIOMzC2meSn81EL9nW/d3BU9yP+lNA+Kma
+         QERGPQPJEnwirOhBMoEpEG87bLOTU4DZRXp3LaDjSAIuDjlU1/rfXqQKwLO9o/TSAqC+
+         rdc+lNawnw+f4GyFtQ5f5JFEy4rVOQBUoyQO59I0lRYNExodz/0726+bo7y93x3eYQJi
+         ++Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=VH46Ehb61wn3Nsa+EuwV9XgSdGbIry8HRNC2P/68lZA=;
+        b=lPnKt2mzlo/y9uNYCR0VKAr6l4nhMg9NnOlXOvxC+S7LxTtTGf+K7e4E1I9GmJzzN3
+         lszbZwlOWG85XSTOgmYnLj4Kqzs/+3tlSz4BocgDFuzUE1cutnZA+TsUDe+eAPpj9y8Q
+         +nxwp6Kd859CJztZBuGeORKajkJ14QTDZpze9uQCAIsSmi8q7nqf9Lh6kmhs9rFiVwXS
+         Y6W2dBQKLSOFw9SP/HiL0iEDBDgz9+3NWjrStyrzS1AR9JbYcup2BzmESRqUTfiCQ+Ms
+         K3wTbIMDvq/b/jrVgbbuGcimb+vHY/dP2xzDbeNBeCO8K9L+2K3nn1NPV7PR+bPoYnqR
+         32yw==
+X-Gm-Message-State: ANhLgQ2F5Fv7AJKKfRVRsc/hFx/sgf8Q0OlCleCObjvEvKggHymIInf1
+        S7HDaFfVHC9Y4zxvNqUgcBq8B3ThH1QtgMahSn226g==
+X-Google-Smtp-Source: ADFU+vsJpPQRtMLbg/7hFmm1JetBjf6nVzCFU9hpVCk7A5WXVIqO+oXTsLXumVJU+m7yZeRwnJx/e0EC+8gHpl6KelA=
+X-Received: by 2002:ac2:5222:: with SMTP id i2mr7811848lfl.81.1583802582314;
+ Mon, 09 Mar 2020 18:09:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200309202155.GA8432@embeddedor>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1581555616.git.ashish.kalra@amd.com> <d6f21be0c775fd51a63565c8944b03b3bf099e0f.1581555616.git.ashish.kalra@amd.com>
+In-Reply-To: <d6f21be0c775fd51a63565c8944b03b3bf099e0f.1581555616.git.ashish.kalra@amd.com>
+From:   Steve Rutherford <srutherford@google.com>
+Date:   Mon, 9 Mar 2020 18:09:06 -0700
+Message-ID: <CABayD+dB-CQ7HwhDvkgxXne9fhy6Wbh8iQLVhEkegWhYMoLGGw@mail.gmail.com>
+Subject: Re: [PATCH 03/12] KVM: SVM: Add KVM_SEV_SEND_FINISH command
+To:     Ashish Kalra <Ashish.Kalra@amd.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Joerg Roedel <joro@8bytes.org>,
+        Borislav Petkov <bp@suse.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        David Rientjes <rientjes@google.com>, X86 ML <x86@kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2020/3/10 04:21, Gustavo A. R. Silva wrote:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
-> 
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
-> 
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
-> 
-> This issue was found with the help of Coccinelle.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+On Wed, Feb 12, 2020 at 5:16 PM Ashish Kalra <Ashish.Kalra@amd.com> wrote:
+>
+> From: Brijesh Singh <brijesh.singh@amd.com>
+>
+> The command is used to finailize the encryption context created with
+> KVM_SEV_SEND_START command.
+>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: "Radim Kr=C4=8Dm=C3=A1=C5=99" <rkrcmar@redhat.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Borislav Petkov <bp@suse.de>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: x86@kernel.org
+> Cc: kvm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
+> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
 > ---
->  fs/ocfs2/ocfs2_fs.h | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/ocfs2/ocfs2_fs.h b/fs/ocfs2/ocfs2_fs.h
-> index 0db4a7ec58a2..0dd8c41bafd4 100644
-> --- a/fs/ocfs2/ocfs2_fs.h
-> +++ b/fs/ocfs2/ocfs2_fs.h
-> @@ -470,7 +470,7 @@ struct ocfs2_extent_list {
->  	__le16 l_reserved1;
->  	__le64 l_reserved2;		/* Pad to
->  					   sizeof(ocfs2_extent_rec) */
-> -/*10*/	struct ocfs2_extent_rec l_recs[0];	/* Extent records */
-> +/*10*/	struct ocfs2_extent_rec l_recs[];	/* Extent records */
->  };
->  
->  /*
-> @@ -484,7 +484,7 @@ struct ocfs2_chain_list {
->  	__le16 cl_count;		/* Total chains in this list */
->  	__le16 cl_next_free_rec;	/* Next unused chain slot */
->  	__le64 cl_reserved1;
-> -/*10*/	struct ocfs2_chain_rec cl_recs[0];	/* Chain records */
-> +/*10*/	struct ocfs2_chain_rec cl_recs[];	/* Chain records */
->  };
->  
->  /*
-> @@ -496,7 +496,7 @@ struct ocfs2_truncate_log {
->  /*00*/	__le16 tl_count;		/* Total records in this log */
->  	__le16 tl_used;			/* Number of records in use */
->  	__le32 tl_reserved1;
-> -/*08*/	struct ocfs2_truncate_rec tl_recs[0];	/* Truncate records */
-> +/*08*/	struct ocfs2_truncate_rec tl_recs[];	/* Truncate records */
->  };
->  
->  /*
-> @@ -640,7 +640,7 @@ struct ocfs2_local_alloc
->  	__le16 la_size;		/* Size of included bitmap, in bytes */
->  	__le16 la_reserved1;
->  	__le64 la_reserved2;
-> -/*10*/	__u8   la_bitmap[0];
-> +/*10*/	__u8   la_bitmap[];
->  };
->  
->  /*
-> @@ -653,7 +653,7 @@ struct ocfs2_inline_data
->  				 * for data, starting at id_data */
->  	__le16	id_reserved0;
->  	__le32	id_reserved1;
-> -	__u8	id_data[0];	/* Start of user data */
-> +	__u8	id_data[];	/* Start of user data */
->  };
->  
->  /*
-> @@ -798,7 +798,7 @@ struct ocfs2_dx_entry_list {
->  					 * possible in de_entries */
->  	__le16		de_num_used;	/* Current number of
->  					 * de_entries entries */
-> -	struct	ocfs2_dx_entry		de_entries[0];	/* Indexed dir entries
-> +	struct	ocfs2_dx_entry		de_entries[];	/* Indexed dir entries
->  							 * in a packed array of
->  							 * length de_num_used */
->  };
-> @@ -935,7 +935,7 @@ struct ocfs2_refcount_list {
->  	__le16 rl_used;		/* Current number of used records */
->  	__le32 rl_reserved2;
->  	__le64 rl_reserved1;	/* Pad to sizeof(ocfs2_refcount_record) */
-> -/*10*/	struct ocfs2_refcount_rec rl_recs[0];	/* Refcount records */
-> +/*10*/	struct ocfs2_refcount_rec rl_recs[];	/* Refcount records */
->  };
->  
->  
-> @@ -1021,7 +1021,7 @@ struct ocfs2_xattr_header {
->  						    buckets.  A block uses
->  						    xb_check and sets
->  						    this field to zero.) */
-> -	struct ocfs2_xattr_entry xh_entries[0]; /* xattr entry list. */
-> +	struct ocfs2_xattr_entry xh_entries[]; /* xattr entry list. */
->  };
->  
->  /*
-> @@ -1207,7 +1207,7 @@ struct ocfs2_local_disk_dqinfo {
->  /* Header of one chunk of a quota file */
->  struct ocfs2_local_disk_chunk {
->  	__le32 dqc_free;	/* Number of free entries in the bitmap */
-> -	__u8 dqc_bitmap[0];	/* Bitmap of entries in the corresponding
-> +	__u8 dqc_bitmap[];	/* Bitmap of entries in the corresponding
->  				 * chunk of quota file */
->  };
->  
-> 
+>  .../virt/kvm/amd-memory-encryption.rst        |  8 +++++++
+>  arch/x86/kvm/svm.c                            | 23 +++++++++++++++++++
+>  2 files changed, 31 insertions(+)
+>
+> diff --git a/Documentation/virt/kvm/amd-memory-encryption.rst b/Documenta=
+tion/virt/kvm/amd-memory-encryption.rst
+> index 0f1c3860360f..f22f09ad72bd 100644
+> --- a/Documentation/virt/kvm/amd-memory-encryption.rst
+> +++ b/Documentation/virt/kvm/amd-memory-encryption.rst
+> @@ -289,6 +289,14 @@ Returns: 0 on success, -negative on error
+>                  __u32 trans_len;
+>          };
+>
+> +12. KVM_SEV_SEND_FINISH
+> +------------------------
+> +
+> +After completion of the migration flow, the KVM_SEV_SEND_FINISH command =
+can be
+> +issued by the hypervisor to delete the encryption context.
+> +
+> +Returns: 0 on success, -negative on error
+> +
+>  References
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index ae97f774e979..c55c1865f9e0 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -7387,6 +7387,26 @@ static int sev_send_update_data(struct kvm *kvm, s=
+truct kvm_sev_cmd *argp)
+>         return ret;
+>  }
+>
+> +static int sev_send_finish(struct kvm *kvm, struct kvm_sev_cmd *argp)
+> +{
+> +       struct kvm_sev_info *sev =3D &to_kvm_svm(kvm)->sev_info;
+> +       struct sev_data_send_finish *data;
+> +       int ret;
+> +
+> +       if (!sev_guest(kvm))
+> +               return -ENOTTY;
+> +
+> +       data =3D kzalloc(sizeof(*data), GFP_KERNEL);
+> +       if (!data)
+> +               return -ENOMEM;
+> +
+> +       data->handle =3D sev->handle;
+> +       ret =3D sev_issue_cmd(kvm, SEV_CMD_SEND_FINISH, data, &argp->erro=
+r);
+> +
+> +       kfree(data);
+> +       return ret;
+> +}
+> +
+>  static int svm_mem_enc_op(struct kvm *kvm, void __user *argp)
+>  {
+>         struct kvm_sev_cmd sev_cmd;
+> @@ -7434,6 +7454,9 @@ static int svm_mem_enc_op(struct kvm *kvm, void __u=
+ser *argp)
+>         case KVM_SEV_SEND_UPDATE_DATA:
+>                 r =3D sev_send_update_data(kvm, &sev_cmd);
+>                 break;
+> +       case KVM_SEV_SEND_FINISH:
+> +               r =3D sev_send_finish(kvm, &sev_cmd);
+> +               break;
+>         default:
+>                 r =3D -EINVAL;
+>                 goto out;
+> --
+> 2.17.1
+>
+Reviewed-by: Steve Rutherford <srutherford@google.com>
