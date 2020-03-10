@@ -2,102 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B64117FACE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:08:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 643F517FB1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:11:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731120AbgCJNI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:08:28 -0400
-Received: from mga01.intel.com ([192.55.52.88]:19572 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731107AbgCJNIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:08:25 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 06:08:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,537,1574150400"; 
-   d="scan'208";a="388926224"
-Received: from akharche-mobl2.ccr.corp.intel.com (HELO localhost) ([10.251.86.23])
-  by orsmga004.jf.intel.com with ESMTP; 10 Mar 2020 06:08:19 -0700
-Date:   Tue, 10 Mar 2020 15:08:18 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Neil Horman <nhorman@redhat.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
-        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v28 14/22] selftests/x86: Add a selftest for SGX
-Message-ID: <20200310130818.GA32334@linux.intel.com>
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
- <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com>
- <CAOASepN1JrD6OEzZycbqOr6_ZVACK=EctEOoQ8oSAEeigMr1Eg@mail.gmail.com>
- <04362c0cf66bf66e8f7c25a531830b9f294d2d09.camel@linux.intel.com>
- <20200306154222.GA20820@wind.enjellic.com>
- <20200306190753.GH7472@linux.intel.com>
- <20200307174223.GA30928@wind.enjellic.com>
+        id S1731158AbgCJNK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:10:57 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37065 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731352AbgCJNKp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:10:45 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 6so15812032wre.4
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:10:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=stwvll2Z0UBciDGqDN3BPXdjztkYAsKlie43tBme5yA=;
+        b=SkahghNvvZALFb90kpfwpcpzAUyl5pDoHb70SjCV3iA4YutJUYplbhYlVpKyaVLMdL
+         5LIqFP8rbhBVjLrD7xkyGkhxEGQBmhI6VE6LT2IHmbdkTKdvYQvb0+xZT7wtgVonVHq7
+         ch4bg5ZA48tL9wEWovL9ra+kFPu7L6FDwLjGbeLqnIzvUfiK884KTc+n5qKHw7X6j4uc
+         BDSyXry1sSSRZOsueyVXi2t+LL/plIcMkboBZzybZtfwTSo3ZVxsLRdjmvEcswQX/EvS
+         lLktHt6qBQ3pRfTGLLEG2uE/N/LWwApvu+RNA6YLmEO5qeJhX7mdkrfky65YZGMGBv0W
+         1wmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=stwvll2Z0UBciDGqDN3BPXdjztkYAsKlie43tBme5yA=;
+        b=pS0hE9Pc4yPmUWgVAGGsZZpWXSx7GbL/bH5yTP9J/xx436dWYg4v4aztKIx/UpK6Vk
+         8ncdYp0xIG0B1MqLq4q+crjYaedrkXg7qUJxMsK6xWs4umKAain9eRC3AntDbAQSrUnU
+         W3UI0OutLGPIczaIJFycYbP07q81jm7xZJt+RTvnKU3FrBJAYe5JxJDZmxLqCkWkSbjr
+         D4jKU4kR6hYiS/cSXwUCtDqV+LA0XTT6/wSIp1zYbWosBj2IVNlnUNb5E+rrKCNvuZMe
+         sL0nNRn9/ew2ICPqfE31I+WJGBPetgzt35EnkhbnJWAV9+SeB3GANajkI5XItFPi0mnT
+         mpVw==
+X-Gm-Message-State: ANhLgQ2aiIzhEklb/d/HSBND0DqC8/xf3OYM+A+Rk8j8o0FDk3QwtLF2
+        S4FnOaned9ec7eTM6J+fl/K85A==
+X-Google-Smtp-Source: ADFU+vtv+ocviwwMA8GuKvRJ5+rnYhleqOJVhro+wgnoMNtIf53L9tTB3qbfS/zh9rhfpDxcJ72Nhg==
+X-Received: by 2002:a5d:60c2:: with SMTP id x2mr27061532wrt.123.1583845842444;
+        Tue, 10 Mar 2020 06:10:42 -0700 (PDT)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id k18sm16130392wru.94.2020.03.10.06.10.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Mar 2020 06:10:40 -0700 (PDT)
+Subject: Re: [PATCH v3 1/2] nvmem: Allow nvmem_sysfs_get_groups() to return
+ NULL as error condition
+To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>
+References: <PSXP216MB0438C66F372D62AA71CFC04780FE0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <bc9c0714-6e21-4a6c-48ad-df3eb0cbb4a4@linaro.org>
+Date:   Tue, 10 Mar 2020 13:10:39 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200307174223.GA30928@wind.enjellic.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <PSXP216MB0438C66F372D62AA71CFC04780FE0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 07, 2020 at 11:42:23AM -0600, Dr. Greg wrote:
-> On Fri, Mar 06, 2020 at 09:07:53PM +0200, Jarkko Sakkinen wrote:
+
+
+On 09/03/2020 17:49, Nicholas Johnson wrote:
+> Currently, nvmem_register() does not check for NULL return from
+> nvmem_sysfs_get_groups(), and hence nvmem_sysfs_get_groups() has to
+> always return a valid group, even if it is given invalid inputs.
 > 
-> Good morning, I hope the weekend is going well for everyone.
+> Add check in nvmem_register() to return an error if NULL group is given.
 > 
-> > Actually many people have applaused to have a small scoped, even if
-> > not perfect, test program to look at how SGX works. One that is only
-> > dependent on glibc. None of the selftests are meant to be production
-> > peaces of code. You are getting wrong the role of the selftest in
-> > the first place.
+> Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+> ---
+>   drivers/nvmem/core.c | 4 ++++
+>   1 file changed, 4 insertions(+)
 > 
-> We certainly want to be counted in the camp of those who are
-> applausing you for making the selftests available, particularly the
-> new VDSO setup and entry code.
+> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> index ef326f243..f6cd8a56a 100644
+> --- a/drivers/nvmem/core.c
+> +++ b/drivers/nvmem/core.c
+> @@ -388,6 +388,10 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+>   			   config->read_only || !nvmem->reg_write;
+>   
+>   	nvmem->dev.groups = nvmem_sysfs_get_groups(nvmem, config);
+Code as it today will never return null so this patch belongs to the 
+next patch where its possible to return null.
+
+> +	if (!nvmem->dev.groups) {
+> +		kfree(nvmem);
+
+This is still leaking few more things here!
+> +		return ERR_PTR(-EPERM);
+
+Error code hear does not really reflect why it failed, we should return 
+-EINVAL indicating that its invalid configuration.
+
+--srini
+> +	}
+>   
+>   	device_initialize(&nvmem->dev);
+>   
 > 
-> We arguably have similar motivations.  We architected and authored an
-> entire SGX runtime that has as its only dependencies the MUSL C
-> library, libelf and OpenSSL, primarily because we needed an easily
-> auditable and low footprint SGX implementation.
-
-Good to hear!
-
-> To the point at hand though, I'm certainly not a very smart guy so I
-> doubt that I am able to understand the role of the selftests.  We do
-> seem to agree though that they only provide a rudimentary exercise of
-> the driver.
-
-The role of kselftests is not to be production code. They are somewhat
-adhoc pieces of code that just check that "things turn on" e.g. in a
-new kernel release or a new hardware platform.
-
-> We also seem to agree that the primary role of the driver is to
-> service the needs of those of us that are building production level
-> SGX runtime stacks.  In service of that premise, it would be helpful
-> to know if you are internally testing the driver/VDSO against enclaves
-> of production quality, with metadata, or just the two page selftest
-> enclave.
-
-I do agree that a more complete test suite would be an essential thing
-to have. In that I'd just use the SDK and implement it outside the
-kernel tree.
-
-Unfortunately I do not have time to implement such.
-
-/Jarkko
