@@ -2,42 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEE6417F7FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:44:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC58C17F8A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:49:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbgCJMoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:44:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44446 "EHLO mail.kernel.org"
+        id S1727518AbgCJMtj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:49:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726501AbgCJMn5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:43:57 -0400
+        id S1728484AbgCJMth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:49:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06DA924686;
-        Tue, 10 Mar 2020 12:43:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02A2C2467D;
+        Tue, 10 Mar 2020 12:49:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844237;
-        bh=zelQCojRdjTRJfT/utokvhhGatHdiVoh5veId4tJeag=;
+        s=default; t=1583844576;
+        bh=2D4FIR9GBkiS0LsTGQEJSULlDlMwEyDFKr0ZL7m6JsA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m1DkBiyFMHB81QRoaEVnEF2rMml+6DKV/A4NcwESl6UZAWa5tbA4C2YLyX/TiVxNn
-         eaZlulIdtsJ4ygoGoWCL5PtOG4pwvbQ5jC+LIqWk/rufXHA6trInUo5xk8/lrHxXHQ
-         9+nfforcqX/fJTU3GP5Cf8cr69sEkYJP3oRu0w9M=
+        b=XeQcRu95zhiAkSHHRuNXL/TSozoaGOXUzQCNf7zvDGZNkij5ScfmBGUB3EgbrGysB
+         07pyxy+RkyOfJu6kb9wmy8nUHvX5QV6wQRTXqz1/4y2NSLKtZjaHRPB5o64J38OFzl
+         gVAj4rb9oZCEcwzKyOjsPZ6TUC+n+E/jzH6AUKIU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Ajay Kaher <akaher@vmware.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 01/88] iwlwifi: pcie: fix rb_allocator workqueue allocation
+        stable@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Leif Liddy <leif.liddy@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 043/168] nvme-pci: Use single IRQ vector for old Apple models
 Date:   Tue, 10 Mar 2020 13:38:09 +0100
-Message-Id: <20200310123606.848982431@linuxfoundation.org>
+Message-Id: <20200310123639.726928176@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,43 +47,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit 8188a18ee2e48c9a7461139838048363bfce3fef upstream
+[ Upstream commit 98f7b86a0becc1154b1a6df6e75c9695dfd87e0d ]
 
-We don't handle failures in the rb_allocator workqueue allocation
-correctly. To fix that, move the code earlier so the cleanup is
-easier and we don't have to undo all the interrupt allocations in
-this case.
+People reported that old Apple machines are not working properly
+if the non-first IRQ vector is in use.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-[Ajay: Rewrote this patch for v4.9.y, as 4.9.y codebase is different from mainline]
-Signed-off-by: Ajay Kaher <akaher@vmware.com>
+Set quirk for that models to limit IRQ to use first vector only.
+
+Based on original patch by GitHub user npx001.
+
+Link: https://github.com/Dunedan/mbp-2016-linux/issues/9
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Leif Liddy <leif.liddy@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/rx.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/nvme/host/pci.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-index a2ebe46bcfc5b..395bbe2c0f983 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-@@ -898,9 +898,13 @@ int iwl_pcie_rx_init(struct iwl_trans *trans)
- 			return err;
- 	}
- 	def_rxq = trans_pcie->rxq;
--	if (!rba->alloc_wq)
-+	if (!rba->alloc_wq) {
- 		rba->alloc_wq = alloc_workqueue("rb_allocator",
- 						WQ_HIGHPRI | WQ_UNBOUND, 1);
-+		if (!rba->alloc_wq)
-+			return -ENOMEM;
-+	}
-+
- 	INIT_WORK(&rba->rx_alloc, iwl_pcie_rx_allocator_work);
- 
- 	cancel_work_sync(&rba->rx_alloc);
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index c8e55674cf937..cd64ddb129e5b 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -3126,7 +3126,8 @@ static const struct pci_device_id nvme_id_table[] = {
+ 		.driver_data = NVME_QUIRK_NO_DEEPEST_PS |
+ 				NVME_QUIRK_IGNORE_DEV_SUBNQN, },
+ 	{ PCI_DEVICE_CLASS(PCI_CLASS_STORAGE_EXPRESS, 0xffffff) },
+-	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2001) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2001),
++		.driver_data = NVME_QUIRK_SINGLE_VECTOR },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2003) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2005),
+ 		.driver_data = NVME_QUIRK_SINGLE_VECTOR |
 -- 
 2.20.1
 
