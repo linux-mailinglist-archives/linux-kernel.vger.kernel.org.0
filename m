@@ -2,136 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D21A18060F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:19:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AE5D180612
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:21:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbgCJSTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 14:19:55 -0400
-Received: from mga01.intel.com ([192.55.52.88]:49185 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726436AbgCJSTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 14:19:54 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 11:19:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,537,1574150400"; 
-   d="scan'208";a="236024744"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga008.fm.intel.com with ESMTP; 10 Mar 2020 11:19:52 -0700
-Date:   Tue, 10 Mar 2020 11:19:52 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH 4.14 057/126] KVM: SVM: Override default MMIO mask if
- memory encryption is enabled
-Message-ID: <20200310181952.GF9305@linux.intel.com>
-References: <20200310124203.704193207@linuxfoundation.org>
- <20200310124207.819562318@linuxfoundation.org>
+        id S1727076AbgCJSU4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 14:20:56 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53445 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726403AbgCJSUz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 14:20:55 -0400
+Received: from mail-lf1-f69.google.com ([209.85.167.69])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <guilherme.piccoli@canonical.com>)
+        id 1jBjUq-0005FT-W6
+        for linux-kernel@vger.kernel.org; Tue, 10 Mar 2020 18:20:53 +0000
+Received: by mail-lf1-f69.google.com with SMTP id 6so4274557lft.11
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 11:20:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a/HvhUt0ysFx0Jm3cdreQunT4799OHITOZy4NURukkw=;
+        b=kTEy0vWS6tcwLcErhL+HVBaj9r/Ahqh4ZTFOAldDCFg1pB23/155jZryGyvIVIvW+n
+         r4O8M00le5PZ97tH8CyEpKTQ7mA4QlSAJXkcypGrvOb2zuCgz/8WZSK3sGuQSJ5y5Fqx
+         2WWUPBJ0fhhkcG5sJUsDzlsq0WvAnv2ct2kVF73eWKv3saoPlnVkD8ky0+Wfo6ds9Q0a
+         MAob16FgVdZpX6gCdDmsw27RV7Qoxh4P9/jQwEyKXic3Mu037i9rDgjWLCdw8qRMYORC
+         SuzCJfYM7U0hahbDYAd/Qw4lAYBwbcahEp1Jv179Vxh6Wv6LkFdrUZF9C2O91B+vCTFo
+         o26Q==
+X-Gm-Message-State: ANhLgQ1/xBC8ESMex0YzasIy7Nc5dz32knUCfS1mdtOINQRW/YrxgzqQ
+        TGWldd7E6T2XmHgRyDG3PLyb6/PQjoDgU7fkiz3md3Gn3psaaH/1ZFUJ+WiTlGVAK6xdAH3JhzO
+        f/YnHqPUchbN8ACZRPjJRAdcZlZUNvk0L/Vk/4g2J0l+ePpDFNcstig86Lg==
+X-Received: by 2002:a2e:8e96:: with SMTP id z22mr322956ljk.2.1583864452485;
+        Tue, 10 Mar 2020 11:20:52 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vv1foG7lISXTxzcKfKe32bPMb6/YSMz1BE1vbeu9A+TuE7+TSTV4C6X+XoeiJI8/tOm0zC6H7DeRMp6mZnlgAU=
+X-Received: by 2002:a2e:8e96:: with SMTP id z22mr322946ljk.2.1583864452275;
+ Tue, 10 Mar 2020 11:20:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200310124207.819562318@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20200310151503.11589-1-gpiccoli@canonical.com> <20200310110554.1fc016ad@lwn.net>
+In-Reply-To: <20200310110554.1fc016ad@lwn.net>
+From:   Guilherme Piccoli <gpiccoli@canonical.com>
+Date:   Tue, 10 Mar 2020 15:20:15 -0300
+Message-ID: <CAHD1Q_w26XP5fOcqW_toDLvEU0crt1dUUjiwCyWTn_U1-Nh=1g@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: Better document the softlockup_panic sysctl
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        swood@redhat.com, mcgrof@kernel.org, keescook@chromium.org,
+        yzaikin@google.com, mingo@kernel.org,
+        "Guilherme G. Piccoli" <kernel@gpiccoli.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Has this been tested on the stable kernels?  There's a recent bug report[*]
-that suggests the 4.19 backport of this patch may be causing issues.
+On Tue, Mar 10, 2020 at 2:05 PM Jonathan Corbet <corbet@lwn.net> wrote:
+> So this doesn't even come close to applying; could you respin it against
+> docs-next, please?
 
-[*] https://bugzilla.kernel.org/show_bug.cgi?id=206795
+Sure, will resubmit soon. I understand docs-next is just linux-next
+correct? I couldn't find any specific docs tree on kernel.org ...
 
 
-On Tue, Mar 10, 2020 at 01:41:18PM +0100, Greg Kroah-Hartman wrote:
-> From: Tom Lendacky <thomas.lendacky@amd.com>
-> 
-> commit 52918ed5fcf05d97d257f4131e19479da18f5d16 upstream.
-> 
-> The KVM MMIO support uses bit 51 as the reserved bit to cause nested page
-> faults when a guest performs MMIO. The AMD memory encryption support uses
-> a CPUID function to define the encryption bit position. Given this, it is
-> possible that these bits can conflict.
-> 
-> Use svm_hardware_setup() to override the MMIO mask if memory encryption
-> support is enabled. Various checks are performed to ensure that the mask
-> is properly defined and rsvd_bits() is used to generate the new mask (as
-> was done prior to the change that necessitated this patch).
-> 
-> Fixes: 28a1f3ac1d0c ("kvm: x86: Set highest physical address bits in non-present/reserved SPTEs")
-> Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> ---
->  arch/x86/kvm/svm.c |   43 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 43 insertions(+)
-> 
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -1088,6 +1088,47 @@ static int avic_ga_log_notifier(u32 ga_t
->  	return 0;
->  }
->  
-> +/*
-> + * The default MMIO mask is a single bit (excluding the present bit),
-> + * which could conflict with the memory encryption bit. Check for
-> + * memory encryption support and override the default MMIO mask if
-> + * memory encryption is enabled.
-> + */
-> +static __init void svm_adjust_mmio_mask(void)
-> +{
-> +	unsigned int enc_bit, mask_bit;
-> +	u64 msr, mask;
-> +
-> +	/* If there is no memory encryption support, use existing mask */
-> +	if (cpuid_eax(0x80000000) < 0x8000001f)
-> +		return;
-> +
-> +	/* If memory encryption is not enabled, use existing mask */
-> +	rdmsrl(MSR_K8_SYSCFG, msr);
-> +	if (!(msr & MSR_K8_SYSCFG_MEM_ENCRYPT))
-> +		return;
-> +
-> +	enc_bit = cpuid_ebx(0x8000001f) & 0x3f;
-> +	mask_bit = boot_cpu_data.x86_phys_bits;
-> +
-> +	/* Increment the mask bit if it is the same as the encryption bit */
-> +	if (enc_bit == mask_bit)
-> +		mask_bit++;
-> +
-> +	/*
-> +	 * If the mask bit location is below 52, then some bits above the
-> +	 * physical addressing limit will always be reserved, so use the
-> +	 * rsvd_bits() function to generate the mask. This mask, along with
-> +	 * the present bit, will be used to generate a page fault with
-> +	 * PFER.RSV = 1.
-> +	 *
-> +	 * If the mask bit location is 52 (or above), then clear the mask.
-> +	 */
-> +	mask = (mask_bit < 52) ? rsvd_bits(mask_bit, 51) | PT_PRESENT_MASK : 0;
-> +
-> +	kvm_mmu_set_mmio_spte_mask(mask, PT_WRITABLE_MASK | PT_USER_MASK);
-> +}
-> +
->  static __init int svm_hardware_setup(void)
->  {
->  	int cpu;
-> @@ -1123,6 +1164,8 @@ static __init int svm_hardware_setup(voi
->  		kvm_enable_efer_bits(EFER_SVME | EFER_LMSLE);
->  	}
->  
-> +	svm_adjust_mmio_mask();
-> +
->  	for_each_possible_cpu(cpu) {
->  		r = svm_cpu_init(cpu);
->  		if (r)
-> 
-> 
+>
+> ..and while you're at it, make it "*the* kernel.softlockup_panic sysctl" :)
+
+
+Sure! Thanks for the review,
+
+
+Guilherme
