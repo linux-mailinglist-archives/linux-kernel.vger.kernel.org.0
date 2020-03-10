@@ -2,54 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F2EB180BC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 23:40:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB029180BC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 23:41:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbgCJWkH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 18:40:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32844 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726402AbgCJWkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 18:40:07 -0400
-Subject: Re: [GIT PULL] clang-format for v5.6-rc6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583880006;
-        bh=bv1LOEIUMDk94xJUo/qvqrgc8WpmpthHl23CoRZlaw8=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=FZHYtwqy8RpJublvJg6ueYbhlQ/HmxpXiP9obQjxh4hA1uJFD7IZZ/bMIrsQ000el
-         0NPH8fqIRMeCX2pTmOg7ffbDcew6uPifSRZ7cyJUlOr3gQZIoqCGu0ZNTXbWxbA7hf
-         mR4VhDrOtBBh4QK8bGK2PTrc6ef5Bw9zG4BzOvng=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200310161556.GA17087@gmail.com>
-References: <20200310161556.GA17087@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200310161556.GA17087@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ojeda/linux.git
- tags/clang-format-for-linus-v5.6-rc6
-X-PR-Tracked-Commit-Id: 11a4a8f73b3ce71b32f36e9f1655f6ddf8f1732b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f35111a946548e3b34a55abbad3e9bacce6cb10f
-Message-Id: <158388000665.13098.2125659062438326403.pr-tracker-bot@kernel.org>
-Date:   Tue, 10 Mar 2020 22:40:06 +0000
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        linux-kernel@vger.kernel.org
+        id S1727799AbgCJWlE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 18:41:04 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:58882 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbgCJWlE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 18:41:04 -0400
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 236F272CCF0;
+        Wed, 11 Mar 2020 01:41:01 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 1A1F07CC7FF; Wed, 11 Mar 2020 01:41:01 +0300 (MSK)
+Date:   Wed, 11 Mar 2020 01:41:01 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 2/4] selftests/ptrace: add test cases for dead-locks
+Message-ID: <20200310224100.GA1563@altlinux.org>
+References: <878sk94eay.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517086003BD2C32E199690A3E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y12yc7.fsf@x220.int.ebiederm.org>
+ <87k13t2xpd.fsf@x220.int.ebiederm.org>
+ <87d09l2x5n.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170F0F9DC18F5EA77C9A857E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <871rq12vxu.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170DF45E3245F55B95CCD91E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <877dzt1fnf.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51703199741A2C27A78980FFE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM6PR03MB51703199741A2C27A78980FFE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 10 Mar 2020 17:15:56 +0100:
+On Tue, Mar 10, 2020 at 02:44:01PM +0100, Bernd Edlinger wrote:
+> This adds test cases for ptrace deadlocks.
+> 
+> Additionally fixes a compile problem in get_syscall_info.c,
+> observed with gcc-4.8.4:
+> 
+> get_syscall_info.c: In function 'get_syscall_info':
+> get_syscall_info.c:93:3: error: 'for' loop initial declarations are only
+>                                  allowed in C99 mode
+>    for (unsigned int i = 0; i < ARRAY_SIZE(args); ++i) {
+>    ^
+> get_syscall_info.c:93:3: note: use option -std=c99 or -std=gnu99 to compile
+>                                your code
+[...]
+> @@ -1,6 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> -CFLAGS += -iquote../../../../include/uapi -Wall
+> +CFLAGS += -std=c99 -pthread -iquote../../../../include/uapi -Wall
 
-> https://github.com/ojeda/linux.git tags/clang-format-for-linus-v5.6-rc6
+Wouldn't it be better to choose -std=gnu99 over -std=c99?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f35111a946548e3b34a55abbad3e9bacce6cb10f
-
-Thank you!
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+ldv
