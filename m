@@ -2,156 +2,290 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB4771802FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:16:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75A35180301
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:17:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbgCJQQf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 12:16:35 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:51438 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbgCJQQe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 12:16:34 -0400
-Received: by mail-pj1-f67.google.com with SMTP id y7so620091pjn.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 09:16:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DOrOSAeLspFbYbXz9Qm/Iq7jD9WCeEQR9ClLCc8oPgE=;
-        b=Glbfrsj7qXW4XMlk6izswgcTuUnOnVPLyYa+uub7K5RG2kDn5MM0jlfIGlnZa/a6Fi
-         JM7faDFxwn2OwVOjimQ+/BpZYEcYWVo7+hehHp33EXuY6cTKoNTj4TTsV8zAv4SGPyUQ
-         5IIqAms0w7M4YbMKtFuwtietZSDqNxSCfixoS2bgiOxUt/vDX7z7uSd/dzQFRcoSbw6/
-         TrxDPnGIbTPpgQ6OoiFEuVxyHy6iTF+/gx5LxgHIPwyrauhRWVBQIfyqhERtmrkdWkrP
-         lrYf/iyLB801FKeNh6HwLe+SV1oEnX9PcILV3bZPELG+kM1bZq9Q1ml/CXQ7FZaCFkt7
-         Deeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DOrOSAeLspFbYbXz9Qm/Iq7jD9WCeEQR9ClLCc8oPgE=;
-        b=fsn35dq6SwDgn0xIABdLfAf0Ak9VCZa3K0mrcOvAqJ+qjc1roLY0W96jj9ViCER23q
-         LhJY5j5yrrcjqkkoC0sgETX3oMZRCscwlqNmJH5s36VhIIImeRlTjWzxw/R9RbUt4jtV
-         VDU2cVkaJgeu1SZAPJ/kjRe0BzorZ4WbQYE/7M9IcOxC140iDIsIthvNFg1+iZ5O7VPx
-         yU8q3xhXy8VJ3W1UVE3nB7FQeYpZem11yzih7QPGHlxgbyM6C7LRNq6uu+tZXqiid341
-         ji9OPXUJbHZs4xFIC5ww5UboC1WD6UDcFBxCLI3n4AKUqKywKPFDHfWw42CmA8W6Ty5P
-         AuUw==
-X-Gm-Message-State: ANhLgQ02ra5Vjdp2yzF7AKhwSUXHu5AnYsz8S2Owh+r1BJuVBYW8PvEv
-        1QE+rQylqTX0Caj+MVz59oUOFY5K7NV4YO/+tVayRg==
-X-Google-Smtp-Source: ADFU+vsc0zHMVKED7UniO5Kq+6KFg/Q4A+f3RC2sHN2BOg94KRCK01t/8vKmmhnfMSyOr/sGx3XAEwjNEqAKkkXFq24=
-X-Received: by 2002:a17:90a:1f8d:: with SMTP id x13mr2509613pja.27.1583856993053;
- Tue, 10 Mar 2020 09:16:33 -0700 (PDT)
+        id S1727112AbgCJQRi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 12:17:38 -0400
+Received: from mga09.intel.com ([134.134.136.24]:35089 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726426AbgCJQRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 12:17:36 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 09:17:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
+   d="scan'208";a="321851490"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga001.jf.intel.com with SMTP; 10 Mar 2020 09:17:24 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 10 Mar 2020 18:17:23 +0200
+Date:   Tue, 10 Mar 2020 18:17:23 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
+Cc:     jani.nikula@linux.intel.com, daniel@ffwll.ch,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        airlied@linux.ie, maarten.lankhorst@linux.intel.com,
+        tzimmermann@suse.de, mripard@kernel.org, mihail.atanassov@arm.com,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        =?iso-8859-1?Q?Jos=E9?= Roberto de Souza 
+        <jose.souza@intel.com>, Lucas De Marchi <lucas.demarchi@intel.com>,
+        Matt Roper <matthew.d.roper@intel.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Uma Shankar <uma.shankar@intel.com>,
+        linux-kernel@vger.kernel.org, ankit.k.nautiyal@intel.com
+Subject: Re: [RFC][PATCH 5/5] drm/i915/display: Add Nearest-neighbor based
+ integer scaling support
+Message-ID: <20200310161723.GK13686@intel.com>
+References: <20200225070545.4482-1-pankaj.laxminarayan.bharadiya@intel.com>
+ <20200225070545.4482-6-pankaj.laxminarayan.bharadiya@intel.com>
 MIME-Version: 1.0
-References: <20200308073400.23398-1-natechancellor@gmail.com>
- <CAK7LNARcTHpd8fzrAhFVB_AR7NoBgenX64de0eS2uN8g0by9PQ@mail.gmail.com>
- <20200310012545.GA16822@ubuntu-m2-xlarge-x86> <c2a687d065c1463d8eea9947687b3b05@AcuMS.aculab.com>
- <CAK7LNARMsO0AeO8-kH4czMuW0Y_=dN+ZhtXNdRE7CWGvU2PNvA@mail.gmail.com>
-In-Reply-To: <CAK7LNARMsO0AeO8-kH4czMuW0Y_=dN+ZhtXNdRE7CWGvU2PNvA@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 10 Mar 2020 09:16:22 -0700
-Message-ID: <CAKwvOdmf0V61O5gsuby_50fijrxe=LNh4pTtRGy_8=5637P7qw@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Disable -Wpointer-to-enum-cast
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     David Laight <David.Laight@aculab.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        stable <stable@vger.kernel.org>,
-        Saravana Kannan <saravanak@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200225070545.4482-6-pankaj.laxminarayan.bharadiya@intel.com>
+X-Patchwork-Hint: comment
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Saravana, who I spoke to briefly about this.
+On Tue, Feb 25, 2020 at 12:35:45PM +0530, Pankaj Bharadiya wrote:
+> Integer scaling (IS) is a nearest-neighbor upscaling technique that
+> simply scales up the existing pixels by an integer
+> (i.e., whole number) multiplier.Nearest-neighbor (NN) interpolation
+> works by filling in the missing color values in the upscaled image
+> with that of the coordinate-mapped nearest source pixel value.
+> 
+> Both IS and NN preserve the clarity of the original image. Integer
+> scaling is particularly useful for pixel art games that rely on
+> sharp, blocky images to deliver their distinctive look.
+> 
+> Program the scaler filter coefficients to enable the NN filter if
+> scaling filter property is set to DRM_SCALING_FILTER_NEAREST_NEIGHBOR
+> and enable integer scaling.
+> 
+> Bspec: 49247
+> 
+> Signed-off-by: Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
+> Signed-off-by: Ankit Nautiyal <ankit.k.nautiyal@intel.com>
+> ---
+>  drivers/gpu/drm/i915/display/intel_display.c | 83 +++++++++++++++++++-
+>  drivers/gpu/drm/i915/display/intel_display.h |  2 +
+>  drivers/gpu/drm/i915/display/intel_sprite.c  | 20 +++--
+>  3 files changed, 97 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm/i915/display/intel_display.c
+> index b5903ef3c5a0..6d5f59203258 100644
+> --- a/drivers/gpu/drm/i915/display/intel_display.c
+> +++ b/drivers/gpu/drm/i915/display/intel_display.c
+> @@ -6237,6 +6237,73 @@ void skl_scaler_disable(const struct intel_crtc_state *old_crtc_state)
+>  		skl_detach_scaler(crtc, i);
+>  }
+>  
+> +/**
+> + *  Theory behind setting nearest-neighbor integer scaling:
+> + *
+> + *  17 phase of 7 taps requires 119 coefficients in 60 dwords per set.
+> + *  The letter represents the filter tap (D is the center tap) and the number
+> + *  represents the coefficient set for a phase (0-16).
+> + *
+> + *         +------------+------------------------+------------------------+
+> + *         |Index value | Data value coeffient 1 | Data value coeffient 2 |
+> + *         +------------+------------------------+------------------------+
+> + *         |   00h      |          B0            |          A0            |
+> + *         +------------+------------------------+------------------------+
+> + *         |   01h      |          D0            |          C0            |
+> + *         +------------+------------------------+------------------------+
+> + *         |   02h      |          F0            |          E0            |
+> + *         +------------+------------------------+------------------------+
+> + *         |   03h      |          A1            |          G0            |
+> + *         +------------+------------------------+------------------------+
+> + *         |   04h      |          C1            |          B1            |
+> + *         +------------+------------------------+------------------------+
+> + *         |   ...      |          ...           |          ...           |
+> + *         +------------+------------------------+------------------------+
+> + *         |   38h      |          B16           |          A16           |
+> + *         +------------+------------------------+------------------------+
+> + *         |   39h      |          D16           |          C16           |
+> + *         +------------+------------------------+------------------------+
+> + *         |   3Ah      |          F16           |          C16           |
+> + *         +------------+------------------------+------------------------+
+> + *         |   3Bh      |        Reserved        |          G16           |
+> + *         +------------+------------------------+------------------------+
+> + *
+> + *  To enable nearest-neighbor scaling:  program scaler coefficents with
+> + *  the center tap (Dxx) values set to 1 and all other values set to 0 as per
+> + *  SCALER_COEFFICIENT_FORMAT
+> + *
+> + */
+> +void skl_setup_nearest_neighbor_filter(struct drm_i915_private *dev_priv,
+> +				  enum pipe pipe, int scaler_id)
 
+skl_scaler_... 
 
-On Tue, Mar 10, 2020 at 8:32 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> On Tue, Mar 10, 2020 at 8:31 PM David Laight <David.Laight@aculab.com> wrote:
-> >
-> > From: Nathan Chancellor
-> > > Sent: 10 March 2020 01:26
-> > ...
-> > > Sure, I can send v2 to do that but I think that sending 97 patches just
-> > > casting the small values (usually less than twenty) to unsigned long
-> > > then to the enum is rather frivolous. I audited at least ten to fifteen
-> > > of these call sites when creating the clang patch and they are all
-> > > basically false positives.
-> >
-> > Such casts just make the code hard to read.
-> > If misused casts can hide horrid bugs.
-> > IMHO sprinkling the code with casts just to remove
-> > compiler warnings will bite back one day.
-> >
->
-> I agree that too much casts make the code hard to read,
-> but irrespective of this patch, there is no difference
-> in the fact that we need a cast to convert
-> (const void *) to a non-pointer value.
->
-> The difference is whether we use
-> (uintptr_t) or (enum foo).
->
->
->
->
-> If we want to avoid casts completely,
-> we could use union in struct of_device_id
-> although this might be rejected.
->
->
-> FWIW:
->
-> diff --git a/drivers/ata/ahci_brcm.c b/drivers/ata/ahci_brcm.c
-> index 6853dbb4131d..534170bea134 100644
-> --- a/drivers/ata/ahci_brcm.c
-> +++ b/drivers/ata/ahci_brcm.c
-> @@ -415,11 +415,11 @@ static struct scsi_host_template ahci_platform_sht = {
->  };
->
->  static const struct of_device_id ahci_of_match[] = {
-> -       {.compatible = "brcm,bcm7425-ahci", .data = (void *)BRCM_SATA_BCM7425},
-> -       {.compatible = "brcm,bcm7445-ahci", .data = (void *)BRCM_SATA_BCM7445},
-> -       {.compatible = "brcm,bcm63138-ahci", .data = (void *)BRCM_SATA_BCM7445},
-> -       {.compatible = "brcm,bcm-nsp-ahci", .data = (void *)BRCM_SATA_NSP},
-> -       {.compatible = "brcm,bcm7216-ahci", .data = (void *)BRCM_SATA_BCM7216},
-> +       {.compatible = "brcm,bcm7425-ahci", .data2 = BRCM_SATA_BCM7425},
-> +       {.compatible = "brcm,bcm7445-ahci", .data2 = BRCM_SATA_BCM7445},
-> +       {.compatible = "brcm,bcm63138-ahci", .data2 = BRCM_SATA_BCM7445},
-> +       {.compatible = "brcm,bcm-nsp-ahci", .data2 = BRCM_SATA_NSP},
-> +       {.compatible = "brcm,bcm7216-ahci", .data2 = BRCM_SATA_BCM7216},
->         {},
->  };
->  MODULE_DEVICE_TABLE(of, ahci_of_match);
-> @@ -442,7 +442,7 @@ static int brcm_ahci_probe(struct platform_device *pdev)
->         if (!of_id)
->                 return -ENODEV;
->
-> -       priv->version = (enum brcm_ahci_version)of_id->data;
-> +       priv->version = of_id->data2;
->         priv->dev = dev;
->
->         res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "top-ctrl");
-> diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
-> index e3596db077dc..98d44ebf146a 100644
-> --- a/include/linux/mod_devicetable.h
-> +++ b/include/linux/mod_devicetable.h
-> @@ -261,7 +261,10 @@ struct of_device_id {
->         char    name[32];
->         char    type[32];
->         char    compatible[128];
-> -       const void *data;
-> +       union {
-> +               const void *data;
-> +               unsigned long data2;
-> +       };
->  };
->
+> +{
+> +
+> +	int coeff = 0;
+> +	int phase = 0;
+> +	int tap;
+> +	int val = 0;
+
+Needlessly wide scope for most of these.
+
+> +
+> +	/*enable the index auto increment.*/
+> +	intel_de_write_fw(dev_priv, SKL_PS_COEF_INDEX_SET0(pipe, scaler_id),
+> +			  _PS_COEE_INDEX_AUTO_INC);
+> +
+> +	for (phase = 0; phase < 17; phase++) {
+> +		for (tap = 0; tap < 7; tap++) {
+> +			coeff++;
+
+Can be part of the % check.
+
+> +			if (tap == 3)
+> +				val = (phase % 2) ? (0x800) : (0x800 << 16);
+
+Parens overload.
+
+> +
+> +			if (coeff % 2 == 0) {
+> +				intel_de_write_fw(dev_priv, SKL_PS_COEF_DATA_SET0(pipe, scaler_id), val);
+> +				val = 0;
+
+Can drop this val=0 if you move the variable into tight scope and
+initialize there.
+
+I was trying to think of a bit more generic way to do this, but couldn't
+really think of anything apart from pre-filling the entire coefficient
+set and the programming blindly. And that seems a bit wasteful if we only
+care about nearest neighbour.
+
+> +			}
+> +
+> +		}
+> +
+> +	}
+> +
+> +	intel_de_write_fw(dev_priv, SKL_PS_COEF_DATA_SET0(pipe, scaler_id), 0);
+> +}
+> +
+>  static void skl_pfit_enable(const struct intel_crtc_state *crtc_state)
+>  {
+>  	struct intel_crtc *crtc = to_intel_crtc(crtc_state->uapi.crtc);
+> @@ -6260,9 +6327,23 @@ static void skl_pfit_enable(const struct intel_crtc_state *crtc_state)
+>  		pfit_w = (crtc_state->pch_pfit.size >> 16) & 0xFFFF;
+>  		pfit_h = crtc_state->pch_pfit.size & 0xFFFF;
+>  
+> +		id = scaler_state->scaler_id;
+> +
+>  		if (state->scaling_filter ==
+>  		    DRM_SCALING_FILTER_NEAREST_NEIGHBOR) {
+>  			scaling_filter = PS_FILTER_PROGRAMMED;
+> +			skl_setup_nearest_neighbor_filter(dev_priv, pipe, id);
+
+This should be sitting alongside the other register writes.
+
+> +
+> +			/* Make the scaling window size to integer multiple of
+> +			 * source.
+> +			 *
+> +			 * TODO: Should userspace take desision to round
+> +			 * scaling window to integer multiple?
+
+To give userspace actual control of the pfit window size we need the border
+props (or something along those lines). Step 1 is
+https://patchwork.freedesktop.org/series/68409/. There are further steps
+in my branch after that, but it's still missing the border props for
+eDP/LVDS/DSI since I was too lazy to think how they should interact with
+the existing scaling mode prop.
+
+> +			 */
+> +			pfit_w = rounddown(pfit_w,
+> +					   (crtc_state->pipe_src_w << 16));
+> +			pfit_h = rounddown(pfit_h,
+> +					   (crtc_state->pipe_src_h << 16));
+>  		}
+
+This part should be dropped as Daniel mentioned.
+
+>  
+>  		hscale = (crtc_state->pipe_src_w << 16) / pfit_w;
+> @@ -6271,8 +6352,6 @@ static void skl_pfit_enable(const struct intel_crtc_state *crtc_state)
+>  		uv_rgb_hphase = skl_scaler_calc_phase(1, hscale, false);
+>  		uv_rgb_vphase = skl_scaler_calc_phase(1, vscale, false);
+>  
+> -		id = scaler_state->scaler_id;
+> -
+>  		spin_lock_irqsave(&dev_priv->uncore.lock, irqflags);
+>  
+>  		intel_de_write_fw(dev_priv, SKL_PS_CTRL(pipe, id),
+
+I think we should also explicitly indicate here which cofficient set(s)
+we're going to use, even if using set0 does mean those bits will be 0.
+
+> diff --git a/drivers/gpu/drm/i915/display/intel_display.h b/drivers/gpu/drm/i915/display/intel_display.h
+> index f92efbbec838..49f58d3c98fe 100644
+> --- a/drivers/gpu/drm/i915/display/intel_display.h
+> +++ b/drivers/gpu/drm/i915/display/intel_display.h
+> @@ -586,6 +586,8 @@ void intel_crtc_arm_fifo_underrun(struct intel_crtc *crtc,
+>  u16 skl_scaler_calc_phase(int sub, int scale, bool chroma_center);
+>  int skl_update_scaler_crtc(struct intel_crtc_state *crtc_state);
+>  void skl_scaler_disable(const struct intel_crtc_state *old_crtc_state);
+> +void skl_setup_nearest_neighbor_filter(struct drm_i915_private *dev_priv,
+> +				  enum pipe pipe, int scaler_id);
+>  void ilk_pfit_disable(const struct intel_crtc_state *old_crtc_state);
+>  u32 glk_plane_color_ctl(const struct intel_crtc_state *crtc_state,
+>  			const struct intel_plane_state *plane_state);
+> diff --git a/drivers/gpu/drm/i915/display/intel_sprite.c b/drivers/gpu/drm/i915/display/intel_sprite.c
+> index fd7b31a21723..5bef5c031374 100644
+> --- a/drivers/gpu/drm/i915/display/intel_sprite.c
+> +++ b/drivers/gpu/drm/i915/display/intel_sprite.c
+> @@ -415,18 +415,26 @@ skl_program_scaler(struct intel_plane *plane,
+>  	u16 y_vphase, uv_rgb_vphase;
+>  	int hscale, vscale;
+>  	const struct drm_plane_state *state = &plane_state->uapi;
+> +	u32 src_w = drm_rect_width(&plane_state->uapi.src) >> 16;
+> +	u32 src_h = drm_rect_height(&plane_state->uapi.src) >> 16;
+>  	u32 scaling_filter = PS_FILTER_MEDIUM;
+> +	struct drm_rect dst;
+>  
+>  	if (state->scaling_filter == DRM_SCALING_FILTER_NEAREST_NEIGHBOR) {
+>  		scaling_filter = PS_FILTER_PROGRAMMED;
+> +		skl_setup_nearest_neighbor_filter(dev_priv, pipe, scaler_id);
+> +
+> +		/* Make the scaling window size to integer multiple of source
+> +		 * TODO: Should userspace take desision to round scaling window
+> +		 * to integer multiple?
+> +		 */
+> +		crtc_w = rounddown(crtc_w, src_w);
+> +		crtc_h = rounddown(crtc_h, src_h);
+>  	}
+>  
+> -	hscale = drm_rect_calc_hscale(&plane_state->uapi.src,
+> -				      &plane_state->uapi.dst,
+> -				      0, INT_MAX);
+> -	vscale = drm_rect_calc_vscale(&plane_state->uapi.src,
+> -				      &plane_state->uapi.dst,
+> -				      0, INT_MAX);
+> +	drm_rect_init(&dst, crtc_x, crtc_y, crtc_w, crtc_h);
+
+Drop as well.
+
+> +	hscale = drm_rect_calc_hscale(&plane_state->uapi.src, &dst, 0, INT_MAX);
+> +	vscale = drm_rect_calc_vscale(&plane_state->uapi.src, &dst, 0, INT_MAX);
+>  
+>  	/* TODO: handle sub-pixel coordinates */
+>  	if (intel_format_info_is_yuv_semiplanar(fb->format, fb->modifier) &&
+> -- 
+> 2.23.0
 
 -- 
-Thanks,
-~Nick Desaulniers
+Ville Syrjälä
+Intel
