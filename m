@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B68617F6E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:57:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CD8D17F6E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:58:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbgCJL5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 07:57:44 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:9863 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbgCJL5o (ORCPT
+        id S1726545AbgCJL6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 07:58:14 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:46275 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726380AbgCJL6O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 07:57:44 -0400
+        Tue, 10 Mar 2020 07:58:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1583841463; x=1615377463;
+  t=1583841493; x=1615377493;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    mime-version;
-  bh=rvUgQi1RSZnWOcD+bSfiTnhYnySdlegrosLEYC9fUUY=;
-  b=URxqH2rcfDy+1gRXUAss3vPLhWWML/mnepy1CrjZsRFrcwGmppQvzaFW
-   rikLAhDbs9CsLoBxa04SfAauQMJ2bzlJ06MASWe/2h81QoN7uUAVaqnLH
-   kY6Ul8X/rceHPxXaZeIMdPdoaZdTEE5E0JckVHuzPEHwfVOxQDnXdMUeN
-   U=;
-IronPort-SDR: 5nYFytLj2UvIzlSxHw1B4kO6bi6VWzxV80E6jVROjexrYtyj8ba+izZcDxMFVExK0r6c4Ry5zL
- NqiPIMkT3hmw==
+  bh=8PhEWrbLx4ftb154QoF0BF/Klh8/3U3Dc5cpOPWo/O0=;
+  b=MSkVWomiCOPUhPyCq4le26nHHqrSJBJJ9r8MY5W4Mzclc6pfrHNM+bH3
+   YT+6nHb69bwFSgq0QajDvNtm06/uoIvSq1arzCu05VFmO0vPOv7nWhRDb
+   RIhLNoA32UQtmkErOh4w8t5eOyICB/JhCZ6ER8KxrydtTjYo4wuzN2bO6
+   8=;
+IronPort-SDR: c+0tBTd9uIM/XjtIyW3WFpi2Q4aMZtL1Ry/AAz3NSDY6pKaJnNlVFhtz7/htTi2bVg2uAplV+A
+ 4oI8MC87i2fA==
 X-IronPort-AV: E=Sophos;i="5.70,536,1574121600"; 
-   d="scan'208";a="20395339"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-c7c08562.us-east-1.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 10 Mar 2020 11:57:31 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1e-c7c08562.us-east-1.amazon.com (Postfix) with ESMTPS id 407B72447AC;
-        Tue, 10 Mar 2020 11:57:20 +0000 (UTC)
+   d="scan'208";a="21834230"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-62350142.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 10 Mar 2020 11:58:01 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1e-62350142.us-east-1.amazon.com (Postfix) with ESMTPS id 4023FA29C9;
+        Tue, 10 Mar 2020 11:57:51 +0000 (UTC)
 Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
  EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Tue, 10 Mar 2020 11:57:20 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.161.152) by
+ id 15.0.1236.3; Tue, 10 Mar 2020 11:57:51 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.160.16) by
  EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Tue, 10 Mar 2020 11:57:08 +0000
+ id 15.0.1497.2; Tue, 10 Mar 2020 11:57:39 +0000
 From:   SeongJae Park <sjpark@amazon.com>
 To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>
 CC:     SeongJae Park <sjpark@amazon.com>, <akpm@linux-foundation.org>,
@@ -52,268 +52,121 @@ CC:     SeongJae Park <sjpark@amazon.com>, <akpm@linux-foundation.org>,
         <rostedt@goodmis.org>, <shuah@kernel.org>, <sj38.park@gmail.com>,
         <vbabka@suse.cz>, <vdavydov.dev@gmail.com>, <linux-mm@kvack.org>,
         <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: Re: [PATCH v6 08/14] mm/damon: Add debugfs interface
-Date:   Tue, 10 Mar 2020 12:56:54 +0100
-Message-ID: <20200310115654.24999-1-sjpark@amazon.com>
+Subject: Re: Re: [PATCH v6 09/14] mm/damon: Add a tracepoint for result writing
+Date:   Tue, 10 Mar 2020 12:57:24 +0100
+Message-ID: <20200310115724.25152-1-sjpark@amazon.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200310090209.00000d6b@Huawei.com> (raw)
+In-Reply-To: <20200310090331.00006596@Huawei.com> (raw)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.43.161.152]
-X-ClientProxiedBy: EX13D02UWB002.ant.amazon.com (10.43.161.160) To
+X-Originating-IP: [10.43.160.16]
+X-ClientProxiedBy: EX13D03UWC002.ant.amazon.com (10.43.162.160) To
  EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Mar 2020 09:02:09 +0000 Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
+On Tue, 10 Mar 2020 09:03:31 +0000 Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
 
-> On Mon, 24 Feb 2020 13:30:41 +0100
+> On Mon, 24 Feb 2020 13:30:42 +0100
 > SeongJae Park <sjpark@amazon.com> wrote:
 > 
 > > From: SeongJae Park <sjpark@amazon.de>
 > > 
-> > This commit adds a debugfs interface for DAMON.
-[...]
+> > This commit adds a tracepoint for DAMON's result buffer writing.  It is
+> > called for each writing of the DAMON results and print the result data.
+> > Therefore, it would be used to easily integrated with other tracepoint
+> > supporting tracers such as perf.
 > > 
 > > Signed-off-by: SeongJae Park <sjpark@amazon.de>
 > 
-> Some of the code in here seems a bit fragile and convoluted.
-
-Indeed, it needs many fixes.
-
+> I'm curious, why at the flush of rbuf rather than using a more structured trace
+> point for each of the writes into rbuf?
 > 
-> > ---
-> >  mm/damon.c | 377 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 376 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/damon.c b/mm/damon.c
-> > index b3e9b9da5720..facb1d7f121b 100644
-> > --- a/mm/damon.c
-> > +++ b/mm/damon.c
-> > @@ -10,6 +10,7 @@
-[...]
-> >  
-> > +/*
-> > + * debugfs functions
-> 
-> Seems unnecessary when their naming makes this clear.
+> Seems it would make more sense to have a tracepoint for each record write out.
+> Probably at the level of each task, though might be more elegant to do it at the
+> level of each region within a task and duplicate the header stuff.
 
-Agreed, will remove it.
-
-> 
-[...]
-> > +static ssize_t debugfs_pids_write(struct file *file,
-> > +		const char __user *buf, size_t count, loff_t *ppos)
-> > +{
-> > +	struct damon_ctx *ctx = &damon_user_ctx;
-> > +	char *kbuf;
-> > +	unsigned long *targets;
-> > +	ssize_t nr_targets;
-> > +	ssize_t ret;
-> > +
-> > +	kbuf = kmalloc_array(count, sizeof(char), GFP_KERNEL);
-> > +	if (!kbuf)
-> > +		return -ENOMEM;
-> > +
-> > +	ret = simple_write_to_buffer(kbuf, 512, ppos, buf, count);
-> 
-> Why only 512?
-
-I might lost my mind at that time :'(
-Good catch, it should be 'count'.
-
-> 
-[...]
-> > +
-> > +static ssize_t debugfs_attrs_write(struct file *file,
-> > +		const char __user *buf, size_t count, loff_t *ppos)
-> > +{
-> > +	struct damon_ctx *ctx = &damon_user_ctx;
-> > +	unsigned long s, a, r, minr, maxr;
-> > +	char *kbuf;
-> > +	ssize_t ret;
-> > +
-> > +	kbuf = kmalloc_array(count, sizeof(char), GFP_KERNEL);
-> 
-> malloc fine for array of characters.   The checks on overflow etc cannot be
-> relevant here.
-
-You're right, will use 'kamlloc()' instead.
-
-> 
-> > +	if (!kbuf)
-> > +		return -ENOMEM;
-> > +
-> > +	ret = simple_write_to_buffer(kbuf, count, ppos, buf, count);
-> > +	if (ret < 0)
-> > +		goto out;
-> > +
-> > +	if (sscanf(kbuf, "%lu %lu %lu %lu %lu",
-> > +				&s, &a, &r, &minr, &maxr) != 5) {
-> > +		ret = -EINVAL;
-> > +		goto out;
-> > +	}
-> > +
-> > +	spin_lock(&ctx->kdamond_lock);
-> > +	if (ctx->kdamond)
-> > +		goto monitor_running;
-> > +
-> > +	damon_set_attrs(ctx, s, a, r, minr, maxr);
-> > +	spin_unlock(&ctx->kdamond_lock);
-> > +
-> > +	goto out;
-> > +
-> > +monitor_running:
-> > +	spin_unlock(&ctx->kdamond_lock);
-> > +	pr_err("%s: kdamond is running. Turn it off first.\n", __func__);
-> > +	ret = -EINVAL;
-> 
-> This complex exit path is a bad idea from maintainability point of view...
-> Just put the pr_err and spin_unlock in the error path above.
-
-Agreed, will do so.
-
-> 
-> > +out:
-> > +	kfree(kbuf);
-> > +	return ret;
-> > +}
-> > +
-> > +static const struct file_operations monitor_on_fops = {
-> > +	.owner = THIS_MODULE,
-> > +	.read = debugfs_monitor_on_read,
-> > +	.write = debugfs_monitor_on_write,
-> > +};
-> > +
-> > +static const struct file_operations pids_fops = {
-> > +	.owner = THIS_MODULE,
-> > +	.read = debugfs_pids_read,
-> > +	.write = debugfs_pids_write,
-> > +};
-> > +
-> > +static const struct file_operations record_fops = {
-> > +	.owner = THIS_MODULE,
-> > +	.read = debugfs_record_read,
-> > +	.write = debugfs_record_write,
-> > +};
-> > +
-> > +static const struct file_operations attrs_fops = {
-> > +	.owner = THIS_MODULE,
-> > +	.read = debugfs_attrs_read,
-> > +	.write = debugfs_attrs_write,
-> > +};
-> > +
-> > +static struct dentry *debugfs_root;
-> > +
-> > +static int __init debugfs_init(void)
-> 
-> Prefix this function.  Chances of sometime getting a header
-> that includes debugfs_init feels rather too high!
-
-That's right, I will rename it.
-
-> 
-> > +{
-> > +	const char * const file_names[] = {"attrs", "record",
-> > +		"pids", "monitor_on"};
-> > +	const struct file_operations *fops[] = {&attrs_fops, &record_fops,
-> > +		&pids_fops, &monitor_on_fops};
-> > +	int i;
-> > +
-> > +	debugfs_root = debugfs_create_dir("damon", NULL);
-> > +	if (!debugfs_root) {
-> > +		pr_err("failed to create the debugfs dir\n");
-> > +		return -ENOMEM;
-> > +	}
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(file_names); i++) {
-> > +		if (!debugfs_create_file(file_names[i], 0600, debugfs_root,
-> > +					NULL, fops[i])) {
-> > +			pr_err("failed to create %s file\n", file_names[i]);
-> > +			return -ENOMEM;
-> > +		}
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int __init damon_init_user_ctx(void)
-> > +{
-> > +	int rc;
-> > +
-> > +	struct damon_ctx *ctx = &damon_user_ctx;
-> > +
-> > +	ktime_get_coarse_ts64(&ctx->last_aggregation);
-> > +	ctx->last_regions_update = ctx->last_aggregation;
-> > +
-> > +	ctx->rbuf_offset = 0;
-> > +	rc = damon_set_recording(ctx, 1024 * 1024, "/damon.data");
-> > +	if (rc)
-> > +		return rc;
-> > +
-> > +	ctx->kdamond = NULL;
-> > +	ctx->kdamond_stop = false;
-> > +	spin_lock_init(&ctx->kdamond_lock);
-> > +
-> > +	prandom_seed_state(&ctx->rndseed, 42);
-> 
-> :)
-
-You got the answer ;)
-
-> 
-> > +	INIT_LIST_HEAD(&ctx->tasks_list);
-> > +
-> > +	ctx->sample_cb = NULL;
-> > +	ctx->aggregate_cb = NULL;
-> 
-> Should already be set to 0.
-
-Oops, right!
-
-> 
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int __init damon_init(void)
-> >  {
-> > +	int rc;
-> > +
-> >  	pr_info("init\n");
-> >  
-> > -	return 0;
-> > +	rc = damon_init_user_ctx();
-> > +	if (rc)
-> > +		return rc;
-> > +
-> > +	return debugfs_init();
-> 
-> In theory no code should ever be dependent on debugfs succeeding..
-> There might be other daemon users so you should just eat the return
-> code.
-
-Right!  Thank you for catching this!
+I was worried if the format changes, but agree your suggestion is the right
+way.  Will change so in next spin.
 
 
 Thanks,
 SeongJae Park
 
 > 
-> 
-> >  }
+> > ---
+> >  include/trace/events/damon.h | 32 ++++++++++++++++++++++++++++++++
+> >  mm/damon.c                   |  4 ++++
+> >  2 files changed, 36 insertions(+)
+> >  create mode 100644 include/trace/events/damon.h
+> > 
+> > diff --git a/include/trace/events/damon.h b/include/trace/events/damon.h
+> > new file mode 100644
+> > index 000000000000..fb33993620ce
+> > --- /dev/null
+> > +++ b/include/trace/events/damon.h
+> > @@ -0,0 +1,32 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +#undef TRACE_SYSTEM
+> > +#define TRACE_SYSTEM damon
+> > +
+> > +#if !defined(_TRACE_DAMON_H) || defined(TRACE_HEADER_MULTI_READ)
+> > +#define _TRACE_DAMON_H
+> > +
+> > +#include <linux/types.h>
+> > +#include <linux/tracepoint.h>
+> > +
+> > +TRACE_EVENT(damon_write_rbuf,
+> > +
+> > +	TP_PROTO(void *buf, const ssize_t sz),
+> > +
+> > +	TP_ARGS(buf, sz),
+> > +
+> > +	TP_STRUCT__entry(
+> > +		__dynamic_array(char, buf, sz)
+> > +	),
+> > +
+> > +	TP_fast_assign(
+> > +		memcpy(__get_dynamic_array(buf), buf, sz);
+> > +	),
+> > +
+> > +	TP_printk("dat=%s", __print_hex(__get_dynamic_array(buf),
+> > +			__get_dynamic_array_len(buf)))
+> > +);
+> > +
+> > +#endif /* _TRACE_DAMON_H */
+> > +
+> > +/* This part must be outside protection */
+> > +#include <trace/define_trace.h>
+> > diff --git a/mm/damon.c b/mm/damon.c
+> > index facb1d7f121b..8faf3879f99e 100644
+> > --- a/mm/damon.c
+> > +++ b/mm/damon.c
+> > @@ -9,6 +9,8 @@
 > >  
-> >  static void __exit damon_exit(void)
+> >  #define pr_fmt(fmt) "damon: " fmt
+> >  
+> > +#define CREATE_TRACE_POINTS
+> > +
+> >  #include <linux/damon.h>
+> >  #include <linux/debugfs.h>
+> >  #include <linux/delay.h>
+> > @@ -20,6 +22,7 @@
+> >  #include <linux/sched/mm.h>
+> >  #include <linux/sched/task.h>
+> >  #include <linux/slab.h>
+> > +#include <trace/events/damon.h>
+> >  
+> >  #define damon_get_task_struct(t) \
+> >  	(get_pid_task(find_vpid(t->pid), PIDTYPE_PID))
+> > @@ -553,6 +556,7 @@ static void damon_flush_rbuffer(struct damon_ctx *ctx)
+> >   */
+> >  static void damon_write_rbuf(struct damon_ctx *ctx, void *data, ssize_t size)
 > >  {
-> > +	damon_turn_kdamond(&damon_user_ctx, false);
-> > +	debugfs_remove_recursive(debugfs_root);
-> > +
-> > +	kfree(damon_user_ctx.rbuf);
-> > +	kfree(damon_user_ctx.rfile_path);
-> > +
-> >  	pr_info("exit\n");
-> >  }
-> >  
+> > +	trace_damon_write_rbuf(data, size);
+> >  	if (!ctx->rbuf_len || !ctx->rbuf)
+> >  		return;
+> >  	if (ctx->rbuf_offset + size > ctx->rbuf_len)
 > 
