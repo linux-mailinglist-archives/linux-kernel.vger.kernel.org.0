@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A84DF17F9D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:00:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A296717F9D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:00:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729869AbgCJNAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:00:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40910 "EHLO mail.kernel.org"
+        id S1730120AbgCJNAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:00:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730096AbgCJNAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:00:13 -0400
+        id S1730104AbgCJNAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:00:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40FAB2468C;
-        Tue, 10 Mar 2020 13:00:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCA682467D;
+        Tue, 10 Mar 2020 13:00:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845212;
-        bh=L3YiocDpEzYv1QW8WI6JYlW/c5kgKuS3/yf2buhgVc4=;
+        s=default; t=1583845218;
+        bh=5/gOWobDitjujnzHz3dAZGSSozG6WnHLKR2KTuA9lK0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wSCngUBXQt0kzzQkA8cexqga8rMlx2zPYtf1XdfRqw8GZuuPBpV8OErZRVqCQ3nNO
-         6mL9UL1AoJDhjk9hvYxfqCzPwbFWCVCC1TVvT5jpRLFuUxCDBxeXymhMp3ebkQK79p
-         qFDAMRc9kr0tBDAs+D/daeJ5NzkD7sKYZNMjLFF8=
+        b=X7o6YM64vCqF3HDkX+oyCGp8k+QjqDQJUQUSCFOnW/QofW/Q/es9+WMxfUCOpQ7EK
+         2uW64I6GvSvR0CCyoJzExMlKVd8f5eNRL4MbKkhEv3AgnHA8inn9m6q2rigA20f8hj
+         XOpuF03e9XZX6MpwNJ5flscZr2h+/jE+caYAsJn4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Wei Li <liwei391@huawei.com>
-Subject: [PATCH 5.5 102/189] perf arm-spe: Fix endless record after being terminated
-Date:   Tue, 10 Mar 2020 13:38:59 +0100
-Message-Id: <20200310123650.013021076@linuxfoundation.org>
+        stable@vger.kernel.org, Simon Han <z.han@kunbus.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.5 103/189] spi: spidev: Fix CS polarity if GPIO descriptors are used
+Date:   Tue, 10 Mar 2020 13:39:00 +0100
+Message-Id: <20200310123650.119983202@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
 References: <20200310123639.608886314@linuxfoundation.org>
@@ -46,47 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-commit d6bc34c5ec18c3544c4b0d85963768dfbcd24184 upstream.
+commit 138c9c32f090894614899eca15e0bb7279f59865 upstream.
 
-In __cmd_record(), when receiving SIGINT(ctrl + c), a 'done' flag will
-be set and the event list will be disabled by evlist__disable() once.
+Commit f3186dd87669 ("spi: Optionally use GPIO descriptors for CS GPIOs")
+amended of_spi_parse_dt() to always set SPI_CS_HIGH for SPI slaves whose
+Chip Select is defined by a "cs-gpios" devicetree property.
 
-While in auxtrace_record.read_finish(), the related events will be
-enabled again, if they are continuous, the recording seems to be
-endless.
+This change broke userspace applications which issue an SPI_IOC_WR_MODE
+ioctl() to an spidev:  Chip Select polarity will be incorrect unless the
+application is changed to set SPI_CS_HIGH.  And once changed, it will be
+incompatible with kernels not containing the commit.
 
-If the event is disabled, don't enable it again here.
+Fix by setting SPI_CS_HIGH in spidev_ioctl() (under the same conditions
+as in of_spi_parse_dt()).
 
-Based-on-patch-by: Wei Li <liwei391@huawei.com>
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Tan Xiaojun <tanxiaojun@huawei.com>
-Cc: stable@vger.kernel.org # 5.4+
-Link: http://lore.kernel.org/lkml/20200214132654.20395-5-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: f3186dd87669 ("spi: Optionally use GPIO descriptors for CS GPIOs")
+Reported-by: Simon Han <z.han@kunbus.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Link: https://lore.kernel.org/r/fca3ba7cdc930cd36854666ceac4fbcf01b89028.1582027457.git.lukas@wunner.de
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org # v5.1+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/arch/arm64/util/arm-spe.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/spi/spidev.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/tools/perf/arch/arm64/util/arm-spe.c
-+++ b/tools/perf/arch/arm64/util/arm-spe.c
-@@ -165,9 +165,12 @@ static int arm_spe_read_finish(struct au
- 	struct evsel *evsel;
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -396,6 +396,7 @@ spidev_ioctl(struct file *filp, unsigned
+ 		else
+ 			retval = get_user(tmp, (u32 __user *)arg);
+ 		if (retval == 0) {
++			struct spi_controller *ctlr = spi->controller;
+ 			u32	save = spi->mode;
  
- 	evlist__for_each_entry(sper->evlist, evsel) {
--		if (evsel->core.attr.type == sper->arm_spe_pmu->type)
-+		if (evsel->core.attr.type == sper->arm_spe_pmu->type) {
-+			if (evsel->disabled)
-+				return 0;
- 			return perf_evlist__enable_event_idx(sper->evlist,
- 							     evsel, idx);
-+		}
- 	}
- 	return -EINVAL;
- }
+ 			if (tmp & ~SPI_MODE_MASK) {
+@@ -403,6 +404,10 @@ spidev_ioctl(struct file *filp, unsigned
+ 				break;
+ 			}
+ 
++			if (ctlr->use_gpio_descriptors && ctlr->cs_gpiods &&
++			    ctlr->cs_gpiods[spi->chip_select])
++				tmp |= SPI_CS_HIGH;
++
+ 			tmp |= spi->mode & ~SPI_MODE_MASK;
+ 			spi->mode = (u16)tmp;
+ 			retval = spi_setup(spi);
 
 
