@@ -2,93 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6673180A41
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:22:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7565180A50
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:23:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbgCJVWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 17:22:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56302 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726268AbgCJVWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 17:22:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 9F294AFDF;
-        Tue, 10 Mar 2020 21:21:58 +0000 (UTC)
-From:   NeilBrown <neilb@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>, yangerkun <yangerkun@huawei.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 11 Mar 2020 08:21:49 +1100
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        Bruce Fields <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [locks] 6d390e4b5d: will-it-scale.per_process_ops -96.6% regression
-In-Reply-To: <c4ef31a663fbf7a3de349696e9f00f2f5c4ec89a.camel@kernel.org>
-References: <20200308140314.GQ5972@shao2-debian> <e3783d060c778cb41b77380ad3e278133b52f57e.camel@kernel.org> <CAHk-=whGK712fPqmQ3FSHxqe3Aqny4bEeWEvfaytLeLV2+ijCQ@mail.gmail.com> <34355c4fe6c3968b1f619c60d5ff2ca11a313096.camel@kernel.org> <1bfba96b4bf0d3ca9a18a2bced3ef3a2a7b44dad.camel@kernel.org> <87blp5urwq.fsf@notabene.neil.brown.name> <41c83d34ae4c166f48e7969b2b71e43a0f69028d.camel@kernel.org> <ed73fb5d-ddd5-fefd-67ae-2d786e68544a@huawei.com> <923487db2c9396c79f8e8dd4f846b2b1762635c8.camel@kernel.org> <36c58a6d07b67aac751fca27a4938dc1759d9267.camel@kernel.org> <878sk7vs8q.fsf@notabene.neil.brown.name> <c4ef31a663fbf7a3de349696e9f00f2f5c4ec89a.camel@kernel.org>
-Message-ID: <875zfbvrbm.fsf@notabene.neil.brown.name>
+        id S1727539AbgCJVXc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 17:23:32 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:58156 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbgCJVXb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 17:23:31 -0400
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jBmKz-0000SO-JD; Tue, 10 Mar 2020 21:22:53 +0000
+Date:   Tue, 10 Mar 2020 22:22:50 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v2 3/5] exec: Move cleanup of posix timers on exec out of
+ de_thread
+Message-ID: <20200310212250.zdywq2pp4dzzo3wv@wittgenstein>
+References: <87v9nlii0b.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74xi4kz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87eeu25y14.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87eeu25y14.fsf_-_@x220.int.ebiederm.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Sun, Mar 08, 2020 at 04:36:55PM -0500, Eric W. Biederman wrote:
+> 
+> These functions have very little to do with de_thread move them out
+> of de_thread an into flush_old_exec proper so it can be more clearly
+> seen what flush_old_exec is doing.
+> 
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-On Tue, Mar 10 2020, Jeff Layton wrote:
-
->> @@ -735,11 +723,13 @@ static void __locks_wake_up_blocks(struct file_loc=
-k *blocker)
->>=20=20
->>  		waiter =3D list_first_entry(&blocker->fl_blocked_requests,
->>  					  struct file_lock, fl_blocked_member);
->> -		__locks_delete_block(waiter);
->> +		locks_delete_global_blocked(waiter);
->> +		waiter->fl_blocker =3D NULL;
->>  		if (waiter->fl_lmops && waiter->fl_lmops->lm_notify)
->>  			waiter->fl_lmops->lm_notify(waiter);
->>  		else
->>  			wake_up(&waiter->fl_wait);
->> +		list_del_init(&waiter->fl_blocked_member);
->
-> Are you sure you don't need a memory barrier here? Could the
-> list_del_init be hoisted just above the if condition?
->
-
-A compiler barrier() is probably justified.  Memory barriers delay reads
-and expedite writes so they cannot be needed.
-
- 			wake_up(&waiter->fl_wait);
-+		/* The list_del_init() must not be visible before the
-+		 * wake_up completes, the the waiter can then be freed.
-+		 */
-+		barrier();
-+		list_del_init(&waiter->fl_blocked_member);
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl5oBO0ACgkQOeye3VZi
-gblwqQ/8DkoZJyjuip/ioeNV4RJRreBlvckVZvhMWegAEcWtiVd5cIxwwz8R4C/Q
-Wjqpyxw9g2jzlhbwNfjQwgQqVyWppGrzjhWlIDD5Js6nE8BKTBFtaWpcFsfZ6CX+
-xieFoX0DIVAqqqJZPY2GaJZ11PUtJMHmr+/nDz2IdQNEcZuu34V1z+kTFzYyXevm
-4lEy/8e5c16/lRID0fB4kk3RkcrM3DMnvONExpW2jqK0MrDMoTkxbLhhtMKONj0j
-qDYCe7sV7+h9dxGA5WFWxvbt6l4n6epnNa5pKqihLtFqi85jGTygbca3V8W8YDM6
-inrX9L+EduuK0VBP21sWc0k1YZTF3xCt+uVTLM/qROevkxivD6vWCB2XdAqNbnoj
-raxEz15GEoMqAUlaPQ73hpvMfeAaeXVEm9gsgp7LjzoyQzL7F6rk5xQ/ccRo4cK2
-zEoGnAt9kXQpobSfjnOELoFbzEFshSxzwQuEzmeh8fe7z84qjMVBl2kJOcL2XJ0N
-dv2jiyG46DPl1ALm9EAVv4qlcwmOe4vklq087STWgGbAJTlzj+Q6SayXyOAwdzK+
-RRxyvjEcPfS0xivpE2l0FkU/zjcg+A1HkSG94KPEP4xjLalfevU68H3BoSCfuGr2
-PueecWCIamfD9nVunUqyawXWxdPISUKNrgq1sqQ2J8exnpUqMIU=
-=ZHtk
------END PGP SIGNATURE-----
---=-=-=--
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
