@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB35517F8D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:51:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D8C217F9C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:59:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbgCJMvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:51:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56476 "EHLO mail.kernel.org"
+        id S1729699AbgCJM7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:59:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728891AbgCJMvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:51:22 -0400
+        id S1730033AbgCJM7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:59:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C64112468E;
-        Tue, 10 Mar 2020 12:51:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 030A324694;
+        Tue, 10 Mar 2020 12:59:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844682;
-        bh=FXX8B0x0n9nfbA091PCc2o//Nqx3Gj8KH1PPBSL/LpY=;
+        s=default; t=1583845176;
+        bh=gS7enNgW0pwEG5MbC1p+uuguDBIOtjYIhdJFMPv0zvQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dPkqC9abs+TCWzytEpA8xSvrfOE6h5JRf8OR5o/iZBEplLRGH1VsBifiwyyxj4EAb
-         j//EFXBN7Ex1F6WENLyLQyN61Zf16cdoZWtkjqhMe450xP11zk0yOLSadOvs+rM/Gy
-         0oUhrL3+YvjKoNILqyeSbnF1GF+WCrUBfNvWEmpY=
+        b=YHTdeLWJhqmgQ4DrfhFhCkqWnkFPJJd0ejKD1jK9QzxjYd8jQaxZnTAD7bkq+oZ6K
+         hTl6984prFH5L8FWGKd2kLgCCpRIsp7pFRqI74dbOmm7kcTVf23wncdfcnovOIsZZ1
+         3PbJ6RsVEZ3OQSVYYJTFmv0RSD+2ms9jepUiwRVw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
-        Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 5.4 081/168] arm: dts: dra76x: Fix mmc3 max-frequency
+        stable@vger.kernel.org, Jay Dolan <jay.dolan@accesio.com>
+Subject: [PATCH 5.5 090/189] serial: 8250_exar: add support for ACCES cards
 Date:   Tue, 10 Mar 2020 13:38:47 +0100
-Message-Id: <20200310123643.490848614@linuxfoundation.org>
+Message-Id: <20200310123648.821024972@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +42,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Faiz Abbas <faiz_abbas@ti.com>
+From: Jay Dolan <jay.dolan@accesio.com>
 
-commit fa63c0039787b8fbacf4d6a51e3ff44288f5b90b upstream.
+commit 10c5ccc3c6d32f3d7d6c07de1d3f0f4b52f3e3ab upstream.
 
-dra76x is not affected by i887 which requires mmc3 node to be limited to
-a max frequency of 64 MHz. Fix this by overwriting the correct value in
-the the dra76 specific dtsi.
+Add ACCES VIDs and PIDs that use the Exar chips
 
-Fixes: 895bd4b3e5ec ("ARM: dts: Add support for dra76-evm")
-Cc: stable@vger.kernel.org
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Jay Dolan <jay.dolan@accesio.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200305140504.22237-1-jay.dolan@accesio.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/dra76x.dtsi |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/tty/serial/8250/8250_exar.c |   33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
---- a/arch/arm/boot/dts/dra76x.dtsi
-+++ b/arch/arm/boot/dts/dra76x.dtsi
-@@ -86,3 +86,8 @@
- &usb4_tm {
- 	status = "disabled";
- };
+--- a/drivers/tty/serial/8250/8250_exar.c
++++ b/drivers/tty/serial/8250/8250_exar.c
+@@ -25,6 +25,14 @@
+ 
+ #include "8250.h"
+ 
++#define PCI_DEVICE_ID_ACCES_COM_2S		0x1052
++#define PCI_DEVICE_ID_ACCES_COM_4S		0x105d
++#define PCI_DEVICE_ID_ACCES_COM_8S		0x106c
++#define PCI_DEVICE_ID_ACCES_COM232_8		0x10a8
++#define PCI_DEVICE_ID_ACCES_COM_2SM		0x10d2
++#define PCI_DEVICE_ID_ACCES_COM_4SM		0x10db
++#define PCI_DEVICE_ID_ACCES_COM_8SM		0x10ea
 +
-+&mmc3 {
-+	/* dra76x is not affected by i887 */
-+	max-frequency = <96000000>;
+ #define PCI_DEVICE_ID_COMMTECH_4224PCI335	0x0002
+ #define PCI_DEVICE_ID_COMMTECH_4222PCI335	0x0004
+ #define PCI_DEVICE_ID_COMMTECH_2324PCI335	0x000a
+@@ -677,6 +685,22 @@ static int __maybe_unused exar_resume(st
+ 
+ static SIMPLE_DEV_PM_OPS(exar_pci_pm, exar_suspend, exar_resume);
+ 
++static const struct exar8250_board acces_com_2x = {
++	.num_ports	= 2,
++	.setup		= pci_xr17c154_setup,
 +};
++
++static const struct exar8250_board acces_com_4x = {
++	.num_ports	= 4,
++	.setup		= pci_xr17c154_setup,
++};
++
++static const struct exar8250_board acces_com_8x = {
++	.num_ports	= 8,
++	.setup		= pci_xr17c154_setup,
++};
++
++
+ static const struct exar8250_board pbn_fastcom335_2 = {
+ 	.num_ports	= 2,
+ 	.setup		= pci_fastcom335_setup,
+@@ -745,6 +769,15 @@ static const struct exar8250_board pbn_e
+ 	}
+ 
+ static const struct pci_device_id exar_pci_tbl[] = {
++	EXAR_DEVICE(ACCESSIO, ACCES_COM_2S, acces_com_2x),
++	EXAR_DEVICE(ACCESSIO, ACCES_COM_4S, acces_com_4x),
++	EXAR_DEVICE(ACCESSIO, ACCES_COM_8S, acces_com_8x),
++	EXAR_DEVICE(ACCESSIO, ACCES_COM232_8, acces_com_8x),
++	EXAR_DEVICE(ACCESSIO, ACCES_COM_2SM, acces_com_2x),
++	EXAR_DEVICE(ACCESSIO, ACCES_COM_4SM, acces_com_4x),
++	EXAR_DEVICE(ACCESSIO, ACCES_COM_8SM, acces_com_8x),
++
++
+ 	CONNECT_DEVICE(XR17C152, UART_2_232, pbn_connect),
+ 	CONNECT_DEVICE(XR17C154, UART_4_232, pbn_connect),
+ 	CONNECT_DEVICE(XR17C158, UART_8_232, pbn_connect),
 
 
