@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B2917F8AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:50:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B34C617F998
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:58:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728543AbgCJMuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:50:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54550 "EHLO mail.kernel.org"
+        id S1729900AbgCJM6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:58:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727080AbgCJMuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:50:02 -0400
+        id S1729889AbgCJM6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:58:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AE2D2468E;
-        Tue, 10 Mar 2020 12:50:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B45F32467D;
+        Tue, 10 Mar 2020 12:58:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844601;
-        bh=nRO455Vq+s6RfjtfOB2yl+aWuz2EYmxn6affqv+/Knc=;
+        s=default; t=1583845098;
+        bh=GUUSBQ2LscTsifQt8f2EADYwVDwhoS+aRY1ujJQs46M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cteE66bItAdn0azoPg+6li25dgMk/GSeycF/OldywR+WB7oV9MwxWu7f3kjhX4VRh
-         Es8ZybLg6Ay/fxd7Y3MdqOzCdyxqlEvQgUdjSZUnvcjq1GaBarYKupqo8oZ88zvhBB
-         bi6eMfeQIXFr0Inin4YYeGDrfuccLw+9A3zhJw1A=
+        b=WAo6Or/zerSgHe+Dl2NutzDtgZsJ4dqlpnyd1/F2pT22fZZssxE1iOvO/QrDd4sX2
+         s1Ax7vsUvdS2gV1QntXBlpJQed9iyHFi1NfOuh9Hm6BqpW9mEXmp1ZokoQF1bbWVGE
+         3qSyelvvcv2MAwEByQJCU0orWsJaLr1npFN//ilk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guo Ren <guoren@linux.alibaba.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 051/168] csky: Set regs->usp to kernel sp, when the exception is from kernel
-Date:   Tue, 10 Mar 2020 13:38:17 +0100
-Message-Id: <20200310123640.523177260@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.5 061/189] ALSA: hda/realtek - Add Headset Mic supported
+Date:   Tue, 10 Mar 2020 13:38:18 +0100
+Message-Id: <20200310123645.761106686@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,155 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <guoren@linux.alibaba.com>
+From: Kailang Yang <kailang@realtek.com>
 
-[ Upstream commit f8e17c17b81070f38062dce79ca7f4541851dadd ]
+commit 78def224f59c05d00e815be946ec229719ccf377 upstream.
 
-In the past, we didn't care about kernel sp when saving pt_reg. But in some
-cases, we still need pt_reg->usp to represent the kernel stack before enter
-exception.
+Dell desktop platform supported headset Mic.
+Add pin verb to enable headset Mic.
+This platform only support fixed type headset for Iphone type.
 
-For cmpxhg in atomic.S, we need save and restore usp for above.
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/b9da28d772ef43088791b0f3675929e7@realtek.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/csky/abiv1/inc/abi/entry.h | 19 ++++++++++++++-----
- arch/csky/abiv2/inc/abi/entry.h | 11 +++++++++++
- arch/csky/kernel/atomic.S       |  8 ++++++--
- 3 files changed, 31 insertions(+), 7 deletions(-)
+ sound/pci/hda/patch_realtek.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/csky/abiv1/inc/abi/entry.h b/arch/csky/abiv1/inc/abi/entry.h
-index 7ab78bd0f3b13..f35a9f3315ee6 100644
---- a/arch/csky/abiv1/inc/abi/entry.h
-+++ b/arch/csky/abiv1/inc/abi/entry.h
-@@ -16,14 +16,16 @@
- #define LSAVE_A4	40
- #define LSAVE_A5	44
- 
-+#define usp ss1
-+
- .macro USPTOKSP
--	mtcr	sp, ss1
-+	mtcr	sp, usp
- 	mfcr	sp, ss0
- .endm
- 
- .macro KSPTOUSP
- 	mtcr	sp, ss0
--	mfcr	sp, ss1
-+	mfcr	sp, usp
- .endm
- 
- .macro	SAVE_ALL epc_inc
-@@ -45,7 +47,13 @@
- 	add	lr, r13
- 	stw     lr, (sp, 8)
- 
-+	mov	lr, sp
-+	addi	lr, 32
-+	addi	lr, 32
-+	addi	lr, 16
-+	bt	2f
- 	mfcr	lr, ss1
-+2:
- 	stw     lr, (sp, 16)
- 
- 	stw     a0, (sp, 20)
-@@ -79,9 +87,10 @@
- 	ldw     a0, (sp, 12)
- 	mtcr    a0, epsr
- 	btsti   a0, 31
-+	bt      1f
- 	ldw     a0, (sp, 16)
- 	mtcr	a0, ss1
--
-+1:
- 	ldw     a0, (sp, 24)
- 	ldw     a1, (sp, 28)
- 	ldw     a2, (sp, 32)
-@@ -102,9 +111,9 @@
- 	addi	sp, 32
- 	addi	sp, 8
- 
--	bt      1f
-+	bt      2f
- 	KSPTOUSP
--1:
-+2:
- 	rte
- .endm
- 
-diff --git a/arch/csky/abiv2/inc/abi/entry.h b/arch/csky/abiv2/inc/abi/entry.h
-index 9897a16b45e5d..94a7a58765dff 100644
---- a/arch/csky/abiv2/inc/abi/entry.h
-+++ b/arch/csky/abiv2/inc/abi/entry.h
-@@ -31,7 +31,13 @@
- 
- 	mfcr	lr, epsr
- 	stw	lr, (sp, 12)
-+	btsti   lr, 31
-+	bf      1f
-+	addi    lr, sp, 152
-+	br	2f
-+1:
- 	mfcr	lr, usp
-+2:
- 	stw	lr, (sp, 16)
- 
- 	stw     a0, (sp, 20)
-@@ -64,8 +70,10 @@
- 	mtcr	a0, epc
- 	ldw	a0, (sp, 12)
- 	mtcr	a0, epsr
-+	btsti   a0, 31
- 	ldw	a0, (sp, 16)
- 	mtcr	a0, usp
-+	mtcr	a0, ss0
- 
- #ifdef CONFIG_CPU_HAS_HILO
- 	ldw	a0, (sp, 140)
-@@ -86,6 +94,9 @@
- 	addi    sp, 40
- 	ldm     r16-r30, (sp)
- 	addi    sp, 72
-+	bf	1f
-+	mfcr	sp, ss0
-+1:
- 	rte
- .endm
- 
-diff --git a/arch/csky/kernel/atomic.S b/arch/csky/kernel/atomic.S
-index 5b84f11485aeb..3821ef9b75672 100644
---- a/arch/csky/kernel/atomic.S
-+++ b/arch/csky/kernel/atomic.S
-@@ -17,10 +17,12 @@ ENTRY(csky_cmpxchg)
- 	mfcr	a3, epc
- 	addi	a3, TRAP0_SIZE
- 
--	subi    sp, 8
-+	subi    sp, 16
- 	stw     a3, (sp, 0)
- 	mfcr    a3, epsr
- 	stw     a3, (sp, 4)
-+	mfcr	a3, usp
-+	stw     a3, (sp, 8)
- 
- 	psrset	ee
- #ifdef CONFIG_CPU_HAS_LDSTEX
-@@ -47,7 +49,9 @@ ENTRY(csky_cmpxchg)
- 	mtcr	a3, epc
- 	ldw     a3, (sp, 4)
- 	mtcr	a3, epsr
--	addi	sp, 8
-+	ldw     a3, (sp, 8)
-+	mtcr	a3, usp
-+	addi	sp, 16
- 	KSPTOUSP
- 	rte
- END(csky_cmpxchg)
--- 
-2.20.1
-
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -7115,6 +7115,8 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x1028, 0x0935, "Dell", ALC274_FIXUP_DELL_AIO_LINEOUT_VERB),
+ 	SND_PCI_QUIRK(0x1028, 0x097e, "Dell Precision", ALC289_FIXUP_DUAL_SPK),
+ 	SND_PCI_QUIRK(0x1028, 0x097d, "Dell Precision", ALC289_FIXUP_DUAL_SPK),
++	SND_PCI_QUIRK(0x1028, 0x098d, "Dell Precision", ALC233_FIXUP_ASUS_MIC_NO_PRESENCE),
++	SND_PCI_QUIRK(0x1028, 0x09bf, "Dell Precision", ALC233_FIXUP_ASUS_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x164a, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x164b, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x1586, "HP", ALC269_FIXUP_HP_MUTE_LED_MIC2),
 
 
