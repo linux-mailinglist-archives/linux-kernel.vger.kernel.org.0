@@ -2,102 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CBD717F757
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:23:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A48BE17F763
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:27:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbgCJMXi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:23:38 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:54890 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726211AbgCJMXh (ORCPT
+        id S1726451AbgCJM1T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:27:19 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:46006 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbgCJM1T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:23:37 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-134-nZB81PfeP52EGTki-0E5KQ-1; Tue, 10 Mar 2020 12:23:34 +0000
-X-MC-Unique: nZB81PfeP52EGTki-0E5KQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 10 Mar 2020 12:23:34 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 10 Mar 2020 12:23:34 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Chris Wilson' <chris@chris-wilson.co.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] list: Prevent compiler reloads inside 'safe' list
- iteration
-Thread-Topic: [PATCH] list: Prevent compiler reloads inside 'safe' list
- iteration
-Thread-Index: AQHV9r1KBrT+D4Vo2U+Op9v/Nv0od6hBsdzwgAAEwQCAAAWYAA==
-Date:   Tue, 10 Mar 2020 12:23:34 +0000
-Message-ID: <723d527a4ad349b78bf11d52eba97c0e@AcuMS.aculab.com>
-References: <20200310092119.14965-1-chris@chris-wilson.co.uk>
- <2e936d8fd2c445beb08e6dd3ee1f3891@AcuMS.aculab.com>
- <158384100886.16414.15741589015363013386@build.alporthouse.com>
-In-Reply-To: <158384100886.16414.15741589015363013386@build.alporthouse.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 10 Mar 2020 08:27:19 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02ACR8SC120035;
+        Tue, 10 Mar 2020 12:27:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=MyICk3cp8RgzQvarUb9WQh78t/0MGEVCei//pwTl8wA=;
+ b=eJx6VBwxtch5ckDJMSizWhQUlyRjPnqDNYlYLoxGgLDfnt/GR4d4vN0PJkP92b6jVZ6V
+ dcT833CIuAIuTnxcVtEz6bGazlCyf5dcwRCOfD2lrpiuBP1yTnvKs9Yc9DOJwethrRBF
+ /qW3Aend1jWlQuPMqPgh/JGsEtzZvjVMOXU/PG5rZHduBbGbXlHr7qky0bvzs/vKhtLd
+ O2N/1m3kZcZi+GfMryfAvpTV0OiAskOz/eeUP6v9mymJNAMA8st96N8lymByIHbpckYW
+ MzlPKOGeRDCmAf9P7QyupyY4TFAOdWGaiJ3E2SJxpukjzWqabr179i7wgL9OCvq1tPdU Zg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2yp7hm1k3v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Mar 2020 12:27:11 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02ACHiZw005293;
+        Tue, 10 Mar 2020 12:25:12 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2yp8rhpq6r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Mar 2020 12:25:12 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02ACPBtg019198;
+        Tue, 10 Mar 2020 12:25:11 GMT
+Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 10 Mar 2020 05:25:11 -0700
+Subject: Re: [PATCH] xen/xenbus: remove unused xenbus_map_ring()
+To:     Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org
+Cc:     Stefano Stabellini <sstabellini@kernel.org>
+References: <20200309155441.30997-1-jgross@suse.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Autocrypt: addr=boris.ostrovsky@oracle.com; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <7044ef14-6493-3e42-94f0-bc2ab601eca3@oracle.com>
+Date:   Tue, 10 Mar 2020 08:25:02 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+In-Reply-To: <20200309155441.30997-1-jgross@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9555 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ spamscore=0 malwarescore=0 bulkscore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003100083
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9555 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0
+ priorityscore=1501 clxscore=1015 mlxscore=0 impostorscore=0
+ mlxlogscore=999 suspectscore=0 phishscore=0 malwarescore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003100083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogQ2hyaXMgV2lsc29uDQo+IFNlbnQ6IDEwIE1hcmNoIDIwMjAgMTE6NTANCj4gDQo+IFF1
-b3RpbmcgRGF2aWQgTGFpZ2h0ICgyMDIwLTAzLTEwIDExOjM2OjQxKQ0KPiA+IEZyb206IENocmlz
-IFdpbHNvbg0KPiA+ID4gU2VudDogMTAgTWFyY2ggMjAyMCAwOToyMQ0KPiA+ID4gSW5zdHJ1Y3Qg
-dGhlIGNvbXBpbGVyIHRvIHJlYWQgdGhlIG5leHQgZWxlbWVudCBpbiB0aGUgbGlzdCBpdGVyYXRp
-b24NCj4gPiA+IG9uY2UsIGFuZCB0aGF0IGl0IGlzIG5vdCBhbGxvd2VkIHRvIHJlbG9hZCB0aGUg
-dmFsdWUgZnJvbSB0aGUgc3RhbGUNCj4gPiA+IGVsZW1lbnQgbGF0ZXIuIFRoaXMgaXMgaW1wb3J0
-YW50IGFzIGR1cmluZyB0aGUgY291cnNlIG9mIHRoZSBzYWZlDQo+ID4gPiBpdGVyYXRpb24sIHRo
-ZSBzdGFsZSBlbGVtZW50IG1heSBiZSBwb2lzb25lZCAodW5iZWtub3duc3QgdG8gdGhlDQo+ID4g
-PiBjb21waWxlcikuDQo+ID4NCj4gPiBFaD8NCj4gPiBJIHRob3VnaHQgYW55IGZ1bmN0aW9uIGNh
-bGwgd2lsbCBzdG9wIHRoZSBjb21waWxlciBiZWluZyBhbGxvd2VkDQo+ID4gdG8gcmVsb2FkIHRo
-ZSB2YWx1ZS4NCj4gPiBUaGUgJ3NhZmUnIGxvb3AgaXRlcmF0b3JzIGFyZSBvbmx5ICdzYWZlJyBh
-Z2FpbnN0IGNhbGxlZA0KPiA+IGNvZGUgcmVtb3ZpbmcgdGhlIGN1cnJlbnQgaXRlbSBmcm9tIHRo
-ZSBsaXN0Lg0KPiA+DQo+ID4gPiBUaGlzIGhlbHBzIHByZXZlbnQga2NzYW4gd2FybmluZ3Mgb3Zl
-ciAndW5zYWZlJyBjb25kdWN0IGluIHJlbGVhc2luZyB0aGUNCj4gPiA+IGxpc3QgZWxlbWVudHMg
-ZHVyaW5nIGxpc3RfZm9yX2VhY2hfZW50cnlfc2FmZSgpIGFuZCBmcmllbmRzLg0KPiA+DQo+ID4g
-U291bmRzIGxpa2Uga2NzYW4gaXMgYnVnZ3kgPz8/Pw0KPiANCj4gVGhlIHdhcm5pbmcga2NzYW4g
-Z2F2ZSBtYWRlIHNlbnNlIChhIHN0cmFuZ2UgY2FzZSB3aGVyZSB0aGUgZW1wdHlpbmcgdGhlDQo+
-IGxpc3QgZnJvbSBpbnNpZGUgdGhlIHNhZmUgaXRlcmF0b3Igd291bGQgYWxsb3cgdGhhdCBsaXN0
-IHRvIGJlIHRha2VuDQo+IHVuZGVyIGEgZ2xvYmFsIG11dGV4IGFuZCBoYXZlIG9uZSBleHRyYSBy
-ZXF1ZXN0IGFkZGVkIHRvIGl0LiBUaGUNCj4gbGlzdF9mb3JfZWFjaF9lbnRyeV9zYWZlKCkgc2hv
-dWxkIGJlIG9rIGluIHRoaXMgc2NlbmFyaW8sIHNvIGxvbmcgYXMgdGhlDQo+IG5leHQgZWxlbWVu
-dCBpcyByZWFkIGJlZm9yZSB0aGlzIGVsZW1lbnQgaXMgZHJvcHBlZCwgYW5kIHRoZSBjb21waWxl
-ciBpcw0KPiBpbnN0cnVjdGVkIG5vdCB0byByZWxvYWQgdGhlIGVsZW1lbnQuDQoNCk5vcm1hbGx5
-IHRoZSBsb29wIGl0ZXJhdGlvbiBjb2RlIGhhcyB0byBob2xkIHRoZSBtdXRleC4NCkkgZ3Vlc3Mg
-aXQgY2FuIGJlIHJlbGVhc2VkIGluc2lkZSB0aGUgbG9vcCBwcm92aWRlZCBubyBvdGhlcg0KY29k
-ZSBjYW4gZXZlciBkZWxldGUgZW50cmllcy4NCg0KPiBrY3NhbiBpcyBhIGxpdHRsZSBtb3JlIGlu
-c2lzdGVudCBvbiBoYXZpbmcgdGhhdCBhbm5vdGF0aW9uIDopDQo+IA0KPiBJbiB0aGlzIGluc3Rh
-bmNlIEkgd291bGQgc2F5IGl0IHdhcyBhIGZhbHNlIHBvc2l0aXZlIGZyb20ga2NzYW4sIGJ1dCBJ
-DQo+IGNhbiBzZWUgd2h5IGl0IHdvdWxkIGNvbXBsYWluIGFuZCBzdXNwZWN0IHRoYXQgZ2l2ZW4g
-YSBzdWZmaWNpZW50bHkNCj4gYWdncmVzc2l2ZSBjb21waWxlciwgd2UgbWF5IGJlIGNhdWdodCBv
-dXQgYnkgYSBsYXRlIHJlbG9hZCBvZiB0aGUgbmV4dA0KPiBlbGVtZW50Lg0KDQpJZiB5b3UgaGF2
-ZToNCglmb3IgKDsgcDsgcCA9IG5leHQpIHsNCgkJbmV4dCA9IHAtPm5leHQ7DQoJCWV4dGVybmFs
-X2Z1bmN0aW9uX2NhbGwodm9pZCk7DQoJfQ0KdGhlIGNvbXBpbGVyIG11c3QgYXNzdW1lIHRoYXQg
-dGhlIGZ1bmN0aW9uIGNhbGwNCmNhbiBjaGFuZ2UgJ3AtPm5leHQnIGFuZCByZWFkIGl0IGJlZm9y
-ZSB0aGUgY2FsbC4NCg0KSXMgdGhpcyBhIGxpc3Qgd2l0aCBzdHJhbmdlIGxvY2tpbmcgcnVsZXM/
-DQpUaGUgb25seSBkZWxldGVzIGFyZSBmcm9tIHdpdGhpbiB0aGUgbG9vcC4NCkFkZHMgYW5kIGRl
-bGV0ZXMgYXJlIGxvY2tlZC4NClRoZSBsaXN0IHRyYXZlcnNhbCBpc24ndCBsb2NrZWQuDQoNCkkg
-c3VzcGVjdCBrY3NhbiBibGVhdHMgYmVjYXVzZSBpdCBkb2Vzbid0IGFzc3VtZSB0aGUgY29tcGls
-ZXINCndpbGwgdXNlIGEgc2luZ2xlIGluc3RydWN0aW9uL21lbW9yeSBvcGVyYXRpb24gdG8gcmVh
-ZCBwLT5uZXh0Lg0KVGhhdCBpcyBqdXN0IHN0dXBpZC4NCg0KCURhdmlkDQoNCg0KDQoJCQ0KDQot
-DQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwg
-TWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2Fs
-ZXMpDQo=
+
+
+On 3/9/20 11:54 AM, Juergen Gross wrote:
+> xenbus_map_ring() is used nowhere in the tree, remove it.
+> xenbus_unmap_ring() is used only locally, so make it static and move it=
+
+> up.
+>
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+>
+
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+
+Applied to for-linus-5.6b
 
