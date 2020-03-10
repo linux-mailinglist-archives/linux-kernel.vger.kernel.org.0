@@ -2,235 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5C501804BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 18:27:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23D991804B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 18:25:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbgCJR13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 13:27:29 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:38264 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbgCJR13 (ORCPT
+        id S1726591AbgCJRZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 13:25:16 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14586 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbgCJRZQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 13:27:29 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02AHQPfZ091794;
-        Tue, 10 Mar 2020 17:27:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=pF62Fl9n3hLaC/9fx7+0TCIeLjvePYs54Kor98cC3bU=;
- b=0LVi/Recrroz+h0BejT26wbyY6sBrBp1gyymxHJ9BDWvxmMQc/dDMXG9ChJWf1P2tn2V
- PD+41FD1DYKM+WRaCxKf7DieGezpHmHNdX8s70dVJM6RHRKXh6N31zOj+MofRuHeYu1b
- T/tEBP0Ou2aCM/WDJ5vOGvC6q838PiEXwfD9pNF82ShukjYdCfUzcEXRzRhhnDBM8qYA
- kCvq+s57DvAshPbEE2HBbvj37wLuYiK3eWvUgXaNbq/vRfbY1xjNRlfzkLxvqEJ8TmRQ
- BA+gmSx5F/KLl5fjnXsAaaVYUxY9BIJTdY7aAdjp2KUEbPJhqURwoGF/n6Dcaa0QqZJP +Q== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2yp7hm3byp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Mar 2020 17:27:16 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02AHRFE3022118;
-        Tue, 10 Mar 2020 17:27:15 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2yp8qpe6ps-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Mar 2020 17:27:15 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02AHR2vc013906;
-        Tue, 10 Mar 2020 17:27:03 GMT
-Received: from [192.168.1.206] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 10 Mar 2020 10:27:02 -0700
-Subject: Re: [PATCH v2] mm: hugetlb: optionally allocate gigantic hugepages
- using cma
-To:     Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        kernel-team@fb.com, linux-kernel@vger.kernel.org,
-        Rik van Riel <riel@surriel.com>
-References: <20200310002524.2291595-1-guro@fb.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <5cfa9031-fc15-2bcc-adb9-9779285ef0f7@oracle.com>
-Date:   Tue, 10 Mar 2020 10:27:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Tue, 10 Mar 2020 13:25:16 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e67cd200000>; Tue, 10 Mar 2020 10:23:44 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 10 Mar 2020 10:25:14 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 10 Mar 2020 10:25:14 -0700
+Received: from [10.2.175.232] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Mar
+ 2020 17:25:13 +0000
+Subject: Re: LKFT: arm x15: mmc1: cache flush error -110
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Jon Hunter <jonathanh@nvidia.com>,
+        Bitan Biswas <bbiswas@nvidia.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        <lkft-triage@lists.linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Kishon <kishon@ti.com>
+References: <CA+G9fYuqAQfhzF2BzHr7vMHx68bo8-jT+ob_F3eHQ3=oFjgYdg@mail.gmail.com>
+ <CAPDyKFrrO4noYqdxWL9Y8Nx75LopbDudKGMotkGbGcAF1oq==w@mail.gmail.com>
+ <5e9b5646-bd48-e55b-54ee-1c2c41fc9218@nvidia.com>
+ <CAPDyKFqpNo_4OePBR1KnJNO=kR8XEqbcsEd=icSceSdDH+Rk1Q@mail.gmail.com>
+ <757853cf-987e-f6b6-9259-b4560a031692@nvidia.com>
+ <d12fe142-7e72-ab58-33ab-17817e35096f@nvidia.com>
+ <c216f131-6f83-c9c9-9d17-8d44ec06972d@nvidia.com>
+ <87ad7586-9569-4276-044a-adb64e84ca15@nvidia.com>
+ <a0962e0b-0f1d-9f32-f6e9-92f69f93167f@nvidia.com>
+ <57ddddc2-3ee8-d867-bba0-0dd9929ba37d@nvidia.com>
+ <CAPDyKFqZSd9E3+16yFsmpee2JsbRJ-DGThxx7NJHu6UE00Xi1Q@mail.gmail.com>
+ <26ee7225-9483-4664-c2d7-b5cefeadcd4b@nvidia.com>
+ <CAPDyKFqwVQDEnPNi33mc9ycTxpaT1cRLejbR3Ja4c8dha4gFRw@mail.gmail.com>
+ <0301bbd5-8d4d-4a77-42c7-8a1391c2d60a@nvidia.com>
+ <CAPDyKFp93H0=ttazofW9NMBtL5VnjB4PdkwN0FDCtWR0pMHrPA@mail.gmail.com>
+ <f01b5533-124a-d978-a90a-9c9c6235fb65@nvidia.com>
+ <CAPDyKFqJjsuHect-azQKO8cCoq5JJQrZ=eShsdLHq97NXgXnuQ@mail.gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <227d9f08-582e-fd79-e1dc-7695bddd162d@nvidia.com>
+Date:   Tue, 10 Mar 2020 10:27:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200310002524.2291595-1-guro@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <CAPDyKFqJjsuHect-azQKO8cCoq5JJQrZ=eShsdLHq97NXgXnuQ@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9556 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0 mlxscore=0
- adultscore=0 suspectscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003100105
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9556 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0
- priorityscore=1501 clxscore=1011 mlxscore=0 impostorscore=0
- mlxlogscore=999 suspectscore=0 phishscore=0 malwarescore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003100104
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1583861024; bh=u81zjZkUGBM+2adtEa1nBZaymHCbzrmBFSnlbj7WlR4=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=WuyfZGd69+yiiObkV6kiAq5Y13ZBDkr6Fd/CfP0IOyohs7XadcGaMpSEPK9+OcFdd
+         mbM40Sh4IfKYvbfDayRdQwHe20MEzCZMwzE1dL3ZOB6oIYQKW7bz/Px1SCqmRuZZ04
+         3fu5dRy4Ict2DrxUvis8S4i+e8TV8iXCjShSXxNkW/z4BHgsCUKSeRXTSkw8PnMBg0
+         qm9/IKMnT8+SVcQerASRUpuRlEPfPYXkO3zdYGjVKlKDo0lfvvEJky5zwwUdUyN5P0
+         xK1drhaFbDKXn9wA7vdrBQNqllcFeQS2ndch5TtxQhONrl0xvixgOHtM+eS5pTNuzw
+         D+stW+XqcH3ig==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/9/20 5:25 PM, Roman Gushchin wrote:
-> Commit 944d9fec8d7a ("hugetlb: add support for gigantic page allocation
-> at runtime") has added the run-time allocation of gigantic pages. However
-> it actually works only at early stages of the system loading, when
-> the majority of memory is free. After some time the memory gets
-> fragmented by non-movable pages, so the chances to find a contiguous
-> 1 GB block are getting close to zero. Even dropping caches manually
-> doesn't help a lot.
-> 
-> At large scale rebooting servers in order to allocate gigantic hugepages
-> is quite expensive and complex. At the same time keeping some constant
-> percentage of memory in reserved hugepages even if the workload isn't
-> using it is a big waste: not all workloads can benefit from using 1 GB
-> pages.
-> 
-> The following solution can solve the problem:
-> 1) On boot time a dedicated cma area* is reserved. The size is passed
->    as a kernel argument.
-> 2) Run-time allocations of gigantic hugepages are performed using the
->    cma allocator and the dedicated cma area
-> 
-> In this case gigantic hugepages can be allocated successfully with a
-> high probability, however the memory isn't completely wasted if nobody
-> is using 1GB hugepages: it can be used for pagecache, anon memory,
-> THPs, etc.
-> 
-> * On a multi-node machine a per-node cma area is allocated on each node.
->   Following gigantic hugetlb allocation are using the first available
->   numa node if the mask isn't specified by a user.
-> 
-> Usage:
-> 1) configure the kernel to allocate a cma area for hugetlb allocations:
->    pass hugetlb_cma=10G as a kernel argument
-> 
-> 2) allocate hugetlb pages as usual, e.g.
->    echo 10 > /sys/kernel/mm/hugepages/hugepages-1048576kB/nr_hugepages
-> 
-> If the option isn't enabled or the allocation of the cma area failed,
-> the current behavior of the system is preserved.
-> 
-> Only x86 is covered by this patch, but it's trivial to extend it to
-> cover other architectures as well.
-> 
-> v2: fixed !CONFIG_CMA build, suggested by Andrew Morton
-> 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
 
-Thanks!  I really like this idea.
+On 3/10/20 10:09 AM, Ulf Hansson wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> [...]
+>
+>>>>> I would like to get the regression fixed asap, but I also would like
+>>>>> to avoid reverting patches, unless really necessary. May I propose the
+>>>>> following two options.
+>>>>>
+>>>>> 1. Find out why polling with ->card_busy() or CMD13, for a CMD6 with
+>>>>> an R1 response doesn't work - and then fix that behaviour.
+>>>>>
+>>>>> 2. Set the mmc->max_busy_timeout to zero for sdhci-tegra, which makes
+>>>>> the core to always use R1B for CMD6 (and erase). This also means that
+>>>>> when the cmd->busy_timeout becomes longer than 11s, sdhci-tegra must
+>>>>> disable the HW busy timeout and just wait "forever".
+>>>>>
+>>>>> If you decide for 2, you can add the software timeout support on top,
+>>>>> but make that can be considered as a next step of an improvement,
+>>>>> rather than needed as fix. Note that, I believe there are some support
+>>>>> for software timeout already in the sdhci core, maybe you need to
+>>>>> tweak it a bit for your case, I don't know.
+>>>>>
+>>>>> Kind regards
+>>>>> Uffe
+>>>> Hi Uffe
+>>>>
+>>>> Will go with 2nd option and will send patches out when ready.
+>>> Okay, good.
+>>>
+>>>> BTW, Tegra host also supports SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK for
+>>>> data timeout based on host clock when using finite mode (HW busy
+>>>> detection based on DATA TIMEOUT count value when cmd operation timeout
+>>>> is < 11s for tegra host).
+>>>>
+>>>> So, looks like we cant set host max_busy_timeout to 0 for Tegra host to
+>>>> force R1B during SWITCH and SLEEP_AWAKE.
+>>>>
+>>>> So, was thinking to introduce host capability MMC_CAP2_LONG_WAIT_HW_BUSY
+>>>> which can be used for hosts supporting long or infinite HW busy wait
+>>>> detection and will update mmc and mmc_ops drivers to not allow convert
+>>>> R1B to R1B for hosts with this capability during SLEEP_AWAKE and SWITCH.
+>>> That seems reasonable, it becomes probably both easier and clearer by
+>>> adding a new host cap.
+>>>
+>>> In any case, let me help out and cook a patch for this for the core
+>>> part (I leave the sdhci change to you). It may be a bit tricky,
+>>> especially since I have currently queued a bunch of new changes for
+>>> v5.7, that enables more users of mmc_poll_for_busy() in the core.
+>>> Maybe I need to temporarily drop them, so we can fix these problems
+>>> first. I will check.
+>>>
+>>> Probably, I would also name the cap MMC_CAP_HW_NEED_RSP_BUSY, as that
+>>> seems to be describing the common problem we have for sdhci
+>>> omap/tegra.
+>>>
+>>> Finally, it seems like MMC_CAP_WAIT_WHILE_BUSY should be set for
+>>> sdhci- tegra, so while at it, perhaps you can cook a patch for that as
+>>> well.
+>>>
+>>> Kind regards
+>>> Uffe
+>> OK, I sent v1 yesterday. Please ignore them then.
+> Oh, I haven't seen them. In any case, I am ignoring them.
+>
+>> Will send out patches only for HW busy wait modes program based on cmd
+>> timeout and WAIT_WHILE_BUSY enabled.
+> Great, thanks!
+>
+> Please help test the series I just posted as well, if you have the
+> time ofcourse.
+>
+> Kind regards
+> Uffe
 
-> ---
->  .../admin-guide/kernel-parameters.txt         |   7 ++
->  arch/x86/kernel/setup.c                       |   3 +
->  include/linux/hugetlb.h                       |   2 +
->  mm/hugetlb.c                                  | 115 ++++++++++++++++++
->  4 files changed, 127 insertions(+)
-> 
-<snip>
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index a74262c71484..ceeb06ddfd41 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -16,6 +16,7 @@
->  #include <linux/pci.h>
->  #include <linux/root_dev.h>
->  #include <linux/sfi.h>
-> +#include <linux/hugetlb.h>
->  #include <linux/tboot.h>
->  #include <linux/usb/xhci-dbgp.h>
->  
-> @@ -1158,6 +1159,8 @@ void __init setup_arch(char **cmdline_p)
->  	initmem_init();
->  	dma_contiguous_reserve(max_pfn_mapped << PAGE_SHIFT);
->  
-> +	hugetlb_cma_reserve();
-> +
+Sure,
 
-I know this is called from arch specific code here to fit in with the timing
-of CMA setup/reservation calls.  However, there really is nothing architecture
-specific about this functionality.  It would be great IMO if we could make
-this architecture independent.  However, I can not think of a straight forward
-way to do this.
+Thanks
 
->  	/*
->  	 * Reserve memory for crash kernel after SRAT is parsed so that it
->  	 * won't consume hotpluggable memory.
-<snip>
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-<snip>
-> +void __init hugetlb_cma_reserve(void)
-> +{
-> +	unsigned long totalpages = 0;
-> +	unsigned long start_pfn, end_pfn;
-> +	phys_addr_t size;
-> +	int nid, i, res;
-> +
-> +	if (!hugetlb_cma_size && !hugetlb_cma_percent)
-> +		return;
-> +
-> +	if (hugetlb_cma_percent) {
-> +		for_each_mem_pfn_range(i, MAX_NUMNODES, &start_pfn, &end_pfn,
-> +				       NULL)
-> +			totalpages += end_pfn - start_pfn;
-> +
-> +		size = PAGE_SIZE * (hugetlb_cma_percent * 100 * totalpages) /
-> +			10000UL;
-> +	} else {
-> +		size = hugetlb_cma_size;
-> +	}
-> +
-> +	pr_info("hugetlb_cma: reserve %llu, %llu per node\n", size,
-> +		size / nr_online_nodes);
-> +
-> +	size /= nr_online_nodes;
-> +
-> +	for_each_node_state(nid, N_ONLINE) {
-> +		unsigned long min_pfn = 0, max_pfn = 0;
-> +
-> +		for_each_mem_pfn_range(i, nid, &start_pfn, &end_pfn, NULL) {
-> +			if (!min_pfn)
-> +				min_pfn = start_pfn;
-> +			max_pfn = end_pfn;
-> +		}
-> +
-> +		res = cma_declare_contiguous(PFN_PHYS(min_pfn), size,
-> +					     PFN_PHYS(max_pfn), (1UL << 30),
+Sowjanya
 
-The alignment is hard coded for x86 gigantic page size.  If this supports
-more architectures or becomes arch independent we will need to determine
-what this alignment should be.  Perhaps an arch specific call back to get
-the alignment for gigantic pages.  That will require a little thought as
-some arch's support multiple gigantic page sizes.
-
--- 
-Mike Kravetz
-
-> +					     0, false,
-> +					     "hugetlb", &hugetlb_cma[nid]);
-> +		if (res) {
-> +			pr_warn("hugetlb_cma: reservation failed: err %d, node %d, [%llu, %llu)",
-> +				res, nid, PFN_PHYS(min_pfn), PFN_PHYS(max_pfn));
-> +
-> +			for (; nid >= 0; nid--)
-> +				hugetlb_cma[nid] = NULL;
-> +
-> +			break;
-> +		}
-> +
-> +		pr_info("hugetlb_cma: successfully reserved %llu on node %d\n",
-> +			size, nid);
-> +	}
-> +}
-> +
-> +#else /* CONFIG_CMA */
-> +void __init hugetlb_cma_reserve(void)
-> +{
-> +}
-> +
-> +#endif /* CONFIG_CMA */
