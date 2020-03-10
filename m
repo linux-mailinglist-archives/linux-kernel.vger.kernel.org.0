@@ -2,114 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4234A180B3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 23:14:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 235E6180B41
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 23:14:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbgCJWOM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 18:14:12 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:43016 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726273AbgCJWOM (ORCPT
+        id S1727736AbgCJWOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 18:14:34 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35617 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727717AbgCJWOd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 18:14:12 -0400
-Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id D21B17E991C;
-        Wed, 11 Mar 2020 09:14:08 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jBn8Y-0004cq-Mh; Wed, 11 Mar 2020 09:14:06 +1100
-Date:   Wed, 11 Mar 2020 09:14:06 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-Cc:     "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hch@lst.de" <hch@lst.de>
-Subject: Re: 5.5 XFS getdents regression?
-Message-ID: <20200310221406.GO10776@dread.disaster.area>
-References: <72c5fd8e9a23dde619f70f21b8100752ec63e1d2.camel@nokia.com>
+        Tue, 10 Mar 2020 18:14:33 -0400
+Received: by mail-lj1-f193.google.com with SMTP id u12so74510ljo.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 15:14:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=A0DJ1QWaOzdShQUNy+Xq2LWv3cgxACTM1sGjd/lAyrQ=;
+        b=PE12SCsWX0jtdXlLC7s8SBu/WbwEPg5yee5goR2A9E7eXbONG+zY2j3g8MU5gMY4cI
+         gpQVYpf4gr8akr8301HuU4d0RZVExceNqTnoiuhQMQQ+S4LimrjudwbtXD7qVESq+I3Y
+         YunNWg0f3xQ13/vVv6+VaMcob/DyVA/vCVF3c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A0DJ1QWaOzdShQUNy+Xq2LWv3cgxACTM1sGjd/lAyrQ=;
+        b=BE5d2bUNwSQ1hehghrBv/ihTCErLNcOW7Sd7LpuhjJ9/107jcBElkKTq7aezXVhKOH
+         YCfj3q56bcz7KZlcB3i0synjatsSRQDaqEGxFfexD22/FUCzxn3TlD2DF5MVGnldJBZo
+         fz2wWJTWRrHFp/ykG/vTjfRcIkdPc3tiBwjeZHo8tOa/VKFXuEJuzNoKWlhhpoRO18p8
+         UEDH39OhW9dyVdSunyOoHuNoDduUbB+UyeE5NtF3CK6ZJSSKoFeGF7C7paGsbZ+rnvK0
+         HJOnfSD1yxsq0+bzuR2ITgQWVhwFnFACcmIbr5jyuKIDsfqUxrZCcdfMue8aD6pPnnMx
+         033A==
+X-Gm-Message-State: ANhLgQ1USqWZzHaSSyuTId5jG1/OJ72PKQjL5pA3q9GCuCCfpSC1CuQl
+        wLFfgglFAvZ/+BXwTEPX+PgIiqWeFCs=
+X-Google-Smtp-Source: ADFU+vuCJCX5n1VGTuDHVWtN8O+2TK+JtHYYqxvWcs3mcbzRm3kdyVxqkPUtOowS5Y+9vFA+tM02ig==
+X-Received: by 2002:a2e:b018:: with SMTP id y24mr201976ljk.146.1583878471061;
+        Tue, 10 Mar 2020 15:14:31 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id o13sm1519155lfg.90.2020.03.10.15.14.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Mar 2020 15:14:30 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id x22so12293786lff.5
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 15:14:30 -0700 (PDT)
+X-Received: by 2002:ac2:5986:: with SMTP id w6mr161806lfn.30.1583878469474;
+ Tue, 10 Mar 2020 15:14:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <72c5fd8e9a23dde619f70f21b8100752ec63e1d2.camel@nokia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
-        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=SS2py6AdgQ4A:10
-        a=pM9yUfARAAAA:8 a=TXhh1AoAAAAA:20 a=7-415B0cAAAA:8
-        a=kddjMyLgLR5ZLaLsPHMA:9 a=CjuIK1q_8ugA:10 a=YH-7kEGJnRg4CV3apUU-:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20200310144107.GC79873@mtj.duckdns.org>
+In-Reply-To: <20200310144107.GC79873@mtj.duckdns.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 10 Mar 2020 15:14:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi=5p6s_BmPAg5EF8Joe5d-6iAjQq6-Le7+xf5Gq-ZTfw@mail.gmail.com>
+Message-ID: <CAHk-=wi=5p6s_BmPAg5EF8Joe5d-6iAjQq6-Le7+xf5Gq-ZTfw@mail.gmail.com>
+Subject: Re: [GIT PULL] cgroup fixes for v5.6-rc5
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Cgroups <cgroups@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 08:45:58AM +0000, Rantala, Tommi T. (Nokia - FI/Espoo) wrote:
-> Hello,
-> 
-> One of my GitLab CI jobs stopped working after upgrading server 5.4.18-
-> 100.fc30.x86_64 -> 5.5.7-100.fc30.x86_64.
-> (tested 5.5.8-100.fc30.x86_64 too, no change)
-> The server is fedora30 with XFS rootfs.
-> The problem reproduces always, and takes only couple minutes to run.
-> 
-> The CI job fails in the beginning when doing "git clean" in docker
-> container, and failing to rmdir some directory:
-> "warning: failed to remove 
-> .vendor/pkg/mod/golang.org/x/net@v0.0.0-20200114155413-6afb5195e5aa/intern
-> al/socket: Directory not empty"
-> 
-> Quick google search finds some other people reporting similar problems
-> with 5.5.0:
-> https://gitlab.com/gitlab-org/gitlab-runner/issues/3185
+On Tue, Mar 10, 2020 at 7:41 AM Tejun Heo <tj@kernel.org> wrote:
+>
+> * Empty release_agent handling fix.
 
-Which appears to be caused by multiple gitlab processes modifying
-the directory at the same time. i.e. something is adding an entry to
-the directory at the same time something is trying to rm -rf it.
-That's a race condition, and would lead to the exact symptoms you
-see here, depending on where in the directory the new entry is
-added.
+Pulled. However, I gagged a bit when I saw the code:
 
-> Collected some data with strace, and it seems that getdents is not
-> returning all entries:
-> 
-> 5.4 getdents64() returns 52+50+1+0 entries 
-> => all files in directory are deleted and rmdir() is OK
-> 
-> 5.5 getdents64() returns 52+50+0+0 entries
-> => rmdir() fails with ENOTEMPTY
+        if (!pathbuf || !agentbuf || !strlen(agentbuf))
 
-Yup, that's a classic userspace TOCTOU race.
+yeah, I really hope that the compiler is smart enough to just optimize
+that, but we shouldn't assume that the compiler is that smart.
 
-Remember, getdents() is effectively a sequential walk through the
-directory data - subsequent calls start at the offset (cookie) where
-the previous one left off. New entries can be added between
-getdents() syscalls.
+The proper way to test for "empty string" is to just check the first
+character for NUL:
 
-If that new entry is put at the tail of the directory, then the last
-getdents() call will return that entry rather than none because it
-was placed at an offset in the directory that the getdents() sweep
-has not yet reached, and hence will be found by a future getdents()
-call in the sweep.
+        if (!pathbuf || !agentbuf || !*agentbuf)
 
+which doesn't require the compiler to have a pattern for "oh, I can
+test for a zero strlen without actually calling strlen".
 
-However, if there is a hole in the directory structure before the
-current getdents cookie offset, a new entry can be added in that
-hole. i.e. at an offset in the directory that getdents has already
-passed over. That dirent will never be reported by the current
-getdents() sequence - a directory rewind and re-read is required to
-find it. i.e. there's an inherent userspace TOUTOC race condition in
-'rm -rf' operations.
+Also, wouldn't it be nice to test for the empty string before you even
+bother to kstrdup() it? Even before you
 
-IOWs, this is exactly what you'd expect to see when there are
-concurrent userspace modifications to a directory that is currently
-being read. Hence you need to rule out an application and userspace
-level issues before looking for filesystem level problems.
+Finally, shouldn't we technically hold the release_agent_path_lock
+while looking at it?
 
-Cheers,
+Small details, and I've taken the pull, but the lack of locking does
+seem to be an actual (if perhaps fairly theoretical) bug, no?
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+                 Linus
