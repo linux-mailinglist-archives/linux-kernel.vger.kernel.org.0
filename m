@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE63017F5F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B97917F5F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:16:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbgCJLQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 07:16:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53974 "EHLO mail.kernel.org"
+        id S1726643AbgCJLQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 07:16:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725937AbgCJLQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 07:16:14 -0400
+        id S1725937AbgCJLQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 07:16:17 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.37.151])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B809624691;
-        Tue, 10 Mar 2020 11:16:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 471AE2468F;
+        Tue, 10 Mar 2020 11:16:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583838973;
-        bh=eQAKiMa7qGcpy9qc02RUYOUUHYsEqcjBh8ajoMODSSc=;
+        s=default; t=1583838977;
+        bh=nTOUwNuPvB9t/C+sYs3EvVxrB9+MpX5GBSTL8dH8SUg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qbMdB9zJ5Q3XVc6b8ylR/QB8ULYBFjWHZ/gMLfLWSRZ24yV73kXTbImnij4vS8e+a
-         wGQ384VeCWumgN/q3ELo6GKl4Fgik2udk03wJZw3TPJ4cSI2fIfK9y49dzaPvzNxgv
-         EqvOrs8GJLeUTfc4PhyUekIi1iiqsdG5Bp7lnDKE=
+        b=HIhzy0kIU0lQ7euDdgsdhqQyR4wWhezVOy/o/blyFns3HPMvyfuESrzA9qmlzMFon
+         tN/2kbECwvmTDPbifOa/K5lTNzj6seV183qibA/Eu7fVCLMtjUAPxTXoFK2m5lpO4G
+         2cKeV2oLULOfR2eJBic2/Ja2JqQWXZm1JzEfhnEU=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>, Ian Rogers <irogers@google.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 04/19] perf annotate: Get rid of annotation->nr_jumps
-Date:   Tue, 10 Mar 2020 08:15:36 -0300
-Message-Id: <20200310111551.25160-5-acme@kernel.org>
+Subject: [PATCH 05/19] libperf: Add counting example
+Date:   Tue, 10 Mar 2020 08:15:37 -0300
+Message-Id: <20200310111551.25160-6-acme@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200310111551.25160-1-acme@kernel.org>
 References: <20200310111551.25160-1-acme@kernel.org>
@@ -47,50 +47,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+From: Michael Petlan <mpetlan@redhat.com>
 
-The 'nr_jumps' field in 'struct annotation' is not used since it's
-inception in commit 2402e4a936a0 ("perf annotate browser: Show 'jumpy'
-functions").  Get rid of it.
+Current libperf man pages mention file counting.c "coming with libperf package",
+however, the file is missing. Add the file then.
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Fixes: 81de3bf37a8b ("libperf: Add man pages")
+Signed-off-by: Michael Petlan <mpetlan@redhat.com>
 Acked-by: Jiri Olsa <jolsa@redhat.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Song Liu <songliubraving@fb.com>
-Link: http://lore.kernel.org/lkml/20200204045233.474937-7-ravi.bangoria@linux.ibm.com
+Cc: Peter Zijlstra <peterz@infradead.org>
+LPU-Reference: 20200227194424.28210-1-mpetlan@redhat.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/annotate.c | 2 --
- tools/perf/util/annotate.h | 1 -
- 2 files changed, 3 deletions(-)
+ .../perf/Documentation/examples/counting.c    | 83 +++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 tools/lib/perf/Documentation/examples/counting.c
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 0ea95be84b3b..f1ea0d61eb5b 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -2611,8 +2611,6 @@ void annotation__mark_jump_targets(struct annotation *notes, struct symbol *sym)
- 
- 		if (++al->jump_sources > notes->max_jump_sources)
- 			notes->max_jump_sources = al->jump_sources;
--
--		++notes->nr_jumps;
- 	}
- }
- 
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 001258601a37..07c775938d46 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -279,7 +279,6 @@ struct annotation {
- 	struct annotation_options *options;
- 	struct annotation_line	**offsets;
- 	int			nr_events;
--	int			nr_jumps;
- 	int			max_jump_sources;
- 	int			nr_entries;
- 	int			nr_asm_entries;
+diff --git a/tools/lib/perf/Documentation/examples/counting.c b/tools/lib/perf/Documentation/examples/counting.c
+new file mode 100644
+index 000000000000..6085693571ef
+--- /dev/null
++++ b/tools/lib/perf/Documentation/examples/counting.c
+@@ -0,0 +1,83 @@
++#include <linux/perf_event.h>
++#include <perf/evlist.h>
++#include <perf/evsel.h>
++#include <perf/cpumap.h>
++#include <perf/threadmap.h>
++#include <perf/mmap.h>
++#include <perf/core.h>
++#include <perf/event.h>
++#include <stdio.h>
++#include <unistd.h>
++
++static int libperf_print(enum libperf_print_level level,
++                         const char *fmt, va_list ap)
++{
++	return vfprintf(stderr, fmt, ap);
++}
++
++int main(int argc, char **argv)
++{
++	int count = 100000, err = 0;
++	struct perf_evlist *evlist;
++	struct perf_evsel *evsel;
++	struct perf_thread_map *threads;
++	struct perf_counts_values counts;
++
++	struct perf_event_attr attr1 = {
++		.type        = PERF_TYPE_SOFTWARE,
++		.config      = PERF_COUNT_SW_CPU_CLOCK,
++		.read_format = PERF_FORMAT_TOTAL_TIME_ENABLED|PERF_FORMAT_TOTAL_TIME_RUNNING,
++		.disabled    = 1,
++	};
++	struct perf_event_attr attr2 = {
++		.type        = PERF_TYPE_SOFTWARE,
++		.config      = PERF_COUNT_SW_TASK_CLOCK,
++		.read_format = PERF_FORMAT_TOTAL_TIME_ENABLED|PERF_FORMAT_TOTAL_TIME_RUNNING,
++		.disabled    = 1,
++	};
++
++	libperf_init(libperf_print);
++	threads = perf_thread_map__new_dummy();
++	if (!threads) {
++		fprintf(stderr, "failed to create threads\n");
++		return -1;
++	}
++	perf_thread_map__set_pid(threads, 0, 0);
++	evlist = perf_evlist__new();
++	if (!evlist) {
++		fprintf(stderr, "failed to create evlist\n");
++		goto out_threads;
++	}
++	evsel = perf_evsel__new(&attr1);
++	if (!evsel) {
++		fprintf(stderr, "failed to create evsel1\n");
++		goto out_evlist;
++	}
++	perf_evlist__add(evlist, evsel);
++	evsel = perf_evsel__new(&attr2);
++	if (!evsel) {
++		fprintf(stderr, "failed to create evsel2\n");
++		goto out_evlist;
++	}
++	perf_evlist__add(evlist, evsel);
++	perf_evlist__set_maps(evlist, NULL, threads);
++	err = perf_evlist__open(evlist);
++	if (err) {
++		fprintf(stderr, "failed to open evsel\n");
++		goto out_evlist;
++	}
++	perf_evlist__enable(evlist);
++	while (count--);
++	perf_evlist__disable(evlist);
++	perf_evlist__for_each_evsel(evlist, evsel) {
++		perf_evsel__read(evsel, 0, 0, &counts);
++		fprintf(stdout, "count %llu, enabled %llu, run %llu\n",
++				counts.val, counts.ena, counts.run);
++	}
++	perf_evlist__close(evlist);
++out_evlist:
++	perf_evlist__delete(evlist);
++out_threads:
++	perf_thread_map__put(threads);
++	return err;
++}
 -- 
 2.21.1
 
