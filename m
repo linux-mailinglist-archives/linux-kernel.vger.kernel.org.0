@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D99617FA24
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:03:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A96B117FA7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:05:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730499AbgCJNC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:02:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46824 "EHLO mail.kernel.org"
+        id S1729889AbgCJNF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:05:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730484AbgCJNCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:02:53 -0400
+        id S1730490AbgCJNCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:02:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D7E924696;
-        Tue, 10 Mar 2020 13:02:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A165B2468C;
+        Tue, 10 Mar 2020 13:02:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845372;
-        bh=Dz80d63uOmyK71ppUHVER6aN2T9E8bc13m3WbnjNPyk=;
+        s=default; t=1583845375;
+        bh=ChoXbZiZ4xRWHDCDYxKjjQMyaZm6alpKJH4NtUZrkDQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BNnz8+KTKjizXIwWfLNGMNXml1MVDTPLu+Ne6oFNWrER8RUxxLmjrrE9Z5AOp6puq
-         b/MOnjOeRvaQRRLNZ1t2EleDpsz8SYfi8dBwxfcL10P71PpXajEDgdgZiKc3bBtdzw
-         CbM3PWOFdGbbdRTHvGsORXbrtego6pJpJppUGp9E=
+        b=0cs7wc2xjszZiyB2p7xHEw3OGZ+cQTmEdegxaCJRzcpO2QQMWdO8AuvZcNpUF+e40
+         /9xUl5/i7djStYysDDP1xlHpUX4qkIGMtkrSBNXW5OczLGYFdjsa1SopMKGXzC1kdk
+         JDV8UA0NXMMr7UrO5EqmZ8Jxj1hcFomvHh35rfFo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ondrej Kozina <okozina@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
         Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 5.5 120/189] dm integrity: fix invalid table returned due to argument count mismatch
-Date:   Tue, 10 Mar 2020 13:39:17 +0100
-Message-Id: <20200310123651.904055477@linuxfoundation.org>
+Subject: [PATCH 5.5 121/189] dm cache: fix a crash due to incorrect work item cancelling
+Date:   Tue, 10 Mar 2020 13:39:18 +0100
+Message-Id: <20200310123652.005567020@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
 References: <20200310123639.608886314@linuxfoundation.org>
@@ -46,34 +45,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 7fc2e47f40dd77ab1fcbda6db89614a0173d89c7 upstream.
+commit 7cdf6a0aae1cccf5167f3f04ecddcf648b78e289 upstream.
 
-If the flag SB_FLAG_RECALCULATE is present in the superblock, but it was
-not specified on the command line (i.e. ic->recalculate_flag is false),
-dm-integrity would return invalid table line - the reported number of
-arguments would not match the real number.
+The crash can be reproduced by running the lvm2 testsuite test
+lvconvert-thin-external-cache.sh for several minutes, e.g.:
+  while :; do make check T=shell/lvconvert-thin-external-cache.sh; done
 
-Fixes: 468dfca38b1a ("dm integrity: add a bitmap mode")
-Cc: stable@vger.kernel.org # v5.2+
-Reported-by: Ondrej Kozina <okozina@redhat.com>
+The crash happens in this call chain:
+do_waker -> policy_tick -> smq_tick -> end_hotspot_period -> clear_bitset
+-> memset -> __memset -- which accesses an invalid pointer in the vmalloc
+area.
+
+The work entry on the workqueue is executed even after the bitmap was
+freed. The problem is that cancel_delayed_work doesn't wait for the
+running work item to finish, so the work item can continue running and
+re-submitting itself even after cache_postsuspend. In order to make sure
+that the work item won't be running, we must use cancel_delayed_work_sync.
+
+Also, change flush_workqueue to drain_workqueue, so that if some work item
+submits itself or another work item, we are properly waiting for both of
+them.
+
+Fixes: c6b4fcbad044 ("dm: add cache target")
+Cc: stable@vger.kernel.org # v3.9
 Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-integrity.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-cache-target.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/md/dm-integrity.c
-+++ b/drivers/md/dm-integrity.c
-@@ -2975,7 +2975,7 @@ static void dm_integrity_status(struct d
- 			DMEMIT(" meta_device:%s", ic->meta_dev->name);
- 		if (ic->sectors_per_block != 1)
- 			DMEMIT(" block_size:%u", ic->sectors_per_block << SECTOR_SHIFT);
--		if (ic->recalculate_flag)
-+		if (ic->sb->flags & cpu_to_le32(SB_FLAG_RECALCULATING))
- 			DMEMIT(" recalculate");
- 		DMEMIT(" journal_sectors:%u", ic->initial_sectors - SB_SECTORS);
- 		DMEMIT(" interleave_sectors:%u", 1U << ic->sb->log2_interleave_sectors);
+--- a/drivers/md/dm-cache-target.c
++++ b/drivers/md/dm-cache-target.c
+@@ -2846,8 +2846,8 @@ static void cache_postsuspend(struct dm_
+ 	prevent_background_work(cache);
+ 	BUG_ON(atomic_read(&cache->nr_io_migrations));
+ 
+-	cancel_delayed_work(&cache->waker);
+-	flush_workqueue(cache->wq);
++	cancel_delayed_work_sync(&cache->waker);
++	drain_workqueue(cache->wq);
+ 	WARN_ON(cache->tracker.in_flight);
+ 
+ 	/*
 
 
