@@ -2,75 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC6111803AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:38:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75B201803B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:39:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbgCJQiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 12:38:15 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:34313 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbgCJQiP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 12:38:15 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jBhtK-000791-Ez; Tue, 10 Mar 2020 17:38:02 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id D9EFB1040A5; Tue, 10 Mar 2020 17:38:01 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Alexandre Chartre <alexandre.chartre@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [patch part-II V2 11/13] x86/speculation/mds: Mark mds_user_clear_cpu_buffers() __always_inline
-In-Reply-To: <c9847c45-32b0-e5e6-1eb9-5f9e10814276@oracle.com>
-References: <20200308222359.370649591@linutronix.de> <20200308222610.040107039@linutronix.de> <c9847c45-32b0-e5e6-1eb9-5f9e10814276@oracle.com>
-Date:   Tue, 10 Mar 2020 17:38:01 +0100
-Message-ID: <87lfo85fo6.fsf@nanos.tec.linutronix.de>
+        id S1727191AbgCJQjn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 12:39:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48782 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726647AbgCJQjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 12:39:41 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 996F2222C3;
+        Tue, 10 Mar 2020 16:39:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583858379;
+        bh=DAW7xTUed0FfcyKkaoTCpHE55I+ixoL7o21Jj1lUqZA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CPMiHDgw4e/BVbFl+DIYaq0q+o+/Q1tF9JzU/U68B1NHU7qvT748iN3MQmm6B1yP8
+         bObq+88sQqBKI+A0M6cCkbQnV5qGVwejvs3SvqlM41yDIxLjTaWUaiAe9hTzwkHz7j
+         kU1Ignb00T9aZuUn0oAEaFLRPFxtDi5S/wy7+4Vg=
+Date:   Tue, 10 Mar 2020 17:39:35 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Sanchayan Maity <maitysanchayan@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+Subject: Re: [PATCH 5.5 175/189] ARM: dts: imx6dl-colibri-eval-v3: fix sram
+ compatible properties
+Message-ID: <20200310163935.GA3430367@kroah.com>
+References: <20200310123639.608886314@linuxfoundation.org>
+ <20200310123657.443556491@linuxfoundation.org>
+ <20200310150512.GC14211@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310150512.GC14211@localhost>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alexandre Chartre <alexandre.chartre@oracle.com> writes:
-> On 3/8/20 11:24 PM, Thomas Gleixner wrote:
->> -static inline void mds_user_clear_cpu_buffers(void)
->> +static __always_inline void mds_user_clear_cpu_buffers(void)
->>   {
->>   	if (static_branch_likely(&mds_user_clear))
->>   		mds_clear_cpu_buffers();
->> 
->
-> Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
->
-> I am just wondering if it would be worth defining a new function attribute to
-> identify functions which shouldn't be trace/probe more clearly. For example:
->
-> #define no_trace_and_probe __always_inline
->
-> static no_trace_and_probe void mds_user_clear_cpu_buffers(void)
-> {
->          ...
-> }
->
-> I am just concerned that overtime we might forgot that a function is defined
-> __always_inline just because it shouldn't be traced/probed.
+On Tue, Mar 10, 2020 at 04:05:12PM +0100, Johan Hovold wrote:
+> On Tue, Mar 10, 2020 at 01:40:12PM +0100, Greg Kroah-Hartman wrote:
+> > From: Johan Hovold <johan@kernel.org>
+> > 
+> > commit bcbf53a0dab50980867476994f6079c1ec5bb3a3 upstream.
+> > 
+> > The sram-node compatible properties have mistakingly combined the
+> > model-specific string with the generic "mtd-ram" string.
+> > 
+> > Note that neither "cy7c1019dv33-10zsxi, mtd-ram" or
+> > "cy7c1019dv33-10zsxi" are used by any in-kernel driver and they are
+> > not present in any binding.
+> > 
+> > The physmap driver will however bind to platform devices that specify
+> > "mtd-ram".
+> > 
+> > Fixes: fc48e76489fd ("ARM: dts: imx6: Add support for Toradex Colibri iMX6 module")
+> > Cc: Sanchayan Maity <maitysanchayan@gmail.com>
+> > Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > Cc: Shawn Guo <shawnguo@kernel.org>
+> > Signed-off-by: Johan Hovold <johan@kernel.org>
+> > Reviewed-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+> > Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> This was never meant to go into stable so I didn't add a stable CC-tag.
+> 
+> It causes a driver to bind to the corresponding platform devices, which
+> have so far been unbound and may therefore have unwanted side-effects.
+> 
+> I don't think it's stable material either way.
 
-True, for exactly that reason we are reconsidering the whole annotation
-business by putting stuff into a separate section so we get tools
-support for finding things which escape. See the discussion at:
+Thanks, now dropped from all kernel trees.
 
-  https://lore.kernel.org/lkml/87mu8p797b.fsf@nanos.tec.linutronix.de/
-
-Peter and I are working on this right now, so you might end up reviewing
-this pile in different form yet another time :(
-
-Thanks,
-
-        tglx
+greg k-h
