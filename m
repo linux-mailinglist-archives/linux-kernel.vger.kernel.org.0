@@ -2,188 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19B05180AF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:56:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E387180B04
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:59:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbgCJV4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 17:56:39 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:11542 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbgCJV4j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 17:56:39 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e680cbb0000>; Tue, 10 Mar 2020 14:55:07 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 10 Mar 2020 14:56:38 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 10 Mar 2020 14:56:38 -0700
-Received: from [10.2.175.232] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Mar
- 2020 21:56:37 +0000
-Subject: Re: LKFT: arm x15: mmc1: cache flush error -110
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Jon Hunter <jonathanh@nvidia.com>,
-        Bitan Biswas <bbiswas@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        <lkft-triage@lists.linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Kishon <kishon@ti.com>
-References: <CA+G9fYuqAQfhzF2BzHr7vMHx68bo8-jT+ob_F3eHQ3=oFjgYdg@mail.gmail.com>
- <5e9b5646-bd48-e55b-54ee-1c2c41fc9218@nvidia.com>
- <CAPDyKFqpNo_4OePBR1KnJNO=kR8XEqbcsEd=icSceSdDH+Rk1Q@mail.gmail.com>
- <757853cf-987e-f6b6-9259-b4560a031692@nvidia.com>
- <d12fe142-7e72-ab58-33ab-17817e35096f@nvidia.com>
- <c216f131-6f83-c9c9-9d17-8d44ec06972d@nvidia.com>
- <87ad7586-9569-4276-044a-adb64e84ca15@nvidia.com>
- <a0962e0b-0f1d-9f32-f6e9-92f69f93167f@nvidia.com>
- <57ddddc2-3ee8-d867-bba0-0dd9929ba37d@nvidia.com>
- <CAPDyKFqZSd9E3+16yFsmpee2JsbRJ-DGThxx7NJHu6UE00Xi1Q@mail.gmail.com>
- <26ee7225-9483-4664-c2d7-b5cefeadcd4b@nvidia.com>
- <CAPDyKFqwVQDEnPNi33mc9ycTxpaT1cRLejbR3Ja4c8dha4gFRw@mail.gmail.com>
- <0301bbd5-8d4d-4a77-42c7-8a1391c2d60a@nvidia.com>
- <CAPDyKFp93H0=ttazofW9NMBtL5VnjB4PdkwN0FDCtWR0pMHrPA@mail.gmail.com>
- <f01b5533-124a-d978-a90a-9c9c6235fb65@nvidia.com>
- <CAPDyKFqJjsuHect-azQKO8cCoq5JJQrZ=eShsdLHq97NXgXnuQ@mail.gmail.com>
- <227d9f08-582e-fd79-e1dc-7695bddd162d@nvidia.com>
-Message-ID: <2456654f-2724-0b6d-8936-afa05f345344@nvidia.com>
-Date:   Tue, 10 Mar 2020 14:59:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727588AbgCJV7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 17:59:42 -0400
+Received: from mga06.intel.com ([134.134.136.31]:22711 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726271AbgCJV7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 17:59:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 14:59:41 -0700
+X-IronPort-AV: E=Sophos;i="5.70,538,1574150400"; 
+   d="scan'208";a="242466540"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.251.10.135]) ([10.251.10.135])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 10 Mar 2020 14:59:40 -0700
+Subject: Re: [PATCH V1 09/13] selftests/resctrl: Modularize fill_buf for new
+ CAT test case
+To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        shuah@kernel.org, linux-kselftest@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        tony.luck@intel.com, babu.moger@amd.com, james.morse@arm.com,
+        ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
+ <43b368952bb006ee973311d9c9ae0eb53d8e7f60.1583657204.git.sai.praneeth.prakhya@intel.com>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <4c84be1d-8839-2c85-b294-7e3c454240bb@intel.com>
+Date:   Tue, 10 Mar 2020 14:59:39 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <227d9f08-582e-fd79-e1dc-7695bddd162d@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <43b368952bb006ee973311d9c9ae0eb53d8e7f60.1583657204.git.sai.praneeth.prakhya@intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1583877307; bh=4ydBhXoolqNBdP0wSohINyRuG6rrsfzD39lc3ukllCU=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=Yik2d1OgyNcAXPt7QdRZz1LBsFuGCRloFWsErN15gJjteNaCpVKe9ZtW1ywvjYSzS
-         F/OVYh3HVeyK1kbx+xIkBIGwxNWeO3FV/pkh0LI51lJhj/Rqw3FbXGCAFs6vLse+Ht
-         EZlR1TUv2wpybyfQ/u2uZvzKK5flVqA0kC78SC2etIp1uMlTBpmnEUB5FlbL/JCuIL
-         s/xadKbRVFKw8PJ33Ni+L8R0abXhxh5y2tCZ4pdLBTokZHNL+yINtKHTQiHbjRopRd
-         vHcrgwlrFd9O0fnyx0L7IZDe/nrJZOxTaU+CqeMObF2WQwRHP8egX+rrZh+v+JCmSM
-         02kCF+ZyzMuQQ==
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Sai,
 
-On 3/10/20 10:27 AM, Sowjanya Komatineni wrote:
->
-> On 3/10/20 10:09 AM, Ulf Hansson wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> [...]
->>
->>>>>> I would like to get the regression fixed asap, but I also would like
->>>>>> to avoid reverting patches, unless really necessary. May I 
->>>>>> propose the
->>>>>> following two options.
->>>>>>
->>>>>> 1. Find out why polling with ->card_busy() or CMD13, for a CMD6 with
->>>>>> an R1 response doesn't work - and then fix that behaviour.
->>>>>>
->>>>>> 2. Set the mmc->max_busy_timeout to zero for sdhci-tegra, which 
->>>>>> makes
->>>>>> the core to always use R1B for CMD6 (and erase). This also means 
->>>>>> that
->>>>>> when the cmd->busy_timeout becomes longer than 11s, sdhci-tegra must
->>>>>> disable the HW busy timeout and just wait "forever".
->>>>>>
->>>>>> If you decide for 2, you can add the software timeout support on 
->>>>>> top,
->>>>>> but make that can be considered as a next step of an improvement,
->>>>>> rather than needed as fix. Note that, I believe there are some 
->>>>>> support
->>>>>> for software timeout already in the sdhci core, maybe you need to
->>>>>> tweak it a bit for your case, I don't know.
->>>>>>
->>>>>> Kind regards
->>>>>> Uffe
->>>>> Hi Uffe
->>>>>
->>>>> Will go with 2nd option and will send patches out when ready.
->>>> Okay, good.
->>>>
->>>>> BTW, Tegra host also supports SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK for
->>>>> data timeout based on host clock when using finite mode (HW busy
->>>>> detection based on DATA TIMEOUT count value when cmd operation 
->>>>> timeout
->>>>> is < 11s for tegra host).
->>>>>
->>>>> So, looks like we cant set host max_busy_timeout to 0 for Tegra 
->>>>> host to
->>>>> force R1B during SWITCH and SLEEP_AWAKE.
->>>>>
->>>>> So, was thinking to introduce host capability 
->>>>> MMC_CAP2_LONG_WAIT_HW_BUSY
->>>>> which can be used for hosts supporting long or infinite HW busy wait
->>>>> detection and will update mmc and mmc_ops drivers to not allow 
->>>>> convert
->>>>> R1B to R1B for hosts with this capability during SLEEP_AWAKE and 
->>>>> SWITCH.
->>>> That seems reasonable, it becomes probably both easier and clearer by
->>>> adding a new host cap.
->>>>
->>>> In any case, let me help out and cook a patch for this for the core
->>>> part (I leave the sdhci change to you). It may be a bit tricky,
->>>> especially since I have currently queued a bunch of new changes for
->>>> v5.7, that enables more users of mmc_poll_for_busy() in the core.
->>>> Maybe I need to temporarily drop them, so we can fix these problems
->>>> first. I will check.
->>>>
->>>> Probably, I would also name the cap MMC_CAP_HW_NEED_RSP_BUSY, as that
->>>> seems to be describing the common problem we have for sdhci
->>>> omap/tegra.
->>>>
->>>> Finally, it seems like MMC_CAP_WAIT_WHILE_BUSY should be set for
->>>> sdhci- tegra, so while at it, perhaps you can cook a patch for that as
->>>> well.
->>>>
->>>> Kind regards
->>>> Uffe
->>> OK, I sent v1 yesterday. Please ignore them then.
->> Oh, I haven't seen them. In any case, I am ignoring them.
->>
->>> Will send out patches only for HW busy wait modes program based on cmd
->>> timeout and WAIT_WHILE_BUSY enabled.
->> Great, thanks!
->>
->> Please help test the series I just posted as well, if you have the
->> time ofcourse.
->>
->> Kind regards
->> Uffe
->
-> Sure,
->
-> Thanks
->
-> Sowjanya
+On 3/6/2020 7:40 PM, Sai Praneeth Prakhya wrote:
+> Currently fill_buf (in-built benchmark) runs as a separate process and it
+> runs indefinitely looping around given buffer either reading it or writing
+> to it. But, some future test cases might want to start and stop looping
+> around the buffer as they see fit. So, modularize fill_buf to support this
+> use case.
+> 
+> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+> ---
+>  tools/testing/selftests/resctrl/fill_buf.c | 66 ++++++++++++++++++++----------
+>  1 file changed, 44 insertions(+), 22 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/resctrl/fill_buf.c b/tools/testing/selftests/resctrl/fill_buf.c
+> index 9ede7b63f059..204ae8870a32 100644
+> --- a/tools/testing/selftests/resctrl/fill_buf.c
+> +++ b/tools/testing/selftests/resctrl/fill_buf.c
+> @@ -23,7 +23,7 @@
+>  #define PAGE_SIZE		(4 * 1024)
+>  #define MB			(1024 * 1024)
+>  
+> -static unsigned char *startptr;
+> +static unsigned char *startptr, *endptr;
+>  
+>  static void sb(void)
+>  {
+> @@ -82,13 +82,13 @@ static void *malloc_and_init_memory(size_t s)
+>  	return p;
+>  }
+>  
+> -static int fill_one_span_read(unsigned char *start_ptr, unsigned char *end_ptr)
+> +static int fill_one_span_read(void)
+>  {
+>  	unsigned char sum, *p;
+>  
+>  	sum = 0;
+> -	p = start_ptr;
+> -	while (p < end_ptr) {
+> +	p = startptr;
+> +	while (p < endptr) {
+>  		sum += *p;
+>  		p += (CL_SIZE / 2);
+>  	}
+> @@ -96,26 +96,24 @@ static int fill_one_span_read(unsigned char *start_ptr, unsigned char *end_ptr)
+>  	return sum;
+>  }
+>  
+> -static
+> -void fill_one_span_write(unsigned char *start_ptr, unsigned char *end_ptr)
+> +static void fill_one_span_write(void)
+>  {
+>  	unsigned char *p;
+>  
+> -	p = start_ptr;
+> -	while (p < end_ptr) {
+> +	p = startptr;
+> +	while (p < endptr) {
+>  		*p = '1';
+>  		p += (CL_SIZE / 2);
+>  	}
+>  }
+>  
+> -static int fill_cache_read(unsigned char *start_ptr, unsigned char *end_ptr,
+> -			   char *resctrl_val)
+> +static int fill_cache_read(char *resctrl_val)
+>  {
+>  	int ret = 0;
+>  	FILE *fp;
+>  
+>  	while (1) {
+> -		ret = fill_one_span_read(start_ptr, end_ptr);
+> +		ret = fill_one_span_read();
+>  		if (!strcmp(resctrl_val, "cat"))
+>  			break;
+>  	}
+> @@ -130,11 +128,10 @@ static int fill_cache_read(unsigned char *start_ptr, unsigned char *end_ptr,
+>  	return 0;
+>  }
+>  
+> -static int fill_cache_write(unsigned char *start_ptr, unsigned char *end_ptr,
+> -			    char *resctrl_val)
+> +static int fill_cache_write(char *resctrl_val)
+>  {
+>  	while (1) {
+> -		fill_one_span_write(start_ptr, end_ptr);
+> +		fill_one_span_write();
+>  		if (!strcmp(resctrl_val, "cat"))
+>  			break;
+>  	}
+> @@ -142,24 +139,25 @@ static int fill_cache_write(unsigned char *start_ptr, unsigned char *end_ptr,
+>  	return 0;
+>  }
+>  
+> -static int
+> -fill_cache(unsigned long long buf_size, int malloc_and_init, int memflush,
+> -	   int op, char *resctrl_val)
+> +static
+> +int init_buffer(unsigned long long buf_size, int malloc_and_init, int memflush)
+>  {
+>  	unsigned char *start_ptr, *end_ptr;
+>  	unsigned long long i;
+> -	int ret;
+>  
+>  	if (malloc_and_init)
+>  		start_ptr = malloc_and_init_memory(buf_size);
+>  	else
+>  		start_ptr = malloc(buf_size);
+>  
+> -	if (!start_ptr)
+> +	if (!start_ptr) {
+> +		printf("Failed to allocate memory to buffer\n");
+>  		return -1;
+> +	}
+>  
+> -	startptr = start_ptr;
+>  	end_ptr = start_ptr + buf_size;
+> +	endptr = end_ptr;
+> +	startptr = start_ptr;
+>  
+>  	/*
+>  	 * It's better to touch the memory once to avoid any compiler
+> @@ -176,16 +174,40 @@ fill_cache(unsigned long long buf_size, int malloc_and_init, int memflush,
+>  	if (memflush)
+>  		mem_flush(start_ptr, buf_size);
+>  
+> +	return 0;
+> +}
+> +
+> +static int use_buffer_forever(int op, char *resctrl_val)
+> +{
+> +	int ret;
+> +
+>  	if (op == 0)
+> -		ret = fill_cache_read(start_ptr, end_ptr, resctrl_val);
+> +		ret = fill_cache_read(resctrl_val);
+>  	else
+> -		ret = fill_cache_write(start_ptr, end_ptr, resctrl_val);
+> +		ret = fill_cache_write(resctrl_val);
+>  
+>  	if (ret) {
+>  		printf("\n Errror in fill cache read/write...\n");
+>  		return -1;
+>  	}
+>  
+> +	return 0;
+> +}
+> +
+> +static int
+> +fill_cache(unsigned long long buf_size, int malloc_and_init, int memflush,
+> +	   int op, char *resctrl_val)
+> +{
+> +	int ret;
+> +
+> +	ret = init_buffer(buf_size, malloc_and_init, memflush);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = use_buffer_forever(op, resctrl_val);
+> +	if (ret)
+> +		return ret;
 
+Should buffer be freed on this error path?
 
-mmc_sleep() also needs update to force R1B when host sets capability 
-MMC_CAP_NEED_RSP_BUSY
+I think the asymmetrical nature of the memory allocation and release
+creates traps like this.
 
+It may be less error prone to have the pointer returned by init_buffer
+and the acted on and released within fill_cache(), passed to
+"use_buffer_forever()" as a parameter.  The buffer size is known here,
+there is no need to keep an "end pointer" around.
 
+> +
+>  	free(startptr);
+>  
+>  	return 0;
+> 
+
+Reinette
