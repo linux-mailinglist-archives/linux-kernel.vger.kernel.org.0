@@ -2,56 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F74B17FE0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:32:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8C6617FE07
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:32:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728613AbgCJNcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:32:04 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39144 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729529AbgCJNcB (ORCPT
+        id S1729564AbgCJNcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:32:05 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39184 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729017AbgCJNcD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:32:01 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r15so10836193wrx.6
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:31:58 -0700 (PDT)
+        Tue, 10 Mar 2020 09:32:03 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f7so1352083wml.4
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:32:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8OGniJ9ezEM9gt13c3po2v7CvB5QI80dkjRxl/nZ7iA=;
-        b=jS5iW+1Jof6k6J0551eCvEtxb5WxKQelGzXk2ev4iY+BuOC4Dw2up4/qy07IXyW8/i
-         CdB9TlYia0CSKrj2j3Mg+IrkZS7fP6Jaly4fjJJJH9zNni9EIDYZDmO1pq+R1zkFuMQT
-         2uw4deG9mOFaXb6reHgBkjA+IV6NN5lasmPYQXpZ/dTK+Ayn8tv6XtRWM4Yrj4ooZ9Ek
-         qd8PTW1VVJcl4YHsNiYvD2A5zpplma/yH/Jzar4nywwLnVMwoi0153p1qWdjsYfLOEex
-         xDcBhACS0V1cgnmYrO5vJ3QVnZ0jHprKwH/CKvLU258gbgFyTvqVBRh60uC0/s8wa71X
-         +3cw==
+        bh=0PDXUNP0CNWIcOfZIatzfIp7MveLX2/j+5KT4VopvNc=;
+        b=mqSjKHGj010PNQfFZwfvEAmV8ADnB1wWjI4PptouwtPF1tHRYa+/DX4AQxW14hNUIy
+         yws6pL6lXIbp/OY5sKPGIpD+hiliV3ZIpgEaM2hRRoksOdzVTJhmUpUTPMkcXPQE70AM
+         oaluGsvPDi9Ae258jTLONdHvwLzIaaLTz4ASzlhD0zMfanLXbc0aJktA/Z97UdNtnoTv
+         BlxmaVfkLnP1Lg5RkSevCvFVdlINZNRcroScsQuOjIUz7eD8Q6v/e5jagkdBjmUsHTvL
+         qP6T0H63x/A0Fxb38hSCohESNWEF3RklHtLnBF4BGVDPkpgdNNVBdGrnoVGoBT+JURVA
+         KJWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8OGniJ9ezEM9gt13c3po2v7CvB5QI80dkjRxl/nZ7iA=;
-        b=Ad+rLwHsBAYEmQhZzm8BE9twb5qtA4tG2mJ6XvabpOzs8t6w8wfl2amqF1cO5yM8fT
-         409Bu6O+3kdadfctXTUVjAiiNjoRYDFhNdHBcA7xBDQFAOTK5PQQ70nGqXEvxRBk0pe4
-         4G48uTXQpOxO5EyvadEJGeUVLapmA9nnPBQeqMWYAJJbR8VABmHiU9yjqQQtHXmoREyb
-         05R2tuoFg+exidBusHrep9nwzCWDqp/mGTFl2hz4AERl5N01A/zca8yoGpGH8g/eD1/r
-         /e9H/VrXOCoXE9B2JPwaPySaEO/Q1FZEP7SQGXLzevUwfiio8ceTBkX4IYPV7KhMETqN
-         y1+A==
-X-Gm-Message-State: ANhLgQ14a3LODAKfmKnepUBRnRPzhVn5AEkIe/F/rHhAff9ZYjvLUGgT
-        bd0EZg2VIOX/Q1pUOJvJ1u0=
-X-Google-Smtp-Source: ADFU+vspL/LCXzLaAIfKTgG0AZR6jwCAVdsIr799rs+CFgH0CQns365BUM6DqkgKpyIMWOMCb3N53A==
-X-Received: by 2002:adf:e487:: with SMTP id i7mr9937328wrm.151.1583847118180;
-        Tue, 10 Mar 2020 06:31:58 -0700 (PDT)
+        bh=0PDXUNP0CNWIcOfZIatzfIp7MveLX2/j+5KT4VopvNc=;
+        b=T8EZpfuL7BYNK/rdy8fwMzhYJw3oI01OXJ1woJfekprsLXChVi+TwmYtNejx371e4L
+         oJt6MjXFf1q1IxA3HWclQ2CTFymys9OLnL7mFmK6KZwpHj1T9ydXN6jYLiWvltF6xfJ9
+         iIWDCsPT221cNFHFKVBWUuDRgk4xZrd28BMn7O6rl2CjQ0+Tnzmbfwbh9Ourk1WJ7DZQ
+         UQkM6nvo6hTRa9KbCt4XDf/EOwp9d3TJNTWDIyeg5J4kKB7J28Iy1EqFpuVaG9GYblHx
+         KbkJHoi65pIBK6v/FESQyGkWBLZ7QZjaX5AR77vaR6X6XbWRcftmHT3JzM8jLmOcEeSp
+         lNpw==
+X-Gm-Message-State: ANhLgQ3WQ8/duOu7+KXJ6YdWaFu7gQoNvH8QizgdPRyP2UonzN/8qBu3
+        AN2V+YwsUyBHFCq6G/xTG6Q=
+X-Google-Smtp-Source: ADFU+vv+T6EX42I7QsCPKFPJNMq6GUXg9pANHhKWydd9YqyV4Y93WsRrc5JL+R7T0hRAGNFYQNCtDA==
+X-Received: by 2002:a05:600c:c8:: with SMTP id u8mr2236586wmm.178.1583847120433;
+        Tue, 10 Mar 2020 06:32:00 -0700 (PDT)
 Received: from localhost.localdomain ([197.248.222.210])
-        by smtp.googlemail.com with ESMTPSA id o7sm14047141wrx.60.2020.03.10.06.31.56
+        by smtp.googlemail.com with ESMTPSA id o7sm14047141wrx.60.2020.03.10.06.31.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 06:31:57 -0700 (PDT)
+        Tue, 10 Mar 2020 06:31:59 -0700 (PDT)
 From:   Wambui Karuga <wambui.karugax@gmail.com>
-To:     airlied@linux.ie, daniel@ffwll.ch, Eric Anholt <eric@anholt.net>
+To:     airlied@linux.ie, daniel@ffwll.ch,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         gregkh@linuxfoundation.org
-Subject: [PATCH v2 12/17] drm/pl111: make pl111_debugfs_init return 0
-Date:   Tue, 10 Mar 2020 16:31:16 +0300
-Message-Id: <20200310133121.27913-13-wambui.karugax@gmail.com>
+Subject: [PATCH v2 13/17] drm/omap: remove checks for return value of drm_debugfs functions
+Date:   Tue, 10 Mar 2020 16:31:17 +0300
+Message-Id: <20200310133121.27913-14-wambui.karugax@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310133121.27913-1-wambui.karugax@gmail.com>
 References: <20200310133121.27913-1-wambui.karugax@gmail.com>
@@ -63,36 +64,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Since 987d65d01356 (drm: debugfs: make
-drm_debugfs_create_files() never fail) drm_debugfs_create_files()
-should return void. Therefore, remove its use as the return value in
-pl111_debugfs_init(), and have the function return 0 directly.
+drm_debugfs_create_files() never fail), there is no need to ever check
+the return value for drm_debugfs_create_files(). Therefore remove the
+checks for the return value and subsequent error handling in
+omap_debugfs_init().
 
-v2: have pl111_debugfs_init() return 0 instead of void to avoid build
-breakage for individual compilation.
+These changes also enables the changing of omap_debugfs_init() to return
+0 directly.
+
+v2: convert omap_debugfs_init() to return 0 instead of void to avoid
+introduction of build issues and enable individual driver compilation.
 
 References: https://lists.freedesktop.org/archives/dri-devel/2020-February/257183.html
 Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
 ---
- drivers/gpu/drm/pl111/pl111_debugfs.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/omapdrm/omap_debugfs.c | 27 +++++++-------------------
+ 1 file changed, 7 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/gpu/drm/pl111/pl111_debugfs.c b/drivers/gpu/drm/pl111/pl111_debugfs.c
-index 3c8e82016854..5595b19c91ce 100644
---- a/drivers/gpu/drm/pl111/pl111_debugfs.c
-+++ b/drivers/gpu/drm/pl111/pl111_debugfs.c
-@@ -54,7 +54,9 @@ static const struct drm_info_list pl111_debugfs_list[] = {
- int
- pl111_debugfs_init(struct drm_minor *minor)
+diff --git a/drivers/gpu/drm/omapdrm/omap_debugfs.c b/drivers/gpu/drm/omapdrm/omap_debugfs.c
+index 34dfb33145b4..ed63dcced79a 100644
+--- a/drivers/gpu/drm/omapdrm/omap_debugfs.c
++++ b/drivers/gpu/drm/omapdrm/omap_debugfs.c
+@@ -82,29 +82,16 @@ static struct drm_info_list omap_dmm_debugfs_list[] = {
+ 
+ int omap_debugfs_init(struct drm_minor *minor)
  {
--	return drm_debugfs_create_files(pl111_debugfs_list,
--					ARRAY_SIZE(pl111_debugfs_list),
--					minor->debugfs_root, minor);
-+	drm_debugfs_create_files(pl111_debugfs_list,
-+				 ARRAY_SIZE(pl111_debugfs_list),
+-	struct drm_device *dev = minor->dev;
+-	int ret;
+-
+-	ret = drm_debugfs_create_files(omap_debugfs_list,
+-			ARRAY_SIZE(omap_debugfs_list),
+-			minor->debugfs_root, minor);
+-
+-	if (ret) {
+-		dev_err(dev->dev, "could not install omap_debugfs_list\n");
+-		return ret;
+-	}
++	drm_debugfs_create_files(omap_debugfs_list,
++				 ARRAY_SIZE(omap_debugfs_list),
 +				 minor->debugfs_root, minor);
-+
+ 
+ 	if (dmm_is_available())
+-		ret = drm_debugfs_create_files(omap_dmm_debugfs_list,
+-				ARRAY_SIZE(omap_dmm_debugfs_list),
+-				minor->debugfs_root, minor);
++		drm_debugfs_create_files(omap_dmm_debugfs_list,
++					 ARRAY_SIZE(omap_dmm_debugfs_list),
++					 minor->debugfs_root, minor);
+ 
+-	if (ret) {
+-		dev_err(dev->dev, "could not install omap_dmm_debugfs_list\n");
+-		return ret;
+-	}
+-
+-	return ret;
 +	return 0;
  }
+ 
+ #endif
 -- 
 2.25.1
 
