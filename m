@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F5C717F807
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:44:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 989D117F7B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:41:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727736AbgCJMo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:44:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46636 "EHLO mail.kernel.org"
+        id S1727083AbgCJMlp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:41:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727241AbgCJMoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:44:22 -0400
+        id S1727073AbgCJMlo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:41:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA5ED24695;
-        Tue, 10 Mar 2020 12:44:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0366246A7;
+        Tue, 10 Mar 2020 12:41:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844262;
-        bh=A2foWvc9jrT5bSCjJRdsWFm8MIww1d4V6xIALYzfqq8=;
+        s=default; t=1583844103;
+        bh=BTlBOkjgyKc7KUFEV99ZCrPWLOftTICokMyxw3S9+P4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b51urLQXTq1/y5BjF4HSU07ePckFstOVd3Mp2UUjtVTBXlkiqYIvt3q4p4EwAnNS9
-         PxIEqbloEi9gGzPWFqbgdF7SFCv4w8L+9HD7E9W1zsQBeEAmUM38ejtvaKRz+hPq/k
-         vi+2Oifr+ntl5ytHimhSCgdaMxOGeUXn6QtQj5Os=
+        b=mN7oomRZc3BeoieTS8T6f9vQkdCFOaFr1fvGktZYo1dHhxwc2r/W4ck8+mvVVXxfu
+         jHMecJmtKJKyMuZpLyxn3z3UkZScmkKZXUThHTxPHvkMa2cbAaCormDyvFriVo/+G5
+         PX5A6OE0xrzbNhkXtZCBzSAHD3+IJ45MDKSgidCA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 18/88] cfg80211: add missing policy for NL80211_ATTR_STATUS_CODE
-Date:   Tue, 10 Mar 2020 13:38:26 +0100
-Message-Id: <20200310123610.726142764@linuxfoundation.org>
+        Benjamin Poirier <bpoirier@cumulusnetworks.com>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 14/72] ipv6: Fix nlmsg_flags when splitting a multipath route
+Date:   Tue, 10 Mar 2020 13:38:27 +0100
+Message-Id: <20200310123605.134231758@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <20200310123601.053680753@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +46,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
+From: Benjamin Poirier <bpoirier@cumulusnetworks.com>
 
-[ Upstream commit ea75080110a4c1fa011b0a73cb8f42227143ee3e ]
+[ Upstream commit afecdb376bd81d7e16578f0cfe82a1aec7ae18f3 ]
 
-The nl80211_policy is missing for NL80211_ATTR_STATUS_CODE attribute.
-As a result, for strictly validated commands, it's assumed to not be
-supported.
+When splitting an RTA_MULTIPATH request into multiple routes and adding the
+second and later components, we must not simply remove NLM_F_REPLACE but
+instead replace it by NLM_F_CREATE. Otherwise, it may look like the netlink
+message was malformed.
 
-Signed-off-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
-Link: https://lore.kernel.org/r/20200213131608.10541-2-sergey.matyukevich.os@quantenna.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+For example,
+	ip route add 2001:db8::1/128 dev dummy0
+	ip route change 2001:db8::1/128 nexthop via fe80::30:1 dev dummy0 \
+		nexthop via fe80::30:2 dev dummy0
+results in the following warnings:
+[ 1035.057019] IPv6: RTM_NEWROUTE with no NLM_F_CREATE or NLM_F_REPLACE
+[ 1035.057517] IPv6: NLM_F_CREATE should be set when creating new route
+
+This patch makes the nlmsg sequence look equivalent for __ip6_ins_rt() to
+what it would get if the multipath route had been added in multiple netlink
+operations:
+	ip route add 2001:db8::1/128 dev dummy0
+	ip route change 2001:db8::1/128 nexthop via fe80::30:1 dev dummy0
+	ip route append 2001:db8::1/128 nexthop via fe80::30:2 dev dummy0
+
+Fixes: 27596472473a ("ipv6: fix ECMP route replacement")
+Signed-off-by: Benjamin Poirier <bpoirier@cumulusnetworks.com>
+Reviewed-by: Michal Kubecek <mkubecek@suse.cz>
+Reviewed-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/wireless/nl80211.c | 1 +
+ net/ipv6/route.c |    1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index bb19be78aed70..9823bef65e5ec 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -333,6 +333,7 @@ static const struct nla_policy nl80211_policy[NUM_NL80211_ATTR] = {
- 	[NL80211_ATTR_CONTROL_PORT_ETHERTYPE] = { .type = NLA_U16 },
- 	[NL80211_ATTR_CONTROL_PORT_NO_ENCRYPT] = { .type = NLA_FLAG },
- 	[NL80211_ATTR_PRIVACY] = { .type = NLA_FLAG },
-+	[NL80211_ATTR_STATUS_CODE] = { .type = NLA_U16 },
- 	[NL80211_ATTR_CIPHER_SUITE_GROUP] = { .type = NLA_U32 },
- 	[NL80211_ATTR_WPA_VERSIONS] = { .type = NLA_U32 },
- 	[NL80211_ATTR_PID] = { .type = NLA_U32 },
--- 
-2.20.1
-
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -2953,6 +2953,7 @@ static int ip6_route_multipath_add(struc
+ 		 */
+ 		cfg->fc_nlinfo.nlh->nlmsg_flags &= ~(NLM_F_EXCL |
+ 						     NLM_F_REPLACE);
++		cfg->fc_nlinfo.nlh->nlmsg_flags |= NLM_F_CREATE;
+ 		nhn++;
+ 	}
+ 
 
 
