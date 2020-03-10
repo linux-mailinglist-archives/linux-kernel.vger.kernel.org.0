@@ -2,84 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2468B17FE2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:33:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 233E617FEA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:36:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbgCJMsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:48:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51904 "EHLO mail.kernel.org"
+        id S1728177AbgCJNgp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:36:45 -0400
+Received: from foss.arm.com ([217.140.110.172]:35116 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727955AbgCJMr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:47:56 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB2512468D;
-        Tue, 10 Mar 2020 12:47:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844476;
-        bh=/RtocEC+iLNR/9RT9a7srULExoLFSwUr55SBVusUmN8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YaGyH2Emg3yrvL+3kp0GuXrC44aL5yYtdWsqPozwFHE2z6WEErMuAGeEgzSeMNXdB
-         1FxA0OeQUuyW+gnlXqiXXxNBd8xl78iLRtNadSz9SskDSmvJ4XSUxylwZLtsAAi7rp
-         v9GWBfPPiv5DU00pYGUhPfphKsFpYQCuOFLPYE+A=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+cb0c054eabfba4342146@syzkaller.appspotmail.com,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.9 81/88] RDMA/iwcm: Fix iwcm work deallocation
-Date:   Tue, 10 Mar 2020 13:39:29 +0100
-Message-Id: <20200310123624.586962529@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727333AbgCJMm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:42:28 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 177C130E;
+        Tue, 10 Mar 2020 05:42:28 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D64B3F67D;
+        Tue, 10 Mar 2020 05:42:27 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 12:42:26 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H . J . Lu " <hjl.tools@gmail.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Sudakshina Das <sudi.das@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v8 00/11] arm64: Branch Target Identification support
+Message-ID: <20200310124226.GC4106@sirena.org.uk>
+References: <20200227174417.23722-1-broonie@kernel.org>
+ <20200306102729.GC2503422@arrakis.emea.arm.com>
+ <20200309210505.GM4101@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="XMCwj5IQnwKtuyBG"
+Content-Disposition: inline
+In-Reply-To: <20200309210505.GM4101@sirena.org.uk>
+X-Cookie: In space, no one can hear you fart.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bernard Metzler <bmt@zurich.ibm.com>
 
-commit 810dbc69087b08fd53e1cdd6c709f385bc2921ad upstream.
+--XMCwj5IQnwKtuyBG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The dealloc_work_entries() function must update the work_free_list pointer
-while freeing its entries, since potentially called again on same list. A
-second iteration of the work list caused system crash. This happens, if
-work allocation fails during cma_iw_listen() and free_cm_id() tries to
-free the list again during cleanup.
+On Mon, Mar 09, 2020 at 09:05:05PM +0000, Mark Brown wrote:
+> On Fri, Mar 06, 2020 at 10:27:29AM +0000, Catalin Marinas wrote:
 
-Fixes: 922a8e9fb2e0 ("RDMA: iWARP Connection Manager.")
-Link: https://lore.kernel.org/r/20200302181614.17042-1-bmt@zurich.ibm.com
-Reported-by: syzbot+cb0c054eabfba4342146@syzkaller.appspotmail.com
-Signed-off-by: Bernard Metzler <bmt@zurich.ibm.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Does this series affect uprobes in any way? I.e. can you probe a landing
+> > pad?
 
----
- drivers/infiniband/core/iwcm.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> You can't probe a landing pad, uprobes on landing pads will be silently
+> ignored so the program isn't disrupted, you just don't get the expected
+> trace from those uprobes.  This isn't new with the BTI support since
+> the landing pads are generally pointer auth instructions, these already
+> can't be probed regardless of what's going on with this series.  It's
+> already on the list to get sorted.
 
---- a/drivers/infiniband/core/iwcm.c
-+++ b/drivers/infiniband/core/iwcm.c
-@@ -137,8 +137,10 @@ static void dealloc_work_entries(struct
- {
- 	struct list_head *e, *tmp;
- 
--	list_for_each_safe(e, tmp, &cm_id_priv->work_free_list)
-+	list_for_each_safe(e, tmp, &cm_id_priv->work_free_list) {
-+		list_del(e);
- 		kfree(list_entry(e, struct iwcm_work, free_list));
-+	}
- }
- 
- static int alloc_work_entries(struct iwcm_id_private *cm_id_priv, int count)
+Sorry, I realized thanks to Amit's off-list prompting that I was testing
+that I was verifying with the wrong kernel binary here (user error since
+it took me a while to sort out uprobes) so this isn't quite right - you
+can probe the landing pads with or without this series.
 
+--XMCwj5IQnwKtuyBG
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5nizEACgkQJNaLcl1U
+h9CwvAf/ZRKRyzQ70X79x8NhEkUSVp2jprVe6r4y/8/g449xGTTicMDIWQKGeikg
+Z2v/GrsJ7+EAW4fiTl3dz+srzmuQCLS+67Dk/PwL4G4l8eJKQlBVj8BpiAASUml6
+mx3mbdZSIfcRKgz3BbzAsmW6p186TYm1Eh0MAQJhN11goYRuZjs0MNTDwZ0RuvSZ
+76rUJVdjbiFhjam1Et05p4G8HDQFKU0QArmyibQtCz1kU9+7affCfVyXFj3bnXx4
+qepGxIs1ld2UGb4lZ1BdlDxDpQoaQ+nVPxPRic0loZbovKlASlaSyKuRFl49jYg1
+8wHzzFxXeERLY2RJGZxzvae6Fq1zzA==
+=fbe8
+-----END PGP SIGNATURE-----
+
+--XMCwj5IQnwKtuyBG--
