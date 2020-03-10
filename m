@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6775417F8A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:49:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BA3617F99A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:58:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728487AbgCJMtm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:49:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54100 "EHLO mail.kernel.org"
+        id S1729907AbgCJM6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:58:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728484AbgCJMtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:49:40 -0400
+        id S1729901AbgCJM6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:58:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA15220674;
-        Tue, 10 Mar 2020 12:49:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5432820674;
+        Tue, 10 Mar 2020 12:58:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844580;
-        bh=m3/5GV8iND6nq+ZvNW2PfXvQ5eZR+5DVF27T+hS7AB4=;
+        s=default; t=1583845100;
+        bh=m1bj2nosYZ8MFQjvjfH7oDSog1qvxQmq/5hcWMEBSgM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=panqf81utlWg0Tr4+FQmNHJp5Rli3fO58Xhp/ubeqcsxilSDT4tLncZkNE7cHe0Dy
-         uerkQZqpu2CoZMqjd4SBz79MkE/cG0BFAWFdBhAZyey5CqEwsThY/Bkos4Mp+w8X8W
-         N0LOnO9vckk7llfTdLaLcmIOJ9kONyfE01ZONwGM=
+        b=tHI6joM7E+S9pWuvdj5rPFVaWSuk9QEAaUAqX1diLPWTaLIa/uvCPDe50v10sG8YM
+         1HI45sJm15SarMUKv6DM7mg2AcRh0LDp5QRvGhR9/h4qcsdDrQTI7QJuQTCirC1icP
+         3Rur4ZqF6ix6bE4NbdFu6yfnqL3P/c1JNH74G1LE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Henzl <thenzl@redhat.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Lee Duncan <lduncan@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Marek Vasut <marex@denx.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Lukas Wunner <lukas@wunner.de>, Petr Stetiar <ynezz@true.cz>,
+        YueHaibing <yuehaibing@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 026/168] scsi: megaraid_sas: silence a warning
+Subject: [PATCH 5.5 035/189] net: ks8851-ml: Fix 16-bit IO operation
 Date:   Tue, 10 Mar 2020 13:37:52 +0100
-Message-Id: <20200310123638.295083020@linuxfoundation.org>
+Message-Id: <20200310123643.042538884@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,57 +46,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomas Henzl <thenzl@redhat.com>
+From: Marek Vasut <marex@denx.de>
 
-[ Upstream commit 0e99b2c625da181aebf1a3d13493e3f7a5057a9c ]
+[ Upstream commit 58292104832fef6cb4a89f736012c0e0724c3442 ]
 
-Add a flag to DMA memory allocation to silence a warning.
+The Micrel KSZ8851-16MLLI datasheet DS00002357B page 12 states that
+BE[3:0] signals are active high. This contradicts the measurements
+of the behavior of the actual chip, where these signals behave as
+active low. For example, to read the CIDER register, the bus must
+expose 0xc0c0 during the address phase, which means BE[3:0]=4'b1100.
 
-This driver allocates DMA memory for IO frames. This allocation may exceed
-MAX_ORDER pages for few megaraid_sas controllers (controllers with very
-high queue depth). Consequently, the driver has logic to keep reducing the
-controller queue depth until the DMA memory allocation succeeds.
-
-On impacted megaraid_sas controllers there would be multiple DMA allocation
-failures until driver settled on an allocation that fit. These failed DMA
-allocation requests caused stack traces in system logs. These were not
-harmful and this patch silences those warnings/stack traces.
-
-[mkp: clarified commit desc]
-
-Link: https://lore.kernel.org/r/20200204152413.7107-1-thenzl@redhat.com
-Signed-off-by: Tomas Henzl <thenzl@redhat.com>
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
-Reviewed-by: Lee Duncan <lduncan@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Lukas Wunner <lukas@wunner.de>
+Cc: Petr Stetiar <ynezz@true.cz>
+Cc: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/megaraid/megaraid_sas_fusion.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/micrel/ks8851_mll.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-index 46bc062d873ef..d868388018053 100644
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -594,7 +594,8 @@ megasas_alloc_request_fusion(struct megasas_instance *instance)
+diff --git a/drivers/net/ethernet/micrel/ks8851_mll.c b/drivers/net/ethernet/micrel/ks8851_mll.c
+index 5ae206ae5d2b3..1c9e70c8cc30f 100644
+--- a/drivers/net/ethernet/micrel/ks8851_mll.c
++++ b/drivers/net/ethernet/micrel/ks8851_mll.c
+@@ -166,7 +166,7 @@ static int msg_enable;
  
- 	fusion->io_request_frames =
- 			dma_pool_alloc(fusion->io_request_frames_pool,
--				GFP_KERNEL, &fusion->io_request_frames_phys);
-+				GFP_KERNEL | __GFP_NOWARN,
-+				&fusion->io_request_frames_phys);
- 	if (!fusion->io_request_frames) {
- 		if (instance->max_fw_cmds >= (MEGASAS_REDUCE_QD_COUNT * 2)) {
- 			instance->max_fw_cmds -= MEGASAS_REDUCE_QD_COUNT;
-@@ -632,7 +633,7 @@ megasas_alloc_request_fusion(struct megasas_instance *instance)
+ static u16 ks_rdreg16(struct ks_net *ks, int offset)
+ {
+-	ks->cmd_reg_cache = (u16)offset | ((BE1 | BE0) << (offset & 0x02));
++	ks->cmd_reg_cache = (u16)offset | ((BE3 | BE2) >> (offset & 0x02));
+ 	iowrite16(ks->cmd_reg_cache, ks->hw_addr_cmd);
+ 	return ioread16(ks->hw_addr);
+ }
+@@ -181,7 +181,7 @@ static u16 ks_rdreg16(struct ks_net *ks, int offset)
  
- 		fusion->io_request_frames =
- 			dma_pool_alloc(fusion->io_request_frames_pool,
--				       GFP_KERNEL,
-+				       GFP_KERNEL | __GFP_NOWARN,
- 				       &fusion->io_request_frames_phys);
- 
- 		if (!fusion->io_request_frames) {
+ static void ks_wrreg16(struct ks_net *ks, int offset, u16 value)
+ {
+-	ks->cmd_reg_cache = (u16)offset | ((BE1 | BE0) << (offset & 0x02));
++	ks->cmd_reg_cache = (u16)offset | ((BE3 | BE2) >> (offset & 0x02));
+ 	iowrite16(ks->cmd_reg_cache, ks->hw_addr_cmd);
+ 	iowrite16(value, ks->hw_addr);
+ }
 -- 
 2.20.1
 
