@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8372E17FEA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89F8717FE80
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:35:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbgCJNgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:36:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42606 "EHLO mail.kernel.org"
+        id S1727674AbgCJMoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:44:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726708AbgCJMme (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:42:34 -0400
+        id S1726594AbgCJMnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:43:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F02BD2469C;
-        Tue, 10 Mar 2020 12:42:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8799524693;
+        Tue, 10 Mar 2020 12:43:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844154;
-        bh=bh71+yUWZJ2KgQTnvoKcgRM0pieJSYtq5owc9PoROas=;
+        s=default; t=1583844235;
+        bh=Vn8MA2JWAlQXOEu/9651uZO4QlqIhBvCV5/tHIIYK8w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LgQx1qOXRenCGhrCqUgg6YrvwHCLNzkzFNa9cQP4Btuufi7BQA6LxDUFbKWZGAJmE
-         pt6f6voPk3ddrW5yjE6g4BoL7p5qPMd6OCwAQazHCq10r7tsr43u/ppmoSPwn4foV4
-         seTB0AJE/UAfg4k1rYFtshA9LBz04qsGn0uUfeIw=
+        b=PpZAmcRymKAH4ZXl6fU1m4cITo8J0rl1ltxG1C5m/OooUZodnyvY5inmE6JSoXFNB
+         2oEhZR3YZrH8UEIc9kZT6vD4H4lGEGQ7TEu+dbtkmDX0iMeiGK0kVWtYqmUrDUQm7q
+         f8ZTEqjy39d/t0Wdyji5TofdJx2EyZHPonczPCWA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Vasily Averin <vvs@virtuozzo.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 49/72] s390/cio: cio_ignore_proc_seq_next should increase position index
-Date:   Tue, 10 Mar 2020 13:39:02 +0100
-Message-Id: <20200310123613.424488147@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Lazewatsky <dlaz@chromium.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+Subject: [PATCH 4.4 52/72] usb: quirks: add NO_LPM quirk for Logitech Screen Share
+Date:   Tue, 10 Mar 2020 13:39:05 +0100
+Message-Id: <20200310123614.129457987@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
 References: <20200310123601.053680753@linuxfoundation.org>
@@ -46,50 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Dan Lazewatsky <dlaz@chromium.org>
 
-[ Upstream commit 8b101a5e14f2161869636ff9cb4907b7749dc0c2 ]
+commit b96ed52d781a2026d0c0daa5787c6f3d45415862 upstream.
 
-if seq_file .next fuction does not change position index,
-read after some lseek can generate unexpected output.
+LPM on the device appears to cause xHCI host controllers to claim
+that there isn't enough bandwidth to support additional devices.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206283
-Link: https://lore.kernel.org/r/d44c53a7-9bc1-15c7-6d4a-0c10cb9dffce@virtuozzo.com
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Dan Lazewatsky <dlaz@chromium.org>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+Link: https://lore.kernel.org/r/20200226143438.1445-1-gustavo.padovan@collabora.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/s390/cio/blacklist.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/usb/core/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/s390/cio/blacklist.c b/drivers/s390/cio/blacklist.c
-index 20314aad7ab7d..f329459cadf14 100644
---- a/drivers/s390/cio/blacklist.c
-+++ b/drivers/s390/cio/blacklist.c
-@@ -303,8 +303,10 @@ static void *
- cio_ignore_proc_seq_next(struct seq_file *s, void *it, loff_t *offset)
- {
- 	struct ccwdev_iter *iter;
-+	loff_t p = *offset;
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -86,6 +86,9 @@ static const struct usb_device_id usb_qu
+ 	/* Logitech PTZ Pro Camera */
+ 	{ USB_DEVICE(0x046d, 0x0853), .driver_info = USB_QUIRK_DELAY_INIT },
  
--	if (*offset >= (__MAX_SUBCHANNEL + 1) * (__MAX_SSID + 1))
-+	(*offset)++;
-+	if (p >= (__MAX_SUBCHANNEL + 1) * (__MAX_SSID + 1))
- 		return NULL;
- 	iter = it;
- 	if (iter->devno == __MAX_SUBCHANNEL) {
-@@ -314,7 +316,6 @@ cio_ignore_proc_seq_next(struct seq_file *s, void *it, loff_t *offset)
- 			return NULL;
- 	} else
- 		iter->devno++;
--	(*offset)++;
- 	return iter;
- }
++	/* Logitech Screen Share */
++	{ USB_DEVICE(0x046d, 0x086c), .driver_info = USB_QUIRK_NO_LPM },
++
+ 	/* Logitech Quickcam Fusion */
+ 	{ USB_DEVICE(0x046d, 0x08c1), .driver_info = USB_QUIRK_RESET_RESUME },
  
--- 
-2.20.1
-
 
 
