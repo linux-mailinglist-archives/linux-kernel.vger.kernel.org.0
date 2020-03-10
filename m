@@ -2,98 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53326180A2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:17:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C850180A32
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:18:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbgCJVRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 17:17:16 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35222 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbgCJVRQ (ORCPT
+        id S1727682AbgCJVSQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 17:18:16 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:62442 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726265AbgCJVSP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 17:17:16 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jBmFE-0003vP-75; Tue, 10 Mar 2020 22:16:56 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 1DCD7104099; Tue, 10 Mar 2020 22:16:55 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 8/8] x86/fpu/xstate: Restore supervisor xstates for __fpu__restore_sig()
-In-Reply-To: <e62e968c0980b091d7b263401ddd10162773678f.camel@intel.com>
-References: <6f91699c91f9ea0f527e80ed3ea2999444a8d2d1.camel@intel.com> <20200228172202.GD25261@zn.tnic> <9a283ad42da140d73de680b1975da142e62e016e.camel@intel.com> <20200228183131.GE25261@zn.tnic> <7c6560b067436e2ec52121bba6bff64833e28d8d.camel@intel.com> <20200228214742.GF25261@zn.tnic> <c8da950a64db495088f0abe3932a489a84e4da97.camel@intel.com> <20200229143644.GA1129@zn.tnic> <6778d141a3cdbbe51cdeb3a8efb9c34e0951f6c6.camel@intel.com> <53e795ffbc029de316985476fd61845b7a9e824f.camel@intel.com> <20200306205039.GA5337@cz.tnic> <e62e968c0980b091d7b263401ddd10162773678f.camel@intel.com>
-Date:   Tue, 10 Mar 2020 22:16:55 +0100
-Message-ID: <87a74n6hbs.fsf@nanos.tec.linutronix.de>
+        Tue, 10 Mar 2020 17:18:15 -0400
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02ALGc5B002011;
+        Tue, 10 Mar 2020 17:17:03 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ym852d2fs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 10 Mar 2020 17:17:03 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02ALGXwO024560;
+        Tue, 10 Mar 2020 21:17:01 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma01wdc.us.ibm.com with ESMTP id 2ym386nk0h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 10 Mar 2020 21:17:01 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02ALH09c51380540
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Mar 2020 21:17:00 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9AC21AC05F;
+        Tue, 10 Mar 2020 21:17:00 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9FBBBAC059;
+        Tue, 10 Mar 2020 21:16:59 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.160.11.149])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 10 Mar 2020 21:16:59 +0000 (GMT)
+Subject: Re: [PATCH v6 3/3] tpm: ibmvtpm: Add support for TPM2
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, aik@ozlabs.ru,
+        david@gibson.dropbear.id.au, linux-kernel@vger.kernel.org,
+        gcwilson@linux.ibm.com, jgg@ziepe.ca
+References: <20200304132243.179402-1-stefanb@linux.vnet.ibm.com>
+ <20200304132243.179402-4-stefanb@linux.vnet.ibm.com>
+ <a54d6cffe536d568a9fde46f1f32616e89a42d30.camel@linux.intel.com>
+ <8dcd22c1-b05f-d619-58c5-fd2248c75b9e@linux.ibm.com>
+ <20200306183305.GA7472@linux.intel.com>
+ <9905c816-04f3-4674-055c-b2606e30fc17@linux.ibm.com>
+ <20200307110825.GA6705@linux.intel.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <ce77deb4-95cd-df1a-bdcf-bb5794b9ca42@linux.vnet.ibm.com>
+Date:   Tue, 10 Mar 2020 17:16:59 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20200307110825.GA6705@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-10_15:2020-03-10,2020-03-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 clxscore=1015 malwarescore=0 phishscore=0 mlxscore=0
+ mlxlogscore=999 adultscore=0 suspectscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003100127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yu-cheng Yu <yu-cheng.yu@intel.com> writes:
-> On Fri, 2020-03-06 at 21:50 +0100, Borislav Petkov wrote:
-> Earlier you wrote:
+
+On 3/7/20 6:09 AM, Jarkko Sakkinen wrote:
+> On Fri, Mar 06, 2020 at 01:51:30PM -0500, Stefan Berger wrote:
+>> On 3/6/20 1:33 PM, Jarkko Sakkinen wrote:
+>>> On Thu, Mar 05, 2020 at 08:58:15AM -0500, Stefan Berger wrote:
+>>>> On 3/5/20 6:21 AM, Jarkko Sakkinen wrote:
+>>>>> On Wed, 2020-03-04 at 08:22 -0500, Stefan Berger wrote:
+>>>>>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>>>>>
+>>>>>> Support TPM2 in the IBM vTPM driver. The hypervisor tells us what
+>>>>>> version of TPM is connected through the vio_device_id.
+>>>>>>
+>>>>>> In case a TPM2 device is found, we set the TPM_CHIP_FLAG_TPM2 flag
+>>>>>> and get the command codes attributes table. The driver does
+>>>>>> not need the timeouts and durations, though.
+>>>>>>
+>>>>>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>>>>> There is huge bunch of people in the cc-list and these patches
+>>>>> have total zero tested-by's. Why is that?
+>>>> I cc'ed them because of their involvement in other layers. That's all I can
+>>>> say.
+>>> OK, so there is no one who can test this?
+>> Nayna said she will test it next week.
+> That'd be great. Otherwise, I have no issues pulling the patches.
 >
->   53973 / (3*60 + 35) =~ 251 XSAVES invocations per second!
->
-> I would argue that the kernel does much more than that for context
-> switches.
+> /Jarkko
 
-And that argument is completly bogus. You deliberately ignored that
-Boris said that this is just a boring kernel build which is definitely
-not a signal heavy workload. And just if you look at what the build
-does, it spends a huge amount if time in ld which is not using signals
-at all.
 
-> These are from:
->   perf record -a make -j32 bzImage
+I tested the patches, except testing of bugfix for vtpm1.2.
 
-How useful: This is a systemwide record and not a recording of the
-workload. Try again and try with and without your stuff.
+Here are my Ack-by/Tested-by for the patchset:
 
-Even if you do it proper, those numbers are uninteresting, really.
+Acked-by: Nayna Jain <nayna@linux.ibm.com>
 
-What do they tell? Nothing but a picture of a workload which is known to
-be not signal heavy. You can also run while(1); for 20 seconds thats
-equally useful.
+Tested-by: Nayna Jain <nayna@linux.ibm.com>
 
-Run a signal benchmark and then show the numbers before and after and
-chose a benchmark which is not running on a single CPU, chose one which
-is bouncing signals back and forth between two busy threads pinned on
-different CPUs.
+Thanks & Regards,
 
-> Consider this and later maintenance, I think copy_xregs_to_kernel() is at
-> least not worse than saving each state separately.
+      - Nayna
 
-Please provide precise numbers taken with TSC for both variants just for
-that particular code path.
 
-And these numbers will only tell half of the story because they still do
-not take the cache foot print into account. 1000 bytes just to throw
-away 960 of them?
 
-While I appreciate that you worry about maintenance I can assure you
-that the code will be in a maintainable state at the point where it is
-going to be merged.
-
-Thanks,
-
-        tglx
 
 
