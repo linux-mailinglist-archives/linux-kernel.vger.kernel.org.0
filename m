@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0403917FEA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C621C17FE72
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:35:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbgCJNgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:36:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42872 "EHLO mail.kernel.org"
+        id S1727782AbgCJMoj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:44:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726729AbgCJMmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:42:45 -0400
+        id S1727774AbgCJMog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:44:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7C772469C;
-        Tue, 10 Mar 2020 12:42:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73A7E24691;
+        Tue, 10 Mar 2020 12:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844164;
-        bh=VHILj1hdvLedi4bK9aldW2sCS/TGmle25NoRM34pY1A=;
+        s=default; t=1583844275;
+        bh=XAUzqqs/iFZqXjyiC3BTwxXkC+Ct1BC8ORsE7GURgB4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fWZKjOedYyh/DOOIrtMps1rjAxEUgtgWCaNynZUK/7BYBVdBs3fpoTPOt0UZ3IjBs
-         EKqL9LahvLvzYCaXtFq4de6s/BzO65P2FutL7LvBEyiGiZTTzotLFPo2/ttYjaynVG
-         RQzIPr5yjQGYdqIyJ3E0OS7UWy9OLuV9bN+cxe94=
+        b=qCRJ696ly9YC8Ba3vleNZgMIV0zm3Nt9RInoaTLtQUhqVFZ45NsKYpiWOADc51oQm
+         RF3d9Jc7mkLawEYndsnz40PVIk1Q8oLBBy468E7ooPELduSKvw7oztaLPTB2iEDJvg
+         Az5Eyd+QsAkaVb40uHVqQIc2NfMNkhapqCWdDaPw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        stable@vger.kernel.org,
+        Arun Parameswaran <arun.parameswaran@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 17/72] nfc: pn544: Fix occasional HW initialization failure
+Subject: [PATCH 4.9 22/88] net: phy: restore mdio regs in the iproc mdio driver
 Date:   Tue, 10 Mar 2020 13:38:30 +0100
-Message-Id: <20200310123605.849507429@linuxfoundation.org>
+Message-Id: <20200310123611.443688839@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
-References: <20200310123601.053680753@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,43 +47,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Arun Parameswaran <arun.parameswaran@broadcom.com>
 
-[ Upstream commit c3331d2fe3fd4d5e321f2467d01f72de7edfb5d0 ]
+commit 6f08e98d62799e53c89dbf2c9a49d77e20ca648c upstream.
 
-The PN544 driver checks the "enable" polarity during of driver's probe and
-it's doing that by turning ON and OFF NFC with different polarities until
-enabling succeeds. It takes some time for the hardware to power-down, and
-thus, to deassert the IRQ that is raised by turning ON the hardware.
-Since the delay after last power-down of the polarity-checking process is
-missed in the code, the interrupt may trigger immediately after installing
-the IRQ handler (right after the checking is done), which results in IRQ
-handler trying to touch the disabled HW and ends with marking NFC as
-'DEAD' during of the driver's probe:
+The mii management register in iproc mdio block
+does not have a retention register so it is lost on suspend.
+Save and restore value of register while resuming from suspend.
 
-  pn544_hci_i2c 1-002a: NFC: nfc_en polarity : active high
-  pn544_hci_i2c 1-002a: NFC: invalid len byte
-  shdlc: llc_shdlc_recv_frame: NULL Frame -> link is dead
-
-This patch fixes the occasional NFC initialization failure on Nexus 7
-device.
-
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Fixes: bb1a619735b4 ("net: phy: Initialize mdio clock at probe function")
+Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nfc/pn544/i2c.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/phy/mdio-bcm-iproc.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/drivers/nfc/pn544/i2c.c
-+++ b/drivers/nfc/pn544/i2c.c
-@@ -241,6 +241,7 @@ static void pn544_hci_i2c_platform_init(
- 
- out:
- 	gpio_set_value_cansleep(phy->gpio_en, !phy->en_polarity);
-+	usleep_range(10000, 15000);
+--- a/drivers/net/phy/mdio-bcm-iproc.c
++++ b/drivers/net/phy/mdio-bcm-iproc.c
+@@ -188,6 +188,23 @@ static int iproc_mdio_remove(struct plat
+ 	return 0;
  }
  
- static void pn544_hci_i2c_enable_mode(struct pn544_i2c_phy *phy, int run_mode)
++#ifdef CONFIG_PM_SLEEP
++int iproc_mdio_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct iproc_mdio_priv *priv = platform_get_drvdata(pdev);
++
++	/* restore the mii clock configuration */
++	iproc_mdio_config_clk(priv->base);
++
++	return 0;
++}
++
++static const struct dev_pm_ops iproc_mdio_pm_ops = {
++	.resume = iproc_mdio_resume
++};
++#endif /* CONFIG_PM_SLEEP */
++
+ static const struct of_device_id iproc_mdio_of_match[] = {
+ 	{ .compatible = "brcm,iproc-mdio", },
+ 	{ /* sentinel */ },
+@@ -198,6 +215,9 @@ static struct platform_driver iproc_mdio
+ 	.driver = {
+ 		.name = "iproc-mdio",
+ 		.of_match_table = iproc_mdio_of_match,
++#ifdef CONFIG_PM_SLEEP
++		.pm = &iproc_mdio_pm_ops,
++#endif
+ 	},
+ 	.probe = iproc_mdio_probe,
+ 	.remove = iproc_mdio_remove,
 
 
