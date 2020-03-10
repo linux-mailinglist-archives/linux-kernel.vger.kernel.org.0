@@ -2,75 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3935E183303
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:30:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 423BF183E6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:12:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbgCLOaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 10:30:13 -0400
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:44766 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727390AbgCLOaN (ORCPT
+        id S1727218AbgCMBL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 21:11:26 -0400
+Received: from 97-93-29-23.dhcp.snlo.ca.charter.com ([97.93.29.23]:54444 "EHLO
+        skomatineni-linux.nvidia.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726971AbgCMBL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 10:30:13 -0400
-Received: by mail-qv1-f68.google.com with SMTP id w5so2674997qvp.11
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 07:30:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vM6oc6fo5COIOjScDqQkExf4k5Kw0lPjKerDiWDWlLs=;
-        b=GDBssRqB5HoCEcSFAl4veBaM3ULCEz87+H9W6shCKz64VI7iHbHXaLRH86hKhzvEAO
-         58U9az8YW2VX9xEZYQp7XKEFT9IWX9XPPupTTDtiE7hEclU/O4UdhKpffh9pTWyoBReN
-         FYibIJc5xTWXHNfpH66CYQZ2J55UiZBNv5thKuW4lkbwQlIneziO+dxsXT6vqTqk+OtT
-         fljVAqZVwnVn1yQkaiyFqVE1+anbH9REtujwJh20Z8o56OsxetVSycWbuDPL9eIBaomZ
-         7B8PERVfeQ2ipNQnx0y5xoWFpJjQyEdkBLdMiUtEspgf/nUw1WJzgCA//C8J6rRlQJLJ
-         WjTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vM6oc6fo5COIOjScDqQkExf4k5Kw0lPjKerDiWDWlLs=;
-        b=RHg3vyn500eVJX1dayXWxMsPXJYCzOYGWH5rMQrAcp0bAq/wf8FG1adZYrc9OHYJ2Y
-         j121u/K3wPcvpkTE5EdfXapjxd/h6xgNoQEs6G7C7JFPHe0Z+W0QOxc6L0aOyyNtuyLX
-         bZn0yreeT1DlRc1pSfBrM1oTqGN0JFjYcSTgaO+ROjvpQkQPvxsNe+spj89scPf5V/5o
-         PvRKzplsbJ1WUOZrzfvd5uHLlhT4xF4wALWSonDXzLsACXWYDLScg2JYRgY93zjHFUf9
-         vZV4lUJ1t/R1LzOnbSmxd282W2Md/3WU/wV70vSTwJy+ZOYR6WD4T/BZVc/3JOSfz+C3
-         GOYA==
-X-Gm-Message-State: ANhLgQ1CTrly5noPModI3jvHIfJHL21T2FmRd8XHyhNCqVU8EP4O7KkL
-        k+NXH/XXT9Rt6MA5Ja9CVmVwDi3yyWVl1xHe5gpWFw==
-X-Google-Smtp-Source: ADFU+vskodzAfAY2XYiDJ7aqoyeN9fXBPZhIj/VC7r42Db/fA6y3KJYApo5/zk+3zEyUUZ20T56TyvRlxLq9E51aDII=
-X-Received: by 2002:ad4:4a6c:: with SMTP id cn12mr5105765qvb.148.1584023412109;
- Thu, 12 Mar 2020 07:30:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200312094008.1833929-1-gabravier@gmail.com> <CAMpxmJUUth5w8tvZp8mFV-FDz0YivmRWAqsOQSTdze1xagMX8A@mail.gmail.com>
- <38cbabe3-151b-1fd6-9d36-f27e9c9aa414@gmail.com>
-In-Reply-To: <38cbabe3-151b-1fd6-9d36-f27e9c9aa414@gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Thu, 12 Mar 2020 15:29:57 +0100
-Message-ID: <CAMpxmJVSPA9CQBGULyk69KaP42oMdKGg883z0FeFC_mSA5w2xA@mail.gmail.com>
-Subject: Re: [PATCH] gpio-hammer: Avoid potential overflow in main
-To:     Gabriel Ravier <gabravier@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 12 Mar 2020 21:11:26 -0400
+Received: by skomatineni-linux.nvidia.com (Postfix, from userid 1000)
+        id 402D0104006E; Mon,  9 Mar 2020 17:13:27 -0700 (PDT)
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        baolin.wang@linaro.org, kstewart@linuxfoundation.org,
+        tglx@linutronix.de, bradleybolen@gmail.com,
+        gregkh@linuxfoundation.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com
+Cc:     skomatineni@nvidia.com, anrao@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Subject: [PATCH v1 1/3] mmc: core: Add capability for hosts supporting long HW busy wait
+Date:   Mon,  9 Mar 2020 17:13:23 -0700
+Message-Id: <1583799205-8442-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-czw., 12 mar 2020 o 15:21 Gabriel Ravier <gabravier@gmail.com> napisa=C5=82=
-(a):
->
-> Ah, that was accidental. I was applying scripts/Lindent to my code and
-> ended up also having it applied to part of the old code. Didn't think it
-> would hurt, but I guess it makes sense to be this stringent on
-> separating logical changes. Will send a (complete) corrected patch
-> in-reply-to this message.
->
+Some mmc operation like SLEEP_AWAKE and cache flush through SWITCH
+command takes longer time and for host controllers supporting HW
+busy detection, core driver converts R1B type to R1 type response
+for these commands if operation time is more than HW busy timeout
+and uses SW poll for busy state.
 
-Please don't send patches in response to other threads. Always start a
-new thread and increment the version in [PATCH vX] tag.
+This patch adds a host capability MMC_CAP2_LONG_WAIT_HW_BUSY for
+hosts supporting long or infinite busy wait of HW busy detection
+for these long mmc operations and prevents core driver from
+converting R1B to R1 response type.
 
-Bart
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/mmc/core/mmc.c     | 3 ++-
+ drivers/mmc/core/mmc_ops.c | 3 ++-
+ include/linux/mmc/host.h   | 1 +
+ 3 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index c2abd41..5aea3a6 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1916,7 +1916,8 @@ static int mmc_sleep(struct mmc_host *host)
+ 	 * from doing hw busy detection, which is done by converting to a R1
+ 	 * response instead of a R1B.
+ 	 */
+-	if (host->max_busy_timeout && (timeout_ms > host->max_busy_timeout)) {
++	if (host->max_busy_timeout && (timeout_ms > host->max_busy_timeout) &&
++	    !(host->caps2 & MMC_CAP2_LONG_WAIT_HW_BUSY)) {
+ 		cmd.flags = MMC_RSP_R1 | MMC_CMD_AC;
+ 	} else {
+ 		cmd.flags = MMC_RSP_R1B | MMC_CMD_AC;
+diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
+index aa0cab1..251b4c7 100644
+--- a/drivers/mmc/core/mmc_ops.c
++++ b/drivers/mmc/core/mmc_ops.c
+@@ -579,7 +579,8 @@ int __mmc_switch(struct mmc_card *card, u8 set, u8 index, u8 value,
+ 	 * the host to avoid HW busy detection, by converting to a R1 response
+ 	 * instead of a R1B.
+ 	 */
+-	if (host->max_busy_timeout && (timeout_ms > host->max_busy_timeout))
++	if (host->max_busy_timeout && (timeout_ms > host->max_busy_timeout) &&
++	    !(host->caps2 & MMC_CAP2_LONG_WAIT_HW_BUSY))
+ 		use_r1b_resp = false;
+ 
+ 	cmd.opcode = MMC_SWITCH;
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 6aaa15e..1cda4dd 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -371,6 +371,7 @@ struct mmc_host {
+ #define MMC_CAP2_CQE_DCMD	(1 << 24)	/* CQE can issue a direct command */
+ #define MMC_CAP2_AVOID_3_3V	(1 << 25)	/* Host must negotiate down from 3.3V */
+ #define MMC_CAP2_MERGE_CAPABLE	(1 << 26)	/* Host can merge a segment over the segment size */
++#define MMC_CAP2_LONG_WAIT_HW_BUSY (1 << 27)	/* Host can support long busy timeout, do not convert R1B to R1 response */
+ 
+ 	int			fixed_drv_type;	/* fixed driver type for non-removable media */
+ 
+-- 
+2.7.4
+
