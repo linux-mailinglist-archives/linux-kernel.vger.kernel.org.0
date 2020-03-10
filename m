@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0545817F844
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E379217F8EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:52:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbgCJMq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:46:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49556 "EHLO mail.kernel.org"
+        id S1728737AbgCJMwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:52:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728002AbgCJMqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:46:21 -0400
+        id S1729057AbgCJMw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:52:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D26C520674;
-        Tue, 10 Mar 2020 12:46:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A428220674;
+        Tue, 10 Mar 2020 12:52:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844381;
-        bh=PeHBr6dPrD0S0NEiWd3wlD5q13RzmQoY6W7P6aRl6YY=;
+        s=default; t=1583844748;
+        bh=vTWBqDRsC/tFRPDMOCq60Nxj2V6mOLrWJm0saUVbkdQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bD2oHnJHwIFwf0cbOv5R0nXmp2uw2P7nvwo4p4O7ayPivbGEK1YLo5IXEs9w6+yrt
-         JUSlCgW+Z02b3f/tTc2fuNkjdhimJmP5hyoQvE5I0rUk7RivzE1PNnafjjvCpAgfGx
-         40VtjfS2oC+xzZFgX7Sa5TBsCmiBd6LJ88gqpe38=
+        b=XCHu0GA3XnaRxOFBItUrK76AA0q9izLx5YvPlHnevFMijXprQEswpFnwevXcSSozx
+         8gpKAoUdzdEfWdu9di7ffn677zUAL9OgrknaMGsN7/at07ObGtHfwioVxuznivD9PK
+         5iPat5XUbvS06e2G1McnPc3ikuZqAhVZUaaVcDD8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 60/88] watchdog: da9062: do not ping the hw during stop()
-Date:   Tue, 10 Mar 2020 13:39:08 +0100
-Message-Id: <20200310123621.404079329@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 5.4 103/168] dmaengine: tegra-apb: Prevent race conditions of tasklet vs free list
+Date:   Tue, 10 Mar 2020 13:39:09 +0100
+Message-Id: <20200310123645.807416745@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,51 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marco Felsch <m.felsch@pengutronix.de>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit e9a0e65eda3f78d0b04ec6136c591c000cbc3b76 ]
+commit c33ee1301c393a241d6424e36eff1071811b1064 upstream.
 
-The da9062 hw has a minimum ping cool down phase of at least 200ms. The
-driver takes that into account by setting the min_hw_heartbeat_ms to
-300ms and the core guarantees that the hw limit is observed for the
-ping() calls. But the core can't guarantee the required minimum ping
-cool down phase if a stop() command is send immediately after the ping()
-command. So it is not allowed to ping the watchdog within the stop()
-command as the driver does. Remove the ping can be done without doubts
-because the watchdog gets disabled anyway and a (re)start resets the
-watchdog counter too.
+The interrupt handler puts a half-completed DMA descriptor on a free list
+and then schedules tasklet to process bottom half of the descriptor that
+executes client's callback, this creates possibility to pick up the busy
+descriptor from the free list. Thus, let's disallow descriptor's re-use
+until it is fully processed.
 
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20200120091729.16256-1-m.felsch@pengutronix.de
-[groeck: Updated description]
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200209163356.6439-3-digetx@gmail.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/watchdog/da9062_wdt.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/dma/tegra20-apb-dma.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/watchdog/da9062_wdt.c b/drivers/watchdog/da9062_wdt.c
-index 7386111220d58..daeb645fcea8a 100644
---- a/drivers/watchdog/da9062_wdt.c
-+++ b/drivers/watchdog/da9062_wdt.c
-@@ -126,13 +126,6 @@ static int da9062_wdt_stop(struct watchdog_device *wdd)
- 	struct da9062_watchdog *wdt = watchdog_get_drvdata(wdd);
- 	int ret;
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -281,7 +281,7 @@ static struct tegra_dma_desc *tegra_dma_
  
--	ret = da9062_reset_watchdog_timer(wdt);
--	if (ret) {
--		dev_err(wdt->hw->dev, "Failed to ping the watchdog (err = %d)\n",
--			ret);
--		return ret;
--	}
--
- 	ret = regmap_update_bits(wdt->hw->regmap,
- 				 DA9062AA_CONTROL_D,
- 				 DA9062AA_TWDSCALE_MASK,
--- 
-2.20.1
-
+ 	/* Do not allocate if desc are waiting for ack */
+ 	list_for_each_entry(dma_desc, &tdc->free_dma_desc, node) {
+-		if (async_tx_test_ack(&dma_desc->txd)) {
++		if (async_tx_test_ack(&dma_desc->txd) && !dma_desc->cb_count) {
+ 			list_del(&dma_desc->node);
+ 			spin_unlock_irqrestore(&tdc->lock, flags);
+ 			dma_desc->txd.flags = 0;
 
 
