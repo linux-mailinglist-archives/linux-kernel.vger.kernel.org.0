@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C301917F7C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:42:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1CFC17F82A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:45:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbgCJMmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:42:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41936 "EHLO mail.kernel.org"
+        id S1726463AbgCJMpn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:45:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727241AbgCJMmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:42:06 -0400
+        id S1727691AbgCJMpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:45:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C78E624686;
-        Tue, 10 Mar 2020 12:42:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DAB4246A3;
+        Tue, 10 Mar 2020 12:45:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844126;
-        bh=sOAGFuQmdWeLvsjXjqeTg71nvzmjKCDHQHCRceyd3eA=;
+        s=default; t=1583844340;
+        bh=/SdVvABjZMbhpCatfBfYl/CVRlV9dxUaLRllt1nFvB8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hwfVoCWzBNL/BAKV1RA1w3/8Ugoy86OyqatWBsrMXchRxBDj56Xv5mdNl2/A49dns
-         2cNgnEUwtEeBb0IcJfffptt7qtf8IGRF9WqFtobShwhJN4P+j3NVqnIkEqJPM8DZlg
-         OxJucODUNr7hDzyVj6+NYQtJIDzIWsSpYfQovN08=
+        b=plL+pplXLHoyQRWAetymaErJPQKvbanKOKC8UASd0+bYWUkLUbENz+L0OYLDScmfv
+         tPIFQrnpvbR160eKcVIrLhGGuqStPqQUdRndZQuLCaJg87JS75krXEj8m48+E5djb1
+         ofrmceZE8QelSIRKUY97kazbPkUsh7Y6uixD9FMk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuanhong Guo <gch981213@gmail.com>,
-        Daniel Golle <daniel@makrotopia.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 40/72] serial: ar933x_uart: set UART_CS_{RX,TX}_READY_ORIDE
-Date:   Tue, 10 Mar 2020 13:38:53 +0100
-Message-Id: <20200310123611.483812673@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 46/88] drivers: net: xgene: Fix the order of the arguments of alloc_etherdev_mqs()
+Date:   Tue, 10 Mar 2020 13:38:54 +0100
+Message-Id: <20200310123617.440477082@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
-References: <20200310123601.053680753@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,58 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Golle <daniel@makrotopia.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit 87c5cbf71ecbb9e289d60a2df22eb686c70bf196 ]
+commit 5a44c71ccda60a50073c5d7fe3f694cdfa3ab0c2 upstream.
 
-On AR934x this UART is usually not initialized by the bootloader
-as it is only used as a secondary serial port while the primary
-UART is a newly introduced NS16550-compatible.
-In order to make use of the ar933x-uart on AR934x without RTS/CTS
-hardware flow control, one needs to set the
-UART_CS_{RX,TX}_READY_ORIDE bits as other than on AR933x where this
-UART is used as primary/console, the bootloader on AR934x typically
-doesn't set those bits.
-Setting them explicitely on AR933x should not do any harm, so just
-set them unconditionally.
+'alloc_etherdev_mqs()' expects first 'tx', then 'rx'. The semantic here
+looks reversed.
 
-Tested-by: Chuanhong Guo <gch981213@gmail.com>
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-Link: https://lore.kernel.org/r/20200207095335.GA179836@makrotopia.org
+Reorder the arguments passed to 'alloc_etherdev_mqs()' in order to keep
+the correct semantic.
+
+In fact, this is a no-op because both XGENE_NUM_[RT]X_RING are 8.
+
+Fixes: 107dec2749fe ("drivers: net: xgene: Add support for multiple queues")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/tty/serial/ar933x_uart.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/ethernet/apm/xgene/xgene_enet_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/ar933x_uart.c b/drivers/tty/serial/ar933x_uart.c
-index 1519d2ca7705f..40194791cde0b 100644
---- a/drivers/tty/serial/ar933x_uart.c
-+++ b/drivers/tty/serial/ar933x_uart.c
-@@ -294,6 +294,10 @@ static void ar933x_uart_set_termios(struct uart_port *port,
- 	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
- 			    AR933X_UART_CS_HOST_INT_EN);
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
+@@ -1711,7 +1711,7 @@ static int xgene_enet_probe(struct platf
+ 	int ret;
  
-+	/* enable RX and TX ready overide */
-+	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
-+		AR933X_UART_CS_TX_READY_ORIDE | AR933X_UART_CS_RX_READY_ORIDE);
-+
- 	/* reenable the UART */
- 	ar933x_uart_rmw(up, AR933X_UART_CS_REG,
- 			AR933X_UART_CS_IF_MODE_M << AR933X_UART_CS_IF_MODE_S,
-@@ -426,6 +430,10 @@ static int ar933x_uart_startup(struct uart_port *port)
- 	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
- 			    AR933X_UART_CS_HOST_INT_EN);
+ 	ndev = alloc_etherdev_mqs(sizeof(struct xgene_enet_pdata),
+-				  XGENE_NUM_RX_RING, XGENE_NUM_TX_RING);
++				  XGENE_NUM_TX_RING, XGENE_NUM_RX_RING);
+ 	if (!ndev)
+ 		return -ENOMEM;
  
-+	/* enable RX and TX ready overide */
-+	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
-+		AR933X_UART_CS_TX_READY_ORIDE | AR933X_UART_CS_RX_READY_ORIDE);
-+
- 	/* Enable RX interrupts */
- 	up->ier = AR933X_UART_INT_RX_VALID;
- 	ar933x_uart_write(up, AR933X_UART_INT_EN_REG, up->ier);
--- 
-2.20.1
-
 
 
