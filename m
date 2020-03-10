@@ -2,68 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45235180B70
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 23:24:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC3AB180B7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 23:25:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbgCJWYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 18:24:19 -0400
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:8935 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726315AbgCJWYT (ORCPT
+        id S1727829AbgCJWZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 18:25:15 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:40192 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727791AbgCJWZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 18:24:19 -0400
-Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 10 Mar 2020 15:24:18 -0700
-Received: from gurus-linux.qualcomm.com ([10.46.162.81])
-  by ironmsg-SD-alpha.qualcomm.com with ESMTP; 10 Mar 2020 15:24:18 -0700
-Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
-        id 50F004A2B; Tue, 10 Mar 2020 15:24:18 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 15:24:18 -0700
-From:   Guru Das Srinagesh <gurus@codeaurora.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
-        linux-kernel@vger.kernel.org, Kamil Debski <kamil@wypas.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v7 03/13] hwmon: pwm-fan: Use 64-bit division macros for
- period and duty cycle
-Message-ID: <20200310222418.GA8053@codeaurora.org>
-References: <cover.1583782035.git.gurus@codeaurora.org>
- <b503833e0f58bd6dd9fe84d866124e7c457e099e.1583782035.git.gurus@codeaurora.org>
- <20200309214822.GA19773@roeck-us.net>
- <20200310120814.4kjxmii3c7zxw55y@pengutronix.de>
- <bd6c7679-9569-2cf1-1664-61bf368d82dd@roeck-us.net>
+        Tue, 10 Mar 2020 18:25:14 -0400
+Received: by mail-io1-f71.google.com with SMTP id m24so100135iol.7
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 15:25:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=/mGXnhXZurO4CREgFpYtZhovCFB8iVw1jhK1uRbKELA=;
+        b=JF/SFOI8B26prH/HAEFoDqZ9vWA3gcaZHGCdsx64UdV8SaWzgQ06P9QJHxXnaM7Fd2
+         tzZFZra6Xq7kHHs6jEfMEjlm5OyEFfUfux7rq6h1vm64kk04pI09rc73BwhDAVMkDr6a
+         VZjTFzGDX3p/iLbcz27g7f/c/MR8LQPGmDRs8rkGu2ahpyzhvFjIUm/G2I6RHUXA1hyv
+         rQpNDy4mNJHLrkNkXWdgcN8H/u6JZ1+HRjEhJ3Jc5NFss5Fgxf22/P2ysu46jERBLE4a
+         yVC3bQ6SyPJrHpQaEbzCfziUomO0bMMpDcTCz0jmnpR5yzkj9XKJL1wINYGMVTB/9Z1m
+         8y9A==
+X-Gm-Message-State: ANhLgQ2qCoBgarUUzDde9TE/ve90pxBdTMc5WySk7zT8vSSME4oHadMO
+        wn2JKml9kkeLvc4jlpLMlBcZdManO81S7LLuUDrZbKfKhZlB
+X-Google-Smtp-Source: ADFU+vuSCDa6sFDmriiZ0a0XGIM9FkUJKlP1Z4fwu89Hj8u7d6sDDMEcvTfI7GrxVA1ivCG/v+ATvnkrzGPr+j+rOHWgcOW0QdhF
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd6c7679-9569-2cf1-1664-61bf368d82dd@roeck-us.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Received: by 2002:a5e:9b09:: with SMTP id j9mr240391iok.114.1583879113910;
+ Tue, 10 Mar 2020 15:25:13 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 15:25:13 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f3b11305a0879723@google.com>
+Subject: WARNING in kfree (2)
+From:   syzbot <syzbot+50ef5e5e5ea5f812f0c2@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, jhs@mojatatu.com, jiri@resnulli.us,
+        kuba@kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 08:05:58AM -0700, Guenter Roeck wrote:
-> I don't see support in the LED subsystem to utilize the PWM framework directly
-> for blinking. Plus, you say yourself that it isn't a _real_ use case, just a
-> theoretic one.
+Hello,
 
-An example use case is a mobile phone OEM that wishes to set a period of
-5 seconds or more for, say, a low battery slow blinking indication - currently
-this is not possible. The PWM framework not having direct support for
-blinking should not be a concern if the PWM peripheral being controlled
-supports it via register writes.
+syzbot found the following crash on:
 
-> Either case, the reason / use case for this series should be explained
-> in the summary patch. That is what it is for. That case is not made.
+HEAD commit:    2c523b34 Linux 5.6-rc5
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=154b5181e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c2e311dba9a02ba9
+dashboard link: https://syzkaller.appspot.com/bug?extid=50ef5e5e5ea5f812f0c2
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+userspace arch: i386
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d8ae91e00000
 
-Will upload a new patchset adding more details in the summary patch.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+50ef5e5e5ea5f812f0c2@syzkaller.appspotmail.com
 
-Thank you.
+------------[ cut here ]------------
+virt_to_cache: Object is not a Slab page!
+WARNING: CPU: 1 PID: 9436 at mm/slab.h:473 virt_to_cache mm/slab.h:473 [inline]
+WARNING: CPU: 1 PID: 9436 at mm/slab.h:473 kfree+0x1cf/0x2b0 mm/slab.c:3749
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 9436 Comm: syz-executor.0 Not tainted 5.6.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x188/0x20d lib/dump_stack.c:118
+ panic+0x2e3/0x75c kernel/panic.c:221
+ __warn.cold+0x2f/0x35 kernel/panic.c:582
+ report_bug+0x27b/0x2f0 lib/bug.c:195
+ fixup_bug arch/x86/kernel/traps.c:174 [inline]
+ fixup_bug arch/x86/kernel/traps.c:169 [inline]
+ do_error_trap+0x12b/0x220 arch/x86/kernel/traps.c:267
+ do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:286
+ invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+RIP: 0010:virt_to_cache mm/slab.h:473 [inline]
+RIP: 0010:kfree+0x1cf/0x2b0 mm/slab.c:3749
+Code: 51 ff e9 67 fe ff ff 80 3d 8a a4 b2 08 00 75 1c 48 c7 c6 40 52 15 88 48 c7 c7 e8 03 26 89 c6 05 73 a4 b2 08 01 e8 b9 9f 95 ff <0f> 0b f6 c7 02 75 6b 48 83 3d 52 2e c5 07 00 0f 85 4e ff ff ff 0f
+RSP: 0018:ffffc900020e7030 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: 0000000000000282 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff815bf4f1 RDI: fffff5200041cdf8
+RBP: ffffffff8c3f7080 R08: ffff88808e97c600 R09: ffffed1015ce45c9
+R10: ffffed1015ce45c8 R11: ffff8880ae722e43 R12: ffffffff8628c202
+R13: dffffc0000000000 R14: ffff8880a0069c10 R15: 0000000000000000
+ tcf_exts_destroy+0x62/0xc0 net/sched/cls_api.c:3002
+ tcf_exts_change+0xf4/0x150 net/sched/cls_api.c:3059
+ tcindex_set_parms+0xed8/0x1a00 net/sched/cls_tcindex.c:456
+ tcindex_change+0x203/0x2e0 net/sched/cls_tcindex.c:518
+ tc_new_tfilter+0xa59/0x20b0 net/sched/cls_api.c:2103
+ rtnetlink_rcv_msg+0x810/0xad0 net/core/rtnetlink.c:5427
+ netlink_rcv_skb+0x15a/0x410 net/netlink/af_netlink.c:2478
+ netlink_unicast_kernel net/netlink/af_netlink.c:1303 [inline]
+ netlink_unicast+0x537/0x740 net/netlink/af_netlink.c:1329
+ netlink_sendmsg+0x882/0xe10 net/netlink/af_netlink.c:1918
+ sock_sendmsg_nosec net/socket.c:652 [inline]
+ sock_sendmsg+0xcf/0x120 net/socket.c:672
+ ____sys_sendmsg+0x6b9/0x7d0 net/socket.c:2343
+ ___sys_sendmsg+0x100/0x170 net/socket.c:2397
+ __sys_sendmsg+0xec/0x1b0 net/socket.c:2430
+ do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
+ do_fast_syscall_32+0x270/0xe8f arch/x86/entry/common.c:408
+ entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-Guru Das.
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
