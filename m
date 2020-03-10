@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D14317F83A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E36217F7D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:43:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbgCJMqH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:46:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49012 "EHLO mail.kernel.org"
+        id S1727413AbgCJMmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:42:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727722AbgCJMqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:46:06 -0400
+        id S1726729AbgCJMmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:42:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 270B224696;
-        Tue, 10 Mar 2020 12:46:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 723E224691;
+        Tue, 10 Mar 2020 12:42:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844365;
-        bh=TmISeBl+z/riu5zI1Aow+4OtmrTWBLBSDho4zHJx+0g=;
+        s=default; t=1583844157;
+        bh=SQ2MaxiEeeggYa8Al9n/ttmWC3FChj2NL+dGYfBYCuY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vB5LMzaAiR8/queMPFHGeq+B+5eQt+nr4BmAvYG7s7eRD9D4Ts9077ucBUrfgxJlT
-         0QudpRm5UUs64zfajwN++ZD9tb0AyOb0SloILk+DfgoPsWnMopW0WZg7gk0VJ6vJbl
-         XdEm0jSC4anL6I3N20hGtBcEd7Z+WvPdsk4invlM=
+        b=YsYjpZ6MD3mXXJwXz99lIpwxCn2blAhxl+48XbtJ+DNTKt8Djwu3S0IsZzyBeRGJe
+         30y2X7zN6017r4tY5ecgpikqKH3e+B6upw5/8urQP3OJ/0sW4jiAm9zpImWrwSu0XH
+         UbTjwjUezHHdE84aDdZcRj0MXEPWB1wRYsWUn7jo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sergey Organov <sorganov@gmail.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Felipe Balbi <balbi@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 54/88] usb: gadget: serial: fix Tx stall after buffer overflow
-Date:   Tue, 10 Mar 2020 13:39:02 +0100
-Message-Id: <20200310123619.619783130@linuxfoundation.org>
+        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>
+Subject: [PATCH 4.4 50/72] cifs: dont leak -EAGAIN for stat() during reconnect
+Date:   Tue, 10 Mar 2020 13:39:03 +0100
+Message-Id: <20200310123613.706021327@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <20200310123601.053680753@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergey Organov <sorganov@gmail.com>
+From: Ronnie Sahlberg <lsahlber@redhat.com>
 
-[ Upstream commit e4bfded56cf39b8d02733c1e6ef546b97961e18a ]
+commit fc513fac56e1b626ae48a74d7551d9c35c50129e upstream.
 
-Symptom: application opens /dev/ttyGS0 and starts sending (writing) to
-it while either USB cable is not connected, or nobody listens on the
-other side of the cable. If driver circular buffer overflows before
-connection is established, no data will be written to the USB layer
-until/unless /dev/ttyGS0 is closed and re-opened again by the
-application (the latter besides having no means of being notified about
-the event of establishing of the connection.)
+If from cifs_revalidate_dentry_attr() the SMB2/QUERY_INFO call fails with an
+error, such as STATUS_SESSION_EXPIRED, causing the session to be reconnected
+it is possible we will leak -EAGAIN back to the application even for
+system calls such as stat() where this is not a valid error.
 
-Fix: on open and/or connect, kick Tx to flush circular buffer data to
-USB layer.
+Fix this by re-trying the operation from within cifs_revalidate_dentry_attr()
+if cifs_get_inode_info*() returns -EAGAIN.
 
-Signed-off-by: Sergey Organov <sorganov@gmail.com>
-Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Signed-off-by: Felipe Balbi <balbi@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This fixes stat() and possibly also other system calls that uses
+cifs_revalidate_dentry*().
+
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/usb/gadget/function/u_serial.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/cifs/inode.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
-index 510a54f889635..5d7d0f2e80a5e 100644
---- a/drivers/usb/gadget/function/u_serial.c
-+++ b/drivers/usb/gadget/function/u_serial.c
-@@ -715,8 +715,10 @@ static int gs_start_io(struct gs_port *port)
- 	port->n_read = 0;
- 	started = gs_start_rx(port);
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -1957,6 +1957,7 @@ int cifs_revalidate_dentry_attr(struct d
+ 	struct inode *inode = d_inode(dentry);
+ 	struct super_block *sb = dentry->d_sb;
+ 	char *full_path = NULL;
++	int count = 0;
  
--	/* unblock any pending writes into our circular buffer */
- 	if (started) {
-+		gs_start_tx(port);
-+		/* Unblock any pending writes into our circular buffer, in case
-+		 * we didn't in gs_start_tx() */
- 		tty_wakeup(port->port.tty);
- 	} else {
- 		gs_free_requests(ep, head, &port->read_allocated);
--- 
-2.20.1
-
+ 	if (inode == NULL)
+ 		return -ENOENT;
+@@ -1978,15 +1979,18 @@ int cifs_revalidate_dentry_attr(struct d
+ 		 full_path, inode, inode->i_count.counter,
+ 		 dentry, dentry->d_time, jiffies);
+ 
++again:
+ 	if (cifs_sb_master_tcon(CIFS_SB(sb))->unix_ext)
+ 		rc = cifs_get_inode_info_unix(&inode, full_path, sb, xid);
+ 	else
+ 		rc = cifs_get_inode_info(&inode, full_path, NULL, sb,
+ 					 xid, NULL);
+-
++	if (rc == -EAGAIN && count++ < 10)
++		goto again;
+ out:
+ 	kfree(full_path);
+ 	free_xid(xid);
++
+ 	return rc;
+ }
+ 
 
 
