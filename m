@@ -2,318 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCC1617F119
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 08:38:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B79317F11F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 08:39:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbgCJHix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 03:38:53 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45380 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbgCJHiw (ORCPT
+        id S1726403AbgCJHjn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 03:39:43 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:42217 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbgCJHjm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 03:38:52 -0400
-Received: by mail-wr1-f68.google.com with SMTP id m9so5454722wro.12
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 00:38:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0dFLdP85Y9Q8awZvmKHn54zR0u+MbjrnH2r4/T/oqTM=;
-        b=QCZknUtyKW1Tlu+z26Lyf3hzOfJ8dbBwlDj43PxnSWzU1ew+4lXbTeLry/MG/ijeFi
-         ghy+DoOd2lzneoouNvWg0GgTXU+J9C4W9L6smg9xJx4pTzL5QHW/if1YZ9X6Lw7B6TOO
-         H6AdrxwAMuLzgt77HZp2Zn1c5A9TrG/NSUFo+lJ9gDFVTfF98QFh0pj4Rc69wxsE/OzF
-         AOOT1T2GK2Es4FsxLpfWHTbbXQgXP+aaMtnFUuC8C2/DTdOeqD0N6IqjbgtRlGJLWBxB
-         w6++FB+X/z3cm1GQl5SQQYULo4lY1rsxC45mq2zweY3bjd3J4upsH8SP3RSRX8SXiES2
-         djnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0dFLdP85Y9Q8awZvmKHn54zR0u+MbjrnH2r4/T/oqTM=;
-        b=ERT0AqzxB/KWtOyn4+rXhRFVqgY3qsJno6lfuMrF39f8k6u6vWwTYYoMGWVTqIVp6s
-         owLdoO5En5716WCXUAt74HPi4tmm/zkYT4HBXWbaIEBN6LfIaR0rNXa4qG5jGWX8g4zI
-         qAcgJfGlli65ccMxA1bPh26LJxyulyT3NQKIfIU0/CvLvSKU9+0lHp/l3vinc8xI4L5i
-         KuUJcwPDGgZZwi4I06q3p+g6uIgWDdu3gDw2/wc7TkHiJXb3rFPMd2qg/rRwwzCLzLck
-         QBWtmAKoXkBH0sXeaALPOYRIjmyUpGQKeb4oPLdoIsm2HJgoelaMb4nvSoKxW1uvCw6l
-         a61g==
-X-Gm-Message-State: ANhLgQ0wm96xmPp7FxNTzhmGTiX0s7OXWKiH5IKWKKuva9JRW+5QlnBX
-        3LMRRmuryzVn+35OLfSICHPuPj9BnU9nsJPaVvIT5A==
-X-Google-Smtp-Source: ADFU+vtkDemeCtgwrmDObfWc/zs49KPzuQUFPvhXvrdL+aQHzY5iKeS7LyinR8U/P7wWJnFaZ0dGFEZkh4vMj7q/yrE=
-X-Received: by 2002:adf:f309:: with SMTP id i9mr16812426wro.0.1583825930137;
- Tue, 10 Mar 2020 00:38:50 -0700 (PDT)
+        Tue, 10 Mar 2020 03:39:42 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1jBZU3-0001OK-GJ; Tue, 10 Mar 2020 08:39:23 +0100
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1jBZU0-00089j-OU; Tue, 10 Mar 2020 08:39:20 +0100
+Date:   Tue, 10 Mar 2020 08:39:20 +0100
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Robin Gong <yibin.gong@nxp.com>
+Cc:     vkoul@kernel.org, shawnguo@kernel.org,
+        u.kleine-koenig@pengutronix.de, broonie@kernel.org,
+        robh+dt@kernel.org, festevam@gmail.com, dan.j.williams@intel.com,
+        mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        l.stach@pengutronix.de, martin.fuzzey@flowbird.group,
+        kernel@pengutronix.de, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [RESEND v6  06/13] spi: imx: fix ERR009165
+Message-ID: <20200310073920.GR3335@pengutronix.de>
+References: <1583839922-22699-1-git-send-email-yibin.gong@nxp.com>
+ <1583839922-22699-7-git-send-email-yibin.gong@nxp.com>
 MIME-Version: 1.0
-References: <20200226011037.7179-1-atish.patra@wdc.com> <20200226011037.7179-6-atish.patra@wdc.com>
- <CAKv+Gu_iAzQ6et13aACarqns8-xzQ+YSqj+m3mVGGy=ny8GJBg@mail.gmail.com>
- <26172d39fdb5ecd951ade0a89566c010f6166a03.camel@wdc.com> <CAKv+Gu8i93gM0dMqzbhvNbqsgd9dHCMGzX7E47uusrUvv6xRJA@mail.gmail.com>
- <46e9873e288134f638cd8726a2c15c9ca63860ce.camel@wdc.com> <CAKv+Gu_2dCj74VvCMRQ9yFgBtJRENasBbEV0bwcfqLQwuaj0=A@mail.gmail.com>
- <CAOnJCU+zBgYo0ez2ExiAbGttwpVq302vGrZJ3Y9g+S=SHTMuiw@mail.gmail.com>
-In-Reply-To: <CAOnJCU+zBgYo0ez2ExiAbGttwpVq302vGrZJ3Y9g+S=SHTMuiw@mail.gmail.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Tue, 10 Mar 2020 13:08:38 +0530
-Message-ID: <CAAhSdy3tT5TgRy1g=aMX1k+m7j13eo4exM0jvgt8mDS4bZ94YA@mail.gmail.com>
-Subject: Re: [RFC PATCH 5/5] RISC-V: Add EFI stub support.
-To:     Atish Patra <atishp@atishpatra.org>
-Cc:     Ard Biesheuvel <ardb@kernel.org>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "abner.chang@hpe.com" <abner.chang@hpe.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel.schaefer@hpe.com" <daniel.schaefer@hpe.com>,
-        Anup Patel <Anup.Patel@wdc.com>,
-        "palmer@dabbelt.com" <palmer@dabbelt.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "agraf@csgraf.de" <agraf@csgraf.de>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "leif@nuviainc.com" <leif@nuviainc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1583839922-22699-7-git-send-email-yibin.gong@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 08:28:52 up 19 days, 14:59, 43 users,  load average: 0.01, 0.14,
+ 0.20
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 12:39 PM Atish Patra <atishp@atishpatra.org> wrote:
->
-> On Thu, Feb 27, 2020 at 10:57 PM Ard Biesheuvel <ardb@kernel.org> wrote:
-> >
-> > On Fri, 28 Feb 2020 at 02:05, Atish Patra <Atish.Patra@wdc.com> wrote:
-> > >
-> > > On Thu, 2020-02-27 at 20:59 +0100, Ard Biesheuvel wrote:
-> > > > On Thu, 27 Feb 2020 at 20:53, Atish Patra <Atish.Patra@wdc.com>
-> > > > wrote:
-> > > > > On Wed, 2020-02-26 at 08:28 +0100, Ard Biesheuvel wrote:
-> > > > > > On Wed, 26 Feb 2020 at 02:10, Atish Patra <atish.patra@wdc.com>
-> > > > > > wrote:
-> > > > > > > Add a RISC-V architecture specific stub code that actually
-> > > > > > > copies
-> > > > > > > the
-> > > > > > > actual kernel image to a valid address and jump to it after
-> > > > > > > boot
-> > > > > > > services
-> > > > > > > are terminated. Enable UEFI related kernel configs as well for
-> > > > > > > RISC-V.
-> > > > > > >
-> > > > > > > Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> > > > > > > ---
-> > > > > > >  arch/riscv/Kconfig                        |  20 ++++
-> > > > > > >  arch/riscv/Makefile                       |   1 +
-> > > > > > >  arch/riscv/configs/defconfig              |   1 +
-> > > > > > >  drivers/firmware/efi/libstub/Makefile     |   8 ++
-> > > > > > >  drivers/firmware/efi/libstub/riscv-stub.c | 135
-> > > > > > > ++++++++++++++++++++++
-> > > > > > >  5 files changed, 165 insertions(+)
-> > > > > > >  create mode 100644 drivers/firmware/efi/libstub/riscv-stub.c
-> > > > > > >
-> > > > > > > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > > > > > > index 42c122170cfd..68b1d565e51d 100644
-> > > > > > > --- a/arch/riscv/Kconfig
-> > > > > > > +++ b/arch/riscv/Kconfig
-> > > > > > > @@ -372,10 +372,30 @@ config CMDLINE_FORCE
-> > > > > > >
-> > > > > > >  endchoice
-> > > > > > >
-> > > > > > > +config EFI_STUB
-> > > > > > > +       bool
-> > > > > > > +
-> > > > > > > +config EFI
-> > > > > > > +       bool "UEFI runtime support"
-> > > > > > > +       depends on OF
-> > > > > > > +       select LIBFDT
-> > > > > > > +       select UCS2_STRING
-> > > > > > > +       select EFI_PARAMS_FROM_FDT
-> > > > > > > +       select EFI_STUB
-> > > > > > > +       select EFI_GENERIC_ARCH_STUB
-> > > > > > > +       default y
-> > > > > > > +       help
-> > > > > > > +         This option provides support for runtime services
-> > > > > > > provided
-> > > > > > > +         by UEFI firmware (such as non-volatile variables,
-> > > > > > > realtime
-> > > > > > > +          clock, and platform reset). A UEFI stub is also
-> > > > > > > provided
-> > > > > > > to
-> > > > > > > +         allow the kernel to be booted as an EFI application.
-> > > > > > > This
-> > > > > > > +         is only useful on systems that have UEFI firmware.
-> > > > > > > +
-> > > > > > >  endmenu
-> > > > > > >
-> > > > > > >  menu "Power management options"
-> > > > > > >
-> > > > > > >  source "kernel/power/Kconfig"
-> > > > > > > +source "drivers/firmware/Kconfig"
-> > > > > > >
-> > > > > > >  endmenu
-> > > > > > > diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> > > > > > > index b9009a2fbaf5..0afaa89ba9ad 100644
-> > > > > > > --- a/arch/riscv/Makefile
-> > > > > > > +++ b/arch/riscv/Makefile
-> > > > > > > @@ -78,6 +78,7 @@ head-y := arch/riscv/kernel/head.o
-> > > > > > >  core-y += arch/riscv/
-> > > > > > >
-> > > > > > >  libs-y += arch/riscv/lib/
-> > > > > > > +core-$(CONFIG_EFI_STUB) +=
-> > > > > > > $(objtree)/drivers/firmware/efi/libstub/lib.a
-> > > > > > >
-> > > > > > >  PHONY += vdso_install
-> > > > > > >  vdso_install:
-> > > > > > > diff --git a/arch/riscv/configs/defconfig
-> > > > > > > b/arch/riscv/configs/defconfig
-> > > > > > > index e2ff95cb3390..0a5d3578f51e 100644
-> > > > > > > --- a/arch/riscv/configs/defconfig
-> > > > > > > +++ b/arch/riscv/configs/defconfig
-> > > > > > > @@ -125,3 +125,4 @@ CONFIG_DEBUG_BLOCK_EXT_DEVT=y
-> > > > > > >  # CONFIG_FTRACE is not set
-> > > > > > >  # CONFIG_RUNTIME_TESTING_MENU is not set
-> > > > > > >  CONFIG_MEMTEST=y
-> > > > > > > +CONFIG_EFI=y
-> > > > > > > diff --git a/drivers/firmware/efi/libstub/Makefile
-> > > > > > > b/drivers/firmware/efi/libstub/Makefile
-> > > > > > > index 2c5b76787126..38facb61745b 100644
-> > > > > > > --- a/drivers/firmware/efi/libstub/Makefile
-> > > > > > > +++ b/drivers/firmware/efi/libstub/Makefile
-> > > > > > > @@ -21,6 +21,8 @@ cflags-$(CONFIG_ARM64)                :=
-> > > > > > > $(subst
-> > > > > > > $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
-> > > > > > >  cflags-$(CONFIG_ARM)           := $(subst
-> > > > > > > $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
-> > > > > > >                                    -fno-builtin -fpic \
-> > > > > > >                                    $(call cc-option,-mno-
-> > > > > > > single-
-> > > > > > > pic-base)
-> > > > > > > +cflags-$(CONFIG_RISCV)         := $(subst
-> > > > > > > $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
-> > > > > > > +                                  -fpic
-> > > > > > >
-> > > > > > >  cflags-$(CONFIG_EFI_GENERIC_ARCH_STUB) +=
-> > > > > > > -I$(srctree)/scripts/dtc/libfdt
-> > > > > > >
-> > > > > > > @@ -55,6 +57,7 @@ lib-
-> > > > > > > $(CONFIG_EFI_GENERIC_ARCH_STUB)           +=
-> > > > > > > efi-stub.o fdt.o string.o \
-> > > > > > >  lib-$(CONFIG_ARM)              += arm32-stub.o
-> > > > > > >  lib-$(CONFIG_ARM64)            += arm64-stub.o
-> > > > > > >  lib-$(CONFIG_X86)              += x86-stub.o
-> > > > > > > +lib-$(CONFIG_RISCV)            += riscv-stub.o
-> > > > > > >  CFLAGS_arm32-stub.o            := -DTEXT_OFFSET=$(TEXT_OFFSET)
-> > > > > > >  CFLAGS_arm64-stub.o            := -DTEXT_OFFSET=$(TEXT_OFFSET)
-> > > > > > >
-> > > > > > > @@ -79,6 +82,11 @@ STUBCOPY_FLAGS-$(CONFIG_ARM64)       += --
-> > > > > > > prefix-alloc-sections=.init \
-> > > > > > >                                    --prefix-symbols=__efistub_
-> > > > > > >  STUBCOPY_RELOC-$(CONFIG_ARM64) := R_AARCH64_ABS
-> > > > > > >
-> > > > > > > +STUBCOPY_FLAGS-$(CONFIG_RISCV) += --prefix-alloc-
-> > > > > > > sections=.init \
-> > > > > > > +                                  --prefix-symbols=__efistub_
-> > > > > > > +STUBCOPY_RELOC-$(CONFIG_RISCV) := R_RISCV_HI20
-> > > > > > > +
-> > > > > > > +
-> > > > > > >  $(obj)/%.stub.o: $(obj)/%.o FORCE
-> > > > > > >         $(call if_changed,stubcopy)
-> > > > > > >
-> > > > > > > diff --git a/drivers/firmware/efi/libstub/riscv-stub.c
-> > > > > > > b/drivers/firmware/efi/libstub/riscv-stub.c
-> > > > > > > new file mode 100644
-> > > > > > > index 000000000000..3935b29ea93a
-> > > > > > > --- /dev/null
-> > > > > > > +++ b/drivers/firmware/efi/libstub/riscv-stub.c
-> > > > > > > @@ -0,0 +1,135 @@
-> > > > > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > > > > +/*
-> > > > > > > + * Copyright (C) 2013, 2014 Linaro Ltd;  <roy.franz@linaro.org
-> > > > > > > >
-> > > > > > > + * Copyright (C) 2020 Western Digital Corporation or its
-> > > > > > > affiliates.
-> > > > > > > + *
-> > > > > > > + * This file implements the EFI boot stub for the RISC-V
-> > > > > > > kernel.
-> > > > > > > + * Adapted from ARM64 version at
-> > > > > > > drivers/firmware/efi/libstub/arm64-stub.c.
-> > > > > > > + */
-> > > > > > > +
-> > > > > > > +#include <linux/efi.h>
-> > > > > > > +#include <linux/libfdt.h>
-> > > > > > > +#include <linux/libfdt_env.h>
-> > > > > > > +#include <asm/efi.h>
-> > > > > > > +#include <asm/sections.h>
-> > > > > > > +
-> > > > > > > +#include "efistub.h"
-> > > > > > > +/*
-> > > > > > > + * RISCV requires the kernel image to placed TEXT_OFFSET bytes
-> > > > > > > beyond a 2 MB
-> > > > > > > + * aligned base for 64 bit and 4MB for 32 bit.
-> > > > > > > + */
-> > > > > > > +#if IS_ENABLED(CONFIG_64BIT)
-> > > > > >
-> > > > > > You can use #ifdef here
-> > > > > >
-> > > > >
-> > > > > ok.
-> > > > >
-> > > > > > > +#define MIN_KIMG_ALIGN SZ_2M
-> > > > > > > +#else
-> > > > > > > +#define MIN_KIMG_ALIGN SZ_4M
-> > > > > > > +#endif
-> > > > > > > +/*
-> > > > > > > + * TEXT_OFFSET ensures that we don't overwrite the firmware
-> > > > > > > that
-> > > > > > > probably sits
-> > > > > > > + * at the beginning of the DRAM.
-> > > > > > > + */
-> > > > > >
-> > > > > > Ugh. Really? On an EFI system, that memory should be reserved in
-> > > > > > some
-> > > > > > way, we shouldn't be able to stomp on it like that.
-> > > > > >
-> > > > >
-> > > > > Currently, we reserve the initial 128KB for run time firmware(only
-> > > > > openSBI for now, EDK2 later) by using PMP (physical memory
-> > > > > protection).
-> > > > > Any acess to that region from supervisor mode (i.e. U-Boot) will
-> > > > > result
-> > > > > in a fault.
-> > > > >
-> > > > > Is it mandatory for UEFI to reserve the beginning of the DRAM ?
-> > > > >
-> > > >
-> > > > It is mandatory to describe which memory is usable and which memory
-> > > > is
-> > > > reserved. If this memory is not usable, you either describe it as
-> > > > reserved, or not describe it at all. Describing it as usable memory,
-> > > > allocating it for the kernel but with a hidden agreement that it is
-> > > > reserved is highly likely to cause problems down the road.
-> > > >
-> > >
-> > > I completely agree with you on this. We have been talking to have a
-> > > booting guide and memory map document for RISC-V Linux to document all
-> > > the idiosyncries of RISC-V. But that has not happend until now.
-> > > Once, the ordered booting patches are merged, I will try to take a stab
-> > > at it.
-> > >
-> > > Other than that, do we need to describe it somewhere in U-boot wrt to
-> > > UEFI so that it doesn't allocate memory from that region ?
-> > >
-> >
-> > It is an idiosyncrasy that the firmware should hide from the OS.
-> >
-> > What if GRUB comes along and attempts to allocate that memory? Do we
-> > also have to teach it that the first 128 KB memory of free memory are
-> > magic and should not be touched?
-> >
-> > So the answer is to mark it as reserved. This way, no UEFI tools,
-> > bootloaders etc will ever try to use it.
->
-> Sounds good to me. We are currently discussing the best approach to
-> provide reserved memory
-> information to U-Boot/EDK2. The idea is to U-Boot/EDK2 may have to
-> update the DT with
-> reserved-memory node so that Linux is aware of the reservation as well.
+On Tue, Mar 10, 2020 at 07:31:55PM +0800, Robin Gong wrote:
+> Change to XCH  mode even in dma mode, please refer to the below
+> errata:
+> https://www.nxp.com/docs/en/errata/IMX6DQCE.pdf
+> 
+> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+> Acked-by: Mark Brown <broonie@kernel.org>
+> ---
+>  drivers/spi/spi-imx.c | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
+> index f4f28a4..842a86e 100644
+> --- a/drivers/spi/spi-imx.c
+> +++ b/drivers/spi/spi-imx.c
+> @@ -585,8 +585,9 @@ static int mx51_ecspi_prepare_transfer(struct spi_imx_data *spi_imx,
+>  	ctrl |= mx51_ecspi_clkdiv(spi_imx, t->speed_hz, &clk);
+>  	spi_imx->spi_bus_clk = clk;
+>  
+> +	/* ERR009165: work in XHC mode as PIO */
+>  	if (spi_imx->usedma)
+> -		ctrl |= MX51_ECSPI_CTRL_SMC;
+> +		ctrl &= ~MX51_ECSPI_CTRL_SMC;
 
-The discussion is happening on Github at:
-https://github.com/riscv/riscv-sbi-doc/pull/37
+'ctrl' was read from the hardware. In the dma case it was set
+explicitly, but it was never cleared for a PIO transfer. This looked
+wrong before this patch. Now with this patch it looks even more wrong:
+We clear a bit that has never been set and we only do this for DMA, when
+for the PIO case it definitly must be cleared. Drop the if clause.
 
-Feel free to share your views in above mentioned Github link.
+>  
+>  	writel(ctrl, spi_imx->base + MX51_ECSPI_CTRL);
+>  
+> @@ -612,12 +613,14 @@ static int mx51_ecspi_prepare_transfer(struct spi_imx_data *spi_imx,
+>  
+>  static void mx51_setup_wml(struct spi_imx_data *spi_imx)
+>  {
+> +	u32 tx_wml = 0;
+> +
+>  	/*
+>  	 * Configure the DMA register: setup the watermark
+>  	 * and enable DMA request.
+>  	 */
+>  	writel(MX51_ECSPI_DMA_RX_WML(spi_imx->wml - 1) |
+> -		MX51_ECSPI_DMA_TX_WML(spi_imx->wml) |
+> +		MX51_ECSPI_DMA_TX_WML(tx_wml) |
 
-Regards,
-Anup
+tx_wml is never assigned any other value than 0. Drop the variable.
+
+>  		MX51_ECSPI_DMA_RXT_WML(spi_imx->wml) |
+>  		MX51_ECSPI_DMA_TEDEN | MX51_ECSPI_DMA_RXDEN |
+>  		MX51_ECSPI_DMA_RXTDEN, spi_imx->base + MX51_ECSPI_DMA);
+> @@ -1171,7 +1174,11 @@ static int spi_imx_dma_configure(struct spi_master *master)
+>  	tx.direction = DMA_MEM_TO_DEV;
+>  	tx.dst_addr = spi_imx->base_phys + MXC_CSPITXDATA;
+>  	tx.dst_addr_width = buswidth;
+> -	tx.dst_maxburst = spi_imx->wml;
+> +	/*
+> +	 * For ERR009165 with tx_wml = 0 could enlarge burst size to fifo size
+> +	 * to speed up fifo filling as possible.
+> +	 */
+> +	tx.dst_maxburst = spi_imx->devtype_data->fifo_size;
+>  	ret = dmaengine_slave_config(master->dma_tx, &tx);
+>  	if (ret) {
+>  		dev_err(spi_imx->dev, "TX dma configuration failed with %d\n", ret);
+> @@ -1265,10 +1272,6 @@ static int spi_imx_sdma_init(struct device *dev, struct spi_imx_data *spi_imx,
+>  {
+>  	int ret;
+>  
+> -	/* use pio mode for i.mx6dl chip TKT238285 */
+> -	if (of_machine_is_compatible("fsl,imx6dl"))
+> -		return 0;
+
+So with this patch it becomes possible to do DMA on i.MX6dl, but it is
+mentioned nowhere.
+
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
