@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D55217FDEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:31:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07B4F17FE82
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:35:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729228AbgCJNbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:31:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54618 "EHLO mail.kernel.org"
+        id S1727986AbgCJNft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:35:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728514AbgCJMuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:50:05 -0400
+        id S1727671AbgCJMoA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:44:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F114720674;
-        Tue, 10 Mar 2020 12:50:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94FF824693;
+        Tue, 10 Mar 2020 12:43:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844605;
-        bh=F4Lhoeop5jyc/HLHpAGZSESF9WLzwH4clZlIidY28eo=;
+        s=default; t=1583844240;
+        bh=rT/guU/aACRynQqnHmNwjF9jC3hiPxcb+PyGiqR+f/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mq/FmkkxqH62emZvc02uU+JWKH0BfqQBOgbubpaz+qmSpuGDIa2EwCaFZhFsPINka
-         lTpWGAAX/0UwWm6Xul3O1fUvYdTn2+JtCgMv/3NQp6nXwTUTB4lcnIvd4gwX2uWN6I
-         OvBAGVHjgR2KJi/3mLL4VnuRaAS+Fjd/DZCuYHpY=
+        b=wlUc5nrJ81XllAyIZ6N4zyu8SANDeQiRclsTFRQ8vePtq3naPYjvCsS0bQ8GGrNKp
+         vPyoI2uUFFd1yk4OI2vM71LRSczMK+v2pLiG0Fw9eTdkvBRQ4oTJ4FnONIqeFMwLsj
+         ALyurMWgYocSgGU4KcXzKWMvGm9X7uCNdCTIaUQQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guo Ren <guoren@linux.alibaba.com>,
+        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
+        Arthur Kiyanovski <akiyano@amazon.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 052/168] csky/smp: Fixup boot failed when CONFIG_SMP
+Subject: [PATCH 4.9 10/88] net: ena: fix potential crash when rxfh key is NULL
 Date:   Tue, 10 Mar 2020 13:38:18 +0100
-Message-Id: <20200310123640.610127709@linuxfoundation.org>
+Message-Id: <20200310123609.011583695@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,32 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <guoren@linux.alibaba.com>
+From: Arthur Kiyanovski <akiyano@amazon.com>
 
-[ Upstream commit c9492737b25ca32679ba3163609d938c9abfd508 ]
+[ Upstream commit 91a65b7d3ed8450f31ab717a65dcb5f9ceb5ab02 ]
 
-If we use a non-ipi-support interrupt controller, it will cause panic here.
-We should let cpu up and work with CONFIG_SMP, when we use a non-ipi intc.
+When ethtool -X is called without an hkey, ena_com_fill_hash_function()
+is called with key=NULL, which is passed to memcpy causing a crash.
 
-Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
+This commit fixes this issue by checking key is not NULL.
+
+Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
+Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
+Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/csky/kernel/smp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/amazon/ena/ena_com.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/arch/csky/kernel/smp.c b/arch/csky/kernel/smp.c
-index b753d382e4cef..0bb0954d55709 100644
---- a/arch/csky/kernel/smp.c
-+++ b/arch/csky/kernel/smp.c
-@@ -120,7 +120,7 @@ void __init setup_smp_ipi(void)
- 	int rc;
+diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
+index 912dc09bc7a74..f09b7887039a2 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_com.c
++++ b/drivers/net/ethernet/amazon/ena/ena_com.c
+@@ -2034,15 +2034,16 @@ int ena_com_fill_hash_function(struct ena_com_dev *ena_dev,
  
- 	if (ipi_irq == 0)
--		panic("%s IRQ mapping failed\n", __func__);
-+		return;
- 
- 	rc = request_percpu_irq(ipi_irq, handle_ipi, "IPI Interrupt",
- 				&ipi_dummy_dev);
+ 	switch (func) {
+ 	case ENA_ADMIN_TOEPLITZ:
+-		if (key_len > sizeof(hash_key->key)) {
+-			pr_err("key len (%hu) is bigger than the max supported (%zu)\n",
+-			       key_len, sizeof(hash_key->key));
+-			return -EINVAL;
++		if (key) {
++			if (key_len != sizeof(hash_key->key)) {
++				pr_err("key len (%hu) doesn't equal the supported size (%zu)\n",
++				       key_len, sizeof(hash_key->key));
++				return -EINVAL;
++			}
++			memcpy(hash_key->key, key, key_len);
++			rss->hash_init_val = init_val;
++			hash_key->keys_num = key_len >> 2;
+ 		}
+-
+-		memcpy(hash_key->key, key, key_len);
+-		rss->hash_init_val = init_val;
+-		hash_key->keys_num = key_len >> 2;
+ 		break;
+ 	case ENA_ADMIN_CRC32:
+ 		rss->hash_init_val = init_val;
 -- 
 2.20.1
 
