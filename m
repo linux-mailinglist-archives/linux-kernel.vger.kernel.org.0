@@ -2,119 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2698180802
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 20:29:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0D5718080B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 20:30:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbgCJT3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 15:29:45 -0400
-Received: from mga12.intel.com ([192.55.52.136]:21692 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726545AbgCJT3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 15:29:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 12:29:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,538,1574150400"; 
-   d="scan'208";a="353693892"
-Received: from hhuan26-mobl1.amr.corp.intel.com ([10.254.76.69])
-  by fmsmga001.fm.intel.com with ESMTP; 10 Mar 2020 12:29:41 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>,
-        "Dr. Greg" <greg@enjellic.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v28 14/22] selftests/x86: Add a selftest for SGX
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
- <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com>
- <20200306053210.GA16297@wind.enjellic.com>
-Date:   Tue, 10 Mar 2020 14:29:41 -0500
+        id S1727490AbgCJT37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 15:29:59 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:45929 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727311AbgCJT3z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 15:29:55 -0400
+Received: by mail-io1-f65.google.com with SMTP id w9so14009228iob.12
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 12:29:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O+5kKx2vjd+32qtXdrToSkdcaTFfCoL0XwTHvIf1Udg=;
+        b=aK5PVE29ZcX0JiUctdQKR6J4V8Ui1eAIPqRanRd0A6P1wY0Olma3AwHhrD2PySTEY1
+         kZXXW4WCwVRDmSdrzbH44gRLv2dG0A/Uo2FsE583gbPAcJns18ZxYKCVeIw3hoRvR9nW
+         X63aa+sKmNAHbQ4QA3pDh67PTQqXiIq2fbgVc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O+5kKx2vjd+32qtXdrToSkdcaTFfCoL0XwTHvIf1Udg=;
+        b=eobogGv9RlvHuXlJBfY/cTPgGRYlPNqs5FatbJZ66qwV0EkBPtnYc8o8hPuoqDIbxW
+         92D+RWS/8Okxcss7SGgbWOLoooJwcuH1R3Ek4bTtfgK+CxQG72CYPhWXp2daTDAtCN4s
+         qXVEa+ADEgpGDWKAQY4YebS2HFQqsl1IOthBQMML8pytusHNhJS8Zqc4yVldeqigyif4
+         wlsS2QpG9ch2DALuvZsExj17hS5wxCBBw4lRpKgyDtJEa5G3Lv4XEyLUy5CpiZVIEmH3
+         KygJ4CZXuLBYI4LZ5+1eHX3w54aIWZ5CwCUkbWKE9o4xXQg4EFNkvRPe6en2A6G25Scg
+         fhJg==
+X-Gm-Message-State: ANhLgQ0dHVShHm7b3Q91IYDBE6NNSRt9KEkS57cc8fY7uTwyx2AJJG2e
+        4pe6NxTmc16m0BCzmL6cjTdcgDHjzkaDVL/7btzX9Q==
+X-Google-Smtp-Source: ADFU+vtsHIE3juf6VloEHRQ+IFMzK3xP4NZGmqU4UP+Nis9eHwUR1TaPlSRS7pe1JGlIhD+fR0kBGJFzXYHNxz1Bts4=
+X-Received: by 2002:a02:7a07:: with SMTP id a7mr12556058jac.77.1583868594718;
+ Tue, 10 Mar 2020 12:29:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel Corp
-Message-ID: <op.0g923rgpwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
-In-Reply-To: <20200306053210.GA16297@wind.enjellic.com>
-User-Agent: Opera Mail/1.0 (Win32)
+References: <20200304165845.3081-1-vgoyal@redhat.com> <20200304165845.3081-11-vgoyal@redhat.com>
+In-Reply-To: <20200304165845.3081-11-vgoyal@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 10 Mar 2020 20:29:43 +0100
+Message-ID: <CAJfpegshzZB=e3npbY3h9VOLMwAgLtQ3PJSC8AupF_d3FW9few@mail.gmail.com>
+Subject: Re: [PATCH 10/20] fuse,virtiofs: Keep a list of free dax memory ranges
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, virtio-fs@redhat.com,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Peng Tao <tao.peng@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 05 Mar 2020 23:32:10 -0600, Dr. Greg <greg@enjellic.com> wrote:
+On Wed, Mar 4, 2020 at 5:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> Divide the dax memory range into fixed size ranges (2MB for now) and put
+> them in a list. This will track free ranges. Once an inode requires a
+> free range, we will take one from here and put it in interval-tree
+> of ranges assigned to inode.
+>
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> Signed-off-by: Peng Tao <tao.peng@linux.alibaba.com>
 
-> On Wed, Mar 04, 2020 at 01:36:01AM +0200, Jarkko Sakkinen wrote:
->
-> Good evening, I hope the end of the week is going well for everyone.
->
->> Add a selftest for SGX. It is a trivial test where a simple enclave
->> copies one 64-bit word of memory between two memory locations given
->> to the enclave as arguments. Use ENCLS[EENTER] to invoke the
->> enclave.
->
-> Just as a clarification, are you testing the new driver against signed
-> production class enclaves in .so format that also include metadata
-> layout directives or is the driver just getting tested against the two
-> page toy enclave that copies a word of memory from one memory location
-> to another?
->
-
-We (Intel SGX SDK/PSW team) tested this driver for enclaves in .so format  
-with metadata. Our 2.8 release supports v24 and 2.9 supports v25+. Both  
-production signed and debug signed enclaves worked.
-
-*Note* we did make some code changes in our runtime for v24+, mainly  
-dealing with src & EPC page alignment for EADD, open one fd per enclave,  
-use -z noexecstack linker option, etc. You can see the changes on GitHub.
-
-> Our PSW/runtime is currently failing to initialize production class
-> enclaves secondary to a return value of -4 from the ENCLU[EINIT]
-> instruction, which means the measurement of the loaded enclave has
-> failed to match the value in the signature structure.
->
-> The same enclave loads fine with the out of kernel driver.  Our
-> diagnostics tell us we are feeding identical page streams and
-> permissions to the page add ioctl's of both drivers.  The identity
-> modulus signature of the signing key for the enclave is being written
-> to the launch control registers.
->
-> We see the same behavior from both our unit test enclaves and the
-> Quoting Enclave from the Intel SGX runtime.
->
-We did not see any issue loading QE in our tests. Please directly email me  
-on this test if you have specific questions.
-
-> When we ported our runtime loader to the new driver ABI we kept things
-> simple and add only a single page at a time in order to replicate the
-> behavior of the old driver.
->
-> Secondly, we were wondering what distribution you are building the
-> self-tests with?  Initial indications are that the selftest signing
-> utility doesn't build properly with OpenSSL 1.1.1.
->
-> Have a good day.
->
-> Dr. Greg
->
-> As always,
-> Dr. Greg Wettstein, Ph.D, Worker
-> IDfusion, LLC               SGX secured infrastructure and
-> 4206 N. 19th Ave.           autonomously self-defensive platforms.
-> Fargo, ND  58102
-> PH: 701-281-1686            EMAIL: greg@idfusion.net
-> ------------------------------------------------------------------------------
-> "Don't worry about people stealing your ideas.  If your ideas are any
->  good, you'll have to ram them down people's throats."
->                                 -- Howard Aiken
-
-
--- 
-Using Opera's mail client: http://www.opera.com/mail/
+Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
