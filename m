@@ -2,116 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C2F417FCDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:24:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3715B17FCE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:24:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731216AbgCJNX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:23:56 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55925 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730327AbgCJNXv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:23:51 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 6so1380191wmi.5
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:23:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qu2lw3ZMdrwKfuQS5Az0Y2I91d1iyT17fahD+FQIc7A=;
-        b=GZYZ3dy3SH1F1KzpQL67050MlJI2B1XnreFQQisg5jZageYwSx1QdS87LMjWW1RTeZ
-         MHlLxJkq7giYykvhYXPWlCN8Gf6a0BUC2Zgm/fudGoTGd8dp+QU5OdKx/e2JZV9XIdxv
-         PESspqAEjvmZWmJ/PNzhQl10PZzfuKTz9PoJWf2vDCImhAB8A/HDg0SxvHHVwglaGz2I
-         ec3bco1yfkbO7sqRbbTOf91rP0YYXzQ8/V9ai5+e1NMqbGX+is/6T35b4hBbcrGCkXyV
-         k9K9ZM4UxsyrcoIHFy2fSCgcUMHXijDNFzxUq2XYF/OldB8dk+GWul4GjDjABhrtQ36b
-         AxOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qu2lw3ZMdrwKfuQS5Az0Y2I91d1iyT17fahD+FQIc7A=;
-        b=E/L87VjxsoqqH3cuZzJDFc3PccEGS9urdm4Cs2NBWXjpcGfigrUocn6tngDE3VM4Sd
-         Zn7Wm7sF+9z+kNnWQgQ5Y8Iei0XUFKDgPqydSMtL0GY+wXrVNaXEf30s9rR62iZmETYf
-         SlnMmPIG6hwQdjO7zYqv0GrIuWXepDcmljh8HWtDJ3Yf0ljegYFRauYYkmFJHe0h1mMj
-         QL1Yb8GTp+hucoPeJu9iQufZvAq0jf922Lj+zmY7zEETkHhJNFnSQriqXmdcc+qxSxVH
-         jfF9NmLkbhvpQL3ASc+dAB/OP+lNNCl9DUnSM/KcovMlieKeHGoIieQZWh71JlCrB7eI
-         xfLg==
-X-Gm-Message-State: ANhLgQ3/zdEnaLTrxCkcWMKVszfNVrBkH5q9Nel/s1qFWtnJ8rQgQkgf
-        qgsYhrLhsab80HccfPcriEkxAw==
-X-Google-Smtp-Source: ADFU+vsnl10c74H/moJdIjTZh+FN9swVuA3axENgjSKxmCuMr1CqInUVB3P0Sn1hpo9YbIKGxtRPVw==
-X-Received: by 2002:a7b:c204:: with SMTP id x4mr2255109wmi.20.1583846629385;
-        Tue, 10 Mar 2020 06:23:49 -0700 (PDT)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id s22sm3761199wmc.16.2020.03.10.06.23.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 06:23:48 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        kbuild test robot <lkp@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        srinivas.kandagatla@linaro.org, prasannatsmkumar@gmail.com,
-        malat@debian.org, paul@crapouillou.net
-Subject: [PATCH 14/14] nvmem: jz4780-efuse: fix build warnings on ARCH=x86_64 or riscv
-Date:   Tue, 10 Mar 2020 13:22:57 +0000
-Message-Id: <20200310132257.23358-15-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200310132257.23358-1-srinivas.kandagatla@linaro.org>
-References: <20200310132257.23358-1-srinivas.kandagatla@linaro.org>
+        id S1731236AbgCJNYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:24:08 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:55132 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730327AbgCJNYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:24:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=IzQlYHGoa46ajr1EZTuJDABnxTaARMHlWCMFWC3lKAQ=; b=d34cIJ4053bHz7eMwjO57QAjDa
+        FKaLM/VRz2WjXv6n57jzGvtkzqK7Tvp9SRJBRAPwDY0ul3xcVH9C3g3kzZQcbIwqzw7Ev2NXV67zs
+        JcH9onBFBiXFMbEK/HvOIEjzb2DklOJ1VYQ1u1sR+iZeqoiAI4bz9MK8J2iIuth8pXeA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1jBera-0001oF-JW; Tue, 10 Mar 2020 14:24:02 +0100
+Date:   Tue, 10 Mar 2020 14:24:02 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Antoine Tenart <antoine.tenart@bootlin.com>
+Cc:     davem@davemloft.net, f.fainelli@gmail.com, hkallweit1@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/3] net: phy: mscc: split the driver into
+ separate files
+Message-ID: <20200310132402.GF5932@lunn.ch>
+References: <20200310090720.521745-1-antoine.tenart@bootlin.com>
+ <20200310090720.521745-3-antoine.tenart@bootlin.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310090720.521745-3-antoine.tenart@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
+On Tue, Mar 10, 2020 at 10:07:19AM +0100, Antoine Tenart wrote:
+> +++ b/drivers/net/phy/mscc/mscc.h
+> @@ -0,0 +1,451 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> +/*
+> + * Driver for Microsemi VSC85xx PHYs
+> + *
+> + * Copyright (c) 2016 Microsemi Corporation
+> + */
+> +
+> +#ifndef _MSCC_PHY_H_
+> +#define _MSCC_PHY_H_
+> +
+> +#if IS_ENABLED(CONFIG_MACSEC)
+> +#include <net/macsec.h>
+> +#include "mscc_macsec.h"
+> +#endif
 
-kbuild-robot did find a type error in the min(a, b)
-function used by this driver if built for x86_64 or riscv.
+> +#if IS_ENABLED(CONFIG_MACSEC)
+> +struct macsec_flow {
+> +	struct list_head list;
+> +	enum mscc_macsec_destination_ports port;
+> +	enum macsec_bank bank;
+> +	u32 index;
+> +	int assoc_num;
+> +	bool has_transformation;
+> +
+> +	/* Highest takes precedence [0..15] */
+> +	u8 priority;
+> +
+> +	u8 key[MACSEC_KEYID_LEN];
+> +
+> +	union {
+> +		struct macsec_rx_sa *rx_sa;
+> +		struct macsec_tx_sa *tx_sa;
+> +	};
+> +
+> +	/* Matching */
+> +	struct {
+> +		u8 sci:1;
+> +		u8 tagged:1;
+> +		u8 untagged:1;
+> +		u8 etype:1;
+> +	} match;
+> +
+> +	u16 etype;
+> +
+> +	/* Action */
+> +	struct {
+> +		u8 bypass:1;
+> +		u8 drop:1;
+> +	} action;
+> +
+> +};
+> +#endif
 
-Althought it is very unlikely that this driver is built
-for those platforms it could be used as a template
-for something else and therefore should be correct.
+Could some of this be moved into mscc_macsec.h? It would reduce the
+number of #ifdefs.
 
-The problem is that we implicitly cast a size_t to
-unsigned int inside the implementation of the min() function.
-
-Since size_t may differ on different compilers and
-plaforms there may be warnings or not.
-
-So let's use only size_t variables on all platforms.
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: srinivas.kandagatla@linaro.org
-Cc: prasannatsmkumar@gmail.com
-Cc: malat@debian.org
-Cc: paul@crapouillou.net
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/nvmem/jz4780-efuse.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/nvmem/jz4780-efuse.c b/drivers/nvmem/jz4780-efuse.c
-index 51d140980b1e..512e1872ba36 100644
---- a/drivers/nvmem/jz4780-efuse.c
-+++ b/drivers/nvmem/jz4780-efuse.c
-@@ -72,9 +72,9 @@ static int jz4780_efuse_read(void *context, unsigned int offset,
- 	struct jz4780_efuse *efuse = context;
- 
- 	while (bytes > 0) {
--		unsigned int start = offset & ~(JZ_EFU_READ_SIZE - 1);
--		unsigned int chunk = min(bytes, (start + JZ_EFU_READ_SIZE)
--					 - offset);
-+		size_t start = offset & ~(JZ_EFU_READ_SIZE - 1);
-+		size_t chunk = min(bytes, (start + JZ_EFU_READ_SIZE)
-+				    - offset);
- 		char buf[JZ_EFU_READ_SIZE];
- 		unsigned int tmp;
- 		u32 ctrl;
--- 
-2.21.0
-
+       Andrew
