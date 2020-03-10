@@ -2,138 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8804818031E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:21:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2FFA180329
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:24:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbgCJQVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 12:21:33 -0400
-Received: from mail.efficios.com ([167.114.26.124]:48254 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbgCJQVd (ORCPT
+        id S1726928AbgCJQYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 12:24:09 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:25950 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbgCJQYJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 12:21:33 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 5DD292710DD;
-        Tue, 10 Mar 2020 12:21:32 -0400 (EDT)
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id w9T7RxEtq-x5; Tue, 10 Mar 2020 12:21:32 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id E20782710DA;
-        Tue, 10 Mar 2020 12:21:31 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com E20782710DA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1583857291;
-        bh=tWZFnyCczeukzEgel4uS/lmDTXMSun6ygvYNDKKai0M=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=Bbt2bdO654UEm+wAltRuPhqQv0X5Fc2m6BKHOrapIuwXdsXMmNFbgo3QV8Yn9QkCF
-         bvoKQjJsJqGd5/Y7JhRMUE1zaGDvL09gf4x39feIsWOOUyhO2Z6+dyaHT/7Hlne64a
-         2/sjwZp1WeY4m5TdbCaFLJytJVDGtLo+KZgA/v0jOWNWvHIhznSZTy/O6Ii1WMm4WA
-         OUwq6YSnREy8UNcjKPqiWdc8UCMQ+V6k4mDBQgziXV+iiOGUmsMDNIxXjr9mcb3Igh
-         HCvdNVU83r3kR9nG3Q+Dd+fYgZZ4DEAbWH10Ucby4iVUVvVyCOixukv8yKOt4v1rhn
-         OzPGfRoEQn5gg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id o0hb4Qnavl1U; Tue, 10 Mar 2020 12:21:31 -0400 (EDT)
-Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
-        by mail.efficios.com (Postfix) with ESMTP id D382227106E;
-        Tue, 10 Mar 2020 12:21:31 -0400 (EDT)
-Date:   Tue, 10 Mar 2020 12:21:31 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     rostedt <rostedt@goodmis.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        paulmck <paulmck@kernel.org>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jason Wessel <jason.wessel@windriver.com>
-Message-ID: <1760242532.23694.1583857291763.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20200310114657.099122fd@gandalf.local.home>
-References: <87mu8p797b.fsf@nanos.tec.linutronix.de> <20200309141546.5b574908@gandalf.local.home> <87fteh73sp.fsf@nanos.tec.linutronix.de> <20200310170951.87c29e9c1cfbddd93ccd92b3@kernel.org> <87pndk5tb4.fsf@nanos.tec.linutronix.de> <450878559.23455.1583854311078.JavaMail.zimbra@efficios.com> <20200310114657.099122fd@gandalf.local.home>
-Subject: Re: Instrumentation and RCU
+        Tue, 10 Mar 2020 12:24:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1583857449; x=1615393449;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   mime-version;
+  bh=VrseEukOssTilgqY2XKYefkrT6ke1sG7DpqNk8hn9uE=;
+  b=Ax/9s7ogfoqTlt72XxiJEw9iln0akWUibpkvy5b5vZpQhcabDFuohPzo
+   MRKuCokOGOvtJ6kQoMN3VjMFkWXtsXvKfVzr02FvJCpHT/dGw6jXiWhJF
+   I413yztwvnJl3QfVUUlWsutyg2S+yVK+svu83K+YjTJZFzZMpcWA2ZgTc
+   8=;
+IronPort-SDR: u3sR+s5CccWviaAIqc9+8qRAfx/Zq2ue01/8WFJ0cTgakwM4ylenCHtTNDjoB11YuNpwtAI27r
+ uVMKUNBz4nTA==
+X-IronPort-AV: E=Sophos;i="5.70,537,1574121600"; 
+   d="scan'208";a="21871583"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 10 Mar 2020 16:23:19 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com (Postfix) with ESMTPS id 76E5EA1F37;
+        Tue, 10 Mar 2020 16:23:09 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1236.3; Tue, 10 Mar 2020 16:23:08 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.160.16) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Tue, 10 Mar 2020 16:22:56 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+CC:     SeongJae Park <sjpark@amazon.com>, <akpm@linux-foundation.org>,
+        "SeongJae Park" <sjpark@amazon.de>, <aarcange@redhat.com>,
+        <yang.shi@linux.alibaba.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <amit@kernel.org>,
+        <brendan.d.gregg@gmail.com>, <brendanhiggins@google.com>,
+        <cai@lca.pw>, <colin.king@canonical.com>, <corbet@lwn.net>,
+        <dwmw@amazon.com>, <jolsa@redhat.com>, <kirill@shutemov.name>,
+        <mark.rutland@arm.com>, <mgorman@suse.de>, <minchan@kernel.org>,
+        <mingo@redhat.com>, <namhyung@kernel.org>, <peterz@infradead.org>,
+        <rdunlap@infradead.org>, <rientjes@google.com>,
+        <rostedt@goodmis.org>, <shuah@kernel.org>, <sj38.park@gmail.com>,
+        <vbabka@suse.cz>, <vdavydov.dev@gmail.com>, <linux-mm@kvack.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: Re: [PATCH v6 02/14] mm/damon: Implement region based sampling
+Date:   Tue, 10 Mar 2020 17:22:40 +0100
+Message-ID: <20200310162240.27935-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200310155510.000025d2@Huawei.com> (raw)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.26.124]
-X-Mailer: Zimbra 8.8.15_GA_3901 (ZimbraWebClient - FF73 (Linux)/8.8.15_GA_3895)
-Thread-Topic: Instrumentation and RCU
-Thread-Index: RTqroigTFUikIe4Q7CnVOH/BWK2GZA==
+Content-Type: text/plain
+X-Originating-IP: [10.43.160.16]
+X-ClientProxiedBy: EX13P01UWB001.ant.amazon.com (10.43.161.59) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Mar 10, 2020, at 11:46 AM, rostedt rostedt@goodmis.org wrote:
+On Tue, 10 Mar 2020 15:55:10 +0000 Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
 
-> On Tue, 10 Mar 2020 11:31:51 -0400 (EDT)
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> On Tue, 10 Mar 2020 12:52:33 +0100
+> SeongJae Park <sjpark@amazon.com> wrote:
 > 
->> I think there are two distinct problems we are trying to solve here,
->> and it would be good to spell them out to see which pieces of technical
->> solution apply to which.
->> 
->> Problem #1) Tracer invoked from partially initialized kernel context
->> 
->>   - Moving the early/late entry/exit points into sections invisible from
->>     instrumentation seems to make tons of sense for this.
->> 
->> Problem #2) Tracer recursion
->> 
->>   - I'm much less convinced that hiding entry points from instrumentation
->>     works for this. As an example, with the isntr_begin/end() approach you
->>     propose above, as soon as you have a tracer recursing into itself because
->>     something below do_stuff() has been instrumented, having hidden the entry
->>     point did not help at all.
->> 
->> So I would be tempted to use the "hide entry/exit points" with explicit
->> instr begin/end annotation to solve Problem #1, but I'm still thinking there
->> is value in the per recursion context "in_tracing" flag to prevent tracer
->> recursion.
+> > Added replies to your every comment in line below.  I agree to your whole
+> > opinions, will apply those in next spin! :)
+> > 
 > 
-> The only recursion issue that I've seen discussed is breakpoints. And
-> that's outside of the tracer infrastructure. Basically, if someone added a
-> breakpoint for a kprobe on something that gets called in the int3 code
-> before kprobes is called we have (let's say rcu_nmi_enter()):
-> 
-> 
-> rcu_nmi_enter();
->  <int3>
->     do_int3() {
->        rcu_nmi_enter();
->          <int3>
->             do_int3();
->                [..]
-> 
-> Where would a "in_tracer" flag help here? Perhaps a "in_breakpoint" could?
+> One additional question inline that came to mind.  Using a single statistic
+> to monitor huge page and normal page hits is going to give us problems
+> I think.
 
-An approach where the "in_tracer" flag is tested and set by the instrumentation
-(function tracer, kprobes, tracepoints) would work here. Let's say the beginning
-of the int3 ISR is part of the code which is invisible to instrumentation, and
-before we issue rcu_nmi_enter(), we handle the in_tracer flag:
+Ah, you're right!!!  This is indeed a critical bug!
 
-rcu_nmi_enter();
- <int3>
-    (recursion_ctx->in_tracer == false)
-    set recursion_ctx->in_tracer = true
-    do_int3() {
-       rcu_nmi_enter();
-         <int3>
-            if (recursion_ctx->in_tracer == true)
-                iret
+> 
+> Perhaps I'm missing something?
+> 
+> > > > +/*
+> > > > + * Check whether the given region has accessed since the last check  
+> > > 
+> > > Should also make clear that this sets us up for the next access check at
+> > > a different memory address it the region.
+> > > 
+> > > Given the lack of connection between activities perhaps just split this into
+> > > two functions that are always called next to each other.  
+> > 
+> > Will make the description more clearer as suggested.
+> > 
+> > Also, I found that I'm not clearing *pte and *pmd before going 'mkold', thanks
+> > to this comment.  Will fix it, either.
+> > 
+> > >   
+> > > > + *
+> > > > + * mm	'mm_struct' for the given virtual address space
+> > > > + * r	the region to be checked
+> > > > + */
+> > > > +static void kdamond_check_access(struct damon_ctx *ctx,
+> > > > +			struct mm_struct *mm, struct damon_region *r)
+> > > > +{
+> > > > +	pte_t *pte = NULL;
+> > > > +	pmd_t *pmd = NULL;
+> > > > +	spinlock_t *ptl;
+> > > > +
+> > > > +	if (follow_pte_pmd(mm, r->sampling_addr, NULL, &pte, &pmd, &ptl))
+> > > > +		goto mkold;
+> > > > +
+> > > > +	/* Read the page table access bit of the page */
+> > > > +	if (pte && pte_young(*pte))
+> > > > +		r->nr_accesses++;
+> > > > +#ifdef CONFIG_TRANSPARENT_HUGEPAGE  
+> > > 
+> > > Is it worth having this protection?  Seems likely to have only a very small
+> > > influence on performance and makes it a little harder to reason about the code.  
+> > 
+> > It was necessary for addressing 'implicit declaration' problem of 'pmd_young()'
+> > and 'pmd_mkold()' for build of DAMON on several architectures including User
+> > Mode Linux.
+> > 
+> > Will modularize the code for better readability.
+> > 
+> > >   
+> > > > +	else if (pmd && pmd_young(*pmd))
+> > > > +		r->nr_accesses++;
+> 
+> So we increment a region count by one if we have an access in a huge page, or
+> in a normal page.
+> 
+> If we get a region that has a mixture of the two, this seems likely to give a
+> bad approximation.
+> 
+> Assume the region is accessed 'evenly' but each " 4k page" is only hit 10% of the time
+> (where a hit is in one check period)
+> 
+> If our address in a page, then we'll hit 10% of the time, but if it is in a 2M
+> huge page then we'll hit a much higher percentage of the time.
+> 1 - (0.9^512) ~= 1
+> 
+> Should we look to somehow account for this?
 
-We can change "in_tracer" for "in_breakpoint", "in_tracepoint" and
-"in_function_trace" if we ever want to allow different types of instrumentation
-to nest. I'm not sure whether this is useful or not through.
+Yes, this is really critical bug and we should fix this!  Thank you so much for
+finding this!
+
+> 
+> > > > +#endif	/* CONFIG_TRANSPARENT_HUGEPAGE */
+> > > > +
+> > > > +	spin_unlock(ptl);
+> > > > +
+> > > > +mkold:
+> > > > +	/* mkold next target */
+> > > > +	r->sampling_addr = damon_rand(ctx, r->vm_start, r->vm_end);
+> > > > +
+> > > > +	if (follow_pte_pmd(mm, r->sampling_addr, NULL, &pte, &pmd, &ptl))
+> > > > +		return;
+> > > > +
+> > > > +	if (pte) {
+> > > > +		if (pte_young(*pte)) {
+> > > > +			clear_page_idle(pte_page(*pte));
+> > > > +			set_page_young(pte_page(*pte));
+> > > > +		}
+> > > > +		*pte = pte_mkold(*pte);
+> > > > +	}
+> > > > +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> > > > +	else if (pmd) {
+> > > > +		if (pmd_young(*pmd)) {
+> > > > +			clear_page_idle(pmd_page(*pmd));
+> > > > +			set_page_young(pmd_page(*pmd));
+> > > > +		}
+> > > > +		*pmd = pmd_mkold(*pmd);
+> > > > +	}
+
+This is also very problematic if several regions are backed by a single huge
+page, as only one region in the huge page will be checked as accessed.
+
+Will address these problems in next spin!
+
 
 Thanks,
+SeongJae Park
 
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+> > > > +#endif
+> > > > +
+> > > > +	spin_unlock(ptl);
+> > > > +}
+> > > > +
+> 
+> 
