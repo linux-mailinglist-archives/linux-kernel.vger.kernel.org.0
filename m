@@ -2,63 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDCC7180675
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:32:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B7F4180685
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:33:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbgCJScI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 14:32:08 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:58607 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726545AbgCJScH (ORCPT
+        id S1727417AbgCJScx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 14:32:53 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33126 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727071AbgCJScx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 14:32:07 -0400
-X-Originating-IP: 91.224.148.103
-Received: from localhost.localdomain (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id B9F63C0010;
-        Tue, 10 Mar 2020 18:32:04 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Mason Yang <masonccyang@mxic.com.tw>, miquel.raynal@bootlin.com,
-        richard@nod.at, vigneshr@ti.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     devicetree@vger.kernel.org, juliensu@mxic.com.tw,
-        yuehaibing@huawei.com, linux-kernel@vger.kernel.org,
-        frieder.schrempf@kontron.de, linux-mtd@lists.infradead.org,
-        tglx@linutronix.de, allison@lohutok.net
-Subject: Re: [PATCH v5 1/2] mtd: rawnand: Add support for Macronix NAND randomizer
-Date:   Tue, 10 Mar 2020 19:32:04 +0100
-Message-Id: <20200310183204.18963-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <1581922600-25461-2-git-send-email-masonccyang@mxic.com.tw>
-References: 
+        Tue, 10 Mar 2020 14:32:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=BM1rOj2mhNiPAl7HQ9Dqr15pnyhMXu6TgEmfxY4G2dE=; b=ed6zJKUMN0NHTWgGMZZSTBEMDJ
+        ZDwYVpOOtBbWFiUHnmoG6GaShnCVBNtgLFdocdwwRDKj4qutRI2XnmiCFY3FvYu0H6LTim5ZMYG7l
+        er2Lg68TxUnu7dgmzliLVYHYuWZlDRVJZnXxTrNbeyTmFNxMT/4eKfoklcs5lYKYFagBDGM3D1DXQ
+        Mfob/seec8sdaZisq4mZffAyZUetOdUKq7p7SqhAx2aZ6sX/rk12t8fIAlAmkmzXB/Fu5MVzj1oNr
+        3IDqAJiLb2d029n6cYMi7pHsO0hMT85id6WaFxFPrLWgXPuuRoplFfqkZd8EvysaP2+Sgd06AOwkD
+        QGZb4vxQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jBjgJ-0005Yb-SK; Tue, 10 Mar 2020 18:32:43 +0000
+Date:   Tue, 10 Mar 2020 11:32:43 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     John Garry <john.garry@huawei.com>
+Cc:     axboe@kernel.dk, jejb@linux.ibm.com, martin.petersen@oracle.com,
+        hare@suse.de, ming.lei@redhat.com, bvanassche@acm.org,
+        hch@infradead.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        esc.storagedev@microsemi.com, chenxiang66@hisilicon.com,
+        Hannes Reinecke <hare@suse.com>
+Subject: Re: [PATCH RFC v2 02/24] scsi: allocate separate queue for reserved
+ commands
+Message-ID: <20200310183243.GA14549@infradead.org>
+References: <1583857550-12049-1-git-send-email-john.garry@huawei.com>
+ <1583857550-12049-3-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: db955f2f752f20ce0bf4859430999d3c119d7cc4
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1583857550-12049-3-git-send-email-john.garry@huawei.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-02-17 at 06:56:39 UTC, Mason Yang wrote:
-> Macronix NANDs support randomizer operation for user data scrambled,
-> which can be enabled with a SET_FEATURE.
+On Wed, Mar 11, 2020 at 12:25:28AM +0800, John Garry wrote:
+> From: Hannes Reinecke <hare@suse.com>
 > 
-> User data written to the NAND device without randomizer is still readable
-> after randomizer function enabled.
-> The penalty of randomizer are subpage accesses prohibited and more time
-> period is needed in program operation and entering deep power-down mode.
-> i.e., tPROG 300us to 340us(randomizer enabled)
-> 
-> For more high-reliability concern, if subpage write not available with
-> hardware ECC and then to enable randomizer is recommended by default.
-> Driver checks byte 167 of Vendor Blocks in ONFI parameter page table
-> to see if this high-reliability function is supported. By adding a new
-> specific DT property in children nodes to enable randomizer function.
-> 
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> Allocate a separate 'reserved_cmd_q' for sending reserved commands.
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
-
-Miquel
+Why?  Reserved command specifically are not in any way tied to queues.
