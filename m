@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82C6217F7BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:41:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACF0717F9BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:59:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbgCJMls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:41:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41406 "EHLO mail.kernel.org"
+        id S1726899AbgCJM7g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:59:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726420AbgCJMlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:41:46 -0400
+        id S1729871AbgCJM7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:59:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 699BA24698;
-        Tue, 10 Mar 2020 12:41:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DC7524698;
+        Tue, 10 Mar 2020 12:59:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844105;
-        bh=TtPVw9B+lbDiUyUsy+nb7x90oko5644fx7SkOVULfOs=;
+        s=default; t=1583845172;
+        bh=7+LMZXNi4MoY4tezDeyJYcxJUKRx7xxqRt+myaI/E10=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J0ClrTZAUxshiQ372AdQL7+0odpxmKC8jRcx7JkaUFSno+rQmsg8VMGTp+4KizgMH
-         9W6FmYln7UGjqnKidOZ58pu/f/Au7Wx4nrPl/lE8G6CUTiTph94QqOP+Bh5iOBCfnl
-         TJmpFi7H8tKoL3/ia2WeytQTA2QsHNH6kdFUGjKY=
+        b=f8RQ8Ikeuiu9jeiAL8bC/8kXYNv5xpATkMY+P56nuXMkqeNMx/U+BiR/YtY9aofhX
+         Ww1Nmqtr8n/WjJBRIt/fsUBWzxoUMGnlPq6Rz/Uir+kEEeenLOPXyAukP079DJzHfL
+         VK/MA0RX3gW5zryhgL6E7DDSWFZ1Nm4+Os3wokRA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>, stable@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Srivatsa S. Bhat (VMware)" <srivatsa@csail.mit.edu>,
-        Ajay Kaher <akaher@vmware.com>
-Subject: [PATCH 4.4 32/72] mm: make page ref count overflow check tighter and more explicit
-Date:   Tue, 10 Mar 2020 13:38:45 +0100
-Message-Id: <20200310123609.246382874@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Walle <michael@walle.cc>
+Subject: [PATCH 5.5 089/189] tty: serial: fsl_lpuart: free IDs allocated by IDA
+Date:   Tue, 10 Mar 2020 13:38:46 +0100
+Message-Id: <20200310123648.719610467@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
-References: <20200310123601.053680753@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,79 +42,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Michael Walle <michael@walle.cc>
 
-commit f958d7b528b1b40c44cfda5eabe2d82760d868c3 upsteam.
+commit 2b2e71fe657510a6f71aa16ef0309fa6bc20ab3d upstream.
 
-We have a VM_BUG_ON() to check that the page reference count doesn't
-underflow (or get close to overflow) by checking the sign of the count.
+Since commit 3bc3206e1c0f ("serial: fsl_lpuart: Remove the alias node
+dependence") the port line number can also be allocated by IDA, but in
+case of an error the ID will no be removed again. More importantly, any
+ID will be freed in remove(), even if it wasn't allocated but instead
+fetched by of_alias_get_id(). If it was not allocated by IDA there will
+be a warning:
+  WARN(1, "ida_free called for id=%d which is not allocated.\n", id);
 
-That's all fine, but we actually want to allow people to use a "get page
-ref unless it's already very high" helper function, and we want that one
-to use the sign of the page ref (without triggering this VM_BUG_ON).
+Move the ID allocation more to the end of the probe() so that we still
+can use plain return in the first error cases.
 
-Change the VM_BUG_ON to only check for small underflows (or _very_ close
-to overflowing), and ignore overflows which have strayed into negative
-territory.
-
-Acked-by: Matthew Wilcox <willy@infradead.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: stable@kernel.org
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[ 4.4.y backport notes:
-  Ajay: Open-coded atomic refcount access due to missing
-  page_ref_count() helper in 4.4.y
-  Srivatsa: Added overflow check to get_page_foll() and related code. ]
-Signed-off-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
-Signed-off-by: Ajay Kaher <akaher@vmware.com>
+Fixes: 3bc3206e1c0f ("serial: fsl_lpuart: Remove the alias node dependence")
+Signed-off-by: Michael Walle <michael@walle.cc>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200303174306.6015-3-michael@walle.cc
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/mm.h |    6 +++++-
- mm/internal.h      |    5 +++--
- 2 files changed, 8 insertions(+), 3 deletions(-)
 
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -488,6 +488,10 @@ static inline void get_huge_page_tail(st
+---
+ drivers/tty/serial/fsl_lpuart.c |   39 ++++++++++++++++++++++++---------------
+ 1 file changed, 24 insertions(+), 15 deletions(-)
+
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -268,6 +268,7 @@ struct lpuart_port {
+ 	int			rx_dma_rng_buf_len;
+ 	unsigned int		dma_tx_nents;
+ 	wait_queue_head_t	dma_wait;
++	bool			id_allocated;
+ };
  
- extern bool __get_page_tail(struct page *page);
+ struct lpuart_soc_data {
+@@ -2429,19 +2430,6 @@ static int lpuart_probe(struct platform_
+ 	if (!sport)
+ 		return -ENOMEM;
  
-+/* 127: arbitrary random number, small enough to assemble well */
-+#define page_ref_zero_or_close_to_overflow(page) \
-+	((unsigned int) atomic_read(&page->_count) + 127u <= 127u)
-+
- static inline void get_page(struct page *page)
- {
- 	if (unlikely(PageTail(page)))
-@@ -497,7 +501,7 @@ static inline void get_page(struct page
- 	 * Getting a normal page or the head of a compound page
- 	 * requires to already have an elevated page->_count.
- 	 */
--	VM_BUG_ON_PAGE(atomic_read(&page->_count) <= 0, page);
-+	VM_BUG_ON_PAGE(page_ref_zero_or_close_to_overflow(page), page);
- 	atomic_inc(&page->_count);
- }
- 
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -81,7 +81,8 @@ static inline void __get_page_tail_foll(
- 	 * speculative page access (like in
- 	 * page_cache_get_speculative()) on tail pages.
- 	 */
--	VM_BUG_ON_PAGE(atomic_read(&compound_head(page)->_count) <= 0, page);
-+	VM_BUG_ON_PAGE(page_ref_zero_or_close_to_overflow(compound_head(page)),
-+		       page);
- 	if (get_page_head)
- 		atomic_inc(&compound_head(page)->_count);
- 	get_huge_page_tail(page);
-@@ -106,7 +107,7 @@ static inline void get_page_foll(struct
- 		 * Getting a normal page or the head of a compound page
- 		 * requires to already have an elevated page->_count.
- 		 */
--		VM_BUG_ON_PAGE(atomic_read(&page->_count) <= 0, page);
-+		VM_BUG_ON_PAGE(page_ref_zero_or_close_to_overflow(page), page);
- 		atomic_inc(&page->_count);
+-	ret = of_alias_get_id(np, "serial");
+-	if (ret < 0) {
+-		ret = ida_simple_get(&fsl_lpuart_ida, 0, UART_NR, GFP_KERNEL);
+-		if (ret < 0) {
+-			dev_err(&pdev->dev, "port line is full, add device failed\n");
+-			return ret;
+-		}
+-	}
+-	if (ret >= ARRAY_SIZE(lpuart_ports)) {
+-		dev_err(&pdev->dev, "serial%d out of range\n", ret);
+-		return -EINVAL;
+-	}
+-	sport->port.line = ret;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	sport->port.membase = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(sport->port.membase))
+@@ -2485,9 +2473,25 @@ static int lpuart_probe(struct platform_
+ 		}
  	}
+ 
++	ret = of_alias_get_id(np, "serial");
++	if (ret < 0) {
++		ret = ida_simple_get(&fsl_lpuart_ida, 0, UART_NR, GFP_KERNEL);
++		if (ret < 0) {
++			dev_err(&pdev->dev, "port line is full, add device failed\n");
++			return ret;
++		}
++		sport->id_allocated = true;
++	}
++	if (ret >= ARRAY_SIZE(lpuart_ports)) {
++		dev_err(&pdev->dev, "serial%d out of range\n", ret);
++		ret = -EINVAL;
++		goto failed_out_of_range;
++	}
++	sport->port.line = ret;
++
+ 	ret = lpuart_enable_clks(sport);
+ 	if (ret)
+-		return ret;
++		goto failed_clock_enable;
+ 	sport->port.uartclk = lpuart_get_baud_clk_rate(sport);
+ 
+ 	lpuart_ports[sport->port.line] = sport;
+@@ -2537,6 +2541,10 @@ static int lpuart_probe(struct platform_
+ failed_attach_port:
+ failed_irq_request:
+ 	lpuart_disable_clks(sport);
++failed_clock_enable:
++failed_out_of_range:
++	if (sport->id_allocated)
++		ida_simple_remove(&fsl_lpuart_ida, sport->port.line);
+ 	return ret;
  }
+ 
+@@ -2546,7 +2554,8 @@ static int lpuart_remove(struct platform
+ 
+ 	uart_remove_one_port(&lpuart_reg, &sport->port);
+ 
+-	ida_simple_remove(&fsl_lpuart_ida, sport->port.line);
++	if (sport->id_allocated)
++		ida_simple_remove(&fsl_lpuart_ida, sport->port.line);
+ 
+ 	lpuart_disable_clks(sport);
+ 
 
 
