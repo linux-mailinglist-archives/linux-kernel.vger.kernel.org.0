@@ -2,56 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5253517FCD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:23:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD6D17FCDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:24:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730931AbgCJNXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:23:44 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39954 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730861AbgCJNXm (ORCPT
+        id S1729351AbgCJNXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:23:53 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53867 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730944AbgCJNXo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:23:42 -0400
-Received: by mail-wm1-f66.google.com with SMTP id e26so1322419wme.5
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:23:41 -0700 (PDT)
+        Tue, 10 Mar 2020 09:23:44 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 25so1385671wmk.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:23:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=okCxADSi/XY9CnlYiTmN0nDKDcnaKRsPlFnUGxBGBDw=;
-        b=K0O1LvJXX9y5ExHZJUF2jvnWozFa1b4OyIMifbq/EthW/7dhvlCuMcELgEznc9xX+n
-         fmVFj64B7NG61nTIe5w28Cx/CMjsT2SYERLM7RM08vA1MCpItKg9VqZpAPTQb1Bl+YM8
-         PhLtYEQcVs0mBGdxEy7zkwwTUz5J+Jfl2rGwsMEjFbLkDlTo/u90Z4jq3+QTYU6Vhkxf
-         WwocC7Gk9YVobNDQAI673rtZIbsH6Sq/dmwFJ1+L8PErywBOXBu2cShgAokMYV4IVoIF
-         i2Zib2XZwNylddY57+vgv2vBA3CzBOy7JAA5peYrcldoWq4Bj3gM9bVR5UPvVOLbrPW+
-         sN0A==
+        bh=akDdAt4p2dWoTZwYxw75tkvXAlxdneDQi+0B2o38Fws=;
+        b=h1AbrJMApWyg4kNotGG5swk6LiG4J2pDGRiKJvSG0/7WZGe6VlS6P0OEtDc5Zw5FJj
+         QDeMfUmosx2YlYnMM9eEtBrrfeQkt1hEq6SJEjptGQihtdwQva+r0RYNdWF051/CleG6
+         wt6gyGo+K8jaKkFUaUoLovkFk05zVyqxlcw0S87rzhdVO9Lod95v48j69AK9Fs7RATCC
+         7StM96w3Sg4ELeYl3vyO7ku9fyBPUam7ubFvFCQpvtVEoC/cQA8xLs9r4Af4b9ih/uP0
+         iYzT8zDHdqthEcf7IAqbS/zt7CXyliDFALQmTk0EGklqT/gs1M9wnkmV8U/xFt4Ah04k
+         nBgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=okCxADSi/XY9CnlYiTmN0nDKDcnaKRsPlFnUGxBGBDw=;
-        b=T4Fy4VpYvpiJVfoDpG+67Cayf9sPKkI3HgaCryfpwSlz9K+r/ubT4r5DFaBGhZig7P
-         XASUOsu865UisoLhcbKiMbJDc5EH2xq+3tNi82G4PuvOdObzyg8dvueUv/xFfkqIf/PI
-         mFiUzm/btML07BuxcUXo/exUVqeOFzYfVA65XyhwGUl9gW7kpcoBA7T1SYrAmAuWn+JO
-         UanlW3bDBfpAf8trnmyCeY/+7dKdyw5jeS+4xInAVW7dFKEXK5FGYZufnxrfbjrWv1L0
-         4NSp2JNeuY4une4/GrEh/q7k19enBvvzR5deuCxBKCBR81UdYEnOVMl3IDmKJBXyYELU
-         3u+Q==
-X-Gm-Message-State: ANhLgQ16D59fPWSHPJWKvMCpmk/TFudbiuiWAoZZnr04CLGaN9JhRkfu
-        aaNdYvXuIWtoxIuUS+yRMqVtyg==
-X-Google-Smtp-Source: ADFU+vtFCLoGYmDlAXXA55PpemqKxAdjTNnLmBuvP0pziZ8lOfz5Ewp6b85h3dxefvTQMiJa4wH97Q==
-X-Received: by 2002:a1c:25c1:: with SMTP id l184mr2198473wml.122.1583846620784;
-        Tue, 10 Mar 2020 06:23:40 -0700 (PDT)
+        bh=akDdAt4p2dWoTZwYxw75tkvXAlxdneDQi+0B2o38Fws=;
+        b=AIFtUTvFMmu8gPrPxjyoJjwrFjTpL0LybuRBVXGMl9IeyNU+ZjeF6AgmxxMx4E0GDF
+         AwggrDc9Pnam6Z9iZj8ZheQZbgEjvp5JAOhuP43LtqLbZa5trQUeU8zdWIydt5ST87F+
+         YdZRxOHFPod0NSgaIbpFZ7E/GBmYZhF60FVVEv6ZVY5dccWjPmt55ftESAojAxpwsjNv
+         oAeyBw2EyZxw8reySCQF2pccirtqzpXYEZrZFNHdYior9DntbqnRis7Qe1qtaQtu1NH0
+         XAVkbItRyG1a1VfQSDApyMvg+2FeC/jYe2BHNSKmHoAewtRPZLv+sh7jl0csQXlYz38w
+         YrdA==
+X-Gm-Message-State: ANhLgQ2VBG5Zv223/aseyKRC1Z8KtGDBrWoFRj9Ux7GwJcKmaB/AJj1Y
+        soteXmtFkLevtB8PU41aBEyXcUwFm6I=
+X-Google-Smtp-Source: ADFU+vsXFQIe4HC64N/UgpZCNemZncS+enpSTHkmz9rIHzpNEJh+52u8oxdQkxRxmpMUHHQy2aQhTw==
+X-Received: by 2002:a1c:b743:: with SMTP id h64mr2219100wmf.88.1583846622078;
+        Tue, 10 Mar 2020 06:23:42 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id s22sm3761199wmc.16.2020.03.10.06.23.39
+        by smtp.gmail.com with ESMTPSA id s22sm3761199wmc.16.2020.03.10.06.23.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 06:23:39 -0700 (PDT)
+        Tue, 10 Mar 2020 06:23:41 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org,
+        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 08/14] nvmem: core: validate nvmem config before parsing
-Date:   Tue, 10 Mar 2020 13:22:51 +0000
-Message-Id: <20200310132257.23358-9-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 09/14] nvmem: check for NULL reg_read and reg_write before dereferencing
+Date:   Tue, 10 Mar 2020 13:22:52 +0000
+Message-Id: <20200310132257.23358-10-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20200310132257.23358-1-srinivas.kandagatla@linaro.org>
 References: <20200310132257.23358-1-srinivas.kandagatla@linaro.org>
@@ -62,28 +63,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nvmem provider has to provide either reg_read/write, add a check
-to enforce this.
+From: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
 
+Return -EPERM if reg_read is NULL in bin_attr_nvmem_read() or if
+reg_write is NULL in bin_attr_nvmem_write().
+
+This prevents NULL dereferences such as the one described in
+03cd45d2e219 ("thunderbolt: Prevent crash if non-active NVMem file is
+read")
+
+Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/core.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/nvmem/nvmem-sysfs.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index c05c4f4a7b9e..77d890d3623d 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -339,6 +339,9 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	if (!config->dev)
- 		return ERR_PTR(-EINVAL);
+diff --git a/drivers/nvmem/nvmem-sysfs.c b/drivers/nvmem/nvmem-sysfs.c
+index 9e0c429cd08a..8759c4470012 100644
+--- a/drivers/nvmem/nvmem-sysfs.c
++++ b/drivers/nvmem/nvmem-sysfs.c
+@@ -56,6 +56,9 @@ static ssize_t bin_attr_nvmem_read(struct file *filp, struct kobject *kobj,
  
-+	if (!config->reg_read && !config->reg_write)
-+		return ERR_PTR(-EINVAL);
+ 	count = round_down(count, nvmem->word_size);
+ 
++	if (!nvmem->reg_read)
++		return -EPERM;
 +
- 	nvmem = kzalloc(sizeof(*nvmem), GFP_KERNEL);
- 	if (!nvmem)
- 		return ERR_PTR(-ENOMEM);
+ 	rc = nvmem->reg_read(nvmem->priv, pos, buf, count);
+ 
+ 	if (rc)
+@@ -90,6 +93,9 @@ static ssize_t bin_attr_nvmem_write(struct file *filp, struct kobject *kobj,
+ 
+ 	count = round_down(count, nvmem->word_size);
+ 
++	if (!nvmem->reg_write)
++		return -EPERM;
++
+ 	rc = nvmem->reg_write(nvmem->priv, pos, buf, count);
+ 
+ 	if (rc)
 -- 
 2.21.0
 
