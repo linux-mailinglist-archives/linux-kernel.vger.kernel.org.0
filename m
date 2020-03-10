@@ -2,49 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6128B17F7CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:42:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF0D117F82E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:45:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbgCJMm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:42:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42152 "EHLO mail.kernel.org"
+        id S1727015AbgCJMpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:45:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727302AbgCJMmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:42:17 -0400
+        id S1726861AbgCJMpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:45:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2AE6246A3;
-        Tue, 10 Mar 2020 12:42:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 884BA2469C;
+        Tue, 10 Mar 2020 12:45:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844137;
-        bh=t2rrqzoW7TB77qiw1SOKTPOwUk9Edw9mxwPjCXvnKmI=;
+        s=default; t=1583844346;
+        bh=tga0kAfL5khGIFnbNDBvYt+Mr60/b3AfqOf26I9Xtjo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XIVyB4Dr9qjm214JYoZOvZjCMZlzY0ef+h+ya5MuCiFxZOEaKQH82Sl8eOZJVPqzJ
-         aBBTwOC3GXmyiw5PlhAKRlDyw4agkfpuG5dEC8keIhmDJRcWs99jp6aFZo0VD8kTp3
-         P5V7DhllqWl048DuPhEM0vLohFgm0GISoOcTmdAc=
+        b=KLT9z/AWgz5hsakzWrKLje01wxKTPyz3lKy3zgfXvRhldDM8PUupZvtQPc1JUYB3i
+         yA5Ws8FKSQUliylKRVEAP0JptAdV2/oxq2fXoH9c+bNyLPipd6lJi9eRursH5DvAwm
+         ZEyXqJrmboePQqzhG5j2+rxyfVEfPLe6y+D0w14U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Todd Kjos <tkjos@google.com>,
-        Alistair Delva <adelva@google.com>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        freedreno@lists.freedesktop.org,
-        clang-built-linux@googlegroups.com,
-        John Stultz <john.stultz@linaro.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Rob Clark <robdclark@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 43/72] drm: msm: Fix return type of dsi_mgr_connector_mode_valid for kCFI
+        stable@vger.kernel.org, Wei Yang <richardw.yang@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 48/88] mm/huge_memory.c: use head to check huge zero page
 Date:   Tue, 10 Mar 2020 13:38:56 +0100
-Message-Id: <20200310123612.064015342@linuxfoundation.org>
+Message-Id: <20200310123617.993328962@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
-References: <20200310123601.053680753@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,55 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Stultz <john.stultz@linaro.org>
+From: Wei Yang <richardw.yang@linux.intel.com>
 
-[ Upstream commit 7fd2dfc3694922eb7ace4801b7208cf9f62ebc7d ]
+commit cb829624867b5ab10bc6a7036d183b1b82bfe9f8 upstream.
 
-I was hitting kCFI crashes when building with clang, and after
-some digging finally narrowed it down to the
-dsi_mgr_connector_mode_valid() function being implemented as
-returning an int, instead of an enum drm_mode_status.
+The page could be a tail page, if this is the case, this BUG_ON will
+never be triggered.
 
-This patch fixes it, and appeases the opaque word of the kCFI
-gods (seriously, clang inlining everything makes the kCFI
-backtraces only really rough estimates of where things went
-wrong).
+Link: http://lkml.kernel.org/r/20200110032610.26499-1-richardw.yang@linux.intel.com
+Fixes: e9b61f19858a ("thp: reintroduce split_huge_page()")
 
-Thanks as always to Sami for his help narrowing this down.
+Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Cc: Rob Clark <robdclark@gmail.com>
-Cc: Sean Paul <sean@poorly.run>
-Cc: Sami Tolvanen <samitolvanen@google.com>
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Alistair Delva <adelva@google.com>
-Cc: Amit Pundir <amit.pundir@linaro.org>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: freedreno@lists.freedesktop.org
-Cc: clang-built-linux@googlegroups.com
-Signed-off-by: John Stultz <john.stultz@linaro.org>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Tested-by: Amit Pundir <amit.pundir@linaro.org>
-Signed-off-by: Rob Clark <robdclark@chromium.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/dsi/dsi_manager.c | 2 +-
+ mm/huge_memory.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-index 0455ff75074ad..439dfb69e2ef8 100644
---- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-@@ -302,7 +302,7 @@ static int dsi_mgr_connector_get_modes(struct drm_connector *connector)
- 	return num;
- }
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2095,7 +2095,7 @@ int split_huge_page_to_list(struct page
+ 	unsigned long flags;
+ 	pgoff_t end;
  
--static int dsi_mgr_connector_mode_valid(struct drm_connector *connector,
-+static enum drm_mode_status dsi_mgr_connector_mode_valid(struct drm_connector *connector,
- 				struct drm_display_mode *mode)
- {
- 	int id = dsi_mgr_connector_get_id(connector);
--- 
-2.20.1
-
+-	VM_BUG_ON_PAGE(is_huge_zero_page(page), page);
++	VM_BUG_ON_PAGE(is_huge_zero_page(head), head);
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 	VM_BUG_ON_PAGE(!PageSwapBacked(page), page);
+ 	VM_BUG_ON_PAGE(!PageCompound(page), page);
 
 
