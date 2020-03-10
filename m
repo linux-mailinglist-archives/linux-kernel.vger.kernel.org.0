@@ -2,259 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B49E17FFDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 15:11:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A242D17FFDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 15:11:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727161AbgCJOLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 10:11:15 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:50739 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbgCJOLP (ORCPT
+        id S1727283AbgCJOLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 10:11:43 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:26276 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726415AbgCJOLm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 10:11:15 -0400
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id CBC9B23ECA;
-        Tue, 10 Mar 2020 15:11:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1583849471;
+        Tue, 10 Mar 2020 10:11:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583849502;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=IsAsAFMQdm4t+w+VAii6/sLzY0pLLvWgOGV7ZznUbU4=;
-        b=XUcaxUjX/EyhUVCFQ8WJ/QIphEfVQc3pzpMavTS22ctpJXWyUsIL+MX1lMsQUN4xmDrfCa
-        PXmfSgyReung2xDwbzq4xbVdWoxJJFLCD6/68E/YQPjt4HOcKFRFbeAbehXWiQbnlhx1m2
-        AIu5qnlG/vh7upvko9aeIRF9chpTwjI=
+        bh=4VMlPSkkEaFEV/UY+CJNGIQlRtniz4tmHocOHXLHtXw=;
+        b=YffjYSymLwRq2Vnn9m546Fi2mQ1vf49ASO5EuGf4jpi2xBMG4ApQJ0bROQBmj3HABPqVtw
+        aORiOLCeDFgCI/7CnLR+LNP/igS3BB9VJuSBw9THSi/WYjW8kvmWfbgNDILRZ7EEfFG6AH
+        0HzSDxnMd0VTS+DJmeYUidxxi7fHvF8=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-279-MpVkm-sqPlWK073Z4yYrXA-1; Tue, 10 Mar 2020 10:11:38 -0400
+X-MC-Unique: MpVkm-sqPlWK073Z4yYrXA-1
+Received: by mail-qt1-f199.google.com with SMTP id o10so9161957qtk.22
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 07:11:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4VMlPSkkEaFEV/UY+CJNGIQlRtniz4tmHocOHXLHtXw=;
+        b=EQPvSc9Umlg3R4tzIroxVxnFFiwDCajk4cLLdRlpzd2RUBW5EiGdq2yfPVhucD93zq
+         NsUeKyrgOXYtpmyi1RkJFS40RQC9S4daCU8Jua/G+2to/vtcJGr+5M2s2KTkXXIr2tpi
+         dgASmhNIbtFcIbQ5Xiyp8GrGHFo6UbZ4HnWXAS2QP86TUGElvLELLn4QgrQYVloWVLKw
+         H2nO5+C8KRX8EpRR7JtCddNaVQBjy4RhJwLbX/9dtzV9jPvOsrw/QTOPDIuzcql96wRu
+         P5PFH4leYrCeBmRVhLi19H1CzD53l7eQS+lW7UlgGaqafrSpBxm0x2Vdon9mm9HbLk+i
+         FRUg==
+X-Gm-Message-State: ANhLgQ0pTjLgHHqWyv7sna+yRdcPo4E22Ym84iBeQnDwpxVwpBYQtu6c
+        UWtIHYE8zW7rTCzI9fQYGxGT0nfUDzhc9Q7yJ9PBIl5bi9gro3EXSWWwnsDuquj/NcrREzy1Ghd
+        vQNYUbEgrvPkgyHncQgl46QCv
+X-Received: by 2002:ad4:498c:: with SMTP id t12mr13713734qvx.27.1583849498207;
+        Tue, 10 Mar 2020 07:11:38 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vuq5Hd2E1gOPKAjD/xk0yU5tPclVVvaT0lJDm/8lSD7XYa6TVP1JdMFzrX8lvQtFIZQU5Qu7g==
+X-Received: by 2002:ad4:498c:: with SMTP id t12mr13713704qvx.27.1583849497927;
+        Tue, 10 Mar 2020 07:11:37 -0700 (PDT)
+Received: from redhat.com (bzq-79-178-2-19.red.bezeqint.net. [79.178.2.19])
+        by smtp.gmail.com with ESMTPSA id i4sm24289819qkf.111.2020.03.10.07.11.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 07:11:36 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 10:11:30 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        Lei Cao <lei.cao@stratus.com>
+Subject: Re: [PATCH v5 05/14] KVM: X86: Implement ring-based dirty memory
+ tracking
+Message-ID: <20200310101039-mutt-send-email-mst@kernel.org>
+References: <20200304174947.69595-6-peterx@redhat.com>
+ <202003061911.MfG74mgX%lkp@intel.com>
+ <20200309213554.GF4206@xz-x1>
+ <20200310022931-mutt-send-email-mst@kernel.org>
+ <20200310140921.GD326977@xz-x1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 10 Mar 2020 15:11:10 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     broonie@kernel.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, shawnguo@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, eha@deif.com, angelo@sysam.it,
-        andrew.smirnov@gmail.com, gustavo@embeddedor.com, weic@nvidia.com,
-        mhosny@nvidia.com, peng.ma@nxp.com
-Subject: Re: [PATCH v3 0/7] NXP DSPI bugfixes and support for LS1028A
-In-Reply-To: <20200310125542.5939-1-olteanv@gmail.com>
-References: <20200310125542.5939-1-olteanv@gmail.com>
-Message-ID: <615284875b709f602d57e4a4621a83c1@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.10
-X-Spamd-Bar: +
-X-Spam-Level: *
-X-Rspamd-Server: web
-X-Spam-Status: No, score=1.40
-X-Spam-Score: 1.40
-X-Rspamd-Queue-Id: CBC9B23ECA
-X-Spamd-Result: default: False [1.40 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         FREEMAIL_ENVRCPT(0.00)[gmail.com];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[15];
-         NEURAL_HAM(-0.00)[-0.551];
-         FREEMAIL_TO(0.00)[gmail.com];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,arm.com,deif.com,sysam.it,gmail.com,embeddedor.com,nvidia.com,nxp.com];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310140921.GD326977@xz-x1>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vladimir,
-
-Am 2020-03-10 13:55, schrieb Vladimir Oltean:
-> From: Vladimir Oltean <vladimir.oltean@nxp.com>
+On Tue, Mar 10, 2020 at 10:09:21AM -0400, Peter Xu wrote:
+> On Tue, Mar 10, 2020 at 02:31:55AM -0400, Michael S. Tsirkin wrote:
+> > On Mon, Mar 09, 2020 at 05:35:54PM -0400, Peter Xu wrote:
+> > > I'll probably also
+> > > move KVM_DIRTY_LOG_PAGE_OFFSET==0 definition to uapi/linux/kvm.h.
+> > 
+> > 
+> > IMHO KVM_DIRTY_LOG_PAGE_OFFSET is kind of pointless anyway - 
+> > we won't be able to move data around just by changing the
+> > uapi value since userspace isn't
+> > recompiled when kernel changes ...
 > 
-> This series addresses a few issues that were missed during the previous
-> series "[PATCH 00/12] TCFQ to XSPI migration for NXP DSPI driver", on
-> SoCs other than LS1021A and LS1043A. DMA mode has been completely 
-> broken
-> by that series, and XSPI mode never worked on little-endian 
-> controllers.
+> Yes I think we can even drop this KVM_DIRTY_LOG_PAGE_OFFSET==0
+> definition.  IMHO it's only a matter of whether we would like to
+> directly reference this value in the common code (e.g., for kernel
+> virt/kvm_main.c) or we want quite a few of this instead:
 > 
-> Then it introduces support for the LS1028A chip, whose compatible has
-> recently been documented here:
+> #ifdef KVM_DIRTY_LOG_PAGE_OFFSET
+> ..
+> #endif
+
+Hmm do other arches define it to a different value?
+Maybe I'm confused.
+If they do then it makes sense.
+
+> I slightly prefer to not use lots of "#ifdef"s so I chose to make sure
+> it's defined.  However I've no strong opinion on this either. So I'm
+> open to change that if anyone insists with some reasons.
 > 
-> https://lore.kernel.org/linux-devicetree/20200218171418.18297-1-michael@walle.cc/
+> Thanks,
 > 
-> The device tree for the LS1028A SoC is extended with DMA channels
-> definition, such that even though the default operating mode is XSPI,
-> one can simply change DSPI_XSPI_MODE to DSPI_DMA_MODE in the
-> devtype_data structure of the driver and use that instead.
-> 
-> I don't expect the "fixes" patches to reach very far down the stable
-> pipe, since there has been pretty heavy refactoring in this driver.
-> 
-> For testing, benchmarking and debugging, the mikroBUS connector on the
-> LS1028A-RDB is made available via spidev.
+> -- 
+> Peter Xu
 
-
-XSPI mode, while now I cannot reproduce the kernel oops anymore, I've 
-found two
-other problems (1), (2). Which are likely the same underlying problem. 
-DMA mode
-works "better" now, still one problem (3).
-
-(1) It seems like the first write/read/erase after the aborted 
-instruction
-don't get through:
-
-# hexdump -C /dev/mtd0
-00000000  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  
-|................|
-*
-[  627.914654] fsl-dspi 2120000.spi: Waiting for transfer to complete 
-failed!
-^C[  627.921649] spi_master spi1: failed to transfer one message from 
-queue
-
-#
-# echo huhu > /dev/mtd0
-# hexdump -C /dev/mtd0
-00000000  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  
-|................|
-*
-hexdump: /dev/mtd0: Input/output error
-003df000
-# echo huhu > /dev/mtd0
-# hexdump -C /dev/mtd0
-00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff  
-|huhu............|
-00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  
-|................|
-*
-[  642.738905] fsl-dspi 2120000.spi: Waiting for transfer to complete 
-failed!
-^C[  642.745832] spi_master spi1: failed to transfer one message from 
-queue
-#
-# flash_erase /dev/mtd0 0 1
-Erasing 4 Kibyte @ 0 -- 100 % complete
-#
-# hexdump -C /dev/mtd0
-00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff  
-|huhu............|
-00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  
-|................|
-*
-hexdump: /dev/mtd0: Input/output error
-0023d000
-# hexdump -C /dev/mtd0
-00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff  
-|huhu............|
-00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  
-|................|
-*
-
-(2) Also, reading the flash, every second time there is (reproducibly) 
-an
-IO error:
-
-# hexdump -C /dev/mtd0
-00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff  
-|huhu............|
-00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  
-|................|
-*
-01000000
-# hexdump -C /dev/mtd0
-00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff  
-|huhu............|
-00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  
-|................|
-*
-hexdump: /dev/mtd0: Input/output error
-00dc0000
-# hexdump -C /dev/mtd0
-00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff  
-|huhu............|
-00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  
-|................|
-*
-01000000
-# hexdump -C /dev/mtd0
-00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff  
-|huhu............|
-00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  
-|................|
-*
-hexdump: /dev/mtd0: Input/output error
-00e6a000
-
-(3) Depening on the content length there is also an IO error. Funny 
-enough,
-the content is still written to the SPI flash.
-
-# echo -n 1 > /dev/mtd10
-# echo -n 12 > /dev/mtd10
-# echo -n 123 > /dev/mtd10
-# echo -n 1234 > /dev/mtd10
-# echo -n 12345 > /dev/mtd10
-sh: write error: Input/output error
-# echo -n 123456 > /dev/mtd10
-# echo -n 1234567 > /dev/mtd10
-sh: write error: Input/output error
-# echo -n 12345678 > /dev/mtd10
-# echo -n 123456789 > /dev/mtd10
-# echo -n 1234567890 > /dev/mtd10
-# echo -n 12345678901 > /dev/mtd10
-# echo -n 123456789012 > /dev/mtd10
-# echo -n 1234567890123 > /dev/mtd10
-sh: write error: Input/output error
-# echo -n 12345678901234 > /dev/mtd10
-# echo -n 123456789012345 > /dev/mtd10
-sh: write error: Input/output error
-# echo -n 1234567890123456 > /dev/mtd10
-# echo -n 12345678901234567 > /dev/mtd10
-# echo -n 123456789012345678 > /dev/mtd10
-
-
-# flash_erase /dev/mtd10 0 1
-Erasing 4 Kibyte @ 0 -- 100 % complete
-# hexdump -C /dev/mtd10
-00000000  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  
-|................|
-*
-^C
-# echo -n 12345 > /dev/mtd10
-sh: write error: Input/output error
-# hexdump -C /dev/mtd10
-00000000  31 32 33 34 35 ff ff ff  ff ff ff ff ff ff ff ff  
-|12345...........|
-00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  
-|................|
-*
-^C
-
-
--michael
-
-> 
-> Vladimir Oltean (7):
->   spi: spi-fsl-dspi: Don't access reserved fields in SPI_MCR
->   spi: spi-fsl-dspi: Avoid use-after-free in interrupt mode
->   spi: spi-fsl-dspi: Fix little endian access to PUSHR CMD and TXDATA
->   spi: spi-fsl-dspi: Fix bits-per-word acceleration in DMA mode
->   spi: spi-fsl-dspi: Add support for LS1028A
->   arm64: dts: ls1028a: Specify the DMA channels for the DSPI 
-> controllers
->   arm64: dts: ls1028a-rdb: Add a spidev node for the mikroBUS
-> 
->  .../boot/dts/freescale/fsl-ls1028a-rdb.dts    |  14 ++
->  .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |   6 +
->  drivers/spi/spi-fsl-dspi.c                    | 188 +++++++++++-------
->  3 files changed, 134 insertions(+), 74 deletions(-)
