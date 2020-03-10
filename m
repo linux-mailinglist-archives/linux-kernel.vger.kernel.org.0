@@ -2,105 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A718180070
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 15:42:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1318F180049
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 15:34:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbgCJOmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 10:42:07 -0400
-Received: from er-systems.de ([148.251.68.21]:44986 "EHLO er-systems.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726391AbgCJOmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 10:42:07 -0400
-X-Greylist: delayed 486 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Mar 2020 10:42:06 EDT
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by er-systems.de (Postfix) with ESMTP id BD688D6006F;
-        Tue, 10 Mar 2020 15:33:58 +0100 (CET)
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on er-systems.de
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=5.0 tests=ALL_TRUSTED,BAYES_00
-        autolearn=ham autolearn_force=no version=3.4.2
-Received: from localhost (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by er-systems.de (Postfix) with ESMTPS id 9DF71D6006D;
-        Tue, 10 Mar 2020 15:33:58 +0100 (CET)
-Date:   Tue, 10 Mar 2020 15:33:57 +0100 (CET)
-From:   Thomas Voegtle <tv@lio96.de>
-X-X-Sender: thomas@er-systems.de
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        "H.J. Lu" <hjl.tools@gmail.com>, Borislav Petkov <bp@suse.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.9 62/88] x86/boot/compressed: Dont declare __force_order
- in kaslr_64.c
-In-Reply-To: <20200310123621.868809541@linuxfoundation.org>
-Message-ID: <alpine.LSU.2.21.2003101522120.20206@er-systems.de>
-References: <20200310123606.543939933@linuxfoundation.org> <20200310123621.868809541@linuxfoundation.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1726998AbgCJOei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 10:34:38 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44680 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbgCJOei (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 10:34:38 -0400
+Received: by mail-wr1-f68.google.com with SMTP id l18so6094096wru.11
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 07:34:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zXUts9AKiN/fKeCTOGQ7/e/tECu60a66Sq1qE2nSsj8=;
+        b=ucqglDNfh+/t7dmNc1CoK4kO9k+WxOIJzAhBXn+Oh0STOsQnfHC/GDv6spYpC2ti0F
+         WkhQA8v8uiST7Z2FuAl1vsyWSGLCSJLSeMFgLDT5TelHP3z9E5sty8LyyHNRfUDslRso
+         p498ot405gbFzIQB8Gt7/kHjgUTRjDSPxJyPA9DIw7zogenq96fCCzMxkx/7v30uhgLQ
+         MaUkhBksj+EQPUUo9C1nbNcAeQ7zVyr7DbaeRMuje32RNsSbERV6RjurO2HhIIVSVp5P
+         1C58TiVwLcXXFWBZ6cIpe4SUvRGwDpB5RiViuB8j7/8j8KHchz/Q4771WMHVRqM0rp1w
+         ddbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zXUts9AKiN/fKeCTOGQ7/e/tECu60a66Sq1qE2nSsj8=;
+        b=qjbk5j894eJYHzuCJwOCAfosoeKJnCeFEc+7vbQ3S4Xk2IzKV/5WuE1cQlKQ2JPtse
+         WjOUwdDDBg1qR7vwjhrsbeSnCNzg9NNS3PlTKGJCqqeySJb1fhHHDxRXYYGDP0zjfHwz
+         fr2lsyS8/3OhwDPXhfKn/ltuXjxZtrfrmK+SADC1PNHmePPx9mW0ZAHwAkFX7yblU4O3
+         8DvGjM6Nhe2HRQnMu/bUo5rW9sP8fQx3cQtqh8LbLA0wA46/QdanWJi7em1QuiRIyYsu
+         nfqHwHsBfMTl2SYlPtTS4oQUYuD8s49dCc0kKrAwA2Duotc5Tpnqz0iiEa+7Sui5Nr7k
+         6w9w==
+X-Gm-Message-State: ANhLgQ3ai1zVnTkchhmFxpP4GQc6Y8hb7IWoETNQKPKaJmh8I2Y479t7
+        aTbeYIdVMl9Llnh93ClDC77MaA==
+X-Google-Smtp-Source: ADFU+vvCn/r+CWrqGkHsSeFBVcE/wnMDHgQjwBF6p03Kfe11Rwc7vjt86tUuLleXNkWdlmNEvJ52Jg==
+X-Received: by 2002:adf:eb51:: with SMTP id u17mr29388013wrn.29.1583850875652;
+        Tue, 10 Mar 2020 07:34:35 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id o3sm4610328wme.36.2020.03.10.07.34.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 07:34:34 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 14:34:32 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Guru Das Srinagesh <gurus@codeaurora.org>
+Cc:     linux-pwm@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH v7 12/13] backlight: pwm_bl: Use 64-bit division macros
+ for period and duty cycle
+Message-ID: <20200310143432.cfjlqac5x6oinshj@holly.lan>
+References: <cover.1583782035.git.gurus@codeaurora.org>
+ <bf6d8f6190d266f8992bd5451b12c9f3962fd18e.1583782035.git.gurus@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-Virus-Status: No
-X-Virus-Checker-Version: clamassassin 1.2.4 with clamdscan / ClamAV 0.102.2/25747/Tue Mar 10 12:06:29 2020 signatures .
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bf6d8f6190d266f8992bd5451b12c9f3962fd18e.1583782035.git.gurus@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Mar 2020, Greg Kroah-Hartman wrote:
+On Mon, Mar 09, 2020 at 12:35:15PM -0700, Guru Das Srinagesh wrote:
+> Because period and duty cycle are defined in the PWM framework structs
+> as ints with units of nanoseconds, the maximum time duration that can be
+> set is limited to ~2.147 seconds. Redefining them as u64 values will
+> enable larger time durations to be set.
+> 
+> As a first step, prepare drivers to handle the switch to u64 period and
+> duty_cycle by replacing division operations involving pwm period and duty cycle
+> with their 64-bit equivalents as appropriate. The actual switch to u64 period
+> and duty_cycle follows as a separate patch.
+> 
+> Where the dividend is 64-bit but the divisor is 32-bit, use *_ULL
+> macros:
+> - DIV_ROUND_UP_ULL
+> - DIV_ROUND_CLOSEST_ULL
+> - div_u64
+> 
+> Where the divisor is 64-bit (dividend may be 32-bit or 64-bit), use
+> DIV64_* macros:
+> - DIV64_U64_ROUND_CLOSEST
+> - div64_u64
 
-> From: H.J. Lu <hjl.tools@gmail.com>
->
-> [ Upstream commit df6d4f9db79c1a5d6f48b59db35ccd1e9ff9adfc ]
->
-> GCC 10 changed the default to -fno-common, which leads to
->
->    LD      arch/x86/boot/compressed/vmlinux
->  ld: arch/x86/boot/compressed/pgtable_64.o:(.bss+0x0): multiple definition of `__force_order'; \
->    arch/x86/boot/compressed/kaslr_64.o:(.bss+0x0): first defined here
->  make[2]: *** [arch/x86/boot/compressed/Makefile:119: arch/x86/boot/compressed/vmlinux] Error 1
->
-> Since __force_order is already provided in pgtable_64.c, there is no
-> need to declare __force_order in kaslr_64.c.
->
-> Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Link: https://lkml.kernel.org/r/20200124181811.4780-1-hjl.tools@gmail.com
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+This patch looks like it is a tiny change to get the pwm_backlight to
+perform 64-bit division. Most of the above text is completely irrelevant
+to the change contained in this patch. No need to justify the change in
+the PWM structures here since that can go in the patch that changes
+those structures.  Just describe what this patch does, perhaps something
+like the following:
+
+    The PWM API will shortly switch the state.period and
+    state.duty_cycle fields to 64-bit values. Make pwm_bl
+    ready for this transition by adopting 64-bit division
+    macros.
+
+Also please copy the backlight maintainers into the covering letter. It
+is useful to place patches like this into context.
+
+
+Daniel.
+
+ 
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Daniel Thompson <daniel.thompson@linaro.org>
+> Cc: Jingoo Han <jingoohan1@gmail.com>
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Cc: linux-pwm@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-fbdev@vger.kernel.org
+> 
+> Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
 > ---
-> arch/x86/boot/compressed/pagetable.c | 3 ---
-> 1 file changed, 3 deletions(-)
->
-> diff --git a/arch/x86/boot/compressed/pagetable.c b/arch/x86/boot/compressed/pagetable.c
-> index 56589d0a804b1..2591f8f6d45f2 100644
-> --- a/arch/x86/boot/compressed/pagetable.c
-> +++ b/arch/x86/boot/compressed/pagetable.c
-> @@ -25,9 +25,6 @@
-> #define __PAGE_OFFSET __PAGE_OFFSET_BASE
-> #include "../../mm/ident_map.c"
->
-> -/* Used by pgtable.h asm code to force instruction serialization. */
-> -unsigned long __force_order;
-> -
-> /* Used to track our page table allocation area. */
-> struct alloc_pgt_data {
-> 	unsigned char *pgt_buf;
->
-
-
-This ends up for me in:
-
-arch/x86/boot/compressed/pagetable.o: In function 
-`initialize_identity_maps':
-pagetable.c:(.text+0x309): undefined reference to `__force_order'
-arch/x86/boot/compressed/pagetable.o: In function 
-`finalize_identity_maps':
-pagetable.c:(.text+0x41a): undefined reference to `__force_order'
-
-
-pgtable_64.c doesn't exist in v4.9 for x86.
-
-So I guess it's not correct to remove __force_order from pagetable.c?
-
-
-    Thomas
-
+>  drivers/video/backlight/pwm_bl.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> index efb4efc..3e5dbcf 100644
+> --- a/drivers/video/backlight/pwm_bl.c
+> +++ b/drivers/video/backlight/pwm_bl.c
+> @@ -625,7 +625,8 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+>  		pb->scale = data->max_brightness;
+>  	}
+>  
+> -	pb->lth_brightness = data->lth_brightness * (state.period / pb->scale);
+> +	pb->lth_brightness = data->lth_brightness * (div_u64(state.period,
+> +				pb->scale));
+>  
+>  	props.type = BACKLIGHT_RAW;
+>  	props.max_brightness = data->max_brightness;
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
