@@ -2,90 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F56A17F6D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:55:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA1CE17F6D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:56:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726535AbgCJLzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 07:55:47 -0400
-Received: from first.geanix.com ([116.203.34.67]:47896 "EHLO first.geanix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726252AbgCJLzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 07:55:47 -0400
-Received: from localhost (unknown [85.191.123.149])
-        by first.geanix.com (Postfix) with ESMTPSA id B1D50C62C6;
-        Tue, 10 Mar 2020 11:55:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
-        t=1583841344; bh=tBmlMn2UhNtC3VSTWAV5c9jmOKvQNedYrfvi/K5ohGg=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To;
-        b=bknF87lxIHrTbRn9f0bMCZpIXWn6y6n/jJv5jJx4GVZKoB64Bw/amu1yPpyVKyVQj
-         aDjg9xvogqkkpUaBj6U1zLi7FDZ7jgc/lt0AQ7sUkLej0RuMOPNnUbMiabQ0fXaF3F
-         GqzKb194kcK1dP47haALH8WbY4oYbH2mWa2xem4iWz3m7mGF5FzMwE+UKOsG9b21KT
-         7zDI2UVEr6q5+mOMC2lLtsKA+WBZIcauOWojzeohBdKNJXmicDsolfYIO7XZcefQbU
-         KG/C+18nWtm7arWOt9VX4mQPTBUPibR+FAKQz4hD+pjYtuCsX6iCiLLkTWYHnhoa4m
-         z3dIPzS6qGtzw==
-From:   Esben Haabendal <esben@geanix.com>
-To:     Andre Przywara <andre.przywara@arm.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Robert Hancock <hancock@sedsystems.ca>, netdev@vger.kernel.org,
-        rmk+kernel@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 01/14] net: xilinx: temac: Relax Kconfig dependencies
-References: <20200309181851.190164-1-andre.przywara@arm.com>
-        <20200309181851.190164-2-andre.przywara@arm.com>
-Date:   Tue, 10 Mar 2020 12:55:44 +0100
-In-Reply-To: <20200309181851.190164-2-andre.przywara@arm.com> (Andre
-        Przywara's message of "Mon, 9 Mar 2020 18:18:38 +0000")
-Message-ID: <871rq0a0fz.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        id S1726483AbgCJL4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 07:56:32 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:36263 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbgCJL4c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 07:56:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1583841392; x=1615377392;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   mime-version;
+  bh=XgE7fl2rsu1FY7ZdIVhp6neAOLJV5gIrJsW3gETU0eM=;
+  b=HEVK8xf50yNJCWCslyH5qH7VsjfplPeENWOnOla3jcP8gwZ4ZCL1l0q4
+   T8cocqDUSYFDBgLOxxqQCAyBbHdnkjjHszR213oeMuJ/0aJAgCHoTCE2L
+   A1ICcn90vLlupGYRp4hlqlSVLspu6y6NhurXoEOpxld9mTEoGzdhMzLjf
+   8=;
+IronPort-SDR: 0Hzydumc9Ij+7hDen+sL7JUWLL5Ret2Tmu1RWo6Sr1AL94jtdCPeH/n9LuHToof97fSrrZZupW
+ HxW5PLblkjgg==
+X-IronPort-AV: E=Sophos;i="5.70,536,1574121600"; 
+   d="scan'208";a="30315489"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1a-807d4a99.us-east-1.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 10 Mar 2020 11:56:28 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1a-807d4a99.us-east-1.amazon.com (Postfix) with ESMTPS id A4F76A0687;
+        Tue, 10 Mar 2020 11:56:17 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1236.3; Tue, 10 Mar 2020 11:56:16 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.67) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Tue, 10 Mar 2020 11:56:04 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+CC:     SeongJae Park <sjpark@amazon.com>, <akpm@linux-foundation.org>,
+        "SeongJae Park" <sjpark@amazon.de>, <aarcange@redhat.com>,
+        <yang.shi@linux.alibaba.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <amit@kernel.org>,
+        <brendan.d.gregg@gmail.com>, <brendanhiggins@google.com>,
+        <cai@lca.pw>, <colin.king@canonical.com>, <corbet@lwn.net>,
+        <dwmw@amazon.com>, <jolsa@redhat.com>, <kirill@shutemov.name>,
+        <mark.rutland@arm.com>, <mgorman@suse.de>, <minchan@kernel.org>,
+        <mingo@redhat.com>, <namhyung@kernel.org>, <peterz@infradead.org>,
+        <rdunlap@infradead.org>, <rientjes@google.com>,
+        <rostedt@goodmis.org>, <shuah@kernel.org>, <sj38.park@gmail.com>,
+        <vbabka@suse.cz>, <vdavydov.dev@gmail.com>, <linux-mm@kvack.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: Re: [PATCH v6 06/14] mm/damon: Implement access pattern recording
+Date:   Tue, 10 Mar 2020 12:55:49 +0100
+Message-ID: <20200310115550.24668-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200310090134.000052fb@Huawei.com> (raw)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Spam-Status: No, score=0.6 required=4.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,UNPARSEABLE_RELAY,URIBL_BLOCKED
-        autolearn=disabled version=3.4.4
-X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on 05ff821c8cf1
+X-Originating-IP: [10.43.162.67]
+X-ClientProxiedBy: EX13D16UWB004.ant.amazon.com (10.43.161.170) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andre Przywara <andre.przywara@arm.com> writes:
+On Tue, 10 Mar 2020 09:01:34 +0000 Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
 
-> Similar to axienet, the temac driver is now architecture agnostic, and
-> can be at least compiled for several architectures.
-> Especially the fact that this is a soft IP for implementing in FPGAs
-> makes the current restriction rather pointless, as it could literally
-> appear on any architecture, as long as an FPGA is connected to the bus.
->
-> The driver hasn't been actually tried on any hardware, it is just a
-> drive-by patch when doing the same for axienet (a similar patch for
-> axienet is already merged).
->
-> This (temac and axienet) have been compile-tested for:
-> alpha hppa64 microblaze mips64 powerpc powerpc64 riscv64 s390 sparc64
-> (using kernel.org cross compilers).
+> On Mon, 24 Feb 2020 13:30:39 +0100
+> SeongJae Park <sjpark@amazon.com> wrote:
+> 
+> > From: SeongJae Park <sjpark@amazon.de>
+> > 
+> > This commit implements the recording feature of DAMON. If this feature
+> > is enabled, DAMON writes the monitored access patterns in its binary
+> > format into a file which specified by the user. This is already able to
+> > be implemented by each user using the callbacks.  However, as the
+> > recording is expected to be used widely, this commit implements the
+> > feature in the DAMON, for more convenience and efficiency.
+> > 
+> > Signed-off-by: SeongJae Park <sjpark@amazon.de>
+> 
+> I guess this work whilst you are still developing, but I'm not convinced
+> writing to a file should be a standard feature...
 
-The temac driver is being actively used on x86_64, so please include
-that for future compile-tests of it.
+I also not sure whether this is right feature of the kernel or not, but this
+would minimize many efforts in user space.  I also thought that this might be
+not out of the intention of the 'kernel_write()'.
 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-> ---
->  drivers/net/ethernet/xilinx/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/xilinx/Kconfig b/drivers/net/ethernet/xilinx/Kconfig
-> index 6304ebd8b5c6..0810af8193cb 100644
-> --- a/drivers/net/ethernet/xilinx/Kconfig
-> +++ b/drivers/net/ethernet/xilinx/Kconfig
-> @@ -32,7 +32,6 @@ config XILINX_AXI_EMAC
->  
->  config XILINX_LL_TEMAC
->  	tristate "Xilinx LL TEMAC (LocalLink Tri-mode Ethernet MAC) driver"
-> -	depends on PPC || MICROBLAZE || X86 || COMPILE_TEST
->  	select PHYLIB
->  	---help---
->  	  This driver supports the Xilinx 10/100/1000 LocalLink TEMAC
+Nonetheless, this patch could be simply removed, as DAMON supports tracepoints
+and the recording can be implemented on user space using it.
 
-Acked-by: Esben Haabendal <esben@geanix.com>
+Could I ask your other suggestions for this feature?
+
+
+Thanks,
+SeongJae Park
+
+> 
+> > ---
+[...]
