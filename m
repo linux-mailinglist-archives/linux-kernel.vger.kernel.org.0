@@ -2,132 +2,247 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28FEE1803EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:49:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBB19180400
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:54:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbgCJQt2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 12:49:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51602 "EHLO mail.kernel.org"
+        id S1726958AbgCJQyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 12:54:10 -0400
+Received: from mga09.intel.com ([134.134.136.24]:39029 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbgCJQt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 12:49:28 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726837AbgCJQyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 12:54:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 09:54:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,537,1574150400"; 
+   d="scan'208";a="234406247"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 10 Mar 2020 09:54:08 -0700
+Received: from [10.251.24.33] (kliang2-mobl.ccr.corp.intel.com [10.251.24.33])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C1D321927;
-        Tue, 10 Mar 2020 16:49:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583858967;
-        bh=aZeeJI4m4VA8ZtSKMjKdiWAG3VUJVrzCbJacfmOigbk=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=EN8bsFrHW5CSe5hqSMYnzI6bVJxJrFU1KeDLhy7aWdoO69m+Qh9WglObnp+WfrWbe
-         9NegxcjuXjpEdBF0vCmlcMxg5CENvEmjq2kHND9IeSg/1eBSeP3nHHp4W1S5KmPzMQ
-         SQIYJvibJM6bn0EGU+a1EwuBcrVaUw37T8s5jJUc=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 190C035229CC; Tue, 10 Mar 2020 09:49:27 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 09:49:27 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: Instrumentation and RCU
-Message-ID: <20200310164927.GD2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <87mu8p797b.fsf@nanos.tec.linutronix.de>
- <20200309204710.GU2935@paulmck-ThinkPad-P72>
- <379743142.23419.1583853207158.JavaMail.zimbra@efficios.com>
+        by linux.intel.com (Postfix) with ESMTPS id 666A85804A0;
+        Tue, 10 Mar 2020 09:54:07 -0700 (PDT)
+Subject: Re: [PATCH V2 1/9] perf pmu: Add support for PMU capabilities
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     jolsa@redhat.com, peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        adrian.hunter@intel.com, mathieu.poirier@linaro.org,
+        ravi.bangoria@linux.ibm.com, alexey.budankov@linux.intel.com,
+        vitaly.slobodskoy@intel.com, pavel.gerasimov@intel.com,
+        mpe@ellerman.id.au, eranian@google.com, ak@linux.intel.com
+References: <20200309174639.4594-1-kan.liang@linux.intel.com>
+ <20200309174639.4594-2-kan.liang@linux.intel.com>
+ <20200310130644.GC15931@kernel.org>
+ <00ebb51d-0282-8181-7285-c60aec27566c@linux.intel.com>
+ <20200310140421.GD15931@kernel.org>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <fa4e32f0-1572-a9aa-e609-3cecaae7ef9e@linux.intel.com>
+Date:   Tue, 10 Mar 2020 12:54:05 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <379743142.23419.1583853207158.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200310140421.GD15931@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 11:13:27AM -0400, Mathieu Desnoyers wrote:
-> 
-> 
-> ----- On Mar 9, 2020, at 4:47 PM, paulmck paulmck@kernel.org wrote:
-> [...]
-> 
-> > 
-> > Suppose that we had a variant of RCU that had about the same read-side
-> > overhead as Preempt-RCU, but which could be used from idle as well as
-> > from CPUs in the process of coming online or going offline?  I have not
-> > thought through the irq/NMI/exception entry/exit cases, but I don't see
-> > why that would be problem.
-> > 
-> > This would have explicit critical-section entry/exit code, so it would
-> > not be any help for trampolines.
-> > 
-> > Would such a variant of RCU help?
-> > 
-> > Yeah, I know.  Just what the kernel doesn't need, yet another variant
-> > of RCU...
-> 
-> Hi Paul,
-> 
-> I think that before introducing yet another RCU flavor, it's important
-> to take a step back and look at the tracer requirements first. If those
-> end up being covered by currently available RCU flavors, then why add
-> another ?
 
-Well, we have BPF requirements as well.
 
-> I can start with a few use-cases I have in mind. Others should feel free
-> to pitch in:
+On 3/10/2020 10:04 AM, Arnaldo Carvalho de Melo wrote:
+> Em Tue, Mar 10, 2020 at 09:53:24AM -0400, Liang, Kan escreveu:
+>> On 3/10/2020 9:06 AM, Arnaldo Carvalho de Melo wrote:
+>>> Em Mon, Mar 09, 2020 at 10:46:31AM -0700, kan.liang@linux.intel.com escreveu:
+>>>> +static int perf_pmu__new_caps(struct list_head *list, char *name, char *value)
+>>>> +{
+>>>> +	struct perf_pmu_caps *caps;
+>>>> +
+>>>> +	caps = zalloc(sizeof(*caps));
+>>>> +	if (!caps)
+>>>> +		return -ENOMEM;
 > 
-> Tracing callsite context:
+>>> So here you check if zalloc fails and returns a proper error
 > 
-> 1) Thread context
+>>>> +	caps->name = strdup(name);
+>>>> +	caps->value = strndup(value, strlen(value) - 1);
 > 
->    1.1) Preemption enabled
+>>> But then you don't check strdup()?
+>   
+>> Right, I should check strdup(), otherwise the capability information may be
+>> incomplete. I will fix it in V3.
 > 
->    One tracepoint in this category is syscall enter/exit. We should introduce
->    a variant of tracepoints relying on SRCU for this use-case so we can take
->    page faults when fetching userspace data.
+> Thanks, overall just consider making the patches smaller if possible,
+> with prep patches paving the way for more complex changes so that
+> reviewing becomes easier, for instance:
+> 
+>    perf machine: Refine the function for LBR call stack reconstruction
+> 
+> Seems to do too many things at once. It was unfortunate, for instance,
+> that the pre-existing code had that
+> 
+> resolve_lbr_callchain_sample()
+> {
+> 	/* LBR only affects the user callchain */
+> 	if (i != chain_nr) {
+> 		body of the function, long
+> 		....
+> 		return err;
+> 	}
+> 
+> 	return 0;
+> }
+> 
+> One of the things you did in this patch was to the more sensible:
+> 
+> 	/* LBR only affects the user callchain */
+> 	if (i == chain_nr)
+> 		return 0;
+> 
+> 	body of the function
+> 	...
+> 	return err;
+> 
+> So if you had a prep patch at this point just removing that silly
+> indent, then we would see that that is just removing the indent, the
+> next patch wouldn't have that check for user callchains, would be
+> smaller, I think that would help reduce the patch sizes.
+> 
+> Then if you just moved to a separate function the (callchain_param.order
+> == ORDER_CALLEE) part, the patch would again be smaller, etc.
+> 
+> This helps reviewing and usually helps us later, with bisection, when
+> some bug is introduced,
 
-Agreed, SRCU works fine for the page-fault case, as the read-side memory
-barriers are in the noise compared to page-fault overhead.  Back in
-the day, there were light-weight system calls.  Are all of these now
-converted to VDSO or similar?
 
->    1.2) Preemption disabled
-> 
->    Tree-RCU works fine.
-> 
->    1.3) IRQs disabled
-> 
->    Tree-RCU works fine.
-> 
-> 2) IRQ handler context
-> 
->    Tree-RCU works fine.
-> 
-> 3) NMI context
-> 
->    Tree-RCU works fine.
-> 
-> 4) cpuidle context (!rcu_is_watching())
-> 
->    - By all means, we should not have tracepoints requiring to temporarily enable
->      RCU in frequent code-paths. It appears that we should be able to remove the few
->      offenders we currently have (e.g. enter from usermode),
->    - For tracepoints which are infrequently called from !rcu_is_watching context, checking
->      whether RCU is watching and only enabling when needed should be fast enough.
-> 
-> Are there other use-cases am I missing that would justify adding another flavor of RCU ?
+Sure, I will go through all patches and see what I can do to reduce the 
+size of patches in V3.
 
-BPF programs that might sometimes sleep, but are usually lightweight.
 
-I will be double-checking this, of course.
+Thanks,
+Kan
 
-							Thanx, Paul
+> 
+> Regards,
+> 
+> - Arnaldo
+> 
+>> Thanks,
+>> Kan
+>>
+>>>
+>>>> +	list_add_tail(&caps->list, list);
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +/*
+>>>> + * Reading/parsing the given pmu capabilities, which should be located at:
+>>>> + * /sys/bus/event_source/devices/<dev>/caps as sysfs group attributes.
+>>>> + * Return the number of capabilities
+>>>> + */
+>>>> +int perf_pmu__caps_parse(struct perf_pmu *pmu)
+>>>> +{
+>>>> +	struct stat st;
+>>>> +	char caps_path[PATH_MAX];
+>>>> +	const char *sysfs = sysfs__mountpoint();
+>>>> +	DIR *caps_dir;
+>>>> +	struct dirent *evt_ent;
+>>>> +	int nr_caps = 0;
+>>>> +
+>>>> +	if (!sysfs)
+>>>> +		return -1;
+>>>> +
+>>>> +	snprintf(caps_path, PATH_MAX,
+>>>> +		 "%s" EVENT_SOURCE_DEVICE_PATH "%s/caps", sysfs, pmu->name);
+>>>> +
+>>>> +	if (stat(caps_path, &st) < 0)
+>>>> +		return 0;	/* no error if caps does not exist */
+>>>> +
+>>>> +	caps_dir = opendir(caps_path);
+>>>> +	if (!caps_dir)
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	while ((evt_ent = readdir(caps_dir)) != NULL) {
+>>>> +		char path[PATH_MAX + NAME_MAX + 1];
+>>>> +		char *name = evt_ent->d_name;
+>>>> +		char value[128];
+>>>> +		FILE *file;
+>>>> +
+>>>> +		if (!strcmp(name, ".") || !strcmp(name, ".."))
+>>>> +			continue;
+>>>> +
+>>>> +		snprintf(path, sizeof(path), "%s/%s", caps_path, name);
+>>>> +
+>>>> +		file = fopen(path, "r");
+>>>> +		if (!file)
+>>>> +			break;
+>>>> +
+>>>> +		if (!fgets(value, sizeof(value), file) ||
+>>>> +		    (perf_pmu__new_caps(&pmu->caps, name, value) < 0)) {
+>>>> +			fclose(file);
+>>>> +			break;
+>>>> +		}
+>>>> +
+>>>> +		nr_caps++;
+>>>> +		fclose(file);
+>>>> +	}
+>>>> +
+>>>> +	closedir(caps_dir);
+>>>> +
+>>>> +	return nr_caps;
+>>>> +}
+>>>> +
+>>>> +struct perf_pmu_caps *perf_pmu__scan_caps(struct perf_pmu *pmu,
+>>>> +					  struct perf_pmu_caps *caps)
+>>>> +{
+>>>> +	if (!pmu)
+>>>> +		return NULL;
+>>>> +
+>>>> +	if (!caps)
+>>>> +		caps = list_prepare_entry(caps, &pmu->caps, list);
+>>>> +
+>>>> +	list_for_each_entry_continue(caps, &pmu->caps, list)
+>>>> +		return caps;
+>>>> +
+>>>> +	return NULL;
+>>>> +}
+>>>> diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
+>>>> index 6737e3d5d568..a228e27ae462 100644
+>>>> --- a/tools/perf/util/pmu.h
+>>>> +++ b/tools/perf/util/pmu.h
+>>>> @@ -21,6 +21,12 @@ enum {
+>>>>    struct perf_event_attr;
+>>>> +struct perf_pmu_caps {
+>>>> +	char *name;
+>>>> +	char *value;
+>>>> +	struct list_head list;
+>>>> +};
+>>>> +
+>>>>    struct perf_pmu {
+>>>>    	char *name;
+>>>>    	__u32 type;
+>>>> @@ -32,6 +38,7 @@ struct perf_pmu {
+>>>>    	struct perf_cpu_map *cpus;
+>>>>    	struct list_head format;  /* HEAD struct perf_pmu_format -> list */
+>>>>    	struct list_head aliases; /* HEAD struct perf_pmu_alias -> list */
+>>>> +	struct list_head caps;    /* HEAD struct perf_pmu_caps -> list */
+>>>>    	struct list_head list;    /* ELEM */
+>>>>    };
+>>>> @@ -102,4 +109,9 @@ struct pmu_events_map *perf_pmu__find_map(struct perf_pmu *pmu);
+>>>>    int perf_pmu__convert_scale(const char *scale, char **end, double *sval);
+>>>> +int perf_pmu__caps_parse(struct perf_pmu *pmu);
+>>>> +
+>>>> +struct perf_pmu_caps *perf_pmu__scan_caps(struct perf_pmu *pmu,
+>>>> +					  struct perf_pmu_caps *caps);
+>>>> +
+>>>>    #endif /* __PMU_H */
+>>>> -- 
+>>>> 2.17.1
+>>>>
+>>>
+> 
