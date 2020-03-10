@@ -2,107 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2265517FE21
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:33:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC8B017FDE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:31:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728400AbgCJNdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:33:09 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44860 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727972AbgCJMsr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:48:47 -0400
-Received: by mail-lf1-f66.google.com with SMTP id i10so10738243lfg.11
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 05:48:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=02YCpOcYgDr2RIZdF/x1NVUywRgMsFxtc+njZV4rLeY=;
-        b=RkadbTZs67fU9rSXGjUpIYuJJqO/hjj4cQZTKNqQhWlzhil9no9aSQh/hdlLwNp+7m
-         NA45dgJZ3moN/DxYshX5WzSk+mv/+Y9FCbSyQ13p/EcUB5p3PfOCeTdVoLFbacGbb3Xf
-         BbdXyBh99t3+aoKRMOrsbF6ojIE5Zlcc7qlJjg3bgVBeecYhWRTgw7H4A6T4kQt9Iz2n
-         dPb63B8RDKqNYjcnueVxQ2dIyKEYaMGCmZFh3pChz/bha8/K1P+f0PaKPArh88LuTNAV
-         Nr353sAH0Y9OR+5Z0vj86pxdPS3uQ0upAY+n70y5hCHyVLoys7XULawzdWe9dT5XHnWP
-         g0sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=02YCpOcYgDr2RIZdF/x1NVUywRgMsFxtc+njZV4rLeY=;
-        b=XutwtjNWrlYSdxk/Xrs/q72D+fZhS6RjTUXaA39qCRAI+6zJRASiRPl/ML1p27Z8Dn
-         8DceUawawF0uFTt/C/0jLuZPINp+oLFuZyrZqQr/wF8lgysw1Kvr24Wn4uI5VTh/ldIG
-         DvnSnqdih9aROaBOxcXbF41oynVhUwfP+B7GxSJQJWyzGFXSxqHbZ8EOCIVTHBayz8pv
-         FEWcw1L0j/72uB7QPCNCKnTeKxxlKTr99DzCbtUHrofGBxGslJdmU7FzNgRFJ93iU1sk
-         7cf0OVAyy/Esz3TPFbfwh3Ze64nuZf8vXSEO8pGMccMTDlZ9xAwFDvKBids+k4385S6y
-         KZzg==
-X-Gm-Message-State: ANhLgQ1xf3yTVBvZnRuK2ZU3q0T0i8qdTB8qOA8LR2hbGQmD37JpGpsE
-        0KyaEuyBJgF9Q9evyfmlkNqqNQ==
-X-Google-Smtp-Source: ADFU+vsgmv0jq7AXXvtsvyuZoBOTHOnaupBq/z++CY1/zbVVC5+3JatnqiO1l0kG1KPSmZcEcESjhw==
-X-Received: by 2002:ac2:5598:: with SMTP id v24mr499682lfg.139.1583844525496;
-        Tue, 10 Mar 2020 05:48:45 -0700 (PDT)
-Received: from localhost (h-200-138.A463.priv.bahnhof.se. [176.10.200.138])
-        by smtp.gmail.com with ESMTPSA id b17sm23704416ljd.5.2020.03.10.05.48.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 05:48:44 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 13:48:44 +0100
-From:   Niklas <niklas.soderlund@ragnatech.se>
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lad Prabhakar <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH v2 3/3] media: rcar-vin: rcar-csi2: Add support for
- MEDIA_BUS_FMT_SRGGB8_1X8 format
-Message-ID: <20200310124844.GP2975348@oden.dyn.berto.se>
-References: <1583838364-12932-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1583838364-12932-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        id S1729125AbgCJNav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:30:51 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11617 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728589AbgCJMuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:50:25 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 81232A850F29D316DF7A;
+        Tue, 10 Mar 2020 20:50:21 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.487.0; Tue, 10 Mar 2020 20:50:11 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/5] f2fs: change default compression algorithm
+Date:   Tue, 10 Mar 2020 20:50:05 +0800
+Message-ID: <20200310125009.12966-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1583838364-12932-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lad,
+Use LZ4 as default compression algorithm, as compared to LZO, it shows
+almost the same compression ratio and much better decompression speed.
 
-Thanks for your work.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 2020-03-10 11:06:04 +0000, Lad Prabhakar wrote:
-> This patch adds support for MEDIA_BUS_FMT_SRGGB8_1X8 format for CSI2
-> input.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Small nit, you can drop rcar-vin from the subject as this patch is for 
-the rcar-csi2 driver. With this fixed,
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
->  drivers/media/platform/rcar-vin/rcar-csi2.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> index 39e1639..b030ef6 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> @@ -320,6 +320,7 @@ static const struct rcar_csi2_format rcar_csi2_formats[] = {
->  	{ .code = MEDIA_BUS_FMT_YUYV8_1X16,	.datatype = 0x1e, .bpp = 16 },
->  	{ .code = MEDIA_BUS_FMT_UYVY8_2X8,	.datatype = 0x1e, .bpp = 16 },
->  	{ .code = MEDIA_BUS_FMT_YUYV10_2X10,	.datatype = 0x1e, .bpp = 20 },
-> +	{ .code = MEDIA_BUS_FMT_SRGGB8_1X8,     .datatype = 0x2a, .bpp = 8 },
->  };
->  
->  static const struct rcar_csi2_format *rcsi2_code_to_fmt(unsigned int code)
-> -- 
-> 2.7.4
-> 
-
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index db3a63f7c769..ebffe7aa08ee 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1577,7 +1577,7 @@ static void default_options(struct f2fs_sb_info *sbi)
+ 	F2FS_OPTION(sbi).test_dummy_encryption = false;
+ 	F2FS_OPTION(sbi).s_resuid = make_kuid(&init_user_ns, F2FS_DEF_RESUID);
+ 	F2FS_OPTION(sbi).s_resgid = make_kgid(&init_user_ns, F2FS_DEF_RESGID);
+-	F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZO;
++	F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZ4;
+ 	F2FS_OPTION(sbi).compress_log_size = MIN_COMPRESS_LOG_SIZE;
+ 	F2FS_OPTION(sbi).compress_ext_cnt = 0;
+ 	F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
 -- 
-Regards,
-Niklas Söderlund
+2.18.0.rc1
+
