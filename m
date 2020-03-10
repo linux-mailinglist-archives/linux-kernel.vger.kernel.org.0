@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E15817F7A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:41:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 971E817F99F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:58:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbgCJMlJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:41:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40306 "EHLO mail.kernel.org"
+        id S1729679AbgCJM6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:58:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726669AbgCJMlF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:41:05 -0400
+        id S1727721AbgCJM6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:58:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA15824695;
-        Tue, 10 Mar 2020 12:41:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74BA020674;
+        Tue, 10 Mar 2020 12:58:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844065;
-        bh=v+LS8lTv33twM/8R1u/V5jF9GnZzvDvZPfP5JaMQFQM=;
+        s=default; t=1583845112;
+        bh=YM21NR3WIcF/teKqF/0ZAFPk4jioggWL5nRp/7qQI7o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bspk+vbLsexr6eGDBHIozJXxjPVtBnz3LZha0VTTXPS7ZYw/Sm6BHGsG6twFImSdt
-         w/bWn+K3/YvoTo/bhn0/V2vDVyEo1nBEmAsaArZqhtZLek/E6BonnVh78sCVwcoeDm
-         cgddmEIgGq4cN7n+WdqjhWgpUZxq4WLhH/x76tWE=
+        b=hcBlQPHnN/YLEKUJmUFmvP5GeDSDw5RXVXtMcPa9TYp3AwWsxMtLKtpIUMDIh3VrQ
+         HZLZTq+XZDv1muo2Py48Cds9PpOnZLeIHVc6vc+zoZu+zqbDaZVZJm5OalblWWQ/QN
+         sj73UmQArqRm7xD9oBe4DtcG7HxwLiL7CvEilYTc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Sorenson <sorenson@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 08/72] cifs: Fix mode output in debugging statements
-Date:   Tue, 10 Mar 2020 13:38:21 +0100
-Message-Id: <20200310123603.608888906@linuxfoundation.org>
+        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.5 065/189] ALSA: hda/realtek - Enable the headset of ASUS B9450FA with ALC294
+Date:   Tue, 10 Mar 2020 13:38:22 +0100
+Message-Id: <20200310123646.184078975@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
-References: <20200310123601.053680753@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Sorenson <sorenson@redhat.com>
+From: Jian-Hong Pan <jian-hong@endlessm.com>
 
-[ Upstream commit f52aa79df43c4509146140de0241bc21a4a3b4c7 ]
+commit 8b33a134a9cc2a501f8fc731d91caef39237d495 upstream.
 
-A number of the debug statements output file or directory mode
-in hex.  Change these to print using octal.
+A headset on the laptop like ASUS B9450FA does not work, until quirk
+ALC294_FIXUP_ASUS_HPE is applied.
 
-Signed-off-by: Frank Sorenson <sorenson@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200225072920.109199-1-jian-hong@endlessm.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/cifs/cifsacl.c | 4 ++--
- fs/cifs/connect.c | 2 +-
- fs/cifs/inode.c   | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ sound/pci/hda/patch_realtek.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/fs/cifs/cifsacl.c b/fs/cifs/cifsacl.c
-index 3f93125916bf0..f5b87a8f75c47 100644
---- a/fs/cifs/cifsacl.c
-+++ b/fs/cifs/cifsacl.c
-@@ -480,7 +480,7 @@ static void access_flags_to_mode(__le32 ace_flags, int type, umode_t *pmode,
- 			((flags & FILE_EXEC_RIGHTS) == FILE_EXEC_RIGHTS))
- 		*pmode |= (S_IXUGO & (*pbits_to_set));
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5922,6 +5922,7 @@ enum {
+ 	ALC294_FIXUP_SPK2_TO_DAC1,
+ 	ALC294_FIXUP_ASUS_DUAL_SPK,
+ 	ALC285_FIXUP_THINKPAD_HEADSET_JACK,
++	ALC294_FIXUP_ASUS_HPE,
+ };
  
--	cifs_dbg(NOISY, "access flags 0x%x mode now 0x%x\n", flags, *pmode);
-+	cifs_dbg(NOISY, "access flags 0x%x mode now %04o\n", flags, *pmode);
- 	return;
- }
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -7049,6 +7050,17 @@ static const struct hda_fixup alc269_fix
+ 		.chained = true,
+ 		.chain_id = ALC285_FIXUP_SPEAKER2_TO_DAC1
+ 	},
++	[ALC294_FIXUP_ASUS_HPE] = {
++		.type = HDA_FIXUP_VERBS,
++		.v.verbs = (const struct hda_verb[]) {
++			/* Set EAPD high */
++			{ 0x20, AC_VERB_SET_COEF_INDEX, 0x0f },
++			{ 0x20, AC_VERB_SET_PROC_COEF, 0x7774 },
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC294_FIXUP_ASUS_HEADSET_MIC
++	},
+ };
  
-@@ -509,7 +509,7 @@ static void mode_to_access_flags(umode_t mode, umode_t bits_to_use,
- 	if (mode & S_IXUGO)
- 		*pace_flags |= SET_FILE_EXEC_RIGHTS;
- 
--	cifs_dbg(NOISY, "mode: 0x%x, access flags now 0x%x\n",
-+	cifs_dbg(NOISY, "mode: %04o, access flags now 0x%x\n",
- 		 mode, *pace_flags);
- 	return;
- }
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index 4bde8acca455c..cf104bbe30a14 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -3402,7 +3402,7 @@ void cifs_setup_cifs_sb(struct smb_vol *pvolume_info,
- 	cifs_sb->mnt_gid = pvolume_info->linux_gid;
- 	cifs_sb->mnt_file_mode = pvolume_info->file_mode;
- 	cifs_sb->mnt_dir_mode = pvolume_info->dir_mode;
--	cifs_dbg(FYI, "file mode: 0x%hx  dir mode: 0x%hx\n",
-+	cifs_dbg(FYI, "file mode: %04ho  dir mode: %04ho\n",
- 		 cifs_sb->mnt_file_mode, cifs_sb->mnt_dir_mode);
- 
- 	cifs_sb->actimeo = pvolume_info->actimeo;
-diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
-index 0a219545940d9..8827de2ba7bef 100644
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -1540,7 +1540,7 @@ int cifs_mkdir(struct inode *inode, struct dentry *direntry, umode_t mode)
- 	struct TCP_Server_Info *server;
- 	char *full_path;
- 
--	cifs_dbg(FYI, "In cifs_mkdir, mode = 0x%hx inode = 0x%p\n",
-+	cifs_dbg(FYI, "In cifs_mkdir, mode = %04ho inode = 0x%p\n",
- 		 mode, inode);
- 
- 	cifs_sb = CIFS_SB(inode->i_sb);
--- 
-2.20.1
-
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -7214,6 +7226,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x1043, 0x16e3, "ASUS UX50", ALC269_FIXUP_STEREO_DMIC),
+ 	SND_PCI_QUIRK(0x1043, 0x17d1, "ASUS UX431FL", ALC294_FIXUP_ASUS_DUAL_SPK),
+ 	SND_PCI_QUIRK(0x1043, 0x18b1, "Asus MJ401TA", ALC256_FIXUP_ASUS_HEADSET_MIC),
++	SND_PCI_QUIRK(0x1043, 0x19ce, "ASUS B9450FA", ALC294_FIXUP_ASUS_HPE),
+ 	SND_PCI_QUIRK(0x1043, 0x1a13, "Asus G73Jw", ALC269_FIXUP_ASUS_G73JW),
+ 	SND_PCI_QUIRK(0x1043, 0x1a30, "ASUS X705UD", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x1b13, "Asus U41SV", ALC269_FIXUP_INV_DMIC),
 
 
