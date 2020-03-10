@@ -2,103 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA0661807DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 20:20:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ADF71807BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 20:14:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbgCJTUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 15:20:32 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44289 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbgCJTUb (ORCPT
+        id S1727264AbgCJTOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 15:14:16 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42317 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbgCJTOQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 15:20:31 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 37so2578335pgm.11
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 12:20:31 -0700 (PDT)
+        Tue, 10 Mar 2020 15:14:16 -0400
+Received: by mail-pf1-f194.google.com with SMTP id f5so6936547pfk.9
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 12:14:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=cC2057sPqmPcpMKTkeB3a8bTjc/o1vrfqpJvHiGtnZU=;
-        b=Gp/3+tK3D+e1w351TKt3AZhjG7ssptPYwoN75sKp8UNBt+HYPDOF0OuAmp/1t3HyEA
-         TA3d6tn36/U+iKROF0bxiFHF8/ZMxBC44qGb9zVh9byUtO0ME4tgbJHE1hBMaBJBBi0R
-         iKNszHZ7hKuuvpRvrZ1jghA+/1QDoDgVCerX7dS7fJm1hXCEdfXWd4sCU3WU7Ow8YN7I
-         Us/anH7lZ0Nt+sSP+sgA8JTLVbaoPDek1O01K4AKCrAD0qCFrNRIMNLff21NmMXUgfdk
-         PimTnrj3zfOlwtgqyY9waZRr2/3dzy0kJbLM547JpbxcxX4kZ6S7xeeSynQ6VoyHcsEp
-         E2Ew==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=jXS+fddiboogW4J/E0/NXpTN0n1JtPDhmBZ3qFcCQP4=;
+        b=chA/wqnMnfNRRpErVjOWwHfwqEReVmuaVJ1j+gJ786KskrXv1xxlMHWhSZ81FrPINb
+         t7VRbkrSkhXP6B2AaNJjhiJwM2hcw8iC5vC15rnPmbKeluQ9W+ctzvfjLc8K9LQZM3XL
+         U0xJCK4FrImSkd/bNujq2E/EqANq5jI44q7b434QSRqv+yT6EY0hBWqFGnzsFhfzfaEX
+         vRhUSmSQpQZzlrGJtoXcF4+YLOlbZIBrxiw9vXyFDuc1hz42F1yAfIPOzTJTq7Ywtbhs
+         01HAt7Ibzbj1v8/pSyh5SOldubP6Wr/hSF38V63VzmxAdrNUhTMhLqi3c/aa3U5K0xz4
+         09fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cC2057sPqmPcpMKTkeB3a8bTjc/o1vrfqpJvHiGtnZU=;
-        b=UcF1iWH5yCdYZi2AAJ7UmseyfqY8nQIYzAXnxMpLv+JZP6ITlbrJ5bX8HAWpYTAA9i
-         mrWK0sDYdqF1yCbXTbRGdXBhtwwUvtMBPwTvf8+rE35/NF98nVYcRbka8pfjp3Eavznp
-         ee5MdsPBu876gfymxIfd4SsKvMLRvRoAefliVrmcAjBPQJRbBGWxAmaVKnPNofJ3d5Ei
-         8ALDBgKTkzL+ew3zzphrnKB3HRcRmfeXx3Lff+/1Yn8/ebd4oCAepJxcNxcIFf29b3pi
-         Q09fPRhwUWvPXV8mYxXt3TLLStF8hmUv9SceKokEnPXuzTcNgzIpoWiC6usyAXoireFI
-         YYqQ==
-X-Gm-Message-State: ANhLgQ2U17oiEbmG7g+644tgRJI+cV6+vgeQ64MMkRCJu5iIBoJqU0Wv
-        uKjPLyThY2k/q/Jkj3gyklKruA==
-X-Google-Smtp-Source: ADFU+vtWP5ERLP9aV0fp1zqUyf9v1Asbb4leZXOT+JfMa00W8DwkmyxfINhtLJv8waJz4e7fOejrYg==
-X-Received: by 2002:a63:6dc5:: with SMTP id i188mr21478581pgc.82.1583868030640;
-        Tue, 10 Mar 2020 12:20:30 -0700 (PDT)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id o66sm35067793pfb.93.2020.03.10.12.20.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 12:20:30 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 12:20:27 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v4 3/5] remoteproc: qcom: Update PIL relocation info on
- load
-Message-ID: <20200310192027.GJ264362@yoga>
-References: <20200310063338.3344582-1-bjorn.andersson@linaro.org>
- <20200310063338.3344582-4-bjorn.andersson@linaro.org>
- <158386385637.149997.10680456822295964075@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <158386385637.149997.10680456822295964075@swboyd.mtv.corp.google.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jXS+fddiboogW4J/E0/NXpTN0n1JtPDhmBZ3qFcCQP4=;
+        b=BdmwS6DdpXFZbtu6hBvykU+lcL0Cshes3/gqpMgqgNOMAIj4Hj8mrCXdAkb2o8Dkwa
+         20FTt1lN45TYNiXWpHB0UVfq8EpEVM+Ldf62GvSPobGIvX4I6cI8baxYJEoBLo+SHnU1
+         4cNM+dY/yNuRXY6Ncf7sJuoVdWKkpbX3EcwvVQ4G+OTBXuTA3lxFxR/+LPmw+DJAeHTp
+         OSUs05SsLOBFSTAcSyNAk8XVx2Kk5QpepkQpkSkrvPCjSK6Yd+x0d9RUZq3+CS8Qnwwy
+         gDsSH5XJM89KK/f7RitGOYIBpxg1TMg0um6Xle+w1RYfECA5vtVZULL3X8QkLTwekTsV
+         XckQ==
+X-Gm-Message-State: ANhLgQ1uyPnOSUHX5r6kkNF6FE3c8wEq14EUS5p4rJFtsLABGJ1ymFqZ
+        L34Waobl1UWQKKZ9Ygi/wIY=
+X-Google-Smtp-Source: ADFU+vs52a6rip8IWsWcP1fpdvE1kMMG2to1qSplhRkZx9BvaY+Hdl6MbNO/wIfE52DWiHve9HXUuQ==
+X-Received: by 2002:aa7:8513:: with SMTP id v19mr22471763pfn.222.1583867655422;
+        Tue, 10 Mar 2020 12:14:15 -0700 (PDT)
+Received: from localhost.localdomain ([157.45.34.130])
+        by smtp.gmail.com with ESMTPSA id p9sm2232630pgs.50.2020.03.10.12.14.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 10 Mar 2020 12:14:14 -0700 (PDT)
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Souptick Joarder <jrdr.linux@gmail.com>
+Subject: [PATCH] mm/filemap.c: Remove unused argument from shrink_readahead_size_eio()
+Date:   Wed, 11 Mar 2020 00:51:33 +0530
+Message-Id: <1583868093-24342-1-git-send-email-jrdr.linux@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 10 Mar 11:10 PDT 2020, Stephen Boyd wrote:
+The first argument of shrink_readahead_size_eio() is not used. Hence
+removed from function definition and from all the callers.
 
-> Quoting Bjorn Andersson (2020-03-09 23:33:36)
-> > diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> > index e953886b2eb7..d5cdff942535 100644
-> > --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> > +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> > @@ -164,10 +166,18 @@ static int qcom_adsp_shutdown(struct qcom_adsp *adsp)
-> >  static int adsp_load(struct rproc *rproc, const struct firmware *fw)
-> >  {
-> >         struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> > +       int ret;
-> > +
-> > +       ret = qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
-> > +                                   adsp->mem_region, adsp->mem_phys,
-> > +                                   adsp->mem_size, &adsp->mem_reloc);
-> > +       if (ret)
-> > +               return ret;
-> >  
-> > -       return qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
-> > -                            adsp->mem_region, adsp->mem_phys, adsp->mem_size,
-> > -                            &adsp->mem_reloc);
-> > +       /* Failures only affect post mortem debugging, so ignore return value */
-> > +       qcom_pil_info_store(adsp->info_name, adsp->mem_reloc, adsp->mem_size);
-> 
-> If the return value was void then the comment wouldn't be necessary and
-> it would be self documenting as such. Can we do that?
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ mm/filemap.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-I started off with this in v1, but agreed with Mathieu to ignore the
-failures in the place where we actually don't care, rather than inside
-qcom_pil_info_store()...
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 1784478..98f3703 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1962,8 +1962,7 @@ unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
+  *
+  * It is going insane. Fix it by quickly scaling down the readahead size.
+  */
+-static void shrink_readahead_size_eio(struct file *filp,
+-					struct file_ra_state *ra)
++static void shrink_readahead_size_eio(struct file_ra_state *ra)
+ {
+ 	ra->ra_pages /= 4;
+ }
+@@ -2188,7 +2187,7 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 					goto find_page;
+ 				}
+ 				unlock_page(page);
+-				shrink_readahead_size_eio(filp, ra);
++				shrink_readahead_size_eio(ra);
+ 				error = -EIO;
+ 				goto readpage_error;
+ 			}
+@@ -2560,7 +2559,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 		goto retry_find;
+ 
+ 	/* Things didn't work out. Return zero to tell the mm layer so. */
+-	shrink_readahead_size_eio(file, ra);
++	shrink_readahead_size_eio(ra);
+ 	return VM_FAULT_SIGBUS;
+ 
+ out_retry:
+-- 
+1.9.1
 
-Regards,
-Bjorn
