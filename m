@@ -2,72 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17331180A30
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:18:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC533180A35
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:18:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbgCJVSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 17:18:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50544 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726265AbgCJVSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 17:18:08 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BABA215A4;
-        Tue, 10 Mar 2020 21:18:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583875088;
-        bh=1hSwRP4XYIJtvxPCOunS5ppy5zneYNWuW8C15YKCUbs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=x9Puf/icMegSN3cze30TQLprA1XrtfyMOHlrCTnnCaYMxZOfZjfJnvA4yWOGB/8M0
-         /VM7bwsZW3BKN2GA+Ln+uB3RlE0r9xd+B11Moi85a018vGOJO2U0KAuk9syT88yVYr
-         H5ENo7fBJ5Li1PUYQiXwTIkPrUwDKA5ByMhpPAnY=
-Subject: Re: [PATCH 4.19 00/86] 4.19.109-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20200310124530.808338541@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <e7087a12-956c-1ef0-06a6-3ed0ed2eced3@kernel.org>
-Date:   Tue, 10 Mar 2020 15:18:07 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727484AbgCJVSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 17:18:54 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40974 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbgCJVSy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 17:18:54 -0400
+Received: by mail-ot1-f68.google.com with SMTP id s15so6453819otq.8;
+        Tue, 10 Mar 2020 14:18:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iYG2/A6J0MuYaTBIHQCtF8BBNXHrAqwI6lmzEa8ArSA=;
+        b=Yp/my6KeCdY52ZhXYpY83g8ePitOK1UwSGQXybMj6E+wgH7boUx3lQYARGBKRovDTE
+         VE9Y+jMHAft2lQ2fd5d6vYZPNQKSyygGQUbr2L347ETAMHC0sBQo3WnOTtl95utolSj9
+         cvYWwiMD/2nte0L7HyUIGha7N/qHkQNS/2CS5w5/9Rw0WDzkJ5Tz/Di/8rtfb0MdOcXZ
+         a4Ozj68iIZD+4ELtZRmTxCXSFWLsb2hftvPDDMFc8KftRfhrT/Rk36Ud16yMPl6BF9Jq
+         knJn3mZ243HPuGUa3XsxGIsPrzJjl+MhVnURsiYBZsW5l+ZHRi0LFt9kc4ya2dF//8nO
+         1gTg==
+X-Gm-Message-State: ANhLgQ24up3KB+CLRUCz2PLcj5mXEaqQDpqFLGM1vxJMVSQq7HoHfoQv
+        gsN/YcMVfnrXRbhGpxbHbg==
+X-Google-Smtp-Source: ADFU+vtKlHa3IK/ehZVScFZn40tglX4cN0RpFUVuzT+HjO/JNhCB8Ag3iPcgNLm2zCByIKhaLL9Mng==
+X-Received: by 2002:a05:6830:18d4:: with SMTP id v20mr8278772ote.23.1583875131391;
+        Tue, 10 Mar 2020 14:18:51 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id b2sm4643842oii.20.2020.03.10.14.18.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 14:18:50 -0700 (PDT)
+Received: (nullmailer pid 13623 invoked by uid 1000);
+        Tue, 10 Mar 2020 21:18:49 -0000
+Date:   Tue, 10 Mar 2020 16:18:49 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+        broonie@kernel.org, wim@linux-watchdog.org, linux@roeck-us.net,
+        p.paillet@st.com, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: Re: [PATCH v5] dt-bindings: mfd: Convert stpmic1 bindings to
+ json-schema
+Message-ID: <20200310211849.GA13562@bogus>
+References: <20200304094220.28156-1-benjamin.gaignard@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20200310124530.808338541@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200304094220.28156-1-benjamin.gaignard@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/10/20 6:44 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.109 release.
-> There are 86 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, 4 Mar 2020 10:42:20 +0100, Benjamin Gaignard wrote:
+> Convert stpmic1 bindings to json-schema.
 > 
-> Responses should be made by Thu, 12 Mar 2020 12:45:15 +0000.
-> Anything received after that time might be too late.
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> ---
+> version 5:
+> - move $ref regulator.yaml under a patternProperties
+> - move remain fixed strings under properties field
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.109-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
+> version 4:
+> - move on uppder node $ref: ../regulator/regulator.yaml 
+> - move fixed strings under properties field
+> - remove unneeded () in patternProperties
+> - keep ldo3 separate from other ldo properties
+> Note:
+> - 'st,mask-reset' property stay in each subnode, I don't find
+>   the syntax to avoid dupliquate it. 
+> - ldo6-supply and all possible *-supply are describe by this regular
+>   expression: ^(buck[1-4]|ldo[1-6]|boost|pwr_sw[1-2])-supply$":
 > 
-> thanks,
+> version 3:
+> - put $ref under allOf keyword
+> - for each regulator node add the list of supported regulator properties
 > 
-> greg k-h
+>  .../devicetree/bindings/input/st,stpmic1-onkey.txt |  28 --
+>  .../devicetree/bindings/mfd/st,stpmic1.txt         |  61 ----
+>  .../devicetree/bindings/mfd/st,stpmic1.yaml        | 339 +++++++++++++++++++++
+>  .../bindings/regulator/st,stpmic1-regulator.txt    |  64 ----
+>  .../bindings/watchdog/st,stpmic1-wdt.txt           |  11 -
+>  5 files changed, 339 insertions(+), 164 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/input/st,stpmic1-onkey.txt
+>  delete mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.txt
+>  create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt
+>  delete mode 100644 Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt
 > 
 
-Compiled and booted on my test system. No dmesg regressions.
-
-thanks,
--- Shuah
-
+Reviewed-by: Rob Herring <robh@kernel.org>
