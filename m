@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F4CA180764
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:49:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D09180763
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:49:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbgCJStl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 14:49:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44496 "EHLO mail.kernel.org"
+        id S1727506AbgCJSti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 14:49:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726391AbgCJStb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726315AbgCJStb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Mar 2020 14:49:31 -0400
 Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9404320873;
-        Tue, 10 Mar 2020 18:49:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CDF5222C4;
+        Tue, 10 Mar 2020 18:49:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583866170;
-        bh=unCX+t/zqE6eNvK2oVqS1Vr7/wodzuZVkgvAgzYg+gg=;
+        s=default; t=1583866171;
+        bh=tw0gB/ovTVcwrhtwprojKzwKigF0zMWLOBTxhTgjsuU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BmJu1/U/6X+arNuaUz0kbM5fshnGIOQgGAbFGh8rA/F6TUTjCBBP2O2mydxqnzNP4
-         loNOgVAf7RxFZkMnRvg118macTBUuCA1FxuaQYh0jYE0urtSJLfA7Bq5MK2S/F/7gb
-         vLHJOH7AAgNz5acJBn2jHcwWP7NSYoMLbiw+zbs4=
+        b=nDcTjMpNX02c3ckluYK+vNdLFT/Tl7iG4Z2tiCzUMyp16ctrkTgRf5C2IGs6TPnSI
+         lEmhUSqmKR9t2oufMCrzHgH2FWJTe4j4rl3ROUyUfmgBpmTBx335O75xN8tFB/sOTC
+         fHlOhxbEJ+cOagJXpGC0R+zkPUh/pmDAfdjlNa5w=
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
         by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <maz@kernel.org>)
-        id 1jBjwW-00Bi6k-SD; Tue, 10 Mar 2020 18:49:29 +0000
+        id 1jBjwX-00Bi6k-G6; Tue, 10 Mar 2020 18:49:29 +0000
 From:   Marc Zyngier <maz@kernel.org>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -37,9 +37,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Ludovic Desroches <ludovic.desroches@microchip.com>,
         Zenghui Yu <yuzenghui@huawei.com>
-Subject: [PATCH 2/4] irqchip/atmel-aic5: Fix irq_retrigger callback return value
-Date:   Tue, 10 Mar 2020 18:49:19 +0000
-Message-Id: <20200310184921.23552-3-maz@kernel.org>
+Subject: [PATCH 3/4] ARM: sa1111: Fix irq_retrigger callback return value
+Date:   Tue, 10 Mar 2020 18:49:20 +0000
+Message-Id: <20200310184921.23552-4-maz@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200310184921.23552-1-maz@kernel.org>
 References: <20200310184921.23552-1-maz@kernel.org>
@@ -57,26 +57,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 The irq_retrigger callback is supposed to return 0 when retrigger
 has failed, and a non-zero value otherwise. Tell the core code
 that the driver has succedded in using the HW to retrigger the
-interrupt.
+interrupt (if ever).
 
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/irqchip/irq-atmel-aic5.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/common/sa1111.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/irqchip/irq-atmel-aic5.c b/drivers/irqchip/irq-atmel-aic5.c
-index 29333497ba10..fc1b3a9cdafc 100644
---- a/drivers/irqchip/irq-atmel-aic5.c
-+++ b/drivers/irqchip/irq-atmel-aic5.c
-@@ -128,7 +128,7 @@ static int aic5_retrigger(struct irq_data *d)
- 	irq_reg_writel(bgc, 1, AT91_AIC5_ISCR);
- 	irq_gc_unlock(bgc);
+diff --git a/arch/arm/common/sa1111.c b/arch/arm/common/sa1111.c
+index 947ef7981d92..c98ebae1aeac 100644
+--- a/arch/arm/common/sa1111.c
++++ b/arch/arm/common/sa1111.c
+@@ -302,10 +302,13 @@ static int sa1111_retrigger_irq(struct irq_data *d)
+ 			break;
+ 	}
  
--	return 0;
+-	if (i == 8)
++	if (i == 8) {
+ 		pr_err("Danger Will Robinson: failed to re-trigger IRQ%d\n",
+ 		       d->irq);
+-	return i == 8 ? -1 : 0;
++		return 0;
++	}
++
 +	return 1;
  }
  
- static int aic5_set_type(struct irq_data *d, unsigned type)
+ static int sa1111_type_irq(struct irq_data *d, unsigned int flags)
 -- 
 2.20.1
 
