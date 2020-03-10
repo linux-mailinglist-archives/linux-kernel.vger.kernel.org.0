@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A534017F95F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:56:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B23C17F893
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:49:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729632AbgCJM4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:56:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35266 "EHLO mail.kernel.org"
+        id S1728393AbgCJMtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:49:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728083AbgCJM4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:56:08 -0400
+        id S1728117AbgCJMs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:48:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0DDF2253D;
-        Tue, 10 Mar 2020 12:56:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4BD62468E;
+        Tue, 10 Mar 2020 12:48:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844967;
-        bh=s2g0LRWX6H7MbcPgU/o429p+TqB9XRPEgt3LrYpmpyI=;
+        s=default; t=1583844538;
+        bh=kTAVCmjkgt4yY7w8vHGxKTKF51LOERhUSmEEkoSYfzw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZcUjbss4suOj89GU53nIISDLUCiXt14IaVN8gfqdDble1GLRA6Pfaku8dXlBpkk84
-         2XSkIrhLFBZuUWv0gshdblQjZTkBrsR87jabqa5++Cxm/mZVaVdEOctcwr++Hg/pe6
-         nd1rzMADFQH227Y7i+i11ROWSNzjE3H2Eqs6SJ6c=
+        b=jeDKGThuMaitai2e7XvdbKkYlLTm9c7kD7JzDYSf0hi/A8X7RWbmyqXHD6rIL+/Nw
+         c7u2AQcV1cEY7H1HYYAltRZQttmhpX6JL/wXaN5kR5oKHBUWIdPcvwcfiSVObJw41l
+         So1ujvtMWb44vl6q5ttkg2DGaTCC9lFc++WSB1yI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jack Pham <jackp@codeaurora.org>,
-        Felipe Balbi <balbi@kernel.org>,
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 016/189] usb: gadget: composite: Support more than 500mA MaxPower
+Subject: [PATCH 5.4 007/168] dm thin metadata: fix lockdep complaint
 Date:   Tue, 10 Mar 2020 13:37:33 +0100
-Message-Id: <20200310123641.157879263@linuxfoundation.org>
+Message-Id: <20200310123636.537069124@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,113 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jack Pham <jackp@codeaurora.org>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit a2035411fa1d1206cea7d5dfe833e78481844a76 ]
+[ Upstream commit 3918e0667bbac99400b44fa5aef3f8be2eeada4a ]
 
-USB 3.x SuperSpeed peripherals can draw up to 900mA of VBUS power
-when in configured state. However, if a configuration wanting to
-take advantage of this is added with MaxPower greater than 500
-(currently possible if using a ConfigFS gadget) the composite
-driver fails to accommodate this for a couple reasons:
+[ 3934.173244] ======================================================
+[ 3934.179572] WARNING: possible circular locking dependency detected
+[ 3934.185884] 5.4.21-xfstests #1 Not tainted
+[ 3934.190151] ------------------------------------------------------
+[ 3934.196673] dmsetup/8897 is trying to acquire lock:
+[ 3934.201688] ffffffffbce82b18 (shrinker_rwsem){++++}, at: unregister_shrinker+0x22/0x80
+[ 3934.210268]
+               but task is already holding lock:
+[ 3934.216489] ffff92a10cc5e1d0 (&pmd->root_lock){++++}, at: dm_pool_metadata_close+0xba/0x120
+[ 3934.225083]
+               which lock already depends on the new lock.
 
- - usb_gadget_vbus_draw() when called from set_config() and
-   composite_resume() will be passed the MaxPower value without
-   regard for the current connection speed, resulting in a
-   violation for USB 2.0 since the max is 500mA.
+[ 3934.564165] Chain exists of:
+                 shrinker_rwsem --> &journal->j_checkpoint_mutex --> &pmd->root_lock
 
- - the bMaxPower of the configuration descriptor would be
-   incorrectly encoded, again if the connection speed is only
-   at USB 2.0 or below, likely wrapping around U8_MAX since
-   the 2mA multiplier corresponds to a maximum of 510mA.
+For a more detailed lockdep report, please see:
 
-Fix these by adding checks against the current gadget->speed
-when the c->MaxPower value is used (set_config() and
-composite_resume()) and appropriately limit based on whether
-it is currently at a low-/full-/high- or super-speed connection.
+	https://lore.kernel.org/r/20200220234519.GA620489@mit.edu
 
-Because 900 is not divisible by 8, with the round-up division
-currently used in encode_bMaxPower() a MaxPower of 900mA will
-result in an encoded value of 0x71. When a host stack (including
-Linux and Windows) enumerates this on a single port root hub, it
-reads this value back and decodes (multiplies by 8) to get 904mA
-which is strictly greater than 900mA that is typically budgeted
-for that port, causing it to reject the configuration. Instead,
-we should be using the round-down behavior of normal integral
-division so that 900 / 8 -> 0x70 or 896mA to stay within range.
-And we might as well change it for the high/full/low case as well
-for consistency.
+We shouldn't need to hold the lock while are just tearing down and
+freeing the whole metadata pool structure.
 
-N.B. USB 3.2 Gen N x 2 allows for up to 1500mA but there doesn't
-seem to be any any peripheral controller supported by Linux that
-does two lane operation, so for now keeping the clamp at 900
-should be fine.
-
-Signed-off-by: Jack Pham <jackp@codeaurora.org>
-Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Fixes: 44d8ebf436399a4 ("dm thin metadata: use pool locking at end of dm_pool_metadata_close")
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/composite.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+ drivers/md/dm-thin-metadata.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
-index cd303a3ea6802..223f72d4d9edd 100644
---- a/drivers/usb/gadget/composite.c
-+++ b/drivers/usb/gadget/composite.c
-@@ -438,9 +438,13 @@ static u8 encode_bMaxPower(enum usb_device_speed speed,
- 	if (!val)
- 		return 0;
- 	if (speed < USB_SPEED_SUPER)
--		return DIV_ROUND_UP(val, 2);
-+		return min(val, 500U) / 2;
- 	else
--		return DIV_ROUND_UP(val, 8);
-+		/*
-+		 * USB 3.x supports up to 900mA, but since 900 isn't divisible
-+		 * by 8 the integral division will effectively cap to 896mA.
-+		 */
-+		return min(val, 900U) / 8;
- }
- 
- static int config_buf(struct usb_configuration *config,
-@@ -852,6 +856,10 @@ static int set_config(struct usb_composite_dev *cdev,
- 
- 	/* when we return, be sure our power usage is valid */
- 	power = c->MaxPower ? c->MaxPower : CONFIG_USB_GADGET_VBUS_DRAW;
-+	if (gadget->speed < USB_SPEED_SUPER)
-+		power = min(power, 500U);
-+	else
-+		power = min(power, 900U);
- done:
- 	usb_gadget_vbus_draw(gadget, power);
- 	if (result >= 0 && cdev->delayed_status)
-@@ -2278,7 +2286,7 @@ void composite_resume(struct usb_gadget *gadget)
- {
- 	struct usb_composite_dev	*cdev = get_gadget_data(gadget);
- 	struct usb_function		*f;
--	u16				maxpower;
-+	unsigned			maxpower;
- 
- 	/* REVISIT:  should we have config level
- 	 * suspend/resume callbacks?
-@@ -2292,10 +2300,14 @@ void composite_resume(struct usb_gadget *gadget)
- 				f->resume(f);
- 		}
- 
--		maxpower = cdev->config->MaxPower;
-+		maxpower = cdev->config->MaxPower ?
-+			cdev->config->MaxPower : CONFIG_USB_GADGET_VBUS_DRAW;
-+		if (gadget->speed < USB_SPEED_SUPER)
-+			maxpower = min(maxpower, 500U);
-+		else
-+			maxpower = min(maxpower, 900U);
- 
--		usb_gadget_vbus_draw(gadget, maxpower ?
--			maxpower : CONFIG_USB_GADGET_VBUS_DRAW);
-+		usb_gadget_vbus_draw(gadget, maxpower);
+diff --git a/drivers/md/dm-thin-metadata.c b/drivers/md/dm-thin-metadata.c
+index 8bb723f1a569a..4cd8868f80040 100644
+--- a/drivers/md/dm-thin-metadata.c
++++ b/drivers/md/dm-thin-metadata.c
+@@ -960,9 +960,9 @@ int dm_pool_metadata_close(struct dm_pool_metadata *pmd)
+ 			DMWARN("%s: __commit_transaction() failed, error = %d",
+ 			       __func__, r);
  	}
++	pmd_write_unlock(pmd);
+ 	if (!pmd->fail_io)
+ 		__destroy_persistent_data_objects(pmd);
+-	pmd_write_unlock(pmd);
  
- 	cdev->suspended = 0;
+ 	kfree(pmd);
+ 	return 0;
 -- 
 2.20.1
 
