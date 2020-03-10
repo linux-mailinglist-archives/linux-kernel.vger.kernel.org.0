@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32C6B17F9C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:00:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFDDD17F828
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:45:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730065AbgCJM7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:59:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40480 "EHLO mail.kernel.org"
+        id S1727950AbgCJMpk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:45:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730060AbgCJM7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:59:53 -0400
+        id S1727933AbgCJMpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:45:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 310F02467D;
-        Tue, 10 Mar 2020 12:59:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2102B246A6;
+        Tue, 10 Mar 2020 12:45:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845192;
-        bh=kNqg7uePm2vq1Lh6+cc4u5zajUhmI7rnSFTD2vc+6ZA=;
+        s=default; t=1583844334;
+        bh=/kRuxcuHOYsDociFLkbeQUfdfObngkhGQ3sS+2p7z/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z/o8I8yDuQxnsjZg9hQLE2LwBPy3BdV4nREuHoMejEyvkOBF+EzlmaMvMJ8u4ns9x
-         b2WfNjGRW6wfHBA9u0wf6/THnHJ3+MrBIKMhhpeTQaCVj2XgpVKgx/z9nY8mfYhGif
-         HNH8VSCd+Oc7AAX/V7EPImNVwivobcQythV3IkXM=
+        b=KU2y/LE7Z+M3HV30u1oaslEz6DJYM4Saq9kPW6VuZjjpfR15ZwIZbXohfE9TE+8Di
+         tCUwYJpY+3k1C8c7XjV9g9ik5u7mAvhthIOQ29EgqF/idFSIK4OyuBIcNyMf5Jg03l
+         1YY/j0kHNZmrxrxfxIwi6BlC+FRcXHKH/zJTY7KE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 5.5 095/189] media: hantro: Fix broken media controller links
+        stable@vger.kernel.org, yangerkun <yangerkun@huawei.com>
+Subject: [PATCH 4.9 44/88] slip: stop double free sl->dev in slip_open
 Date:   Tue, 10 Mar 2020 13:38:52 +0100
-Message-Id: <20200310123649.298905024@linuxfoundation.org>
+Message-Id: <20200310123616.884028679@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,43 +42,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ezequiel Garcia <ezequiel@collabora.com>
+From: yangerkun <yangerkun@huawei.com>
 
-commit d171c45da874e3858a83e6377e00280a507fe2f2 upstream.
+After include 3b5a39979daf ("slip: Fix memory leak in slip_open error path")
+and e58c19124189 ("slip: Fix use-after-free Read in slip_open") with 4.4.y/4.9.y.
+We will trigger a bug since we can double free sl->dev in slip_open. Actually,
+we should backport cf124db566e6 ("net: Fix inconsistent teardown and release
+of private netdev state.") too since it has delete free_netdev from sl_free_netdev.
+Fix it by delete free_netdev from slip_open.
 
-The driver currently creates a broken topology,
-with a source-to-source link and a sink-to-sink
-link instead of two source-to-sink links.
-
-Reported-by: Nicolas Dufresne <nicolas@ndufresne.ca>
-Cc: <stable@vger.kernel.org>      # for v5.3 and up
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-Tested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: yangerkun <yangerkun@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/media/hantro/hantro_drv.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/slip/slip.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/staging/media/hantro/hantro_drv.c
-+++ b/drivers/staging/media/hantro/hantro_drv.c
-@@ -553,13 +553,13 @@ static int hantro_attach_func(struct han
- 		goto err_rel_entity1;
+--- a/drivers/net/slip/slip.c
++++ b/drivers/net/slip/slip.c
+@@ -868,7 +868,6 @@ err_free_chan:
+ 	tty->disc_data = NULL;
+ 	clear_bit(SLF_INUSE, &sl->flags);
+ 	sl_free_netdev(sl->dev);
+-	free_netdev(sl->dev);
  
- 	/* Connect the three entities */
--	ret = media_create_pad_link(&func->vdev.entity, 0, &func->proc, 1,
-+	ret = media_create_pad_link(&func->vdev.entity, 0, &func->proc, 0,
- 				    MEDIA_LNK_FL_IMMUTABLE |
- 				    MEDIA_LNK_FL_ENABLED);
- 	if (ret)
- 		goto err_rel_entity2;
- 
--	ret = media_create_pad_link(&func->proc, 0, &func->sink, 0,
-+	ret = media_create_pad_link(&func->proc, 1, &func->sink, 0,
- 				    MEDIA_LNK_FL_IMMUTABLE |
- 				    MEDIA_LNK_FL_ENABLED);
- 	if (ret)
+ err_exit:
+ 	rtnl_unlock();
 
 
