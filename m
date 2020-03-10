@@ -2,117 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5234717FD8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:29:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF45217FD70
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:29:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728368AbgCJN21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:28:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42892 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728887AbgCJMxQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:53:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id D2329B134;
-        Tue, 10 Mar 2020 12:53:13 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     linux-kernel@vger.kernel.org,
-        Mathias Nyman <mathias.nyman@intel.com>
-Cc:     linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com,
-        gregkh@linuxfoundation.org, tim.gover@raspberrypi.org,
-        linux-pci@vger.kernel.org, wahrenst@gmx.net,
-        sergei.shtylyov@cogentembedded.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH v5 4/4] USB: pci-quirks: Add Raspberry Pi 4 quirk
-Date:   Tue, 10 Mar 2020 13:52:42 +0100
-Message-Id: <20200310125243.25805-5-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310125243.25805-1-nsaenzjulienne@suse.de>
-References: <20200310125243.25805-1-nsaenzjulienne@suse.de>
+        id S1729368AbgCJMy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:54:29 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:36029 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729350AbgCJMyX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:54:23 -0400
+Received: by mail-qk1-f193.google.com with SMTP id u25so12557091qkk.3;
+        Tue, 10 Mar 2020 05:54:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4gPRUE/8c5unfeblSQvhYpKxeSuVZhZNXJJMTut3+xc=;
+        b=XkznGvkaYBTUY217XQ+/JcQlXuOsrjWrLd6qvYVsRlLicZNCjg+d1sTOEeWvFDBjed
+         ZUQFiYxNYCClkr65W3vIB7yabWXsorUCj9aoLmomRhnyGmNzS97zSfSpHywipgu2WlML
+         5GQjtgI93aBcWLFmFWtro9CmlXquwSClaP6pI8JhmVxxHoD+ywnBhYIi0tL5byG53uHe
+         HOh3OK35wClm2ks6crxtZTJmPM1XzoHgk/pmQ3S/3FEKsFWVaHcUpEs4Li1XwIw9Eij7
+         l3eZfqtzF8TEb9w+VUtY2cK+IIlD/WcB23bnYGWkxIH/bCgp91JtqG+n3saW1kbB6HGz
+         07jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4gPRUE/8c5unfeblSQvhYpKxeSuVZhZNXJJMTut3+xc=;
+        b=NCOg7YCbAvKQHwGhs0qvOzf8I6su65P9a+E50imI6lUwlMGid9USmjS/APlZTv8ryO
+         /Hqr4Xey0NxaRPqZ36fvuaccNRHFNDrxsTW5fk8wpwkjwf7fMskYucrWRQwkhhm+fNmz
+         FV5zpvm5f9kO8sFTNTGwfnTNPhRAH2OdMiCHF/N+9xzas4BHvucVLUcMQxpX7KTJqDCz
+         WyG5UUC5pp+XFDgiYWkwsh/b+8tkclRvSvoVUBBk7diP9/SnbwqrexK7jXksmUvlxKkW
+         /b4Z2jflslLdcAvgX2U58uooGyKdXcrN6XdFJtUXE9w+OOpEAJO+diuVUE0stslIptNi
+         PwrQ==
+X-Gm-Message-State: ANhLgQ1nKO/VtkW8wHApSt5FV8XxvnIp7vwnkHYiOgl/sxeW3uEpW1J8
+        UxrRV73nXNdp4X78621mjbjYSpoYjm8Nfa37+Pg=
+X-Google-Smtp-Source: ADFU+vvDgu6r2lvGrzD+aENtSuJiR4ntDHyMa/Gp9A1Gub6RnDjugtxTlXjHNfyjGwMDnaqFEam8O6u6HzvTy4j0zEU=
+X-Received: by 2002:a05:620a:22cd:: with SMTP id o13mr10800851qki.160.1583844862180;
+ Tue, 10 Mar 2020 05:54:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1580185137-11255-1-git-send-email-gupt21@gmail.com> <20200310122934.GA13896@ninjato>
+In-Reply-To: <20200310122934.GA13896@ninjato>
+From:   rishi gupta <gupt21@gmail.com>
+Date:   Tue, 10 Mar 2020 18:24:10 +0530
+Message-ID: <CALUj-guKqkRKVKDa1U+gv0rLx23zc5cFT3Qnakp4muk9LSUYfQ@mail.gmail.com>
+Subject: Re: [PATCH v3] HID: mcp2221: add usb to i2c-smbus host bridge
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        wsa+renesas@sang-engineering.com,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the Raspberry Pi 4, after a PCI reset, VL805's firmware may either be
-loaded directly from an EEPROM or, if not present, by the SoC's
-VideCore. Inform VideCore that VL805 was just reset.
+I will send two more patches in sometime.
 
-Also, as this creates a dependency between XHCI_PCI and VideoCore's
-firmware interface, reflect that on the firmware interface Kconfg.
+Patch 1: Define i2c_adapter_quirks to let i2c core check msg's order,
+type and length
+              As of now this driver itself is doing this sanity.
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
+Patch 2: Add support for GPIO functionality
 
-Changes since v4:
- - Do not split up error message
-
-Changes since v3:
- - Add more complete error message
-
-Changes since v1:
- - Make RASPBERRYPI_FIRMWARE dependent on this quirk to make sure it
-   gets compiled when needed.
-
- drivers/firmware/Kconfig      |  1 +
- drivers/usb/host/pci-quirks.c | 16 ++++++++++++++++
- 2 files changed, 17 insertions(+)
-
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index ea869addc89b..40a468d712a5 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -180,6 +180,7 @@ config ISCSI_IBFT
- config RASPBERRYPI_FIRMWARE
- 	tristate "Raspberry Pi Firmware Driver"
- 	depends on BCM2835_MBOX
-+	default XHCI_PCI
- 	help
- 	  This option enables support for communicating with the firmware on the
- 	  Raspberry Pi.
-diff --git a/drivers/usb/host/pci-quirks.c b/drivers/usb/host/pci-quirks.c
-index beb2efa71341..0dc34668bb2a 100644
---- a/drivers/usb/host/pci-quirks.c
-+++ b/drivers/usb/host/pci-quirks.c
-@@ -16,6 +16,9 @@
- #include <linux/export.h>
- #include <linux/acpi.h>
- #include <linux/dmi.h>
-+
-+#include <soc/bcm2835/raspberrypi-firmware.h>
-+
- #include "pci-quirks.h"
- #include "xhci-ext-caps.h"
- 
-@@ -1243,11 +1246,24 @@ static void quirk_usb_handoff_xhci(struct pci_dev *pdev)
- 
- static void quirk_usb_early_handoff(struct pci_dev *pdev)
- {
-+	int ret;
-+
- 	/* Skip Netlogic mips SoC's internal PCI USB controller.
- 	 * This device does not need/support EHCI/OHCI handoff
- 	 */
- 	if (pdev->vendor == 0x184e)	/* vendor Netlogic */
- 		return;
-+
-+	if (pdev->vendor == PCI_VENDOR_ID_VIA && pdev->device == 0x3483) {
-+		ret = rpi_firmware_init_vl805(pdev);
-+		if (ret) {
-+			/* Firmware might be outdated, or something failed */
-+			dev_warn(&pdev->dev,
-+				 "Failed to load VL805's firmware: %d. Will continue to attempt to work, but bad things might happen. You should fix this...\n",
-+				 ret);
-+		}
-+	}
-+
- 	if (pdev->class != PCI_CLASS_SERIAL_USB_UHCI &&
- 			pdev->class != PCI_CLASS_SERIAL_USB_OHCI &&
- 			pdev->class != PCI_CLASS_SERIAL_USB_EHCI &&
--- 
-2.25.1
-
+On Tue, Mar 10, 2020 at 5:59 PM Wolfram Sang <wsa@the-dreams.de> wrote:
+>
+>
+> > +     if (num == 1) {
+> > +             if (msgs->flags & I2C_M_RD) {
+> > +                     ret = mcp_i2c_smbus_read(mcp, msgs, MCP2221_I2C_RD_DATA,
+> > +                                                     0, 0, NULL);
+> > +             } else {
+> > +                     ret = mcp_i2c_write(mcp, msgs, MCP2221_I2C_WR_DATA, 1);
+> > +             }
+> > +             if (ret)
+> > +                     goto exit;
+> > +             ret = num;
+> > +     } else if (num == 2) {
+> > +             /* Ex transaction; send reg address and read its contents */
+> > +             if (msgs[0].addr == msgs[1].addr &&
+> > +                     !(msgs[0].flags & I2C_M_RD) &&
+> > +                      (msgs[1].flags & I2C_M_RD)) {
+> > +
+> > +                     ret = mcp_i2c_write(mcp, &msgs[0],
+> > +                                             MCP2221_I2C_WR_NO_STOP, 0);
+> > +                     if (ret)
+> > +                             goto exit;
+> > +
+> > +                     ret = mcp_i2c_smbus_read(mcp, &msgs[1],
+> > +                                             MCP2221_I2C_RD_RPT_START,
+> > +                                             0, 0, NULL);
+> > +                     if (ret)
+> > +                             goto exit;
+> > +                     ret = num;
+> > +             } else {
+> > +                     dev_err(&adapter->dev,
+> > +                             "unsupported multi-msg i2c transaction\n");
+> > +                     ret = -EOPNOTSUPP;
+> > +             }
+> > +     } else {
+> > +             dev_err(&adapter->dev,
+> > +                     "unsupported multi-msg i2c transaction\n");
+> > +             ret = -EOPNOTSUPP;
+> > +     }
+>
+> Have a look at struct i2c_adapter_quirks and especially the flags to let
+> the I2C core do the sanity checks from here.
+>
