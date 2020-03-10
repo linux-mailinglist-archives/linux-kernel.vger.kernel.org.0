@@ -2,87 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A1E8180B11
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 23:01:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE9F7180B16
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 23:01:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbgCJWB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 18:01:28 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:34347 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727688AbgCJWB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727707AbgCJWB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 10 Mar 2020 18:01:27 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48cTZF1NB6z9s3x;
-        Wed, 11 Mar 2020 09:01:25 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1583877685;
-        bh=wzZzebi45AhIS8HGeVFhdyHkTlG8O3pVyWnqNN9rlqQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=jVjC6Nju7T0T9y+wjzfdyl/mtjA8IR7sw+h4jd/f7Ti0Pd40VyYazZf2eRRWGU2mJ
-         PMqLMtTwnNkj3c/CHqenS59dGXobbwChG76kOW9xmamf5QnIyr5FK1eRI1sIZ2FaB0
-         Bwjj+3QYsrECTk7K6BrA2eptDTkI3Hb+C8mSO6rAoAAkGKAcS54fhRGdya0LcP2sfd
-         wpJVBUW/zwHo0xZaI0kF0wMR5/8TnYhOkOsZOuYz/Le8XteAsq7frdw8bLNcGq6mLf
-         RwgMpX1YvHtGgNcFe5CG/0TlaZv7FMXzY3cKdh2nbwpGk2WgXWjeR8sJ/knchFE/9w
-         1tv7+owRHiwVw==
-Date:   Wed, 11 Mar 2020 09:01:15 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        KVM <kvm@vger.kernel.org>, S390 <linux-s390@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the kvms390-fixes tree
-Message-ID: <20200311090115.3967bbc6@canb.auug.org.au>
+Received: from mail.kmu-office.ch ([178.209.48.109]:43964 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbgCJWB1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 18:01:27 -0400
+Received: from zyt.lan (unknown [IPv6:2a02:169:3df5::564])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 1E5BF5C2157;
+        Tue, 10 Mar 2020 23:01:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1583877685;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:
+         content-transfer-encoding:content-transfer-encoding:in-reply-to:
+         references; bh=y9mUQ47Qx5sWxU4e4s/o/28BEccjHtCQBjF8z/UpJQA=;
+        b=myQMTVO9iLbwC69i6CgS14cavDxa3wRcSvyTw2x8TEZPdhyjXpSUnaXFceu7NNWcTEBJs7
+        pf3ixShGDXOIbwMQnyWr7xcXSEVSoDaqlJ2gtLApsaVmOJeP5lNv9Be6mTxMbr/3J64CTC
+        24wOk8GGmKBHVICv329Ipn1ASCGvVNw=
+From:   Stefan Agner <stefan@agner.ch>
+To:     linux@armlinux.org.uk
+Cc:     arnd@arndb.de, ard.biesheuvel@linaro.org, robin.murphy@arm.com,
+        yamada.masahiro@socionext.com, ndesaulniers@google.com,
+        manojgupta@google.com, jiancai@google.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com, Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 0/3] ARM: make use of UAL VFP mnemonics when possible
+Date:   Tue, 10 Mar 2020 23:01:18 +0100
+Message-Id: <cover.1583360296.git.stefan@agner.ch>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/kv.9uJJpUfaryogAyL3K1zT";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/kv.9uJJpUfaryogAyL3K1zT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+To build the kernel with Clang's integrated assembler the VFP code needs
+to make use of the unified assembler language (UAL) VFP mnemonics.
 
-Hi all,
+At first I tried to get rid of the co-processor instructions to access
+the floating point unit along with the macros completely. However, due
+to missing FPINST/FPINST2 argument support in older binutils versions we
+have to keep them around. Once we drop support for binutils 2.24 and
+older, the move to UAL VFP mnemonics will be straight forward with this
+changes applied.
 
-In commit
+Tested using Clang with integrated assembler as well as external
+(binutils assembler), various gcc/binutils version down to 4.7/2.23.
+Disassembled and compared the object files in arch/arm/vfp/ to make
+sure this changes leads to the same code. Besides different inlining
+behavior I was not able to spot a difference.
 
-  b5de9eede579 ("KVM: s390: Also reset registers in sync regs for initial c=
-pu reset")
+This replaces (and extends) my earlier patch "ARM: use assembly mnemonics
+for VFP register access"
+http://lore.kernel.org/r/8bb16ac4b15a7e28a8e819ef9aae20bfc3f75fbc.1582266841.git.stefan@agner.ch
 
-Fixes tag
+--
+Stefan
 
-  Fixes: 7de3f1423ff ("KVM: s390: Add new reset vcpu API")
+Stefan Agner (3):
+  ARM: use .fpu assembler directives instead of assembler arguments
+  ARM: use VFP assembler mnemonics in register load/store macros
+  ARM: use VFP assembler mnemonics if available
 
-has these problem(s):
+ arch/arm/include/asm/vfp.h       |  2 ++
+ arch/arm/include/asm/vfpmacros.h | 31 ++++++++++++++++++++++---------
+ arch/arm/vfp/Makefile            |  5 ++++-
+ arch/arm/vfp/vfphw.S             | 31 ++++++++++++++++++++-----------
+ arch/arm/vfp/vfpinstr.h          | 23 +++++++++++++++++++----
+ 5 files changed, 67 insertions(+), 25 deletions(-)
 
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+-- 
+2.25.1
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/kv.9uJJpUfaryogAyL3K1zT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5oDisACgkQAVBC80lX
-0GzYaAf9FXBdN/sPL0m1wS/M8NvQrp0wWqykM2mze0kNV+wY77eqasWuk3dSkCZQ
-YOWpjCN/T6FTBwJpiNLZMtgoKYOKFwkPToNXjCNkl+3sXrp/8xhKREmnobTSpqyP
-XWhIzMfqyXRn5/5gWg44M/pVIE5KIDeDxZzeU4tbcDCCsoHOeqkdne1n7KOkRk+L
-yTw1hgzfqPeT6uegHLvSwgO1K1XwLDZagZJrPzdMgr5wGvMMEe6J4gk7msoXBpia
-3n+gZjDjDeYb8erVrRxqR7niqGb7vIPeeKkP4PNVKxnVoIg2N0/kLrQHHvnZGEaU
-prhFRX7EBNh0WELfnGmQDRa/L3c75Q==
-=IiMa
------END PGP SIGNATURE-----
-
---Sig_/kv.9uJJpUfaryogAyL3K1zT--
