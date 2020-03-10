@@ -2,95 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36EBC17F082
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 07:32:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5B2A17F095
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 07:35:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbgCJGcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 02:32:07 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:58102 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726100AbgCJGcH (ORCPT
+        id S1726403AbgCJGfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 02:35:13 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40161 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726369AbgCJGfM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 02:32:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583821926;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1yU8oUTA8/wnaOz9hoJioLzE4hVFWMjV/4+YfFPe8NY=;
-        b=aZ3LCU7SduD5XEMiwKFoEifIBfoOmMeOA4uqX7fAg2KkJZXV8XyWGzAwrZ5k9uJaKI36c0
-        hWqzo3WgyALMCjFq/cG6Q7IRGo1jrKqRnLy1UHX/NkE47sKK6VTl0RlHsTEoPUX/+Yu0g1
-        58U5bzzgraNTLZs9a853e/kIAdbSzFk=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-69-6kUlt1K1Nl-7ydPIcaviOA-1; Tue, 10 Mar 2020 02:32:03 -0400
-X-MC-Unique: 6kUlt1K1Nl-7ydPIcaviOA-1
-Received: by mail-qk1-f200.google.com with SMTP id m6so5708402qkm.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 23:32:03 -0700 (PDT)
+        Tue, 10 Mar 2020 02:35:12 -0400
+Received: by mail-pl1-f193.google.com with SMTP id h11so1854088plk.7
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 23:35:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nP9PNS9eIJgQJAIRsXlp8n4P+pGeRNDem1/JAJ9CZoo=;
+        b=yJby5aKYmht78gbCPLKW/yR9kFDyyMOl0hhOcLl9Yv1XCDJgxKqDFQ/VY/Cm4+78Du
+         +IXhtz6sRqDL+pbulDPLtlduJdTc0rLACLbmB2Ldp9LZJkHsAZAWrnhtozeQAnDVoSBI
+         styPVyZA5xIQFeRnye0NpOM8eKb1OABAEcMq1qLc3FxW4gDXggoW3CCdKelcxrovDwfy
+         JckNwcerrnx3xqbuTV35u5gOMdGzCLXP41n/GdmEWZ4gEReWLNM6aV4BcDHwPs0/9OcX
+         xgVyrlM+ScKNfn4uMWnrGj7zEPMfT8CFJnM1bzLHDW9mTBewjXgc9m2s52hNUBAtMyVW
+         6/8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=1yU8oUTA8/wnaOz9hoJioLzE4hVFWMjV/4+YfFPe8NY=;
-        b=HM3cqJya6N7dBH0oBSLe8uAI6pv5U/8CgGpYzdFdtcquZHx6EGZSLSe1m3CWbniqwV
-         mANsWAab2HjXIrrQocQyiNzDruM5j/jfSDCfxUEV6VaMlw9e/fbH62zX3eRMnJb6U8zu
-         vDi3gylv92MSs0nFNXbhPhrUtncTNhCfQtlwoUKgZ1ko7ei6UXSNJtWVzEPmqY4awyMR
-         tQpMONilzKPPNJYFAm9yjUuTLaO5/zy0Wm4ix2CH+gQLBkwlpB6sVa+UWypo60FVjs0+
-         AJ9E50ypSvcMliuvXt4atjG8j80oDot2NItTsIxbfELKqkNPqxX30/ujhuc/sVFBcs2E
-         wWMQ==
-X-Gm-Message-State: ANhLgQ1V3GKz8yrkxdHPJ3O4m3903zOCC45086fTW8r9WcOC2Abj9avH
-        CGmGbRzBj0O2EL/WWstdpRBiURXw31Sr6P5sq+vRNd1icCVAWeWNmcXic8dAcUfeB99Eg7MR0np
-        77K3Jy8NM13OfuZlt+Jfn5a9+
-X-Received: by 2002:ad4:510f:: with SMTP id g15mr17843674qvp.105.1583821923117;
-        Mon, 09 Mar 2020 23:32:03 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vuxiDdLJVlLKqFBw/p9Wp9h+eHv1I2YQjlDbjEPANoQ+DnOSPJfUC4oUjNeZIuVmyLRb0N5hg==
-X-Received: by 2002:ad4:510f:: with SMTP id g15mr17843652qvp.105.1583821922918;
-        Mon, 09 Mar 2020 23:32:02 -0700 (PDT)
-Received: from redhat.com (bzq-79-178-2-19.red.bezeqint.net. [79.178.2.19])
-        by smtp.gmail.com with ESMTPSA id e7sm14687548qtp.0.2020.03.09.23.31.58
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nP9PNS9eIJgQJAIRsXlp8n4P+pGeRNDem1/JAJ9CZoo=;
+        b=GqTfvvTOx/3RNKfAJVUBBywN+ZsACM5QmqpUGnmMClQEaPDtwkI4UtMr27Ghb+MhRz
+         EE4kuDmf+jBuAZYsUrZNPlwJxW6tHKYv/9mpEqvBGzze+zAHWGvNCNoe9rLnzCB3EPQe
+         ori/GmJLz+IVrGVIj+uFFZsI4LfptI5nXzTiLLXdTXxduYbmnTpO21pYZnppWg7tszOX
+         7XewB0FH6ePR6giHbymbVr7vF2ChWVg/HHiY6uK4vD5JnY3Jz9cURlUKgNQdbr1EfmpG
+         rN4SP9ta1/AWKgB25IC1fze1eJV495tJek0jjsDFJszM7H8F79gYDChGqQ+HSaJb+y/e
+         7wCw==
+X-Gm-Message-State: ANhLgQ3d6Afk6e5Qejm1h9m7Op32FnhU3LgKlYN+eKXHnWoQdespy0M7
+        xtQNimhCm32HTT1+MzyVufidIw==
+X-Google-Smtp-Source: ADFU+vvNU8SVNQz3C9Imsfqn/W1TG5Peq/nh++Xv6kdj+KouUr/6rTO+KMeCdRN12xY5J1qFbutcuw==
+X-Received: by 2002:a17:90b:438d:: with SMTP id in13mr202775pjb.114.1583822110408;
+        Mon, 09 Mar 2020 23:35:10 -0700 (PDT)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id v8sm1388029pjr.10.2020.03.09.23.35.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 23:32:01 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 02:31:55 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Yan Zhao <yan.y.zhao@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christophe de Dinechin <dinechin@redhat.com>,
-        Lei Cao <lei.cao@stratus.com>
-Subject: Re: [PATCH v5 05/14] KVM: X86: Implement ring-based dirty memory
- tracking
-Message-ID: <20200310022931-mutt-send-email-mst@kernel.org>
-References: <20200304174947.69595-6-peterx@redhat.com>
- <202003061911.MfG74mgX%lkp@intel.com>
- <20200309213554.GF4206@xz-x1>
+        Mon, 09 Mar 2020 23:35:09 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>
+Subject: [PATCH v4 0/5] remoteproc: qcom: PIL info support
+Date:   Mon,  9 Mar 2020 23:33:33 -0700
+Message-Id: <20200310063338.3344582-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200309213554.GF4206@xz-x1>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 05:35:54PM -0400, Peter Xu wrote:
-> I'll probably also
-> move KVM_DIRTY_LOG_PAGE_OFFSET==0 definition to uapi/linux/kvm.h.
+Introduce support for filling out the relocation information in IMEM, to aid
+post mortem debug tools to locate the various remoteprocs.
 
+Bjorn Andersson (5):
+  dt-bindings: remoteproc: Add Qualcomm PIL info binding
+  remoteproc: qcom: Introduce driver to store pil info in IMEM
+  remoteproc: qcom: Update PIL relocation info on load
+  arm64: dts: qcom: qcs404: Add IMEM and PIL info region
+  arm64: dts: qcom: sdm845: Add IMEM and PIL info region
 
-IMHO KVM_DIRTY_LOG_PAGE_OFFSET is kind of pointless anyway - 
-we won't be able to move data around just by changing the
-uapi value since userspace isn't
-recompiled when kernel changes ...
+ .../bindings/remoteproc/qcom,pil-info.yaml    |  44 +++++
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          |  15 ++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          |  15 ++
+ drivers/remoteproc/Kconfig                    |   6 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/qcom_pil_info.c            | 180 ++++++++++++++++++
+ drivers/remoteproc/qcom_pil_info.h            |   8 +
+ drivers/remoteproc/qcom_q6v5_adsp.c           |  20 +-
+ drivers/remoteproc/qcom_q6v5_mss.c            |   7 +
+ drivers/remoteproc/qcom_q6v5_pas.c            |  19 +-
+ drivers/remoteproc/qcom_q6v5_wcss.c           |  14 +-
+ drivers/remoteproc/qcom_wcnss.c               |  18 +-
+ 12 files changed, 335 insertions(+), 12 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+ create mode 100644 drivers/remoteproc/qcom_pil_info.c
+ create mode 100644 drivers/remoteproc/qcom_pil_info.h
 
-
-> -- 
-> Peter Xu
+-- 
+2.24.0
 
