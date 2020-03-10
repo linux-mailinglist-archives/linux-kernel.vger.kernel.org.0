@@ -2,282 +2,376 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 924E117F3BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 10:33:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0485717F3C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 10:35:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbgCJJdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 05:33:12 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58187 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726258AbgCJJdL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 05:33:11 -0400
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jBbG5-0006dc-62; Tue, 10 Mar 2020 09:33:05 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     christian.brauner@ubuntu.com
-Cc:     christian@brauner.io, darrick.wong@oracle.com, dhowells@redhat.com,
-        jannh@google.com, jlayton@redhat.com, kzak@redhat.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, mszeredi@redhat.com,
-        raven@themaw.net, torvalds@linux-foundation.org,
-        viro@zeniv.linux.org.uk
-Subject: [PATCH v19 14/14] arch: wire up fsinfo syscall
-Date:   Tue, 10 Mar 2020 10:32:41 +0100
-Message-Id: <20200310093241.1143777-2-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310093241.1143777-1-christian.brauner@ubuntu.com>
-References: <20200310093116.ylq6vaunr6js4eyy@wittgenstein>
- <20200310093241.1143777-1-christian.brauner@ubuntu.com>
+        id S1726402AbgCJJff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 05:35:35 -0400
+Received: from foss.arm.com ([217.140.110.172]:33244 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726202AbgCJJff (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 05:35:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 16D0630E;
+        Tue, 10 Mar 2020 02:35:34 -0700 (PDT)
+Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA19C3F67D;
+        Tue, 10 Mar 2020 02:35:32 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 09:35:29 +0000
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Robert Hancock <hancock@sedsystems.ca>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>, netdev@vger.kernel.org,
+        rmk+kernel@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2 12/14] net: axienet: Upgrade descriptors to hold
+ 64-bit addresses
+Message-ID: <20200310093529.043bc0a7@donnerap.cambridge.arm.com>
+In-Reply-To: <a0cab814-4c93-a59c-55cb-3c5f17c1bcde@sedsystems.ca>
+References: <20200309181851.190164-1-andre.przywara@arm.com>
+        <20200309181851.190164-13-andre.przywara@arm.com>
+        <a0cab814-4c93-a59c-55cb-3c5f17c1bcde@sedsystems.ca>
+Organization: ARM
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This wires up the fsinfo() syscall for all architectures.
+On Mon, 9 Mar 2020 12:46:25 -0600
+Robert Hancock <hancock@sedsystems.ca> wrote:
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- arch/alpha/kernel/syscalls/syscall.tbl      | 1 +
- arch/arm/tools/syscall.tbl                  | 1 +
- arch/arm64/include/asm/unistd.h             | 2 +-
- arch/arm64/include/asm/unistd32.h           | 2 ++
- arch/ia64/kernel/syscalls/syscall.tbl       | 1 +
- arch/m68k/kernel/syscalls/syscall.tbl       | 1 +
- arch/microblaze/kernel/syscalls/syscall.tbl | 1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   | 1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   | 1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   | 1 +
- arch/parisc/kernel/syscalls/syscall.tbl     | 1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    | 1 +
- arch/s390/kernel/syscalls/syscall.tbl       | 1 +
- arch/sh/kernel/syscalls/syscall.tbl         | 1 +
- arch/sparc/kernel/syscalls/syscall.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     | 1 +
- include/linux/syscalls.h                    | 4 ++++
- include/uapi/asm-generic/unistd.h           | 4 +++-
- 20 files changed, 26 insertions(+), 2 deletions(-)
+Hi,
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index 7c0115af9010..4d0b07dde12d 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -479,3 +479,4 @@
- 548	common	pidfd_getfd			sys_pidfd_getfd
- 549	common	watch_mount			sys_watch_mount
- 550	common	watch_sb			sys_watch_sb
-+551	common	fsinfo				sys_fsinfo
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index f256f009a89f..fdda8382b420 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -453,3 +453,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	watch_mount			sys_watch_mount
- 440	common	watch_sb			sys_watch_sb
-+441	common	fsinfo				sys_fsinfo
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index bc0f923e0e04..388eeb71cff0 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -38,7 +38,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
- 
--#define __NR_compat_syscalls		441
-+#define __NR_compat_syscalls		442
- #endif
- 
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index c1c61635f89c..1f7d2c8d481a 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -883,6 +883,8 @@ __SYSCALL(__NR_clone3, sys_clone3)
- __SYSCALL(__NR_openat2, sys_openat2)
- #define __NR_pidfd_getfd 438
- __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
-+#define __NR_fsinfo 441
-+__SYSCALL(__NR_fsinfo, sys_fsinfo)
- 
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index a4dafc659647..2316e60e031a 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -360,3 +360,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	watch_mount			sys_watch_mount
- 440	common	watch_sb			sys_watch_sb
-+441	common	fsinfo				sys_fsinfo
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index 893fb4151547..efc2723ca91f 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -439,3 +439,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	watch_mount			sys_watch_mount
- 440	common	watch_sb			sys_watch_sb
-+441	common	fsinfo				sys_fsinfo
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index 54aaf0d40c64..745c0f462fce 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -445,3 +445,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	watch_mount			sys_watch_mount
- 440	common	watch_sb			sys_watch_sb
-+441	common	fsinfo				sys_fsinfo
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index fd34dd0efed0..499f83562a8c 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -378,3 +378,4 @@
- 438	n32	pidfd_getfd			sys_pidfd_getfd
- 439	n32	watch_mount			sys_watch_mount
- 440	n32	watch_sb			sys_watch_sb
-+441	n32	fsinfo				sys_fsinfo
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index db0f4c0a0a0b..b3188bc3ab3c 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -354,3 +354,4 @@
- 438	n64	pidfd_getfd			sys_pidfd_getfd
- 439	n64	watch_mount			sys_watch_mount
- 440	n64	watch_sb			sys_watch_sb
-+441	n64	fsinfo				sys_fsinfo
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index ce2e1326de8f..1a3e8ed5e538 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -427,3 +427,4 @@
- 438	o32	pidfd_getfd			sys_pidfd_getfd
- 439	o32	watch_mount			sys_watch_mount
- 440	o32	watch_sb			sys_watch_sb
-+441	o32	fsinfo				sys_fsinfo
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index 6e4a7c08b64b..2572c215d861 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -437,3 +437,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	watch_mount			sys_watch_mount
- 440	common	watch_sb			sys_watch_sb
-+441	common	fsinfo				sys_fsinfo
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index 08943f3b8206..39d7ac7e918c 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -521,3 +521,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	watch_mount			sys_watch_mount
- 440	common	watch_sb			sys_watch_sb
-+441	common	fsinfo				sys_fsinfo
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index b3b8529d2b74..ae4cefd3dd1b 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -442,3 +442,4 @@
- 438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
- 439	common	watch_mount		sys_watch_mount			sys_watch_mount
- 440	common	watch_sb		sys_watch_sb			sys_watch_sb
-+441  common	fsinfo			sys_fsinfo			sys_fsinfo
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index 89307a20657c..05945b9aee4b 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -442,3 +442,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	watch_mount			sys_watch_mount
- 440	common	watch_sb			sys_watch_sb
-+441	common	fsinfo				sys_fsinfo
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index 4ff841a00450..b71b34d4b45c 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -485,3 +485,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	watch_mount			sys_watch_mount
- 440	common	watch_sb			sys_watch_sb
-+441	common	fsinfo				sys_fsinfo
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index e2731d295f88..e118ba9aca4c 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -444,3 +444,4 @@
- 438	i386	pidfd_getfd		sys_pidfd_getfd			__ia32_sys_pidfd_getfd
- 439	i386	watch_mount		sys_watch_mount			__ia32_sys_watch_mount
- 440	i386	watch_sb		sys_watch_sb			__ia32_sys_watch_sb
-+441	i386	fsinfo			sys_fsinfo			__ia32_sys_fsinfo
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index f4391176102c..067f247471d0 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -361,6 +361,7 @@
- 438	common	pidfd_getfd		__x64_sys_pidfd_getfd
- 439	common	watch_mount		__x64_sys_watch_mount
- 440	common	watch_sb		__x64_sys_watch_sb
-+441	common	fsinfo			__x64_sys_fsinfo
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 8e7d731ed6cf..e1ec25099d10 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -410,3 +410,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	watch_mount			sys_watch_mount
- 440	common	watch_sb			sys_watch_sb
-+441	common	fsinfo				sys_fsinfo
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index c84440d57f52..76064c0807e5 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -47,6 +47,7 @@ struct stat64;
- struct statfs;
- struct statfs64;
- struct statx;
-+struct fsinfo_params;
- struct __sysctl_args;
- struct sysinfo;
- struct timespec;
-@@ -1007,6 +1008,9 @@ asmlinkage long sys_watch_mount(int dfd, const char __user *path,
- 				unsigned int at_flags, int watch_fd, int watch_id);
- asmlinkage long sys_watch_sb(int dfd, const char __user *path,
- 			     unsigned int at_flags, int watch_fd, int watch_id);
-+asmlinkage long sys_fsinfo(int dfd, const char __user *pathname,
-+			   struct fsinfo_params __user *params, size_t params_size,
-+			   void __user *result_buffer, size_t result_buf_size);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 5bff318b7ffa..7d764f86d3f5 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -859,9 +859,11 @@ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
- __SYSCALL(__NR_watch_mount, sys_watch_mount)
- #define __NR_watch_sb 440
- __SYSCALL(__NR_watch_sb, sys_watch_sb)
-+#define __NR_fsinfo 441
-+__SYSCALL(__NR_fsinfo, sys_fsinfo)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 441
-+#define __NR_syscalls 442
- 
- /*
-  * 32 bit systems traditionally used different
--- 
-2.25.1
+> On 2020-03-09 12:18 p.m., Andre Przywara wrote:
+> > Newer revisions of the AXI DMA IP (>= v7.1) support 64-bit addresses,
+> > both for the descriptors itself, as well as for the buffers they are
+> > pointing to.
+> > This is realised by adding "MSB" words for the next and phys pointer
+> > right behind the existing address word, now named "LSB". These MSB words
+> > live in formerly reserved areas of the descriptor.
+> > 
+> > If the hardware supports it, write both words when setting an address.
+> > The buffer address is handled by two wrapper functions, the two
+> > occasions where we set the next pointers are open coded.
+> > 
+> > For now this is guarded by a flag which we don't set yet.
+> > 
+> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > ---
+> >  drivers/net/ethernet/xilinx/xilinx_axienet.h  |   9 +-
+> >  .../net/ethernet/xilinx/xilinx_axienet_main.c | 113 ++++++++++++------
+> >  2 files changed, 83 insertions(+), 39 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h b/drivers/net/ethernet/xilinx/xilinx_axienet.h
+> > index fb7450ca5c53..84c4c3655516 100644
+> > --- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
+> > +++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
+> > @@ -328,6 +328,7 @@
+> >  #define XAE_FEATURE_PARTIAL_TX_CSUM	(1 << 1)
+> >  #define XAE_FEATURE_FULL_RX_CSUM	(1 << 2)
+> >  #define XAE_FEATURE_FULL_TX_CSUM	(1 << 3)
+> > +#define XAE_FEATURE_DMA_64BIT		(1 << 4)
+> >  
+> >  #define XAE_NO_CSUM_OFFLOAD		0
+> >  
+> > @@ -340,9 +341,9 @@
+> >  /**
+> >   * struct axidma_bd - Axi Dma buffer descriptor layout
+> >   * @next:         MM2S/S2MM Next Descriptor Pointer
+> > - * @reserved1:    Reserved and not used
+> > + * @next_msb:     MM2S/S2MM Next Descriptor Pointer (high 32 bits)
+> >   * @phys:         MM2S/S2MM Buffer Address
+> > - * @reserved2:    Reserved and not used
+> > + * @phys_msb:     MM2S/S2MM Buffer Address (high 32 bits)
+> >   * @reserved3:    Reserved and not used
+> >   * @reserved4:    Reserved and not used
+> >   * @cntrl:        MM2S/S2MM Control value
+> > @@ -355,9 +356,9 @@
+> >   */
+> >  struct axidma_bd {
+> >  	u32 next;	/* Physical address of next buffer descriptor */
+> > -	u32 reserved1;
+> > +	u32 next_msb;	/* high 32 bits for IP >= v7.1, reserved on older IP */
+> >  	u32 phys;
+> > -	u32 reserved2;
+> > +	u32 phys_msb;	/* for IP >= v7.1, reserved for older IP */
+> >  	u32 reserved3;
+> >  	u32 reserved4;
+> >  	u32 cntrl;
+> > diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> > index ea44ef4cf288..edee0666d52c 100644
+> > --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> > +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> > @@ -153,6 +153,25 @@ static void axienet_dma_out_addr(struct axienet_local *lp, off_t reg,
+> >  	axienet_dma_out32(lp, reg, lower_32_bits(addr));
+> >  }
+> >  
+> > +static void desc_set_phys_addr(struct axienet_local *lp, dma_addr_t addr,
+> > +			       struct axidma_bd *desc)
+> > +{
+> > +	desc->phys = lower_32_bits(addr);
+> > +	if (lp->features & XAE_FEATURE_DMA_64BIT)
+> > +		desc->phys_msb = upper_32_bits(addr);
+> > +}
+> > +
+> > +static dma_addr_t desc_get_phys_addr(struct axienet_local *lp,
+> > +				     struct axidma_bd *desc)
+> > +{
+> > +	dma_addr_t ret = desc->phys;
+> > +
+> > +	if (lp->features & XAE_FEATURE_DMA_64BIT)
+> > +		ret |= (dma_addr_t)desc->phys_msb << 32;  
+> 
+> Does this compile/work properly on a 32-bit kernel? If dma_addr_t was a
+> 32-bit type, I would expect that left-shifting by 32 bits may not do
+> what you want. Not sure if there is an inverse to lower_32_bits and
+> upper_32_bits macros?
+
+Ah, good point. I compile-tested on 32-bit, but only with ARM32+LPAE, which makes dma_addr_t 64-bit as well.
+
+I couldn't find any suitable macro in kernel.h, but will try << 16 << 16.
+
+Thanks for spotting this (six hours before the build bot)!
+
+Cheers,
+Andre
+
+> 
+> > +
+> > +	return ret;
+> > +}
+> > +
+> >  /**
+> >   * axienet_dma_bd_release - Release buffer descriptor rings
+> >   * @ndev:	Pointer to the net_device structure
+> > @@ -176,6 +195,8 @@ static void axienet_dma_bd_release(struct net_device *ndev)
+> >  		return;
+> >  
+> >  	for (i = 0; i < lp->rx_bd_num; i++) {
+> > +		dma_addr_t phys;
+> > +
+> >  		/* A NULL skb means this descriptor has not been initialised
+> >  		 * at all.
+> >  		 */
+> > @@ -188,9 +209,11 @@ static void axienet_dma_bd_release(struct net_device *ndev)
+> >  		 * descriptor size, after it had been successfully allocated.
+> >  		 * So a non-zero value in there means we need to unmap it.
+> >  		 */
+> > -		if (lp->rx_bd_v[i].cntrl)
+> > -			dma_unmap_single(ndev->dev.parent, lp->rx_bd_v[i].phys,
+> > +		if (lp->rx_bd_v[i].cntrl) {
+> > +			phys = desc_get_phys_addr(lp, &lp->rx_bd_v[i]);
+> > +			dma_unmap_single(ndev->dev.parent, phys,
+> >  					 lp->max_frm_size, DMA_FROM_DEVICE);
+> > +		}
+> >  	}
+> >  
+> >  	dma_free_coherent(ndev->dev.parent,
+> > @@ -235,29 +258,36 @@ static int axienet_dma_bd_init(struct net_device *ndev)
+> >  		goto out;
+> >  
+> >  	for (i = 0; i < lp->tx_bd_num; i++) {
+> > -		lp->tx_bd_v[i].next = lp->tx_bd_p +
+> > -				      sizeof(*lp->tx_bd_v) *
+> > -				      ((i + 1) % lp->tx_bd_num);
+> > +		dma_addr_t addr = lp->tx_bd_p +
+> > +				  sizeof(*lp->tx_bd_v) *
+> > +				  ((i + 1) % lp->tx_bd_num);
+> > +
+> > +		lp->tx_bd_v[i].next = lower_32_bits(addr);
+> > +		if (lp->features & XAE_FEATURE_DMA_64BIT)
+> > +			lp->tx_bd_v[i].next_msb = upper_32_bits(addr);
+> >  	}
+> >  
+> >  	for (i = 0; i < lp->rx_bd_num; i++) {
+> > -		lp->rx_bd_v[i].next = lp->rx_bd_p +
+> > -				      sizeof(*lp->rx_bd_v) *
+> > -				      ((i + 1) % lp->rx_bd_num);
+> > +		dma_addr_t addr;
+> > +
+> > +		addr = lp->rx_bd_p + sizeof(*lp->rx_bd_v) *
+> > +			((i + 1) % lp->rx_bd_num);
+> > +		lp->rx_bd_v[i].next = lower_32_bits(addr);
+> > +		if (lp->features & XAE_FEATURE_DMA_64BIT)
+> > +			lp->rx_bd_v[i].next_msb = upper_32_bits(addr);
+> >  
+> >  		skb = netdev_alloc_skb_ip_align(ndev, lp->max_frm_size);
+> >  		if (!skb)
+> >  			goto out;
+> >  
+> >  		lp->rx_bd_v[i].skb = skb;
+> > -		lp->rx_bd_v[i].phys = dma_map_single(ndev->dev.parent,
+> > -						     skb->data,
+> > -						     lp->max_frm_size,
+> > -						     DMA_FROM_DEVICE);
+> > -		if (dma_mapping_error(ndev->dev.parent, lp->rx_bd_v[i].phys)) {
+> > +		addr = dma_map_single(ndev->dev.parent, skb->data,
+> > +				      lp->max_frm_size, DMA_FROM_DEVICE);
+> > +		if (dma_mapping_error(ndev->dev.parent, addr)) {
+> >  			netdev_err(ndev, "DMA mapping error\n");
+> >  			goto out;
+> >  		}
+> > +		desc_set_phys_addr(lp, addr, &lp->rx_bd_v[i]);
+> >  
+> >  		lp->rx_bd_v[i].cntrl = lp->max_frm_size;
+> >  	}
+> > @@ -573,6 +603,7 @@ static int axienet_free_tx_chain(struct net_device *ndev, u32 first_bd,
+> >  	struct axienet_local *lp = netdev_priv(ndev);
+> >  	int max_bds = (nr_bds != -1) ? nr_bds : lp->tx_bd_num;
+> >  	struct axidma_bd *cur_p;
+> > +	dma_addr_t phys;
+> >  	unsigned int status;
+> >  	int i;
+> >  
+> > @@ -586,9 +617,10 @@ static int axienet_free_tx_chain(struct net_device *ndev, u32 first_bd,
+> >  		if (nr_bds == -1 && !(status & XAXIDMA_BD_STS_COMPLETE_MASK))
+> >  			break;
+> >  
+> > -		dma_unmap_single(ndev->dev.parent, cur_p->phys,
+> > -				(cur_p->cntrl & XAXIDMA_BD_CTRL_LENGTH_MASK),
+> > -				DMA_TO_DEVICE);
+> > +		phys = desc_get_phys_addr(lp, cur_p);
+> > +		dma_unmap_single(ndev->dev.parent, phys,
+> > +				 (cur_p->cntrl & XAXIDMA_BD_CTRL_LENGTH_MASK),
+> > +				 DMA_TO_DEVICE);
+> >  
+> >  		if (cur_p->skb && (status & XAXIDMA_BD_STS_COMPLETE_MASK))
+> >  			dev_consume_skb_irq(cur_p->skb);
+> > @@ -684,7 +716,7 @@ axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+> >  	u32 csum_start_off;
+> >  	u32 csum_index_off;
+> >  	skb_frag_t *frag;
+> > -	dma_addr_t tail_p;
+> > +	dma_addr_t tail_p, phys;
+> >  	struct axienet_local *lp = netdev_priv(ndev);
+> >  	struct axidma_bd *cur_p;
+> >  	u32 orig_tail_ptr = lp->tx_bd_tail;
+> > @@ -723,14 +755,15 @@ axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+> >  		cur_p->app0 |= 2; /* Tx Full Checksum Offload Enabled */
+> >  	}
+> >  
+> > -	cur_p->phys = dma_map_single(ndev->dev.parent, skb->data,
+> > -				     skb_headlen(skb), DMA_TO_DEVICE);
+> > -	if (unlikely(dma_mapping_error(ndev->dev.parent, cur_p->phys))) {
+> > +	phys = dma_map_single(ndev->dev.parent, skb->data,
+> > +			      skb_headlen(skb), DMA_TO_DEVICE);
+> > +	if (unlikely(dma_mapping_error(ndev->dev.parent, phys))) {
+> >  		if (net_ratelimit())
+> >  			netdev_err(ndev, "TX DMA mapping error\n");
+> >  		ndev->stats.tx_dropped++;
+> >  		return NETDEV_TX_OK;
+> >  	}
+> > +	desc_set_phys_addr(lp, phys, cur_p);
+> >  	cur_p->cntrl = skb_headlen(skb) | XAXIDMA_BD_CTRL_TXSOF_MASK;
+> >  
+> >  	for (ii = 0; ii < num_frag; ii++) {
+> > @@ -738,11 +771,11 @@ axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+> >  			lp->tx_bd_tail = 0;
+> >  		cur_p = &lp->tx_bd_v[lp->tx_bd_tail];
+> >  		frag = &skb_shinfo(skb)->frags[ii];
+> > -		cur_p->phys = dma_map_single(ndev->dev.parent,
+> > -					     skb_frag_address(frag),
+> > -					     skb_frag_size(frag),
+> > -					     DMA_TO_DEVICE);
+> > -		if (unlikely(dma_mapping_error(ndev->dev.parent, cur_p->phys))) {
+> > +		phys = dma_map_single(ndev->dev.parent,
+> > +				      skb_frag_address(frag),
+> > +				      skb_frag_size(frag),
+> > +				      DMA_TO_DEVICE);
+> > +		if (unlikely(dma_mapping_error(ndev->dev.parent, phys))) {
+> >  			if (net_ratelimit())
+> >  				netdev_err(ndev, "TX DMA mapping error\n");
+> >  			ndev->stats.tx_dropped++;
+> > @@ -752,6 +785,7 @@ axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+> >  
+> >  			return NETDEV_TX_OK;
+> >  		}
+> > +		desc_set_phys_addr(lp, phys, cur_p);
+> >  		cur_p->cntrl = skb_frag_size(frag);
+> >  	}
+> >  
+> > @@ -790,10 +824,12 @@ static void axienet_recv(struct net_device *ndev)
+> >  	cur_p = &lp->rx_bd_v[lp->rx_bd_ci];
+> >  
+> >  	while ((cur_p->status & XAXIDMA_BD_STS_COMPLETE_MASK)) {
+> > +		dma_addr_t phys;
+> > +
+> >  		tail_p = lp->rx_bd_p + sizeof(*lp->rx_bd_v) * lp->rx_bd_ci;
+> >  
+> > -		dma_unmap_single(ndev->dev.parent, cur_p->phys,
+> > -				 lp->max_frm_size,
+> > +		phys = desc_get_phys_addr(lp, cur_p);
+> > +		dma_unmap_single(ndev->dev.parent, phys, lp->max_frm_size,
+> >  				 DMA_FROM_DEVICE);
+> >  
+> >  		skb = cur_p->skb;
+> > @@ -829,15 +865,16 @@ static void axienet_recv(struct net_device *ndev)
+> >  		if (!new_skb)
+> >  			return;
+> >  
+> > -		cur_p->phys = dma_map_single(ndev->dev.parent, new_skb->data,
+> > -					     lp->max_frm_size,
+> > -					     DMA_FROM_DEVICE);
+> > -		if (unlikely(dma_mapping_error(ndev->dev.parent, cur_p->phys))) {
+> > +		phys = dma_map_single(ndev->dev.parent, new_skb->data,
+> > +				      lp->max_frm_size,
+> > +				      DMA_FROM_DEVICE);
+> > +		if (unlikely(dma_mapping_error(ndev->dev.parent, phys))) {
+> >  			if (net_ratelimit())
+> >  				netdev_err(ndev, "RX DMA mapping error\n");
+> >  			dev_kfree_skb(new_skb);
+> >  			return;
+> >  		}
+> > +		desc_set_phys_addr(lp, phys, cur_p);
+> >  
+> >  		cur_p->cntrl = lp->max_frm_size;
+> >  		cur_p->status = 0;
+> > @@ -882,7 +919,8 @@ static irqreturn_t axienet_tx_irq(int irq, void *_ndev)
+> >  		return IRQ_NONE;
+> >  	if (status & XAXIDMA_IRQ_ERROR_MASK) {
+> >  		dev_err(&ndev->dev, "DMA Tx error 0x%x\n", status);
+> > -		dev_err(&ndev->dev, "Current BD is at: 0x%x\n",
+> > +		dev_err(&ndev->dev, "Current BD is at: 0x%x%08x\n",
+> > +			(lp->tx_bd_v[lp->tx_bd_ci]).phys_msb,
+> >  			(lp->tx_bd_v[lp->tx_bd_ci]).phys);
+> >  
+> >  		cr = axienet_dma_in32(lp, XAXIDMA_TX_CR_OFFSET);
+> > @@ -931,7 +969,8 @@ static irqreturn_t axienet_rx_irq(int irq, void *_ndev)
+> >  		return IRQ_NONE;
+> >  	if (status & XAXIDMA_IRQ_ERROR_MASK) {
+> >  		dev_err(&ndev->dev, "DMA Rx error 0x%x\n", status);
+> > -		dev_err(&ndev->dev, "Current BD is at: 0x%x\n",
+> > +		dev_err(&ndev->dev, "Current BD is at: 0x%x%08x\n",
+> > +			(lp->rx_bd_v[lp->rx_bd_ci]).phys_msb,
+> >  			(lp->rx_bd_v[lp->rx_bd_ci]).phys);
+> >  
+> >  		cr = axienet_dma_in32(lp, XAXIDMA_TX_CR_OFFSET);
+> > @@ -1633,14 +1672,18 @@ static void axienet_dma_err_handler(struct work_struct *work)
+> >  
+> >  	for (i = 0; i < lp->tx_bd_num; i++) {
+> >  		cur_p = &lp->tx_bd_v[i];
+> > -		if (cur_p->cntrl)
+> > -			dma_unmap_single(ndev->dev.parent, cur_p->phys,
+> > +		if (cur_p->cntrl) {
+> > +			dma_addr_t addr = desc_get_phys_addr(lp, cur_p);
+> > +
+> > +			dma_unmap_single(ndev->dev.parent, addr,
+> >  					 (cur_p->cntrl &
+> >  					  XAXIDMA_BD_CTRL_LENGTH_MASK),
+> >  					 DMA_TO_DEVICE);
+> > +		}
+> >  		if (cur_p->skb)
+> >  			dev_kfree_skb_irq(cur_p->skb);
+> >  		cur_p->phys = 0;
+> > +		cur_p->phys_msb = 0;
+> >  		cur_p->cntrl = 0;
+> >  		cur_p->status = 0;
+> >  		cur_p->app0 = 0;
+> >   
+> 
 
