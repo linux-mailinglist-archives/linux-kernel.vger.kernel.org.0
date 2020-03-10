@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABD1F17FD63
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:29:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F86117FA02
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:02:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729207AbgCJMxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:53:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59666 "EHLO mail.kernel.org"
+        id S1730112AbgCJNB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:01:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729202AbgCJMxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:53:34 -0400
+        id S1730336AbgCJNBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:01:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5376924693;
-        Tue, 10 Mar 2020 12:53:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7B5920409;
+        Tue, 10 Mar 2020 13:01:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844813;
+        s=default; t=1583845312;
         bh=res+kNY6oEd1iav7ZQxfpSu96Lndx0UOZKW8UJxr7Cw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RMEKv0qRFqcorpaoj5foUlGhnLLvyzn/gWv58a/Lt/dHZD5hCKifcWLCGRujLiTqk
-         /jNxyN02nH8XrAn4P7Mx//8KPMHCKw3nFdEc3zdI+o66sBgQaqqUITQhYYmraGyfpn
-         XrH2SI629WSalDGacQCNM/g/V+z3c8nLzvn6S5uw=
+        b=iDhs1oJM1QoYGNbtOL9iZ3BM4NY1QaEJRlJBrtnzw072N+BnBbiNzXIftR7LkDXUW
+         SkVi/V/ib2VcaJlM+m228piArqWIVULr1dTcMsBiJ6sn9hAhgrNlOB2ORK/ottpy+t
+         YlseRUadRiUOTowpVxcXzRF17NuzT6ZSDg8FhbkE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Charles Keepax <ckeepax@opensource.cirrus.com>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.4 128/168] ASoC: dapm: Correct DAPM handling of active widgets during shutdown
-Date:   Tue, 10 Mar 2020 13:39:34 +0100
-Message-Id: <20200310123648.425280069@linuxfoundation.org>
+Subject: [PATCH 5.5 138/189] ASoC: dapm: Correct DAPM handling of active widgets during shutdown
+Date:   Tue, 10 Mar 2020 13:39:35 +0100
+Message-Id: <20200310123653.772698923@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
