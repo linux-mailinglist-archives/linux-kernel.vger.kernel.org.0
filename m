@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E0817F969
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:56:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C29B617F878
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:48:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729666AbgCJM4d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:56:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35704 "EHLO mail.kernel.org"
+        id S1727699AbgCJMsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:48:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729659AbgCJM43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:56:29 -0400
+        id S1728293AbgCJMsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:48:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A10C20674;
-        Tue, 10 Mar 2020 12:56:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADA1524692;
+        Tue, 10 Mar 2020 12:48:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844989;
-        bh=xbprZq1vSIfI+nurrzi56EZK4Gvb28onAXYXGcf0sAM=;
+        s=default; t=1583844494;
+        bh=8zSyvj3eyDdfA65LUCwZBtK20UW9f3gErYuT4Yv70vQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xVFDKBXUZncJe15V2ryEHyfzgEWAJCo3OonkBGmReo9HAf+Aovpg0c2KqzGVYL54P
-         ecjhAl5PAbshTmjrZ4FB/HDscBleGPt9s8xLpaqkOq2MISpoUcBLdIPM0ARQZzaxil
-         Aq+n9E59/+NyVVKkYgT0XAqNn9yeV3gdr3odNtE8=
+        b=Pl5IjO0cohmAmzlE0854rUkCqRb7zDBkr7JRZrzJdte9sFJ9aRZr9Cvot07snpDQj
+         zyytsTM+PUKOPWHcA5qJX7He9H2ztH82AofYCRajxGk2adKdslcBxD0tSOpNQze0Xj
+         JaoCOxIyswZgm+sDqVzVEV5uV4GGYiKl2zKy5/Yo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Masney <masneyb@onstation.org>,
-        Rob Clark <robdclark@chromium.org>,
+        stable@vger.kernel.org,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 022/189] drm/msm/mdp5: rate limit pp done timeout warnings
+Subject: [PATCH 5.4 013/168] ALSA: hda: do not override bus codec_mask in link_get()
 Date:   Tue, 10 Mar 2020 13:37:39 +0100
-Message-Id: <20200310123641.693818539@linuxfoundation.org>
+Message-Id: <20200310123637.066257208@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +47,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Masney <masneyb@onstation.org>
+From: Kai Vehmanen <kai.vehmanen@linux.intel.com>
 
-[ Upstream commit ef8c9809acb0805c991bba8bdd4749fc46d44a98 ]
+[ Upstream commit 43bcb1c0507858cdc95e425017dcc33f8105df39 ]
 
-Add rate limiting of the 'pp done time out' warnings since these
-warnings can quickly fill the dmesg buffer.
+snd_hdac_ext_bus_link_get() does not work correctly in case
+there are multiple codecs on the bus. It unconditionally
+resets the bus->codec_mask value. As per documentation in
+hdaudio.h and existing use in client code, this field should
+be used to store bit flag of detected codecs on the bus.
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
-Signed-off-by: Rob Clark <robdclark@chromium.org>
+By overwriting value of the codec_mask, information on all
+detected codecs is lost. No current user of hdac is impacted,
+but use of bus->codec_mask is planned in future patches
+for SOF.
+
+Signed-off-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
+Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
+Link: https://lore.kernel.org/r/20200206200223.7715-1-kai.vehmanen@linux.intel.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/hda/ext/hdac_ext_controller.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-index 05cc04f729d63..e1cc541e0ef2e 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-@@ -1109,8 +1109,8 @@ static void mdp5_crtc_wait_for_pp_done(struct drm_crtc *crtc)
- 	ret = wait_for_completion_timeout(&mdp5_crtc->pp_completion,
- 						msecs_to_jiffies(50));
- 	if (ret == 0)
--		dev_warn(dev->dev, "pp done time out, lm=%d\n",
--			 mdp5_cstate->pipeline.mixer->lm);
-+		dev_warn_ratelimited(dev->dev, "pp done time out, lm=%d\n",
-+				     mdp5_cstate->pipeline.mixer->lm);
- }
+diff --git a/sound/hda/ext/hdac_ext_controller.c b/sound/hda/ext/hdac_ext_controller.c
+index cfab60d88c921..09ff209df4a30 100644
+--- a/sound/hda/ext/hdac_ext_controller.c
++++ b/sound/hda/ext/hdac_ext_controller.c
+@@ -254,6 +254,7 @@ EXPORT_SYMBOL_GPL(snd_hdac_ext_bus_link_power_down_all);
+ int snd_hdac_ext_bus_link_get(struct hdac_bus *bus,
+ 				struct hdac_ext_link *link)
+ {
++	unsigned long codec_mask;
+ 	int ret = 0;
  
- static void mdp5_crtc_wait_for_flush_done(struct drm_crtc *crtc)
+ 	mutex_lock(&bus->lock);
+@@ -280,9 +281,11 @@ int snd_hdac_ext_bus_link_get(struct hdac_bus *bus,
+ 		 *  HDA spec section 4.3 - Codec Discovery
+ 		 */
+ 		udelay(521);
+-		bus->codec_mask = snd_hdac_chip_readw(bus, STATESTS);
+-		dev_dbg(bus->dev, "codec_mask = 0x%lx\n", bus->codec_mask);
+-		snd_hdac_chip_writew(bus, STATESTS, bus->codec_mask);
++		codec_mask = snd_hdac_chip_readw(bus, STATESTS);
++		dev_dbg(bus->dev, "codec_mask = 0x%lx\n", codec_mask);
++		snd_hdac_chip_writew(bus, STATESTS, codec_mask);
++		if (!bus->codec_mask)
++			bus->codec_mask = codec_mask;
+ 	}
+ 
+ 	mutex_unlock(&bus->lock);
 -- 
 2.20.1
 
