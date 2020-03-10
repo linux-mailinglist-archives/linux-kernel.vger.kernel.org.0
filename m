@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE4A317F87C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:48:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F22DF17F96D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:56:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728080AbgCJMsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:48:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52336 "EHLO mail.kernel.org"
+        id S1729681AbgCJM4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:56:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728297AbgCJMsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:48:17 -0400
+        id S1729443AbgCJM4f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:56:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2806C2468D;
-        Tue, 10 Mar 2020 12:48:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F98D24693;
+        Tue, 10 Mar 2020 12:56:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844496;
-        bh=YKfdWWef2XAP+GCkkOxxFSr7TtbFVlNDiZybrdw5O7M=;
+        s=default; t=1583844995;
+        bh=AFLhECNdQynG25OAfG50zgqOns9HClcAwKK6FJTao+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P2op+Ybp6Wdz+gNDbCgI64FaWX7nYWqhTC58bssCTV50pyoEdA/8yWQ6Dwg3w9nbo
-         +5pZqzuEEk/giNoIqSIrRBo1FiFgmQWYwW5XOoxqR0phh63PVVmr1GwH46L/ARNxFx
-         3NioFLtL7aV0XtFR5WHOjodBgTw9UZBdDsBnxkY0=
+        b=ayANvTYH70Rrd2G/HCIyOcSWsF/95H6VJ7hMN7Oh9qcpz5Vjn6kP5EnvpgWLed7h1
+         7Te9CK3rSBMO2+vNKtmuAEu0CRD5H4svhFLmDaUM3cLjlnJgQCx/0JUS+mclxi0DJO
+         8bYMjkuBK8J+EAWqb4x+0s3mKVzKbTEV58LjJCJA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuanhong Guo <gch981213@gmail.com>,
-        Daniel Golle <daniel@makrotopia.org>,
+        stable@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>,
+        Maxime Ripard <maxime@cerno.tech>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 014/168] serial: ar933x_uart: set UART_CS_{RX,TX}_READY_ORIDE
-Date:   Tue, 10 Mar 2020 13:37:40 +0100
-Message-Id: <20200310123637.149646464@linuxfoundation.org>
+Subject: [PATCH 5.5 024/189] drm/modes: Make sure to parse valid rotation value from cmdline
+Date:   Tue, 10 Mar 2020 13:37:41 +0100
+Message-Id: <20200310123641.916422220@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +44,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Golle <daniel@makrotopia.org>
+From: Stephan Gerhold <stephan@gerhold.net>
 
-[ Upstream commit 87c5cbf71ecbb9e289d60a2df22eb686c70bf196 ]
+[ Upstream commit e6980a727154b793adb218fbc7b4d6af52a7e364 ]
 
-On AR934x this UART is usually not initialized by the bootloader
-as it is only used as a secondary serial port while the primary
-UART is a newly introduced NS16550-compatible.
-In order to make use of the ar933x-uart on AR934x without RTS/CTS
-hardware flow control, one needs to set the
-UART_CS_{RX,TX}_READY_ORIDE bits as other than on AR933x where this
-UART is used as primary/console, the bootloader on AR934x typically
-doesn't set those bits.
-Setting them explicitely on AR933x should not do any harm, so just
-set them unconditionally.
+A rotation value should have exactly one rotation angle.
+At the moment there is no validation for this when parsing video=
+parameters from the command line. This causes problems later on
+when we try to combine the command line rotation with the panel
+orientation.
 
-Tested-by: Chuanhong Guo <gch981213@gmail.com>
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-Link: https://lore.kernel.org/r/20200207095335.GA179836@makrotopia.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To make sure that we generate a valid rotation value:
+  - Set DRM_MODE_ROTATE_0 by default (if no rotate= option is set)
+  - Validate that there is exactly one rotation angle set
+    (i.e. specifying the rotate= option multiple times is invalid)
+
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Link: https://patchwork.freedesktop.org/patch/msgid/20200117153429.54700-2-stephan@gerhold.net
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/ar933x_uart.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/gpu/drm/drm_modes.c                       |  7 +++++++
+ drivers/gpu/drm/selftests/drm_cmdline_selftests.h |  1 +
+ .../gpu/drm/selftests/test-drm_cmdline_parser.c   | 15 +++++++++++++--
+ 3 files changed, 21 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/ar933x_uart.c b/drivers/tty/serial/ar933x_uart.c
-index 3bdd56a1021b2..ea12f10610b64 100644
---- a/drivers/tty/serial/ar933x_uart.c
-+++ b/drivers/tty/serial/ar933x_uart.c
-@@ -286,6 +286,10 @@ static void ar933x_uart_set_termios(struct uart_port *port,
- 	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
- 			    AR933X_UART_CS_HOST_INT_EN);
+diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
+index 88232698d7a00..3fd35e6b9d535 100644
+--- a/drivers/gpu/drm/drm_modes.c
++++ b/drivers/gpu/drm/drm_modes.c
+@@ -1672,6 +1672,13 @@ static int drm_mode_parse_cmdline_options(char *str, size_t len,
+ 		}
+ 	}
  
-+	/* enable RX and TX ready overide */
-+	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
-+		AR933X_UART_CS_TX_READY_ORIDE | AR933X_UART_CS_RX_READY_ORIDE);
++	if (!(rotation & DRM_MODE_ROTATE_MASK))
++		rotation |= DRM_MODE_ROTATE_0;
 +
- 	/* reenable the UART */
- 	ar933x_uart_rmw(up, AR933X_UART_CS_REG,
- 			AR933X_UART_CS_IF_MODE_M << AR933X_UART_CS_IF_MODE_S,
-@@ -418,6 +422,10 @@ static int ar933x_uart_startup(struct uart_port *port)
- 	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
- 			    AR933X_UART_CS_HOST_INT_EN);
++	/* Make sure there is exactly one rotation defined */
++	if (!is_power_of_2(rotation & DRM_MODE_ROTATE_MASK))
++		return -EINVAL;
++
+ 	mode->rotation_reflection = rotation;
  
-+	/* enable RX and TX ready overide */
-+	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
-+		AR933X_UART_CS_TX_READY_ORIDE | AR933X_UART_CS_RX_READY_ORIDE);
+ 	return 0;
+diff --git a/drivers/gpu/drm/selftests/drm_cmdline_selftests.h b/drivers/gpu/drm/selftests/drm_cmdline_selftests.h
+index 6d61a0eb5d64f..84e6bc050bf2c 100644
+--- a/drivers/gpu/drm/selftests/drm_cmdline_selftests.h
++++ b/drivers/gpu/drm/selftests/drm_cmdline_selftests.h
+@@ -53,6 +53,7 @@ cmdline_test(drm_cmdline_test_rotate_0)
+ cmdline_test(drm_cmdline_test_rotate_90)
+ cmdline_test(drm_cmdline_test_rotate_180)
+ cmdline_test(drm_cmdline_test_rotate_270)
++cmdline_test(drm_cmdline_test_rotate_multiple)
+ cmdline_test(drm_cmdline_test_rotate_invalid_val)
+ cmdline_test(drm_cmdline_test_rotate_truncated)
+ cmdline_test(drm_cmdline_test_hmirror)
+diff --git a/drivers/gpu/drm/selftests/test-drm_cmdline_parser.c b/drivers/gpu/drm/selftests/test-drm_cmdline_parser.c
+index 013de9d27c35d..035f86c5d6482 100644
+--- a/drivers/gpu/drm/selftests/test-drm_cmdline_parser.c
++++ b/drivers/gpu/drm/selftests/test-drm_cmdline_parser.c
+@@ -856,6 +856,17 @@ static int drm_cmdline_test_rotate_270(void *ignored)
+ 	return 0;
+ }
+ 
++static int drm_cmdline_test_rotate_multiple(void *ignored)
++{
++	struct drm_cmdline_mode mode = { };
 +
- 	/* Enable RX interrupts */
- 	up->ier = AR933X_UART_INT_RX_VALID;
- 	ar933x_uart_write(up, AR933X_UART_INT_EN_REG, up->ier);
++	FAIL_ON(drm_mode_parse_command_line_for_connector("720x480,rotate=0,rotate=90",
++							  &no_connector,
++							  &mode));
++
++	return 0;
++}
++
+ static int drm_cmdline_test_rotate_invalid_val(void *ignored)
+ {
+ 	struct drm_cmdline_mode mode = { };
+@@ -888,7 +899,7 @@ static int drm_cmdline_test_hmirror(void *ignored)
+ 	FAIL_ON(!mode.specified);
+ 	FAIL_ON(mode.xres != 720);
+ 	FAIL_ON(mode.yres != 480);
+-	FAIL_ON(mode.rotation_reflection != DRM_MODE_REFLECT_X);
++	FAIL_ON(mode.rotation_reflection != (DRM_MODE_ROTATE_0 | DRM_MODE_REFLECT_X));
+ 
+ 	FAIL_ON(mode.refresh_specified);
+ 
+@@ -913,7 +924,7 @@ static int drm_cmdline_test_vmirror(void *ignored)
+ 	FAIL_ON(!mode.specified);
+ 	FAIL_ON(mode.xres != 720);
+ 	FAIL_ON(mode.yres != 480);
+-	FAIL_ON(mode.rotation_reflection != DRM_MODE_REFLECT_Y);
++	FAIL_ON(mode.rotation_reflection != (DRM_MODE_ROTATE_0 | DRM_MODE_REFLECT_Y));
+ 
+ 	FAIL_ON(mode.refresh_specified);
+ 
 -- 
 2.20.1
 
