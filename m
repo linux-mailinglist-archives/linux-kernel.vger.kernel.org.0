@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6DD917F87F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:48:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB86F17F96E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:56:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728331AbgCJMs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:48:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52528 "EHLO mail.kernel.org"
+        id S1729108AbgCJM4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:56:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728315AbgCJMsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:48:25 -0400
+        id S1729685AbgCJM4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:56:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E61B424691;
-        Tue, 10 Mar 2020 12:48:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF63820674;
+        Tue, 10 Mar 2020 12:56:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844504;
-        bh=oK3VlKykMd14h0+qC0KHi9ORL2bg4TEb/vdCaZ/mivY=;
+        s=default; t=1583845002;
+        bh=UKem77v3AKngJTCiKKqmdNySz2FCD1k2poQmhztolg4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fkIU6s9+M1ByA7ydAzS9Eb8LpHOjG1VtkGk1UdXjF17qAUU0OneVzJaKlDJJ4PHD/
-         HwYjN3NsCb5N3W3Djb3mt5skaq6L/3NTJrTfT4YuNSJC07l6r/3iFVpKV5xrj8/Kt+
-         E8tVH2oGvClJL3Q47YvfD4qHHMRKY33ZrdQheKnk=
+        b=2Gh/JDBWD01lvWgX996L0zeDxXEAga22IDEisEaadeMIsyPTgaLEGFR+Hf1r5Cs5V
+         Lrx53l8mwL/83VkN4hsy64F0ll80SE7rLJx+k2BWaigcVVhyr0t7El60M1f4k20UBa
+         y4AQ3AupgO589Gq9yTZv/l6Yp3T8O61rD7MHhTXg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Nazarewicz <mina86@mina86.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Felipe Balbi <balbi@kernel.org>,
+        stable@vger.kernel.org, Harigovindan P <harigovi@codeaurora.org>,
+        Rob Clark <robdclark@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 017/168] usb: gadget: ffs: ffs_aio_cancel(): Save/restore IRQ flags
-Date:   Tue, 10 Mar 2020 13:37:43 +0100
-Message-Id: <20200310123637.426298580@linuxfoundation.org>
+Subject: [PATCH 5.5 027/189] drm/msm/dsi: save pll state before dsi host is powered off
+Date:   Tue, 10 Mar 2020 13:37:44 +0100
+Message-Id: <20200310123642.184628844@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,51 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+From: Harigovindan P <harigovi@codeaurora.org>
 
-[ Upstream commit 43d565727a3a6fd24e37c7c2116475106af71806 ]
+[ Upstream commit a1028dcfd0dd97884072288d0c8ed7f30399b528 ]
 
-ffs_aio_cancel() can be called from both interrupt and thread context. Make
-sure that the current IRQ state is saved and restored by using
-spin_{un,}lock_irq{save,restore}().
+Save pll state before dsi host is powered off. Without this change
+some register values gets resetted.
 
-Otherwise undefined behavior might occur.
-
-Acked-by: Michal Nazarewicz <mina86@mina86.com>
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Signed-off-by: Harigovindan P <harigovi@codeaurora.org>
+Signed-off-by: Rob Clark <robdclark@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/f_fs.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/msm/dsi/dsi_manager.c | 5 +++++
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.c | 4 ----
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-index ced2581cf99fe..a9a711e046148 100644
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -1162,18 +1162,19 @@ static int ffs_aio_cancel(struct kiocb *kiocb)
- {
- 	struct ffs_io_data *io_data = kiocb->private;
- 	struct ffs_epfile *epfile = kiocb->ki_filp->private_data;
-+	unsigned long flags;
- 	int value;
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+index 355a60b4a536f..73127948f54d9 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+@@ -479,6 +479,7 @@ static void dsi_mgr_bridge_post_disable(struct drm_bridge *bridge)
+ 	struct msm_dsi *msm_dsi1 = dsi_mgr_get_dsi(DSI_1);
+ 	struct mipi_dsi_host *host = msm_dsi->host;
+ 	struct drm_panel *panel = msm_dsi->panel;
++	struct msm_dsi_pll *src_pll;
+ 	bool is_dual_dsi = IS_DUAL_DSI();
+ 	int ret;
  
- 	ENTER();
+@@ -519,6 +520,10 @@ static void dsi_mgr_bridge_post_disable(struct drm_bridge *bridge)
+ 								id, ret);
+ 	}
  
--	spin_lock_irq(&epfile->ffs->eps_lock);
-+	spin_lock_irqsave(&epfile->ffs->eps_lock, flags);
++	/* Save PLL status if it is a clock source */
++	src_pll = msm_dsi_phy_get_pll(msm_dsi->phy);
++	msm_dsi_pll_save_state(src_pll);
++
+ 	ret = msm_dsi_host_power_off(host);
+ 	if (ret)
+ 		pr_err("%s: host %d power off failed,%d\n", __func__, id, ret);
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+index b0cfa67d2a578..f509ebd77500f 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+@@ -724,10 +724,6 @@ void msm_dsi_phy_disable(struct msm_dsi_phy *phy)
+ 	if (!phy || !phy->cfg->ops.disable)
+ 		return;
  
- 	if (likely(io_data && io_data->ep && io_data->req))
- 		value = usb_ep_dequeue(io_data->ep, io_data->req);
- 	else
- 		value = -EINVAL;
+-	/* Save PLL status if it is a clock source */
+-	if (phy->usecase != MSM_DSI_PHY_SLAVE)
+-		msm_dsi_pll_save_state(phy->pll);
+-
+ 	phy->cfg->ops.disable(phy);
  
--	spin_unlock_irq(&epfile->ffs->eps_lock);
-+	spin_unlock_irqrestore(&epfile->ffs->eps_lock, flags);
- 
- 	return value;
- }
+ 	dsi_phy_regulator_disable(phy);
 -- 
 2.20.1
 
