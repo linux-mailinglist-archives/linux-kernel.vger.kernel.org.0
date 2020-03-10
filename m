@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B590317F7FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:44:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFA3D17F99C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:58:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbgCJMoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:44:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45268 "EHLO mail.kernel.org"
+        id S1729919AbgCJM6b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:58:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727018AbgCJMoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:44:06 -0400
+        id S1727721AbgCJM61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:58:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DBE6246D8;
-        Tue, 10 Mar 2020 12:44:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72A552467D;
+        Tue, 10 Mar 2020 12:58:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844245;
-        bh=k/1DM/98TU/ijAoGfLniJako7x1XJ5bDAuIAfvSeJbc=;
+        s=default; t=1583845106;
+        bh=T0KW9LhRfqGeqUX6Km1CbTFGh3EnAJFz/LNoIML+vzo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vvoBwX7XDNwUK1q8Lh3grbfngjRkO1va8VdQzFUIbf9Ng25qlFqCZrSxYnsau+HiX
-         /qkCll/+GciWB2S5oh87iPlwme/pn2/0+dRvzkvJs4uMQGOPTSrjPdDNXbVVSd+7sL
-         vYF8HhNoel+FAlCh69wsPoGF/Z6jyiJODCo6kV8A=
+        b=rVQajL9OL/oLURImn2EzOEjoTFA0HR3f0jgsDLDB7ujJra6ayEVdCvxm/pHZyXRd9
+         ajxgShAk9HyfNXX51egYLR6sI7DKEYwcC6fFZ7U16PcIyq0VTb866DZa47NWFU9fCD
+         r+TrWHMW2lB5T6aNpoaiTKdQQsLTu+oNK9D5uFO4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
-        Arthur Kiyanovski <akiyano@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 12/88] net: ena: fix incorrect default RSS key
+        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.5 063/189] ALSA: hda/realtek - Fix a regression for mute led on Lenovo Carbon X1
 Date:   Tue, 10 Mar 2020 13:38:20 +0100
-Message-Id: <20200310123609.368720060@linuxfoundation.org>
+Message-Id: <20200310123645.968154152@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,83 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arthur Kiyanovski <akiyano@amazon.com>
+From: Hui Wang <hui.wang@canonical.com>
 
-[ Upstream commit 0d1c3de7b8c78a5e44b74b62ede4a63629f5d811 ]
+commit c37c0ab029569a75fd180edb03d411e7a28a936f upstream.
 
-Bug description:
-When running "ethtool -x <if_name>" the key shows up as all zeros.
+Need to chain the THINKPAD_ACPI, otherwise the mute led will not
+work.
 
-When we use "ethtool -X <if_name> hfunc toeplitz hkey <some:random:key>" to
-set the key and then try to retrieve it using "ethtool -x <if_name>" then
-we return the correct key because we return the one we saved.
+Fixes: d2cd795c4ece ("ALSA: hda - fixup for the bass speaker on Lenovo Carbon X1 7th gen")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Link: https://lore.kernel.org/r/20200219052306.24935-1-hui.wang@canonical.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Bug cause:
-We don't fetch the key from the device but instead return the key
-that we have saved internally which is by default set to zero upon
-allocation.
-
-Fix:
-This commit fixes the issue by initializing the key to a random value
-using netdev_rss_key_fill().
-
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
-Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_com.c | 15 +++++++++++++++
- drivers/net/ethernet/amazon/ena/ena_com.h |  1 +
- 2 files changed, 16 insertions(+)
+ sound/pci/hda/patch_realtek.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
-index f09b7887039a2..be8a2d48c98f2 100644
---- a/drivers/net/ethernet/amazon/ena/ena_com.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.c
-@@ -839,6 +839,19 @@ static int ena_com_get_feature(struct ena_com_dev *ena_dev,
- 				      0);
- }
- 
-+static void ena_com_hash_key_fill_default_key(struct ena_com_dev *ena_dev)
-+{
-+	struct ena_admin_feature_rss_flow_hash_control *hash_key =
-+		(ena_dev->rss).hash_key;
-+
-+	netdev_rss_key_fill(&hash_key->key, sizeof(hash_key->key));
-+	/* The key is stored in the device in u32 array
-+	 * as well as the API requires the key to be passed in this
-+	 * format. Thus the size of our array should be divided by 4
-+	 */
-+	hash_key->keys_num = sizeof(hash_key->key) / sizeof(u32);
-+}
-+
- static int ena_com_hash_key_allocate(struct ena_com_dev *ena_dev)
- {
- 	struct ena_rss *rss = &ena_dev->rss;
-@@ -2367,6 +2380,8 @@ int ena_com_rss_init(struct ena_com_dev *ena_dev, u16 indr_tbl_log_size)
- 	if (unlikely(rc))
- 		goto err_hash_key;
- 
-+	ena_com_hash_key_fill_default_key(ena_dev);
-+
- 	rc = ena_com_hash_ctrl_init(ena_dev);
- 	if (unlikely(rc))
- 		goto err_hash_ctrl;
-diff --git a/drivers/net/ethernet/amazon/ena/ena_com.h b/drivers/net/ethernet/amazon/ena/ena_com.h
-index 509d7b8e15ab9..628bf7a8fc0cb 100644
---- a/drivers/net/ethernet/amazon/ena/ena_com.h
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.h
-@@ -41,6 +41,7 @@
- #include <linux/spinlock.h>
- #include <linux/types.h>
- #include <linux/wait.h>
-+#include <linux/netdevice.h>
- 
- #include "ena_common_defs.h"
- #include "ena_admin_defs.h"
--- 
-2.20.1
-
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6684,6 +6684,8 @@ static const struct hda_fixup alc269_fix
+ 	[ALC285_FIXUP_SPEAKER2_TO_DAC1] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc285_fixup_speaker2_to_dac1,
++		.chained = true,
++		.chain_id = ALC269_FIXUP_THINKPAD_ACPI
+ 	},
+ 	[ALC256_FIXUP_DELL_INSPIRON_7559_SUBWOOFER] = {
+ 		.type = HDA_FIXUP_PINS,
 
 
