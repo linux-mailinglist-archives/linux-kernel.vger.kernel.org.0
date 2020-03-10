@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D81D317F846
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E355417F8F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:52:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbgCJMqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:46:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49692 "EHLO mail.kernel.org"
+        id S1728708AbgCJMwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:52:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728020AbgCJMq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:46:27 -0400
+        id S1729072AbgCJMwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:52:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E46DD2468D;
-        Tue, 10 Mar 2020 12:46:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3022320674;
+        Tue, 10 Mar 2020 12:52:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844386;
-        bh=A//OTV3+t80o4DfPxG+5T9Nazx04EEHsGGsu+omI/XM=;
+        s=default; t=1583844751;
+        bh=9FSYDkae8qu7VN6CuUOGfJEylPiP87lYdX0dWiEBBUU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OGRsfUXlizfVjX6q4EdMlMUkgJeTRCDOvzjEdIQ91tTVNf9/hZf/KpbXHD3V1awT7
-         2Cs+JIASsxwCFBhU2uLHw8euzqNStoH5rs9xAfaeAANkXkwsOWQMz3Et+B5tixTllS
-         IVN/HNxhd92jhBtG/OoYrXJyksbn01FVrNyhggzg=
+        b=ab9PnF3jlunNHJl24iaHyQ7viZ0o5Cwd9WI6Z19dlMeAMXGxBNQRozIc7rNzwc8UR
+         +cnV19MQLILLZrJqhbUTzEfdfrZRc0gMHGgrk9a7VktzSfR90aou7u/FnKJGH6NM2s
+         bdyVz6KSr5czZyuP4T/PGQvxtu8TdyVUr3kpngjI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Vasily Averin <vvs@virtuozzo.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 61/88] s390/cio: cio_ignore_proc_seq_next should increase position index
-Date:   Tue, 10 Mar 2020 13:39:09 +0100
-Message-Id: <20200310123621.642063499@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 5.4 104/168] dm integrity: fix recalculation when moving from journal mode to bitmap mode
+Date:   Tue, 10 Mar 2020 13:39:10 +0100
+Message-Id: <20200310123645.911225481@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,50 +43,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-[ Upstream commit 8b101a5e14f2161869636ff9cb4907b7749dc0c2 ]
+commit d5bdf66108419cdb39da361b58ded661c29ff66e upstream.
 
-if seq_file .next fuction does not change position index,
-read after some lseek can generate unexpected output.
+If we resume a device in bitmap mode and the on-disk format is in journal
+mode, we must recalculate anything above ic->sb->recalc_sector. Otherwise,
+there would be non-recalculated blocks which would cause I/O errors.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206283
-Link: https://lore.kernel.org/r/d44c53a7-9bc1-15c7-6d4a-0c10cb9dffce@virtuozzo.com
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 468dfca38b1a ("dm integrity: add a bitmap mode")
+Cc: stable@vger.kernel.org # v5.2+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/s390/cio/blacklist.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/md/dm-integrity.c |   17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/s390/cio/blacklist.c b/drivers/s390/cio/blacklist.c
-index 9082476b51db9..4e9f794176d35 100644
---- a/drivers/s390/cio/blacklist.c
-+++ b/drivers/s390/cio/blacklist.c
-@@ -302,8 +302,10 @@ static void *
- cio_ignore_proc_seq_next(struct seq_file *s, void *it, loff_t *offset)
- {
- 	struct ccwdev_iter *iter;
-+	loff_t p = *offset;
+--- a/drivers/md/dm-integrity.c
++++ b/drivers/md/dm-integrity.c
+@@ -2883,17 +2883,24 @@ static void dm_integrity_resume(struct d
+ 	} else {
+ 		replay_journal(ic);
+ 		if (ic->mode == 'B') {
+-			int mode;
+ 			ic->sb->flags |= cpu_to_le32(SB_FLAG_DIRTY_BITMAP);
+ 			ic->sb->log2_blocks_per_bitmap_bit = ic->log2_blocks_per_bitmap_bit;
+ 			r = sync_rw_sb(ic, REQ_OP_WRITE, REQ_FUA);
+ 			if (unlikely(r))
+ 				dm_integrity_io_error(ic, "writing superblock", r);
  
--	if (*offset >= (__MAX_SUBCHANNEL + 1) * (__MAX_SSID + 1))
-+	(*offset)++;
-+	if (p >= (__MAX_SUBCHANNEL + 1) * (__MAX_SSID + 1))
- 		return NULL;
- 	iter = it;
- 	if (iter->devno == __MAX_SUBCHANNEL) {
-@@ -313,7 +315,6 @@ cio_ignore_proc_seq_next(struct seq_file *s, void *it, loff_t *offset)
- 			return NULL;
- 	} else
- 		iter->devno++;
--	(*offset)++;
- 	return iter;
- }
- 
--- 
-2.20.1
-
+-			mode = ic->recalculate_flag ? BITMAP_OP_SET : BITMAP_OP_CLEAR;
+-			block_bitmap_op(ic, ic->journal, 0, ic->provided_data_sectors, mode);
+-			block_bitmap_op(ic, ic->recalc_bitmap, 0, ic->provided_data_sectors, mode);
+-			block_bitmap_op(ic, ic->may_write_bitmap, 0, ic->provided_data_sectors, mode);
++			block_bitmap_op(ic, ic->journal, 0, ic->provided_data_sectors, BITMAP_OP_CLEAR);
++			block_bitmap_op(ic, ic->recalc_bitmap, 0, ic->provided_data_sectors, BITMAP_OP_CLEAR);
++			block_bitmap_op(ic, ic->may_write_bitmap, 0, ic->provided_data_sectors, BITMAP_OP_CLEAR);
++			if (ic->sb->flags & cpu_to_le32(SB_FLAG_RECALCULATING) &&
++			    le64_to_cpu(ic->sb->recalc_sector) < ic->provided_data_sectors) {
++				block_bitmap_op(ic, ic->journal, le64_to_cpu(ic->sb->recalc_sector),
++						ic->provided_data_sectors - le64_to_cpu(ic->sb->recalc_sector), BITMAP_OP_SET);
++				block_bitmap_op(ic, ic->recalc_bitmap, le64_to_cpu(ic->sb->recalc_sector),
++						ic->provided_data_sectors - le64_to_cpu(ic->sb->recalc_sector), BITMAP_OP_SET);
++				block_bitmap_op(ic, ic->may_write_bitmap, le64_to_cpu(ic->sb->recalc_sector),
++						ic->provided_data_sectors - le64_to_cpu(ic->sb->recalc_sector), BITMAP_OP_SET);
++			}
+ 			rw_journal_sectors(ic, REQ_OP_WRITE, REQ_FUA | REQ_SYNC, 0,
+ 					   ic->n_bitmap_blocks * (BITMAP_BLOCK_SIZE >> SECTOR_SHIFT), NULL);
+ 		}
 
 
