@@ -2,81 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE1D6180841
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 20:38:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3AB4180846
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 20:39:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbgCJTiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 15:38:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35214 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726729AbgCJTiW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 15:38:22 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA3C3208E4;
-        Tue, 10 Mar 2020 19:38:21 +0000 (UTC)
-Date:   Tue, 10 Mar 2020 15:38:20 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Artem Savkov <asavkov@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: Re: [PATCH v2] ftrace: return first found result in lookup_rec()
-Message-ID: <20200310153820.436a8583@gandalf.local.home>
-In-Reply-To: <20200306174317.21699-1-asavkov@redhat.com>
-References: <20200306121246.5dac2573@gandalf.local.home>
-        <20200306174317.21699-1-asavkov@redhat.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727508AbgCJTjn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 15:39:43 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:8328 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726546AbgCJTjm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 15:39:42 -0400
+X-IronPort-AV: E=Sophos;i="5.70,538,1574089200"; 
+   d="scan'208";a="41516787"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 11 Mar 2020 04:39:40 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id CC0A940E36FF;
+        Wed, 11 Mar 2020 04:39:37 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v8] dt-bindings: display: Add idk-2121wr binding
+Date:   Tue, 10 Mar 2020 19:39:29 +0000
+Message-Id: <1583869169-1006-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  6 Mar 2020 18:43:17 +0100
-Artem Savkov <asavkov@redhat.com> wrote:
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-> It appears that ip ranges can overlap so. In that case lookup_rec()
-> returns whatever results it got last even if it found nothing in last
-> searched page.
-> 
-> This breaks an obscure livepatch late module patching usecase:
->   - load livepatch
->   - load the patched module
->   - unload livepatch
->   - try to load livepatch again
-> 
-> To fix this return from lookup_rec() as soon as it found the record
-> containing searched-for ip. This used to be this way prior lookup_rec()
-> introduction.
-> 
-> v2: break instead of two returns
+Add binding for the idk-2121wr LVDS panel from Advantech.
 
-Thanks Artem, I applied your patch. But just an FYI, it's best to place the
-"v2" statement below the three dashes "---" so that it doesn't get pulled
-into the git commit when this patch is applied via a script.
+Some panel-specific documentation can be found here:
+https://buy.advantech.eu/Displays/Embedded-LCD-Kits-High-Brightness/model-IDK-2121WR-K2FHA2E.htm
 
--- Steve
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
 
-> 
-> Fixes: 7e16f581a817 ("ftrace: Separate out functionality from ftrace_location_range()")
-> Signed-off-by: Artem Savkov <asavkov@redhat.com>
-> ---
->  kernel/trace/ftrace.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index 3f7ee102868a..fd81c7de77a7 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -1547,6 +1547,8 @@ static struct dyn_ftrace *lookup_rec(unsigned long start, unsigned long end)
->  		rec = bsearch(&key, pg->records, pg->index,
->  			      sizeof(struct dyn_ftrace),
->  			      ftrace_cmp_recs);
-> +		if (rec)
-> +			break;
->  	}
->  	return rec;
->  }
+Hi All,
+This patch is part of series [1] ("Add dual-LVDS panel support to EK874),
+all the patches have been accepted from it except this one. I have fixed
+Rob's comments in this version of the patch.
+
+[1] https://patchwork.kernel.org/cover/11297589/
+
+V7->8
+ * Dropped ref to lvds.yaml, since the panel a dual channel LVDS, as a
+   result the root port is called as ports instead of port and the child
+   node port@0 and port@1 are used for even and odd pixels, hence binding
+   has required property as ports instead of port.
+
+v6->7
+ * Added reference to lvds.yaml
+ * Changed maintainer to myself
+ * Switched to dual license
+ * Dropped required properties except for ports as rest are already listed
+   in lvds.panel
+ * Dropped Reviewed-by tag of Laurent, due to the changes made it might not
+   be valid.
+
+v5->v6:
+ * No change
+
+v4->v5:
+* No change
+
+v3->v4:
+* Absorbed patch "dt-bindings: display: Add bindings for LVDS
+  bus-timings"
+* Big restructuring after Rob's and Laurent's comments
+
+v2->v3:
+* New patch
+
+ .../display/panel/advantech,idk-2121wr.yaml        | 122 +++++++++++++++++++++
+ 1 file changed, 122 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml
+
+diff --git a/Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml b/Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml
+new file mode 100644
+index 0000000..6b7fddc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml
+@@ -0,0 +1,122 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/panel/advantech,idk-2121wr.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Advantech IDK-2121WR 21.5" Full-HD dual-LVDS panel
++
++maintainers:
++  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
++  - Thierry Reding <thierry.reding@gmail.com>
++
++description: |
++  The IDK-2121WR from Advantech is a Full-HD dual-LVDS panel.
++  A dual-LVDS interface is a dual-link connection with even pixels traveling
++  on one link, and with odd pixels traveling on the other link.
++
++  The panel expects odd pixels on the first port, and even pixels on the
++  second port, therefore the ports must be marked accordingly (with either
++  dual-lvds-odd-pixels or dual-lvds-even-pixels).
++
++properties:
++  compatible:
++    items:
++      - const: advantech,idk-2121wr
++      - {} # panel-lvds, but not listed here to avoid false select
++
++  width-mm:
++    const: 476
++
++  height-mm:
++    const: 268
++
++  data-mapping:
++    const: vesa-24
++
++  panel-timing: true
++
++  ports:
++    type: object
++    properties:
++      port@0:
++        type: object
++        description: The sink for odd pixels.
++        properties:
++          reg:
++            const: 0
++
++          dual-lvds-odd-pixels: true
++
++        required:
++          - reg
++          - dual-lvds-odd-pixels
++
++      port@1:
++        type: object
++        description: The sink for even pixels.
++        properties:
++          reg:
++            const: 1
++
++          dual-lvds-even-pixels: true
++
++        required:
++          - reg
++          - dual-lvds-even-pixels
++
++additionalProperties: false
++
++required:
++  - compatible
++  - width-mm
++  - height-mm
++  - data-mapping
++  - panel-timing
++  - ports
++
++examples:
++  - |+
++    panel-lvds {
++      compatible = "advantech,idk-2121wr", "panel-lvds";
++
++      width-mm = <476>;
++      height-mm = <268>;
++
++      data-mapping = "vesa-24";
++
++      panel-timing {
++        clock-frequency = <148500000>;
++        hactive = <1920>;
++        vactive = <1080>;
++        hsync-len = <44>;
++        hfront-porch = <88>;
++        hback-porch = <148>;
++        vfront-porch = <4>;
++        vback-porch = <36>;
++        vsync-len = <5>;
++      };
++
++      ports {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        port@0 {
++          reg = <0>;
++          dual-lvds-odd-pixels;
++          panel_in0: endpoint {
++            remote-endpoint = <&lvds0_out>;
++          };
++        };
++
++        port@1 {
++          reg = <1>;
++          dual-lvds-even-pixels;
++          panel_in1: endpoint {
++            remote-endpoint = <&lvds1_out>;
++          };
++        };
++      };
++    };
++
++...
+-- 
+2.7.4
 
