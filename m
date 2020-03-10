@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C89917FCF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:25:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2B6617FCF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:25:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbgCJM6f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:58:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38474 "EHLO mail.kernel.org"
+        id S1729358AbgCJM6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:58:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729915AbgCJM63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:58:29 -0400
+        id S1729926AbgCJM6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:58:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F237120674;
-        Tue, 10 Mar 2020 12:58:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C7C92467D;
+        Tue, 10 Mar 2020 12:58:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845109;
-        bh=SvLp9QeIlteRIJuHx2peXZJf994646fGWpEk41TPcgY=;
+        s=default; t=1583845117;
+        bh=M4RjzHem3X0FsBjOMuNyScD5wQbgCmaiyLwrIwa61vk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a6XIcfkAhJRyJxap/2Jzhg5gQC7V5r0zW4tFBXa9PZyIiHQr8CoKokVjQf462tiWp
-         /AxX9X49iX+oy1DFagiBr/FLQpABsHYpnf3jMFGBEJHBwgWg8k4sgH/k4FK7ycbhjP
-         U9GnOD65OHUTtyUoRSwsTeCBWI4ZVIDrEnmr9YPg=
+        b=Vleg5nwaJaHtb3q4upDRark1jhXhH07aODN5MwUnbn3IE8RtcLnufQQ0GKkwE3Lc9
+         FFd2ITR35nur5YzptEpCbAYKzQC7AL7M1/CsUvkIirMhDvYqX6N5vTKM3dsI3MdCyB
+         KqJ+2X1YSoRjKJ+/G21JDEPGdzfNTJ71clQIqjak=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christian Lachner <gladiac@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.5 064/189] ALSA: hda/realtek - Fix silent output on Gigabyte X570 Aorus Master
-Date:   Tue, 10 Mar 2020 13:38:21 +0100
-Message-Id: <20200310123646.059714635@linuxfoundation.org>
+        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>
+Subject: [PATCH 5.5 067/189] cifs: dont leak -EAGAIN for stat() during reconnect
+Date:   Tue, 10 Mar 2020 13:38:24 +0100
+Message-Id: <20200310123646.371404844@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
 References: <20200310123639.608886314@linuxfoundation.org>
@@ -43,34 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Lachner <gladiac@gmail.com>
+From: Ronnie Sahlberg <lsahlber@redhat.com>
 
-commit 0d45e86d2267d5bdf7bbb631499788da1c27ceb2 upstream.
+commit fc513fac56e1b626ae48a74d7551d9c35c50129e upstream.
 
-The Gigabyte X570 Aorus Master motherboard with ALC1220 codec
-requires a similar workaround for Clevo laptops to enforce the
-DAC/mixer connection path. Set up a quirk entry for that.
+If from cifs_revalidate_dentry_attr() the SMB2/QUERY_INFO call fails with an
+error, such as STATUS_SESSION_EXPIRED, causing the session to be reconnected
+it is possible we will leak -EAGAIN back to the application even for
+system calls such as stat() where this is not a valid error.
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=205275
-Signed-off-by: Christian Lachner <gladiac@gmail.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200223092416.15016-2-gladiac@gmail.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fix this by re-trying the operation from within cifs_revalidate_dentry_attr()
+if cifs_get_inode_info*() returns -EAGAIN.
+
+This fixes stat() and possibly also other system calls that uses
+cifs_revalidate_dentry*().
+
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/cifs/inode.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -2447,6 +2447,7 @@ static const struct snd_pci_quirk alc882
- 	SND_PCI_QUIRK(0x1071, 0x8258, "Evesham Voyaeger", ALC882_FIXUP_EAPD),
- 	SND_PCI_QUIRK(0x1458, 0xa002, "Gigabyte EP45-DS3/Z87X-UD3H", ALC889_FIXUP_FRONT_HP_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1458, 0xa0b8, "Gigabyte AZ370-Gaming", ALC1220_FIXUP_GB_DUAL_CODECS),
-+	SND_PCI_QUIRK(0x1458, 0xa0cd, "Gigabyte X570 Aorus Master", ALC1220_FIXUP_CLEVO_P950),
- 	SND_PCI_QUIRK(0x1462, 0x1228, "MSI-GP63", ALC1220_FIXUP_CLEVO_P950),
- 	SND_PCI_QUIRK(0x1462, 0x1276, "MSI-GL73", ALC1220_FIXUP_CLEVO_P950),
- 	SND_PCI_QUIRK(0x1462, 0x1293, "MSI-GP65", ALC1220_FIXUP_CLEVO_P950),
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -2074,6 +2074,7 @@ int cifs_revalidate_dentry_attr(struct d
+ 	struct inode *inode = d_inode(dentry);
+ 	struct super_block *sb = dentry->d_sb;
+ 	char *full_path = NULL;
++	int count = 0;
+ 
+ 	if (inode == NULL)
+ 		return -ENOENT;
+@@ -2095,15 +2096,18 @@ int cifs_revalidate_dentry_attr(struct d
+ 		 full_path, inode, inode->i_count.counter,
+ 		 dentry, cifs_get_time(dentry), jiffies);
+ 
++again:
+ 	if (cifs_sb_master_tcon(CIFS_SB(sb))->unix_ext)
+ 		rc = cifs_get_inode_info_unix(&inode, full_path, sb, xid);
+ 	else
+ 		rc = cifs_get_inode_info(&inode, full_path, NULL, sb,
+ 					 xid, NULL);
+-
++	if (rc == -EAGAIN && count++ < 10)
++		goto again;
+ out:
+ 	kfree(full_path);
+ 	free_xid(xid);
++
+ 	return rc;
+ }
+ 
 
 
