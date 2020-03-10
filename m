@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FAF517F9F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:01:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27B0717F9FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:01:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729748AbgCJNBf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:01:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42840 "EHLO mail.kernel.org"
+        id S1730295AbgCJNBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:01:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727104AbgCJNBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:01:33 -0400
+        id S1730281AbgCJNBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:01:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AAF42467D;
-        Tue, 10 Mar 2020 13:01:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC64124649;
+        Tue, 10 Mar 2020 13:01:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845292;
-        bh=VVjIXwPkrqnR2wi6ZaS3kd0ZA5iuH5URV97l+aRyis4=;
+        s=default; t=1583845296;
+        bh=Cg/CqJDhL5vBLVPwq3kwxrK1hEijNk3vd2jgYBFSC7k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dDID5TClsf/n69UxpmHb2ZS1eUCFM0/OgqpQ96naGR/qtUT7QIvWfzjePKl5w5BtQ
-         01PYgRde88h7dZvpyXHV+LkEBSyi9/CTO7P7i9TGcH/JWWruI2VX9HS7KFgTMlezs1
-         if6WthS2wX+gkzsTETzjGRToXz7nQqRhajlkRYbk=
+        b=RLiRq6FPr0200W0gOym3i0jzD8HVWqjkMg8zwd/CU4rZSDmkpOjh7UeIE2/+4oY7N
+         wWe1GYVw2si7W2Q0VcPusY7WWlf91JGiU7QGvQNpG1dq/TZL6VjeOxwcQZm+5Z4Jz/
+         bLuHsO3qwXMamhcY9lxnr2BEhryWIar1TRrUzfM0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.5 132/189] ASoC: SOF: Fix snd_sof_ipc_stream_posn()
-Date:   Tue, 10 Mar 2020 13:39:29 +0100
-Message-Id: <20200310123653.159130273@linuxfoundation.org>
+Subject: [PATCH 5.5 133/189] ASoC: intel: skl: Fix pin debug prints
+Date:   Tue, 10 Mar 2020 13:39:30 +0100
+Message-Id: <20200310123653.271276796@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
 References: <20200310123639.608886314@linuxfoundation.org>
@@ -44,34 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 613cea5935e83cb5a7d182ee3f98d54620e102e2 upstream.
+commit 64bbacc5f08c01954890981c63de744df1f29a30 upstream.
 
-We're passing "&posn" instead of "posn" so it ends up corrupting
-memory instead of doing something useful.
+skl_print_pins() loops over all given pins but it overwrites the text
+at the very same position while increasing the returned length.
+Fix this to show the all pin contents properly.
 
-Fixes: 53e0c72d98ba ("ASoC: SOF: Add support for IPC IO between DSP and Host")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
-Link: https://lore.kernel.org/r/20200303101858.ytehbrivocyp3cnf@kili.mountain
+Fixes: d14700a01f91 ("ASoC: Intel: Skylake: Debugfs facility to dump module config")
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Acked-by: Cezary Rojewski <cezary.rojewski@intel.com>
+Link: https://lore.kernel.org/r/20200218111737.14193-2-tiwai@suse.de
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/sof/ipc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/intel/skylake/skl-debug.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/sound/soc/sof/ipc.c
-+++ b/sound/soc/sof/ipc.c
-@@ -495,7 +495,7 @@ int snd_sof_ipc_stream_posn(struct snd_s
+--- a/sound/soc/intel/skylake/skl-debug.c
++++ b/sound/soc/intel/skylake/skl-debug.c
+@@ -34,7 +34,7 @@ static ssize_t skl_print_pins(struct skl
+ 	int i;
+ 	ssize_t ret = 0;
  
- 	/* send IPC to the DSP */
- 	err = sof_ipc_tx_message(sdev->ipc,
--				 stream.hdr.cmd, &stream, sizeof(stream), &posn,
-+				 stream.hdr.cmd, &stream, sizeof(stream), posn,
- 				 sizeof(*posn));
- 	if (err < 0) {
- 		dev_err(sdev->dev, "error: failed to get stream %d position\n",
+-	for (i = 0; i < max_pin; i++)
++	for (i = 0; i < max_pin; i++) {
+ 		ret += snprintf(buf + size, MOD_BUF - size,
+ 				"%s %d\n\tModule %d\n\tInstance %d\n\t"
+ 				"In-used %s\n\tType %s\n"
+@@ -45,6 +45,8 @@ static ssize_t skl_print_pins(struct skl
+ 				m_pin[i].in_use ? "Used" : "Unused",
+ 				m_pin[i].is_dynamic ? "Dynamic" : "Static",
+ 				m_pin[i].pin_state, i);
++		size += ret;
++	}
+ 	return ret;
+ }
+ 
 
 
