@@ -2,130 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5401E17EE8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 03:26:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0396817EE90
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 03:27:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbgCJC0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 22:26:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37470 "EHLO mail.kernel.org"
+        id S1726766AbgCJC1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 22:27:12 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:58771 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726450AbgCJC0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 22:26:50 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726450AbgCJC1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 22:27:12 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70C1D20637;
-        Tue, 10 Mar 2020 02:26:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583807209;
-        bh=nQXDEoo6Qa8IkKSSYjqM1U7q4GgW+WWnETvYqiwoqgs=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=egIcQ56YpmAPHTS7ypaqsTA/2uGGF8z0keKlDwRMqns3cH6/KHuNtxSsIT65+9uIb
-         HhlixC6yd+qo1Bn6D/kGmf6whPjv/SRCZlOp6RZis8NZk0Utm1vUlvXbsGBmLzNqg0
-         CpRBitk3tKU0XXIB2UnlGhNyBq2UxFarHZ8WRiXc=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 465CA3522730; Mon,  9 Mar 2020 19:26:49 -0700 (PDT)
-Date:   Mon, 9 Mar 2020 19:26:49 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: Instrumentation and RCU
-Message-ID: <20200310022649.GW2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <87mu8p797b.fsf@nanos.tec.linutronix.de>
- <20200309204710.GU2935@paulmck-ThinkPad-P72>
- <20200309235210.GB20868@lenoir>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48bzWL28SJz9sRY;
+        Tue, 10 Mar 2020 13:27:10 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1583807230;
+        bh=TcEm2jElDtda0OnJoa/Kb42gHbOESR+FN7DCdczoA+M=;
+        h=Date:From:To:Cc:Subject:From;
+        b=skwfrOr54sltbhn4/QAAFHC3RYdTZF6qpD/tq6Ygm/jcenlBBALKNkMCA9Bq9UhZ6
+         O2eGsQdHRNwAGMBmWyzZLGJU7VKo54tuSikmIfFpalPvluoGJ/X/U1km5uOc8uOwaG
+         mAb/0Kd5Q2W2xh2lbFtswB8p6TMeqaMyb4c3lIKuGTl+eC0UMkufcSLOVd7cKGYiVn
+         seIuMsWWNr5d85st8gpSiqxUV8D2XROoIvuWYpGsdi+KbY39Alc90M/WNMLwTnTwRm
+         4QbszmG3VoW3ui7pH65T0KQ0jKZtwFVSe3LkZZ1QSe8cl4GP5gBIys8RN4PT8eKNBf
+         uGETxEfOZz/LA==
+Date:   Tue, 10 Mar 2020 13:27:09 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build warning after merge of the rcu tree
+Message-ID: <20200310132709.3b5c6abe@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200309235210.GB20868@lenoir>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; boundary="Sig_/QkSvzejC3hMJ5tN920fwy8Z";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 12:52:11AM +0100, Frederic Weisbecker wrote:
-> On Mon, Mar 09, 2020 at 01:47:10PM -0700, Paul E. McKenney wrote:
-> > On Mon, Mar 09, 2020 at 06:02:32PM +0100, Thomas Gleixner wrote:
-> > > #3) RCU idle
-> > > 
-> > >     Being able to trace code inside RCU idle sections is very similar to
-> > >     the question raised in #1.
-> > > 
-> > >     Assume all of the instrumentation would be doing conditional RCU
-> > >     schemes, i.e.:
-> > > 
-> > >     if (rcuidle)
-> > >     	....
-> > >     else
-> > >         rcu_read_lock_sched()
-> > > 
-> > >     before invoking the actual instrumentation functions and of course
-> > >     undoing that right after it, that really begs the question whether
-> > >     it's worth it.
-> > > 
-> > >     Especially constructs like:
-> > > 
-> > >     trace_hardirqs_off()
-> > >        idx = srcu_read_lock()
-> > >        rcu_irq_enter_irqson();
-> > >        ...
-> > >        rcu_irq_exit_irqson();
-> > >        srcu_read_unlock(idx);
-> > > 
-> > >     if (user_mode)
-> > >        user_exit_irqsoff();
-> > >     else
-> > >        rcu_irq_enter();
-> > > 
-> > >     are really more than questionable. For 99.9999% of instrumentation
-> > >     users it's absolutely irrelevant whether this traces the interrupt
-> > >     disabled time of user_exit_irqsoff() or rcu_irq_enter() or not.
-> > > 
-> > >     But what's relevant is the tracer overhead which is e.g. inflicted
-> > >     with todays trace_hardirqs_off/on() implementation because that
-> > >     unconditionally uses the rcuidle variant with the scru/rcu_irq dance
-> > >     around every tracepoint.
-> > > 
-> > >     Even if the tracepoint sits in the ASM code it just covers about ~20
-> > >     low level ASM instructions more. The tracer invocation, which is
-> > >     even done twice when coming from user space on x86 (the second call
-> > >     is optimized in the tracer C-code), costs definitely way more
-> > >     cycles. When you take the scru/rcu_irq dance into account it's a
-> > >     complete disaster performance wise.
-> > 
-> > Suppose that we had a variant of RCU that had about the same read-side
-> > overhead as Preempt-RCU, but which could be used from idle as well as
-> > from CPUs in the process of coming online or going offline?  I have not
-> > thought through the irq/NMI/exception entry/exit cases, but I don't see
-> > why that would be problem.
-> > 
-> > This would have explicit critical-section entry/exit code, so it would
-> > not be any help for trampolines.
-> > 
-> > Would such a variant of RCU help?
-> > 
-> > Yeah, I know.  Just what the kernel doesn't need, yet another variant
-> > of RCU...
-> 
-> I was thinking about having a tracing-specific implementation of RCU.
-> Last week Steve told me that the tracing ring buffer has its own ad-hoc
-> RCU implementation which schedule a thread on each CPU to complete a grace
-> period (did I understand it right?). Of course such a flavour of RCU wouldn't
-> be nice to nohz_full but surely we can arrange some tweaks for those who
-> require strong isolation. I'm sure you're having a much better idea though.
+--Sig_/QkSvzejC3hMJ5tN920fwy8Z
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Well, that too.  Please see CONFIG_TASKS_RCU_RUDE in current
-"dev" on -rcu.  But yes, another is on its way...
+Hi all,
 
-Hey, it compiled, so it much be perfect, right?  :-/
+After merging the rcu tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-							Thanx, Paul
+WARNING: "rcu_tasks_rude_wait_gp" [vmlinux] is a static EXPORT_SYMBOL_GPL
+
+Introduced by commit
+
+  cbd703932774 ("rcu-tasks: Add an RCU-tasks rude variant")
+
+Why is all that code in a header file?  Do you intend to have those
+functions defined in each C file that includes kernel/rcu/tasks.h?
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/QkSvzejC3hMJ5tN920fwy8Z
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5m+v0ACgkQAVBC80lX
+0GxrGQf/VeuDxyFSS7muQBK5vie3WSBJDxNXY0G+U0hygFVeb1VwtLNS3fVSQndp
+D8v2BYAw0p46jioLjh9BMyQXTpxWgxCcCvb9XRRaxoRbpA/tRif06HK9S9OHuAfk
+wdfTZGMiNxOEdEC3VT4IRuDsdK90VUSBFTmu1hIszwB1hjx2uItNUKNBNeeft3GC
+AxEj+MdS+0i/dZq0bQwBBrzYoYUpblsWpK3IJnes8w+MwNSrYYL6ljIe3VP4wGTw
+wIDdZtHf/mMDwdOS43kkeGhj5TlqHzHs/XV1LX3ST59+mO8ZRyXJVDS0ttGuq6dt
+cPE6UmpBTOno2zAMaLOldVcvEd0Xdw==
+=hKUV
+-----END PGP SIGNATURE-----
+
+--Sig_/QkSvzejC3hMJ5tN920fwy8Z--
