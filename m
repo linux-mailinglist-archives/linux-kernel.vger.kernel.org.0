@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FBF917F7EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:43:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B62F17F934
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:54:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbgCJMnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:43:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43554 "EHLO mail.kernel.org"
+        id S1729402AbgCJMyn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:54:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727513AbgCJMnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:43:14 -0400
+        id S1728574AbgCJMyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:54:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7541C24695;
-        Tue, 10 Mar 2020 12:43:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE4F420674;
+        Tue, 10 Mar 2020 12:54:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844193;
-        bh=xVHPfJwgpy+80zOCWhcXFojkR2XjvT3blf7cFg0/OCg=;
+        s=default; t=1583844879;
+        bh=gT28lgSALOjg9Oy2Uz9uwJz0kp5lejbDlA6KiD7JrIo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B3JbL3tvElCQbi5loQhUGTFb2oiGBgOYrEXep0qqalU49bnm0uxb5ZcwF5wi39f+R
-         XXJXT7w1B+RfYaKXB/0PtUTO18kVdvze90POLWD41AmF3664hKghBi2wIQWX/ALx2u
-         /uWFqvRLKk924QmYkPPMx2iuX1ai3tx8k2UYl81U=
+        b=Z2yS+4nKLCwDupp9EXNK3LsqOx3xBgTlahmC1z9kQlByxL3+4nFKmQPOo492s4nRr
+         jLyyCymvzj6ebFyLPounv1X6L+5tNz0YoD1m3DFr7AeXKsdUrFF8972Et3XtGDAglu
+         /66pwRDNSLe4A/3vA2cJodTIKRNeGsXiXeyGsA/I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.4 66/72] RMDA/cm: Fix missing ib_cm_destroy_id() in ib_cm_insert_listen()
-Date:   Tue, 10 Mar 2020 13:39:19 +0100
-Message-Id: <20200310123617.989713862@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.4 114/168] spi: bcm63xx-hsspi: Really keep pll clk enabled
+Date:   Tue, 10 Mar 2020 13:39:20 +0100
+Message-Id: <20200310123646.963911379@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
-References: <20200310123601.053680753@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,32 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-commit c14dfddbd869bf0c2bafb7ef260c41d9cebbcfec upstream.
+commit 51bddd4501bc414b8b1e8f4d096b4a5304068169 upstream.
 
-The algorithm pre-allocates a cm_id since allocation cannot be done while
-holding the cm.lock spinlock, however it doesn't free it on one error
-path, leading to a memory leak.
+The purpose of commit 0fd85869c2a9 ("spi/bcm63xx-hsspi: keep pll clk enabled")
+was to keep the pll clk enabled through the lifetime of the device.
 
-Fixes: 067b171b8679 ("IB/cm: Share listening CM IDs")
-Link: https://lore.kernel.org/r/20200221152023.GA8680@ziepe.ca
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+In order to do that, some 'clk_prepare_enable()'/'clk_disable_unprepare()'
+calls have been added in the error handling path of the probe function, in
+the remove function and in the suspend and resume functions.
+
+However, a 'clk_disable_unprepare()' call has been unfortunately left in
+the probe function. So the commit seems to be more or less a no-op.
+
+Axe it now, so that the pll clk is left enabled through the lifetime of
+the device, as described in the commit.
+
+Fixes: 0fd85869c2a9 ("spi/bcm63xx-hsspi: keep pll clk enabled")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Jonas Gorski <jonas.gorski@gmail.com>
+Link: https://lore.kernel.org/r/20200228213838.7124-1-christophe.jaillet@wanadoo.fr
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/cm.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/spi/spi-bcm63xx-hsspi.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/infiniband/core/cm.c
-+++ b/drivers/infiniband/core/cm.c
-@@ -1073,6 +1073,7 @@ struct ib_cm_id *ib_cm_insert_listen(str
- 			/* Sharing an ib_cm_id with different handlers is not
- 			 * supported */
- 			spin_unlock_irqrestore(&cm.lock, flags);
-+			ib_destroy_cm_id(cm_id);
- 			return ERR_PTR(-EINVAL);
- 		}
- 		atomic_inc(&cm_id_priv->refcount);
+--- a/drivers/spi/spi-bcm63xx-hsspi.c
++++ b/drivers/spi/spi-bcm63xx-hsspi.c
+@@ -367,7 +367,6 @@ static int bcm63xx_hsspi_probe(struct pl
+ 			goto out_disable_clk;
+ 
+ 		rate = clk_get_rate(pll_clk);
+-		clk_disable_unprepare(pll_clk);
+ 		if (!rate) {
+ 			ret = -EINVAL;
+ 			goto out_disable_pll_clk;
 
 
