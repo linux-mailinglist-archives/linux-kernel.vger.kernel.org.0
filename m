@@ -2,161 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B13E817F0E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 08:04:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BF9717F0E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 08:05:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbgCJHEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 03:04:11 -0400
-Received: from mga09.intel.com ([134.134.136.24]:5994 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726703AbgCJHEH (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 03:04:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 00:04:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,535,1574150400"; 
-   d="scan'208";a="265524713"
-Received: from kbl.sh.intel.com ([10.239.159.24])
-  by fmsmga004.fm.intel.com with ESMTP; 10 Mar 2020 00:04:04 -0700
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v1 14/14] perf diff: Filter out streams by changed functions
-Date:   Tue, 10 Mar 2020 15:02:45 +0800
-Message-Id: <20200310070245.16314-15-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200310070245.16314-1-yao.jin@linux.intel.com>
-References: <20200310070245.16314-1-yao.jin@linux.intel.com>
+        id S1726403AbgCJHFe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 03:05:34 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:59288 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726156AbgCJHFe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 03:05:34 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02A75O6Q020066;
+        Tue, 10 Mar 2020 02:05:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583823924;
+        bh=HXSncGp7iCXQUqa3Y4kMAHAsnOMNjDVmmPi3JxHsHAw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=goK7G1wvD66F881UeJL6Zj/tCmMn5TFWn2FERNEOuxPQbYmj7rLM14pDbEjM/t8fA
+         b4ePIpPM2qlZUORjfKE+VsPTcnJrciuDNJBhClHTmQm76lzzhU9SH+JDrBZXUBFWWE
+         II6Zj/MQKecUvReh7auhoaLC+/LBwDMH0t6kUAag=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02A75OnI096753
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 10 Mar 2020 02:05:24 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 10
+ Mar 2020 02:05:23 -0500
+Received: from localhost.localdomain (10.64.41.19) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 10 Mar 2020 02:05:23 -0500
+Received: from [10.24.69.20] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 02A75K9T071982;
+        Tue, 10 Mar 2020 02:05:21 -0500
+Subject: Re: [PATCH v2 4/6] pwm: omap-dmtimer: Fix pwm disabling sequence
+To:     Tony Lindgren <tony@atomide.com>
+CC:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, Vignesh R <vigneshr@ti.com>,
+        Sebastian Reichel <sre@kernel.org>
+References: <20200228095651.32464-1-lokeshvutla@ti.com>
+ <20200228095651.32464-5-lokeshvutla@ti.com>
+ <20200306181443.GJ37466@atomide.com>
+ <9129d4fe-a17e-2fa6-764c-6a746fa5096d@ti.com>
+ <20200309180123.GP37466@atomide.com>
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+Message-ID: <666dbb7a-db98-d16a-ee73-27d353d2a317@ti.com>
+Date:   Tue, 10 Mar 2020 12:34:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20200309180123.GP37466@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sometime some changes are not reflected in the source code,
-e.g. changing the compiler option. So for this, we can't get
-the changes by diffing the source code lines.
+Hi Tony,
 
-This patch introduces a new perf-diff option "--changed-func".
-It passes the names of changed functions then perf-diff can
-know what functions are changed.
+[...snip...]
 
-For example,
-perf diff --stream --changed-func main --changed-func rand
+>>>>  
+>>>> +	/*
+>>>> +	 * Disable auto reload so that the current cycle gets completed and
+>>>> +	 * then the counter stops.
+>>>> +	 */
+>>>>  	mutex_lock(&omap->mutex);
+>>>> -	omap->pdata->stop(omap->dm_timer);
+>>>> +	omap->pdata->set_pwm(omap->dm_timer,
+>>>> +			     pwm_get_polarity(pwm) == PWM_POLARITY_INVERSED,
+>>>> +			     true, OMAP_TIMER_TRIGGER_OVERFLOW_AND_COMPARE,
+>>>> +			     false);
+>>>> +
+>>>>  	mutex_unlock(&omap->mutex);
+>>>>  }
+>>>
+>>> I'm seeing an issue with this patch where after use something is
+>>> left on and power consumption stays higher by about 30 mW after
+>>> use.
+>>
+>> Interesting...What is the PWM period and duty cycle in the test case?
+>> Can you dump the following registers before and after disabling:
+>> - TLDR
+>> - TMAR
+>> - TCLR
+> 
+> Here's the state dumped before and after in omap_dm_timer_set_pwm():
+> 
+> omap_timer 4803e000.timer: XXX set_pwm before: tldr: fffffeb8 tmar: fffffffe tclr: 00000040
+> omap_timer 4803e000.timer: XXX set_pwm after: tldr: fffffeb8 tmar: fffffffe tclr: 00001842
+> omap_timer 4013e000.timer: XXX set_pwm before: tldr: fffffeb8 tmar: fffffffe tclr: 00000040
+> omap_timer 4013e000.timer: XXX set_pwm after: tldr: fffffeb8 tmar: fffffffe tclr: 00001842
+> omap_timer 4013e000.timer: XXX set_pwm before: tldr: fffffeb8 tmar: fffffffe tclr: 00001843
+> omap_timer 4013e000.timer: XXX set_pwm after: tldr: fffffeb8 tmar: fffffffe tclr: 00001841
+> omap_timer 4803e000.timer: XXX set_pwm before: tldr: fffffeb8 tmar: fffffffe tclr: 00001843
+> omap_timer 4803e000.timer: XXX set_pwm after: tldr: fffffeb8 tmar: fffffffe tclr: 00001841
+> 
 
-It passes the function list {"main", "rand"} to perf-diff.
-Now perf-diff knows the functions "main" and "rand" in new perf
-data file are changed.
+Looking at the registers:
+period = 327 *(1000/clk_freq in MHz) ns
+duty_cycle =  perioid.
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/Documentation/perf-diff.txt |  5 +++++
- tools/perf/builtin-diff.c              | 30 ++++++++++++++++++++++++--
- 2 files changed, 33 insertions(+), 2 deletions(-)
+I did simulate this behavior on BeagleBoneBlack on timer7. PWM is going down
+after disabling.
 
-diff --git a/tools/perf/Documentation/perf-diff.txt b/tools/perf/Documentation/perf-diff.txt
-index 296fea98ac07..784598c12e26 100644
---- a/tools/perf/Documentation/perf-diff.txt
-+++ b/tools/perf/Documentation/perf-diff.txt
-@@ -196,6 +196,11 @@ OPTIONS
- 	Source code directory corresponding to perf.data. Should be
- 	used with --stream and --before.
- 
-+--changed-func=::
-+	The given function is changed in new perf data file. This option
-+	needs to be used with --stream option. Multiple functions can be given
-+	by using this option more than once.
-+
- COMPARISON
- ----------
- The comparison is governed by the baseline file. The baseline perf.data
-diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
-index 98e9ab8c69ce..5e5f29105fe1 100644
---- a/tools/perf/builtin-diff.c
-+++ b/tools/perf/builtin-diff.c
-@@ -27,6 +27,7 @@
- #include "util/block-info.h"
- #include "util/srclist.h"
- #include "util/callchain.h"
-+#include "util/strlist.h"
- #include <linux/err.h>
- #include <linux/zalloc.h>
- #include <subcmd/pager.h>
-@@ -49,6 +50,7 @@ struct perf_diff {
- 	bool				 src_cmp;
- 	bool				 stream;
- 	struct srclist			*src_list;
-+	struct strlist			*func_list;
- 	u64				 total_cycles;
- 	float				 min_percent;
- };
-@@ -1017,7 +1019,8 @@ static int process_base_stream(struct data__file *data_base,
- 		if (!es_pair)
- 			return -1;
- 
--		callchain_match_streams(es_base, es_pair, pdiff.src_list, NULL);
-+		callchain_match_streams(es_base, es_pair, pdiff.src_list,
-+					pdiff.func_list);
- 		callchain_stream_report(es_base, es_pair);
- 	}
- 
-@@ -1043,7 +1046,7 @@ static int process_base_stream(struct data__file *data_base,
- 		block_hists_addr2line(&rep_pair->hist.block_hists, pair_dir);
- 
- 		block_info__match_report(rep_base, rep_pair,
--					 pdiff.src_list, NULL, NULL);
-+					 pdiff.src_list, pdiff.func_list, NULL);
- 
- 		fprintf(stdout, "%s", title);
- 
-@@ -1213,6 +1216,24 @@ static struct callchain_streams *create_evsel_streams(struct evlist *evlist,
- 	return evsel_streams;
- }
- 
-+static int parse_func(const struct option *opt __maybe_unused,
-+		      const char *str, int unset __maybe_unused)
-+{
-+	int ret;
-+
-+	if (!pdiff.func_list) {
-+		pdiff.func_list = strlist__new(NULL, NULL);
-+		if (!pdiff.func_list)
-+			return -ENOMEM;
-+	}
-+
-+	ret = strlist__add(pdiff.func_list, str);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static int __cmd_diff(void)
- {
- 	struct data__file *d;
-@@ -1312,6 +1333,9 @@ static int __cmd_diff(void)
- 	if (pdiff.src_list)
- 		srclist__delete(pdiff.src_list);
- 
-+	if (pdiff.func_list)
-+		strlist__delete(pdiff.func_list);
-+
- 	return ret;
- }
- 
-@@ -1390,6 +1414,8 @@ static const struct option options[] = {
- 	OPT_CALLBACK(0, "percent-limit", &pdiff, "percent",
- 		     "Don't show entries under that percent",
- 		     parse_percent_limit),
-+	OPT_CALLBACK(0, "changed-func", NULL, "func",
-+		     "Given function is changed", parse_func),
- 	OPT_END()
- };
- 
--- 
-2.17.1
+> So looks like the start bit is still enabled after use?
 
+Right, that is expected. The start bit gets disabled automatically once the pwm
+period completes. This is because auto reload bit is off. That's the main idea
+of this patch so that PWM period is completed after disabling, else PWM is
+stopped abruptly.
+
+Not sure why it is not happening in your case. If you think it is not needed, I
+can drop this patch and add a limitation saying that PWM gets disabled
+immediately without completing the current cycle.
+
+Thanks and regards,
+Lokesh
