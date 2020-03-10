@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B26B117FA7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:05:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7889C17FA35
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:04:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730182AbgCJNFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:05:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48154 "EHLO mail.kernel.org"
+        id S1730615AbgCJNDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:03:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729809AbgCJND1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:03:27 -0400
+        id S1729616AbgCJNDc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:03:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EDE52468D;
-        Tue, 10 Mar 2020 13:03:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D772524691;
+        Tue, 10 Mar 2020 13:03:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845407;
-        bh=Tg4+xHdoUUqG5BHcaX9AF5r82107Nq3jGYbzvAySqwc=;
+        s=default; t=1583845410;
+        bh=ufhKVVNyjq8Y1qCZPHnjcRs1TwGgtAcKA5uVgpTmO9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EqOJffV9B0DQOIdZoTOUurASxHccPtHVUn5ciHDD3Jdd6f0nyCY4w4/Op/hqMGCSx
-         Y76CdBZVJKczmTN9OfBjm15MrSkqAtYJb4/dWkZOOgNbRge+sjlyoBmUryCqvbR0Iz
-         ex5dQhXB0k0ceq62g0m/quQwhCgvowSd5OACxA1I=
+        b=ji8s77AP47k+UuktWI/15j9sXi2m0BFJ5bqDKkNr6K2XoMlR/Tf1A4tNgpQCX2O4G
+         lRSs6o0fhtZSWP68h0SmCOtEEhvRmLgltSxcqOx9IGKG8K3mISpWfcq9xx5bcZwP/i
+         1SJHnjnfvyc0d6nNq4H6AiEZceedfChPXIQTwVrA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH 5.5 172/189] ARM: dts: imx7d: fix opp-supported-hw
-Date:   Tue, 10 Mar 2020 13:40:09 +0100
-Message-Id: <20200310123657.226232553@linuxfoundation.org>
+        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
+        Suman Anna <s-anna@ti.com>, Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 5.5 173/189] ARM: dts: am437x-idk-evm: Fix incorrect OPP node names
+Date:   Tue, 10 Mar 2020 13:40:10 +0100
+Message-Id: <20200310123657.299404422@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
 References: <20200310123639.608886314@linuxfoundation.org>
@@ -43,56 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+From: Suman Anna <s-anna@ti.com>
 
-commit 54d6477dca3b65b7b77a903fe60a9447bc836e7f upstream.
+commit 31623468be0bf57617b8057dcd335693935a9491 upstream.
 
-Per i.MX7D Document Number: IMX7DCEC Rev. 6, 03/2019,
-there are only consumer/industrial parts, and 1.2GHz
-is only support in consumer parts.
+The commit 337c6c9a69af ("ARM: dts: am437x-idk-evm: Disable
+OPP50 for MPU") adjusts couple of OPP nodes defined in the
+common am4372.dtsi file, but used outdated node names. This
+results in these getting treated as new OPP nodes with missing
+properties.
 
-So exclude automotive from 792/996MHz/1.2GHz and exclude
-industrial from 1.2GHz.
+Fix this properly by using the correct node names as updated in
+commit b9cb2ba71848 ("ARM: dts: Use - instead of @ for DT OPP
+entries for TI SoCs").
 
-Fixes: d7bfba7296ca ("ARM: dts: imx7d: Update cpufreq OPP table")
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Reported-by: Roger Quadros <rogerq@ti.com>
+Fixes: 337c6c9a69af ("ARM: dts: am437x-idk-evm: Disable OPP50 for MPU")
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/imx7d.dtsi |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/am437x-idk-evm.dts |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/imx7d.dtsi
-+++ b/arch/arm/boot/dts/imx7d.dtsi
-@@ -44,7 +44,7 @@
- 			opp-hz = /bits/ 64 <792000000>;
- 			opp-microvolt = <1000000>;
- 			clock-latency-ns = <150000>;
--			opp-supported-hw = <0xd>, <0xf>;
-+			opp-supported-hw = <0xd>, <0x7>;
- 			opp-suspend;
- 		};
- 
-@@ -52,7 +52,7 @@
- 			opp-hz = /bits/ 64 <996000000>;
- 			opp-microvolt = <1100000>;
- 			clock-latency-ns = <150000>;
--			opp-supported-hw = <0xc>, <0xf>;
-+			opp-supported-hw = <0xc>, <0x7>;
- 			opp-suspend;
- 		};
- 
-@@ -60,7 +60,7 @@
- 			opp-hz = /bits/ 64 <1200000000>;
- 			opp-microvolt = <1225000>;
- 			clock-latency-ns = <150000>;
--			opp-supported-hw = <0x8>, <0xf>;
-+			opp-supported-hw = <0x8>, <0x3>;
- 			opp-suspend;
- 		};
+--- a/arch/arm/boot/dts/am437x-idk-evm.dts
++++ b/arch/arm/boot/dts/am437x-idk-evm.dts
+@@ -526,11 +526,11 @@
+ 	 * Supply voltage supervisor on board will not allow opp50 so
+ 	 * disable it and set opp100 as suspend OPP.
+ 	 */
+-	opp50@300000000 {
++	opp50-300000000 {
+ 		status = "disabled";
  	};
+ 
+-	opp100@600000000 {
++	opp100-600000000 {
+ 		opp-suspend;
+ 	};
+ };
 
 
