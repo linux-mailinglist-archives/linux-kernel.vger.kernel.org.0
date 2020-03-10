@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE40117F84D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8425D17F90D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:53:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbgCJMqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:46:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50092 "EHLO mail.kernel.org"
+        id S1729201AbgCJMxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:53:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726548AbgCJMqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:46:43 -0400
+        id S1729188AbgCJMx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:53:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F128F20674;
-        Tue, 10 Mar 2020 12:46:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5747A2253D;
+        Tue, 10 Mar 2020 12:53:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844402;
-        bh=aQyOo51tJXpfdWYbk8rtLOh1ur5fSsFP40lAEGRT9CI=;
+        s=default; t=1583844808;
+        bh=RdwNiBrqBMF96enX3Y8lOCJkGzpZXUYtdAP1pkP1rzc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2UH33dAb3vxB8u4Fsi8qtzed+lbimkOqDvJG7beaPPsqB2VtmTvAXmhPYosCRwmPq
-         xntWw6rvwlHCeuNo0dluJvzug++g7R13qtMBYPldZKN0xvM92/rFIHLxihlQ1BP4/w
-         YkQzLcDvHkmE8wnFFcQfF4hF2//WgbCgW/oq2fNE=
+        b=CWoKq65JsGhoO1SZdy5GWbwH2rkVsRJBzz4d2newGbeVVbtHLI4OkTYfoBDKYFTj+
+         fpgTV/dl5S09LjLZWsCKY+IjcyuuF6nH/ZUNBhnXSfleiCCeboOhuX9rpI2K4/5KGv
+         PMEW1jrh4FytAN+WutigyXDKufN0nHgFt5GokFXs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: [PATCH 4.9 67/88] usb: core: port: do error out if usb_autopm_get_interface() fails
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 5.4 109/168] dm writecache: verify watermark during resume
 Date:   Tue, 10 Mar 2020 13:39:15 +0100
-Message-Id: <20200310123622.817577268@linuxfoundation.org>
+Message-Id: <20200310123646.428917143@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,62 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugeniu Rosca <erosca@de.adit-jv.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 1f8b39bc99a31759e97a0428a5c3f64802c1e61d upstream.
+commit 41c526c5af46d4c4dab7f72c99000b7fac0b9702 upstream.
 
-Reviewing a fresh portion of coverity defects in USB core
-(specifically CID 1458999), Alan Stern noted below in [1]:
+Verify the watermark upon resume - so that if the target is reloaded
+with lower watermark, it will start the cleanup process immediately.
 
-On Tue, Feb 25, 2020 at 02:39:23PM -0500, Alan Stern wrote:
- > A revised search finds line 997 in drivers/usb/core/hub.c and lines
- > 216, 269 in drivers/usb/core/port.c.  (I didn't try looking in any
- > other directories.)  AFAICT all three of these should check the
- > return value, although a error message in the kernel log probably
- > isn't needed.
-
-Factor out the usb_port_runtime_{resume,suspend}() changes into a
-standalone patch to allow conflict-free porting on top of stable v3.9+.
-
-[1] https://lore.kernel.org/lkml/Pine.LNX.4.44L0.2002251419120.1485-100000@iolanthe.rowland.org
-
-Fixes: 971fcd492cebf5 ("usb: add runtime pm support for usb port device")
-Cc: stable@vger.kernel.org # v3.9+
-Suggested-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Link: https://lore.kernel.org/r/20200226175036.14946-3-erosca@de.adit-jv.com
+Fixes: 48debafe4f2f ("dm: add writecache target")
+Cc: stable@vger.kernel.org # 4.18+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/port.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/md/dm-writecache.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/core/port.c
-+++ b/drivers/usb/core/port.c
-@@ -179,7 +179,10 @@ static int usb_port_runtime_resume(struc
- 	if (!port_dev->is_superspeed && peer)
- 		pm_runtime_get_sync(&peer->dev);
+--- a/drivers/md/dm-writecache.c
++++ b/drivers/md/dm-writecache.c
+@@ -625,6 +625,12 @@ static void writecache_add_to_freelist(s
+ 	wc->freelist_size++;
+ }
  
--	usb_autopm_get_interface(intf);
-+	retval = usb_autopm_get_interface(intf);
-+	if (retval < 0)
-+		return retval;
++static inline void writecache_verify_watermark(struct dm_writecache *wc)
++{
++	if (unlikely(wc->freelist_size + wc->writeback_size <= wc->freelist_high_watermark))
++		queue_work(wc->writeback_wq, &wc->writeback_work);
++}
 +
- 	retval = usb_hub_set_port_power(hdev, hub, port1, true);
- 	msleep(hub_power_on_good_delay(hub));
- 	if (udev && !retval) {
-@@ -232,7 +235,10 @@ static int usb_port_runtime_suspend(stru
- 	if (usb_port_block_power_off)
- 		return -EBUSY;
+ static struct wc_entry *writecache_pop_from_freelist(struct dm_writecache *wc)
+ {
+ 	struct wc_entry *e;
+@@ -646,8 +652,8 @@ static struct wc_entry *writecache_pop_f
+ 		list_del(&e->lru);
+ 	}
+ 	wc->freelist_size--;
+-	if (unlikely(wc->freelist_size + wc->writeback_size <= wc->freelist_high_watermark))
+-		queue_work(wc->writeback_wq, &wc->writeback_work);
++
++	writecache_verify_watermark(wc);
  
--	usb_autopm_get_interface(intf);
-+	retval = usb_autopm_get_interface(intf);
-+	if (retval < 0)
-+		return retval;
+ 	return e;
+ }
+@@ -961,6 +967,8 @@ erase_this:
+ 		writecache_commit_flushed(wc, false);
+ 	}
+ 
++	writecache_verify_watermark(wc);
 +
- 	retval = usb_hub_set_port_power(hdev, hub, port1, false);
- 	usb_clear_port_feature(hdev, port1, USB_PORT_FEAT_C_CONNECTION);
- 	if (!port_dev->is_superspeed)
+ 	wc_unlock(wc);
+ }
+ 
 
 
