@@ -2,60 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC8B017FDE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:31:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9150917FDCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:31:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbgCJNav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:30:51 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11617 "EHLO huawei.com"
+        id S1728657AbgCJMui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:50:38 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:36164 "EHLO loongson.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728589AbgCJMuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:50:25 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 81232A850F29D316DF7A;
-        Tue, 10 Mar 2020 20:50:21 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.487.0; Tue, 10 Mar 2020 20:50:11 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/5] f2fs: change default compression algorithm
-Date:   Tue, 10 Mar 2020 20:50:05 +0800
-Message-ID: <20200310125009.12966-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+        id S1728594AbgCJMub (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:50:31 -0400
+Received: from linux.localdomain (unknown [113.200.148.30])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Dxn9kBjWdeay0ZAA--.25S2;
+        Tue, 10 Mar 2020 20:50:10 +0800 (CST)
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+To:     Bjorn Helgaas <bhelgaas@google.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-pci@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Xuefeng Li <lixuefeng@loongson.cn>
+Subject: [PATCH 1/2] PCI: Add Loongson vendor ID
+Date:   Tue, 10 Mar 2020 20:50:07 +0800
+Message-Id: <1583844608-30029-1-git-send-email-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+X-CM-TRANSID: AQAAf9Dxn9kBjWdeay0ZAA--.25S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7XF43KF43XFWUuFykXryDtrb_yoW3XFc_C3
+        4fWF18Cr4rZr1UXw48XFy3JF1a934a9a17Wr95KrW3u3Wjyrs8X34xCr9Fq3Z3uanxCrn8
+        Jan2q34Iyw1UujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbckFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+        Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+        0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+        jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+        1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW5JwCF
+        04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
+        18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vI
+        r41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr
+        1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
+        0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUID73UUUUU=
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use LZ4 as default compression algorithm, as compared to LZO, it shows
-almost the same compression ratio and much better decompression speed.
+Add the Loongson vendor ID to pci_ids.h to be used by the controller
+driver in the future.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+The Loongson vendor ID can be found at the following link:
+https://git.kernel.org/pub/scm/utils/pciutils/pciutils.git/tree/pci.ids
+
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 ---
- fs/f2fs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/pci_ids.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index db3a63f7c769..ebffe7aa08ee 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1577,7 +1577,7 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	F2FS_OPTION(sbi).test_dummy_encryption = false;
- 	F2FS_OPTION(sbi).s_resuid = make_kuid(&init_user_ns, F2FS_DEF_RESUID);
- 	F2FS_OPTION(sbi).s_resgid = make_kgid(&init_user_ns, F2FS_DEF_RESGID);
--	F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZO;
-+	F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZ4;
- 	F2FS_OPTION(sbi).compress_log_size = MIN_COMPRESS_LOG_SIZE;
- 	F2FS_OPTION(sbi).compress_ext_cnt = 0;
- 	F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index 352c0d7..977e668 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -148,6 +148,8 @@
+ 
+ /* Vendors and devices.  Sort key: vendor first, device next. */
+ 
++#define PCI_VENDOR_ID_LOONGSON		0x0014
++
+ #define PCI_VENDOR_ID_TTTECH		0x0357
+ #define PCI_DEVICE_ID_TTTECH_MC322	0x000a
+ 
 -- 
-2.18.0.rc1
+2.1.0
 
