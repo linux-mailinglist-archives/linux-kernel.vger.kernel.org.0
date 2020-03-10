@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E0BD17FD53
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:29:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0C8717F9EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:01:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729089AbgCJMww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:52:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58546 "EHLO mail.kernel.org"
+        id S1730227AbgCJNBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:01:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728408AbgCJMwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:52:47 -0400
+        id S1730219AbgCJNBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:01:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E606220674;
-        Tue, 10 Mar 2020 12:52:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA61820409;
+        Tue, 10 Mar 2020 13:01:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844767;
-        bh=bvcVhcGROHodvDqr337Qgj7U7rQY8iGqxJ8DVU2cvOs=;
+        s=default; t=1583845262;
+        bh=hLVPD/xwaIxpskZ9bkmW5JfIjz/vNlkr4UQHuL9vOpk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JhAdGrTR5SceLM1CMu5iu0MfL0kALjR/3Baap9Un1J5d61GT1lsxOemurB8/N+Xkc
-         VjONcUgYjtoAqogRBR0O1iAi0VYyR9pQLJ0NI2qcnEXYbxNwD+eRIXKbX9NhN6Knex
-         6V/ZzGJv2y1O5bFfiv28GINfgCYjDgz+wCFNZnCM=
+        b=W55TCU7MJfNWuGz0apdcHS6WS07R6gmvqgDx3em4QmfoWyVe3HKfucVAm2aI00H7I
+         geBVNYTHpMaLkycaOkbACJj5B8Ca6bStUj9MsgyPfSahqXBwOx+z/5nwqpgltpoeva
+         cCFRvR68iEILCljLDLA0bdm6t5ZsMZWygezqacds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: [PATCH 5.4 073/168] usb: core: port: do error out if usb_autopm_get_interface() fails
+        stable@vger.kernel.org,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Qian Cai <cai@lca.pw>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.5 082/189] mm, hotplug: fix page online with DEBUG_PAGEALLOC compiled but not enabled
 Date:   Tue, 10 Mar 2020 13:38:39 +0100
-Message-Id: <20200310123642.652642579@linuxfoundation.org>
+Message-Id: <20200310123647.957581981@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,62 +48,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugeniu Rosca <erosca@de.adit-jv.com>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-commit 1f8b39bc99a31759e97a0428a5c3f64802c1e61d upstream.
+commit c87cbc1f007c4b46165f05ceca04e1973cda0b9c upstream.
 
-Reviewing a fresh portion of coverity defects in USB core
-(specifically CID 1458999), Alan Stern noted below in [1]:
+Commit cd02cf1aceea ("mm/hotplug: fix an imbalance with DEBUG_PAGEALLOC")
+fixed memory hotplug with debug_pagealloc enabled, where onlining a page
+goes through page freeing, which removes the direct mapping.  Some arches
+don't like when the page is not mapped in the first place, so
+generic_online_page() maps it first.  This is somewhat wasteful, but
+better than special casing page freeing fast paths.
 
-On Tue, Feb 25, 2020 at 02:39:23PM -0500, Alan Stern wrote:
- > A revised search finds line 997 in drivers/usb/core/hub.c and lines
- > 216, 269 in drivers/usb/core/port.c.  (I didn't try looking in any
- > other directories.)  AFAICT all three of these should check the
- > return value, although a error message in the kernel log probably
- > isn't needed.
+The commit however missed that DEBUG_PAGEALLOC configured doesn't mean
+it's actually enabled.  One has to test debug_pagealloc_enabled() since
+031bc5743f15 ("mm/debug-pagealloc: make debug-pagealloc boottime
+configurable"), or alternatively debug_pagealloc_enabled_static() since
+8e57f8acbbd1 ("mm, debug_pagealloc: don't rely on static keys too early"),
+but this is not done.
 
-Factor out the usb_port_runtime_{resume,suspend}() changes into a
-standalone patch to allow conflict-free porting on top of stable v3.9+.
+As a result, a s390 kernel with DEBUG_PAGEALLOC configured but not enabled
+will crash:
 
-[1] https://lore.kernel.org/lkml/Pine.LNX.4.44L0.2002251419120.1485-100000@iolanthe.rowland.org
+Unable to handle kernel pointer dereference in virtual kernel address space
+Failing address: 0000000000000000 TEID: 0000000000000483
+Fault in home space mode while using kernel ASCE.
+AS:0000001ece13400b R2:000003fff7fd000b R3:000003fff7fcc007 S:000003fff7fd7000 P:000000000000013d
+Oops: 0004 ilc:2 [#1] SMP
+CPU: 1 PID: 26015 Comm: chmem Kdump: loaded Tainted: GX 5.3.18-5-default #1 SLE15-SP2 (unreleased)
+Krnl PSW : 0704e00180000000 0000001ecd281b9e (__kernel_map_pages+0x166/0x188)
+R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
+Krnl GPRS: 0000000000000000 0000000000000800 0000400b00000000 0000000000000100
+0000000000000001 0000000000000000 0000000000000002 0000000000000100
+0000001ece139230 0000001ecdd98d40 0000400b00000100 0000000000000000
+000003ffa17e4000 001fffe0114f7d08 0000001ecd4d93ea 001fffe0114f7b20
+Krnl Code: 0000001ecd281b8e: ec17ffff00d8 ahik %r1,%r7,-1
+0000001ecd281b94: ec111dbc0355 risbg %r1,%r1,29,188,3
+>0000001ecd281b9e: 94fb5006 ni 6(%r5),251
+0000001ecd281ba2: 41505008 la %r5,8(%r5)
+0000001ecd281ba6: ec51fffc6064 cgrj %r5,%r1,6,1ecd281b9e
+0000001ecd281bac: 1a07 ar %r0,%r7
+0000001ecd281bae: ec03ff584076 crj %r0,%r3,4,1ecd281a5e
+Call Trace:
+[<0000001ecd281b9e>] __kernel_map_pages+0x166/0x188
+[<0000001ecd4d9516>] online_pages_range+0xf6/0x128
+[<0000001ecd2a8186>] walk_system_ram_range+0x7e/0xd8
+[<0000001ecda28aae>] online_pages+0x2fe/0x3f0
+[<0000001ecd7d02a6>] memory_subsys_online+0x8e/0xc0
+[<0000001ecd7add42>] device_online+0x5a/0xc8
+[<0000001ecd7d0430>] state_store+0x88/0x118
+[<0000001ecd5b9f62>] kernfs_fop_write+0xc2/0x200
+[<0000001ecd5064b6>] vfs_write+0x176/0x1e0
+[<0000001ecd50676a>] ksys_write+0xa2/0x100
+[<0000001ecda315d4>] system_call+0xd8/0x2c8
 
-Fixes: 971fcd492cebf5 ("usb: add runtime pm support for usb port device")
-Cc: stable@vger.kernel.org # v3.9+
-Suggested-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Link: https://lore.kernel.org/r/20200226175036.14946-3-erosca@de.adit-jv.com
+Fix this by checking debug_pagealloc_enabled_static() before calling
+kernel_map_pages(). Backports for kernel before 5.5 should use
+debug_pagealloc_enabled() instead. Also add comments.
+
+Fixes: cd02cf1aceea ("mm/hotplug: fix an imbalance with DEBUG_PAGEALLOC")
+Reported-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Cc: <stable@vger.kernel.org>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Qian Cai <cai@lca.pw>
+Link: http://lkml.kernel.org/r/20200224094651.18257-1-vbabka@suse.cz
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/port.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ include/linux/mm.h  |    4 ++++
+ mm/memory_hotplug.c |    8 +++++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/core/port.c
-+++ b/drivers/usb/core/port.c
-@@ -213,7 +213,10 @@ static int usb_port_runtime_resume(struc
- 	if (!port_dev->is_superspeed && peer)
- 		pm_runtime_get_sync(&peer->dev);
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2687,6 +2687,10 @@ static inline bool debug_pagealloc_enabl
+ #if defined(CONFIG_DEBUG_PAGEALLOC) || defined(CONFIG_ARCH_HAS_SET_DIRECT_MAP)
+ extern void __kernel_map_pages(struct page *page, int numpages, int enable);
  
--	usb_autopm_get_interface(intf);
-+	retval = usb_autopm_get_interface(intf);
-+	if (retval < 0)
-+		return retval;
-+
- 	retval = usb_hub_set_port_power(hdev, hub, port1, true);
- 	msleep(hub_power_on_good_delay(hub));
- 	if (udev && !retval) {
-@@ -266,7 +269,10 @@ static int usb_port_runtime_suspend(stru
- 	if (usb_port_block_power_off)
- 		return -EBUSY;
++/*
++ * When called in DEBUG_PAGEALLOC context, the call should most likely be
++ * guarded by debug_pagealloc_enabled() or debug_pagealloc_enabled_static()
++ */
+ static inline void
+ kernel_map_pages(struct page *page, int numpages, int enable)
+ {
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -599,7 +599,13 @@ EXPORT_SYMBOL_GPL(restore_online_page_ca
  
--	usb_autopm_get_interface(intf);
-+	retval = usb_autopm_get_interface(intf);
-+	if (retval < 0)
-+		return retval;
-+
- 	retval = usb_hub_set_port_power(hdev, hub, port1, false);
- 	usb_clear_port_feature(hdev, port1, USB_PORT_FEAT_C_CONNECTION);
- 	if (!port_dev->is_superspeed)
+ void generic_online_page(struct page *page, unsigned int order)
+ {
+-	kernel_map_pages(page, 1 << order, 1);
++	/*
++	 * Freeing the page with debug_pagealloc enabled will try to unmap it,
++	 * so we should map it first. This is better than introducing a special
++	 * case in page freeing fast path.
++	 */
++	if (debug_pagealloc_enabled_static())
++		kernel_map_pages(page, 1 << order, 1);
+ 	__free_pages_core(page, order);
+ 	totalram_pages_add(1UL << order);
+ #ifdef CONFIG_HIGHMEM
 
 
