@@ -2,86 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98DB71803F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:50:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FD5D1803EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:49:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbgCJQuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 12:50:24 -0400
-Received: from smtprelay0075.hostedemail.com ([216.40.44.75]:58653 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726307AbgCJQuY (ORCPT
+        id S1726481AbgCJQtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 12:49:05 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:34354 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbgCJQtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 12:50:24 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 53E711802DEEB;
-        Tue, 10 Mar 2020 16:50:23 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:4321:5007:7576:8660:10004:10400:11232:11658:11914:12050:12114:12296:12297:12740:12760:12895:13069:13148:13230:13311:13357:13439:14181:14659:14721:21080:21433:21451:21627:21990:30012:30054:30060:30083:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: list44_3299c48c4159
-X-Filterd-Recvd-Size: 2580
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf19.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 10 Mar 2020 16:50:21 +0000 (UTC)
-Message-ID: <0fdd3a89033ce3d6e7ab6b12eddefc343ac43729.camel@perches.com>
-Subject: Re: [PATCH] kbuild: Disable -Wpointer-to-enum-cast
-From:   Joe Perches <joe@perches.com>
-To:     Masahiro Yamada <masahiroy@kernel.org>,
-        David Laight <David.Laight@aculab.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        stable <stable@vger.kernel.org>
-Date:   Tue, 10 Mar 2020 09:48:40 -0700
-In-Reply-To: <CAK7LNARMsO0AeO8-kH4czMuW0Y_=dN+ZhtXNdRE7CWGvU2PNvA@mail.gmail.com>
-References: <20200308073400.23398-1-natechancellor@gmail.com>
-         <CAK7LNARcTHpd8fzrAhFVB_AR7NoBgenX64de0eS2uN8g0by9PQ@mail.gmail.com>
-         <20200310012545.GA16822@ubuntu-m2-xlarge-x86>
-         <c2a687d065c1463d8eea9947687b3b05@AcuMS.aculab.com>
-         <CAK7LNARMsO0AeO8-kH4czMuW0Y_=dN+ZhtXNdRE7CWGvU2PNvA@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Tue, 10 Mar 2020 12:49:05 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jBi3h-0007Lw-Qi; Tue, 10 Mar 2020 17:48:45 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 7040C1040A5; Tue, 10 Mar 2020 17:48:45 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        paulmck <paulmck@kernel.org>,
+        "Joel Fernandes\, Google" <joel@joelfernandes.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: Instrumentation and RCU
+In-Reply-To: <1489283504.23399.1583852595008.JavaMail.zimbra@efficios.com>
+References: <87mu8p797b.fsf@nanos.tec.linutronix.de> <1403546357.21810.1583779060302.JavaMail.zimbra@efficios.com> <871rq171ca.fsf@nanos.tec.linutronix.de> <1489283504.23399.1583852595008.JavaMail.zimbra@efficios.com>
+Date:   Tue, 10 Mar 2020 17:48:45 +0100
+Message-ID: <87imjc5f6a.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-03-11 at 00:30 +0900, Masahiro Yamada wrote:
-> On Tue, Mar 10, 2020 at 8:31 PM David Laight <David.Laight@aculab.com> wrote:
-> > From: Nathan Chancellor
-> > > Sent: 10 March 2020 01:26
-> > ...
-> > > Sure, I can send v2 to do that but I think that sending 97 patches just
-> > > casting the small values (usually less than twenty) to unsigned long
-> > > then to the enum is rather frivolous. I audited at least ten to fifteen
-> > > of these call sites when creating the clang patch and they are all
-> > > basically false positives.
-> > 
-> > Such casts just make the code hard to read.
-> > If misused casts can hide horrid bugs.
-> > IMHO sprinkling the code with casts just to remove
-> > compiler warnings will bite back one day.
-> > 
-> 
-> I agree that too much casts make the code hard to read,
-> but irrespective of this patch, there is no difference
-> in the fact that we need a cast to convert
-> (const void *) to a non-pointer value.
-> 
-> The difference is whether we use
-> (uintptr_t) or (enum foo).
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> writes:
+> ----- On Mar 9, 2020, at 3:52 PM, Thomas Gleixner tglx@linutronix.de wrote:
+>> In a quick test I did with a invalid syscall number with profiling the
+>> trace_hardirqs_off() is pretty prominent and goes down by roughly a
+>> factor of 2 when I move it past enter_from_user_mode() and use just the
+>> non RCU idle variant.
+>
+> I think one issue here is that trace_hardirqs_off() is now shared between
+> lockdep and tracing. For lockdep, we have the following comment:
+>
+>         /*
+>          * IRQ from user mode.
+>          *
+>          * We need to tell lockdep that IRQs are off.  We can't do this until
+>          * we fix gsbase, and we should do it before enter_from_user_mode
+>          * (which can take locks).  Since TRACE_IRQS_OFF is idempotent,
+>          * the simplest way to handle it is to just call it twice if
+>          * we enter from user mode.  There's no reason to optimize this since
+>          * TRACE_IRQS_OFF is a no-op if lockdep is off.
+>          */
+>         TRACE_IRQS_OFF
+>
+>         CALL_enter_from_user_mode
+>
+> 1:
+>         ENTER_IRQ_STACK old_rsp=%rdi save_ret=1
+>         /* We entered an interrupt context - irqs are off: */
+>         TRACE_IRQS_OFF
+>
+> which seems to imply that lockdep requires TRACE_IRQS_OFF to be performed
+> _before_ entering from usermode. I don't expect this to be useful at all for
+> other tracers though. I think this should be replaced by a new e.g.
+> LOCKDEP_ENTER_FROM_USER_MODE or such which would call into lockdep without
+> calling other tracers.
 
-or hide it altogether in a macro like cast_to
+See the entry series I'm working on. Aside of moving all this nonsense
+into C-code it splits lockdep and tracing so it looks like this:
 
-#define cast_to(type, val)	\
-	etc...
+            lockdep_hardirqs_off();
+            user_exit_irqsoff();
+            __trace_hardirqs_off();
 
-where cast_to could do the appropriate
-intermediate cast if type is an enum
-and sizeof(tupeof val) is larger than int
+The latter uses regular RCU and not the scru/rcu_irq dance.
 
+>> Right, but that still does the whole rcu_irq dance especially in the
+>> entry code just to trace 50 or 100 instructions which are turning on RCU
+>> anyway.
+>
+> Agreed. Would changing this to a lockdep-specific call as I suggest above
+> solve this ?
 
+That split exist for a few weeks now at least in my patches :)
+
+>>> If a tracer recurses, or if a tracer attempts to trace another tracer, the
+>>> instrumentation would break the recursion chain by preventing instrumentation
+>>> from firing. If we end up caring about tracers tracing other tracers, we could
+>>> have one distinct flag per tracer and let each tracer break the recursion chain.
+>>>
+>>> Having this flag per kernel stack rather than per CPU or per thread would
+>>> allow tracing of nested interrupt handlers (and NMIs), but would break
+>>> call chains both within the same stack or going through a trap. I think
+>>> it could be a nice complementary safety net to handle mishaps in a non-fatal
+>>> way.
+>> 
+>> That works as long as none of this uses breakpoint based patching to
+>> dynamically disable/enable stuff.
+>
+> I'm clearly missing something here. I was expecting the "in_tracing" flag trick
+> to be able to fix the breakpoint recursion issue. What is the problem I'm missing
+> here ?
+
+How do you "fix" that when you can't reach the tracepoint because you
+trip over a breakpoint and then while trying to fixup that stuff you hit
+another one?
+
+Thanks,
+
+        tglx
