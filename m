@@ -2,91 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BCCF180C2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 00:17:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9637180C39
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 00:19:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbgCJXQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 19:16:52 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:38948 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbgCJXQv (ORCPT
+        id S1727733AbgCJXTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 19:19:04 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:42655 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726402AbgCJXTD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 19:16:51 -0400
-Received: by mail-pj1-f67.google.com with SMTP id d8so1097825pje.4
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 16:16:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zXg9Gj7QTUwpYvOhGlvMrbNF6i7eg/pUYIjVoM9j78w=;
-        b=m1sTUdtz0IBH4T58S0Qp8F887lOMFeQ6E3LwhmSyto0/XicAZGMKH/OdcvxBS/gioj
-         hpdgTy+8k2waNEDrL7V93U+BcQrXkOtW7w1AYTphgWutJGFtTIY3zpT15dtk3Y+co1p9
-         dCqpvzXMboOTnI8q3DAmcjPcZiP2ChNuhzxOw=
+        Tue, 10 Mar 2020 19:19:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583882342;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=z5sLqw2q00TFWFE2+/xEamSW6/qGE1IWWYINTtiDzeQ=;
+        b=ePT3ybQq7KlGmqxO6iw8fnPh7diSygkqL+zDJkDzSfoSPeRrt0z1uZYL9GJmmcxMWAgUIJ
+        bupMJEySk8dAf3qr+64zujsrYvGLpXGQ9rp6XYpGlIe8jtiYzdF5PjXzbscA/f6zq/oXu9
+        TuBg8tgx7poj6sxgV2q6pz6Ffz1K80w=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-183-d5Mcj0jsPY6nLI6SLsnx4A-1; Tue, 10 Mar 2020 19:18:58 -0400
+X-MC-Unique: d5Mcj0jsPY6nLI6SLsnx4A-1
+Received: by mail-ed1-f69.google.com with SMTP id y35so196404ede.4
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 16:18:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zXg9Gj7QTUwpYvOhGlvMrbNF6i7eg/pUYIjVoM9j78w=;
-        b=N6nJCQ9UCN/+sl58qG2vSoQizC+IFcQ/Vq2Gy5iS2jS58kCALx77XP61pTsFQF5JC3
-         djeN9a51247222e7G09fEgml2PRooLezF/Fbsk84kf/hcJy9MjL1n+qhyefJ9Jrv3+LH
-         NTkCzFgf0P7nY3Z9V6dsVpbm+KBTQ0w0+IpD0JIq5Pn15DpAIxoDeOk/znAseOQ6X4Vh
-         IwBqMRPoGN3jbysu6deh5Y/6S/QWDkMVuUbWsLqvVygslfHa4ZWIXnokK4T31XhLqRbN
-         sfTULcM7vz9E/ImCqW0bvRVGUukeaA9qm5MQiss9C6r7v+Mp7dduSheQwca+fT7Zz2MO
-         W9Fw==
-X-Gm-Message-State: ANhLgQ1OlB/8iHEb/erM8uYSupy8fg24RG+pVY+KYY+vomSXjNHvtYPR
-        NTVsy4jLSB+dZAewPa+RzeRvDA==
-X-Google-Smtp-Source: ADFU+vua2DRqzHPDCg1h0WaWa5jUQRYxfdS9IEm3qlPlei+YNlP5TOn8cJF3gz2OQRyZ5zwlg/XAUQ==
-X-Received: by 2002:a17:90b:438d:: with SMTP id in13mr333664pjb.114.1583882210644;
-        Tue, 10 Mar 2020 16:16:50 -0700 (PDT)
-Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id 15sm43071797pfp.125.2020.03.10.16.16.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 10 Mar 2020 16:16:50 -0700 (PDT)
-From:   Evan Green <evgreen@chromium.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Evan Green <evgreen@chromium.org>, Andy Gross <agross@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: sc7180: Include interconnect definitions
-Date:   Tue, 10 Mar 2020 16:16:29 -0700
-Message-Id: <20200310161502.1.Ia2884ed3c8826f52fbd5dcfa7a376a2fac4f31e6@changeid>
-X-Mailer: git-send-email 2.24.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z5sLqw2q00TFWFE2+/xEamSW6/qGE1IWWYINTtiDzeQ=;
+        b=gm/UUwTjllxqKE9Y+UMdxIbDfwIb7rM+EfVnI7yAb44dW0K1VpeTkSgbCCfuq5NDjC
+         Af9rJH0ghKhNdhV2Se9siD4/rd7iWxWKer9c/TW9QQiH3/2XUjNyLpnps50PbRx5oK6W
+         tEmdkk0oYmkUQ5OIgZEd4VC6a4MDtzKjnY3ThmxRIB2l7OJt1XptY3j+yeiaRLdwChXp
+         tjNZrdqBo2dY0w06d0R2IzqNla/aHKi3auxD0C8bmnnpJcAjn0tTKXdufbUOmCN2IFyo
+         Se2Xe/B5qfWxVMFsTbsQamhs7sGQzxE5WbEaBdl9SJb48n/IC7gpL+vxM+3HEHtlse7E
+         pvzQ==
+X-Gm-Message-State: ANhLgQ1F1wqreo4FldhAW/URD+mBbjluBSJuAhbV/N3JwhHBX1znMvKx
+        A9c4z3pkBmb+NVCsVJkXQw+y/LjW9jwm/rh3xa6Sv2fOwc0vASf4GqQTXoqYixTaCIh7j+ZigmK
+        e+IhLY6H2U9qjDNkhAY9pbnvlKnZzxHPbUnOmoVtL
+X-Received: by 2002:a17:907:262a:: with SMTP id aq10mr12415669ejc.377.1583882337422;
+        Tue, 10 Mar 2020 16:18:57 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vstjHqiZOF0xElis+31S7G0gY2aH73JLw/AluJvKeWmdJcJyHfoWoeERc+w0Ht0pyWZgseKXsqtbLAkFkQLxyM=
+X-Received: by 2002:a17:907:262a:: with SMTP id aq10mr12415648ejc.377.1583882337100;
+ Tue, 10 Mar 2020 16:18:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200310223516.102758-1-mcroce@redhat.com> <d473061b-688f-f4a6-c0e8-61c22b8a2b10@cloud.ionos.com>
+In-Reply-To: <d473061b-688f-f4a6-c0e8-61c22b8a2b10@cloud.ionos.com>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Wed, 11 Mar 2020 00:18:21 +0100
+Message-ID: <CAGnkfhwjXN_T09MsD1e6P95gUqxCbWL7BcOLSy16_QOZsZKbgQ@mail.gmail.com>
+Subject: Re: [PATCH v2] block: refactor duplicated macros
+To:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Cc:     linux-block@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-bcache@vger.kernel.org,
+        linux-raid <linux-raid@vger.kernel.org>,
+        linux-mmc@vger.kernel.org,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-nfs@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Song Liu <song@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Re-introduce the include of the sc7180 interconnect node name
-definitions. Though this was part of v5 of the interconnect provider
-series [1], it was dropped because the DT changes went through a
-different tree than the header. Re-add that now.
+On Wed, Mar 11, 2020 at 12:10 AM Guoqing Jiang
+<guoqing.jiang@cloud.ionos.com> wrote:
+>
+>
+>
+> On 3/10/20 11:35 PM, Matteo Croce wrote:
+> > +++ b/drivers/md/raid1.c
+> > @@ -2129,7 +2129,7 @@ static void process_checks(struct r1bio *r1_bio)
+> >       int vcnt;
+> >
+> >       /* Fix variable parts of all bios */
+> > -     vcnt = (r1_bio->sectors + PAGE_SIZE / 512 - 1) >> (PAGE_SHIFT - 9);
+> > +     vcnt = (r1_bio->sectors + PAGE_SECTORS - 1) >> (PAGE_SHIFT - 9);
+>
+> Maybe replace "PAGE_SHIFT - 9" with "PAGE_SECTORS_SHIFT" too.
+>
+> Thanks,
+> Guoqing
+>
 
-Interconnect clients being introduced can reference this patch as a
-dependency, rather than racing each other to add the include.
+Wow, there are a lot of them!
 
-[1] https://patchwork.kernel.org/patch/11417989/
+$ git grep -c 'PAGE_SHIFT - 9'
+arch/ia64/include/asm/pgtable.h:2
+block/blk-settings.c:2
+block/partition-generic.c:1
+drivers/md/dm-table.c:1
+drivers/md/raid1.c:1
+drivers/md/raid10.c:1
+drivers/md/raid5-cache.c:5
+drivers/md/raid5.h:1
+drivers/nvme/host/fc.c:1
+drivers/nvme/target/loop.c:1
+fs/erofs/internal.h:1
+fs/ext2/dir.c:1
+fs/libfs.c:1
+fs/nilfs2/dir.c:1
+mm/page_io.c:2
+mm/swapfile.c:6
 
-Signed-off-by: Evan Green <evgreen@chromium.org>
----
-
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index 89ba01246f95b..eb5a527da685a 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -10,6 +10,7 @@
- #include <dt-bindings/clock/qcom,gpucc-sc7180.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/clock/qcom,videocc-sc7180.h>
-+#include <dt-bindings/interconnect/qcom,sc7180.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/phy/phy-qcom-qusb2.h>
- #include <dt-bindings/power/qcom-aoss-qmp.h>
 -- 
-2.24.1
+Matteo Croce
+per aspera ad upstream
 
