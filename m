@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6776917F9B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:59:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BFBC17F984
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:57:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbgCJM7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:59:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39480 "EHLO mail.kernel.org"
+        id S1727917AbgCJM5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:57:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729995AbgCJM7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:59:07 -0400
+        id S1728024AbgCJM50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:57:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F39FA2468D;
-        Tue, 10 Mar 2020 12:59:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D02624694;
+        Tue, 10 Mar 2020 12:57:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845147;
-        bh=sKWT9C6S3r2RGpbAtBeNneIuanNERDEEBk/3vOnT6T8=;
+        s=default; t=1583845046;
+        bh=CRPQnmQX8v9UbMLLUzvOypGMEqyXfDIldQelCKqdbLI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KJMV/NnuODWiE/qOik4ivy/O84HqKXHiuFSiKSBfd1vCRaJtDaGSvxgUwgMu5gbNh
-         MGssBn7pMLZkJiq/RIdV/NhZJ6c+09KNjmHYX4CHJ5RW5K7aGuQ46s8JNphTphyK1x
-         hiFDvzf+hjtsdvrYBuJrfnoBSfwhynVql/toWeGE=
+        b=CV3SRR7BQeCqVgfjuuz2dreSIny/ZhHY3K/cD8liXE652+V+slY9/Gd80KnQLk0b5
+         g51160eYfkVWEjpSre0dz5bdzrEOlPBQGDL2L0kWZ6cOZHJRDG+LkYf+ckR/OIR5tg
+         BFCrK522ksFDtu9vSqFuPUQNbZJiGT0OI0JtUwKQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hamdan Igbaria <hamdani@mellanox.com>,
-        Alex Vesker <valex@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
+        stable@vger.kernel.org, Jon Derrick <jonathan.derrick@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Shyjumon N <shyjumon.n@intel.com>,
+        Keith Busch <kbusch@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 041/189] net/mlx5: DR, Fix matching on vport gvmi
-Date:   Tue, 10 Mar 2020 13:37:58 +0100
-Message-Id: <20200310123643.628314647@linuxfoundation.org>
+Subject: [PATCH 5.5 043/189] nvme/pci: Add sleep quirk for Samsung and Toshiba drives
+Date:   Tue, 10 Mar 2020 13:38:00 +0100
+Message-Id: <20200310123643.822498031@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
 References: <20200310123639.608886314@linuxfoundation.org>
@@ -45,45 +46,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hamdan Igbaria <hamdani@mellanox.com>
+From: Shyjumon N <shyjumon.n@intel.com>
 
-[ Upstream commit 52d214976d4f64504c1bbb52d47b46a5a3d5ee42 ]
+[ Upstream commit 1fae37accfc5872af3905d4ba71dc6ab15829be7 ]
 
-Set vport gvmi in the tag, only when source gvmi is set in the bit mask.
+The Samsung SSD SM981/PM981 and Toshiba SSD KBG40ZNT256G on the Lenovo
+C640 platform experience runtime resume issues when the SSDs are kept in
+sleep/suspend mode for long time.
 
-Fixes: 26d688e3 ("net/mlx5: DR, Add Steering entry (STE) utilities")
-Signed-off-by: Hamdan Igbaria <hamdani@mellanox.com>
-Reviewed-by: Alex Vesker <valex@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+This patch applies the 'Simple Suspend' quirk to these configurations.
+With this patch, the issue had not been observed in a 1+ day test.
+
+Reviewed-by: Jon Derrick <jonathan.derrick@intel.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Shyjumon N <shyjumon.n@intel.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/steering/dr_ste.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/nvme/host/pci.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_ste.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_ste.c
-index c6c7d1defbd78..aade62a9ee5ce 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_ste.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_ste.c
-@@ -2307,7 +2307,9 @@ static int dr_ste_build_src_gvmi_qpn_tag(struct mlx5dr_match_param *value,
- 	struct mlx5dr_cmd_vport_cap *vport_cap;
- 	struct mlx5dr_domain *dmn = sb->dmn;
- 	struct mlx5dr_cmd_caps *caps;
-+	u8 *bit_mask = sb->bit_mask;
- 	u8 *tag = hw_ste->tag;
-+	bool source_gvmi_set;
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index bb5e13ad1aff2..ec4165e879163 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2747,6 +2747,18 @@ static unsigned long check_vendor_combination_bug(struct pci_dev *pdev)
+ 		    (dmi_match(DMI_BOARD_NAME, "PRIME B350M-A") ||
+ 		     dmi_match(DMI_BOARD_NAME, "PRIME Z370-A")))
+ 			return NVME_QUIRK_NO_APST;
++	} else if ((pdev->vendor == 0x144d && (pdev->device == 0xa801 ||
++		    pdev->device == 0xa808 || pdev->device == 0xa809)) ||
++		   (pdev->vendor == 0x1e0f && pdev->device == 0x0001)) {
++		/*
++		 * Forcing to use host managed nvme power settings for
++		 * lowest idle power with quick resume latency on
++		 * Samsung and Toshiba SSDs based on suspend behavior
++		 * on Coffee Lake board for LENOVO C640
++		 */
++		if ((dmi_match(DMI_BOARD_VENDOR, "LENOVO")) &&
++		     dmi_match(DMI_BOARD_NAME, "LNVNB161216"))
++			return NVME_QUIRK_SIMPLE_SUSPEND;
+ 	}
  
- 	DR_STE_SET_TAG(src_gvmi_qp, tag, source_qp, misc, source_sqn);
- 
-@@ -2328,7 +2330,8 @@ static int dr_ste_build_src_gvmi_qpn_tag(struct mlx5dr_match_param *value,
- 	if (!vport_cap)
- 		return -EINVAL;
- 
--	if (vport_cap->vport_gvmi)
-+	source_gvmi_set = MLX5_GET(ste_src_gvmi_qp, bit_mask, source_gvmi);
-+	if (vport_cap->vport_gvmi && source_gvmi_set)
- 		MLX5_SET(ste_src_gvmi_qp, tag, source_gvmi, vport_cap->vport_gvmi);
- 
- 	misc->source_eswitch_owner_vhca_id = 0;
+ 	return 0;
 -- 
 2.20.1
 
