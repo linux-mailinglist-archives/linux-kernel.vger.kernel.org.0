@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BFBC17F984
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:57:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A7DA17F898
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:49:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727917AbgCJM5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:57:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36980 "EHLO mail.kernel.org"
+        id S1728430AbgCJMtR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:49:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728024AbgCJM50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:57:26 -0400
+        id S1728421AbgCJMtL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:49:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D02624694;
-        Tue, 10 Mar 2020 12:57:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDF1D24696;
+        Tue, 10 Mar 2020 12:49:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845046;
-        bh=CRPQnmQX8v9UbMLLUzvOypGMEqyXfDIldQelCKqdbLI=;
+        s=default; t=1583844551;
+        bh=m1bj2nosYZ8MFQjvjfH7oDSog1qvxQmq/5hcWMEBSgM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CV3SRR7BQeCqVgfjuuz2dreSIny/ZhHY3K/cD8liXE652+V+slY9/Gd80KnQLk0b5
-         g51160eYfkVWEjpSre0dz5bdzrEOlPBQGDL2L0kWZ6cOZHJRDG+LkYf+ckR/OIR5tg
-         BFCrK522ksFDtu9vSqFuPUQNbZJiGT0OI0JtUwKQ=
+        b=QRoRE/26qU+aWSJVkOdqbIYIpAvWVHf5SiwcrRAoAT5iig6tTX91V2RxqP5wQhEan
+         3RaIOzuMojqsW6/oBwnJcD23N+9dj6RweO2EOFGm2btOXZOaWQ7Ig+MIsC2A5yWVeu
+         NrZ7XyxH5ZDW1GY6quZKFcLSrKJikCMuj3PSUQNA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Derrick <jonathan.derrick@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Shyjumon N <shyjumon.n@intel.com>,
-        Keith Busch <kbusch@kernel.org>,
+        stable@vger.kernel.org, Marek Vasut <marex@denx.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Lukas Wunner <lukas@wunner.de>, Petr Stetiar <ynezz@true.cz>,
+        YueHaibing <yuehaibing@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 043/189] nvme/pci: Add sleep quirk for Samsung and Toshiba drives
+Subject: [PATCH 5.4 034/168] net: ks8851-ml: Fix 16-bit IO operation
 Date:   Tue, 10 Mar 2020 13:38:00 +0100
-Message-Id: <20200310123643.822498031@linuxfoundation.org>
+Message-Id: <20200310123638.978739089@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,49 +46,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shyjumon N <shyjumon.n@intel.com>
+From: Marek Vasut <marex@denx.de>
 
-[ Upstream commit 1fae37accfc5872af3905d4ba71dc6ab15829be7 ]
+[ Upstream commit 58292104832fef6cb4a89f736012c0e0724c3442 ]
 
-The Samsung SSD SM981/PM981 and Toshiba SSD KBG40ZNT256G on the Lenovo
-C640 platform experience runtime resume issues when the SSDs are kept in
-sleep/suspend mode for long time.
+The Micrel KSZ8851-16MLLI datasheet DS00002357B page 12 states that
+BE[3:0] signals are active high. This contradicts the measurements
+of the behavior of the actual chip, where these signals behave as
+active low. For example, to read the CIDER register, the bus must
+expose 0xc0c0 during the address phase, which means BE[3:0]=4'b1100.
 
-This patch applies the 'Simple Suspend' quirk to these configurations.
-With this patch, the issue had not been observed in a 1+ day test.
-
-Reviewed-by: Jon Derrick <jonathan.derrick@intel.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Shyjumon N <shyjumon.n@intel.com>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Lukas Wunner <lukas@wunner.de>
+Cc: Petr Stetiar <ynezz@true.cz>
+Cc: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/pci.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/net/ethernet/micrel/ks8851_mll.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index bb5e13ad1aff2..ec4165e879163 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2747,6 +2747,18 @@ static unsigned long check_vendor_combination_bug(struct pci_dev *pdev)
- 		    (dmi_match(DMI_BOARD_NAME, "PRIME B350M-A") ||
- 		     dmi_match(DMI_BOARD_NAME, "PRIME Z370-A")))
- 			return NVME_QUIRK_NO_APST;
-+	} else if ((pdev->vendor == 0x144d && (pdev->device == 0xa801 ||
-+		    pdev->device == 0xa808 || pdev->device == 0xa809)) ||
-+		   (pdev->vendor == 0x1e0f && pdev->device == 0x0001)) {
-+		/*
-+		 * Forcing to use host managed nvme power settings for
-+		 * lowest idle power with quick resume latency on
-+		 * Samsung and Toshiba SSDs based on suspend behavior
-+		 * on Coffee Lake board for LENOVO C640
-+		 */
-+		if ((dmi_match(DMI_BOARD_VENDOR, "LENOVO")) &&
-+		     dmi_match(DMI_BOARD_NAME, "LNVNB161216"))
-+			return NVME_QUIRK_SIMPLE_SUSPEND;
- 	}
+diff --git a/drivers/net/ethernet/micrel/ks8851_mll.c b/drivers/net/ethernet/micrel/ks8851_mll.c
+index 5ae206ae5d2b3..1c9e70c8cc30f 100644
+--- a/drivers/net/ethernet/micrel/ks8851_mll.c
++++ b/drivers/net/ethernet/micrel/ks8851_mll.c
+@@ -166,7 +166,7 @@ static int msg_enable;
  
- 	return 0;
+ static u16 ks_rdreg16(struct ks_net *ks, int offset)
+ {
+-	ks->cmd_reg_cache = (u16)offset | ((BE1 | BE0) << (offset & 0x02));
++	ks->cmd_reg_cache = (u16)offset | ((BE3 | BE2) >> (offset & 0x02));
+ 	iowrite16(ks->cmd_reg_cache, ks->hw_addr_cmd);
+ 	return ioread16(ks->hw_addr);
+ }
+@@ -181,7 +181,7 @@ static u16 ks_rdreg16(struct ks_net *ks, int offset)
+ 
+ static void ks_wrreg16(struct ks_net *ks, int offset, u16 value)
+ {
+-	ks->cmd_reg_cache = (u16)offset | ((BE1 | BE0) << (offset & 0x02));
++	ks->cmd_reg_cache = (u16)offset | ((BE3 | BE2) >> (offset & 0x02));
+ 	iowrite16(ks->cmd_reg_cache, ks->hw_addr_cmd);
+ 	iowrite16(value, ks->hw_addr);
+ }
 -- 
 2.20.1
 
