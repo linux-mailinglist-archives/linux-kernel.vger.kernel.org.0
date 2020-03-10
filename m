@@ -2,223 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A78DE17F53B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 11:41:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04E9617F549
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 11:44:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726385AbgCJKlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 06:41:52 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46069 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbgCJKlv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 06:41:51 -0400
-Received: by mail-lj1-f196.google.com with SMTP id e18so13495182ljn.12
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 03:41:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=0vZawaTqWCz2V8Z7mamXXKPhhUtkT0sw/sdFRGO2vlw=;
-        b=rfN6Lx7BOmqQhhOcLZn74EbzqdvStmveWhgz/2wPqRS6Vsou7fptHHWEIrnS4TE5yp
-         JTpNP9cVTh9+ScV8dItrwHNxAxXeH2M366CwIpOP/wfCYI8Lr6gWHzuSx2wtV3+CotGf
-         vS8wvdPooB2/guIp7F2u9RYKDRt/5+8VJfG61EPWc1IiA6LEanZkA62sFK/IyPHDj3c4
-         XISld2tme2+mLRcphKCh3phxQo89djJLpcsShu4ldtlDr+zRUmlW7K6sHnBNcoi5Waik
-         td79ng96wZGYcrIub2d9UrMG4QLXkEFBlTDCdk8EaNGbiEKhTJBuuRRONadmzh/i9mG0
-         Nigw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=0vZawaTqWCz2V8Z7mamXXKPhhUtkT0sw/sdFRGO2vlw=;
-        b=rERfqqY47m741s0nGuloNo5MEpDyJIqpz8KeNZBFCdpMYDRfatOP+OXil839K/8jHV
-         KuQmhXPo9yY7m3VCY8DXLxRia08kPuAeQfOwAdZcyX2n9FcijF9afpaWX0oGjqP0ngdP
-         ZuOTz42jTgyRFc9hXtXCGdyxZ1g/BpvGSjwdIc/hFikAv51PGTEW8E2rONqPZQzEHmwG
-         73bhNFxfwQ4X82T7Pdui4PbJ9ik/CJKipowDtL/xxq8krhWXm6HCQDRrbiADM+Ig64z7
-         JGJpOVlceZAlCsU6Kz7VZR0p4lUxRPp006pjPWO1wKoUvwP1MyJTM50s5XRB/hDo3pbX
-         Fy1g==
-X-Gm-Message-State: ANhLgQ2VGUGKFveM8EK7GCUBNPRI07ndVAl7n6fLA/ki6IJMLM4xJB0U
-        euKJ5g8XDuv7LQhRhRgMmChLmA==
-X-Google-Smtp-Source: ADFU+vtWe5qAVNKXwQBYPCtcvZJH5it9LZ15Lowysh7WzMF8KSRZeQGnQWR4Gbgv9g0YFkPOui+jIA==
-X-Received: by 2002:a2e:7c03:: with SMTP id x3mr12742730ljc.104.1583836909643;
-        Tue, 10 Mar 2020 03:41:49 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id h2sm2079300ljm.103.2020.03.10.03.41.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 03:41:48 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 27FEF1013FA; Tue, 10 Mar 2020 13:41:49 +0300 (+03)
-Date:   Tue, 10 Mar 2020 13:41:49 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     brookxu <brookxu.cn@gmail.com>, hannes@cmpxchg.org,
-        vdavydov.dev@gmail.com, akpm@linux-foundation.org,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2] memcg: fix NULL pointer dereference in
- __mem_cgroup_usage_unregister_event
-Message-ID: <20200310104149.5c3pc75y6ny5hixb@box>
-References: <077a6f67-aefa-4591-efec-f2f3af2b0b02@gmail.com>
- <20200310094836.GD8447@dhcp22.suse.cz>
+        id S1726273AbgCJKow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 06:44:52 -0400
+Received: from mga01.intel.com ([192.55.52.88]:10392 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726170AbgCJKow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 06:44:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 03:44:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,536,1574150400"; 
+   d="scan'208";a="415149407"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by orsmga005.jf.intel.com with ESMTP; 10 Mar 2020 03:44:49 -0700
+Subject: Re: [PATCH] mmc: mmc: Fix the timing for clock changing in mmc
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        "Seo, Kyungmin" <kyungmin.seo@intel.com>
+Cc:     Chaotian Jing <chaotian.jing@mediatek.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200212024220.GA32111@seokyung-mobl1>
+ <CAPDyKFr9H2XcgCk9AmHgJfHC+PySh66KxegMJ4yb4aqKSVt3kg@mail.gmail.com>
+ <BYAPR11MB269638142E2BF2C6E108B40A9CE20@BYAPR11MB2696.namprd11.prod.outlook.com>
+ <CAPDyKFr=hE6diZmaVy-os3rFScHe+8OphBS+edkVGK+Z-J_=HA@mail.gmail.com>
+ <BYAPR11MB2696D160D6F5B7C98E0503E79CFF0@BYAPR11MB2696.namprd11.prod.outlook.com>
+ <CAPDyKFqqDWMsHEb493p__FNzYaEzE6Ry0bkd-2ng7cdM886zjw@mail.gmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <5f3b8cb9-5e55-ee47-46e5-af019d6328b6@intel.com>
+Date:   Tue, 10 Mar 2020 12:44:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200310094836.GD8447@dhcp22.suse.cz>
+In-Reply-To: <CAPDyKFqqDWMsHEb493p__FNzYaEzE6Ry0bkd-2ng7cdM886zjw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 10:48:36AM +0100, Michal Hocko wrote:
-> [Cc Kirill, I didn't realize he has implemented this code]
-
-My first non-trivial mm contribution :P
-
-> On Fri 06-03-20 09:02:02, brookxu wrote:
-> > From: Chunguang Xu <brookxu@tencent.com>
-> > 
-> > An eventfd monitors multiple memory thresholds of the cgroup, closes them,
-> > the kernel deletes all events related to this eventfd. Before all events
-> > are deleted, another eventfd monitors the memory threshold of this cgroup,
-> > leading to a crash:
-> > 
-> > [  135.675108] BUG: kernel NULL pointer dereference, address: 0000000000000004
-> > [  135.675350] #PF: supervisor write access in kernel mode
-> > [  135.675579] #PF: error_code(0x0002) - not-present page
-> > [  135.675816] PGD 800000033058e067 P4D 800000033058e067 PUD 3355ce067 PMD 0
-> > [  135.676080] Oops: 0002 [#1] SMP PTI
-> > [  135.676332] CPU: 2 PID: 14012 Comm: kworker/2:6 Kdump: loaded Not tainted 5.6.0-rc4 #3
-> > [  135.676610] Hardware name: LENOVO 20AWS01K00/20AWS01K00, BIOS GLET70WW (2.24 ) 05/21/2014
-> > [  135.676909] Workqueue: events memcg_event_remove
-> > [  135.677192] RIP: 0010:__mem_cgroup_usage_unregister_event+0xb3/0x190
-> > [  135.677825] RSP: 0018:ffffb47e01c4fe18 EFLAGS: 00010202
-> > [  135.678186] RAX: 0000000000000001 RBX: ffff8bb223a8a000 RCX: 0000000000000001
-> > [  135.678548] RDX: 0000000000000001 RSI: ffff8bb22fb83540 RDI: 0000000000000001
-> > [  135.678912] RBP: ffffb47e01c4fe48 R08: 0000000000000000 R09: 0000000000000010
-> > [  135.679287] R10: 000000000000000c R11: 071c71c71c71c71c R12: ffff8bb226aba880
-> > [  135.679670] R13: ffff8bb223a8a480 R14: 0000000000000000 R15: 0000000000000000
-> > [  135.680066] FS:  0000000000000000(0000) GS:ffff8bb242680000(0000) knlGS:0000000000000000
-> > [  135.680475] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [  135.680894] CR2: 0000000000000004 CR3: 000000032c29c003 CR4: 00000000001606e0
-> > [  135.681325] Call Trace:
-> > [  135.681763]  memcg_event_remove+0x32/0x90
-> > [  135.682209]  process_one_work+0x172/0x380
-> > [  135.682657]  worker_thread+0x49/0x3f0
-> > [  135.683111]  kthread+0xf8/0x130
-> > [  135.683570]  ? max_active_store+0x80/0x80
-> > [  135.684034]  ? kthread_bind+0x10/0x10
-> > [  135.684506]  ret_from_fork+0x35/0x40
-> > [  135.689733] CR2: 0000000000000004
-> > 
-> > We can reproduce this problem in the following ways:
-> >  
-> > 1. We create a new cgroup subdirectory and a new eventfd, and then we
-> >    monitor multiple memory thresholds of the cgroup through this eventfd.
-> > 2. closing this eventfd, and __mem_cgroup_usage_unregister_event () will be
-> >    called multiple times to delete all events related to this eventfd.
-> > 
-> > The first time __mem_cgroup_usage_unregister_event() is called, the kernel
-> > will clear all items related to this eventfd in thresholds-> primary.Since
-> > there is currently only one eventfd, thresholds-> primary becomes empty,
-> > so the kernel will set thresholds-> primary and hresholds-> spare to NULL.
-
-						    ^ typo
-
-> > If at this time, the user creates a new eventfd and monitor the memory
-> > threshold of this cgroup, kernel will re-initialize thresholds-> primary.
-> > Then when __mem_cgroup_usage_unregister_event () is called for the second
-> > time, because thresholds-> primary is not empty, the system will access
-> > thresholds-> spare, but thresholds-> spare is NULL, which will trigger a
-> > crash.
-> > 
-> > In general, the longer it takes to delete all events related to this
-> > eventfd, the easier it is to trigger this problem.
-> > 
-> > The solution is to check whether the thresholds associated with the eventfd
-> > has been cleared when deleting the event. If so, we do nothing.
-> > 
-> > Signed-off-by: Chunguang Xu <brookxu@tencent.com>
+On 10/03/20 11:05 am, Ulf Hansson wrote:
+> On Tue, 10 Mar 2020 at 05:28, Seo, Kyungmin <kyungmin.seo@intel.com> wrote:
+>>
+>> I read the link and patch of Chaotian Jing.
+>> I also point out what Chaotian said.
+>> Most host controllers have DLL tuning values for each mode. When host controller is set as HS400 mode with 50MHz clock, host controller uses DLL value which is tuned with 200MHz clock.
+>>
+>> If DLL value in HS400 mode doesn't have the pass range in HS mode, command transfer failing may fail.
+>> In order to make robust sdhci driver, I think the patch needs to be considered.
 > 
-> The fix looks reasonable to me
-> Acked-by: Michal Hocko <mhocko@suse.com>
+> I have, but I am not picking it up in its current form.
+> 
+>> Of course, CMD6 with HS400 mode and 200MHz clock should not cause any problem because it's correct configuration.
+> 
+> Yes, but not for all cases, as I said in my reply in those email-threads.
+> 
+> What I had in mind, is that I I think we should inform
+> mmc_hs400_to_hs200() about under what situation it's getting called.
+> Depending on that, we should either decrease the clock rate before or
+> after we send the CMD6.
+> 
+> Would that work for your case?
 
-Agreed. Two typos have to be addressed.
+Ulf, would you consider a new call back e.g.
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index c2abd417a84a..1bc18fe2632f 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1237,7 +1237,10 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
+ 
+ 	/* Reduce frequency to HS */
+ 	max_dtr = card->ext_csd.hs_max_dtr;
+-	mmc_set_clock(host, max_dtr);
++	if (host->ops->hs400_to_hs200_prep)
++		host->ops->hs400_to_hs200_prep(host, max_dtr);
++	else
++		mmc_set_clock(host, max_dtr);
+ 
+ 	/* Switch HS400 to HS DDR */
+ 	val = EXT_CSD_TIMING_HS;
 
-> It seems that the code has been broken since 2c488db27b61 ("memcg: clean
-> up memory thresholds"). We've had 371528caec55 ("mm: memcg: Correct
-> unregistring of events attached to the same eventfd") but it didn't
-> catch this case for some reason. Unless I am missing something the code
-> was broken back then already. Kirill please double check after me.
-
-I think the issue exitsted before 2c488db27b61. The fields had different
-names back then.
-
-The logic to make unregister never-fail is added in 907860ed381a
-("cgroups: make cftype.unregister_event() void-returning"). I believe the
-Fixes should point there.
 
 > 
-> So if I am not wrong then we want
-> Fixes: 2c488db27b61 ("memcg: clean up memory thresholds")
-> Cc: stable
+> Kind regards
+> Uffe
 > 
-> sounds appropriate because this seems to be user trigerable.
-> 
-> Thanks for preparing the patch!
-> 
-> Btw. you should double check your email sender because it seemed to
-> whitespace damaged the patch (\t -> spaces). Please use git send-email
-> instead.
-> 
-> > ---
-> >  mm/memcontrol.c | 10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index d09776c..4575a58 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -4027,7 +4027,7 @@ static void __mem_cgroup_usage_unregister_event(struct mem_cgroup *memcg,
-> >      struct mem_cgroup_thresholds *thresholds;
-> >      struct mem_cgroup_threshold_ary *new;
-> >      unsigned long usage;
-> > -    int i, j, size;
-> > +    int i, j, size, entries;
-> >  
-> >      mutex_lock(&memcg->thresholds_lock);
-> >  
-> > @@ -4047,12 +4047,18 @@ static void __mem_cgroup_usage_unregister_event(struct mem_cgroup *memcg,
-> >      __mem_cgroup_threshold(memcg, type == _MEMSWAP);
-> >  
-> >      /* Calculate new number of threshold */
-> > -    size = 0;
-> > +    size = entries = 0;
-> >      for (i = 0; i < thresholds->primary->size; i++) {
-> >          if (thresholds->primary->entries[i].eventfd != eventfd)
-> >              size++;
-> > +        else
-> > +            entries++;
-> >      }
-> >  
-> > +    /* If items related to eventfd have been cleared, nothing to do */
+>>
+>> Thanks
+>>
+>> -----Original Message-----
+>> From: Ulf Hansson <ulf.hansson@linaro.org>
+>> Sent: Friday, March 6, 2020 12:18 AM
+>> To: Seo, Kyungmin <kyungmin.seo@intel.com>; Hunter, Adrian <adrian.hunter@intel.com>; Chaotian Jing <chaotian.jing@mediatek.com>
+>> Cc: linux-mmc@vger.kernel.org; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+>> Subject: Re: [PATCH] mmc: mmc: Fix the timing for clock changing in mmc
+>>
+>> + Adrian, Chaotian
+>>
+>> On Thu, 5 Mar 2020 at 09:57, Seo, Kyungmin <kyungmin.seo@intel.com> wrote:
+>>>
+>>> The mmc_hs400_to_hs200 function is called only in HS400 mode.
+>>> I saw the clock change from 200MHz to 52MHz via oscilloscope on real platform.
+>>>
+>>> I think CMD6 is sent in HS400 mode with 200MHz clock, but it's not.
+>>> First CMD6 in mmc_hs400_to_hs200 function is sent with 52MHz clock.
+>>
+>> I had a vague memory that we have discussed a similar problem as your are pointing out on the mailing list already. And I was right.
+>>
+>> Please read up on the below references, [1], [2] for the earlier discussions. I suggested a solution for Chaotian to try, but it seems like he never managed to give it a go, as I don't recall new patch being posted.
+>>
+>> Perhaps you can pick up were Chaotian left and see if you can implement the suggested solution(s). My main concern is breaking other host drivers, as that seems quite likely to happen, if we aren't careful about this.
+>>
+>> Kind regards
+>> Uffe
+>>
+>> [1]
+>> https://lore.kernel.org/linux-mmc/1548921212-5219-1-git-send-email-chaotian.jing@mediatek.com/
+>> [2]
+>> https://lore.kernel.org/linux-mmc/CAPDyKFquyyXx1MqNLVXuFxcEDB9nKzN8LGGNUP2yxoVMQrWiUg@mail.gmail.com/
+>>
+>>
+>>
+>>>
+>>> Thanks
+>>> KM
+>>>
+>>> -----Original Message-----
+>>> From: Ulf Hansson <ulf.hansson@linaro.org>
+>>> Sent: Wednesday, March 4, 2020 8:09 PM
+>>> To: Seo, Kyungmin <kyungmin.seo@intel.com>
+>>> Cc: linux-mmc@vger.kernel.org; Linux Kernel Mailing List
+>>> <linux-kernel@vger.kernel.org>
+>>> Subject: Re: [PATCH] mmc: mmc: Fix the timing for clock changing in
+>>> mmc
+>>>
+>>> On Wed, 12 Feb 2020 at 03:40, Kyungmin Seo <kyungmin.seo@intel.com> wrote:
+>>>>
+>>>> The clock has to be changed after sending CMD6 for HS mode selection
+>>>> in
+>>>> mmc_hs400_to_hs200() function.
+>>>>
+>>>> The JEDEC 5.0 and 5.1 said that "High-speed" mode selection has to
+>>>> enable the the high speed mode timing in the Device, before chaning
+>>>> the clock frequency to a frequency between 26MHz and 52MHz.
+>>>
+>>> I think that is based upon the assumption that you are using a lower frequency to start with.
+>>>
+>>> For example, assume that you are running with 400KHz during card initialization, then you want to send the CMD6 to switch to HS mode and that should be done, before updating the clock rate.
+>>>
+>>> mmc_hs400_to_hs200() goes the opposite direction, so I think the current code looks correct to me.
+>>>
+>>> Kind regards
+>>> Uffe
+>>>
+>>>>
+>>>> Signed-off-by: Kyungmin Seo <kyungmin.seo@intel.com>
+>>>> ---
+>>>>  drivers/mmc/core/mmc.c | 8 ++++----
+>>>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c index
+>>>> 3486bc7fbb64..98640b51c73e 100644
+>>>> --- a/drivers/mmc/core/mmc.c
+>>>> +++ b/drivers/mmc/core/mmc.c
+>>>> @@ -1196,10 +1196,6 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
+>>>>         int err;
+>>>>         u8 val;
+>>>>
+>>>> -       /* Reduce frequency to HS */
+>>>> -       max_dtr = card->ext_csd.hs_max_dtr;
+>>>> -       mmc_set_clock(host, max_dtr);
+>>>> -
+>>>>         /* Switch HS400 to HS DDR */
+>>>>         val = EXT_CSD_TIMING_HS;
+>>>>         err = __mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+>>>> EXT_CSD_HS_TIMING, @@ -1210,6 +1206,10 @@ int
+>>>> mmc_hs400_to_hs200(struct mmc_card *card)
+>>>>
+>>>>         mmc_set_timing(host, MMC_TIMING_MMC_DDR52);
+>>>>
+>>>> +       /* Reduce frequency to HS */
+>>>> +       max_dtr = card->ext_csd.hs_max_dtr;
+>>>> +       mmc_set_clock(host, max_dtr);
+>>>> +
+>>>>         err = mmc_switch_status(card);
+>>>>         if (err)
+>>>>                 goto out_err;
+>>>> --
+>>>> 2.17.1
+>>>>
 
-	       ^ "no items" ?
-
-> > +    if (!entries)
-> > +        goto unlock;
-> > +
-> >      new = thresholds->spare;
-> >  
-> >      /* Set thresholds array to NULL if we don't have thresholds */
-> > -- 
-> > 1.8.3.1
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
-
--- 
- Kirill A. Shutemov
