@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCA4A17F826
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:45:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ED0617F9C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:59:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727931AbgCJMpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:45:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48130 "EHLO mail.kernel.org"
+        id S1727210AbgCJM7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:59:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727559AbgCJMp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:45:29 -0400
+        id S1727175AbgCJM7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:59:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2227A246A2;
-        Tue, 10 Mar 2020 12:45:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23AC32467D;
+        Tue, 10 Mar 2020 12:59:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844328;
-        bh=+cAswMxICauY55nftB9OIrbu+ADdoLTyXUMn+AqHzDc=;
+        s=default; t=1583845187;
+        bh=MXln7nZqWGaCBLy6dtD8fUgYZiJwCNGm/S6MIDZKz0A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Msfsk2f7E3DvBE5IJ0AbBRHBmviI/nt4g/qM6BWJXA/OoWf57ImnEIpOaKRF8zYiF
-         LJW5UyeVAkuj4uzZeFpAyNAQMOFgf81d+ex34MVWxJsDqUnp9/7SmeXbLsrM6AvDUd
-         nBKKqFS7caJRJ0faSzXenI/potrZ2otAtl5feOnI=
+        b=MB4yEg/jG2a36gCjYWb5SFr1TVEsdakOD5KRM7j2b9m3or+DPsTCl3z36B8NUK3X0
+         o2r+XtBqmNsJcxtbxvWZ73QiGVGhJ3KnPszNb5BOP3uPSZOgjH0/M/bvrS5zCfF8PY
+         sIRvxdLX+nDKN4gj9YaG26H2xFDXuRkWeW4Lj0kk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>
-Subject: [PATCH 4.9 42/88] namei: only return -ECHILD from follow_dotdot_rcu()
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 5.5 093/189] vt: selection, push console lock down
 Date:   Tue, 10 Mar 2020 13:38:50 +0100
-Message-Id: <20200310123616.295697790@linuxfoundation.org>
+Message-Id: <20200310123649.111221683@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +42,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aleksa Sarai <cyphar@cyphar.com>
+From: Jiri Slaby <jslaby@suse.cz>
 
-commit 2b98149c2377bff12be5dd3ce02ae0506e2dd613 upstream.
+commit 4b70dd57a15d2f4685ac6e38056bad93e81e982f upstream.
 
-It's over-zealous to return hard errors under RCU-walk here, given that
-a REF-walk will be triggered for all other cases handling ".." under
-RCU.
+We need to nest the console lock in sel_lock, so we have to push it down
+a bit. Fortunately, the callers of set_selection_* just lock the console
+lock around the function call. So moving it down is easy.
 
-The original purpose of this check was to ensure that if a rename occurs
-such that a directory is moved outside of the bind-mount which the
-resolution started in, it would be detected and blocked to avoid being
-able to mess with paths outside of the bind-mount. However, triggering a
-new REF-walk is just as effective a solution.
+In the next patch, we switch the order.
 
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Fixes: 397d425dc26d ("vfs: Test for and handle paths that are unreachable from their mnt_root")
-Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Fixes: 07e6124a1a46 ("vt: selection, close sel_buffer race")
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200228115406.5735-1-jslaby@suse.cz
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namei.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/speakup/selection.c |    2 --
+ drivers/tty/vt/selection.c          |   13 ++++++++++++-
+ drivers/tty/vt/vt.c                 |    2 --
+ 3 files changed, 12 insertions(+), 5 deletions(-)
 
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1370,7 +1370,7 @@ static int follow_dotdot_rcu(struct name
- 			nd->path.dentry = parent;
- 			nd->seq = seq;
- 			if (unlikely(!path_connected(&nd->path)))
--				return -ENOENT;
-+				return -ECHILD;
+--- a/drivers/staging/speakup/selection.c
++++ b/drivers/staging/speakup/selection.c
+@@ -51,9 +51,7 @@ static void __speakup_set_selection(stru
+ 		goto unref;
+ 	}
+ 
+-	console_lock();
+ 	set_selection_kernel(&sel, tty);
+-	console_unlock();
+ 
+ unref:
+ 	tty_kref_put(tty);
+--- a/drivers/tty/vt/selection.c
++++ b/drivers/tty/vt/selection.c
+@@ -181,7 +181,7 @@ int set_selection_user(const struct tioc
+ 	return set_selection_kernel(&v, tty);
+ }
+ 
+-int set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
++static int __set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
+ {
+ 	struct vc_data *vc = vc_cons[fg_console].d;
+ 	int new_sel_start, new_sel_end, spc;
+@@ -343,6 +343,17 @@ unlock:
+ 	mutex_unlock(&sel_lock);
+ 	return ret;
+ }
++
++int set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
++{
++	int ret;
++
++	console_lock();
++	ret = __set_selection_kernel(v, tty);
++	console_unlock();
++
++	return ret;
++}
+ EXPORT_SYMBOL_GPL(set_selection_kernel);
+ 
+ /* Insert the contents of the selection buffer into the
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -3046,10 +3046,8 @@ int tioclinux(struct tty_struct *tty, un
+ 	switch (type)
+ 	{
+ 		case TIOCL_SETSEL:
+-			console_lock();
+ 			ret = set_selection_user((struct tiocl_selection
+ 						 __user *)(p+1), tty);
+-			console_unlock();
  			break;
- 		} else {
- 			struct mount *mnt = real_mount(nd->path.mnt);
+ 		case TIOCL_PASTESEL:
+ 			ret = paste_selection(tty);
 
 
