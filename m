@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0D2017F79E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:41:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B85A317F822
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:45:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbgCJMk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:40:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39978 "EHLO mail.kernel.org"
+        id S1727609AbgCJMpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:45:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726546AbgCJMkz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:40:55 -0400
+        id S1727902AbgCJMpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:45:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B27CD24686;
-        Tue, 10 Mar 2020 12:40:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45A5724695;
+        Tue, 10 Mar 2020 12:45:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844054;
-        bh=Vb2UgYu0Ir6IG1p3YKoPDtZyl4TlgfSjETolv+Zmf04=;
+        s=default; t=1583844318;
+        bh=yPOMweMTvIVMEebzEEQEwUamvdvERBXJ4zun5+Ygmr0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HQaKLhjuYMT/yncRKpfICexS1YiJyJ+5T0S/g1QfEoJgSeZn10KZ+e36AP3jBipkU
-         0jkhs8jqbPkQIh5YkTBEfMx4xuGg9peoMArKXGooyxJZ3n4vJGLkQeSPX/IXIGbsjw
-         tN+csfixQvYo/W6pGNZzx3eq50pAd6leaXznj1Ac=
+        b=R/WbbnqlYh3hRMQsU78l0rvvTwKi+60FbIcx4cW30axF7YzSlGz8yxrL+Gqn1m3LU
+         HNadpo/y0MxxOhrbVlXYfFZ3oYpq4LNRZ/wpKR0FcFwaWKfOrvVK/H3HrepCps5yDw
+         HW5pTITjz+AQj2k6jAfLjknhr09aAslqu3X/nD/c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Suraj Jitindar Singh <surajjs@amazon.com>,
-        Theodore Tso <tytso@mit.edu>, Balbir Singh <sblbir@amazon.com>,
-        stable@kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 04/72] ext4: fix potential race between s_group_info online resizing and access
+        stable@vger.kernel.org, Lars Melin <larsm17@gmail.com>,
+        Aleksander Morgado <aleksander@aleksander.es>,
+        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 09/88] qmi_wwan: re-add DW5821e pre-production variant
 Date:   Tue, 10 Mar 2020 13:38:17 +0100
-Message-Id: <20200310123602.554457819@linuxfoundation.org>
+Message-Id: <20200310123608.812657179@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
-References: <20200310123601.053680753@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,184 +46,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suraj Jitindar Singh <surajjs@amazon.com>
+From: Bjørn Mork <bjorn@mork.no>
 
-[ Upstream commit df3da4ea5a0fc5d115c90d5aa6caa4dd433750a7 ]
+[ Upstream commit 88bf54603f6f2c137dfee1abf6436ceac3528d2d ]
 
-During an online resize an array of pointers to s_group_info gets replaced
-so it can get enlarged. If there is a concurrent access to the array in
-ext4_get_group_info() and this memory has been reused then this can lead to
-an invalid memory access.
+Commit f25e1392fdb5 removed the support for the pre-production variant
+of the Dell DW5821e to avoid probing another USB interface unnecessarily.
+However, the pre-production samples are found in the wild, and this lack
+of support is causing problems for users of such samples.  It is therefore
+necessary to support both variants.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206443
-Link: https://lore.kernel.org/r/20200221053458.730016-3-tytso@mit.edu
-Signed-off-by: Suraj Jitindar Singh <surajjs@amazon.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Balbir Singh <sblbir@amazon.com>
-Cc: stable@kernel.org
+Matching on both interfaces 0 and 1 is not expected to cause any problem
+with either variant, as only the QMI function will be probed successfully
+on either.  Interface 1 will be rejected based on the HID class for the
+production variant:
+
+T:  Bus=01 Lev=03 Prnt=04 Port=00 Cnt=01 Dev#= 16 Spd=480 MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  2
+P:  Vendor=413c ProdID=81d7 Rev=03.18
+S:  Manufacturer=DELL
+S:  Product=DW5821e Snapdragon X20 LTE
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+I:  If#= 1 Alt= 0 #EPs= 1 Cls=03(HID  ) Sub=00 Prot=00 Driver=usbhid
+I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+
+And interface 0 will be rejected based on too few endpoints for the
+pre-production variant:
+
+T: Bus=01 Lev=02 Prnt=02 Port=03 Cnt=03 Dev#= 7 Spd=480 MxCh= 0
+D: Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs= 2
+P: Vendor=413c ProdID=81d7 Rev= 3.18
+S: Manufacturer=DELL
+S: Product=DW5821e Snapdragon X20 LTE
+S: SerialNumber=0123456789ABCDEF
+C: #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=500mA
+I: If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=
+I: If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+I: If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I: If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I: If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+
+Fixes: f25e1392fdb5 ("qmi_wwan: fix interface number for DW5821e production firmware")
+Link: https://whrl.pl/Rf0vNk
+Reported-by: Lars Melin <larsm17@gmail.com>
+Cc: Aleksander Morgado <aleksander@aleksander.es>
+Signed-off-by: Bjørn Mork <bjorn@mork.no>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/ext4.h    |  8 ++++----
- fs/ext4/mballoc.c | 52 +++++++++++++++++++++++++++++++----------------
- 2 files changed, 39 insertions(+), 21 deletions(-)
+ drivers/net/usb/qmi_wwan.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index e1f2d0499080e..ab0f08c89d5f1 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1363,7 +1363,7 @@ struct ext4_sb_info {
- #endif
- 
- 	/* for buddy allocator */
--	struct ext4_group_info ***s_group_info;
-+	struct ext4_group_info ** __rcu *s_group_info;
- 	struct inode *s_buddy_cache;
- 	spinlock_t s_md_lock;
- 	unsigned short *s_mb_offsets;
-@@ -2813,13 +2813,13 @@ static inline
- struct ext4_group_info *ext4_get_group_info(struct super_block *sb,
- 					    ext4_group_t group)
- {
--	 struct ext4_group_info ***grp_info;
-+	 struct ext4_group_info **grp_info;
- 	 long indexv, indexh;
- 	 BUG_ON(group >= EXT4_SB(sb)->s_groups_count);
--	 grp_info = EXT4_SB(sb)->s_group_info;
- 	 indexv = group >> (EXT4_DESC_PER_BLOCK_BITS(sb));
- 	 indexh = group & ((EXT4_DESC_PER_BLOCK(sb)) - 1);
--	 return grp_info[indexv][indexh];
-+	 grp_info = sbi_array_rcu_deref(EXT4_SB(sb), s_group_info, indexv);
-+	 return grp_info[indexh];
- }
- 
- /*
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index e15a5c5ddc096..fda49f4c5a8eb 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -2378,7 +2378,7 @@ int ext4_mb_alloc_groupinfo(struct super_block *sb, ext4_group_t ngroups)
- {
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	unsigned size;
--	struct ext4_group_info ***new_groupinfo;
-+	struct ext4_group_info ***old_groupinfo, ***new_groupinfo;
- 
- 	size = (ngroups + EXT4_DESC_PER_BLOCK(sb) - 1) >>
- 		EXT4_DESC_PER_BLOCK_BITS(sb);
-@@ -2391,13 +2391,16 @@ int ext4_mb_alloc_groupinfo(struct super_block *sb, ext4_group_t ngroups)
- 		ext4_msg(sb, KERN_ERR, "can't allocate buddy meta group");
- 		return -ENOMEM;
- 	}
--	if (sbi->s_group_info) {
--		memcpy(new_groupinfo, sbi->s_group_info,
-+	rcu_read_lock();
-+	old_groupinfo = rcu_dereference(sbi->s_group_info);
-+	if (old_groupinfo)
-+		memcpy(new_groupinfo, old_groupinfo,
- 		       sbi->s_group_info_size * sizeof(*sbi->s_group_info));
--		kvfree(sbi->s_group_info);
--	}
--	sbi->s_group_info = new_groupinfo;
-+	rcu_read_unlock();
-+	rcu_assign_pointer(sbi->s_group_info, new_groupinfo);
- 	sbi->s_group_info_size = size / sizeof(*sbi->s_group_info);
-+	if (old_groupinfo)
-+		ext4_kvfree_array_rcu(old_groupinfo);
- 	ext4_debug("allocated s_groupinfo array for %d meta_bg's\n", 
- 		   sbi->s_group_info_size);
- 	return 0;
-@@ -2409,6 +2412,7 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
- {
- 	int i;
- 	int metalen = 0;
-+	int idx = group >> EXT4_DESC_PER_BLOCK_BITS(sb);
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	struct ext4_group_info **meta_group_info;
- 	struct kmem_cache *cachep = get_groupinfo_cache(sb->s_blocksize_bits);
-@@ -2427,12 +2431,12 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
- 				 "for a buddy group");
- 			goto exit_meta_group_info;
- 		}
--		sbi->s_group_info[group >> EXT4_DESC_PER_BLOCK_BITS(sb)] =
--			meta_group_info;
-+		rcu_read_lock();
-+		rcu_dereference(sbi->s_group_info)[idx] = meta_group_info;
-+		rcu_read_unlock();
- 	}
- 
--	meta_group_info =
--		sbi->s_group_info[group >> EXT4_DESC_PER_BLOCK_BITS(sb)];
-+	meta_group_info = sbi_array_rcu_deref(sbi, s_group_info, idx);
- 	i = group & (EXT4_DESC_PER_BLOCK(sb) - 1);
- 
- 	meta_group_info[i] = kmem_cache_zalloc(cachep, GFP_NOFS);
-@@ -2480,8 +2484,13 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
- exit_group_info:
- 	/* If a meta_group_info table has been allocated, release it now */
- 	if (group % EXT4_DESC_PER_BLOCK(sb) == 0) {
--		kfree(sbi->s_group_info[group >> EXT4_DESC_PER_BLOCK_BITS(sb)]);
--		sbi->s_group_info[group >> EXT4_DESC_PER_BLOCK_BITS(sb)] = NULL;
-+		struct ext4_group_info ***group_info;
-+
-+		rcu_read_lock();
-+		group_info = rcu_dereference(sbi->s_group_info);
-+		kfree(group_info[idx]);
-+		group_info[idx] = NULL;
-+		rcu_read_unlock();
- 	}
- exit_meta_group_info:
- 	return -ENOMEM;
-@@ -2494,6 +2503,7 @@ static int ext4_mb_init_backend(struct super_block *sb)
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	int err;
- 	struct ext4_group_desc *desc;
-+	struct ext4_group_info ***group_info;
- 	struct kmem_cache *cachep;
- 
- 	err = ext4_mb_alloc_groupinfo(sb, ngroups);
-@@ -2528,11 +2538,16 @@ err_freebuddy:
- 	while (i-- > 0)
- 		kmem_cache_free(cachep, ext4_get_group_info(sb, i));
- 	i = sbi->s_group_info_size;
-+	rcu_read_lock();
-+	group_info = rcu_dereference(sbi->s_group_info);
- 	while (i-- > 0)
--		kfree(sbi->s_group_info[i]);
-+		kfree(group_info[i]);
-+	rcu_read_unlock();
- 	iput(sbi->s_buddy_cache);
- err_freesgi:
--	kvfree(sbi->s_group_info);
-+	rcu_read_lock();
-+	kvfree(rcu_dereference(sbi->s_group_info));
-+	rcu_read_unlock();
- 	return -ENOMEM;
- }
- 
-@@ -2720,7 +2735,7 @@ int ext4_mb_release(struct super_block *sb)
- 	ext4_group_t ngroups = ext4_get_groups_count(sb);
- 	ext4_group_t i;
- 	int num_meta_group_infos;
--	struct ext4_group_info *grinfo;
-+	struct ext4_group_info *grinfo, ***group_info;
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	struct kmem_cache *cachep = get_groupinfo_cache(sb->s_blocksize_bits);
- 
-@@ -2738,9 +2753,12 @@ int ext4_mb_release(struct super_block *sb)
- 		num_meta_group_infos = (ngroups +
- 				EXT4_DESC_PER_BLOCK(sb) - 1) >>
- 			EXT4_DESC_PER_BLOCK_BITS(sb);
-+		rcu_read_lock();
-+		group_info = rcu_dereference(sbi->s_group_info);
- 		for (i = 0; i < num_meta_group_infos; i++)
--			kfree(sbi->s_group_info[i]);
--		kvfree(sbi->s_group_info);
-+			kfree(group_info[i]);
-+		kvfree(group_info);
-+		rcu_read_unlock();
- 	}
- 	kfree(sbi->s_mb_offsets);
- 	kfree(sbi->s_mb_maxs);
+diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
+index de7b431fdd6b5..97f6b8130db33 100644
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -951,6 +951,7 @@ static const struct usb_device_id products[] = {
+ 	{QMI_FIXED_INTF(0x413c, 0x81b6, 8)},	/* Dell Wireless 5811e */
+ 	{QMI_FIXED_INTF(0x413c, 0x81b6, 10)},	/* Dell Wireless 5811e */
+ 	{QMI_FIXED_INTF(0x413c, 0x81d7, 0)},	/* Dell Wireless 5821e */
++	{QMI_FIXED_INTF(0x413c, 0x81d7, 1)},	/* Dell Wireless 5821e preproduction config */
+ 	{QMI_FIXED_INTF(0x413c, 0x81e0, 0)},	/* Dell Wireless 5821e with eSIM support*/
+ 	{QMI_FIXED_INTF(0x03f0, 0x4e1d, 8)},	/* HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module */
+ 	{QMI_FIXED_INTF(0x03f0, 0x9d1d, 1)},	/* HP lt4120 Snapdragon X5 LTE */
 -- 
 2.20.1
 
