@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F76F17F9A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:58:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ECE317F803
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:44:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728532AbgCJM6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:58:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38722 "EHLO mail.kernel.org"
+        id S1727725AbgCJMoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:44:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729743AbgCJM6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:58:36 -0400
+        id S1727264AbgCJMoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:44:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2A0024693;
-        Tue, 10 Mar 2020 12:58:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67F32246A3;
+        Tue, 10 Mar 2020 12:44:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845115;
-        bh=2HC14OJD8sm2GYzsUeOeNLtimAmjef6iXcyHaCfw8aE=;
+        s=default; t=1583844256;
+        bh=1UG6/K0ZXbloJbcRrJtGl0di2YcCGVylYoLcKEsDLJc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sCbs25/tdxw4GhX/54sog1Eubtpv+ss18ApPw2aaW9FAj6/iJAS16JariS1G258yU
-         J9X9gBNP3dRJBSzy3WX5sEaWxXUrs/+Aesyz99ORZMe3S6ZQOebYq3axxNdjBAjzld
-         3UIzhCCGX4pS0jKSJyLgurpuAifH8xPNMcA0hTEg=
+        b=qqW1o0FeVBC9KqCZSM8mPTk5NF1mzaozCbfpRlf7uQI+1mJ4fup9et/AMimKkeklE
+         oM6c91w1J6AzgCA4NQ80VGSULGq4aX1w0SaiQfmMOmVZd8FlRG7OrffVtqbFngVMSb
+         5U6YOEyST4KFV9wUk1uYy0dc7RabmFDsZdSEceKM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Saravana Kannan <saravanak@google.com>
-Subject: [PATCH 5.5 066/189] driver core: Call sync_state() even if supplier has no consumers
-Date:   Tue, 10 Mar 2020 13:38:23 +0100
-Message-Id: <20200310123646.283600281@linuxfoundation.org>
+        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
+        Arthur Kiyanovski <akiyano@amazon.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 16/88] net: ena: ena-com.c: prevent NULL pointer dereference
+Date:   Tue, 10 Mar 2020 13:38:24 +0100
+Message-Id: <20200310123610.229239968@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,94 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Saravana Kannan <saravanak@google.com>
+From: Arthur Kiyanovski <akiyano@amazon.com>
 
-commit 21eb93f432b1a785df193df1a56a59e9eb3a985f upstream.
+[ Upstream commit c207979f5ae10ed70aff1bb13f39f0736973de99 ]
 
-The initial patch that added sync_state() support didn't handle the case
-where a supplier has no consumers. This was because when a device is
-successfully bound with a driver, only its suppliers were checked to see
-if they are eligible to get a sync_state(). This is not sufficient for
-devices that have no consumers but still need to do device state clean
-up. So fix this.
+comp_ctx can be NULL in a very rare case when an admin command is executed
+during the execution of ena_remove().
 
-Fixes: fc5a251d0fd7ca90 (driver core: Add sync_state driver/bus callback)
-Signed-off-by: Saravana Kannan <saravanak@google.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200221080510.197337-2-saravanak@google.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The bug scenario is as follows:
 
+* ena_destroy_device() sets the comp_ctx to be NULL
+* An admin command is executed before executing unregister_netdev(),
+  this can still happen because our device can still receive callbacks
+  from the netdev infrastructure such as ethtool commands.
+* When attempting to access the comp_ctx, the bug occurs since it's set
+  to NULL
+
+Fix:
+Added a check that comp_ctx is not NULL
+
+Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
+Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
+Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/core.c |   23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/amazon/ena/ena_com.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -745,25 +745,31 @@ static void __device_links_queue_sync_st
- /**
-  * device_links_flush_sync_list - Call sync_state() on a list of devices
-  * @list: List of devices to call sync_state() on
-+ * @dont_lock_dev: Device for which lock is already held by the caller
-  *
-  * Calls sync_state() on all the devices that have been queued for it. This
-- * function is used in conjunction with __device_links_queue_sync_state().
-+ * function is used in conjunction with __device_links_queue_sync_state(). The
-+ * @dont_lock_dev parameter is useful when this function is called from a
-+ * context where a device lock is already held.
-  */
--static void device_links_flush_sync_list(struct list_head *list)
-+static void device_links_flush_sync_list(struct list_head *list,
-+					 struct device *dont_lock_dev)
+diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
+index e1f694322e41a..9bd2a7a5b5a78 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_com.c
++++ b/drivers/net/ethernet/amazon/ena/ena_com.c
+@@ -199,6 +199,11 @@ static inline void comp_ctxt_release(struct ena_com_admin_queue *queue,
+ static struct ena_comp_ctx *get_comp_ctxt(struct ena_com_admin_queue *queue,
+ 					  u16 command_id, bool capture)
  {
- 	struct device *dev, *tmp;
- 
- 	list_for_each_entry_safe(dev, tmp, list, links.defer_sync) {
- 		list_del_init(&dev->links.defer_sync);
- 
--		device_lock(dev);
-+		if (dev != dont_lock_dev)
-+			device_lock(dev);
- 
- 		if (dev->bus->sync_state)
- 			dev->bus->sync_state(dev);
- 		else if (dev->driver && dev->driver->sync_state)
- 			dev->driver->sync_state(dev);
- 
--		device_unlock(dev);
-+		if (dev != dont_lock_dev)
-+			device_unlock(dev);
- 
- 		put_device(dev);
- 	}
-@@ -801,7 +807,7 @@ void device_links_supplier_sync_state_re
- out:
- 	device_links_write_unlock();
- 
--	device_links_flush_sync_list(&sync_list);
-+	device_links_flush_sync_list(&sync_list, NULL);
- }
- 
- static int sync_state_resume_initcall(void)
-@@ -865,6 +871,11 @@ void device_links_driver_bound(struct de
- 			driver_deferred_probe_add(link->consumer);
- 	}
- 
-+	if (defer_sync_state_count)
-+		__device_links_supplier_defer_sync(dev);
-+	else
-+		__device_links_queue_sync_state(dev, &sync_list);
++	if (unlikely(!queue->comp_ctx)) {
++		pr_err("Completion context is NULL\n");
++		return NULL;
++	}
 +
- 	list_for_each_entry(link, &dev->links.suppliers, c_node) {
- 		if (!(link->flags & DL_FLAG_MANAGED))
- 			continue;
-@@ -883,7 +894,7 @@ void device_links_driver_bound(struct de
- 
- 	device_links_write_unlock();
- 
--	device_links_flush_sync_list(&sync_list);
-+	device_links_flush_sync_list(&sync_list, dev);
- }
- 
- static void device_link_drop_managed(struct device_link *link)
+ 	if (unlikely(command_id >= queue->q_depth)) {
+ 		pr_err("command id is larger than the queue size. cmd_id: %u queue size %d\n",
+ 		       command_id, queue->q_depth);
+-- 
+2.20.1
+
 
 
