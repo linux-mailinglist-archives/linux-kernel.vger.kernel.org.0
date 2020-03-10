@@ -2,80 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6393A17FCA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:22:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B5F717FCD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:23:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731006AbgCJNWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:22:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730239AbgCJNWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:22:19 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53E39208E4;
-        Tue, 10 Mar 2020 13:22:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583846539;
-        bh=FaMTD2na3NDedgKSwXsZVOGx7i/nxquek6psyjDM3Lo=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=nOHUzyv8eb4NIsmREF9QILrzXXWOx92nJ+aS2RDg1Dv7jNtzGLBsZOeyveMA7AQVV
-         Cq8vn5QKZbw+kqb6EA5V7asq10eKRxLNL69aHKd+KpzRG/coxJDSXCz2f2nx0TCNRr
-         L6a5/PaJXVH3SRWycAiQbGPnBxTmEZsULi5zIptM=
-Date:   Tue, 10 Mar 2020 14:22:16 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     =?ISO-8859-15?Q?Filipe_La=EDns?= <lains@archlinux.org>
-cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nestor Lopez Casado <nlopezcasad@logitech.com>
-Subject: Re: [PATCH] HID: logitech-dj: add support for the static device in
- the Powerplay mat/receiver
-In-Reply-To: <5a93677bd6238a9d7928e4fd16a8915faeb5f19e.camel@archlinux.org>
-Message-ID: <nycvar.YFH.7.76.2003101301280.19500@cbobk.fhfr.pm>
-References: <20200115201811.3271284-1-lains@archlinux.org>  <nycvar.YFH.7.76.2002121449191.3144@cbobk.fhfr.pm> <5a93677bd6238a9d7928e4fd16a8915faeb5f19e.camel@archlinux.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1730077AbgCJNXc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:23:32 -0400
+Received: from mail-wr1-f52.google.com ([209.85.221.52]:39712 "EHLO
+        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726899AbgCJNXb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:23:31 -0400
+Received: by mail-wr1-f52.google.com with SMTP id r15so10800715wrx.6
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:23:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FRdcUkChFP73CYf+Z4biQyn+H2NRrY9pLjMDRNYo9tg=;
+        b=QyQ5OuAwtnFtO+rzxR9TwzIq3V4BxejuzULD5FX2U7mPjWYVDKzoOha/TPpoqCdWjV
+         3m2p79yqiNcO4tW1EFP9AL7hBG7DZEBoQ1g8aBaGaHcCa+vVkBAiF3LQ7YeAGcwykSfG
+         SJQLjO4wrL+Zz4/IF/eYXyLV84zkZVyTAh2X9BZiXd6wNns1LgsPOcQU6jWJY4UrKZdV
+         gWOSjCxHX46mUs7VQ2w83JsDC3oKbE4nNQkLG8eqcVuisCqHBIH4jsJhK9eWmtNPsy9L
+         N6Fcf2z0DhtMg0iPY10PNNvWuQa/kBMjqp1mUJTK/mGu/Y/zNN4E0X1wMyxUotGzwpxW
+         eFrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FRdcUkChFP73CYf+Z4biQyn+H2NRrY9pLjMDRNYo9tg=;
+        b=VgVIyBI8NHOYGCLCDYMIS91X4oVOGRu0Rz+EJxLHhAT803GzI+MGHb+GN8UjpUrg+i
+         REbsESif0lFt9vJq87eMVJ9hl/44hAX4XITYmS+rMuiR56YzW7QUidF2jpZE0HUMkD4h
+         pgaTe5p7k3wOBnVWMPwC3PkcOO1b2ioI1nbWgBK9mMCaSlcAmjTsszKyad57j1yuyzP1
+         Qn3t7JYrLzjZ440iq/FenWJIAHN5inHiwJCsiY9F54Gp2UfCu55gRlPNAzIE7+NV9yBx
+         Px++4E4J4zeHiBP/1sH6gfS/ay+pFjkzsna9z9LU8DDqLcADZK2dRkwM8eMwzQV53rtw
+         CrwA==
+X-Gm-Message-State: ANhLgQ0JEuZCdIpgglHjTqCaM1c5dykQjz0s8hilQmEB1/40kvVI1JF5
+        BXOnW+KNkOCoozVoMqXsF/ICwg==
+X-Google-Smtp-Source: ADFU+vvYNTEkfMjbpKNQHbWYLz1vKiv/kKkC1gxI0zsBl1Z7EB1nAWwRqDzMwDnWZIARR9zyQCYNgw==
+X-Received: by 2002:adf:df8f:: with SMTP id z15mr27121143wrl.184.1583846608939;
+        Tue, 10 Mar 2020 06:23:28 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id s22sm3761199wmc.16.2020.03.10.06.23.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 06:23:27 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 00/14] nvmem: patches for 5.7
+Date:   Tue, 10 Mar 2020 13:22:43 +0000
+Message-Id: <20200310132257.23358-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Feb 2020, Filipe Laíns wrote:
+Hi Greg,
 
-> > > +	/* custom receiver device (eg. powerplay) */
-> > > +	if (hidpp_report->device_index == 7) {
-> > > +		workitem.reports_supported |= HIDPP;
-> > > +	}
-> > > +
-> > 
-> > I guess we can't do anything else than to trust Logitech that they will 
-> > not assign conflicting device_index ID in the future to something that 
-> > will not be HID++, right?
-> > 
-> > Or is this properly documented somewhere?
-> > 
-> > Thanks,
-> 
-> 
-> CCing Nestor
-> 
-> Yes, we need to trust Logitech on this. There's isn't anything
-> documented regarding this AFAIK.
-> 
-> Even if Logitech released a device with index 7 that didn't support
-> HID++, it wouldn't be that big of an issue. We would just end up with a
-> hidraw node which would export a vendor page report descriptor but the
-> device wouldn't actually reply to anything.
+Here are some nvmem patches for 5.7 which includes
+- few general cleanups and checks
+- gpio descriptor release fixes
+- new JZ4780 nvmem provider
+- compatible string for i.MX8MP
+- add new nvmem_cell_read_u64()
 
-Given the silence from Nestor, I guess we can just apply this for 5.7; 
-pushing to for-5.7/logitech branch.
+Can you please queue them up for 5.7.
 
-Thanks,
+thanks,
+srini
+
+Anson Huang (1):
+  nvmem: imx-ocotp: Drop unnecessary initializations
+
+Bartosz Golaszewski (3):
+  nvmem: remove a stray newline in nvmem_register()
+  nvmem: add a newline for readability
+  nvmem: fix memory leak in error path
+
+H. Nikolaus Schaller (1):
+  nvmem: jz4780-efuse: fix build warnings on ARCH=x86_64 or riscv
+
+Khouloud Touil (1):
+  nvmem: release the write-protect pin
+
+Nicholas Johnson (1):
+  nvmem: check for NULL reg_read and reg_write before dereferencing
+
+Peng Fan (1):
+  nvmem: imx: ocotp: add i.MX8MP support
+
+PrasannaKumar Muralidharan (3):
+  Bindings: nvmem: add bindings for JZ4780 efuse
+  nvmem: add driver for JZ4780 efuse
+  Documentation: ABI: nvmem: add documentation for JZ4780 efuse ABI
+
+Srinivas Kandagatla (1):
+  nvmem: core: validate nvmem config before parsing
+
+Yangtao Li (2):
+  nvmem: core: add nvmem_cell_read_common
+  nvmem: core: add nvmem_cell_read_u64
+
+ .../ABI/testing/sysfs-driver-jz4780-efuse     |  16 ++
+ .../bindings/nvmem/ingenic,jz4780-efuse.yaml  |  45 ++++
+ drivers/nvmem/Kconfig                         |  12 +
+ drivers/nvmem/Makefile                        |   2 +
+ drivers/nvmem/core.c                          |  83 +++---
+ drivers/nvmem/imx-ocotp.c                     |  29 ++-
+ drivers/nvmem/jz4780-efuse.c                  | 239 ++++++++++++++++++
+ drivers/nvmem/nvmem-sysfs.c                   |   6 +
+ include/linux/nvmem-consumer.h                |   7 +
+ 9 files changed, 397 insertions(+), 42 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-jz4780-efuse
+ create mode 100644 Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml
+ create mode 100644 drivers/nvmem/jz4780-efuse.c
 
 -- 
-Jiri Kosina
-SUSE Labs
+2.21.0
 
