@@ -2,103 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB90E17F25E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 09:54:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99E8D17F263
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 09:55:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbgCJIyc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 04:54:32 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:37923 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726466AbgCJIyc (ORCPT
+        id S1726641AbgCJIz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 04:55:27 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42844 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726389AbgCJIz1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 04:54:32 -0400
-Received: by mail-qk1-f196.google.com with SMTP id h14so6002710qke.5
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 01:54:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nSPxA9X500mgbh9IFPNCBvtp5v+qregrP1EhmFh9wNQ=;
-        b=Q05xIIQLHRc1MoiGKDvABRgahTMFDzDQ4Ck1T7qE3LuZVcY7SjB9im3hZXh1MBO8BD
-         tQCQ5/nKjtYM51FVdSbLdKJNHTOr07CgOD7VspKmPJLSI2nKDNMYnGh+sgs9eEgdTaTz
-         UAtWopKNqaTtn6NQW1GbkupcEFOUnnuOY8xmbv1jNSClQP43hozMkqz7dq3Sywj5LGzc
-         NCBDP9dcWc9zXnyQ+e1bkqZJRb9S61qNJVSKpRfNYWkUurvYLqKtbQUUF+Ptg/TB8S2n
-         V1Z27CFKbaqbF2MARL6t8YH4yvnrl2r4smaHIfyzrRnX47CCFxgEcqGa2BT07/kWYY2N
-         bNow==
+        Tue, 10 Mar 2020 04:55:27 -0400
+Received: by mail-oi1-f193.google.com with SMTP id l12so13048484oil.9;
+        Tue, 10 Mar 2020 01:55:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nSPxA9X500mgbh9IFPNCBvtp5v+qregrP1EhmFh9wNQ=;
-        b=YBWXUciaGBVA5j5pOJeLdP5mPnDlssQ1LmMALqnxWWl0BNTrCtxKm6iS3EcmYGrKI6
-         aQ9lDWErD/ZYo0hJBHgdLhrB4limw2pI/8li+zFIIDJUe9hxms5C24jxZhZ/QfaFQoWm
-         J4QAdjdYRuegw/3ZDqvlYdhxJCXysZa5gEKBctJcYkhdTdlRgt4LzAvBu+fW6nwqvho0
-         M92CU7aOmu+IzjoBbEWmQlCLFf2pfTzn5oMBgMawyzpugG1TeY28n0IXKGqGqUJPh//c
-         apTwf3rpwi5oLJH8mavHiyYQ9xlGql3N8hhBC/jo0VLdGDbsoLAj+DcLepSkyLGkv1ez
-         uZxA==
-X-Gm-Message-State: ANhLgQ3ZYcuv+kbhOqHJx1F5H177aHuAT8tdkQQPzAl+ALgKsYywfKU0
-        J1GmyXdO6ME9b3X0zITgNo3ETRVFGmbHOl14EDZR5Q==
-X-Google-Smtp-Source: ADFU+vtMECKg0iE77xyeveafTTIJe1NctM9ZS1gbqJZXUfdRwOkJDNRqliHHiYwApvHERLRaNfSDyKeu+F6P0l3jIE0=
-X-Received: by 2002:a37:a8d8:: with SMTP id r207mr18024852qke.123.1583830471137;
- Tue, 10 Mar 2020 01:54:31 -0700 (PDT)
+        bh=2sdxtpswuMghQi2CqrS8nbarm5BBY7Twk1RfEVxSRME=;
+        b=XaZP7UlgED3ejJpsWPXpBh6qStBgKfcasuZZXe9qbxfXtqoh9Ua+13n8ZkhwL+cj3g
+         PNIiCbol0PcZbxu/iNYPERHE/QD9SkU1nywBVEzh9zOE7JRSidKBjiXlT/RCm7TC5dCa
+         A4V68sIf6rXOj3gWLPAP2JUBXqbZCPJnRDyHqcqFB+H17DmAIoob0aVd/EryalTHpqAz
+         vOW2I0rgM6ELh4K3d5+WL1k85UgEPovalQ4qgV7rYUZcMGpT7Sk+t0Nj/qS+SuLEFvRF
+         w9jAQCDKRbJC//13+ZTZ/FNGMQMBDK8xj2gcRjM4SFBfO6/KwebWn4wiCGFeIyzOlnGl
+         PN2A==
+X-Gm-Message-State: ANhLgQ34+KixIUd2pJeP7jDCz2dbPrnft76NUtd9oFOzsi++vQhE4Pfi
+        27fYXY7ZFFpzfy+aXLTGsBmY7YDOqZ3XG1vpTayYeA==
+X-Google-Smtp-Source: ADFU+vtHqBwQVlPlHwGR60IzGRtmFCmsCWjXRcUW7nbupazhD/5nD53PM9w490GIIaN84xdF3KO7cjRDU8OA+N0lj+I=
+X-Received: by 2002:aca:5155:: with SMTP id f82mr384236oib.103.1583830526316;
+ Tue, 10 Mar 2020 01:55:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200308094954.13258-1-guoren@kernel.org> <CAHCEeh+XYD3uVmaQRGpY=VGxpO9hzMeKasNmAojhkZe9PJ9Lug@mail.gmail.com>
- <95e3bba4-65c0-8991-9523-c16977f6350f@c-sky.com>
-In-Reply-To: <95e3bba4-65c0-8991-9523-c16977f6350f@c-sky.com>
-From:   Greentime Hu <greentime.hu@sifive.com>
-Date:   Tue, 10 Mar 2020 16:54:19 +0800
-Message-ID: <CAHCEehK0rgBpEzrWar1UTWJoOz=OQi18iw4Y+v3z5Hi=7JCEWw@mail.gmail.com>
-Subject: Re: [RFC PATCH V3 00/11] riscv: Add vector ISA support
-To:     LIU Zhiwei <zhiwei_liu@c-sky.com>
-Cc:     guoren@kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>, Anup.Patel@wdc.com,
+References: <fcbb3dc4-38ae-8361-bd6b-a00ae00c189c@linuxfoundation.org>
+In-Reply-To: <fcbb3dc4-38ae-8361-bd6b-a00ae00c189c@linuxfoundation.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 10 Mar 2020 09:55:15 +0100
+Message-ID: <CAJZ5v0jqTGE5zBnwijjWbze4fuDW_h3muV9X1=EHbeHMqcF2JQ@mail.gmail.com>
+Subject: Re: [GIT PULL] cpupower update for Linux 5.6-rc6
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Mike Gilbert <floppym@gentoo.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch@vger.kernel.org, arnd@arndb.de,
-        linux-csky@vger.kernel.org,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Guo Ren <guoren@linux.alibaba.com>,
-        Dave Martin <Dave.Martin@arm.com>
+        Thomas Renninger <trenn@suse.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 9, 2020 at 6:27 PM LIU Zhiwei <zhiwei_liu@c-sky.com> wrote:
-> On 2020/3/9 11:41, Greentime Hu wrote:
-> > On Sun, Mar 8, 2020 at 5:50 PM <guoren@kernel.org> wrote:
-> >> From: Guo Ren <guoren@linux.alibaba.com>
-> >>
-> >> The implementation follow the RISC-V "V" Vector Extension draft v0.8 with
-> >> 128bit-vlen and it's based on linux-5.6-rc3 and tested with qemu [1].
-> >>
-> >> The patch implement basic context switch, sigcontext save/restore and
-> >> ptrace interface with a new regset NT_RISCV_VECTOR. Only fixed 128bit-vlen
-> >> is implemented. We need to discuss about vlen-size for libc sigcontext and
-> >> ptrace (the maximum size of vlen is unlimited in spec).
-> >>
-> >> Puzzle:
-> >> Dave Martin has talked "Growing CPU register state without breaking ABI" [2]
-> >> before, and riscv also met vlen size problem. Let's discuss the common issue
-> >> for all architectures and we need a better solution for unlimited vlen.
-> >>
-> >> Any help are welcomed :)
-> >>
-> >>   1: https://github.com/romanheros/qemu.git branch:vector-upstream-v3
-> > Hi Guo,
-> >
-> > Thanks for your patch.
-> > It seems the qemu repo doesn't have this branch?
-> Hi Greentime,
->
-> It's a promise from me. Now it's ready.  You can turn on vector by
-> "qemu-system-riscv64 -cpu rv64,v=true,vext_spec=v0.7.1".
->
-> Zhiwei
->
->
+Hi Shuah,
 
-Hi Zhiwei,
+On Sat, Mar 7, 2020 at 1:14 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>
+> Hi Rafael,
+>
+> Please pull the following cpupower update for Linux 5.6-rc6.
+>
+> This cpupower update for Linux 5.6-rc6 consists of a fix from
+> Mike Gilbert for build failures when -fno-common is enabled.
+> -fno-common will be default in gcc v10.
+>
+> Diff is attached.
 
-Thank you, I see the branch in the repo now. I will give it a try and
-let you know if I have any problem. :)
+Pulled, thanks!
