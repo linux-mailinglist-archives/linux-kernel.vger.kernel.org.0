@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D692717F874
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:48:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EC6117F966
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:56:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbgCJMsL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:48:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52124 "EHLO mail.kernel.org"
+        id S1727975AbgCJM4a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:56:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728276AbgCJMsJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:48:09 -0400
+        id S1729420AbgCJM4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:56:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E76A20674;
-        Tue, 10 Mar 2020 12:48:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 447CA2253D;
+        Tue, 10 Mar 2020 12:56:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844487;
-        bh=fVMYinxaYFkfkSebpKMHUC3DxbydeGk4V7PgQkK/xyo=;
+        s=default; t=1583844982;
+        bh=EmVp/FvO12B6npsKyvEA08xNMu5dfLgtPtThwfKw6fg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wnMVRUgq+cJxvTn1hm8/kHnuX7WLl7vtdDLYgsKmDU8ti/a9J1xgHnyW+0PqK7Gac
-         ZoEZmdYtwi9dM36X++1P9T7exGuWGX0IxIkjmt0+gf7pK7u+B848LWhebShuWOLmnE
-         7cI4GNuXxVCy4mKA052cHuBHBXYLsrrkKg8yAOYM=
+        b=19Jhvg/SpIWpo++TGENHruHz3CGvGksMNT9fXRsrwBbEvHXPOyl+oGdvb/ow2Ehsv
+         AF5g25hluNlinIv6kao1ijTh5VWmcVdMMKkwhaJGchHn23ylF2nHzJYYXbnE5VKdKX
+         ZikZlWyE3UDXw7GjH8WcAKBYbcNX3pRDjhmxcLJ0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, bristot@redhat.com,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 011/168] kprobes: Fix optimize_kprobe()/unoptimize_kprobe() cancellation logic
+        stable@vger.kernel.org, Omer Shpigelman <oshpigelman@habana.ai>,
+        Oded Gabbay <oded.gabbay@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 020/189] habanalabs: do not halt CoreSight during hard reset
 Date:   Tue, 10 Mar 2020 13:37:37 +0100
-Message-Id: <20200310123636.899326378@linuxfoundation.org>
+Message-Id: <20200310123641.507093495@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,164 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Omer Shpigelman <oshpigelman@habana.ai>
 
-[ Upstream commit e4add247789e4ba5e08ad8256183ce2e211877d4 ]
+[ Upstream commit a37e47192dfa98f79a0cd5ab991c224b5980c982 ]
 
-optimize_kprobe() and unoptimize_kprobe() cancels if a given kprobe
-is on the optimizing_list or unoptimizing_list already. However, since
-the following commit:
+During hard reset we must not write to the device.
+Hence avoid halting CoreSight during user context close if it is done
+during hard reset.
+In addition, we must not re-enable clock gating afterwards as it was
+deliberately disabled in the beginning of the hard reset flow.
 
-  f66c0447cca1 ("kprobes: Set unoptimized flag after unoptimizing code")
-
-modified the update timing of the KPROBE_FLAG_OPTIMIZED, it doesn't
-work as expected anymore.
-
-The optimized_kprobe could be in the following states:
-
-- [optimizing]: Before inserting jump instruction
-  op.kp->flags has KPROBE_FLAG_OPTIMIZED and
-  op->list is not empty.
-
-- [optimized]: jump inserted
-  op.kp->flags has KPROBE_FLAG_OPTIMIZED and
-  op->list is empty.
-
-- [unoptimizing]: Before removing jump instruction (including unused
-  optprobe)
-  op.kp->flags has KPROBE_FLAG_OPTIMIZED and
-  op->list is not empty.
-
-- [unoptimized]: jump removed
-  op.kp->flags doesn't have KPROBE_FLAG_OPTIMIZED and
-  op->list is empty.
-
-Current code mis-expects [unoptimizing] state doesn't have
-KPROBE_FLAG_OPTIMIZED, and that can cause incorrect results.
-
-To fix this, introduce optprobe_queued_unopt() to distinguish [optimizing]
-and [unoptimizing] states and fixes the logic in optimize_kprobe() and
-unoptimize_kprobe().
-
-[ mingo: Cleaned up the changelog and the code a bit. ]
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bristot@redhat.com
-Fixes: f66c0447cca1 ("kprobes: Set unoptimized flag after unoptimizing code")
-Link: https://lkml.kernel.org/r/157840814418.7181.13478003006386303481.stgit@devnote2
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
+Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/kprobes.c | 67 +++++++++++++++++++++++++++++++-----------------
- 1 file changed, 43 insertions(+), 24 deletions(-)
+ drivers/misc/habanalabs/device.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 34e28b236d680..2625c241ac00f 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -612,6 +612,18 @@ void wait_for_kprobe_optimizer(void)
- 	mutex_unlock(&kprobe_mutex);
- }
+diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
+index 166883b647252..b680b0caa69be 100644
+--- a/drivers/misc/habanalabs/device.c
++++ b/drivers/misc/habanalabs/device.c
+@@ -598,7 +598,9 @@ int hl_device_set_debug_mode(struct hl_device *hdev, bool enable)
+ 			goto out;
+ 		}
  
-+static bool optprobe_queued_unopt(struct optimized_kprobe *op)
-+{
-+	struct optimized_kprobe *_op;
+-		hdev->asic_funcs->halt_coresight(hdev);
++		if (!hdev->hard_reset_pending)
++			hdev->asic_funcs->halt_coresight(hdev);
 +
-+	list_for_each_entry(_op, &unoptimizing_list, list) {
-+		if (op == _op)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- /* Optimize kprobe if p is ready to be optimized */
- static void optimize_kprobe(struct kprobe *p)
- {
-@@ -633,17 +645,21 @@ static void optimize_kprobe(struct kprobe *p)
- 		return;
+ 		hdev->in_debug = 0;
  
- 	/* Check if it is already optimized. */
--	if (op->kp.flags & KPROBE_FLAG_OPTIMIZED)
-+	if (op->kp.flags & KPROBE_FLAG_OPTIMIZED) {
-+		if (optprobe_queued_unopt(op)) {
-+			/* This is under unoptimizing. Just dequeue the probe */
-+			list_del_init(&op->list);
-+		}
- 		return;
-+	}
- 	op->kp.flags |= KPROBE_FLAG_OPTIMIZED;
- 
--	if (!list_empty(&op->list))
--		/* This is under unoptimizing. Just dequeue the probe */
--		list_del_init(&op->list);
--	else {
--		list_add(&op->list, &optimizing_list);
--		kick_kprobe_optimizer();
--	}
-+	/* On unoptimizing/optimizing_list, op must have OPTIMIZED flag */
-+	if (WARN_ON_ONCE(!list_empty(&op->list)))
-+		return;
-+
-+	list_add(&op->list, &optimizing_list);
-+	kick_kprobe_optimizer();
- }
- 
- /* Short cut to direct unoptimizing */
-@@ -665,30 +681,33 @@ static void unoptimize_kprobe(struct kprobe *p, bool force)
- 		return; /* This is not an optprobe nor optimized */
- 
- 	op = container_of(p, struct optimized_kprobe, kp);
--	if (!kprobe_optimized(p)) {
--		/* Unoptimized or unoptimizing case */
--		if (force && !list_empty(&op->list)) {
--			/*
--			 * Only if this is unoptimizing kprobe and forced,
--			 * forcibly unoptimize it. (No need to unoptimize
--			 * unoptimized kprobe again :)
--			 */
--			list_del_init(&op->list);
--			force_unoptimize_kprobe(op);
--		}
-+	if (!kprobe_optimized(p))
- 		return;
--	}
- 
- 	if (!list_empty(&op->list)) {
--		/* Dequeue from the optimization queue */
--		list_del_init(&op->list);
-+		if (optprobe_queued_unopt(op)) {
-+			/* Queued in unoptimizing queue */
-+			if (force) {
-+				/*
-+				 * Forcibly unoptimize the kprobe here, and queue it
-+				 * in the freeing list for release afterwards.
-+				 */
-+				force_unoptimize_kprobe(op);
-+				list_move(&op->list, &freeing_list);
-+			}
-+		} else {
-+			/* Dequeue from the optimizing queue */
-+			list_del_init(&op->list);
-+			op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
-+		}
- 		return;
- 	}
-+
- 	/* Optimized kprobe case */
--	if (force)
-+	if (force) {
- 		/* Forcibly update the code: this is a special case */
- 		force_unoptimize_kprobe(op);
--	else {
-+	} else {
- 		list_add(&op->list, &unoptimizing_list);
- 		kick_kprobe_optimizer();
- 	}
+ 		goto out;
 -- 
 2.20.1
 
