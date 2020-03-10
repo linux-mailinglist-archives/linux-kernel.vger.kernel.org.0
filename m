@@ -2,116 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0262D17F640
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:25:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8FD917F614
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:19:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbgCJLZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 07:25:05 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:51150 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726197AbgCJLZE (ORCPT
+        id S1726423AbgCJLT0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 07:19:26 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:37846 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726186AbgCJLT0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 07:25:04 -0400
-Received: from mr3.cc.vt.edu (mr3.cc.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 02ABP3Pu032270
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 07:25:03 -0400
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 02ABOwOT010833
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 07:25:03 -0400
-Received: by mail-qv1-f71.google.com with SMTP id o10so8877416qvn.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 04:25:03 -0700 (PDT)
+        Tue, 10 Mar 2020 07:19:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583839164;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qfsU9Bh+9ERXSvjXe/Jnk6fWHOirWhBhsnum3jMiYw8=;
+        b=VpxfH9xCfCaBgIZpeBibodLU39T+Z9rrYfDhdSqRh2sBE4f0kh+HoG29znNzJs8zDppTgA
+        7AhNLMxF5rC1QsMOcauP06cfiXzj7HmVpusZSs4dYw3yhWkxwE5akUlbB4Bc5+fXMpydXk
+        DDr324GUg2Fvbx9Cx8zA1kXITn/KBU8=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-43-iZZFG3kyPZe1avT3tnznEg-1; Tue, 10 Mar 2020 07:19:20 -0400
+X-MC-Unique: iZZFG3kyPZe1avT3tnznEg-1
+Received: by mail-qt1-f199.google.com with SMTP id q7so8872566qtp.16
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 04:19:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=OesXhfFfB1ZZgxnRfuwwLM+t7VkmSIoWuSuAcfzfaQ8=;
-        b=dCZbYLbquuVk5/ZFppDzrETygoVy3jGZ6CPKHNclKR7C3jw2V4zUxcQFwVO5Zi3FuS
-         UUNcGkzqrItSiMyM1ZY4hEuovR537qulZwmwOSc0JbmlF+cgfVEh+M+Y6XBv2qs1K1uw
-         +PTeAAVDxY8BXU1zO/92kOKjxEWxAsMqKnkbpy+0L1NIemp8UyTH1K278Zhf1cntce8O
-         QeI7Ukdw903H3H+vob7sBE7PI5oOYHwNljlO/LQ7UGT90NB/xhbQZhUUmGPu99ZZF2Pi
-         EnWImIGEmENwaQjYSUsQf/e8Yx3/jgiZDYMzyxZVVgWefpTrCeuvbLPRUKAt4/5ZYxj9
-         OvjA==
-X-Gm-Message-State: ANhLgQ2PH9GjgUaBBvB2YU9AQfYedUjA1pbJJQFJOVaVJP3h7V+GQObg
-        Fn2WzsENPXYrMROfpjx+E59JwzpkIqOQOxa64VymHUMSHGPzR4ziuOjQ/FUbVjPbYzJrJ+mjBdp
-        pFlT9DhES7FXhYdi+UTe/rRh4ZAe0etpWuxM=
-X-Received: by 2002:a05:6214:60d:: with SMTP id z13mr5971526qvw.183.1583839142739;
-        Tue, 10 Mar 2020 04:19:02 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vto9Cc/inOPkYfcSZLmhvSxM16DJD9Z9E7y4/q01ZrjcE60oTAT3RepCU3XjTs472qHoHtnOQ==
-X-Received: by 2002:a05:6214:60d:: with SMTP id z13mr5971506qvw.183.1583839142428;
-        Tue, 10 Mar 2020 04:19:02 -0700 (PDT)
-Received: from turing-police ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id w2sm23859201qto.73.2020.03.10.04.19.00
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qfsU9Bh+9ERXSvjXe/Jnk6fWHOirWhBhsnum3jMiYw8=;
+        b=M+Vozi4xKkimPOn0/YZ+bxtB01JCAGcock/Q+0ombsOM3BGcN8VsZahy9om0HsXIgM
+         5LoDxKKv20BQUY2/VaYrO4aSS27HcMPcAAakHaX+11PObxfRSS4wo1BGOgiW/AyQAvQa
+         /VIfsNEURTxs28emb31W8dse13S9LrAVEp26gKdHq4RU4gshUiv1EwxLleOWASm7ZBKm
+         n2LKGcQdCU31ZhUh7hXBDOJcfQSQ8Kxblb6nHQ01pm557Bhr/in8ajDozYPElPR8Yalk
+         6E6bj2c5OnzIFVnokiI+vwI7yZDuw6iFHojW3Cf/TCxAMXyZj7slvA4UaThCb4OjfeJg
+         Xltw==
+X-Gm-Message-State: ANhLgQ0MoiaYppdl4Va1wcafoQO6y/cYZsdURC/ehMbQzYbRSUeAy3Mf
+        Tk7RJPTSVZK8rbZ+yJI0lu0zz6tU6oVu9xGu/FDQzjLvQ4Q9/dEFxAmLetTVtr55Ltn7NctRZRP
+        I6EqTKipu4lHt4zsUqyI8426f
+X-Received: by 2002:a37:4141:: with SMTP id o62mr18336382qka.282.1583839160118;
+        Tue, 10 Mar 2020 04:19:20 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vvFQXTyeq0C9+jsN/NWv2w1PTOeNblibyZ7JGEqrKf11uCaqcYvWES5T61GOlUp4h635fOhPA==
+X-Received: by 2002:a37:4141:: with SMTP id o62mr18336356qka.282.1583839159836;
+        Tue, 10 Mar 2020 04:19:19 -0700 (PDT)
+Received: from redhat.com (bzq-79-178-2-19.red.bezeqint.net. [79.178.2.19])
+        by smtp.gmail.com with ESMTPSA id e130sm23973211qkb.72.2020.03.10.04.19.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 04:19:00 -0700 (PDT)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "'Linux Next Mailing List'" <linux-next@vger.kernel.org>,
-        "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
-        devel@driverdev.osuosl.org,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+        Tue, 10 Mar 2020 04:19:18 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 07:19:13 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        virtualization@lists.linux-foundation.org,
+        Jason Wang <jasowang@redhat.com>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] staging: exfat: remove staging version of exfat filesystem
-In-Reply-To: <20200310105421.GA2810679@kroah.com>
-References: <20200310105421.GA2810679@kroah.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1583839139_13328P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 10 Mar 2020 07:18:59 -0400
-Message-ID: <35151.1583839139@turing-police>
+        Tyler Sanderson <tysand@google.com>,
+        Wei Wang <wei.w.wang@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Nadav Amit <namit@vmware.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2] virtio-balloon: Switch back to OOM handler for
+ VIRTIO_BALLOON_F_DEFLATE_ON_OOM
+Message-ID: <20200310071844-mutt-send-email-mst@kernel.org>
+References: <20200310103903.6014-1-david@redhat.com>
+ <20200310070413-mutt-send-email-mst@kernel.org>
+ <78427916-fc17-b081-6b1e-cbcb00d51752@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78427916-fc17-b081-6b1e-cbcb00d51752@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1583839139_13328P
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+On Tue, Mar 10, 2020 at 12:12:50PM +0100, David Hildenbrand wrote:
+> >>  static void virtio_balloon_unregister_shrinker(struct virtio_balloon *vb)
+> >> @@ -971,7 +950,22 @@ static int virtballoon_probe(struct virtio_device *vdev)
+> >>  						  VIRTIO_BALLOON_CMD_ID_STOP);
+> >>  		spin_lock_init(&vb->free_page_list_lock);
+> >>  		INIT_LIST_HEAD(&vb->free_page_list);
+> >> +		/*
+> >> +		 * We're allowed to reuse any free pages, even if they are
+> >> +		 * still to be processed by the host.
+> >> +		 */
+> >> +		err = virtio_balloon_register_shrinker(vb);
+> >> +		if (err)
+> >> +			goto out_del_balloon_wq;
+> >>  	}
+> >> +	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM)) {
+> >> +		vb->oom_nb.notifier_call = virtio_balloon_oom_notify;
+> >> +		vb->oom_nb.priority = VIRTIO_BALLOON_OOM_NOTIFY_PRIORITY;
+> >> +		err = register_oom_notifier(&vb->oom_nb);
+> >> +		if (err < 0)
+> >> +			goto out_unregister_shrinker;
+> >> +	}
+> >> +
+> > 
+> > 
+> > Let's decide whether we want an empty line after }, or not, and stick to
+> > it. I prefer an empty line but no biggie as long as we are consistent.
+> 
+> Can add one.
+> 
+> > 
+> >>  	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_PAGE_POISON)) {
+> >>  		/* Start with poison val of 0 representing general init */
+> >>  		__u32 poison_val = 0;
+> >> @@ -986,15 +980,6 @@ static int virtballoon_probe(struct virtio_device *vdev)
+> >>  		virtio_cwrite(vb->vdev, struct virtio_balloon_config,
+> >>  			      poison_val, &poison_val);
+> >>  	}
+> >> -	/*
+> >> -	 * We continue to use VIRTIO_BALLOON_F_DEFLATE_ON_OOM to decide if a
+> >> -	 * shrinker needs to be registered to relieve memory pressure.
+> >> -	 */
+> >> -	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM)) {
+> >> -		err = virtio_balloon_register_shrinker(vb);
+> >> -		if (err)
+> >> -			goto out_del_balloon_wq;
+> >> -	}
+> >>  
+> >>  	vb->pr_dev_info.report = virtballoon_free_page_report;
+> >>  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_REPORTING)) {
+> >> @@ -1003,12 +988,12 @@ static int virtballoon_probe(struct virtio_device *vdev)
+> >>  		capacity = virtqueue_get_vring_size(vb->reporting_vq);
+> >>  		if (capacity < PAGE_REPORTING_CAPACITY) {
+> >>  			err = -ENOSPC;
+> >> -			goto out_unregister_shrinker;
+> >> +			goto out_unregister_oom;
+> >>  		}
+> >>  
+> >>  		err = page_reporting_register(&vb->pr_dev_info);
+> >>  		if (err)
+> >> -			goto out_unregister_shrinker;
+> >> +			goto out_unregister_oom;
+> >>  	}
+> >>  
+> >>  	virtio_device_ready(vdev);
+> >> @@ -1017,8 +1002,11 @@ static int virtballoon_probe(struct virtio_device *vdev)
+> >>  		virtballoon_changed(vdev);
+> >>  	return 0;
+> >>  
+> >> +out_unregister_oom:
+> >> +	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
+> >> +		unregister_oom_notifier(&vb->oom_nb);
+> >>  out_unregister_shrinker:
+> >> -	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
+> >> +	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT))
+> >>  		virtio_balloon_unregister_shrinker(vb);
+> > 
+> > 
+> > What's with vdev versus vb->vdev here?
+> > I suggest we keep using vb->vdev to make the patch minimal if we can.
+> > Same elsewhere.
+> 
+> As we touch this line either way, does it really make a difference? No
+> strong opinion. Can just do a vb->vdev and clean this up globally later.
+> 
 
-On Tue, 10 Mar 2020 11:54:21 +0100, Greg Kroah-Hartman said:
-> Now that there is a =22real=22 solution for exfat in the vfs tree queue=
-d up
-> to be merged in 5.7-rc1 the =22old=22 exfat code in staging can be remo=
-ved.
->
-> Many thanks to Valdis for doing the work to get this into the tree in
-> the first place, it was greatly appreciated.
->
-> Cc: Valdis Kletnieks <valdis.kletnieks=40vt.edu>
+Let's just be consistent. I guess that means keep using vb->vdev
+everywhere.
 
-You can stick my Acked-by: on that. :)
+> -- 
+> Thanks,
+> 
+> David / dhildenb
 
-And thanks to Namjae Jeon for graciously offering to take it off my hands=
-
-by providing a better version, and to all the people at Linux Foundation
-and Microsoft who did a lot of behind the scenes work to make it happen..=
-.
-
---==_Exmh_1583839139_13328P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
-
-iQIVAwUBXmd3owdmEQWDXROgAQIhLhAAkEefL8MqDbPRHTLSuvJEcgA0wOk3+Y5q
-NaIlQZ3VNZQkIguUEEKq4Ic+mpBl9+r8rWIbJiDWYe2gZRq+b4BFi8Dlc9T46yst
-rW9YWLIGLsVwnCjvVRyZRO/S+6oSzFh6yTdkxQIBBOmWhhITLvIKoJozoSFTOwwn
-I0G97lwb9++mH2r9n87/3NHOfTyUB061TU3l5/fk/a3bpWWYrR+NXEuEli8QGukl
-eDwRMUvegpPBt/iPN7PTznuwbVKSYigB17Wopr+gAEnS3rZ2YeG2lkQFe7vnoevl
-6FNTcq2W5hJU2Jrb2eAuKMrW4LVg2rSis8jHmM7Eeoi/Pkyko/Cdfw1TD5L0Uqc/
-QYnofVkQrni42j8gCSTTHvzeag+rjmeSK/YEsjyYzVGnK3Hc+27mmMoHYTYQo7JI
-k2r4nZCZINc67E/DeBb1hWEnlbjdfeKwQLrW5qAm/x9jumGPto+nfqyaNHKwfmW1
-OMq9FCU+7HW9lG/FZHbOY/l0+yMlBeg3fM5YmiC0+aotmHPZiQoVMYDOThdG0ukc
-z91DNBW2rsqmrfc83U8nxnNxfnYyfWuNJ03IuLIhRY6BsrsUXLKZiFRQUPjGAs7i
-u+oBYngj9OUyw58ks8S5KYgoFZbqe1oWKBQ+fiXXKXqRt4CbagiSOeYcaVQPcctT
-Sy9zO5MRsa0=
-=l13Y
------END PGP SIGNATURE-----
-
---==_Exmh_1583839139_13328P--
