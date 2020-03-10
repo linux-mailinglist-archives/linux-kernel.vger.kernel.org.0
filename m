@@ -2,77 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20F1F18081E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 20:32:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96F3D180827
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 20:33:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbgCJTb4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 15:31:56 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:44044 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726729AbgCJTb4 (ORCPT
+        id S1727479AbgCJTc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 15:32:59 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44462 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727445AbgCJTc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 15:31:56 -0400
-Received: by mail-il1-f195.google.com with SMTP id j69so13094765ila.11
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 12:31:56 -0700 (PDT)
+        Tue, 10 Mar 2020 15:32:58 -0400
+Received: by mail-pf1-f194.google.com with SMTP id b72so3400252pfb.11
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 12:32:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0QsMHMToALTgigyVVitR0QGzkqjZRHN3wRK9R0WkFcg=;
-        b=Auk/J/am7PnSkti7DnDeBTBkoI7EdkOeiXxOafA83iFtNlXEfJCh8HA0llJSykN0lU
-         F3K3PX0+eGlrLpw9xVldfbGWlBeibwiL4+JP4oW3J6fT8IYoEUYX6QU+hSAzqc2x9YAS
-         wcqf5w4LictNkY4z6rP056PjahcGRfLxvhsqs=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=qMuGgR0+CRDM0BuHZ2Ae6KXyGRvF/Wi0RAPV3JkXST8=;
+        b=O7XNI6K/jach7eBMD0zokAVd37z8MwdLv7WqFDGJUXpzEHJv/6LF5IM1MssL5NHx69
+         sERBdH0/wvxJRbfXc8ZfBW6WmU/BI5HjmYU5Pwy6aJgYPsoC/QOCaZUUfklrPzeM+LmE
+         PliHwz3PwFW+ET0WFX++nrj0fUsGiY5wb79UMhnPsZ4NSU56/TwfJhVBhRED1eo7IZvY
+         tSQ6LFPA1n/cAURoK6zJWkEVSXYiL6y+KiwY8l+yxV5JDY+n10m2MA3KzHqx7bRV4sL6
+         CAx0URzemFt5ihkASDeSRezGbX69RIjNEsoJ9YZzp9qrBY5Pp5i1yewl1O6hD70yt0SH
+         wjTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0QsMHMToALTgigyVVitR0QGzkqjZRHN3wRK9R0WkFcg=;
-        b=cRolXBGdu0GwbFKAvT/C8vt13x1L3gvGAQlhDoMb9CEwtFCj/wk8JRQDpqX0SefaSx
-         V3NoF+SpO+fAeGN17iwofyikKpUJQESce3bH8wurECkI29PEMcd3qwBqmNnN3XGHczCd
-         NBUZYErph3LZmtLPv+5Yyg9PUQG2GrgD0M0TpIdzjT6GDcqOSzYH8BscNr6BOVQnhTkc
-         Ui7qN2gdM7/BF/bCqQD3hJxPlYd7+q0zUB6A9kmioeuTH0VH+GM9BiqIDH1/FnRek46e
-         +berO8vBxn3OEaJ8WE+GU35iU4X7/rYXSR31yVJ1e+dVlqsOepIZI3fvIJGyh3RvDZtF
-         raIA==
-X-Gm-Message-State: ANhLgQ3bXmm5wnz0TSR0IjkXCJS/p5rA7IWdftT8n8GbolPobdI4bCM2
-        gp/1h3rECwaYvm8MA7b3w4K8P+6ptezKsBgu9jvMfA==
-X-Google-Smtp-Source: ADFU+vsFfd6CjN4MRb2Z8XflZdOXGt54+OVcpgTdjMhSBiJTAUfuWfnL1e0wV+iTRlceDUTwZKIzKC3VAbxB+0sXKGs=
-X-Received: by 2002:a05:6e02:f43:: with SMTP id y3mr21752506ilj.174.1583868715742;
- Tue, 10 Mar 2020 12:31:55 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qMuGgR0+CRDM0BuHZ2Ae6KXyGRvF/Wi0RAPV3JkXST8=;
+        b=AB7i/9C9eOItbLwkcmGZANbFxzSMHWfJy61yL52F8ESvAL5h4iDNXu/tqxVZ1IShoG
+         mw79D3zBbf+/2G5L1WznnYX8tTLl5sMAVXdt7JO7pE2qB9zKxrdXOrXEM/++/Jqh9mCk
+         oAS/8jGu0id1kVhZvuPfmRI9HylAwqiYEMRjwQA/XTSCjwi7z4WA2V9DDqszYk9Kb8Ey
+         NEAzRjdSfRYwp0g1QCJflI0vQdCTdy3Qb+l2YdZBxUEoG8yqAZl0Z1mfPCLl9ZbXemXA
+         3NWXx4uAJLY/R87zka5t5BFSiv+cpIRsYg2AsYfuRsaSAwBHDylSJHq3f7y46qj33B9c
+         Tl2A==
+X-Gm-Message-State: ANhLgQ2ESTa4N8P6dqZYrmtdogGyvGc7BQfoxIu7K1qtzcze3Y6izX8j
+        FB5rQLC7orFPJNJ4BZGzbVH3xQ==
+X-Google-Smtp-Source: ADFU+vv+xHc+Rr1UGKn/v70xw8LFUA/EYdzRhMgcJY4xJ9NFuwzP6M5LicOfJuYbs5v5GixSEdrWVA==
+X-Received: by 2002:a63:7f09:: with SMTP id a9mr22043810pgd.375.1583868777114;
+        Tue, 10 Mar 2020 12:32:57 -0700 (PDT)
+Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id s18sm3003094pjp.24.2020.03.10.12.32.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 12:32:56 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 12:32:53 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Cl?ment Leger <cleger@kalrayinc.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>
+Subject: Re: [PATCH v5 3/8] remoteproc: Use u64 type for boot_addr
+Message-ID: <20200310193253.GL264362@yoga>
+References: <20200210162209.23149-1-cleger@kalray.eu>
+ <20200302093902.27849-1-cleger@kalray.eu>
+ <20200302093902.27849-4-cleger@kalray.eu>
+ <20200309195247.GC1399@xps15>
+ <1297722115.9030349.1583827151221.JavaMail.zimbra@kalray.eu>
 MIME-Version: 1.0
-References: <20200304165845.3081-1-vgoyal@redhat.com> <20200304165845.3081-12-vgoyal@redhat.com>
-In-Reply-To: <20200304165845.3081-12-vgoyal@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 10 Mar 2020 20:31:44 +0100
-Message-ID: <CAJfpegu5HMg2BnBsfSEWOv7K_0KjchntZ9q4oOvxzYLjOEBF3g@mail.gmail.com>
-Subject: Re: [PATCH 11/20] fuse: implement FUSE_INIT map_alignment field
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, virtio-fs@redhat.com,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1297722115.9030349.1583827151221.JavaMail.zimbra@kalray.eu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 4, 2020 at 5:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> The device communicates FUSE_SETUPMAPPING/FUSE_REMOVMAPPING alignment
-> constraints via the FUST_INIT map_alignment field.  Parse this field and
-> ensure our DAX mappings meet the alignment constraints.
->
-> We don't actually align anything differently since our mappings are
-> already 2MB aligned.  Just check the value when the connection is
-> established.  If it becomes necessary to honor arbitrary alignments in
-> the future we'll have to adjust how mappings are sized.
->
-> The upshot of this commit is that we can be confident that mappings will
-> work even when emulating x86 on Power and similar combinations where the
-> host page sizes are different.
->
-> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+On Tue 10 Mar 00:59 PDT 2020, Cl?ment Leger wrote:
 
-Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
+> 
+> 
+> ----- On 9 Mar, 2020, at 20:52, Mathieu Poirier mathieu.poirier@linaro.org wrote:
+> 
+> > On Mon, Mar 02, 2020 at 10:38:57AM +0100, Clement Leger wrote:
+> >> elf64 entry is defined as a u64. Since boot_addr is used to store the
+> >> elf entry point, change boot_addr type to u64 to support both elf32
+> >> and elf64. In the same time, fix users that were using this variable.
+> >> 
+> >> Signed-off-by: Clement Leger <cleger@kalray.eu>
+> >> ---
+> >>  drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
+> >>  drivers/remoteproc/remoteproc_internal.h   | 2 +-
+> >>  drivers/remoteproc/st_remoteproc.c         | 2 +-
+> >>  include/linux/remoteproc.h                 | 4 ++--
+> >>  4 files changed, 5 insertions(+), 5 deletions(-)
+> >> 
+> >> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
+> >> b/drivers/remoteproc/remoteproc_elf_loader.c
+> >> index 606aae166eba..c2a9783cfb9a 100644
+> >> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> >> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> >> @@ -102,7 +102,7 @@ EXPORT_SYMBOL(rproc_elf_sanity_check);
+> >>   * Note that the boot address is not a configurable property of all remote
+> >>   * processors. Some will always boot at a specific hard-coded address.
+> >>   */
+> >> -u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+> >> +u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+> >>  {
+> >>  	struct elf32_hdr *ehdr  = (struct elf32_hdr *)fw->data;
+> >>  
+> >> diff --git a/drivers/remoteproc/remoteproc_internal.h
+> >> b/drivers/remoteproc/remoteproc_internal.h
+> >> index 58580210575c..0deae5f237b8 100644
+> >> --- a/drivers/remoteproc/remoteproc_internal.h
+> >> +++ b/drivers/remoteproc/remoteproc_internal.h
+> >> @@ -55,7 +55,7 @@ phys_addr_t rproc_va_to_pa(void *cpu_addr);
+> >>  int rproc_trigger_recovery(struct rproc *rproc);
+> >>  
+> >>  int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
+> >> -u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
+> >> +u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
+> >>  int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
+> >>  int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw);
+> >>  struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
+> > 
+> > The return type of function rproc_get_boot_addr() should also be changed from
+> > u32 to u64.  Or perhaps this is intentional to make sure rproc->bootaddr never
+> > occupies more than 32bit?
+> 
+> No, this is a mistake clearly. I haven't been able to test with a 64 bit
+> boot address since our remote processors always boot in the 32 bits
+> space. But since the elf64 boot address is on 64 bitsn this was a logical
+> modification. I will fix that.
+> 
+
+Sorry, I forgot to reply to this one. I fixed it up while applying the
+patch.
+
+Thanks,
+Bjorn
+
+> > 
+> >> diff --git a/drivers/remoteproc/st_remoteproc.c
+> >> b/drivers/remoteproc/st_remoteproc.c
+> >> index ee13d23b43a9..a3268d95a50e 100644
+> >> --- a/drivers/remoteproc/st_remoteproc.c
+> >> +++ b/drivers/remoteproc/st_remoteproc.c
+> >> @@ -190,7 +190,7 @@ static int st_rproc_start(struct rproc *rproc)
+> >>  		}
+> >>  	}
+> >>  
+> >> -	dev_info(&rproc->dev, "Started from 0x%x\n", rproc->bootaddr);
+> >> +	dev_info(&rproc->dev, "Started from 0x%llx\n", rproc->bootaddr);
+> >>  
+> >>  	return 0;
+> >>  
+> >> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> >> index bee559330204..1683d6c386a6 100644
+> >> --- a/include/linux/remoteproc.h
+> >> +++ b/include/linux/remoteproc.h
+> >> @@ -382,7 +382,7 @@ struct rproc_ops {
+> >>  				struct rproc *rproc, const struct firmware *fw);
+> >>  	int (*load)(struct rproc *rproc, const struct firmware *fw);
+> >>  	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+> >> -	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+> >> +	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+> >>  };
+> >>  
+> >>  /**
+> >> @@ -498,7 +498,7 @@ struct rproc {
+> >>  	int num_traces;
+> >>  	struct list_head carveouts;
+> >>  	struct list_head mappings;
+> >> -	u32 bootaddr;
+> >> +	u64 bootaddr;
+> >>  	struct list_head rvdevs;
+> >>  	struct list_head subdevs;
+> >>  	struct idr notifyids;
+> >> --
+> >> 2.15.0.276.g89ea799
