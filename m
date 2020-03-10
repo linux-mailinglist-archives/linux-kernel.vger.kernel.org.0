@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 193CC17F90C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:53:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82A5817F85F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:48:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729192AbgCJMxa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:53:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59322 "EHLO mail.kernel.org"
+        id S1728171AbgCJMrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:47:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727077AbgCJMxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:53:20 -0400
+        id S1728157AbgCJMrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:47:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DDFB2468F;
-        Tue, 10 Mar 2020 12:53:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4977E246B1;
+        Tue, 10 Mar 2020 12:47:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844799;
-        bh=1d+l+kqG2hH2aBbgPH+auk/JtTL97jzlzJUpenApdvM=;
+        s=default; t=1583844439;
+        bh=4I1YLMCj3IlKF5jI77aeT/Tfxrc6P5ndiSwlZHx4FUI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ltOivEj5d/XXb4eAz13sbw17oQHSwNd02bevGoXBAesnCgwoYBsEkgDIADg9hnR4Y
-         Q1whxgs3/nwJoS6MiyFfed9IPBMTiJz1Q8RI501sRwfUQVBMkRmtlcSJk3QdwLEyxt
-         XqxQPjspb0rlmtduTpXqR5vqpI6YufQTa8IxSJho=
+        b=RWbkNwAn8qWiaVpINQ64KCNggJ6DGn2eX9aB4GXwz2Fiixsoy4bF5b7uNX+IZEdpA
+         U4W46T7yU19UY7b8U4kGvanHGuql5kI8DazDS/eQU/qShE7b6tFwib722O8O6kzbcH
+         pA/U6qKCLmLPThDpQmzlFlFbymZubuq0hDx9lE3M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 124/168] powerpc/mm: Fix missing KUAP disable in flush_coherent_icache()
-Date:   Tue, 10 Mar 2020 13:39:30 +0100
-Message-Id: <20200310123648.022168973@linuxfoundation.org>
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Rouven Czerwinski <r.czerwinski@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 4.9 83/88] ARM: imx: build v7_cpu_resume() unconditionally
+Date:   Tue, 10 Mar 2020 13:39:31 +0100
+Message-Id: <20200310123624.816413875@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,92 +45,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-[ Upstream commit 59bee45b9712c759ea4d3dcc4eff1752f3a66558 ]
+commit 512a928affd51c2dc631401e56ad5ee5d5dd68b6 upstream.
 
-Stefan reported a strange kernel fault which turned out to be due to a
-missing KUAP disable in flush_coherent_icache() called from
-flush_icache_range().
+This function is not only needed by the platform suspend code, but is also
+reused as the CPU resume function when the ARM cores can be powered down
+completely in deep idle, which is the case on i.MX6SX and i.MX6UL(L).
 
-The fault looks like:
+Providing the static inline stub whenever CONFIG_SUSPEND is disabled means
+that those platforms will hang on resume from cpuidle if suspend is disabled.
 
-  Kernel attempted to access user page (7fffc30d9c00) - exploit attempt? (uid: 1009)
-  BUG: Unable to handle kernel data access on read at 0x7fffc30d9c00
-  Faulting instruction address: 0xc00000000007232c
-  Oops: Kernel access of bad area, sig: 11 [#1]
-  LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=2048 NUMA PowerNV
-  CPU: 35 PID: 5886 Comm: sigtramp Not tainted 5.6.0-rc2-gcc-8.2.0-00003-gfc37a1632d40 #79
-  NIP:  c00000000007232c LR: c00000000003b7fc CTR: 0000000000000000
-  REGS: c000001e11093940 TRAP: 0300   Not tainted  (5.6.0-rc2-gcc-8.2.0-00003-gfc37a1632d40)
-  MSR:  900000000280b033 <SF,HV,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 28000884  XER: 00000000
-  CFAR: c0000000000722fc DAR: 00007fffc30d9c00 DSISR: 08000000 IRQMASK: 0
-  GPR00: c00000000003b7fc c000001e11093bd0 c0000000023ac200 00007fffc30d9c00
-  GPR04: 00007fffc30d9c18 0000000000000000 c000001e11093bd4 0000000000000000
-  GPR08: 0000000000000000 0000000000000001 0000000000000000 c000001e1104ed80
-  GPR12: 0000000000000000 c000001fff6ab380 c0000000016be2d0 4000000000000000
-  GPR16: c000000000000000 bfffffffffffffff 0000000000000000 0000000000000000
-  GPR20: 00007fffc30d9c00 00007fffc30d8f58 00007fffc30d9c18 00007fffc30d9c20
-  GPR24: 00007fffc30d9c18 0000000000000000 c000001e11093d90 c000001e1104ed80
-  GPR28: c000001e11093e90 0000000000000000 c0000000023d9d18 00007fffc30d9c00
-  NIP flush_icache_range+0x5c/0x80
-  LR  handle_rt_signal64+0x95c/0xc2c
-  Call Trace:
-    0xc000001e11093d90 (unreliable)
-    handle_rt_signal64+0x93c/0xc2c
-    do_notify_resume+0x310/0x430
-    ret_from_except_lite+0x70/0x74
-  Instruction dump:
-  409e002c 7c0802a6 3c62ff31 3863f6a0 f8010080 48195fed 60000000 48fe4c8d
-  60000000 e8010080 7c0803a6 7c0004ac <7c00ffac> 7c0004ac 4c00012c 38210070
+So there are two problems:
 
-This path through handle_rt_signal64() to setup_trampoline() and
-flush_icache_range() is only triggered by 64-bit processes that have
-unmapped their VDSO, which is rare.
+  - The static inline stub masks the linker error
+  - The function is not available where needed
 
-flush_icache_range() takes a range of addresses to flush. In
-flush_coherent_icache() we implement an optimisation for CPUs where we
-know we don't actually have to flush the whole range, we just need to
-do a single icbi.
+Fix both by just building the function unconditionally, when
+CONFIG_SOC_IMX6 is enabled. The actual code is three instructions long,
+so it's arguably ok to just leave it in for all i.MX6 kernel configurations.
 
-However we still execute the icbi on the user address of the start of
-the range we're flushing. On CPUs that also implement KUAP (Power9)
-that leads to the spurious fault above.
+Fixes: 05136f0897b5 ("ARM: imx: support arm power off in cpuidle for i.mx6sx")
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Signed-off-by: Rouven Czerwinski <r.czerwinski@pengutronix.de>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-We should be able to pass any address, including a kernel address, to
-the icbi on these CPUs, which would avoid any interaction with KUAP.
-But I don't want to make that change in a bug fix, just in case it
-surfaces some strange behaviour on some CPU.
-
-So for now just disable KUAP around the icbi. Note the icbi is treated
-as a load, so we allow read access, not write as you'd expect.
-
-Fixes: 890274c2dc4c ("powerpc/64s: Implement KUAP for Radix MMU")
-Cc: stable@vger.kernel.org # v5.2+
-Reported-by: Stefan Berger <stefanb@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20200303235708.26004-1-mpe@ellerman.id.au
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/mem.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/mach-imx/Makefile       |    2 ++
+ arch/arm/mach-imx/common.h       |    4 ++--
+ arch/arm/mach-imx/resume-imx6.S  |   24 ++++++++++++++++++++++++
+ arch/arm/mach-imx/suspend-imx6.S |   14 --------------
+ 4 files changed, 28 insertions(+), 16 deletions(-)
 
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index 6612796ea69c2..96ca90ce0264a 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -363,7 +363,9 @@ static inline bool flush_coherent_icache(unsigned long addr)
- 	 */
- 	if (cpu_has_feature(CPU_FTR_COHERENT_ICACHE)) {
- 		mb(); /* sync */
-+		allow_read_from_user((const void __user *)addr, L1_CACHE_BYTES);
- 		icbi((void *)addr);
-+		prevent_read_from_user((const void __user *)addr, L1_CACHE_BYTES);
- 		mb(); /* sync */
- 		isync();
- 		return true;
--- 
-2.20.1
-
+--- a/arch/arm/mach-imx/Makefile
++++ b/arch/arm/mach-imx/Makefile
+@@ -86,6 +86,8 @@ AFLAGS_suspend-imx6.o :=-Wa,-march=armv7
+ obj-$(CONFIG_SOC_IMX6) += suspend-imx6.o
+ obj-$(CONFIG_SOC_IMX53) += suspend-imx53.o
+ endif
++AFLAGS_resume-imx6.o :=-Wa,-march=armv7-a
++obj-$(CONFIG_SOC_IMX6) += resume-imx6.o
+ obj-$(CONFIG_SOC_IMX6) += pm-imx6.o
+ 
+ obj-$(CONFIG_SOC_IMX1) += mach-imx1.o
+--- a/arch/arm/mach-imx/common.h
++++ b/arch/arm/mach-imx/common.h
+@@ -112,17 +112,17 @@ void imx_cpu_die(unsigned int cpu);
+ int imx_cpu_kill(unsigned int cpu);
+ 
+ #ifdef CONFIG_SUSPEND
+-void v7_cpu_resume(void);
+ void imx53_suspend(void __iomem *ocram_vbase);
+ extern const u32 imx53_suspend_sz;
+ void imx6_suspend(void __iomem *ocram_vbase);
+ #else
+-static inline void v7_cpu_resume(void) {}
+ static inline void imx53_suspend(void __iomem *ocram_vbase) {}
+ static const u32 imx53_suspend_sz;
+ static inline void imx6_suspend(void __iomem *ocram_vbase) {}
+ #endif
+ 
++void v7_cpu_resume(void);
++
+ void imx6_pm_ccm_init(const char *ccm_compat);
+ void imx6q_pm_init(void);
+ void imx6dl_pm_init(void);
+--- /dev/null
++++ b/arch/arm/mach-imx/resume-imx6.S
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright 2014 Freescale Semiconductor, Inc.
++ */
++
++#include <linux/linkage.h>
++#include <asm/assembler.h>
++#include <asm/asm-offsets.h>
++#include <asm/hardware/cache-l2x0.h>
++#include "hardware.h"
++
++/*
++ * The following code must assume it is running from physical address
++ * where absolute virtual addresses to the data section have to be
++ * turned into relative ones.
++ */
++
++ENTRY(v7_cpu_resume)
++	bl	v7_invalidate_l1
++#ifdef CONFIG_CACHE_L2X0
++	bl	l2c310_early_resume
++#endif
++	b	cpu_resume
++ENDPROC(v7_cpu_resume)
+--- a/arch/arm/mach-imx/suspend-imx6.S
++++ b/arch/arm/mach-imx/suspend-imx6.S
+@@ -333,17 +333,3 @@ resume:
+ 
+ 	ret	lr
+ ENDPROC(imx6_suspend)
+-
+-/*
+- * The following code must assume it is running from physical address
+- * where absolute virtual addresses to the data section have to be
+- * turned into relative ones.
+- */
+-
+-ENTRY(v7_cpu_resume)
+-	bl	v7_invalidate_l1
+-#ifdef CONFIG_CACHE_L2X0
+-	bl	l2c310_early_resume
+-#endif
+-	b	cpu_resume
+-ENDPROC(v7_cpu_resume)
 
 
