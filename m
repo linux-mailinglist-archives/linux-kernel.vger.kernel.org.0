@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E46A11805EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:11:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EE0C1805F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:11:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbgCJSK7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 14:10:59 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44453 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbgCJSK6 (ORCPT
+        id S1727060AbgCJSL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 14:11:26 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36538 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbgCJSL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 14:10:58 -0400
-Received: by mail-pl1-f196.google.com with SMTP id d9so5742892plo.11
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 11:10:58 -0700 (PDT)
+        Tue, 10 Mar 2020 14:11:26 -0400
+Received: by mail-pg1-f196.google.com with SMTP id c7so940266pgw.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 11:11:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:content-transfer-encoding:in-reply-to:references
          :subject:from:cc:to:date:message-id:user-agent;
-        bh=zsKib0GqynNKua7iAWBmqWACz2JHoCf4kZ0aZVNqsbQ=;
-        b=HLZpkhv24sgfXCUG4fX3MIo+Au43vnAfit8xW0HNvvMmiJukq0nlQHasooY+XayfsH
-         bPDPnsiOCYxI3bQG7B0B/K/8wZgxUxSAH4dukVWksxBstHWMBiG0AFIKs5cR34NvIry0
-         7XpgDvrSHWGOiZ1HYqWiFG8XWhw20Xr6INzc4=
+        bh=yrVZjd8gZ0Ysia7WKkOlNyA8gHSCOfIvJw2hn5fXOTo=;
+        b=S+pLjMqdeN6mnY8CQehC3nBw/yA6NMpCjF8qbgxUBM1lcueUbng2IKM5q69nW9YMLI
+         1K9oW8b1DaZDeSNKGBvlwA1Q+d9J2pBu/3a4VL6E7nlJ3ZWwc2zSouHg+21N2OJ6NviD
+         shULJYOBdJPXnC8VaRxjyev4hoQU5eXx2v66k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:content-transfer-encoding
          :in-reply-to:references:subject:from:cc:to:date:message-id
          :user-agent;
-        bh=zsKib0GqynNKua7iAWBmqWACz2JHoCf4kZ0aZVNqsbQ=;
-        b=KQEAxFSfQaD2ig9v6Lx0VrrwCqCkhhCfiHevyQfYy72aFQmQFm/7qsrTPYqDzFebGv
-         HGEcQwuyUfKi2Iul5XfSyC61ayxkm4B5kGytLA2SiJ5v1uDHFi7PmgBirOEz8IR/O7ds
-         rrvcpnJW+AorjLmf60NiQroZzDpiIiD7S+r7i6blzYcHnks00/R5WR8IRaMjHcfUFdC7
-         5FrajbXMQJVgfeTakw/iZbdbZwTFT0gdSWV4CevGZFyNLhM15AvxPKoX+4SpXPfbir0t
-         XMP7yXmS+ETwRBv7ARjVKN4UQTbyeFiEcEhBZ0AEcPcovYzjqgWe/YIkIKWpCUx68uEM
-         zq9g==
-X-Gm-Message-State: ANhLgQ11RWCwtGdKoTPxRD2cHYXEgJpEoiuFZbdw9nnzgDGbPe3u6+8x
-        4aovXOI2oqf76ULqRpZY+Z2bqA==
-X-Google-Smtp-Source: ADFU+vvi/bGVsNtmguU66YqisKjD03wxFAZstCH06FyZW30xgi/xqHri6gRo4LARgAX/p5XdWG7+gQ==
-X-Received: by 2002:a17:902:ab8f:: with SMTP id f15mr22089420plr.280.1583863857702;
-        Tue, 10 Mar 2020 11:10:57 -0700 (PDT)
+        bh=yrVZjd8gZ0Ysia7WKkOlNyA8gHSCOfIvJw2hn5fXOTo=;
+        b=gm1bccVQWuNRdL4v71bgpiNhqMUik52dg7MtuX+AlNY4aD6Kr3XIJDWd3/bX0IIoub
+         qF+/MEpJf/7KVVXFZuXIfVmKimJ1QqH6jX/8MmjMBRZlF+TtBLdue9tnqLSJPgYhSu5/
+         H624LHL3BJ7gAxc3AN+2pS/959HX/CJMxxfPUKZyjxWPWcotZcirSZKOH0anEUklkQGL
+         R4614UZ2EPHmpAvhLxU0Esvtrkti8omP6YkJXwosgjOr6GW1dVvGijh7euXUvr78kojX
+         RTBSBlG0u1mE2GJyWYs2NqyVe2AtmOmXlP31NeJQJukLNA8dnD3rNOub0/IBR6fPloO3
+         kiXw==
+X-Gm-Message-State: ANhLgQ2rKQ2p6gEWjWd1Tb3a5TJA3Gb+F5jnkGNmYLxx2adFEWk8bppq
+        c9490xqBxbqsaDeVDLrME7sSkg==
+X-Google-Smtp-Source: ADFU+vuipIwBt7HZ/eXbGMHyK0C9Xm3ciUBrtc453qCMfM4q/YxsgsKOtlO41E3QCYP95HQyqRhlwA==
+X-Received: by 2002:a63:7e10:: with SMTP id z16mr6992656pgc.412.1583863885067;
+        Tue, 10 Mar 2020 11:11:25 -0700 (PDT)
 Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id e2sm14277262pgv.81.2020.03.10.11.10.57
+        by smtp.gmail.com with ESMTPSA id c17sm27415625pfo.71.2020.03.10.11.11.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 11:10:57 -0700 (PDT)
+        Tue, 10 Mar 2020 11:11:24 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200310063338.3344582-4-bjorn.andersson@linaro.org>
-References: <20200310063338.3344582-1-bjorn.andersson@linaro.org> <20200310063338.3344582-4-bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v4 3/5] remoteproc: qcom: Update PIL relocation info on load
+In-Reply-To: <20200310063338.3344582-5-bjorn.andersson@linaro.org>
+References: <20200310063338.3344582-1-bjorn.andersson@linaro.org> <20200310063338.3344582-5-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v4 4/5] arm64: dts: qcom: qcs404: Add IMEM and PIL info region
 From:   Stephen Boyd <swboyd@chromium.org>
 Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -57,41 +57,20 @@ To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 10 Mar 2020 11:10:56 -0700
-Message-ID: <158386385637.149997.10680456822295964075@swboyd.mtv.corp.google.com>
+Date:   Tue, 10 Mar 2020 11:11:23 -0700
+Message-ID: <158386388355.149997.17460216194595657584@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bjorn Andersson (2020-03-09 23:33:36)
-> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qco=
-m_q6v5_adsp.c
-> index e953886b2eb7..d5cdff942535 100644
-> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> @@ -164,10 +166,18 @@ static int qcom_adsp_shutdown(struct qcom_adsp *ads=
-p)
->  static int adsp_load(struct rproc *rproc, const struct firmware *fw)
->  {
->         struct qcom_adsp *adsp =3D (struct qcom_adsp *)rproc->priv;
-> +       int ret;
-> +
-> +       ret =3D qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
-> +                                   adsp->mem_region, adsp->mem_phys,
-> +                                   adsp->mem_size, &adsp->mem_reloc);
-> +       if (ret)
-> +               return ret;
-> =20
-> -       return qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
-> -                            adsp->mem_region, adsp->mem_phys, adsp->mem_=
-size,
-> -                            &adsp->mem_reloc);
-> +       /* Failures only affect post mortem debugging, so ignore return v=
-alue */
-> +       qcom_pil_info_store(adsp->info_name, adsp->mem_reloc, adsp->mem_s=
-ize);
+Quoting Bjorn Andersson (2020-03-09 23:33:37)
+> Add a simple-mfd representing IMEM on QCS404 and define the PIL
+> relocation info region, so that post mortem tools will be able to locate
+> the loaded remoteprocs.
+>=20
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 
-If the return value was void then the comment wouldn't be necessary and
-it would be self documenting as such. Can we do that?
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
