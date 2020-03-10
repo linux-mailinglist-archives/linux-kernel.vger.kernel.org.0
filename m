@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 381B017F93A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:54:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA34A17F93C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:55:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729423AbgCJMyz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:54:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33498 "EHLO mail.kernel.org"
+        id S1729431AbgCJMy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:54:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729412AbgCJMyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:54:53 -0400
+        id S1729421AbgCJMyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:54:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33E5620674;
-        Tue, 10 Mar 2020 12:54:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D5C624696;
+        Tue, 10 Mar 2020 12:54:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844892;
-        bh=9RiMgh8QPyWIuQfhiMeAtqfXBCzae0ghcsVZphTMLKs=;
+        s=default; t=1583844895;
+        bh=7NRmezi1vA7WMk2yR8WRvB8DC2NMDVyQdd4/HrxFIMc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r/4FeE5tg16wC0IfRcIO+y1eez2arrrhaOdQojmBYY92rBNdXS8xhXuZU2XqPNoAk
-         0IoKAMF2K8BKB3PYlfZ/pzH9HqPD137oK3KlVqr5BSA2IZtxlsn2giNr1rzshOEeZV
-         DDPzpw4/l7GamMBmFR90rpdqa5woBEg09U0sOeEI=
+        b=byBAxJqkOTCYWWFu3P7tONvc86pE9Guf6zGcZiLDUhrBd0OcGTroDYV0f573ohDV0
+         G4RRNjCxYBnydzjxI5Fhr129EoBxK6etNexixJsqgDt47gPrX+bZBOvrRDklPuruL1
+         3sKuwIu2ZLfAI5mR2LvNdiRnwQT/xBIMjyzBtpKk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH 5.4 158/168] ARM: dts: imx7-colibri: Fix frequency for sd/mmc
-Date:   Tue, 10 Mar 2020 13:40:04 +0100
-Message-Id: <20200310123651.514115742@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 5.4 159/168] hwmon: (adt7462) Fix an error return in ADT7462_REG_VOLT()
+Date:   Tue, 10 Mar 2020 13:40:05 +0100
+Message-Id: <20200310123651.617647552@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
 References: <20200310123635.322799692@linuxfoundation.org>
@@ -45,47 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 2773fe1d31c42ffae2a9cb9a6055d99dd86e2fee upstream.
+commit 44f2f882909fedfc3a56e4b90026910456019743 upstream.
 
-SD/MMC on Colibri iMX7S/D modules successfully support
-200Mhz frequency in HS200 mode.
+This is only called from adt7462_update_device().  The caller expects it
+to return zero on error.  I fixed a similar issue earlier in commit
+a4bf06d58f21 ("hwmon: (adt7462) ADT7462_REG_VOLT_MAX() should return 0")
+but I missed this one.
 
-Removing the unnecessary max-frequency limit significantly
-increases the performance:
-
-== before fix ====
-root@colibri-imx7-emmc:~# hdparm -t /dev/mmcblk0
-/dev/mmcblk0:
- Timing buffered disk reads: 252 MB in  3.02 seconds =  83.54 MB/sec
-==================
-
-=== after fix ====
-root@colibri-imx7-emmc:~# hdparm -t /dev/mmcblk0
-/dev/mmcblk0:
- Timing buffered disk reads: 408 MB in  3.00 seconds = 135.94 MB/sec
-==================
-
-Fixes: f928a4a377e4 ("ARM: dts: imx7: add Toradex Colibri iMX7D 1GB (eMMC) support")
-Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Fixes: c0b4e3ab0c76 ("adt7462: new hwmon driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Link: https://lore.kernel.org/r/20200303101608.kqjwfcazu2ylhi2a@kili.mountain
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/imx7-colibri.dtsi |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/hwmon/adt7462.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/imx7-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx7-colibri.dtsi
-@@ -337,7 +337,6 @@
- 	assigned-clock-rates = <400000000>;
- 	bus-width = <8>;
- 	fsl,tuning-step = <2>;
--	max-frequency = <100000000>;
- 	vmmc-supply = <&reg_module_3v3>;
- 	vqmmc-supply = <&reg_DCDC3>;
- 	non-removable;
+--- a/drivers/hwmon/adt7462.c
++++ b/drivers/hwmon/adt7462.c
+@@ -413,7 +413,7 @@ static int ADT7462_REG_VOLT(struct adt74
+ 			return 0x95;
+ 		break;
+ 	}
+-	return -ENODEV;
++	return 0;
+ }
+ 
+ /* Provide labels for sysfs */
 
 
