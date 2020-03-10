@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD36217F8FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:53:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D0D317F9CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:00:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729113AbgCJMxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:53:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58744 "EHLO mail.kernel.org"
+        id S1730077AbgCJNAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:00:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729099AbgCJMw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:52:57 -0400
+        id S1730059AbgCJM7w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:59:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD4AA20674;
-        Tue, 10 Mar 2020 12:52:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EB432468C;
+        Tue, 10 Mar 2020 12:59:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844776;
-        bh=WLTWQkKSnLnhF6Yiww78OxYvtR69QxHf5Yt/kkUHpaw=;
+        s=default; t=1583845185;
+        bh=u5EESKKXh5N8XxF1ERwT6O7rJ8l+e6cksy9HpYkORGc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nhBeHsXB+wsePFVsSzB4PwC/x+GNhmsUBM/cIAuUevSrXqJ5pXL/HG2QWzvj1KE6C
-         c34Jqp4J350We9KyqilvYo1sy2hINVks5wlo2JWyakU2yGGo/aOGBcrKnTtnWRFzba
-         1WYJ0rbeK25aB5BROaPM/lmGeANRvJEzXeJSxw+A=
+        b=U9xA+Db1XkN4FhxtOWkn9BLJWqA5c5AW2nZxgdl9LlCPpDkkiXOKDpEhadwS1BGfl
+         hQD1yzFSsI06Nl5kFZUpYC8tIT1YVF2wO40GTCgMRWpCB42ktzjrLDimGhQvnlhNHB
+         poSe+FLKExAS/70qE65Zc469FLFOuu2eGQfHFJBA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jim Lin <jilin@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 5.4 066/168] usb: storage: Add quirk for Samsung Fit flash
+        stable@vger.kernel.org
+Subject: [PATCH 5.5 075/189] usb: core: hub: fix unhandled return by employing a void function
 Date:   Tue, 10 Mar 2020 13:38:32 +0100
-Message-Id: <20200310123641.954557630@linuxfoundation.org>
+Message-Id: <20200310123647.200239875@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +42,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jim Lin <jilin@nvidia.com>
+From: Eugeniu Rosca <erosca@de.adit-jv.com>
 
-commit 86d92f5465958752481269348d474414dccb1552 upstream.
+commit 63d6d7ed475c53dc1cabdfedf63de1fd8dcd72ee upstream.
 
-Current driver has 240 (USB2.0) and 2048 (USB3.0) as max_sectors,
-e.g., /sys/bus/scsi/devices/0:0:0:0/max_sectors
-
-If data access times out, driver error handling will issue a port
-reset.
-Sometimes Samsung Fit (090C:1000) flash disk will not respond to
-later Set Address or Get Descriptor command.
-
-Adding this quirk to limit max_sectors to 64 sectors to avoid issue
-occurring.
-
-Signed-off-by: Jim Lin <jilin@nvidia.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/1583158895-31342-1-git-send-email-jilin@nvidia.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Address below Coverity complaint (Feb 25, 2020, 8:06 AM CET):
 
 ---
- drivers/usb/storage/unusual_devs.h |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/usb/core/hub.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -1258,6 +1258,12 @@ UNUSUAL_DEV( 0x090a, 0x1200, 0x0000, 0x9
- 		USB_SC_RBC, USB_PR_BULK, NULL,
- 		0 ),
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -1866,7 +1866,7 @@ static int hub_probe(struct usb_interfac
  
-+UNUSUAL_DEV(0x090c, 0x1000, 0x1100, 0x1100,
-+		"Samsung",
-+		"Flash Drive FIT",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_MAX_SECTORS_64),
-+
- /* aeb */
- UNUSUAL_DEV( 0x090c, 0x1132, 0x0000, 0xffff,
- 		"Feiya",
+ 	if (id->driver_info & HUB_QUIRK_DISABLE_AUTOSUSPEND) {
+ 		hub->quirk_disable_autosuspend = 1;
+-		usb_autopm_get_interface(intf);
++		usb_autopm_get_interface_no_resume(intf);
+ 	}
+ 
+ 	if (hub_configure(hub, &desc->endpoint[0].desc) >= 0)
 
 
