@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D27FD17FD0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:25:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DE3217FD01
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:25:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbgCJNZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:25:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37212 "EHLO mail.kernel.org"
+        id S1729825AbgCJM5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:57:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729444AbgCJM5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:57:35 -0400
+        id S1729801AbgCJM5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:57:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D35EE2253D;
-        Tue, 10 Mar 2020 12:57:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24CBB20674;
+        Tue, 10 Mar 2020 12:57:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845054;
-        bh=er7aEzAbdX4AhtA3Dai7AyRJbMyF3vwss5YL5afdx7E=;
+        s=default; t=1583845062;
+        bh=Ijmq/i5PFf8y/H7vXVaSKWPVJgkUToA6JgRLsQDTu7M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jMMQkACorEMKaoauFGGm9y5XLrJwvvWPE7mjfA8+abSkDlbCWvrZ0y/be1b95OZpw
-         F4MGmpB1NTmAJbJ76JZpwiYah87YvkRxNg83z0L3TlgY4QOAW8HEMJ3cQl5ax5BiDI
-         1uLQsOwmBEibK1jWTvyXza47+66vAy0mhDUh9Q78=
+        b=gHBDt/Is9XhIs5F+ywYIOLZ7yGeHmANu6GD02HqgpOVISkZUbNU/HY15YWc9TiiYb
+         aMaMHxlk4gZqbc3QaUYDosNgqpKiXWQfJtUWajfwtJQ+uRh5gEd8hE0sVepxlvqnLt
+         XzkHgIKrIWqgJotPv1ssXxkEO1n64+w4ongeQ6ec=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Benjamin Block <bblock@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Steffen Maier <maier@linux.ibm.com>
-Subject: [PATCH 5.5 046/189] s390/qdio: fill SL with absolute addresses
-Date:   Tue, 10 Mar 2020 13:38:03 +0100
-Message-Id: <20200310123644.122223419@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 049/189] x86/xen: Distribute switch variables for initialization
+Date:   Tue, 10 Mar 2020 13:38:06 +0100
+Message-Id: <20200310123644.460773649@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
 References: <20200310123639.608886314@linuxfoundation.org>
@@ -47,110 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Kees Cook <keescook@chromium.org>
 
-[ Upstream commit e9091ffd6a0aaced111b5d6ead5eaab5cd7101bc ]
+[ Upstream commit 9038ec99ceb94fb8d93ade5e236b2928f0792c7c ]
 
-As the comment says, sl->sbal holds an absolute address. qeth currently
-solves this through wild casting, while zfcp doesn't care.
+Variables declared in a switch statement before any case statements
+cannot be automatically initialized with compiler instrumentation (as
+they are not part of any execution flow). With GCC's proposed automatic
+stack variable initialization feature, this triggers a warning (and they
+don't get initialized). Clang's automatic stack variable initialization
+(via CONFIG_INIT_STACK_ALL=y) doesn't throw a warning, but it also
+doesn't initialize such variables[1]. Note that these warnings (or silent
+skipping) happen before the dead-store elimination optimization phase,
+so even when the automatic initializations are later elided in favor of
+direct initializations, the warnings remain.
 
-Handle this properly in the code that actually builds the SL.
+To avoid these problems, move such variables into the "case" where
+they're used or lift them up into the main function body.
 
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Reviewed-by: Alexandra Winter <wintera@linux.ibm.com>
-Reviewed-by: Steffen Maier <maier@linux.ibm.com> [for qdio]
-Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+arch/x86/xen/enlighten_pv.c: In function ‘xen_write_msr_safe’:
+arch/x86/xen/enlighten_pv.c:904:12: warning: statement will never be executed [-Wswitch-unreachable]
+  904 |   unsigned which;
+      |            ^~~~~
+
+[1] https://bugs.llvm.org/show_bug.cgi?id=44916
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Link: https://lore.kernel.org/r/20200220062318.69299-1-keescook@chromium.org
+Reviewed-by: Juergen Gross <jgross@suse.com>
+[boris: made @which an 'unsigned int']
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/include/asm/qdio.h      |  2 +-
- drivers/s390/cio/qdio_setup.c     |  3 ++-
- drivers/s390/net/qeth_core_main.c | 23 +++++++++++------------
- 3 files changed, 14 insertions(+), 14 deletions(-)
+ arch/x86/xen/enlighten_pv.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/s390/include/asm/qdio.h b/arch/s390/include/asm/qdio.h
-index 71e3f0146cda0..7870cf8345334 100644
---- a/arch/s390/include/asm/qdio.h
-+++ b/arch/s390/include/asm/qdio.h
-@@ -227,7 +227,7 @@ struct qdio_buffer {
-  * @sbal: absolute SBAL address
-  */
- struct sl_element {
--	unsigned long sbal;
-+	u64 sbal;
- } __attribute__ ((packed));
+diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+index 1f756ffffe8b3..79409120a6036 100644
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -896,14 +896,15 @@ static u64 xen_read_msr_safe(unsigned int msr, int *err)
+ static int xen_write_msr_safe(unsigned int msr, unsigned low, unsigned high)
+ {
+ 	int ret;
++#ifdef CONFIG_X86_64
++	unsigned int which;
++	u64 base;
++#endif
  
- /**
-diff --git a/drivers/s390/cio/qdio_setup.c b/drivers/s390/cio/qdio_setup.c
-index dc430bd86ade9..58eaac70dba7f 100644
---- a/drivers/s390/cio/qdio_setup.c
-+++ b/drivers/s390/cio/qdio_setup.c
-@@ -8,6 +8,7 @@
- #include <linux/kernel.h>
- #include <linux/slab.h>
- #include <linux/export.h>
-+#include <linux/io.h>
- #include <asm/qdio.h>
+ 	ret = 0;
  
- #include "cio.h"
-@@ -205,7 +206,7 @@ static void setup_storage_lists(struct qdio_q *q, struct qdio_irq *irq_ptr,
- 
- 	/* fill in sl */
- 	for (j = 0; j < QDIO_MAX_BUFFERS_PER_Q; j++)
--		q->sl->element[j].sbal = (unsigned long)q->sbal[j];
-+		q->sl->element[j].sbal = virt_to_phys(q->sbal[j]);
- }
- 
- static void setup_queues(struct qdio_irq *irq_ptr,
-diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
-index 10edfd6fc9302..4fd7b0ceb4ffd 100644
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -4749,10 +4749,10 @@ static void qeth_qdio_establish_cq(struct qeth_card *card,
- 	if (card->options.cq == QETH_CQ_ENABLED) {
- 		int offset = QDIO_MAX_BUFFERS_PER_Q *
- 			     (card->qdio.no_in_queues - 1);
--		for (i = 0; i < QDIO_MAX_BUFFERS_PER_Q; ++i) {
--			in_sbal_ptrs[offset + i] = (struct qdio_buffer *)
--				virt_to_phys(card->qdio.c_q->bufs[i].buffer);
--		}
-+
-+		for (i = 0; i < QDIO_MAX_BUFFERS_PER_Q; i++)
-+			in_sbal_ptrs[offset + i] =
-+				card->qdio.c_q->bufs[i].buffer;
- 
- 		queue_start_poll[card->qdio.no_in_queues - 1] = NULL;
- 	}
-@@ -4786,10 +4786,9 @@ static int qeth_qdio_establish(struct qeth_card *card)
- 		rc = -ENOMEM;
- 		goto out_free_qib_param;
- 	}
--	for (i = 0; i < QDIO_MAX_BUFFERS_PER_Q; ++i) {
--		in_sbal_ptrs[i] = (struct qdio_buffer *)
--			virt_to_phys(card->qdio.in_q->bufs[i].buffer);
--	}
-+
-+	for (i = 0; i < QDIO_MAX_BUFFERS_PER_Q; i++)
-+		in_sbal_ptrs[i] = card->qdio.in_q->bufs[i].buffer;
- 
- 	queue_start_poll = kcalloc(card->qdio.no_in_queues, sizeof(void *),
- 				   GFP_KERNEL);
-@@ -4810,11 +4809,11 @@ static int qeth_qdio_establish(struct qeth_card *card)
- 		rc = -ENOMEM;
- 		goto out_free_queue_start_poll;
- 	}
-+
- 	for (i = 0, k = 0; i < card->qdio.no_out_queues; ++i)
--		for (j = 0; j < QDIO_MAX_BUFFERS_PER_Q; ++j, ++k) {
--			out_sbal_ptrs[k] = (struct qdio_buffer *)virt_to_phys(
--				card->qdio.out_qs[i]->bufs[j]->buffer);
--		}
-+		for (j = 0; j < QDIO_MAX_BUFFERS_PER_Q; j++, k++)
-+			out_sbal_ptrs[k] =
-+				card->qdio.out_qs[i]->bufs[j]->buffer;
- 
- 	memset(&init_data, 0, sizeof(struct qdio_initialize));
- 	init_data.cdev                   = CARD_DDEV(card);
+ 	switch (msr) {
+ #ifdef CONFIG_X86_64
+-		unsigned which;
+-		u64 base;
+-
+ 	case MSR_FS_BASE:		which = SEGBASE_FS; goto set;
+ 	case MSR_KERNEL_GS_BASE:	which = SEGBASE_GS_USER; goto set;
+ 	case MSR_GS_BASE:		which = SEGBASE_GS_KERNEL; goto set;
 -- 
 2.20.1
 
