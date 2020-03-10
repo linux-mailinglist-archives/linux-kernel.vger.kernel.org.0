@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB1E617FE1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:33:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9712417FE22
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:33:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728405AbgCJMtI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:49:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53360 "EHLO mail.kernel.org"
+        id S1727977AbgCJMsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:48:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728390AbgCJMtC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:49:02 -0400
+        id S1728326AbgCJMs1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:48:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B68142467D;
-        Tue, 10 Mar 2020 12:49:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62C4A2468E;
+        Tue, 10 Mar 2020 12:48:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844541;
-        bh=F7HTiL+Ka9hsR6pb/OJoLfafwLysTmHqqcBwRpvJXuQ=;
+        s=default; t=1583844506;
+        bh=MA8zhD69ihie6dC77BwgHBWhp7WRCSyibezRwwFndzk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VgOoU4uXhihFV/vzQEo1DvOFHW+EWWX5me4j6y3ymJpMZe4kJDE8/5wyUXrlCSdYF
-         nMmjTfXb2Kea1ANffbgnuioQk7V7ji1U+ml4A6smxaM1UK3vAMpY5TpU9SFkACL6WJ
-         HEbj3m+erwSl+TK9Zq5NtUJWPWBK5ag6laDGuJy0=
+        b=IQerwmRQDyymewJ6fPXhR6rKnlFs5/A4piXDIGiOllqZxoGNe+4ccGbKVOMZeqqoL
+         iqx3eTMreS0CKCbnLWYdn14qwKbp9Lj2Rtpj0iKw0Tf+0GWqL9HtyTKTjLROwL29vR
+         9HKDepi4Clf829I+ZP9293MjiCn2QH+jaVMoJNvw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maor Gottlieb <maorg@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Sergey Organov <sorganov@gmail.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Felipe Balbi <balbi@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 008/168] RDMA/core: Fix pkey and port assignment in get_new_pps
-Date:   Tue, 10 Mar 2020 13:37:34 +0100
-Message-Id: <20200310123636.674408305@linuxfoundation.org>
+Subject: [PATCH 5.4 018/168] usb: gadget: serial: fix Tx stall after buffer overflow
+Date:   Tue, 10 Mar 2020 13:37:44 +0100
+Message-Id: <20200310123637.516348081@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
 References: <20200310123635.322799692@linuxfoundation.org>
@@ -46,105 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maor Gottlieb <maorg@mellanox.com>
+From: Sergey Organov <sorganov@gmail.com>
 
-[ Upstream commit 801b67f3eaafd3f2ec8b65d93142d4ffedba85df ]
+[ Upstream commit e4bfded56cf39b8d02733c1e6ef546b97961e18a ]
 
-When port is part of the modify mask, then we should take it from the
-qp_attr and not from the old pps. Same for PKEY. Otherwise there are
-panics in some configurations:
+Symptom: application opens /dev/ttyGS0 and starts sending (writing) to
+it while either USB cable is not connected, or nobody listens on the
+other side of the cable. If driver circular buffer overflows before
+connection is established, no data will be written to the USB layer
+until/unless /dev/ttyGS0 is closed and re-opened again by the
+application (the latter besides having no means of being notified about
+the event of establishing of the connection.)
 
-  RIP: 0010:get_pkey_idx_qp_list+0x50/0x80 [ib_core]
-  Code: c7 18 e8 13 04 30 ef 0f b6 43 06 48 69 c0 b8 00 00 00 48 03 85 a0 04 00 00 48 8b 50 20 48 8d 48 20 48 39 ca 74 1a 0f b7 73 04 <66> 39 72 10 75 08 eb 10 66 39 72 10 74 0a 48 8b 12 48 39 ca 75 f2
-  RSP: 0018:ffffafb3480932f0 EFLAGS: 00010203
-  RAX: ffff98059ababa10 RBX: ffff980d926e8cc0 RCX: ffff98059ababa30
-  RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff98059ababa28
-  RBP: ffff98059b940000 R08: 00000000000310c0 R09: ffff97fe47c07480
-  R10: 0000000000000036 R11: 0000000000000200 R12: 0000000000000071
-  R13: ffff98059b940000 R14: ffff980d87f948a0 R15: 0000000000000000
-  FS:  00007f88deb31740(0000) GS:ffff98059f600000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000000000000010 CR3: 0000000853e26001 CR4: 00000000001606e0
-  Call Trace:
-   port_pkey_list_insert+0x3d/0x1b0 [ib_core]
-   ? kmem_cache_alloc_trace+0x215/0x220
-   ib_security_modify_qp+0x226/0x3a0 [ib_core]
-   _ib_modify_qp+0xcf/0x390 [ib_core]
-   ipoib_init_qp+0x7f/0x200 [ib_ipoib]
-   ? rvt_modify_port+0xd0/0xd0 [rdmavt]
-   ? ib_find_pkey+0x99/0xf0 [ib_core]
-   ipoib_ib_dev_open_default+0x1a/0x200 [ib_ipoib]
-   ipoib_ib_dev_open+0x96/0x130 [ib_ipoib]
-   ipoib_open+0x44/0x130 [ib_ipoib]
-   __dev_open+0xd1/0x160
-   __dev_change_flags+0x1ab/0x1f0
-   dev_change_flags+0x23/0x60
-   do_setlink+0x328/0xe30
-   ? __nla_validate_parse+0x54/0x900
-   __rtnl_newlink+0x54e/0x810
-   ? __alloc_pages_nodemask+0x17d/0x320
-   ? page_fault+0x30/0x50
-   ? _cond_resched+0x15/0x30
-   ? kmem_cache_alloc_trace+0x1c8/0x220
-   rtnl_newlink+0x43/0x60
-   rtnetlink_rcv_msg+0x28f/0x350
-   ? kmem_cache_alloc+0x1fb/0x200
-   ? _cond_resched+0x15/0x30
-   ? __kmalloc_node_track_caller+0x24d/0x2d0
-   ? rtnl_calcit.isra.31+0x120/0x120
-   netlink_rcv_skb+0xcb/0x100
-   netlink_unicast+0x1e0/0x340
-   netlink_sendmsg+0x317/0x480
-   ? __check_object_size+0x48/0x1d0
-   sock_sendmsg+0x65/0x80
-   ____sys_sendmsg+0x223/0x260
-   ? copy_msghdr_from_user+0xdc/0x140
-   ___sys_sendmsg+0x7c/0xc0
-   ? skb_dequeue+0x57/0x70
-   ? __inode_wait_for_writeback+0x75/0xe0
-   ? fsnotify_grab_connector+0x45/0x80
-   ? __dentry_kill+0x12c/0x180
-   __sys_sendmsg+0x58/0xa0
-   do_syscall_64+0x5b/0x200
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-  RIP: 0033:0x7f88de467f10
+Fix: on open and/or connect, kick Tx to flush circular buffer data to
+USB layer.
 
-Link: https://lore.kernel.org/r/20200227125728.100551-1-leon@kernel.org
-Cc: <stable@vger.kernel.org>
-Fixes: 1dd017882e01 ("RDMA/core: Fix protection fault in get_pkey_idx_qp_list")
-Signed-off-by: Maor Gottlieb <maorg@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Tested-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sergey Organov <sorganov@gmail.com>
+Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/security.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/usb/gadget/function/u_serial.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/core/security.c b/drivers/infiniband/core/security.c
-index 2b4d80393bd0d..9e27ca18d3270 100644
---- a/drivers/infiniband/core/security.c
-+++ b/drivers/infiniband/core/security.c
-@@ -340,11 +340,15 @@ static struct ib_ports_pkeys *get_new_pps(const struct ib_qp *qp,
- 		return NULL;
+diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
+index bb1e2e1d00769..038c445a4e9b5 100644
+--- a/drivers/usb/gadget/function/u_serial.c
++++ b/drivers/usb/gadget/function/u_serial.c
+@@ -560,8 +560,10 @@ static int gs_start_io(struct gs_port *port)
+ 	port->n_read = 0;
+ 	started = gs_start_rx(port);
  
- 	if (qp_attr_mask & IB_QP_PORT)
--		new_pps->main.port_num =
--			(qp_pps) ? qp_pps->main.port_num : qp_attr->port_num;
-+		new_pps->main.port_num = qp_attr->port_num;
-+	else if (qp_pps)
-+		new_pps->main.port_num = qp_pps->main.port_num;
-+
- 	if (qp_attr_mask & IB_QP_PKEY_INDEX)
--		new_pps->main.pkey_index = (qp_pps) ? qp_pps->main.pkey_index :
--						      qp_attr->pkey_index;
-+		new_pps->main.pkey_index = qp_attr->pkey_index;
-+	else if (qp_pps)
-+		new_pps->main.pkey_index = qp_pps->main.pkey_index;
-+
- 	if ((qp_attr_mask & IB_QP_PKEY_INDEX) && (qp_attr_mask & IB_QP_PORT))
- 		new_pps->main.state = IB_PORT_PKEY_VALID;
- 
+-	/* unblock any pending writes into our circular buffer */
+ 	if (started) {
++		gs_start_tx(port);
++		/* Unblock any pending writes into our circular buffer, in case
++		 * we didn't in gs_start_tx() */
+ 		tty_wakeup(port->port.tty);
+ 	} else {
+ 		gs_free_requests(ep, head, &port->read_allocated);
 -- 
 2.20.1
 
