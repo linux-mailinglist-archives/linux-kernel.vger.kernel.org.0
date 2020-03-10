@@ -2,216 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EE5E17F594
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:03:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C77B17F5A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:04:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726331AbgCJLDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 07:03:12 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:56609 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726211AbgCJLDM (ORCPT
+        id S1726414AbgCJLEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 07:04:51 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:38888 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726252AbgCJLEv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 07:03:12 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583838191; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: References: Cc: To:
- Subject: From: Sender; bh=c4oW8IIqjmviFCEAZBm4P1/JnOBsbaaXtNNdfLZYOaA=;
- b=knIf8XSMfML9xCGBetSMP5VXlYvxdg2bykxhDzUnDwzXbh+FQDSJ1z3Wy2891DuJWlt57ufG
- 4drfbtzWl7E4Lr7N30ssqeIesKABskxUc47Fne13aSUEpNwixEMb8XPMfF9ta5jHpI2y6v6D
- YWBC1R2h8y76Jf0CncDZtu/lCO0=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6773ef.7f56735e1f80-smtp-out-n01;
- Tue, 10 Mar 2020 11:03:11 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 3711AC433BA; Tue, 10 Mar 2020 11:03:11 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [192.168.1.2] (unknown [183.83.137.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 10 Mar 2020 07:04:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583838290;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CzkrWAmBf2oqqeq6nmGCN0dfk2xPizcnlNYu+9BCd+8=;
+        b=VhdHJtbBM2UJ7wihHh7agbQKfcNldICQy9XKaRmv2cRQ/9Yvg7O8UzTF7KnJdgqedblf1o
+        8T2uFMLwxn0xt8VWMSnBXdmoopO770O471tecm9eoVfZKbLAltFO8l+ZF4FxiFdyxCEJx+
+        P6fX73BFRDYRi2Gui1uczpHTzizjygY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-389--FRRzkK1NtS5nisEDRQ31g-1; Tue, 10 Mar 2020 07:04:45 -0400
+X-MC-Unique: -FRRzkK1NtS5nisEDRQ31g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 54EC8C433CB;
-        Tue, 10 Mar 2020 11:03:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 54EC8C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
-From:   Maulik Shah <mkshah@codeaurora.org>
-Subject: Re: [PATCH v10 2/3] soc: qcom: rpmh: Update dirty flag only when data
- changes
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org
-References: <1583238415-18686-1-git-send-email-mkshah@codeaurora.org>
- <1583238415-18686-3-git-send-email-mkshah@codeaurora.org>
- <CAD=FV=VOARbQzY_p-SyDFu0mzFROp8nV9E=sraNrykWiySwEpw@mail.gmail.com>
- <8e307595-7758-6eb5-ab2d-73ab1ac1029c@codeaurora.org>
- <CAD=FV=VzNnRdDN5uPYskJ6kQHq2bAi2ysEqt0=taagdd_qZb-g@mail.gmail.com>
-Message-ID: <26b17bf5-7aa0-5853-a1b5-b6f6496aea13@codeaurora.org>
-Date:   Tue, 10 Mar 2020 16:33:05 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7AB9218B5FAA;
+        Tue, 10 Mar 2020 11:04:44 +0000 (UTC)
+Received: from localhost (unknown [10.36.118.73])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B404B5C28E;
+        Tue, 10 Mar 2020 11:04:38 +0000 (UTC)
+Date:   Tue, 10 Mar 2020 11:04:37 +0000
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
+        dgilbert@redhat.com, mst@redhat.com,
+        Sebastien Boeuf <sebastien.boeuf@intel.com>,
+        kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH 04/20] virtio: Implement get_shm_region for PCI transport
+Message-ID: <20200310110437.GI140737@stefanha-x1.localdomain>
+References: <20200304165845.3081-1-vgoyal@redhat.com>
+ <20200304165845.3081-5-vgoyal@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=VzNnRdDN5uPYskJ6kQHq2bAi2ysEqt0=taagdd_qZb-g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+In-Reply-To: <20200304165845.3081-5-vgoyal@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zgY/UHCnsaNnNXRx"
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--zgY/UHCnsaNnNXRx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 3/6/2020 3:52 AM, Doug Anderson wrote:
-> Hi,
->
-> On Thu, Mar 5, 2020 at 3:10 AM Maulik Shah <mkshah@codeaurora.org> wrote:
->>> To summarize:
->>>
->>> a) If the only allowable use of "WAKE_ONLY" is to undo "SLEEP_ONLY"
->>> then we should re-think the API and stop letting callers to
->>> rpmh_write(), rpmh_write_async(), or rpmh_write_batch() ever specify
->>> "WAKE_ONLY".  The code should just assume that "wake_only =
->>> active_only if (active_only != sleep_only)".  In other words, RPMH
->>> should programmatically figure out the "wake" state based on the
->>> sleep/active state and not force callers to do this.
->>>
->>> b) If "WAKE_ONLY" is allowed to do other things (or if it's not RPMH's
->>> job to enforce/assume this) then we should fully skip calling
->>> cache_rpm_request() for RPMH_ACTIVE_ONLY_STATE.
->>>
->>>
->>> NOTE: this discussion also makes me wonder about the is_req_valid()
->>> function.  That will skip sending a sleep/wake entry if the sleep and
->>> wake entries are equal to each other.  ...but if sleep and wake are
->>> both different than "active" it'll be a problem.
->> Hi Doug,
->>
->> To answer above points, yes in general it’s the understanding that wake is
->> almost always need to be equal to active. However, there can be valid reasons
->> for which the callers are enforced to call them differently in the first place.
->>
->> At present caller send 3 types of request.
->> rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
->> rpmh_write(RPMH_SLEEP_STATE, addr=0x10, data=0x0);
->> rpmh_write(RPMH_WAKE_ONLY_STATE, addr=0x10, data=0x99);
->>
->> Now, Lets assume we handle this in rpmh driver since wake=active and the caller
->> send only 2 type of request (lets call it active and sleep, since we have assumption
->> of wake=active, and we don’t want 3rd request as its handled in rpmh driver)
->> So callers will now invoke 2 types of request.
->>
->> rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
->> rpmh_write(RPMH_SLEEP_STATE, addr=0x10, data=0x0);
->>
->> with first type request, it now needs to serve 2 purpose
->> (a)    cache ACTIVE request votes as WAKE votes
->> (b)    trigger it out immediately (in ACTIVE TCS) as it need to be also complete immediately.
->>
->> For SLEEP, nothing changes. Now when entering to sleep we do rpmh_flush() to program all
->> WAKE and SLEEP request…so far so good…
->>
->> Now consider a corner case,
->>
->> There is something called a solver mode in RSC where HW could be in autonomous mode executing
->> low power modes. For this it may want to “only” program WAKE and SLEEP votes and then controller
->> would be in solver mode entering and exiting sleep autonomously.
->>
->> There is no ACTIVE set request and hence no requirement to send it right away as ACTIVE vote.
->>
->> If we have only 2 type of request, caller again need to differentiate to tell rpmh driver that
->> when it invoke
->>
->> rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
->>
->> with this caching it as WAKE is fine  ((a) in above) but do not trigger it ((b) in above)
->>
->> so we need to again modify this API and pass another argument saying whether to do (a + b) or only (a).
->> but caller can already differentiate by using RPMH_ACTIVE_ONLY_STATE or RPMH_WAKE_ONLY_STATE.
->>
->> i think at least for now, leave it as it is, unless we really see any impact by caller invoking all
->> 3 types of request and take in account all such corner cases before i make any such change.
->> we can take it separate if needed along with optimization pointed in v9 series discussions.
-> I totally don't understand what solver mode is for and when it's used,
-> but I'm willing to set that aside for now I guess.  From looking at
-> what you did for v12 it looks like the way you're expecting things to
-> function is this:
->
-> * ACTIVE: set wake state and trigger active change right away.
->
-> * SLEEP: set only sleep state
->
-> * WAKE: set only wake state, will take effect after next sleep/wake
-> unless changed again before that happens.
->
->
-> ...I'll look at the code with this understanding, now.  Presumably also:
->
-> * We should document this.
-Okay, i will document above.
-> * If we see clients that are explicitly setting _both_ active and wake
-> to the same thing then we can change the clients.  That means the only
-> people using "WAKE" mode would be those clients that explicitly want
-> the deferred action (presumably those using "solver" mode).
->
-> Do those seem correct?
-Correct. but i suggest to change clients only once solver mode changes go in.
-until then leave clients to call ACTIVE and WAKE request separately (even with same data)
->
-> If that's correct, I guess one subtle corner-case bug in
-> is_req_valid().  Specifically if it's ever valid to do this:
->
-> rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
-> rpmh_write(RPMH_SLEEP_STATE, addr=0x10, data=0x0);
-> rpmh_write(RPMH_WAKE_ONLY_STATE, addr=0x10, data=0x0);
-This scenario will never hit in solver mode.
-when in solver, only WAKE and SLEEP requests are allowed to go through.
-> ...then it won't work.  
-will work out just fine, as said above.
-> You'll transition between sleep/wake and stay
-> with "data=0x99".  Since "sleep == wake" then is_req_valid() will
-> return "false" and we won't bother programming the commands for
-> sleep/wake.  One simple way to solve this is remove the
-> "req->sleep_val != req->wake_val" optimization in is_req_valid().
+On Wed, Mar 04, 2020 at 11:58:29AM -0500, Vivek Goyal wrote:
+> diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_p=
+ci_modern.c
+> index 7abcc50838b8..52f179411015 100644
+> --- a/drivers/virtio/virtio_pci_modern.c
+> +++ b/drivers/virtio/virtio_pci_modern.c
+> @@ -443,6 +443,111 @@ static void del_vq(struct virtio_pci_vq_info *info)
+>  =09vring_del_virtqueue(vq);
+>  }
+> =20
+> +static int virtio_pci_find_shm_cap(struct pci_dev *dev,
+> +                                   u8 required_id,
+> +                                   u8 *bar, u64 *offset, u64 *len)
+> +{
+> +=09int pos;
+> +
+> +        for (pos =3D pci_find_capability(dev, PCI_CAP_ID_VNDR);
 
-This will still need to keep check.
+Please fix the mixed tabs vs space indentation in this patch.
 
-the clients may invoke with below example data...
+> +static bool vp_get_shm_region(struct virtio_device *vdev,
+> +=09=09=09      struct virtio_shm_region *region, u8 id)
+> +{
+> +=09struct virtio_pci_device *vp_dev =3D to_vp_device(vdev);
+> +=09struct pci_dev *pci_dev =3D vp_dev->pci_dev;
+> +=09u8 bar;
+> +=09u64 offset, len;
+> +=09phys_addr_t phys_addr;
+> +=09size_t bar_len;
+> +=09int ret;
+> +
+> +=09if (!virtio_pci_find_shm_cap(pci_dev, id, &bar, &offset, &len)) {
+> +=09=09return false;
+> +=09}
+> +
+> +=09ret =3D pci_request_region(pci_dev, bar, "virtio-pci-shm");
+> +=09if (ret < 0) {
+> +=09=09dev_err(&pci_dev->dev, "%s: failed to request BAR\n",
+> +=09=09=09__func__);
+> +=09=09return false;
+> +=09}
+> +
+> +=09phys_addr =3D pci_resource_start(pci_dev, bar);
+> +=09bar_len =3D pci_resource_len(pci_dev, bar);
+> +
+> +        if (offset + len > bar_len) {
+> +                dev_err(&pci_dev->dev,
+> +                        "%s: bar shorter than cap offset+len\n",
+> +                        __func__);
+> +                return false;
+> +        }
+> +
+> +=09region->len =3D len;
+> +=09region->addr =3D (u64) phys_addr + offset;
+> +
+> +=09return true;
+> +}
 
-rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
-rpmh_write(RPMH_SLEEP_STATE, addr=0x10, data=0x99);
-rpmh_write(RPMH_WAKE_ONLY_STATE, addr=0x10, data=0x99); (we assume wake=active)
+Missing pci_release_region()?
 
-while ACTIVE is immediatly sent, and resource already came to 0x99 level.
+--zgY/UHCnsaNnNXRx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Now while flushing, there is no point in programming in SLEEP TCS as such when cmd triggers
-from SLEEP TCS then it won't make any real level transition since its already brought up to
-0x99 level with previous ACTIVE cmd. same reason goes for not programming it in WAKE TCS.
+-----BEGIN PGP SIGNATURE-----
 
->
-> I guess we should also document that "batch" doesn't work like this.
-> The "batch" API is really designed around having exactly one "batch"
-> caller (the interconnect code) and we assume that the batch code will
-> be sending us pre-optimized commands I guess?  Specifically there
-> doesn't seem to be anything trying to catch batch writes to "active"
-> and also applying them to "wake".
-Okay, i will document above.
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl5ndEUACgkQnKSrs4Gr
+c8jLYwf/exeUl3WphEdcCDBZB1FzUfCmswGzkwrT92YXIdpwgJZrl688mmhjXloi
+GJqsnE3BX20JSmDOw3KlRiByhAEaz2HwKpdjT62Xq3CBRMLDemAymoDsGtjlanVK
+fdmw17AJzX01wpcPW2ek87jGaHwygYHt4GFrE9NH+TiB7WVU0EfXmaF1fbVREkT1
+VGzPZqY0xpWl3g12g9P0BCrftqa0PyLG29aHHG5NFs7kbTNaej5NcBOUjxEvk9jB
+3mS+w/vUz7cdZPyj0BxxVjNN6udpyi83i4QdTzgLKilwD9x1VhvtnVVJiOdXOdvm
+h4bns2UcpEqEvyaSsVzo3jlYx+OeRw==
+=74o7
+-----END PGP SIGNATURE-----
 
-Thanks,
-Maulik
+--zgY/UHCnsaNnNXRx--
 
-> -Doug
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
