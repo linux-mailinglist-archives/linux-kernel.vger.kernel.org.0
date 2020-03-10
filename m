@@ -2,56 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABB9B17F0F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 08:09:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E10C317F0FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 08:25:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726369AbgCJHJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 03:09:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49644 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725919AbgCJHJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 03:09:47 -0400
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D79824677;
-        Tue, 10 Mar 2020 07:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583824186;
-        bh=L11SdzzQTyUNNRxclnarGF3ZTYF1cI+qdg4ZV5PcXDQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lktXBtD6NO4hhBukLkC1l8I8yzsKD/dc7CaQMdMGMOzA4WGkwh1vxYWNAdBOX6pdL
-         rpE4An+4S7gMURXu7b5U8rg3/FeD4IFeAJ2PZQ/I9BXgyGsGrr4HZaIWpekUVEbRsx
-         xZOjrneNU3I8yx18lXvfWSMZSbOzyMRkkYLoJEvk=
-Date:   Tue, 10 Mar 2020 15:09:40 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Anson Huang <Anson.Huang@nxp.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: imx8mp: add crypto node
-Message-ID: <20200310070939.GD17772@dragon>
-References: <20200224125023.29780-1-horia.geanta@nxp.com>
+        id S1726369AbgCJHZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 03:25:31 -0400
+Received: from ZXSHCAS1.zhaoxin.com ([203.148.12.81]:60163 "EHLO
+        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726202AbgCJHZb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 03:25:31 -0400
+Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by ZXSHCAS1.zhaoxin.com
+ (10.28.252.161) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Tue, 10 Mar
+ 2020 15:25:17 +0800
+Received: from [10.32.64.44] (10.32.64.44) by zxbjmbx1.zhaoxin.com
+ (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Tue, 10 Mar
+ 2020 15:25:15 +0800
+Subject: Re: [PATCH] x86/Kconfig: make X86_UMIP to cover any X86 CPU
+To:     "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>
+CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <x86@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <DavidWang@zhaoxin.com>,
+        <CooperYan@zhaoxin.com>, <QiyuanWang@zhaoxin.com>,
+        <HerryYang@zhaoxin.com>, <CobeChen@zhaoxin.com>
+References: <1583733990-2587-1-git-send-email-TonyWWang-oc@zhaoxin.com>
+ <20200309203632.GB9002@zn.tnic>
+ <79c4bc05-0482-3ce7-0f93-544977e466dc@zytor.com>
+From:   Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+Message-ID: <621e255f-f497-a324-b004-4cb9b84784d0@zhaoxin.com>
+Date:   Tue, 10 Mar 2020 15:24:37 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200224125023.29780-1-horia.geanta@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <79c4bc05-0482-3ce7-0f93-544977e466dc@zytor.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.32.64.44]
+X-ClientProxiedBy: ZXSHCAS1.zhaoxin.com (10.28.252.161) To
+ zxbjmbx1.zhaoxin.com (10.29.252.163)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 02:50:23PM +0200, Horia Geantă wrote:
-> Add node for CAAM - Cryptographic Acceleration and Assurance Module.
-> 
-> Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
 
-Applied, thanks.
+On 10/03/2020 08:25, H. Peter Anvin wrote:
+> On 2020-03-09 13:36, Borislav Petkov wrote:
+>>
+>> If you're going to do that, is there even any use for that config option
+>> at all?
+>>
+>> AFAICT, it adds ~1K to kernel text so we might just as well remove the
+>> ifdeffery completely. The code ends up built in in 99% of the cases
+>> anyway...
+>>
+> 
+> Perhaps the super-tiny-embedded kernel guys care? Otherwise it seems
+> pointless.
+
+Agree, and I think leave this config to some users are meaningful.
+
+Moreover, if remove the X86_UMIP config, a kernel-parameter like
+"noumip" may be needed?
+
+Sincerely
+TonyWWang-oc
+
+> 
+> In general, once INTEL and AMD is enabled, it is just a matter of time
+> until other (still existent) vendors add those features, at least for
+> core features.
+> 
+> 	-hpa
+> .
+> 
