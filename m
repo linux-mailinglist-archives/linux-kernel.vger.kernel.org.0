@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3025E17F7D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:43:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F4B917F8DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:51:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbgCJMm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:42:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42006 "EHLO mail.kernel.org"
+        id S1728979AbgCJMvu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:51:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727262AbgCJMmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:42:09 -0400
+        id S1728958AbgCJMvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:51:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB30724691;
-        Tue, 10 Mar 2020 12:42:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92FAC2468E;
+        Tue, 10 Mar 2020 12:51:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844129;
-        bh=awzDN82KYJ5TGTZJjcvf3lRygd874USY6KRrUfyWfDQ=;
+        s=default; t=1583844704;
+        bh=kNqg7uePm2vq1Lh6+cc4u5zajUhmI7rnSFTD2vc+6ZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F/WJJWGMJFsaMTC9iD/QoeKXNQe+6F0oJscyboPO8OimOs/2kSYy44az/+AfT3fwm
-         qkvVZskuSWe27IeC58tjezcKJXc0wDbl18xmdKCSMyrwSqn1xkIVQyrtvbP8r2Dsqt
-         eAHQvySrGuCmtWjGtW60+Jeb/lhW2xGQnNJlz5PA=
+        b=piyE8adKoo8PHI0Paz/AE/BslPpljFmyU2J5BYEQ3U5NBgocAsaU2nOETobQRvmrp
+         Hu+06ZG4MMAKJM9kwsI0EG8ZN4vQazHRKIsVBzHGP8lnZyP+P4HcujEMwSZw1O935Z
+         86LzN0oPA/aEV4ZNpsT7xWc4ppNjyHJKao3bgD0s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Nazarewicz <mina86@mina86.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 41/72] usb: gadget: ffs: ffs_aio_cancel(): Save/restore IRQ flags
+        stable@vger.kernel.org, Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: [PATCH 5.4 088/168] media: hantro: Fix broken media controller links
 Date:   Tue, 10 Mar 2020 13:38:54 +0100
-Message-Id: <20200310123611.686906801@linuxfoundation.org>
+Message-Id: <20200310123644.175528961@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
-References: <20200310123601.053680753@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,53 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+From: Ezequiel Garcia <ezequiel@collabora.com>
 
-[ Upstream commit 43d565727a3a6fd24e37c7c2116475106af71806 ]
+commit d171c45da874e3858a83e6377e00280a507fe2f2 upstream.
 
-ffs_aio_cancel() can be called from both interrupt and thread context. Make
-sure that the current IRQ state is saved and restored by using
-spin_{un,}lock_irq{save,restore}().
+The driver currently creates a broken topology,
+with a source-to-source link and a sink-to-sink
+link instead of two source-to-sink links.
 
-Otherwise undefined behavior might occur.
+Reported-by: Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc: <stable@vger.kernel.org>      # for v5.3 and up
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Tested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Acked-by: Michal Nazarewicz <mina86@mina86.com>
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Felipe Balbi <balbi@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/f_fs.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/staging/media/hantro/hantro_drv.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-index 4cb1355271ec4..9536c409a90d5 100644
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -888,18 +888,19 @@ static int ffs_aio_cancel(struct kiocb *kiocb)
- {
- 	struct ffs_io_data *io_data = kiocb->private;
- 	struct ffs_epfile *epfile = kiocb->ki_filp->private_data;
-+	unsigned long flags;
- 	int value;
+--- a/drivers/staging/media/hantro/hantro_drv.c
++++ b/drivers/staging/media/hantro/hantro_drv.c
+@@ -553,13 +553,13 @@ static int hantro_attach_func(struct han
+ 		goto err_rel_entity1;
  
- 	ENTER();
+ 	/* Connect the three entities */
+-	ret = media_create_pad_link(&func->vdev.entity, 0, &func->proc, 1,
++	ret = media_create_pad_link(&func->vdev.entity, 0, &func->proc, 0,
+ 				    MEDIA_LNK_FL_IMMUTABLE |
+ 				    MEDIA_LNK_FL_ENABLED);
+ 	if (ret)
+ 		goto err_rel_entity2;
  
--	spin_lock_irq(&epfile->ffs->eps_lock);
-+	spin_lock_irqsave(&epfile->ffs->eps_lock, flags);
- 
- 	if (likely(io_data && io_data->ep && io_data->req))
- 		value = usb_ep_dequeue(io_data->ep, io_data->req);
- 	else
- 		value = -EINVAL;
- 
--	spin_unlock_irq(&epfile->ffs->eps_lock);
-+	spin_unlock_irqrestore(&epfile->ffs->eps_lock, flags);
- 
- 	return value;
- }
--- 
-2.20.1
-
+-	ret = media_create_pad_link(&func->proc, 0, &func->sink, 0,
++	ret = media_create_pad_link(&func->proc, 1, &func->sink, 0,
+ 				    MEDIA_LNK_FL_IMMUTABLE |
+ 				    MEDIA_LNK_FL_ENABLED);
+ 	if (ret)
 
 
