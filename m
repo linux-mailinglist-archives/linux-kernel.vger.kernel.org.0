@@ -2,108 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3148018042E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 18:01:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 338A3180450
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 18:05:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbgCJRA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 13:00:59 -0400
-Received: from mail-pg1-f201.google.com ([209.85.215.201]:42373 "EHLO
-        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726716AbgCJRA6 (ORCPT
+        id S1726444AbgCJRFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 13:05:41 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37449 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbgCJRFl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 13:00:58 -0400
-Received: by mail-pg1-f201.google.com with SMTP id m29so8951576pgd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 10:00:56 -0700 (PDT)
+        Tue, 10 Mar 2020 13:05:41 -0400
+Received: by mail-wr1-f67.google.com with SMTP id 6so16873172wre.4
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 10:05:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=utC88xO/3DQklGM/YS6f9zgx+KbjPZZi5VnmSXETSAc=;
-        b=C7O49/VNKptjw/lBpQwmcIz0a8sArXeQ42cXcwYltCRPre0Vtqll5m97ztrXC62a7W
-         QUZTB4QvdtN4Bqoiss33Thm/ckIzSGOux1JMfrkRwZr9APo6equSusZ7s6DSNDwT+4cg
-         NRVEPHW9sv3KKsX6+VQjMw0yqUw5Ki51pUJg6NvKOcEvW0VFt+5TSfgi6+0FNZPB/bMN
-         u9uGqCZ+kLYV4MUdExkun7mKU3qfokzowai0+M3L7hwDVps2X/TDyuTA/+pPy14PLzRY
-         EPgAlrIaMlmCSVJNVsvBpU+jNp+H+/aF+RvaII931y/cYa3tr4y15JqSmybv8MMeWauH
-         NE1w==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=V2pGv/F3fb90BGXpKCDOidB6iWxOC6kQch9TvvDExWQ=;
+        b=VeQXF0crM1hy3UQaVzKzxaSVetHnvCqHAfce3p4P/ICUltPZGweTGDdVEoRD4s5x+F
+         rM+5BHW8p4Sp5zeCIrR5TQ7yT2fbDYZGyXdvLo0Gyfsb4AtSFsTxuF6jPBjMLcMvEuz7
+         5YKSKVa9j0zKk/1rmwu5TYnIuMWklBNPXJ4gI2MnmOuUxMUJ+0EWYhipHIAr/tEVZn+z
+         2onNZlqmePWBW1jDLUsmUhCR//SNmFI0VagFKRfhj6DT1khSNLs+35h0zbXFaqQiyvpZ
+         oNnwnn7Y2gANz4AExhVId3S+j/l5IcBKQ56tiCwu8YsqZ7ItVXVAU4xca29d1ZyVrqXJ
+         DDjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=utC88xO/3DQklGM/YS6f9zgx+KbjPZZi5VnmSXETSAc=;
-        b=ddG3XE5N0VmMLGj/d5itXFJotWB6ns9O/j7vDRqNmYgLl1h4izoGsb3hDdDo14VdTX
-         dbYdXAteCqK2kGFqv2sJXekjbeHbihlzQqkUWnYQ1yB2C/M2dBR85+mqcaCkXiuDSD44
-         zNHhOpO/P4EDZHPp2f0P6658Lirj3eh9Mf0OYZptyFoR0dVfRa/nMel+yCd9DW6x9YmE
-         6jBFT5HPDc1VvWjKdUvGu9Kc/TAYiodac3gKodfzFLkPDcoX9p2AgDa41tgBO6xVPnPT
-         wG8GnM/e2FiIVts124m53Qx+F9akTqhB27sZE+XJqPtFZcAFhK+ZtqH0jrI2ZRKsKp+i
-         jSmg==
-X-Gm-Message-State: ANhLgQ2WvnOu5BzFAEclcvHP11Du4+Slw0JGXmYL5PuYYKlmA+hm2qpM
-        pFQmMeBD5xWAvbimgJOLQBqjLhMzLAIADg==
-X-Google-Smtp-Source: ADFU+vvxgNuaV6N0CUwbmim8in/d79uD6t3S+h+G7BS5M8JDfoSZw2XoErdStzAGhIWo2dEYhjudJLxlOBjruQ==
-X-Received: by 2002:a17:90a:a386:: with SMTP id x6mr2667641pjp.108.1583859655698;
- Tue, 10 Mar 2020 10:00:55 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 10:00:38 -0700
-Message-Id: <20200310095959.1.I864ded253b57454e732ab5acb1cae5b22c67cfae@changeid>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-Subject: [PATCH] Bluetooth: include file and function names in logs
-From:   Manish Mandlik <mmandlik@google.com>
-To:     marcel@holtmann.org
-Cc:     Joseph Hwang <josephsih@chromium.org>,
-        Yoni Shavit <yshavit@chromium.org>,
-        Miao-chen Chou <mcchou@chromium.org>,
-        Alain Michaud <alainm@chromium.org>,
-        linux-bluetooth@vger.kernel.org,
-        Manish Mandlik <mmandlik@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jakub Kicinski <kuba@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=V2pGv/F3fb90BGXpKCDOidB6iWxOC6kQch9TvvDExWQ=;
+        b=RXhDVhUeQgm7PGtZys7xkVZTiULjN2xq/oVxMDb6itXg5J7JvzDhCNuPvY3KLo/CUz
+         xZ1FZZOihwQVmqaSfHYJgX7LCSNOuKynnUcM3u1zpfKQJfA/FIGfVln0dMWlg+/cGPGH
+         gotG99UJ4aloO+JP61MxLAi8MW7Ktb0W2zFMoPQuRZYdRGet6/U874acnbUubnsYcg91
+         0EuLCSprbNWRClK+WQCU9xfwJ+EEbRapROnuRR1Y7f5SH8xRUAnVSPlozGbw2dkyPJZf
+         TSI1Q1PDBdkzxEYbimd3M9u47gHouggaCQSGW2CDuY68TD42UkeBGRynCQo1QgfROuDK
+         +DYg==
+X-Gm-Message-State: ANhLgQ34p/aOtovc5q5bmP3mVgP6Q7wCtCcNTIhNPz8hDGb4hnCYIq1Q
+        3s/X+XMXI5elH2N0bHWVMVzXTw==
+X-Google-Smtp-Source: ADFU+vv1fzoBgLAS9dMUu/kgFvxBEkZ24A5EkgKtG2cBZw55ztM0JuCdRstUNjkRZCz+N35sqlcK+w==
+X-Received: by 2002:a5d:43cc:: with SMTP id v12mr27790937wrr.125.1583859938739;
+        Tue, 10 Mar 2020 10:05:38 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id f4sm11241592wrt.24.2020.03.10.10.05.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 10:05:38 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 17:05:36 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: Instrumentation and RCU
+Message-ID: <20200310170536.w4p5r2fnsyaorys5@holly.lan>
+References: <87mu8p797b.fsf@nanos.tec.linutronix.de>
+ <20200309141546.5b574908@gandalf.local.home>
+ <87fteh73sp.fsf@nanos.tec.linutronix.de>
+ <20200310170951.87c29e9c1cfbddd93ccd92b3@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310170951.87c29e9c1cfbddd93ccd92b3@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joseph Hwang <josephsih@chromium.org>
+On Tue, Mar 10, 2020 at 05:09:51PM +0900, Masami Hiramatsu wrote:
+> Hi,
+> 
+> On Mon, 09 Mar 2020 19:59:18 +0100
+> Thomas Gleixner <tglx@linutronix.de> wrote:
+> 
+> > >> #2) Breakpoint utilization
+> > >> 
+> > >>     As recent findings have shown, breakpoint utilization needs to be
+> > >>     extremly careful about not creating infinite breakpoint recursions.
+> > >> 
+> > >>     I think that's pretty much obvious, but falls into the overall
+> > >>     question of how to protect callchains.
+> > >
+> > > This is rather unique, and I agree that its best to at least get to a point
+> > > where we limit the tracing within breakpoint code. I'm fine with making
+> > > rcu_nmi_exit() nokprobe too.
+> > 
+> > Yes, the break point stuff is unique, but it has nicely demonstrated how
+> > much of the code is affected by it.
+> 
+> I see. I had followed the callchain several times, and always found new function.
+> So I agree with the off-limit section idea. That is a kind of entry code section
+> but more generic one. It is natural to split such sensitive code in different
+> place.
+> 
+> BTW, what about kdb stuffs? (+Cc Jason)
 
-Include file and function names in bluetooth kernel logs to
-help debugging.
+There is some double breakpoint detection code but IIRC this merely
+retrospectively warns the user that they have their hurt their system...
+and whether the system would run long enough to reach that logic is
+relatively unlikely.
 
-Signed-off-by: Joseph Hwang <josephsih@chromium.org>
-Signed-off-by: Manish Mandlik <mmandlik@google.com>
----
+For both kdb and kgdb, the main "defence" is the use case. Neither kdb
+or kgdb faces the userspace (except via a SysRq, which can be disabled)
+and triggering either already implies the user is not especially
+concerned about things like availability guarantees since they are happy
+for everything running on the system to be halted indefinitely.
 
- include/net/bluetooth/bluetooth.h | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+Additionally breakpoints in kgdb/kdb are not wildcarded so there are no
+need to worry about a user selecting a bad pattern! Setting a breakpoint
+with kgdb/kdb needs a user (who is assumed to have kernel knowledge) to
+have explicitly chose to study the dynamic behaviour of that particular
+bit of code.
 
-diff --git a/include/net/bluetooth/bluetooth.h b/include/net/bluetooth/bluetooth.h
-index 1576353a27732..2024d9c53d687 100644
---- a/include/net/bluetooth/bluetooth.h
-+++ b/include/net/bluetooth/bluetooth.h
-@@ -150,10 +150,21 @@ void bt_warn_ratelimited(const char *fmt, ...);
- __printf(1, 2)
- void bt_err_ratelimited(const char *fmt, ...);
- 
--#define BT_INFO(fmt, ...)	bt_info(fmt "\n", ##__VA_ARGS__)
--#define BT_WARN(fmt, ...)	bt_warn(fmt "\n", ##__VA_ARGS__)
--#define BT_ERR(fmt, ...)	bt_err(fmt "\n", ##__VA_ARGS__)
--#define BT_DBG(fmt, ...)	pr_debug(fmt "\n", ##__VA_ARGS__)
-+static inline const char *basename(const char *path)
-+{
-+	const char *str = strrchr(path, '/');
-+
-+	return str ? (str + 1) : path;
-+}
-+
-+#define BT_INFO(fmt, ...)	bt_info("%s:%s() " fmt "\n",		\
-+				basename(__FILE__), __func__, ##__VA_ARGS__)
-+#define BT_WARN(fmt, ...)	bt_warn("%s:%s() " fmt "\n",		\
-+				basename(__FILE__), __func__, ##__VA_ARGS__)
-+#define BT_ERR(fmt, ...)	bt_err("%s:%s() " fmt "\n",		\
-+				basename(__FILE__), __func__, ##__VA_ARGS__)
-+#define BT_DBG(fmt, ...)	pr_debug("%s:%s() " fmt "\n",		\
-+				basename(__FILE__), __func__, ##__VA_ARGS__)
- 
- #define bt_dev_info(hdev, fmt, ...)				\
- 	BT_INFO("%s: " fmt, (hdev)->name, ##__VA_ARGS__)
--- 
-2.25.1.481.gfbce0eb801-goog
+I'm not saying kgdb/kdb would not benefit from additional safety
+barriers (it would), simply that the problem is less acute.
 
+
+Daniel.
