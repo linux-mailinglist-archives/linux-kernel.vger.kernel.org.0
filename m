@@ -2,132 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12931180292
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:56:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 678EE18028C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:55:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbgCJP4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 11:56:37 -0400
-Received: from mga14.intel.com ([192.55.52.115]:30835 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726514AbgCJP4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 11:56:37 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 08:56:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,537,1574150400"; 
-   d="scan'208";a="441348845"
-Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.159.39])
-  by fmsmga005.fm.intel.com with ESMTP; 10 Mar 2020 08:56:34 -0700
-Date:   Tue, 10 Mar 2020 23:55:16 +0800
-From:   Philip Li <philip.li@intel.com>
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        Matthias Maennich <maennich@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        lkp@01.org
-Subject: Re: [LKP] Re: [PATCH v3 1/2] modpost: rework and consolidate logging
- interface
-Message-ID: <20200310155516.GC22995@intel.com>
-References: <20200306160206.5609-1-jeyu@kernel.org>
- <CAK7LNARZ4VgaCa_TiDBG-99amBGTTXTQMs9LsK3nO4k+y-5KDQ@mail.gmail.com>
- <20200309095914.GA18870@linux-8ccs.fritz.box>
- <CAK7LNARf9CzZ8dcK5O5vxUoncpDdpzSZctd0YuKeWyfDG_cdwA@mail.gmail.com>
- <20200309103935.GB18870@linux-8ccs.fritz.box>
- <CAK7LNARpJ-FAvCUEH9rrNCiqx5LwRHmWospvRnT-ERQoEGjK-Q@mail.gmail.com>
- <20200309105812.GC18870@linux-8ccs.fritz.box>
- <CAK7LNAQqMGSkX4Coe+f49SbXT_jkG_Mm4XZ3EJei0_K7SEaLhg@mail.gmail.com>
- <20200310113158.GA4865@linux-8ccs.fritz.box>
+        id S1726481AbgCJPzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 11:55:32 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36294 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbgCJPzb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 11:55:31 -0400
+Received: by mail-ot1-f67.google.com with SMTP id j14so13642935otq.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 08:55:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=TgqmscoWWwUwE2N+wjkp7klbD8Llg5aD9QxcbbWM91M=;
+        b=SbYgGqz6Iv/cF2Xk6HbsmaZYROCsChtMTCZqVrowfSBNRknWfl4l1M2KOEsbDuDViG
+         gz35NNiTeGIUs6AKuQ85hd+LpOAnbrCsiqXjdX8KQqXe7sYPAN3+qsNvVCKZfIlRisfw
+         d8FdhZRhYobG0/brLgrhPttDTXvZDKY2co3aN4RN+AwRGvicLAZZiSbWUv4cmlcMSEYV
+         y3pCA+lmAWxqQ1Zt2ktlka8bQcuydF8d6bzmMRc/6QhsiRaYsUAFs5SzkAyLyKI8wrmc
+         s1TDcwRI8TNmjAenvUK7oftIL/kYKvWncS50htb8hL0Me+hB5c2JE7d9rw/gD2+mtj4P
+         5H5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TgqmscoWWwUwE2N+wjkp7klbD8Llg5aD9QxcbbWM91M=;
+        b=WEafMbLRDsj8b471umNB1W8Xfafik2owIyVo0t6sT7lJ+LTyRYTO959JJEIMQSNv7J
+         HeK2cPRjpbcQnh4VA1nalKzR4oePs5UYSfh2RoZV49FCEPoBInDmVJmB4LPrk5n3wNey
+         y55VgNzdfBxPjcR9DVWffRTJXIgrQMNWv/eGpEBduoa1r21pVAsaE0s1XhTAnuk2glKS
+         TUs4LI7f8sG14tf6Y/10o5w2rok81eEFC7zChKOkRXZus4PWxJBwa3g2yQydXyCjRWsF
+         VXvegTweDmD58iYlbVnRemPCp8A0zC3LD06p309J84m9bkBEkvjla8Qxg0dlPEW0j7Dr
+         3pRg==
+X-Gm-Message-State: ANhLgQ0pG9ilH+bzk4Y0MVMJqNs6QIyFKZvCc7nHQQNS+QkM9712tljk
+        ekgsJOYr09JBP6kmv1GhH1edxfQ4YsiRLSKto3KD1g==
+X-Google-Smtp-Source: ADFU+vva3WOrofQsiULBwLdHFTnTgcGCFkvcJUnV+SV2B4eVtEQKOTmFmG4oUCa5cat2xXUgVCBlj6+tobSNOz5bcMI=
+X-Received: by 2002:a9d:19e9:: with SMTP id k96mr17670341otk.68.1583855731083;
+ Tue, 10 Mar 2020 08:55:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200310113158.GA4865@linux-8ccs.fritz.box>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200310134603.30260-1-robert.foss@linaro.org>
+ <20200310134603.30260-3-robert.foss@linaro.org> <20200310142652.GK1922688@smile.fi.intel.com>
+In-Reply-To: <20200310142652.GK1922688@smile.fi.intel.com>
+From:   Robert Foss <robert.foss@linaro.org>
+Date:   Tue, 10 Mar 2020 16:55:20 +0100
+Message-ID: <CAG3jFyu5S1H=r6pV92tc_a2LoCUnhb0mDbOegP2BCO8a5C1nVg@mail.gmail.com>
+Subject: Re: [v1 2/3] media: ov8856: Add devicetree support
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     ben.kao@intel.com, mchehab@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, matthias.bgg@gmail.com, davem@davemloft.net,
+        gregkh@linuxfoundation.org, Jonathan.Cameron@huawei.com,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Dongchun Zhu <dongchun.zhu@mediatek.com>,
+        Tomasz Figa <tfiga@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 12:32:00PM +0100, Jessica Yu wrote:
-> +++ Masahiro Yamada [09/03/20 20:03 +0900]:
-> > On Mon, Mar 9, 2020 at 7:58 PM Jessica Yu <jeyu@kernel.org> wrote:
-> > > 
-> > > +++ Masahiro Yamada [09/03/20 19:49 +0900]:
-> > > >On Mon, Mar 9, 2020 at 7:39 PM Jessica Yu <jeyu@kernel.org> wrote:
-> > > >>
-> > > >> Ah, sorry, I mean the kbuild 0-day bot errors. I am just realizing
-> > > >> the 0-day bot emails are not CC'd to lkml. Here is the error I got
-> > > >> from the bot:
-> > > >>
-> > > >> ---
-> > > >>
-> > > >> I love your patch! Yet something to improve:
-> > > >>
-> > > >> [auto build test ERROR on linus/master]
-> > > >> [also build test ERROR on v5.6-rc4 next-20200306]
-> > > >> [if your patch is applied to the wrong git tree, please drop us a note to help
-> > > >> improve the system. BTW, we also suggest to use '--base' option to specify the
-> > > >> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-> > > >>
-> > > >> url:    https://github.com/0day-ci/linux/commits/Jessica-Yu/modpost-rework-and-consolidate-logging-interface/20200307-052346
-> > > >> base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 30fe0d07fd7b27d41d9b31a224052cc4e910947a
-> > > >> config: sh-randconfig-a001-20200306 (attached as .config)
-> > > >> compiler: sh4-linux-gcc (GCC) 7.5.0
-> > > >> reproduce:
-> > > >>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-> > > >>         chmod +x ~/bin/make.cross
-> > > >>         # save the attached .config to linux build tree
-> > > >>         GCC_VERSION=7.5.0 make.cross ARCH=sh
-> > > >>
-> > > >> If you fix the issue, kindly add following tag
-> > > >> Reported-by: kbuild test robot <lkp@intel.com>
-> > > >>
-> > > >> All errors (new ones prefixed by >>):
-> > > >>
-> > > >> >> ERROR: modpost: "adc_single" [arch/sh/boards/mach-hp6xx/hp6xx_apm.ko] undefined!
-> > > >
-> > > >
-> > > >Indeed, this one is odd.
-> > > >I have no idea...
-> > > 
-> > > I've pushed the patches to a branch to let the kbuild bot run through its
-> > > build tests again, and if I have extra time today I will try to
-> > > reproduce this and let you know the results.
-> > > 
-> > > Thanks,
-> > > 
-> > > Jessica
-> > 
-> > 
-> > Ah, Now I see.
-> > 
-> > 
-> > Because you added "modpost:" prefix.
-> > 
-> > 
-> > 
-> > The previous error message:
-> > 
-> > ERROR: "adc_single" [arch/sh/boards/mach-hp6xx/hp6xx_apm.ko] undefined!
-> > 
-> > 
-> > The new error message:
-> > 
-> > ERROR: modpost: "adc_single" [arch/sh/boards/mach-hp6xx/hp6xx_apm.ko] undefined!
-> > 
-> > 
-> > 
-> > So, the bot assumed it was a new error.
-> 
-> Nice catch! Hm, I suppose we need to let the LKP folks know about the
-> change in error message. CC'd LKP mailing list.
-Thanks for the info, we will look into this to handle the
-changed error.
+Hi Andy,
 
-> 
-> Jessica
-> _______________________________________________
-> LKP mailing list -- lkp@lists.01.org
-> To unsubscribe send an email to lkp-leave@lists.01.org
+On Tue, 10 Mar 2020 at 15:26, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Tue, Mar 10, 2020 at 02:46:02PM +0100, Robert Foss wrote:
+> > Add devicetree match table, and enable ov8856_probe()
+> > to initialize power, clocks and reset pins.
+>
+> ...
+>
+> > +#define OV8856_NUM_SUPPLIES ARRAY_SIZE(ov8856_supply_names)
+>
+> Use ARRAY_SIZE() directly.
+
+Ack.
+
+>
+> Have you seen Sakari's comments?
+> Sakari, do I have d=C3=A9j=C4=85 vu or you indeed commented this driver?
+
+Yes, I may have missed some part of it, so please tell me if I have.
+
+There is a patchset floating around that implements a larger chunk of
+functionality,
+including a couple of new modes. This is based on that series.
+
+>
+> ...
+>
+> > +     gpiod_set_value_cansleep(ov8856->n_shutdn_gpio, GPIOD_OUT_LOW);
+>
+> > +     gpiod_set_value_cansleep(ov8856->n_shutdn_gpio, GPIOD_OUT_HIGH);
+>
+> Yes, seems this one is inverted.
+>
+> ...
+>
+> > +{
+> > +     gpiod_set_value_cansleep(ov8856->n_shutdn_gpio, GPIOD_OUT_LOW);
+> > +     regulator_bulk_disable(OV8856_NUM_SUPPLIES, ov8856->supplies);
+> > +     clk_disable_unprepare(ov8856->xvclk);
+> > +}
+> > +
+> > +
+>
+> One blank line is enough.
+>
+> ...
+>
+> > +     ov8856->xvclk =3D devm_clk_get(&client->dev, "xvclk");
+> > +     if (IS_ERR(ov8856->xvclk)) {
+> > +             dev_err(&client->dev, "failed to get xvclk\n");
+> > +             return -EINVAL;
+> > +     }
+>
+> Previously it worked without clock provider, now you make a dependency.
+>
+> This won't work.
+
+So the ideal behavior would be to only use the xclk if it is provided?
