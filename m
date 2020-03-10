@@ -2,202 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3359118015E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:16:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 727B5180151
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:14:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbgCJPQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 11:16:08 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:54422 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbgCJPQH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 11:16:07 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBgby-0004CF-1k; Tue, 10 Mar 2020 09:16:02 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBgbx-0004Li-5P; Tue, 10 Mar 2020 09:16:01 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
-        <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
-        <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
-        <AM6PR03MB5170BC58D90BAD80CDEF3F8BE4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <878sk94eay.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517086003BD2C32E199690A3E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87r1y12yc7.fsf@x220.int.ebiederm.org>
-        <87k13t2xpd.fsf@x220.int.ebiederm.org>
-        <87d09l2x5n.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170F0F9DC18F5EA77C9A857E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <871rq12vxu.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170DF45E3245F55B95CCD91E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <877dzt1fnf.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517033EAD25BED15CC84E17DE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Tue, 10 Mar 2020 10:13:42 -0500
-In-Reply-To: <AM6PR03MB517033EAD25BED15CC84E17DE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        (Bernd Edlinger's message of "Tue, 10 Mar 2020 14:43:41 +0100")
-Message-ID: <87d09kxmxl.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1727018AbgCJPOL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 11:14:11 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42295 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbgCJPOK (ORCPT
+        <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 11:14:10 -0400
+Received: by mail-qt1-f193.google.com with SMTP id g16so2253378qtp.9
+        for <Linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 08:14:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=+qR1nZB95A3CqTDYGX0bbznR/iFDjSAZBPiTL4z0/eI=;
+        b=kGPh/mxFDAdC7K/ZfDS6Bt3bBJUaMwTHC+dLyfNBZrnQCt7emo3EBQS/hLNz3zwRQw
+         vswtoebgyT0+D7br6MLB9i2MugPXD584KxQJD6khnjtYFFe9LnAhSVOPfZtqEkjJqH0C
+         liEByWIw4c3Ffz0EwcaGJLJd3C71njCkiiVLdhmXjL8AUYc3ztiPGUqkwUcjbVShV9Xd
+         LC9DpsRwf17tn4o3pWP4sakdp7ogN2XHo0Zv1gIMExo8JPwDt7TrHitjPxShM7aQo4Z3
+         Ond7HsapBVpgZRLtAKCYBn6flBQn+JwN2gTpmzQdPaph1BZ/9GvCFnDZAz+Kv+tqYLcU
+         pblg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+qR1nZB95A3CqTDYGX0bbznR/iFDjSAZBPiTL4z0/eI=;
+        b=SlIOywUEMK6uEvnPrQeJ8MfmrynULdh9zTF8m+rPoN1ec7GUCRgU6CnsZonOTzAv2Z
+         ueXX9+oeXhOZxcDGxdxDXY4KU9S4S7nYtfpuK22LuOrhvgblpVdYWoxeV+9IgzjEElVe
+         m1baBTylfOZYhk/fgbSCplx/B5mXGgVxOm5SNvI6yAgiDtRWPsXr5Aw/bqhmwpT+AC+E
+         0+fmXaQZPhsqBZVMXT8x9a+GrfbcNofWEDxPb8VvD6wpZUPiMEnByivfv8lxqEG9QqwW
+         LWA6MT7CixkFyIxbbKcf65xAH84H3IACxIBDJGNkqdjKpR2rx2wovsOq/STeZzGoQN6B
+         A4/g==
+X-Gm-Message-State: ANhLgQ3LpJmmDBozyN4HA/xJJVN3Mb1r/s8e+pgaNGGKtKAsBLe1OgZ2
+        xNrIvlM8tDp0L2ZZ9qj2QUc=
+X-Google-Smtp-Source: ADFU+vuElx2/vRs+yZrG6Wde8wjMCLXTgwJ2zJJPq2c6oyQwQf/J2QJRUG5ScJtJXeOIhO2gc+gjuA==
+X-Received: by 2002:ac8:36a1:: with SMTP id a30mr8307340qtc.103.1583853249226;
+        Tue, 10 Mar 2020 08:14:09 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id o57sm4420341qtf.42.2020.03.10.08.14.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 08:14:08 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 230E540009; Tue, 10 Mar 2020 12:14:06 -0300 (-03)
+Date:   Tue, 10 Mar 2020 12:14:05 -0300
+To:     Jin Yao <yao.jin@linux.intel.com>
+Cc:     jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v1 05/14] perf util: Calculate the sum of all streams hits
+Message-ID: <20200310151405.GH15931@kernel.org>
+References: <20200310070245.16314-1-yao.jin@linux.intel.com>
+ <20200310070245.16314-6-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jBgbx-0004Li-5P;;;mid=<87d09kxmxl.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/eOO49tMC1vtWTUcFarj2ncADp1TyDOKs=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Bernd Edlinger <bernd.edlinger@hotmail.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 328 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 2.3 (0.7%), b_tie_ro: 1.57 (0.5%), parse: 0.90
-        (0.3%), extract_message_metadata: 10 (3.0%), get_uri_detail_list: 1.60
-        (0.5%), tests_pri_-1000: 15 (4.5%), tests_pri_-950: 0.98 (0.3%),
-        tests_pri_-900: 0.92 (0.3%), tests_pri_-90: 36 (11.1%), check_bayes:
-        35 (10.7%), b_tokenize: 11 (3.5%), b_tok_get_all: 11 (3.4%),
-        b_comp_prob: 2.8 (0.9%), b_tok_touch_all: 8 (2.5%), b_finish: 0.59
-        (0.2%), tests_pri_0: 252 (76.8%), check_dkim_signature: 0.51 (0.2%),
-        check_dkim_adsp: 2.3 (0.7%), poll_dns_idle: 0.61 (0.2%), tests_pri_10:
-        1.75 (0.5%), tests_pri_500: 5 (1.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/4] exec: Fix a deadlock in ptrace
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310070245.16314-6-yao.jin@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
-
-> This fixes a deadlock in the tracer when tracing a multi-threaded
-> application that calls execve while more than one thread are running.
->
-> I observed that when running strace on the gcc test suite, it always
-> blocks after a while, when expect calls execve, because other threads
-> have to be terminated.  They send ptrace events, but the strace is no
-> longer able to respond, since it is blocked in vm_access.
->
-> The deadlock is always happening when strace needs to access the
-> tracees process mmap, while another thread in the tracee starts to
-> execve a child process, but that cannot continue until the
-> PTRACE_EVENT_EXIT is handled and the WIFEXITED event is received:
-
-Overall this looks good.  Mind if I change the subject to:
-"exec: Fix a deadlock in strace" ?
-
-Eric
-
-
->
-> strace          D    0 30614  30584 0x00000000
-> Call Trace:
-> __schedule+0x3ce/0x6e0
-> schedule+0x5c/0xd0
-> schedule_preempt_disabled+0x15/0x20
-> __mutex_lock.isra.13+0x1ec/0x520
-> __mutex_lock_killable_slowpath+0x13/0x20
-> mutex_lock_killable+0x28/0x30
-> mm_access+0x27/0xa0
-> process_vm_rw_core.isra.3+0xff/0x550
-> process_vm_rw+0xdd/0xf0
-> __x64_sys_process_vm_readv+0x31/0x40
-> do_syscall_64+0x64/0x220
-> entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
-> expect          D    0 31933  30876 0x80004003
-> Call Trace:
-> __schedule+0x3ce/0x6e0
-> schedule+0x5c/0xd0
-> flush_old_exec+0xc4/0x770
-> load_elf_binary+0x35a/0x16c0
-> search_binary_handler+0x97/0x1d0
-> __do_execve_file.isra.40+0x5d4/0x8a0
-> __x64_sys_execve+0x49/0x60
-> do_syscall_64+0x64/0x220
-> entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
-> This changes mm_access to use the new exec_update_mutex
-> instead of cred_guard_mutex.
->
-> This patch is based on the following patch by Eric W. Biederman:
-> "[PATCH 0/5] Infrastructure to allow fixing exec deadlocks"
-> Link: https://lore.kernel.org/lkml/87v9ne5y4y.fsf_-_@x220.int.ebiederm.org/
->
-> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Em Tue, Mar 10, 2020 at 03:02:36PM +0800, Jin Yao escreveu:
+> We have used callchain_node->hit to measure the hot level of one
+> stream. This patch calculates the sum of hits of all streams.
+> 
+> Then in next patch, we can use following formula to report hot
+> percent for one stream.
+> 
+> hot percent = callchain_node->hit / sum of all hits
+> 
+> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
 > ---
->  kernel/fork.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index c12595a..5720ff3 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1224,7 +1224,7 @@ struct mm_struct *mm_access(struct task_struct *task, unsigned int mode)
->  	struct mm_struct *mm;
->  	int err;
->  
-> -	err =  mutex_lock_killable(&task->signal->cred_guard_mutex);
-> +	err =  mutex_lock_killable(&task->signal->exec_update_mutex);
->  	if (err)
->  		return ERR_PTR(err);
->  
-> @@ -1234,7 +1234,7 @@ struct mm_struct *mm_access(struct task_struct *task, unsigned int mode)
->  		mmput(mm);
->  		mm = ERR_PTR(-EACCES);
+>  tools/perf/util/callchain.c | 35 +++++++++++++++++++++++++++++++++++
+>  tools/perf/util/callchain.h |  1 +
+>  2 files changed, 36 insertions(+)
+> 
+> diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
+> index a9dd91268b00..040995405664 100644
+> --- a/tools/perf/util/callchain.c
+> +++ b/tools/perf/util/callchain.c
+> @@ -1685,6 +1685,39 @@ static void update_hot_streams(struct hist_entry *he,
 >  	}
-> -	mutex_unlock(&task->signal->cred_guard_mutex);
-> +	mutex_unlock(&task->signal->exec_update_mutex);
->  
->  	return mm;
 >  }
+>  
+> +static u64 count_callchain_hits(struct hist_entry *he)
+> +{
+> +	struct rb_root *root = &he->sorted_chain;
+> +	struct rb_node *rb_node = rb_first(root);
+> +	struct callchain_node *node;
+> +	u64 chain_hits = 0;
+> +
+> +	while (rb_node) {
+> +		node = rb_entry(rb_node, struct callchain_node, rb_node);
+> +		chain_hits += node->hit;
+> +		rb_node = rb_next(rb_node);
+> +	}
+> +
+> +	return chain_hits;
+> +}
+> +
+> +static u64 total_callchain_hits(struct hists *hists)
+> +{
+> +	struct rb_node *next;
+> +	u64 chain_hits = 0;
+> +
+> +	next = rb_first_cached(&hists->entries);
+
+Try to combine the variable decl line with its initial assignment,
+saving one line, i.e.:
+
++static u64 total_callchain_hits(struct hists *hists)
++{
++	struct rb_node *next = rb_first_cached(&hists->entries);
++	u64 chain_hits = 0;
++
+> +	while (next) {
+> +		struct hist_entry *he;
+> +
+> +		he = rb_entry(next, struct hist_entry, rb_node);
+
+Ditto:
+
++		struct hist_entry *he = rb_entry(next, struct hist_entry, rb_node);
+
+> +		chain_hits += count_callchain_hits(he);
+> +		next = rb_next(&he->rb_node);
+> +	}
+> +
+> +	return chain_hits;
+> +}
+> +
+>  static void get_hot_streams(struct hists *hists,
+>  			    struct callchain_streams *s)
+>  {
+> @@ -1698,6 +1731,8 @@ static void get_hot_streams(struct hists *hists,
+>  		update_hot_streams(he, s);
+>  		next = rb_next(&he->rb_node);
+>  	}
+> +
+> +	s->chain_hits = total_callchain_hits(hists);
+>  }
+>  
+>  struct callchain_streams *callchain_evsel_streams_create(struct evlist *evlist,
+> diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
+> index c996ab4fb108..3c0e0b45656b 100644
+> --- a/tools/perf/util/callchain.h
+> +++ b/tools/perf/util/callchain.h
+> @@ -173,6 +173,7 @@ struct callchain_streams {
+>  	int			nr_streams_max;
+>  	int			nr_streams;
+>  	int			evsel_idx;
+> +	u64			chain_hits;
+>  };
+>  
+>  extern __thread struct callchain_cursor callchain_cursor;
+> -- 
+> 2.17.1
+> 
+
+-- 
+
+- Arnaldo
