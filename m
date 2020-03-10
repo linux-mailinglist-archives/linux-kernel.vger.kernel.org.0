@@ -2,100 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A731D17F312
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 10:13:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51C1F17F32C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 10:14:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbgCJJNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 05:13:02 -0400
-Received: from 8bytes.org ([81.169.241.247]:50586 "EHLO theia.8bytes.org"
+        id S1726420AbgCJJOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 05:14:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726523AbgCJJMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 05:12:38 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 80837E0F; Tue, 10 Mar 2020 10:12:34 +0100 (CET)
-From:   Joerg Roedel <joro@8bytes.org>
-To:     iommu@lists.linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 15/15] iommu: Move fwspec->iommu_priv to struct dev_iommu
-Date:   Tue, 10 Mar 2020 10:12:29 +0100
-Message-Id: <20200310091229.29830-16-joro@8bytes.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200310091229.29830-1-joro@8bytes.org>
-References: <20200310091229.29830-1-joro@8bytes.org>
+        id S1726195AbgCJJOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 05:14:43 -0400
+Received: from localhost (unknown [193.47.165.251])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F64C20674;
+        Tue, 10 Mar 2020 09:14:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583831682;
+        bh=Wi6CL6iB7RwT0hh+gpEgbzB/O/wFTDNg36YiiDVjK5M=;
+        h=From:To:Cc:Subject:Date:From;
+        b=vSB/ejyXc+jE1iES8JJPvEKTB+3tk3Yi3JlMQbNr1iARpr5TCrxpIJE6bkCSM2Y3M
+         QcHeqxVRrAx4K+pPjZYYGqIbOf10YoJ9tnuBY/U0zmMisXTTSC5K4bmWmTzls6b3df
+         /Gt6l3s53xwKtF+vW4Wxh0p4r2URxaGS5HjR0OIg=
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Leon Romanovsky <leonro@mellanox.com>,
+        Gal Pressman <galpress@amazon.com>,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Mark Zhang <markz@mellanox.com>,
+        Yishai Hadas <yishaih@mellanox.com>
+Subject: [PATCH rdma-next v1 00/11] Add Enhanced Connection Established (ECE)
+Date:   Tue, 10 Mar 2020 11:14:27 +0200
+Message-Id: <20200310091438.248429-1-leon@kernel.org>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-Move the pointer for iommu private data from struct iommu_fwspec to
-struct dev_iommu.
+Changelog:
+ v1: Dropped field_avail patch in favor of mass conversion to use function
+     which already exists in the kernel code.
+ v0: https://lore.kernel.org/lkml/20200305150105.207959-1-leon@kernel.org
 
-Tested-by: Will Deacon <will@kernel.org> # arm-smmu
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- include/linux/iommu.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Enhanced Connection Established or ECE is new negotiation scheme
+introduced in IBTA v1.4 to exchange extra information about nodes
+capabilities and later negotiate them at the connection establishment
+phase.
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 056900e75758..8c4d45fce042 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -369,6 +369,7 @@ struct iommu_fault_param {
-  *
-  * @fault_param: IOMMU detected device fault reporting data
-  * @fwspec:	 IOMMU fwspec data
-+ * @priv:	 IOMMU Driver private data
-  *
-  * TODO: migrate other per device data pointers under iommu_dev_data, e.g.
-  *	struct iommu_group	*iommu_group;
-@@ -377,6 +378,7 @@ struct dev_iommu {
- 	struct mutex lock;
- 	struct iommu_fault_param	*fault_param;
- 	struct iommu_fwspec		*fwspec;
-+	void				*priv;
- };
- 
- int  iommu_device_register(struct iommu_device *iommu);
-@@ -589,7 +591,6 @@ struct iommu_group *fsl_mc_device_group(struct device *dev);
- struct iommu_fwspec {
- 	const struct iommu_ops	*ops;
- 	struct fwnode_handle	*iommu_fwnode;
--	void			*iommu_priv;
- 	u32			flags;
- 	u32			num_pasid_bits;
- 	unsigned int		num_ids;
-@@ -629,12 +630,12 @@ static inline void dev_iommu_fwspec_set(struct device *dev,
- 
- static inline void *dev_iommu_priv_get(struct device *dev)
- {
--	return dev->iommu->fwspec->iommu_priv;
-+	return dev->iommu->priv;
- }
- 
- static inline void dev_iommu_priv_set(struct device *dev, void *priv)
- {
--	dev->iommu->fwspec->iommu_priv = priv;
-+	dev->iommu->priv = priv;
- }
- 
- int iommu_probe_device(struct device *dev);
--- 
-2.17.1
+The RDMA-CM messages (REQ, REP, SIDR_REQ and SIDR_REP) were extended
+to carry two fields, one new and another gained new functionality:
+ * VendorID is a new field that indicates that common subset of vendor
+   option bits are supported as indicated by that VendorID.
+ * AttributeModifier already exists, but overloaded to indicate which
+   vendor options are supported by this VendorID.
+
+This is kernel part of such functionality which is responsible to get data
+from librdmacm and properly create and handle RDMA-CM messages.
+
+Thanks
+
+Leon Romanovsky (11):
+  RDMA/cm: Add Enhanced Connection Establishment (ECE) bits
+  RDMA/mlx4: Delete duplicated offsetofend implementation
+  RDMA/efa: Use in-kernel offsetofend() to check field availability
+  RDMA/mlx5: Use offsetofend() instead of duplicated variant
+  RDMA/cm: Delete not implemented CM peer to peer communication
+  RDMA/uapi: Add ECE definitions to UCMA
+  RDMA/ucma: Extend ucma_connect to receive ECE parameters
+  RDMA/ucma: Deliver ECE parameters through UCMA events
+  RDMA/cm: Send and receive ECE parameter over the wire
+  RDMA/cma: Connect ECE to rdma_accept
+  RDMA/cma: Provide ECE reject reason
+
+ drivers/infiniband/core/cm.c          | 48 ++++++++++++++++++------
+ drivers/infiniband/core/cma.c         | 54 ++++++++++++++++++++++++---
+ drivers/infiniband/core/cma_priv.h    |  1 +
+ drivers/infiniband/core/ucma.c        | 40 ++++++++++++++++----
+ drivers/infiniband/hw/efa/efa_verbs.c |  7 +---
+ drivers/infiniband/hw/mlx4/main.c     |  9 ++---
+ drivers/infiniband/hw/mlx5/main.c     | 42 ++++++++++-----------
+ drivers/infiniband/hw/mlx5/mlx5_ib.h  | 16 +++-----
+ include/rdma/ib_cm.h                  | 11 +++++-
+ include/rdma/ibta_vol1_c12.h          |  6 +++
+ include/rdma/rdma_cm.h                | 28 ++++++++++++--
+ include/uapi/rdma/rdma_user_cm.h      | 15 +++++++-
+ 12 files changed, 203 insertions(+), 74 deletions(-)
+
+--
+2.24.1
 
