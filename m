@@ -2,72 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C583F17F11C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 08:39:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DF2C17F122
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 08:40:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbgCJHjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 03:39:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51788 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726205AbgCJHjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 03:39:40 -0400
-Received: from localhost (unknown [193.47.165.251])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0106024677;
-        Tue, 10 Mar 2020 07:39:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583825979;
-        bh=pDcTo3jGlaRUg4AJeQ3STqNwHMX3K2wiybrw6YdVmYw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O0pOXHhbimVqagJBxc5C9HtnA2BVus046mwHniCHutVE8XnmrnyBpBT8tLKiKGUXt
-         0/exUDO0wgX2Ws/1l83Yx38lMila0T5pOQs3iWG+pnS/eyuZEDvjUh6km7jv4+Mh8Z
-         lOXPdrjX8w7TSX+onXP4dR2NNi85LikjxmX3Lq24=
-Date:   Tue, 10 Mar 2020 09:39:36 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     syzbot <syzbot+e11efb687f5ab7f01f3d@syzkaller.appspotmail.com>,
-        dledford@redhat.com, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, monis@mellanox.com,
-        syzkaller-bugs@googlegroups.com, yanjunz@mellanox.com
-Subject: Re: KASAN: use-after-free Read in rxe_query_port
-Message-ID: <20200310073936.GF172334@unreal>
-References: <0000000000000c9e12059fc941ff@google.com>
- <20200309173451.GA15143@mellanox.com>
+        id S1726436AbgCJHj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 03:39:56 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34224 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbgCJHj4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 03:39:56 -0400
+Received: by mail-lj1-f194.google.com with SMTP id s13so3726652ljm.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 00:39:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=906zhF/DpvO92DB5R6S0wKpZldy8rKqVy+oJ+1hJ7tc=;
+        b=BtEB11BT+4+x6r+b85nmuZMZ8WSrwLKlB0krXkFlYtK/dt/V0+0cQ1Frx8fN6Hue/k
+         QvYC/Ts8BlFWAQBRhsuef51j6c+dDP+y6aDpYkx37otX2Olc9aN5vNUYWR6YV72xgMsT
+         RNe23fDPZUnMoYJsX8juilalfY8nmbt66QqhMJDDzumYkG6oewRtMqeD3d3TlWhpoP3Y
+         NXMzqKMcG9SPa+YJIfKYc9xjsawr9XZtBwDQpQYcFFxbFXMoXR0C6j1P8JqrFIbbbj9w
+         3Ct6dJ5klaUnlzXCxNHwm1MA2RYg5Kzf+H3jD+ykeX+Xw1CSjA0ZDv7Atcpx4qUJWfLX
+         3BOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=906zhF/DpvO92DB5R6S0wKpZldy8rKqVy+oJ+1hJ7tc=;
+        b=mfNyz8msK5wG5Q+r1e1AkXVG3BInwuLXwVpbL8slLiRjzOZpXFockhaxIPoMcXk1gA
+         ZFiLm27hH23LLzgLhSD3c7gQZuTusnmpXSBTH4MgoxS6CMd1gYFkVBnd9iMeLi/hgxZP
+         eTq9lygmkKmbiqbRrE24f0Vu9WcJl2sQs5lxE8dsTsUW69p3BIq3azQgNc3wNRQRsZY2
+         o8uEPtDAUHsKFAwG2cfm7fgkr/ix/dcwZLiPPI47wq1+3Q6AMK1Nq/a/Rg+aGG4iQDxU
+         HABXx1RVqwjIiRfj2OyNhwhdIXH6k2Ju918Rcp43ku8lnzR59wjgGhYmAcKiHKgh0dsF
+         gpIw==
+X-Gm-Message-State: ANhLgQ0KnUkUddueZRiH+mgo3UQ7StNqKsoEGzwGzvU5a4U/s4cWsGH7
+        qpWxVXG9u8uGBFOkPDdm0LsANYbp0ngZbYKcygo=
+X-Google-Smtp-Source: ADFU+vtHLABgcs/RKfCTtvB3II9owxZ2QnhPDfOiSQ1n+T6t0IDdSv3kohhSda5dj81+KqxJIFnQjjP954hSrE7ioYY=
+X-Received: by 2002:a2e:880d:: with SMTP id x13mr200983ljh.190.1583825993683;
+ Tue, 10 Mar 2020 00:39:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200309173451.GA15143@mellanox.com>
+References: <20200309113141.167289-1-shaju.abraham@nutanix.com>
+ <20200309115818.GK8447@dhcp22.suse.cz> <CAGxeL8CxaeKsqEMtLMZL8mdxUXPcH6ZkpMNjUmzZJ6q603B-_g@mail.gmail.com>
+ <20200309161230.GT8447@dhcp22.suse.cz>
+In-Reply-To: <20200309161230.GT8447@dhcp22.suse.cz>
+From:   Shaju Abraham <shajunutanix@gmail.com>
+Date:   Tue, 10 Mar 2020 13:09:42 +0530
+Message-ID: <CAGxeL8B97OUFaceKW9g95CpwULfLO8HLPBAxrPmbB4D3uPkVew@mail.gmail.com>
+Subject: Re: [PATCH] mm/vmpressure.c: Include GFP_KERNEL flag to vmpressure
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Shaju Abraham <shaju.abraham@nutanix.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 02:34:51PM -0300, Jason Gunthorpe wrote:
-> On Sun, Mar 01, 2020 at 03:20:12AM -0800, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    f8788d86 Linux 5.6-rc3
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=132d3645e00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=9833e26bab355358
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=e11efb687f5ab7f01f3d
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> >
-> > Unfortunately, I don't have any reproducer for this crash yet.
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+e11efb687f5ab7f01f3d@syzkaller.appspotmail.com
+On Mon, Mar 9, 2020 at 9:42 PM Michal Hocko <mhocko@kernel.org> wrote:
 >
-> Yanjun, do you have some idea what this could be?
-
-See this fix in the net mailing list.
-https://lore.kernel.org/netdev/20200306134518.84416-1-kgraul@linux.ibm.com
-
-Thanks
-
+> On Mon 09-03-20 21:02:50, Shaju Abraham wrote:
+> > On Mon, Mar 9, 2020 at 5:28 PM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > > On Mon 09-03-20 11:31:41, Shaju Abraham wrote:
+> > > > The VM pressure notification flags have excluded GFP_KERNEL with the
+> > > > reasoning that user land will not be able to take any action in case of
+> > > > kernel memory being low. This is not true always. Consider the case of
+> > > > a user land program managing all the huge memory pages. By including
+> > > > GFP_KERNEL flag whenever the kernel memory is low, pressure notification
+> > > > can be send, and the manager process can split huge pages to satisfy
+> > > kernel
+> > > > memory requirement.
+> > >
+> > > Are you sure about this reasoning? GFP_KERNEL = __GFP_FS | __GFP_IO |
+> > > __GFP_RECLAIM
+> > > Two of the flags mentioned there are already listed so we are talking
+> > > about __GFP_RECLAIM here. Including it here would be a more appropriate
+> > > change than GFP_KERNEL btw.
+> > >
+> > > But still I do not really understand what is the actual problem and how
+> > > is this patch meant to fix it. vmpressure is triggered only from the
+> > > reclaim path which inherently requires to have __GFP_RECLAIM present
+> > > so I fail to see how this can make any change at all. How have you
+> > > tested it?
+> > >
+> > >    We have a user space application which waits on memory pressure events.
 >
-> Thanks,
-> Jason
+> > Upon receiving the event, the user space program will free up huge
+> > pages to make more memory available in the system.  This mechanism
+> > works fine if the memory is being consumed by other user space
+> > applications. To test this, we wrote a test program which will
+> > allocate all the memory available in the system using malloc() and
+> > touch the allocated pages. When the free memory level becomes low,
+> > the pressure event is fired and the process gets notified about it .
+> > The same test is repeated with kmalloc() instead of malloc(). A test
+> > kernel module is developed, which will allocate all the available
+> > memory with kmalloc(GFP_KERNEL) flag.  The OOM killer gets invoked in
+> > this case. The memory pressure event is not fired.  After modifying
+> > the vmpressure.c with the attached patch, the pressure event gets
+> > triggered.  Swap is disabled in the system we were testing.
+>
+> Are you sure this is really the case? I am either missing something here
+> or your test might simply be timing specific because
+>
+>         GFP_KERNEL & (__GFP_FS | __GFP_IO) = true
+>
+> so I really do not see how the current code could bail out on the test
+> you are patching so that the patch would make any change. The only real
+> difference this patch makes is to trigger events for __GFP_RECLAIM
+> allocations which could be GFP_NOIO. All non-sleepable allocations would
+> wake kswapd and that would in turn reclaim with _GFP_FS | __GFP_IO set
+> so the check doesn't change anything.
+>
+> Am I missing something?
+ No . You are right. The pressure event does get generated from kernel
+but before the
+ user space gets time to act, OOM killer is invoked.
+
+Regards
+Shaju
+
+
+
+> --
+> Michal Hocko
+> SUSE Labs
