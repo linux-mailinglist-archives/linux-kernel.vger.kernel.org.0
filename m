@@ -2,84 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF1CE17F75E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:26:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07DE117F770
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:29:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbgCJM0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:26:25 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38675 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbgCJM0Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:26:25 -0400
-Received: by mail-pf1-f196.google.com with SMTP id z5so1525330pfn.5;
-        Tue, 10 Mar 2020 05:26:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=aqG1gpI3UojXGpXKG8hweJC7Y4rK/8MUyRGkcr9E4Og=;
-        b=NRk29ZvL9dXRWhydPFZ1MNK8u+VK026HEZdZ6QJrhG6+YwgQJuM7hPfBqK43y29Z/P
-         hWjhYn+xQYQ139crRXlL6FVPYINBUyzwkWupHkYDkopCT25pfhSL/C+lh7wspGkpamcO
-         HygLSE48s954ZazP/AOdt6BNis2UE2+oCV+23F2KC92SOkyyT8Z46DyqmlybGYQQPnoL
-         o3dP2LYSOlpEKs3G44b5dpHRWF0F4ZCaQHnnfQGsQqsZOFhA/MfKa2yp1KNWo5I5zPa4
-         0HoLFM9+y1dGU69VBRHAS+ULujVS+3wcyH+yKDkDERtzTPYeMQZcwWxvGf1bYoGtNIn6
-         ONnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=aqG1gpI3UojXGpXKG8hweJC7Y4rK/8MUyRGkcr9E4Og=;
-        b=N+wQX3okNNEuTp5Cxo0wlLd5vmslArqxxOip7ljl2j/vNWNs1xSDDWd+9aMQ69DFwt
-         A8V9uBkq9XU9DqrfZ1NNBR9ewZtL622ZfjXZ3wXsw98ZR1XyenobfwkCEfhDut6QY3zs
-         2c8WSehBJhyu+jprfeMdRs7j2Iums85xob3MQ7rEg7WDcbkBgjwqJgBzk4Of9MF3HvWJ
-         nzHHSNPVcyv+oY7Vm/CNIvn85rcZsfYB6w7wvsyNetRQZ5UtkzOo10XK2OtGaAnwxyCX
-         XY37tR8bAFvyQnv8EBeCE04wWKCju8l9RF/Xe2hPXHgXkdZ0r0a/py1ScG68jgnO8g1V
-         s5aA==
-X-Gm-Message-State: ANhLgQ0wIVvjGslZr1PWQaf3B+rucsJ620Ff7DxBYWfSPXW7SZ81FetW
-        E9DF2zyoCjTsxYbDpoIpbfY=
-X-Google-Smtp-Source: ADFU+vsGROcltLUCt7lKgq5KZYHU57Q1LyZzFESKeWrFihj5+bJ1r/nBxQ+urASpaa7ZFtj7UtrrtA==
-X-Received: by 2002:a63:5864:: with SMTP id i36mr21841664pgm.426.1583843183996;
-        Tue, 10 Mar 2020 05:26:23 -0700 (PDT)
-Received: from localhost.localdomain ([149.129.63.152])
-        by smtp.gmail.com with ESMTPSA id w11sm47557396pfn.4.2020.03.10.05.26.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 05:26:22 -0700 (PDT)
-From:   Jianhui Zhao <zhaojh329@gmail.com>
-To:     herbert@gondor.apana.org.au
-Cc:     davem@davemloft.net, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Jianhui Zhao <zhaojh329@gmail.com>
-Subject: [PATCH v2] crypto: atmel-i2c - Fix wakeup fail
-Date:   Tue, 10 Mar 2020 20:25:51 +0800
-Message-Id: <20200310122551.27831-1-zhaojh329@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726420AbgCJM3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:29:36 -0400
+Received: from sauhun.de ([88.99.104.3]:48178 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726331AbgCJM3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:29:36 -0400
+Received: from localhost (p54B33196.dip0.t-ipconnect.de [84.179.49.150])
+        by pokefinder.org (Postfix) with ESMTPSA id CED972C1EB6;
+        Tue, 10 Mar 2020 13:29:34 +0100 (CET)
+Date:   Tue, 10 Mar 2020 13:29:34 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Rishi Gupta <gupt21@gmail.com>
+Cc:     jikos@kernel.org, benjamin.tissoires@redhat.com,
+        wsa+renesas@sang-engineering.com, gregkh@linuxfoundation.org,
+        linux-i2c@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] HID: mcp2221: add usb to i2c-smbus host bridge
+Message-ID: <20200310122934.GA13896@ninjato>
+References: <1580185137-11255-1-git-send-email-gupt21@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
+Content-Disposition: inline
+In-Reply-To: <1580185137-11255-1-git-send-email-gupt21@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The wake token cannot be sent without ignoring the nack for the
-device address
 
-Signed-off-by: Jianhui Zhao <zhaojh329@gmail.com>
----
- drivers/crypto/atmel-i2c.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+--nFreZHaLTZJo0R7j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/crypto/atmel-i2c.c b/drivers/crypto/atmel-i2c.c
-index 1d3355913b40..e8e8281e027d 100644
---- a/drivers/crypto/atmel-i2c.c
-+++ b/drivers/crypto/atmel-i2c.c
-@@ -176,7 +176,8 @@ static int atmel_i2c_wakeup(struct i2c_client *client)
- 	 * device is idle, asleep or during waking up. Don't check for error
- 	 * when waking up the device.
- 	 */
--	i2c_master_send(client, i2c_priv->wake_token, i2c_priv->wake_token_sz);
-+	i2c_transfer_buffer_flags(client, i2c_priv->wake_token,
-+				i2c_priv->wake_token_sz, I2C_M_IGNORE_NAK);
- 
- 	/*
- 	 * Wait to wake the device. Typical execution times for ecdh and genkey
--- 
-2.17.1
 
+> +	if (num == 1) {
+> +		if (msgs->flags & I2C_M_RD) {
+> +			ret = mcp_i2c_smbus_read(mcp, msgs, MCP2221_I2C_RD_DATA,
+> +							0, 0, NULL);
+> +		} else {
+> +			ret = mcp_i2c_write(mcp, msgs, MCP2221_I2C_WR_DATA, 1);
+> +		}
+> +		if (ret)
+> +			goto exit;
+> +		ret = num;
+> +	} else if (num == 2) {
+> +		/* Ex transaction; send reg address and read its contents */
+> +		if (msgs[0].addr == msgs[1].addr &&
+> +			!(msgs[0].flags & I2C_M_RD) &&
+> +			 (msgs[1].flags & I2C_M_RD)) {
+> +
+> +			ret = mcp_i2c_write(mcp, &msgs[0],
+> +						MCP2221_I2C_WR_NO_STOP, 0);
+> +			if (ret)
+> +				goto exit;
+> +
+> +			ret = mcp_i2c_smbus_read(mcp, &msgs[1],
+> +						MCP2221_I2C_RD_RPT_START,
+> +						0, 0, NULL);
+> +			if (ret)
+> +				goto exit;
+> +			ret = num;
+> +		} else {
+> +			dev_err(&adapter->dev,
+> +				"unsupported multi-msg i2c transaction\n");
+> +			ret = -EOPNOTSUPP;
+> +		}
+> +	} else {
+> +		dev_err(&adapter->dev,
+> +			"unsupported multi-msg i2c transaction\n");
+> +		ret = -EOPNOTSUPP;
+> +	}
+
+Have a look at struct i2c_adapter_quirks and especially the flags to let
+the I2C core do the sanity checks from here.
+
+
+--nFreZHaLTZJo0R7j
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl5niCoACgkQFA3kzBSg
+Kbbcbw/7BH9KSGZnx60OjlH4kqubSsU/7webUKwIWx40VdSbxBmccq49gipAxmP5
+k1fMwsW0uCKcslR/iJ7R88cM8BLP1led1JCbGsbZ2AYMs1liYrcz/np7xxVG5NqZ
+33L+D2OyXovtD+9gQudVIF593s0BipaL3FBDvmSayBs/qZldA1OKrt5xKshu6Gu3
+twzjtixSLjQnqxhydQ0rva5i0Wccd5X++VTthF1zCfydoN9Yuj+wfu+surk2y9fP
+Nou7eizASM27B5yl4T4VJgzrAZZmq2Mq3HeY1/fZ5ic9rIATj819xGOw0NqBpgsr
+MgZiUh0shBJenx4gXYD+oZxUxaqGQFb12V88vfWnIw+0l4n5L54sfVhTXmAZE2zC
+yMZ5oBLvrQfO6dDGPz5PKYqN1hS0YM+pGaGBi3Fx8mna3QvdbZFe4bLNNvA0wcsX
+vg4UgMvfavZAAjpCQtkY8p7ew1dFyOs5eLinYsnVuF9T1KcjOFWlx90/+GOMYeoZ
+TzxD2TFDjc8/7Jp60r+IkDgpLwH8/YxsBoy9ESzSi7MBzQLuSw7hju5OATmQ/Sld
+oGMy9aUtIEVW2Y/t6P2XbMeFOBGwc0zXO1pWVKS6Pqj1yqYf7QcHWcjwd2CyAyif
+Dr9fv+gGmqZ+hEED4tRPQMuzbXvVbax3IlNOOI4rYT8c3LuKUx8=
+=rvj5
+-----END PGP SIGNATURE-----
+
+--nFreZHaLTZJo0R7j--
