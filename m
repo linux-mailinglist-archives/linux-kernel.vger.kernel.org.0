@@ -2,99 +2,249 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC533180A35
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:18:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B77E7180A4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:22:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbgCJVSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 17:18:54 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40974 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbgCJVSy (ORCPT
+        id S1727678AbgCJVWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 17:22:37 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:47318 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbgCJVWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 17:18:54 -0400
-Received: by mail-ot1-f68.google.com with SMTP id s15so6453819otq.8;
-        Tue, 10 Mar 2020 14:18:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iYG2/A6J0MuYaTBIHQCtF8BBNXHrAqwI6lmzEa8ArSA=;
-        b=Yp/my6KeCdY52ZhXYpY83g8ePitOK1UwSGQXybMj6E+wgH7boUx3lQYARGBKRovDTE
-         VE9Y+jMHAft2lQ2fd5d6vYZPNQKSyygGQUbr2L347ETAMHC0sBQo3WnOTtl95utolSj9
-         cvYWwiMD/2nte0L7HyUIGha7N/qHkQNS/2CS5w5/9Rw0WDzkJ5Tz/Di/8rtfb0MdOcXZ
-         a4Ozj68iIZD+4ELtZRmTxCXSFWLsb2hftvPDDMFc8KftRfhrT/Rk36Ud16yMPl6BF9Jq
-         knJn3mZ243HPuGUa3XsxGIsPrzJjl+MhVnURsiYBZsW5l+ZHRi0LFt9kc4ya2dF//8nO
-         1gTg==
-X-Gm-Message-State: ANhLgQ24up3KB+CLRUCz2PLcj5mXEaqQDpqFLGM1vxJMVSQq7HoHfoQv
-        gsN/YcMVfnrXRbhGpxbHbg==
-X-Google-Smtp-Source: ADFU+vtKlHa3IK/ehZVScFZn40tglX4cN0RpFUVuzT+HjO/JNhCB8Ag3iPcgNLm2zCByIKhaLL9Mng==
-X-Received: by 2002:a05:6830:18d4:: with SMTP id v20mr8278772ote.23.1583875131391;
-        Tue, 10 Mar 2020 14:18:51 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id b2sm4643842oii.20.2020.03.10.14.18.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 14:18:50 -0700 (PDT)
-Received: (nullmailer pid 13623 invoked by uid 1000);
-        Tue, 10 Mar 2020 21:18:49 -0000
-Date:   Tue, 10 Mar 2020 16:18:49 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, wim@linux-watchdog.org, linux@roeck-us.net,
-        p.paillet@st.com, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH v5] dt-bindings: mfd: Convert stpmic1 bindings to
- json-schema
-Message-ID: <20200310211849.GA13562@bogus>
-References: <20200304094220.28156-1-benjamin.gaignard@st.com>
+        Tue, 10 Mar 2020 17:22:36 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jBmKe-0001lA-LQ; Tue, 10 Mar 2020 15:22:32 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jBmKd-0001Rk-94; Tue, 10 Mar 2020 15:22:32 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
+        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
+References: <87v9nlii0b.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87a74xi4kz.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+        <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+        <875zfe5xzb.fsf_-_@x220.int.ebiederm.org>
+        <202003101337.AC1A30576@keescook>
+Date:   Tue, 10 Mar 2020 16:20:12 -0500
+In-Reply-To: <202003101337.AC1A30576@keescook> (Kees Cook's message of "Tue,
+        10 Mar 2020 13:44:09 -0700")
+Message-ID: <87sgifq54j.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304094220.28156-1-benjamin.gaignard@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-XM-SPF: eid=1jBmKd-0001Rk-94;;;mid=<87sgifq54j.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/uSgxqQ7yJ0LmMGrR7SNxCBN/dTq54Iqs=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4979]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Kees Cook <keescook@chromium.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 966 ms - load_scoreonly_sql: 0.07 (0.0%),
+        signal_user_changed: 2.8 (0.3%), b_tie_ro: 1.78 (0.2%), parse: 1.85
+        (0.2%), extract_message_metadata: 24 (2.5%), get_uri_detail_list: 4.5
+        (0.5%), tests_pri_-1000: 42 (4.4%), tests_pri_-950: 1.97 (0.2%),
+        tests_pri_-900: 1.73 (0.2%), tests_pri_-90: 48 (4.9%), check_bayes: 46
+        (4.7%), b_tokenize: 23 (2.3%), b_tok_get_all: 12 (1.2%), b_comp_prob:
+        3.6 (0.4%), b_tok_touch_all: 4.4 (0.5%), b_finish: 0.80 (0.1%),
+        tests_pri_0: 825 (85.4%), check_dkim_signature: 0.68 (0.1%),
+        check_dkim_adsp: 2.2 (0.2%), poll_dns_idle: 0.52 (0.1%), tests_pri_10:
+        2.2 (0.2%), tests_pri_500: 12 (1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v2 4/5] exec: Move exec_mmap right after de_thread in flush_old_exec
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Mar 2020 10:42:20 +0100, Benjamin Gaignard wrote:
-> Convert stpmic1 bindings to json-schema.
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
-> version 5:
-> - move $ref regulator.yaml under a patternProperties
-> - move remain fixed strings under properties field
-> 
-> version 4:
-> - move on uppder node $ref: ../regulator/regulator.yaml 
-> - move fixed strings under properties field
-> - remove unneeded () in patternProperties
-> - keep ldo3 separate from other ldo properties
-> Note:
-> - 'st,mask-reset' property stay in each subnode, I don't find
->   the syntax to avoid dupliquate it. 
-> - ldo6-supply and all possible *-supply are describe by this regular
->   expression: ^(buck[1-4]|ldo[1-6]|boost|pwr_sw[1-2])-supply$":
-> 
-> version 3:
-> - put $ref under allOf keyword
-> - for each regulator node add the list of supported regulator properties
-> 
->  .../devicetree/bindings/input/st,stpmic1-onkey.txt |  28 --
->  .../devicetree/bindings/mfd/st,stpmic1.txt         |  61 ----
->  .../devicetree/bindings/mfd/st,stpmic1.yaml        | 339 +++++++++++++++++++++
->  .../bindings/regulator/st,stpmic1-regulator.txt    |  64 ----
->  .../bindings/watchdog/st,stpmic1-wdt.txt           |  11 -
->  5 files changed, 339 insertions(+), 164 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/input/st,stpmic1-onkey.txt
->  delete mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.txt
->  create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.yaml
->  delete mode 100644 Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt
->  delete mode 100644 Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt
-> 
+Kees Cook <keescook@chromium.org> writes:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> On Sun, Mar 08, 2020 at 04:38:00PM -0500, Eric W. Biederman wrote:
+>> 
+>> I have read through the code in exec_mmap and I do not see anything
+>> that depends on sighand or the sighand lock, or on signals in anyway
+>> so this should be safe.
+>> 
+>> This rearrangement of code has two siginficant benefits.  It makes
+>> the determination of passing the point of no return by testing bprm->mm
+>> accurate.  All failures prior to that point in flush_old_exec are
+>> either truly recoverable or they are fatal.
+>
+> Agreed. Though I see a use of "current", which maybe you want to
+> parameterize to a "me" argument in acct_arg_size(). (Though looking at
+> the callers, perhaps there is no benefit?)
+
+My testing suggests there is a small benefit on x86.
+
+The code is just "#define current get_current()"
+and get_current() revoles into a read of "%gs:current_task".
+
+But looking at the code I find gcc can sometimes when the
+reads are close in the source code can optimize the read
+away.  But gcc does not manage to optimize the extra
+read of "%gs:current_task" away.
+
+So I think things are much much better than they used to be,
+code generation wise.  But it still helps to cache current
+in a local variable.
+
+>> Futher this consolidates all of the possible indefinite waits for
+>> userspace together at the top of flush_old_exec.  The possible wait
+>> for a ptracer on PTRACE_EVENT_EXIT, the possible wait for a page fault
+>> to be resolved in clear_child_tid, and the possible wait for a page
+>> fault in exit_robust_list.
+>> 
+>> This consolidation allows the creation of a mutex to replace
+>> cred_guard_mutex that is not held of possible indefinite userspace
+>> waits.  Which will allow removing deadlock scenarios from the kernel.
+>> 
+>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>> ---
+>>  fs/exec.c | 24 ++++++++++++------------
+>>  1 file changed, 12 insertions(+), 12 deletions(-)
+>> 
+>> diff --git a/fs/exec.c b/fs/exec.c
+>> index 215d86f77b63..d820a7272a76 100644
+>> --- a/fs/exec.c
+>> +++ b/fs/exec.c
+>> @@ -1272,18 +1272,6 @@ int flush_old_exec(struct linux_binprm * bprm)
+>>  	if (retval)
+>>  		goto out;
+>>  
+>> -#ifdef CONFIG_POSIX_TIMERS
+>> -	exit_itimers(me->signal);
+>> -	flush_itimer_signals();
+>> -#endif
+>
+> I think this comment:
+>
+> /*
+>  * This is called by do_exit or de_thread, only when there are no more
+>  * references to the shared signal_struct.
+>  */
+> void exit_itimers(struct signal_struct *sig)
+>
+> Refers to there being other threads, yes? Not that the signal table is
+> private yet?
+
+The signal table is in sighand_struct.
+
+So yes that refers to the other threads being gone.
+
+
+>> -
+>> -	/*
+>> -	 * Make the signal table private.
+>> -	 */
+>> -	retval = unshare_sighand(me);
+>> -	if (retval)
+>> -		goto out;
+>> -
+>>  	/*
+>>  	 * Must be called _before_ exec_mmap() as bprm->mm is
+>>  	 * not visibile until then. This also enables the update
+>> @@ -1307,6 +1295,18 @@ int flush_old_exec(struct linux_binprm * bprm)
+>>  	 */
+>>  	bprm->mm = NULL;
+>>  
+>> +#ifdef CONFIG_POSIX_TIMERS
+>> +	exit_itimers(me->signal);
+>> +	flush_itimer_signals();
+>> +#endif
+>
+> I've mostly convinced myself that there are no "side-effects" from having
+> these timers expire as the mm is going away. I think some kind of comment
+> of that intent should be explicitly stated here above the timer work.
+
+The timers can at most generate signals.  And we are not handling
+signals in the middle of exec.
+
+So the only possible interaction would be to set a timeout and then try
+exec, and have the timer kill the caller.
+
+Maybe we get a killable signal from a scenario like that and maybe this
+changes the time before the timer expires into the dangerous zone.
+But that is all I can think of.
+
+We have to return to the edge of userspace before any signals are
+delivered.
+
+
+> Beyond that:
+>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+>
+> -Kees
+>
+>> +
+>> +	/*
+>> +	 * Make the signal table private.
+>> +	 */
+>> +	retval = unshare_sighand(me);
+>> +	if (retval)
+>> +		goto out;
+>> +
+>>  	set_fs(USER_DS);
+>>  	me->flags &= ~(PF_RANDOMIZE | PF_FORKNOEXEC | PF_KTHREAD |
+>>  					PF_NOFREEZE | PF_NO_SETAFFINITY);
+>> -- 
+>> 2.25.0
+>> 
+
+Eric
+
