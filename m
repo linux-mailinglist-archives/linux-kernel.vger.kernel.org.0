@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B14017F851
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C229817F9BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:59:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbgCJMqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:46:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50478 "EHLO mail.kernel.org"
+        id S1730038AbgCJM7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:59:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726973AbgCJMqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:46:53 -0400
+        id S1730023AbgCJM71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:59:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A7232468E;
-        Tue, 10 Mar 2020 12:46:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 488602253D;
+        Tue, 10 Mar 2020 12:59:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844412;
-        bh=rMQn7kjsa7T0S3IBhZrsTg2HDBVaXevtNP7v9XkF4Dg=;
+        s=default; t=1583845166;
+        bh=hKYGiz4zk2QHN8e6pfKsbViwp/zI0pmUHjXxczMOWvU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ejb6IAvlTCNS7BH7PHStAC3p+HvS2ssv7mFdUlRYSs11NpP4gFhMDKNCyIG4QlXqx
-         zHJ0EXZm3bms68OiY/0wF01yrN2WaxzMLXk8MJmCkIsxjICyibl9I6BCFxZYN1VQ4R
-         6zu0CMme4yLYub3LSCmyjdB+PzZmxA5P+cK+Aqw4=
+        b=s1D2vPTPT9+64SItJcGxyjMR/40/J0qPWnVLr4YYHyOXRz7KpVBf5HP5mD68cOkcK
+         rMpuUjsudQzPwsWYEEO+ImM/vxhKdMmgJxsTAox2Nkx8pKTPBsYNTzo40sNkJm4njY
+         tFNWkgBhSjInMvwx0zbwomP+yMHB379ngUHJavHI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org,
-        linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH 4.9 35/88] MIPS: VPE: Fix a double free and a memory leak in release_vpe()
-Date:   Tue, 10 Mar 2020 13:38:43 +0100
-Message-Id: <20200310123614.437868526@linuxfoundation.org>
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Ondrej Jirman <megous@megous.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH 5.5 087/189] phy: allwinner: Fix GENMASK misuse
+Date:   Tue, 10 Mar 2020 13:38:44 +0100
+Message-Id: <20200310123648.473874835@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Rikard Falkeborn <rikard.falkeborn@gmail.com>
 
-commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 upstream.
+commit 96b4ea324ae92386db2b0c73ace597c80cde1ecb upstream.
 
-Pointer on the memory allocated by 'alloc_progmem()' is stored in
-'v->load_addr'. So this is this memory that should be freed by
-'release_progmem()'.
+Arguments are supposed to be ordered high then low.
 
-'release_progmem()' is only a call to 'kfree()'.
-
-With the current code, there is both a double free and a memory leak.
-Fix it by passing the correct pointer to 'release_progmem()'.
-
-Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: ralf@linux-mips.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+Fixes: a228890f9458 ("phy: allwinner: add phy driver for USB3 PHY on Allwinner H6 SoC")
+Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Tested-by: Ondrej Jirman <megous@megous.com>
+Signed-off-by: Ondrej Jirman <megous@megous.com>
+Acked-by: Maxime Ripard <mripard@kernel.org>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191110124355.1569-1-rikard.falkeborn@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/vpe.c |    2 +-
+ drivers/phy/allwinner/phy-sun50i-usb3.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/kernel/vpe.c
-+++ b/arch/mips/kernel/vpe.c
-@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
- {
- 	list_del(&v->list);
- 	if (v->load_addr)
--		release_progmem(v);
-+		release_progmem(v->load_addr);
- 	kfree(v);
- }
+--- a/drivers/phy/allwinner/phy-sun50i-usb3.c
++++ b/drivers/phy/allwinner/phy-sun50i-usb3.c
+@@ -49,7 +49,7 @@
+ #define SUNXI_LOS_BIAS(n)		((n) << 3)
+ #define SUNXI_LOS_BIAS_MASK		GENMASK(5, 3)
+ #define SUNXI_TXVBOOSTLVL(n)		((n) << 0)
+-#define SUNXI_TXVBOOSTLVL_MASK		GENMASK(0, 2)
++#define SUNXI_TXVBOOSTLVL_MASK		GENMASK(2, 0)
  
+ struct sun50i_usb3_phy {
+ 	struct phy *phy;
 
 
