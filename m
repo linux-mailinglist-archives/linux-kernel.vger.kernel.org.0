@@ -2,152 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 876FC17F5C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:10:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4744B17F5CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:12:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbgCJLKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 07:10:03 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:27962 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725937AbgCJLKC (ORCPT
+        id S1726295AbgCJLMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 07:12:14 -0400
+Received: from smtprelay0006.hostedemail.com ([216.40.44.6]:42301 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726186AbgCJLMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 07:10:02 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583838602; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: References: Cc: To:
- Subject: From: Sender; bh=Va3n/cJLbQfqQGCh5nSi8Ti3b5OUaE9Hu4OHUP+lYJM=;
- b=KimsQRUiktGsQdHQsRjyaCHai52dO+qLPfWPbI61D1MsYw9/eclKpOTSZSpVWQ+fc87RtqH/
- yIM6+DYwRBTJcWElH8n5R28chscqdTYAEeMS+ISnm4sjQqWnCQRxIjl2kBklwhQQxapoChF2
- ezIzrguYgpJn5tBF2H6V3V3SNP8=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e67757a.7f87c5cede30-smtp-out-n03;
- Tue, 10 Mar 2020 11:09:46 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 29253C432C2; Tue, 10 Mar 2020 11:09:46 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [192.168.1.2] (unknown [183.83.137.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 78BEEC433CB;
-        Tue, 10 Mar 2020 11:09:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 78BEEC433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
-From:   Maulik Shah <mkshah@codeaurora.org>
-Subject: Re: [PATCH v13 3/5] soc: qcom: rpmh: Invalidate SLEEP and WAKE TCSes
- before flushing new data
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org
-References: <1583746236-13325-1-git-send-email-mkshah@codeaurora.org>
- <1583746236-13325-4-git-send-email-mkshah@codeaurora.org>
- <CAD=FV=Xkqquyk907zAE-v7_QK_dOSmn1ooTzuXxP5Fckmhaw+Q@mail.gmail.com>
-Message-ID: <ba1d108d-8baa-a09e-2678-497acb6d9e9c@codeaurora.org>
-Date:   Tue, 10 Mar 2020 16:39:38 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Tue, 10 Mar 2020 07:12:14 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id E15B6837F24D;
+        Tue, 10 Mar 2020 11:12:12 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:4250:4321:4605:5007:6119:6742:7903:8531:9389:10004:10400:10848:11026:11232:11473:11658:11914:12050:12297:12740:12760:12895:13069:13161:13229:13311:13357:13439:14096:14097:14659:14721:21080:21324:21433:21451:21627:30012:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: worm72_6a6262640771f
+X-Filterd-Recvd-Size: 2949
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 10 Mar 2020 11:12:10 +0000 (UTC)
+Message-ID: <7e2471ed71a42d74c0dbd9f2197034f5163d0eda.camel@perches.com>
+Subject: Re: [PATCH] mm: Use fallthrough;
+From:   Joe Perches <joe@perches.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Nitin Gupta <ngupta@vflare.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Date:   Tue, 10 Mar 2020 04:10:29 -0700
+In-Reply-To: <20200309064806.GB46830@google.com>
+References: <f62fea5d10eb0ccfc05d87c242a620c261219b66.camel@perches.com>
+         <20200308031825.GB1125@jagdpanzerIV.localdomain>
+         <5f297e8995b22c9ccf06d4d0a04f7d9a37d3cd77.camel@perches.com>
+         <20200309041551.GA1765@jagdpanzerIV.localdomain>
+         <84f3c9891d4e89909d5537f34ea9d75de339c415.camel@perches.com>
+         <20200309062046.GA46830@google.com> <20200309064806.GB46830@google.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=Xkqquyk907zAE-v7_QK_dOSmn1ooTzuXxP5Fckmhaw+Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2020-03-09 at 15:48 +0900, Sergey Senozhatsky wrote:
+> On (20/03/09 15:20), Sergey Senozhatsky wrote:
+> [..]
+> > > <shrug, maybe>  I've no real opinion about that necessity.
+> > > 
+> > > fallthrough commments are relatively rarely used as a
+> > > separating element between case labels.
+> > > 
+> > > It's by far most common to just have consecutive case labels
+> > > without any other content.
+> > > 
+> > > It's somewhere between 500:1 to 1000:1 in the kernel.
+> > 
+> > I thought that those labels were used by some static code analysis
+> > tools, so that the removal of some labels raised questions. But I
+> > don't think I have opinions otherwise.
+> 
+> ... I guess GCC counts as a static code analysis tool :)
+> 
+> Looking at previous commits, people wanted to have proper 'fall through'
+> 
+> 
+>     Replace "fallthru" with a proper "fall through" annotation.
+>     This fix is part of the ongoing efforts to enabling
+>     -Wimplicit-fallthrough
+> 
+> ---
+> 
+> -       case ZPOOL_MM_RW: /* fallthru */
+> +       case ZPOOL_MM_RW: /* fall through */
 
-On 3/10/2020 5:12 AM, Doug Anderson wrote:
-> Hi,
->
-> On Mon, Mar 9, 2020 at 2:31 AM Maulik Shah <mkshah@codeaurora.org> wrote:
->> TCSes have previously programmed data when rpmh_flush is called.
->> This can cause old data to trigger along with newly flushed.
->>
->> Fix this by cleaning SLEEP and WAKE TCSes before new data is flushed.
->>
->> With this there is no need to invoke rpmh_rsc_invalidate() call from
->> rpmh_invalidate().
->>
->> Simplify rpmh_invalidate() by moving invalidate_batch() inside.
->>
->> Fixes: 600513dfeef3 ("drivers: qcom: rpmh: cache sleep/wake state requests")
->> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
->> ---
->>  drivers/soc/qcom/rpmh.c | 36 +++++++++++++++---------------------
->>  1 file changed, 15 insertions(+), 21 deletions(-)
->>
->> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
->> index 03630ae..5bed8f4 100644
->> --- a/drivers/soc/qcom/rpmh.c
->> +++ b/drivers/soc/qcom/rpmh.c
->> @@ -317,19 +317,6 @@ static int flush_batch(struct rpmh_ctrlr *ctrlr)
->>         return ret;
->>  }
->>
->> -static void invalidate_batch(struct rpmh_ctrlr *ctrlr)
->> -{
->> -       struct batch_cache_req *req, *tmp;
->> -       unsigned long flags;
->> -
->> -       spin_lock_irqsave(&ctrlr->cache_lock, flags);
->> -       list_for_each_entry_safe(req, tmp, &ctrlr->batch_cache, list)
->> -               kfree(req);
->> -       INIT_LIST_HEAD(&ctrlr->batch_cache);
->> -       ctrlr->dirty = true;
->> -       spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
->> -}
->> -
->>  /**
->>   * rpmh_write_batch: Write multiple sets of RPMH commands and wait for the
->>   * batch to finish.
->> @@ -467,6 +454,11 @@ int rpmh_flush(struct rpmh_ctrlr *ctrlr)
->>                 return 0;
->>         }
->>
->> +       /* Invalidate the TCSes first to avoid stale data */
->> +       do {
->> +               ret = rpmh_rsc_invalidate(ctrlr_to_drv(ctrlr));
->> +       } while (ret == -EAGAIN);
->> +
-> You forgot to actually check the return value.
->
-> if (ret)
->   return ret;
-Done.
->
->>         /* First flush the cached batch requests */
->>         ret = flush_batch(ctrlr);
->>         if (ret)
->> @@ -503,19 +495,21 @@ int rpmh_flush(struct rpmh_ctrlr *ctrlr)
->>   *
->>   * @dev: The device making the request
->>   *
->> - * Invalidate the sleep and active values in the TCS blocks.
->> + * Invalidate the sleep and wake values in batch_cache.
-> Thanks for updating this.  It was on my todo list.  Can you also
-> update the function description, which still says "Invalidate all
-> sleep and active sets sets."  While you're at it, remove the double
-> "sets".
+That conversion was unnecessary.
+(there are still 6 /* fallthru */ comments in today's kernel)
 
-Done.
+There are tens of thousands of consecutive case labels without
+interleaving fallthrough comments in the kernel like:
 
-Thanks,
-Maulik
+	switch (foo) {
+	case BAR:
+	case BAZ:
+		do_something();
+		break;
+	default:
+		something_else();
+		break;
+	}
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+So gcc and clang handle consecutive cases without fallthrough
+without uselessly emitting warnings just fine.
+
