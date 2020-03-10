@@ -2,112 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DADC17FEC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:38:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A09517FED1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:41:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbgCJNiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:38:05 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:40082 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbgCJNiE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:38:04 -0400
-Received: by mail-qk1-f195.google.com with SMTP id m2so12664043qka.7
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:38:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=KLpE8ve97oAPJLQLYYx8zGcQlVMaeFiUkBk5Iqbenl8=;
-        b=m7BI9M5RrSAdY9gQkOpFG49o2OVYRUpkhH5uPzs18vsyS6dGIxm5s7iy5NuIjVGJzY
-         9vZLRtNmR4ZeKnF8/Ev178kvbaneUUaPBN8fExwioTwYzLO8BHYMGBPGQthQADnPfaD4
-         qV1AIlIkINGm2asemPKT1jIGsK7D65xVBhMUxRY9pgNfThrpLCLcQUxg4mj2eBguU5MZ
-         ljFhCUIQUF9wwbQOtN0XtlHLX39W7/Kb2CPNBl6dOJFT3Gyq8CW8O7COTMjFc2vK/YS9
-         kOObfhDYXgduzoYwXrQKBG7F/QrlrFI0erXY3tKTa7Z+0MF5CKI47BKQDh2whXED8BlE
-         24jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KLpE8ve97oAPJLQLYYx8zGcQlVMaeFiUkBk5Iqbenl8=;
-        b=Kuvg7RMQYNhpz0jPuoU/HVkaAffR3lBoY2UmvlleTHTZ6U68HHlY1x6CXvf0lLIyOX
-         H0Ko67C9Fp/SmW2BFLsKJNwPZAgw2H9L1gHT3J6rG3v9jUutVwXp60j6wLkKU84M1GU/
-         OLiA6jBKtFGMf5pn5Lr2vvUMsQdCYaS4KsmDzDLfHR6ofE/eFs/0PFB4f9cTEXw86N7v
-         l4SzMAtjXy13Bblfp2g2Ei/F4FVqiil2OBq+TNpV29Z65hyyivCblY1+pEf6xuZm2VE9
-         iVZAFkzyZgX0miEZkQKcmJy00q8n5WKVqyDoUBdGxnG3vm+jxWN5bXZUBKYzr/eurCuF
-         A2pw==
-X-Gm-Message-State: ANhLgQ0DtAQoBy7nw6sazy4sBPFWxGxl030N5wJVZcLhTvOSwhJAyJJg
-        KqrUeEXcqN9xlkgTpl+kUOdJIg==
-X-Google-Smtp-Source: ADFU+vumpRvFLLiIHtsP+ekHyITbCWW7vsarNvrGDMzw+/UrDznI0a70pXFrab+iJaNLKVMgkWxF6w==
-X-Received: by 2002:a37:4986:: with SMTP id w128mr20381557qka.189.1583847483739;
-        Tue, 10 Mar 2020 06:38:03 -0700 (PDT)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id v59sm3576687qte.19.2020.03.10.06.38.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Mar 2020 06:38:03 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org
-Cc:     aryabinin@virtuozzo.com, glider@google.com, dvyukov@google.com,
-        kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH -next] lib/test_kasan: silence a -Warray-bounds warning
-Date:   Tue, 10 Mar 2020 09:37:49 -0400
-Message-Id: <1583847469-4354-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        id S1726777AbgCJNlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:41:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35940 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726508AbgCJNlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:41:01 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DF57205F4;
+        Tue, 10 Mar 2020 13:41:00 +0000 (UTC)
+Date:   Tue, 10 Mar 2020 09:40:58 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Brian Gerst <brgerst@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Alexandre Chartre <alexandre.chartre@oracle.com>
+Subject: Re: [patch part-II V2 09/13] x86/entry/common: Split hardirq
+ tracing into lockdep and ftrace parts
+Message-ID: <20200310094058.1239cf2f@gandalf.local.home>
+In-Reply-To: <20200310112045.GD29372@zn.tnic>
+References: <20200308222359.370649591@linutronix.de>
+        <20200308222609.825111830@linutronix.de>
+        <20200310112045.GD29372@zn.tnic>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit "kasan: add test for invalid size in memmove" introduced a
-compilation warning where it used a negative size on purpose. Silence it
-by disabling "array-bounds" checking for this file only for testing
-purpose.
+On Tue, 10 Mar 2020 12:20:45 +0100
+Borislav Petkov <bp@alien8.de> wrote:
 
-In file included from ./include/linux/bitmap.h:9,
-                 from ./include/linux/cpumask.h:12,
-                 from ./arch/x86/include/asm/cpumask.h:5,
-                 from ./arch/x86/include/asm/msr.h:11,
-                 from ./arch/x86/include/asm/processor.h:22,
-                 from ./arch/x86/include/asm/cpufeature.h:5,
-                 from ./arch/x86/include/asm/thread_info.h:53,
-                 from ./include/linux/thread_info.h:38,
-                 from ./arch/x86/include/asm/preempt.h:7,
-                 from ./include/linux/preempt.h:78,
-                 from ./include/linux/rcupdate.h:27,
-                 from ./include/linux/rculist.h:11,
-                 from ./include/linux/pid.h:5,
-                 from ./include/linux/sched.h:14,
-                 from ./include/linux/uaccess.h:6,
-                 from ./arch/x86/include/asm/fpu/xstate.h:5,
-                 from ./arch/x86/include/asm/pgtable.h:26,
-                 from ./include/linux/kasan.h:15,
-                 from lib/test_kasan.c:12:
-In function 'memmove',
-    inlined from 'kmalloc_memmove_invalid_size' at
-lib/test_kasan.c:301:2:
-./include/linux/string.h:441:9: warning: '__builtin_memmove' pointer
-overflow between offset 0 and size [-2, 9223372036854775807]
-[-Warray-bounds]
-  return __builtin_memmove(p, q, size);
-         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > +
+> > +	/*
+> > +	 * Tell the tracer about the irq state as well before enabling
+> > +	 * interrupts.
+> > +	 */
+> > +	__trace_hardirqs_off();  
+> 
+> I wonder if those "__" variants should be named something else to
+> denote better the difference between __trace_hardirqs_{on,off} and
+> trace_hardirqs_{on,off}. Latter does the _rcuidle variant and lockdep
+> annotation but
+> 
+> 	trace_hardirqs_{on,off}_rcuidle_lockdep()
+> 
+> sounds yuck.
+> 
+> Maybe lockdep_trace_hardirqs_{on,off}()...
+> 
+> Blergh, I can't think of a good name ATM.
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- lib/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+Kernel developers are not good at naming ;-) This is one of the original
+pieces of code that came in with the original addition of tracing, where we
+had the "Ingo notation" of something like:
 
-diff --git a/lib/Makefile b/lib/Makefile
-index ab68a8674360..24d519a0741d 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -297,6 +297,8 @@ UBSAN_SANITIZE_ubsan.o := n
- KASAN_SANITIZE_ubsan.o := n
- KCSAN_SANITIZE_ubsan.o := n
- CFLAGS_ubsan.o := $(call cc-option, -fno-stack-protector) $(DISABLE_STACKLEAK_PLUGIN)
-+# kmalloc_memmove_invalid_size() does this on purpose.
-+CFLAGS_test_kasan.o += $(call cc-disable-warning, array-bounds)
- 
- obj-$(CONFIG_SBITMAP) += sbitmap.o
- 
--- 
-1.8.3.1
+  trace() {
+	[..]
+	_trace();
+	[..]
+  }
 
+  _trace() {
+	[..]
+	__trace();
+	[..]
+  }
+
+  __trace() {
+	[..]
+	___trace();
+	[..]
+  }
+
+  ___trace() {
+	[..]
+	____trace();
+	[..]
+  }
+
+  ____trace() {
+	[..]
+	_____trace();
+	[..]
+  }
+
+  _____trace() {
+	[..]
+  }
+
+-- Steve
