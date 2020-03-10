@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1419317FD50
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:29:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C543F17FCB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:22:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728731AbgCJMwa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:52:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58036 "EHLO mail.kernel.org"
+        id S1728419AbgCJNAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:00:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728422AbgCJMwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:52:22 -0400
+        id S1729924AbgCJNAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:00:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57ED42253D;
-        Tue, 10 Mar 2020 12:52:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4ABCA2468D;
+        Tue, 10 Mar 2020 13:00:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844741;
-        bh=z/WV8EeiNvfcjX/k2GwivHrgnCgeVcM9x9Mjv+VytKY=;
+        s=default; t=1583845237;
+        bh=j4rbuNto2WRhNGN8Rhb71bMLkxbanm1XnNP+wsBtRi0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ye6TQB+ix/zJmt4ZMdpZg7r6Q767zcU1CNkVctQ+/0vhSoxZp4FvWoUf+AfA0lqPA
-         fg+SIFTqP2+QQ6QmokmnUM1Do1N24ng/Y2qz5Oe98ZTNPAG9PQvc3/7sXLLVg1GGrD
-         tWH/vbW2+a+sOKvod8VpGtAwmFfJiUpUfus4RGOo=
+        b=gj65FWbgwwNDeDzfyWl7dmz0RaHGycL/5g3oHiUqRBws//t+HU+Ut3WXv3rGHWZyw
+         5sQdTEQkxlhKuYWlTMB5hRF/WNOgHkhZihbEO8Y6Wy7v6RJFoLQicjSpDoKNfboQpO
+         2F+agPdcSxfRA52mXEr4arH4+gKfqAW/qm6jqXDs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 5.4 101/168] dmaengine: imx-sdma: Fix the event id check to include RX event for UART6
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Guillaume Gardet <Guillaume.Gardet@arm.com>,
+        Gerd Hoffmann <kraxel@redhat.com>
+Subject: [PATCH 5.5 110/189] drm/virtio: fix mmap page attributes
 Date:   Tue, 10 Mar 2020 13:39:07 +0100
-Message-Id: <20200310123645.607285006@linuxfoundation.org>
+Message-Id: <20200310123650.814203614@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+From: Gerd Hoffmann <kraxel@redhat.com>
 
-commit 25962e1a7f1d522f1b57ead2f266fab570042a70 upstream.
+commit 6be7e07335486f5731cab748d80c68f20896581f upstream.
 
-On i.MX6UL/ULL and i.MX6SX the DMA event id for the RX channel of
-UART6 is '0'. To fix the broken DMA support for UART6, we change
-the check for event_id0 to include '0' as a valid id.
+virtio-gpu uses cached mappings, set
+drm_gem_shmem_object.map_cached accordingly.
 
-Fixes: 1ec1e82f2510 ("dmaengine: Add Freescale i.MX SDMA support")
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
 Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20200225082139.7646-1-frieder.schrempf@kontron.de
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Fixes: c66df701e783 ("drm/virtio: switch from ttm to gem shmem helpers")
+Reported-by: Gurchetan Singh <gurchetansingh@chromium.org>
+Reported-by: Guillaume Gardet <Guillaume.Gardet@arm.com>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Gurchetan Singh <gurchetansingh@chromium.org>
+Tested-by: Guillaume Gardet <Guillaume.Gardet@arm.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/20200226154752.24328-3-kraxel@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma/imx-sdma.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_object.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -1328,7 +1328,7 @@ static void sdma_free_chan_resources(str
+--- a/drivers/gpu/drm/virtio/virtgpu_object.c
++++ b/drivers/gpu/drm/virtio/virtgpu_object.c
+@@ -99,6 +99,7 @@ struct drm_gem_object *virtio_gpu_create
+ 		return NULL;
  
- 	sdma_channel_synchronize(chan);
+ 	bo->base.base.funcs = &virtio_gpu_gem_funcs;
++	bo->base.map_cached = true;
+ 	return &bo->base.base;
+ }
  
--	if (sdmac->event_id0)
-+	if (sdmac->event_id0 >= 0)
- 		sdma_event_disable(sdmac, sdmac->event_id0);
- 	if (sdmac->event_id1)
- 		sdma_event_disable(sdmac, sdmac->event_id1);
-@@ -1629,7 +1629,7 @@ static int sdma_config(struct dma_chan *
- 	memcpy(&sdmac->slave_config, dmaengine_cfg, sizeof(*dmaengine_cfg));
- 
- 	/* Set ENBLn earlier to make sure dma request triggered after that */
--	if (sdmac->event_id0) {
-+	if (sdmac->event_id0 >= 0) {
- 		if (sdmac->event_id0 >= sdmac->sdma->drvdata->num_events)
- 			return -EINVAL;
- 		sdma_event_enable(sdmac, sdmac->event_id0);
 
 
