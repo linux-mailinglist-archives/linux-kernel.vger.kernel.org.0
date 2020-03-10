@@ -2,147 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 602DD1806AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:35:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D92E1806DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:36:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbgCJSfK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 14:35:10 -0400
-Received: from foss.arm.com ([217.140.110.172]:41010 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726283AbgCJSfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 14:35:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EDAD030E;
-        Tue, 10 Mar 2020 11:35:08 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6DA883F534;
-        Tue, 10 Mar 2020 11:35:08 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 18:35:06 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: Applied "spi: spi-fsl-dspi: fix DMA mapping" to the spi tree
-In-Reply-To:  <20200310073313.21277-1-michael@walle.cc>
-Message-Id:  <applied-20200310073313.21277-1-michael@walle.cc>
-X-Patchwork-Hint: ignore
+        id S1727228AbgCJSgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 14:36:19 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:43907 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbgCJSgS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 14:36:18 -0400
+Received: by mail-ot1-f67.google.com with SMTP id a6so6273685otb.10;
+        Tue, 10 Mar 2020 11:36:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RWBhtEAElv+woAI0B9coW/qcWUrLc+hN8tGBRRi9/8s=;
+        b=KzL0Cc2cTGGSj3qjzAhUSqEeOnk1ivJqba8748Famn+YIdUawiC4uLcDT8KRVyX+yU
+         VIfN/IwTtsE+dI5olqNVHQtGDoHaHYccQzJRAocYrYMaLo7ackvUWyLgo03YQ9lSaXn7
+         nHzTV/rgesOuXcdFD+B8SYhC+7agbbalbonCjqK1AMOf4Cg/Svy4mAUueLZka/RtBcGd
+         xCtbMhY7r9SBBIU8Ie/1KecLDLpidggoNbCSsFSqe38YbXQ37w1J4yQKsPS2AKIfNxxy
+         9cxWRZ0pDd0TGaH0Riw3feG7n9RbFGURqi2/n1yYmkOUfGy6AULzBx/9g6ybgaNDWLLX
+         PAhw==
+X-Gm-Message-State: ANhLgQ1EfaAk3JlXxz0t9etC6zcpWIp34e9UibQhYUSmBqNpYEHeJsX/
+        pMkq57nDmsj1dfWc3Tm0fg==
+X-Google-Smtp-Source: ADFU+vu0ICotI3P1yky6B20yPZmLQBQBsrF3y63sWlL0hNI6+A8JD+ItyEEvuVkvK6xbWwo2T/IxBA==
+X-Received: by 2002:a9d:6e90:: with SMTP id a16mr5846143otr.72.1583865377661;
+        Tue, 10 Mar 2020 11:36:17 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id c12sm4551332oic.27.2020.03.10.11.36.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 11:36:16 -0700 (PDT)
+Received: (nullmailer pid 22533 invoked by uid 1000);
+        Tue, 10 Mar 2020 18:36:16 -0000
+Date:   Tue, 10 Mar 2020 13:36:16 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     linux-clk@vger.kernel.org, dinguyen@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Subject: Re: [PATCHv2 2/3] dt-bindings: documentation: add clock bindings
+ information for Agilex
+Message-ID: <20200310183616.GA20350@bogus>
+References: <20200309171653.27630-1-dinguyen@kernel.org>
+ <20200309171653.27630-3-dinguyen@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200309171653.27630-3-dinguyen@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Mon,  9 Mar 2020 12:16:52 -0500, Dinh Nguyen wrote:
+> Document the Agilex clock bindings, and add the clock header file. The
+> clock header is an enumeration of all the different clocks on the Agilex
+> platform.
+> 
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
+> v2: convert original document to YAML
+> ---
+>  .../bindings/clock/intc,agilex.yaml           | 79 +++++++++++++++++++
+>  include/dt-bindings/clock/agilex-clock.h      | 70 ++++++++++++++++
+>  2 files changed, 149 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/intc,agilex.yaml
+>  create mode 100644 include/dt-bindings/clock/agilex-clock.h
+> 
 
-   spi: spi-fsl-dspi: fix DMA mapping
+My bot found errors running 'make dt_binding_check' on your patch:
 
-has been applied to the spi tree at
+Documentation/devicetree/bindings/clock/intc,agilex.yaml:  while scanning a block scalar
+  in "<unicode string>", line 36, column 5
+found a tab character where an indentation space is expected
+  in "<unicode string>", line 37, column 1
+Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/clock/intc,agilex.example.dts' failed
+make[1]: *** [Documentation/devicetree/bindings/clock/intc,agilex.example.dts] Error 1
+make[1]: *** Waiting for unfinished jobs....
+warning: no schema found in file: Documentation/devicetree/bindings/clock/intc,agilex.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/intc,agilex.yaml: ignoring, error parsing file
+Makefile:1262: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 22ee9de1ecfb4459a9b3a959994f6ccb4a3827a4 Mon Sep 17 00:00:00 2001
-From: Michael Walle <michael@walle.cc>
-Date: Tue, 10 Mar 2020 08:33:13 +0100
-Subject: [PATCH] spi: spi-fsl-dspi: fix DMA mapping
-
-Use the correct device to request the DMA mapping. Otherwise the IOMMU
-doesn't get the mapping and it will generate a page fault.
-
-The error messages look like:
-[    3.008452] arm-smmu 5000000.iommu: Unhandled context fault: fsr=0x402, iova=0xf9800000, fsynr=0x3f0022, cbfrsynra=0x828, cb=8
-[    3.020123] arm-smmu 5000000.iommu: Unhandled context fault: fsr=0x402, iova=0xf9800000, fsynr=0x3f0022, cbfrsynra=0x828, cb=8
-
-This was tested on a custom board with a LS1028A SoC.
-
-Signed-off-by: Michael Walle <michael@walle.cc>
-Link: https://lore.kernel.org/r/20200310073313.21277-1-michael@walle.cc
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-fsl-dspi.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 0683a3fbd48c..50e3382f0c50 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -497,14 +497,16 @@ static int dspi_request_dma(struct fsl_dspi *dspi, phys_addr_t phy_addr)
- 		goto err_tx_channel;
- 	}
- 
--	dma->tx_dma_buf = dma_alloc_coherent(dev, dspi->devtype_data->dma_bufsize,
-+	dma->tx_dma_buf = dma_alloc_coherent(dma->chan_tx->device->dev,
-+					     dspi->devtype_data->dma_bufsize,
- 					     &dma->tx_dma_phys, GFP_KERNEL);
- 	if (!dma->tx_dma_buf) {
- 		ret = -ENOMEM;
- 		goto err_tx_dma_buf;
- 	}
- 
--	dma->rx_dma_buf = dma_alloc_coherent(dev, dspi->devtype_data->dma_bufsize,
-+	dma->rx_dma_buf = dma_alloc_coherent(dma->chan_rx->device->dev,
-+					     dspi->devtype_data->dma_bufsize,
- 					     &dma->rx_dma_phys, GFP_KERNEL);
- 	if (!dma->rx_dma_buf) {
- 		ret = -ENOMEM;
-@@ -541,10 +543,12 @@ static int dspi_request_dma(struct fsl_dspi *dspi, phys_addr_t phy_addr)
- 	return 0;
- 
- err_slave_config:
--	dma_free_coherent(dev, dspi->devtype_data->dma_bufsize,
-+	dma_free_coherent(dma->chan_rx->device->dev,
-+			  dspi->devtype_data->dma_bufsize,
- 			  dma->rx_dma_buf, dma->rx_dma_phys);
- err_rx_dma_buf:
--	dma_free_coherent(dev, dspi->devtype_data->dma_bufsize,
-+	dma_free_coherent(dma->chan_tx->device->dev,
-+			  dspi->devtype_data->dma_bufsize,
- 			  dma->tx_dma_buf, dma->tx_dma_phys);
- err_tx_dma_buf:
- 	dma_release_channel(dma->chan_tx);
-@@ -560,20 +564,19 @@ static int dspi_request_dma(struct fsl_dspi *dspi, phys_addr_t phy_addr)
- static void dspi_release_dma(struct fsl_dspi *dspi)
- {
- 	struct fsl_dspi_dma *dma = dspi->dma;
--	struct device *dev = &dspi->pdev->dev;
- 
- 	if (!dma)
- 		return;
- 
- 	if (dma->chan_tx) {
--		dma_unmap_single(dev, dma->tx_dma_phys,
-+		dma_unmap_single(dma->chan_tx->device->dev, dma->tx_dma_phys,
- 				 dspi->devtype_data->dma_bufsize,
- 				 DMA_TO_DEVICE);
- 		dma_release_channel(dma->chan_tx);
- 	}
- 
- 	if (dma->chan_rx) {
--		dma_unmap_single(dev, dma->rx_dma_phys,
-+		dma_unmap_single(dma->chan_rx->device->dev, dma->rx_dma_phys,
- 				 dspi->devtype_data->dma_bufsize,
- 				 DMA_FROM_DEVICE);
- 		dma_release_channel(dma->chan_rx);
--- 
-2.20.1
-
+See https://patchwork.ozlabs.org/patch/1251669
+Please check and re-submit.
