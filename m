@@ -2,94 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99EE9180364
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:31:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73EB1180394
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:33:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727500AbgCJQbT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 12:31:19 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11219 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727464AbgCJQbQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 12:31:16 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C9E836DEA0F079C9BFAD;
-        Wed, 11 Mar 2020 00:30:38 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.58) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.487.0; Wed, 11 Mar 2020 00:30:32 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <axboe@kernel.dk>, <jejb@linux.ibm.com>,
-        <martin.petersen@oracle.com>, <hare@suse.de>,
-        <ming.lei@redhat.com>, <bvanassche@acm.org>, <hch@infradead.org>
-CC:     <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>,
-        <esc.storagedev@microsemi.com>, <chenxiang66@hisilicon.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH RFC v2 24/24] scsi: hisi_sas: Use libsas slow task SCSI command
-Date:   Wed, 11 Mar 2020 00:25:50 +0800
-Message-ID: <1583857550-12049-25-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1583857550-12049-1-git-send-email-john.garry@huawei.com>
-References: <1583857550-12049-1-git-send-email-john.garry@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.58]
-X-CFilter-Loop: Reflected
+        id S1727567AbgCJQcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 12:32:45 -0400
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:35974 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727407AbgCJQco (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 12:32:44 -0400
+Received: by mail-pf1-f201.google.com with SMTP id h125so3171489pfg.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 09:32:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=orSnkR0b0kEaczXYpxz6sH2e+X0g5twrn8pQx+WIZsU=;
+        b=f9d7nMDELRVltXLuc+w/x0sA9qcoRpITVlGtCZMS3SIPIR4GcWsOQof7Ev82kZrUii
+         yH3Z0EpkdC9MD2e2RMoP4DIxM/2rLW21qeBviJy2WyMN1ZrMJs0Bhjx49QLTzoJNBTgU
+         4DMR+vHmZuhQ5UxOTBoN5opUtIVAkohIuqimV4s5pO8ct8XofVo/Jq4E51k5/JCWKCg/
+         9Xdi9jFPKgNrJJHhPKJRGbDvxBibwI2RwjxjoxPElmsRuV+ytDt3a1OncyBBUIt6mv7u
+         nnMwGE+x2qN37Zue0ZsnAEUNJ6aiIz2zNk6x/lDi8UuFo+udFUd6vGTP/HhRoUoJ4q9R
+         XdxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=orSnkR0b0kEaczXYpxz6sH2e+X0g5twrn8pQx+WIZsU=;
+        b=pHk5tsybvL+JkF17AGiClKFP9QY+3a1WpSFNzDXsORt2779X3zCRao8EGP3/TrRuqq
+         d/iVMblXuyd7yG+Da1g90vM2wQbhoOfhf/aakpEbmYGB9/gfN4b/5wNMkUS0Vnpp+Vgt
+         b2ySOOz/3eaLyz4NZ3hbtu5MUpYAwVVjAEnrJUIIbYLZipWrAzLmm3igIxZKPOocfTUY
+         uadaImGQpwz4O+NeVJ2QLKegoEqoyLAUmkBlk9pvSThjNbGkDaP8HxmR3Tmjb5v0uXTw
+         dl2kyIOhLijCkwDeQHh+Aholk5EJKxdlMh6AOnM838tejJqyHUdKK+v9JbtEhqQvuFhS
+         E5Ow==
+X-Gm-Message-State: ANhLgQ1GqqoWw/MuiJlhuszWj/K1sLajx6ZchTuyv1R+1hTJEvHOEqAt
+        tA/x2z+yrLNZWm1Kvno/TP/ieicZ3SeVlg==
+X-Google-Smtp-Source: ADFU+vsk/MhKLnMEl6XXM0gmfMX/+yVoxQ1mlYcZ9OVXE+KVATINDkuf9BSlNbBWf92pBgHmMAtRTSSReTRc3A==
+X-Received: by 2002:a17:90a:be0c:: with SMTP id a12mr2651608pjs.26.1583857963999;
+ Tue, 10 Mar 2020 09:32:43 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 09:31:50 -0700
+Message-Id: <20200310093101.1.Iaa45f22c4b2bb1828e88211b2d28c24d6ddd50a7@changeid>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+Subject: [PATCH] Bluetooth: mgmt: add mgmt_cmd_status in add_advertising
+From:   Manish Mandlik <mmandlik@google.com>
+To:     marcel@holtmann.org
+Cc:     Alain Michaud <alainm@chromium.org>,
+        linux-bluetooth@vger.kernel.org,
+        Miao-chen Chou <mcchou@chromium.org>,
+        Joseph Hwang <josephsih@chromium.org>,
+        Yoni Shavit <yshavit@chromium.org>,
+        Manish Mandlik <mmandlik@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jakub Kicinski <kuba@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that a SCSI command can be allocated for a libsas slow tasks, make the
-task prep code use it.
+From: Joseph Hwang <josephsih@chromium.org>
 
-Signed-off-by: John Garry <john.garry@huawei.com>
+From: Joseph Hwang <josephsih@chromium.org>
+
+If an error occurs during request building in add_advertising(),
+remember to send MGMT_STATUS_FAILED command status back to bluetoothd.
+
+Signed-off-by: Joseph Hwang <josephsih@chromium.org>
+Signed-off-by: Manish Mandlik <mmandlik@google.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_main.c  | 5 ++++-
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 5 +++--
- 2 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index c7951ac8b075..61039f3608c8 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -476,8 +476,10 @@ static int hisi_sas_task_prep(struct sas_task *task,
- 			} else {
- 				scsi_cmnd = task->uldd_task;
- 			}
-+		} else if (task->slow_task) {
-+			scsi_cmnd = task->slow_task->scmd;
- 		}
--		rc  = hisi_sas_slot_index_alloc(hisi_hba, scsi_cmnd);
-+		rc = hisi_sas_slot_index_alloc(hisi_hba, scsi_cmnd);
- 	}
- 	if (rc < 0)
- 		goto err_out_dif_dma_unmap;
-@@ -2650,6 +2652,7 @@ int hisi_sas_probe(struct platform_device *pdev,
- 	} else {
- 		shost->can_queue = HISI_SAS_UNRESERVED_IPTT;
- 		shost->cmd_per_lun = HISI_SAS_UNRESERVED_IPTT;
-+		shost->nr_reserved_cmds = HISI_SAS_RESERVED_IPTT;
- 	}
+ net/bluetooth/mgmt.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+index 1002c657768a0..2398f57b7dc3c 100644
+--- a/net/bluetooth/mgmt.c
++++ b/net/bluetooth/mgmt.c
+@@ -6747,8 +6747,11 @@ static int add_advertising(struct sock *sk, struct hci_dev *hdev,
+ 	if (!err)
+ 		err = hci_req_run(&req, add_advertising_complete);
  
- 	sha->sas_ha_name = DRV_NAME;
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index a2debe0c8185..44530f8c0319 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -3237,8 +3237,9 @@ hisi_sas_v3_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	shost->max_lun = ~0;
- 	shost->max_channel = 1;
- 	shost->max_cmd_len = 16;
--	shost->can_queue = HISI_SAS_UNRESERVED_IPTT;
--	shost->cmd_per_lun = HISI_SAS_UNRESERVED_IPTT;
-+	shost->can_queue = HISI_SAS_MAX_COMMANDS;
-+	shost->cmd_per_lun = HISI_SAS_MAX_COMMANDS;
-+	shost->nr_reserved_cmds = HISI_SAS_RESERVED_IPTT;
+-	if (err < 0)
++	if (err < 0) {
++		err = mgmt_cmd_status(sk, hdev->id, MGMT_OP_ADD_ADVERTISING,
++				      MGMT_STATUS_FAILED);
+ 		mgmt_pending_remove(cmd);
++	}
  
- 	sha->sas_ha_name = DRV_NAME;
- 	sha->dev = dev;
+ unlock:
+ 	hci_dev_unlock(hdev);
 -- 
-2.17.1
+2.25.1.481.gfbce0eb801-goog
 
