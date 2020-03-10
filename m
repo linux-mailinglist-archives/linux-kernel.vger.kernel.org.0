@@ -2,84 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43471180904
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 21:19:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADC9818090D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 21:21:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbgCJUTQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 16:19:16 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33995 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbgCJUTP (ORCPT
+        id S1726414AbgCJUVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 16:21:11 -0400
+Received: from mail.efficios.com ([167.114.26.124]:46260 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbgCJUVL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 16:19:15 -0400
-Received: by mail-oi1-f195.google.com with SMTP id g6so15317002oiy.1;
-        Tue, 10 Mar 2020 13:19:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AFq1DdnvEPEiWUIBZ8XMuzd1FRD5fPx8e3pkYB6x7lA=;
-        b=eEZi5xsYYS+MEVVRmuKMdsQ9PSWiLL57+1rihYjAyQX5TAZN0jEHTaTPfMNEngdvvK
-         Z7qa6hqGBharr+zUBjBXpaOHfCbqv7dBMj0W+RKTaJzMYhLA6YbAizJ/G4bl3JT49NTJ
-         o1pKiaQTZv/Sk7Pdpwl27eObLkcdcpKRupwgn+eUOHiOfcL75Dh/RBwS/PAaGUJ6h+FS
-         isnLTtc3WUIdRM6u4y/agViVA3RKzRST9ozVxUZjzV4WpEEOc9WhLnehNX6v94eT0qGE
-         71LyNPdpKcjKBqfd8h6Yofmch9tctoToLgGGqyRJWKErCzQMVAK8Yl7Lyp3hawn+Fequ
-         Hj8g==
-X-Gm-Message-State: ANhLgQ2BbqhR6fLUV403cXS/aUDLxDXZFcaqOvZ4EshHL0zxBnTanK3/
-        r0l6n6z672X+g01c+wpzAg==
-X-Google-Smtp-Source: ADFU+vvvg/ETQnv8QslVQHIZ0sV61kxtcOyz2SY3bt9I0ZnGmiT8R7zO6pDr8Jh91tKE6yR0zXuznA==
-X-Received: by 2002:aca:600b:: with SMTP id u11mr2481775oib.6.1583871554816;
-        Tue, 10 Mar 2020 13:19:14 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l1sm288460otp.76.2020.03.10.13.19.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 13:19:13 -0700 (PDT)
-Received: (nullmailer pid 2066 invoked by uid 1000);
-        Tue, 10 Mar 2020 20:19:12 -0000
-Date:   Tue, 10 Mar 2020 15:19:12 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [RFC 10/11] reset: imx: Add audiomix reset controller support
-Message-ID: <20200310201912.GA31651@bogus>
-References: <1583226206-19758-1-git-send-email-abel.vesa@nxp.com>
- <1583226206-19758-11-git-send-email-abel.vesa@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1583226206-19758-11-git-send-email-abel.vesa@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 10 Mar 2020 16:21:11 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.efficios.com (Postfix) with ESMTP id ACBBF272E37;
+        Tue, 10 Mar 2020 16:21:09 -0400 (EDT)
+Received: from mail.efficios.com ([127.0.0.1])
+        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 6QBRYl5TmVUS; Tue, 10 Mar 2020 16:21:07 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.efficios.com (Postfix) with ESMTP id 6C256272E36;
+        Tue, 10 Mar 2020 16:21:07 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 6C256272E36
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1583871667;
+        bh=n360acFerpRQ3K2nmTTFfkxk9piJlk5016zKlRB/rOg=;
+        h=From:To:Date:Message-Id;
+        b=sCh1p/sIJsMNZ8qweim7YQUSfN1aA5wbiIaTnDUUZRASH1kV6/t+zFHdW+p5E5CmL
+         ciUbBnE96BEoLKLgyQzy8dVj7N2L2cxKyB+N8YkEwPtMLPtX8QUwdBG+GykctRn2P8
+         nwgQqDYeJRKVD9PsK+x4ps7n9vxhVXZCyR6/FnLqvP5wKi0pejWL1ARHHGOYlPX4vM
+         xUSmey1zaBKrW18x1Df6iv3+R7kXPKlAWSbMxwRdUhJGEcPJSkLariZRV31HYEqdTt
+         748Dr2fZNSUUuyAOpahf2nsvO3Og+BKlZ9bijkykt3rIuagdU0T/ka+hn4bbUdVKsd
+         795bkRb4oUJUg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([127.0.0.1])
+        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 52sGQ0iV__2c; Tue, 10 Mar 2020 16:21:07 -0400 (EDT)
+Received: from localhost.localdomain (192-222-181-218.qc.cable.ebox.net [192.222.181.218])
+        by mail.efficios.com (Postfix) with ESMTPSA id E19A8272CE5;
+        Tue, 10 Mar 2020 16:21:06 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] tracepoint: rcuidle: use rcu_is_watching() and tree-rcu
+Date:   Tue, 10 Mar 2020 16:20:54 -0400
+Message-Id: <20200310202054.5880-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 11:03:25AM +0200, Abel Vesa wrote:
-> The imx-mix MFD driver registers some devices, one of which, in case of
-> audiomix, maps correctly to a reset controller type. This driver registers
-> a reset controller for that. For now, only the EARC specific resets are added.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
-> ---
->  drivers/reset/Kconfig                          |   7 ++
->  drivers/reset/Makefile                         |   1 +
->  drivers/reset/reset-imx-audiomix.c             | 122 +++++++++++++++++++++++++
->  include/dt-bindings/reset/imx-audiomix-reset.h |  15 +++
+commit e6753f23d961 ("tracepoint: Make rcuidle tracepoint callers use
+SRCU") aimed at improving performance of rcuidle tracepoints by using
+SRCU rather than temporarily enabling tree-rcu every time.
 
-This should be in a binding patch which makes me wonder where is the 
-binding patch?
+commit 865e63b04e9b ("tracing: Add back in rcu_irq_enter/exit_irqson()
+for rcuidle tracepoints") adds back the high-overhead enabling of
+tree-rcu because perf expects RCU to be watching when called from
+rcuidle tracepoints.
 
-Rob
+It turns out that by using "rcu_is_watching()" and conditionally
+calling the high-overhead rcu_irq_enter/exit_irqson(), the original
+motivation for using SRCU in the first place disappears.
+
+I suspect that the original benchmarks justifying the introduction
+of SRCU to handle rcuidle tracepoints was caused by preempt/irq
+tracepoints, which are typically invoked from contexts that have
+RCU watching.
+
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Steven Rostedt <rostedt@goodmis.org>
+CC: Joel Fernandes <joel@joelfernandes.org>
+CC: "Paul E. McKenney" <paulmck@kernel.org>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Frederic Weisbecker <fweisbec@gmail.com>
+CC: Ingo Molnar <mingo@kernel.org>
+---
+ include/linux/tracepoint.h | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
+
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index 1fb11daa5c53..8e0e94fee29a 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -165,25 +165,22 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 		void *it_func;						\
+ 		void *__data;						\
+ 		int __maybe_unused __idx = 0;				\
++		bool __exit_rcu = false;				\
+ 									\
+ 		if (!(cond))						\
+ 			return;						\
+ 									\
+-		/* srcu can't be used from NMI */			\
+-		WARN_ON_ONCE(rcuidle && in_nmi());			\
+-									\
+-		/* keep srcu and sched-rcu usage consistent */		\
+-		preempt_disable_notrace();				\
+-									\
+ 		/*							\
+-		 * For rcuidle callers, use srcu since sched-rcu	\
+-		 * doesn't work from the idle path.			\
++		 * For rcuidle callers, temporarily enable RCU if	\
++		 * it is not currently watching.			\
+ 		 */							\
+-		if (rcuidle) {						\
+-			__idx = srcu_read_lock_notrace(&tracepoint_srcu);\
++		if (rcuidle && !rcu_is_watching()) {			\
+ 			rcu_irq_enter_irqson();				\
++			__exit_rcu = true;				\
+ 		}							\
+ 									\
++		preempt_disable_notrace();				\
++									\
+ 		it_func_ptr = rcu_dereference_raw((tp)->funcs);		\
+ 									\
+ 		if (it_func_ptr) {					\
+@@ -194,12 +191,10 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 			} while ((++it_func_ptr)->func);		\
+ 		}							\
+ 									\
+-		if (rcuidle) {						\
+-			rcu_irq_exit_irqson();				\
+-			srcu_read_unlock_notrace(&tracepoint_srcu, __idx);\
+-		}							\
+-									\
+ 		preempt_enable_notrace();				\
++									\
++		if (__exit_rcu)						\
++			rcu_irq_exit_irqson();				\
+ 	} while (0)
+ 
+ #ifndef MODULE
+-- 
+2.17.1
+
