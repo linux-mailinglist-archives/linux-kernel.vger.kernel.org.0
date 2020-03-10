@@ -2,167 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6061D180962
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 21:42:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16FF718096A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 21:44:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbgCJUmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 16:42:15 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:12322 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727528AbgCJUmM (ORCPT
+        id S1726998AbgCJUoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 16:44:12 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:52544 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbgCJUoM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 16:42:12 -0400
-X-IronPort-AV: E=Sophos;i="5.70,538,1574089200"; 
-   d="scan'208";a="41303690"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 11 Mar 2020 05:42:10 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9878C40F8AD8;
-        Wed, 11 Mar 2020 05:42:07 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 2/2] arm64: dts: renesas: Add HiHope RZ/G2M board with idk-1110wr display
-Date:   Tue, 10 Mar 2020 20:41:59 +0000
-Message-Id: <1583872919-7757-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583872919-7757-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1583872919-7757-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Tue, 10 Mar 2020 16:44:12 -0400
+Received: by mail-pj1-f67.google.com with SMTP id f15so922714pjq.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 13:44:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=099TGIbMGOF3GLWL/lcf16vXSWx45mM4eXf6iexqK48=;
+        b=eHf9WnjYVqdE3DUP7usldr/Zn8V1+Arq8UsrYtew5+29RS2x609pIGI1hnVIsnD1a7
+         Xw7DIDoceUaWSr8wHASF9JD5ass2A0tQ6Fz8HXxuf2yNUsJvmiWSpk2Sp3FUBjBm7vzs
+         U0PMba7d6qyGRdRQBOV5q7h2Qx2RgU6AzQn3I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=099TGIbMGOF3GLWL/lcf16vXSWx45mM4eXf6iexqK48=;
+        b=dSzkJt1aIxCA1K5WiDwDee8fyLXH2ib1sffbuEvXwMwKjgo71plxiXBrs+Qyx1bfka
+         iSmdqTN9/pzM9Ycd32D5U6Zaye+bsBDEWW+58rEMSZe/314kUGblKktl3Io09GkJ4wwG
+         47BZN3jbU2wGnwhNuMo9yo5E+v/s2O7x4QDZMf2P1XDfRp4XQjg0olaEG3OfimhviNRL
+         yYE6DHqdZnVP7mFsnmgYINgE4otY/jfQsO8vSbqYF4K9cOF5BdvFAgQHC1MdtrZ6kmB5
+         r0Ew430bREpDydbMt0wz6TH+x1IrFEdnMw6U6rCaD9HSiDy3UZoiWyMEd/Yo7EdWVIXg
+         HqNg==
+X-Gm-Message-State: ANhLgQ0BMkpZtNigkf0j4OlLmESnOE1QH5gAA4xs88sb7NtzAPSgMgXc
+        2RujER1p/I7izDxzUNzmTMHZgA==
+X-Google-Smtp-Source: ADFU+vueXlCI7IpLmS/tzrctbYyGFJWCavdSXGaTgdpbGe7iJ4PA/I36iG3t3Co2w1uOjvrwaTysEw==
+X-Received: by 2002:a17:902:ac83:: with SMTP id h3mr22299518plr.86.1583873050871;
+        Tue, 10 Mar 2020 13:44:10 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id w206sm6074394pfc.54.2020.03.10.13.44.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 13:44:10 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 13:44:09 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v2 4/5] exec: Move exec_mmap right after de_thread in
+ flush_old_exec
+Message-ID: <202003101337.AC1A30576@keescook>
+References: <87v9nlii0b.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74xi4kz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <875zfe5xzb.fsf_-_@x220.int.ebiederm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <875zfe5xzb.fsf_-_@x220.int.ebiederm.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Sun, Mar 08, 2020 at 04:38:00PM -0500, Eric W. Biederman wrote:
+> 
+> I have read through the code in exec_mmap and I do not see anything
+> that depends on sighand or the sighand lock, or on signals in anyway
+> so this should be safe.
+> 
+> This rearrangement of code has two siginficant benefits.  It makes
+> the determination of passing the point of no return by testing bprm->mm
+> accurate.  All failures prior to that point in flush_old_exec are
+> either truly recoverable or they are fatal.
 
-The HiHope RZ/G2M is advertised as compatible with panel idk-1110wr
-from Advantech, however the panel isn't sold alongside the board.
-A new dts, adding everything that's required to get the panel to
-work the HiHope RZ/G2M, is the most convenient way to support the
-HiHope RZ/G2M when it's connected to the idk-1110wr.
+Agreed. Though I see a use of "current", which maybe you want to
+parameterize to a "me" argument in acct_arg_size(). (Though looking at
+the callers, perhaps there is no benefit?)
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/Makefile               |  1 +
- .../r8a774a1-hihope-rzg2m-ex-idk-1110wr.dts        | 86 ++++++++++++++++++++++
- 2 files changed, 87 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex-idk-1110wr.dts
+> 
+> Futher this consolidates all of the possible indefinite waits for
+> userspace together at the top of flush_old_exec.  The possible wait
+> for a ptracer on PTRACE_EVENT_EXIT, the possible wait for a page fault
+> to be resolved in clear_child_tid, and the possible wait for a page
+> fault in exit_robust_list.
+> 
+> This consolidation allows the creation of a mutex to replace
+> cred_guard_mutex that is not held of possible indefinite userspace
+> waits.  Which will allow removing deadlock scenarios from the kernel.
+> 
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
+>  fs/exec.c | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 215d86f77b63..d820a7272a76 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1272,18 +1272,6 @@ int flush_old_exec(struct linux_binprm * bprm)
+>  	if (retval)
+>  		goto out;
+>  
+> -#ifdef CONFIG_POSIX_TIMERS
+> -	exit_itimers(me->signal);
+> -	flush_itimer_signals();
+> -#endif
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 2153842..82dd245 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m.dtb
- dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-ex.dtb
-+dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-ex-idk-1110wr.dtb
- dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n.dtb
- dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-ex.dtb
- dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb r8a774c0-ek874.dtb \
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex-idk-1110wr.dts b/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex-idk-1110wr.dts
-new file mode 100644
-index 0000000..6033cae
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex-idk-1110wr.dts
-@@ -0,0 +1,86 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the HiHope RZ/G2M sub board connected to an
-+ * Advantech IDK-1110WR 10.1" LVDS panel
-+ *
-+ * Copyright (C) 2020 Renesas Electronics Corp.
-+ */
-+
-+#include "r8a774a1-hihope-rzg2m-ex.dts"
-+
-+/ {
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm0 0 50000>;
-+
-+		brightness-levels = <0 2 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+	};
-+
-+	panel-lvds {
-+		compatible = "advantech,idk-1110wr", "panel-lvds";
-+
-+		width-mm = <223>;
-+		height-mm = <125>;
-+
-+		data-mapping = "jeida-24";
-+
-+		panel-timing {
-+			/* 1024x600 @60Hz */
-+			clock-frequency = <51200000>;
-+			hactive = <1024>;
-+			vactive = <600>;
-+			hsync-len = <240>;
-+			hfront-porch = <40>;
-+			hback-porch = <40>;
-+			vfront-porch = <15>;
-+			vback-porch = <10>;
-+			vsync-len = <10>;
-+		};
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint = <&lvds0_out>;
-+			};
-+		};
-+	};
-+};
-+
-+&gpio1 {
-+	/*
-+	 * When GP1_20 is LOW LVDS0 is connected to the LVDS connector
-+	 * When GP1_20 is HIGH LVDS0 is connected to the LT8918L
-+	 */
-+	lvds-connector-en-gpio {
-+		gpio-hog;
-+		gpios = <20 GPIO_ACTIVE_HIGH>;
-+		output-low;
-+		line-name = "lvds-connector-en-gpio";
-+	};
-+};
-+
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&panel_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&pfc {
-+	pwm0_pins: pwm0 {
-+		groups = "pwm0";
-+		function = "pwm0";
-+	};
-+};
-+
-+&pwm0 {
-+	pinctrl-0 = <&pwm0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
+I think this comment:
+
+/*
+ * This is called by do_exit or de_thread, only when there are no more
+ * references to the shared signal_struct.
+ */
+void exit_itimers(struct signal_struct *sig)
+
+Refers to there being other threads, yes? Not that the signal table is
+private yet?
+
+> -
+> -	/*
+> -	 * Make the signal table private.
+> -	 */
+> -	retval = unshare_sighand(me);
+> -	if (retval)
+> -		goto out;
+> -
+>  	/*
+>  	 * Must be called _before_ exec_mmap() as bprm->mm is
+>  	 * not visibile until then. This also enables the update
+> @@ -1307,6 +1295,18 @@ int flush_old_exec(struct linux_binprm * bprm)
+>  	 */
+>  	bprm->mm = NULL;
+>  
+> +#ifdef CONFIG_POSIX_TIMERS
+> +	exit_itimers(me->signal);
+> +	flush_itimer_signals();
+> +#endif
+
+I've mostly convinced myself that there are no "side-effects" from having
+these timers expire as the mm is going away. I think some kind of comment
+of that intent should be explicitly stated here above the timer work.
+
+Beyond that:
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> +
+> +	/*
+> +	 * Make the signal table private.
+> +	 */
+> +	retval = unshare_sighand(me);
+> +	if (retval)
+> +		goto out;
+> +
+>  	set_fs(USER_DS);
+>  	me->flags &= ~(PF_RANDOMIZE | PF_FORKNOEXEC | PF_KTHREAD |
+>  					PF_NOFREEZE | PF_NO_SETAFFINITY);
+> -- 
+> 2.25.0
+> 
+
 -- 
-2.7.4
-
+Kees Cook
