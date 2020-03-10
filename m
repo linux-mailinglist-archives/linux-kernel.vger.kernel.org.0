@@ -2,57 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B5F717FCD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:23:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B25517FCD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:23:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730077AbgCJNXc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:23:32 -0400
-Received: from mail-wr1-f52.google.com ([209.85.221.52]:39712 "EHLO
-        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726899AbgCJNXb (ORCPT
+        id S1730534AbgCJNXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:23:36 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41681 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729982AbgCJNXd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:23:31 -0400
-Received: by mail-wr1-f52.google.com with SMTP id r15so10800715wrx.6
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:23:29 -0700 (PDT)
+        Tue, 10 Mar 2020 09:23:33 -0400
+Received: by mail-wr1-f67.google.com with SMTP id s14so2195804wrt.8
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:23:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FRdcUkChFP73CYf+Z4biQyn+H2NRrY9pLjMDRNYo9tg=;
-        b=QyQ5OuAwtnFtO+rzxR9TwzIq3V4BxejuzULD5FX2U7mPjWYVDKzoOha/TPpoqCdWjV
-         3m2p79yqiNcO4tW1EFP9AL7hBG7DZEBoQ1g8aBaGaHcCa+vVkBAiF3LQ7YeAGcwykSfG
-         SJQLjO4wrL+Zz4/IF/eYXyLV84zkZVyTAh2X9BZiXd6wNns1LgsPOcQU6jWJY4UrKZdV
-         gWOSjCxHX46mUs7VQ2w83JsDC3oKbE4nNQkLG8eqcVuisCqHBIH4jsJhK9eWmtNPsy9L
-         N6Fcf2z0DhtMg0iPY10PNNvWuQa/kBMjqp1mUJTK/mGu/Y/zNN4E0X1wMyxUotGzwpxW
-         eFrA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=nL9Xh/WeV27boRWOFkfWejN3qF1VL9pfmFG/uXGr0Pg=;
+        b=XZR+41xbtTqx5nATriE4XULQuOtBeRmdMVKMetUUk+8XuxONjqPqfsv9ChbiuegRnj
+         OpDiZ56RoMnV9I8dhRYr4jkdkOkIqFwQCmxzVzXvuPM8Jd6vLAlVr+c1hyQbwI47bzf9
+         B0EMHWCnmDBxOMhev0YT5Ouaj3yswImOI2YHTUOIP5OuPFHDbHgtWbCDLfk/i+3W9StX
+         vOlp1sYJIynbnYn39mNbeLCPawUOuQmrYtY/bej7K6WD1NCzriz0k1daiMmW3WoB3ck1
+         psoOF5qTXkblhIn8jVmH/1MN9IXlBs1xc+cHqW8Jr38Q02TZsOjUqfQeeBxhzhd7zBST
+         hrWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FRdcUkChFP73CYf+Z4biQyn+H2NRrY9pLjMDRNYo9tg=;
-        b=VgVIyBI8NHOYGCLCDYMIS91X4oVOGRu0Rz+EJxLHhAT803GzI+MGHb+GN8UjpUrg+i
-         REbsESif0lFt9vJq87eMVJ9hl/44hAX4XITYmS+rMuiR56YzW7QUidF2jpZE0HUMkD4h
-         pgaTe5p7k3wOBnVWMPwC3PkcOO1b2ioI1nbWgBK9mMCaSlcAmjTsszKyad57j1yuyzP1
-         Qn3t7JYrLzjZ440iq/FenWJIAHN5inHiwJCsiY9F54Gp2UfCu55gRlPNAzIE7+NV9yBx
-         Px++4E4J4zeHiBP/1sH6gfS/ay+pFjkzsna9z9LU8DDqLcADZK2dRkwM8eMwzQV53rtw
-         CrwA==
-X-Gm-Message-State: ANhLgQ0JEuZCdIpgglHjTqCaM1c5dykQjz0s8hilQmEB1/40kvVI1JF5
-        BXOnW+KNkOCoozVoMqXsF/ICwg==
-X-Google-Smtp-Source: ADFU+vvYNTEkfMjbpKNQHbWYLz1vKiv/kKkC1gxI0zsBl1Z7EB1nAWwRqDzMwDnWZIARR9zyQCYNgw==
-X-Received: by 2002:adf:df8f:: with SMTP id z15mr27121143wrl.184.1583846608939;
-        Tue, 10 Mar 2020 06:23:28 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=nL9Xh/WeV27boRWOFkfWejN3qF1VL9pfmFG/uXGr0Pg=;
+        b=Lv6NVNg0qR5WuKZXB66bkiww4wmc4K5dPVAf/7eN6jHhCmYJ+60zj18cEr/QzHK1l2
+         PYeIqrI+ez9PgYHU4VWRPGxNBS7B5GE283mI0wT89omZULv3zoPOXpPRzQSdkg1bJEEH
+         n7PUP76EzfgxRLk5BcOv7QPpE8M/BnjJkTbXUOV1YgwklGISRys6u6rxk5ciVTS1kqPJ
+         46mhjX5orR3jLaZEIXNPde3MmI1xVyPAb46FJqJwg8oRh6Kd5ZpHAfSGSTYH4UuUiIf2
+         jhBC0IJg8RZG1C3i2/HcwyIp2hF4YG7ujyHRG7gM7w5GZEksOnCrMk/kzucu5z/vdq1u
+         7uUA==
+X-Gm-Message-State: ANhLgQ29srFThU+L+WTGGZ8pF6cB9CUebWzFWOE/Dj1+GBq5AuJu/mrO
+        p0e2aEGQeLZT4FVuke2pPteN3A==
+X-Google-Smtp-Source: ADFU+vs5ZjtCqdDGIqV18VT66l9Lfoxq4k/7/RHz7BPg/ippDal3YzREkfrEQL2XWtESqmSmIJYx9A==
+X-Received: by 2002:a5d:604f:: with SMTP id j15mr23696590wrt.35.1583846611127;
+        Tue, 10 Mar 2020 06:23:31 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id s22sm3761199wmc.16.2020.03.10.06.23.27
+        by smtp.gmail.com with ESMTPSA id s22sm3761199wmc.16.2020.03.10.06.23.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 06:23:27 -0700 (PDT)
+        Tue, 10 Mar 2020 06:23:29 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org,
+Cc:     linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 00/14] nvmem: patches for 5.7
-Date:   Tue, 10 Mar 2020 13:22:43 +0000
-Message-Id: <20200310132257.23358-1-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 01/14] nvmem: imx: ocotp: add i.MX8MP support
+Date:   Tue, 10 Mar 2020 13:22:44 +0000
+Message-Id: <20200310132257.23358-2-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20200310132257.23358-1-srinivas.kandagatla@linaro.org>
+References: <20200310132257.23358-1-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,66 +62,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+From: Peng Fan <peng.fan@nxp.com>
 
-Here are some nvmem patches for 5.7 which includes
-- few general cleanups and checks
-- gpio descriptor release fixes
-- new JZ4780 nvmem provider
-- compatible string for i.MX8MP
-- add new nvmem_cell_read_u64()
+i.MX8MP has 96 banks with each bank 4 words. And it has different
+ctrl register layout, so add new macros for that.
 
-Can you please queue them up for 5.7.
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ drivers/nvmem/imx-ocotp.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-thanks,
-srini
-
-Anson Huang (1):
-  nvmem: imx-ocotp: Drop unnecessary initializations
-
-Bartosz Golaszewski (3):
-  nvmem: remove a stray newline in nvmem_register()
-  nvmem: add a newline for readability
-  nvmem: fix memory leak in error path
-
-H. Nikolaus Schaller (1):
-  nvmem: jz4780-efuse: fix build warnings on ARCH=x86_64 or riscv
-
-Khouloud Touil (1):
-  nvmem: release the write-protect pin
-
-Nicholas Johnson (1):
-  nvmem: check for NULL reg_read and reg_write before dereferencing
-
-Peng Fan (1):
-  nvmem: imx: ocotp: add i.MX8MP support
-
-PrasannaKumar Muralidharan (3):
-  Bindings: nvmem: add bindings for JZ4780 efuse
-  nvmem: add driver for JZ4780 efuse
-  Documentation: ABI: nvmem: add documentation for JZ4780 efuse ABI
-
-Srinivas Kandagatla (1):
-  nvmem: core: validate nvmem config before parsing
-
-Yangtao Li (2):
-  nvmem: core: add nvmem_cell_read_common
-  nvmem: core: add nvmem_cell_read_u64
-
- .../ABI/testing/sysfs-driver-jz4780-efuse     |  16 ++
- .../bindings/nvmem/ingenic,jz4780-efuse.yaml  |  45 ++++
- drivers/nvmem/Kconfig                         |  12 +
- drivers/nvmem/Makefile                        |   2 +
- drivers/nvmem/core.c                          |  83 +++---
- drivers/nvmem/imx-ocotp.c                     |  29 ++-
- drivers/nvmem/jz4780-efuse.c                  | 239 ++++++++++++++++++
- drivers/nvmem/nvmem-sysfs.c                   |   6 +
- include/linux/nvmem-consumer.h                |   7 +
- 9 files changed, 397 insertions(+), 42 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-jz4780-efuse
- create mode 100644 Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml
- create mode 100644 drivers/nvmem/jz4780-efuse.c
-
+diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
+index 4ba9cc8f76df..794858093086 100644
+--- a/drivers/nvmem/imx-ocotp.c
++++ b/drivers/nvmem/imx-ocotp.c
+@@ -44,6 +44,11 @@
+ #define IMX_OCOTP_BM_CTRL_ERROR		0x00000200
+ #define IMX_OCOTP_BM_CTRL_REL_SHADOWS	0x00000400
+ 
++#define IMX_OCOTP_BM_CTRL_ADDR_8MP		0x000001FF
++#define IMX_OCOTP_BM_CTRL_BUSY_8MP		0x00000200
++#define IMX_OCOTP_BM_CTRL_ERROR_8MP		0x00000400
++#define IMX_OCOTP_BM_CTRL_REL_SHADOWS_8MP	0x00000800
++
+ #define IMX_OCOTP_BM_CTRL_DEFAULT				\
+ 	{							\
+ 		.bm_addr = IMX_OCOTP_BM_CTRL_ADDR,		\
+@@ -52,6 +57,14 @@
+ 		.bm_rel_shadows = IMX_OCOTP_BM_CTRL_REL_SHADOWS,\
+ 	}
+ 
++#define IMX_OCOTP_BM_CTRL_8MP					\
++	{							\
++		.bm_addr = IMX_OCOTP_BM_CTRL_ADDR_8MP,		\
++		.bm_busy = IMX_OCOTP_BM_CTRL_BUSY_8MP,		\
++		.bm_error = IMX_OCOTP_BM_CTRL_ERROR_8MP,	\
++		.bm_rel_shadows = IMX_OCOTP_BM_CTRL_REL_SHADOWS_8MP,\
++	}
++
+ #define TIMING_STROBE_PROG_US		10	/* Min time to blow a fuse */
+ #define TIMING_STROBE_READ_NS		37	/* Min time before read */
+ #define TIMING_RELAX_NS			17
+@@ -520,6 +533,13 @@ static const struct ocotp_params imx8mn_params = {
+ 	.ctrl = IMX_OCOTP_BM_CTRL_DEFAULT,
+ };
+ 
++static const struct ocotp_params imx8mp_params = {
++	.nregs = 384,
++	.bank_address_words = 0,
++	.set_timing = imx_ocotp_set_imx6_timing,
++	.ctrl = IMX_OCOTP_BM_CTRL_8MP,
++};
++
+ static const struct of_device_id imx_ocotp_dt_ids[] = {
+ 	{ .compatible = "fsl,imx6q-ocotp",  .data = &imx6q_params },
+ 	{ .compatible = "fsl,imx6sl-ocotp", .data = &imx6sl_params },
+@@ -532,6 +552,7 @@ static const struct of_device_id imx_ocotp_dt_ids[] = {
+ 	{ .compatible = "fsl,imx8mq-ocotp", .data = &imx8mq_params },
+ 	{ .compatible = "fsl,imx8mm-ocotp", .data = &imx8mm_params },
+ 	{ .compatible = "fsl,imx8mn-ocotp", .data = &imx8mn_params },
++	{ .compatible = "fsl,imx8mp-ocotp", .data = &imx8mp_params },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, imx_ocotp_dt_ids);
 -- 
 2.21.0
 
