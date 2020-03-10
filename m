@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA67F17FE7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:35:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4457717FDE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:31:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726290AbgCJMoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:44:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46490 "EHLO mail.kernel.org"
+        id S1728037AbgCJNbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:31:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727708AbgCJMoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:44:14 -0400
+        id S1728271AbgCJMuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:50:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD85A246C3;
-        Tue, 10 Mar 2020 12:44:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 689D02468D;
+        Tue, 10 Mar 2020 12:50:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844254;
-        bh=zzPMN8ClbvNOFCObJbKWZeMGhJ7EDRNIn3a606Z8cqo=;
+        s=default; t=1583844620;
+        bh=qbf21E2IavgVSLI2y2C0+80T2s+pZGUkJ98c2nWXwj0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GR+/jIdRJD7iaGGbPvGhJLhdy4LeLqGTfazeKmKJjNs/n13aa34F6OGoCmNMqsToa
-         uo0VQBlVzZUI26FWDp+z/bce5OUCzfdUJPM3KPP0ZE2NYWTjKUTC7O7kPYrmWt/P5+
-         1vTAbugYznuKNkHG3Tq8tibrTgYmFAJolJdwqXi8=
+        b=s6NSao1tRWylG7d5+vQfG5NLoX/yNwwnV8sAZJ1ffRQMc7XApikaUXpP6bU9Mo0Gu
+         BI/CfFvSt/xTPGinDrqQF2Xh17IZ8WTGQy3W6ArFoIo2E+NZo2ltAx2mfNj1wxGQCg
+         wr0YwTsDjmpYrV3NaQaXjxbRq/PPNvPXIRNkcVoE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
-        Arthur Kiyanovski <akiyano@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 15/88] net: ena: fix incorrectly saving queue numbers when setting RSS indirection table
+        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        ": Oleksij Rempel" <o.rempel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 5.4 057/168] firmware: imx: scu: Ensure sequential TX
 Date:   Tue, 10 Mar 2020 13:38:23 +0100
-Message-Id: <20200310123609.972244612@linuxfoundation.org>
+Message-Id: <20200310123641.102643598@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,96 +45,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arthur Kiyanovski <akiyano@amazon.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
-[ Upstream commit 92569fd27f5cb0ccbdf7c7d70044b690e89a0277 ]
+commit 26d0fba29c96241de8a9d16f045b1de49875884c upstream.
 
-The indirection table has the indices of the Rx queues. When we store it
-during set indirection operation, we convert the indices to our internal
-representation of the indices.
+SCU requires that all messages words are written sequentially but linux MU
+driver implements multiple independent channels for each register so ordering
+between different channels must be ensured by SCU API interface.
 
-Our internal representation of the indices is: even indices for Tx and
-uneven indices for Rx, where every Tx/Rx pair are in a consecutive order
-starting from 0. For example if the driver has 3 queues (3 for Tx and 3
-for Rx) then the indices are as follows:
-0  1  2  3  4  5
-Tx Rx Tx Rx Tx Rx
+Wait for tx_done before every send to ensure that no queueing happens at the
+mailbox channel level.
 
-The BUG:
-The issue is that when we satisfy a get request for the indirection
-table, we don't convert the indices back to the original representation.
+Fixes: edbee095fafb ("firmware: imx: add SCU firmware driver support")
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Reviewed-by:: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-The FIX:
-Simply apply the inverse function for the indices of the indirection
-table after we set it.
-
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
-Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_ethtool.c | 24 ++++++++++++++++++-
- drivers/net/ethernet/amazon/ena/ena_netdev.h  |  2 ++
- 2 files changed, 25 insertions(+), 1 deletion(-)
+ drivers/firmware/imx/imx-scu.c |   27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_ethtool.c b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-index 8c44ac7232ba2..191d369563595 100644
---- a/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-@@ -651,6 +651,28 @@ static u32 ena_get_rxfh_key_size(struct net_device *netdev)
- 	return ENA_HASH_KEY_SIZE;
- }
+--- a/drivers/firmware/imx/imx-scu.c
++++ b/drivers/firmware/imx/imx-scu.c
+@@ -29,6 +29,7 @@ struct imx_sc_chan {
+ 	struct mbox_client cl;
+ 	struct mbox_chan *ch;
+ 	int idx;
++	struct completion tx_done;
+ };
  
-+static int ena_indirection_table_get(struct ena_adapter *adapter, u32 *indir)
+ struct imx_sc_ipc {
+@@ -100,6 +101,14 @@ int imx_scu_get_handle(struct imx_sc_ipc
+ }
+ EXPORT_SYMBOL(imx_scu_get_handle);
+ 
++/* Callback called when the word of a message is ack-ed, eg read by SCU */
++static void imx_scu_tx_done(struct mbox_client *cl, void *mssg, int r)
 +{
-+	struct ena_com_dev *ena_dev = adapter->ena_dev;
-+	int i, rc;
++	struct imx_sc_chan *sc_chan = container_of(cl, struct imx_sc_chan, cl);
 +
-+	if (!indir)
-+		return 0;
-+
-+	rc = ena_com_indirect_table_get(ena_dev, indir);
-+	if (rc)
-+		return rc;
-+
-+	/* Our internal representation of the indices is: even indices
-+	 * for Tx and uneven indices for Rx. We need to convert the Rx
-+	 * indices to be consecutive
-+	 */
-+	for (i = 0; i < ENA_RX_RSS_TABLE_SIZE; i++)
-+		indir[i] = ENA_IO_RXQ_IDX_TO_COMBINED_IDX(indir[i]);
-+
-+	return rc;
++	complete(&sc_chan->tx_done);
 +}
 +
- static int ena_get_rxfh(struct net_device *netdev, u32 *indir, u8 *key,
- 			u8 *hfunc)
+ static void imx_scu_rx_callback(struct mbox_client *c, void *msg)
  {
-@@ -659,7 +681,7 @@ static int ena_get_rxfh(struct net_device *netdev, u32 *indir, u8 *key,
- 	u8 func;
- 	int rc;
+ 	struct imx_sc_chan *sc_chan = container_of(c, struct imx_sc_chan, cl);
+@@ -143,6 +152,19 @@ static int imx_scu_ipc_write(struct imx_
  
--	rc = ena_com_indirect_table_get(adapter->ena_dev, indir);
-+	rc = ena_indirection_table_get(adapter, indir);
- 	if (rc)
- 		return rc;
+ 	for (i = 0; i < hdr->size; i++) {
+ 		sc_chan = &sc_ipc->chans[i % 4];
++
++		/*
++		 * SCU requires that all messages words are written
++		 * sequentially but linux MU driver implements multiple
++		 * independent channels for each register so ordering between
++		 * different channels must be ensured by SCU API interface.
++		 *
++		 * Wait for tx_done before every send to ensure that no
++		 * queueing happens at the mailbox channel level.
++		 */
++		wait_for_completion(&sc_chan->tx_done);
++		reinit_completion(&sc_chan->tx_done);
++
+ 		ret = mbox_send_message(sc_chan->ch, &data[i]);
+ 		if (ret < 0)
+ 			return ret;
+@@ -225,6 +247,11 @@ static int imx_scu_probe(struct platform
+ 		cl->knows_txdone = true;
+ 		cl->rx_callback = imx_scu_rx_callback;
  
-diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.h b/drivers/net/ethernet/amazon/ena/ena_netdev.h
-index 008f2d594d402..326c2e1437b32 100644
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.h
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.h
-@@ -110,6 +110,8 @@
- 
- #define ENA_IO_TXQ_IDX(q)	(2 * (q))
- #define ENA_IO_RXQ_IDX(q)	(2 * (q) + 1)
-+#define ENA_IO_TXQ_IDX_TO_COMBINED_IDX(q)	((q) / 2)
-+#define ENA_IO_RXQ_IDX_TO_COMBINED_IDX(q)	(((q) - 1) / 2)
- 
- #define ENA_MGMNT_IRQ_IDX		0
- #define ENA_IO_IRQ_FIRST_IDX		1
--- 
-2.20.1
-
++		/* Initial tx_done completion as "done" */
++		cl->tx_done = imx_scu_tx_done;
++		init_completion(&sc_chan->tx_done);
++		complete(&sc_chan->tx_done);
++
+ 		sc_chan->sc_ipc = sc_ipc;
+ 		sc_chan->idx = i % 4;
+ 		sc_chan->ch = mbox_request_channel_byname(cl, chan_name);
 
 
