@@ -2,142 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26A0F1809B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 21:58:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF6751809BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 21:59:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbgCJU6A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 16:58:00 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43904 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbgCJU6A (ORCPT
+        id S1727320AbgCJU7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 16:59:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51458 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbgCJU7V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 16:58:00 -0400
-Received: by mail-pg1-f193.google.com with SMTP id u12so6852571pgb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 13:57:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=NSnXjtw6BvnjWDGIhdIRejbxeFIsypmUSM0EVeQ+Uig=;
-        b=XNQHeyRLT95Iz7HO7tqkWQ6/sSMwGKo5bd80/1Q/QaJ5M1YExD2yISBVWEW/n3lAUr
-         tkv7AJhIRjzO2Hjw1Eu493BeCu5akkQFw7U5n327J4keqaqVy3NZZOnH0sOQ4c7EAwkY
-         Nfumx3a1xGu9L0OrAtTbJl9mO3bqLw6ZrWiD4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NSnXjtw6BvnjWDGIhdIRejbxeFIsypmUSM0EVeQ+Uig=;
-        b=Zkmv6P4WdQIcCuAMgC68PxJy2HF6ZldtFzcErijyBrtvsIljN9jPMYi4Bm0BSY9iro
-         QQc3KXV47Q1ozEzlGshOe9/nwoMYsltObwP78SlmJ9EDS7XOh8uZsEZQrQCxQJU4CMdX
-         1SYFJmFjGVl4Kkf193TjKhENkzLfetQJAf058PH0xg0qXlQGLdlZ3yXINW4BEwNQjRlr
-         78Fgx2dtmet4Q9eWshinTFCgmbTbSZViyyZAqU6nca0wml2MFWO2cmHOlzy6axlfSZ5r
-         lYBBlgrwKOcNScT2OcClo4s56hlFUU/MqEaeeBv2CrZlFk8QUWMhIpRwEUlWKQYuKgE3
-         Awzw==
-X-Gm-Message-State: ANhLgQ1eTRJm8BuQMxUpRD/qARljGL0YowwLVxgS4nVGCtjeH3g24eFp
-        E53hipJdySh4MhUy2KRTeRZJlg==
-X-Google-Smtp-Source: ADFU+vu4EeH+yVMv9tpwMaGvHwzGMhYFOuE0iRroLbEdduwZiXXe1msMJtUJMFBKLAERB9nEKnQ+wg==
-X-Received: by 2002:a63:650:: with SMTP id 77mr16314387pgg.201.1583873877277;
-        Tue, 10 Mar 2020 13:57:57 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id d186sm30572689pfc.8.2020.03.10.13.57.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 13:57:56 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 13:57:55 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v2 2/5] exec: Factor unshare_sighand out of de_thread and
- call it separately
-Message-ID: <202003101356.A2B9885F17@keescook>
-References: <87a74xi4kz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87r1y8dqqz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
- <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
- <87k13u5y26.fsf_-_@x220.int.ebiederm.org>
- <202003101319.BAE7B535A@keescook>
- <AM6PR03MB5170BDBF7D6E4AC63B40E9C0E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        Tue, 10 Mar 2020 16:59:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=a+XDis4Tmx90hHSPR6tuJGr7gvvV3SscmiwwFKQv5zo=; b=EWtWPNdShHkkO7dQGRj3SgEVo+
+        PFvvXL38QtXGgO58ivEWw3G+uqOW/iTrvgTajhYav8VdETmIwPiorCs1h4M3Fap5FDTme1kt/PE9h
+        pcLJfJxGPHLOuP3kCPpWGWW/ezKR5dTi7ToIp+kxEeqkr23SU4r3TLPfoi7NZHfvk2pKMGylTGlcz
+        kFsOEgFbIymbhJF8rX0dGdDaqn4Bn4hFqp9Tn27r2AUYelp1eC1Y9JTEyXFB+KKqrDhGXIM7BbhQ6
+        nH+ffkVsH0zRQmV7mJR2vKZDWPj+lQ3uMOJM8+FqqI0JTNj/3VlC3kUN4dyjLGC6iOqvbUgxDms6c
+        myh+iCLA==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jBly8-0004a6-JB; Tue, 10 Mar 2020 20:59:16 +0000
+Subject: Re: [PATCH] panic: Add sysctl/cmdline to dump all CPUs backtraces on
+ oops event
+To:     "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-doc@vger.kernel.org, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com, tglx@linutronix.de,
+        akpm@linux-foundation.org, kernel@gpiccoli.net
+References: <20200310163700.19186-1-gpiccoli@canonical.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <93f20e59-41b1-48ad-b0eb-e670b18994d5@infradead.org>
+Date:   Tue, 10 Mar 2020 13:59:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM6PR03MB5170BDBF7D6E4AC63B40E9C0E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+In-Reply-To: <20200310163700.19186-1-gpiccoli@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 09:34:03PM +0100, Bernd Edlinger wrote:
-> On 3/10/20 9:29 PM, Kees Cook wrote:
-> > On Sun, Mar 08, 2020 at 04:36:17PM -0500, Eric W. Biederman wrote:
-> >>
-> >> This makes the code clearer and makes it easier to implement a mutex
-> >> that is not taken over any locations that may block indefinitely waiting
-> >> for userspace.
-> >>
-> >> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> >> ---
-> >>  fs/exec.c | 39 ++++++++++++++++++++++++++-------------
-> >>  1 file changed, 26 insertions(+), 13 deletions(-)
-> >>
-> >> diff --git a/fs/exec.c b/fs/exec.c
-> >> index c3f34791f2f0..ff74b9a74d34 100644
-> >> --- a/fs/exec.c
-> >> +++ b/fs/exec.c
-> >> @@ -1194,6 +1194,23 @@ static int de_thread(struct task_struct *tsk)
-> >>  	flush_itimer_signals();
-> >>  #endif
-> > 
-> > Semi-related (existing behavior): in de_thread(), what keeps the thread
-> > group from changing? i.e.:
-> > 
-> >         if (thread_group_empty(tsk))
-> >                 goto no_thread_group;
-> > 
-> >         /*
-> >          * Kill all other threads in the thread group.
-> >          */
-> >         spin_lock_irq(lock);
-> > 	... kill other threads under lock ...
-> > 
-> > Why is the thread_group_emtpy() test not under lock?
-> > 
+Hi-
+
+On 3/10/20 9:37 AM, Guilherme G. Piccoli wrote:
 > 
-> A new thread cannot created when only one thread is executing,
-> right?
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@canonical.com>
+> ---
+> 
+> As a P.S. note, my choice to put the backtrace dump in the end of
+> oops_enter() was from previous experience (in which I used this
+> approach in a kprobes to collect more data on oops), but I'd
+> gladly accept suggestion in case there's a better place to dump
+> this. Thanks in advance for the reviews!
+> Cheers,
+> 
+> Guilherme
+> 
+> 
+>  .../admin-guide/kernel-parameters.txt         |  8 +++++++
+>  Documentation/admin-guide/sysctl/kernel.rst   | 15 +++++++++++++
+>  include/linux/kernel.h                        |  6 ++++++
+>  kernel/panic.c                                | 21 +++++++++++++++++++
+>  kernel/sysctl.c                               | 11 ++++++++++
+>  5 files changed, 61 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 4c6595b5f6c8..888b1fab3f6e 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -3333,6 +3333,14 @@
+>  			This will also cause panics on machine check exceptions.
+>  			Useful together with panic=30 to trigger a reboot.
+>  
+> +	oops_all_cpu_backtrace=
+> +			[KNL] Should kernel generates backtraces on all cpus
 
-*face palm* Yes, of course. :) I'm thinking too hard.
+			                    generate backtraces on all CPUs
 
+> +			when oops occurs - this should be a last measure resort
+> +			in case	a kdump cannot be collected, for example.
+> +			Defaults to 0 and can be controlled by the sysctl
+> +			kernel.oops_all_cpu_backtrace.
+> +			Format: <integer>
+> +
+>  	page_alloc.shuffle=
+>  			[KNL] Boolean flag to control whether the page allocator
+>  			should randomize its free lists. The randomization may
+> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+> index 218c717c1354..460112c3f656 100644
+> --- a/Documentation/admin-guide/sysctl/kernel.rst
+> +++ b/Documentation/admin-guide/sysctl/kernel.rst
+> @@ -573,6 +574,20 @@ numa_balancing_scan_size_mb is how many megabytes worth of pages are
+>  scanned for a given scan.
+>  
+>  
+> +oops_all_cpu_backtrace:
+> +================
+> +
+> +Determines if kernel should NMI all CPUs to dump their backtraces when
+
+I would much prefer that to be written without using NMI as a verb.
+
+> +an oops event occurs. It should be used as a last resort in case a panic
+> +cannot be triggered (to protect VMs running, for example) or kdump can't
+> +be collected. This file shows up if CONFIG_SMP is enabled.
+> +
+> +0: Won't show all CPUs backtraces when an oops is detected.
+> +This is the default behavior.
+> +
+> +1: Will NMI all CPUs and dump their backtraces when an oops is detected.
+
+Same here.
+
+> +
+> +
+>  osrelease, ostype & version:
+>  ============================
+>  
+
+
+
+Thanks.
 -- 
-Kees Cook
+~Randy
+
