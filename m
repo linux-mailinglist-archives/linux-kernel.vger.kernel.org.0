@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCE1617F8E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:52:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D14317F83A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729018AbgCJMwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:52:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57592 "EHLO mail.kernel.org"
+        id S1727953AbgCJMqH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:46:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729005AbgCJMwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:52:09 -0400
+        id S1727722AbgCJMqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:46:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 245C420674;
-        Tue, 10 Mar 2020 12:52:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 270B224696;
+        Tue, 10 Mar 2020 12:46:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844728;
-        bh=3aUHtr5VhDOf2LoeEAfUA4zom+D6IHvYST6XzR/+4/Y=;
+        s=default; t=1583844365;
+        bh=TmISeBl+z/riu5zI1Aow+4OtmrTWBLBSDho4zHJx+0g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ijPcdLVMJG0ZobxjpfL4TQOpXmdox8thgFFjWDa0uHnQByqVMmQQgR0py691balDA
-         UAZs2ErWTsfqqUaTkwK10Ee2ZJf0tUPPi5eQIIGqaR+HxGNBh21fOL0Lcxyz7Sc/yD
-         MzbVt8v1zu37p2Pkxx8AaJeUcCehJOGz4lchLyyE=
+        b=vB5LMzaAiR8/queMPFHGeq+B+5eQt+nr4BmAvYG7s7eRD9D4Ts9077ucBUrfgxJlT
+         0QudpRm5UUs64zfajwN++ZD9tb0AyOb0SloILk+DfgoPsWnMopW0WZg7gk0VJ6vJbl
+         XdEm0jSC4anL6I3N20hGtBcEd7Z+WvPdsk4invlM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Simon Han <z.han@kunbus.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.4 096/168] spi: spidev: Fix CS polarity if GPIO descriptors are used
+        stable@vger.kernel.org, Sergey Organov <sorganov@gmail.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Felipe Balbi <balbi@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 54/88] usb: gadget: serial: fix Tx stall after buffer overflow
 Date:   Tue, 10 Mar 2020 13:39:02 +0100
-Message-Id: <20200310123645.084722622@linuxfoundation.org>
+Message-Id: <20200310123619.619783130@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Sergey Organov <sorganov@gmail.com>
 
-commit 138c9c32f090894614899eca15e0bb7279f59865 upstream.
+[ Upstream commit e4bfded56cf39b8d02733c1e6ef546b97961e18a ]
 
-Commit f3186dd87669 ("spi: Optionally use GPIO descriptors for CS GPIOs")
-amended of_spi_parse_dt() to always set SPI_CS_HIGH for SPI slaves whose
-Chip Select is defined by a "cs-gpios" devicetree property.
+Symptom: application opens /dev/ttyGS0 and starts sending (writing) to
+it while either USB cable is not connected, or nobody listens on the
+other side of the cable. If driver circular buffer overflows before
+connection is established, no data will be written to the USB layer
+until/unless /dev/ttyGS0 is closed and re-opened again by the
+application (the latter besides having no means of being notified about
+the event of establishing of the connection.)
 
-This change broke userspace applications which issue an SPI_IOC_WR_MODE
-ioctl() to an spidev:  Chip Select polarity will be incorrect unless the
-application is changed to set SPI_CS_HIGH.  And once changed, it will be
-incompatible with kernels not containing the commit.
+Fix: on open and/or connect, kick Tx to flush circular buffer data to
+USB layer.
 
-Fix by setting SPI_CS_HIGH in spidev_ioctl() (under the same conditions
-as in of_spi_parse_dt()).
-
-Fixes: f3186dd87669 ("spi: Optionally use GPIO descriptors for CS GPIOs")
-Reported-by: Simon Han <z.han@kunbus.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Link: https://lore.kernel.org/r/fca3ba7cdc930cd36854666ceac4fbcf01b89028.1582027457.git.lukas@wunner.de
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org # v5.1+
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sergey Organov <sorganov@gmail.com>
+Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spidev.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/usb/gadget/function/u_serial.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/spi/spidev.c
-+++ b/drivers/spi/spidev.c
-@@ -394,6 +394,7 @@ spidev_ioctl(struct file *filp, unsigned
- 		else
- 			retval = get_user(tmp, (u32 __user *)arg);
- 		if (retval == 0) {
-+			struct spi_controller *ctlr = spi->controller;
- 			u32	save = spi->mode;
+diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
+index 510a54f889635..5d7d0f2e80a5e 100644
+--- a/drivers/usb/gadget/function/u_serial.c
++++ b/drivers/usb/gadget/function/u_serial.c
+@@ -715,8 +715,10 @@ static int gs_start_io(struct gs_port *port)
+ 	port->n_read = 0;
+ 	started = gs_start_rx(port);
  
- 			if (tmp & ~SPI_MODE_MASK) {
-@@ -401,6 +402,10 @@ spidev_ioctl(struct file *filp, unsigned
- 				break;
- 			}
- 
-+			if (ctlr->use_gpio_descriptors && ctlr->cs_gpiods &&
-+			    ctlr->cs_gpiods[spi->chip_select])
-+				tmp |= SPI_CS_HIGH;
-+
- 			tmp |= spi->mode & ~SPI_MODE_MASK;
- 			spi->mode = (u16)tmp;
- 			retval = spi_setup(spi);
+-	/* unblock any pending writes into our circular buffer */
+ 	if (started) {
++		gs_start_tx(port);
++		/* Unblock any pending writes into our circular buffer, in case
++		 * we didn't in gs_start_tx() */
+ 		tty_wakeup(port->port.tty);
+ 	} else {
+ 		gs_free_requests(ep, head, &port->read_allocated);
+-- 
+2.20.1
+
 
 
