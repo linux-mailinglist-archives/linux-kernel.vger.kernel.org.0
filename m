@@ -2,343 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D3EE17F237
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 09:45:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10D0117F23D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 09:46:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbgCJIpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 04:45:50 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34892 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726389AbgCJIpt (ORCPT
+        id S1726643AbgCJIqJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 04:46:09 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:45624 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726389AbgCJIqI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 04:45:49 -0400
-Received: by mail-wm1-f65.google.com with SMTP id m3so317388wmi.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 01:45:47 -0700 (PDT)
+        Tue, 10 Mar 2020 04:46:08 -0400
+Received: by mail-oi1-f195.google.com with SMTP id v19so13023372oic.12;
+        Tue, 10 Mar 2020 01:46:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Irapte2jMjBTf5tgiU8rGS0JL18ZdOQCDd6Y5nxOecc=;
-        b=ciamwfiO9I2t4HvS+6mDrHs9cKjsRDfPef/FSthRCjR3g/cxOJTaCZia8/NeKoKXGV
-         kZtiPp++HpvIXpHVvqzGxak4pq6wek541JBAl8LLuMAsoECkFZJpd3cSNHKWBentCiGL
-         wfnKsFncycpA+bQ6Wsh9SanwFi6qQRNDFISaH92Xf/F/oG/Becvi4JbA8D9wZJDdFnFj
-         ELyAnn9mmDE/k5FuwQTCvMix/1ceVvLHQ1WFlu9hrD+c8/vhASPK7lPM4yoImyDvmjhY
-         8wea4zAStLUyt7cd/Hs9oU7cMAKXvCk3UV7JLTCAm3iqNkRL2yJWDZ6gFOmt4UgD8GT5
-         Qfig==
-X-Gm-Message-State: ANhLgQ3gDfwUUMGGnPEIjnJUJ6IUInJdYJnui8Cmvct1MkHcoxkKQEMQ
-        VkhSYrBOlmZSX1yr6EUXNTE=
-X-Google-Smtp-Source: ADFU+vtXTNBR7lK8Ag9Lxs5wN9/TAgFNzpZ3ovJGPL7xKkc9q2dIuYlzN561ULfL95Mv+Y9AsEFZAQ==
-X-Received: by 2002:a7b:c944:: with SMTP id i4mr956259wml.77.1583829946756;
-        Tue, 10 Mar 2020 01:45:46 -0700 (PDT)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id s14sm53401881wrv.44.2020.03.10.01.45.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 01:45:45 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 09:45:44 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        kernel-team@fb.com, linux-kernel@vger.kernel.org,
-        Rik van Riel <riel@surriel.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH v2] mm: hugetlb: optionally allocate gigantic hugepages
- using cma
-Message-ID: <20200310084544.GY8447@dhcp22.suse.cz>
-References: <20200310002524.2291595-1-guro@fb.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A8GV2HuSqXBx4DrwJWUZYgLB27q46+xOcdSszllMiCI=;
+        b=DGv3qAG1QgxxigCW9HuiJuOeSKZYMK6T34h194WrqL+gsB3Q5ld+HHou2A1Zz4+z9J
+         uImch6vMK9FyIYY6Ya6L6S+dZ3UVU+gHIDiCzSAnqvHr0K9mO06W3WsyCgB6Y4p8nTDu
+         S0gQ6FJlEBGNzwbv8HaS/ECUZKn9Bc8TkT8vsw7quDD7gQnUMsTdsxmZ5QLVEkVQPPsP
+         cNwuTHFjk+q1bscL27o6Sw0oCgTra+pEoKiLHvUSGPOY6B3+j1kejR1HynCfJ7dFWqUG
+         A7o84tvVLQIVaBcUz1WVnFJzrMlP6eRIB7wUL6vMmtk27391Hi3mct10W7Q8DMnXs3Hz
+         rX0g==
+X-Gm-Message-State: ANhLgQ33OkQs4zM74hAMkqDUvDyvjxqwbvfeHTKosMsfrxiAMGUG0yA9
+        mCSr6xKIM3EPUrvEvlUgL2aXk19EAobyQ++mJEU=
+X-Google-Smtp-Source: ADFU+vttQqetvNaCij6CJgxOr6ZhOH0rw6dT6OZELsXWp4+In7/oAlCGDZCXVnl7OX4oCGpGQHis/ArFx874qPoc7Zk=
+X-Received: by 2002:aca:df0b:: with SMTP id w11mr352964oig.68.1583829968022;
+ Tue, 10 Mar 2020 01:46:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200310002524.2291595-1-guro@fb.com>
+References: <20200305013509.GF5972@shao2-debian> <951b0986-bb35-d9a5-1639-0a8cdb3dcd04@intel.com>
+ <cbe4887c-d54a-c4aa-e4bf-981b5fcc291d@intel.com> <CAJZ5v0g2vzYQ04GyrpubLx2+B0O4SDbqoTDCvhnSyaj1j1xswA@mail.gmail.com>
+ <87zhcuyxce.fsf@yhuang-dev.intel.com> <CAJZ5v0g3f1Rf0HFLH+hWkbW6q0_E1RjhX2AeUxa_DHfJRQj7Qw@mail.gmail.com>
+ <87imjez5rl.fsf@yhuang-dev.intel.com>
+In-Reply-To: <87imjez5rl.fsf@yhuang-dev.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 10 Mar 2020 09:45:57 +0100
+Message-ID: <CAJZ5v0hdAnN-mu8b9g19cM8AqYGXDbs1qVxLu-qE-3P6fP1=XA@mail.gmail.com>
+Subject: Re: [LKP] Re: [cpufreq] 909c0e9cc1: fwq.fwq.med 210.0% improvement
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rong Chen <rong.a.chen@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>,
+        Linux PM <linux-pm@vger.kernel.org>, lkp@lists.01.org,
+        Andi Kleen <andi.kleen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc Mike as hugetlb maintainer and keeping the full context for his
-reference]
+On Mon, Mar 9, 2020 at 2:17 AM Huang, Ying <ying.huang@intel.com> wrote:
+>
+> "Rafael J. Wysocki" <rafael@kernel.org> writes:
+>
+> > On Fri, Mar 6, 2020 at 4:29 AM Huang, Ying <ying.huang@intel.com> wrote:
+> >>
+> >> Hi, Rafael,
+> >>
+> >> "Rafael J. Wysocki" <rafael@kernel.org> writes:
+> >>
+> >> > On Thu, Mar 5, 2020 at 9:18 AM Rong Chen <rong.a.chen@intel.com> wrote:
+> >> >>
+> >> >>
+> >> >>
+> >> >> On 3/5/20 3:50 PM, Rafael J. Wysocki wrote:
+> >> >> > On 3/5/2020 2:35 AM, kernel test robot wrote:
+> >> >> >> Greeting,
+> >> >> >>
+> >> >> >> FYI, we noticed a 210.0% improvement of fwq.fwq.med due to commit:
+> >> >> >
+> >> >> > Well, that sounds impressive. :-)
+> >> >> >
+> >> >> >
+> >> >> >>
+> >> >> >> commit: 909c0e9cc11ba39fa5a660583b25c2431cf54deb ("cpufreq:
+> >> >> >> intel_pstate: Use passive mode by default without HWP")
+> >> >> >> https://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.git
+> >> >> >> intel_pstate-passive
+> >> >> >>
+> >> >> >> in testcase: fwq
+> >> >> >> on test machine: 16 threads Intel(R) Xeon(R) CPU D-1541 @ 2.10GHz
+> >> >> >> with 48G memory
+> >> >> >> with following parameters:
+> >> >> >>
+> >> >> >>     nr_task: 100%
+> >> >> >>     samples: 100000ss
+> >> >> >>     iterations: 18x
+> >> >> >>     cpufreq_governor: powersave
+> >> >> >
+> >> >> > The governor should be schedutil, though, unless it is explicitly set
+> >> >> > to powersave in the test environment.
+> >> >> >
+> >> >> > Is that the case?
+> >> >> >
+> >> >> >
+> >> >>
+> >> >> Hi Rafael,
+> >> >>
+> >> >> Yes, we set to powersave for this test.
+> >> >
+> >> > I wonder why this is done?  Is there any particular technical reason
+> >> > for doing that?
+> >>
+> >> fwq is a noise benchmark to measure the hardware and software noise
+> >> level.  More information could be found in the following document.
+> >>
+> >> https://asc.llnl.gov/sequoia/benchmarks/FTQ_summary_v1.1.pdf
+> >>
+> >> In 0day, to measure the noise introduced by power management, we will
+> >> run fwq with the performance and powersave governors.  Do you think this
+> >> is reasonable?  Or we should use some other governors?
+> >
+> > I think that the schedutil governor should be tested too if present.
+> >
+> > Also note that for the intel_pstate driver "powersave" may mean
+> > different things depending on the current operation mode of the
+> > driver.  If scaling_driver is "intel_pstate", then "powersave" is the
+> > driver's built-in algorithm.  If scaling_driver is "intel_cpufreq",
+> > though, "powersave" means running at the minimum frequency all the
+> > time.
+>
+> Thanks for your guidance.  We will test schedutil governor in the future
+> too.
+>
+> As for powersave, should we stop testing it?
 
-On Mon 09-03-20 17:25:24, Roman Gushchin wrote:
-> Commit 944d9fec8d7a ("hugetlb: add support for gigantic page allocation
-> at runtime") has added the run-time allocation of gigantic pages. However
-> it actually works only at early stages of the system loading, when
-> the majority of memory is free. After some time the memory gets
-> fragmented by non-movable pages, so the chances to find a contiguous
-> 1 GB block are getting close to zero. Even dropping caches manually
-> doesn't help a lot.
-> 
-> At large scale rebooting servers in order to allocate gigantic hugepages
-> is quite expensive and complex. At the same time keeping some constant
-> percentage of memory in reserved hugepages even if the workload isn't
-> using it is a big waste: not all workloads can benefit from using 1 GB
-> pages.
-> 
-> The following solution can solve the problem:
-> 1) On boot time a dedicated cma area* is reserved. The size is passed
->    as a kernel argument.
-> 2) Run-time allocations of gigantic hugepages are performed using the
->    cma allocator and the dedicated cma area
-> 
-> In this case gigantic hugepages can be allocated successfully with a
-> high probability, however the memory isn't completely wasted if nobody
-> is using 1GB hugepages: it can be used for pagecache, anon memory,
-> THPs, etc.
-> 
-> * On a multi-node machine a per-node cma area is allocated on each node.
->   Following gigantic hugetlb allocation are using the first available
->   numa node if the mask isn't specified by a user.
-> 
-> Usage:
-> 1) configure the kernel to allocate a cma area for hugetlb allocations:
->    pass hugetlb_cma=10G as a kernel argument
-> 
-> 2) allocate hugetlb pages as usual, e.g.
->    echo 10 > /sys/kernel/mm/hugepages/hugepages-1048576kB/nr_hugepages
-> 
-> If the option isn't enabled or the allocation of the cma area failed,
-> the current behavior of the system is preserved.
-> 
-> Only x86 is covered by this patch, but it's trivial to extend it to
-> cover other architectures as well.
+You cannot stop testing it, because it is the default governor
+algorithm for intel_pstate working in the active mode.
 
-Overall idea makes sense to me. I am worried about the configuration
-side of the thing. Not only I would stick with the absolute size for now
-for simplicity and because percentage usecase is not really explained
-anywhere. I am also worried about the resulting memory layout you will
-get when using the parameter.
+>  Or just pay attention to the possible issue you pointed out?
 
-Let's scroll down to the setup code ...
+Yes, please!
 
-> v2: fixed !CONFIG_CMA build, suggested by Andrew Morton
-> 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> ---
->  .../admin-guide/kernel-parameters.txt         |   7 ++
->  arch/x86/kernel/setup.c                       |   3 +
->  include/linux/hugetlb.h                       |   2 +
->  mm/hugetlb.c                                  | 115 ++++++++++++++++++
->  4 files changed, 127 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 0c9894247015..d3349ec1dbef 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1452,6 +1452,13 @@
->  	hpet_mmap=	[X86, HPET_MMAP] Allow userspace to mmap HPET
->  			registers.  Default set by CONFIG_HPET_MMAP_DEFAULT.
->  
-> +	hugetlb_cma=	[x86-64] The size of a cma area used for allocation
-> +			of gigantic hugepages.
-> +			Format: nn[GTPE] | nn%
-> +
-> +			If enabled, boot-time allocation of gigantic hugepages
-> +			is skipped.
-> +
->  	hugepages=	[HW,X86-32,IA-64] HugeTLB pages to allocate at boot.
->  	hugepagesz=	[HW,IA-64,PPC,X86-64] The size of the HugeTLB pages.
->  			On x86-64 and powerpc, this option can be specified
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index a74262c71484..ceeb06ddfd41 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -16,6 +16,7 @@
->  #include <linux/pci.h>
->  #include <linux/root_dev.h>
->  #include <linux/sfi.h>
-> +#include <linux/hugetlb.h>
->  #include <linux/tboot.h>
->  #include <linux/usb/xhci-dbgp.h>
->  
-> @@ -1158,6 +1159,8 @@ void __init setup_arch(char **cmdline_p)
->  	initmem_init();
->  	dma_contiguous_reserve(max_pfn_mapped << PAGE_SHIFT);
->  
-> +	hugetlb_cma_reserve();
-> +
->  	/*
->  	 * Reserve memory for crash kernel after SRAT is parsed so that it
->  	 * won't consume hotpluggable memory.
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index 50480d16bd33..50050c981ab9 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -157,6 +157,8 @@ pte_t *huge_pmd_share(struct mm_struct *mm, unsigned long addr, pud_t *pud);
->  extern int sysctl_hugetlb_shm_group;
->  extern struct list_head huge_boot_pages;
->  
-> +extern void __init hugetlb_cma_reserve(void);
-> +
->  /* arch callbacks */
->  
->  pte_t *huge_pte_alloc(struct mm_struct *mm,
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 7fb31750e670..c6f58bab879c 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -28,6 +28,7 @@
->  #include <linux/jhash.h>
->  #include <linux/numa.h>
->  #include <linux/llist.h>
-> +#include <linux/cma.h>
->  
->  #include <asm/page.h>
->  #include <asm/pgtable.h>
-> @@ -44,6 +45,9 @@
->  int hugetlb_max_hstate __read_mostly;
->  unsigned int default_hstate_idx;
->  struct hstate hstates[HUGE_MAX_HSTATE];
-> +
-> +static struct cma *hugetlb_cma[MAX_NUMNODES];
-> +
->  /*
->   * Minimum page order among possible hugepage sizes, set to a proper value
->   * at boot time.
-> @@ -1228,6 +1232,11 @@ static void destroy_compound_gigantic_page(struct page *page,
->  
->  static void free_gigantic_page(struct page *page, unsigned int order)
->  {
-> +	if (IS_ENABLED(CONFIG_CMA) && hugetlb_cma[0]) {
-> +		cma_release(hugetlb_cma[page_to_nid(page)], page, 1 << order);
-> +		return;
-> +	}
-> +
->  	free_contig_range(page_to_pfn(page), 1 << order);
->  }
->  
-> @@ -1237,6 +1246,23 @@ static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
->  {
->  	unsigned long nr_pages = 1UL << huge_page_order(h);
->  
-> +	if (IS_ENABLED(CONFIG_CMA) && hugetlb_cma[0]) {
-> +		struct page *page;
-> +		int nid;
-> +
-> +		for_each_node_mask(nid, *nodemask) {
-> +			if (!hugetlb_cma[nid])
-> +				break;
-> +
-> +			page = cma_alloc(hugetlb_cma[nid], nr_pages,
-> +					 huge_page_order(h), true);
-> +			if (page)
-> +				return page;
-> +		}
-> +
-> +		return NULL;
-> +	}
-> +
->  	return alloc_contig_pages(nr_pages, gfp_mask, nid, nodemask);
->  }
->  
-> @@ -2439,6 +2465,10 @@ static void __init hugetlb_hstate_alloc_pages(struct hstate *h)
->  
->  	for (i = 0; i < h->max_huge_pages; ++i) {
->  		if (hstate_is_gigantic(h)) {
-> +			if (IS_ENABLED(CONFIG_CMA) && hugetlb_cma[0]) {
-> +				pr_warn_once("HugeTLB: hugetlb_cma is enabled, skip boot time allocation\n");
-> +				break;
-> +			}
->  			if (!alloc_bootmem_huge_page(h))
->  				break;
->  		} else if (!alloc_pool_huge_page(h,
-> @@ -5372,3 +5402,88 @@ void move_hugetlb_state(struct page *oldpage, struct page *newpage, int reason)
->  		spin_unlock(&hugetlb_lock);
->  	}
->  }
-> +
-> +#ifdef CONFIG_CMA
-> +static unsigned long hugetlb_cma_size __initdata;
-> +static unsigned long hugetlb_cma_percent __initdata;
-> +
-> +static int __init cmdline_parse_hugetlb_cma(char *p)
-> +{
-> +	unsigned long long val;
-> +	char *endptr;
-> +
-> +	if (!p)
-> +		return -EINVAL;
-> +
-> +	/* Value may be a percentage of total memory, otherwise bytes */
-> +	val = simple_strtoull(p, &endptr, 0);
-> +	if (*endptr == '%')
-> +		hugetlb_cma_percent = clamp_t(unsigned long, val, 0, 100);
-> +	else
-> +		hugetlb_cma_size = memparse(p, &p);
-> +
-> +	return 0;
-> +}
-> +
-> +early_param("hugetlb_cma", cmdline_parse_hugetlb_cma);
-> +
-> +void __init hugetlb_cma_reserve(void)
-> +{
-> +	unsigned long totalpages = 0;
-> +	unsigned long start_pfn, end_pfn;
-> +	phys_addr_t size;
-> +	int nid, i, res;
-> +
-> +	if (!hugetlb_cma_size && !hugetlb_cma_percent)
-> +		return;
-> +
-> +	if (hugetlb_cma_percent) {
-> +		for_each_mem_pfn_range(i, MAX_NUMNODES, &start_pfn, &end_pfn,
-> +				       NULL)
-> +			totalpages += end_pfn - start_pfn;
-> +
-> +		size = PAGE_SIZE * (hugetlb_cma_percent * 100 * totalpages) /
-> +			10000UL;
-> +	} else {
-> +		size = hugetlb_cma_size;
-> +	}
-> +
-> +	pr_info("hugetlb_cma: reserve %llu, %llu per node\n", size,
-> +		size / nr_online_nodes);
-> +
-> +	size /= nr_online_nodes;
-> +
-> +	for_each_node_state(nid, N_ONLINE) {
-> +		unsigned long min_pfn = 0, max_pfn = 0;
-> +
-> +		for_each_mem_pfn_range(i, nid, &start_pfn, &end_pfn, NULL) {
-> +			if (!min_pfn)
-> +				min_pfn = start_pfn;
-> +			max_pfn = end_pfn;
-> +		}
+Basically, I would recommend to test the following configurations by default:
 
-Do you want to compare the range to the size? But besides that, I
-believe this really needs to be much more careful. I believe you do not
-want to eat a considerable part of the kernel memory because the
-resulting configuration will really struggle (yeah all the low mem/high
-mem problems all over again).
+(1) scaling_driver = intel_pstate + scaling_governor = powersave
 
-> +
-> +		res = cma_declare_contiguous(PFN_PHYS(min_pfn), size,
-> +					     PFN_PHYS(max_pfn), (1UL << 30),
-> +					     0, false,
-> +					     "hugetlb", &hugetlb_cma[nid]);
-> +		if (res) {
-> +			pr_warn("hugetlb_cma: reservation failed: err %d, node %d, [%llu, %llu)",
-> +				res, nid, PFN_PHYS(min_pfn), PFN_PHYS(max_pfn));
-> +
-> +			for (; nid >= 0; nid--)
-> +				hugetlb_cma[nid] = NULL;
-> +
-> +			break;
-> +		}
-> +
-> +		pr_info("hugetlb_cma: successfully reserved %llu on node %d\n",
-> +			size, nid);
-> +	}
-> +}
-> +
-> +#else /* CONFIG_CMA */
-> +void __init hugetlb_cma_reserve(void)
-> +{
-> +}
-> +
-> +#endif /* CONFIG_CMA */
-> -- 
-> 2.24.1
+(2) scaling_driver = intel_cpufreq + scaling_governor = schedutil
 
--- 
-Michal Hocko
-SUSE Labs
+The other ones are kind of less interesting.
+
+[Note that in order to switch over from intel_pstate to intel_cpufreq,
+you need to write "passive" into
+/sys/devices/system/cpu/intel_pstate/status and if that write fails,
+configuration (2) is not available and may be skipped.]
+
+> Should we add ondemand governor?
+
+Not necessarily, maybe as a reference only if you have spare cycles.
+
+Thanks!
