@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CB5917F7F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:43:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96ADC17F84A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbgCJMnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:43:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44146 "EHLO mail.kernel.org"
+        id S1728054AbgCJMqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:46:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726389AbgCJMno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:43:44 -0400
+        id S1728034AbgCJMqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:46:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B89DC24695;
-        Tue, 10 Mar 2020 12:43:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72B7D2468D;
+        Tue, 10 Mar 2020 12:46:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844224;
-        bh=XxTGXWArpn7JRhRxJXLk6mX9vUg6mfOKu4yvicoqYuM=;
+        s=default; t=1583844394;
+        bh=oBMNqUX4ZPWgo8M0jSF0Wt24UTeI5DRNxLRhMkgAc7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hbgd3TWzS3W7tf4TC3Mf5F+Zo2Qk+DWENoZS9euNrANd5pvalbHVyQWuWdXwCl9J/
-         dJ4/xyMkHOZldXCDcF/JJS+LvE6Si0UlMXHNULYozr3Jcfv3Dn2yfC4X0L2zbg81k+
-         o575Ks6e2Qh8MTE4l7IxbV+U2isOF6scS7a8f7AE=
+        b=jv4/Q7zoK56bymmosJv8GIzFKxSFChQIFc90gvkRgDSet9DHbEcVgWeHjwV9mM37t
+         3q4AD4kD6OR5bvAeXpzeO8Muxn/CadZcEOWT0RCm5FQaJYG1d1y8CGlGHK0igJvkq9
+         NeTxUsBO0N+7SrQfFvE717aVQD3cQinf7gGvxHmY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 4.4 58/72] vt: selection, push console lock down
-Date:   Tue, 10 Mar 2020 13:39:11 +0100
-Message-Id: <20200310123615.678733417@linuxfoundation.org>
+        stable@vger.kernel.org, Jim Lin <jilin@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.9 64/88] usb: storage: Add quirk for Samsung Fit flash
+Date:   Tue, 10 Mar 2020 13:39:12 +0100
+Message-Id: <20200310123622.282782455@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
-References: <20200310123601.053680753@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,67 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Jim Lin <jilin@nvidia.com>
 
-commit 4b70dd57a15d2f4685ac6e38056bad93e81e982f upstream.
+commit 86d92f5465958752481269348d474414dccb1552 upstream.
 
-We need to nest the console lock in sel_lock, so we have to push it down
-a bit. Fortunately, the callers of set_selection_* just lock the console
-lock around the function call. So moving it down is easy.
+Current driver has 240 (USB2.0) and 2048 (USB3.0) as max_sectors,
+e.g., /sys/bus/scsi/devices/0:0:0:0/max_sectors
 
-In the next patch, we switch the order.
+If data access times out, driver error handling will issue a port
+reset.
+Sometimes Samsung Fit (090C:1000) flash disk will not respond to
+later Set Address or Get Descriptor command.
 
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Fixes: 07e6124a1a46 ("vt: selection, close sel_buffer race")
+Adding this quirk to limit max_sectors to 64 sectors to avoid issue
+occurring.
+
+Signed-off-by: Jim Lin <jilin@nvidia.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200228115406.5735-1-jslaby@suse.cz
+Link: https://lore.kernel.org/r/1583158895-31342-1-git-send-email-jilin@nvidia.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/selection.c |   13 ++++++++++++-
- drivers/tty/vt/vt.c        |    2 --
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ drivers/usb/storage/unusual_devs.h |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/tty/vt/selection.c
-+++ b/drivers/tty/vt/selection.c
-@@ -158,7 +158,7 @@ static int store_utf8(u16 c, char *p)
-  *	The entire selection process is managed under the console_lock. It's
-  *	 a lot under the lock but its hardly a performance path
-  */
--int set_selection(const struct tiocl_selection __user *sel, struct tty_struct *tty)
-+static int __set_selection(const struct tiocl_selection __user *sel, struct tty_struct *tty)
- {
- 	struct vc_data *vc = vc_cons[fg_console].d;
- 	int sel_mode, new_sel_start, new_sel_end, spc;
-@@ -334,6 +334,17 @@ unlock:
- 	return ret;
- }
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -1277,6 +1277,12 @@ UNUSUAL_DEV( 0x090a, 0x1200, 0x0000, 0x9
+ 		USB_SC_RBC, USB_PR_BULK, NULL,
+ 		0 ),
  
-+int set_selection(const struct tiocl_selection __user *v, struct tty_struct *tty)
-+{
-+	int ret;
++UNUSUAL_DEV(0x090c, 0x1000, 0x1100, 0x1100,
++		"Samsung",
++		"Flash Drive FIT",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_MAX_SECTORS_64),
 +
-+	console_lock();
-+	ret = __set_selection(v, tty);
-+	console_unlock();
-+
-+	return ret;
-+}
-+
- /* Insert the contents of the selection buffer into the
-  * queue of the tty associated with the current console.
-  * Invoked by ioctl().
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -2687,9 +2687,7 @@ int tioclinux(struct tty_struct *tty, un
- 	switch (type)
- 	{
- 		case TIOCL_SETSEL:
--			console_lock();
- 			ret = set_selection((struct tiocl_selection __user *)(p+1), tty);
--			console_unlock();
- 			break;
- 		case TIOCL_PASTESEL:
- 			ret = paste_selection(tty);
+ /* aeb */
+ UNUSUAL_DEV( 0x090c, 0x1132, 0x0000, 0xffff,
+ 		"Feiya",
 
 
