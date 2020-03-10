@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A357617FE2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:33:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C1CA17FE8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:36:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbgCJMsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:48:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51950 "EHLO mail.kernel.org"
+        id S1726666AbgCJMnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:43:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727828AbgCJMr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:47:59 -0400
+        id S1727533AbgCJMnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:43:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0A5420674;
-        Tue, 10 Mar 2020 12:47:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED24E24686;
+        Tue, 10 Mar 2020 12:43:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844479;
-        bh=mT4Is3gTXjJnNKGVbzohHzQbJiVs/z0vEr6I06JIZJo=;
+        s=default; t=1583844196;
+        bh=YEAAEVmqfnq3Wsv2Ga1ibSGZRSw0j1vQ21GUCM9M4y4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1iofb3weVLYfv6jvSE/24cvIbxAkUCtR2HgkT/ETQtHpUm544kfZ8kGogLIrALwO+
-         pS+RUF8HNuUh+/qFhuSje0qqiCG0e0Qi42msXhIF8TSO8VALArsQacljz7Bwm/OFvR
-         iLuq1MhABnz/Puh/kNKXhqfqVj6G5dOe9/zBVw4w=
+        b=DU+OA2XZyNNO1Lwd5M5eMntEdCleRxyGeFwYRnXyYzngAk3vka7GAFKYs8NdfLVnt
+         qmYaESLeHF8JAWIAAagjBbRHJEHTyuorQpcI3GpDMPRhQNW08MTBPCYRna+aKNWLoj
+         fAZjwm8Q0rNynUVFmc9w6q/9eWOCqf4QgEtz4mMo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 4.9 72/88] vt: selection, push console lock down
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Rouven Czerwinski <r.czerwinski@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 4.4 67/72] ARM: imx: build v7_cpu_resume() unconditionally
 Date:   Tue, 10 Mar 2020 13:39:20 +0100
-Message-Id: <20200310123623.463360507@linuxfoundation.org>
+Message-Id: <20200310123618.211840823@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <20200310123601.053680753@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,67 +45,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-commit 4b70dd57a15d2f4685ac6e38056bad93e81e982f upstream.
+commit 512a928affd51c2dc631401e56ad5ee5d5dd68b6 upstream.
 
-We need to nest the console lock in sel_lock, so we have to push it down
-a bit. Fortunately, the callers of set_selection_* just lock the console
-lock around the function call. So moving it down is easy.
+This function is not only needed by the platform suspend code, but is also
+reused as the CPU resume function when the ARM cores can be powered down
+completely in deep idle, which is the case on i.MX6SX and i.MX6UL(L).
 
-In the next patch, we switch the order.
+Providing the static inline stub whenever CONFIG_SUSPEND is disabled means
+that those platforms will hang on resume from cpuidle if suspend is disabled.
 
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Fixes: 07e6124a1a46 ("vt: selection, close sel_buffer race")
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200228115406.5735-1-jslaby@suse.cz
+So there are two problems:
+
+  - The static inline stub masks the linker error
+  - The function is not available where needed
+
+Fix both by just building the function unconditionally, when
+CONFIG_SOC_IMX6 is enabled. The actual code is three instructions long,
+so it's arguably ok to just leave it in for all i.MX6 kernel configurations.
+
+Fixes: 05136f0897b5 ("ARM: imx: support arm power off in cpuidle for i.mx6sx")
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Signed-off-by: Rouven Czerwinski <r.czerwinski@pengutronix.de>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/selection.c |   13 ++++++++++++-
- drivers/tty/vt/vt.c        |    2 --
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ arch/arm/mach-imx/Makefile       |    2 ++
+ arch/arm/mach-imx/common.h       |    4 ++--
+ arch/arm/mach-imx/resume-imx6.S  |   24 ++++++++++++++++++++++++
+ arch/arm/mach-imx/suspend-imx6.S |   14 --------------
+ 4 files changed, 28 insertions(+), 16 deletions(-)
 
---- a/drivers/tty/vt/selection.c
-+++ b/drivers/tty/vt/selection.c
-@@ -158,7 +158,7 @@ static int store_utf8(u16 c, char *p)
-  *	The entire selection process is managed under the console_lock. It's
-  *	 a lot under the lock but its hardly a performance path
-  */
--int set_selection(const struct tiocl_selection __user *sel, struct tty_struct *tty)
-+static int __set_selection(const struct tiocl_selection __user *sel, struct tty_struct *tty)
- {
- 	struct vc_data *vc = vc_cons[fg_console].d;
- 	int sel_mode, new_sel_start, new_sel_end, spc;
-@@ -334,6 +334,17 @@ unlock:
- 	return ret;
- }
+--- a/arch/arm/mach-imx/Makefile
++++ b/arch/arm/mach-imx/Makefile
+@@ -91,6 +91,8 @@ AFLAGS_suspend-imx6.o :=-Wa,-march=armv7
+ obj-$(CONFIG_SOC_IMX6) += suspend-imx6.o
+ obj-$(CONFIG_SOC_IMX53) += suspend-imx53.o
+ endif
++AFLAGS_resume-imx6.o :=-Wa,-march=armv7-a
++obj-$(CONFIG_SOC_IMX6) += resume-imx6.o
+ obj-$(CONFIG_SOC_IMX6) += pm-imx6.o
  
-+int set_selection(const struct tiocl_selection __user *v, struct tty_struct *tty)
-+{
-+	int ret;
+ obj-$(CONFIG_SOC_IMX50) += mach-imx50.o
+--- a/arch/arm/mach-imx/common.h
++++ b/arch/arm/mach-imx/common.h
+@@ -115,17 +115,17 @@ void imx_cpu_die(unsigned int cpu);
+ int imx_cpu_kill(unsigned int cpu);
+ 
+ #ifdef CONFIG_SUSPEND
+-void v7_cpu_resume(void);
+ void imx53_suspend(void __iomem *ocram_vbase);
+ extern const u32 imx53_suspend_sz;
+ void imx6_suspend(void __iomem *ocram_vbase);
+ #else
+-static inline void v7_cpu_resume(void) {}
+ static inline void imx53_suspend(void __iomem *ocram_vbase) {}
+ static const u32 imx53_suspend_sz;
+ static inline void imx6_suspend(void __iomem *ocram_vbase) {}
+ #endif
+ 
++void v7_cpu_resume(void);
 +
-+	console_lock();
-+	ret = __set_selection(v, tty);
-+	console_unlock();
+ void imx6_pm_ccm_init(const char *ccm_compat);
+ void imx6q_pm_init(void);
+ void imx6dl_pm_init(void);
+--- /dev/null
++++ b/arch/arm/mach-imx/resume-imx6.S
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright 2014 Freescale Semiconductor, Inc.
++ */
 +
-+	return ret;
-+}
++#include <linux/linkage.h>
++#include <asm/assembler.h>
++#include <asm/asm-offsets.h>
++#include <asm/hardware/cache-l2x0.h>
++#include "hardware.h"
 +
- /* Insert the contents of the selection buffer into the
-  * queue of the tty associated with the current console.
-  * Invoked by ioctl().
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -2690,9 +2690,7 @@ int tioclinux(struct tty_struct *tty, un
- 	switch (type)
- 	{
- 		case TIOCL_SETSEL:
--			console_lock();
- 			ret = set_selection((struct tiocl_selection __user *)(p+1), tty);
--			console_unlock();
- 			break;
- 		case TIOCL_PASTESEL:
- 			ret = paste_selection(tty);
++/*
++ * The following code must assume it is running from physical address
++ * where absolute virtual addresses to the data section have to be
++ * turned into relative ones.
++ */
++
++ENTRY(v7_cpu_resume)
++	bl	v7_invalidate_l1
++#ifdef CONFIG_CACHE_L2X0
++	bl	l2c310_early_resume
++#endif
++	b	cpu_resume
++ENDPROC(v7_cpu_resume)
+--- a/arch/arm/mach-imx/suspend-imx6.S
++++ b/arch/arm/mach-imx/suspend-imx6.S
+@@ -333,17 +333,3 @@ resume:
+ 
+ 	ret	lr
+ ENDPROC(imx6_suspend)
+-
+-/*
+- * The following code must assume it is running from physical address
+- * where absolute virtual addresses to the data section have to be
+- * turned into relative ones.
+- */
+-
+-ENTRY(v7_cpu_resume)
+-	bl	v7_invalidate_l1
+-#ifdef CONFIG_CACHE_L2X0
+-	bl	l2c310_early_resume
+-#endif
+-	b	cpu_resume
+-ENDPROC(v7_cpu_resume)
 
 
