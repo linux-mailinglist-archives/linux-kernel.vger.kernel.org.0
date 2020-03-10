@@ -2,37 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D8C217F9C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:59:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B233217F7BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:41:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729699AbgCJM7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:59:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40132 "EHLO mail.kernel.org"
+        id S1727190AbgCJMl4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:41:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730033AbgCJM7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:59:36 -0400
+        id S1727124AbgCJMly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:41:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 030A324694;
-        Tue, 10 Mar 2020 12:59:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A239424686;
+        Tue, 10 Mar 2020 12:41:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845176;
-        bh=gS7enNgW0pwEG5MbC1p+uuguDBIOtjYIhdJFMPv0zvQ=;
+        s=default; t=1583844113;
+        bh=q0dA++JbjvCA5R5jLB67BZqMzPWHMTL43xyWr3Uu7ck=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YHTdeLWJhqmgQ4DrfhFhCkqWnkFPJJd0ejKD1jK9QzxjYd8jQaxZnTAD7bkq+oZ6K
-         hTl6984prFH5L8FWGKd2kLgCCpRIsp7pFRqI74dbOmm7kcTVf23wncdfcnovOIsZZ1
-         3PbJ6RsVEZ3OQSVYYJTFmv0RSD+2ms9jepUiwRVw=
+        b=RtZgkY3nFHSQ1h/laIeOEJyWBgtkFDNy0NkzrQumaciVvgywgyAhPuE1mgSNW6OWP
+         3CkJaHNQRBWScccfzPAvzeSNlZgRJS/RnOCXyxRDDju2O/Ic4XKV15sRSkoNQozrQQ
+         tP9xYUi/qbBnkL1sdWhaKHIa88BV/ScFy83Mrobw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jay Dolan <jay.dolan@accesio.com>
-Subject: [PATCH 5.5 090/189] serial: 8250_exar: add support for ACCES cards
-Date:   Tue, 10 Mar 2020 13:38:47 +0100
-Message-Id: <20200310123648.821024972@linuxfoundation.org>
+        stable@vger.kernel.org, Punit Agrawal <punit.agrawal@arm.com>,
+        Steve Capper <steve.capper@arm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hillf Danton <hillf.zj@alibaba-inc.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ajay Kaher <akaher@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH 4.4 35/72] mm, gup: ensure real head page is ref-counted when using hugepages
+Date:   Tue, 10 Mar 2020 13:38:48 +0100
+Message-Id: <20200310123609.865580324@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <20200310123601.053680753@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,76 +56,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jay Dolan <jay.dolan@accesio.com>
+From: Punit Agrawal <punit.agrawal@arm.com>
 
-commit 10c5ccc3c6d32f3d7d6c07de1d3f0f4b52f3e3ab upstream.
+commit d63206ee32b6e64b0e12d46e5d6004afd9913713 upstream.
 
-Add ACCES VIDs and PIDs that use the Exar chips
+When speculatively taking references to a hugepage using
+page_cache_add_speculative() in gup_huge_pmd(), it is assumed that the
+page returned by pmd_page() is the head page.  Although normally true,
+this assumption doesn't hold when the hugepage comprises of successive
+page table entries such as when using contiguous bit on arm64 at PTE or
+PMD levels.
 
-Signed-off-by: Jay Dolan <jay.dolan@accesio.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200305140504.22237-1-jay.dolan@accesio.com
+This can be addressed by ensuring that the page passed to
+page_cache_add_speculative() is the real head or by de-referencing the
+head page within the function.
+
+We take the first approach to keep the usage pattern aligned with
+page_cache_get_speculative() where users already pass the appropriate
+page, i.e., the de-referenced head.
+
+Apply the same logic to fix gup_huge_[pud|pgd]() as well.
+
+[punit.agrawal@arm.com: fix arm64 ltp failure]
+  Link: http://lkml.kernel.org/r/20170619170145.25577-5-punit.agrawal@arm.com
+Link: http://lkml.kernel.org/r/20170522133604.11392-3-punit.agrawal@arm.com
+Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+Acked-by: Steve Capper <steve.capper@arm.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Hillf Danton <hillf.zj@alibaba-inc.com>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Ajay Kaher <akaher@vmware.com>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/tty/serial/8250/8250_exar.c |   33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ mm/gup.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/tty/serial/8250/8250_exar.c
-+++ b/drivers/tty/serial/8250/8250_exar.c
-@@ -25,6 +25,14 @@
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -1130,8 +1130,7 @@ static int gup_huge_pmd(pmd_t orig, pmd_
+ 		return 0;
  
- #include "8250.h"
+ 	refs = 0;
+-	head = pmd_page(orig);
+-	page = head + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
++	page = pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
+ 	tail = page;
+ 	do {
+ 		pages[*nr] = page;
+@@ -1140,6 +1139,7 @@ static int gup_huge_pmd(pmd_t orig, pmd_
+ 		refs++;
+ 	} while (addr += PAGE_SIZE, addr != end);
  
-+#define PCI_DEVICE_ID_ACCES_COM_2S		0x1052
-+#define PCI_DEVICE_ID_ACCES_COM_4S		0x105d
-+#define PCI_DEVICE_ID_ACCES_COM_8S		0x106c
-+#define PCI_DEVICE_ID_ACCES_COM232_8		0x10a8
-+#define PCI_DEVICE_ID_ACCES_COM_2SM		0x10d2
-+#define PCI_DEVICE_ID_ACCES_COM_4SM		0x10db
-+#define PCI_DEVICE_ID_ACCES_COM_8SM		0x10ea
-+
- #define PCI_DEVICE_ID_COMMTECH_4224PCI335	0x0002
- #define PCI_DEVICE_ID_COMMTECH_4222PCI335	0x0004
- #define PCI_DEVICE_ID_COMMTECH_2324PCI335	0x000a
-@@ -677,6 +685,22 @@ static int __maybe_unused exar_resume(st
++	head = compound_head(pmd_page(orig));
+ 	if (!page_cache_add_speculative(head, refs)) {
+ 		*nr -= refs;
+ 		return 0;
+@@ -1176,8 +1176,7 @@ static int gup_huge_pud(pud_t orig, pud_
+ 		return 0;
  
- static SIMPLE_DEV_PM_OPS(exar_pci_pm, exar_suspend, exar_resume);
+ 	refs = 0;
+-	head = pud_page(orig);
+-	page = head + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
++	page = pud_page(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
+ 	tail = page;
+ 	do {
+ 		pages[*nr] = page;
+@@ -1186,6 +1185,7 @@ static int gup_huge_pud(pud_t orig, pud_
+ 		refs++;
+ 	} while (addr += PAGE_SIZE, addr != end);
  
-+static const struct exar8250_board acces_com_2x = {
-+	.num_ports	= 2,
-+	.setup		= pci_xr17c154_setup,
-+};
-+
-+static const struct exar8250_board acces_com_4x = {
-+	.num_ports	= 4,
-+	.setup		= pci_xr17c154_setup,
-+};
-+
-+static const struct exar8250_board acces_com_8x = {
-+	.num_ports	= 8,
-+	.setup		= pci_xr17c154_setup,
-+};
-+
-+
- static const struct exar8250_board pbn_fastcom335_2 = {
- 	.num_ports	= 2,
- 	.setup		= pci_fastcom335_setup,
-@@ -745,6 +769,15 @@ static const struct exar8250_board pbn_e
- 	}
++	head = compound_head(pud_page(orig));
+ 	if (!page_cache_add_speculative(head, refs)) {
+ 		*nr -= refs;
+ 		return 0;
+@@ -1218,8 +1218,7 @@ static int gup_huge_pgd(pgd_t orig, pgd_
+ 		return 0;
  
- static const struct pci_device_id exar_pci_tbl[] = {
-+	EXAR_DEVICE(ACCESSIO, ACCES_COM_2S, acces_com_2x),
-+	EXAR_DEVICE(ACCESSIO, ACCES_COM_4S, acces_com_4x),
-+	EXAR_DEVICE(ACCESSIO, ACCES_COM_8S, acces_com_8x),
-+	EXAR_DEVICE(ACCESSIO, ACCES_COM232_8, acces_com_8x),
-+	EXAR_DEVICE(ACCESSIO, ACCES_COM_2SM, acces_com_2x),
-+	EXAR_DEVICE(ACCESSIO, ACCES_COM_4SM, acces_com_4x),
-+	EXAR_DEVICE(ACCESSIO, ACCES_COM_8SM, acces_com_8x),
-+
-+
- 	CONNECT_DEVICE(XR17C152, UART_2_232, pbn_connect),
- 	CONNECT_DEVICE(XR17C154, UART_4_232, pbn_connect),
- 	CONNECT_DEVICE(XR17C158, UART_8_232, pbn_connect),
+ 	refs = 0;
+-	head = pgd_page(orig);
+-	page = head + ((addr & ~PGDIR_MASK) >> PAGE_SHIFT);
++	page = pgd_page(orig) + ((addr & ~PGDIR_MASK) >> PAGE_SHIFT);
+ 	tail = page;
+ 	do {
+ 		pages[*nr] = page;
+@@ -1228,6 +1227,7 @@ static int gup_huge_pgd(pgd_t orig, pgd_
+ 		refs++;
+ 	} while (addr += PAGE_SIZE, addr != end);
+ 
++	head = compound_head(pgd_page(orig));
+ 	if (!page_cache_add_speculative(head, refs)) {
+ 		*nr -= refs;
+ 		return 0;
 
 
