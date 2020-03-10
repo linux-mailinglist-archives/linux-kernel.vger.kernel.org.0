@@ -2,220 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC375180A3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:21:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C2FD180A42
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:22:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbgCJVVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 17:21:08 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:42122 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726268AbgCJVVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 17:21:08 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.92)
-        (envelope-from <logang@deltatee.com>)
-        id 1jBmJB-0001Qz-EH; Tue, 10 Mar 2020 15:21:02 -0600
-To:     Sanjay R Mehta <sanju.mehta@amd.com>, jdmason@kudzu.us,
-        dave.jiang@intel.com, allenbh@gmail.com, arindam.nath@amd.com,
-        Shyam-sundar.S-k@amd.com
-Cc:     linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org
-References: <1583873694-19151-1-git-send-email-sanju.mehta@amd.com>
- <1583873694-19151-2-git-send-email-sanju.mehta@amd.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <e700a5f6-1929-0d65-b204-c5bfde58f5f7@deltatee.com>
-Date:   Tue, 10 Mar 2020 15:21:00 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727642AbgCJVWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 17:22:05 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:58083 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727504AbgCJVWC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 17:22:02 -0400
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jBmJc-0000N4-9H; Tue, 10 Mar 2020 21:21:28 +0000
+Date:   Tue, 10 Mar 2020 22:21:24 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v2 2/5] exec: Factor unshare_sighand out of de_thread and
+ call it separately
+Message-ID: <20200310212124.l6rajcjkitt65fxr@wittgenstein>
+References: <87v9nlii0b.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74xi4kz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87k13u5y26.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
-In-Reply-To: <1583873694-19151-2-git-send-email-sanju.mehta@amd.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com, Shyam-sundar.S-k@amd.com, arindam.nath@amd.com, allenbh@gmail.com, dave.jiang@intel.com, jdmason@kudzu.us, sanju.mehta@amd.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: Re: [PATCH v2 1/5] ntb_perf: refactor code for CPU and DMA transfers
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Disposition: inline
+In-Reply-To: <87k13u5y26.fsf_-_@x220.int.ebiederm.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2020-03-10 2:54 p.m., Sanjay R Mehta wrote:
-> From: Arindam Nath <arindam.nath@amd.com>
+On Sun, Mar 08, 2020 at 04:36:17PM -0500, Eric W. Biederman wrote:
 > 
-> This patch creates separate function to handle CPU
-> and DMA transfers. Since CPU transfers use memcopy
-> and DMA transfers use dmaengine APIs, these changes
-> not only allow logical separation between the two,
-> but also allows someone to clearly see the difference
-> in the way the two are handled.
+> This makes the code clearer and makes it easier to implement a mutex
+> that is not taken over any locations that may block indefinitely waiting
+> for userspace.
 > 
-> In the case of DMA, we DMA from system memory to the
-> memory window(MW) of NTB, which is a MMIO region, we
-> should not use dma_map_page() for mapping MW. The
-> correct way to map a MMIO region is to use
-> dma_map_resource(), so the code is modified
-> accordingly.
-> 
-> dma_map_resource() expects physical address of the
-> region to be mapped for DMA, we add a new field,
-> outbuf_phys_addr, to struct perf_peer, and also
-> another field, outbuf_dma_addr, to store the
-> corresponding mapped address returned by the API.
-> 
-> Since the MW is contiguous, rather than mapping
-> chunk-by-chunk, we map the entire MW before the
-> actual DMA transfer happens. Then for each chunk,
-> we simply pass offset into the mapped region and
-> DMA to that region. Then later, we unmap the MW
-> during perf_clear_test().
-> 
-> The above means that now we need to have different
-> function parameters to deal with in the case of
-> CPU and DMA transfers. In the case of CPU transfers,
-> we simply need the CPU virtual addresses for memcopy,
-> but in the case of DMA, we need dma_addr_t, which
-> will be different from CPU physical address depending
-> on whether IOMMU is enabled or not. Thus we now
-> have two separate functions, perf_copy_chunk_cpu(),
-> and perf_copy_chunk_dma() to take care of above
-> consideration.
-> 
-> Signed-off-by: Arindam Nath <arindam.nath@amd.com>
-> Signed-off-by: Sanjay R Mehta <sanju.mehta@amd.com>
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 > ---
->  drivers/ntb/test/ntb_perf.c | 141 +++++++++++++++++++++++++++++++++-----------
->  1 file changed, 105 insertions(+), 36 deletions(-)
+>  fs/exec.c | 39 ++++++++++++++++++++++++++-------------
+>  1 file changed, 26 insertions(+), 13 deletions(-)
 > 
-> diff --git a/drivers/ntb/test/ntb_perf.c b/drivers/ntb/test/ntb_perf.c
-> index e9b7c2d..6d16628 100644
-> --- a/drivers/ntb/test/ntb_perf.c
-> +++ b/drivers/ntb/test/ntb_perf.c
-> @@ -149,6 +149,8 @@ struct perf_peer {
->  	u64 outbuf_xlat;
->  	resource_size_t outbuf_size;
->  	void __iomem *outbuf;
-> +	phys_addr_t outbuf_phys_addr;
-> +	dma_addr_t outbuf_dma_addr;
+> diff --git a/fs/exec.c b/fs/exec.c
+> index c3f34791f2f0..ff74b9a74d34 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1194,6 +1194,23 @@ static int de_thread(struct task_struct *tsk)
+>  	flush_itimer_signals();
+>  #endif
 >  
->  	/* Inbound MW params */
->  	dma_addr_t inbuf_xlat;
-> @@ -775,26 +777,24 @@ static void perf_dma_copy_callback(void *data)
->  	wake_up(&pthr->dma_wait);
->  }
->  
-> -static int perf_copy_chunk(struct perf_thread *pthr,
-> -			   void __iomem *dst, void *src, size_t len)
-> +static int perf_copy_chunk_cpu(struct perf_thread *pthr,
-> +			       void __iomem *dst, void *src, size_t len)
-> +{
-> +	memcpy_toio(dst, src, len);
+> +	BUG_ON(!thread_group_leader(tsk));
+> +	return 0;
 > +
-> +	return likely(atomic_read(&pthr->perf->tsync) > 0) ? 0 : -EINTR;
+> +killed:
+> +	/* protects against exit_notify() and __exit_signal() */
+> +	read_lock(&tasklist_lock);
+> +	sig->group_exit_task = NULL;
+> +	sig->notify_count = 0;
+> +	read_unlock(&tasklist_lock);
+> +	return -EAGAIN;
 > +}
 > +
-> +static int perf_copy_chunk_dma(struct perf_thread *pthr,
-> +			       dma_addr_t dst, void *src, size_t len)
->  {
->  	struct dma_async_tx_descriptor *tx;
->  	struct dmaengine_unmap_data *unmap;
->  	struct device *dma_dev;
->  	int try = 0, ret = 0;
->  
-> -	if (!use_dma) {
-> -		memcpy_toio(dst, src, len);
-> -		goto ret_check_tsync;
-> -	}
-> -
->  	dma_dev = pthr->dma_chan->device->dev;
-> -
-> -	if (!is_dma_copy_aligned(pthr->dma_chan->device, offset_in_page(src),
-> -				 offset_in_page(dst), len))
-> -		return -EIO;
-
-Can you please split this patch into multiple patches? It is hard to
-review and part of the reason this code is such a mess is because we
-merged large patches with a bunch of different changes rolled into one,
-many of which didn't get sufficient reviewer attention.
-
-Patches that refactor things shouldn't be making functional changes
-(like adding dma_map_resources()).
-
-
-> -static int perf_run_test(struct perf_thread *pthr)
-> +static int perf_run_test_cpu(struct perf_thread *pthr)
->  {
->  	struct perf_peer *peer = pthr->perf->test_peer;
->  	struct perf_ctx *perf = pthr->perf;
-> @@ -914,7 +903,7 @@ static int perf_run_test(struct perf_thread *pthr)
->  
->  	/* Copied field is cleared on test launch stage */
->  	while (pthr->copied < total_size) {
-> -		ret = perf_copy_chunk(pthr, flt_dst, flt_src, chunk_size);
-> +		ret = perf_copy_chunk_cpu(pthr, flt_dst, flt_src, chunk_size);
->  		if (ret) {
->  			dev_err(&perf->ntb->dev, "%d: Got error %d on test\n",
->  				pthr->tidx, ret);
-> @@ -937,6 +926,74 @@ static int perf_run_test(struct perf_thread *pthr)
->  	return 0;
->  }
->  
-> +static int perf_run_test_dma(struct perf_thread *pthr)
+> +
+> +static int unshare_sighand(struct task_struct *me)
 > +{
-> +	struct perf_peer *peer = pthr->perf->test_peer;
-> +	struct perf_ctx *perf = pthr->perf;
-> +	struct device *dma_dev;
-> +	dma_addr_t flt_dst, bnd_dst;
-> +	u64 total_size, chunk_size;
-> +	void *flt_src;
-> +	int ret = 0;
+> +	struct sighand_struct *oldsighand = me->sighand;
 > +
-> +	total_size = 1ULL << total_order;
-> +	chunk_size = 1ULL << chunk_order;
-> +	chunk_size = min_t(u64, peer->outbuf_size, chunk_size);
-> +
-> +	/* Map MW for DMA */
-> +	dma_dev = pthr->dma_chan->device->dev;
-> +	peer->outbuf_dma_addr = dma_map_resource(dma_dev,
-> +						 peer->outbuf_phys_addr,
-> +						 peer->outbuf_size,
-> +						 DMA_FROM_DEVICE, 0);
-> +	if (dma_mapping_error(dma_dev, peer->outbuf_dma_addr)) {
-> +		dma_unmap_resource(dma_dev, peer->outbuf_dma_addr,
-> +				   peer->outbuf_size, DMA_FROM_DEVICE, 0);
-> +		return -EIO;
-> +	}
-> +
-> +	flt_src = pthr->src;
-> +	bnd_dst = peer->outbuf_dma_addr + peer->outbuf_size;
-> +	flt_dst = peer->outbuf_dma_addr;
-> +
-> +	pthr->duration = ktime_get();
-> +	/* Copied field is cleared on test launch stage */
-> +	while (pthr->copied < total_size) {
-> +		ret = perf_copy_chunk_dma(pthr, flt_dst, flt_src, chunk_size);
-> +		if (ret) {
-> +			dev_err(&perf->ntb->dev, "%d: Got error %d on test\n",
-> +				pthr->tidx, ret);
-> +			return ret;
-> +		}
-> +
+>  	if (refcount_read(&oldsighand->count) != 1) {
+>  		struct sighand_struct *newsighand;
+>  		/*
+> @@ -1210,23 +1227,13 @@ static int de_thread(struct task_struct *tsk)
+>  
+>  		write_lock_irq(&tasklist_lock);
+>  		spin_lock(&oldsighand->siglock);
+> -		rcu_assign_pointer(tsk->sighand, newsighand);
+> +		rcu_assign_pointer(me->sighand, newsighand);
+>  		spin_unlock(&oldsighand->siglock);
+>  		write_unlock_irq(&tasklist_lock);
+>  
+>  		__cleanup_sighand(oldsighand);
+>  	}
 
-Honestly, this doesn't seem like a good approach to me. Duplicating the
-majority of the perf_run_test() function is making the code more
-complicated and harder to maintain.
+This is fine for now but we share an aweful lot of code with
+copy_sighand(). We should earmark this to look into consolidating the
+core operations into a common helper called from both copy_sighand() and
+unshare_sighand() maybe even dumbing it down to one helper. But not
+needed for now.
 
-You should be able to just selectively call dma_map_resources() in
-perf_run_test(), or even in perf_setup_peer_mw() without needing to add
-so much extra duplicate code.
-
-Logan
+Otherwise:
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
