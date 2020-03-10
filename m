@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 971E817F99F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:58:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7743917F7A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:41:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729679AbgCJM6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:58:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38664 "EHLO mail.kernel.org"
+        id S1726749AbgCJMlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:41:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727721AbgCJM6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:58:33 -0400
+        id S1726702AbgCJMlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:41:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74BA020674;
-        Tue, 10 Mar 2020 12:58:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62E12246A1;
+        Tue, 10 Mar 2020 12:41:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845112;
-        bh=YM21NR3WIcF/teKqF/0ZAFPk4jioggWL5nRp/7qQI7o=;
+        s=default; t=1583844067;
+        bh=yF4Ztizqe6OAY18YyV2d1eE+3ZkYoQOuvreLCSvwfoU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hcBlQPHnN/YLEKUJmUFmvP5GeDSDw5RXVXtMcPa9TYp3AwWsxMtLKtpIUMDIh3VrQ
-         HZLZTq+XZDv1muo2Py48Cds9PpOnZLeIHVc6vc+zoZu+zqbDaZVZJm5OalblWWQ/QN
-         sj73UmQArqRm7xD9oBe4DtcG7HxwLiL7CvEilYTc=
+        b=ZcA0SyximazwgIlRN0jKVSHjgfmq8+RrHYZOsnVzsLM2R6XwM/kIVVTT05VHMHmhU
+         IuFm73ipSqIliCR1cTuU8GzCOopttSK+OOyPBfLErR4vEDHJgwlmdBFYCzKeDu8kPE
+         QIjPJB7KACnWaxv6XwW0hAZX4nkbwbbUgR+jBPUU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
-        Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.5 065/189] ALSA: hda/realtek - Enable the headset of ASUS B9450FA with ALC294
+        stable@vger.kernel.org,
+        Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 09/72] cfg80211: add missing policy for NL80211_ATTR_STATUS_CODE
 Date:   Tue, 10 Mar 2020 13:38:22 +0100
-Message-Id: <20200310123646.184078975@linuxfoundation.org>
+Message-Id: <20200310123603.945548066@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <20200310123601.053680753@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian-Hong Pan <jian-hong@endlessm.com>
+From: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
 
-commit 8b33a134a9cc2a501f8fc731d91caef39237d495 upstream.
+[ Upstream commit ea75080110a4c1fa011b0a73cb8f42227143ee3e ]
 
-A headset on the laptop like ASUS B9450FA does not work, until quirk
-ALC294_FIXUP_ASUS_HPE is applied.
+The nl80211_policy is missing for NL80211_ATTR_STATUS_CODE attribute.
+As a result, for strictly validated commands, it's assumed to not be
+supported.
 
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200225072920.109199-1-jian-hong@endlessm.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
+Link: https://lore.kernel.org/r/20200213131608.10541-2-sergey.matyukevich.os@quantenna.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_realtek.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ net/wireless/nl80211.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -5922,6 +5922,7 @@ enum {
- 	ALC294_FIXUP_SPK2_TO_DAC1,
- 	ALC294_FIXUP_ASUS_DUAL_SPK,
- 	ALC285_FIXUP_THINKPAD_HEADSET_JACK,
-+	ALC294_FIXUP_ASUS_HPE,
- };
- 
- static const struct hda_fixup alc269_fixups[] = {
-@@ -7049,6 +7050,17 @@ static const struct hda_fixup alc269_fix
- 		.chained = true,
- 		.chain_id = ALC285_FIXUP_SPEAKER2_TO_DAC1
- 	},
-+	[ALC294_FIXUP_ASUS_HPE] = {
-+		.type = HDA_FIXUP_VERBS,
-+		.v.verbs = (const struct hda_verb[]) {
-+			/* Set EAPD high */
-+			{ 0x20, AC_VERB_SET_COEF_INDEX, 0x0f },
-+			{ 0x20, AC_VERB_SET_PROC_COEF, 0x7774 },
-+			{ }
-+		},
-+		.chained = true,
-+		.chain_id = ALC294_FIXUP_ASUS_HEADSET_MIC
-+	},
- };
- 
- static const struct snd_pci_quirk alc269_fixup_tbl[] = {
-@@ -7214,6 +7226,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x1043, 0x16e3, "ASUS UX50", ALC269_FIXUP_STEREO_DMIC),
- 	SND_PCI_QUIRK(0x1043, 0x17d1, "ASUS UX431FL", ALC294_FIXUP_ASUS_DUAL_SPK),
- 	SND_PCI_QUIRK(0x1043, 0x18b1, "Asus MJ401TA", ALC256_FIXUP_ASUS_HEADSET_MIC),
-+	SND_PCI_QUIRK(0x1043, 0x19ce, "ASUS B9450FA", ALC294_FIXUP_ASUS_HPE),
- 	SND_PCI_QUIRK(0x1043, 0x1a13, "Asus G73Jw", ALC269_FIXUP_ASUS_G73JW),
- 	SND_PCI_QUIRK(0x1043, 0x1a30, "ASUS X705UD", ALC256_FIXUP_ASUS_MIC),
- 	SND_PCI_QUIRK(0x1043, 0x1b13, "Asus U41SV", ALC269_FIXUP_INV_DMIC),
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index fd0bf278067ef..4b30e91106d07 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -330,6 +330,7 @@ static const struct nla_policy nl80211_policy[NUM_NL80211_ATTR] = {
+ 	[NL80211_ATTR_CONTROL_PORT_ETHERTYPE] = { .type = NLA_U16 },
+ 	[NL80211_ATTR_CONTROL_PORT_NO_ENCRYPT] = { .type = NLA_FLAG },
+ 	[NL80211_ATTR_PRIVACY] = { .type = NLA_FLAG },
++	[NL80211_ATTR_STATUS_CODE] = { .type = NLA_U16 },
+ 	[NL80211_ATTR_CIPHER_SUITE_GROUP] = { .type = NLA_U32 },
+ 	[NL80211_ATTR_WPA_VERSIONS] = { .type = NLA_U32 },
+ 	[NL80211_ATTR_PID] = { .type = NLA_U32 },
+-- 
+2.20.1
+
 
 
