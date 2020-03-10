@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F5E817F7E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:43:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2666A17F810
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:44:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbgCJMnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:43:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43142 "EHLO mail.kernel.org"
+        id S1727828AbgCJMot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:44:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727455AbgCJMm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:42:56 -0400
+        id S1727816AbgCJMor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:44:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53CCA24686;
-        Tue, 10 Mar 2020 12:42:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B09F124691;
+        Tue, 10 Mar 2020 12:44:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844175;
-        bh=Yl1679fxqA9LwZ6IpB84+cAsrC1wEP/CXlBCoCxUi7A=;
+        s=default; t=1583844287;
+        bh=KHti8o2FYwSj12hzyxan72hJVGTpJLY+UTule31FX9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u2hoCW4nh2jbtFsvqQJkTkIMqGv6gzMzIKKnN65Yxe7VwOG3FOPm8Yz/+8vS9bWY8
-         VnJTUOukxvughqfySR+PTwY6aNuQaseA+27SUr+iFMd1hKVJcug01QW+HuWe265mg6
-         94Qpx3S149tmrp1HotNlwUh/zwtII9xwsIKFVJC0=
+        b=W3R/XDH3aEqKDOgVvYYyCEYlUxWjicAq+AoJkl+KZgqzSIvAROpc3fvMyMduDi5q3
+         g7mtlUz9pP8lXS8XdN/pWt6/1mh3eZhyccNArgTMGdysgyxzrywAxCwTqvv4AzOiO9
+         78ongb7W0HD6Kjo5Qiy/aFym0WbTsWjVAhVKofuk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Korsnes <jkorsnes@cisco.com>,
-        Armando Visconti <armando.visconti@st.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.4 21/72] HID: core: fix off-by-one memset in hid_report_raw_event()
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 26/88] nfc: pn544: Fix occasional HW initialization failure
 Date:   Tue, 10 Mar 2020 13:38:34 +0100
-Message-Id: <20200310123606.886657619@linuxfoundation.org>
+Message-Id: <20200310123612.246938207@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
-References: <20200310123601.053680753@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Korsnes <jkorsnes@cisco.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-commit 5ebdffd25098898aff1249ae2f7dbfddd76d8f8f upstream.
+[ Upstream commit c3331d2fe3fd4d5e321f2467d01f72de7edfb5d0 ]
 
-In case a report is greater than HID_MAX_BUFFER_SIZE, it is truncated,
-but the report-number byte is not correctly handled. This results in a
-off-by-one in the following memset, causing a kernel Oops and ensuing
-system crash.
+The PN544 driver checks the "enable" polarity during of driver's probe and
+it's doing that by turning ON and OFF NFC with different polarities until
+enabling succeeds. It takes some time for the hardware to power-down, and
+thus, to deassert the IRQ that is raised by turning ON the hardware.
+Since the delay after last power-down of the polarity-checking process is
+missed in the code, the interrupt may trigger immediately after installing
+the IRQ handler (right after the checking is done), which results in IRQ
+handler trying to touch the disabled HW and ends with marking NFC as
+'DEAD' during of the driver's probe:
 
-Note: With commit 8ec321e96e05 ("HID: Fix slab-out-of-bounds read in
-hid_field_extract") I no longer hit the kernel Oops as we instead fail
-"controlled" at probe if there is a report too long in the HID
-report-descriptor. hid_report_raw_event() is an exported symbol, so
-presumabely we cannot always rely on this being the case.
+  pn544_hci_i2c 1-002a: NFC: nfc_en polarity : active high
+  pn544_hci_i2c 1-002a: NFC: invalid len byte
+  shdlc: llc_shdlc_recv_frame: NULL Frame -> link is dead
 
-Fixes: 966922f26c7f ("HID: fix a crash in hid_report_raw_event()
-                     function.")
-Signed-off-by: Johan Korsnes <jkorsnes@cisco.com>
-Cc: Armando Visconti <armando.visconti@st.com>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+This patch fixes the occasional NFC initialization failure on Nexus 7
+device.
+
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/hid/hid-core.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/nfc/pn544/i2c.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -1508,7 +1508,9 @@ int hid_report_raw_event(struct hid_devi
+--- a/drivers/nfc/pn544/i2c.c
++++ b/drivers/nfc/pn544/i2c.c
+@@ -240,6 +240,7 @@ static void pn544_hci_i2c_platform_init(
  
- 	rsize = ((report->size - 1) >> 3) + 1;
+ out:
+ 	gpio_set_value_cansleep(phy->gpio_en, !phy->en_polarity);
++	usleep_range(10000, 15000);
+ }
  
--	if (rsize > HID_MAX_BUFFER_SIZE)
-+	if (report_enum->numbered && rsize >= HID_MAX_BUFFER_SIZE)
-+		rsize = HID_MAX_BUFFER_SIZE - 1;
-+	else if (rsize > HID_MAX_BUFFER_SIZE)
- 		rsize = HID_MAX_BUFFER_SIZE;
- 
- 	if (csize < rsize) {
+ static void pn544_hci_i2c_enable_mode(struct pn544_i2c_phy *phy, int run_mode)
 
 
