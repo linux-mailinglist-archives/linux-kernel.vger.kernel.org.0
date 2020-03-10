@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B23C17F893
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:49:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B352817F961
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:56:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbgCJMtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:49:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53288 "EHLO mail.kernel.org"
+        id S1727648AbgCJM4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:56:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728117AbgCJMs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:48:59 -0400
+        id S1729635AbgCJM4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:56:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4BD62468E;
-        Tue, 10 Mar 2020 12:48:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C93A2253D;
+        Tue, 10 Mar 2020 12:56:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844538;
-        bh=kTAVCmjkgt4yY7w8vHGxKTKF51LOERhUSmEEkoSYfzw=;
+        s=default; t=1583844969;
+        bh=XPgDphCG7o8+2DsQtg+A8h+zRYGpfJPdC/2PvdX86VQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jeDKGThuMaitai2e7XvdbKkYlLTm9c7kD7JzDYSf0hi/A8X7RWbmyqXHD6rIL+/Nw
-         c7u2AQcV1cEY7H1HYYAltRZQttmhpX6JL/wXaN5kR5oKHBUWIdPcvwcfiSVObJw41l
-         So1ujvtMWb44vl6q5ttkg2DGaTCC9lFc++WSB1yI=
+        b=QUmx71KR5RVcm3rn9vds3EIaX8Z3O5xm+8tC39gyImLSavPoyNJ8hBdd6MwoBZ/Wt
+         JwsMGffOf95op3CTqmraz1zkVo2zc4n4MSCaP2NxmoOp974INtm/oNCoelqdCt5Jnv
+         laPQ18bLyW6jPNWNcOMzQTD8GOpTksjADSpGH6Uo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        Mike Snitzer <snitzer@redhat.com>,
+        stable@vger.kernel.org, Michal Nazarewicz <mina86@mina86.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Felipe Balbi <balbi@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 007/168] dm thin metadata: fix lockdep complaint
-Date:   Tue, 10 Mar 2020 13:37:33 +0100
-Message-Id: <20200310123636.537069124@linuxfoundation.org>
+Subject: [PATCH 5.5 017/189] usb: gadget: ffs: ffs_aio_cancel(): Save/restore IRQ flags
+Date:   Tue, 10 Mar 2020 13:37:34 +0100
+Message-Id: <20200310123641.244040601@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +46,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-[ Upstream commit 3918e0667bbac99400b44fa5aef3f8be2eeada4a ]
+[ Upstream commit 43d565727a3a6fd24e37c7c2116475106af71806 ]
 
-[ 3934.173244] ======================================================
-[ 3934.179572] WARNING: possible circular locking dependency detected
-[ 3934.185884] 5.4.21-xfstests #1 Not tainted
-[ 3934.190151] ------------------------------------------------------
-[ 3934.196673] dmsetup/8897 is trying to acquire lock:
-[ 3934.201688] ffffffffbce82b18 (shrinker_rwsem){++++}, at: unregister_shrinker+0x22/0x80
-[ 3934.210268]
-               but task is already holding lock:
-[ 3934.216489] ffff92a10cc5e1d0 (&pmd->root_lock){++++}, at: dm_pool_metadata_close+0xba/0x120
-[ 3934.225083]
-               which lock already depends on the new lock.
+ffs_aio_cancel() can be called from both interrupt and thread context. Make
+sure that the current IRQ state is saved and restored by using
+spin_{un,}lock_irq{save,restore}().
 
-[ 3934.564165] Chain exists of:
-                 shrinker_rwsem --> &journal->j_checkpoint_mutex --> &pmd->root_lock
+Otherwise undefined behavior might occur.
 
-For a more detailed lockdep report, please see:
-
-	https://lore.kernel.org/r/20200220234519.GA620489@mit.edu
-
-We shouldn't need to hold the lock while are just tearing down and
-freeing the whole metadata pool structure.
-
-Fixes: 44d8ebf436399a4 ("dm thin metadata: use pool locking at end of dm_pool_metadata_close")
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Acked-by: Michal Nazarewicz <mina86@mina86.com>
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-thin-metadata.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/function/f_fs.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/dm-thin-metadata.c b/drivers/md/dm-thin-metadata.c
-index 8bb723f1a569a..4cd8868f80040 100644
---- a/drivers/md/dm-thin-metadata.c
-+++ b/drivers/md/dm-thin-metadata.c
-@@ -960,9 +960,9 @@ int dm_pool_metadata_close(struct dm_pool_metadata *pmd)
- 			DMWARN("%s: __commit_transaction() failed, error = %d",
- 			       __func__, r);
- 	}
-+	pmd_write_unlock(pmd);
- 	if (!pmd->fail_io)
- 		__destroy_persistent_data_objects(pmd);
--	pmd_write_unlock(pmd);
+diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
+index 6f8b67e617716..bdac92d3a8d0c 100644
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -1162,18 +1162,19 @@ static int ffs_aio_cancel(struct kiocb *kiocb)
+ {
+ 	struct ffs_io_data *io_data = kiocb->private;
+ 	struct ffs_epfile *epfile = kiocb->ki_filp->private_data;
++	unsigned long flags;
+ 	int value;
  
- 	kfree(pmd);
- 	return 0;
+ 	ENTER();
+ 
+-	spin_lock_irq(&epfile->ffs->eps_lock);
++	spin_lock_irqsave(&epfile->ffs->eps_lock, flags);
+ 
+ 	if (likely(io_data && io_data->ep && io_data->req))
+ 		value = usb_ep_dequeue(io_data->ep, io_data->req);
+ 	else
+ 		value = -EINVAL;
+ 
+-	spin_unlock_irq(&epfile->ffs->eps_lock);
++	spin_unlock_irqrestore(&epfile->ffs->eps_lock, flags);
+ 
+ 	return value;
+ }
 -- 
 2.20.1
 
