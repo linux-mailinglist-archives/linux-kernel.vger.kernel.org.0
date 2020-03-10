@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F6FD17F85A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50CEA17F7B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:41:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbgCJMrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:47:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50872 "EHLO mail.kernel.org"
+        id S1726956AbgCJMl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:41:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728130AbgCJMrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:47:12 -0400
+        id S1726837AbgCJMl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:41:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5244B2468D;
-        Tue, 10 Mar 2020 12:47:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B2D624698;
+        Tue, 10 Mar 2020 12:41:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844431;
-        bh=FENz68I0RaPEhZkP8bdUxUd0mUyE1lN/0TK31Bdtg44=;
+        s=default; t=1583844086;
+        bh=uOxiZGB6cB8mzQhBTuIRU4Z3aQ39w41B7Hx6Zi24a34=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ajgFQAhpzX1k96isUBo6VvugodOhCYB8xexFkDRtKe0grew5/KISNusnOUfuBnt0M
-         kkmKtUsQGOirI8l01QH5TIPMQXi/e3QGIZhHqt6C4anIWD8NrWvo3kf9z8C9s5oMWg
-         kChDTJY5t4NboxKPC/sZG0MZ3ei/UlvGFF5o88PQ=
+        b=UWHvDJYZzQk/ShEHfdMrqfAgzTWQR/WjcNVZghvQXM2g72dac2YUc35IzTLDQiEwm
+         cVkAM9Jk3p8XaQDSFQ3YUupipzdzqWl5Vbclxp4XOspI/j8xO25N5VuHQ26daDSOEd
+         aUN8HgtRNe58TEMfkvqjBYPgUACteQ4vSlvvdsXA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.9 31/88] ACPI: watchdog: Fix gas->access_width usage
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.4 26/72] ecryptfs: Fix up bad backport of fe2e082f5da5b4a0a92ae32978f81507ef37ec66
 Date:   Tue, 10 Mar 2020 13:38:39 +0100
-Message-Id: <20200310123613.535568269@linuxfoundation.org>
+Message-Id: <20200310123608.241254542@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <20200310123601.053680753@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +43,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 2ba33a4e9e22ac4dda928d3e9b5978a3a2ded4e0 upstream.
+When doing the 4.9 merge into certain Android trees, I noticed a warning
+from Android's deprecated GCC 4.9.4, which causes a build failure in
+those trees due to basically -Werror:
 
-ACPI Generic Address Structure (GAS) access_width field is not in bytes
-as the driver seems to expect in few places so fix this by using the
-newly introduced macro ACPI_ACCESS_BYTE_WIDTH().
+fs/ecryptfs/keystore.c: In function 'ecryptfs_parse_packet_set':
+fs/ecryptfs/keystore.c:1357:2: warning: 'auth_tok_list_item' may be used
+uninitialized in this function [-Wmaybe-uninitialized]
+  memset(auth_tok_list_item, 0,
+  ^
+fs/ecryptfs/keystore.c:1260:38: note: 'auth_tok_list_item' was declared
+here
+  struct ecryptfs_auth_tok_list_item *auth_tok_list_item;
+                                      ^
 
-Fixes: b1abf6fc4982 ("ACPI / watchdog: Fix off-by-one error at resource assignment")
-Fixes: 058dfc767008 ("ACPI / watchdog: Add support for WDAT hardware watchdog")
-Reported-by: Jean Delvare <jdelvare@suse.de>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Cc: 4.16+ <stable@vger.kernel.org> # 4.16+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+GCC 9.2.0 was not able to pick up this warning when I tested it.
+
+Turns out that Clang warns as well when -Wuninitialized is used, which
+is not the case in older stable trees at the moment (but shows value in
+potentially backporting the various warning fixes currently in upstream
+to get more coverage).
+
+fs/ecryptfs/keystore.c:1284:6: warning: variable 'auth_tok_list_item' is
+used uninitialized whenever 'if' condition is true
+[-Wsometimes-uninitialized]
+        if (data[(*packet_size)++] != ECRYPTFS_TAG_1_PACKET_TYPE) {
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+fs/ecryptfs/keystore.c:1360:4: note: uninitialized use occurs here
+                        auth_tok_list_item);
+                        ^~~~~~~~~~~~~~~~~~
+fs/ecryptfs/keystore.c:1284:2: note: remove the 'if' if its condition is
+always false
+        if (data[(*packet_size)++] != ECRYPTFS_TAG_1_PACKET_TYPE) {
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+fs/ecryptfs/keystore.c:1260:56: note: initialize the variable
+'auth_tok_list_item' to silence this warning
+        struct ecryptfs_auth_tok_list_item *auth_tok_list_item;
+                                                              ^
+                                                               = NULL
+1 warning generated.
+
+Somehow, commit fe2e082f5da5 ("ecryptfs: fix a memory leak bug in
+parse_tag_1_packet()") upstream was not applied in the correct if block
+in 4.4.215, 4.9.215, and 4.14.172, which will indeed lead to use of
+uninitialized memory. Fix it up by undoing the bad backport in those
+trees then reapplying the patch in the proper location.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/acpi/acpi_watchdog.c |    3 +--
- drivers/watchdog/wdat_wdt.c  |    2 +-
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ fs/ecryptfs/keystore.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/acpi/acpi_watchdog.c
-+++ b/drivers/acpi/acpi_watchdog.c
-@@ -129,12 +129,11 @@ void __init acpi_watchdog_init(void)
- 		gas = &entries[i].register_region;
- 
- 		res.start = gas->address;
-+		res.end = res.start + ACPI_ACCESS_BYTE_WIDTH(gas->access_width) - 1;
- 		if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
- 			res.flags = IORESOURCE_MEM;
--			res.end = res.start + ALIGN(gas->access_width, 4) - 1;
- 		} else if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
- 			res.flags = IORESOURCE_IO;
--			res.end = res.start + gas->access_width - 1;
- 		} else {
- 			pr_warn("Unsupported address space: %u\n",
- 				gas->space_id);
---- a/drivers/watchdog/wdat_wdt.c
-+++ b/drivers/watchdog/wdat_wdt.c
-@@ -392,7 +392,7 @@ static int wdat_wdt_probe(struct platfor
- 
- 		memset(&r, 0, sizeof(r));
- 		r.start = gas->address;
--		r.end = r.start + gas->access_width - 1;
-+		r.end = r.start + ACPI_ACCESS_BYTE_WIDTH(gas->access_width) - 1;
- 		if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
- 			r.flags = IORESOURCE_MEM;
- 		} else if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
+--- a/fs/ecryptfs/keystore.c
++++ b/fs/ecryptfs/keystore.c
+@@ -1280,7 +1280,7 @@ parse_tag_1_packet(struct ecryptfs_crypt
+ 		printk(KERN_ERR "Enter w/ first byte != 0x%.2x\n",
+ 		       ECRYPTFS_TAG_1_PACKET_TYPE);
+ 		rc = -EINVAL;
+-		goto out_free;
++		goto out;
+ 	}
+ 	/* Released: wipe_auth_tok_list called in ecryptfs_parse_packet_set or
+ 	 * at end of function upon failure */
+@@ -1330,7 +1330,7 @@ parse_tag_1_packet(struct ecryptfs_crypt
+ 		printk(KERN_WARNING "Tag 1 packet contains key larger "
+ 		       "than ECRYPTFS_MAX_ENCRYPTED_KEY_BYTES");
+ 		rc = -EINVAL;
+-		goto out;
++		goto out_free;
+ 	}
+ 	memcpy((*new_auth_tok)->session_key.encrypted_key,
+ 	       &data[(*packet_size)], (body_size - (ECRYPTFS_SIG_SIZE + 2)));
 
 
