@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DC3417FDB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:29:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B80C17FCC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:23:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729007AbgCJN3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:29:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56988 "EHLO mail.kernel.org"
+        id S1729827AbgCJNXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:23:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728951AbgCJMvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:51:42 -0400
+        id S1728110AbgCJM77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:59:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C5002468F;
-        Tue, 10 Mar 2020 12:51:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5DB024693;
+        Tue, 10 Mar 2020 12:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844701;
-        bh=y0UAmrvUmkyxgD5jPwVeJBdvYogkBm6vnteCiZOpYhg=;
+        s=default; t=1583845198;
+        bh=L/8bNz1ay2DsHD8v+WzxzOz1K+YBVsMdPN+L+Xvzoac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q1S+DPl2Hu4znXAy480/7N4B3/Hw4Ut79FHM5bDTxH9fRFh09/2DxUDvQv2z1IuOD
-         aO5tXicL2CNczKX17qixQ1DGnoYdOdWw88sJGzfMld7b6DVg4hoXJeAJtLvqXpJG/j
-         cnw+2vFr2WTTPccuZ6Flhvb5Zy4+qhzagM9PndI8=
+        b=S1WXAPjXEd28BBZsYLpxJ+zYvY6CxnqKOVcazZKJPQ/Rmxgrv86qpjlv8laznZyB+
+         3nEifQ67VdPQFh3p3gzWrYk8Twh/VipoXD20aMFVCZMMRsSF1Mral4ppvTmOLXMffP
+         yc30+9+mbU1WXNP7G6xE+KJ1a07UT8YYSwU+s/i8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        syzbot+26183d9746e62da329b8@syzkaller.appspotmail.com
-Subject: [PATCH 5.4 087/168] vt: selection, push sel_lock up
-Date:   Tue, 10 Mar 2020 13:38:53 +0100
-Message-Id: <20200310123644.079003475@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: [PATCH 5.5 097/189] media: vicodec: process all 4 components for RGB32 formats
+Date:   Tue, 10 Mar 2020 13:38:54 +0100
+Message-Id: <20200310123649.508730969@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+References: <20200310123639.608886314@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,145 +43,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit e8c75a30a23c6ba63f4ef6895cbf41fd42f21aa2 upstream.
+commit 49a56266f96f2c6608373464af8755b431ef1513 upstream.
 
-sel_lock cannot nest in the console lock. Thanks to syzkaller, the
-kernel states firmly:
+Only ARGB32-type pixelformat were assumed to have 4 components, which is
+wrong since RGB32-type pixelformats may have an alpha channel, so they
+should also assume 4 color components.
 
-> WARNING: possible circular locking dependency detected
-> 5.6.0-rc3-syzkaller #0 Not tainted
-> ------------------------------------------------------
-> syz-executor.4/20336 is trying to acquire lock:
-> ffff8880a2e952a0 (&tty->termios_rwsem){++++}, at: tty_unthrottle+0x22/0x100 drivers/tty/tty_ioctl.c:136
->
-> but task is already holding lock:
-> ffffffff89462e70 (sel_lock){+.+.}, at: paste_selection+0x118/0x470 drivers/tty/vt/selection.c:374
->
-> which lock already depends on the new lock.
->
-> the existing dependency chain (in reverse order) is:
->
-> -> #2 (sel_lock){+.+.}:
->        mutex_lock_nested+0x1b/0x30 kernel/locking/mutex.c:1118
->        set_selection_kernel+0x3b8/0x18a0 drivers/tty/vt/selection.c:217
->        set_selection_user+0x63/0x80 drivers/tty/vt/selection.c:181
->        tioclinux+0x103/0x530 drivers/tty/vt/vt.c:3050
->        vt_ioctl+0x3f1/0x3a30 drivers/tty/vt/vt_ioctl.c:364
+The XRGB32-type pixelformats really have only 3 color components, but this
+complicated matters since that creates strides that are sometimes width * 3
+and sometimes width * 4, and in fact this can result in buffer overflows.
 
-This is ioctl(TIOCL_SETSEL).
-Locks held on the path: console_lock -> sel_lock
+Keep things simple by just always processing all 4 color components.
 
-> -> #1 (console_lock){+.+.}:
->        console_lock+0x46/0x70 kernel/printk/printk.c:2289
->        con_flush_chars+0x50/0x650 drivers/tty/vt/vt.c:3223
->        n_tty_write+0xeae/0x1200 drivers/tty/n_tty.c:2350
->        do_tty_write drivers/tty/tty_io.c:962 [inline]
->        tty_write+0x5a1/0x950 drivers/tty/tty_io.c:1046
+In the future we might want to optimize this again for the XRGB32-type
+pixelformats, but for now keep it simple and robust.
 
-This is write().
-Locks held on the path: termios_rwsem -> console_lock
-
-> -> #0 (&tty->termios_rwsem){++++}:
->        down_write+0x57/0x140 kernel/locking/rwsem.c:1534
->        tty_unthrottle+0x22/0x100 drivers/tty/tty_ioctl.c:136
->        mkiss_receive_buf+0x12aa/0x1340 drivers/net/hamradio/mkiss.c:902
->        tty_ldisc_receive_buf+0x12f/0x170 drivers/tty/tty_buffer.c:465
->        paste_selection+0x346/0x470 drivers/tty/vt/selection.c:389
->        tioclinux+0x121/0x530 drivers/tty/vt/vt.c:3055
->        vt_ioctl+0x3f1/0x3a30 drivers/tty/vt/vt_ioctl.c:364
-
-This is ioctl(TIOCL_PASTESEL).
-Locks held on the path: sel_lock -> termios_rwsem
-
-> other info that might help us debug this:
->
-> Chain exists of:
->   &tty->termios_rwsem --> console_lock --> sel_lock
-
-Clearly. From the above, we have:
- console_lock -> sel_lock
- sel_lock -> termios_rwsem
- termios_rwsem -> console_lock
-
-Fix this by reversing the console_lock -> sel_lock dependency in
-ioctl(TIOCL_SETSEL). First, lock sel_lock, then console_lock.
-
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Reported-by: syzbot+26183d9746e62da329b8@syzkaller.appspotmail.com
-Fixes: 07e6124a1a46 ("vt: selection, close sel_buffer race")
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200228115406.5735-2-jslaby@suse.cz
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: <stable@vger.kernel.org>      # for v5.4 and up
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/selection.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/media/platform/vicodec/codec-v4l2-fwht.c |   34 ++++++-----------------
+ 1 file changed, 9 insertions(+), 25 deletions(-)
 
---- a/drivers/tty/vt/selection.c
-+++ b/drivers/tty/vt/selection.c
-@@ -214,7 +214,6 @@ static int __set_selection_kernel(struct
- 	if (ps > pe)	/* make sel_start <= sel_end */
- 		swap(ps, pe);
+--- a/drivers/media/platform/vicodec/codec-v4l2-fwht.c
++++ b/drivers/media/platform/vicodec/codec-v4l2-fwht.c
+@@ -27,17 +27,17 @@ static const struct v4l2_fwht_pixfmt_inf
+ 	{ V4L2_PIX_FMT_BGR24,   3, 3, 1, 3, 3, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
+ 	{ V4L2_PIX_FMT_RGB24,   3, 3, 1, 3, 3, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
+ 	{ V4L2_PIX_FMT_HSV24,   3, 3, 1, 3, 3, 1, 1, 3, 1, FWHT_FL_PIXENC_HSV},
+-	{ V4L2_PIX_FMT_BGR32,   4, 4, 1, 4, 4, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
+-	{ V4L2_PIX_FMT_XBGR32,  4, 4, 1, 4, 4, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
++	{ V4L2_PIX_FMT_BGR32,   4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
++	{ V4L2_PIX_FMT_XBGR32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+ 	{ V4L2_PIX_FMT_ABGR32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+-	{ V4L2_PIX_FMT_RGB32,   4, 4, 1, 4, 4, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
+-	{ V4L2_PIX_FMT_XRGB32,  4, 4, 1, 4, 4, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
++	{ V4L2_PIX_FMT_RGB32,   4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
++	{ V4L2_PIX_FMT_XRGB32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+ 	{ V4L2_PIX_FMT_ARGB32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+-	{ V4L2_PIX_FMT_BGRX32,  4, 4, 1, 4, 4, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
++	{ V4L2_PIX_FMT_BGRX32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+ 	{ V4L2_PIX_FMT_BGRA32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+-	{ V4L2_PIX_FMT_RGBX32,  4, 4, 1, 4, 4, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
++	{ V4L2_PIX_FMT_RGBX32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+ 	{ V4L2_PIX_FMT_RGBA32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+-	{ V4L2_PIX_FMT_HSV32,   4, 4, 1, 4, 4, 1, 1, 3, 1, FWHT_FL_PIXENC_HSV},
++	{ V4L2_PIX_FMT_HSV32,   4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_HSV},
+ 	{ V4L2_PIX_FMT_GREY,    1, 1, 1, 1, 0, 1, 1, 1, 1, FWHT_FL_PIXENC_RGB},
+ };
  
--	mutex_lock(&sel_lock);
- 	if (sel_cons != vc_cons[fg_console].d) {
- 		clear_selection();
- 		sel_cons = vc_cons[fg_console].d;
-@@ -260,10 +259,9 @@ static int __set_selection_kernel(struct
- 			break;
- 		case TIOCL_SELPOINTER:
- 			highlight_pointer(pe);
--			goto unlock;
-+			return 0;
- 		default:
--			ret = -EINVAL;
--			goto unlock;
-+			return -EINVAL;
- 	}
- 
- 	/* remove the pointer */
-@@ -285,7 +283,7 @@ static int __set_selection_kernel(struct
- 	else if (new_sel_start == sel_start)
- 	{
- 		if (new_sel_end == sel_end)	/* no action required */
--			goto unlock;
-+			return 0;
- 		else if (new_sel_end > sel_end)	/* extend to right */
- 			highlight(sel_end + 2, new_sel_end);
- 		else				/* contract from right */
-@@ -313,8 +311,7 @@ static int __set_selection_kernel(struct
- 	if (!bp) {
- 		printk(KERN_WARNING "selection: kmalloc() failed\n");
- 		clear_selection();
--		ret = -ENOMEM;
--		goto unlock;
-+		return -ENOMEM;
- 	}
- 	kfree(sel_buffer);
- 	sel_buffer = bp;
-@@ -339,8 +336,7 @@ static int __set_selection_kernel(struct
- 		}
- 	}
- 	sel_buffer_lth = bp - sel_buffer;
--unlock:
--	mutex_unlock(&sel_lock);
-+
- 	return ret;
- }
- 
-@@ -348,9 +344,11 @@ int set_selection_kernel(struct tiocl_se
- {
- 	int ret;
- 
-+	mutex_lock(&sel_lock);
- 	console_lock();
- 	ret = __set_selection_kernel(v, tty);
- 	console_unlock();
-+	mutex_unlock(&sel_lock);
- 
- 	return ret;
- }
+@@ -175,22 +175,14 @@ static int prepare_raw_frame(struct fwht
+ 	case V4L2_PIX_FMT_RGB32:
+ 	case V4L2_PIX_FMT_XRGB32:
+ 	case V4L2_PIX_FMT_HSV32:
+-		rf->cr = rf->luma + 1;
+-		rf->cb = rf->cr + 2;
+-		rf->luma += 2;
+-		break;
+-	case V4L2_PIX_FMT_BGR32:
+-	case V4L2_PIX_FMT_XBGR32:
+-		rf->cb = rf->luma;
+-		rf->cr = rf->cb + 2;
+-		rf->luma++;
+-		break;
+ 	case V4L2_PIX_FMT_ARGB32:
+ 		rf->alpha = rf->luma;
+ 		rf->cr = rf->luma + 1;
+ 		rf->cb = rf->cr + 2;
+ 		rf->luma += 2;
+ 		break;
++	case V4L2_PIX_FMT_BGR32:
++	case V4L2_PIX_FMT_XBGR32:
+ 	case V4L2_PIX_FMT_ABGR32:
+ 		rf->cb = rf->luma;
+ 		rf->cr = rf->cb + 2;
+@@ -198,10 +190,6 @@ static int prepare_raw_frame(struct fwht
+ 		rf->alpha = rf->cr + 1;
+ 		break;
+ 	case V4L2_PIX_FMT_BGRX32:
+-		rf->cb = rf->luma + 1;
+-		rf->cr = rf->cb + 2;
+-		rf->luma += 2;
+-		break;
+ 	case V4L2_PIX_FMT_BGRA32:
+ 		rf->alpha = rf->luma;
+ 		rf->cb = rf->luma + 1;
+@@ -209,10 +197,6 @@ static int prepare_raw_frame(struct fwht
+ 		rf->luma += 2;
+ 		break;
+ 	case V4L2_PIX_FMT_RGBX32:
+-		rf->cr = rf->luma;
+-		rf->cb = rf->cr + 2;
+-		rf->luma++;
+-		break;
+ 	case V4L2_PIX_FMT_RGBA32:
+ 		rf->alpha = rf->luma + 3;
+ 		rf->cr = rf->luma;
 
 
