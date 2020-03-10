@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ED0617F9C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:59:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18A6E17F7BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:42:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbgCJM7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:59:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40374 "EHLO mail.kernel.org"
+        id S1727217AbgCJMmA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:42:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727175AbgCJM7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:59:48 -0400
+        id S1727201AbgCJMl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:41:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23AC32467D;
-        Tue, 10 Mar 2020 12:59:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BF7024686;
+        Tue, 10 Mar 2020 12:41:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845187;
-        bh=MXln7nZqWGaCBLy6dtD8fUgYZiJwCNGm/S6MIDZKz0A=;
+        s=default; t=1583844118;
+        bh=mKajp1Fbx+JhuBoBL2JS9NsWyLifeaJJe/+eZpH9qIc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MB4yEg/jG2a36gCjYWb5SFr1TVEsdakOD5KRM7j2b9m3or+DPsTCl3z36B8NUK3X0
-         o2r+XtBqmNsJcxtbxvWZ73QiGVGhJ3KnPszNb5BOP3uPSZOgjH0/M/bvrS5zCfF8PY
-         sIRvxdLX+nDKN4gj9YaG26H2xFDXuRkWeW4Lj0kk=
+        b=Qt9SnenmxUxaBz+d+LhIRdKcC0mpa6Hn+kgqNWXGDmFqSUKHN1UkKLNf1SibvGokz
+         BB6zr46x6/feszgLfUQtF13xYuYU8NZOY6dN1GOa8r9cDx00dlMPGpFi+VE3U1fqIB
+         g9yUBSFMoVmuyXVitB0eN/KIo+MHqkJkFeCQOGUA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 5.5 093/189] vt: selection, push console lock down
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Ajay Kaher <akaher@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH 4.4 37/72] pipe: add pipe_buf_get() helper
 Date:   Tue, 10 Mar 2020 13:38:50 +0100
-Message-Id: <20200310123649.111221683@linuxfoundation.org>
+Message-Id: <20200310123610.519964582@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <20200310123601.053680753@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,81 +45,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 4b70dd57a15d2f4685ac6e38056bad93e81e982f upstream.
+commit 7bf2d1df80822ec056363627e2014990f068f7aa upstream.
 
-We need to nest the console lock in sel_lock, so we have to push it down
-a bit. Fortunately, the callers of set_selection_* just lock the console
-lock around the function call. So moving it down is easy.
-
-In the next patch, we switch the order.
-
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Fixes: 07e6124a1a46 ("vt: selection, close sel_buffer race")
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200228115406.5735-1-jslaby@suse.cz
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Ajay Kaher <akaher@vmware.com>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/staging/speakup/selection.c |    2 --
- drivers/tty/vt/selection.c          |   13 ++++++++++++-
- drivers/tty/vt/vt.c                 |    2 --
- 3 files changed, 12 insertions(+), 5 deletions(-)
+ fs/fuse/dev.c             |    2 +-
+ fs/splice.c               |    4 ++--
+ include/linux/pipe_fs_i.h |   11 +++++++++++
+ 3 files changed, 14 insertions(+), 3 deletions(-)
 
---- a/drivers/staging/speakup/selection.c
-+++ b/drivers/staging/speakup/selection.c
-@@ -51,9 +51,7 @@ static void __speakup_set_selection(stru
- 		goto unref;
- 	}
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -2052,7 +2052,7 @@ static ssize_t fuse_dev_splice_write(str
+ 			pipe->curbuf = (pipe->curbuf + 1) & (pipe->buffers - 1);
+ 			pipe->nrbufs--;
+ 		} else {
+-			ibuf->ops->get(pipe, ibuf);
++			pipe_buf_get(pipe, ibuf);
+ 			*obuf = *ibuf;
+ 			obuf->flags &= ~PIPE_BUF_FLAG_GIFT;
+ 			obuf->len = rem;
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1876,7 +1876,7 @@ retry:
+ 			 * Get a reference to this pipe buffer,
+ 			 * so we can copy the contents over.
+ 			 */
+-			ibuf->ops->get(ipipe, ibuf);
++			pipe_buf_get(ipipe, ibuf);
+ 			*obuf = *ibuf;
  
--	console_lock();
- 	set_selection_kernel(&sel, tty);
--	console_unlock();
+ 			/*
+@@ -1948,7 +1948,7 @@ static int link_pipe(struct pipe_inode_i
+ 		 * Get a reference to this pipe buffer,
+ 		 * so we can copy the contents over.
+ 		 */
+-		ibuf->ops->get(ipipe, ibuf);
++		pipe_buf_get(ipipe, ibuf);
  
- unref:
- 	tty_kref_put(tty);
---- a/drivers/tty/vt/selection.c
-+++ b/drivers/tty/vt/selection.c
-@@ -181,7 +181,7 @@ int set_selection_user(const struct tioc
- 	return set_selection_kernel(&v, tty);
- }
+ 		obuf = opipe->bufs + nbuf;
+ 		*obuf = *ibuf;
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -115,6 +115,17 @@ struct pipe_buf_operations {
+ 	void (*get)(struct pipe_inode_info *, struct pipe_buffer *);
+ };
  
--int set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
-+static int __set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
- {
- 	struct vc_data *vc = vc_cons[fg_console].d;
- 	int new_sel_start, new_sel_end, spc;
-@@ -343,6 +343,17 @@ unlock:
- 	mutex_unlock(&sel_lock);
- 	return ret;
- }
-+
-+int set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
++/**
++ * pipe_buf_get - get a reference to a pipe_buffer
++ * @pipe:	the pipe that the buffer belongs to
++ * @buf:	the buffer to get a reference to
++ */
++static inline void pipe_buf_get(struct pipe_inode_info *pipe,
++				struct pipe_buffer *buf)
 +{
-+	int ret;
-+
-+	console_lock();
-+	ret = __set_selection_kernel(v, tty);
-+	console_unlock();
-+
-+	return ret;
++	buf->ops->get(pipe, buf);
 +}
- EXPORT_SYMBOL_GPL(set_selection_kernel);
- 
- /* Insert the contents of the selection buffer into the
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -3046,10 +3046,8 @@ int tioclinux(struct tty_struct *tty, un
- 	switch (type)
- 	{
- 		case TIOCL_SETSEL:
--			console_lock();
- 			ret = set_selection_user((struct tiocl_selection
- 						 __user *)(p+1), tty);
--			console_unlock();
- 			break;
- 		case TIOCL_PASTESEL:
- 			ret = paste_selection(tty);
++
+ /* Differs from PIPE_BUF in that PIPE_SIZE is the length of the actual
+    memory allocation, whereas PIPE_BUF makes atomicity guarantees.  */
+ #define PIPE_SIZE		PAGE_SIZE
 
 
