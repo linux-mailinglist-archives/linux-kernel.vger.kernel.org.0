@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CBC317F8CF
+	by mail.lfdr.de (Postfix) with ESMTP id D6D7417F8D0
 	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:51:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728868AbgCJMvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:51:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56264 "EHLO mail.kernel.org"
+        id S1728881AbgCJMvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:51:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728337AbgCJMvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:51:14 -0400
+        id S1728337AbgCJMvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:51:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E8B52468E;
-        Tue, 10 Mar 2020 12:51:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36B0820674;
+        Tue, 10 Mar 2020 12:51:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844674;
-        bh=zHbdShaZV+XM7ds1MbyGEf0M0GeteJZlB32nh7R+jx8=;
+        s=default; t=1583844676;
+        bh=ynRe312WszRx85XR+tsK9DlAu8ik3gqbPyT1ZCXbYgY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=baE8aQMT1CoBH76vViC/X3G61ISE4xzMcFXBcvZ9Nrggmdcu6RSL3j1yyU5/8gjcZ
-         IimCXAQkdgrTVkVvL+7HkXUxdcKvSCRz2pTft/1QGc/mcWw9ocoafsJZlj/5N8IBf3
-         xY+P9PrWzEqzlsuaYmZ+QC+PiW+iBgiJZoHA60cc=
+        b=lQrointjOMSsN94UnlHp0RzFglPXtj0CjVFndflOtWPTVdfsCWQ23d0tkiTVFSY4X
+         Db+NJhyFtfGb8z2Ko4DppSFxAeR3OX9pG3wehWD30oFdLIVj3hkDa/hqIos1viJ7p5
+         NGAcAZEfFkNe7nmn2vrVyhayrgtZKIB9NJrbPMdo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+9d82b8de2992579da5d0@syzkaller.appspotmail.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.4 078/168] fat: fix uninit-memory access for partial initialized inode
-Date:   Tue, 10 Mar 2020 13:38:44 +0100
-Message-Id: <20200310123643.187715152@linuxfoundation.org>
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Omar Sandoval <osandov@fb.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.4 079/168] btrfs: fix RAID direct I/O reads with alternate csums
+Date:   Tue, 10 Mar 2020 13:38:45 +0100
+Message-Id: <20200310123643.301496512@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
 References: <20200310123635.322799692@linuxfoundation.org>
@@ -46,74 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+From: Omar Sandoval <osandov@fb.com>
 
-commit bc87302a093f0eab45cd4e250c2021299f712ec6 upstream.
+commit e7a04894c766daa4248cb736efee93550f2d5872 upstream.
 
-When get an error in the middle of reading an inode, some fields in the
-inode might be still not initialized.  And then the evict_inode path may
-access those fields via iput().
+btrfs_lookup_and_bind_dio_csum() does pointer arithmetic which assumes
+32-bit checksums. If using a larger checksum, this leads to spurious
+failures when a direct I/O read crosses a stripe. This is easy
+to reproduce:
 
-To fix, this makes sure that inode fields are initialized.
+  # mkfs.btrfs -f --checksum blake2 -d raid0 /dev/vdc /dev/vdd
+  ...
+  # mount /dev/vdc /mnt
+  # cd /mnt
+  # dd if=/dev/urandom of=foo bs=1M count=1 status=none
+  # dd if=foo of=/dev/null bs=1M iflag=direct status=none
+  dd: error reading 'foo': Input/output error
+  # dmesg | tail -1
+  [  135.821568] BTRFS warning (device vdc): csum failed root 5 ino 257 off 421888 ...
 
-Reported-by: syzbot+9d82b8de2992579da5d0@syzkaller.appspotmail.com
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/871rqnreqx.fsf@mail.parknet.co.jp
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fix it by using the actual checksum size.
+
+Fixes: 1e25a2e3ca0d ("btrfs: don't assume ordered sums to be 4 bytes")
+CC: stable@vger.kernel.org # 5.4+
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fat/inode.c |   19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+ fs/btrfs/inode.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/fat/inode.c
-+++ b/fs/fat/inode.c
-@@ -749,6 +749,13 @@ static struct inode *fat_alloc_inode(str
- 		return NULL;
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -8426,6 +8426,7 @@ static inline blk_status_t btrfs_lookup_
+ {
+ 	struct btrfs_io_bio *io_bio = btrfs_io_bio(bio);
+ 	struct btrfs_io_bio *orig_io_bio = btrfs_io_bio(dip->orig_bio);
++	u16 csum_size;
+ 	blk_status_t ret;
  
- 	init_rwsem(&ei->truncate_lock);
-+	/* Zeroing to allow iput() even if partial initialized inode. */
-+	ei->mmu_private = 0;
-+	ei->i_start = 0;
-+	ei->i_logstart = 0;
-+	ei->i_attrs = 0;
-+	ei->i_pos = 0;
-+
- 	return &ei->vfs_inode;
- }
+ 	/*
+@@ -8445,7 +8446,8 @@ static inline blk_status_t btrfs_lookup_
  
-@@ -1373,16 +1380,6 @@ out:
+ 	file_offset -= dip->logical_offset;
+ 	file_offset >>= inode->i_sb->s_blocksize_bits;
+-	io_bio->csum = (u8 *)(((u32 *)orig_io_bio->csum) + file_offset);
++	csum_size = btrfs_super_csum_size(btrfs_sb(inode->i_sb)->super_copy);
++	io_bio->csum = orig_io_bio->csum + csum_size * file_offset;
+ 
  	return 0;
  }
- 
--static void fat_dummy_inode_init(struct inode *inode)
--{
--	/* Initialize this dummy inode to work as no-op. */
--	MSDOS_I(inode)->mmu_private = 0;
--	MSDOS_I(inode)->i_start = 0;
--	MSDOS_I(inode)->i_logstart = 0;
--	MSDOS_I(inode)->i_attrs = 0;
--	MSDOS_I(inode)->i_pos = 0;
--}
--
- static int fat_read_root(struct inode *inode)
- {
- 	struct msdos_sb_info *sbi = MSDOS_SB(inode->i_sb);
-@@ -1843,13 +1840,11 @@ int fat_fill_super(struct super_block *s
- 	fat_inode = new_inode(sb);
- 	if (!fat_inode)
- 		goto out_fail;
--	fat_dummy_inode_init(fat_inode);
- 	sbi->fat_inode = fat_inode;
- 
- 	fsinfo_inode = new_inode(sb);
- 	if (!fsinfo_inode)
- 		goto out_fail;
--	fat_dummy_inode_init(fsinfo_inode);
- 	fsinfo_inode->i_ino = MSDOS_FSINFO_INO;
- 	sbi->fsinfo_inode = fsinfo_inode;
- 	insert_inode_hash(fsinfo_inode);
 
 
