@@ -2,67 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D714B17F7F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:43:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEA6017F83D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbgCJMnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:43:40 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:42882 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbgCJMni (ORCPT
+        id S1727687AbgCJMqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:46:13 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39536 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727850AbgCJMqJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:43:38 -0400
-Received: by mail-lf1-f67.google.com with SMTP id t21so10730507lfe.9
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 05:43:36 -0700 (PDT)
+        Tue, 10 Mar 2020 08:46:09 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j15so10769521lfk.6
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 05:46:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Tp+WhRfe9z22I0aaYb5f/5sPZ49iEEX8/N9J9TsNd2w=;
-        b=rfZJpdeNgql+QKTxeU9+HkLjBN+sAmAviwgdRh9H3Nr6vaQlmtvlR+i/mTv2GBMcgk
-         xcNterp+0uZG9sodb8zYciNObXS63itCz17iqreChxalm3xFrSZjp6LDolF/Dz6KZZ65
-         3aAHu5WVqZFRZ3KaK0JfuhienTlG2tDlDqRPeFeowO12IfE3f2Tkw2aN6+g6C4JhzQGj
-         MzaJJz5hbckDPLEFQXw4eF5RWQvw7MQPb2bVoD8PziVtGHHQ0coNgFiykvMLyr39QzxS
-         CaV+ZQbuVIYuy/1/VYk+eUqV8Js6GJYAQs7so+lxpHROh+H7HS/vUnlweTEpIRFZqE5u
-         fXMQ==
+        bh=gSh1O1Tg9hbTntXDCgjlVsmaZkd6pHTV1/gOIcuwgPA=;
+        b=gBX0hj2bXSbp6ZWoSSKmNdJnfp75xbmMV8MJPUiA15XORwlHFEVauBYND86NTZjePe
+         uMWEWtNNrphpDgivuZbFv64ouBIlSFLbilwZbzkEP4+lDXLRNVdOZh9CE+xD6jNOsJs7
+         toYBQQeNbDyh4fT09xiiQnN2fGYbuj9I7YeeZ536wtMuCh3jByrjO/NZ2X6yvXnsl4I5
+         jP3Jkw15A01benfiwwOLuORcAQmA0ZahHiP+CzcIdgMutm6kPKvVXtUk5uWkHhlkysD3
+         HaWjZQxlfG15VjJEWCWUawaTHG3hlxHiVaAekhkAs5lBFFdLYGW8HUSTtVx+qQ9cpyrV
+         G31Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=Tp+WhRfe9z22I0aaYb5f/5sPZ49iEEX8/N9J9TsNd2w=;
-        b=bVsrATZ1SCJVq6k3zbBCuh+8rsESFNe1tYciAEcM3FPK36/xQqtMegUx2ZOlrBTbYg
-         ruYgvlOzaTpYKBCo30jKRiiTVch2P90haNhS/BLJtBrSwmbfofn+nDH6ros+kNVfDRj9
-         Wllu5b+/nEW7H/TGe2/ojboyOFiQWygM7wAIhdOGczpvHE/9GKaQZDdaaHJ7JPbNkITg
-         aLpa8yAkkSRH/6DisuvrzhZG3qcK7rICTTnVtJPyzz3RD354K5XCugDTNMkUPqddNl4L
-         aNNp8r4IEoPbLXa9waP5v6QXGsJzrXnSkw8kT7bHI43saI3mcger9wGX9BLQ8ytWlbxY
-         2MDQ==
-X-Gm-Message-State: ANhLgQ3PegBQQIIiwAK0VJ+F3bcOlqGhfKkpCLzbMBK8VVaoEqym+o7l
-        ZP3Hgppr8CgAG7Pe6pcAMC2D6w==
-X-Google-Smtp-Source: ADFU+vuUMVtzCh5rITN78eoNDvgLskHfJdescsUwVQx5LjTGLLf9ct9Mzy4IiFelaJLtgrDUUHo4cg==
-X-Received: by 2002:a19:ad47:: with SMTP id s7mr12520609lfd.165.1583844215572;
-        Tue, 10 Mar 2020 05:43:35 -0700 (PDT)
+        bh=gSh1O1Tg9hbTntXDCgjlVsmaZkd6pHTV1/gOIcuwgPA=;
+        b=mhMyg0d8iBJLDdv9XvBRy7YVuILjMByOqVxV5poqcFgUVW/VbtD+5NyWtJvPfSS3YE
+         rkg2lbiZJi+TRfrU+7OAhkEskTI4YhxID8DV88QsZMg8L7fieIp/+6hzK3uZut8Tq/l0
+         ScN8uW0odRLl5UI8JcXAu0Tk5vFxdTyJMc8QIE9/ZAyrRehBkCHhzCJiVXm2UD/dKDuU
+         dZ0fIqfFhtQYlhZQo97411bgFSgdqEft6iEFE8n5ggdetFFrSwjDpdnSs6bEWTE5WT80
+         ipxOF36/MWoUq7Nv79GDU5tLdW98w3vEinZKAMii97ObqupsNdYouJvPvR42ekSzRbDs
+         YWLQ==
+X-Gm-Message-State: ANhLgQ17PoWJ4whCDVpikb77/yNaHXiKD4+zW3Di2/e6LLvDZO8WJh1H
+        zfe8TQuT8HDCQyR8mOoERd7mgQ==
+X-Google-Smtp-Source: ADFU+vujsGPeuu/uOOnds8ODD/USMbLgA+oa2eE0LaLi60lfZcm8MGkkOgN13EGJlp/DwCPZ7b32NQ==
+X-Received: by 2002:a19:ac42:: with SMTP id r2mr8254913lfc.38.1583844366775;
+        Tue, 10 Mar 2020 05:46:06 -0700 (PDT)
 Received: from localhost (h-200-138.A463.priv.bahnhof.se. [176.10.200.138])
-        by smtp.gmail.com with ESMTPSA id g14sm685589lfb.48.2020.03.10.05.43.34
+        by smtp.gmail.com with ESMTPSA id c22sm3508834lfm.25.2020.03.10.05.46.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 05:43:34 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 13:43:34 +0100
+        Tue, 10 Mar 2020 05:46:05 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 13:46:05 +0100
 From:   Niklas <niklas.soderlund@ragnatech.se>
 To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Lad Prabhakar <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH v2 1/3] media: rcar-csi2: Add support to match fwnode
- against remote or parent port
-Message-ID: <20200310124334.GN2975348@oden.dyn.berto.se>
+Subject: Re: [PATCH v2 2/3] media: rcar-vin: Add support for
+ MEDIA_BUS_FMT_SRGGB8_1X8 format
+Message-ID: <20200310124605.GO2975348@oden.dyn.berto.se>
 References: <1583838364-12932-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1583838364-12932-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1583838364-12932-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1583838364-12932-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1583838364-12932-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -72,152 +72,132 @@ Hi Lad,
 
 Thanks for your work.
 
-On 2020-03-10 11:06:02 +0000, Lad Prabhakar wrote:
-> The rcar-csi2 driver uses the v4l2-async framework to do endpoint matching
-> instead of node matching. This is needed as it needs to work with the
-> adv748x driver which register it self in v4l2-async using endpoints
-> instead of nodes. The reason for this is that from a single DT node it
-> creates multiple subdevices, one for each endpoint.
-> 
-> But when using subdevs which register itself in v4l2-async using nodes,
-> the rcar-csi2 driver failed to find the matching endpoint because the
-> match.fwnode was pointing to remote endpoint instead of remote parent
-> port.
-> 
-> This commit adds support in rcar-csi2 driver to handle both the cases
-> where subdev registers in v4l2-async using endpoints/nodes, by using
-> match_type as V4L2_ASYNC_MATCH_CUSTOM and implementing the match()
-> callback to compare the fwnode of either remote/parent.
-
-This is a novel approach to the solution, and I won't object to it out 
-right. But I think the proper solution is to move this logic into 
-v4l2-async instead of adding a custom match handler in rcar-csi2.
-
-Think of the reveres use-case, a different CSI-2 receiver who wish to 
-use the ADV748x would still have this node vs. endpoint issue.
-
+On 2020-03-10 11:06:03 +0000, Lad Prabhakar wrote:
+> Add support for MEDIA_BUS_FMT_SRGGB8_1X8 format in rcar-vin by setting
+> format type to RAW8 in VNMC register and appropriately setting the
+> bpp, bytesperline to enable V4L2_PIX_FMT_SRGGB8.
 > 
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
->  drivers/media/platform/rcar-vin/rcar-csi2.c | 41 ++++++++++++++++++++++++++---
->  1 file changed, 38 insertions(+), 3 deletions(-)
+>  drivers/media/platform/rcar-vin/rcar-core.c |  1 +
+>  drivers/media/platform/rcar-vin/rcar-dma.c  |  9 ++++++++-
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 13 ++++++++++++-
+>  3 files changed, 21 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> index faa9fb2..39e1639 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> @@ -808,6 +808,41 @@ static int rcsi2_parse_v4l2(struct rcar_csi2 *priv,
->  	return 0;
->  }
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index 7440c89..76daf2f 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -469,6 +469,7 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
+>  		case MEDIA_BUS_FMT_UYVY8_2X8:
+>  		case MEDIA_BUS_FMT_UYVY10_2X10:
+>  		case MEDIA_BUS_FMT_RGB888_1X24:
+> +		case MEDIA_BUS_FMT_SRGGB8_1X8:
+>  			vin->mbus_code = code.code;
+>  			vin_dbg(vin, "Found media bus format for %s: %d\n",
+>  				subdev->name, vin->mbus_code);
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+> index 1a30cd0..1c1fafa 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -85,6 +85,7 @@
+>  #define VNMC_INF_YUV8_BT601	(1 << 16)
+>  #define VNMC_INF_YUV10_BT656	(2 << 16)
+>  #define VNMC_INF_YUV10_BT601	(3 << 16)
+> +#define VNMC_INF_RAW8		(4 << 16)
+>  #define VNMC_INF_YUV16		(5 << 16)
+>  #define VNMC_INF_RGB888		(6 << 16)
+>  #define VNMC_VUP		(1 << 10)
+> @@ -587,7 +588,6 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
+>  	rvin_write(vin, vin->crop.top, VNSLPRC_REG);
+>  	rvin_write(vin, vin->crop.top + vin->crop.height - 1, VNELPRC_REG);
 >  
-> +static bool rcsi2_asd_match(struct device *dev,
-> +			    struct v4l2_async_subdev *async_sd)
-> +{
-> +	struct rcar_csi2 *priv = (struct rcar_csi2 *)
-> +				  async_sd->match.custom.priv;
-> +	struct fwnode_handle *endpoint;
-> +	struct fwnode_handle *remote;
-> +	struct fwnode_handle *parent;
-> +	struct device_node *np;
-> +	bool matched = false;
-> +
-> +	np = of_graph_get_endpoint_by_regs(priv->dev->of_node, 0, 0);
-> +	if (!np) {
-> +		dev_err(priv->dev, "Not connected to subdevice\n");
-> +		return -EINVAL;
+> -
+>  	/* TODO: Add support for the UDS scaler. */
+>  	if (vin->info->model != RCAR_GEN3)
+>  		rvin_crop_scale_comp_gen2(vin);
+> @@ -676,6 +676,9 @@ static int rvin_setup(struct rvin_dev *vin)
+>  
+>  		input_is_yuv = true;
+>  		break;
+> +	case MEDIA_BUS_FMT_SRGGB8_1X8:
+> +		vnmc |= VNMC_INF_RAW8;
+> +		break;
+>  	default:
+>  		break;
+>  	}
+> @@ -737,6 +740,9 @@ static int rvin_setup(struct rvin_dev *vin)
+>  	case V4L2_PIX_FMT_ABGR32:
+>  		dmr = VNDMR_A8BIT(vin->alpha) | VNDMR_EXRGB | VNDMR_DTMD_ARGB;
+>  		break;
+> +	case V4L2_PIX_FMT_SRGGB8:
+> +		dmr = 0;
+> +		break;
+>  	default:
+>  		vin_err(vin, "Invalid pixelformat (0x%x)\n",
+>  			vin->format.pixelformat);
+> @@ -1110,6 +1116,7 @@ static int rvin_mc_validate_format(struct rvin_dev *vin, struct v4l2_subdev *sd,
+>  	case MEDIA_BUS_FMT_UYVY8_2X8:
+>  	case MEDIA_BUS_FMT_UYVY10_2X10:
+>  	case MEDIA_BUS_FMT_RGB888_1X24:
+> +	case MEDIA_BUS_FMT_SRGGB8_1X8:
+>  		vin->mbus_code = fmt.format.code;
+>  		break;
+>  	default:
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index 5151a3c..4698099 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -66,6 +66,10 @@ static const struct rvin_video_format rvin_formats[] = {
+>  		.fourcc			= V4L2_PIX_FMT_ABGR32,
+>  		.bpp			= 4,
+>  	},
+> +	{
+> +		.fourcc			= V4L2_PIX_FMT_SRGGB8,
+> +		.bpp			= 2,
 
-You can't return -EINVAL here as it will be interpreted as a match by 
-the caller ;-).  You should not even register a device with v4l2-async 
-if it's not connected to an endpoint.
+This does not look right, is not bytes-per-pixel 1 for a SRGGB8?
 
-> +	}
-> +
-> +	endpoint = of_fwnode_handle(np);
-> +	remote = fwnode_graph_get_remote_endpoint(endpoint);
-> +	parent = fwnode_graph_get_remote_port_parent(endpoint);
-> +	if (parent) {
-
-This is wrong, we will always have a parent and will always take this 
-code path. Hence reducing this to the equivalent of node only matching.  
-I applied this patch and tried on M3-N with a ADv748x and the wrong 
-endpoints of the ADV7482 is routed to the two CSI-2 receivers, breaking 
-it.
-
-I added some debug printouts to explain whats going on:
-
-    * First call
-        dev: rcar-csi2 fea80000.csi2
-        endpoint: /soc/csi2@feaa0000/ports/port@0/endpoint
-        remote: /soc/i2c@e66d8000/video-receiver@70/port@a/endpoint
-        parent: /soc/i2c@e66d8000/video-receiver@70
-        dev->fwnode: /soc/csi2@fea80000
-        dev->of_node: /soc/csi2@fea80000
-        match: false
-
-    * Second call
-        dev: adv748x 4-0070
-        endpoint: /soc/csi2@feaa0000/ports/port@0/endpoint
-        remote: /soc/i2c@e66d8000/video-receiver@70/port@a/endpoint
-        parent: /soc/i2c@e66d8000/video-receiver@70
-        dev->fwnode: /soc/i2c@e66d8000/video-receiver@70
-        dev->of_node: /soc/i2c@e66d8000/video-receiver@70
-        match: true
-
-    * Third call
-        dev: adv748x 4-0070
-        endpoint: /soc/csi2@fea80000/ports/port@0/endpoint
-        remote: /soc/i2c@e66d8000/video-receiver@70/port@b/endpoint
-        parent: /soc/i2c@e66d8000/video-receiver@70
-        dev->fwnode: /soc/i2c@e66d8000/video-receiver@70
-        dev->of_node: /soc/i2c@e66d8000/video-receiver@70
-        match: true
-
-Now we have a media graph that is completely probed and video devices 
-register in the system but you are not able to stream video as the wrong 
-CSI-2 transmitter is described in the graph to be connected to the wrong 
-receiver.
-
-This only strengthens my view that this should not be fixed with a 
-custom matcher in rcar-csi2 but directly in v4l-async. Please see if you 
-can't address the issue in the framework to allow node and endpoint 
-matching to co-exists.
-
-> +		if (parent == dev->fwnode ||
-> +		    parent == &dev->of_node->fwnode)
-> +			matched = true;
-> +	} else if (remote && !matched) {
-
-No need to check !matched here ;-)
-
-> +		if (remote == dev->fwnode ||
-> +		    remote == &dev->of_node->fwnode)
-> +			matched = true;
-> +	}
-
-
-
-> +
-> +	of_node_put(np);
-> +
-> +	return matched;
-> +}
-> +
->  static int rcsi2_parse_dt(struct rcar_csi2 *priv)
+> +	},
+>  };
+>  
+>  const struct rvin_video_format *rvin_format_from_pixel(struct rvin_dev *vin,
+> @@ -102,6 +106,7 @@ static u32 rvin_format_bytesperline(struct rvin_dev *vin,
 >  {
->  	struct device_node *ep;
-> @@ -833,9 +868,9 @@ static int rcsi2_parse_dt(struct rcar_csi2 *priv)
->  		return ret;
+>  	const struct rvin_video_format *fmt;
+>  	u32 align;
+> +	u8 div;
+>  
+>  	fmt = rvin_format_from_pixel(vin, pix->pixelformat);
+>  
+> @@ -112,16 +117,22 @@ static u32 rvin_format_bytesperline(struct rvin_dev *vin,
+>  	case V4L2_PIX_FMT_NV12:
+>  	case V4L2_PIX_FMT_NV16:
+>  		align = 0x20;
+> +		div = 1;
+> +		break;
+> +	case V4L2_PIX_FMT_SRGGB8:
+> +		align = 0x10;
+> +		div = 2;
+
+Yes this does not look right at all, I think you should set bpp to 1 and 
+drop the div handling here.
+
+>  		break;
+>  	default:
+>  		align = 0x10;
+> +		div = 1;
+>  		break;
 >  	}
 >  
-> -	priv->asd.match.fwnode =
-> -		fwnode_graph_get_remote_endpoint(of_fwnode_handle(ep));
-> -	priv->asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
-> +	priv->asd.match.custom.match = &rcsi2_asd_match;
-> +	priv->asd.match.custom.priv = priv;
-> +	priv->asd.match_type = V4L2_ASYNC_MATCH_CUSTOM;
+>  	if (V4L2_FIELD_IS_SEQUENTIAL(pix->field))
+>  		align = 0x80;
 >  
->  	of_node_put(ep);
+> -	return ALIGN(pix->width, align) * fmt->bpp;
+> +	return ALIGN(pix->width / div, align) * fmt->bpp;
+>  }
 >  
+>  static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
 > -- 
 > 2.7.4
 > 
