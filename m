@@ -2,103 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 640D417FAAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:07:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B64117FACE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:08:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730961AbgCJNHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:07:21 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:23931 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730920AbgCJNHO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:07:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1583845632;
-        s=strato-dkim-0002; d=hartkopp.net;
-        h=In-Reply-To:Date:Message-ID:From:References:To:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=6R1RKm2q+lEZhuVelK1a77+oRAAsa1Xp6grAc/+xsXE=;
-        b=URt7zzUnEnTvofORtuRgOgsWVLD++cxyB1eUte9R8PgJvMMdtcvxgwHUCFCa9LImKO
-        51t5J47ocVi6hlmyIrNuQthH+E2HtNSyJCIp7tzvLs2W3GwEjiW0uga6aUMkWfzdEWaW
-        z99GXggdOYGskCGrR92Gr5TYR2wdKJZfT+H1VQifAJy30uq+Fu/GmWhfB68Ipu4DSjOP
-        kqUxb5ljm/um1iOBa35XmzcaHv5sEO0Ny6KbT86vsWax36ja1+6OGPMt28hmpDzmGCOK
-        u6zayrTUprrHAVuH4WkGFyzAWAGUGZcQqJilbqpDLcEm43kfqMWd650XMsPZRqWwyuxs
-        qhaw==
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1o3PMaViOoLMJVch5lEq7"
-X-RZG-CLASS-ID: mo00
-Received: from [192.168.1.177]
-        by smtp.strato.de (RZmta 46.2.0 DYNA|AUTH)
-        with ESMTPSA id e0a4ffw2AD78XAp
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Tue, 10 Mar 2020 14:07:08 +0100 (CET)
-Subject: Re: [PATCH] net: slcan, slip -- no need for goto when if () will do
-To:     Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-can@vger.kernel.org,
-        yangerkun@huawei.com, davem@davemloft.net, mkl@pengutronix.de,
-        wg@grandegger.com
-References: <20200309223323.GA1634@duo.ucw.cz>
-From:   Oliver Hartkopp <socketcan@hartkopp.net>
-Message-ID: <0d9a5f11-1dc9-03ad-cecb-af38ad421c95@hartkopp.net>
-Date:   Tue, 10 Mar 2020 14:07:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1731120AbgCJNI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:08:28 -0400
+Received: from mga01.intel.com ([192.55.52.88]:19572 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731107AbgCJNIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:08:25 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 06:08:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,537,1574150400"; 
+   d="scan'208";a="388926224"
+Received: from akharche-mobl2.ccr.corp.intel.com (HELO localhost) ([10.251.86.23])
+  by orsmga004.jf.intel.com with ESMTP; 10 Mar 2020 06:08:19 -0700
+Date:   Tue, 10 Mar 2020 15:08:18 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Dr. Greg" <greg@enjellic.com>
+Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Neil Horman <nhorman@redhat.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
+        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
+        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v28 14/22] selftests/x86: Add a selftest for SGX
+Message-ID: <20200310130818.GA32334@linux.intel.com>
+References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
+ <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com>
+ <CAOASepN1JrD6OEzZycbqOr6_ZVACK=EctEOoQ8oSAEeigMr1Eg@mail.gmail.com>
+ <04362c0cf66bf66e8f7c25a531830b9f294d2d09.camel@linux.intel.com>
+ <20200306154222.GA20820@wind.enjellic.com>
+ <20200306190753.GH7472@linux.intel.com>
+ <20200307174223.GA30928@wind.enjellic.com>
 MIME-Version: 1.0
-In-Reply-To: <20200309223323.GA1634@duo.ucw.cz>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200307174223.GA30928@wind.enjellic.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/03/2020 23.33, Pavel Machek wrote:
+On Sat, Mar 07, 2020 at 11:42:23AM -0600, Dr. Greg wrote:
+> On Fri, Mar 06, 2020 at 09:07:53PM +0200, Jarkko Sakkinen wrote:
 > 
-> No need to play with gotos to jump over single statement.
+> Good morning, I hope the weekend is going well for everyone.
 > 
-> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> > Actually many people have applaused to have a small scoped, even if
+> > not perfect, test program to look at how SGX works. One that is only
+> > dependent on glibc. None of the selftests are meant to be production
+> > peaces of code. You are getting wrong the role of the selftest in
+> > the first place.
 > 
-> diff --git a/drivers/net/can/slcan.c b/drivers/net/can/slcan.c
-> index 2f5c287eac95..686d853fc249 100644
-> --- a/drivers/net/can/slcan.c
-> +++ b/drivers/net/can/slcan.c
-> @@ -348,11 +348,8 @@ static void slcan_write_wakeup(struct tty_struct *tty)
->   
->   	rcu_read_lock();
->   	sl = rcu_dereference(tty->disc_data);
-> -	if (!sl)
-> -		goto out;
-> -
-> -	schedule_work(&sl->tx_work);
-> -out:
-> +	if (sl)
-> +		schedule_work(&sl->tx_work);
->   	rcu_read_unlock();
->   }
-
-Haha. Yes, that looks indeed much better ...
-
-Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
-
->   
-> diff --git a/drivers/net/slip/slip.c b/drivers/net/slip/slip.c
-> index babb01888b78..f81fb0b13a94 100644
-> --- a/drivers/net/slip/slip.c
-> +++ b/drivers/net/slip/slip.c
-> @@ -456,11 +456,8 @@ static void slip_write_wakeup(struct tty_struct *tty)
->   
->   	rcu_read_lock();
->   	sl = rcu_dereference(tty->disc_data);
-> -	if (!sl)
-> -		goto out;
-> -
-> -	schedule_work(&sl->tx_work);
-> -out:
-> +	if (sl)
-> +		schedule_work(&sl->tx_work);
->   	rcu_read_unlock();
->   }
->   
+> We certainly want to be counted in the camp of those who are
+> applausing you for making the selftests available, particularly the
+> new VDSO setup and entry code.
 > 
+> We arguably have similar motivations.  We architected and authored an
+> entire SGX runtime that has as its only dependencies the MUSL C
+> library, libelf and OpenSSL, primarily because we needed an easily
+> auditable and low footprint SGX implementation.
+
+Good to hear!
+
+> To the point at hand though, I'm certainly not a very smart guy so I
+> doubt that I am able to understand the role of the selftests.  We do
+> seem to agree though that they only provide a rudimentary exercise of
+> the driver.
+
+The role of kselftests is not to be production code. They are somewhat
+adhoc pieces of code that just check that "things turn on" e.g. in a
+new kernel release or a new hardware platform.
+
+> We also seem to agree that the primary role of the driver is to
+> service the needs of those of us that are building production level
+> SGX runtime stacks.  In service of that premise, it would be helpful
+> to know if you are internally testing the driver/VDSO against enclaves
+> of production quality, with metadata, or just the two page selftest
+> enclave.
+
+I do agree that a more complete test suite would be an essential thing
+to have. In that I'd just use the SDK and implement it outside the
+kernel tree.
+
+Unfortunately I do not have time to implement such.
+
+/Jarkko
