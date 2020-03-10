@@ -2,65 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99E8D17F263
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 09:55:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A000B17F26C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 09:56:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbgCJIz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 04:55:27 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:42844 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726389AbgCJIz1 (ORCPT
+        id S1726702AbgCJI4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 04:56:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:57016 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726389AbgCJI4P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 04:55:27 -0400
-Received: by mail-oi1-f193.google.com with SMTP id l12so13048484oil.9;
-        Tue, 10 Mar 2020 01:55:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2sdxtpswuMghQi2CqrS8nbarm5BBY7Twk1RfEVxSRME=;
-        b=XaZP7UlgED3ejJpsWPXpBh6qStBgKfcasuZZXe9qbxfXtqoh9Ua+13n8ZkhwL+cj3g
-         PNIiCbol0PcZbxu/iNYPERHE/QD9SkU1nywBVEzh9zOE7JRSidKBjiXlT/RCm7TC5dCa
-         A4V68sIf6rXOj3gWLPAP2JUBXqbZCPJnRDyHqcqFB+H17DmAIoob0aVd/EryalTHpqAz
-         vOW2I0rgM6ELh4K3d5+WL1k85UgEPovalQ4qgV7rYUZcMGpT7Sk+t0Nj/qS+SuLEFvRF
-         w9jAQCDKRbJC//13+ZTZ/FNGMQMBDK8xj2gcRjM4SFBfO6/KwebWn4wiCGFeIyzOlnGl
-         PN2A==
-X-Gm-Message-State: ANhLgQ34+KixIUd2pJeP7jDCz2dbPrnft76NUtd9oFOzsi++vQhE4Pfi
-        27fYXY7ZFFpzfy+aXLTGsBmY7YDOqZ3XG1vpTayYeA==
-X-Google-Smtp-Source: ADFU+vtHqBwQVlPlHwGR60IzGRtmFCmsCWjXRcUW7nbupazhD/5nD53PM9w490GIIaN84xdF3KO7cjRDU8OA+N0lj+I=
-X-Received: by 2002:aca:5155:: with SMTP id f82mr384236oib.103.1583830526316;
- Tue, 10 Mar 2020 01:55:26 -0700 (PDT)
+        Tue, 10 Mar 2020 04:56:15 -0400
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jBaft-0001ga-GQ; Tue, 10 Mar 2020 08:55:41 +0000
+Date:   Tue, 10 Mar 2020 09:55:40 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v2 3/5] exec: Move cleanup of posix timers on exec out of
+ de_thread
+Message-ID: <20200310085540.pztaty2mj62xt2nm@wittgenstein>
+References: <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87eeu25y14.fsf_-_@x220.int.ebiederm.org>
+ <20200309195909.h2lv5uawce5wgryx@wittgenstein>
+ <877dztz415.fsf@x220.int.ebiederm.org>
+ <20200309201729.yk5sd26v4bz4gtou@wittgenstein>
+ <87k13txnig.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-References: <fcbb3dc4-38ae-8361-bd6b-a00ae00c189c@linuxfoundation.org>
-In-Reply-To: <fcbb3dc4-38ae-8361-bd6b-a00ae00c189c@linuxfoundation.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 10 Mar 2020 09:55:15 +0100
-Message-ID: <CAJZ5v0jqTGE5zBnwijjWbze4fuDW_h3muV9X1=EHbeHMqcF2JQ@mail.gmail.com>
-Subject: Re: [GIT PULL] cpupower update for Linux 5.6-rc6
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Mike Gilbert <floppym@gentoo.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Renninger <trenn@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87k13txnig.fsf@x220.int.ebiederm.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shuah,
+On Mon, Mar 09, 2020 at 03:48:55PM -0500, Eric W. Biederman wrote:
+> Christian Brauner <christian.brauner@ubuntu.com> writes:
+> 
+> > On Mon, Mar 09, 2020 at 03:06:46PM -0500, Eric W. Biederman wrote:
+> >> Christian Brauner <christian.brauner@ubuntu.com> writes:
+> >> 
+> >> > On Sun, Mar 08, 2020 at 04:36:55PM -0500, Eric W. Biederman wrote:
+> >> >> 
+> >> >> These functions have very little to do with de_thread move them out
+> >> >> of de_thread an into flush_old_exec proper so it can be more clearly
+> >> >> seen what flush_old_exec is doing.
+> >> >> 
+> >> >> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> >> >> ---
+> >> >>  fs/exec.c | 10 +++++-----
+> >> >>  1 file changed, 5 insertions(+), 5 deletions(-)
+> >> >> 
+> >> >> diff --git a/fs/exec.c b/fs/exec.c
+> >> >> index ff74b9a74d34..215d86f77b63 100644
+> >> >> --- a/fs/exec.c
+> >> >> +++ b/fs/exec.c
+> >> >> @@ -1189,11 +1189,6 @@ static int de_thread(struct task_struct *tsk)
+> >> >
+> >> > While you're cleaning up de_thread() wouldn't it be good to also take
+> >> > the opportunity and remove the task argument from de_thread(). It's only
+> >> > ever used with current. Could be done in one of your patches or as a
+> >> > separate patch.
+> >> 
+> >> How does that affect the code generation?
+> >
+> > The same way renaming "tsk" to "me" does.
+> >
+> >> 
+> >> My sense is that computing current once in flush_old_exec is much
+> >> better than computing it in each function flush_old_exec calls.
+> >> I remember that computing current used to be not expensive but
+> >> noticable.
+> >> 
+> >> For clarity I can see renaming tsk to me.  So that it is clear we are
+> >> talking about the current process, and not some arbitrary process.
+> >
+> > For clarity since de_thread() uses "tsk" giving the impression that any
+> > task can be dethreaded while it's only ever used with current. It's just
+> > a suggestion since you're doing the rename tsk->me anyway it would fit
+> > with the series. You do whatever you want though.
+> > (I just remember that the same request was made once to changes I did:
+> > Don't pass current as arg when it's the only task passed.)
+> 
+> That's fair.
+> 
+> And I completely agree that we should at least rename tsk to me.
+> Just for clarity.
+> 
+> My apologies if I am a little short.  My little son has been an extra
+> handful lately.
 
-On Sat, Mar 7, 2020 at 1:14 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
->
-> Hi Rafael,
->
-> Please pull the following cpupower update for Linux 5.6-rc6.
->
-> This cpupower update for Linux 5.6-rc6 consists of a fix from
-> Mike Gilbert for build failures when -fno-common is enabled.
-> -fno-common will be default in gcc v10.
->
-> Diff is attached.
+No worries, stress is a thing most of us know too well.
 
-Pulled, thanks!
+Christian
