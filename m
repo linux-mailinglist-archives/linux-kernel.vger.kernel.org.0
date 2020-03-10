@@ -2,114 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA8C317F4A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 11:12:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5173D17F4A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 11:13:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbgCJKMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 06:12:32 -0400
-Received: from sauhun.de ([88.99.104.3]:46998 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726199AbgCJKMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 06:12:32 -0400
-Received: from localhost (p54B33196.dip0.t-ipconnect.de [84.179.49.150])
-        by pokefinder.org (Postfix) with ESMTPSA id 321342C1EB6;
-        Tue, 10 Mar 2020 11:12:30 +0100 (CET)
-Date:   Tue, 10 Mar 2020 11:12:29 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 03/89] i2c: brcmstb: Support BCM2711 HDMI BSC controllers
-Message-ID: <20200310101229.GM1987@ninjato>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
- <1ed75ec6dc9310afd768c0bbfd8e73268e8cdfa9.1582533919.git-series.maxime@cerno.tech>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="bPrm2PuLP7ysUh6c"
-Content-Disposition: inline
-In-Reply-To: <1ed75ec6dc9310afd768c0bbfd8e73268e8cdfa9.1582533919.git-series.maxime@cerno.tech>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726415AbgCJKNS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 06:13:18 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:24944 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726199AbgCJKNR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 06:13:17 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id 02AACqfU019796;
+        Tue, 10 Mar 2020 19:12:53 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com 02AACqfU019796
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1583835173;
+        bh=9xOpIGGc+JZ3lbYb04or905H1Kt+yrULBMXg/tSCO2w=;
+        h=From:To:Cc:Subject:Date:From;
+        b=1J0xfzflFFAWxFgLAoJOJ8bqxm6qeEDK5W2TF1DawP6X+gFXY0I4Y1HKBT9eCvVIk
+         59IvBs41Da7sDJRILCtx5upsUMhWTvsuVzK8/1jUE81a/2SvvxndXZIu5fzPm8FJP7
+         3GVRgtVGE9hZXruEw2mqcYh6zeUs9INrt8UgNHhZzoyKZNGZM1U96s7o5CqQ+o3Tg6
+         xfoc8vwEhnSD2IlBJ2HaJQ7pM9CJcdTLgUxi8Ej0lzU30BGRHESOapDi24ScvVvCO7
+         nAzNd5Q5Uz0rC1Ribh9fiKZXAYOQ2m1L1QdKfJROkvFFYUK39mKu+r2prxtShkqws+
+         Wr6Fnf1NaNFvg==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Ard Biesheuvel <ardb@kernel.org>, George Spelvin <lkml@sdf.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] kconfig: introduce m32-flag and m64-flag
+Date:   Tue, 10 Mar 2020 19:12:49 +0900
+Message-Id: <20200310101250.22374-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When a compiler supports multiple architectures, some compiler features
+can be dependent on the target architecture.
 
---bPrm2PuLP7ysUh6c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is typical for Clang, which supports multiple LLVM backends.
+Even for GCC, we need to take care of biarch compiler cases.
 
-On Mon, Feb 24, 2020 at 10:06:05AM +0100, Maxime Ripard wrote:
-> The HDMI blocks in the BCM2771 have an i2c controller to retrieve the
-> EDID. This block is split into two parts, the BSC and the AUTO_I2C,
-> lying in two separate register areas.
->=20
-> The AUTO_I2C block has a mailbox-like interface and will take away the
-> BSC control from the CPU if enabled. However, the BSC is the actually
-> the same controller than the one supported by the brcmstb driver, and
-> the AUTO_I2C doesn't really bring any immediate benefit.
->=20
-> Let's use the BSC then, but let's also tie the AUTO_I2C registers with a
-> separate compatible so that we can enable AUTO_I2C if needed in the
-> future.
->=20
-> The AUTO_I2C is enabled by default at boot though, so we first need to
-> release the BSC from the AUTO_I2C control.
->=20
-> Cc: Kamal Dasu <kdasu.kdev@gmail.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: bcm-kernel-feedback-list@broadcom.com
-> Cc: linux-i2c@vger.kernel.org
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+It is not a problem when we evaluate cc-option in Makefiles because
+cc-option is tested against the flag in question + $(KBUILD_CFLAGS).
 
-Fixed the acked-by and applied to for-next, thanks!
+The cc-option in Kconfig, on the other hand, does not accumulate
+tested flags. Due to this simplification, it could potentially test
+cc-option against a different target.
 
-FYI, cppcheck rightfully warned about this in the driver:
+At first, Kconfig always evaluated cc-option against the host
+architecture.
 
-drivers/i2c/busses/i2c-brcmstb.c:319:7: warning: Condition 'CMD_RD' is alwa=
-ys true [knownConditionTrueFalse]
- if ((CMD_RD || CMD_WR) &&
-      ^
-drivers/i2c/busses/i2c-brcmstb.c:319:17: warning: Condition 'CMD_WR' is alw=
-ays false [knownConditionTrueFalse]
- if ((CMD_RD || CMD_WR) &&
-                ^
-drivers/i2c/busses/i2c-brcmstb.c:464:0: warning: Variable 'len' is assigned=
- a value that is never used. [unreadVariable]
- int len =3D 0;
+Since commit e8de12fb7cde ("kbuild: Check for unknown options with
+cc-option usage in Kconfig and clang"), in case of cross-compiling
+with Clang, the target triple is correctly passed to Kconfig.
 
-Not related to this patch, but maybe one of you is interested...
+The case with biarch GCC (and native build with Clang) is still not
+handled properly. We need to pass some flags to specify the target
+machine bit.
 
+Due to the design, all the macros in Kconfig are expanded in the
+parse stage, where we do not know the target bit size yet.
 
---bPrm2PuLP7ysUh6c
-Content-Type: application/pgp-signature; name="signature.asc"
+For example, arch/x86/Kconfig allows a user to toggle CONFIG_64BIT.
+If a compiler flag -foo depends on the machine bit, it must be tested
+twice, one with -m32 and the other with -m64.
 
------BEGIN PGP SIGNATURE-----
+However, -m32/-m64 are not always recognized. So, this commits adds
+m64-flag and m32-flag macros. They expand to -m32, -m64, respectively
+if supported. Or, they expand to an empty string if unsupported.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl5naAkACgkQFA3kzBSg
-Kba2JQ/9HdPkWxyj7kgAVp3iCcUbIkAtwDpmrhGYLSr9AUHb+mlfe6sB92mog9+X
-P3ETy/m7Gs6cwIBqlhmQuR4E0S89dDTnC1zFk+sAyQvOp1deyoTW+P3xteUyiR9W
-9Y72Z2nhdTS1LouythkJled4kCfJ1PF3lst9/o1umYF5Q68akoWIGRq20MMBz80K
-eEXbI5+ZfvbIfzsuD220A3v3IH+KNI9rGx8Yj7ze+B/iwmTVQd7NnEkRQdD2eAxW
-yfQK9TTn+fhJWUOEJ5PvYmkYd2zfEjQQdOIdqi93nqE4w9dZ43P1YcrlPQBGqv0c
-TRXyls9o1HK2iw7ISd0tZgQBAytHuaxzST+RFHjCI8tvhU48AzplJLcc1BcXixI8
-9tAcRvbud+1WeOLk43q6jA+mIuV19/E88iJt2oqGMoUWOxnalSgg9vvkYS5MumZY
-XenAGha5oYmvszOd9tU/cDkktv+RdMNVzpOBa2gG8uiOyaEZfGLp1vaCBra7TJLw
-BZg8EzpWi6iea304u43d8P9NLfuIlNmZFTcZ7sO7UPpy9fuwaeHXRPwmIj8DmGrW
-o/TNxAnkSIOhRE/f/JnhOHHJ+BM9kuSydjAr0NHi0nnBUNTQw5J9YsPWGUSUEKHP
-IatOEa4v1/N5hUB+jP9YLWGUiBYU3bpuHEF70XNtg6jQVYyCj6c=
-=Dx35
------END PGP SIGNATURE-----
+The typical usage is like this:
 
---bPrm2PuLP7ysUh6c--
+  config FOO
+          bool
+          default $(cc-option,$(m64-flag) -foo) if 64BIT
+          default $(cc-option,$(m32-flag) -foo)
+
+This is clumsy, but there is no elegant way to handle this in the
+current static macro expansion.
+
+There was discussion for static functions vs dynamic functions.
+The consensus was to go as far as possible with the static functions.
+(https://lkml.org/lkml/2018/3/2/22)
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ scripts/Kconfig.include | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
+index 85334dc8c997..496d11c92c97 100644
+--- a/scripts/Kconfig.include
++++ b/scripts/Kconfig.include
+@@ -44,3 +44,10 @@ $(error-if,$(success, $(LD) -v | grep -q gold), gold linker '$(LD)' not supporte
+ 
+ # gcc version including patch level
+ gcc-version := $(shell,$(srctree)/scripts/gcc-version.sh $(CC))
++
++# machine bit flags
++#  $(m32-flag): -m32 if the compiler supports it, or an empty string otherwise.
++#  $(m64-flag): -m64 if the compiler supports it, or an empty string otherwise.
++cc-option-bit = $(if-success,$(CC) -Werror $(1) -E -x c /dev/null -o /dev/null,$(1))
++m32-flag := $(cc-option-bit,-m32)
++m64-flag := $(cc-option-bit,-m64)
+-- 
+2.17.1
+
