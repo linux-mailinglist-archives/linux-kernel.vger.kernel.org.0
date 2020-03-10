@@ -2,108 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 643F517FB1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:11:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3273517FB4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:12:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731158AbgCJNK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:10:57 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37065 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731352AbgCJNKp (ORCPT
+        id S1731597AbgCJNMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:12:40 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37547 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731579AbgCJNMh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:10:45 -0400
-Received: by mail-wr1-f65.google.com with SMTP id 6so15812032wre.4
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:10:43 -0700 (PDT)
+        Tue, 10 Mar 2020 09:12:37 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a141so1295026wme.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:12:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=stwvll2Z0UBciDGqDN3BPXdjztkYAsKlie43tBme5yA=;
-        b=SkahghNvvZALFb90kpfwpcpzAUyl5pDoHb70SjCV3iA4YutJUYplbhYlVpKyaVLMdL
-         5LIqFP8rbhBVjLrD7xkyGkhxEGQBmhI6VE6LT2IHmbdkTKdvYQvb0+xZT7wtgVonVHq7
-         ch4bg5ZA48tL9wEWovL9ra+kFPu7L6FDwLjGbeLqnIzvUfiK884KTc+n5qKHw7X6j4uc
-         BDSyXry1sSSRZOsueyVXi2t+LL/plIcMkboBZzybZtfwTSo3ZVxsLRdjmvEcswQX/EvS
-         lLktHt6qBQ3pRfTGLLEG2uE/N/LWwApvu+RNA6YLmEO5qeJhX7mdkrfky65YZGMGBv0W
-         1wmg==
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=L42pOiV3jLGMDXgIEOo6/CJMt+4vo0NwEJd2XSpLcUA=;
+        b=lzqQa7kxFDW37mdZURAt89yck5+OARsY2LdJSCdEsu5+xXa2Xbg17kXA5EGl5kb6wm
+         PoFYlOQwGj3O2Ri+uO7PsFU99oR0jJVyijlGShvxiXmgpyHzoGFJ73ZHmSiNiU+MPjbC
+         gEru521iogeffswdTziIksfdFbyi0mWY/Qh2Hy54Y9u2rlNhcczLUQifXm6G/EThoTDK
+         Dv2AgEUBTIbKOvZ5lgGh1IjYuUYLh/8rROg0jxiBHq0ZTXpF9CMd5EDPUVc7mA5oZrG0
+         zMo2h48yZBvk0RnqcQHIbFGx+fU/HH2LjJNugadXuSchjJRKGFa3FBlKx8Vo9Rd8Pcgw
+         XA9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=stwvll2Z0UBciDGqDN3BPXdjztkYAsKlie43tBme5yA=;
-        b=pS0hE9Pc4yPmUWgVAGGsZZpWXSx7GbL/bH5yTP9J/xx436dWYg4v4aztKIx/UpK6Vk
-         8ncdYp0xIG0B1MqLq4q+crjYaedrkXg7qUJxMsK6xWs4umKAain9eRC3AntDbAQSrUnU
-         W3UI0OutLGPIczaIJFycYbP07q81jm7xZJt+RTvnKU3FrBJAYe5JxJDZmxLqCkWkSbjr
-         D4jKU4kR6hYiS/cSXwUCtDqV+LA0XTT6/wSIp1zYbWosBj2IVNlnUNb5E+rrKCNvuZMe
-         sL0nNRn9/ew2ICPqfE31I+WJGBPetgzt35EnkhbnJWAV9+SeB3GANajkI5XItFPi0mnT
-         mpVw==
-X-Gm-Message-State: ANhLgQ2aiIzhEklb/d/HSBND0DqC8/xf3OYM+A+Rk8j8o0FDk3QwtLF2
-        S4FnOaned9ec7eTM6J+fl/K85A==
-X-Google-Smtp-Source: ADFU+vtv+ocviwwMA8GuKvRJ5+rnYhleqOJVhro+wgnoMNtIf53L9tTB3qbfS/zh9rhfpDxcJ72Nhg==
-X-Received: by 2002:a5d:60c2:: with SMTP id x2mr27061532wrt.123.1583845842444;
-        Tue, 10 Mar 2020 06:10:42 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id k18sm16130392wru.94.2020.03.10.06.10.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Mar 2020 06:10:40 -0700 (PDT)
-Subject: Re: [PATCH v3 1/2] nvmem: Allow nvmem_sysfs_get_groups() to return
- NULL as error condition
-To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>
-References: <PSXP216MB0438C66F372D62AA71CFC04780FE0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <bc9c0714-6e21-4a6c-48ad-df3eb0cbb4a4@linaro.org>
-Date:   Tue, 10 Mar 2020 13:10:39 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        bh=L42pOiV3jLGMDXgIEOo6/CJMt+4vo0NwEJd2XSpLcUA=;
+        b=j0i3JQRTCfD9IOFf5dONQyM99C+xhwvZdo0bVWxCZTtGFOTWCH37rhZSCSah5pZaja
+         rory2CGyEs1GzG18V/XDsehgC9q3XX2cf+X9gkL+JGc4wWd5mkYfMtFGFfMGwKsid3aR
+         w+CRDHixD6ZcvYJYHNekrvJvQ8UFFVDz2a8P0BcL37BkDnrqZe7Dtl48B5SlBCMlx/x2
+         atoL8vldp7VLik2ZhO2+ePuWE8he+Vmfz6XfLahJ/zmfs9gwj9cC5dHgzLJuSpZDSa8b
+         ZTY5un0yE22vDjqwqv6MSx+GNR54jSNi6K78X5Q23au+Bat2jBm2y3uHk6tnLP5LL/pI
+         tgjA==
+X-Gm-Message-State: ANhLgQ27SZlaDHywBptNMAk8EI4qX+O4fNtV+rJKI5sa/bYcTqElj4LQ
+        huAFE9XGnJOlNdD0D+XNxg/CwFoaYvM=
+X-Google-Smtp-Source: ADFU+vsBo54LPFGNDNUeazMCLtEa+s5E4VYML9WS+QK+OJ1rbrRdVOCr6u1NDOhMUhn0duW7MuNqmw==
+X-Received: by 2002:a7b:c7cd:: with SMTP id z13mr2034890wmk.97.1583845954319;
+        Tue, 10 Mar 2020 06:12:34 -0700 (PDT)
+Received: from maco2.ams.corp.google.com (a83-162-234-235.adsl.xs4all.nl. [83.162.234.235])
+        by smtp.gmail.com with ESMTPSA id x5sm3658447wrv.67.2020.03.10.06.12.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 06:12:33 -0700 (PDT)
+From:   Martijn Coenen <maco@android.com>
+To:     axboe@kernel.dk, hch@lst.de
+Cc:     bvanassche@acm.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Martijn Coenen <maco@android.com>
+Subject: [PATCH] loop: Only change blocksize when needed.
+Date:   Tue, 10 Mar 2020 14:12:30 +0100
+Message-Id: <20200310131230.106427-1-maco@android.com>
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
 MIME-Version: 1.0
-In-Reply-To: <PSXP216MB0438C66F372D62AA71CFC04780FE0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Return early in loop_set_block_size() if the requested block size is
+identical to the one we already have; this avoids expensive calls to
+freeze the block queue.
 
+Signed-off-by: Martijn Coenen <maco@android.com>
+---
+ drivers/block/loop.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-On 09/03/2020 17:49, Nicholas Johnson wrote:
-> Currently, nvmem_register() does not check for NULL return from
-> nvmem_sysfs_get_groups(), and hence nvmem_sysfs_get_groups() has to
-> always return a valid group, even if it is given invalid inputs.
-> 
-> Add check in nvmem_register() to return an error if NULL group is given.
-> 
-> Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-> ---
->   drivers/nvmem/core.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-> index ef326f243..f6cd8a56a 100644
-> --- a/drivers/nvmem/core.c
-> +++ b/drivers/nvmem/core.c
-> @@ -388,6 +388,10 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
->   			   config->read_only || !nvmem->reg_write;
->   
->   	nvmem->dev.groups = nvmem_sysfs_get_groups(nvmem, config);
-Code as it today will never return null so this patch belongs to the 
-next patch where its possible to return null.
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index c1c844ad6b1a..a42c49e04954 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1541,16 +1541,16 @@ static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
+ 	if (arg < 512 || arg > PAGE_SIZE || !is_power_of_2(arg))
+ 		return -EINVAL;
+ 
+-	if (lo->lo_queue->limits.logical_block_size != arg) {
+-		sync_blockdev(lo->lo_device);
+-		kill_bdev(lo->lo_device);
+-	}
++	if (lo->lo_queue->limits.logical_block_size == arg)
++		return 0;
++
++	sync_blockdev(lo->lo_device);
++	kill_bdev(lo->lo_device);
+ 
+ 	blk_mq_freeze_queue(lo->lo_queue);
+ 
+ 	/* kill_bdev should have truncated all the pages */
+-	if (lo->lo_queue->limits.logical_block_size != arg &&
+-			lo->lo_device->bd_inode->i_mapping->nrpages) {
++	if (lo->lo_device->bd_inode->i_mapping->nrpages) {
+ 		err = -EAGAIN;
+ 		pr_warn("%s: loop%d (%s) has still dirty pages (nrpages=%lu)\n",
+ 			__func__, lo->lo_number, lo->lo_file_name,
+-- 
+2.25.1.481.gfbce0eb801-goog
 
-> +	if (!nvmem->dev.groups) {
-> +		kfree(nvmem);
-
-This is still leaking few more things here!
-> +		return ERR_PTR(-EPERM);
-
-Error code hear does not really reflect why it failed, we should return 
--EINVAL indicating that its invalid configuration.
-
---srini
-> +	}
->   
->   	device_initialize(&nvmem->dev);
->   
-> 
