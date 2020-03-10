@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2041417F866
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:48:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91BEA17F90F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:53:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728195AbgCJMrg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:47:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
+        id S1729219AbgCJMxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:53:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726481AbgCJMrc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:47:32 -0400
+        id S1729188AbgCJMxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:53:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDF6724696;
-        Tue, 10 Mar 2020 12:47:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3A1120674;
+        Tue, 10 Mar 2020 12:53:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844452;
-        bh=la9qw1l3uMA53Tssfqtz17j/JLxUUBGrf9xPRhZu1Io=;
+        s=default; t=1583844816;
+        bh=X7tG5Nb9FdI0XtMkJSgMz6obTbzw75umNhrHk6RRrbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dWbvIpeT5idI2ertN84tmSqpA5wj/RfwvU/rYvI+eEKjtZCq6QfSQpPJobv6DDuaS
-         KfSnypo/8SiZXaoee6G0zwTmoNGRGDrKVJvYGMt9z9p4B4ZyPIZj8wO+yqs/0aJQYH
-         1kDpYGvSmEVFKPhlXjXlm6lxCh35lPzinjrvIX2g=
+        b=kRgw0/vx5pGTweZfYAEl0bxrnBcqG8CHgKse/4fakgiuOCXWUD2Yt0f7uA5/F/0OC
+         C/RmzzGe6elqOOBrEO/ApYgb4d/NSlPWkMhVjJr8Qln/DwqSxhEXsrPKocX2WO0OLY
+         YP4Rqu+0qw9mBbqlDvaAuBQ6iJt/D6wOomqrm5nY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.9 87/88] dm cache: fix a crash due to incorrect work item cancelling
+        stable@vger.kernel.org,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.4 129/168] spi: atmel-quadspi: fix possible MMIO window size overrun
 Date:   Tue, 10 Mar 2020 13:39:35 +0100
-Message-Id: <20200310123625.267758815@linuxfoundation.org>
+Message-Id: <20200310123648.527892444@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,51 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-commit 7cdf6a0aae1cccf5167f3f04ecddcf648b78e289 upstream.
+commit 8e093ea4d3593379be46b845b9e823179558047e upstream.
 
-The crash can be reproduced by running the lvm2 testsuite test
-lvconvert-thin-external-cache.sh for several minutes, e.g.:
-  while :; do make check T=shell/lvconvert-thin-external-cache.sh; done
+The QSPI controller memory space is limited to 128MB:
+0x9000_00000-0x9800_00000/0XD000_0000--0XD800_0000.
 
-The crash happens in this call chain:
-do_waker -> policy_tick -> smq_tick -> end_hotspot_period -> clear_bitset
--> memset -> __memset -- which accesses an invalid pointer in the vmalloc
-area.
+There are nor flashes that are bigger in size than the memory size
+supported by the controller: Micron MT25QL02G (256 MB).
 
-The work entry on the workqueue is executed even after the bitmap was
-freed. The problem is that cancel_delayed_work doesn't wait for the
-running work item to finish, so the work item can continue running and
-re-submitting itself even after cache_postsuspend. In order to make sure
-that the work item won't be running, we must use cancel_delayed_work_sync.
+Check if the address exceeds the MMIO window size. An improvement
+would be to add support for regular SPI mode and fall back to it
+when the flash memories overrun the controller's memory space.
 
-Also, change flush_workqueue to drain_workqueue, so that if some work item
-submits itself or another work item, we are properly waiting for both of
-them.
-
-Fixes: c6b4fcbad044 ("dm: add cache target")
-Cc: stable@vger.kernel.org # v3.9
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fixes: 0e6aae08e9ae ("spi: Add QuadSPI driver for Atmel SAMA5D2")
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Link: https://lore.kernel.org/r/20200228155437.1558219-1-tudor.ambarus@microchip.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-cache-target.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/spi/atmel-quadspi.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/md/dm-cache-target.c
-+++ b/drivers/md/dm-cache-target.c
-@@ -2192,8 +2192,8 @@ static void wait_for_migrations(struct c
+--- a/drivers/spi/atmel-quadspi.c
++++ b/drivers/spi/atmel-quadspi.c
+@@ -149,6 +149,7 @@ struct atmel_qspi {
+ 	struct clk		*qspick;
+ 	struct platform_device	*pdev;
+ 	const struct atmel_qspi_caps *caps;
++	resource_size_t		mmap_size;
+ 	u32			pending;
+ 	u32			mr;
+ 	u32			scr;
+@@ -329,6 +330,14 @@ static int atmel_qspi_exec_op(struct spi
+ 	u32 sr, offset;
+ 	int err;
  
- static void stop_worker(struct cache *cache)
- {
--	cancel_delayed_work(&cache->waker);
--	flush_workqueue(cache->wq);
-+	cancel_delayed_work_sync(&cache->waker);
-+	drain_workqueue(cache->wq);
- }
++	/*
++	 * Check if the address exceeds the MMIO window size. An improvement
++	 * would be to add support for regular SPI mode and fall back to it
++	 * when the flash memories overrun the controller's memory space.
++	 */
++	if (op->addr.val + op->data.nbytes > aq->mmap_size)
++		return -ENOTSUPP;
++
+ 	err = atmel_qspi_set_cfg(aq, op, &offset);
+ 	if (err)
+ 		return err;
+@@ -480,6 +489,8 @@ static int atmel_qspi_probe(struct platf
+ 		goto exit;
+ 	}
  
- static void requeue_deferred_cells(struct cache *cache)
++	aq->mmap_size = resource_size(res);
++
+ 	/* Get the peripheral clock */
+ 	aq->pclk = devm_clk_get(&pdev->dev, "pclk");
+ 	if (IS_ERR(aq->pclk))
 
 
