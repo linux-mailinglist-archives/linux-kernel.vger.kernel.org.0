@@ -2,88 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B587C18033F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:28:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 809C41803AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:38:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbgCJQ2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 12:28:12 -0400
-Received: from foss.arm.com ([217.140.110.172]:39216 "EHLO foss.arm.com"
+        id S1727138AbgCJQij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 12:38:39 -0400
+Received: from mga06.intel.com ([134.134.136.31]:1135 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726692AbgCJQ2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 12:28:11 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8ADE21FB;
-        Tue, 10 Mar 2020 09:28:10 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0FC453F67D;
-        Tue, 10 Mar 2020 09:28:09 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 16:28:08 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Kevin Li <kevin-ke.li@broadcom.com>
-Cc:     Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Ray Jui <rjui@broadcom.com>, Jaroslav Kysela <perex@perex.cz>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Stephen Boyd <swboyd@chromium.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: brcm: Add DSL/PON SoC audio driver
-Message-ID: <20200310162808.GI4106@sirena.org.uk>
-References: <20200306222705.13309-1-kevin-ke.li@broadcom.com>
- <20200309123307.GE4101@sirena.org.uk>
- <69138568e9c18afa57d5edba6be9887b@mail.gmail.com>
- <20200309175205.GJ4101@sirena.org.uk>
- <8113837129a1b41aee674c68258cd37f@mail.gmail.com>
- <20200309191813.GA51173@sirena.org.uk>
- <1165b736-d0fc-1247-6f46-94a51d392532@broadcom.com>
+        id S1726420AbgCJQij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 12:38:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 09:38:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
+   d="scan'208";a="321858019"
+Received: from djdickof-mobl.amr.corp.intel.com (HELO [10.252.192.103]) ([10.252.192.103])
+  by orsmga001.jf.intel.com with ESMTP; 10 Mar 2020 09:38:37 -0700
+Subject: Re: [RFC PATCH] soundwire: bus: Add flag to mark DPN_BlockCtrl1 as
+ readonly
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        vkoul@kernel.org
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <20200309173755.955-1-srinivas.kandagatla@linaro.org>
+ <d94fca16-ed61-632a-6f8c-84e3a97869c7@linux.intel.com>
+ <92d3ae1b-bace-1d20-ef99-82f7e1a0a644@linaro.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <a2b24f84-0f9a-29ab-8748-dc5a26c05ffa@linux.intel.com>
+Date:   Tue, 10 Mar 2020 10:53:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="WR+jf/RUebEcofwt"
-Content-Disposition: inline
-In-Reply-To: <1165b736-d0fc-1247-6f46-94a51d392532@broadcom.com>
-X-Cookie: In space, no one can hear you fart.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <92d3ae1b-bace-1d20-ef99-82f7e1a0a644@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Srinivas,
 
---WR+jf/RUebEcofwt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+>>  > My recommendation would be to add a DisCo property stating the
+>> WordLength value can be used by the bus code but not written to the 
+>> Slave device registers.
+> 
+> Does something like "mipi-sdw-read-only-wordlength" as slave property, 
+> make sense?
 
-On Tue, Mar 10, 2020 at 08:49:08AM -0700, Kevin Li wrote:
+The properties can be handled at two levels.
 
-> > This is not how any of this is supposed to work, it's unlikely to work
-> > well with other devices.  If the device supports both master and slave
-> > operation then you should let the machine driver pick if the SoC or the
-> > CODEC is master via set_fmt(), randomly varying this at runtime is not
-> > going to be helpful.
+First, you'd want to change include/linux/soundwire/sdw.h, and add a new 
+field in
 
-> Maybe the name "master/slave" is confusing, these names come from internal
-> chip signals and do not represent the state of the i2s bus master. Our SoC
-> supports only master mode in the i2s bus. The Rx and Tx block each have an
-> independent bit to indicate if it is generating the clock for the i2s bus.
-> The i2s bus clocks need to be generated from either the Rx block or the Tx
-> block, but not both.
+struct sdw_dpn_prop {
+	u32 num;
+	u32 max_word;
+	u32 min_word;
+	u32 num_words;
+	u32 *words;
++       bool read_only_wordlength;
 
-Right, at the very least this needs to be better documented in the code.
+Once this is added, along with the code that bypasses the programming of 
+DPn_BlockCtrl1, the implementation has two choices:
 
---WR+jf/RUebEcofwt
-Content-Type: application/pgp-signature; name="signature.asc"
+a) hard-code the field value in the codec driver.
 
------BEGIN PGP SIGNATURE-----
+b) read the property from firmware with the DisCo helpers.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5nwBcACgkQJNaLcl1U
-h9A6pQf/bT2lCprxs3DA2/Vx/yM3Ff2ZDC3VmEzFcFoscpWNx2hOh9KohpTKb48l
-laXl5M87VISWnaTdNMb1uBh1FPljBqHfYdE8IlUbr9qU0i88TJ883m9YxTPQ5xv7
-Xt27ndFU/3gzEzDrpwKB/tbCCcYKoCwMIgPTs5eRNUzN+TY46HcgnxFFQ6ztGQ99
-lh/5tl7Bgchn3Vy0GgBJKj0LDxkZta0GAI8MMt5M4pMOBUFJSG9ULQfdyNhB1n8D
-ev0H3RU4FWKIfJx6CkWwwhnb/BrdZ+xPTF1kTYaGmkXeL7dJgjwJe6rfsSnDWbOU
-01yQDtxGqZZMUMHy7OA6TlHLpyd5UA==
-=Pkro
------END PGP SIGNATURE-----
+There is no requirement that all properties be read from firmware, and 
+if you look at existing code base sdw_slave_read_prop() is currently 
+unused, each codec implements its own .read_prop() callback.
 
---WR+jf/RUebEcofwt--
+We really wanted to be pragmatic, and give the possibility to either 
+override bad firmware or extend incomplete firmware to avoid coupling OS 
+and firmware too much. If you foresee cases where this implementation 
+might vary and firmware distribution is not a problem, then a property 
+read would make sense.
+
+Just once procedural reminder that all 'mipi-sdw' properties are handled 
+by the MIPI software WG, so we'd need to have this property added in a 
+formal MIPI document update.
+
+I suggest you talk with Lior first on this.
+
+Hope this helps
+-Pierre
