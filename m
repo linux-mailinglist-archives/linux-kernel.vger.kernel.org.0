@@ -2,139 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EED217F568
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 11:52:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB2B217F56F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 11:53:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbgCJKwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 06:52:39 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44562 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbgCJKwi (ORCPT
+        id S1726426AbgCJKx2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 06:53:28 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:40350 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725937AbgCJKx2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 06:52:38 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l18so5128213wru.11;
-        Tue, 10 Mar 2020 03:52:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=L1SaPwrLMD/7Ldsd7S8wEPnAQ7L1lH2zSz11oiEB96o=;
-        b=lRQcWmST4MwWnVaYlvChNqCrNRBfvZwY24n4gdS2ge8ZR81rnZbyQw7qMUmGOJpAUB
-         VvDO0ZwZPzSQG0wuNdolav9rKlDWvtpPKp8amcGWChVA74OsBw+x/aao5WkrGiFbVKPn
-         zaLgipimVJ5MRfFxa51glepf+7UROcQe+D6yfY0UJDY1iiXNOCzWcbBWxPG8/cR2WnT/
-         242jEL3PJcDTW2QPaJc02c6LfGtphcTVgm4piQGWXlVdvzx/PDxfrCHNlIiT8Eyovu2x
-         mOZ+BlMLWg9lRaAEzX4rafAo/Jt4+4IiodOIN9xZ8GglfUSYwgbie5uwsWQStxR8oELZ
-         2Iyg==
-X-Gm-Message-State: ANhLgQ0lKy0ulSc2lmmOH4wkULmdZ6zcHts6O3e63S6zkbbXHmMf01BP
-        LS50Id2zaAqP18fzm9ck/hYHuCi4
-X-Google-Smtp-Source: ADFU+vtLjSDsGEcgRM1V0CgiuAsHhcPsCOIVk946rDCAXgiE8LmPKdLFZqba2dIGDkNmJwcdw6rJEA==
-X-Received: by 2002:adf:df8b:: with SMTP id z11mr9977741wrl.142.1583837556168;
-        Tue, 10 Mar 2020 03:52:36 -0700 (PDT)
-Received: from ?IPv6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
-        by smtp.gmail.com with ESMTPSA id a7sm3605783wmb.0.2020.03.10.03.52.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Mar 2020 03:52:35 -0700 (PDT)
-Subject: Re: linux-next: manual merge of the tty tree with Linus' tree
-To:     Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200310144013.6df85b46@canb.auug.org.au>
- <20200310090422.GB2445065@kroah.com>
-From:   Jiri Slaby <jslaby@suse.cz>
-Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <8502911d-3764-fcb4-0c8d-f42dce1bd2fb@suse.cz>
-Date:   Tue, 10 Mar 2020 11:52:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Tue, 10 Mar 2020 06:53:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583837607;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=QcfSUQMFok+AcNi7dQXtsoDmhCrnzMZSnlpXGMmh0d0=;
+        b=V/wfIIxBi2ApJ0FD/azYXs1ZB5cY/CLh59FovnQ/BvvQD47H1iNPcN7vBf3I7MxhyIRMU5
+        gKsQegdKyDdCC3+XIc87qhQNS0VVesABO0AYe6GtuQnEe9/THYA2+8cHM+81lQiJw8wJFV
+        QlGeVXHr6BvyOZXGNXLUiaTOMP5tzxU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-167-8uj9hiuuPPGN9Y84CP11UA-1; Tue, 10 Mar 2020 06:53:23 -0400
+X-MC-Unique: 8uj9hiuuPPGN9Y84CP11UA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 750F518FE860;
+        Tue, 10 Mar 2020 10:53:21 +0000 (UTC)
+Received: from localhost (unknown [10.36.118.73])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DA367909E9;
+        Tue, 10 Mar 2020 10:53:15 +0000 (UTC)
+Date:   Tue, 10 Mar 2020 10:53:14 +0000
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
+        dgilbert@redhat.com, mst@redhat.com,
+        Sebastien Boeuf <sebastien.boeuf@intel.com>
+Subject: Re: [PATCH 03/20] virtio: Add get_shm_region method
+Message-ID: <20200310105314.GH140737@stefanha-x1.localdomain>
+References: <20200304165845.3081-1-vgoyal@redhat.com>
+ <20200304165845.3081-4-vgoyal@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200310090422.GB2445065@kroah.com>
-Content-Type: text/plain; charset=iso-8859-2
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200304165845.3081-4-vgoyal@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="poemUeGtc2GQvHuH"
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10. 03. 20, 10:04, Greg KH wrote:
-> On Tue, Mar 10, 2020 at 02:40:13PM +1100, Stephen Rothwell wrote:
->> Hi all,
->>
->> Today's linux-next merge of the tty tree got a conflict in:
->>
->>   drivers/tty/vt/selection.c
->>
->> between commits:
->>
->>   4b70dd57a15d ("vt: selection, push console lock down")
->>   e8c75a30a23c ("vt: selection, push sel_lock up")
->>
->> from Linus' tree and commits:
->>
->>   9256d09f1da1 ("vt: selection, create struct from console selection globals")
->>   bc80932cc25a ("vt: selection, indent switch-case properly")
->>
->> from the tty tree.
->>
->> I fixed it up (I think - see below) and can carry the fix as necessary.
->> This is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
-> 
-> Thank you for this, I hadn't gotten to it yet.
-> 
-> Your merge looks the same as mine, and I've pushed out the merge
-> resolution in my tree.
-> 
-> Jiri, can you double-check to verify that the merge is correct in my
-> tree?
-Yes, the result is exactly what I have in my tree.
+--poemUeGtc2GQvHuH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-thanks,
--- 
-js
-suse labs
+On Wed, Mar 04, 2020 at 11:58:28AM -0500, Vivek Goyal wrote:
+> From: Sebastien Boeuf <sebastien.boeuf@intel.com>
+>=20
+> Virtio defines 'shared memory regions' that provide a continuously
+> shared region between the host and guest.
+>=20
+> Provide a method to find a particular region on a device.
+>=20
+> Signed-off-by: Sebastien Boeuf <sebastien.boeuf@intel.com>
+> Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
+> ---
+>  include/linux/virtio_config.h | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+--poemUeGtc2GQvHuH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl5ncZoACgkQnKSrs4Gr
+c8jg6gf/SZPcTN7LLKRqnGxHpVb154voV9YMHZaHBKN3vnrXZ/Ea+UHdkyY5QADv
+1HY5kbzIGy9+ACo9dYF7RX+TuinFOlr+r5jN3n7IucAg0tpW4TgOk6zpgA78e9lm
+mO+nsBaEiHuhUuon5GUa93qEog7TEWFWJdvcPvVzMqZ2Lgn6GWHiREjWIjET8IUW
+toe4/8fig7Co7AvRXossbQVGQy6JO0b77Fe1KkrhIGnFm1CCa40cgb9SQWqgZgx+
+H8MqAl8thKLsKsusSCvvypkZnO4WI7I7bfQ8y91OFS6eH+TyOjWeCnE92hTIXNxs
+ADjNRLTsQ8amVAZxTD9jyKsF+tsOFA==
+=Eh/9
+-----END PGP SIGNATURE-----
+
+--poemUeGtc2GQvHuH--
+
