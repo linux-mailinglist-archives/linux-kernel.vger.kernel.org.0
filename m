@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6868D17F81C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:45:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D70417F8A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:50:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbgCJMpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:45:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47586 "EHLO mail.kernel.org"
+        id S1726973AbgCJMt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:49:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727600AbgCJMpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:45:08 -0400
+        id S1728513AbgCJMtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:49:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16B81246A3;
-        Tue, 10 Mar 2020 12:45:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 785C320674;
+        Tue, 10 Mar 2020 12:49:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844306;
-        bh=cg2as5AkT77EQDRMH1DPFUeJrfDK/wXOqjs5Sf/uJa8=;
+        s=default; t=1583844590;
+        bh=ujHYlmvzzmARpzykN3UJl7tQFXD5glbjjzu9OoZqoc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M2JZ4GnwNJh0ZvzcBhLMkx/PVCz90aHHwelsFm9QU7SmMsGQmpaUJ4E9tLv33RIfn
-         qPZ831E1Sylr+JYDlSJgunTVp5mgP9s44tUFhwNsM3CoIjewA+RzypxiOarnKMF/wI
-         Yg0K25n3M+VeshODXAo6LaJfyZwGNSioG6J9PR6w=
+        b=ctcI/s6XNwi4x8g7YLM6p1XFIHlkJ26u6NXNalXhMbmwFopDVVVUol/J9JMRUZOKs
+         6pF2NXWk6g6VTd+JVncNXvbfhS+bMYbz/1GVVwQTQIeEmuWh3W3kJCWU5zVto7toIs
+         5LM48hZ4dZsYR5ylDfFKZdABibFNX7qJYeC1uql0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Corey Minyard <cminyard@mvista.com>,
+        stable@vger.kernel.org,
+        Michal Swiatkowski <michal.swiatkowski@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 05/88] ipmi:ssif: Handle a possible NULL pointer reference
+Subject: [PATCH 5.4 047/168] ice: Dont tell the OS that link is going down
 Date:   Tue, 10 Mar 2020 13:38:13 +0100
-Message-Id: <20200310123608.059439536@linuxfoundation.org>
+Message-Id: <20200310123640.127645637@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Corey Minyard <cminyard@mvista.com>
+From: Michal Swiatkowski <michal.swiatkowski@intel.com>
 
-[ Upstream commit 6b8526d3abc02c08a2f888e8c20b7ac9e5776dfe ]
+[ Upstream commit 8a55c08d3bbc9ffc9639f69f742e59ebd99f913b ]
 
-In error cases a NULL can be passed to memcpy.  The length will always
-be zero, so it doesn't really matter, but go ahead and check for NULL,
-anyway, to be more precise and avoid static analysis errors.
+Remove code that tell the OS that link is going down when user
+change flow control via ethtool. When link is up it isn't certain
+that link goes down after 0x0605 aq command. If link doesn't go
+down, OS thinks that link is down, but physical link is up. To
+reset this state user have to take interface down and up.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
+If link goes down after 0x0605 command, FW send information
+about that and after that driver tells the OS that the link goes
+down. So this code in ethtool is unnecessary.
+
+Signed-off-by: Michal Swiatkowski <michal.swiatkowski@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/ipmi/ipmi_ssif.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/intel/ice/ice_ethtool.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
-index 996b9ae154042..a4ef9a6bd3678 100644
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -746,10 +746,14 @@ static void msg_done_handler(struct ssif_info *ssif_info, int result,
- 	flags = ipmi_ssif_lock_cond(ssif_info, &oflags);
- 	msg = ssif_info->curr_msg;
- 	if (msg) {
-+		if (data) {
-+			if (len > IPMI_MAX_MSG_LENGTH)
-+				len = IPMI_MAX_MSG_LENGTH;
-+			memcpy(msg->rsp, data, len);
-+		} else {
-+			len = 0;
-+		}
- 		msg->rsp_size = len;
--		if (msg->rsp_size > IPMI_MAX_MSG_LENGTH)
--			msg->rsp_size = IPMI_MAX_MSG_LENGTH;
--		memcpy(msg->rsp, data, msg->rsp_size);
- 		ssif_info->curr_msg = NULL;
- 	}
+diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool.c b/drivers/net/ethernet/intel/ice/ice_ethtool.c
+index 1fe9f6050635d..62673e27af0e8 100644
+--- a/drivers/net/ethernet/intel/ice/ice_ethtool.c
++++ b/drivers/net/ethernet/intel/ice/ice_ethtool.c
+@@ -2916,13 +2916,6 @@ ice_set_pauseparam(struct net_device *netdev, struct ethtool_pauseparam *pause)
+ 	else
+ 		return -EINVAL;
+ 
+-	/* Tell the OS link is going down, the link will go back up when fw
+-	 * says it is ready asynchronously
+-	 */
+-	ice_print_link_msg(vsi, false);
+-	netif_carrier_off(netdev);
+-	netif_tx_stop_all_queues(netdev);
+-
+ 	/* Set the FC mode and only restart AN if link is up */
+ 	status = ice_set_fc(pi, &aq_failures, link_up);
  
 -- 
 2.20.1
