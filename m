@@ -2,108 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E13D180AA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:39:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53323180AA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:40:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbgCJVjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 17:39:52 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36961 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbgCJVjw (ORCPT
+        id S1727704AbgCJVk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 17:40:28 -0400
+Received: from mail-ot1-f54.google.com ([209.85.210.54]:37038 "EHLO
+        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbgCJVk2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 17:39:52 -0400
-Received: by mail-pf1-f195.google.com with SMTP id p14so89436pfn.4
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 14:39:50 -0700 (PDT)
+        Tue, 10 Mar 2020 17:40:28 -0400
+Received: by mail-ot1-f54.google.com with SMTP id b3so14763908otp.4
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 14:40:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
-        bh=vzwzOrISC8AE6Ft8LM/EkNEsA5EmXRG9n4oBptOAC84=;
-        b=B4tbgodbmpEw4if6P+g89G1vo8NtdE1LRRFqpf4jl226jISTdzX3Svw0VVSLA8/+Yg
-         96cjfZK1I4vhnM3JeLPXB2NI3BtHwOeLYDHQbUmHnxTpr7mzT+95ABi/GxT+ZmxZBeLj
-         AUeNP7/DQI0guHcsT+BsZhVY9jHenjA83RyswSovB48KEssZCLYOSKWj2qRSPj48Nacl
-         20WfGk9h2ZhBNGF46yFx41faRs5sJYvjhncO3iWFkT6CEDMvHSbs4+tf24mPECaLHe0d
-         EUKR1BUR9PIQOobfSAjqPIDG5pAvv5b1LCEsBvQ+oR9V52FJHWBZa6wWOvwwW+jT4UoP
-         N0Mg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=30v28QZwvgciyeUbGcFniNwVinb7jSfmAcitW4ywOgw=;
+        b=pVHbW9YKRfFKZADsnAMJUGWLLN4457YVQMmhbheWBFB3MwtHdAS3MmRJYpyKaJnsOb
+         rFf6OXsUpkBbr5iDyWHykufITmHwEqrVNRlJqU63iuzLFlg1Z9MIRUH7UWE4GgLt0miz
+         5WTmAnuC4FApvZNx+enghhHzYN0PInrSX/8HNHkBs5vuFg6tkrFnlhEmj47EoYVX5IjP
+         YOccE9PudP0FfqfHBvzgCI8LKHZgbRKKToWxImEyQlMGHTFJqk+EXMcAF0uDr+n5LQKg
+         fy1W/aiXBgKwdLBhXziDEqmkP5FSQOg05yyWFYcle69NPG2P47ndKV1i5Wvpy21K2sEQ
+         X47w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
-         :mime-version;
-        bh=vzwzOrISC8AE6Ft8LM/EkNEsA5EmXRG9n4oBptOAC84=;
-        b=Y5tPRiK6IQYmXVMGQzpMlRlgYjMgmJmNjMiI9+ZltQeY1ElsjlRX56KEuCM/7d/4r7
-         3Mcc+HmwQCSPYBNH960uJbtgTXUxQV3cb6ZtJM/m0I9PsWMC0scAyyZB6cJdTDGvBZJK
-         cNISIacZLTETksOwgKv9KgthOsEHMj2V7nhT92GQ9M/CJOvaEX7/wNUnpQCLq2MIRUNO
-         UhtiGMEeIz9iUn0ue/v/ZKQPSCinLUnt1h6rmsZfc/XX/KuRbViZ+vCBAt2tOznJ+CM3
-         /E5HBSVeCnBOdh6YAcKql0NYno4fgyt+7yLl8uW1t8iPdtynZsW4/F6SENX+6hxOdLHu
-         M7cQ==
-X-Gm-Message-State: ANhLgQ3KwtRZRMXBhIDv07mgFScf8Iz8wR09w3xKCerm3kM5mxxf8ohl
-        7wLJAY8I7O+t3C8o7QbNzmx1cg==
-X-Google-Smtp-Source: ADFU+vuI2NxooomqK+7EhwkWpuecOjCyFtdWZeLBT5Dysz/5KuClAiEyVeMPqCHMFXTtTucpEYxUSQ==
-X-Received: by 2002:a65:5b49:: with SMTP id y9mr22608048pgr.153.1583876389690;
-        Tue, 10 Mar 2020 14:39:49 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id m26sm2252920pgc.77.2020.03.10.14.39.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 14:39:49 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 14:39:48 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-cc:     Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [patch] mm, oom: prevent soft lockup on memcg oom for UP systems
-Message-ID: <alpine.DEB.2.21.2003101438510.161160@chino.kir.corp.google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=30v28QZwvgciyeUbGcFniNwVinb7jSfmAcitW4ywOgw=;
+        b=HTQifvdQrH2cCPNSguMleJuDPLVSPPKmrXeVN8jE39xeVamRdOgiJMu8Svgl1Fp3m4
+         A9SG4HrxooJWAdCseVq2alcGOfjj/tOi30IBy4jpBAL8za6kEhQztO6imi7cMlDNTZIB
+         H+G/EkRfJ5QfMdrmyxKReAemMjzkIQpcLE8+YuDU+u5T7YapPQuPHqD/ce020a6rnb/s
+         JdjAbA4uqgzk8dGxDMCU2flCIy16yx2W2d+hzxNaLBc50kBKmKYXPC2GauoUUGjtVDPh
+         rFfm0/AvA1oqf6K5yU5GnxQMtdE9VJ75K8jxmbQA+12Etfktx0wI70+kVf0JX/ttu1B1
+         j+bA==
+X-Gm-Message-State: ANhLgQ1gaq9Q5mHBHdB1zPAoiBmofJv2bEtT8iZXSA69EYCR+vFxzeQX
+        O09uS3BP8iqrIR7arUKh6KotAlYP2bAFtesfp4EPgA==
+X-Google-Smtp-Source: ADFU+vuwo43Am+Q4ZOSwVz+gheEF2PfMeUE0HNw3+JQ8rS3wiOXwG1aHHfvywTiOdtBznco4h3w5ww0CkXTuxEA/kKc=
+X-Received: by 2002:a9d:6654:: with SMTP id q20mr5592078otm.180.1583876427094;
+ Tue, 10 Mar 2020 14:40:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <CAG48ez0G3JkMq61gUmyQAaCq=_TwHbi1XKzWRooxZkv08PQKuw@mail.gmail.com>
+ <20200310184814.GA8447@dhcp22.suse.cz> <CAKOZueua_v8jHCpmEtTB6f3i9e2YnmX4mqdYVWhV4E=Z-n+zRQ@mail.gmail.com>
+In-Reply-To: <CAKOZueua_v8jHCpmEtTB6f3i9e2YnmX4mqdYVWhV4E=Z-n+zRQ@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 10 Mar 2020 22:40:00 +0100
+Message-ID: <CAG48ez2EWzn_xm0Q3YaPjSXrhVAAOUUvNDyDQ+jpgavmN6wLvQ@mail.gmail.com>
+Subject: Re: interaction of MADV_PAGEOUT with CoW anonymous mappings?
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, Minchan Kim <minchan@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a process is oom killed as a result of memcg limits and the victim
-is waiting to exit, nothing ends up actually yielding the processor back
-to the victim on UP systems with preemption disabled.  Instead, the
-charging process simply loops in memcg reclaim and eventually soft
-lockups.
+On Tue, Mar 10, 2020 at 9:19 PM Daniel Colascione <dancol@google.com> wrote:
+> On Tue, Mar 10, 2020 at 11:48 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > On Tue 10-03-20 19:08:28, Jann Horn wrote:
+> > > >From looking at the source code, it looks to me as if using
+> > > MADV_PAGEOUT on a CoW anonymous mapping will page out the page if
+> > > possible, even if other processes still have the same page mapped. Is
+> > > that correct?
+> > >
+> > > If so, that's probably bad in environments where many processes (with
+> > > different privileges) are forked from a single zygote process (like
+> > > Android and Chrome), I think? If you accidentally call it on a CoW
+> > > anonymous mapping with shared pages, you'll degrade the performance of
+> > > other processes. And if an attacker does it intentionally, they could
+> > > use that to aid with exploiting race conditions or weird
+> > > microarchitectural stuff (e.g. the new https://lviattack.eu/lvi.pdf
+> > > talks about "the assumption that attackers can provoke page faults or
+> > > microcode assists for (arbitrary) load operations in the victim
+> > > domain").
+> > >
+> > > Should madvise_cold_or_pageout_pte_range() maybe refuse to operate on
+> > > pages with mapcount>1, or something like that? Or does it already do
+> > > that, and I just missed the check?
+> >
+> > I have brought up side channel attacks earlier [1] but only in the
+> > context of shared page cache pages. I didn't really consider shared
+> > anonymous pages to be a real problem. I was under impression that CoW
+> > pages shouldn't be a real problem because any security sensible
+> > applications shouldn't allow untrusted code to be forked and CoW
+> > anything really important. I believe we have made this assumption
+> > in other places - IIRC on gup with FOLL_FORCE but I admit I have
+> > very happily forgot most details.
+>
+> I'm more worried about the performance implications. Consider
+> libc.so's data section: that's a COW mapping, and we COW it during
+> zygote initialization as we load and relocate libc.so. Child processes
+> shouldn't be dirtying and re-COWing those relocated pages. If I
+> understand Jann's message correctly, MADV_PAGEOUT would force the
+> pages corresponding to the libc.so data segment out to zram just
+> because we MADV_PAGEOUT-ed a single process that happened to use libc.
+> We should leave those pages in memory, IMHO.
 
-Memory cgroup out of memory: Killed process 808 (repro) total-vm:41944kB, anon-rss:35344kB, file-rss:504kB, shmem-rss:0kB, UID:0 pgtables:108kB oom_score_adj:0
-watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [repro:806]
-CPU: 0 PID: 806 Comm: repro Not tainted 5.6.0-rc5+ #136
-RIP: 0010:shrink_lruvec+0x4e9/0xa40
-...
-Call Trace:
- shrink_node+0x40d/0x7d0
- do_try_to_free_pages+0x13f/0x470
- try_to_free_mem_cgroup_pages+0x16d/0x230
- try_charge+0x247/0xac0
- mem_cgroup_try_charge+0x10a/0x220
- mem_cgroup_try_charge_delay+0x1e/0x40
- handle_mm_fault+0xdf2/0x15f0
- do_user_addr_fault+0x21f/0x420
- page_fault+0x2f/0x40
-
-Make sure that something ends up actually yielding the processor back to
-the victim to allow for memory freeing.  Most appropriate place appears to
-be shrink_node_memcgs() where the iteration of all decendant memcgs could
-be particularly lengthy.
-
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: David Rientjes <rientjes@google.com>
----
- mm/vmscan.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2637,6 +2637,8 @@ static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
- 		unsigned long reclaimed;
- 		unsigned long scanned;
- 
-+		cond_resched();
-+
- 		switch (mem_cgroup_protected(target_memcg, memcg)) {
- 		case MEMCG_PROT_MIN:
- 			/*
+Actually, the libc.so data section is a file mapping, so I think
+can_do_pageout() would decide whether the caller is allowed to force
+pageout based on whether the caller is the owner of (or capable over)
+libc (in other words, root, basically). But I think the bss section,
+as well as heap memory, could have pageout forced by anyone.
