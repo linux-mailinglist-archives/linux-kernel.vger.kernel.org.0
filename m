@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4023A17F9B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:59:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D78917F849
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728594AbgCJM7Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:59:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39714 "EHLO mail.kernel.org"
+        id S1728042AbgCJMqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:46:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726632AbgCJM7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:59:19 -0400
+        id S1727821AbgCJMqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:46:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D17F2253D;
-        Tue, 10 Mar 2020 12:59:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 598A02467D;
+        Tue, 10 Mar 2020 12:46:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845159;
-        bh=b6GGZTOuGD4Z4VZmHbTlQCD+5uTvAchfnra/Zg+5ig4=;
+        s=default; t=1583844383;
+        bh=k+hGJZYSyfR7ivL/m9ThcSWN/LBHQZfZdVkxeHyYmkE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zC3rqHUbiKJVrPnt7ija+2tFnNhbwitULJ24ryD5SSaAmWSVmJMSJu7fCYECivC5B
-         iPLwTTmqccpbB21ple/z4AU5PmL+gDcXovdNDk8uWcAvnsALn+5c+LkNqKdW0/9vQd
-         bg62aZVDDcSzQjL0UuE3xgkpwvx1qT97C+i47N1Y=
+        b=JBpNMpWHYySXFMFjv3vCJzRlBS8+nxFiwzlLsj3DpZnpZSeXJlgkWyp+oiP9a2Lzk
+         /sEwvJGKGU3CZ8xn7H3Ms252MuvmmJGRHG9bAynQQ5xUKo+8M2WDl55A7tf35CNZJb
+         Cah04Tm0rncmQkki7i1OYiZnjjmUziFFb3XADWto=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Omar Sandoval <osandov@fb.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.5 084/189] btrfs: fix RAID direct I/O reads with alternate csums
-Date:   Tue, 10 Mar 2020 13:38:41 +0100
-Message-Id: <20200310123648.166936372@linuxfoundation.org>
+        syzbot+784ccb935f9900cc7c9e@syzkaller.appspotmail.com,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.9 34/88] HID: hiddev: Fix race in in hiddev_disconnect()
+Date:   Tue, 10 Mar 2020 13:38:42 +0100
+Message-Id: <20200310123614.195198369@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,58 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Omar Sandoval <osandov@fb.com>
+From: dan.carpenter@oracle.com <dan.carpenter@oracle.com>
 
-commit e7a04894c766daa4248cb736efee93550f2d5872 upstream.
+commit 5c02c447eaeda29d3da121a2e17b97ccaf579b51 upstream.
 
-btrfs_lookup_and_bind_dio_csum() does pointer arithmetic which assumes
-32-bit checksums. If using a larger checksum, this leads to spurious
-failures when a direct I/O read crosses a stripe. This is easy
-to reproduce:
+Syzbot reports that "hiddev" is used after it's free in hiddev_disconnect().
+The hiddev_disconnect() function sets "hiddev->exist = 0;" so
+hiddev_release() can free it as soon as we drop the "existancelock"
+lock.  This patch moves the mutex_unlock(&hiddev->existancelock) until
+after we have finished using it.
 
-  # mkfs.btrfs -f --checksum blake2 -d raid0 /dev/vdc /dev/vdd
-  ...
-  # mount /dev/vdc /mnt
-  # cd /mnt
-  # dd if=/dev/urandom of=foo bs=1M count=1 status=none
-  # dd if=foo of=/dev/null bs=1M iflag=direct status=none
-  dd: error reading 'foo': Input/output error
-  # dmesg | tail -1
-  [  135.821568] BTRFS warning (device vdc): csum failed root 5 ino 257 off 421888 ...
-
-Fix it by using the actual checksum size.
-
-Fixes: 1e25a2e3ca0d ("btrfs: don't assume ordered sums to be 4 bytes")
-CC: stable@vger.kernel.org # 5.4+
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Reported-by: syzbot+784ccb935f9900cc7c9e@syzkaller.appspotmail.com
+Fixes: 7f77897ef2b6 ("HID: hiddev: fix potential use-after-free")
+Suggested-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/hid/usbhid/hiddev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -8444,6 +8444,7 @@ static inline blk_status_t btrfs_lookup_
- {
- 	struct btrfs_io_bio *io_bio = btrfs_io_bio(bio);
- 	struct btrfs_io_bio *orig_io_bio = btrfs_io_bio(dip->orig_bio);
-+	u16 csum_size;
- 	blk_status_t ret;
+--- a/drivers/hid/usbhid/hiddev.c
++++ b/drivers/hid/usbhid/hiddev.c
+@@ -962,9 +962,9 @@ void hiddev_disconnect(struct hid_device
+ 	hiddev->exist = 0;
  
- 	/*
-@@ -8463,7 +8464,8 @@ static inline blk_status_t btrfs_lookup_
- 
- 	file_offset -= dip->logical_offset;
- 	file_offset >>= inode->i_sb->s_blocksize_bits;
--	io_bio->csum = (u8 *)(((u32 *)orig_io_bio->csum) + file_offset);
-+	csum_size = btrfs_super_csum_size(btrfs_sb(inode->i_sb)->super_copy);
-+	io_bio->csum = orig_io_bio->csum + csum_size * file_offset;
- 
- 	return 0;
- }
+ 	if (hiddev->open) {
+-		mutex_unlock(&hiddev->existancelock);
+ 		usbhid_close(hiddev->hid);
+ 		wake_up_interruptible(&hiddev->wait);
++		mutex_unlock(&hiddev->existancelock);
+ 	} else {
+ 		mutex_unlock(&hiddev->existancelock);
+ 		kfree(hiddev);
 
 
