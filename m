@@ -2,71 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3293017ED7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 01:57:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 379E917ED80
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 01:57:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbgCJA5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 20:57:05 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:42919 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbgCJA5E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 20:57:04 -0400
-Received: by mail-il1-f200.google.com with SMTP id j88so5488999ilg.9
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 17:57:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=LYm5Iby0moxVQ3MIVViH9TGv1Wc+3G3kH6N8E5ebnTE=;
-        b=GgklFzJ4kDMZF3v0TIp+TNonnvdVLxckFB3dlMtjUprxwqZTPL5CGCogwNRbq0fAF9
-         dYmKu7YVMkvfx1ak9Bypz9Co1En/AA3nN5+Eod/rsprNEPnkPlCQ6Dmmd2zDjQ8L4sJj
-         9hLaLHePBTAPP17OdPXaSVdKP83BrhmIcokg+tvD/R+so8Z1gb/LM5eI4csuEO/hifPI
-         BPmVM6fs0yXvyaOM6FLXoEeM8TNqmjF4dy/ilotYCT8ffeJQxP7qnRK2jfSlGpuzfpzM
-         Z4sJ+2YvRymV5wH0TWBZwyP1cIz/JmTLr7Gi2tmB3cJmaMnu0nIImNnqXlWuZabn23pc
-         mEQQ==
-X-Gm-Message-State: ANhLgQ1Oz3zC5doNqu55Nn36Hn3CgL5uAr4Ul5n0JYxFKzF3FTvE/oiR
-        nT99TEKQcijEwyKULt32HUFNON6EZ7QjsLvCzmzCyEiyGKBr
-X-Google-Smtp-Source: ADFU+vsO07X2AYCKTvab5N7cNSC601aCG4vt7PzApUl9ze4ga8n/fz5NIF4Ffi3z5mMRBJnLnNodZUm/iOqnfNwJed5i3tLZZFAN
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:f43:: with SMTP id y3mr17890487ilj.174.1583801822243;
- Mon, 09 Mar 2020 17:57:02 -0700 (PDT)
-Date:   Mon, 09 Mar 2020 17:57:02 -0700
-In-Reply-To: <000000000000ce8d2305a03b0988@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000002735905a07599be@google.com>
-Subject: Re: INFO: trying to register non-static key in uhid_char_release
-From:   syzbot <syzbot+8357fbef0d7bb602de45@syzkaller.appspotmail.com>
-To:     benjamin.tissoires@redhat.com, dh.herrmann@googlemail.com,
-        ebiggers@kernel.org, hdanton@sina.com, jikos@kernel.org,
-        jkorsnes@cisco.com, jkosina@suse.cz, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+        id S1727608AbgCJA5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 20:57:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48820 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727380AbgCJA5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 20:57:43 -0400
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6F2320637;
+        Tue, 10 Mar 2020 00:57:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583801862;
+        bh=hv/wJWI7gkQDnGVISxHm+oiONB52KqrznHkCU1HEsbE=;
+        h=Date:From:To:Subject:In-Reply-To:From;
+        b=nNPsoLtTM9VHCueBMLf99SyAggk/tVmXAeyyN8Fde+EwTi+HpDCZrag+iZFIKvvhy
+         GTwficNSGhCbdLCZMerTwKE2PZwu0l1+49U9mPFe4dmUz/ED/7+QphHthehNCobAW3
+         OqnPGnoBju/mZstgPaoxxQzQ6SQ00w3pgj2mcr/Q=
+Date:   Mon, 09 Mar 2020 17:57:41 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     bp@alien8.de, geert@linux-m68k.org, haren@us.ibm.com,
+        joe@perches.com, johannes@sipsolutions.net, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        mm-commits@vger.kernel.org, rikard.falkeborn@gmail.com,
+        tglx@linutronix.de, yamada.masahiro@socionext.com
+Subject:  +
+ linux-bitsh-add-compile-time-sanity-check-of-genmask-inputs.patch added to
+ -mm tree
+Message-ID: <20200310005741.yFMy7WAMl%akpm@linux-foundation.org>
+In-Reply-To: <20200305222751.6d781a3f2802d79510941e4e@linux-foundation.org>
+User-Agent: s-nail v14.8.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
 
-commit 84a4062632462c4320704fcdf8e99e89e94c0aba
-Author: Johan Korsnes <jkorsnes@cisco.com>
-Date:   Fri Jan 17 12:08:36 2020 +0000
+The patch titled
+     Subject: linux/bits.h: add compile time sanity check of GENMASK inputs
+has been added to the -mm tree.  Its filename is
+     linux-bitsh-add-compile-time-sanity-check-of-genmask-inputs.patch
 
-    HID: core: increase HID report buffer size to 8KiB
+This patch should soon appear at
+    http://ozlabs.org/~akpm/mmots/broken-out/linux-bitsh-add-compile-time-sanity-check-of-genmask-inputs.patch
+and later at
+    http://ozlabs.org/~akpm/mmotm/broken-out/linux-bitsh-add-compile-time-sanity-check-of-genmask-inputs.patch
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=113098b1e00000
-start commit:   2c523b34 Linux 5.6-rc5
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=133098b1e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=153098b1e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a5295e161cd85b82
-dashboard link: https://syzkaller.appspot.com/bug?extid=8357fbef0d7bb602de45
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11b439c3e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16dc6fb5e00000
+Before you just go and hit "reply", please:
+   a) Consider who else should be cc'ed
+   b) Prefer to cc a suitable mailing list as well
+   c) Ideally: find the original patch on the mailing list and do a
+      reply-to-all to that, adding suitable additional cc's
 
-Reported-by: syzbot+8357fbef0d7bb602de45@syzkaller.appspotmail.com
-Fixes: 84a406263246 ("HID: core: increase HID report buffer size to 8KiB")
+*** Remember to use Documentation/process/submit-checklist.rst when testing your code ***
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+The -mm tree is included into linux-next and is updated
+there every 3-4 working days
+
+------------------------------------------------------
+From: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Subject: linux/bits.h: add compile time sanity check of GENMASK inputs
+
+GENMASK() and GENMASK_ULL() are supposed to be called with the high bit as
+the first argument and the low bit as the second argument.  Mixing them
+will return a mask with zero bits set.
+
+Recent commits show getting this wrong is not uncommon, see e.g.  commit
+aa4c0c9091b0 ("net: stmmac: Fix misuses of GENMASK macro") and commit
+9bdd7bb3a844 ("clocksource/drivers/npcm: Fix misuse of GENMASK macro").
+
+To prevent such mistakes from appearing again, add compile time sanity
+checking to the arguments of GENMASK() and GENMASK_ULL().  If both
+arguments are known at compile time, and the low bit is higher than the
+high bit, break the build to detect the mistake immediately.
+
+Since GENMASK() is used in declarations, BUILD_BUG_ON_ZERO() must be used
+instead of BUILD_BUG_ON().
+
+__builtin_constant_p does not evaluate is argument, it only checks if it
+is a constant or not at compile time, and __builtin_choose_expr does not
+evaluate the expression that is not chosen.  Therefore, GENMASK(x++, 0)
+does only evaluate x++ once.
+
+Commit 95b980d62d52 ("linux/bits.h: make BIT(), GENMASK(), and friends
+available in assembly") made the macros in linux/bits.h available in
+assembly.  Since BUILD_BUG_OR_ZERO() is not asm compatible, disable the
+checks if the file is included in an asm file.
+
+Due to bugs in GCC versions before 4.9 [0], disable the check if building
+with a too old GCC compiler.
+
+[0]: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=19449
+
+Link: http://lkml.kernel.org/r/20200308193954.2372399-1-rikard.falkeborn@gmail.com
+Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Haren Myneni <haren@us.ibm.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Cc: lkml <linux-kernel@vger.kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ include/linux/bits.h |   22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+--- a/include/linux/bits.h~linux-bitsh-add-compile-time-sanity-check-of-genmask-inputs
++++ a/include/linux/bits.h
+@@ -18,12 +18,30 @@
+  * position @h. For example
+  * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
+  */
+-#define GENMASK(h, l) \
++#if !defined(__ASSEMBLY__) && \
++	(!defined(CONFIG_CC_IS_GCC) || CONFIG_GCC_VERSION >= 49000)
++#include <linux/build_bug.h>
++#define GENMASK_INPUT_CHECK(h, l) \
++	(BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
++		__builtin_constant_p((l) > (h)), (l) > (h), 0)))
++#else
++/*
++ * BUILD_BUG_ON_ZERO is not available in h files included from asm files,
++ * disable the input check if that is the case.
++ */
++#define GENMASK_INPUT_CHECK(h, l) 0
++#endif
++
++#define __GENMASK(h, l) \
+ 	(((~UL(0)) - (UL(1) << (l)) + 1) & \
+ 	 (~UL(0) >> (BITS_PER_LONG - 1 - (h))))
++#define GENMASK(h, l) \
++	(GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
+ 
+-#define GENMASK_ULL(h, l) \
++#define __GENMASK_ULL(h, l) \
+ 	(((~ULL(0)) - (ULL(1) << (l)) + 1) & \
+ 	 (~ULL(0) >> (BITS_PER_LONG_LONG - 1 - (h))))
++#define GENMASK_ULL(h, l) \
++	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
+ 
+ #endif	/* __LINUX_BITS_H */
+_
+
+Patches currently in -mm which might be from rikard.falkeborn@gmail.com are
+
+linux-bitsh-add-compile-time-sanity-check-of-genmask-inputs.patch
+
