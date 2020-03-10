@@ -2,49 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53C2217F96C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:56:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE4A317F87C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:48:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729300AbgCJM4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:56:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35758 "EHLO mail.kernel.org"
+        id S1728080AbgCJMsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:48:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729298AbgCJM4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:56:33 -0400
+        id S1728297AbgCJMsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:48:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D69D20674;
-        Tue, 10 Mar 2020 12:56:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2806C2468D;
+        Tue, 10 Mar 2020 12:48:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844992;
-        bh=8NYG1n3xKdhO8T2dlTDUokQeG2/YXy4P9DT44E3uIK8=;
+        s=default; t=1583844496;
+        bh=YKfdWWef2XAP+GCkkOxxFSr7TtbFVlNDiZybrdw5O7M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wFgEGdxgoJAnA8Un1j1JvI9b4+veToeLq8B8DuzR+XO6vwyD1O7LjH9GADnoZh160
-         YE0LefKxO/7Ph4VZiMz3QSICHRXV230piZZW4wYeqY7XcXHaU3i55vNXAvLT9tHqdj
-         gRd4p01Alk2D+mWjXrLFT81fTgB61Ztk/Dt+EXWU=
+        b=P2op+Ybp6Wdz+gNDbCgI64FaWX7nYWqhTC58bssCTV50pyoEdA/8yWQ6Dwg3w9nbo
+         +5pZqzuEEk/giNoIqSIrRBo1FiFgmQWYwW5XOoxqR0phh63PVVmr1GwH46L/ARNxFx
+         3NioFLtL7aV0XtFR5WHOjodBgTw9UZBdDsBnxkY0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Todd Kjos <tkjos@google.com>,
-        Alistair Delva <adelva@google.com>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        freedreno@lists.freedesktop.org,
-        clang-built-linux@googlegroups.com,
-        John Stultz <john.stultz@linaro.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Rob Clark <robdclark@chromium.org>,
+        stable@vger.kernel.org, Chuanhong Guo <gch981213@gmail.com>,
+        Daniel Golle <daniel@makrotopia.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 023/189] drm: msm: Fix return type of dsi_mgr_connector_mode_valid for kCFI
+Subject: [PATCH 5.4 014/168] serial: ar933x_uart: set UART_CS_{RX,TX}_READY_ORIDE
 Date:   Tue, 10 Mar 2020 13:37:40 +0100
-Message-Id: <20200310123641.816284321@linuxfoundation.org>
+Message-Id: <20200310123637.149646464@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,53 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Stultz <john.stultz@linaro.org>
+From: Daniel Golle <daniel@makrotopia.org>
 
-[ Upstream commit 7fd2dfc3694922eb7ace4801b7208cf9f62ebc7d ]
+[ Upstream commit 87c5cbf71ecbb9e289d60a2df22eb686c70bf196 ]
 
-I was hitting kCFI crashes when building with clang, and after
-some digging finally narrowed it down to the
-dsi_mgr_connector_mode_valid() function being implemented as
-returning an int, instead of an enum drm_mode_status.
+On AR934x this UART is usually not initialized by the bootloader
+as it is only used as a secondary serial port while the primary
+UART is a newly introduced NS16550-compatible.
+In order to make use of the ar933x-uart on AR934x without RTS/CTS
+hardware flow control, one needs to set the
+UART_CS_{RX,TX}_READY_ORIDE bits as other than on AR933x where this
+UART is used as primary/console, the bootloader on AR934x typically
+doesn't set those bits.
+Setting them explicitely on AR933x should not do any harm, so just
+set them unconditionally.
 
-This patch fixes it, and appeases the opaque word of the kCFI
-gods (seriously, clang inlining everything makes the kCFI
-backtraces only really rough estimates of where things went
-wrong).
-
-Thanks as always to Sami for his help narrowing this down.
-
-Cc: Rob Clark <robdclark@gmail.com>
-Cc: Sean Paul <sean@poorly.run>
-Cc: Sami Tolvanen <samitolvanen@google.com>
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Alistair Delva <adelva@google.com>
-Cc: Amit Pundir <amit.pundir@linaro.org>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: freedreno@lists.freedesktop.org
-Cc: clang-built-linux@googlegroups.com
-Signed-off-by: John Stultz <john.stultz@linaro.org>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Tested-by: Amit Pundir <amit.pundir@linaro.org>
-Signed-off-by: Rob Clark <robdclark@chromium.org>
+Tested-by: Chuanhong Guo <gch981213@gmail.com>
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Link: https://lore.kernel.org/r/20200207095335.GA179836@makrotopia.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/dsi/dsi_manager.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/ar933x_uart.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-index 271aa7bbca925..355a60b4a536f 100644
---- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-@@ -336,7 +336,7 @@ static int dsi_mgr_connector_get_modes(struct drm_connector *connector)
- 	return num;
- }
+diff --git a/drivers/tty/serial/ar933x_uart.c b/drivers/tty/serial/ar933x_uart.c
+index 3bdd56a1021b2..ea12f10610b64 100644
+--- a/drivers/tty/serial/ar933x_uart.c
++++ b/drivers/tty/serial/ar933x_uart.c
+@@ -286,6 +286,10 @@ static void ar933x_uart_set_termios(struct uart_port *port,
+ 	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
+ 			    AR933X_UART_CS_HOST_INT_EN);
  
--static int dsi_mgr_connector_mode_valid(struct drm_connector *connector,
-+static enum drm_mode_status dsi_mgr_connector_mode_valid(struct drm_connector *connector,
- 				struct drm_display_mode *mode)
- {
- 	int id = dsi_mgr_connector_get_id(connector);
++	/* enable RX and TX ready overide */
++	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
++		AR933X_UART_CS_TX_READY_ORIDE | AR933X_UART_CS_RX_READY_ORIDE);
++
+ 	/* reenable the UART */
+ 	ar933x_uart_rmw(up, AR933X_UART_CS_REG,
+ 			AR933X_UART_CS_IF_MODE_M << AR933X_UART_CS_IF_MODE_S,
+@@ -418,6 +422,10 @@ static int ar933x_uart_startup(struct uart_port *port)
+ 	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
+ 			    AR933X_UART_CS_HOST_INT_EN);
+ 
++	/* enable RX and TX ready overide */
++	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
++		AR933X_UART_CS_TX_READY_ORIDE | AR933X_UART_CS_RX_READY_ORIDE);
++
+ 	/* Enable RX interrupts */
+ 	up->ier = AR933X_UART_INT_RX_VALID;
+ 	ar933x_uart_write(up, AR933X_UART_INT_EN_REG, up->ier);
 -- 
 2.20.1
 
