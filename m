@@ -2,49 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C13417F83B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AD5017F8EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:52:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727965AbgCJMqJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:46:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49068 "EHLO mail.kernel.org"
+        id S1729045AbgCJMwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:52:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727955AbgCJMqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:46:08 -0400
+        id S1729024AbgCJMwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:52:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79CC420674;
-        Tue, 10 Mar 2020 12:46:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 232FA20674;
+        Tue, 10 Mar 2020 12:52:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844367;
-        bh=AKiDxTBGwqzIwKAfhtt+V4AulIjqGDPCCSzA6zfwocA=;
+        s=default; t=1583844733;
+        bh=Hv/zFigUtWuyvjMe+xMgpy36FHJ+5DjFT0Oop1pwdqY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I688UE/6NdkPgMmN0R9zcpKWdUGYyJeIS0rxJkz6h0nruQzynPiw7W+OO+4pjLwLk
-         bavQ+/MIysRxjLqMBT6UlhsMSmq+zhDeLWjfHGCWKypceC07BWWqixXmdP6uUXoxuN
-         qtJt0LIV57TGFTWHfPfFWOhj1MHHdnEF6aX6vSvw=
+        b=IOe1Sqtw8EI77wSW5CMqM/UVblBiVXzqn0S64KzGtDwAbp/XcIAeBuGp23eJ+nz5N
+         4BmrHjXP5V8AoVUe9PwBvRdji5/JcCywJIRiStZGBuvCLHW5xhOhKo9UzvYky+TgKM
+         g2rnAvjDAN+blceyYlSiLx6R6sDZ94gXdpj/t/RY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Todd Kjos <tkjos@google.com>,
-        Alistair Delva <adelva@google.com>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        freedreno@lists.freedesktop.org,
-        clang-built-linux@googlegroups.com,
-        John Stultz <john.stultz@linaro.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Rob Clark <robdclark@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 55/88] drm: msm: Fix return type of dsi_mgr_connector_mode_valid for kCFI
-Date:   Tue, 10 Mar 2020 13:39:03 +0100
-Message-Id: <20200310123619.853887519@linuxfoundation.org>
+        stable@vger.kernel.org, Niklas Schnelle <schnelle@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH 5.4 098/168] s390/pci: Fix unexpected write combine on resource
+Date:   Tue, 10 Mar 2020 13:39:04 +0100
+Message-Id: <20200310123645.304199904@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,55 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Stultz <john.stultz@linaro.org>
+From: Niklas Schnelle <schnelle@linux.ibm.com>
 
-[ Upstream commit 7fd2dfc3694922eb7ace4801b7208cf9f62ebc7d ]
+commit df057c914a9c219ac8b8ed22caf7da2f80c1fe26 upstream.
 
-I was hitting kCFI crashes when building with clang, and after
-some digging finally narrowed it down to the
-dsi_mgr_connector_mode_valid() function being implemented as
-returning an int, instead of an enum drm_mode_status.
+In the initial MIO support introduced in
 
-This patch fixes it, and appeases the opaque word of the kCFI
-gods (seriously, clang inlining everything makes the kCFI
-backtraces only really rough estimates of where things went
-wrong).
+commit 71ba41c9b1d9 ("s390/pci: provide support for MIO instructions")
 
-Thanks as always to Sami for his help narrowing this down.
+zpci_map_resource() and zpci_setup_resources() default to using the
+mio_wb address as the resource's start address. This means users of the
+mapping, which includes most drivers, will get write combining on PCI
+Stores. This may lead to problems when drivers expect write through
+behavior when not using an explicit ioremap_wc().
 
-Cc: Rob Clark <robdclark@gmail.com>
-Cc: Sean Paul <sean@poorly.run>
-Cc: Sami Tolvanen <samitolvanen@google.com>
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Alistair Delva <adelva@google.com>
-Cc: Amit Pundir <amit.pundir@linaro.org>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: freedreno@lists.freedesktop.org
-Cc: clang-built-linux@googlegroups.com
-Signed-off-by: John Stultz <john.stultz@linaro.org>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Tested-by: Amit Pundir <amit.pundir@linaro.org>
-Signed-off-by: Rob Clark <robdclark@chromium.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 71ba41c9b1d9 ("s390/pci: provide support for MIO instructions")
+Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/gpu/drm/msm/dsi/dsi_manager.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/pci/pci.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-index c8d1f19c9a6d9..10d49d43c17eb 100644
---- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-@@ -306,7 +306,7 @@ static int dsi_mgr_connector_get_modes(struct drm_connector *connector)
- 	return num;
- }
+--- a/arch/s390/pci/pci.c
++++ b/arch/s390/pci/pci.c
+@@ -423,7 +423,7 @@ static void zpci_map_resources(struct pc
  
--static int dsi_mgr_connector_mode_valid(struct drm_connector *connector,
-+static enum drm_mode_status dsi_mgr_connector_mode_valid(struct drm_connector *connector,
- 				struct drm_display_mode *mode)
- {
- 	int id = dsi_mgr_connector_get_id(connector);
--- 
-2.20.1
-
+ 		if (zpci_use_mio(zdev))
+ 			pdev->resource[i].start =
+-				(resource_size_t __force) zdev->bars[i].mio_wb;
++				(resource_size_t __force) zdev->bars[i].mio_wt;
+ 		else
+ 			pdev->resource[i].start = (resource_size_t __force)
+ 				pci_iomap_range_fh(pdev, i, 0, 0);
+@@ -530,7 +530,7 @@ static int zpci_setup_bus_resources(stru
+ 			flags |= IORESOURCE_MEM_64;
+ 
+ 		if (zpci_use_mio(zdev))
+-			addr = (unsigned long) zdev->bars[i].mio_wb;
++			addr = (unsigned long) zdev->bars[i].mio_wt;
+ 		else
+ 			addr = ZPCI_ADDR(entry);
+ 		size = 1UL << zdev->bars[i].size;
 
 
