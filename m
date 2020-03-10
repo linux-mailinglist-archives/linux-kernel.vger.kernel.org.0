@@ -2,38 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 072B417F9E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:00:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9E0817FDAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:29:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729584AbgCJNAw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:00:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41644 "EHLO mail.kernel.org"
+        id S1728330AbgCJMvp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:51:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730174AbgCJNAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:00:46 -0400
+        id S1728937AbgCJMvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:51:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0E2E2253D;
-        Tue, 10 Mar 2020 13:00:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFBD82253D;
+        Tue, 10 Mar 2020 12:51:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845246;
-        bh=bvcVhcGROHodvDqr337Qgj7U7rQY8iGqxJ8DVU2cvOs=;
+        s=default; t=1583844696;
+        bh=ZBMgcPbP3wxgjFwxzZhy0vyba5otvsXz9ItW6/9bml8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bh678ByyndCIKcvgHTacOCm1gYHJjW0LPYCzlFfACWNd+pAc4xyg95JyyY7kR3rRU
-         01AiVs690FmG7Hl8zROAf6HVEygWg0r448KAdg97i6AtGzWFCsOF/Ey4r9NJG20dZj
-         4QgN9clqOAhYmKqhwXkYG5xK11+8MvdAUAMka6WE=
+        b=X27lnu/V/bLjerueDn5dGo96Hs87kkH0OPdJic96WgY6B3B8nFCat9JKymT96lzXa
+         zlHyZwljIoIJV91OZIbcs28WSbtiXYmX4CpKp0D1+G1hmPGGgdQws/EGfbRnvGXDa5
+         AeqBmFutxeAleBK9MauNhA/sZfgYvre5cNtZNhpQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: [PATCH 5.5 077/189] usb: core: port: do error out if usb_autopm_get_interface() fails
+        stable@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        Yang Fei <fei.yang@intel.com>,
+        Thinh Nguyen <thinhn@synopsys.com>,
+        Tejas Joglekar <tejas.joglekar@synopsys.com>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        Jack Pham <jackp@codeaurora.org>, Todd Kjos <tkjos@google.com>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        Pratham Pratap <prathampratap@codeaurora.org>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [PATCH 5.4 068/168] usb: dwc3: gadget: Update chain bit correctly when using sg list
 Date:   Tue, 10 Mar 2020 13:38:34 +0100
-Message-Id: <20200310123647.386448402@linuxfoundation.org>
+Message-Id: <20200310123642.132340279@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,62 +50,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugeniu Rosca <erosca@de.adit-jv.com>
+From: Pratham Pratap <prathampratap@codeaurora.org>
 
-commit 1f8b39bc99a31759e97a0428a5c3f64802c1e61d upstream.
+commit dad2aff3e827b112f27fa5e6f2bf87a110067c3f upstream.
 
-Reviewing a fresh portion of coverity defects in USB core
-(specifically CID 1458999), Alan Stern noted below in [1]:
+If scatter-gather operation is allowed, a large USB request is split
+into multiple TRBs. For preparing TRBs for sg list, driver iterates
+over the list and creates TRB for each sg and mark the chain bit to
+false for the last sg. The current IOMMU driver is clubbing the list
+of sgs which shares a page boundary into one and giving it to USB driver.
+With this the number of sgs mapped it not equal to the the number of sgs
+passed. Because of this USB driver is not marking the chain bit to false
+since it couldn't iterate to the last sg. This patch addresses this issue
+by marking the chain bit to false if it is the last mapped sg.
 
-On Tue, Feb 25, 2020 at 02:39:23PM -0500, Alan Stern wrote:
- > A revised search finds line 997 in drivers/usb/core/hub.c and lines
- > 216, 269 in drivers/usb/core/port.c.  (I didn't try looking in any
- > other directories.)  AFAICT all three of these should check the
- > return value, although a error message in the kernel log probably
- > isn't needed.
+At a practical level, this patch resolves USB transfer stalls
+seen with adb on dwc3 based db845c, pixel3 and other qcom
+hardware after functionfs gadget added scatter-gather support
+around v4.20.
 
-Factor out the usb_port_runtime_{resume,suspend}() changes into a
-standalone patch to allow conflict-free porting on top of stable v3.9+.
+Credit also to Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+who implemented a very similar fix to this issue.
 
-[1] https://lore.kernel.org/lkml/Pine.LNX.4.44L0.2002251419120.1485-100000@iolanthe.rowland.org
-
-Fixes: 971fcd492cebf5 ("usb: add runtime pm support for usb port device")
-Cc: stable@vger.kernel.org # v3.9+
-Suggested-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Link: https://lore.kernel.org/r/20200226175036.14946-3-erosca@de.adit-jv.com
+Cc: Felipe Balbi <balbi@kernel.org>
+Cc: Yang Fei <fei.yang@intel.com>
+Cc: Thinh Nguyen <thinhn@synopsys.com>
+Cc: Tejas Joglekar <tejas.joglekar@synopsys.com>
+Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc: Jack Pham <jackp@codeaurora.org>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linux USB List <linux-usb@vger.kernel.org>
+Cc: stable <stable@vger.kernel.org> #4.20+
+Signed-off-by: Pratham Pratap <prathampratap@codeaurora.org>
+[jstultz: Slight tweak to remove sg_is_last() usage, reworked
+          commit message, minor comment tweak]
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Link: https://lore.kernel.org/r/20200302214443.55783-1-john.stultz@linaro.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/port.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/usb/dwc3/gadget.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/core/port.c
-+++ b/drivers/usb/core/port.c
-@@ -213,7 +213,10 @@ static int usb_port_runtime_resume(struc
- 	if (!port_dev->is_superspeed && peer)
- 		pm_runtime_get_sync(&peer->dev);
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -1068,7 +1068,14 @@ static void dwc3_prepare_one_trb_sg(stru
+ 		unsigned int rem = length % maxp;
+ 		unsigned chain = true;
  
--	usb_autopm_get_interface(intf);
-+	retval = usb_autopm_get_interface(intf);
-+	if (retval < 0)
-+		return retval;
-+
- 	retval = usb_hub_set_port_power(hdev, hub, port1, true);
- 	msleep(hub_power_on_good_delay(hub));
- 	if (udev && !retval) {
-@@ -266,7 +269,10 @@ static int usb_port_runtime_suspend(stru
- 	if (usb_port_block_power_off)
- 		return -EBUSY;
+-		if (sg_is_last(s))
++		/*
++		 * IOMMU driver is coalescing the list of sgs which shares a
++		 * page boundary into one and giving it to USB driver. With
++		 * this the number of sgs mapped is not equal to the number of
++		 * sgs passed. So mark the chain bit to false if it isthe last
++		 * mapped sg.
++		 */
++		if (i == remaining - 1)
+ 			chain = false;
  
--	usb_autopm_get_interface(intf);
-+	retval = usb_autopm_get_interface(intf);
-+	if (retval < 0)
-+		return retval;
-+
- 	retval = usb_hub_set_port_power(hdev, hub, port1, false);
- 	usb_clear_port_feature(hdev, port1, USB_PORT_FEAT_C_CONNECTION);
- 	if (!port_dev->is_superspeed)
+ 		if (rem && usb_endpoint_dir_out(dep->endpoint.desc) && !chain) {
 
 
