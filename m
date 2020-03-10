@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B85A317F822
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:45:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52B2917F8AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:50:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbgCJMpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:45:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47888 "EHLO mail.kernel.org"
+        id S1728543AbgCJMuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:50:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727902AbgCJMpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:45:19 -0400
+        id S1727080AbgCJMuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:50:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45A5724695;
-        Tue, 10 Mar 2020 12:45:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5AE2D2468E;
+        Tue, 10 Mar 2020 12:50:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844318;
-        bh=yPOMweMTvIVMEebzEEQEwUamvdvERBXJ4zun5+Ygmr0=;
+        s=default; t=1583844601;
+        bh=nRO455Vq+s6RfjtfOB2yl+aWuz2EYmxn6affqv+/Knc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R/WbbnqlYh3hRMQsU78l0rvvTwKi+60FbIcx4cW30axF7YzSlGz8yxrL+Gqn1m3LU
-         HNadpo/y0MxxOhrbVlXYfFZ3oYpq4LNRZ/wpKR0FcFwaWKfOrvVK/H3HrepCps5yDw
-         HW5pTITjz+AQj2k6jAfLjknhr09aAslqu3X/nD/c=
+        b=cteE66bItAdn0azoPg+6li25dgMk/GSeycF/OldywR+WB7oV9MwxWu7f3kjhX4VRh
+         Es8ZybLg6Ay/fxd7Y3MdqOzCdyxqlEvQgUdjSZUnvcjq1GaBarYKupqo8oZ88zvhBB
+         bi6eMfeQIXFr0Inin4YYeGDrfuccLw+9A3zhJw1A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lars Melin <larsm17@gmail.com>,
-        Aleksander Morgado <aleksander@aleksander.es>,
-        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Guo Ren <guoren@linux.alibaba.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 09/88] qmi_wwan: re-add DW5821e pre-production variant
+Subject: [PATCH 5.4 051/168] csky: Set regs->usp to kernel sp, when the exception is from kernel
 Date:   Tue, 10 Mar 2020 13:38:17 +0100
-Message-Id: <20200310123608.812657179@linuxfoundation.org>
+Message-Id: <20200310123640.523177260@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,74 +43,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjørn Mork <bjorn@mork.no>
+From: Guo Ren <guoren@linux.alibaba.com>
 
-[ Upstream commit 88bf54603f6f2c137dfee1abf6436ceac3528d2d ]
+[ Upstream commit f8e17c17b81070f38062dce79ca7f4541851dadd ]
 
-Commit f25e1392fdb5 removed the support for the pre-production variant
-of the Dell DW5821e to avoid probing another USB interface unnecessarily.
-However, the pre-production samples are found in the wild, and this lack
-of support is causing problems for users of such samples.  It is therefore
-necessary to support both variants.
+In the past, we didn't care about kernel sp when saving pt_reg. But in some
+cases, we still need pt_reg->usp to represent the kernel stack before enter
+exception.
 
-Matching on both interfaces 0 and 1 is not expected to cause any problem
-with either variant, as only the QMI function will be probed successfully
-on either.  Interface 1 will be rejected based on the HID class for the
-production variant:
+For cmpxhg in atomic.S, we need save and restore usp for above.
 
-T:  Bus=01 Lev=03 Prnt=04 Port=00 Cnt=01 Dev#= 16 Spd=480 MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  2
-P:  Vendor=413c ProdID=81d7 Rev=03.18
-S:  Manufacturer=DELL
-S:  Product=DW5821e Snapdragon X20 LTE
-S:  SerialNumber=0123456789ABCDEF
-C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-I:  If#= 1 Alt= 0 #EPs= 1 Cls=03(HID  ) Sub=00 Prot=00 Driver=usbhid
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-
-And interface 0 will be rejected based on too few endpoints for the
-pre-production variant:
-
-T: Bus=01 Lev=02 Prnt=02 Port=03 Cnt=03 Dev#= 7 Spd=480 MxCh= 0
-D: Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs= 2
-P: Vendor=413c ProdID=81d7 Rev= 3.18
-S: Manufacturer=DELL
-S: Product=DW5821e Snapdragon X20 LTE
-S: SerialNumber=0123456789ABCDEF
-C: #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=500mA
-I: If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=
-I: If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-I: If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I: If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I: If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-
-Fixes: f25e1392fdb5 ("qmi_wwan: fix interface number for DW5821e production firmware")
-Link: https://whrl.pl/Rf0vNk
-Reported-by: Lars Melin <larsm17@gmail.com>
-Cc: Aleksander Morgado <aleksander@aleksander.es>
-Signed-off-by: Bjørn Mork <bjorn@mork.no>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/qmi_wwan.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/csky/abiv1/inc/abi/entry.h | 19 ++++++++++++++-----
+ arch/csky/abiv2/inc/abi/entry.h | 11 +++++++++++
+ arch/csky/kernel/atomic.S       |  8 ++++++--
+ 3 files changed, 31 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index de7b431fdd6b5..97f6b8130db33 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -951,6 +951,7 @@ static const struct usb_device_id products[] = {
- 	{QMI_FIXED_INTF(0x413c, 0x81b6, 8)},	/* Dell Wireless 5811e */
- 	{QMI_FIXED_INTF(0x413c, 0x81b6, 10)},	/* Dell Wireless 5811e */
- 	{QMI_FIXED_INTF(0x413c, 0x81d7, 0)},	/* Dell Wireless 5821e */
-+	{QMI_FIXED_INTF(0x413c, 0x81d7, 1)},	/* Dell Wireless 5821e preproduction config */
- 	{QMI_FIXED_INTF(0x413c, 0x81e0, 0)},	/* Dell Wireless 5821e with eSIM support*/
- 	{QMI_FIXED_INTF(0x03f0, 0x4e1d, 8)},	/* HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module */
- 	{QMI_FIXED_INTF(0x03f0, 0x9d1d, 1)},	/* HP lt4120 Snapdragon X5 LTE */
+diff --git a/arch/csky/abiv1/inc/abi/entry.h b/arch/csky/abiv1/inc/abi/entry.h
+index 7ab78bd0f3b13..f35a9f3315ee6 100644
+--- a/arch/csky/abiv1/inc/abi/entry.h
++++ b/arch/csky/abiv1/inc/abi/entry.h
+@@ -16,14 +16,16 @@
+ #define LSAVE_A4	40
+ #define LSAVE_A5	44
+ 
++#define usp ss1
++
+ .macro USPTOKSP
+-	mtcr	sp, ss1
++	mtcr	sp, usp
+ 	mfcr	sp, ss0
+ .endm
+ 
+ .macro KSPTOUSP
+ 	mtcr	sp, ss0
+-	mfcr	sp, ss1
++	mfcr	sp, usp
+ .endm
+ 
+ .macro	SAVE_ALL epc_inc
+@@ -45,7 +47,13 @@
+ 	add	lr, r13
+ 	stw     lr, (sp, 8)
+ 
++	mov	lr, sp
++	addi	lr, 32
++	addi	lr, 32
++	addi	lr, 16
++	bt	2f
+ 	mfcr	lr, ss1
++2:
+ 	stw     lr, (sp, 16)
+ 
+ 	stw     a0, (sp, 20)
+@@ -79,9 +87,10 @@
+ 	ldw     a0, (sp, 12)
+ 	mtcr    a0, epsr
+ 	btsti   a0, 31
++	bt      1f
+ 	ldw     a0, (sp, 16)
+ 	mtcr	a0, ss1
+-
++1:
+ 	ldw     a0, (sp, 24)
+ 	ldw     a1, (sp, 28)
+ 	ldw     a2, (sp, 32)
+@@ -102,9 +111,9 @@
+ 	addi	sp, 32
+ 	addi	sp, 8
+ 
+-	bt      1f
++	bt      2f
+ 	KSPTOUSP
+-1:
++2:
+ 	rte
+ .endm
+ 
+diff --git a/arch/csky/abiv2/inc/abi/entry.h b/arch/csky/abiv2/inc/abi/entry.h
+index 9897a16b45e5d..94a7a58765dff 100644
+--- a/arch/csky/abiv2/inc/abi/entry.h
++++ b/arch/csky/abiv2/inc/abi/entry.h
+@@ -31,7 +31,13 @@
+ 
+ 	mfcr	lr, epsr
+ 	stw	lr, (sp, 12)
++	btsti   lr, 31
++	bf      1f
++	addi    lr, sp, 152
++	br	2f
++1:
+ 	mfcr	lr, usp
++2:
+ 	stw	lr, (sp, 16)
+ 
+ 	stw     a0, (sp, 20)
+@@ -64,8 +70,10 @@
+ 	mtcr	a0, epc
+ 	ldw	a0, (sp, 12)
+ 	mtcr	a0, epsr
++	btsti   a0, 31
+ 	ldw	a0, (sp, 16)
+ 	mtcr	a0, usp
++	mtcr	a0, ss0
+ 
+ #ifdef CONFIG_CPU_HAS_HILO
+ 	ldw	a0, (sp, 140)
+@@ -86,6 +94,9 @@
+ 	addi    sp, 40
+ 	ldm     r16-r30, (sp)
+ 	addi    sp, 72
++	bf	1f
++	mfcr	sp, ss0
++1:
+ 	rte
+ .endm
+ 
+diff --git a/arch/csky/kernel/atomic.S b/arch/csky/kernel/atomic.S
+index 5b84f11485aeb..3821ef9b75672 100644
+--- a/arch/csky/kernel/atomic.S
++++ b/arch/csky/kernel/atomic.S
+@@ -17,10 +17,12 @@ ENTRY(csky_cmpxchg)
+ 	mfcr	a3, epc
+ 	addi	a3, TRAP0_SIZE
+ 
+-	subi    sp, 8
++	subi    sp, 16
+ 	stw     a3, (sp, 0)
+ 	mfcr    a3, epsr
+ 	stw     a3, (sp, 4)
++	mfcr	a3, usp
++	stw     a3, (sp, 8)
+ 
+ 	psrset	ee
+ #ifdef CONFIG_CPU_HAS_LDSTEX
+@@ -47,7 +49,9 @@ ENTRY(csky_cmpxchg)
+ 	mtcr	a3, epc
+ 	ldw     a3, (sp, 4)
+ 	mtcr	a3, epsr
+-	addi	sp, 8
++	ldw     a3, (sp, 8)
++	mtcr	a3, usp
++	addi	sp, 16
+ 	KSPTOUSP
+ 	rte
+ END(csky_cmpxchg)
 -- 
 2.20.1
 
