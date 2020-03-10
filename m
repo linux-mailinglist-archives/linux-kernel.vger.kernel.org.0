@@ -2,197 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EA5617EDC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 02:10:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1275917EDCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 02:12:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726467AbgCJBK3 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Mar 2020 21:10:29 -0400
-Received: from mail-oln040092253032.outbound.protection.outlook.com ([40.92.253.32]:47680
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726121AbgCJBK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 21:10:29 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U94eAOAoauswfmyKpkXzmblZVfyWYuW+RT5s2KZ7k9B25K1hY1Pcfi4RXIACUOGwToNopSZKKfu9YcxEx/I0WNKpWHFbf1/sK5gK9RL/K1EHv+2pJdhgi33sqXIk5WXWdntnB7hlp4YBO/GMcQn0kSu+i9d2UiVQQnCWS9FcY0/Br7Bop+D7zsE56rDpmE4rTvsH5Sc668GB/CEYhzOfB1qwze4PBWQl36uGVQYAbn62LRXT5Mt6nzcZLgHcJ+i5njVbt1elo+Ntm7ZYGOhGmNkqJ1+B0sJ4LtuTraRNKWiElM2F0XK2JKDjM51UJvmfG29QXYjrQzKwe/xgKpEGTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nBYfntADUxw41Qc6CzWTB/HGT5tN86qbIZGPHhItfD0=;
- b=Dl5BX5t5fGSyM56Gzr1W1Z6TipygaYnh2yzP9bUY0DjGuCO6z45T+rbQQ6rePlaWJ8/7erdynTzDxRVe+LCUuKDjI+LyRaLGbR2KY712pLBAeZ9l1cBP/+a01UUO5QDba1b/fsp+vn8xmUY+NQo+W/eqbgE0uBBSAwqls6uXacl5ryAwQSvEVjeViwRElQZ7WD76eYkF0UYEV7LW9zpmh3U5GUQ/eJ8w37y+Qt5FQ4cBgCLWEG11rLaQTaX1liqdDdpLJ4nmgV/CLq26w/G0Q7oKY9SS9ZwhNHeqx5iG/4NOkw4oJTmMkq+4NV+0+2sYh1YActWHsMdiGVkDzvfxwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from HK2APC01FT060.eop-APC01.prod.protection.outlook.com
- (2a01:111:e400:7ebc::37) by
- HK2APC01HT078.eop-APC01.prod.protection.outlook.com (2a01:111:e400:7ebc::332)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Tue, 10 Mar
- 2020 01:10:24 +0000
-Received: from PSXP216MB0438.KORP216.PROD.OUTLOOK.COM (10.152.248.57) by
- HK2APC01FT060.mail.protection.outlook.com (10.152.249.160) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2793.11 via Frontend Transport; Tue, 10 Mar 2020 01:10:24 +0000
-Received: from PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
- ([fe80::a5dc:fc1:6544:5cb2]) by PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
- ([fe80::a5dc:fc1:6544:5cb2%7]) with mapi id 15.20.2793.013; Tue, 10 Mar 2020
- 01:10:24 +0000
-Received: from nicholas-dell-linux (49.196.154.16) by ME1PR01CA0130.ausprd01.prod.outlook.com (2603:10c6:200:1b::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.14 via Frontend Transport; Tue, 10 Mar 2020 01:10:21 +0000
-From:   Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH v3 2/2] nvmem: Add support for write-only instances
-Thread-Topic: [PATCH v3 2/2] nvmem: Add support for write-only instances
-Thread-Index: AQHV9jsxJuscDJGSJEm8fhjJto18yKhBBNgA
-Date:   Tue, 10 Mar 2020 01:10:24 +0000
-Message-ID: <PSXP216MB04388474C638D9EAC994ECEA80FF0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-References: <PSXP216MB0438614877E3559E155F12AF80FE0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
- <PSXP216MB0438EF52E2F4E58264ADBB8A80FE0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-In-Reply-To: <PSXP216MB0438EF52E2F4E58264ADBB8A80FE0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-Accept-Language: en-AU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: ME1PR01CA0130.ausprd01.prod.outlook.com
- (2603:10c6:200:1b::15) To PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
- (2603:1096:300:d::20)
-x-incomingtopheadermarker: OriginalChecksum:9088E1F1033EEEB6F52C934E61C9B536DCA1B292D62601BD613604A9ECD64EF9;UpperCasedChecksum:96BDA764C951C57580F899DB3E987838782C1E0515DD9AADE27770F848C95567;SizeAsReceived:7811;Count:50
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [VMV59lluRA9JDK4pIqgP0/i9zgA2N/xv]
-x-microsoft-original-message-id: <20200310011014.GA2103@nicholas-dell-linux>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 50
-x-eopattributedmessage: 0
-x-ms-office365-filtering-correlation-id: 7c73045c-d0b3-4ead-1117-08d7c48fcf4e
-x-ms-traffictypediagnostic: HK2APC01HT078:
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: NFpQE5j4Zpv+SqoKJxmb/GnTwojt7H22NVXz1BKYuYe7CiZmzjv9LjXDE5DbQwYb92HKLJd7Ibzi8OGJe+za2aggPXmf2MthYjX4Vgci1WB0DxNmCjSngCfBwTTVGTJk7LF3HqFHRibwizPi51eUH4njzAmm2Pwbj8fuO2uPgRVnozW8xTTjPplbAPmNROXn
-x-ms-exchange-antispam-messagedata: EQ3flCzuyu9a7GJcz45n3fGSo/Jq7rI5/qbG8Ghca4mhaytCGCheo3yI4Hd3xVPPx4Pv9LNx/bfadbKbmsPIFOc9BhhkuYdZuBXqv4Pg6MTo9VC5tjGJ7f3i59BrvbidCEx88C/sxHBsp04wcLlFhQ==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <D9AE6678071B5B4384EEB405A5E1395B@KORP216.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: 8BIT
+        id S1726283AbgCJBMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 21:12:49 -0400
+Received: from mail.baikalelectronics.com ([87.245.175.226]:44614 "EHLO
+        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbgCJBMt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 21:12:49 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id 438CD80307C5;
+        Tue, 10 Mar 2020 01:12:48 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at baikalelectronics.ru
+Received: from mail.baikalelectronics.ru ([127.0.0.1])
+        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id VPQJE74fpZjG; Tue, 10 Mar 2020 04:12:47 +0300 (MSK)
+Date:   Tue, 10 Mar 2020 04:11:57 +0300
+From:   Sergey Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
+        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
+        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] mfd: Add Baikal-T1 SoC Boot Controller driver
+References: <20200306130528.9973-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c73045c-d0b3-4ead-1117-08d7c48fcf4e
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Mar 2020 01:10:24.2317
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2APC01HT078
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20200306130528.9973-1-Sergey.Semin@baikalelectronics.ru>
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+Message-Id: <20200310011248.438CD80307C5@mail.baikalelectronics.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 05:50:17PM +0000, Nicholas Johnson wrote:
-> There is at least one real-world use-case for write-only nvmem
-> instances. Refer to 03cd45d2e219 ("thunderbolt: Prevent crash if
-> non-active NVMem file is read").
+On Fri, Mar 06, 2020 at 04:05:26PM +0300, Sergey.Semin@baikalelectronics.ru wrote:
+> From: Serge Semin <fancer.lancer@gmail.com>
 > 
-> Add support for write-only nvmem instances by adding attrs for 0200.
+> Baikal-T1 Boot Controller is an IP block embedded into the SoC and responsible
+> for the chip proper pre-initialization and further booting up from selected
+> memory mapped device. From the Linux kernel point of view it's just a multi-
+> functional device, which exports three physically mapped ROMs and a single SPI
+> controller interface.
 > 
-> Change nvmem_register() to abort if NULL group is returned from
-> nvmem_sysfs_get_groups().
+> Baikal-T1 can boot either from an external SPI-flash or from an embedded into
+> it firmware. So when the bootup from the SPI-flash is selected the flash memory
+> can be accessed either directly via the embedded into the Boot Controller DW
+> APB SSI controller registers or via a physically mapped ROM (which is just an
+> FSM IP-core interacting with the DW APB SSI controller by itself). Since both
+> of these interfaces are using the same SPI interface they can't be utilized
+> simultaneously. Instead the Boot Controller provides the access switching
+> functionality by means of the control register flag. That's why we need the
+> Boot Controller MFD driver provided by this patchset - in order to multiplex the
+> access to the DW APB SSI controller and SPI interface from two different
+> subsystems.
 > 
-> Return NULL from nvmem_sysfs_get_groups() in invalid cases.
-Oops, late night. Please drop the above line if you accept this. This 
-above line applies to patch 1/2 now.
-
+> After this patchset is integrated into the kernel we'll submit two more
+> patchsets with physically mapped ROMs (due to some peculiarities we can't have
+> the already available in the kernel mtd-rom drivers) and SPI controller
+> (similarly the available in the kernel DW APB SSI driver isn't suitable for
+> our version of the SPI controller) drivers will be submitted for integration
+> into the mainline Linux kernel.
 > 
-> Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-> ---
->  drivers/nvmem/nvmem-sysfs.c | 56 +++++++++++++++++++++++++++++++------
->  1 file changed, 48 insertions(+), 8 deletions(-)
+> This patchset is rebased and tested on the mainline Linux kernel 5.6-rc4:
+> commit 98d54f81e36b ("Linux 5.6-rc4").
 > 
-> diff --git a/drivers/nvmem/nvmem-sysfs.c b/drivers/nvmem/nvmem-sysfs.c
-> index 9e0c429cd..846112786 100644
-> --- a/drivers/nvmem/nvmem-sysfs.c
-> +++ b/drivers/nvmem/nvmem-sysfs.c
-> @@ -196,16 +196,49 @@ static const struct attribute_group *nvmem_ro_root_dev_groups[] = {
->  	NULL,
->  };
->  
-> +/* write only permission, root only */
-> +static struct bin_attribute bin_attr_wo_root_nvmem = {
-> +	.attr	= {
-> +		.name	= "nvmem",
-> +		.mode	= 0200,
-> +	},
-> +	.write	= bin_attr_nvmem_write,
-> +};
-> +
-> +static struct bin_attribute *nvmem_bin_wo_root_attributes[] = {
-> +	&bin_attr_wo_root_nvmem,
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group nvmem_bin_wo_root_group = {
-> +	.bin_attrs	= nvmem_bin_wo_root_attributes,
-> +	.attrs		= nvmem_attrs,
-> +};
-> +
-> +static const struct attribute_group *nvmem_wo_root_dev_groups[] = {
-> +	&nvmem_bin_wo_root_group,
-> +	NULL,
-> +};
-> +
->  const struct attribute_group **nvmem_sysfs_get_groups(
->  					struct nvmem_device *nvmem,
->  					const struct nvmem_config *config)
->  {
-> -	if (config->root_only)
-> -		return nvmem->read_only ?
-> -			nvmem_ro_root_dev_groups :
-> -			nvmem_rw_root_dev_groups;
-> +	/* Read-only */
-> +	if (nvmem->reg_read && (!nvmem->reg_write || nvmem->read_only))
-> +		return config->root_only ?
-> +			nvmem_ro_root_dev_groups : nvmem_ro_dev_groups;
-> +
-> +	/* Read-write */
-> +	if (nvmem->reg_read && nvmem->reg_write && !nvmem->read_only)
-> +		return config->root_only ?
-> +			nvmem_rw_root_dev_groups : nvmem_rw_dev_groups;
->  
-> -	return nvmem->read_only ? nvmem_ro_dev_groups : nvmem_rw_dev_groups;
-> +	/* Write-only, do not honour request for global writable entry */
-> +	if (!nvmem->reg_read && nvmem->reg_write && !nvmem->read_only)
-> +		return config->root_only ? nvmem_wo_root_dev_groups : NULL;
-> +
-> +	return NULL;
->  }
->  
->  /*
-> @@ -224,17 +257,24 @@ int nvmem_sysfs_setup_compat(struct nvmem_device *nvmem,
->  	if (!config->base_dev)
->  		return -EINVAL;
->  
-> -	if (nvmem->read_only) {
-> +	if (nvmem->reg_read && (!nvmem->reg_write || nvmem->read_only)) {
->  		if (config->root_only)
->  			nvmem->eeprom = bin_attr_ro_root_nvmem;
->  		else
->  			nvmem->eeprom = bin_attr_ro_nvmem;
-> -	} else {
-> +	} else if (!nvmem->reg_read && nvmem->reg_write && !nvmem->read_only) {
-> +		if (config->root_only)
-> +			nvmem->eeprom = bin_attr_wo_root_nvmem;
-> +		else
-> +			return -EPERM;
-> +	} else if (nvmem->reg_read && nvmem->reg_write && !nvmem->read_only) {
->  		if (config->root_only)
->  			nvmem->eeprom = bin_attr_rw_root_nvmem;
->  		else
->  			nvmem->eeprom = bin_attr_rw_nvmem;
-> -	}
-> +	} else
-> +		return -EPERM;
-> +
->  	nvmem->eeprom.attr.name = "eeprom";
->  	nvmem->eeprom.size = nvmem->size;
->  #ifdef CONFIG_DEBUG_LOCK_ALLOC
+> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+> Cc: Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>
+> Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
+> Cc: Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>
+> Cc: Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>
+> Cc: Vadim Vlasov <V.Vlasov@baikalelectronics.ru>
+> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> Cc: Paul Burton <paulburton@kernel.org>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> 
+> Serge Semin (2):
+>   dt-bindings: mfd: Add Baikal-T1 Boot Controller bindings
+>   mfd: Add Baikal-T1 Boot Controller driver
+> 
+>  .../bindings/mfd/be,bt1-boot-ctl.yaml         |  89 +++++
+>  drivers/mfd/Kconfig                           |  13 +
+>  drivers/mfd/Makefile                          |   1 +
+>  drivers/mfd/bt1-boot-ctl.c                    | 345 ++++++++++++++++++
+>  include/linux/mfd/bt1-boot-ctl.h              |  46 +++
+>  5 files changed, 494 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/be,bt1-boot-ctl.yaml
+>  create mode 100644 drivers/mfd/bt1-boot-ctl.c
+>  create mode 100644 include/linux/mfd/bt1-boot-ctl.h
+> 
 > -- 
 > 2.25.1
 > 
+
+Folks,
+
+It appears our corporate email server changes the Message-Id field of 
+messages passing through it. Due to that the emails threading gets to be
+broken. I'll resubmit the properly structured v2 patchset as soon as our system
+administrator fixes the problem. Sorry for the inconvenience caused by it.
+
+Regards,
+-Sergey
