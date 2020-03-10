@@ -2,140 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CC9918023B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:46:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2A63180243
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:46:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbgCJPqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 11:46:39 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41021 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726504AbgCJPqj (ORCPT
+        id S1726851AbgCJPqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 11:46:54 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:34507 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726403AbgCJPqy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 11:46:39 -0400
-Received: by mail-ot1-f67.google.com with SMTP id s15so5357307otq.8;
-        Tue, 10 Mar 2020 08:46:39 -0700 (PDT)
+        Tue, 10 Mar 2020 11:46:54 -0400
+Received: by mail-vs1-f66.google.com with SMTP id t10so47673vsp.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 08:46:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oAoaOcfKFLCJ0nOY8c3/piOO/zUeoRHQO/N6WrhcgWU=;
-        b=etnEvI74yEK5vkZRP14Lb1HLwlj0y6enD0GjUQc/PYmFYYpeNHdCLwMh1sAP4bgaVk
-         T6TGxwW19BpreGXZy4V2mGzXYWIiCJu6X41TfpL3iJBxK0KjkhLg1mn2sR6w0qKz8/Nc
-         IClt1AiO1XDPJCwbzNRui+PzCYEiOJYjgdvIqW2GVnXm7n9OTs0fdsmX2K4HmakfLz4a
-         Bezhh2WQDHkuo7EUbvtjXrFmLjLMrGrRVcwJ/8doEJRY/KXlaOvdWeQL6+orOABbeu3K
-         TA8N3/8sOofCXnyJrhoJIGt5xCAqdOQlsWj0AbrHxbwwkF0YHp7ibPRpgh4amSXeTYrS
-         OvxA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sm4E9m+LGUaQR6rC1v5sJxi5G7WnVBGz5OK0zEAN9bw=;
+        b=Co0nMb9QaOSzcmqYW/l4HYb5lPCHntNoFCdQX+ZwbekNQpPMYlBtbKszJh8zubjoe7
+         fBWPpVvSzO6setnDca0m5bvmw0Ot9ixJFIx5tqfYwlViGySu77C820EUuQz/5l1RICOO
+         ltSUJGSxynnvGxHx1b7iEhaIxp96/YQwOR9Mc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oAoaOcfKFLCJ0nOY8c3/piOO/zUeoRHQO/N6WrhcgWU=;
-        b=fp0VNjx34Ro33GkTD4BG7QpAw93m/uCstmxeJdEmh+q1w7xjEfAjkZXg5QrsOAtdOs
-         OzUW7XDPLa9UZK4CfOXvsHYdPE9LCrrFnz3caAU9Ysg1xCSOI0whgECp2/OmYMxQIw5A
-         OUAqVv29DV8XDFMYkonYjcmndt/xsR8egcHlgXlY8aAnwVxtJeV2myORDg4yVP5H17yi
-         0zObIEItCCaawM2iTMBccA9HE2vtZ2/B0hPr/i/CZByTJYZZJRgh3HzutgoJdkPs2wA7
-         8LwsKcBWJzEGR1/TaLh5ttc4qnei1yhFrEBAVbjOdBb9tajIDRkjEhKckSFBeg5w6BHb
-         ufCg==
-X-Gm-Message-State: ANhLgQ3/Pl1+t7MdLN4xA65pGXMsmRyLHHxpCXWwm/MyEBzK8O4X3XQr
-        HxGX8chAXD/r5lPTijBEDEMp3u2NFHE=
-X-Google-Smtp-Source: ADFU+vv9nOlKV1/TZjUbSqBUA3fOw2xujdKfOY8jbNz+gMBBvwN9774g/GhGVMGWg1Nu4YwvKYcDJA==
-X-Received: by 2002:a05:6830:2009:: with SMTP id e9mr18014608otp.296.1583855197829;
-        Tue, 10 Mar 2020 08:46:37 -0700 (PDT)
-Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id c12sm4411577oic.27.2020.03.10.08.46.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 10 Mar 2020 08:46:37 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 08:46:36 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     linux-kbuild@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-        George Spelvin <lkml@sdf.org>,
-        clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] kconfig: introduce m32-flag and m64-flag
-Message-ID: <20200310154636.GA24694@ubuntu-m2-xlarge-x86>
-References: <20200310101250.22374-1-masahiroy@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sm4E9m+LGUaQR6rC1v5sJxi5G7WnVBGz5OK0zEAN9bw=;
+        b=BQMSSNohC/nSnXoNZaPxMuV+eL6EQYEkBjC/OTc47tOxAsYI/+33lZjrwpusuI/Kds
+         DkgtlgZxycg03r/CbOswXNVmpSTXzh11c+4HBhxjEQ1S++MjQNLIINuase1iKnJmYiGm
+         4TzbwDM28VnWA3jcbJ1+Bocvvf58unghi5htYiXqnqOUXFfBB6+RmxeXeewxwN4p07/N
+         sKEukV/vT3GG6fNW2GcPRTP9+RnpY4Rw+0HAAv5sQZgEYIvBoa6cT9Mt/7RtklZ6efAP
+         4J9OXOyP0QGwEKdMNppr+oMfgfD8q4e+Kgi8Qv3FxeaxWXh1u52WKNfDoFLG6N+MLg1D
+         sOEg==
+X-Gm-Message-State: ANhLgQ0fVgigHNcPOFshtzPs3KJJ4hz7j35GX0WpG13ZeVW74ijWVX8N
+        sY1GfLNMEPLdSCP0yUh9JiWwDbFovVY=
+X-Google-Smtp-Source: ADFU+vtUSVm41yIger1FFddQzRKOJJvgbI8daDzX+Y6o8VrCorw06elzq892dj3Dg/If4XvouUEvzQ==
+X-Received: by 2002:a67:8843:: with SMTP id k64mr13506514vsd.195.1583855212539;
+        Tue, 10 Mar 2020 08:46:52 -0700 (PDT)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id o36sm10269006uao.15.2020.03.10.08.46.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Mar 2020 08:46:51 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id g21so2446317uaj.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 08:46:50 -0700 (PDT)
+X-Received: by 2002:ab0:6212:: with SMTP id m18mr1216115uao.120.1583855210519;
+ Tue, 10 Mar 2020 08:46:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200310101250.22374-1-masahiroy@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1583746236-13325-1-git-send-email-mkshah@codeaurora.org>
+ <1583746236-13325-6-git-send-email-mkshah@codeaurora.org> <CAD=FV=UugityQX+TG2c41dyaaCrhYe534UgXxm0G0igLz-9LSw@mail.gmail.com>
+ <9bf2c0d6-29cf-47f1-3f98-e4bc9703b7b7@codeaurora.org>
+In-Reply-To: <9bf2c0d6-29cf-47f1-3f98-e4bc9703b7b7@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 10 Mar 2020 08:46:37 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UbXbYDzRMn-2P1nRa7y6a4sDH6GuWnnPuaHW4zea1v=A@mail.gmail.com>
+Message-ID: <CAD=FV=UbXbYDzRMn-2P1nRa7y6a4sDH6GuWnnPuaHW4zea1v=A@mail.gmail.com>
+Subject: Re: [PATCH v13 5/5] drivers: qcom: Update rpmh clients to use start
+ and end transactions
+To:     Maulik Shah <mkshah@codeaurora.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org,
+        Taniya Das <tdas@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Kiran Gunda <kgunda@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 07:12:49PM +0900, Masahiro Yamada wrote:
-> When a compiler supports multiple architectures, some compiler features
-> can be dependent on the target architecture.
-> 
-> This is typical for Clang, which supports multiple LLVM backends.
-> Even for GCC, we need to take care of biarch compiler cases.
-> 
-> It is not a problem when we evaluate cc-option in Makefiles because
-> cc-option is tested against the flag in question + $(KBUILD_CFLAGS).
-> 
-> The cc-option in Kconfig, on the other hand, does not accumulate
-> tested flags. Due to this simplification, it could potentially test
-> cc-option against a different target.
-> 
-> At first, Kconfig always evaluated cc-option against the host
-> architecture.
-> 
-> Since commit e8de12fb7cde ("kbuild: Check for unknown options with
-> cc-option usage in Kconfig and clang"), in case of cross-compiling
-> with Clang, the target triple is correctly passed to Kconfig.
-> 
-> The case with biarch GCC (and native build with Clang) is still not
-> handled properly. We need to pass some flags to specify the target
-> machine bit.
-> 
-> Due to the design, all the macros in Kconfig are expanded in the
-> parse stage, where we do not know the target bit size yet.
-> 
-> For example, arch/x86/Kconfig allows a user to toggle CONFIG_64BIT.
-> If a compiler flag -foo depends on the machine bit, it must be tested
-> twice, one with -m32 and the other with -m64.
-> 
-> However, -m32/-m64 are not always recognized. So, this commits adds
-> m64-flag and m32-flag macros. They expand to -m32, -m64, respectively
-> if supported. Or, they expand to an empty string if unsupported.
-> 
-> The typical usage is like this:
-> 
->   config FOO
->           bool
->           default $(cc-option,$(m64-flag) -foo) if 64BIT
->           default $(cc-option,$(m32-flag) -foo)
-> 
-> This is clumsy, but there is no elegant way to handle this in the
-> current static macro expansion.
-> 
-> There was discussion for static functions vs dynamic functions.
-> The consensus was to go as far as possible with the static functions.
-> (https://lkml.org/lkml/2018/3/2/22)
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  scripts/Kconfig.include | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
-> index 85334dc8c997..496d11c92c97 100644
-> --- a/scripts/Kconfig.include
-> +++ b/scripts/Kconfig.include
-> @@ -44,3 +44,10 @@ $(error-if,$(success, $(LD) -v | grep -q gold), gold linker '$(LD)' not supporte
->  
->  # gcc version including patch level
->  gcc-version := $(shell,$(srctree)/scripts/gcc-version.sh $(CC))
-> +
-> +# machine bit flags
-> +#  $(m32-flag): -m32 if the compiler supports it, or an empty string otherwise.
-> +#  $(m64-flag): -m64 if the compiler supports it, or an empty string otherwise.
-> +cc-option-bit = $(if-success,$(CC) -Werror $(1) -E -x c /dev/null -o /dev/null,$(1))
-> +m32-flag := $(cc-option-bit,-m32)
-> +m64-flag := $(cc-option-bit,-m64)
-> -- 
-> 2.17.1
+Hi,
 
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+On Tue, Mar 10, 2020 at 4:47 AM Maulik Shah <mkshah@codeaurora.org> wrote:
+>
+>
+> On 3/10/2020 5:14 AM, Doug Anderson wrote:
+> > Hi,
+> >
+> > On Mon, Mar 9, 2020 at 2:31 AM Maulik Shah <mkshah@codeaurora.org> wrote:
+> >> Update all rpmh clients to start using rpmh_start_transaction() and
+> >> rpmh_end_transaction().
+> >>
+> >> Cc: Taniya Das <tdas@codeaurora.org>
+> >> Cc: Odelu Kukatla <okukatla@codeaurora.org>
+> >> Cc: Kiran Gunda <kgunda@codeaurora.org>
+> >> Cc: Sibi Sankar <sibis@codeaurora.org>
+> >> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+> >> ---
+> >>  drivers/clk/qcom/clk-rpmh.c             | 21 ++++++++++++++-------
+> >>  drivers/interconnect/qcom/bcm-voter.c   | 13 +++++++++----
+> >>  drivers/regulator/qcom-rpmh-regulator.c |  4 ++++
+> >>  drivers/soc/qcom/rpmhpd.c               | 11 +++++++++--
+> > This needs to be 4 separate patches since the change to each subsystem
+> > will go through a different maintainer.
+> I will split to 4 changes, and send each one to its respective mailing lists and maintainer/reviewer.
+> >
+> > Also: it'll be a lot easier to land this if you make the new
+> > rpmh_start_transaction() and rpmh_end_transaction() calls _optional_
+> > for now, especially since they are just a speed optimization and not
+> > for correctness.  That is, if a driver makes a call to rpmh_write(),
+> > rpmh_write_async(), rpmh_write_batch(), or rpmh_invalidate() without
+> > doing rpmh_start_transaction() then it should still work
+>
+> yes, this is already taken care.
+>
+> All the calls from driver will go through as it is and won't fail even without calling new APIs.
+> So they are already optional.
+>
+> The comment in rpmh_start_transaction() is already saying if client "choose" to invoke this
+> then this must be ended by calling rpmh_end_transaction(). if client don't invoke
+> rpmh_start_transaction() in the first place then everything is expected work as if no change.
+
+I think you may have misunderstood.  With your v13 it's not optional
+because the flush won't happen unless the clients call
+rpmh_start_transaction() and rpmh_end_transaction().  ...but the flush
+is necessary for correctness, right?
+
+
+> > --just flush
+> > right away.
+>
+> No, currently also in driver no one is calling rpmh_flush().
+>
+> so nothing breaks with series and no point in adding changes to flush right away and then remove them in same series.
+>
+> when the clients starts invoking new APIs, rpmh_flush() will start getting invoked for the first time in driver.
+
+I'm not saying to expose flush to clients.  I'm saying that you should
+modify the implementation of the calls in rpmh.c.  AKA in rpmh.c you
+have:
+
+rpmh_write():
+  start_transaction()
+  ... the contents of rpmh_write() from your v13 ...
+  end_transaction()
+
+rpmh_write_async():
+  start_transaction()
+  ... the contents of rpmh_write_async() from your v13 ...
+  end_transaction()
+
+rpmh_write_batch()
+  start_transaction()
+  ... the contents of rpmh_write_batch() from your v13 ...
+  end_transaction()
+
+rpmh_invalidate()
+  start_transaction()
+  ... the contents of rpmh_invalidate() from your v13 ...
+  end_transaction()
+
+
+If a client calls rpmh_write() without anything else, they will get an
+implicit flush.
+
+If a client does this:
+
+start_transaction()
+rpmh_invalidate()
+rpmh_write_batch()
+rpmh_write_batch()
+end_transaction()
+
+That translates to:
+
+start_transaction()
+  start_transaction()
+  ... the contents of rpmh_invalidate() from your v13 ...
+  end_transaction()
+  start_transaction()
+  ... the contents of rpmh_write_batch() from your v13 ...
+  end_transaction()
+  start_transaction()
+  ... the contents of rpmh_write_batch() from your v13 ...
+  end_transaction()
+end_transaction()
+
+...then you'll get one flush at the end.  That's because the
+start_transaction() embedded in rpmh_invalidate() and
+rpmh_write_batch() will increase the usage count to 2 and then
+decrease back to 1.  Since it won't be 0 you won't get flushes from
+the embedded start/end.  You'll just get one flush at the end.
+
+
+Now start_transaction() and end_transaction() are truly optional.  If
+a client doesn't call them they'll get an implicit flush at the end of
+every call.  If they do call start/end themselves they can postpone
+the flush till the true end.
+
+...and because it's truly optional, you can drop several of the
+changes in your series.
+
+
+
+-Doug
