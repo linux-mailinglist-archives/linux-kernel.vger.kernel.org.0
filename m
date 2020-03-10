@@ -2,111 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C11D317F091
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 07:35:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FB1217F087
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 07:35:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726533AbgCJGfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 02:35:19 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44251 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726501AbgCJGfS (ORCPT
+        id S1726271AbgCJGfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 02:35:00 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44359 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbgCJGe7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 02:35:18 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 37so1696941pgm.11
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 23:35:18 -0700 (PDT)
+        Tue, 10 Mar 2020 02:34:59 -0400
+Received: by mail-pl1-f194.google.com with SMTP id d9so5034135plo.11
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 23:34:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=v580Rmb03EtLJPoOXCw/wOCBD8/8JxS+MoT154A+lnQ=;
-        b=mZjnCK5vkBIEyZzc52Dk5xKX2BfQ4L8Z8HcJx+EiQC03uv4g6+eRRk4jICz1TvlwxF
-         pz3aLzoHZks6knnpqS++ZFf5tPuVGESoZ2yZbKadXuqgPzAgqi7/TXMdpEh1O2j3s1Gl
-         v4bcGPiX5s/4jbedA5urg6swkCFxd5wBDCicTaB/F0u/DHq/nXl9joKuGBAinkAzS2vc
-         Z+js7OfJk7DwI56K2vyUZ5zLBiGliWVM/ngL8cr5PX7aFRPkKp7pnBwqPfRj5NlEAmD2
-         UApecdCUqnHxLO5ghE2IOabdpF9QEe0E3KoVuk5IKTDGCTUA9KKQrJhKqsGado8ogL2O
-         Gm9A==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bGWhlBnTQCg9+tiKpri2VWMC+y1op1Nt19f6ZhKfJYA=;
+        b=GxSAYlGCXeh43hPNRDPHqDFdspD0YDrMVU2NIgVXwKJtapFOATDRQ0R/nqQw40fTkj
+         kzOfk+wx9BggRwzKU2SV/YqTWl3N/qtAkkN6wQq2nYhfSFe1LexX03KojL5sq+K3qTcx
+         TM4O9JbkAmtoSm4y/XVnxB0EKhMfe7GKpBF5eOAs1vtVQz7f4sYcXzfxGzTyIoRtyDdu
+         hWP1XBNVU1Fvu7I+szxaociVb8JpEpGno/Lb+rzkuSnsJP7EZMk77NcYSwJTgPJyV7pO
+         6v9U/sDvQ9ecbJytSGvwnAkCmfiUPpTLkCuOoUNh5WJbG6ThoXm13ilfqcX2ViDOsEH6
+         EZQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=v580Rmb03EtLJPoOXCw/wOCBD8/8JxS+MoT154A+lnQ=;
-        b=ak4KmH3tBOzsfgl0TCsShAhfUh049Y7nDcVCGtsENiGOzEiEuQJzh7QuOyqaUbXirS
-         GvoWNdVxANIhD4LoHjDcbaAIkh88Fa6beZ/8YaTunF6vqrQBc5ioA0ltU2oYALVgHGpA
-         XAF1PzmTOJnacER8zYzQAVsS6hzITVXySfWquIJy6JhseHZagHAG+m+i5L5cCr+feqHn
-         JilcHxFTAm86a4ZC5yo+fflHAegMUWzNKnOQ+yjcU2gTpXcsBYKl40bLez7W9OqPaz5q
-         Br7Q94Y6PATkxiasEb+YtfNFV7vXX9+VNjm5pEb1vl7gJSiG/yp4mv18GSV1sa3+GxVC
-         zS0w==
-X-Gm-Message-State: ANhLgQ3G9lzLlCwA8DF4XW+H6NBLjJrFvPO808EKMA0Hqja9c6TfvSbF
-        Ne+ZWlUJxaKDPhUo8AoIvZ9fXHe10p0=
-X-Google-Smtp-Source: ADFU+vtPlT2KsyZktOOc6LBt4AUsdDGVs4j2Zjv4y1WWMu5o9XGsVuStyT+MHbY93epK6kNtxoTLhQ==
-X-Received: by 2002:aa7:875a:: with SMTP id g26mr20675002pfo.193.1583822118013;
-        Mon, 09 Mar 2020 23:35:18 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id v8sm1388029pjr.10.2020.03.09.23.35.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 23:35:17 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH v4 5/5] arm64: dts: qcom: sdm845: Add IMEM and PIL info region
-Date:   Mon,  9 Mar 2020 23:33:38 -0700
-Message-Id: <20200310063338.3344582-6-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200310063338.3344582-1-bjorn.andersson@linaro.org>
-References: <20200310063338.3344582-1-bjorn.andersson@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bGWhlBnTQCg9+tiKpri2VWMC+y1op1Nt19f6ZhKfJYA=;
+        b=GvZWgIosGK2wO0nNn/X4Sw8G0swmH/y1mgpBc3E5c3EmqGbgQ3vifedNsN/t4regXM
+         wAT7BAt2So8cmVvHQZmT94tNRPkwwvqMfHlyhEALE7WA+wrKRI7RujwjDz4vnVF7hYqX
+         +FtVkZeyGgL6gS/vakHvplLlYydomKuj7hcOXaOrUz7RcbprdeS74k+qC0rbhsZEPaCn
+         Er4NHHy/rPr06oGS1MralTtNi+fyg98STCyjyt83iabE4fmSTwQljOS0xdTeVqOZ8xCm
+         nwOryJcmeXFDgqnVojU7hnF86XQVHWMv4JmiS89+jH11bIRwFTBQM8xU6371AaDT2X6a
+         a2Zw==
+X-Gm-Message-State: ANhLgQ3fHwzxlp6j5m23mMBEx+qWnIJtG1Bk47CX329bG9SpfAFDH9vM
+        NnEnt/Fc/394tWqvHvKdJ5szKy+X/N1UHO2qmWA=
+X-Google-Smtp-Source: ADFU+vsh2DTPbuDRsemIdTyt+pljDxJrkb9G1oGyBBc2JnwQGWDQ48zTeNg0Ii3dC/Nrzr0jhM5tkg05/xZyknk2mk8=
+X-Received: by 2002:a17:902:8647:: with SMTP id y7mr19292031plt.224.1583822097536;
+ Mon, 09 Mar 2020 23:34:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200310045925.25396-1-masahiroy@kernel.org>
+In-Reply-To: <20200310045925.25396-1-masahiroy@kernel.org>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Mon, 9 Mar 2020 23:34:46 -0700
+Message-ID: <CAMo8BfLLacwcBOhZfkuRziPOYbRzUHRf+BjVo_tV1r6xJZ7+4Q@mail.gmail.com>
+Subject: Re: [PATCH] xtensa: remove meaningless export ccflags-y
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Chris Zankel <chris@zankel.net>,
+        "open list:TENSILICA XTENSA PORT (xtensa)" 
+        <linux-xtensa@linux-xtensa.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a simple-mfd representing IMEM on SDM845 and define the PIL
-relocation info region, so that post mortem tools will be able to locate
-the loaded remoteprocs.
+On Mon, Mar 9, 2020 at 10:00 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> arch/xtensa/boot/Makefile does not define ccflags-y at all.
+>
+> Please do not export ccflags-y because it is meant to be effective
+> only in the current Makefile.
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>
+>  arch/xtensa/boot/Makefile | 1 -
+>  1 file changed, 1 deletion(-)
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+Thanks! Applied to my xtensa tree.
 
-Changes since v3:
-- Added ranges
-- Made size in reg hex
-
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 061f49faab19..36ed6d8d0863 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -3254,6 +3254,21 @@ spmi_bus: spmi@c440000 {
- 			cell-index = <0>;
- 		};
- 
-+		imem@146bf000 {
-+			compatible = "syscon", "simple-mfd";
-+			reg = <0 0x146bf000 0 0x1000>;
-+
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			ranges = <0 0 0x146bf000 0x1000>;
-+
-+			pil-reloc@94c {
-+				compatible = "qcom,pil-reloc-info";
-+				reg = <0x94c 0xc8>;
-+			};
-+		};
-+
- 		apps_smmu: iommu@15000000 {
- 			compatible = "qcom,sdm845-smmu-500", "arm,mmu-500";
- 			reg = <0 0x15000000 0 0x80000>;
--- 
-2.24.0
-
+-- Max
