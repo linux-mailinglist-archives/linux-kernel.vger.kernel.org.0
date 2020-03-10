@@ -2,110 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F093C180A7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42F13180A84
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:33:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbgCJVay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 17:30:54 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:50788 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbgCJVax (ORCPT
+        id S1727614AbgCJVdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 17:33:13 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:49800 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbgCJVdN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 17:30:53 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 95993293E8E
-Received: by earth.universe (Postfix, from userid 1000)
-        id 6BF9A3C0C82; Tue, 10 Mar 2020 22:30:50 +0100 (CET)
-Date:   Tue, 10 Mar 2020 22:30:50 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Sandeep Patil <sspatil@android.com>
-Cc:     Dan Murphy <dmurphy@ti.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v4 2/4] power_supply: Add additional health properties to
- the header
-Message-ID: <20200310213050.si7gcr2wbmjgr7jf@earth.universe>
-References: <20200116175039.1317-1-dmurphy@ti.com>
- <20200116175039.1317-3-dmurphy@ti.com>
- <20200117010658.iqs2zpwl6bsomkuo@earth.universe>
- <20200306235548.GA187098@google.com>
+        Tue, 10 Mar 2020 17:33:13 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jBmUw-0002iF-Vy; Tue, 10 Mar 2020 15:33:11 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jBmUw-0004iW-59; Tue, 10 Mar 2020 15:33:10 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Jann Horn <jannh@google.com>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
+        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87k142lpfz.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <875zfmloir.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87v9nmjulm.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <202003021531.C77EF10@keescook>
+        <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+        <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87v9nlii0b.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87a74xi4kz.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+        <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+        <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
+        <CAG48ez13XXWNRLrPFRHRsvPKSwSK1-6k+1F7QujWOJtVuk0QHg@mail.gmail.com>
+Date:   Tue, 10 Mar 2020 16:30:51 -0500
+In-Reply-To: <CAG48ez13XXWNRLrPFRHRsvPKSwSK1-6k+1F7QujWOJtVuk0QHg@mail.gmail.com>
+        (Jann Horn's message of "Tue, 10 Mar 2020 22:21:28 +0100")
+Message-ID: <87wo7roq2c.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="35joe23zra66xihb"
-Content-Disposition: inline
-In-Reply-To: <20200306235548.GA187098@google.com>
+Content-Type: text/plain
+X-XM-SPF: eid=1jBmUw-0004iW-59;;;mid=<87wo7roq2c.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/8FoRYPhgRSLS/IXD3oa0BUqZPsIotcuI=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4999]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Jann Horn <jannh@google.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 310 ms - load_scoreonly_sql: 0.02 (0.0%),
+        signal_user_changed: 2.6 (0.8%), b_tie_ro: 1.82 (0.6%), parse: 0.80
+        (0.3%), extract_message_metadata: 9 (2.9%), get_uri_detail_list: 1.05
+        (0.3%), tests_pri_-1000: 14 (4.4%), tests_pri_-950: 1.00 (0.3%),
+        tests_pri_-900: 0.87 (0.3%), tests_pri_-90: 29 (9.5%), check_bayes: 28
+        (9.1%), b_tokenize: 9 (2.9%), b_tok_get_all: 9 (2.8%), b_comp_prob:
+        1.98 (0.6%), b_tok_touch_all: 3.5 (1.1%), b_finish: 0.56 (0.2%),
+        tests_pri_0: 244 (78.6%), check_dkim_signature: 0.42 (0.1%),
+        check_dkim_adsp: 2.1 (0.7%), poll_dns_idle: 0.80 (0.3%), tests_pri_10:
+        1.70 (0.5%), tests_pri_500: 5 (1.7%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace cred_guard_mutex
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Jann Horn <jannh@google.com> writes:
 
---35joe23zra66xihb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Sun, Mar 8, 2020 at 10:41 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> The cred_guard_mutex is problematic.  The cred_guard_mutex is held
+>> over the userspace accesses as the arguments from userspace are read.
+>> The cred_guard_mutex is held of PTRACE_EVENT_EXIT as the the other
+>> threads are killed.  The cred_guard_mutex is held over
+>> "put_user(0, tsk->clear_child_tid)" in exit_mm().
+>>
+>> Any of those can result in deadlock, as the cred_guard_mutex is held
+>> over a possible indefinite userspace waits for userspace.
+>>
+>> Add exec_update_mutex that is only held over exec updating process
+>> with the new contents of exec, so that code that needs not to be
+>> confused by exec changing the mm and the cred in ways that can not
+>> happen during ordinary execution of a process.
+>>
+>> The plan is to switch the users of cred_guard_mutex to
+>> exec_udpate_mutex one by one.  This lets us move forward while still
+>> being careful and not introducing any regressions.
+> [...]
+>> @@ -1034,6 +1035,11 @@ static int exec_mmap(struct mm_struct *mm)
+>>                         return -EINTR;
+>>                 }
+>>         }
+>> +
+>> +       ret = mutex_lock_killable(&tsk->signal->exec_update_mutex);
+>> +       if (ret)
+>> +               return ret;
+>
+> We're already holding the old mmap_sem, and now nest the
+> exec_update_mutex inside it; but then while still holding the
+> exec_update_mutex, we do mmput(), which can e.g. end up in ksm_exit(),
+> which can do down_write(&mm->mmap_sem) from __ksm_exit(). So I think
+> at least lockdep will be unhappy, and I'm not sure whether it's an
+> actual problem or not.
 
-Hi Sandeep,
+Good point.  I should double check the lock ordering here with mmap_sem.
+It doesn't look like mmput takes mmap_sem, but still there might be a
+lock inversion of some kind here.  At least as far as lockdep is
+concerned and we don't want anything like that.
 
-On Fri, Mar 06, 2020 at 03:55:48PM -0800, Sandeep Patil wrote:
-> On Fri, Jan 17, 2020 at 02:06:58AM +0100, Sebastian Reichel wrote:
-> > Hi,
-> >=20
-> > On Thu, Jan 16, 2020 at 11:50:37AM -0600, Dan Murphy wrote:
-> > > Add HEALTH_WARM, HEALTH_COOL and HEALTH_HOT to the health enum.
-> > >=20
-> > > Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> > > ---
-> >=20
-> > Looks good. But I will not merge it without a user and have comments
-> > for the driver.
->=20
-> Android has been looking for these properties for a while now [1].
-> It was added[2] when we saw that the manufacturers were implementing these
-> properties in the driver. I didn't know the properties were absent upstre=
-am
-> until yesterday. Somebody pointed out in our ongoing effort to make sure
-> all core kernel changes that android depends on are present upstream.
->=20
-> I think those values are also propagated in application facing APIs in
-> Android (but I am not sure yet, let me know if that's something you want
-> to find out).
->=20
-> I wanted to chime in and present you a 'user' for this if that helps.
+Eric
 
-With user I meant an upstream kernel driver, which exposes the
-values. But thanks for the pointer. This should be mentioned in
-the patch description, also the fact that the status values are
-directly taken from JEITA spec.
 
-> Cc: kernel-team@android.com
->=20
-> - ssp
->=20
-> 1. https://android.googlesource.com/platform/system/core/+/refs/heads/mas=
-ter/healthd/BatteryMonitor.cpp#162
-> 2. https://android-review.googlesource.com/c/platform/system/core/+/414481
 
--- Sebastian
 
---35joe23zra66xihb
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl5oBwcACgkQ2O7X88g7
-+pqdpw/+Lcc4W0PsvkYpEfn0QKMOTsIdEV/XS+BPufOCcHNwB+J8VhlmicgdEpf6
-2zviAP4z/u6yz72Tb1zgQlJVplBlfmxYoWgWjUUYbscZ0YQNTFDanOyUHjyw9I5b
-S6Sx9z1jAbWkQk5tb5novx/eXpwYq/AScfKDAuwIqN+Aid8OXRB6vHi56nVCEuWH
-bQkt7CdHQCa6wodzcN5TEShhzXi3nMNHpAXHg1MRzyijzNEnH16G88vVtHfhflxw
-4zzSrGWVyyZAzqK8ap1tXEIOhTFvev4hSm69fUDPB5fF1rc43pTY78jzRcFbx+Qe
-0TBaJwP9pkaCxMEY4qJdNEIO8UnzL7Wcu76XrWEvcXJg/jFXzNo6p64lA+sfDoMl
-UFxh1WsAFLF3rAO0d5vj5pHojIZ0IAmp82ruzJEFPqmlGslSZ8bmbgFz4+bqc3J9
-45toClOMeAbp8QZvd8cVI+OriVGpjcOGaUtjbVSul9T2sWnqs7UuHgtyNI6oYRU3
-zpEkwk80aZAgb9MSpicykzBH8zTXaSDIKN6nhcWlcceyBGiD2VTZ9DRpxcgyD27y
-GMEo4kMf1W++TELOIhwJsB7MzHNc8e1nLcBK9TTy5YNDAqvMs/YWjVfYfy0VpfMh
-bm4wW6p52ufDicRSq2AwUl65InaRKRY3XRIVzfVe4bg8PihKD8E=
-=OK1D
------END PGP SIGNATURE-----
 
---35joe23zra66xihb--
