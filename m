@@ -2,59 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 512F817FF7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:49:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1649217FF87
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:52:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbgCJNtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:49:05 -0400
-Received: from mga01.intel.com ([192.55.52.88]:22466 "EHLO mga01.intel.com"
+        id S1726779AbgCJNwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:52:33 -0400
+Received: from foss.arm.com ([217.140.110.172]:37482 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726390AbgCJNtE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:49:04 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 06:49:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
-   d="scan'208";a="260793292"
-Received: from akharche-mobl2.ccr.corp.intel.com (HELO localhost) ([10.251.86.23])
-  by orsmga002.jf.intel.com with ESMTP; 10 Mar 2020 06:49:01 -0700
-Date:   Tue, 10 Mar 2020 15:49:00 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commits in the tpmdd tree
-Message-ID: <20200310134900.GB32334@linux.intel.com>
-References: <20200310004629.5a752080@canb.auug.org.au>
+        id S1726390AbgCJNwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:52:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D9E130E;
+        Tue, 10 Mar 2020 06:52:32 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26C433F6CF;
+        Tue, 10 Mar 2020 06:52:31 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 13:52:24 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     David Laight <David.Laight@ACULAB.COM>,
+        'Chris Wilson' <chris@chris-wilson.co.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>, elver@google.com
+Subject: Re: [PATCH] list: Prevent compiler reloads inside 'safe' list
+ iteration
+Message-ID: <20200310135224.GA54660@lakrids.cambridge.arm.com>
+References: <20200310092119.14965-1-chris@chris-wilson.co.uk>
+ <2e936d8fd2c445beb08e6dd3ee1f3891@AcuMS.aculab.com>
+ <158384100886.16414.15741589015363013386@build.alporthouse.com>
+ <723d527a4ad349b78bf11d52eba97c0e@AcuMS.aculab.com>
+ <20200310125031.GY2935@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200310004629.5a752080@canb.auug.org.au>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200310125031.GY2935@paulmck-ThinkPad-P72>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 12:46:29AM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Tue, Mar 10, 2020 at 05:50:31AM -0700, Paul E. McKenney wrote:
+> On Tue, Mar 10, 2020 at 12:23:34PM +0000, David Laight wrote:
+> > From: Chris Wilson
+> > > Sent: 10 March 2020 11:50
+> > > 
+> > > Quoting David Laight (2020-03-10 11:36:41)
+> > > > From: Chris Wilson
+> > > > > Sent: 10 March 2020 09:21
+> > > > > Instruct the compiler to read the next element in the list iteration
+> > > > > once, and that it is not allowed to reload the value from the stale
+> > > > > element later. This is important as during the course of the safe
+> > > > > iteration, the stale element may be poisoned (unbeknownst to the
+> > > > > compiler).
+> > > >
+> > > > Eh?
+> > > > I thought any function call will stop the compiler being allowed
+> > > > to reload the value.
+> > > > The 'safe' loop iterators are only 'safe' against called
+> > > > code removing the current item from the list.
+> > > >
+> > > > > This helps prevent kcsan warnings over 'unsafe' conduct in releasing the
+> > > > > list elements during list_for_each_entry_safe() and friends.
+> > > >
+> > > > Sounds like kcsan is buggy ????
 > 
-> Commits
+> Adding Marco on CC for his thoughts.
 > 
->   4eecda6b7df2 ("tpm: tpm_tis_spi_cr50: use new structure for SPI transfer delays")
->   0fbd8fe52759 ("tpm_tis_spi: use new 'delay' structure for SPI transfer delays")
+> > > The warning kcsan gave made sense (a strange case where the emptying the
+> > > list from inside the safe iterator would allow that list to be taken
+> > > under a global mutex and have one extra request added to it. The
+> > > list_for_each_entry_safe() should be ok in this scenario, so long as the
+> > > next element is read before this element is dropped, and the compiler is
+> > > instructed not to reload the element.
+> > 
+> > Normally the loop iteration code has to hold the mutex.
+> > I guess it can be released inside the loop provided no other
+> > code can ever delete entries.
+> > 
+> > > kcsan is a little more insistent on having that annotation :)
+> > > 
+> > > In this instance I would say it was a false positive from kcsan, but I
+> > > can see why it would complain and suspect that given a sufficiently
+> > > aggressive compiler, we may be caught out by a late reload of the next
+> > > element.
+> > 
+> > If you have:
+> > 	for (; p; p = next) {
+> > 		next = p->next;
+> > 		external_function_call(void);
+> > 	}
+> > the compiler must assume that the function call
+> > can change 'p->next' and read it before the call.
 > 
-> are missing a Signed-off-by from their committer.
-> 
-> Not really, but "Signed-off-by" is misspelled.  Please fix up what ever
-> script produces this (or your finger memory :-)).
+> That "must assume" is a statement of current compiler technology.
+> Given the progress over the past forty years, I would not expect this
+> restriction to hold forever. 
 
-Sure thing!
+FWIW, this is exactly the sort of assumption that link time optimization
+is likely to render invalid going forward, and LTO is starting to be
+used today (e.g. to enable SW CFI stuff with clang).
 
-Backtracked to a manual typo in a filter-branch spell. I'll convert my
-regulary used fb-spells as scripts to counter measure this in the future.
+Given that, I don't think that core kernel primitives can rely on this
+assumption.
 
-/Jarkko
+Thanks,
+Mark.
