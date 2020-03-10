@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5E4B17F978
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:57:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 348DE17F97C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:57:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729725AbgCJM5G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:57:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36312 "EHLO mail.kernel.org"
+        id S1729734AbgCJM5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:57:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729719AbgCJM5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:57:00 -0400
+        id S1729380AbgCJM5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:57:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECB2520674;
-        Tue, 10 Mar 2020 12:56:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 664EE20674;
+        Tue, 10 Mar 2020 12:57:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845020;
-        bh=qMh9/b7Wjjh4p1I6eLg+fOXx59WbAGqj5JBNVoj8QCU=;
+        s=default; t=1583845022;
+        bh=kTAVCmjkgt4yY7w8vHGxKTKF51LOERhUSmEEkoSYfzw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rr2koHGGT2sf93aNdPbxUgls0AqZN8eG1gFxJp0aV9wGtxSpu1U6yCx5J6kLpNNRx
-         95MIIG+ZiYaqsT2y9qxB5aI0iJTlCPuufbpcdt1CgrFk9z0LteYusrftARLyfdGJON
-         5b8US/Jc8wNEcgSReypzTBZMHcLEGsv9EG5D0gNE=
+        b=M5f+paL4x5SP5e0dTj37pZNhDXc2U67P4ukqk5KuKekMD8wV8yJtYPeHwJQlyNu6z
+         T57cYEdNnPPiamem5KbdGkoCailsUV6RZnTef5sfUDVq+L+9khmpwxWty1tZ8Kbo5x
+         y1b+MBdW2uX4ucnZX4y7hwzwyJ5sHNJf/+IvjOVg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Patrick Dung <patdung100@gmail.com>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 004/189] block, bfq: do not insert oom queue into position tree
-Date:   Tue, 10 Mar 2020 13:37:21 +0100
-Message-Id: <20200310123640.011975709@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 005/189] dm thin metadata: fix lockdep complaint
+Date:   Tue, 10 Mar 2020 13:37:22 +0100
+Message-Id: <20200310123640.109538555@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
 References: <20200310123639.608886314@linuxfoundation.org>
@@ -45,47 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Valente <paolo.valente@linaro.org>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit 32c59e3a9a5a0b180dd015755d6d18ca31e55935 ]
+[ Upstream commit 3918e0667bbac99400b44fa5aef3f8be2eeada4a ]
 
-BFQ maintains an ordered list, implemented with an RB tree, of
-head-request positions of non-empty bfq_queues. This position tree,
-inherited from CFQ, is used to find bfq_queues that contain I/O close
-to each other. BFQ merges these bfq_queues into a single shared queue,
-if this boosts throughput on the device at hand.
+[ 3934.173244] ======================================================
+[ 3934.179572] WARNING: possible circular locking dependency detected
+[ 3934.185884] 5.4.21-xfstests #1 Not tainted
+[ 3934.190151] ------------------------------------------------------
+[ 3934.196673] dmsetup/8897 is trying to acquire lock:
+[ 3934.201688] ffffffffbce82b18 (shrinker_rwsem){++++}, at: unregister_shrinker+0x22/0x80
+[ 3934.210268]
+               but task is already holding lock:
+[ 3934.216489] ffff92a10cc5e1d0 (&pmd->root_lock){++++}, at: dm_pool_metadata_close+0xba/0x120
+[ 3934.225083]
+               which lock already depends on the new lock.
 
-There is however a special-purpose bfq_queue that does not participate
-in queue merging, the oom bfq_queue. Yet, also this bfq_queue could be
-wrongly added to the position tree. So bfqq_find_close() could return
-the oom bfq_queue, which is a source of further troubles in an
-out-of-memory situation. This commit prevents the oom bfq_queue from
-being inserted into the position tree.
+[ 3934.564165] Chain exists of:
+                 shrinker_rwsem --> &journal->j_checkpoint_mutex --> &pmd->root_lock
 
-Tested-by: Patrick Dung <patdung100@gmail.com>
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+For a more detailed lockdep report, please see:
+
+	https://lore.kernel.org/r/20200220234519.GA620489@mit.edu
+
+We shouldn't need to hold the lock while are just tearing down and
+freeing the whole metadata pool structure.
+
+Fixes: 44d8ebf436399a4 ("dm thin metadata: use pool locking at end of dm_pool_metadata_close")
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/bfq-iosched.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/md/dm-thin-metadata.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 5c239c540c47a..3dbd0666fec1b 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -614,6 +614,10 @@ bfq_pos_tree_add_move(struct bfq_data *bfqd, struct bfq_queue *bfqq)
- 		bfqq->pos_root = NULL;
+diff --git a/drivers/md/dm-thin-metadata.c b/drivers/md/dm-thin-metadata.c
+index 8bb723f1a569a..4cd8868f80040 100644
+--- a/drivers/md/dm-thin-metadata.c
++++ b/drivers/md/dm-thin-metadata.c
+@@ -960,9 +960,9 @@ int dm_pool_metadata_close(struct dm_pool_metadata *pmd)
+ 			DMWARN("%s: __commit_transaction() failed, error = %d",
+ 			       __func__, r);
  	}
++	pmd_write_unlock(pmd);
+ 	if (!pmd->fail_io)
+ 		__destroy_persistent_data_objects(pmd);
+-	pmd_write_unlock(pmd);
  
-+	/* oom_bfqq does not participate in queue merging */
-+	if (bfqq == &bfqd->oom_bfqq)
-+		return;
-+
- 	/*
- 	 * bfqq cannot be merged any longer (see comments in
- 	 * bfq_setup_cooperator): no point in adding bfqq into the
+ 	kfree(pmd);
+ 	return 0;
 -- 
 2.20.1
 
