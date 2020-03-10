@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A869417F7A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:41:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 084CB17F801
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:44:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbgCJMlE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:41:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40224 "EHLO mail.kernel.org"
+        id S1727709AbgCJMoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:44:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726669AbgCJMlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:41:02 -0400
+        id S1727700AbgCJMoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:44:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 673C824686;
-        Tue, 10 Mar 2020 12:41:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD841246EB;
+        Tue, 10 Mar 2020 12:44:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844061;
-        bh=cy7SP9sbTFkiqIp2R+EgdcYVzesuD6fYlrZu3pfgR18=;
+        s=default; t=1583844249;
+        bh=bulQOK/My/jMPNZAniR85hY3Af0spvx6/wgGchrJY7w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fDBCrOK1Zx+WTLTtB8tiUWYFFrpdJvH6mvcDDdrIaM+/FL/6Hs2ZIwLU+5U3Pf/73
-         u/Hzkv7B68yoq+XwxchQ86McKboSkSn1h4MiPi7QG/3Y/KThQF1+ezuIN6Yh9uqhxg
-         GH032tlL53C+maQqEFUGccZ6bMQh3yCmBIbSEDPE=
+        b=H8/7iFpBKLEeVgltgbr6Nh5+0rUbULn3C88H+ZNBK5LQ0Ryc5rUEisMm1Cx1JmYdQ
+         bqgEv5x/oav5vjEoiuQlodSsKRVitx+7Xuto1VWRtzB8p1fq7y89nsnFlt4JuCTEBZ
+         lw1+eTHeOh72Dx/ZFLkuJEgJhCFc/lMSiqMPpBqM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 07/72] cfg80211: check wiphy driver existence for drvinfo report
-Date:   Tue, 10 Mar 2020 13:38:20 +0100
-Message-Id: <20200310123603.291415271@linuxfoundation.org>
+Subject: [PATCH 4.9 13/88] net: ena: rss: fix failure to get indirection table
+Date:   Tue, 10 Mar 2020 13:38:21 +0100
+Message-Id: <20200310123609.580032129@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
-References: <20200310123601.053680753@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
+From: Sameeh Jubran <sameehj@amazon.com>
 
-[ Upstream commit bfb7bac3a8f47100ebe7961bd14e924c96e21ca7 ]
+[ Upstream commit 0c8923c0a64fb5d14bebb9a9065d2dc25ac5e600 ]
 
-When preparing ethtool drvinfo, check if wiphy driver is defined
-before dereferencing it. Driver may not exist, e.g. if wiphy is
-attached to a virtual platform device.
+On old hardware, getting / setting the hash function is not supported while
+gettting / setting the indirection table is.
 
-Signed-off-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
-Link: https://lore.kernel.org/r/20200203105644.28875-1-sergey.matyukevich.os@quantenna.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+This commit enables us to still show the indirection table on older
+hardwares by setting the hash function and key to NULL.
+
+Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
+Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/ethtool.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/amazon/ena/ena_ethtool.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/net/wireless/ethtool.c b/net/wireless/ethtool.c
-index e9e91298c70de..3cedf2c2b60bd 100644
---- a/net/wireless/ethtool.c
-+++ b/net/wireless/ethtool.c
-@@ -6,9 +6,13 @@
- void cfg80211_get_drvinfo(struct net_device *dev, struct ethtool_drvinfo *info)
- {
- 	struct wireless_dev *wdev = dev->ieee80211_ptr;
-+	struct device *pdev = wiphy_dev(wdev->wiphy);
+diff --git a/drivers/net/ethernet/amazon/ena/ena_ethtool.c b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+index d85fe0de28dba..8c44ac7232ba2 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_ethtool.c
++++ b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+@@ -663,7 +663,21 @@ static int ena_get_rxfh(struct net_device *netdev, u32 *indir, u8 *key,
+ 	if (rc)
+ 		return rc;
  
--	strlcpy(info->driver, wiphy_dev(wdev->wiphy)->driver->name,
--		sizeof(info->driver));
-+	if (pdev->driver)
-+		strlcpy(info->driver, pdev->driver->name,
-+			sizeof(info->driver));
-+	else
-+		strlcpy(info->driver, "N/A", sizeof(info->driver));
- 
- 	strlcpy(info->version, init_utsname()->release, sizeof(info->version));
++	/* We call this function in order to check if the device
++	 * supports getting/setting the hash function.
++	 */
+ 	rc = ena_com_get_hash_function(adapter->ena_dev, &ena_func, key);
++
++	if (rc) {
++		if (rc == -EOPNOTSUPP) {
++			key = NULL;
++			hfunc = NULL;
++			rc = 0;
++		}
++
++		return rc;
++	}
++
+ 	if (rc)
+ 		return rc;
  
 -- 
 2.20.1
