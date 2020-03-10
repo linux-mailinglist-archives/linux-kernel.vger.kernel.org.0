@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE34517FCC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:23:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A6D417FDA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:29:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727891AbgCJNXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:23:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40684 "EHLO mail.kernel.org"
+        id S1728968AbgCJMv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:51:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730070AbgCJNAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:00:02 -0400
+        id S1727859AbgCJMvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:51:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 553BD2467D;
-        Tue, 10 Mar 2020 13:00:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5909A2468E;
+        Tue, 10 Mar 2020 12:51:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845201;
-        bh=VuexKs39MVjL3+DndPO6XuISqRYdC9A34Djm9UGu9jQ=;
+        s=default; t=1583844709;
+        bh=L/8bNz1ay2DsHD8v+WzxzOz1K+YBVsMdPN+L+Xvzoac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qTQVKXz+hgxdm/31yqFchq4G+hv4VswL8uohfL7PVoS0IJYa0+6mYCoOd784nzS5m
-         yMDqy5xqkIU+dKkOLW4VMuug6ZLz+zWLul4SHWdzgQqeyd/7dJY0nJ88kRzdq3QWlG
-         9+8Hj+070AzkZzk8vVwUBQ2HHygnNc8EsCl3UlUU=
+        b=RIHIK4pIW/osYIq8NQ+q0qIZABTi3QX/GB599geB78wNgCZwnD4rnrlnm8zssz9Eq
+         85PA7TnNVSeu97P9poyJDMVf0o2abxoGGjLKoPRGhFm4oBcJS7wYC8SqVQoYRIwgw3
+         tlIuxhulETxjkrV83nGhb1JKyCLUFHstPGeNK434=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Nicolas Dufresne <nicolas@ndufresne.ca>,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 5.5 098/189] media: v4l2-mem2mem.c: fix broken links
-Date:   Tue, 10 Mar 2020 13:38:55 +0100
-Message-Id: <20200310123649.616518359@linuxfoundation.org>
+Subject: [PATCH 5.4 090/168] media: vicodec: process all 4 components for RGB32 formats
+Date:   Tue, 10 Mar 2020 13:38:56 +0100
+Message-Id: <20200310123644.414885381@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,41 +45,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit 316e730f1d8bb029fe6cec2468fb2a50424485b3 upstream.
+commit 49a56266f96f2c6608373464af8755b431ef1513 upstream.
 
-The topology that v4l2_m2m_register_media_controller() creates for a
-processing block actually created a source-to-source link and a sink-to-sink
-link instead of two source-to-sink links.
+Only ARGB32-type pixelformat were assumed to have 4 components, which is
+wrong since RGB32-type pixelformats may have an alpha channel, so they
+should also assume 4 color components.
 
-Unfortunately v4l2-compliance never checked for such bad links, so this
-went unreported for quite some time.
+The XRGB32-type pixelformats really have only 3 color components, but this
+complicated matters since that creates strides that are sometimes width * 3
+and sometimes width * 4, and in fact this can result in buffer overflows.
+
+Keep things simple by just always processing all 4 color components.
+
+In the future we might want to optimize this again for the XRGB32-type
+pixelformats, but for now keep it simple and robust.
 
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reported-by: Nicolas Dufresne <nicolas@ndufresne.ca>
-Cc: <stable@vger.kernel.org>      # for v4.19 and up
+Cc: <stable@vger.kernel.org>      # for v5.4 and up
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/v4l2-core/v4l2-mem2mem.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/vicodec/codec-v4l2-fwht.c |   34 ++++++-----------------
+ 1 file changed, 9 insertions(+), 25 deletions(-)
 
---- a/drivers/media/v4l2-core/v4l2-mem2mem.c
-+++ b/drivers/media/v4l2-core/v4l2-mem2mem.c
-@@ -880,12 +880,12 @@ int v4l2_m2m_register_media_controller(s
- 		goto err_rel_entity1;
+--- a/drivers/media/platform/vicodec/codec-v4l2-fwht.c
++++ b/drivers/media/platform/vicodec/codec-v4l2-fwht.c
+@@ -27,17 +27,17 @@ static const struct v4l2_fwht_pixfmt_inf
+ 	{ V4L2_PIX_FMT_BGR24,   3, 3, 1, 3, 3, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
+ 	{ V4L2_PIX_FMT_RGB24,   3, 3, 1, 3, 3, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
+ 	{ V4L2_PIX_FMT_HSV24,   3, 3, 1, 3, 3, 1, 1, 3, 1, FWHT_FL_PIXENC_HSV},
+-	{ V4L2_PIX_FMT_BGR32,   4, 4, 1, 4, 4, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
+-	{ V4L2_PIX_FMT_XBGR32,  4, 4, 1, 4, 4, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
++	{ V4L2_PIX_FMT_BGR32,   4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
++	{ V4L2_PIX_FMT_XBGR32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+ 	{ V4L2_PIX_FMT_ABGR32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+-	{ V4L2_PIX_FMT_RGB32,   4, 4, 1, 4, 4, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
+-	{ V4L2_PIX_FMT_XRGB32,  4, 4, 1, 4, 4, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
++	{ V4L2_PIX_FMT_RGB32,   4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
++	{ V4L2_PIX_FMT_XRGB32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+ 	{ V4L2_PIX_FMT_ARGB32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+-	{ V4L2_PIX_FMT_BGRX32,  4, 4, 1, 4, 4, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
++	{ V4L2_PIX_FMT_BGRX32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+ 	{ V4L2_PIX_FMT_BGRA32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+-	{ V4L2_PIX_FMT_RGBX32,  4, 4, 1, 4, 4, 1, 1, 3, 1, FWHT_FL_PIXENC_RGB},
++	{ V4L2_PIX_FMT_RGBX32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+ 	{ V4L2_PIX_FMT_RGBA32,  4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_RGB},
+-	{ V4L2_PIX_FMT_HSV32,   4, 4, 1, 4, 4, 1, 1, 3, 1, FWHT_FL_PIXENC_HSV},
++	{ V4L2_PIX_FMT_HSV32,   4, 4, 1, 4, 4, 1, 1, 4, 1, FWHT_FL_PIXENC_HSV},
+ 	{ V4L2_PIX_FMT_GREY,    1, 1, 1, 1, 0, 1, 1, 1, 1, FWHT_FL_PIXENC_RGB},
+ };
  
- 	/* Connect the three entities */
--	ret = media_create_pad_link(m2m_dev->source, 0, &m2m_dev->proc, 1,
-+	ret = media_create_pad_link(m2m_dev->source, 0, &m2m_dev->proc, 0,
- 			MEDIA_LNK_FL_IMMUTABLE | MEDIA_LNK_FL_ENABLED);
- 	if (ret)
- 		goto err_rel_entity2;
- 
--	ret = media_create_pad_link(&m2m_dev->proc, 0, &m2m_dev->sink, 0,
-+	ret = media_create_pad_link(&m2m_dev->proc, 1, &m2m_dev->sink, 0,
- 			MEDIA_LNK_FL_IMMUTABLE | MEDIA_LNK_FL_ENABLED);
- 	if (ret)
- 		goto err_rm_links0;
+@@ -175,22 +175,14 @@ static int prepare_raw_frame(struct fwht
+ 	case V4L2_PIX_FMT_RGB32:
+ 	case V4L2_PIX_FMT_XRGB32:
+ 	case V4L2_PIX_FMT_HSV32:
+-		rf->cr = rf->luma + 1;
+-		rf->cb = rf->cr + 2;
+-		rf->luma += 2;
+-		break;
+-	case V4L2_PIX_FMT_BGR32:
+-	case V4L2_PIX_FMT_XBGR32:
+-		rf->cb = rf->luma;
+-		rf->cr = rf->cb + 2;
+-		rf->luma++;
+-		break;
+ 	case V4L2_PIX_FMT_ARGB32:
+ 		rf->alpha = rf->luma;
+ 		rf->cr = rf->luma + 1;
+ 		rf->cb = rf->cr + 2;
+ 		rf->luma += 2;
+ 		break;
++	case V4L2_PIX_FMT_BGR32:
++	case V4L2_PIX_FMT_XBGR32:
+ 	case V4L2_PIX_FMT_ABGR32:
+ 		rf->cb = rf->luma;
+ 		rf->cr = rf->cb + 2;
+@@ -198,10 +190,6 @@ static int prepare_raw_frame(struct fwht
+ 		rf->alpha = rf->cr + 1;
+ 		break;
+ 	case V4L2_PIX_FMT_BGRX32:
+-		rf->cb = rf->luma + 1;
+-		rf->cr = rf->cb + 2;
+-		rf->luma += 2;
+-		break;
+ 	case V4L2_PIX_FMT_BGRA32:
+ 		rf->alpha = rf->luma;
+ 		rf->cb = rf->luma + 1;
+@@ -209,10 +197,6 @@ static int prepare_raw_frame(struct fwht
+ 		rf->luma += 2;
+ 		break;
+ 	case V4L2_PIX_FMT_RGBX32:
+-		rf->cr = rf->luma;
+-		rf->cb = rf->cr + 2;
+-		rf->luma++;
+-		break;
+ 	case V4L2_PIX_FMT_RGBA32:
+ 		rf->alpha = rf->luma + 3;
+ 		rf->cr = rf->luma;
 
 
