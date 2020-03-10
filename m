@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EC6117F966
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:56:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD63017F876
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:48:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbgCJM4a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:56:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35578 "EHLO mail.kernel.org"
+        id S1727648AbgCJMsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:48:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729420AbgCJM4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:56:23 -0400
+        id S1727624AbgCJMsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:48:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 447CA2253D;
-        Tue, 10 Mar 2020 12:56:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 268CD2467D;
+        Tue, 10 Mar 2020 12:48:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844982;
-        bh=EmVp/FvO12B6npsKyvEA08xNMu5dfLgtPtThwfKw6fg=;
+        s=default; t=1583844491;
+        bh=LPWEOXXHH5EmBECDqoJMdQuy16xACdmF1Y8tC/ZfenU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=19Jhvg/SpIWpo++TGENHruHz3CGvGksMNT9fXRsrwBbEvHXPOyl+oGdvb/ow2Ehsv
-         AF5g25hluNlinIv6kao1ijTh5VWmcVdMMKkwhaJGchHn23ylF2nHzJYYXbnE5VKdKX
-         ZikZlWyE3UDXw7GjH8WcAKBYbcNX3pRDjhmxcLJ0=
+        b=ISNzU1erqjKptA/FMheDcF6Rswpg186h0RL7qXxxylTz6q6IwPUldff8quAosXRZm
+         XuQOMsymy1NYmsVsqRJUNGX12gC1Apvn1sNbzN/Hi4syaeh7dBqOzPr7Ycd/kRfUCX
+         1OaGJJPneofpsvCMdwCHUyJLi5JC94L06moqr9To=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Omer Shpigelman <oshpigelman@habana.ai>,
-        Oded Gabbay <oded.gabbay@gmail.com>,
+        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        Bob Liu <bob.liu@oracle.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Cengiz Can <cengiz@kernel.wtf>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 020/189] habanalabs: do not halt CoreSight during hard reset
-Date:   Tue, 10 Mar 2020 13:37:37 +0100
-Message-Id: <20200310123641.507093495@linuxfoundation.org>
+Subject: [PATCH 5.4 012/168] blktrace: fix dereference after null check
+Date:   Tue, 10 Mar 2020 13:37:38 +0100
+Message-Id: <20200310123636.981272933@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +46,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Omer Shpigelman <oshpigelman@habana.ai>
+From: Cengiz Can <cengiz@kernel.wtf>
 
-[ Upstream commit a37e47192dfa98f79a0cd5ab991c224b5980c982 ]
+[ Upstream commit 153031a301bb07194e9c37466cfce8eacb977621 ]
 
-During hard reset we must not write to the device.
-Hence avoid halting CoreSight during user context close if it is done
-during hard reset.
-In addition, we must not re-enable clock gating afterwards as it was
-deliberately disabled in the beginning of the hard reset flow.
+There was a recent change in blktrace.c that added a RCU protection to
+`q->blk_trace` in order to fix a use-after-free issue during access.
 
-Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
-Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+However the change missed an edge case that can lead to dereferencing of
+`bt` pointer even when it's NULL:
+
+Coverity static analyzer marked this as a FORWARD_NULL issue with CID
+1460458.
+
+```
+/kernel/trace/blktrace.c: 1904 in sysfs_blk_trace_attr_store()
+1898            ret = 0;
+1899            if (bt == NULL)
+1900                    ret = blk_trace_setup_queue(q, bdev);
+1901
+1902            if (ret == 0) {
+1903                    if (attr == &dev_attr_act_mask)
+>>>     CID 1460458:  Null pointer dereferences  (FORWARD_NULL)
+>>>     Dereferencing null pointer "bt".
+1904                            bt->act_mask = value;
+1905                    else if (attr == &dev_attr_pid)
+1906                            bt->pid = value;
+1907                    else if (attr == &dev_attr_start_lba)
+1908                            bt->start_lba = value;
+1909                    else if (attr == &dev_attr_end_lba)
+```
+
+Added a reassignment with RCU annotation to fix the issue.
+
+Fixes: c780e86dd48 ("blktrace: Protect q->blk_trace with RCU")
+Cc: stable@vger.kernel.org
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Bob Liu <bob.liu@oracle.com>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Cengiz Can <cengiz@kernel.wtf>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/habanalabs/device.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/trace/blktrace.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-index 166883b647252..b680b0caa69be 100644
---- a/drivers/misc/habanalabs/device.c
-+++ b/drivers/misc/habanalabs/device.c
-@@ -598,7 +598,9 @@ int hl_device_set_debug_mode(struct hl_device *hdev, bool enable)
- 			goto out;
- 		}
+diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+index 4b2ad374167bc..e7e483cdbea61 100644
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -1888,8 +1888,11 @@ static ssize_t sysfs_blk_trace_attr_store(struct device *dev,
+ 	}
  
--		hdev->asic_funcs->halt_coresight(hdev);
-+		if (!hdev->hard_reset_pending)
-+			hdev->asic_funcs->halt_coresight(hdev);
-+
- 		hdev->in_debug = 0;
+ 	ret = 0;
+-	if (bt == NULL)
++	if (bt == NULL) {
+ 		ret = blk_trace_setup_queue(q, bdev);
++		bt = rcu_dereference_protected(q->blk_trace,
++				lockdep_is_held(&q->blk_trace_mutex));
++	}
  
- 		goto out;
+ 	if (ret == 0) {
+ 		if (attr == &dev_attr_act_mask)
 -- 
 2.20.1
 
