@@ -2,87 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39BA017F0FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 08:25:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B222117F111
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 08:33:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726290AbgCJHZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 03:25:16 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:48537 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726252AbgCJHZP (ORCPT
+        id S1726389AbgCJHdc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 03:33:32 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:53173 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726195AbgCJHdb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 03:25:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583825115;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=d8UiZddWXkafFLvP5bz3JJYwq005hZDC3aZQhOodzY0=;
-        b=HrBIVzOnjYtaQBuexLxR8betU32bcGxKEKCWWRz55Q3NfkDqVkx0Bb1gobXQdoSAcqvNIa
-        M9WwF4lk5EeCtDQSKtfori0+Pk9vEycrEHSt0rxYiGHb6hYwkORCG28NmwwEsRQo7eAXKL
-        zCj/j11jAJd2f1XH2WxA+N1AW1HOshk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-92-tBUfClqxMNKyh-Do3iS4ng-1; Tue, 10 Mar 2020 03:25:11 -0400
-X-MC-Unique: tBUfClqxMNKyh-Do3iS4ng-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 10 Mar 2020 03:33:31 -0400
+Received: from mwalle01.sab.local. (unknown [213.135.10.150])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 68D09107ACC9;
-        Tue, 10 Mar 2020 07:25:09 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7AB708F35C;
-        Tue, 10 Mar 2020 07:25:06 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
-References: <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com> <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk> <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk> <20200310005549.adrn3yf4mbljc5f6@yavin>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Metzmacher <metze@samba.org>,
-        Ian Kent <raven@themaw.net>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 70E5923EDA;
+        Tue, 10 Mar 2020 08:33:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1583825609;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=mGzo69y07vEikBiBYw51X7LqR4nXAnMjmqLFsIzeY0g=;
+        b=iBIzRz5537ewx9ux46LYo3F+UVQAT5T+jWgeQUuy0Z2+rqVnvLuzdJdGcrHnuJm57LNSI7
+        wv+B3Bz284fy9Fm5iJfq/n7ztHPr6dGnAFwWVgtNGWWahZ1FbKW7uq9FePGHSwf9oxpa25
+        ChDL8L9SrCV4wdUYnlf0H7omv4G++f0=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Michael Walle <michael@walle.cc>
+Subject: [PATCH] spi: spi-fsl-dspi: fix DMA mapping
+Date:   Tue, 10 Mar 2020 08:33:13 +0100
+Message-Id: <20200310073313.21277-1-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <580351.1583825105.1@warthog.procyon.org.uk>
-Date:   Tue, 10 Mar 2020 07:25:05 +0000
-Message-ID: <580352.1583825105@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++
+X-Spam-Level: ****
+X-Rspamd-Server: web
+X-Spam-Status: No, score=4.90
+X-Spam-Score: 4.90
+X-Rspamd-Queue-Id: 70E5923EDA
+X-Spamd-Result: default: False [4.90 / 15.00];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         R_MISSING_CHARSET(2.50)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         NEURAL_SPAM(0.00)[0.643];
+         BROKEN_CONTENT_TYPE(1.50)[];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[9];
+         MID_CONTAINS_FROM(1.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:12941, ipnet:213.135.0.0/19, country:DE]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Use the correct device to request the DMA mapping. Otherwise the IOMMU
+doesn't get the mapping and it will generate a page fault.
 
-> > > Also make openat2() handle RESOLVE_NO_TRAILING_SYMLINKS.
-> 
-> No, please let's not do this.
-> 
-> We have O_NOFOLLOW, and we can't get rid of it.
-> 
-> So adding RESOLVE_NO_TRAILING_SYMLINKS isn't a cleanup. It's just
-> extra complexity for absolutely zero gain.
+The error messages look like:
+[    3.008452] arm-smmu 5000000.iommu: Unhandled context fault: fsr=0x402, iova=0xf9800000, fsynr=0x3f0022, cbfrsynra=0x828, cb=8
+[    3.020123] arm-smmu 5000000.iommu: Unhandled context fault: fsr=0x402, iova=0xf9800000, fsynr=0x3f0022, cbfrsynra=0x828, cb=8
 
-Okay.  So what's the equivalent of AT_SYMLINK_NOFOLLOW in RESOLVE_* flag
-terms?  RESOLVE_NO_SYMLINKS is not equivalent, though O_NOFOLLOW is.  The
-reason I ask is that RESOLVE_* flags can't be easily extended to non-open
-syscalls that don't take O_* flags without it.  Would you prefer that new
-non-open syscalls continue to take AT_* and ignore RESOLVE_* flags?  That
-would be fine by me.
+This was tested on a custom board with a LS1028A SoC.
 
-David
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+ drivers/spi/spi-fsl-dspi.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index cf8a141bbaf2..ad63804ef690 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -510,14 +510,16 @@ static int dspi_request_dma(struct fsl_dspi *dspi, phys_addr_t phy_addr)
+ 		goto err_tx_channel;
+ 	}
+ 
+-	dma->tx_dma_buf = dma_alloc_coherent(dev, dspi->devtype_data->dma_bufsize,
++	dma->tx_dma_buf = dma_alloc_coherent(dma->chan_tx->device->dev,
++					     dspi->devtype_data->dma_bufsize,
+ 					     &dma->tx_dma_phys, GFP_KERNEL);
+ 	if (!dma->tx_dma_buf) {
+ 		ret = -ENOMEM;
+ 		goto err_tx_dma_buf;
+ 	}
+ 
+-	dma->rx_dma_buf = dma_alloc_coherent(dev, dspi->devtype_data->dma_bufsize,
++	dma->rx_dma_buf = dma_alloc_coherent(dma->chan_rx->device->dev,
++					     dspi->devtype_data->dma_bufsize,
+ 					     &dma->rx_dma_phys, GFP_KERNEL);
+ 	if (!dma->rx_dma_buf) {
+ 		ret = -ENOMEM;
+@@ -554,10 +556,12 @@ static int dspi_request_dma(struct fsl_dspi *dspi, phys_addr_t phy_addr)
+ 	return 0;
+ 
+ err_slave_config:
+-	dma_free_coherent(dev, dspi->devtype_data->dma_bufsize,
++	dma_free_coherent(dma->chan_rx->device->dev,
++			  dspi->devtype_data->dma_bufsize,
+ 			  dma->rx_dma_buf, dma->rx_dma_phys);
+ err_rx_dma_buf:
+-	dma_free_coherent(dev, dspi->devtype_data->dma_bufsize,
++	dma_free_coherent(dma->chan_tx->device->dev,
++			  dspi->devtype_data->dma_bufsize,
+ 			  dma->tx_dma_buf, dma->tx_dma_phys);
+ err_tx_dma_buf:
+ 	dma_release_channel(dma->chan_tx);
+@@ -573,20 +577,19 @@ static int dspi_request_dma(struct fsl_dspi *dspi, phys_addr_t phy_addr)
+ static void dspi_release_dma(struct fsl_dspi *dspi)
+ {
+ 	struct fsl_dspi_dma *dma = dspi->dma;
+-	struct device *dev = &dspi->pdev->dev;
+ 
+ 	if (!dma)
+ 		return;
+ 
+ 	if (dma->chan_tx) {
+-		dma_unmap_single(dev, dma->tx_dma_phys,
++		dma_unmap_single(dma->chan_tx->device->dev, dma->tx_dma_phys,
+ 				 dspi->devtype_data->dma_bufsize,
+ 				 DMA_TO_DEVICE);
+ 		dma_release_channel(dma->chan_tx);
+ 	}
+ 
+ 	if (dma->chan_rx) {
+-		dma_unmap_single(dev, dma->rx_dma_phys,
++		dma_unmap_single(dma->chan_rx->device->dev, dma->rx_dma_phys,
+ 				 dspi->devtype_data->dma_bufsize,
+ 				 DMA_FROM_DEVICE);
+ 		dma_release_channel(dma->chan_rx);
+-- 
+2.20.1
 
