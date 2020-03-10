@@ -2,32 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FA6C17F5CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:10:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82B0F17F5BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:09:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbgCJLKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 07:10:15 -0400
-Received: from web0081.zxcs.nl ([185.104.29.10]:45310 "EHLO web0081.zxcs.nl"
+        id S1726382AbgCJLJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 07:09:19 -0400
+Received: from web0081.zxcs.nl ([185.104.29.10]:43580 "EHLO web0081.zxcs.nl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbgCJLKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 07:10:15 -0400
+        id S1726186AbgCJLJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 07:09:18 -0400
+X-Greylist: delayed 2469 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Mar 2020 07:09:17 EDT
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=pascalroeleven.nl; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id
-        :Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        d=pascalroeleven.nl; s=x; h=Content-Transfer-Encoding:MIME-Version:References
+        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=HoDOAAuu5g+qc/P5aShbUEJfbz/Uo1silh5yOmrLmWo=; b=w4bjR2mY+UHNrDlRWT8xDR2nu+
-        D+QFN+mnGv0mFAAfW2MuFLUOZOwQeaEw0esSVw+YM/7upIRHet2+DCK/pl3y/2EWxVE8og2KBsUCN
-        Ngy2aJoTuuoHROOH7z8/h6Bay3E0QEQPaHl6j9qHcbvbjCpdI30OQ4zEKJV0Tcj7j+r2jnh8T6fll
-        fNzDsREBfhNwtMMx8l2cKUtPXkswCIpb7uJjj1GcUhMStho2+9n3bo6QjN2yf2plcEBb2TxlrLrD6
-        kBD0Lad7/4Yl9VKdSq9YUzmWbs9VWZIL59KwGPCenUWBrlHW2Wy229oBnQ5UghiyBxUfxurM1MIoI
-        I2HJqqyQ==;
+        bh=3IKSYKtw2n6yNxpaRbwsTLkcDXqG5XqbFrwDDbF1iTo=; b=q2+FGgY0n/8I2ypRNbhdzFXmqe
+        v0RSk3+nlIPz7V1WNA4b2mV2GDPyr7Zu2w2nsC6m6IDsFTa+C/EvGl5f7bD3ICTSHBttf2qA7ew/B
+        xlpjY0minYaq3RrdJDEh/ik+cnx1GxwSl2Mmh/n4X+n7gKtdx6y5qTBj3lis5R43C43SG74Aj8M/K
+        Umi/D9E+BWGRi7OdWzpUKecpD+kPoF42Tc6HVsAJ9D6BmYo4irlzvlUZOiY6Cn6zqP0ZnYOfpJmPc
+        z2niDfCBx86K/mz0ndvyQrDg7iXNLXSfbvMUo2PvgpBgtNGsvsXWhyk50Xq/25ZVA7amTh977Ogf7
+        WFyBuphg==;
 Received: from ip565b1bc7.direct-adsl.nl ([86.91.27.199]:35430 helo=localhost.localdomain)
         by web0081.zxcs.nl with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.92.3)
         (envelope-from <dev@pascalroeleven.nl>)
-        id 1jBc7U-0017It-N1; Tue, 10 Mar 2020 11:28:16 +0100
+        id 1jBc7q-0017It-Mh; Tue, 10 Mar 2020 11:28:38 +0100
 From:   Pascal Roeleven <dev@pascalroeleven.nl>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Sam Ravnborg <sam@ravnborg.org>,
@@ -41,10 +42,12 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         linux-arm-kernel@lists.infradead.org
 Cc:     linux-sunxi@googlegroups.com,
         Pascal Roeleven <dev@pascalroeleven.nl>
-Subject: [PATCH 0/2] Add support for Topwise A721 tablet
-Date:   Tue, 10 Mar 2020 11:27:22 +0100
-Message-Id: <20200310102725.14591-1-dev@pascalroeleven.nl>
+Subject: [PATCH 1/2] drm/panel: Add Starry KR070PE2T
+Date:   Tue, 10 Mar 2020 11:27:23 +0100
+Message-Id: <20200310102725.14591-2-dev@pascalroeleven.nl>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200310102725.14591-1-dev@pascalroeleven.nl>
+References: <20200310102725.14591-1-dev@pascalroeleven.nl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Authenticated-Id: dev@pascalroeleven.nl
@@ -53,22 +56,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series add support for the Topwise A721 tablet and it's display.
-It is an old tablet (around 2012) but it might be useful as reference
-as the devicetree is pretty complete.
+The KR070PE2T is a 7" panel with a resolution of 800x480.
 
-Pascal Roeleven (2):
-  drm/panel: Add Starry KR070PE2T
-  ARM: dts: sun4i: Add support for Topwise A721 tablet
+KR070PE2T is the marking present on the ribbon cable. As this panel is
+probably available under different brands, this marking will catch
+most devices.
 
- .../display/panel/starry,kr070pe2t.txt        |   7 +
- arch/arm/boot/dts/Makefile                    |   3 +-
- arch/arm/boot/dts/sun4i-a10-topwise-a721.dts  | 302 ++++++++++++++++++
- drivers/gpu/drm/panel/panel-simple.c          |  26 ++
- 4 files changed, 337 insertions(+), 1 deletion(-)
+Signed-off-by: Pascal Roeleven <dev@pascalroeleven.nl>
+---
+ .../display/panel/starry,kr070pe2t.txt        |  7 +++++
+ drivers/gpu/drm/panel/panel-simple.c          | 26 +++++++++++++++++++
+ 2 files changed, 33 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/display/panel/starry,kr070pe2t.txt
- create mode 100644 arch/arm/boot/dts/sun4i-a10-topwise-a721.dts
 
+diff --git a/Documentation/devicetree/bindings/display/panel/starry,kr070pe2t.txt b/Documentation/devicetree/bindings/display/panel/starry,kr070pe2t.txt
+new file mode 100644
+index 000000000..699ad5eb2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/starry,kr070pe2t.txt
+@@ -0,0 +1,7 @@
++Starry 7" (800x480 pixels) LCD panel
++
++Required properties:
++- compatible: should be "starry,kr070pe2t"
++
++This binding is compatible with the simple-panel binding, which is specified
++in simple-panel.txt in this directory.
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index e14c14ac6..027a2612b 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -2842,6 +2842,29 @@ static const struct panel_desc shelly_sca07010_bfn_lnn = {
+ 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
+ };
+ 
++static const struct drm_display_mode starry_kr070pe2t_mode = {
++	.clock = 33000,
++	.hdisplay = 800,
++	.hsync_start = 800 + 209,
++	.hsync_end = 800 + 209 + 1,
++	.htotal = 800 + 209 + 1 + 45,
++	.vdisplay = 480,
++	.vsync_start = 480 + 22,
++	.vsync_end = 480 + 22 + 1,
++	.vtotal = 480 + 22 + 1 + 22,
++	.vrefresh = 60,
++};
++
++static const struct panel_desc starry_kr070pe2t = {
++	.modes = &starry_kr070pe2t_mode,
++	.num_modes = 1,
++	.bpc = 8,
++	.size = {
++		.width = 152,
++		.height = 86,
++	},
++};
++
+ static const struct drm_display_mode starry_kr122ea0sra_mode = {
+ 	.clock = 147000,
+ 	.hdisplay = 1920,
+@@ -3474,6 +3497,9 @@ static const struct of_device_id platform_of_match[] = {
+ 	}, {
+ 		.compatible = "shelly,sca07010-bfn-lnn",
+ 		.data = &shelly_sca07010_bfn_lnn,
++	}, {
++		.compatible = "starry,kr070pe2t",
++		.data = &starry_kr070pe2t,
+ 	}, {
+ 		.compatible = "starry,kr122ea0sra",
+ 		.data = &starry_kr122ea0sra,
 -- 
 2.20.1
 
