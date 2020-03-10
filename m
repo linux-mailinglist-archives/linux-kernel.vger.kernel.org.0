@@ -2,128 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1A2A17F2C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 10:07:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1939317F2C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 10:08:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbgCJJHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 05:07:37 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:44565 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726677AbgCJJHd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 05:07:33 -0400
-X-Originating-IP: 90.89.41.158
-Received: from localhost (lfbn-tou-1-1473-158.w90-89.abo.wanadoo.fr [90.89.41.158])
-        (Authenticated sender: antoine.tenart@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id B6E7B1BF217;
-        Tue, 10 Mar 2020 09:07:31 +0000 (UTC)
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com,
-        hkallweit1@gmail.com
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 3/3] net: phy: mscc: fix header defines and descriptions
-Date:   Tue, 10 Mar 2020 10:07:20 +0100
-Message-Id: <20200310090720.521745-4-antoine.tenart@bootlin.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200310090720.521745-1-antoine.tenart@bootlin.com>
-References: <20200310090720.521745-1-antoine.tenart@bootlin.com>
+        id S1726659AbgCJJIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 05:08:02 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:54904 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726195AbgCJJIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 05:08:02 -0400
+Received: from zn.tnic (p200300EC2F09B400A5B1E817268DA3C3.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:b400:a5b1:e817:268d:a3c3])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1828D1EC0CAA;
+        Tue, 10 Mar 2020 10:08:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1583831281;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=rqmq7MqrLcXz6NJsrkYnbB+Lr1QkPByv8PIiSXE40vk=;
+        b=pv2LI/ni+TT8nTovomJcIMrk9dlFogVp/bdFBBlkd0w/binbvLrqto8yATm1AwCqFxNnMt
+        SYs9tmFDNCbMxNXO8vpMEZEO/ZCLkzYW2UY39jbFSQWp6BI9HR/P6VnM8p3KK63Cf6YwY6
+        m7yrBTy/k/d9k7Lnos3KzMD6Erz8vxg=
+Date:   Tue, 10 Mar 2020 10:08:05 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>, tglx@linutronix.de,
+        mingo@redhat.com, x86@kernel.org, linux-kernel@vger.kernel.org,
+        DavidWang@zhaoxin.com, CooperYan@zhaoxin.com,
+        QiyuanWang@zhaoxin.com, HerryYang@zhaoxin.com, CobeChen@zhaoxin.com
+Subject: Re: [PATCH] x86/Kconfig: make X86_UMIP to cover any X86 CPU
+Message-ID: <20200310090805.GA29372@zn.tnic>
+References: <1583733990-2587-1-git-send-email-TonyWWang-oc@zhaoxin.com>
+ <20200309203632.GB9002@zn.tnic>
+ <79c4bc05-0482-3ce7-0f93-544977e466dc@zytor.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <79c4bc05-0482-3ce7-0f93-544977e466dc@zytor.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cosmetic commit fixing the MSCC PHY header defines and descriptions,
-which were referring the to MSCC Ocelot MAC driver (see
-drivers/net/ethernet/mscc/).
+On Mon, Mar 09, 2020 at 05:25:59PM -0700, H. Peter Anvin wrote:
+> Perhaps the super-tiny-embedded kernel guys care? Otherwise it seems
+> pointless.
 
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
----
- drivers/net/phy/mscc/mscc_fc_buffer.h | 8 ++++----
- drivers/net/phy/mscc/mscc_mac.h       | 8 ++++----
- drivers/net/phy/mscc/mscc_macsec.h    | 8 ++++----
- 3 files changed, 12 insertions(+), 12 deletions(-)
+Yeah and I haven't heard anything from them in a while. I guess we can
+leave it until someone removes it later.
 
-diff --git a/drivers/net/phy/mscc/mscc_fc_buffer.h b/drivers/net/phy/mscc/mscc_fc_buffer.h
-index 7e9c0e877895..3803e826c37d 100644
---- a/drivers/net/phy/mscc/mscc_fc_buffer.h
-+++ b/drivers/net/phy/mscc/mscc_fc_buffer.h
-@@ -1,12 +1,12 @@
- /* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
- /*
-- * Microsemi Ocelot Switch driver
-+ * Driver for Microsemi VSC85xx PHYs
-  *
-  * Copyright (C) 2019 Microsemi Corporation
-  */
- 
--#ifndef _MSCC_OCELOT_FC_BUFFER_H_
--#define _MSCC_OCELOT_FC_BUFFER_H_
-+#ifndef _MSCC_PHY_FC_BUFFER_H_
-+#define _MSCC_PHY_FC_BUFFER_H_
- 
- #define MSCC_FCBUF_ENA_CFG					0x00
- #define MSCC_FCBUF_MODE_CFG					0x01
-@@ -61,4 +61,4 @@
- #define MSCC_FCBUF_FC_READ_THRESH_CFG_RX_THRESH(x)		((x) << 16)
- #define MSCC_FCBUF_FC_READ_THRESH_CFG_RX_THRESH_M		GENMASK(31, 16)
- 
--#endif
-+#endif /* _MSCC_PHY_FC_BUFFER_H_ */
-diff --git a/drivers/net/phy/mscc/mscc_mac.h b/drivers/net/phy/mscc/mscc_mac.h
-index 9420ee5175a6..fcb5ba5e5d03 100644
---- a/drivers/net/phy/mscc/mscc_mac.h
-+++ b/drivers/net/phy/mscc/mscc_mac.h
-@@ -1,12 +1,12 @@
- /* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
- /*
-- * Microsemi Ocelot Switch driver
-+ * Driver for Microsemi VSC85xx PHYs
-  *
-  * Copyright (c) 2017 Microsemi Corporation
-  */
- 
--#ifndef _MSCC_OCELOT_LINE_MAC_H_
--#define _MSCC_OCELOT_LINE_MAC_H_
-+#ifndef _MSCC_PHY_LINE_MAC_H_
-+#define _MSCC_PHY_LINE_MAC_H_
- 
- #define MSCC_MAC_CFG_ENA_CFG					0x00
- #define MSCC_MAC_CFG_MODE_CFG					0x01
-@@ -156,4 +156,4 @@
- #define MSCC_PROC_0_IP_1588_TOP_CFG_STAT_MODE_CTL_PROTOCOL_MODE(x)	(x)
- #define MSCC_PROC_0_IP_1588_TOP_CFG_STAT_MODE_CTL_PROTOCOL_MODE_M	GENMASK(2, 0)
- 
--#endif /* _MSCC_OCELOT_LINE_MAC_H_ */
-+#endif /* _MSCC_PHY_LINE_MAC_H_ */
-diff --git a/drivers/net/phy/mscc/mscc_macsec.h b/drivers/net/phy/mscc/mscc_macsec.h
-index d9ab6aba7482..29735f32f2e1 100644
---- a/drivers/net/phy/mscc/mscc_macsec.h
-+++ b/drivers/net/phy/mscc/mscc_macsec.h
-@@ -1,12 +1,12 @@
- /* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
- /*
-- * Microsemi Ocelot Switch driver
-+ * Driver for Microsemi VSC85xx PHYs
-  *
-  * Copyright (c) 2018 Microsemi Corporation
-  */
- 
--#ifndef _MSCC_OCELOT_MACSEC_H_
--#define _MSCC_OCELOT_MACSEC_H_
-+#ifndef _MSCC_PHY_MACSEC_H_
-+#define _MSCC_PHY_MACSEC_H_
- 
- #define MSCC_MS_MAX_FLOWS		16
- 
-@@ -263,4 +263,4 @@ enum mscc_macsec_validate_levels {
- #define MSCC_MS_INTR_CTRL_STATUS_INTR_ENABLE_M		GENMASK(31, 16)
- #define MACSEC_INTR_CTRL_STATUS_ROLLOVER		BIT(5)
- 
--#endif
-+#endif /* _MSCC_PHY_MACSEC_H_ */
 -- 
-2.24.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
