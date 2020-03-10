@@ -2,86 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 574F117FC70
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:21:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6393A17FCA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:22:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729481AbgCJNVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:21:06 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42970 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728891AbgCJNVE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:21:04 -0400
-Received: by mail-lf1-f66.google.com with SMTP id t21so10839608lfe.9;
-        Tue, 10 Mar 2020 06:21:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eCOf6OlvnGPo1hdNSLTHBdAdbBO34t+xIqKTSfU9Lvs=;
-        b=ofGge65itC/lwthulFPkeKmDbr51QadcYAHtbQTWHLMr4RdA4qAd/052klcqj2lAsG
-         lG19xD5JLaz+SSBvbyWBnexIZXc+pMAmdLEy/8T0gU/LQSksodQR33+THK0q9M2snw2N
-         GCSwTKPgt0loPawbXIl8cFRjEWNxE1H1gbIf4NsO213jri589TnigSRklTK61xdOj60u
-         Vz17OG0RXYAJKvJx4S+NNYBKhIlvGutiLYN5BEW6S2OfLzQwh6t822l/YxOgLNhAGHhB
-         AGa1bkaG9PycUT/K+Jw38gw8R06DQVD5zMnrU5+OTuVhu7qk3UDW2PX9DhrNMn4pNvXK
-         3A6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eCOf6OlvnGPo1hdNSLTHBdAdbBO34t+xIqKTSfU9Lvs=;
-        b=SedNbbYY7eEz2PvpOv+31uzHZYbA0nfTUc07HdlNyzilL/VOOwtXYbpOmpn8yGPnyf
-         Yefv+5HTNt38osYqbkwr0/7LgmCZ9q2hvoYw16wVFl9ERVaYArrPjerHBbVEk8duxke7
-         A55eVc5jb8l6AxcTMIMc0Q5hgSTNAh8BA3QxX3qwgJdOPCscseox2/raOFAn7iivpIK0
-         LvaUlmPrgY9/JIKqJVksqAj3ZZZs8RIV6kUNFzELzpaQnFgd2nfljC4dT26NRDXgHChN
-         TvPUeinsV/YwHjya6CL3QcP1A4FagqVzoDSpsPwPlD2jlq8BpCA3Aja1gijsrgYvMsOT
-         Cisw==
-X-Gm-Message-State: ANhLgQ3d0wNyKGSUOpCgi44OciAOSFyZ5gnuavv3TwfNDc6MJZ1HmpL9
-        +PdjenW3rtgo/jDv3xisDrY4JHEO
-X-Google-Smtp-Source: ADFU+vvwQjyIsXgU6I8GX3SpR7E8fsB37sAUt5jafoxPGt96Qq9i12zZidE0qlga4HzlmkG+DA5O4w==
-X-Received: by 2002:ac2:5c44:: with SMTP id s4mr9161431lfp.129.1583846462339;
-        Tue, 10 Mar 2020 06:21:02 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.googlemail.com with ESMTPSA id v17sm12992881lfn.64.2020.03.10.06.21.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Mar 2020 06:21:01 -0700 (PDT)
-Subject: Re: [PATCH v1] power: supply: bq27xxx_battery: Silence deferred-probe
- error
-To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>,
-        "Andrew F. Davis" <afd@ti.com>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        David Heidelberg <david@ixit.cz>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200308215143.27823-1-digetx@gmail.com>
- <20200309230608.aur2iddomzrdw4pq@pali>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <4d0cb298-f6ab-731d-a5d9-e08ed092f504@gmail.com>
-Date:   Tue, 10 Mar 2020 16:21:00 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1731006AbgCJNWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:22:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730239AbgCJNWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:22:19 -0400
+Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53E39208E4;
+        Tue, 10 Mar 2020 13:22:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583846539;
+        bh=FaMTD2na3NDedgKSwXsZVOGx7i/nxquek6psyjDM3Lo=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=nOHUzyv8eb4NIsmREF9QILrzXXWOx92nJ+aS2RDg1Dv7jNtzGLBsZOeyveMA7AQVV
+         Cq8vn5QKZbw+kqb6EA5V7asq10eKRxLNL69aHKd+KpzRG/coxJDSXCz2f2nx0TCNRr
+         L6a5/PaJXVH3SRWycAiQbGPnBxTmEZsULi5zIptM=
+Date:   Tue, 10 Mar 2020 14:22:16 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     =?ISO-8859-15?Q?Filipe_La=EDns?= <lains@archlinux.org>
+cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nestor Lopez Casado <nlopezcasad@logitech.com>
+Subject: Re: [PATCH] HID: logitech-dj: add support for the static device in
+ the Powerplay mat/receiver
+In-Reply-To: <5a93677bd6238a9d7928e4fd16a8915faeb5f19e.camel@archlinux.org>
+Message-ID: <nycvar.YFH.7.76.2003101301280.19500@cbobk.fhfr.pm>
+References: <20200115201811.3271284-1-lains@archlinux.org>  <nycvar.YFH.7.76.2002121449191.3144@cbobk.fhfr.pm> <5a93677bd6238a9d7928e4fd16a8915faeb5f19e.camel@archlinux.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20200309230608.aur2iddomzrdw4pq@pali>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-10.03.2020 02:06, Pali Rohár пишет:
-> On Monday 09 March 2020 00:51:43 Dmitry Osipenko wrote:
->> The driver fails to probe with -EPROBE_DEFER if battery's power supply
->> (charger driver) isn't ready yet and this results in a bit noisy error
->> message in KMSG during kernel's boot up. Let's silence the harmless
->> error message.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> 
-> Hello Dmitry! This change make sense, it is really not an error when
-> bq27k device registration is deferred. You can add my:
-> 
-> Reviewed-by: Pali Rohár <pali@kernel.org>
+On Wed, 12 Feb 2020, Filipe La�ns wrote:
 
-Thank you and Andrew for taking a look at this patch!
+> > > +	/* custom receiver device (eg. powerplay) */
+> > > +	if (hidpp_report->device_index == 7) {
+> > > +		workitem.reports_supported |= HIDPP;
+> > > +	}
+> > > +
+> > 
+> > I guess we can't do anything else than to trust Logitech that they will 
+> > not assign conflicting device_index ID in the future to something that 
+> > will not be HID++, right?
+> > 
+> > Or is this properly documented somewhere?
+> > 
+> > Thanks,
+> 
+> 
+> CCing Nestor
+> 
+> Yes, we need to trust Logitech on this. There's isn't anything
+> documented regarding this AFAIK.
+> 
+> Even if Logitech released a device with index 7 that didn't support
+> HID++, it wouldn't be that big of an issue. We would just end up with a
+> hidraw node which would export a vendor page report descriptor but the
+> device wouldn't actually reply to anything.
+
+Given the silence from Nestor, I guess we can just apply this for 5.7; 
+pushing to for-5.7/logitech branch.
+
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
+
