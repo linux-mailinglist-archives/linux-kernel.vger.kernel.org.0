@@ -2,92 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6F1C17F607
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:17:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5204A17F605
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:17:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbgCJLRi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 07:17:38 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45462 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726385AbgCJLRi (ORCPT
+        id S1726976AbgCJLRR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 07:17:17 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37841 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726971AbgCJLRO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 07:17:38 -0400
-Received: by mail-ot1-f65.google.com with SMTP id f21so12701396otp.12;
-        Tue, 10 Mar 2020 04:17:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m09U5Nj3Yoc7UUHoM3/K3YvvnK5tLs5UgDhB2bnbB7s=;
-        b=UWEOl2hn0i6+civfP1gv0gPmQwxE4CF6xj/4mYyIYXRpIxVZwunziiWbLGexnCHfuZ
-         WAadVKx04+a0iRAb/rnVieVBkWuLoUaRBBItAD8rAgp8nn+rzgaMOaRuyosEG7KYkidQ
-         Eii+l29ipjRGEomNmFP09PPcZWzCTu6ORe09toaXlT5ElKkPbReHKXS49GVhUn/888lc
-         5bb47DGtrwGV+kkkTSyX8v0pBOsk2+Ea3PTNiJm3eVNIwiT99zFoTeW3abX+XGgyv5Bp
-         EOJAgjh5LO6H46zOF8KQke/MnRrYlbyENrZjrwJPYhYBWy7SQRciY/QSHq0YkW1PIruB
-         fVkQ==
+        Tue, 10 Mar 2020 07:17:14 -0400
+Received: by mail-wr1-f66.google.com with SMTP id 6so15332298wre.4;
+        Tue, 10 Mar 2020 04:17:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m09U5Nj3Yoc7UUHoM3/K3YvvnK5tLs5UgDhB2bnbB7s=;
-        b=GbA8Bg/92CAn6bDfLbaWrlB0WQZFz90m0Z7Av2VtTgEkMz89uvEWKGO7WeVpLRijVb
-         caHpOtKKRES80AChSNgS6bAIYBpgK7ay+WoK78UAJjXBt/Jwt+Glo0EZv5cd7CRvOBFE
-         K8fzSoMzWN4K55o666QNqfT2zEbq/MmRkpJZPZu7aPaBsOiiBmhmpo7lj4+FUD7RqgV/
-         ie/oirwFeaUJx//MyEXl7+ewl1v2s4nkln5hI9k07GO4Y7UQ7Jef3JzYG+5kF+0pBAwV
-         hukXHrZ0QzSIGZ4lT3slwERUASz9PQsxFX+B8jX/w2ScPKSyUxshNXhlPIerBS3GCptc
-         xkzA==
-X-Gm-Message-State: ANhLgQ3MSekVgARJgRO6vG2nK3p1G14FA9v/6p/D8E2NubfQ01/4erW8
-        mjQ+5OXlQYaPQFlPpKIjsk/hhix4cvo01FbFCY0=
-X-Google-Smtp-Source: ADFU+vtN+zaOZYvzPnrYZoO2Or6SvEL79vvzFTm+3xIivtNvlmRie/gGWT1dTZhv8Nz3jO1SqSMsBQ4RxqjesurQdoo=
-X-Received: by 2002:a9d:64cd:: with SMTP id n13mr16686281otl.274.1583839056416;
- Tue, 10 Mar 2020 04:17:36 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=hMeYQLjzGBbtQiC8mAcdXgfjl4PT8fCW6CmTjHRY5u4=;
+        b=ST3E6xJFYBuU0kajH+iJyGJhMRZzyEx1lCvyrh+CpSinJ7Opb6PVGmYNqLgoD5yFDd
+         c89Uo/JG/+h9PDC6R+oYzIfGatcu9GQnPM0fAjWwCMqzOSFqdjwfH7PQLc1pu4UFrYQa
+         x4AUfe9hCOWZiFyIr4WW/gcRKzrhzg0P4Mlg6QmkJDD0UJYGNzeFS5x0PUD+hiiw0WWW
+         YDCpL+lwwYI426xGKBntuMJ15RCTMpN/eBojWZ4v/XZDP72aZgj1/hTzXwEnLtTNtb8O
+         10KCAmCzkRepVgWJNDrAGYPu7AD2YV5gvE4OVJcmM0yNS8wOEcJtGxjebJodpIHhB/iY
+         2A0A==
+X-Gm-Message-State: ANhLgQ0yhfUeJ3ERRAniBHi4AJaoHgasmgKdn2IUffeT/i34W8CcT7+E
+        lUMjGXjeo8wfYAUE8oguiiLUOYUj
+X-Google-Smtp-Source: ADFU+vvwMGbod/4+O259JslpdYAISzZQ2Ja6Zj9n5SvnGOf2IeBIQt9CdyH0FQcsl015TRgEW+7DEw==
+X-Received: by 2002:a5d:4685:: with SMTP id u5mr25849575wrq.69.1583839032708;
+        Tue, 10 Mar 2020 04:17:12 -0700 (PDT)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id 5sm11485857wrh.10.2020.03.10.04.17.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 04:17:11 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 12:17:10 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     brookxu <brookxu.cn@gmail.com>, hannes@cmpxchg.org,
+        vdavydov.dev@gmail.com, akpm@linux-foundation.org,
+        cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2] memcg: fix NULL pointer dereference in
+ __mem_cgroup_usage_unregister_event
+Message-ID: <20200310111710.GF8447@dhcp22.suse.cz>
+References: <077a6f67-aefa-4591-efec-f2f3af2b0b02@gmail.com>
+ <20200310094836.GD8447@dhcp22.suse.cz>
+ <20200310104149.5c3pc75y6ny5hixb@box>
 MIME-Version: 1.0
-References: <20200228164126.17517-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200305114314.GP5379@paasikivi.fi.intel.com> <CA+V-a8tGEYT7sOqzLRu8cx3u1DySt4mOz0UujU57SZSGqXB=Pw@mail.gmail.com>
-In-Reply-To: <CA+V-a8tGEYT7sOqzLRu8cx3u1DySt4mOz0UujU57SZSGqXB=Pw@mail.gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Tue, 10 Mar 2020 11:17:10 +0000
-Message-ID: <CA+V-a8sXP98EkrvepX6hqj8oNE8c5o5PUtU306V_QYb1Bowjpw@mail.gmail.com>
-Subject: Re: [PATCH] media: i2c: ov5645: Add virtual_channel module parameter
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Jacopo Mondi <jacopo@jmondi.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310104149.5c3pc75y6ny5hixb@box>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari,
+On Tue 10-03-20 13:41:49, Kirill A. Shutemov wrote:
+> On Tue, Mar 10, 2020 at 10:48:36AM +0100, Michal Hocko wrote:
+> > [Cc Kirill, I didn't realize he has implemented this code]
+> 
+> My first non-trivial mm contribution :P
 
-On Fri, Mar 6, 2020 at 10:18 AM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
->
-> Hi Sakari,
->
-> On Thu, Mar 5, 2020 at 11:43 AM Sakari Ailus
-> <sakari.ailus@linux.intel.com> wrote:
-> >
-> > Hi Prabhakar,
-> >
-> > On Fri, Feb 28, 2020 at 04:41:26PM +0000, Lad Prabhakar wrote:
-> > > OV5645 can operate in virtual channel 0-3 in CSI2 interfaces, this patch
-> > > adds support for module parameter virtual_channel to select the required
-> > > channel. By default OV5645 operates in virtual channel 0.
-> >
-> > What's your use case for different virtual channels?
-> >
-> Just ability to switch to different virtual channel, based on ov5640
-> driver. The rcar-csi2
-> has capability to capture  from multiple channels so that we can
-> capture simultaneously
-> from two sensors.
->
-Any thoughts on how this could be handled ?
+Everybody has to pay for sins of youth :p
 
-Cheers,
---Prabhakar
+[...]
+
+> > It seems that the code has been broken since 2c488db27b61 ("memcg: clean
+> > up memory thresholds"). We've had 371528caec55 ("mm: memcg: Correct
+> > unregistring of events attached to the same eventfd") but it didn't
+> > catch this case for some reason. Unless I am missing something the code
+> > was broken back then already. Kirill please double check after me.
+> 
+> I think the issue exitsted before 2c488db27b61. The fields had different
+> names back then.
+> 
+> The logic to make unregister never-fail is added in 907860ed381a
+> ("cgroups: make cftype.unregister_event() void-returning"). I believe the
+> Fixes should point there.
+
+Yes, you seem to be right. It doesn't make a difference much as both
+went in to the same kernel but a proper Fixes tag is really valuable.
+
+Thanks for looking into that.
+
+-- 
+Michal Hocko
+SUSE Labs
