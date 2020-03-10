@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D0D317F9CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:00:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 191C317F8CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:51:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730077AbgCJNAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:00:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40338 "EHLO mail.kernel.org"
+        id S1728821AbgCJMvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:51:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730059AbgCJM7w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:59:52 -0400
+        id S1728754AbgCJMvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:51:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EB432468C;
-        Tue, 10 Mar 2020 12:59:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57D1B2468F;
+        Tue, 10 Mar 2020 12:51:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845185;
-        bh=u5EESKKXh5N8XxF1ERwT6O7rJ8l+e6cksy9HpYkORGc=;
+        s=default; t=1583844665;
+        bh=WN/vcMhR2MwEel8vwqkEIUHgK4v5sJpIPWk8UdLLXT8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U9xA+Db1XkN4FhxtOWkn9BLJWqA5c5AW2nZxgdl9LlCPpDkkiXOKDpEhadwS1BGfl
-         hQD1yzFSsI06Nl5kFZUpYC8tIT1YVF2wO40GTCgMRWpCB42ktzjrLDimGhQvnlhNHB
-         poSe+FLKExAS/70qE65Zc469FLFOuu2eGQfHFJBA=
+        b=jumcEaeyq+WfyjzytMFUMbPqOyFmHJGbNnc8ogCUaYdzL0Ifh21gyXdlWGyrj//bc
+         uf88Uqxl70i4Tovz69WIHPOV0GN8dXrJ41ZAZ85y8gPwJA5aQdIkJU//9l16vuVMwk
+         QJW4j6OL0m4joX1FBv0AJ9xkm/sCYoReRm98sTp8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-Subject: [PATCH 5.5 075/189] usb: core: hub: fix unhandled return by employing a void function
-Date:   Tue, 10 Mar 2020 13:38:32 +0100
-Message-Id: <20200310123647.200239875@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Lazewatsky <dlaz@chromium.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+Subject: [PATCH 5.4 067/168] usb: quirks: add NO_LPM quirk for Logitech Screen Share
+Date:   Tue, 10 Mar 2020 13:38:33 +0100
+Message-Id: <20200310123642.042278422@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,26 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugeniu Rosca <erosca@de.adit-jv.com>
+From: Dan Lazewatsky <dlaz@chromium.org>
 
-commit 63d6d7ed475c53dc1cabdfedf63de1fd8dcd72ee upstream.
+commit b96ed52d781a2026d0c0daa5787c6f3d45415862 upstream.
 
-Address below Coverity complaint (Feb 25, 2020, 8:06 AM CET):
+LPM on the device appears to cause xHCI host controllers to claim
+that there isn't enough bandwidth to support additional devices.
+
+Signed-off-by: Dan Lazewatsky <dlaz@chromium.org>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+Link: https://lore.kernel.org/r/20200226143438.1445-1-gustavo.padovan@collabora.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/hub.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/core/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -1866,7 +1866,7 @@ static int hub_probe(struct usb_interfac
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -231,6 +231,9 @@ static const struct usb_device_id usb_qu
+ 	/* Logitech PTZ Pro Camera */
+ 	{ USB_DEVICE(0x046d, 0x0853), .driver_info = USB_QUIRK_DELAY_INIT },
  
- 	if (id->driver_info & HUB_QUIRK_DISABLE_AUTOSUSPEND) {
- 		hub->quirk_disable_autosuspend = 1;
--		usb_autopm_get_interface(intf);
-+		usb_autopm_get_interface_no_resume(intf);
- 	}
++	/* Logitech Screen Share */
++	{ USB_DEVICE(0x046d, 0x086c), .driver_info = USB_QUIRK_NO_LPM },
++
+ 	/* Logitech Quickcam Fusion */
+ 	{ USB_DEVICE(0x046d, 0x08c1), .driver_info = USB_QUIRK_RESET_RESUME },
  
- 	if (hub_configure(hub, &desc->endpoint[0].desc) >= 0)
 
 
