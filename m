@@ -2,172 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACFF31803DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:45:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7E0F1803E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:47:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbgCJQpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 12:45:22 -0400
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:40919 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbgCJQpW (ORCPT
+        id S1727154AbgCJQrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 12:47:06 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33772 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbgCJQrF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 12:45:22 -0400
-Received: by mail-vk1-f195.google.com with SMTP id k63so1613859vka.7;
-        Tue, 10 Mar 2020 09:45:19 -0700 (PDT)
+        Tue, 10 Mar 2020 12:47:05 -0400
+Received: by mail-ed1-f68.google.com with SMTP id z65so11226011ede.0;
+        Tue, 10 Mar 2020 09:47:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Id7nxzKDmSxI0cxB6yaElDPLzg27V9lnZyiHS/FO3cA=;
-        b=OLgxZaW6bKNkMqqk5xI+ZQZ5koSwhOU2O2YajGrqtFX0SGrvSFA9HmS/gCiiWJw8G/
-         Asl8ogHEcdLsWX8yltDot3pYdZGeoA3rT7NfPPqvrk1mYkJ7A31cY43vYOamEzs9SwXP
-         JcosmGuuSgns7PgnY2K1/NO2xPkuw29r9EZUa2ie2FQ+PZGF8bRwPwKbAKRZz1H+g73v
-         Oivk+VjqvgZ31Rx2ZbTPnVy7H/MQdjdr98cb5WzHBD94PJNx0tDJf7tkxjYIiXhGirO2
-         F0S4i/g0nTnmcM8ID3R5XfUXFMqneDfyw4Bgl9hNo/MNMJUU8aFxZJD/tx8yHNmj8vud
-         jcJg==
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KaPldxTH/MOzYJHDrcn8FfN8mXWcToCgtBawkR0wyWs=;
+        b=T7RnYrMI4PK8EB5ELCHeXakHQ1YvHx60EzqZmU0MB0KwtV/2WzGfSeUMw2kCfcFlCS
+         rF0sDn4d00UIkPNSEcueRx8QH2rHAbL95thqO07lw89r3JrquAuaXsVw5Vn3iPTe6jnx
+         yFkybxLId61q3oh4+WWKnjq8C1sfQOFjOkx8LxuwGU2oY9+2GE3IodsO62qS/lGhnXTw
+         6qt4FyDnoFIJJzcuQKsmAzOT0kj+mU8S9m/FF1Vj3jG3evM4CwVMxeQCXL5JJX06CzG/
+         r8daAcTLsRKdzUfrlWVVphWcR19CFmRv7fBnOg4tLKy1Y8DeYwncp+uX18V8d4jrEjxX
+         y2ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Id7nxzKDmSxI0cxB6yaElDPLzg27V9lnZyiHS/FO3cA=;
-        b=jLFFZMcdNHpnnf/qzXshaC4vxS+xrTOwN5gXZmfWL0bRpVwBCrxh7QA/ADOj2O2+GU
-         s/hvJXPjv6wYew5IUjLlzbR9tPTBZ/UvoPc5gPm3JAZLS4Sd1wIZ+uUONGee3MnExtk8
-         w1se1fkhPKalUw/NqjDiSFzC3F1DYD4ZcOK70/5chZ70TqVtrWh4VHPA4W2kabUcIPLk
-         Ha1minHqWfxvCN6IITCUGJjjRQzIB5/wHrUML4gKgaeLVniV0LybJYC80wH8MZL8JXsC
-         XKI+49Tahh3U+H94SeDhPwjlTQ7p79Onq/1u6HYYTDbtmxSCC+BfdXAPh49IfTT1rzj1
-         DGFw==
-X-Gm-Message-State: ANhLgQ0iayZ1s2KQVDjLWxSKsPCiB+b3kRS90afZytKJZYc1qtnXcRYb
-        4Pz8w4xPgoo58qfXXvVLZ3Pz1Ln3r3rCywY4rMA=
-X-Google-Smtp-Source: ADFU+vsFnMZOJyX+JnMLr2gSOiucHUxAptJ2co35Xt2ai8onMy2NXP9Q6zK4kHPGL3XY4vYMadgXzXQO5GJyc3DfNHA=
-X-Received: by 2002:a1f:b401:: with SMTP id d1mr11868133vkf.26.1583858719158;
- Tue, 10 Mar 2020 09:45:19 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=KaPldxTH/MOzYJHDrcn8FfN8mXWcToCgtBawkR0wyWs=;
+        b=pw7Ncw+sslXroRf76x9gCDFNVdGeI0iwCpTTLhqtwYegXz5KSVO6PbSEetg6qpWzHE
+         jSsnt1ygBlVhf6gynN8nc065/iD2xX15MTuDvuSgzZfREAq7gUIQg3yzNW1V/K9p2t5O
+         joBLDi7NZ4XZs1sDBWEpF4rA2hZkBmmO2p3WrREWumfOM6QfUeKIEopBbM4BTnlU609d
+         FqRkCs1iVe9XLFmgQw1hKNbwrcfBqAX5120ZDNQuo9zfXFf7lcwMu4AF6Ch/VDaTRZfq
+         HH99hKE2yjAIW9RYCYv3SN+c/5kqTZPwYY/0qqTMpouG1CS+QIUUQ54IQ+Lzvunpwq9H
+         y2wA==
+X-Gm-Message-State: ANhLgQ1CHMfAdul6pTlQoAGE65AK1vyzGRsh6oPNBVL+/Ushj6w+FIHr
+        XiPBiPGqABPc33OxMdwWTeVoEUYz
+X-Google-Smtp-Source: ADFU+vsvuyXnQKzBQuTwVuG2o3ywflRkiQSuLRQe0z4hDMvawHwWfF/PB8W+Vq2jZW9Z9rlTMpTvKw==
+X-Received: by 2002:a17:906:8409:: with SMTP id n9mr18238651ejx.253.1583858822169;
+        Tue, 10 Mar 2020 09:47:02 -0700 (PDT)
+Received: from [10.67.48.239] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id j19sm506231edq.57.2020.03.10.09.46.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Mar 2020 09:47:01 -0700 (PDT)
+Subject: Re: [PATCH net] net: phy: Avoid multiple suspends
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        David Miller <davem@davemloft.net>
+Cc:     netdev <netdev@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>, B38611@freescale.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20200220233454.31514-1-f.fainelli@gmail.com>
+ <20200223.205911.1667092059432885700.davem@davemloft.net>
+ <CAMuHMdWuP1_3vqOpf7KEimLLTKiWpWku9fUAdP3CCR6WbHyQdg@mail.gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ G10n8gCguORqNGMsVRxrlLs7/himep7MrCc=
+Message-ID: <c2a4edcb-dbf9-bc60-4399-3eaec9a20fe7@gmail.com>
+Date:   Tue, 10 Mar 2020 09:46:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <00000000000088452f05a07621d2@google.com>
-In-Reply-To: <00000000000088452f05a07621d2@google.com>
-From:   =?UTF-8?B?6buE56eL6ZKn?= <anenbupt@gmail.com>
-Date:   Wed, 11 Mar 2020 00:45:08 +0800
-Message-ID: <CADG63jBA42RVg_GGDHhMP0iL0VP2FTm8N7684wdOccATO_TrzA@mail.gmail.com>
-Subject: Re: WARNING: refcount bug in sctp_wfree
-To:     syzbot <syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com>
-Cc:     davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org,
-        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
-        netdev@vger.kernel.org, nhorman@tuxdriver.com,
-        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAMuHMdWuP1_3vqOpf7KEimLLTKiWpWku9fUAdP3CCR6WbHyQdg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sctp_wfree
-    ->refcount_sub_and_test(sizeof(struct sctp_chunk),
-                                      &sk->sk_wmem_alloc)
-sctp_wfree will sub sizeof(struct sctp_chunk) for every skb. So could
-we add the extra size for gso segment ?
+On 3/10/20 7:16 AM, Geert Uytterhoeven wrote:
+> Hi Florian, David,
+> 
+> On Mon, Feb 24, 2020 at 5:59 AM David Miller <davem@davemloft.net> wrote:
+>> From: Florian Fainelli <f.fainelli@gmail.com>
+>> Date: Thu, 20 Feb 2020 15:34:53 -0800
+>>
+>>> It is currently possible for a PHY device to be suspended as part of a
+>>> network device driver's suspend call while it is still being attached to
+>>> that net_device, either via phy_suspend() or implicitly via phy_stop().
+>>>
+>>> Later on, when the MDIO bus controller get suspended, we would attempt
+>>> to suspend again the PHY because it is still attached to a network
+>>> device.
+>>>
+>>> This is both a waste of time and creates an opportunity for improper
+>>> clock/power management bugs to creep in.
+>>>
+>>> Fixes: 803dd9c77ac3 ("net: phy: avoid suspending twice a PHY")
+>>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+>>
+>> Applied, and queued up for -stable, thanks Florian.
+> 
+> This patch causes a regression on r8a73a4/ape6evm and sh73a0/kzm9g.
+> After resume from s2ram, Ethernet no longer works:
+> 
+>         PM: suspend exit
+>         nfs: server aaa.bbb.ccc.ddd not responding, still trying
+>         ...
+> 
+> Reverting commit 503ba7c6961034ff ("net: phy: Avoid multiple suspends")
+> fixes the issue.
+> 
+> On both boards, an SMSC LAN9220 is connected to a power-managed local
+> bus.
+> 
+> I added some debug code to check when the clock driving the local bus
+> is stopped and started, but I see no difference before/after.  Hence I
+> suspect the Ethernet chip is no longer reinitialized after resume.
 
+Can you provide a complete log? Do you use the Generic PHY driver or a
+specialized one? Do you have a way to dump the registers at the time of
+failure and see if BMCR.PDOWN is still set somehow?
 
+Does the following help:
 
---- a/net/sctp/output.c
-+++ b/net/sctp/output.c
-@@ -398,7 +398,8 @@ static void sctp_packet_gso_append(struct sk_buff
-*head, struct sk_buff *skb)
-        head->truesize += skb->truesize;
-        head->data_len += skb->len;
-        head->len += skb->len;
--       refcount_add(skb->truesize, &head->sk->sk_wmem_alloc);
-+       refcount_add(skb->truesize + sizeof(struct sctp_chunk),
-+                               &head->sk->sk_wmem_alloc);
+diff --git a/drivers/net/ethernet/smsc/smsc911x.c
+b/drivers/net/ethernet/smsc/smsc911x.c
+index 49a6a9167af4..df17190c76c0 100644
+--- a/drivers/net/ethernet/smsc/smsc911x.c
++++ b/drivers/net/ethernet/smsc/smsc911x.c
+@@ -2618,6 +2618,7 @@ static int smsc911x_resume(struct device *dev)
+        if (netif_running(ndev)) {
+                netif_device_attach(ndev);
+                netif_start_queue(ndev);
++               phy_resume(dev->phydev);
+        }
 
-        __skb_header_release(skb);
-
-On Tue, Mar 10, 2020 at 9:36 AM syzbot
-<syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    2c523b34 Linux 5.6-rc5
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=155a5f29e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a5295e161cd85b82
-> dashboard link: https://syzkaller.appspot.com/bug?extid=cea71eec5d6de256d54d
-> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164b5181e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166dd70de00000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com
->
-> ------------[ cut here ]------------
-> refcount_t: underflow; use-after-free.
-> WARNING: CPU: 1 PID: 8668 at lib/refcount.c:28 refcount_warn_saturate+0x15b/0x1a0 lib/refcount.c:28
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 1 PID: 8668 Comm: syz-executor779 Not tainted 5.6.0-rc5-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1e9/0x30e lib/dump_stack.c:118
->  panic+0x264/0x7a0 kernel/panic.c:221
->  __warn+0x209/0x210 kernel/panic.c:582
->  report_bug+0x1ac/0x2d0 lib/bug.c:195
->  fixup_bug arch/x86/kernel/traps.c:174 [inline]
->  do_error_trap+0xca/0x1c0 arch/x86/kernel/traps.c:267
->  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:286
->  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-> RIP: 0010:refcount_warn_saturate+0x15b/0x1a0 lib/refcount.c:28
-> Code: c7 e4 ff d0 88 31 c0 e8 23 20 b3 fd 0f 0b eb 85 e8 8a 4a e0 fd c6 05 ff 70 b1 05 01 48 c7 c7 10 00 d1 88 31 c0 e8 05 20 b3 fd <0f> 0b e9 64 ff ff ff e8 69 4a e0 fd c6 05 df 70 b1 05 01 48 c7 c7
-> RSP: 0018:ffffc90001f577d0 EFLAGS: 00010246
-> RAX: 8c9c9070bbb4e500 RBX: 0000000000000003 RCX: ffff8880938a63c0
-> RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-> RBP: 0000000000000003 R08: ffffffff815e16e6 R09: fffffbfff15db92a
-> R10: fffffbfff15db92a R11: 0000000000000000 R12: dffffc0000000000
-> R13: ffff88809de82000 R14: ffff8880a89237c0 R15: 1ffff11013be52b0
->  sctp_wfree+0x3b1/0x710 net/sctp/socket.c:9111
->  skb_release_head_state+0xfb/0x210 net/core/skbuff.c:651
->  skb_release_all net/core/skbuff.c:662 [inline]
->  __kfree_skb+0x22/0x1c0 net/core/skbuff.c:678
->  sctp_chunk_destroy net/sctp/sm_make_chunk.c:1454 [inline]
->  sctp_chunk_put+0x17b/0x200 net/sctp/sm_make_chunk.c:1481
->  __sctp_outq_teardown+0x80a/0x9d0 net/sctp/outqueue.c:257
->  sctp_association_free+0x21e/0x7c0 net/sctp/associola.c:339
->  sctp_cmd_delete_tcb net/sctp/sm_sideeffect.c:930 [inline]
->  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1318 [inline]
->  sctp_side_effects net/sctp/sm_sideeffect.c:1185 [inline]
->  sctp_do_sm+0x3c01/0x5560 net/sctp/sm_sideeffect.c:1156
->  sctp_primitive_ABORT+0x93/0xc0 net/sctp/primitive.c:104
->  sctp_close+0x231/0x770 net/sctp/socket.c:1512
->  inet_release+0x135/0x180 net/ipv4/af_inet.c:427
->  __sock_release net/socket.c:605 [inline]
->  sock_close+0xd8/0x260 net/socket.c:1283
->  __fput+0x2d8/0x730 fs/file_table.c:280
->  task_work_run+0x176/0x1b0 kernel/task_work.c:113
->  exit_task_work include/linux/task_work.h:22 [inline]
->  do_exit+0x5ef/0x1f80 kernel/exit.c:801
->  do_group_exit+0x15e/0x2c0 kernel/exit.c:899
->  __do_sys_exit_group+0x13/0x20 kernel/exit.c:910
->  __se_sys_exit_group+0x10/0x10 kernel/exit.c:908
->  __x64_sys_exit_group+0x37/0x40 kernel/exit.c:908
->  do_syscall_64+0xf3/0x1b0 arch/x86/entry/common.c:294
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x43ef98
-> Code: Bad RIP value.
-> RSP: 002b:00007ffcc7e7c398 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043ef98
-> RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-> RBP: 00000000004be7a8 R08: 00000000000000e7 R09: ffffffffffffffd0
-> R10: 000000002059aff8 R11: 0000000000000246 R12: 0000000000000001
-> R13: 00000000006d01a0 R14: 0000000000000000 R15: 0000000000000000
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+        return 0;
+-- 
+Florian
