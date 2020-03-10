@@ -2,125 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C469518020A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:39:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 298CC180216
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:41:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbgCJPjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 11:39:03 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:26134 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726283AbgCJPjD (ORCPT
+        id S1726514AbgCJPll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 11:41:41 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:44583 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726402AbgCJPlk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 11:39:03 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583854743; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=gUmzy0ip2pBA4D+C/B3z0+zgPFLhXRY4x38ZdJYS4bI=; b=XDlxLPGaj9UQQ4tWF9YeEEIp08Uq2+iWjtbqfl701p/XRdgR6EcXZkz0SrOq5eXny8vheVcr
- xfhG66Snqoy/2oLZhJ/OwVb6L1JfGFtBW+I5T/5IXzpJufkAhv50HbHFJZr3SnKss4mk+SSz
- cZHVdtWZ3kYUUgl+mTzxOMcQ5Os=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e67b487.7f36ed5cd1b8-smtp-out-n01;
- Tue, 10 Mar 2020 15:38:47 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id A75E3C433CB; Tue, 10 Mar 2020 15:38:47 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [192.168.1.2] (unknown [183.83.137.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C51FEC433D2;
-        Tue, 10 Mar 2020 15:38:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C51FEC433D2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
-Subject: Re: [PATCH v3 2/4] soc: qcom: Add SoC sleep stats driver
-To:     Stephen Boyd <swboyd@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     mka@chromium.org, evgreen@chromium.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        agross@kernel.org, dianders@chromium.org, rnayak@codeaurora.org,
-        ilina@codeaurora.org, lsrao@codeaurora.org,
-        Mahesh Sivasubramanian <msivasub@codeaurora.org>
-References: <1583479412-18320-1-git-send-email-mkshah@codeaurora.org>
- <1583479412-18320-3-git-send-email-mkshah@codeaurora.org>
- <20200307064231.GF1094083@builder>
- <e1133bcd-b1fe-98b3-3a28-c12d07ff8ebc@codeaurora.org>
- <158377799320.66766.16447517220100414599@swboyd.mtv.corp.google.com>
-From:   Maulik Shah <mkshah@codeaurora.org>
-Message-ID: <ad874421-f197-174f-3d30-2037c7fb57a0@codeaurora.org>
-Date:   Tue, 10 Mar 2020 21:08:41 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Tue, 10 Mar 2020 11:41:40 -0400
+Received: by mail-vs1-f68.google.com with SMTP id u24so8672243vso.11
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 08:41:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qC62IIKhW9YMr17j8xvm6h6ivRNlHnarpiL0rd3uVKU=;
+        b=kvg/jmDC2+FQKCGTxQeEEU6eDVxiDOfi+PHdpb9F44rCDr3iDuhTLKJW1jaTOnoQmE
+         w/t7XbVm8bSJu3rJ8x5P6tq6so2jy3ND0Ky5r+nu+Yko4oCB+17s6NFbxoT7+buPLybU
+         fktRZY1HUG0Z/x19Mz3x9kUDjs3J5CAFqEgbmx5CzZigtEo6kJF0FSgmgqfCHeh4qgUx
+         9wct/UW9csPIXWs9aOrfVews9WbHFSUxPTHHB0lsICKhNACIQHwQ86Wr+yK4lKZS5iSv
+         /YRWmjUpWMkrNuOhodF6/HEr02KbVE733HicXMQwZu2lKcaNdJx2WG0Kw4gOxHr1nq7a
+         E9hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qC62IIKhW9YMr17j8xvm6h6ivRNlHnarpiL0rd3uVKU=;
+        b=WQ92nvK90FAKwTzZHronABb7dq51htxJYMRImAdeKTcHfWFAjOO5p+w3zdXBOG4v+p
+         hgxDrcobNcx0iDzjN0PKnK+Pk8yifX3RMsfCzAr/JAK5+yeEIm+rPok3dm8XElXw550K
+         Qis+gcLzdQj2d1EOZxmde3IqPi+RafC7hs2Xw4X5KtfDNRgPMBJHpPMcC2S/ywxMpzmB
+         c/N7uWVIj6fNFnImMI4B1t0ChyXYa0sfMrRFOQhHeVJXATfgDKlLSnp7SCJMq5WX72aL
+         1apFvaoPAMhCMVMZz+uEzLXdeKj1Pd7aUbfXj+L3Yg0JHWhuaEkyGkOteOfXRj8qQW2m
+         m2eA==
+X-Gm-Message-State: ANhLgQ0ZZX9C2YLga6wC/ca3gKJFt5QKCvR/hS1uk8U4zgdxioxzedCW
+        KKu7gREqZEIqHnGUHFihCHiVc7ls7dF+nLb0cVX3XQ==
+X-Google-Smtp-Source: ADFU+vvRHRssKbGiLu9InPmubuJ6G49Iyj1Gxm04bT4kJkzS/p9pec09o3Xxoe47Pgqc689j19eURg2PLSNAEoxYkK4=
+X-Received: by 2002:a05:6102:2051:: with SMTP id q17mr8378399vsr.165.1583854899378;
+ Tue, 10 Mar 2020 08:41:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <158377799320.66766.16447517220100414599@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+References: <20200212024220.GA32111@seokyung-mobl1> <CAPDyKFr9H2XcgCk9AmHgJfHC+PySh66KxegMJ4yb4aqKSVt3kg@mail.gmail.com>
+ <BYAPR11MB269638142E2BF2C6E108B40A9CE20@BYAPR11MB2696.namprd11.prod.outlook.com>
+ <CAPDyKFr=hE6diZmaVy-os3rFScHe+8OphBS+edkVGK+Z-J_=HA@mail.gmail.com>
+ <BYAPR11MB2696D160D6F5B7C98E0503E79CFF0@BYAPR11MB2696.namprd11.prod.outlook.com>
+ <CAPDyKFqqDWMsHEb493p__FNzYaEzE6Ry0bkd-2ng7cdM886zjw@mail.gmail.com> <5f3b8cb9-5e55-ee47-46e5-af019d6328b6@intel.com>
+In-Reply-To: <5f3b8cb9-5e55-ee47-46e5-af019d6328b6@intel.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 10 Mar 2020 16:41:02 +0100
+Message-ID: <CAPDyKFosrju6y5mOKePsNwqgDr=QeBozFTrWKz4MNpsMmeZdCA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: mmc: Fix the timing for clock changing in mmc
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     "Seo, Kyungmin" <kyungmin.seo@intel.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 3/9/2020 11:49 PM, Stephen Boyd wrote:
-> Quoting Maulik Shah (2020-03-09 03:58:27)
->> On 3/7/2020 12:12 PM, Bjorn Andersson wrote:
->>> On Thu 05 Mar 23:23 PST 2020, Maulik Shah wrote:
->>>> diff --git a/drivers/soc/qcom/soc_sleep_stats.c b/drivers/soc/qcom/soc_sleep_stats.c
->>>> new file mode 100644
->>>> index 00000000..79a14d2
->>>> --- /dev/null
->>>> +++ b/drivers/soc/qcom/soc_sleep_stats.c
->>>> @@ -0,0 +1,248 @@
-> [...]
->>>> +    u32 pid;
->>>> +};
->>>> +
->>>> +static struct subsystem_data subsystems[] = {
->>>> +    { "modem", MODEM_ITEM_ID, PID_MODEM },
->>>> +    { "adsp", ADSP_ITEM_ID, PID_ADSP },
->>>> +    { "cdsp", CDSP_ITEM_ID, PID_CDSP },
->>>> +    { "slpi", SLPI_ITEM_ID, PID_SLPI },
->>>> +    { "gpu", GPU_ITEM_ID, PID_APSS },
->>>> +    { "display", DISPLAY_ITEM_ID, PID_APSS },
->>>> +};
->>>> +
->>>> +struct stats_config {
->>>> +    unsigned int offset_addr;
->>>> +    unsigned int num_records;
->>>> +    bool appended_stats_avail;
->>>> +};
->>>> +
->>>> +static const struct stats_config *config;
->>> Add this to soc_sleep_stats_data and pass that as s->private instead of
->>> just the reg, to avoid the global variable.
->> No, this is required to keep global. we are not passing just reg as s->private,
->> we are passing "reg + offset" which differs for each stat.
-> Can you please stop sending these review comment replies and then
-> immediately turning around and sending the next revision of the patch
-> series. I doubt that the changes take less than an hour to write and it
-> would be helpful for everyone involved to have constructive discussions
-> about the code if there's ever a response besides "done" or "ok".
-Sure, i be careful to wait for at least few days before spinning new one,
-atleast wait till all discussion finish on current version.
-
-Also will try to reply in more details for comments as much as possible.
+On Tue, 10 Mar 2020 at 11:44, Adrian Hunter <adrian.hunter@intel.com> wrote:
 >
-> In this case it should be possible to get rid of the global 'config'.
-> Make a new container struct to hold the config and offset or figure out
-> what actually needs to be passed into the functions instead and do that
-> when the files are created.
+> On 10/03/20 11:05 am, Ulf Hansson wrote:
+> > On Tue, 10 Mar 2020 at 05:28, Seo, Kyungmin <kyungmin.seo@intel.com> wrote:
+> >>
+> >> I read the link and patch of Chaotian Jing.
+> >> I also point out what Chaotian said.
+> >> Most host controllers have DLL tuning values for each mode. When host controller is set as HS400 mode with 50MHz clock, host controller uses DLL value which is tuned with 200MHz clock.
+> >>
+> >> If DLL value in HS400 mode doesn't have the pass range in HS mode, command transfer failing may fail.
+> >> In order to make robust sdhci driver, I think the patch needs to be considered.
+> >
+> > I have, but I am not picking it up in its current form.
+> >
+> >> Of course, CMD6 with HS400 mode and 200MHz clock should not cause any problem because it's correct configuration.
+> >
+> > Yes, but not for all cases, as I said in my reply in those email-threads.
+> >
+> > What I had in mind, is that I I think we should inform
+> > mmc_hs400_to_hs200() about under what situation it's getting called.
+> > Depending on that, we should either decrease the clock rate before or
+> > after we send the CMD6.
+> >
+> > Would that work for your case?
+>
+> Ulf, would you consider a new call back e.g.
 
-i will address this to get rid of global config.
+That could work, but I am not sure what's best, honestly.
 
-Thanks,
-Maulik
+The problem may be generic or it could be specific to some host
+controller? I think we need to answer that question first.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+What do you think?
+
+Br
+Uffe
+
+>
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index c2abd417a84a..1bc18fe2632f 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -1237,7 +1237,10 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
+>
+>         /* Reduce frequency to HS */
+>         max_dtr = card->ext_csd.hs_max_dtr;
+> -       mmc_set_clock(host, max_dtr);
+> +       if (host->ops->hs400_to_hs200_prep)
+> +               host->ops->hs400_to_hs200_prep(host, max_dtr);
+> +       else
+> +               mmc_set_clock(host, max_dtr);
+>
+>         /* Switch HS400 to HS DDR */
+>         val = EXT_CSD_TIMING_HS;
+>
+>
+
+[...]
+
+Kind regards
+Uffe
