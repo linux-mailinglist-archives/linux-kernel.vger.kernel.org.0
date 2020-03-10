@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ECE317F803
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:44:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 255C217F798
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:40:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbgCJMoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:44:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46538 "EHLO mail.kernel.org"
+        id S1726486AbgCJMkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:40:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727264AbgCJMoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:44:17 -0400
+        id S1726271AbgCJMkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:40:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67F32246A3;
-        Tue, 10 Mar 2020 12:44:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A1E124686;
+        Tue, 10 Mar 2020 12:40:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844256;
-        bh=1UG6/K0ZXbloJbcRrJtGl0di2YcCGVylYoLcKEsDLJc=;
+        s=default; t=1583844045;
+        bh=6vgnEVKPxfD/pdUoe5UTAYqvaq18nWzg0dsew9eFp2I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qqW1o0FeVBC9KqCZSM8mPTk5NF1mzaozCbfpRlf7uQI+1mJ4fup9et/AMimKkeklE
-         oM6c91w1J6AzgCA4NQ80VGSULGq4aX1w0SaiQfmMOmVZd8FlRG7OrffVtqbFngVMSb
-         5U6YOEyST4KFV9wUk1uYy0dc7RabmFDsZdSEceKM=
+        b=f3WNmNhwcYtUE4spk3/ugKJoJO6prP3p8JuuFMf0po1DfzpUWc0VEBwTEDHJGv6rz
+         XORrk/G/ncf9rqcVJS0w7EB0GkdU7WaWApTlCIRuLT1Nw0XmpbSFRhOUi70cULklkI
+         vz7AzFXYPRjTrDKyhJnbp+PBCvPE8zgK8O4J6JFg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
-        Arthur Kiyanovski <akiyano@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 16/88] net: ena: ena-com.c: prevent NULL pointer dereference
+        stable@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Tommi Rantala <tommi.t.rantala@nokia.com>
+Subject: [PATCH 4.4 11/72] sysrq: Remove duplicated sysrq message
 Date:   Tue, 10 Mar 2020 13:38:24 +0100
-Message-Id: <20200310123610.229239968@linuxfoundation.org>
+Message-Id: <20200310123604.449673448@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <20200310123601.053680753@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,52 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arthur Kiyanovski <akiyano@amazon.com>
+From: Petr Mladek <pmladek@suse.com>
 
-[ Upstream commit c207979f5ae10ed70aff1bb13f39f0736973de99 ]
+commit c3fee60908db4a8594f2e4a2131998384b8fa006 upstream.
 
-comp_ctx can be NULL in a very rare case when an admin command is executed
-during the execution of ena_remove().
+The commit 97f5f0cd8cd0a0544 ("Input: implement SysRq as a separate input
+handler") added pr_fmt() definition. It caused a duplicated message
+prefix in the sysrq header messages, for example:
 
-The bug scenario is as follows:
+[  177.053931] sysrq: SysRq : Show backtrace of all active CPUs
+[  742.864776] sysrq: SysRq : HELP : loglevel(0-9) reboot(b) crash(c)
 
-* ena_destroy_device() sets the comp_ctx to be NULL
-* An admin command is executed before executing unregister_netdev(),
-  this can still happen because our device can still receive callbacks
-  from the netdev infrastructure such as ethtool commands.
-* When attempting to access the comp_ctx, the bug occurs since it's set
-  to NULL
+Fixes: 97f5f0cd8cd0a05 ("Input: implement SysRq as a separate input handler")
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Tommi Rantala  <tommi.t.rantala@nokia.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fix:
-Added a check that comp_ctx is not NULL
-
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
-Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_com.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/tty/sysrq.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
-index e1f694322e41a..9bd2a7a5b5a78 100644
---- a/drivers/net/ethernet/amazon/ena/ena_com.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.c
-@@ -199,6 +199,11 @@ static inline void comp_ctxt_release(struct ena_com_admin_queue *queue,
- static struct ena_comp_ctx *get_comp_ctxt(struct ena_com_admin_queue *queue,
- 					  u16 command_id, bool capture)
- {
-+	if (unlikely(!queue->comp_ctx)) {
-+		pr_err("Completion context is NULL\n");
-+		return NULL;
-+	}
-+
- 	if (unlikely(command_id >= queue->q_depth)) {
- 		pr_err("command id is larger than the queue size. cmd_id: %u queue size %d\n",
- 		       command_id, queue->q_depth);
--- 
-2.20.1
-
+--- a/drivers/tty/sysrq.c
++++ b/drivers/tty/sysrq.c
+@@ -542,7 +542,6 @@ void __handle_sysrq(int key, bool check_
+ 	 */
+ 	orig_log_level = console_loglevel;
+ 	console_loglevel = CONSOLE_LOGLEVEL_DEFAULT;
+-	pr_info("SysRq : ");
+ 
+         op_p = __sysrq_get_key_op(key);
+         if (op_p) {
+@@ -551,15 +550,15 @@ void __handle_sysrq(int key, bool check_
+ 		 * should not) and is the invoked operation enabled?
+ 		 */
+ 		if (!check_mask || sysrq_on_mask(op_p->enable_mask)) {
+-			pr_cont("%s\n", op_p->action_msg);
++			pr_info("%s\n", op_p->action_msg);
+ 			console_loglevel = orig_log_level;
+ 			op_p->handler(key);
+ 		} else {
+-			pr_cont("This sysrq operation is disabled.\n");
++			pr_info("This sysrq operation is disabled.\n");
+ 			console_loglevel = orig_log_level;
+ 		}
+ 	} else {
+-		pr_cont("HELP : ");
++		pr_info("HELP : ");
+ 		/* Only print the help msg once per handler */
+ 		for (i = 0; i < ARRAY_SIZE(sysrq_key_table); i++) {
+ 			if (sysrq_key_table[i]) {
 
 
