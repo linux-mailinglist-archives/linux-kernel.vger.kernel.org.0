@@ -2,111 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F63817FFCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 15:09:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACA8917FFD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 15:10:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbgCJOJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 10:09:29 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:49623 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726380AbgCJOJ2 (ORCPT
+        id S1726718AbgCJOKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 10:10:30 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:53560 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbgCJOK3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 10:09:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583849367;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=byWQY42UbKEvCBp8MZXn5MOeNLyHCCWS7iASAAIHrRc=;
-        b=HheXlu1SVyi3nfmcJWM7USg9CMbR7wXPqNuSBv+Jsm0QeZNoVLyjYWyhfca4yI39Qr2OCY
-        nsRWLKsYAD009t2bClX0PKQjlTTq3Xlt8kK9iPMmHBAUR3XLhdB+2/wWzdCcU33Ja25GWl
-        fbuaYPnHe7zYGZdrserRPrcLBlnicNg=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-454-lfW40ij5PLuqsiI-hXSeAw-1; Tue, 10 Mar 2020 10:09:26 -0400
-X-MC-Unique: lfW40ij5PLuqsiI-hXSeAw-1
-Received: by mail-qt1-f199.google.com with SMTP id n4so9228940qtv.5
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 07:09:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=byWQY42UbKEvCBp8MZXn5MOeNLyHCCWS7iASAAIHrRc=;
-        b=XC2RqXYJbeiIudSqjqndwmkmIg5P2AXkTZs7GYfE7TjQSxUlBYE14JO/OKgi4INHLh
-         kiX0FB9lDZESep1h16bSE2lBosLOEI/br0qetUshof4hG0wRkYaOAHEYOC+sSSyRsc2/
-         txE6WmDzGsS5XT2CmmIjpbulr0afV/t4XIkt5/f1e8ET4+aavoDjRiIk5Uo6x5iRYAwH
-         OBp2f46dhOHm/YVbuy+0ExPKBrPTS70sl8UpeDqMyqKzAw/86WP197fj1El7mgL1aItt
-         6pR6gJJaR7LOcpEeHGehQnf0kICY8xKG93XVpdL4s+VjyHa7SSRt8WPPpPNtWk+Rwk6y
-         qlqQ==
-X-Gm-Message-State: ANhLgQ28ntu0NAexC2ZTqD4v0d7vXL6RUE7ggo34cs/mw4fYvwmW+8xr
-        wm/ROV16vutswvVHGfRiCKoa+y99m9fVSRSPgHwvE6Y7uc5F9diW4b/PJPJXwRYnJS1vOEWCJRH
-        QbuCMz24NNIAzRr5hwgmuX6Tm
-X-Received: by 2002:a05:6214:1749:: with SMTP id dc9mr19418536qvb.236.1583849365643;
-        Tue, 10 Mar 2020 07:09:25 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vuselEllZdFmXTm+ij76DcuB/hAvX4mBLfQIVzSXmReeE0fULDXOqySrnGv9L/lJyNuHicsAw==
-X-Received: by 2002:a05:6214:1749:: with SMTP id dc9mr19418482qvb.236.1583849365206;
-        Tue, 10 Mar 2020 07:09:25 -0700 (PDT)
-Received: from xz-x1 ([2607:9880:19c0:32::2])
-        by smtp.gmail.com with ESMTPSA id k25sm361047qtm.94.2020.03.10.07.09.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 07:09:24 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 10:09:21 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Yan Zhao <yan.y.zhao@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christophe de Dinechin <dinechin@redhat.com>,
-        Lei Cao <lei.cao@stratus.com>
-Subject: Re: [PATCH v5 05/14] KVM: X86: Implement ring-based dirty memory
- tracking
-Message-ID: <20200310140921.GD326977@xz-x1>
-References: <20200304174947.69595-6-peterx@redhat.com>
- <202003061911.MfG74mgX%lkp@intel.com>
- <20200309213554.GF4206@xz-x1>
- <20200310022931-mutt-send-email-mst@kernel.org>
+        Tue, 10 Mar 2020 10:10:29 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02AE2ua7163526;
+        Tue, 10 Mar 2020 14:09:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=f29kP8EPy7TnjRocNsizivmDPXvx0hQFJ7+kQQ00MJY=;
+ b=MDrcOUiIxgR2aP56KbUWNhU9Qz63YugyfQz0f4D+L4J5BgcALxcxPNjQp83UYyM4mrZu
+ kBN3gdIxcKmxAXxjTEnt4RCuVg2FtszCoVKfj+PSQghtv6U64NL0177Huh4sUsHnRVTe
+ PiIky+9d6mCfARnsnyzifDF0mmGUrrnKAnbrYGefxBGrheYayJGYf5GnOHkHu1VzX7BJ
+ MhaQodsDKSbQeQ3VRdZD6INSZolvpul5qsdn5FyYb4f8lgiXNQr6yfPFA3UHpzczlhFY
+ 5hZiL6CJifg2s8aaimLW+FfHCb0hkNzAx64WmcfHOZ0EWKM22hAGNzm5jlYOe9BUsFbJ 2w== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2ym31udrqb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Mar 2020 14:09:30 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02AE3fKQ085607;
+        Tue, 10 Mar 2020 14:09:30 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2yp8rj3676-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Mar 2020 14:09:30 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02AE9SZH032502;
+        Tue, 10 Mar 2020 14:09:28 GMT
+Received: from [192.168.8.5] (/213.41.92.70)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 10 Mar 2020 07:09:28 -0700
+Subject: Re: [patch part-II V2 13/13] x86/entry/common: Split irq tracing in
+ prepare_exit_to_usermode()
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Brian Gerst <brgerst@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Frederic Weisbecker <frederic@kernel.org>
+References: <20200308222359.370649591@linutronix.de>
+ <20200308222610.245444311@linutronix.de>
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <d01a2ab6-db0f-cc0e-83e1-a60d95cde8e9@oracle.com>
+Date:   Tue, 10 Mar 2020 15:09:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200310022931-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20200308222610.245444311@linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9555 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ spamscore=0 malwarescore=0 bulkscore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003100095
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9555 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 lowpriorityscore=0
+ spamscore=0 priorityscore=1501 impostorscore=0 bulkscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003100095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 02:31:55AM -0400, Michael S. Tsirkin wrote:
-> On Mon, Mar 09, 2020 at 05:35:54PM -0400, Peter Xu wrote:
-> > I'll probably also
-> > move KVM_DIRTY_LOG_PAGE_OFFSET==0 definition to uapi/linux/kvm.h.
+
+On 3/8/20 11:24 PM, Thomas Gleixner wrote:
+> As in entry from user mode, lockdep and tracing have different
+> requirements. lockdep needs to know about the interrupts off state accross
+> the call to user_enter_irqsoff() but tracing is unsafe after the call.
+
+typo: user_enter_irqoff() (no 's' between 'irq' and 'off').
+
 > 
+> Split it up and tell the tracer that interrupts are going to be enabled
+> before calling user_enter_irqsoff() and tell lockdep afterwards.
 > 
-> IMHO KVM_DIRTY_LOG_PAGE_OFFSET is kind of pointless anyway - 
-> we won't be able to move data around just by changing the
-> uapi value since userspace isn't
-> recompiled when kernel changes ...
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>   arch/x86/entry/common.c |   12 +++++++++++-
+>   1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> --- a/arch/x86/entry/common.c
+> +++ b/arch/x86/entry/common.c
+> @@ -251,9 +251,19 @@ static noinline void __prepare_exit_to_u
+>   {
+>   	__prepare_exit_to_usermode(regs);
+>   
+> +	/*
+> +	 * Return to user space enables interrupts. Tell the tracer before
+> +	 * invoking user_enter_irqsoff() which switches to CONTEXT_USER and
 
-Yes I think we can even drop this KVM_DIRTY_LOG_PAGE_OFFSET==0
-definition.  IMHO it's only a matter of whether we would like to
-directly reference this value in the common code (e.g., for kernel
-virt/kvm_main.c) or we want quite a few of this instead:
+Same typo here: user_enter_irqoff()
 
-#ifdef KVM_DIRTY_LOG_PAGE_OFFSET
-..
-#endif
+> +	 * RCU to rcuidle state. Lockdep still needs to keep the irqs
+> +	 * disabled state.
+> +	 */
+> +	__trace_hardirqs_on();
+> +
+>   	user_enter_irqoff();
+>   	mds_user_clear_cpu_buffers();
+> -	trace_hardirqs_on();
+> +
+> +	/* All done. Tell lockdep as well. */
+> +	lockdep_hardirqs_on(CALLER_ADDR0);
+>   }
+>   NOKPROBE_SYMBOL(prepare_exit_to_usermode);
+>   
+> 
 
-I slightly prefer to not use lots of "#ifdef"s so I chose to make sure
-it's defined.  However I've no strong opinion on this either. So I'm
-open to change that if anyone insists with some reasons.
+Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
 
-Thanks,
-
--- 
-Peter Xu
-
+alex.
