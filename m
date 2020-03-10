@@ -2,76 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6892180A2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:17:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17331180A30
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:18:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbgCJVRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 17:17:02 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:32785 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbgCJVRC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 17:17:02 -0400
-Received: by mail-oi1-f196.google.com with SMTP id r7so2308337oij.0;
-        Tue, 10 Mar 2020 14:17:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7t2XjatVgxl1m5zmI0zf3cecNSKg3Cs9fIponxPwXSw=;
-        b=KqtmxOMbEO+NZ5NaO1ZrWYHJVFmkdWz65LLAuWIfqd9OC97tvcLi7nRcdBuH+a6OQn
-         qR8YmHPRSAqytfj7GkKX2qcE4CCOFPIc6EHOCS55k3IJ8xJM3lCEUYPr+Ey4gneksKh7
-         GFMpFwClj7TL9K9dw9MfChpAA6Avx9Rv3B2ZmgaZl0KpcDRHzLrouJBTBJkbPkVlPJJ6
-         tPR5wET2+nkz1QEzzwQVh0FC7jGveHY+f7zehT8c/1yBGaCKfcVQ6wMdp5iB92eE+fkg
-         lm8Y+b42l6w4Y+zW5o4nwlbfbqDlll6KwBEB4s8Z9VywQCDTIyY+Jid3qM42CSrLr5A/
-         KLxw==
-X-Gm-Message-State: ANhLgQ12qdDU3KGGXbuA4Pn+EUVmPgIAivqy3WZaSQOjspildcN3/miO
-        F5x8wzXDT19YeH2owsna1Q==
-X-Google-Smtp-Source: ADFU+vvnBqeRTKTq5e+nF4YgIWdaO8ppO/L3bDWF/OAOgz41PPJ+xjsLP+OYrd9V6nJXHRyJ/eyJqQ==
-X-Received: by 2002:aca:4fc7:: with SMTP id d190mr2684099oib.100.1583875021566;
-        Tue, 10 Mar 2020 14:17:01 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id h6sm7816905otq.63.2020.03.10.14.17.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 14:17:00 -0700 (PDT)
-Received: (nullmailer pid 10621 invoked by uid 1000);
-        Tue, 10 Mar 2020 21:17:00 -0000
-Date:   Tue, 10 Mar 2020 16:17:00 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Subject: Re: [PATCH v6 3/7] dt-bindings: clk: sprd: add bindings for sc9863a
- clock controller
-Message-ID: <20200310211659.GA10559@bogus>
-References: <20200304072730.9193-1-zhang.lyra@gmail.com>
- <20200304072730.9193-4-zhang.lyra@gmail.com>
+        id S1727588AbgCJVSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 17:18:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50544 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726265AbgCJVSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 17:18:08 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BABA215A4;
+        Tue, 10 Mar 2020 21:18:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583875088;
+        bh=1hSwRP4XYIJtvxPCOunS5ppy5zneYNWuW8C15YKCUbs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=x9Puf/icMegSN3cze30TQLprA1XrtfyMOHlrCTnnCaYMxZOfZjfJnvA4yWOGB/8M0
+         /VM7bwsZW3BKN2GA+Ln+uB3RlE0r9xd+B11Moi85a018vGOJO2U0KAuk9syT88yVYr
+         H5ENo7fBJ5Li1PUYQiXwTIkPrUwDKA5ByMhpPAnY=
+Subject: Re: [PATCH 4.19 00/86] 4.19.109-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20200310124530.808338541@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <e7087a12-956c-1ef0-06a6-3ed0ed2eced3@kernel.org>
+Date:   Tue, 10 Mar 2020 15:18:07 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304072730.9193-4-zhang.lyra@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200310124530.808338541@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  4 Mar 2020 15:27:26 +0800, Chunyan Zhang wrote:
-> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+On 3/10/20 6:44 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.109 release.
+> There are 86 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> add a new bindings to describe sc9863a clock compatible string.
+> Responses should be made by Thu, 12 Mar 2020 12:45:15 +0000.
+> Anything received after that time might be too late.
 > 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> ---
->  .../bindings/clock/sprd,sc9863a-clk.yaml      | 105 ++++++++++++++++++
->  1 file changed, 105 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.109-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Compiled and booted on my test system. No dmesg regressions.
+
+thanks,
+-- Shuah
+
