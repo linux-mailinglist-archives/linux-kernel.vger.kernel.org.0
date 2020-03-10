@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82A5817F85F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:48:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0354017F860
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:48:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbgCJMrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:47:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51134 "EHLO mail.kernel.org"
+        id S1727795AbgCJMr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:47:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728157AbgCJMrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:47:21 -0400
+        id S1726918AbgCJMrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:47:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4977E246B1;
-        Tue, 10 Mar 2020 12:47:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D42E62468D;
+        Tue, 10 Mar 2020 12:47:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844439;
-        bh=4I1YLMCj3IlKF5jI77aeT/Tfxrc6P5ndiSwlZHx4FUI=;
+        s=default; t=1583844442;
+        bh=gQWh7sVvH+z0XgXF4BmUO0G1rkaaDUhYsderlOQ/u0Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RWbkNwAn8qWiaVpINQ64KCNggJ6DGn2eX9aB4GXwz2Fiixsoy4bF5b7uNX+IZEdpA
-         U4W46T7yU19UY7b8U4kGvanHGuql5kI8DazDS/eQU/qShE7b6tFwib722O8O6kzbcH
-         pA/U6qKCLmLPThDpQmzlFlFbymZubuq0hDx9lE3M=
+        b=ig/UmTMVyKGRg/eFYPonRNWIvXrDR1PzGrD/yp9QOvNOyvH3au2/F/eOPIanmL2M4
+         vbhSmQHHmB3OGoYIwgU9Mxz+WJuKj+LbRESSJU5w08vdf/LunXZZsY73GQ3MSnQtOO
+         O0IXfc/CFkO9Z/vkxojcG4RurYG9xkQEiXdyG/SU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Rouven Czerwinski <r.czerwinski@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH 4.9 83/88] ARM: imx: build v7_cpu_resume() unconditionally
-Date:   Tue, 10 Mar 2020 13:39:31 +0100
-Message-Id: <20200310123624.816413875@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.9 84/88] hwmon: (adt7462) Fix an error return in ADT7462_REG_VOLT()
+Date:   Tue, 10 Mar 2020 13:39:32 +0100
+Message-Id: <20200310123624.933829480@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
 References: <20200310123606.543939933@linuxfoundation.org>
@@ -45,119 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 512a928affd51c2dc631401e56ad5ee5d5dd68b6 upstream.
+commit 44f2f882909fedfc3a56e4b90026910456019743 upstream.
 
-This function is not only needed by the platform suspend code, but is also
-reused as the CPU resume function when the ARM cores can be powered down
-completely in deep idle, which is the case on i.MX6SX and i.MX6UL(L).
+This is only called from adt7462_update_device().  The caller expects it
+to return zero on error.  I fixed a similar issue earlier in commit
+a4bf06d58f21 ("hwmon: (adt7462) ADT7462_REG_VOLT_MAX() should return 0")
+but I missed this one.
 
-Providing the static inline stub whenever CONFIG_SUSPEND is disabled means
-that those platforms will hang on resume from cpuidle if suspend is disabled.
-
-So there are two problems:
-
-  - The static inline stub masks the linker error
-  - The function is not available where needed
-
-Fix both by just building the function unconditionally, when
-CONFIG_SOC_IMX6 is enabled. The actual code is three instructions long,
-so it's arguably ok to just leave it in for all i.MX6 kernel configurations.
-
-Fixes: 05136f0897b5 ("ARM: imx: support arm power off in cpuidle for i.mx6sx")
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Signed-off-by: Rouven Czerwinski <r.czerwinski@pengutronix.de>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Fixes: c0b4e3ab0c76 ("adt7462: new hwmon driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Link: https://lore.kernel.org/r/20200303101608.kqjwfcazu2ylhi2a@kili.mountain
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-imx/Makefile       |    2 ++
- arch/arm/mach-imx/common.h       |    4 ++--
- arch/arm/mach-imx/resume-imx6.S  |   24 ++++++++++++++++++++++++
- arch/arm/mach-imx/suspend-imx6.S |   14 --------------
- 4 files changed, 28 insertions(+), 16 deletions(-)
+ drivers/hwmon/adt7462.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/mach-imx/Makefile
-+++ b/arch/arm/mach-imx/Makefile
-@@ -86,6 +86,8 @@ AFLAGS_suspend-imx6.o :=-Wa,-march=armv7
- obj-$(CONFIG_SOC_IMX6) += suspend-imx6.o
- obj-$(CONFIG_SOC_IMX53) += suspend-imx53.o
- endif
-+AFLAGS_resume-imx6.o :=-Wa,-march=armv7-a
-+obj-$(CONFIG_SOC_IMX6) += resume-imx6.o
- obj-$(CONFIG_SOC_IMX6) += pm-imx6.o
+--- a/drivers/hwmon/adt7462.c
++++ b/drivers/hwmon/adt7462.c
+@@ -426,7 +426,7 @@ static int ADT7462_REG_VOLT(struct adt74
+ 			return 0x95;
+ 		break;
+ 	}
+-	return -ENODEV;
++	return 0;
+ }
  
- obj-$(CONFIG_SOC_IMX1) += mach-imx1.o
---- a/arch/arm/mach-imx/common.h
-+++ b/arch/arm/mach-imx/common.h
-@@ -112,17 +112,17 @@ void imx_cpu_die(unsigned int cpu);
- int imx_cpu_kill(unsigned int cpu);
- 
- #ifdef CONFIG_SUSPEND
--void v7_cpu_resume(void);
- void imx53_suspend(void __iomem *ocram_vbase);
- extern const u32 imx53_suspend_sz;
- void imx6_suspend(void __iomem *ocram_vbase);
- #else
--static inline void v7_cpu_resume(void) {}
- static inline void imx53_suspend(void __iomem *ocram_vbase) {}
- static const u32 imx53_suspend_sz;
- static inline void imx6_suspend(void __iomem *ocram_vbase) {}
- #endif
- 
-+void v7_cpu_resume(void);
-+
- void imx6_pm_ccm_init(const char *ccm_compat);
- void imx6q_pm_init(void);
- void imx6dl_pm_init(void);
---- /dev/null
-+++ b/arch/arm/mach-imx/resume-imx6.S
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * Copyright 2014 Freescale Semiconductor, Inc.
-+ */
-+
-+#include <linux/linkage.h>
-+#include <asm/assembler.h>
-+#include <asm/asm-offsets.h>
-+#include <asm/hardware/cache-l2x0.h>
-+#include "hardware.h"
-+
-+/*
-+ * The following code must assume it is running from physical address
-+ * where absolute virtual addresses to the data section have to be
-+ * turned into relative ones.
-+ */
-+
-+ENTRY(v7_cpu_resume)
-+	bl	v7_invalidate_l1
-+#ifdef CONFIG_CACHE_L2X0
-+	bl	l2c310_early_resume
-+#endif
-+	b	cpu_resume
-+ENDPROC(v7_cpu_resume)
---- a/arch/arm/mach-imx/suspend-imx6.S
-+++ b/arch/arm/mach-imx/suspend-imx6.S
-@@ -333,17 +333,3 @@ resume:
- 
- 	ret	lr
- ENDPROC(imx6_suspend)
--
--/*
-- * The following code must assume it is running from physical address
-- * where absolute virtual addresses to the data section have to be
-- * turned into relative ones.
-- */
--
--ENTRY(v7_cpu_resume)
--	bl	v7_invalidate_l1
--#ifdef CONFIG_CACHE_L2X0
--	bl	l2c310_early_resume
--#endif
--	b	cpu_resume
--ENDPROC(v7_cpu_resume)
+ /* Provide labels for sysfs */
 
 
