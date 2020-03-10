@@ -2,146 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E79D517F239
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 09:46:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2373217F240
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 09:47:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbgCJIqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 04:46:03 -0400
-Received: from mail-eopbgr70139.outbound.protection.outlook.com ([40.107.7.139]:9510
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726389AbgCJIqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 04:46:03 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CXEuYowL3W294zit2UjXTiHOLvWJbIVJfvPqqIEpFDRFdtIl5RNPHjFzKml3+6T+GhyagUO3del5sibo+eVav/cP1qRO+KV38sZiRAo1YDe3uPWxS05SGjnLzwr99KsPire5t+BDeQ2aKqzmX8PTP3OYJJRcgMewHtEn+MOuqbZ/3znlUTkgUhE64aSUH1OON8flZTPIN8PfMNs98gBRqgljW5aTvTERgGnXjZ+Qiq5FjeNfuXYR1JTKmd3m10L1pZqCql0nGTGOmlM1nDDwYu3ny4ifM8B0NflpBVkqAhd3OQfyptNgzJYDZMN9nBKzhgc2aZXUWMN5tOxrKiwTkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2IkS7XUdgiKnoSkgf/9Web2TVnQ0qLAiLcADE6Skdys=;
- b=ZwbJ6znNB02eBe5dXTTimLGIjDX5CReTQjfI36aaVzQ0BKIu+GG+T8wj5jogPtDV8Re45AhTCoGB1gqtJnCj98eBwvrU8VRZCtzXkDH2msrcDs7flZb266/IdIHDOkk7mcoqC3hMI4UFUa6nxecyx9WvV0EOPjzAhe9QB2NwzgwHGZo53sZxAqIH1Ai3hCFBvnRNXUiWU/pGZB9f2eqffmHfSC7vfFH/LKZUqimZO/7C6VOpPLKyAe2cPr1STQi5byTvWGNL2KJ3rG1+p86cGXyxZGJSZMLx4JVDd64dKZvXVszq9vSjPtNIeAti6SJ6KWGm3r5im01EAsWtULjLUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
- dkim=pass header.d=nokia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2IkS7XUdgiKnoSkgf/9Web2TVnQ0qLAiLcADE6Skdys=;
- b=T+d5OGxTAluCAjU9uW5IuzN5xWoc5mVgsGN/f4KHofQ+vQk/ov6Xo7mLHI8CCs6zThbW3Mh7qWBwf59511Zd0eEwwoR1BUbSp2nIGjB4f1hwaOV7OHak+vvoJSdtIJpMaBJDcRVT2TO52AYSci408jfjSAQAqiogV/RQWQbqq+w=
-Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com (10.167.127.12) by
- HE1PR0702MB3788.eurprd07.prod.outlook.com (52.133.5.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.9; Tue, 10 Mar 2020 08:45:58 +0000
-Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com
- ([fe80::2806:c34c:d469:8e87]) by HE1PR0702MB3675.eurprd07.prod.outlook.com
- ([fe80::2806:c34c:d469:8e87%5]) with mapi id 15.20.2814.007; Tue, 10 Mar 2020
- 08:45:58 +0000
-From:   "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-To:     "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "hch@lst.de" <hch@lst.de>
-Subject: 5.5 XFS getdents regression?
-Thread-Topic: 5.5 XFS getdents regression?
-Thread-Index: AQHV9rhRbXPUS+vCVkG2reFy3jRV2w==
-Date:   Tue, 10 Mar 2020 08:45:58 +0000
-Message-ID: <72c5fd8e9a23dde619f70f21b8100752ec63e1d2.camel@nokia.com>
-Accept-Language: fi-FI, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=tommi.t.rantala@nokia.com; 
-x-originating-ip: [131.228.2.19]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 56673539-5c1c-4319-61c4-08d7c4cf7466
-x-ms-traffictypediagnostic: HE1PR0702MB3788:
-x-microsoft-antispam-prvs: <HE1PR0702MB3788DFD1F37347BED7250420B4FF0@HE1PR0702MB3788.eurprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:569;
-x-forefront-prvs: 033857D0BD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(39860400002)(136003)(376002)(366004)(396003)(199004)(189003)(76116006)(110136005)(26005)(2616005)(36756003)(186003)(316002)(8936002)(6486002)(66946007)(64756008)(66556008)(66446008)(81156014)(66476007)(81166006)(7116003)(6512007)(478600001)(2906002)(71200400001)(86362001)(966005)(8676002)(6506007)(5660300002)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0702MB3788;H:HE1PR0702MB3675.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2KedPC2wzCuOpXwa3951n1iu9vc/pa+qnm8itcZnxx/Rn5u8Mx2MSj1HwgMR4QGYvHxDCtC94bxatZLMQa77OR9Enaq8xWDwPwQbhQ8a7eWtcDz7M+45CHXS9NV5p1tCDaupY1KtfB/t/qicukL/fJVjOHfc1i0pvBD3YMfn3MUUNwLhQZ9sOY8vlR86C3U+XbQ8EDoerKaKLMPKR8r1tT/SmMmeaYoIq1dK3kRZnrkp9w5bq0Y4p3avjxjemJDRKKjoxSEFNiiTqgG4bMxXY7f8ysGnshqNsFhfGVWMHcG/p97Ls/1T/xcBXRlcEaSyRH/eO7GmqLrv8rMyTAL5QQjCHTSop2PB4cINBw4mj79QD0Nb/z9Y3rZhxS+4G2IEEqTP8hAKScS6mXjTrQe1HKoX1XkvCGoEPVITIqxlOdzq9+2cQKB6fLbWWLTyXKERrYch+hV4JoKb4x3onFhI2iECh99ZFU/1r70osR79oGlWsU24zBW92vhiI+5h+Bj/XIzjltsvJKFtocOv/eRN0A==
-x-ms-exchange-antispam-messagedata: /Mr9wwvKTzRqYxYjaMKek+VSu/RFYe8ILRPaY2ZEbAi+SMg8BtxTZUE2/82RbX9sz8bASH5NnsjqE7bl313rHdB3rCbF9IGrn8k4NGGqUXVa/Pv1MhpMptVVHkKIqoeTwlLdkMDejN2N9clhDHSp+A==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D76916B7F7D1BC40B415BD6D729B8BFD@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1726571AbgCJIra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 04:47:30 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:38077 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726389AbgCJIra (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 04:47:30 -0400
+Received: by mail-ot1-f65.google.com with SMTP id i14so12389317otp.5;
+        Tue, 10 Mar 2020 01:47:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=boOApZIKCOv83J2w3ZeGrsmLMsYMcv80baJK+BIb6gY=;
+        b=PrqyokW3eqeHEHJSNtkFm3gg5WvwC77Avr8OrS0JALnN81S5J4uZoVqIK+ChI7zRKN
+         HpJeIrN5szGAfd7TDcaWtus2vFHM/uxd2/AF5yzMOJ/p7fnLSBxw6MtmIgCZCvjhVevi
+         /EQGRLl3AGmKKqloWU/jh4G27WGhlDNI6P3cxwgcy99ht+QrJqgUVHRCsst7MjM/sG7D
+         g8WLKkshgylOCVgdILH4K6UUhjxv+xP/+c75sIHZ504SFRRj2GuSLkU1kUZnnOrTY0Eq
+         rJ+MtrVBWJNmKOMz5ZLsqWP79vmn0r9CeqgTPBNReunI5SgyoovRVzcFhB3pq4ZFkWz+
+         kEKA==
+X-Gm-Message-State: ANhLgQ3PAdm1gJJ550rQs4UtbBC2Sy6jfCGng/CNCSqA1+VAmufIgyuO
+        XG7ZIeg/NRpMICZJyL8bnpVGbiCznwllo8pXAkE=
+X-Google-Smtp-Source: ADFU+vty+TpRY4Ac1mTTlnhKuNFwJ1A6bGkpI8IVtjqbOXVyaswgRUMHHcn54Y1V4g21JKdrGDCvoZTaA2BR/9GgTms=
+X-Received: by 2002:a9d:8d0:: with SMTP id 74mr3528400otf.39.1583830047801;
+ Tue, 10 Mar 2020 01:47:27 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56673539-5c1c-4319-61c4-08d7c4cf7466
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Mar 2020 08:45:58.5286
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JPPKi6wzrWtjDjsK2FQx7Ij9Tul4UOF1rn/Cpy8F/2YGPKIZIWPeXY91KVS32K9w4ZP1oUgKQQzYgOFR38J/k5DCHOrh5JxnbplCSslz+hQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0702MB3788
+References: <20200305103228.9686-1-zhang.lyra@gmail.com> <CAMuHMdVyy3v24zBxJFe5hYdnzdj80dvE2Z9GO4=AC1N8fD64pw@mail.gmail.com>
+ <CAAfSe-spu2oNmfEYt+WQvRQy1bCC0e1MFjbUyBAFzghd5XNBfw@mail.gmail.com>
+ <CAMuHMdV1qQZF-kAwbcxhHQZZ9hs0dG-OTZ2NcB25Jtra6ii5iA@mail.gmail.com>
+ <20200310041903.GA260998@google.com> <20200310042739.GB260998@google.com>
+In-Reply-To: <20200310042739.GB260998@google.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 10 Mar 2020 09:47:16 +0100
+Message-ID: <CAMuHMdXRPBwFo2zAb99gMLP_+KaTHZ261fLYa+cbG6DEH_EP_g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: change ARCH_SPRD Kconfig to tristate
+To:     Sandeep Patil <sspatil@android.com>
+Cc:     Chunyan Zhang <zhang.lyra@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        saravanak@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCk9uZSBvZiBteSBHaXRMYWIgQ0kgam9icyBzdG9wcGVkIHdvcmtpbmcgYWZ0ZXIg
-dXBncmFkaW5nIHNlcnZlciA1LjQuMTgtDQoxMDAuZmMzMC54ODZfNjQgLT4gNS41LjctMTAwLmZj
-MzAueDg2XzY0Lg0KKHRlc3RlZCA1LjUuOC0xMDAuZmMzMC54ODZfNjQgdG9vLCBubyBjaGFuZ2Up
-DQpUaGUgc2VydmVyIGlzIGZlZG9yYTMwIHdpdGggWEZTIHJvb3Rmcy4NClRoZSBwcm9ibGVtIHJl
-cHJvZHVjZXMgYWx3YXlzLCBhbmQgdGFrZXMgb25seSBjb3VwbGUgbWludXRlcyB0byBydW4uDQoN
-ClRoZSBDSSBqb2IgZmFpbHMgaW4gdGhlIGJlZ2lubmluZyB3aGVuIGRvaW5nICJnaXQgY2xlYW4i
-IGluIGRvY2tlcg0KY29udGFpbmVyLCBhbmQgZmFpbGluZyB0byBybWRpciBzb21lIGRpcmVjdG9y
-eToNCiJ3YXJuaW5nOiBmYWlsZWQgdG8gcmVtb3ZlIA0KLnZlbmRvci9wa2cvbW9kL2dvbGFuZy5v
-cmcveC9uZXRAdjAuMC4wLTIwMjAwMTE0MTU1NDEzLTZhZmI1MTk1ZTVhYS9pbnRlcm4NCmFsL3Nv
-Y2tldDogRGlyZWN0b3J5IG5vdCBlbXB0eSINCg0KUXVpY2sgZ29vZ2xlIHNlYXJjaCBmaW5kcyBz
-b21lIG90aGVyIHBlb3BsZSByZXBvcnRpbmcgc2ltaWxhciBwcm9ibGVtcw0Kd2l0aCA1LjUuMDoN
-Cmh0dHBzOi8vZ2l0bGFiLmNvbS9naXRsYWItb3JnL2dpdGxhYi1ydW5uZXIvaXNzdWVzLzMxODUN
-Cg0KDQpDb2xsZWN0ZWQgc29tZSBkYXRhIHdpdGggc3RyYWNlLCBhbmQgaXQgc2VlbXMgdGhhdCBn
-ZXRkZW50cyBpcyBub3QNCnJldHVybmluZyBhbGwgZW50cmllczoNCg0KNS40IGdldGRlbnRzNjQo
-KSByZXR1cm5zIDUyKzUwKzErMCBlbnRyaWVzIA0KPT4gYWxsIGZpbGVzIGluIGRpcmVjdG9yeSBh
-cmUgZGVsZXRlZCBhbmQgcm1kaXIoKSBpcyBPSw0KDQo1LjUgZ2V0ZGVudHM2NCgpIHJldHVybnMg
-NTIrNTArMCswIGVudHJpZXMNCj0+IHJtZGlyKCkgZmFpbHMgd2l0aCBFTk9URU1QVFkNCg0KDQpX
-b3JraW5nIDUuNCBzdHJhY2U6DQoxMDowMDoxMiBnZXRkZW50czY0KDEwPA0KL2J1aWxkcy94eXov
-LnZlbmRvci9wa2cvbW9kL2dvbGFuZy5vcmcveC9uZXRAdjAuMC4wLTIwMjAwMzAxMDIyMTMwLTI0
-NDQ5MmRmYTM3YQ0KL2ludGVybmFsL3NvY2tldD4sIC8qIDUyIGVudHJpZXMgKi8sIDIwNDgpID0g
-MjAyNCA8MC4wMDAwMjA+DQoxMDowMDoxMiB1bmxpbmsoIg0KLnZlbmRvci9wa2cvbW9kL2dvbGFu
-Zy5vcmcveC9uZXRAdjAuMC4wLTIwMjAwMzAxMDIyMTMwLTI0NDQ5MmRmYTM3YS9pbnRlcm4NCmFs
-L3NvY2tldC9jbXNnaGRyLmdvIikgPSAwIDwwLjAwMDA2OD4NCjEwOjAwOjEyIHVubGluaygiDQou
-dmVuZG9yL3BrZy9tb2QvZ29sYW5nLm9yZy94L25ldEB2MC4wLjAtMjAyMDAzMDEwMjIxMzAtMjQ0
-NDkyZGZhMzdhL2ludGVybg0KYWwvc29ja2V0L2Ntc2doZHJfYnNkLmdvIikgPSAwIDwwLjAwMDA0
-OD4NClsuLi5dDQoxMDowMDoxMiBnZXRkZW50czY0KDEwPA0KL2J1aWxkcy94eXovLnZlbmRvci9w
-a2cvbW9kL2dvbGFuZy5vcmcveC9uZXRAdjAuMC4wLTIwMjAwMzAxMDIyMTMwLTI0NDQ5MmRmYTM3
-YQ0KL2ludGVybmFsL3NvY2tldD4sIC8qIDUwIGVudHJpZXMgKi8sIDIwNDgpID0gMjA0OCA8MC4w
-MDAwMjM+DQoxMDowMDoxMiB1bmxpbmsoIg0KLnZlbmRvci9wa2cvbW9kL2dvbGFuZy5vcmcveC9u
-ZXRAdjAuMC4wLTIwMjAwMzAxMDIyMTMwLTI0NDQ5MmRmYTM3YS9pbnRlcm4NCmFsL3NvY2tldC9z
-eXNfbGludXhfMzg2LnMiKSA9IDAgPDAuMDAwMDYyPg0KWy4uLl0NCjEwOjAwOjEyIGdldGRlbnRz
-NjQoMTA8DQovYnVpbGRzL3h5ei8udmVuZG9yL3BrZy9tb2QvZ29sYW5nLm9yZy94L25ldEB2MC4w
-LjAtMjAyMDAzMDEwMjIxMzAtMjQ0NDkyZGZhMzdhDQovaW50ZXJuYWwvc29ja2V0PiwgLyogMSBl
-bnRyaWVzICovLCAyMDQ4KSA9IDQ4IDwwLjAwMDAxNz4NCjEwOjAwOjEyIHVubGluaygiDQoudmVu
-ZG9yL3BrZy9tb2QvZ29sYW5nLm9yZy94L25ldEB2MC4wLjAtMjAyMDAzMDEwMjIxMzAtMjQ0NDky
-ZGZhMzdhL2ludGVybg0KYWwvc29ja2V0L3pzeXNfc29sYXJpc19hbWQ2NC5nbyIpID0gMCA8MC4w
-MDAwMzk+DQoxMDowMDoxMiBnZXRkZW50czY0KDEwPA0KL2J1aWxkcy94eXovLnZlbmRvci9wa2cv
-bW9kL2dvbGFuZy5vcmcveC9uZXRAdjAuMC4wLTIwMjAwMzAxMDIyMTMwLTI0NDQ5MmRmYTM3YQ0K
-L2ludGVybmFsL3NvY2tldD4sIC8qIDAgZW50cmllcyAqLywgMjA0OCkgPSAwIDwwLjAwMDAxNT4N
-CjEwOjAwOjEyIHJtZGlyKCINCi52ZW5kb3IvcGtnL21vZC9nb2xhbmcub3JnL3gvbmV0QHYwLjAu
-MC0yMDIwMDMwMTAyMjEzMC0yNDQ0OTJkZmEzN2EvaW50ZXJuDQphbC9zb2NrZXQiKSA9IDAgPDAu
-MDAwMDU1Pg0KDQoNCkZhaWxpbmcgNS41IHN0cmFjZToNCjEwOjA5OjE1IGdldGRlbnRzNjQoMTA8
-DQovYnVpbGRzL3h5ei8udmVuZG9yL3BrZy9tb2QvZ29sYW5nLm9yZy94L25ldEB2MC4wLjAtMjAy
-MDAzMDEwMjIxMzAtMjQ0NDkyZGZhMzdhDQovaW50ZXJuYWwvc29ja2V0PiwgLyogNTIgZW50cmll
-cyAqLywgMjA0OCkgPSAyMDI0IDwwLjAwMDAzMT4NCjEwOjA5OjE1IHVubGluaygiDQoudmVuZG9y
-L3BrZy9tb2QvZ29sYW5nLm9yZy94L25ldEB2MC4wLjAtMjAyMDAzMDEwMjIxMzAtMjQ0NDkyZGZh
-MzdhL2ludGVybg0KYWwvc29ja2V0L2Ntc2doZHIuZ28iKSA9IDAgPDAuMDA2MTc0Pg0KWy4uLl0N
-CjEwOjA5OjE1IGdldGRlbnRzNjQoMTA8DQovYnVpbGRzL3h5ei8udmVuZG9yL3BrZy9tb2QvZ29s
-YW5nLm9yZy94L25ldEB2MC4wLjAtMjAyMDAzMDEwMjIxMzAtMjQ0NDkyZGZhMzdhDQovaW50ZXJu
-YWwvc29ja2V0PiwgLyogNTAgZW50cmllcyAqLywgMjA0OCkgPSAyMDQ4IDwwLjAwMDAzND4NCjEw
-OjA5OjE1IHVubGluaygiDQoudmVuZG9yL3BrZy9tb2QvZ29sYW5nLm9yZy94L25ldEB2MC4wLjAt
-MjAyMDAzMDEwMjIxMzAtMjQ0NDkyZGZhMzdhL2ludGVybg0KYWwvc29ja2V0L3N5c19saW51eF8z
-ODYucyIpID0gMCA8MC4wMDAwNTQ+DQpbLi4uXQ0KMTA6MDk6MTYgZ2V0ZGVudHM2NCgxMDwNCi9i
-dWlsZHMveHl6Ly52ZW5kb3IvcGtnL21vZC9nb2xhbmcub3JnL3gvbmV0QHYwLjAuMC0yMDIwMDMw
-MTAyMjEzMC0yNDQ0OTJkZmEzN2ENCi9pbnRlcm5hbC9zb2NrZXQ+LCAvKiAwIGVudHJpZXMgKi8s
-IDIwNDgpID0gMCA8MC4wMDAwMjA+DQoxMDowOToxNiBybWRpcigiDQoudmVuZG9yL3BrZy9tb2Qv
-Z29sYW5nLm9yZy94L25ldEB2MC4wLjAtMjAyMDAzMDEwMjIxMzAtMjQ0NDkyZGZhMzdhL2ludGVy
-bg0KYWwvc29ja2V0IikgPSAtMSBFTk9URU1QVFkgKERpcmVjdG9yeSBub3QgZW1wdHkpIDwwLjAw
-MDAyOT4NCg0KDQpBbnkgaWRlYXMgd2hhdCdzIGdvaW5nIHdyb25nIGhlcmU/DQoNCi1Ub21taQ0K
-DQo=
+Hi Sandeep,
+
+On Tue, Mar 10, 2020 at 5:27 AM Sandeep Patil <sspatil@android.com> wrote:
+> On Mon, Mar 09, 2020 at 09:19:03PM -0700, Sandeep Patil wrote:
+> > On Mon, Mar 09, 2020 at 11:32:06AM +0100, Geert Uytterhoeven wrote:
+> > > On Mon, Mar 9, 2020 at 9:32 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+> > > > On Mon, 9 Mar 2020 at 16:03, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > > On Thu, Mar 5, 2020 at 11:33 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+> > > > > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > > > >
+> > > > > > The default value of Kconfig for almost all sprd drivers are the same with
+> > > > > > ARCH_SPRD, making these drivers built as modules as default would be easier
+> > > > > > if we can set ARCH_SPRD as 'm', so this patch change ARCH_SPRD to tristate.
+> > > > > >
+> > > > > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > > >
+> > > > > Can you actually boot a kernel on a Spreadtrum platform when all platform
+> > > > > and driver support is modular?
+> > > >
+> > > > Yes, even if all drivers are modular.
+> > >
+> > > Cool. No hard dependencies on e.g. regulators that are turned off when
+> > > unused?
+> > >
+> > > > But I hope serial can be builtin, then I can have a console to see
+> > > > kernel output before loading modules.
+> > >
+> > > No dependency on the clock driver?
+> > > Oh, I see you have a hack in the serial driver, to assume default
+> > > values when the serial port's parent clock is not found.  That may
+> > > limit use of the other serial ports, depending on the actual serial
+> > > hardware.
+> > > And on Sharkl64, the serial port's clock is a fixed-clock anyway, so
+> > > you don't even need the hack.
+> > >
+> > > But in general you cannot rely on that, especially if your SoC has clock
+> > > and/or power domains.
+
+So I gave it a try on my platform (R-Car), with just the serial driver
+builtin.  I can see the kernel booting using earlycon.
+However, the serial driver is never probed, as the pin control driver is
+missing. And after that, it would need the clock domain (power domain
+and clock drivers), and more serial clock inputs (clock driver, again).
+Fortunately DMA is optional (dmac driver, and optional iommu driver).
+
+I guess core platform-specific drivers can be loaded from the initramfs,
+after which the serial driver would be probed, finally.  If the
+initramfs includes a storage driver, anything else can be loaded from
+e.g. eMMC.
+
+> > > > Also, this's what Google GKI [1] asked :)
+
+> > > > [1] https://arstechnica.com/gadgets/2019/11/google-outlines-plans-for-mainline-linux-kernel-support-in-android/
+> > >
+> > > Let's see how having everything modular works out on an SoC where all
+> > > hardware is part of a clock and power domain.
+> >
+> > I'm curious, are there any problems that we should be aware of? We know about
+> > the regulator sync state and consumer-supplier dependencies. [1]
+
+Care must be taken, as probe deferral behaves differently after
+late_initcall time (see driver_deferred_probe_check_state_continue),
+which may cause issues with "optional" components like DMA controllers
+and IOMMUs.  Unused clocks and power domains are not turned off,
+unlike for the builtin case.
+
+On some SoCs, even the interrupt controller (GIC) may be part of a clock
+and/or power domain, while the GIC driver is not aware of that.
+For the clock, that is handled by CLK_IS_CRITICAL in the clock driver.
+For power domains, that is not handled explicitly on Renesas SoCs, as
+the GIC is always in the same power domain as other devices that are
+Runtime PM-aware.  But if those devices would have modular drivers, that
+power domain could still be turned off.
+
+So on a modern ARM system, I assume a generic kernel with no
+vendor-specific drivers builtin can indeed work.
+On older systems, without an ARM architectured timer, you will need at
+least the platform-specific timer driver (and the clock driver) builtin.
+Assumed the timer's power domain has been powered up by the firmware.
+
+> (oops, forgot to paste the link to presentation)
+> 1. https://linuxplumbersconf.org/event/4/contributions/402/attachments/320/544/Solving_issues_associated_with_modules_and_supplier-consumer_dependencies.pdf
+
+Thanks, hadn't seen that presentation.
+It matches my understanding.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
