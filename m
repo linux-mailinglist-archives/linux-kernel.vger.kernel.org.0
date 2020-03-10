@@ -2,85 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE774180822
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 20:32:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32324180829
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 20:33:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbgCJTcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 15:32:55 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:43904 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbgCJTcz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 15:32:55 -0400
-Received: by mail-oi1-f193.google.com with SMTP id p125so15110453oif.10;
-        Tue, 10 Mar 2020 12:32:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eIE4b9URO1qb+MxsPOjVs9T43nhsRKMyMwg2+2kf3Bo=;
-        b=rPeU/CB7wHyeTsfT3HtSmQcj5Z4fH00gSaDwR3jy2ttNYAJPaav6I1D/IgGTIqb38N
-         vwaotwGRao5UQWJQ24BkM1qXcEp4tinVajXdOfXarPiBDE/Qj11o55IuN1GwfnOJtTTg
-         2Dk4sC2BF/jUrWsBRYqnDJsUC7uyxzBfqE63AxouIyMONKp/RwysqllfyqCGOwWSP+yS
-         2Qm9cKYNWATbPQv/oDnE3YAdeaziZOd5qTZdKPuT1XKpvEuDv6vu4lQUlxrRPIRq9imh
-         Ivuimv3VQ7+sIJHtbriwOsrSEJdM6AFU7y4SLnxjfezFseoJI2EuT9TZlflZ6SIDWv8L
-         MnYQ==
-X-Gm-Message-State: ANhLgQ1V3A2o318Y5gZbqrVUhhvoUvawGo5bJHL7/iNCkwHDhhYfV3Q9
-        etSLluE3jvIeTe7ev7jhncL5TsI=
-X-Google-Smtp-Source: ADFU+vtyF0UxNd2V5SNDAhbqfD+SoLrFN/9/7Iy1fakA8ZwCLf/fMWqKCvI1jf25Ndt1qbrkinmu+A==
-X-Received: by 2002:aca:d553:: with SMTP id m80mr1624311oig.30.1583868774574;
-        Tue, 10 Mar 2020 12:32:54 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 96sm16366528otn.29.2020.03.10.12.32.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 12:32:53 -0700 (PDT)
-Received: (nullmailer pid 23387 invoked by uid 1000);
-        Tue, 10 Mar 2020 19:32:53 -0000
-Date:   Tue, 10 Mar 2020 14:32:53 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     heiko@sntech.de, robh+dt@kernel.org, gregkh@linuxfoundation.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: serial: snps-dw-apb-uart: add compatible
- property for rk3308 uart
-Message-ID: <20200310193253.GA23246@bogus>
-References: <20200302133910.10942-1-jbx6244@gmail.com>
+        id S1727518AbgCJTdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 15:33:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60406 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727445AbgCJTdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 15:33:00 -0400
+Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 276C922B48;
+        Tue, 10 Mar 2020 19:32:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583868779;
+        bh=svHYd0D7j94mbORR4v24c3DginNWgdH5YgabZSqKun8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=tnuVIpNlaJzyjGgFnmF+hBNDNWHMEJHntfb7OQmfPaXu2TiPTzCj2Ad5NgM18cvpc
+         GKUaave7l6QWqa70n3UfrF40u2hMw+lTBJTgMWRZIJH6udreg2mwdt5oTLTFKBpjJr
+         n0EQ0TfAIbT4rdQdiLDavrEqlSh2V3o+QRqXrX14=
+Date:   Tue, 10 Mar 2020 14:32:57 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Austin.Bolen@dell.com
+Cc:     sathyanarayanan.kuppuswamy@linux.intel.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com
+Subject: Re: [PATCH v17 09/12] PCI/AER: Allow clearing Error Status Register
+ in FF mode
+Message-ID: <20200310193257.GA170043@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200302133910.10942-1-jbx6244@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <0476c948e73f4c68a9bf221afccfcf7e@AUSX13MPC107.AMER.DELL.COM>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  2 Mar 2020 14:39:10 +0100, Johan Jonker wrote:
-> A test with the command below gives these errors:
+On Tue, Mar 10, 2020 at 06:14:20PM +0000, Austin.Bolen@dell.com wrote:
+> On 3/9/2020 11:28 PM, Kuppuswamy, Sathyanarayanan wrote:
+> > On 3/9/2020 7:40 PM, Bjorn Helgaas wrote:
+> >> [+cc Austin, tentative Linux patches on this git branch:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/tree/drivers/pci/pcie?h=review/edr]
+> >>
+> >> On Tue, Mar 03, 2020 at 06:36:32PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+> >>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> >>>
+> >>> As per PCI firmware specification r3.2 System Firmware Intermediary
+> >>> (SFI) _OSC and DPC Updates ECR
+> >>> (https://members.pcisig.com/wg/PCI-SIG/document/13563), sec titled "DPC
+> >>> Event Handling Implementation Note", page 10, Error Disconnect Recover
+> >>> (EDR) support allows OS to handle error recovery and clearing Error
+> >>> Registers even in FF mode. So create new API pci_aer_raw_clear_status()
+> >>> which allows clearing AER registers without FF mode checks.
+> >>
+> >> I see that this ECR was released as an ECN a few days ago:
+> >> https://members.pcisig.com/wg/PCI-SIG/document/14076
+> >> Regrettably the title in the PDF still says "ECR" (the rendered title
+> >> *page* says "ENGINEERING CHANGE NOTIFICATION", but some metadata
+> >> buried in the file says "ECR - SFI _OSC Support and DPC Updates".
 > 
-> arch/arm64/boot/dts/rockchip/rk3308-evb.dt.yaml: serial@ff0d0000: compatible:
-> ['rockchip,rk3308-uart', 'snps,dw-apb-uart']
-> is not valid under any of the given schemas
-> arch/arm64/boot/dts/rockchip/rk3308-roc-cc.dt.yaml: serial@ff0a0000: compatible:
-> ['rockchip,rk3308-uart', 'snps,dw-apb-uart']
-> is not valid under any of the given schemas
-> 
-> The compatible property for the Rockchip rk3308 uart was somehow never
-> added to the documention. Fix this error by adding 'rockchip,rk3308-uart'
-> to snps-dw-apb-uart.yaml.
-> 
-> make ARCH=arm64 dtbs_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/serial/
-> snps-dw-apb-uart.yaml
-> 
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-> ---
->  Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+> I'll see if PCI-SIG can update the metadata and repost.
 
-Applied, thanks.
+If that's possible, it would be nice to update the metadata for the
+"Downstream Port Containment related Enhancements" ECN as well.  That
+one currently says "ECR - CardBus Header Proposal", which means that's
+what's in the window title bar and icons in the panel.
 
-Rob
+> >> Anyway, I think I see the note you refer to (now on page 12):
+> >>
+> >>     IMPLEMENTATION NOTE
+> >>     DPC Event Handling
+> >>
+> >>     The flow chart below documents the behavior when firmware maintains
+> >>     control of AER and DPC and grants control of PCIe Hot-Plug to the
+> >>     operating system.
+> >>
+> >>     ...
+> >>
+> >>     Capture and clear device AER status. OS may choose to offline
+> >>     devices3, either via SW (not load driver) or HW (power down device,
+> >>     disable Link5,6,7). Otherwise process _HPX, complete device
+> >>     enumeration, load drivers
+> >>
+> >> This clearly suggests that the OS should clear device AER status.
+> >> However, according to the intro text, firmware has retained control of
+> >> AER, so what gives the OS the right to clear AER status?
+> >>
+> >> The Downstream Port Containment Related Enhancements ECN (sec 4.5.1,
+> >> table 4-6) contains an exception that allows the OS to read/write
+> >> DPC registers during recovery.  But
+> >>
+> >>     - that is for *DPC* registers, not for AER registers, and
+> >>
+> >>     - that exception only applies between OS receipt of the EDR
+> >>       notification and OS release of DPC by clearing the DPC Trigger
+> >>       Status bit.
+> >>
+> >> The flowchart in the SFI ECN shows the OS releasing DPC before
+> >> clearing AER status:
+> >>
+> >>     - Receive EDR notification
+> >>
+> >>     - Cleanup - Notify and unload child drivers below Port
+> >>
+> >>     - Bring Port out of DPC, clear port error status, assign bus numbers
+> >>       to child devices.
+> >>
+> >>       I assume this box includes clearing DPC error status and clearing
+> >>       Trigger Status?  They seem to be out of order in the box.
+> 
+> OS clears the DPC Trigger Status bit which will bring port below it out 
+> of containment. Then OS will clear the "port" error status bits (i.e., 
+> the AER and DPC status bits in the root port or downstream port that 
+> triggered containment). I don't think it would hurt to do this two steps 
+> in reverse order but don't think it is necessary. Note that error status 
+> bits for devices below the port in containment are cleared later after 
+> f/w has a chance to log them.
+
+Maybe I'm misreading the DPC enhancements ECN.  I think it says the OS
+can read/write DPC registers until it clears the DPC Trigger Status.
+If the OS clears Trigger Status first, my understanding is that we're
+now out of the EDR notification processing window and the OS is not
+permitted to write DPC registers.
+
+If it's OK for the OS to clear Trigger Status before clearing DPC
+error status, what is the event that determines when the OS may no
+longer read/write the DPC registers?
+
+> >>     - Evaluate _OST
+> >>
+> >>     - Capture and clear device AER status.
+> >>
+> >>       This seems suspect to me.  Where does it say the OS is
+> >>       allowed to write AER status when firmware retains control
+> >>       of AER?
+> >>
+> >> This patch series does things in this order:
+> >>
+> >>     - Receive EDR notification (edr_handle_event(), edr.c)
+> >>
+> >>     - Read, log, and clear DPC error regs (dpc_process_error(),
+> >>       dpc.c).
+> >>
+> >>       This also clears AER uncorrectable error status when the
+> >>       relevant HEST entries do not have the FIRMWARE_FIRST bit
+> >>       set.  I think this is incorrect: the test should be based
+> >>       the _OSC negotiation for AER ownership, not on the HEST
+> >>       entries.  But this problem pre-dates this patch series.
+> >>
+> >>     - Clear AER status (pci_aer_raw_clear_status(), aer.c).
+> >>
+> >>       This is at least inside the EDR recovery window, but again,
+> >>       I don't see where it says the OS is allowed to write the
+> >>       AER status.
+> > 
+> > Implementation note is the only reference we have regarding
+> > clearing the AER registers.
+> > 
+> > But since the spec says both DPC and AER needs to be always
+> > controlled together by the either OS or firmware, and when
+> > firmware relinquishes control over DPC registers in EDR
+> > notification window, we can assume that we also have control over
+> > AER registers.
+> > 
+> > But I agree that is not explicitly spelled out any where outside
+> > the implementation note.
+
+This is all quite unsatisfying since implementation notes are not
+normative.  I would far rather reference actual spec text.
+
+> > Austin,
+> > 
+> > May be ECN (section 4.5.1, table 4-6) needs to be updated to add
+> > this clarification.
+> 
+> Sure we can update to section 4.5.1, table 4-6 to indicate when OS
+> can clear the AER status bits. It will just follow what's done in
+> the implementation note so I think it's acceptable to follow
+> implementation guidance for now.
+
+There are no events after the "clear device AER status" box.  That
+seems to mean the OS can write the AER status registers at any time.
+But the whole implementation note assumes firmware maintains control
+of AER.
+
+> >>     - Attempt recovery (pcie_do_recovery(), err.c)
+> >>
+> >>     - Clear DPC Trigger Status (dpc_reset_link(), dpc.c)
+> >>
+> >>     - Evaluate _OST (acpi_send_edr_status(), edr.c)
+> >>
+> >> What am I missing?
