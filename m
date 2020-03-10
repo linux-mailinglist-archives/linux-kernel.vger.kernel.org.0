@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1508B17F965
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:56:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40FB917F975
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:56:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729654AbgCJM40 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:56:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35506 "EHLO mail.kernel.org"
+        id S1729703AbgCJM44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:56:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729261AbgCJM4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:56:20 -0400
+        id S1728361AbgCJM4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:56:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C68892467D;
-        Tue, 10 Mar 2020 12:56:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 654C02468D;
+        Tue, 10 Mar 2020 12:56:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844980;
-        bh=Oy+lx+C1FH8Pn1YwPuWLa0OFRoIc6I4rO1gKpk1oFWc=;
+        s=default; t=1583845011;
+        bh=Ne+Rbl+wF0k1lMl/aPemFvLHXKkrkdgmlb5C+qtk2yg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=na+Rq8+/eyAWggfa7xxue71HNP4iD7822iQDQnOvn2kstjzeCCWan62KQ6bEZ7cOz
-         ikjy8zBOTMKuSQQkHBnb3RWqgNxcZbG/1v3M9qIVoi0CCvhXgITXrlSAm8E9PoAxOK
-         fSq8DzxJMb+ruA5tkhlG30j3ChPMRTbMnRVJ2UYs=
+        b=AMD+S7040woPqoFipSLqMTwVDBxs9nPw51gg+w2kZJc75DwK5mLisDhTUfJFNedO0
+         vcGlUbD+Iqn45uBiMmqIpJdc+nqYPEM8aaqXOr1hbAq2OvMtOF7WMNvi6bDMc3KJsO
+         QuyHm5wfA1fpPoaj4RZKuwVXF5f5B/jvkfd3jkj8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Chris Evich <cevich@redhat.com>,
         Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Chris Evich <cevich@redhat.com>,
         Paolo Valente <paolo.valente@linaro.org>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 002/189] block, bfq: get a ref to a group when adding it to a service tree
-Date:   Tue, 10 Mar 2020 13:37:19 +0100
-Message-Id: <20200310123639.841517948@linuxfoundation.org>
+Subject: [PATCH 5.5 003/189] block, bfq: get extra ref to prevent a queue from being freed during a group move
+Date:   Tue, 10 Mar 2020 13:37:20 +0100
+Message-Id: <20200310123639.929399082@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
 References: <20200310123639.608886314@linuxfoundation.org>
@@ -48,80 +47,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Paolo Valente <paolo.valente@linaro.org>
 
-[ Upstream commit db37a34c563bf4692b36990ae89005c031385e52 ]
+[ Upstream commit ecedd3d7e19911ab8fe42f17b77c0a30fe7f4db3 ]
 
-BFQ schedules generic entities, which may represent either bfq_queues
-or groups of bfq_queues. When an entity is inserted into a service
-tree, a reference must be taken, to make sure that the entity does not
-disappear while still referred in the tree. Unfortunately, such a
-reference is mistakenly taken only if the entity represents a
-bfq_queue. This commit takes a reference also in case the entity
-represents a group.
+In bfq_bfqq_move(), the bfq_queue, say Q, to be moved to a new group
+may happen to be deactivated in the scheduling data structures of the
+source group (and then activated in the destination group). If Q is
+referred only by the data structures in the source group when the
+deactivation happens, then Q is freed upon the deactivation.
 
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+This commit addresses this issue by getting an extra reference before
+the possible deactivation, and releasing this extra reference after Q
+has been moved.
+
 Tested-by: Chris Evich <cevich@redhat.com>
+Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
 Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/bfq-cgroup.c  |  2 +-
- block/bfq-iosched.h |  1 +
- block/bfq-wf2q.c    | 12 ++++++++++--
- 3 files changed, 12 insertions(+), 3 deletions(-)
+ block/bfq-cgroup.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/block/bfq-cgroup.c b/block/bfq-cgroup.c
-index e1419edde2ec5..e7919e76a27c2 100644
+index e7919e76a27c2..db2a14215aeea 100644
 --- a/block/bfq-cgroup.c
 +++ b/block/bfq-cgroup.c
-@@ -332,7 +332,7 @@ static void bfqg_put(struct bfq_group *bfqg)
- 		kfree(bfqg);
- }
+@@ -651,6 +651,12 @@ void bfq_bfqq_move(struct bfq_data *bfqd, struct bfq_queue *bfqq,
+ 		bfq_bfqq_expire(bfqd, bfqd->in_service_queue,
+ 				false, BFQQE_PREEMPTED);
  
--static void bfqg_and_blkg_get(struct bfq_group *bfqg)
-+void bfqg_and_blkg_get(struct bfq_group *bfqg)
- {
- 	/* see comments in bfq_bic_update_cgroup for why refcounting bfqg */
- 	bfqg_get(bfqg);
-diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
-index 8526f20c53bc1..144bc544be568 100644
---- a/block/bfq-iosched.h
-+++ b/block/bfq-iosched.h
-@@ -984,6 +984,7 @@ struct bfq_group *bfq_find_set_group(struct bfq_data *bfqd,
- struct blkcg_gq *bfqg_to_blkg(struct bfq_group *bfqg);
- struct bfq_group *bfqq_group(struct bfq_queue *bfqq);
- struct bfq_group *bfq_create_group_hierarchy(struct bfq_data *bfqd, int node);
-+void bfqg_and_blkg_get(struct bfq_group *bfqg);
- void bfqg_and_blkg_put(struct bfq_group *bfqg);
- 
- #ifdef CONFIG_BFQ_GROUP_IOSCHED
-diff --git a/block/bfq-wf2q.c b/block/bfq-wf2q.c
-index 05f0bf4a1144d..44079147e396e 100644
---- a/block/bfq-wf2q.c
-+++ b/block/bfq-wf2q.c
-@@ -536,7 +536,9 @@ static void bfq_get_entity(struct bfq_entity *entity)
- 		bfqq->ref++;
- 		bfq_log_bfqq(bfqq->bfqd, bfqq, "get_entity: %p %d",
- 			     bfqq, bfqq->ref);
--	}
-+	} else
-+		bfqg_and_blkg_get(container_of(entity, struct bfq_group,
-+					       entity));
- }
- 
- /**
-@@ -650,8 +652,14 @@ static void bfq_forget_entity(struct bfq_service_tree *st,
- 
- 	entity->on_st = false;
- 	st->wsum -= entity->weight;
--	if (bfqq && !is_in_service)
-+	if (is_in_service)
-+		return;
++	/*
++	 * get extra reference to prevent bfqq from being freed in
++	 * next possible deactivate
++	 */
++	bfqq->ref++;
 +
-+	if (bfqq)
- 		bfq_put_queue(bfqq);
-+	else
-+		bfqg_and_blkg_put(container_of(entity, struct bfq_group,
-+					       entity));
+ 	if (bfq_bfqq_busy(bfqq))
+ 		bfq_deactivate_bfqq(bfqd, bfqq, false, false);
+ 	else if (entity->on_st)
+@@ -670,6 +676,8 @@ void bfq_bfqq_move(struct bfq_data *bfqd, struct bfq_queue *bfqq,
+ 
+ 	if (!bfqd->in_service_queue && !bfqd->rq_in_driver)
+ 		bfq_schedule_dispatch(bfqd);
++	/* release extra ref taken above */
++	bfq_put_queue(bfqq);
  }
  
  /**
