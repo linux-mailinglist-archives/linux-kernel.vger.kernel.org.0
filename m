@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DE8417F8AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:50:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1A3017F8B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:50:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbgCJMuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:50:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54686 "EHLO mail.kernel.org"
+        id S1726775AbgCJMuX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:50:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728549AbgCJMuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:50:08 -0400
+        id S1728563AbgCJMuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:50:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73E222468E;
-        Tue, 10 Mar 2020 12:50:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 736AF20674;
+        Tue, 10 Mar 2020 12:50:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844607;
-        bh=zC3Y1C8HwIOEPRo15lvjJ/967zThZkg6I7D9cZHzu88=;
+        s=default; t=1583844612;
+        bh=1Y8fBheo+gb39pMv7lTELFyrrzvQXoZGwB0CRyzuFc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sh/BYcvi5f+LWoMzXm3z1lAkkghh6YUmZ9oJEykInhEc5PxJkhYr7gkA7vTO9nhD9
-         eZv6J+EQ8oekxvRDwX52FsXtQJfPzUecm55gfd2zvj1wxDuEASBEWFqEn7kZSNPFVj
-         g4uykD5OiiHVkJ0awVD07/9RfjMuWw4IOdH6W/tE=
+        b=FzqMHnnp+fjeX1B3a+zSiOsJL4cpLbUr/7SeymM6ZSdDsjhh875nJGxgqyP+pQT70
+         F+BijfB544YiBTwdoIkSvo2AeI9Riu2xkehZiSxpGrHyf5QZMGIAbg0fyZBIuKgnrw
+         +7+Ihb7jEkrwI1tIpBTNn+M3YsqFgI+dO9R8yP+o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Guo Ren <guoren@linux.alibaba.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 053/168] csky: Fixup ftrace modify panic
-Date:   Tue, 10 Mar 2020 13:38:19 +0100
-Message-Id: <20200310123640.710173049@linuxfoundation.org>
+Subject: [PATCH 5.4 054/168] csky: Fixup compile warning for three unimplemented syscalls
+Date:   Tue, 10 Mar 2020 13:38:20 +0100
+Message-Id: <20200310123640.814044663@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
 References: <20200310123635.322799692@linuxfoundation.org>
@@ -45,34 +45,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Guo Ren <guoren@linux.alibaba.com>
 
-[ Upstream commit 359ae00d12589c31cf103894d0f32588d523ca83 ]
+[ Upstream commit 2305f60b76110cb3e8658a4ae85d1f7eb0c66a5b ]
 
-During ftrace init, linux will replace all function prologues
-(call_mcout) with nops, but it need flush_dcache and
-invalidate_icache to make it work. So flush_cache functions
-couldn't be nested called by ftrace framework.
+Implement fstat64, fstatat64, clone3 syscalls to fixup
+checksyscalls.sh compile warnings.
 
 Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/csky/mm/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/csky/include/uapi/asm/unistd.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/csky/mm/Makefile b/arch/csky/mm/Makefile
-index c94ef64810986..efb7ebab342b3 100644
---- a/arch/csky/mm/Makefile
-+++ b/arch/csky/mm/Makefile
-@@ -1,8 +1,10 @@
- # SPDX-License-Identifier: GPL-2.0-only
- ifeq ($(CONFIG_CPU_HAS_CACHEV2),y)
- obj-y +=			cachev2.o
-+CFLAGS_REMOVE_cachev2.o = $(CC_FLAGS_FTRACE)
- else
- obj-y +=			cachev1.o
-+CFLAGS_REMOVE_cachev1.o = $(CC_FLAGS_FTRACE)
- endif
+diff --git a/arch/csky/include/uapi/asm/unistd.h b/arch/csky/include/uapi/asm/unistd.h
+index 211c983c7282d..ba40189297338 100644
+--- a/arch/csky/include/uapi/asm/unistd.h
++++ b/arch/csky/include/uapi/asm/unistd.h
+@@ -1,7 +1,10 @@
+ /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+ // Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
  
- obj-y +=			dma-mapping.o
++#define __ARCH_WANT_STAT64
++#define __ARCH_WANT_NEW_STAT
+ #define __ARCH_WANT_SYS_CLONE
++#define __ARCH_WANT_SYS_CLONE3
+ #define __ARCH_WANT_SET_GET_RLIMIT
+ #define __ARCH_WANT_TIME32_SYSCALLS
+ #include <asm-generic/unistd.h>
 -- 
 2.20.1
 
