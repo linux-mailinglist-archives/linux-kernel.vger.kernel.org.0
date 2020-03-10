@@ -2,70 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A598180756
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 859ED18075E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:49:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbgCJSsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 14:48:47 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34964 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726546AbgCJSsr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 14:48:47 -0400
-Received: by mail-ot1-f65.google.com with SMTP id k26so6971149otr.2;
-        Tue, 10 Mar 2020 11:48:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EzS4Ory16y/BLSb6no87Sernjs2m/cGxUWkwz4EtDSw=;
-        b=bHrrbkEe93tofoi9fXugjJHRTbU1TMEPmLwDmEpz8kIbcp0BZ0uzFY8CIz2TJE4QcA
-         H65GMIhzduUY5GGOIMKxjYW5G3WonEnC9qKqbKjzWdsQRBAc4XAL/1eoLfx8BEn04W/j
-         ZSyofGpHSCT2mSnIwTFyM/26ltBHBROy8hLn4gGlZ1nbCI1RoL3V/uV9pIzgqZ5jzH99
-         h/rYMYXJseNhVRsU+jZ7eaVF15w0BBvNe8DADxmBi8Ji5M0mhnQB9ciLrFG3Tz/5TmUp
-         lgDc37Rm4v7ABAPQjaFOVcyWfL4tLjzYqBi7etHKbbCSgKd9Q6BLr9lQgMjSh1AoMi2R
-         emzQ==
-X-Gm-Message-State: ANhLgQ0dMupVGjiZ9/kzLLm6Wuk24FFRFTOHdi4y65/YpP2rEAwiaFsm
-        O9r+uJ+LLmv2bhyjOtZ1dw==
-X-Google-Smtp-Source: ADFU+vsMU183YY5TJ9IDWm2qf6EIOH/EKHLHafJAiNQIT7jZ1BNW3xQAYT9kBEXnBN09EB1NU0f2WQ==
-X-Received: by 2002:a9d:750d:: with SMTP id r13mr7271522otk.321.1583866126181;
-        Tue, 10 Mar 2020 11:48:46 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a73sm2633320oib.16.2020.03.10.11.48.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 11:48:45 -0700 (PDT)
-Received: (nullmailer pid 15229 invoked by uid 1000);
-        Tue, 10 Mar 2020 18:48:44 -0000
-Date:   Tue, 10 Mar 2020 13:48:44 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
-        olivier.moysan@st.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH] dt-bindings: sound: Convert cirrus,cs42l51 to json-schema
-Message-ID: <20200310184844.GA15190@bogus>
-References: <20200228152706.29749-1-benjamin.gaignard@st.com>
+        id S1727451AbgCJSta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 14:49:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44436 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726391AbgCJSt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 14:49:29 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F18C208C3;
+        Tue, 10 Mar 2020 18:49:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583866169;
+        bh=Z+esqeekOvcK2NlG82c5Na805Zd2SVU9aa9FMtHbcgI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=e2UggPeF8iA59akyJ483DNpcLE+EGJD1P244SZYW9oLCBJ7O2l2FGNT1KnYCOMYCi
+         rP12B1uIXWZj22kFXhhzqtz6KvszfbarvaZoxP3xNrdr8vcMlseCBC27SyRgel3sbe
+         z6pkEo+rEIArhs2H0UuUmMmuuvO2qNFu9IE+WAsQ=
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1jBjwV-00Bi6k-Lr; Tue, 10 Mar 2020 18:49:27 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Russell King <linux@arm.linux.org.uk>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Zenghui Yu <yuzenghui@huawei.com>
+Subject: [PATCH 0/4] irqchip: Random irq_retrigger fixes
+Date:   Tue, 10 Mar 2020 18:49:17 +0000
+Message-Id: <20200310184921.23552-1-maz@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200228152706.29749-1-benjamin.gaignard@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, jason@lakedaemon.net, linux@arm.linux.org.uk, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Feb 2020 16:27:06 +0100, Benjamin Gaignard wrote:
-> Convert cirrus,cs42l51 to yaml format.
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->  .../devicetree/bindings/sound/cirrus,cs42l51.yaml  | 69 ++++++++++++++++++++++
->  .../devicetree/bindings/sound/cs42l51.txt          | 33 -----------
->  2 files changed, 69 insertions(+), 33 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/sound/cirrus,cs42l51.yaml
->  delete mode 100644 Documentation/devicetree/bindings/sound/cs42l51.txt
-> 
+As I was investigating some ugly retrigger locking issues (see patch 4),
+I managed to find three occurences of irq_retrigger callbacks that return
+the wrong value, leading to a SW retrigger on top of the HW one.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Not really a big deal, but definitely worth fixing.
+
+Marc Zyngier (4):
+  irqchip/atmel-aic: Fix irq_retrigger callback return value
+  irqchip/atmel-aic5: Fix irq_retrigger callback return value
+  ARM: sa1111: Fix irq_retrigger callback return value
+  irqchip/gic-v4: Provide irq_retrigger to avoid circular locking
+    dependency
+
+ arch/arm/common/sa1111.c         | 7 +++++--
+ drivers/irqchip/irq-atmel-aic.c  | 2 +-
+ drivers/irqchip/irq-atmel-aic5.c | 2 +-
+ drivers/irqchip/irq-gic-v3-its.c | 6 ++++++
+ 4 files changed, 13 insertions(+), 4 deletions(-)
+
+-- 
+2.20.1
+
