@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9945617F7D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:43:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3078117F8E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:52:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbgCJMmc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:42:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42342 "EHLO mail.kernel.org"
+        id S1728994AbgCJMwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:52:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727327AbgCJMmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:42:25 -0400
+        id S1727692AbgCJMv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:51:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DCA224686;
-        Tue, 10 Mar 2020 12:42:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C96922468F;
+        Tue, 10 Mar 2020 12:51:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844144;
-        bh=ABU12IfNmFeJk/drjZr/gSCCysZwfcqqTJ7L/m1fD/w=;
+        s=default; t=1583844717;
+        bh=qWAc4lkmnx7MFeaEj37pRCLigJTuMPeW3Vz6mPUmO8s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k74RhTJDhS+kRJ2v6ECPs+BZVu1zcYuy/RRCmX9OHncfPg9ANeLTBalUqvl3Nslwi
-         lel7y/yZAYpDgakhdPaG5HcekJpsDyliNhEQlSLoiBcdiyHskk0jME95/Jj/RP0jiD
-         aku7OSY+k7u5FsLaWxJ6dXUB205cXZ9xXawG5+8k=
+        b=yeHllDNN3YvHUsvj4KUVH4AE7afcORrGmzCYzyneHVgAH6xvOalGeCmvGwpBAyeQx
+         b/Hd/9NPHEOm4gmnfDOHphte0KY0iatYZmMB5GnSbT4VT70QiY/OmzZSlmWL3VmXee
+         mCuAdFuU/S7Ksmki0TIRl4DBxV7P0i7IdE/HxqLc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marek Vasut <marex@denx.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Lukas Wunner <lukas@wunner.de>, Petr Stetiar <ynezz@true.cz>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 46/72] net: ks8851-ml: Fix 16-bit data access
+        stable@vger.kernel.org, Wei Li <liwei391@huawei.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 5.4 093/168] perf intel-bts: Fix endless record after being terminated
 Date:   Tue, 10 Mar 2020 13:38:59 +0100
-Message-Id: <20200310123612.662932776@linuxfoundation.org>
+Message-Id: <20200310123644.714147403@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
-References: <20200310123601.053680753@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,48 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Vasut <marex@denx.de>
+From: Wei Li <liwei391@huawei.com>
 
-[ Upstream commit edacb098ea9c31589276152f09b4439052c0f2b1 ]
+commit 783fed2f35e2a6771c8dc6ee29b8c4b9930783ce upstream.
 
-The packet data written to and read from Micrel KSZ8851-16MLLI must be
-byte-swapped in 16-bit mode, add this byte-swapping.
+In __cmd_record(), when receiving SIGINT(ctrl + c), a 'done' flag will
+be set and the event list will be disabled by evlist__disable() once.
 
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Lukas Wunner <lukas@wunner.de>
-Cc: Petr Stetiar <ynezz@true.cz>
-Cc: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+While in auxtrace_record.read_finish(), the related events will be
+enabled again, if they are continuous, the recording seems to be
+endless.
+
+If the intel_bts event is disabled, we don't enable it again here.
+
+Note: This patch is NOT tested since i don't have such a machine with
+intel_bts feature, but the code seems buggy same as arm-spe and
+intel-pt.
+
+Signed-off-by: Wei Li <liwei391@huawei.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Tan Xiaojun <tanxiaojun@huawei.com>
+Cc: stable@vger.kernel.org # 5.4+
+Link: http://lore.kernel.org/lkml/20200214132654.20395-3-adrian.hunter@intel.com
+[ahunter: removed redundant 'else' after 'return']
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/micrel/ks8851_mll.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/arch/x86/util/intel-bts.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/micrel/ks8851_mll.c b/drivers/net/ethernet/micrel/ks8851_mll.c
-index 721f851674531..20356976b9772 100644
---- a/drivers/net/ethernet/micrel/ks8851_mll.c
-+++ b/drivers/net/ethernet/micrel/ks8851_mll.c
-@@ -515,7 +515,7 @@ static inline void ks_inblk(struct ks_net *ks, u16 *wptr, u32 len)
- {
- 	len >>= 1;
- 	while (len--)
--		*wptr++ = (u16)ioread16(ks->hw_addr);
-+		*wptr++ = be16_to_cpu(ioread16(ks->hw_addr));
- }
+--- a/tools/perf/arch/x86/util/intel-bts.c
++++ b/tools/perf/arch/x86/util/intel-bts.c
+@@ -415,9 +415,12 @@ static int intel_bts_read_finish(struct
+ 	struct evsel *evsel;
  
- /**
-@@ -529,7 +529,7 @@ static inline void ks_outblk(struct ks_net *ks, u16 *wptr, u32 len)
- {
- 	len >>= 1;
- 	while (len--)
--		iowrite16(*wptr++, ks->hw_addr);
-+		iowrite16(cpu_to_be16(*wptr++), ks->hw_addr);
+ 	evlist__for_each_entry(btsr->evlist, evsel) {
+-		if (evsel->core.attr.type == btsr->intel_bts_pmu->type)
++		if (evsel->core.attr.type == btsr->intel_bts_pmu->type) {
++			if (evsel->disabled)
++				return 0;
+ 			return perf_evlist__enable_event_idx(btsr->evlist,
+ 							     evsel, idx);
++		}
+ 	}
+ 	return -EINVAL;
  }
- 
- static void ks_disable_int(struct ks_net *ks)
--- 
-2.20.1
-
 
 
