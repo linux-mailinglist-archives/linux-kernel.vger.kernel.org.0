@@ -2,302 +2,315 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F30D180123
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:06:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22BE318012A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:06:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbgCJPGD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 11:06:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42258 "EHLO mail.kernel.org"
+        id S1727740AbgCJPGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 11:06:39 -0400
+Received: from mga12.intel.com ([192.55.52.136]:63162 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726295AbgCJPGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 11:06:02 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62EB920675;
-        Tue, 10 Mar 2020 15:06:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583852762;
-        bh=dJ1QL3pv3Q18dLX/Cj0vcZsf9aRIU74gV9hTzO5Akj4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=UZC1Jok0JtQI2eRZoFCK3zpRf2Typ9pt7UaFWX822ZRbUGI96kdq79jVZ6bMoCtEi
-         WSkktvKBk2qLRrEMsAdVZzC2R8GVh3rm6gjfZb1JGB6uCBi/PVurZIpSL6zSEHJ6dw
-         HFE5NKgHpRgR3msFFFrsezBbfc0IVLVk7s6yXRys=
-Message-ID: <89cb4ef962c9a0a4d88e5fb41a3a80dbabbe3469.camel@kernel.org>
-Subject: Re: [locks] 6d390e4b5d: will-it-scale.per_process_ops -96.6%
- regression
-From:   Jeff Layton <jlayton@kernel.org>
-To:     yangerkun <yangerkun@huawei.com>, NeilBrown <neilb@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        Bruce Fields <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Date:   Tue, 10 Mar 2020 11:06:00 -0400
-In-Reply-To: <c4739d51-9aec-6697-9c70-b888015df764@huawei.com>
-References: <20200308140314.GQ5972@shao2-debian>
-         <e3783d060c778cb41b77380ad3e278133b52f57e.camel@kernel.org>
-         <CAHk-=whGK712fPqmQ3FSHxqe3Aqny4bEeWEvfaytLeLV2+ijCQ@mail.gmail.com>
-         <34355c4fe6c3968b1f619c60d5ff2ca11a313096.camel@kernel.org>
-         <1bfba96b4bf0d3ca9a18a2bced3ef3a2a7b44dad.camel@kernel.org>
-         <87blp5urwq.fsf@notabene.neil.brown.name>
-         <41c83d34ae4c166f48e7969b2b71e43a0f69028d.camel@kernel.org>
-         <ed73fb5d-ddd5-fefd-67ae-2d786e68544a@huawei.com>
-         <923487db2c9396c79f8e8dd4f846b2b1762635c8.camel@kernel.org>
-         <c4739d51-9aec-6697-9c70-b888015df764@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        id S1726271AbgCJPGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 11:06:38 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 08:06:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,537,1574150400"; 
+   d="scan'208";a="276984234"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by fmsmga002.fm.intel.com with ESMTP; 10 Mar 2020 08:06:38 -0700
+Date:   Tue, 10 Mar 2020 08:06:37 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v6 03/14] KVM: X86: Don't track dirty for
+ KVM_SET_[TSS_ADDR|IDENTITY_MAP_ADDR]
+Message-ID: <20200310150637.GB7600@linux.intel.com>
+References: <20200309214424.330363-1-peterx@redhat.com>
+ <20200309214424.330363-4-peterx@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200309214424.330363-4-peterx@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-03-10 at 22:18 +0800, yangerkun wrote:
-> 
-> On 2020/3/10 20:52, Jeff Layton wrote:
-> > On Tue, 2020-03-10 at 11:24 +0800, yangerkun wrote:
-> > > On 2020/3/10 6:11, Jeff Layton wrote:
-> > > > On Tue, 2020-03-10 at 08:42 +1100, NeilBrown wrote:
-> > > > > On Mon, Mar 09 2020, Jeff Layton wrote:
-> > > > > 
-> > > > > > On Mon, 2020-03-09 at 13:22 -0400, Jeff Layton wrote:
-> > > > > > > On Mon, 2020-03-09 at 08:52 -0700, Linus Torvalds wrote:
-> > > > > > > > On Mon, Mar 9, 2020 at 7:36 AM Jeff Layton <jlayton@kernel.org> wrote:
-> > > > > > > > > On Sun, 2020-03-08 at 22:03 +0800, kernel test robot wrote:
-> > > > > > > > > > FYI, we noticed a -96.6% regression of will-it-scale.per_process_ops due to commit:
-> > > > > > > > > 
-> > > > > > > > > This is not completely unexpected as we're banging on the global
-> > > > > > > > > blocked_lock_lock now for every unlock. This test just thrashes file
-> > > > > > > > > locks and unlocks without doing anything in between, so the workload
-> > > > > > > > > looks pretty artificial [1].
-> > > > > > > > > 
-> > > > > > > > > It would be nice to avoid the global lock in this codepath, but it
-> > > > > > > > > doesn't look simple to do. I'll keep thinking about it, but for now I'm
-> > > > > > > > > inclined to ignore this result unless we see a problem in more realistic
-> > > > > > > > > workloads.
-> > > > > > > > 
-> > > > > > > > That is a _huge_ regression, though.
-> > > > > > > > 
-> > > > > > > > What about something like the attached? Wouldn't that work? And make
-> > > > > > > > the code actually match the old comment about wow "fl_blocker" being
-> > > > > > > > NULL being special.
-> > > > > > > > 
-> > > > > > > > The old code seemed to not know about things like memory ordering either.
-> > > > > > > > 
-> > > > > > > > Patch is entirely untested, but aims to have that "smp_store_release()
-> > > > > > > > means I'm done and not going to touch it any more", making that
-> > > > > > > > smp_load_acquire() test hopefully be valid as per the comment..
-> > > > > > > 
-> > > > > > > Yeah, something along those lines maybe. I don't think we can use
-> > > > > > > fl_blocker that way though, as the wait_event_interruptible is waiting
-> > > > > > > on it to go to NULL, and the wake_up happens before fl_blocker is
-> > > > > > > cleared.
-> > > > > > > 
-> > > > > > > Maybe we need to mix in some sort of FL_BLOCK_ACTIVE flag and use that
-> > > > > > > instead of testing for !fl_blocker to see whether we can avoid the
-> > > > > > > blocked_lock_lock?
-> > > > > > >     
-> > > > > > 
-> > > > > > How about something like this instead? (untested other than for
-> > > > > > compilation)
-> > > > > > 
-> > > > > > Basically, this just switches the waiters over to wait for
-> > > > > > fl_blocked_member to go empty. That still happens before the wakeup, so
-> > > > > > it should be ok to wait on that.
-> > > > > > 
-> > > > > > I think we can also eliminate the lockless list_empty check in
-> > > > > > locks_delete_block, as the fl_blocker check should be sufficient now.
-> > > > > > -- 
-> > > > > > Jeff Layton <jlayton@kernel.org>
-> > > > > >   From c179d779c9b72838ed9996a65d686d86679d1639 Mon Sep 17 00:00:00 2001
-> > > > > > From: Linus Torvalds <torvalds@linux-foundation.org>
-> > > > > > Date: Mon, 9 Mar 2020 14:35:43 -0400
-> > > > > > Subject: [PATCH] locks: reinstate locks_delete_lock optimization
-> > > > > > 
-> > > > > > ...by using smp_load_acquire and smp_store_release to close the race
-> > > > > > window.
-> > > > > > 
-> > > > > > [ jlayton: wait on the fl_blocked_requests list to go empty instead of
-> > > > > > 	   the fl_blocker pointer to clear. Remove the list_empty check
-> > > > > > 	   from locks_delete_lock shortcut. ]
-> > > > > 
-> > > > > Why do you think it is OK to remove that list_empty check?  I don't
-> > > > > think it is.  There might be locked requests that need to be woken up.
-> > > > > 
-> > > > > As the problem here is a use-after-free due to a race, one option would
-> > > > > be to use rcu_free() on the file_lock, and hold rcu_read_lock() around
-> > > > > test/use.
-> > > > > 
-> > > > > Another option is to use a different lock.  The fl_wait contains a
-> > > > > spinlock, and we have wake_up_locked() which is provided for exactly
-> > > > > these sorts of situations where the wake_up call can race with a thread
-> > > > > waking up.
-> > > > > 
-> > > > > So my compile-tested-only proposal is below.
-> > > > > I can probably a proper change-log entry if you think the patch is a
-> > > > > good way to go.
-> > > > > 
-> > > > > NeilBrown
-> > > > > 
-> > > > > 
-> > > > > diff --git a/fs/locks.c b/fs/locks.c
-> > > > > index 426b55d333d5..8aa04d5ac8b3 100644
-> > > > > --- a/fs/locks.c
-> > > > > +++ b/fs/locks.c
-> > > > > @@ -735,11 +735,13 @@ static void __locks_wake_up_blocks(struct file_lock *blocker)
-> > > > >    
-> > > > >    		waiter = list_first_entry(&blocker->fl_blocked_requests,
-> > > > >    					  struct file_lock, fl_blocked_member);
-> > > > > +		spin_lock(&waiter->fl_wait.lock);
-> > > > >    		__locks_delete_block(waiter);
-> > > > >    		if (waiter->fl_lmops && waiter->fl_lmops->lm_notify)
-> > > > >    			waiter->fl_lmops->lm_notify(waiter);
-> > > > >    		else
-> > > > > -			wake_up(&waiter->fl_wait);
-> > > > > +			wake_up_locked(&waiter->fl_wait);
-> > > > > +		spin_unlock(&waiter->fl_wait.lock);
-> > > > >    	}
-> > > > >    }
-> > > > >    
-> > > > > @@ -753,6 +755,31 @@ int locks_delete_block(struct file_lock *waiter)
-> > > > >    {
-> > > > >    	int status = -ENOENT;
-> > > > >    
-> > > > > +	/*
-> > > > > +	 * If fl_blocker is NULL, it won't be set again as this thread
-> > > > > +	 * "owns" the lock and is the only one that might try to claim
-> > > > > +	 * the lock.  So it is safe to test fl_blocker locklessly.
-> > > > > +	 * Also if fl_blocker is NULL, this waiter is not listed on
-> > > > > +	 * fl_blocked_requests for some lock, so no other request can
-> > > > > +	 * be added to the list of fl_blocked_requests for this
-> > > > > +	 * request.  So if fl_blocker is NULL, it is safe to
-> > > > > +	 * locklessly check if fl_blocked_requests is empty.  If both
-> > > > > +	 * of these checks succeed, there is no need to take the lock.
-> > > > > +	 * However, some other thread might have only *just* set
-> > > > > +	 * fl_blocker to NULL and it about to send a wakeup on
-> > > > > +	 * fl_wait, so we mustn't return too soon or we might free waiter
-> > > > > +	 * before that wakeup can be sent.  So take the fl_wait.lock
-> > > > > +	 * to serialize with the wakeup in __locks_wake_up_blocks().
-> > > > > +	 */
-> > > > > +	if (waiter->fl_blocker == NULL) {
-> > > > > +		spin_lock(&waiter->fl_wait.lock);
-> > > > > +		if (waiter->fl_blocker == NULL &&
-> > > > > +		    list_empty(&waiter->fl_blocked_requests)) {
-> > > > > +			spin_unlock(&waiter->fl_wait.lock);
-> > > > > +			return status;
-> > > > > +		}
-> > > > > +		spin_unlock(&waiter->fl_wait.lock);
-> > > > > +	}
-> > > > >    	spin_lock(&blocked_lock_lock);
-> > > > >    	if (waiter->fl_blocker)
-> > > > >    		status = 0;
-> > > > > 
-> > > > 
-> > > > Looks good on a cursory check, and I'm inclined to go with this since
-> > > > it's less fiddly for people to backport.
-> > > > 
-> > > > One other difference to note -- we are holding the fl_wait lock when
-> > > > calling lm_notify, but I don't think it will matter to any of the
-> > > > existing lm_notify functions.
-> > > > 
-> > > > If you want to clean up the changelog and resend that would be great.
-> > > > 
-> > > > Thanks,
-> > > > 
-> > > Something others. I think there is no need to call locks_delete_block
-> > > for all case in function like flock_lock_inode_wait. What we should do
-> > > as the patch '16306a61d3b7 ("fs/locks: always delete_block after
-> > > waiting.")' describes is that we need call locks_delete_block not only
-> > > for error equal to -ERESTARTSYS(please point out if I am wrong). And
-> > > this patch may fix the regression too since simple lock that success or
-> > > unlock will not try to acquire blocked_lock_lock.
-> > > 
-> > > 
-> > 
-> > Nice! This looks like it would work too, and it's a simpler fix.
-> > 
-> > I'd be inclined to add a WARN_ON_ONCE(fl->fl_blocker) after the if
-> > statements to make sure we never exit with one still queued. Also, I
-> > think we can do a similar optimization in __break_lease.
-> > 
-> > There are some other callers of locks_delete_block:
-> > 
-> > cifs_posix_lock_set: already only calls it in these cases
-> 
-> Maybe cifs_posix_lock_set should to be treated the same as 
-> posix_lock_inode_wait since cifs_posix_lock_set can call 
-> locks_delete_block only when rc equals to -ERESTARTSYS.
-> 
-> --------------------------------------------
-> 
-> [PATCH] cifs: call locks_delete_block for all error case in
->   cifs_posix_lock_set
-> 
-> '16306a61d3b7 ("fs/locks: always delete_block after waiting.")' fix the
-> problem that we should call locks_delete_block for all error case.
->
-> However, cifs_posix_lock_set has been leaved alone which bug may still
-> exists. Fix it and reorder the code to make in simple.
-> 
+On Mon, Mar 09, 2020 at 05:44:13PM -0400, Peter Xu wrote:
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 40b1e6138cd5..fc638a164e03 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -3467,34 +3467,26 @@ static bool guest_state_valid(struct kvm_vcpu *vcpu)
+>  	return true;
+>  }
+>  
+> -static int init_rmode_tss(struct kvm *kvm)
+> +static int init_rmode_tss(struct kvm *kvm, void __user *ua)
+>  {
+> -	gfn_t fn;
+> +	const void *zero_page = (const void *) __va(page_to_phys(ZERO_PAGE(0)));
+>  	u16 data = 0;
 
-I don't think this is a real bug. The block will not be inserted unless
-posix_lock_file returns FILE_LOCK_DEFERRED, and wait_event_interruptible
-only returns 0 or -ERESTARTSYS.
+"data" doesn't need to be intialized to zero, it's set below before it's used.
 
-Why do you believe we need to call it after any error?
+>  	int idx, r;
 
-> Fixes: 16306a61d3b7 ("fs/locks: always delete_block after waiting.")
-> Signed-off-by: yangerkun <yangerkun@huawei.com>
-> ---
->   fs/cifs/file.c | 28 ++++++++++++++++------------
->   1 file changed, 16 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> index 3b942ecdd4be..e20fc252c0a9 100644
-> --- a/fs/cifs/file.c
-> +++ b/fs/cifs/file.c
-> @@ -1159,21 +1159,25 @@ cifs_posix_lock_set(struct file *file, struct 
-> file_lock *flock)
->   	if ((flock->fl_flags & FL_POSIX) == 0)
->   		return rc;
-> 
-> -try_again:
-> -	cifs_down_write(&cinode->lock_sem);
-> -	if (!cinode->can_cache_brlcks) {
-> -		up_write(&cinode->lock_sem);
-> -		return rc;
-> -	}
-> +	for (;;) {
-> +		cifs_down_write(&cinode->lock_sem);
-> +		if (!cinode->can_cache_brlcks) {
-> +			up_write(&cinode->lock_sem);
-> +			return rc;
-> +		}
-> 
-> -	rc = posix_lock_file(file, flock, NULL);
-> -	up_write(&cinode->lock_sem);
-> -	if (rc == FILE_LOCK_DEFERRED) {
-> +		rc = posix_lock_file(file, flock, NULL);
-> +		up_write(&cinode->lock_sem);
-> +		if (rc != FILE_LOCK_DEFERRED)
-> +			break;
->   		rc = wait_event_interruptible(flock->fl_wait, !flock->fl_blocker);
-> -		if (!rc)
-> -			goto try_again;
-> -		locks_delete_block(flock);
-> +		if (rc)
-> +			break;
->   	}
-> +	if (rc)
-> +		locks_delete_block(flock);
-> +	WARN_ON_ONCE(flock->fl_blocker);
+nit: I'd prefer to rename "idx" to "i" to make it more obvious it's a plain
+ole loop counter.  Reusing the srcu index made me do a double take :-)
+
+>  
+> -	idx = srcu_read_lock(&kvm->srcu);
+> -	fn = to_kvm_vmx(kvm)->tss_addr >> PAGE_SHIFT;
+> -	r = kvm_clear_guest_page(kvm, fn, 0, PAGE_SIZE);
+> -	if (r < 0)
+> -		goto out;
+> +	for (idx = 0; idx < 3; idx++) {
+> +		r = __copy_to_user(ua + PAGE_SIZE * idx, zero_page, PAGE_SIZE);
+> +		if (r)
+> +			return -EFAULT;
+> +	}
+
+Can this be done in a single __copy_to_user(), or do those helpers not like
+crossing page boundaries?
+
 > +
->   	return rc;
->   }
+>  	data = TSS_BASE_SIZE + TSS_REDIRECTION_SIZE;
+> -	r = kvm_write_guest_page(kvm, fn++, &data,
+> -			TSS_IOPB_BASE_OFFSET, sizeof(u16));
+> -	if (r < 0)
+> -		goto out;
+> -	r = kvm_clear_guest_page(kvm, fn++, 0, PAGE_SIZE);
+> -	if (r < 0)
+> -		goto out;
+> -	r = kvm_clear_guest_page(kvm, fn, 0, PAGE_SIZE);
+> -	if (r < 0)
+> -		goto out;
+> +	r = __copy_to_user(ua + TSS_IOPB_BASE_OFFSET, &data, sizeof(u16));
+> +	if (r)
+> +		return -EFAULT;
+> +
+>  	data = ~0;
+> -	r = kvm_write_guest_page(kvm, fn, &data,
+> -				 RMODE_TSS_SIZE - 2 * PAGE_SIZE - 1,
+> -				 sizeof(u8));
+> -out:
+> -	srcu_read_unlock(&kvm->srcu, idx);
+> +	r = __copy_to_user(ua + RMODE_TSS_SIZE - 1, &data, sizeof(u8));
+> +
+>  	return r;
+>  }
+>  
+> @@ -3503,6 +3495,7 @@ static int init_rmode_identity_map(struct kvm *kvm)
+>  	struct kvm_vmx *kvm_vmx = to_kvm_vmx(kvm);
+>  	int i, r = 0;
+>  	kvm_pfn_t identity_map_pfn;
+> +	void __user *uaddr;
+>  	u32 tmp;
+>  
+>  	/* Protect kvm_vmx->ept_identity_pagetable_done. */
+> @@ -3515,22 +3508,24 @@ static int init_rmode_identity_map(struct kvm *kvm)
+>  		kvm_vmx->ept_identity_map_addr = VMX_EPT_IDENTITY_PAGETABLE_ADDR;
+>  	identity_map_pfn = kvm_vmx->ept_identity_map_addr >> PAGE_SHIFT;
+>  
+> -	r = __x86_set_memory_region(kvm, IDENTITY_PAGETABLE_PRIVATE_MEMSLOT,
+> -				    kvm_vmx->ept_identity_map_addr, PAGE_SIZE);
+> -	if (r < 0)
+> +	uaddr = __x86_set_memory_region(kvm,
+> +					IDENTITY_PAGETABLE_PRIVATE_MEMSLOT,
+> +					kvm_vmx->ept_identity_map_addr,
+> +					PAGE_SIZE);
+> +	if (IS_ERR(uaddr)) {
+> +		r = PTR_ERR(uaddr);
+>  		goto out;
+> +	}
+>  
+> -	r = kvm_clear_guest_page(kvm, identity_map_pfn, 0, PAGE_SIZE);
+> -	if (r < 0)
+> -		goto out;
+>  	/* Set up identity-mapping pagetable for EPT in real mode */
+>  	for (i = 0; i < PT32_ENT_PER_PAGE; i++) {
+>  		tmp = (i << 22) + (_PAGE_PRESENT | _PAGE_RW | _PAGE_USER |
+>  			_PAGE_ACCESSED | _PAGE_DIRTY | _PAGE_PSE);
+> -		r = kvm_write_guest_page(kvm, identity_map_pfn,
+> -				&tmp, i * sizeof(tmp), sizeof(tmp));
+> -		if (r < 0)
+> +		r = __copy_to_user(uaddr + i * sizeof(tmp), &tmp, sizeof(tmp));
+> +		if (r) {
+> +			r = -EFAULT;
+>  			goto out;
+> +		}
+>  	}
+>  	kvm_vmx->ept_identity_pagetable_done = true;
+>  
+> @@ -3557,19 +3552,22 @@ static void seg_setup(int seg)
+>  static int alloc_apic_access_page(struct kvm *kvm)
+>  {
+>  	struct page *page;
+> -	int r = 0;
+> +	void __user *r;
+> +	int ret = 0;
+>  
+>  	mutex_lock(&kvm->slots_lock);
+>  	if (kvm->arch.apic_access_page_done)
+>  		goto out;
+>  	r = __x86_set_memory_region(kvm, APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
+>  				    APIC_DEFAULT_PHYS_BASE, PAGE_SIZE);
+> -	if (r)
+> +	if (IS_ERR(r)) {
+> +		ret = PTR_ERR(r);
+>  		goto out;
+> +	}
+>  
+>  	page = gfn_to_page(kvm, APIC_DEFAULT_PHYS_BASE >> PAGE_SHIFT);
+>  	if (is_error_page(page)) {
+> -		r = -EFAULT;
+> +		ret = -EFAULT;
+>  		goto out;
+>  	}
+>  
+> @@ -3581,7 +3579,7 @@ static int alloc_apic_access_page(struct kvm *kvm)
+>  	kvm->arch.apic_access_page_done = true;
+>  out:
+>  	mutex_unlock(&kvm->slots_lock);
+> -	return r;
+> +	return ret;
+>  }
+>  
+>  int allocate_vpid(void)
+> @@ -4503,7 +4501,7 @@ static int vmx_interrupt_allowed(struct kvm_vcpu *vcpu)
+>  
+>  static int vmx_set_tss_addr(struct kvm *kvm, unsigned int addr)
+>  {
+> -	int ret;
+> +	void __user *ret;
+>  
+>  	if (enable_unrestricted_guest)
+>  		return 0;
+> @@ -4513,10 +4511,12 @@ static int vmx_set_tss_addr(struct kvm *kvm, unsigned int addr)
+>  				      PAGE_SIZE * 3);
+>  	mutex_unlock(&kvm->slots_lock);
+>  
+> -	if (ret)
+> -		return ret;
+> +	if (IS_ERR(ret))
+> +		return PTR_ERR(ret);
+> +
+>  	to_kvm_vmx(kvm)->tss_addr = addr;
+> -	return init_rmode_tss(kvm);
+> +
+> +	return init_rmode_tss(kvm, ret);
+>  }
+>  
+>  static int vmx_set_identity_map_addr(struct kvm *kvm, u64 ident_addr)
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 5de200663f51..fe485d4ba6c7 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -9756,7 +9756,33 @@ void kvm_arch_sync_events(struct kvm *kvm)
+>  	kvm_free_pit(kvm);
+>  }
+>  
+> -int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
+> +/**
+> + * __x86_set_memory_region: Setup KVM internal memory slot
+> + *
+> + * @kvm: the kvm pointer to the VM.
+> + * @id: the slot ID to setup.
+> + * @gpa: the GPA to install the slot (unused when @size == 0).
+> + * @size: the size of the slot. Set to zero to uninstall a slot.
+> + *
+> + * This function helps to setup a KVM internal memory slot.  Specify
+> + * @size > 0 to install a new slot, while @size == 0 to uninstall a
+> + * slot.  The return code can be one of the following:
+> + *
+> + *   - An error number if error happened, or,
+> + *   - For installation: the HVA of the newly mapped memory slot, or,
+> + *   - For uninstallation: zero if we successfully uninstall a slot.
 
+Maybe tweak this so the return it stands out?  And returning zero on
+uninstallation is no longer true in kvm/queue, at least not without further
+modifications (as is it'll return 0xdead000000000000 on 64-bit).  The
+0xdead shenanigans won't trigger IS_ERR(), so I think this can simply be:
 
--- 
-Jeff Layton <jlayton@kernel.org>
+ * Returns:
+ *   hva:    on success
+ *   -errno: on error
 
+With the blurb below calling out that hva is bogus uninstallation.
+
+> + *
+> + * The caller should always use IS_ERR() to check the return value
+> + * before use.  NOTE: KVM internal memory slots are guaranteed and
+> + * won't change until the VM is destroyed. This is also true to the
+> + * returned HVA when installing a new memory slot.  The HVA can be
+> + * invalidated by either an errornous userspace program or a VM under
+> + * destruction, however as long as we use __copy_{to|from}_user()
+> + * properly upon the HVAs and handle the failure paths always then
+> + * we're safe.
+> + */
+> +void __user * __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa,
+> +				      u32 size)
+>  {
+>  	int i, r;
+>  	unsigned long hva;
+> @@ -9765,12 +9791,12 @@ int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
+>  
+>  	/* Called with kvm->slots_lock held.  */
+>  	if (WARN_ON(id >= KVM_MEM_SLOTS_NUM))
+> -		return -EINVAL;
+> +		return ERR_PTR(-EINVAL);
+>  
+>  	slot = id_to_memslot(slots, id);
+>  	if (size) {
+>  		if (slot->npages)
+> -			return -EEXIST;
+> +			return ERR_PTR(-EEXIST);
+>  
+>  		/*
+>  		 * MAP_SHARED to prevent internal slot pages from being moved
+> @@ -9779,10 +9805,10 @@ int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
+>  		hva = vm_mmap(NULL, 0, size, PROT_READ | PROT_WRITE,
+>  			      MAP_SHARED | MAP_ANONYMOUS, 0);
+>  		if (IS_ERR((void *)hva))
+> -			return PTR_ERR((void *)hva);
+> +			return (void __user *)hva;
+>  	} else {
+>  		if (!slot->npages)
+> -			return 0;
+> +			return ERR_PTR(0);
+>  
+>  		hva = 0;
+>  	}
+> @@ -9798,13 +9824,13 @@ int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
+>  		m.memory_size = size;
+>  		r = __kvm_set_memory_region(kvm, &m);
+>  		if (r < 0)
+> -			return r;
+> +			return ERR_PTR(r);
+>  	}
+>  
+>  	if (!size)
+>  		vm_munmap(old.userspace_addr, old.npages * PAGE_SIZE);
+>  
+> -	return 0;
+> +	return (void __user *)hva;
+>  }
+>  EXPORT_SYMBOL_GPL(__x86_set_memory_region);
+>  
+> -- 
+> 2.24.1
+> 
