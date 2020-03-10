@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD07217F9C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:00:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBBF317F7C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:42:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbgCJM7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:59:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40422 "EHLO mail.kernel.org"
+        id S1727233AbgCJMmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:42:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727175AbgCJM7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:59:50 -0400
+        id S1727222AbgCJMmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:42:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A34DC2467D;
-        Tue, 10 Mar 2020 12:59:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8C92246C6;
+        Tue, 10 Mar 2020 12:42:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845190;
-        bh=y0UAmrvUmkyxgD5jPwVeJBdvYogkBm6vnteCiZOpYhg=;
+        s=default; t=1583844121;
+        bh=TozLtoVh77U5/hOYYVw5gd42uWtqHnUz7UqzxkxfWjU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=udSBYE62f22k+7U7keWbHfsLqq2+BPf1MEweWrMFidlc4LIJqQah5K7wxvTnn6LdP
-         GjCGuj1ikBX6/QgTlkzDGnCLXRzqM2es1zegdNF9efSeH8O9xakdlcsro+wK6ZRs75
-         yMEKzToccm8LUTOs+rrXCWNNIr9htUxz0ZD1519Q=
+        b=EVBX2DDjnHf0IX5EEAaxZFs5e06UE07CcR9KDu3sIpc8skr0vHQAI2gAUfsRqlMGo
+         D/Y5vR5PNCTz9cKuwpnIqlZ+yqQ/NelEHgevma2Tay4KSN19n1FF6l9impxFJHhS0B
+         oGswzTfKwjsJrC1iu3sp5JqlzJzprKrzDXf0D/BM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        syzbot+26183d9746e62da329b8@syzkaller.appspotmail.com
-Subject: [PATCH 5.5 094/189] vt: selection, push sel_lock up
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Matthew Wilcox <willy@infradead.org>, stable@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ajay Kaher <akaher@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH 4.4 38/72] fs: prevent page refcount overflow in pipe_buf_get
 Date:   Tue, 10 Mar 2020 13:38:51 +0100
-Message-Id: <20200310123649.202837272@linuxfoundation.org>
+Message-Id: <20200310123610.971044185@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <20200310123601.053680753@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,145 +46,172 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Matthew Wilcox <willy@infradead.org>
 
-commit e8c75a30a23c6ba63f4ef6895cbf41fd42f21aa2 upstream.
+commit 15fab63e1e57be9fdb5eec1bbc5916e9825e9acb upstream.
 
-sel_lock cannot nest in the console lock. Thanks to syzkaller, the
-kernel states firmly:
+Change pipe_buf_get() to return a bool indicating whether it succeeded
+in raising the refcount of the page (if the thing in the pipe is a page).
+This removes another mechanism for overflowing the page refcount.  All
+callers converted to handle a failure.
 
-> WARNING: possible circular locking dependency detected
-> 5.6.0-rc3-syzkaller #0 Not tainted
-> ------------------------------------------------------
-> syz-executor.4/20336 is trying to acquire lock:
-> ffff8880a2e952a0 (&tty->termios_rwsem){++++}, at: tty_unthrottle+0x22/0x100 drivers/tty/tty_ioctl.c:136
->
-> but task is already holding lock:
-> ffffffff89462e70 (sel_lock){+.+.}, at: paste_selection+0x118/0x470 drivers/tty/vt/selection.c:374
->
-> which lock already depends on the new lock.
->
-> the existing dependency chain (in reverse order) is:
->
-> -> #2 (sel_lock){+.+.}:
->        mutex_lock_nested+0x1b/0x30 kernel/locking/mutex.c:1118
->        set_selection_kernel+0x3b8/0x18a0 drivers/tty/vt/selection.c:217
->        set_selection_user+0x63/0x80 drivers/tty/vt/selection.c:181
->        tioclinux+0x103/0x530 drivers/tty/vt/vt.c:3050
->        vt_ioctl+0x3f1/0x3a30 drivers/tty/vt/vt_ioctl.c:364
-
-This is ioctl(TIOCL_SETSEL).
-Locks held on the path: console_lock -> sel_lock
-
-> -> #1 (console_lock){+.+.}:
->        console_lock+0x46/0x70 kernel/printk/printk.c:2289
->        con_flush_chars+0x50/0x650 drivers/tty/vt/vt.c:3223
->        n_tty_write+0xeae/0x1200 drivers/tty/n_tty.c:2350
->        do_tty_write drivers/tty/tty_io.c:962 [inline]
->        tty_write+0x5a1/0x950 drivers/tty/tty_io.c:1046
-
-This is write().
-Locks held on the path: termios_rwsem -> console_lock
-
-> -> #0 (&tty->termios_rwsem){++++}:
->        down_write+0x57/0x140 kernel/locking/rwsem.c:1534
->        tty_unthrottle+0x22/0x100 drivers/tty/tty_ioctl.c:136
->        mkiss_receive_buf+0x12aa/0x1340 drivers/net/hamradio/mkiss.c:902
->        tty_ldisc_receive_buf+0x12f/0x170 drivers/tty/tty_buffer.c:465
->        paste_selection+0x346/0x470 drivers/tty/vt/selection.c:389
->        tioclinux+0x121/0x530 drivers/tty/vt/vt.c:3055
->        vt_ioctl+0x3f1/0x3a30 drivers/tty/vt/vt_ioctl.c:364
-
-This is ioctl(TIOCL_PASTESEL).
-Locks held on the path: sel_lock -> termios_rwsem
-
-> other info that might help us debug this:
->
-> Chain exists of:
->   &tty->termios_rwsem --> console_lock --> sel_lock
-
-Clearly. From the above, we have:
- console_lock -> sel_lock
- sel_lock -> termios_rwsem
- termios_rwsem -> console_lock
-
-Fix this by reversing the console_lock -> sel_lock dependency in
-ioctl(TIOCL_SETSEL). First, lock sel_lock, then console_lock.
-
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Reported-by: syzbot+26183d9746e62da329b8@syzkaller.appspotmail.com
-Fixes: 07e6124a1a46 ("vt: selection, close sel_buffer race")
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200228115406.5735-2-jslaby@suse.cz
+Reported-by: Jann Horn <jannh@google.com>
+Signed-off-by: Matthew Wilcox <willy@infradead.org>
+Cc: stable@kernel.org
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[ 4.4.y backport notes:
+  Regarding the change in generic_pipe_buf_get(), note that
+  page_cache_get() is the same as get_page(). See mainline commit
+  09cbfeaf1a5a6 "mm, fs: get rid of PAGE_CACHE_* and
+  page_cache_{get,release} macros" for context. ]
+Signed-off-by: Ajay Kaher <akaher@vmware.com>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/tty/vt/selection.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ fs/fuse/dev.c             |   12 ++++++------
+ fs/pipe.c                 |    4 ++--
+ fs/splice.c               |   12 ++++++++++--
+ include/linux/pipe_fs_i.h |   10 ++++++----
+ kernel/trace/trace.c      |    6 +++++-
+ 5 files changed, 29 insertions(+), 15 deletions(-)
 
---- a/drivers/tty/vt/selection.c
-+++ b/drivers/tty/vt/selection.c
-@@ -214,7 +214,6 @@ static int __set_selection_kernel(struct
- 	if (ps > pe)	/* make sel_start <= sel_end */
- 		swap(ps, pe);
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -2031,10 +2031,8 @@ static ssize_t fuse_dev_splice_write(str
+ 		rem += pipe->bufs[(pipe->curbuf + idx) & (pipe->buffers - 1)].len;
  
--	mutex_lock(&sel_lock);
- 	if (sel_cons != vc_cons[fg_console].d) {
- 		clear_selection();
- 		sel_cons = vc_cons[fg_console].d;
-@@ -260,10 +259,9 @@ static int __set_selection_kernel(struct
- 			break;
- 		case TIOCL_SELPOINTER:
- 			highlight_pointer(pe);
--			goto unlock;
-+			return 0;
- 		default:
--			ret = -EINVAL;
--			goto unlock;
-+			return -EINVAL;
- 	}
+ 	ret = -EINVAL;
+-	if (rem < len) {
+-		pipe_unlock(pipe);
+-		goto out;
+-	}
++	if (rem < len)
++		goto out_free;
  
- 	/* remove the pointer */
-@@ -285,7 +283,7 @@ static int __set_selection_kernel(struct
- 	else if (new_sel_start == sel_start)
- 	{
- 		if (new_sel_end == sel_end)	/* no action required */
--			goto unlock;
-+			return 0;
- 		else if (new_sel_end > sel_end)	/* extend to right */
- 			highlight(sel_end + 2, new_sel_end);
- 		else				/* contract from right */
-@@ -313,8 +311,7 @@ static int __set_selection_kernel(struct
- 	if (!bp) {
- 		printk(KERN_WARNING "selection: kmalloc() failed\n");
- 		clear_selection();
--		ret = -ENOMEM;
--		goto unlock;
-+		return -ENOMEM;
- 	}
- 	kfree(sel_buffer);
- 	sel_buffer = bp;
-@@ -339,8 +336,7 @@ static int __set_selection_kernel(struct
- 		}
- 	}
- 	sel_buffer_lth = bp - sel_buffer;
--unlock:
--	mutex_unlock(&sel_lock);
+ 	rem = len;
+ 	while (rem) {
+@@ -2052,7 +2050,9 @@ static ssize_t fuse_dev_splice_write(str
+ 			pipe->curbuf = (pipe->curbuf + 1) & (pipe->buffers - 1);
+ 			pipe->nrbufs--;
+ 		} else {
+-			pipe_buf_get(pipe, ibuf);
++			if (!pipe_buf_get(pipe, ibuf))
++				goto out_free;
 +
+ 			*obuf = *ibuf;
+ 			obuf->flags &= ~PIPE_BUF_FLAG_GIFT;
+ 			obuf->len = rem;
+@@ -2075,13 +2075,13 @@ static ssize_t fuse_dev_splice_write(str
+ 	ret = fuse_dev_do_write(fud, &cs, len);
+ 
+ 	pipe_lock(pipe);
++out_free:
+ 	for (idx = 0; idx < nbuf; idx++) {
+ 		struct pipe_buffer *buf = &bufs[idx];
+ 		buf->ops->release(pipe, buf);
+ 	}
+ 	pipe_unlock(pipe);
+ 
+-out:
+ 	kfree(bufs);
  	return ret;
  }
- 
-@@ -348,9 +344,11 @@ int set_selection_kernel(struct tiocl_se
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -178,9 +178,9 @@ EXPORT_SYMBOL(generic_pipe_buf_steal);
+  *	in the tee() system call, when we duplicate the buffers in one
+  *	pipe into another.
+  */
+-void generic_pipe_buf_get(struct pipe_inode_info *pipe, struct pipe_buffer *buf)
++bool generic_pipe_buf_get(struct pipe_inode_info *pipe, struct pipe_buffer *buf)
  {
- 	int ret;
- 
-+	mutex_lock(&sel_lock);
- 	console_lock();
- 	ret = __set_selection_kernel(v, tty);
- 	console_unlock();
-+	mutex_unlock(&sel_lock);
- 
- 	return ret;
+-	page_cache_get(buf->page);
++	return try_get_page(buf->page);
  }
+ EXPORT_SYMBOL(generic_pipe_buf_get);
+ 
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1876,7 +1876,11 @@ retry:
+ 			 * Get a reference to this pipe buffer,
+ 			 * so we can copy the contents over.
+ 			 */
+-			pipe_buf_get(ipipe, ibuf);
++			if (!pipe_buf_get(ipipe, ibuf)) {
++				if (ret == 0)
++					ret = -EFAULT;
++				break;
++			}
+ 			*obuf = *ibuf;
+ 
+ 			/*
+@@ -1948,7 +1952,11 @@ static int link_pipe(struct pipe_inode_i
+ 		 * Get a reference to this pipe buffer,
+ 		 * so we can copy the contents over.
+ 		 */
+-		pipe_buf_get(ipipe, ibuf);
++		if (!pipe_buf_get(ipipe, ibuf)) {
++			if (ret == 0)
++				ret = -EFAULT;
++			break;
++		}
+ 
+ 		obuf = opipe->bufs + nbuf;
+ 		*obuf = *ibuf;
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -112,18 +112,20 @@ struct pipe_buf_operations {
+ 	/*
+ 	 * Get a reference to the pipe buffer.
+ 	 */
+-	void (*get)(struct pipe_inode_info *, struct pipe_buffer *);
++	bool (*get)(struct pipe_inode_info *, struct pipe_buffer *);
+ };
+ 
+ /**
+  * pipe_buf_get - get a reference to a pipe_buffer
+  * @pipe:	the pipe that the buffer belongs to
+  * @buf:	the buffer to get a reference to
++ *
++ * Return: %true if the reference was successfully obtained.
+  */
+-static inline void pipe_buf_get(struct pipe_inode_info *pipe,
++static inline __must_check bool pipe_buf_get(struct pipe_inode_info *pipe,
+ 				struct pipe_buffer *buf)
+ {
+-	buf->ops->get(pipe, buf);
++	return buf->ops->get(pipe, buf);
+ }
+ 
+ /* Differs from PIPE_BUF in that PIPE_SIZE is the length of the actual
+@@ -148,7 +150,7 @@ struct pipe_inode_info *alloc_pipe_info(
+ void free_pipe_info(struct pipe_inode_info *);
+ 
+ /* Generic pipe buffer ops functions */
+-void generic_pipe_buf_get(struct pipe_inode_info *, struct pipe_buffer *);
++bool generic_pipe_buf_get(struct pipe_inode_info *, struct pipe_buffer *);
+ int generic_pipe_buf_confirm(struct pipe_inode_info *, struct pipe_buffer *);
+ int generic_pipe_buf_steal(struct pipe_inode_info *, struct pipe_buffer *);
+ void generic_pipe_buf_release(struct pipe_inode_info *, struct pipe_buffer *);
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -5749,12 +5749,16 @@ static void buffer_pipe_buf_release(stru
+ 	buf->private = 0;
+ }
+ 
+-static void buffer_pipe_buf_get(struct pipe_inode_info *pipe,
++static bool buffer_pipe_buf_get(struct pipe_inode_info *pipe,
+ 				struct pipe_buffer *buf)
+ {
+ 	struct buffer_ref *ref = (struct buffer_ref *)buf->private;
+ 
++	if (ref->ref > INT_MAX/2)
++		return false;
++
+ 	ref->ref++;
++	return true;
+ }
+ 
+ /* Pipe buffer operations for a buffer. */
 
 
