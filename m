@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EA4617FDCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:31:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4658417FE71
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:35:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728679AbgCJMul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:50:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55376 "EHLO mail.kernel.org"
+        id S1727441AbgCJMoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:44:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728640AbgCJMuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:50:35 -0400
+        id S1727752AbgCJMob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:44:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F23162468E;
-        Tue, 10 Mar 2020 12:50:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53C1824691;
+        Tue, 10 Mar 2020 12:44:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844634;
-        bh=SvLp9QeIlteRIJuHx2peXZJf994646fGWpEk41TPcgY=;
+        s=default; t=1583844270;
+        bh=8Wu/2aOxnCpRNo8O23+t6KoOaYC3NPHia+8+AOmLd7k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZS5ZVbe1NXbWtwr2oSNAfdcWORvrzWTrBs/MDoGKPUeTvRZGMyrBnoqaF3eaWFzmh
-         LpWQsBYXQrgHeVzxOs1eJXQ6Dk0PTewWARRXLP3ImTCaZa6fQQYRC/n7g483NwzatW
-         6TVe0XgwdniDQHrrJogu5SHZ+gRTMi1Y+2irknt4=
+        b=V5x9rSxJcg55U7ROygt2IzXcOHAvtU4WDK8pfA1M0PmOsDt1LsT+hFiHpnnFEhqBD
+         qijd/BaeeWFkiQdqebr9Q7N2qlIXWvsevV5jBRVdLlGeH/zfajkFas6XTn9wXjfBw7
+         VMYYGE7adiNVGkNJBpPQFmoAclq20yn4h3/+6wlc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christian Lachner <gladiac@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.4 062/168] ALSA: hda/realtek - Fix silent output on Gigabyte X570 Aorus Master
+        stable@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Tommi Rantala <tommi.t.rantala@nokia.com>
+Subject: [PATCH 4.9 20/88] sysrq: Remove duplicated sysrq message
 Date:   Tue, 10 Mar 2020 13:38:28 +0100
-Message-Id: <20200310123641.556080956@linuxfoundation.org>
+Message-Id: <20200310123611.073762825@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Lachner <gladiac@gmail.com>
+From: Petr Mladek <pmladek@suse.com>
 
-commit 0d45e86d2267d5bdf7bbb631499788da1c27ceb2 upstream.
+commit c3fee60908db4a8594f2e4a2131998384b8fa006 upstream.
 
-The Gigabyte X570 Aorus Master motherboard with ALC1220 codec
-requires a similar workaround for Clevo laptops to enforce the
-DAC/mixer connection path. Set up a quirk entry for that.
+The commit 97f5f0cd8cd0a0544 ("Input: implement SysRq as a separate input
+handler") added pr_fmt() definition. It caused a duplicated message
+prefix in the sysrq header messages, for example:
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=205275
-Signed-off-by: Christian Lachner <gladiac@gmail.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200223092416.15016-2-gladiac@gmail.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[  177.053931] sysrq: SysRq : Show backtrace of all active CPUs
+[  742.864776] sysrq: SysRq : HELP : loglevel(0-9) reboot(b) crash(c)
+
+Fixes: 97f5f0cd8cd0a05 ("Input: implement SysRq as a separate input handler")
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Tommi Rantala  <tommi.t.rantala@nokia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/tty/sysrq.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -2447,6 +2447,7 @@ static const struct snd_pci_quirk alc882
- 	SND_PCI_QUIRK(0x1071, 0x8258, "Evesham Voyaeger", ALC882_FIXUP_EAPD),
- 	SND_PCI_QUIRK(0x1458, 0xa002, "Gigabyte EP45-DS3/Z87X-UD3H", ALC889_FIXUP_FRONT_HP_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1458, 0xa0b8, "Gigabyte AZ370-Gaming", ALC1220_FIXUP_GB_DUAL_CODECS),
-+	SND_PCI_QUIRK(0x1458, 0xa0cd, "Gigabyte X570 Aorus Master", ALC1220_FIXUP_CLEVO_P950),
- 	SND_PCI_QUIRK(0x1462, 0x1228, "MSI-GP63", ALC1220_FIXUP_CLEVO_P950),
- 	SND_PCI_QUIRK(0x1462, 0x1276, "MSI-GL73", ALC1220_FIXUP_CLEVO_P950),
- 	SND_PCI_QUIRK(0x1462, 0x1293, "MSI-GP65", ALC1220_FIXUP_CLEVO_P950),
+--- a/drivers/tty/sysrq.c
++++ b/drivers/tty/sysrq.c
+@@ -543,7 +543,6 @@ void __handle_sysrq(int key, bool check_
+ 	 */
+ 	orig_log_level = console_loglevel;
+ 	console_loglevel = CONSOLE_LOGLEVEL_DEFAULT;
+-	pr_info("SysRq : ");
+ 
+         op_p = __sysrq_get_key_op(key);
+         if (op_p) {
+@@ -552,15 +551,15 @@ void __handle_sysrq(int key, bool check_
+ 		 * should not) and is the invoked operation enabled?
+ 		 */
+ 		if (!check_mask || sysrq_on_mask(op_p->enable_mask)) {
+-			pr_cont("%s\n", op_p->action_msg);
++			pr_info("%s\n", op_p->action_msg);
+ 			console_loglevel = orig_log_level;
+ 			op_p->handler(key);
+ 		} else {
+-			pr_cont("This sysrq operation is disabled.\n");
++			pr_info("This sysrq operation is disabled.\n");
+ 			console_loglevel = orig_log_level;
+ 		}
+ 	} else {
+-		pr_cont("HELP : ");
++		pr_info("HELP : ");
+ 		/* Only print the help msg once per handler */
+ 		for (i = 0; i < ARRAY_SIZE(sysrq_key_table); i++) {
+ 			if (sysrq_key_table[i]) {
 
 
