@@ -2,128 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA98C180158
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:15:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BA75180164
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:17:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbgCJPPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 11:15:12 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44121 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbgCJPPM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 11:15:12 -0400
-Received: from mail-wm1-f71.google.com ([209.85.128.71])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <gpiccoli@canonical.com>)
-        id 1jBgb6-0006FP-UG
-        for linux-kernel@vger.kernel.org; Tue, 10 Mar 2020 15:15:09 +0000
-Received: by mail-wm1-f71.google.com with SMTP id p4so440335wmp.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 08:15:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=SX7toKZWodKfwjLUNVU3mZINSd3WdGinFSx6G9WeLDk=;
-        b=YFUqnfQkTGawzHADm/SqlcrnNotxxDSur/gXsIrRu447Kp9gDeWqYOBlTsjEy57xeI
-         +AVJ8p2Ze3ZilWu+SIswldS0PAfoo2vCdBEm60xTkS15Pa+7/6eMki/jHdPIlE+SkfDE
-         tXH2ONnFwtH7G5LNZY89hawYWIobfS3mlHZ4v4BHVWYY8SYYMZ2C/10PyiGLCD9zKr0I
-         y5WKcz3pgviQ3Yk6AKYkEzIXu7nNux58NOdwYQwe5Qage5m9pRfX3CpsfmruQOW4bUDL
-         yFvir5zC3tPX2AVpg/s4+Mo69JG5TXdSygtie+Dk/4olfpGEGMcmFa9O2f8nH9o0/pcr
-         JXcA==
-X-Gm-Message-State: ANhLgQ3cGdigqPulEiu0Gni/hHhmZnf/Kn/qflGFwVqcLzifcxFA66/L
-        jjI57GuYTQBVZXlh2PZ/RWRt6uoSHdy1R64vQ4xJQL3mJWC6n5cENg+mlXEg11qyKW9ZBXAmMb2
-        jxagTQVKw/A16BqTywtF6krgb/kxe0lsKJtV9Xhsn5A==
-X-Received: by 2002:adf:ef44:: with SMTP id c4mr12995063wrp.404.1583853308616;
-        Tue, 10 Mar 2020 08:15:08 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vtSJ6usylxaeEgKGV13gLvCQGlN13i7Aktoi9ePJtqB/19xsQe+qjKKiMWcO7JVdMeLevXEuQ==
-X-Received: by 2002:adf:ef44:: with SMTP id c4mr12995038wrp.404.1583853308339;
-        Tue, 10 Mar 2020 08:15:08 -0700 (PDT)
-Received: from localhost (189-47-87-73.dsl.telesp.net.br. [189.47.87.73])
-        by smtp.gmail.com with ESMTPSA id f9sm15143586wrc.71.2020.03.10.08.15.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Mar 2020 08:15:07 -0700 (PDT)
-From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-To:     linux-doc@vger.kernel.org
-Cc:     corbet@lwn.net, linux-kernel@vger.kernel.org, swood@redhat.com,
-        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        mingo@kernel.org, gpiccoli@canonical.com, kernel@gpiccoli.net
-Subject: [PATCH] Documentation: Better document the softlockup_panic sysctl
-Date:   Tue, 10 Mar 2020 12:15:03 -0300
-Message-Id: <20200310151503.11589-1-gpiccoli@canonical.com>
-X-Mailer: git-send-email 2.24.1
+        id S1726863AbgCJPRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 11:17:32 -0400
+Received: from mail-oln040092071019.outbound.protection.outlook.com ([40.92.71.19]:33099
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726283AbgCJPRb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 11:17:31 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DT83+kwv9a1Vq8572rSuao9T3PzrxiAKOr5mG17eFemn8jzHvvboLDjCMli4RU0aAXFZg7Br3WvyJvBBaVXtmDIkDmP+IZvk1YaOD1rHdPBav4+O5xL/M4DW3oBhIVlajkRhu51fD1QwdYW6QbcH3O6tKotm+qsFkUFoWTF2zBI3V7v70DvEISKd4jc6fuG1vmrs5PXhsKyz+xbPOK2MLzHoZl6RW1o1HR0Fid3fqYkLTYS3eFrOzCZq5sGQWUOU+NKV+sOArQe8yFndwTb4+jkJ6gsJIlTzlvzu78GGg6sWMqjbQnq4Yhw5cNKbuMSQyIAq/xfZq1leq4a2TWgEGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7MERsL12ctMhu/N6mOV36IeX7WrSbnsrDvcLG/CgAcM=;
+ b=k0kIsu9sFIO/sZAviAQGqyJU0ilpecEEo0mWQabNnhFjnLRnpArGNlqg7vKXHQan1KtJw9daN/amXRYIVWpvV5VTjrvVRy3v14C+Z6qVXVmj9FuebqOvd0doXWU0/2XYzSmO+RH1wLQ9Bsqb9q2Khi8xrmNnowko10IerUT9akdEP+8oV+urenPcO2QSm6C62wVSjH6SOvuVMsvL15mc3pEHMOJW7nUrVcy1ww6dG+LmyL+f3lA7tihvToEO+oWk6ZDsQ1proSDseWpWSyM3pTgDeW9cmPwcUxB08MV+W0EHVM02+pSAIZSBx3HTGQKCTIydMkwUA39wMY6tU/fq9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hotmail.de; dmarc=pass action=none header.from=hotmail.de;
+ dkim=pass header.d=hotmail.de; arc=none
+Received: from VE1EUR03FT009.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:e400:7e09::36) by
+ VE1EUR03HT218.eop-EUR03.prod.protection.outlook.com (2a01:111:e400:7e09::394)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Tue, 10 Mar
+ 2020 15:17:27 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.18.59) by
+ VE1EUR03FT009.mail.protection.outlook.com (10.152.18.92) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.11 via Frontend Transport; Tue, 10 Mar 2020 15:17:27 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:4ABB00EC27A7E899A622942F93AAC0B5D7405984177B6CBE182C36D6D85FC71D;UpperCasedChecksum:ED1AEF8E26893324273C4B6F6273B37170CD7EA0D4FB7E0E77F27A89EAE9FD5E;SizeAsReceived:10277;Count:50
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2793.013; Tue, 10 Mar 2020
+ 15:17:27 +0000
+Subject: Re: [PATCH 1/4] exec: Fix a deadlock in ptrace
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
+ <AM6PR03MB5170BC58D90BAD80CDEF3F8BE4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <878sk94eay.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517086003BD2C32E199690A3E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y12yc7.fsf@x220.int.ebiederm.org> <87k13t2xpd.fsf@x220.int.ebiederm.org>
+ <87d09l2x5n.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170F0F9DC18F5EA77C9A857E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <871rq12vxu.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170DF45E3245F55B95CCD91E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <877dzt1fnf.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517033EAD25BED15CC84E17DE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87d09kxmxl.fsf@x220.int.ebiederm.org>
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+Message-ID: <AM6PR03MB517090B728A0F6E982C9C920E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Date:   Tue, 10 Mar 2020 16:17:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+In-Reply-To: <87d09kxmxl.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM4PR07CA0020.eurprd07.prod.outlook.com
+ (2603:10a6:205:1::33) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+X-Microsoft-Original-Message-ID: <782f7067-518a-4979-64ae-6027f3e17ce2@hotmail.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.1.101] (92.77.140.102) by AM4PR07CA0020.eurprd07.prod.outlook.com (2603:10a6:205:1::33) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.6 via Frontend Transport; Tue, 10 Mar 2020 15:17:25 +0000
+X-Microsoft-Original-Message-ID: <782f7067-518a-4979-64ae-6027f3e17ce2@hotmail.de>
+X-TMN:  [Z3lgAUqy4nucF3x8Z/b2WnzlOwmiw+VC]
+X-MS-PublicTrafficType: Email
+X-IncomingHeaderCount: 50
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-Correlation-Id: dd300894-40f9-430f-0808-08d7c5062475
+X-MS-TrafficTypeDiagnostic: VE1EUR03HT218:
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: +6qWBWJOP1x9rrV2MrYaCF5/02/aHcK94Y2nQWTSx+x8klWi8SpBN+mLW2CGqp1dRg92LgGFgvFKBECHvTP2ccGnhyfr+NJ/WFIMXS5BMWT21fmg+m01JijgCz9r4/Zt6qN5Gp9XIaBmkY+wSd9zLWIlwSNV2VvzaJCUA0udtl8txGGhQLqI1iTLlIkZVAD4jj81I+bqyUNKCw/9w44gqx/FNebVbi2yCQ9Y/lVFcTw=
+X-MS-Exchange-AntiSpam-MessageData: mHipqRo6hS60olGOUYG9i2a6ZJYV6ymKNPegcyfCBaKKiWHYB1JJyc3RULEkWbU1SavTZn2gcfro8yyaCVZXjIzzdloK9OWnR/4wCITZdNtbbpRFV2PhsW2uf3eEBCHdRSqs8mX9Hq4OLeSkFQa9/g==
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd300894-40f9-430f-0808-08d7c5062475
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2020 15:17:27.3816
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1EUR03HT218
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 9c44bc03fff4 ("softlockup: allow panic on lockup") added the
-softlockup_panic sysctl, but didn't add information about it to the file
-Documentation/admin-guide/sysctl/kernel.rst (which in that time certainly
-wasn't rst and had other name!).
+On 3/10/20 4:13 PM, Eric W. Biederman wrote:
+> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+> 
+>> This fixes a deadlock in the tracer when tracing a multi-threaded
+>> application that calls execve while more than one thread are running.
+>>
+>> I observed that when running strace on the gcc test suite, it always
+>> blocks after a while, when expect calls execve, because other threads
+>> have to be terminated.  They send ptrace events, but the strace is no
+>> longer able to respond, since it is blocked in vm_access.
+>>
+>> The deadlock is always happening when strace needs to access the
+>> tracees process mmap, while another thread in the tracee starts to
+>> execve a child process, but that cannot continue until the
+>> PTRACE_EVENT_EXIT is handled and the WIFEXITED event is received:
+> 
+> Overall this looks good.  Mind if I change the subject to:
+> "exec: Fix a deadlock in strace" ?
+> 
 
-This patch just adds the respective documentation and references it from
-the corresponding entry in Documentation/admin-guide/kernel-parameters.txt.
+Sure, go ahead.
 
-This patch was strongly based on Scott Wood's commit d22881dc13b6
-("Documentation: Better document the hardlockup_panic sysctl").
+Thanks
+Bernd.
 
-Signed-off-by: Guilherme G. Piccoli <gpiccoli@canonical.com>
----
- Documentation/admin-guide/kernel-parameters.txt |  6 +++---
- Documentation/admin-guide/sysctl/kernel.rst     | 13 +++++++++++++
- 2 files changed, 16 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index c07815d230bc..adf77ead02c3 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4515,9 +4515,9 @@
- 
- 			A nonzero value instructs the soft-lockup detector
- 			to panic the machine when a soft-lockup occurs. This
--			is also controlled by CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC
--			which is the respective build-time switch to that
--			functionality.
-+			is also controlled by kernel.softlockup_panic sysctl
-+			and CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC, which is the
-+			respective build-time switch to that functionality.
- 
- 	softlockup_all_cpu_backtrace=
- 			[KNL] Should the soft-lockup detector generate
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index def074807cee..95b2f3256323 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -95,6 +95,7 @@ show up in /proc/sys/kernel:
- - shmmax                      [ sysv ipc ]
- - shmmni
- - softlockup_all_cpu_backtrace
-+- softlockup_panic
- - soft_watchdog
- - stack_erasing
- - stop-a                      [ SPARC only ]
-@@ -1029,6 +1030,18 @@ NMI.
- 1: on detection capture more debug information.
- 
- 
-+softlockup_panic:
-+=================
-+
-+This parameter can be used to control whether the kernel panics when
-+a soft lockup is detected.
-+
-+0: don't panic on soft lockup
-+1: panic on soft lockup
-+
-+This can also be set using the softlockup_panic kernel parameter.
-+
-+
- soft_watchdog:
- ==============
- 
--- 
-2.24.1
-
+> Eric
+> 
+> 
+>>
+>> strace          D    0 30614  30584 0x00000000
+>> Call Trace:
+>> __schedule+0x3ce/0x6e0
+>> schedule+0x5c/0xd0
+>> schedule_preempt_disabled+0x15/0x20
+>> __mutex_lock.isra.13+0x1ec/0x520
+>> __mutex_lock_killable_slowpath+0x13/0x20
+>> mutex_lock_killable+0x28/0x30
+>> mm_access+0x27/0xa0
+>> process_vm_rw_core.isra.3+0xff/0x550
+>> process_vm_rw+0xdd/0xf0
+>> __x64_sys_process_vm_readv+0x31/0x40
+>> do_syscall_64+0x64/0x220
+>> entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>
+>> expect          D    0 31933  30876 0x80004003
+>> Call Trace:
+>> __schedule+0x3ce/0x6e0
+>> schedule+0x5c/0xd0
+>> flush_old_exec+0xc4/0x770
+>> load_elf_binary+0x35a/0x16c0
+>> search_binary_handler+0x97/0x1d0
+>> __do_execve_file.isra.40+0x5d4/0x8a0
+>> __x64_sys_execve+0x49/0x60
+>> do_syscall_64+0x64/0x220
+>> entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>
+>> This changes mm_access to use the new exec_update_mutex
+>> instead of cred_guard_mutex.
+>>
+>> This patch is based on the following patch by Eric W. Biederman:
+>> "[PATCH 0/5] Infrastructure to allow fixing exec deadlocks"
+>> Link: https://lore.kernel.org/lkml/87v9ne5y4y.fsf_-_@x220.int.ebiederm.org/
+>>
+>> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+>> ---
+>>  kernel/fork.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/fork.c b/kernel/fork.c
+>> index c12595a..5720ff3 100644
+>> --- a/kernel/fork.c
+>> +++ b/kernel/fork.c
+>> @@ -1224,7 +1224,7 @@ struct mm_struct *mm_access(struct task_struct *task, unsigned int mode)
+>>  	struct mm_struct *mm;
+>>  	int err;
+>>  
+>> -	err =  mutex_lock_killable(&task->signal->cred_guard_mutex);
+>> +	err =  mutex_lock_killable(&task->signal->exec_update_mutex);
+>>  	if (err)
+>>  		return ERR_PTR(err);
+>>  
+>> @@ -1234,7 +1234,7 @@ struct mm_struct *mm_access(struct task_struct *task, unsigned int mode)
+>>  		mmput(mm);
+>>  		mm = ERR_PTR(-EACCES);
+>>  	}
+>> -	mutex_unlock(&task->signal->cred_guard_mutex);
+>> +	mutex_unlock(&task->signal->exec_update_mutex);
+>>  
+>>  	return mm;
+>>  }
