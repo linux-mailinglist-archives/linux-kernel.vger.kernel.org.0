@@ -2,164 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D39AE180781
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:54:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EA60180770
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:52:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbgCJSyn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 14:54:43 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:56464 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727210AbgCJSyl (ORCPT
+        id S1726604AbgCJSwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 14:52:53 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41403 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbgCJSwx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 14:54:41 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBk1K-0000Vk-UM; Tue, 10 Mar 2020 12:54:26 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBk1J-000215-JY; Tue, 10 Mar 2020 12:54:26 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sargun Dhillon <sargun@sargun.me>
-References: <87r1y8dqqz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
-        <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
-        <87eeu25y14.fsf_-_@x220.int.ebiederm.org>
-        <20200309195909.h2lv5uawce5wgryx@wittgenstein>
-        <877dztz415.fsf@x220.int.ebiederm.org>
-        <20200309201729.yk5sd26v4bz4gtou@wittgenstein>
-        <87k13txnig.fsf@x220.int.ebiederm.org>
-        <20200310085540.pztaty2mj62xt2nm@wittgenstein>
-Date:   Tue, 10 Mar 2020 13:52:05 -0500
-In-Reply-To: <20200310085540.pztaty2mj62xt2nm@wittgenstein> (Christian
-        Brauner's message of "Tue, 10 Mar 2020 09:55:40 +0100")
-Message-ID: <87wo7svy96.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 10 Mar 2020 14:52:53 -0400
+Received: by mail-qt1-f195.google.com with SMTP id l21so10454115qtr.8;
+        Tue, 10 Mar 2020 11:52:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=EtahSso5JAHVpOJNzgS4dPTgoehtv6wYSvMnh2h8YfY=;
+        b=ijTf999nN+QQTwsdAsJKj0ZKfM40Xgzqktsmkh646xPgPKSjzD95mHL75yX5ta4TMb
+         hLpkGoZDf1hPh1c/XMxCVH6GFcwv/HPpxxr+3hnzuGOGU1wHI8gUsg3MWLJ7y1O9rJp2
+         X+poSY2B1oCvJVuFHI5B8uoCPc68NG3fQuFpA9R5Zl1NvAtqH/S+FCcSaDkEmvl6gpF/
+         tb3QU7Zi/yMTua0y6Tc29L5zw1BrHjX9erpJ+DRTBlAWy5TmKgJbX7yyMqk23BqbKr89
+         3vrN1ia4B2F5daAsapQbN05SA7IG06x0GnCURmjIFQ3O2YCbQqukGL5PSWqoT7uE1kyE
+         sx+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=EtahSso5JAHVpOJNzgS4dPTgoehtv6wYSvMnh2h8YfY=;
+        b=naRaN0tbArJb3zvVnQ4yhF3JXSUDyrZ7J/j/nv+9uGLYFpyBOrIuc5eCO+fZeJyCkq
+         EwyMDoAQi1tP/o5XqshSC0DU0mHDMI/Dwy15M+CrFpA/veDmQeOZYPsthofUjCCnoEts
+         pCZOMb3zCXE6EvrX7Aky4Z2nFO9PL3A6yQELj0HRzvImB9vnoFc0yGZc+FfhiFOodOiE
+         b7ywTnQ1WoP98XKGatsILVbr7rvX6Yx9kyU/7jbJg3/1Qohl17PAtMcXe7O/9Fqqsb/e
+         YzMEpECLqE2KUMsTLtDzTzde2oWfR0h3umrt6IlwArsnFVoysO+n4wwfqOc58AVy41TI
+         EWvg==
+X-Gm-Message-State: ANhLgQ1Z2YxcSq9OdV2XEN3SJXp2JUHbSVmMOTzlGWzSzxARx3NVbAtq
+        y9PwhwIJWTshEjmZtijdq/o=
+X-Google-Smtp-Source: ADFU+vuSS9B/uX+Jw77s+9kaUnsZBXNaJp/kp03xcFvsnp7YAQjZI2Tzw9vF7ofSvmHN1nTYARC/zg==
+X-Received: by 2002:ac8:348f:: with SMTP id w15mr7314055qtb.219.1583866371680;
+        Tue, 10 Mar 2020 11:52:51 -0700 (PDT)
+Received: from quaco.ghostprotocols.net (179-240-149-111.3g.claro.net.br. [179.240.149.111])
+        by smtp.gmail.com with ESMTPSA id p18sm24243304qkp.47.2020.03.10.11.52.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 11:52:51 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 326CE40009; Tue, 10 Mar 2020 15:52:48 -0300 (-03)
+Date:   Tue, 10 Mar 2020 15:52:48 -0300
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] kbuild: Remove debug info from kallsyms linking
+Message-ID: <20200310185248.GM15931@kernel.org>
+References: <202002242114.CBED7F1@keescook>
+ <CAEf4BzYrBoQJ1tPMRMQ_-G6e76=zj4zyC=HrY-mxH_9QK65oqg@mail.gmail.com>
+ <202003031301.083CF048C2@keescook>
+ <CAEf4BzbX-Eo3+DCG4zBMhJtLSZrtp48Z-8SvA8qy-WXA5kjR6A@mail.gmail.com>
+ <202003031758.AE8FEB7@keescook>
+ <CAEf4Bza31J_3Puwf7gnq0jDYRH2_JkRM9L+PO8dFrCzp+==8Lg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jBk1J-000215-JY;;;mid=<87wo7svy96.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/UQDQ9+ZCJN9SiRdg7xtb+liwj6nFG3vc=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Christian Brauner <christian.brauner@ubuntu.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 648 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 2.6 (0.4%), b_tie_ro: 1.83 (0.3%), parse: 0.94
-        (0.1%), extract_message_metadata: 20 (3.0%), get_uri_detail_list: 1.56
-        (0.2%), tests_pri_-1000: 27 (4.1%), tests_pri_-950: 1.26 (0.2%),
-        tests_pri_-900: 1.12 (0.2%), tests_pri_-90: 31 (4.8%), check_bayes: 30
-        (4.6%), b_tokenize: 12 (1.8%), b_tok_get_all: 9 (1.3%), b_comp_prob:
-        2.6 (0.4%), b_tok_touch_all: 4.0 (0.6%), b_finish: 0.66 (0.1%),
-        tests_pri_0: 553 (85.4%), check_dkim_signature: 0.52 (0.1%),
-        check_dkim_adsp: 3.2 (0.5%), poll_dns_idle: 0.32 (0.0%), tests_pri_10:
-        2.2 (0.3%), tests_pri_500: 6 (1.0%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH] pidfd: Stop taking cred_guard_mutex
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4Bza31J_3Puwf7gnq0jDYRH2_JkRM9L+PO8dFrCzp+==8Lg@mail.gmail.com>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Em Tue, Mar 03, 2020 at 08:29:39PM -0800, Andrii Nakryiko escreveu:
+> On Tue, Mar 3, 2020 at 6:11 PM Kees Cook <keescook@chromium.org> wrote:
+> > On Tue, Mar 03, 2020 at 01:50:52PM -0800, Andrii Nakryiko wrote:
+> > > On Tue, Mar 3, 2020 at 1:06 PM Kees Cook <keescook@chromium.org> wrote:
+> > > > On Mon, Mar 02, 2020 at 10:55:04PM -0800, Andrii Nakryiko wrote:
+> > > > > On Mon, Feb 24, 2020 at 9:17 PM Kees Cook <keescook@chromium.org> wrote:
+> > > > > >         LLVM_OBJCOPY=${OBJCOPY} ${PAHOLE} -J ${1}
+> > > > > >
+> > > > > >         # dump .BTF section into raw binary file to link with final vmlinux
 
-During exec some file descriptors are closed and the files struct is
-unshared.  But all of that can happen at other times and it has the
-same protections during exec as at ordinary times.  So stop taking the
-cred_guard_mutex as it is useless.
+> > > > BTW, in looking at BTF generation, why is this cut up into three steps:
+> > > > pahole, objcopy, objcopy... shouldn't pahole just gross an output method
+> > > > to dump the final .o file? That would be MUCH nicer. Especially since
+> > > > the first step ends up rewriting (?!) the original ELF. This is a lot of
+> > > > needless IO...
 
-Furthermore he cred_guard_mutex is a bad idea because it is deadlock
-prone, as it is held in serveral while waiting possibly indefinitely
-for userspace to do something.
+> > > Just mostly historical reasons, that was the interface pahole already
+> > > supported. I agree that it's a good idea to teach pahole to just emit
+> > > a binary BTF section dump.
 
-Cc: Sargun Dhillon <sargun@sargun.me>
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Fixes: 8649c322f75c ("pid: Implement pidfd_getfd syscall")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- kernel/pid.c | 6 ------
- 1 file changed, 6 deletions(-)
+> > /me adds it to giant TODO list ;)
 
-Christian if you don't have any objections I will take this one through
-my tree.
+Mine is giant as well, but adding it anyway...
 
-I tried to figure out why this code path takes the cred_guard_mutex and
-the archive on lore.kernel.org was not helpful in finding that part of
-the conversation.
+:-)
 
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 60820e72634c..53646d5616d2 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -577,17 +577,11 @@ static struct file *__pidfd_fget(struct task_struct *task, int fd)
- 	struct file *file;
- 	int ret;
- 
--	ret = mutex_lock_killable(&task->signal->cred_guard_mutex);
--	if (ret)
--		return ERR_PTR(ret);
--
- 	if (ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS))
- 		file = fget_task(task, fd);
- 	else
- 		file = ERR_PTR(-EPERM);
- 
--	mutex_unlock(&task->signal->cred_guard_mutex);
--
- 	return file ?: ERR_PTR(-EBADF);
- }
- 
--- 
-2.20.1
-
+- Arnaldo
