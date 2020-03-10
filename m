@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 835A917FE4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:34:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2124017FE93
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:36:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728854AbgCJNeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:34:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50366 "EHLO mail.kernel.org"
+        id S1727535AbgCJMnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:43:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727770AbgCJMqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:46:48 -0400
+        id S1727063AbgCJMnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:43:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5E5E20674;
-        Tue, 10 Mar 2020 12:46:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 005B424691;
+        Tue, 10 Mar 2020 12:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844408;
-        bh=xl9wnhembeDGjI5M84bf2op9bwgLmvBsjfk6ygNAZLc=;
+        s=default; t=1583844191;
+        bh=OMmxkevDUNxaHHi6hTgeEqTy7B/zjT98vwhasWl1utg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Noc3yvZryMFfY7BlwPlH8B1Sjel82msnfrGwnD35gps/VFB33HL2gCQBWjSQkADwj
-         J7a4UYE360YSj+5nBYe1xo5oEYC0igyZsYeTV37po2Bj6E6bqQ9ZKsi7J/DBbibNiL
-         iP2+JKWn1WeCiMXkvTVYmQe6ZkvWgvMH2Q6WkU0w=
+        b=0w3e82rfEnuwP+c1Is1jEa/tTgynjyofzrglH+DthztRhV2rOcw/jfkXMgAUQMB5Q
+         ZpysTWRCcBYwF1hdNYjE0/mWLkyhkx/XfkAEIlweCJgWyETkDyryFhRfSa3oR88XTA
+         iQo0/k2f2JFV6U1hCvxPk7ufvyLgxp4FfwcxgKy0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+9d82b8de2992579da5d0@syzkaller.appspotmail.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 69/88] fat: fix uninit-memory access for partial initialized inode
-Date:   Tue, 10 Mar 2020 13:39:17 +0100
-Message-Id: <20200310123623.092076720@linuxfoundation.org>
+        syzbot+cb0c054eabfba4342146@syzkaller.appspotmail.com,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.4 65/72] RDMA/iwcm: Fix iwcm work deallocation
+Date:   Tue, 10 Mar 2020 13:39:18 +0100
+Message-Id: <20200310123617.779350871@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <20200310123601.053680753@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,74 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+From: Bernard Metzler <bmt@zurich.ibm.com>
 
-commit bc87302a093f0eab45cd4e250c2021299f712ec6 upstream.
+commit 810dbc69087b08fd53e1cdd6c709f385bc2921ad upstream.
 
-When get an error in the middle of reading an inode, some fields in the
-inode might be still not initialized.  And then the evict_inode path may
-access those fields via iput().
+The dealloc_work_entries() function must update the work_free_list pointer
+while freeing its entries, since potentially called again on same list. A
+second iteration of the work list caused system crash. This happens, if
+work allocation fails during cma_iw_listen() and free_cm_id() tries to
+free the list again during cleanup.
 
-To fix, this makes sure that inode fields are initialized.
-
-Reported-by: syzbot+9d82b8de2992579da5d0@syzkaller.appspotmail.com
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/871rqnreqx.fsf@mail.parknet.co.jp
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 922a8e9fb2e0 ("RDMA: iWARP Connection Manager.")
+Link: https://lore.kernel.org/r/20200302181614.17042-1-bmt@zurich.ibm.com
+Reported-by: syzbot+cb0c054eabfba4342146@syzkaller.appspotmail.com
+Signed-off-by: Bernard Metzler <bmt@zurich.ibm.com>
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fat/inode.c |   19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+ drivers/infiniband/core/iwcm.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/fat/inode.c
-+++ b/fs/fat/inode.c
-@@ -736,6 +736,13 @@ static struct inode *fat_alloc_inode(str
- 		return NULL;
- 
- 	init_rwsem(&ei->truncate_lock);
-+	/* Zeroing to allow iput() even if partial initialized inode. */
-+	ei->mmu_private = 0;
-+	ei->i_start = 0;
-+	ei->i_logstart = 0;
-+	ei->i_attrs = 0;
-+	ei->i_pos = 0;
-+
- 	return &ei->vfs_inode;
- }
- 
-@@ -1366,16 +1373,6 @@ out:
- 	return 0;
- }
- 
--static void fat_dummy_inode_init(struct inode *inode)
--{
--	/* Initialize this dummy inode to work as no-op. */
--	MSDOS_I(inode)->mmu_private = 0;
--	MSDOS_I(inode)->i_start = 0;
--	MSDOS_I(inode)->i_logstart = 0;
--	MSDOS_I(inode)->i_attrs = 0;
--	MSDOS_I(inode)->i_pos = 0;
--}
--
- static int fat_read_root(struct inode *inode)
+--- a/drivers/infiniband/core/iwcm.c
++++ b/drivers/infiniband/core/iwcm.c
+@@ -125,8 +125,10 @@ static void dealloc_work_entries(struct
  {
- 	struct msdos_sb_info *sbi = MSDOS_SB(inode->i_sb);
-@@ -1820,13 +1817,11 @@ int fat_fill_super(struct super_block *s
- 	fat_inode = new_inode(sb);
- 	if (!fat_inode)
- 		goto out_fail;
--	fat_dummy_inode_init(fat_inode);
- 	sbi->fat_inode = fat_inode;
+ 	struct list_head *e, *tmp;
  
- 	fsinfo_inode = new_inode(sb);
- 	if (!fsinfo_inode)
- 		goto out_fail;
--	fat_dummy_inode_init(fsinfo_inode);
- 	fsinfo_inode->i_ino = MSDOS_FSINFO_INO;
- 	sbi->fsinfo_inode = fsinfo_inode;
- 	insert_inode_hash(fsinfo_inode);
+-	list_for_each_safe(e, tmp, &cm_id_priv->work_free_list)
++	list_for_each_safe(e, tmp, &cm_id_priv->work_free_list) {
++		list_del(e);
+ 		kfree(list_entry(e, struct iwcm_work, free_list));
++	}
+ }
+ 
+ static int alloc_work_entries(struct iwcm_id_private *cm_id_priv, int count)
 
 
