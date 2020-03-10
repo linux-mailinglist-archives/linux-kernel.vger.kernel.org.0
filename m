@@ -2,45 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FA2317F858
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB35517F8D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:51:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbgCJMrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:47:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50750 "EHLO mail.kernel.org"
+        id S1728897AbgCJMvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:51:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727938AbgCJMrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:47:07 -0400
+        id S1728891AbgCJMvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:51:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D90A20674;
-        Tue, 10 Mar 2020 12:47:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C64112468E;
+        Tue, 10 Mar 2020 12:51:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844426;
-        bh=iYoThNzsN9sLo4BBTBPvBQeaRYlI3YW5q55/Nq573as=;
+        s=default; t=1583844682;
+        bh=FXX8B0x0n9nfbA091PCc2o//Nqx3Gj8KH1PPBSL/LpY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=skvQ1tfApCtlhdhzdVzZf9G4Xi9zZuwDZ44DiUlxkf87Q034MDTY7kLm6TILt+/z2
-         602CN6JqoQ1RDnejQQlj4aaH3a43T8rD29lBeJ/f48vlqXguNwl66V/kr+gmXByUYG
-         A7VwPmKPF9iNBFu/5zXC+37HxFEnWXCw3uCQxheY=
+        b=dPkqC9abs+TCWzytEpA8xSvrfOE6h5JRf8OR5o/iZBEplLRGH1VsBifiwyyxj4EAb
+         j//EFXBN7Ex1F6WENLyLQyN61Zf16cdoZWtkjqhMe450xP11zk0yOLSadOvs+rM/Gy
+         0oUhrL3+YvjKoNILqyeSbnF1GF+WCrUBfNvWEmpY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Andy Gospodarek <gospo@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 39/88] include/linux/bitops.h: introduce BITS_PER_TYPE
+        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 5.4 081/168] arm: dts: dra76x: Fix mmc3 max-frequency
 Date:   Tue, 10 Mar 2020 13:38:47 +0100
-Message-Id: <20200310123615.448719347@linuxfoundation.org>
+Message-Id: <20200310123643.490848614@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,42 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Faiz Abbas <faiz_abbas@ti.com>
 
-commit 9144d75e22cad3c89e6b2ccab551db9ee28d250a upstream.
+commit fa63c0039787b8fbacf4d6a51e3ff44288f5b90b upstream.
 
-net_dim.h has a rather useful extension to BITS_PER_BYTE to compute the
-number of bits in a type (BITS_PER_BYTE * sizeof(T)), so promote the macro
-to bitops.h, alongside BITS_PER_BYTE, for wider usage.
+dra76x is not affected by i887 which requires mmc3 node to be limited to
+a max frequency of 64 MHz. Fix this by overwriting the correct value in
+the the dra76 specific dtsi.
 
-Link: http://lkml.kernel.org/r/20180706094458.14116-1-chris@chris-wilson.co.uk
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Andy Gospodarek <gospo@broadcom.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[only take the bitops.h portion for stable kernels - gregkh]
+Fixes: 895bd4b3e5ec ("ARM: dts: Add support for dra76-evm")
+Cc: stable@vger.kernel.org
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/bitops.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/dra76x.dtsi |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/include/linux/bitops.h
-+++ b/include/linux/bitops.h
-@@ -3,7 +3,8 @@
- #include <asm/types.h>
- #include <linux/bits.h>
- 
--#define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
-+#define BITS_PER_TYPE(type) (sizeof(type) * BITS_PER_BYTE)
-+#define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
- 
- extern unsigned int __sw_hweight8(unsigned int w);
- extern unsigned int __sw_hweight16(unsigned int w);
+--- a/arch/arm/boot/dts/dra76x.dtsi
++++ b/arch/arm/boot/dts/dra76x.dtsi
+@@ -86,3 +86,8 @@
+ &usb4_tm {
+ 	status = "disabled";
+ };
++
++&mmc3 {
++	/* dra76x is not affected by i887 */
++	max-frequency = <96000000>;
++};
 
 
