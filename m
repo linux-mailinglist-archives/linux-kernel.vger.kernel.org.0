@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08B7B17FDBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:29:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BED517FDB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:29:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728889AbgCJMvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:51:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56418 "EHLO mail.kernel.org"
+        id S1728911AbgCJMv2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:51:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728876AbgCJMvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:51:19 -0400
+        id S1728900AbgCJMvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:51:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE13C2468E;
-        Tue, 10 Mar 2020 12:51:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F0C724686;
+        Tue, 10 Mar 2020 12:51:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844679;
-        bh=ZYVkyMqGgYhlO0BtJ+tooypGJCOKVDmmHomUeIHmEeM=;
+        s=default; t=1583844684;
+        bh=sY5bfK+8ITb+dpGrs5Z9/t0hnwNG9E2OWdcwrAl2K48=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=shFgYCOdhGau/PygsCNjPOM6II+peN8OUG4FNKQnWPvejVs8RtcGcfrxi34qr84B8
-         Bs9OFKW27Mqs2iR7kaAxzcumJDnPVv0NIJH2koAbi+D2choB6hdwqE3m5e49diJW4T
-         OLiS8Lc2tr1j7NKxscBPYCHLdoS3o7HV05CV2xf0=
+        b=2VViqOXme7r1PCpRE9ahNVpLD1Bqs3OTGB1HQA27MMk606mmSYcTByrNwDpma6n8p
+         XrsH7t4pcPUCrzXx5/JPB7JfN63rmJ/pwkfNptULaG9UJ10PdJVMUhgclhZTLtPHWI
+         dIOghBIIP2HQIKAE2CIm+s2gJDCAI1EqCNNNmG0c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ley Foon Tan <ley.foon.tan@intel.com>,
-        Dinh Nguyen <dinguyen@kernel.org>
-Subject: [PATCH 5.4 080/168] arm64: dts: socfpga: agilex: Fix gmac compatible
-Date:   Tue, 10 Mar 2020 13:38:46 +0100
-Message-Id: <20200310123643.391916006@linuxfoundation.org>
+        stable@vger.kernel.org, tangbin <tangbin@cmss.chinamobile.com>,
+        Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 5.4 082/168] tty:serial:mvebu-uart:fix a wrong return
+Date:   Tue, 10 Mar 2020 13:38:48 +0100
+Message-Id: <20200310123643.585056004@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
 References: <20200310123635.322799692@linuxfoundation.org>
@@ -43,51 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ley Foon Tan <ley.foon.tan@intel.com>
+From: tangbin <tangbin@cmss.chinamobile.com>
 
-commit 8c867387160e89c9ffd12459f38e56844312a7a7 upstream.
+commit 4a3e208474204e879d22a310b244cb2f39e5b1f8 upstream.
 
-Fix gmac compatible string to "altr,socfpga-stmmac-a10-s10". Gmac for
-Agilex should use same compatible as Stratix 10.
+in this place, the function should return a
+negative value and the PTR_ERR already returns
+a negative,so return -PTR_ERR() is wrong.
 
-Fixes: 4b36daf9ada3 ("arm64: dts: agilex: Add initial support for Intel's Agilex SoCFPGA")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ley Foon Tan <ley.foon.tan@intel.com>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Signed-off-by: tangbin <tangbin@cmss.chinamobile.com>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Jiri Slaby <jslaby@suse.cz>
+Link: https://lore.kernel.org/r/20200305013823.20976-1-tangbin@cmss.chinamobile.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/boot/dts/intel/socfpga_agilex.dtsi |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/tty/serial/mvebu-uart.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-@@ -82,7 +82,7 @@
- 		ranges = <0 0 0 0xffffffff>;
+--- a/drivers/tty/serial/mvebu-uart.c
++++ b/drivers/tty/serial/mvebu-uart.c
+@@ -851,7 +851,7 @@ static int mvebu_uart_probe(struct platf
  
- 		gmac0: ethernet@ff800000 {
--			compatible = "altr,socfpga-stmmac", "snps,dwmac-3.74a", "snps,dwmac";
-+			compatible = "altr,socfpga-stmmac-a10-s10", "snps,dwmac-3.74a", "snps,dwmac";
- 			reg = <0xff800000 0x2000>;
- 			interrupts = <0 90 4>;
- 			interrupt-names = "macirq";
-@@ -97,7 +97,7 @@
- 		};
+ 	port->membase = devm_ioremap_resource(&pdev->dev, reg);
+ 	if (IS_ERR(port->membase))
+-		return -PTR_ERR(port->membase);
++		return PTR_ERR(port->membase);
  
- 		gmac1: ethernet@ff802000 {
--			compatible = "altr,socfpga-stmmac", "snps,dwmac-3.74a", "snps,dwmac";
-+			compatible = "altr,socfpga-stmmac-a10-s10", "snps,dwmac-3.74a", "snps,dwmac";
- 			reg = <0xff802000 0x2000>;
- 			interrupts = <0 91 4>;
- 			interrupt-names = "macirq";
-@@ -112,7 +112,7 @@
- 		};
- 
- 		gmac2: ethernet@ff804000 {
--			compatible = "altr,socfpga-stmmac", "snps,dwmac-3.74a", "snps,dwmac";
-+			compatible = "altr,socfpga-stmmac-a10-s10", "snps,dwmac-3.74a", "snps,dwmac";
- 			reg = <0xff804000 0x2000>;
- 			interrupts = <0 92 4>;
- 			interrupt-names = "macirq";
+ 	mvuart = devm_kzalloc(&pdev->dev, sizeof(struct mvebu_uart),
+ 			      GFP_KERNEL);
 
 
