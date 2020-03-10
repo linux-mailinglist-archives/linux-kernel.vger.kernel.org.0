@@ -2,91 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 809C41803AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:38:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34585180360
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 17:31:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbgCJQij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 12:38:39 -0400
-Received: from mga06.intel.com ([134.134.136.31]:1135 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726420AbgCJQij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 12:38:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 09:38:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
-   d="scan'208";a="321858019"
-Received: from djdickof-mobl.amr.corp.intel.com (HELO [10.252.192.103]) ([10.252.192.103])
-  by orsmga001.jf.intel.com with ESMTP; 10 Mar 2020 09:38:37 -0700
-Subject: Re: [RFC PATCH] soundwire: bus: Add flag to mark DPN_BlockCtrl1 as
- readonly
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        vkoul@kernel.org
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20200309173755.955-1-srinivas.kandagatla@linaro.org>
- <d94fca16-ed61-632a-6f8c-84e3a97869c7@linux.intel.com>
- <92d3ae1b-bace-1d20-ef99-82f7e1a0a644@linaro.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <a2b24f84-0f9a-29ab-8748-dc5a26c05ffa@linux.intel.com>
-Date:   Tue, 10 Mar 2020 10:53:31 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727456AbgCJQbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 12:31:10 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:35842 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727265AbgCJQbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 12:31:08 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 16DE65EE380EC62AB3CC;
+        Wed, 11 Mar 2020 00:30:34 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.487.0; Wed, 11 Mar 2020 00:30:23 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <axboe@kernel.dk>, <jejb@linux.ibm.com>,
+        <martin.petersen@oracle.com>, <hare@suse.de>,
+        <ming.lei@redhat.com>, <bvanassche@acm.org>, <hch@infradead.org>
+CC:     <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>,
+        <virtualization@lists.linux-foundation.org>,
+        <esc.storagedev@microsemi.com>, <chenxiang66@hisilicon.com>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH RFC v2 00/24] scsi: enable reserved commands for LLDDs 
+Date:   Wed, 11 Mar 2020 00:25:26 +0800
+Message-ID: <1583857550-12049-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-In-Reply-To: <92d3ae1b-bace-1d20-ef99-82f7e1a0a644@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Srinivas,
+This is v2 of original series from Hannes, which I'm hijacking for the
+moment:
+https://patchwork.kernel.org/cover/10967071/
 
->>  > My recommendation would be to add a DisCo property stating the
->> WordLength value can be used by the bus code but not written to the 
->> Slave device registers.
-> 
-> Does something like "mipi-sdw-read-only-wordlength" as slave property, 
-> make sense?
+And the background:
 
-The properties can be handled at two levels.
+Quite some drivers use internal commands for various purposes, most
+commonly sending TMFs or querying the HBA status.
+While these commands use the same submission mechanism than normal
+I/O commands, they will not be counted as outstanding commands,
+requiring those drivers to implement their own mechanism to figure
+out outstanding commands.
+This patchset enables the use of reserved tags for the SCSI midlayer,
+enabling LLDDs to rely on the block layer for tracking outstanding
+commands.
+More importantly, it allows LLDD to request a valid tag from the block
+layer without having to implement some tracking mechanism within the
+driver. This removes quite some hacks which were required for some
+drivers (eg. fnic or snic).
 
-First, you'd want to change include/linux/soundwire/sdw.h, and add a new 
-field in
+Finally:
 
-struct sdw_dpn_prop {
-	u32 num;
-	u32 max_word;
-	u32 min_word;
-	u32 num_words;
-	u32 *words;
-+       bool read_only_wordlength;
+As I see, there is no dependency on this series to go into the kernel now.
+And we need it for [0].
 
-Once this is added, along with the code that bypasses the programming of 
-DPn_BlockCtrl1, the implementation has two choices:
+Note: [0] also depends on [1]
 
-a) hard-code the field value in the codec driver.
+[0] https://lore.kernel.org/linux-block/1583409280-158604-1-git-send-email-john.garry@huawei.com/T/#t
+[1] https://lore.kernel.org/linux-block/20191014015043.25029-1-ming.lei@redhat.com/
 
-b) read the property from firmware with the DisCo helpers.
+Differences to v1:
+- Make scsi_{get, put}_reserved_cmd() for Scsi host
+	- Previously we separate scsi_{get, put}_reserved_cmd() for sdev
+	  and scsi_host_get_reserved_cmd() for the host
+- Fix how Scsi_Host.can_queue is set in the virtio-scsi change
+- Drop Scsi_Host.use_reserved_cmd_q
+- Drop scsi_is_reserved_cmd()
+	- It was unused
+	- But keep blk_mq_rq_is_reserved()
+- Add support in libsas and associated HBA drivers
+	- Allocate reserved command in slow task
+	- Switch hisi_sas to use reserved Scsi command
+- Reorder the series a little
+- Some tidying
 
-There is no requirement that all properties be read from firmware, and 
-if you look at existing code base sdw_slave_read_prop() is currently 
-unused, each codec implements its own .read_prop() callback.
+Hannes Reinecke (22):
+  scsi: add 'nr_reserved_cmds' field to the SCSI host template
+  scsi: allocate separate queue for reserved commands
+  blk-mq: Implement blk_mq_rq_is_reserved()
+  scsi: Add scsi_{get, put}_reserved_cmd()
+  csiostor: use reserved command for LUN reset
+  scsi: add scsi_cmd_from_priv()
+  virtio_scsi: use reserved commands for TMF
+  scsi: add host tagset busy iterator
+  fnic: use reserved commands
+  fnic: use scsi_host_tagset_busy_iter() to traverse commands
+  hpsa: move hpsa_hba_inquiry after scsi_add_host()
+  hpsa: use reserved commands
+  hpsa: use blk_mq_tagset_busy_iter() to traverse outstanding commands
+  hpsa: drop refcount field from CommandList
+  snic: use reserved commands
+  snic: use tagset iter for traversing commands
+  aacraid: move scsi_add_host()
+  aacraid: use private commands
+  aacraid: replace cmd_list with scsi_host_tagset_busy_iter()
+  aacraid: use scsi_host_tagset_busy_iter() to traverse outstanding
+    commands
+  dpt_i2o: drop cmd_list usage
+  scsi: drop scsi command list
 
-We really wanted to be pragmatic, and give the possibility to either 
-override bad firmware or extend incomplete firmware to avoid coupling OS 
-and firmware too much. If you foresee cases where this implementation 
-might vary and firmware distribution is not a problem, then a property 
-read would make sense.
+John Garry (2):
+  scsi: libsas: aic94xx: hisi_sas: mvsas: pm8001: Allocate Scsi_cmd for
+    slow task
+  scsi: hisi_sas: Use libsas slow task SCSI command
 
-Just once procedural reminder that all 'mipi-sdw' properties are handled 
-by the MIPI software WG, so we'd need to have this property added in a 
-formal MIPI document update.
+ block/blk-mq.c                         |  13 +
+ drivers/scsi/aacraid/aachba.c          | 125 ++--
+ drivers/scsi/aacraid/aacraid.h         |   6 +-
+ drivers/scsi/aacraid/comminit.c        |  28 +-
+ drivers/scsi/aacraid/commsup.c         | 134 ++--
+ drivers/scsi/aacraid/linit.c           | 300 ++++----
+ drivers/scsi/csiostor/csio_init.c      |   3 +-
+ drivers/scsi/csiostor/csio_scsi.c      |  49 +-
+ drivers/scsi/dpt_i2o.c                 |  23 +-
+ drivers/scsi/fnic/fnic_scsi.c          | 917 +++++++++++--------------
+ drivers/scsi/hisi_sas/hisi_sas_main.c  |  13 +-
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c |   5 +-
+ drivers/scsi/hosts.c                   |  27 +
+ drivers/scsi/hpsa.c                    | 313 ++++-----
+ drivers/scsi/hpsa.h                    |   1 -
+ drivers/scsi/hpsa_cmd.h                |   1 -
+ drivers/scsi/libsas/sas_expander.c     |   3 +-
+ drivers/scsi/libsas/sas_init.c         |  36 +-
+ drivers/scsi/mvsas/mv_sas.c            |   2 +-
+ drivers/scsi/pm8001/pm8001_hwi.c       |   4 +-
+ drivers/scsi/pm8001/pm8001_sas.c       |   4 +-
+ drivers/scsi/pm8001/pm80xx_hwi.c       |   4 +-
+ drivers/scsi/scsi.c                    |   1 -
+ drivers/scsi/scsi_lib.c                |  80 ++-
+ drivers/scsi/scsi_scan.c               |   1 -
+ drivers/scsi/snic/snic.h               |   2 +-
+ drivers/scsi/snic/snic_main.c          |   2 +
+ drivers/scsi/snic/snic_scsi.c          | 502 +++++++-------
+ drivers/scsi/virtio_scsi.c             | 107 ++-
+ include/linux/blk-mq.h                 |   2 +
+ include/scsi/libsas.h                  |   4 +-
+ include/scsi/scsi_cmnd.h               |  14 +-
+ include/scsi/scsi_device.h             |   1 -
+ include/scsi/scsi_host.h               |  14 +-
+ 34 files changed, 1346 insertions(+), 1395 deletions(-)
 
-I suggest you talk with Lior first on this.
+-- 
+2.17.1
 
-Hope this helps
--Pierre
