@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D7C917F9C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:59:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14FC317F859
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730048AbgCJM7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:59:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40174 "EHLO mail.kernel.org"
+        id S1728137AbgCJMrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:47:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727001AbgCJM7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:59:39 -0400
+        id S1728112AbgCJMrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:47:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8590520674;
-        Tue, 10 Mar 2020 12:59:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D732624696;
+        Tue, 10 Mar 2020 12:47:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845179;
-        bh=JU/E6Hyc3lT/mzdd3OXkf1eaDqIKOPhrJqDCJo67chE=;
+        s=default; t=1583844429;
+        bh=lH07DyGfCpn7Umrw/EPCa6h0VuEhaCMiaDb8h6et0cI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bss3sntZ3MR+AEM0Jd9VMSkyTuR6avggC0iMUR2wJeLqZ26KXpSZb+FJQdkvwgTFL
-         HIxfVupD4cfBwDVgYjI3+M64RwhIwzOPGSBmPiR/56IXZ3dyDQG6HeLbJgESvrCAXs
-         86HJF13nqDDx8uFP4qWjK7SCiu4qcQe5J0UE/Z7U=
+        b=h2HpeYtoevXOSWDEUziZLGetMCSIbUfsJjWmjxb51FEHXYwctH4IxeQ9CjJDwO1W/
+         DKdbKd/emQEsjik4yn43fIwU3Hg95GhQKZWog9satYQgZc3SGoYjiOzgQS2ZumItha
+         Y0QkrjednCgXW1Htnv4R35PfncLXj0p3aCQVsPlI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Ronald=20Tschal=C3=A4r?= <ronald@innovation.ch>
-Subject: [PATCH 5.5 091/189] serdev: Fix detection of UART devices on Apple machines.
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        "Erhard F." <erhard_f@mailbox.org>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 40/88] net: netlink: cap max groups which will be considered in netlink_bind()
 Date:   Tue, 10 Mar 2020 13:38:48 +0100
-Message-Id: <20200310123648.924250076@linuxfoundation.org>
+Message-Id: <20200310123615.720352829@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,56 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronald Tschalär <ronald@innovation.ch>
+From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
-commit 35d4670aaec7206b5ef19c842ca33076bde562e4 upstream.
+commit 3a20773beeeeadec41477a5ba872175b778ff752 upstream.
 
-On Apple devices the _CRS method returns an empty resource template, and
-the resource settings are instead provided by the _DSM method. But
-commit 33364d63c75d6182fa369cea80315cf1bb0ee38e (serdev: Add ACPI
-devices by ResourceSource field) changed the search for serdev devices
-to require valid, non-empty resource template, thereby breaking Apple
-devices and causing bluetooth devices to not be found.
+Since nl_groups is a u32 we can't bind more groups via ->bind
+(netlink_bind) call, but netlink has supported more groups via
+setsockopt() for a long time and thus nlk->ngroups could be over 32.
+Recently I added support for per-vlan notifications and increased the
+groups to 33 for NETLINK_ROUTE which exposed an old bug in the
+netlink_bind() code causing out-of-bounds access on archs where unsigned
+long is 32 bits via test_bit() on a local variable. Fix this by capping the
+maximum groups in netlink_bind() to BITS_PER_TYPE(u32), effectively
+capping them at 32 which is the minimum of allocated groups and the
+maximum groups which can be bound via netlink_bind().
 
-This expands the check so that if we don't find a valid template, and
-we're on an Apple machine, then just check for the device being an
-immediate child of the controller and having a "baud" property.
-
-Cc: <stable@vger.kernel.org> # 5.5
-Fixes: 33364d63c75d ("serdev: Add ACPI devices by ResourceSource field")
-Signed-off-by: Ronald Tschalär <ronald@innovation.ch>
-Link: https://lore.kernel.org/r/20200211194723.486217-1-ronald@innovation.ch
+CC: Christophe Leroy <christophe.leroy@c-s.fr>
+CC: Richard Guy Briggs <rgb@redhat.com>
+Fixes: 4f520900522f ("netlink: have netlink per-protocol bind function return an error code.")
+Reported-by: Erhard F. <erhard_f@mailbox.org>
+Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serdev/core.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ net/netlink/af_netlink.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/serdev/core.c
-+++ b/drivers/tty/serdev/core.c
-@@ -18,6 +18,7 @@
- #include <linux/sched.h>
- #include <linux/serdev.h>
- #include <linux/slab.h>
-+#include <linux/platform_data/x86/apple.h>
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -1003,7 +1003,8 @@ static int netlink_bind(struct socket *s
+ 	if (nlk->netlink_bind && groups) {
+ 		int group;
  
- static bool is_registered;
- static DEFINE_IDA(ctrl_ida);
-@@ -630,6 +631,15 @@ static int acpi_serdev_check_resources(s
- 	if (ret)
- 		return ret;
- 
-+	/*
-+	 * Apple machines provide an empty resource template, so on those
-+	 * machines just look for immediate children with a "baud" property
-+	 * (from the _DSM method) instead.
-+	 */
-+	if (!lookup.controller_handle && x86_apple_machine &&
-+	    !acpi_dev_get_property(adev, "baud", ACPI_TYPE_BUFFER, NULL))
-+		acpi_get_parent(adev->handle, &lookup.controller_handle);
-+
- 	/* Make sure controller and ResourceSource handle match */
- 	if (ACPI_HANDLE(ctrl->dev.parent) != lookup.controller_handle)
- 		return -ENODEV;
+-		for (group = 0; group < nlk->ngroups; group++) {
++		/* nl_groups is a u32, so cap the maximum groups we can bind */
++		for (group = 0; group < BITS_PER_TYPE(u32); group++) {
+ 			if (!test_bit(group, &groups))
+ 				continue;
+ 			err = nlk->netlink_bind(net, group + 1);
+@@ -1022,7 +1023,7 @@ static int netlink_bind(struct socket *s
+ 			netlink_insert(sk, nladdr->nl_pid) :
+ 			netlink_autobind(sock);
+ 		if (err) {
+-			netlink_undo_bind(nlk->ngroups, groups, sk);
++			netlink_undo_bind(BITS_PER_TYPE(u32), groups, sk);
+ 			return err;
+ 		}
+ 	}
 
 
