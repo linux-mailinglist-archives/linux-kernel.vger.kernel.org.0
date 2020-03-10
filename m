@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A8BB17FA71
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:05:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6226B17FA75
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:05:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730742AbgCJNEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:04:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49670 "EHLO mail.kernel.org"
+        id S1730215AbgCJNEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:04:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730270AbgCJNEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:04:33 -0400
+        id S1728343AbgCJNEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:04:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 845872469E;
-        Tue, 10 Mar 2020 13:04:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10E9320409;
+        Tue, 10 Mar 2020 13:04:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845473;
-        bh=8gxeKVJRTa95MFXJxHtDVepSP8cSP4qItCCKQRtp9S8=;
+        s=default; t=1583845475;
+        bh=+hi5aN+D6JGLzjvA6/P2ENZRj0ICH3a32s1Tw3e6BL8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OVtBg7MP+++N4tTl+MS8n21jKDBI9SHhOTHKuqAGy6HOVoJxdIU5ou/bZHe7s4k3s
-         DZXIMv9h/i/x2Pc/aIhS+kyQYFzmO8jGxBDyPB/qtv/ZfGi3G9bJ4HFuXD49/rfo7c
-         uvPjsp1dwNo4JtlCSSdvB0ulH+evOjaAgoRwXbFw=
+        b=QWD+heYmwSRDClvzv57XA6YrCEWv8PcxPwfbX0GmD7iWd46ugJ0+gHkXL62+spcRl
+         qYIhQXvVoL9ML7fH25ekEi2zrsL6cqL3r8YxH4Tj+VsecHYtvaaWxCHMHRsAYO39JD
+         1IYE0TaJa5k6QYD1B1fcf3NVXhgQ9fff2qwmYwDg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+2e80962bedd9559fe0b3@syzkaller.appspotmail.com,
+        syzbot+cb0c054eabfba4342146@syzkaller.appspotmail.com,
         Bernard Metzler <bmt@zurich.ibm.com>,
         Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.5 163/189] RDMA/siw: Fix failure handling during device creation
-Date:   Tue, 10 Mar 2020 13:40:00 +0100
-Message-Id: <20200310123656.507835659@linuxfoundation.org>
+Subject: [PATCH 5.5 164/189] RDMA/iwcm: Fix iwcm work deallocation
+Date:   Tue, 10 Mar 2020 13:40:01 +0100
+Message-Id: <20200310123656.595378514@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
 References: <20200310123639.608886314@linuxfoundation.org>
@@ -47,45 +47,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bernard Metzler <bmt@zurich.ibm.com>
 
-commit 12e5eef0f4d8087ea7b559f6630be08ffea2d851 upstream.
+commit 810dbc69087b08fd53e1cdd6c709f385bc2921ad upstream.
 
-A failing call to ib_device_set_netdev() during device creation caused
-system crash due to xa_destroy of uninitialized xarray hit by device
-deallocation. Fixed by moving xarray initialization before potential
-device deallocation.
+The dealloc_work_entries() function must update the work_free_list pointer
+while freeing its entries, since potentially called again on same list. A
+second iteration of the work list caused system crash. This happens, if
+work allocation fails during cma_iw_listen() and free_cm_id() tries to
+free the list again during cleanup.
 
-Fixes: bdcf26bf9b3a ("rdma/siw: network and RDMA core interface")
-Link: https://lore.kernel.org/r/20200302155814.9896-1-bmt@zurich.ibm.com
-Reported-by: syzbot+2e80962bedd9559fe0b3@syzkaller.appspotmail.com
+Fixes: 922a8e9fb2e0 ("RDMA: iWARP Connection Manager.")
+Link: https://lore.kernel.org/r/20200302181614.17042-1-bmt@zurich.ibm.com
+Reported-by: syzbot+cb0c054eabfba4342146@syzkaller.appspotmail.com
 Signed-off-by: Bernard Metzler <bmt@zurich.ibm.com>
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/sw/siw/siw_main.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/core/iwcm.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/sw/siw/siw_main.c
-+++ b/drivers/infiniband/sw/siw/siw_main.c
-@@ -388,6 +388,9 @@ static struct siw_device *siw_device_cre
- 		{ .max_segment_size = SZ_2G };
- 	base_dev->num_comp_vectors = num_possible_cpus();
+--- a/drivers/infiniband/core/iwcm.c
++++ b/drivers/infiniband/core/iwcm.c
+@@ -159,8 +159,10 @@ static void dealloc_work_entries(struct
+ {
+ 	struct list_head *e, *tmp;
  
-+	xa_init_flags(&sdev->qp_xa, XA_FLAGS_ALLOC1);
-+	xa_init_flags(&sdev->mem_xa, XA_FLAGS_ALLOC1);
-+
- 	ib_set_device_ops(base_dev, &siw_device_ops);
- 	rv = ib_device_set_netdev(base_dev, netdev, 1);
- 	if (rv)
-@@ -415,9 +418,6 @@ static struct siw_device *siw_device_cre
- 	sdev->attrs.max_srq_wr = SIW_MAX_SRQ_WR;
- 	sdev->attrs.max_srq_sge = SIW_MAX_SGE;
+-	list_for_each_safe(e, tmp, &cm_id_priv->work_free_list)
++	list_for_each_safe(e, tmp, &cm_id_priv->work_free_list) {
++		list_del(e);
+ 		kfree(list_entry(e, struct iwcm_work, free_list));
++	}
+ }
  
--	xa_init_flags(&sdev->qp_xa, XA_FLAGS_ALLOC1);
--	xa_init_flags(&sdev->mem_xa, XA_FLAGS_ALLOC1);
--
- 	INIT_LIST_HEAD(&sdev->cep_list);
- 	INIT_LIST_HEAD(&sdev->qp_list);
- 
+ static int alloc_work_entries(struct iwcm_id_private *cm_id_priv, int count)
 
 
