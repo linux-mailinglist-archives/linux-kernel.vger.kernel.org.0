@@ -2,596 +2,551 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4164817F6BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:53:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C82817F6BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:53:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbgCJLxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 07:53:13 -0400
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:37155 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbgCJLxN (ORCPT
+        id S1726467AbgCJLx1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 07:53:27 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:43044 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbgCJLx1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 07:53:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1583841193; x=1615377193;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   mime-version;
-  bh=fofroTZNkI7MGPUfvGdR2qP48XLFbqHW9ocHFYBbhAQ=;
-  b=tUV4NovHdBfPVqP8n4GhoFIPxzqOJXm2qzHWz1xLX+iEjG45Nx+pwQIX
-   jaortxZwQWCP0QDG+1rT6dIzx0QX2uHtj2ALy7SUxFqmthqb3OpZ+XwZ8
-   9qAAPcP1J08VmDybr8hH3RdgcUTxArGFKRFyNuuPK0HEZu29tU5HT8ruH
-   4=;
-IronPort-SDR: U+4vr6n8N2F5o9OB0hD7qSPrjZq3tl/UTMpE01/jRdxOCKNLajdCUVrUdjBGj0c5c1OB+6MAAT
- sl3v5nMnbsEg==
-X-IronPort-AV: E=Sophos;i="5.70,536,1574121600"; 
-   d="scan'208";a="21950750"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1a-807d4a99.us-east-1.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 10 Mar 2020 11:53:10 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1a-807d4a99.us-east-1.amazon.com (Postfix) with ESMTPS id 4D19FA2DA3;
-        Tue, 10 Mar 2020 11:52:59 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Tue, 10 Mar 2020 11:52:59 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.160.100) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Tue, 10 Mar 2020 11:52:47 +0000
-From:   SeongJae Park <sjpark@amazon.com>
-To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-CC:     SeongJae Park <sjpark@amazon.com>, <akpm@linux-foundation.org>,
-        "SeongJae Park" <sjpark@amazon.de>, <aarcange@redhat.com>,
-        <yang.shi@linux.alibaba.com>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <amit@kernel.org>,
-        <brendan.d.gregg@gmail.com>, <brendanhiggins@google.com>,
-        <cai@lca.pw>, <colin.king@canonical.com>, <corbet@lwn.net>,
-        <dwmw@amazon.com>, <jolsa@redhat.com>, <kirill@shutemov.name>,
-        <mark.rutland@arm.com>, <mgorman@suse.de>, <minchan@kernel.org>,
-        <mingo@redhat.com>, <namhyung@kernel.org>, <peterz@infradead.org>,
-        <rdunlap@infradead.org>, <rientjes@google.com>,
-        <rostedt@goodmis.org>, <shuah@kernel.org>, <sj38.park@gmail.com>,
-        <vbabka@suse.cz>, <vdavydov.dev@gmail.com>, <linux-mm@kvack.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: Re: [PATCH v6 02/14] mm/damon: Implement region based sampling
-Date:   Tue, 10 Mar 2020 12:52:33 +0100
-Message-ID: <20200310115233.23246-1-sjpark@amazon.com>
+        Tue, 10 Mar 2020 07:53:27 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02ABrGt4090450;
+        Tue, 10 Mar 2020 06:53:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583841196;
+        bh=/V05tI97b+o4euK188OHj7APR/Z3sRaOxeCvenO2y2c=;
+        h=From:To:CC:Subject:Date;
+        b=Ke8TM4q7CUvf5KCHilVqDfCAZErBaeGLhSor80fhUsPVikiyFtcNPs6Gao2WB9Qu5
+         pPJHoDtCSG5lsyMNCYVz8oyIrLq+7gHjouUGvGre9A+wLNGRF0F9QWQVj7e/HCsSqF
+         C/qwHE/gQ011UIGGux2oUMNIZjTnjJVZjSgHdjhA=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02ABrGEi104406
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 10 Mar 2020 06:53:16 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 10
+ Mar 2020 06:53:16 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 10 Mar 2020 06:53:16 -0500
+Received: from lta0400828a.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02ABrDAD009274;
+        Tue, 10 Mar 2020 06:53:13 -0500
+From:   Roger Quadros <rogerq@ti.com>
+To:     <tony@atomide.com>
+CC:     <hch@lst.de>, <robin.murphy@arm.com>, <robh+dt@kernel.org>,
+        <nm@ti.com>, <t-kristo@ti.com>, <nsekhar@ti.com>,
+        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
+Subject: [PATCH] ARM: dts: dra7: Add bus_dma_limit for L3 bus
+Date:   Tue, 10 Mar 2020 13:53:09 +0200
+Message-ID: <20200310115309.31354-1-rogerq@ti.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200310085721.00000a0f@Huawei.com> (raw)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.43.160.100]
-X-ClientProxiedBy: EX13d09UWA003.ant.amazon.com (10.43.160.227) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added replies to your every comment in line below.  I agree to your whole
-opinions, will apply those in next spin! :)
+The L3 interconnect can access only 32-bits of address.
+Add the dma-ranges property to reflect this limit.
 
-On Tue, 10 Mar 2020 08:57:21 +0000 Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
+This will ensure that no device under L3 is
+given > 32-bit address for DMA.
 
-> On Mon, 24 Feb 2020 13:30:35 +0100
-> SeongJae Park <sjpark@amazon.com> wrote:
-> 
-> > From: SeongJae Park <sjpark@amazon.de>
-> > 
-> > This commit implements DAMON's basic access check and region based
-> > sampling mechanisms.  This change would seems make no sense, mainly
-> > because it is only a part of the DAMON's logics.  Following two commits
-> > will make more sense.
-> > 
-> > This commit also exports `lookup_page_ext()` to GPL modules because
-> > DAMON uses the function but also supports the module build.
-> 
-> Do that as a separate patch before this one.  Makes it easy to spot.
+Issue was observed only with SATA on DRA7-EVM with 4GB RAM
+and CONFIG_ARM_LPAE enabled. This is because the controller
+can perform 64-bit DMA and was setting the dma_mask to 64-bit.
 
-Agreed, will do so.
+Setting the correct bus_dma_limit fixes the issue.
 
-> 
-> > 
-[...]
-> 
-> Various things inline. In particularly can you make use of standard
-> kthread_stop infrastructure rather than rolling your own?
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+---
+ arch/arm/boot/dts/dra7-l4.dtsi |  20 ++---
+ arch/arm/boot/dts/dra7.dtsi    | 129 +++++++++++++++++----------------
+ arch/arm/boot/dts/dra72x.dtsi  |   6 +-
+ arch/arm/boot/dts/dra74x.dtsi  |  33 +++++----
+ 4 files changed, 95 insertions(+), 93 deletions(-)
 
-Nice suggestion!  That will be much better, will use it.
+diff --git a/arch/arm/boot/dts/dra7-l4.dtsi b/arch/arm/boot/dts/dra7-l4.dtsi
+index fc418834890d..5bbe3de7eba3 100644
+--- a/arch/arm/boot/dts/dra7-l4.dtsi
++++ b/arch/arm/boot/dts/dra7-l4.dtsi
+@@ -2280,11 +2280,11 @@
+ 
+ &l4_per2 {						/* 0x48400000 */
+ 	compatible = "ti,dra7-l4-per2", "simple-bus";
+-	reg = <0x48400000 0x800>,
+-	      <0x48400800 0x800>,
+-	      <0x48401000 0x400>,
+-	      <0x48401400 0x400>,
+-	      <0x48401800 0x400>;
++	reg = <0x48400000 0x0 0x800>,
++	      <0x48400800 0x0 0x800>,
++	      <0x48401000 0x0 0x400>,
++	      <0x48401400 0x0 0x400>,
++	      <0x48401800 0x0 0x400>;
+ 	reg-names = "ap", "la", "ia0", "ia1", "ia2";
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+@@ -3152,11 +3152,11 @@
+ 
+ &l4_per3 {						/* 0x48800000 */
+ 	compatible = "ti,dra7-l4-per3", "simple-bus";
+-	reg = <0x48800000 0x800>,
+-	      <0x48800800 0x800>,
+-	      <0x48801000 0x400>,
+-	      <0x48801400 0x400>,
+-	      <0x48801800 0x400>;
++	reg = <0x48800000 0x0 0x800>,
++	      <0x48800800 0x0 0x800>,
++	      <0x48801000 0x0 0x400>,
++	      <0x48801400 0x0 0x400>,
++	      <0x48801800 0x0 0x400>;
+ 	reg-names = "ap", "la", "ia0", "ia1", "ia2";
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
+index d78b684e7fca..81e7f30afe02 100644
+--- a/arch/arm/boot/dts/dra7.dtsi
++++ b/arch/arm/boot/dts/dra7.dtsi
+@@ -146,8 +146,9 @@
+ 	ocp {
+ 		compatible = "ti,dra7-l3-noc", "simple-bus";
+ 		#address-cells = <1>;
+-		#size-cells = <1>;
+-		ranges = <0x0 0x0 0x0 0xc0000000>;
++		#size-cells = <2>;
++		ranges = <0x0 0x0 0x0 0x0 0xc0000000>;
++		dma-ranges = <0x0 0x0 0x0 0x1 0x00000000>;
+ 		ti,hwmods = "l3_main_1", "l3_main_2";
+ 		reg = <0x0 0x44000000 0x0 0x1000000>,
+ 		      <0x0 0x45000000 0x0 0x1000>;
+@@ -261,7 +262,7 @@
+ 
+ 		ocmcram1: ocmcram@40300000 {
+ 			compatible = "mmio-sram";
+-			reg = <0x40300000 0x80000>;
++			reg = <0x40300000 0x0 0x80000>;
+ 			ranges = <0x0 0x40300000 0x80000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+@@ -291,7 +292,7 @@
+ 		ocmcram2: ocmcram@40400000 {
+ 			status = "disabled";
+ 			compatible = "mmio-sram";
+-			reg = <0x40400000 0x100000>;
++			reg = <0x40400000 0x0 0x100000>;
+ 			ranges = <0x0 0x40400000 0x100000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+@@ -300,19 +301,19 @@
+ 		ocmcram3: ocmcram@40500000 {
+ 			status = "disabled";
+ 			compatible = "mmio-sram";
+-			reg = <0x40500000 0x100000>;
++			reg = <0x40500000 0x0 0x100000>;
+ 			ranges = <0x0 0x40500000 0x100000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 		};
+ 
+ 		bandgap: bandgap@4a0021e0 {
+-			reg = <0x4a0021e0 0xc
+-				0x4a00232c 0xc
+-				0x4a002380 0x2c
+-				0x4a0023C0 0x3c
+-				0x4a002564 0x8
+-				0x4a002574 0x50>;
++			reg = <0x4a0021e0 0x0 0xc
++				0x4a00232c 0x0 0xc
++				0x4a002380 0x0 0x2c
++				0x4a0023C0 0x0 0x3c
++				0x4a002564 0x0 0x8
++				0x4a002574 0x0 0x50>;
+ 				compatible = "ti,dra752-bandgap";
+ 				interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+ 				#thermal-sensor-cells = <1>;
+@@ -320,12 +321,12 @@
+ 
+ 		dsp1_system: dsp_system@40d00000 {
+ 			compatible = "syscon";
+-			reg = <0x40d00000 0x100>;
++			reg = <0x40d00000 0x0 0x100>;
+ 		};
+ 
+ 		dra7_iodelay_core: padconf@4844a000 {
+ 			compatible = "ti,dra7-iodelay";
+-			reg = <0x4844a000 0x0d1c>;
++			reg = <0x4844a000 0x0 0x0d1c>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			#pinctrl-cells = <2>;
+@@ -334,7 +335,7 @@
+ 		edma: edma@43300000 {
+ 			compatible = "ti,edma3-tpcc";
+ 			ti,hwmods = "tpcc";
+-			reg = <0x43300000 0x100000>;
++			reg = <0x43300000 0x0 0x100000>;
+ 			reg-names = "edma3_cc";
+ 			interrupts = <GIC_SPI 361 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>,
+@@ -357,7 +358,7 @@
+ 		edma_tptc0: tptc@43400000 {
+ 			compatible = "ti,edma3-tptc";
+ 			ti,hwmods = "tptc0";
+-			reg =	<0x43400000 0x100000>;
++			reg =	<0x43400000 0x0 0x100000>;
+ 			interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "edma3_tcerrint";
+ 		};
+@@ -365,23 +366,23 @@
+ 		edma_tptc1: tptc@43500000 {
+ 			compatible = "ti,edma3-tptc";
+ 			ti,hwmods = "tptc1";
+-			reg =	<0x43500000 0x100000>;
++			reg =	<0x43500000 0x0 0x100000>;
+ 			interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "edma3_tcerrint";
+ 		};
+ 
+ 		dmm@4e000000 {
+ 			compatible = "ti,omap5-dmm";
+-			reg = <0x4e000000 0x800>;
++			reg = <0x4e000000 0x0 0x800>;
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+ 			ti,hwmods = "dmm";
+ 		};
+ 
+ 		target-module@40d01000 {
+ 			compatible = "ti,sysc-omap2", "ti,sysc";
+-			reg = <0x40d01000 0x4>,
+-			      <0x40d01010 0x4>,
+-			      <0x40d01014 0x4>;
++			reg = <0x40d01000 0x0 0x4>,
++			      <0x40d01010 0x0 0x4>,
++			      <0x40d01014 0x0 0x4>;
+ 			reg-names = "rev", "sysc", "syss";
+ 			ti,sysc-sidle = <SYSC_IDLE_FORCE>,
+ 					<SYSC_IDLE_NO>,
+@@ -408,9 +409,9 @@
+ 
+ 		target-module@40d02000 {
+ 			compatible = "ti,sysc-omap2", "ti,sysc";
+-			reg = <0x40d02000 0x4>,
+-			      <0x40d02010 0x4>,
+-			      <0x40d02014 0x4>;
++			reg = <0x40d02000 0x0 0x4>,
++			      <0x40d02010 0x0 0x4>,
++			      <0x40d02014 0x0 0x4>;
+ 			reg-names = "rev", "sysc", "syss";
+ 			ti,sysc-sidle = <SYSC_IDLE_FORCE>,
+ 					<SYSC_IDLE_NO>,
+@@ -437,9 +438,9 @@
+ 
+ 		target-module@58882000 {
+ 			compatible = "ti,sysc-omap2", "ti,sysc";
+-			reg = <0x58882000 0x4>,
+-			      <0x58882010 0x4>,
+-			      <0x58882014 0x4>;
++			reg = <0x58882000 0x0 0x4>,
++			      <0x58882010 0x0 0x4>,
++			      <0x58882014 0x0 0x4>;
+ 			reg-names = "rev", "sysc", "syss";
+ 			ti,sysc-sidle = <SYSC_IDLE_FORCE>,
+ 					<SYSC_IDLE_NO>,
+@@ -466,9 +467,9 @@
+ 
+ 		target-module@55082000 {
+ 			compatible = "ti,sysc-omap2", "ti,sysc";
+-			reg = <0x55082000 0x4>,
+-			      <0x55082010 0x4>,
+-			      <0x55082014 0x4>;
++			reg = <0x55082000 0x0 0x4>,
++			      <0x55082010 0x0 0x4>,
++			      <0x55082014 0x0 0x4>;
+ 			reg-names = "rev", "sysc", "syss";
+ 			ti,sysc-sidle = <SYSC_IDLE_FORCE>,
+ 					<SYSC_IDLE_NO>,
+@@ -502,9 +503,9 @@
+ 			ti,settling-time = <50>;
+ 			ti,clock-cycles = <16>;
+ 
+-			reg = <0x4ae07ddc 0x4>, <0x4ae07de0 0x4>,
+-			      <0x4ae06014 0x4>, <0x4a003b20 0xc>,
+-			      <0x4ae0c158 0x4>;
++			reg = <0x4ae07ddc 0x0 0x4>, <0x4ae07de0 0x0 0x4>,
++			      <0x4ae06014 0x0 0x4>, <0x4a003b20 0x0 0xc>,
++			      <0x4ae0c158 0x0 0x4>;
+ 			reg-names = "setup-address", "control-address",
+ 				    "int-address", "efuse-address",
+ 				    "ldo-address";
+@@ -535,9 +536,9 @@
+ 			ti,settling-time = <50>;
+ 			ti,clock-cycles = <16>;
+ 
+-			reg = <0x4ae07e34 0x4>, <0x4ae07e24 0x4>,
+-			      <0x4ae06010 0x4>, <0x4a0025cc 0xc>,
+-			      <0x4a002470 0x4>;
++			reg = <0x4ae07e34 0x0 0x4>, <0x4ae07e24 0x0 0x4>,
++			      <0x4ae06010 0x0 0x4>, <0x4a0025cc 0x0 0xc>,
++			      <0x4a002470 0x0 0x4>;
+ 			reg-names = "setup-address", "control-address",
+ 				    "int-address", "efuse-address",
+ 				    "ldo-address";
+@@ -568,9 +569,9 @@
+ 			ti,settling-time = <50>;
+ 			ti,clock-cycles = <16>;
+ 
+-			reg = <0x4ae07e30 0x4>, <0x4ae07e20 0x4>,
+-			      <0x4ae06010 0x4>, <0x4a0025e0 0xc>,
+-			      <0x4a00246c 0x4>;
++			reg = <0x4ae07e30 0x0 0x4>, <0x4ae07e20 0x0 0x4>,
++			      <0x4ae06010 0x0 0x4>, <0x4a0025e0 0x0 0xc>,
++			      <0x4a00246c 0x0 0x4>;
+ 			reg-names = "setup-address", "control-address",
+ 				    "int-address", "efuse-address",
+ 				    "ldo-address";
+@@ -601,9 +602,9 @@
+ 			ti,settling-time = <50>;
+ 			ti,clock-cycles = <16>;
+ 
+-			reg = <0x4ae07de4 0x4>, <0x4ae07de8 0x4>,
+-			      <0x4ae06010 0x4>, <0x4a003b08 0xc>,
+-			      <0x4ae0c154 0x4>;
++			reg = <0x4ae07de4 0x0 0x4>, <0x4ae07de8 0x0 0x4>,
++			      <0x4ae06010 0x0 0x4>, <0x4a003b08 0x0 0xc>,
++			      <0x4ae0c154 0x0 0x4>;
+ 			reg-names = "setup-address", "control-address",
+ 				    "int-address", "efuse-address",
+ 				    "ldo-address";
+@@ -627,8 +628,8 @@
+ 
+ 		qspi: spi@4b300000 {
+ 			compatible = "ti,dra7xxx-qspi";
+-			reg = <0x4b300000 0x100>,
+-			      <0x5c000000 0x4000000>;
++			reg = <0x4b300000 0x0 0x100>,
++			      <0x5c000000 0x0 0x4000000>;
+ 			reg-names = "qspi_base", "qspi_mmap";
+ 			syscon-chipselects = <&scm_conf 0x558>;
+ 			#address-cells = <1>;
+@@ -644,7 +645,7 @@
+ 		/* OCP2SCP3 */
+ 		sata: sata@4a141100 {
+ 			compatible = "snps,dwc-ahci";
+-			reg = <0x4a140000 0x1100>, <0x4a141100 0x7>;
++			reg = <0x4a140000 0x0 0x1100>, <0x4a141100 0x0 0x7>;
+ 			interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
+ 			phys = <&sata_phy>;
+ 			phy-names = "sata-phy";
+@@ -658,7 +659,7 @@
+ 		gpmc: gpmc@50000000 {
+ 			compatible = "ti,am3352-gpmc";
+ 			ti,hwmods = "gpmc";
+-			reg = <0x50000000 0x37c>;      /* device IO registers */
++			reg = <0x50000000 0x0 0x37c>;      /* device IO registers */
+ 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&edma_xbar 4 0>;
+ 			dma-names = "rxtx";
+@@ -675,8 +676,8 @@
+ 
+ 		target-module@56000000 {
+ 			compatible = "ti,sysc-omap4", "ti,sysc";
+-			reg = <0x5600fe00 0x4>,
+-			      <0x5600fe10 0x4>;
++			reg = <0x5600fe00 0x0 0x4>,
++			      <0x5600fe10 0x0 0x4>;
+ 			reg-names = "rev", "sysc";
+ 			ti,sysc-midle = <SYSC_IDLE_FORCE>,
+ 					<SYSC_IDLE_NO>,
+@@ -693,7 +694,7 @@
+ 
+ 		crossbar_mpu: crossbar@4a002a48 {
+ 			compatible = "ti,irq-crossbar";
+-			reg = <0x4a002a48 0x130>;
++			reg = <0x4a002a48 0x0 0x130>;
+ 			interrupt-controller;
+ 			interrupt-parent = <&wakeupgen>;
+ 			#interrupt-cells = <3>;
+@@ -715,11 +716,11 @@
+ 			syscon-pll-ctrl = <&scm_conf 0x538>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+-			ranges;
++			ranges = <0x0 0x58000000 0x79000>;
+ 
+ 			dispc@58001000 {
+ 				compatible = "ti,dra7-dispc";
+-				reg = <0x58001000 0x1000>;
++				reg = <0x1000 0x1000>;
+ 				interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 				ti,hwmods = "dss_dispc";
+ 				clocks = <&dss_clkctrl DRA7_DSS_DSS_CORE_CLKCTRL 8>;
+@@ -730,10 +731,10 @@
+ 
+ 			hdmi: encoder@58060000 {
+ 				compatible = "ti,dra7-hdmi";
+-				reg = <0x58040000 0x200>,
+-				      <0x58040200 0x80>,
+-				      <0x58040300 0x80>,
+-				      <0x58060000 0x19000>;
++				reg = <0x40000 0x200>,
++				      <0x40200 0x80>,
++				      <0x40300 0x80>,
++				      <0x60000 0x19000>;
+ 				reg-names = "wp", "pll", "phy", "core";
+ 				interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+ 				status = "disabled";
+@@ -748,9 +749,9 @@
+ 
+ 		aes1_target: target-module@4b500000 {
+ 			compatible = "ti,sysc-omap2", "ti,sysc";
+-			reg = <0x4b500080 0x4>,
+-			      <0x4b500084 0x4>,
+-			      <0x4b500088 0x4>;
++			reg = <0x4b500080 0x0 0x4>,
++			      <0x4b500084 0x0 0x4>,
++			      <0x4b500088 0x0 0x4>;
+ 			reg-names = "rev", "sysc", "syss";
+ 			ti,sysc-mask = <(SYSC_OMAP2_SOFTRESET |
+ 					 SYSC_OMAP2_AUTOIDLE)>;
+@@ -779,9 +780,9 @@
+ 
+ 		aes2_target: target-module@4b700000 {
+ 			compatible = "ti,sysc-omap2", "ti,sysc";
+-			reg = <0x4b700080 0x4>,
+-			      <0x4b700084 0x4>,
+-			      <0x4b700088 0x4>;
++			reg = <0x4b700080 0x0 0x4>,
++			      <0x4b700084 0x0 0x4>,
++			      <0x4b700088 0x0 0x4>;
+ 			reg-names = "rev", "sysc", "syss";
+ 			ti,sysc-mask = <(SYSC_OMAP2_SOFTRESET |
+ 					 SYSC_OMAP2_AUTOIDLE)>;
+@@ -810,9 +811,9 @@
+ 
+ 		sham_target: target-module@4b101000 {
+ 			compatible = "ti,sysc-omap3-sham", "ti,sysc";
+-			reg = <0x4b101100 0x4>,
+-			      <0x4b101110 0x4>,
+-			      <0x4b101114 0x4>;
++			reg = <0x4b101100 0x0 0x4>,
++			      <0x4b101110 0x0 0x4>,
++			      <0x4b101114 0x0 0x4>;
+ 			reg-names = "rev", "sysc", "syss";
+ 			ti,sysc-mask = <(SYSC_OMAP2_SOFTRESET |
+ 					 SYSC_OMAP2_AUTOIDLE)>;
+@@ -840,7 +841,7 @@
+ 
+ 		opp_supply_mpu: opp-supply@4a003b20 {
+ 			compatible = "ti,omap5-opp-supply";
+-			reg = <0x4a003b20 0xc>;
++			reg = <0x4a003b20 0x0 0xc>;
+ 			ti,efuse-settings = <
+ 			/* uV   offset */
+ 			1060000 0x0
+diff --git a/arch/arm/boot/dts/dra72x.dtsi b/arch/arm/boot/dts/dra72x.dtsi
+index 82b57a35abc0..09c1801c18c3 100644
+--- a/arch/arm/boot/dts/dra72x.dtsi
++++ b/arch/arm/boot/dts/dra72x.dtsi
+@@ -60,9 +60,9 @@
+ };
+ 
+ &dss {
+-	reg = <0x58000000 0x80>,
+-	      <0x58004054 0x4>,
+-	      <0x58004300 0x20>;
++	reg = <0x58000000 0x0 0x80>,
++	      <0x58004054 0x0 0x4>,
++	      <0x58004300 0x0 0x20>;
+ 	reg-names = "dss", "pll1_clkctrl", "pll1";
+ 
+ 	clocks = <&dss_clkctrl DRA7_DSS_DSS_CORE_CLKCTRL 8>,
+diff --git a/arch/arm/boot/dts/dra74x.dtsi b/arch/arm/boot/dts/dra74x.dtsi
+index c5abc436ca1f..a88a64af41e0 100644
+--- a/arch/arm/boot/dts/dra74x.dtsi
++++ b/arch/arm/boot/dts/dra74x.dtsi
+@@ -39,22 +39,23 @@
+ 	ocp {
+ 		dsp2_system: dsp_system@41500000 {
+ 			compatible = "syscon";
+-			reg = <0x41500000 0x100>;
++			reg = <0x41500000 0x0 0x100>;
+ 		};
+ 
+ 		omap_dwc3_4: omap_dwc3_4@48940000 {
+ 			compatible = "ti,dwc3";
+ 			ti,hwmods = "usb_otg_ss4";
+-			reg = <0x48940000 0x10000>;
++			reg = <0x48940000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			utmi-mode = <2>;
+-			ranges;
++			ranges = <0x0 0x48940000 0x20000>;
+ 			status = "disabled";
+-			usb4: usb@48950000 {
++
++			usb4: usb@10000 {
+ 				compatible = "snps,dwc3";
+-				reg = <0x48950000 0x17000>;
++				reg = <0x10000 0x17000>;
+ 				interrupts = <GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH>;
+@@ -68,9 +69,9 @@
+ 
+ 		target-module@41501000 {
+ 			compatible = "ti,sysc-omap2", "ti,sysc";
+-			reg = <0x41501000 0x4>,
+-			      <0x41501010 0x4>,
+-			      <0x41501014 0x4>;
++			reg = <0x41501000 0x0 0x4>,
++			      <0x41501010 0x0 0x4>,
++			      <0x41501014 0x0 0x4>;
+ 			reg-names = "rev", "sysc", "syss";
+ 			ti,sysc-sidle = <SYSC_IDLE_FORCE>,
+ 					<SYSC_IDLE_NO>,
+@@ -97,9 +98,9 @@
+ 
+ 		target-module@41502000 {
+ 			compatible = "ti,sysc-omap2", "ti,sysc";
+-			reg = <0x41502000 0x4>,
+-			      <0x41502010 0x4>,
+-			      <0x41502014 0x4>;
++			reg = <0x41502000 0x0 0x4>,
++			      <0x41502010 0x0 0x4>,
++			      <0x41502014 0x0 0x4>;
+ 			reg-names = "rev", "sysc", "syss";
+ 			ti,sysc-sidle = <SYSC_IDLE_FORCE>,
+ 					<SYSC_IDLE_NO>,
+@@ -132,11 +133,11 @@
+ };
+ 
+ &dss {
+-	reg = <0x58000000 0x80>,
+-	      <0x58004054 0x4>,
+-	      <0x58004300 0x20>,
+-	      <0x58009054 0x4>,
+-	      <0x58009300 0x20>;
++	reg = <0x58000000 0x0 0x80>,
++	      <0x58004054 0x0 0x4>,
++	      <0x58004300 0x0 0x20>,
++	      <0x58009054 0x0 0x4>,
++	      <0x58009300 0x0 0x20>;
+ 	reg-names = "dss", "pll1_clkctrl", "pll1",
+ 		    "pll2_clkctrl", "pll2";
+ 
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
-> 
-> > ---
-> >  mm/damon.c    | 509 ++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  mm/page_ext.c |   1 +
-> >  2 files changed, 510 insertions(+)
-> > 
-> > diff --git a/mm/damon.c b/mm/damon.c
-> > index aafdca35b7b8..6bdeb84d89af 100644
-> > --- a/mm/damon.c
-> > +++ b/mm/damon.c
-> > @@ -9,9 +9,14 @@
-> >  
-[...]
-> > +/*
-> > + * Get the mm_struct of the given task
-> > + *
-> > + * Callser should put the mm_struct after use, unless it is NULL.
-> 
-> Caller 
-
-Good eye!  Will fix it.
-
-> 
-> > + *
-> > + * Returns the mm_struct of the task on success, NULL on failure
-> > + */
-> > +static struct mm_struct *damon_get_mm(struct damon_task *t)
-> > +{
-> > +	struct task_struct *task;
-> > +	struct mm_struct *mm;
-> > +
-> > +	task = damon_get_task_struct(t);
-> > +	if (!task)
-> > +		return NULL;
-> > +
-> > +	mm = get_task_mm(task);
-> > +	put_task_struct(task);
-> > +	return mm;
-> > +}
-> > +
-> > +/*
-> > + * Size-evenly split a region into 'nr_pieces' small regions
-> > + *
-> > + * Returns 0 on success, or negative error code otherwise.
-> > + */
-> > +static int damon_split_region_evenly(struct damon_ctx *ctx,
-> > +		struct damon_region *r, unsigned int nr_pieces)
-> > +{
-> > +	unsigned long sz_orig, sz_piece, orig_end;
-> > +	struct damon_region *piece = NULL, *next;
-> > +	unsigned long start;
-> > +
-> > +	if (!r || !nr_pieces)
-> > +		return -EINVAL;
-> > +
-> > +	orig_end = r->vm_end;
-> > +	sz_orig = r->vm_end - r->vm_start;
-> > +	sz_piece = sz_orig / nr_pieces;
-> > +
-> > +	if (!sz_piece)
-> > +		return -EINVAL;
-> > +
-> > +	r->vm_end = r->vm_start + sz_piece;
-> > +	next = damon_next_region(r);
-> > +	for (start = r->vm_end; start + sz_piece <= orig_end;
-> > +			start += sz_piece) {
-> > +		piece = damon_new_region(ctx, start, start + sz_piece);
-> > +		damon_add_region(piece, r, next);
-> > +		r = piece;
-> > +	}
-> 
-> I'd add a comment here. I think this next bit is to catch any rounding error
-> holes, but I'm not 100% sure.
-
-Yes, will make it clearer.
-
-> 
-> > +	if (piece)
-> > +		piece->vm_end = orig_end;
-> 
-> blank line here.
-
-Will add.
-
-> 
-> > +	return 0;
-> > +}
-[...]
-> > +/*
-> > + * Initialize the monitoring target regions for the given task
-> > + *
-> > + * t	the given target task
-> > + *
-> > + * Because only a number of small portions of the entire address space
-> > + * is acutally mapped to the memory and accessed, monitoring the unmapped
-> 
-> actually
-
-Good eye!  Will consider adding these in 'scripts/spelling.txt'.
-
-> 
-[...]
-> > +/*
-> > + * Check whether the given region has accessed since the last check
-> 
-> Should also make clear that this sets us up for the next access check at
-> a different memory address it the region.
-> 
-> Given the lack of connection between activities perhaps just split this into
-> two functions that are always called next to each other.
-
-Will make the description more clearer as suggested.
-
-Also, I found that I'm not clearing *pte and *pmd before going 'mkold', thanks
-to this comment.  Will fix it, either.
-
-> 
-> > + *
-> > + * mm	'mm_struct' for the given virtual address space
-> > + * r	the region to be checked
-> > + */
-> > +static void kdamond_check_access(struct damon_ctx *ctx,
-> > +			struct mm_struct *mm, struct damon_region *r)
-> > +{
-> > +	pte_t *pte = NULL;
-> > +	pmd_t *pmd = NULL;
-> > +	spinlock_t *ptl;
-> > +
-> > +	if (follow_pte_pmd(mm, r->sampling_addr, NULL, &pte, &pmd, &ptl))
-> > +		goto mkold;
-> > +
-> > +	/* Read the page table access bit of the page */
-> > +	if (pte && pte_young(*pte))
-> > +		r->nr_accesses++;
-> > +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> 
-> Is it worth having this protection?  Seems likely to have only a very small
-> influence on performance and makes it a little harder to reason about the code.
-
-It was necessary for addressing 'implicit declaration' problem of 'pmd_young()'
-and 'pmd_mkold()' for build of DAMON on several architectures including User
-Mode Linux.
-
-Will modularize the code for better readability.
-
-> 
-> > +	else if (pmd && pmd_young(*pmd))
-> > +		r->nr_accesses++;
-> > +#endif	/* CONFIG_TRANSPARENT_HUGEPAGE */
-> > +
-> > +	spin_unlock(ptl);
-> > +
-> > +mkold:
-> > +	/* mkold next target */
-> > +	r->sampling_addr = damon_rand(ctx, r->vm_start, r->vm_end);
-> > +
-> > +	if (follow_pte_pmd(mm, r->sampling_addr, NULL, &pte, &pmd, &ptl))
-> > +		return;
-> > +
-> > +	if (pte) {
-> > +		if (pte_young(*pte)) {
-> > +			clear_page_idle(pte_page(*pte));
-> > +			set_page_young(pte_page(*pte));
-> > +		}
-> > +		*pte = pte_mkold(*pte);
-> > +	}
-> > +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> > +	else if (pmd) {
-> > +		if (pmd_young(*pmd)) {
-> > +			clear_page_idle(pmd_page(*pmd));
-> > +			set_page_young(pmd_page(*pmd));
-> > +		}
-> > +		*pmd = pmd_mkold(*pmd);
-> > +	}
-> > +#endif
-> > +
-> > +	spin_unlock(ptl);
-> > +}
-> > +
-> > +/*
-> > + * Check whether a time interval is elapsed
-> 
-> Another comment block that would be clearer if it was kernel-doc rather
-> than nearly kernel-doc
-
-Will apply the kernel-doc syntax.
-
-> 
-> > + *
-> > + * baseline	the time to check whether the interval has elapsed since
-> > + * interval	the time interval (microseconds)
-> > + *
-> > + * See whether the given time interval has passed since the given baseline
-> > + * time.  If so, it also updates the baseline to current time for next check.
-> > + *
-> > + * Returns true if the time interval has passed, or false otherwise.
-> > + */
-> > +static bool damon_check_reset_time_interval(struct timespec64 *baseline,
-> > +		unsigned long interval)
-> > +{
-> > +	struct timespec64 now;
-> > +
-> > +	ktime_get_coarse_ts64(&now);
-> > +	if ((timespec64_to_ns(&now) - timespec64_to_ns(baseline)) <
-> > +			interval * 1000)
-> > +		return false;
-> > +	*baseline = now;
-> > +	return true;
-> > +}
-> > +
-> > +/*
-> > + * Check whether it is time to flush the aggregated information
-> > + */
-> > +static bool kdamond_aggregate_interval_passed(struct damon_ctx *ctx)
-> > +{
-> > +	return damon_check_reset_time_interval(&ctx->last_aggregation,
-> > +			ctx->aggr_interval);
-> > +}
-> > +
-> > +/*
-> > + * Reset the aggregated monitoring results
-> > + */
-> > +static void kdamond_flush_aggregated(struct damon_ctx *c)
-> 
-> I wouldn't expect a reset function to be called flush.
-
-It will work as flushing in next commit, but it makes no sense now.  Will
-rename it.
-
-> 
-> > +{
-> > +	struct damon_task *t;
-> > +	struct damon_region *r;
-> > +
-> > +	damon_for_each_task(c, t) {
-> > +		damon_for_each_region(r, t)
-> > +			r->nr_accesses = 0;
-> > +	}
-> > +}
-> > +
-> > +/*
-> > + * Check whether current monitoring should be stopped
-> > + *
-> > + * If users asked to stop, need stop.  Even though no user has asked to stop,
-> > + * need stop if every target task has dead.
-> > + *
-> > + * Returns true if need to stop current monitoring.
-> > + */
-> > +static bool kdamond_need_stop(struct damon_ctx *ctx)
-> > +{
-> > +	struct damon_task *t;
-> > +	struct task_struct *task;
-> > +	bool stop;
-> > +
-> 
-> As below comment asks, can you use kthread_should_stop?
-
-Yes, I will.
-
-> 
-> > +	spin_lock(&ctx->kdamond_lock);
-> > +	stop = ctx->kdamond_stop;
-> > +	spin_unlock(&ctx->kdamond_lock);
-> > +	if (stop)
-> > +		return true;
-> > +
-> > +	damon_for_each_task(ctx, t) {
-> > +		task = damon_get_task_struct(t);
-> > +		if (task) {
-> > +			put_task_struct(task);
-> > +			return false;
-> > +		}
-> > +	}
-> > +
-> > +	return true;
-> > +}
-> > +
-> > +/*
-> > + * The monitoring daemon that runs as a kernel thread
-> > + */
-> > +static int kdamond_fn(void *data)
-> > +{
-> > +	struct damon_ctx *ctx = (struct damon_ctx *)data;
-> 
-> Never any need to explicitly cast a void * to some other pointer type.
-> (C spec)
-
-Ah, you're right.
-
-> 
-> 	struct damon_ctx *ctx = data;
-> > +	struct damon_task *t;
-> > +	struct damon_region *r, *next;
-> > +	struct mm_struct *mm;
-> > +
-> > +	pr_info("kdamond (%d) starts\n", ctx->kdamond->pid);
-> > +	kdamond_init_regions(ctx);
-> > +	while (!kdamond_need_stop(ctx)) {
-> > +		damon_for_each_task(ctx, t) {
-> > +			mm = damon_get_mm(t);
-> > +			if (!mm)
-> > +				continue;
-> > +			damon_for_each_region(r, t)
-> > +				kdamond_check_access(ctx, mm, r);
-> > +			mmput(mm);
-> > +		}
-> > +
-> > +		if (kdamond_aggregate_interval_passed(ctx))
-> > +			kdamond_flush_aggregated(ctx);
-> > +
-> > +		usleep_range(ctx->sample_interval, ctx->sample_interval + 1);
-> 
-> Is there any purpose in using a range for such a narrow window?
-
-Actually, it needs to sleep only 'ctx->sample_interval', and thus I set the
-interval so narrow.
-
-> 
-> > +	}
-> > +	damon_for_each_task(ctx, t) {
-> > +		damon_for_each_region_safe(r, next, t)
-> > +			damon_destroy_region(r);
-> > +	}
-> > +	pr_info("kdamond (%d) finishes\n", ctx->kdamond->pid);
-> 
-> Feels like noise.  I'd drop tis to pr_debug.
-
-Agreed, will remove it.
-
-> 
-> > +	spin_lock(&ctx->kdamond_lock);
-> > +	ctx->kdamond = NULL;
-> > +	spin_unlock(&ctx->kdamond_lock);
-> 
-> blank line.
-
-Yup!
-
-> 
-> > +	return 0;
-> > +}
-> > +
-> > +/*
-> > + * Controller functions
-> > + */
-> > +
-> > +/*
-> > + * Start or stop the kdamond
-> > + *
-> > + * Returns 0 if success, negative error code otherwise.
-> > + */
-> > +static int damon_turn_kdamond(struct damon_ctx *ctx, bool on)
-> > +{
-> > +	spin_lock(&ctx->kdamond_lock);
-> > +	ctx->kdamond_stop = !on;
-> 
-> Can't use the kthread_stop / kthread_should_stop approach?
-
-Will use it.
-
-> 
-> > +	if (!ctx->kdamond && on) {
-> > +		ctx->kdamond = kthread_run(kdamond_fn, ctx, "kdamond");
-> > +		if (!ctx->kdamond)
-> > +			goto fail;
-> > +		goto success;
-> 
-> cleaner as 
-> int ret = 0; above then
-> 
-> 		if (!ctx->kdamond)
-> 			ret = -EINVAL;
-> 		goto unlock;
-> 
-> with
-> 
-> unlock:
-> 	spin_unlock(&ctx->dmanond_lock);
-> 	return ret;
-
-Agreed, will change so.
-
-> 
-> > +	}
-> > +	if (ctx->kdamond && !on) {
-> > +		spin_unlock(&ctx->kdamond_lock);
-> > +		while (true) {
-> 
-> An unbounded loop is probably a bad idea.
-
-Will add clear condition here.
-
-> 
-> > +			spin_lock(&ctx->kdamond_lock);
-> > +			if (!ctx->kdamond)
-> > +				goto success;
-> > +			spin_unlock(&ctx->kdamond_lock);
-> > +
-> > +			usleep_range(ctx->sample_interval,
-> > +					ctx->sample_interval * 2);
-> > +		}
-> > +	}
-> > +
-> > +	/* tried to turn on while turned on, or turn off while turned off */
-> > +
-> > +fail:
-> > +	spin_unlock(&ctx->kdamond_lock);
-> > +	return -EINVAL;
-> > +
-> > +success:
-> > +	spin_unlock(&ctx->kdamond_lock);
-> > +	return 0;
-> > +}
-> > +
-> > +/*
-> > + * This function should not be called while the kdamond is running.
-> > + */
-> > +static int damon_set_pids(struct damon_ctx *ctx,
-> > +			unsigned long *pids, ssize_t nr_pids)
-> > +{
-> > +	ssize_t i;
-> > +	struct damon_task *t, *next;
-> > +
-> > +	damon_for_each_task_safe(ctx, t, next)
-> > +		damon_destroy_task(t);
-> > +
-> > +	for (i = 0; i < nr_pids; i++) {
-> > +		t = damon_new_task(pids[i]);
-> > +		if (!t) {
-> > +			pr_err("Failed to alloc damon_task\n");
-> > +			return -ENOMEM;
-> > +		}
-> > +		damon_add_task_tail(ctx, t);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/*
-> 
-> This is kind of similar to kernel-doc formatting.  Might as well just make
-> it kernel-doc!
-
-Agreed, will do so!
-
-> 
-> > + * Set attributes for the monitoring
-> > + *
-> > + * sample_int		time interval between samplings
-> > + * aggr_int		time interval between aggregations
-> > + * min_nr_reg		minimal number of regions
-> > + *
-> > + * This function should not be called while the kdamond is running.
-> > + * Every time interval is in micro-seconds.
-> > + *
-> > + * Returns 0 on success, negative error code otherwise.
-> > + */
-> > +static int damon_set_attrs(struct damon_ctx *ctx, unsigned long sample_int,
-> > +		unsigned long aggr_int, unsigned long min_nr_reg)
-> > +{
-> > +	if (min_nr_reg < 3) {
-> > +		pr_err("min_nr_regions (%lu) should be bigger than 2\n",
-> > +				min_nr_reg);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	ctx->sample_interval = sample_int;
-> > +	ctx->aggr_interval = aggr_int;
-> > +	ctx->min_nr_regions = min_nr_reg;
-> 
-> blank line helps readability a tiny little bit.
-
-Agreed!
-
-
-Thanks,
-SeongJae Park
-
-> 
-> > +	return 0;
-> > +}
-> > +
-> >  static int __init damon_init(void)
-> >  {
-> >  	pr_info("init\n");
-> > diff --git a/mm/page_ext.c b/mm/page_ext.c
-> > index 4ade843ff588..71169b45bba9 100644
-> > --- a/mm/page_ext.c
-> > +++ b/mm/page_ext.c
-> > @@ -131,6 +131,7 @@ struct page_ext *lookup_page_ext(const struct page *page)
-> >  					MAX_ORDER_NR_PAGES);
-> >  	return get_entry(base, index);
-> >  }
-> > +EXPORT_SYMBOL_GPL(lookup_page_ext);
-> >  
-> >  static int __init alloc_node_page_ext(int nid)
-> >  {
