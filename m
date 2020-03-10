@@ -2,96 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C52A917F955
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:55:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF0FB17F793
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:40:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbgCJMzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:55:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34570 "EHLO mail.kernel.org"
+        id S1726391AbgCJMkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:40:01 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:35664 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728220AbgCJMzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:55:42 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1726271AbgCJMkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:40:00 -0400
+Received: from zn.tnic (p200300EC2F09B400B9A98D8D0B62C6C9.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:b400:b9a9:8d8d:b62:c6c9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BCA22253D;
-        Tue, 10 Mar 2020 12:55:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844942;
-        bh=XEXZZ3AeeRBg3Un5BwVmquNRa4spPwv3uB1xz132X1Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u0Jjc5XqDaPhUbCZYHDvu1A5KpZ7/5MPaedSluOAP30xHgvXqLQTRnGz0Q79ubVe4
-         q2ZofHJzWDmr8cDjT06zTlQ/6LOYznBHurIX8lUs2dn9mo6VFINC1VAozLKf8xEe/b
-         PsW6hWm4BBStZaAQ870GNFnl3iiGdNjqzp62TaS0=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sanchayan Maity <maitysanchayan@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Johan Hovold <johan@kernel.org>,
-        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-Subject: [PATCH 5.4 157/168] ARM: dts: imx6dl-colibri-eval-v3: fix sram compatible properties
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A30A51EC0CD1;
+        Tue, 10 Mar 2020 13:39:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1583843998;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=JNxa356xMiMYcOhZxcJVg2pdOP2CCzDRhw8kQvxntFE=;
+        b=M+1KJt5fj95okOKnzkUz0LTHzVcELFFy3zXGL4rWgw9FhLmqGtVxHOlM6h6722fvTU8YUF
+        22OW56yTfootMxs8nUT83Pls1jOXkOqlsDVHkq5eTT60bxZ5IZeo1fEsJz5Jm1dolSNNlE
+        yGt8xjj4gt1psneh6e92loQbj9CCLSI=
 Date:   Tue, 10 Mar 2020 13:40:03 +0100
-Message-Id: <20200310123651.426820011@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
-User-Agent: quilt/0.66
+From:   Borislav Petkov <bp@alien8.de>
+To:     Tom Lendacky <thomas.lendacky@amd.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Bruce Rogers <brogers@suse.com>, Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH] x86/ioremap: Map EFI runtime services data as encrypted
+ for SEV
+Message-ID: <20200310124003.GE29372@zn.tnic>
+References: <2d9e16eb5b53dc82665c95c6764b7407719df7a0.1582645327.git.thomas.lendacky@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2d9e16eb5b53dc82665c95c6764b7407719df7a0.1582645327.git.thomas.lendacky@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+On Tue, Feb 25, 2020 at 09:42:07AM -0600, Tom Lendacky wrote:
+> The dmidecode program fails to properly decode the SMBIOS data supplied
+> by OVMF/UEFI when running on an SEV guest. The SMBIOS area, under SEV, is
+> encrypted and resides in reserved memory that is marked as EFI runtime
+> services data. As a result, when memremap() is attempted for the SMBIOS
+> data, it can't be mapped as regular RAM (through try_ram_remap()) and,
+> since the address isn't part of the iomem resources list, it isn't mapped
+> encrypted through the fallback ioremap().
+> 
+> Update __ioremap_check_mem() to set the IORES_MAP_ENCRYPTED flag if SEV is
+> active and the memory being mapped is part of EFI runtime services data.
+> This allows any runtime services data, which has been created encrypted,
+> to be mapped encrypted.
+> 
+> Cc: Bruce Rogers <brogers@suse.com>
+> Cc: Joerg Roedel <jroedel@suse.de>
+> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+> ---
+>  arch/x86/mm/ioremap.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+> index 44e4beb4239f..382b6ca66820 100644
+> --- a/arch/x86/mm/ioremap.c
+> +++ b/arch/x86/mm/ioremap.c
+> @@ -135,6 +135,13 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
+>  	memset(desc, 0, sizeof(struct ioremap_desc));
+>  
+>  	walk_mem_res(start, end, desc, __ioremap_collect_map_flags);
+> +
+> +	/*
+> +	 * The EFI runtime services data area is not covered by walk_mem_res(),
+> +	 * but must be mapped encrypted when SEV is active.
+> +	 */
+> +	if (sev_active() && efi_mem_type(addr) == EFI_RUNTIME_SERVICES_DATA)
+> +		desc->flags |= IORES_MAP_ENCRYPTED;
+>  }
 
-commit bcbf53a0dab50980867476994f6079c1ec5bb3a3 upstream.
+Why isn't this done in __ioremap_check_encrypted() which is exactly for
+SEV stuff like that?
 
-The sram-node compatible properties have mistakingly combined the
-model-specific string with the generic "mtd-ram" string.
+-- 
+Regards/Gruss,
+    Boris.
 
-Note that neither "cy7c1019dv33-10zsxi, mtd-ram" or
-"cy7c1019dv33-10zsxi" are used by any in-kernel driver and they are
-not present in any binding.
-
-The physmap driver will however bind to platform devices that specify
-"mtd-ram".
-
-Fixes: fc48e76489fd ("ARM: dts: imx6: Add support for Toradex Colibri iMX6 module")
-Cc: Sanchayan Maity <maitysanchayan@gmail.com>
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Reviewed-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts
-@@ -236,7 +236,7 @@
- 
- 	/* SRAM on Colibri nEXT_CS0 */
- 	sram@0,0 {
--		compatible = "cypress,cy7c1019dv33-10zsxi, mtd-ram";
-+		compatible = "cypress,cy7c1019dv33-10zsxi", "mtd-ram";
- 		reg = <0 0 0x00010000>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-@@ -247,7 +247,7 @@
- 
- 	/* SRAM on Colibri nEXT_CS1 */
- 	sram@1,0 {
--		compatible = "cypress,cy7c1019dv33-10zsxi, mtd-ram";
-+		compatible = "cypress,cy7c1019dv33-10zsxi", "mtd-ram";
- 		reg = <1 0 0x00010000>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-
-
+https://people.kernel.org/tglx/notes-about-netiquette
