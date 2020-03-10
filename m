@@ -2,98 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFEE017F4D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 11:15:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5A7717F4AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 11:14:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbgCJKPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 06:15:13 -0400
-Received: from conuserg-09.nifty.com ([210.131.2.76]:28070 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726258AbgCJKPN (ORCPT
+        id S1726437AbgCJKOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 06:14:07 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40729 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbgCJKOH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 06:15:13 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id 02AACqfV019796;
-        Tue, 10 Mar 2020 19:12:53 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com 02AACqfV019796
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1583835174;
-        bh=c1hiVSalTfFe0k0/wchrmFhfrgNpWjBz7yfa9mrIes0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=czPo1Alz4v2bYy/O+q1ieUqOMyecpHvIpktuzimVqNuSLSW59yllVakJKLtmz+z40
-         yOKERYzt+YCkxIqs7mQdJHtYA7sxpB54U/94Lu6Mo2udosIOymxVX3ifGZajrk5YHV
-         y9DAzF3XmhsdprFlMsBZOZYKD/g4QyDUv93/1/G6o85FzesJ+32gw7hHJOJCzQJtvo
-         no/VAdi3c8JpC4+3UMLk+cs/orlJ6vaUxybrzWKG+621Sk5gmrtC6aHW5VyhWgqyDe
-         w8A5BZAf1opTQjUIxh3iIkI0Q8Zjfg7SN0VjCrsyIwDxed7S/2nGS8EIBzXedUTpet
-         y7zsLNw7eD/rA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Ard Biesheuvel <ardb@kernel.org>, George Spelvin <lkml@sdf.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Howells <dhowells@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Tue, 10 Mar 2020 06:14:07 -0400
+Received: by mail-lf1-f65.google.com with SMTP id j17so5821494lfe.7;
+        Tue, 10 Mar 2020 03:14:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H41EK6fFWsu7lc3SctFKC6jvmteBRlGuxbpCpld6vno=;
+        b=g8ZD6JIS5Nbi5VQkoVKI9M/R0asumknvg+5tJnMpLTrwLqopBa459G+Q/XQzcwPv1A
+         dnFXMhqtT5oJqRaM0Kwk034c0qEj7/G4f0UyF3vC+FunNgutepJnWbUIIsGWNMpGPrij
+         jCA2K6vv24K2GdNo8Kj6muOUhaj5wLjo7+xZTE36a18WvipB2aBXdQTWg0csU9DCnIdr
+         zMRrnaF4sdNWdxAyrCOzLDh60CE54BVAevIoJBTwsg102Mg3I3iWoDVg8tiNJ8LskBgt
+         3Uik+QIPptsu2Tb68aLInTso3Nwoo+3e8nPPA+WZWFbBl4GCkwQ4O6CZhst/1TtrprRx
+         aaXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H41EK6fFWsu7lc3SctFKC6jvmteBRlGuxbpCpld6vno=;
+        b=hWR5rykeIlqbSGtI2aeckCYNP3m4mdHHaCugsc7Zle8BbfH6WG/bL+EgPgdmMBSmRY
+         UOL8UfnYyUi7G8+3hM4topFjO6EF6seuJVwXGpDDuQMk3NjZpm+6PLAzJ5ch9nVfgx4z
+         BKSYiZIfRfdj5Ri++KZJD+9bgn4PfufS44lUXLiR+a9KgKMPXJhBWJsowxddkuWk6YD+
+         Pw65yTaDBBVBzPTXtDp2C3Qv4sKIjVHDF8DZZWfWIbfysVW28AbeXEmad8n3Tt1Dcalw
+         KPWqWD/tbRGf6n2DKKqzqDF3QW1Ivch7TF/NaP0i08QdNzuHWAyMezgPmx+jK0MkJm3e
+         LXNA==
+X-Gm-Message-State: ANhLgQ0jRLhnM1E9H+szgp4wURDOQmJOF22mnIOQ1m58Motg3sWgTEnQ
+        kBF2VIZ/DU6b5lmvq+sNXZvEOHoHCiQNHZGnCWU=
+X-Google-Smtp-Source: ADFU+vsQgLEAeKs3QBpJxub3atlz11c+n+Pl9FnwgZlDHA1wgeUPgTtZl/KRIlugnXJikY9VrxzECcYh0hftZrqU0oQ=
+X-Received: by 2002:a19:f615:: with SMTP id x21mr325697lfe.47.1583835244537;
+ Tue, 10 Mar 2020 03:14:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200305103228.9686-1-zhang.lyra@gmail.com> <CAMuHMdVyy3v24zBxJFe5hYdnzdj80dvE2Z9GO4=AC1N8fD64pw@mail.gmail.com>
+ <CAAfSe-spu2oNmfEYt+WQvRQy1bCC0e1MFjbUyBAFzghd5XNBfw@mail.gmail.com>
+ <CAMuHMdV1qQZF-kAwbcxhHQZZ9hs0dG-OTZ2NcB25Jtra6ii5iA@mail.gmail.com>
+ <CA+H2tpEzFAbfzMuUGMfW3BqCKv2+kk+cLL5gWpR-zJZFYwWKqw@mail.gmail.com> <CAMuHMdUKD5Ob_o4E3bH9wx=6r2PU+7U3RQ_GVRj7ZQc-e5Y4TA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUKD5Ob_o4E3bH9wx=6r2PU+7U3RQ_GVRj7ZQc-e5Y4TA@mail.gmail.com>
+From:   Orson Zhai <orsonzhai@gmail.com>
+Date:   Tue, 10 Mar 2020 18:13:51 +0800
+Message-ID: <CA+H2tpFaEp0Wbna=Z-A0bnno5hymVrSDE-397-Jdp6Uqsm0+qQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: change ARCH_SPRD Kconfig to tristate
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Chunyan Zhang <zhang.lyra@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] int128: fix __uint128_t compiler test in Kconfig
-Date:   Tue, 10 Mar 2020 19:12:50 +0900
-Message-Id: <20200310101250.22374-2-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200310101250.22374-1-masahiroy@kernel.org>
-References: <20200310101250.22374-1-masahiroy@kernel.org>
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The support for __uint128_t is dependent on the target bit size.
+On Tue, Mar 10, 2020 at 5:52 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Orson,
+>
+> On Tue, Mar 10, 2020 at 10:41 AM Orson Zhai <orsonzhai@gmail.com> wrote:
+> > On Mon, Mar 9, 2020 at 6:32 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > On Mon, Mar 9, 2020 at 9:32 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+> > > > On Mon, 9 Mar 2020 at 16:03, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > > On Thu, Mar 5, 2020 at 11:33 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+> > > > > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > > > >
+> > > > > > The default value of Kconfig for almost all sprd drivers are the same with
+> > > > > > ARCH_SPRD, making these drivers built as modules as default would be easier
+> > > > > > if we can set ARCH_SPRD as 'm', so this patch change ARCH_SPRD to tristate.
+> > > > > >
+> > > > > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > > >
+> > > > > Can you actually boot a kernel on a Spreadtrum platform when all platform
+> > > > > and driver support is modular?
+> > > >
+> > > > Yes, even if all drivers are modular.
+> > >
+> > > Cool. No hard dependencies on e.g. regulators that are turned off when
+> > > unused?
+> > >
+> > > > But I hope serial can be builtin, then I can have a console to see
+> > > > kernel output before loading modules.
+> > >
+> > > No dependency on the clock driver?
+> > > Oh, I see you have a hack in the serial driver, to assume default
+> > > values when the serial port's parent clock is not found.  That may
+> > > limit use of the other serial ports, depending on the actual serial
+> > > hardware.
+> >
+> > There is an function named "sprd_uart_is_console()" in the driver
+> > code. So the hack could be only applied when the
+> > port is identified as console. And other ports might return
+> > PROBE_DEFER until the clock is ready.
+> >
+> > Could it work out of the limitation?
+>
+> Yes, that could work.  You also have only a single SPRD_DEFAULT_SOURCE_CLK,
+> which makes it simple to handle.
+> For other SoCs, there may be a variation of possible values, depending on
+> SoC and/or board.
 
-GCC that defaults to the 32-bit can still build the 64-bit kernel
-with -m64 flag passed.
+Ok, thanks.
 
-However, $(cc-option,-D__SIZEOF_INT128__=0) is evaluated against the
-default machine bit, which may not match to the kernel it is building.
+-Orson
 
-Theoretically, this could be evaluated separately for 64BIT/32BIT.
-
-  config CC_HAS_INT128
-          bool
-          default !$(cc-option,$(m64-flag) -D__SIZEOF_INT128__=0) if 64BIT
-          default !$(cc-option,$(m32-flag) -D__SIZEOF_INT128__=0)
-
-I simplified it more because the 32-bit compiler is unlikely to support
-__uint128_t.
-
-Fixes: c12d3362a74b ("int128: move __uint128_t compiler test to Kconfig")
-Reported-by: George Spelvin <lkml@sdf.org>
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-
- init/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/init/Kconfig b/init/Kconfig
-index 20a6ac33761c..4f717bfdbfe2 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -767,8 +767,7 @@ config ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
- 	bool
- 
- config CC_HAS_INT128
--	def_bool y
--	depends on !$(cc-option,-D__SIZEOF_INT128__=0)
-+	def_bool !$(cc-option,$(m64-flag) -D__SIZEOF_INT128__=0) && 64BIT
- 
- #
- # For architectures that know their GCC __int128 support is sound
--- 
-2.17.1
-
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
