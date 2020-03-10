@@ -2,40 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43C0617F8E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:52:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C13417F83B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729026AbgCJMwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:52:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57660 "EHLO mail.kernel.org"
+        id S1727965AbgCJMqJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:46:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727850AbgCJMwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:52:11 -0400
+        id S1727955AbgCJMqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:46:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5FAD24699;
-        Tue, 10 Mar 2020 12:52:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79CC420674;
+        Tue, 10 Mar 2020 12:46:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844731;
-        bh=Q25WBHXvspD9juEVC5yaTk47J15+joeeQqGOlAxDojE=;
+        s=default; t=1583844367;
+        bh=AKiDxTBGwqzIwKAfhtt+V4AulIjqGDPCCSzA6zfwocA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bts7fw+j2SFjP/SVRxNQdXut0WK/zd+4zTBVZ7Pe+WHJNeswx+x1sxWwqK6tJqNwX
-         tcqZBjzAu/JKsvD8p8FdXNFYb8r/Z/lBwKD94b+xi5/y78+lDX+DqtjdPf70B8jqgd
-         DHKIQOFepsN1MsaQuqqukEABY6wiyL00ZDWSDRuA=
+        b=I688UE/6NdkPgMmN0R9zcpKWdUGYyJeIS0rxJkz6h0nruQzynPiw7W+OO+4pjLwLk
+         bavQ+/MIysRxjLqMBT6UlhsMSmq+zhDeLWjfHGCWKypceC07BWWqixXmdP6uUXoxuN
+         qtJt0LIV57TGFTWHfPfFWOhj1MHHdnEF6aX6vSvw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [PATCH 5.4 097/168] x86/pkeys: Manually set X86_FEATURE_OSPKE to preserve existing changes
+        stable@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
+        Sean Paul <sean@poorly.run>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Todd Kjos <tkjos@google.com>,
+        Alistair Delva <adelva@google.com>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        freedreno@lists.freedesktop.org,
+        clang-built-linux@googlegroups.com,
+        John Stultz <john.stultz@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Rob Clark <robdclark@chromium.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 55/88] drm: msm: Fix return type of dsi_mgr_connector_mode_valid for kCFI
 Date:   Tue, 10 Mar 2020 13:39:03 +0100
-Message-Id: <20200310123645.190145951@linuxfoundation.org>
+Message-Id: <20200310123619.853887519@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +54,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: John Stultz <john.stultz@linaro.org>
 
-commit 735a6dd02222d8d070c7bb748f25895239ca8c92 upstream.
+[ Upstream commit 7fd2dfc3694922eb7ace4801b7208cf9f62ebc7d ]
 
-Explicitly set X86_FEATURE_OSPKE via set_cpu_cap() instead of calling
-get_cpu_cap() to pull the feature bit from CPUID after enabling CR4.PKE.
-Invoking get_cpu_cap() effectively wipes out any {set,clear}_cpu_cap()
-changes that were made between this_cpu->c_init() and setup_pku(), as
-all non-synthetic feature words are reinitialized from the CPU's CPUID
-values.
+I was hitting kCFI crashes when building with clang, and after
+some digging finally narrowed it down to the
+dsi_mgr_connector_mode_valid() function being implemented as
+returning an int, instead of an enum drm_mode_status.
 
-Blasting away capability updates manifests most visibility when running
-on a VMX capable CPU, but with VMX disabled by BIOS.  To indicate that
-VMX is disabled, init_ia32_feat_ctl() clears X86_FEATURE_VMX, using
-clear_cpu_cap() instead of setup_clear_cpu_cap() so that KVM can report
-which CPU is misconfigured (KVM needs to probe every CPU anyways).
-Restoring X86_FEATURE_VMX from CPUID causes KVM to think VMX is enabled,
-ultimately leading to an unexpected #GP when KVM attempts to do VMXON.
+This patch fixes it, and appeases the opaque word of the kCFI
+gods (seriously, clang inlining everything makes the kCFI
+backtraces only really rough estimates of where things went
+wrong).
 
-Arguably, init_ia32_feat_ctl() should use setup_clear_cpu_cap() and let
-KVM figure out a different way to report the misconfigured CPU, but VMX
-is not the only feature bit that is affected, i.e. there is precedent
-that tweaking feature bits via {set,clear}_cpu_cap() after ->c_init()
-is expected to work.  Most notably, x86_init_rdrand()'s clearing of
-X86_FEATURE_RDRAND when RDRAND malfunctions is also overwritten.
+Thanks as always to Sami for his help narrowing this down.
 
-Fixes: 0697694564c8 ("x86/mm/pkeys: Actually enable Memory Protection Keys in the CPU")
-Reported-by: Jacob Keller <jacob.e.keller@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Tested-by: Jacob Keller <jacob.e.keller@intel.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20200226231615.13664-1-sean.j.christopherson@intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Rob Clark <robdclark@gmail.com>
+Cc: Sean Paul <sean@poorly.run>
+Cc: Sami Tolvanen <samitolvanen@google.com>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Alistair Delva <adelva@google.com>
+Cc: Amit Pundir <amit.pundir@linaro.org>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: freedreno@lists.freedesktop.org
+Cc: clang-built-linux@googlegroups.com
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Tested-by: Amit Pundir <amit.pundir@linaro.org>
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/common.c |    2 +-
+ drivers/gpu/drm/msm/dsi/dsi_manager.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -464,7 +464,7 @@ static __always_inline void setup_pku(st
- 	 * cpuid bit to be set.  We need to ensure that we
- 	 * update that bit in this CPU's "cpu_info".
- 	 */
--	get_cpu_cap(c);
-+	set_cpu_cap(c, X86_FEATURE_OSPKE);
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+index c8d1f19c9a6d9..10d49d43c17eb 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+@@ -306,7 +306,7 @@ static int dsi_mgr_connector_get_modes(struct drm_connector *connector)
+ 	return num;
  }
  
- #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+-static int dsi_mgr_connector_mode_valid(struct drm_connector *connector,
++static enum drm_mode_status dsi_mgr_connector_mode_valid(struct drm_connector *connector,
+ 				struct drm_display_mode *mode)
+ {
+ 	int id = dsi_mgr_connector_get_id(connector);
+-- 
+2.20.1
+
 
 
