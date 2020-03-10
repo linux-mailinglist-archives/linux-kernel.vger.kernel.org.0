@@ -2,86 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 450DE17FD3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:26:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 067C717FD9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:29:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbgCJN0s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:26:48 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33624 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728043AbgCJN0p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:26:45 -0400
-Received: by mail-lj1-f194.google.com with SMTP id f13so14135714ljp.0;
-        Tue, 10 Mar 2020 06:26:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OFEfv78mqxElApVv1PrLdhetmsXCx++xAuLsijmT7RU=;
-        b=MPjkwmXIAf3FWyEgLP72VjHIRYpfGhG20UY8BhN66PsNpd4eGCduEIgthZsYBz4n9C
-         5H9OfqJmEgjp2Du2id90Wx5m8OyU9+TmYOjINHJkzc1MiJV6yIfrsGPCiafRVAOWGSuI
-         1Gs+jLcTEOpUsyfNPXJF25iNTJOrR8OVSF9/i3xeJiy8Y6D57slJhMk+tWGFtq3QujnP
-         mciLBxJjYSs+Px/jakxMHhE/edRBjYPhwpCEOW7gEDNifraZRlkCfEkeqfeNmacRF/kx
-         qhxV+c2mGxh8SBUwtPRh02MYUUi5QbY75MS43mhKGPjlYRn3XXCTvXwUoHI55oLqsOkD
-         bbfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OFEfv78mqxElApVv1PrLdhetmsXCx++xAuLsijmT7RU=;
-        b=WfPklX4tjngMs3psv/VlVntfAMWekYLHNpA3vkNHc9XyL575gYOpHI2v09EcxJfUbA
-         0K4UekBNGdr7Cp6HAP1u6I8aE9QiqlRk9Oquks2B8ID7IFaajf/nb8KaW8Ksv74bX7zC
-         qfMHFY6Es5WNoiVBqACJmngb35k6H3AXVWNTNbXM2UMoP/QW85Mj1fCHy3bBsGKJPWrV
-         WUKDrfTmFAEPj/u12YYMLHULHkfW2ViBIG9q1AxPIDzfsxgeHYlRc/Z1v/si7X/rDfdY
-         KlXaT13q9Hk58BMTcDXQe3lpsn5wEH/1poaQsmZDzUaqA5VMomALjM3o265RcRa6VNM5
-         d8lQ==
-X-Gm-Message-State: ANhLgQ2h63mwAj4hKZlTXL9dQRn43KDEr+hZdPvhAKHVKoGzjCob1HuW
-        owJPnt4KjiMw15rkYLT48K0MiP8n
-X-Google-Smtp-Source: ADFU+vs0D5hsfb7X1yf/tpe6lP/YNwM1B9Ae7W/yTvjMuZrOxV1xdmC8WTPJFzqs51fKWHW5jAXXMQ==
-X-Received: by 2002:a05:651c:114:: with SMTP id a20mr12995219ljb.122.1583846803027;
-        Tue, 10 Mar 2020 06:26:43 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.googlemail.com with ESMTPSA id j24sm8742473lji.76.2020.03.10.06.26.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Mar 2020 06:26:42 -0700 (PDT)
-Subject: Re: [PATCH v1] i2c: tegra: Make timeout error more informative
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        id S1729797AbgCJN2f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:28:35 -0400
+Received: from elvis.franken.de ([193.175.24.41]:60394 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728887AbgCJN2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:28:33 -0400
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1jBevd-0006Jg-00; Tue, 10 Mar 2020 14:28:13 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id D9C6FC0FAF; Tue, 10 Mar 2020 14:27:47 +0100 (CET)
+Date:   Tue, 10 Mar 2020 14:27:47 +0100
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Guo Ren <guoren@kernel.org>, Brian Cain <bcain@codeaurora.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sam Creasey <sammy@sammy.net>, Michal Simek <monstr@monstr.eu>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Nick Hu <nickhu@andestech.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Ley Foon Tan <ley.foon.tan@intel.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Guan Xuetao <gxt@pku.edu.cn>, Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, nios2-dev@lists.rocketboards.org,
+        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20200302173512.2743-1-digetx@gmail.com>
- <20200310113706.GW1987@ninjato>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <017aad72-9872-a4aa-dc99-bd7d08c0db14@gmail.com>
-Date:   Tue, 10 Mar 2020 16:26:41 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+Subject: Re: [PATCH V2] mm/special: Create generic fallbacks for
+ pte_special() and pte_mkspecial()
+Message-ID: <20200310132747.GA12601@alpha.franken.de>
+References: <1583802551-15406-1-git-send-email-anshuman.khandual@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20200310113706.GW1987@ninjato>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1583802551-15406-1-git-send-email-anshuman.khandual@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-10.03.2020 14:37, Wolfram Sang пишет:
-> On Mon, Mar 02, 2020 at 08:35:12PM +0300, Dmitry Osipenko wrote:
->> The I2C timeout error message doesn't tell us what exactly failed and some
->> I2C client drivers do not clarify the error either. Adding WARN_ON_ONCE()
->> results in a stacktrace being dumped into KMSG, which is very useful for
->> debugging purposes.
-> 
-> This is good for debugging, in deed, yet not good in the generic case.
-> Timeouts are not an exception on the I2C bus (think of an EEPROM which
-> is busy during an erase cycle), so it shouldn't be printed at all.
-> 
-> This prinout should rather be dropped or at least be dev_dbg.
+On Tue, Mar 10, 2020 at 06:39:11AM +0530, Anshuman Khandual wrote:
+> diff --git a/arch/mips/include/asm/pgtable.h b/arch/mips/include/asm/pgtable.h
+> index aef5378f909c..8e4e4be1ca00 100644
+> --- a/arch/mips/include/asm/pgtable.h
+> +++ b/arch/mips/include/asm/pgtable.h
+> @@ -269,6 +269,36 @@ static inline void set_pte_at(struct mm_struct *mm, unsigned long addr,
+>   */
+>  extern pgd_t swapper_pg_dir[];
+>  
+> +/*
+> + * Platform specific pte_special() and pte_mkspecial() definitions
+> + * are required only when ARCH_HAS_PTE_SPECIAL is enabled.
+> + */
+> +#if !defined(CONFIG_32BIT) && !defined(CONFIG_CPU_HAS_RIXI)
 
-Oh, well. I'll keep this debugging applied locally then, it's quite
-unfortunate when something fails silently :)
+this looks wrong.
+
+current Kconfig statement is
+
+select ARCH_HAS_PTE_SPECIAL if !(32BIT && CPU_HAS_RIXI)
+
+so we can't use PTE_SPECIAL on 32bit _and_ CPUs with RIXI support.
+
+Why can't we use
+
+#if defined(CONFIG_ARCH_HAS_PTE_SPECIAL)
+
+here as the comment already suggests ?
+
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
