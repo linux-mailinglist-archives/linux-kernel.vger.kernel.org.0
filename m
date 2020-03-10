@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE5EC17FE27
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:33:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 665CB17FE1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:33:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbgCJMsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:48:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51998 "EHLO mail.kernel.org"
+        id S1728174AbgCJMtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:49:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728017AbgCJMsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:48:03 -0400
+        id S1727689AbgCJMs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:48:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CE9B20674;
-        Tue, 10 Mar 2020 12:48:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E2E92467D;
+        Tue, 10 Mar 2020 12:48:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844481;
-        bh=WDUi5d0G8h0tLb8V+7eC1VkZHiw/SHNdnjtGbH5DClc=;
+        s=default; t=1583844535;
+        bh=LZyWpX33RtTDKGvVKBxikGAy/hclwcm1ft5zVmNnDl4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1dQdn5IuG8jqdla3qlcVPIHtQdljSlxXtxXArlLk8bYDnC6HGkyDxIxyTw3f32K4M
-         nwv6k46AE5bMekgxthoqhQm82us/J2LTvP6Y11/JVTG6juvgZtuaEtwE3uSpFw/wxb
-         nOa7H1yHUpCm7MZEwLy3tLteH+CK4YRJOjYaql1Y=
+        b=Wq8+gjfoQrS/j0rlGnkCvRLKpdeDqaIwcAtRU273BMwIsXOA6rcS6FpNELXgKVvDs
+         OTm5L9fE8ZjqJ1cOkP9rDKU7Fxt7kGoUTGfZcNVwg0NFEEscLaudikraSKOrJojC+v
+         YVD1i6qt/4BqmlYqinvYvjQO3e0R/drydLgkTRXI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Chris Evich <cevich@redhat.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 001/168] block, bfq: get a ref to a group when adding it to a service tree
-Date:   Tue, 10 Mar 2020 13:37:27 +0100
-Message-Id: <20200310123635.438685308@linuxfoundation.org>
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@nokia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 006/168] net: stmmac: fix notifier registration
+Date:   Tue, 10 Mar 2020 13:37:32 +0100
+Message-Id: <20200310123636.162963642@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
 References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -48,85 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Valente <paolo.valente@linaro.org>
+From: Aaro Koskinen <aaro.koskinen@nokia.com>
 
-[ Upstream commit db37a34c563bf4692b36990ae89005c031385e52 ]
+[ Upstream commit 474a31e13a4e9749fb3ee55794d69d0f17ee0998 ]
 
-BFQ schedules generic entities, which may represent either bfq_queues
-or groups of bfq_queues. When an entity is inserted into a service
-tree, a reference must be taken, to make sure that the entity does not
-disappear while still referred in the tree. Unfortunately, such a
-reference is mistakenly taken only if the entity represents a
-bfq_queue. This commit takes a reference also in case the entity
-represents a group.
+We cannot register the same netdev notifier multiple times when probing
+stmmac devices. Register the notifier only once in module init, and also
+make debugfs creation/deletion safe against simultaneous notifier call.
 
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-Tested-by: Chris Evich <cevich@redhat.com>
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 481a7d154cbb ("stmmac: debugfs entry name is not be changed when udev rename device name.")
+Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/bfq-cgroup.c  |  2 +-
- block/bfq-iosched.h |  1 +
- block/bfq-wf2q.c    | 12 ++++++++++--
- 3 files changed, 12 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/block/bfq-cgroup.c b/block/bfq-cgroup.c
-index 86a607cf19a10..0999d56bc4d19 100644
---- a/block/bfq-cgroup.c
-+++ b/block/bfq-cgroup.c
-@@ -332,7 +332,7 @@ static void bfqg_put(struct bfq_group *bfqg)
- 		kfree(bfqg);
- }
- 
--static void bfqg_and_blkg_get(struct bfq_group *bfqg)
-+void bfqg_and_blkg_get(struct bfq_group *bfqg)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 582176d869c35..89a6ae2b17e35 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -4208,6 +4208,8 @@ static void stmmac_init_fs(struct net_device *dev)
  {
- 	/* see comments in bfq_bic_update_cgroup for why refcounting bfqg */
- 	bfqg_get(bfqg);
-diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
-index 5d1a519640f6a..e0e4a413d43a5 100644
---- a/block/bfq-iosched.h
-+++ b/block/bfq-iosched.h
-@@ -978,6 +978,7 @@ struct bfq_group *bfq_find_set_group(struct bfq_data *bfqd,
- struct blkcg_gq *bfqg_to_blkg(struct bfq_group *bfqg);
- struct bfq_group *bfqq_group(struct bfq_queue *bfqq);
- struct bfq_group *bfq_create_group_hierarchy(struct bfq_data *bfqd, int node);
-+void bfqg_and_blkg_get(struct bfq_group *bfqg);
- void bfqg_and_blkg_put(struct bfq_group *bfqg);
+ 	struct stmmac_priv *priv = netdev_priv(dev);
  
- #ifdef CONFIG_BFQ_GROUP_IOSCHED
-diff --git a/block/bfq-wf2q.c b/block/bfq-wf2q.c
-index 05f0bf4a1144d..44079147e396e 100644
---- a/block/bfq-wf2q.c
-+++ b/block/bfq-wf2q.c
-@@ -536,7 +536,9 @@ static void bfq_get_entity(struct bfq_entity *entity)
- 		bfqq->ref++;
- 		bfq_log_bfqq(bfqq->bfqd, bfqq, "get_entity: %p %d",
- 			     bfqq, bfqq->ref);
--	}
-+	} else
-+		bfqg_and_blkg_get(container_of(entity, struct bfq_group,
-+					       entity));
- }
- 
- /**
-@@ -650,8 +652,14 @@ static void bfq_forget_entity(struct bfq_service_tree *st,
- 
- 	entity->on_st = false;
- 	st->wsum -= entity->weight;
--	if (bfqq && !is_in_service)
-+	if (is_in_service)
-+		return;
++	rtnl_lock();
 +
-+	if (bfqq)
- 		bfq_put_queue(bfqq);
-+	else
-+		bfqg_and_blkg_put(container_of(entity, struct bfq_group,
-+					       entity));
+ 	/* Create per netdev entries */
+ 	priv->dbgfs_dir = debugfs_create_dir(dev->name, stmmac_fs_dir);
+ 
+@@ -4219,14 +4221,13 @@ static void stmmac_init_fs(struct net_device *dev)
+ 	debugfs_create_file("dma_cap", 0444, priv->dbgfs_dir, dev,
+ 			    &stmmac_dma_cap_fops);
+ 
+-	register_netdevice_notifier(&stmmac_notifier);
++	rtnl_unlock();
  }
  
- /**
+ static void stmmac_exit_fs(struct net_device *dev)
+ {
+ 	struct stmmac_priv *priv = netdev_priv(dev);
+ 
+-	unregister_netdevice_notifier(&stmmac_notifier);
+ 	debugfs_remove_recursive(priv->dbgfs_dir);
+ }
+ #endif /* CONFIG_DEBUG_FS */
+@@ -4728,14 +4729,14 @@ int stmmac_dvr_remove(struct device *dev)
+ 
+ 	netdev_info(priv->dev, "%s: removing driver", __func__);
+ 
+-#ifdef CONFIG_DEBUG_FS
+-	stmmac_exit_fs(ndev);
+-#endif
+ 	stmmac_stop_all_dma(priv);
+ 
+ 	stmmac_mac_set(priv, priv->ioaddr, false);
+ 	netif_carrier_off(ndev);
+ 	unregister_netdev(ndev);
++#ifdef CONFIG_DEBUG_FS
++	stmmac_exit_fs(ndev);
++#endif
+ 	phylink_destroy(priv->phylink);
+ 	if (priv->plat->stmmac_rst)
+ 		reset_control_assert(priv->plat->stmmac_rst);
+@@ -4955,6 +4956,7 @@ static int __init stmmac_init(void)
+ 	/* Create debugfs main directory if it doesn't exist yet */
+ 	if (!stmmac_fs_dir)
+ 		stmmac_fs_dir = debugfs_create_dir(STMMAC_RESOURCE_NAME, NULL);
++	register_netdevice_notifier(&stmmac_notifier);
+ #endif
+ 
+ 	return 0;
+@@ -4963,6 +4965,7 @@ static int __init stmmac_init(void)
+ static void __exit stmmac_exit(void)
+ {
+ #ifdef CONFIG_DEBUG_FS
++	unregister_netdevice_notifier(&stmmac_notifier);
+ 	debugfs_remove_recursive(stmmac_fs_dir);
+ #endif
+ }
 -- 
 2.20.1
 
