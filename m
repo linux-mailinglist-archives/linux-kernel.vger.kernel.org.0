@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1464317F7EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:43:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16B6217F86A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:48:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbgCJMn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:43:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43778 "EHLO mail.kernel.org"
+        id S1728211AbgCJMrn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:47:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727533AbgCJMn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:43:26 -0400
+        id S1727514AbgCJMrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:47:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9F5A24693;
-        Tue, 10 Mar 2020 12:43:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48DBE24691;
+        Tue, 10 Mar 2020 12:47:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844205;
-        bh=h7q2nI/axaClZyGnKqmaJHLV5ikhS1D/BVJY9Jv/du4=;
+        s=default; t=1583844460;
+        bh=jQRkvTTSvmorzupsnApKvUN8T93chrRBwJoSMoNe3Ko=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a0fSpvapWcjMjr524lZQq0Yu7z+Jqg9Yfuc43kmCQUYYhZkZoHz2STz+XLs/m059W
-         dLHDtMAZD/3mgRu0QbJPZFgECdiagOUAJN/0il0rE6D40xMMWXn6AUZKwFmNePgcuE
-         DlETPi6BIT2aalCHVubuvRfvDx/C2VPqAPBlMw4k=
+        b=b7RA0e6EUqNU3DOs/WQVlcuDp0ZcA3asNUgDna81o2vJXUieJNAHs8wwIfCdd0DXG
+         bZaSfIVKiiFkwoAUXVveermmI95oRlOg2qOePclu3en8PoNIPoczFi5cspmIl/ea65
+         0eTpaMNjfLeo94HgpFZ6AjhrRoPA/DQ8K5OAC/Eo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Desnes A. Nunes do Rosario" <desnesn@linux.ibm.com>,
-        Leonardo Bras <leonardo@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.4 70/72] powerpc: fix hardware PMU exception bug on PowerVM compatibility mode systems
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.9 75/88] dmaengine: tegra-apb: Fix use-after-free
 Date:   Tue, 10 Mar 2020 13:39:23 +0100
-Message-Id: <20200310123618.939602353@linuxfoundation.org>
+Message-Id: <20200310123623.917173559@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
-References: <20200310123601.053680753@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Desnes A. Nunes do Rosario <desnesn@linux.ibm.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-commit fc37a1632d40c80c067eb1bc235139f5867a2667 upstream.
+commit 94788af4ed039476ff3527b0e6a12c1dc42cb022 upstream.
 
-PowerVM systems running compatibility mode on a few Power8 revisions are
-still vulnerable to the hardware defect that loses PMU exceptions arriving
-prior to a context switch.
+I was doing some experiments with I2C and noticed that Tegra APB DMA
+driver crashes sometime after I2C DMA transfer termination. The crash
+happens because tegra_dma_terminate_all() bails out immediately if pending
+list is empty, and thus, it doesn't release the half-completed descriptors
+which are getting re-used before ISR tasklet kicks-in.
 
-The software fix for this issue is enabled through the CPU_FTR_PMAO_BUG
-cpu_feature bit, nevertheless this bit also needs to be set for PowerVM
-compatibility mode systems.
+ tegra-i2c 7000c400.i2c: DMA transfer timeout
+ elants_i2c 0-0010: elants_i2c_irq: failed to read data: -110
+ ------------[ cut here ]------------
+ WARNING: CPU: 0 PID: 142 at lib/list_debug.c:45 __list_del_entry_valid+0x45/0xac
+ list_del corruption, ddbaac44->next is LIST_POISON1 (00000100)
+ Modules linked in:
+ CPU: 0 PID: 142 Comm: kworker/0:2 Not tainted 5.5.0-rc2-next-20191220-00175-gc3605715758d-dirty #538
+ Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+ Workqueue: events_freezable_power_ thermal_zone_device_check
+ [<c010e5c5>] (unwind_backtrace) from [<c010a1c5>] (show_stack+0x11/0x14)
+ [<c010a1c5>] (show_stack) from [<c0973925>] (dump_stack+0x85/0x94)
+ [<c0973925>] (dump_stack) from [<c011f529>] (__warn+0xc1/0xc4)
+ [<c011f529>] (__warn) from [<c011f7e9>] (warn_slowpath_fmt+0x61/0x78)
+ [<c011f7e9>] (warn_slowpath_fmt) from [<c042497d>] (__list_del_entry_valid+0x45/0xac)
+ [<c042497d>] (__list_del_entry_valid) from [<c047a87f>] (tegra_dma_tasklet+0x5b/0x154)
+ [<c047a87f>] (tegra_dma_tasklet) from [<c0124799>] (tasklet_action_common.constprop.0+0x41/0x7c)
+ [<c0124799>] (tasklet_action_common.constprop.0) from [<c01022ab>] (__do_softirq+0xd3/0x2a8)
+ [<c01022ab>] (__do_softirq) from [<c0124683>] (irq_exit+0x7b/0x98)
+ [<c0124683>] (irq_exit) from [<c0168c19>] (__handle_domain_irq+0x45/0x80)
+ [<c0168c19>] (__handle_domain_irq) from [<c043e429>] (gic_handle_irq+0x45/0x7c)
+ [<c043e429>] (gic_handle_irq) from [<c0101aa5>] (__irq_svc+0x65/0x94)
+ Exception stack(0xde2ebb90 to 0xde2ebbd8)
 
-Fixes: 68f2f0d431d9ea4 ("powerpc: Add a cpu feature CPU_FTR_PMAO_BUG")
-Signed-off-by: Desnes A. Nunes do Rosario <desnesn@linux.ibm.com>
-Reviewed-by: Leonardo Bras <leonardo@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20200227134715.9715-1-desnesn@linux.ibm.com
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200209163356.6439-2-digetx@gmail.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/cputable.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/dma/tegra20-apb-dma.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/arch/powerpc/kernel/cputable.c
-+++ b/arch/powerpc/kernel/cputable.c
-@@ -2147,11 +2147,13 @@ static struct cpu_spec * __init setup_cp
- 		 * oprofile_cpu_type already has a value, then we are
- 		 * possibly overriding a real PVR with a logical one,
- 		 * and, in that case, keep the current value for
--		 * oprofile_cpu_type.
-+		 * oprofile_cpu_type. Futhermore, let's ensure that the
-+		 * fix for the PMAO bug is enabled on compatibility mode.
- 		 */
- 		if (old.oprofile_cpu_type != NULL) {
- 			t->oprofile_cpu_type = old.oprofile_cpu_type;
- 			t->oprofile_type = old.oprofile_type;
-+			t->cpu_features |= old.cpu_features & CPU_FTR_PMAO_BUG;
- 		}
- 	}
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -755,10 +755,6 @@ static int tegra_dma_terminate_all(struc
+ 	bool was_busy;
  
+ 	spin_lock_irqsave(&tdc->lock, flags);
+-	if (list_empty(&tdc->pending_sg_req)) {
+-		spin_unlock_irqrestore(&tdc->lock, flags);
+-		return 0;
+-	}
+ 
+ 	if (!tdc->busy)
+ 		goto skip_dma_stop;
 
 
