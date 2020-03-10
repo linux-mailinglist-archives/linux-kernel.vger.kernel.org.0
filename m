@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B52AB17FE76
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:35:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26C7417FEB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:37:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbgCJMop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:44:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47036 "EHLO mail.kernel.org"
+        id S1726838AbgCJMlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:41:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727789AbgCJMom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:44:42 -0400
+        id S1726776AbgCJMlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:41:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E43CB24691;
-        Tue, 10 Mar 2020 12:44:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D54AD24695;
+        Tue, 10 Mar 2020 12:41:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844281;
-        bh=sfBcGXRcQOZOoFxrn2GPLq76i/Oyp2K9kXMLiWQdk0U=;
+        s=default; t=1583844075;
+        bh=e6XfKFCo3E/geqxtJL5UjdGZZn5PajSr++jGszYg4WU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2p5mZcqS8ScgBql3W59DDYaecu1exAqqRyn0rUMJczC4CmZ5fBVVPeGV9Xi9tuj1T
-         Yhlck6daJrfrEaoXtQge433UqLykwgPIMusO9pqxNyQyCg64HgI1Jowb/iPSwuVuez
-         EBVnpbSaoP6OIeMo1+It/9GMpo6MmofPv10B9aQ0=
+        b=B1O8m6Tqf9w1P3iK6AT2Y0wbw3T4c9YBvW5JpApbCHYCf7SDqDFTdE6bbJRXaNeqR
+         q1uEMreS39TL2vzelA0mI4Za8PPoJGKjHDj3oMpMxLooC8UgUlOdtLRKeIwdm4CG9i
+         Z4YyXv7oRqu+iI1rraDGrUEsy+baPVxkQgtzmEQU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Poirier <bpoirier@cumulusnetworks.com>,
-        Michal Kubecek <mkubecek@suse.cz>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 24/88] ipv6: Fix route replacement with dev-only route
-Date:   Tue, 10 Mar 2020 13:38:32 +0100
-Message-Id: <20200310123611.873089710@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Korsnes <jkorsnes@cisco.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Armando Visconti <armando.visconti@st.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.4 22/72] HID: core: increase HID report buffer size to 8KiB
+Date:   Tue, 10 Mar 2020 13:38:35 +0100
+Message-Id: <20200310123607.383998649@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
-References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <20200310123601.053680753@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,58 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Poirier <bpoirier@cumulusnetworks.com>
+From: Johan Korsnes <jkorsnes@cisco.com>
 
-[ Upstream commit e404b8c7cfb31654c9024d497cec58a501501692 ]
+commit 84a4062632462c4320704fcdf8e99e89e94c0aba upstream.
 
-After commit 27596472473a ("ipv6: fix ECMP route replacement") it is no
-longer possible to replace an ECMP-able route by a non ECMP-able route.
-For example,
-	ip route add 2001:db8::1/128 via fe80::1 dev dummy0
-	ip route replace 2001:db8::1/128 dev dummy0
-does not work as expected.
+We have a HID touch device that reports its opens and shorts test
+results in HID buffers of size 8184 bytes. The maximum size of the HID
+buffer is currently set to 4096 bytes, causing probe of this device to
+fail. With this patch we increase the maximum size of the HID buffer to
+8192 bytes, making device probe and acquisition of said buffers succeed.
 
-Tweak the replacement logic so that point 3 in the log of the above commit
-becomes:
-3. If the new route is not ECMP-able, and no matching non-ECMP-able route
-exists, replace matching ECMP-able route (if any) or add the new route.
-
-We can now summarize the entire replace semantics to:
-When doing a replace, prefer replacing a matching route of the same
-"ECMP-able-ness" as the replace argument. If there is no such candidate,
-fallback to the first route found.
-
-Fixes: 27596472473a ("ipv6: fix ECMP route replacement")
-Signed-off-by: Benjamin Poirier <bpoirier@cumulusnetworks.com>
-Reviewed-by: Michal Kubecek <mkubecek@suse.cz>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Johan Korsnes <jkorsnes@cisco.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Armando Visconti <armando.visconti@st.com>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/ip6_fib.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/net/ipv6/ip6_fib.c
-+++ b/net/ipv6/ip6_fib.c
-@@ -784,8 +784,7 @@ static int fib6_add_rt2node(struct fib6_
- 					found++;
- 					break;
- 				}
--				if (rt_can_ecmp)
--					fallback_ins = fallback_ins ?: ins;
-+				fallback_ins = fallback_ins ?: ins;
- 				goto next_iter;
- 			}
+---
+ include/linux/hid.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/include/linux/hid.h
++++ b/include/linux/hid.h
+@@ -451,7 +451,7 @@ struct hid_report_enum {
+ };
  
-@@ -825,7 +824,9 @@ next_iter:
- 	}
+ #define HID_MIN_BUFFER_SIZE	64		/* make sure there is at least a packet size of space */
+-#define HID_MAX_BUFFER_SIZE	4096		/* 4kb */
++#define HID_MAX_BUFFER_SIZE	8192		/* 8kb */
+ #define HID_CONTROL_FIFO_SIZE	256		/* to init devices with >100 reports */
+ #define HID_OUTPUT_FIFO_SIZE	64
  
- 	if (fallback_ins && !found) {
--		/* No ECMP-able route found, replace first non-ECMP one */
-+		/* No matching route with same ecmp-able-ness found, replace
-+		 * first matching route
-+		 */
- 		ins = fallback_ins;
- 		iter = *ins;
- 		found++;
 
 
