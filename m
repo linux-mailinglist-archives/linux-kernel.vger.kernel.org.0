@@ -2,71 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 014C718075B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:49:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F4CA180764
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:49:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbgCJStU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 14:49:20 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41055 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbgCJStU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 14:49:20 -0400
-Received: by mail-ot1-f65.google.com with SMTP id s15so5997833otq.8;
-        Tue, 10 Mar 2020 11:49:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oJMNno1lQZX5Yt1T2cwhhyz5mFeIoqqe8lauC7RtIRA=;
-        b=Njgpew2CHuC5qYOF1TcSe5stBQWQ0tuPSRt8BveiDzvFIUvhwtv1JB7zb7cbjG9aQR
-         KgfwlqmOfE7GUlAlcs+XlRGPA8lvA3NtefHYulJpan0eku9PaVgAwjFk4aPWolFlKHJv
-         EV2jbbYE154QnktIsIYo4Ek7Qq78KnJgc0zTryYftPQlgJ2R6u2qvcliM1pBIrsRzefZ
-         Val0m+MlW7A1zePqj2Lvx/6uwISHtWzAmj9upZeoG4nCyYJI13Q1eaYqNiBcoI0PrIkV
-         JuHnJRLsJyRGpHd9P/CdcLtvj9MsjV2ZW018uRtnkUENf2v6MYkS6aCXToGYAu3GcOZQ
-         kJ1A==
-X-Gm-Message-State: ANhLgQ3/ggn98ohQDdOyEW7yP5sd8XSdMh1bNKr9tHzB4neGDAsPfVrZ
-        RjOinfS4RcL2CJz07YBBAw==
-X-Google-Smtp-Source: ADFU+vuY1E3rPvi2pXUsd32GlxgjEnTZz42NF9oeHquVvRsTdPF4ziEbeCb7z0ZUE5vT7X7YGYn5yA==
-X-Received: by 2002:a9d:4b0c:: with SMTP id q12mr18866881otf.77.1583866159629;
-        Tue, 10 Mar 2020 11:49:19 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v2sm3534546oiv.41.2020.03.10.11.49.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 11:49:19 -0700 (PDT)
-Received: (nullmailer pid 16240 invoked by uid 1000);
-        Tue, 10 Mar 2020 18:49:18 -0000
-Date:   Tue, 10 Mar 2020 13:49:18 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Christian Hewitt <christianshewitt@gmail.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Christian Hewitt <christianshewitt@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: amlogic: add support for the
- Beelink GT-King
-Message-ID: <20200310184918.GA16177@bogus>
-References: <1582985353-83371-1-git-send-email-christianshewitt@gmail.com>
- <1582985353-83371-2-git-send-email-christianshewitt@gmail.com>
+        id S1727520AbgCJStl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 14:49:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44496 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726391AbgCJStb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 14:49:31 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9404320873;
+        Tue, 10 Mar 2020 18:49:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583866170;
+        bh=unCX+t/zqE6eNvK2oVqS1Vr7/wodzuZVkgvAgzYg+gg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BmJu1/U/6X+arNuaUz0kbM5fshnGIOQgGAbFGh8rA/F6TUTjCBBP2O2mydxqnzNP4
+         loNOgVAf7RxFZkMnRvg118macTBUuCA1FxuaQYh0jYE0urtSJLfA7Bq5MK2S/F/7gb
+         vLHJOH7AAgNz5acJBn2jHcwWP7NSYoMLbiw+zbs4=
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1jBjwW-00Bi6k-SD; Tue, 10 Mar 2020 18:49:29 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Russell King <linux@arm.linux.org.uk>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Zenghui Yu <yuzenghui@huawei.com>
+Subject: [PATCH 2/4] irqchip/atmel-aic5: Fix irq_retrigger callback return value
+Date:   Tue, 10 Mar 2020 18:49:19 +0000
+Message-Id: <20200310184921.23552-3-maz@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200310184921.23552-1-maz@kernel.org>
+References: <20200310184921.23552-1-maz@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1582985353-83371-2-git-send-email-christianshewitt@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, jason@lakedaemon.net, linux@arm.linux.org.uk, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 29 Feb 2020 18:09:12 +0400, Christian Hewitt wrote:
-> The Shenzen AZW (Beelink) GT-King is based on the Amlogic W400 reference
-> board with an S922X chip.
-> 
-> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/amlogic.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+The irq_retrigger callback is supposed to return 0 when retrigger
+has failed, and a non-zero value otherwise. Tell the core code
+that the driver has succedded in using the HW to retrigger the
+interrupt.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+---
+ drivers/irqchip/irq-atmel-aic5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-atmel-aic5.c b/drivers/irqchip/irq-atmel-aic5.c
+index 29333497ba10..fc1b3a9cdafc 100644
+--- a/drivers/irqchip/irq-atmel-aic5.c
++++ b/drivers/irqchip/irq-atmel-aic5.c
+@@ -128,7 +128,7 @@ static int aic5_retrigger(struct irq_data *d)
+ 	irq_reg_writel(bgc, 1, AT91_AIC5_ISCR);
+ 	irq_gc_unlock(bgc);
+ 
+-	return 0;
++	return 1;
+ }
+ 
+ static int aic5_set_type(struct irq_data *d, unsigned type)
+-- 
+2.20.1
+
