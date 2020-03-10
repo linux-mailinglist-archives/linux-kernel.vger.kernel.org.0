@@ -2,75 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAE6717F669
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:37:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1810C17F652
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:31:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726403AbgCJLhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 07:37:04 -0400
-Received: from mail.11d01.mspz7.gob.ec ([190.152.145.91]:52976 "EHLO
-        mail.11d01.mspz7.gob.ec" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbgCJLhD (ORCPT
+        id S1726391AbgCJLbH convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 10 Mar 2020 07:31:07 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:42443 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726325AbgCJLbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 07:37:03 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.11d01.mspz7.gob.ec (Postfix) with ESMTP id 9133F2F70B46;
-        Tue, 10 Mar 2020 03:46:56 -0500 (-05)
-Received: from mail.11d01.mspz7.gob.ec ([127.0.0.1])
-        by localhost (mail.11d01.mspz7.gob.ec [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Pa6Uk9AiK7HY; Tue, 10 Mar 2020 03:46:56 -0500 (-05)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.11d01.mspz7.gob.ec (Postfix) with ESMTP id A38652F6AC86;
-        Tue, 10 Mar 2020 03:22:20 -0500 (-05)
-DKIM-Filter: OpenDKIM Filter v2.9.2 mail.11d01.mspz7.gob.ec A38652F6AC86
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=11d01.mspz7.gob.ec;
-        s=50CBC7E4-8BED-11E9-AF6C-F1A741A224D3; t=1583828540;
-        bh=o+H3O7n1+zJcXo0FhJs7spyf8HmE4ClnBa/Y2Gk0DL0=;
-        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:To:
-         From:Date:Reply-To:Message-Id;
-        b=vVUaPb+SJ9mXZxiJJ9vPndeWCTgSMobkPbsb/wPzyyThnshXKAOmWEvrl3fJQ7hyp
-         8zkrd4IYJ1KFfiZjfeDsaROLLH1mFpsCybzEoBT2ze1qc+099t5JmJxxCsP5Mjq8Pa
-         DS9mLailkGySFsqhEAIr62q+FxORMGP3z5LoHA7k=
-X-Virus-Scanned: amavisd-new at 11d01.mspz7.gob.ec
-Received: from mail.11d01.mspz7.gob.ec ([127.0.0.1])
-        by localhost (mail.11d01.mspz7.gob.ec [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id NRAsYzIob2zp; Tue, 10 Mar 2020 03:22:20 -0500 (-05)
-Received: from [10.19.167.32] (unknown [105.0.4.171])
-        by mail.11d01.mspz7.gob.ec (Postfix) with ESMTPSA id 2B8B72F6C163;
-        Tue, 10 Mar 2020 02:51:35 -0500 (-05)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 10 Mar 2020 07:31:06 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-4-p-Ri5FvvOWKUDYolSD5F6g-13; Tue, 10 Mar 2020 11:31:02 +0000
+X-MC-Unique: p-Ri5FvvOWKUDYolSD5F6g-13
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 10 Mar 2020 11:31:01 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 10 Mar 2020 11:31:01 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Nathan Chancellor' <natechancellor@gmail.com>,
+        Masahiro Yamada <masahiroy@kernel.org>
+CC:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        stable <stable@vger.kernel.org>
+Subject: RE: [PATCH] kbuild: Disable -Wpointer-to-enum-cast
+Thread-Topic: [PATCH] kbuild: Disable -Wpointer-to-enum-cast
+Thread-Index: AQHV9nra+DJ/Yb9GEECSXKfRu6cHrKhBsStA
+Date:   Tue, 10 Mar 2020 11:31:01 +0000
+Message-ID: <c2a687d065c1463d8eea9947687b3b05@AcuMS.aculab.com>
+References: <20200308073400.23398-1-natechancellor@gmail.com>
+ <CAK7LNARcTHpd8fzrAhFVB_AR7NoBgenX64de0eS2uN8g0by9PQ@mail.gmail.com>
+ <20200310012545.GA16822@ubuntu-m2-xlarge-x86>
+In-Reply-To: <20200310012545.GA16822@ubuntu-m2-xlarge-x86>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000_Millionen_Euro?=
-To:     Recipients <ronald.pena@11d01.mspz7.gob.ec>
-From:   ''Michael weirsky'' <ronald.pena@11d01.mspz7.gob.ec>
-Date:   Tue, 10 Mar 2020 10:21:03 +0200
-Reply-To: mikeweirskyspende@gmail.com
-Message-Id: <20200310075136.2B8B72F6C163@mail.11d01.mspz7.gob.ec>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lieber Freund,
+From: Nathan Chancellor
+> Sent: 10 March 2020 01:26
+...
+> Sure, I can send v2 to do that but I think that sending 97 patches just
+> casting the small values (usually less than twenty) to unsigned long
+> then to the enum is rather frivolous. I audited at least ten to fifteen
+> of these call sites when creating the clang patch and they are all
+> basically false positives.
 
-Ich bin Herr Mike Weirsky, New Jersey, Vereinigte Staaten von Amerika, der =
-Mega-Gewinner von $ 273million In Mega Millions Jackpot, spende ich an 5 zu=
-f=C3=A4llige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Ma=
-il nach einem Spinball ausgew=C3=A4hlt.Ich habe den gr=C3=B6=C3=9Ften Teil =
-meines Verm=C3=B6gens auf eine Reihe von Wohlt=C3=A4tigkeitsorganisationen =
-und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die =
-Summe von =E2=82=AC 2.000.000,00 an Sie als eine der ausgew=C3=A4hlten 5 zu=
- spenden, um meine Gewinne zu =C3=BCberpr=C3=BCfen.
-Das ist dein Spendencode: [MW530342019]
-www.youtube.com/watch?v=3Dun8yRTmrYMY
+Such casts just make the code hard to read.
+If misused casts can hide horrid bugs.
+IMHO sprinkling the code with casts just to remove
+compiler warnings will bite back one day.
 
-Antworten Sie mit dem SPENDE-CODE an diese =
+	David
 
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-E-Mail:mikeweirskyspende@gmail.com
-
-Ich hoffe, Sie und Ihre Familie gl=C3=BCcklich zu machen.
-
-Gr=C3=BC=C3=9Fe
-Herr Mike Weirsky
