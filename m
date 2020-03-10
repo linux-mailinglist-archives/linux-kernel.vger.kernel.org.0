@@ -2,139 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F9DC180290
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:56:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20493180297
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:57:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbgCJPz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 11:55:59 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:52599 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbgCJPz7 (ORCPT
+        id S1726721AbgCJP5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 11:57:07 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46200 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbgCJP5G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 11:55:59 -0400
-Received: by mail-pj1-f65.google.com with SMTP id f15so590712pjq.2;
-        Tue, 10 Mar 2020 08:55:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bwBSe9J29UDT2a8cggrqQgzSCk0l6BfTI9Jlj85gMCE=;
-        b=qJJ8iwQSiqQFSHvEveOAAjVn2jWlAdU7MU2xZnopyM83H035x0DL9cTVvEKaaYBpPj
-         v0H50596N0ZmeNWaa6ZmZRBiv/VRXPmUIA8mX9ZR3Q4UIsSyOlCdd7N11cijPmQ7v3Rw
-         SFwmDCg+OX6DIvvS1PJRBKkvfs1pj4utl+9ZZ0/yvW4DTzL0ESRU+pCbGjlIfncmzn+X
-         4d5CU/iFvIsbeqKCePILZ3atr6hszHxwC7HsDjrorF9pbw6vPeUiLReSopndYvsb8msd
-         618CO2e0mm+CqFglbd5698UpVRq6deqmOV2LV1kmDBCJcFjhon0afynxJqt5Ql44AtOK
-         eAxQ==
+        Tue, 10 Mar 2020 11:57:06 -0400
+Received: from mail-wm1-f72.google.com ([209.85.128.72])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <gpiccoli@canonical.com>)
+        id 1jBhFf-0001ih-Id
+        for linux-kernel@vger.kernel.org; Tue, 10 Mar 2020 15:57:03 +0000
+Received: by mail-wm1-f72.google.com with SMTP id 20so580336wmk.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 08:57:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=bwBSe9J29UDT2a8cggrqQgzSCk0l6BfTI9Jlj85gMCE=;
-        b=lH4PMCV2B1fBz39U+apbSR08bqpw5lfGDMvG6+mQkOxMW1PI2lXGkByXyExEF4x2cb
-         GVDnx2WNP5b0SkQf6+i6G23HVMMVv1AjXY654upR8huRyilDQ6/51QrPJaD3xtXGmFC3
-         O8lFns4ERWA5SIHMOZbVt94y2huulNXp+MEpPJyJRtrwwue5tDx2O6zfSnT3XRKZN+rw
-         6L7IdPCIQhsEXso4dV7CZQUR4wUXxbJSB7wKziPlv7K5Au67SmLgwKxo7ncjf3XXWNVA
-         FPM03mVvBWDQY7flTSA893XNE3aUJDz5o7EC52cEdOfpzm2aZfl5VCh9xGJcRhys6Mp3
-         0p3w==
-X-Gm-Message-State: ANhLgQ1rqqYcn/ChDiXh57xJkWqJRpIWyyhiVQTTUkgBjrSxzCEf7wNW
-        iWmOLeSKY81fweKwFC395+idRK6U
-X-Google-Smtp-Source: ADFU+vtmNkVYH5Lz3eKS09VC8JI23fnLYHfw6xk7pW58r1MFvtA6sGXsBZGzIfI1MBE/dVBImTHKww==
-X-Received: by 2002:a17:902:a715:: with SMTP id w21mr4422917plq.244.1583855757432;
-        Tue, 10 Mar 2020 08:55:57 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id h22sm47363643pgn.57.2020.03.10.08.55.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Mar 2020 08:55:55 -0700 (PDT)
-Subject: Re: [PATCH 5.4 000/167] 5.4.25-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20200310144113.973994620@linuxfoundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-Message-ID: <2fc1ae97-cb04-7105-b458-cb456732f48e@roeck-us.net>
-Date:   Tue, 10 Mar 2020 08:55:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5bU2bAsKCmhGtQG8kyL29QcjXAg6Y2S3H5JueO4Uiyo=;
+        b=ci5A6fOrFPxHHGdE0DrDoSbx51r7aIj4cMY44gjsj+smTEXbW2uplskA9NoAXTvXj3
+         hIr2cgglqXjgJyTXazei/wn5SsX4Kiz3wuSdpEMLwQe6iBqFHHsyyr0qciTDwxnbBvOf
+         nbDMuXg9aA1jktnEANMQtTKjfF3ZJxYP2Z1IKLQcZtAppxZjUlHwvg+5n/81c6HWXp3W
+         YAfC6mTkgj1Fz+czrqlWfC+mape5NeZ7T11+7+URv41gQdy3ymZkBsHU01azSbxl7nzH
+         lhTR9oKEUKcHzQceSGmxK48k+3rY0ZnSLlqHoP0KO94OSFoayWuYI2+Rw0KUSiJr1wi9
+         vqyA==
+X-Gm-Message-State: ANhLgQ0ByEtIwMOA/goBWy5jjpvWt/pUuhhgU7DNgqF9NsLTxbJ5pE2s
+        pPNnu+OoJHXDlVSyy8XzXIUsSl8ViutopK1I1uL1vFmoNvWgjOk4EAnIlK0Nd5ssMti+mAsg8U3
+        FZdyHhHiixIzIk5Acb9sZf0ZD86foF1hvYnqZZhAw1A==
+X-Received: by 2002:a5d:4382:: with SMTP id i2mr27043804wrq.424.1583855822760;
+        Tue, 10 Mar 2020 08:57:02 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vtwXC/I1eK0vh+vQ0Rr6XLMpACaGQdcAhI6O2uc9M49Po4n8L+6y3hqKiqs5jQnam6z0Du/0g==
+X-Received: by 2002:a5d:4382:: with SMTP id i2mr27043774wrq.424.1583855822450;
+        Tue, 10 Mar 2020 08:57:02 -0700 (PDT)
+Received: from localhost (189-47-87-73.dsl.telesp.net.br. [189.47.87.73])
+        by smtp.gmail.com with ESMTPSA id r19sm4461075wmh.26.2020.03.10.08.57.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Mar 2020 08:57:01 -0700 (PDT)
+From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     linux-doc@vger.kernel.org, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com, tglx@linutronix.de,
+        gpiccoli@canonical.com, kernel@gpiccoli.net,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] kernel/hung_task.c: Introduce sysctl to print all traces when a hung task is detected
+Date:   Tue, 10 Mar 2020 12:56:50 -0300
+Message-Id: <20200310155650.17968-1-gpiccoli@canonical.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20200310144113.973994620@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/10/20 7:42 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.25 release.
-> There are 167 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 12 Mar 2020 14:40:27 +0000.
-> Anything received after that time might be too late.
-> 
+Commit 401c636a0eeb ("kernel/hung_task.c: show all hung tasks before panic")
+introduced a change in that we started to show all CPUs backtraces when a
+hung task is detected _and_ the sysctl/kernel parameter "hung_task_panic"
+is set. The idea is good, because usually when observing deadlocks (that
+may lead to hung tasks), the culprit is another task holding a lock and
+not necessarily the task detected as hung.
 
-mips:allmodconfig, nds32:allmodconfig, and probably others:
+The problem with this approach is that dumping backtraces is a slightly
+expensive task, specially printing that on console (and specially in many
+CPU machines, as servers commonly found nowadays). So, users that plan to
+collect a kdump to investigate the hung tasks and narrow down the deadlock
+definitely don't need the CPUs backtrace on dmesg/console, which will delay
+the panic and pollute the log (crash tool would easily grab all CPUs traces
+with 'bt -a' command).
+Also, there's the reciprocal scenario: some users may be interested in
+seeing the CPUs backtraces but not have the system panic when a hung task
+is detected. The current approach hence is almost as embedding a policy in
+the kernel, by forcing the CPUs backtraces' dump (only) on hung_task_panic.
 
-  CC [M]  drivers/gpu/drm/virtio/virtgpu_object.o
-drivers/gpu/drm/virtio/virtgpu_object.c:31:67: error: expected ')' before 'int'
-   31 | module_param_named(virglhack, virtio_gpu_virglrenderer_workaround, int, 0400);
+This patch decouples the panic event on hung task from the CPUs backtraces
+dump, by creating (and documenting) a new sysctl/kernel parameter called
+"hung_task_all_cpu_backtrace", analog to the approach taken on soft/hard
+lockups, that have both a panic and an "all_cpu_backtrace" sysctl to allow
+individual control. The new mechanism for dumping the CPUs backtraces on
+hung task detection respects "hung_task_warnings" by not dumping the
+traces in case there's no warnings left.
 
-Culprit is "drm/virtio: make resource id workaround runtime switchable.".
-Upstream commit b0138364da17617d ("drm/virtio: module_param_named() requires linux/moduleparam.h")
-is tagged 'Fixes: 3e93bc2a58aa ("drm/virtio: make resource id workaround runtime switchable.")'
-and does indeed fix this problem.
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Guilherme G. Piccoli <gpiccoli@canonical.com>
+---
+ .../admin-guide/kernel-parameters.txt         |  6 ++++
+ Documentation/admin-guide/sysctl/kernel.rst   | 15 ++++++++++
+ include/linux/sched/sysctl.h                  |  7 +++++
+ kernel/hung_task.c                            | 30 +++++++++++++++++--
+ kernel/sysctl.c                               | 11 +++++++
+ 5 files changed, 67 insertions(+), 2 deletions(-)
 
-When patches are auto-selected for backports, would it be possible to also pick
-patches fixing them right away ?
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index adf77ead02c3..4c6595b5f6c8 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1453,6 +1453,12 @@
+ 			x86-64 are 2M (when the CPU supports "pse") and 1G
+ 			(when the CPU supports the "pdpe1gb" cpuinfo flag).
+ 
++	hung_task_all_cpu_backtrace=
++			[KNL] Should kernel generates backtraces on all cpus
++			when a hung task is detected. Defaults to 0 and can
++			be controlled by hung_task_all_cpu_backtrace sysctl.
++			Format: <integer>
++
+ 	hung_task_panic=
+ 			[KNL] Should the hung task detector generate panics.
+ 			Format: <integer>
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index 95b2f3256323..218c717c1354 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -40,6 +40,7 @@ show up in /proc/sys/kernel:
+ - hotplug
+ - hardlockup_all_cpu_backtrace
+ - hardlockup_panic
++- hung_task_all_cpu_backtrace
+ - hung_task_panic
+ - hung_task_check_count
+ - hung_task_timeout_secs
+@@ -339,6 +340,20 @@ Path for the hotplug policy agent.
+ Default value is "/sbin/hotplug".
+ 
+ 
++hung_task_all_cpu_backtrace:
++================
++
++Determines if kernel should NMI all CPUs to dump their backtraces when
++a hung task is detected. This file shows up if CONFIG_DETECT_HUNG_TASK
++and CONFIG_SMP are enabled.
++
++0: Won't show all CPUs backtraces when a hung task is detected.
++This is the default behavior.
++
++1: Will NMI all CPUs and dump their backtraces when a hung task
++is detected.
++
++
+ hung_task_panic:
+ ================
+ 
+diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+index d4f6215ee03f..8cd29440ec8a 100644
+--- a/include/linux/sched/sysctl.h
++++ b/include/linux/sched/sysctl.h
+@@ -7,6 +7,13 @@
+ struct ctl_table;
+ 
+ #ifdef CONFIG_DETECT_HUNG_TASK
++
++#ifdef CONFIG_SMP
++extern unsigned int sysctl_hung_task_all_cpu_backtrace;
++#else
++#define sysctl_hung_task_all_cpu_backtrace 0
++#endif /* CONFIG_SMP */
++
+ extern int	     sysctl_hung_task_check_count;
+ extern unsigned int  sysctl_hung_task_panic;
+ extern unsigned long sysctl_hung_task_timeout_secs;
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 14a625c16cb3..54152b26117e 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -53,9 +53,28 @@ int __read_mostly sysctl_hung_task_warnings = 10;
+ static int __read_mostly did_panic;
+ static bool hung_task_show_lock;
+ static bool hung_task_call_panic;
++static bool hung_task_show_bt;
+ 
+ static struct task_struct *watchdog_task;
+ 
++#ifdef CONFIG_SMP
++/*
++ * Should we dump all CPUs backtraces in a hung task event?
++ * Defaults to 0, can be changed either via cmdline or sysctl.
++ */
++unsigned int __read_mostly sysctl_hung_task_all_cpu_backtrace;
++
++static int __init hung_task_backtrace_setup(char *str)
++{
++	int rc = kstrtouint(str, 0, &sysctl_hung_task_all_cpu_backtrace);
++
++	if (rc)
++		return rc;
++	return 1;
++}
++__setup("hung_task_all_cpu_backtrace=", hung_task_backtrace_setup);
++#endif /* CONFIG_SMP */
++
+ /*
+  * Should we panic (and reboot, if panic_timeout= is set) when a
+  * hung task is detected:
+@@ -137,6 +156,9 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 			" disables this message.\n");
+ 		sched_show_task(t);
+ 		hung_task_show_lock = true;
++
++		if (sysctl_hung_task_all_cpu_backtrace)
++			hung_task_show_bt = true;
+ 	}
+ 
+ 	touch_nmi_watchdog();
+@@ -201,10 +223,14 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ 	rcu_read_unlock();
+ 	if (hung_task_show_lock)
+ 		debug_show_all_locks();
+-	if (hung_task_call_panic) {
++
++	if (hung_task_show_bt) {
++		hung_task_show_bt = false;
+ 		trigger_all_cpu_backtrace();
++	}
++
++	if (hung_task_call_panic)
+ 		panic("hung_task: blocked tasks");
+-	}
+ }
+ 
+ static long hung_timeout_jiffies(unsigned long last_checked,
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index ad5b88a53c5a..238f268de486 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1098,6 +1098,17 @@ static struct ctl_table kern_table[] = {
+ 	},
+ #endif
+ #ifdef CONFIG_DETECT_HUNG_TASK
++#ifdef CONFIG_SMP
++	{
++		.procname	= "hung_task_all_cpu_backtrace",
++		.data		= &sysctl_hung_task_all_cpu_backtrace,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
++	},
++#endif /* CONFIG_SMP */
+ 	{
+ 		.procname	= "hung_task_panic",
+ 		.data		= &sysctl_hung_task_panic,
+-- 
+2.25.1
 
-Guenter
