@@ -2,115 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF45217FD70
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:29:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EC4317FD38
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:26:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729368AbgCJMy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:54:29 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:36029 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729350AbgCJMyX (ORCPT
+        id S1730134AbgCJN0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:26:43 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:56185 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728863AbgCJMzw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:54:23 -0400
-Received: by mail-qk1-f193.google.com with SMTP id u25so12557091qkk.3;
-        Tue, 10 Mar 2020 05:54:22 -0700 (PDT)
+        Tue, 10 Mar 2020 08:55:52 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 6so1269978wmi.5;
+        Tue, 10 Mar 2020 05:55:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4gPRUE/8c5unfeblSQvhYpKxeSuVZhZNXJJMTut3+xc=;
-        b=XkznGvkaYBTUY217XQ+/JcQlXuOsrjWrLd6qvYVsRlLicZNCjg+d1sTOEeWvFDBjed
-         ZUQFiYxNYCClkr65W3vIB7yabWXsorUCj9aoLmomRhnyGmNzS97zSfSpHywipgu2WlML
-         5GQjtgI93aBcWLFmFWtro9CmlXquwSClaP6pI8JhmVxxHoD+ywnBhYIi0tL5byG53uHe
-         HOh3OK35wClm2ks6crxtZTJmPM1XzoHgk/pmQ3S/3FEKsFWVaHcUpEs4Li1XwIw9Eij7
-         l3eZfqtzF8TEb9w+VUtY2cK+IIlD/WcB23bnYGWkxIH/bCgp91JtqG+n3saW1kbB6HGz
-         07jw==
+        h=from:to:cc:subject:date:message-id;
+        bh=ddx48D2gr10nMoG1C61HRni/V10Bu89hCsWOfewS3C4=;
+        b=mclrgEFbgjuY+WFqJ+yAnwLTrQAeGXiC0Khzlfy+mgVHM1ed2h7pdu01MundlIfUOz
+         lK1bvpqusxVftNGxvuDX8dIDOXjHVEUAr1+UmxkBK0E7cdjtLT09f9juyEOgCPeTGOHf
+         dri3R4BLs5m2VACYXYbpduXDXQgMT6RyF1IuKHtrf8s07k/VzpcRttYBlxrS7+0m4Cuc
+         0+emoIgUY+Hv9GEup174YOtN+nXnwG0164vMzM8KJi7UraKvZ5FLdiqPQtArsU3I4jbn
+         AFyhQro+tSKtFVMPm2Qb8M+V/t8W6TluhBMQ5bgRH5JUjWtmM3q3erHjcumkmQ7ct7GQ
+         200A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4gPRUE/8c5unfeblSQvhYpKxeSuVZhZNXJJMTut3+xc=;
-        b=NCOg7YCbAvKQHwGhs0qvOzf8I6su65P9a+E50imI6lUwlMGid9USmjS/APlZTv8ryO
-         /Hqr4Xey0NxaRPqZ36fvuaccNRHFNDrxsTW5fk8wpwkjwf7fMskYucrWRQwkhhm+fNmz
-         FV5zpvm5f9kO8sFTNTGwfnTNPhRAH2OdMiCHF/N+9xzas4BHvucVLUcMQxpX7KTJqDCz
-         WyG5UUC5pp+XFDgiYWkwsh/b+8tkclRvSvoVUBBk7diP9/SnbwqrexK7jXksmUvlxKkW
-         /b4Z2jflslLdcAvgX2U58uooGyKdXcrN6XdFJtUXE9w+OOpEAJO+diuVUE0stslIptNi
-         PwrQ==
-X-Gm-Message-State: ANhLgQ1nKO/VtkW8wHApSt5FV8XxvnIp7vwnkHYiOgl/sxeW3uEpW1J8
-        UxrRV73nXNdp4X78621mjbjYSpoYjm8Nfa37+Pg=
-X-Google-Smtp-Source: ADFU+vvDgu6r2lvGrzD+aENtSuJiR4ntDHyMa/Gp9A1Gub6RnDjugtxTlXjHNfyjGwMDnaqFEam8O6u6HzvTy4j0zEU=
-X-Received: by 2002:a05:620a:22cd:: with SMTP id o13mr10800851qki.160.1583844862180;
- Tue, 10 Mar 2020 05:54:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <1580185137-11255-1-git-send-email-gupt21@gmail.com> <20200310122934.GA13896@ninjato>
-In-Reply-To: <20200310122934.GA13896@ninjato>
-From:   rishi gupta <gupt21@gmail.com>
-Date:   Tue, 10 Mar 2020 18:24:10 +0530
-Message-ID: <CALUj-guKqkRKVKDa1U+gv0rLx23zc5cFT3Qnakp4muk9LSUYfQ@mail.gmail.com>
-Subject: Re: [PATCH v3] HID: mcp2221: add usb to i2c-smbus host bridge
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        wsa+renesas@sang-engineering.com,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ddx48D2gr10nMoG1C61HRni/V10Bu89hCsWOfewS3C4=;
+        b=kzU7Te13CnI92MbfifeH/92yu0hJ3Zogs3WNPfCwAO14zXHIksyGHc2tt2EXaJwA43
+         zqSJWylBwNl/MmTcyw5ABW7aaB89kNuT0HcDYyRXSH2qPaWBliSOKVGQaqzET4+beNtN
+         fNw7BKbvtmvVmjATbmg1ZdVAp3cFyApWwVlDWbE+J6EtIfHyNHbDZ5m+yW7K44437taa
+         +tmZxgrCQKgcvfUSxEr/3wlx2XRj6RxLb/+0lvZiekc8dnczLkF2q/Jnk2Crfe9SIx66
+         OMjHOKcFphHT3JrdtL24zJAzeGNC2rZmGMoET5SRLHK/LjoiGN4aysvN5dOI+XRTwvLW
+         A1Uw==
+X-Gm-Message-State: ANhLgQ3LYTQ02fT3qGDtxnZfMcqpWvRX6shRTQxnPzhIl3K5JkgGob3W
+        B4RHRNgkTK4txMruxz8gay0=
+X-Google-Smtp-Source: ADFU+vs/PIuMLTxZwNDZV1kMk1rEY1URgp5tFfXnru+tJtrPQsbTGmlA5/Sp7HQfDtoO2oX3XXcdlw==
+X-Received: by 2002:a1c:ac46:: with SMTP id v67mr1970418wme.153.1583844950007;
+        Tue, 10 Mar 2020 05:55:50 -0700 (PDT)
+Received: from localhost.localdomain ([79.115.60.40])
+        by smtp.gmail.com with ESMTPSA id t81sm4018594wmb.15.2020.03.10.05.55.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 05:55:49 -0700 (PDT)
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     broonie@kernel.org
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, eha@deif.com, angelo@sysam.it,
+        andrew.smirnov@gmail.com, gustavo@embeddedor.com, weic@nvidia.com,
+        mhosny@nvidia.com, michael@walle.cc, peng.ma@nxp.com
+Subject: [PATCH v3 0/7] NXP DSPI bugfixes and support for LS1028A
+Date:   Tue, 10 Mar 2020 14:55:35 +0200
+Message-Id: <20200310125542.5939-1-olteanv@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I will send two more patches in sometime.
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
 
-Patch 1: Define i2c_adapter_quirks to let i2c core check msg's order,
-type and length
-              As of now this driver itself is doing this sanity.
+This series addresses a few issues that were missed during the previous
+series "[PATCH 00/12] TCFQ to XSPI migration for NXP DSPI driver", on
+SoCs other than LS1021A and LS1043A. DMA mode has been completely broken
+by that series, and XSPI mode never worked on little-endian controllers.
 
-Patch 2: Add support for GPIO functionality
+Then it introduces support for the LS1028A chip, whose compatible has
+recently been documented here:
 
-On Tue, Mar 10, 2020 at 5:59 PM Wolfram Sang <wsa@the-dreams.de> wrote:
->
->
-> > +     if (num == 1) {
-> > +             if (msgs->flags & I2C_M_RD) {
-> > +                     ret = mcp_i2c_smbus_read(mcp, msgs, MCP2221_I2C_RD_DATA,
-> > +                                                     0, 0, NULL);
-> > +             } else {
-> > +                     ret = mcp_i2c_write(mcp, msgs, MCP2221_I2C_WR_DATA, 1);
-> > +             }
-> > +             if (ret)
-> > +                     goto exit;
-> > +             ret = num;
-> > +     } else if (num == 2) {
-> > +             /* Ex transaction; send reg address and read its contents */
-> > +             if (msgs[0].addr == msgs[1].addr &&
-> > +                     !(msgs[0].flags & I2C_M_RD) &&
-> > +                      (msgs[1].flags & I2C_M_RD)) {
-> > +
-> > +                     ret = mcp_i2c_write(mcp, &msgs[0],
-> > +                                             MCP2221_I2C_WR_NO_STOP, 0);
-> > +                     if (ret)
-> > +                             goto exit;
-> > +
-> > +                     ret = mcp_i2c_smbus_read(mcp, &msgs[1],
-> > +                                             MCP2221_I2C_RD_RPT_START,
-> > +                                             0, 0, NULL);
-> > +                     if (ret)
-> > +                             goto exit;
-> > +                     ret = num;
-> > +             } else {
-> > +                     dev_err(&adapter->dev,
-> > +                             "unsupported multi-msg i2c transaction\n");
-> > +                     ret = -EOPNOTSUPP;
-> > +             }
-> > +     } else {
-> > +             dev_err(&adapter->dev,
-> > +                     "unsupported multi-msg i2c transaction\n");
-> > +             ret = -EOPNOTSUPP;
-> > +     }
->
-> Have a look at struct i2c_adapter_quirks and especially the flags to let
-> the I2C core do the sanity checks from here.
->
+https://lore.kernel.org/linux-devicetree/20200218171418.18297-1-michael@walle.cc/
+
+The device tree for the LS1028A SoC is extended with DMA channels
+definition, such that even though the default operating mode is XSPI,
+one can simply change DSPI_XSPI_MODE to DSPI_DMA_MODE in the
+devtype_data structure of the driver and use that instead.
+
+I don't expect the "fixes" patches to reach very far down the stable
+pipe, since there has been pretty heavy refactoring in this driver.
+
+For testing, benchmarking and debugging, the mikroBUS connector on the
+LS1028A-RDB is made available via spidev.
+
+Vladimir Oltean (7):
+  spi: spi-fsl-dspi: Don't access reserved fields in SPI_MCR
+  spi: spi-fsl-dspi: Avoid use-after-free in interrupt mode
+  spi: spi-fsl-dspi: Fix little endian access to PUSHR CMD and TXDATA
+  spi: spi-fsl-dspi: Fix bits-per-word acceleration in DMA mode
+  spi: spi-fsl-dspi: Add support for LS1028A
+  arm64: dts: ls1028a: Specify the DMA channels for the DSPI controllers
+  arm64: dts: ls1028a-rdb: Add a spidev node for the mikroBUS
+
+ .../boot/dts/freescale/fsl-ls1028a-rdb.dts    |  14 ++
+ .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |   6 +
+ drivers/spi/spi-fsl-dspi.c                    | 188 +++++++++++-------
+ 3 files changed, 134 insertions(+), 74 deletions(-)
+
+-- 
+2.17.1
+
