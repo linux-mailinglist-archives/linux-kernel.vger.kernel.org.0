@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD43017FE09
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:32:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14F8F17FE06
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:32:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729585AbgCJNcQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:32:16 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38644 "EHLO
+        id S1729768AbgCJNcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:32:12 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45748 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729657AbgCJNcG (ORCPT
+        with ESMTP id S1728218AbgCJNcK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:32:06 -0400
-Received: by mail-wr1-f65.google.com with SMTP id t11so15905553wrw.5
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:32:06 -0700 (PDT)
+        Tue, 10 Mar 2020 09:32:10 -0400
+Received: by mail-wr1-f65.google.com with SMTP id m9so6898955wro.12
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:32:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eTSKNjhkTPUhvHieKRKNo9OKCglUUf75Y8SFUIDPF94=;
-        b=oe3lLYb2VJTK/cYnJvNzU5OpK0mPTfzjuJD+F9YMYyfVJ/t+AmHIugoNuGmcIvoU9Y
-         EeaUpH9h2OXprhwgbtCo9n7yECDhrSNI1W1KhdqizKavVDcvAWqf3omtZ9zzt51I0rPh
-         h6n8jnL8mmLbY2JW9OuXFp79v0Ch1liAMssyOQ2Oyau7CmcMZMNOM+f6XbF7zI2k1nE+
-         V4b39W4ErWrRKaKpgiwNul6qpNgyxC5b7vpERvT2JwBGXuydMDuNzNy4GxDLoZhR8WJ0
-         PMrRcjVi8KmQqZyQJkWIiL98QIAAMxqIIycH3EAM2ivmIjfS89SD8dxJyP8gbviy1U++
-         ktOQ==
+        bh=AwwrCpJJN77zM77SbkDGUuHYvYg7rqeDy4N6zR+WgEI=;
+        b=jk0A5/IebVZglpAYFFlUy843DnPN1be3LQ6z/aHJvyhSRIdqMMwJnf5E3/7SYiHdTd
+         uzMP0wtkDa7HGgmsFBcvV82GlGEUTlwLFReY0u9Wb34T8kSt7YHhy8DUgGMhdooJqOMH
+         wRP6r2wLDgfz7C2Ed5WsVfQxP7f2DRKv1+L0CxC51WPsWgmdXt2/WMSPqd4taJ8wKHpf
+         4pf+c8y8I1Md1HeILP5JoQaiN5c6Ztl+zeAyzy19KofAFj2NNdH9Gld6kFoFx38+CmXR
+         ptDZRiMMw4ALCWvhiDWWMKR3MwLY8ORmhUDzNsS8RPnrduAYcOJ84mYZOF1AgX/Y6+pk
+         VhpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eTSKNjhkTPUhvHieKRKNo9OKCglUUf75Y8SFUIDPF94=;
-        b=oVDz2KylvBm5r9cZczu8vY/ihmOtPOJ1spV65NbWWHE+hUerhw25Tf/Jaz9bsFm2bl
-         8zZvvRBMOA1pydGrsPVjzXH4BCOyLrzGUVNWLFlwmnhi+t2kabs3vKt3Q60X9W2EKhPN
-         9kRe78PZVNm/nvy//Q/IgI+/vg99O+VYrGZHW7BeFSTmi5kDPek6RHBsaF0WMxtq1XMl
-         rlmIos2WJdX+vG3hcGMaZXP3/yM/phVxFuR//rLwCVJ4C9ec6HYjshBxJBPSY39IfZIr
-         QDzJZ59kMDmho80rvAotZHFdtGAiEInqQcOJxwNDAmnw37TxsKMVNEWZr9ozkzLSWfk+
-         Qjkw==
-X-Gm-Message-State: ANhLgQ06WBl8kMfclk/K1SDohJSRX7iVamN9nmwh+Ghh2nRcs3KjajqR
-        +FJvnReOZnqq54V1XugRfBs=
-X-Google-Smtp-Source: ADFU+vsr5MTGUh6MoLka24KREcQMiRot37IVhStzHILNYiCyak9Qotha1lzAWhWg9+ITuaIsmaZ1Ew==
-X-Received: by 2002:adf:8501:: with SMTP id 1mr29345378wrh.56.1583847125462;
-        Tue, 10 Mar 2020 06:32:05 -0700 (PDT)
+        bh=AwwrCpJJN77zM77SbkDGUuHYvYg7rqeDy4N6zR+WgEI=;
+        b=iuzzw273tN5JOn+6GcvBxuC1oYIgHwf3g2bcqaavpgycLz/BsAdhqbsS+M9ZC9Sehu
+         SdDSpnHacl0a5vffHy4nxY5vD256VrzQj8Q77Ab9AI20LhU9uTUzWa6kUiah5Yj5Proc
+         ChmJCYKk1bYWnRni/hd4xey1mV7lYikAWOfnVmQgduG52wXaqSs+yBY5N8NA9VaVGZ+2
+         AOgCrhzi4X0S2mqgNvZtpcx4CWbBamZzVqP/7k5yVH0YZZi7jcKhqp+3pX3jWPy4VTF3
+         r32TvQbnI7KfC6z44Q6zVDUICfLhurCWnCDuGrc/zsLWwMqjpjhvLcR2xEWIYFhTyv5n
+         urbA==
+X-Gm-Message-State: ANhLgQ3vSXgx9BT4mQk+Ao7pjvIMSnOAiWyxMd8xoPw45J6bNvLYzOWF
+        72LxyCaDlu0JRYBYPKjODUE=
+X-Google-Smtp-Source: ADFU+vt0XerfApImofidQNBRU6BqvoH/lgoUFVpyyUBZe1G5BorEVx5BYo26sH6tSLijvh/MdZEeGA==
+X-Received: by 2002:adf:e74e:: with SMTP id c14mr28703351wrn.128.1583847127901;
+        Tue, 10 Mar 2020 06:32:07 -0700 (PDT)
 Received: from localhost.localdomain ([197.248.222.210])
-        by smtp.googlemail.com with ESMTPSA id o7sm14047141wrx.60.2020.03.10.06.32.03
+        by smtp.googlemail.com with ESMTPSA id o7sm14047141wrx.60.2020.03.10.06.32.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 06:32:05 -0700 (PDT)
+        Tue, 10 Mar 2020 06:32:07 -0700 (PDT)
 From:   Wambui Karuga <wambui.karugax@gmail.com>
 To:     airlied@linux.ie, daniel@ffwll.ch,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -52,9 +52,9 @@ To:     airlied@linux.ie, daniel@ffwll.ch,
         Thomas Zimmermann <tzimmermann@suse.de>
 Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         gregkh@linuxfoundation.org
-Subject: [PATCH v2 15/17] drm: make various debugfs_init() functions return 0
-Date:   Tue, 10 Mar 2020 16:31:19 +0300
-Message-Id: <20200310133121.27913-16-wambui.karugax@gmail.com>
+Subject: [PATCH v2 16/17] drm/debugfs: remove checks for return value of drm_debugfs functions.
+Date:   Tue, 10 Mar 2020 16:31:20 +0300
+Message-Id: <20200310133121.27913-17-wambui.karugax@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310133121.27913-1-wambui.karugax@gmail.com>
 References: <20200310133121.27913-1-wambui.karugax@gmail.com>
@@ -65,76 +65,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 987d65d01356 (drm: debugfs: make
-drm_debugfs_create_files() never fail), drm_debugfs_create_files() never
-fails and should return void. Therefore, remove its use as the
-return value of various debugfs_init() functions in drm, and have these
-functions return 0 directly.
+Since 987d65d01356 (drm: debugfs: make drm_debugfs_create_files() never
+fail), there is no need to check the return value of
+drm_debugfs_create_files(). Therefore, remove remove unnecessary checks
+and error handling statement blocks for its return value.
 
-v2: convert debugfs_init() functions to return 0 instead of void to
-avoid build breakage.
+These changes also enable changing drm_debugfs_create_files() to return
+void.
 
-References: https://lists.freedesktop.org/archives/dri-devel/2020-February/257183.html
 Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
 ---
- drivers/gpu/drm/drm_atomic.c      | 7 ++++---
- drivers/gpu/drm/drm_client.c      | 8 +++++---
- drivers/gpu/drm/drm_framebuffer.c | 8 +++++---
- 3 files changed, 14 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/drm_debugfs.c | 33 +++++++--------------------------
+ include/drm/drm_debugfs.h     | 16 +++++++---------
+ 2 files changed, 14 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-index 9ccfbf213d72..c0056d9cc139 100644
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -1643,8 +1643,9 @@ static const struct drm_info_list drm_atomic_debugfs_list[] = {
- 
- int drm_atomic_debugfs_init(struct drm_minor *minor)
+diff --git a/drivers/gpu/drm/drm_debugfs.c b/drivers/gpu/drm/drm_debugfs.c
+index 4e673d318503..e13f21642f88 100644
+--- a/drivers/gpu/drm/drm_debugfs.c
++++ b/drivers/gpu/drm/drm_debugfs.c
+@@ -172,8 +172,8 @@ static const struct file_operations drm_debugfs_fops = {
+  * &struct drm_info_list in the given root directory. These files will be removed
+  * automatically on drm_debugfs_cleanup().
+  */
+-int drm_debugfs_create_files(const struct drm_info_list *files, int count,
+-			     struct dentry *root, struct drm_minor *minor)
++void drm_debugfs_create_files(const struct drm_info_list *files, int count,
++			      struct dentry *root, struct drm_minor *minor)
  {
--	return drm_debugfs_create_files(drm_atomic_debugfs_list,
--			ARRAY_SIZE(drm_atomic_debugfs_list),
--			minor->debugfs_root, minor);
-+	drm_debugfs_create_files(drm_atomic_debugfs_list,
-+				 ARRAY_SIZE(drm_atomic_debugfs_list),
-+				 minor->debugfs_root, minor);
-+	return 0;
+ 	struct drm_device *dev = minor->dev;
+ 	struct drm_info_node *tmp;
+@@ -199,7 +199,6 @@ int drm_debugfs_create_files(const struct drm_info_list *files, int count,
+ 		list_add(&tmp->list, &minor->debugfs_list);
+ 		mutex_unlock(&minor->debugfs_lock);
+ 	}
+-	return 0;
  }
- #endif
-diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
-index 6b0c6ef8b9b3..82fbdee407b2 100644
---- a/drivers/gpu/drm/drm_client.c
-+++ b/drivers/gpu/drm/drm_client.c
-@@ -459,8 +459,10 @@ static const struct drm_info_list drm_client_debugfs_list[] = {
+ EXPORT_SYMBOL(drm_debugfs_create_files);
  
- int drm_client_debugfs_init(struct drm_minor *minor)
- {
--	return drm_debugfs_create_files(drm_client_debugfs_list,
--					ARRAY_SIZE(drm_client_debugfs_list),
--					minor->debugfs_root, minor);
-+	drm_debugfs_create_files(drm_client_debugfs_list,
-+				 ARRAY_SIZE(drm_client_debugfs_list),
-+				 minor->debugfs_root, minor);
-+
-+	return 0;
- }
- #endif
-diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
-index 57ac94ce9b9e..46be88271fe5 100644
---- a/drivers/gpu/drm/drm_framebuffer.c
-+++ b/drivers/gpu/drm/drm_framebuffer.c
-@@ -1209,8 +1209,10 @@ static const struct drm_info_list drm_framebuffer_debugfs_list[] = {
+@@ -215,35 +214,17 @@ int drm_debugfs_init(struct drm_minor *minor, int minor_id,
+ 	sprintf(name, "%d", minor_id);
+ 	minor->debugfs_root = debugfs_create_dir(name, root);
  
- int drm_framebuffer_debugfs_init(struct drm_minor *minor)
- {
--	return drm_debugfs_create_files(drm_framebuffer_debugfs_list,
--				ARRAY_SIZE(drm_framebuffer_debugfs_list),
--				minor->debugfs_root, minor);
-+	drm_debugfs_create_files(drm_framebuffer_debugfs_list,
-+				 ARRAY_SIZE(drm_framebuffer_debugfs_list),
+-	ret = drm_debugfs_create_files(drm_debugfs_list, DRM_DEBUGFS_ENTRIES,
+-				       minor->debugfs_root, minor);
+-	if (ret) {
+-		debugfs_remove(minor->debugfs_root);
+-		minor->debugfs_root = NULL;
+-		DRM_ERROR("Failed to create core drm debugfs files\n");
+-		return ret;
+-	}
++	drm_debugfs_create_files(drm_debugfs_list, DRM_DEBUGFS_ENTRIES,
 +				 minor->debugfs_root, minor);
-+
-+	return 0;
- }
- #endif
+ 
+ 	if (drm_drv_uses_atomic_modeset(dev)) {
+-		ret = drm_atomic_debugfs_init(minor);
+-		if (ret) {
+-			DRM_ERROR("Failed to create atomic debugfs files\n");
+-			return ret;
+-		}
++		drm_atomic_debugfs_init(minor);
+ 	}
+ 
+ 	if (drm_core_check_feature(dev, DRIVER_MODESET)) {
+-		ret = drm_framebuffer_debugfs_init(minor);
+-		if (ret) {
+-			DRM_ERROR("Failed to create framebuffer debugfs file\n");
+-			return ret;
+-		}
++		drm_framebuffer_debugfs_init(minor);
+ 
+-		ret = drm_client_debugfs_init(minor);
+-		if (ret) {
+-			DRM_ERROR("Failed to create client debugfs file\n");
+-			return ret;
+-		}
++		drm_client_debugfs_init(minor);
+ 	}
+ 
+ 	if (dev->driver->debugfs_init) {
+diff --git a/include/drm/drm_debugfs.h b/include/drm/drm_debugfs.h
+index 7501e323d383..2188dc83957f 100644
+--- a/include/drm/drm_debugfs.h
++++ b/include/drm/drm_debugfs.h
+@@ -80,18 +80,16 @@ struct drm_info_node {
+ };
+ 
+ #if defined(CONFIG_DEBUG_FS)
+-int drm_debugfs_create_files(const struct drm_info_list *files,
+-			     int count, struct dentry *root,
+-			     struct drm_minor *minor);
++void drm_debugfs_create_files(const struct drm_info_list *files,
++			      int count, struct dentry *root,
++			      struct drm_minor *minor);
+ int drm_debugfs_remove_files(const struct drm_info_list *files,
+ 			     int count, struct drm_minor *minor);
+ #else
+-static inline int drm_debugfs_create_files(const struct drm_info_list *files,
+-					   int count, struct dentry *root,
+-					   struct drm_minor *minor)
+-{
+-	return 0;
+-}
++static inline void drm_debugfs_create_files(const struct drm_info_list *files,
++					    int count, struct dentry *root,
++					    struct drm_minor *minor)
++{}
+ 
+ static inline int drm_debugfs_remove_files(const struct drm_info_list *files,
+ 					   int count, struct drm_minor *minor)
 -- 
 2.25.1
 
