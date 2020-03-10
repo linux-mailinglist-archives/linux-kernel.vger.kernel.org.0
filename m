@@ -2,178 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22F48180AF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:55:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE020180AF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 22:56:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbgCJVzy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 17:55:54 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46322 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbgCJVzy (ORCPT
+        id S1727659AbgCJV44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 17:56:56 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34240 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbgCJV4z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 17:55:54 -0400
-Received: by mail-pl1-f194.google.com with SMTP id w12so50209pll.13
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 14:55:53 -0700 (PDT)
+        Tue, 10 Mar 2020 17:56:55 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t3so42608pgn.1;
+        Tue, 10 Mar 2020 14:56:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
-        bh=NcbwCXxUWslIYcC/IMvtiJA7e1LVai6+WIY+FfCtsI4=;
-        b=slxenHycS43HvwTp9eEVzF+wztjB8QJFeQRxOro/81jxR6ZI4o6+LapbIyCB8fRRLR
-         KPEIY41GPcjQtfWMgJCB7ByvRSqed1vi7SuyNTZNjachFGHzpq0SQTd420m76wNe4eeQ
-         oQrLii1+vos27HHOvdTTamlWHA4TKmXCxLw5dCEhrNKBypII22+RT46KwfQsChwkFiN9
-         iepDf+3sdOvSL9QvwpyZmxg0YM6umlPgMpcV6CIKdqeqTEBtYg4lGXSQtZu2zlRipmiv
-         eb6Vv6YD+CNCqy4Pco2nmd3bcgii1HrJPO2796aUFhj9lJ8Lr8wE/oQ2TeADCDj9drFr
-         TPPA==
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EUgdI5mcMtImG/LqTz4Gpy3bEyNZFkSkMU6F3srqIow=;
+        b=e1hs7hUWyABS5E33ztEMaXOBWT3VWy4AfGj7XXVl8XruezGFMTP5XEzor+uYZd5TO3
+         7mfNrF4/ZDiEgnCtWkyZdGSZdlbM2COgwmuqE4KZs/5boAP90+8ism6BuIJhNpQk7IB2
+         XQfdy6fkH+i7cxScEpZetiAdRM+cwk0zH4qZEEQCQIthPnPYET6lm0qhrS9gXy7DsbGS
+         yUswI8WAyp8ntREGub2ObFqc/1/ZkicN7Ejv5X6SbU2NVl1jIKIwgWue4fqIB6wq0Dg3
+         NfSgBYDe7P2p2Ug5ZZeSEiROT4i/xyKMOk+U0ginbI7I/83PXKVeVD3js84RwjnURRBj
+         4MDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
-         :mime-version;
-        bh=NcbwCXxUWslIYcC/IMvtiJA7e1LVai6+WIY+FfCtsI4=;
-        b=psY6Efck0sqCx3U9rpADG97x4MeFrvenja7GYFDLrCv9hBlu+UD3nzjonZRSLjFQWj
-         2EXr4ZbFRIWGRyyWuTt+h0b6p4aMbnv+R2PryusyUjm8HIdSMp+4VL7cpVVk3+1qHsG7
-         4yT+loj6dS7ZnS9SNgqv9ONr9O/D2BaHTXteAg9dybJC4YDecLE+Rcil9V5VVyhjDhLS
-         NhYTwaMSBkBZOMBBBXdtM2MnnRozmWWL2UYw4BIOxVJeR6Z6OqN4anXf2yflCZj0EUc3
-         9wN+qGnXXduEGAMcmjd6SHOU0saFb3XhY0Ezhr/OrDCtP1IxfU73XeJzciSUniwkd/xS
-         7T8A==
-X-Gm-Message-State: ANhLgQ0uftlz2BrUIiNxZx95Mc867fOa9d6XWINzThZOzzsujiV+Csto
-        ZRiXVjUP0p6vvG3wo57iTZtlhA==
-X-Google-Smtp-Source: ADFU+vugU09Jze4dd0S5K5zWLDJJTy74D0sfUDWhtwZo6IZIK7WLHp/D87fNZyQUWPZ2k+5vqd3JQw==
-X-Received: by 2002:a17:902:a611:: with SMTP id u17mr7plq.343.1583877352222;
-        Tue, 10 Mar 2020 14:55:52 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id u14sm30006734pgg.67.2020.03.10.14.55.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 14:55:51 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 14:55:50 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-cc:     Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [patch] mm, oom: make a last minute check to prevent unnecessary
- memcg oom kills
-Message-ID: <alpine.DEB.2.21.2003101454580.142656@chino.kir.corp.google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=EUgdI5mcMtImG/LqTz4Gpy3bEyNZFkSkMU6F3srqIow=;
+        b=Ql/NDCxPIgQ+gSxMfD3gTMIe1XPtTJe1psIMjBBAzwzepFCmpSQiYeqst8lHAw7YR6
+         OB3a/lctWgcBWfRqjUy/3ir7kg9MsrwGuL3R8er8iw2eLOpjFTT0+F+Ha+jYCtJ8WMRm
+         m6UD0uLJD7dXFhPvylGBUhCvw6P5fZSFA3RmHEKt/LMwRDzL8k70StQDUFCu/VJsPXYN
+         h7+AHc+Dg9fjjM6ru8bPNOnJZzE3vOUiHSTqNGGoCKbMRvCCGlA79z+rbNU8pZA/p18T
+         43/bgKBAE9R/5RojV9ZXNE/5t9dtkmEdf00hZqXFOYQiADmalnLVTFJ2qqTK0jyEL8M8
+         3PRA==
+X-Gm-Message-State: ANhLgQ33tBQ5XHBW4MENTY6kyeW7ol2szaOBUkwmwBlTaKY4tshKD5Kh
+        TVGSQEKDJmq1gO+afUWQ83CELB3A
+X-Google-Smtp-Source: ADFU+vt6Wrvw+Sx2PMwaS+LFwq8c1ctMrywi9D3F824+DlSXLvQFig/5vglM64xoDsHoAcTNQEV/xw==
+X-Received: by 2002:a62:be0d:: with SMTP id l13mr23839402pff.217.1583877413541;
+        Tue, 10 Mar 2020 14:56:53 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id e18sm3251648pjt.41.2020.03.10.14.56.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Mar 2020 14:56:52 -0700 (PDT)
+Subject: Re: [PATCH 4.4 00/72] 4.4.216-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20200310123601.053680753@linuxfoundation.org>
+From:   Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+Message-ID: <464fa845-7e49-c1a6-2511-0b18d81be888@roeck-us.net>
+Date:   Tue, 10 Mar 2020 14:56:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Killing a user process as a result of hitting memcg limits is a serious
-decision that is unfortunately needed only when no forward progress in
-reclaiming memory can be made.
+On 3/10/20 5:38 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.216 release.
+> There are 72 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 12 Mar 2020 12:34:10 +0000.
+> Anything received after that time might be too late.
+> 
 
-Deciding the appropriate oom victim can take a sufficient amount of time
-that allows another process that is exiting to actually uncharge to the
-same memcg hierarchy and prevent unnecessarily killing user processes.
+Build results:
+	total: 170 pass: 170 fail: 0
+Qemu test results:
+	total: 335 pass: 335 fail: 0
 
-An example is to prevent *multiple* unnecessary oom kills on a system
-with two cores where the oom kill occurs when there is an abundance of
-free memory available:
-
-Memory cgroup out of memory: Killed process 628 (repro) total-vm:41944kB, anon-rss:40888kB, file-rss:496kB, shmem-rss:0kB, UID:0 pgtables:116kB oom_score_adj:0
-<immediately after>
-repro invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=0
-CPU: 1 PID: 629 Comm: repro Not tainted 5.6.0-rc5+ #130
-Call Trace:
- dump_stack+0x78/0xb6
- dump_header+0x55/0x240
- oom_kill_process+0xc5/0x170
- out_of_memory+0x305/0x4a0
- try_charge+0x77b/0xac0
- mem_cgroup_try_charge+0x10a/0x220
- mem_cgroup_try_charge_delay+0x1e/0x40
- handle_mm_fault+0xdf2/0x15f0
- do_user_addr_fault+0x21f/0x420
- async_page_fault+0x2f/0x40
-memory: usage 61336kB, limit 102400kB, failcnt 74
-
-Notice the second memcg oom kill shows usage is >40MB below its limit of
-100MB but a process is still unnecessarily killed because the decision has
-already been made to oom kill by calling out_of_memory() before the
-initial victim had a chance to uncharge its memory.
-
-Make a last minute check to determine if an oom kill is really needed to
-prevent unnecessary oom killing.
-
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: David Rientjes <rientjes@google.com>
----
- include/linux/memcontrol.h |  7 +++++++
- mm/memcontrol.c            |  2 +-
- mm/oom_kill.c              | 16 +++++++++++++---
- 3 files changed, 21 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -445,6 +445,8 @@ void mem_cgroup_iter_break(struct mem_cgroup *, struct mem_cgroup *);
- int mem_cgroup_scan_tasks(struct mem_cgroup *,
- 			  int (*)(struct task_struct *, void *), void *);
- 
-+unsigned long mem_cgroup_margin(struct mem_cgroup *memcg);
-+
- static inline unsigned short mem_cgroup_id(struct mem_cgroup *memcg)
- {
- 	if (mem_cgroup_disabled())
-@@ -945,6 +947,11 @@ static inline int mem_cgroup_scan_tasks(struct mem_cgroup *memcg,
- 	return 0;
- }
- 
-+static inline unsigned long mem_cgroup_margin(struct mem_cgroup *memcg)
-+{
-+	return 0;
-+}
-+
- static inline unsigned short mem_cgroup_id(struct mem_cgroup *memcg)
- {
- 	return 0;
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1286,7 +1286,7 @@ void mem_cgroup_update_lru_size(struct lruvec *lruvec, enum lru_list lru,
-  * Returns the maximum amount of memory @mem can be charged with, in
-  * pages.
-  */
--static unsigned long mem_cgroup_margin(struct mem_cgroup *memcg)
-+unsigned long mem_cgroup_margin(struct mem_cgroup *memcg)
- {
- 	unsigned long margin = 0;
- 	unsigned long count;
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -972,9 +972,6 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 	}
- 	task_unlock(victim);
- 
--	if (__ratelimit(&oom_rs))
--		dump_header(oc, victim);
--
- 	/*
- 	 * Do we need to kill the entire memory cgroup?
- 	 * Or even one of the ancestor memory cgroups?
-@@ -982,6 +979,19 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 	 */
- 	oom_group = mem_cgroup_get_oom_group(victim, oc->memcg);
- 
-+	if (is_memcg_oom(oc)) {
-+		cond_resched();
-+
-+		/* One last check: do we *really* need to kill? */
-+		if (mem_cgroup_margin(oc->memcg) >= (1 << oc->order)) {
-+			put_task_struct(victim);
-+			return;
-+		}
-+	}
-+
-+	if (__ratelimit(&oom_rs))
-+		dump_header(oc, victim);
-+
- 	__oom_kill_process(victim, message);
- 
- 	/*
+Guenter
