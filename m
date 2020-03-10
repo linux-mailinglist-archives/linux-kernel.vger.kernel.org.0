@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31D5817F964
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:56:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 618FB17F873
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:48:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729648AbgCJM4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:56:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35442 "EHLO mail.kernel.org"
+        id S1728273AbgCJMsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:48:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728676AbgCJM4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:56:17 -0400
+        id S1728263AbgCJMsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:48:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECFD02468D;
-        Tue, 10 Mar 2020 12:56:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB13920674;
+        Tue, 10 Mar 2020 12:48:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844976;
-        bh=3Bx8udfb9FnxnWAt+F7PsFFjq1j/IIjT9fNxerbjN54=;
+        s=default; t=1583844485;
+        bh=E7HA8Tb6z/fR4TEQUjmrtS8FF/XCbRmKlwiBpuiJBeY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OUGFOuAl/o0Z72K0rLd2CZTH6FIOVOQ3DTTVN381XF9+VfXvtS9gNS1JQaOE6PveS
-         dDG/zFsVY4qWtxy1sTPVkvZde/Ek4im0vBP5U9vPNkNav/FBvgOIuygNTE/px7+Msp
-         H7L+M628p4q5kszm+A1Bbv0BdKyjcapiwhAiiJ/Q=
+        b=CP3fb0N5unX1QFWmLw6OOj+M6Ru6qbL/Jj3Ur056pdSnmp5Zsz1Mq8XfeXbF+hUu+
+         qYR2zFyGp83kjdC7QDE+NnZlFeydC/md92j329gF/o3LRY07tbkyg+hHP0Uxb+AJ67
+         M2B+xmcug0HyqQwaowKirRKzMVl/iwYy9o1Mvze4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomer Tayar <ttayar@habana.ai>,
-        Oded Gabbay <oded.gabbay@gmail.com>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 019/189] habanalabs: halt the engines before hard-reset
+Subject: [PATCH 5.4 010/168] kbuild: fix No such file or directory warning when cleaning
 Date:   Tue, 10 Mar 2020 13:37:36 +0100
-Message-Id: <20200310123641.419495641@linuxfoundation.org>
+Message-Id: <20200310123636.818007750@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,141 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oded Gabbay <oded.gabbay@gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
 
-[ Upstream commit 908087ffbe896c100ed73d5f0ce11a5b7264af4a ]
+[ Upstream commit cf6b58ab2d55f5a143c88c219c8e66ff0720fa69 ]
 
-The driver must halt the engines before doing hard-reset, otherwise the
-device can go into undefined state. There is a place where the driver
-didn't do that and this patch fixes it.
+Since commit fcbb8461fd23 ("kbuild: remove header compile test"),
+'make clean' with O= option in the pristine source tree emits
+'No such file or directory' warning.
 
-Reviewed-by: Tomer Tayar <ttayar@habana.ai>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+$ git clean -d -f -x
+$ make O=foo clean
+make[1]: Entering directory '/home/masahiro/linux/foo'
+find: ‘usr/include’: No such file or directory
+make[1]: Leaving directory '/home/masahiro/linux/foo'
+
+Fixes: fcbb8461fd23 ("kbuild: remove header compile test")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/habanalabs/device.c    |  1 +
- drivers/misc/habanalabs/goya/goya.c | 42 +++++++++++++++++++++++++++++
- 2 files changed, 43 insertions(+)
+ usr/include/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-index b155e95490761..166883b647252 100644
---- a/drivers/misc/habanalabs/device.c
-+++ b/drivers/misc/habanalabs/device.c
-@@ -1189,6 +1189,7 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
- 	if (hdev->asic_funcs->get_hw_state(hdev) == HL_DEVICE_HW_STATE_DIRTY) {
- 		dev_info(hdev->dev,
- 			"H/W state is dirty, must reset before initializing\n");
-+		hdev->asic_funcs->halt_engines(hdev, true);
- 		hdev->asic_funcs->hw_fini(hdev, true);
- 	}
+diff --git a/usr/include/Makefile b/usr/include/Makefile
+index 47cb91d3a51d2..e2840579156a9 100644
+--- a/usr/include/Makefile
++++ b/usr/include/Makefile
+@@ -99,7 +99,7 @@ endif
+ # asm-generic/*.h is used by asm/*.h, and should not be included directly
+ header-test- += asm-generic/%
  
-diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index 7344e8a222ae5..f24fe909b88d8 100644
---- a/drivers/misc/habanalabs/goya/goya.c
-+++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -895,6 +895,11 @@ void goya_init_dma_qmans(struct hl_device *hdev)
-  */
- static void goya_disable_external_queues(struct hl_device *hdev)
- {
-+	struct goya_device *goya = hdev->asic_specific;
-+
-+	if (!(goya->hw_cap_initialized & HW_CAP_DMA))
-+		return;
-+
- 	WREG32(mmDMA_QM_0_GLBL_CFG0, 0);
- 	WREG32(mmDMA_QM_1_GLBL_CFG0, 0);
- 	WREG32(mmDMA_QM_2_GLBL_CFG0, 0);
-@@ -956,6 +961,11 @@ static int goya_stop_external_queues(struct hl_device *hdev)
- {
- 	int rc, retval = 0;
+-extra-y := $(patsubst $(obj)/%.h,%.hdrtest, $(shell find $(obj) -name '*.h'))
++extra-y := $(patsubst $(obj)/%.h,%.hdrtest, $(shell find $(obj) -name '*.h' 2>/dev/null))
  
-+	struct goya_device *goya = hdev->asic_specific;
-+
-+	if (!(goya->hw_cap_initialized & HW_CAP_DMA))
-+		return retval;
-+
- 	rc = goya_stop_queue(hdev,
- 			mmDMA_QM_0_GLBL_CFG1,
- 			mmDMA_QM_0_CP_STS,
-@@ -1744,9 +1754,18 @@ void goya_init_tpc_qmans(struct hl_device *hdev)
-  */
- static void goya_disable_internal_queues(struct hl_device *hdev)
- {
-+	struct goya_device *goya = hdev->asic_specific;
-+
-+	if (!(goya->hw_cap_initialized & HW_CAP_MME))
-+		goto disable_tpc;
-+
- 	WREG32(mmMME_QM_GLBL_CFG0, 0);
- 	WREG32(mmMME_CMDQ_GLBL_CFG0, 0);
- 
-+disable_tpc:
-+	if (!(goya->hw_cap_initialized & HW_CAP_TPC))
-+		return;
-+
- 	WREG32(mmTPC0_QM_GLBL_CFG0, 0);
- 	WREG32(mmTPC0_CMDQ_GLBL_CFG0, 0);
- 
-@@ -1782,8 +1801,12 @@ static void goya_disable_internal_queues(struct hl_device *hdev)
-  */
- static int goya_stop_internal_queues(struct hl_device *hdev)
- {
-+	struct goya_device *goya = hdev->asic_specific;
- 	int rc, retval = 0;
- 
-+	if (!(goya->hw_cap_initialized & HW_CAP_MME))
-+		goto stop_tpc;
-+
- 	/*
- 	 * Each queue (QMAN) is a separate H/W logic. That means that each
- 	 * QMAN can be stopped independently and failure to stop one does NOT
-@@ -1810,6 +1833,10 @@ static int goya_stop_internal_queues(struct hl_device *hdev)
- 		retval = -EIO;
- 	}
- 
-+stop_tpc:
-+	if (!(goya->hw_cap_initialized & HW_CAP_TPC))
-+		return retval;
-+
- 	rc = goya_stop_queue(hdev,
- 			mmTPC0_QM_GLBL_CFG1,
- 			mmTPC0_QM_CP_STS,
-@@ -1975,6 +2002,11 @@ static int goya_stop_internal_queues(struct hl_device *hdev)
- 
- static void goya_dma_stall(struct hl_device *hdev)
- {
-+	struct goya_device *goya = hdev->asic_specific;
-+
-+	if (!(goya->hw_cap_initialized & HW_CAP_DMA))
-+		return;
-+
- 	WREG32(mmDMA_QM_0_GLBL_CFG1, 1 << DMA_QM_0_GLBL_CFG1_DMA_STOP_SHIFT);
- 	WREG32(mmDMA_QM_1_GLBL_CFG1, 1 << DMA_QM_1_GLBL_CFG1_DMA_STOP_SHIFT);
- 	WREG32(mmDMA_QM_2_GLBL_CFG1, 1 << DMA_QM_2_GLBL_CFG1_DMA_STOP_SHIFT);
-@@ -1984,6 +2016,11 @@ static void goya_dma_stall(struct hl_device *hdev)
- 
- static void goya_tpc_stall(struct hl_device *hdev)
- {
-+	struct goya_device *goya = hdev->asic_specific;
-+
-+	if (!(goya->hw_cap_initialized & HW_CAP_TPC))
-+		return;
-+
- 	WREG32(mmTPC0_CFG_TPC_STALL, 1 << TPC0_CFG_TPC_STALL_V_SHIFT);
- 	WREG32(mmTPC1_CFG_TPC_STALL, 1 << TPC1_CFG_TPC_STALL_V_SHIFT);
- 	WREG32(mmTPC2_CFG_TPC_STALL, 1 << TPC2_CFG_TPC_STALL_V_SHIFT);
-@@ -1996,6 +2033,11 @@ static void goya_tpc_stall(struct hl_device *hdev)
- 
- static void goya_mme_stall(struct hl_device *hdev)
- {
-+	struct goya_device *goya = hdev->asic_specific;
-+
-+	if (!(goya->hw_cap_initialized & HW_CAP_MME))
-+		return;
-+
- 	WREG32(mmMME_STALL, 0xFFFFFFFF);
- }
- 
+ quiet_cmd_hdrtest = HDRTEST $<
+       cmd_hdrtest = \
 -- 
 2.20.1
 
