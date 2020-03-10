@@ -2,94 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B014180045
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 15:33:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A718180070
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 15:42:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbgCJOdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 10:33:50 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43557 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbgCJOdt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 10:33:49 -0400
-Received: by mail-qt1-f195.google.com with SMTP id l13so4689248qtv.10
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 07:33:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=OS3DRJg+3W57g5Emu/IKpN2zktyimdd83c8dc82YO5E=;
-        b=PfLH649Xafb18jKxixuwudbIRBhw3f1iAhZMf1aB8cCPMmoRom0w1oI8RbRUxflRQ3
-         2cH2d7ksnC/u/c7CYXZq+TiRljnnqVK3HFnLXaKGiq0qRq5MRYDO9N68v6Z6ENk212aZ
-         G74ZLj1KevEFtZxclarGH+l8CS9wErj5idTFwtTz/XwgrD281pXsj1wnGyXxvn+prLKu
-         ER60B5JnD8ZaZ6usisVtNG1vFVnuzcW/GwhfB+G4qHcg6/YC2kjoTLjOHyYJINoYUtPO
-         iOqxDLE1fujV+noJyeK7fhGUc9x+qdd3xgde6CKSSzwapMHJAIdVjuSbHq8PbutoArZ1
-         TEvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition;
-        bh=OS3DRJg+3W57g5Emu/IKpN2zktyimdd83c8dc82YO5E=;
-        b=mlxAmjvFKavRSdOujbXQpRJjo0MroACADEP/46uEKaOlmBxr4f4Aw0y3Y3ahUsUfaE
-         KNbFhIm5qTukb6EklQCe5/0Zx0H/QhEd5icXzhGZsrM5FTZZjfZ1DtkHGCM+DyPw0HD5
-         wFLo0fhn54KN423E75g425O3jISqEKwODlxSEkbua6BGVJfA35klr70Mj5OY5Zz/f40e
-         lSS2upAxuM4L//lNZ22VYXLZq55Wf2CgTCqzMF9dXKlNj4fLPyrdLy5fuWFZFghpR22w
-         9sEV6gz/VUTtGRIX/IjL8RDRa+DpqVA7subF8lgt1u5Wcsa/PvruNKdmyQNVfZIlTEkl
-         j4Sw==
-X-Gm-Message-State: ANhLgQ34PLVOEy2s2ZyEvJdtgrGaodktHBzWRycyblHgeAqgA3k+GZDL
-        ZLUBpUzXTe7vJeRfPnBIQsFc9lgKdGo=
-X-Google-Smtp-Source: ADFU+vuGVlaAjulUafD2IcjTSX/LWkoNLKu5pTCAqASrRUN66wQP39HGEKG/ZW74/SjTbBBctJLv2A==
-X-Received: by 2002:ac8:7290:: with SMTP id v16mr19405235qto.197.1583850828228;
-        Tue, 10 Mar 2020 07:33:48 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::e8d1])
-        by smtp.gmail.com with ESMTPSA id f22sm2593884qto.79.2020.03.10.07.33.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 07:33:47 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 10:33:46 -0400
-From:   Tejun Heo <tj@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [GIT PULL] workqueue fixes for v5.6-rc5
-Message-ID: <20200310143346.GB79873@mtj.duckdns.org>
+        id S1727447AbgCJOmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 10:42:07 -0400
+Received: from er-systems.de ([148.251.68.21]:44986 "EHLO er-systems.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726391AbgCJOmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 10:42:07 -0400
+X-Greylist: delayed 486 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Mar 2020 10:42:06 EDT
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by er-systems.de (Postfix) with ESMTP id BD688D6006F;
+        Tue, 10 Mar 2020 15:33:58 +0100 (CET)
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on er-systems.de
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=5.0 tests=ALL_TRUSTED,BAYES_00
+        autolearn=ham autolearn_force=no version=3.4.2
+Received: from localhost (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by er-systems.de (Postfix) with ESMTPS id 9DF71D6006D;
+        Tue, 10 Mar 2020 15:33:58 +0100 (CET)
+Date:   Tue, 10 Mar 2020 15:33:57 +0100 (CET)
+From:   Thomas Voegtle <tv@lio96.de>
+X-X-Sender: thomas@er-systems.de
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        "H.J. Lu" <hjl.tools@gmail.com>, Borislav Petkov <bp@suse.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.9 62/88] x86/boot/compressed: Dont declare __force_order
+ in kaslr_64.c
+In-Reply-To: <20200310123621.868809541@linuxfoundation.org>
+Message-ID: <alpine.LSU.2.21.2003101522120.20206@er-systems.de>
+References: <20200310123606.543939933@linuxfoundation.org> <20200310123621.868809541@linuxfoundation.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-Virus-Status: No
+X-Virus-Checker-Version: clamassassin 1.2.4 with clamdscan / ClamAV 0.102.2/25747/Tue Mar 10 12:06:29 2020 signatures .
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Linus.
+On Tue, 10 Mar 2020, Greg Kroah-Hartman wrote:
 
-Workqueue has been incorrectly round-robining per-cpu work items.
-Hillf's patch fixes that. The other patch documents memory-ordering
-properties of workqueue operations.
+> From: H.J. Lu <hjl.tools@gmail.com>
+>
+> [ Upstream commit df6d4f9db79c1a5d6f48b59db35ccd1e9ff9adfc ]
+>
+> GCC 10 changed the default to -fno-common, which leads to
+>
+>    LD      arch/x86/boot/compressed/vmlinux
+>  ld: arch/x86/boot/compressed/pgtable_64.o:(.bss+0x0): multiple definition of `__force_order'; \
+>    arch/x86/boot/compressed/kaslr_64.o:(.bss+0x0): first defined here
+>  make[2]: *** [arch/x86/boot/compressed/Makefile:119: arch/x86/boot/compressed/vmlinux] Error 1
+>
+> Since __force_order is already provided in pgtable_64.c, there is no
+> need to declare __force_order in kaslr_64.c.
+>
+> Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> Link: https://lkml.kernel.org/r/20200124181811.4780-1-hjl.tools@gmail.com
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+> arch/x86/boot/compressed/pagetable.c | 3 ---
+> 1 file changed, 3 deletions(-)
+>
+> diff --git a/arch/x86/boot/compressed/pagetable.c b/arch/x86/boot/compressed/pagetable.c
+> index 56589d0a804b1..2591f8f6d45f2 100644
+> --- a/arch/x86/boot/compressed/pagetable.c
+> +++ b/arch/x86/boot/compressed/pagetable.c
+> @@ -25,9 +25,6 @@
+> #define __PAGE_OFFSET __PAGE_OFFSET_BASE
+> #include "../../mm/ident_map.c"
+>
+> -/* Used by pgtable.h asm code to force instruction serialization. */
+> -unsigned long __force_order;
+> -
+> /* Used to track our page table allocation area. */
+> struct alloc_pgt_data {
+> 	unsigned char *pgt_buf;
+>
 
-Thanks.
 
-The following changes since commit 0bf999f9c5e74c7ecf9dafb527146601e5c848b9:
+This ends up for me in:
 
-  linux/pipe_fs_i.h: fix kernel-doc warnings after @wait was split (2020-02-12 11:54:08 -0800)
+arch/x86/boot/compressed/pagetable.o: In function 
+`initialize_identity_maps':
+pagetable.c:(.text+0x309): undefined reference to `__force_order'
+arch/x86/boot/compressed/pagetable.o: In function 
+`finalize_identity_maps':
+pagetable.c:(.text+0x41a): undefined reference to `__force_order'
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-5.6-fixes
+pgtable_64.c doesn't exist in v4.9 for x86.
 
-for you to fetch changes up to aa202f1f56960c60e7befaa0f49c72b8fa11b0a8:
+So I guess it's not correct to remove __force_order from pagetable.c?
 
-  workqueue: don't use wq_select_unbound_cpu() for bound works (2020-03-10 10:30:51 -0400)
 
-----------------------------------------------------------------
-Andrea Parri (1):
-      workqueue: Document (some) memory-ordering properties of {queue,schedule}_work()
+    Thomas
 
-Hillf Danton (1):
-      workqueue: don't use wq_select_unbound_cpu() for bound works
-
- include/linux/workqueue.h | 16 ++++++++++++++++
- kernel/workqueue.c        | 14 ++++++++------
- 2 files changed, 24 insertions(+), 6 deletions(-)
-
--- 
-tejun
