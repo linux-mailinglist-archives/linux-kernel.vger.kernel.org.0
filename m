@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91BEA17F90F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:53:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 207EC17F868
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:48:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729219AbgCJMxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:53:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59748 "EHLO mail.kernel.org"
+        id S1728199AbgCJMrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:47:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729188AbgCJMxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:53:36 -0400
+        id S1727901AbgCJMrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:47:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3A1120674;
-        Tue, 10 Mar 2020 12:53:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62BBE2467D;
+        Tue, 10 Mar 2020 12:47:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844816;
-        bh=X7tG5Nb9FdI0XtMkJSgMz6obTbzw75umNhrHk6RRrbA=;
+        s=default; t=1583844454;
+        bh=m2VMjPdP7Tghk64h+YiyaAAmIOugxKZ/W6szpaKD2Vs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kRgw0/vx5pGTweZfYAEl0bxrnBcqG8CHgKse/4fakgiuOCXWUD2Yt0f7uA5/F/0OC
-         C/RmzzGe6elqOOBrEO/ApYgb4d/NSlPWkMhVjJr8Qln/DwqSxhEXsrPKocX2WO0OLY
-         YP4Rqu+0qw9mBbqlDvaAuBQ6iJt/D6wOomqrm5nY=
+        b=d9PsmU+QooTm+JrJJ2bNw3tmITheplZFsDLuQMVVnpS8RLnKhUJuyC32kaD/awuQI
+         eSHmOeBupEzC/lLsBLFDtpabG+gAxKzppwN4R67HhzrLroYcxcVmphyBxFEQ05NTYl
+         tH6YNNyxNwZVP+QbJJWtB8b0hLWHVOv8CNN+xVlQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.4 129/168] spi: atmel-quadspi: fix possible MMIO window size overrun
-Date:   Tue, 10 Mar 2020 13:39:35 +0100
-Message-Id: <20200310123648.527892444@linuxfoundation.org>
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        yangerkun <yangerkun@huawei.com>
+Subject: [PATCH 4.9 88/88] crypto: algif_skcipher - use ZERO_OR_NULL_PTR in skcipher_recvmsg_async
+Date:   Tue, 10 Mar 2020 13:39:36 +0100
+Message-Id: <20200310123625.434168321@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,63 +43,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tudor Ambarus <tudor.ambarus@microchip.com>
+From: yangerkun <yangerkun@huawei.com>
 
-commit 8e093ea4d3593379be46b845b9e823179558047e upstream.
+Nowdays, we trigger a oops:
+...
+kasan: GPF could be caused by NULL-ptr deref or user memory accessgeneral protection fault: 0000 [#1] SMP KASAN
+...
+Call Trace:
+ [<ffffffff81a26fb1>] skcipher_recvmsg_async+0x3f1/0x1400 x86/../crypto/algif_skcipher.c:543
+ [<ffffffff81a28053>] skcipher_recvmsg+0x93/0x7f0 x86/../crypto/algif_skcipher.c:723
+ [<ffffffff823e43a4>] sock_recvmsg_nosec x86/../net/socket.c:702 [inline]
+ [<ffffffff823e43a4>] sock_recvmsg x86/../net/socket.c:710 [inline]
+ [<ffffffff823e43a4>] sock_recvmsg+0x94/0xc0 x86/../net/socket.c:705
+ [<ffffffff823e464b>] sock_read_iter+0x27b/0x3a0 x86/../net/socket.c:787
+ [<ffffffff817f479b>] aio_run_iocb+0x21b/0x7a0 x86/../fs/aio.c:1520
+ [<ffffffff817f57c9>] io_submit_one x86/../fs/aio.c:1630 [inline]
+ [<ffffffff817f57c9>] do_io_submit+0x6b9/0x10b0 x86/../fs/aio.c:1688
+ [<ffffffff817f902d>] SYSC_io_submit x86/../fs/aio.c:1713 [inline]
+ [<ffffffff817f902d>] SyS_io_submit+0x2d/0x40 x86/../fs/aio.c:1710
+ [<ffffffff828b33c3>] tracesys_phase2+0x90/0x95
 
-The QSPI controller memory space is limited to 128MB:
-0x9000_00000-0x9800_00000/0XD000_0000--0XD800_0000.
+In skcipher_recvmsg_async, we use '!sreq->tsg' to determine does we
+calloc fail. However, kcalloc may return ZERO_SIZE_PTR, and with this,
+the latter sg_init_table will trigger the bug. Fix it be use ZERO_OF_NULL_PTR.
 
-There are nor flashes that are bigger in size than the memory size
-supported by the controller: Micron MT25QL02G (256 MB).
+This function was introduced with ' commit a596999b7ddf ("crypto:
+algif - change algif_skcipher to be asynchronous")', and has been removed
+with 'commit e870456d8e7c ("crypto: algif_skcipher - overhaul memory
+management")'.
 
-Check if the address exceeds the MMIO window size. An improvement
-would be to add support for regular SPI mode and fall back to it
-when the flash memories overrun the controller's memory space.
-
-Fixes: 0e6aae08e9ae ("spi: Add QuadSPI driver for Atmel SAMA5D2")
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Link: https://lore.kernel.org/r/20200228155437.1558219-1-tudor.ambarus@microchip.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: yangerkun <yangerkun@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/spi/atmel-quadspi.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ crypto/algif_skcipher.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/spi/atmel-quadspi.c
-+++ b/drivers/spi/atmel-quadspi.c
-@@ -149,6 +149,7 @@ struct atmel_qspi {
- 	struct clk		*qspick;
- 	struct platform_device	*pdev;
- 	const struct atmel_qspi_caps *caps;
-+	resource_size_t		mmap_size;
- 	u32			pending;
- 	u32			mr;
- 	u32			scr;
-@@ -329,6 +330,14 @@ static int atmel_qspi_exec_op(struct spi
- 	u32 sr, offset;
- 	int err;
- 
-+	/*
-+	 * Check if the address exceeds the MMIO window size. An improvement
-+	 * would be to add support for regular SPI mode and fall back to it
-+	 * when the flash memories overrun the controller's memory space.
-+	 */
-+	if (op->addr.val + op->data.nbytes > aq->mmap_size)
-+		return -ENOTSUPP;
-+
- 	err = atmel_qspi_set_cfg(aq, op, &offset);
- 	if (err)
- 		return err;
-@@ -480,6 +489,8 @@ static int atmel_qspi_probe(struct platf
- 		goto exit;
- 	}
- 
-+	aq->mmap_size = resource_size(res);
-+
- 	/* Get the peripheral clock */
- 	aq->pclk = devm_clk_get(&pdev->dev, "pclk");
- 	if (IS_ERR(aq->pclk))
+v1->v2:
+update the commit message
+
+--- a/crypto/algif_skcipher.c
++++ b/crypto/algif_skcipher.c
+@@ -538,7 +538,7 @@ static int skcipher_recvmsg_async(struct
+ 	lock_sock(sk);
+ 	tx_nents = skcipher_all_sg_nents(ctx);
+ 	sreq->tsg = kcalloc(tx_nents, sizeof(*sg), GFP_KERNEL);
+-	if (unlikely(!sreq->tsg))
++	if (unlikely(ZERO_OR_NULL_PTR(sreq->tsg)))
+ 		goto unlock;
+ 	sg_init_table(sreq->tsg, tx_nents);
+ 	memcpy(iv, ctx->iv, ivsize);
 
 
