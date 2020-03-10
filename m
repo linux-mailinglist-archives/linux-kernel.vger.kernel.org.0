@@ -2,204 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2A63180243
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:46:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D28B180249
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:47:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbgCJPqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 11:46:54 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:34507 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726403AbgCJPqy (ORCPT
+        id S1726977AbgCJPrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 11:47:10 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45164 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726861AbgCJPrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 11:46:54 -0400
-Received: by mail-vs1-f66.google.com with SMTP id t10so47673vsp.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 08:46:53 -0700 (PDT)
+        Tue, 10 Mar 2020 11:47:08 -0400
+Received: by mail-ot1-f67.google.com with SMTP id f21so13556364otp.12
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 08:47:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=sm4E9m+LGUaQR6rC1v5sJxi5G7WnVBGz5OK0zEAN9bw=;
-        b=Co0nMb9QaOSzcmqYW/l4HYb5lPCHntNoFCdQX+ZwbekNQpPMYlBtbKszJh8zubjoe7
-         fBWPpVvSzO6setnDca0m5bvmw0Ot9ixJFIx5tqfYwlViGySu77C820EUuQz/5l1RICOO
-         ltSUJGSxynnvGxHx1b7iEhaIxp96/YQwOR9Mc=
+        bh=4HrHpJuYloPdd64QgDvsMEZuP7xh7v2AxwQIiGYP/MQ=;
+        b=nyX2OVgPZVTO0zNEHpYlZ63oRyFSngj5xEudidOqj0uclLGX1S3zY0a0pfVYbatnkh
+         2D8dMoBtwD6CVOzC+glCPpuvt8B96EHbtS82/rUczghAC0dNb4kQCpDrfGDyM9WZnqhE
+         cD6V6C6atqbJIAFiPVYvmYb94/db0bZxLbC57HdisRWP2TiqR6vE7vFtKOUuGN2Qqnoy
+         UMexxU5mlNO2XThhD5qTcBXOc17qUOjEsd6a01vAIa4/bhVs6QdAKwNo165h4SqsC52p
+         ITAZxkyx2Yityikj+lkO5XXyvLWVkLC9LbqQ8yZeKIwAnTwqHFumm0Ja4JSGxjFCyNUe
+         iFPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=sm4E9m+LGUaQR6rC1v5sJxi5G7WnVBGz5OK0zEAN9bw=;
-        b=BQMSSNohC/nSnXoNZaPxMuV+eL6EQYEkBjC/OTc47tOxAsYI/+33lZjrwpusuI/Kds
-         DkgtlgZxycg03r/CbOswXNVmpSTXzh11c+4HBhxjEQ1S++MjQNLIINuase1iKnJmYiGm
-         4TzbwDM28VnWA3jcbJ1+Bocvvf58unghi5htYiXqnqOUXFfBB6+RmxeXeewxwN4p07/N
-         sKEukV/vT3GG6fNW2GcPRTP9+RnpY4Rw+0HAAv5sQZgEYIvBoa6cT9Mt/7RtklZ6efAP
-         4J9OXOyP0QGwEKdMNppr+oMfgfD8q4e+Kgi8Qv3FxeaxWXh1u52WKNfDoFLG6N+MLg1D
-         sOEg==
-X-Gm-Message-State: ANhLgQ0fVgigHNcPOFshtzPs3KJJ4hz7j35GX0WpG13ZeVW74ijWVX8N
-        sY1GfLNMEPLdSCP0yUh9JiWwDbFovVY=
-X-Google-Smtp-Source: ADFU+vtUSVm41yIger1FFddQzRKOJJvgbI8daDzX+Y6o8VrCorw06elzq892dj3Dg/If4XvouUEvzQ==
-X-Received: by 2002:a67:8843:: with SMTP id k64mr13506514vsd.195.1583855212539;
-        Tue, 10 Mar 2020 08:46:52 -0700 (PDT)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id o36sm10269006uao.15.2020.03.10.08.46.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Mar 2020 08:46:51 -0700 (PDT)
-Received: by mail-ua1-f47.google.com with SMTP id g21so2446317uaj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 08:46:50 -0700 (PDT)
-X-Received: by 2002:ab0:6212:: with SMTP id m18mr1216115uao.120.1583855210519;
- Tue, 10 Mar 2020 08:46:50 -0700 (PDT)
+        bh=4HrHpJuYloPdd64QgDvsMEZuP7xh7v2AxwQIiGYP/MQ=;
+        b=JyCz1PGRXtwCsp8pl+nglJzaNuzKWsoKnPcmpm+3+zDRKHDzQqwUNTL+rnFqcxi+iY
+         JB+BCeBKULGGbKRRYP81PXy8qZj5lhfvJozJ5P8yenp/GIYGqCdeMQgzHY076IvZjcN1
+         P24//NhQklmbgYoXWGmU6S+h1hlgA/3aHtVB4Z+ETlUtgoyUlfJfgcv+1L0ITpJmZ88i
+         y5uXIxtTdFzLniGqdfxnltXWEfGpGcY646Vh/JbLwppHyabzl04IThU7zVDHBxW2940P
+         wmC2edKFG0QpUf5hhU3/21N/hxV19LZJdpp9f3O8ptgBXp7M796mVSEhQUCVak53Fcdc
+         tNFA==
+X-Gm-Message-State: ANhLgQ2vlU/oBp3sYDISjgLJONnL0fU4uDVj8tgUC+qfeuZOyLjNRwnS
+        cPloaDH0cqM8i77l0KUyxT/wJVftrndP7opzLW8efg==
+X-Google-Smtp-Source: ADFU+vvtWUnpgSR4cBsrFTI3Mtf9+RyaT5KjmUoKRwAbx1+YCbYzwZsgMVbDCYPSxtaSHxlcT6lv+BwV3Srw2n+HtWY=
+X-Received: by 2002:a9d:19e9:: with SMTP id k96mr17642241otk.68.1583855227689;
+ Tue, 10 Mar 2020 08:47:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <1583746236-13325-1-git-send-email-mkshah@codeaurora.org>
- <1583746236-13325-6-git-send-email-mkshah@codeaurora.org> <CAD=FV=UugityQX+TG2c41dyaaCrhYe534UgXxm0G0igLz-9LSw@mail.gmail.com>
- <9bf2c0d6-29cf-47f1-3f98-e4bc9703b7b7@codeaurora.org>
-In-Reply-To: <9bf2c0d6-29cf-47f1-3f98-e4bc9703b7b7@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 10 Mar 2020 08:46:37 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UbXbYDzRMn-2P1nRa7y6a4sDH6GuWnnPuaHW4zea1v=A@mail.gmail.com>
-Message-ID: <CAD=FV=UbXbYDzRMn-2P1nRa7y6a4sDH6GuWnnPuaHW4zea1v=A@mail.gmail.com>
-Subject: Re: [PATCH v13 5/5] drivers: qcom: Update rpmh clients to use start
- and end transactions
-To:     Maulik Shah <mkshah@codeaurora.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org,
-        Taniya Das <tdas@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Kiran Gunda <kgunda@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>
+References: <20200310134603.30260-1-robert.foss@linaro.org>
+ <20200310134603.30260-3-robert.foss@linaro.org> <CAOMZO5D7N6FfPMiycGun-eui-G-tbp15stwRWBWs4L98JHFfGA@mail.gmail.com>
+In-Reply-To: <CAOMZO5D7N6FfPMiycGun-eui-G-tbp15stwRWBWs4L98JHFfGA@mail.gmail.com>
+From:   Robert Foss <robert.foss@linaro.org>
+Date:   Tue, 10 Mar 2020 16:46:56 +0100
+Message-ID: <CAG3jFyuwHEXHD1JbWMwNX_LDtawJ1+-zEptzq2yrn8Uk+S3fdQ@mail.gmail.com>
+Subject: Re: [v1 2/3] media: ov8856: Add devicetree support
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     ben.kao@intel.com, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan.Cameron@huawei.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        Dongchun Zhu <dongchun.zhu@mediatek.com>,
+        Tomasz Figa <tfiga@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Tue, Mar 10, 2020 at 4:47 AM Maulik Shah <mkshah@codeaurora.org> wrote:
+On Tue, 10 Mar 2020 at 15:03, Fabio Estevam <festevam@gmail.com> wrote:
 >
+> On Tue, Mar 10, 2020 at 10:47 AM Robert Foss <robert.foss@linaro.org> wrote:
 >
-> On 3/10/2020 5:14 AM, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Mon, Mar 9, 2020 at 2:31 AM Maulik Shah <mkshah@codeaurora.org> wrote:
-> >> Update all rpmh clients to start using rpmh_start_transaction() and
-> >> rpmh_end_transaction().
-> >>
-> >> Cc: Taniya Das <tdas@codeaurora.org>
-> >> Cc: Odelu Kukatla <okukatla@codeaurora.org>
-> >> Cc: Kiran Gunda <kgunda@codeaurora.org>
-> >> Cc: Sibi Sankar <sibis@codeaurora.org>
-> >> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
-> >> ---
-> >>  drivers/clk/qcom/clk-rpmh.c             | 21 ++++++++++++++-------
-> >>  drivers/interconnect/qcom/bcm-voter.c   | 13 +++++++++----
-> >>  drivers/regulator/qcom-rpmh-regulator.c |  4 ++++
-> >>  drivers/soc/qcom/rpmhpd.c               | 11 +++++++++--
-> > This needs to be 4 separate patches since the change to each subsystem
-> > will go through a different maintainer.
-> I will split to 4 changes, and send each one to its respective mailing lists and maintainer/reviewer.
-> >
-> > Also: it'll be a lot easier to land this if you make the new
-> > rpmh_start_transaction() and rpmh_end_transaction() calls _optional_
-> > for now, especially since they are just a speed optimization and not
-> > for correctness.  That is, if a driver makes a call to rpmh_write(),
-> > rpmh_write_async(), rpmh_write_batch(), or rpmh_invalidate() without
-> > doing rpmh_start_transaction() then it should still work
+> > +static int __ov8856_power_on(struct ov8856 *ov8856)
+> > +{
+> > +       struct i2c_client *client = v4l2_get_subdevdata(&ov8856->sd);
+> > +       int ret;
+> > +
+> > +       ret = clk_prepare_enable(ov8856->xvclk);
+> > +       if (ret < 0) {
+> > +               dev_err(&client->dev, "failed to enable xvclk\n");
+> > +               return ret;
+> > +       }
+> > +
+> > +       gpiod_set_value_cansleep(ov8856->n_shutdn_gpio, GPIOD_OUT_LOW);
+> > +
+> > +       ret = regulator_bulk_enable(OV8856_NUM_SUPPLIES, ov8856->supplies);
+> > +       if (ret < 0) {
+> > +               dev_err(&client->dev, "failed to enable regulators\n");
+> > +               goto disable_clk;
+> > +       }
+> > +
+> > +       gpiod_set_value_cansleep(ov8856->n_shutdn_gpio, GPIOD_OUT_HIGH);
 >
-> yes, this is already taken care.
+> To power it up you probably only need:
 >
-> All the calls from driver will go through as it is and won't fail even without calling new APIs.
-> So they are already optional.
+> gpiod_set_value_cansleep(ov8856->n_shutdn_gpio, 0);
 >
-> The comment in rpmh_start_transaction() is already saying if client "choose" to invoke this
-> then this must be ended by calling rpmh_end_transaction(). if client don't invoke
-> rpmh_start_transaction() in the first place then everything is expected work as if no change.
+> And use reset-gpios as active low in your device tree. Assuming the
+> reset-gpios is active low like other OmniVision sensors.
 
-I think you may have misunderstood.  With your v13 it's not optional
-because the flush won't happen unless the clients call
-rpmh_start_transaction() and rpmh_end_transaction().  ...but the flush
-is necessary for correctness, right?
+Ack.
 
-
-> > --just flush
-> > right away.
 >
-> No, currently also in driver no one is calling rpmh_flush().
+> > +
+> > +       usleep_range(1500, 1800);
+> > +
+> > +       return 0;
+> > +
+> > +disable_clk:
+> > +       clk_disable_unprepare(ov8856->xvclk);
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +static void __ov8856_power_off(struct ov8856 *ov8856)
+> > +{
+> > +       gpiod_set_value_cansleep(ov8856->n_shutdn_gpio, GPIOD_OUT_LOW);
+> > +       regulator_bulk_disable(OV8856_NUM_SUPPLIES, ov8856->supplies);
+> > +       clk_disable_unprepare(ov8856->xvclk);
+> > +}
+> > +
+> > +
 >
-> so nothing breaks with series and no point in adding changes to flush right away and then remove them in same series.
+> Unneede extra blank line.
+
+Ack.
+
 >
-> when the clients starts invoking new APIs, rpmh_flush() will start getting invoked for the first time in driver.
+> >         v4l2_i2c_subdev_init(&ov8856->sd, client, &ov8856_subdev_ops);
+> > +       ov8856->xvclk = devm_clk_get(&client->dev, "xvclk");
+> > +       if (IS_ERR(ov8856->xvclk)) {
+> > +               dev_err(&client->dev, "failed to get xvclk\n");
+> > +               return -EINVAL;
+>
+> You should better return the real error insteald
+> PTR_ERR(ov8856->xvclk). This way defer probe could work.
+>
 
-I'm not saying to expose flush to clients.  I'm saying that you should
-modify the implementation of the calls in rpmh.c.  AKA in rpmh.c you
-have:
+Ack.
 
-rpmh_write():
-  start_transaction()
-  ... the contents of rpmh_write() from your v13 ...
-  end_transaction()
+> > +       }
+> > +
+> > +       ret = clk_set_rate(ov8856->xvclk, OV8856_XVCLK_24);
+> > +       if (ret < 0) {
+> > +               dev_err(&client->dev, "failed to set xvclk rate (24MHz)\n");
+> > +               return ret;
+> > +       }
+> > +
+> > +       ov8856->n_shutdn_gpio = devm_gpiod_get(&client->dev, "reset",
+> > +                                              GPIOD_OUT_LOW);
+> > +       if (IS_ERR(ov8856->n_shutdn_gpio)) {
+> > +               dev_err(&client->dev, "failed to get reset-gpios\n");
+> > +               return -EINVAL;
+>
+> Please return the real error.
 
-rpmh_write_async():
-  start_transaction()
-  ... the contents of rpmh_write_async() from your v13 ...
-  end_transaction()
-
-rpmh_write_batch()
-  start_transaction()
-  ... the contents of rpmh_write_batch() from your v13 ...
-  end_transaction()
-
-rpmh_invalidate()
-  start_transaction()
-  ... the contents of rpmh_invalidate() from your v13 ...
-  end_transaction()
-
-
-If a client calls rpmh_write() without anything else, they will get an
-implicit flush.
-
-If a client does this:
-
-start_transaction()
-rpmh_invalidate()
-rpmh_write_batch()
-rpmh_write_batch()
-end_transaction()
-
-That translates to:
-
-start_transaction()
-  start_transaction()
-  ... the contents of rpmh_invalidate() from your v13 ...
-  end_transaction()
-  start_transaction()
-  ... the contents of rpmh_write_batch() from your v13 ...
-  end_transaction()
-  start_transaction()
-  ... the contents of rpmh_write_batch() from your v13 ...
-  end_transaction()
-end_transaction()
-
-...then you'll get one flush at the end.  That's because the
-start_transaction() embedded in rpmh_invalidate() and
-rpmh_write_batch() will increase the usage count to 2 and then
-decrease back to 1.  Since it won't be 0 you won't get flushes from
-the embedded start/end.  You'll just get one flush at the end.
-
-
-Now start_transaction() and end_transaction() are truly optional.  If
-a client doesn't call them they'll get an implicit flush at the end of
-every call.  If they do call start/end themselves they can postpone
-the flush till the true end.
-
-...and because it's truly optional, you can drop several of the
-changes in your series.
-
-
-
--Doug
+Ack.
