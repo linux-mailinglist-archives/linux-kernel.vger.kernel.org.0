@@ -2,111 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA370180744
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:47:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C61FD18074A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 19:47:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbgCJSrg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 14:47:36 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37740 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726426AbgCJSrf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 14:47:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583866054;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nvrq31NBMkv7Vsef+6f+mBGyLXD/eDRO+WBoQLnMO/s=;
-        b=A90CR9b+5ERYZcvA94Ya8A4/iAfjbnY5QXsrpGjcZeEwdmVz5nVXuVFen/6a7ud9pqb+Gt
-        d97xe8b+yVxT5N0FS7iFqbEY+JVGe2+DxQAFWvzWU2MmgS5CYLFcHqJvxy1xeAwUi0pyAE
-        benwlQ2NrIltU/T8D82YEtuxLswDLTE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-82-lrpkCCq3MUejwZtd_UU6uw-1; Tue, 10 Mar 2020 14:47:30 -0400
-X-MC-Unique: lrpkCCq3MUejwZtd_UU6uw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A82A2477;
-        Tue, 10 Mar 2020 18:47:29 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.210])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DDAF6277A4;
-        Tue, 10 Mar 2020 18:47:20 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 7B8B322021D; Tue, 10 Mar 2020 14:47:20 -0400 (EDT)
-Date:   Tue, 10 Mar 2020 14:47:20 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
-        stefanha@redhat.com, dgilbert@redhat.com,
-        Sebastien Boeuf <sebastien.boeuf@intel.com>,
-        kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH 04/20] virtio: Implement get_shm_region for PCI transport
-Message-ID: <20200310184720.GD38440@redhat.com>
-References: <20200304165845.3081-1-vgoyal@redhat.com>
- <20200304165845.3081-5-vgoyal@redhat.com>
- <20200310071043-mutt-send-email-mst@kernel.org>
+        id S1727311AbgCJSro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 14:47:44 -0400
+Received: from verein.lst.de ([213.95.11.211]:54558 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727228AbgCJSrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 14:47:43 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 2A66068BE1; Tue, 10 Mar 2020 19:47:41 +0100 (CET)
+Date:   Tue, 10 Mar 2020 19:47:41 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Grimm, Jon" <jon.grimm@amd.com>, Joerg Roedel <joro@8bytes.org>,
+        baekhw@google.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [rfc 5/6] dma-direct: atomic allocations must come from
+ unencrypted pools
+Message-ID: <20200310184740.GA9745@lst.de>
+References: <alpine.DEB.2.21.1912311738130.68206@chino.kir.corp.google.com> <b22416ec-cc28-3fd2-3a10-89840be173fa@amd.com> <alpine.DEB.2.21.2002280118461.165532@chino.kir.corp.google.com> <alpine.DEB.2.21.2003011535510.213582@chino.kir.corp.google.com> <alpine.DEB.2.21.2003011538040.213582@chino.kir.corp.google.com> <20200305154456.GC5332@lst.de> <alpine.DEB.2.21.2003061623060.27928@chino.kir.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200310071043-mutt-send-email-mst@kernel.org>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <alpine.DEB.2.21.2003061623060.27928@chino.kir.corp.google.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 07:12:25AM -0400, Michael S. Tsirkin wrote:
-[..]
-> > +static bool vp_get_shm_region(struct virtio_device *vdev,
-> > +			      struct virtio_shm_region *region, u8 id)
-> > +{
-> > +	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> > +	struct pci_dev *pci_dev = vp_dev->pci_dev;
-> > +	u8 bar;
-> > +	u64 offset, len;
-> > +	phys_addr_t phys_addr;
-> > +	size_t bar_len;
-> > +	int ret;
-> > +
-> > +	if (!virtio_pci_find_shm_cap(pci_dev, id, &bar, &offset, &len)) {
-> > +		return false;
-> > +	}
-> > +
-> > +	ret = pci_request_region(pci_dev, bar, "virtio-pci-shm");
-> > +	if (ret < 0) {
-> > +		dev_err(&pci_dev->dev, "%s: failed to request BAR\n",
-> > +			__func__);
-> > +		return false;
-> > +	}
-> > +
-> > +	phys_addr = pci_resource_start(pci_dev, bar);
-> > +	bar_len = pci_resource_len(pci_dev, bar);
-> > +
-> > +        if (offset + len > bar_len) {
-> > +                dev_err(&pci_dev->dev,
-> > +                        "%s: bar shorter than cap offset+len\n",
-> > +                        __func__);
-> > +                return false;
-> > +        }
-> > +
-> 
-> Something wrong with indentation here.
+On Fri, Mar 06, 2020 at 04:36:07PM -0800, David Rientjes wrote:
+> As a preliminary change to this series, I could move the atomic pools and 
+> coherent_pool command line to a new kernel/dma/atomic_pools.c file with a 
+> new CONFIG_DMA_ATOMIC_POOLS that would get "select"ed by CONFIG_DMA_REMAP 
+> and CONFIG_AMD_MEM_ENCRYPT and call into dma_common_contiguous_remap() if 
+> we have CONFIG_DMA_DIRECT_REMAP when adding pages to the pool.
 
-Will fix all indentation related issues in this patch.
+Yes.  Although I'd just name it kernel/dma/pool.c and
+CONFIG_DMA_COHERENT_POOL or so, as I plan to reuse the code for
+architectures that just preallocate all coherent memory at boot time
+as well.
 
-> Also as long as you are validating things, it's worth checking
-> offset + len does not overflow.
+> I think that's what you mean by splitting the pool from remapping, 
+> otherwise we still have a full CONFIG_DMA_REMAP dependency here.  If you 
+> had something else in mind, please let me know.  Thanks!
 
-Something like addition of following lines?
-
-+       if ((offset + len) < offset) {
-+               dev_err(&pci_dev->dev, "%s: cap offset+len overflow detected\n",
-+                       __func__);
-+               return false;
-+       }
-
-Vivek
-
+Yes, that is exactly what I meant.
