@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B314D17F8DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:51:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC56517F7CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:42:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728987AbgCJMvx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:51:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57126 "EHLO mail.kernel.org"
+        id S1727303AbgCJMmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:42:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728968AbgCJMvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:51:47 -0400
+        id S1727286AbgCJMmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:42:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5A6E2253D;
-        Tue, 10 Mar 2020 12:51:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72AAA246A1;
+        Tue, 10 Mar 2020 12:42:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844707;
-        bh=5SN7HBIx7S/iolfgVHveQ4pUn7G7+gnmiMjM+m1Zmmw=;
+        s=default; t=1583844134;
+        bh=3tsSw4jgessdiPGEVOtj2pNmUIlDeuL0uPmLRPFww7w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VBxzc8kL70ySX922sy6QBuBevmsiQQEyfg8Pip+iE9vdpCuUUDVNv2OoZBXEeIMqt
-         1SL5J58hNHV7T/ATTIKnRGuIk3oclRFqt+3J195lmhDZN01HGnlSQUq87hY8XzGbXE
-         UK5DB4Ncy1mXCyqS1RQyTO/uP/hkZiUCeF35fjcQ=
+        b=Rb79BpEd/wPbldgMUinSakA5Hpn33xo2exOf/mRviUJY3BRZMMexn+SZns7lBfU9K
+         874nHmI8uZfUgpjfWsEviJoHmqDlvaSrvh+CUPMOBR3JG9CHbcuLVbIl0WizHpVsZa
+         4uT6J6U+ejdMZNv60obvDAnD4WriS2JMizNsCBq4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 5.4 089/168] media: mc-entity.c: use & to check pad flags, not ==
+        stable@vger.kernel.org, Sergey Organov <sorganov@gmail.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Felipe Balbi <balbi@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 42/72] usb: gadget: serial: fix Tx stall after buffer overflow
 Date:   Tue, 10 Mar 2020 13:38:55 +0100
-Message-Id: <20200310123644.307258286@linuxfoundation.org>
+Message-Id: <20200310123611.870381032@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <20200310123601.053680753@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Sergey Organov <sorganov@gmail.com>
 
-commit 044041cd5227ec9ccf969f4bf1cc08bffe13b9d3 upstream.
+[ Upstream commit e4bfded56cf39b8d02733c1e6ef546b97961e18a ]
 
-These are bits so to test if a pad is a sink you use & but not ==.
+Symptom: application opens /dev/ttyGS0 and starts sending (writing) to
+it while either USB cable is not connected, or nobody listens on the
+other side of the cable. If driver circular buffer overflows before
+connection is established, no data will be written to the USB layer
+until/unless /dev/ttyGS0 is closed and re-opened again by the
+application (the latter besides having no means of being notified about
+the event of establishing of the connection.)
 
-It looks like the only reason this hasn't caused problems before is that
-media_get_pad_index() is currently only used with pads that do not set the
-MEDIA_PAD_FL_MUST_CONNECT flag. So a pad really had only the SINK or SOURCE
-flag set and nothing else.
+Fix: on open and/or connect, kick Tx to flush circular buffer data to
+USB layer.
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: <stable@vger.kernel.org>      # for v5.3 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sergey Organov <sorganov@gmail.com>
+Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/mc/mc-entity.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/function/u_serial.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/media/mc/mc-entity.c
-+++ b/drivers/media/mc/mc-entity.c
-@@ -639,9 +639,9 @@ int media_get_pad_index(struct media_ent
- 		return -EINVAL;
+diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
+index 31e08bb3cb41e..58a699cfa4582 100644
+--- a/drivers/usb/gadget/function/u_serial.c
++++ b/drivers/usb/gadget/function/u_serial.c
+@@ -701,8 +701,10 @@ static int gs_start_io(struct gs_port *port)
+ 	port->n_read = 0;
+ 	started = gs_start_rx(port);
  
- 	for (i = 0; i < entity->num_pads; i++) {
--		if (entity->pads[i].flags == MEDIA_PAD_FL_SINK)
-+		if (entity->pads[i].flags & MEDIA_PAD_FL_SINK)
- 			pad_is_sink = true;
--		else if (entity->pads[i].flags == MEDIA_PAD_FL_SOURCE)
-+		else if (entity->pads[i].flags & MEDIA_PAD_FL_SOURCE)
- 			pad_is_sink = false;
- 		else
- 			continue;	/* This is an error! */
+-	/* unblock any pending writes into our circular buffer */
+ 	if (started) {
++		gs_start_tx(port);
++		/* Unblock any pending writes into our circular buffer, in case
++		 * we didn't in gs_start_tx() */
+ 		tty_wakeup(port->port.tty);
+ 	} else {
+ 		gs_free_requests(ep, head, &port->read_allocated);
+-- 
+2.20.1
+
 
 
