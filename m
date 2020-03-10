@@ -2,80 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB0A417F4D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 11:16:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CD8317F4DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 11:17:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726290AbgCJKQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 06:16:15 -0400
-Received: from sauhun.de ([88.99.104.3]:47064 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbgCJKQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 06:16:15 -0400
-Received: from localhost (p54B33196.dip0.t-ipconnect.de [84.179.49.150])
-        by pokefinder.org (Postfix) with ESMTPSA id F2DDE2C1EB6;
-        Tue, 10 Mar 2020 11:16:13 +0100 (CET)
-Date:   Tue, 10 Mar 2020 11:16:13 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 04/89] i2c: brcmstb: Allow to compile it on BCM2835
-Message-ID: <20200310101613.GN1987@ninjato>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
- <0ec2a26c7492b1ef6554d3bdada7a6fb8b41ab1c.1582533919.git-series.maxime@cerno.tech>
+        id S1726316AbgCJKRR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 06:17:17 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:39326 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbgCJKRQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 06:17:16 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02AA3Hwr122950;
+        Tue, 10 Mar 2020 10:16:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=7sCznqIL6gIPYAX8P2LFWxeyh1Nnbv7oFLHeKxsEIUc=;
+ b=rTixhLAFAddEj2YNGfA06aCY7S2MRrjbXLm3YjhuIoA2imsFhZoVPyGNsfX4KNkfCWR5
+ eUKVWQ2EevX1KxHtEisZrI1NptToWsvF3rm+zC7/RsRpIz0Gtt0BFrqGU2vQHEXwWctb
+ gUUx7PDL6ldj7jz+3CNHnnnriNnni7ewP/Y+I1EfbhumbazQGkpmz2yvku6iFXrSpjLO
+ eS4AybV6OauleVRsWx/Wb9YKKsvwbihyQDMv3UwuUj+OXD7jHDUQN5kHdAYJUYs+YCoE
+ JJgk/ZU+pKj1XK5ncEb572bCSZ6xRKJBfa390Q5ZYRLy/LHMbrcInwZoOyBCwdVwzoz+ Xg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2yp7hm11de-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Mar 2020 10:16:47 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02AADDMk001761;
+        Tue, 10 Mar 2020 10:16:47 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2yp8qmj2hk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Mar 2020 10:16:46 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02AAGjLG015441;
+        Tue, 10 Mar 2020 10:16:45 GMT
+Received: from [192.168.8.5] (/213.41.92.70)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 10 Mar 2020 03:16:44 -0700
+Subject: Re: [patch part-II V2 03/13] x86/entry/32: Remove unused label
+ restore_nocheck
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Brian Gerst <brgerst@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Frederic Weisbecker <frederic@kernel.org>
+References: <20200308222359.370649591@linutronix.de>
+ <20200308222609.219366430@linutronix.de>
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <cecbe5ac-f2ad-beb8-b724-aae8fa00f501@oracle.com>
+Date:   Tue, 10 Mar 2020 11:16:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ztcJpsdPpsnnlAp8"
-Content-Disposition: inline
-In-Reply-To: <0ec2a26c7492b1ef6554d3bdada7a6fb8b41ab1c.1582533919.git-series.maxime@cerno.tech>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200308222609.219366430@linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9555 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 suspectscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003100068
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9555 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0
+ priorityscore=1501 clxscore=1015 mlxscore=0 impostorscore=0
+ mlxlogscore=999 suspectscore=0 phishscore=0 malwarescore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003100068
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ztcJpsdPpsnnlAp8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 3/8/20 11:24 PM, Thomas Gleixner wrote:
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>   arch/x86/entry/entry_32.S |    2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 
+Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
 
->  config I2C_BRCMSTB
->  	tristate "BRCM Settop/DSL I2C controller"
->  	depends on ARCH_BRCMSTB || BMIPS_GENERIC || ARCH_BCM_63XX || \
-> -		   COMPILE_TEST
-> +		   COMPILE_TEST || ARCH_BCM2835
+alex.
 
-Can you please sort if for easier maintenance?
-
-
---ztcJpsdPpsnnlAp8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl5naO0ACgkQFA3kzBSg
-Kbbotw/+MzEKdBWRAl9XS4c7JMOrYWcaHDXRPlPcgpby/WGwtkBcP3qMVLzhUK3P
-wmRIwVMeZxmVzF6//Nj0RUMzHdMABDfMxroBW71xRaksB0X1Z4QwQoPhJrySz880
-n7CosfR4WmdVujIgSA4G5Wx7Izqbw6Y3F5MBI4q9hDQC4yB6+0ByDA5PdC2c/ze8
-UtrISDP7GZyfGY8j7+R5jycrYzGAZo+nsQ96AphoZYqnMoOaVhMU8e9zKzcPZjXE
-y7gjuKI9drofcEYwZSwfA7xBN3mjG/zGaQdcfw8wYd9dX6+7Rw4ufZ36t6xKjvGv
-OtMuow5QkSJAnjoTxFx8AvfqpXuGFTaRIq8znaIPOLp3OfwbWy6YpMQXwBTuhdip
-GHouuNT9FKOfKhNxWo4wRox1VnaI9a/88X6L8VPu6hCpk2y+Ok6vzdcd//aA56/W
-JeSFvdkFW305mu4CGGLq7CSH/w86tjSSmQveOXgRrsYfZ8fJL5TrQUIkkVCZG9Gk
-Tj9LqtT4b97xVY6bNloTPRF3xAiu9t6pvJna/J8RSSIct6bjSPXJ5wuZW7eykUYD
-DKOCd2LRmDbjwU0niH6Xt9K5FOK05SVdQDvSgFNABjGJTkaH29yxtoA+MQ8PTDaS
-5J1H1Vzqf6tuGQ1I4Iv/W2yS9GmOlwY6pW8qvi+csOoeW4TXMR8=
-=UluX
------END PGP SIGNATURE-----
-
---ztcJpsdPpsnnlAp8--
+> 
+> --- a/arch/x86/entry/entry_32.S
+> +++ b/arch/x86/entry/entry_32.S
+> @@ -1091,7 +1091,7 @@ SYM_FUNC_START(entry_INT80_32)
+>   	TRACE_IRQS_IRET
+>   	SWITCH_TO_ENTRY_STACK
+>   	CHECK_AND_APPLY_ESPFIX
+> -.Lrestore_nocheck:
+> +
+>   	/* Switch back to user CR3 */
+>   	SWITCH_TO_USER_CR3 scratch_reg=%eax
+>   
+> 
