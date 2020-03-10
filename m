@@ -2,210 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7531117F610
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:18:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0262D17F640
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 12:25:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbgCJLSo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 07:18:44 -0400
-Received: from mga03.intel.com ([134.134.136.65]:21993 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726402AbgCJLSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 07:18:44 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 04:18:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,536,1574150400"; 
-   d="scan'208";a="353602579"
-Received: from kuha.fi.intel.com ([10.237.72.162])
-  by fmsmga001.fm.intel.com with SMTP; 10 Mar 2020 04:18:38 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 10 Mar 2020 13:18:37 +0200
-Date:   Tue, 10 Mar 2020 13:18:37 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        hdegoede@redhat.com,
-        "rafael.j.wysocki" <rafael.j.wysocki@intel.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        lkft-triage@lists.linaro.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: BUG: kernel NULL pointer dereference, address: 00 -
- ida_free+0x76/0x140
-Message-ID: <20200310111837.GA1368052@kuha.fi.intel.com>
-References: <CA+G9fYvRZ9eCE29FjXkv1dQfrdGO3uWp4Tvkip5Z_jsgjVJeAQ@mail.gmail.com>
- <CAHp75VfhKoLtWkLHUyzg6m=rx833qiCVimWJVKU13qrX+aJz-Q@mail.gmail.com>
- <CAFd5g45GbSX1BkuaH=8639ESHi-MCGkpFhEZZpycm9=jQb93rg@mail.gmail.com>
- <CAFd5g47aaE+tGeHPrQmhfi6_nrvi1K4DvtRodh=zN21-uiQ1DQ@mail.gmail.com>
- <20200305223350.GA2852@mara.localdomain>
- <20200306120525.GC68079@kuha.fi.intel.com>
- <CAFd5g45c9L4BBRNtxtQf_NFr2bR6Wgt9uOHW86gzb6Ozeb0SBA@mail.gmail.com>
- <CAFd5g45cdygYfxGoCkk710tLXFADeLNb+6w-=vhkDMLP9OM7bw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFd5g45cdygYfxGoCkk710tLXFADeLNb+6w-=vhkDMLP9OM7bw@mail.gmail.com>
+        id S1726411AbgCJLZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 07:25:05 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:51150 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726197AbgCJLZE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 07:25:04 -0400
+Received: from mr3.cc.vt.edu (mr3.cc.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 02ABP3Pu032270
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 07:25:03 -0400
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 02ABOwOT010833
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 07:25:03 -0400
+Received: by mail-qv1-f71.google.com with SMTP id o10so8877416qvn.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 04:25:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=OesXhfFfB1ZZgxnRfuwwLM+t7VkmSIoWuSuAcfzfaQ8=;
+        b=dCZbYLbquuVk5/ZFppDzrETygoVy3jGZ6CPKHNclKR7C3jw2V4zUxcQFwVO5Zi3FuS
+         UUNcGkzqrItSiMyM1ZY4hEuovR537qulZwmwOSc0JbmlF+cgfVEh+M+Y6XBv2qs1K1uw
+         +PTeAAVDxY8BXU1zO/92kOKjxEWxAsMqKnkbpy+0L1NIemp8UyTH1K278Zhf1cntce8O
+         QeI7Ukdw903H3H+vob7sBE7PI5oOYHwNljlO/LQ7UGT90NB/xhbQZhUUmGPu99ZZF2Pi
+         EnWImIGEmENwaQjYSUsQf/e8Yx3/jgiZDYMzyxZVVgWefpTrCeuvbLPRUKAt4/5ZYxj9
+         OvjA==
+X-Gm-Message-State: ANhLgQ2PH9GjgUaBBvB2YU9AQfYedUjA1pbJJQFJOVaVJP3h7V+GQObg
+        Fn2WzsENPXYrMROfpjx+E59JwzpkIqOQOxa64VymHUMSHGPzR4ziuOjQ/FUbVjPbYzJrJ+mjBdp
+        pFlT9DhES7FXhYdi+UTe/rRh4ZAe0etpWuxM=
+X-Received: by 2002:a05:6214:60d:: with SMTP id z13mr5971526qvw.183.1583839142739;
+        Tue, 10 Mar 2020 04:19:02 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vto9Cc/inOPkYfcSZLmhvSxM16DJD9Z9E7y4/q01ZrjcE60oTAT3RepCU3XjTs472qHoHtnOQ==
+X-Received: by 2002:a05:6214:60d:: with SMTP id z13mr5971506qvw.183.1583839142428;
+        Tue, 10 Mar 2020 04:19:02 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:c9e1::359])
+        by smtp.gmail.com with ESMTPSA id w2sm23859201qto.73.2020.03.10.04.19.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 04:19:00 -0700 (PDT)
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "'Linux Next Mailing List'" <linux-next@vger.kernel.org>,
+        "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
+        devel@driverdev.osuosl.org,
+        Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] staging: exfat: remove staging version of exfat filesystem
+In-Reply-To: <20200310105421.GA2810679@kroah.com>
+References: <20200310105421.GA2810679@kroah.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1583839139_13328P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 10 Mar 2020 07:18:59 -0400
+Message-ID: <35151.1583839139@turing-police>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 02:43:13PM -0700, Brendan Higgins wrote:
-> On Mon, Mar 9, 2020 at 1:35 PM Brendan Higgins
-> <brendanhiggins@google.com> wrote:
-> >
-> > On Fri, Mar 6, 2020 at 4:05 AM Heikki Krogerus
-> > <heikki.krogerus@linux.intel.com> wrote:
-> > >
-> > > On Fri, Mar 06, 2020 at 12:33:50AM +0200, Sakari Ailus wrote:
-> > > > Hi Brendan,
-> > > >
-> > > > On Thu, Mar 05, 2020 at 11:51:20AM -0800, Brendan Higgins wrote:
-> > > > > On Thu, Mar 5, 2020 at 11:40 AM Brendan Higgins
-> > > > > <brendanhiggins@google.com> wrote:
-> > > > > >
-> > > > > > On Thu, Mar 5, 2020 at 11:18 AM Andy Shevchenko
-> > > > > > <andy.shevchenko@gmail.com> wrote:
-> > > > > > >
-> > > > > > > +Cc: Sakari
-> > > > > > >
-> > > > > > > On Thu, Mar 5, 2020 at 6:00 PM Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
-> > > > > > > >
-> > > > > > > > Regression reported on Linux next 5.6.0-rc4-next-20200305 on x86_64,
-> > > > > > > > i386, arm and arm64. The steps to reproduce is running kselftests lib
-> > > > > > > > printf.sh test case.
-> > > > > > > > Which is doing modprobe operations.
-> > > > > > > >
-> > > > > > > > BTW, there are few RCU warnings from the boot log.
-> > > > > > > > Please refer below link for more details.
-> > > > > > > >
-> > > > > > > > Steps reproduce by using kselftests,
-> > > > > > > >
-> > > > > > > >           - lsmod || true
-> > > > > > > >           - cd /opt/kselftests/default-in-kernel/lib/
-> > > > > > > >           - export PATH=/opt/kselftests/default-in-kernel/kselftest:$PATH
-> > > > > > > >           - ./printf.sh || true
-> > > > > > > >           - ./bitmap.sh || true
-> > > > > > > >           - ./prime_numbers.sh || true
-> > > > > > > >           - ./strscpy.sh || true
-> > > > > > > >
-> > > > > > > > x86_64 kernel BUG dump.
-> > > > > > > > + ./printf.sh
-> > > > > >
-> > > > > > Oops, I am wondering if I broke this with my change "Revert "software
-> > > > > > node: Simplify software_node_release() function"":
-> > > > > >
-> > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=d1c19322388d6935b534b494a2c223dd089e30dd
-> > > > > >
-> > > > > > I am still investigating, will update later.
-> > > > >
-> > > > > Okay, yeah, I am pretty sure I caused the breakage. I got an email
-> > > > > from kernel test robot a couple days ago that I didn't see:
-> > > > >
-> > > > > https://lists.01.org/hyperkitty/list/lkp@lists.01.org/thread/N3ZN5XH7HK24JVEJ5WSQD2SK6YCDRILR/
-> > > > >
-> > > > > It shows the same breakage after applying this change.
-> > > > >
-> > > > > I am still investigating how my change broke it, nevertheless.
-> > > >
-> > > > As nodes in the tree are being removed, the code before the patch that
-> > > > "simplified" the software_node_release() function accessed the node's parent
-> > > > in its release function.
-> > > >
-> > > > And if CONFIG_DEBUG_KOBJECT_RELEASE is defined, the release functions are no
-> > > > longer necessarily called in order, leading to referencing released memory.
-> > > > Oops!
-> > > >
-> > > > So Heikki's patch actually fixed a bug. :-)
-> > >
-> > > Well, I think it just hid the problem. It looks like the core
-> > > (lib/kobject.c) allows the parent kobject to be released before the
-> > > last child kobject is released. To be honest, that does not sound
-> > > right to me...
-> > >
-> > > I think we can workaround this problem by taking reference to the
-> > > parent when the child is added, and then releasing it when the child
-> > > is released, and in that way be guaranteed that the parent will not
-> > > disappear before the child is fully released, but that still does not
-> > > feel right. It feels more like the core is not doing it's job to me.
-> > > The parent just should not be released before its children.
-> > >
-> > > Either I'm wrong about that, and we still should take the reference on
-> > > the parent, or we revert my patch like Brendan proposed and then fix
-> >
-> > Either way, isn't it wrong to release the node ID before deleting the
-> > sysfs entry? I am not sure that my fix was the correct one, but I
-> > believe the bug that Heidi and I found is actually a bug.
+--==_Exmh_1583839139_13328P
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-I agree.
+On Tue, 10 Mar 2020 11:54:21 +0100, Greg Kroah-Hartman said:
+> Now that there is a =22real=22 solution for exfat in the vfs tree queue=
+d up
+> to be merged in 5.7-rc1 the =22old=22 exfat code in staging can be remo=
+ved.
+>
+> Many thanks to Valdis for doing the work to get this into the tree in
+> the first place, it was greatly appreciated.
+>
+> Cc: Valdis Kletnieks <valdis.kletnieks=40vt.edu>
 
-> > > the core with something like this (warning, I did not even try to
-> > > compile that):
-> >
-> > I will try it out.
-> >
-> > > diff --git a/lib/kobject.c b/lib/kobject.c
-> > > index 83198cb37d8d..ec5774992337 100644
-> > > --- a/lib/kobject.c
-> > > +++ b/lib/kobject.c
-> > > @@ -680,6 +680,12 @@ static void kobject_cleanup(struct kobject *kobj)
-> > >                 kobject_uevent(kobj, KOBJ_REMOVE);
-> > >         }
-> > >
-> > > +       if (t && t->release) {
-> > > +               pr_debug("kobject: '%s' (%p): calling ktype release\n",
-> > > +                        kobject_name(kobj), kobj);
-> > > +               t->release(kobj);
-> > > +       }
-> > > +
-> > >         /* remove from sysfs if the caller did not do it */
-> > >         if (kobj->state_in_sysfs) {
-> > >                 pr_debug("kobject: '%s' (%p): auto cleanup kobject_del\n",
-> > > @@ -687,12 +693,6 @@ static void kobject_cleanup(struct kobject *kobj)
-> > >                 kobject_del(kobj);
-> > >         }
-> > >
-> > > -       if (t && t->release) {
-> > > -               pr_debug("kobject: '%s' (%p): calling ktype release\n",
-> > > -                        kobject_name(kobj), kobj);
-> > > -               t->release(kobj);
-> > > -       }
-> > > -
-> > >         /* free name if we allocated it */
-> > >         if (name) {
-> > >                 pr_debug("kobject: '%s': free name\n", name);
-> 
-> Alright, so I tried it and it looks like Heikki's suggestion worked.
-> 
-> Is everyone comfortable going this route?
+You can stick my Acked-by: on that. :)
 
-Hold on. Another way to fix the problem is to increment the parent's
-reference count before that kobject_del(kobj) is called, and then
-decrementing it after t->release(kobj) is called. It may be safer to
-fix the problem like that.
+And thanks to Namjae Jeon for graciously offering to take it off my hands=
 
-My example above proofs that there is the problem, but it changes the
-order of execution which I think can always have other consequences.
+by providing a better version, and to all the people at Linux Foundation
+and Microsoft who did a lot of behind the scenes work to make it happen..=
+.
 
-> Also, should I send this fix as a separate patch? Or do people want me
-> to send an updated revision of my revert patch with the fix?
+--==_Exmh_1583839139_13328P
+Content-Type: application/pgp-signature
 
-This needs to be send in its own separate patch. Ideally it could be
-send together with the revert in the same series, but I'm not sure
-that's possible anymore. Didn't Greg pick the revert already?
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
 
+iQIVAwUBXmd3owdmEQWDXROgAQIhLhAAkEefL8MqDbPRHTLSuvJEcgA0wOk3+Y5q
+NaIlQZ3VNZQkIguUEEKq4Ic+mpBl9+r8rWIbJiDWYe2gZRq+b4BFi8Dlc9T46yst
+rW9YWLIGLsVwnCjvVRyZRO/S+6oSzFh6yTdkxQIBBOmWhhITLvIKoJozoSFTOwwn
+I0G97lwb9++mH2r9n87/3NHOfTyUB061TU3l5/fk/a3bpWWYrR+NXEuEli8QGukl
+eDwRMUvegpPBt/iPN7PTznuwbVKSYigB17Wopr+gAEnS3rZ2YeG2lkQFe7vnoevl
+6FNTcq2W5hJU2Jrb2eAuKMrW4LVg2rSis8jHmM7Eeoi/Pkyko/Cdfw1TD5L0Uqc/
+QYnofVkQrni42j8gCSTTHvzeag+rjmeSK/YEsjyYzVGnK3Hc+27mmMoHYTYQo7JI
+k2r4nZCZINc67E/DeBb1hWEnlbjdfeKwQLrW5qAm/x9jumGPto+nfqyaNHKwfmW1
+OMq9FCU+7HW9lG/FZHbOY/l0+yMlBeg3fM5YmiC0+aotmHPZiQoVMYDOThdG0ukc
+z91DNBW2rsqmrfc83U8nxnNxfnYyfWuNJ03IuLIhRY6BsrsUXLKZiFRQUPjGAs7i
+u+oBYngj9OUyw58ks8S5KYgoFZbqe1oWKBQ+fiXXKXqRt4CbagiSOeYcaVQPcctT
+Sy9zO5MRsa0=
+=l13Y
+-----END PGP SIGNATURE-----
 
-thanks,
-
--- 
-heikki
+--==_Exmh_1583839139_13328P--
