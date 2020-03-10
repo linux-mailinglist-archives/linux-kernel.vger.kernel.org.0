@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59DB317F8F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:52:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CE4517F7AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:41:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728796AbgCJMwp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:52:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58452 "EHLO mail.kernel.org"
+        id S1726898AbgCJMlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:41:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728284AbgCJMwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:52:42 -0400
+        id S1726837AbgCJMlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:41:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A75212253D;
-        Tue, 10 Mar 2020 12:52:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44D1324695;
+        Tue, 10 Mar 2020 12:41:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844762;
-        bh=TPw2k5RTp3jIJwl5cVpO8uiiXKwu7hHDfLYGxuIr0Go=;
+        s=default; t=1583844080;
+        bh=rMQn7kjsa7T0S3IBhZrsTg2HDBVaXevtNP7v9XkF4Dg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sKPTBcVMhlh1GVgvPwusIVJ74tnzwHJZHU1oc1taCR9J9fPQYn9lUa8ZhmYfvILEw
-         be7BuYIAsbKgDoZ7SMUr83t0/6VLaeAE24DCHKfNJXNHhVptNqQFQOTRYpPV+SESvK
-         ritTY1VTIPSfangj5QdL2JAc/Zau59wDb3s8H2SE=
+        b=I1JxvhDPgDdPbfsnjCQzklPKuKYeH34p3jYxw+MsAleqZaoD5vlZMGSgwDJve/kcb
+         HBer8cTXymqF4VCWBT2qnulLughtIaoKkViJa9HFSlLkHA1QXxJ2MhRXNT3OoAJF3y
+         /nieGO+TXiFXQ+bNESnLDMU1h0CttBVCiuFoe6qc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-Subject: [PATCH 5.4 071/168] usb: core: hub: fix unhandled return by employing a void function
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org,
+        linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH 4.4 24/72] MIPS: VPE: Fix a double free and a memory leak in release_vpe()
 Date:   Tue, 10 Mar 2020 13:38:37 +0100
-Message-Id: <20200310123642.454327306@linuxfoundation.org>
+Message-Id: <20200310123607.860475256@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <20200310123601.053680753@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,26 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugeniu Rosca <erosca@de.adit-jv.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-commit 63d6d7ed475c53dc1cabdfedf63de1fd8dcd72ee upstream.
+commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 upstream.
 
-Address below Coverity complaint (Feb 25, 2020, 8:06 AM CET):
+Pointer on the memory allocated by 'alloc_progmem()' is stored in
+'v->load_addr'. So this is this memory that should be freed by
+'release_progmem()'.
+
+'release_progmem()' is only a call to 'kfree()'.
+
+With the current code, there is both a double free and a memory leak.
+Fix it by passing the correct pointer to 'release_progmem()'.
+
+Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: ralf@linux-mips.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/hub.c |    2 +-
+ arch/mips/kernel/vpe.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -1865,7 +1865,7 @@ static int hub_probe(struct usb_interfac
+--- a/arch/mips/kernel/vpe.c
++++ b/arch/mips/kernel/vpe.c
+@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
+ {
+ 	list_del(&v->list);
+ 	if (v->load_addr)
+-		release_progmem(v);
++		release_progmem(v->load_addr);
+ 	kfree(v);
+ }
  
- 	if (id->driver_info & HUB_QUIRK_DISABLE_AUTOSUSPEND) {
- 		hub->quirk_disable_autosuspend = 1;
--		usb_autopm_get_interface(intf);
-+		usb_autopm_get_interface_no_resume(intf);
- 	}
- 
- 	if (hub_configure(hub, &desc->endpoint[0].desc) >= 0)
 
 
