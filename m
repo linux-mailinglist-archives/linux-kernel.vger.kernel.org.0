@@ -2,100 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ADF71807BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 20:14:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A7151807E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 20:22:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbgCJTOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 15:14:16 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42317 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbgCJTOQ (ORCPT
+        id S1727264AbgCJTWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 15:22:25 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:38476 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726546AbgCJTWZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 15:14:16 -0400
-Received: by mail-pf1-f194.google.com with SMTP id f5so6936547pfk.9
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 12:14:15 -0700 (PDT)
+        Tue, 10 Mar 2020 15:22:25 -0400
+Received: by mail-pj1-f68.google.com with SMTP id a16so854107pju.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 12:22:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=jXS+fddiboogW4J/E0/NXpTN0n1JtPDhmBZ3qFcCQP4=;
-        b=chA/wqnMnfNRRpErVjOWwHfwqEReVmuaVJ1j+gJ786KskrXv1xxlMHWhSZ81FrPINb
-         t7VRbkrSkhXP6B2AaNJjhiJwM2hcw8iC5vC15rnPmbKeluQ9W+ctzvfjLc8K9LQZM3XL
-         U0xJCK4FrImSkd/bNujq2E/EqANq5jI44q7b434QSRqv+yT6EY0hBWqFGnzsFhfzfaEX
-         vRhUSmSQpQZzlrGJtoXcF4+YLOlbZIBrxiw9vXyFDuc1hz42F1yAfIPOzTJTq7Ywtbhs
-         01HAt7Ibzbj1v8/pSyh5SOldubP6Wr/hSF38V63VzmxAdrNUhTMhLqi3c/aa3U5K0xz4
-         09fQ==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Vrf8fXIC1r2+JvlXlYgJWxCM5oPrpq5MZD/CQnIzo+w=;
+        b=MmjLu5wlCm1KVWVg8MptJtFwJswJGmrA7TNTK6MlBe1QSv/l6sU0nu+xKUKFI5me9o
+         88d+/cMpF6gvVKH5e38OY0sZpb0yCnFMSTlBQPQcLhTCOcS96CUUksnCUaHuQvU1WaFN
+         06B+kAybXERrT5cBsw8iPIopCKaMFgckQdHZI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=jXS+fddiboogW4J/E0/NXpTN0n1JtPDhmBZ3qFcCQP4=;
-        b=BdmwS6DdpXFZbtu6hBvykU+lcL0Cshes3/gqpMgqgNOMAIj4Hj8mrCXdAkb2o8Dkwa
-         20FTt1lN45TYNiXWpHB0UVfq8EpEVM+Ldf62GvSPobGIvX4I6cI8baxYJEoBLo+SHnU1
-         4cNM+dY/yNuRXY6Ncf7sJuoVdWKkpbX3EcwvVQ4G+OTBXuTA3lxFxR/+LPmw+DJAeHTp
-         OSUs05SsLOBFSTAcSyNAk8XVx2Kk5QpepkQpkSkrvPCjSK6Yd+x0d9RUZq3+CS8Qnwwy
-         gDsSH5XJM89KK/f7RitGOYIBpxg1TMg0um6Xle+w1RYfECA5vtVZULL3X8QkLTwekTsV
-         XckQ==
-X-Gm-Message-State: ANhLgQ1uyPnOSUHX5r6kkNF6FE3c8wEq14EUS5p4rJFtsLABGJ1ymFqZ
-        L34Waobl1UWQKKZ9Ygi/wIY=
-X-Google-Smtp-Source: ADFU+vs52a6rip8IWsWcP1fpdvE1kMMG2to1qSplhRkZx9BvaY+Hdl6MbNO/wIfE52DWiHve9HXUuQ==
-X-Received: by 2002:aa7:8513:: with SMTP id v19mr22471763pfn.222.1583867655422;
-        Tue, 10 Mar 2020 12:14:15 -0700 (PDT)
-Received: from localhost.localdomain ([157.45.34.130])
-        by smtp.gmail.com with ESMTPSA id p9sm2232630pgs.50.2020.03.10.12.14.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 10 Mar 2020 12:14:14 -0700 (PDT)
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Souptick Joarder <jrdr.linux@gmail.com>
-Subject: [PATCH] mm/filemap.c: Remove unused argument from shrink_readahead_size_eio()
-Date:   Wed, 11 Mar 2020 00:51:33 +0530
-Message-Id: <1583868093-24342-1-git-send-email-jrdr.linux@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Vrf8fXIC1r2+JvlXlYgJWxCM5oPrpq5MZD/CQnIzo+w=;
+        b=GEJt2YpORNcjjJVTJEU7s015ubOAiwdHCiBJjixUXT4pABxjy/M5tyolX53F+WOQXt
+         lyJw50bddyL+/ErAW9sLFZJD/fAYDR657CHuBubcyAbMNhbPri6FXaNLMq3FsPFEz5AC
+         a8FnZh3k/eEF9g8AJ9ozfVDHGzJZbeY7H1gvhJwgUINoA0LLBxsZuPePpOa4J1TRDm3V
+         +6v80VWAvG1E8ESBwF4+k0gYSWkS49etIr2JVA6B2jyW91YvYQlDnUMOJnivgURwfzaJ
+         ToPql+iIEk5y5m4WUFkFXi83I8S9gFAcLt5AU8bR+9AlQ20CYPPcBHBdaeGO6VawLvCv
+         209w==
+X-Gm-Message-State: ANhLgQ2Igyq5hNvphpGgyN/y4lrfjtPNa8cpoI6PtUkpja+00gGG4rNa
+        dRlNZ8OLTL7U/HTh93l6iryuFg==
+X-Google-Smtp-Source: ADFU+vsysRpDn6XtMDd6KeAEkYr65mpcbz9mvFMHbNITyDJ6Jk+4GBWwtp+4wEdTCClVX71+QtvaoQ==
+X-Received: by 2002:a17:902:8a81:: with SMTP id p1mr21836886plo.284.1583868143955;
+        Tue, 10 Mar 2020 12:22:23 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id o66sm35070452pfb.93.2020.03.10.12.22.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 12:22:22 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 12:22:21 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Joe Perches <joe@perches.com>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: deprecated.rst: Clean up fall-through details
+Message-ID: <202003101221.A1388D0C@keescook>
+References: <202003041102.47A4E4B62@keescook>
+ <20200310112356.1b5b32f2@lwn.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310112356.1b5b32f2@lwn.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The first argument of shrink_readahead_size_eio() is not used. Hence
-removed from function definition and from all the callers.
+On Tue, Mar 10, 2020 at 11:23:56AM -0600, Jonathan Corbet wrote:
+> On Wed, 4 Mar 2020 11:03:24 -0800
+> Kees Cook <keescook@chromium.org> wrote:
+> 
+> > Add example of fall-through, list-ify the case ending statements, and
+> > adjust the markup for links and readability. While here, adjust
+> > strscpy() details to mention strscpy_pad().
+> > 
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> 
+> Applied, thanks.  But ...
+> 
+> > ---
+> >  Documentation/process/deprecated.rst | 48 +++++++++++++++++-----------
+> >  1 file changed, 29 insertions(+), 19 deletions(-)
+> > 
+> > diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
+> > index 179f2a5625a0..f9f196d3a69b 100644
+> > --- a/Documentation/process/deprecated.rst
+> > +++ b/Documentation/process/deprecated.rst
+> > @@ -94,8 +94,8 @@ and other misbehavior due to the missing termination. It also NUL-pads the
+> >  destination buffer if the source contents are shorter than the destination
+> >  buffer size, which may be a needless performance penalty for callers using
+> >  only NUL-terminated strings. The safe replacement is :c:func:`strscpy`.
+> > -(Users of :c:func:`strscpy` still needing NUL-padding will need an
+> > -explicit :c:func:`memset` added.)
+> > +(Users of :c:func:`strscpy` still needing NUL-padding should instead
+> > +use strscpy_pad().)
+> 
+> :c:func: usage should really be stomped on when we encounter it.  There's
+> a few in this file; I'll tack on a quick patch making them go away.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- mm/filemap.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Oops, yes, I meant to do another pass for that. I will double-check
+future patches!
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 1784478..98f3703 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1962,8 +1962,7 @@ unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
-  *
-  * It is going insane. Fix it by quickly scaling down the readahead size.
-  */
--static void shrink_readahead_size_eio(struct file *filp,
--					struct file_ra_state *ra)
-+static void shrink_readahead_size_eio(struct file_ra_state *ra)
- {
- 	ra->ra_pages /= 4;
- }
-@@ -2188,7 +2187,7 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 					goto find_page;
- 				}
- 				unlock_page(page);
--				shrink_readahead_size_eio(filp, ra);
-+				shrink_readahead_size_eio(ra);
- 				error = -EIO;
- 				goto readpage_error;
- 			}
-@@ -2560,7 +2559,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 		goto retry_find;
- 
- 	/* Things didn't work out. Return zero to tell the mm layer so. */
--	shrink_readahead_size_eio(file, ra);
-+	shrink_readahead_size_eio(ra);
- 	return VM_FAULT_SIGBUS;
- 
- out_retry:
 -- 
-1.9.1
-
+Kees Cook
