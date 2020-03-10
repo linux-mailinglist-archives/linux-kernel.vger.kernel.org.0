@@ -2,122 +2,302 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0ACF180213
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:41:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DD3B180230
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 16:45:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726451AbgCJPlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 11:41:21 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:46210 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725965AbgCJPlV (ORCPT
+        id S1726623AbgCJPpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 11:45:18 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37204 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbgCJPpS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 11:41:21 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02AFf771071642;
-        Tue, 10 Mar 2020 10:41:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583854867;
-        bh=o8p5fgauZyRiTn5E7k0GtjXIgdIv7UAxDQEKWWWaJfY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Ra5+SIXXQfeVOZm3RvbV5swiBlvbReP7NTLQX/D8K+VqcBi9liQGpquLYWf9iw29J
-         4ETfAYOode0Lsr6LyYcndg4kc9ygQL/UoqToEg+Mm/9Os5MJgYsXqFy0d+m4uILvmf
-         6RtL7KddBk0DvyXZIsBQQg04LHxSa2E8YXiCrum0=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02AFf7mA050793
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 10 Mar 2020 10:41:07 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 10
- Mar 2020 10:41:07 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 10 Mar 2020 10:41:06 -0500
-Received: from [128.247.81.242] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02AFf6vb119386;
-        Tue, 10 Mar 2020 10:41:06 -0500
-Subject: Re: [PATCH] bus: ti-sysc: Fix quirk flags for lcdc on am335x
-To:     Tony Lindgren <tony@atomide.com>, <linux-omap@vger.kernel.org>
-CC:     "Andrew F . Davis" <afd@ti.com>, Faiz Abbas <faiz_abbas@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Jyri Sarha <jsarha@ti.com>
-References: <20200309181912.28645-1-tony@atomide.com>
-From:   Dave Gerlach <d-gerlach@ti.com>
-Message-ID: <1196fb5a-ed41-51bb-67a4-dc9c7fe3ed36@ti.com>
-Date:   Tue, 10 Mar 2020 10:45:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 10 Mar 2020 11:45:18 -0400
+Received: by mail-wr1-f66.google.com with SMTP id 6so16514698wre.4
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 08:45:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=/l4bB0RTZCr+TXNjwcIbwFmUPU0HxSL2j4UaMs7FnHA=;
+        b=qFnoSJsimN+32h59UqQoLTAUa69LqgJO+/AKyFBvdHbfpZIJZIlupebSpU+03Kr6hL
+         EptAalZMAygFLN18r5kWaQ+nsSb06AXoBKmZeiq+GV90MKxkeXbnlHNLBESK3VQ+GOnP
+         KUvCcju7M/bPPCFRELDwF275+RVW4i7qXEkzLfNEDgwwl3xINoieJKtLHYq9qV4kdLQo
+         IlVUO4R0Qtc6x/VY8JkQZ41ce6GyE3Z29oa9CpmMbJom/YqCipjEpXWQhFQ515Ihca4z
+         Gcf+gKWjkEV5eJQIEL59JCdkkDWsDJod0WVrpeCLCssER3il6Lk3ucT9ABYOn0kPkEHy
+         rKPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/l4bB0RTZCr+TXNjwcIbwFmUPU0HxSL2j4UaMs7FnHA=;
+        b=DaIYYFe2WY7JcxYmiq4ypoI6MFXJbZhrmxOyBwbbj49GgwZxgFSfU0h1SwLa3i2F+R
+         Rboyt+khR5ve53B9FBO327tSMlauyFoFh4yNG+guShk/dui31XoySqWSBMzLYSCvQKR5
+         tKQ+EyjWhndj4dRrBVVpK0CAL2dA2hJK3MBYyQR+yqXXc2tWiA/48KvdsXPvrzqAeiIk
+         u4q79yNImyPuOod2opt9lVOVB9yPmSAFB6UpqoRXLsE1ainsiCjgXSXxkyqnUaQ6ZeUD
+         Jn8KdJ2vwvKyAynFUJ7a6XmOsczGlExL7pSURotwE9f3Aa74EHdYw2XHPZtDg8euV5gp
+         aqcQ==
+X-Gm-Message-State: ANhLgQ1OOiAwLBmALfL7GAlRdpkl5sBtVj0ShLOVYsid4Ei+RekUt4js
+        chYuW2Lm/Be/RKxAfQsRMfbZZw==
+X-Google-Smtp-Source: ADFU+vtGcKU9YWbVhURUwYv7mI3XOgzF4ULZ4NXNF2mbyMGMWren6xgeqafExXiK6k2qGVrMzE47gg==
+X-Received: by 2002:a5d:4c92:: with SMTP id z18mr27938252wrs.294.1583855115039;
+        Tue, 10 Mar 2020 08:45:15 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id 9sm4677542wmx.32.2020.03.10.08.45.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 08:45:14 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 15:45:12 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Kiran Gunda <kgunda@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
+        lee.jones@linaro.org, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org, jacek.anaszewski@gmail.com,
+        pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
+        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH V3 3/4] backlight: qcom-wled: Add support for WLED5
+ peripheral in PM8150L
+Message-ID: <20200310154512.wvnx5k44mhrsxifv@holly.lan>
+References: <1583760362-26978-1-git-send-email-kgunda@codeaurora.org>
+ <1583760362-26978-4-git-send-email-kgunda@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20200309181912.28645-1-tony@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1583760362-26978-4-git-send-email-kgunda@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tony,
-On 3/9/20 1:19 PM, Tony Lindgren wrote:
-> Commit adb72394e2ab ("ARM: OMAP2+: Drop legacy platform data for am3
-> lcdc") dropped legacy platform data but we never added the quirks for
-> SWSUP_SIDLE and SWSUP_MSTANDBY for lcdc for ti-sysc driver.
+On Mon, Mar 09, 2020 at 06:56:01PM +0530, Kiran Gunda wrote:
+> Add support for WLED5 peripheral that is present on PM8150L PMICs.
 > 
-> This breaks suspend/resume. Let's fix the issue by enabling the same
-> quirks for ti-sysc driver as we had earlier with platform data.
+> PM8150L WLED supports the following:
+>     - Two modulators and each sink can use any of the modulator
+>     - Multiple CABC selection options
+>     - Multiple brightness width selection (12 bits to 15 bits)
 > 
-> Fixes: adb72394e2ab ("ARM: OMAP2+: Drop legacy platform data for am3 lcdc")
-> Fixes: 23731eac9848 ("bus: ti-sysc: Detect devices on am335x when DEBUG is enabled")
-> Reported-by: Keerthy <j-keerthy@ti.com>
-> Cc: Jyri Sarha <jsarha@ti.com>
-> Cc: Keerthy <j-keerthy@ti.com>
-> Cc: Dave Gerlach <d-gerlach@ti.com>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+
+Mostly just style comments below...
+
+
 > ---
+>  .../bindings/leds/backlight/qcom-wled.yaml         |  39 +++
+>  drivers/video/backlight/qcom-wled.c                | 336 ++++++++++++++++++++-
+
+Shouldn't the bindings and driver be separate?
+
+
+>  2 files changed, 374 insertions(+), 1 deletion(-)
 > 
-> This patch is against v5.6-rc series, it needs a merge conflict resolved
-> for Linux next next is using -ENODEV instead of -1 for missing registers.
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+> index d334f81..e0dadc4 100644
+> --- a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+> @@ -20,6 +20,7 @@ properties:
+>         - qcom,pm8941-wled
+>         - qcom,pmi8998-wled
+>         - qcom,pm660l-wled
+> +       - qcom,pm8150l-wled
+>  
+>    reg:
+>      maxItems: 1
+> @@ -28,10 +29,23 @@ properties:
+>      maxItems: 1
+>      description:
+>        brightness value on boot, value from 0-4095.
+> +      For pm8150l this value vary from 0-4095 or 0-32767
+> +      depending on the brightness control mode. If CABC is
+> +      enabled 0-4095 range is used.
+
+Is this a pm8150l restriction or a WLED5 restriction (will other WLED5
+have different ranges)?
 
 
-Tested with v5.6-rc5, can confirm that suspend looks OK now and is 
-exited without "pm33xx pm33xx: PM: Could not transition all powerdomains 
-to target state" message with this patch.
+>      allOf:
+>        - $ref: /schemas/types.yaml#/definitions/uint32
+>          default: 2048
+>  
+> +  max-brightness:
+> +    maxItems: 1
+> +    description:
+> +      Maximum brightness level. Allowed values are,
+> +      for pmi8998 it is  0-4095.
+> +      For pm8150l, this can be either 4095 or 32767.
 
-Tested-by: Dave Gerlach <d-gerlach@ti.com>
+Ditto.
 
-Regards,
-Dave
 
-> 
-> ---
->   drivers/bus/ti-sysc.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-> --- a/drivers/bus/ti-sysc.c
-> +++ b/drivers/bus/ti-sysc.c
-> @@ -1266,6 +1266,8 @@ static const struct sysc_revision_quirk sysc_revision_quirks[] = {
->   	SYSC_QUIRK("gpu", 0x50000000, 0x14, -1, -1, 0x00010201, 0xffffffff, 0),
->   	SYSC_QUIRK("gpu", 0x50000000, 0xfe00, 0xfe10, -1, 0x40000000 , 0xffffffff,
->   		   SYSC_MODULE_QUIRK_SGX),
-> +	SYSC_QUIRK("lcdc", 0, 0, 0x54, -1, 0x4f201000, 0xffffffff,
-> +		   SYSC_QUIRK_SWSUP_SIDLE | SYSC_QUIRK_SWSUP_MSTANDBY),
->   	SYSC_QUIRK("usb_otg_hs", 0, 0x400, 0x404, 0x408, 0x00000050,
->   		   0xffffffff, SYSC_QUIRK_SWSUP_SIDLE | SYSC_QUIRK_SWSUP_MSTANDBY),
->   	SYSC_QUIRK("usb_otg_hs", 0, 0, 0x10, -1, 0x4ea2080d, 0xffffffff,
-> @@ -1294,7 +1296,6 @@ static const struct sysc_revision_quirk sysc_revision_quirks[] = {
->   	SYSC_QUIRK("gpu", 0, 0xfe00, 0xfe10, -1, 0x40000000 , 0xffffffff, 0),
->   	SYSC_QUIRK("hsi", 0, 0, 0x10, 0x14, 0x50043101, 0xffffffff, 0),
->   	SYSC_QUIRK("iss", 0, 0, 0x10, -1, 0x40000101, 0xffffffff, 0),
-> -	SYSC_QUIRK("lcdc", 0, 0, 0x54, -1, 0x4f201000, 0xffffffff, 0),
->   	SYSC_QUIRK("mcasp", 0, 0, 0x4, -1, 0x44306302, 0xffffffff, 0),
->   	SYSC_QUIRK("mcasp", 0, 0, 0x4, -1, 0x44307b02, 0xffffffff, 0),
->   	SYSC_QUIRK("mcbsp", 0, -1, 0x8c, -1, 0, 0, 0),
-> 
+> +      If CABC is enabled, this is capped to 4095.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +
+>    label:
+>      maxItems: 1
+>      description:
+> @@ -124,6 +138,31 @@ properties:
+>        value for PM8941 from 1 to 3. Default 2
+>        For PMI8998 from 1 to 4.
+>  
+> +  qcom,modulator-sel:
+> +    maxItems: 1
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Selects the modulator used for brightness modulation.
+> +      Allowed values are,
+> +               0 - Modulator A
+> +               1 - Modulator B
+> +      If not specified, then modulator A will be used by default.
+> +      This property is applicable only to WLED5 peripheral.
+> +
+> +  qcom,cabc-sel:
+> +    maxItems: 1
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Selects the CABC pin signal used for brightness modulation.
+> +      Allowed values are,
+> +              0 - CABC disabled
+> +              1 - CABC 1
+> +              2 - CABC 2
+> +              3 - External signal (e.g. LPG) is used for dimming
+> +      This property is applicable only to WLED5 peripheral.
+> +
+>    interrupts:
+>      maxItems: 2
+>      description:
+> diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
+> index b73f273..edbbcb2 100644
+> --- a/drivers/video/backlight/qcom-wled.c
+> +++ b/drivers/video/backlight/qcom-wled.c
+> @@ -19,6 +19,8 @@
+>  #define WLED_DEFAULT_BRIGHTNESS				2048
+>  #define WLED_SOFT_START_DLY_US				10000
+>  #define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
+> +#define WLED5_SINK_REG_BRIGHT_MAX_12B			0xFFF
+> +#define WLED5_SINK_REG_BRIGHT_MAX_15B			0x7FFF
+>  
+>  /* WLED3/WLED4 control registers */
+>  #define WLED3_CTRL_REG_FAULT_STATUS			0x08
+> @@ -40,6 +42,7 @@
+>  
+>  #define WLED3_CTRL_REG_OVP				0x4d
+>  #define  WLED3_CTRL_REG_OVP_MASK			GENMASK(1, 0)
+> +#define  WLED5_CTRL_REG_OVP_MASK			GENMASK(3, 0)
+>  
+>  #define WLED3_CTRL_REG_ILIMIT				0x4e
+>  #define  WLED3_CTRL_REG_ILIMIT_MASK			GENMASK(2, 0)
+> @@ -101,6 +104,40 @@
+>  
+>  #define WLED4_SINK_REG_BRIGHT(n)			(0x57 + (n * 0x10))
+>  
+> +/* WLED5 specific sink registers */
+> +#define WLED5_SINK_REG_MOD_A_EN				0x50
+> +#define WLED5_SINK_REG_MOD_B_EN				0x60
+> +#define  WLED5_SINK_REG_MOD_EN_MASK			BIT(7)
+> +
+> +#define WLED5_SINK_REG_MOD_A_SRC_SEL			0x51
+> +#define WLED5_SINK_REG_MOD_B_SRC_SEL			0x61
+> +#define  WLED5_SINK_REG_MOD_SRC_SEL_HIGH		0
+> +#define  WLED5_SINK_REG_MOD_SRC_SEL_EXT			0x03
+> +#define  WLED5_SINK_REG_MOD_SRC_SEL_MASK		GENMASK(1, 0)
+> +
+> +#define WLED5_SINK_REG_MOD_A_BRIGHTNESS_WIDTH_SEL	0x52
+> +#define WLED5_SINK_REG_MOD_B_BRIGHTNESS_WIDTH_SEL	0x62
+> +#define  WLED5_SINK_REG_BRIGHTNESS_WIDTH_12B		0
+> +#define  WLED5_SINK_REG_BRIGHTNESS_WIDTH_15B		1
+> +
+> +#define WLED5_SINK_REG_MOD_A_BRIGHTNESS_LSB		0x53
+> +#define WLED5_SINK_REG_MOD_A_BRIGHTNESS_MSB		0x54
+> +#define WLED5_SINK_REG_MOD_B_BRIGHTNESS_LSB		0x63
+> +#define WLED5_SINK_REG_MOD_B_BRIGHTNESS_MSB		0x64
+> +
+> +#define WLED5_SINK_REG_MOD_SYNC_BIT			0x65
+> +#define  WLED5_SINK_REG_SYNC_MOD_A_BIT			BIT(0)
+> +#define  WLED5_SINK_REG_SYNC_MOD_B_BIT			BIT(1)
+> +#define  WLED5_SINK_REG_SYNC_MASK			GENMASK(1, 0)
+> +
+> +/* WLED5 specific per-'string' registers below */
+> +#define WLED5_SINK_REG_STR_FULL_SCALE_CURR(n)		(0x72 + (n * 0x10))
+> +
+> +#define WLED5_SINK_REG_STR_SRC_SEL(n)			(0x73 + (n * 0x10))
+> +#define  WLED5_SINK_REG_SRC_SEL_MOD_A			0
+> +#define  WLED5_SINK_REG_SRC_SEL_MOD_B			1
+> +#define  WLED5_SINK_REG_SRC_SEL_MASK			GENMASK(1, 0)
+> +
+>  struct wled_var_cfg {
+>  	const u32 *values;
+>  	u32 (*fn)(u32);
+> @@ -125,6 +162,8 @@ struct wled_config {
+>  	u32 num_strings;
+>  	u32 string_i_limit;
+>  	u32 enabled_strings[WLED_MAX_STRINGS];
+
+> +	u32 mod_sel;
+> +	u32 cabc_sel;
+
+Please explain cabc_sel (wled5) versus cabc_en (wled4).
+
+>  	bool cs_out_en;
+>  	bool ext_gen;
+>  	bool cabc;
+> @@ -164,6 +203,27 @@ struct wled {
+>  	int (*wled_ovp_delay)(struct wled *wled);
+>  };
+>  
+> +enum wled5_mod_sel {
+> +	MOD_A,
+> +	MOD_B,
+> +	MOD_MAX,
+> +};
+> +
+> +static const u8 wled5_brightness_reg[MOD_MAX] = {
+> +	[MOD_A] = WLED5_SINK_REG_MOD_A_BRIGHTNESS_LSB,
+> +	[MOD_B] = WLED5_SINK_REG_MOD_B_BRIGHTNESS_LSB,
+> +};
+> +
+> +static const u8 wled5_src_sel_reg[MOD_MAX] = {
+> +	[MOD_A] = WLED5_SINK_REG_MOD_A_SRC_SEL,
+> +	[MOD_B] = WLED5_SINK_REG_MOD_B_SRC_SEL,
+> +};
+> +
+> +static const u8 wled5_brt_wid_sel_reg[MOD_MAX] = {
+> +	[MOD_A] = WLED5_SINK_REG_MOD_A_BRIGHTNESS_WIDTH_SEL,
+> +	[MOD_B] = WLED5_SINK_REG_MOD_B_BRIGHTNESS_WIDTH_SEL,
+> +};
+> +
+>  static int wled3_set_brightness(struct wled *wled, u16 brightness)
+>  {
+>  	int rc, i;
+> @@ -182,6 +242,25 @@ static int wled3_set_brightness(struct wled *wled, u16 brightness)
+>  	return 0;
+>  }
+>  
+> +static int wled5_set_brightness(struct wled *wled, u16 brightness)
+> +{
+> +	int rc, offset;
+> +	u16 low_limit = wled->max_brightness * 1 / 1000;
+> +	u8 v[2];
+> +
+> +	/* WLED5's lower limit is 0.1% */
+> +	if (brightness < low_limit)
+> +		brightness = low_limit;
+> +
+> +	v[0] = brightness & 0xff;
+> +	v[1] = (brightness >> 8) & 0x7f;
+> +
+> +	offset = wled5_brightness_reg[wled->cfg.mod_sel];
+> +	rc = regmap_bulk_write(wled->regmap, wled->sink_addr + offset,
+> +			       v, 2);
+> +	return rc;
+> +}
+> +
+
+Can we keep the same ordering throughout the file (wled3, wled4, wled5)?
+Most of the wled5 callbacks seem to have been inserted above wled4.
+
+
+Daniel.
