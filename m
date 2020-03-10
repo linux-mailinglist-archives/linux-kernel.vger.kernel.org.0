@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 101B617F8EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:52:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B132917F841
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:47:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729036AbgCJMwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:52:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57940 "EHLO mail.kernel.org"
+        id S1727989AbgCJMqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:46:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729025AbgCJMwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:52:16 -0400
+        id S1727955AbgCJMqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:46:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A289F2253D;
-        Tue, 10 Mar 2020 12:52:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97D272467D;
+        Tue, 10 Mar 2020 12:46:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844736;
-        bh=U9fQTBsZ77C7T0LqNy6KK/CCyL7/y0DL4O9YsefmW0Y=;
+        s=default; t=1583844376;
+        bh=ABU12IfNmFeJk/drjZr/gSCCysZwfcqqTJ7L/m1fD/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lp3g8KofP7SZyDYs+zXobEu9y/4ByToWoNVtUbtXD7Hw9fnKuHIVa/aPHUC83k9p+
-         Aafeejp01yrzHhe4VO8JpY4qIIkAhhx6UtNvRphlVE0aWwn3sLDUmMNExBX1izlACG
-         SykdBgdLXzfPWGsQHNHxmwFD2olK6d+Sf7MZ7Bp0=
+        b=J075e1ouZUv/KtbI5rWaOKa/qkEDgnc446Jh+5NeguJJfe7UPNWHkCZtaK2joQhcy
+         NTKvnj1ywvlLrE8P45fxVv9ItlE0sr1UeNXc/iJoeEt97VHpR+MO5rR9iWcdY3x29c
+         TB5Pj2ljiXubFoUleSGHjXkEsV8KZrlhEEZeF4Bs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 5.4 099/168] s390/mm: fix panic in gup_fast on large pud
-Date:   Tue, 10 Mar 2020 13:39:05 +0100
-Message-Id: <20200310123645.404447808@linuxfoundation.org>
+        stable@vger.kernel.org, Marek Vasut <marex@denx.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Lukas Wunner <lukas@wunner.de>, Petr Stetiar <ynezz@true.cz>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 58/88] net: ks8851-ml: Fix 16-bit data access
+Date:   Tue, 10 Mar 2020 13:39:06 +0100
+Message-Id: <20200310123620.969868245@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
+References: <20200310123606.543939933@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +46,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+From: Marek Vasut <marex@denx.de>
 
-commit 582b4e55403e053d8a48ff687a05174da9cc3fb0 upstream.
+[ Upstream commit edacb098ea9c31589276152f09b4439052c0f2b1 ]
 
-On s390 there currently is no implementation of pud_write(). That was ok
-as long as we had our own implementation of get_user_pages_fast() which
-checked for pud protection by testing the bit directly w/o using
-pud_write(). The other callers of pud_write() are not reachable on s390.
+The packet data written to and read from Micrel KSZ8851-16MLLI must be
+byte-swapped in 16-bit mode, add this byte-swapping.
 
-After commit 1a42010cdc26 ("s390/mm: convert to the generic
-get_user_pages_fast code") we use the generic get_user_pages_fast(), which
-does call pud_write() in pud_access_permitted() for FOLL_WRITE access on
-a large pud. Without an s390 specific pud_write(), the generic version is
-called, which contains a BUG() statement to remind us that we don't have a
-proper implementation. This results in a kernel panic.
-
-Fix this by providing an implementation of pud_write().
-
-Cc: <stable@vger.kernel.org> # 5.2+
-Fixes: 1a42010cdc26 ("s390/mm: convert to the generic get_user_pages_fast code")
-Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Lukas Wunner <lukas@wunner.de>
+Cc: Petr Stetiar <ynezz@true.cz>
+Cc: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/include/asm/pgtable.h |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/micrel/ks8851_mll.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/s390/include/asm/pgtable.h
-+++ b/arch/s390/include/asm/pgtable.h
-@@ -756,6 +756,12 @@ static inline int pmd_write(pmd_t pmd)
- 	return (pmd_val(pmd) & _SEGMENT_ENTRY_WRITE) != 0;
+diff --git a/drivers/net/ethernet/micrel/ks8851_mll.c b/drivers/net/ethernet/micrel/ks8851_mll.c
+index 721f851674531..20356976b9772 100644
+--- a/drivers/net/ethernet/micrel/ks8851_mll.c
++++ b/drivers/net/ethernet/micrel/ks8851_mll.c
+@@ -515,7 +515,7 @@ static inline void ks_inblk(struct ks_net *ks, u16 *wptr, u32 len)
+ {
+ 	len >>= 1;
+ 	while (len--)
+-		*wptr++ = (u16)ioread16(ks->hw_addr);
++		*wptr++ = be16_to_cpu(ioread16(ks->hw_addr));
  }
  
-+#define pud_write pud_write
-+static inline int pud_write(pud_t pud)
-+{
-+	return (pud_val(pud) & _REGION3_ENTRY_WRITE) != 0;
-+}
-+
- static inline int pmd_dirty(pmd_t pmd)
+ /**
+@@ -529,7 +529,7 @@ static inline void ks_outblk(struct ks_net *ks, u16 *wptr, u32 len)
  {
- 	int dirty = 1;
+ 	len >>= 1;
+ 	while (len--)
+-		iowrite16(*wptr++, ks->hw_addr);
++		iowrite16(cpu_to_be16(*wptr++), ks->hw_addr);
+ }
+ 
+ static void ks_disable_int(struct ks_net *ks)
+-- 
+2.20.1
+
 
 
