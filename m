@@ -2,139 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0409C182397
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 21:59:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C585818239E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 22:00:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729333AbgCKU7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 16:59:49 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33243 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbgCKU7t (ORCPT
+        id S1729424AbgCKVAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 17:00:06 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40180 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729309AbgCKVAG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 16:59:49 -0400
-Received: by mail-ed1-f68.google.com with SMTP id z65so4691538ede.0;
-        Wed, 11 Mar 2020 13:59:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3H5Kw0nM66iirRbzQhksMORXJOKjkt3BzJBYjpxbKOE=;
-        b=cvu0JVCt7p72t4BoGNrh8LY+oeHyaLe8RffbZjUFtRHWBGb22t+Mvyk01e/wYlkYUy
-         k/qgsyYdplCEmDl2AT2NrK4z69dNDnMZrHfBxUJFdu9ARF/2xAoW0r24ts5jnN6B7azu
-         +45XFjdrN8PAHgakzq6CZY02KZK0zBc+h9AURGG2G97LmKwga4KroB8rAtEDilRghE1q
-         X5ZC7958Tvwxr7h5BuT7UoHOqk94LJJIWOy28/6oheTAUakSHyGghRW3jXrHKGdOI/Ob
-         7Ew2cXrSL6LsDFnUghYCFGuIv1lvgayUIu00A0aa5IZqqzw9Jfqp6/h1gK7qgt5TPrv7
-         LRqg==
+        Wed, 11 Mar 2020 17:00:06 -0400
+Received: by mail-oi1-f194.google.com with SMTP id y71so3302469oia.7;
+        Wed, 11 Mar 2020 14:00:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=3H5Kw0nM66iirRbzQhksMORXJOKjkt3BzJBYjpxbKOE=;
-        b=pnIpQeZ/Gy57YOjzRq4397O0rSyjer4Clg8o1MetEKPdLa1gW6Byo2/54jkeAqJ/BB
-         dk5a2JWy2t2NRrtNCw+KLvlEBOplGE0CG8T0Sw2z5nOAB8EW/020IjYP1yZ2ON9oK2Ci
-         Hm0Wbz453TvqzuyjRwbb9LD4zFQJX0TOiyCo8SijDg3Bc1gRDmFglhdOxOtYgxA+/AbB
-         /7s242l4zglu9IAvLbKp6ZVPAq+V74YPjA/AAqBd7su0SSMYtfGAq7qePIAvD8oKPkFd
-         LdPtThBmHkCDvjkiHJqaxEEpu3fjvj25UcODJxl3+qwTf6nUQiYgAhUwddpPZNNvCrl1
-         bS8g==
-X-Gm-Message-State: ANhLgQ2BGLzYXpcSH1g/RSZkjTigd8R25vqE+Z8mW4NMQEedZTkxXcnt
-        rYagL/LwAVW/fQipT2WmR1cQL3ee
-X-Google-Smtp-Source: ADFU+vvmvJLvuR3+ybNB0vpNfffsHk0QdrxIKE0/B0NWWn8g8q+DpnuJRKkTVl7DmyLBJhGOKdpqCg==
-X-Received: by 2002:a05:6402:282:: with SMTP id l2mr4728474edv.269.1583960386264;
-        Wed, 11 Mar 2020 13:59:46 -0700 (PDT)
-Received: from [10.67.48.239] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id b15sm1515486edn.69.2020.03.11.13.59.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 13:59:45 -0700 (PDT)
-Subject: Re: [PATCH V2] gpio: brcmstb: support gpio-line-names property
-To:     Doug Berger <opendmb@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1583780521-45702-1-git-send-email-opendmb@gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- G10n8gCguORqNGMsVRxrlLs7/himep7MrCc=
-Message-ID: <9e8d89e4-236f-61fa-4f62-569741fbfebe@gmail.com>
-Date:   Wed, 11 Mar 2020 13:59:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7phUkchvkdDhI0qJQteXXrbvWqBV29LumyqHqAKAGfw=;
+        b=T+Y8EyLy5UhiYZsyuZPZJIIrj7m90yI8r7BLZZLB2HkAN4ZRw2+Yp59QAn40113cNa
+         vfBXmeCAoEIsX9ZobWLjj9Fg1Rarz1nD/J7blg0D534YD+yXbO6e85h0qNuspVV4oHQF
+         L9q/POeB7DmAv5VQur3J3N1cKRdsf+qvVgxQ5M/NQv3EuOOP2gRLCKunLPec818NB6vd
+         qinhpQ/T+1KYeaRXI3l6jRPRhqSF5Xs9dw87N+czBPjzQYYhw5z1RMTrIMayVW7A4sKt
+         XerJlWy5MEnSrK2aEBJ5J4t9FdqAS+N0p6cILFkKmMPZntlNIA4nyC0yBBjPV/qNxb7U
+         iCuQ==
+X-Gm-Message-State: ANhLgQ3Zr3H8CEDHmBn32Sl5v264gD+vFd93hrMexhDZV7zmA1A7YQ0C
+        dRxHwq2Pq4BLFsomn2S7jg==
+X-Google-Smtp-Source: ADFU+vt16JBJitN1b4tjKD/58wMS3bY1wUUrgmNH3EbK4CL9Ke6XCgMF9CDaBHhmiDnMFZbI7bhplQ==
+X-Received: by 2002:a05:6808:248:: with SMTP id m8mr403527oie.91.1583960403280;
+        Wed, 11 Mar 2020 14:00:03 -0700 (PDT)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id z22sm634145oog.45.2020.03.11.14.00.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 14:00:02 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     dri-devel@lists.freedesktop.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>, Jyri Sarha <jsarha@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: [PATCH] dt-bindings: display: Fix dtc unit-address warnings in examples
+Date:   Wed, 11 Mar 2020 16:00:01 -0500
+Message-Id: <20200311210001.5102-1-robh@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <1583780521-45702-1-git-send-email-opendmb@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/9/20 12:02 PM, Doug Berger wrote:
-> The default handling of the gpio-line-names property by the
-> gpiolib-of implementation does not work with the multiple
-> gpiochip banks per device structure used by the gpio-brcmstb
-> driver.
-> 
-> This commit adds driver level support for the device tree
-> property so that GPIO lines can be assigned friendly names.
-> 
-> Signed-off-by: Doug Berger <opendmb@gmail.com>
+Extra dtc warnings (roughly what W=1 enables) are now enabled by default
+when building the binding examples. These were fixed treewide in
+5.6-rc5, but some new display bindings have been added with new
+warnings:
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Documentation/devicetree/bindings/display/panel/raydium,rm68200.example.dts:17.7-27.11: Warning (unit_address_vs_reg): /example-0/dsi@0: node has a unit name, but no reg property
+Documentation/devicetree/bindings/display/panel/panel-simple-dsi.example.dts:17.19-31.11: Warning (unit_address_vs_reg): /example-0/mdss_dsi@fd922800: node has a unit name, but no reg property
+Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.example.dts:17.7-26.11: Warning (unit_address_vs_reg): /example-0/dsi@0: node has a unit name, but no reg property
+Documentation/devicetree/bindings/display/ti/ti,am65x-dss.example.dts:21.27-49.11: Warning (unit_address_format): /example-0/dss@04a00000: unit name should not have leading 0s
+Documentation/devicetree/bindings/display/ti/ti,j721e-dss.example.dts:21.27-72.11: Warning (unit_address_format): /example-0/dss@04a00000: unit name should not have leading 0s
+Documentation/devicetree/bindings/display/ti/ti,k2g-dss.example.dts:20.27-42.11: Warning (unit_address_format): /example-0/dss@02540000: unit name should not have leading 0s
+
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Sam Ravnborg <sam@ravnborg.org>
+Cc: Jyri Sarha <jsarha@ti.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/display/panel/orisetech,otm8009a.yaml  | 3 +--
+ .../devicetree/bindings/display/panel/panel-simple-dsi.yaml    | 2 +-
+ .../devicetree/bindings/display/panel/raydium,rm68200.yaml     | 2 +-
+ Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml | 2 +-
+ Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml | 2 +-
+ Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml   | 2 +-
+ 6 files changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.yaml b/Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.yaml
+index 6e6ac995c27b..2e7c65b093d7 100644
+--- a/Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.yaml
++++ b/Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.yaml
+@@ -39,7 +39,7 @@ required:
+ 
+ examples:
+   - |
+-    dsi@0 {
++    dsi {
+       #address-cells = <1>;
+       #size-cells = <0>;
+       panel@0 {
+@@ -50,4 +50,3 @@ examples:
+       };
+     };
+ ...
+-
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
+index 8b60368a2425..b2e8742fd6af 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
++++ b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
+@@ -50,7 +50,7 @@ required:
+ 
+ examples:
+   - |
+-    mdss_dsi@fd922800 {
++    dsi {
+       #address-cells = <1>;
+       #size-cells = <0>;
+       panel@0 {
+diff --git a/Documentation/devicetree/bindings/display/panel/raydium,rm68200.yaml b/Documentation/devicetree/bindings/display/panel/raydium,rm68200.yaml
+index 09149f140d5f..a35ba16fc000 100644
+--- a/Documentation/devicetree/bindings/display/panel/raydium,rm68200.yaml
++++ b/Documentation/devicetree/bindings/display/panel/raydium,rm68200.yaml
+@@ -42,7 +42,7 @@ required:
+ 
+ examples:
+   - |
+-    dsi@0 {
++    dsi {
+       #address-cells = <1>;
+       #size-cells = <0>;
+       panel@0 {
+diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+index cac61a998203..aa5543a64526 100644
+--- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
++++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+@@ -121,7 +121,7 @@ examples:
+     #include <dt-bindings/interrupt-controller/irq.h>
+     #include <dt-bindings/soc/ti,sci_pm_domain.h>
+ 
+-    dss: dss@04a00000 {
++    dss: dss@4a00000 {
+             compatible = "ti,am65x-dss";
+             reg =   <0x0 0x04a00000 0x0 0x1000>, /* common */
+                     <0x0 0x04a02000 0x0 0x1000>, /* vidl1 */
+diff --git a/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
+index ade9b2f513f5..6d47cd7206c2 100644
+--- a/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
++++ b/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
+@@ -154,7 +154,7 @@ examples:
+     #include <dt-bindings/interrupt-controller/irq.h>
+     #include <dt-bindings/soc/ti,sci_pm_domain.h>
+ 
+-    dss: dss@04a00000 {
++    dss: dss@4a00000 {
+             compatible = "ti,j721e-dss";
+             reg =   <0x00 0x04a00000 0x00 0x10000>, /* common_m */
+                     <0x00 0x04a10000 0x00 0x10000>, /* common_s0*/
+diff --git a/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
+index 385bd060ccf9..7cb37053e95b 100644
+--- a/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
++++ b/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
+@@ -81,7 +81,7 @@ examples:
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+ 
+-    dss: dss@02540000 {
++    dss: dss@2540000 {
+             compatible = "ti,k2g-dss";
+             reg =   <0x02540000 0x400>,
+                     <0x02550000 0x1000>,
 -- 
-Florian
+2.20.1
+
