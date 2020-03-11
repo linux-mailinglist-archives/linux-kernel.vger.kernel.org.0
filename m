@@ -2,129 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2633C182079
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:12:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 802CC182069
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:08:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730690AbgCKSMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 14:12:37 -0400
-Received: from mga12.intel.com ([192.55.52.136]:55536 "EHLO mga12.intel.com"
+        id S1730715AbgCKSII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 14:08:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730468AbgCKSMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:12:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 11:12:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
-   d="scan'208";a="261223466"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
-  by orsmga002.jf.intel.com with ESMTP; 11 Mar 2020 11:12:32 -0700
-Message-ID: <32b35b12e5e80f309f45b3a17a8d681e7e1fa33f.camel@intel.com>
-Subject: Re: [PATCH V1 11/13] selftests/resctrl: Change Cache Quality
- Monitoring (CQM) test
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     Reinette Chatre <reinette.chatre@intel.com>, shuah@kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        tony.luck@intel.com, babu.moger@amd.com, james.morse@arm.com,
-        ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 11 Mar 2020 11:07:45 -0700
-In-Reply-To: <e0bada87-9464-2d08-c4cb-751e30866585@intel.com>
-References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
-         <26086dda86f062bba4116878a012a553503924b2.1583657204.git.sai.praneeth.prakhya@intel.com>
-         <e7bd79cf-4da8-7a61-ac09-4d124315fa93@intel.com>
-         <cf8fbdebd8096900d47a97f0e23a852d94df257a.camel@intel.com>
-         <e7c85e35-9efb-77da-a33f-dd9447a6cf07@intel.com>
-         <04c252f59062450e14642fcbef4b85845f6a7427.camel@intel.com>
-         <e0bada87-9464-2d08-c4cb-751e30866585@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        id S1730607AbgCKSIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 14:08:07 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8914320691;
+        Wed, 11 Mar 2020 18:08:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583950087;
+        bh=6MIXU7Mwc0VDsHaOdMgwhPDerRJ9XxPEu+qxamHI2sk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Y91BYwoVFMWy7IhSUNFJFEBDLOTgaFp0aa6zpHM9bavXn9CAVlX5mS7qovrtGxVbu
+         0qY1xaAEIt2V7umCxRqPJgz8Kmzg8GbXZCGXbybREUWq4Xd87J7KF0ebr1bUHZGP0Y
+         auoWsQmrNChcLY2Kf3O6tZ13U9jg93hvrDbEkXY8=
+Date:   Wed, 11 Mar 2020 11:08:05 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Jessica Yu <jeyu@kernel.org>
+Subject: Re: [PATCH] kmod: make request_module() return an error when
+ autoloading is disabled
+Message-ID: <20200311180805.GA1273@sol.localdomain>
+References: <20200310223731.126894-1-ebiggers@kernel.org>
+ <202003111026.2BBE41C@keescook>
+ <20200311174134.GB20006@gmail.com>
+ <20200311180107.GO11244@42.do-not-panic.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200311180107.GO11244@42.do-not-panic.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Reinette,
-
-On Wed, 2020-03-11 at 11:03 -0700, Reinette Chatre wrote:
-> > > > > > 
-
-[SNIP]
-
-> Hi Sai,
-> 
-> On 3/11/2020 10:33 AM, Sai Praneeth Prakhya wrote:
-> > On Wed, 2020-03-11 at 10:19 -0700, Reinette Chatre wrote:
-> > > On 3/10/2020 7:46 PM, Sai Praneeth Prakhya wrote:
-> > > > On Tue, 2020-03-10 at 15:18 -0700, Reinette Chatre wrote:
-> > > > > On 3/6/2020 7:40 PM, Sai Praneeth Prakhya wrote:
-> > > I missed that. Thank you.
+On Wed, Mar 11, 2020 at 06:01:07PM +0000, Luis Chamberlain wrote:
+> On Wed, Mar 11, 2020 at 10:41:34AM -0700, Eric Biggers wrote:
+> > On Wed, Mar 11, 2020 at 10:28:07AM -0700, Kees Cook wrote:
+> > > On Tue, Mar 10, 2020 at 03:37:31PM -0700, Eric Biggers wrote:
+> > > > From: Eric Biggers <ebiggers@google.com>
+> > > > 
+> > > > It's long been possible to disable kernel module autoloading completely
+> > > > by setting /proc/sys/kernel/modprobe to the empty string.  This can be
 > > > 
-> > > fyi ... when I tried these tests I encountered the following error
-> > > related to unmounting:
+> > > Hunh. I've never seen that before. :) I've always used;
 > > > 
-> > > [SNIP]
-> > > ok Write schema "L3:1=7fff" to resctrl FS
-> > > ok Write schema "L3:1=ffff" to resctrl FS
-> > > ok Write schema "L3:1=1ffff" to resctrl FS
-> > > ok Write schema "L3:1=3ffff" to resctrl FS
-> > > # Unable to umount resctrl: Device or resource busy
-> > > # Results are displayed in (Bytes)
-> > > ok CQM: diff within 5% for mask 1
-> > > # alloc_llc_cache_size: 2883584
-> > > # avg_llc_occu_resc: 2973696
-> > > ok CQM: diff within 5% for mask 3
-> > > [SNIP]
+> > > echo 1 > /proc/sys/kernel/modules_disabled
 > > > 
-> > > This seems to originate from resctrl_val() that forces an unmount but if
-> > > that fails the error is not propagated.
+> > > Regardless,
+> > > 
+> > > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > > 
 > > 
-> > Yes, that's right and it's a good test. I didn't encounter this issue
-> > during
-> > my testing because I wasn't using resctrl FS from other terminals (I think
-> > you
-> > were using resctrl FS from other terminal and hence resctrl_test was
-> > unable to
-> > unmount it).
+> > modules_disabled is different because it disables *all* module loading, not just
+> > autoloading.
 > 
-> I was not explicitly testing for this but this may have been the case.
-> 
-> As a sidenote ... could remount_resctrlfs() be called consistently? It
-> seems to switch between being called with true/false and 1/0. Since its
-> parameter type is boolean using true/false seems most appropriate.
+> Clarifying this on your patch would be useful, otherwise its lost
+> tribal knowledge.
 
-Agreed and make sense. I will fix this in a separate patch.
+I think it would be more useful to improve the documentation in proc(5) and
+Documentation/admin-guide/sysctl/kernel.rst.  People shouldn't have to read
+random kernel commit messages to find the documentation.
 
-> > I think the error should not be propagated because unmounting resctrl FS
-> > shouldn't stop us from checking the results. If measuring values reports
-> > an
-> > error then we shouldn't check for results.
-> 
-> This sounds right. It is inconsistent though ... the CQM test unmounts
-> resctrl after it is run but the CAT test does not. Looking closer the
-> CAT test seems to leave its artifacts around in resctrl and this should
-> be cleaned up.
+I'll send out patches for those.
 
-Yes makes sense. I will fix CAT test to cleanup things.
-
-> I am not sure about the expectations here. Unmounting resctrl after a
-> test is run is indeed the easiest to clean up and may be ok.
-
-The main reason for unmounting is that assume user hasn't mounted resctrl FS
-before running the test then we want to make sure we get back to the same
-state as before running test and also to clean up any changes made to resctrl
-FS during test.
-
-> It may be a
-> surprise to the user though. Perhaps there can be a snippet in the
-> README that warns people about this?
-
-Sure! makes sense. I will add it.
-
-Regards,
-Sai
-
+- Eric
