@@ -2,157 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF0C618119D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 08:18:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80F37181196
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 08:17:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728400AbgCKHRt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 03:17:49 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34263 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbgCKHRs (ORCPT
+        id S1728346AbgCKHRG convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 03:17:06 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:54521 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbgCKHRF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 03:17:48 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 23so802633pfj.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 00:17:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iuLWRCnwI5Es2pCunfLJ3i9sOSoy9rpEkn76xPgxdQ4=;
-        b=hT7lzc6Y9cKwW7N7zRSNsJiWlZG0353YL2YPUR+5FAGHtssrHwnxzl+CfV/apIEIDZ
-         htMgSisOR8b3TOedLN+eFMI4XhVNGGP+bRlax286kXVku5RKeqm1jVucushcuRsdJieW
-         kvEs76B7goWazwFA83c+9Ft87I1o7CKLlSuXYqnDBWICktnnabW7CUSxvje3yu6XFLrn
-         DNQsx9T7jNeSn6dO8VwYbFEusMjemqcgO+OSGfsBJ30xu0uSoLp3aEvYUTCPlsWMgimp
-         umImgLMLTMQlmqtUJ5LsavIlgtXs3Yz/HubPtg00qFvrGPqBXBAIlMjO3o+OGMrrsoY0
-         sOmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=iuLWRCnwI5Es2pCunfLJ3i9sOSoy9rpEkn76xPgxdQ4=;
-        b=Ms6G5dNCsGMh7khGHJeI/e3jXdcUVcEz5PvZ30ozYaUyLL28a5w7+9s8XzpQMpdDvQ
-         BwUuw/AyB6mA28FZT70IFbM2E3Q+8g5QH8Q2L9W52so7B7t2soQmTRCkNXmUbXlwJVN4
-         VTJ/NyeCwQFT7oPzdWJlwlSH1RDBipp7TKFrJvpP65e16jhX9gVFSSlI170uC7Fy13Kb
-         saHz7dkUsss8wd8Trwp/n3rmawRTHGf26O/s6giXq+iCYixo/3zSzlmlU4RTZf8xuna8
-         rfF46E/BHJdoxTxjOd8MAJFJf2SC0wE3r9/i4u3f0xUTd+LWtD9zHUh5XbvtuLiXvq8N
-         bxDg==
-X-Gm-Message-State: ANhLgQ3seed92VEpSw8UY5eudPC7v/iWmWFo9rsSlzqe97ZcBpx2ekiQ
-        +resT9xe+Xj2UIwGzDishK6tmjdL
-X-Google-Smtp-Source: ADFU+vsjnRwbJ6wMVkQS7UKn5TUozRtQ05t7wb+WmIp7RSDYwsBqaaFgIGaFrDAVZT/ACGLuYMpJWQ==
-X-Received: by 2002:a62:e812:: with SMTP id c18mr1478463pfi.47.1583911067199;
-        Wed, 11 Mar 2020 00:17:47 -0700 (PDT)
-Received: from ZB-PF114XEA.360buyad.local ([103.90.76.242])
-        by smtp.gmail.com with ESMTPSA id g18sm4352904pfh.174.2020.03.11.00.17.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 00:17:46 -0700 (PDT)
-From:   Zhenzhong Duan <zhenzhong.duan@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
-        miguel.ojeda.sandonis@gmail.com, willy@haproxy.com,
-        ksenija.stanojevic@gmail.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, mpm@selenic.com,
-        herbert@gondor.apana.org.au, jonathan@buzzard.org.uk,
-        benh@kernel.crashing.org, davem@davemloft.net,
-        b.zolnierkie@samsung.com, rjw@rjwysocki.net, pavel@ucw.cz,
-        len.brown@intel.com, Zhenzhong Duan <zhenzhong.duan@gmail.com>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v2 2/2] misc: move FLASH_MINOR into miscdevice.h and fix conflicts
-Date:   Wed, 11 Mar 2020 15:16:54 +0800
-Message-Id: <20200311071654.335-3-zhenzhong.duan@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200311071654.335-1-zhenzhong.duan@gmail.com>
-References: <20200311071654.335-1-zhenzhong.duan@gmail.com>
+        Wed, 11 Mar 2020 03:17:05 -0400
+X-Originating-IP: 90.89.41.158
+Received: from xps13 (lfbn-tou-1-1473-158.w90-89.abo.wanadoo.fr [90.89.41.158])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 44C9B1C000D;
+        Wed, 11 Mar 2020 07:17:03 +0000 (UTC)
+Date:   Wed, 11 Mar 2020 08:17:02 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Piotr Sroka <piotrs@cadence.com>
+Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>
+Subject: Re: [PATCH 2/4] mtd: rawnand: cadence: fix calculating avaialble
+ oob size
+Message-ID: <20200310193823.76319593@xps13>
+In-Reply-To: <20200310182951.17794-1-miquel.raynal@bootlin.com>
+References: <1581328530-29966-2-git-send-email-piotrs@cadence.com>
+        <20200310182951.17794-1-miquel.raynal@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FLASH_MINOR is used in both drivers/char/nwflash.c and
-drivers/sbus/char/flash.c with conflict minor numbers.
+Hi Piotr,
 
-Move all the definitions of FLASH_MINOR into miscdevice.h.
-Rename FLASH_MINOR for drivers/char/nwflash.c to NWFLASH_MINOR
-and FLASH_MINOR for drivers/sbus/char/flash.c to SBUS_FLASH_MINOR.
+Miquel Raynal <miquel.raynal@bootlin.com> wrote on Tue, 10 Mar 2020
+19:29:51 +0100:
 
-Link: https://lore.kernel.org/lkml/20200120221323.GJ15860@mit.edu/t/
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@gmail.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: "David S. Miller" <davem@davemloft.net>
----
- arch/arm/include/asm/nwflash.h | 1 -
- drivers/char/nwflash.c         | 2 +-
- drivers/sbus/char/flash.c      | 4 +---
- include/linux/miscdevice.h     | 2 ++
- 4 files changed, 4 insertions(+), 5 deletions(-)
+> On Mon, 2020-02-10 at 09:55:26 UTC, Piotr Sroka wrote:
+> > Previously ecc_sector size was used for calculation but its value
+> > was not yet known.
+> > 
+> > Signed-off-by: Piotr Sroka <piotrs@cadence.com>  
+> 
+> Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+> 
 
-diff --git a/arch/arm/include/asm/nwflash.h b/arch/arm/include/asm/nwflash.h
-index 0ec6f07..66b7e68 100644
---- a/arch/arm/include/asm/nwflash.h
-+++ b/arch/arm/include/asm/nwflash.h
-@@ -2,7 +2,6 @@
- #ifndef _FLASH_H
- #define _FLASH_H
- 
--#define FLASH_MINOR		 160	/* MAJOR is 10 - miscdevice */
- #define CMD_WRITE_DISABLE	 0
- #define CMD_WRITE_ENABLE	 0x28
- #define CMD_WRITE_BASE64K_ENABLE 0x47
-diff --git a/drivers/char/nwflash.c b/drivers/char/nwflash.c
-index a4a0797d..0973c2c 100644
---- a/drivers/char/nwflash.c
-+++ b/drivers/char/nwflash.c
-@@ -576,7 +576,7 @@ static void kick_open(void)
- 
- static struct miscdevice flash_miscdev =
- {
--	FLASH_MINOR,
-+	NWFLASH_MINOR,
- 	"nwflash",
- 	&flash_fops
- };
-diff --git a/drivers/sbus/char/flash.c b/drivers/sbus/char/flash.c
-index e85a05a..4147d22 100644
---- a/drivers/sbus/char/flash.c
-+++ b/drivers/sbus/char/flash.c
-@@ -31,8 +31,6 @@
- 	unsigned long busy;		/* In use? */
- } flash;
- 
--#define FLASH_MINOR	152
--
- static int
- flash_mmap(struct file *file, struct vm_area_struct *vma)
- {
-@@ -157,7 +155,7 @@
- 	.release =	flash_release,
- };
- 
--static struct miscdevice flash_dev = { FLASH_MINOR, "flash", &flash_fops };
-+static struct miscdevice flash_dev = { SBUS_FLASH_MINOR, "flash", &flash_fops };
- 
- static int flash_probe(struct platform_device *op)
- {
-diff --git a/include/linux/miscdevice.h b/include/linux/miscdevice.h
-index 42360fc..66cc45e 100644
---- a/include/linux/miscdevice.h
-+++ b/include/linux/miscdevice.h
-@@ -30,12 +30,14 @@
- #define SUN_OPENPROM_MINOR	139
- #define DMAPI_MINOR		140	/* unused */
- #define NVRAM_MINOR		144
-+#define SBUS_FLASH_MINOR	152
- #define SGI_MMTIMER		153
- #define PMU_MINOR		154
- #define STORE_QUEUE_MINOR	155	/* unused */
- #define LCD_MINOR		156
- #define AC_MINOR		157
- #define BUTTON_MINOR		158	/* Major 10, Minor 158, /dev/nwbutton */
-+#define NWFLASH_MINOR		160	/* MAJOR is 10 - miscdevice */
- #define ENVCTRL_MINOR		162
- #define I2O_MINOR		166
- #define UCTRL_MINOR		174
--- 
-1.8.3.1
+I applied patch 2, 3 and 4 after having changed the commit message as
+suggested and with the Fixes/Cc: stable tags added.
 
+Thanks,
+Miquèl
