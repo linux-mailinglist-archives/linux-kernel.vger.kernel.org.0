@@ -2,67 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9C611817D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 13:21:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FCB41817E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 13:21:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729263AbgCKMU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 08:20:59 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:49420 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729095AbgCKMU7 (ORCPT
+        id S1729379AbgCKMVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 08:21:32 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37407 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729363AbgCKMVb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 08:20:59 -0400
-X-UUID: 6dbda1a3d6ee4ac6af30b8c2d6027b5f-20200311
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=Ko1BjI2ELzJodvKKe45j1AqO09tGfo0MC5W9HBQrrI4=;
-        b=hFd3ssV38dSzWcHGUfFxv41cNlIzg1K6LwKuaT4btZfKqojgk4NhpFB53ppr1KkIIPs/jga7i9b2NHg2TyoCvc6WzgszSU0G4a93S7uxpAPkhpr6nvMENo9FKWsr3guixQQRo9cT7+drVmlsfMK1GEZqTAaLjmR/w822/YcQaAA=;
-X-UUID: 6dbda1a3d6ee4ac6af30b8c2d6027b5f-20200311
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <walter-zh.wu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 412987948; Wed, 11 Mar 2020 20:20:53 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 11 Mar 2020 20:20:51 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 11 Mar 2020 20:20:58 +0800
-From:   Walter Wu <walter-zh.wu@mediatek.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Oleg Nesterov <oleg@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        wsd_upstream <wsd_upstream@mediatek.com>,
-        Walter Wu <walter-zh.wu@mediatek.com>
-Subject: [PATCH] pid: fix uninitialized var warnings
-Date:   Wed, 11 Mar 2020 20:20:49 +0800
-Message-ID: <20200311122049.11589-1-walter-zh.wu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 8FFCA056A86FDAB388FAEAFCBF293114866B37C98B625B24FDEB9BC4584ECB9F2000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        Wed, 11 Mar 2020 08:21:31 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a141so1887923wme.2;
+        Wed, 11 Mar 2020 05:21:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Bjy8AO/uhgcJDLcwPUOIt+S4XzlyY0iXNSdbKltQ36A=;
+        b=YrNGJzGF8Sz2KBSWeK/hf7PDvkuhUmUPaFUWpED2XjFzw8lBww62twa0MakQBVltJP
+         QSVOZsRbcvEHxN3/9nroTf6TmN4ijSRMvcYGRUrD8ILrTI8x02H2uRtst5zkj79NME9f
+         fbRMlZ5KFxbjcKsaPAtBbJfRqjFTvqAGdLc7LR4DAX2yJEg7yxfT2JApHkLu+/5BAKgz
+         5RPMPL59oa9NJ5mbgSJho8Ku8mD9/LDcWmksukWb9N9YoIVhYOzXYOlZDaiWxSB7SgZW
+         RclTYtjNVQsDIyIAiF/Mp11e25GRj2NZOBvAjC4YvjI/ehZiote6WpeYLRczD1+N4Ppz
+         0dpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Bjy8AO/uhgcJDLcwPUOIt+S4XzlyY0iXNSdbKltQ36A=;
+        b=W9R2/0bG5lUYE3Culp93u1GgbXkYWV4F5Aoza+JgAoSKCIDnaUXaZ7A1iKYMulfeMz
+         1s6jKSFl3K2q6kn1T6N3HtmsIpQviI6MrraC7NzbXKBaTysSt6px/10fvOv6re+WUfLl
+         hktaLYk+bZqKWyD5mUA3yW4xFKgMgpkxmAz6bHdesQWSf3MYHukEetTi4tLfph7/KiFo
+         B+69gvupBzSLKBVzluKohNANw3QK7uVbvmyYqtdc/vMcFJ+zjfMiErx2s8O9aDraoOzY
+         P2mH/tu2K7J7UfIJO5zV6WELlfLksA6QJKOaYKI0He5NqJdPQ3bexySx8HZEicsiufWk
+         K//A==
+X-Gm-Message-State: ANhLgQ1YaFbCre8BK7ThJ+F6ypcb2+kLW9cCnzX8tfTjbZ6UUd/dg/5B
+        5ltVCiskvnesXD5H7xjTAGE=
+X-Google-Smtp-Source: ADFU+vuoxl7Rnu55mlVmnlycYhZAAsnWZUu9SUYm83N5yQjSKn6nH0w8BR0h43FMBG0sXrWPe1kBGg==
+X-Received: by 2002:a05:600c:2214:: with SMTP id z20mr3458638wml.57.1583929289117;
+        Wed, 11 Mar 2020 05:21:29 -0700 (PDT)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id u25sm7998875wml.17.2020.03.11.05.21.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Mar 2020 05:21:28 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] dt-bindings: usb: dwc2: add compatible property for rk3328 usb
+Date:   Wed, 11 Mar 2020 13:21:20 +0100
+Message-Id: <20200311122121.8912-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Q29tcGlsaW5nIHdpdGggZ2NjLTkuMi4xIHBvaW50cyBvdXQgYmVsb3cgd2FybmluZ3MuIEZpeCBp
-dC4NCg0Ka2VybmVsL3BpZC5jOiBJbiBmdW5jdGlvbiAnYWxsb2NfcGlkJzoNCmtlcm5lbC9waWQu
-YzoxODA6MTA6IHdhcm5pbmc6ICdyZXR2YWwnIG1heSBiZSB1c2VkIHVuaW5pdGlhbGl6ZWQNCmlu
-IHRoaXMgZnVuY3Rpb24gWy1XbWF5YmUtdW5pbml0aWFsaXplZF0NCg0KQ2M6IEFuZHJldyBNb3J0
-b24gPGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc+DQpDYzogQ2hyaXN0aWFuIEJyYXVuZXIgPGNo
-cmlzdGlhbkBicmF1bmVyLmlvPg0KQ2M6IE9sZWcgTmVzdGVyb3YgPG9sZWdAcmVkaGF0LmNvbT4N
-ClNpZ25lZC1vZmYtYnk6IFdhbHRlciBXdSA8d2FsdGVyLXpoLnd1QG1lZGlhdGVrLmNvbT4NCi0t
-LQ0KIGtlcm5lbC9waWQuYyB8IDQgKysrLQ0KIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMo
-KyksIDEgZGVsZXRpb24oLSkNCg0KZGlmZiAtLWdpdCBhL2tlcm5lbC9waWQuYyBiL2tlcm5lbC9w
-aWQuYw0KaW5kZXggZmY2Y2Q2Nzg2ZDEwLi4wMjk0NGNmZDRlNTEgMTAwNjQ0DQotLS0gYS9rZXJu
-ZWwvcGlkLmMNCisrKyBiL2tlcm5lbC9waWQuYw0KQEAgLTE3Niw4ICsxNzYsMTAgQEAgc3RydWN0
-IHBpZCAqYWxsb2NfcGlkKHN0cnVjdCBwaWRfbmFtZXNwYWNlICpucywgcGlkX3QgKnNldF90aWQs
-DQogCQlyZXR1cm4gRVJSX1BUUigtRUlOVkFMKTsNCiANCiAJcGlkID0ga21lbV9jYWNoZV9hbGxv
-Yyhucy0+cGlkX2NhY2hlcCwgR0ZQX0tFUk5FTCk7DQotCWlmICghcGlkKQ0KKwlpZiAoIXBpZCkg
-ew0KKwkJcmV0dmFsID0gLUVOT01FTTsNCiAJCXJldHVybiBFUlJfUFRSKHJldHZhbCk7DQorCX0N
-CiANCiAJdG1wID0gbnM7DQogCXBpZC0+bGV2ZWwgPSBucy0+bGV2ZWw7DQotLSANCjIuMTguMA0K
+A test with the command below gives for example this error:
+
+arch/arm64/boot/dts/rockchip/rk3328-evb.dt.yaml: usb@ff580000:
+compatible:
+['rockchip,rk3328-usb', 'rockchip,rk3066-usb', 'snps,dwc2']
+is not valid under any of the given schemas
+
+The compatible property for rk3328 dwc2 usb was somehow never added to
+the documention. Fix this error by adding
+'rockchip,rk3328-usb', 'rockchip,rk3066-usb', 'snps,dwc2'
+to dwc2.yaml.
+
+make ARCH=arm64 dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/usb/dwc2.yaml
+
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+Changes v2:
+  Combine compatible properties with enum.
+---
+ Documentation/devicetree/bindings/usb/dwc2.yaml | 29 +++++++------------------
+ 1 file changed, 8 insertions(+), 21 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/usb/dwc2.yaml b/Documentation/devicetree/bindings/usb/dwc2.yaml
+index e95ba9373..d8d3c7c22 100644
+--- a/Documentation/devicetree/bindings/usb/dwc2.yaml
++++ b/Documentation/devicetree/bindings/usb/dwc2.yaml
+@@ -18,27 +18,14 @@ properties:
+           - const: rockchip,rk3066-usb
+           - const: snps,dwc2
+       - items:
+-          - const: rockchip,px30-usb
+-          - const: rockchip,rk3066-usb
+-          - const: snps,dwc2
+-      - items:
+-          - const: rockchip,rk3036-usb
+-          - const: rockchip,rk3066-usb
+-          - const: snps,dwc2
+-      - items:
+-          - const: rockchip,rv1108-usb
+-          - const: rockchip,rk3066-usb
+-          - const: snps,dwc2
+-      - items:
+-          - const: rockchip,rk3188-usb
+-          - const: rockchip,rk3066-usb
+-          - const: snps,dwc2
+-      - items:
+-          - const: rockchip,rk3228-usb
+-          - const: rockchip,rk3066-usb
+-          - const: snps,dwc2
+-      - items:
+-          - const: rockchip,rk3288-usb
++          - enum:
++            - rockchip,px30-usb
++            - rockchip,rk3036-usb
++            - rockchip,rk3188-usb
++            - rockchip,rk3228-usb
++            - rockchip,rk3288-usb
++            - rockchip,rk3328-usb
++            - rockchip,rv1108-usb
+           - const: rockchip,rk3066-usb
+           - const: snps,dwc2
+       - const: lantiq,arx100-usb
+-- 
+2.11.0
 
