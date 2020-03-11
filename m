@@ -2,110 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04F6B18211D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:46:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A4A2182121
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:47:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730849AbgCKSp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 14:45:59 -0400
-Received: from mga04.intel.com ([192.55.52.120]:45178 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730691AbgCKSp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:45:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 11:45:58 -0700
-X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
-   d="scan'208";a="277479353"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.251.23.31]) ([10.251.23.31])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Mar 2020 11:45:57 -0700
-Subject: Re: [PATCH V1 01/13] selftests/resctrl: Fix feature detection
-To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>,
-        "babu.moger@amd.com" <babu.moger@amd.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        "Yu, Fenghua" <fenghua.yu@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
- <7e3e4b91f5786a489e68eecda21e1d8049b60181.1583657204.git.sai.praneeth.prakhya@intel.com>
- <a7407b0d-4e4d-d0cf-621c-769d218fdace@intel.com>
- <FFF73D592F13FD46B8700F0A279B802F57307F89@ORSMSX114.amr.corp.intel.com>
- <d0409729-b546-f0b9-4944-cbe5c9a74f76@intel.com>
- <FFF73D592F13FD46B8700F0A279B802F573084EC@ORSMSX114.amr.corp.intel.com>
- <b83ba95d-9f0f-4d4f-b68c-c5a612afece4@intel.com>
- <664cf142449b0a1ef7f09d04111f96ff84738e28.camel@intel.com>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <518831ab-0f4e-5c5c-10c2-52c5f8492df1@intel.com>
-Date:   Wed, 11 Mar 2020 11:45:56 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1730893AbgCKSr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 14:47:28 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:53672 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730892AbgCKSr1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 14:47:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583952446;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Irye0rFaDzdP42Inlr4cQrTj7L1YCDCLX9nYEZrBcr8=;
+        b=Z6srpiWz1hNEhd/IZy29bOTbnmqI3yUQW/sm4feQZbNLVtE6msKlbscRSsCy/keM98mpGd
+        AexHA/Ku2OjT4Iv+dBKNU8J1hsjLvLetluu+5TiB+ls5J/edt5R3mDALwy6widq71kgT6O
+        rwF2Go94E1xLis8KiWkdJE72IO9s4g8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-68-5e2e3V1UMgaulAWdT5wBzA-1; Wed, 11 Mar 2020 14:47:22 -0400
+X-MC-Unique: 5e2e3V1UMgaulAWdT5wBzA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 55719107ACC4;
+        Wed, 11 Mar 2020 18:47:21 +0000 (UTC)
+Received: from kamzik.brq.redhat.com (ovpn-206-80.brq.redhat.com [10.40.206.80])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D3E5E92D34;
+        Wed, 11 Mar 2020 18:47:07 +0000 (UTC)
+Date:   Wed, 11 Mar 2020 19:47:03 +0100
+From:   Andrew Jones <drjones@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: Re: [PATCH v6 10/14] KVM: selftests: Use a single binary for
+ dirty/clear log test
+Message-ID: <20200311184703.gbjncvlusef44tqk@kamzik.brq.redhat.com>
+References: <20200309214424.330363-1-peterx@redhat.com>
+ <20200309222519.345601-1-peterx@redhat.com>
+ <20200310081002.unxq6kwlevmr6m3b@kamzik.brq.redhat.com>
+ <20200311174324.GH479302@xz-x1>
 MIME-Version: 1.0
-In-Reply-To: <664cf142449b0a1ef7f09d04111f96ff84738e28.camel@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200311174324.GH479302@xz-x1>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sai,
-
-On 3/11/2020 11:22 AM, Sai Praneeth Prakhya wrote:
-> Hi Reinette,
+On Wed, Mar 11, 2020 at 01:43:24PM -0400, Peter Xu wrote:
+> > >  
+> > > +	if (!log_mode_supported()) {
+> > > +		fprintf(stderr, "Log mode '%s' not supported, skip\n",
+> > > +			log_modes[host_log_mode].name);
+> > 
+> > I think kvm selftests needs a skip_test() function that outputs a more
+> > consistent test skip message. It seems we mostly do
 > 
-> On Wed, 2020-03-11 at 11:06 -0700, Reinette Chatre wrote:
->> Hi Sai,
->>
->> On 3/9/2020 3:51 PM, Prakhya, Sai Praneeth wrote:
->>>> -----Original Message-----
->>>> From: Reinette Chatre <reinette.chatre@intel.com>
->>>> Sent: Monday, March 9, 2020 3:34 PM
->>>
->>> [SNIP]
->>>
->>>>> That's a good point and makes sense to me. I think we could fix it in
->>>>> two ways 1. grep for strings in dmesg but that will still leave
->>>>> ambiguity in deciding b/w mbm and cqm because kernel prints "resctrl:
->>>>> L3
->>>> monitoring detected" for both the features 2. Check in "info" directory
->>>>> 	a. For cat_l3, we could search for info/L3
->>>>> 	b. For mba, we could search for info/MB
->>>>> 	c. For cqm and mbm, we could search for specified string in
->>>>> info/L3_MON/mon_features
->>>>>
->>>>> I think option 2 might be better because it can handle all cases,
->>>>> please let me
->>>> know what you think.
->>>>
->>>> I agree. For the reasons you mention and also that (1) may not be
->>>> possible if the
->>>> loglevel prevents those lines from being printed.
->>>
->>> Makes sense. I will work on the fix.
->>
->> One more note about this ... from what I can tell the test for a feature
->> currently fails if the platform does not support the feature. Would it
->> be possible to just skip the test in this case instead?
-> 
-> That's because the output of the test should be just "ok" or "not ok".
+> Yep, I can introduce one.
 
-The output could be something like:
+I already did. Right after suggesting it.
 
-ok MBA # SKIP MBA is not supported
+https://www.spinics.net/lists/kvm/msg209545.html
 
-> I can change it to something like "# Skip <test_name> because platform doesn't
-> support the feature", but not really sure if it complies with TAP 13 protocol.
-
-Please consider the "skip" directive at
-https://testanything.org/tap-version-13-specification.html
-
-Reinette
-
+Thanks,
+drew
 
