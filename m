@@ -2,129 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C422C180E79
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 04:27:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 549A7180E63
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 04:22:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728055AbgCKD0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 23:26:54 -0400
-Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:35191 "EHLO
-        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727506AbgCKD0x (ORCPT
+        id S1727986AbgCKDV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 23:21:59 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:2076 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbgCKDV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 23:26:53 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id C08D56C5;
-        Tue, 10 Mar 2020 23:19:43 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Tue, 10 Mar 2020 23:19:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-         h=date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=b+Ma1H6/IShcWZqpJAo1sroDdFj
-        4Te1+J3eJjPIM5JU=; b=ECHIVNCT6Daf9QX6h78auESsTvlreFKUsOl7YL/deIR
-        DSKjlSxqc0pUdQDeWk9m8j0x/fp9VJlYhyjt0nByJumbzTGfu/0Wj3vplgfdTi6M
-        4uRr9S1kVxp4FZSRI95dmyGMUbp1QFYVdaEUBasiPg9Hjd3X91tGEvRBxpfKcvtB
-        oe8HGZePb7sitte8q9RvjRHSIe5FEbb6QlhOejhRNbDXZRNDPgRw9g53IoPnJC0t
-        vs//S60QIOOJyXid7kyy4QOkQdBCg8bYTkzImzN7XLz3wbz3VWP3F54jLS0iekb6
-        0O7rV8hwBawPi/wuvfQ8VXHedcSIy1a7Mo9gyfzBhqw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=b+Ma1H
-        6/IShcWZqpJAo1sroDdFj4Te1+J3eJjPIM5JU=; b=rr04A5h7BMT9Yj65iF6YDE
-        ECW6/MTrQ27G7qS9nzLXGSzUhxsev/OnnstAVSVWRkGBZkzJTUNJMhGCMiIbFPa1
-        t8oLSlqv9MT5IV1+qyfPZdniPIWxc6DGovX/mRPCIXQbyUySOHfmA9bcItA64CNu
-        ZglX+MDj09GgJhS2qTfgmtc6WJY4QCEUrdNSahqFmD2NIujb4iWAUI19B2aiMF4b
-        weI+pancvkoiZGslUBJEjf2spiHkfEw2skOlfYswPD6hZq4yCalNey0R31ecO8Pr
-        oBZk5Tkj+ZeA/WK+3NRYkNepwOIn1J90G+kr3W3mglvmI/XJpENb6rb6x3mdlxJA
-        ==
-X-ME-Sender: <xms:z1hoXmytAzEOi46fVw3GFhW_14BvvQR1Y1vWrMnMPUK4DGjvBo2RSA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedruddvuddgheekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepvfgrkhgr
-    shhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhird
-    hjpheqnecukfhppedugedrfedrjeegrdduieeknecuvehluhhsthgvrhfuihiivgepuden
-    ucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthh
-    hirdhjph
-X-ME-Proxy: <xmx:z1hoXiiUkX573jKbV_tcMGplJyH-eTvnmffAW08TYCowKgGJZ43ZvQ>
-    <xmx:z1hoXhO4Jm58TYxyrN5zn6entPRWUgacm00qBpgIiP8xHiW2q59qiQ>
-    <xmx:z1hoXgZXzw0UOQ9ISWNUI8F-0ZTWyBlm3ZZ489HaxtrKPs-w7c4QMQ>
-    <xmx:z1hoXjgGQP4vx36n0nQxZ9hGyM4-mPXoxwDnyYiOPkxeFxAyk-yhQQOwuNw>
-Received: from workstation (ae074168.dynamic.ppp.asahi-net.or.jp [14.3.74.168])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 8B70A3060F09;
-        Tue, 10 Mar 2020 23:19:40 -0400 (EDT)
-Date:   Wed, 11 Mar 2020 12:19:38 +0900
-From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To:     Jules Irenge <jbi.octave@gmail.com>
-Cc:     boqun.feng@gmail.com, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "moderated list:FIREWIRE AUDIO DRIVERS and IEC 61883-1/6 PACKET..." 
-        <alsa-devel@alsa-project.org>
-Subject: Re: [PATCH 7/8] ALSA: firewire-tascam: Add missing annotation for
- tscm_hwdep_read_queue()
-Message-ID: <20200311031937.GB8197@workstation>
-Mail-Followup-To: Jules Irenge <jbi.octave@gmail.com>, boqun.feng@gmail.com,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "moderated list:FIREWIRE AUDIO DRIVERS and IEC 61883-1/6 PACKET..." <alsa-devel@alsa-project.org>
-References: <0/8>
- <20200311010908.42366-1-jbi.octave@gmail.com>
- <20200311010908.42366-8-jbi.octave@gmail.com>
+        Tue, 10 Mar 2020 23:21:58 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e6859290000>; Tue, 10 Mar 2020 20:21:13 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 10 Mar 2020 20:21:58 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 10 Mar 2020 20:21:58 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 11 Mar
+ 2020 03:21:57 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 11 Mar 2020 03:21:57 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e6859550000>; Tue, 10 Mar 2020 20:21:57 -0700
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+CC:     Linux Next <linux-next@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH] pid: fix uninitialized retval in alloc_pid()
+Date:   Tue, 10 Mar 2020 20:21:53 -0700
+Message-ID: <20200311032153.431492-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200311010908.42366-8-jbi.octave@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1583896873; bh=aNbMTHzEBed2jLOkpeGMmsEaPHwGzRfzqOjyErWK5uk=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
+         Content-Type;
+        b=KX3p6IR6m/cQXjuSydvF0pEZ0gTdkgVJTOLRSOdojHLdH5cQZk+I1nwGRl7Kg3Kcx
+         +eHwLyP6kuBpa7FnsUx7RtImMfZi1udoigiyeUtkKskqhxifRO4MYg01M0jc0qFiOe
+         Z5FQvDYPOfdRrMdvcbnPl94iuMROFDiRBShgbJNnsVaDn3IfhjEHulDKNfTpfOVJsr
+         mizltKbR1xzsUzhDYx0ENA8xRQkz3zWcK4ZAaDkLNq2pfAGov0hIV0glXu6Y3o903p
+         /wRm1fGcK/W0WgG32Hf3STT45EgDarQKBrCareLKlyLOCH5ZnFCqYdXcdwSkq6EBd2
+         r0E2TKg4ssdYw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 01:09:07AM +0000, Jules Irenge wrote:
-> Sparse reports a warning at tscm_hwdep_read_queue()
-> 
-> warning: context imbalance in tscm_hwdep_read_queue() - unexpected unlock
-> 
-> The root cause is the missing annotation at tscm_hwdep_read_queue()
-> Add the missing __releases(&tscm->lock) annotation
-> 
-> Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
-> ---
->  sound/firewire/tascam/tascam-hwdep.c | 1 +
->  1 file changed, 1 insertion(+)
- 
-This looks good.
+Commit 8deb24dcb89cb ("pid: make ENOMEM return value more obvious")
+left the return value uninitialized in one error case. The justification
+for the above commit included a statement that retval is "initialized on
+ever[y] failure path in the loop". However, that is not quite good
+enough because there is an earlier case that is before the loop. And
+also, it's more maintenance and merge-safe to initialize it once at the
+top, as evidenced by this build warning that we now have.
 
-Acked-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Therefore, restore the top-level initialization of retval.
 
-> diff --git a/sound/firewire/tascam/tascam-hwdep.c b/sound/firewire/tascam/tascam-hwdep.c
-> index c29a97f6f638..9801e33e7f2a 100644
-> --- a/sound/firewire/tascam/tascam-hwdep.c
-> +++ b/sound/firewire/tascam/tascam-hwdep.c
-> @@ -36,6 +36,7 @@ static long tscm_hwdep_read_locked(struct snd_tscm *tscm, char __user *buf,
->  
->  static long tscm_hwdep_read_queue(struct snd_tscm *tscm, char __user *buf,
->  				  long remained, loff_t *offset)
-> +	__releases(&tscm->lock)
->  {
->  	char __user *pos = buf;
->  	unsigned int type = SNDRV_FIREWIRE_EVENT_TASCAM_CONTROL;
-> -- 
-> 2.24.1
+Also move the descriptive comment up, and remove the now-redundant
+later initialization of retval.
 
+Fixes: 8deb24dcb89cb ("pid: make ENOMEM return value more obvious")
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ kernel/pid.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-Regards
+diff --git a/kernel/pid.c b/kernel/pid.c
+index ff6cd6786d10..49bf6dd32de4 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -162,7 +162,16 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t =
+*set_tid,
+ 	int i, nr;
+ 	struct pid_namespace *tmp;
+ 	struct upid *upid;
+-	int retval;
++
++	/*
++	 * ENOMEM is not the most obvious choice especially for the case
++	 * where the child subreaper has already exited and the pid
++	 * namespace denies the creation of any new processes. But ENOMEM
++	 * is what we have exposed to userspace for a long time and it is
++	 * documented behavior for pid namespaces. So we can't easily
++	 * change it even if there were an error code better suited.
++	 */
++	int retval =3D -ENOMEM;
+=20
+ 	/*
+ 	 * set_tid_size contains the size of the set_tid array. Starting at
+@@ -244,16 +253,6 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t =
+*set_tid,
+ 		tmp =3D tmp->parent;
+ 	}
+=20
+-	/*
+-	 * ENOMEM is not the most obvious choice especially for the case
+-	 * where the child subreaper has already exited and the pid
+-	 * namespace denies the creation of any new processes. But ENOMEM
+-	 * is what we have exposed to userspace for a long time and it is
+-	 * documented behavior for pid namespaces. So we can't easily
+-	 * change it even if there were an error code better suited.
+-	 */
+-	retval =3D -ENOMEM;
+-
+ 	get_pid_ns(ns);
+ 	refcount_set(&pid->count, 1);
+ 	for (type =3D 0; type < PIDTYPE_MAX; ++type)
 
-Takashi Sakamoto
+base-commit: 134546626849cd6852d6d4bf8f207b5fbc54261b
+--=20
+2.25.1
+
