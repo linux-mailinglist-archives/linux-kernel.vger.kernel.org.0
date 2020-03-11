@@ -2,141 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84148181D4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:13:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F604181D28
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:06:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730187AbgCKQM5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 12:12:57 -0400
-Received: from gateway20.websitewelcome.com ([192.185.4.169]:44397 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730172AbgCKQM5 (ORCPT
+        id S1730104AbgCKQGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 12:06:01 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51192 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729921AbgCKQGB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 12:12:57 -0400
-X-Greylist: delayed 1447 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Mar 2020 12:12:56 EDT
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id BADF740DBE61B
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 09:28:43 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id C3WMjpUHmSl8qC3WMjQFgG; Wed, 11 Mar 2020 10:43:46 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3i0tZ6VUT9ayplPHL2UUSqmRafZXT88cIoIL540L3iM=; b=OpztcXRgfZ2/MGS27k1f4voZHT
-        xXFYfSFmrX9E+yfjgVYj5g2lPtdZN++7Voh0DTfHt8I7+tQGRbbTg8cJix17V4gvGriEBD7pzriAF
-        sdZgs6UtRYgaYvxQfQjERJ/YYMNBDn1/WPTlPY/iPrAyQi0nukbWOYmN56U8hkaS6ACSXUp/0XaaC
-        PFUa/C+MuR2NU1DSW5uOw0SqxrK6a4MYea8pa/tIB5wTWZ9NJjyhxEGCUVUQu7aFxbOAoLy/KopRq
-        nj3e1dge7JGpk8Yd7Iae0g36wT1f8uySJQsB+X3wLoU6GCuaHsJ2KqpVkMcM1xNM5oXHdHEvG1lj8
-        gKA43fYw==;
-Received: from [200.39.15.97] (port=13388 helo=[192.168.43.132])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jC3WL-002v4F-Io; Wed, 11 Mar 2020 10:43:46 -0500
-Subject: Re: [PATCH] mmc: Replace zero-length array with flexible-array member
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200226223125.GA20630@embeddedor>
- <CAPDyKFpCczkLfzbRHV5WEzuMOseMj19mV=j1w6=hNX9K8YN1JQ@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <7fe54f8f-52ed-c819-550c-a775c2afdde6@embeddedor.com>
-Date:   Wed, 11 Mar 2020 10:46:01 -0500
+        Wed, 11 Mar 2020 12:06:01 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02BG1pBj076682
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:06:00 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yq0hbqer3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:05:58 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Wed, 11 Mar 2020 16:00:50 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Mar 2020 16:00:45 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02BG0hbI35717308
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Mar 2020 16:00:43 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 87A13A4051;
+        Wed, 11 Mar 2020 16:00:43 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A4C95A405D;
+        Wed, 11 Mar 2020 16:00:20 +0000 (GMT)
+Received: from [9.199.52.104] (unknown [9.199.52.104])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Mar 2020 16:00:20 +0000 (GMT)
+Subject: Re: [RFC 00/11] perf: Enhancing perf to export processor hazard
+ information
+To:     Kim Phillips <kim.phillips@amd.com>
+Cc:     Stephane Eranian <eranian@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        yao.jin@linux.intel.com, Robert Richter <robert.richter@amd.com>,
+        maddy@linux.ibm.com, Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20200302052355.36365-1-ravi.bangoria@linux.ibm.com>
+ <20200302101332.GS18400@hirez.programming.kicks-ass.net>
+ <CABPqkBSzwpR6p7UZs7g1vWGCJRLsh565mRMGc6m0Enn1SnkC4w@mail.gmail.com>
+ <df966d6e-8898-029f-e697-8496500a1663@amd.com>
+ <2550ec4d-a015-4625-ca24-ff10632dbe2e@linux.ibm.com>
+ <d3c82708-dd09-80e0-4e9f-1cbab118a169@amd.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Wed, 11 Mar 2020 21:30:18 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFpCczkLfzbRHV5WEzuMOseMj19mV=j1w6=hNX9K8YN1JQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <d3c82708-dd09-80e0-4e9f-1cbab118a169@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.39.15.97
-X-Source-L: No
-X-Exim-ID: 1jC3WL-002v4F-Io
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.132]) [200.39.15.97]:13388
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20031116-0012-0000-0000-0000038F7981
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20031116-0013-0000-0000-000021CC48A1
+Message-Id: <8a4d966c-acc9-b2b7-8ab7-027aefab201c@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-11_06:2020-03-11,2020-03-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ impostorscore=0 phishscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0
+ priorityscore=1501 clxscore=1015 suspectscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003110099
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Kim,
 
-
-On 3/11/20 10:34, Ulf Hansson wrote:
-
+On 3/6/20 3:36 AM, Kim Phillips wrote:
+>> On 3/3/20 3:55 AM, Kim Phillips wrote:
+>>> On 3/2/20 2:21 PM, Stephane Eranian wrote:
+>>>> On Mon, Mar 2, 2020 at 2:13 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>>>>>
+>>>>> On Mon, Mar 02, 2020 at 10:53:44AM +0530, Ravi Bangoria wrote:
+>>>>>> Modern processors export such hazard data in Performance
+>>>>>> Monitoring Unit (PMU) registers. Ex, 'Sampled Instruction Event
+>>>>>> Register' on IBM PowerPC[1][2] and 'Instruction-Based Sampling' on
+>>>>>> AMD[3] provides similar information.
+>>>>>>
+>>>>>> Implementation detail:
+>>>>>>
+>>>>>> A new sample_type called PERF_SAMPLE_PIPELINE_HAZ is introduced.
+>>>>>> If it's set, kernel converts arch specific hazard information
+>>>>>> into generic format:
+>>>>>>
+>>>>>>     struct perf_pipeline_haz_data {
+>>>>>>            /* Instruction/Opcode type: Load, Store, Branch .... */
+>>>>>>            __u8    itype;
+>>>>>>            /* Instruction Cache source */
+>>>>>>            __u8    icache;
+>>>>>>            /* Instruction suffered hazard in pipeline stage */
+>>>>>>            __u8    hazard_stage;
+>>>>>>            /* Hazard reason */
+>>>>>>            __u8    hazard_reason;
+>>>>>>            /* Instruction suffered stall in pipeline stage */
+>>>>>>            __u8    stall_stage;
+>>>>>>            /* Stall reason */
+>>>>>>            __u8    stall_reason;
+>>>>>>            __u16   pad;
+>>>>>>     };
+>>>>>
+>>>>> Kim, does this format indeed work for AMD IBS?
+>>>
+>>> It's not really 1:1, we don't have these separations of stages
+>>> and reasons, for example: we have missed in L2 cache, for example.
+>>> So IBS output is flatter, with more cycle latency figures than
+>>> IBM's AFAICT.
 >>
->> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
->> [2] https://github.com/KSPP/linux/issues/21
->> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>> AMD IBS captures pipeline latency data incase Fetch sampling like the
+>> Fetch latency, tag to retire latency, completion to retire latency and
+>> so on. Yes, Ops sampling do provide more data on load/store centric
+>> information. But it also captures more detailed data for Branch instructions.
+>> And we also looked at ARM SPE, which also captures more details pipeline
+>> data and latency information.
 >>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>>>> Personally, I don't like the term hazard. This is too IBM Power
+>>>> specific. We need to find a better term, maybe stall or penalty.
+>>>
+>>> Right, IBS doesn't have a filter to only count stalled or otherwise
+>>> bad events.  IBS' PPR descriptions has one occurrence of the
+>>> word stall, and no penalty.  The way I read IBS is it's just
+>>> reporting more sample data than just the precise IP: things like
+>>> hits, misses, cycle latencies, addresses, types, etc., so words
+>>> like 'extended', or the 'auxiliary' already used today even
+>>> are more appropriate for IBS, although I'm the last person to
+>>> bikeshed.
+>>
+>> We are thinking of using "pipeline" word instead of Hazard.
 > 
-> Applied for next, thanks!
+> Hm, the word 'pipeline' occurs 0 times in IBS documentation.
+
+NP. We thought pipeline is generic hw term so we proposed "pipeline"
+word. We are open to term which can be generic enough.
+
+> 
+> I realize there are a couple of core pipeline-specific pieces
+> of information coming out of it, but the vast majority
+> are addresses, latencies of various components in the memory
+> hierarchy, and various component hit/miss bits.
+
+Yes. we should capture core pipeline specific details. For example,
+IBS generates Branch unit information(IbsOpData1) and Icahce related
+data(IbsFetchCtl) which is something that shouldn't be extended as
+part of perf-mem, IMO.
+
+> 
+> What's needed here is a vendor-specific extended
+> sample information that all these technologies gather,
+> of which things like e.g., 'L1 TLB cycle latency' we
+> all should have in common.
+
+Yes. We will include fields to capture the latency cycles (like Issue
+latency, Instruction completion latency etc..) along with other pipeline
+details in the proposed structure.
+
+> 
+> I'm not sure why a new PERF_SAMPLE_PIPELINE_HAZ is needed
+> either.  Can we use PERF_SAMPLE_AUX instead?
+
+We took a look at PERF_SAMPLE_AUX. IIUC, PERF_SAMPLE_AUX is intended when
+large volume of data needs to be captured as part of perf.data without
+frequent PMIs. But proposed type is to address the capture of pipeline
+information on each sample using PMI at periodic intervals. Hence proposing
+PERF_SAMPLE_PIPELINE_HAZ.
+
+>  Take a look at
+> commit 98dcf14d7f9c "perf tools: Add kernel AUX area sampling
+> definitions".  The sample identifier can be used to determine
+> which vendor's sampling IP's data is in it, and events can
+> be recorded just by copying the content of the SIER, etc.
+> registers, and then events get synthesized from the aux
+> sample at report/inject/annotate etc. time.  This allows
+> for less sample recording overhead, and moves all the vendor
+> specific decoding and common event conversions for userspace
+> to figure out.
+
+When AUX buffer data is structured, tool side changes added to present the
+pipeline data can be re-used.
+
+> 
+>>>> Also worth considering is the support of ARM SPE (Statistical
+>>>> Profiling Extension) which is their version of IBS.
+>>>> Whatever gets added need to cover all three with no limitations.
+>>>
+>>> I thought Intel's various LBR, PEBS, and PT supported providing
+>>> similar sample data in perf already, like with perf mem/c2c?
+>>
+>> perf-mem is more of data centric in my opinion. It is more towards
+>> memory profiling. So proposal here is to expose pipeline related
+>> details like stalls and latencies.
+> 
+> Like I said, I don't see it that way, I see it as "any particular
+> vendor's event's extended details', and these pipeline details
+> have overlap with existing infrastructure within perf, e.g., L2
+> cache misses.
+> 
+> Kim
 > 
 
-Thanks, Ulf.
---
-Gustavo
-
-> Kind regards
-> Uffe
-> 
