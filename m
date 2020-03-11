@@ -2,154 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84BC2181D93
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:17:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B8E4181D99
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:18:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730142AbgCKQRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 12:17:31 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39416 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729921AbgCKQRa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 12:17:30 -0400
-Received: by mail-pl1-f195.google.com with SMTP id j20so1323224pll.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 09:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eGB8HLn34Ay+oTWhql5ATheorHKXdDNb1Y38OeMfZ0w=;
-        b=V1FnRQ1L3bblXi4JseWibpSlMPHSWCCa8FQHLozbgJBRgDgqs1i34nh150UBybDfY9
-         qpz1rYB7r8IltEW2bXAEI/YQh4n3irUfxn+TD5jdeT7sggcxFuUDoHr9TSSeKip0NXWo
-         wDOPA2JYHFO211/0qHHCmU8ivE9ZRdPuIggeU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eGB8HLn34Ay+oTWhql5ATheorHKXdDNb1Y38OeMfZ0w=;
-        b=ZxSLVkyt/TkHvVZO1NJ+8gnKrTDf0hbimHOsNj1Lgn0nVs3KQEsMj/bFfbBfzzHjJg
-         GRqxx21u+RqjGAe/pMin6HJCuV9e8oQ5eFGesGgPIYZgCU9dnj0nX/wl/Qrw1hqVoTc7
-         /Ub/tJm7qYuCsODQ4m/iy65mp2Aacrrndm2ahucgb43Z9kf1dPkPRm3zgAjAg8YCc8Nr
-         ZlSfCwXhml6g1mSrxBOpKOmXeBpH5n/mKmrXvJ5UzAKC1N9LdB6MjZz0Bf00v1Oue78k
-         SpX7Y1kNGMUKzXvaLuTt/tB0+ylmvSWCVZ+c/7SVh7i4sGg0jE8mz2GLJz1hiHExwvTF
-         9ZYQ==
-X-Gm-Message-State: ANhLgQ2ydDmHRm/BAepRlW9hYMpyqE72bn0XvqS5Jri0F82hutXxvzRB
-        IO28goFZn8YAPdbNbF6YWY3hiw==
-X-Google-Smtp-Source: ADFU+vshhiwVVGqo0dONSe/FWHePlzAq5T+rk31M7o0XbB+wx4eKCGFnSPWzp/SOMGkIF+9iuxQHdA==
-X-Received: by 2002:a17:902:528:: with SMTP id 37mr3891621plf.322.1583943449493;
-        Wed, 11 Mar 2020 09:17:29 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id bb13sm6129763pjb.43.2020.03.11.09.17.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 09:17:28 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 09:17:26 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Maulik Shah <mkshah@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFT PATCH 1/9] drivers: qcom: rpmh-rsc: Clean code
- reading/writing regs/cmds
-Message-ID: <20200311161726.GA144492@google.com>
-References: <20200306235951.214678-1-dianders@chromium.org>
- <20200306155707.RFT.1.I1b754137e8089e46cf33fc2ea270734ec3847ec4@changeid>
- <85758e97-8c0c-5c4e-24ad-d3e8b2b01d3c@codeaurora.org>
- <CAD=FV=X649r8qrNRZSezUBEuJbt0oZg6VBweAGjEhxOPp0zf2w@mail.gmail.com>
+        id S1730256AbgCKQRv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 12:17:51 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:40062 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730052AbgCKQRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 12:17:49 -0400
+Received: from zn.tnic (p200300EC2F12AA00E5C435974B72A9DE.dip0.t-ipconnect.de [IPv6:2003:ec:2f12:aa00:e5c4:3597:4b72:a9de])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C05151EC0CE7;
+        Wed, 11 Mar 2020 17:17:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1583943467;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=cLO4YbyKgXCkxVnutlFvkoeFpFis0mCV7bvOffoDZ5k=;
+        b=QdFSOObwSB15f5RiOB8UTj3dfRacRUPLMwuGdiKvbuaVGklnT4560hwTiPSf17QDwTIZzE
+        YuHFO3oIWgE5Z4irCkejSNxSyi86LEPRG5dMuMmeNYVl35+uS6FJek8n8IFGK6pmS8M6oC
+        IWvna8Lwyp/vtRArCBooNFKuubGZUos=
+Date:   Wed, 11 Mar 2020 17:17:56 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Qian Cai <cai@lca.pw>
+Cc:     tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, elver@google.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH -next] x86/mm/pat: mark an intentional data race
+Message-ID: <20200311161756.GE3470@zn.tnic>
+References: <1581343816-6490-1-git-send-email-cai@lca.pw>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAD=FV=X649r8qrNRZSezUBEuJbt0oZg6VBweAGjEhxOPp0zf2w@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <1581343816-6490-1-git-send-email-cai@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
++ Paul.
 
-On Wed, Mar 11, 2020 at 08:03:27AM -0700, Doug Anderson wrote:
-> Hi,
+On Mon, Feb 10, 2020 at 09:10:16AM -0500, Qian Cai wrote:
+> cpa_4k_install could be accessed concurrently as noticed by KCSAN,
 > 
-> On Wed, Mar 11, 2020 at 1:47 AM Maulik Shah <mkshah@codeaurora.org> wrote:
-> >
-> > Hi,
-> >
-> > On 3/7/2020 5:29 AM, Douglas Anderson wrote:
-> > > This patch makes two changes, both of which should be no-ops:
-> > >
-> > > 1. Make read_tcs_reg() / read_tcs_cmd() symmetric to write_tcs_reg() /
-> > >    write_tcs_cmd().
-> >
-> > i agree that there are two different write function doing same thing except last addition (RSC_DRV_CMD_OFFSET * cmd_id)
-> >
-> > can you please rename write_tcs_cmd() to write_tcs_reg(), add above operation in it, and then remove existing write_tcs_reg().
-> > this way we have only one read and one write function.
-> >
-> > so at the end we will two function as,
-> >
-> > static u32 read_tcs_reg(struct rsc_drv *drv, int reg, int tcs_id, int cmd_id)
-> > {
-> >         return readl_relaxed(drv->tcs_base + reg + RSC_DRV_TCS_OFFSET * tcs_id +
-> >                              RSC_DRV_CMD_OFFSET * cmd_id);
-> > }
-> >
-> > static void write_tcs_reg(struct rsc_drv *drv, int reg, int tcs_id, int cmd_id,
-> >                           u32 data)
-> > {
-> >         writel_relaxed(data, drv->tcs_base + reg + RSC_DRV_TCS_OFFSET * tcs_id +
-> >                        RSC_DRV_CMD_OFFSET * cmd_id);
-> > }
+> read to 0xffffffffaa59a000 of 8 bytes by interrupt on cpu 7:
+> cpa_inc_4k_install arch/x86/mm/pat/set_memory.c:131 [inline]
+> __change_page_attr+0x10cf/0x1840 arch/x86/mm/pat/set_memory.c:1514
+> __change_page_attr_set_clr+0xce/0x490 arch/x86/mm/pat/set_memory.c:1636
+> __set_pages_np+0xc4/0xf0 arch/x86/mm/pat/set_memory.c:2148
+> __kernel_map_pages+0xb0/0xc8 arch/x86/mm/pat/set_memory.c:2178
+> kernel_map_pages include/linux/mm.h:2719 [inline] <snip>
 > 
-> I can if you insist and this is still better than the existing
-> (inconsistent) code.
+> write to 0xffffffffaa59a000 of 8 bytes by task 1 on cpu 6:
+> cpa_inc_4k_install arch/x86/mm/pat/set_memory.c:131 [inline]
+> __change_page_attr+0x10ea/0x1840 arch/x86/mm/pat/set_memory.c:1514
+> __change_page_attr_set_clr+0xce/0x490 arch/x86/mm/pat/set_memory.c:1636
+> __set_pages_p+0xc4/0xf0 arch/x86/mm/pat/set_memory.c:2129
+> __kernel_map_pages+0x2e/0xc8 arch/x86/mm/pat/set_memory.c:2176
+> kernel_map_pages include/linux/mm.h:2719 [inline] <snip>
 > 
-> ...but I still feel that having two functions adds value here.
+> Both accesses are due to the same "cpa_4k_install++" in
+> cpa_inc_4k_install. A data race here could be potentially undesirable:
+> depending on compiler optimizations or how x86 executes a non-LOCK'd
+> increment, it may lose increments, corrupt the counter, etc. Since this
+> counter only seems to be used for printing some stats, this data race
+> itself is unlikely to cause harm to the system though. Thus, mark this
+> intentional data race using the data_race() marco.
 > 
+> Suggested-by: Macro Elver <elver@google.com>
+> Signed-off-by: Qian Cai <cai@lca.pw>
+> ---
+>  arch/x86/mm/pat/set_memory.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Anyone else who is CCed want to weigh in and tie break?
+> diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+> index c4aedd00c1ba..ea0b6df950ee 100644
+> --- a/arch/x86/mm/pat/set_memory.c
+> +++ b/arch/x86/mm/pat/set_memory.c
+> @@ -128,7 +128,7 @@ static inline void cpa_inc_2m_checked(void)
+>  
+>  static inline void cpa_inc_4k_install(void)
+>  {
+> -	cpa_4k_install++;
+> +	data_race(cpa_4k_install++);
+>  }
+>  
+>  static inline void cpa_inc_lp_sameprot(int level)
+> -- 
 
-I agree with Doug, having two functions makes the code that calls them
-clearer. It makes it evident when a command is read/written and doesn't require
-a useless extra parameter when accessing a non-command register.
+Acked-by: Borislav Petkov <bp@suse.de>
 
-> > > 2. Change the order of operations in the above functions to make it
-> > >    more obvious to me what the math is doing.  Specifically first you
-> > >    want to find the right TCS, then the right register, and then
-> > >    multiply by the command ID if necessary.
-> > With above change, i don't think you need to re-order this.
-> > specifically from tcs->base, we find right "reg" first and if it happens to be tcs then intended tcs, and then cmd inside tcs.
-> 
-> There was never any "need" to re-order.  That math works out to be the
-> same.  This is just clearer.
-> 
-> As an example, let's look at this:
-> 
-> struct point {
->   int x;
->   int y;
-> };
-> struct point points[10];
-> 
-> Let's say you have:
->   void *points_base = &(points[0]);
-> 
-> ...and now you want to find &(points[5].y).  What does your math look like?
-> 
-> a) points_base + (sizeof(struct point) * 5) + 4 ;
-> 
-> ...or...
-> 
-> b) points_base + 4 + (sizeof(struct point) * 5);
-> 
-> 
-> Both calculations give the same result, but I am arguring that "a)" is
-> more intuitive.  Specifically you deal with the array access first and
-> then deal with the offset within the structure that you found.
+-- 
+Regards/Gruss,
+    Boris.
 
-+1
+https://people.kernel.org/tglx/notes-about-netiquette
