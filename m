@@ -2,96 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA72F181CB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:45:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 639F0181C98
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:44:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729848AbgCKPpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 11:45:03 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60826 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729977AbgCKPpA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 11:45:00 -0400
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jC3XW-0001h8-Gg; Wed, 11 Mar 2020 15:44:58 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] thread fixes v5.6-rc6
-Date:   Wed, 11 Mar 2020 16:44:05 +0100
-Message-Id: <20200311154405.3137527-1-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.25.1
+        id S1730065AbgCKPoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 11:44:24 -0400
+Received: from mga07.intel.com ([134.134.136.100]:13577 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729927AbgCKPoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 11:44:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 08:44:23 -0700
+X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
+   d="scan'208";a="277419617"
+Received: from jkbowlin-mobl.amr.corp.intel.com (HELO [10.251.23.31]) ([10.251.23.31])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Mar 2020 08:44:21 -0700
+Subject: Re: [PATCH V1 09/13] selftests/resctrl: Modularize fill_buf for new
+ CAT test case
+To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        shuah@kernel.org, linux-kselftest@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        tony.luck@intel.com, babu.moger@amd.com, james.morse@arm.com,
+        ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
+ <43b368952bb006ee973311d9c9ae0eb53d8e7f60.1583657204.git.sai.praneeth.prakhya@intel.com>
+ <4c84be1d-8839-2c85-b294-7e3c454240bb@intel.com>
+ <7a1f93d4516a7de99c5dbc4afd6279d6fe7aa126.camel@intel.com>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <50cb755f-e112-5d71-11fa-a7cbc951d91e@intel.com>
+Date:   Wed, 11 Mar 2020 08:44:20 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <7a1f93d4516a7de99c5dbc4afd6279d6fe7aa126.camel@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Linus,
+Hi Sai,
 
-/* Summary */
-This contains a single fix for a regression which was introduced when we
-introduced the ability to select a specific pid at process creation time. When
-this feature is requested, the error value will be set to -EPERM after exiting
-the pid allocation loop. This caused EPERM to be returned when e.g. the init
-process/child subreaper of the pid namespace has already died where we used to
-return ENOMEM before.
-The first patch here simply fixes the regression by unconditionally setting the
-return value back to ENOMEM again once we've successfully allocated the
-requested pid number. This should be easy to backport to v5.5.
+On 3/10/2020 6:04 PM, Sai Praneeth Prakhya wrote:
+> On Tue, 2020-03-10 at 14:59 -0700, Reinette Chatre wrote:
+>> On 3/6/2020 7:40 PM, Sai Praneeth Prakhya wrote:
+>>> Currently fill_buf (in-built benchmark) runs as a separate process and it
+>>> runs indefinitely looping around given buffer either reading it or writing
+>>> to it. But, some future test cases might want to start and stop looping
+>>> around the buffer as they see fit. So, modularize fill_buf to support this
+>>> use case.
+>>>
+>>> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+>>> ---
+>>>  tools/testing/selftests/resctrl/fill_buf.c | 66 ++++++++++++++++++++-----
+>>> -----
+>>>  1 file changed, 44 insertions(+), 22 deletions(-)
+>>>
+>>> diff --git a/tools/testing/selftests/resctrl/fill_buf.c
+>>> b/tools/testing/selftests/resctrl/fill_buf.c
+>>> index 9ede7b63f059..204ae8870a32 100644
+>>> --- a/tools/testing/selftests/resctrl/fill_buf.c
+>>> +++ b/tools/testing/selftests/resctrl/fill_buf.c
+>>> @@ -23,7 +23,7 @@
+>>>  #define PAGE_SIZE		(4 * 1024)
+>>>  #define MB			(1024 * 1024)
+>>>  
+>>> -static unsigned char *startptr;
+>>> +static unsigned char *startptr, *endptr;
+> 
+> [Snipped.. assuming code over here might not be needed for discussion]
+> 
+>>> +static int use_buffer_forever(int op, char *resctrl_val)
+>>> +{
+>>> +	int ret;
+>>> +
+>>>  	if (op == 0)
+>>> -		ret = fill_cache_read(start_ptr, end_ptr, resctrl_val);
+>>> +		ret = fill_cache_read(resctrl_val);
+>>>  	else
+>>> -		ret = fill_cache_write(start_ptr, end_ptr, resctrl_val);
+>>> +		ret = fill_cache_write(resctrl_val);
+>>>  
+>>>  	if (ret) {
+>>>  		printf("\n Errror in fill cache read/write...\n");
+>>>  		return -1;
+>>>  	}
+>>>  
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int
+>>> +fill_cache(unsigned long long buf_size, int malloc_and_init, int
+>>> memflush,
+>>> +	   int op, char *resctrl_val)
+>>> +{
+>>> +	int ret;
+>>> +
+>>> +	ret = init_buffer(buf_size, malloc_and_init, memflush);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	ret = use_buffer_forever(op, resctrl_val);
+>>> +	if (ret)
+>>> +		return ret;
+>>
+>> Should buffer be freed on this error path?
+> 
+> Yes, that's right.. my bad. Will fix it. But the right fix is,
+> use_buffer_forever() should not return at all. It's meant to loop around the
+> buffer _forever_.
+> 
+>> I think the asymmetrical nature of the memory allocation and release
+>> creates traps like this.
+>>
+>> It may be less error prone to have the pointer returned by init_buffer
+>> and the acted on and released within fill_cache(), passed to
+>> "use_buffer_forever()" as a parameter.  The buffer size is known here,
+>> there is no need to keep an "end pointer" around.
+> 
+> The main reason for having "startptr" as a global variable is to free memory
+> when fill_buf is killed. fill_buf runs as a separate process (for test cases
+> like MBM, MBA and CQM) and when user issues Ctrl_c or when the test kills
+> benchmark_pid (i.e. fill_buf), the buffer is freed (please see
+> ctrl_handler()).
 
-The second patch adds a comment explaining that we must keep returning ENOMEM
-since we've been doing it for a long time and have explicitly documented this
-behavior for userspace. This seemed worthwhile because we now have at least two
-separate example where people tried to change the return value to something
-other than ENOMEM (The first version of the regression fix did that too and the
-commit message links to an earlier patch that tried to do the same.).
+I see. Got it, thanks.
 
-I have a simple regression test to make sure we catch this regression in the
-future but since that introduces a whole new selftest subdir and test files
-I'll keep this for v5.7.
+> 
+> So, I thought, as "startptr" is anyways global, why pass it around as an
+> argument? While making this change I thought it's natural to make "endptr"
+> global as well because the function didn't really look good to just take
+> endptr as an argument without startptr.
 
-/* Testing */
-All patches have seen exposure in linux-next and are based on v5.6-rc1.
-I've had a build warning reported to me for the first version of the second
-patch two days ago that tried to remove the unconditional initalization but
-that's fixed and linux-next seemed happy. The second patch is now a pure
-non-functional change.
+Maintaining the end pointer is unusual. The start of the buffer and the
+size are known properties that the end of the buffer can be computed
+from. Not a problem, it just seems inconsistent that some of the buffer
+functions operate on the start pointer and size while others operate on
+the start pointer and end pointer.
 
-/* Conflicts */
-At the time of creating this pr no merge conflicts were reported with anything
-that is expected to land this merge window.
+> I do agree that asymmetrical nature of the memory allocation and release might
+> create traps, I will try to overcome this for CAT test case (other test cases
+> will not need it).
 
-The following changes since commit 98d54f81e36ba3bf92172791eba5ca5bd813989b:
+Thank you very much
 
-  Linux 5.6-rc4 (2020-03-01 16:38:46 -0600)
+Reinette
 
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/for-linus-2020-03-10
-
-for you to fetch changes up to 10dab84caf400f2f5f8b010ebb0c7c4272ec5093:
-
-  pid: make ENOMEM return value more obvious (2020-03-09 23:40:05 +0100)
-
-Please consider pulling these changes from the signed for-linus-2020-03-10 tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-for-linus-2020-03-10
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      pid: make ENOMEM return value more obvious
-
-Corey Minyard (1):
-      pid: Fix error return value in some cases
-
- kernel/pid.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
