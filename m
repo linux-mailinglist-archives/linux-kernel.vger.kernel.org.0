@@ -2,129 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE0041821A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:13:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E66061821A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:14:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730962AbgCKTNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 15:13:34 -0400
-Received: from smtprelay-out1.synopsys.com ([149.117.73.133]:37796 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730705AbgCKTNe (ORCPT
+        id S1731079AbgCKTOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 15:14:02 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34899 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730925AbgCKTOB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:13:34 -0400
-Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id B870A43B76;
-        Wed, 11 Mar 2020 19:13:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1583954013; bh=GCnc8Pe16ifGGkBm9Qf1Pg9gDdgo5xyrsNj7YaH1v98=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=Yp/LTLFve61m3uCDVcZeEFomxUPuPRi/24K41uKhCJ/PBQxvEoKgiW3eMt3ORWWkf
-         SZonKrU10ZqoonSAuoVQfX9EbMp04lT1R/Vf6lkQaqLgkP6XWWs9ReKY/SnVlgeigq
-         waQAehba+IM5iENmUSlfChrlM/kPLIcnCIBS32AQIn9d7qsC28FqaYEZWmgoBw/zAb
-         LY/WBvruoh9kU1SK0UsQxjVUpTOXdp0pGBwGMkPYm/IngDNwW7rSM7fU0aPwFeMEz/
-         R+BCAijM0KnpVdruNULbbhLx3sfRmkRrbtsJKrO8dyyVCmkVU4Ih0hUITrtvyln/jz
-         z/FcbnMaqKOQw==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 881CBA0083;
-        Wed, 11 Mar 2020 19:13:33 +0000 (UTC)
-Received: from us01hybrid1.internal.synopsys.com (10.200.27.51) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 11 Mar 2020 12:13:29 -0700
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (10.202.3.67) by
- mrs.synopsys.com (10.200.27.51) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Wed, 11 Mar 2020 12:13:29 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Dfg0ZgCqIj3/JP9RDlYmNf8as7FuDI0TAC/yuJt/EO34/2flIWzHYghYPUHXyBhb/R/hJQQl0Hg7khf3OjFnJSOEC9sSwU2TUcEhn7SMIBHQL2Khod6qpTcWvEdHJw1aF/6AD53QxISANxnVoOcnio/GFE/b9dc8Bk7xyESZ/FBW+X57Uy3TbG///y7RGmJvapZdv+ANv1T1/G31HL+Y8Hd5UVGKtjkAVibL9C4bvHPaz45vmBPsxJyQaaraBHYtt8jD0UvYVSavF5flPEUnpMPLq3zeOn3RbZ92XGzKwBHJLVNI0fGMNdmDOmaL6fMC/STKsm7CcbfcOZDhTrlQKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GCnc8Pe16ifGGkBm9Qf1Pg9gDdgo5xyrsNj7YaH1v98=;
- b=DhXydrpnckpPgfxLALZcq0zipnXZp0Lr9d/RtHOYCneGRVjQ2yDqpT1Oez8hxGbTzzIgMAB8uM46MTu35awl8Vq9QxR94eb8XhTRVj5jALUCo3DcTpkl9HvJVG+UNcugQ6LjgtZd/ZEkKNVS3NLxRaaLxoj0liOw4FsVATgD+D8PMfvUhavrkO33eGl3sTCXWxN2RlnbmpAroFUVsw/X2TKhekvilqZfwNkJcT3wiKwCbq3Y4xn4lcqhAfX6eexvZUgHiMVXjqSQL/Gy9UDu5/I4PljYagrnGyJqVRT/KbvHzEf1q+cRN18tabnqJgkIY7FiYLB2/0avH7wB0BOKMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
- dkim=pass header.d=synopsys.com; arc=none
+        Wed, 11 Mar 2020 15:14:01 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d5so3758962wrc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:14:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GCnc8Pe16ifGGkBm9Qf1Pg9gDdgo5xyrsNj7YaH1v98=;
- b=Bre8N7Xb4G0vzoJtlFsOAZmWWAiFlnNw3X6EdkcKIPiPM8s1oJf6MO+RkgEsmnj9FooA6XGVNBzNYd9PUzr9CJ7ywvMH5ha9criDlMqSfOvhcSBncJqLJwRT7yJkGdeyyLkwX4mptR7x8vOb+OCrc7cdu2yj6XixyDSVFcuLvMU=
-Received: from BYAPR12MB3592.namprd12.prod.outlook.com (2603:10b6:a03:db::25)
- by BYAPR12MB3112.namprd12.prod.outlook.com (2603:10b6:a03:ae::25) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.17; Wed, 11 Mar
- 2020 19:13:28 +0000
-Received: from BYAPR12MB3592.namprd12.prod.outlook.com
- ([fe80::a45a:6a41:3fe5:2eb7]) by BYAPR12MB3592.namprd12.prod.outlook.com
- ([fe80::a45a:6a41:3fe5:2eb7%7]) with mapi id 15.20.2793.013; Wed, 11 Mar 2020
- 19:13:28 +0000
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Alexey Brodkin" <Alexey.Brodkin@synopsys.com>
-Subject: Re: [PATCH v2 3/4] ARC: add support for DSP-enabled userspace
- applications
-Thread-Topic: [PATCH v2 3/4] ARC: add support for DSP-enabled userspace
- applications
-Thread-Index: AQHV8ykv0O4Z+b6gX0KY0D/KHFb2oKhDy/cA
-Date:   Wed, 11 Mar 2020 19:13:28 +0000
-Message-ID: <6f7916f4-9ff9-e947-c62e-30000a4bcc84@synopsys.com>
-References: <20200305200252.14278-1-Eugeniy.Paltsev@synopsys.com>
- <20200305200252.14278-4-Eugeniy.Paltsev@synopsys.com>
-In-Reply-To: <20200305200252.14278-4-Eugeniy.Paltsev@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vgupta@synopsys.com; 
-x-originating-ip: [149.117.75.11]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1ba3b106-10ea-44e0-2866-08d7c5f047b2
-x-ms-traffictypediagnostic: BYAPR12MB3112:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR12MB31123F2A562B0202711D4A4BB6FC0@BYAPR12MB3112.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4714;
-x-forefront-prvs: 0339F89554
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(376002)(346002)(39860400002)(396003)(199004)(76116006)(71200400001)(66556008)(478600001)(66946007)(66476007)(64756008)(66446008)(31696002)(4744005)(8676002)(2906002)(86362001)(5660300002)(53546011)(81166006)(8936002)(81156014)(36756003)(6506007)(6512007)(2616005)(26005)(107886003)(4326008)(186003)(54906003)(316002)(31686004)(6486002)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR12MB3112;H:BYAPR12MB3592.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: synopsys.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 1I4sgSNL/i7LXmknuLSFEveCg89TOJQVgTgU0/7bjJLwt/kOGq3p32Lfiz0LGQUFu8/ojOne1AP5GqKVHqjq4U9hC5O8tAoSM+Jo5s/TThr9UJwCRcuueGwlc705eqXxC8AR1eg79f5WZlLfxYxjRYfIvZha3qz0eU2VbztSrD7Y8Q5Pv7my4MwcGdrEDcZ5z2l0RlITrtygf4xJy3Y7vk3NI2wth7lT8c9GgGEEHZPOMr+IFYXOU137fA4LefstmjlmWXZKMZ4akBWfu+UZr0TpZ9lw7Ao5g/q63nCkfC25vZZB4k+AsZuS9ndqFmuLhLkNSmvfDVAYUvy/MWlQS38Po9UFhjS/rIJhlL7PLnS0aSduVlh/EJvOiD4qPN7ThrLllVEFSVbPq54FKeAA7Yd3kBA0NBXJw6Hchrd/oqcQRAIVC7uWlv3eu165qMHQ
-x-ms-exchange-antispam-messagedata: ZbOgs+uwtNVvhxlLBRw+O2RswABN8aV4NL7MprX/crzHyxOn7gsGqUF2Liul8Qv/ZI+tZyCdbReSI3blXDOBthhJP4x957tKK/2WfyQNLo0etYtfm29PxwfPgAY1PS+Y9IXHyJExVtEzR1g3SOwG8g==
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6401D9DBA752F04C8C88B8138468C5BA@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ER8r6kuUaQFI4Ynly9v8z6IPFmvVEI9Rxdr3ANi7+iU=;
+        b=iicUtDXArOSxEFvBdjsxJcyXboEG8KFyobEdgv9o4gZQVZio9qKETqfoMqs4VtiV2x
+         SoEFBPXyciEwmI8pH4NzWRgYl387KY0wql+SWr6rEdu+MYmg7hz1mzncJ1d/SK5iT6Rl
+         wlqOyaXrZoCJl46i308wSnFJ5OolXi9qpMjcT7ul1l6Dbmfao97kEQ4ZMss9qz+i9Pyd
+         lryNEf9QpnxxA1lWDTuazNY8zXpjgXJpyO0+PT3IXWjB1/vok8O2JuVv9Rnsv1GiWSQK
+         0Kbb4QHEX7YhGLQONvDeKxu0/0bAhc73l9LSdPZVopdk6o6Gu69+UMssHjEnWj7uk39L
+         16cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ER8r6kuUaQFI4Ynly9v8z6IPFmvVEI9Rxdr3ANi7+iU=;
+        b=aFuv5sw20TdOAdGDHv/cr9wqEqImzhzsiJpBtyOMTFVFBOEqiQMXFmV0jaIKaKc9qj
+         8AM1F7Fd5MyjQcYNwFQ2W0+OtWL08Vm270qSuQNojkLKctypFtIaChdJOKoUSeUA6TXe
+         7TIfCLHV4x4uW9Uj8Z7QhSe3yZENqWSr4RkHUTHQPeKZ9F4Fw/63t7sgNSycZHb27fun
+         +mEPVmUk7XQJMs5uWjh2zoXEwWeO7Y98hMNLj1Wy6u2V/TPsLQsp8aFFBNIBnM9/b38g
+         5gBVnIUWo1oYstoDABpmMPywZq9EONpCcy6LS1Wiyvq0RcLofgzeANazZ2fw2Jqs7vPX
+         qU5A==
+X-Gm-Message-State: ANhLgQ1UDEYhPOXcMPcwey/cAhpfhCIcV6q2ea4vTdFawGZWJnJSIpMa
+        KrijF1vhonQB51vJ4yitrLWxRA==
+X-Google-Smtp-Source: ADFU+vtF+2GsRN9+8m8r6qqPD7Zzz4pXC2NvU1p4465LKdjjKrUCepF7L1yPBVk9/7CnhbYlxbtOAw==
+X-Received: by 2002:adf:8501:: with SMTP id 1mr6362304wrh.56.1583954039471;
+        Wed, 11 Mar 2020 12:13:59 -0700 (PDT)
+Received: from localhost.localdomain ([176.61.57.127])
+        by smtp.gmail.com with ESMTPSA id v8sm69443919wrw.2.2020.03.11.12.13.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 12:13:58 -0700 (PDT)
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To:     kishon@ti.com
+Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, jackp@codeaurora.org,
+        robh@kernel.org, bjorn.andersson@linaro.org,
+        p.zabel@pengutronix.de,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH 0/5] Enable Qualcomm QCS 404 HS/SS USB PHYs
+Date:   Wed, 11 Mar 2020 19:13:53 +0000
+Message-Id: <20200311191358.8102-1-bryan.odonoghue@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ba3b106-10ea-44e0-2866-08d7c5f047b2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2020 19:13:28.0606
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Q4lbC1C/K8hKjdwAjkF2OwnqdJnSlaTUZQG45OoY+sZB+h9VrGTUy7uQgufiM+j0HZHFJKWiJyNcoEoGmCGYuw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3112
-X-OriginatorOrg: synopsys.com
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMy81LzIwIDEyOjAyIFBNLCBFdWdlbml5IFBhbHRzZXYgd3JvdGU6DQo+IFRvIGJlIGFibGUg
-dG8gcnVuIERTUC1lbmFibGVkIHVzZXJzcGFjZSBhcHBsaWNhdGlvbnMgd2UgbmVlZCB0bw0KPiBz
-YXZlIGFuZCByZXN0b3JlIGZvbGxvd2luZyBEU1AtcmVsYXRlZCByZWdpc3RlcnM6DQo+IEF0IElS
-US9leGNlcHRpb24gZW50cnkvZXhpdDoNCj4gICogRFNQX0NUUkwgKHNhdmUgaXQgYW5kIHJlc2V0
-IHRvIHZhbHVlIHN1aXRhYmxlIGZvciBrZXJuZWwpDQo+ICAqIEFDQzBfTE8sIEFDQzBfSEkgKHdl
-IGFscmVhZHkgc2F2ZSB0aGVtIGFzIHI1OCwgcjU5IHBhaXIpDQo+IEF0IGNvbnRleHQgc3dpdGNo
-Og0KPiAgKiBBQ0MwX0dMTywgQUNDMF9HSEkNCj4gICogRFNQX0JGTFkwLCBEU1BfRkZUX0NUUkwN
-Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IEV1Z2VuaXkgUGFsdHNldiA8RXVnZW5peS5QYWx0c2V2QHN5
-bm9wc3lzLmNvbT4NCg0KQWNrZWQtYnk6IFZpbmVldCBHdXB0YSA8dmd1cHRhQHN5bm9wc3lzLmNv
-bT4NCg==
+This set of patches does the following:
+
+- Removes unused Qualcomm USB PHY bindings
+- Adds new USB PHY bindings for QCS404
+- Adds new USB PHY drivers for QCS404
+
+These patches have been through seven review cycles already and have a
+number of Review-by and Ack-by. For the pusposes of making it easier to
+merge this set focuses on the PHY stuff in isolation.
+
+The last set for can be found here:
+https://lkml.org/lkml/2020/3/3/807
+
+Jorge Ramirez-Ortiz (3):
+  dt-bindings: phy: remove qcom-dwc3-usb-phy
+  dt-bindings: Add Qualcomm USB SuperSpeed PHY bindings
+  phy: qualcomm: usb: Add SuperSpeed PHY driver
+
+Shawn Guo (1):
+  phy: qualcomm: Add Synopsys 28nm Hi-Speed USB PHY driver
+
+Sriharsha Allenki (1):
+  dt-bindings: phy: Add Qualcomm Synopsys Hi-Speed USB PHY binding
+
+ .../bindings/phy/qcom,usb-hs-28nm.yaml        |  90 ++++
+ .../devicetree/bindings/phy/qcom,usb-ss.yaml  |  83 ++++
+ .../bindings/phy/qcom-dwc3-usb-phy.txt        |  37 --
+ drivers/phy/qualcomm/Kconfig                  |  20 +
+ drivers/phy/qualcomm/Makefile                 |   2 +
+ drivers/phy/qualcomm/phy-qcom-usb-hs-28nm.c   | 415 ++++++++++++++++++
+ drivers/phy/qualcomm/phy-qcom-usb-ss.c        | 246 +++++++++++
+ 7 files changed, 856 insertions(+), 37 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/qcom,usb-hs-28nm.yaml
+ create mode 100644 Documentation/devicetree/bindings/phy/qcom,usb-ss.yaml
+ delete mode 100644 Documentation/devicetree/bindings/phy/qcom-dwc3-usb-phy.txt
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-usb-hs-28nm.c
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-usb-ss.c
+
+-- 
+2.25.1
+
