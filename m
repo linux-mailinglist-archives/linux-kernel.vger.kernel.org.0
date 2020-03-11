@@ -2,107 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D71B18136C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:39:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44BA818137D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:42:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728630AbgCKIjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 04:39:03 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44659 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728263AbgCKIjD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 04:39:03 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l18so1395918wru.11
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 01:39:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=C83D13RbbLMx100lu80tj5F+qur1iKkMPkCCyf8642M=;
-        b=qgmR9LE0krcismS1swJKI4gB90CjjCXHhgw83BxO8WRSBjMPILGxZ4XkBGSn1FUHyn
-         LRtAIscXPPjirZ6py0Bkkl1Vwd6topbKsuSTtwku04iMbpMxXsExfNbkHT/LLV5rj6TA
-         TmPfLdtq59s9BjiGHeh6dQx8gz5Z8KhLxxpzbmqyzLlV0OzkeLbtubd54S7r+MRZ5iiQ
-         3MHOnKMOP99/1sUua6ZczQkIfT0ZCMu+7A5a0sbCmr47Wb9DPhsIp9xvYUKAAquRjg34
-         0qtGH2y5w/QZpeIsxoU9CIHB+0w3mFFuTZjhXIEiUVHGVjr0wJ5yaJ1hSRgNP0Q5SxqK
-         5meg==
-X-Gm-Message-State: ANhLgQ2DEKdwCNMqbRscuUvIKGtG9NE5tCF4q3Xaa5qOtLl3OUI3xYhw
-        KMUtH+dDlubCOcFDr5VGTfqUwzQS
-X-Google-Smtp-Source: ADFU+vs7t+U0ceJGkiZIaqRViEUlJVUvfjKGh7J9G6TaUk8MKCJbZ3ArKDHjsJXiBHb/gwLkAl4WmA==
-X-Received: by 2002:adf:f105:: with SMTP id r5mr3155919wro.314.1583915941473;
-        Wed, 11 Mar 2020 01:39:01 -0700 (PDT)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id n2sm1455019wrr.62.2020.03.11.01.39.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 01:39:00 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 09:39:00 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Robert Kolchmeyer <rkolchmeyer@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch] mm, oom: make a last minute check to prevent unnecessary
- memcg oom kills
-Message-ID: <20200311083900.GC23944@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.2003101454580.142656@chino.kir.corp.google.com>
- <20200310221938.GF8447@dhcp22.suse.cz>
- <alpine.DEB.2.21.2003101547090.177273@chino.kir.corp.google.com>
+        id S1728721AbgCKIk6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 04:40:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51106 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726934AbgCKIk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 04:40:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 61764B090;
+        Wed, 11 Mar 2020 08:40:55 +0000 (UTC)
+Subject: Re: [PATCH] mm,cma: remove pfn_range_valid_contig
+To:     Rik van Riel <riel@surriel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, Anshuman Khandual <anshuman.khandual@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Qian Cai <cai@lca.pw>, Roman Gushchin <guro@fb.com>
+References: <20200306170647.455a2db3@imladris.surriel.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <0f8bf6ad-ab1b-dc1d-259f-bc6deb447ce8@suse.cz>
+Date:   Wed, 11 Mar 2020 09:40:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2003101547090.177273@chino.kir.corp.google.com>
+In-Reply-To: <20200306170647.455a2db3@imladris.surriel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 10-03-20 15:54:44, David Rientjes wrote:
-> On Tue, 10 Mar 2020, Michal Hocko wrote:
+On 3/6/20 11:06 PM, Rik van Riel wrote:
+> The function pfn_range_valid_contig checks whether all memory in the
+> target area is free. This causes unnecessary CMA failures, since
+> alloc_contig_range will migrate movable memory out of a target range,
+> and has its own sanity check early on in has_unmovable_pages, which
+> is called from start_isolate_page_range & set_migrate_type_isolate.
 > 
-> > On Tue 10-03-20 14:55:50, David Rientjes wrote:
-> > > Killing a user process as a result of hitting memcg limits is a serious
-> > > decision that is unfortunately needed only when no forward progress in
-> > > reclaiming memory can be made.
-> > > 
-> > > Deciding the appropriate oom victim can take a sufficient amount of time
-> > > that allows another process that is exiting to actually uncharge to the
-> > > same memcg hierarchy and prevent unnecessarily killing user processes.
-> > > 
-> > > An example is to prevent *multiple* unnecessary oom kills on a system
-> > > with two cores where the oom kill occurs when there is an abundance of
-> > > free memory available:
-> > > 
-> > > Memory cgroup out of memory: Killed process 628 (repro) total-vm:41944kB, anon-rss:40888kB, file-rss:496kB, shmem-rss:0kB, UID:0 pgtables:116kB oom_score_adj:0
-> > > <immediately after>
-> > > repro invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=0
-> > > CPU: 1 PID: 629 Comm: repro Not tainted 5.6.0-rc5+ #130
-> > > Call Trace:
-> > >  dump_stack+0x78/0xb6
-> > >  dump_header+0x55/0x240
-> > >  oom_kill_process+0xc5/0x170
-> > >  out_of_memory+0x305/0x4a0
-> > >  try_charge+0x77b/0xac0
-> > >  mem_cgroup_try_charge+0x10a/0x220
-> > >  mem_cgroup_try_charge_delay+0x1e/0x40
-> > >  handle_mm_fault+0xdf2/0x15f0
-> > >  do_user_addr_fault+0x21f/0x420
-> > >  async_page_fault+0x2f/0x40
-> > > memory: usage 61336kB, limit 102400kB, failcnt 74
-> > > 
-> > > Notice the second memcg oom kill shows usage is >40MB below its limit of
-> > > 100MB but a process is still unnecessarily killed because the decision has
-> > > already been made to oom kill by calling out_of_memory() before the
-> > > initial victim had a chance to uncharge its memory.
-> > 
-> > Could you be more specific about the specific workload please?
-> > 
+> Relying on that has_unmovable_pages call simplifies the CMA code and
+> results in an increased success rate of CMA allocations.
 > 
-> Robert, could you elaborate on the user-visible effects of this issue that 
-> caused it to initially get reported?
+> Signed-off-by: Rik van Riel <riel@surriel.com>
 
-Yes please, real life usecases are important when adding hacks like this
-one and we should have a clear data to support the check actually helps
-(in how many instances etc...)
--- 
-Michal Hocko
-SUSE Labs
+Yeah, the page_count and PageHuge checks are harmful. Not sure about
+PageReserved. And is anything later in the alloc_contig_range() making sure that
+we are always in the same zone?
+
+> ---
+>  mm/page_alloc.c | 47 +++--------------------------------------------
+>  1 file changed, 3 insertions(+), 44 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 0fb3c1719625..75e84907d8c6 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -8539,32 +8539,6 @@ static int __alloc_contig_pages(unsigned long start_pfn,
+>  				  gfp_mask);
+>  }
+>  
+> -static bool pfn_range_valid_contig(struct zone *z, unsigned long start_pfn,
+> -				   unsigned long nr_pages)
+> -{
+> -	unsigned long i, end_pfn = start_pfn + nr_pages;
+> -	struct page *page;
+> -
+> -	for (i = start_pfn; i < end_pfn; i++) {
+> -		page = pfn_to_online_page(i);
+> -		if (!page)
+> -			return false;
+> -
+> -		if (page_zone(page) != z)
+> -			return false;
+> -
+> -		if (PageReserved(page))
+> -			return false;
+> -
+> -		if (page_count(page) > 0)
+> -			return false;
+> -
+> -		if (PageHuge(page))
+> -			return false;
+> -	}
+> -	return true;
+> -}
+> -
+>  static bool zone_spans_last_pfn(const struct zone *zone,
+>  				unsigned long start_pfn, unsigned long nr_pages)
+>  {
+> @@ -8605,28 +8579,13 @@ struct page *alloc_contig_pages(unsigned long nr_pages, gfp_t gfp_mask,
+>  	zonelist = node_zonelist(nid, gfp_mask);
+>  	for_each_zone_zonelist_nodemask(zone, z, zonelist,
+>  					gfp_zone(gfp_mask), nodemask) {
+> -		spin_lock_irqsave(&zone->lock, flags);
+> -
+>  		pfn = ALIGN(zone->zone_start_pfn, nr_pages);
+>  		while (zone_spans_last_pfn(zone, pfn, nr_pages)) {
+> -			if (pfn_range_valid_contig(zone, pfn, nr_pages)) {
+> -				/*
+> -				 * We release the zone lock here because
+> -				 * alloc_contig_range() will also lock the zone
+> -				 * at some point. If there's an allocation
+> -				 * spinning on this lock, it may win the race
+> -				 * and cause alloc_contig_range() to fail...
+> -				 */
+> -				spin_unlock_irqrestore(&zone->lock, flags);
+> -				ret = __alloc_contig_pages(pfn, nr_pages,
+> -							gfp_mask);
+> -				if (!ret)
+> -					return pfn_to_page(pfn);
+> -				spin_lock_irqsave(&zone->lock, flags);
+> -			}
+> +			ret = __alloc_contig_pages(pfn, nr_pages, gfp_mask);
+> +			if (!ret)
+> +				return pfn_to_page(pfn);
+>  			pfn += nr_pages;
+>  		}
+> -		spin_unlock_irqrestore(&zone->lock, flags);
+>  	}
+>  	return NULL;
+>  }
+> 
+
