@@ -2,85 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD750181F10
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:17:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C7F5181EE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:14:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730559AbgCKRQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:16:50 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24700 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730408AbgCKRQs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:16:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583947007;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wdADVxXhJgEXL3ktYCtYRoI/HrQwnEtYWZwwV0awFRY=;
-        b=IXFxVKjOXlUnAhcnDQLWfZ6EVsO6XGNnUkVsigEgdS4JOPNYGKXLHDRz3w93q026dvw/9A
-        xB1Xg6qEqj7XW4G5arb8TtWMMPEgLNUbDdpNkp305XvsKlts+w2Is/CJzd7JqzEovC8u/q
-        Sn3FsYaWennIy4pOSr1yYq4zoNAWnXw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-353-TQMyPHx5MzGwUywT1SRRIQ-1; Wed, 11 Mar 2020 13:16:44 -0400
-X-MC-Unique: TQMyPHx5MzGwUywT1SRRIQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1730222AbgCKROu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:14:50 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:49428 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729675AbgCKROu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:14:50 -0400
+Received: from zn.tnic (p200300EC2F12AA00280D644233BA3664.dip0.t-ipconnect.de [IPv6:2003:ec:2f12:aa00:280d:6442:33ba:3664])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7271C800EBC;
-        Wed, 11 Mar 2020 17:16:40 +0000 (UTC)
-Received: from t480s.redhat.com (ovpn-116-132.ams2.redhat.com [10.36.116.132])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9444860BEE;
-        Wed, 11 Mar 2020 17:16:38 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, virtio-dev@lists.oasis-open.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        David Hildenbrand <david@redhat.com>
-Subject: [PATCH v2 10/10] MAINTAINERS: Add myself as virtio-mem maintainer
-Date:   Wed, 11 Mar 2020 18:14:22 +0100
-Message-Id: <20200311171422.10484-11-david@redhat.com>
-In-Reply-To: <20200311171422.10484-1-david@redhat.com>
-References: <20200311171422.10484-1-david@redhat.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 20F4A1EC0304;
+        Wed, 11 Mar 2020 18:14:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1583946888;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=pOIR3Q7MS+lWIofLjdYvowmUr10Fu8TbBWzKCrl1rVA=;
+        b=ezMmFg+NM6ZkBHnYwJtIeF9dDV3RY4eUQh+O44OctmClapZxbkZKHf0OC5ckcMzcFfCUZW
+        pS99lHQnfKNvGaeMIC4isPhORCQUJoVcfKePh24IeuuoAs1Qv68UtDCnfGhT3FMv3cUk+z
+        PvFJbrFKQql3oxi/CxWrApOEB1xP1zs=
+Date:   Wed, 11 Mar 2020 18:14:50 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Joe Perches <joe@perches.com>
+Cc:     Tony Luck <tony.luck@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next 022/491] X86 MCE INFRASTRUCTURE: Use fallthrough;
+Message-ID: <20200311171450.GH3470@zn.tnic>
+References: <cover.1583896344.git.joe@perches.com>
+ <1dbc36979b08577a2d589b7fe572f83aadf7b5ef.1583896349.git.joe@perches.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1dbc36979b08577a2d589b7fe572f83aadf7b5ef.1583896349.git.joe@perches.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's make sure patches/bug reports find the right person.
+On Tue, Mar 10, 2020 at 09:51:36PM -0700, Joe Perches wrote:
 
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+> Subject: Re: [PATCH -next 022/491] X86 MCE INFRASTRUCTURE: Use fallthrough;
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f6dcd1233935..ee0e7cbca5c6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17937,6 +17937,13 @@ S:	Maintained
- F:	drivers/iommu/virtio-iommu.c
- F:	include/uapi/linux/virtio_iommu.h
-=20
-+VIRTIO MEM DRIVER
-+M:	David Hildenbrand <david@redhat.com>
-+L:	virtualization@lists.linux-foundation.org
-+S:	Maintained
-+F:	drivers/virtio/virtio_mem.c
-+F:	include/uapi/linux/virtio_mem.h
-+
- VIRTUAL BOX GUEST DEVICE DRIVER
- M:	Hans de Goede <hdegoede@redhat.com>
- M:	Arnd Bergmann <arnd@arndb.de>
---=20
-2.24.1
+Make that subject prefix "x86/mce: ..."
 
+> Convert the various uses of fallthrough comments to fallthrough;
+> 
+> Done via script
+> Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe.com/
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+>  arch/x86/kernel/cpu/mce/inject.c | 2 +-
+>  arch/x86/kernel/cpu/mce/intel.c  | 4 +---
+>  2 files changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/mce/inject.c b/arch/x86/kernel/cpu/mce/inject.c
+> index 3413b41..b5e3bab 100644
+> --- a/arch/x86/kernel/cpu/mce/inject.c
+> +++ b/arch/x86/kernel/cpu/mce/inject.c
+> @@ -199,7 +199,7 @@ static int raise_local(void)
+>  			 * calling irq_enter, but the necessary
+>  			 * machinery isn't exported currently.
+>  			 */
+> -			/*FALL THROUGH*/
+> +			fallthrough;
+>  		case MCJ_CTX_PROCESS:
+>  			raise_exception(m, NULL);
+>  			break;
+> diff --git a/arch/x86/kernel/cpu/mce/intel.c b/arch/x86/kernel/cpu/mce/intel.c
+> index d8f9230..5be647 100644
+> --- a/arch/x86/kernel/cpu/mce/intel.c
+> +++ b/arch/x86/kernel/cpu/mce/intel.c
+> @@ -192,9 +192,7 @@ unsigned long cmci_intel_adjust_timer(unsigned long interval)
+>  		__this_cpu_write(cmci_storm_state, CMCI_STORM_SUBSIDED);
+>  		if (!atomic_sub_return(1, &cmci_storm_on_cpus))
+>  			pr_notice("CMCI storm subsided: switching to interrupt mode\n");
+> -
+> -		/* FALLTHROUGH */
+> -
+> +		fallthrough;
+>  	case CMCI_STORM_SUBSIDED:
+>  		/*
+>  		 * We wait for all CPUs to go back to SUBSIDED state. When that
+> -- 
+
+With that:
+
+Acked-by: Borislav Petkov <bp@suse.de>
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
