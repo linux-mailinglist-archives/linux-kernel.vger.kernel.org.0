@@ -2,103 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44C62181EC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:09:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE797181ECF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:09:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730235AbgCKRJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:09:24 -0400
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:50128 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730055AbgCKRJY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:09:24 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 0C79D3FF96;
-        Wed, 11 Mar 2020 18:09:22 +0100 (CET)
-Authentication-Results: ste-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=LCRzxYi9;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=shipmail.org
-Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id dUa-2b0bjt8Z; Wed, 11 Mar 2020 18:09:21 +0100 (CET)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 1AA9F3FF88;
-        Wed, 11 Mar 2020 18:09:19 +0100 (CET)
-Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 730CF362EB1;
-        Wed, 11 Mar 2020 18:09:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1583946559; bh=QALlf4jaCGRsKuKgXyRiZ+GDUymJdPMTcMsIafOFzT4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LCRzxYi9G0SPusaigDSI6LpV+XE57W3UDu5RpVgQERtMgmF6Tw+gXWO9jqgKQDVC0
-         40YAkzawHdzDxRQC3H4BpCnaU4mu0/ubE4tEwdKw2ZlzfrWh7LAdwT0tfdPN2gs+or
-         pjzn83CbWAfGw1LPHgJ8v47qka2V+bz8PGxuoafU=
-From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
-        <thomas_os@shipmail.org>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Brian Paul <brianp@vmware.com>
-Subject: [PATCH 2/2] drm/vmwgfx: Refuse DMA operation when SEV encryption is active
-Date:   Wed, 11 Mar 2020 18:08:39 +0100
-Message-Id: <20200311170839.3617-2-thomas_os@shipmail.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200311170839.3617-1-thomas_os@shipmail.org>
-References: <20200311170839.3617-1-thomas_os@shipmail.org>
+        id S1730390AbgCKRJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:09:42 -0400
+Received: from mga01.intel.com ([192.55.52.88]:16911 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730312AbgCKRJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:09:41 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 10:09:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
+   d="scan'208";a="415637047"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga005.jf.intel.com with ESMTP; 11 Mar 2020 10:09:40 -0700
+Date:   Wed, 11 Mar 2020 10:09:40 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v6 03/14] KVM: X86: Don't track dirty for
+ KVM_SET_[TSS_ADDR|IDENTITY_MAP_ADDR]
+Message-ID: <20200311170940.GH21852@linux.intel.com>
+References: <20200309214424.330363-4-peterx@redhat.com>
+ <202003110908.UE6SBwLU%lkp@intel.com>
+ <20200311163906.GG479302@xz-x1>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200311163906.GG479302@xz-x1>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+On Wed, Mar 11, 2020 at 12:39:06PM -0400, Peter Xu wrote:
+> On Wed, Mar 11, 2020 at 09:10:04AM +0800, kbuild test robot wrote:
+> > Hi Peter,
+> > 
+> > Thank you for the patch! Perhaps something to improve:
+> > 
+> > [auto build test WARNING on tip/auto-latest]
+> > [also build test WARNING on vhost/linux-next linus/master v5.6-rc5 next-20200310]
+> > [cannot apply to kvm/linux-next linux/master]
+> > [if your patch is applied to the wrong git tree, please drop us a note to help
+> > improve the system. BTW, we also suggest to use '--base' option to specify the
+> > base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+> > 
+> > url:    https://github.com/0day-ci/linux/commits/Peter-Xu/KVM-Dirty-ring-interface/20200310-070637
+> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git 12481c76713078054f2d043b3ce946e4814ac29f
+> > reproduce:
+> >         # apt-get install sparse
+> >         # sparse version: v0.6.1-174-g094d5a94-dirty
+> >         make ARCH=x86_64 allmodconfig
+> >         make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+> > 
+> > If you fix the issue, kindly add following tag
+> > Reported-by: kbuild test robot <lkp@intel.com>
+> > 
+> > 
+> > sparse warnings: (new ones prefixed by >>)
+> > 
+> >    arch/x86/kvm/x86.c:2599:38: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const [noderef] <asn:1> * @@    got  const [noderef] <asn:1> * @@
+> >    arch/x86/kvm/x86.c:2599:38: sparse:    expected void const [noderef] <asn:1> *
+> >    arch/x86/kvm/x86.c:2599:38: sparse:    got unsigned char [usertype] *
+> >    arch/x86/kvm/x86.c:7501:15: sparse: sparse: incompatible types in comparison expression (different address spaces):
+> >    arch/x86/kvm/x86.c:7501:15: sparse:    struct kvm_apic_map [noderef] <asn:4> *
+> >    arch/x86/kvm/x86.c:7501:15: sparse:    struct kvm_apic_map *
+> > >> arch/x86/kvm/x86.c:9794:31: sparse: sparse: incorrect type in return expression (different address spaces) @@    expected void [noderef] <asn:1> * @@    got n:1> * @@
+> 
+> I'm not sure on how I can reproduce this locally, and also I'm not
+> very sure I understand this warning.  I'd be glad to know if anyone
+> knows...
+> 
+> If without further hints, I'll try to remove the __user for
+> __x86_set_memory_region() and use a cast on the callers next.
 
-TTM doesn't yet fully support mapping of DMA memory when SEV is active,
-so in that case, refuse DMA operation. For guest-backed object operation
-this means 3D acceleration will be disabled. For host-backed, VRAM will be
-used for data transfer between the guest and the device.
+Ah, it's complaining that the ERR_PTR() returns in __x86_set_memory_region()
+aren't explicitly casting to a __user pointer.
 
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Reviewed-by: Brian Paul <brianp@vmware.com>
----
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Part of me wonders if something along the lines of your original approach
+of keeping the "int" return and passing a "void __user **p_hva" would be
+cleaner overall, as opposed to having to cast everywhere.  The diff would
+certainly be smaller.  E.g.
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-index f2ec3155468d..4f58364421ce 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -29,6 +29,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-+#include <linux/mem_encrypt.h>
- 
- #include <drm/drm_drv.h>
- #include <drm/drm_ioctl.h>
-@@ -575,6 +576,10 @@ static int vmw_dma_select_mode(struct vmw_private *dev_priv)
- 		[vmw_dma_map_populate] = "Caching DMA mappings.",
- 		[vmw_dma_map_bind] = "Giving up DMA mappings early."};
- 
-+	/* TTM currently doesn't fully support SEV encryption. */
-+	if (mem_encrypt_active())
-+		return -EINVAL;
-+
- 	if (vmw_force_coherent)
- 		dev_priv->map_mode = vmw_dma_alloc_coherent;
- 	else if (vmw_restrict_iommu)
--- 
-2.21.1
+int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size,
+			    void __user **p_hva)
+{
+	...
 
+	if (p_hva)
+		*p_hva = (void __user *)hva;
+
+        return 0;
+}
