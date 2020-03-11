@@ -2,91 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81778181C60
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:34:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69B03181C6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:35:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729973AbgCKPen (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 11:34:43 -0400
-Received: from mout.gmx.net ([212.227.15.15]:60243 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729646AbgCKPen (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 11:34:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1583940880;
-        bh=qMTvCor3jpfyFKgrZ9wr9DsSBzIOqOTlphBmida8eK4=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=RuVgq6apKeIpfL7yIgcXFXy2jbBayyfh1TwPIu2dht6gHYx7ZJm+tNzak5ZQrJx+0
-         IyB1YWkt5t9J+7U6Fszss0V/76E6dMVspVNZpBvcuWO8MQi1o98ayaCGjckbTDZUe0
-         IuSuoLO+Yj7MgGo3n5or6Gm2Yt2c+lOtQr9d/seg=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [10.81.10.6] ([196.52.84.30]) by mail.gmx.com (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1Mk0Ne-1jaQuV48ds-00kL0E; Wed, 11
- Mar 2020 16:34:40 +0100
-Subject: Re: [Bug 206175] Fedora >= 5.4 kernels instantly freeze on boot
- without producing any display output
-To:     Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        iommu@lists.linux-foundation.org
-References: <bug-206175-5873@https.bugzilla.kernel.org/>
- <bug-206175-5873-S6PaNNClEr@https.bugzilla.kernel.org/>
- <CAHk-=wi4GS05j67V0D_cRXRQ=_Jh-NT0OuNpF-JFsDFj7jZK9A@mail.gmail.com>
- <20200310162342.GA4483@lst.de>
- <CAHk-=wgB2YMM6kw8W0wq=7efxsRERL14OHMOLU=Nd1OaR+sXvw@mail.gmail.com>
- <20200310182546.GA9268@lst.de> <20200311152453.GB23704@lst.de>
-From:   "Artem S. Tashkinov" <aros@gmx.com>
-Message-ID: <e70dd793-e8b8-ab0c-6027-6c22b5a99bfc@gmx.com>
-Date:   Wed, 11 Mar 2020 15:34:38 +0000
+        id S1730031AbgCKPfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 11:35:19 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:44213 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730020AbgCKPfT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 11:35:19 -0400
+Received: by mail-vk1-f193.google.com with SMTP id s194so642844vkb.11
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 08:35:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=44KMhJHWm8HZn3OxGvi82dZNfs9ed2LpZdiM7LdpP/Y=;
+        b=VPPIlhV3Af2X+JuRVM1wrhOFW3BuR87y+SfDe+sg4rTNkuDJL02wgw5a96Vtcg4AP8
+         2sryc0lZrN0wiaWVeBKRU0h2IuNoFIoBdBN/c2ZxqfpcVTj3QtONeBmk7dFo/K32qPh0
+         lPQodtTyBk7qGA0neWHyPWREzx9wWetbqu5sTNrZmapw88PSuUthTqb0q87gL9z9dZx7
+         PwLdfmNcvfmB3lH7I6BbtQ0vEnG+mrLbOc8xGgOdFYMsbQ6EeMQ5xR8YbdP3KTpiuLpQ
+         2XNaiqg7+zxt7iRgu/pKBy90kRGUbNtLNyGYHD02Z4Yu53C98MnU9vtD/pRuR/YYOyR4
+         ARdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=44KMhJHWm8HZn3OxGvi82dZNfs9ed2LpZdiM7LdpP/Y=;
+        b=FaG37EuqkSs3cyPfa+jJqQ2OFPHki8XPdHuvpTHu7czr+Amu6fHWcklAP4lemPDKWQ
+         DDp55lb0Q9vIqhJ38V6Apuk0WiCpSLYMePLJOG82Z7MpZCMV3D5Xn1zeoNi13P4so3/t
+         L1J1OX9ZMPs/GMcB0QqH1YQ/d4eyIdO+ikzmPmkTqhZPqHHzws932jRNL9C8lNzG5RZd
+         nTOl67WTwyudSwecU/wLMkN63hmRggXA6kMVtKorUDhLpW+kQmJWTLWMFP8WrPmlnn0q
+         gFObjtNJ7QGCekKzAixsOtWv2f9YkKtPY/38mpBSCCkCz+zTt2dwECKoEBaskpRfJwTk
+         +5Xw==
+X-Gm-Message-State: ANhLgQ1BK9m5psWWGleJuKYM0Yv9M3LdULJSZtzYZ3IwtN5Dvcn5CwlG
+        2dz2WNw0tJzDBQznDgW5VaEIJb49cKtuz/DdFUwQZw==
+X-Google-Smtp-Source: ADFU+vuh8H/6ItX+lmltncMiOZy1e8lV20DlYIwXecECEf4+QeuEY3mWGDBOB7VJvWftDS8S+POR92TGfS5nFTchfuA=
+X-Received: by 2002:a1f:b695:: with SMTP id g143mr2366350vkf.59.1583940916897;
+ Wed, 11 Mar 2020 08:35:16 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200311152453.GB23704@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: ru
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:ipwOs7FlOcH+6J3PcePxcCRnbvZHEtKYkRq97SxCZoHICwHq3Qg
- 2cMPf807JYMW2jipwGFmwqS+2FKbj09pzZS9ojZKYXyfQ7ATZcA8xOxp9NZaY47J7in3zJD
- egeVJhsFqz7R2pVZuZ9tqYc9V1oGQ7ksWYlMKhm12henmD5eGZ0B5HXC1gfYrfC8hN0KUN0
- GqYV3A5CtCPO+Bc2QAYfA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:S5f+/dbDwjk=:pN0thVNlQMKusrih9u/FU5
- BwQB4ytnyRj0sf8lGxDl3fZqKxDRBXiOoWOqaI4d0pugdjDxGJjv+L7WAvUaXXUIgajj9FUq3
- W+mnNsHR3t9oOEvkXa4DSbjlm7tPQX78+hEmW5Th8FWc0OG5MmfML8zFfvlChj+F+/oO/O1t6
- TuOhvFapJ5KjrsS9ZnZf8qXvP6YP3PNkbTVuEppxBrx/m41SFhtDgAyg7Ad01mESt9jBF3y0T
- A6Vje+IYY/qtAzlp2n5ExLYVRuLZPnSkW7sbZh0sqpXVenleLZGzq9Ukmy5UK8skjGtLjoX4z
- 0ZppStq8r+gxj+xcpON56jSidDvt2jCc/KV8O85sDAqKAD2SEaZUnHluJcM4+3u2aetxaC/3a
- Y9+oXjwRcoYoR+a0/Pz12ATKd8xA0FiebzdaiExoJ8kQAiE1FzfMByqzpgVTCYej0QyQYCxDr
- YNElQGjyD3oIi4mIZeCnRjEw0Qork28+8faMluWYnNT2RC3iN+xUBuwoh0fDQkcQJZcZN6WZf
- QMLSXw4SUjej8AceXJGUJrzHsotMNqlsqfHV/W67acOu96VChlswI5zdJ/V23FbqSS1TVrYaj
- xA0BMB4NFpYGUsxRDAfwFvKiquLSrfo+HV6nBD3BD52PuEv6fbe6AYOnOMzenDHyMTJNShUe+
- PrKI7zEW2ghdTzPwF+eQdhKP0WDTKffOBv1LHtDarDlw2mK7i56Gjt1KE7xBDWRQS/jv9cCtC
- QRTItsbS4C+eynjd2xs4A/7djHU0dDq3YRlm2p2K1TOhhL660O6KCx6BK+fvf57ujVSx0vqIO
- M6RyB4yOKZO6aNedwOPK8rRHw2z1c9SfIdf/GcT2lO25DJkaPftSkorlQCFDc+b9mX1yJe28O
- PwsB033dop/ltjEodf4q1N5y3KI2VM9FufCL/NzpIwSH8UhvUOIBPAxYQ8AieuCBC4uqdkhEe
- IypiD3vYee2IKhkHUxEzHvLOx9WdNs05CnSJSyXt1jhw19Q/5s6EEonuQr8PSdnK8amkbh4Vl
- /zOBhoVa1NdOQRgCx345q3dtQ2J1iFe6/PhG829OdK7kncpDEC7SiAsWDbNyKvk4J3EyB+o+S
- mZ+ybqE9T3tAbaxjl0oAgpCAU5qubNp6+dc3fomhLU8QgnqBkgTznPE9i1vQL8uABOsCCYGu9
- C14BALcNfVu0iMAFPDQuWGhQkzoAqUg9ukaoqcG6SBnz9e0k4DARaAxwCYEklai/0ehHuviw7
- Gdw54J368hjobO/wt
+References: <20200305151228.24692-1-faiz_abbas@ti.com>
+In-Reply-To: <20200305151228.24692-1-faiz_abbas@ti.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 11 Mar 2020 16:34:40 +0100
+Message-ID: <CAPDyKFrRcCzLs=Oab_ct_1yLkfCAT9mB4exT3er-UyFUKK_ePw@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: sdhci-omap: Add Support for Suspend/Resume
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Kishon <kishon@ti.com>, Adrian Hunter <adrian.hunter@intel.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/11/20 3:24 PM, Christoph Hellwig wrote:
-> pdev->dma_mask = parent->dma_mask ? *parent->dma_mask : 0;
+On Thu, 5 Mar 2020 at 16:10, Faiz Abbas <faiz_abbas@ti.com> wrote:
+>
+> Add power management ops which save and restore the driver context and
+> facilitate a system suspend and resume.
+>
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 
-This patch makes no difference.
+Applied for next, thanks!
 
-The kernel panics with the same call trace which starts with:
+Kind regards
+Uffe
 
-RIP: 0010:kmem_cache_alloc_trace
-...
 
-? acpi_ds_create_walk_state
-acpi_ds_create_walk_state
-acpi_ds_call_control_method
-acpi_ds_parse_aml
-acpi_ps_execute_method
-acpi_ns_evaluate
-acpi_ut_evaluate_object
-...
+> ---
+> v2:
+> 1. Save and restore only those registers which are not written to by
+>    core
+> 2. Use force_suspend()/resume() APIs instead of runtime_resume()/suspend()
+>    as the driver has no runtime PM support.
+>  drivers/mmc/host/sdhci-omap.c | 57 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+> index 882053151a47..989133ec74d6 100644
+> --- a/drivers/mmc/host/sdhci-omap.c
+> +++ b/drivers/mmc/host/sdhci-omap.c
+> @@ -108,6 +108,11 @@ struct sdhci_omap_host {
+>         struct pinctrl          *pinctrl;
+>         struct pinctrl_state    **pinctrl_state;
+>         bool                    is_tuning;
+> +       /* Omap specific context save */
+> +       u32                     con;
+> +       u32                     hctl;
+> +       u32                     sysctl;
+> +       u32                     capa;
+>  };
+>
+>  static void sdhci_omap_start_clock(struct sdhci_omap_host *omap_host);
+> @@ -1232,12 +1237,64 @@ static int sdhci_omap_remove(struct platform_device *pdev)
+>
+>         return 0;
+>  }
+> +#ifdef CONFIG_PM_SLEEP
+> +static void sdhci_omap_context_save(struct sdhci_omap_host *omap_host)
+> +{
+> +       omap_host->con = sdhci_omap_readl(omap_host, SDHCI_OMAP_CON);
+> +       omap_host->hctl = sdhci_omap_readl(omap_host, SDHCI_OMAP_HCTL);
+> +       omap_host->capa = sdhci_omap_readl(omap_host, SDHCI_OMAP_CAPA);
+> +}
+> +
+> +static void sdhci_omap_context_restore(struct sdhci_omap_host *omap_host)
+> +{
+> +       sdhci_omap_writel(omap_host, SDHCI_OMAP_CON, omap_host->con);
+> +       sdhci_omap_writel(omap_host, SDHCI_OMAP_HCTL, omap_host->hctl);
+> +       sdhci_omap_writel(omap_host, SDHCI_OMAP_CAPA, omap_host->capa);
+> +}
+> +
+> +static int __maybe_unused sdhci_omap_suspend(struct device *dev)
+> +{
+> +       struct sdhci_host *host = dev_get_drvdata(dev);
+> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +       struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
+> +
+> +       sdhci_suspend_host(host);
+> +
+> +       sdhci_omap_context_save(omap_host);
+> +
+> +       pinctrl_pm_select_idle_state(dev);
+> +
+> +       pm_runtime_force_suspend(dev);
+> +
+> +       return 0;
+> +}
+> +
+> +static int __maybe_unused sdhci_omap_resume(struct device *dev)
+> +{
+> +       struct sdhci_host *host = dev_get_drvdata(dev);
+> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +       struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
+> +
+> +       pm_runtime_force_resume(dev);
+> +
+> +       pinctrl_pm_select_default_state(dev);
+> +
+> +       sdhci_omap_context_restore(omap_host);
+> +
+> +       sdhci_resume_host(host);
+> +
+> +       return 0;
+> +}
+> +#endif
+> +static SIMPLE_DEV_PM_OPS(sdhci_omap_dev_pm_ops, sdhci_omap_suspend,
+> +                        sdhci_omap_resume);
+>
+>  static struct platform_driver sdhci_omap_driver = {
+>         .probe = sdhci_omap_probe,
+>         .remove = sdhci_omap_remove,
+>         .driver = {
+>                    .name = "sdhci-omap",
+> +                  .pm = &sdhci_omap_dev_pm_ops,
+>                    .of_match_table = omap_sdhci_match,
+>                   },
+>  };
+> --
+> 2.19.2
+>
