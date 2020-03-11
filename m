@@ -2,86 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8529182054
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:03:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FB1A182058
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:04:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730679AbgCKSDc convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 14:03:32 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37541 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730468AbgCKSDb (ORCPT
+        id S1730691AbgCKSEo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 14:04:44 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46604 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730363AbgCKSEo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:03:31 -0400
-Received: from 2.general.sarnold.us.vpn ([10.172.64.71] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <seth.arnold@canonical.com>)
-        id 1jC5hY-0003jD-1j; Wed, 11 Mar 2020 18:03:28 +0000
-Date:   Wed, 11 Mar 2020 18:03:26 +0000
-From:   Seth Arnold <seth.arnold@canonical.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs_parse: Remove pr_notice() about each validation
-Message-ID: <20200311180326.GA2007141@millbarge>
-References: <202003061617.A8835CAAF@keescook>
+        Wed, 11 Mar 2020 14:04:44 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n15so3804609wrw.13
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 11:04:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uSWL2FmY7zpKu733UysN5ObefdtHGdo1xnjVfRmXsfs=;
+        b=M3bjxGksxSB2uD4exfypPyvoUCoNhuYHVu0Z7MqkcbU24JUr39s/S5w2HTfIBfk8Gt
+         qvyGcxu9THPrvu/aO9SGE5ImXArh3scmpeWqi7SwDUsnUKyiSePi2qxnIhWu2eR0N40D
+         jP9cTxfo/cMkuwroo9gS3LZzbkIEzd3rU8wGYX0ygDWBuKI6fwLXlz/xtgJ/aQqFt+Q1
+         wdkU4M+LdGcUDA4KdxkDA4pt48DMP7F0FLVJLgJ/doKJcBQ4rVy8quGpLLbWnyFM5viI
+         HtLbFbgQb9/ku1o3OmTW6d4p76eqt/6x1eO/WjPqZ4DCDHjVdvyxmQSAFxJVp5a2W+S+
+         sMOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uSWL2FmY7zpKu733UysN5ObefdtHGdo1xnjVfRmXsfs=;
+        b=Q8aTvW/n2arab0fSTk2NfSA+Ln0HgsqlYgZLTxIydBzxCxCK2b8878fGcXOkUNblxu
+         vZGsyhuVUrX86sUbbPD8wWynmQPTywxw3/hQOCe+KkRtfIOIcpvcwJorsqS2w34JKMbl
+         4D2apuK3+TryN5HaxAISIX/QdsHOvEni0jGX9g2jtBpnccV8qHOkKDwM4B1rJaH/DgKH
+         JJvFs4jBJOnIpaAVsCbGDAcJdfM8dFExjYchC/FZP81al01pI5XuULXPMk1hI6O6Zetk
+         izO0EEuPK8B2qBNMZr1QspZUd1Lgr2LAQME4+pdyXF6GWLen4aTUMYDeBqPlE17JwZ/i
+         SfEw==
+X-Gm-Message-State: ANhLgQ18ZsnMRugAGQ3/DH9mQbwS+FISfm40ffTqvTR6rxE0ySjc8Tg0
+        nXxNLpvWAji+NvTX5uGLx+2p2YKy160=
+X-Google-Smtp-Source: ADFU+vvWK8hKheKVDZ1BgJb12Z0r9+RePhfmT1iLPBixkKd5N5IR5u2BasLAy4m4UbOiD5vTW3YbfQ==
+X-Received: by 2002:adf:f044:: with SMTP id t4mr5493484wro.287.1583949882618;
+        Wed, 11 Mar 2020 11:04:42 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id z11sm8997840wmd.47.2020.03.11.11.04.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 11:04:40 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     broonie@kernel.org
+Cc:     alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
+        linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 0/2] ASoC: qdsp6: fix default FE dais and routings.
+Date:   Wed, 11 Mar 2020 18:04:20 +0000
+Message-Id: <20200311180422.28363-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <202003061617.A8835CAAF@keescook>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 04:20:02PM -0800, Kees Cook wrote:
-> This notice fills my boot logs with scary-looking asterisks but doesn't
-> really tell me anything. Let's just remove it; validation errors
-> are already reported separately, so this is just a redundant list of
-> filesystems.
-> 
-> $ dmesg | grep VALIDATE
-> [    0.306256] *** VALIDATE tmpfs ***
-> [    0.307422] *** VALIDATE proc ***
-> [    0.308355] *** VALIDATE cgroup ***
-> [    0.308741] *** VALIDATE cgroup2 ***
-> [    0.813256] *** VALIDATE bpf ***
-> [    0.815272] *** VALIDATE ramfs ***
-> [    0.815665] *** VALIDATE hugetlbfs ***
-> [    0.876970] *** VALIDATE nfs ***
-> [    0.877383] *** VALIDATE nfs4 ***
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+QDSP6 Frontend dais can be configured to work in rx or tx or both rx/tx mode,
+however the default routing do not honour this DT configuration making sound
+card fail to probe. FE dais are also not fully honouring device tree configuration.
+Fix both of them.
 
-Excellent, these messages haven't been useful in helping users diagnose
-problems and they look quite noisy considering how mundane they are.
+Originally  issue was reported by Vinod Koul
 
-Reviewed-by: Seth Arnold <seth.arnold@canonical.com>
+Srinivas Kandagatla (2):
+  ASoC: qdsp6: q6asm-dai: only enable dais from device tree
+  ASoC: qdsp6: q6routing: remove default routing
 
-Thanks
+ sound/soc/qcom/qdsp6/q6asm-dai.c | 30 +++++++++++++++++++++++-------
+ sound/soc/qcom/qdsp6/q6routing.c | 19 -------------------
+ 2 files changed, 23 insertions(+), 26 deletions(-)
 
-> ---
->  fs/fs_parser.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-> index 7e6fb43f9541..ab53e42a874a 100644
-> --- a/fs/fs_parser.c
-> +++ b/fs/fs_parser.c
-> @@ -368,8 +368,6 @@ bool fs_validate_description(const char *name,
->  	const struct fs_parameter_spec *param, *p2;
->  	bool good = true;
->  
-> -	pr_notice("*** VALIDATE %s ***\n", name);
-> -
->  	for (param = desc; param->name; param++) {
->  		/* Check for duplicate parameter names */
->  		for (p2 = desc; p2 < param; p2++) {
-> -- 
-> 2.20.1
-> 
-> 
-> -- 
-> Kees Cook
+-- 
+2.21.0
+
