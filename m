@@ -2,92 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CC84180E40
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 03:57:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F67B180E49
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 04:04:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbgCKC5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 22:57:38 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34363 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727307AbgCKC5i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 22:57:38 -0400
-Received: by mail-lj1-f193.google.com with SMTP id s13so614289ljm.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 19:57:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WHJo9jwMYPaGt5B4QvwDpgXAg2phkjBbDHGzsQU+N3I=;
-        b=aPSqjFvWjvdtvp8nVXfAoj+kYZWu3nVRyQ/p2DoRhOKX2zIof1/W9HuOfjtGrhEGo4
-         bTFVId/1UJUexP0vZx+GLFATndJeJVGjdNhylTAZEBrB9UgSVpeDcY0fbd2URSPeYcAl
-         uln5TeOcLUBapk8RcBr7zH8fXVeJOekRmKyEvK47RdG5LZ3ocCVMNhKNjZ03DENuk6He
-         bJmiSgv6cySFXzmKebaDhjhnLhOwRDhTvJ0AgMubjeXowbLQfIakEXUutx4lQpg3Q94B
-         Z/2TJ35EkOsIWZ5j8j3QTWqq0f5Eg/ApTvcCQFe1Vv3LRkP2drM+ML2uT6oy1bfcG9p1
-         F90w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WHJo9jwMYPaGt5B4QvwDpgXAg2phkjBbDHGzsQU+N3I=;
-        b=LAB8HRVrh0ZqI3iiCLTZXePJofcTpRgdgJLLGGw7odf0451msTFX2PRbAxbhc/ugnZ
-         5F0dJ5/LMptk8edWQ3E+RWo3J42Ccs7yqfjqbiK9tENyQr9X7CBm4/tcLw/HrnBs4xO1
-         5rdPJXZjO028Hnn4whTqjoYX8NNyFi/3N3gLiBAnKnlup52R0gs3/uDZm2wtX0IrZdCY
-         QH2ax2fmI+uonpXcZa7q+qRf5d7BihETCEYT0pF6Nda96L09fClwhqloS0H7NWy/f7zf
-         IB7To8rWsBk7VKIetjXrIUKuTaIi8D1a7jrkyoqHS2U466HQ9j06+LupDjRacG+rNZBh
-         PBTQ==
-X-Gm-Message-State: ANhLgQ2OFx8UuZL1t9/etfPGUihQcSjsMgRjrHzkFd1N7b3sT230cU8j
-        6m4kJFtbop6lryt+Zp2V+hKtCr6QuekSt5JSZOE=
-X-Google-Smtp-Source: ADFU+vtshCj9Q46hlfgr5TbhM+vuzc2+J73V4+7Gd94s/qMzp0Krh6P6wbjzZlyrgRoXzp6uwiFGbcKdgYSlllh+tYg=
-X-Received: by 2002:a2e:87d7:: with SMTP id v23mr670025ljj.10.1583895456295;
- Tue, 10 Mar 2020 19:57:36 -0700 (PDT)
+        id S1727986AbgCKDE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 23:04:56 -0400
+Received: from mga12.intel.com ([192.55.52.136]:50823 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727506AbgCKDE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 23:04:56 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 20:04:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,539,1574150400"; 
+   d="scan'208";a="289237204"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by FMSMGA003.fm.intel.com with ESMTP; 10 Mar 2020 20:04:53 -0700
+Date:   Wed, 11 Mar 2020 10:43:56 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Xu Yilun <yilun.xu@intel.com>
+Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>
+Subject: Re: [PATCH 4/7] fpga: dfl: afu: add interrupt support for error
+ reporting
+Message-ID: <20200311024356.GA26202@hao-dev>
+References: <1583749790-10837-1-git-send-email-yilun.xu@intel.com>
+ <1583749790-10837-5-git-send-email-yilun.xu@intel.com>
+ <20200310103921.GD28396@hao-dev>
+ <20200310164738.GC30868@yilunxu-OptiPlex-7050>
 MIME-Version: 1.0
-References: <20200309021747.626-1-zhenzhong.duan@gmail.com>
- <20200309021747.626-2-zhenzhong.duan@gmail.com> <CAK8P3a2jy3+7tPFPjN5pfrQdfkhReCdPFjAnw144pXzpHCGDdQ@mail.gmail.com>
-In-Reply-To: <CAK8P3a2jy3+7tPFPjN5pfrQdfkhReCdPFjAnw144pXzpHCGDdQ@mail.gmail.com>
-From:   Zhenzhong Duan <zhenzhong.duan@gmail.com>
-Date:   Wed, 11 Mar 2020 10:57:25 +0800
-Message-ID: <CAFH1YnNe6MELofTJNdtS3cxJOiFB8vco0oGTj3t7ZERUQA5gHQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/3] misc: cleanup minor number definitions in c file
- into miscdevice.h
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        Willy Tarreau <willy@haproxy.com>,
-        Ksenija Stanojevic <ksenija.stanojevic@gmail.com>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        jonathan@buzzard.org.uk,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        David Miller <davem@davemloft.net>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310164738.GC30868@yilunxu-OptiPlex-7050>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 9, 2020 at 9:08 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Mon, Mar 9, 2020 at 3:18 AM Zhenzhong Duan <zhenzhong.duan@gmail.com> wrote:
-> >
-> > HWRNG_MINOR and RNG_MISCDEV_MINOR are duplicate definitions, use
-> > unified RNG_MINOR instead and moved into miscdevice.h
-> >
-> > ANSLCD_MINOR and LCD_MINOR are duplicate definitions, use unified
-> > LCD_MINOR instead and moved into miscdevice.h
-> >
-> > MISCDEV_MINOR is renamed to PXA3XXX_GCU_MINOR and moved into
-> > miscdevice.h
->
-> This should be PXA3XX_GCU_MINOR (with 2 X, not 3).
+On Wed, Mar 11, 2020 at 12:47:38AM +0800, Xu Yilun wrote:
+> On Tue, Mar 10, 2020 at 06:39:21PM +0800, Wu Hao wrote:
+> > On Mon, Mar 09, 2020 at 06:29:47PM +0800, Xu Yilun wrote:
+> > > Error reporting interrupt is very useful to notify users that some
+> > > errors are detected by the hardware. Once users are notified, they
+> > > could query hardware logged error states, no need to continuously
+> > > poll on these states.
+> > > 
+> > > This patch follows the common DFL interrupt notification and handling
+> > > mechanism, implements two ioctl commands below for user to query
+> > > hardware capability, and set/unset interrupt triggers.
+> > > 
+> > >  Ioctls:
+> > >  * DFL_FPGA_PORT_ERR_GET_INFO
+> > >    get error reporting feature info, including num_irqs which is used to
+> > >    determine whether/how many interrupts it supports.
+> > > 
+> > >  * DFL_FPGA_PORT_ERR_SET_IRQ
+> > >    set/unset given eventfds as error interrupt triggers.
+> > > 
+> > > Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+> > > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> > > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> > > ---
+> > >  drivers/fpga/dfl-afu-error.c  | 69 +++++++++++++++++++++++++++++++++++++++++++
+> > >  drivers/fpga/dfl-afu-main.c   |  4 +++
+> > >  include/uapi/linux/fpga-dfl.h | 34 +++++++++++++++++++++
+> > >  3 files changed, 107 insertions(+)
+> > > 
+> > > diff --git a/drivers/fpga/dfl-afu-error.c b/drivers/fpga/dfl-afu-error.c
+> > > index c1467ae..a2c5454 100644
+> > > --- a/drivers/fpga/dfl-afu-error.c
+> > > +++ b/drivers/fpga/dfl-afu-error.c
+> > > @@ -15,6 +15,7 @@
+> > >   */
+> > >  
+> > >  #include <linux/uaccess.h>
+> > > +#include <linux/fpga-dfl.h>
+> > >  
+> > >  #include "dfl-afu.h"
+> > >  
+> > > @@ -219,6 +220,73 @@ static void port_err_uinit(struct platform_device *pdev,
+> > >  	afu_port_err_mask(&pdev->dev, true);
+> > >  }
+> > >  
+> > > +static long
+> > > +port_err_get_info(struct platform_device *pdev,
+> > > +		  struct dfl_feature *feature, unsigned long arg)
+> > > +{
+> > > +	struct dfl_fpga_port_err_info info;
+> > > +
+> > > +	info.flags = 0;
+> > > +	info.capability = 0;
+> > 
+> > as flags and capability are not used at this moment, so actually it only exposes
+> > irq information to user. I understand flags and capability are used for
+> > future extension, but it may not work without argsz, as we never know what
+> > comes next, e.g. a capability requires > 32bit can't fit into this ioctl.
+> > So maybe just a ioctl for IRQ_INFO is enough for now.
+> > 
+> > How do you think?
+> 
+> Yes the flags & capability are for future extension.
+> 
+> The capability field is planned to a bitmask, each bit could indicate the feature
+> has some capability or not. So it could describe up to 32 capabilities.
+> I think it would be enough for one sub feature.
+> 
+> With this field, users could get a general description of capabilities with one
+> ioctl. If some capability has more detailed info, we may add addtional ioctl to
+> fetch it. This is how it works without argsz. Does it make sense?
+> 
+> And same definition for flag field. The flag fields could contain some
+> bool running state represented by each bit.
 
-Will fix in next version, thanks for pointing out.
+This should work for some cases, but kernel doc (core-api/ioctl.rst) says it's
+better to avoid bitfield completely. I understand it's possible to extend this
+ioctl with flags and capability, even we can define if flags = A, then given 
+capability = definition B, if flags = C, then capbaility definition is D, to
+maximum the usage for extension, but it may make this interface very very
+complicated to users. This should be the same reason why you didn't put irq
+info into capability directly. Another reason is, in my understanding, it
+choices ioctl to expose irq info becasue user must use ioctl to set irq, for
+other capabilities which doesn't use device file, then some sysfs may be enough
+for their own functions.
 
-Zhenzhong
+Thanks
+Hao
