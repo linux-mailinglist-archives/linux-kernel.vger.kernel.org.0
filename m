@@ -2,58 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF9111810AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 07:29:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B4011810B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 07:32:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728224AbgCKG34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 02:29:56 -0400
-Received: from verein.lst.de ([213.95.11.211]:57474 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726160AbgCKG34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 02:29:56 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id ADA7868C4E; Wed, 11 Mar 2020 07:29:52 +0100 (CET)
-Date:   Wed, 11 Mar 2020 07:29:52 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Christoph Hellwig <hch@lst.de>,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH V5 00/12] Enable per-file/per-directory DAX operations
- V5
-Message-ID: <20200311062952.GA11519@lst.de>
-References: <20200227052442.22524-1-ira.weiny@intel.com> <20200305155144.GA5598@lst.de> <20200309170437.GA271052@iweiny-DESK2.sc.intel.com> <20200311033614.GQ1752567@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200311033614.GQ1752567@magnolia>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S1728256AbgCKGbR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 02:31:17 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:49549 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726387AbgCKGbQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 02:31:16 -0400
+X-Greylist: delayed 2365 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Mar 2020 02:31:15 EDT
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id 02B6TRrY029044;
+        Wed, 11 Mar 2020 15:29:28 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com 02B6TRrY029044
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1583908169;
+        bh=LNe3hvgyxkqOgtMP39KHBSlFvsuDIP1M2ZSJ4/uygew=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pQ78yNELMBLF7QjXDLteBATDFgKPmsdH5/A6TLtLGZgBxh15kdpp2x5o0/Mipr7lR
+         PBAbQ59hfEN4wgZyWhPkVc9j3hIp+lP8z/XpV8IFpBmGwcfX9jUb54LUeokw5Tm31M
+         D2jn/EYj1oAT/AV/vWs8uzkq1UHPTn3ZItSOcjSod6sh2xSAGgDsOkK9AyUCFUEsU2
+         vTt50UXcXyVM9YndjEppLPkyXdx9+nZEwpMzESjz2566oitfaEWtGMHuEUloJXFmUI
+         bb4PurPwX7S7uvXM2s17YvvyHhHEnxfGo80C/v+CNRN7pzja1S9mWeX+9MoeggNbL1
+         JNg3Zy9d90lfw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     Neil Horman <nhorman@tuxdriver.com>, netdev@vger.kernel.org,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     Ido Schimmel <idosch@mellanox.com>, Jiri Pirko <jiri@mellanox.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Nicolas Pitre <nico@fluxnic.net>, linux-kbuild@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: drop_monitor: use IS_REACHABLE() to guard net_dm_hw_report()
+Date:   Wed, 11 Mar 2020 15:29:25 +0900
+Message-Id: <20200311062925.5163-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 08:36:14PM -0700, Darrick J. Wong wrote:
-> 1) Leave the inode flag (FS_XFLAG_DAX) as it is, and export the S_DAX
-> status via statx.  Document that changes to FS_XFLAG_DAX do not take
-> effect immediately and that one must check statx to find out the real
-> mode.  If we choose this, I would also deprecate the dax mount option;
-> send in my mkfs.xfs patch to make it so that you can set FS_XFLAG_DAX on
-> all files at mkfs time; and we can finally lay this whole thing to rest.
-> This is the closest to what we have today.
-> 
-> 2) Withdraw FS_XFLAG_DAX entirely, and let the kernel choose based on
-> usage patterns, hardware heuristics, or spiteful arbitrariness.
+In net/Kconfig, NET_DEVLINK implies NET_DROP_MONITOR.
 
-3) Only allow changing FS_XFLAG_DAX on directories or files that do
-not have blocks allocated to them yet, and side step all the hard
-problems.
+The original behavior of the 'imply' keyword prevents NET_DROP_MONITOR
+from being 'm' when NET_DEVLINK=y.
 
-Which of course still side steps the hard question of what it actually
-is supposed to mean..
+With the planned Kconfig change that relaxes the 'imply', the
+combination of NET_DEVLINK=y and NET_DROP_MONITOR=m would be allowed.
+
+Use IS_REACHABLE() to avoid the vmlinux link error for this case.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+This build error was reported in linux-next.
+https://lkml.org/lkml/2020/3/10/1936
+
+If this patch is acceptable,
+I'd like to get Ack from the maintainers,
+and insert this patch before my Kconfig change.
+
+
+ include/net/drop_monitor.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/net/drop_monitor.h b/include/net/drop_monitor.h
+index 2ab668461463..f68bc373544a 100644
+--- a/include/net/drop_monitor.h
++++ b/include/net/drop_monitor.h
+@@ -19,7 +19,7 @@ struct net_dm_hw_metadata {
+ 	struct net_device *input_dev;
+ };
+ 
+-#if IS_ENABLED(CONFIG_NET_DROP_MONITOR)
++#if IS_REACHABLE(CONFIG_NET_DROP_MONITOR)
+ void net_dm_hw_report(struct sk_buff *skb,
+ 		      const struct net_dm_hw_metadata *hw_metadata);
+ #else
+-- 
+2.17.1
+
