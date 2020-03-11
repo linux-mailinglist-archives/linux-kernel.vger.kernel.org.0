@@ -2,70 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0D8F18247F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 23:11:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EB26182474
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 23:09:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731218AbgCKWLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 18:11:10 -0400
-Received: from smtprelay0191.hostedemail.com ([216.40.44.191]:34216 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729518AbgCKWLK (ORCPT
+        id S1729881AbgCKWJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 18:09:54 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:40816 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729535AbgCKWJx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 18:11:10 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id F39FF181D330D;
-        Wed, 11 Mar 2020 22:11:08 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1568:1593:1594:1711:1714:1730:1747:1777:1792:2393:2525:2566:2682:2685:2828:2859:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3866:3867:3870:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4362:5007:9025:10004:10400:11232:11658:11914:12043:12297:12438:12555:12679:12740:12760:12895:12986:13069:13311:13357:13439:14181:14659:14721:21080:21433:21627:21740:21811:21939:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: loaf59_60ffb32fe5a07
-X-Filterd-Recvd-Size: 1958
-Received: from XPS-9350 (unknown [172.58.78.137])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 11 Mar 2020 22:11:06 +0000 (UTC)
-Message-ID: <3fc2c61e4c1c25d847fd7f284c818b664b64441c.camel@perches.com>
-Subject: Re: [PATCH -next 023/491] AMD KFD: Use fallthrough;
-From:   Joe Perches <joe@perches.com>
-To:     Felix Kuehling <felix.kuehling@amd.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date:   Wed, 11 Mar 2020 15:09:22 -0700
-In-Reply-To: <12c75b17-1d0e-6cc4-4ed1-a6f5003772ae@amd.com>
-References: <cover.1583896344.git.joe@perches.com>
-         <3cfc40c8f750abc672d6a60418fe220cb663a0f5.1583896349.git.joe@perches.com>
-         <12c75b17-1d0e-6cc4-4ed1-a6f5003772ae@amd.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Wed, 11 Mar 2020 18:09:53 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jC9Xu-0001sJ-Cb; Wed, 11 Mar 2020 23:09:46 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id C2842100F5A; Wed, 11 Mar 2020 23:09:45 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Hans de Goede <hdegoede@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC v2] x86: Select HARDIRQS_SW_RESEND on x86
+In-Reply-To: <218eb262-011f-0739-8e74-9ca3ef793bb8@redhat.com>
+References: <87sgk4naqh.fsf@nanos.tec.linutronix.de> <0e5b484d-89f5-c018-328a-fb4a04c6cd91@redhat.com> <87fteek27x.fsf@nanos.tec.linutronix.de> <218eb262-011f-0739-8e74-9ca3ef793bb8@redhat.com>
+Date:   Wed, 11 Mar 2020 23:09:45 +0100
+Message-ID: <87a74mk0gm.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-03-11 at 17:50 -0400, Felix Kuehling wrote:
-> On 2020-03-11 12:51 a.m., Joe Perches wrote:
-> > Convert the various uses of fallthrough comments to fallthrough;
-> > 
-> > Done via script
-> > Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe.com/
-> 
-> The link seems to be broken. This one works: 
-> https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe@perches.com/
+Hans de Goede <hdegoede@redhat.com> writes:
+> On 3/11/20 10:31 PM, Thomas Gleixner wrote:
+>> Hans de Goede <hdegoede@redhat.com> writes:
+>>>> I just need to stare at the legacy PIC and the virt stuff.
+>>>>
+>>>>> Also maybe we should add a Cc: stable@vger.kernel.org ??? This seems like
+>>>>> somewhat a big change for that but it does solve some real issues...
+>>>>
+>>>> Yes. Let me stare at the couple of weird irqchips which might get
+>>>> surprised. I'll teach them not to do that :)
+>>>
+>>> I know that you are very busy, still I'm wondering is there any progress
+>>> on this ?
+>> 
+>> Bah. That fell through the cracks, but actually I looked at this due to
+>> the PCI-E AER wreckage. So yes, this is fine, but we want:
+>> 
+>>   https://lkml.kernel.org/r/20200306130623.590923677@linutronix.de
+>>   https://lkml.kernel.org/r/20200306130623.684591280@linutronix.de
+>> 
+>> if we want to backport this to stable.
+>
+> So far I have seen a few, but not a lot of devices which need this, so
+> I'm not 100% sure what to do here.
+>
+> Do you consider this change safe / suitable for stable if those 2 patches
+> are backported and applied first?
 
-Thanks.
+I think so. The two patches are on my list for backports anyway, but I
+wanted to give them some time to simmer.
 
-I neglected to use a backslash on the generating script.
-In the script in 0/491,
+Thanks,
 
-Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe@perches.com/
-
-likely should have been:
-
-Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe\@perches.com/
-
-
+        tglx
