@@ -2,197 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6581A181FDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:45:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EE65182001
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:50:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730693AbgCKRpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:45:19 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41213 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730624AbgCKRpR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:45:17 -0400
-Received: by mail-ed1-f67.google.com with SMTP id m25so3900154edq.8
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:45:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=g0bFqwsXkUukHh8ZfDKot08BOWer+gFninhmoUg4N4E=;
-        b=hP0KGGjqaMgRA4J7UQgYmOlx7VkzP0/sjYdfJ/2GmHapvrqjnyoyHI8+DQQfzi6xf/
-         nNCLkXm17Dfa5oVtbfCkrKT0PvAFyNKjn7Rf9P9jyrorKlGVigawlGZ93mmvCLR1tGpk
-         DwwNenl0Av3HBTOa4oVJsOk9fVK1C6sFYAgA5XZR80mOTseCDx47FLomQnGOecrSvwXW
-         0tSbUvndpYS30PHYZe4LenZnmzs7CYwSn1Rvw1EmgMdLWkZALLdlD3pVTOV58AEbz9K7
-         15L1g4d4KWQUnINWXZ5jmf/zb0MquJw7Ab+Qn0Orfx0JZaJJsp4zOjlNngJFaLSCv+h+
-         AJ5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g0bFqwsXkUukHh8ZfDKot08BOWer+gFninhmoUg4N4E=;
-        b=FMQNYGs5Dg58i4ggC4OzRD1SDrNXTOjtIwBhao/4frWIMgpfsXf0+T/wf6nPoZe3vl
-         QhgPWaWr3WGVPUGiaaXnX5UbpSa11qiG4HzSBXiySphMQwAzSy+cw948tHK6cnKcPLBp
-         nR+cWqwlRZgwT1RLMW2WaniP00l5Aa8YMN3ITRiZh+VL7+3JZ2dlxe35nw+9V3pUPSlr
-         yDzLNEjnuecBYY1AZtU3ljlf1MIK8CypiabZ22M1tQ9M7HB6e+mZOroMAH4cxI/vXUDa
-         dEZ9B5sNDRzOMDA6l3ICol+5d15vlvNIwCxRqF4KhfGqHJ5P8pYbTWQgkgaz3u3vyj04
-         nZOQ==
-X-Gm-Message-State: ANhLgQ3CrTW9dcXv/xdsXZNshvnnyg9PK1d+BJ45MTDxdT03Wu/M5zKV
-        ZzLR4MO1MU6pNf7r23F5sv4dhgkRXufgXdKcU1cI9A==
-X-Google-Smtp-Source: ADFU+vs4v81YY4ntsRiC9uQ5T2bWwhpBnVGb0EQlXIiP8t3Yqxk6E6nEPOpjSBZQv735hW2J0pKr2DfPMLgvPQ49Gc4=
-X-Received: by 2002:a05:6402:343:: with SMTP id r3mr2781292edw.85.1583948715601;
- Wed, 11 Mar 2020 10:45:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200311123848.118638-1-shile.zhang@linux.alibaba.com>
-In-Reply-To: <20200311123848.118638-1-shile.zhang@linux.alibaba.com>
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-Date:   Wed, 11 Mar 2020 13:45:04 -0400
-Message-ID: <CA+CK2bBdim9dEYsRJ+3HNg4+FsTM0185q54PU=gNKGPAWDpcNA@mail.gmail.com>
-Subject: Re: [PATCH v3] mm: fix tick timer stall during deferred page init
-To:     Shile Zhang <shile.zhang@linux.alibaba.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        id S1730524AbgCKRty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:49:54 -0400
+Received: from mga01.intel.com ([192.55.52.88]:20305 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730363AbgCKRty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:49:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 10:49:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
+   d="scan'208";a="353932452"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
+  by fmsmga001.fm.intel.com with ESMTP; 11 Mar 2020 10:49:53 -0700
+Message-ID: <588d18133c0ad76b375a920b6e6cc1598564163a.camel@intel.com>
+Subject: Re: [PATCH V1 09/13] selftests/resctrl: Modularize fill_buf for new
+ CAT test case
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>, shuah@kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        tony.luck@intel.com, babu.moger@amd.com, james.morse@arm.com,
+        ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 11 Mar 2020 10:45:07 -0700
+In-Reply-To: <50cb755f-e112-5d71-11fa-a7cbc951d91e@intel.com>
+References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
+         <43b368952bb006ee973311d9c9ae0eb53d8e7f60.1583657204.git.sai.praneeth.prakhya@intel.com>
+         <4c84be1d-8839-2c85-b294-7e3c454240bb@intel.com>
+         <7a1f93d4516a7de99c5dbc4afd6279d6fe7aa126.camel@intel.com>
+         <50cb755f-e112-5d71-11fa-a7cbc951d91e@intel.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 8:39 AM Shile Zhang
-<shile.zhang@linux.alibaba.com> wrote:
->
-> When 'CONFIG_DEFERRED_STRUCT_PAGE_INIT' is set, 'pgdatinit' kthread will
-> initialise the deferred pages with local interrupts disabled. It is
-> introduced by commit 3a2d7fa8a3d5 ("mm: disable interrupts while
-> initializing deferred pages").
->
-> On machine with NCPUS <= 2, the 'pgdatinit' kthread could be bound to
-> the boot CPU, which could caused the tick timer long time stall, system
-> jiffies not be updated in time.
->
-> The dmesg shown that:
->
->     [    0.197975] node 0 initialised, 32170688 pages in 1ms
->
-> Obviously, 1ms is unreasonable.
->
-> Now, fix it by restore in the pending interrupts for every 32*1204 pages
-> (128MB) initialized, give the chance to update the systemd jiffies.
-> The reasonable demsg shown likes:
->
->     [    1.069306] node 0 initialised, 32203456 pages in 894ms
+Hi Reinette,
 
-Sorry for joining late to this thread. I wonder if we could use
-sched_clock() to print this statistics. Or not to print statistics at
-all?
+On Wed, 2020-03-11 at 08:44 -0700, Reinette Chatre wrote:
+> Hi Sai,
+> 
+> On 3/10/2020 6:04 PM, Sai Praneeth Prakhya wrote:
+> > On Tue, 2020-03-10 at 14:59 -0700, Reinette Chatre wrote:
+> > > On 3/6/2020 7:40 PM, Sai Praneeth Prakhya wrote:
+> > > > Currently fill_buf (in-built benchmark) runs as a separate process a
+> > > > 
+> > > 
 
-==============
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 3c4eb750a199..5958f599aced 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1770,7 +1770,7 @@ static int __init deferred_init_memmap(void *data)
-        const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
-        unsigned long spfn = 0, epfn = 0, nr_pages = 0;
-        unsigned long first_init_pfn, flags;
--       unsigned long start = jiffies;
-+       unsigned long start = sched_clock();
-        struct zone *zone;
-        int zid;
-        u64 i;
-@@ -1817,8 +1817,8 @@ static int __init deferred_init_memmap(void *data)
-        /* Sanity check that the next zone really is unpopulated */
-        WARN_ON(++zid < MAX_NR_ZONES && populated_zone(++zone));
+[SNIP]
 
--       pr_info("node %d initialised, %lu pages in %ums\n",
--               pgdat->node_id, nr_pages, jiffies_to_msecs(jiffies - start));
-+       pr_info("node %d initialised, %lu pages in %lldns\n",
-+               pgdat->node_id, nr_pages, sched_clock() - start);
+> > > Should buffer be freed on this error path?
+> > 
+> > Yes, that's right.. my bad. Will fix it. But the right fix is,
+> > use_buffer_forever() should not return at all. It's meant to loop around
+> > the
+> > buffer _forever_.
+> > 
+> > > I think the asymmetrical nature of the memory allocation and release
+> > > creates traps like this.
+> > > 
+> > > It may be less error prone to have the pointer returned by init_buffer
+> > > and the acted on and released within fill_cache(), passed to
+> > > "use_buffer_forever()" as a parameter.  The buffer size is known here,
+> > > there is no need to keep an "end pointer" around.
+> > 
+> > The main reason for having "startptr" as a global variable is to free
+> > memory
+> > when fill_buf is killed. fill_buf runs as a separate process (for test
+> > cases
+> > like MBM, MBA and CQM) and when user issues Ctrl_c or when the test kills
+> > benchmark_pid (i.e. fill_buf), the buffer is freed (please see
+> > ctrl_handler()).
+> 
+> I see. Got it, thanks.
+> 
+> > So, I thought, as "startptr" is anyways global, why pass it around as an
+> > argument? While making this change I thought it's natural to make "endptr"
+> > global as well because the function didn't really look good to just take
+> > endptr as an argument without startptr.
+> 
+> Maintaining the end pointer is unusual. The start of the buffer and the
+> size are known properties that the end of the buffer can be computed
+> from. Not a problem, it just seems inconsistent that some of the buffer
+> functions operate on the start pointer and size while others operate on
+> the start pointer and end pointer.
 
-        pgdat_init_report_one_done();
-        return 0;
-==============
+Ok.. makes sense. I will try to make it consistent by using endptr all the
+time. One advantage of using endptr is that we could just compute endptr once
+and use it when needed by passing it as variable (will try to not make it
+global variable).
 
-[    1.245331] node 0 initialised, 10256176 pages in 373565742ns
+Regards,
+Sai
 
-Pasha
-
-
-
-> Fixes: 3a2d7fa8a3d5 ("mm: disable interrupts while initializing deferred pages").
->
-> Co-developed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> Signed-off-by: Shile Zhang <shile.zhang@linux.alibaba.com>
-> ---
->  mm/page_alloc.c | 25 ++++++++++++++++++++++---
->  1 file changed, 22 insertions(+), 3 deletions(-)
->
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 3c4eb750a199..a3a47845e150 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1763,12 +1763,17 @@ deferred_init_maxorder(u64 *i, struct zone *zone, unsigned long *start_pfn,
->         return nr_pages;
->  }
->
-> +/*
-> + * Release the pending interrupts for every TICK_PAGE_COUNT pages.
-> + */
-> +#define TICK_PAGE_COUNT        (32 * 1024)
-> +
->  /* Initialise remaining memory on a node */
->  static int __init deferred_init_memmap(void *data)
->  {
->         pg_data_t *pgdat = data;
->         const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
-> -       unsigned long spfn = 0, epfn = 0, nr_pages = 0;
-> +       unsigned long spfn = 0, epfn = 0, nr_pages = 0, prev_nr_pages = 0;
->         unsigned long first_init_pfn, flags;
->         unsigned long start = jiffies;
->         struct zone *zone;
-> @@ -1779,6 +1784,7 @@ static int __init deferred_init_memmap(void *data)
->         if (!cpumask_empty(cpumask))
->                 set_cpus_allowed_ptr(current, cpumask);
->
-> +again:
->         pgdat_resize_lock(pgdat, &flags);
->         first_init_pfn = pgdat->first_deferred_pfn;
->         if (first_init_pfn == ULONG_MAX) {
-> @@ -1790,7 +1796,6 @@ static int __init deferred_init_memmap(void *data)
->         /* Sanity check boundaries */
->         BUG_ON(pgdat->first_deferred_pfn < pgdat->node_start_pfn);
->         BUG_ON(pgdat->first_deferred_pfn > pgdat_end_pfn(pgdat));
-> -       pgdat->first_deferred_pfn = ULONG_MAX;
->
->         /* Only the highest zone is deferred so find it */
->         for (zid = 0; zid < MAX_NR_ZONES; zid++) {
-> @@ -1809,9 +1814,23 @@ static int __init deferred_init_memmap(void *data)
->          * that we can avoid introducing any issues with the buddy
->          * allocator.
->          */
-> -       while (spfn < epfn)
-> +       while (spfn < epfn) {
->                 nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
-> +               /*
-> +                * Release the interrupts for every TICK_PAGE_COUNT pages
-> +                * (128MB) to give tick timer the chance to update the
-> +                * system jiffies.
-> +                */
-> +               if ((nr_pages - prev_nr_pages) > TICK_PAGE_COUNT) {
-> +                       prev_nr_pages = nr_pages;
-> +                       pgdat->first_deferred_pfn = spfn;
-> +                       pgdat_resize_unlock(pgdat, &flags);
-> +                       goto again;
-> +               }
-> +       }
-> +
->  zone_empty:
-> +       pgdat->first_deferred_pfn = ULONG_MAX;
->         pgdat_resize_unlock(pgdat, &flags);
->
->         /* Sanity check that the next zone really is unpopulated */
-> --
-> 2.24.0.rc2
->
