@@ -2,307 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F591180FCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 06:23:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98DC1181003
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 06:26:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbgCKFXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 01:23:17 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38148 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725813AbgCKFXR (ORCPT
+        id S1727986AbgCKF0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 01:26:25 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44406 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725813AbgCKF0Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 01:23:17 -0400
-Received: by mail-ed1-f65.google.com with SMTP id h5so1343710edn.5
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 22:23:15 -0700 (PDT)
+        Wed, 11 Mar 2020 01:26:24 -0400
+Received: by mail-oi1-f196.google.com with SMTP id d62so658967oia.11;
+        Tue, 10 Mar 2020 22:26:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=JM9zu4grKzwKY2OIbM2yqTOoFgqOAS5Vs32abRmGmUM=;
-        b=KQwCs+/l9EaTxy3RwXy50wGVDvK1dSgCff/KUauW5pN1fszV3LSPQc2T2D0ZiwIx9t
-         It135UhmhIw3RafGKWFO5x46JRKtPf/yCz3+ghgGnnBX0vLOrx8pa7ofGX5mLaBZ/FU9
-         KNfPSwQwjCMRyuMwYpUTRRnmURbl3WDAw8ZuJO+7SSiVfLYLDkV0hxkTkbGrufYD2xq9
-         LUVrfmy/I7z1CrtTBF9CzaixYTGyHPvApKxsAxYr4bms5hIc+bhw6HeVx6RgQ3+5H/UD
-         tQJtbuSVnpB0YgV/ePW0f6Po03AqU3xPr34KwUBX0xzTVlNvjK4PZx7zbGbUeT+ggO+k
-         Mbrw==
+        bh=8W+zYa184ZyKxjkQJutCEVqgw5AXS9GRHt9fLMAGBdg=;
+        b=PzcLRaRey6wdIFrAxa/AOcg4B2xWVVZmbG1mpCZyFXf5IqLuchpXUiBr5XxLysTbGG
+         Nduh2x8Vh+mPg82HyQygL8gT/+xM4cNz6kPLliUkbabGH2tr+4SxgSZkNZTsLr+PDmG0
+         OctjLStigR7j4pN0qY2Yik5ewCsyklaO1lee58MuymVbMHU1ZGEiM7cmIKYJRsSz+gN3
+         k6XU4UnweZ1cFFmekHZlfd7IMhdlCR2iRwpMbX9w80oOejDcoPJwbwFcWifvzGrsQWOa
+         RXtzaADFYvA8O9WeG1w39hXRzTgldFS336zYt9JGWFUUBF8ha5F5Jed4OJ9nHqtgUvYJ
+         Z8gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=JM9zu4grKzwKY2OIbM2yqTOoFgqOAS5Vs32abRmGmUM=;
-        b=ZjkRZC3bqpNOGydvhHAhurLKcBFazkU5ayzHEPskjBdrhrIgRdM9bT+i9tVwAja8xi
-         3U7U40x5Z/TzCl35l3wlLLwavS0Q1ZZevFQaahRtpCQXz0jiNWSBWVHn2ktp+VICxK+f
-         Y2YW0QlFOaRoOPhwzNWQzC0uVLEwwHJC2LClB1aKNTmF6wiKdIdvar6S+hSh1PbyXPEE
-         KbnP7yFsiNTe3XhtUwu7lFtJrK0d0RDQAvOzzwZ90xeuTJrGGEIvPDCNKE8FpAXyIUqH
-         1PYm6bUon58p9KmZmYktywGNW0MSfwAseXoCTvXr5VBNKpSKxqyrziBpkcVO6dpnSKFO
-         Er+g==
-X-Gm-Message-State: ANhLgQ3nxiNpB0OPu0iYOXCfuL3nrdk47BTFUm0iucWVJQ9kqU1kwHEY
-        5KZc0YcMF8KtFT+g5w3QTWomEqSg2LBP7ocjZwx+6g==
-X-Google-Smtp-Source: ADFU+vuTDvC9t080L+LZ2YE+PW/zd8Eu9TQJoE8XAM9NvA1Xqm/2oKnjT2jJhZKEQMuGlrbALvs8u36+drjZYwbvN/E=
-X-Received: by 2002:a17:906:385:: with SMTP id b5mr913477eja.268.1583904194983;
- Tue, 10 Mar 2020 22:23:14 -0700 (PDT)
+        bh=8W+zYa184ZyKxjkQJutCEVqgw5AXS9GRHt9fLMAGBdg=;
+        b=YabYhOjnS5Xknna6NNJhGnHCQ/PfdL7DFTA1ibCIH+rw32q1qsBc5hX1w1jjyoAZq4
+         yfYwL2ZlZezVVih9wQObXjgFFaMfXvh2wZhZU0zISm1S593Mt7cvD0QXYwUkWKPq8ZBD
+         BCtgyXrmyswmn4BYKmbWK/cMNTBmq5qmvLhk0VFXgbSZa3+5O3gDqKUY7sRzlAHmE9BW
+         PPmdpxEO85/el6z6ILkqkOe8T5zC9UX3WfyhDdtif1Shqs//M45j1lluZUBMw+GZubRx
+         OU2FEevjZM61gT1jX/7OtmrSX7Buza8aIbg9g/dIm+T86P/iAoe64Ch7EhOUlc8SmS14
+         mIVg==
+X-Gm-Message-State: ANhLgQ0kfliF19NDSV47m7ecB3M0liqqC2rNG+O5/RnPtTeufq0mGGtR
+        P11719e29lHeU4YhYDrMU5WfsbW6qbfjccJHavO3AZuw
+X-Google-Smtp-Source: ADFU+vu2XzxOxIEDf398NgTJGxQ8XLZbmiljOOXSim5zUgskWKUT3HnDcVnhOeqdxyBeQPERi7ieZdnjTaO3jmhsy6I=
+X-Received: by 2002:aca:d489:: with SMTP id l131mr804061oig.5.1583904383212;
+ Tue, 10 Mar 2020 22:26:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1583896344.git.joe@perches.com> <2e6818291503f032e7662f1fa45fb64c7751a7ae.1583896348.git.joe@perches.com>
-In-Reply-To: <2e6818291503f032e7662f1fa45fb64c7751a7ae.1583896348.git.joe@perches.com>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Wed, 11 Mar 2020 10:53:03 +0530
-Message-ID: <CAHLCerPFWFoUpt6Soc1awDiCy6aBn=qTbQ8G5vjhmX-g2=8znA@mail.gmail.com>
-Subject: Re: [PATCH -next 011/491] ARM/QUALCOMM SUPPORT: Use fallthrough;
-To:     Joe Perches <joe@perches.com>
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-media@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Linux PM list <linux-pm@vger.kernel.org>
+References: <000000000000bf5ff105a01fef33@google.com> <20200306064428.16776-1-hdanton@sina.com>
+In-Reply-To: <20200306064428.16776-1-hdanton@sina.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Tue, 10 Mar 2020 22:26:11 -0700
+Message-ID: <CAM_iQpXMZ9r_mPVVNuP6rU3=sBDkB=XoYyywD7HmTQF92fWapQ@mail.gmail.com>
+Subject: Re: WARNING: ODEBUG bug in tcf_queue_work
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+9c2df9fd5e9445b74e01@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Jakub Kicinski <kuba@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 10:37 AM Joe Perches <joe@perches.com> wrote:
+On Thu, Mar 5, 2020 at 10:44 PM Hillf Danton <hdanton@sina.com> wrote:
 >
-> Convert the various uses of fallthrough comments to fallthrough;
 >
-> Done via script
-> Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe.com/
+> On Thu, 05 Mar 2020 10:45:10 -0800
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    63623fd4 Merge tag 'for-linus' of git://git.kernel.org/pub..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=10535e45e00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=9833e26bab355358
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=9c2df9fd5e9445b74e01
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=168c4839e00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10587419e00000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+9c2df9fd5e9445b74e01@syzkaller.appspotmail.com
+> >
+> > ------------[ cut here ]------------
+> > ODEBUG: activate active (active state 1) object type: rcu_head hint: 0x0
+> > WARNING: CPU: 0 PID: 9599 at lib/debugobjects.c:485 debug_print_object+0x168/0x250 lib/debugobjects.c:485
+> > Kernel panic - not syncing: panic_on_warn set ...
+> > CPU: 0 PID: 9599 Comm: syz-executor772 Not tainted 5.6.0-rc3-syzkaller #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> > Call Trace:
+> >  __dump_stack lib/dump_stack.c:77 [inline]
+> >  dump_stack+0x197/0x210 lib/dump_stack.c:118
+> >  panic+0x2e3/0x75c kernel/panic.c:221
+> >  __warn.cold+0x2f/0x3e kernel/panic.c:582
+> >  report_bug+0x289/0x300 lib/bug.c:195
+> >  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+> >  fixup_bug arch/x86/kernel/traps.c:169 [inline]
+> >  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
+> >  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
+> >  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+> > RIP: 0010:debug_print_object+0x168/0x250 lib/debugobjects.c:485
+> > Code: dd 00 e7 91 88 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 b5 00 00 00 48 8b 14 dd 00 e7 91 88 48 c7 c7 60 dc 91 88 e8 07 6e 9f fd <0f> 0b 83 05 03 6c ff 06 01 48 83 c4 20 5b 41 5c 41 5d 41 5e 5d c3
+> > RSP: 0018:ffffc90005cd70b0 EFLAGS: 00010286
+> > RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
+> > RDX: 0000000000000000 RSI: ffffffff815ebe46 RDI: fffff52000b9ae08
+> > RBP: ffffc90005cd70f0 R08: ffff888093472400 R09: fffffbfff16a3370
+> > R10: fffffbfff16a336f R11: ffffffff8b519b7f R12: 0000000000000001
+> > R13: ffffffff89bac220 R14: 0000000000000000 R15: 1ffff92000b9ae24
+> >  debug_object_activate+0x346/0x470 lib/debugobjects.c:652
+> >  debug_rcu_head_queue kernel/rcu/rcu.h:176 [inline]
+> >  __call_rcu kernel/rcu/tree.c:2597 [inline]
+> >  call_rcu+0x2f/0x700 kernel/rcu/tree.c:2683
+> >  queue_rcu_work+0x8a/0xa0 kernel/workqueue.c:1742
+> >  tcf_queue_work+0xd3/0x110 net/sched/cls_api.c:206
+> >  route4_change+0x19e8/0x2250 net/sched/cls_route.c:550
+> >  tc_new_tfilter+0xb82/0x2480 net/sched/cls_api.c:2103
+> >  rtnetlink_rcv_msg+0x824/0xaf0 net/core/rtnetlink.c:5427
+> >  netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2478
+> >  rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5454
+> >  netlink_unicast_kernel net/netlink/af_netlink.c:1303 [inline]
+> >  netlink_unicast+0x59e/0x7e0 net/netlink/af_netlink.c:1329
+> >  netlink_sendmsg+0x91c/0xea0 net/netlink/af_netlink.c:1918
+> >  sock_sendmsg_nosec net/socket.c:652 [inline]
+> >  sock_sendmsg+0xd7/0x130 net/socket.c:672
+> >  ____sys_sendmsg+0x753/0x880 net/socket.c:2343
+> >  ___sys_sendmsg+0x100/0x170 net/socket.c:2397
+> >  __sys_sendmsg+0x105/0x1d0 net/socket.c:2430
+> >  __do_sys_sendmsg net/socket.c:2439 [inline]
+> >  __se_sys_sendmsg net/socket.c:2437 [inline]
+> >  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2437
+> >  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> Add a put callback for cls_route4_ops in an attempt to pair with get.
 
+This does not look like a refcnt pairing issue, it seems to be a
+double "free", more precisely, we call call_rcu() twice on the same
+object. I guess for some reason 'fold' is still visible even after
+it is scheduled to be freed by rcu work.
 
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+I will take a deeper look tomorrow.
 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
->  drivers/media/platform/qcom/venus/vdec.c |  2 +-
->  drivers/phy/qualcomm/phy-qcom-usb-hs.c   |  2 +-
->  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c |  4 ++--
->  drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |  2 +-
->  drivers/rpmsg/qcom_glink_native.c        |  4 ++--
->  drivers/soc/qcom/socinfo.c               | 16 ++++++++--------
->  drivers/thermal/qcom/tsens-v0_1.c        |  8 ++++----
->  drivers/thermal/qcom/tsens-v1.c          |  4 ++--
->  8 files changed, 21 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> index f34920..9e0451 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -983,7 +983,7 @@ static int vdec_stop_capture(struct venus_inst *inst)
->         switch (inst->codec_state) {
->         case VENUS_DEC_STATE_DECODING:
->                 ret = hfi_session_flush(inst, HFI_FLUSH_ALL);
-> -               /* fallthrough */
-> +               fallthrough;
->         case VENUS_DEC_STATE_DRAIN:
->                 vdec_cancel_dst_buffers(inst);
->                 inst->codec_state = VENUS_DEC_STATE_STOPPED;
-> diff --git a/drivers/phy/qualcomm/phy-qcom-usb-hs.c b/drivers/phy/qualcomm/phy-qcom-usb-hs.c
-> index 610542..327df1a 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-usb-hs.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-usb-hs.c
-> @@ -53,7 +53,7 @@ static int qcom_usb_hs_phy_set_mode(struct phy *phy,
->                 case PHY_MODE_USB_OTG:
->                 case PHY_MODE_USB_HOST:
->                         val |= ULPI_INT_IDGRD;
-> -                       /* fall through */
-> +                       fallthrough;
->                 case PHY_MODE_USB_DEVICE:
->                         val |= ULPI_INT_SESS_VALID;
->                 default:
-> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> index fe0be8..3b0ab0e 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> @@ -793,13 +793,13 @@ static int pmic_gpio_populate(struct pmic_gpio_state *state,
->         switch (subtype) {
->         case PMIC_GPIO_SUBTYPE_GPIO_4CH:
->                 pad->have_buffer = true;
-> -               /* Fall through */
-> +               fallthrough;
->         case PMIC_GPIO_SUBTYPE_GPIOC_4CH:
->                 pad->num_sources = 4;
->                 break;
->         case PMIC_GPIO_SUBTYPE_GPIO_8CH:
->                 pad->have_buffer = true;
-> -               /* Fall through */
-> +               fallthrough;
->         case PMIC_GPIO_SUBTYPE_GPIOC_8CH:
->                 pad->num_sources = 8;
->                 break;
-> diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> index 338a15..b5949f7 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> @@ -346,7 +346,7 @@ static int pm8xxx_pin_config_set(struct pinctrl_dev *pctldev,
->                                 return -EINVAL;
->                         }
->                         pin->pull_up_strength = arg;
-> -                       /* FALLTHROUGH */
-> +                       fallthrough;
->                 case PIN_CONFIG_BIAS_PULL_UP:
->                         pin->bias = pin->pull_up_strength;
->                         banks |= BIT(2);
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index 1995f5b..f40312 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -553,7 +553,7 @@ static void qcom_glink_receive_version(struct qcom_glink *glink,
->                 break;
->         case GLINK_VERSION_1:
->                 glink->features &= features;
-> -               /* FALLTHROUGH */
-> +               fallthrough;
->         default:
->                 qcom_glink_send_version_ack(glink);
->                 break;
-> @@ -584,7 +584,7 @@ static void qcom_glink_receive_version_ack(struct qcom_glink *glink,
->                         break;
->
->                 glink->features &= features;
-> -               /* FALLTHROUGH */
-> +               fallthrough;
->         default:
->                 qcom_glink_send_version(glink);
->                 break;
-> diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-> index 7864b7..8ae5646 100644
-> --- a/drivers/soc/qcom/socinfo.c
-> +++ b/drivers/soc/qcom/socinfo.c
-> @@ -325,7 +325,7 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
->                 debugfs_create_x32("raw_device_number", 0400,
->                                    qcom_socinfo->dbg_root,
->                                    &qcom_socinfo->info.raw_device_num);
-> -               /* Fall through */
-> +               fallthrough;
->         case SOCINFO_VERSION(0, 11):
->         case SOCINFO_VERSION(0, 10):
->         case SOCINFO_VERSION(0, 9):
-> @@ -333,12 +333,12 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
->
->                 debugfs_create_u32("foundry_id", 0400, qcom_socinfo->dbg_root,
->                                    &qcom_socinfo->info.foundry_id);
-> -               /* Fall through */
-> +               fallthrough;
->         case SOCINFO_VERSION(0, 8):
->         case SOCINFO_VERSION(0, 7):
->                 DEBUGFS_ADD(info, pmic_model);
->                 DEBUGFS_ADD(info, pmic_die_rev);
-> -               /* Fall through */
-> +               fallthrough;
->         case SOCINFO_VERSION(0, 6):
->                 qcom_socinfo->info.hw_plat_subtype =
->                         __le32_to_cpu(info->hw_plat_subtype);
-> @@ -346,7 +346,7 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
->                 debugfs_create_u32("hardware_platform_subtype", 0400,
->                                    qcom_socinfo->dbg_root,
->                                    &qcom_socinfo->info.hw_plat_subtype);
-> -               /* Fall through */
-> +               fallthrough;
->         case SOCINFO_VERSION(0, 5):
->                 qcom_socinfo->info.accessory_chip =
->                         __le32_to_cpu(info->accessory_chip);
-> @@ -354,27 +354,27 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
->                 debugfs_create_u32("accessory_chip", 0400,
->                                    qcom_socinfo->dbg_root,
->                                    &qcom_socinfo->info.accessory_chip);
-> -               /* Fall through */
-> +               fallthrough;
->         case SOCINFO_VERSION(0, 4):
->                 qcom_socinfo->info.plat_ver = __le32_to_cpu(info->plat_ver);
->
->                 debugfs_create_u32("platform_version", 0400,
->                                    qcom_socinfo->dbg_root,
->                                    &qcom_socinfo->info.plat_ver);
-> -               /* Fall through */
-> +               fallthrough;
->         case SOCINFO_VERSION(0, 3):
->                 qcom_socinfo->info.hw_plat = __le32_to_cpu(info->hw_plat);
->
->                 debugfs_create_u32("hardware_platform", 0400,
->                                    qcom_socinfo->dbg_root,
->                                    &qcom_socinfo->info.hw_plat);
-> -               /* Fall through */
-> +               fallthrough;
->         case SOCINFO_VERSION(0, 2):
->                 qcom_socinfo->info.raw_ver  = __le32_to_cpu(info->raw_ver);
->
->                 debugfs_create_u32("raw_version", 0400, qcom_socinfo->dbg_root,
->                                    &qcom_socinfo->info.raw_ver);
-> -               /* Fall through */
-> +               fallthrough;
->         case SOCINFO_VERSION(0, 1):
->                 DEBUGFS_ADD(info, build_id);
->                 break;
-> diff --git a/drivers/thermal/qcom/tsens-v0_1.c b/drivers/thermal/qcom/tsens-v0_1.c
-> index 4b8dd6..893ce1 100644
-> --- a/drivers/thermal/qcom/tsens-v0_1.c
-> +++ b/drivers/thermal/qcom/tsens-v0_1.c
-> @@ -163,7 +163,7 @@ static int calibrate_8916(struct tsens_priv *priv)
->                 p2[4] = (qfprom_cdata[1] & MSM8916_S4_P2_MASK) >> MSM8916_S4_P2_SHIFT;
->                 for (i = 0; i < priv->num_sensors; i++)
->                         p2[i] = ((base1 + p2[i]) << 3);
-> -               /* Fall through */
-> +               fallthrough;
->         case ONE_PT_CALIB2:
->                 base0 = (qfprom_cdata[0] & MSM8916_BASE0_MASK);
->                 p1[0] = (qfprom_cdata[0] & MSM8916_S0_P1_MASK) >> MSM8916_S0_P1_SHIFT;
-> @@ -228,7 +228,7 @@ static int calibrate_8974(struct tsens_priv *priv)
->                         p2[8] = (calib[5] & S8_P2_BKP_MASK) >> S8_P2_BKP_SHIFT;
->                         p2[9] = (calib[5] & S9_P2_BKP_MASK) >> S9_P2_BKP_SHIFT;
->                         p2[10] = (calib[5] & S10_P2_BKP_MASK) >> S10_P2_BKP_SHIFT;
-> -                       /* Fall through */
-> +                       fallthrough;
->                 case ONE_PT_CALIB:
->                 case ONE_PT_CALIB2:
->                         base1 = bkp[0] & BASE1_MASK;
-> @@ -263,7 +263,7 @@ static int calibrate_8974(struct tsens_priv *priv)
->                         p2[8] = (calib[4] & S8_P2_MASK) >> S8_P2_SHIFT;
->                         p2[9] = (calib[4] & S9_P2_MASK) >> S9_P2_SHIFT;
->                         p2[10] = (calib[4] & S10_P2_MASK) >> S10_P2_SHIFT;
-> -                       /* Fall through */
-> +                       fallthrough;
->                 case ONE_PT_CALIB:
->                 case ONE_PT_CALIB2:
->                         base1 = calib[0] & BASE1_MASK;
-> @@ -293,7 +293,7 @@ static int calibrate_8974(struct tsens_priv *priv)
->                         p2[i] <<= 2;
->                         p2[i] |= BIT_APPEND;
->                 }
-> -               /* Fall through */
-> +               fallthrough;
->         case ONE_PT_CALIB2:
->                 for (i = 0; i < priv->num_sensors; i++) {
->                         p1[i] += base1;
-> diff --git a/drivers/thermal/qcom/tsens-v1.c b/drivers/thermal/qcom/tsens-v1.c
-> index bd2ddb..d096d3 100644
-> --- a/drivers/thermal/qcom/tsens-v1.c
-> +++ b/drivers/thermal/qcom/tsens-v1.c
-> @@ -202,7 +202,7 @@ static int calibrate_v1(struct tsens_priv *priv)
->                 p2[9] = (qfprom_cdata[3] & S9_P2_MASK) >> S9_P2_SHIFT;
->                 for (i = 0; i < priv->num_sensors; i++)
->                         p2[i] = ((base1 + p2[i]) << 2);
-> -               /* Fall through */
-> +               fallthrough;
->         case ONE_PT_CALIB2:
->                 base0 = (qfprom_cdata[4] & BASE0_MASK) >> BASE0_SHIFT;
->                 p1[0] = (qfprom_cdata[0] & S0_P1_MASK) >> S0_P1_SHIFT;
-> @@ -263,7 +263,7 @@ static int calibrate_8976(struct tsens_priv *priv)
->
->                 for (i = 0; i < priv->num_sensors; i++)
->                         p2[i] = ((base1 + p2[i]) << 2);
-> -               /* Fall through */
-> +               fallthrough;
->         case ONE_PT_CALIB2:
->                 base0 = qfprom_cdata[0] & MSM8976_BASE0_MASK;
->                 p1[0] = (qfprom_cdata[0] & MSM8976_S0_P1_MASK) >> MSM8976_S0_P1_SHIFT;
-> --
-> 2.24.0
->
+Thanks.
