@@ -2,314 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 220DB180E80
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 04:30:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6EAB180E89
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 04:33:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728092AbgCKDaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 23:30:46 -0400
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:39363 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727659AbgCKDap (ORCPT
+        id S1728113AbgCKDdn convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 10 Mar 2020 23:33:43 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37179 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727506AbgCKDdm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 23:30:45 -0400
-Received: by mail-qv1-f65.google.com with SMTP id fc12so240753qvb.6;
-        Tue, 10 Mar 2020 20:30:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=9J5qiQUPzskfFYaq0VFel7qMJ7BbpvwZwBFmnnOYWzo=;
-        b=TWOiVkaRy0VXEc7KYFp0FdQv4wg+6yYDGW3oB5sRT6eKRQgYt3bTQR32M/dFFgDVPx
-         eNt5dHcT0zjpqU+sGsCQqNCvZFw0un/YbiI5ZK09P0SN+afExJIrvDx+qXtfWchCycXu
-         cLbv77cQk+aW4fw7Iv/Xpzndkh7IQPv1hc4pREffcc0O4iIgdlwHLialYJVN6BP3Bflc
-         yONLj303EzBKoSuU0T78VfxXFN2CM8P3aGHo+anhQWlHoczEegd23mLjgoqDiZgV5che
-         Mz6B+hMLy3/JqpDOEkAuarIsiZEEFBjxn3Ph39TIIaeX9OsNcgshyZRUsZhjuMWrwvNg
-         WPwQ==
+        Tue, 10 Mar 2020 23:33:42 -0400
+Received: from mail-pf1-f199.google.com ([209.85.210.199])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1jBs5C-0007ly-Kw
+        for linux-kernel@vger.kernel.org; Wed, 11 Mar 2020 03:30:58 +0000
+Received: by mail-pf1-f199.google.com with SMTP id d127so439349pfa.7
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 20:30:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=9J5qiQUPzskfFYaq0VFel7qMJ7BbpvwZwBFmnnOYWzo=;
-        b=EgqhiyDg4a+I6r0VtsMxlD+WzgHWXyQfcZFMG9on7o0pGob1T3tCD9jQAh4Y2K/BBH
-         ePK9bEtbG5Q85LCq45m1QEv7e5tH8anHEeJO6VjAyqdZR4J1MvYN108oLfjAjK+QWr49
-         Ik4c9VLZDuNa0fQ40/wtFWaxMfnGQVJmjBN8HjBt4NC6G9FbLEShGQwgjSra+sW+tN6M
-         FAUj3H0ICCI1TA2S0RWAybkDVZrQkuQHCvzP9vix46x37Oj9PHPGBYy/TlRQfBOVV8wB
-         LoHe4iyx5wp6bOEiRGtlpIUMhC2eXM2HD2VjZxLiQXuUJQh/wpuGpw+ZdqfYjEhIbD2f
-         q7wg==
-X-Gm-Message-State: ANhLgQ2IUZqUlQKCdO1yw7j/3Z3WnVpq5NMtWRmVg3KPOJ0RqSEZBWPY
-        ZFUFgPSMF1CBF8ABJycKsenCfRjyw7k=
-X-Google-Smtp-Source: ADFU+vtNWJPXdET2Y/5xnUXOUaKNUms0V/qsbhb+iGfG22yUJoBtWlWzXw3efT1+Jl5jwIj1BnA7Ug==
-X-Received: by 2002:ad4:5289:: with SMTP id v9mr1164968qvr.82.1583897442292;
-        Tue, 10 Mar 2020 20:30:42 -0700 (PDT)
-Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
-        by smtp.gmail.com with ESMTPSA id k66sm12384571qke.10.2020.03.10.20.30.41
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=JAj39y4cSkPD8V1E4/a4ReHRXvM9rblHsG5Ml1/Bwlg=;
+        b=FArtQIeHxPt6kNd3ipYBEZoVQz8EOXzW/HtktkIHxJIGQ4qcrGZHtS33MJdtH1ynd8
+         66qukc35hIHRiy0a43qn8okEklDC3ulI2cRPYIklEcLs8hizgBXwdCI/wQsXhOzjGUeV
+         VrrmnkZACOyhye+NVqFSO3xXhBCcfFe55g4S+dw/+RTcBsVfQzY1Bwazl0V39cpD618n
+         Elcge5xRx7SDISGdPxWuRhLaxzITcMWPa83p0XiQkzFCas/saiF/PpgoQy8pVLOExBkv
+         aQqmbD6/V1Z9u+kP3+62fPWzQ9xBkjZfK8MeXiE4QiRBI95aA5ytMWOvbXJ6dNPUmz3I
+         enqg==
+X-Gm-Message-State: ANhLgQ2UaUk9e2E4dtkZRhZZ6hwkVst3Dqsca1i9/YiJnkQOxBNcpupf
+        ZbKM2eom8khYJu/D+gYGNEXPIWcPgYYGrE5FkalinNxG/QOZEppthCnCwWVUfElSuJv/zwhN5Lg
+        OnEDVBiAvXgmLAqerHLgSjZ2jLmzM/ydTQvtIzn+q7Q==
+X-Received: by 2002:a63:1c4a:: with SMTP id c10mr911465pgm.252.1583897457269;
+        Tue, 10 Mar 2020 20:30:57 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vsEErfC0z0HElIsPQwHJRDDdA2hHxEBoyTBij97kd4MeYBIaxapOby5p099widGMm2WCiMq9w==
+X-Received: by 2002:a63:1c4a:: with SMTP id c10mr911334pgm.252.1583897455506;
+        Tue, 10 Mar 2020 20:30:55 -0700 (PDT)
+Received: from [192.168.1.208] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
+        by smtp.gmail.com with ESMTPSA id u3sm3623345pjv.32.2020.03.10.20.30.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Mar 2020 20:30:41 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 66AAE22295;
-        Tue, 10 Mar 2020 23:30:40 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Tue, 10 Mar 2020 23:30:40 -0400
-X-ME-Sender: <xms:YFtoXm0LeDrt46SN4dTlmZI4wm4XD1pCSQbIRcukQQWy0MIo1P8XjA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedruddvuddgiedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucffohhmrg
-    hinhepghhithhhuhgsuhhsvghrtghonhhtvghnthdrtghomhenucfkphephedvrdduheeh
-    rdduuddurdejudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledv
-    geehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtoh
-    hmsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:YFtoXla4h4-bUzBVOaS-JCnEeV5sfhZZqVO07bRx42e5dYGztA6jyg>
-    <xmx:YFtoXhrKrZ5_FRQs1yg-OMQoKkjvGwqjP-bcXISDewPuY5gwzhbomA>
-    <xmx:YFtoXpoIHmg0HYprHXcA4GQ17lLCrfqWrnaC0j7PnmJpD3hn5lUrMg>
-    <xmx:YFtoXpzlIKhvVpk_HWvKhSrhC0o6vcnOxDu7EyfxC2YivIfmLirfsA>
-Received: from localhost (unknown [52.155.111.71])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 9D48E30611FB;
-        Tue, 10 Mar 2020 23:30:39 -0400 (EDT)
-Date:   Wed, 11 Mar 2020 11:30:38 +0800
-From:   Boqun Feng <boqun.feng@gmail.com>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>
-Subject: Re: PROVE_RCU_LIST + /proc/lockdep warning
-Message-ID: <20200311033038.GA64051@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-References: <CA9BD318-A8C8-4F22-828A-65C355931A5C@lca.pw>
- <20200307171618.GC231616@google.com>
- <20200309014017.GH110915@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
- <1583865744.7365.167.camel@lca.pw>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1583865744.7365.167.camel@lca.pw>
+        Tue, 10 Mar 2020 20:30:54 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [PATCH v3 2/2] net-sysfs: Ensure begin/complete are called in
+ speed_show() and duplex_show()
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <425AF2D4-1FEE-437B-8520-452F818F7DEE@canonical.com>
+Date:   Wed, 11 Mar 2020 11:30:49 +0800
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jouni Hogander <jouni.hogander@unikie.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wang Hai <wanghai26@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Kimberly Brown <kimbrownkd@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jiri Pirko <jiri@mellanox.com>, Andrew Lunn <andrew@lunn.ch>,
+        Li RongQing <lirongqing@baidu.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <BEFADD90-2EC7-4B46-8AF4-F1D1CCD81993@canonical.com>
+References: <20200207101005.4454-1-kai.heng.feng@canonical.com>
+ <20200207101005.4454-2-kai.heng.feng@canonical.com>
+ <425AF2D4-1FEE-437B-8520-452F818F7DEE@canonical.com>
+To:     David Miller <davem@davemloft.net>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 02:42:24PM -0400, Qian Cai wrote:
-> On Mon, 2020-03-09 at 09:40 +0800, Boqun Feng wrote:
-> > On Sat, Mar 07, 2020 at 12:16:18PM -0500, Joel Fernandes wrote:
-> > > On Thu, Mar 05, 2020 at 11:06:10PM -0500, Qian Cai wrote:
-> > > > Since the linux-next commit c9af03c14bfd (“Default enable RCU list lockdep debugging with PROVE_RCU”),
-> > > > read /proc/lockdep will trigger a warning with this config below. Reverted the commit fixed the issue
-> > > > right away.
-> > > > 
-> > > > https://raw.githubusercontent.com/cailca/linux-mm/master/x86.config
-> > > 
-> > > Hmm, since Peter hates the list-RCU checking patches and rejected a patch by
-> > > Amol to fix this (;-)), the easiest way to resolve it would be to just bypass
-> > > the check in lockdep code:
-> > > 
-> > > Peter, this should be the last of the list-RCU changes and thank you for the
-> > > patience.
-> > > 
-> > > Should I or Amol send a patch for this?
-> > > 
-> > 
-> > Hmm.. IIUC, the warning got triggered here is because
-> > lockdep_count_forward_deps() didn't set up the ->lockdep_recursion, as a
-> > result, __bfs() was called without ->lockdep_recursion being 1, which
-> > introduced the inconsistency of lockdep status. So how about the
-> > following (untested) fix?:
-> > 
-> > Thoughts?
-> > 
-> > Regards,
-> > Boqun
-> > 
-> > -------------------------
-> > diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> > index 32406ef0d6a2..a258640edace 100644
-> > --- a/kernel/locking/lockdep.c
-> > +++ b/kernel/locking/lockdep.c
-> > @@ -1720,7 +1720,9 @@ unsigned long lockdep_count_forward_deps(struct lock_class *class)
-> >  
-> >  	raw_local_irq_save(flags);
-> >  	arch_spin_lock(&lockdep_lock);
-> > +	current->lockdep_recursion = 1;
-> >  	ret = __lockdep_count_forward_deps(&this);
-> > +	current->lockdep_recursion = 0;
-> >  	arch_spin_unlock(&lockdep_lock);
-> >  	raw_local_irq_restore(flags);
+
+
+> On Feb 20, 2020, at 13:45, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
 > 
-> This does not work. Still the same splat.
+>> 
+>> On Feb 7, 2020, at 18:10, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
+>> 
+>> Device like igb gets runtime suspended when there's no link partner. We
+>> can't get correct speed under that state:
+>> $ cat /sys/class/net/enp3s0/speed
+>> 1000
+>> 
+>> In addition to that, an error can also be spotted in dmesg:
+>> [  385.991957] igb 0000:03:00.0 enp3s0: PCIe link lost
+>> 
+>> It's because the igb device doesn't get runtime resumed before calling
+>> get_link_ksettings().
+>> 
+>> So let's use a new helper to call begin() and complete() like what
+>> dev_ethtool() does, to runtime resume/suspend or power up/down the
+>> device properly.
+>> 
+>> Once this fix is in place, igb can show the speed correctly without link
+>> partner:
+>> $ cat /sys/class/net/enp3s0/speed
+>> -1
+>> 
+>> -1 here means SPEED_UNKNOWN, which is the correct value when igb is
+>> runtime suspended.
+>> 
+>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 > 
+> A gentle ping...
 
-Hmm.. interesting, I tried this myself. I could trigger the 
-"DEBUG_LOCKS_WARN_ON(current->hardirqs_enabled)" warning after a "cat
-/proc/lockdep" with the linux-next tree, and after I applied the changes
-I proposed above, "cat /proc/lockdep" did not trigger the same warning.
+Another gentle ping...
 
-Is this the typical "works on my machine" situation? ;-)
+> 
+> Kai-Heng
+> 
+>> ---
+>> v3:
+>> - Specify -1 means SPEED_UNKNOWN.
+>> v2:
+>> - Add a new helper with begin/complete and use it in net-sysfs.
+>> 
+>> include/linux/ethtool.h |  4 ++++
+>> net/core/net-sysfs.c    |  4 ++--
+>> net/ethtool/ioctl.c     | 33 ++++++++++++++++++++++++++++++++-
+>> 3 files changed, 38 insertions(+), 3 deletions(-)
+>> 
+>> diff --git a/include/linux/ethtool.h b/include/linux/ethtool.h
+>> index 95991e4300bf..785ec1921417 100644
+>> --- a/include/linux/ethtool.h
+>> +++ b/include/linux/ethtool.h
+>> @@ -160,6 +160,10 @@ extern int
+>> __ethtool_get_link_ksettings(struct net_device *dev,
+>> 			     struct ethtool_link_ksettings *link_ksettings);
+>> 
+>> +extern int
+>> +__ethtool_get_link_ksettings_full(struct net_device *dev,
+>> +				  struct ethtool_link_ksettings *link_ksettings);
+>> +
+>> /**
+>> * ethtool_intersect_link_masks - Given two link masks, AND them together
+>> * @dst: first mask and where result is stored
+>> diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+>> index 4c826b8bf9b1..a199e15a080f 100644
+>> --- a/net/core/net-sysfs.c
+>> +++ b/net/core/net-sysfs.c
+>> @@ -201,7 +201,7 @@ static ssize_t speed_show(struct device *dev,
+>> 	if (netif_running(netdev)) {
+>> 		struct ethtool_link_ksettings cmd;
+>> 
+>> -		if (!__ethtool_get_link_ksettings(netdev, &cmd))
+>> +		if (!__ethtool_get_link_ksettings_full(netdev, &cmd))
+>> 			ret = sprintf(buf, fmt_dec, cmd.base.speed);
+>> 	}
+>> 	rtnl_unlock();
+>> @@ -221,7 +221,7 @@ static ssize_t duplex_show(struct device *dev,
+>> 	if (netif_running(netdev)) {
+>> 		struct ethtool_link_ksettings cmd;
+>> 
+>> -		if (!__ethtool_get_link_ksettings(netdev, &cmd)) {
+>> +		if (!__ethtool_get_link_ksettings_full(netdev, &cmd)) {
+>> 			const char *duplex;
+>> 
+>> 			switch (cmd.base.duplex) {
+>> diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
+>> index b987052d91ef..faeba247c1fb 100644
+>> --- a/net/ethtool/ioctl.c
+>> +++ b/net/ethtool/ioctl.c
+>> @@ -420,7 +420,9 @@ struct ethtool_link_usettings {
+>> 	} link_modes;
+>> };
+>> 
+>> -/* Internal kernel helper to query a device ethtool_link_settings. */
+>> +/* Internal kernel helper to query a device ethtool_link_settings. To be called
+>> + * inside begin/complete block.
+>> + */
+>> int __ethtool_get_link_ksettings(struct net_device *dev,
+>> 				 struct ethtool_link_ksettings *link_ksettings)
+>> {
+>> @@ -434,6 +436,35 @@ int __ethtool_get_link_ksettings(struct net_device *dev,
+>> }
+>> EXPORT_SYMBOL(__ethtool_get_link_ksettings);
+>> 
+>> +/* Internal kernel helper to query a device ethtool_link_settings. To be called
+>> + * outside of begin/complete block.
+>> + */
+>> +int __ethtool_get_link_ksettings_full(struct net_device *dev,
+>> +				      struct ethtool_link_ksettings *link_ksettings)
+>> +{
+>> +	int rc;
+>> +
+>> +	ASSERT_RTNL();
+>> +
+>> +	if (!dev->ethtool_ops->get_link_ksettings)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	if (dev->ethtool_ops->begin) {
+>> +		rc = dev->ethtool_ops->begin(dev);
+>> +		if (rc  < 0)
+>> +			return rc;
+>> +	}
+>> +
+>> +	memset(link_ksettings, 0, sizeof(*link_ksettings));
+>> +	rc = dev->ethtool_ops->get_link_ksettings(dev, link_ksettings);
+>> +
+>> +	if (dev->ethtool_ops->complete)
+>> +		dev->ethtool_ops->complete(dev);
+>> +
+>> +	return rc;
+>> +}
+>> +EXPORT_SYMBOL(__ethtool_get_link_ksettings_full);
+>> +
+>> /* convert ethtool_link_usettings in user space to a kernel internal
+>> * ethtool_link_ksettings. return 0 on success, errno on error.
+>> */
+>> -- 
+>> 2.17.1
 
-Just to be clear, you mean after you added the ->lockdep_recursion pair
-for both lockdep_count_forward_deps() and lockdep_count_backward_deps(),
-the same splat ("DEBUG_LOCKS_WARN_ON(current->hardirqs_enabled)" still
-got trigger, after you did a read on /proc/lockdep? Thanks!
-
-Regards,
-Boqun
-
-> > 
-> > > ---8<-----------------------
-> > > 
-> > > diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> > > index 32406ef0d6a2d..d47643d8081b2 100644
-> > > --- a/kernel/locking/lockdep.c
-> > > +++ b/kernel/locking/lockdep.c
-> > > @@ -1493,7 +1493,7 @@ static int __bfs(struct lock_list *source_entry,
-> > >  
-> > >  		DEBUG_LOCKS_WARN_ON(!irqs_disabled());
-> > >  
-> > > -		list_for_each_entry_rcu(entry, head, entry) {
-> > > +		list_for_each_entry_rcu(entry, head, entry, true) {
-> > >  			if (!lock_accessed(entry)) {
-> > >  				unsigned int cq_depth;
-> > >  				mark_lock_accessed(entry, lock);
-> > > 
-> > > thanks,
-> > > 
-> > >  - Joel
-> > > 
-> > > > 
-> > > > [26405.676199][ T3548] DEBUG_LOCKS_WARN_ON(current->hardirqs_enabled)
-> > > > [26405.676239][ T3548] WARNING: CPU: 11 PID: 3548 at kernel/locking/lockdep.c:4637 check_flags.part.28+0x218/0x220
-> > > > [26405.756287][ T3548] Modules linked in: kvm_intel nls_iso8859_1 nls_cp437 kvm vfat fat irqbypass intel_cstate intel_uncore intel_rapl_perf dax_pmem dax_pmem_core efivars ip_tables x_tables xfs sd_mod bnx2x hpsa mdio scsi_transport_sas firmware_class dm_mirror dm_region_hash dm_log dm_mod efivarfs
-> > > > [26405.881899][ T3548] CPU: 11 PID: 3548 Comm: cat Not tainted 5.6.0-rc4-next-20200305+ #8
-> > > > [26405.920091][ T3548] Hardware name: HP ProLiant BL660c Gen9, BIOS I38 10/17/2018
-> > > > [26405.955370][ T3548] RIP: 0010:check_flags.part.28+0x218/0x220
-> > > > [26405.983016][ T3548] Code: 13 8a e8 2b 3f 29 00 44 8b 15 84 df ba 01 45 85 d2 0f 85 c7 94 00 00 48 c7 c6 40 2b 47 89 48 c7 c7 40 04 47 89 e8 49 e3 f3 ff <0f> 0b e9 ad 94 00 00 90 55 48 89 e5 41 57 4d 89 cf 41 56 45 89 c6
-> > > > [26406.076147][ T3548] RSP: 0018:ffffc9000695f848 EFLAGS: 00010086
-> > > > [26406.104215][ T3548] RAX: 0000000000000000 RBX: ffff888fe6184040 RCX: ffffffff8858cecf
-> > > > [26406.140856][ T3548] RDX: 0000000000000007 RSI: dffffc0000000000 RDI: 0000000000000000
-> > > > [26406.178465][ T3548] RBP: ffffc9000695f850 R08: fffffbfff1377355 R09: fffffbfff1377355
-> > > > [26406.217995][ T3548] R10: ffffffff89bb9aa3 R11: fffffbfff1377354 R12: 0000000000000000
-> > > > [26406.256760][ T3548] R13: ffffffff8aa55ee0 R14: 0000000000000046 R15: ffffffff8aa55ec0
-> > > > [26406.293708][ T3548] FS:  00007f58cf3a3540(0000) GS:ffff88905fa80000(0000) knlGS:0000000000000000
-> > > > [26406.335252][ T3548] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > [26406.366331][ T3548] CR2: 00007f58cf326000 CR3: 0000000f1ba38006 CR4: 00000000001606e0
-> > > > [26406.402408][ T3548] Call Trace:
-> > > > [26406.416739][ T3548]  lock_is_held_type+0x5d/0x150
-> > > > [26406.438262][ T3548]  ? rcu_lockdep_current_cpu_online+0x64/0x80
-> > > > [26406.466463][ T3548]  rcu_read_lock_any_held+0xac/0x100
-> > > > [26406.490105][ T3548]  ? rcu_read_lock_held+0xc0/0xc0
-> > > > [26406.513258][ T3548]  ? __slab_free+0x421/0x540
-> > > > [26406.535012][ T3548]  ? kasan_kmalloc+0x9/0x10
-> > > > [26406.555901][ T3548]  ? __kmalloc_node+0x1d7/0x320
-> > > > [26406.578668][ T3548]  ? kvmalloc_node+0x6f/0x80
-> > > > [26406.599872][ T3548]  __bfs+0x28a/0x3c0
-> > > > [26406.617075][ T3548]  ? class_equal+0x30/0x30
-> > > > [26406.637524][ T3548]  lockdep_count_forward_deps+0x11a/0x1a0
-> > > > [26406.664134][ T3548]  ? check_noncircular+0x2e0/0x2e0
-> > > > [26406.688191][ T3548]  ? __kasan_check_read+0x11/0x20
-> > > > [26406.713581][ T3548]  ? check_chain_key+0x1df/0x2e0
-> > > > [26406.738044][ T3548]  ? seq_vprintf+0x4e/0xb0
-> > > > [26406.758241][ T3548]  ? seq_printf+0x9b/0xd0
-> > > > [26406.778169][ T3548]  ? seq_vprintf+0xb0/0xb0
-> > > > [26406.798172][ T3548]  l_show+0x1c4/0x380
-> > > > [26406.816474][ T3548]  ? print_name+0xb0/0xb0
-> > > > [26406.836393][ T3548]  seq_read+0x56b/0x750
-> > > > [26406.855346][ T3548]  proc_reg_read+0x1b4/0x200
-> > > > [26406.876737][ T3548]  ? proc_reg_unlocked_ioctl+0x1e0/0x1e0
-> > > > [26406.903030][ T3548]  ? check_chain_key+0x1df/0x2e0
-> > > > [26406.926531][ T3548]  ? find_held_lock+0xca/0xf0
-> > > > [26406.948291][ T3548]  __vfs_read+0x50/0xa0
-> > > > [26406.967391][ T3548]  vfs_read+0xcb/0x1e0
-> > > > [26406.986102][ T3548]  ksys_read+0xc6/0x160
-> > > > [26407.005405][ T3548]  ? kernel_write+0xc0/0xc0
-> > > > [26407.026076][ T3548]  ? do_syscall_64+0x79/0xaec
-> > > > [26407.047448][ T3548]  ? do_syscall_64+0x79/0xaec
-> > > > [26407.068650][ T3548]  __x64_sys_read+0x43/0x50
-> > > > [26407.089132][ T3548]  do_syscall_64+0xcc/0xaec
-> > > > [26407.109939][ T3548]  ? trace_hardirqs_on_thunk+0x1a/0x1c
-> > > > [26407.134924][ T3548]  ? syscall_return_slowpath+0x580/0x580
-> > > > [26407.160854][ T3548]  ? entry_SYSCALL_64_after_hwframe+0x3e/0xbe
-> > > > [26407.188943][ T3548]  ? trace_hardirqs_off_caller+0x3a/0x150
-> > > > [26407.216692][ T3548]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-> > > > [26407.243534][ T3548]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > > > [26407.272720][ T3548] RIP: 0033:0x7f58ceeafd75
-> > > > [26407.293162][ T3548] Code: fe ff ff 50 48 8d 3d 4a dc 09 00 e8 25 0e 02 00 0f 1f 44 00 00 f3 0f 1e fa 48 8d 05 a5 59 2d 00 8b 00 85 c0 75 0f 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 53 c3 66 90 41 54 49 89 d4 55 48 89 f5 53 89
-> > > > [26407.386043][ T3548] RSP: 002b:00007ffc115111a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-> > > > [26407.425283][ T3548] RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007f58ceeafd75
-> > > > [26407.462717][ T3548] RDX: 0000000000020000 RSI: 00007f58cf327000 RDI: 0000000000000003
-> > > > [26407.500428][ T3548] RBP: 00007f58cf327000 R08: 00000000ffffffff R09: 0000000000000000
-> > > > [26407.538473][ T3548] R10: 0000000000000022 R11: 0000000000000246 R12: 00007f58cf327000
-> > > > [26407.575743][ T3548] R13: 0000000000000003 R14: 0000000000000fff R15: 0000000000020000
-> > > > [26407.613112][ T3548] irq event stamp: 7161
-> > > > [26407.632089][ T3548] hardirqs last  enabled at (7161): [<ffffffff88ea2684>] _raw_spin_unlock_irqrestore+0x44/0x50
-> > > > [26407.680094][ T3548] hardirqs last disabled at (7160): [<ffffffff88ea2418>] _raw_spin_lock_irqsave+0x18/0x50
-> > > > [26407.727273][ T3548] softirqs last  enabled at (5898): [<ffffffff89200447>] __do_softirq+0x447/0x766
-> > > > [26407.774000][ T3548] softirqs last disabled at (5889): [<ffffffff884d20e6>] irq_exit+0xd6/0xf0
-> > > > [26407.814407][ T3548] ---[ end trace 1026d00df66af83e ]---
-> > > > [26407.839742][ T3548] possible reason: unannotated irqs-off.
-> > > > [26407.866243][ T3548] irq event stamp: 7161
-> > > > [26407.885407][ T3548] hardirqs last  enabled at (7161): [<ffffffff88ea2684>] _raw_spin_unlock_irqrestore+0x44/0x50
-> > > > [26407.933602][ T3548] hardirqs last disabled at (7160): [<ffffffff88ea2418>] _raw_spin_lock_irqsave+0x18/0x50
-> > > > [26407.980432][ T3548] softirqs last  enabled at (5898): [<ffffffff89200447>] __do_softirq+0x447/0x766
-> > > > [26408.022826][ T3548] softirqs last disabled at (5889): [<ffffffff884d20e6>] irq_exit+0xd6/0xf0
-> > > > 
-> > > > On a side note, it likely to hit another bug in next-20200305 (not such problem on 0304) where it
-> > > > will stuck during boot, but the reverting does not help there. Rebooting a few times could pass.
-> > > > 
-> > > > [    0.013514][    C0] NMI watchdog: Watchdog detected hard LOCKUP on cpu 0 
-> > > > [    0.013514][    C0] Modules linked in: 
-> > > > [    0.013514][    C0] irq event stamp: 64186318 
-> > > > [    0.013514][    C0] hardirqs last  enabled at (64186317): [<ffffffff84c9b107>] _raw_spin_unlock_irq+0x27/0x40 
-> > > > [    0.013514][    C0] hardirqs last disabled at (64186318): [<ffffffff84c8f384>] __schedule+0x214/0x1070 
-> > > > [    0.013514][    C0] softirqs last  enabled at (267904): [<ffffffff85000447>] __do_softirq+0x447/0x766 
-> > > > [    0.013514][    C0] softirqs last disabled at (267897): [<ffffffff842d1f16>] irq_exit+0xd6/0xf0 
-> > > > [    0.013514][    C0] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.6.0-rc4-next-20200305+ #6 
-> > > > [    0.013514][    C0] Hardware name: HP ProLiant BL660c Gen9, BIOS I38 10/17/2018 
-> > > > [    0.013514][    C0] RIP: 0010:lock_is_held_type+0x12a/0x150 
-> > > > [    0.013514][    C0] Code: 41 0f 94 c4 65 48 8b 1c 25 40 0f 02 00 48 8d bb 74 08 00 00 e8 77 c0 28 00 c7 83 74 08 00 00 00 00 00 00 41 56 9d 48 83 c4 18 <44> 89 e0 5b 41 5c 41 5d 41 5e 41 5f 5d c3 45 31 e4 eb c7 41 bc 01 
-> > > > [    0.013514][    C0] RSP: 0000:ffffc9000628f9f8 EFLAGS: 00000082 
-> > > > [    0.013514][    C0] RAX: 0000000000000000 RBX: ffff889880efc040 RCX: ffffffff8438b449 
-> > > > [    0.013514][    C0] RDX: 0000000000000007 RSI: dffffc0000000000 RDI: ffff889880efc8b4 
-> > > > [    0.013514][    C0] RBP: ffffc9000628fa20 R08: ffffed1108588a24 R09: ffffed1108588a24 
-> > > > [    0.013514][    C0] R10: ffff888842c4511b R11: 0000000000000000 R12: 0000000000000000 
-> > > > [    0.013514][    C0] R13: ffff889880efc908 R14: 0000000000000046 R15: 0000000000000003 
-> > > > [    0.013514][    C0] FS:  0000000000000000(0000) GS:ffff888842c00000(0000) knlGS:0000000000000000 
-> > > > [    0.013514][    C0] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033 
-> > > > [    0.013514][    C0] CR2: ffff88a0707ff000 CR3: 0000000b72012001 CR4: 00000000001606f0 
-> > > > [    0.013514][    C0] Call Trace: 
-> > > > [    0.013514][    C0]  rcu_read_lock_sched_held+0xac/0xe0 
-> > > > lock_is_held at include/linux/lockdep.h:361
-> > > > (inlined by) rcu_read_lock_sched_held at kernel/rcu/update.c:121
-> > > > [    0.013514][    C0]  ? rcu_read_lock_bh_held+0xc0/0xc0 
-> > > > [    0.013514][    C0]  rcu_note_context_switcx186/0x3b0 
-> > > > [    0.013514][    C0]  __schedule+0x21f/0x1070 
-> > > > [    0.013514][    C0]  ? __sched_text_start+0x8/0x8 
-> > > > [    0.013514][    C0]  schedule+0x95/0x160 
-> > > > [    0.013514][    C0]  do_boot_cpu+0x58c/0xaf0 
-> > > > [    0.013514][    C0]  native_cpu_up+0x298/0x430 
-> > > > [    0.013514][    C0]  ? common_cpu_up+0x150/0x150 
-> > > > [    0.013514][    C0]  bringup_cpu+0x44/0x310 
-> > > > [    0.013514][    C0]  ? timers_prepare_cpu+0x114/0x190 
-> > > > [    0.013514][    C0]  ? takedown_cpu+0x2e0/0x2e0 
-> > > > [    0.013514][    C0]  cpuhp_invoke_callback+0x197/0x1120 
-> > > > [    0.013514][    C0]  ? ring_buffer_record_is_set_on+0x40/0x40 
-> > > > [    0.013514][    C0]  _cpu_up+0x171/0x280 
-> > > > [    0.013514][    C0]  do_cpu_up+0xb1/0x120 
-> > > > [    0.013514][    C0]  cpu_up+0x13/0x20 
-> > > > [    0.013514][    C0]  smp_init+0x91/0x118 
-> > > > [    0.013514][    C0]  kernel_init_freeable+0x221/0x4f8 
-> > > > [    0.013514][    C0]  ? mark_held_locks+0x34/0xb0 
-> > > > [    0.013514][    C0]  ? _raw_spin_unlock_irq+0x27/0x40 
-> > > > [    0.013514][    C0]  ? start_kernel+0x876/0x876 
-> > > > [    0.013514][    C0]  ? lockdep_hardirqs_on+0x1b0/0x2a0 
-> > > > [    0.013514][    C0]  ? _raw_spin_unlock_irq+0x27/0x40 
-> > > > [    0.013514][    C0]  ? rest_init+0x307/0x307 
-> > > > [    0.013514][    C0]  kernel_init+0x  0.013514][    C0]  ? rest_init+0x307/0x307 
-> > > > [    0.013514][    C0]  ret_from_fork+0x3a/0x50 
-> > > > 
-> > > >  
-> > > 
-> > > 
