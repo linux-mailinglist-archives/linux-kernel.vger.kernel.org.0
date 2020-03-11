@@ -2,214 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E106180D77
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 02:26:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E08A6180D70
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 02:24:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbgCKB0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 21:26:01 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:39069 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727659AbgCKB0B (ORCPT
+        id S1727702AbgCKBYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 21:24:12 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36804 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727484AbgCKBYM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 21:26:01 -0400
-Received: by mail-qk1-f196.google.com with SMTP id e16so578021qkl.6
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 18:25:59 -0700 (PDT)
+        Tue, 10 Mar 2020 21:24:12 -0400
+Received: by mail-lf1-f68.google.com with SMTP id s1so267504lfd.3;
+        Tue, 10 Mar 2020 18:24:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jP1h4LnU7XtbVr4y3Ipe7IVVDlnx9HE/9oHCfNpi+WM=;
-        b=DWmdEhxbRi4c6Wg+y0GATJ62iaarJpImMb/f9vZSKIsSkrBGKKUSaWo1E/dEpqSr/K
-         eVKPs/whf8Ze75a9+siOh36sJh2/cE3ZJu/u0VfyUP/ROogSYwfbm5K35GCnm+HYG14J
-         6kCCGQfMt/EVaeMu9wBpnsZ1oPcTgUAmaui3r+qq8/YLsaTpHC0XkgLxzVGPaRoydonI
-         62wywfcwFrdvhaf6z9Vo6wND3OmZVDITTcEsDRl0OgZBjnzb4dIgthnHwILPpa1GQkj+
-         /Ghaeh+KWp5v+irIAlE2EMwtmNNXF2Io8iOHY57H0Fo2Dnocm+yrL0hv7JZjohGRkGJO
-         HE7A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tFsCMPYEvQ090eghtJnuZSfndIYHXofg6kpzbpjDHcg=;
+        b=khQEriv/qXhJIlEcRUfHpUFBBNJlME/YbqhLsz8nEtpslFi3hDMOkwANIKEhmCYLIn
+         bKaKw0sRKxN+kYaN9gg0bSnEOl8ctNwfUxBPjELrFcsIjdXUN8o3N7sEblgIC11+H0Hb
+         kkTLLOwiDrrUPHBva+FhCK9knYGxysZb+I8src6lLjjdpAPbAG5RDBjMZtFx7uBorF1L
+         1JAYEomu+xOdLN23slKQQ9BEgsY5Yrxu7J3PQDfRO706FQnB7t8Y/bGeyZq7inIKNY5s
+         phKS+ngDHm2ynGfhdehkvlCeasU4TiC09gHJJy2vY0zw4LQhMRcaidUibP2n68b5TJTW
+         nkHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jP1h4LnU7XtbVr4y3Ipe7IVVDlnx9HE/9oHCfNpi+WM=;
-        b=iehEMHZt/oJKCT9gz1KZxq9liYHXGrNmLkbhOdHVqEOQFzu2ZqD9fFaTTxhDVEzk8T
-         l2Dnm/1ir0jM5aFUqkwxljuMbXYVkgJGyxPK6U7H2t8DHjUZnW552itoIbQxfrJJ/L2C
-         +IlDgxqwJcwBpKLPRjqwUZRzKkcWN2psI3/F3K4lUdxb3k9e25TsaqsNIimKW2Tc/5af
-         cXpaTC4Qzv2M4VEAe1HZQ8mMsnPnqX7xbErDKnC0Ox6hsZ70/fFGTp5k1u4Vy8bUtDwR
-         xTvtWLa6B6mSZKKpMm9XwWM9JebdDUzwbKp3jwRsa6WxPGnUq9Lyc/hBet4TnO7svGEV
-         zxKw==
-X-Gm-Message-State: ANhLgQ2XtOUHBydImvniyVLN73uH8IXGhxq2dQcnn+VNnYMTBBkgQLa6
-        yXobJI4zY8eI6UsR4gbweZo+Ahre/ByoLg==
-X-Google-Smtp-Source: ADFU+vvmeAaY55VzzyTgfMyK56hvzzpG+chCK2Qehp/bdiWtE7hHp88BWGBXhRLtPCdJTnqEdHMMbg==
-X-Received: by 2002:a37:702:: with SMTP id 2mr626759qkh.134.1583889958494;
-        Tue, 10 Mar 2020 18:25:58 -0700 (PDT)
-Received: from 2158e4caaa32.ic.unicamp.br (wifi-177-220-84-104.wifi.ic.unicamp.br. [177.220.84.104])
-        by smtp.gmail.com with ESMTPSA id i66sm4618730qkc.13.2020.03.10.18.25.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 18:25:57 -0700 (PDT)
-From:   Thiago Souza Ferreira <thsouza2013@gmail.com>
-To:     Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        lkcamp@lists.libreplanetbr.org
-Subject: [PATCH] staging: rtl8188eu: Fix block comments to use *
-Date:   Wed, 11 Mar 2020 01:23:32 +0000
-Message-Id: <20200311012332.27498-1-thsouza2013@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tFsCMPYEvQ090eghtJnuZSfndIYHXofg6kpzbpjDHcg=;
+        b=GQlLO/yZC+MYWFZM5M9LnNgduaOD9pQjJ92QRP26mmcsgjW1d6kW2x1v/8L1VcRtN7
+         KmLKsT7AByH0e7XGejkm/jO2rzW+7urHrjnYGpGBnp9IYi/6oNr6YC6X7WlLebth93f6
+         j2CmYAM95tmuXBw5F3Fn+GJIi7ZhzAnn6yeWEw4jZUbkbk74RuqPcDkqo6LvWSae7USD
+         Ay9opVXP+igzBLC8DZcNuemBqm5SucX3+hHu/WjOIHWfeKPfqs41MpMFNmC778QbVp+N
+         iDombWRmn+Yy2U+h3TNdhRdYgKbK3JGIoVyFZfn8SQ8Z+xGkW6MkvmBrqv811zOAOfFR
+         tUdw==
+X-Gm-Message-State: ANhLgQ0zqldo7H2X3iVk5IJXtu7vNdRuxEE+FUoBoso1ilAUIkWChbhS
+        5lbIBjbE1fz23/ChgWTm2+mI1opbeHR3xyZhWIYhJUmn/D4=
+X-Google-Smtp-Source: ADFU+vtVBcBmmMm93NbesCcxOezx6ue+FNXn7WKGQmB+8VFPVc0CNlHuwX5yQeRTpTjhhcjyixGtamX00YP1kjg7Q6I=
+X-Received: by 2002:a05:6512:1116:: with SMTP id l22mr491651lfg.70.1583889850626;
+ Tue, 10 Mar 2020 18:24:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200311010138.10465-1-aford173@gmail.com>
+In-Reply-To: <20200311010138.10465-1-aford173@gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Tue, 10 Mar 2020 22:24:01 -0300
+Message-ID: <CAOMZO5AqjrQxGcHVLPRQXC0nRUM+hOeWtnAK2vJ=O_P28FZ3-g@mail.gmail.com>
+Subject: Re: [PATCH V2] arm64: dts: imx: Add Beacon i.mx8mm development kit
+To:     Adam Ford <aford173@gmail.com>
+Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        aford@beaconembeddedworks.com, Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix "Block comments use * on subsequent lines" warning of
-rtw_mlme_ext.c, found by checkpatch.pl script
+Hi Adam,
 
-Signed-off-by: Thiago Souza Ferreira <thsouza2013@gmail.com>
----
- drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 69 ++++++++++---------
- 1 file changed, 35 insertions(+), 34 deletions(-)
+On Tue, Mar 10, 2020 at 10:01 PM Adam Ford <aford173@gmail.com> wrote:
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-index 36841d20c..02b87a804 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-@@ -20,8 +20,8 @@
- static u8 null_addr[ETH_ALEN] = {};
- 
- /**************************************************
--OUI definitions for the vendor specific IE
--***************************************************/
-+ *OUI definitions for the vendor specific IE
-+ ***************************************************/
- const u8 RTW_WPA_OUI[] = {0x00, 0x50, 0xf2, 0x01};
- const u8 WPS_OUI[] = {0x00, 0x50, 0xf2, 0x04};
- static const u8 WMM_OUI[] = {0x00, 0x50, 0xf2, 0x02};
-@@ -33,16 +33,16 @@ const u8 WPA_TKIP_CIPHER[4] = {0x00, 0x50, 0xf2, 0x02};
- const u8 RSN_TKIP_CIPHER[4] = {0x00, 0x0f, 0xac, 0x02};
- 
- /********************************************************
--MCS rate definitions
--*********************************************************/
-+ *MCS rate definitions
-+ *********************************************************/
- const u8 MCS_rate_1R[16] = {
- 	0xff, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
- 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
- };
- 
- /********************************************************
--ChannelPlan definitions
--*********************************************************/
-+ *ChannelPlan definitions
-+ *********************************************************/
- static struct rt_channel_plan_2g RTW_ChannelPlan2G[RT_CHANNEL_DOMAIN_2G_MAX] = {
- 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, 13},		/*  0x00, RT_CHANNEL_DOMAIN_2G_WORLD , Passive scan CH 12, 13 */
- 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, 13},		/*  0x01, RT_CHANNEL_DOMAIN_2G_ETSI1 */
-@@ -173,10 +173,10 @@ struct xmit_frame *alloc_mgtxmitframe(struct xmit_priv *pxmitpriv)
- }
- 
- /****************************************************************************
--
--Following are some TX functions for WiFi MLME
--
--*****************************************************************************/
-+ *
-+ * Following are some TX functions for WiFi MLME
-+ *
-+ *****************************************************************************/
- 
- void update_mgnt_tx_rate(struct adapter *padapter, u8 rate)
- {
-@@ -1895,10 +1895,10 @@ unsigned int send_beacon(struct adapter *padapter)
- }
- 
- /****************************************************************************
--
--Following are some utility functions for WiFi MLME
--
--*****************************************************************************/
-+ *
-+ *Following are some utility functions for WiFi MLME
-+ *
-+ *****************************************************************************/
- 
- static void site_survey(struct adapter *padapter)
- {
-@@ -2497,10 +2497,11 @@ static void process_80211d(struct adapter *padapter, struct wlan_bssid_ex *bssid
- }
- 
- /****************************************************************************
--
--Following are the callback functions for each subtype of the management frames
--
--*****************************************************************************/
-+ *
-+ * Following are the callback functions for each subtype of the management
-+ * frames
-+ *
-+ *****************************************************************************/
- 
- static unsigned int OnProbeReq(struct adapter *padapter,
- 			       struct recv_frame *precv_frame)
-@@ -3822,10 +3823,10 @@ static unsigned int OnAction(struct adapter *padapter,
- }
- 
- /****************************************************************************
--
--Following are the initialization functions for WiFi MLME
--
--*****************************************************************************/
-+ *
-+ * Following are the initialization functions for WiFi MLME
-+ *
-+ *****************************************************************************/
- 
- static struct mlme_handler mlme_sta_tbl[] = {
- 	{WIFI_ASSOCREQ,	  "OnAssocReq",	  &OnAssocReq},
-@@ -4151,10 +4152,10 @@ void mgt_dispatcher(struct adapter *padapter, struct recv_frame *precv_frame)
- }
- 
- /****************************************************************************
--
--Following are the functions to report events
--
--*****************************************************************************/
-+ *
-+ * Following are the functions to report events
-+ *
-+ *****************************************************************************/
- 
- void report_survey_event(struct adapter *padapter,
- 			 struct recv_frame *precv_frame)
-@@ -4405,10 +4406,10 @@ void report_add_sta_event(struct adapter *padapter, unsigned char *MacAddr,
- }
- 
- /****************************************************************************
--
--Following are the event callback functions
--
--*****************************************************************************/
-+ *
-+ * Following are the event callback functions
-+ *
-+ *****************************************************************************/
- 
- /* for sta/adhoc mode */
- void update_sta_info(struct adapter *padapter, struct sta_info *psta)
-@@ -4599,10 +4600,10 @@ void mlmeext_sta_del_event_callback(struct adapter *padapter)
- }
- 
- /****************************************************************************
--
--Following are the functions for the timer handlers
--
--*****************************************************************************/
-+ *
-+ * Following are the functions for the timer handlers
-+ *
-+ *****************************************************************************/
- 
- static u8 chk_ap_is_alive(struct adapter *padapter, struct sta_info *psta)
- {
--- 
-2.20.1
+> +&ecspi2 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&pinctrl_espi2>;
+> +       cs-gpios = <&gpio5 9 0>;
 
+You could use GPIO_ACTIVE_HIGH instead of hardcoded 0.
+
+> +       status = "okay";
+> +
+> +       at25@0 {
+
+Node names should be generic:
+
+eeprom@0
+
+> +               compatible = "atmel,at25";
+
+Documentation/devicetree/bindings/eeprom/at25.txt states:
+
+"- compatible : Should be "<vendor>,<type>", and generic value "atmel,at25".
+  Example "<vendor>,<type>" values:
+    "microchip,25lc040"
+    "st,m95m02"
+    "st,m95256"
+
+> +&i2c4 {
+> +
+
+Unneeded blank line.
+
+> diff --git a/arch/arm64/boot/dts/freescale/beacon-imx8mm-kit.dts b/arch/arm64/boot/dts/freescale/beacon-imx8mm-kit.dts
+> new file mode 100644
+> index 000000000000..417b15d345d5
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/beacon-imx8mm-kit.dts
+> @@ -0,0 +1,19 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright 2020 Compass Electronics Group, LLC
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "imx8mm.dtsi"
+> +#include "beacon-imx8mm-som.dtsi"
+> +#include "beacon-imx8mm-baseboard.dtsi"
+
+The naming convention we use is to start the dts names with the i.MX
+SoC name, so:
+
+imx8mm-beacon-som.dtsi
+imx8mm-beacon-baseboard.dtsi
+
+> +/ {
+> +       model = "Beacon EmbeddedWorks i.MX8M Mini Development Kit";
+> +       compatible = "fsl,imx8mm";
+
+You should add an Entry for Beacon in
+Documentation/devicetree/bindings/vendor-prefixes.yaml on a separate
+patch.
+
+and then:
+
+compatible = "beacon,imx8mm-beacon-kit", "fsl,imx8mm"
+
+Also, please add an entry for this board in
+Documentation/devicetree/bindings/arm/fsl.yaml
+
+> +&i2c3 {
+> +       clock-frequency = <400000>;
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&pinctrl_i2c3>;
+> +       status = "okay";
+> +
+> +       eeprom@50 {
+> +               compatible = "atmel,24c64";
+
+Same comment about the compatible.
+
+> +&iomuxc {
+> +
+
+Unneeded blank line.
+
+> +               pinctrl_fec1: fec1grp {
