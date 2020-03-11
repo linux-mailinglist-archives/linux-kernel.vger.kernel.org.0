@@ -2,73 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 322B4181C91
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:44:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA72F181CB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:45:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730046AbgCKPn6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 11:43:58 -0400
-Received: from lists.gateworks.com ([108.161.130.12]:39778 "EHLO
-        lists.gateworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729848AbgCKPn6 (ORCPT
+        id S1729848AbgCKPpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 11:45:03 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:60826 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729977AbgCKPpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 11:43:58 -0400
-Received: from 68-189-91-139.static.snlo.ca.charter.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
-        by lists.gateworks.com with esmtp (Exim 4.82)
-        (envelope-from <tharvey@gateworks.com>)
-        id 1jC3Xn-0008Ub-Ga; Wed, 11 Mar 2020 15:45:15 +0000
-From:   Tim Harvey <tharvey@gateworks.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Robert Richter <rrichter@marvell.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tim Harvey <tharvey@gateworks.com>
-Subject: [PATCH] gpio: thunderx: fix irq_request_resources
-Date:   Wed, 11 Mar 2020 08:43:53 -0700
-Message-Id: <1583941433-15876-1-git-send-email-tharvey@gateworks.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 11 Mar 2020 11:45:00 -0400
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jC3XW-0001h8-Gg; Wed, 11 Mar 2020 15:44:58 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] thread fixes v5.6-rc6
+Date:   Wed, 11 Mar 2020 16:44:05 +0100
+Message-Id: <20200311154405.3137527-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If there are no parent resources do not call irq_chip_request_resources_parent
-at all as this will return an error.
+Hey Linus,
 
-This resolves a regression where devices using a thunderx gpio as an interrupt
-would fail probing.
+/* Summary */
+This contains a single fix for a regression which was introduced when we
+introduced the ability to select a specific pid at process creation time. When
+this feature is requested, the error value will be set to -EPERM after exiting
+the pid allocation loop. This caused EPERM to be returned when e.g. the init
+process/child subreaper of the pid namespace has already died where we used to
+return ENOMEM before.
+The first patch here simply fixes the regression by unconditionally setting the
+return value back to ENOMEM again once we've successfully allocated the
+requested pid number. This should be easy to backport to v5.5.
 
-Fixes: 0d04d0c ("gpio: thunderx: Use the default parent apis for {request,release}_resources")
-Signed-off-by: Tim Harvey <tharvey@gateworks.com>
----
- drivers/gpio/gpio-thunderx.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+The second patch adds a comment explaining that we must keep returning ENOMEM
+since we've been doing it for a long time and have explicitly documented this
+behavior for userspace. This seemed worthwhile because we now have at least two
+separate example where people tried to change the return value to something
+other than ENOMEM (The first version of the regression fix did that too and the
+commit message links to an earlier patch that tried to do the same.).
 
-diff --git a/drivers/gpio/gpio-thunderx.c b/drivers/gpio/gpio-thunderx.c
-index 4627704..f84b9b1 100644
---- a/drivers/gpio/gpio-thunderx.c
-+++ b/drivers/gpio/gpio-thunderx.c
-@@ -366,15 +366,18 @@ static int thunderx_gpio_irq_request_resources(struct irq_data *data)
- {
- 	struct thunderx_line *txline = irq_data_get_irq_chip_data(data);
- 	struct thunderx_gpio *txgpio = txline->txgpio;
-+	struct irq_data *parent_data = data->parent_data;
- 	int r;
- 
- 	r = gpiochip_lock_as_irq(&txgpio->chip, txline->line);
- 	if (r)
- 		return r;
- 
--	r = irq_chip_request_resources_parent(data);
--	if (r)
--		gpiochip_unlock_as_irq(&txgpio->chip, txline->line);
-+	if (parent_data && parent_data->chip->irq_request_resources) {
-+		r = irq_chip_request_resources_parent(data);
-+		if (r)
-+			gpiochip_unlock_as_irq(&txgpio->chip, txline->line);
-+	}
- 
- 	return r;
- }
--- 
-2.7.4
+I have a simple regression test to make sure we catch this regression in the
+future but since that introduces a whole new selftest subdir and test files
+I'll keep this for v5.7.
 
+/* Testing */
+All patches have seen exposure in linux-next and are based on v5.6-rc1.
+I've had a build warning reported to me for the first version of the second
+patch two days ago that tried to remove the unconditional initalization but
+that's fixed and linux-next seemed happy. The second patch is now a pure
+non-functional change.
+
+/* Conflicts */
+At the time of creating this pr no merge conflicts were reported with anything
+that is expected to land this merge window.
+
+The following changes since commit 98d54f81e36ba3bf92172791eba5ca5bd813989b:
+
+  Linux 5.6-rc4 (2020-03-01 16:38:46 -0600)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/for-linus-2020-03-10
+
+for you to fetch changes up to 10dab84caf400f2f5f8b010ebb0c7c4272ec5093:
+
+  pid: make ENOMEM return value more obvious (2020-03-09 23:40:05 +0100)
+
+Please consider pulling these changes from the signed for-linus-2020-03-10 tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+for-linus-2020-03-10
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      pid: make ENOMEM return value more obvious
+
+Corey Minyard (1):
+      pid: Fix error return value in some cases
+
+ kernel/pid.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
