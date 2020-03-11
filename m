@@ -2,62 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21588183E6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:12:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6CA8183E83
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:12:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbgCMBL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 21:11:27 -0400
-Received: from 97-93-29-23.dhcp.snlo.ca.charter.com ([97.93.29.23]:54452 "EHLO
+        id S1727427AbgCMBMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 21:12:01 -0400
+Received: from 97-93-29-23.dhcp.snlo.ca.charter.com ([97.93.29.23]:54474 "EHLO
         skomatineni-linux.nvidia.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726647AbgCMBL0 (ORCPT
+        by vger.kernel.org with ESMTP id S1727179AbgCMBL1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 21:11:26 -0400
-X-Greylist: delayed 91210 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Mar 2020 21:11:25 EDT
+        Thu, 12 Mar 2020 21:11:27 -0400
+X-Greylist: delayed 91210 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Mar 2020 21:11:26 EDT
 Received: by skomatineni-linux.nvidia.com (Postfix, from userid 1000)
-        id E04C81040078; Tue, 10 Mar 2020 17:20:31 -0700 (PDT)
+        id 070701040081; Tue, 10 Mar 2020 21:02:53 -0700 (PDT)
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        baolin.wang@linaro.org, kstewart@linuxfoundation.org,
-        tglx@linutronix.de, bradleybolen@gmail.com,
-        gregkh@linuxfoundation.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com
-Cc:     skomatineni@nvidia.com, anrao@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-Subject: [PATCH v2 2/2] sdhci: tegra: Enable MMC_CAP_WAIT_WHILE_BUSY host capability
-Date:   Tue, 10 Mar 2020 17:20:30 -0700
-Message-Id: <1583886030-11339-2-git-send-email-skomatineni@nvidia.com>
+To:     skomatineni@nvidia.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, robh+dt@kernel.org, josephl@nvidia.com,
+        daniel.lezcano@linaro.org, mmaddireddy@nvidia.com,
+        nkristam@nvidia.com
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] arm64: tegra: Add reset-cells to mc
+Date:   Tue, 10 Mar 2020 21:02:46 -0700
+Message-Id: <1583899366-1588-1-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583886030-11339-1-git-send-email-skomatineni@nvidia.com>
-References: <1583886030-11339-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra sdhci host supports HW busy detection of the device busy
-signaling over data0 lane.
+Tegra210 device tree is missing reset-cells property for mc node.
 
-So, this patch enables host capability MMC_CAP_wAIT_WHILE_BUSY.
+This patch fixes it.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/mmc/host/sdhci-tegra.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index fa8f6a4..1c381f8 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -1580,6 +1580,8 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	if (rc)
- 		goto err_parse_dt;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 66dd1df..9241163 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -935,6 +935,7 @@
+ 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
  
-+	host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY;
-+
- 	if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
- 		host->mmc->caps |= MMC_CAP_1_8V_DDR;
+ 		#iommu-cells = <1>;
++		#reset-cells = <1>;
+ 	};
  
+ 	sata@70020000 {
 -- 
 2.7.4
 
