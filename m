@@ -2,166 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C939182404
+	by mail.lfdr.de (Postfix) with ESMTP id B6509182405
 	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 22:40:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387555AbgCKVki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 17:40:38 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:34036 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387523AbgCKVke (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 17:40:34 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 575BA20031;
-        Wed, 11 Mar 2020 22:40:30 +0100 (CET)
-Date:   Wed, 11 Mar 2020 22:40:28 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jyri Sarha <jsarha@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH] dt-bindings: display: Fix dtc unit-address warnings in
- examples
-Message-ID: <20200311214028.GA21800@ravnborg.org>
-References: <20200311210001.5102-1-robh@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200311210001.5102-1-robh@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pGLkceISAAAA:8
-        a=7gkXJVJtAAAA:8 a=sozttTNsAAAA:8 a=VwQbUJbxAAAA:8 a=Hs3obBPvDEpcAaRkq7IA:9
-        a=KgW6Z8YwRCCCCE-m:21 a=khJvjRUq4pdLXzPm:21 a=CjuIK1q_8ugA:10
-        a=E9Po1WZjFZOl8hwRPBS3:22 a=aeg5Gbbo78KNqacMgKqU:22
-        a=AjGcO6oz07-iQ99wixmX:22
+        id S2387565AbgCKVkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 17:40:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46622 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387531AbgCKVkg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 17:40:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id A8D50AE41;
+        Wed, 11 Mar 2020 21:40:33 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id 577CAE0C0A; Wed, 11 Mar 2020 22:40:33 +0100 (CET)
+Message-Id: <34fbf1c52e23440328f5ca53e7ad8bef9bc991b7.1583962006.git.mkubecek@suse.cz>
+In-Reply-To: <cover.1583962006.git.mkubecek@suse.cz>
+References: <cover.1583962006.git.mkubecek@suse.cz>
+From:   Michal Kubecek <mkubecek@suse.cz>
+Subject: [PATCH net-next 06/15] ethtool: add FEATURES_NTF notification
+To:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        John Linville <linville@tuxdriver.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 11 Mar 2020 22:40:33 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 04:00:01PM -0500, Rob Herring wrote:
-> Extra dtc warnings (roughly what W=1 enables) are now enabled by default
-> when building the binding examples. These were fixed treewide in
-> 5.6-rc5, but some new display bindings have been added with new
-> warnings:
-> 
-> Documentation/devicetree/bindings/display/panel/raydium,rm68200.example.dts:17.7-27.11: Warning (unit_address_vs_reg): /example-0/dsi@0: node has a unit name, but no reg property
-> Documentation/devicetree/bindings/display/panel/panel-simple-dsi.example.dts:17.19-31.11: Warning (unit_address_vs_reg): /example-0/mdss_dsi@fd922800: node has a unit name, but no reg property
-> Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.example.dts:17.7-26.11: Warning (unit_address_vs_reg): /example-0/dsi@0: node has a unit name, but no reg property
-> Documentation/devicetree/bindings/display/ti/ti,am65x-dss.example.dts:21.27-49.11: Warning (unit_address_format): /example-0/dss@04a00000: unit name should not have leading 0s
-> Documentation/devicetree/bindings/display/ti/ti,j721e-dss.example.dts:21.27-72.11: Warning (unit_address_format): /example-0/dss@04a00000: unit name should not have leading 0s
-> Documentation/devicetree/bindings/display/ti/ti,k2g-dss.example.dts:20.27-42.11: Warning (unit_address_format): /example-0/dss@02540000: unit name should not have leading 0s
-> 
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Jyri Sarha <jsarha@ti.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Send ETHTOOL_MSG_FEATURES_NTF notification whenever network device features
+are modified using ETHTOOL_MSG_FEATURES_SET netlink message, ethtool ioctl
+request or any other way resulting in call to netdev_update_features() or
+netdev_change_features()
 
-And I can drop my patch that only fixed the panel/ parts - good.
+Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+---
+ Documentation/networking/ethtool-netlink.rst |  6 ++++
+ include/uapi/linux/ethtool_netlink.h         |  1 +
+ net/ethtool/features.c                       |  4 +++
+ net/ethtool/netlink.c                        | 29 +++++++++++++++++++-
+ 4 files changed, 39 insertions(+), 1 deletion(-)
 
-	Sam
+diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
+index d6706c4aa972..47542f042e9d 100644
+--- a/Documentation/networking/ethtool-netlink.rst
++++ b/Documentation/networking/ethtool-netlink.rst
+@@ -208,6 +208,7 @@ Kernel to userspace:
+   ``ETHTOOL_MSG_WOL_NTF``               wake-on-lan settings notification
+   ``ETHTOOL_MSG_FEATURES_GET_REPLY``    device features
+   ``ETHTOOL_MSG_FEATURES_SET_REPLY``    optional reply to FEATURES_SET
++  ``ETHTOOL_MSG_FEATURES_NTF``          netdev features notification
+   ===================================== =================================
+ 
+ ``GET`` requests are sent by userspace applications to retrieve device
+@@ -591,6 +592,11 @@ reports the difference between old and new dev->features: mask consists of
+ bits which have changed, values are their values in new dev->features (after
+ the operation).
+ 
++``ETHTOOL_MSG_FEATURES_NTF`` notification is sent not only if device features
++are modified using ``ETHTOOL_MSG_FEATURES_SET`` request or on of ethtool ioctl
++request but also each time features are modified with netdev_update_features()
++or netdev_change_features().
++
+ 
+ Request translation
+ ===================
+diff --git a/include/uapi/linux/ethtool_netlink.h b/include/uapi/linux/ethtool_netlink.h
+index 6f7aaa6b7f42..3d0204cf96a6 100644
+--- a/include/uapi/linux/ethtool_netlink.h
++++ b/include/uapi/linux/ethtool_netlink.h
+@@ -47,6 +47,7 @@ enum {
+ 	ETHTOOL_MSG_WOL_NTF,
+ 	ETHTOOL_MSG_FEATURES_GET_REPLY,
+ 	ETHTOOL_MSG_FEATURES_SET_REPLY,
++	ETHTOOL_MSG_FEATURES_NTF,
+ 
+ 	/* add new constants above here */
+ 	__ETHTOOL_MSG_KERNEL_CNT,
+diff --git a/net/ethtool/features.c b/net/ethtool/features.c
+index a12e73db4452..cf00751067c6 100644
+--- a/net/ethtool/features.c
++++ b/net/ethtool/features.c
+@@ -233,6 +233,7 @@ int ethnl_set_features(struct sk_buff *skb, struct genl_info *info)
+ 	struct nlattr *tb[ETHTOOL_A_FEATURES_MAX + 1];
+ 	struct ethnl_req_info req_info = {};
+ 	struct net_device *dev;
++	bool mod;
+ 	int ret;
+ 
+ 	ret = nlmsg_parse(info->nlhdr, GENL_HDRLEN, tb,
+@@ -275,6 +276,7 @@ int ethnl_set_features(struct sk_buff *skb, struct genl_info *info)
+ 	dev->wanted_features = ethnl_bitmap_to_features(req_wanted);
+ 	__netdev_update_features(dev);
+ 	ethnl_features_to_bitmap(new_active, dev->features);
++	mod = !bitmap_equal(old_active, new_active, NETDEV_FEATURE_COUNT);
+ 
+ 	ret = 0;
+ 	if (!(req_info.flags & ETHTOOL_FLAG_OMIT_REPLY)) {
+@@ -295,6 +297,8 @@ int ethnl_set_features(struct sk_buff *skb, struct genl_info *info)
+ 					  wanted_diff_mask, new_active,
+ 					  active_diff_mask, compact);
+ 	}
++	if (mod)
++		ethtool_notify(dev, ETHTOOL_MSG_FEATURES_NTF, NULL);
+ 
+ out_rtnl:
+ 	rtnl_unlock();
+diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
+index 757ea3fc98a0..5c0e361bfd66 100644
+--- a/net/ethtool/netlink.c
++++ b/net/ethtool/netlink.c
+@@ -528,6 +528,7 @@ ethnl_default_notify_ops[ETHTOOL_MSG_KERNEL_MAX + 1] = {
+ 	[ETHTOOL_MSG_LINKMODES_NTF]	= &ethnl_linkmodes_request_ops,
+ 	[ETHTOOL_MSG_DEBUG_NTF]		= &ethnl_debug_request_ops,
+ 	[ETHTOOL_MSG_WOL_NTF]		= &ethnl_wol_request_ops,
++	[ETHTOOL_MSG_FEATURES_NTF]	= &ethnl_features_request_ops,
+ };
+ 
+ /* default notification handler */
+@@ -613,6 +614,7 @@ static const ethnl_notify_handler_t ethnl_notify_handlers[] = {
+ 	[ETHTOOL_MSG_LINKMODES_NTF]	= ethnl_default_notify,
+ 	[ETHTOOL_MSG_DEBUG_NTF]		= ethnl_default_notify,
+ 	[ETHTOOL_MSG_WOL_NTF]		= ethnl_default_notify,
++	[ETHTOOL_MSG_FEATURES_NTF]	= ethnl_default_notify,
+ };
+ 
+ void ethtool_notify(struct net_device *dev, unsigned int cmd, const void *data)
+@@ -630,6 +632,29 @@ void ethtool_notify(struct net_device *dev, unsigned int cmd, const void *data)
+ }
+ EXPORT_SYMBOL(ethtool_notify);
+ 
++static void ethnl_notify_features(struct netdev_notifier_info *info)
++{
++	struct net_device *dev = netdev_notifier_info_to_dev(info);
++
++	ethtool_notify(dev, ETHTOOL_MSG_FEATURES_NTF, NULL);
++}
++
++static int ethnl_netdev_event(struct notifier_block *this, unsigned long event,
++			      void *ptr)
++{
++	switch (event) {
++	case NETDEV_FEAT_CHANGE:
++		ethnl_notify_features(ptr);
++		break;
++	}
++
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block ethnl_netdev_notifier = {
++	.notifier_call = ethnl_netdev_event,
++};
++
+ /* genetlink setup */
+ 
+ static const struct genl_ops ethtool_genl_ops[] = {
+@@ -736,7 +761,9 @@ static int __init ethnl_init(void)
+ 		return ret;
+ 	ethnl_ok = true;
+ 
+-	return 0;
++	ret = register_netdevice_notifier(&ethnl_netdev_notifier);
++	WARN(ret < 0, "ethtool: net device notifier registration failed");
++	return ret;
+ }
+ 
+ subsys_initcall(ethnl_init);
+-- 
+2.25.1
 
-> ---
->  .../devicetree/bindings/display/panel/orisetech,otm8009a.yaml  | 3 +--
->  .../devicetree/bindings/display/panel/panel-simple-dsi.yaml    | 2 +-
->  .../devicetree/bindings/display/panel/raydium,rm68200.yaml     | 2 +-
->  Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml | 2 +-
->  Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml | 2 +-
->  Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml   | 2 +-
->  6 files changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.yaml b/Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.yaml
-> index 6e6ac995c27b..2e7c65b093d7 100644
-> --- a/Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.yaml
-> @@ -39,7 +39,7 @@ required:
->  
->  examples:
->    - |
-> -    dsi@0 {
-> +    dsi {
->        #address-cells = <1>;
->        #size-cells = <0>;
->        panel@0 {
-> @@ -50,4 +50,3 @@ examples:
->        };
->      };
->  ...
-> -
-> diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
-> index 8b60368a2425..b2e8742fd6af 100644
-> --- a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
-> @@ -50,7 +50,7 @@ required:
->  
->  examples:
->    - |
-> -    mdss_dsi@fd922800 {
-> +    dsi {
->        #address-cells = <1>;
->        #size-cells = <0>;
->        panel@0 {
-> diff --git a/Documentation/devicetree/bindings/display/panel/raydium,rm68200.yaml b/Documentation/devicetree/bindings/display/panel/raydium,rm68200.yaml
-> index 09149f140d5f..a35ba16fc000 100644
-> --- a/Documentation/devicetree/bindings/display/panel/raydium,rm68200.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/raydium,rm68200.yaml
-> @@ -42,7 +42,7 @@ required:
->  
->  examples:
->    - |
-> -    dsi@0 {
-> +    dsi {
->        #address-cells = <1>;
->        #size-cells = <0>;
->        panel@0 {
-> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> index cac61a998203..aa5543a64526 100644
-> --- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> +++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> @@ -121,7 +121,7 @@ examples:
->      #include <dt-bindings/interrupt-controller/irq.h>
->      #include <dt-bindings/soc/ti,sci_pm_domain.h>
->  
-> -    dss: dss@04a00000 {
-> +    dss: dss@4a00000 {
->              compatible = "ti,am65x-dss";
->              reg =   <0x0 0x04a00000 0x0 0x1000>, /* common */
->                      <0x0 0x04a02000 0x0 0x1000>, /* vidl1 */
-> diff --git a/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
-> index ade9b2f513f5..6d47cd7206c2 100644
-> --- a/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
-> +++ b/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
-> @@ -154,7 +154,7 @@ examples:
->      #include <dt-bindings/interrupt-controller/irq.h>
->      #include <dt-bindings/soc/ti,sci_pm_domain.h>
->  
-> -    dss: dss@04a00000 {
-> +    dss: dss@4a00000 {
->              compatible = "ti,j721e-dss";
->              reg =   <0x00 0x04a00000 0x00 0x10000>, /* common_m */
->                      <0x00 0x04a10000 0x00 0x10000>, /* common_s0*/
-> diff --git a/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
-> index 385bd060ccf9..7cb37053e95b 100644
-> --- a/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
-> +++ b/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
-> @@ -81,7 +81,7 @@ examples:
->      #include <dt-bindings/interrupt-controller/arm-gic.h>
->      #include <dt-bindings/interrupt-controller/irq.h>
->  
-> -    dss: dss@02540000 {
-> +    dss: dss@2540000 {
->              compatible = "ti,k2g-dss";
->              reg =   <0x02540000 0x400>,
->                      <0x02550000 0x1000>,
-> -- 
-> 2.20.1
