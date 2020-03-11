@@ -2,105 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EE65182001
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:50:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0144181FD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:45:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730524AbgCKRty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:49:54 -0400
-Received: from mga01.intel.com ([192.55.52.88]:20305 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730363AbgCKRty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:49:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 10:49:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
-   d="scan'208";a="353932452"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
-  by fmsmga001.fm.intel.com with ESMTP; 11 Mar 2020 10:49:53 -0700
-Message-ID: <588d18133c0ad76b375a920b6e6cc1598564163a.camel@intel.com>
-Subject: Re: [PATCH V1 09/13] selftests/resctrl: Modularize fill_buf for new
- CAT test case
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     Reinette Chatre <reinette.chatre@intel.com>, shuah@kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        tony.luck@intel.com, babu.moger@amd.com, james.morse@arm.com,
-        ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 11 Mar 2020 10:45:07 -0700
-In-Reply-To: <50cb755f-e112-5d71-11fa-a7cbc951d91e@intel.com>
-References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
-         <43b368952bb006ee973311d9c9ae0eb53d8e7f60.1583657204.git.sai.praneeth.prakhya@intel.com>
-         <4c84be1d-8839-2c85-b294-7e3c454240bb@intel.com>
-         <7a1f93d4516a7de99c5dbc4afd6279d6fe7aa126.camel@intel.com>
-         <50cb755f-e112-5d71-11fa-a7cbc951d91e@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        id S1730684AbgCKRpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:45:18 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:43603 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730568AbgCKRpR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:45:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583948716;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=AB8Xr/U170UK1wx2l/F+WJsKF1gpUCBlvtcUiwS4DKw=;
+        b=b5dHeWnFVc795gzOCHfG+taxyZnLAIswfiXbkbfKGb3lfDbm7f745A4pd222tXgDN7g3Z3
+        0/n4lgk952w5eves5o2D2h0gQ6QUZH3eeKpd1UTARI0BWpMS4uBXVocx4MRZG968U+OSiy
+        01uFWfhuwoyqLQOeWPFx1NxcyGLScf0=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-186-UOReIK3aNUCe5QSnRhrRlw-1; Wed, 11 Mar 2020 13:45:15 -0400
+X-MC-Unique: UOReIK3aNUCe5QSnRhrRlw-1
+Received: by mail-qt1-f199.google.com with SMTP id d2so1710604qtr.9
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:45:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=AB8Xr/U170UK1wx2l/F+WJsKF1gpUCBlvtcUiwS4DKw=;
+        b=ScOt8CZIYZJ+gJwt738SyEBpjjgTrNJNxoG5Jp89vH0K6hvT/Ecx7LTEO9NeAR0d8g
+         Tedku3Xa3NXPBxIxMXMykXNwqggfaGrJwL1dmfo5en+oHa0a9Lnv9vy9lEUAK7GyXtve
+         5jo2rJtpEXCfzuJcZXyhL9HFTpokXUpy/xIMYw7SiQ/y/Q90NjqBuYrxVZGBp5Zvgoo3
+         SLchOox+anQ/zmRYq1o6ba2coSZFOVLsD+YhYOtntKI0Br5DQrkXmkHYSRqKlvk0DnmP
+         X6xjuM4YauiV4zwx3EC8oi0HqU0OXLqUJ/AXJMxbizwGWM57RXurcDZyAK1n1Tl+lI2j
+         OyPQ==
+X-Gm-Message-State: ANhLgQ3WIiuGiWp57h9YzSuKg0RYRqyrlAhIB4Pr/y9zcKn79RNwoq+2
+        88HIa5VPLTV7zH4WH41JBgadBsjqGAzmlvK5xP3TjEjf6B1d2KlOixgu0v+6kmTyR0Gu4ff+Cv/
+        Kf1FdBHZ6LxXinNIZlCYrAXt7
+X-Received: by 2002:a37:3c7:: with SMTP id 190mr3983851qkd.130.1583948713758;
+        Wed, 11 Mar 2020 10:45:13 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vvnvBW0KU19maXwWy9gbtSBb/6E4IjU2yQzpZ+WMaT2HfH/SpqJrH1c4nEHWDgV/4Uz0pUc3A==
+X-Received: by 2002:a37:3c7:: with SMTP id 190mr3983828qkd.130.1583948713469;
+        Wed, 11 Mar 2020 10:45:13 -0700 (PDT)
+Received: from xz-x1 ([2607:9880:19c0:32::2])
+        by smtp.gmail.com with ESMTPSA id 128sm863687qki.103.2020.03.11.10.45.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 10:45:12 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 13:45:10 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Andrew Jones <drjones@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: Re: [PATCH v6 13/14] KVM: selftests: Let dirty_log_test async for
+ dirty ring test
+Message-ID: <20200311174510.GJ479302@xz-x1>
+References: <20200309214424.330363-1-peterx@redhat.com>
+ <20200309222534.345748-1-peterx@redhat.com>
+ <20200310082704.cvmy6h4u7t2spncd@kamzik.brq.redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200310082704.cvmy6h4u7t2spncd@kamzik.brq.redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Reinette,
-
-On Wed, 2020-03-11 at 08:44 -0700, Reinette Chatre wrote:
-> Hi Sai,
+On Tue, Mar 10, 2020 at 09:27:04AM +0100, Andrew Jones wrote:
+> >  enum log_mode_t {
+> >  	/* Only use KVM_GET_DIRTY_LOG for logging */
+> > @@ -156,6 +167,33 @@ enum log_mode_t {
+> >  static enum log_mode_t host_log_mode_option = LOG_MODE_ALL;
+> >  /* Logging mode for current run */
+> >  static enum log_mode_t host_log_mode;
+> > +pthread_t vcpu_thread;
+> > +
+> > +/* Only way to pass this to the signal handler */
+> > +struct kvm_vm *current_vm;
 > 
-> On 3/10/2020 6:04 PM, Sai Praneeth Prakhya wrote:
-> > On Tue, 2020-03-10 at 14:59 -0700, Reinette Chatre wrote:
-> > > On 3/6/2020 7:40 PM, Sai Praneeth Prakhya wrote:
-> > > > Currently fill_buf (in-built benchmark) runs as a separate process a
-> > > > 
-> > > 
+> nit: above two new globals could be static
 
-[SNIP]
+Will do.
 
-> > > Should buffer be freed on this error path?
-> > 
-> > Yes, that's right.. my bad. Will fix it. But the right fix is,
-> > use_buffer_forever() should not return at all. It's meant to loop around
-> > the
-> > buffer _forever_.
-> > 
-> > > I think the asymmetrical nature of the memory allocation and release
-> > > creates traps like this.
-> > > 
-> > > It may be less error prone to have the pointer returned by init_buffer
-> > > and the acted on and released within fill_cache(), passed to
-> > > "use_buffer_forever()" as a parameter.  The buffer size is known here,
-> > > there is no need to keep an "end pointer" around.
-> > 
-> > The main reason for having "startptr" as a global variable is to free
-> > memory
-> > when fill_buf is killed. fill_buf runs as a separate process (for test
-> > cases
-> > like MBM, MBA and CQM) and when user issues Ctrl_c or when the test kills
-> > benchmark_pid (i.e. fill_buf), the buffer is freed (please see
-> > ctrl_handler()).
-> 
-> I see. Got it, thanks.
-> 
-> > So, I thought, as "startptr" is anyways global, why pass it around as an
-> > argument? While making this change I thought it's natural to make "endptr"
-> > global as well because the function didn't really look good to just take
-> > endptr as an argument without startptr.
-> 
-> Maintaining the end pointer is unusual. The start of the buffer and the
-> size are known properties that the end of the buffer can be computed
-> from. Not a problem, it just seems inconsistent that some of the buffer
-> functions operate on the start pointer and size while others operate on
-> the start pointer and end pointer.
-
-Ok.. makes sense. I will try to make it consistent by using endptr all the
-time. One advantage of using endptr is that we could just compute endptr once
-and use it when needed by passing it as variable (will try to not make it
-global variable).
-
-Regards,
-Sai
+-- 
+Peter Xu
 
