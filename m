@@ -2,234 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E7FB18202F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:00:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A117182039
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:00:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730738AbgCKSAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 14:00:02 -0400
-Received: from foss.arm.com ([217.140.110.172]:52924 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730507AbgCKSAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:00:01 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4DC541FB;
-        Wed, 11 Mar 2020 11:00:01 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C495F3F6CF;
-        Wed, 11 Mar 2020 11:00:00 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 17:59:59 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Olivier Moysan <olivier.moysan@st.com>
-Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
-        broonie@kernel.org, devicetree@vger.kernel.org,
-        lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Mark Brown <broonie@kernel.org>, mark.rutland@arm.com,
-        mcoquelin.stm32@gmail.com, olivier.moysan@st.com, perex@perex.cz,
-        robh@kernel.org, tiwai@suse.com
-Subject: Applied "ASoC: dt-bindings: stm32: convert spdfirx to json-schema" to the asoc tree
-In-Reply-To:  <20200117170352.16040-1-olivier.moysan@st.com>
-Message-Id:  <applied-20200117170352.16040-1-olivier.moysan@st.com>
-X-Patchwork-Hint: ignore
+        id S1730700AbgCKSAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 14:00:14 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40760 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730692AbgCKSAM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 14:00:12 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j17so2495103lfe.7
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 11:00:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dpqDD1Wo+HKU40oDoKA/BJI8LsaHpPP8z3qrK9mKasM=;
+        b=ckkZBdQmXywHGIbczwxKoXJtM5bn1Q4zF8980dmDzUAerY42Vnt79h0/hrgko+maFY
+         g6W5qtOcDU0FR7TReGj9YV2UAWuNcF/lAEUT03GfvSsuEW22s7MzLhczmTz71ew7VoeG
+         9tipLpaaHNIEBXH+b/EPSFlrBcI9QWo4iyKEg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dpqDD1Wo+HKU40oDoKA/BJI8LsaHpPP8z3qrK9mKasM=;
+        b=oY856EjMQM/eWrmwtdVgu4ofzrTYkMUNpleYTFLNXwsSbTA/y4jOjy3NCbuWx9YHCo
+         XofoC/uTf0jQ3F5lrvODHK11E2JZ70IE9uGUrMboq/g4zsq035a2A7+is8uSAUqfoJS5
+         VR4pIXTQuhj7OQ7bYizxuvN1mDF3yETYK0GUqF78uxXcmRWpj0rdiOUlrNb20AjZxcvJ
+         YzSbpw3pI51YXbomFKiQraHwo0VHjJcMwzQNlABN5Y8FqSZ+2oGfE/MTneIWpuv3+d+A
+         McrJfu+0zdC7dNKRm5A9e9WC9HzfiEW+dvI2qnRRcfFjiya4P42CwhfSucd7vPX5OgMl
+         Z6hg==
+X-Gm-Message-State: ANhLgQ3GQzKwCVBcPxpC20ljXzE8+JeOkWZFZKyNoq/4zKvuS5STadxK
+        qmHbTzxF8vp0uYhP6AcnXA/4KmWMYY4=
+X-Google-Smtp-Source: ADFU+vvayonPlBe6Bwr7duUpdzmjlsgphjAebLkzPCxb8MwnSLQWD1OTg6k7LF7ULhWXAtp8PVyUJg==
+X-Received: by 2002:a05:6512:1085:: with SMTP id j5mr2885555lfg.183.1583949609792;
+        Wed, 11 Mar 2020 11:00:09 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id r2sm1911459lfn.92.2020.03.11.11.00.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2020 11:00:07 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id r24so3388517ljd.4
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 11:00:07 -0700 (PDT)
+X-Received: by 2002:a2e:5850:: with SMTP id x16mr2622296ljd.209.1583949607115;
+ Wed, 11 Mar 2020 11:00:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
+ <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
+ <20200310005549.adrn3yf4mbljc5f6@yavin> <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
+ <580352.1583825105@warthog.procyon.org.uk>
+In-Reply-To: <580352.1583825105@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 11 Mar 2020 10:59:51 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
+Message-ID: <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
+Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Stefan Metzmacher <metze@samba.org>,
+        Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Tue, Mar 10, 2020 at 12:25 AM David Howells <dhowells@redhat.com> wrote:
+?
+> Okay.  So what's the equivalent of AT_SYMLINK_NOFOLLOW in RESOLVE_* flag
+> terms?
 
-   ASoC: dt-bindings: stm32: convert spdfirx to json-schema
+Nothing.
 
-has been applied to the asoc tree at
+openat2() takes two sets of flags. We'll never get rid of
+AT_SYMLINK_NOFOLLOW / O_NOFOLLOW, and we've added RESOLVE_NO_SYMLINKS
+to the new set of flags. It's just a separate namespace.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+We will _not_ be adding a RESOLVE_XYZ flag for O_NOFOLLOW or
+AT_SYMLINK_NOFOLLOW. At least not visible to user space - because as
+people already figured out, that just causes problems with consistency
+issues.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+And yes, the fact that we then have three different user-visible
+namespaces (O_xyz flags for open(), AT_xyz flags for linkat(), and now
+RESOLVE_xyz flags for openat2()) is sad and messy. But it's an
+inherent messiness from just how the world works. We can't get rid of
+it.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+If we need linkat2() and friends, so be it. Do we?
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Could we have a _fourth_ set of flags that are simply for internal use
+that is a superset of them all? Sure. But no, it's almost certainly
+not worth it. Four is not better than three.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Now, some type-safety in the kernel to make sure that we can't mix
+AT_xyz with O_xyz or RESOLVE_xyz - that might be worth it. Although
+judging by past experience, not enough people run sparse for it to
+really be worth it.
 
-Thanks,
-Mark
+               Linus
 
-From 9032cdd96a2d4b0ef2f43499328f8a68050be2ec Mon Sep 17 00:00:00 2001
-From: Olivier Moysan <olivier.moysan@st.com>
-Date: Fri, 17 Jan 2020 18:03:52 +0100
-Subject: [PATCH] ASoC: dt-bindings: stm32: convert spdfirx to json-schema
-
-Convert the STM32 SPDIFRX bindings to DT schema format using json-schema.
-
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Link: https://lore.kernel.org/r/20200117170352.16040-1-olivier.moysan@st.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- .../bindings/sound/st,stm32-spdifrx.txt       | 56 -------------
- .../bindings/sound/st,stm32-spdifrx.yaml      | 80 +++++++++++++++++++
- 2 files changed, 80 insertions(+), 56 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/sound/st,stm32-spdifrx.txt
- create mode 100644 Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml
-
-diff --git a/Documentation/devicetree/bindings/sound/st,stm32-spdifrx.txt b/Documentation/devicetree/bindings/sound/st,stm32-spdifrx.txt
-deleted file mode 100644
-index 33826f2459fa..000000000000
---- a/Documentation/devicetree/bindings/sound/st,stm32-spdifrx.txt
-+++ /dev/null
-@@ -1,56 +0,0 @@
--STMicroelectronics STM32 S/PDIF receiver (SPDIFRX).
--
--The SPDIFRX peripheral, is designed to receive an S/PDIF flow compliant with
--IEC-60958 and IEC-61937.
--
--Required properties:
--  - compatible: should be "st,stm32h7-spdifrx"
--  - reg: cpu DAI IP base address and size
--  - clocks: must contain an entry for kclk (used as S/PDIF signal reference)
--  - clock-names: must contain "kclk"
--  - interrupts: cpu DAI interrupt line
--  - dmas: DMA specifiers for audio data DMA and iec control flow DMA
--    See STM32 DMA bindings, Documentation/devicetree/bindings/dma/stm32-dma.txt
--  - dma-names: two dmas have to be defined, "rx" and "rx-ctrl"
--
--Optional properties:
--  - resets: Reference to a reset controller asserting the SPDIFRX
--
--The device node should contain one 'port' child node with one child 'endpoint'
--node, according to the bindings defined in Documentation/devicetree/bindings/
--graph.txt.
--
--Example:
--spdifrx: spdifrx@40004000 {
--	compatible = "st,stm32h7-spdifrx";
--	reg = <0x40004000 0x400>;
--	clocks = <&rcc SPDIFRX_CK>;
--	clock-names = "kclk";
--	interrupts = <97>;
--	dmas = <&dmamux1 2 93 0x400 0x0>,
--	       <&dmamux1 3 94 0x400 0x0>;
--	dma-names = "rx", "rx-ctrl";
--	pinctrl-0 = <&spdifrx_pins>;
--	pinctrl-names = "default";
--
--	spdifrx_port: port {
--		cpu_endpoint: endpoint {
--			remote-endpoint = <&codec_endpoint>;
--		};
--	};
--};
--
--spdif_in: spdif-in {
--	compatible = "linux,spdif-dir";
--
--	codec_port: port {
--		codec_endpoint: endpoint {
--			remote-endpoint = <&cpu_endpoint>;
--		};
--	};
--};
--
--soundcard {
--	compatible = "audio-graph-card";
--	dais = <&spdifrx_port>;
--};
-diff --git a/Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml b/Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml
-new file mode 100644
-index 000000000000..b7f7dc452231
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml
-@@ -0,0 +1,80 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/st,stm32-spdifrx.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: STMicroelectronics STM32 S/PDIF receiver (SPDIFRX)
-+
-+maintainers:
-+  - Olivier Moysan <olivier.moysan@st.com>
-+
-+description: |
-+  The SPDIFRX peripheral, is designed to receive an S/PDIF flow compliant with
-+  IEC-60958 and IEC-61937.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - st,stm32h7-spdifrx
-+
-+  "#sound-dai-cells":
-+    const: 0
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: kclk
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  dmas:
-+    items:
-+      - description: audio data capture DMA
-+      - description: IEC status bits capture DMA
-+
-+  dma-names:
-+    items:
-+      - const: rx
-+      - const: rx-ctrl
-+
-+  resets:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - "#sound-dai-cells"
-+  - reg
-+  - clocks
-+  - clock-names
-+  - interrupts
-+  - dmas
-+  - dma-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/stm32mp1-clks.h>
-+    spdifrx: spdifrx@40004000 {
-+        compatible = "st,stm32h7-spdifrx";
-+        #sound-dai-cells = <0>;
-+        reg = <0x40004000 0x400>;
-+        clocks = <&rcc SPDIF_K>;
-+        clock-names = "kclk";
-+        interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-+        dmas = <&dmamux1 2 93 0x400 0x0>,
-+               <&dmamux1 3 94 0x400 0x0>;
-+        dma-names = "rx", "rx-ctrl";
-+        pinctrl-0 = <&spdifrx_pins>;
-+        pinctrl-names = "default";
-+    };
-+
-+...
--- 
-2.20.1
-
+PS. Yeah, we also have that LOOKUP_xyz namespace, and the access mode
+namespace, so we already have those internal format versions too.
