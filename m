@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C5E818181C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 13:35:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83E28181823
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 13:35:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbgCKMfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 08:35:14 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:56163 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729419AbgCKMfN (ORCPT
+        id S1729462AbgCKMfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 08:35:21 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37350 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729442AbgCKMfR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 08:35:13 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 6so1893000wmi.5
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 05:35:12 -0700 (PDT)
+        Wed, 11 Mar 2020 08:35:17 -0400
+Received: by mail-wr1-f66.google.com with SMTP id 6so2402093wre.4
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 05:35:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0S8YiKSlFY8C2wfSnfYCKEk3w9krt/5PEihft8xMBGs=;
-        b=iLwUXOrjXX1JgooKK4C1Ej7aG++N6vBTyANbdSesx4J5LANkA4rttAdfoN3Cl9OWKN
-         MK8FbGS80ejPexHaTTEhYRZed+ckS3C6aTIXTWQoEcjAesHoSKfGdtfNIVffBZmNij0t
-         +c2hNFirdEnegtp+oJcHVUXtcCiOFQ1TIXBLoKbywdKv2X4tr3zE+Jm0Jr6KfhgZ9Hdn
-         FQwJX8RDzIZLP0muodqY9eAC77ehypRz/hCnqognQa2LPPREWDxA1l8jr+KkOTWZORaS
-         +0M7U1ItFDSyfQdvkdvSylEi4p8LuqqNHh2RTBb26xVVV85ZQnPO8I3Gec63XEFl93md
-         8W1A==
+        bh=EsLey6y6SKlRjbgkIy31jgpCjMbbEJbmH2TS7XD1nHc=;
+        b=mWiG+P2pZRLmizuh34OhP27MX0SBZMGPPLs/YPdMWgllcaWklbh7guy+08eWuXJxUs
+         /Ipa746mPKuK+LfdBgdCATUcP++GWjeRDVtWby9q6vrnLC3u8J3gz1p9ZzHgjR3wNjpi
+         q0UScWG0vPv/cXxV04mA2UVSBScF+okNEXCzyP//2YejVgmnuaGvOS9Nu7QX1dzbziUM
+         qn8Ei1PCD4Kuj+vXVgwK2QHlxknkWkfo6IyW/IkKBAfrj69PeeefnDH4g8BF253gwr0q
+         4ezC/kATL6VKJuEb55xEHxFeYYbe5+1+tpRTvFU3I3CuDZ8l1SSkvDVTW44s8MUVqlFY
+         uckw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0S8YiKSlFY8C2wfSnfYCKEk3w9krt/5PEihft8xMBGs=;
-        b=t0pQvSlHhiAJ38Fdeqb5FvgMOxiGp6TDNgOtjHVv/xtrO9PLmHLE05b+2hJl/sy/AE
-         M4Znrcg0hfMEtVJUdJpXGKYL7SXOKZl4WNsjkbSHJ5Puje6BPnMhUjkLwZmqiI4g6SHD
-         9hFaGKI6QYgwZ7oXXuJr3Y9X90/VxfgW9dyv5pZCKZ7nP41OoEaCquWH86PDJ57xbtUF
-         kjA+7ho3uucN2/Nm/I6zywSwTJYUhNhrDB6RNizMEoCg4u0bH7JvSylh0nj0dRPsJnRX
-         jRq8YcbnmiaXZvjcoeBlz5eqFXZwp1u+ZeMQloVCcRT8TEnWFKB4Y5ijt0HdbMgW4syy
-         EPdQ==
-X-Gm-Message-State: ANhLgQ1qfCfKvxcq1EALeHyLQpgvhsOlHmxEiHyJRx8OgaLueis++st1
-        zFhdli8jsYj2qpGjbFzgEsIksA==
-X-Google-Smtp-Source: ADFU+vtnJUfH6dtY/lJKtuEbOdGr7AEex8lhT/SZQ0KZ7Kab7Njaq1yaVX/R+8xktDk/P5+P/+x86w==
-X-Received: by 2002:a7b:c8d5:: with SMTP id f21mr3670765wml.60.1583930111399;
-        Wed, 11 Mar 2020 05:35:11 -0700 (PDT)
+        bh=EsLey6y6SKlRjbgkIy31jgpCjMbbEJbmH2TS7XD1nHc=;
+        b=jxYBp9mLZHFJTuRoih7f2B9zr91ZTqziaumIajsscIgF0thiRTqsrqqbzTPwScQf+3
+         xfrGkNw2aYtaInu1SQL8X0AQqRG1iYVVB9aLOgs6RiXIAn1kB6ZizkXa6hzCyivmKmx0
+         tMIDx1xexHQexCtdUGrLMNrJ1eG4aVaTDZbcuyluDPzHLSoYpuVAL7nUXoywlRf1tcQg
+         0e5FpfBjV1e+IlQXTbkTbxfMl7pBwC2Bo9+Pd9eTqS/Zd18J79dZVB5K3i6UeO8j8FoF
+         vRtOihvqulyUdH2x/LZ5XbwpibT94ZZXKSpfMW/I8xvkok4Qy2O+tikzE1i5MVL05Z6U
+         MpyQ==
+X-Gm-Message-State: ANhLgQ2PRlLkp1/yj0MaLaEpasmvo6YHW16MejHh966xiYmBiB65KNjZ
+        BRxsI4K1jxu7kBX97F469goWXA==
+X-Google-Smtp-Source: ADFU+vsLDiiJL2pTGClrrfzghrj2bi6GXYebxKsoYlZUpQHtyIgYMG+4GTMEmr09Abr3Us8gL5WUSw==
+X-Received: by 2002:adf:b19e:: with SMTP id q30mr4265494wra.163.1583930112809;
+        Wed, 11 Mar 2020 05:35:12 -0700 (PDT)
 Received: from xps7590.local ([2a02:2450:102f:13b8:9087:3e80:4ebc:ae7b])
-        by smtp.gmail.com with ESMTPSA id m25sm7822732wml.35.2020.03.11.05.35.10
+        by smtp.gmail.com with ESMTPSA id m25sm7822732wml.35.2020.03.11.05.35.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 05:35:10 -0700 (PDT)
+        Wed, 11 Mar 2020 05:35:12 -0700 (PDT)
 From:   Robert Foss <robert.foss@linaro.org>
 To:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
         mark.rutland@arm.com, catalin.marinas@arm.com, will@kernel.org,
@@ -55,9 +55,9 @@ To:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Loic Poulain <loic.poulain@linaro.org>
 Cc:     Robert Foss <robert.foss@linaro.org>
-Subject: [v1 4/6] arm64: dts: sdm845-db845c: Add pm_8998 gpio names
-Date:   Wed, 11 Mar 2020 13:34:59 +0100
-Message-Id: <20200311123501.18202-5-robert.foss@linaro.org>
+Subject: [v1 5/6] arm64: dts: sdm845-db845c: Add ov8856 & ov7251 camera nodes
+Date:   Wed, 11 Mar 2020 13:35:00 +0100
+Message-Id: <20200311123501.18202-6-robert.foss@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200311123501.18202-1-robert.foss@linaro.org>
 References: <20200311123501.18202-1-robert.foss@linaro.org>
@@ -68,54 +68,283 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add pm_8998 GPIO trace names. These names are defined in
-the 96boards db845c mezzanine schematic.
+Enable the ov8856 main camera and the ov7251 b/w tracking camera
+used on the Qualcomm RB3 kit.
+
+Currently the camera nodes have not yet been attached to an to a
+CSI2 endpoint, since no driver currently supports the ISP that the the
+SDM845/db845c ships with.
 
 Signed-off-by: Robert Foss <robert.foss@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sdm845-db845c.dts | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ arch/arm64/boot/dts/qcom/sdm845-db845c.dts | 239 +++++++++++++++++++++
+ 1 file changed, 239 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-index a6b6837c3d68..e8c056d02ace 100644
+index e8c056d02ace..660550197ce9 100644
 --- a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
 +++ b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-@@ -584,6 +584,36 @@
+@@ -110,6 +110,53 @@
+ 		// enable-active-high;
  	};
+ 
++	cam0_dvdd_1v2: reg_cam0_dvdd_1v2 {
++		compatible = "regulator-fixed";
++		regulator-name = "CAM0_DVDD_1V2";
++		regulator-min-microvolt = <1200000>;
++		regulator-max-microvolt = <1200000>;
++		enable-active-high;
++		gpio = <&pm8998_gpio 12 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&cam0_dvdd_1v2_en_default>;
++		vin-supply = <&vbat>;
++	};
++
++	cam0_avdd_2v8: reg_cam0_avdd_2v8 {
++		compatible = "regulator-fixed";
++		regulator-name = "CAM0_AVDD_2V8";
++		regulator-min-microvolt = <2800000>;
++		regulator-max-microvolt = <2800000>;
++		enable-active-high;
++		gpio = <&pm8998_gpio 10 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&cam0_avdd_2v8_en_default>;
++		vin-supply = <&vbat>;
++	};
++
++	/* This regulator is enabled when the VREG_LVS1A_1P8 trace is enabled */
++	cam3_avdd_2v8: reg_cam3_avdd_2v8 {
++		compatible = "regulator-fixed";
++		regulator-name = "CAM3_AVDD_2V8";
++		regulator-min-microvolt = <2800000>;
++		regulator-max-microvolt = <2800000>;
++		regulator-always-on;
++		vin-supply = <&vbat>;
++	};
++
++	/* This regulator does not really exits, but a 'vddd-supply' is
++	 * required for the ov7251 driver, but no 'vddd' regulator is used
++	 * in the schematic
++	 */
++	cam3_vddd_1v2: reg_cam3_vddd_1v2 {
++		compatible = "regulator-fixed";
++		regulator-name = "CAM3_VDDD_1V2_DUMMY";
++		regulator-min-microvolt = <1200000>;
++		regulator-max-microvolt = <1200000>;
++		regulator-always-on;
++		vin-supply = <&vbat>;
++	};
++
+ 	pcie0_3p3v_dual: vldo-3v3-regulator {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VLDO_3V3";
+@@ -406,6 +453,81 @@
  };
  
-+&pm8998_gpio {
-+	gpio-line-names =
-+		"NC",
-+		"NC",
-+		"WLAN_SW_CTRL",
-+		"NC",
-+		"PM_GPIO5_BLUE_BT_LED",
-+		"VOL_UP_N",
-+		"NC",
-+		"ADC_IN1",
-+		"PM_GPIO9_YEL_WIFI_LED",
-+		"CAM0_AVDD_EN",
-+		"NC",
-+		"CAM0_DVDD_EN",
-+		"PM_GPIO13_GREEN_U4_LED",
-+		"DIV_CLK2",
-+		"NC",
-+		"NC",
-+		"NC",
-+		"SMB_STAT",
-+		"NC",
-+		"NC",
-+		"ADC_IN2",
-+		"OPTION1",
-+		"WCSS_PWR_REQ",
-+		"PM845_GPIO24",
-+		"OPTION2",
-+		"PM845_SLB";
-+};
+ &tlmm {
++	pcie0_default_state: pcie0-default {
++		clkreq {
++			pins = "gpio36";
++			function = "pci_e0";
++			bias-pull-up;
++		};
 +
++		reset-n {
++			pins = "gpio35";
++			function = "gpio";
++
++			drive-strength = <2>;
++			output-low;
++			bias-pull-down;
++		};
++
++		wake-n {
++			pins = "gpio37";
++			function = "gpio";
++
++			drive-strength = <2>;
++			bias-pull-up;
++		};
++	};
++
++	cam0_default: cam0_default {
++		mux_rst {
++			function = "gpio";
++			pins = "gpio9";
++		};
++		config_rst {
++			pins = "gpio9";
++			drive-strength = <16>;
++			bias-disable;
++		};
++
++		mux_mclk0 {
++			function = "cam_mclk";
++			pins = "gpio13";
++		};
++		config_mclk0 {
++			pins = "gpio13";
++			drive-strength = <16>;
++			bias-disable;
++		};
++	};
++
++	cam3_default: cam3_default {
++			mux_rst {
++				function = "gpio";
++				pins = "gpio21";
++			};
++			config_rst {
++				pins = "gpio21";
++				drive-strength = <16>;
++				bias-disable;
++			};
++
++			mux_mclk3 {
++				function = "cam_mclk";
++				pins = "gpio16";
++			};
++			config_mclk3 {
++				pins = "gpio16";
++				drive-strength = <16>;
++				bias-disable;
++			};
++	};
++
++	lt9611_irq_pin: lt9611-irq {
++		pins = "gpio84";
++		function = "gpio";
++		bias-disable;
++	};
++
+ 	pcie0_pwren_state: pcie0-pwren {
+ 		pins = "gpio90";
+ 		function = "gpio";
+@@ -612,8 +734,125 @@
+ 		"PM845_GPIO24",
+ 		"OPTION2",
+ 		"PM845_SLB";
++
++	cam0_dvdd_1v2_en_default: cam0_dvdd_1v2_en_pinctrl {
++		pins = "gpio12";
++		function = "normal";
++
++		bias-pull-up;
++		drive-push-pull;
++		qcom,drive-strength = <PMIC_GPIO_STRENGTH_HIGH>;
++	};
++
++	cam0_avdd_2v8_en_default: cam0_avdd_2v8_en_pinctrl {
++		pins = "gpio10";
++		function = "normal";
++
++		bias-pull-up;
++		drive-push-pull;
++		qcom,drive-strength = <PMIC_GPIO_STRENGTH_HIGH>;
++	};
+ };
+ 
  &cci {
  	status = "ok";
++
++	i2c-bus@0 {
++		cam0@10 {
++			compatible = "ovti,ov8856";
++
++			/* The Qualcomm RB3 camera mezzanine schematic lists
++			 * 0x20 as I2C address of this device, but the Linux
++			 * kernel documentation lists 0x10 I2C address.
++			 */
++			reg = <0x10>;
++
++			// CAM0_RST_N
++			reset-gpios = <&tlmm 9 GPIO_ACTIVE_HIGH>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&cam0_default>;
++			gpios = <&tlmm 13 0>,
++				<&tlmm 9 0>;
++
++			clocks = <&clock_camcc CAM_CC_MCLK0_CLK>;
++			clock-names = "xvclk";
++			clock-frequency = <19200000>;
++
++
++			/* The &vreg_s4a_1p8 trace is powered on as a
++			 * part of the TITAN_TOP_GDSC power domain.
++			 * So it is represented by a fixed regulator.
++			 *
++			 * The 2.8V vdda-supply and 1.2V vddd-supply regulators
++			 * both have to be enabled through the power management
++			 * gpios.
++			 */
++			power-domains = <&clock_camcc TITAN_TOP_GDSC>;
++
++			dovdd-supply = <&vreg_lvs1a_1p8>;
++			avdd-supply = <&cam0_avdd_2v8>;
++			dvdd-supply = <&cam0_dvdd_1v2>;
++
++			/* No camera mezzanine by default */
++			status = "ok";
++
++			port {
++				ov8856_ep: endpoint {
++					clock-lanes = <1>;
++					link-frequencies = /bits/ 64
++						<360000000 180000000>;
++					data-lanes = <1 2 3 4>;
++//					remote-endpoint = <&csiphy0_ep>;
++				};
++			};
++		};
++	};
++
++	i2c-bus@1 {
++		cam3@60 {
++			compatible = "ovti,ov7251";
++
++			// I2C address as per ov7251.txt linux documentation
++			reg = <0x60>;
++
++			// CAM3_RST_N
++			enable-gpios = <&tlmm 21 GPIO_ACTIVE_HIGH>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&cam3_default>;
++			gpios = <&tlmm 16 0>,
++				<&tlmm 21 0>;
++
++			clocks = <&clock_camcc CAM_CC_MCLK3_CLK>;
++			clock-names = "xclk";
++			clock-frequency = <24000000>;
++
++			/* The &vreg_s4a_1p8 trace is powered on as a
++			 * part of the TITAN_TOP_GDSC power domain.
++			 * So it is represented by a fixed regulator.
++			 *
++			 * The 2.8V vdda-supply regulator is enabled when the
++			 * vreg_s4a_1p8 trace is pulled high.
++			 * It too is represented by a fixed regulator.
++			 *
++			 * No 1.2V vddd-supply regulator is used, a fixed
++			 * regulator represents it.
++			 */
++			power-domains = <&clock_camcc TITAN_TOP_GDSC>;
++
++			vdddo-supply = <&vreg_lvs1a_1p8>;
++			vdda-supply = <&cam3_avdd_2v8>;
++			vddd-supply = <&cam3_vddd_1v2>;
++
++			/* No camera mezzanine by default */
++			status = "ok";
++
++			port {
++				ov7251_ep: endpoint {
++					clock-lanes = <1>;
++					data-lanes = <0 1>;
++//					remote-endpoint = <&csiphy3_ep>;
++				};
++			};
++		};
++	};
  };
 -- 
 2.20.1
