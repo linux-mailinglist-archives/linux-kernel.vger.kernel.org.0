@@ -2,103 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90D2A181BC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:55:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B32A181BDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:56:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729921AbgCKOzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 10:55:06 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45367 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729460AbgCKOzF (ORCPT
+        id S1729957AbgCKO4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 10:56:35 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40705 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729844AbgCKO4e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 10:55:05 -0400
-Received: by mail-wr1-f67.google.com with SMTP id m9so2986944wro.12;
-        Wed, 11 Mar 2020 07:55:04 -0700 (PDT)
+        Wed, 11 Mar 2020 10:56:34 -0400
+Received: by mail-ot1-f65.google.com with SMTP id h17so2239101otn.7
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 07:56:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=T6dhYyYvJS/8Bl4FjnByulc+SHG/kFSfXU5KSrYTgvo=;
-        b=YpR821mEYGSQYCAJdxDmyyX1QVwPDu7Rb+v0SpjUUf77rpGL4EX+ni4S+CA2f5Ddd4
-         Tn6GVumWKMkc+KSE4/YRS9Bh9EXH07aq1OGbWacOITIjyrgjPKWp5s8QtRFCtElId6ap
-         loh9EfaNtUHKS0cARkPlOA5W3ZvPDVQe4YKYApAG4RFW2sO+D4lojIESO+ye4U8YfB0U
-         OA7UmdyO96F/KOBzabiUxreqyVAmzi4lLfGFxNyETOZu5z/8kdcwLFq4eTsGGz3FN+Qt
-         Zq9+pswIm00N4KRxKmDlZZouEd/pvKvXEVr3JS3V9AZ8rQJlOaDRPFtcDijkVtvYv9mf
-         QLUg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ouxKLWRXOtqbKDl0q+UmOju78v5owF0LnUPYL3Cn3Kg=;
+        b=Xc7KTwBmSvnyR04w7xAsoM4QolF0XcaryYGGSqywW6r0XlqYx9XvikGX4w7bLlxxLJ
+         7Q9AwD+7i/TJ2mStAI9eb2ob9VCt6KgwBw+LR3gAYpgM3S9uQWoNLD+xlKhWnCsJiDsd
+         gQ/4BkYOpVHRSRCowJu6XRQFruet41lwL6gwC6z3ZSErV3n8O+X2f+eZSuo5E01C3UV8
+         tyeHf9B1wPr69eyCIlYMAQR5+WIsB75Z+R5FBKu1iRw02ws17iiqnH3dVPNo9lJU7J88
+         tpacvkSbf6Ri5ZPR6z68IF56hdGSxpTT8rbI4/vpexPf/ozipoU+b1l6PAcyKYZfa7Y6
+         rVAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=T6dhYyYvJS/8Bl4FjnByulc+SHG/kFSfXU5KSrYTgvo=;
-        b=NRgBx/07bnOHz1vHwnZ+kpO/r8pxWqonrmp0/7Zeto4BTzspdNp8ak/Qi8Bp7TcY2g
-         MIg18Kvpn5TiwrTahqCXFVta0L6LqRW3nIBkJA0zu5X7Du1a5YWxdBl0Wb29wCXbOhik
-         lz0/W4erX0UXGZI5YIU1d9JbBCjCaEX/kWAK3XoTYBQzxxq1n2kBzivvFdRt2eaX+tO5
-         Sc3kJNOgRlYtBIx8gML8EqzVuts5jFcM/qWJeFR1wuVFcEAFy+piNLa1Lvi26m1gO/gf
-         3hkMdG2SQxKDBaJvoAzyMxTskxbK15yODxoX/HReFyHQ+2u30VOYgaY+5ykwaH1laeiX
-         AVfA==
-X-Gm-Message-State: ANhLgQ0otppPNH6iaySJc1mwqZLFwurqxlKIRKgMvpxflAMqzwBMPQ8F
-        kDqZ6FauZ3+L9iyGDCCiqF4=
-X-Google-Smtp-Source: ADFU+vs4BWU2lMGWUFQMXyBURcsQiYdsefcfXhTiCwDFmuMlBP9RvmVVDzc5UzvPBDK9q9P6PpDWBQ==
-X-Received: by 2002:adf:a506:: with SMTP id i6mr4636282wrb.146.1583938503671;
-        Wed, 11 Mar 2020 07:55:03 -0700 (PDT)
-Received: from wambui.local ([197.237.61.225])
-        by smtp.googlemail.com with ESMTPSA id i7sm56001662wro.87.2020.03.11.07.54.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 07:55:02 -0700 (PDT)
-From:   Wambui Karuga <wambui.karugax@gmail.com>
-X-Google-Original-From: Wambui Karuga <wambui@wambui>
-Date:   Wed, 11 Mar 2020 17:54:46 +0300 (EAT)
-To:     Thierry Reding <thierry.reding@gmail.com>
-cc:     Wambui Karuga <wambui.karugax@gmail.com>, daniel@ffwll.ch,
-        airlied@linux.ie, Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 10/21] drm/tegra: remove checks for debugfs functions
- return value
-In-Reply-To: <20200311143753.GC494173@ulmo>
-Message-ID: <alpine.LNX.2.21.99999.375.2003111750360.14786@wambui>
-References: <20200227120232.19413-1-wambui.karugax@gmail.com> <20200227120232.19413-11-wambui.karugax@gmail.com> <20200311143753.GC494173@ulmo>
-User-Agent: Alpine 2.21.99999 (LNX 375 2019-10-29)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ouxKLWRXOtqbKDl0q+UmOju78v5owF0LnUPYL3Cn3Kg=;
+        b=EhWBB/lMmsQMLIs1luamco0Qcugt5H7+EljwbsnnWY9VFrv07aAAwlxOfTuGp7EYZ/
+         hEgUC/HmHy24XL5g7Vojs6RP54wfQ4+tx1WcglxSTUS3HlisNrrbqbvch//bH9nwJvxs
+         +Nh8pLjAS21m0QjCwje/kuoJMWsfzMXf0LypNNN6vr49VLFeUZpTnk521wqbVllO7vF6
+         lU3OSx17c+obJL45nYtARRvxMimh7QVEVt9dHxE8hUNToIPaRkVsM3tvqNFZiAkfTHi3
+         yyl0ePuepQey5btUMVdR6fLElkDKs3qZ09ecb2jDbH/WJJukNZonghJDoZpMRatite0x
+         /iVg==
+X-Gm-Message-State: ANhLgQ3HRvo5L+0Vug0bcEE1RaXwsh/6+JLkjJOjseMuz88iQC3fB8+F
+        0qDL2Q1xfaYwSbus/28lBT9tXQk+B+Z/8jVy/u3Mdw==
+X-Google-Smtp-Source: ADFU+vsoVPEYUzYAEvw3qgsbNcHFvKCUWY2EnYgxb3/1wEn7Xj5CByupWPUTgv6N0jalxR0NpVo1qN7c0CgaHTbYtAA=
+X-Received: by 2002:a4a:a8c6:: with SMTP id r6mr553536oom.21.1583938593523;
+ Wed, 11 Mar 2020 07:56:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+References: <87r1y8dqqz.fsf@x220.int.ebiederm.org> <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org> <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87eeu25y14.fsf_-_@x220.int.ebiederm.org> <20200309195909.h2lv5uawce5wgryx@wittgenstein>
+ <877dztz415.fsf@x220.int.ebiederm.org> <20200309201729.yk5sd26v4bz4gtou@wittgenstein>
+ <87k13txnig.fsf@x220.int.ebiederm.org> <20200310085540.pztaty2mj62xt2nm@wittgenstein>
+ <87wo7svy96.fsf_-_@x220.int.ebiederm.org> <CAG48ez2cUZMVOAXfHPNjKjYsMSaWkjUjOCHo0KYZ+oXQUW4viA@mail.gmail.com>
+ <87k13sui1p.fsf@x220.int.ebiederm.org> <CAG48ez2vRgaEVJ=Rs8gn6HkGO6syL8MpSOUq7BNN+OUE1uYxCA@mail.gmail.com>
+ <CAG48ez1LjW1xAGe-5tNtstCWxG2bkiHaQUMOcJNjx=z-2Wc2Jw@mail.gmail.com>
+ <AM6PR03MB5170AF454A8A9C37891B12B2E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <5a8b2794-b498-af33-1327-ff2861cff83f@hotmail.de>
+In-Reply-To: <5a8b2794-b498-af33-1327-ff2861cff83f@hotmail.de>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 11 Mar 2020 15:56:07 +0100
+Message-ID: <CAG48ez33hx0NavmLub1QjzTw_DJuyRtkB71Mm35Hmp1x+DjmFA@mail.gmail.com>
+Subject: Re: [PATCH] pidfd: Stop taking cred_guard_mutex
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "adobriyan@gmail.com" <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        "avagin@gmail.com" <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "duyuyang@gmail.com" <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "christian@kellner.me" <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "sargun@sargun.me" <sargun@sargun.me>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Thierry,
-
-On Wed, 11 Mar 2020, Thierry Reding wrote:
-
-> On Thu, Feb 27, 2020 at 03:02:21PM +0300, Wambui Karuga wrote:
->> Since 987d65d01356 (drm: debugfs: make
->> drm_debugfs_create_files() never fail) there is no need to check the
->> return value of drm_debugfs_create_files(). Therefore, remove the
->> return checks and error handling of the drm_debugfs_create_files()
->> function from various debugfs init functions in drm/tegra and have
->> them return 0 directly.
->>
->> This change also includes removing the use of drm_debugfs_create_files
->> as a return value in tegra_debugfs_init() and have the function declared
->> as void.
->>
->> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
->> ---
->>  drivers/gpu/drm/tegra/dc.c   | 11 +----------
->>  drivers/gpu/drm/tegra/drm.c  |  8 ++++----
->>  drivers/gpu/drm/tegra/dsi.c  | 11 +----------
->>  drivers/gpu/drm/tegra/hdmi.c | 11 +----------
->>  drivers/gpu/drm/tegra/sor.c  | 11 +----------
->>  5 files changed, 8 insertions(+), 44 deletions(-)
+On Wed, Mar 11, 2020 at 7:12 AM Bernd Edlinger
+<bernd.edlinger@hotmail.de> wrote:
+> On 3/10/20 9:22 PM, Bernd Edlinger wrote:
+> > On 3/10/20 9:10 PM, Jann Horn wrote:
+> >> On Tue, Mar 10, 2020 at 9:00 PM Jann Horn <jannh@google.com> wrote:
+> >>> On Tue, Mar 10, 2020 at 8:29 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >>>> Jann Horn <jannh@google.com> writes:
+> >>>>> On Tue, Mar 10, 2020 at 7:54 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >>>>>> During exec some file descriptors are closed and the files struct is
+> >>>>>> unshared.  But all of that can happen at other times and it has the
+> >>>>>> same protections during exec as at ordinary times.  So stop taking the
+> >>>>>> cred_guard_mutex as it is useless.
+> >>>>>>
+> >>>>>> Furthermore he cred_guard_mutex is a bad idea because it is deadlock
+> >>>>>> prone, as it is held in serveral while waiting possibly indefinitely
+> >>>>>> for userspace to do something.
+> >> [...]
+> >>>>> If you make this change, then if this races with execution of a setuid
+> >>>>> program that afterwards e.g. opens a unix domain socket, an attacker
+> >>>>> will be able to steal that socket and inject messages into
+> >>>>> communication with things like DBus. procfs currently has the same
+> >>>>> race, and that still needs to be fixed, but at least procfs doesn't
+> >>>>> let you open things like sockets because they don't have a working
+> >>>>> ->open handler, and it enforces the normal permission check for
+> >>>>> opening files.
+> >>>>
+> >>>> It isn't only exec that can change credentials.  Do we need a lock for
+> >>>> changing credentials?
+> >> [...]
+> >>>> If we need a lock around credential change let's design and build that.
+> >>>> Having a mismatch between what a lock is designed to do, and what
+> >>>> people use it for can only result in other bugs as people get confused.
+> >>>
+> >>> Hmm... what benefits do we get from making it a separate lock? I guess
+> >>> it would allow us to make it a per-task lock instead of a
+> >>> signal_struct-wide one? That might be helpful...
+> >>
+> >> But actually, isn't the core purpose of the cred_guard_mutex to guard
+> >> against concurrent credential changes anyway? That's what almost
+> >> everyone uses it for, and it's in the name...
+> >>
+> >
+> > The main reason d'etre of exec_update_mutex is to get a consitent
+> > view of task->mm and task credentials.
+> > > The reason why you want the cred_guard_mutex, is that some action
+> > is changing the resulting credentials that the execve is about
+> > to install, and that is the data flow in the opposite direction.
+> >
 >
-> Applied, thanks.
->
-There's a newer version[1] of this patch series as this specific patch 
-depends on other work in drm.
+> So in other words, you need the exec_update_mutex when you
+> access another thread's credentials and possibly the mmap at the
+> same time.
 
-Thanks,
-wambui karuga.
+Or the file descriptor table, or register state, ...
 
-[1] https://lists.freedesktop.org/archives/dri-devel/2020-March/258793.html
-> Thierry
->
+> You need no mutex at all when you are just accessing or
+> even changing the credentials of the current thread.  (If another
+> thread is doing execve, your task will be killed, and wether
+> or not the credentials were changed does not matter any more)
+
+Only if the only access checks you care about are those related to mm access.
