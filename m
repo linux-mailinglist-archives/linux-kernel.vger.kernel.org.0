@@ -2,108 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84B77180D1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 02:08:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDD8E180D27
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 02:09:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbgCKBIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 21:08:11 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:42123 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbgCKBIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 21:08:11 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48cYjf3Bbpz9sPJ;
-        Wed, 11 Mar 2020 12:08:01 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1583888888;
-        bh=xL5gRERG+tXKda/H6O66oGES5jwZVd7h6GReVkqNsc0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=XKAgSNj3aolnLdBSQ7axiO3n7rde7Bq9OVrapzK+DQyZESY8kqHoAjecHhVXZB5So
-         dGUqlVE1zA5Nwmj6felmbnxASi5FsKx7QyJlmX3jFLPHMZ7h10rA4ECbAbRyGd1zys
-         WNJqRsDlR8cQ8db3zBJxaIjvXs5oFGwtVT3OVJblgfIJU76ql/UoH4UW32ymjw7u+6
-         aFtnjwg+/jQ743qK7dYjwOCmDtd0vK/3Tih6TgnSiH8haA19TeOlqc9fE4lnUabBQZ
-         6gJPfKeQGLT0b+b/HFLULeh7MZPTfld0eMRgWH5bIFvvc7dwccXQobHEw/Eh8qGRoZ
-         dNDrI9pr7cMEA==
-Date:   Wed, 11 Mar 2020 12:07:42 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: linux-next: manual merge of the jc_docs tree with the kbuild tree
-Message-ID: <20200311120742.074ca2ff@canb.auug.org.au>
+        id S1727937AbgCKBJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 21:09:30 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36711 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727744AbgCKBJ2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 21:09:28 -0400
+Received: by mail-wm1-f65.google.com with SMTP id g62so300195wme.1;
+        Tue, 10 Mar 2020 18:09:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=2UKmRBSgazdDi1hm3bxfhfrJmnu09DZG7aqXlMNZ2a8=;
+        b=jVoyTxH3UgKlEEgoxTyCCbkQuroNHW97dqNIiknHIhSVI4+VKRZa4j8qwTfELv41um
+         IIxVXqAk4gh41QLt5dLIhboWS5zztWFLesYDGvkuXx+n8WE9R8HjU1JBOfY3ggjJqZHL
+         cJviBTFPHv8yNa4DRiDz88VS9lkSvgOSOC41VLfW/Jwn3H5IChbQrVltrY98ZKazrce5
+         KAZJ5w4YmFtSIeDH2ZKZebKYkFcpkghEzBd19nZHlK/nW82aQpxdzyaaxOU9aiyl+vuO
+         WiusbOk2y2sl5TbSKRHYIJhXOPFlylpaSy6zZRna6PXvWVgk5Lmsz4oHHnYIsG1TvfKN
+         VmUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=2UKmRBSgazdDi1hm3bxfhfrJmnu09DZG7aqXlMNZ2a8=;
+        b=kfvEw7TGMjkQSEVUraG8CKXgfd5YUwGhazuQBTJ6c3vslv1DWjf3Mv4irnhs7w7pZa
+         lFBc/VTjWl0tE7+/QXzcmalp8Kr/rUeubV+M4evPLbO3ehHiNxHaGTC4AOQeE7s9N0e8
+         TfE3M2MlAy1avF7OduqtSK7ekzXs5ohEKnGPHaYSOqosU2d1RtDKqFs9YEzS/J+Wsvjk
+         vf9/ngRgaXdlwrWptnLvgHoA4haCyiQZL1NJg0CwyuCeLx9nd64UBLDSzd14xY6BkLA4
+         IbsJFllC55ik4yvyiu4IM8XtsaF2IO3ijwh6vK2hsDUt8wCCVPoT22VwMl8dXTieoMLn
+         1SvQ==
+X-Gm-Message-State: ANhLgQ2UWKg1JRJDSvIgVVo9MYX1ndTHP99yiVRkZoS6iLRN8sIimHrd
+        m8JilC8PTTXyj/yb8etY2Q==
+X-Google-Smtp-Source: ADFU+vtMuxpL34oQe2WNFQIHS3VeWNKnBzGrKjivGzUGfU6xgHtqcmlXExpKohyjCDQwuEzhQrEhvQ==
+X-Received: by 2002:a1c:e109:: with SMTP id y9mr433205wmg.62.1583888964431;
+        Tue, 10 Mar 2020 18:09:24 -0700 (PDT)
+Received: from ninjahost.lan (host-2-102-15-144.as13285.net. [2.102.15.144])
+        by smtp.googlemail.com with ESMTPSA id i6sm36658097wra.42.2020.03.10.18.09.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 18:09:24 -0700 (PDT)
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     boqun.feng@gmail.com
+Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>
+Subject: [PATCH 0/8] Lock warning cleanups
+Date:   Wed, 11 Mar 2020 01:09:00 +0000
+Message-Id: <20200311010908.42366-1-jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <0/8>
+References: <0/8>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/+DiTLaWpe0SVmX41DLPgh_l";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/+DiTLaWpe0SVmX41DLPgh_l
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch series adds missing annotations to various functions,
+that register warnings of context imbalance when built with Sparse tool.
+The adds fix the warnings, improve on readability odf the code
+and give better insight or directive on what the functions are actually doing.
 
-Hi all,
+Jules Irenge (8):
+  bpf: Add missing annotations for __bpf_prog_enter() and 
+    __bpf_prog_exit()
+  raw: Add missing annotations to raw_seq_start() and raw_seq_stop()
+  tcp: Add missing annotation for tcp_child_process()
+  netfilter: Add missing annotation for ctnetlink_parse_nat_setup()
+  netfilter: conntrack: Add missing annotations for
+    nf_conntrack_all_lock() and nf_conntrack_all_unlock()
+  net: Add missing annotation for *netlink_seq_start()
+  ALSA: firewire-tascam: Add missing annotation for
+    tscm_hwdep_read_queue()
+  ALSA: firewire-tascam: Add missing annotation for
+    tscm_hwdep_read_locked()
 
-Today's linux-next merge of the jc_docs tree got a conflict in:
+ kernel/bpf/trampoline.c              | 2 ++
+ net/ipv4/raw.c                       | 2 ++
+ net/ipv4/tcp_minisocks.c             | 1 +
+ net/netfilter/nf_conntrack_core.c    | 2 ++
+ net/netfilter/nf_conntrack_netlink.c | 1 +
+ net/netlink/af_netlink.c             | 1 +
+ sound/firewire/tascam/tascam-hwdep.c | 2 ++
+ 7 files changed, 11 insertions(+)
 
-  Documentation/kbuild/index.rst
+-- 
+2.24.1
 
-between commit:
-
-  fcf1b6a35c16 ("Documentation/llvm: add documentation on building w/ Clang=
-/LLVM")
-
-from the kbuild tree and commit:
-
-  2b4cbd5c9505 ("docs: move gcc-plugins to the kbuild manual")
-
-from the jc_docs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc Documentation/kbuild/index.rst
-index 3882bd5f7728,82daf2efcb73..000000000000
---- a/Documentation/kbuild/index.rst
-+++ b/Documentation/kbuild/index.rst
-@@@ -19,7 -19,7 +19,8 @@@ Kernel Build Syste
- =20
-      issues
-      reproducible-builds
- +    llvm
-+     gcc-plugins
- =20
-  .. only::  subproject and html
- =20
-
---Sig_/+DiTLaWpe0SVmX41DLPgh_l
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5oOd4ACgkQAVBC80lX
-0GylkAf/X2jioLnGX2xfzj/Hj8inJiy66h8hEn5KoYraroxYITX0cpOEhrb3DqDV
-B3t2d81OIf682ui7vRBcLMi1jYTu5LAGSkJwaOxIdrtfo0DYPQLZvBjrPtzORI0F
-6D2UjPQ67SvTzpCGbvJPywER1zerzcHMM9BX86OeGNYPWht75kU2PSa6clQEb38d
-sKvqIHglur5qPyp8/o7s2Vsrs7lPMp+RNZWyVm22yzDT+XWhjquf8CGHDTS+9058
-VsCplAIDxPy4zCX12HU11ErLZfN1zZ93ipEdP5T1UrVj71kG+inEH7fbMt1Uzwrb
-y1BIv8184i3cE8cTxmbtUXgWP64h3w==
-=vuhw
------END PGP SIGNATURE-----
-
---Sig_/+DiTLaWpe0SVmX41DLPgh_l--
