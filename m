@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BF0218253B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 23:54:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3977418253F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 23:54:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731478AbgCKWyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 18:54:20 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:42880 "EHLO inva021.nxp.com"
+        id S1731513AbgCKWyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 18:54:35 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:42892 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731432AbgCKWyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 18:54:12 -0400
+        id S1731433AbgCKWyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 18:54:11 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 91557200BF0;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D1FFE200BF2;
         Wed, 11 Mar 2020 23:54:10 +0100 (CET)
 Received: from smtp.na-rdc02.nxp.com (usphx01srsp001v.us-phx01.nxp.com [134.27.49.11])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 59FD3200BF2;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9B0AB200BF8;
         Wed, 11 Mar 2020 23:54:10 +0100 (CET)
 Received: from right.am.freescale.net (right.am.freescale.net [10.81.116.70])
-        by usphx01srsp001v.us-phx01.nxp.com (Postfix) with ESMTP id DDD6E40A85;
-        Wed, 11 Mar 2020 15:54:09 -0700 (MST)
+        by usphx01srsp001v.us-phx01.nxp.com (Postfix) with ESMTP id 2A43340A5F;
+        Wed, 11 Mar 2020 15:54:10 -0700 (MST)
 From:   Li Yang <leoyang.li@nxp.com>
 To:     shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, Li Yang <leoyang.li@nxp.com>
-Subject: [PATCH v2 13/15] arm64: defconfig: Enable RTC devices for QorIQ boards
-Date:   Wed, 11 Mar 2020 17:53:15 -0500
-Message-Id: <20200311225317.11198-14-leoyang.li@nxp.com>
+Subject: [PATCH v2 14/15] arm64: defconfig: Enable PHY devices used on QorIQ boards
+Date:   Wed, 11 Mar 2020 17:53:16 -0500
+Message-Id: <20200311225317.11198-15-leoyang.li@nxp.com>
 X-Mailer: git-send-email 2.25.1.377.g2d2118b
 In-Reply-To: <20200311225317.11198-1-leoyang.li@nxp.com>
 References: <20200311225317.11198-1-leoyang.li@nxp.com>
@@ -37,33 +37,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enables the RTC devices used on QorIQ reference boards supported in
-mainline kernel.
+Enables various PHY device drivers and PHY MUX drivers used on QorIQ
+reference boards supported in mainline kernel.
+
+Enabled as built-in to boot from network without an initramfs.
 
 Signed-off-by: Li Yang <leoyang.li@nxp.com>
 ---
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/configs/defconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index f0d75bbaac80..b092adecf724 100644
+index b092adecf724..a6e9d046e65d 100644
 --- a/arch/arm64/configs/defconfig
 +++ b/arch/arm64/configs/defconfig
-@@ -692,11 +692,14 @@ CONFIG_LEDS_TRIGGER_PANIC=y
- CONFIG_EDAC=y
- CONFIG_EDAC_GHES=y
- CONFIG_RTC_CLASS=y
-+CONFIG_RTC_DRV_DS1307=m
- CONFIG_RTC_DRV_MAX77686=y
- CONFIG_RTC_DRV_RK808=m
-+CONFIG_RTC_DRV_PCF85363=m
- CONFIG_RTC_DRV_RX8581=m
- CONFIG_RTC_DRV_S5M=y
- CONFIG_RTC_DRV_DS3232=y
-+CONFIG_RTC_DRV_PCF2127=m
- CONFIG_RTC_DRV_EFI=y
- CONFIG_RTC_DRV_CROS_EC=y
- CONFIG_RTC_DRV_S3C=y
+@@ -306,13 +306,17 @@ CONFIG_SNI_AVE=y
+ CONFIG_SNI_NETSEC=y
+ CONFIG_STMMAC_ETH=m
+ CONFIG_MDIO_BUS_MUX_MMIOREG=y
++CONFIG_MDIO_BUS_MUX_MULTIPLEXER=y
++CONFIG_AQUANTIA_PHY=y
+ CONFIG_MARVELL_PHY=m
+ CONFIG_MARVELL_10G_PHY=m
+ CONFIG_MESON_GXL_PHY=m
+ CONFIG_MICREL_PHY=y
++CONFIG_MICROSEMI_PHY=y
+ CONFIG_AT803X_PHY=y
+ CONFIG_REALTEK_PHY=m
+ CONFIG_ROCKCHIP_PHY=y
++CONFIG_VITESSE_PHY=y
+ CONFIG_USB_PEGASUS=m
+ CONFIG_USB_RTL8150=m
+ CONFIG_USB_RTL8152=m
+@@ -880,6 +884,7 @@ CONFIG_FPGA_REGION=m
+ CONFIG_OF_FPGA_REGION=m
+ CONFIG_TEE=y
+ CONFIG_OPTEE=y
++CONFIG_MUX_MMIO=y
+ CONFIG_EXT2_FS=y
+ CONFIG_EXT3_FS=y
+ CONFIG_EXT4_FS_POSIX_ACL=y
 -- 
 2.17.1
 
