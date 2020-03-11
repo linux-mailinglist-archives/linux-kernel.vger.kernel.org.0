@@ -2,101 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44E371813BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:55:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE07A1813C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:57:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728661AbgCKIyO convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 04:54:14 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48127 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728195AbgCKIyO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 04:54:14 -0400
-Received: from mail-pf1-f200.google.com ([209.85.210.200])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1jBx7z-00046L-Pr
-        for linux-kernel@vger.kernel.org; Wed, 11 Mar 2020 08:54:11 +0000
-Received: by mail-pf1-f200.google.com with SMTP id 78so888417pfy.22
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 01:54:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=EJWnh1S/r/UN0sDn/GSkUc/60c+WdDetrbhkwselzAg=;
-        b=B8J4DBtvnUoPNWv2z4jz/l5WGOrZsAyZrIsMKdFvfVQOd1PEwti0UXeVcKefLyyRuV
-         R9GHdGoOY5uV2+XWP1lPLI3lt4ia56pdZWBUBSlVfa0EpvREpNVwYYSU12N0pb+S+9kf
-         9+t+bX8PzY1BBS1oqMvRt0Vcf0ZmTewDPB2H8dXOQOS6rxw3s8z5XVYZ1XkIII2jFbvH
-         9HbL6slwyfB/JxQcEoGjfioMg43xKWW2uy/j3t3srw1t+nLLzhdKyDLRUqyYaIt9Y5Bw
-         JRWW2CtgsuXwavgNAQQpwbFXxkw38le3SLL4y813Fwakr94OoE0p50NeofkpGLieDB4H
-         A0DA==
-X-Gm-Message-State: ANhLgQ15YeC89+Fh1uGPaVSJ+zrLUEAhANmZ+kjzFAdmyuGdjPxT9cvQ
-        UyHvBVqiQ0HQRu9l+kS8U0qB/y1MacUmZjp2F3DHmjvD15EKdcRSKGQdOB9RmTSxBlE2dJAe/rN
-        NECxlbDpw9Qda828RtrdDKDmvL9TxmydnSo9Ve6p4UQ==
-X-Received: by 2002:a65:494f:: with SMTP id q15mr1837945pgs.383.1583916850396;
-        Wed, 11 Mar 2020 01:54:10 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vtm8So4/d3DEnR6dWVHPhIUH8t8Knc+iRilA2DGZRDO/zn7T+RrQ/v03vMqgAyTeD7rAD0jqw==
-X-Received: by 2002:a65:494f:: with SMTP id q15mr1837929pgs.383.1583916850047;
-        Wed, 11 Mar 2020 01:54:10 -0700 (PDT)
-Received: from [192.168.1.208] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id a24sm929062pfl.115.2020.03.11.01.54.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Mar 2020 01:54:09 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: [PATCH] ALSA: hda/realtek: Fix pop noise on ALC225
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <s5ho8t39yaz.wl-tiwai@suse.de>
-Date:   Wed, 11 Mar 2020 16:54:07 +0800
-Cc:     tiwai@suse.com, alsa-devel@alsa-project.org,
+        id S1728721AbgCKIzR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 04:55:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38832 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728150AbgCKIzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 04:55:17 -0400
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7EE520873;
+        Wed, 11 Mar 2020 08:55:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583916916;
+        bh=0ig719qF57xMjabG6POD53mHZVoOUP1KuWNeaq573R0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V43tAO0ACoA3JdfRHjOn9zZn2Wb2Qp3Khnjp/rCGPSnjyZp97U+mNSohEFmytVHM7
+         yscdk7an4Txq45MYWm2En70FFi4rHGTjxm/6ygSylt+2NkxNH8IEC5qkpQNwMNUI9d
+         2bKo4PqWSNR8557NyaTX70Ta6ohHPUKDs1sUX7Fs=
+Date:   Wed, 11 Mar 2020 16:55:12 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <65C45FA9-E58A-4EF2-AE42-5CF2AEF00F68@canonical.com>
-References: <20200311061328.17614-1-kai.heng.feng@canonical.com>
- <s5ho8t39yaz.wl-tiwai@suse.de>
-To:     Takashi Iwai <tiwai@suse.de>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+Subject: Re: [PATCH] ARM: dts: imx25-pinfunc: add config for kpp rows 4 to 7
+Message-ID: <20200311085511.GH29269@dragon>
+References: <20200305212623.5601-1-martin@kaiser.cx>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200305212623.5601-1-martin@kaiser.cx>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> On Mar 11, 2020, at 14:54, Takashi Iwai <tiwai@suse.de> wrote:
+On Thu, Mar 05, 2020 at 10:26:24PM +0100, Martin Kaiser wrote:
+> i.MX25's Keypad Port (KPP) can be used with a key pad matrix of up to
+> 8 x 8 keys. Add pin configurations for rows 4 to 7.
 > 
-> On Wed, 11 Mar 2020 07:13:28 +0100,
-> Kai-Heng Feng wrote:
->> 
->> Commit 317d9313925c ("ALSA: hda/realtek - Set default power save node to
->> 0") makes the ALC225 have pop noise on S3 resume and cold boot.
->> 
->> So partially revert this commit for ALC225 to fix the regression.
->> 
->> Fixes: 317d9313925c ("ALSA: hda/realtek - Set default power save node to 0")
->> BugLink: https://bugs.launchpad.net/bugs/1866357
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
+> The new defines have been tested on an out-of-tree board.
 > 
-> Hrm, it's rather surprising.  The power_save_node was thought to be a
-> cause of the pop noise, but in this case it fixes.  It's interesting
-> because this codec chip has no loopback mixer, and the connection is
-> directly from DAC to pin, so in theory, it shouldn't be influenced
-> from other nodes.
-> 
-> Anyways, a slight concern is that this might cause a regression on
-> another machine.  But who knows, maybe the influence is very limited.
-> Let's apply it and see what happens.
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 
-If that happens I'll write a specific fixup for the affected model.
-
-Kai-Heng
-
-> 
-> 
-> thanks,
-> 
-> Takashi
-
+Applied, thanks.
