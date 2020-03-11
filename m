@@ -2,173 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51CE91823B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 22:17:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C46F01823BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 22:20:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729333AbgCKVRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 17:17:40 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45436 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbgCKVRk (ORCPT
+        id S1729331AbgCKVUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 17:20:06 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46037 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbgCKVUF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 17:17:40 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 2so2031300pfg.12
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 14:17:39 -0700 (PDT)
+        Wed, 11 Mar 2020 17:20:05 -0400
+Received: by mail-qt1-f193.google.com with SMTP id a4so2726451qto.12
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 14:20:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jVB9ateUNPWjDSRVGMb+4rgbxEOqdavmk19dJVvZMIM=;
-        b=YgTgbM406HdGsLsPlF+VVmtshblGPo2TvOf06wGTAhyHuMsZ2O+UXyNXLGkoFJjBZE
-         cVnCgfZ5EH7rzeAdjXhc7QfXKSUzwW1Wq8FpJAB6ZT/GQkIbvJBMuNA33fRKml839N7I
-         kj8xerEdEETVWepH0A+NUni0QHeCHJX7bbJ30=
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QrR6IkxbfB/5ffdnPqJAfi5wAANIcwpGNJdV+0yyLdE=;
+        b=HJVymAgnYNpp0H9H2fG1EpM9HBNGIVbg7acU0APh6f5Yk9gueinXfSMRtSNG866FaV
+         bULm8TjLgRbSfMnXDgLibjxcg7Bf8JrxOCtHUETjHSmqxC8fBGVmcw8p+hgjb3f4FzHD
+         FCP+dYFRJlf/fPhnRTn/g1FfSpKIulL8PXWRJs1HeXXdCmRQXz+9fahyiAhIhS7RYC4C
+         tggHxa/VVWVHIk3HbByQJFvKK69nEo12/0HtOR5QX45gho7f+JLc5G3bVc8Glgfa9oz5
+         xiKhK5diZGmN3GoihAAc2pQX872fzB2AbIwg9tzi/WJJe3gaaRmiZ4FCOEi7QPPd9Efw
+         753w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jVB9ateUNPWjDSRVGMb+4rgbxEOqdavmk19dJVvZMIM=;
-        b=FyePFeEY1s8k1HyA4DKSahGiC9UkTGzboMcYtxFXrg0ZoAh7qK3G/Nq7z5/n2jWqw5
-         71nArDN/7g7chN99eu3B5UuXODR5GxcBF4DmLENU6JFbX5toyzMhXXHDYDRoVsVk1QQy
-         Nk7SrROpc9/Y6ceEM3dbpMmv6QyUSTCFrQEPXcnioFs/jF6CnZQNAKrNWfIur7/36uD7
-         hJM3+rPSAYGaTULvXSO2jPWlbU9iSh1YJN6X3HBLDAIaAez9i51ucZd7/yKI4YGTO1+R
-         OprcYhtv/CEgv8FUHOdYzeIUvFTGhbm35pnUMCi3djoyEYHp2IQ/E8WzXbkD5ga92b03
-         V+wQ==
-X-Gm-Message-State: ANhLgQ2OKCHR0cpBusk+cz6+cAK3S4KoboaUd9gO8wwKqH6SWezrvkla
-        PXlDoOMh+lTkbx/haakZIUnwTg==
-X-Google-Smtp-Source: ADFU+vtTCjEhI3JPw2xL9W4cakF1N6Pmv6rkqFP+mzP01zBwJjNzf9RYvvo4VRKg6V5rIt4yJLfXMA==
-X-Received: by 2002:aa7:87c1:: with SMTP id i1mr1082817pfo.297.1583961458705;
-        Wed, 11 Mar 2020 14:17:38 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y200sm19036662pfb.138.2020.03.11.14.17.37
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QrR6IkxbfB/5ffdnPqJAfi5wAANIcwpGNJdV+0yyLdE=;
+        b=jNegV+3xsTkt0qr9La9MkTrseRaJIG+dtH117f4pMkRXdQ9Z9VeBY0Amgbrh1zKr+H
+         VuAJ/Cq0Se+xqbOvKXu07q8U4BOXcoPdljr4aFTgA7eGhueXCKrVVl9d13G8t+utxwbm
+         FQhIJbYpacm5CSe4agvIP0z0apNseJbjmQerTiuarVLsMS83kv8pVDxwyp1gpK2YVdAk
+         LXwgW42AoK4kpXsGq/sSS1ZFt6wgE4QtlagO6ZPw9Ow/ycSAQ8anKVfmyMYqNy26YXeS
+         tSOiQFIw9RpkBggJ447HvLiUM3LZZ0bqRTJYAIV3GQh7tJz2dQ8H368/ajoSJYXV+V5a
+         QK8g==
+X-Gm-Message-State: ANhLgQ3gXVkHXm/qG7vtXpzNuIy5XzYXP9flgHIMimoG3LuTVjk490jT
+        L1IumJUrseBr9Na3pYlRC6waot+XXgA=
+X-Google-Smtp-Source: ADFU+vvwNWe54LWCG1kbwgZ+neaGkcg/wjvgZkU0yes0SQnMQ1kaDfq0gTo3L3CQqHVoebP7wDS7mA==
+X-Received: by 2002:ac8:c4f:: with SMTP id l15mr4533613qti.177.1583961604617;
+        Wed, 11 Mar 2020 14:20:04 -0700 (PDT)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id x19sm25848523qtm.47.2020.03.11.14.20.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 14:17:37 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] selftests/harness: Handle timeouts cleanly
-Date:   Wed, 11 Mar 2020 14:17:33 -0700
-Message-Id: <20200311211733.21211-3-keescook@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200311211733.21211-1-keescook@chromium.org>
-References: <20200311211733.21211-1-keescook@chromium.org>
+        Wed, 11 Mar 2020 14:20:04 -0700 (PDT)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Wed, 11 Mar 2020 17:20:02 -0400
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH resend] x86/purgatory: Make sure we fail the build if
+ purgatory.ro has missing symbols
+Message-ID: <20200311212000.GA4022430@rani.riverdale.lan>
+References: <20200221165941.508653-1-hdegoede@redhat.com>
+ <202003010150.eyjF3gp0%lkp@intel.com>
+ <b9a34773-ab38-a3c7-3e35-7da95dc625f4@redhat.com>
+ <20200311204813.GM3470@zn.tnic>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200311204813.GM3470@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a selftest would timeout before, the program would just fall over
-and no accounting of failures would be reported (i.e. it would result in
-an incomplete TAP report). Instead, add an explicit SIGALRM handler to
-cleanly catch and report the timeout.
+On Wed, Mar 11, 2020 at 09:49:54PM +0100, Borislav Petkov wrote:
+> On Sat, Feb 29, 2020 at 07:12:57PM +0100, Hans de Goede wrote:
+> > Hi,
+> > 
+> > On 2/29/20 6:16 PM, kbuild test robot wrote:
+> > > Hi Hans,
+> > > 
+> > > I love your patch! Yet something to improve:
+> > > 
+> > > [auto build test ERROR on tip/x86/core]
+> > > [also build test ERROR on v5.6-rc3 next-20200228]
+> > > [cannot apply to tip/auto-latest]
+> > > [if your patch is applied to the wrong git tree, please drop us a note to help
+> > > improve the system. BTW, we also suggest to use '--base' option to specify the
+> > > base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+> > > 
+> > > url:    https://github.com/0day-ci/linux/commits/Hans-de-Goede/x86-purgatory-Make-sure-we-fail-the-build-if-purgatory-ro-has-missing-symbols/20200223-040035
+> > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git 248ed51048c40d36728e70914e38bffd7821da57
+> > > config: x86_64-randconfig-s1-20200229 (attached as .config)
+> > > compiler: gcc-4.9 (Debian 4.9.2-10+deb8u1) 4.9.2
+> > > reproduce:
+> > >          # save the attached .config to linux build tree
+> > >          make ARCH=x86_64
+> > > 
+> > > If you fix the issue, kindly add following tag
+> > > Reported-by: kbuild test robot <lkp@intel.com>
+> > > 
+> > > All errors (new ones prefixed by >>):
+> > > 
+> > >     ld: arch/x86/purgatory/purgatory.ro: in function `kstrtoull':
+> > > > > (.text+0x2b0e): undefined reference to `ftrace_likely_update'
+> > 
+> > AFAICT this is the patch working as intended and pointing out an actual issue
+> > with the purgatory code. Which shows that we really should get this
+> > patch merged...
+> 
+> ... and break the build? I don't think so.
+> 
+> I know, it would fail silently now but I don't recall anyone complaining
+> about it. So it was a don't care so far.
+> 
+> IOW, first this ftrace_likely_update thing needs to be sorted out and
+> then this merged.
+> 
+> Thx.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
 
-Before:
+Hans, I think adding -DDISABLE_BRANCH_PROFILING to PURGATORY_CFLAGS
+might fix this.
 
-	[==========] Running 2 tests from 2 test cases.
-	[ RUN      ] timeout.finish
-	[       OK ] timeout.finish
-	[ RUN      ] timeout.too_long
-	Alarm clock
-
-After:
-
-	[==========] Running 2 tests from 2 test cases.
-	[ RUN      ] timeout.finish
-	[       OK ] timeout.finish
-	[ RUN      ] timeout.too_long
-	timeout.too_long: Test terminated by timeout
-	[     FAIL ] timeout.too_long
-	[==========] 1 / 2 tests passed.
-	[  FAILED  ]
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- tools/testing/selftests/kselftest_harness.h | 53 ++++++++++++++++++++-
- 1 file changed, 51 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-index c7b67e379219..2902f6a78f8a 100644
---- a/tools/testing/selftests/kselftest_harness.h
-+++ b/tools/testing/selftests/kselftest_harness.h
-@@ -639,7 +639,8 @@ struct __test_metadata {
- 	int termsig;
- 	int passed;
- 	int trigger; /* extra handler after the evaluation */
--	int timeout;
-+	int timeout;	/* seconds to wait for test timeout */
-+	bool timed_out;	/* did this test timeout instead of exiting? */
- 	__u8 step;
- 	bool no_print; /* manual trigger when TH_LOG_STREAM is not available */
- 	struct __test_metadata *prev, *next;
-@@ -696,15 +697,63 @@ static inline int __bail(int for_realz, bool no_print, __u8 step)
- 	return 0;
- }
- 
-+struct __test_metadata *__active_test;
-+static void __timeout_handler(int sig, siginfo_t *info, void *ucontext)
-+{
-+	struct __test_metadata *t = __active_test;
-+
-+	/* Sanity check handler execution environment. */
-+	if (!t) {
-+		fprintf(TH_LOG_STREAM,
-+			"no active test in SIGARLM handler!?\n");
-+		abort();
-+	}
-+	if (sig != SIGALRM || sig != info->si_signo) {
-+		fprintf(TH_LOG_STREAM,
-+			"%s: SIGALRM handler caught signal %d!?\n",
-+			t->name, sig != SIGALRM ? sig : info->si_signo);
-+		abort();
-+	}
-+
-+	t->timed_out = true;
-+	kill(t->pid, SIGKILL);
-+}
-+
- void __wait_for_test(struct __test_metadata *t)
- {
-+	struct sigaction action = {
-+		.sa_sigaction = __timeout_handler,
-+		.sa_flags = SA_SIGINFO,
-+	};
-+	struct sigaction saved_action;
- 	int status;
- 
-+	if (sigaction(SIGALRM, &action, &saved_action)) {
-+		t->passed = 0;
-+		fprintf(TH_LOG_STREAM,
-+			"%s: unable to install SIGARLM handler\n",
-+			t->name);
-+		return;
-+	}
-+	__active_test = t;
-+	t->timed_out = false;
- 	alarm(t->timeout);
- 	waitpid(t->pid, &status, 0);
- 	alarm(0);
-+	if (sigaction(SIGALRM, &saved_action, NULL)) {
-+		t->passed = 0;
-+		fprintf(TH_LOG_STREAM,
-+			"%s: unable to uninstall SIGARLM handler\n",
-+			t->name);
-+		return;
-+	}
-+	__active_test = NULL;
- 
--	if (WIFEXITED(status)) {
-+	if (t->timed_out) {
-+		t->passed = 0;
-+		fprintf(TH_LOG_STREAM,
-+			"%s: Test terminated by timeout\n", t->name);
-+	} else if (WIFEXITED(status)) {
- 		t->passed = t->termsig == -1 ? !WEXITSTATUS(status) : 0;
- 		if (t->termsig != -1) {
- 			fprintf(TH_LOG_STREAM,
--- 
-2.20.1
-
+Thanks.
