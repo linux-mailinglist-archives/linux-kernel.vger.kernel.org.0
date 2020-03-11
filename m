@@ -2,193 +2,465 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93E82181ED7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B71CD181EEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:15:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730258AbgCKRMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:12:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38772 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726299AbgCKRMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:12:07 -0400
-Received: from localhost (165.sub-174-234-131.myvzw.com [174.234.131.165])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730424AbgCKRPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:15:12 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:32437 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730236AbgCKRPM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:15:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583946911;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=tltugljWB03t3t9efVxWUD7LJ38gUskpvS9AulZYy0c=;
+        b=H92Jxm9l8RPkdqYPhVLUfkJlrKqa5pFuCcQ21r7gkkULpSHGl9KFFGZ0RRhB29h1WVkI2L
+        rGcoZvpSTE5su2yakUNoKuJ2olgaVBu0kA+20xo7GHkqaxBjMz7QNA3pfpCur0rp8NI2qq
+        cbA2QRhq2PxI/nxULXMYk3w/UzXsDS0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-411-oK5My588PXuQV5ihCTPzpQ-1; Wed, 11 Mar 2020 13:15:01 -0400
+X-MC-Unique: oK5My588PXuQV5ihCTPzpQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3289E20734;
-        Wed, 11 Mar 2020 17:12:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583946726;
-        bh=SDlz6mXq+YdNYkyKQd61cklNTIoTHr9DyC26899vQnU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=P2fZLADUcGo59L7OpnMvgYKe/tfthcyHmnxXJknm3Q/SJgekNqc9oymX/hvvbf0tm
-         NQ5OuGfnIIR1Skw2qbfaTG1q+zqU+dBU5Bm6F7wSLgKJlwcMwimuh/jJ9Ea0Gs1WHi
-         KK2p1Hb85H2sLmSBuRhlL3MkfrlojXVwYQfDIbxQ=
-Date:   Wed, 11 Mar 2020 12:12:03 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Austin.Bolen@dell.com
-Cc:     sathyanarayanan.kuppuswamy@linux.intel.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com
-Subject: Re: [PATCH v17 09/12] PCI/AER: Allow clearing Error Status Register
- in FF mode
-Message-ID: <20200311171203.GA137848@google.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B95B98017CC;
+        Wed, 11 Mar 2020 17:14:55 +0000 (UTC)
+Received: from t480s.redhat.com (ovpn-116-132.ams2.redhat.com [10.36.116.132])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C47CE92F84;
+        Wed, 11 Mar 2020 17:14:33 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, virtio-dev@lists.oasis-open.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastien Boeuf <sebastien.boeuf@intel.com>,
+        Samuel Ortiz <samuel.ortiz@intel.com>,
+        Robert Bradford <robert.bradford@intel.com>,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
+        teawater <teawaterz@linux.alibaba.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Alexander Potapenko <glider@google.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Young <dyoung@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Juergen Gross <jgross@suse.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Len Brown <lenb@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Pingfan Liu <kernelfans@gmail.com>, Qian Cai <cai@lca.pw>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Wei Yang <richard.weiyang@gmail.com>
+Subject: [PATCH v2 00/10] virtio-mem: paravirtualized memory
+Date:   Wed, 11 Mar 2020 18:14:12 +0100
+Message-Id: <20200311171422.10484-1-david@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0890801daa6c4564bca1690fd8439dab@AUSX13MPC107.AMER.DELL.COM>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 03:19:44PM +0000, Austin.Bolen@dell.com wrote:
-> On 3/11/2020 9:46 AM, Bjorn Helgaas wrote:
-> > On Tue, Mar 10, 2020 at 08:06:21PM +0000, Austin.Bolen@dell.com wrote:
-> >> On 3/10/2020 2:33 PM, Bjorn Helgaas wrote:
-> >>> On Tue, Mar 10, 2020 at 06:14:20PM +0000, Austin.Bolen@dell.com wrote:
-> >>>> On 3/9/2020 11:28 PM, Kuppuswamy, Sathyanarayanan wrote:
-> >>>>> On 3/9/2020 7:40 PM, Bjorn Helgaas wrote:
-> >>>>>> [+cc Austin, tentative Linux patches on this git branch:
-> >>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/tree/drivers/pci/pcie?h=review/edr]
-> >>>>>>
-> >>>>>> On Tue, Mar 03, 2020 at 06:36:32PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
-> >>>>>>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> >>>>>>>
-> >>>>>>> As per PCI firmware specification r3.2 System Firmware Intermediary
-> >>>>>>> (SFI) _OSC and DPC Updates ECR
-> >>>>>>> (https://members.pcisig.com/wg/PCI-SIG/document/13563), sec titled "DPC
-> >>>>>>> Event Handling Implementation Note", page 10, Error Disconnect Recover
-> >>>>>>> (EDR) support allows OS to handle error recovery and clearing Error
-> >>>>>>> Registers even in FF mode. So create new API pci_aer_raw_clear_status()
-> >>>>>>> which allows clearing AER registers without FF mode checks.
-> > 
-> >>>> OS clears the DPC Trigger Status bit which will bring port below it out
-> >>>> of containment. Then OS will clear the "port" error status bits (i.e.,
-> >>>> the AER and DPC status bits in the root port or downstream port that
-> >>>> triggered containment). I don't think it would hurt to do this two steps
-> >>>> in reverse order but don't think it is necessary.
-> > 
-> >>>> Note that error status bits for devices below the port in
-> >>>> containment are cleared later after f/w has a chance to log them.
-> > 
-> > Thanks for pointing out this wrinkle about devices below the port in
-> > containment.  I think we might have an issue here with the current
-> > series because evaluating _OST is the last thing the EDR notify
-> > handler does.  More below.
-> > 
-> >>> Maybe I'm misreading the DPC enhancements ECN.  I think it says the OS
-> >>> can read/write DPC registers until it clears the DPC Trigger Status.
-> >>> If the OS clears Trigger Status first, my understanding is that we're
-> >>> now out of the EDR notification processing window and the OS is not
-> >>> permitted to write DPC registers.
-> >>>
-> >>> If it's OK for the OS to clear Trigger Status before clearing DPC
-> >>> error status, what is the event that determines when the OS may no
-> >>> longer read/write the DPC registers?
-> >>
-> >> I think there are a few different registers to consider... DPC
-> >> Control, DPC Status, various AER registers, and the RP PIO
-> >> registers. At this point in the flow, the firmware has already had a
-> >> chance to read all of them and so it really doesn't matter the order
-> >> the OS does those two things. The firmware isn't going to get
-> >> notified again until _OST so by then both operation will be done and
-> >> system firmware will have no idea which order the OS did them in,
-> >> nor will it care.  But since the existing normative text specifies
-> >> and order, I would just follow that.
-> > 
-> > OK, this series clears DPC error status before clearing DPC Trigger
-> > Status, so I think we can keep that as-is.
-> > 
+This series is based on latest linux-next. The patches are located at:
+    https://github.com/davidhildenbrand/linux.git virtio-mem-v2
 
-> >>> There are no events after the "clear device AER status" box.
-> >>> That seems to mean the OS can write the AER status registers at
-> >>> any time.  But the whole implementation note assumes firmware
-> >>> maintains control of AER.
-> >>
-> >> In this model the OS doesn't own DPC or AER but the model allows
-> >> OS to touch both DPC and AER registers at certain times.  I would
-> >> view ownership in this case as who is the primary owner and not
-> >> who is the sole entity allowed to access the registers.
-> > 
-> > I'm not sure how to translate the idea of primary ownership into
-> > code.
-> 
-> I would just add text that said when it's ok for OS to touch these
-> bits even when they don't own them similar to what's done for the
-> DPC bits.
+I now have acks for all !virtio-mem changes. I'll be happy to get review
+feedback, testing reports, etc. for the virtio-mem changes. If there are
+no further comments, I guess this is good to go as a v1 soon.
 
-I'm probably missing your intent, but that sounds like "the OS can
-read/write AER bits whenever it wants, regardless of ownership."
+The basic idea of virtio-mem is to provide a flexible,
+cross-architecture memory hot(un)plug solution that avoids many limitatio=
+ns
+imposed by existing technologies, architectures, and interfaces. More
+details can be found below and in linked material.
 
-That doesn't sound practical to me, and I don't think it's really
-similar to DPC, where it's pretty clear that the OS can touch DPC bits
-it doesn't own but only *during the EDR processing window*.
+It's currently only enabled for x86-64, however, should theoretically wor=
+k
+on any architecture that supports virtio and implements memory hot(un)plu=
+g
+under Linux - like s390x, powerpc64, and arm64. On x86-64, it is currentl=
+y
+possible to add/remove memory to the system in >=3D 4MB granularity.
+Memory hotplug works very reliably. For memory unplug, there are no
+guarantees how much memory can actually get unplugged, it depends on the
+setup (especially: fragmentation of physical memory).
 
-> >> For the normative text describing when OS clears the AER bits
-> >> following the informative flow chart, it could say that OS clears
-> >> AER as soon as possible after OST returns and before OS processes
-> >> _HPX and loading drivers.  Open to other suggestions as well.
-> > 
-> > I'm not sure what to do with "as soon as possible" either.  That
-> > doesn't seem like something firmware and the OS can agree on.
-> 
-> I can just state that it's done after OST returns but before _HPX or
-> driver is loaded. Any time in that range is fine. I can't get super
-> specific here because different OSes do different things.  Even for
-> a given OS they change over time. And I need something generic
-> enough to support a wide variety of OS implementations.
+I am currently getting the QEMU side into shape (which will be posted as
+RFC soon, see below for a link to the current state). Experimental Kata
+support is in the works [4]. Also, a cloud-hypervisor implementation is
+under discussion [5].
 
-Yeah.  I don't know how to solve this.
+-------------------------------------------------------------------------=
+-
+1. virtio-mem
+-------------------------------------------------------------------------=
+-
 
-Linux doesn't actually unload and reload drivers for the child devices
-(Sathy, correct me if I'm wrong here) even though DPC containment
-takes the link down and effectively unplugs and replugs the device.  I
-would *like* to handle it like hotplug, but some higher-level software
-doesn't deal well with things like storage devices disappearing and
-reappearing.
+The basic idea behind virtio-mem was presented at KVM Forum 2018. The
+slides can be found at [1]. The previous RFC can be found at [2]. The
+first RFC can be found at [3]. However, the concept evolved over time. Th=
+e
+KVM Forum slides roughly match the current design.
 
-Since Linux doesn't actually re-enumerate the child devices, it
-wouldn't evaluate _HPX again.  It would probably be cleaner if it did,
-but it's all tied up with the whole unplug/replug problem.
+Patch #2 ("virtio-mem: Paravirtualized memory hotplug") contains quite so=
+me
+information, especially in "include/uapi/linux/virtio_mem.h":
 
-> > For child devices of that port, obviously it's impossible to
-> > access AER registers until DPC Trigger Status is cleared, and the
-> > flowchart says the OS shouldn't access them until after _OST.
-> > 
-> > I'm actually not sure we currently do *anything* with child device
-> > AER info in the EDR path.  pcie_do_recovery() does walk the
-> > sub-hierarchy of child devices, but it only calls error handling
-> > callbacks in the child drivers; it doesn't do anything with the
-> > child AER registers itself.  And of course, this happens before
-> > _OST, so it would be too early in any case.  But maybe I'm missing
-> > something here.
-> 
-> My understanding is that the OS read/clears AER in the case where OS
-> has native control of AER.  Feedback from OSVs is they wanted to
-> continue to do that to keep the native OS controlled AER and FF
-> mechanism similar.  The other way we could have done it would be to
-> have the firmware read/clear AER and report them to OS via APEI.
+    Each virtio-mem device manages a dedicated region in physical address
+    space. Each device can belong to a single NUMA node, multiple devices
+    for a single NUMA node are possible. A virtio-mem device is like a
+    "resizable DIMM" consisting of small memory blocks that can be plugge=
+d
+    or unplugged. The device driver is responsible for (un)plugging memor=
+y
+    blocks on demand.
 
-When Linux has native control of AER, it reads/clears AER status.
-The flowchart is for the case where firmware has AER control, so I
-guess Linux would not field AER interrupts and wouldn't expect to
-read/clear AER status.  So I *guess* Linux would assume APEI?  But
-that doesn't seem to be what the flowchart assumes.
+    Virtio-mem devices can only operate on their assigned memory region i=
+n
+    order to (un)plug memory. A device cannot (un)plug memory belonging t=
+o
+    other devices.
 
-> > BTW, if/when this is updated, I have another question: the _OSC
-> > DPC control bit currently allows the OS to write DPC Control
-> > during that window.  I understand the OS writing the RW1C *Status*
-> > bits to clear them, but it seems like writing the DPC Control
-> > register is likely to cause issues.  The same question would apply
-> > to the AER access we're talking about.
-> 
-> We could specify which particular bits can and can't be touched.
-> But it's hard to maintain as new bits are added.  Probably better to
-> add some guidance that OS should read/clear error status, DPC
-> Trigger Status, etc. but shouldn't change masks/severity/control
-> bits/etc.
+    The "region_size" corresponds to the maximum amount of memory that ca=
+n
+    be provided by a device. The "size" corresponds to the amount of memo=
+ry
+    that is currently plugged. "requested_size" corresponds to a request
+    from the device to the device driver to (un)plug blocks. The
+    device driver should try to (un)plug blocks in order to reach the
+    "requested_size". It is impossible to plug more memory than requested=
+.
 
-Yeah.  I didn't mean at the level of individual bits; I was thinking
-more of status/log/etc vs control registers.  But maybe even that is
-hard, I dunno.
+    The "usable_region_size" represents the memory region that can actual=
+ly
+    be used to (un)plug memory. It is always at least as big as the
+    "requested_size" and will grow dynamically. It will only shrink when
+    explicitly triggered (VIRTIO_MEM_REQ_UNPLUG).
+
+    There are no guarantees what will happen if unplugged memory is
+    read/written. Such memory should, in general, not be touched. E.g.,
+    even writing might succeed, but the values will simply be discarded a=
+t
+    random points in time.
+
+    It can happen that the device cannot process a request, because it is
+    busy. The device driver has to retry later.
+
+    Usually, during system resets all memory will get unplugged, so the
+    device driver can start with a clean state. However, in specific
+    scenarios (if the device is busy) it can happen that the device still
+    has memory plugged. The device driver can request to unplug all memor=
+y
+    (VIRTIO_MEM_REQ_UNPLUG) - which might take a while to succeed if the
+    device is busy.
+
+-------------------------------------------------------------------------=
+-
+2. Linux Implementation
+-------------------------------------------------------------------------=
+-
+
+Memory blocks (e.g., 128MB) are added/removed on demand. Within these
+memory blocks, subblocks (e.g., 4MB) are plugged/unplugged. The sizes
+depend on the target architecture, MAX_ORDER, pageblock_order, and
+the block size of a virtio-mem device.
+
+add_memory()/try_remove_memory() is used to add/remove memory blocks.
+virtio-mem will not online memory blocks itself. This has to be done by
+user space, or configured into the kernel
+(CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE). virtio-mem will only unplug memor=
+y
+that was online to the ZONE_NORMAL. Memory is suggested to be onlined to
+the ZONE_NORMAL for now.
+
+The memory hotplug notifier is used to properly synchronize against
+onlining/offlining of memory blocks and to track the states of memory
+blocks (including the zone memory blocks are onlined to).
+
+The set_online_page() callback is used to keep unplugged subblocks
+of a memory block fake-offline when onlining the memory block.
+generic_online_page() is used to fake-online plugged subblocks. This
+handling is similar to the Hyper-V balloon driver.
+
+PG_offline is used to mark unplugged subblocks as offline, so e.g.,
+dumping tools (makedumpfile) will skip these pages. This is similar to
+other balloon drivers like virtio-balloon and Hyper-V.
+
+Memory offlining code is extended to allow drivers to drop their referenc=
+e
+to PG_offline pages when MEM_GOING_OFFLINE, so these pages can be skipped
+when offlining memory blocks. This allows to offline memory blocks that
+have partially unplugged (allocated e.g., via alloc_contig_range())
+subblocks - or are completely unplugged.
+
+alloc_contig_range()/free_contig_range() [now exposed] is used to
+unplug/plug subblocks of memory blocks the are already exposed to Linux.
+
+offline_and_remove_memory() [new] is used to offline a fully unplugged
+memory block and remove it from Linux.
+
+-------------------------------------------------------------------------=
+-
+3. Changes v1 -> v2
+-------------------------------------------------------------------------=
+-
+
+- "virtio-mem: Paravirtualized memory hotplug"
+-- Use "__u64" and friends in uapi header
+-- Split out ACPI PXM handling
+- "virtio-mem: Allow to specify an ACPI PXM as nid"
+-- Squash of the ACPI PXM handling and previous "ACPI: NUMA: export
+   pxm_to_node"
+- "virtio-mem: Paravirtualized memory hotunplug part 2"
+-- Squashed previous "mm: Export alloc_contig_range() /
+   free_contig_range()"
+- "virtio-mem: Allow to offline partially unplugged memory blocks"
+-- WARN and dump_page() in case somebody has a reference to an unplugged
+   page
+- "virtio-mem: Better retry handling"
+-- Use retry interval of 5s -> 5m
+- Tweaked some patch descriptions
+
+-------------------------------------------------------------------------=
+-
+4. Future work
+-------------------------------------------------------------------------=
+-
+
+One of the next TODO things besides the QEMU part is writing a virtio-mem
+spec - however, that might still take some time.
+
+virtio-mem extensions (via new feature flags):
+- Indicate the guest status (e.g., initialized, working, all memory is
+  busy when unplugging, too many memory blocks are offline when plugging,
+  etc.)
+- Guest-triggered shrinking of the usable region (e.g., whenever the
+  highest memory block is removed).
+- Exchange of plugged<->unplugged block for defragmentation.
+
+Memory hotplug:
+- Reduce the amount of memory resources if that tunes out to be an
+  issue. Or try to speed up relevant code paths to deal with many
+  resources.
+- Allocate vmemmap from added memory.
+
+Memory hotunplug:
+- Performance improvements:
+-- Sense (lockless) if it make sense to try alloc_contig_range() at all
+   before directly trying to isolate and taking locks.
+-- Try to unplug bigger chunks within a memory block first.
+- Make unplug more likely to succeed:
+-- There are various idea to limit fragmentation on memory block
+   granularity. (e.g., ZONE_PREFER_MOVABLE and smart balancing)
+-- Allocate vmemmap from added memory.
+- OOM handling, e.g., via an OOM handler/shrinker.
+- Defragmentation
+- Support for < MAX_ORDER - 1 blocks (esp. pageblock_order)
+
+-------------------------------------------------------------------------=
+-
+5. Example Usage
+-------------------------------------------------------------------------=
+-
+
+A QEMU implementation (without protection of unplugged memory, but with
+resizable memory regions and optimized migration) is available at (kept
+updated):
+    https://github.com/davidhildenbrand/qemu.git virtio-mem
+
+Start QEMU with two virtio-mem devices (one per NUMA node):
+ $ qemu-system-x86_64 -m 4G,maxmem=3D204G \
+  -smp sockets=3D2,cores=3D2 \
+  -numa node,nodeid=3D0,cpus=3D0-1 -numa node,nodeid=3D1,cpus=3D2-3 \
+  [...]
+  -object memory-backend-ram,id=3Dmem0,size=3D100G,managed-size=3Don \
+  -device virtio-mem-pci,id=3Dvm0,memdev=3Dmem0,node=3D0,requested-size=3D=
+0M \
+  -object memory-backend-ram,id=3Dmem1,size=3D100G,managed-size=3Don \
+  -device virtio-mem-pci,id=3Dvm1,memdev=3Dmem1,node=3D1,requested-size=3D=
+1G
+
+Query the configuration:
+ QEMU 4.2.50 monitor - type 'help' for more information
+ (qemu) info memory-devices
+ Memory device [virtio-mem]: "vm0"
+   memaddr: 0x140000000
+   node: 0
+   requested-size: 0
+   size: 0
+   max-size: 107374182400
+   block-size: 2097152
+   memdev: /objects/mem0
+ Memory device [virtio-mem]: "vm1"
+   memaddr: 0x1a40000000
+   node: 1
+   requested-size: 1073741824
+   size: 1073741824
+   max-size: 107374182400
+   block-size: 2097152
+   memdev: /objects/mem1
+
+Add some memory to node 0:
+ QEMU 4.2.50 monitor - type 'help' for more information
+ (qemu) qom-set vm0 requested-size 1G
+
+Remove some memory from node 1:
+ QEMU 4.2.50 monitor - type 'help' for more information
+ (qemu) qom-set vm1 requested-size 64M
+
+Query the configuration again:
+ QEMU 4.2.50 monitor - type 'help' for more information
+ (qemu) info memory-devices
+ Memory device [virtio-mem]: "vm0"
+   memaddr: 0x140000000
+   node: 0
+   requested-size: 1073741824
+   size: 1073741824
+   max-size: 107374182400
+   block-size: 2097152
+   memdev: /objects/mem0
+ Memory device [virtio-mem]: "vm1"
+   memaddr: 0x1a40000000
+   node: 1
+   requested-size: 67108864
+   size: 67108864
+   max-size: 107374182400
+   block-size: 2097152
+   memdev: /objects/mem1
+
+-------------------------------------------------------------------------=
+-
+6. Q/A
+-------------------------------------------------------------------------=
+-
+
+Q: Why add/remove parts ("subblocks") of memory blocks/sections?
+A: Flexibility (section size depends on the architecture) - e.g., some
+   architectures have a section size of 2GB. Also, the memory block size
+   is variable (e.g., on x86-64). I want to avoid any such restrictions.
+   Some use cases want to add/remove memory in smaller granularity to a
+   VM (e.g., the Hyper-V balloon also implements this) - especially small=
+er
+   VMs like used for kata containers. Also, on memory unplug, it is more
+   reliable to free-up and unplug multiple small chunks instead
+   of one big chunk. E.g., if one page of a DIMM is either unmovable or
+   pinned, the DIMM can't get unplugged. This approach is basically a
+   compromise between DIMM-based memory hot(un)plug and balloon
+   inflation/deflation, which works mostly on page granularity.
+
+Q: Why care about memory blocks?
+A: They are the way to tell user space about new memory. This way,
+   memory can get onlined/offlined by user space. Also, e.g., kdump
+   relies on udev events to reload kexec when memory blocks are
+   onlined/offlined. Memory blocks are the "real" memory hot(un)plug
+   granularity. Everything that's smaller has to be emulated "on top".
+
+Q: Won't memory unplug of subblocks fragment memory?
+A: Yes and no. Unplugging e.g., >=3D4MB subblocks on x86-64 will not real=
+ly
+   fragment memory like unplugging random pages like a balloon driver doe=
+s.
+   Buddy merging will not be limited. However, any allocation that requir=
+es
+   bigger consecutive memory chunks (e.g., gigantic pages) might observe
+   the fragmentation. Possible solutions: Allocate gigantic huge pages
+   before unplugging memory, don't unplug memory, combine virtio-mem with
+   DIMM based memory or bigger initial memory. Remember, a virtio-mem
+   device will only unplug on the memory range it manages, not on other
+   DIMMs. Unplug of single memory blocks will result in similar
+   fragmentation in respect to gigantic huge pages.
+
+Q: How reliable is memory unplug?
+A: There are no guarantees on how much memory can get unplugged
+   again. However, it is more likely to find 4MB chunks to unplug than
+   e.g., 128MB chunks. If memory is terribly fragmented, there is nothing
+   we can do - for now. I consider memory hotplug the first primary use
+   of virtio-mem. Memory unplug might usually work, but we want to improv=
+e
+   the performance and the amount of memory we can actually unplug later.
+
+Q: Why not unplug from the ZONE_MOVABLE?
+A: Unplugged memory chunks are unmovable. Unmovable data must not end up
+   on the ZONE_MOVABLE - similar to gigantic pages - they will never be
+   allocated from ZONE_MOVABLE. virtio-mem added memory can be onlined
+   to the ZONE_MOVABLE, but subblocks will not get unplugged from it.
+
+Q: How big should the initial (!virtio-mem) memory of a VM be?
+A: virtio-mem memory will not go to the DMA zones. So to avoid running ou=
+t
+   of DMA memory, I suggest something like 2-3GB on x86-64. But many
+   VMs can most probably deal with less DMA memory - depends on the use
+   case.
+
+[1] https://events.linuxfoundation.org/wp-content/uploads/2017/12/virtio-=
+mem-Paravirtualized-Memory-David-Hildenbrand-Red-Hat-1.pdf
+[2] https://lkml.kernel.org/r/20190919142228.5483-1-david@redhat.com
+[3] https://lkml.kernel.org/r/547865a9-d6c2-7140-47e2-5af01e7d761d@redhat=
+.com
+[4] https://github.com/kata-containers/documentation/pull/592
+[5] https://github.com/cloud-hypervisor/cloud-hypervisor/pull/837
+
+Cc: Sebastien Boeuf <sebastien.boeuf@intel.com>
+Cc: Samuel Ortiz <samuel.ortiz@intel.com>
+Cc: Robert Bradford <robert.bradford@intel.com>
+Cc: Luiz Capitulino <lcapitulino@redhat.com>
+Cc: Pankaj Gupta <pankaj.gupta.linux@gmail.com>
+Cc: teawater <teawaterz@linux.alibaba.com>
+Cc: Igor Mammedov <imammedo@redhat.com>
+Cc: Dr. David Alan Gilbert <dgilbert@redhat.com>
+
+David Hildenbrand (10):
+  virtio-mem: Paravirtualized memory hotplug
+  virtio-mem: Allow to specify an ACPI PXM as nid
+  virtio-mem: Paravirtualized memory hotunplug part 1
+  virtio-mem: Paravirtualized memory hotunplug part 2
+  mm: Allow to offline unmovable PageOffline() pages via
+    MEM_GOING_OFFLINE
+  virtio-mem: Allow to offline partially unplugged memory blocks
+  mm/memory_hotplug: Introduce offline_and_remove_memory()
+  virtio-mem: Offline and remove completely unplugged memory blocks
+  virtio-mem: Better retry handling
+  MAINTAINERS: Add myself as virtio-mem maintainer
+
+ MAINTAINERS                     |    7 +
+ drivers/acpi/numa/srat.c        |    1 +
+ drivers/virtio/Kconfig          |   18 +
+ drivers/virtio/Makefile         |    1 +
+ drivers/virtio/virtio_mem.c     | 1910 +++++++++++++++++++++++++++++++
+ include/linux/memory_hotplug.h  |    1 +
+ include/linux/page-flags.h      |   10 +
+ include/uapi/linux/virtio_ids.h |    1 +
+ include/uapi/linux/virtio_mem.h |  208 ++++
+ mm/memory_hotplug.c             |   81 +-
+ mm/page_alloc.c                 |   26 +
+ mm/page_isolation.c             |    9 +
+ 12 files changed, 2263 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/virtio/virtio_mem.c
+ create mode 100644 include/uapi/linux/virtio_mem.h
+
+--=20
+2.24.1
+
