@@ -2,90 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5487181DAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:24:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C5AD181DB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:25:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730096AbgCKQYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 12:24:43 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35101 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbgCKQYm (ORCPT
+        id S1730186AbgCKQZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 12:25:34 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39989 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730142AbgCKQZe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 12:24:42 -0400
-Received: by mail-lj1-f193.google.com with SMTP id u12so3062619ljo.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 09:24:41 -0700 (PDT)
+        Wed, 11 Mar 2020 12:25:34 -0400
+Received: by mail-wm1-f68.google.com with SMTP id e26so2825082wme.5;
+        Wed, 11 Mar 2020 09:25:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ewAlQHQt8dNmtJm6MPN3fd97uVC477VMUv7XsNvWER4=;
-        b=T4CQInzmlM2NS3Aw7NWKi1zS/EPg/I3ePyu2SZ6CEEMmQlPuypdSz89daz11monzuF
-         Ah+MttBb+norGtqwBrEU/TbbOCS32LF7TwYCBY95bzhG0y61XDLQQ5mVUplCZol/nK1C
-         guY8cMZZTIhfPI/ExVsw1ygxAVbRY1ifDJhlQ=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=g92svwYBuSyg8jgfB1ySNd3KartWFgju0AKQL5BNu30=;
+        b=b0RzEB3LUIItSreCToIbiC/rkCpE2jb4oD+C0GmG6jhAcdgWNuq9QCPBt+JayskKHM
+         T4elVkDCsK5DKgWsOPXM6Qyg5UK2B/nifMpbkipfYZtCkXuddjLBeVSQsQ0Vv8mKPxvE
+         YliMbOO4ppc+hhi/YbhokRy94j+SfZ6/zUH53n4nUVfTAkIW5m53XIUc414LPbmwU086
+         XYla6tjKjsyTUzfWNSnRQvVa11/t2qfsIS/4Y1IUATdsyavWHUfXGSJS/TmJKCHggIQl
+         wbbheNOmOLiMVZjNKA9sgGFekKMvD3eNBMAgVU5yJBcZwxrvhG+IXDAYRUBR88s/9yTf
+         T09w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ewAlQHQt8dNmtJm6MPN3fd97uVC477VMUv7XsNvWER4=;
-        b=r+sozeJLACyqIuFjou7ynz5T0djE3rvELsAJO/YIFCzNaWhDw5Nf3JLcdHLhJLz7Na
-         cRm2BNNPKOlers+Sh/Dq8XO+CuVeLEiyOoys2tU86mJfbvQ8/5FLDyy5sgP7QyZ2LCCj
-         cNNKel45oJ6YRCMCn2Cxe+Nk59EWBj4kz8iwofHdXHd4y98CFES2zajoPJdaCEFh4+Dq
-         ntdoARtxLeQeGHY3NhvwQB2zkhTN+2u35kQXRe0y8wMDV88xtns8/JFal75qZ/wvSfdB
-         PTgdll+OZXY46ByVlEbAy6SiYGcRVln9IH9oI5C50i5anBd5MAzA1tpQsKCra9AI/SlZ
-         feaw==
-X-Gm-Message-State: ANhLgQ1PI4k8nw3zeDbHhne+OCK6M9hHSZ2xYUgiIdPeNVxcQZwBmHcH
-        NuaPnCRDAPvfLKKaI1zgZTp96IojeIk=
-X-Google-Smtp-Source: ADFU+vsncakXkVONABzYp5T/x62RhroiD8voxvkdIOL5PAayPRqhe41/swn5/YOVl6iZeUojDnwgYQ==
-X-Received: by 2002:a2e:9c4:: with SMTP id 187mr2637880ljj.89.1583943880228;
-        Wed, 11 Mar 2020 09:24:40 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id g16sm3548838lfd.7.2020.03.11.09.24.39
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 09:24:39 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id r24so3046030ljd.4
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 09:24:39 -0700 (PDT)
-X-Received: by 2002:a05:651c:230:: with SMTP id z16mr2626766ljn.201.1583943878724;
- Wed, 11 Mar 2020 09:24:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <bug-206175-5873@https.bugzilla.kernel.org/> <bug-206175-5873-S6PaNNClEr@https.bugzilla.kernel.org/>
- <CAHk-=wi4GS05j67V0D_cRXRQ=_Jh-NT0OuNpF-JFsDFj7jZK9A@mail.gmail.com>
- <20200310162342.GA4483@lst.de> <CAHk-=wgB2YMM6kw8W0wq=7efxsRERL14OHMOLU=Nd1OaR+sXvw@mail.gmail.com>
- <20200310182546.GA9268@lst.de> <20200311152453.GB23704@lst.de>
- <e70dd793-e8b8-ab0c-6027-6c22b5a99bfc@gmx.com> <20200311154328.GA24044@lst.de>
- <20200311154718.GB24044@lst.de> <962693d9-b595-c44d-1390-e044f29e91d3@gmx.com>
- <CAHk-=wj0E9vCO_VTiK6xuXAW13ZeeLsW=G3v+yNsCaUm1+H61A@mail.gmail.com>
-In-Reply-To: <CAHk-=wj0E9vCO_VTiK6xuXAW13ZeeLsW=G3v+yNsCaUm1+H61A@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 11 Mar 2020 09:24:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whFu_p-eiyJfiEevV=a+irzW=9LMWjMaaFSaaasXout9w@mail.gmail.com>
-Message-ID: <CAHk-=whFu_p-eiyJfiEevV=a+irzW=9LMWjMaaFSaaasXout9w@mail.gmail.com>
-Subject: Re: [Bug 206175] Fedora >= 5.4 kernels instantly freeze on boot
- without producing any display output
-To:     "Artem S. Tashkinov" <aros@gmx.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        iommu <iommu@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=g92svwYBuSyg8jgfB1ySNd3KartWFgju0AKQL5BNu30=;
+        b=HStFrtuyLo9USPN/BBFVeotibA6jMd7+dVUiYS2PkMlJ4Yaz1sC6TuS32fb2F8SfAT
+         uTXYdv1rsjDDh0bTa1XAJDz/GJrQGHlTTwZJEuugrXXcMX3NetDfo3hlE6q4bohuFUNX
+         QRmDGedYJfUSpbIxqBCGfQ6c4R++rWqnVMhQ15f5L4o1PGbCTY5n/Dho8dhgY4WERulF
+         PCXoXjUN6ZdujG1zx6tkR98uvdE5ZVztVM0tv1DFAztORobjo3aXI/O1ah/GgV2YyTYT
+         2ILhH6J/ScjsPf6y+HyLLbEhhSOucbv5AKOvCMauSJNPc4xpX//+rWnvxt+XQi4SRxUu
+         PN0A==
+X-Gm-Message-State: ANhLgQ18ZxEMZGRsLIrtdt3fmKFc46H5AYPEO7rwfFmoHeMG73Oe7tc4
+        j929QUdd3KpkNFV5rUIVZZ+RWVvh
+X-Google-Smtp-Source: ADFU+vvs61AYxW8DEMnQEw8rODfkI0Hq6B1WdiR+aSW/ymhbIQSqukGtGfpeakTg74muhZKWjCshIw==
+X-Received: by 2002:a1c:f60d:: with SMTP id w13mr4587872wmc.171.1583943932278;
+        Wed, 11 Mar 2020 09:25:32 -0700 (PDT)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id i1sm53624688wrs.18.2020.03.11.09.25.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Mar 2020 09:25:30 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ARM: dts: rockchip: swap clocks and clock-names values for i2s nodes
+Date:   Wed, 11 Mar 2020 17:25:23 +0100
+Message-Id: <20200311162524.19748-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 9:21 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> It's commit e423fb6929d4 ("driver code: clarify and fix platform
-> device DMA mask allocation") in my tree. I've not pushed it out yet (I
-> have a few pending pull requests), but it should be out shortly.
+Current dts files with 'i2s' nodes are manually verified.
+In order to automate this process rockchip-i2s.txt
+has to be converted to yaml. In the new setup dtbs_check with
+rockchip-i2s.yaml expect clocks and clock-names values
+in the same order. Fix this for some older Rockchip models.
 
-Actually, looking at other emails in my mailbox I see that Christoph
-send a patch with a sign-off, and there's a reviewed-by too, so since
-I haven't pushed mine out yet, I'll edit that up and give credit to
-Christoph properly, and add the reviewed-by.
+make ARCH=arm dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/sound/rockchip-i2s.yaml
 
-So it will have a different commit ID, updated message, and be a mix
-of my patch and Christoph's.
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ arch/arm/boot/dts/rk3066a.dtsi | 12 ++++++------
+ arch/arm/boot/dts/rk3188.dtsi  |  4 ++--
+ arch/arm/boot/dts/rk3288.dtsi  |  4 ++--
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
-             Linus
+diff --git a/arch/arm/boot/dts/rk3066a.dtsi b/arch/arm/boot/dts/rk3066a.dtsi
+index 3d1b02f45..f3fc92e57 100644
+--- a/arch/arm/boot/dts/rk3066a.dtsi
++++ b/arch/arm/boot/dts/rk3066a.dtsi
+@@ -160,10 +160,10 @@
+ 		#size-cells = <0>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2s0_bus>;
++		clocks = <&cru SCLK_I2S0>, <&cru HCLK_I2S0>;
++		clock-names = "i2s_clk", "i2s_hclk";
+ 		dmas = <&dmac1_s 4>, <&dmac1_s 5>;
+ 		dma-names = "tx", "rx";
+-		clock-names = "i2s_hclk", "i2s_clk";
+-		clocks = <&cru HCLK_I2S0>, <&cru SCLK_I2S0>;
+ 		rockchip,playback-channels = <8>;
+ 		rockchip,capture-channels = <2>;
+ 		#sound-dai-cells = <0>;
+@@ -178,10 +178,10 @@
+ 		#size-cells = <0>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2s1_bus>;
++		clocks = <&cru SCLK_I2S1>, <&cru HCLK_I2S1>;
++		clock-names = "i2s_clk", "i2s_hclk";
+ 		dmas = <&dmac1_s 6>, <&dmac1_s 7>;
+ 		dma-names = "tx", "rx";
+-		clock-names = "i2s_hclk", "i2s_clk";
+-		clocks = <&cru HCLK_I2S1>, <&cru SCLK_I2S1>;
+ 		rockchip,playback-channels = <2>;
+ 		rockchip,capture-channels = <2>;
+ 		#sound-dai-cells = <0>;
+@@ -196,10 +196,10 @@
+ 		#size-cells = <0>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2s2_bus>;
++		clocks = <&cru SCLK_I2S2>, <&cru HCLK_I2S2>;
++		clock-names = "i2s_clk", "i2s_hclk";
+ 		dmas = <&dmac1_s 9>, <&dmac1_s 10>;
+ 		dma-names = "tx", "rx";
+-		clock-names = "i2s_hclk", "i2s_clk";
+-		clocks = <&cru HCLK_I2S2>, <&cru SCLK_I2S2>;
+ 		rockchip,playback-channels = <2>;
+ 		rockchip,capture-channels = <2>;
+ 		#sound-dai-cells = <0>;
+diff --git a/arch/arm/boot/dts/rk3188.dtsi b/arch/arm/boot/dts/rk3188.dtsi
+index 10ede65d9..651ea4e15 100644
+--- a/arch/arm/boot/dts/rk3188.dtsi
++++ b/arch/arm/boot/dts/rk3188.dtsi
+@@ -170,10 +170,10 @@
+ 		#size-cells = <0>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2s0_bus>;
++		clocks = <&cru SCLK_I2S0>, <&cru HCLK_I2S0>;
++		clock-names = "i2s_clk", "i2s_hclk";
+ 		dmas = <&dmac1_s 6>, <&dmac1_s 7>;
+ 		dma-names = "tx", "rx";
+-		clock-names = "i2s_hclk", "i2s_clk";
+-		clocks = <&cru HCLK_I2S0>, <&cru SCLK_I2S0>;
+ 		rockchip,playback-channels = <2>;
+ 		rockchip,capture-channels = <2>;
+ 		#sound-dai-cells = <0>;
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 8bcb4a516..f68dcde6c 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -964,10 +964,10 @@
+ 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		clocks = <&cru SCLK_I2S0>, <&cru HCLK_I2S0>;
++		clock-names = "i2s_clk", "i2s_hclk";
+ 		dmas = <&dmac_bus_s 0>, <&dmac_bus_s 1>;
+ 		dma-names = "tx", "rx";
+-		clock-names = "i2s_hclk", "i2s_clk";
+-		clocks = <&cru HCLK_I2S0>, <&cru SCLK_I2S0>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2s0_bus>;
+ 		rockchip,playback-channels = <8>;
+-- 
+2.11.0
+
