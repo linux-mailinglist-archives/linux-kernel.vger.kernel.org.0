@@ -2,151 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A58951813C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:58:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B84A1813CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:58:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbgCKI4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 04:56:02 -0400
-Received: from mga12.intel.com ([192.55.52.136]:8691 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728150AbgCKI4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 04:56:02 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 01:56:00 -0700
-X-IronPort-AV: E=Sophos;i="5.70,540,1574150400"; 
-   d="scan'208";a="277295646"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 01:55:57 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 3E8972096B; Wed, 11 Mar 2020 10:55:55 +0200 (EET)
-Date:   Wed, 11 Mar 2020 10:55:55 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-i2c <linux-i2c@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-acpi@vger.kernel.org, Bingbu Cao <bingbu.cao@intel.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        Chiranjeevi Rapolu <chiranjeevi.rapolu@intel.com>,
-        Hyungwoo Yang <hyungwoo.yang@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rajmohan.mani@intel.com, Tomasz Figa <tfiga@chromium.org>
-Subject: Re: [PATCH v4 5/6] at24: Support probing while off
-Message-ID: <20200311085555.GH5379@paasikivi.fi.intel.com>
-References: <20200121134157.20396-1-sakari.ailus@linux.intel.com>
- <20200121134157.20396-6-sakari.ailus@linux.intel.com>
- <CAMpxmJU5dG49N2FA0oSQsOfKrCr3KQ1BisON4c+nUJJmZQG=bQ@mail.gmail.com>
+        id S1728705AbgCKI60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 04:58:26 -0400
+Received: from mail-ua1-f45.google.com ([209.85.222.45]:43609 "EHLO
+        mail-ua1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728547AbgCKI6Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 04:58:25 -0400
+Received: by mail-ua1-f45.google.com with SMTP id o42so425564uad.10
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 01:58:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fLNxk8O6Gh8TsCWdxPFKykWAzp8mOJGuS0q7kCK4jy0=;
+        b=fGiA0ZAktSjoWl9DDT85ZeYkJ/uEVjJpeb9D+ohfkIR+yM76gHK2IpxSSIwpuF2uM2
+         f2KVUbuOiRqkDOo+27dpkmhtlKA8GVE7nLmTUaOrTtsS3Vg5TtujomGQ2OB+nDzSn0Eu
+         jP7Gn/B2Nf+N4OyS4QKWwxRYqyWMgNgMff8ZQ181MSjcvYeNjOxr0Lm9MWarNKssfHFj
+         aiGjMskNZhn5mY6RZodwxcRSfIaO8vcIeGJXTUccmJWaJAw1VHj5sJ/YiEG+CcqCqZo6
+         1r54TV302rzRYwz8muKtxckcsEPENmI/kg+QWD5YvScsB1RsdsEY78Ha3Gkw8jf0kf+5
+         NybA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fLNxk8O6Gh8TsCWdxPFKykWAzp8mOJGuS0q7kCK4jy0=;
+        b=iOR/kn3zfE48iGYoqA0iAjUZ8nvsWuj6If6cI7mY3mnAKgMocFD3m9yef23ifDkbGW
+         Thnt7kMvGxOSoc0jUHH0ikExQz4RmhAprStRhUaA8eD5ALIXx5nIPtP82361/RAOAWH9
+         f/QJpzqdXgQQaPVL6AAxBXVJAH8THwX58anJpJnGcl+apHsAooLFah3J2iU1Qqaz4e+x
+         aR9JSr9YsOqy+jEyHG9x43J8IG95/acrDyRYOQRgS8Vn4lYJvcwXttO3xSx4FFtu5gNw
+         2ri9JVjNR0EglTYzHk1yjZndk7NljAPlUcan5YHb/6SH8SnGyya8EzlkCyQYQlX69Tyn
+         MBkA==
+X-Gm-Message-State: ANhLgQ1RRrR+f5irfvBtZf5Xtxymn+3t7Ni58E1LvPh8BjjybPRgAdAK
+        HeY9FT+23BKdE5Ims5KfL4JfPTpzUe8TVvNjZF1FyA==
+X-Google-Smtp-Source: ADFU+vvAY1hloT57HCPzA8/FbRSet7fJZ0ZjIpEDUNDE3WhJyVBOXTHiqYoQ7JQeBWuQaOvXqocGgd1G1twm2cIJlf8=
+X-Received: by 2002:ab0:7802:: with SMTP id x2mr1058363uaq.100.1583917104040;
+ Wed, 11 Mar 2020 01:58:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMpxmJU5dG49N2FA0oSQsOfKrCr3KQ1BisON4c+nUJJmZQG=bQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200212024220.GA32111@seokyung-mobl1> <CAPDyKFr9H2XcgCk9AmHgJfHC+PySh66KxegMJ4yb4aqKSVt3kg@mail.gmail.com>
+ <BYAPR11MB269638142E2BF2C6E108B40A9CE20@BYAPR11MB2696.namprd11.prod.outlook.com>
+ <CAPDyKFr=hE6diZmaVy-os3rFScHe+8OphBS+edkVGK+Z-J_=HA@mail.gmail.com>
+ <BYAPR11MB2696D160D6F5B7C98E0503E79CFF0@BYAPR11MB2696.namprd11.prod.outlook.com>
+ <CAPDyKFqqDWMsHEb493p__FNzYaEzE6Ry0bkd-2ng7cdM886zjw@mail.gmail.com>
+ <5f3b8cb9-5e55-ee47-46e5-af019d6328b6@intel.com> <CAPDyKFosrju6y5mOKePsNwqgDr=QeBozFTrWKz4MNpsMmeZdCA@mail.gmail.com>
+ <1583892806.24941.7.camel@mhfsdcap03>
+In-Reply-To: <1583892806.24941.7.camel@mhfsdcap03>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 11 Mar 2020 09:57:47 +0100
+Message-ID: <CAPDyKFrdiiVUrCKR2N=Xbtfy3NhXSaq4m_ziXScdJU3x8G2F+w@mail.gmail.com>
+Subject: Re: [PATCH] mmc: mmc: Fix the timing for clock changing in mmc
+To:     Chaotian Jing <chaotian.jing@mediatek.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        "Seo, Kyungmin" <kyungmin.seo@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bartosz,
+On Wed, 11 Mar 2020 at 03:13, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
+>
+> On Tue, 2020-03-10 at 16:41 +0100, Ulf Hansson wrote:
+> > On Tue, 10 Mar 2020 at 11:44, Adrian Hunter <adrian.hunter@intel.com> wrote:
+> > >
+> > > On 10/03/20 11:05 am, Ulf Hansson wrote:
+> > > > On Tue, 10 Mar 2020 at 05:28, Seo, Kyungmin <kyungmin.seo@intel.com> wrote:
+> > > >>
+> > > >> I read the link and patch of Chaotian Jing.
+> > > >> I also point out what Chaotian said.
+> > > >> Most host controllers have DLL tuning values for each mode. When host controller is set as HS400 mode with 50MHz clock, host controller uses DLL value which is tuned with 200MHz clock.
+> > > >>
+> > > >> If DLL value in HS400 mode doesn't have the pass range in HS mode, command transfer failing may fail.
+> > > >> In order to make robust sdhci driver, I think the patch needs to be considered.
+> > > >
+> > > > I have, but I am not picking it up in its current form.
+> > > >
+> > > >> Of course, CMD6 with HS400 mode and 200MHz clock should not cause any problem because it's correct configuration.
+> > > >
+> > > > Yes, but not for all cases, as I said in my reply in those email-threads.
+> > > >
+> > > > What I had in mind, is that I I think we should inform
+> > > > mmc_hs400_to_hs200() about under what situation it's getting called.
+> > > > Depending on that, we should either decrease the clock rate before or
+> > > > after we send the CMD6.
+> > > >
+> > > > Would that work for your case?
+> > >
+> > > Ulf, would you consider a new call back e.g.
+> >
+> > That could work, but I am not sure what's best, honestly.
+> >
+> > The problem may be generic or it could be specific to some host
+> > controller? I think we need to answer that question first.
+> >
+> > What do you think?
+> >
+> > Br
+> > Uffe
+> >
+> When start to send CMD6 to switch to HS mode, both Host & eMMC device
+> are working on HS400 mode, so the timing used is MUST at HS400 mode and
+> the clock MUST keep at current clock(usually 200Mhz). after received the
+> response of CMD6, Never use CMD13 to polling card status for timing
+> switch. if host has ops->card_busy() or caps WAIT_WHILE_BUSY, then use
+> it, if not,just do mmc_delay() for specific time.
 
-Thanks for the reply.
+The CMD13 is currently not used when polling, because we set the
+send_status parameter to false in the calls to __mmc_switch(). So this
+should already be covered, according to your suggestions. Right?
 
-On Wed, Jan 29, 2020 at 02:36:17PM +0100, Bartosz Golaszewski wrote:
-> wt., 21 sty 2020 o 14:41 Sakari Ailus <sakari.ailus@linux.intel.com> napisał(a):
-> >
-> > In certain use cases (where the chip is part of a camera module, and the
-> > camera module is wired together with a camera privacy LED), powering on
-> > the device during probe is undesirable. Add support for the at24 to
-> > execute probe while being powered off. For this to happen, a hint in form
-> > of a device property is required from the firmware.
-> >
-> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > ---
-> >  drivers/misc/eeprom/at24.c | 31 +++++++++++++++++++++----------
-> >  1 file changed, 21 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-> > index 0681d5fdd538a..5fc1162b67618 100644
-> > --- a/drivers/misc/eeprom/at24.c
-> > +++ b/drivers/misc/eeprom/at24.c
-> > @@ -564,6 +564,7 @@ static int at24_probe(struct i2c_client *client)
-> >         bool i2c_fn_i2c, i2c_fn_block;
-> >         unsigned int i, num_addresses;
-> >         struct at24_data *at24;
-> > +       bool low_power;
-> >         struct regmap *regmap;
-> >         bool writable;
-> >         u8 test_byte;
-> > @@ -701,19 +702,24 @@ static int at24_probe(struct i2c_client *client)
-> >
-> >         i2c_set_clientdata(client, at24);
-> >
-> > -       /* enable runtime pm */
-> > -       pm_runtime_set_active(dev);
-> > +       low_power = acpi_dev_state_low_power(&client->dev);
-> > +       if (!low_power)
-> > +               pm_runtime_set_active(dev);
-> > +
-> >         pm_runtime_enable(dev);
-> >
-> >         /*
-> > -        * Perform a one-byte test read to verify that the
-> > -        * chip is functional.
-> > +        * Perform a one-byte test read to verify that the chip is functional,
-> > +        * unless powering on the device is to be avoided during probe (i.e.
-> > +        * it's powered off right now).
-> >          */
-> > -       err = at24_read(at24, 0, &test_byte, 1);
-> > -       pm_runtime_idle(dev);
-> > -       if (err) {
-> > -               pm_runtime_disable(dev);
-> > -               return -ENODEV;
-> > +       if (!low_power) {
-> > +               err = at24_read(at24, 0, &test_byte, 1);
-> > +               pm_runtime_idle(dev);
-> > +               if (err) {
-> > +                       pm_runtime_disable(dev);
-> > +                       return -ENODEV;
-> > +               }
-> >         }
-> >
-> >         if (writable)
-> > @@ -728,8 +734,12 @@ static int at24_probe(struct i2c_client *client)
-> >
-> >  static int at24_remove(struct i2c_client *client)
-> >  {
-> > +       bool low_power;
-> > +
-> >         pm_runtime_disable(&client->dev);
-> > -       pm_runtime_set_suspended(&client->dev);
-> > +       low_power = acpi_dev_state_low_power(&client->dev);
-> 
-> This is inconsistent. You define the low_power field in the context
-> structure (BTW the name low_power is a bit vague here - without
-> looking at its assignment it would make me think it's about something
-> battery-related, how about 'off_at_probe'?) and instead of reusing
+When it comes to keeping the clock rate as is, before sending the CMD6
+- I fully agree that it's a good idea when doing a periodic retuning.
+As you would expect things to work as they are.
 
-The field was called probe_powered_off in v1, but I changed it to
-probe_low_power (and renamed related functions etc.) based on review
-comments --- for the device may not be powered off actually.
+The problem is, when you have received a CRC error and the re-tuning
+is being triggered because of that. In that case it may be a better
+option to decrease the clock rate, at least that is what I recall
+Adrian needs for his cases. Adrian?
 
-> this field here, you call acpi_dev_state_low_power() again. Either
-> don't store the context for the life-time of the device if not
-> necessary or don't call acpi_dev_state_low_power() at remove, although
-> the commit message doesn't describe whether the latter is done on
-> purpose.
+What will happen when you receive a CRC error and there is re-tuning
+triggered, is that something you have seen happening on you boards?
 
-Right. probe-low-power property has the same effect on remove for
-consistency, i.e. the device can remain in low power state during remove.
-This is documented in probe_low_power field documentation in the first
-patch.
+>
+> the next step is that call mmc_set_ios() to set current timing to HS
+> mode and clock to 50Mhz to let Host driver that eMMC device has been
+> switched to HS mode and Host can switch to HS mode at 50Mhz(may apply
+> parameters for this low speed).
 
--- 
-Regards,
+Yep, makes sense.
 
-Sakari Ailus
+> > >
+> > > diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> > > index c2abd417a84a..1bc18fe2632f 100644
+> > > --- a/drivers/mmc/core/mmc.c
+> > > +++ b/drivers/mmc/core/mmc.c
+> > > @@ -1237,7 +1237,10 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
+> > >
+> > >         /* Reduce frequency to HS */
+> > >         max_dtr = card->ext_csd.hs_max_dtr;
+> > > -       mmc_set_clock(host, max_dtr);
+> > > +       if (host->ops->hs400_to_hs200_prep)
+> > > +               host->ops->hs400_to_hs200_prep(host, max_dtr);
+> > > +       else
+> > > +               mmc_set_clock(host, max_dtr);
+> > >
+> > >         /* Switch HS400 to HS DDR */
+> > >         val = EXT_CSD_TIMING_HS;
+> > >
+> > >
+> >
+> > [...]
+> >
+> > Kind regards
+> > Uffe
+>
+
+Kind regards
+Uffe
