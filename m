@@ -2,83 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FEF5181FB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:41:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87F08181FB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:41:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730524AbgCKRlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:41:42 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39305 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbgCKRll (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:41:41 -0400
-Received: by mail-lf1-f67.google.com with SMTP id j15so2468547lfk.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:41:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QCN3ckDZYTgKsnmWN3MWB/SQ8UiGeh+NLtW3p106h1c=;
-        b=YSCkVqVocKNnlqDlgiECoEadYMt16n+8MdHbaK6Gz4V/6O09UsUL+qmuweL0ZNYT2i
-         Sr+AidQV9hb4/BL4It5d/F0SRAJZtYfVSGXINNlDJSfUWwK0NTXRvpGwgZRmxC5/f8Gy
-         rsjNb5cScHJ2Hv2E8KQjB7u3AijuPnYd/xZas=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QCN3ckDZYTgKsnmWN3MWB/SQ8UiGeh+NLtW3p106h1c=;
-        b=cmS7MhIuexeB7VNmqMHeOy0cphWdQN0ETZyM29hpuukpI8qSXznbg0YCrK+JK2WVOw
-         OsJYmewOxx3mJmzfgnr8PfzIr0koPuct58dIHxHouOo33ZrWht+aFKA/YQaHjda5jQsI
-         5JEJ9nmg27T1yZsac8PpJ7Mb9ykGIL8EfWTRq4GFAlmqX7VeOkrnlqGzGUfMzEx5wpTO
-         bjtY3McFahpICw/KH4/GOEzOO/lURYVXascMU1VW90lUtfi6ucU/phmikH9aJZXTHeLe
-         HozyL68YVCgr5Ve9cnmQKo0RkKyGaUAzD8UW94LAnuUtszMpSt0xSr/5jnrPsazk5L1H
-         jYdQ==
-X-Gm-Message-State: ANhLgQ2ddqWArp2JvjuPzk4+o2Tk6ed7CCIgnT9rDR2rDch57hVzjFUj
-        PJpIPyr/IZ/2DuQLd5grxQdonQGJZl0=
-X-Google-Smtp-Source: ADFU+vuDpeWxXTsbVkBhSHld6Gg5hgerbrEVTh001y4cMA3pUdroimkWvQdo73d67fCeLpgsVNTCDA==
-X-Received: by 2002:a19:915b:: with SMTP id y27mr2810946lfj.127.1583948498299;
-        Wed, 11 Mar 2020 10:41:38 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id m24sm30947298ljb.81.2020.03.11.10.41.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 10:41:37 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id w1so3322964ljh.5
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:41:37 -0700 (PDT)
-X-Received: by 2002:a2e:5850:: with SMTP id x16mr2584551ljd.209.1583948497068;
- Wed, 11 Mar 2020 10:41:37 -0700 (PDT)
+        id S1730472AbgCKRlh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:41:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60966 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726099AbgCKRlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:41:36 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF31F2073E;
+        Wed, 11 Mar 2020 17:41:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583948497;
+        bh=bgSmYq0cHTA9/4QmAQKlWfxb9DYO4QtAo2xGhsXLHps=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yYhgVgcpvDOsH3WNqqv4VJaIHxs5wN4tGA9bBiWMCq51SV1jtYQeY/3Hg+G2tNEhf
+         OEMzIGYpDTyPBJJFUwtTeCGd6V9ckxD2m3X5NJ0dT4GXQK46sRT3I+MK1GJTAZaw43
+         6jccbBjs49GmqycJtbbyE3DYqlA03nzqLIuV2Grk=
+Date:   Wed, 11 Mar 2020 10:41:34 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: [PATCH] kmod: make request_module() return an error when
+ autoloading is disabled
+Message-ID: <20200311174134.GB20006@gmail.com>
+References: <20200310223731.126894-1-ebiggers@kernel.org>
+ <202003111026.2BBE41C@keescook>
 MIME-Version: 1.0
-References: <20200311162735.GA152176@google.com> <CAHk-=wjES_Si7rUtu_EuYu4PDz4OGdA4BWhYGJ=zOoJiELiykw@mail.gmail.com>
- <20200311173513.GA261045@google.com>
-In-Reply-To: <20200311173513.GA261045@google.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 11 Mar 2020 10:41:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiVpnOo9MyOpHxAyuv0ZBGCsW2tMmOtwb+6CX-taKRtKQ@mail.gmail.com>
-Message-ID: <CAHk-=wiVpnOo9MyOpHxAyuv0ZBGCsW2tMmOtwb+6CX-taKRtKQ@mail.gmail.com>
-Subject: Re: [GIT PULL] f2fs for 5.6-rc6
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202003111026.2BBE41C@keescook>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 10:35 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
->
-> I actually merged the last three patches which were introduced yesterday.
->
-> Others were merged over a week ago.
+On Wed, Mar 11, 2020 at 10:28:07AM -0700, Kees Cook wrote:
+> On Tue, Mar 10, 2020 at 03:37:31PM -0700, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > It's long been possible to disable kernel module autoloading completely
+> > by setting /proc/sys/kernel/modprobe to the empty string.  This can be
+> 
+> Hunh. I've never seen that before. :) I've always used;
+> 
+> echo 1 > /proc/sys/kernel/modules_disabled
+> 
+> Regardless,
+> 
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> 
 
-No, three were done just before you sent the pull request, and then
-seven others were done yesterday.
+modules_disabled is different because it disables *all* module loading, not just
+autoloading.
 
-Yes, the rest were a week ago.
-
-But basically, by rc6, I want to get the warm and fuzzies that the
-code has been tested, seen review, and isn't some last-minute
-addition.
-
-               Linus
+- Eric
