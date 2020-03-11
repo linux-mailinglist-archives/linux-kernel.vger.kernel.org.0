@@ -2,54 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CD6B18236B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 21:45:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DAAB182370
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 21:45:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729182AbgCKUpB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 16:45:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59372 "EHLO mail.kernel.org"
+        id S1729251AbgCKUpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 16:45:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726713AbgCKUpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 16:45:01 -0400
-Subject: Re: [GIT PULL] fscrypt fix for v5.6-rc6
+        id S1726713AbgCKUpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 16:45:07 -0400
+Subject: Re: [GIT PULL] pin control fixes for v5.6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583959502;
-        bh=BpqMPqVMEExHAmwE9Beff6FPwRMgQuXwVzkTYS3rtlU=;
+        s=default; t=1583959507;
+        bh=zxeBjc03GGTpm1E0YMnSwLEHXklOLkORMmtnLFc/rbM=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Xs0c8KJMFvlIzYcA40MhFlGm1IOWy8yJpK+Fr+m+FqJo0T4F6QMhQO5I8brlBTQQ9
-         uN96LInyTlX1axYS0S+hFluaPchZGwlMsSGXC1kNPWesIoYBt+wReS3ilar28gicxk
-         whhVJL8+3q1awpkbNsNhFivAMtRZl/XbkoeJm9ig=
+        b=1MMsjkOIdYJMSl53oC5aF3+ypQI2jbiAEzBA52ZRHTykYviOHYMC9IYb0JyRBoHVc
+         LtngedRyKdbttipMSv+uq0BAxacuqJlC4ug1eCWWu8uKWGswqgaZrH37rVQLVNmSV1
+         wcJqMes8mV+Se4KXnsYKZTJxYn0meIrX1h60VtFs=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200311194839.GB41227@sol.localdomain>
-References: <20200311194839.GB41227@sol.localdomain>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200311194839.GB41227@sol.localdomain>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git
- tags/fscrypt-for-linus
-X-PR-Tracked-Commit-Id: 2b4eae95c7361e0a147b838715c8baa1380a428f
+In-Reply-To: <CACRpkdYZbx_3AgtTYSwtBcr0G4PisWt8As=T7nqq60rTPXjYCA@mail.gmail.com>
+References: <CACRpkdYZbx_3AgtTYSwtBcr0G4PisWt8As=T7nqq60rTPXjYCA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CACRpkdYZbx_3AgtTYSwtBcr0G4PisWt8As=T7nqq60rTPXjYCA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+ tags/pinctrl-v5.6-2
+X-PR-Tracked-Commit-Id: 1cada2f307665e208a486d7ac2294ed9a6f74a6f
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e6e6ec48dd0fa12e8a2d1ff6b55cd907401bd7fe
-Message-Id: <158395950136.14877.831369511825672693.pr-tracker-bot@kernel.org>
-Date:   Wed, 11 Mar 2020 20:45:01 +0000
-To:     Eric Biggers <ebiggers@kernel.org>
+X-PR-Merge-Commit-Id: a6ff4631a61928061c166d3919b9f6e397851125
+Message-Id: <158395950702.14877.746149326958817812.pr-tracker-bot@kernel.org>
+Date:   Wed, 11 Mar 2020 20:45:07 +0000
+To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 11 Mar 2020 12:48:39 -0700:
+The pull request you sent on Wed, 11 Mar 2020 10:22:42 +0100:
 
-> https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fscrypt-for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.6-2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e6e6ec48dd0fa12e8a2d1ff6b55cd907401bd7fe
+https://git.kernel.org/torvalds/c/a6ff4631a61928061c166d3919b9f6e397851125
 
 Thank you!
 
