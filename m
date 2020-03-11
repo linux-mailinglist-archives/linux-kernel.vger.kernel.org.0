@@ -2,176 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78B431822CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:51:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F8BA1822CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:51:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387422AbgCKTvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 15:51:17 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:48866 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731030AbgCKTvQ (ORCPT
+        id S1731215AbgCKTvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 15:51:14 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39700 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731030AbgCKTvN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:51:16 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jC7Nn-0003gw-M1; Wed, 11 Mar 2020 13:51:11 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jC7Nm-0007Ul-Q4; Wed, 11 Mar 2020 13:51:11 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Wed, 11 Mar 2020 15:51:13 -0400
+Received: by mail-pg1-f193.google.com with SMTP id s2so1757679pgv.6
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:51:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=bEbLn60MatMY03Vz8TeE0dyBSEdNX1ebEYntbweJuus=;
+        b=kmneJE/E/emo/Td6UCnKU/32NDvRw/nBoZicVqzuxBCWpm5iG8fX02sFQBI0JvB3+J
+         aqHGUFrXMVFIn6B8JgGNHHQj/rdtI+g/cgqFZiH5mloGj1OHyBnTjoA9VumS3J5wRE1Q
+         WEwWrbo/RBVh3B2ko8HDeuFYcziESr7cZl+8nRI/wVqVRd904yac66ZYjZWCLn17i+31
+         +gKjNbkoQJ4wthQTQ7uKLN6ht8ZcSRQaQSvaYi5RcuYNkP4+fxT+RUKxOPo9XoqCdeCJ
+         3W6hblO2KQdXVy0mcu9wi+9NST0m55Hjm+NeANKDMATlMN6Q+AOZEZrRh8tFtpOgLH+C
+         NeeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=bEbLn60MatMY03Vz8TeE0dyBSEdNX1ebEYntbweJuus=;
+        b=jN2r4e031/7PcRuqaapcSzKGQm2Zn+foLVcxHZefJ7zNwmDCBFgeQEKniKNSNqZXmV
+         D++ykEKryeqpxETK8+fWoVb+0VeY8iXa9K9dZa0ODk+bROkmeIoYL2w8xZB7ClH59fz0
+         yX9qW6QbB3789V2wjSojtzMFSNqHsW+uI/5L0yMkEjBy/l18SyFA/qMOrBLM60TITiOO
+         edFTVWND9czXKKJeMyZdah55Wd4mqMiZYYTLmuMNRPmkXu+eWPqAxEPNXysznQv1BRF0
+         iNsmuRQx/HXvwsj1Bx3ZI7WH5gItL+VON/A0QiMDEVGOVByF39zN/KAchYUt3wzyUlz5
+         SmYQ==
+X-Gm-Message-State: ANhLgQ0PdmmkjllhWSrRAeepYd/cpEBHy65mpongLqu4r91LVRohe4/r
+        IHWIDYq8xe6o08cTHuuzfab2ew==
+X-Google-Smtp-Source: ADFU+vvGMdQQLQxm0XcO/IMv0j89hOM1EAvpHbUo1Jp3dwwCwmeE7+Eohjtm5Si4J6N350GGvOyM7w==
+X-Received: by 2002:a63:8343:: with SMTP id h64mr4182670pge.73.1583956272565;
+        Wed, 11 Mar 2020 12:51:12 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id a3sm29260287pfi.161.2020.03.11.12.51.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 12:51:11 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 12:51:11 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+cc:     Michal Hocko <mhocko@kernel.org>,
+        Robert Kolchmeyer <rkolchmeyer@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <87r1y12yc7.fsf@x220.int.ebiederm.org>
-        <87k13t2xpd.fsf@x220.int.ebiederm.org>
-        <87d09l2x5n.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170F0F9DC18F5EA77C9A857E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <871rq12vxu.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170DF45E3245F55B95CCD91E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <877dzt1fnf.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB51701C6F60699F99C5C67E0BE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <875zfcxlwy.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170BD2476E35068E182EFA4E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <202003111203.738487D@keescook>
-Date:   Wed, 11 Mar 2020 14:48:50 -0500
-In-Reply-To: <202003111203.738487D@keescook> (Kees Cook's message of "Wed, 11
-        Mar 2020 12:08:08 -0700")
-Message-ID: <87pndin04d.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [patch] mm, oom: make a last minute check to prevent unnecessary
+ memcg oom kills
+In-Reply-To: <54d56b12-3f75-1382-cc12-a8e63e24ce1f@I-love.SAKURA.ne.jp>
+Message-ID: <alpine.DEB.2.21.2003111248250.171292@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.2003101454580.142656@chino.kir.corp.google.com> <20200310221938.GF8447@dhcp22.suse.cz> <alpine.DEB.2.21.2003101547090.177273@chino.kir.corp.google.com> <54d56b12-3f75-1382-cc12-a8e63e24ce1f@I-love.SAKURA.ne.jp>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jC7Nm-0007Ul-Q4;;;mid=<87pndin04d.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+d5+rrjcsoE4xtiynlnq3fJUCLMY6zpyU=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
-        XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.7 XMSubLong Long Subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Kees Cook <keescook@chromium.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 421 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 3.4 (0.8%), b_tie_ro: 2.2 (0.5%), parse: 1.74
-        (0.4%), extract_message_metadata: 24 (5.6%), get_uri_detail_list: 2.6
-        (0.6%), tests_pri_-1000: 39 (9.3%), tests_pri_-950: 1.53 (0.4%),
-        tests_pri_-900: 1.26 (0.3%), tests_pri_-90: 34 (8.1%), check_bayes: 33
-        (7.7%), b_tokenize: 14 (3.4%), b_tok_get_all: 9 (2.1%), b_comp_prob:
-        2.8 (0.7%), b_tok_touch_all: 4.1 (1.0%), b_finish: 0.70 (0.2%),
-        tests_pri_0: 288 (68.3%), check_dkim_signature: 0.84 (0.2%),
-        check_dkim_adsp: 2.1 (0.5%), poll_dns_idle: 0.35 (0.1%), tests_pri_10:
-        4.2 (1.0%), tests_pri_500: 19 (4.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 3/4] proc: io_accounting: Use new infrastructure to fix deadlocks in execve
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
+On Wed, 11 Mar 2020, Tetsuo Handa wrote:
 
-> On Tue, Mar 10, 2020 at 06:45:47PM +0100, Bernd Edlinger wrote:
->> This changes do_io_accounting to use the new exec_update_mutex
->> instead of cred_guard_mutex.
->> 
->> This fixes possible deadlocks when the trace is accessing
->> /proc/$pid/io for instance.
->> 
->> This should be safe, as the credentials are only used for reading.
->
-> I'd like to see the rationale described better here for why it should be
-> safe. I'm still not seeing why this is safe here, as we might check
-> ptrace_may_access() with one cred and then iterate io accounting with a
-> different credential...
->
-> What am I missing?
+> > The patch certainly prevents unnecessary oom kills when there is a pending 
+> > victim that uncharges its memory between invoking the oom killer and 
+> > finding MMF_OOM_SKIP in the list of eligible tasks and its much more 
+> > common on systems with limited cpu cores.
+> 
+> I think that it is dump_header() which currently spends much time (due to
+> synchronous printing) enough to make "the second memcg oom kill shows usage
+> is >40MB below its limit of 100MB" happen. Shouldn't we call dump_header()
+> and then do the last check and end with "but did not kill anybody" message?
+> 
 
-The rational for non-regression is that exec_update_mutex covers all
-of the same tsk->cred changes as cred_guard_mutex.  Therefore we are not
-any worse off, and we avoid the deadlock.
+Lol, I actually did that for internal testing as well :)  I didn't like 
+how it spammed the kernel log and then basically said "just kidding, 
+nothing was oom killed."
 
-As for safety.  Jann's argument that the only interesting credential
-change is in exec applies.  All other credential changes that have any
-effect on permission checks make the new cred non-dumpable (excepions
-apply see the code).
+But if you think this would helpful I can propose it as v2.
+---
+ include/linux/memcontrol.h |  7 +++++++
+ mm/memcontrol.c            |  2 +-
+ mm/oom_kill.c              | 14 +++++++++++++-
+ 3 files changed, 21 insertions(+), 2 deletions(-)
 
-So I think this is a non-regressing change.  A safe change.
-
-I don't think either version of this code is fully correct.
-
-Eric
-
->> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
->> ---
->>  fs/proc/base.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->> 
->> diff --git a/fs/proc/base.c b/fs/proc/base.c
->> index 4fdfe4f..529d0c6 100644
->> --- a/fs/proc/base.c
->> +++ b/fs/proc/base.c
->> @@ -2770,7 +2770,7 @@ static int do_io_accounting(struct task_struct *task, struct seq_file *m, int wh
->>  	unsigned long flags;
->>  	int result;
->>  
->> -	result = mutex_lock_killable(&task->signal->cred_guard_mutex);
->> +	result = mutex_lock_killable(&task->signal->exec_update_mutex);
->>  	if (result)
->>  		return result;
->>  
->> @@ -2806,7 +2806,7 @@ static int do_io_accounting(struct task_struct *task, struct seq_file *m, int wh
->>  	result = 0;
->>  
->>  out_unlock:
->> -	mutex_unlock(&task->signal->cred_guard_mutex);
->> +	mutex_unlock(&task->signal->exec_update_mutex);
->>  	return result;
->>  }
->>  
->> -- 
->> 1.9.1
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -445,6 +445,8 @@ void mem_cgroup_iter_break(struct mem_cgroup *, struct mem_cgroup *);
+ int mem_cgroup_scan_tasks(struct mem_cgroup *,
+ 			  int (*)(struct task_struct *, void *), void *);
+ 
++unsigned long mem_cgroup_margin(struct mem_cgroup *memcg);
++
+ static inline unsigned short mem_cgroup_id(struct mem_cgroup *memcg)
+ {
+ 	if (mem_cgroup_disabled())
+@@ -945,6 +947,11 @@ static inline int mem_cgroup_scan_tasks(struct mem_cgroup *memcg,
+ 	return 0;
+ }
+ 
++static inline unsigned long mem_cgroup_margin(struct mem_cgroup *memcg)
++{
++	return 0;
++}
++
+ static inline unsigned short mem_cgroup_id(struct mem_cgroup *memcg)
+ {
+ 	return 0;
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1286,7 +1286,7 @@ void mem_cgroup_update_lru_size(struct lruvec *lruvec, enum lru_list lru,
+  * Returns the maximum amount of memory @mem can be charged with, in
+  * pages.
+  */
+-static unsigned long mem_cgroup_margin(struct mem_cgroup *memcg)
++unsigned long mem_cgroup_margin(struct mem_cgroup *memcg)
+ {
+ 	unsigned long margin = 0;
+ 	unsigned long count;
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -934,7 +934,6 @@ static void __oom_kill_process(struct task_struct *victim, const char *message)
+ 	mmdrop(mm);
+ 	put_task_struct(victim);
+ }
+-#undef K
+ 
+ /*
+  * Kill provided task unless it's secured by setting
+@@ -982,6 +981,18 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+ 	 */
+ 	oom_group = mem_cgroup_get_oom_group(victim, oc->memcg);
+ 
++	/* One last check: do we *really* need to kill? */
++	if (is_memcg_oom(oc)) {
++		unsigned long margin = mem_cgroup_margin(oc->memcg);
++
++		if (unlikely(margin >= (1 << oc->order))) {
++			put_task_struct(victim);
++			pr_info("Suppressed oom kill, %lukB of memory can be charged\n",
++				K(margin));
++			return;
++		}
++	}
++
+ 	__oom_kill_process(victim, message);
+ 
+ 	/*
+@@ -994,6 +1005,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+ 		mem_cgroup_put(oom_group);
+ 	}
+ }
++#undef K
+ 
+ /*
+  * Determines whether the kernel must panic because of the panic_on_oom sysctl.
