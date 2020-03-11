@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBB39182022
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:58:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87955182026
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:59:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730680AbgCKR6z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:58:55 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55613 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730453AbgCKR6x (ORCPT
+        id S1730505AbgCKR7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:59:01 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41145 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730375AbgCKR6z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:58:53 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 6so3093990wmi.5
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:58:51 -0700 (PDT)
+        Wed, 11 Mar 2020 13:58:55 -0400
+Received: by mail-wr1-f66.google.com with SMTP id s14so3816767wrt.8
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:58:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=N4JCBOx8G3oWdvQfPIJ3DTOnZanq5rcB9mg+1By+2ec=;
-        b=OiOKpPfuxffO0meppq6Jf7Aci2vKfdixIxWwDO/s/32LA36YZVqgIbf7ssgFJKFtLE
-         hbLnhhPrwUOBb+UZ5eYpqi7aiKkS6519Sbfk0Hara2GzdkEKF8NcmbJ2D9ehD7ncd5wb
-         Sj1K2kGytTYhIPM2QDs7kfKJ1WtN6iQR2jcmO91n8R9lLJdaSo4LLwwtiKSGQUiTM602
-         eVG15XFqU4A+OOHiRcJdpZwdrT4Bg2SuEO4ujsA857Wos8nBQ6FH4vM8UJKoRE6/NEiK
-         nYxvfgIxqKd5txo76X34B1xKnkcn40FXZcdAl4tPWBII5jie85W+RFQhYuq7j6OgUJXp
-         Opvg==
+        bh=inRJj7F/F+AbnrSRtqE2WRG/KTJ90ug0HSiEeq5Pj94=;
+        b=hnncAEEtg+JuFokx6qluoIDGPjGjDCUHe/CaMVrGS+t8kul2ZMdoTNwxanLMkn/tsS
+         kB2NMrxOHdP3ZxRW8Gt1a9jwj8JXYYz7ggw/FyNAovZG0yeV4aSObJLAAjZq6JuS9oE5
+         nKhHiosX8ZuVzjK5Pp5BEwixnPaplON1R/rgy4cHIAl8sj1r/TCh5xZ9H487/nqztatL
+         7vYiGZnNCRfGgnT5FXLOKMVgzgSmHVU4rUMhttkHDxudcOcy0rvtLOYW1piFZGoO3Ol+
+         wvk8XB9vG//vjjjZU4mm9IC5RrMksT7ERrHgxS1FyRUdxp7LjuR8yJ4XCxrCxJu2x40b
+         g6EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=N4JCBOx8G3oWdvQfPIJ3DTOnZanq5rcB9mg+1By+2ec=;
-        b=ThgBWB8NXbJoIKuyQZBN+pVAhRrJVSi5d0ZS7BNfG7o2giq092XakQZbNUsKRZJ7l1
-         VMAeJP7EvyIBNOZnzgel9mmul4TYJZkkFXOziLpX3x6Rt3RPd684aka9Q6/Y6wMO2/pD
-         tLtTyDArU55tusLtk/NAprp74k86WAASbs11ywIYGxLBxP2QLg4dTsdRoNPHWbmsXNbe
-         qZzMVpNihMOyC7l+0e8o5FjbirzP1ZgwTeGtbfBEc5aQgS6c+Z2oIft3ec//jknnZwAi
-         uiuftcgvXfJbq7UT7aQx2cE1PubroP5pir6ZMnDi+LQAL8DGoyoCnHNyIoR0JIqn6swR
-         RqQA==
-X-Gm-Message-State: ANhLgQ0FehG1j2qzclkeVYp0nQIWzHDD+zGfYoRVApJ15lkWk5Sf/iil
-        dIrNEWwtZNLQptKq6oHPm2k=
-X-Google-Smtp-Source: ADFU+vtL22sild8eFvtwYgKPKknFimV2k5Ei0QwvYbIltnqvbf8st8VU95tXL5IPkETRlRNhO5AO/A==
-X-Received: by 2002:a1c:a502:: with SMTP id o2mr4692129wme.94.1583949531131;
-        Wed, 11 Mar 2020 10:58:51 -0700 (PDT)
+        bh=inRJj7F/F+AbnrSRtqE2WRG/KTJ90ug0HSiEeq5Pj94=;
+        b=pmawbI6wrplzA+cNrDPpUjj6EBfclnT4exeBoxTHYsZ/Y7w3kLscyYfISkaBQ3na5d
+         mSqsCfRlZkOTdZ+2/ZoAjojcK7IsNemFKkfiRq5iaFlip55fKePlY4ZQPOe0oNSVgQIn
+         js9I5hcT4Peb46r1fiZsAS9sl20RvNDMOd7UTSLE1mM+m1fNwYZe9bsHW69gpz8SVDFQ
+         4qc1Sa5pzr7A3AkXfwsa4t6qkicEbu0XhpDOsWwYAAOmE7OAcsjQiZXv2yIa3PpIF+rQ
+         1/JgnCfpcLxOkI8KI+agxOVwb++UjNR1fddF3KJsTtTkJm0qFYIrcxJIPeXWaqKcGaUS
+         hEZA==
+X-Gm-Message-State: ANhLgQ1l/d7wkB53O6Ozoj1fSNiu7JC4zG+Vn98B518pRDzbYqqMmC8O
+        HLJRmjwcjMmWKtMMxilUpwg=
+X-Google-Smtp-Source: ADFU+vs5z+HMwUCXtWkE+RoE8aWn/MuWk8pCgfPI8JtM44InUqEHPsnwufNPB0dl/+OoyaIBAU8AYA==
+X-Received: by 2002:adf:94a3:: with SMTP id 32mr6039829wrr.276.1583949532613;
+        Wed, 11 Mar 2020 10:58:52 -0700 (PDT)
 Received: from opensdev.fritz.box (business-178-015-117-054.static.arcor-ip.net. [178.15.117.54])
-        by smtp.gmail.com with ESMTPSA id l18sm1502107wrr.17.2020.03.11.10.58.49
+        by smtp.gmail.com with ESMTPSA id l18sm1502107wrr.17.2020.03.11.10.58.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 10:58:50 -0700 (PDT)
+        Wed, 11 Mar 2020 10:58:51 -0700 (PDT)
 From:   shiva.linuxworks@gmail.com
 X-Google-Original-From: sshivamurthy@micron.com
 To:     Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -54,9 +54,9 @@ To:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Frieder Schrempf <frieder.schrempf@kontron.de>,
         linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Shivamurthy Shastri <sshivamurthy@micron.com>
-Subject: [PATCH v7 3/6] mtd: spinand: micron: Add new Micron SPI NAND devices
-Date:   Wed, 11 Mar 2020 18:57:32 +0100
-Message-Id: <20200311175735.2007-4-sshivamurthy@micron.com>
+Subject: [PATCH v7 4/6] mtd: spinand: micron: identify SPI NAND device with Continuous Read mode
+Date:   Wed, 11 Mar 2020 18:57:33 +0100
+Message-Id: <20200311175735.2007-5-sshivamurthy@micron.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200311175735.2007-1-sshivamurthy@micron.com>
 References: <20200311175735.2007-1-sshivamurthy@micron.com>
@@ -67,58 +67,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Shivamurthy Shastri <sshivamurthy@micron.com>
 
-Add device table for M79A and M78A series Micron SPI NAND devices.
+Add SPINAND_HAS_CR_FEAT_BIT flag to identify the SPI NAND device with
+the Continuous Read mode.
+
+Some of the Micron SPI NAND devices have the "Continuous Read" feature
+enabled by default, which does not fit the subsystem needs.
+
+In this mode, the READ CACHE command doesn't require the starting column
+address. The device always output the data starting from the first
+column of the cache register, and once the end of the cache register
+reached, the data output continues through the next page. With the
+continuous read mode, it is possible to read out the entire block using
+a single READ command, and once the end of the block reached, the output
+pins become High-Z state. However, during this mode the read command
+doesn't output the OOB area.
+
+Hence, we disable the feature at probe time.
 
 Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
 Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 ---
- drivers/mtd/nand/spi/micron.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/mtd/nand/spi/micron.c | 16 ++++++++++++++++
+ include/linux/mtd/spinand.h   |  1 +
+ 2 files changed, 17 insertions(+)
 
 diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
-index 4727933c894b..26925714a9fb 100644
+index 26925714a9fb..956f7710aca2 100644
 --- a/drivers/mtd/nand/spi/micron.c
 +++ b/drivers/mtd/nand/spi/micron.c
-@@ -102,6 +102,39 @@ static const struct spinand_info micron_spinand_table[] = {
- 		     0,
- 		     SPINAND_ECCINFO(&micron_8_ooblayout,
+@@ -18,6 +18,8 @@
+ #define MICRON_STATUS_ECC_4TO6_BITFLIPS	(3 << 4)
+ #define MICRON_STATUS_ECC_7TO8_BITFLIPS	(5 << 4)
+ 
++#define MICRON_CFG_CR			BIT(0)
++
+ static SPINAND_OP_VARIANTS(read_cache_variants,
+ 		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
+ 		SPINAND_PAGE_READ_FROM_CACHE_X4_OP(0, 1, NULL, 0),
+@@ -137,7 +139,21 @@ static const struct spinand_info micron_spinand_table[] = {
  				     micron_8_ecc_get_status)),
-+	/* M79A 2Gb 1.8V */
-+	SPINAND_INFO("MT29F2G01ABBGD",
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x25),
-+		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 2, 1, 1),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     0,
-+		     SPINAND_ECCINFO(&micron_8_ooblayout,
-+				     micron_8_ecc_get_status)),
-+	/* M78A 1Gb 3.3V */
-+	SPINAND_INFO("MT29F1G01ABAFD",
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x14),
-+		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     0,
-+		     SPINAND_ECCINFO(&micron_8_ooblayout,
-+				     micron_8_ecc_get_status)),
-+	/* M78A 1Gb 1.8V */
-+	SPINAND_INFO("MT29F1G01ABAFD",
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x15),
-+		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     0,
-+		     SPINAND_ECCINFO(&micron_8_ooblayout,
-+				     micron_8_ecc_get_status)),
  };
  
++static int micron_spinand_init(struct spinand_device *spinand)
++{
++	/*
++	 * M70A device series enable Continuous Read feature at Power-up,
++	 * which is not supported. Disable this bit to avoid any possible
++	 * failure.
++	 */
++	if (spinand->flags & SPINAND_HAS_CR_FEAT_BIT)
++		return spinand_upd_cfg(spinand, MICRON_CFG_CR, 0);
++
++	return 0;
++}
++
  static const struct spinand_manufacturer_ops micron_spinand_manuf_ops = {
++	.init = micron_spinand_init,
+ };
+ 
+ const struct spinand_manufacturer micron_spinand_manufacturer = {
+diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
+index f4c4ae87181b..1077c45721ff 100644
+--- a/include/linux/mtd/spinand.h
++++ b/include/linux/mtd/spinand.h
+@@ -284,6 +284,7 @@ struct spinand_ecc_info {
+ };
+ 
+ #define SPINAND_HAS_QE_BIT		BIT(0)
++#define SPINAND_HAS_CR_FEAT_BIT		BIT(1)
+ 
+ /**
+  * struct spinand_info - Structure used to describe SPI NAND chips
 -- 
 2.17.1
 
