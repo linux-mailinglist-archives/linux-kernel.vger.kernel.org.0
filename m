@@ -2,111 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17347181DC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:27:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3119F181DCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:28:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730307AbgCKQ1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 12:27:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52340 "EHLO mail.kernel.org"
+        id S1730252AbgCKQ2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 12:28:34 -0400
+Received: from foss.arm.com ([217.140.110.172]:51592 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729631AbgCKQ1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 12:27:36 -0400
-Received: from localhost (unknown [104.132.1.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03E70206BE;
-        Wed, 11 Mar 2020 16:27:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583944056;
-        bh=6Vo3+x0qJalhkBRtWzcGky+bHsuwVfFeSdbQXvVkhUQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=yMJ5i1TnwI1bH7wYGWAQujoySrxYNb6JJqlT3ces9qWP3xXNA8Jr4wWMtImW9UVOG
-         wxmOxSc07MpcO69zm6fENyc/zI44TvJn37V0sfYPdsBYV4bMyN8yBI2eTp3AYgaW7/
-         cW4GPNXM3wHuqLIfupBz6q+FYpyRB5J3jUvj5X1I=
-Date:   Wed, 11 Mar 2020 09:27:35 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>
-Subject: [GIT PULL] f2fs for 5.6-rc6
-Message-ID: <20200311162735.GA152176@google.com>
+        id S1729511AbgCKQ2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 12:28:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74F8C31B;
+        Wed, 11 Mar 2020 09:28:32 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB3443F6CF;
+        Wed, 11 Mar 2020 09:28:31 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 16:28:30 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Olivier MOYSAN <olivier.moysan@st.com>
+Cc:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] ASoC: dt-bindings: stm32: convert spdfirx to
+ json-schema
+Message-ID: <20200311162830.GG5411@sirena.org.uk>
+References: <20200117170352.16040-1-olivier.moysan@st.com>
+ <d792a2b8-3b59-f04e-c24d-06185d60c734@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="w/VI3ydZO+RcZ3Ux"
 Content-Disposition: inline
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <d792a2b8-3b59-f04e-c24d-06185d60c734@st.com>
+X-Cookie: I'm a Lisp variable -- bind me!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
 
-Sorry for late pull request. Could you please consider this?
+--w/VI3ydZO+RcZ3Ux
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+On Wed, Mar 11, 2020 at 03:37:01PM +0000, Olivier MOYSAN wrote:
+> Hi,
+> Kind reminder for this patch.
 
-The following changes since commit b19e8c68470385dd2c5440876591fddb02c8c402:
+Please don't send content free pings and please allow a reasonable time
+for review.  People get busy, go on holiday, attend conferences and so=20
+on so unless there is some reason for urgency (like critical bug fixes)
+please allow at least a couple of weeks for review.  If there have been
+review comments then people may be waiting for those to be addressed.
 
-  Merge tag 'arm64-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux (2020-02-13 14:36:57 -0800)
+Sending content free pings adds to the mail volume (if they are seen at
+all) which is often the problem and since they can't be reviewed
+directly if something has gone wrong you'll have to resend the patches
+anyway, so sending again is generally a better approach though there are
+some other maintainers who like them - if in doubt look at how patches
+for the subsystem are normally handled.
 
-are available in the Git repository at:
+--w/VI3ydZO+RcZ3Ux
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-5.6-rc6
+-----BEGIN PGP SIGNATURE-----
 
-for you to fetch changes up to 2536ac6872e5265b4d9d263122cee02e3d5cae1d:
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5pEa0ACgkQJNaLcl1U
+h9DdKAf/RDfG02WXRCBnnFoaoVDDhiXfiLY3E3cosFMFo8a7Gmv/wb6FwPPevsyq
+MiA+WtsBBa8juOJ6PlmQ7IWC84GpUDFMpoeW7HkEMzGJ+CxF5su7kQCQfCG0XeR7
+xiTK0cF1l+zLaKcz2gkyO4P0pAu0eQbHF5MC9sEX7HsYd6qZd26GU4gpLOGqqZBN
+eMzdoSHCY8tJpZqbT0f9JnU5+el6wwfo8c3LPEmbzTBT6b6oCxc9fhXi8BIsTWsi
+64G1cgZIzc34qeX4JeAtb2lPBAKYd9Fm9bJOhGhf1XkIq8SOWlONePAb454reMOZ
+kiJO+xOE40GqCY82X5SD8I5A7DU4Og==
+=F+uO
+-----END PGP SIGNATURE-----
 
-  f2fs: allow to clear F2FS_COMPR_FL flag (2020-03-11 08:25:38 -0700)
-
-----------------------------------------------------------------
-f2fs-for-5.6-rc6
-
-Some major bug fixes wrt compression:
-- compressed block count
-- memory access and leak
-- remove obsolete fields
-- flag controls
-
-And some others:
-- replace rwsem with spinlock
-- potential deadlock
-
-----------------------------------------------------------------
-Chao Yu (14):
-      f2fs: fix to wait all node page writeback
-      f2fs: fix to avoid NULL pointer dereference
-      f2fs: recycle unused compress_data.chksum feild
-      f2fs: add missing function name in kernel message
-      f2fs: fix to avoid potential deadlock
-      f2fs: fix to check i_compr_blocks correctly
-      f2fs: cover last_disk_size update with spinlock
-      f2fs: remove i_sem lock coverage in f2fs_setxattr()
-      f2fs: fix inconsistent comments
-      f2fs: fix to avoid using uninitialized variable
-      f2fs: fix to avoid use-after-free in f2fs_write_multi_pages()
-      f2fs: fix to account compressed inode correctly
-      f2fs: fix to check dirty pages during compressed inode conversion
-      f2fs: allow to clear F2FS_COMPR_FL flag
-
-Eric Biggers (1):
-      f2fs: fix leaking uninitialized memory in compressed clusters
-
-Jaegeuk Kim (1):
-      f2fs: fix wrong check on F2FS_IOC_FSSETXATTR
-
-Sahitya Tummala (1):
-      f2fs: fix the panic in do_checkpoint()
-
- fs/f2fs/checkpoint.c | 34 +++++++++++-----------------------
- fs/f2fs/compress.c   | 24 ++++++++++++++----------
- fs/f2fs/data.c       | 23 ++++++++---------------
- fs/f2fs/f2fs.h       | 18 ++++++++++--------
- fs/f2fs/file.c       | 40 +++++++++++++++++++++++++---------------
- fs/f2fs/gc.c         |  5 ++++-
- fs/f2fs/inode.c      | 25 +++++++++++++++++++++----
- fs/f2fs/namei.c      |  2 +-
- fs/f2fs/node.c       | 18 ++++++++----------
- fs/f2fs/shrinker.c   |  2 +-
- fs/f2fs/super.c      |  7 ++++---
- fs/f2fs/xattr.c      |  3 ---
- 12 files changed, 107 insertions(+), 94 deletions(-)
+--w/VI3ydZO+RcZ3Ux--
