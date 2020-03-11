@@ -2,143 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADD6E18105D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 07:06:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27CF518105E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 07:06:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbgCKGGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 02:06:23 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45212 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbgCKGGX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 02:06:23 -0400
-Received: by mail-pg1-f193.google.com with SMTP id m15so570025pgv.12
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 23:06:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VD15hEVyVLaO06R8soxT+wdeQAWi6jWDprT4gENa4Pk=;
-        b=BXuEks7icu5+J5qHi20hsEXmiCS9E/ow1l+ZYZM9dxF94vzf71w5/CXBQ/elTEp2KY
-         sK8PCWAC3CzcAsApi7PogMStwLY/F4bznDnaXJEdBmhw68CVuyf9vg0GSasdNXWi1ZwT
-         7hT/PuFLEvpc89BNSLsKiNMtvhjH4ARqGRItPC1FZ5eS88OofdfR+fvzxCiIw9RNVbBH
-         DKPTCJAE4h7KiuM6zOg9g0+3oavV1W+RM5RX6EcvpwmUgcS5BSDXSw+8pyqe4yxY6HxW
-         YO+gCM+xBLjl9wjlLUpYgIyOjYjSmeSVRwCpR+CVEmmjBcyduqs/JiHWgwd69myM0ZN/
-         bKMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VD15hEVyVLaO06R8soxT+wdeQAWi6jWDprT4gENa4Pk=;
-        b=joqHXUIn5qjAonSYe+0HcS/BJOQs9G3PvFcIo+RbwTlW4xPFomaN3Pt5YLhhaclgpe
-         bFXt6IKrXdvP2hL5hZHgItkTgh0aUUyWQ5P6a7ahPBMiEvXQk0cwUxaG60tYiK9C5zKx
-         8f37bCDriXs3w6uH+LTXHtU5f6PIJUKUiTLUY2FNQERob7hu4Zxq33+haEntcSyugttf
-         CeMGBtbaRnuHn/lUPiuNnHG1zfj09enkwBkHkYq1zXe0DXdRE+dhv7irCbkZP35Dj/jg
-         Iwvch1gIJNWjLHnvk2Uo6UXOV27MDyOsteqYedCwiVbsVRyQwgNdGMzUGlUsp6A3HknN
-         a0TA==
-X-Gm-Message-State: ANhLgQ3YVKnc278eMK2SKnfaAngv/WOq5JxCsnXjKoMK2DzB7dD1YCE8
-        D81Xzay9j3Eqr7UgaPwNucGbGw==
-X-Google-Smtp-Source: ADFU+vtUcWmiYBhCHp72xQGkMofh54beImT2nmLF78jXNh6JeBSFkkPXyzzpZemY6U8GEERnxtK6Bg==
-X-Received: by 2002:a63:a055:: with SMTP id u21mr1300692pgn.100.1583906780227;
-        Tue, 10 Mar 2020 23:06:20 -0700 (PDT)
-Received: from localhost ([122.171.122.128])
-        by smtp.gmail.com with ESMTPSA id i5sm31347131pfo.173.2020.03.10.23.06.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Mar 2020 23:06:19 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 11:36:16 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     "andrew-sh.cheng" <andrew-sh.cheng@mediatek.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, Nishanth Menon <nm@ti.com>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Fan Chen =?utf-8?B?KOmZs+WHoSk=?= <fan.chen@mediatek.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [v5, PATCH 4/5] cpufreq: mediatek: add opp notification for SVS
- support
-Message-ID: <20200311060616.62nh7sfwtjwvrjfr@vireshk-i7>
-References: <1574769046-28449-1-git-send-email-andrew-sh.cheng@mediatek.com>
- <1574769046-28449-5-git-send-email-andrew-sh.cheng@mediatek.com>
- <20191127083619.etocnhpyyut3hzwq@vireshk-i7>
- <1575874588.13494.4.camel@mtksdaap41>
- <20191210064319.f4ksrxozp3gv4xry@vireshk-i7>
- <1583827865.4840.1.camel@mtksdaap41>
+        id S1728146AbgCKGGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 02:06:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49772 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726160AbgCKGGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 02:06:25 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 960F921655;
+        Wed, 11 Mar 2020 06:06:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583906783;
+        bh=KN+8Bn3VC9leAlT1f02Os7gMAUM2T74PCNfPOjVGbWs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wWo4tT1gOx3yAEZEhjPSUV27VP0nWW866DOBe9RFC0C6PJN2Q8MgE3engI4aXxTkO
+         Y0QkrjLic3u26gKiuvnnXAovwfMBRrvXkt+cOJ7u7PzU4yi/cMi58QvUGClPhpeDWO
+         W9oYXFjWNdxhk0zAd/NCbxO4GpZVw1T6PKT1tSpw=
+Date:   Wed, 11 Mar 2020 07:06:20 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Marcio Albano <marcio.ahf@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        lkcamp@lists.libreplanetbr.org
+Subject: Re: [PATCH] staging: fbtft: Remove prohibited spaces before ')'
+Message-ID: <20200311060620.GB3522362@kroah.com>
+References: <20200311012533.26167-1-marcio.ahf@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1583827865.4840.1.camel@mtksdaap41>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20200311012533.26167-1-marcio.ahf@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10-03-20, 16:11, andrew-sh.cheng wrote:
-> On Tue, 2019-12-10 at 14:43 +0800, Viresh Kumar wrote:
-> > On 09-12-19, 14:56, andrew-sh.cheng wrote:
-> > > On Wed, 2019-11-27 at 14:06 +0530, Viresh Kumar wrote:
-> > > > On 26-11-19, 19:50, Andrew-sh.Cheng wrote:
-> > > > > +		if (!IS_ERR(opp_item))
-> > > > > +			dev_pm_opp_put(opp_item);
-> > > > > +		else
-> > > > > +			freq = 0;
-> > > > > +
-> > > > 
-> > > > What is the purpose of the above code ?
-> > > When dev_pm_opp_find_freq_ceil() doesn't find matching opp item, freq
-> > > value won't be set.
-> > > Set it as 0 for below checking
-> > > > 
-> > > > > +		/* case of current opp is disabled */
-> > > > > +		if (freq == 0 || freq != info->opp_freq) {
-> > > > > +			// find an enable opp item
-> > > > > +			freq = 1;
-> > > > > +			opp_item = dev_pm_opp_find_freq_ceil(info->cpu_dev,
-> > > > > +							     &freq);
-> > > > > +			if (!IS_ERR(opp_item)) {
-> > > > > +				dev_pm_opp_put(opp_item);
-> > > > > +				policy = cpufreq_cpu_get(info->opp_cpu);
-> > > > > +				if (policy) {
-> > > > > +					cpufreq_driver_target(policy,
-> > > > > +						freq / 1000,
-> > > > > +						CPUFREQ_RELATION_L);
-> > > > 
-> > > > Why don't you simply call this instead of all the code in the else
-> > > > block ?
-> > > These else code is used to check "current opp item is disabled or not".
-> > > If not, do nothing.
-> > > If current opp item is disabled, need to find an not-disabled opp item,
-> > > and set frequency to it.
-> > 
-> > Right. So this notifier helper of yours receive the opp which is getting
-> > disabled, why don't you compare its frequency directly to see if the current OPP
-> > is getting disabled ?
-> Sorry to overlook your question.
-> This is because when the opp is disabled,
-> we cannot use dev_pm_opp_get_freq() to get frequency of that opp.
-> There is a check:
-> 	if (IS_ERR_OR_NULL(opp) || !opp->available) {
-
-I think we can remove the available check here, as we are jut trying
-to find frequency of an OPP we already have. Send a patch for that
-please.
-
-> 		pr_err("%s: Invalid parameters\n", __func__);
-> 		return 0;
+On Wed, Mar 11, 2020 at 01:25:33AM +0000, Marcio Albano wrote:
+> Fix checkpatch errors:
 > 
-> > 
+> "ERROR: space prohibited before that close parenthesis ')'"
+> in fbtft-bus.c:65 and fbtft-bus.c:67.
 > 
+> Signed-off-by: Marcio Albano <marcio.ahf@gmail.com>
+> ---
+>  drivers/staging/fbtft/fbtft-bus.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/fbtft/fbtft-bus.c b/drivers/staging/fbtft/fbtft-bus.c
+> index 63c65dd67..847cbfbbd 100644
+> --- a/drivers/staging/fbtft/fbtft-bus.c
+> +++ b/drivers/staging/fbtft/fbtft-bus.c
+> @@ -62,9 +62,9 @@ out:									      \
+>  }                                                                             \
+>  EXPORT_SYMBOL(func);
+>  
+> -define_fbtft_write_reg(fbtft_write_reg8_bus8, u8, u8, )
+> +define_fbtft_write_reg(fbtft_write_reg8_bus8, u8, u8)
+>  define_fbtft_write_reg(fbtft_write_reg16_bus8, __be16, u16, cpu_to_be16)
+> -define_fbtft_write_reg(fbtft_write_reg16_bus16, u16, u16, )
+> +define_fbtft_write_reg(fbtft_write_reg16_bus16, u16, u16)
 
--- 
-viresh
+Always test-build your patches :(
