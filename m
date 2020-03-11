@@ -2,96 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8854D18219D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:10:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CD0E18219F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:11:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731048AbgCKTKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 15:10:42 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41378 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730827AbgCKTKl (ORCPT
+        id S1731017AbgCKTLl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 15:11:41 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45453 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730858AbgCKTLk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:10:41 -0400
-Received: by mail-qt1-f195.google.com with SMTP id l21so2427113qtr.8
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:10:39 -0700 (PDT)
+        Wed, 11 Mar 2020 15:11:40 -0400
+Received: by mail-wr1-f68.google.com with SMTP id m9so4079295wro.12
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:11:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=JVqj7q5ukK8cPdSfh61GJxDmiY+XBFrd77XlUjw+ai0=;
-        b=UQNsFyPiyauFZ3N6ff+BhSIkDx9YgBFvu/qZyImNM2327AJYhWCBp9McQxiXeeNsPu
-         WJgXVpqvN1+MSftFHg50Dm5A7Kk8+9boBJET+GhbfzcOJQSkg5xdjG5w6r/FaEMr76y2
-         DPTj9y634kmYrsItg0Ahjh9zK0uclNtaVujkgNmNb04Oh5+BBA1OB7J3anYo2N2VMwa2
-         vm7ajjVX088Fj8RWQoFXMX38ufVqDQa6fyA/uyJhICmefmgCevYeRkzo55Gb+g66r4PO
-         SR50ealRs6uYLin4Wh35VJY19BnhUl0lbAJRf9yYksmgyL1D3Q0Cso9HkWblSpHpk2OV
-         8cJA==
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=5L4TciC+tNkYgT9aNIpRQF0FAoCb9l4BAjFrnNt7nFY=;
+        b=ZaRkYseRVuRzovGqfb6Q9Lp+BkDzd4pKaChfeu7h6YDBJId4Bx4/eIO84sTUkVZYQb
+         CfzJL8zoOuFkf0W2alkbdRNBhdX+vNtlmvIzC7U5j2QEHYjWw6mS56MoJczgblPaL7Ph
+         XfxIteJ3a5kzAnmQUM1M433YpHbmbI8PCuAcU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=JVqj7q5ukK8cPdSfh61GJxDmiY+XBFrd77XlUjw+ai0=;
-        b=Hpr0D4Jp3ZbvOY1JmpD3yUowgjixYqMnT4JAJH+Hp3YPxJZoziJCZZsCGXT4MMxF91
-         7qjBFBHUgt55UnT2O9BmKgROzKIbATaThFmXHKhruNx34hjUASvKt4+Ldr1MAcEiy1j8
-         0nI3xXFsEf7sO9t7M+oGUKd2p//9MhJGZ0hYlMX8lw/0kZ16fVr2rvkTk2nOIbe2KflI
-         4kpV+dD4mD6oE8+2b31uiEvhTveYk6dmr/HTEbKf0GLHgK6uysYmfyztUx7ingcaQo71
-         5FIRV+qCsV9b7204rqIlMpQEtMBJsNz/6fA+8frzqYSzryriZdhbtJ8+Y6F+r/Eqv6Cd
-         PZAw==
-X-Gm-Message-State: ANhLgQ1FvKouEoiHwi8tJyMW9s/WecL/chVfPfzBefdHAk1Lasp83Cjk
-        W/WT/EMXISijG7WmDi43AEHKMW2J86hC9PuW8hg=
-X-Google-Smtp-Source: ADFU+vtfYt4thnXs2/atnR0hsW+ZTxHbygm0Nvjyxxr7fPBdbU1OtOZzOJHQPbDuvTy3i4lgE67jxGTCYc7wpCpPiyI=
-X-Received: by 2002:ac8:4e93:: with SMTP id 19mr3917409qtp.32.1583953838862;
- Wed, 11 Mar 2020 12:10:38 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a0c:b4a6:0:0:0:0:0 with HTTP; Wed, 11 Mar 2020 12:10:38
- -0700 (PDT)
-From:   Iamgold Mining <hostonwilly@gmail.com>
-Date:   Wed, 11 Mar 2020 12:10:38 -0700
-Message-ID: <CAMnNhZ3fyfar=TKor6A7BYzkPuQ+okfEToO5411A0dC1Tpt=Ww@mail.gmail.com>
-Subject: Urgent
-To:     hostonwilly@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5L4TciC+tNkYgT9aNIpRQF0FAoCb9l4BAjFrnNt7nFY=;
+        b=dmuweYsFr1eQLrsOyf/xtDa/ikH2eCfzOThKuE+mPPkGHa5NAchz+VFiGNrzAKTHXk
+         YeV1Wry7ZoC4VagK7V/dxLIUbumBdkUlFFvKK/Sr/Tbw2AZVlpc/7PSTVxGoR+/RZr2Z
+         MvlvqG0cOF/86eiaogxta6H6ZRWuFzKPIJ2uP14Q38ae+eZbxWg7lqrhMEYSQ+Qm8ytG
+         vgM8qunW6S0WKkri6AOSX7YeA/yCElifp8H+9q5fllecALSiHM6C/69XpU2tzzpPXWNZ
+         MUJY2K7/A8jSQbmFf9a5sxaGiwaa6KjapoNqg+S3JRqsiy/CLoIZJj7byDCwdNlbgSbj
+         5v5Q==
+X-Gm-Message-State: ANhLgQ1i70rjNID6adxCl2VoHi9rtWFvRsCETXJuPUfYYDV24Nyzevee
+        ZX2ebqR5AkhvXlVl9o17zU2YZA==
+X-Google-Smtp-Source: ADFU+vtUQS42bYpju+swHjyc1GLs7Clm0LNLN27Lk3vZkmaYwpX36hgY8X+jZTNmCauYkOFNUAlKhA==
+X-Received: by 2002:a5d:5411:: with SMTP id g17mr5611761wrv.4.1583953898577;
+        Wed, 11 Mar 2020 12:11:38 -0700 (PDT)
+Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id i6sm7073030wru.40.2020.03.11.12.11.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 12:11:37 -0700 (PDT)
+From:   Scott Branden <scott.branden@broadcom.com>
+To:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Scott Branden <scott.branden@broadcom.com>
+Subject: [PATCH] checkpatch: always allow C99 SPDX License Identifer comments
+Date:   Wed, 11 Mar 2020 12:11:28 -0700
+Message-Id: <20200311191128.7896-1-scott.branden@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IAMGOLD MINING GLOBAL FINANCIAL
-EMPOWERMENT JACKPOT 2020
+Always allow C99 comment styles if SPDK-License-Identifier is in comment
+even if C99_COMMENT_TOLERANCE is specified in the --ignore options.
 
-Attention/Dear Email Owner,
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+---
+ scripts/checkpatch.pl | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Congratulations!!!, This is to inform you that your email ID emerged
-as one the 25 lucky random email users that won the sum
-{US$25,000.00},powered by IAMGOLD MINING new year global financial
-empowerment jackpot. Visit our website: http://www.iamgold.com/
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index a63380c6b0d2..c8b429dd6b51 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3852,8 +3852,8 @@ sub process {
+ 			}
+ 		}
+ 
+-# no C99 // comments
+-		if ($line =~ m{//}) {
++# no C99 // comments except for SPDX-License-Identifier
++		if ($line =~ m{//} && $rawline !~ /SPDX-License-Identifier:/) {
+ 			if (ERROR("C99_COMMENTS",
+ 				  "do not use C99 // comments\n" . $herecurr) &&
+ 			    $fix) {
+-- 
+2.17.1
 
-Your winning identification numbers fall under IAMGOLD European
-Location file, you are requested to quickly forward your winning
-identification numbers together with your information's to our
-European payment head office through this E-mail address below for
-immediate dispatch of your atm visa card value of your wining prize
-Sum of (U$25,000.00) to you through courier service.
-
-PAYMENT DEPT CONTACT INFO
-Location, IAMGOLD mining European head office ferrara Italy
-Contact Person: Mr Rocco Mario
-E-mail: iamgoldempowermentdept@excite.com
-
-YOUR WINNING IDENTIFICATION NUMBERS.
-REF: IGML/2049BF9308/03
-BATCH: 18/203/IGL.
-PIN NO: 1266
-
-FULL NAME:
-DATE OF BIRTH:
-HOUSE ADDRESS:
-SEX:
-CITY:
-NATIONALITY:
-DIRECT TELEPHONE NUMBER:
-
-IMPORTANT NOTE: For security reasons you have to keep your winning
-particulars confidential from the public until you receive your visa
-card to avoid double application which might result to cancellation of
-prize.
-
-Best Wishes
-IAMGOLD EMPOWERMENT CORDINATOR.
