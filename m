@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1404518208C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:17:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E731F182094
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:17:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730814AbgCKSQ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 14:16:58 -0400
-Received: from foss.arm.com ([217.140.110.172]:53206 "EHLO foss.arm.com"
+        id S1730876AbgCKSRS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 14:17:18 -0400
+Received: from foss.arm.com ([217.140.110.172]:53218 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730805AbgCKSQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:16:55 -0400
+        id S1730810AbgCKSQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 14:16:57 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11E87FEC;
-        Wed, 11 Mar 2020 11:16:55 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25DF2FEC;
+        Wed, 11 Mar 2020 11:16:57 -0700 (PDT)
 Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2E5313F6CF;
-        Wed, 11 Mar 2020 11:16:54 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 41FAC3F6CF;
+        Wed, 11 Mar 2020 11:16:56 -0700 (PDT)
 From:   Valentin Schneider <valentin.schneider@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
         dietmar.eggemann@arm.com
-Subject: [PATCH v2 3/9] sched: Remove checks against SD_LOAD_BALANCE
-Date:   Wed, 11 Mar 2020 18:15:55 +0000
-Message-Id: <20200311181601.18314-4-valentin.schneider@arm.com>
+Subject: [PATCH v2 4/9] sched/topology: Kill SD_LOAD_BALANCE
+Date:   Wed, 11 Mar 2020 18:15:56 +0000
+Message-Id: <20200311181601.18314-5-valentin.schneider@arm.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20200311181601.18314-1-valentin.schneider@arm.com>
 References: <20200311181601.18314-1-valentin.schneider@arm.com>
@@ -34,127 +34,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Potential users of that flag could have been cpusets and isolcpus.
-
-cpusets don't need it because they define exclusive (i.e. non-overlapping)
-domain spans, see cpuset.cpu_exclusive and cpuset.sched_load_balance.
-If such a cpuset contains a single CPU, it will have the NULL domain
-attached to it. If it contains several CPUs, none of their domains will
-extend beyond the span of the cpuset.
-
-isolcpus apply the same "trick": isolated CPUs are explicitly taken out of
-the sched_domain rebuild (using housekeeping_cpumask()), so they get the
-NULL domain treatment as well.
-
-The sched_domain systcl interface was the only way to clear that flag, and
-it has just been made read-only. Since sd_init() sets it unconditionally,
-remove the checks.
+That flag is set unconditionally in sd_init(), and no one checks for it
+anymore. Remove it.
 
 Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 ---
- kernel/sched/fair.c     | 14 ++------------
- kernel/sched/topology.c | 28 +++++++++-------------------
- 2 files changed, 11 insertions(+), 31 deletions(-)
+ include/linux/sched/topology.h | 29 ++++++++++++++---------------
+ kernel/sched/topology.c        |  3 +--
+ 2 files changed, 15 insertions(+), 17 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 1c3311277fb3..f8eb950fbefd 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6609,9 +6609,6 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+index f341163fedc9..8de2f9744569 100644
+--- a/include/linux/sched/topology.h
++++ b/include/linux/sched/topology.h
+@@ -11,21 +11,20 @@
+  */
+ #ifdef CONFIG_SMP
  
- 	rcu_read_lock();
- 	for_each_domain(cpu, tmp) {
--		if (!(tmp->flags & SD_LOAD_BALANCE))
--			break;
--
- 		/*
- 		 * If both 'cpu' and 'prev_cpu' are part of this domain,
- 		 * cpu is a valid SD_WAKE_AFFINE target.
-@@ -9723,9 +9720,8 @@ static int active_load_balance_cpu_stop(void *data)
- 	/* Search for an sd spanning us and the target CPU. */
- 	rcu_read_lock();
- 	for_each_domain(target_cpu, sd) {
--		if ((sd->flags & SD_LOAD_BALANCE) &&
--		    cpumask_test_cpu(busiest_cpu, sched_domain_span(sd)))
--				break;
-+		if (cpumask_test_cpu(busiest_cpu, sched_domain_span(sd)))
-+			break;
- 	}
+-#define SD_LOAD_BALANCE		0x0001	/* Do load balancing on this domain. */
+-#define SD_BALANCE_NEWIDLE	0x0002	/* Balance when about to become idle */
+-#define SD_BALANCE_EXEC		0x0004	/* Balance on exec */
+-#define SD_BALANCE_FORK		0x0008	/* Balance on fork, clone */
+-#define SD_BALANCE_WAKE		0x0010  /* Balance on wakeup */
+-#define SD_WAKE_AFFINE		0x0020	/* Wake task to waking CPU */
+-#define SD_ASYM_CPUCAPACITY	0x0040  /* Domain members have different CPU capacities */
+-#define SD_SHARE_CPUCAPACITY	0x0080	/* Domain members share CPU capacity */
+-#define SD_SHARE_POWERDOMAIN	0x0100	/* Domain members share power domain */
+-#define SD_SHARE_PKG_RESOURCES	0x0200	/* Domain members share CPU pkg resources */
+-#define SD_SERIALIZE		0x0400	/* Only a single load balancing instance */
+-#define SD_ASYM_PACKING		0x0800  /* Place busy groups earlier in the domain */
+-#define SD_PREFER_SIBLING	0x1000	/* Prefer to place tasks in a sibling domain */
+-#define SD_OVERLAP		0x2000	/* sched_domains of this level overlap */
+-#define SD_NUMA			0x4000	/* cross-node balancing */
++#define SD_BALANCE_NEWIDLE	0x0001	/* Balance when about to become idle */
++#define SD_BALANCE_EXEC		0x0002	/* Balance on exec */
++#define SD_BALANCE_FORK		0x0004	/* Balance on fork, clone */
++#define SD_BALANCE_WAKE		0x0008  /* Balance on wakeup */
++#define SD_WAKE_AFFINE		0x0010	/* Wake task to waking CPU */
++#define SD_ASYM_CPUCAPACITY	0x0020  /* Domain members have different CPU capacities */
++#define SD_SHARE_CPUCAPACITY	0x0040	/* Domain members share CPU capacity */
++#define SD_SHARE_POWERDOMAIN	0x0080	/* Domain members share power domain */
++#define SD_SHARE_PKG_RESOURCES	0x0100	/* Domain members share CPU pkg resources */
++#define SD_SERIALIZE		0x0200	/* Only a single load balancing instance */
++#define SD_ASYM_PACKING		0x0400  /* Place busy groups earlier in the domain */
++#define SD_PREFER_SIBLING	0x0800	/* Prefer to place tasks in a sibling domain */
++#define SD_OVERLAP		0x1000	/* sched_domains of this level overlap */
++#define SD_NUMA			0x2000	/* cross-node balancing */
  
- 	if (likely(sd)) {
-@@ -9814,9 +9810,6 @@ static void rebalance_domains(struct rq *rq, enum cpu_idle_type idle)
- 		}
- 		max_cost += sd->max_newidle_lb_cost;
- 
--		if (!(sd->flags & SD_LOAD_BALANCE))
--			continue;
--
- 		/*
- 		 * Stop the load balance at this level. There is another
- 		 * CPU in our sched group which is doing load balancing more
-@@ -10405,9 +10398,6 @@ int newidle_balance(struct rq *this_rq, struct rq_flags *rf)
- 		int continue_balancing = 1;
- 		u64 t0, domain_cost;
- 
--		if (!(sd->flags & SD_LOAD_BALANCE))
--			continue;
--
- 		if (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost) {
- 			update_next_balance(sd, &next_balance);
- 			break;
+ #ifdef CONFIG_SCHED_SMT
+ static inline int cpu_smt_flags(void)
 diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 00911884b7e7..79a85827be2f 100644
+index 79a85827be2f..6077b23f9723 100644
 --- a/kernel/sched/topology.c
 +++ b/kernel/sched/topology.c
-@@ -33,14 +33,6 @@ static int sched_domain_debug_one(struct sched_domain *sd, int cpu, int level,
- 	cpumask_clear(groupmask);
+@@ -1333,8 +1333,7 @@ sd_init(struct sched_domain_topology_level *tl,
  
- 	printk(KERN_DEBUG "%*s domain-%d: ", level, "", level);
--
--	if (!(sd->flags & SD_LOAD_BALANCE)) {
--		printk("does not load-balance\n");
--		if (sd->parent)
--			printk(KERN_ERR "ERROR: !SD_LOAD_BALANCE domain has parent");
--		return -1;
--	}
--
- 	printk(KERN_CONT "span=%*pbl level=%s\n",
- 	       cpumask_pr_args(sched_domain_span(sd)), sd->name);
+ 		.cache_nice_tries	= 0,
  
-@@ -151,8 +143,7 @@ static int sd_degenerate(struct sched_domain *sd)
- 		return 1;
- 
- 	/* Following flags need at least 2 groups */
--	if (sd->flags & (SD_LOAD_BALANCE |
--			 SD_BALANCE_NEWIDLE |
-+	if (sd->flags & (SD_BALANCE_NEWIDLE |
- 			 SD_BALANCE_FORK |
- 			 SD_BALANCE_EXEC |
- 			 SD_SHARE_CPUCAPACITY |
-@@ -183,15 +174,14 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
- 
- 	/* Flags needing groups don't count if only 1 group in parent */
- 	if (parent->groups == parent->groups->next) {
--		pflags &= ~(SD_LOAD_BALANCE |
--				SD_BALANCE_NEWIDLE |
--				SD_BALANCE_FORK |
--				SD_BALANCE_EXEC |
--				SD_ASYM_CPUCAPACITY |
--				SD_SHARE_CPUCAPACITY |
--				SD_SHARE_PKG_RESOURCES |
--				SD_PREFER_SIBLING |
--				SD_SHARE_POWERDOMAIN);
-+		pflags &= ~(SD_BALANCE_NEWIDLE |
-+			    SD_BALANCE_FORK |
-+			    SD_BALANCE_EXEC |
-+			    SD_ASYM_CPUCAPACITY |
-+			    SD_SHARE_CPUCAPACITY |
-+			    SD_SHARE_PKG_RESOURCES |
-+			    SD_PREFER_SIBLING |
-+			    SD_SHARE_POWERDOMAIN);
- 		if (nr_node_ids == 1)
- 			pflags &= ~SD_SERIALIZE;
- 	}
+-		.flags			= 1*SD_LOAD_BALANCE
+-					| 1*SD_BALANCE_NEWIDLE
++		.flags			= 1*SD_BALANCE_NEWIDLE
+ 					| 1*SD_BALANCE_EXEC
+ 					| 1*SD_BALANCE_FORK
+ 					| 0*SD_BALANCE_WAKE
 -- 
 2.24.0
 
