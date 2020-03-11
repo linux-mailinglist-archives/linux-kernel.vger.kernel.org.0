@@ -2,132 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8447181F37
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:22:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55F81181F30
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:22:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730580AbgCKRVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:21:32 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38065 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730569AbgCKRV3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:21:29 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x7so1560194pgh.5
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:21:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EGHWPlxApQjuktMa4xDP9Q063H+hJfu1b6AJ+NVENyk=;
-        b=wzs9yWYIHxuZrh+l83G2npKrDy1oqKA1xypVVS2U3HsnbNYgw41X9lhRBnp5I2yzT1
-         g5VgsJUrdt4LeNiaK2vJ/mH7MyOeWmpLGprY3DMJa9CbNM0R9zNZPcoJYAiL9T2Rdcj9
-         +LcoDzpvuTgfkwpvij9j9ByGn7+WdlzBB7svWaFuqsRzYYOtH7AnAG602VatDxsx6EF9
-         594VtuNPghhGM6IC4h6UAS0/ANrg2roTguqX5Lx8EvmYVVJDXFkKA9wFpYUK84uDLvjJ
-         Qk+4ms1LaPNgumDoE2yBA9ihADez2A0VyLMvk8/f567jxhIes7jevL9y497QVZCU0BzV
-         poOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=EGHWPlxApQjuktMa4xDP9Q063H+hJfu1b6AJ+NVENyk=;
-        b=o6x8EIpu45KtJUzDpKOn6V/Z1tDaiV6N5qGCMjrDa8NXDHorpJ7Ud6vXaaUSq7DdBC
-         gIHhKn5UN82gErlRnRdy21LWnFVo9VdTYmslQJa6Wn9XFji9MLuu+nNtLDMcjrA7bfbx
-         74oaKDXM0gmtZD7hVI81Dept983n4R+Xk0H6f1HhcrKqVcLen9aDev+tto3RFhweMH77
-         L1/6ZV+PMczTd84ak9XBpJ6I1hGysEX5SUd3kueqlwqd2TPOO3iE45xRxneXP6NUr5OO
-         zufaL627MaLhFAc94OYGpDWVmpEfKO026dbthzju42Qe5ySuTmp4PMVLaTjaqnQAz/js
-         dRXw==
-X-Gm-Message-State: ANhLgQ2jACs14EbVO2rO7rtQPPjO3/vKHqzS9wAnOWfHlJHbcAFedkb7
-        I8n1jkKwJE4SqzcN/mXf2T3grSRa8mk=
-X-Google-Smtp-Source: ADFU+vsIQvS6vI9A6/ZJeX7p5NOAE/vGwSitovbBlSU6A/ubzt4w/w/19x/VN1rAPQPkC6KZ7bZHVw==
-X-Received: by 2002:a62:382:: with SMTP id 124mr3867452pfd.11.1583947287937;
-        Wed, 11 Mar 2020 10:21:27 -0700 (PDT)
-Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id b24sm14914053pfi.52.2020.03.11.10.21.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 10:21:27 -0700 (PDT)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
+        id S1730546AbgCKRVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:21:25 -0400
+Received: from mout.gmx.net ([212.227.15.18]:57717 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730534AbgCKRVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:21:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1583947280;
+        bh=N0Mt55tH5t+Up1Jf8+V0Xwu+VhOGcetuqNUN75M6s/I=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=UThROAwY0Puz8teOBw7m281B3Y6r+rjHOyIzEYgi3j+RzqW+TmcT9VGkd5OCr+yQR
+         RIiZRkn1P1mkFsfAWj9XbUUGiCB7Dl1bzLF1ABmPGGr7PizyCT5UNh4NnGIKmimtJL
+         9wik/tB+lfHjN3qn3lDHgfgreBBHBGetgn0EfI6s=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [10.94.10.10] ([196.52.84.11]) by mail.gmx.com (mrgmx004
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MC34h-1j1ve10gZB-00CQMU; Wed, 11
+ Mar 2020 18:21:20 +0100
+Subject: Re: [Bug 206175] Fedora >= 5.4 kernels instantly freeze on boot
+ without producing any display output
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        ShuFan Lee <shufan_lee@richtek.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Yu Chen <chenyu56@huawei.com>, Felipe Balbi <balbi@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jun Li <lijun.kernel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Guillaume Gardet <Guillaume.Gardet@arm.com>,
-        Jack Pham <jackp@codeaurora.org>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [RESEND][PATCH v8 6/6] usb: dwc3: Rework resets initialization to be more flexible
-Date:   Wed, 11 Mar 2020 17:21:09 +0000
-Message-Id: <20200311172109.45134-7-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200311172109.45134-1-john.stultz@linaro.org>
-References: <20200311172109.45134-1-john.stultz@linaro.org>
+        iommu <iommu@lists.linux-foundation.org>
+References: <bug-206175-5873@https.bugzilla.kernel.org/>
+ <bug-206175-5873-S6PaNNClEr@https.bugzilla.kernel.org/>
+ <CAHk-=wi4GS05j67V0D_cRXRQ=_Jh-NT0OuNpF-JFsDFj7jZK9A@mail.gmail.com>
+ <20200310162342.GA4483@lst.de>
+ <CAHk-=wgB2YMM6kw8W0wq=7efxsRERL14OHMOLU=Nd1OaR+sXvw@mail.gmail.com>
+ <20200310182546.GA9268@lst.de> <20200311152453.GB23704@lst.de>
+ <e70dd793-e8b8-ab0c-6027-6c22b5a99bfc@gmx.com>
+ <20200311154328.GA24044@lst.de> <20200311154718.GB24044@lst.de>
+ <962693d9-b595-c44d-1390-e044f29e91d3@gmx.com>
+ <CAHk-=wj0E9vCO_VTiK6xuXAW13ZeeLsW=G3v+yNsCaUm1+H61A@mail.gmail.com>
+From:   "Artem S. Tashkinov" <aros@gmx.com>
+Message-ID: <e97de44a-39b0-c4fa-488c-d9fa76eb1eae@gmx.com>
+Date:   Wed, 11 Mar 2020 17:21:18 +0000
+MIME-Version: 1.0
+In-Reply-To: <CAHk-=wj0E9vCO_VTiK6xuXAW13ZeeLsW=G3v+yNsCaUm1+H61A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: ru
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Ze7y1s6CHNlylCGF1+im6WZhD4xZTD+aR40SqUuS7Nb0FZg3KBM
+ HD/zOBY6QVgIkackJElkVcjFBpuhL4AexRdeMdI/rFfAXRe9UqzngsLOx8A8YDq9wxkF3KZ
+ F87fUG7rOr0LPnDTxFdhAGTZ5F2S1FX0Fl695oJJtXGjmWA6tdgU+zq44+k1OhTJ8UAnZ83
+ nKF8NiFlAS331rxR1VwoA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:R0sDNHJ+Vm4=:kBnZF+dTpOcEkg0WvtmBEI
+ kPihdaA/As3/lGXNTUOzoDtVZzwsTuaKdzSbFCB0pG9SjO7hE62YONOb1kgUU6cwoTzbkWFSv
+ jlsbAkTbKboPX4LcwX7BRThXcu6NNzR4YfHSgV1LM8GNWpQK8oTSClnXAd6Jh40rWN9lF+cE6
+ TxgEHwnEVzrGboYSSsxibnPbX8F1HjMYl/f+GjMIwQ540ghvzn1bGXzsr3ZpyLyPVCdDYqu5j
+ 1arWraV/da5227dPAlg8kcozOib30DHziNJo8NNUFBZOthbQ8S7tgr57P+T0gEVp9x2O2TFXZ
+ GCwzBFuJLs6HA2Du4uHRN0mJuWTbiDAmYpGIAXGTid/s+GT1RMFb14PfTcSTNLIXiN/l1YFN3
+ yKCfBB6b0NR2PksAfly6xNBqi1YAi2EkS2rt4EJSAMNcyFg9saVhngTQoublBs5TZUKK+tq8R
+ OF/MNwqhb6+Y9FHWR6TGbLmXzvJxC1b2hpOyZw58a7+0mhQSxgBjVHIff/kJ9YtNjGKNFIUYj
+ fqJV9yF/2OFHRC4CFPdgeSylr0qPa1+DauQdDB/PRXgCIN460t3VU2cs8NpIWvYqwLmEGlkL3
+ 4ti8TmZkmZftyfXMMcqoYd5BtRxQYAxbO2qesM3TOQZuO+xzsrvjWlnrPhssWR0ZVdqdfwEDz
+ 384BPbOhhuIeKPuZMD1Z+XEon9u3jSQ+rbkKJDJJjckMt/NT8fOesb4rxE79udG15Lxf5MeJn
+ +N8ATuyG9bRrMF8FTLqBaPwyIDY8J6MEuuedpsB7f1Mdu5Y/9ZUWsz1hR1ZGtuLZvApIdWXcR
+ BH5u0UitU64nRqqtlpX1YFPm7a/seA+lydKe8BGsD0qLSbTQ+py7mKWZ/vSy9ka4iqepeFjd+
+ wZipi0uXeIlo/6sBojHVyMXrAO2hy18vYwFh2A3C3ahbWhFXJLFBBaJwmCCiqWjLAp87PY0Gj
+ 3S9MBCuZyRMYj+lRF7JnSyna2Qtk4r5JiVqQI/HDMOXOEVUZzszP6jevvHg9nv9SOvuNkbuLh
+ hK92Ddg9wZZ5LHJN9yz3XhktnaJGLAT3B7GBtO991/EuPjDPhIreeRDiGOmM/s1TGm/wZMijF
+ yl+UDHrbOH8CTr16c9VbwvyFT8Hc/tmxWX9pFKmaafmASUOXO4cvuBm/CJcVxjuvBDmAQ1eBM
+ l3j2tIPVyH0Y4ltKmhUCwIS2CeRB6+asXBoJ7ksitvWzb8gmtfRnR7VEkBtHm+zUcAdqnXNoX
+ YHijdGB3L4XA6g1cm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dwc3 core binding specifies one reset.
 
-However some variants of the hardware may have more. Previously
-this was handled by using the dwc3-of-simple glue driver, but
-that resulted in a proliferation of bindings for for every
-variant, when the only difference was the clocks and resets
-lists.
 
-So this patch reworks the reading of the resets to fetch all the
-resets specified in the dts together.
+On 3/11/20 4:21 PM, Linus Torvalds wrote:
+> On Wed, Mar 11, 2020 at 9:02 AM Artem S. Tashkinov <aros@gmx.com> wrote:
+>>
+>> With this patch the system works (I haven't created an initrd, so it
+>> doesn't completely boot and panics on not being able to mount root fs
+>> but that's expected).
+>
+> Perfect.
+>
+> I ended up applying my earlier cleanup patch with just the added
+> removal of the kfree(), which was the actual trigger of the bug.
+>
+> It's commit e423fb6929d4 ("driver code: clarify and fix platform
+> device DMA mask allocation") in my tree. I've not pushed it out yet (I
+> have a few pending pull requests), but it should be out shortly.
 
-This patch was recommended by Rob Herring <robh@kernel.org>
-as an alternative to creating multiple bindings for each variant
-of hardware.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-CC: ShuFan Lee <shufan_lee@richtek.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc: Yu Chen <chenyu56@huawei.com>
-Cc: Felipe Balbi <balbi@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jun Li <lijun.kernel@gmail.com>
-Cc: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Guillaume Gardet <Guillaume.Gardet@arm.com>
-Cc: Jack Pham <jackp@codeaurora.org>
-Cc: linux-usb@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Suggested-by: Rob Herring <robh@kernel.org>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
-v3: Rework dwc3 core rather then adding another dwc-of-simple
-    binding.
-v6: Re-introduce this patch, on Rob's suggestion
----
- drivers/usb/dwc3/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I've been able to compile and run
+e3a36eb6dfaeea8175c05d5915dcf0b939be6dab successfully. I won't claim
+this patch doesn't break something for other people :-)
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index ba21af5c1204..2afcc04da338 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -1465,7 +1465,7 @@ static int dwc3_probe(struct platform_device *pdev)
- 
- 	dwc3_get_properties(dwc);
- 
--	dwc->reset = devm_reset_control_get_optional_shared(dev, NULL);
-+	dwc->reset = devm_reset_control_array_get(dev, true, true);
- 	if (IS_ERR(dwc->reset))
- 		return PTR_ERR(dwc->reset);
- 
--- 
-2.17.1
-
+Best regards,
+Artem
