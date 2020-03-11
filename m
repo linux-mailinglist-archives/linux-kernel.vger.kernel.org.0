@@ -2,94 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD3F3181DE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:31:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC617181DED
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:32:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730180AbgCKQbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 12:31:10 -0400
-Received: from foss.arm.com ([217.140.110.172]:51686 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730052AbgCKQbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 12:31:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E968E31B;
-        Wed, 11 Mar 2020 09:31:08 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.71])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D8A643F6CF;
-        Wed, 11 Mar 2020 09:31:05 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 16:31:03 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Will Deacon <will@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H . J . Lu " <hjl.tools@gmail.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Dave Martin <Dave.Martin@arm.com>
-Subject: Re: [PATCH v8 03/11] arm64: Basic Branch Target Identification
- support
-Message-ID: <20200311163103.GL3216816@arrakis.emea.arm.com>
-References: <20200227174417.23722-1-broonie@kernel.org>
- <20200227174417.23722-4-broonie@kernel.org>
+        id S1730280AbgCKQcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 12:32:53 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:40409 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729852AbgCKQcx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 12:32:53 -0400
+Received: by mail-pj1-f67.google.com with SMTP id gv19so1283476pjb.5;
+        Wed, 11 Mar 2020 09:32:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zmUBvFmNMYqAgE4hUh5PxorZyEbBCYGzea7UV2DPByM=;
+        b=okn3wxoxdRHK59h+9WIq7oUfCZKvj8jYSlljDW2vEtjcLJX7mgYZASlfNT2PSYE6Ew
+         hTxbbboBZjfEQPOaLaDTKkp2kAaVqZVROy0sVYOndeFLtoC7w9dk7d90z8EtJQq0Vx0R
+         vy9cgKIwOxAWv5BdqTYwtuiYYyguWrlCbqRIYcLTabjY59Uz+WnOAb8XXE+r/5G2b4FS
+         0hKP4XWaegGUW05mM/tuyOjn8lu6DjLqOKDzuzDjE1W3KtsqetyMjI5B1hTR1nJumbKu
+         vF4IfBaBzIIt5RZA++Mg8wN3WcVTwUS5m/euqks2Ta8zJGfFhw2KCVKjQnHaLV+MY2Wg
+         tbuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zmUBvFmNMYqAgE4hUh5PxorZyEbBCYGzea7UV2DPByM=;
+        b=M2rJnaR+2K0b0xNvw2qg5sMWEgCUFV4UCXZ8hobAzrGHHQOaQ2grG7zapKyvKEmSrL
+         Y4v3UvtNubOz1sbXM3xfGmYmD1f8+hXo31TQxzhuCK7AH+4nHmQerGgCZBzlZi3mxnIK
+         THm6TTztIXKvFUuzAyoiUAF7dqplG9NPaU8gQxrTLc3nPU0xqtYlnGMkqF9EP1GwTBKV
+         bMw1kLZhtEOC7UncLgHZWmA9p8fe18T8ato76Y/gPva91gei4lZSawLk+RjNXVqTB1wn
+         uI5/xL+yJhazasWX+/WN8lqEHBhGAccthdM+GLk2rzq3XG4v3H/4fauKf5QpxDkFs2T1
+         MumA==
+X-Gm-Message-State: ANhLgQ2exVk2bdb2LEHaWKGGz+sAf8ONpUiaIfulgCKP6WuIBlA9EjZy
+        pyd6AeXon2a8IokAbvl/iOY=
+X-Google-Smtp-Source: ADFU+vtseRHn4vAz5dlT4WliTsDFscNXLHw6uylAKsWiiB6pM6JEaG1187JNfqDIKnTVPdUgOiyByg==
+X-Received: by 2002:a17:90a:4487:: with SMTP id t7mr4170485pjg.104.1583944371770;
+        Wed, 11 Mar 2020 09:32:51 -0700 (PDT)
+Received: from localhost ([106.51.232.35])
+        by smtp.gmail.com with ESMTPSA id q12sm51720409pfh.158.2020.03.11.09.32.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Mar 2020 09:32:50 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 22:02:49 +0530
+From:   afzal mohammed <afzal.mohd.ma@gmail.com>
+To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Keguang Zhang <keguang.zhang@gmail.com>,
+        Huacai Chen <chenhc@lemote.com>,
+        John Crispin <john@phrozen.org>
+Subject: Re: [PATCH v4] MIPS: Replace setup_irq() by request_irq()
+Message-ID: <20200311163249.GA4984@afzalpc>
+References: <20200304203144.GA4323@alpha.franken.de>
+ <20200305115759.3186-1-afzal.mohd.ma@gmail.com>
+ <20200311053126.GA48442@ubuntu-m2-xlarge-x86>
+ <20200311090308.GA5060@afzalpc>
+ <20200311104217.GA10615@alpha.franken.de>
+ <20200311131210.GA5115@afzalpc>
+ <20200311160307.GA15464@alpha.franken.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200227174417.23722-4-broonie@kernel.org>
+In-Reply-To: <20200311160307.GA15464@alpha.franken.de>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 05:44:09PM +0000, Mark Brown wrote:
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 0b30e884e088..e37f4f07b990 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -1519,6 +1519,28 @@ endmenu
->  
->  menu "ARMv8.5 architectural features"
->  
-> +config ARM64_BTI
-> +	bool "Branch Target Identification support"
-> +	default y
-> +	help
-> +	  Branch Target Identification (part of the ARMv8.5 Extensions)
-> +	  provides a mechanism to limit the set of locations to which computed
-> +	  branch instructions such as BR or BLR can jump.
-> +
-> +	  To make use of BTI on CPUs that support it, say Y.
-> +
-> +	  BTI is intended to provide complementary protection to other control
-> +	  flow integrity protection mechanisms, such as the Pointer
-> +	  authentication mechanism provided as part of the ARMv8.3 Extensions.
-> +	  For this reason, it does not make sense to enable this option without
-> +	  also enabling support for pointer authentication.  Thus, when
-> +	  enabling this option you should also select ARM64_PTR_AUTH=y.
-> +
-> +	  Userspace binaries must also be specifically compiled to make use of
-> +	  this mechanism.  If you say N here or the hardware does not support
-> +	  BTI, such binaries can still run, but you get no additional
-> +	  enforcement of branch destinations.
+Hi,
 
-To keep the series bisectable, I'd move the Kconfig into a separate
-patch towards the end. It looks like the feature is only partially
-supported after patch 3, so let's not advertise it here.
+On Wed, Mar 11, 2020 at 05:03:07PM +0100, Thomas Bogendoerfer wrote:
+> On Wed, Mar 11, 2020 at 06:42:10PM +0530, afzal mohammed wrote:
 
--- 
-Catalin
+> > If IRQF_SHARED is passed, it exepcts a non-NULL dev_id, here it is
+> > NULL, setup_irq() doesn't have any check like that.
+> 
+> so request_irq() is not a 1:1 replacement for our current setup_irq().
+> Or put it the another way our setup_irq() might be buggy, when used for
+> shared interrupts.
+
+AFAIU, this causes problems only while freeing irq, but not sure. Seems
+it is not happening with any of the cases in the diff.
+
+> > So i think proper solution is to add a non NULL dev_id, as removing
+> > IRQF_SHARED might affect some platforms that might be using that
+> > interrupt line shared.
+> > 
+> > Patch with non-NULL dev_id below, it works w/ Nathan's test case.
+> 
+> I'm not sure, I like the adding of string pointers as dev_id arguments
+> in your patch. How can we make sure they are unique enough for the use
+> case ? I guess using handler as dev_id does a better job here.
+
+There was one prior similar usage using string pointers, another way i
+have seen is using irq no. itself, but then it has to be typecasted,
+in file arch/mips/txx9/generic/pci.c,
+
+        request_irq(irq, &i8259_interrupt, IRQF_SHARED,
+                "cascade(i8259)", (void *)(long)irq);
+
+[ but i think that double casting is not required, only (void *) might
+suffice ]
+
+If you prefer handler function pointer, i will use that.
+
+> And before doing that, lets clean up some of the IRQF_SHARED usage first.
+> All sni IRQF_SHARED can go away, the interrupt lines are exclusive there. 
+> 
+> loongson2ef/lemote-2f/irq.c: looks like the only user of
+> LOONGSON_NORTH_BRIDGE_IRQ, so IRQF_SHARED could go as well.
+> Could someone confirm that ?
+> 
+> All other need to stay, IMHO.
+
+Okay, i am venturing into MIPS the first time as part of this patch
+series, so no MIPS specific knowledge, just let me know
+loongson2ef/lemote-2f case as well, i will prepare patch accordingly. 
+
+> And v4 is already in mips-next, so I need an incremental patch please.
+
+Okay, i already sent a patch, it crossed your mail, i will make a new
+patch based on the outcome of the discusson here.
+
+Since there is some issue w/ lore.kernel.org, i send it again, but
+both are not seen in archives.
+
+Regards
+afzal
