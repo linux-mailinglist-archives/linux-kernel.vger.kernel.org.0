@@ -2,59 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A9FD181D83
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:14:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70AD1181D8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:15:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730144AbgCKQO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 12:14:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59160 "EHLO mail.kernel.org"
+        id S1730180AbgCKQPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 12:15:36 -0400
+Received: from foss.arm.com ([217.140.110.172]:51416 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730019AbgCKQO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 12:14:26 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 402F0205ED;
-        Wed, 11 Mar 2020 16:14:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583943266;
-        bh=MaWKFPKIrPw8JNoAnoRn2l5keN1aF9MIevl6On+tlDM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gKGR6vUV5p5sBIzU5msZWg5oszHnxGh+C37aHnrTePE8WIg+lS5c8yYS4MOV0/Wp7
-         Gb4nTASpyRKLIPpQehOaoRtjqalt9dGxXIdQp6VK4lHoOMPX87n54wDtKMX4+UUDc6
-         h5bZumMEFewWI5aZwL5q4r/9N3kfk/9zElt0B5FA=
-Date:   Wed, 11 Mar 2020 17:14:23 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     torvalds@linux-foundation.org, aros@gmx.com,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: Re: [PATCH] device core: fix dma_mask handling in
- platform_device_register_full
-Message-ID: <20200311161423.GA3941932@kroah.com>
-References: <20200311160710.376090-1-hch@lst.de>
+        id S1729704AbgCKQPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 12:15:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0575831B;
+        Wed, 11 Mar 2020 09:15:35 -0700 (PDT)
+Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F05E03F6CF;
+        Wed, 11 Mar 2020 09:15:33 -0700 (PDT)
+Subject: Re: [Bug 206175] Fedora >= 5.4 kernels instantly freeze on boot
+ without producing any display output
+To:     "Artem S. Tashkinov" <aros@gmx.com>, Christoph Hellwig <hch@lst.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        iommu@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+References: <bug-206175-5873@https.bugzilla.kernel.org/>
+ <bug-206175-5873-S6PaNNClEr@https.bugzilla.kernel.org/>
+ <CAHk-=wi4GS05j67V0D_cRXRQ=_Jh-NT0OuNpF-JFsDFj7jZK9A@mail.gmail.com>
+ <20200310162342.GA4483@lst.de>
+ <CAHk-=wgB2YMM6kw8W0wq=7efxsRERL14OHMOLU=Nd1OaR+sXvw@mail.gmail.com>
+ <20200310182546.GA9268@lst.de> <20200311152453.GB23704@lst.de>
+ <e70dd793-e8b8-ab0c-6027-6c22b5a99bfc@gmx.com>
+ <20200311154328.GA24044@lst.de> <20200311154718.GB24044@lst.de>
+ <962693d9-b595-c44d-1390-e044f29e91d3@gmx.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <eadd21f1-c618-9523-fa14-e862dfa256ac@arm.com>
+Date:   Wed, 11 Mar 2020 16:15:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200311160710.376090-1-hch@lst.de>
+In-Reply-To: <962693d9-b595-c44d-1390-e044f29e91d3@gmx.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 05:07:10PM +0100, Christoph Hellwig wrote:
-> Ever since the generic platform device code started allocating DMA masks
-> itself the code to allocate and leak a private DMA mask in
-> platform_device_register_full has been superflous.  More so the fact that
-> it unconditionally frees the DMA mask allocation in the failure path
-> can lead to slab corruption if the function fails later on for a device
-> where it didn't allocate the mask.  Just remove the offending code.
+On 11/03/2020 4:02 pm, Artem S. Tashkinov wrote:
+> On 3/11/20 3:47 PM, Christoph Hellwig wrote:
+>> And actually one more idea after looking at what slab interactions
+>> could exist.  platform_device_register_full frees the dma_mask
+>> unconditionally, even if it didn't allocated it, which might lead
+>> to weird memory corruption if we hit the failure path.  So let's try
+>> something like this, replacing the earlier patch in that file.
+>>
+>> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+>> index b230beb6ccb4..04080a8d94e2 100644
+>> --- a/drivers/base/platform.c
+>> +++ b/drivers/base/platform.c
+>> @@ -632,19 +632,6 @@ struct platform_device 
+>> *platform_device_register_full(
+>>       pdev->dev.of_node_reused = pdevinfo->of_node_reused;
+>>
+>>       if (pdevinfo->dma_mask) {
+>> -        /*
+>> -         * This memory isn't freed when the device is put,
+>> -         * I don't have a nice idea for that though.  Conceptually
+>> -         * dma_mask in struct device should not be a pointer.
+>> -         * See http://thread.gmane.org/gmane.linux.kernel.pci/9081
+>> -         */
+>> -        pdev->dev.dma_mask =
+>> -            kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
+>> -        if (!pdev->dev.dma_mask)
+>> -            goto err;
+>> -
+>> -        kmemleak_ignore(pdev->dev.dma_mask);
+>> -
+>>           *pdev->dev.dma_mask = pdevinfo->dma_mask;
+>>           pdev->dev.coherent_dma_mask = pdevinfo->dma_mask;
+>>       }
+>> @@ -670,7 +657,6 @@ struct platform_device 
+>> *platform_device_register_full(
+>>       if (ret) {
+>>   err:
+>>           ACPI_COMPANION_SET(&pdev->dev, NULL);
+>> -        kfree(pdev->dev.dma_mask);
+>>           platform_device_put(pdev);
+>>           return ERR_PTR(ret);
+>>       }
+>>
 > 
-> Fixes: cdfee5623290 ("driver core: initialize a default DMA mask for platform device")
-> Reported-by: Artem S. Tashkinov <aros@gmx.com>
-> Tested-by: Artem S. Tashkinov <aros@gmx.com>
+> With this patch the system works (I haven't created an initrd, so it
+> doesn't completely boot and panics on not being able to mount root fs
+> but that's expected).
 
-No s-o-b from you?  :(
+Yup, a few lines earlier in the log you can see the wdat_wdt driver 
+failing in platform_device_add(), which since it called into 
+platform_device_register_full() with pdevinfo.dma_mask = 0, will have 
+unwound into that kfree() of pdev.dma_mask corrupting the heap.
 
-I can take this, or Linus, you can take this now if you want to as well:
-
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Robin.
