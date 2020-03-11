@@ -2,98 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FE2E1820CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:27:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD8A71820A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:23:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730832AbgCKS1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 14:27:45 -0400
-Received: from mga07.intel.com ([134.134.136.100]:25702 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730468AbgCKS1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:27:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 11:27:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
-   d="scan'208";a="236370876"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
-  by fmsmga008.fm.intel.com with ESMTP; 11 Mar 2020 11:27:44 -0700
-Message-ID: <664cf142449b0a1ef7f09d04111f96ff84738e28.camel@intel.com>
-Subject: Re: [PATCH V1 01/13] selftests/resctrl: Fix feature detection
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     Reinette Chatre <reinette.chatre@intel.com>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>,
-        "babu.moger@amd.com" <babu.moger@amd.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        "Yu, Fenghua" <fenghua.yu@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Wed, 11 Mar 2020 11:22:57 -0700
-In-Reply-To: <b83ba95d-9f0f-4d4f-b68c-c5a612afece4@intel.com>
-References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
-         <7e3e4b91f5786a489e68eecda21e1d8049b60181.1583657204.git.sai.praneeth.prakhya@intel.com>
-         <a7407b0d-4e4d-d0cf-621c-769d218fdace@intel.com>
-         <FFF73D592F13FD46B8700F0A279B802F57307F89@ORSMSX114.amr.corp.intel.com>
-         <d0409729-b546-f0b9-4944-cbe5c9a74f76@intel.com>
-         <FFF73D592F13FD46B8700F0A279B802F573084EC@ORSMSX114.amr.corp.intel.com>
-         <b83ba95d-9f0f-4d4f-b68c-c5a612afece4@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        id S1730806AbgCKSXa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 14:23:30 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:51318 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730677AbgCKSXa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 14:23:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1583951008; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=XuegH4/ESXmv9jvimvm+jo54TN7v2f2NupKchkt4G/Q=;
+        b=RHy36I5iuPJ6cjDS84GmovAHo35bj/Bvg40l/1D3tqI4JBajMOtAL+cYajC58JOCoX62Io
+        aNfLcG7d5Io/lHuC/mDcDvMa2q23640p0ZhJ33oMOvALicknhLvlb6ivPK0SaGVmOVawAN
+        DFE5ARZSLsVRCCoTI488mtDM2vkG33k=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     od@zcrc.me, linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 1/3] rtc: jz4740: Add support for JZ4760 SoC
+Date:   Wed, 11 Mar 2020 19:23:16 +0100
+Message-Id: <20200311182318.22154-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Reinette,
+The WENR feature (set a magic value to enable RTC registers read-write)
+first appeared on the JZ4760; the JZ4780 came much later.
 
-On Wed, 2020-03-11 at 11:06 -0700, Reinette Chatre wrote:
-> Hi Sai,
-> 
-> On 3/9/2020 3:51 PM, Prakhya, Sai Praneeth wrote:
-> > > -----Original Message-----
-> > > From: Reinette Chatre <reinette.chatre@intel.com>
-> > > Sent: Monday, March 9, 2020 3:34 PM
-> > 
-> > [SNIP]
-> > 
-> > > > That's a good point and makes sense to me. I think we could fix it in
-> > > > two ways 1. grep for strings in dmesg but that will still leave
-> > > > ambiguity in deciding b/w mbm and cqm because kernel prints "resctrl:
-> > > > L3
-> > > monitoring detected" for both the features 2. Check in "info" directory
-> > > > 	a. For cat_l3, we could search for info/L3
-> > > > 	b. For mba, we could search for info/MB
-> > > > 	c. For cqm and mbm, we could search for specified string in
-> > > > info/L3_MON/mon_features
-> > > > 
-> > > > I think option 2 might be better because it can handle all cases,
-> > > > please let me
-> > > know what you think.
-> > > 
-> > > I agree. For the reasons you mention and also that (1) may not be
-> > > possible if the
-> > > loglevel prevents those lines from being printed.
-> > 
-> > Makes sense. I will work on the fix.
-> 
-> One more note about this ... from what I can tell the test for a feature
-> currently fails if the platform does not support the feature. Would it
-> be possible to just skip the test in this case instead?
+Since it would be dangerous to specify a newer SoC's compatible string as
+the fallback of an older SoC's compatible string, we add support for the
+"ingenic,jz4760-rtc" compatible string in the driver.
 
-That's because the output of the test should be just "ok" or "not ok".
+This will permit to support the JZ4770 by having:
+compatible = "ingenic,jz4770-rtc", "ingenic,jz4760-rtc";
 
-I can change it to something like "# Skip <test_name> because platform doesn't
-support the feature", but not really sure if it complies with TAP 13 protocol.
+Instead of doing:
+compatible = "ingenic,jz4770-rtc", "ingenic,jz4780-rtc";
 
-Regards,
-Sai
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/rtc/rtc-jz4740.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/rtc-jz4740.c b/drivers/rtc/rtc-jz4740.c
+index 18023e472cbc..d764cd525c9a 100644
+--- a/drivers/rtc/rtc-jz4740.c
++++ b/drivers/rtc/rtc-jz4740.c
+@@ -46,6 +46,7 @@
+ 
+ enum jz4740_rtc_type {
+ 	ID_JZ4740,
++	ID_JZ4760,
+ 	ID_JZ4780,
+ };
+ 
+@@ -106,7 +107,7 @@ static inline int jz4740_rtc_reg_write(struct jz4740_rtc *rtc, size_t reg,
+ {
+ 	int ret = 0;
+ 
+-	if (rtc->type >= ID_JZ4780)
++	if (rtc->type >= ID_JZ4760)
+ 		ret = jz4780_rtc_enable_write(rtc);
+ 	if (ret == 0)
+ 		ret = jz4740_rtc_wait_write_ready(rtc);
+@@ -298,6 +299,7 @@ static void jz4740_rtc_power_off(void)
+ 
+ static const struct of_device_id jz4740_rtc_of_match[] = {
+ 	{ .compatible = "ingenic,jz4740-rtc", .data = (void *)ID_JZ4740 },
++	{ .compatible = "ingenic,jz4760-rtc", .data = (void *)ID_JZ4760 },
+ 	{ .compatible = "ingenic,jz4780-rtc", .data = (void *)ID_JZ4780 },
+ 	{},
+ };
+-- 
+2.25.1
 
