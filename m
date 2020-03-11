@@ -2,156 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA7D318144C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 10:15:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BFAC181451
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 10:15:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbgCKJNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 05:13:32 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37905 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728150AbgCKJNc (ORCPT
+        id S1728925AbgCKJOB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 05:14:01 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46885 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728150AbgCKJOB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 05:13:32 -0400
-Received: by mail-lf1-f68.google.com with SMTP id x22so1035146lff.5;
-        Wed, 11 Mar 2020 02:13:30 -0700 (PDT)
+        Wed, 11 Mar 2020 05:14:01 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n15so1512401wrw.13
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 02:13:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qhIDi5z+ZT29B7/4ImamXTHxL5IkLJQZ2qWtWxOwngg=;
-        b=feWAmBZU6jPMCLJTe4qIBRN5vfcIvDMveyJd6+gV0jN7vrMLNV0wui8EBMGQBPMegH
-         2gruLAicQvWedRyGmq7oZDFR8HOhJAXO/jcGmJfaZ9+uuTau0H7cdMQvwmkwWWMceveH
-         lUJf7zjRD/jm6d4AHqLUBoHqQc0zN37MSx8Qv5BqPNIyFydjbSQDb+3kLzU9Fw1pKwGc
-         oopIc71BJUCX/Gg5e0De+eQoRTIo9NheuaR3fsPw60BxL2JGQfL1yA4tMbcMRJ/DRpjn
-         zWXl1h3xauhzJXtORKc7SttCtlQz0hIK8kCpg+FozrSxXae83dLcjOB7vrbVvOWEApfa
-         cIdw==
-X-Gm-Message-State: ANhLgQ1gojTqkV/3oc39rq+eD/kZit270E5zDc9o9wDRrx0r8lFxUhy9
-        WOheximDPR0XLqZidEqUDq6PBdpC
-X-Google-Smtp-Source: ADFU+vs+ntekw8VoDZK1u9rzKMuU4M+2SABuMJltW7glq97SpzCU/kTbIOH0xSNS6z18yZMHJ7dctQ==
-X-Received: by 2002:a19:cbd5:: with SMTP id b204mr1517318lfg.102.1583918009861;
-        Wed, 11 Mar 2020 02:13:29 -0700 (PDT)
-Received: from xi.terra (c-12aae455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.170.18])
-        by smtp.gmail.com with ESMTPSA id i16sm619685lfl.29.2020.03.11.02.13.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 02:13:28 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@kernel.org>)
-        id 1jBxQS-0004Qy-EU; Wed, 11 Mar 2020 10:13:16 +0100
-Date:   Wed, 11 Mar 2020 10:13:16 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
-Cc:     johan@kernel.org, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peter_hong@fintek.com.tw,
-        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
-Subject: Re: [PATCH V4 1/1] USB: serial: f81232: Add generator for F81534A
-Message-ID: <20200311091316.GG14211@localhost>
-References: <20200304033751.8662-1-hpeter+linux_kernel@gmail.com>
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=xsSU+80Y3lxtivrqrvbzy5IJmkkrb659KNbVYST+ACI=;
+        b=BfOvXL7oqhz1X0UdWlBUEl6LVgQBLNwy4+wRfPjNfyHMRZ58Adj1h1NZWzwntsQnLK
+         gMYj/XE8MiySDEs5z42yRJlO43ikWwQQ16QhylWUpucjUqjVi7EpVxUw8pty0yn42tQT
+         yp9RuTXRrq7BIf1tTZWAIqEpNeBRFiPyLg4XhuoNYFrINx9NgDVn7g7BCT25Ml3ZX8SK
+         tzzXXDRYFU8upK59E15lO1tB/ibGyW4UPxIkr8wG/tu3WJehuTLUe8NQ5ssv5a5HhC6d
+         g/7nqiHL1SstZuYE74JX9cMlUA3k/c4U5nniPsFEiBqaWYfiQzYuMgSnKCY6UlaVMfnE
+         OeKA==
+X-Gm-Message-State: ANhLgQ2N5CqKVtzssWp+/N2o+qHpmxohNW8RJsfNxAio+PBWg22SdsgK
+        Sw9TUGEkbMyt5sVpVB3McKVIxQ==
+X-Google-Smtp-Source: ADFU+vsYf1KquYfcemf3FjAgci4KByuaitL3xBXGeBCd9SxaaK7D/ZsYeNmplABcK3CkkFJDnRTDxQ==
+X-Received: by 2002:a5d:42c8:: with SMTP id t8mr3390174wrr.415.1583918039172;
+        Wed, 11 Mar 2020 02:13:59 -0700 (PDT)
+Received: from Google-Pixel-3a.fritz.box (ip5f5bf7ec.dynamic.kabel-deutschland.de. [95.91.247.236])
+        by smtp.gmail.com with ESMTPSA id f127sm7782162wma.4.2020.03.11.02.13.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2020 02:13:58 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 10:13:57 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CA+G9fYusdfg7PMfC9Xce-xLT7NiyKSbgojpK35GOm=Pf9jXXrA@mail.gmail.com>
+References: <CA+G9fYusdfg7PMfC9Xce-xLT7NiyKSbgojpK35GOm=Pf9jXXrA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304033751.8662-1-hpeter+linux_kernel@gmail.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: WARNING: at refcount.c:190 refcount_sub_and_test_checked+0xac/0xc8 - refcount_t: underflow; use-after-free.
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+CC:     John Stultz <john.stultz@linaro.org>, tkjos@google.com,
+        Shuah Khan <shuah@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, ardb@kernel.org,
+        Kees Cook <keescook@chromium.org>, lkft-triage@lists.linaro.org
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+Message-ID: <FBB76EEA-5503-4D57-AD2B-642D0CA7C090@ubuntu.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 11:37:51AM +0800, Ji-Ze Hong (Peter Hong) wrote:
-> The Fintek F81534A series is contains 1 HUB / 1 GPIO device / n UARTs,
-> but the UART is default disable and need enabled by GPIO device(2c42/16F8).
-> 
-> When F81534A plug to host, we can only see 1 HUB & 1 GPIO device and we
-> write 0x8fff to GPIO device register F81534A_CTRL_CMD_ENABLE_PORT(116h)
-> to enable all available serial ports.
-> 
-> Signed-off-by: Ji-Ze Hong (Peter Hong) <hpeter+linux_kernel@gmail.com>
-> ---
-> Changelog:
-> v4:
-> 	1. Remove unused define.
-> 	2. Remove usb_translate_errors() in f81534a_ctrl_set_register()
-> 	   with short transfer.
-> 	3. Replace dev_warn() with dev_err() in f81534a_ctrl_enable_all_ports()
-> 	4. Disable & remove all usb serial port device when disconnect().
+On March 11, 2020 8:52:16 AM GMT+01:00, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>While running selftest binderfs_test on linux mainline the following
+>warning on arm64, arm, x86_64 and i386.
+>
+>[  329.383391] refcount_t: underflow; use-after-free.
+>[  329.391025] WARNING: CPU: 0 PID: 2604 at
+>/usr/src/kernel/lib/refcount.c:28 refcount_warn_saturate+0xd4/0x150
+>[  329.403319] Modules linked in: cls_bpf sch_fq algif_hash af_alg
+>rfkill tda998x drm_kms_helper drm crct10dif_ce fuse
+>[  329.413828] CPU: 0 PID: 2604 Comm: binderfs_test Not tainted
+>5.6.0-rc5 #1
+>[  329.420640] Hardware name: ARM Juno development board (r2) (DT)
+>[  329.426584] pstate: 40000005 (nZcv daif -PAN -UAO)
+>[  329.431402] pc : refcount_warn_saturate+0xd4/0x150
+>[  329.436216] lr : refcount_warn_saturate+0xd4/0x150
+>[  329.441026] sp : ffff800013d03a70
+>[  329.444356] x29: ffff800013d03a70 x28: ffff00092c3f8000
+>[  329.449694] x27: 0000000000000000 x26: ffff80001236f000
+>[  329.455033] x25: ffff800012656000 x24: 0000000000000001
+>[  329.460371] x23: ffff800012656f76 x22: ffff80001265b2c0
+>[  329.465709] x21: ffff000929035c00 x20: ffff00095cd8ce00
+>[  329.471048] x19: ffff80001261c848 x18: ffffffffffffffff
+>[  329.476386] x17: 0000000000000000 x16: 0000000000000000
+>[  329.481724] x15: ffff80001236fa88 x14: ffff800093d03767
+>[  329.487062] x13: ffff800013d03775 x12: ffff80001239e000
+>[  329.492400] x11: 0000000005f5e0ff x10: ffff800013d03700
+>[  329.497738] x9 : ffff8000126ddc68 x8 : 0000000000000028
+>[  329.503076] x7 : ffff800010190a5c x6 : ffff00097ef0b428
+>[  329.508414] x5 : ffff00097ef0b428 x4 : ffff00092c3f8000
+>[  329.513752] x3 : ffff800012370000 x2 : 0000000000000000
+>[  329.519090] x1 : 295161095161e100 x0 : 0000000000000000
+>[  329.524429] Call trace:
+>[  329.526894]  refcount_warn_saturate+0xd4/0x150
+>[  329.531362]  binderfs_evict_inode+0xcc/0xe8
+>[  329.535567]  evict+0xa8/0x188
+>[  329.538552]  iput+0x278/0x318
+>[  329.541537]  dentry_unlink_inode+0x154/0x170
+>[  329.545827]  __dentry_kill+0xc4/0x1d8
+>[  329.549509]  shrink_dentry_list+0xf4/0x210
+>[  329.553625]  shrink_dcache_parent+0x124/0x210
+>[  329.558002]  do_one_tree+0x20/0x50
+>[  329.561423]  shrink_dcache_for_umount+0x30/0x98
+>[  329.565975]  generic_shutdown_super+0x2c/0xf8
+>[  329.570354]  kill_anon_super+0x24/0x48
+>[  329.574122]  kill_litter_super+0x2c/0x38
+>[  329.578065]  binderfs_kill_super+0x24/0x48
+>[  329.582182]  deactivate_locked_super+0x74/0xa0
+>[  329.586647]  deactivate_super+0x8c/0x98
+>[  329.590502]  cleanup_mnt+0xd8/0x130
+>[  329.594008]  __cleanup_mnt+0x20/0x30
+>[  329.597605]  task_work_run+0x90/0x150
+>[  329.601287]  do_notify_resume+0x130/0x498
+>[  329.605317]  work_pending+0x8/0x14
+>[  329.608736] irq event stamp: 1612
+>[  329.612072] hardirqs last  enabled at (1611): [<ffff800010190bf4>]
+>console_unlock+0x514/0x5d8
+>[  329.620631] hardirqs last disabled at (1612): [<ffff8000100a904c>]
+>debug_exception_enter+0xac/0xe8
+>[  329.629622] softirqs last  enabled at (1608): [<ffff8000100818bc>]
+>__do_softirq+0x4c4/0x578
+>[  329.638005] softirqs last disabled at (1561): [<ffff80001010b6ac>]
+>irq_exit+0x144/0x150
+>[  329.646035] ---[ end trace bac6584738d9306f ]---
+>
+>Metadata:
+>---------------
+>  git branch: master
+>git repo:
+>https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+>  git describe: v5.6-rc5
+>  kernel-config:
+>http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/intel-corei7-64/lkft/linux-mainline/2518/config
+>
+>Full test log,
+>https://lkft.validation.linaro.org/scheduler/job/1273667#L6591
+>https://lkft.validation.linaro.org/scheduler/job/1273569#L6222
+>https://lkft.validation.linaro.org/scheduler/job/1273548#L6126
+>https://lkft.validation.linaro.org/scheduler/job/1273596#L4687
 
-> +static int f81534a_ctrl_set_register(struct usb_device *dev, u16 reg, u16 size,
-> +					void *val)
-> +{
-> +	int retry = F81534A_ACCESS_REG_RETRY;
-> +	int status;
-> +	u8 *tmp;
-> +
-> +	tmp = kmemdup(val, size, GFP_KERNEL);
-> +	if (!tmp)
-> +		return -ENOMEM;
-> +
-> +	while (retry--) {
-> +		status = usb_control_msg(dev,
-> +					usb_sndctrlpipe(dev, 0),
-> +					F81232_REGISTER_REQUEST,
-> +					F81232_SET_REGISTER,
-> +					reg,
-> +					0,
-> +					tmp,
-> +					size,
-> +					USB_CTRL_SET_TIMEOUT);
-> +		if (status != size) {
-> +			status = -EIO;
-
-You shouldn't discard any error code you get here; only set it to -EIO
-if the transfer is short.
-
-Your previous patch didn't retry on -ENOMEM and -ENODEV (e.g. if the
-device was disconnected) which seems reasonable.
-
-What errors are you seeing here when you really do need to resend?
-Perhaps only retry on those specifically (and short transfers)?
-
-> +			continue;
-> +		}
-> +
-> +		status = 0;
-> +		break;
-> +	}
-> +
-> +	if (status) {
-> +		dev_err(&dev->dev, "set ctrl reg: %x, failed status: %d\n",
-> +				reg, status);
-> +	}
-> +
-> +	kfree(tmp);
-> +	return status;
-> +}
-> +
-> +static int f81534a_ctrl_enable_all_ports(struct usb_interface *intf, bool en)
-> +{
-> +	struct usb_device *dev = interface_to_usbdev(intf);
-> +	unsigned char enable[2] = {0};
-> +	int status;
-> +
-> +	/*
-> +	 * Enable all available serial ports, define as following:
-> +	 * bit 15	: Reset behavior (when HUB got soft reset)
-> +	 *			0: maintain all serial port enabled state.
-> +	 *			1: disable all serial port.
-> +	 * bit 0~11	: Serial port enable bit.
-> +	 */
-> +	if (en) {
-> +		enable[0] = 0xff;
-> +		enable[1] = 0x8f;
-> +	}
-> +
-> +	status = f81534a_ctrl_set_register(dev, F81534A_CTRL_CMD_ENABLE_PORT,
-> +			sizeof(enable), enable);
-> +	if (status)
-> +		dev_err(&dev->dev, "failed to enable ports: %d\n", status);
-
-Please use &intf->dev here and for the dev_err() in
-f81534a_ctrl_set_register() as that will include the driver name in the
-prefix.
-
-> +
-> +	return status;
-> +}
-
-Johan
+Thanks, I'll take a look in a little bit.
