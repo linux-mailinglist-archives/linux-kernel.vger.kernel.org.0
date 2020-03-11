@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A851F1823BB
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2A91823BA
 	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 22:17:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729449AbgCKVRm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 17:17:42 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37453 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729095AbgCKVRm (ORCPT
+        id S1729418AbgCKVRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 17:17:41 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:56130 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729095AbgCKVRk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 17:17:42 -0400
-Received: by mail-pf1-f194.google.com with SMTP id p14so2051541pfn.4
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 14:17:40 -0700 (PDT)
+        Wed, 11 Mar 2020 17:17:40 -0400
+Received: by mail-pj1-f65.google.com with SMTP id mj6so1435246pjb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 14:17:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3LAERohpuvpSm00xKjtaZdoLFyl6wQmyHVk+s3HW4ao=;
-        b=Dt+BHf7WqtAzksMgppkm1kzL6sgJlgG6NGzgEwvH3WTT8gIJgWzW08GFsJbZGnIghv
-         1xLoE7nGsuKZxrP9SGxRwb0S6uq3PSudZQ03IHeedBogQuKh2dKMRrPwUNPKhm21wG9/
-         hqH8tWV8IU+Sk8OtrTWDDxYJdlHuKrt3geVXo=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Nc9NjinbmrTaxyzjE2LeQktq68AoC4uPHhJEEjjrJgc=;
+        b=i1rRo9cQXtQVJYpbkuUHBDz3DG2L+anp7slukdngNw8TGGR8GERDze0/8etvv/yWCU
+         oK1pY3tV7qSb9h+h38yzskqqoUyBDN0LO34fCcezTJH4uiRheDXJoTKLGn8dSZkiw9c0
+         p7x8bEBWEzaa1MXRoL5I8RL7L3uHPzbYdtGf4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3LAERohpuvpSm00xKjtaZdoLFyl6wQmyHVk+s3HW4ao=;
-        b=UfLdH76B6Q3/HIDLuraS8OA8UgBC7p52vSkyPqFMJv6sueoiNkDxnTNrtRl03+P9Bv
-         upsdYU/vBxkwGfbACkNPP41xxc8ghqK6aVnS85i9a7Ke5LXFocti25I2wII7w9yaFeP4
-         g/GwGweckGrHbldwOroMOdjGK7B/zPK88qRTQfHZhzKC2CEOGKEArZgu40pYHdjnInu+
-         OgrMr5EFShwITBm3O6nfHL7HuAfC7iEEBIWJK47cN1gWaFPoHyzZC20/nY6gVj/44+EV
-         d7EXB7nEpdE+HlZxUeDszEDYmyv0MICJklVuu0HfYbzJ6+qc2IDGwrMX+6kJVpRjzekf
-         6SmA==
-X-Gm-Message-State: ANhLgQ0EUteD8K43bdhivpWGwRW31AeHf31RJ1uP17Lrqeif8txiDDev
-        JDRLzoGd6/rvd3JW+m7Gh+kmmQ==
-X-Google-Smtp-Source: ADFU+vsE/tbqMMh99IEondTMGiAXly4iLT4ptHDR79in7ALtrEBOqRXfZNbkKUAuIi/sOEdvmju+dw==
-X-Received: by 2002:aa7:880e:: with SMTP id c14mr4676249pfo.76.1583961459854;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Nc9NjinbmrTaxyzjE2LeQktq68AoC4uPHhJEEjjrJgc=;
+        b=mnW7AtGVJC8SX/8bMzwdVWJeggg2itnSgBuz8JuV+cha7mlNmWcqX0tO6cSsCm0HHT
+         U2X/9KWoiS87gpCN5kD1EA7cR6seFcDzLl8CKcgD3dNBcDvWSj51pQiEzwe5qelKffwg
+         Ijm68h3yu1wciNwaCf0Qcnz3KYe8G8Pftl2Gk6Gn2mcI3Qi+w75uvJFcTss1+5HxpYm5
+         /4kHSZPCRW7F5ZMo77Ds7jayCmQ4bf4mtUWjftcdgja+Ln+/ycz64XQQCZTAiAyPK8oA
+         8J2Y9rMy/bIJfQPbq1cJY01sjJVWK9PIkWPDqGBkO66SWieqSoRIlrC7tIvWtJg09kC/
+         IsKg==
+X-Gm-Message-State: ANhLgQ0nBnKsi23hHa4Itbq8M5+6IVrTsr1yhUKKhn23srMUTipstN8B
+        oc7pFaEQMEEDJ4L1eIbyceuSzQ==
+X-Google-Smtp-Source: ADFU+vtwSFH+JOAbpOb/3n4HNpVl3+GgXIImjKKjyy8vWRpDCnnW52YDpgakBJbUmvK3PJtQ+eVTKA==
+X-Received: by 2002:a17:902:8485:: with SMTP id c5mr4831297plo.156.1583961459264;
         Wed, 11 Mar 2020 14:17:39 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b9sm22272129pgi.75.2020.03.11.14.17.37
+        by smtp.gmail.com with ESMTPSA id u3sm6874522pfb.36.2020.03.11.14.17.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 11 Mar 2020 14:17:37 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -48,10 +48,12 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Andy Lutomirski <luto@amacapital.net>,
         Will Drewry <wad@chromium.org>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] selftests/harness: Handle timeouts cleanly
-Date:   Wed, 11 Mar 2020 14:17:31 -0700
-Message-Id: <20200311211733.21211-1-keescook@chromium.org>
+Subject: [PATCH 1/2] selftests/seccomp: Move test child waiting logic
+Date:   Wed, 11 Mar 2020 14:17:32 -0700
+Message-Id: <20200311211733.21211-2-keescook@chromium.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200311211733.21211-1-keescook@chromium.org>
+References: <20200311211733.21211-1-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,39 +61,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a selftest would timeout before, the program would just fall over
-and no accounting of failures would be reported (i.e. it would result in
-an incomplete TAP report). Instead, add an explicit SIGALRM handler to
-cleanly catch and report the timeout.
+In order to better handle timeout failures, rearrange the child waiting
+logic into a separate function. This is mostly a copy/paste with an
+indentation change. To handle pid tracking, a new field is added for
+the child pid. Also move the alarm() pairing into the function.
 
-Before:
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ tools/testing/selftests/kselftest_harness.h | 93 +++++++++++----------
+ 1 file changed, 49 insertions(+), 44 deletions(-)
 
-        [==========] Running 2 tests from 2 test cases.
-        [ RUN      ] timeout.finish
-        [       OK ] timeout.finish
-        [ RUN      ] timeout.too_long
-        Alarm clock
-
-After:
-
-        [==========] Running 2 tests from 2 test cases.
-        [ RUN      ] timeout.finish
-        [       OK ] timeout.finish
-        [ RUN      ] timeout.too_long
-        timeout.too_long: Test terminated by timeout
-        [     FAIL ] timeout.too_long
-        [==========] 1 / 2 tests passed.
-        [  FAILED  ]
-
--Kees
-
-Kees Cook (2):
-  selftests/seccomp: Move test child waiting logic
-  selftests/harness: Handle timeouts cleanly
-
- tools/testing/selftests/kselftest_harness.h | 144 ++++++++++++++------
- 1 file changed, 99 insertions(+), 45 deletions(-)
-
+diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+index 5336b26506ab..c7b67e379219 100644
+--- a/tools/testing/selftests/kselftest_harness.h
++++ b/tools/testing/selftests/kselftest_harness.h
+@@ -635,6 +635,7 @@
+ struct __test_metadata {
+ 	const char *name;
+ 	void (*fn)(struct __test_metadata *);
++	pid_t pid;	/* pid of test when being run */
+ 	int termsig;
+ 	int passed;
+ 	int trigger; /* extra handler after the evaluation */
+@@ -695,64 +696,68 @@ static inline int __bail(int for_realz, bool no_print, __u8 step)
+ 	return 0;
+ }
+ 
+-void __run_test(struct __test_metadata *t)
++void __wait_for_test(struct __test_metadata *t)
+ {
+-	pid_t child_pid;
+ 	int status;
+ 
++	alarm(t->timeout);
++	waitpid(t->pid, &status, 0);
++	alarm(0);
++
++	if (WIFEXITED(status)) {
++		t->passed = t->termsig == -1 ? !WEXITSTATUS(status) : 0;
++		if (t->termsig != -1) {
++			fprintf(TH_LOG_STREAM,
++				"%s: Test exited normally "
++				"instead of by signal (code: %d)\n",
++				t->name,
++				WEXITSTATUS(status));
++		} else if (!t->passed) {
++			fprintf(TH_LOG_STREAM,
++				"%s: Test failed at step #%d\n",
++				t->name,
++				WEXITSTATUS(status));
++		}
++	} else if (WIFSIGNALED(status)) {
++		t->passed = 0;
++		if (WTERMSIG(status) == SIGABRT) {
++			fprintf(TH_LOG_STREAM,
++				"%s: Test terminated by assertion\n",
++				t->name);
++		} else if (WTERMSIG(status) == t->termsig) {
++			t->passed = 1;
++		} else {
++			fprintf(TH_LOG_STREAM,
++				"%s: Test terminated unexpectedly "
++				"by signal %d\n",
++				t->name,
++				WTERMSIG(status));
++		}
++	} else {
++		fprintf(TH_LOG_STREAM,
++			"%s: Test ended in some other way [%u]\n",
++			t->name,
++			status);
++	}
++}
++
++void __run_test(struct __test_metadata *t)
++{
+ 	t->passed = 1;
+ 	t->trigger = 0;
+ 	printf("[ RUN      ] %s\n", t->name);
+-	alarm(t->timeout);
+-	child_pid = fork();
+-	if (child_pid < 0) {
++	t->pid = fork();
++	if (t->pid < 0) {
+ 		printf("ERROR SPAWNING TEST CHILD\n");
+ 		t->passed = 0;
+-	} else if (child_pid == 0) {
++	} else if (t->pid == 0) {
+ 		t->fn(t);
+ 		/* return the step that failed or 0 */
+ 		_exit(t->passed ? 0 : t->step);
+ 	} else {
+-		/* TODO(wad) add timeout support. */
+-		waitpid(child_pid, &status, 0);
+-		if (WIFEXITED(status)) {
+-			t->passed = t->termsig == -1 ? !WEXITSTATUS(status) : 0;
+-			if (t->termsig != -1) {
+-				fprintf(TH_LOG_STREAM,
+-					"%s: Test exited normally "
+-					"instead of by signal (code: %d)\n",
+-					t->name,
+-					WEXITSTATUS(status));
+-			} else if (!t->passed) {
+-				fprintf(TH_LOG_STREAM,
+-					"%s: Test failed at step #%d\n",
+-					t->name,
+-					WEXITSTATUS(status));
+-			}
+-		} else if (WIFSIGNALED(status)) {
+-			t->passed = 0;
+-			if (WTERMSIG(status) == SIGABRT) {
+-				fprintf(TH_LOG_STREAM,
+-					"%s: Test terminated by assertion\n",
+-					t->name);
+-			} else if (WTERMSIG(status) == t->termsig) {
+-				t->passed = 1;
+-			} else {
+-				fprintf(TH_LOG_STREAM,
+-					"%s: Test terminated unexpectedly "
+-					"by signal %d\n",
+-					t->name,
+-					WTERMSIG(status));
+-			}
+-		} else {
+-			fprintf(TH_LOG_STREAM,
+-				"%s: Test ended in some other way [%u]\n",
+-				t->name,
+-				status);
+-		}
++		__wait_for_test(t);
+ 	}
+ 	printf("[     %4s ] %s\n", (t->passed ? "OK" : "FAIL"), t->name);
+-	alarm(0);
+ }
+ 
+ static int test_harness_run(int __attribute__((unused)) argc,
 -- 
 2.20.1
 
