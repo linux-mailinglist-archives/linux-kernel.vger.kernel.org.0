@@ -2,106 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1734418228A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:34:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EB7918228F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:34:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731402AbgCKTdc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 15:33:32 -0400
-Received: from foss.arm.com ([217.140.110.172]:54476 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731057AbgCKTdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:33:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E97D71FB;
-        Wed, 11 Mar 2020 12:33:30 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A25053F534;
-        Wed, 11 Mar 2020 12:33:26 -0700 (PDT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H . J . Lu " <hjl.tools@gmail.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        =?UTF-8?q?Kristina=20Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH v9 13/13] arm64: BTI: Add Kconfig entry for userspace BTI
-Date:   Wed, 11 Mar 2020 19:26:08 +0000
-Message-Id: <20200311192608.40095-14-broonie@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200311192608.40095-1-broonie@kernel.org>
-References: <20200311192608.40095-1-broonie@kernel.org>
+        id S1731417AbgCKTd6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 15:33:58 -0400
+Received: from balrog.mythic-beasts.com ([46.235.227.24]:39983 "EHLO
+        balrog.mythic-beasts.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731232AbgCKTdx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 15:33:53 -0400
+X-Greylist: delayed 303 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Mar 2020 15:33:52 EDT
+Received: from [146.90.33.204] (port=40284 helo=slartibartfast.quignogs.org.uk)
+        by balrog.mythic-beasts.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92.3)
+        (envelope-from <peter@bikeshed.quignogs.org.uk>)
+        id 1jC726-0001Gt-L7; Wed, 11 Mar 2020 19:28:46 +0000
+From:   peter@bikeshed.quignogs.org.uk
+To:     linux-doc@vger.kernel.org, netdev@vger.kernel.org
+Cc:     Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        Peter Lister <peter@bikeshed.quignogs.org.uk>
+Subject: [PATCH 0/1] Convert text to ReST list and remove doc build warnings
+Date:   Wed, 11 Mar 2020 19:28:22 +0000
+Message-Id: <20200311192823.16213-1-peter@bikeshed.quignogs.org.uk>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-BlackCat-Spam-Score: 65
+X-Spam-Status: No, score=6.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Martin <Dave.Martin@arm.com>
+From: Peter Lister <peter@bikeshed.quignogs.org.uk>
 
-Now that the code for userspace BTI support is in the kernel add the
-Kconfig entry so that it can be built and used.
+A minimal patch to format a couple of multi-line return value descriptions as
+ReST lists, mostly by adding blank lines to kerneldoc comments.
 
-[Split out of "arm64: Basic Branch Target Identification support" --
-broonie]
+This is pure formatting - the actual documentation text remains unchanged.
 
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- arch/arm64/Kconfig | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+It also removes a couple of warnings from the doc build.
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 8a15bc68dadd..d65d226a77ec 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1522,6 +1522,28 @@ endmenu
- 
- menu "ARMv8.5 architectural features"
- 
-+config ARM64_BTI
-+	bool "Branch Target Identification support"
-+	default y
-+	help
-+	  Branch Target Identification (part of the ARMv8.5 Extensions)
-+	  provides a mechanism to limit the set of locations to which computed
-+	  branch instructions such as BR or BLR can jump.
-+
-+	  To make use of BTI on CPUs that support it, say Y.
-+
-+	  BTI is intended to provide complementary protection to other control
-+	  flow integrity protection mechanisms, such as the Pointer
-+	  authentication mechanism provided as part of the ARMv8.3 Extensions.
-+	  For this reason, it does not make sense to enable this option without
-+	  also enabling support for pointer authentication.  Thus, when
-+	  enabling this option you should also select ARM64_PTR_AUTH=y.
-+
-+	  Userspace binaries must also be specifically compiled to make use of
-+	  this mechanism.  If you say N here or the hardware does not support
-+	  BTI, such binaries can still run, but you get no additional
-+	  enforcement of branch destinations.
-+
- config ARM64_E0PD
- 	bool "Enable support for E0PD"
- 	default y
+
+Peter Lister (1):
+  Reformat return value descriptions as ReST lists.
+
+ drivers/net/phy/sfp-bus.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
 -- 
-2.20.1
+2.24.1
 
