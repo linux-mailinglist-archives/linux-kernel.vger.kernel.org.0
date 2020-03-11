@@ -2,126 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB510181C85
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:41:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC0B2181C90
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:44:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729999AbgCKPlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 11:41:24 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:32935 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729646AbgCKPlX (ORCPT
+        id S1730035AbgCKPnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 11:43:55 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:20394 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729848AbgCKPny (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 11:41:23 -0400
-Received: by mail-vs1-f66.google.com with SMTP id n27so1641806vsa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 08:41:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=bRlEXufW+otZULePWW/gKpEh2IixSSza/KchTcrPm2Q=;
-        b=j7kpCO3voHcWqHVyatv0lWnoAAecB8yuezwj9exrXWfCvklFKwRQ6i0yNsnulp2Ilf
-         aYceY31muzNpCzivV9FxEu8Vqy9DpXdlRX/hd8kNQ6eG3AdabEG55fVjKvzhUR24P3NT
-         f64/tJP5KM+lAmMmVfIMAu2FulqGjNZgyGQDQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=bRlEXufW+otZULePWW/gKpEh2IixSSza/KchTcrPm2Q=;
-        b=HU4zpZCpPmR7cn/c53jQWzaA29GLccVk1OS8cHfks0DyjBIkYzScgCUqTLX1jql0gw
-         cDo+b5xRCX6JuUzZlqqQWYgEEu9k6oTcAuQjWMi3Nq/Kgz/gVrknTYj/wyhHT5q63dGu
-         aG1F1Bh6ZTOLoUMT/e/LO78D+976VypYefCChizONLAR6i4Vm/2mNkChnBEEeEWMskDv
-         wuUfXRxyx2ttdji5EMrPpYfWS0TbKSJDuEwwf4CQCXoX430lsA+Z/CILJOPawpoCMHik
-         ECbUVPJz06lj2XPjcEF73NtRew0etY8FlcJpUEvn27f/iRqvlxTmJBV7CxKs3WH6953J
-         RLLQ==
-X-Gm-Message-State: ANhLgQ0KLrbbp0ezn7mZQUfY108W0OzufhhnPSQ0S5Gidh49A10qhuUr
-        1ZyqwdznuuenGvpaRlxzYSJus4pSxpoTLRjpxlReyg==
-X-Google-Smtp-Source: ADFU+vvSyAbSz8PejFXbhO8Lv/TfLKzTjntPjsDPEH44gWzlhFI7DeDejvMB2sioeNFkEu7pKQf9Yw6dVWhEPsCxVc8=
-X-Received: by 2002:a67:f641:: with SMTP id u1mr2388964vso.86.1583941282719;
- Wed, 11 Mar 2020 08:41:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200308212334.213841-1-abhishekpandit@chromium.org> <C9E912BC-01E0-4E5D-ABC9-DBA932231E50@holtmann.org>
-In-Reply-To: <C9E912BC-01E0-4E5D-ABC9-DBA932231E50@holtmann.org>
-From:   Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Date:   Wed, 11 Mar 2020 08:41:08 -0700
-Message-ID: <CANFp7mVQyzwb1MnDjid9TSBb_15OmyJ85doZQNpyd-2J-SAN3w@mail.gmail.com>
-Subject: Re: [RFC PATCH v5 0/5] Bluetooth: Handle system suspend gracefully
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Alain Michaud <alainm@chromium.org>,
-        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
-        ChromeOS Bluetooth Upstreaming 
-        <chromeos-bluetooth-upstreaming@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>
+        Wed, 11 Mar 2020 11:43:54 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02BFf1Gp099444
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 11:43:53 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yq291terd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 11:43:51 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 11 Mar 2020 15:43:01 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Mar 2020 15:42:58 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02BFgv4T64749706
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Mar 2020 15:42:57 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1C816A406A;
+        Wed, 11 Mar 2020 15:42:57 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 820A6A4060;
+        Wed, 11 Mar 2020 15:42:55 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.220.140])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Mar 2020 15:42:55 +0000 (GMT)
+Subject: Re: [PATCH v3] ima: add a new CONFIG for loading arch-specific
+ policies
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-efi@vger.kernel.org,
+        linux-s390@vger.kernel.org, x86@kernel.org
+Cc:     Ard Biesheuvel <ardb@kernel.org>,
+        Philipp Rudo <prudo@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.vnet.ibm.com>
+Date:   Wed, 11 Mar 2020 11:42:55 -0400
+In-Reply-To: <1583715471-15525-1-git-send-email-nayna@linux.ibm.com>
+References: <1583715471-15525-1-git-send-email-nayna@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20031115-0020-0000-0000-000003B2CB40
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20031115-0021-0000-0000-0000220B1BF5
+Message-Id: <1583941375.5293.33.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-11_06:2020-03-11,2020-03-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 mlxlogscore=998 phishscore=0 impostorscore=0
+ suspectscore=0 bulkscore=0 mlxscore=0 clxscore=1015 lowpriorityscore=0
+ spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003110098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sure -- patch incoming in a few minutes.
+On Sun, 2020-03-08 at 20:57 -0400, Nayna Jain wrote:
+> From: Nayna Jain <nayna@linux.vnet.ibm.com>
+> 
+> Every time a new architecture defines the IMA architecture specific
+> functions - arch_ima_get_secureboot() and arch_ima_get_policy(), the IMA
+> include file needs to be updated. To avoid this "noise", this patch
+> defines a new IMA Kconfig IMA_SECURE_AND_OR_TRUSTED_BOOT option, allowing
+> the different architectures to select it.
+> 
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+> Acked-by: Ard Biesheuvel <ardb@kernel.org>
+> Cc: Philipp Rudo <prudo@linux.ibm.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
 
-On Wed, Mar 11, 2020 at 8:03 AM Marcel Holtmann <marcel@holtmann.org> wrote=
-:
->
-> Hi Abhishek,
->
-> > This patch series prepares the Bluetooth controller for system suspend
-> > by disconnecting all devices and preparing the event filter and LE
-> > whitelist with devices that can wake the system from suspend.
-> >
-> > The main motivation for doing this is so we can enable Bluetooth as
-> > a wake up source during suspend without it being noisy. Bluetooth shoul=
-d
-> > wake the system when a HID device receives user input but otherwise not
-> > send any events to the host.
-> >
-> > This patch series was tested on several Chromebooks with both btusb and
-> > hci_serdev on kernel 4.19. The set of tests was basically the following=
-:
-> > * Reconnects after suspend succeed
-> > * HID devices can wake the system from suspend (needs some related blue=
-z
-> >  changes to call the Set Wake Capable management command)
-> > * System properly pauses and unpauses discovery + advertising around
-> >  suspend
-> > * System does not wake from any events from non wakeable devices
-> >
-> > Series 2 has refactored the change into multiple smaller commits as
-> > requested. I tried to simplify some of the whitelist filtering edge
-> > cases but unfortunately it remains quite complex.
-> >
-> > Series 3 has refactored it further and should have resolved the
-> > whitelisting complexity in series 2.
-> >
-> > Series 4 adds a fix to check for powered down and powering down adapter=
-s.
-> >
-> > Series 5 moves set_wake_capable to the last patch in the series and
-> > changes BT_DBG to bt_dev_dbg.
-> >
-> > Please review and provide any feedback.
->
-> so I was planning to apply patches 1-4. The only thing that I noticed was=
- that patch 2 introduces the following warning.
->
->   CC      net/bluetooth/hci_request.o
-> net/bluetooth/hci_request.c: In function =E2=80=98hci_req_prepare_suspend=
-=E2=80=99:
-> net/bluetooth/hci_request.c:973:6: warning: unused variable =E2=80=98old_=
-state=E2=80=99 [-Wunused-variable]
->   973 |  int old_state;
->       |      ^~~~~~~~~
->
-> I think this variable should only be introduced in patch 4. Are you able =
-to respin this series so that the variable moves to patch 4. If not, I can =
-try to fix this myself.
->
-> Regards
->
-> Marcel
->
+Thanks, Michael for the suggestion of using "imply".  Seems to be
+working nicely.  Thanks, Nayna.  I pushed this patch out to next-
+integrity-testing.  Could we get some tags on this version of the
+patch?
+
+thanks,
+
+Mimi
+
