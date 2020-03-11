@@ -2,61 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32F04181294
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:05:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF417181297
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:07:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728349AbgCKIF1 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 04:05:27 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:37342 "EHLO gloria.sntech.de"
+        id S1728461AbgCKIGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 04:06:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726198AbgCKIF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 04:05:26 -0400
-Received: from p5b127c69.dip0.t-ipconnect.de ([91.18.124.105] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1jBwMi-0000Em-QT; Wed, 11 Mar 2020 09:05:20 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: arm: fix Rockchip Kylin board bindings
-Date:   Wed, 11 Mar 2020 09:05:19 +0100
-Message-ID: <1953057.m1zP5CsIQp@phil>
-In-Reply-To: <20200302092759.3291-1-jbx6244@gmail.com>
-References: <20200302092759.3291-1-jbx6244@gmail.com>
+        id S1726160AbgCKIGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 04:06:50 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F9742051A;
+        Wed, 11 Mar 2020 08:06:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583914007;
+        bh=wrkxLkNSJuSFWkXso1jggtLZ/EMJmTIF6RreW9CZSUE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=guynm0uwX1mGSSNdN3g22RSoCjQdqU9tFZRyO10WAeSyD1hJXe+2a28MTzu0iXswj
+         4gJVMDMJ8s1vrwtTGemTvyUiC5jz+SzDSG5/0L/cRszH9kV8vfwUJdJ3D6pLIB3Ndq
+         7oU59LQIiXk44ncO/P+rYnTR70f5QYcriceTRdog=
+Date:   Wed, 11 Mar 2020 09:06:42 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] drivers/base/cpu: s*nprintf() usage fixes /
+ cleanups
+Message-ID: <20200311080642.GA3662448@kroah.com>
+References: <20200311080207.12046-1-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200311080207.12046-1-tiwai@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 2. März 2020, 10:27:57 CET schrieb Johan Jonker:
-> A test with the command below gives this error:
+On Wed, Mar 11, 2020 at 09:02:05AM +0100, Takashi Iwai wrote:
+> Hi,
 > 
-> arch/arm/boot/dts/rk3036-kylin.dt.yaml: /: compatible:
-> ['rockchip,rk3036-kylin', 'rockchip,rk3036']
-> is not valid under any of the given schemas
+> this is a respin of my previous patch [*].
+> Now the scnprintf() conversion is done only in the needed places,
+> and the second patch cleans up the superfluous s*nprintf() usages.
 > 
-> Normally the dt-binding is the authoritative part, so boards should follow
-> the binding, but in the kylin-case the compatible from the .dts is used for
-> years in the field now, so fix the binding, as otherwise
-> we would break old users.
+> Takashi
 > 
-> Fix this error by changing 'rockchip,kylin-rk3036' to
-> 'rockchip,rk3036-kylin' in rockchip.yaml.
-> 
-> make ARCH=arm dtbs_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/arm/rockchip.yaml
-> 
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> [*] https://lore.kernel.org/r/20200311071200.4024-1-tiwai@suse.de
 
-applied all 3 for 5.7
+Thanks for these, much nicer, I'll go queue them up now.
 
-Thanks
-Heiko
-
-
+greg k-h
