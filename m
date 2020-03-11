@@ -2,74 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84D77181CDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:50:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B9E9181CE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:52:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730114AbgCKPuO convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 11:50:14 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:53777 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729991AbgCKPuN (ORCPT
+        id S1730013AbgCKPwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 11:52:35 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41642 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729841AbgCKPwe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 11:50:13 -0400
-X-Originating-IP: 90.89.41.158
-Received: from xps13 (lfbn-tou-1-1473-158.w90-89.abo.wanadoo.fr [90.89.41.158])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id B843BE0004;
-        Wed, 11 Mar 2020 15:50:11 +0000 (UTC)
-Date:   Wed, 11 Mar 2020 16:50:11 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
-Cc:     vigneshr@ti.com, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v4 0/2] mtd: spinand: toshiba: Support for new Kioxia
- Serial NAND
-Message-ID: <20200311165011.63a3d82e@xps13>
-In-Reply-To: <cover.1583834323.git.ytc-mb-yfuruyama7@kioxia.com>
-References: <cover.1583834323.git.ytc-mb-yfuruyama7@kioxia.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Wed, 11 Mar 2020 11:52:34 -0400
+Received: by mail-pg1-f193.google.com with SMTP id b1so1427073pgm.8;
+        Wed, 11 Mar 2020 08:52:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=YF/1cXUmQGWs9vSHKbzj30xb9Qf0cIfVSbu0+Qxd3G8=;
+        b=ssizjqaE8LNQ4GalJXJFUG+g9GGx66za4SuJU32ftKXnpfxnJ9z3wYHQPMB9j89nJr
+         /h9mI6bBmUwfVW5vhlNm2aa7cq4hBpPvTdJZvz1WyWIw7QQeCP6GsjGlhSQIZ2Gwygur
+         pcUcfos/aVZkG106C/snkGidsvKTOjfCKwkkXZMtHVAhut/UBGqJ3kBYMY9U9sLW24TP
+         7y8XB41E4TfRQ/Q8iDIen1UgoyFOGdsJKrGhQinJARq/8BIiJm/uL75S8vksfLtUnFQu
+         LtO0pUhlPBD1vE2yDrX+k4JIfD1zuKZT/3c8EkO4E8euUHtuaR9ZYKNynOhzAxBQW+3j
+         Siwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YF/1cXUmQGWs9vSHKbzj30xb9Qf0cIfVSbu0+Qxd3G8=;
+        b=hT8/jz9qZ8/wDWKPIkmUVcwwYm32BLnWXDBikxYAlIa3o62eLLbphQ23Wg6NqzvZ27
+         UN5lTJAWRbs1h9Pwd5HoJsgG6OntzC45ze18qzRbu8SCFNhwvJ9Ewd5Cm/s6jQ/fgtev
+         GeTPOGllxyJGhERbSCSQcDK2yjXAdjoprkwPikv5cgjHXabdC61nMw6xoearbYNlYpys
+         h8Ng1oDoN0yH1V9NGgce6eoLYKQFxb+HPMRC1kCSPODqHJbz+jbdBMnRO6t1LUHn2hKF
+         m1S8lvnESDr2U8nn/uwMAJVZWkYJ6kQQzHCynBxaENA4NZ4HOECfLI1dPPr5Q8TR5NXV
+         vE0A==
+X-Gm-Message-State: ANhLgQ33+AfM0xxP2Ku0ahR6OQg8ZfcQdMxlMSebY1dO+wWV+8US2naW
+        /56cVP4+PsLqU8NlQ0z3rcu5eIrZ
+X-Google-Smtp-Source: ADFU+vu0tbtYyRZAcpfr8ob41eF4QASNAVe0pQU7kmdtHAsBLa4Dvm5DERimhttpO/IMJ/0r7on6qQ==
+X-Received: by 2002:a62:1b12:: with SMTP id b18mr3538762pfb.258.1583941951979;
+        Wed, 11 Mar 2020 08:52:31 -0700 (PDT)
+Received: from localhost.localdomain ([106.51.109.105])
+        by smtp.gmail.com with ESMTPSA id d13sm5805564pjs.44.2020.03.11.08.52.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 11 Mar 2020 08:52:31 -0700 (PDT)
+From:   Rishi Gupta <gupt21@gmail.com>
+To:     thierry.reding@gmail.com, u.kleine-koenig@pengutronix.de,
+        s.trumtrar@pengutronix.de
+Cc:     linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rishi Gupta <gupt21@gmail.com>
+Subject: [PATCH 1/1] pwm: pca9685: use gpio core provided macro GPIO_LINE_DIRECTION_OUT
+Date:   Wed, 11 Mar 2020 21:22:20 +0530
+Message-Id: <1583941940-17194-1-git-send-email-gupt21@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yoshio,
+GPIO core recently added macro to uniformly specify direction
+of a GPIO Line, so use it.
 
-Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com> wrote on Wed, 11 Mar
-2020 10:47:04 +0900:
+Signed-off-by: Rishi Gupta <gupt21@gmail.com>
+---
+ drivers/pwm/pwm-pca9685.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> First patch is to rename function name becase of add new device.
-> Second patch is to supprot for new device.
-> 
-> Yoshio Furuyama (2):
->   mtd: spinand: toshiba: Rename function name to change suffix and
->     prefix (8Gbit)
->   mtd: spinand: toshiba: Support for new Kioxia Serial NAND
-> 
->  drivers/mtd/nand/spi/toshiba.c | 173 +++++++++++++++++++++++++++++++----------
->  1 file changed, 130 insertions(+), 43 deletions(-)
-> 
-
-I am very sorry but actually I had issues applying all your patches not
-because they were not based on v5.6-rc1, but because since then I
-applied a patch changing the detection that changed the content of a
-lot of structures (including in Toshiba's driver).
-
-Can you please rebase again on top of the current nand/next? I am very
-sorry for this extra work, this is my mistake.
-
-Head should be:
-
-	a5d53ad26a8b ("mtd: rawnand: brcmnand: Add support for flash-edu for dma transfers")
-
-And the culprit commit is:
-
-	f1541773af49 ("mtd: spinand: rework detect procedure for different READ_ID operation")
-
-Thanks,
-Miquèl
+diff --git a/drivers/pwm/pwm-pca9685.c b/drivers/pwm/pwm-pca9685.c
+index b2a9e77..e2bac1e 100644
+--- a/drivers/pwm/pwm-pca9685.c
++++ b/drivers/pwm/pwm-pca9685.c
+@@ -168,7 +168,7 @@ static int pca9685_pwm_gpio_get_direction(struct gpio_chip *chip,
+ 					  unsigned int offset)
+ {
+ 	/* Always out */
+-	return 0;
++	return GPIO_LINE_DIRECTION_OUT;
+ }
+ 
+ static int pca9685_pwm_gpio_direction_input(struct gpio_chip *gpio,
+-- 
+2.7.4
 
