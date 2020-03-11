@@ -2,101 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86B40181653
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 11:55:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05DFF181650
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 11:55:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729182AbgCKKyr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 06:54:47 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:10342 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729056AbgCKKyr (ORCPT
+        id S1729162AbgCKKyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 06:54:37 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56540 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbgCKKyh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 06:54:47 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02BAmM0s020922;
-        Wed, 11 Mar 2020 11:54:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=3cvGCt8bpqbB/LxrpYqHti3FK8Z4pnOI3/BaTMIW+tU=;
- b=oeNThnReaSNTfbbFhxUuGXeiiVjbv1FeEB/UdRUcWBiu7l6L2zGuLvG4icO8IiJUlGP/
- G4oBk4lznjcYQQtIWjkWHKr4da51Iiu70YfUkKstYgNElnKfXV/hoqGWY2pDWgV4XmVD
- J7e7eIjVA7suRAnsm/7dDt4vdIagTm4mOaXCaTaIpbaEoh4qC5wj1slnWZlp5hVW5KVe
- orzBQBILuOujZp2jt9Jvf1awJYNOEyGHBBvBRPTF11TUAcnqwOBORsEMDoTE2v3XEyOs
- /+wizsNZ5CJ3A3/4bMWeIC74kkrDIW8pRk+uOWi/M+zA33DgjnQRsKIWiLGNtfGdRqXU vA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2ym1mh29p6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 11 Mar 2020 11:54:43 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 302C110003D;
-        Wed, 11 Mar 2020 11:54:39 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag7node2.st.com [10.75.127.20])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 25EDB2A543D;
-        Wed, 11 Mar 2020 11:54:39 +0100 (CET)
-Received: from localhost (10.75.127.48) by SFHDAG7NODE2.st.com (10.75.127.20)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 11 Mar 2020 11:54:38
- +0100
-From:   Loic Pallardy <loic.pallardy@st.com>
-To:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>,
-        <fabien.dessenne@st.com>, <s-anna@ti.com>,
-        Loic Pallardy <loic.pallardy@st.com>
-Subject: [RFC 2/2] remoteproc: core: keep rproc in crash state in case of recovery failure
-Date:   Wed, 11 Mar 2020 11:54:32 +0100
-Message-ID: <1583924072-20648-3-git-send-email-loic.pallardy@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583924072-20648-1-git-send-email-loic.pallardy@st.com>
-References: <1583924072-20648-1-git-send-email-loic.pallardy@st.com>
+        Wed, 11 Mar 2020 06:54:37 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 2A4782929C9;
+        Wed, 11 Mar 2020 10:54:36 +0000 (GMT)
+Date:   Wed, 11 Mar 2020 11:54:33 +0100
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     shiva.linuxworks@gmail.com
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Shivamurthy Shastri <sshivamurthy@micron.com>
+Subject: Re: [PATCH v6 6/6] mtd: spinand: micron: Add new Micron SPI NAND
+ devices with multiple dies
+Message-ID: <20200311115433.2360bea1@collabora.com>
+In-Reply-To: <20200309115230.7207-7-sshivamurthy@micron.com>
+References: <20200309115230.7207-1-sshivamurthy@micron.com>
+        <20200309115230.7207-7-sshivamurthy@micron.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG6NODE1.st.com (10.75.127.16) To SFHDAG7NODE2.st.com
- (10.75.127.20)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-11_04:2020-03-11,2020-03-11 signatures=0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When an error occurs during recovery procedure, internal rproc
-variables may be unaligned:
-- state is set to RPROC_OFFLINE
-- power atomic not equal to 0
-which is normal as only rproc_stop() has been executed and not
-rproc_shutdown()
+On Mon,  9 Mar 2020 12:52:30 +0100
+shiva.linuxworks@gmail.com wrote:
 
-In such case, rproc_boot() can be re-executed by client to
-reboot co-processor.
+> From: Shivamurthy Shastri <sshivamurthy@micron.com>
+> 
+> Add device table for new Micron SPI NAND devices, which have multiple
+> dies.
+> 
+> Also, enable support to select the dies.
+> 
+> Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
 
-This patch proposes to keep rproc in RPROC_CRASHED state in case
-of recovery failure to be coherent with recovery disabled mode.
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 7ac87a75cd1b..def4f9fc881d 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1679,6 +1679,12 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 	release_firmware(firmware_p);
- 
- unlock_mutex:
-+	/*
-+	 * In case of error during recovery sequence restore rproc
-+	 * state in CRASHED
-+	 */
-+	if (ret)
-+		rproc->state = RPROC_CRASHED;
- 	mutex_unlock(&rproc->lock);
- 	return ret;
- }
--- 
-2.7.4
+> ---
+>  drivers/mtd/nand/spi/micron.c | 55 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+> 
+> diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
+> index 9db1ab71fcae..f7d148aaa476 100644
+> --- a/drivers/mtd/nand/spi/micron.c
+> +++ b/drivers/mtd/nand/spi/micron.c
+> @@ -20,6 +20,14 @@
+>  
+>  #define MICRON_CFG_CR			BIT(0)
+>  
+> +/*
+> + * As per datasheet, die selection is done by the 6th bit of Die
+> + * Select Register (Address 0xD0).
+> + */
+> +#define MICRON_DIE_SELECT_REG	0xD0
+> +
+> +#define MICRON_SELECT_DIE(x)	((x) << 6)
+> +
+>  static SPINAND_OP_VARIANTS(read_cache_variants,
+>  		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
+>  		SPINAND_PAGE_READ_FROM_CACHE_X4_OP(0, 1, NULL, 0),
+> @@ -66,6 +74,20 @@ static const struct mtd_ooblayout_ops micron_8_ooblayout = {
+>  	.free = micron_8_ooblayout_free,
+>  };
+>  
+> +static int micron_select_target(struct spinand_device *spinand,
+> +				unsigned int target)
+> +{
+> +	struct spi_mem_op op = SPINAND_SET_FEATURE_OP(MICRON_DIE_SELECT_REG,
+> +						      spinand->scratchbuf);
+> +
+> +	if (target > 1)
+> +		return -EINVAL;
+> +
+> +	*spinand->scratchbuf = MICRON_SELECT_DIE(target);
+> +
+> +	return spi_mem_exec_op(spinand->spimem, &op);
+> +}
+> +
+>  static int micron_8_ecc_get_status(struct spinand_device *spinand,
+>  				   u8 status)
+>  {
+> @@ -133,6 +155,17 @@ static const struct spinand_info micron_spinand_table[] = {
+>  		     0,
+>  		     SPINAND_ECCINFO(&micron_8_ooblayout,
+>  				     micron_8_ecc_get_status)),
+> +	/* M79A 4Gb 3.3V */
+> +	SPINAND_INFO("MT29F4G01ADAGD", 0x36,
+> +		     NAND_MEMORG(1, 2048, 128, 64, 2048, 80, 2, 1, 2),
+> +		     NAND_ECCREQ(8, 512),
+> +		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
+> +					      &write_cache_variants,
+> +					      &update_cache_variants),
+> +		     0,
+> +		     SPINAND_ECCINFO(&micron_8_ooblayout,
+> +				     micron_8_ecc_get_status),
+> +		     SPINAND_SELECT_TARGET(micron_select_target)),
+>  	/* M70A 4Gb 3.3V */
+>  	SPINAND_INFO("MT29F4G01ABAFD", 0x34,
+>  		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
+> @@ -153,6 +186,28 @@ static const struct spinand_info micron_spinand_table[] = {
+>  		     SPINAND_HAS_CR_FEAT_BIT,
+>  		     SPINAND_ECCINFO(&micron_8_ooblayout,
+>  				     micron_8_ecc_get_status)),
+> +	/* M70A 8Gb 3.3V */
+> +	SPINAND_INFO("MT29F8G01ADAFD", 0x46,
+> +		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 2),
+> +		     NAND_ECCREQ(8, 512),
+> +		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
+> +					      &write_cache_variants,
+> +					      &update_cache_variants),
+> +		     SPINAND_HAS_CR_FEAT_BIT,
+> +		     SPINAND_ECCINFO(&micron_8_ooblayout,
+> +				     micron_8_ecc_get_status),
+> +		     SPINAND_SELECT_TARGET(micron_select_target)),
+> +	/* M70A 8Gb 1.8V */
+> +	SPINAND_INFO("MT29F8G01ADBFD", 0x47,
+> +		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 2),
+> +		     NAND_ECCREQ(8, 512),
+> +		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
+> +					      &write_cache_variants,
+> +					      &update_cache_variants),
+> +		     SPINAND_HAS_CR_FEAT_BIT,
+> +		     SPINAND_ECCINFO(&micron_8_ooblayout,
+> +				     micron_8_ecc_get_status),
+> +		     SPINAND_SELECT_TARGET(micron_select_target)),
+>  };
+>  
+>  static int micron_spinand_detect(struct spinand_device *spinand)
 
