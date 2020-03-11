@@ -2,116 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 087631820B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:25:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14FAD1820B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:26:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730762AbgCKSZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 14:25:03 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:41023 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730703AbgCKSZD (ORCPT
+        id S1730801AbgCKS0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 14:26:13 -0400
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:40929 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730779AbgCKS0M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:25:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583951101;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uaZ9c6mFKi33dS6s6gMieJUilQtBx6d2khI9AiP0fEw=;
-        b=UXLY8qz/iNEK3qgOVaDqRRNpjKCBsnNwnmUOnm8Ze7kf4iZchQgE04xLM1Z3sesdeS4tNL
-        S5lyaMfIv0WBc9wZXcoTw+OitZXFpwlRPidNnXxYafnGuOv9FrjAT+1rusHn1xaZDwKlG/
-        OdPxHQ5QJnE8zF3hUyvokWi7fJBNqeE=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-64-VNJ6haIENoCLoojk7TFfmA-1; Wed, 11 Mar 2020 14:25:00 -0400
-X-MC-Unique: VNJ6haIENoCLoojk7TFfmA-1
-Received: by mail-wr1-f70.google.com with SMTP id p11so1324796wrn.10
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 11:24:59 -0700 (PDT)
+        Wed, 11 Mar 2020 14:26:12 -0400
+Received: by mail-vk1-f196.google.com with SMTP id k63so816474vka.7
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 11:26:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qSTO/qgdxH6bi8PzikSAQgbIeZmagWyxAFGQFRnsxM0=;
+        b=RJDG2r5hZ7Fa4gKvOb6pCPMrNGIdb/yHB7y2MSErjlsY7DUNkWh3ZEca8aPPbLj0VE
+         ul6gkiQlxlyJ/oy4EVgannnB3f34MaqcrdBRY3NjNzJw+MC8doRaRH7czlERR29oZ7++
+         XYgZ+a+e0GmSpGSW3PT5McijvKzbFCJfGGATRrEVCXhrhJvZ8sjZbJFhTfZWIu5pT+/0
+         CE8s2xJ/zkUwJ75LtNCMyNOk99ot3gpGEzwc2DGOzuAcgDj8+bf6Wg8pUBdhHYtj4zqj
+         1kzbY7mdKIMO1CScVFA8I+qyVi62JAK/5fBe+cSzveK3TknfkrVuCQQyXf/GO4cqHQOe
+         BEAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uaZ9c6mFKi33dS6s6gMieJUilQtBx6d2khI9AiP0fEw=;
-        b=QSg7bFsZG3ntylLa2yn6p9CZi6W6JmlKMEEFRfCgKIbFrpkPv8RntozF6Elw6HTR6x
-         e3XSC0tkEhp5DInmdzJV7q8Gh49Ymsc0lY5bZ6cSRM+r5foZ0K61fqiQ9gzN+2SSh68S
-         JsKTOWhQqsj5ws0Lf3l+TdFRfhF6ObPjyVKrvkxPEnQd0brMRSdz/cqbtWfC2eLrkZRh
-         zBSurGosC/ycl0eIm1fIo5Eh4QuI+TpIch0xA8yqvZwPNbbxUF64dAzTU1xmx6v7c405
-         vtZcmPKaF2fUbjFoFEopJMvOifJPElC69oefsjkfrLIFp/PvWYp5zivtZ0N9iY/ZX4D0
-         gthQ==
-X-Gm-Message-State: ANhLgQ1NObBf9jFkPkcnDtTd7Gk0TuX4fSNuFjsssUqhBLT8rRHhX5OJ
-        Pws2IBrbJ2RCZtwbIa2l00pKnSpNR+WUHzts3p/WtUVLHDf1FkYQq2mfE1NfuNri7jZk4hWyo0m
-        M/ERIltDWmn1MTNdlYjv7o6Vs
-X-Received: by 2002:a5d:4683:: with SMTP id u3mr6044461wrq.251.1583951098564;
-        Wed, 11 Mar 2020 11:24:58 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vuFwa2rQIlp3Ndabf9/ozMQ9Cr3LXBZlBnnVx+Xl6lybR3w5KhAONmLioZJaJ7wCHoT+edMNw==
-X-Received: by 2002:a5d:4683:: with SMTP id u3mr6044427wrq.251.1583951098327;
-        Wed, 11 Mar 2020 11:24:58 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c0c-fe00-fc7e-fd47-85c1-1ab3.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:fc7e:fd47:85c1:1ab3])
-        by smtp.gmail.com with ESMTPSA id 12sm9267987wmo.30.2020.03.11.11.24.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 11:24:56 -0700 (PDT)
-Subject: Re: [RFC v2] x86: Select HARDIRQS_SW_RESEND on x86
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-References: <87sgk4naqh.fsf@nanos.tec.linutronix.de>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <0e5b484d-89f5-c018-328a-fb4a04c6cd91@redhat.com>
-Date:   Wed, 11 Mar 2020 19:24:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qSTO/qgdxH6bi8PzikSAQgbIeZmagWyxAFGQFRnsxM0=;
+        b=fwYnqa1mRbhbcCbD7DXpiqk3ky24HYnBvp2jlrYCzwJsINqVD43nDHazV0pAuGCVO6
+         wp/fvKFYxyysSNmgEPLEaOi4rvz+xClru0wGugMJv/I/iTDNvODc3dqYi3iYKd/bJsK9
+         DZWBlWpHCfzHuytasToHw/FVaJOgGwW2Exp0e2JUP/tMbmr2c4ot0niHFX4Czb5fJRXc
+         J2vRMzLUgIx9w9P+JazWR6KYLrVryXRhSvauSatYm32a2ivYq5vsDgvA8u2t9bPvHYvB
+         YuEMlRXEdypyxtOvun81CnPo6QNA0iCivm0rZdW2YSEdXjxC6CySV/4RlHon+kkGp+vl
+         /hEA==
+X-Gm-Message-State: ANhLgQ3pqBi1I1lfG92BDwzNdDQurGJg3G1rAVo0Vbay60gqGzIC5H/C
+        S+/GmHQBLNwR9rb/N5B52nZ1vYeI2l+7Xz8D3VSEtA==
+X-Google-Smtp-Source: ADFU+vuIP9IDVuL0y634tAQhisn3M2xsRFEZFWHFyFy7XLhjtLGyNWdbdNXlCC9/Qu0OTuevDsb+8mNaGPDTKJZbW+M=
+X-Received: by 2002:a1f:cbc1:: with SMTP id b184mr2790877vkg.73.1583951170072;
+ Wed, 11 Mar 2020 11:26:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <87sgk4naqh.fsf@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CA+G9fYusdfg7PMfC9Xce-xLT7NiyKSbgojpK35GOm=Pf9jXXrA@mail.gmail.com>
+ <20200311105309.1742827-1-christian.brauner@ubuntu.com>
+In-Reply-To: <20200311105309.1742827-1-christian.brauner@ubuntu.com>
+From:   Todd Kjos <tkjos@google.com>
+Date:   Wed, 11 Mar 2020 11:25:58 -0700
+Message-ID: <CAHRSSEwF_UX7=6PLsmd62PfJwzdwScjqi=JxjtWkAmGorn+Xkw@mail.gmail.com>
+Subject: Re: [PATCH] binderfs: use refcount for binder control devices too
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     naresh.kamboju@linaro.org, ard.biesheuvel@linaro.org,
+        ardb@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, lkft-triage@lists.linaro.org,
+        shuah@kernel.org, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On Wed, Mar 11, 2020 at 3:53 AM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> Binderfs binder-control devices are cleaned up via binderfs_evict_inode
+> too() which will use refcount_dec_and_test(). However, we missed to set
+> the refcount for binderfs binder-control devices and so we underflowed
+> when the binderfs instance got unmounted. Pretty obvious oversight and
+> should have been part of the more general UAF fix. The good news is that
+> having test cases (suprisingly) helps.
+>
+> Technically, we could detect that we're about to cleanup the
+> binder-control dentry in binderfs_evict_inode() and then simply clean it
+> up. But that makes the assumption that the binder driver itself will
+> never make use of a binderfs binder-control device after the binderfs
+> instance it belongs to has been unmounted and the superblock for it been
+> destroyed. While it is unlikely to ever come to this let's be on the
+> safe side. Performance-wise this also really doesn't matter since the
+> binder-control device is only every really when creating the binderfs
+> filesystem or creating additional binder devices. Both operations are
+> pretty rare.
+>
+> Fixes: f0fe2c0f050d ("binder: prevent UAF for binderfs devices II")
+> Link: https://lore.kernel.org/r/CA+G9fYusdfg7PMfC9Xce-xLT7NiyKSbgojpK35GOm=Pf9jXXrA@mail.gmail.com
+> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Cc: stable@vger.kernel.org
+> Cc: Todd Kjos <tkjos@google.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-On 1/24/20 4:19 PM, Thomas Gleixner wrote:
-> Hans,
-> 
-> Hans de Goede <hdegoede@redhat.com> writes:
->>
->> The Intel GPIO controllers do not allow implementing irq_retrigger without
->> emulating it in software, at which point we are better of just using the
->> generic HARDIRQS_SW_RESEND mechanism rather then re-implementing software
->> emulation for this separately in aprox. 14 different pinctrl drivers.
-> 
-> Indeed.
-> 
->> I'm sending this out as a RFC since I'm not %100 sure this is the best
->> solution and it seems like a somewhat big change to make.
-> 
-> It's not that bad. The only affected interrupt chips on x86 should be
-> secondary interrupt chips like the GPIO controller.
-> 
-> ioapic/msi/... have irq_retrigger() functionality, so it won't do the
-> software resend.
-> 
-> I just need to stare at the legacy PIC and the virt stuff.
-> 
->> Also maybe we should add a Cc: stable@vger.kernel.org ??? This seems like
->> somewhat a big change for that but it does solve some real issues...
-> 
-> Yes. Let me stare at the couple of weird irqchips which might get
-> surprised. I'll teach them not to do that :)
+Acked-by: Todd Kjos <tkjos@google.com>
 
-I know that you are very busy, still I'm wondering is there any progress
-on this ?
-
-Regards,
-
-Hans
-
+> ---
+>  drivers/android/binderfs.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
+> index 110e41f920c2..f303106b3362 100644
+> --- a/drivers/android/binderfs.c
+> +++ b/drivers/android/binderfs.c
+> @@ -448,6 +448,7 @@ static int binderfs_binder_ctl_create(struct super_block *sb)
+>         inode->i_uid = info->root_uid;
+>         inode->i_gid = info->root_gid;
+>
+> +       refcount_set(&device->ref, 1);
+>         device->binderfs_inode = inode;
+>         device->miscdev.minor = minor;
+>
+>
+> base-commit: 2c523b344dfa65a3738e7039832044aa133c75fb
+> --
+> 2.25.1
+>
