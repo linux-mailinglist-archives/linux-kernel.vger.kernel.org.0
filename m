@@ -2,71 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 204D8181F99
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:35:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2945C181FAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:39:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730607AbgCKRfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:35:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51106 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729852AbgCKRfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:35:14 -0400
-Received: from localhost (unknown [104.132.1.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57EBA2072F;
-        Wed, 11 Mar 2020 17:35:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583948114;
-        bh=uRPyYMPVAszfnVKvro8kpzdf0xTwiUPLRA5JUmq/v9A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AFREYax8HihMgrTlVKVrpk3AA9/wEAT4h2oCHN1AyBMB7R+05HA2C0vFxIJMHH27R
-         UPkC4nDbncZxW0a7COmWptXuSEreRqBTWA6DrlfAZg5l5dN1cyosfdQT2vN4xMPlh0
-         7y7peuTKexQxFbK0VPX1Og1l2zOYka3QVDU2pjwc=
-Date:   Wed, 11 Mar 2020 10:35:13 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>
-Subject: Re: [GIT PULL] f2fs for 5.6-rc6
-Message-ID: <20200311173513.GA261045@google.com>
-References: <20200311162735.GA152176@google.com>
- <CAHk-=wjES_Si7rUtu_EuYu4PDz4OGdA4BWhYGJ=zOoJiELiykw@mail.gmail.com>
+        id S1730575AbgCKRjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:39:22 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11629 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729852AbgCKRjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:39:22 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 43322579B4F62CF1EA02;
+        Thu, 12 Mar 2020 01:39:17 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.487.0; Thu, 12 Mar 2020 01:39:08 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <broonie@kernel.org>
+CC:     <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>, <rdunlap@infradead.org>,
+        <linux-next@vger.kernel.org>, <joe@perches.com>,
+        <Tudor.Ambarus@microchip.com>, <sfr@canb.auug.org.au>,
+        <chenxiang66@hisilicon.com>, John Garry <john.garry@huawei.com>
+Subject: [PATCH] spi: Stop selecting MTD_SPI_NOR for SPI_HISI_SFC_V3XX
+Date:   Thu, 12 Mar 2020 01:35:15 +0800
+Message-ID: <1583948115-239907-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjES_Si7rUtu_EuYu4PDz4OGdA4BWhYGJ=zOoJiELiykw@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/11, Linus Torvalds wrote:
-> On Wed, Mar 11, 2020 at 9:27 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> >
-> > Sorry for late pull request. Could you please consider this?
-> 
-> I pulled this, and then immediately unpulled.
-> 
-> Most (all?) of the commits have been committed basically minutes
-> before you sent the pull request.
-> 
-> That's simply not acceptable. Not when we're in late rc, and with
-> hundreds of lines of changes, and when there is no explanation for a
-> late pull request that was very very recently generated.
+By selecting MTD_SPI_NOR for SPI_HISI_SFC_V3XX, we may introduce unmet
+dependencies:
 
-I actually merged the last three patches which were introduced yesterday.
-I thought that it'd be fine to pull in, since they are quite trivial several
-lines of code changes.
+WARNING: unmet direct dependencies detected for MTD_SPI_NOR
+  Depends on [m]: MTD [=m] && SPI_MASTER [=y]
+  Selected by [y]:
+  - SPI_HISI_SFC_V3XX [=y] && SPI [=y] && SPI_MASTER [=y] && (ARM64 && ACPI [=y] || COMPILE_TEST [=y]) && HAS_IOMEM [=y]
 
-Others were merged over a week ago, and I've tested in the mean time.
-It seems the commit times were modified as recent date, when I reorganized
-there-in commits aligned to other branch, dev-test. Probably, I had to keep
-the commit date in somehow.
+Since MTD_SPI_NOR is only selected by SPI_HISI_SFC_V3XX for practical
+reasons - slave devices use the spi-nor driver, enabled by MTD_SPI_NOR -
+just drop it.
 
-Thanks,
+Signed-off-by: John Garry <john.garry@huawei.com>
 
-> 
->                 Linus
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 66c6c0d77ea7..ad1a2547a414 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -299,7 +299,6 @@ config SPI_HISI_SFC_V3XX
+ 	tristate "HiSilicon SPI-NOR Flash Controller for Hi16XX chipsets"
+ 	depends on (ARM64 && ACPI) || COMPILE_TEST
+ 	depends on HAS_IOMEM
+-	select MTD_SPI_NOR
+ 	help
+ 	  This enables support for HiSilicon v3xx SPI-NOR flash controller
+ 	  found in hi16xx chipsets.
+-- 
+2.17.1
+
