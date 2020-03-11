@@ -2,132 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F19DF182150
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:54:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79A66182162
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:59:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731003AbgCKSyI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 14:54:08 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41551 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730988AbgCKSyG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:54:06 -0400
-Received: by mail-pg1-f196.google.com with SMTP id b1so1676787pgm.8
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 11:54:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+NFtzlNIubXyKkT0aaqAyTYGNu2hBMxpytJJLWrkR+w=;
-        b=Xu0YYNq6iL3XItsLJITZiAfw7pQ55+Wan446ePi0MQv+K8wkXn4aRCAf4e5Emt+HlC
-         hKXOCC/w+kuvCqACGDt+jTb/a6HCI7Gwm6wXsgSTYmC6M16yXJO58tUwc7cQNtetwc/Z
-         JdAJWbhaOAvARZcMbagpxGBlTJO9eEMDFM22E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+NFtzlNIubXyKkT0aaqAyTYGNu2hBMxpytJJLWrkR+w=;
-        b=ep5NbKpW8bF49PrKJh4mzGBCgx8hf5VcddYIKihcyPkejA+HkWnz0B0m20qdR1mHEo
-         njm3O9htQSkpbIeiwNzgM5GJkZc4DvS4v2eGprXMhlzTlinaauwW117r9Fkxx/GZzI7p
-         bbj6xc6dmHeKo4NlylIjOBbMd7ExmmMHw7orM0x4KT/YRHT7nhIBRWNdykmntPzzu0zO
-         LKuFQP4UvnU4/f7q1LHw5CYOh8OTONpYPQXORwgM97KN3NDXUj/Oqvala+eeh84dsBH1
-         KkUXqsiNprrJDCpQ5RONAdYz8hxrBOEXHaSlkEehkiEi2NCZ9i6buD0FX6zYukgmS2PG
-         //PQ==
-X-Gm-Message-State: ANhLgQ2nsfWaqUU3c78ZPLMz/RFulvti1oAMBadfmMV4dOV++4l66u4g
-        pOEFFXmFq7BmHnpWm1RLX6vtNg==
-X-Google-Smtp-Source: ADFU+vtdcKOyGaZUfwI5+MQMZZomjwrU/L0V+T9gd4shCDOL0PoNkiwaShk91h0o8jLRtEUWUh1JTA==
-X-Received: by 2002:a63:b04f:: with SMTP id z15mr4044123pgo.58.1583952845893;
-        Wed, 11 Mar 2020 11:54:05 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id z24sm19444621pfk.46.2020.03.11.11.54.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 11:54:05 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 11:54:04 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 4/4] kernel: doc: remove outdated comment cred.c
-Message-ID: <202003111154.AEA9260278@keescook>
-References: <878sk94eay.fsf@x220.int.ebiederm.org>
- <AM6PR03MB517086003BD2C32E199690A3E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87r1y12yc7.fsf@x220.int.ebiederm.org>
- <87k13t2xpd.fsf@x220.int.ebiederm.org>
- <87d09l2x5n.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170F0F9DC18F5EA77C9A857E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <871rq12vxu.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170DF45E3245F55B95CCD91E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <877dzt1fnf.fsf@x220.int.ebiederm.org>
- <AM6PR03MB517039DB07AB641C194FEA57E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        id S1730963AbgCKS7H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 14:59:07 -0400
+Received: from mga01.intel.com ([192.55.52.88]:25674 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730734AbgCKS7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 14:59:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 11:59:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
+   d="scan'208";a="234797582"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
+  by fmsmga007.fm.intel.com with ESMTP; 11 Mar 2020 11:59:06 -0700
+Message-ID: <d185e125da333953e7a78eeab8538652905fd978.camel@intel.com>
+Subject: Re: [PATCH V1 01/13] selftests/resctrl: Fix feature detection
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>,
+        "babu.moger@amd.com" <babu.moger@amd.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Wed, 11 Mar 2020 11:54:19 -0700
+In-Reply-To: <518831ab-0f4e-5c5c-10c2-52c5f8492df1@intel.com>
+References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
+         <7e3e4b91f5786a489e68eecda21e1d8049b60181.1583657204.git.sai.praneeth.prakhya@intel.com>
+         <a7407b0d-4e4d-d0cf-621c-769d218fdace@intel.com>
+         <FFF73D592F13FD46B8700F0A279B802F57307F89@ORSMSX114.amr.corp.intel.com>
+         <d0409729-b546-f0b9-4944-cbe5c9a74f76@intel.com>
+         <FFF73D592F13FD46B8700F0A279B802F573084EC@ORSMSX114.amr.corp.intel.com>
+         <b83ba95d-9f0f-4d4f-b68c-c5a612afece4@intel.com>
+         <664cf142449b0a1ef7f09d04111f96ff84738e28.camel@intel.com>
+         <518831ab-0f4e-5c5c-10c2-52c5f8492df1@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM6PR03MB517039DB07AB641C194FEA57E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 02:44:18PM +0100, Bernd Edlinger wrote:
-> This removes an outdated comment in prepare_kernel_cred.
+Hi Reinette,
+
+On Wed, 2020-03-11 at 11:45 -0700, Reinette Chatre wrote:
+> Hi Sai,
 > 
-> There is no "cred_replace_mutex" any more, so the comment must
-> go away.
+> On 3/11/2020 11:22 AM, Sai Praneeth Prakhya wrote:
+> > Hi Reinette,
+> > 
+> > On Wed, 2020-03-11 at 11:06 -0700, Reinette Chatre wrote:
+> > > Hi Sai,
+> > > 
+> > > On 3/9/2020 3:51 PM, Prakhya, Sai Praneeth wrote:
+> > > > > -----Original Message-----
+> > > > > From: Reinette Chatre <reinette.chatre@intel.com>
+> > > > > Sent: Monday, March 9, 2020 3:34 PM
+> > > > 
+> > > > [SNIP]
+> > > > 
+> > > > > > That's a good point and makes sense to me. I think we could fix it
+> > > > > > in
+> > > > > > two ways 1. grep for strings in dmesg but that will still leave
+> > > > > > ambiguity in deciding b/w mbm and cqm because kernel prints
+> > > > > > "resctrl:
+> > > > > > L3
+> > > > > monitoring detected" for both the features 2. Check in "info"
+> > > > > directory
+> > > > > > 	a. For cat_l3, we could search for info/L3
+> > > > > > 	b. For mba, we could search for info/MB
+> > > > > > 	c. For cqm and mbm, we could search for specified string in
+> > > > > > info/L3_MON/mon_features
+> > > > > > 
+> > > > > > I think option 2 might be better because it can handle all cases,
+> > > > > > please let me
+> > > > > know what you think.
+> > > > > 
+> > > > > I agree. For the reasons you mention and also that (1) may not be
+> > > > > possible if the
+> > > > > loglevel prevents those lines from being printed.
+> > > > 
+> > > > Makes sense. I will work on the fix.
+> > > 
+> > > One more note about this ... from what I can tell the test for a feature
+> > > currently fails if the platform does not support the feature. Would it
+> > > be possible to just skip the test in this case instead?
+> > 
+> > That's because the output of the test should be just "ok" or "not ok".
 > 
-> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
-> ---
->  kernel/cred.c | 2 --
->  1 file changed, 2 deletions(-)
+> The output could be something like:
 > 
-> diff --git a/kernel/cred.c b/kernel/cred.c
-> index 809a985..71a7926 100644
-> --- a/kernel/cred.c
-> +++ b/kernel/cred.c
-> @@ -675,8 +675,6 @@ void __init cred_init(void)
->   * The caller may change these controls afterwards if desired.
->   *
->   * Returns the new credentials or NULL if out of memory.
-> - *
-> - * Does not take, and does not return holding current->cred_replace_mutex.
->   */
->  struct cred *prepare_kernel_cred(struct task_struct *daemon)
->  {
-> -- 
-> 1.9.1
+> ok MBA # SKIP MBA is not supported
 
--- 
-Kees Cook
+Makes sense.. I will fix it.
+
+> > I can change it to something like "# Skip <test_name> because platform
+> > doesn't
+> > support the feature", but not really sure if it complies with TAP 13
+> > protocol.
+> 
+> Please consider the "skip" directive at
+> https://testanything.org/tap-version-13-specification.html
+
+Sure! thanks for the link :)
+
+Regards,
+Sai
+
