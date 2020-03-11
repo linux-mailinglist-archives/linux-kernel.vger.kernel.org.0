@@ -2,54 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A5851812D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:22:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DADE01812E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:27:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728626AbgCKIWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 04:22:18 -0400
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:36665 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbgCKIWS (ORCPT
+        id S1728514AbgCKI1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 04:27:07 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:42640 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726923AbgCKI1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 04:22:18 -0400
-Received: by mail-vk1-f194.google.com with SMTP id a1so287668vkg.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 01:22:17 -0700 (PDT)
+        Wed, 11 Mar 2020 04:27:07 -0400
+Received: by mail-qk1-f196.google.com with SMTP id e11so1238721qkg.9
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 01:27:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=zdxUWMWXTEs/zs0LJh1bxLoOHpDg1k5nkLimqXptzik=;
-        b=Vv4CHY4+JL7e3fdzoiUetDUozCKvW47aJtBunNSK1qiSOaXsLmI778GNIOhoiQs9lY
-         h9Kxm7VAmSY2HOTq3nIbjgU8VW6jaO5tQlT0AQ4vZCsOlOHIGYOlqe40Zlib6E1gnOAJ
-         nuFkA5+/u6+w3sctQ0x6TSpHeCi/wituVzVFZjpP6lxBnFcpUTgGJmcSt48eXCVxI6jL
-         8t32CMsFfqkYiKTDChCNneFm7oZc3Db59DKySOQ65JHw7FitJgsHc2DKLZT1nz9gdtnR
-         fGntj48fl+z9Oim7S98AjMvKrkp2KmhaOLgiTyhhjyoa+cjiRytNrHwtfa2nL6w2dspe
-         mumA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Vuzfa5Ii3C+114ZZwPqdNHymYuyp0hGwxEjG+i+rX1M=;
+        b=KK2szt1h7nFFVCO3f9nxfC++kUNef5i7vZty9U/gBtxe1i+yMWak1f4jIR5Kb4+ZLA
+         4vw5Iye+6iBjmx4V99eSyyfZWKslZbhILLwKA+Fh0R3xZ4NGcf7fD2K+qr0lK8OL/e1j
+         HEvSqaPf47seotvIOR/52luoXum5Qp7c7fwsU135RB1sY9c8iV1SxIsluGw4hoP8ENKU
+         6Dc3TfE8HEo36qIXRqrCwGcnJ8/oVPIEMnJh0529oXSU0ZV2sLh+72GfO4C5jjxotBCF
+         ZU43ziooQvVB2uodGzLDDFl0uwQyXL4tiyfagbq7qk+JhQfeh5xNtG0zV0/ao45KwBlg
+         xzvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=zdxUWMWXTEs/zs0LJh1bxLoOHpDg1k5nkLimqXptzik=;
-        b=iQUrkmskxHgUUSJMePvmb7XRPUdY3YeAGmalknZs6NARvuc1HByt0FD5jbJs9YkFo0
-         ImNI6DfgZxQP2TITmateMOJZ29FucAIRIHdFWBh7ozJnK3Ym6fgpj34Jt/XAR72LxM/b
-         dORiT61tzUkljPaQFX/+My4lzv4QdaBOgsWcUhfxrTn1JzN46EAMOakZSU7I9y311SfT
-         mtq+m5k0p5is8Z0ymk21t382y9yxftf3ZbpGZSrBfhIyjgPcyQWucst8EAy0QNi2JZvA
-         x82gKeAYxGYzxSa+vLnqCf21gT1x/2qXNzG2DiJ5b/g6YjHWagCqA2B6tTq0C7YWCihI
-         DWmQ==
-X-Gm-Message-State: ANhLgQ2ffRtYLqxBeR3qGBOZdN6kBMWqlXKXbClsMh2QMxEdkwvKATCe
-        a4yVW7+HKOVSsIIQo4fyGajCX1gzZ8QBX61vmOU=
-X-Google-Smtp-Source: ADFU+vtO/7bOyfPcaODlMcubeZVdaNidhxs2H3Cj8N/mD1kru2e6YvPYdHY2mrK7YJQr84XrBGD3/nUN3q/7afNHQ9Q=
-X-Received: by 2002:a1f:4c45:: with SMTP id z66mr1219179vka.20.1583914937081;
- Wed, 11 Mar 2020 01:22:17 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Vuzfa5Ii3C+114ZZwPqdNHymYuyp0hGwxEjG+i+rX1M=;
+        b=RWspj9KMm98cVF2TDY8CKg13m2yNWxzXjoRIYFGMg8udYDEn0hUtFvQOV27PbePfHH
+         Ll0BHjudfIPefNHTQQUnL9CDdjdoiIMPMM3HLmD7AV7xONsN6CCwJTPOnrhRlat3raUA
+         r62JxF37dX+CE1cKK8qrelr9Dx1s9ZROAwH09XafAu/piLIZ4HH5h+4omEgriR9vmTUN
+         CWvmUJ7bngU8vS3KpKtaPbcZO5ArV0byzsUChpeRT4AHay4KLJlsx0OAo76BtfmMfHjY
+         zamr6Q7Cmk5Hts5TRVwzauUj7Xs6Ddn02S6RWSofjW7mxNMeOhjn8K+IY0pmwL2U4Kv/
+         5Icg==
+X-Gm-Message-State: ANhLgQ1UdVfYomRpUHjab4P8R3EgpvkSHxlADeScB4/XAQiGuHNpR0Ub
+        c1p2t90L3/8mxyTW4AHsvCXOm/oBvEi0BwfI3zL/ow==
+X-Google-Smtp-Source: ADFU+vtRG2ZTrHb7CXb7FLMFpUdds0tOVt2N9o3unR9wlTcKNLgyYsV64mnNuo/+Q1Bnfi60U9+WJIUiDfOg7LEc+Cc=
+X-Received: by 2002:a37:b9c7:: with SMTP id j190mr1583102qkf.21.1583915225914;
+ Wed, 11 Mar 2020 01:27:05 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:2fd1:0:0:0:0:0 with HTTP; Wed, 11 Mar 2020 01:22:15
- -0700 (PDT)
-Reply-To: ayishagddafio@mail.ru
-From:   Aisha Gddafi <aishagddafi68@gmail.com>
-Date:   Wed, 11 Mar 2020 01:22:15 -0700
-Message-ID: <CAKJgomEG0E77-LUgeo2ne0Uuwz9U2Ob9LKJQTerCmSaJgxAf1Q@mail.gmail.com>
-Subject: Lieber Freund (Assalamu Alaikum),?
-To:     undisclosed-recipients:;
+References: <20200310205841.123084-1-michael.auchter@ni.com>
+In-Reply-To: <20200310205841.123084-1-michael.auchter@ni.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 11 Mar 2020 09:26:54 +0100
+Message-ID: <CAMpxmJXBN_qTwHpcD-anHVB-uhatuN-PZDUUe6boD0GoFiMVXw@mail.gmail.com>
+Subject: Re: [PATCH] misc: eeprom: at24: fix regulator underflow
+To:     Michael Auchter <michael.auchter@ni.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,41 +60,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=20
-Lieber Freund (Assalamu Alaikum),
+wt., 10 mar 2020 o 21:59 Michael Auchter <michael.auchter@ni.com> napisa=C5=
+=82(a):
+>
+> The at24 driver attempts to read a byte from the device to validate that
+> it's actually present, and if not, disables the vcc regulator and
+> returns -ENODEV. However, between the read and the error handling path,
+> pm_runtime_idle() is called and invokes the driver's suspend callback,
+> which also disables the vcc regulator. This leads to an underflow of the
+> regulator enable count if the EEPROM is not present.
+>
+> Move the pm_runtime_suspend() call to be after the error handling path
+> to resolve this.
+>
+> Signed-off-by: Michael Auchter <michael.auchter@ni.com>
+> ---
+>  drivers/misc/eeprom/at24.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
+> index 031eb64549af..282c9ef68ed2 100644
+> --- a/drivers/misc/eeprom/at24.c
+> +++ b/drivers/misc/eeprom/at24.c
+> @@ -712,13 +712,14 @@ static int at24_probe(struct i2c_client *client)
+>          * chip is functional.
+>          */
+>         err =3D at24_read(at24, 0, &test_byte, 1);
+> -       pm_runtime_idle(dev);
+>         if (err) {
+>                 pm_runtime_disable(dev);
+>                 regulator_disable(at24->vcc_reg);
+>                 return -ENODEV;
+>         }
+>
+> +       pm_runtime_idle(dev);
+> +
+>         if (writable)
+>                 dev_info(dev, "%u byte %s EEPROM, writable, %u bytes/writ=
+e\n",
+>                          byte_len, client->name, at24->write_max);
+> --
+> 2.24.1
+>
 
-Ich bin vor einer privaten Suche auf Ihren E-Mail-Kontakt gesto=C3=9Fen
-Ihre Hilfe. Mein Name ist Aisha Al-Qaddafi, eine alleinerziehende
-Mutter und eine Witwe
-mit drei Kindern. Ich bin die einzige leibliche Tochter des Sp=C3=A4tlibysc=
-hen
-Pr=C3=A4sident (verstorbener Oberst Muammar Gaddafi).
+Patch applied for fixes.
 
-Ich habe Investmentfonds im Wert von siebenundzwanzig Millionen
-f=C3=BCnfhunderttausend
-United State Dollar ($ 27.500.000.00) und ich brauche eine
-vertrauensw=C3=BCrdige Investition
-Manager / Partner aufgrund meines aktuellen Fl=C3=BCchtlingsstatus bin ich =
-jedoch
-M=C3=B6glicherweise interessieren Sie sich f=C3=BCr die Unterst=C3=BCtzung =
-von
-Investitionsprojekten in Ihrem Land
-Von dort aus k=C3=B6nnen wir in naher Zukunft Gesch=C3=A4ftsbeziehungen auf=
-bauen.
-
-Ich bin bereit, mit Ihnen =C3=BCber das Verh=C3=A4ltnis zwischen Investitio=
-n und
-Unternehmensgewinn zu verhandeln
-Basis f=C3=BCr die zuk=C3=BCnftige Investition Gewinne zu erzielen.
-
-Wenn Sie bereit sind, dieses Projekt in meinem Namen zu bearbeiten,
-antworten Sie bitte dringend
-Damit ich Ihnen mehr Informationen =C3=BCber die Investmentfonds geben kann=
-.
-
-Ihre dringende Antwort wird gesch=C3=A4tzt. schreibe mir an diese email adr=
-esse (
-ayishagddafio@mail.ru ) zur weiteren Diskussion.
-
-Freundliche Gr=C3=BC=C3=9Fe
-Frau Aisha Al-Qaddafi
+Bartosz
