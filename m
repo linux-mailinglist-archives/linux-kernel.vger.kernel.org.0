@@ -2,369 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6841181702
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 12:43:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED60518170E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 12:49:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729151AbgCKLnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 07:43:08 -0400
-Received: from relay.sw.ru ([185.231.240.75]:51882 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725834AbgCKLnI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 07:43:08 -0400
-Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1jBzl2-0006Eu-OS; Wed, 11 Mar 2020 14:42:40 +0300
-Subject: Re: [PATCH v2 1/1] mm: fix interrupt disabled long time inside
- deferred_init_memmap()
-To:     Shile Zhang <shile.zhang@linux.alibaba.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>
-References: <20200303161551.132263-1-shile.zhang@linux.alibaba.com>
- <20200303161551.132263-2-shile.zhang@linux.alibaba.com>
- <fc22967d-0803-2e6f-26af-148a24f8f958@virtuozzo.com>
- <386d7d5f-a57d-f5b1-acee-131ce23d35ec@linux.alibaba.com>
- <2d4defb7-8816-3447-3d65-f5d80067a9fd@virtuozzo.com>
- <1856c956-858f-82d4-f3b3-05b2d0e5641c@linux.alibaba.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <094fcf02-37bd-c9b9-7156-77b9b34955e0@virtuozzo.com>
-Date:   Wed, 11 Mar 2020 14:42:40 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1729211AbgCKLtm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 07:49:42 -0400
+Received: from retiisi.org.uk ([95.216.213.190]:40214 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729165AbgCKLtl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 07:49:41 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 0450A634C87;
+        Wed, 11 Mar 2020 13:48:48 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1jBzqy-0001Rt-6p; Wed, 11 Mar 2020 13:48:48 +0200
+Date:   Wed, 11 Mar 2020 13:48:48 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Robert Foss <robert.foss@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        ben.kao@intel.com, mchehab@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, matthias.bgg@gmail.com, davem@davemloft.net,
+        gregkh@linuxfoundation.org, Jonathan.Cameron@huawei.com,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Dongchun Zhu <dongchun.zhu@mediatek.com>,
+        Tomasz Figa <tfiga@chromium.org>
+Subject: Re: [v1 2/3] media: ov8856: Add devicetree support
+Message-ID: <20200311114848.GJ2619@valkosipuli.retiisi.org.uk>
+References: <20200310134603.30260-1-robert.foss@linaro.org>
+ <20200310134603.30260-3-robert.foss@linaro.org>
+ <20200310142652.GK1922688@smile.fi.intel.com>
+ <CAG3jFyu5S1H=r6pV92tc_a2LoCUnhb0mDbOegP2BCO8a5C1nVg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1856c956-858f-82d4-f3b3-05b2d0e5641c@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG3jFyu5S1H=r6pV92tc_a2LoCUnhb0mDbOegP2BCO8a5C1nVg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.03.2020 04:44, Shile Zhang wrote:
-> Hi Kirill,
-> 
-> Sorry for late to reply!
-> I'm not fully understood the whole thing about deferred page init, so I
-> just force on the jiffies update issue itself.
-> 
-> Maybe I'm in wrong path, it seems make no sense that deferred page init in 1 CPU system,
-> it cannot be initialize memory parallel.
+Hi Robert,
 
-Yes, it can't be initialized in parallel. But scheduler interprets deferred thread as a separate
-task, so CPU time will be shared between that thread and the rest of tasks. This still should
-make boot faster.
+On Tue, Mar 10, 2020 at 04:55:20PM +0100, Robert Foss wrote:
+> Hi Andy,
+> 
+> On Tue, 10 Mar 2020 at 15:26, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > On Tue, Mar 10, 2020 at 02:46:02PM +0100, Robert Foss wrote:
+> > > Add devicetree match table, and enable ov8856_probe()
+> > > to initialize power, clocks and reset pins.
+> >
+> > ...
+> >
+> > > +#define OV8856_NUM_SUPPLIES ARRAY_SIZE(ov8856_supply_names)
+> >
+> > Use ARRAY_SIZE() directly.
+> 
+> Ack.
+> 
+> >
+> > Have you seen Sakari's comments?
+> > Sakari, do I have déją vu or you indeed commented this driver?
+> 
+> Yes, I may have missed some part of it, so please tell me if I have.
+> 
+> There is a patchset floating around that implements a larger chunk of
+> functionality,
+> including a couple of new modes. This is based on that series.
 
-> It might be better to disable deferred page init in 'deferred_init' in case of 1 CPU
-> (or only one memory node).
-> 
-> In other word, seems the better way to solve this issue is do not bind 'pgdatinit' thread
-> on boot CPU.
-> 
-> I also refactor the patch based on your comment, please help to check, thanks!
-> 
-> 
-> On 2020/3/4 18:47, Kirill Tkhai wrote:
->> On 04.03.2020 05:34, Shile Zhang wrote:
->>> Hi Kirill,
->>>
->>> Thanks for your quickly reply!
->>>
->>> On 2020/3/4 00:52, Kirill Tkhai wrote:
->>>> On 03.03.2020 19:15, Shile Zhang wrote:
->>>>> When 'CONFIG_DEFERRED_STRUCT_PAGE_INIT' is set, 'pgdatinit' kthread will
->>>>> initialise the deferred pages with local interrupts disabled. It is
->>>>> introduced by commit 3a2d7fa8a3d5 ("mm: disable interrupts while
->>>>> initializing deferred pages").
->>>>>
->>>>> The local interrupt will be disabled long time inside
->>>>> deferred_init_memmap(), depends on memory size.
->>>>> On machine with NCPUS <= 2, the 'pgdatinit' kthread could be pined on
->>>>> boot CPU, then the tick timer will stuck long time, which caused the
->>>>> system wall time inaccuracy.
->>>>>
->>>>> For example, the dmesg shown that:
->>>>>
->>>>>     [    0.197975] node 0 initialised, 32170688 pages in 1ms
->>>>>
->>>>> Obviously, 1ms is unreasonable.
->>>>> Now, fix it by restore in the pending interrupts inside the while loop.
->>>>> The reasonable demsg shown likes:
->>>>>
->>>>> [    1.069306] node 0 initialised, 32203456 pages in 894ms
->>>> The way I understand the original problem, that Pavel fixed:
->>>>
->>>> we need disable irqs in deferred_init_memmap() since this function may be called
->>>> in parallel with deferred_grow_zone() called from interrupt handler. So, Pavel
->>>> added lock to fix the race.
->>>>
->>>> In case of we temporary unlock the lock, interrupt still be possible,
->>>> so my previous proposition returns the problem back.
->>>>
->>>> Now thought again, I think we have to just add:
->>>>
->>>>      pgdat_resize_unlock();
->>>>      pgdat_resize_lock();
->>>>
->>>> instead of releasing interrupts, since in case of we just release them with lock held,
->>>> a call of interrupt->deferred_grow_zone() bring us to a deadlock.
->>>>
->>>> So, unlock the lock is must.
->>> Yes, you're right! I missed this point.
->>> Thanks for your comment!
->>>
->>>>> Signed-off-by: Shile Zhang<shile.zhang@linux.alibaba.com>
->>>>> ---
->>>>>    mm/page_alloc.c | 6 +++++-
->>>>>    1 file changed, 5 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->>>>> index 3c4eb750a199..d3f337f2e089 100644
->>>>> --- a/mm/page_alloc.c
->>>>> +++ b/mm/page_alloc.c
->>>>> @@ -1809,8 +1809,12 @@ static int __init deferred_init_memmap(void *data)
->>>>>         * that we can avoid introducing any issues with the buddy
->>>>>         * allocator.
->>>>>         */
->>>>> -    while (spfn < epfn)
->>>>> +    while (spfn < epfn) {
->>>>>            nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
->>>>> +        /* let in any pending interrupts */
->>>>> +        local_irq_restore(flags);
->>>>> +        local_irq_save(flags);
->>>>> +    }
->>>>>    zone_empty:
->>>>>        pgdat_resize_unlock(pgdat, &flags);
->>>> I think we need here something like below (untested):
->>>>
->>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->>>> index 79e950d76ffc..323afa9a4db5 100644
->>>> --- a/mm/page_alloc.c
->>>> +++ b/mm/page_alloc.c
->>>> @@ -1828,7 +1828,7 @@ static int __init deferred_init_memmap(void *data)
->>>>    {
->>>>        pg_data_t *pgdat = data;
->>>>        const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
->>>> -    unsigned long spfn = 0, epfn = 0, nr_pages = 0;
->>>> +    unsigned long spfn = 0, epfn = 0, nr_pages = 0, prev_nr_pages = 0;
->>>>        unsigned long first_init_pfn, flags;
->>>>        unsigned long start = jiffies;
->>>>        struct zone *zone;
->>>> @@ -1869,8 +1869,18 @@ static int __init deferred_init_memmap(void *data)
->>>>         * that we can avoid introducing any issues with the buddy
->>>>         * allocator.
->>>>         */
->>>> -    while (spfn < epfn)
->>>> +    while (spfn < epfn) {
->>>>            nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
->>>> +        /*
->>>> +         * Release interrupts every 1Gb to give a possibility
->>>> +         * a timer to advance jiffies.
->>>> +         */
->>>> +        if (nr_pages - prev_nr_pages > (1UL << (30 - PAGE_SHIFT))) {
->>>> +            prev_nr_pages = nr_pages;
->>>> +            pgdat_resize_unlock(pgdat, &flags);
->>>> +            pgdat_resize_lock(pgdat, &flags);
->>>> +        }
->>>> +    }
->>>>    zone_empty:
->>>>        pgdat_resize_unlock(pgdat, &flags);
->>>>   (I believe the comment may be improved more).
->>> Yeah, your patch is better!
->>> I test your code and it works!
->>> But it seems that 1G is still hold the interrupts too long, about 40ms in my env
->>> with Intel(R) Xeon(R) 2.5GHz). I tried other size, it is OK to use 1024 pages (4MB),
->>> which suggested by Andrew's before.
->>>
->>> Could you please help to review it again?
->>>
->>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->>> index 3c4eb750a199..5def66d3ffcd 100644
->>> --- a/mm/page_alloc.c
->>> +++ b/mm/page_alloc.c
->>> @@ -1768,7 +1768,7 @@ static int __init deferred_init_memmap(void *data)
->>>   {
->>>          pg_data_t *pgdat = data;
->>>          const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
->>> -       unsigned long spfn = 0, epfn = 0, nr_pages = 0;
->>> +       unsigned long spfn = 0, epfn = 0, nr_pages = 0, prev_nr_pages = 0;
->>>          unsigned long first_init_pfn, flags;
->>>          unsigned long start = jiffies;
->>>          struct zone *zone;
->>> @@ -1809,8 +1809,17 @@ static int __init deferred_init_memmap(void *data)
->>>           * that we can avoid introducing any issues with the buddy
->>>           * allocator.
->>>           */
->>> -       while (spfn < epfn)
->>> +       while (spfn < epfn) {
->>>                  nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
->>> +               /*
->>> +                * Restore pending interrupts every 1024 pages to give
->>> +                * the chance tick timer to advance jiffies.
->>> +                */
->>> +               if (nr_pages - prev_nr_pages > 1024) {
->>> +                       pgdat_resize_unlock(&flags);
->>> +                       pgdat_resize_lock(&flags);
->> Here is problem: prev_nr_pages must be updated.
->>
->> Anyway, releasing every 4M looks wrong for me, since you removes the fix that Pavel introduced.
->> He protected against big allocations made from interrupt content. But in case of we unlock
->> the lock after 4Mb, only 4Mb will be available for allocations from interrupts. pgdat->first_deferred_pfn
->> is updated at the start of function, so interrupt allocations won't be able to initialize
->> mode for themselve.
-> 
-> Yes, you're right. I missed this point since I'm not fully understood the code before.
-> Thanks for your advice!
->> In case of you want unlock interrupts very often, you should make some creativity with first_deferred_pfn.
->> We should update it sequentially. Something like below (untested):
-> 
-> I got your point now, thanks!
->> ---
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index 79e950d76ffc..be09d158baeb 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -1828,7 +1828,7 @@ static int __init deferred_init_memmap(void *data)
->>   {
->>       pg_data_t *pgdat = data;
->>       const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
->> -    unsigned long spfn = 0, epfn = 0, nr_pages = 0;
->> +    unsigned long spfn = 0, epfn = 0, nr_pages;
->>       unsigned long first_init_pfn, flags;
->>       unsigned long start = jiffies;
->>       struct zone *zone;
->> @@ -1838,7 +1838,7 @@ static int __init deferred_init_memmap(void *data)
->>       /* Bind memory initialisation thread to a local node if possible */
->>       if (!cpumask_empty(cpumask))
->>           set_cpus_allowed_ptr(current, cpumask);
->> -
->> +again:
->>       pgdat_resize_lock(pgdat, &flags);
->>       first_init_pfn = pgdat->first_deferred_pfn;
->>       if (first_init_pfn == ULONG_MAX) {
->> @@ -1850,7 +1850,6 @@ static int __init deferred_init_memmap(void *data)
->>       /* Sanity check boundaries */
->>       BUG_ON(pgdat->first_deferred_pfn < pgdat->node_start_pfn);
->>       BUG_ON(pgdat->first_deferred_pfn > pgdat_end_pfn(pgdat));
->> -    pgdat->first_deferred_pfn = ULONG_MAX;
->>         /* Only the highest zone is deferred so find it */
->>       for (zid = 0; zid < MAX_NR_ZONES; zid++) {
->> @@ -1864,14 +1863,30 @@ static int __init deferred_init_memmap(void *data)
->>                            first_init_pfn))
->>           goto zone_empty;
->>   +    nr_pages = 0;
-> 
-> 'nr_pages' used to mark the total init pages before, so it cannot be zerolized each round.
-> seems we need one more to count the pages init each round.
-> 
->> +
->>       /*
->>        * Initialize and free pages in MAX_ORDER sized increments so
->>        * that we can avoid introducing any issues with the buddy
->>        * allocator.
->> +     * Final iteration marker is: spfn=ULONG_MAX and epfn=0.
->>        */
->> -    while (spfn < epfn)
->> +    while (spfn < epfn) {
->>           nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
->> +        if (!epfn)
->> +            break;
-> 
-> Seems 'epfn' never goes to 0 since it is "end page frame number", right?
-> So this is needless.
->> +        pgdat->first_deferred_pfn = epfn;
-> 
-> I think first_deferred_pfn update wrong value here, it seems should be the spfn, the start pfn right?
->> +        /*
->> +         * Restore pending interrupts every 128Mb to give
->> +         * the chance tick timer to advance jiffies.
->> +         */
->> +        if (nr_pages > (1UL << 27 - PAGE_SHIFT)) {
->> +            pgdat_resize_unlock(pgdat, &flags);
->> +            goto again;
->> +        }
->> +    }
->>   zone_empty:
->> +    pgdat->first_deferred_pfn = ULONG_MAX;
->>       pgdat_resize_unlock(pgdat, &flags);
->>         /* Sanity check that the next zone really is unpopulated */
->>
->>
-> I update the patch based on your comment, it passed the test.
-> Could you please help to review it again? Thanks!
+Please see earlier comments given against an earlier variant of this set.
+They're on LMML.
 
-The patch is OK for me. It may be sent into ml with an appropriate description.
+> 
+> >
+> > ...
+> >
+> > > +     gpiod_set_value_cansleep(ov8856->n_shutdn_gpio, GPIOD_OUT_LOW);
+> >
+> > > +     gpiod_set_value_cansleep(ov8856->n_shutdn_gpio, GPIOD_OUT_HIGH);
+> >
+> > Yes, seems this one is inverted.
+> >
+> > ...
+> >
+> > > +{
+> > > +     gpiod_set_value_cansleep(ov8856->n_shutdn_gpio, GPIOD_OUT_LOW);
+> > > +     regulator_bulk_disable(OV8856_NUM_SUPPLIES, ov8856->supplies);
+> > > +     clk_disable_unprepare(ov8856->xvclk);
+> > > +}
+> > > +
+> > > +
+> >
+> > One blank line is enough.
+> >
+> > ...
+> >
+> > > +     ov8856->xvclk = devm_clk_get(&client->dev, "xvclk");
+> > > +     if (IS_ERR(ov8856->xvclk)) {
+> > > +             dev_err(&client->dev, "failed to get xvclk\n");
+> > > +             return -EINVAL;
+> > > +     }
+> >
+> > Previously it worked without clock provider, now you make a dependency.
+> >
+> > This won't work.
+> 
+> So the ideal behavior would be to only use the xclk if it is provided?
 
-Feel free to not forget to add my:
+See e.g. the smiapp driver on how to do this so it continues to work on
+ACPI.
 
-Co-developed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+I think it'd be also appropriate to add the usleep() after lifting reset
+only if the reset GPIO is defined for the device.
 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 3c4eb750a199..841c902d4509 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1763,12 +1763,17 @@ deferred_init_maxorder(u64 *i, struct zone *zone, unsigned long *start_pfn,
->         return nr_pages;
->  }
-> 
-> +/*
-> + * Release the tick timer interrupts for every TICK_PAGE_COUNT pages.
-> + */
-> +#define TICK_PAGE_COUNT        (32 * 1024)
-> +
->  /* Initialise remaining memory on a node */
->  static int __init deferred_init_memmap(void *data)
->  {
->         pg_data_t *pgdat = data;
->         const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
-> -       unsigned long spfn = 0, epfn = 0, nr_pages = 0;
-> +       unsigned long spfn = 0, epfn = 0, nr_pages = 0, prev_nr_pages = 0;
->         unsigned long first_init_pfn, flags;
->         unsigned long start = jiffies;
->         struct zone *zone;
-> @@ -1779,6 +1784,7 @@ static int __init deferred_init_memmap(void *data)
->         if (!cpumask_empty(cpumask))
->                 set_cpus_allowed_ptr(current, cpumask);
-> 
-> +again:
->         pgdat_resize_lock(pgdat, &flags);
->         first_init_pfn = pgdat->first_deferred_pfn;
->         if (first_init_pfn == ULONG_MAX) {
-> @@ -1790,7 +1796,6 @@ static int __init deferred_init_memmap(void *data)
->         /* Sanity check boundaries */
->         BUG_ON(pgdat->first_deferred_pfn < pgdat->node_start_pfn);
->         BUG_ON(pgdat->first_deferred_pfn > pgdat_end_pfn(pgdat));
-> -       pgdat->first_deferred_pfn = ULONG_MAX;
-> 
->         /* Only the highest zone is deferred so find it */
->         for (zid = 0; zid < MAX_NR_ZONES; zid++) {
-> @@ -1809,9 +1814,23 @@ static int __init deferred_init_memmap(void *data)
->          * that we can avoid introducing any issues with the buddy
->          * allocator.
->          */
-> -       while (spfn < epfn)
-> +       while (spfn < epfn) {
->                 nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
-> +               /*
-> +                * Release the interrupts for every TICK_PAGE_COUNT pages
-> +                * (128MB) to give the chance that tick timer to advance
-> +                * the jiffies.
-> +                */
-> +               if ((nr_pages - prev_nr_pages) > TICK_PAGE_COUNT) {
-> +                       prev_nr_pages = nr_pages;
-> +                       pgdat->first_deferred_pfn = spfn;
-> +                       pgdat_resize_unlock(pgdat, &flags);
-> +                       goto again;
-> +               }
-> +       }
-> +
->  zone_empty:
-> +       pgdat->first_deferred_pfn = ULONG_MAX;
->         pgdat_resize_unlock(pgdat, &flags);
-> 
->         /* Sanity check that the next zone really is unpopulated */
-> 
+Also do consider dropping some people from the distribution. For many this
+is just noise.
 
+-- 
+Kind regards,
+
+Sakari Ailus
