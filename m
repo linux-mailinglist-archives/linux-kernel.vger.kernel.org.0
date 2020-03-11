@@ -2,112 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B5CD181F1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:20:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23703181F1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:21:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730423AbgCKRUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:20:25 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43023 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730211AbgCKRUZ (ORCPT
+        id S1730481AbgCKRVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:21:01 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44081 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730235AbgCKRVA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:20:25 -0400
-Received: by mail-pl1-f193.google.com with SMTP id f8so1391358plt.10
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:20:25 -0700 (PDT)
+        Wed, 11 Mar 2020 13:21:00 -0400
+Received: by mail-lf1-f68.google.com with SMTP id b186so2312132lfg.11
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:20:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=P6EKaX1yk36UPbpCr2MJbOIatu0Z5wCwvN3X/nog/c4=;
-        b=LIlHm+edvk5lAktjIoXzhtiMe7TTT/WwRCOMvZQCRPYaM69mTOO4DszMDJXXb9PdZZ
-         ob6Qobrw3w6Ag6uVvMMeXLqv/UlP2LWjlRzi95wn7vhHMu4GxIGYERXnK+nXSZ+cccTO
-         9igVbvTcDlKDU1TbWaTuP5QwiMLQtZdaWIC78=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aJxZbwEp+wlKlGV90QlJ+a4eQ5p+pI1IhjdIHz5JZ4s=;
+        b=SniYRJq8qrMWk118P05M9PetiYL7ODjNp75BvsOcDJIlqRkPD3Jb97yILnYQFVOz3/
+         kiJlYw0cMZBed9vrOZnFV+UZBXXysRi52+PxPI+rg/qM/xWIbOjLpjK7O1VzB68ts7iY
+         82PbMl8MtY1FZuEId9Eyj3WPq1fryqn0sIQrc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=P6EKaX1yk36UPbpCr2MJbOIatu0Z5wCwvN3X/nog/c4=;
-        b=CsR1kEx7yTWIorRszEBggyXI0fAHTaMTKWnX5U8M4GbrEcF0tbKH5vajG43SFzR8xX
-         YDR6q3vcVjp5XofspvjFN6uo+e8M/bnNDE6sI+ka2vZ1IqUQwNzJ+y0VEvtrmh0JQbGP
-         Gju7mbadPn+xki/v7vmKvCoo5u9Loe4R+6soB40FTVYj3ywQQNLQ44zv4AnvgdoJH5e3
-         Cu5Mmvd4Itmvd2eYD+wir1RB1U3b7sCXh85y7ia6WtmjXQ/qJTMAmjkRgKkUjEE8Wgrq
-         KRvN5GjHMrfbLvW84YWZ4AXqmtWjVnZLxG41FO74haARDUHyisuyPq0brLOM9uIPktsa
-         OQFg==
-X-Gm-Message-State: ANhLgQ2K6TTIcSINv6vuWji9ZixTwrjf3Tyqpktt/YNU/C6ovg9ZdFK6
-        BxAOT89f50cLvNgH/d9v6M982w==
-X-Google-Smtp-Source: ADFU+vv/0NCgP3hBuxLBflFF34xjIGPeo/MBF1uHeyjSSzOUs4fjmSmfzp3rj/UTad09GD08/7v+/Q==
-X-Received: by 2002:a17:90a:cb90:: with SMTP id a16mr1689261pju.80.1583947224699;
-        Wed, 11 Mar 2020 10:20:24 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id v123sm24901012pfb.85.2020.03.11.10.20.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 10:20:23 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 10:20:22 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs_parse: Remove pr_notice() about each validation
-Message-ID: <202003111015.E263BE9448@keescook>
-References: <202003061617.A8835CAAF@keescook>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aJxZbwEp+wlKlGV90QlJ+a4eQ5p+pI1IhjdIHz5JZ4s=;
+        b=SAzcMlcG91gLhPC6C2jZzANkEsegLy/13sBy/tffyyf3nYkDdv68MRCj4HdS5UgQU1
+         /N2r+BDVz7MjwvLBZakorSgcdCNIrxitzeVhpbdNmjKA2HFnY+sF8umCzmMwth1ZqNDR
+         nrYAa0YKcEh2172uHeJ3JcdZoxJ8pIKTuYV2aQ23B2DXNo1+sP+mOtMB6BUV/cTcPT/t
+         N4+ZJENKKEswbiTloJY+dFSaOFGHNrgpLgu9e17QaiHF7Y5Cgmc/imUdc/oEaZsK0wf8
+         OrEWsersWSUy3hW2mj62GFaHBiRBahmoRacRGct05f88Q5JrnWkccqK555WTuejQ1vex
+         XD5g==
+X-Gm-Message-State: ANhLgQ0KCfjqsm+Qif24GhnDXvvJlv0Kx7fZjPyYLdIvSFMu62UG0vIz
+        +KQPQXl46Fu45GxI+IEoIaqxQ9fpGxs=
+X-Google-Smtp-Source: ADFU+vtrzdoOoBhJ7LnhIxEY67HwARQGZAO+k9tpy91GVsByr8tvQYetU1L2WmM6WovdGfMd2Nmmuw==
+X-Received: by 2002:ac2:511a:: with SMTP id q26mr2696353lfb.161.1583947257695;
+        Wed, 11 Mar 2020 10:20:57 -0700 (PDT)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id f26sm25221210ljn.104.2020.03.11.10.20.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2020 10:20:57 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id l7so2388128lfe.13
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:20:56 -0700 (PDT)
+X-Received: by 2002:a05:6512:10cf:: with SMTP id k15mr2864358lfg.142.1583947256468;
+ Wed, 11 Mar 2020 10:20:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202003061617.A8835CAAF@keescook>
+References: <20200311162735.GA152176@google.com>
+In-Reply-To: <20200311162735.GA152176@google.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 11 Mar 2020 10:20:40 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjES_Si7rUtu_EuYu4PDz4OGdA4BWhYGJ=zOoJiELiykw@mail.gmail.com>
+Message-ID: <CAHk-=wjES_Si7rUtu_EuYu4PDz4OGdA4BWhYGJ=zOoJiELiykw@mail.gmail.com>
+Subject: Re: [GIT PULL] f2fs for 5.6-rc6
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux F2FS Dev Mailing List 
+        <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+On Wed, Mar 11, 2020 at 9:27 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+>
+> Sorry for late pull request. Could you please consider this?
 
-Can you pick this up in -mm?
+I pulled this, and then immediately unpulled.
 
-Thanks!
+Most (all?) of the commits have been committed basically minutes
+before you sent the pull request.
 
--Kees
+That's simply not acceptable. Not when we're in late rc, and with
+hundreds of lines of changes, and when there is no explanation for a
+late pull request that was very very recently generated.
 
-On Fri, Mar 06, 2020 at 04:20:02PM -0800, Kees Cook wrote:
-> This notice fills my boot logs with scary-looking asterisks but doesn't
-> really tell me anything. Let's just remove it; validation errors
-> are already reported separately, so this is just a redundant list of
-> filesystems.
-> 
-> $ dmesg | grep VALIDATE
-> [    0.306256] *** VALIDATE tmpfs ***
-> [    0.307422] *** VALIDATE proc ***
-> [    0.308355] *** VALIDATE cgroup ***
-> [    0.308741] *** VALIDATE cgroup2 ***
-> [    0.813256] *** VALIDATE bpf ***
-> [    0.815272] *** VALIDATE ramfs ***
-> [    0.815665] *** VALIDATE hugetlbfs ***
-> [    0.876970] *** VALIDATE nfs ***
-> [    0.877383] *** VALIDATE nfs4 ***
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  fs/fs_parser.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-> index 7e6fb43f9541..ab53e42a874a 100644
-> --- a/fs/fs_parser.c
-> +++ b/fs/fs_parser.c
-> @@ -368,8 +368,6 @@ bool fs_validate_description(const char *name,
->  	const struct fs_parameter_spec *param, *p2;
->  	bool good = true;
->  
-> -	pr_notice("*** VALIDATE %s ***\n", name);
-> -
->  	for (param = desc; param->name; param++) {
->  		/* Check for duplicate parameter names */
->  		for (p2 = desc; p2 < param; p2++) {
-> -- 
-> 2.20.1
-> 
-> 
-> -- 
-> Kees Cook
-
--- 
-Kees Cook
+                Linus
