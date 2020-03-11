@@ -2,57 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AD3E18142B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 10:10:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4E18181439
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 10:11:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728753AbgCKJKH convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 05:10:07 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:38066 "EHLO gloria.sntech.de"
+        id S1728843AbgCKJLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 05:11:31 -0400
+Received: from mga14.intel.com ([192.55.52.115]:36178 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbgCKJKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 05:10:07 -0400
-Received: from p5b127c69.dip0.t-ipconnect.de ([91.18.124.105] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1jBxNL-0000a4-7G; Wed, 11 Mar 2020 10:10:03 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] ARM: dts: rockchip: remove #dma-cells from dma client nodes for rv1108
-Date:   Wed, 11 Mar 2020 10:10:02 +0100
-Message-ID: <2565398.9qm7F6LNF9@phil>
-In-Reply-To: <20200309134020.14935-1-jbx6244@gmail.com>
-References: <20200309134020.14935-1-jbx6244@gmail.com>
+        id S1726934AbgCKJLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 05:11:31 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 02:11:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,540,1574150400"; 
+   d="scan'208";a="443491350"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga006.fm.intel.com with ESMTP; 11 Mar 2020 02:11:28 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jBxOk-008hB5-Ey; Wed, 11 Mar 2020 11:11:30 +0200
+Date:   Wed, 11 Mar 2020 11:11:30 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Tobias Schramm <t.schramm@manjaro.org>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] power: supply: add CellWise cw2015 fuel gauge
+ driver
+Message-ID: <20200311091130.GC1922688@smile.fi.intel.com>
+References: <20200309160346.2203680-1-t.schramm@manjaro.org>
+ <20200309160346.2203680-3-t.schramm@manjaro.org>
+ <20200310101050.GG1922688@smile.fi.intel.com>
+ <eb732216-dd19-f18d-9ace-e14c7e8de991@manjaro.org>
+ <20200311081450.GZ1922688@smile.fi.intel.com>
+ <503baadb-b8f2-f4bd-a1a8-44b2dc77b933@manjaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <503baadb-b8f2-f4bd-a1a8-44b2dc77b933@manjaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 9. März 2020, 14:40:20 CET schrieb Johan Jonker:
-> When we combine spi-rockchip.yaml and
-> spi-controller.yaml and add 'additionalProperties: false'
-> it gives for example this error:
-> 
-> arch/arm/boot/dts/rv1108-evb.dt.yaml: spi@10270000:
-> '#dma-cells' does not match any of the regexes:
-> '^.*@[0-9a-f]+$', '^slave$'
-> 
-> '#dma-cells' are not used for dma clients, so remove them all.
-> 
-> make ARCH=arm dtbs_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/spi/spi-rockchip.yaml
-> 
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+On Wed, Mar 11, 2020 at 09:48:30AM +0100, Tobias Schramm wrote:
 
-applied for 5.7
+> was just about to send v3.
+> 
+> > 
+> > 	__be16 value;
+> > 
+> > 
+> > 	ret = regmap(..., (...)value, sizeof(value));
 
-Thanks
-Heiko
+Just checked this, simple &value works.
+
+> > 	if (ret)
+> > 		return ret; // note, you missed this in above.
+> > 
+> > 	*val = be16_to_cpu(value);
+> > 	return 0;
+> > 
+> 
+> That implementation looks pretty clean. I'll take it.
+
+Thank you.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
