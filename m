@@ -2,164 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A89181825AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 00:14:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2154D1825B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 00:16:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731579AbgCKXOg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 19:14:36 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37021 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731535AbgCKXOZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 19:14:25 -0400
-Received: by mail-pl1-f193.google.com with SMTP id f16so1827268plj.4
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 16:14:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+l8HEEp5z/NJMl2lmZaebCPqD2oTwZcZODCagAmwBoI=;
-        b=gZsLsQ905xELdiFXDuvhCY948QmOeq8hgf7WRNwFQYggf7QXDlIrRdkt6RRbcRjNRw
-         wCDMWcAZnWj75TZ4WmkroiHz3XAAsw/OTa+lAVRAp2o5sCdGCFOAvvSDqJKeZEUCpmBb
-         BpstVVFKwXnMIPEHqdjum/DfKDyUB92ghvYrg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+l8HEEp5z/NJMl2lmZaebCPqD2oTwZcZODCagAmwBoI=;
-        b=uFGtooAOSpljjNqFDltVxwbGPsp5JSUFlvjZSFfT8mIJEp824J7qTZp2rcZqKPe1m2
-         bU1ztH8dKGPmjgofn6BpkENSohPk3wHwKheynwsegUyA9y7Z2lx4uc7IVRNf1i92/8vU
-         Da6M5WldES6lxvMeg0JIg4PaULWdHmoo30F5HCqQQdxst46nyzSJxMwctXmYEFErWNvW
-         0pKFvQyHSGKyUg/5VJ4MsuUIgrTZPSNlB8wdJX2Wc73VNHyOTAANA+LkOyCqEFUCySkH
-         9Yw6QENJpdn6Ou/8d8z9TQHWMWFF2VEv9U3lPhkMvkoPBFk8fsHkhVddAjj4VsJRwEqn
-         TG1g==
-X-Gm-Message-State: ANhLgQ3LrPaTHqUZYRKPA1sibwsoZ6NDDbAWUExdBabZqJMxhvLLbp3X
-        uZozLTbXM5yHs2lWffjYjftD5A==
-X-Google-Smtp-Source: ADFU+vuyyhI1HC2LBNYvyyv/D6HXeGMLu7hKQzSZUyP6NZso3KnmgOeJay5KNjXVk2vcBMokDpLLZw==
-X-Received: by 2002:a17:90a:b90a:: with SMTP id p10mr1029934pjr.81.1583968464591;
-        Wed, 11 Mar 2020 16:14:24 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id g75sm2606334pje.37.2020.03.11.16.14.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 16:14:23 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Maulik Shah <mkshah@codeaurora.org>
-Cc:     mka@chromium.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        evgreen@chromium.org, Lina Iyer <ilina@codeaurora.org>,
-        swboyd@chromium.org, Douglas Anderson <dianders@chromium.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFT PATCH v2 10/10] drivers: qcom: rpmh-rsc: Always use -EAGAIN, never -EBUSY
-Date:   Wed, 11 Mar 2020 16:13:48 -0700
-Message-Id: <20200311161104.RFT.v2.10.I537337af59c51c72aac2c1625760a60519c66387@changeid>
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-In-Reply-To: <20200311231348.129254-1-dianders@chromium.org>
-References: <20200311231348.129254-1-dianders@chromium.org>
+        id S1731530AbgCKXQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 19:16:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37566 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731338AbgCKXQ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 19:16:28 -0400
+Received: from kicinski-fedora-PC1C0HJN (unknown [163.114.132.128])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BDBE2074F;
+        Wed, 11 Mar 2020 23:16:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583968587;
+        bh=M70agrfssHoPC0ilpkLCRMDtLq4/+qKfN23DruDaesA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=zGb2nUUcfnL2QLTUh6RV9QAQrmf2L7DOqnEEoJMSonXk5Rdx7OuMhNE4y0aTvaz+L
+         LLwABvSgQouIcektbiVBBLYuFlJ2zA6HHdgnSiwQtBLpf7+fSv7KqumdZRKX2X4xGl
+         ODuwMizUBUWTKNA9g7nHU+NeVhXC4o6FZ46MGXLU=
+Date:   Wed, 11 Mar 2020 16:16:25 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        John Linville <linville@tuxdriver.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 10/15] ethtool: provide ring sizes with
+ RINGS_GET request
+Message-ID: <20200311161625.7292f745@kicinski-fedora-PC1C0HJN>
+In-Reply-To: <55a76ca4eecc92c7209775340ff36ba5dd32f713.1583962006.git.mkubecek@suse.cz>
+References: <cover.1583962006.git.mkubecek@suse.cz>
+        <55a76ca4eecc92c7209775340ff36ba5dd32f713.1583962006.git.mkubecek@suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some parts of rpmh-rsc returned -EAGAIN when the controller was busy
-and you should try again.  Other parts returned -EBUSY when the
-controller was busy and you should try again.  Typically -EAGAIN was
-used when dealing with sleep/wake TCSs and -EBUSY was used when
-dealing with the active TCS.
+On Wed, 11 Mar 2020 22:40:53 +0100 (CET) Michal Kubecek wrote:
+> +static int rings_prepare_data(const struct ethnl_req_info *req_base,
+> +			      struct ethnl_reply_data *reply_base,
+> +			      struct genl_info *info)
+> +{
+> +	struct rings_reply_data *data = RINGS_REPDATA(reply_base);
+> +	struct net_device *dev = reply_base->dev;
+> +	int ret;
+> +
+> +	if (!dev->ethtool_ops->get_ringparam)
+> +		return -EOPNOTSUPP;
+> +	ret = ethnl_ops_begin(dev);
+> +	if (ret < 0)
+> +		return ret;
+> +	dev->ethtool_ops->get_ringparam(dev, &data->ringparam);
+> +	ret = 0;
+> +	ethnl_ops_complete(dev);
+> +
+> +	return ret;
 
-Let's standardize and just have one return code.
+nit: just return 0 and drop ret = 0 above, there is no goto here
 
-If we don't do this then the crossover case where we need to use a
-sleep/wake TCS for an active only transfer (when there are zero active
-TCSs) we need to either adapt one code to the other test for both.
+> +}
+> +
+> +static int rings_reply_size(const struct ethnl_req_info *req_base,
+> +			    const struct ethnl_reply_data *reply_base)
+> +{
+> +	return 8 * nla_total_size(sizeof(u32))
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+nit: 8 is a little bit of a magic constant
 
-Changes in v2:
-- ("Always use -EAGAIN, never -EBUSY") new for v2.
+> +		+ 0;
 
- drivers/soc/qcom/rpmh-rsc.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+nit: personally not a huge fan
 
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index abbd8b158a63..8b59d07ef94e 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -497,11 +497,11 @@ static void __tcs_trigger(struct rsc_drv *drv, int tcs_id)
-  *
-  * This will walk through the TCSs in the group and check if any of them
-  * appear to be sending to addresses referenced in the message.  If it finds
-- * one it'll return -EBUSY.
-+ * one it'll return -EAGAIN.
-  *
-  * Must be called with the drv->lock held since that protects tcs_in_use.
-  *
-- * Return: 0 if nothing in flight or -EBUSY if we should try again later.
-+ * Return: 0 if nothing in flight or -EAGAIN if we should try again later.
-  *         The caller must re-enable interrupts between tries since that's
-  *         the only way tcs_is_free() will ever return true and the only way
-  *         RSC_DRV_CMD_ENABLE will ever be cleared.
-@@ -524,7 +524,7 @@ static int check_for_req_inflight(struct rsc_drv *drv, struct tcs_group *tcs,
- 			addr = read_tcs_cmd(drv, RSC_DRV_CMD_ADDR, tcs_id, j);
- 			for (k = 0; k < msg->num_cmds; k++) {
- 				if (addr == msg->cmds[k].addr)
--					return -EBUSY;
-+					return -EAGAIN;
- 			}
- 		}
- 	}
-@@ -550,21 +550,21 @@ static int find_free_tcs(struct tcs_group *tcs)
- 			return tcs->offset + i;
- 	}
- 
--	return -EBUSY;
-+	return -EAGAIN;
- }
- 
- /**
-- * tcs_write() - Store messages into a TCS right now, or return -EBUSY.
-+ * tcs_write() - Store messages into a TCS right now, or return -EAGAIN.
-  * @drv: The controller.
-  * @msg: The data to be sent.
-  *
-  * Grabs a TCS for ACTIVE_ONLY transfers and writes the messages to it.
-  *
-  * If there are no free ACTIVE_ONLY TCSs or if a command for the same address
-- * is already transferring returns -EBUSY which means the client should retry
-+ * is already transferring returns -EAGAIN which means the client should retry
-  * shortly.
-  *
-- * Return: 0 on success, -EBUSY if client should retry, or an error.
-+ * Return: 0 on success, -EAGAIN if client should retry, or an error.
-  *         Client should have interrupts enabled for a bit before retrying.
-  */
- static int tcs_write(struct rsc_drv *drv, const struct tcs_request *msg)
-@@ -580,7 +580,6 @@ static int tcs_write(struct rsc_drv *drv, const struct tcs_request *msg)
- 	 */
- 	WARN_ON(msg->state != RPMH_ACTIVE_ONLY_STATE);
- 
--	/* TODO: get_tcs_for_msg() can return -EAGAIN and nobody handles */
- 	tcs = get_tcs_for_msg(drv, msg);
- 	if (IS_ERR(tcs))
- 		return PTR_ERR(tcs);
-@@ -651,12 +650,12 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg)
- 
- 	do {
- 		ret = tcs_write(drv, msg);
--		if (ret == -EBUSY) {
-+		if (ret == -EAGAIN) {
- 			pr_info_ratelimited("TCS Busy, retrying RPMH message send: addr=%#x\n",
- 					    msg->cmds[0].addr);
- 			udelay(10);
- 		}
--	} while (ret == -EBUSY);
-+	} while (ret == -EAGAIN);
- 
- 	return ret;
- }
--- 
-2.25.1.481.gfbce0eb801-goog
+> +}
+> +
+> +static int rings_fill_reply(struct sk_buff *skb,
+> +			    const struct ethnl_req_info *req_base,
+> +			    const struct ethnl_reply_data *reply_base)
+> +{
+> +	const struct rings_reply_data *data = RINGS_REPDATA(reply_base);
+> +	const struct ethtool_ringparam *ringparam = &data->ringparam;
+> +
+> +	if (nla_put_u32(skb, ETHTOOL_A_RINGS_RX_MAX,
+> +			ringparam->rx_max_pending) ||
+> +	    nla_put_u32(skb, ETHTOOL_A_RINGS_RX_MINI_MAX,
+> +			ringparam->rx_mini_max_pending) ||
+> +	    nla_put_u32(skb, ETHTOOL_A_RINGS_RX_JUMBO_MAX,
+> +			ringparam->rx_jumbo_max_pending) ||
+> +	    nla_put_u32(skb, ETHTOOL_A_RINGS_TX_MAX,
+> +			ringparam->tx_max_pending) ||
+> +	    nla_put_u32(skb, ETHTOOL_A_RINGS_RX,
+> +			ringparam->rx_pending) ||
+> +	    nla_put_u32(skb, ETHTOOL_A_RINGS_RX_MINI,
+> +			ringparam->rx_mini_pending) ||
+> +	    nla_put_u32(skb, ETHTOOL_A_RINGS_RX_JUMBO,
+> +			ringparam->rx_jumbo_pending) ||
+> +	    nla_put_u32(skb, ETHTOOL_A_RINGS_TX,
+> +			ringparam->tx_pending))
+> +		return -EMSGSIZE;
 
+nit: I wonder if it's necessary to report the zero values..
+
+Reviewed-by: Jakub Kicinski <kuba@kernel.org>
