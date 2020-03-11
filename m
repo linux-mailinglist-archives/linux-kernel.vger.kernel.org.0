@@ -2,90 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DFDA1821E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:15:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC8F5182207
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:17:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731059AbgCKTPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 15:15:24 -0400
-Received: from foss.arm.com ([217.140.110.172]:53884 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731297AbgCKTPW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:15:22 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E81C21FB;
-        Wed, 11 Mar 2020 12:15:21 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02A0A3F534;
-        Wed, 11 Mar 2020 12:15:21 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 19:15:19 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Richard Henderson <richard.henderson@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H . J . Lu" <hjl.tools@gmail.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v8 00/11] arm64: Branch Target Identification support
-Message-ID: <20200311191519.GK5411@sirena.org.uk>
-References: <20200227174417.23722-1-broonie@kernel.org>
- <562edd23-9d86-800e-aae3-e54c92601929@linaro.org>
+        id S1731085AbgCKTRg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 15:17:36 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43051 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730807AbgCKTRe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 15:17:34 -0400
+Received: by mail-ed1-f68.google.com with SMTP id dc19so4241599edb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:17:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IoGQYT+rchnYF2zG5DEg3NeiNAoLKHCeyEY/yuvUhRg=;
+        b=Qty98XX/5cZd1xLOpIdrTlHmSOxWrvAJPpba33iF+RhyOUDdezy7/AvSYh58mnyJK6
+         UjTrcRQsHNLdkJSG4Rw3egxSyRm+NO5u/ziM5sEJ4syzSi/ofv//CVi/NySuuemFXjvN
+         ZeoLd5zBi2yI+dJQt1ARKHz//BShoSnycvkQPPAa0mD1VCftEOwQPOKdsBjzXtMib2am
+         BCC6ytK1fgh3Zw+e4CK/xxJ4RSHoAl0xoSWbEHV74NfcywU4Sr8i4XQ/fpmXYceMyRQA
+         DMasFvXlCVaYwJH6VlOT0huN4mo+9H8IzPTNwLw8MkGeLZ+H01zkXm4mEPrOf4DnyaJj
+         BcDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IoGQYT+rchnYF2zG5DEg3NeiNAoLKHCeyEY/yuvUhRg=;
+        b=chXamRYPlWeZgldlQGzk4uYP8aJNa6RiFXU/dsYXxAvFsntuA8joGSiGqoh5cbl+zw
+         jVMqA4wvogl1lxBYsihaBgs5E2HmG7WwKo8+8byIql7/1a+m5S304hsAHF03ncHyjYoc
+         UtsWbW9N1yc5B/uS4phFKrFq8imrYJonkLun+Sr4xYCQNWv+u1yIMp1po5u6Y9wHa6MA
+         r1AgHWINLozYB6yDJj8vnsUMrucy7URiyFaRHy39tDiJhblBS3sVzwjCDeHEtinQRZF5
+         d5F3Ei+pN7rThHf40deZWgmtkiIGH2tBKQhsbj9TssqfQySvrtsUbRvv9Zm71C4O5d49
+         nUkg==
+X-Gm-Message-State: ANhLgQ3Pho9/UiC6pks0fn0IHGteBZcH/HdHYdmINNuIyItf33rKcsCh
+        RUl9aO/Q9Oysv/YN9KPG95HAgQ==
+X-Google-Smtp-Source: ADFU+vvqObpUv4yT5hu9m1ZZe/ETe+eJynYIwhQ0IE0wZjybZQc/WQoS5nOBi4wA7jf1jEJxVN6wFw==
+X-Received: by 2002:a50:ed97:: with SMTP id h23mr3364514edr.197.1583954252557;
+        Wed, 11 Mar 2020 12:17:32 -0700 (PDT)
+Received: from [192.168.0.38] ([176.61.57.127])
+        by smtp.gmail.com with ESMTPSA id k11sm482932ejr.92.2020.03.11.12.17.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2020 12:17:31 -0700 (PDT)
+Subject: Re: [RESEND][PATCH v8 1/6] usb: dwc3: Registering a role switch in
+ the DRD code.
+To:     John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Cc:     Yu Chen <chenyu56@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        ShuFan Lee <shufan_lee@richtek.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jun Li <lijun.kernel@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Guillaume Gardet <Guillaume.Gardet@arm.com>,
+        Jack Pham <jackp@codeaurora.org>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20200311172109.45134-1-john.stultz@linaro.org>
+ <20200311172109.45134-2-john.stultz@linaro.org>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Message-ID: <7337bea7-1449-e6e3-4c65-1bb802a2c316@linaro.org>
+Date:   Wed, 11 Mar 2020 19:17:48 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mGCtrYeZ202LI9ZG"
-Content-Disposition: inline
-In-Reply-To: <562edd23-9d86-800e-aae3-e54c92601929@linaro.org>
-X-Cookie: I'm a Lisp variable -- bind me!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200311172109.45134-2-john.stultz@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> +static int dwc3_usb_role_switch_set(struct device *dev, enum usb_role role)
 
---mGCtrYeZ202LI9ZG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+@bjorn found an API change that explodes this one.
 
-On Thu, Feb 27, 2020 at 05:35:39PM -0800, Richard Henderson wrote:
-> On 2/27/20 9:44 AM, Mark Brown wrote:
-> >  * Binutils trunk supports the new ELF note, but this wasn't in a release
-> >    the last time I posted this series.  (The situation _might_ have changed
-> >    in the meantime...)
-
-> I believe this support is in binutils 2.32.
-
-It looks like it's actually 2.33 but either way it's in a release,
-thanks for prompting me to check.  I've updated this for v9.
-
---mGCtrYeZ202LI9ZG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5pOMYACgkQJNaLcl1U
-h9AOkgf/SY/gSI7QW/Lbe29z6/u9w1lrepP1itRV8ICgiWASwxjzBxEUDfHMgTsV
-Ng7Lx+w79lkeoWKj1id3jmu9SXG8pAmKiBpnc/iGNpkUs1evKFp2XyaqMLl5w1mO
-DaNzX4HwWOKK6mjLXS1ferTsYgP0h0SnrJpODS/3HbvD6Txoi8b/m+XvAqiKrJi9
-UiPK06ESXjNibgAx2JUDWtuKumjSFWEEGXDx2q6lCI06ZEvBIdkSK5aB0yJwYJqc
-k60lhGcyCoMK6T9zNOCutbhZbQpGMlr+GInkEjkuuf/xo6SLfmuZx5hiFJHAumim
-NrgBSedG1UXpaC5rINKAgEc2IacPkQ==
-=4P3c
------END PGP SIGNATURE-----
-
---mGCtrYeZ202LI9ZG--
+Fixed here: https://lkml.org/lkml/2020/3/11/1034
