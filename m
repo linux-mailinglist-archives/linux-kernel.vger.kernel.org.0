@@ -2,64 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B473180E43
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 03:57:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28886180E39
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 03:56:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728041AbgCKC5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 22:57:46 -0400
-Received: from mga18.intel.com ([134.134.136.126]:25558 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727307AbgCKC5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 22:57:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 19:57:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,539,1574150400"; 
-   d="scan'208";a="231544522"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
-  by orsmga007.jf.intel.com with ESMTP; 10 Mar 2020 19:57:44 -0700
-Message-ID: <48e14e976d3258571229d3165aa879da4a6e4b28.camel@intel.com>
-Subject: Re: [PATCH V1 12/13] selftests/resctrl: Dynamically select buffer
- size for CAT test
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     Reinette Chatre <reinette.chatre@intel.com>, shuah@kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        tony.luck@intel.com, babu.moger@amd.com, james.morse@arm.com,
-        ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 10 Mar 2020 19:52:57 -0700
-In-Reply-To: <50e8e1a1-f7ef-2ea8-178e-49adf3373e23@intel.com>
-References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
-         <18ab8b47d1d2b6373d7899bdf8df19fa94afcfaa.1583657204.git.sai.praneeth.prakhya@intel.com>
-         <50e8e1a1-f7ef-2ea8-178e-49adf3373e23@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        id S1727967AbgCKC42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 22:56:28 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11621 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727528AbgCKC42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 22:56:28 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D688528DB561F007B992;
+        Wed, 11 Mar 2020 10:56:23 +0800 (CST)
+Received: from DESKTOP-KKJBAGG.china.huawei.com (10.173.220.25) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.487.0; Wed, 11 Mar 2020 10:56:14 +0800
+From:   Zhenyu Ye <yezhenyu2@huawei.com>
+To:     <mark.rutland@arm.com>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <aneesh.kumar@linux.ibm.com>, <maz@kernel.org>,
+        <steven.price@arm.com>, <broonie@kernel.org>,
+        <guohanjun@huawei.com>
+CC:     <yezhenyu2@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <linux-mm@kvack.org>, <arm@kernel.org>, <xiexiangyou@huawei.com>,
+        <prime.zeng@hisilicon.com>
+Subject: [RFC PATCH v1 0/3] arm64: tlb: add support for TTL field
+Date:   Wed, 11 Mar 2020 10:53:06 +0800
+Message-ID: <20200311025309.1743-1-yezhenyu2@huawei.com>
+X-Mailer: git-send-email 2.22.0.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.173.220.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Reinette,
+ARMv8.4-TTL provides the TTL field in tlbi instruction to indicate
+the level of translation table walk holding the leaf entry for the
+address that is being invalidated. Hardware can use this information
+to determine if there was a risk of splintering.
 
-On Tue, 2020-03-10 at 15:19 -0700, Reinette Chatre wrote:
-> Hi Sai,
-> 
-> On 3/6/2020 7:40 PM, Sai Praneeth Prakhya wrote:
-> > Presently, while running CAT test case, if user hasn't given any input for
-> > '-n' option, the test defaults to 5 bits to determine the buffer size that
-> > is used during test. Instead of statically running always with 5 bits,
-> > change it such that the buffer size is always half of the cache size.
-> 
-> This seems more appropriate as a preparation patch to not have to make
-> so many changes on top of the earlier patches included in this series.
+This set of patches adds TTL field to __TLBI_ADDR, and uses
+Architecture-specific MM context to pass the TTL value to tlb interface.
 
-Ok.. makes sense.
+The default value of TTL is 0, which will not have any impact on the
+TLB maintenance instructions. The last patch trys to use TTL field in
+some obviously tlb-flush interface.
 
-Regards,
-Sai
+Zhenyu Ye (3):
+  arm64: tlb: add TTL field to __TLBI_ADDR
+  arm64: tlb: use mm_struct.context.flags to indicate TTL
+  arm64: tlb: add support for TTL in some functions
+
+ arch/arm64/include/asm/cpucaps.h  |  3 ++-
+ arch/arm64/include/asm/mmu.h      | 11 ++++++++++
+ arch/arm64/include/asm/sysreg.h   |  4 ++++
+ arch/arm64/include/asm/tlb.h      |  3 +++
+ arch/arm64/include/asm/tlbflush.h | 35 +++++++++++++++++++++++--------
+ arch/arm64/kernel/cpufeature.c    | 10 +++++++++
+ arch/arm64/kernel/sys_compat.c    |  2 +-
+ arch/arm64/mm/hugetlbpage.c       |  2 ++
+ 8 files changed, 59 insertions(+), 11 deletions(-)
+
+-- 
+2.19.1
+
 
