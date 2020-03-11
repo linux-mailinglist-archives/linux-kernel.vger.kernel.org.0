@@ -2,129 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 946B3180E01
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 03:37:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95904180E09
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 03:39:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbgCKChM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 22:37:12 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:46073 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727307AbgCKChM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 22:37:12 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48cbgs1DRzz9sPF;
-        Wed, 11 Mar 2020 13:36:36 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1583894228;
-        bh=+JH45CaJ8RQ/br5Hf0W4Xq5hn+PXWNj2y+4emeie5wI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=byC3Zym4NutwqTImCcrtNlHWWJ7KK3rLjQP5yRiWg9wgwsBYwuNKh9HflAVBDQcNm
-         ocfdgkGgFozYLDZUhQrH1lPoHBuI0avdI5uD6v6NyqtbB3fUWEEhacgV/WHmUlNYU3
-         dx1y376SwRSWyIU58Yls8ihRzOMgMinuypHeIeQ+2irvEvsVT/j/ZyYZHnvnPaBp+w
-         Qu0eTtrc7NUywKnQj2OpbIut6NbOuClNq4qCf6Jvvzl4w7VojsviW1JBVzi/es0gWb
-         lN8sNUChe4zF58IA4N/LxWqa1eJzWfBraK/vqzp9R1SpZSr1n7Ta6ltldYbuasoqD7
-         bOWgfB5URtq0Q==
-Date:   Wed, 11 Mar 2020 13:36:35 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>,
-        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
-Subject: linux-next: manual merge of the drm-intel tree with the
- drm-intel-fixes tree
-Message-ID: <20200311133635.7fcb422e@canb.auug.org.au>
+        id S1727969AbgCKCjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 22:39:09 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:50988 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbgCKCjJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 22:39:09 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02B2WqLK082735;
+        Wed, 11 Mar 2020 02:38:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=T1vuTLFwybasjMVmh5QNYh7y/tteWNgXqxwplD/1b/Q=;
+ b=OCMhO/TDcuSj1zxgMMDqFgTRISFo3vHpcBUHaLzX+lDUwLXv0pC8ExJnOp1Dnc1bBotA
+ WbIFulHYrPB0TYGzPfHjbQtyINw+3Z/ICYk5sbrgHjUjKNTKxWzEmFVK+vMGBnUd+pHr
+ DIzn0tlfjaDGr10cvl7kqbh8nRNznjs4cdg8H0W2Zn5rW3KXKr42vLWPgZ75mULl3pD8
+ hMVZrlMcm+q4AJJgTMF0lHj16Q/0YOCfJ4K0grog6UcejbfkUVFQ61VSLt3zwlTB6I2p
+ mELAZ8yWsvsgUw0ETvEflqGqj0bYJDWGgF+oy+u6mSeRw2zhHp2SdH7haMuhnaZE4QVA EA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2yp9v6419s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Mar 2020 02:38:55 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02B2YW9E130583;
+        Wed, 11 Mar 2020 02:36:54 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2yp8pvkacc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Mar 2020 02:36:54 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02B2aqgp013711;
+        Wed, 11 Mar 2020 02:36:53 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 10 Mar 2020 19:36:52 -0700
+To:     Phong Tran <tranmanphong@gmail.com>
+Cc:     john.garry@huawei.com, aacraid@microsemi.com, bvanassche@acm.org,
+        jejb@linux.ibm.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        martin.petersen@oracle.com
+Subject: Re: [PATCH v3] scsi: aacraid: cleanup warning cast-function-type
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <9a0e6373-b4a3-0822-3b65-e3b326266832@huawei.com>
+        <20200309155319.12658-1-tranmanphong@gmail.com>
+Date:   Tue, 10 Mar 2020 22:36:49 -0400
+In-Reply-To: <20200309155319.12658-1-tranmanphong@gmail.com> (Phong Tran's
+        message of "Mon, 9 Mar 2020 22:53:19 +0700")
+Message-ID: <yq1o8t3r51a.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Cm=kxNYzaFTdCCtVhbFDBzh";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9556 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
+ mlxlogscore=962 bulkscore=0 suspectscore=0 mlxscore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003110014
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9556 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 mlxscore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
+ phishscore=0 adultscore=0 clxscore=1011 impostorscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003110014
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Cm=kxNYzaFTdCCtVhbFDBzh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Phong,
 
-Today's linux-next merge of the drm-intel tree got a conflict in:
+> Make the aacraid driver -Wcast-function-type clean Report by:
+> https://github.com/KSPP/linux/issues/20
 
-  drivers/gpu/drm/i915/gvt/vgpu.c
+Applied to 5.7/scsi-queue, thanks!
 
-between commit:
-
-  04d6067f1f19 ("drm/i915/gvt: Fix unnecessary schedule timer when no vGPU =
-exits")
-
-from the drm-intel-fixes tree and commit:
-
-  12d5861973c7 ("drm/i915/gvt: Make WARN* drm specific where vgpu ptr is av=
-ailable")
-
-from the drm-intel tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/i915/gvt/vgpu.c
-index 345c2aa3b491,abcde8ce1a9a..000000000000
---- a/drivers/gpu/drm/i915/gvt/vgpu.c
-+++ b/drivers/gpu/drm/i915/gvt/vgpu.c
-@@@ -271,18 -272,12 +272,19 @@@ void intel_gvt_release_vgpu(struct inte
-  void intel_gvt_destroy_vgpu(struct intel_vgpu *vgpu)
-  {
-  	struct intel_gvt *gvt =3D vgpu->gvt;
-+ 	struct drm_i915_private *i915 =3D gvt->gt->i915;
- =20
-- 	WARN(vgpu->active, "vGPU is still active!\n");
- -	mutex_lock(&vgpu->vgpu_lock);
- -
-+ 	drm_WARN(&i915->drm, vgpu->active, "vGPU is still active!\n");
- =20
- +	/*
- +	 * remove idr first so later clean can judge if need to stop
- +	 * service if no active vgpu.
- +	 */
- +	mutex_lock(&gvt->lock);
- +	idr_remove(&gvt->vgpu_idr, vgpu->id);
- +	mutex_unlock(&gvt->lock);
- +
- +	mutex_lock(&vgpu->vgpu_lock);
-  	intel_gvt_debugfs_remove_vgpu(vgpu);
-  	intel_vgpu_clean_sched_policy(vgpu);
-  	intel_vgpu_clean_submission(vgpu);
-
---Sig_/Cm=kxNYzaFTdCCtVhbFDBzh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5oTrMACgkQAVBC80lX
-0GxCfwf8DF6UZIwJBxtfb8gzkqDJvX/8pPbpOWpeUrdQTiqxjvVkMLh9wg2em+U5
-TeNW2XcAameNYoShX3Vd1m72DRtsBhkzWSlhDvvTcb/bJ26nFUAUqZmR8UouGCnw
-99Sfw5k13EFOYXN9hLocEEi63T5Stlo9Sd97XyJuky3MFObStnc+38WAAspTioyC
-FNIZwHjC6+MtY95jeuH81GlsjQcDl42GrK+/Quxc2xEi61BI5FrTFC20TskItmYp
-0beAHa0nZ42ZoMwU7QhCTzDMzcFD1O/GRhmTxEtcm0BxXnz5G+Z+oTmkkEwQWbgg
-QufOTS0DpsdJ3dogPO5z1Ew4wr3AIA==
-=H4EQ
------END PGP SIGNATURE-----
-
---Sig_/Cm=kxNYzaFTdCCtVhbFDBzh--
+-- 
+Martin K. Petersen	Oracle Linux Engineering
