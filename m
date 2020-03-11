@@ -2,208 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98ADD1821B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:14:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE0041821A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:13:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731138AbgCKTOL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 15:14:11 -0400
-Received: from mail-bn8nam12on2066.outbound.protection.outlook.com ([40.107.237.66]:6033
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731104AbgCKTOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:14:06 -0400
+        id S1730962AbgCKTNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 15:13:34 -0400
+Received: from smtprelay-out1.synopsys.com ([149.117.73.133]:37796 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730705AbgCKTNe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 15:13:34 -0400
+Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id B870A43B76;
+        Wed, 11 Mar 2020 19:13:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1583954013; bh=GCnc8Pe16ifGGkBm9Qf1Pg9gDdgo5xyrsNj7YaH1v98=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=Yp/LTLFve61m3uCDVcZeEFomxUPuPRi/24K41uKhCJ/PBQxvEoKgiW3eMt3ORWWkf
+         SZonKrU10ZqoonSAuoVQfX9EbMp04lT1R/Vf6lkQaqLgkP6XWWs9ReKY/SnVlgeigq
+         waQAehba+IM5iENmUSlfChrlM/kPLIcnCIBS32AQIn9d7qsC28FqaYEZWmgoBw/zAb
+         LY/WBvruoh9kU1SK0UsQxjVUpTOXdp0pGBwGMkPYm/IngDNwW7rSM7fU0aPwFeMEz/
+         R+BCAijM0KnpVdruNULbbhLx3sfRmkRrbtsJKrO8dyyVCmkVU4Ih0hUITrtvyln/jz
+         z/FcbnMaqKOQw==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 881CBA0083;
+        Wed, 11 Mar 2020 19:13:33 +0000 (UTC)
+Received: from us01hybrid1.internal.synopsys.com (10.200.27.51) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 11 Mar 2020 12:13:29 -0700
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (10.202.3.67) by
+ mrs.synopsys.com (10.200.27.51) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Wed, 11 Mar 2020 12:13:29 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cQztyBk/PlS9Y/kTtOGtpucKxZCRGomRPtjKHriDwAntAx9P49PJeEdXCtnTw+Jfx6zA9w1Mv2Gb8al6SUVarygt3pjKg00tMGM27DZdGa/AzfnGGy0DukbD8+6DOr1+NnOZy5VW6NCt4kxJklzrX1ond/c2wNsQdnKiHU8Owl+jzRxk0V37ynxTbjJLlP+D9lFm/xBkY/8t6iDjcUaU6gcNE9KZvYCXtBJtkp2Zv2eytJH1gEajah3seFU8QOzLCqHZXukn4V0/0awHnmctSbjkcRaaf1p4Tw9vQtMo3kK/sfgyB0m4U0XKeT61vxEVDEBe8D2aKI+18KtCEWW42g==
+ b=Dfg0ZgCqIj3/JP9RDlYmNf8as7FuDI0TAC/yuJt/EO34/2flIWzHYghYPUHXyBhb/R/hJQQl0Hg7khf3OjFnJSOEC9sSwU2TUcEhn7SMIBHQL2Khod6qpTcWvEdHJw1aF/6AD53QxISANxnVoOcnio/GFE/b9dc8Bk7xyESZ/FBW+X57Uy3TbG///y7RGmJvapZdv+ANv1T1/G31HL+Y8Hd5UVGKtjkAVibL9C4bvHPaz45vmBPsxJyQaaraBHYtt8jD0UvYVSavF5flPEUnpMPLq3zeOn3RbZ92XGzKwBHJLVNI0fGMNdmDOmaL6fMC/STKsm7CcbfcOZDhTrlQKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JIMA6d+XfRdhBHbRXj8EcHyIEMDlbvBXLWFwk0//MxE=;
- b=A0gCCFklUn1WNuH7lSnfYxWKfT13HTKRJbspKsfEYiIMTnCNc40F+M5g9ifDd5kVhOc8wBxIXxw+stdyAj8b2nfVNppKQeyC4jvQwtWzCKRrweRjLipCR8jNXEWlAi5QtXtG0DQfv4uPzL+foAAO3MqF74llV5TP6nsmCawFOR+IRuq6VdEvlFrOlR+in5Z3WK7EjXEiyEDocw4I9XMbvudIHxUBGhxKL3xRu6Yur8CANxTHgVj344gQfnztA9Fu8tX+faGDS4XG+bYDil9fCPMLW8PHwfM0qCjMXAdlDFnClU7WsOuhOa0SKxqghXWhWJQsinAvi8P14n6q3Ndcmg==
+ bh=GCnc8Pe16ifGGkBm9Qf1Pg9gDdgo5xyrsNj7YaH1v98=;
+ b=DhXydrpnckpPgfxLALZcq0zipnXZp0Lr9d/RtHOYCneGRVjQ2yDqpT1Oez8hxGbTzzIgMAB8uM46MTu35awl8Vq9QxR94eb8XhTRVj5jALUCo3DcTpkl9HvJVG+UNcugQ6LjgtZd/ZEkKNVS3NLxRaaLxoj0liOw4FsVATgD+D8PMfvUhavrkO33eGl3sTCXWxN2RlnbmpAroFUVsw/X2TKhekvilqZfwNkJcT3wiKwCbq3Y4xn4lcqhAfX6eexvZUgHiMVXjqSQL/Gy9UDu5/I4PljYagrnGyJqVRT/KbvHzEf1q+cRN18tabnqJgkIY7FiYLB2/0avH7wB0BOKMg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JIMA6d+XfRdhBHbRXj8EcHyIEMDlbvBXLWFwk0//MxE=;
- b=XcvwTxMniMdT4pvMu3xSuSfny+0WUw32lSJN0g40fdNzsOnJ5ooEfe31BWvbzfEuLhzC62Nn/LdoVg/u8A8/8r1tRqSt26Rvmv9VqLD2nTpBG4OwFR5KoVZFSU9EpY/gq7rlq60xTUGia2+WOh+reO2b93BrlO6dA5+7L4zR1gg=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=kim.phillips@amd.com; 
-Received: from SN6PR12MB2845.namprd12.prod.outlook.com (2603:10b6:805:75::33)
- by SN6PR12MB2830.namprd12.prod.outlook.com (2603:10b6:805:e0::27) with
+ bh=GCnc8Pe16ifGGkBm9Qf1Pg9gDdgo5xyrsNj7YaH1v98=;
+ b=Bre8N7Xb4G0vzoJtlFsOAZmWWAiFlnNw3X6EdkcKIPiPM8s1oJf6MO+RkgEsmnj9FooA6XGVNBzNYd9PUzr9CJ7ywvMH5ha9criDlMqSfOvhcSBncJqLJwRT7yJkGdeyyLkwX4mptR7x8vOb+OCrc7cdu2yj6XixyDSVFcuLvMU=
+Received: from BYAPR12MB3592.namprd12.prod.outlook.com (2603:10b6:a03:db::25)
+ by BYAPR12MB3112.namprd12.prod.outlook.com (2603:10b6:a03:ae::25) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.14; Wed, 11 Mar
- 2020 19:14:03 +0000
-Received: from SN6PR12MB2845.namprd12.prod.outlook.com
- ([fe80::dd6f:a575:af8e:4f1b]) by SN6PR12MB2845.namprd12.prod.outlook.com
- ([fe80::dd6f:a575:af8e:4f1b%7]) with mapi id 15.20.2793.018; Wed, 11 Mar 2020
- 19:14:02 +0000
-From:   Kim Phillips <kim.phillips@amd.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, kim.phillips@amd.com
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH 3/3 RESEND] perf/amd/uncore: Add support for Family 19h L3 PMU
-Date:   Wed, 11 Mar 2020 14:13:23 -0500
-Message-Id: <20200311191323.13124-3-kim.phillips@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200311191323.13124-1-kim.phillips@amd.com>
-References: <20200311191323.13124-1-kim.phillips@amd.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: DM5PR07CA0066.namprd07.prod.outlook.com
- (2603:10b6:4:ad::31) To SN6PR12MB2845.namprd12.prod.outlook.com
- (2603:10b6:805:75::33)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from fritz.amd.com (165.204.77.1) by DM5PR07CA0066.namprd07.prod.outlook.com (2603:10b6:4:ad::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16 via Frontend Transport; Wed, 11 Mar 2020 19:14:01 +0000
-X-Mailer: git-send-email 2.25.1
-X-Originating-IP: [165.204.77.1]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 87712052-f898-4594-72d9-08d7c5f05c4b
-X-MS-TrafficTypeDiagnostic: SN6PR12MB2830:|SN6PR12MB2830:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <SN6PR12MB2830C99001C50690BD4D1F2187FC0@SN6PR12MB2830.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-Forefront-PRVS: 0339F89554
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(366004)(396003)(136003)(376002)(39860400002)(199004)(2616005)(956004)(6486002)(6666004)(7696005)(316002)(52116002)(8936002)(36756003)(110136005)(44832011)(478600001)(54906003)(26005)(16526019)(186003)(66556008)(66946007)(2906002)(1076003)(86362001)(5660300002)(8676002)(966005)(66476007)(4326008)(81166006)(81156014)(7416002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2830;H:SN6PR12MB2845.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.17; Wed, 11 Mar
+ 2020 19:13:28 +0000
+Received: from BYAPR12MB3592.namprd12.prod.outlook.com
+ ([fe80::a45a:6a41:3fe5:2eb7]) by BYAPR12MB3592.namprd12.prod.outlook.com
+ ([fe80::a45a:6a41:3fe5:2eb7%7]) with mapi id 15.20.2793.013; Wed, 11 Mar 2020
+ 19:13:28 +0000
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <Alexey.Brodkin@synopsys.com>
+Subject: Re: [PATCH v2 3/4] ARC: add support for DSP-enabled userspace
+ applications
+Thread-Topic: [PATCH v2 3/4] ARC: add support for DSP-enabled userspace
+ applications
+Thread-Index: AQHV8ykv0O4Z+b6gX0KY0D/KHFb2oKhDy/cA
+Date:   Wed, 11 Mar 2020 19:13:28 +0000
+Message-ID: <6f7916f4-9ff9-e947-c62e-30000a4bcc84@synopsys.com>
+References: <20200305200252.14278-1-Eugeniy.Paltsev@synopsys.com>
+ <20200305200252.14278-4-Eugeniy.Paltsev@synopsys.com>
+In-Reply-To: <20200305200252.14278-4-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vgupta@synopsys.com; 
+x-originating-ip: [149.117.75.11]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1ba3b106-10ea-44e0-2866-08d7c5f047b2
+x-ms-traffictypediagnostic: BYAPR12MB3112:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR12MB31123F2A562B0202711D4A4BB6FC0@BYAPR12MB3112.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4714;
+x-forefront-prvs: 0339F89554
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(376002)(346002)(39860400002)(396003)(199004)(76116006)(71200400001)(66556008)(478600001)(66946007)(66476007)(64756008)(66446008)(31696002)(4744005)(8676002)(2906002)(86362001)(5660300002)(53546011)(81166006)(8936002)(81156014)(36756003)(6506007)(6512007)(2616005)(26005)(107886003)(4326008)(186003)(54906003)(316002)(31686004)(6486002)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR12MB3112;H:BYAPR12MB3592.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
  permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HAZC47Jdj1C5vZxS48sIAFs3U4X3Ba/oL3z5QeQXYbOqTv7OgHFtNhzLKk+3xtz12i1FVFXkjyKcc9ztwmhpQdFFR5hicnWGh+FjsrJpeCZChj1X9/r5Lci7XQkg5AUCiPftDlUvVgkWkTwcLwOwMhFSYHVPf3o6DUeh2dAGM107UY/qsOHB6ITTXJ6zlU47uNgP9Jnw0V1fFEAnRHu6Vbk1FQWtanc222UNr1OnKxQPcWgnxjDnBROGzD7OOLzWx0p+ylfXdI0ZUapm5mlIvHYoZ9UA5EsT97+IMIIKopuQzkcp9jem6S+xUIyIkDtx4JWO0n+uPw5QtH9UUN/FWWQrocVUlm5KQd6oGd9v4px1SA2foaV5Pz7mW+0h8cBWveM9uGU++jdYWRbg8eiOKqaOXxNnqrv+SEjggqNVJBHROnRcfIQkw2ox5XRrJsfYn5gc1xZL1YyJ4Xbi/ohFMjA5jvoOTjOEO+SlArZapHwh412+cNosK6L2OIViG80A1fNN8do7p4rSVqaRnh5wRg==
-X-MS-Exchange-AntiSpam-MessageData: m6A2mqtideA2nsa19MwjCD3QPkYjbmOhxU5q4iLalMMh6TMLerC9CIcysttyCLZNU0DeOqShqogDJ3q/4/hoEeSNig6J0rn4Kwj5Oi7u1WmoJ4c84SbBJpnsWfFrN2+ZMpxFvV1yrJSIcohqjFX2oA==
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87712052-f898-4594-72d9-08d7c5f05c4b
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2020 19:14:02.9114
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 1I4sgSNL/i7LXmknuLSFEveCg89TOJQVgTgU0/7bjJLwt/kOGq3p32Lfiz0LGQUFu8/ojOne1AP5GqKVHqjq4U9hC5O8tAoSM+Jo5s/TThr9UJwCRcuueGwlc705eqXxC8AR1eg79f5WZlLfxYxjRYfIvZha3qz0eU2VbztSrD7Y8Q5Pv7my4MwcGdrEDcZ5z2l0RlITrtygf4xJy3Y7vk3NI2wth7lT8c9GgGEEHZPOMr+IFYXOU137fA4LefstmjlmWXZKMZ4akBWfu+UZr0TpZ9lw7Ao5g/q63nCkfC25vZZB4k+AsZuS9ndqFmuLhLkNSmvfDVAYUvy/MWlQS38Po9UFhjS/rIJhlL7PLnS0aSduVlh/EJvOiD4qPN7ThrLllVEFSVbPq54FKeAA7Yd3kBA0NBXJw6Hchrd/oqcQRAIVC7uWlv3eu165qMHQ
+x-ms-exchange-antispam-messagedata: ZbOgs+uwtNVvhxlLBRw+O2RswABN8aV4NL7MprX/crzHyxOn7gsGqUF2Liul8Qv/ZI+tZyCdbReSI3blXDOBthhJP4x957tKK/2WfyQNLo0etYtfm29PxwfPgAY1PS+Y9IXHyJExVtEzR1g3SOwG8g==
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6401D9DBA752F04C8C88B8138468C5BA@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ba3b106-10ea-44e0-2866-08d7c5f047b2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2020 19:13:28.0606
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hZKAH2daEdiknKkCn6sMCDk1T0y8y+ajuoHZX9p6P6fSMTYqSWgRDS1VnbaQuomhcoNbvqEpTyygxiO4uiYcVA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2830
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Q4lbC1C/K8hKjdwAjkF2OwnqdJnSlaTUZQG45OoY+sZB+h9VrGTUy7uQgufiM+j0HZHFJKWiJyNcoEoGmCGYuw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3112
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Family 19h introduces a change in slice, core and thread specification
-in its L3 Performance Event Select (ChL3PmcCfg) register. We implement
-the new bitmask conversions in a new path in l3_thread_slice_mask()
-based on a family 19h-and-above check.
-
-We also change the uncore_init() family check to 19h-and-above, so as
-to not revert to the Family 16h-or-below L2/NB code paths in the driver.
-
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org
----
-RESEND.  No changes since original submission:
-
-https://lkml.org/lkml/2020/2/19/1193
-
- arch/x86/events/amd/uncore.c      | 20 ++++++++++++++------
- arch/x86/include/asm/perf_event.h | 15 +++++++++++++--
- 2 files changed, 27 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
-index e635c40ca9c4..78b4fb917ad6 100644
---- a/arch/x86/events/amd/uncore.c
-+++ b/arch/x86/events/amd/uncore.c
-@@ -191,10 +191,18 @@ static u64 l3_thread_slice_mask(int cpu)
- 	if (topology_smt_supported() && !topology_is_primary_thread(cpu))
- 		thread = 1;
- 
--	shift = AMD64_L3_THREAD_SHIFT + 2 * (core % 4) + thread;
-+	if (boot_cpu_data.x86 <= 0x18) {
-+		shift = AMD64_L3_THREAD_SHIFT + 2 * (core % 4) + thread;
-+		thread_mask = BIT_ULL(shift);
-+
-+		return AMD64_L3_SLICE_MASK | thread_mask;
-+	}
-+
-+	core = (core << AMD64_L3_COREID_SHIFT) & AMD64_L3_COREID_MASK;
-+	shift = AMD64_L3_THREAD_SHIFT + thread;
- 	thread_mask = BIT_ULL(shift);
- 
--	return AMD64_L3_SLICE_MASK | thread_mask;
-+	return AMD64_L3_EN_ALL_SLICES | core | thread_mask;
- }
- 
- static int amd_uncore_event_init(struct perf_event *event)
-@@ -220,8 +228,8 @@ static int amd_uncore_event_init(struct perf_event *event)
- 		return -EINVAL;
- 
- 	/*
--	 * SliceMask and ThreadMask need to be set for certain L3 events in
--	 * Family 17h. For other events, the two fields do not affect the count.
-+	 * SliceMask and ThreadMask need to be set for certain L3 events.
-+	 * For other events, the two fields do not affect the count.
- 	 */
- 	if (l3_mask && is_llc_event(event))
- 		hwc->config |= l3_thread_slice_mask(event->cpu);
-@@ -530,9 +538,9 @@ static int __init amd_uncore_init(void)
- 	if (!boot_cpu_has(X86_FEATURE_TOPOEXT))
- 		return -ENODEV;
- 
--	if (boot_cpu_data.x86 == 0x17 || boot_cpu_data.x86 == 0x18) {
-+	if (boot_cpu_data.x86 >= 0x17) {
- 		/*
--		 * For F17h or F18h, the Northbridge counters are
-+		 * For F17h and above, the Northbridge counters are
- 		 * repurposed as Data Fabric counters. Also, L3
- 		 * counters are supported too. The PMUs are exported
- 		 * based on family as either L2 or L3 and NB or DF.
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 29964b0e1075..e855e9cf2c37 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -50,11 +50,22 @@
- 
- #define AMD64_L3_SLICE_SHIFT				48
- #define AMD64_L3_SLICE_MASK				\
--	((0xFULL) << AMD64_L3_SLICE_SHIFT)
-+	(0xFULL << AMD64_L3_SLICE_SHIFT)
-+#define AMD64_L3_SLICEID_MASK				\
-+	(0x7ULL << AMD64_L3_SLICE_SHIFT)
- 
- #define AMD64_L3_THREAD_SHIFT				56
- #define AMD64_L3_THREAD_MASK				\
--	((0xFFULL) << AMD64_L3_THREAD_SHIFT)
-+	(0xFFULL << AMD64_L3_THREAD_SHIFT)
-+#define AMD64_L3_F19H_THREAD_MASK			\
-+	(0x3ULL << AMD64_L3_THREAD_SHIFT)
-+
-+#define AMD64_L3_EN_ALL_CORES				BIT_ULL(47)
-+#define AMD64_L3_EN_ALL_SLICES				BIT_ULL(46)
-+
-+#define AMD64_L3_COREID_SHIFT				42
-+#define AMD64_L3_COREID_MASK				\
-+	(0x7ULL << AMD64_L3_COREID_SHIFT)
- 
- #define X86_RAW_EVENT_MASK		\
- 	(ARCH_PERFMON_EVENTSEL_EVENT |	\
--- 
-2.25.1
-
+T24gMy81LzIwIDEyOjAyIFBNLCBFdWdlbml5IFBhbHRzZXYgd3JvdGU6DQo+IFRvIGJlIGFibGUg
+dG8gcnVuIERTUC1lbmFibGVkIHVzZXJzcGFjZSBhcHBsaWNhdGlvbnMgd2UgbmVlZCB0bw0KPiBz
+YXZlIGFuZCByZXN0b3JlIGZvbGxvd2luZyBEU1AtcmVsYXRlZCByZWdpc3RlcnM6DQo+IEF0IElS
+US9leGNlcHRpb24gZW50cnkvZXhpdDoNCj4gICogRFNQX0NUUkwgKHNhdmUgaXQgYW5kIHJlc2V0
+IHRvIHZhbHVlIHN1aXRhYmxlIGZvciBrZXJuZWwpDQo+ICAqIEFDQzBfTE8sIEFDQzBfSEkgKHdl
+IGFscmVhZHkgc2F2ZSB0aGVtIGFzIHI1OCwgcjU5IHBhaXIpDQo+IEF0IGNvbnRleHQgc3dpdGNo
+Og0KPiAgKiBBQ0MwX0dMTywgQUNDMF9HSEkNCj4gICogRFNQX0JGTFkwLCBEU1BfRkZUX0NUUkwN
+Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IEV1Z2VuaXkgUGFsdHNldiA8RXVnZW5peS5QYWx0c2V2QHN5
+bm9wc3lzLmNvbT4NCg0KQWNrZWQtYnk6IFZpbmVldCBHdXB0YSA8dmd1cHRhQHN5bm9wc3lzLmNv
+bT4NCg==
