@@ -2,122 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B33F180E1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 03:42:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56DC2180E27
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 03:45:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbgCKCmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 22:42:47 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:45485 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727648AbgCKCmq (ORCPT
+        id S1727911AbgCKCpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 22:45:46 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:36715 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727506AbgCKCpq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 22:42:46 -0400
-Received: by mail-yw1-f68.google.com with SMTP id d206so619838ywa.12
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 19:42:45 -0700 (PDT)
+        Tue, 10 Mar 2020 22:45:46 -0400
+Received: by mail-il1-f195.google.com with SMTP id h3so600578ils.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 19:45:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=z34hT5bULDEZ91B4ZRD0I3GVUqGPOkD4dMmDdKPzM1w=;
-        b=M0ZoqeGgG+H1m7mfw/LTqZ+immbVB/GDQ11/vgSYcolxH+Bclr5pw31gNg1OfvPjhl
-         Lcg2AmQA9PWp7+Ilgnvbi9Xnr/b/kSvym5zDEKyqNjdLcqtaPeSK8Nv43jaVoIhjRQTM
-         xBqlSyC8FUImBaNsGoHSklolbii9rpGHRXDSF9LYLX/k9u5Zjd4saXv5EhluzJIYsxvA
-         PwhH9biQ+OmTw3CPxCfBAt9HI2eCugdQb8KerivL+FD4kkjm99VXnJtYggu0LnAATs3T
-         PE6PXMino1OW0mK1qDUlm3w3fqky5KSppx+ugvCuJbhAQI7ap2hXZ+0qx9qe/nbjw8el
-         SDmA==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=k8BnMRt8VzyM9/Iob3jnPHEoeEkg0bXf9PoCpKaIZBI=;
+        b=cbc6m1pzHmkwjtaxbA17HMxOxKMQ1amglEFAzXX0JbE5LeXphwmaTjoxEESrql9dFH
+         Q5J0exL0ehWlNONBMYVn2xLlm4cp1NjVsCPKJRelZU/PO8IZel6NM/kIa28Do74fHxgX
+         zapR1DbTVFWbojlaVEa7VKnkyRRRhTWJxtv8hbwdTQRoeXjiLMOP0dz9TkRtjBwZmjUi
+         8vEDDyTtgyOOlUZ0xwiLlgQQ4FLrFuWGV0RXUbkhbzV22TQRs208amZF2B+mM5Z+nZMq
+         q9+7L5+VHPxHuYUxQ7pU/rvlyJrmn7E47UBRd1xQYHYAEM9e0DCN2t9Z+aaiVI06S5jJ
+         ONMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=z34hT5bULDEZ91B4ZRD0I3GVUqGPOkD4dMmDdKPzM1w=;
-        b=F61fWLIhozaSVqUvsAS2HrnlMcmwnr6yvyRA5ffFO8Lh3+0qYBQR3KINl7B8XdLMvE
-         5HXldHrSfFhyELGwqVl/i8V8pHwG+8NBM7npltlSJCLZs/2A1/L/YeML2ArQWhb64zUP
-         4bAER1TcCFLaMb5lNlyUYzHlEKnGKK7zUs4NWlhZ6Oy+NaYr03dGWIVqxgUoy1x0FH5o
-         rAg7Ei1Rn9tG1UKAGeTz/xjYKIKn+nt5GEDTfPY+eAa4qHVVJmKkguLg7196G55rKtB3
-         XQUmi1cBLj73Etox8wznd9akqU/6RRh1klbqxxipoGV2C3JxaSuu6VTdFwi6O669sBpX
-         /oOA==
-X-Gm-Message-State: ANhLgQ0/2UYTZyXENtXQX/+w1joK+kOwLh6Q+5ozVF6i1R6NEigLpKfV
-        qO9MVGcBCMuU3vI25Amot0BiUQ==
-X-Google-Smtp-Source: ADFU+vspO2XL5NOw50R2gE7tEMV4xyqoRv+aMelSY/MVWHtUuEhnkA77KqE8WWjPSnvmSc1JOwp7wg==
-X-Received: by 2002:a25:9ac5:: with SMTP id t5mr809418ybo.305.1583894564945;
-        Tue, 10 Mar 2020 19:42:44 -0700 (PDT)
-Received: from presto.localdomain (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.gmail.com with ESMTPSA id x81sm19262510ywa.96.2020.03.10.19.42.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 19:42:44 -0700 (PDT)
+        bh=k8BnMRt8VzyM9/Iob3jnPHEoeEkg0bXf9PoCpKaIZBI=;
+        b=CWDupUwF/rGVLmMngAy74ylPwa1uEV2/tOSFRqt9AZYWP98GFnEOluIAsyFf24b57R
+         za+v0AQrENo11EYs5N7hY5b8I9WJ8JXRL2QbzC0yBisxghSj12NPIF5ctf0AEJb5MJyQ
+         A782S0DGhMfsfskGQWr7eEh5xMY/XLOkXNhSFfczqFLJUNpx/r7kwRP1ru2Ol8bx/Ky1
+         r2krHJnH62x+UiNFJus6is6IoltK1MI/8XQg6lSBlckEJ9TKG+HYUlkh34qmV11HXftt
+         vGWrYrvS+BOWjajF2OYP8yuGekNVE/QEs0ynwNx+l1XJrVCcFODe7wYwKUPfGCGoKZ7p
+         7nAA==
+X-Gm-Message-State: ANhLgQ1Djz9tVMnOI0M0t3RM+3xkCGoVuP9p4qcQ0a7HvTZd3RASFDy9
+        X+//21EultRGZ9lBBERjWkuEpbE4H7w=
+X-Google-Smtp-Source: ADFU+vvXQZI3zbstWEqnSOSoYO5IMA8Gp3GzX6wkJJtuJijLgwEv5ZzmSf6QLJuVD9ydV8p2lNaijQ==
+X-Received: by 2002:a92:d851:: with SMTP id h17mr1105410ilq.104.1583894745118;
+        Tue, 10 Mar 2020 19:45:45 -0700 (PDT)
+Received: from [172.22.22.26] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.googlemail.com with ESMTPSA id t24sm2002503ioj.13.2020.03.10.19.45.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Mar 2020 19:45:44 -0700 (PDT)
+Subject: Re: [PATCH v2] bitfield.h: add FIELD_MAX() and field_max()
 From:   Alex Elder <elder@linaro.org>
-To:     David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+To:     Jakub Kicinski <kuba@kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Johannes Berg <johannes@sipsolutions.net>,
         Arnd Bergmann <arnd@arndb.de>,
         Masahiro Yamada <masahiroy@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] bitfield.h: add FIELD_MAX() and field_max()
-Date:   Tue, 10 Mar 2020 21:42:40 -0500
-Message-Id: <20200311024240.26834-1-elder@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        lkml <linux-kernel@vger.kernel.org>
+References: <20200306042302.17602-1-elder@linaro.org>
+ <20200310212938.GA17565@ubuntu-m2-xlarge-x86>
+ <20200310145825.6ddb3797@kicinski-fedora-PC1C0HJN>
+ <bc50d249-60ab-767d-ae0c-02629483df34@linaro.org>
+Message-ID: <e46a1ba6-e169-e5b5-7933-ab22848407df@linaro.org>
+Date:   Tue, 10 Mar 2020 21:45:43 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
+In-Reply-To: <bc50d249-60ab-767d-ae0c-02629483df34@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define FIELD_MAX(), which supplies the maximum value that can be
-represented by a field value.  Define field_max() as well, to go
-along with the lower-case forms of the field mask functions.
+On 3/10/20 8:48 PM, Alex Elder wrote:
+> On 3/10/20 4:58 PM, Jakub Kicinski wrote:
+>> On Tue, 10 Mar 2020 14:29:38 -0700 Nathan Chancellor wrote:
+>>> Without this patch, the IPA driver that was picked up a couple of days
+>>> ago does not build...
+>>
+>> 😳 
+>>
+>> Yes please, Alex could you repost ASAP with [PATCH net-next] subject
+>> and CC netdev to get it into the netdev patchwork?
+>>
+>> Please also make IPA:
+>>
+>> 	depends on (ARCH_QCOM || COMPILE_TEST) && 64BIT && NET
+>>
+>> Otherwise it's really hard to make sure the code builds.
+> 
+> Sorry all.  I have been on vacation the last few days and only now
+> saw this.
+> 
+> I will put this together shortly.
 
-Signed-off-by: Alex Elder <elder@linaro.org>
-Acked-by: Jakub Kicinski <kuba@kernel.org>
----
-v3: Rebased on latest netdev-next/master.
-
-David, please take this into net-next as soon as possible.  When the
-IPA code was merged the other day this prerequisite patch was not
-included, and as a result the IPA driver fails to build.  Thank you.
-
-  See: https://lkml.org/lkml/2020/3/10/1839
+I just sent an updated version of the field_max() patch.  I will do
+the COMPILE_TEST change separately (and not today).
 
 					-Alex
 
- include/linux/bitfield.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
-index 4bbb5f1c8b5b..48ea093ff04c 100644
---- a/include/linux/bitfield.h
-+++ b/include/linux/bitfield.h
-@@ -55,6 +55,19 @@
- 					      (1ULL << __bf_shf(_mask))); \
- 	})
- 
-+/**
-+ * FIELD_MAX() - produce the maximum value representable by a field
-+ * @_mask: shifted mask defining the field's length and position
-+ *
-+ * FIELD_MAX() returns the maximum value that can be held in the field
-+ * specified by @_mask.
-+ */
-+#define FIELD_MAX(_mask)						\
-+	({								\
-+		__BF_FIELD_CHECK(_mask, 0ULL, 0ULL, "FIELD_MAX: ");	\
-+		(typeof(_mask))((_mask) >> __bf_shf(_mask));		\
-+	})
-+
- /**
-  * FIELD_FIT() - check if value fits in the field
-  * @_mask: shifted mask defining the field's length and position
-@@ -110,6 +123,7 @@ static __always_inline u64 field_mask(u64 field)
- {
- 	return field / field_multiplier(field);
- }
-+#define field_max(field)	((typeof(field))field_mask(field))
- #define ____MAKE_OP(type,base,to,from)					\
- static __always_inline __##type type##_encode_bits(base v, base field)	\
- {									\
--- 
-2.20.1
+> 					-Alex
+> 
 
