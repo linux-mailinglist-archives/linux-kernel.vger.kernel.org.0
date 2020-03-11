@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85C9E181E01
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:34:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EC2D181E04
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:35:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730346AbgCKQef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 12:34:35 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:58112 "EHLO hermes.aosc.io"
+        id S1730351AbgCKQfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 12:35:02 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:58143 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730180AbgCKQef (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 12:34:35 -0400
+        id S1730122AbgCKQfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 12:35:02 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 2554C4C335;
-        Wed, 11 Mar 2020 16:34:29 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 547A64C335;
+        Wed, 11 Mar 2020 16:34:53 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Sam Ravnborg <sam@ravnborg.org>,
@@ -23,76 +23,97 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 4/5] drm/sun4i: sun6i_mipi_dsi: fix horizontal timing calculation
-Date:   Thu, 12 Mar 2020 00:33:28 +0800
-Message-Id: <20200311163329.221840-5-icenowy@aosc.io>
+Subject: [PATCH 5/5] arm64: allwinner: dts: a64: add LCD-related device nodes for PinePhone
+Date:   Thu, 12 Mar 2020 00:33:29 +0800
+Message-Id: <20200311163329.221840-6-icenowy@aosc.io>
 In-Reply-To: <20200311163329.221840-1-icenowy@aosc.io>
 References: <20200311163329.221840-1-icenowy@aosc.io>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aosc.io; s=dkim;
-        t=1583944474;
+        t=1583944501;
         h=from:subject:date:message-id:to:cc:mime-version:content-transfer-encoding:in-reply-to:references;
-        bh=U2GxqfdymldYXpFrmpoV6T/L6VN/aPLvUF+27UYMKNM=;
-        b=tIV6lwpp+xUu1yh4SMhtRjYtnNU8O1efXGjwMBU6+K4WLy9VFlS6syxUXosBQHHhVI5sXQ
-        wqqe/lJ0Z0jZtgQMh+g7fgIPlImrhm2xCibz4wNeaYLAvpCZYuL5mQc6UnYyZk+jw7Rzhd
-        dd7JFj4hPaMvnnyRnz+4/VYq9QYocXw=
+        bh=u9w5nAbN8r7AuM3w2A7hm0aQ2elaDIKLhYe17LG/UKw=;
+        b=OuclH6urbbHX4kgu9EHBRU0pQYaQnNhzw7kkFHhgFmMBeN52FCgbhRETL7FJ/OdQ5cZDi3
+        TaqZ7I76I/vIVkrPIFWCY6+FP3GVx8pJLjoeGSkYfvUYudOZjCpInO0mTBx49H5kfAuo8s
+        cboEN30pn3Ae2Brmh0trBPrEOR/qwu0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The max() function call in horizontal timing calculation shouldn't pad a
-length already subtracted with overhead to overhead, instead it should
-only prevent the set timing to underflow.
+PinePhone uses PWM backlight and a XBD599 LCD panel over DSI for
+display.
+
+Add its device nodes.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ .../dts/allwinner/sun50i-a64-pinephone.dtsi   | 37 +++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 059939789730..5f2313c40328 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -555,7 +555,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
- 		 */
- #define HSA_PACKET_OVERHEAD	10
- 		hsa = max((unsigned int)HSA_PACKET_OVERHEAD,
--			  (mode->hsync_end - mode->hsync_start) * Bpp - HSA_PACKET_OVERHEAD);
-+			  (mode->hsync_end - mode->hsync_start) * Bpp) - HSA_PACKET_OVERHEAD;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+index cefda145c3c9..96d9150423e0 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+@@ -16,6 +16,15 @@ aliases {
+ 		serial0 = &uart0;
+ 	};
  
- 		/*
- 		 * The backporch is set using a blanking packet (4
-@@ -564,7 +564,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
- 		 */
- #define HBP_PACKET_OVERHEAD	6
- 		hbp = max((unsigned int)HBP_PACKET_OVERHEAD,
--			  (mode->htotal - mode->hsync_end) * Bpp - HBP_PACKET_OVERHEAD);
-+			  (mode->htotal - mode->hsync_end) * Bpp) - HBP_PACKET_OVERHEAD;
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
++		brightness-levels = <0 16 18 20 22 24 26 29 32 35 38 42 46 51 56 62 68 75 83 91 100>;
++		default-brightness-level = <15>;
++		enable-gpios = <&pio 7 10 GPIO_ACTIVE_HIGH>; /* PH10 */
++		power-supply = <&reg_ldo_io0>;
++	};
++
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+@@ -84,6 +93,30 @@ &dai {
+ 	status = "okay";
+ };
  
- 		/*
- 		 * The frontporch is set using a sync event (4 bytes)
-@@ -574,7 +574,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
- 		 */
- #define HFP_PACKET_OVERHEAD	16
- 		hfp = max((unsigned int)HFP_PACKET_OVERHEAD,
--			  (mode->hsync_start - mode->hdisplay) * Bpp - HFP_PACKET_OVERHEAD);
-+			  (mode->hsync_start - mode->hdisplay) * Bpp) - HFP_PACKET_OVERHEAD;
++&de {
++	status = "okay";
++};
++
++&dphy {
++	status = "okay";
++};
++
++&dsi {
++	vcc-dsi-supply = <&reg_dldo1>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++
++	panel@0 {
++		compatible = "xingbangda,xbd599";
++		reg = <0>;
++		reset-gpios = <&pio 3 23 GPIO_ACTIVE_LOW>; /* PD23 */
++		iovcc-supply = <&reg_dldo2>;
++		vcc-supply = <&reg_ldo_io0>;
++		backlight = <&backlight>;
++	};
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -188,6 +221,10 @@ &r_pio {
+ 	 */
+ };
  
- 		/*
- 		 * The blanking is set using a sync event (4 bytes)
-@@ -583,8 +583,8 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
- 		 */
- #define HBLK_PACKET_OVERHEAD	10
- 		hblk = max((unsigned int)HBLK_PACKET_OVERHEAD,
--			   (mode->htotal - (mode->hsync_end - mode->hsync_start)) * Bpp -
--			   HBLK_PACKET_OVERHEAD);
-+			   (mode->htotal - (mode->hsync_end - mode->hsync_start)) * Bpp) -
-+			   HBLK_PACKET_OVERHEAD;
++&r_pwm {
++	status = "okay";
++};
++
+ &r_rsb {
+ 	status = "okay";
  
- 		/*
- 		 * And I'm not entirely sure what vblk is about. The driver in
 -- 
 2.24.1
 
