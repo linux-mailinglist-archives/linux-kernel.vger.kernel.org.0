@@ -2,128 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B241181E0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:36:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 772EB181E0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:36:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730358AbgCKQgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 12:36:09 -0400
-Received: from smtprelay-out1.synopsys.com ([149.117.73.133]:58034 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730324AbgCKQgJ (ORCPT
+        id S1730301AbgCKQgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 12:36:03 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44004 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729631AbgCKQgD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 12:36:09 -0400
-Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 5FB2E43B75;
-        Wed, 11 Mar 2020 16:36:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1583944568; bh=QY54OvyEORnwNXGGs5dbPDvosroT2dVspYOudcgf+eI=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=Q6WzN/57/LSjKPiDNt7elhBFEzjz6qvB7rYpAyhsEDJJZfN0gZriIe1mvev+OnjI+
-         hjsHS0DyqF8863mQLvNnpG/2NTu5WeIaPhd56GBK/Y8FFEfODORlsuco5ZLkxtjthW
-         beBc6lGDG7oazr+CBvGagT2UugvSL+Oe9KkrZfiUfznkMqz+YPGqk9mYHvOwFvLkC1
-         II+wRU1OmUcRJ3L6PgYMsb8QbjJRzjFrtrWwlQHmDZpwbzoUPGDOwQP78b5VkEmjMO
-         5ieJsHDMkgSEqvoHUn+eXuuxncuKBtiyPFq5/5WMGkQeOE9XhuJ4Nf2LVH4WqYCJd3
-         eD6oaexBSdEsA==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 416D4A0085;
-        Wed, 11 Mar 2020 16:36:03 +0000 (UTC)
-Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 11 Mar 2020 09:35:43 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (10.202.3.67) by
- mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Wed, 11 Mar 2020 09:35:42 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bO6Tagy03tAOxzivU0gwhlPiZrjrT1rjB7siYXRTaJiLE73IeeB2WooHv4sNTQ20HnqV9eA1pnoVE2WtzO17P+jcLlgwXhds9lT+x8JVsGMikA5015uLsKH7V/4H3vPhsxCl5W451G3exVmgcptNztDuK9XelxQZoNF9KZeDB4noM+fDp79ZU7EEz/nbivciqhWI7Tpewcyh9eAMwm1aQysrQA1H+PRAUa4yG6Vf7OZbqLNazbuPUQgk9f2pU+WMvulflvJDAlsbSbKa7gmRa/EepCAyRFecCFzCtYf2QqkRSzyHyAUcUfICkUKoaPXAzNgj/df/DrvQoF20224bDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QY54OvyEORnwNXGGs5dbPDvosroT2dVspYOudcgf+eI=;
- b=KbiAjO0vx8eOuhf0mYjHhJz6rh5K7IGLlBf8qhT7Vg2EzhSYNijRHWarWSUDhf+qeQ1glaX31L0FX6GzNjh6zfsS4kmmxE/NNh9nhRjV7IoUDAvGG33sNbMPB5OyRlrriApAFI64/HyvFT9ZSX2zNt9LC8xuCIV3LWHXXdhLpnHTErE77wFZqyi1BIQve6xRXUjL/9+6IAqWJc+8wSCYp89cPxH3N9vP4GCt1VnDnhBRpU+1BGb88Ok+u18IuScww7fqPU783ZWs5x412PSks8bmYD4uMmcsk/3v7ttHRMzOD/yOtg4yjeGhwQTeEmBWx50BFE5YDMAo3f5iz9uRMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
- dkim=pass header.d=synopsys.com; arc=none
+        Wed, 11 Mar 2020 12:36:03 -0400
+Received: by mail-ed1-f65.google.com with SMTP id dc19so3609257edb.10;
+        Wed, 11 Mar 2020 09:36:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QY54OvyEORnwNXGGs5dbPDvosroT2dVspYOudcgf+eI=;
- b=mGYEb8osrknZaNr4SRieTQLfeQdc+Tc9CBQ7pBl+m0w4PD25CVyaO9BKIeKeppLsvqsRCqIOC0PnlUeRHv5diC430OIUtxDmikId2jcJMICZYGWwKPuza/4jhypSt83p5au3bWa91J/Mvi4Tqpnh7WHfGnkkbxiig1V8Ue1ykbE=
-Received: from BYAPR12MB3592.namprd12.prod.outlook.com (2603:10b6:a03:db::25)
- by BYAPR12MB2949.namprd12.prod.outlook.com (2603:10b6:a03:12f::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.17; Wed, 11 Mar
- 2020 16:35:41 +0000
-Received: from BYAPR12MB3592.namprd12.prod.outlook.com
- ([fe80::a45a:6a41:3fe5:2eb7]) by BYAPR12MB3592.namprd12.prod.outlook.com
- ([fe80::a45a:6a41:3fe5:2eb7%7]) with mapi id 15.20.2793.013; Wed, 11 Mar 2020
- 16:35:41 +0000
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Alexey Brodkin" <Alexey.Brodkin@synopsys.com>
-Subject: Re: [PATCH 1/2] ARC: define __ALIGN_STR and __ALIGN symbols for ARC
-Thread-Topic: [PATCH 1/2] ARC: define __ALIGN_STR and __ALIGN symbols for ARC
-Thread-Index: AQHV98Hzr2RKMRF2AkWZBgFmQdoYxqhDlq8A
-Date:   Wed, 11 Mar 2020 16:35:40 +0000
-Message-ID: <e7b583c8-6189-cf4d-1df5-402fdc2e896c@synopsys.com>
-References: <20200311162644.7667-1-Eugeniy.Paltsev@synopsys.com>
-In-Reply-To: <20200311162644.7667-1-Eugeniy.Paltsev@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vgupta@synopsys.com; 
-x-originating-ip: [149.117.75.11]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 84284cb7-770b-40cc-6f7d-08d7c5da3cdb
-x-ms-traffictypediagnostic: BYAPR12MB2949:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR12MB2949E87965CDBCEE11D511C9B6FC0@BYAPR12MB2949.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:179;
-x-forefront-prvs: 0339F89554
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(376002)(136003)(366004)(346002)(199004)(6512007)(26005)(6486002)(478600001)(186003)(4326008)(53546011)(6506007)(4744005)(64756008)(66446008)(2616005)(110136005)(316002)(8676002)(36756003)(76116006)(66476007)(5660300002)(66556008)(66946007)(31686004)(71200400001)(54906003)(86362001)(107886003)(81166006)(2906002)(81156014)(31696002)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR12MB2949;H:BYAPR12MB3592.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: synopsys.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: pGZuq7zzyPE1dflA9gS+BCe62o/4F122ELgn+QzJhaw8d54dSkAlQdEeXwGsnTACHKNfN+CltzLI1gTktkbr9SYriSlX78jf6QI9paqFj+jF64Os0GZDqx5YZhC1y38syDtHxWpgoLuL7Gp+g2P1o9Jy83vd/lJmhxmDbiclBvQv1mUy+B2qELDreKWTHwfbpVvWgqPlFg80J4yPGAOGZx0YpChVdnolu/BMyrnpA4HNfzrO2eiNQ1zElXsfTpRHdfzi3PFeZX5Ell53v8Y+A+/GaNaSMEie5Uqyrv69a9YgkY0oOgK0XQ+2J3sZslD1ng6WxvXB6yagZJWgJRKSRVLgcRgp4KLkOtvMVqYNMQW+Cf8ZsO6qIC8f2AiFVC3iS0HgQzwISTDVX/uwXSlYKEnzzvMUytobVE3X/gDi+mt1I/8BHGyQlzacZOofdly1
-x-ms-exchange-antispam-messagedata: TeDcsRzTBBc4hJU7JSStCOi4Caa7by9V9y0RLmPEs0Zb7YLlyunBAGG3zdxE4L+YFgL7dyhdfI3jKHq2crk2eyXICN0nE4IeXgvCARyjP7U1v9zzybzuS2/j+w2mAmmy9OUQHGfJ5x6Ncbf1dcL2YQ==
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9FF97FDEE15A044FA388AB0F0025DDC9@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ALDnh6/CiSndTdMaMbzSmsCEBXICNVByiI58zX8By/I=;
+        b=QWJpHsi+FrCvfO7t8tcTBagtzonzmYs7D0NsTuKBNsIBiAvI1+lnlkze93dfKJ8d8C
+         YFliSCZ1GPyjyA809zaN6Q9W2yQ702WCB5QJmqHvIRqUz+OGzOZzuAnCD7uax0PWFkIW
+         tbnHPkKDZa5O64roVmsiaWFe7d7RumzCZStk9dOaUEL8ggy+KE4NWLEt1v4ZQyuWLJ6g
+         vfrEUlSM9sMCcR968B/LrPbp5qx00iHoPc0eaiTImDv6WOduOYT32j9yE2LaxorMZF3H
+         NsqU9AygX6zFUYnb16rOLsMxWRh1ZN455ze0cD/QGMAiWs/V67FEayNKbyw+R3QN/i+P
+         MUFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=ALDnh6/CiSndTdMaMbzSmsCEBXICNVByiI58zX8By/I=;
+        b=GikLRHBvWyb4cXjfLU3h/jLLdivQoYWRpM5V6IFu9MvfdDsxBmFWsIyCMNvgNXyjlw
+         vOklvhY+v1jUDZBFi3VZ/LivHRRb/v0j9CvwazRIjZgo3D8F3yJdslYlN/hqOGzL65BW
+         6qwhCiZMDTBFQadM7um8LPhnq29SEXZ6U3e5eSV7Fk5q1xFJlXlZiByfoUtpZy6wqiuJ
+         I5dUaClKRZ4R/eFZd/agWtt43sCRC9FhkQxWUGYbQkxyWPJbEeZnY5jcz7JTSSC94pkg
+         AMm5/VHiskx/u0R/vWo0gpYzrJW48S6QR2xEnuRHXOp8g3P8rENmkc9hq0MdcOa5OwC5
+         EiKQ==
+X-Gm-Message-State: ANhLgQ171P2QquzFwvHtPjBSBrdqxIIvqyXmrPd+O/a6Ec+vZeW1cjjE
+        NZNPaN33/mF1HSXKOaZdTyqVf/4p
+X-Google-Smtp-Source: ADFU+vvlHudoRMVXJNn72RmqLiDxqatxcxOaA+o2Z5ntcmI8xTGB941mzo4D3OrqCLW8mTFID9KQBg==
+X-Received: by 2002:a50:b043:: with SMTP id i61mr3639227edd.194.1583944560108;
+        Wed, 11 Mar 2020 09:36:00 -0700 (PDT)
+Received: from [10.67.48.239] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id g31sm4438951edd.53.2020.03.11.09.35.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2020 09:35:59 -0700 (PDT)
+Subject: Re: [PATCH -next 030/491] BROADCOM GENET ETHERNET DRIVER: Use
+ fallthrough;
+To:     Joe Perches <joe@perches.com>, Doug Berger <opendmb@gmail.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1583896344.git.joe@perches.com>
+ <e78fb08d1dcf0d95175fc2866c344fbef2ff7065.1583896349.git.joe@perches.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ G10n8gCguORqNGMsVRxrlLs7/himep7MrCc=
+Message-ID: <a61c388f-bb42-e6e6-7381-5e99c8dad95e@gmail.com>
+Date:   Wed, 11 Mar 2020 09:35:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84284cb7-770b-40cc-6f7d-08d7c5da3cdb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2020 16:35:40.8372
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Dqtzltia8/GUYY2b79n8Ot+B5bVcTUAT48pvfSdnlG0J3DsskR/wgivdLVhikQpeaekFHFQ6dmg+DED2IwpM2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2949
-X-OriginatorOrg: synopsys.com
+In-Reply-To: <e78fb08d1dcf0d95175fc2866c344fbef2ff7065.1583896349.git.joe@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMy8xMS8yMCA5OjI2IEFNLCBFdWdlbml5IFBhbHRzZXYgd3JvdGU6DQo+IEFzIG9mIHRvZGF5
-IEFSQyB1c2VzIGdlbmVyaWMgX19BTElHTl9TVFIgYW5kIF9fQUxJR04gc3ltYm9sDQo+IGRlZmlu
-aXRpb25zIGZyb20gImluY2x1ZGUvbGludXgvbGlua2FnZS5oIg0KPiBUaGV5IGFyZSBkZWZpbmVk
-IHRvICIuYWxpZ24gNCwweDkwIiB3aGljaCBpbnN0cnVjdGVkIHRoZSBhc3NlbWJsZXINCj4gdG8g
-dXNlIGAweDkwYCBhcyBhIGZpbGwgYnl0ZSB3aGVuIGFsaWduaW5nIGZ1bmN0aW9ucyBkZWNsYXJl
-ZCB3aXRoDQo+IEVOVFJZIG9yIHNpbWlsYXIgbWFjcm9zZXMuIFRoaXMgbGVhZHMgdG8gZ2VuZXJh
-dGVkIHdlaXJkIGluc3RydWN0aW9ucw0KPiBpbiBjb2RlICh3aGVuIGFsaWdubWVudCBpcyB1c2Vk
-KSBsaWtlICJsZGhfcyByMTIsW3IwLDB4MjBdIiB3aGljaCBpcw0KPiBlbmNvZGVkIGFzIDB4OTA5
-MCBmb3IgQVJDdjIuDQo+IA0KPiBMZXQncyB1c2UgIi5hbGlnbiA0IiB3aGljaCBpbnNlcnQgYSAi
-bm9wX3MiIGluc3RydWN0aW9uIGluc3RlYWQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBFdWdlbml5
-IFBhbHRzZXYgPEV1Z2VuaXkuUGFsdHNldkBzeW5vcHN5cy5jb20+DQoNCkFja2VkLWJ5OiBWaW5l
-ZXQgR3VwdGEgPHZndXB0YUBzeW5vcHN5cy5jb20+DQoNCi1WaW5lZXQNCg==
+On 3/10/20 9:51 PM, Joe Perches wrote:
+> Convert the various uses of fallthrough comments to fallthrough;
+> 
+> Done via script
+> Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe.com/
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
+
+Please fix the subject to be:
+
+net: bcmgenet: Use fallthrough;
+
+to match commits done to this file.
+-- 
+Florian
