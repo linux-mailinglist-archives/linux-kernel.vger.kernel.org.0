@@ -2,79 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65729181E99
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:04:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA932181E9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:05:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730265AbgCKREq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:04:46 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:45465 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729675AbgCKREp (ORCPT
+        id S1730371AbgCKRF0 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 13:05:26 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:33594 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbgCKRF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:04:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583946284;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jykx3cJByb3AWCb0WV64LkUlnx3R9Hi3e1lE7ij8ROg=;
-        b=XSWOdsI7jKXGkxrXUz+LY5oZdm1+A3z30b0kLKFdo823TlBRLLUqTsBd+bcDZIabFwC1Ig
-        5c/VL2s/FGhWhSl/6DWxfhyoo0hCVTjrDIDrz91fufSlkU6RBWhUDSSK4YspLSiPy2i33o
-        Gc50xMUqvnZLKtE9DFesBAw6tIWBQmk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-451-fylXbBEaNUCy-xrSG-2R-A-1; Wed, 11 Mar 2020 13:04:39 -0400
-X-MC-Unique: fylXbBEaNUCy-xrSG-2R-A-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 07B451937FC0;
-        Wed, 11 Mar 2020 17:04:38 +0000 (UTC)
-Received: from elisabeth (ovpn-200-42.brq.redhat.com [10.40.200.42])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7E1755D9C5;
-        Wed, 11 Mar 2020 17:04:34 +0000 (UTC)
-Date:   Wed, 11 Mar 2020 18:04:28 +0100
-From:   Stefano Brivio <sbrivio@redhat.com>
-To:     Shreeya Patel <shreeya.patel23498@gmail.com>
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com,
-        daniel.baluta@gmail.com, nramas@linux.microsoft.com,
-        hverkuil@xs4all.nl, Larry.Finger@lwfinger.net
-Subject: Re: [Outreachy kernel] [PATCH v4] Staging: rtl8188eu: rtw_mlme: Add
- space around operators
-Message-ID: <20200311180428.6489fe9b@elisabeth>
-In-Reply-To: <20200311131742.31068-1-shreeya.patel23498@gmail.com>
-References: <20200311131742.31068-1-shreeya.patel23498@gmail.com>
-Organization: Red Hat
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+        Wed, 11 Mar 2020 13:05:26 -0400
+Received: from marcel-macbook.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 4829ECECE2;
+        Wed, 11 Mar 2020 18:14:53 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [RFC PATCH v6 0/5] Bluetooth: Handle system suspend gracefully
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20200311155404.209990-1-abhishekpandit@chromium.org>
+Date:   Wed, 11 Mar 2020 18:05:24 +0100
+Cc:     Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Alain Michaud <alainm@chromium.org>,
+        linux-bluetooth@vger.kernel.org,
+        chromeos-bluetooth-upstreaming@chromium.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jakub Kicinski <kuba@kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <99C097F2-FD84-49B8-B3D7-F03C34C4F563@holtmann.org>
+References: <20200311155404.209990-1-abhishekpandit@chromium.org>
+To:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Mar 2020 18:47:42 +0530
-Shreeya Patel <shreeya.patel23498@gmail.com> wrote:
+Hi Abhishek,
 
-> Add space around operators for improving the code
-> readability.
-> Reported by checkpatch.pl
+> This patch series prepares the Bluetooth controller for system suspend
+> by disconnecting all devices and preparing the event filter and LE
+> whitelist with devices that can wake the system from suspend.
 > 
-> git diff -w shows no difference.
-> diff of the .o files before and after the changes shows no difference.
+> The main motivation for doing this is so we can enable Bluetooth as
+> a wake up source during suspend without it being noisy. Bluetooth should
+> wake the system when a HID device receives user input but otherwise not
+> send any events to the host.
 > 
-> Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
+> This patch series was tested on several Chromebooks with both btusb and
+> hci_serdev on kernel 4.19. The set of tests was basically the following:
+> * Reconnects after suspend succeed
+> * HID devices can wake the system from suspend (needs some related bluez
+>  changes to call the Set Wake Capable management command)
+> * System properly pauses and unpauses discovery + advertising around
+>  suspend
+> * System does not wake from any events from non wakeable devices
+> 
+> Series 2 has refactored the change into multiple smaller commits as
+> requested. I tried to simplify some of the whitelist filtering edge
+> cases but unfortunately it remains quite complex.
+> 
+> Series 3 has refactored it further and should have resolved the
+> whitelisting complexity in series 2.
+> 
+> Series 4 adds a fix to check for powered down and powering down adapters.
+> 
+> Series 5 moves set_wake_capable to the last patch in the series and
+> changes BT_DBG to bt_dev_dbg.
+> 
+> Please review and provide any feedback.
+> 
+> Thanks
+> Abhishek
+> 
+> 
+> Changes in v6:
+> * Removed unused variables in hci_req_prepare_suspend
+> * Add int old_state to this patch
+> 
+> Changes in v5:
+> * Convert BT_DBG to bt_dev_dbg
+> * Added wakeable list and changed BT_DBG to bt_dev_dbg
+> * Add wakeable to hci_conn_params and change BT_DBG to bt_dev_dbg
+> * Changed BT_DBG to bt_dev_dbg
+> * Wakeable entries moved to other commits
+> * Patch moved to end of series
+> 
+> Changes in v4:
+> * Added check for mgmt_powering_down and hdev_is_powered in notifier
+> 
+> Changes in v3:
+> * Refactored to only handle BR/EDR devices
+> * Split LE changes into its own commit
+> * Added wakeable property to le_conn_param
+> * Use wakeable list for BR/EDR and wakeable property for LE
+> 
+> Changes in v2:
+> * Moved pm notifier registration into its own patch and moved params out
+>  of separate suspend_state
+> * Refactored filters and whitelist settings to its own patch
+> * Refactored update_white_list to have clearer edge cases
+> * Add connected devices to whitelist (previously missing corner case)
+> * Refactored pause discovery + advertising into its own patch
+> 
+> Abhishek Pandit-Subedi (5):
+>  Bluetooth: Handle PM_SUSPEND_PREPARE and PM_POST_SUSPEND
+>  Bluetooth: Handle BR/EDR devices during suspend
+>  Bluetooth: Handle LE devices during suspend
+>  Bluetooth: Pause discovery and advertising during suspend
+>  Bluetooth: Add mgmt op set_wake_capable
+> 
+> include/net/bluetooth/hci.h      |  17 +-
+> include/net/bluetooth/hci_core.h |  43 ++++
+> include/net/bluetooth/mgmt.h     |   7 +
+> net/bluetooth/hci_core.c         | 102 ++++++++++
+> net/bluetooth/hci_event.c        |  24 +++
+> net/bluetooth/hci_request.c      | 331 ++++++++++++++++++++++++++-----
+> net/bluetooth/hci_request.h      |   2 +
+> net/bluetooth/mgmt.c             |  92 +++++++++
+> 8 files changed, 558 insertions(+), 60 deletions(-)
 
-This looks good to me. Further clean-ups here could probably make this
-look less messy (there are long lines, unnecessary parentheses that are
-rather confusing, especially on that 4/5 factor, "magic" constants that
-might make sense to figure out the meaning of, etc.).
+patches 1-4 have been applied to bluetooth-next tree.
 
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+I skipped patch 5 since now we have to discuss how best the API for setting the wakeable devices will be. Care to start up a discussion thread for that?
 
--- 
-Stefano
+Regards
+
+Marcel
 
