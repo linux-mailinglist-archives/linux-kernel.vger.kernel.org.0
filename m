@@ -2,222 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2081D1824B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 23:22:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAF0D1824C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 23:23:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729991AbgCKWWi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 18:22:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58788 "EHLO mx2.suse.de"
+        id S1731040AbgCKWXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 18:23:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729506AbgCKWWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 18:22:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 871E5B120;
-        Wed, 11 Mar 2020 22:22:34 +0000 (UTC)
-From:   NeilBrown <neilb@suse.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jeff Layton <jlayton@kernel.org>
-Date:   Thu, 12 Mar 2020 09:22:26 +1100
-Cc:     yangerkun <yangerkun@huawei.com>,
-        kernel test robot <rong.a.chen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        Bruce Fields <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [locks] 6d390e4b5d: will-it-scale.per_process_ops -96.6% regression
-In-Reply-To: <CAHk-=whUgeZGcs5YAfZa07BYKNDCNO=xr4wT6JLATJTpX0bjGg@mail.gmail.com>
-References: <20200308140314.GQ5972@shao2-debian> <e3783d060c778cb41b77380ad3e278133b52f57e.camel@kernel.org> <CAHk-=whGK712fPqmQ3FSHxqe3Aqny4bEeWEvfaytLeLV2+ijCQ@mail.gmail.com> <34355c4fe6c3968b1f619c60d5ff2ca11a313096.camel@kernel.org> <1bfba96b4bf0d3ca9a18a2bced3ef3a2a7b44dad.camel@kernel.org> <87blp5urwq.fsf@notabene.neil.brown.name> <41c83d34ae4c166f48e7969b2b71e43a0f69028d.camel@kernel.org> <ed73fb5d-ddd5-fefd-67ae-2d786e68544a@huawei.com> <923487db2c9396c79f8e8dd4f846b2b1762635c8.camel@kernel.org> <36c58a6d07b67aac751fca27a4938dc1759d9267.camel@kernel.org> <878sk7vs8q.fsf@notabene.neil.brown.name> <c4ef31a663fbf7a3de349696e9f00f2f5c4ec89a.camel@kernel.org> <875zfbvrbm.fsf@notabene.neil.brown.name> <CAHk-=wg8N4fDRC3M21QJokoU+TQrdnv7HqoaFW-Z-ZT8z_Bi7Q@mail.gmail.com> <0066a9f150a55c13fcc750f6e657deae4ebdef97.camel@kernel.org> <CAHk-=whUgeZGcs5YAfZa07BYKNDCNO=xr4wT6JLATJTpX0bjGg@mail.gmail.com>
-Message-ID: <87v9nattul.fsf@notabene.neil.brown.name>
+        id S1729506AbgCKWXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 18:23:55 -0400
+Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FBAC2074F;
+        Wed, 11 Mar 2020 22:23:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583965434;
+        bh=VxuBiG8OFio/B5ZtjRsG29WpYhE8YxkKdDWuBasRt2w=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=fDGv/SDkCtTHXBh8kW0vBN8kem9XC4ovtOXnyjOBM+1pp4g2/Va+d1cnO0IiElwvA
+         241pXhPDe/ac5hQcwfeX+qu+ILSg3vKYyWeFPlkxf87j3XmS6BEBSBsp/RIsd5Qxrd
+         tMNCXTIXxAtHH0/IkDgKdsCVjTEtgct/q+yXsIWw=
+Date:   Wed, 11 Mar 2020 17:23:52 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc:     Austin.Bolen@dell.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ashok.raj@intel.com
+Subject: Re: [PATCH v17 09/12] PCI/AER: Allow clearing Error Status Register
+ in FF mode
+Message-ID: <20200311222352.GA200510@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5328126a-7cf0-58c9-7dff-978fe2cae0ee@linux.intel.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Wed, Mar 11, 2020 at 03:11:06PM -0700, Kuppuswamy Sathyanarayanan wrote:
+> On 3/11/20 2:53 PM, Austin.Bolen@dell.com wrote:
+> > On 3/11/2020 4:27 PM, Kuppuswamy Sathyanarayanan wrote:
+> > > On 3/11/20 1:33 PM, Bjorn Helgaas wrote:
+> > > > On Wed, Mar 11, 2020 at 05:27:35PM +0000, Austin.Bolen@dell.com wrote:
+> > > > > On 3/11/2020 12:12 PM, Bjorn Helgaas wrote:
+> > > > > <SNIP>
+> > > > > > I'm probably missing your intent, but that sounds like "the OS can
+> > > > > > read/write AER bits whenever it wants, regardless of ownership."
+> > > > > > 
+> > > > > > That doesn't sound practical to me, and I don't think it's really
+> > > > > > similar to DPC, where it's pretty clear that the OS can touch DPC bits
+> > > > > > it doesn't own but only *during the EDR processing window*.
+> > > > > Yes, by treating AER bits like DPC bits I meant I'd define the specific
+> > > > > time windows when OS can touch the AER status bits similar to how it's
+> > > > > done for DPC in the current ECN.
+> > > > Makes sense, thanks.
+> > > > 
+> > > > > > > > > For the normative text describing when OS clears the AER bits
+> > > > > > > > > following the informative flow chart, it could say that OS clears
+> > > > > > > > > AER as soon as possible after OST returns and before OS processes
+> > > > > > > > > _HPX and loading drivers.  Open to other suggestions as well.
+> > > > > > > > I'm not sure what to do with "as soon as possible" either.  That
+> > > > > > > > doesn't seem like something firmware and the OS can agree on.
+> > > > > > > I can just state that it's done after OST returns but before _HPX or
+> > > > > > > driver is loaded. Any time in that range is fine. I can't get super
+> > > > > > > specific here because different OSes do different things.  Even for
+> > > > > > > a given OS they change over time. And I need something generic
+> > > > > > > enough to support a wide variety of OS implementations.
+> > > > > > Yeah.  I don't know how to solve this.
+> > > > > > 
+> > > > > > Linux doesn't actually unload and reload drivers for the child devices
+> > > > > > (Sathy, correct me if I'm wrong here) even though DPC containment
+> > > > > > takes the link down and effectively unplugs and replugs the device.  I
+> > > > > > would *like* to handle it like hotplug, but some higher-level software
+> > > > > > doesn't deal well with things like storage devices disappearing and
+> > > > > > reappearing.
+> > > > > > 
+> > > > > > Since Linux doesn't actually re-enumerate the child devices, it
+> > > > > > wouldn't evaluate _HPX again.  It would probably be cleaner if it did,
+> > > > > > but it's all tied up with the whole unplug/replug problem.
+> > > > > DPC resets everything below it and so to get it back up and running it
+> > > > > would mean that all buses and resources need to be assigned, _HPX
+> > > > > evaluated, and drivers reloaded. If those things don't happen then the
+> > > > > whole hierarchy below the port that triggered DPC will be inaccessible.
+> > > > Hmm, I think I might be confusing this with another situation.  Sathy,
+> > > > can you help me understand this?  I don't have a way to actually
+> > > > exercise this EDR path.  Is there some way the pciehp hotplug driver
+> > > > gets involved here?
+> > If the port has hot-plug enabled then DPC trigger will cause the link to
+> > go down (disabled state) and will generate a DLLSC hot-plug interrupt.
+> > When DPC is released, the link will become active and generate another
+> > DLLSC hot-plug interrupt.
+> Yes, device/driver enumeration and removal will triggered by DLLSC
+> state change interrupt in pciehp driver.
+> > 
+> > > > Here's how this seems to work as far as I can tell:
+> > > > 
+> > > >      - Linux does not have DPC or AER control
+> > > > 
+> > > >      - Linux installs EDR notify handler
+> > > > 
+> > > >      - Linux evaluates DPC Enable _DSM
+> > > > 
+> > > >      - DPC containment event occurs
+> > > > 
+> > > >      - Firmware fields DPC interrupt
+> > > > 
+> > > >      - DPC event is not a surprise remove
+> > > > 
+> > > >      - Firmware sends EDR notification
+> > > > 
+> > > >      - Linux EDR notify handler evaluates Locate _DSM
+> > > > 
+> > > >      - Linux reads and logs DPC and AER error information for port in
+> > > >        containment mode.  [If it was an RP PIO error, Linux clears RP PIO
+> > > >        error status, which is an asymmetry with the non-RP PIO path.]
+> > > > 
+> > > >      - Linux clears AER error status (pci_aer_raw_clear_status())
+> > > > 
+> > > >      - Linux calls driver .error_detected() methods for all child devices
+> > > >        of the port in containment mode (pcie_do_recovery()).  These
+> > > >        devices are inaccessible because the link is down.
+> > > > 
+> > > >      - Linux clears DPC Trigger Status (dpc_reset_link() from
+> > > >        pcie_do_recovery()).
+> > > > 
+> > > >      - Linux calls driver .mmio_enabled() methods for all child devices.
+> > > > 
+> > > > This is where I get lost.  These child devices are now accessible, but
+> > > > they've been reset, so I don't know how their config space got
+> > > > restored.  Did pciehp enumerate them?  Did we do something like
+> > > > pci_restore_state()?  I don't see where either of these happens.
+> > > AFAIK, AER error status registers  are sticky (RW1CS) and hence
+> > > will be preserved during reset.
+> > In our testing, the device directly connected to the port that was
+> > contained does get reprogrammed and the driver is reloaded.  These are
+> > hot-plug slots and so might be due to DLLSC hot-plug interrupt when
+> > containment is released and link goes back to active state.
+> > 
+> > However, if a switch is connected to the port where DPC was triggered
+> > then we do not see the whole switch hierarchy being re-enumerated.
+> Now that I have a hardware to verify this scenario, I will look into
+> it. I suspect there is a transient state in link status which causes
+> this disconnect issue. But I think this issue is not related to
+> EDR support and hence should be reproducible in native handling
+> as well.
+> > 
+> > Also, DPC could be enabled on non-hot-plug slots so can't always rely on
+> > hot-plug to re-init devices in the recovery path.
+> If hotplug is not supported then there is support to enumerate
+> devices via polling  or ACPI events. But a point to note
+> here is, enumeration path is independent of error handler path, and
+> hence there is no explicit trigger or event from error handler path
+> to enumeration path to kick start the enumeration.
 
-On Tue, Mar 10 2020, Linus Torvalds wrote:
-
-> On Tue, Mar 10, 2020 at 3:07 PM Jeff Layton <jlayton@kernel.org> wrote:
->>
->> Given that, and the fact that Neil pointed out that yangerkun's latest
->> patch would reintroduce the original race, I'm leaning back toward the
->> patch Neil sent yesterday. It relies solely on spinlocks, and so doesn't
->> have the subtle memory-ordering requirements of the others.
->
-> It has subtle locking changes, though.
->
-> It now calls the "->lm_notify()" callback with the wait queue spinlock he=
-ld.
->
-> is that ok? It's not obvious. Those functions take other spinlocks,
-> and wake up other things. See for example nlmsvc_notify_blocked()..
-> Yes, it was called under the blocked_lock_lock spinlock before too,
-> but now there's an _additional_ spinlock, and it must not call
-> "wake_up(&waiter->fl_wait))" in the callback, for example, because it
-> already holds the lock on that wait queue.
->
-> Maybe that is never done. I don't know the callbacks.
->
-> I was really hoping that the simple memory ordering of using that
-> smp_store_release -> smp_load_acquire using fl_blocker would be
-> sufficient. That's a particularly simple and efficient ordering.
->
-> Oh well. If you want to go that spinlock way, it needs to document why
-> it's safe to do a callback under it.
->
->                   Linus
-
-I've learn recently to dislike calling callbacks while holding a lock.
-I don't think the current callbacks care, but the requirement imposes a
-burden on future callbacks too.
-
-We can combine the two ideas - move the list_del_init() later, and still
-protect it with the wq locks.  This avoids holding the lock across the
-callback, but provides clear atomicity guarantees.
-
-NeilBrown
-
-From: NeilBrown <neilb@suse.de>
-Subject: [PATCH] Subject: [PATCH] locks: restore locks_delete_lock
- optimization
-
-A recent patch (see Fixes: below) removed an optimization which is
-important as it avoids taking a lock in a common case.
-
-The comment justifying the optimisation was correct as far as it went,
-in that if the tests succeeded, then the values would remain stable and
-the test result will remain valid even without a lock.
-
-However after the test succeeds the lock can be freed while some other
-thread might have only just set ->blocker to NULL (thus allowing the
-test to succeed) but has not yet called wake_up() on the wq in the lock.
-If the wake_up happens after the lock is freed, a use-after-free error occu=
-rs.
-
-This patch restores the optimization and reorders code to avoid the
-use-after-free.  Specifically we move the list_del_init on
-fl_blocked_member to *after* the wake_up(), and add an extra test on
-fl_block_member() to locks_delete_lock() before deciding to avoid taking
-the spinlock.
-
-To ensure correct ordering for the list_empty() test and the
-list_del_init() call, we protect them both with the wq spinlock.  This
-provides required atomicity, while scaling much better than taking the
-global blocked_lock_lock.
-
-Fixes: 6d390e4b5d48 ("locks: fix a potential use-after-free problem when wa=
-keup a waiter")
-Signed-off-by: NeilBrown <neilb@suse.de>
-=2D--
- fs/locks.c | 46 ++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 38 insertions(+), 8 deletions(-)
-
-diff --git a/fs/locks.c b/fs/locks.c
-index 426b55d333d5..16098a209d63 100644
-=2D-- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -721,11 +721,19 @@ static void locks_delete_global_blocked(struct file_l=
-ock *waiter)
-  *
-  * Must be called with blocked_lock_lock held.
-  */
-=2Dstatic void __locks_delete_block(struct file_lock *waiter)
-+static void __locks_delete_block(struct file_lock *waiter, bool notify)
- {
- 	locks_delete_global_blocked(waiter);
-=2D	list_del_init(&waiter->fl_blocked_member);
- 	waiter->fl_blocker =3D NULL;
-+	if (notify) {
-+		if (waiter->fl_lmops && waiter->fl_lmops->lm_notify)
-+			waiter->fl_lmops->lm_notify(waiter);
-+		else
-+			wake_up(&waiter->fl_wait);
-+	}
-+	spin_lock(&waiter->fl_wait.lock);
-+	list_del_init(&waiter->fl_blocked_member);
-+	spin_unlock(&waiter->fl_wait.lock);
- }
-=20
- static void __locks_wake_up_blocks(struct file_lock *blocker)
-@@ -735,11 +743,7 @@ static void __locks_wake_up_blocks(struct file_lock *b=
-locker)
-=20
- 		waiter =3D list_first_entry(&blocker->fl_blocked_requests,
- 					  struct file_lock, fl_blocked_member);
-=2D		__locks_delete_block(waiter);
-=2D		if (waiter->fl_lmops && waiter->fl_lmops->lm_notify)
-=2D			waiter->fl_lmops->lm_notify(waiter);
-=2D		else
-=2D			wake_up(&waiter->fl_wait);
-+		__locks_delete_block(waiter, true);
- 	}
- }
-=20
-@@ -753,11 +757,37 @@ int locks_delete_block(struct file_lock *waiter)
- {
- 	int status =3D -ENOENT;
-=20
-+	/*
-+	 * If fl_blocker is NULL, it won't be set again as this thread
-+	 * "owns" the lock and is the only one that might try to claim
-+	 * the lock.  So it is safe to test fl_blocker locklessly.
-+	 * Also if fl_blocker is NULL, this waiter is not listed on
-+	 * fl_blocked_requests for some lock, so no other request can
-+	 * be added to the list of fl_blocked_requests for this
-+	 * request.  So if fl_blocker is NULL, it is safe to
-+	 * locklessly check if fl_blocked_requests is empty.  If both
-+	 * of these checks succeed, there is no need to take the lock.
-+	 * We also check fl_blocked_member is empty un the fl_wait.lock.
-+	 * If this fails, __locks_delete_block() must still be notifying
-+	 * waiters, so it isn't yet safe to return and free the file_lock.
-+	 * Doing this under fl_wait.lock allows significantly better scaling
-+	 * than unconditionally taking blocks_lock_lock.
-+	 */
-+	if (waiter->fl_blocker =3D=3D NULL &&
-+	    list_empty(&waiter->fl_blocked_requests)) {
-+		spin_lock(&waiter->fl_wait.lock);
-+		if (list_empty(&waiter->fl_blocked_member)) {
-+			spin_unlock(&waiter->fl_wait.lock);
-+			return status;
-+		}
-+		/* Notification is still happening */
-+		spin_unlock(&waiter->fl_wait.lock);
-+	}
- 	spin_lock(&blocked_lock_lock);
- 	if (waiter->fl_blocker)
- 		status =3D 0;
- 	__locks_wake_up_blocks(waiter);
-=2D	__locks_delete_block(waiter);
-+	__locks_delete_block(waiter, false);
- 	spin_unlock(&blocked_lock_lock);
- 	return status;
- }
-=2D-=20
-2.25.1
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl5pZKIACgkQOeye3VZi
-gblaRQ//Zv/qB6qeBxOzj+SUU1zKJYz61dPDpVVmXD9KiV6Yr6udcKEZ1G01os6b
-zqUyd6VBIe+bqx+moaEKwMvjY7ksvZbLfyW3uGvJ2hMrlgis4ZWUWVu3e0O89uX2
-/YWNABeXVYWZwoafPmy6Zz4cWsD5Ku0/GkpQP6lxLufsEb1AijOGjsBWGg01vqV1
-zj1fvzNKckzRGHCS0aaA3dJ2rh0TnPJwXvkUNbOECsjNfvSWAuJFt/e1IWGH3vJJ
-ELuNnrioDCh/leuS5KOoZp0BJGBf7a8nRkkJUMKcrHvDZUy82UilDSBNvsv3s9N5
-OVxQ8/beN9k1qaLvJzFYPKUxyHqaubavEUS5ouh4SL+kZC4FQvanGMuSbUU2vv5c
-c3Ajz0Ca8vXPWAyAEBu2G64nyBKcc7NhHj9lLsZfBDAJN/+BM3ejL/vGJiIKWs1U
-SxtVVQKjjet/lWogC6zI/811MuUbiAfiK1mn7rgHxPDjpDkKIPf3FNqZISpfxyEU
-WmTLF0LVvQNWm/+W2arnNby9cwyL1fBl+4kcvjCEZepo8rhN9Snje0QlDEVmCAbr
-mNkUY81M2MEnHMW3eC3qkFVkhN1uLI4IMNjpsgtkKLwueF8zZcd/P5TyNm2ushNz
-Vjs3N16EsYMuWdKM2AA1zRYx/URdpSAG9/Kx4646j6nHXjsDGfs=
-=4AgQ
------END PGP SIGNATURE-----
---=-=-=--
+Is any synchronization needed here between the EDR path and the
+hotplug/enumeration path?
