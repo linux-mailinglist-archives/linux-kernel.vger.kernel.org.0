@@ -2,181 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C54C180CB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 01:17:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E471C180CBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 01:18:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbgCKARp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 20:17:45 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:40022 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbgCKARp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 20:17:45 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBp3z-0008FJ-R6; Tue, 10 Mar 2020 18:17:31 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBp3y-0000VK-Vy; Tue, 10 Mar 2020 18:17:31 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Jann Horn <jannh@google.com>
-Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <875zfmloir.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87v9nmjulm.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <202003021531.C77EF10@keescook>
-        <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
-        <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87v9nlii0b.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87a74xi4kz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
-        <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
-        <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
-        <CAG48ez13XXWNRLrPFRHRsvPKSwSK1-6k+1F7QujWOJtVuk0QHg@mail.gmail.com>
-        <87wo7roq2c.fsf@x220.int.ebiederm.org>
-        <CAG48ez1j2=pdj0nc1syHkh6X4d=aHuCH1srzA6hT7+32QD+6Gg@mail.gmail.com>
-Date:   Tue, 10 Mar 2020 19:15:12 -0500
-In-Reply-To: <CAG48ez1j2=pdj0nc1syHkh6X4d=aHuCH1srzA6hT7+32QD+6Gg@mail.gmail.com>
-        (Jann Horn's message of "Wed, 11 Mar 2020 00:21:49 +0100")
-Message-ID: <87k13roigf.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jBp3y-0000VK-Vy;;;mid=<87k13roigf.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX191GcjSpm9Har/C6Rc/ejl26zceokkfPxs=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa08.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4981]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Jann Horn <jannh@google.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 401 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 3.6 (0.9%), b_tie_ro: 2.5 (0.6%), parse: 1.23
-        (0.3%), extract_message_metadata: 12 (3.0%), get_uri_detail_list: 1.38
-        (0.3%), tests_pri_-1000: 28 (6.9%), tests_pri_-950: 1.46 (0.4%),
-        tests_pri_-900: 1.42 (0.4%), tests_pri_-90: 60 (14.8%), check_bayes:
-        58 (14.4%), b_tokenize: 25 (6.2%), b_tok_get_all: 10 (2.5%),
-        b_comp_prob: 2.8 (0.7%), b_tok_touch_all: 4.0 (1.0%), b_finish: 0.76
-        (0.2%), tests_pri_0: 282 (70.3%), check_dkim_signature: 0.55 (0.1%),
-        check_dkim_adsp: 14 (3.4%), poll_dns_idle: 12 (2.9%), tests_pri_10:
-        2.2 (0.6%), tests_pri_500: 7 (1.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace cred_guard_mutex
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        id S1727851AbgCKASD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 20:18:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38378 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726463AbgCKASD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 20:18:03 -0400
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4334222C4;
+        Wed, 11 Mar 2020 00:18:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583885883;
+        bh=y5QJ9GXWSnz15V7XZRVYJqb5uqwEux6PilkXReQ4U1Q=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=pO7/4cHWR3qTj0bznJ7188fG64qaOSB88v7476iEvv3KbMspuOvOFmbEqLGsOanQ1
+         9/io2pTiqypzmUKiZ/4F0cXTFv2UUPnnwJQ9foCp+4eBKERrzND7jG8Aw8qFxSU4U3
+         2XbTIWxreNknyUIg94KcQqpX/rci92Nfcn53fLfU=
+Date:   Tue, 10 Mar 2020 17:18:02 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch] mm, oom: prevent soft lockup on memcg oom for UP
+ systems
+Message-Id: <20200310171802.128129f6817ef3f77d230ccd@linux-foundation.org>
+In-Reply-To: <alpine.DEB.2.21.2003101438510.161160@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.2003101438510.161160@chino.kir.corp.google.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jann Horn <jannh@google.com> writes:
+On Tue, 10 Mar 2020 14:39:48 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
 
-> On Tue, Mar 10, 2020 at 10:33 PM Eric W. Biederman
-> <ebiederm@xmission.com> wrote:
->> Jann Horn <jannh@google.com> writes:
->> > On Sun, Mar 8, 2020 at 10:41 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->> >> The cred_guard_mutex is problematic.  The cred_guard_mutex is held
->> >> over the userspace accesses as the arguments from userspace are read.
->> >> The cred_guard_mutex is held of PTRACE_EVENT_EXIT as the the other
->> >> threads are killed.  The cred_guard_mutex is held over
->> >> "put_user(0, tsk->clear_child_tid)" in exit_mm().
->> >>
->> >> Any of those can result in deadlock, as the cred_guard_mutex is held
->> >> over a possible indefinite userspace waits for userspace.
->> >>
->> >> Add exec_update_mutex that is only held over exec updating process
->> >> with the new contents of exec, so that code that needs not to be
->> >> confused by exec changing the mm and the cred in ways that can not
->> >> happen during ordinary execution of a process.
->> >>
->> >> The plan is to switch the users of cred_guard_mutex to
->> >> exec_udpate_mutex one by one.  This lets us move forward while still
->> >> being careful and not introducing any regressions.
->> > [...]
->> >> @@ -1034,6 +1035,11 @@ static int exec_mmap(struct mm_struct *mm)
->> >>                         return -EINTR;
->> >>                 }
->> >>         }
->> >> +
->> >> +       ret = mutex_lock_killable(&tsk->signal->exec_update_mutex);
->> >> +       if (ret)
->> >> +               return ret;
->> >
->> > We're already holding the old mmap_sem, and now nest the
->> > exec_update_mutex inside it; but then while still holding the
->> > exec_update_mutex, we do mmput(), which can e.g. end up in ksm_exit(),
->> > which can do down_write(&mm->mmap_sem) from __ksm_exit(). So I think
->> > at least lockdep will be unhappy, and I'm not sure whether it's an
->> > actual problem or not.
->>
->> Good point.  I should double check the lock ordering here with mmap_sem.
->> It doesn't look like mmput takes mmap_sem
+> When a process is oom killed as a result of memcg limits and the victim
+> is waiting to exit, nothing ends up actually yielding the processor back
+> to the victim on UP systems with preemption disabled.  Instead, the
+> charging process simply loops in memcg reclaim and eventually soft
+> lockups.
+> 
+> Memory cgroup out of memory: Killed process 808 (repro) total-vm:41944kB, anon-rss:35344kB, file-rss:504kB, shmem-rss:0kB, UID:0 pgtables:108kB oom_score_adj:0
+> watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [repro:806]
+> CPU: 0 PID: 806 Comm: repro Not tainted 5.6.0-rc5+ #136
+> RIP: 0010:shrink_lruvec+0x4e9/0xa40
+> ...
+> Call Trace:
+>  shrink_node+0x40d/0x7d0
+>  do_try_to_free_pages+0x13f/0x470
+>  try_to_free_mem_cgroup_pages+0x16d/0x230
+>  try_charge+0x247/0xac0
+>  mem_cgroup_try_charge+0x10a/0x220
+>  mem_cgroup_try_charge_delay+0x1e/0x40
+>  handle_mm_fault+0xdf2/0x15f0
+>  do_user_addr_fault+0x21f/0x420
+>  page_fault+0x2f/0x40
+> 
+> Make sure that something ends up actually yielding the processor back to
+> the victim to allow for memory freeing.  Most appropriate place appears to
+> be shrink_node_memcgs() where the iteration of all decendant memcgs could
+> be particularly lengthy.
 >
-> You sure about that? mmput() -> __mmput() -> ksm_exit() ->
-> __ksm_exit() -> down_write(&mm->mmap_sem)
->
-> Or also: mmput() -> __mmput() -> khugepaged_exit() ->
-> __khugepaged_exit() -> down_write(&mm->mmap_sem)
->
-> Or is there a reason why those paths can't happen?
 
-Clearly I didn't look far enough. 
+That's a bit sad.
 
-I will adjust this so that exec_update_mutex is taken before mmap_sem.
-Anything else is just asking for trouble.
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -2637,6 +2637,8 @@ static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
+>  		unsigned long reclaimed;
+>  		unsigned long scanned;
+>  
+> +		cond_resched();
+> +
+>  		switch (mem_cgroup_protected(target_memcg, memcg)) {
+>  		case MEMCG_PROT_MIN:
+>  			/*
 
-Eric
+
+Obviously better, but this will still spin wheels until this tasks's
+timeslice expires, and we might want to do something to help ensure
+that the victim runs next (or soon)?
+
+(And why is shrink_node_memcgs compiled in when CONFIG_MEMCG=n?)
+
