@@ -2,88 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FBCE181E3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78F90181E49
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:52:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730201AbgCKQsq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 12:48:46 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43357 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729584AbgCKQsq (ORCPT
+        id S1730223AbgCKQwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 12:52:22 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:21907 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729584AbgCKQwW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 12:48:46 -0400
-Received: by mail-lf1-f65.google.com with SMTP id q9so2307394lfc.10
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 09:48:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nvdaEzJa7BlyOVahyajCu5RaMgVluQfvfvpupgNvYPI=;
-        b=gTYXTGLbY5loy6LLU50Ij4wvtWSkC1KAWrZXcHsoO1uCYD/i8UHh+Fp6H4Lfe4kdbN
-         +iCHTAZrtgnoEbw/v9CPYJjmPJSY9iJAV9hHJtzdILJGtgEkVlpC0w+CR2pyEVwiAyC5
-         UbZvFt+oRjc8PidJ6oJOx+Xw/Ygl8qTl+1lDw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nvdaEzJa7BlyOVahyajCu5RaMgVluQfvfvpupgNvYPI=;
-        b=WmAeZKYzsF7v3ZDX6VdRpBxMWMBk6JzL4unn/EiERWJtgxx8szhPUAYM4hjt8Vr+1R
-         VtgyAJOqB6h+RnjqjYOixlNCXuXup/08NxKroa/M7JjCrJ52kXt+ewQmYKgwzHIcog54
-         aSFm3oVvqLoRZSWYgC52yk5hs2mhzGJuz/JNRiaDnhOvzvKWv7fHk2avKmxdSCB2Z09Q
-         p0H1TfKvVMBF5FnZ2BhJReJxeq9ufEs/wzTROdRTEBRjVbqO6nIKHNF3bhHs+j3D1bAB
-         uiFaLN2R+j2t3xQzECBkE0TnabG3yyXGXKAY/5hyiabVlm9TDiQ9uS3io4XWc5XzfxHE
-         FiAQ==
-X-Gm-Message-State: ANhLgQ2bK92IQikTOjcv7Hh7UPZKr+W8F5HOs48kGuZBCUgPbLGvH3tD
-        x6bzkljYykDMyel57fvzaUigRYrR8eI=
-X-Google-Smtp-Source: ADFU+vsfRKe2zmxBIOETApWTP1+wZnS51uBivMQ3evMQuYGLlms4U7D/XirxAa+dS9ffP3NAYLwDpg==
-X-Received: by 2002:ac2:4116:: with SMTP id b22mr2473616lfi.172.1583945322842;
-        Wed, 11 Mar 2020 09:48:42 -0700 (PDT)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id b23sm4778966lfi.55.2020.03.11.09.48.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 09:48:42 -0700 (PDT)
-Received: by mail-lj1-f181.google.com with SMTP id s13so3142552ljm.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 09:48:41 -0700 (PDT)
-X-Received: by 2002:a2e:89c7:: with SMTP id c7mr2718156ljk.265.1583945321533;
- Wed, 11 Mar 2020 09:48:41 -0700 (PDT)
+        Wed, 11 Mar 2020 12:52:22 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1583945542; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=13ER7EC6tNsem5IUYhvbU5i7rUU+ucV6ONkTZXwQszY=;
+ b=iRM9XHzcles9LTIFTsFfJS/+g1+Tq5lR4PJ9QcOJ3aOQWVYAy25kIgvwFt0KtmTB8D85Lk1G
+ ruCMttMnuATv09bT1me8typdAa1+Kado7LciOk/u/agLvZdZ5MCU1Sa1uVfu+9000Rtyl94p
+ r1LjnyQuBQ6KnuNurwDswqIyTsI=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e69173f.7fa8321f8340-smtp-out-n02;
+ Wed, 11 Mar 2020 16:52:15 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 4AE34C433CB; Wed, 11 Mar 2020 16:52:15 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=2.0 tests=ALL_TRUSTED,MISSING_DATE,
+        MISSING_MID,SPF_NONE autolearn=no autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D0E1FC433CB;
+        Wed, 11 Mar 2020 16:52:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D0E1FC433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <bug-206175-5873@https.bugzilla.kernel.org/> <bug-206175-5873-S6PaNNClEr@https.bugzilla.kernel.org/>
- <CAHk-=wi4GS05j67V0D_cRXRQ=_Jh-NT0OuNpF-JFsDFj7jZK9A@mail.gmail.com>
- <20200310162342.GA4483@lst.de> <CAHk-=wgB2YMM6kw8W0wq=7efxsRERL14OHMOLU=Nd1OaR+sXvw@mail.gmail.com>
- <20200310182546.GA9268@lst.de> <20200311152453.GB23704@lst.de>
- <e70dd793-e8b8-ab0c-6027-6c22b5a99bfc@gmx.com> <20200311154328.GA24044@lst.de>
- <20200311154718.GB24044@lst.de> <962693d9-b595-c44d-1390-e044f29e91d3@gmx.com>
- <CAHk-=wj0E9vCO_VTiK6xuXAW13ZeeLsW=G3v+yNsCaUm1+H61A@mail.gmail.com> <CAHk-=whFu_p-eiyJfiEevV=a+irzW=9LMWjMaaFSaaasXout9w@mail.gmail.com>
-In-Reply-To: <CAHk-=whFu_p-eiyJfiEevV=a+irzW=9LMWjMaaFSaaasXout9w@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 11 Mar 2020 09:48:25 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whkKCxj-U9343Tk4Bbkc7oatqq26XGdAM6JJ+X==R_iNQ@mail.gmail.com>
-Message-ID: <CAHk-=whkKCxj-U9343Tk4Bbkc7oatqq26XGdAM6JJ+X==R_iNQ@mail.gmail.com>
-Subject: Re: [Bug 206175] Fedora >= 5.4 kernels instantly freeze on boot
- without producing any display output
-To:     "Artem S. Tashkinov" <aros@gmx.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        iommu <iommu@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath5k: Add proper dependency for ATH5K_AHB
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20200224182447.4054-1-krzk@kernel.org>
+References: <20200224182447.4054-1-krzk@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Jiri Slaby <jirislaby@gmail.com>,
+        Nick Kossifidis <mickflemm@gmail.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20200311165215.4AE34C433CB@smtp.codeaurora.org>
+Date:   Wed, 11 Mar 2020 16:52:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 9:24 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> So it will have a different commit ID, updated message, and be a mix
-> of my patch and Christoph's.
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-I ended up pushing it out before starting on the pull requests, so
-it's out there now.
+> The CONFIG_ATH5K_AHB could be enabled on ATH25 system without enabling
+> ATH5K driver itself.  This does not make sense because CONFIG_ATH5K_AHB
+> controls object build within drivers/net/wireless/ath/ath5k/ so enabling
+> it without CONFIG_ATH5K brings nothing.
+> 
+> Add proper dependency to CONFIG_ATH5K_AHB.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Artem, it would be good to have confirmation that my (modified) tip of
-tree now works for you. I don't actually doubt it does, but a final
-confirmation would be appreciated.
+Patch applied to ath-next branch of ath.git, thanks.
 
-            Linus
+c98cdaef931c ath5k: Add proper dependency for ATH5K_AHB
+
+-- 
+https://patchwork.kernel.org/patch/11401313/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
