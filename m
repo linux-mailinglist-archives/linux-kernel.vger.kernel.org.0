@@ -2,54 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22757182590
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 00:08:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E0E1182596
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 00:10:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731476AbgCKXIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 19:08:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34992 "EHLO mail.kernel.org"
+        id S1731420AbgCKXKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 19:10:25 -0400
+Received: from mga12.intel.com ([192.55.52.136]:12133 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726194AbgCKXH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 19:07:59 -0400
-Received: from kicinski-fedora-PC1C0HJN (unknown [163.114.132.128])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6BDD2074A;
-        Wed, 11 Mar 2020 23:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583968079;
-        bh=mIDvbT395T9PcLGcQ6KRb4uh0b+8YxZmC7DZ0lz0z9k=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=cjI4HeSPHugHZPP4u8BtUuVscx+iaCimCG5vpifg3sFUC8yIxuMmk53S4Cpirdh/Y
-         SrvVfsMEqR+h4z/ZSfPwLBw3WStOFe7YaBALAt+QJ4OiRP86iqrjH4TWFjjRpUvK6L
-         wB/L3Ma0QPsvxge2MVzzJuqPcv/EXbkdFOrw24OU=
-Date:   Wed, 11 Mar 2020 16:07:57 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Michal Kubecek <mkubecek@suse.cz>
-Cc:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        John Linville <linville@tuxdriver.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 08/15] ethtool: set device private flags with
- PRIVFLAGS_SET request
-Message-ID: <20200311160757.3e5c1395@kicinski-fedora-PC1C0HJN>
-In-Reply-To: <ee141a0bfbe5f6fe1ada537e0f0f1001100eaee5.1583962006.git.mkubecek@suse.cz>
-References: <cover.1583962006.git.mkubecek@suse.cz>
-        <ee141a0bfbe5f6fe1ada537e0f0f1001100eaee5.1583962006.git.mkubecek@suse.cz>
+        id S1729739AbgCKXKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 19:10:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 16:10:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,542,1574150400"; 
+   d="scan'208";a="322286118"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga001.jf.intel.com with ESMTP; 11 Mar 2020 16:10:24 -0700
+Received: from [10.7.201.16] (skuppusw-desk.jf.intel.com [10.7.201.16])
+        by linux.intel.com (Postfix) with ESMTP id 3ADED58033E;
+        Wed, 11 Mar 2020 16:10:24 -0700 (PDT)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v17 09/12] PCI/AER: Allow clearing Error Status Register
+ in FF mode
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Austin.Bolen@dell.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ashok.raj@intel.com
+References: <20200311222352.GA200510@google.com>
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <a4b4b4b0-3c56-51a0-4237-dd439fca3150@linux.intel.com>
+Date:   Wed, 11 Mar 2020 16:07:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200311222352.GA200510@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Mar 2020 22:40:43 +0100 (CET) Michal Kubecek wrote:
-> Implement PRIVFLAGS_SET netlink request to set private flags of a network
-> device. These are traditionally set with ETHTOOL_SPFLAGS ioctl request.
-> 
-> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+Hi Bjorn,
 
-Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+Re-sending the response in text mode.
+
+On 3/11/20 3:23 PM, Bjorn Helgaas wrote:
+> Is any synchronization needed here between the EDR path and the
+> hotplug/enumeration path?
+If we want to follow the implementation note step by step (in sequence) then
+we need some synchronization between EDR path and enumeration path. But
+if its OK the achieve the same end result by following steps out of sequence
+then we don't need to create any dependency between EDR and enumeration
+paths. Currently we follow the later approach.
+
+For example, consider the case in flow chart where after sending success 
+_OST,
+firmware decides to stop the recovery of the device.
+
+if we follow the flow chart as its then the steps should be,
+
+1. clear the DPC status trigger
+2. Send success code via _OST, and wait for return from _OST
+3. if successful return then enumerate the child devices and reassign 
+bus numbers.
+
+In current approach the steps followed are,
+
+1. Clear the DPC status trigger.
+2. Send success code via _OST
+2. In parallel, LINK UP event path will enumerate the child devices.
+3. if firmware decides not to recover the device,  then LINK DOWN event 
+will eventually
+     remove them again.
+
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
+
