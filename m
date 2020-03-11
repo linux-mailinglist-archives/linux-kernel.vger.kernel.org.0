@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08028181652
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 11:55:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A960181655
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 11:55:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729171AbgCKKyr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 06:54:47 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:10334 "EHLO
+        id S1729191AbgCKKyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 06:54:50 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:38714 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726672AbgCKKyq (ORCPT
+        by vger.kernel.org with ESMTP id S1726713AbgCKKyr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 06:54:46 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02BAmMbb020941;
-        Wed, 11 Mar 2020 11:54:42 +0100
+        Wed, 11 Mar 2020 06:54:47 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02BAmlmO007361;
+        Wed, 11 Mar 2020 11:54:43 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=IRy9D1FvBh85Csvv50LbM9UmBLsJ3nQIep1ZPwcvyA8=;
- b=Dsw8paQVdyzyhy2T/qHckOtV4F3Z/xzih8eEbFA1r9Q7FLbDwxZjEdoArBaC941D2x9z
- JrB5ZNy0OcLlO2pqYYs1mIhJZBhhMHG3kRUz/0kCXuW3OP+vH/2XY9ANFmr4P4L8y+HZ
- 4m3bDTgx/Gt9ZpLxUUfPe8Dkyx6+AjsTY2igl+xqHTfJdPT5GrPPcV7Xo7hWIezZ8FfI
- PVYD+c5cYTBFW/pavaIoAok9k561BxZJL4UEf4JP1Ns4wgeeA4ILu2U8JdVDLClzlzKX
- l9hOthXrRGOrVqF/pMd7pcnQbiLSRES/+qQvJk4z2i3tt4BDiixjDJzGY98KDVWsM7VQ Mw== 
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=STMicroelectronics;
+ bh=68gVoIOTswhoH9BzUdkH5JXWP+gK2iB9fVzO3ctGbkg=;
+ b=VZldWqjd/M5NEwmJVC5vMLbr9ueqSyHbRsfKQdSB9cqbE3swERLeKjcDNUXhgVwCYvAm
+ 5YMvTPtKGPbiVZvn4qec7e4o77nLY4drf+PHtlmLxqAJaZu3IhidJiB1OUNB0VIHQkuC
+ rBlGE+qEmKIyZbHDXF6MbVryrprBodxRLhrs4oqwWiZRh/KXkE3mdvc9ytA3uWlXfBws
+ RQvK0dRzLHwS2HwljkZmALmflzzCxTcVe9xvACaHUGNRNmGfaDm3tnEOy1pId7CuO/H6
+ WN1XkQ17AsJyPA1ZnRY003XQ+eXfWspKJouyQmdH89NyM+9jZQuLOGt30LsJ/HTW54yF Ug== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2ym1mh29p2-1
+        by mx07-00178001.pphosted.com with ESMTP id 2ynecdgshm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 11 Mar 2020 11:54:42 +0100
+        Wed, 11 Mar 2020 11:54:43 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B103D10003A;
-        Wed, 11 Mar 2020 11:54:37 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6B27E10002A;
+        Wed, 11 Mar 2020 11:54:38 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag7node2.st.com [10.75.127.20])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9F74D2A543D;
-        Wed, 11 Mar 2020 11:54:37 +0100 (CET)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5C96E2A543D;
+        Wed, 11 Mar 2020 11:54:38 +0100 (CET)
 Received: from localhost (10.75.127.46) by SFHDAG7NODE2.st.com (10.75.127.20)
  with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 11 Mar 2020 11:54:37
  +0100
@@ -43,14 +44,16 @@ CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>,
         <fabien.dessenne@st.com>, <s-anna@ti.com>,
         Loic Pallardy <loic.pallardy@st.com>
-Subject: [RFC 0/2] Allow client to recover crashed processor
-Date:   Wed, 11 Mar 2020 11:54:30 +0100
-Message-ID: <1583924072-20648-1-git-send-email-loic.pallardy@st.com>
+Subject: [RFC 1/2] remoteproc: sysfs: authorize rproc shutdown when rproc is crashed
+Date:   Wed, 11 Mar 2020 11:54:31 +0100
+Message-ID: <1583924072-20648-2-git-send-email-loic.pallardy@st.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1583924072-20648-1-git-send-email-loic.pallardy@st.com>
+References: <1583924072-20648-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG7NODE2.st.com
+X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG7NODE2.st.com
  (10.75.127.20)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-03-11_04:2020-03-11,2020-03-11 signatures=0
@@ -59,23 +62,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following 2 patches propose some changes to allow user space
-client to shutdown and restart a crashed co-processor.
-This is required when auto recovery is disabled at framework level or
-when auto recovery procedure failed.
+When remoteproc recovery is disabled and rproc crashed, user space
+client has no way to reboot co-processor except by a complete platform
+reboot.
+Indeed rproc_shutdown() is called by sysfs state_store() only is rproc
+state is RPROC_RUNNING.
 
-Sent as RFC as may be part of Mathieu's proposal for early boot/late
-attach support
+This patch offers the possibility to shutdown the co-processor if
+it is in RPROC_CRASHED state and so to restart properly co-processor
+from sysfs interface.
 
-Loic Pallardy (2):
-  remoteproc: sysfs: authorize rproc shutdown when rproc is crashed
-  remoteproc: core: keep rproc in crash state in case of recovery
-    failure
-
- drivers/remoteproc/remoteproc_core.c  | 8 +++++++-
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+ drivers/remoteproc/remoteproc_core.c  | 2 +-
  drivers/remoteproc/remoteproc_sysfs.c | 2 +-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 097f33e4f1f3..7ac87a75cd1b 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1812,7 +1812,7 @@ void rproc_shutdown(struct rproc *rproc)
+ 	if (!atomic_dec_and_test(&rproc->power))
+ 		goto out;
+ 
+-	ret = rproc_stop(rproc, false);
++	ret = rproc_stop(rproc, rproc->state == RPROC_CRASHED);
+ 	if (ret) {
+ 		atomic_inc(&rproc->power);
+ 		goto out;
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index 7f8536b73295..1029458a4678 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -101,7 +101,7 @@ static ssize_t state_store(struct device *dev,
+ 		if (ret)
+ 			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
+ 	} else if (sysfs_streq(buf, "stop")) {
+-		if (rproc->state != RPROC_RUNNING)
++		if (rproc->state != RPROC_RUNNING && rproc->state != RPROC_CRASHED)
+ 			return -EINVAL;
+ 
+ 		rproc_shutdown(rproc);
 -- 
 2.7.4
 
