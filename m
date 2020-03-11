@@ -2,134 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E89311810F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 07:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17959181101
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 07:45:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728279AbgCKGoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 02:44:15 -0400
-Received: from mail-il1-f198.google.com ([209.85.166.198]:45908 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbgCKGoO (ORCPT
+        id S1728285AbgCKGpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 02:45:34 -0400
+Received: from enterprise01.smtp.diehl.com ([193.201.238.219]:7714 "EHLO
+        enterprise01.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726160AbgCKGpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 02:44:14 -0400
-Received: by mail-il1-f198.google.com with SMTP id h12so699873ils.12
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 23:44:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=YtV7jGLGMcAp29GFO159t6p3b3YjpBCWK33ht3yH0pw=;
-        b=DS1F2YVTbzu/AEWTr81Ce3Ua68EqQ5d4UYgUIYqJaUGb5HSReSkgaiRhVP8dXOrXNS
-         dW10gtG21PpcbHGOBPNO9t9YSZrs/ByxypO/z+uR0rJhTIYT4+HiDUMpy28mKElVDEqR
-         qNvDtk3+2qzuAPKVTHAfVc0weTqUF4Mg4Nz/AhBCfHXQlZykYDQBzYORjr0NFPUaQmmZ
-         OOnN5MaNk9lPJYndDhyMXOeu7F5HL8LlFsR5qqnwpWzcVzOZFmduWDT3VWa6utlonh8R
-         mGhlU8mxBaPrv5DAoBmnfuFAR0IcrQ6XAu7IiC2G2DNYU5UCQfE2mkvf2O+kgtGQ3SE+
-         QWIA==
-X-Gm-Message-State: ANhLgQ1thL29QVKDexNeyk2gPgLgQHjJjZ0+46XlxkUMMwQ+c62AT0S5
-        dbncg6XzfiiHn6tX1PE+n9+I8kv/btpxc58e6svkURTYUu9k
-X-Google-Smtp-Source: ADFU+vtB67Ml4ghGD81EjWvWukFQaiYCbuwypjU3u1gtlYZawe0DdIHGKgVuGltrfQmSZJAvX1xeZejsBj5NAOQC5/wt7DWOphzN
+        Wed, 11 Mar 2020 02:45:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=diehl.com; i=@diehl.com; q=dns/txt; s=default;
+  t=1583909132; x=1615445132;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=AVSxEPYhTVVwgokzOwC1Y8DPPDlYxY46v2+mPoqz3Ro=;
+  b=dkaidGoUA4YE5fJiQo3qJlkQHykUqP2ewpB545c3M9R3KxJBNdehDD72
+   BNXDrtlNT0iG13tr2fDNIDvsySSj6CAKA/j2k80wlCO45WJ4YhkUsWRYX
+   3wzc6WNwTymi3r8EBh0PZ13159mkQVlI3lhKljZjFpcDgUNYX+NNOeqT8
+   K7pdG6RCZMs1CEa6yuAXpoe8+DnvqkC9913yTWsWokAfPKJgmx0w7/ufX
+   YwXbLYrAInOWsu8e/ivNWnsIMc/MtSplNyI59FcRABNuoM0rpOCfyyOX6
+   9H/6YSz3Sf3Mll4g0FDEQK/TrD224WLuxf8qmO3AOUoUQUdvovKWe7pEX
+   Q==;
+IronPort-SDR: abGHozYKu3or4mTqZtBjvwWR274OjNZfLRCJUvY0vB+k0B0H6755hn/GldSHr6+Bxnk38t/2sZ
+ fCimX2ZAzr9w==
+From:   Denis Osterland-Heim <denis.osterland@diehl.com>
+To:     "dmurphy@ti.com" <dmurphy@ti.com>, "pavel@ucw.cz" <pavel@ucw.cz>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2] leds: pwm: add support for default-state device
+ property
+Thread-Topic: [PATCH v2] leds: pwm: add support for default-state device
+ property
+Thread-Index: AQHV9tn/0ZJlTn83ZkK/QE6qVZtMD6hB4AuAgABjeACAAJ9TgA==
+Date:   Wed, 11 Mar 2020 06:45:30 +0000
+Message-ID: <9e4bd43d14d00266bab4695dd37019bb1a103dd2.camel@diehl.com>
+References: <20200310123126.4709-1-Denis.Osterland@diehl.com>
+         <4c16da22994de29c2fbb23c877d55685bcbf8993.camel@diehl.com>
+         <ccb718b2-d0e5-20d8-f30a-95f8f31a10ef@gmail.com>
+In-Reply-To: <ccb718b2-d0e5-20d8-f30a-95f8f31a10ef@gmail.com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+x-ms-exchange-messagesentrepresentingtype: 1
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B85363EF575A434B91A849FC448B70BD@diehl.internal>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-Received: by 2002:a92:d4d0:: with SMTP id o16mr1744420ilm.40.1583909052265;
- Tue, 10 Mar 2020 23:44:12 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 23:44:12 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006abbca05a08e902c@google.com>
-Subject: BUG: unable to handle kernel paging request in tcf_action_destroy
-From:   syzbot <syzbot+e30bd6a0f27d4d638567@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, jhs@mojatatu.com, jiri@resnulli.us,
-        kuba@kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+X-TrailerSkip: 1
+X-GBS-PROC: PkB65aL1SqtESF35r/jQn7eY91D7Yk3wyBdLEDkUNY69es5NQLe8SnvlyyctNNXu
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    425c075d Merge branch 'tun-debug'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12a97f0de00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=598678fc6e800071
-dashboard link: https://syzkaller.appspot.com/bug?extid=e30bd6a0f27d4d638567
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e30bd6a0f27d4d638567@syzkaller.appspotmail.com
-
-BUG: unable to handle page fault for address: ffffffffffffffff
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 9670067 P4D 9670067 PUD 9672067 PMD 0 
-Oops: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 26046 Comm: syz-executor.3 Not tainted 5.6.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:tcf_action_destroy+0x75/0x150 net/sched/act_api.c:720
-Code: 83 c3 08 89 ee e8 3b 27 48 fb 83 fd 20 0f 84 ae 00 00 00 e8 bd 25 48 fb 48 89 d8 48 c1 e8 03 42 80 3c 28 00 0f 85 ae 00 00 00 <4c> 8b 3b 4d 85 ff 0f 84 8b 00 00 00 e8 9a 25 48 fb 4c 89 f8 48 c7
-RSP: 0018:ffffc90001c57028 EFLAGS: 00010246
-RAX: 1fffffffffffffff RBX: ffffffffffffffff RCX: ffffc9000fec9000
-RDX: 00000000000008d1 RSI: ffffffff8629ecd3 RDI: ffffffffffffffff
-RBP: 0000000000000000 R08: ffff88805b4861c0 R09: ffffed1015ce7074
-R10: ffffed1015ce7073 R11: ffff8880ae73839b R12: 0000000000000000
-R13: dffffc0000000000 R14: 0000000000000001 R15: 0000000000000000
-FS:  00007f4bd1960700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffff CR3: 000000004a795000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- tcf_exts_destroy+0x42/0xc0 net/sched/cls_api.c:3001
- tcf_exts_change+0xf4/0x150 net/sched/cls_api.c:3059
- tcindex_set_parms+0xed8/0x1a00 net/sched/cls_tcindex.c:456
- tcindex_change+0x203/0x2e0 net/sched/cls_tcindex.c:518
- tc_new_tfilter+0xa59/0x20b0 net/sched/cls_api.c:2103
- rtnetlink_rcv_msg+0x810/0xad0 net/core/rtnetlink.c:5431
- netlink_rcv_skb+0x15a/0x410 net/netlink/af_netlink.c:2478
- netlink_unicast_kernel net/netlink/af_netlink.c:1303 [inline]
- netlink_unicast+0x537/0x740 net/netlink/af_netlink.c:1329
- netlink_sendmsg+0x882/0xe10 net/netlink/af_netlink.c:1918
- sock_sendmsg_nosec net/socket.c:652 [inline]
- sock_sendmsg+0xcf/0x120 net/socket.c:672
- ____sys_sendmsg+0x6b9/0x7d0 net/socket.c:2343
- ___sys_sendmsg+0x100/0x170 net/socket.c:2397
- __sys_sendmsg+0xec/0x1b0 net/socket.c:2430
- do_syscall_64+0xf6/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45c4a9
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f4bd195fc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f4bd19606d4 RCX: 000000000045c4a9
-RDX: 0000000000000000 RSI: 00000000200001c0 RDI: 0000000000000003
-RBP: 000000000076bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000009fa R14: 00000000004cc777 R15: 000000000076bf2c
-Modules linked in:
-CR2: ffffffffffffffff
----[ end trace c654cd1e2ba461f1 ]---
-RIP: 0010:tcf_action_destroy+0x75/0x150 net/sched/act_api.c:720
-Code: 83 c3 08 89 ee e8 3b 27 48 fb 83 fd 20 0f 84 ae 00 00 00 e8 bd 25 48 fb 48 89 d8 48 c1 e8 03 42 80 3c 28 00 0f 85 ae 00 00 00 <4c> 8b 3b 4d 85 ff 0f 84 8b 00 00 00 e8 9a 25 48 fb 4c 89 f8 48 c7
-RSP: 0018:ffffc90001c57028 EFLAGS: 00010246
-RAX: 1fffffffffffffff RBX: ffffffffffffffff RCX: ffffc9000fec9000
-RDX: 00000000000008d1 RSI: ffffffff8629ecd3 RDI: ffffffffffffffff
-RBP: 0000000000000000 R08: ffff88805b4861c0 R09: ffffed1015ce7074
-R10: ffffed1015ce7073 R11: ffff8880ae73839b R12: 0000000000000000
-R13: dffffc0000000000 R14: 0000000000000001 R15: 0000000000000000
-FS:  00007f4bd1960700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffff CR3: 000000004a795000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+SGkgSmFjZWssDQoNCkFtIERpZW5zdGFnLCBkZW4gMTAuMDMuMjAyMCwgMjI6MTUgKzAxMDAg
+c2NocmllYiBKYWNlayBBbmFzemV3c2tpOg0KPiBIaSBEZW5pcywNCj4gDQo+IFRoYW5rIHlv
+dSBmb3IgdGhlIHVwZGF0ZS4gUGxlYXNlIGZpbmQgbXkgcmVtYXJrcyBiZWxvdy4NCj4gDQo+
+IE9uIDMvMTAvMjAgNDoxOSBQTSwgRGVuaXMgT3N0ZXJsYW5kLUhlaW0gd3JvdGU6DQo+ID4g
+SGksDQo+ID4gDQouLi4NCj4gPiA+IC0tLSBhL2RyaXZlcnMvbGVkcy9sZWRzLXB3bS5jDQo+
+ID4gPiArKysgYi9kcml2ZXJzL2xlZHMvbGVkcy1wd20uYw0KPiA+ID4gQEAgLTc1LDcgKzc1
+LDggQEAgc3RhdGljIGludCBsZWRfcHdtX2FkZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVj
+dCBsZWRfcHdtX3ByaXYgKnByaXYsDQo+ID4gPiAgCWxlZF9kYXRhLT5hY3RpdmVfbG93ID0g
+bGVkLT5hY3RpdmVfbG93Ow0KPiA+ID4gIAlsZWRfZGF0YS0+Y2Rldi5uYW1lID0gbGVkLT5u
+YW1lOw0KPiA+ID4gIAlsZWRfZGF0YS0+Y2Rldi5kZWZhdWx0X3RyaWdnZXIgPSBsZWQtPmRl
+ZmF1bHRfdHJpZ2dlcjsNCj4gPiA+IC0JbGVkX2RhdGEtPmNkZXYuYnJpZ2h0bmVzcyA9IExF
+RF9PRkY7DQo+ID4gPiArCXJldCA9IGxlZC0+ZGVmYXVsdF9zdGF0ZSA9PSBMRURTX0dQSU9f
+REVGU1RBVEVfT047DQo+IA0KPiByZXQgaXMgZm9yIHJldHVybiB2YWx1ZSBhbmQgaXQgc2hv
+dWxkIG5vdCBiZSB1c2VkIGZvciBhbnl0aGluZw0KPiBlbHNlIGp1c3QgYmVjYXVzZSBpdCBp
+cyBhdCBoYW5kLiBBbHNvIExFRFNfR1BJTyogZGVmaW5pdGlvbnMgaGF2ZQ0KPiBub3RoaW5n
+IHRvIGRvIHdpdGggcHdtIGxlZHMuIFRoaXMgaXMgbGVnYWN5IGJlY2F1c2UgZGVmYXVsdC1z
+dGF0ZQ0KPiBwcm9wZXJ0eSB3YXMgcHJpbWFyaWx5IHNwZWNpZmljIHRvIGxlZHMtZ3BpbyBi
+aW5kaW5ncyBhbmQgb25seQ0KPiBsYXRlciB3YXMgbWFkZSBjb21tb24uDQo+IA0KPiBQbGVh
+c2UgaW50cm9kdWNlIGNvcnJlc3BvbmRpbmcgTEVEU19QV00gZGVmaW5pdGlvbnMsIGJ1dCBp
+biBsZWRzLXB3bS5jLg0Kd2lsbCBjaGFuZ2UNCg0KPiANCj4gPiA+ICsJbGVkX2RhdGEtPmNk
+ZXYuYnJpZ2h0bmVzcyA9IHJldCA/IGxlZC0+bWF4X2JyaWdodG5lc3MgOiBMRURfT0ZGOw0K
+PiANCj4gSW5zdGVhZCBvZiBhYm92ZSB0d28gY2hhbmdlcyBJJ2QgYWRkIGJlbG93Og0KPiAN
+Cj4gaWYgKGxlZC0+ZGVmYXVsdF9zdGF0ZSA9PSBMRURTX1BXTV9ERUZTVEFURV9PTikgew0K
+PiAJbGVkX2RhdGEtPmNkZXYuYnJpZ2h0bmVzcyA9IGxlZC0+bWF4X2JyaWdodG5lc3M7DQo+
+IH0gZWxzZSBpZiAobGVkLT5kZWZhdWx0X3N0YXRlID09IExFRFNfUFdNX0RFRlNUQVRFX0tF
+RVApKSB7DQo+IAkvLyBoZXJlIHB1dCB3aGF0IHlvdSdyZSBhZGRpbmcgYmVsb3csIGJ1dCBw
+bGVhc2UgdXNlDQo+IAkvLyBwd21fZ2V0X3N0YXRlKCkgaW5zdGVhZCBvZiBhY2Nlc3Npbmcg
+b3BzIGRpcmVjdGx5DQo+IH0NCj4gDQo+IExFRF9PRkYgY2FzZSBpcyBjb3ZlcmVkIGJ5IGt6
+YWxsb2MoKSBpbiBsZWRfcHdtX3Byb2JlKCkuDQpMb29rcyB2ZXJ5IGVsZWdhbnQsIEkgd2ls
+bCBhcHBseSB0aGlzLg0KcHdtX2dldF9zdGF0ZSgpIGlzIG5vdCBzdWZmaWNpZW50IGhlcmUg
+YmVjYXVzZSBpdCBvbmx5IHJldHVybnMgdGhlIHZhbHVlcyBmcm9tIHN0cnVjdHVyZSwNCndo
+aWNoIHdlcmUgbm90IHJlYWQgcmVhZCBmcm9tIHJlZ2lzdGVycyBhdCBwd21fZGV2aWNlX3Jl
+cXVlc3QoKS4NClNvbWV0aGluZyBsaWtlIHB3bV9nZXRfc3RhdGVfdW5jYWNoZWQoKSB3b3Vs
+ZCBiZSByZXF1aXJlZCwgd2hpY2ggSSBoYXZlIG5vdCBmb3VuZCB5ZXQuDQoNCkkgbG9va2Vk
+IGF0IHRoZSBhdG9taWMgUFdNIEFQSSAoNWVjODAzZWRjYjcwM2ZlMzc5ODM2ZjEzNTYwYjc5
+ZGZhYzc5YjAxZCksDQp3aGljaCBjbGFpbXMgdG8gcHJvdmlkZSBhIHNtb290aCBoYW5kb3Zl
+ciBmcm9tIGJvb3Rsb2FkZXIgdG8ga2VybmVsLg0KU28gaXQgc2VlbXMgaXQgd291bGQgYmUg
+YmV0dGVyIHRvIGZpeCB0aGUgRklYTUUgZmlyc3QsIGluIGEgZmlyc3QgcGF0Y2guDQoNClJl
+Z2FyZHMgRGVuaXMNCg0KPiANCj4gPiA+ICAJbGVkX2RhdGEtPmNkZXYubWF4X2JyaWdodG5l
+c3MgPSBsZWQtPm1heF9icmlnaHRuZXNzOw0KPiA+ID4gIAlsZWRfZGF0YS0+Y2Rldi5mbGFn
+cyA9IExFRF9DT1JFX1NVU1BFTkRSRVNVTUU7DQo+ID4gPiAgDQouLi4NCg0KDQoNCkRpZWhs
+IENvbm5lY3Rpdml0eSBTb2x1dGlvbnMgR21iSA0KR2VzY2jDpGZ0c2bDvGhydW5nOiBIb3Jz
+dCBMZW9uYmVyZ2VyDQpTaXR6IGRlciBHZXNlbGxzY2hhZnQ6IE7DvHJuYmVyZyAtIFJlZ2lz
+dGVyZ2VyaWNodDogQW10c2dlcmljaHQNCk7DvHJuYmVyZzogSFJCIDMyMzE1DQpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCg0KRGVyIEluaGFsdCBk
+ZXIgdm9yc3RlaGVuZGVuIEUtTWFpbCBpc3QgbmljaHQgcmVjaHRsaWNoIGJpbmRlbmQuIERp
+ZXNlIEUtTWFpbCBlbnRoYWVsdCB2ZXJ0cmF1bGljaGUgdW5kL29kZXIgcmVjaHRsaWNoIGdl
+c2NodWV0enRlIEluZm9ybWF0aW9uZW4uDQpJbmZvcm1pZXJlbiBTaWUgdW5zIGJpdHRlLCB3
+ZW5uIFNpZSBkaWVzZSBFLU1haWwgZmFlbHNjaGxpY2hlcndlaXNlIGVyaGFsdGVuIGhhYmVu
+LiBCaXR0ZSBsb2VzY2hlbiBTaWUgaW4gZGllc2VtIEZhbGwgZGllIE5hY2hyaWNodC4NCkpl
+ZGUgdW5lcmxhdWJ0ZSBGb3JtIGRlciBSZXByb2R1a3Rpb24sIEJla2FubnRnYWJlLCBBZW5k
+ZXJ1bmcsIFZlcnRlaWx1bmcgdW5kL29kZXIgUHVibGlrYXRpb24gZGllc2VyIEUtTWFpbCBp
+c3Qgc3RyZW5nc3RlbnMgdW50ZXJzYWd0Lg0KLSBJbmZvcm1hdGlvbmVuIHp1bSBEYXRlbnNj
+aHV0eiwgaW5zYmVzb25kZXJlIHp1IElocmVuIFJlY2h0ZW4sIGVyaGFsdGVuIFNpZSB1bnRl
+ciBodHRwczovL3d3dy5kaWVobC5jb20vZ3JvdXAvZGUvdHJhbnNwYXJlbnotdW5kLWluZm9y
+bWF0aW9uc3BmbGljaHRlbi8NCg0KVGhlIGNvbnRlbnRzIG9mIHRoZSBhYm92ZSBtZW50aW9u
+ZWQgZS1tYWlsIGlzIG5vdCBsZWdhbGx5IGJpbmRpbmcuIFRoaXMgZS1tYWlsIGNvbnRhaW5z
+IGNvbmZpZGVudGlhbCBhbmQvb3IgbGVnYWxseSBwcm90ZWN0ZWQgaW5mb3JtYXRpb24uIFBs
+ZWFzZSBpbmZvcm0gdXMgaWYgeW91IGhhdmUgcmVjZWl2ZWQgdGhpcyBlLW1haWwgYnkNCm1p
+c3Rha2UgYW5kIGRlbGV0ZSBpdCBpbiBzdWNoIGEgY2FzZS4gRWFjaCB1bmF1dGhvcml6ZWQg
+cmVwcm9kdWN0aW9uLCBkaXNjbG9zdXJlLCBhbHRlcmF0aW9uLCBkaXN0cmlidXRpb24gYW5k
+L29yIHB1YmxpY2F0aW9uIG9mIHRoaXMgZS1tYWlsIGlzIHN0cmljdGx5IHByb2hpYml0ZWQu
+IA0KLSBGb3IgZ2VuZXJhbCBpbmZvcm1hdGlvbiBvbiBkYXRhIHByb3RlY3Rpb24gYW5kIHlv
+dXIgcmVzcGVjdGl2ZSByaWdodHMgcGxlYXNlIHZpc2l0IGh0dHBzOi8vd3d3LmRpZWhsLmNv
+bS9ncm91cC9lbi90cmFuc3BhcmVuY3ktYW5kLWluZm9ybWF0aW9uLW9ibGlnYXRpb25zLw0K
