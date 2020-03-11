@@ -2,70 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACADA181ACC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:08:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 284AB181AD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:11:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729726AbgCKOIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 10:08:40 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45229 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729656AbgCKOIj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 10:08:39 -0400
-Received: by mail-wr1-f66.google.com with SMTP id m9so2763256wro.12
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 07:08:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=oKBnUqxkzb7d7sbIS2OKF3jj3IOW0mcQ4QlWxLRUkk4=;
-        b=uBqiNr0fgkXAjFmgpSWDnnclUsO9GYzmCMMuIY1TkHmli192/qmtJHShThlic5y7Zd
-         OPr76leUe9e8WUGa9OToroJq0Tj0UfVJgw5CERCYUsj3k7YuJXnkVZM2RdQ2rBgnOu+l
-         GMFmJuqGFUP07DTgd551x0QOVYws/DwudfVr3AFBhNXH4j+u7Ep3HYHvDpvkvp6NYE/+
-         yDNwPhKo5AwJ7ke737ZWNRto9N7IEqG6mSODT0aSDT1SsL3ca9Zn0QAZInHj4skkRZbN
-         4Fq8+DIDRm75FYvSvCItmaTVKJkHT+anfdAbkvnYpOxB8YkU1SUPlgMMoZ9VfB6vdc2N
-         NbnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=oKBnUqxkzb7d7sbIS2OKF3jj3IOW0mcQ4QlWxLRUkk4=;
-        b=dow4YIW+gLtngCGOmUfWSkdS8QnfbYhqYdmOhhTLIDbAU0cbK3cZrosayAWiQkiKHM
-         w+rWf43U2R+bkij14Bvt8jayAwiMZDln9BcqspSZLgWCNbpcTVMRyGlrZK1R6EHy17dS
-         WWFK4C0eFyd++YUh+lGAVOZ1i5HMd7lvrCwwMaq1BA8r/24JIuqUb76LCEMjOTwa5BBU
-         jVk/sWQ0RCelh4DEms4Nq50iJ7IEH3DAaS2/fwbSt49LS1I5QwQ929vsLqsL0UmRvQgc
-         m9hG8tCfwwC1JtJ2+ieYe90MGW01RKDnhsWo6cAxwYZr1PL7ipDIATHl02HrNGXXmWIb
-         1pAQ==
-X-Gm-Message-State: ANhLgQ2rRM/xTLMTs2Ue9JpGgicFaw0p6jCRjbJSakWOFzHDCvFrEk6U
-        34EUu3Cvd5rZgx+p6feq8gwiRwJb+RNYwwWAzEE=
-X-Google-Smtp-Source: ADFU+vtx3L9v/dv9bhnwCRxjJ3by7CKBqD6Tb5puANG0eacWkxx7soje+ha8CCckHUVYSpQuCvaW9qTl+yyJA+6hPPY=
-X-Received: by 2002:adf:f08e:: with SMTP id n14mr4585802wro.367.1583935717688;
- Wed, 11 Mar 2020 07:08:37 -0700 (PDT)
+        id S1729719AbgCKOLT convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 10:11:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53812 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729646AbgCKOLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 10:11:19 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77F5B20726;
+        Wed, 11 Mar 2020 14:11:17 +0000 (UTC)
+Date:   Wed, 11 Mar 2020 10:11:15 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Jiri Slaby <jslaby@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] Add kernel config option for fuzz testing.
+Message-ID: <20200311101115.53139149@gandalf.local.home>
+In-Reply-To: <CACT4Y+a6KExbggs4mg8pvoD554PcDqQNW4sM15X-tc=YONCzYw@mail.gmail.com>
+References: <20200307135822.3894-1-penguin-kernel@I-love.SAKURA.ne.jp>
+        <6f2e27de-c820-7de3-447d-cd9f7c650add@suse.com>
+        <20200308065258.GE3983392@kroah.com>
+        <3e9f47f7-a6c1-7cec-a84f-e621ae5426be@suse.com>
+        <CACT4Y+a6KExbggs4mg8pvoD554PcDqQNW4sM15X-tc=YONCzYw@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a05:6000:92:0:0:0:0 with HTTP; Wed, 11 Mar 2020 07:08:37
- -0700 (PDT)
-Reply-To: aakkaavvii@gmail.com
-From:   Abraham Morrison <sambchambers06@gmail.com>
-Date:   Wed, 11 Mar 2020 07:08:37 -0700
-Message-ID: <CA+RS1P0PmX6jkWXihDLipspiLyzP_VkTHS=V8Oih0+ZuXreTcg@mail.gmail.com>
-Subject: Good day!
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear friend, I am Mr. Abraham Morrison, did you receive my previous
-letter? I have an important information for you. So if you are
-interested get back to me for more details.
-Thank you.
-Mr. Abraham Morrison.
-.....................
-Caro amigo, sou o Sr. Abraham Morrison, voc=C3=AA recebeu minha carta
-anterior? Eu tenho uma informa=C3=A7=C3=A3o importante para voc=C3=AA. Ent=
-=C3=A3o, se voc=C3=AA
-estiver interessado, volte para mim para mais detalhes.
-Obrigado.
-Sr. Abraham Morrison.
+On Tue, 10 Mar 2020 07:30:01 +0100
+Dmitry Vyukov <dvyukov@google.com> wrote:
+
+> Steve, I am not sure if by lockdown you mean the existing lockdown
+> mechanism, or just something similar in nature. As Tetsuo pointed, the
+> possibility of using the existing lockdown mechanism for this was
+> discussed here (and rejected):
+> https://lore.kernel.org/lkml/CACdnJutc7OQeoor6WLTh8as10da_CN=crs79v3Fp0mJTaO=+yw@mail.gmail.com/
+
+From Matthew's message a couple of emails earlier:
+
+> Simplicity. Based on discussion, we didn't want the lockdown LSM to
+> enable arbitrary combinations of lockdown primitives, both because
+> that would make it extremely difficult for userland developers and
+> because it would make it extremely easy for local admins to
+> accidentally configure policies that didn't achieve the desired
+> outcome. There's no inherent problem in adding new options, but really
+> right now they should fall into cases where they're protecting either
+> the integrity of the kernel or preventing leakage of confidential
+> information from the kernel.
+
+Now, if you are worried that fuzzing will cause harm, or crash the kernel,
+it sounds to me, whatever fuzzing did would satisfy Matthew's "integrity of
+the kernel" portion.
+
+In other words, I believe fuzzing folks should be working with the lockdown
+folks and letting the lockdown folks how root can crash the system. I would
+think from a security point of view, that if there's a known method to take
+down the kernel, and I don't want root to be able to do so, we should
+either fix the kernel to not be able to do so, or if that interface is "you
+should know what you are doing" then it should be something an admin could
+lock down to keep other admins who don't know what they are doing from
+crashing the system.
+
+Or teach the fuzz tool not to do specific bad things.
+
+Honestly, if you just go with a single config to prevent interfaces from
+crashing the system while running a fuzz test, then you just lowered the
+usefulness of the fuzz test, as it will never find legitimate cases where
+that interface crashed the kernel when it should not have.
+
+We are currently trying to clean up the tracing / probing code to not be
+able to crash the kernel with any interface. It's hard, but it is a goal.
+
+-- Steve
