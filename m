@@ -2,294 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36277181C06
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:06:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DCA8181BE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:00:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729928AbgCKPG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 11:06:28 -0400
-Received: from regular1.263xmail.com ([211.150.70.195]:58740 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729521AbgCKPG2 (ORCPT
+        id S1729939AbgCKPAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 11:00:42 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:32888 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729742AbgCKPAm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 11:06:28 -0400
-X-Greylist: delayed 493 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Mar 2020 11:06:04 EDT
-Received: from localhost (unknown [192.168.167.13])
-        by regular1.263xmail.com (Postfix) with ESMTP id A0C77BB0;
-        Wed, 11 Mar 2020 22:56:53 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-SKE-CHECKED: 1
-X-ABS-CHECKED: 1
-Received: from [192.168.2.106] (unknown [112.49.214.205])
-        by smtp.263.net (postfix) whith ESMTP id P30134T140169747363584S1583938607895180_;
-        Wed, 11 Mar 2020 22:56:54 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <d997085203b868c662318d0858d02951>
-X-RL-SENDER: hjc@rock-chips.com
-X-SENDER: hjc@rock-chips.com
-X-LOGIN-NAME: hjc@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 112.49.214.205
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-X-System-Flag: 0
-Subject: Re: [PATCH v2] dt-bindings: display: convert rockchip vop bindings to
- yaml
-To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de
-Cc:     airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20200311130515.10663-1-jbx6244@gmail.com>
-From:   "sandy.huang" <hjc@rock-chips.com>
-Message-ID: <28eb8ff1-b180-ebf7-a74c-966c6c7df2db@rock-chips.com>
-Date:   Wed, 11 Mar 2020 22:56:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Wed, 11 Mar 2020 11:00:42 -0400
+Received: by mail-vs1-f67.google.com with SMTP id n27so1538851vsa.0;
+        Wed, 11 Mar 2020 08:00:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Id7nxzKDmSxI0cxB6yaElDPLzg27V9lnZyiHS/FO3cA=;
+        b=kk5K54fhbAGgKLS5pzQ5IBK/6e3411Mi/vQvsKgsNtPKuaPXlbKf/PzYtcLSiDVnHp
+         /BEvBGQDspiC3/y9s1wFt85JYqEvuEr6Ulq/Z4UEs/6Sa5qJcVpdUY2Pj9BblfUo8wMS
+         K+7V5iBp9NEbKD7WcK/Ed/w0tmoxXpnOEAD0sSh/89NBzOZXPPs/dZmzzixaS1UtUhxw
+         7vZxn0zMvG7/dlZ80GZC/ihGNABNrxELuSGjf+fUSjDY8TLbb6BSRAxoZmJ5aykPOXtp
+         HhCD0DQfBCL3MAkpCx54tBjYfIkwCrEx/1inxtgRZc4Bawhz21c7tF5imQO5yoROlaES
+         hHMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Id7nxzKDmSxI0cxB6yaElDPLzg27V9lnZyiHS/FO3cA=;
+        b=MDeAgr5FF1uRGlCxxBQQXrLERxsFDpLuR/ILdr+AH7R8VhnAcPyMK78OjZi5lCFVMg
+         JKONe+rORR+OyS4OtEXK/YB89pWkrTACkDM6+rmXxWjylKU+2eb2xJKC2epf8MGqhIZa
+         EqmR7YGBolqTuI97h19LBNlv/WyB99IzfC4Fz1lpJurrtaRbbNeBGIZGHulWvYN3DGzn
+         MLJvXSaOu+AwHXxMKYTJq3jXouuXfy7yVpF00KqIf94Pfn5GYBpnoSuyrae/QcN9VCv3
+         4vs+SGh4C0lIj5oDRE6kuxU0wOokbz91GPpMljZ3ZfjiaSg+ZC5faPoQ32Lv/Hrwfvwq
+         uGxQ==
+X-Gm-Message-State: ANhLgQ3hOzZGYxnErRe0sAcd0u9LDKkYR6Z6ToUUZ91nbyYLZ3Zv5FNN
+        Jr7CzIyUDZMkjwd4IMg4b2nq8Ia5GfXPqLvRlEk=
+X-Google-Smtp-Source: ADFU+vv2eJRjNaYGv0DYhFYkPBmmDTYaOnz/JeuA1Du+FLPVAUHXTCfm+H4I//Ti2O1te8g82zroRYnrkf1z+R50+5A=
+X-Received: by 2002:a67:7182:: with SMTP id m124mr2269349vsc.150.1583938838979;
+ Wed, 11 Mar 2020 08:00:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200311130515.10663-1-jbx6244@gmail.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <00000000000088452f05a07621d2@google.com>
+In-Reply-To: <00000000000088452f05a07621d2@google.com>
+From:   Qiujun Huang <anenbupt@gmail.com>
+Date:   Wed, 11 Mar 2020 23:00:27 +0800
+Message-ID: <CADG63jBgo30DEv4n07C+1ViDCTHZ0opphZ=1=Zis2kNsRCo8Lw@mail.gmail.com>
+Subject: Re: WARNING: refcount bug in sctp_wfree
+To:     syzbot <syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com>,
+        vyasevich@gmail.com
+Cc:     davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
+        netdev@vger.kernel.org, nhorman@tuxdriver.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi johan,
+sctp_wfree
+    ->refcount_sub_and_test(sizeof(struct sctp_chunk),
+                                      &sk->sk_wmem_alloc)
+sctp_wfree will sub sizeof(struct sctp_chunk) for every skb. So could
+we add the extra size for gso segment ?
 
-ÔÚ 2020/3/11 21:05, Johan Jonker Ð´µÀ:
-> Current dts files with 'vop' nodes are manually verified.
-> In order to automate this process rockchip-vop.txt
-> has to be converted to yaml.
+
+
+--- a/net/sctp/output.c
++++ b/net/sctp/output.c
+@@ -398,7 +398,8 @@ static void sctp_packet_gso_append(struct sk_buff
+*head, struct sk_buff *skb)
+        head->truesize += skb->truesize;
+        head->data_len += skb->len;
+        head->len += skb->len;
+-       refcount_add(skb->truesize, &head->sk->sk_wmem_alloc);
++       refcount_add(skb->truesize + sizeof(struct sctp_chunk),
++                               &head->sk->sk_wmem_alloc);
+
+        __skb_header_release(skb);
+
+On Tue, Mar 10, 2020 at 9:36 AM syzbot
+<syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com> wrote:
 >
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-> ---
-> Changes v2:
->    No new properties
-> ---
->   .../bindings/display/rockchip/rockchip-vop.txt     |  74 ------------
->   .../bindings/display/rockchip/rockchip-vop.yaml    | 126 +++++++++++++++++++++
->   2 files changed, 126 insertions(+), 74 deletions(-)
->   delete mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip-vop.txt
->   create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
+> Hello,
 >
-> diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.txt b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.txt
-> deleted file mode 100644
-> index 8b3a5f514..000000000
-> --- a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.txt
-> +++ /dev/null
-> @@ -1,74 +0,0 @@
-> -device-tree bindings for rockchip soc display controller (vop)
-> -
-> -VOP (Visual Output Processor) is the Display Controller for the Rockchip
-
-Can you change (Visual Out Processor) to (Video Out Processor) by the 
-way, we have change this at the latest TRM document. thanks.
-
-> -series of SoCs which transfers the image data from a video memory
-> -buffer to an external LCD interface.
-> -
-> -Required properties:
-> -- compatible: value should be one of the following
-> -		"rockchip,rk3036-vop";
-> -		"rockchip,rk3126-vop";
-> -		"rockchip,px30-vop-lit";
-> -		"rockchip,px30-vop-big";
-> -		"rockchip,rk3066-vop";
-> -		"rockchip,rk3188-vop";
-> -		"rockchip,rk3288-vop";
-> -		"rockchip,rk3368-vop";
-> -		"rockchip,rk3366-vop";
-> -		"rockchip,rk3399-vop-big";
-> -		"rockchip,rk3399-vop-lit";
-> -		"rockchip,rk3228-vop";
-> -		"rockchip,rk3328-vop";
-> -
-> -- reg: Must contain one entry corresponding to the base address and length
-> -	of the register space. Can optionally contain a second entry
-> -	corresponding to the CRTC gamma LUT address.
-> -
-> -- interrupts: should contain a list of all VOP IP block interrupts in the
-> -		 order: VSYNC, LCD_SYSTEM. The interrupt specifier
-> -		 format depends on the interrupt controller used.
-> -
-> -- clocks: must include clock specifiers corresponding to entries in the
-> -		clock-names property.
-> -
-> -- clock-names: Must contain
-> -		aclk_vop: for ddr buffer transfer.
-> -		hclk_vop: for ahb bus to R/W the phy regs.
-> -		dclk_vop: pixel clock.
-> -
-> -- resets: Must contain an entry for each entry in reset-names.
-> -  See ../reset/reset.txt for details.
-> -- reset-names: Must include the following entries:
-> -  - axi
-> -  - ahb
-> -  - dclk
-> -
-> -- iommus: required a iommu node
-> -
-> -- port: A port node with endpoint definitions as defined in
-> -  Documentation/devicetree/bindings/media/video-interfaces.txt.
-> -
-> -Example:
-> -SoC specific DT entry:
-> -	vopb: vopb@ff930000 {
-> -		compatible = "rockchip,rk3288-vop";
-> -		reg = <0x0 0xff930000 0x0 0x19c>, <0x0 0xff931000 0x0 0x1000>;
-> -		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-> -		clocks = <&cru ACLK_VOP0>, <&cru DCLK_VOP0>, <&cru HCLK_VOP0>;
-> -		clock-names = "aclk_vop", "dclk_vop", "hclk_vop";
-> -		resets = <&cru SRST_LCDC1_AXI>, <&cru SRST_LCDC1_AHB>, <&cru SRST_LCDC1_DCLK>;
-> -		reset-names = "axi", "ahb", "dclk";
-> -		iommus = <&vopb_mmu>;
-> -		vopb_out: port {
-> -			#address-cells = <1>;
-> -			#size-cells = <0>;
-> -			vopb_out_edp: endpoint@0 {
-> -				reg = <0>;
-> -				remote-endpoint=<&edp_in_vopb>;
-> -			};
-> -			vopb_out_hdmi: endpoint@1 {
-> -				reg = <1>;
-> -				remote-endpoint=<&hdmi_in_vopb>;
-> -			};
-> -		};
-> -	};
-> diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
-> new file mode 100644
-> index 000000000..cb88849f2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
-> @@ -0,0 +1,126 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/rockchip/rockchip-vop.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Rockchip soc display controller (VOP)
-> +
-> +description:
-> +  VOP (Visual Output Processor) is the Display Controller for the Rockchip
-> +  series of SoCs which transfers the image data from a video memory
-> +  buffer to an external LCD interface.
-> +
-> +maintainers:
-> +  - Sandy Huang <hjc@rock-chips.com>
-> +  - Heiko Stuebner <heiko@sntech.de>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: rockchip,px30-vop-big
-> +      - const: rockchip,px30-vop-lit
-> +      - const: rockchip,rk3036-vop
-> +      - const: rockchip,rk3066-vop
-> +      - const: rockchip,rk3126-vop
-> +      - const: rockchip,rk3188-vop
-> +      - const: rockchip,rk3228-vop
-> +      - const: rockchip,rk3288-vop
-> +      - const: rockchip,rk3328-vop
-> +      - const: rockchip,rk3366-vop
-> +      - const: rockchip,rk3368-vop
-> +      - const: rockchip,rk3399-vop-big
-> +      - const: rockchip,rk3399-vop-lit
-> +
-> +  reg:
-> +    minItems: 1
-> +    items:
-> +      - description:
-> +          Must contain one entry corresponding to the base address and length
-> +          of the register space.
-> +      - description:
-> +          Can optionally contain a second entry corresponding to
-> +          the CRTC gamma LUT address.
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description:
-> +      Should contain a list of all VOP IP block interrupts in the
-> +      order VSYNC, LCD_SYSTEM. The interrupt specifier
-> +      format depends on the interrupt controller used.
-> +
-> +  clocks:
-> +    items:
-> +      - description: Clock for ddr buffer transfer.
-> +      - description: Pixel clock.
-> +      - description: Clock for the ahb bus to R/W the phy regs.
-> +
-> +  clock-names:
-> +    items:
-> +      - const: aclk_vop
-> +      - const: dclk_vop
-> +      - const: hclk_vop
-> +
-> +  resets:
-> +    minItems: 3
-> +    maxItems: 3
-> +
-> +  reset-names:
-> +    items:
-> +      - const: axi
-> +      - const: ahb
-> +      - const: dclk
-> +
-> +  port:
-> +    type: object
-> +    description:
-> +      A port node with endpoint definitions as defined in
-> +      Documentation/devicetree/bindings/media/video-interfaces.txt.
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - port
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/rk3288-cru.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    vopb: vopb@ff930000 {
-> +      compatible = "rockchip,rk3288-vop";
-> +      reg = <0x0 0xff930000 0x0 0x19c>,
-> +            <0x0 0xff931000 0x0 0x1000>;
-> +      interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-> +      clocks = <&cru ACLK_VOP0>,
-> +               <&cru DCLK_VOP0>,
-> +               <&cru HCLK_VOP0>;
-> +      clock-names = "aclk_vop", "dclk_vop", "hclk_vop";
-> +      resets = <&cru SRST_LCDC1_AXI>,
-> +               <&cru SRST_LCDC1_AHB>,
-> +               <&cru SRST_LCDC1_DCLK>;
-> +      reset-names = "axi", "ahb", "dclk";
-> +      iommus = <&vopb_mmu>;
-> +      vopb_out: port {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        vopb_out_edp: endpoint@0 {
-> +          reg = <0>;
-> +          remote-endpoint=<&edp_in_vopb>;
-> +        };
-> +        vopb_out_hdmi: endpoint@1 {
-> +          reg = <1>;
-> +          remote-endpoint=<&hdmi_in_vopb>;
-> +        };
-> +      };
-> +    };
-
-
+> syzbot found the following crash on:
+>
+> HEAD commit:    2c523b34 Linux 5.6-rc5
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=155a5f29e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=a5295e161cd85b82
+> dashboard link: https://syzkaller.appspot.com/bug?extid=cea71eec5d6de256d54d
+> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164b5181e00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166dd70de00000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com
+>
+> ------------[ cut here ]------------
+> refcount_t: underflow; use-after-free.
+> WARNING: CPU: 1 PID: 8668 at lib/refcount.c:28 refcount_warn_saturate+0x15b/0x1a0 lib/refcount.c:28
+> Kernel panic - not syncing: panic_on_warn set ...
+> CPU: 1 PID: 8668 Comm: syz-executor779 Not tainted 5.6.0-rc5-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1e9/0x30e lib/dump_stack.c:118
+>  panic+0x264/0x7a0 kernel/panic.c:221
+>  __warn+0x209/0x210 kernel/panic.c:582
+>  report_bug+0x1ac/0x2d0 lib/bug.c:195
+>  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+>  do_error_trap+0xca/0x1c0 arch/x86/kernel/traps.c:267
+>  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:286
+>  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+> RIP: 0010:refcount_warn_saturate+0x15b/0x1a0 lib/refcount.c:28
+> Code: c7 e4 ff d0 88 31 c0 e8 23 20 b3 fd 0f 0b eb 85 e8 8a 4a e0 fd c6 05 ff 70 b1 05 01 48 c7 c7 10 00 d1 88 31 c0 e8 05 20 b3 fd <0f> 0b e9 64 ff ff ff e8 69 4a e0 fd c6 05 df 70 b1 05 01 48 c7 c7
+> RSP: 0018:ffffc90001f577d0 EFLAGS: 00010246
+> RAX: 8c9c9070bbb4e500 RBX: 0000000000000003 RCX: ffff8880938a63c0
+> RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+> RBP: 0000000000000003 R08: ffffffff815e16e6 R09: fffffbfff15db92a
+> R10: fffffbfff15db92a R11: 0000000000000000 R12: dffffc0000000000
+> R13: ffff88809de82000 R14: ffff8880a89237c0 R15: 1ffff11013be52b0
+>  sctp_wfree+0x3b1/0x710 net/sctp/socket.c:9111
+>  skb_release_head_state+0xfb/0x210 net/core/skbuff.c:651
+>  skb_release_all net/core/skbuff.c:662 [inline]
+>  __kfree_skb+0x22/0x1c0 net/core/skbuff.c:678
+>  sctp_chunk_destroy net/sctp/sm_make_chunk.c:1454 [inline]
+>  sctp_chunk_put+0x17b/0x200 net/sctp/sm_make_chunk.c:1481
+>  __sctp_outq_teardown+0x80a/0x9d0 net/sctp/outqueue.c:257
+>  sctp_association_free+0x21e/0x7c0 net/sctp/associola.c:339
+>  sctp_cmd_delete_tcb net/sctp/sm_sideeffect.c:930 [inline]
+>  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1318 [inline]
+>  sctp_side_effects net/sctp/sm_sideeffect.c:1185 [inline]
+>  sctp_do_sm+0x3c01/0x5560 net/sctp/sm_sideeffect.c:1156
+>  sctp_primitive_ABORT+0x93/0xc0 net/sctp/primitive.c:104
+>  sctp_close+0x231/0x770 net/sctp/socket.c:1512
+>  inet_release+0x135/0x180 net/ipv4/af_inet.c:427
+>  __sock_release net/socket.c:605 [inline]
+>  sock_close+0xd8/0x260 net/socket.c:1283
+>  __fput+0x2d8/0x730 fs/file_table.c:280
+>  task_work_run+0x176/0x1b0 kernel/task_work.c:113
+>  exit_task_work include/linux/task_work.h:22 [inline]
+>  do_exit+0x5ef/0x1f80 kernel/exit.c:801
+>  do_group_exit+0x15e/0x2c0 kernel/exit.c:899
+>  __do_sys_exit_group+0x13/0x20 kernel/exit.c:910
+>  __se_sys_exit_group+0x10/0x10 kernel/exit.c:908
+>  __x64_sys_exit_group+0x37/0x40 kernel/exit.c:908
+>  do_syscall_64+0xf3/0x1b0 arch/x86/entry/common.c:294
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x43ef98
+> Code: Bad RIP value.
+> RSP: 002b:00007ffcc7e7c398 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043ef98
+> RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+> RBP: 00000000004be7a8 R08: 00000000000000e7 R09: ffffffffffffffd0
+> R10: 000000002059aff8 R11: 0000000000000246 R12: 0000000000000001
+> R13: 00000000006d01a0 R14: 0000000000000000 R15: 0000000000000000
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
