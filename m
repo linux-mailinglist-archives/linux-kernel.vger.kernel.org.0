@@ -2,62 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A82E180E06
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 03:38:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1BE2180E0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 03:40:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727960AbgCKChW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 22:37:22 -0400
-Received: from mx.socionext.com ([202.248.49.38]:37335 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727307AbgCKChW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 22:37:22 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 11 Mar 2020 11:37:21 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id A8A7F603AB;
-        Wed, 11 Mar 2020 11:37:21 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 11 Mar 2020 11:37:21 +0900
-Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id 082E81A01BB;
-        Wed, 11 Mar 2020 11:37:21 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH] arm64: entry-ftrace.S: Fix missing argument for CONFIG_FUNCTION_GRAPH_TRACER=y
-Date:   Wed, 11 Mar 2020 11:36:53 +0900
-Message-Id: <1583894213-7633-1-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727956AbgCKCkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 22:40:18 -0400
+Received: from twhmllg3.macronix.com ([211.75.127.131]:52222 "EHLO
+        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbgCKCkS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 22:40:18 -0400
+Received: from twhfmlp1.macronix.com (twhfm1p1.macronix.com [172.17.20.91])
+        by TWHMLLG3.macronix.com with ESMTP id 02B2e4K9076230;
+        Wed, 11 Mar 2020 10:40:04 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+Received: from MXML06C.mxic.com.tw (mxml06c.macronix.com [172.17.14.55])
+        by Forcepoint Email with ESMTP id C5868B39AA6AF42ADD58;
+        Wed, 11 Mar 2020 10:40:04 +0800 (CST)
+In-Reply-To: <20200310202723.16b48f4b@collabora.com>
+References: <1583220084-10890-1-git-send-email-masonccyang@mxic.com.tw> <1583220084-10890-2-git-send-email-masonccyang@mxic.com.tw> <20200310202723.16b48f4b@collabora.com>
+To:     "Boris Brezillon" <boris.brezillon@collabora.com>
+Cc:     allison@lohutok.net, bbrezillon@kernel.org,
+        frieder.schrempf@kontron.de, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        miquel.raynal@bootlin.com, rfontana@redhat.com, richard@nod.at,
+        s.hauer@pengutronix.de, stefan@agner.ch, tglx@linutronix.de,
+        vigneshr@ti.com, yuehaibing@huawei.com
+Subject: Re: [PATCH v3 1/4] mtd: rawnand: Add support manufacturer specific lock/unlock
+ operation
+MIME-Version: 1.0
+X-KeepSent: CDE22522:001A7410-48258528:000E260F;
+ type=4; name=$KeepSent
+X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
+Message-ID: <OFCDE22522.001A7410-ON48258528.000E260F-48258528.000EA7E7@mxic.com.tw>
+From:   masonccyang@mxic.com.tw
+Date:   Wed, 11 Mar 2020 10:40:04 +0800
+X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
+ 2020/03/11 AM 10:40:04,
+        Serialize complete at 2020/03/11 AM 10:40:04
+Content-Type: text/plain; charset="US-ASCII"
+X-MAIL: TWHMLLG3.macronix.com 02B2e4K9076230
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Missing argument of another SYM_INNER_LABEL() breaks build for
-CONFIG_FUNCTION_GRAPH_TRACER=y.
 
-Fixes: e2d591d29d44 ("arm64: entry-ftrace.S: Convert to modern annotations for assembly functions")
-Cc: Mark Brown <broonie@kernel.org>
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
----
- arch/arm64/kernel/entry-ftrace.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Boris,
 
-diff --git a/arch/arm64/kernel/entry-ftrace.S b/arch/arm64/kernel/entry-ftrace.S
-index 8201018..833d48c 100644
---- a/arch/arm64/kernel/entry-ftrace.S
-+++ b/arch/arm64/kernel/entry-ftrace.S
-@@ -279,7 +279,7 @@ SYM_INNER_LABEL(ftrace_call, SYM_L_GLOBAL)	// tracer(pc, lr);
- 					// where xxx can be any kind of tracer.
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
--SYM_INNER_LABEL(ftrace_graph_call)		// ftrace_graph_caller();
-+SYM_INNER_LABEL(ftrace_graph_call, SYM_L_GLOBAL) // ftrace_graph_caller();
- 	nop				// If enabled, this will be replaced
- 					// "b ftrace_graph_caller"
- #endif
--- 
-2.7.4
+> > Add nand_lock() & nand_unlock() for manufacturer specific lock & 
+unlock
+> > operation while the device supports Block Portection function.
+> > 
+> > Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> > Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> Reported-by on something that's not a fix doesn't make sense. I know
+> the 0day bot asked you to add this tag, but that should only be done if
+> you submit a separate patch, ideally with a Fixes tag. If the offending
+> patch has not been merged yet, you should just fix the commit and ignore
+> the Reported-by tag (you can mention who reported the problem in the
+> changelog though).
+> 
+
+okay, understand it.
+Thanks a lot for your explanation.
+
+Mason
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information 
+and/or personal data, which is protected by applicable laws. Please be 
+reminded that duplication, disclosure, distribution, or use of this e-mail 
+(and/or its attachments) or any part thereof is prohibited. If you receive 
+this e-mail in error, please notify us immediately and delete this mail as 
+well as its attachment(s) from your system. In addition, please be 
+informed that collection, processing, and/or use of personal data is 
+prohibited unless expressly permitted by personal data protection laws. 
+Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
+
+
+============================================================================
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
 
