@@ -2,96 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0394B181FA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:37:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19DC7181FA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:37:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730637AbgCKRf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:35:56 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37852 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbgCKRfz (ORCPT
+        id S1730468AbgCKRhq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:37:46 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41165 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729852AbgCKRhp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:35:55 -0400
-Received: by mail-wr1-f66.google.com with SMTP id 6so3744984wre.4
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:35:54 -0700 (PDT)
+        Wed, 11 Mar 2020 13:37:45 -0400
+Received: by mail-pg1-f194.google.com with SMTP id b1so1574401pgm.8
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:37:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ul3aKF3mgmNSrCiKZR1xszeDpKLTrhtBGKS0nAOe96I=;
-        b=Qxv1kSHhmiyl18Lg2mWDZPGmXfwOrbANLmtvAgLq2LDLT4t5EMSGVFbTQ0T7HnVUVC
-         /El7DtDiEORVt9HKOrXAvI53eA3ZjgKAh3xoy5kjaVBE2OwCQPnczmJXs2UCRN58QwEY
-         nrOpJ/cQR0ULP4WPL/gjVtx2SnEEjvJp610a6X85Ou8I0za0dBWskFn4m+JdxiaEEc8i
-         IFgGTtV7w7h/D7nm4FAlQn0lvzYNfHdCon//XQInYH1YHgMmu6IqVsBKjL0wl4YLoVq4
-         2+DCA5uZrFKQoWq5nY5ISU1UlfRZCd32gjj6Da0JK1KvIBa8ky1OTK6lh2qDENVtMezh
-         UFsA==
+         :content-disposition:in-reply-to;
+        bh=apEu9N/pFu25fe7Vqmx6y36i/WaTLbYKboYSmzmWmdI=;
+        b=l8Y5WO63bmnms6wYDERKf+nPQ07ujfaSMsBS/MjhTJdIyr52i3qKwMRtlG+68DyuQb
+         1eZctlrhU8ij5/BvkiFwIjETBRx3uUkdVn1hu1MimLHfwA3PhYNRv9GsL6jl7o9Rqbb2
+         3f6hCbES4VNJC5sJbOEz7Vq3m/NZtxYj7wQrY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ul3aKF3mgmNSrCiKZR1xszeDpKLTrhtBGKS0nAOe96I=;
-        b=U4FEctP9Z++dazJmQSnSObPUZQjq+gFLP/RmBAi+XKHesDqsJA+0d3B6YaK7p6HnQV
-         O0XHelTQQ3qSl1x5Gued922N10jWFKpgc6iHbX82sWqKWAwMvYlJctbj9ZSZsEIePQy6
-         C93r0pULHsSaM8ez3Cw/Fc56+ZrxXz26z+IbIVY/zpXjY+54paYk7DO/auUaXdxANhBs
-         xGf4q2aSaSLIvC1ayU3pM/pXtJ5fHUb/WROMZszN3WDMfbvgYYuPW92zFFxRe9srb27s
-         Kn4LhuMB9xu0CqXSnDjicGU6zGDn7pCiBIyjqYgvbXUe99UCAVpqJKdNcoMck60IOQG/
-         BpzQ==
-X-Gm-Message-State: ANhLgQ1guU9S24l/7odh/gFDncnAa9W81vKFZpp5GUsiZqD2Ljn78WJU
-        WQW9YgD4TCCPGJWYTB0DCw==
-X-Google-Smtp-Source: ADFU+vsjpr414bIBPts3KWkhIsaYHeKBASQZ7NLY183Ib+uUwl1ipw/yJLNpNo/BaGgh+eB9SQ8QUQ==
-X-Received: by 2002:adf:e447:: with SMTP id t7mr5687572wrm.374.1583948154005;
-        Wed, 11 Mar 2020 10:35:54 -0700 (PDT)
-Received: from avx2 ([46.53.249.42])
-        by smtp.gmail.com with ESMTPSA id y69sm9437327wmd.46.2020.03.11.10.35.52
+         :mime-version:content-disposition:in-reply-to;
+        bh=apEu9N/pFu25fe7Vqmx6y36i/WaTLbYKboYSmzmWmdI=;
+        b=hTQfoaoT+admGX08EHSmGmv01uUzqhF4xbZYuRgv2ibxARWj3qUTELpCXEWsQOApjl
+         3QN/I3nTSG9P/ciiise1CYor8qbQvvXd0eT7ldRKGrSB3miwdq34lvE4ihwLWGdUomI9
+         OOkvrJqupLQQUrIScOLYUh7qA/FtqfwRqhMo9hY2Tu1l2E7luqaeWfEI8l7IOTN04GyT
+         juFlBjRvvU+mI65C11K7FP/LdMzKahT8j7hBjk8XVcbjOr7EI2YvRw3TGNR/ntx1wh51
+         Gs96sY0n+fz6T+IlvJa2exeWZCv0guw7HxD1pmfeOaqtVxYgN5qxFzZy7GRd9Iof0OyZ
+         Av/w==
+X-Gm-Message-State: ANhLgQ2Mqd6RkgTM+WJ0EOhLBI9al+bsqbhlsOTAlS5Vfw1cby0rwIsx
+        L8G8kkKfIoJobyxgVdf7EoWTMXqgPrw=
+X-Google-Smtp-Source: ADFU+vswXXoOnWhIYDbnMCIFSjDRcmVBiJ4nhzgaFobMHV0hGKkrUvnoqselwWa48XEKR6xl0ZCVFw==
+X-Received: by 2002:a62:f24d:: with SMTP id y13mr4093191pfl.27.1583948263031;
+        Wed, 11 Mar 2020 10:37:43 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id i187sm11966774pfg.33.2020.03.11.10.37.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 10:35:53 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 20:35:50 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Jaewon Kim <jaewon31.kim@samsung.com>
-Cc:     akpm@linux-foundation.org, labbott@redhat.com,
-        sumit.semwal@linaro.org, minchan@kernel.org, ngupta@vflare.org,
-        sergey.senozhatsky.work@gmail.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, jaewon31.kim@gmail.com
-Subject: Re: [RFC PATCH 1/3] proc/meminfo: introduce extra meminfo
-Message-ID: <20200311173550.GA2170@avx2>
-References: <20200311034441.23243-1-jaewon31.kim@samsung.com>
- <CGME20200311034454epcas1p184680d40f89d37eec7f934074c4a9fcf@epcas1p1.samsung.com>
- <20200311034441.23243-2-jaewon31.kim@samsung.com>
+        Wed, 11 Mar 2020 10:37:41 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 10:37:40 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     'Christopher Lameter' <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Vitaly Nikolenko <vnik@duasynt.com>,
+        Silvio Cesare <silvio.cesare@gmail.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] slub: Relocate freelist pointer to middle of object
+Message-ID: <202003111036.80DEE85@keescook>
+References: <202003051624.AAAC9AECC@keescook>
+ <alpine.DEB.2.21.2003081919290.14266@www.lameter.com>
+ <6fbf67b5936a44feaf9ad5b58d39082b@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200311034441.23243-2-jaewon31.kim@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <6fbf67b5936a44feaf9ad5b58d39082b@AcuMS.aculab.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 12:44:39PM +0900, Jaewon Kim wrote:
-> Provide APIs to drivers so that they can show its memory usage on
-> /proc/meminfo.
+On Wed, Mar 11, 2020 at 02:48:05PM +0000, David Laight wrote:
+> From: Christopher Lameter
+> > Sent: 08 March 2020 19:21
 > 
-> int register_extra_meminfo(atomic_long_t *val, int shift,
-> 			   const char *name);
-> int unregister_extra_meminfo(atomic_long_t *val);
+> > 
+> > On Thu, 5 Mar 2020, Kees Cook wrote:
+> > 
+> > > Instead of having the freelist pointer at the very beginning of an
+> > > allocation (offset 0) or at the very end of an allocation (effectively
+> > > offset -sizeof(void *) from the next allocation), move it away from
+> > > the edges of the allocation and into the middle. This provides some
+> > > protection against small-sized neighboring overflows (or underflows),
+> > > for which the freelist pointer is commonly the target. (Large or well
+> > > controlled overwrites are much more likely to attack live object contents,
+> > > instead of attempting freelist corruption.)
+> > 
+> > Sounds good. You could even randomize the position to avoid attacks on via
+> > the freelist pointer.
+> 
+> Random overwrites could be detected (fairly cheaply) by putting two
+> copies of the pointer into the same cacheline in the buffer.
+> Or better make the second one 'pointer xor constant'.
 
-> +			show_val_kb(m, memtemp->name_pad, nr_page);
+My sense is that this starts to stray closer to "too much overhead" vs
+the mitigation benefit against known heap metadata attacks. I'm open to
+seeing patches, of course, though! :)
 
-I have 3 issues.
-
-Can this be printed without "KB" piece and without useless whitespace,
-like /proc/vmstat does?
-
-I don't know how do you parse /proc/meminfo.
-Do you search for specific string or do you use some kind of map[k] = v
-interface?
-
-2) zsmalloc can create top-level symlink and resolve it to necessary value.
-It will be only 1 readlink(2) system call to fetch it.
-
-3) android can do the same
-
-For simple values there is no need to register stuff and create
-mini subsystems.
-
-	/proc/alexey
+-- 
+Kees Cook
