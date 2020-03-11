@@ -2,226 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F604181D28
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:06:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18151181D17
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:01:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730104AbgCKQGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 12:06:01 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51192 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729921AbgCKQGB (ORCPT
+        id S1730052AbgCKQB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 12:01:27 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:56686 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729995AbgCKQB0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 12:06:01 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02BG1pBj076682
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:06:00 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2yq0hbqer3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:05:58 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Wed, 11 Mar 2020 16:00:50 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 11 Mar 2020 16:00:45 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02BG0hbI35717308
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 Mar 2020 16:00:43 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87A13A4051;
-        Wed, 11 Mar 2020 16:00:43 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A4C95A405D;
-        Wed, 11 Mar 2020 16:00:20 +0000 (GMT)
-Received: from [9.199.52.104] (unknown [9.199.52.104])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 11 Mar 2020 16:00:20 +0000 (GMT)
-Subject: Re: [RFC 00/11] perf: Enhancing perf to export processor hazard
- information
-To:     Kim Phillips <kim.phillips@amd.com>
-Cc:     Stephane Eranian <eranian@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        yao.jin@linux.intel.com, Robert Richter <robert.richter@amd.com>,
-        maddy@linux.ibm.com, Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20200302052355.36365-1-ravi.bangoria@linux.ibm.com>
- <20200302101332.GS18400@hirez.programming.kicks-ass.net>
- <CABPqkBSzwpR6p7UZs7g1vWGCJRLsh565mRMGc6m0Enn1SnkC4w@mail.gmail.com>
- <df966d6e-8898-029f-e697-8496500a1663@amd.com>
- <2550ec4d-a015-4625-ca24-ff10632dbe2e@linux.ibm.com>
- <d3c82708-dd09-80e0-4e9f-1cbab118a169@amd.com>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Wed, 11 Mar 2020 21:30:18 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Wed, 11 Mar 2020 12:01:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583942485;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=C2BHMsicmBBiwdBuJ2lMQ+3Hcfkiz/XVewH9U5MKYBc=;
+        b=AZEp9/nCWNElVJqBtOQF5dRyAr5p9VkMyCg3hd8f6HHJ7OuBhl+Q796PYjG3QigDD3zgXB
+        GE3f2vvawOJ4rejtEvmHCa41JzXYZBD7B4Oo9hgF20OuPi1AIFylnDiyZGyLD7adZqpP8D
+        ptZDtdVIznIE4kO/RJLF23OtjPsAFkY=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-455-eAChKfFNM-mRMy9CmRvk7A-1; Wed, 11 Mar 2020 12:01:23 -0400
+X-MC-Unique: eAChKfFNM-mRMy9CmRvk7A-1
+Received: by mail-qk1-f199.google.com with SMTP id m6so1782137qkm.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 09:01:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=C2BHMsicmBBiwdBuJ2lMQ+3Hcfkiz/XVewH9U5MKYBc=;
+        b=ZRY1kAWE3rSKU69NFuHCqtt9m62P1gd5CxpeVhAvuaBzfYkO6aUrjqX5HtyWUtuJfB
+         ++cuvtN2X7YJ50MHA2oYiM33JX6w9dP49JXehFhEbLmEw+LZasPE12Ja5IBdfDLXil/X
+         v6lsL7MHe9mbH6IYbLGUVkHKso0a9uoTGn8vzYU8UQYB4dX5A0eA7KmIMkKxKFfo9S97
+         m0NE6zFulo3auvsHI24zJmpf/IRYKwkaPJMqTBj19CcVCJF00cnUb7frFHWZm7u36kTC
+         YwQnEMXWZMLbOzapifp4sGDy66sy8f7X9g5W42jXrfv7pgzJAwQgPO+fYOayGUp+tZgz
+         4JZw==
+X-Gm-Message-State: ANhLgQ0O1qoouzu29qh03wIBogjgDnNWEplf4RTorkd7RX3cbbaY93Do
+        9utWZClyQbyV04lVTDw6rqgehYP3ZSqArUB2pb54LCBhkLDzEUhrTWkM4JAGiOqsITFddaINtQP
+        RGprpyniaCySVM/hCtSB08TxK
+X-Received: by 2002:ad4:49b2:: with SMTP id u18mr3531953qvx.102.1583942483148;
+        Wed, 11 Mar 2020 09:01:23 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vsOmAzv2bmE8lfSFbahE0PflJ7WD1T9y24kNWIrUIYt5pgkfMumAg+oBsjtIzahNyH+0Rxn+A==
+X-Received: by 2002:ad4:49b2:: with SMTP id u18mr3531826qvx.102.1583942481913;
+        Wed, 11 Mar 2020 09:01:21 -0700 (PDT)
+Received: from xz-x1 ([2607:9880:19c0:32::2])
+        by smtp.gmail.com with ESMTPSA id h5sm9018726qkc.118.2020.03.11.09.01.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 09:01:21 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 12:01:19 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v6 03/14] KVM: X86: Don't track dirty for
+ KVM_SET_[TSS_ADDR|IDENTITY_MAP_ADDR]
+Message-ID: <20200311160119.GF479302@xz-x1>
+References: <20200309214424.330363-1-peterx@redhat.com>
+ <20200309214424.330363-4-peterx@redhat.com>
+ <20200310150637.GB7600@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <d3c82708-dd09-80e0-4e9f-1cbab118a169@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20031116-0012-0000-0000-0000038F7981
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20031116-0013-0000-0000-000021CC48A1
-Message-Id: <8a4d966c-acc9-b2b7-8ab7-027aefab201c@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-11_06:2020-03-11,2020-03-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- impostorscore=0 phishscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0
- priorityscore=1501 clxscore=1015 suspectscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003110099
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200310150637.GB7600@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kim,
-
-On 3/6/20 3:36 AM, Kim Phillips wrote:
->> On 3/3/20 3:55 AM, Kim Phillips wrote:
->>> On 3/2/20 2:21 PM, Stephane Eranian wrote:
->>>> On Mon, Mar 2, 2020 at 2:13 AM Peter Zijlstra <peterz@infradead.org> wrote:
->>>>>
->>>>> On Mon, Mar 02, 2020 at 10:53:44AM +0530, Ravi Bangoria wrote:
->>>>>> Modern processors export such hazard data in Performance
->>>>>> Monitoring Unit (PMU) registers. Ex, 'Sampled Instruction Event
->>>>>> Register' on IBM PowerPC[1][2] and 'Instruction-Based Sampling' on
->>>>>> AMD[3] provides similar information.
->>>>>>
->>>>>> Implementation detail:
->>>>>>
->>>>>> A new sample_type called PERF_SAMPLE_PIPELINE_HAZ is introduced.
->>>>>> If it's set, kernel converts arch specific hazard information
->>>>>> into generic format:
->>>>>>
->>>>>>     struct perf_pipeline_haz_data {
->>>>>>            /* Instruction/Opcode type: Load, Store, Branch .... */
->>>>>>            __u8    itype;
->>>>>>            /* Instruction Cache source */
->>>>>>            __u8    icache;
->>>>>>            /* Instruction suffered hazard in pipeline stage */
->>>>>>            __u8    hazard_stage;
->>>>>>            /* Hazard reason */
->>>>>>            __u8    hazard_reason;
->>>>>>            /* Instruction suffered stall in pipeline stage */
->>>>>>            __u8    stall_stage;
->>>>>>            /* Stall reason */
->>>>>>            __u8    stall_reason;
->>>>>>            __u16   pad;
->>>>>>     };
->>>>>
->>>>> Kim, does this format indeed work for AMD IBS?
->>>
->>> It's not really 1:1, we don't have these separations of stages
->>> and reasons, for example: we have missed in L2 cache, for example.
->>> So IBS output is flatter, with more cycle latency figures than
->>> IBM's AFAICT.
->>
->> AMD IBS captures pipeline latency data incase Fetch sampling like the
->> Fetch latency, tag to retire latency, completion to retire latency and
->> so on. Yes, Ops sampling do provide more data on load/store centric
->> information. But it also captures more detailed data for Branch instructions.
->> And we also looked at ARM SPE, which also captures more details pipeline
->> data and latency information.
->>
->>>> Personally, I don't like the term hazard. This is too IBM Power
->>>> specific. We need to find a better term, maybe stall or penalty.
->>>
->>> Right, IBS doesn't have a filter to only count stalled or otherwise
->>> bad events.  IBS' PPR descriptions has one occurrence of the
->>> word stall, and no penalty.  The way I read IBS is it's just
->>> reporting more sample data than just the precise IP: things like
->>> hits, misses, cycle latencies, addresses, types, etc., so words
->>> like 'extended', or the 'auxiliary' already used today even
->>> are more appropriate for IBS, although I'm the last person to
->>> bikeshed.
->>
->> We are thinking of using "pipeline" word instead of Hazard.
+On Tue, Mar 10, 2020 at 08:06:37AM -0700, Sean Christopherson wrote:
+> On Mon, Mar 09, 2020 at 05:44:13PM -0400, Peter Xu wrote:
+> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> > index 40b1e6138cd5..fc638a164e03 100644
+> > --- a/arch/x86/kvm/vmx/vmx.c
+> > +++ b/arch/x86/kvm/vmx/vmx.c
+> > @@ -3467,34 +3467,26 @@ static bool guest_state_valid(struct kvm_vcpu *vcpu)
+> >  	return true;
+> >  }
+> >  
+> > -static int init_rmode_tss(struct kvm *kvm)
+> > +static int init_rmode_tss(struct kvm *kvm, void __user *ua)
+> >  {
+> > -	gfn_t fn;
+> > +	const void *zero_page = (const void *) __va(page_to_phys(ZERO_PAGE(0)));
+> >  	u16 data = 0;
 > 
-> Hm, the word 'pipeline' occurs 0 times in IBS documentation.
+> "data" doesn't need to be intialized to zero, it's set below before it's used.
 
-NP. We thought pipeline is generic hw term so we proposed "pipeline"
-word. We are open to term which can be generic enough.
+Yeah I didn't touch it because this change is irrelevant to the rest.
+But I can remove it altogether.
 
 > 
-> I realize there are a couple of core pipeline-specific pieces
-> of information coming out of it, but the vast majority
-> are addresses, latencies of various components in the memory
-> hierarchy, and various component hit/miss bits.
+> >  	int idx, r;
+> 
+> nit: I'd prefer to rename "idx" to "i" to make it more obvious it's a plain
+> ole loop counter.  Reusing the srcu index made me do a double take :-)
 
-Yes. we should capture core pipeline specific details. For example,
-IBS generates Branch unit information(IbsOpData1) and Icahce related
-data(IbsFetchCtl) which is something that shouldn't be extended as
-part of perf-mem, IMO.
+Another irrelevant change, but ok.
 
 > 
-> What's needed here is a vendor-specific extended
-> sample information that all these technologies gather,
-> of which things like e.g., 'L1 TLB cycle latency' we
-> all should have in common.
-
-Yes. We will include fields to capture the latency cycles (like Issue
-latency, Instruction completion latency etc..) along with other pipeline
-details in the proposed structure.
-
+> >  
+> > -	idx = srcu_read_lock(&kvm->srcu);
+> > -	fn = to_kvm_vmx(kvm)->tss_addr >> PAGE_SHIFT;
+> > -	r = kvm_clear_guest_page(kvm, fn, 0, PAGE_SIZE);
+> > -	if (r < 0)
+> > -		goto out;
+> > +	for (idx = 0; idx < 3; idx++) {
+> > +		r = __copy_to_user(ua + PAGE_SIZE * idx, zero_page, PAGE_SIZE);
+> > +		if (r)
+> > +			return -EFAULT;
+> > +	}
 > 
-> I'm not sure why a new PERF_SAMPLE_PIPELINE_HAZ is needed
-> either.  Can we use PERF_SAMPLE_AUX instead?
+> Can this be done in a single __copy_to_user(), or do those helpers not like
+> crossing page boundaries?
 
-We took a look at PERF_SAMPLE_AUX. IIUC, PERF_SAMPLE_AUX is intended when
-large volume of data needs to be captured as part of perf.data without
-frequent PMIs. But proposed type is to address the capture of pipeline
-information on each sample using PMI at periodic intervals. Hence proposing
-PERF_SAMPLE_PIPELINE_HAZ.
+Maybe because the zero_page is only PAGE_SIZE long? :)
 
->  Take a look at
-> commit 98dcf14d7f9c "perf tools: Add kernel AUX area sampling
-> definitions".  The sample identifier can be used to determine
-> which vendor's sampling IP's data is in it, and events can
-> be recorded just by copying the content of the SIER, etc.
-> registers, and then events get synthesized from the aux
-> sample at report/inject/annotate etc. time.  This allows
-> for less sample recording overhead, and moves all the vendor
-> specific decoding and common event conversions for userspace
-> to figure out.
+[...]
 
-When AUX buffer data is structured, tool side changes added to present the
-pipeline data can be re-used.
+> > -int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
+> > +/**
+> > + * __x86_set_memory_region: Setup KVM internal memory slot
+> > + *
+> > + * @kvm: the kvm pointer to the VM.
+> > + * @id: the slot ID to setup.
+> > + * @gpa: the GPA to install the slot (unused when @size == 0).
+> > + * @size: the size of the slot. Set to zero to uninstall a slot.
+> > + *
+> > + * This function helps to setup a KVM internal memory slot.  Specify
+> > + * @size > 0 to install a new slot, while @size == 0 to uninstall a
+> > + * slot.  The return code can be one of the following:
+> > + *
+> > + *   - An error number if error happened, or,
+> > + *   - For installation: the HVA of the newly mapped memory slot, or,
+> > + *   - For uninstallation: zero if we successfully uninstall a slot.
+> 
+> Maybe tweak this so the return it stands out?  And returning zero on
+> uninstallation is no longer true in kvm/queue, at least not without further
+> modifications (as is it'll return 0xdead000000000000 on 64-bit).  The
+> 0xdead shenanigans won't trigger IS_ERR(), so I think this can simply be:
+> 
+>  * Returns:
+>  *   hva:    on success
+>  *   -errno: on error
+> 
+> With the blurb below calling out that hva is bogus uninstallation.
 
-> 
->>>> Also worth considering is the support of ARM SPE (Statistical
->>>> Profiling Extension) which is their version of IBS.
->>>> Whatever gets added need to cover all three with no limitations.
->>>
->>> I thought Intel's various LBR, PEBS, and PT supported providing
->>> similar sample data in perf already, like with perf mem/c2c?
->>
->> perf-mem is more of data centric in my opinion. It is more towards
->> memory profiling. So proposal here is to expose pipeline related
->> details like stalls and latencies.
-> 
-> Like I said, I don't see it that way, I see it as "any particular
-> vendor's event's extended details', and these pipeline details
-> have overlap with existing infrastructure within perf, e.g., L2
-> cache misses.
-> 
-> Kim
-> 
+Sure, I'll rebase to kvm/queue for the next version with the
+suggestion.
+
+Thanks,
+
+-- 
+Peter Xu
 
