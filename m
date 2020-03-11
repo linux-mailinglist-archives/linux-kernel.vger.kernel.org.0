@@ -2,61 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D2B718231D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 21:06:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38FF718231E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 21:06:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387445AbgCKUGR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 16:06:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35458 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731214AbgCKUGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 16:06:17 -0400
-Received: from vulkan (unknown [170.249.165.102])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BDCB20739;
-        Wed, 11 Mar 2020 20:06:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583957177;
-        bh=Dtt1T1Eb5jXEhAvGJ7Ls7woWlnRZjlxMlJnfziDzxGI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=GkM2H7MJNd77kCGIRkhj+XqKeDRo+1Ox+VfAM9vIhMN/qZxrnNfZf+/hAa0+5bWhO
-         GC3YhLmyzPgQJV2DvRoSjyGnzKsZDp6AyXDex7mbmcmN+vTqETw5sgy1b8OOzvxjom
-         8GJ53xlJV2nP9a1EZCq7yiQ3KSdZrI39z/6FE2qQ=
-Message-ID: <7d4c32b94a2ae900afa316c12047f7d79a31aaba.camel@kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the file-locks
- tree
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        NeilBrown <neilb@suse.de>
-Date:   Wed, 11 Mar 2020 15:06:14 -0500
-In-Reply-To: <20200312011809.408fd045@canb.auug.org.au>
-References: <20200312011809.408fd045@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        id S2387464AbgCKUGh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 16:06:37 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40391 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387449AbgCKUGg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 16:06:36 -0400
+Received: by mail-pl1-f195.google.com with SMTP id h11so1586876plk.7
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 13:06:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=++5B0kFRrjAGwY1Pe388z5375HPFD4iEhCYSO75vU9k=;
+        b=d7K69vo1bhwMw4HUPNraxkxEDAvA63FgjV5gB6GbslC680eWufo5K6jlOXYSNUy5w/
+         E9tlsJ0ehHvi6PE7Niu4XjXz9RFah90G7btm8mbFIiRNJD7x8jHwKTo2zT5whrDZ0X5T
+         dELIHgYrIolfYS/CXnML26PUrUSP+338rgp6k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=++5B0kFRrjAGwY1Pe388z5375HPFD4iEhCYSO75vU9k=;
+        b=DsOd3W8Us/x4Cqu/Jbzmjg5rlCL7wMBu6dSaiuukH4mw7ae0WeIysII6frjvo5HP2v
+         ZORKsbDETkPyXbmRBdMRuPq9o0ywZaSTYCj28wf2DnFJQDYsavkx+e9iHeayDS+Uxa3Z
+         LW/La5+3G9hYGCo0ZAFsb0iLwNb7OUY78ip3J9agX3+KVkF9NJ3cdJu4GCuWrK5pxm62
+         06qaPaHCKp3MSQ+hqdu+mp4zOXq1zzDCLe2t31mGFgTFmK2t0meGDEjakuNUCHKKI1jD
+         BWHkoIXc9Z9zjOz4BWA86sUcmbWj6/GmvAyifoLEM/7D7mPsHLzfBSPAbzMmRi9V0jG4
+         3WzA==
+X-Gm-Message-State: ANhLgQ0wepAVTYWC5bFfFCKdRYLFdaoT4FhBgPWdWzT00USzBQjVwwa7
+        NAJw486EbEGM+zQm4M83GjYQYA==
+X-Google-Smtp-Source: ADFU+vsd+Vncz158ZMcxoxWjS4PIk1+al05cPYka23A9zMuWMmHh26nb2njwtfyNobXmcY9VjFFhVQ==
+X-Received: by 2002:a17:902:7618:: with SMTP id k24mr4601393pll.320.1583957195759;
+        Wed, 11 Mar 2020 13:06:35 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id m12sm6440567pjf.25.2020.03.11.13.06.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 13:06:34 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 13:06:33 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Sven Schnelle <svens@linux.ibm.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH] seccomp: add compat_ioctl for seccomp notify
+Message-ID: <202003111305.87B2A84A@keescook>
+References: <20200310123332.42255-1-svens@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310123332.42255-1-svens@linux.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-03-12 at 01:18 +1100, Stephen Rothwell wrote:
-> Hi all,
+On Tue, Mar 10, 2020 at 01:33:32PM +0100, Sven Schnelle wrote:
+> Hi,
 > 
-> Commit
+> executing the seccomp_bpf testsuite with 32 bit userland (both s390 and x86)
+> doesn't work because there's no compat_ioctl handler defined. Is that something
+> that is supposed to work? Disclaimer: I don't know enough about seccomp to judge
+> whether there would be some adjustments required in the compat ioctl handler.
+> Just setting it to seccomp_notify_ioctl() makes the testsuite pass, but i'm not
+> sure whether that's correct.
 > 
->   e2de130a568c ("locks: reintroduce locks_delete_lock shortcut")
+> Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
+
+Whoops! Yes, running a mixed environment (64-bit kernel and 32-bit
+userspace) shows this as broken. I'll tweak the commit log a bit and
+apply it. Thanks!
+
+-Kees
+
+> ---
+>  kernel/seccomp.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> is missing a Signed-off-by from its author.
+> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> index b6ea3dcb57bf..683c81e4861e 100644
+> --- a/kernel/seccomp.c
+> +++ b/kernel/seccomp.c
+> @@ -1221,6 +1221,7 @@ static const struct file_operations seccomp_notify_ops = {
+>  	.poll = seccomp_notify_poll,
+>  	.release = seccomp_notify_release,
+>  	.unlocked_ioctl = seccomp_notify_ioctl,
+> +	.compat_ioctl = seccomp_notify_ioctl,
+>  };
+>  
+>  static struct file *init_listener(struct seccomp_filter *filter)
+> -- 
+> 2.17.1
 > 
 
-Yes, sorry. Neil sent a draft patch and I went ahead and pulled it in
-before he had a chance to fix up the changelog and add his SoB. Once he
-does we'll get that fixed (and before I send this up to Linus).
-
-Thanks,
-Jeff
-
+-- 
+Kees Cook
