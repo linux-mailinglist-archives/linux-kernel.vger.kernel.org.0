@@ -2,112 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DC31181F9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:35:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E030181FA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:37:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730618AbgCKRfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:35:23 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:32856 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730366AbgCKRfX (ORCPT
+        id S1730630AbgCKRfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:35:52 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:60380 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726099AbgCKRfv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:35:23 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 79F2C293DC6;
-        Wed, 11 Mar 2020 17:35:21 +0000 (GMT)
-Date:   Wed, 11 Mar 2020 18:35:17 +0100
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     "Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "shiva.linuxworks@gmail.com" <shiva.linuxworks@gmail.com>
-Subject: Re: [EXT] Re: [PATCH v6 0/6] Add new series Micron SPI NAND devices
-Message-ID: <20200311183517.054cc300@collabora.com>
-In-Reply-To: <MN2PR08MB6397BAEC050EF2C1A9CE8CDAB8FC0@MN2PR08MB6397.namprd08.prod.outlook.com>
-References: <20200309115230.7207-1-sshivamurthy@micron.com>
-        <20200311164932.23cc7a42@xps13>
-        <MN2PR08MB6397BAEC050EF2C1A9CE8CDAB8FC0@MN2PR08MB6397.namprd08.prod.outlook.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Wed, 11 Mar 2020 13:35:51 -0400
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02BHSlrg011760;
+        Wed, 11 Mar 2020 10:35:32 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=facebook; bh=Rbk9BNhqg3NxrI/19U3XuSiUlBGFX5qG0Vxe/PIHThA=;
+ b=bhJmRdSdbCbsl82KqZrz0YaDt1NBUq/3O/PiHNsoBU803BkmGNM5N7TUybVJa5LIGWYq
+ qZNJbkMScaXqeKmF2T7ydn1uCJiLs/rDfGmzlwLn7g6TC+iNNeoTPv1gA2mQU+mghmLv
+ bNtz9Ko91t9Fe1059626VPFOsNkQkGKYOz4= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2ypr7su8tw-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Wed, 11 Mar 2020 10:35:32 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.35.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Wed, 11 Mar 2020 10:35:31 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z9rhG4wIWc4uVdofjDMuQRnvMxQvfN//RtrFsteRgtPgY2lyfYfl+8QZLyv3j4HI24NSYGb047RYqrfxWaZ6AgrNLZSYHY2B+VLN7zBybTadrJqOaZNoZSWX2tx1Ae9aqhDjg20bKFVEw78IoXsh3+xCcdxSVlld13Z6bmYyIbkv5bgkY2/OHyNcIVYB1ftrRuJ0FhDkEVm00VHx8Vg5siv+n03VO09sc6w9DKsZ87oU0ffVwoNy0k6vbcyTN2qf6KxtHHpxA7c7sDxugXUrNcJ8s8eQmhiDZ4oMNLXn9CJ9q3P3ttc5UYZBKmioAQF1oINHb7dG/izoaZoyYyjkiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Rbk9BNhqg3NxrI/19U3XuSiUlBGFX5qG0Vxe/PIHThA=;
+ b=DLCvZqIGQrPOINvXm8qYeDcS52vS9pWPkF4D8r/DYA/3zR4GTt9vPxmnMG0nHRard71gfLP8Du2qqADybGPmGro7oxSrsajAPFPFtvVwQtdtM/rQtGI8/UumqpNtj+/aH/YjUhmUpoKgUv61d+18+7diXmsM7xiQ4Nt2r/sDZ6fqzgyFm7CM/dBJFPFfcROveDYpL0UCdxswZ6w15NfDSOn/OZYXjZIW2VzvfRhtC63wfAoD7iHx5UaN6IHnOIXyhcW41XEGgGRbHXH/Mf4L+wMEN9a8zrbeoPHbiR7eB+SyEXXHcU5rraB9oXLov3C6KQa98gM95+dC35KgxsN4PQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Rbk9BNhqg3NxrI/19U3XuSiUlBGFX5qG0Vxe/PIHThA=;
+ b=dU+tBjKWhoBvrkfBa23ImS7Ld/YJxxYm3iri0/mUUyLT66oAZfYoz9WMWDOubj97kDpotg6iIo3O1VBBY2xRiHNhYrXf4Q1MhvzzAy7vgwSXGPfqehRDqtFDyvRmbEwnyg3S73bfdhTYRvGWU1tkPAN/3v1jISrCQQWfEB1PbeQ=
+Received: from MWHPR15MB1661.namprd15.prod.outlook.com (2603:10b6:300:124::23)
+ by MWHPR15MB1359.namprd15.prod.outlook.com (2603:10b6:300:b7::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.13; Wed, 11 Mar
+ 2020 17:35:30 +0000
+Received: from MWHPR15MB1661.namprd15.prod.outlook.com
+ ([fe80::f930:6bf2:6d2:93ef]) by MWHPR15MB1661.namprd15.prod.outlook.com
+ ([fe80::f930:6bf2:6d2:93ef%8]) with mapi id 15.20.2793.013; Wed, 11 Mar 2020
+ 17:35:30 +0000
+Date:   Wed, 11 Mar 2020 10:35:26 -0700
+From:   Roman Gushchin <guro@fb.com>
+To:     Vlastimil Babka <vbabka@suse.cz>
+CC:     Rik van Riel <riel@surriel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-team@fb.com>, Qian Cai <cai@lca.pw>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Subject: Re: [PATCH] mm,page_alloc,cma: conditionally prefer cma pageblocks
+ for movable allocations
+Message-ID: <20200311173526.GH96999@carbon.dhcp.thefacebook.com>
+References: <20200306150102.3e77354b@imladris.surriel.com>
+ <8e67d88f-3ec8-4795-35dc-47e3735e530e@suse.cz>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e67d88f-3ec8-4795-35dc-47e3735e530e@suse.cz>
+X-ClientProxiedBy: MWHPR2201CA0055.namprd22.prod.outlook.com
+ (2603:10b6:301:16::29) To MWHPR15MB1661.namprd15.prod.outlook.com
+ (2603:10b6:300:124::23)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from carbon.dhcp.thefacebook.com (2620:10d:c090:400::5:820) by MWHPR2201CA0055.namprd22.prod.outlook.com (2603:10b6:301:16::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.17 via Frontend Transport; Wed, 11 Mar 2020 17:35:29 +0000
+X-Originating-IP: [2620:10d:c090:400::5:820]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f4812235-a36d-4ec0-0baf-08d7c5e2983c
+X-MS-TrafficTypeDiagnostic: MWHPR15MB1359:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MWHPR15MB1359D97919456A0FE097E52DBEFC0@MWHPR15MB1359.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 0339F89554
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(136003)(346002)(366004)(376002)(39860400002)(199004)(86362001)(81166006)(8936002)(1076003)(8676002)(81156014)(5660300002)(478600001)(66476007)(66946007)(53546011)(6506007)(16526019)(66556008)(186003)(316002)(9686003)(55016002)(33656002)(2906002)(6916009)(54906003)(4326008)(6666004)(52116002)(7696005)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1359;H:MWHPR15MB1661.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: hjnv4ZKHOuiA+WRQgB5BOXF/L25D5cn1gfpDMggNgeQzlzviY7/CltzUKmOQobZRFv5k5NvsMdOZKJGtjltu5TYvtGEEYMT6m7Xe8wA5ufQGzDwc9opKI4/5+1br3PK0o1MR4GBQqKpG/F5qt/2PyIVfweLvcOu5gqWk+2sTYEN6hitqeeo09m34We0bsUklLFyyczZKJsnO5+l/CC7Eylh/OwwF8cQI6B52tEM1tKAdSQhlt4Z3TG9MBy6UH4+UaYMEOGOg/cOX+VQYEEMXoggr5TdvJippvbQ/tw95i9bzKKJBRmZidfLR4VAOOJPMTJ68KdHpCpWivty29GFFAF1mZSis8knjHVn56WLYvRInvc6go4hNNWQd38pFnQjaCAEYIIH9BkRSeq79ts+yLgiEOqSozKtZJCzp2VcPZSehv3Z2N5g+/ktjKZd6t38EFYiBDlIOCvZQFnOze0AyvaMPpsyISXy4MzhVpzN/w3VauT/X7l0z9AypvVLbkOam
+X-MS-Exchange-AntiSpam-MessageData: FheSwvJzupDjCehpEpo8sGcfMAff64jQG+5zK8vSfWXZr/rRfgqHeGzkKQlukOvSjJUc8dpof1PnBgF0xEvLwMlpkF1hOyuJwjhRERBp5eHk6vi0//FH3llGJt+aY7v44zreiEoFYpVDfPnu4oREjQhzzP7NjKP/64ko76JOzKfChGz0jI9XCjU3foPsBih7
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4812235-a36d-4ec0-0baf-08d7c5e2983c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2020 17:35:30.7455
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rw0A8RFNMTYyv+1423o/l8TnnhTcYx1BEEUkvSgBcsnF9fsDZUyPzH/C+0bro1PZ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1359
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-11_07:2020-03-11,2020-03-11 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 spamscore=0 clxscore=1011
+ bulkscore=0 mlxlogscore=853 mlxscore=0 phishscore=0 malwarescore=0
+ lowpriorityscore=0 adultscore=0 suspectscore=1 impostorscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003110102
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Mar 2020 17:33:41 +0000
-"Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com> wrote:
+On Wed, Mar 11, 2020 at 09:51:07AM +0100, Vlastimil Babka wrote:
+> On 3/6/20 9:01 PM, Rik van Riel wrote:
+> > Posting this one for Roman so I can deal with any upstream feedback and
+> > create a v2 if needed, while scratching my head over the next piece of
+> > this puzzle :)
+> > 
+> > ---8<---
+> > 
+> > From: Roman Gushchin <guro@fb.com>
+> > 
+> > Currently a cma area is barely used by the page allocator because
+> > it's used only as a fallback from movable, however kswapd tries
+> > hard to make sure that the fallback path isn't used.
+> 
+> Few years ago Joonsoo wanted to fix these kinds of weird MIGRATE_CMA corner
+> cases by using ZONE_MOVABLE instead [1]. Unfortunately it was reverted due to
+> unresolved bugs. Perhaps the idea could be resurrected now?
 
-> Hi Miquel,
-> 
-> > 
-> > Hi Shiva,
-> > 
-> > shiva.linuxworks@gmail.com wrote on Mon,  9 Mar 2020 12:52:24 +0100:
-> >   
-> > > From: Shivamurthy Shastri <sshivamurthy@micron.com>
-> > >
-> > > This patchset is for the new series of Micron SPI NAND devices, and the
-> > > following links are their datasheets.
-> > >
-> > > M78A:
-> > > [1] https://www.micron.com/~/media/documents/products/data-  
-> > sheet/nand-flash/70-series/m78a_1gb_3v_nand_spi.pdf  
-> > > [2] https://www.micron.com/~/media/documents/products/data-  
-> > sheet/nand-flash/70-series/m78a_1gb_1_8v_nand_spi.pdf  
-> > >
-> > > M79A:
-> > > [3] https://www.micron.com/~/media/documents/products/data-  
-> > sheet/nand-flash/70-series/m79a_2gb_1_8v_nand_spi.pdf  
-> > > [4] https://www.micron.com/~/media/documents/products/data-  
-> > sheet/nand-flash/70-series/m79a_ddp_4gb_3v_nand_spi.pdf  
-> > >
-> > > M70A:
-> > > [5] https://www.micron.com/~/media/documents/products/data-  
-> > sheet/nand-flash/70-series/m70a_4gb_3v_nand_spi.pdf  
-> > > [6] https://www.micron.com/~/media/documents/products/data-  
-> > sheet/nand-flash/70-series/m70a_4gb_1_8v_nand_spi.pdf  
-> > > [7] https://www.micron.com/~/media/documents/products/data-  
-> > sheet/nand-flash/70-series/m70a_ddp_8gb_3v_nand_spi.pdf  
-> > > [8] https://www.micron.com/~/media/documents/products/data-  
-> > sheet/nand-flash/70-series/m70a_ddp_8gb_1_8v_nand_spi.pdf  
-> > >
-> > > Changes since v5:
-> > > -----------------
-> > >
-> > > 1. Rebased series to v5.6-rc1.  
-> > 
-> > I am very sorry but actually I had issues applying all your patches not
-> > because they were not based on v5.6-rc1, but because since then I
-> > applied a patch changing the detection that changed the content of a
-> > lot of structures (including in Micron's patches).
-> > 
-> > Can you please rebase again on top of the current nand/next? I am very
-> > sorry for this extra work, this is my mistake.
-> > 
-> > Head should be:
-> > 
-> > 	a5d53ad26a8b ("mtd: rawnand: brcmnand: Add support for flash-edu
-> > for dma transfers")
-> > 
-> > And the culprit commit is:
-> > 
-> > 	f1541773af49 ("mtd: spinand: rework detect procedure for different
-> > READ_ID operation")  
-> 
-> 
-> I will rebase and send the patches.
-> Meanwhile, there will be small code change because of the READ_ID patch.
-> 
-> Do I need to drop Reviewed-by from Boris?
+Hi Vlastimil!
 
-Nope, you can keep it.
+Thank you for this reminder! I actually looked at it and also asked Joonsoo in private
+about the state of this patch(set). As I understand, Joonsoo plans to resubmit
+it later this year.
+
+What Rik and I are suggesting seems to be much simpler, however it's perfectly
+possible that Joonsoo's solution is preferable long-term.
+
+So if the proposed patch looks ok for now, I'd suggest to go with it and return
+to this question once we'll have a new version of ZONE_MOVABLE solution.
+
+Thanks!
