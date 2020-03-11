@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25735180D74
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 02:25:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1BA9180D7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 02:27:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbgCKBZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 21:25:45 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:40749 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727506AbgCKBZo (ORCPT
+        id S1727934AbgCKB0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 21:26:52 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:43019 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727528AbgCKB0v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 21:25:44 -0400
-Received: by mail-qk1-f196.google.com with SMTP id m2so568870qka.7;
-        Tue, 10 Mar 2020 18:25:42 -0700 (PDT)
+        Tue, 10 Mar 2020 21:26:51 -0400
+Received: by mail-qk1-f194.google.com with SMTP id q18so553375qki.10
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 18:26:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=1Fukjl9q8moe8CzDk64XDMos63vCyfonbgEhEiAaGvw=;
-        b=DGaA0U9LZTxFDk9p+UrQTc+2w6FbZ2lAa1NdcuJN6FekMurcJUwLjEEAb30LZopenF
-         IhQQqBpDgZ/B1xli5AROa0jXmEJRoFr02uu/7E/l3xzQdINShRX0rY6vlr8pNZDUEmu+
-         lZCOyQ6Kz/rqCIq9UC4KZUNXRnvLdwhb/ShruKQrjpmEkIk64zxarVhNYPB8QfGuhQbZ
-         CjR6OS8+dQFdIojetGmZej1ArM7tpp/ZT+eMwCO3FmHKjNmgyu5Rw9LxF4HyEAniCgn6
-         mTeiCpXNH5mPFpBF7eBXIVTPfqKTUi1t2aq8/UoyLMzwd6IBCM1Z2+ivahWqzXIk+6i+
-         P65Q==
+        bh=UCtkFFyzWvdtpD3qcxemfQRR6JkYt3csnpIWX56p83w=;
+        b=QSWmNcSQr6Dkhtf0ataFvPH3lyriSK8dTS69dj+OPApW2rIc2GcT04dSBSF5V1x1wd
+         ujvfnHj3wXmHGCeWq5zbM73TusV6OlJgMKTR17sNw+ve1yjX52vdIMJ0azaORdle1BWc
+         1Nk2yxDdV7mdUGXgrhudtxPNLhJpXu1gX/o1qo9UOJ69fIleQcAvt1jZHpgQADZusMcG
+         6uLVoY8QgxNNN28Mq2O1VDi9A3nhNSTfBZq1PF1ph/MAR/+U7pwooP33eubml8nSASax
+         KOaUtsv+z3iepBlPQT6AHsiNdcOWH1Z++3W2998AImEWZkENL/9QbaJcvOYR3Y+PeQeH
+         SV3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=1Fukjl9q8moe8CzDk64XDMos63vCyfonbgEhEiAaGvw=;
-        b=nVj0kCpDDPARGcIpklskZoaiRn0MjAeIrJGKjiUI7VMl0bh0A6iBh5RJxrcvhAOBsI
-         iykG/kFWoGX4NwUk+aRbsGQxcdIg43jnY7pDoQQGX35ICKd0zg7OLMGjUeYQEa3yHP4t
-         CQpDUr9IJVSGF3gI7w+qNRhvKJ0U0Be9Sj4BwGTw76qE4WXRLWX7/fzYxdaO33sQ4MoC
-         nZn9JNWlTfbYCiyIbOsUWn384bySSzhR9/ql2UPXQpKrwWX7D47qEBlxDdldV/hUU2Jj
-         dWOjokX+qnK66xzQqBt6Wc17sQQ+kRknGpBTr9eFxm1ECxbIp3lFR9crbgGA5R7X6NcZ
-         cRIw==
-X-Gm-Message-State: ANhLgQ1od9qkiFT0SJZqaL3Dl5pfxMIXSU5EdO5MPu2/1i2fnuEYao5L
-        A5nsD9wlqwbPoC6p3lB3eS0=
-X-Google-Smtp-Source: ADFU+vtwivKOZ8x2mrkiVtdyMruWBJg75D32INLdZIi72P50DVRuj9bAjvMTNxFmNm86LOt8++lszQ==
-X-Received: by 2002:ae9:f504:: with SMTP id o4mr611927qkg.306.1583889941922;
-        Tue, 10 Mar 2020 18:25:41 -0700 (PDT)
-Received: from 73ec49dbc856.ic.unicamp.br (wifi-177-220-84-29.wifi.ic.unicamp.br. [177.220.84.29])
-        by smtp.gmail.com with ESMTPSA id i66sm4618570qkc.13.2020.03.10.18.25.39
+        bh=UCtkFFyzWvdtpD3qcxemfQRR6JkYt3csnpIWX56p83w=;
+        b=oxWiXhvwtZZEWQ1VFmsR3Re0fgwt5O6JTZFnUIlGDcGu82OyqlhIbfZ324PE3CuMnY
+         dVzcvhpv6QvHrJaXlJ0P/vav9L8bA5iJcPuipO7eNbEBQGBgG7wTSonVc4pJdFeL/p6R
+         Wbtmxa1Q6DTlnDxZWwSjfv2ml6VVtJLmHTNgvJ7bPswn6pjW2ABOiIwzg9Q9oH+MaHkh
+         FLSWqXh0Sx8MoxPOg7tyOmQ5Old+Mxwypp2i3BMehCmt3eev8Pjgdy/S30638/y9hdg0
+         kzASDv13sZW46u4mRXi6U3FHOU9eOiG7JMip1m5Ub0ZgiPZj7Xl6qVi8fTATVOLABCP2
+         rRmA==
+X-Gm-Message-State: ANhLgQ05WdsWyUkJG0/vFdDhDo9rkkKfO/uGYF4uTP3AMQzSe7uGB3SO
+        VBofu6X2DYDSSCmAcCq7kvA=
+X-Google-Smtp-Source: ADFU+vs80U7uCDpKBrjfjFYBr8EBQ2qV/rC3KPBixrmZP2xvYFRmkKkdFVIp35YjnPAtklWA7Ils0A==
+X-Received: by 2002:a05:620a:1644:: with SMTP id c4mr572113qko.315.1583890009650;
+        Tue, 10 Mar 2020 18:26:49 -0700 (PDT)
+Received: from 171489447db2.ic.unicamp.br (wifi-177-220-84-20.wifi.ic.unicamp.br. [177.220.84.20])
+        by smtp.gmail.com with ESMTPSA id k202sm12193192qke.134.2020.03.10.18.26.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 18:25:41 -0700 (PDT)
-From:   Marcio Albano <marcio.ahf@gmail.com>
-To:     gregkh@linuxfoundation.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org
-Subject: [PATCH] staging: fbtft: Remove prohibited spaces before ')'
-Date:   Wed, 11 Mar 2020 01:25:33 +0000
-Message-Id: <20200311012533.26167-1-marcio.ahf@gmail.com>
+        Tue, 10 Mar 2020 18:26:48 -0700 (PDT)
+From:   Andre Pinto <andrealmeidap1996@gmail.com>
+To:     Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        lkcamp@lists.libreplanetbr.org
+Subject: [PATCH] staging: rtl8188eu: fix typo s/informations/information
+Date:   Wed, 11 Mar 2020 01:26:38 +0000
+Message-Id: <20200311012638.18889-1-andrealmeidap1996@gmail.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -60,32 +60,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix checkpatch errors:
+Fix checkpatch check: 'informations' may be misspelled - perhaps
+'information'? in rtw_mlme_ext.c:1151.
 
-"ERROR: space prohibited before that close parenthesis ')'"
-in fbtft-bus.c:65 and fbtft-bus.c:67.
-
-Signed-off-by: Marcio Albano <marcio.ahf@gmail.com>
+Signed-off-by: Andre Pinto <andrealmeidap1996@gmail.com>
 ---
- drivers/staging/fbtft/fbtft-bus.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/fbtft/fbtft-bus.c b/drivers/staging/fbtft/fbtft-bus.c
-index 63c65dd67..847cbfbbd 100644
---- a/drivers/staging/fbtft/fbtft-bus.c
-+++ b/drivers/staging/fbtft/fbtft-bus.c
-@@ -62,9 +62,9 @@ out:									      \
- }                                                                             \
- EXPORT_SYMBOL(func);
- 
--define_fbtft_write_reg(fbtft_write_reg8_bus8, u8, u8, )
-+define_fbtft_write_reg(fbtft_write_reg8_bus8, u8, u8)
- define_fbtft_write_reg(fbtft_write_reg16_bus8, __be16, u16, cpu_to_be16)
--define_fbtft_write_reg(fbtft_write_reg16_bus16, u16, u16, )
-+define_fbtft_write_reg(fbtft_write_reg16_bus16, u16, u16)
- 
- void fbtft_write_reg8_bus9(struct fbtft_par *par, int len, ...)
- {
+diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
+index 36841d20c..04897cd48 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
++++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
+@@ -1151,7 +1151,7 @@ static void issue_assocreq(struct adapter *padapter)
+ 				if (!padapter->registrypriv.wifi_spec) {
+ 					/* Commented by Kurt 20110629 */
+ 					/* In some older APs, WPS handshake */
+-					/* would be fail if we append vender extensions informations to AP */
++					/* would be fail if we append vender extensions information to AP */
+ 					if (!memcmp(pIE->data, WPS_OUI, 4))
+ 						pIE->Length = 14;
+ 				}
 -- 
 2.20.1
 
