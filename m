@@ -2,104 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09423181F62
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:26:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98EF8181F6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:27:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730518AbgCKR0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:26:37 -0400
-Received: from foss.arm.com ([217.140.110.172]:52486 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730193AbgCKR0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:26:37 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7FC8C1FB;
-        Wed, 11 Mar 2020 10:26:36 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.71])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0166D3F6CF;
-        Wed, 11 Mar 2020 10:26:33 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 17:26:31 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel-team@fb.com, Kishon Vijay Abraham I <kishon@ti.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
- LRU
-Message-ID: <20200311172631.GN3216816@arrakis.emea.arm.com>
-References: <671b05bc-7237-7422-3ece-f1a4a3652c92@oracle.com>
- <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
- <7c4c1459-60d5-24c8-6eb9-da299ead99ea@oracle.com>
- <20200306203439.peytghdqragjfhdx@kahuna>
- <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com>
- <20200309155945.GA4124965@arrakis.emea.arm.com>
- <20200309160919.GM25745@shell.armlinux.org.uk>
- <CAK8P3a2yyJLmkifpSabMwtUiAvumMPwLEzT5RpsBA=LYn=ZXUw@mail.gmail.com>
- <20200311142905.GI3216816@arrakis.emea.arm.com>
- <CAK8P3a2RC+sg2Tz4M8mkQ_d78FTFdES+YsucUzDFx=UK+L8Oww@mail.gmail.com>
+        id S1730487AbgCKR1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:27:52 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33195 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730201AbgCKR1w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:27:52 -0400
+Received: by mail-lj1-f193.google.com with SMTP id f13so3289629ljp.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:27:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u6sQSsi3UobD+SiMyauoIL5YpFnOKCsVWdR687lY+ao=;
+        b=NJYDNI6MqJAuLHpRl9YLDtRo4dN9HMkarsiN1uMKPDOb3afVGpwPtCRqkGSUNF4kTh
+         DuT1S09TVZrg8COFoWRDf5FT4BFBjn1MchXIuuUT5KRNuKaUma3aHeT5KIPl5SJ+sXwF
+         eEyxd7XlyaC4c5fm3Ud6HJ7nspp6krpFIF+OQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u6sQSsi3UobD+SiMyauoIL5YpFnOKCsVWdR687lY+ao=;
+        b=b1YWMeUM8ycHuN0oa1/nnzDtHn1WVLMGFlaewBdfOPY5/RfxncdPqXEuHXDXOQ/5E1
+         7LrDuPRg6KrBxX/Ldb8CGe/nEhfnPbysMkZLqHzDOoILUJjonkiUff9O9E+L2lrY8J0R
+         C2ivFHFrFJOUprPNf+2MVNQL5YA92Rhul8CmWVNlpSyFgmFFU/gCtVTF80bznBsSvNL3
+         55rWBb+w68kkdNP0eeZOjz8n3M9SRaGP1qtkeSG5/LVzztu190q1zT4btsgct8rw7fYo
+         a9ZuCu6OgCUSVY72Z9n2Tai3SWpjyEPouC7gWhI4imjthvM60qboEHQEkyzcjtzBt5uz
+         cL/w==
+X-Gm-Message-State: ANhLgQ30BDYYsBkhnRHThdtGmXtcd9SCv9cGa4oV86VVLFEg26uH6GWN
+        wTFGNWGIzPqJpIkBHJ+XxZkD6kImjXk=
+X-Google-Smtp-Source: ADFU+vuBDoIgg6lJv4YnfX9wH+wEiK89LSEm80fjbjiPi7/v5Tl6fiDp+70R1OZJrRySfSy9dlka8A==
+X-Received: by 2002:a2e:a16a:: with SMTP id u10mr2636998ljl.283.1583947669229;
+        Wed, 11 Mar 2020 10:27:49 -0700 (PDT)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id v9sm1958561ljv.82.2020.03.11.10.27.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2020 10:27:48 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id i19so2444354lfl.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:27:48 -0700 (PDT)
+X-Received: by 2002:ac2:5203:: with SMTP id a3mr2792496lfl.152.1583947667785;
+ Wed, 11 Mar 2020 10:27:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a2RC+sg2Tz4M8mkQ_d78FTFdES+YsucUzDFx=UK+L8Oww@mail.gmail.com>
+References: <bug-206175-5873@https.bugzilla.kernel.org/> <bug-206175-5873-S6PaNNClEr@https.bugzilla.kernel.org/>
+ <CAHk-=wi4GS05j67V0D_cRXRQ=_Jh-NT0OuNpF-JFsDFj7jZK9A@mail.gmail.com>
+ <20200310162342.GA4483@lst.de> <CAHk-=wgB2YMM6kw8W0wq=7efxsRERL14OHMOLU=Nd1OaR+sXvw@mail.gmail.com>
+ <20200310182546.GA9268@lst.de> <20200311152453.GB23704@lst.de>
+ <e70dd793-e8b8-ab0c-6027-6c22b5a99bfc@gmx.com> <20200311154328.GA24044@lst.de>
+ <20200311154718.GB24044@lst.de> <962693d9-b595-c44d-1390-e044f29e91d3@gmx.com>
+ <CAHk-=wj0E9vCO_VTiK6xuXAW13ZeeLsW=G3v+yNsCaUm1+H61A@mail.gmail.com> <e97de44a-39b0-c4fa-488c-d9fa76eb1eae@gmx.com>
+In-Reply-To: <e97de44a-39b0-c4fa-488c-d9fa76eb1eae@gmx.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 11 Mar 2020 10:27:31 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whBLLdMH2-qu3_ZkQjX3zXNmmDHWSoO_=mLBbzzQ5O0yg@mail.gmail.com>
+Message-ID: <CAHk-=whBLLdMH2-qu3_ZkQjX3zXNmmDHWSoO_=mLBbzzQ5O0yg@mail.gmail.com>
+Subject: Re: [Bug 206175] Fedora >= 5.4 kernels instantly freeze on boot
+ without producing any display output
+To:     "Artem S. Tashkinov" <aros@gmx.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        iommu <iommu@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 05:59:53PM +0100, Arnd Bergmann wrote:
-> On Wed, Mar 11, 2020 at 3:29 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
-> 
-> > > - Flip TTBR0 on kernel entry/exit, and again during user access.
-> > >
-> > > This is probably more work to implement than your idea, but
-> > > I would hope this has a lower overhead on most microarchitectures
-> > > as it doesn't require pinning the pages. Depending on the
-> > > microarchitecture, I'd hope the overhead would be comparable
-> > > to that of ARM64_SW_TTBR0_PAN.
-> >
-> > This still doesn't solve the copy_{from,to}_user() case where both
-> > address spaces need to be available during copy. So you either pin the
-> > user pages in memory and access them via the kernel mapping or you
-> > temporarily map (kmap?) the destination/source kernel address. The
-> > overhead I'd expect to be significantly greater than ARM64_SW_TTBR0_PAN
-> > for the uaccess routines. For user entry/exit, your suggestion is
-> > probably comparable with SW PAN.
-> 
-> Good point, that is indeed a larger overhead. The simplest implementation
-> I had in mind would use the code from arch/arm/lib/copy_from_user.S and
-> flip ttbr0 between each ldm and stm (up to 32 bytes), but I have no idea
-> of the cost of storing to ttbr0, so this might be even more expensive. Do you
-> have an estimate of how long writing to TTBR0_64 takes on Cortex-A7
-> and A15, respectively?
+On Wed, Mar 11, 2020 at 10:21 AM Artem S. Tashkinov <aros@gmx.com> wrote:
+>
+> I've been able to compile and run
+> e3a36eb6dfaeea8175c05d5915dcf0b939be6dab successfully. I won't claim
+> this patch doesn't break something for other people :-)
 
-I don't have numbers but it's usually not cheap since you need an ISB to
-synchronise the context after TTBR0 update (basically flushing the
-pipeline).
+Thanks, that's all I was looking for.
 
-> Another way might be to use a use a temporary buffer that is already
-> mapped, and add a memcpy() through L1-cache to reduce the number
-> of ttbr0 changes. The buffer would probably have to be on the stack,
-> which limits the size, but for large copies get_user_pages()+memcpy()
-> may end up being faster anyway.
+If it breaks something for somebody else, I have a solid plan for that
+too: I'll just sit in a corner and cry.
 
-IIRC, the x86 attempt from Ingo some years ago was using
-get_user_pages() for uaccess. Depending on the size of the buffer, this
-may be faster than copying twice.
-
--- 
-Catalin
+               Linus
