@@ -2,140 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 721F01818D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 13:53:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9445C1818E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 13:58:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729442AbgCKMxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 08:53:10 -0400
-Received: from mail-co1nam11on2058.outbound.protection.outlook.com ([40.107.220.58]:6638
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729283AbgCKMxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 08:53:10 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=F3ma4VJ3oda17loLkEyv6Zy70kYDtDZ1YQ1qzpXpAu4WCLAoGiTtJSE5/zd+ziEyuNJIjWrPsDho2RQaMt8V34WFpltw2f0kN8qWJq3VWM4Qgxxg/npOF71NkAAq0vsfCg8zHryyzsR7PfjPOfH8Evq1Yg6sUzSddCsMpzjSc3wo6s58PC6QGypitAMk1atV7txz1q8SluG5OpBkssEyBgxSYEYMJIXbiHEsyKrOUcemj26vzMNsA0W/aEmvvxYG0y79CCeeP1g8faj/RS+0s9ikXu5BWy2JRDtloQuP8B1gxvL4XxQ2/Ss3ULVtORKCsWtQZj36+MfZ3nuDoTAHfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ViRyt2wALr3pPlYD+ZHkj9qnI/C9+foif2T/IWbn42Q=;
- b=B1o9EDPEnLXbj12difNpm5irNPqMPYuT1g350iUbqgLu9xR0uj9SgL0u30W60RxJkbBJuhHFRvpgMInoYBlSV1OY72xxIxX7mN864AiWW2JrLHvOWbjRbgd5BnxMrTpRT3E1KojcsTTC7/X3as5DYjW5TV0NzIzkyp9KiOfd0C/gA8enq+Q85/dwZHtmDwY+czCutkLtsRfrlW9KokRrY4/GAQSHHR9v1cI8a8S8VLCYe2Qi6FOUuaN2wyafBFaVSAqo7xT+n3+kFpuBVi10NxKshbLWBom/ReRtCYjeck3bRHV5SL9zo92XnrAhzLIjY6m2W+2YqAfYNuo2dJEMHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
- dkim=pass header.d=micron.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ViRyt2wALr3pPlYD+ZHkj9qnI/C9+foif2T/IWbn42Q=;
- b=EgWwWIx+DqxP2E5jgS4tGrMSQXqnH9UkPN2TSTXvtnthexjzEZNEVIRg7C1KFmzKl6dCKijXPVVb6v+Ou+39ND4f5QtLUSkc8qu8oHjzQddWZWgzUxfgpTmv7l21J0Jqb1zHw7PyFWtFfISO2Wh8oliZegaviqzdUhYqpRxLq6g=
-Received: from BN7PR08MB5684.namprd08.prod.outlook.com (2603:10b6:408:35::23)
- by BN7PR08MB4769.namprd08.prod.outlook.com (2603:10b6:408:27::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.13; Wed, 11 Mar
- 2020 12:53:07 +0000
-Received: from BN7PR08MB5684.namprd08.prod.outlook.com
- ([fe80::589d:e16:907b:5135]) by BN7PR08MB5684.namprd08.prod.outlook.com
- ([fe80::589d:e16:907b:5135%5]) with mapi id 15.20.2793.013; Wed, 11 Mar 2020
- 12:53:07 +0000
-From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
-To:     Avri Altman <Avri.Altman@wdc.com>,
-        "huobean@gmail.com" <huobean@gmail.com>,
-        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
-        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "stanley.chu@mediatek.com" <stanley.chu@mediatek.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "tomas.winkler@intel.com" <tomas.winkler@intel.com>,
-        "cang@codeaurora.org" <cang@codeaurora.org>
-CC:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [EXT] RE: [PATCH 0/1] Revert "scsi: ufs: Let the SCSI core
- allocate per-command UFS data"
-Thread-Topic: [EXT] RE: [PATCH 0/1] Revert "scsi: ufs: Let the SCSI core
- allocate per-command UFS data"
-Thread-Index: AQHV96A3H5vu8h64PUWShi5i74/3jahDVomg
-Date:   Wed, 11 Mar 2020 12:53:07 +0000
-Message-ID: <BN7PR08MB5684DBAD57C95A40CB62B24ADBFC0@BN7PR08MB5684.namprd08.prod.outlook.com>
-References: <20200311112921.29031-1-beanhuo@micron.com>
- <SN6PR04MB46404175998962B4FA575824FCFC0@SN6PR04MB4640.namprd04.prod.outlook.com>
-In-Reply-To: <SN6PR04MB46404175998962B4FA575824FCFC0@SN6PR04MB4640.namprd04.prod.outlook.com>
-Accept-Language: en-150, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYmVhbmh1b1xhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUtNmI4NGJhMjllMzViXG1zZ3NcbXNnLTNmMGU5YThhLTYzOTctMTFlYS04YjhkLWRjNzE5NjFmOWRkM1xhbWUtdGVzdFwzZjBlOWE4Yy02Mzk3LTExZWEtOGI4ZC1kYzcxOTYxZjlkZDNib2R5LnR4dCIgc3o9IjExNjMiIHQ9IjEzMjI4NDA0Nzg0NzU0NDU4MyIgaD0icm8xUUlGNDZTWFByWERmZ0xEbG95dWF2VHd3PSIgaWQ9IiIgYmw9IjAiIGJvPSIxIiBjaT0iY0FBQUFFUkhVMVJTUlVGTkNnVUFBSEFBQUFBSFYyY0JwUGZWQVZ6SFEzN2JXMTNxWE1kRGZ0dGJYZW9BQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFCQUFBQkFBQUE5cm1ud1FBQUFBQUFBQUFBQUFBQUFBPT0iLz48L21ldGE+
-x-dg-rorf: true
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=beanhuo@micron.com; 
-x-originating-ip: [165.225.86.96]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 404d9a00-1133-407d-fe75-08d7c5bb257a
-x-ms-traffictypediagnostic: BN7PR08MB4769:|BN7PR08MB4769:|BN7PR08MB4769:
-x-microsoft-antispam-prvs: <BN7PR08MB47692554CB93E26C1BC065F8DBFC0@BN7PR08MB4769.namprd08.prod.outlook.com>
-x-ms-exchange-transport-forked: True
-x-ms-oob-tlc-oobclassifiers: OLM:883;
-x-forefront-prvs: 0339F89554
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(346002)(376002)(396003)(136003)(199004)(2906002)(316002)(4744005)(6506007)(81166006)(8936002)(55236004)(81156014)(478600001)(186003)(54906003)(86362001)(110136005)(26005)(9686003)(71200400001)(8676002)(7696005)(7416002)(4326008)(55016002)(76116006)(66556008)(66446008)(64756008)(66476007)(52536014)(5660300002)(33656002)(66946007)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB4769;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: micron.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: QmydGT6yAVzDZL5HqgHKt0Xe9DA9rXFPxlYew9zZ2ENQ14CQ2Dc/EhO/q88oW76ZmlwypbnKET1M/jM8NQnXpVPpmrUtJzzIBaTEC/MOWFz9vuJrIEQt9nNvl4+fAjXenYCsymcx43iNTqxTuc8UaDrXU1VJRA8Ary4mU18+dIMJZ7dV8ySNBICpsCzTX3iefEQcL52jEfKLGePOjs5VawTMrYkRDO3nYEnbEkPaiZSokrL5X7xJB/ygFlRuMtT1Ox44NaeNJy6bJj/nTS88tWubqinPiuW/+aF5eVJ+++U5gtG98fbQuRcCA+Nv8/ldT2pbCZEVngIP2AvB5hedccv5pwTt0P4WNvTJXNjPy2o4nfWxlQOiRDtI7RBKYMSI5PcXNeJ9bunfwq2SNFiFf+FdxIgp3vj4IY3VIX59aZatrlwaZuusIFpE3lBiXM0b5DyhHaH0VabGCt4yT18z3NLPoai91/z8ldjcLA5DGDwV5+LgL6I/DlYM9QTPNYIZ
-x-ms-exchange-antispam-messagedata: 4Vbv8PpJCpRBJvw2mHvadbZpmyWDPbm5nqBoE0WgbDeS4ExStn+ax4h6GX2bqEAcAoXTiXkKibfvBI0ogFjKSWXdDWIU13pQmrrxqA8xEdE1r07d7o7YZqXworOQGtkn30VClVHYTafQgdYnG+EbrQ==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1729436AbgCKM6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 08:58:41 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35442 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729320AbgCKM6l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 08:58:41 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02BCtlvx014086;
+        Wed, 11 Mar 2020 08:58:35 -0400
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ypywu1fhj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Mar 2020 08:58:35 -0400
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02BCsnS1027972;
+        Wed, 11 Mar 2020 12:58:34 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma05wdc.us.ibm.com with ESMTP id 2ypjxr4x3k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Mar 2020 12:58:34 +0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02BCwXJT8127112
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Mar 2020 12:58:33 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AABB6124054;
+        Wed, 11 Mar 2020 12:58:33 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8397A124052;
+        Wed, 11 Mar 2020 12:58:33 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Mar 2020 12:58:33 +0000 (GMT)
+Subject: Re: [PATCH v6 1/3] tpm: of: Handle IBM,vtpm20 case when getting log
+ parameters
+To:     kbuild test robot <lkp@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     kbuild-all@lists.01.org, jarkko.sakkinen@linux.intel.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nayna@linux.vnet.ibm.com
+References: <20200304132243.179402-2-stefanb@linux.vnet.ibm.com>
+ <202003110648.y1djA66Z%lkp@intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <361c9000-fb0a-a34a-9322-4e6fbe738ab4@linux.ibm.com>
+Date:   Wed, 11 Mar 2020 08:58:33 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-X-OriginatorOrg: micron.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 404d9a00-1133-407d-fe75-08d7c5bb257a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2020 12:53:07.2289
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: j+Crf06BNVMz0taRzQ0xjwt+e/qrBH4cliKd1W+Lid5+xRu24zF1QHm8NeMC1WBoP6uoau6rd6sxk06sOk5lPQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB4769
+In-Reply-To: <202003110648.y1djA66Z%lkp@intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-11_05:2020-03-11,2020-03-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
+ spamscore=0 phishscore=0 priorityscore=1501 suspectscore=0 adultscore=0
+ mlxlogscore=999 malwarescore=0 impostorscore=0 lowpriorityscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003110082
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Avri
-Do you want to revert all or two (scsi: ufs: Let the SCSI core allocate per=
--command UFS data,   scsi: core: Introduce {init,exit}_cmd_priv() )?
-Because the patches "scsi: ufs: Simplify two tests" and  "scsi: ufs: Introd=
-uce ufshcd_init_lrb()" are ok to me.
-No problem keeping them. Just this one "scsi: core: Introduce {init,exit}_c=
-md_priv()" is not necessary, since no drivers it now.=20
+On 3/10/20 6:56 PM, kbuild test robot wrote:
+> Hi Stefan,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on jss-tpmdd/next]
+> [also build test ERROR on powerpc/next linux/master linus/master v5.6-rc5 next-20200310]
+> [if your patch is applied to the wrong git tree, please drop us a note to help
+> improve the system. BTW, we also suggest to use '--base' option to specify the
+> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+>
+> url:    https://github.com/0day-ci/linux/commits/Stefan-Berger/Enable-vTPM-2-0-for-the-IBM-vTPM-driver/20200305-042731
+> base:   git://git.infradead.org/users/jjs/linux-tpmdd next
+> config: xtensa-randconfig-a001-20200310 (attached as .config)
+> compiler: xtensa-linux-gcc (GCC) 9.2.0
+> reproduce:
+>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>          chmod +x ~/bin/make.cross
+>          # save the attached .config to linux build tree
+>          GCC_VERSION=9.2.0 make.cross ARCH=xtensa
+>
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
 
-//Bean
+I suppose I would only add this Report-by if this was an issue upstream?!
 
-
->=20
-> Hi,
->=20
-> >
-> > From: Bean Huo <beanhuo@micron.com>
-> >
-> > Hi, Martin
-> >
-> > Based on Bart's feedack, the less risky way is to revert commit:
-> >
-> > 34656dda81ac "scsi: ufs: Let the SCSI core allocate per-command UFS dat=
-a"
-> >
-> > Bean Huo (1):
-> >   Revert "scsi: ufs: Let the SCSI core allocate per-command UFS data"
-> Maybe it's safer to revert the entire series?
->=20
-> Thanks,
-> Avri
->=20
->=20
-> >
-> >  drivers/scsi/ufs/ufshcd.c | 198 ++++++++++++++------------------------
-> >  drivers/scsi/ufs/ufshcd.h |   5 +
-> >  2 files changed, 75 insertions(+), 128 deletions(-)
-> >
-> > --
-> > 2.17.1
 
