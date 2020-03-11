@@ -2,110 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03691180E38
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 03:56:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CC84180E40
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 03:57:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbgCKC43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 22:56:29 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11624 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727648AbgCKC43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 22:56:29 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id DE05BFE593B10E7FCD02;
-        Wed, 11 Mar 2020 10:56:23 +0800 (CST)
-Received: from DESKTOP-KKJBAGG.china.huawei.com (10.173.220.25) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.487.0; Wed, 11 Mar 2020 10:56:17 +0800
-From:   Zhenyu Ye <yezhenyu2@huawei.com>
-To:     <mark.rutland@arm.com>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <aneesh.kumar@linux.ibm.com>, <maz@kernel.org>,
-        <steven.price@arm.com>, <broonie@kernel.org>,
-        <guohanjun@huawei.com>
-CC:     <yezhenyu2@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <linux-mm@kvack.org>, <arm@kernel.org>, <xiexiangyou@huawei.com>,
-        <prime.zeng@hisilicon.com>
-Subject: [RFC PATCH v1 3/3] arm64: tlb: add support for TTL in some functions
-Date:   Wed, 11 Mar 2020 10:53:09 +0800
-Message-ID: <20200311025309.1743-4-yezhenyu2@huawei.com>
-X-Mailer: git-send-email 2.22.0.windows.1
-In-Reply-To: <20200311025309.1743-1-yezhenyu2@huawei.com>
-References: <20200311025309.1743-1-yezhenyu2@huawei.com>
+        id S1727994AbgCKC5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 22:57:38 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34363 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbgCKC5i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 22:57:38 -0400
+Received: by mail-lj1-f193.google.com with SMTP id s13so614289ljm.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 19:57:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WHJo9jwMYPaGt5B4QvwDpgXAg2phkjBbDHGzsQU+N3I=;
+        b=aPSqjFvWjvdtvp8nVXfAoj+kYZWu3nVRyQ/p2DoRhOKX2zIof1/W9HuOfjtGrhEGo4
+         bTFVId/1UJUexP0vZx+GLFATndJeJVGjdNhylTAZEBrB9UgSVpeDcY0fbd2URSPeYcAl
+         uln5TeOcLUBapk8RcBr7zH8fXVeJOekRmKyEvK47RdG5LZ3ocCVMNhKNjZ03DENuk6He
+         bJmiSgv6cySFXzmKebaDhjhnLhOwRDhTvJ0AgMubjeXowbLQfIakEXUutx4lQpg3Q94B
+         Z/2TJ35EkOsIWZ5j8j3QTWqq0f5Eg/ApTvcCQFe1Vv3LRkP2drM+ML2uT6oy1bfcG9p1
+         F90w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WHJo9jwMYPaGt5B4QvwDpgXAg2phkjBbDHGzsQU+N3I=;
+        b=LAB8HRVrh0ZqI3iiCLTZXePJofcTpRgdgJLLGGw7odf0451msTFX2PRbAxbhc/ugnZ
+         5F0dJ5/LMptk8edWQ3E+RWo3J42Ccs7yqfjqbiK9tENyQr9X7CBm4/tcLw/HrnBs4xO1
+         5rdPJXZjO028Hnn4whTqjoYX8NNyFi/3N3gLiBAnKnlup52R0gs3/uDZm2wtX0IrZdCY
+         QH2ax2fmI+uonpXcZa7q+qRf5d7BihETCEYT0pF6Nda96L09fClwhqloS0H7NWy/f7zf
+         IB7To8rWsBk7VKIetjXrIUKuTaIi8D1a7jrkyoqHS2U466HQ9j06+LupDjRacG+rNZBh
+         PBTQ==
+X-Gm-Message-State: ANhLgQ2OFx8UuZL1t9/etfPGUihQcSjsMgRjrHzkFd1N7b3sT230cU8j
+        6m4kJFtbop6lryt+Zp2V+hKtCr6QuekSt5JSZOE=
+X-Google-Smtp-Source: ADFU+vtshCj9Q46hlfgr5TbhM+vuzc2+J73V4+7Gd94s/qMzp0Krh6P6wbjzZlyrgRoXzp6uwiFGbcKdgYSlllh+tYg=
+X-Received: by 2002:a2e:87d7:: with SMTP id v23mr670025ljj.10.1583895456295;
+ Tue, 10 Mar 2020 19:57:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.173.220.25]
-X-CFilter-Loop: Reflected
+References: <20200309021747.626-1-zhenzhong.duan@gmail.com>
+ <20200309021747.626-2-zhenzhong.duan@gmail.com> <CAK8P3a2jy3+7tPFPjN5pfrQdfkhReCdPFjAnw144pXzpHCGDdQ@mail.gmail.com>
+In-Reply-To: <CAK8P3a2jy3+7tPFPjN5pfrQdfkhReCdPFjAnw144pXzpHCGDdQ@mail.gmail.com>
+From:   Zhenzhong Duan <zhenzhong.duan@gmail.com>
+Date:   Wed, 11 Mar 2020 10:57:25 +0800
+Message-ID: <CAFH1YnNe6MELofTJNdtS3cxJOiFB8vco0oGTj3t7ZERUQA5gHQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/3] misc: cleanup minor number definitions in c file
+ into miscdevice.h
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
+        Willy Tarreau <willy@haproxy.com>,
+        Ksenija Stanojevic <ksenija.stanojevic@gmail.com>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        jonathan@buzzard.org.uk,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        David Miller <davem@davemloft.net>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for TTL in some ARM64-Architecture functions. The
-relevant functions are:
+On Mon, Mar 9, 2020 at 9:08 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Mon, Mar 9, 2020 at 3:18 AM Zhenzhong Duan <zhenzhong.duan@gmail.com> wrote:
+> >
+> > HWRNG_MINOR and RNG_MISCDEV_MINOR are duplicate definitions, use
+> > unified RNG_MINOR instead and moved into miscdevice.h
+> >
+> > ANSLCD_MINOR and LCD_MINOR are duplicate definitions, use unified
+> > LCD_MINOR instead and moved into miscdevice.h
+> >
+> > MISCDEV_MINOR is renamed to PXA3XXX_GCU_MINOR and moved into
+> > miscdevice.h
+>
+> This should be PXA3XX_GCU_MINOR (with 2 X, not 3).
 
-	__pte_free_tlb
-	__pmd_free_tlb
-	__pud_free_tlb
-	clear_flush
-	get_clear_flush
+Will fix in next version, thanks for pointing out.
 
-Signed-off-by: Zhenyu Ye <yezhenyu2@huawei.com>
----
- arch/arm64/include/asm/tlb.h | 3 +++
- arch/arm64/mm/hugetlbpage.c  | 2 ++
- 2 files changed, 5 insertions(+)
-
-diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
-index b76df828e6b7..36428ce53185 100644
---- a/arch/arm64/include/asm/tlb.h
-+++ b/arch/arm64/include/asm/tlb.h
-@@ -44,6 +44,7 @@ static inline void tlb_flush(struct mmu_gather *tlb)
- static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
- 				  unsigned long addr)
- {
-+	tlb->mm->context.flags = TLBI_LEVEL_3;
- 	pgtable_pte_page_dtor(pte);
- 	tlb_remove_table(tlb, pte);
- }
-@@ -53,6 +54,7 @@ static inline void __pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmdp,
- 				  unsigned long addr)
- {
- 	struct page *page = virt_to_page(pmdp);
-+	tlb->mm->context.flags = TLBI_LEVEL_2;
- 
- 	pgtable_pmd_page_dtor(page);
- 	tlb_remove_table(tlb, page);
-@@ -63,6 +65,7 @@ static inline void __pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmdp,
- static inline void __pud_free_tlb(struct mmu_gather *tlb, pud_t *pudp,
- 				  unsigned long addr)
- {
-+	tlb->mm->context.flags = TLBI_LEVEL_1;
- 	tlb_remove_table(tlb, virt_to_page(pudp));
- }
- #endif
-diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-index bbeb6a5a6ba6..4c2f1b802cb8 100644
---- a/arch/arm64/mm/hugetlbpage.c
-+++ b/arch/arm64/mm/hugetlbpage.c
-@@ -141,6 +141,7 @@ static pte_t get_clear_flush(struct mm_struct *mm,
- 
- 	if (valid) {
- 		struct vm_area_struct vma = TLB_FLUSH_VMA(mm, 0);
-+		mm->context.flags = TLBI_LEVEL_3;
- 		flush_tlb_range(&vma, saddr, addr);
- 	}
- 	return orig_pte;
-@@ -163,6 +164,7 @@ static void clear_flush(struct mm_struct *mm,
- {
- 	struct vm_area_struct vma = TLB_FLUSH_VMA(mm, 0);
- 	unsigned long i, saddr = addr;
-+	mm->context.flags = TLBI_LEVEL_3;
- 
- 	for (i = 0; i < ncontig; i++, addr += pgsize, ptep++)
- 		pte_clear(mm, addr, ptep);
--- 
-2.19.1
-
-
+Zhenzhong
