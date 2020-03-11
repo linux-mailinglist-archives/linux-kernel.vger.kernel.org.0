@@ -2,142 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F30F1811E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 08:29:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23A1B1811F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 08:31:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728425AbgCKH2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 03:28:42 -0400
-Received: from mga01.intel.com ([192.55.52.88]:34803 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726310AbgCKH2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 03:28:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 00:28:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
-   d="scan'208";a="322056610"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga001.jf.intel.com with ESMTP; 11 Mar 2020 00:28:33 -0700
-Subject: Re: [PATCH] usb: xhci: Error enumerating USB TV Tuner
-To:     Alan Cooper <alcooperx@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Mathias Nyman <mathias.nyman@intel.com>
-References: <20200306160659.16319-1-alcooperx@gmail.com>
- <74c294a3-8eaa-a48e-3371-a7027d5aabd2@linux.intel.com>
- <CAOGqxeWhsdtvmZBg3RLzSyHeLpCWGoRghTp+8u3gx3Aafi-vgA@mail.gmail.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mathias.nyman@linux.intel.com; prefer-encrypt=mutual; keydata=
- mQINBFMB0ccBEADd+nZnZrFDsIjQtclVz6OsqFOQ6k0nQdveiDNeBuwyFYykkBpaGekoHZ6f
- lH4ogPZzQ+pzoJEMlRGXc881BIggKMCMH86fYJGfZKWdfpg9O6mqSxyEuvBHKe9eZCBKPvoC
- L2iwygtO8TcXXSCynvXSeZrOwqAlwnxWNRm4J2ikDck5S5R+Qie0ZLJIfaId1hELofWfuhy+
- tOK0plFR0HgVVp8O7zWYT2ewNcgAzQrRbzidA3LNRfkL7jrzyAxDapuejuK8TMrFQT/wW53e
- uegnXcRJaibJD84RUJt+mJrn5BvZ0MYfyDSc1yHVO+aZcpNr+71yZBQVgVEI/AuEQ0+p9wpt
- O9Wt4zO2KT/R5lq2lSz1MYMJrtfFRKkqC6PsDSB4lGSgl91XbibK5poxrIouVO2g9Jabg04T
- MIPpVUlPme3mkYHLZUsboemRQp5/pxV4HTFR0xNBCmsidBICHOYAepCzNmfLhfo1EW2Uf+t4
- L8IowAaoURKdgcR2ydUXjhACVEA/Ldtp3ftF4hTQ46Qhba/p4MUFtDAQ5yeA5vQVuspiwsqB
- BoL/298+V119JzM998d70Z1clqTc8fiGMXyVnFv92QKShDKyXpiisQn2rrJVWeXEIVoldh6+
- J8M3vTwzetnvIKpoQdSFJ2qxOdQ8iYRtz36WYl7hhT3/hwkHuQARAQABtCdNYXRoaWFzIE55
- bWFuIDxtYXRoaWFzLm55bWFuQGdtYWlsLmNvbT6JAjsEEwECACUCGwMGCwkIBwMCBhUIAgkK
- CwQWAgMBAh4BAheABQJTAeo1AhkBAAoJEFiDn/uYk8VJOdIP/jhA+RpIZ7rdUHFIYkHEKzHw
- tkwrJczGA5TyLgQaI8YTCTPSvdNHU9Rj19mkjhUO/9MKvwfoT2RFYqhkrtk0K92STDaBNXTL
- JIi4IHBqjXOyJ/dPADU0xiRVtCHWkBgjEgR7Wihr7McSdVpgupsaXhbZjXXgtR/N7PE0Wltz
- hAL2GAnMuIeJyXhIdIMLb+uyoydPCzKdH6znfu6Ox76XfGWBCqLBbvqPXvk4oH03jcdt+8UG
- 2nfSeti/To9ANRZIlSKGjddCGMa3xzjtTx9ryf1Xr0MnY5PeyNLexpgHp93sc1BKxKKtYaT0
- lR6p0QEKeaZ70623oB7Sa2Ts4IytqUVxkQKRkJVWeQiPJ/dZYTK5uo15GaVwufuF8VTwnMkC
- 4l5X+NUYNAH1U1bpRtlT40aoLEUhWKAyVdowxW4yGCP3nL5E69tZQQgsag+OnxBa6f88j63u
- wxmOJGNXcwCerkCb+wUPwJzChSifFYmuV5l89LKHgSbv0WHSN9OLkuhJO+I9fsCNvro1Y7dT
- U/yq4aSVzjaqPT3yrnQkzVDxrYT54FLWO1ssFKAOlcfeWzqrT9QNcHIzHMQYf5c03Kyq3yMI
- Xi91hkw2uc/GuA2CZ8dUD3BZhUT1dm0igE9NViE1M7F5lHQONEr7MOCg1hcrkngY62V6vh0f
- RcDeV0ISwlZWuQINBFMB0ccBEACXKmWvojkaG+kh/yipMmqZTrCozsLeGitxJzo5hq9ev31N
- 2XpPGx4AGhpccbco63SygpVN2bOd0W62fJJoxGohtf/g0uVtRSuK43OTstoBPqyY/35+VnAV
- oA5cnfvtdx5kQPIL6LRcxmYKgN4/3+A7ejIxbOrjWFmbWCC+SgX6mzHHBrV0OMki8R+NnrNa
- NkUmMmosi7jBSKdoi9VqDqgQTJF/GftvmaZHqgmVJDWNrCv7UiorhesfIWPt1O/AIk9luxlE
- dHwkx5zkWa9CGYvV6LfP9BznendEoO3qYZ9IcUlW727Le80Q1oh69QnHoI8pODDBBTJvEq1h
- bOWcPm/DsNmDD8Rwr/msRmRyIoxjasFi5WkM/K/pzujICKeUcNGNsDsEDJC5TCmRO/TlvCvm
- 0X+vdfEJRZV6Z+QFBflK1asUz9QHFre5csG8MyVZkwTR9yUiKi3KiqQdaEu+LuDD2CGF5t68
- xEl66Y6mwfyiISkkm3ETA4E8rVZP1rZQBBm83c5kJEDvs0A4zrhKIPTcI1smK+TWbyVyrZ/a
- mGYDrZzpF2N8DfuNSqOQkLHIOL3vuOyx3HPzS05lY3p+IIVmnPOEdZhMsNDIGmVorFyRWa4K
- uYjBP/W3E5p9e6TvDSDzqhLoY1RHfAIadM3I8kEx5wqco67VIgbIHHB9DbRcxQARAQABiQIf
- BBgBAgAJBQJTAdHHAhsMAAoJEFiDn/uYk8VJb7AQAK56tgX8V1Wa6RmZDmZ8dmBC7W8nsMRz
- PcKWiDSMIvTJT5bygMy1lf7gbHXm7fqezRtSfXAXr/OJqSA8LB2LWfThLyuuCvrdNsQNrI+3
- D+hjHJjhW/4185y3EdmwwHcelixPg0X9EF+lHCltV/w29Pv3PiGDkoKxJrnOpnU6jrwiBebz
- eAYBfpSEvrCm4CR4hf+T6MdCs64UzZnNt0nxL8mLCCAGmq1iks9M4bZk+LG36QjCKGh8PDXz
- 9OsnJmCggptClgjTa7pO6040OW76pcVrP2rZrkjo/Ld/gvSc7yMO/m9sIYxLIsR2NDxMNpmE
- q/H7WO+2bRG0vMmsndxpEYS4WnuhKutoTA/goBEhtHu1fg5KC+WYXp9wZyTfeNPrL0L8F3N1
- BCEYefp2JSZ/a355X6r2ROGSRgIIeYjAiSMgGAZMPEVsdvKsYw6BH17hDRzltNyIj5S0dIhb
- Gjynb3sXforM/GVbr4mnuxTdLXQYlj2EJ4O4f0tkLlADT7podzKSlSuZsLi2D+ohKxtP3U/r
- 42i8PBnX2oAV0UIkYk7Oel/3hr0+BP666SnTls9RJuoXc7R5XQVsomqXID6GmjwFQR5Wh/RE
- IJtkiDAsk37cfZ9d1kZ2gCQryTV9lmflSOB6AFZkOLuEVSC5qW8M/s6IGDfYXN12YJaZPptJ fiD/
-Message-ID: <38c5e0e8-2fe4-d20d-22c5-3f94ea34b878@linux.intel.com>
-Date:   Wed, 11 Mar 2020 09:31:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728490AbgCKHaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 03:30:46 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:44023 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728391AbgCKHaq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 03:30:46 -0400
+Received: by mail-ua1-f66.google.com with SMTP id o42so352653uad.10
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 00:30:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+Nk9d88tir1z9F+OfZqa+RxpSNCU78XfSYzCiKpe64Q=;
+        b=xgQwRmjyFp8+taCvHKFUoeqURRY7TiuLf89r+llmJb6qciItR+j4GtXgiRI5Exwd45
+         8jY928jqPvHCyGb0XL6Yw1dwNw+V6ErLpr7mxnrq88bL4/4l1fxxvnk+5Blu4/kH7/Xh
+         ueBcClS0plhlOrAmI5a1ehlI88tkTnKwZWqqm8hMJRkWRy+Uxw5CgXOrrXvyPuXDCxv0
+         KA1o+PY55P+eaR+1D47waYAVPaIv8GIphtvyWcwDUCvIXPNyBcE+WQBFo2jMEYI2q8hC
+         mq4en4mQHKnr8MdkVJrpwwvrNzg8SMAcgndxI3YXecLM6bqw65F4rBuie5VlWe9l4yiD
+         3zbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+Nk9d88tir1z9F+OfZqa+RxpSNCU78XfSYzCiKpe64Q=;
+        b=UDHZXog9FMZwIqtiIG1sBLkQi1HBMNsi+YtgtBXF997+tU8EkFvyZoNf4WQQKuQSN2
+         sb0SUUXXG35AvUvlxRzOANbsiFSwdPdvkr3+AuZ1FsNReqmnF5SqiePJdK1tvwWU68nn
+         9ihwTni+CXkJ2R/nJBeMZYKVWfiAU8LBFQWr/8wlR2TwSNMy/ErRuyRvDVe4f+cFXHGp
+         sQHV4+M0NBJQYTmGuwTxQaBAQXQNNX4riNV30LRsu2BZ2Z2npvUSg/95gJEZ1MYdmPPO
+         cjQJQhYgvbkUqTvw+UaltbpQk8Doi2+HzZCExoLGbuvLw2WSdwGiuoXC/1L2afvGIZcS
+         vV5Q==
+X-Gm-Message-State: ANhLgQ3FYcFe58KPu+ap9DSrgslFZc+7fSqRU+j5ByUeFBt51SHr/Ers
+        w9+o8g28e8AAHzghwo1KpaQVIdZw18hLZV7kBFqQ1A==
+X-Google-Smtp-Source: ADFU+vt1Nj01BNrpKA6Wcf6tdySvJn+95tH2Jbcar3F9/LL7ZtoYmUEKyaT4NHRuBSPHRz11S0Tm9XGr1rpoOymRoko=
+X-Received: by 2002:ab0:3089:: with SMTP id h9mr877616ual.48.1583911843276;
+ Wed, 11 Mar 2020 00:30:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAOGqxeWhsdtvmZBg3RLzSyHeLpCWGoRghTp+8u3gx3Aafi-vgA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200310154358.39367-1-swboyd@chromium.org> <20200310154358.39367-3-swboyd@chromium.org>
+In-Reply-To: <20200310154358.39367-3-swboyd@chromium.org>
+From:   Amit Kucheria <amit.kucheria@verdurent.com>
+Date:   Wed, 11 Mar 2020 13:00:00 +0530
+Message-ID: <CAHLCerNVX844nUwaYHCRQdUhYbpfjRxQQp445bd_v7hnQ3YbyA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] i2c: qcom-geni: Grow a dev pointer to simplify code
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-i2c@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Alok Chauhan <alokc@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Brendan Higgins <brendanhiggins@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.3.2020 20.34, Alan Cooper wrote:
-> On Mon, Mar 9, 2020 at 8:19 AM Mathias Nyman
-> <mathias.nyman@linux.intel.com> wrote:
->>
->> On 6.3.2020 18.06, Al Cooper wrote:
->>> Unable to complete the enumeration of a USB TV Tuner device.
->>>
->>> Per XHCI spec (4.6.5), the EP state field of the input context shall
->>> be cleared for a set address command. In the special case of an FS
->>> device that has "MaxPacketSize0 = 8", the Linux XHCI driver does
->>> not do this before evaluating the context. With an XHCI controller
->>> that checks the EP state field for parameter context error this
->>> causes a problem in cases such as the device getting reset again
->>> after enumeration.
->>>
->>> When that field is cleared, the problem does not occur.
->>>
->>> This was found and fixed by Sasi Kumar.
->>>
->>> Signed-off-by: Al Cooper <alcooperx@gmail.com>
->>> ---
->>>  drivers/usb/host/xhci.c | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
->>> index dbac0fa9748d..5f034e143082 100644
->>> --- a/drivers/usb/host/xhci.c
->>> +++ b/drivers/usb/host/xhci.c
->>> @@ -1428,6 +1428,7 @@ static int xhci_check_maxpacket(struct xhci_hcd *xhci, unsigned int slot_id,
->>>                               xhci->devs[slot_id]->out_ctx, ep_index);
->>>
->>>               ep_ctx = xhci_get_ep_ctx(xhci, command->in_ctx, ep_index);
->>> +             ep_ctx->ep_info &= cpu_to_le32(~EP_STATE_MASK);/* must clear */
->>>               ep_ctx->ep_info2 &= cpu_to_le32(~MAX_PACKET_MASK);
->>>               ep_ctx->ep_info2 |= cpu_to_le32(MAX_PACKET(max_packet_size));
->>>
->>>
->>
->> Thanks, nice catch.
->>
->> If you agree I'd like to change the the subject of this patch to something like:
->> "xhci: Fix enumeration issue when setting actual max packet size for FS devices"
->>
->> While looking at this it seems that the current EP_STATE_MASK is not correct either.
->> It should be 0x7 instead of 0xf.
->>
+On Tue, Mar 10, 2020 at 9:14 PM Stephen Boyd <swboyd@chromium.org> wrote:
 >
-> Agree on both points.
-> Should I re-send a v2?
-> 
+> Some lines are long here. Use a struct dev pointer to shorten lines and
+> simplify code. The clk_get() call can fail because of EPROBE_DEFER
+> problems too, so just remove the error print message because it isn't
+> useful. Finally, platform_get_irq() already prints an error so just
+> remove that error message.
+>
 
-No need, I can make those changes
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
 
--Mathias
+> Cc: Alok Chauhan <alokc@codeaurora.org>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>  drivers/i2c/busses/i2c-qcom-geni.c | 57 ++++++++++++++----------------
+>  1 file changed, 26 insertions(+), 31 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+> index 4efca130035a..2f5fb2e83f95 100644
+> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+> @@ -502,45 +502,40 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>         struct resource *res;
+>         u32 proto, tx_depth;
+>         int ret;
+> +       struct device *dev = &pdev->dev;
+>
+> -       gi2c = devm_kzalloc(&pdev->dev, sizeof(*gi2c), GFP_KERNEL);
+> +       gi2c = devm_kzalloc(dev, sizeof(*gi2c), GFP_KERNEL);
+>         if (!gi2c)
+>                 return -ENOMEM;
+>
+> -       gi2c->se.dev = &pdev->dev;
+> -       gi2c->se.wrapper = dev_get_drvdata(pdev->dev.parent);
+> +       gi2c->se.dev = dev;
+> +       gi2c->se.wrapper = dev_get_drvdata(dev->parent);
+>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       gi2c->se.base = devm_ioremap_resource(&pdev->dev, res);
+> +       gi2c->se.base = devm_ioremap_resource(dev, res);
+>         if (IS_ERR(gi2c->se.base))
+>                 return PTR_ERR(gi2c->se.base);
+>
+> -       gi2c->se.clk = devm_clk_get(&pdev->dev, "se");
+> -       if (IS_ERR(gi2c->se.clk) && !has_acpi_companion(&pdev->dev)) {
+> -               ret = PTR_ERR(gi2c->se.clk);
+> -               dev_err(&pdev->dev, "Err getting SE Core clk %d\n", ret);
+> -               return ret;
+> -       }
+> +       gi2c->se.clk = devm_clk_get(dev, "se");
+> +       if (IS_ERR(gi2c->se.clk) && !has_acpi_companion(dev))
+> +               return PTR_ERR(gi2c->se.clk);
+>
+> -       ret = device_property_read_u32(&pdev->dev, "clock-frequency",
+> -                                                       &gi2c->clk_freq_out);
+> +       ret = device_property_read_u32(dev, "clock-frequency",
+> +                                      &gi2c->clk_freq_out);
+>         if (ret) {
+> -               dev_info(&pdev->dev,
+> -                       "Bus frequency not specified, default to 100kHz.\n");
+> +               dev_info(dev, "Bus frequency not specified, default to 100kHz.\n");
+>                 gi2c->clk_freq_out = KHZ(100);
+>         }
+>
+> -       if (has_acpi_companion(&pdev->dev))
+> -               ACPI_COMPANION_SET(&gi2c->adap.dev, ACPI_COMPANION(&pdev->dev));
+> +       if (has_acpi_companion(dev))
+> +               ACPI_COMPANION_SET(&gi2c->adap.dev, ACPI_COMPANION(dev));
+>
+>         gi2c->irq = platform_get_irq(pdev, 0);
+> -       if (gi2c->irq < 0) {
+> -               dev_err(&pdev->dev, "IRQ error for i2c-geni\n");
+> +       if (gi2c->irq < 0)
+>                 return gi2c->irq;
+> -       }
+>
+>         ret = geni_i2c_clk_map_idx(gi2c);
+>         if (ret) {
+> -               dev_err(&pdev->dev, "Invalid clk frequency %d Hz: %d\n",
+> +               dev_err(dev, "Invalid clk frequency %d Hz: %d\n",
+>                         gi2c->clk_freq_out, ret);
+>                 return ret;
+>         }
+> @@ -549,29 +544,29 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>         init_completion(&gi2c->done);
+>         spin_lock_init(&gi2c->lock);
+>         platform_set_drvdata(pdev, gi2c);
+> -       ret = devm_request_irq(&pdev->dev, gi2c->irq, geni_i2c_irq, 0,
+> -                              dev_name(&pdev->dev), gi2c);
+> +       ret = devm_request_irq(dev, gi2c->irq, geni_i2c_irq, 0,
+> +                              dev_name(dev), gi2c);
+>         if (ret) {
+> -               dev_err(&pdev->dev, "Request_irq failed:%d: err:%d\n",
+> +               dev_err(dev, "Request_irq failed:%d: err:%d\n",
+>                         gi2c->irq, ret);
+>                 return ret;
+>         }
+>         /* Disable the interrupt so that the system can enter low-power mode */
+>         disable_irq(gi2c->irq);
+>         i2c_set_adapdata(&gi2c->adap, gi2c);
+> -       gi2c->adap.dev.parent = &pdev->dev;
+> -       gi2c->adap.dev.of_node = pdev->dev.of_node;
+> +       gi2c->adap.dev.parent = dev;
+> +       gi2c->adap.dev.of_node = dev->of_node;
+>         strlcpy(gi2c->adap.name, "Geni-I2C", sizeof(gi2c->adap.name));
+>
+>         ret = geni_se_resources_on(&gi2c->se);
+>         if (ret) {
+> -               dev_err(&pdev->dev, "Error turning on resources %d\n", ret);
+> +               dev_err(dev, "Error turning on resources %d\n", ret);
+>                 return ret;
+>         }
+>         proto = geni_se_read_proto(&gi2c->se);
+>         tx_depth = geni_se_get_tx_fifo_depth(&gi2c->se);
+>         if (proto != GENI_SE_I2C) {
+> -               dev_err(&pdev->dev, "Invalid proto %d\n", proto);
+> +               dev_err(dev, "Invalid proto %d\n", proto);
+>                 geni_se_resources_off(&gi2c->se);
+>                 return -ENXIO;
+>         }
+> @@ -581,11 +576,11 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>                                                         true, true, true);
+>         ret = geni_se_resources_off(&gi2c->se);
+>         if (ret) {
+> -               dev_err(&pdev->dev, "Error turning off resources %d\n", ret);
+> +               dev_err(dev, "Error turning off resources %d\n", ret);
+>                 return ret;
+>         }
+>
+> -       dev_dbg(&pdev->dev, "i2c fifo/se-dma mode. fifo depth:%d\n", tx_depth);
+> +       dev_dbg(dev, "i2c fifo/se-dma mode. fifo depth:%d\n", tx_depth);
+>
+>         gi2c->suspended = 1;
+>         pm_runtime_set_suspended(gi2c->se.dev);
+> @@ -595,12 +590,12 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>
+>         ret = i2c_add_adapter(&gi2c->adap);
+>         if (ret) {
+> -               dev_err(&pdev->dev, "Error adding i2c adapter %d\n", ret);
+> +               dev_err(dev, "Error adding i2c adapter %d\n", ret);
+>                 pm_runtime_disable(gi2c->se.dev);
+>                 return ret;
+>         }
+>
+> -       dev_dbg(&pdev->dev, "Geni-I2C adaptor successfully added\n");
+> +       dev_dbg(dev, "Geni-I2C adaptor successfully added\n");
+>
+>         return 0;
+>  }
+> --
+> Sent by a computer, using git, on the internet
+>
