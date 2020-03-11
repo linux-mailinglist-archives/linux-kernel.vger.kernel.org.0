@@ -2,226 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E06B181C5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:34:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 358BE181C63
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:35:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729929AbgCKPeE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 11:34:04 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:24284 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729646AbgCKPeE (ORCPT
+        id S1729991AbgCKPfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 11:35:02 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:39825 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729646AbgCKPfC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 11:34:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583940842;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=u0xU1PIw/tg3wOhypjxZL8zbVhPE6xy4N+qm1n6mhVU=;
-        b=V51LSMFH10RI2xvo6TfB8DX30zWk+wMXagDlTOFZKSx4VlLP3lgiqiwCMtPASb0SzwTHLC
-        c+IgR5gy4JbETdS4LnadiS5OSYgJ7+lal/E+tb+zWhqi7T7mCfi/PUzwkmzkDzwz8tEd5f
-        ed4D1ES5zv8ldS5CxzoQsYT5cR1l5Pw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-344-JzqYz28jPcSBOwpmBU3X3g-1; Wed, 11 Mar 2020 11:33:59 -0400
-X-MC-Unique: JzqYz28jPcSBOwpmBU3X3g-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C5922189D6C0;
-        Wed, 11 Mar 2020 15:33:56 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F24EA8D553;
-        Wed, 11 Mar 2020 15:33:54 +0000 (UTC)
-Subject: Re: [PATCH v2 2/2] KEYS: Avoid false positive ENOMEM error on key
- read
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-References: <da226448-4b76-0456-4c29-742a1a24fe79@redhat.com>
- <20200308170410.14166-3-longman@redhat.com>
- <20200308170410.14166-1-longman@redhat.com>
- <416690.1583771540@warthog.procyon.org.uk>
- <a4c92057-c364-965c-a251-02cbe46229b6@redhat.com>
- <675400.1583860343@warthog.procyon.org.uk>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <7d0b0c5f-98e7-0fb6-69cd-76a31a010bcb@redhat.com>
-Date:   Wed, 11 Mar 2020 11:33:54 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 11 Mar 2020 11:35:02 -0400
+Received: by mail-ua1-f65.google.com with SMTP id o16so877563uap.6
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 08:34:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qhJRpUkshAWGHIKKMgX/B0xQTx8p6qS30KkfC3vx+YA=;
+        b=WR1WFzbazIgYjjugtaAG7OQWvOrO5iNuvokHOH7eBWkX58IpVaAJb0ruuJku5eCCkv
+         enDzuwoPT4fKItDgkN4ZS/IMSfpXYAJWzDXzICdxyxfXDVrIvO4n6YYmqoBw3OGhbh93
+         XkO/kL3NHi+O0DNlFeslMAFpZdEXnUIilOljOV64po7Uruo5KfBMmRHjsQKGaw55irxA
+         6nl+h3mO9VO/p/yuRyCkzOcb6ULjEuPZyolnRYsZO7pN4PoIkD0onzzPKCoBsL8gYGgc
+         2PvgG0WDVDtaOLkJoW2G7m69PpJR3DExglkM7Nefj+D4IdSfPDagY9HIRereqwzungEm
+         f6/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qhJRpUkshAWGHIKKMgX/B0xQTx8p6qS30KkfC3vx+YA=;
+        b=HjmY5z0q8p8AG99RL8D8EKrDp93+Uwrx+ldQFz9t840wzUstvPKyISLeXaKtFVdaPJ
+         zutnaJJNIPq1j1CwEqQ1YH023YTmJ8LNG9jnwpEdNja5hndmCUsohIuVU0TeMBsOn6Pr
+         uMkSpAWTuDu8KYTKh0UgenqNEgDNcTOCB8K+Gyi/W4CldVQU4IUDHx8w1z2KPPDL7JTc
+         KczXP2grCNvjov3KvakNCsLDOAdwqhwaGGA4ZujjicdedyQjex3NuBljqYOf+G5wZOLb
+         nlWnmqiDsQz3l3fIF8ptESEMBsEB1CYaG5u65CFy2JfXmcB/cVf4egcsPyk7WxnlJlvv
+         GcVw==
+X-Gm-Message-State: ANhLgQ1IIhMepkfJP+KC7+ua+Ex4D6nH3LG4bWybkVzwSQCDoYfPcRUV
+        leuq4Ha32abtQ7cP9ffvlD5yomeClmqWquwcJSYZc87+
+X-Google-Smtp-Source: ADFU+vvXyAzAcOGhHOD9upUyRHHqTNy8nX3Fs8hiAWyOZ1DgXWDsSOHwHO0XeVv4FoNZ87lTtOwre/hI30xRJ+iwhDo=
+X-Received: by 2002:ab0:1485:: with SMTP id d5mr2013297uae.129.1583940899169;
+ Wed, 11 Mar 2020 08:34:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <675400.1583860343@warthog.procyon.org.uk>
-Content-Type: multipart/mixed;
- boundary="------------38FC0D37D8A890979402365F"
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+References: <20200226223125.GA20630@embeddedor>
+In-Reply-To: <20200226223125.GA20630@embeddedor>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 11 Mar 2020 16:34:23 +0100
+Message-ID: <CAPDyKFpCczkLfzbRHV5WEzuMOseMj19mV=j1w6=hNX9K8YN1JQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: Replace zero-length array with flexible-array member
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------38FC0D37D8A890979402365F
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-
-On 3/10/20 1:12 PM, David Howells wrote:
-> Waiman Long <longman@redhat.com> wrote:
+On Wed, 26 Feb 2020 at 23:28, Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
 >
->> That is not as simple as I thought. First of that, there is not an
->> equivalent kzvfree() helper to clear the buffer first before clearing.
->> Of course, I can do that manually.
-> Yeah, the actual substance of vfree() may get deferred.  It may be worth
-> adding a kvzfree() that switches between kzfree() and memset(),vfree().
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
 >
->> With patch 2, the allocated buffer length will be max(1024, keylen). The
->> security code uses kmalloc() for allocation. If we use kvalloc() here,
->> perhaps we should also use that for allocation that can be potentially
->> large like that in big_key. What do you think?
-> Not for big_key: if it's larger than BIG_KEY_FILE_THRESHOLD (~1KiB) it gets
-> written encrypted into shmem so that it can be swapped out to disk when not in
-> use.
+> struct foo {
+>         int stuff;
+>         struct boo array[];
+> };
 >
-> However, other cases, sure - just be aware that on a 32-bit system,
-> vmalloc/vmap space is a strictly limited resource.
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertently introduced[3] to the codebase from now on.
+>
+> Also, notice that, dynamic memory allocations won't be affected by
+> this change:
+>
+> "Flexible array members have incomplete type, and so the sizeof operator
+> may not be applied. As a quirk of the original implementation of
+> zero-length arrays, sizeof evaluates to zero."[1]
+>
+> This issue was found with the help of Coccinelle.
+>
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> [2] https://github.com/KSPP/linux/issues/21
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Attached is an additional patch to make the transition from kmalloc() to
-kvmalloc(). I put the __kvzfree() helper in internal.h for now. I plan
-to send a patch later to add a kvzfree() API once there is a use case in
-the kernel.
+Applied for next, thanks!
 
-I am not going to touch other places for now to make thing simpler.
-
-Cheers,
-Longman
-
-
---------------38FC0D37D8A890979402365F
-Content-Type: text/x-patch;
- name="v2-0003-KEYS-Use-kvmalloc-to-better-handle-large-buffer-a.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="v2-0003-KEYS-Use-kvmalloc-to-better-handle-large-buffer-a.pa";
- filename*1="tch"
-
-From e2e73e2bc0c5cd168de273b0fe9df1e5c48cd232 Mon Sep 17 00:00:00 2001
-From: Waiman Long <longman@redhat.com>
-Date: Wed, 11 Mar 2020 11:01:59 -0400
-Subject: [PATCH v2 3/3] KEYS: Use kvmalloc() to better handle large buffer
- allocation
-
-For large multi-page temporary buffer allocation, the security/keys
-subsystem don't need contiguous physical pages. It will work perfectly
-fine with virtually mapped pages.
-
-Replace the kmalloc() call by kvmalloc() and provide a __kvzfree()
-helper function to clear and free the kvmalloc'ed buffer. This will
-reduce the chance of memory allocation failure just because of highly
-fragmented pages.
-
-Suggested-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- security/keys/internal.h | 14 ++++++++++++++
- security/keys/keyctl.c   | 12 ++++++------
- 2 files changed, 20 insertions(+), 6 deletions(-)
-
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index ba3e2da14cef..1b6e2d66e378 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -16,6 +16,8 @@
- #include <linux/keyctl.h>
- #include <linux/refcount.h>
- #include <linux/compat.h>
-+#include <linux/mm.h>
-+#include <linux/vmalloc.h>
- 
- struct iovec;
- 
-@@ -349,4 +351,16 @@ static inline void key_check(const struct key *key)
- 
- #endif
- 
-+/*
-+ * Helper function to clear and free a kvmalloc'ed memory object.
-+ */
-+static inline void __kvzfree(const void *addr, size_t len)
-+{
-+	if (is_vmalloc_addr(addr)) {
-+		memset((char *)addr, 0, len);
-+		vfree(addr);
-+	} else {
-+		kzfree(addr);
-+	}
-+}
- #endif /* _INTERNAL_H */
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 662a638a680d..ca05604bc9c0 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -339,7 +339,7 @@ long keyctl_update_key(key_serial_t id,
- 	payload = NULL;
- 	if (plen) {
- 		ret = -ENOMEM;
--		payload = kmalloc(plen, GFP_KERNEL);
-+		payload = kvmalloc(plen, GFP_KERNEL);
- 		if (!payload)
- 			goto error;
- 
-@@ -360,7 +360,7 @@ long keyctl_update_key(key_serial_t id,
- 
- 	key_ref_put(key_ref);
- error2:
--	kzfree(payload);
-+	__kvzfree(payload, plen);
- error:
- 	return ret;
- }
-@@ -870,7 +870,7 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 		 */
- 		if (buflen && buffer && (buflen <= 0x400)) {
- allocbuf:
--			tmpbuf = kmalloc(tbuflen, GFP_KERNEL);
-+			tmpbuf = kvmalloc(tbuflen, GFP_KERNEL);
- 			if (!tmpbuf) {
- 				ret = -ENOMEM;
- 				goto error2;
-@@ -892,9 +892,9 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 			 * again.
- 			 */
- 			if (!tmpbuf || unlikely(ret > tbuflen)) {
--				tbuflen = ret;
- 				if (unlikely(tmpbuf))
--					kzfree(tmpbuf);
-+					__kvzfree(tmpbuf, tbuflen);
-+				tbuflen = ret;
- 				goto allocbuf;
- 			}
- 
-@@ -903,7 +903,7 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 		}
- 
- 		if (tmpbuf)
--			kzfree(tmpbuf);
-+			__kvzfree(tmpbuf, tbuflen);
- 	}
- 
- error2:
--- 
-2.18.1
+Kind regards
+Uffe
 
 
---------------38FC0D37D8A890979402365F--
-
+> ---
+>  drivers/mmc/host/sdhci-acpi.c    | 2 +-
+>  drivers/mmc/host/sdhci-cadence.c | 2 +-
+>  drivers/mmc/host/sdhci-pci.h     | 2 +-
+>  drivers/mmc/host/sdhci-pltfm.h   | 2 +-
+>  drivers/mmc/host/sdhci.h         | 2 +-
+>  drivers/mmc/host/vub300.c        | 2 +-
+>  include/linux/mmc/host.h         | 2 +-
+>  include/linux/mmc/sdio_func.h    | 2 +-
+>  include/uapi/linux/mmc/ioctl.h   | 2 +-
+>  9 files changed, 9 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-acpi.c b/drivers/mmc/host/sdhci-acpi.c
+> index 9651dca6863e..ea0e4fda3a9e 100644
+> --- a/drivers/mmc/host/sdhci-acpi.c
+> +++ b/drivers/mmc/host/sdhci-acpi.c
+> @@ -72,7 +72,7 @@ struct sdhci_acpi_host {
+>         const struct sdhci_acpi_slot    *slot;
+>         struct platform_device          *pdev;
+>         bool                            use_runtime_pm;
+> -       unsigned long                   private[0] ____cacheline_aligned;
+> +       unsigned long                   private[] ____cacheline_aligned;
+>  };
+>
+>  static inline void *sdhci_acpi_priv(struct sdhci_acpi_host *c)
+> diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
+> index 5827d3751b81..9af3fe48d62f 100644
+> --- a/drivers/mmc/host/sdhci-cadence.c
+> +++ b/drivers/mmc/host/sdhci-cadence.c
+> @@ -67,7 +67,7 @@ struct sdhci_cdns_priv {
+>         void __iomem *hrs_addr;
+>         bool enhanced_strobe;
+>         unsigned int nr_phy_params;
+> -       struct sdhci_cdns_phy_param phy_params[0];
+> +       struct sdhci_cdns_phy_param phy_params[];
+>  };
+>
+>  struct sdhci_cdns_phy_cfg {
+> diff --git a/drivers/mmc/host/sdhci-pci.h b/drivers/mmc/host/sdhci-pci.h
+> index 981bbbe63aff..42ccd123b046 100644
+> --- a/drivers/mmc/host/sdhci-pci.h
+> +++ b/drivers/mmc/host/sdhci-pci.h
+> @@ -163,7 +163,7 @@ struct sdhci_pci_slot {
+>         bool                    cd_override_level;
+>
+>         void (*hw_reset)(struct sdhci_host *host);
+> -       unsigned long           private[0] ____cacheline_aligned;
+> +       unsigned long           private[] ____cacheline_aligned;
+>  };
+>
+>  struct sdhci_pci_chip {
+> diff --git a/drivers/mmc/host/sdhci-pltfm.h b/drivers/mmc/host/sdhci-pltfm.h
+> index 2af445b8c325..6301b81cf573 100644
+> --- a/drivers/mmc/host/sdhci-pltfm.h
+> +++ b/drivers/mmc/host/sdhci-pltfm.h
+> @@ -25,7 +25,7 @@ struct sdhci_pltfm_host {
+>         unsigned int clock;
+>         u16 xfer_mode_shadow;
+>
+> -       unsigned long private[0] ____cacheline_aligned;
+> +       unsigned long private[] ____cacheline_aligned;
+>  };
+>
+>  #ifdef CONFIG_MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index cac2d97782e6..249635692112 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -614,7 +614,7 @@ struct sdhci_host {
+>
+>         u64                     data_timeout;
+>
+> -       unsigned long private[0] ____cacheline_aligned;
+> +       unsigned long private[] ____cacheline_aligned;
+>  };
+>
+>  struct sdhci_ops {
+> diff --git a/drivers/mmc/host/vub300.c b/drivers/mmc/host/vub300.c
+> index 6ced1b7f642f..a5a90d133f1f 100644
+> --- a/drivers/mmc/host/vub300.c
+> +++ b/drivers/mmc/host/vub300.c
+> @@ -95,7 +95,7 @@ struct sd_response_header {
+>         u8 port_number;
+>         u8 command_type;
+>         u8 command_index;
+> -       u8 command_response[0];
+> +       u8 command_response[];
+>  } __packed;
+>
+>  struct sd_status_header {
+> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+> index 562ed06881b0..2629329ab9f2 100644
+> --- a/include/linux/mmc/host.h
+> +++ b/include/linux/mmc/host.h
+> @@ -465,7 +465,7 @@ struct mmc_host {
+>         /* Host Software Queue support */
+>         bool                    hsq_enabled;
+>
+> -       unsigned long           private[0] ____cacheline_aligned;
+> +       unsigned long           private[] ____cacheline_aligned;
+>  };
+>
+>  struct device_node;
+> diff --git a/include/linux/mmc/sdio_func.h b/include/linux/mmc/sdio_func.h
+> index 5a177f7a83c3..fa2aaab5e57a 100644
+> --- a/include/linux/mmc/sdio_func.h
+> +++ b/include/linux/mmc/sdio_func.h
+> @@ -25,7 +25,7 @@ struct sdio_func_tuple {
+>         struct sdio_func_tuple *next;
+>         unsigned char code;
+>         unsigned char size;
+> -       unsigned char data[0];
+> +       unsigned char data[];
+>  };
+>
+>  /*
+> diff --git a/include/uapi/linux/mmc/ioctl.h b/include/uapi/linux/mmc/ioctl.h
+> index 00c08120f3ba..98e29e7f54ac 100644
+> --- a/include/uapi/linux/mmc/ioctl.h
+> +++ b/include/uapi/linux/mmc/ioctl.h
+> @@ -57,7 +57,7 @@ struct mmc_ioc_cmd {
+>   */
+>  struct mmc_ioc_multi_cmd {
+>         __u64 num_of_cmds;
+> -       struct mmc_ioc_cmd cmds[0];
+> +       struct mmc_ioc_cmd cmds[];
+>  };
+>
+>  #define MMC_IOC_CMD _IOWR(MMC_BLOCK_MAJOR, 0, struct mmc_ioc_cmd)
+> --
+> 2.25.0
+>
