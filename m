@@ -2,133 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FDDB1812CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:21:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A5851812D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:22:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728618AbgCKIVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 04:21:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54682 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726097AbgCKIVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 04:21:23 -0400
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AABB20866;
-        Wed, 11 Mar 2020 08:21:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583914882;
-        bh=xOsCy17pMnIpN8H6F7yfTfdZSqkG2zR+BQaWBdsM8Ew=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EQFu+RDgOck99iq5cpUODmlkEEvvRJB9iQ8d/Pcc/SkS8NJ2/c0WYgYces3+rwr0+
-         Ie/m2HlmM+BB8bcRVCxWun+TT3lToNZdm4w0YFJfKLS8FHbFVNREAAFvwZIda3r+0H
-         VjDJeZpVanZ/rWZKdhv7D2IwZoPQ5nhqHw1GHj1I=
-Date:   Wed, 11 Mar 2020 16:21:17 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Zhiqiang Hou <Zhiqiang.Hou@nxp.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, michael@walle.cc, leoyang.li@nxp.com,
-        Mingkai.Hu@nxp.com, Minghuan.Lian@nxp.com,
-        Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: Re: [PATCHv7] arm64: dts: ls1028a: Add PCIe controller DT nodes
-Message-ID: <20200311082117.GA29269@dragon>
-References: <20200302042305.15639-1-Zhiqiang.Hou@nxp.com>
+        id S1728626AbgCKIWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 04:22:18 -0400
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:36665 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbgCKIWS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 04:22:18 -0400
+Received: by mail-vk1-f194.google.com with SMTP id a1so287668vkg.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 01:22:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=zdxUWMWXTEs/zs0LJh1bxLoOHpDg1k5nkLimqXptzik=;
+        b=Vv4CHY4+JL7e3fdzoiUetDUozCKvW47aJtBunNSK1qiSOaXsLmI778GNIOhoiQs9lY
+         h9Kxm7VAmSY2HOTq3nIbjgU8VW6jaO5tQlT0AQ4vZCsOlOHIGYOlqe40Zlib6E1gnOAJ
+         nuFkA5+/u6+w3sctQ0x6TSpHeCi/wituVzVFZjpP6lxBnFcpUTgGJmcSt48eXCVxI6jL
+         8t32CMsFfqkYiKTDChCNneFm7oZc3Db59DKySOQ65JHw7FitJgsHc2DKLZT1nz9gdtnR
+         fGntj48fl+z9Oim7S98AjMvKrkp2KmhaOLgiTyhhjyoa+cjiRytNrHwtfa2nL6w2dspe
+         mumA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=zdxUWMWXTEs/zs0LJh1bxLoOHpDg1k5nkLimqXptzik=;
+        b=iQUrkmskxHgUUSJMePvmb7XRPUdY3YeAGmalknZs6NARvuc1HByt0FD5jbJs9YkFo0
+         ImNI6DfgZxQP2TITmateMOJZ29FucAIRIHdFWBh7ozJnK3Ym6fgpj34Jt/XAR72LxM/b
+         dORiT61tzUkljPaQFX/+My4lzv4QdaBOgsWcUhfxrTn1JzN46EAMOakZSU7I9y311SfT
+         mtq+m5k0p5is8Z0ymk21t382y9yxftf3ZbpGZSrBfhIyjgPcyQWucst8EAy0QNi2JZvA
+         x82gKeAYxGYzxSa+vLnqCf21gT1x/2qXNzG2DiJ5b/g6YjHWagCqA2B6tTq0C7YWCihI
+         DWmQ==
+X-Gm-Message-State: ANhLgQ2ffRtYLqxBeR3qGBOZdN6kBMWqlXKXbClsMh2QMxEdkwvKATCe
+        a4yVW7+HKOVSsIIQo4fyGajCX1gzZ8QBX61vmOU=
+X-Google-Smtp-Source: ADFU+vtO/7bOyfPcaODlMcubeZVdaNidhxs2H3Cj8N/mD1kru2e6YvPYdHY2mrK7YJQr84XrBGD3/nUN3q/7afNHQ9Q=
+X-Received: by 2002:a1f:4c45:: with SMTP id z66mr1219179vka.20.1583914937081;
+ Wed, 11 Mar 2020 01:22:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200302042305.15639-1-Zhiqiang.Hou@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a67:2fd1:0:0:0:0:0 with HTTP; Wed, 11 Mar 2020 01:22:15
+ -0700 (PDT)
+Reply-To: ayishagddafio@mail.ru
+From:   Aisha Gddafi <aishagddafi68@gmail.com>
+Date:   Wed, 11 Mar 2020 01:22:15 -0700
+Message-ID: <CAKJgomEG0E77-LUgeo2ne0Uuwz9U2Ob9LKJQTerCmSaJgxAf1Q@mail.gmail.com>
+Subject: Lieber Freund (Assalamu Alaikum),?
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 12:23:05PM +0800, Zhiqiang Hou wrote:
-> From: Xiaowei Bao <xiaowei.bao@nxp.com>
-> 
-> LS1028a implements 2 PCIe 3.0 controllers.
-> 
-> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> Tested-by: Michael Walle <michael@walle.cc>
-> ---
-> V7:
->  - Rebased the patch to the latest code base.
->  - Added property 'iommu-map'.
-> 
->  .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 54 +++++++++++++++++++
->  1 file changed, 54 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> index 41c9633293fb..3f31641dcced 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> @@ -717,6 +717,60 @@
->  			#thermal-sensor-cells = <1>;
->  		};
->  
-> +		pcie@3400000 {
+--=20
+Lieber Freund (Assalamu Alaikum),
 
-Please keep nodes sorted in unit-address.
+Ich bin vor einer privaten Suche auf Ihren E-Mail-Kontakt gesto=C3=9Fen
+Ihre Hilfe. Mein Name ist Aisha Al-Qaddafi, eine alleinerziehende
+Mutter und eine Witwe
+mit drei Kindern. Ich bin die einzige leibliche Tochter des Sp=C3=A4tlibysc=
+hen
+Pr=C3=A4sident (verstorbener Oberst Muammar Gaddafi).
 
-Shawn
+Ich habe Investmentfonds im Wert von siebenundzwanzig Millionen
+f=C3=BCnfhunderttausend
+United State Dollar ($ 27.500.000.00) und ich brauche eine
+vertrauensw=C3=BCrdige Investition
+Manager / Partner aufgrund meines aktuellen Fl=C3=BCchtlingsstatus bin ich =
+jedoch
+M=C3=B6glicherweise interessieren Sie sich f=C3=BCr die Unterst=C3=BCtzung =
+von
+Investitionsprojekten in Ihrem Land
+Von dort aus k=C3=B6nnen wir in naher Zukunft Gesch=C3=A4ftsbeziehungen auf=
+bauen.
 
-> +			compatible = "fsl,ls1028a-pcie";
-> +			reg = <0x00 0x03400000 0x0 0x00100000   /* controller registers */
-> +			       0x80 0x00000000 0x0 0x00002000>; /* configuration space */
-> +			reg-names = "regs", "config";
-> +			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>, /* PME interrupt */
-> +				     <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>; /* aer interrupt */
-> +			interrupt-names = "pme", "aer";
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +			device_type = "pci";
-> +			dma-coherent;
-> +			num-viewport = <8>;
-> +			bus-range = <0x0 0xff>;
-> +			ranges = <0x81000000 0x0 0x00000000 0x80 0x00010000 0x0 0x00010000   /* downstream I/O */
-> +				  0x82000000 0x0 0x40000000 0x80 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
-> +			msi-parent = <&its>;
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 7>;
-> +			interrupt-map = <0000 0 0 1 &gic 0 0 GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 2 &gic 0 0 GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 3 &gic 0 0 GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 4 &gic 0 0 GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-> +			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
-> +			status = "disabled";
-> +		};
-> +
-> +		pcie@3500000 {
-> +			compatible = "fsl,ls1028a-pcie";
-> +			reg = <0x00 0x03500000 0x0 0x00100000   /* controller registers */
-> +			       0x88 0x00000000 0x0 0x00002000>; /* configuration space */
-> +			reg-names = "regs", "config";
-> +			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "pme", "aer";
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +			device_type = "pci";
-> +			dma-coherent;
-> +			num-viewport = <8>;
-> +			bus-range = <0x0 0xff>;
-> +			ranges = <0x81000000 0x0 0x00000000 0x88 0x00010000 0x0 0x00010000   /* downstream I/O */
-> +				  0x82000000 0x0 0x40000000 0x88 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
-> +			msi-parent = <&its>;
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 7>;
-> +			interrupt-map = <0000 0 0 1 &gic 0 0 GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 2 &gic 0 0 GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 3 &gic 0 0 GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 4 &gic 0 0 GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
-> +			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
-> +			status = "disabled";
-> +		};
-> +
->  		pcie@1f0000000 { /* Integrated Endpoint Root Complex */
->  			compatible = "pci-host-ecam-generic";
->  			reg = <0x01 0xf0000000 0x0 0x100000>;
-> -- 
-> 2.17.1
-> 
+Ich bin bereit, mit Ihnen =C3=BCber das Verh=C3=A4ltnis zwischen Investitio=
+n und
+Unternehmensgewinn zu verhandeln
+Basis f=C3=BCr die zuk=C3=BCnftige Investition Gewinne zu erzielen.
+
+Wenn Sie bereit sind, dieses Projekt in meinem Namen zu bearbeiten,
+antworten Sie bitte dringend
+Damit ich Ihnen mehr Informationen =C3=BCber die Investmentfonds geben kann=
+.
+
+Ihre dringende Antwort wird gesch=C3=A4tzt. schreibe mir an diese email adr=
+esse (
+ayishagddafio@mail.ru ) zur weiteren Diskussion.
+
+Freundliche Gr=C3=BC=C3=9Fe
+Frau Aisha Al-Qaddafi
