@@ -2,58 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8508182324
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 21:08:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DC5F182329
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 21:13:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387470AbgCKUIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 16:08:54 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:44340 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387395AbgCKUIy (ORCPT
+        id S1731136AbgCKUNY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 16:13:24 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:44421 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726947AbgCKUNY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 16:08:54 -0400
-Received: by mail-yw1-f66.google.com with SMTP id t141so3258461ywc.11
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 13:08:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=uQffpg5YHpt3DzZfHr+1WA4ebHf9iAQhlnVY93fmbmI=;
-        b=hKt+WOF9azytx9hGr3mp9smRmTzKKQtHokhcBxl1KYdl9a3Tn2TdkhKEyeweahNBwj
-         Z8uxy32+nuOu1Z6NrIm39Jj4S2EBkmCjd9EQQQzK+VGTUWNm3oL/HFqJkPz6Byf02zVU
-         Uvfh1YX1/cR9368+IaCfAcKP3ZEVDRxKIP7/bQbt1pmqV+6FxAw7lJpwRpCO66Ttc01C
-         GJsJqteUe+OseprCqW/ZqqdiLCqvtXR1IeeHWYtu8nRrhldc1U4MSjYyNtj2in9lU2XQ
-         cQmjNpgP8YAKgJtcBKzx8STMv/COlqMbuhav3bwZCm/UBpSHdB1aUgdy1MCuyDrawjr8
-         IeBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=uQffpg5YHpt3DzZfHr+1WA4ebHf9iAQhlnVY93fmbmI=;
-        b=Tu/+FbNcwbby96Jl24oGbdCidYH7uAljjJTU1gaqdBmv0TOslj/z+ENMULO64c3r7e
-         73/PC0h8HpYxrKg2MvHeoMbznHdUsa6Zodq/G0VPjgk8gnnLmkg/ZdQJ4FRRO11JhsRK
-         8/fCd5wCs8vjD8EUC72U8GQlk1Y7oGxtfhcHQQMitOYLqUUhpiaPxA14A8p9l8Ld4zuT
-         lEF44QCwT+ffvuinDjXhkeKvXxvQ6d6GqwTXV/N0YVo4/Zpaiegtx13bb/N2Um8/5tiC
-         5w+08WAdBRj26ELPsmu4JzJMgXb49c+DA+uM5mYAj1CFdev69uTOrM9ghWsVm1z+OXvT
-         Y8Cw==
-X-Gm-Message-State: ANhLgQ0C1wjCVIrv6+9To6ELs3CAXvaYYrgFsjemTaNOie0DL3QVYFat
-        JxNrF8ZCHjbVNXw+TVfSYl1YAxZqynbGr+H8ZWg=
-X-Google-Smtp-Source: ADFU+vvNSRaMKGMFYblJV2XWNVbqscmrnTRazJax2DafpdZD9QF2YszhIXKodWlylvEdkFODc2jWzU+0nNFofiaRy7o=
-X-Received: by 2002:a25:3dc4:: with SMTP id k187mr4825297yba.82.1583957333183;
- Wed, 11 Mar 2020 13:08:53 -0700 (PDT)
+        Wed, 11 Mar 2020 16:13:24 -0400
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id 02BKD4v4025297
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 05:13:05 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 02BKD4v4025297
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1583957585;
+        bh=UgsI4L/7hhHUm8L3XjDdMOn1HtPURuk7s+u4j4PE49E=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qeszQ2FUXR7/uYcNONbBryhW4NCRyk80atebVbcpk3fC0Mm2nWiuuKyPTJer0ZPBW
+         6yuswb+EeCl35RdRn2CxTHoMCOkzkGxBFf7q/lXo6LdrZfFp2UrI+6qgSzxZYC1TGG
+         0WXj/KmlrN3YzTWLVo2NVK3F4TLWhbqjSitrvSbfvrE8oOKa9COOMpLcZkbqXICYKI
+         hcaS3bIv8qRBAWBczjt/AxmVlPfTXhYd+bQ6NLssyW5OkweHrdZwaeTT009QGm5zVU
+         91NVb0Jy8JLO/68jyTQ9DLQgj0730xGucS7ZfVY+MQPGTUQwFThU5CzAJdBGcu9cPo
+         IqYZeF6QSiTUg==
+X-Nifty-SrcIP: [209.85.221.178]
+Received: by mail-vk1-f178.google.com with SMTP id s139so902080vka.13
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 13:13:05 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ0BewnAvATnLaKCnkWPKexCKi9uZianLGnLOopEKahpd4XN84XB
+        hGjATUUxghaX2M4ZMsU4vY32MvAik7YrBTrOaBQ=
+X-Google-Smtp-Source: ADFU+vt4K27MGCUWogRfX/2TSFVHCEsD8Ht8K80zJtpqN5IrUtsd9RyhaPlDJSqHFhMUShiI/tKrNEc6TB2DXVNwkdw=
+X-Received: by 2002:a1f:2f4c:: with SMTP id v73mr3187092vkv.12.1583957584022;
+ Wed, 11 Mar 2020 13:13:04 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a05:6900:170:0:0:0:0 with HTTP; Wed, 11 Mar 2020 13:08:52
- -0700 (PDT)
-Reply-To: reverendmichael00@gmail.com
-From:   "Mr.Michael Abraham" <chiogb005@gmail.com>
-Date:   Wed, 11 Mar 2020 20:08:52 +0000
-Message-ID: <CAM6p=2haC3B6Gat0wNs78eW9-aBn8QAv-fQr9kSCB+Pp9R6UHQ@mail.gmail.com>
-Subject: Urgent.
-To:     undisclosed-recipients:;
+References: <20200311102217.25170-1-Eugeniy.Paltsev@synopsys.com>
+In-Reply-To: <20200311102217.25170-1-Eugeniy.Paltsev@synopsys.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Thu, 12 Mar 2020 05:12:28 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARSNBOMK9+s9pmVsVtnzr2qqFxHNr+GhJd_BnbgNW4SSQ@mail.gmail.com>
+Message-ID: <CAK7LNARSNBOMK9+s9pmVsVtnzr2qqFxHNr+GhJd_BnbgNW4SSQ@mail.gmail.com>
+Subject: Re: [PATCH] initramfs: restore default compression behaviour
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greeting, I sent you a letter days ago Did you receive it, I wait for
-your response, Best Regard, Mr.Michael Abraham.
+Hi Eugeniy.
+
+On Wed, Mar 11, 2020 at 7:22 PM Eugeniy Paltsev
+<Eugeniy.Paltsev@synopsys.com> wrote:
+>
+> Even though INITRAMFS_SOURCE kconfig option isn't set in most of
+> defconfigs it is used (set) extensively by various build systems.
+> Commit f26661e12765 ("initramfs: make initramfs compression choice
+> non-optional") has changed default compression mode. Previously we
+> compress initramfs using available compression algorithm. Now
+> we don't use any compression at all by default.
+> It significantly increases the image size in case of build system
+> chooses embedded initramfs. Initially I faced with this issue while
+> using buildroot.
+>
+> As of today it's not possible to set preferred compression mode
+> in target defconfig as this option depends on INITRAMFS_SOURCE
+> being set.
+> Modification of build systems doesn't look like good option in this
+> case as it requires to check against kernel version when setting
+> compression mode. The reason for this is that kconfig options
+> describing compression mode was renamed (in same patch series)
+
+Which commit?
+
+I do not remember the renaming of kconfig options
+with this regard.
+
+
+
+> so
+> we are not able to simply enable one option for old and new kernels.
+>
+> Given that I propose to use GZIP as default here instead of NO
+> compression. It should be used only when available but given that
+> gzip is enabled by default it looks like good enough choice.
+
+
+
+Another solution would be to move
+INITRAMFS_COMPRESSION_NONE to the end of the choice menu.
+
+The default of the choice menu is the first visible entry.
+
+GZIP if RD_GZIP is defined, BZIP2 if RD_BZIP2 is defined ...
+
+
+
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> ---
+>  usr/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/usr/Kconfig b/usr/Kconfig
+> index bdf5bbd40727..690ef9020819 100644
+> --- a/usr/Kconfig
+> +++ b/usr/Kconfig
+> @@ -102,6 +102,7 @@ config RD_LZ4
+>
+>  choice
+>         prompt "Built-in initramfs compression mode"
+> +       default INITRAMFS_COMPRESSION_GZIP if RD_GZIP
+>         depends on INITRAMFS_SOURCE != ""
+>         help
+>           This option allows you to decide by which algorithm the builtin
+> --
+> 2.21.1
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
