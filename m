@@ -2,86 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B12C180DD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 03:07:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 544B4180DDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 03:11:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727891AbgCKCHD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 22:07:03 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:56817 "EHLO ozlabs.org"
+        id S1727923AbgCKCLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 22:11:25 -0400
+Received: from gofer.mess.org ([88.97.38.141]:46303 "EHLO gofer.mess.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbgCKCHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 22:07:02 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48cb1G6ZwWz9sPF;
-        Wed, 11 Mar 2020 13:06:42 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1583892421;
-        bh=stRdRWNv5YaKlTh7eqaHiBGxhax7fUt8NJXuvnDHIOQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=fQ9TlMHsoe5lUVDvD1G/QXfsFUh70LJqWZ8YNr2JVAXuKUu/uc3jgK8tducIcMBpW
-         bZkKU6pizbJePcLwz9f7iGnTrPwEiqOJ8HAhfTbRHaSpR33J4jnUQ44RNObTWNiEzm
-         icSOl5z3CCALRPnXEu4AG7WoTS0nS1a00jmvhW5n3lt8FpwDYF78JMAprs/6ZEaAg3
-         RtRq8rKtTeTpvIqiNloI0jD9lEtae/QudEr5N+DCQ32qSWD/mcHYzNXaqe1lx1OfAU
-         aRvKa2PnFMAejDZwBi4hv925Nakcdc1J06lPkHH82NwPGwKFCQ+ydYg34A+V3RKsYm
-         MMmvtedAVTzIw==
-Date:   Wed, 11 Mar 2020 13:06:38 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>
-Subject: linux-next: build warning after merge of the nand tree
-Message-ID: <20200311130638.37e937fa@canb.auug.org.au>
+        id S1727484AbgCKCLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 22:11:25 -0400
+Received: by gofer.mess.org (Postfix, from userid 1000)
+        id EF0C3C6372; Wed, 11 Mar 2020 02:11:22 +0000 (GMT)
+Date:   Wed, 11 Mar 2020 02:11:22 +0000
+From:   Sean Young <sean@mess.org>
+To:     Guru Das Srinagesh <gurus@codeaurora.org>
+Cc:     linux-pwm@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Richard Fontana <rfontana@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH v8 04/12] ir-rx51: Use 64-bit division macro
+Message-ID: <20200311021122.GA13338@gofer.mess.org>
+References: <cover.1583889178.git.gurus@codeaurora.org>
+ <fdb2c5092005f5f149ff71123ff1b895fc3a2249.1583889178.git.gurus@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ACw=fCJaCMbYXfuOHfXyrxZ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fdb2c5092005f5f149ff71123ff1b895fc3a2249.1583889178.git.gurus@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ACw=fCJaCMbYXfuOHfXyrxZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Mar 10, 2020 at 06:41:13PM -0700, Guru Das Srinagesh wrote:
+> Since the PWM framework is switching struct pwm_state.period's datatype
+> to u64, prepare for this transition by using DIV_ROUND_CLOSEST_ULL to
+> handle a 64-bit dividend.
+> 
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Richard Fontana <rfontana@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> Cc: Allison Randal <allison@lohutok.net>
+> Cc: linux-media@vger.kernel.org
 
-Hi all,
+Acked-by: Sean Young <sean@mess.org>
 
-After merging the nand tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
-
-drivers/mtd/nand/raw/nand_macronix.c:301:13: warning: 'macronix_nand_deep_p=
-ower_down_support' defined but not used [-Wunused-function]
-  301 | static void macronix_nand_deep_power_down_support(struct nand_chip =
-*chip)
-      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Introduced by commit
-
-  18870c34d1a8 ("mtd: rawnand: macronix: Add support for deep power down mo=
-de")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ACw=fCJaCMbYXfuOHfXyrxZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5oR64ACgkQAVBC80lX
-0GwLqwf+JvEHos2BTJHk7Wtq5siUFKJo7PfxJlby5eoyeUAopdbXZvzPUcDHUvAl
-X+xCmQ6eA/rzXWaeX2qib5k77Lz6PNeqo3KnCh2vU/Yq6P48PazR4DT+iFAvdkZs
-eMSo64RRwpwyHBaVF1aERhF5FApuacIHS9RtTnSYkz36XAtvyIxsSMJ3Gjt12/c1
-aCInB8KI8guX2h9wrsIMevIiDKKsBgNrjGKwwIvbSblOaE+2fv0JTMOj4yxYvbq+
-dWJmkCahYrp647uBT26Xdrt1hptS6v2QctZk+hCsnCSlsaKuWd80/hS+bY0c9dNe
-XtbMY5A/Ipzn8w6yNz/K06V229BCCA==
-=RIhJ
------END PGP SIGNATURE-----
-
---Sig_/ACw=fCJaCMbYXfuOHfXyrxZ--
+> 
+> Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
+> ---
+>  drivers/media/rc/ir-rx51.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/rc/ir-rx51.c b/drivers/media/rc/ir-rx51.c
+> index 8574eda..9a5dfd7 100644
+> --- a/drivers/media/rc/ir-rx51.c
+> +++ b/drivers/media/rc/ir-rx51.c
+> @@ -241,7 +241,8 @@ static int ir_rx51_probe(struct platform_device *dev)
+>  	}
+>  
+>  	/* Use default, in case userspace does not set the carrier */
+> -	ir_rx51.freq = DIV_ROUND_CLOSEST(pwm_get_period(pwm), NSEC_PER_SEC);
+> +	ir_rx51.freq = DIV_ROUND_CLOSEST_ULL(pwm_get_period(pwm),
+> +			NSEC_PER_SEC);
+>  	pwm_put(pwm);
+>  
+>  	hrtimer_init(&ir_rx51.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
