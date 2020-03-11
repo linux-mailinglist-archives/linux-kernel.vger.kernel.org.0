@@ -2,123 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64DDA181E38
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:46:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FBCE181E3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:48:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730236AbgCKQql (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 12:46:41 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:59979 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730175AbgCKQql (ORCPT
+        id S1730201AbgCKQsq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 12:48:46 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43357 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729584AbgCKQsq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 12:46:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583945199;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ADDrO4QRY1lhdD1iQPV3hdTUF0WjB+BNSCx2nCz9XEE=;
-        b=FZeSdqsJM3f8wip7JeTiN7q2vrF6w1e62iLEpJqFGH1Bj/GXwVtq7n+zuvJXBk+MQApGHO
-        HCQKblTEPOwi9XLoItptg5frKpqXtZ1DNYAMXrY0bMcZ7FlrnudaEfaOw8t0ZnDvTYKbiv
-        NhEZPSKaQEjtc5/uieBaPtAKLPO6thQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-142-ERRbUndcPbCQJOpqCIO01g-1; Wed, 11 Mar 2020 12:46:33 -0400
-X-MC-Unique: ERRbUndcPbCQJOpqCIO01g-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 44D5CA0CDB;
-        Wed, 11 Mar 2020 16:46:32 +0000 (UTC)
-Received: from ovpn-120-185.rdu2.redhat.com (ovpn-120-185.rdu2.redhat.com [10.10.120.185])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6024810013A1;
-        Wed, 11 Mar 2020 16:46:31 +0000 (UTC)
-Message-ID: <2d277b96875e2320a3a7ccd8bfb8881f68e1353c.camel@redhat.com>
-Subject: Re: [PATCH] irqchip/gic-v3: Workaround Cavium erratum 38539 when
- reading GICD_TYPER2
-From:   Mark Salter <msalter@redhat.com>
-To:     Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Robert Richter <rrichter@marvell.com>
-Date:   Wed, 11 Mar 2020 12:46:30 -0400
-In-Reply-To: <20200311115649.26060-1-maz@kernel.org>
-References: <20200311115649.26060-1-maz@kernel.org>
-Organization: Red Hat, Inc
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Wed, 11 Mar 2020 12:48:46 -0400
+Received: by mail-lf1-f65.google.com with SMTP id q9so2307394lfc.10
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 09:48:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nvdaEzJa7BlyOVahyajCu5RaMgVluQfvfvpupgNvYPI=;
+        b=gTYXTGLbY5loy6LLU50Ij4wvtWSkC1KAWrZXcHsoO1uCYD/i8UHh+Fp6H4Lfe4kdbN
+         +iCHTAZrtgnoEbw/v9CPYJjmPJSY9iJAV9hHJtzdILJGtgEkVlpC0w+CR2pyEVwiAyC5
+         UbZvFt+oRjc8PidJ6oJOx+Xw/Ygl8qTl+1lDw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nvdaEzJa7BlyOVahyajCu5RaMgVluQfvfvpupgNvYPI=;
+        b=WmAeZKYzsF7v3ZDX6VdRpBxMWMBk6JzL4unn/EiERWJtgxx8szhPUAYM4hjt8Vr+1R
+         VtgyAJOqB6h+RnjqjYOixlNCXuXup/08NxKroa/M7JjCrJ52kXt+ewQmYKgwzHIcog54
+         aSFm3oVvqLoRZSWYgC52yk5hs2mhzGJuz/JNRiaDnhOvzvKWv7fHk2avKmxdSCB2Z09Q
+         p0H1TfKvVMBF5FnZ2BhJReJxeq9ufEs/wzTROdRTEBRjVbqO6nIKHNF3bhHs+j3D1bAB
+         uiFaLN2R+j2t3xQzECBkE0TnabG3yyXGXKAY/5hyiabVlm9TDiQ9uS3io4XWc5XzfxHE
+         FiAQ==
+X-Gm-Message-State: ANhLgQ2bK92IQikTOjcv7Hh7UPZKr+W8F5HOs48kGuZBCUgPbLGvH3tD
+        x6bzkljYykDMyel57fvzaUigRYrR8eI=
+X-Google-Smtp-Source: ADFU+vsfRKe2zmxBIOETApWTP1+wZnS51uBivMQ3evMQuYGLlms4U7D/XirxAa+dS9ffP3NAYLwDpg==
+X-Received: by 2002:ac2:4116:: with SMTP id b22mr2473616lfi.172.1583945322842;
+        Wed, 11 Mar 2020 09:48:42 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id b23sm4778966lfi.55.2020.03.11.09.48.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2020 09:48:42 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id s13so3142552ljm.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 09:48:41 -0700 (PDT)
+X-Received: by 2002:a2e:89c7:: with SMTP id c7mr2718156ljk.265.1583945321533;
+ Wed, 11 Mar 2020 09:48:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <bug-206175-5873@https.bugzilla.kernel.org/> <bug-206175-5873-S6PaNNClEr@https.bugzilla.kernel.org/>
+ <CAHk-=wi4GS05j67V0D_cRXRQ=_Jh-NT0OuNpF-JFsDFj7jZK9A@mail.gmail.com>
+ <20200310162342.GA4483@lst.de> <CAHk-=wgB2YMM6kw8W0wq=7efxsRERL14OHMOLU=Nd1OaR+sXvw@mail.gmail.com>
+ <20200310182546.GA9268@lst.de> <20200311152453.GB23704@lst.de>
+ <e70dd793-e8b8-ab0c-6027-6c22b5a99bfc@gmx.com> <20200311154328.GA24044@lst.de>
+ <20200311154718.GB24044@lst.de> <962693d9-b595-c44d-1390-e044f29e91d3@gmx.com>
+ <CAHk-=wj0E9vCO_VTiK6xuXAW13ZeeLsW=G3v+yNsCaUm1+H61A@mail.gmail.com> <CAHk-=whFu_p-eiyJfiEevV=a+irzW=9LMWjMaaFSaaasXout9w@mail.gmail.com>
+In-Reply-To: <CAHk-=whFu_p-eiyJfiEevV=a+irzW=9LMWjMaaFSaaasXout9w@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 11 Mar 2020 09:48:25 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whkKCxj-U9343Tk4Bbkc7oatqq26XGdAM6JJ+X==R_iNQ@mail.gmail.com>
+Message-ID: <CAHk-=whkKCxj-U9343Tk4Bbkc7oatqq26XGdAM6JJ+X==R_iNQ@mail.gmail.com>
+Subject: Re: [Bug 206175] Fedora >= 5.4 kernels instantly freeze on boot
+ without producing any display output
+To:     "Artem S. Tashkinov" <aros@gmx.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        iommu <iommu@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-03-11 at 11:56 +0000, Marc Zyngier wrote:
-> Despite the architecture spec requiring that reserved registers in the GIC
-> distributor memory map are RES0 (and thus are not allowed to generate
-> an exception), the Cavium ThunderX (aka TX1) SoC explodes as such:
-> 
-> [    0.000000] GICv3: GIC: Using split EOI/Deactivate mode
-> [    0.000000] GICv3: 128 SPIs implemented
-> [    0.000000] GICv3: 0 Extended SPIs implemented
-> [    0.000000] Internal error: synchronous external abort: 96000210 [#1] SMP
-> [    0.000000] Modules linked in:
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.4.0-rc4-00035-g3cf6a3d5725f #7956
-> [    0.000000] Hardware name: cavium,thunder-88xx (DT)
-> [    0.000000] pstate: 60000085 (nZCv daIf -PAN -UAO)
-> [    0.000000] pc : __raw_readl+0x0/0x8
-> [    0.000000] lr : gic_init_bases+0x110/0x560
-> [    0.000000] sp : ffff800011243d90
-> [    0.000000] x29: ffff800011243d90 x28: 0000000000000000
-> [    0.000000] x27: 0000000000000018 x26: 0000000000000002
-> [    0.000000] x25: ffff8000116f0000 x24: ffff000fbe6a2c80
-> [    0.000000] x23: 0000000000000000 x22: ffff010fdc322b68
-> [    0.000000] x21: ffff800010a7a208 x20: 00000000009b0404
-> [    0.000000] x19: ffff80001124dad0 x18: 0000000000000010
-> [    0.000000] x17: 000000004d8d492b x16: 00000000f67eb9af
-> [    0.000000] x15: ffffffffffffffff x14: ffff800011249908
-> [    0.000000] x13: ffff800091243ae7 x12: ffff800011243af4
-> [    0.000000] x11: ffff80001126e000 x10: ffff800011243a70
-> [    0.000000] x9 : 00000000ffffffd0 x8 : ffff80001069c828
-> [    0.000000] x7 : 0000000000000059 x6 : ffff8000113fb4d1
-> [    0.000000] x5 : 0000000000000001 x4 : 0000000000000000
-> [    0.000000] x3 : 0000000000000000 x2 : 0000000000000000
-> [    0.000000] x1 : 0000000000000000 x0 : ffff8000116f000c
-> [    0.000000] Call trace:
-> [    0.000000]  __raw_readl+0x0/0x8
-> [    0.000000]  gic_of_init+0x188/0x224
-> [    0.000000]  of_irq_init+0x200/0x3cc
-> [    0.000000]  irqchip_init+0x1c/0x40
-> [    0.000000]  init_IRQ+0x160/0x1d0
-> [    0.000000]  start_kernel+0x2ec/0x4b8
-> [    0.000000] Code: a8c47bfd d65f03c0 d538d080 d65f03c0 (b9400000)
-> 
-> when reading the GICv4.1 GICD_TYPER2 register, which is unexpected...
-> 
-> Work around it by adding a new quirk for the following variants:
-> 
->  ThunderX: CN88xx
->  OCTEON TX: CN83xx, CN81xx
->  OCTEON TX2: CN93xx, CN96xx, CN98xx, CNF95xx*
-> 
-> and use this flag to avoid accessing GICD_TYPER2. Note that all
-> reserved registers (including redistributors and ITS) are impacted
-> by this erratum, but that only GICD_TYPER2 has to be worked around
-> so far.
-> 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Cc: Mark Salter <msalter@redhat.com>
-> Cc: Robert Richter <rrichter@marvell.com>
-> ---
-> This is a respin of [1], with the erratum number and affected
-> platform list provided by Robert.
-> 
-> [1] https://lore.kernel.org/lkml/20191027144234.8395-11-maz@kernel.org/
+On Wed, Mar 11, 2020 at 9:24 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> So it will have a different commit ID, updated message, and be a mix
+> of my patch and Christoph's.
 
-Tested-by: Mark Salter <msalter@redhat.com>
+I ended up pushing it out before starting on the pull requests, so
+it's out there now.
 
+Artem, it would be good to have confirmation that my (modified) tip of
+tree now works for you. I don't actually doubt it does, but a final
+confirmation would be appreciated.
 
+            Linus
