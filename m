@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE6A18167D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 12:04:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FB6A181686
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 12:06:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbgCKLDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 07:03:52 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44228 "EHLO
+        id S1729117AbgCKLF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 07:05:59 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:29160 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726044AbgCKLDw (ORCPT
+        by vger.kernel.org with ESMTP id S1726000AbgCKLF6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 07:03:52 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02BB2ADt136879
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 07:03:51 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ypv2m82rv-1
+        Wed, 11 Mar 2020 07:05:58 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02BAs4ZR012266
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 07:05:57 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ypv5uh55j-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 07:03:50 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 07:05:57 -0400
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Wed, 11 Mar 2020 11:03:13 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 11 Mar 2020 11:03:16 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 11 Mar 2020 11:03:08 -0000
+        Wed, 11 Mar 2020 11:03:13 -0000
 Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02BB37IO50856086
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02BB3CYf62914678
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 Mar 2020 11:03:08 GMT
+        Wed, 11 Mar 2020 11:03:12 GMT
 Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DA98752054;
-        Wed, 11 Mar 2020 11:03:07 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 2E4BC52054;
+        Wed, 11 Mar 2020 11:03:12 +0000 (GMT)
 Received: from srikart450.in.ibm.com (unknown [9.102.25.51])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 4B90852050;
-        Wed, 11 Mar 2020 11:03:04 +0000 (GMT)
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 38ACF52050;
+        Wed, 11 Mar 2020 11:03:08 +0000 (GMT)
 From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Michael Ellerman <mpe@ellerman.id.au>
@@ -47,32 +47,79 @@ Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
         "Kirill A. Shutemov" <kirill@shutemov.name>,
         Christopher Lameter <cl@linux.com>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 2/3] powerpc/numa: Prefer node id queried from vphn
-Date:   Wed, 11 Mar 2020 16:32:36 +0530
+Subject: [PATCH 3/3] mm/page_alloc: Keep memoryless cpuless node 0 offline
+Date:   Wed, 11 Mar 2020 16:32:37 +0530
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200311110237.5731-1-srikar@linux.vnet.ibm.com>
 References: <20200311110237.5731-1-srikar@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 20031111-0028-0000-0000-000003E31109
+x-cbid: 20031111-0020-0000-0000-000003B2AD4C
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20031111-0029-0000-0000-000024A85504
-Message-Id: <20200311110237.5731-3-srikar@linux.vnet.ibm.com>
+x-cbparentid: 20031111-0021-0000-0000-0000220AFD04
+Message-Id: <20200311110237.5731-4-srikar@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-03-11_04:2020-03-11,2020-03-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- bulkscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 clxscore=1011
- lowpriorityscore=0 suspectscore=0 phishscore=0 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003110071
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ mlxscore=0 spamscore=0 adultscore=0 phishscore=0 suspectscore=2
+ lowpriorityscore=0 impostorscore=0 mlxlogscore=999 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003110070
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Node id queried from the static device tree may not
-be correct. For example: it may always show 0 on a shared processor.
-Hence prefer the node id queried from vphn and fallback on the device tree
-based node id if vphn query fails.
+Currently Linux kernel with CONFIG_NUMA on a system with multiple
+possible nodes, marks node 0 as online at boot.  However in practice,
+there are systems which have node 0 as memoryless and cpuless.
+
+This can cause numa_balancing to be enabled on systems with only one node
+with memory and CPUs. The existence of this dummy node which is cpuless and
+memoryless node can confuse users/scripts looking at output of lscpu /
+numactl.
+
+Lets stop assuming that Node 0 is always online.
+
+v5.6-rc4
+ available: 2 nodes (0,2)
+ node 0 cpus:
+ node 0 size: 0 MB
+ node 0 free: 0 MB
+ node 2 cpus: 0 1 2 3 4 5 6 7
+ node 2 size: 32625 MB
+ node 2 free: 31490 MB
+ node distances:
+ node   0   2
+   0:  10  20
+   2:  20  10
+
+proc and sys files
+------------------
+ /sys/devices/system/node/online:            0,2
+ /proc/sys/kernel/numa_balancing:            1
+ /sys/devices/system/node/has_cpu:           2
+ /sys/devices/system/node/has_memory:        2
+ /sys/devices/system/node/has_normal_memory: 2
+ /sys/devices/system/node/possible:          0-31
+
+v5.6-rc4 + patch
+------------------
+ available: 1 nodes (2)
+ node 2 cpus: 0 1 2 3 4 5 6 7
+ node 2 size: 32625 MB
+ node 2 free: 31487 MB
+ node distances:
+ node   2
+   2:  10
+
+proc and sys files
+------------------
+/sys/devices/system/node/online:            2
+/proc/sys/kernel/numa_balancing:            0
+/sys/devices/system/node/has_cpu:           2
+/sys/devices/system/node/has_memory:        2
+/sys/devices/system/node/has_normal_memory: 2
+/sys/devices/system/node/possible:          0-31
 
 Cc: linuxppc-dev@lists.ozlabs.org
 Cc: linux-mm@kvack.org
@@ -87,42 +134,25 @@ Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 ---
- arch/powerpc/mm/numa.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ mm/page_alloc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
-index 54dcd49..8735fed 100644
---- a/arch/powerpc/mm/numa.c
-+++ b/arch/powerpc/mm/numa.c
-@@ -719,20 +719,20 @@ static int __init parse_numa_properties(void)
- 	 */
- 	for_each_present_cpu(i) {
- 		struct device_node *cpu;
--		int nid;
--
--		cpu = of_get_cpu_node(i, NULL);
--		BUG_ON(!cpu);
--		nid = of_node_to_nid_single(cpu);
--		of_node_put(cpu);
-+		int nid = vphn_get_nid(i);
- 
- 		/*
- 		 * Don't fall back to default_nid yet -- we will plug
- 		 * cpus into nodes once the memory scan has discovered
- 		 * the topology.
- 		 */
--		if (nid < 0)
--			continue;
-+		if (nid == NUMA_NO_NODE) {
-+			cpu = of_get_cpu_node(i, NULL);
-+			if (cpu) {
-+				nid = of_node_to_nid_single(cpu);
-+				of_node_put(cpu);
-+			}
-+		}
- 		node_set_online(nid);
- 	}
- 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 3c4eb75..68e635f4 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -116,8 +116,10 @@ struct pcpu_drain {
+  */
+ nodemask_t node_states[NR_NODE_STATES] __read_mostly = {
+ 	[N_POSSIBLE] = NODE_MASK_ALL,
++#ifdef CONFIG_NUMA
++	[N_ONLINE] = NODE_MASK_NONE,
++#else
+ 	[N_ONLINE] = { { [0] = 1UL } },
+-#ifndef CONFIG_NUMA
+ 	[N_NORMAL_MEMORY] = { { [0] = 1UL } },
+ #ifdef CONFIG_HIGHMEM
+ 	[N_HIGH_MEMORY] = { { [0] = 1UL } },
 -- 
 1.8.3.1
 
