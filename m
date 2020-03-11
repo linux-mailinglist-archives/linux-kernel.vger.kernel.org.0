@@ -2,111 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 418871812E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:28:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1296018136D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:39:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728544AbgCKI1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 04:27:42 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55436 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbgCKI1m (ORCPT
+        id S1728711AbgCKIjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 04:39:09 -0400
+Received: from mo-csw1114.securemx.jp ([210.130.202.156]:38076 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728512AbgCKIjJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 04:27:42 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 6so1035489wmi.5
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 01:27:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=t/jUgb2WsM9EoAjEAHRyAbPDuMelzLd2J5nybEhmsYU=;
-        b=jHuIGIPOTjRCns6e64/dXbYgRrRsDy+pS6K8S4EmExmqKFFbUgBTaLKS4L5ZwUkSzM
-         SPQn9Xlo7E6IjBDgvDbIJ+Kb0eaBIU2dSDHtm5jjesh0aZ2ks/HtL8gHNN4l8j4SHcBW
-         d/j/znw+ORjHUBrQrpgvdlbuqrqNKDRUuoyIp1OS7n8tTS3t0Mjr+atdWtVNFge92vvo
-         MJFqHvO3eUkl4/ZJ+ljSx8qy7T0+MiZyC1VprLhkuzRU+RXTyo5+y1+wiDiKeFQZU6O1
-         yV3dTWSzv238IubogBkkJbe0RPjVPd9AV5/OzTr9CbofAuhatDfPnCcnC+VqCdQ0Zr8B
-         YJlw==
-X-Gm-Message-State: ANhLgQ0dShsrGl9ByBHtY4HExhaOoiJckSJxlgeFeQ9NpPcvdFGFE2Ky
-        79mDbRyI7np5NjsORZU6sOU=
-X-Google-Smtp-Source: ADFU+vt1rzvjovs9Fqx3ZtwpZNkzPk0A8oKdn7NCmBdaEs2hWB3Vz0N8ji7oL3cMOzx5S1SulIhugw==
-X-Received: by 2002:a1c:9904:: with SMTP id b4mr2565466wme.34.1583915258992;
-        Wed, 11 Mar 2020 01:27:38 -0700 (PDT)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id y184sm7683553wmd.43.2020.03.11.01.27.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 01:27:38 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 09:27:36 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch] mm, oom: prevent soft lockup on memcg oom for UP systems
-Message-ID: <20200311082736.GA23944@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.2003101438510.161160@chino.kir.corp.google.com>
- <20200310221019.GE8447@dhcp22.suse.cz>
- <alpine.DEB.2.21.2003101556270.177273@chino.kir.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2003101556270.177273@chino.kir.corp.google.com>
+        Wed, 11 Mar 2020 04:39:09 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1114) id 02B8crad025431; Wed, 11 Mar 2020 17:38:53 +0900
+X-Iguazu-Qid: 2wHHmtTgkJK7xepRsv
+X-Iguazu-QSIG: v=2; s=0; t=1583915933; q=2wHHmtTgkJK7xepRsv; m=CTR+wak4u3Jesv1LiBVCOyGbLEeAwdX18vkpcTjoyac=
+Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+        by relay.securemx.jp (mx-mr1112) id 02B8cpa7009875;
+        Wed, 11 Mar 2020 17:38:52 +0900
+Received: from enc01.localdomain ([106.186.93.100])
+        by imx2.toshiba.co.jp  with ESMTP id 02B8cpx0011428;
+        Wed, 11 Mar 2020 17:38:51 +0900 (JST)
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by enc01.localdomain  with ESMTP id 02B8cpsm009597;
+        Wed, 11 Mar 2020 17:38:51 +0900
+From:   Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
+To:     miquel.raynal@bootlin.com, vigneshr@ti.com
+Cc:     linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+Subject: [PATCH v3] mtd: rawnand: toshiba: Support actual bitflips for BENAND (Built-in ECC NAND)
+Date:   Wed, 11 Mar 2020 15:19:43 +0900
+X-TSB-HOP: ON
+Message-Id: <1583907583-5967-1-git-send-email-ytc-mb-yfuruyama7@kioxia.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 10-03-20 16:02:23, David Rientjes wrote:
-> On Tue, 10 Mar 2020, Michal Hocko wrote:
-> 
-> > > When a process is oom killed as a result of memcg limits and the victim
-> > > is waiting to exit, nothing ends up actually yielding the processor back
-> > > to the victim on UP systems with preemption disabled.  Instead, the
-> > > charging process simply loops in memcg reclaim and eventually soft
-> > > lockups.
-> > > 
-> > > Memory cgroup out of memory: Killed process 808 (repro) total-vm:41944kB, anon-rss:35344kB, file-rss:504kB, shmem-rss:0kB, UID:0 pgtables:108kB oom_score_adj:0
-> > > watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [repro:806]
-> > > CPU: 0 PID: 806 Comm: repro Not tainted 5.6.0-rc5+ #136
-> > > RIP: 0010:shrink_lruvec+0x4e9/0xa40
-> > > ...
-> > > Call Trace:
-> > >  shrink_node+0x40d/0x7d0
-> > >  do_try_to_free_pages+0x13f/0x470
-> > >  try_to_free_mem_cgroup_pages+0x16d/0x230
-> > >  try_charge+0x247/0xac0
-> > >  mem_cgroup_try_charge+0x10a/0x220
-> > >  mem_cgroup_try_charge_delay+0x1e/0x40
-> > >  handle_mm_fault+0xdf2/0x15f0
-> > >  do_user_addr_fault+0x21f/0x420
-> > >  page_fault+0x2f/0x40
-> > > 
-> > > Make sure that something ends up actually yielding the processor back to
-> > > the victim to allow for memory freeing.  Most appropriate place appears to
-> > > be shrink_node_memcgs() where the iteration of all decendant memcgs could
-> > > be particularly lengthy.
-> > 
-> > There is a cond_resched in shrink_lruvec and another one in
-> > shrink_page_list. Why doesn't any of them hit? Is it because there are
-> > no pages on the LRU list? Because rss data suggests there should be
-> > enough pages to go that path. Or maybe it is shrink_slab path that takes
-> > too long?
-> > 
-> 
-> I think it can be a number of cases, most notably mem_cgroup_protected() 
-> checks which is why the cond_resched() is added above it.  Rather than add 
-> cond_resched() only for MEMCG_PROT_MIN and for certain MEMCG_PROT_LOW, the 
-> cond_resched() is added above the switch clause because the iteration 
-> itself may be potentially very lengthy.
+Add support vendor specific commands for KIOXIA CORPORATION BENAND.
+The actual bitflips number can be get by this command.
 
-Was any of the above the case for your soft lockup case? How have you
-managed to trigger it? As I've said I am not against the patch but I
-would really like to see an actual explanation what happened rather than
-speculations of what might have happened. If for nothing else then for
-the future reference.
+Signed-off-by: Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
+---
+changelog[v3]:Tested version.
+original patch:"[RFC,v2] mtd: nand: toshiba: Add support for ->exec_op()".
 
-If this is really about all the hierarchy being MEMCG_PROT_MIN protected
-and that results in a very expensive and pointless reclaim walk that can
-trigger soft lockup then it should be explicitly mentioned in the
-changelog.
+ drivers/mtd/nand/raw/nand_toshiba.c | 55 +++++++++++++++++++++++++++++++++++--
+ 1 file changed, 53 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/nand_toshiba.c b/drivers/mtd/nand/raw/nand_toshiba.c
+index 9c03fbb..10fcfbd 100644
+--- a/drivers/mtd/nand/raw/nand_toshiba.c
++++ b/drivers/mtd/nand/raw/nand_toshiba.c
+@@ -14,14 +14,65 @@
+ /* Recommended to rewrite for BENAND */
+ #define TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED	BIT(3)
+ 
++/* ECC Status Read Command for BENAND */
++#define TOSHIBA_NAND_CMD_ECC_STATUS_READ	0x7A
++
++/* ECC Status Mask for BENAND */
++#define TOSHIBA_NAND_ECC_STATUS_MASK		0x0F
++
++/* Uncorrectable Error for BENAND */
++#define TOSHIBA_NAND_ECC_STATUS_UNCORR		0x0F
++
++static int toshiba_nand_benand_read_eccstatus_op(struct nand_chip *chip,
++						 u8 *buf)
++{
++	u8 *ecc_status = buf;
++
++	if (nand_has_exec_op(chip)) {
++		const struct nand_sdr_timings *sdr =
++			nand_get_sdr_timings(&chip->data_interface);
++		struct nand_op_instr instrs[] = {
++			NAND_OP_CMD(TOSHIBA_NAND_CMD_ECC_STATUS_READ,
++				    PSEC_TO_NSEC(sdr->tADL_min)),
++			NAND_OP_8BIT_DATA_IN(chip->ecc.steps, ecc_status, 0),
++		};
++		struct nand_operation op = NAND_OPERATION(chip->cur_cs, instrs);
++
++		return nand_exec_op(chip, &op);
++	}
++
++	return -ENOTSUPP;
++}
++
+ static int toshiba_nand_benand_eccstatus(struct nand_chip *chip)
+ {
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+ 	int ret;
+ 	unsigned int max_bitflips = 0;
+-	u8 status;
++	u8 status, ecc_status[8];
+ 
+ 	/* Check Status */
++	ret = toshiba_nand_benand_read_eccstatus_op(chip, ecc_status);
++	if (!ret) {
++		unsigned int i, bitflips = 0;
++
++		for (i = 0; i < chip->ecc.steps; i++) {
++			bitflips = ecc_status[i] & TOSHIBA_NAND_ECC_STATUS_MASK;
++			if (bitflips == TOSHIBA_NAND_ECC_STATUS_UNCORR) {
++				mtd->ecc_stats.failed++;
++			} else {
++				mtd->ecc_stats.corrected += bitflips;
++				max_bitflips = max(max_bitflips, bitflips);
++			}
++		}
++
++		return max_bitflips;
++	}
++
++	/*
++	 * Fallback to regular status check if
++	 * toshiba_nand_benand_read_eccstatus_op() failed.
++	 */
+ 	ret = nand_status_op(chip, &status);
+ 	if (ret)
+ 		return ret;
+@@ -108,7 +159,7 @@ static void toshiba_nand_decode_id(struct nand_chip *chip)
+ 	 */
+ 	if (chip->id.len >= 6 && nand_is_slc(chip) &&
+ 	    (chip->id.data[5] & 0x7) == 0x6 /* 24nm */ &&
+-	    !(chip->id.data[4] & 0x80) /* !BENAND */) {
++	    !(chip->id.data[4] & TOSHIBA_NAND_ID4_IS_BENAND) /* !BENAND */) {
+ 		memorg->oobsize = 32 * memorg->pagesize >> 9;
+ 		mtd->oobsize = memorg->oobsize;
+ 	}
 -- 
-Michal Hocko
-SUSE Labs
+1.9.1
+
