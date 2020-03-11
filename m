@@ -2,42 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94923180F2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 06:07:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ECC5180F2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 06:07:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbgCKFGx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 01:06:53 -0400
-Received: from smtprelay0027.hostedemail.com ([216.40.44.27]:42604 "EHLO
+        id S1728135AbgCKFHC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 01:07:02 -0400
+Received: from smtprelay0107.hostedemail.com ([216.40.44.107]:42626 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727184AbgCKFGu (ORCPT
+        by vger.kernel.org with ESMTP id S1727984AbgCKFGw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 01:06:50 -0400
+        Wed, 11 Mar 2020 01:06:52 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id EC692181D330D;
-        Wed, 11 Mar 2020 05:06:48 +0000 (UTC)
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id B7691181D3025;
+        Wed, 11 Mar 2020 05:06:50 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:541:800:960:967:973:982:988:989:1260:1311:1314:1345:1359:1437:1515:1534:1543:1711:1730:1747:1777:1792:2393:2525:2560:2563:2682:2685:2859:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3865:3866:3867:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4605:5007:6261:8660:9025:9592:10004:10848:11026:11473:11657:11658:11914:12043:12048:12296:12297:12438:12555:12679:12895:12986:13148:13230:13894:14096:14181:14394:14721:21080:21433:21627:21811:21939:30045:30054:30055,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: earth44_1e21c7c654313
-X-Filterd-Recvd-Size: 4150
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:541:800:960:967:973:982:988:989:1260:1311:1314:1345:1359:1437:1515:1534:1541:1711:1730:1747:1777:1792:2393:2525:2560:2563:2682:2685:2859:2901:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3865:3866:3867:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6119:6261:9025:10004:10848:11026:11473:11657:11658:11914:12043:12296:12297:12438:12555:12679:12895:12986:13069:13311:13357:13894:13972:14181:14384:14394:14721:21080:21433:21627:21811:21939:21990:30054,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: jewel27_1e8115a6f7d16
+X-Filterd-Recvd-Size: 2301
 Received: from joe-laptop.perches.com (unknown [47.151.143.254])
         (Authenticated sender: joe@perches.com)
         by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 11 Mar 2020 05:06:46 +0000 (UTC)
+        Wed, 11 Mar 2020 05:06:49 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Subject: [PATCH -next 004/491] PERFORMANCE EVENTS SUBSYSTEM: Use fallthrough;
-Date:   Tue, 10 Mar 2020 21:51:18 -0700
-Message-Id: <73d22360c5c665fd7f480a209ae46807dfb07bbe.1583896348.git.joe@perches.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH -next 005/491] ARM/UNIPHIER ARCHITECTURE: Use fallthrough;
+Date:   Tue, 10 Mar 2020 21:51:19 -0700
+Message-Id: <dae0878058223a42c77d725b8d7c5845a7ef9dc0.1583896348.git.joe@perches.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1583896344.git.joe@perches.com>
 References: <cover.1583896344.git.joe@perches.com>
@@ -55,94 +48,40 @@ Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582
 
 Signed-off-by: Joe Perches <joe@perches.com>
 ---
- arch/mips/kernel/perf_event_mipsxx.c | 6 +++---
- arch/x86/events/intel/core.c         | 7 +++----
- arch/x86/events/intel/lbr.c          | 2 +-
- kernel/events/core.c                 | 3 +--
- 4 files changed, 8 insertions(+), 10 deletions(-)
+ drivers/tty/serial/8250/8250_uniphier.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/mips/kernel/perf_event_mipsxx.c b/arch/mips/kernel/perf_event_mipsxx.c
-index 128fc9..484948 100644
---- a/arch/mips/kernel/perf_event_mipsxx.c
-+++ b/arch/mips/kernel/perf_event_mipsxx.c
-@@ -790,15 +790,15 @@ static void reset_counters(void *arg)
- 	case 4:
- 		mipsxx_pmu_write_control(3, 0);
- 		mipspmu.write_counter(3, 0);
--		/* fall through */
-+		fallthrough;
- 	case 3:
- 		mipsxx_pmu_write_control(2, 0);
- 		mipspmu.write_counter(2, 0);
--		/* fall through */
-+		fallthrough;
- 	case 2:
- 		mipsxx_pmu_write_control(1, 0);
- 		mipspmu.write_counter(1, 0);
--		/* fall through */
-+		fallthrough;
- 	case 1:
- 		mipsxx_pmu_write_control(0, 0);
- 		mipspmu.write_counter(0, 0);
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 332954..8cd3bb 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -4637,8 +4637,7 @@ __init int intel_pmu_init(void)
- 
- 	case INTEL_FAM6_CORE2_MEROM:
- 		x86_add_quirk(intel_clovertown_quirk);
--		/* fall through */
--
-+		fallthrough;
- 	case INTEL_FAM6_CORE2_MEROM_L:
- 	case INTEL_FAM6_CORE2_PENRYN:
- 	case INTEL_FAM6_CORE2_DUNNINGTON:
-@@ -5017,7 +5016,7 @@ __init int intel_pmu_init(void)
- 
- 	case INTEL_FAM6_SKYLAKE_X:
- 		pmem = true;
--		/* fall through */
-+		fallthrough;
- 	case INTEL_FAM6_SKYLAKE_L:
- 	case INTEL_FAM6_SKYLAKE:
- 	case INTEL_FAM6_KABYLAKE_L:
-@@ -5069,7 +5068,7 @@ __init int intel_pmu_init(void)
- 	case INTEL_FAM6_ICELAKE_X:
- 	case INTEL_FAM6_ICELAKE_D:
- 		pmem = true;
--		/* fall through */
-+		fallthrough;
- 	case INTEL_FAM6_ICELAKE_L:
- 	case INTEL_FAM6_ICELAKE:
- 	case INTEL_FAM6_TIGERLAKE_L:
-diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
-index 65113b1..2e2c6fb 100644
---- a/arch/x86/events/intel/lbr.c
-+++ b/arch/x86/events/intel/lbr.c
-@@ -967,7 +967,7 @@ static int branch_type(unsigned long from, unsigned long to, int abort)
- 			ret = X86_BR_ZERO_CALL;
- 			break;
- 		}
--		/* fall through */
-+		fallthrough;
- 	case 0x9a: /* call far absolute */
- 		ret = X86_BR_CALL;
+diff --git a/drivers/tty/serial/8250/8250_uniphier.c b/drivers/tty/serial/8250/8250_uniphier.c
+index e0b73a5..a2978ab 100644
+--- a/drivers/tty/serial/8250/8250_uniphier.c
++++ b/drivers/tty/serial/8250/8250_uniphier.c
+@@ -75,7 +75,7 @@ static unsigned int uniphier_serial_in(struct uart_port *p, int offset)
  		break;
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 6a47c3..7a8ed4d5 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -9762,8 +9762,7 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
- 		case IF_SRC_KERNELADDR:
- 		case IF_SRC_KERNEL:
- 			kernel = 1;
--			/* fall through */
--
-+			fallthrough;
- 		case IF_SRC_FILEADDR:
- 		case IF_SRC_FILE:
- 			if (state != IF_STATE_SOURCE)
+ 	case UART_LCR:
+ 		valshift = 8;
+-		/* fall through */
++		fallthrough;
+ 	case UART_MCR:
+ 		offset = UNIPHIER_UART_LCR_MCR;
+ 		break;
+@@ -101,7 +101,7 @@ static void uniphier_serial_out(struct uart_port *p, int offset, int value)
+ 	case UART_SCR:
+ 		/* No SCR for this hardware.  Use CHAR as a scratch register */
+ 		valshift = 8;
+-		/* fall through */
++		fallthrough;
+ 	case UART_FCR:
+ 		offset = UNIPHIER_UART_CHAR_FCR;
+ 		break;
+@@ -109,7 +109,7 @@ static void uniphier_serial_out(struct uart_port *p, int offset, int value)
+ 		valshift = 8;
+ 		/* Divisor latch access bit does not exist. */
+ 		value &= ~UART_LCR_DLAB;
+-		/* fall through */
++		fallthrough;
+ 	case UART_MCR:
+ 		offset = UNIPHIER_UART_LCR_MCR;
+ 		break;
 -- 
 2.24.0
 
