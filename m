@@ -2,58 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49EE81816EC
+	by mail.lfdr.de (Postfix) with ESMTP id BE2A01816ED
 	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 12:36:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbgCKLgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 07:36:22 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35550 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725834AbgCKLgV (ORCPT
+        id S1729206AbgCKLgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 07:36:23 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46843 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729166AbgCKLgW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 07:36:21 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d5so1791599wrc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 04:36:18 -0700 (PDT)
+        Wed, 11 Mar 2020 07:36:22 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n15so2107295wrw.13
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 04:36:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=a3pvk8YM9KciTsoi8ZTo0J1S/sSYGSlU0IpIN/JdgKY=;
-        b=epXS8b68jSfacixPIe996/Issuty7JuLN8tDTKxPy/9fL8ZoneFpxLQoKp55s/Xqrb
-         yomyWspUaaoN7PPbyg3+1+dn1USNiC4R2gN3GrIlwzilyKRWugjvBFAVkFtSiLgU6c7L
-         yJ2kz9qKA3wpwVLGa7ja7+b5uymfx2YuauBf/dmyNpbqkG9PhfaBYCY73QWPyuGggLKf
-         VeziX3p8ojj9CZveIkORRR8MGnOfWObshMianlG0flWNvIcet9GPAkEOVnX0gdr/RSAn
-         4s2g2ROl0Jdl5Bez/LDwwa1GgbUCDtDn/GoLHXic4DSOo9MSPaScEcnrEgzdTKNJhET6
-         gGJA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=EGydLBv1yG6IqmA1HcLLSymIojwkdOWZ9F3nvVgVBJA=;
+        b=kXQ0EZxjxLgnJQdW6QvzzlgWATLi+m5mPF47WL1MzqQDFw1EiWlnkdIz2pS9VOCc3T
+         FDNd8RL3IcXK0Qeckd0aBJUweELOu6IbjOxdxDg+WZMByjrpme7fUed+9tK9TBW4rn9m
+         BG/YpsOZanwjplJgTJbZzQbVq87G7lQ8mr8v/HOv41h4BSqMV1s1wkBYsaf5zdPDqbaU
+         qioaRRbjEAXWbiUC8bJYgxPXadgqnNe1jLKu98xQxN8HZCfWDJr8lOhaVidMh9D0bcoA
+         evF9I+vktMAWp51nt/4HWlIN3luFQEPc2HcdtfH009FF0O5DlbYODKVJ2NvH1yD2VpKp
+         DM8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=a3pvk8YM9KciTsoi8ZTo0J1S/sSYGSlU0IpIN/JdgKY=;
-        b=VWHmT2yV2ECPG7BCLsUJuea9WyIs/tEdBhlnXvME9ElI6qNWCQd87NFx4YX5bIXr7Q
-         s7sWs7FVIGvNsKJq9yu4FBQYPu9GCy02MSthpOm3VGTYuPIMU36vwsjHEKmEy3zvwmcp
-         w4yIEwfgFxZ8SpgTzJeiFGTjy+zUNjCMt3M6uQhdOsMBHIFThUgMdY3xgC3q4CQNokpH
-         i5MW3wkKgsyUbMyCdyr9W4T/vEBgWpSK+6ldC5Ie6x6I43wnjBh64hWmRhUKBPAHojqa
-         yrWv8LslV34cc5XxHZnzZi9ybA0NUZmr5XvzPaehoflVwzSTGeE4fS65ZymA3G2qyhR9
-         rVbA==
-X-Gm-Message-State: ANhLgQ1vwfldUaaUG0+pscKkliyvEzMirvz0t6i9YBeSrpkHaWsnsMQb
-        kDMd2tDH+K8Em7kZqTngl4Af+g==
-X-Google-Smtp-Source: ADFU+vvu2foe5tilScyQakEbJFDrry3CKe/s1NISiVxUkngdoUCD9DWM8A/xs/ohy3NDrj2Prqhzxg==
-X-Received: by 2002:a5d:6591:: with SMTP id q17mr3933045wru.22.1583926578262;
-        Wed, 11 Mar 2020 04:36:18 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=EGydLBv1yG6IqmA1HcLLSymIojwkdOWZ9F3nvVgVBJA=;
+        b=JuZFFzZegba9rnLwnB7YWQE9aXhk8dHffOUon6aeayzx/AYz0PqIVYn0JIX9enIAvi
+         IGYmD9PJpEQRZmmHy/kCBwOgdttV1U7r+dF+tS7Fj/meIhAqAeiD21RlyQZREbpvRfF/
+         sCXKsan5eHWXyN4jcj+oOebeDLiG7LGK2I+VsKG2lfmAIV/uz4F6ra8GxWQ1o27gZGkI
+         g1zW2IkbId28NObAlcO7Lkr4TlQEE/32AL7XgQ/NyFDo8sWn0IjwntLVviYQNK+9P1/J
+         AGrKHNhtspmMaLUN4RqwqNHEL9siXQMy0dPRdX/T+3hiddE51f3b5dxMPxtBqNXbY5io
+         5fuA==
+X-Gm-Message-State: ANhLgQ2Dbah5K8IfhzVXJkMo1uV/IwDaKblke3/oT2rXSBtfmfHOmKjb
+        LBIsb17vmtWvfbqP3mWBR+9Fsw==
+X-Google-Smtp-Source: ADFU+vuMbN/M6IXL7D0YfyYOzkTFBH0srYm2N5bFT/tMeKkFzGIGsUvO/H40SDljefCGwEFTZmWzbg==
+X-Received: by 2002:adf:e506:: with SMTP id j6mr3976144wrm.309.1583926579504;
+        Wed, 11 Mar 2020 04:36:19 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id c8sm61650537wru.7.2020.03.11.04.36.17
+        by smtp.gmail.com with ESMTPSA id c8sm61650537wru.7.2020.03.11.04.36.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 04:36:17 -0700 (PDT)
+        Wed, 11 Mar 2020 04:36:18 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     broonie@kernel.org, vkoul@kernel.org
 Cc:     pierre-louis.bossart@linux.intel.com, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 0/2] soundwire: add read_only_wordlength flag
-Date:   Wed, 11 Mar 2020 11:35:43 +0000
-Message-Id: <20200311113545.23773-1-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 1/2] soundwire: stream: Add read_only_wordlength flag to port properties
+Date:   Wed, 11 Mar 2020 11:35:44 +0000
+Message-Id: <20200311113545.23773-2-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20200311113545.23773-1-srinivas.kandagatla@linaro.org>
+References: <20200311113545.23773-1-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,16 +77,59 @@ writing to readonly registers, but this patch provides a way to avoid
 writes to DPN_BlockCtrl1 register by providing a read_only_wordlength
 flag in struct sdw_dpn_prop
 
-
-Srinivas Kandagatla (2):
-  soundwire: stream: Add read_only_wordlength flag to port properties
-  ASoC: wsa881x: mark read_only_wordlength flag
-
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
  drivers/soundwire/stream.c    | 16 +++++++++-------
  include/linux/soundwire/sdw.h |  2 ++
- sound/soc/codecs/wsa881x.c    |  4 ++++
- 3 files changed, 15 insertions(+), 7 deletions(-)
+ 2 files changed, 11 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
+index 178ae92b8cc1..7fb89a94d9c0 100644
+--- a/drivers/soundwire/stream.c
++++ b/drivers/soundwire/stream.c
+@@ -167,13 +167,15 @@ static int sdw_program_slave_port_params(struct sdw_bus *bus,
+ 		return ret;
+ 	}
+ 
+-	/* Program DPN_BlockCtrl1 register */
+-	ret = sdw_write(s_rt->slave, addr2, (p_params->bps - 1));
+-	if (ret < 0) {
+-		dev_err(&s_rt->slave->dev,
+-			"DPN_BlockCtrl1 register write failed for port %d\n",
+-			t_params->port_num);
+-		return ret;
++	if (!dpn_prop->read_only_wordlength) {
++		/* Program DPN_BlockCtrl1 register */
++		ret = sdw_write(s_rt->slave, addr2, (p_params->bps - 1));
++		if (ret < 0) {
++			dev_err(&s_rt->slave->dev,
++				"DPN_BlockCtrl1 register write failed for port %d\n",
++				t_params->port_num);
++			return ret;
++		}
+ 	}
+ 
+ 	/* Program DPN_SampleCtrl1 register */
+diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
+index b451bb622335..2dfe14ed3bb0 100644
+--- a/include/linux/soundwire/sdw.h
++++ b/include/linux/soundwire/sdw.h
+@@ -284,6 +284,7 @@ struct sdw_dpn_audio_mode {
+  * @max_async_buffer: Number of samples that this port can buffer in
+  * asynchronous modes
+  * @block_pack_mode: Type of block port mode supported
++ * @read_only_wordlength: Read Only wordlength field in DPN_BlockCtrl1 register
+  * @port_encoding: Payload Channel Sample encoding schemes supported
+  * @audio_modes: Audio modes supported
+  */
+@@ -307,6 +308,7 @@ struct sdw_dpn_prop {
+ 	u32 modes;
+ 	u32 max_async_buffer;
+ 	bool block_pack_mode;
++	bool read_only_wordlength;
+ 	u32 port_encoding;
+ 	struct sdw_dpn_audio_mode *audio_modes;
+ };
 -- 
 2.21.0
 
