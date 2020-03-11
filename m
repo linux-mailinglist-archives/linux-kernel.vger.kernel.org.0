@@ -2,97 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC7351811F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 08:31:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D63F7181223
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 08:42:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728445AbgCKHaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 03:30:13 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:39601 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbgCKHaM (ORCPT
+        id S1728425AbgCKHlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 03:41:02 -0400
+Received: from m177134.mail.qiye.163.com ([123.58.177.134]:16660 "EHLO
+        m177134.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbgCKHlC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 03:30:12 -0400
-Received: by mail-vk1-f196.google.com with SMTP id t129so252152vkg.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 00:30:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=58gY/snG1zfsmEZwfxQ5qaU+C0JmXrHYD5/aDq4nrYQ=;
-        b=FLAgdxR84+bL2lLAlWAAEFw9D/rrFsKwBW3NqU3pB7Sd3LlMlfWJGGwFDELCQ8nba6
-         w08dOuNNjL7cSbUkm+r68e74x7KnCX5SuV3O72x+b16ktxO7Bqnpn2WZjSapQ3n65h0C
-         kO9aFSFDG4lnTOGlHQUzYx7P+xmsnTy28GZuzZGMKuX0GfZqokjoLYbSdcgyOltE2XnW
-         /U6V91Dm0YwZKsEHsjSAEUjVbpOjOMTzZfijDt59h5x8kIYg9YjjLrSMfJEZJE2tjub4
-         9Ed2hzEM1e6Ayykz4Or5XDKHdh+/GvRD8XzVWt9/kD5HATSLtWSpOWwVeyaxKifercaZ
-         f9MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=58gY/snG1zfsmEZwfxQ5qaU+C0JmXrHYD5/aDq4nrYQ=;
-        b=akx5mMYiN3o2mhSLRpzYQRD4+gCBs82Vvoy4GBYwtQ35vRBdFCNZPBHi2JKB9qqB1D
-         /9JKNKCOV/bzB8eQxVgGt7YfMNsDN9PZTyAwLS20Ycu7CxNa+4mJBC6cAmFMGU/qcoxM
-         jwnITtSjCBWcvF3fvo/0IGFBVJiFlY7uteRIXbaFEdvC8yKK7nnWcZ9O92GGOKEYCBIH
-         Eq3DaFdqQIIMls4PD7nAWffvshThhKfbZpjIpQgJsQmMfgtxJx2qcd4CPcziE53az1n2
-         hpYb19jWtBu1LyRf+u6PTND6ywenwyPVyxHF9y4YSFkKApXLdfY7/cs+yEXV1hE5UBps
-         PpLQ==
-X-Gm-Message-State: ANhLgQ0ON2H9QVDl09/QisMY7x9ZujuLoTM09ZOuF+DMijjOG4ZMEfUP
-        k0opNTjI58pS2V/zmHWS9zXk9tybGket9aV98jS8YQ==
-X-Google-Smtp-Source: ADFU+vssJBpId4km4y7xMSEYOl8Z2O97oRKgr/2SAIkTHcB/axtJtiIDB0e8r9ITlvulJ0M4u7XGQfFVYlOgl3EgQ1U=
-X-Received: by 2002:a1f:cbc1:: with SMTP id b184mr1095491vkg.73.1583911811319;
- Wed, 11 Mar 2020 00:30:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200310154358.39367-1-swboyd@chromium.org> <20200310154358.39367-4-swboyd@chromium.org>
-In-Reply-To: <20200310154358.39367-4-swboyd@chromium.org>
-From:   Amit Kucheria <amit.kucheria@verdurent.com>
-Date:   Wed, 11 Mar 2020 13:00:00 +0530
-Message-ID: <CAHLCerM8XT_SwpqDAHrRJTy8T_74ASM6cedo_4gwLxvBOo32rQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] i2c: qcom-geni: Drop of_platform.h include
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-i2c@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Alok Chauhan <alokc@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Brendan Higgins <brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 11 Mar 2020 03:41:02 -0400
+X-Greylist: delayed 519 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Mar 2020 03:41:01 EDT
+Received: from ubuntu.localdomain (unknown [58.251.74.226])
+        by m17618.mail.qiye.163.com (Hmail) with ESMTPA id 4719C4E207F;
+        Wed, 11 Mar 2020 15:32:16 +0800 (CST)
+From:   Li Tao <tao.li@vivo.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     wenhu.pku@gmail.com, Li Tao <tao.li@vivo.com>
+Subject: [PATCH] arm64: kexec_file: Fixed code style.
+Date:   Wed, 11 Mar 2020 15:31:55 +0800
+Message-Id: <20200311073156.125251-1-tao.li@vivo.com>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUlXWQgYFAkeWUFZQ1VKTklCQkNCSU9JTk5ITFlXWShZQU
+        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nio6FCo4EDgyODMNQxkQT0w4
+        Ah8aFD5VSlVKTkNIQkpKQkhCSUxOVTMWGhIXVQ8aFFUXEjsNEg0UVRgUFkVZV1kSC1lBWU5DVUlO
+        SlVMT1VJSU1ZV1kIAVlBSkNJSTcG
+X-HM-Tid: 0a70c88222989376kuws4719c4e207f
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 9:14 PM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> This driver doesn't call any DT platform functions like of_platform_*().
-> Remove the include as it isn't used.
->
+Remove unnecessary blank.
 
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+Signed-off-by: Li Tao <tao.li@vivo.com>
+---
+ arch/arm64/kernel/machine_kexec_file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+index dd3ae80..b40c3b0 100644
+--- a/arch/arm64/kernel/machine_kexec_file.c
++++ b/arch/arm64/kernel/machine_kexec_file.c
+@@ -121,7 +121,7 @@ static int setup_dtb(struct kimage *image,
+ 
+ 	/* add kaslr-seed */
+ 	ret = fdt_delprop(dtb, off, FDT_PROP_KASLR_SEED);
+-	if  (ret == -FDT_ERR_NOTFOUND)
++	if (ret == -FDT_ERR_NOTFOUND)
+ 		ret = 0;
+ 	else if (ret)
+ 		goto out;
+-- 
+1.9.1
 
-> Cc: Alok Chauhan <alokc@codeaurora.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  drivers/i2c/busses/i2c-qcom-geni.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-> index 2f5fb2e83f95..18d1e4fd4cf3 100644
-> --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> @@ -10,7 +10,6 @@
->  #include <linux/io.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/qcom-geni-se.h>
-> --
-> Sent by a computer, using git, on the internet
->
