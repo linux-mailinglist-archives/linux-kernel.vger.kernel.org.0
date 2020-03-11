@@ -2,95 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 596A4181EE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:15:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B99FA181F0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:16:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730398AbgCKRPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:15:01 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:21819 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730351AbgCKRPA (ORCPT
+        id S1730548AbgCKRQp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:16:45 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53215 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730362AbgCKRQo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:15:00 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583946899; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=6IQ1AtHbnG9BHfziFNEIWfdxwfTRRjVzrhnJiTYCmfU=; b=cmfGmGvzdJ4y2Px/u18shEcQRqHxq8oGcrZ2Azs5kMAOFa6icPsybbKTUxU82oos3IUSgY6J
- yP2eMBbRxfH5RYc8T5CFWkoYtR6iznE4csJJSXUoQXTK5oyYKnugcOEVE5YcRYXdJ5CHn6KE
- YOKiUGGLYjqXHcnHa7V5oZT+PkM=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e691c85.7f13681f4030-smtp-out-n05;
- Wed, 11 Mar 2020 17:14:45 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 6441DC43636; Wed, 11 Mar 2020 17:14:44 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from vbadigan-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Wed, 11 Mar 2020 13:16:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583947004;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=T8uHgWgRrKhjOS0/8z1+bbTJM5VUQNPPAg1DCmOx02I=;
+        b=Cyjd/D0bXCZLp8TYtNSXBshwLqYXHbrtyWMC9BtyTBzITP0FQ0cXj012ngDtRgpVKee02i
+        pxct2wRoJ4OrzrZmJf5kzFCWdOJBLu0QabIppWxmga+AwAKS1kenP00PR+ivOp6RU2/S2i
+        htZE200AAg7S+82BmlKJ1dV0nIcsZbM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-288-0R_hVMT8Osu2Hnt2IwParA-1; Wed, 11 Mar 2020 13:16:40 -0400
+X-MC-Unique: 0R_hVMT8Osu2Hnt2IwParA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: vbadigan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 85A97C433BA;
-        Wed, 11 Mar 2020 17:14:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 85A97C433BA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
-From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-To:     bjorn.andersson@linaro.org, vkoul@kernel.org
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS)
-Subject: [PATCH] arm64: dts: qcom: qcs404: Enable CQE support for eMMC
-Date:   Wed, 11 Mar 2020 22:44:21 +0530
-Message-Id: <1583946863-24308-1-git-send-email-vbadigan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 43FB4800D5E;
+        Wed, 11 Mar 2020 17:16:38 +0000 (UTC)
+Received: from t480s.redhat.com (ovpn-116-132.ams2.redhat.com [10.36.116.132])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C87DD60BEE;
+        Wed, 11 Mar 2020 17:16:23 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, virtio-dev@lists.oasis-open.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Igor Mammedov <imammedo@redhat.com>,
+        Dave Young <dyoung@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH v2 09/10] virtio-mem: Better retry handling
+Date:   Wed, 11 Mar 2020 18:14:21 +0100
+Message-Id: <20200311171422.10484-10-david@redhat.com>
+In-Reply-To: <20200311171422.10484-1-david@redhat.com>
+References: <20200311171422.10484-1-david@redhat.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enabling CQE support for eMMC by supplying the correct reg name
-and flag which indicates CQE support.
+Let's start with a retry interval of 5 seconds and double the time until
+we reach 5 minutes, in case we keep getting errors. Reset the retry
+interval in case we succeeded.
 
-Also remove the redundant _mem suffix for reg names.
+The two main reasons for having to retry are
+- The hypervisor is busy and cannot process our request
+- We cannot reach the desired requested_size (esp., not enough memory can
+  get unplugged because we can't allocate any subblocks).
 
-Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Igor Mammedov <imammedo@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 1 +
- arch/arm64/boot/dts/qcom/qcs404.dtsi     | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/virtio/virtio_mem.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-index 522d3ef..afe69e8 100644
---- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-@@ -200,6 +200,7 @@
- &sdcc1 {
- 	status = "ok";
- 
-+	supports-cqe;
- 	mmc-ddr-1_8v;
- 	mmc-hs400-1_8v;
- 	bus-width = <8>;
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index 1eea064..f149a53 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -687,7 +687,7 @@
- 		sdcc1: sdcc@7804000 {
- 			compatible = "qcom,qcs404-sdhci", "qcom,sdhci-msm-v5";
- 			reg = <0x07804000 0x1000>, <0x7805000 0x1000>;
--			reg-names = "hc_mem", "cmdq_mem";
-+			reg-names = "hc", "cqhci";
- 
- 			interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
+diff --git a/drivers/virtio/virtio_mem.c b/drivers/virtio/virtio_mem.c
+index aa322e7732a4..48e96702d4ce 100644
+--- a/drivers/virtio/virtio_mem.c
++++ b/drivers/virtio/virtio_mem.c
+@@ -138,7 +138,9 @@ struct virtio_mem {
+=20
+ 	/* Timer for retrying to plug/unplug memory. */
+ 	struct hrtimer retry_timer;
+-#define VIRTIO_MEM_RETRY_TIMER_MS		30000
++	unsigned int retry_timer_ms;
++#define VIRTIO_MEM_RETRY_TIMER_MIN_MS		50000
++#define VIRTIO_MEM_RETRY_TIMER_MAX_MS		300000
+=20
+ 	/* Memory notifier (online/offline events). */
+ 	struct notifier_block memory_notifier;
+@@ -1548,6 +1550,7 @@ static void virtio_mem_run_wq(struct work_struct *w=
+ork)
+=20
+ 	switch (rc) {
+ 	case 0:
++		vm->retry_timer_ms =3D VIRTIO_MEM_RETRY_TIMER_MIN_MS;
+ 		break;
+ 	case -ENOSPC:
+ 		/*
+@@ -1563,8 +1566,7 @@ static void virtio_mem_run_wq(struct work_struct *w=
+ork)
+ 		 */
+ 	case -ENOMEM:
+ 		/* Out of memory, try again later. */
+-		hrtimer_start(&vm->retry_timer,
+-			      ms_to_ktime(VIRTIO_MEM_RETRY_TIMER_MS),
++		hrtimer_start(&vm->retry_timer, ms_to_ktime(vm->retry_timer_ms),
+ 			      HRTIMER_MODE_REL);
+ 		break;
+ 	case -EAGAIN:
+@@ -1584,6 +1586,8 @@ static enum hrtimer_restart virtio_mem_timer_expire=
+d(struct hrtimer *timer)
+ 					     retry_timer);
+=20
+ 	virtio_mem_retry(vm);
++	vm->retry_timer_ms =3D min_t(unsigned int, vm->retry_timer_ms * 2,
++				   VIRTIO_MEM_RETRY_TIMER_MAX_MS);
+ 	return HRTIMER_NORESTART;
+ }
+=20
+@@ -1750,6 +1754,7 @@ static int virtio_mem_probe(struct virtio_device *v=
+dev)
+ 	spin_lock_init(&vm->removal_lock);
+ 	hrtimer_init(&vm->retry_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+ 	vm->retry_timer.function =3D virtio_mem_timer_expired;
++	vm->retry_timer_ms =3D VIRTIO_MEM_RETRY_TIMER_MIN_MS;
+=20
+ 	/* register the virtqueue */
+ 	rc =3D virtio_mem_init_vq(vm);
+--=20
+2.24.1
+
