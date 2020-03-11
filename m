@@ -2,136 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFA9518225B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:32:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBFA018229E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:38:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731224AbgCKTck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 15:32:40 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:41717 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731165AbgCKTcj (ORCPT
+        id S1731077AbgCKTiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 15:38:11 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40746 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730925AbgCKTiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:32:39 -0400
-Received: by mail-yw1-f68.google.com with SMTP id p124so3162938ywc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:32:38 -0700 (PDT)
+        Wed, 11 Mar 2020 15:38:10 -0400
+Received: by mail-pg1-f194.google.com with SMTP id t24so1738740pgj.7
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:38:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LKraGJ30l6Da9gHXvZPSp4wo2q6s17TXGOTZwSnizRM=;
-        b=ZRa0WWvzWQ7vbhoCUSCiE+Xpnyn0r9X4j+VOZY5z0moAgoqNi7XrIrbvdOGZLoPStZ
-         t73/+8vK2zz/7Sh+YYuj8fHZZ3FvfEkXr6S9rYt7Ocx5uwZ/jttu0ZmY6lDF4hBC0sXu
-         RTFy9i9geyhj4B0j0J1TMco4guXl0g6ScFtbUdddNz65nOwp+Tj4KuGah5rZn7yD5Rip
-         nEJhat4np3znLve8DajoGUAaFw8E/zVSfQ8ONil21IEam4PVvzEjr7iYRP+6KxiOUnLs
-         Khqge9cA25XyxZdxn421HLHv3XL3BJR/eI7EJ1GdIvQIWL5pL6/nNTdMvucoFOejfkzH
-         yvNw==
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=Zb5q/Mu4Y05A8mwi2SFVQb8nWna0MTPdNN6cb7H8VpE=;
+        b=gEjOycvx4YQW2uEn6K7qwHEwfNAGZYNaSKbDvy1IVY56seaG5DAmfh9kBhmrYGMXqs
+         ZqlKVr1XsUWCWptcndhsmwO+Mtiq+tcdxEPjddRld13v5IEbCsKSLYc3mqVr/LB9UbYs
+         zboqVnO8hTlArH7Wi/Z0HcqJP/jrr5og7GZYWIP5h64jIuXT5+E+j66XWTvNUP1/kiLD
+         OC/jyASsnhZOhK4+g4oHDSRhZYjk9f7n9t1ZTyLlA1Og3ObGHHgXxcfjPOPJo1pyeX4K
+         NJzwpMsOguK2wm7Z1Xgr8sqdJSnMYtAK3lVEKy3JGL3JELhaYj4cihBUmV6I1EWIAUcP
+         sNsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LKraGJ30l6Da9gHXvZPSp4wo2q6s17TXGOTZwSnizRM=;
-        b=SnNt2Nj6p4Ei+37+6+ZBtkYtqqzCSXWQbkfQ2cnaTudeIAFLd/avWQMqnvKLu5QpUi
-         yRIqa7jKzRzFWzDQCcFaxVepYyhWMmMvu5lCkqhmAEztJMB6uvoCvJu6TxeHwu7HfYXr
-         PsAk64n13CpFmaJv8dwKgZq+fwWCsjfb0DIX7cdSiOy+jXxkP1GE/4TBYwj089KB7hVH
-         7oq09lhAwSg8/Z8KGxwej2WViayKOh3FbcBQJBGtivSJVdwnw0slW8CRc2Dx6GQqQOb3
-         XHmRqWz+4BUBGc7Ml1M7cEC7MP8H8YwC4jP5/EpbXni7rvXIiOoT585VBjbo0zv3k+wk
-         tzZg==
-X-Gm-Message-State: ANhLgQ3C8zG6uUkL+zj7wvOmL2NZDhpUjWiUymY/kxv+RWBF3S+hHyEr
-        xmYEnNPH6QQjjcHjkwOKV0sywDiiG2pT9AbmCq4UMg==
-X-Google-Smtp-Source: ADFU+vuV0D3QIjqPpw7rA21p5bLAVNUkr3pTXiahSyMXLJ3IuwPm7ousgUlGjlBoJJ8eQPNDhN9e5l4QTnhzSuuZwbw=
-X-Received: by 2002:a25:c482:: with SMTP id u124mr4859412ybf.286.1583955157918;
- Wed, 11 Mar 2020 12:32:37 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=Zb5q/Mu4Y05A8mwi2SFVQb8nWna0MTPdNN6cb7H8VpE=;
+        b=V4LXdfkBRM8qHTiQSBlMdWmZ7SN5EJiUwHQNsayFUCjOMe6POUQAtaPu2dYxUiWG8z
+         oB+FBoLCN9uovF9ASrzmwLSyOk1x8ZLqsRzvJwKshT25FWSyjX51XBvpfRH8ZPbnZfrE
+         JERNMD5+fvDnuWbSnqTUXLNbJIoNOigblGSU69KvKfvj8VnxyShJ3QwqMdkRzrzxfUO2
+         YlPRmSHrJuU6TnsWO2HfaK16j+HQ/EqIDhodDxLiVhlGxzGXWVQYNILZhW1NlfPo5pWU
+         8oU5+pt8aGLxnmJ6nf2pYI+BghpaMlH9cHT5NBW8BRojZlvasYcnFRd8zQRRS3bg+yph
+         F0og==
+X-Gm-Message-State: ANhLgQ1V+TNhYN1X+BTQNJdLQbKxUAfG1yb3GVEHAUapTzJikdvWnr+b
+        zczlxxzCnn5h6tPGvgIvxfC+9Q==
+X-Google-Smtp-Source: ADFU+vu4w2Fjd9qLpxvfjtML0AhQNSJS4jd+sFLDO6cpsSiLPD5qfQgTvXBo2xt9ibO4JgPeFVVIxg==
+X-Received: by 2002:a62:5cc1:: with SMTP id q184mr2272743pfb.259.1583955489598;
+        Wed, 11 Mar 2020 12:38:09 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id x72sm13897760pfc.156.2020.03.11.12.38.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 12:38:08 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 12:38:07 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [patch] mm, oom: prevent soft lockup on memcg oom for UP
+ systems
+In-Reply-To: <7a6170fc-b247-e327-321a-b99fb53f552d@i-love.sakura.ne.jp>
+Message-ID: <alpine.DEB.2.21.2003111235080.171292@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.2003101438510.161160@chino.kir.corp.google.com> <0e5ca6ee-d460-db8e-aba2-79aa7a66fad1@I-love.SAKURA.ne.jp> <alpine.DEB.2.21.2003101555050.177273@chino.kir.corp.google.com>
+ <7a6170fc-b247-e327-321a-b99fb53f552d@i-love.sakura.ne.jp>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20200310185003.57344-1-irogers@google.com> <20200310195915.GA1676879@tassilo.jf.intel.com>
- <CABPqkBRQo=bEOiCFGFjwcM8TZaXMFyaL7o1hcFd6Bc3w+LhJQA@mail.gmail.com> <20200311161320.GA254105@krava>
-In-Reply-To: <20200311161320.GA254105@krava>
-From:   Ian Rogers <irogers@google.com>
-Date:   Wed, 11 Mar 2020 12:32:26 -0700
-Message-ID: <CAP-5=fXYMTT7-iiaacO1VF0rRSO6t9W0a5edkiEwdZMYBcrtpQ@mail.gmail.com>
-Subject: Re: [PATCH] perf tools: add support for lipfm4
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Stephane Eranian <eranian@google.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiwei Sun <jiwei.sun@windriver.com>,
-        yuzhoujian <yuzhoujian@didichuxing.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Leo Yan <leo.yan@linaro.org>,
-        John Garry <john.garry@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 9:13 AM Jiri Olsa <jolsa@redhat.com> wrote:
->
-> On Tue, Mar 10, 2020 at 02:39:23PM -0700, Stephane Eranian wrote:
-> > On Tue, Mar 10, 2020 at 12:59 PM Andi Kleen <ak@linux.intel.com> wrote:
-> > >
-> > > On Tue, Mar 10, 2020 at 11:50:03AM -0700, Ian Rogers wrote:
-> > > > This patch links perf with the libpfm4 library.
-> > > > This library contains all the hardware event tables for all
-> > > > processors supported by perf_events. This is a helper library
-> > > > that help convert from a symbolic event name to the event
-> > > > encoding required by the underlying kernel interface. This
-> > > > library is open-source and available from: http://perfmon2.sf.net.
-> > >
-> > > For most CPUs the builtin perf JSON event support should make
-> > > this redundant.
-> > >
-> > We decided to post this patch to propose an alternative to the JSON
-> > file approach. It could be an option during the build.
-> > The libpfm4 library has been around for 15 years now. Therefore, it
-> > supports a lot of processors core and uncore and it  is very portable.
-> > The key value add I see is that this is a library that can be, and has
-> > been, used by tool developers directly in their apps. It can
-> > work with more than Linux perf_events interface. It is not tied to the
-> > interface. It has well defined and documented entry points.
-> > We do use libpfm4 extensively at Google in both the perf tool and
-> > applications. The PAPI toolkit also relies on this library.
-> >
-> > I don't see this as competing with the JSON approach. It is just an
-> > option I'd like to offer to users especially those familiar
-> > with it in their apps.
->
-> I dont mind having it, in fact I found really old email where I'm
-> asking Peter about that ;-) and he wasn't very keen about that:
->   https://lore.kernel.org/lkml/1312806326.10488.30.camel@twins/
->
-> not sure what was the actual reason at that time and if anything
-> changed since.. Peter?
->
-> btw I can't apply even that v2 on latest Arnaldo's branch
->
-> jirka
+On Wed, 11 Mar 2020, Tetsuo Handa wrote:
 
-Thanks Jiri,
+> >>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> >>> --- a/mm/vmscan.c
+> >>> +++ b/mm/vmscan.c
+> >>> @@ -2637,6 +2637,8 @@ static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
+> >>>  		unsigned long reclaimed;
+> >>>  		unsigned long scanned;
+> >>>  
+> >>> +		cond_resched();
+> >>> +
+> >>
+> >> Is this safe for CONFIG_PREEMPTION case? If current thread has realtime priority,
+> >> can we guarantee that the OOM victim (well, the OOM reaper kernel thread rather
+> >> than the OOM victim ?) gets scheduled?
+> >>
+> > 
+> > I think it's the best we can do that immediately solves the issue unless 
+> > you have another idea in mind?
+> 
+> "schedule_timeout_killable(1) outside of oom_lock" or "the OOM reaper grabs oom_lock
+> so that allocating threads guarantee that the OOM reaper gets scheduled" or "direct OOM
+> reaping so that allocating threads guarantee that some memory is reclaimed".
+> 
 
-the patches were done on tip.git/master, perhaps there is a conflict
-with the Documents Makefile due to adding better man page dates? I'll
-try to repro building on
-https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/ on the
-perf/core branch unless you  have a different suggestion? I also
-noticed a warning crept into the Makefile.config in the v2 patch set
-that should be removed.
+The cond_resched() here is needed if the iteration is lengthy depending on 
+the number of descendant memcgs already.
 
-Ian
+schedule_timeout_killable(1) does not make any guarantees that current 
+will be scheduled after the victim or oom_reaper on UP systems.
+
+If you have an alternate patch to try, we can test it.  But since this 
+cond_resched() is needed anyway, I'm not sure it will change the result.
+
+> > 
+> >>>  		switch (mem_cgroup_protected(target_memcg, memcg)) {
+> >>>  		case MEMCG_PROT_MIN:
+> >>>  			/*
+> >>>
+> >>
+> 
+> 
