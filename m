@@ -2,58 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 772EB181E0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:36:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7F70181E0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:37:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730301AbgCKQgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 12:36:03 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:44004 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729631AbgCKQgD (ORCPT
+        id S1730234AbgCKQhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 12:37:34 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37988 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730055AbgCKQhe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 12:36:03 -0400
-Received: by mail-ed1-f65.google.com with SMTP id dc19so3609257edb.10;
-        Wed, 11 Mar 2020 09:36:01 -0700 (PDT)
+        Wed, 11 Mar 2020 12:37:34 -0400
+Received: by mail-ed1-f67.google.com with SMTP id h5so3655808edn.5;
+        Wed, 11 Mar 2020 09:37:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ALDnh6/CiSndTdMaMbzSmsCEBXICNVByiI58zX8By/I=;
-        b=QWJpHsi+FrCvfO7t8tcTBagtzonzmYs7D0NsTuKBNsIBiAvI1+lnlkze93dfKJ8d8C
-         YFliSCZ1GPyjyA809zaN6Q9W2yQ702WCB5QJmqHvIRqUz+OGzOZzuAnCD7uax0PWFkIW
-         tbnHPkKDZa5O64roVmsiaWFe7d7RumzCZStk9dOaUEL8ggy+KE4NWLEt1v4ZQyuWLJ6g
-         vfrEUlSM9sMCcR968B/LrPbp5qx00iHoPc0eaiTImDv6WOduOYT32j9yE2LaxorMZF3H
-         NsqU9AygX6zFUYnb16rOLsMxWRh1ZN455ze0cD/QGMAiWs/V67FEayNKbyw+R3QN/i+P
-         MUFA==
+        bh=15pNDi70bspHOo89/R4dhqGxnCjqv93UjyKd/hFsVng=;
+        b=N5eQoArWpzk8fVbXOnSsRkhdIxlKFR8JCH9XZBLYRgGNZfgCm3Eb0l0e6Uvk8DkSiD
+         OKOtkMrhB0jOA3Igm9VwGf4uvd3kNUvd2zWR82iYboQJrzuMK2WNc50JOYRPzm7/IqtI
+         z1p7Bvq0BIk0SxQhyhs6nLzyHizyBdgN8EEKzg7LHU9YA7iCD2amB13WPP5gWKovRYWg
+         72dSzP5QK29l5rOWGlydil3zq9t3HfcyzajxucNF6fgSN5yCMue5JmBnmI79gCHwZxNj
+         G53mgy7Qc3Ht9xkSmRCYUnj5Vxz/snJkO6TZpg1dK9/dMThaQfiURf/b47Rnf5H6+M4E
+         iTpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=ALDnh6/CiSndTdMaMbzSmsCEBXICNVByiI58zX8By/I=;
-        b=GikLRHBvWyb4cXjfLU3h/jLLdivQoYWRpM5V6IFu9MvfdDsxBmFWsIyCMNvgNXyjlw
-         vOklvhY+v1jUDZBFi3VZ/LivHRRb/v0j9CvwazRIjZgo3D8F3yJdslYlN/hqOGzL65BW
-         6qwhCiZMDTBFQadM7um8LPhnq29SEXZ6U3e5eSV7Fk5q1xFJlXlZiByfoUtpZy6wqiuJ
-         I5dUaClKRZ4R/eFZd/agWtt43sCRC9FhkQxWUGYbQkxyWPJbEeZnY5jcz7JTSSC94pkg
-         AMm5/VHiskx/u0R/vWo0gpYzrJW48S6QR2xEnuRHXOp8g3P8rENmkc9hq0MdcOa5OwC5
-         EiKQ==
-X-Gm-Message-State: ANhLgQ171P2QquzFwvHtPjBSBrdqxIIvqyXmrPd+O/a6Ec+vZeW1cjjE
-        NZNPaN33/mF1HSXKOaZdTyqVf/4p
-X-Google-Smtp-Source: ADFU+vvlHudoRMVXJNn72RmqLiDxqatxcxOaA+o2Z5ntcmI8xTGB941mzo4D3OrqCLW8mTFID9KQBg==
-X-Received: by 2002:a50:b043:: with SMTP id i61mr3639227edd.194.1583944560108;
-        Wed, 11 Mar 2020 09:36:00 -0700 (PDT)
+        bh=15pNDi70bspHOo89/R4dhqGxnCjqv93UjyKd/hFsVng=;
+        b=VCvOft/hK6nZFDsidD3/ojh/KlsXOdv7tBshxJCg4NCUtqa494DLyxVQitTlyMt+/X
+         QB+7tYmS6HVzEhy9ZF869NKYaLqSPmtQt+ggKn2YrxWCtRY7GRKSlTDgkgfSIE4PkhL7
+         L4JUe5YNycFMZBEvlm3CFrfGa1gCHscngWxnKzdvPJwTMv6OzfOgYwXiqLB6Yvf0ohz8
+         2vGtN3StbDPrEAM41dqhPn6R0R98vqmfKkMbl1tA6JWMGviUmCee3kDJpLbrLRFgRz07
+         wZTrAj4i5L+iYjxMG+aVNSEtoyUA+e25SbsGEmqaR9N/AMYDTbJVxCeKbyUJILjTUuFM
+         sjgA==
+X-Gm-Message-State: ANhLgQ0x54DjSBCp2+x4dmkCOi9bI68NPB/4Jzl/PYsrVWTj9fhj2yFm
+        ssYPHPA0Lg7W2CpAtSS6mP9fMI6U
+X-Google-Smtp-Source: ADFU+vu/KrISFrHtJ1UUl/WO10OjfgJKuXF3b8NeKFDLu3sf+gCRe5Vug+R83Tm5sMH51YdrxApmmQ==
+X-Received: by 2002:a05:6402:30b5:: with SMTP id df21mr3822450edb.317.1583944651324;
+        Wed, 11 Mar 2020 09:37:31 -0700 (PDT)
 Received: from [10.67.48.239] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id g31sm4438951edd.53.2020.03.11.09.35.57
+        by smtp.googlemail.com with ESMTPSA id v25sm4196588edx.89.2020.03.11.09.37.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 09:35:59 -0700 (PDT)
-Subject: Re: [PATCH -next 030/491] BROADCOM GENET ETHERNET DRIVER: Use
- fallthrough;
-To:     Joe Perches <joe@perches.com>, Doug Berger <opendmb@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1583896344.git.joe@perches.com>
- <e78fb08d1dcf0d95175fc2866c344fbef2ff7065.1583896349.git.joe@perches.com>
+        Wed, 11 Mar 2020 09:37:30 -0700 (PDT)
+Subject: Re: [PATCH] ARM: bcm2835-rpi-zero-w: Add missing pinctrl name
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        nick.hudson@gmx.co.uk
+Cc:     Nick Hudson <skrll@netbsd.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20200310182537.8156-1-nick.hudson@gmx.co.uk>
+ <12f35cc38b87dfe27f0786c931d4434b0fecb3d8.camel@suse.de>
 From:   Florian Fainelli <f.fainelli@gmail.com>
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
@@ -109,12 +113,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  HvsHIcv4lxCWkFXkwsuWqzEKK6kxVpRDoEQPDj+Oy/ZJ5fYuMbkdHrlegwoQ64LrqdmiVVPC
  TwQYEQIADwIbDAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2Do+FAJ956xSz2XpDHql+Wg/2qv3b
  G10n8gCguORqNGMsVRxrlLs7/himep7MrCc=
-Message-ID: <a61c388f-bb42-e6e6-7381-5e99c8dad95e@gmail.com>
-Date:   Wed, 11 Mar 2020 09:35:54 -0700
+Message-ID: <620c845c-afd1-a4a4-468a-acc24299f492@gmail.com>
+Date:   Wed, 11 Mar 2020 09:37:22 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <e78fb08d1dcf0d95175fc2866c344fbef2ff7065.1583896349.git.joe@perches.com>
+In-Reply-To: <12f35cc38b87dfe27f0786c931d4434b0fecb3d8.camel@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -123,18 +127,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/10/20 9:51 PM, Joe Perches wrote:
-> Convert the various uses of fallthrough comments to fallthrough;
+On 3/11/20 4:28 AM, Nicolas Saenz Julienne wrote:
+> On Tue, 2020-03-10 at 18:25 +0000, nick.hudson@gmx.co.uk wrote:
+>> From: Nick Hudson <nick.hudson@gmx.co.uk>
+>>
+>> Define the sdhci pinctrl state as "default" so it gets applied
+>> correctly and to match all other RPis.
+>>
+>> Fixes: 2c7c040c73e9 ("ARM: dts: bcm2835: Add Raspberry Pi Zero W")
+>>
+>> Signed-off-by: Nick Hudson <skrll@netbsd.org>
 > 
-> Done via script
-> Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe.com/
+> I think this one has everything right. As a nitpick, there is no need to add a
+> space between the Fixes tag and the Signed-off-by tag, but it's OK as is.
 > 
-> Signed-off-by: Joe Perches <joe@perches.com>
+> Florian, can we channel this as a fix for v5.6 or are we too late?
 
-Please fix the subject to be:
-
-net: bcmgenet: Use fallthrough;
-
-to match commits done to this file.
+We can try, let me queue this today.
 -- 
 Florian
