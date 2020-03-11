@@ -2,68 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC9D9180F92
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 06:14:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7188D180F6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 06:09:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbgCKFOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 01:14:02 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:35814 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726865AbgCKFOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 01:14:02 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7C3522008B6;
-        Wed, 11 Mar 2020 06:14:00 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0F5D62008BB;
-        Wed, 11 Mar 2020 06:13:57 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 83AE4402A5;
-        Wed, 11 Mar 2020 13:13:52 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
-        amit.kucheria@verdurent.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 2/2] thermal: qoriq: Sort includes alphabetically
-Date:   Wed, 11 Mar 2020 13:07:32 +0800
-Message-Id: <1583903252-2058-2-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583903252-2058-1-git-send-email-Anson.Huang@nxp.com>
-References: <1583903252-2058-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727480AbgCKFI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 01:08:57 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:39370 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbgCKFI5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 01:08:57 -0400
+Received: by mail-pj1-f65.google.com with SMTP id d8so365018pje.4
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 22:08:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=upcYox+hR0ff8PbXC/tjXbgIwJyTE9zI/gU5bKsBrcE=;
+        b=G3nvp3iVpVC+yHQkmM1FUvj/OVrYCTe+/dsoBxZEEtfC1hTuasXwqna9yAt1P/K0nE
+         0ki9mJaOhcAhhTHguCjns0Wm6eO+AxFLXS+Khmi3iBUY27t+SCI8cOoDxJfy7Isd6fvX
+         Mu/DS3uKKOBVRg7kWVV94+e+N2lKLD2uSlV/Zme8Gbpl/6C7QV1QrhNN41ylEOoRmBMS
+         KVUowSNqsYyS9rRl4wDU2xUuVSWErgbs8GtxYB3DCQ6wTFvodblK0mEVkLf/TnNXM8Bo
+         GnRLy/4G0dZ10SiSmYK7fQ8dkobJaCEEy62h0tlVic2Vlf3D2iB9CrdrPW4NKHlRaePG
+         PCvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=upcYox+hR0ff8PbXC/tjXbgIwJyTE9zI/gU5bKsBrcE=;
+        b=QNT2SyalOGrH1ViGtq7K5lSmqJ59YGMllYYAZTzfWbM0kl15MNUl3WFHM7fOzZYJ8+
+         yVOmNJh7IScDp9cjCw4cBg70rS+uEIY7oLWEDhLhj2yc54iJKZj32JsUT8daQnPUwl3E
+         a21Btu+JGtGRpZOMbazeDm2UrK6gL1BGRghqFlV+Kr9FtFSBYSmzJk+fVFZbjLHkY5Cq
+         Gaq/xAhGpn8718GgGvFj5FbwtyIHqI13YZCGLiwSw3kBGv7mscqOO9UpGHzfCt9Rv28k
+         Rojr8rUR1hESJE5PaxWQCVlfB2Q3bfeoOJjJlsPb+tjreJdLlASpHVRjXyyQsFkPKPqT
+         jlyQ==
+X-Gm-Message-State: ANhLgQ3QaWXmW2K2JO6vbq1vQqnDlzj/+jP5AW2ZvX+6yRFBohtodpCp
+        FNBJIP0ku3ZQe0d3zLMrZTeFng==
+X-Google-Smtp-Source: ADFU+vuBKgQ7tqeX6Y2sfHE73I7Iho4eW+dmedne9Rn6L6zY1FrbOYgVjkUbkDyv3fB7rHslN4KxSg==
+X-Received: by 2002:a17:902:7794:: with SMTP id o20mr1418285pll.312.1583903335973;
+        Tue, 10 Mar 2020 22:08:55 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id o128sm16053078pfg.5.2020.03.10.22.08.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 22:08:55 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 22:08:54 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     "Huang, Ying" <ying.huang@intel.com>
+cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Hugh Dickins <hughd@google.com>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH] mm: Add more comments for MADV_FREE
+In-Reply-To: <20200311011117.1656744-1-ying.huang@intel.com>
+Message-ID: <alpine.DEB.2.21.2003102204450.255869@chino.kir.corp.google.com>
+References: <20200311011117.1656744-1-ying.huang@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sort includes alphabetically for consistency, and take this chance
-to remove unused include of of_address.h.
+On Wed, 11 Mar 2020, Huang, Ying wrote:
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/thermal/qoriq_thermal.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+> diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
+> index 6f2fef7b0784..01144dd02a5f 100644
+> --- a/include/linux/mm_inline.h
+> +++ b/include/linux/mm_inline.h
+> @@ -9,10 +9,11 @@
+>   * page_is_file_cache - should the page be on a file LRU or anon LRU?
+>   * @page: the page to test
+>   *
+> - * Returns 1 if @page is page cache page backed by a regular filesystem,
+> - * or 0 if @page is anonymous, tmpfs or otherwise ram or swap backed.
+> - * Used by functions that manipulate the LRU lists, to sort a page
+> - * onto the right LRU list.
+> + * Returns 1 if @page is page cache page backed by a regular filesystem or
+> + * anonymous page lazily freed (e.g. via MADV_FREE).  Returns 0 if @page is
+> + * normal anonymous page, tmpfs or otherwise ram or swap backed.  Used by
+> + * functions that manipulate the LRU lists, to sort a page onto the right LRU
+> + * list.
 
-diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
-index 67a8d84..028a6bb 100644
---- a/drivers/thermal/qoriq_thermal.c
-+++ b/drivers/thermal/qoriq_thermal.c
-@@ -3,12 +3,11 @@
- // Copyright 2016 Freescale Semiconductor, Inc.
- 
- #include <linux/clk.h>
--#include <linux/module.h>
--#include <linux/platform_device.h>
- #include <linux/err.h>
- #include <linux/io.h>
-+#include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_address.h>
-+#include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/sizes.h>
- #include <linux/thermal.h>
--- 
-2.7.4
+The function name is misleading: anonymous pages that can be lazily freed 
+are not file cache.  This returns 1 because of the question it is asking: 
+anonymous lazily freeable pages should be on the file lru, not the anon 
+lru.  So before adjusting the comment I'd suggest renaming the function to 
+something like page_is_file_lru().
 
+The rest looks fine.
