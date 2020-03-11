@@ -2,53 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C48E182558
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 23:56:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63E4F182566
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 23:58:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731441AbgCKW4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 18:56:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57364 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731369AbgCKW4f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 18:56:35 -0400
-Received: from kicinski-fedora-PC1C0HJN (unknown [163.114.132.128])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7C8520749;
-        Wed, 11 Mar 2020 22:56:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583967395;
-        bh=0hcCwLr76Y1HrvSf0R8uI0eUyHi0rxL8GhpK18dgQEo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=tPnsfiDyJsW5WEF+WkzlAvGp57GzDEn/TDYqZBZ3gTLb/qSlNOHKYVHPzTPMBApJ/
-         QZa0LyrM9NUFT47l7Q6v/KzMMSW2s+mZuWYC2TINpdwWT1HAN75hWY4PtQ3DjL3SS4
-         YSebbhUJmj8KOx68C1iWfC9FpGM/2ZutN18Vx4v4=
-Date:   Wed, 11 Mar 2020 15:56:32 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Michal Kubecek <mkubecek@suse.cz>
-Cc:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        John Linville <linville@tuxdriver.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 05/15] ethtool: set netdev features with
- FEATURES_SET request
-Message-ID: <20200311155632.4521c71b@kicinski-fedora-PC1C0HJN>
-In-Reply-To: <4fda0f27da984254c3df3c9e58751134967036c9.1583962006.git.mkubecek@suse.cz>
-References: <cover.1583962006.git.mkubecek@suse.cz>
-        <4fda0f27da984254c3df3c9e58751134967036c9.1583962006.git.mkubecek@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2387418AbgCKW5j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 18:57:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58242 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731168AbgCKW5i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 18:57:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=L55NNbRZrnFez8C39HrIWuvzlloT4S/Vj/OMB4/VKlI=; b=DChAntugS8Bhxk1vNc9e1B3pPd
+        MXEQYh95hTVEbyuiykq0eQj/QC/JEYzAR3LevIA7UTxyESzbybnBNsm/VZ5QNxtm9bNn+XL9MS9qP
+        8XzM8ETEBFEDstLkPSiVrOduTmyf/s7i7F6dPFcElhzx1gUogDcjuPk3rEXNv98y+MLNn4jQN3WYW
+        NxlofB0axAlOG3QU6MKg3m0vJxaddRY+i5S+knW8veM1Cf92QzgsoEj2ZIn8B9m4et0b0rugs7zq+
+        cA2XcM6YuqVCXvMwJJrjehcz7Hc0GdP6UB0X49hZIbs+66qYppYh+g+5JfKYjwL/P6XNXwk8fqJ4V
+        AFJ71oOQ==;
+Received: from [2601:1c0:6280:3f0::19c2] (helo=smtpauth.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jCAID-0001PR-WD; Wed, 11 Mar 2020 22:57:38 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+Subject: [PATCH 0/3 v2] char/tty: clean up menus
+Date:   Wed, 11 Mar 2020 15:57:33 -0700
+Message-Id: <20200311225736.32147-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Mar 2020 22:40:28 +0100 (CET) Michal Kubecek wrote:
-> +	if (!(req_info.flags & ETHTOOL_FLAG_OMIT_REPLY)) {
-> +		bool compact = req_info.flags & ETHTOOL_FLAG_COMPACT_BITSETS;
+This patch series cleans up the Character devices & TTY menus.
 
-is req_info->flags validated anywhere to make sure users get an error
-when they set a bit unrecognized by the kernel? :S
+[PATCH 1/3 v2] char: group dev configs togther
+[PATCH 2/3 v2] tty: source all tty Kconfig files in one place
+[PATCH 3/3 v2] tty: reorganize tty & serial menus
+
+ drivers/char/Kconfig       |  105 +++++++++-----------
+ drivers/tty/Kconfig        |  179 +++++++++++++++++------------------
+ drivers/tty/hvc/Kconfig    |    3 
+ drivers/tty/serial/Kconfig |    4 
+ 4 files changed, 142 insertions(+), 149 deletions(-)
