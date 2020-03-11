@@ -2,153 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF297182196
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:10:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8854D18219D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:10:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731033AbgCKTKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 15:10:21 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34506 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730807AbgCKTKV (ORCPT
+        id S1731048AbgCKTKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 15:10:42 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41378 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730827AbgCKTKl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:10:21 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 23so1877142pfj.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:10:20 -0700 (PDT)
+        Wed, 11 Mar 2020 15:10:41 -0400
+Received: by mail-qt1-f195.google.com with SMTP id l21so2427113qtr.8
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:10:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=KcVIrCgeM2L71oQ0HCuZKZl5I3Zr+0M/E39SQWV0gp4=;
-        b=aAhh+xSkXE2t12sKK6saJVYSmf5MEARRfmtM9BDdPnG9hOhY9hMiwRX70zMMhmadP8
-         AEe0v12Bn33gajUeD1uQ8UKiOyi2zoq7FIlGGcSTWYQXUe84sEe6lGBVcgqvS8yfdCxA
-         BqGVlEbMZdiVCE8GlL7i8viPdEpQyi+6TSziw=
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=JVqj7q5ukK8cPdSfh61GJxDmiY+XBFrd77XlUjw+ai0=;
+        b=UQNsFyPiyauFZ3N6ff+BhSIkDx9YgBFvu/qZyImNM2327AJYhWCBp9McQxiXeeNsPu
+         WJgXVpqvN1+MSftFHg50Dm5A7Kk8+9boBJET+GhbfzcOJQSkg5xdjG5w6r/FaEMr76y2
+         DPTj9y634kmYrsItg0Ahjh9zK0uclNtaVujkgNmNb04Oh5+BBA1OB7J3anYo2N2VMwa2
+         vm7ajjVX088Fj8RWQoFXMX38ufVqDQa6fyA/uyJhICmefmgCevYeRkzo55Gb+g66r4PO
+         SR50ealRs6uYLin4Wh35VJY19BnhUl0lbAJRf9yYksmgyL1D3Q0Cso9HkWblSpHpk2OV
+         8cJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=KcVIrCgeM2L71oQ0HCuZKZl5I3Zr+0M/E39SQWV0gp4=;
-        b=o2n87Y2QwAs7VDApQVjtYwWF9elXJSHOAz5gvaq0wKVAfB9AZmmR8jnpROOQdnLOww
-         RtlJ+JIdz/cDfHdn3HBQUQ+5YQmAZ7lE0GQAOzvgEk0jjT3TL2fjI8pwvSX2KA9iZBSX
-         ZxpieSBroEti1K6O9sJ4FycTT7Vm4uj7vVBvSZmPPTf3qLqLtTyPbR28yqAt7KA5yOgN
-         DK+g3JCihB8eFPeaXhazkiqGGPzIKcEx3tTKOWhyr0g98vLdTPe60CkAiXE83DyHLVlW
-         /cZ2I0qx14EVXbOWRTnWpeZfWVGdy2X7ye9UxjGuu+gv2QzWc5wPnIJUK2KkBqJxFD5M
-         tZlg==
-X-Gm-Message-State: ANhLgQ2v9ieUDUwde646j84frzcbNH25dlJQZwBCMXECh8foKOt+yWMX
-        UNfKJVBGBerDVRjQal7icbKM+A==
-X-Google-Smtp-Source: ADFU+vt4NOtfCQB7oRTvrmQkPz4WbsEGCcbOLVTPV1BJcvkD6Dr4oGu+cuFqlafAZoPG2TJB9TQ2XQ==
-X-Received: by 2002:aa7:8687:: with SMTP id d7mr4225994pfo.247.1583953820089;
-        Wed, 11 Mar 2020 12:10:20 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e10sm9854448pfm.121.2020.03.11.12.10.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 12:10:19 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 12:10:18 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 2/4] proc: Use new infrastructure to fix deadlocks in
- execve
-Message-ID: <202003111208.640025F75@keescook>
-References: <87r1y12yc7.fsf@x220.int.ebiederm.org>
- <87k13t2xpd.fsf@x220.int.ebiederm.org>
- <87d09l2x5n.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170F0F9DC18F5EA77C9A857E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <871rq12vxu.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170DF45E3245F55B95CCD91E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <877dzt1fnf.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51701C6F60699F99C5C67E0BE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <875zfcxlwy.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51705D211EC8E7EA270627B1E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=JVqj7q5ukK8cPdSfh61GJxDmiY+XBFrd77XlUjw+ai0=;
+        b=Hpr0D4Jp3ZbvOY1JmpD3yUowgjixYqMnT4JAJH+Hp3YPxJZoziJCZZsCGXT4MMxF91
+         7qjBFBHUgt55UnT2O9BmKgROzKIbATaThFmXHKhruNx34hjUASvKt4+Ldr1MAcEiy1j8
+         0nI3xXFsEf7sO9t7M+oGUKd2p//9MhJGZ0hYlMX8lw/0kZ16fVr2rvkTk2nOIbe2KflI
+         4kpV+dD4mD6oE8+2b31uiEvhTveYk6dmr/HTEbKf0GLHgK6uysYmfyztUx7ingcaQo71
+         5FIRV+qCsV9b7204rqIlMpQEtMBJsNz/6fA+8frzqYSzryriZdhbtJ8+Y6F+r/Eqv6Cd
+         PZAw==
+X-Gm-Message-State: ANhLgQ1FvKouEoiHwi8tJyMW9s/WecL/chVfPfzBefdHAk1Lasp83Cjk
+        W/WT/EMXISijG7WmDi43AEHKMW2J86hC9PuW8hg=
+X-Google-Smtp-Source: ADFU+vtfYt4thnXs2/atnR0hsW+ZTxHbygm0Nvjyxxr7fPBdbU1OtOZzOJHQPbDuvTy3i4lgE67jxGTCYc7wpCpPiyI=
+X-Received: by 2002:ac8:4e93:: with SMTP id 19mr3917409qtp.32.1583953838862;
+ Wed, 11 Mar 2020 12:10:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM6PR03MB51705D211EC8E7EA270627B1E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Received: by 2002:a0c:b4a6:0:0:0:0:0 with HTTP; Wed, 11 Mar 2020 12:10:38
+ -0700 (PDT)
+From:   Iamgold Mining <hostonwilly@gmail.com>
+Date:   Wed, 11 Mar 2020 12:10:38 -0700
+Message-ID: <CAMnNhZ3fyfar=TKor6A7BYzkPuQ+okfEToO5411A0dC1Tpt=Ww@mail.gmail.com>
+Subject: Urgent
+To:     hostonwilly@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 06:45:32PM +0100, Bernd Edlinger wrote:
-> This changes lock_trace to use the new exec_update_mutex
-> instead of cred_guard_mutex.
-> 
-> This fixes possible deadlocks when the trace is accessing
-> /proc/$pid/stack for instance.
-> 
-> This should be safe, as the credentials are only used for reading,
-> and task->mm is updated on execve under the new exec_update_mutex.
-> 
-> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+IAMGOLD MINING GLOBAL FINANCIAL
+EMPOWERMENT JACKPOT 2020
 
-I have the same question here as in 3/4. I should probably rescind my
-Reviewed-by until I'm convinced about the security-safety of this -- why
-is this not a race against cred changes?
+Attention/Dear Email Owner,
 
--Kees
+Congratulations!!!, This is to inform you that your email ID emerged
+as one the 25 lucky random email users that won the sum
+{US$25,000.00},powered by IAMGOLD MINING new year global financial
+empowerment jackpot. Visit our website: http://www.iamgold.com/
 
-> ---
->  fs/proc/base.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index ebea950..4fdfe4f 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -403,11 +403,11 @@ static int proc_pid_wchan(struct seq_file *m, struct pid_namespace *ns,
->  
->  static int lock_trace(struct task_struct *task)
->  {
-> -	int err = mutex_lock_killable(&task->signal->cred_guard_mutex);
-> +	int err = mutex_lock_killable(&task->signal->exec_update_mutex);
->  	if (err)
->  		return err;
->  	if (!ptrace_may_access(task, PTRACE_MODE_ATTACH_FSCREDS)) {
-> -		mutex_unlock(&task->signal->cred_guard_mutex);
-> +		mutex_unlock(&task->signal->exec_update_mutex);
->  		return -EPERM;
->  	}
->  	return 0;
-> @@ -415,7 +415,7 @@ static int lock_trace(struct task_struct *task)
->  
->  static void unlock_trace(struct task_struct *task)
->  {
-> -	mutex_unlock(&task->signal->cred_guard_mutex);
-> +	mutex_unlock(&task->signal->exec_update_mutex);
->  }
->  
->  #ifdef CONFIG_STACKTRACE
-> -- 
-> 1.9.1
+Your winning identification numbers fall under IAMGOLD European
+Location file, you are requested to quickly forward your winning
+identification numbers together with your information's to our
+European payment head office through this E-mail address below for
+immediate dispatch of your atm visa card value of your wining prize
+Sum of (U$25,000.00) to you through courier service.
 
--- 
-Kees Cook
+PAYMENT DEPT CONTACT INFO
+Location, IAMGOLD mining European head office ferrara Italy
+Contact Person: Mr Rocco Mario
+E-mail: iamgoldempowermentdept@excite.com
+
+YOUR WINNING IDENTIFICATION NUMBERS.
+REF: IGML/2049BF9308/03
+BATCH: 18/203/IGL.
+PIN NO: 1266
+
+FULL NAME:
+DATE OF BIRTH:
+HOUSE ADDRESS:
+SEX:
+CITY:
+NATIONALITY:
+DIRECT TELEPHONE NUMBER:
+
+IMPORTANT NOTE: For security reasons you have to keep your winning
+particulars confidential from the public until you receive your visa
+card to avoid double application which might result to cancellation of
+prize.
+
+Best Wishes
+IAMGOLD EMPOWERMENT CORDINATOR.
