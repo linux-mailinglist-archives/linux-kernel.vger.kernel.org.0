@@ -2,130 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44BA818137D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:42:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A279F181384
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:44:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728721AbgCKIk6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 04:40:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51106 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbgCKIk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 04:40:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 61764B090;
-        Wed, 11 Mar 2020 08:40:55 +0000 (UTC)
-Subject: Re: [PATCH] mm,cma: remove pfn_range_valid_contig
-To:     Rik van Riel <riel@surriel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, Anshuman Khandual <anshuman.khandual@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Qian Cai <cai@lca.pw>, Roman Gushchin <guro@fb.com>
-References: <20200306170647.455a2db3@imladris.surriel.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <0f8bf6ad-ab1b-dc1d-259f-bc6deb447ce8@suse.cz>
-Date:   Wed, 11 Mar 2020 09:40:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1728625AbgCKImc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 04:42:32 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38918 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728195AbgCKImc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 04:42:32 -0400
+Received: by mail-lf1-f67.google.com with SMTP id j15so960583lfk.6
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 01:42:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HSW/+5dQsu/FqLoyL9jf+9ZZDs2OGV9dnsgXg37rKKk=;
+        b=DgLSRBQUrCDt/5nBAjCAkkyg2P+43TXZODJ95anLVv5NU++tsUo06UW3OkHWu83+g7
+         nmhMf5fweE4BGTYxQQN5I6UMHRoF3TzoUrSn84LoRkhTb4Btrv2WLiS7syKdnM0QTZ2c
+         viVJFORB/ckRZHyDyVluU4L012uH/Rom6oOXPav6af6abuCO1txfmQ7GRaZj2NdNQp0z
+         U0JOoaiwk00j2KSoA5lfW0+r+fD9gxySNRDFWyeQXTDXMlhTOOnosBeCv66xHzkKHtEB
+         jjelGy4N+XdYZsRS8YPjhzPHRECZ0SmbpwqslniF4eI+M4oozeEKpSID1jjSGusoVX0T
+         rE+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HSW/+5dQsu/FqLoyL9jf+9ZZDs2OGV9dnsgXg37rKKk=;
+        b=RlzLzimUgIm1bTp1gdePZY3tCpmJhS+94RAp9hgM3xrg5J9eb0GaoVHvIqEd/mhfuq
+         AJDZ41a5HTjt52RISQTXkxOIUB6zSPALIosIL6wb75BTR9IRJyWUTHZP1kkAYUPnSkrx
+         CrECE0aq1OPKH0qvVzWMjgzfihmUa7nTA7KJxdoytCwcHkYk9xpa9PHu/kKbjnqXJTXc
+         N/CWf1E6d1n+CRgubDt4LXXnflMVKu0gynPxJq+g8d+u9B+pXeKonJPqJp17lEuosPO2
+         kBZvG5NPSnVcmPW2wiRWU5OvpKZsIJKvMTXnNyIqpNIBFiiGK6nNB1AYT86OA7lL5GYV
+         UV5Q==
+X-Gm-Message-State: ANhLgQ2bqU7peOepLsUD6pwLGICi9bv1MMFS1pD18xyHiE7SFseSt8kP
+        WT0sLS9mF2bpnIzEj3i7KZ3xi+1+DLdFQjbkw4DlPQ==
+X-Google-Smtp-Source: ADFU+vsWmsyleV5atqo3bIBY6SuDEIEvfcD5+QWymQfMOOR21g3oLM74WmtdBbzz2ztzPfm6tEUFggv3ukELlgKYS4A=
+X-Received: by 2002:a19:cbc3:: with SMTP id b186mr1524321lfg.182.1583916149757;
+ Wed, 11 Mar 2020 01:42:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200306170647.455a2db3@imladris.surriel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200310131230.106427-1-maco@android.com> <BYAPR04MB5749104A80045EB0BD3EB28886FF0@BYAPR04MB5749.namprd04.prod.outlook.com>
+In-Reply-To: <BYAPR04MB5749104A80045EB0BD3EB28886FF0@BYAPR04MB5749.namprd04.prod.outlook.com>
+From:   Martijn Coenen <maco@android.com>
+Date:   Wed, 11 Mar 2020 09:42:18 +0100
+Message-ID: <CAB0TPYHZmsMMpOi709gSbCkF7F+E5XfPu0JBZiavn0v=u=26fQ@mail.gmail.com>
+Subject: Re: [PATCH] loop: Only change blocksize when needed.
+To:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
+Cc:     "axboe@kernel.dk" <axboe@kernel.dk>, "hch@lst.de" <hch@lst.de>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-team@android.com" <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/6/20 11:06 PM, Rik van Riel wrote:
-> The function pfn_range_valid_contig checks whether all memory in the
-> target area is free. This causes unnecessary CMA failures, since
-> alloc_contig_range will migrate movable memory out of a target range,
-> and has its own sanity check early on in has_unmovable_pages, which
-> is called from start_isolate_page_range & set_migrate_type_isolate.
-> 
-> Relying on that has_unmovable_pages call simplifies the CMA code and
-> results in an increased success rate of CMA allocations.
-> 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
+Hi Chaitanya,
 
-Yeah, the page_count and PageHuge checks are harmful. Not sure about
-PageReserved. And is anything later in the alloc_contig_range() making sure that
-we are always in the same zone?
+On Tue, Mar 10, 2020 at 9:23 PM Chaitanya Kulkarni
+<Chaitanya.Kulkarni@wdc.com> wrote:
+>
+> Logically this is a right thing to do, but I wonder how much speedup
+> you are getting with these improvements ?
+> It will be great if you have some numbers so we all know the speedup.
 
-> ---
->  mm/page_alloc.c | 47 +++--------------------------------------------
->  1 file changed, 3 insertions(+), 44 deletions(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 0fb3c1719625..75e84907d8c6 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -8539,32 +8539,6 @@ static int __alloc_contig_pages(unsigned long start_pfn,
->  				  gfp_mask);
->  }
->  
-> -static bool pfn_range_valid_contig(struct zone *z, unsigned long start_pfn,
-> -				   unsigned long nr_pages)
-> -{
-> -	unsigned long i, end_pfn = start_pfn + nr_pages;
-> -	struct page *page;
-> -
-> -	for (i = start_pfn; i < end_pfn; i++) {
-> -		page = pfn_to_online_page(i);
-> -		if (!page)
-> -			return false;
-> -
-> -		if (page_zone(page) != z)
-> -			return false;
-> -
-> -		if (PageReserved(page))
-> -			return false;
-> -
-> -		if (page_count(page) > 0)
-> -			return false;
-> -
-> -		if (PageHuge(page))
-> -			return false;
-> -	}
-> -	return true;
-> -}
-> -
->  static bool zone_spans_last_pfn(const struct zone *zone,
->  				unsigned long start_pfn, unsigned long nr_pages)
->  {
-> @@ -8605,28 +8579,13 @@ struct page *alloc_contig_pages(unsigned long nr_pages, gfp_t gfp_mask,
->  	zonelist = node_zonelist(nid, gfp_mask);
->  	for_each_zone_zonelist_nodemask(zone, z, zonelist,
->  					gfp_zone(gfp_mask), nodemask) {
-> -		spin_lock_irqsave(&zone->lock, flags);
-> -
->  		pfn = ALIGN(zone->zone_start_pfn, nr_pages);
->  		while (zone_spans_last_pfn(zone, pfn, nr_pages)) {
-> -			if (pfn_range_valid_contig(zone, pfn, nr_pages)) {
-> -				/*
-> -				 * We release the zone lock here because
-> -				 * alloc_contig_range() will also lock the zone
-> -				 * at some point. If there's an allocation
-> -				 * spinning on this lock, it may win the race
-> -				 * and cause alloc_contig_range() to fail...
-> -				 */
-> -				spin_unlock_irqrestore(&zone->lock, flags);
-> -				ret = __alloc_contig_pages(pfn, nr_pages,
-> -							gfp_mask);
-> -				if (!ret)
-> -					return pfn_to_page(pfn);
-> -				spin_lock_irqsave(&zone->lock, flags);
-> -			}
-> +			ret = __alloc_contig_pages(pfn, nr_pages, gfp_mask);
-> +			if (!ret)
-> +				return pfn_to_page(pfn);
->  			pfn += nr_pages;
->  		}
-> -		spin_unlock_irqrestore(&zone->lock, flags);
->  	}
->  	return NULL;
->  }
-> 
+What makes blk_mq_freeze_queue() relatively expensive is that the
+implementation of that function calls synchronize_rcu() (for good
+reasons); on our x86 devices, I've seen that take 15-20ms on average.
+Recent Android versions configure a lot (~30) of loop devices at boot,
+and so this saves us about 600ms of boot time. I strongly suspect this
+benefits other usecases besides Android.
 
+There is another call in loop_set_status() which is harder to remove;
+eg, if you use loop_set_status() to change the offset of a loop
+device, you shouldn't do that if there are still requests outstanding,
+and blk_mq_freeze_queue() ensures that. But in our specific case, we
+know that there won't be requests outstanding, because during this
+phase of boot the loop device hasn't been mounted yet. But we can't
+tell the kernel that. So I will follow up with a patch that tries to
+address that issue, which will also have some more detailed numbers.
+If you have ideas or suggestions, feel free to let me know!
+
+Thanks,
+Martijn
+
+>
+> Irrespective of that, this looks good to me.
+>
+> Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+>
+> On 03/10/2020 06:17 AM, Martijn Coenen wrote:
+> > Return early in loop_set_block_size() if the requested block size is
+> > identical to the one we already have; this avoids expensive calls to
+> > freeze the block queue.
+> >
+> > Signed-off-by: Martijn Coenen<maco@android.com>
+>
