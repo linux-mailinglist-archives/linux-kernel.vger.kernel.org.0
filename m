@@ -2,89 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EACF1811BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 08:21:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1ED71811C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 08:21:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728525AbgCKHTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 03:19:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbgCKHTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 03:19:37 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C4F4208C3;
-        Wed, 11 Mar 2020 07:19:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583911177;
-        bh=pxFN/y4Pn78eg6K3072OBGZVdP4QYE8XIDVNfrexXig=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EBkW98m04XtashojyPW85zQbJVSKdAEFmMP9TyrDNT/STUbGvVwmZtVQlqTOoUtoD
-         v6IiTSwil6doa+TmdPxOoGLJEpycmFHVJ2qsjcb0i4tQLZsqRswGFzcEUy2hIptDqt
-         UtFeNCDQzF3lIWNuiA9JITbXY9WeL3fCq5tvpdrM=
-Date:   Wed, 11 Mar 2020 08:19:35 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/base/cpu: Use scnprintf() for avoiding potential
- buffer overflow
-Message-ID: <20200311071935.GA3656396@kroah.com>
-References: <20200311071200.4024-1-tiwai@suse.de>
+        id S1728537AbgCKHUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 03:20:11 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11626 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728242AbgCKHUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 03:20:10 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1D0CEFE6F693335B3302;
+        Wed, 11 Mar 2020 15:20:06 +0800 (CST)
+Received: from [127.0.0.1] (10.173.221.230) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.487.0; Wed, 11 Mar 2020
+ 15:19:55 +0800
+Subject: Re: [RFC] KVM: arm64: support enabling dirty log graually in small
+ chunks
+To:     Marc Zyngier <maz@kernel.org>
+References: <20200309085727.1106-1-zhukeqian1@huawei.com>
+ <4b85699ec1d354cc73f5302560231f86@misterjones.org>
+ <64925c8b-af3d-beb5-bc9b-66ef1e47f92d@huawei.com>
+ <a642a79ea9190542a9098e4c9dc5a9f2@kernel.org>
+CC:     <kvmarm@lists.cs.columbia.edu>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "Jay Zhou" <jianjay.zhou@huawei.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "James Morse" <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+From:   zhukeqian <zhukeqian1@huawei.com>
+Message-ID: <9ddefc54-dd5b-0555-0aaa-00a3a23febcf@huawei.com>
+Date:   Wed, 11 Mar 2020 15:19:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200311071200.4024-1-tiwai@suse.de>
+In-Reply-To: <a642a79ea9190542a9098e4c9dc5a9f2@kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.221.230]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 08:12:00AM +0100, Takashi Iwai wrote:
-> Since snprintf() returns the would-be-output size instead of the
-> actual output size, the succeeding calls may go beyond the given
-> buffer limit.  Fix it by replacing with scnprintf().
+Hi Marc,
+
+On 2020/3/10 21:16, Marc Zyngier wrote:
+> On 2020-03-10 08:26, zhukeqian wrote:
+>> Hi Marc,
+>>
+>> On 2020/3/9 19:45, Marc Zyngier wrote:
+>>> Kegian,
 > 
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> ---
->  drivers/base/cpu.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> [...]
 > 
-> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-> index 6265871a4af2..0abcd9d68714 100644
-> --- a/drivers/base/cpu.c
-> +++ b/drivers/base/cpu.c
-> @@ -231,7 +231,7 @@ static struct cpu_attr cpu_attrs[] = {
->  static ssize_t print_cpus_kernel_max(struct device *dev,
->  				     struct device_attribute *attr, char *buf)
->  {
-> -	int n = snprintf(buf, PAGE_SIZE-2, "%d\n", NR_CPUS - 1);
-> +	int n = scnprintf(buf, PAGE_SIZE-2, "%d\n", NR_CPUS - 1);
+>>> Is there a userspace counterpart to it?
+>>>
+>> As this KVM/x86 related changes have not been merged to mainline
+>> kernel, some little modification is needed on mainline Qemu.
+> 
+> Could you please point me to these changes?
+I made some changes locally listed below.
 
-This should just be "sprintf()" as we "know" that fitting a single
-number will work.
+However, Qemu can choose to enable KVM_DIRTY_LOG_INITIALLY_SET or not.
+Here I made no judgement on dirty_log_manual_caps because I just want
+to verify the optimization of this patch.
 
->  	return n;
->  }
->  static DEVICE_ATTR(kernel_max, 0444, print_cpus_kernel_max, NULL);
-> @@ -258,13 +258,13 @@ static ssize_t print_cpus_offline(struct device *dev,
->  			buf[n++] = ',';
->  
->  		if (nr_cpu_ids == total_cpus-1)
-> -			n += snprintf(&buf[n], len - n, "%u", nr_cpu_ids);
-> +			n += scnprintf(&buf[n], len - n, "%u", nr_cpu_ids);
->  		else
-> -			n += snprintf(&buf[n], len - n, "%u-%d",
-> +			n += scnprintf(&buf[n], len - n, "%u-%d",
->  						      nr_cpu_ids, total_cpus-1);
->  	}
->  
-> -	n += snprintf(&buf[n], len - n, "\n");
-> +	n += scnprintf(&buf[n], len - n, "\n");
+diff --git a/accel/kvm/kvm-all.c b/accel/kvm/kvm-all.c
+index 439a4efe52..1611f644a4 100644
+--- a/accel/kvm/kvm-all.c
++++ b/accel/kvm/kvm-all.c
+@@ -2007,14 +2007,16 @@ static int kvm_init(MachineState *ms)
+     s->coalesced_pio = s->coalesced_mmio &&
+                        kvm_check_extension(s, KVM_CAP_COALESCED_PIO);
 
-this part looks sane, can you respin this?
+-    s->manual_dirty_log_protect =
++    uint64_t dirty_log_manual_caps =
+         kvm_check_extension(s, KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2);
+-    if (s->manual_dirty_log_protect) {
+-        ret = kvm_vm_enable_cap(s, KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2, 0, 1);
++    if (dirty_log_manual_caps) {
++        ret = kvm_vm_enable_cap(s, KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2, 0,
++                                dirty_log_manual_caps);
+         if (ret) {
+             warn_report("Trying to enable KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2 "
+                         "but failed.  Falling back to the legacy mode. ");
+-            s->manual_dirty_log_protect = false;
++        } else {
++            s->manual_dirty_log_protect = true;
+         }
+     }
 
-thanks,
+> 
+>> As I tested this patch on a 128GB RAM Linux VM with no huge pages, the
+>> time of enabling dirty log will decrease obviously.
+> 
+> I'm not sure how realistic that is. Not having huge pages tends to lead
+> to pretty bad performance in general...
+Sure, this has no effect on guests which are all of huge pages.
 
-greg k-h
+For my understanding, once a guest has normal pages (maybe are initialized
+at beginning or dissloved from huge pages), it can benefit from this patch.
+> 
+> Thanks,
+> 
+>         M.
+Pretty thanks for your review.
+
+Thanks,
+Keqian
+
