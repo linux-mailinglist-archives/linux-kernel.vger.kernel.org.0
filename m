@@ -2,189 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45946181AC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:06:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACADA181ACC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:08:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729751AbgCKOG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 10:06:56 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:41222 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729646AbgCKOG4 (ORCPT
+        id S1729726AbgCKOIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 10:08:40 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45229 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729656AbgCKOIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 10:06:56 -0400
-Received: by mail-vs1-f68.google.com with SMTP id k188so1373210vsc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 07:06:55 -0700 (PDT)
+        Wed, 11 Mar 2020 10:08:39 -0400
+Received: by mail-wr1-f66.google.com with SMTP id m9so2763256wro.12
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 07:08:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iv2EKBGBW61Sg5j1CuB5OJwL+SL/Rfst3AnSagIhu7w=;
-        b=fYwrS1B6AVdfgW8GdVNI3bGztNkpJ0NdKA78Z0JsnroHgsqCXSMWKt/i1/azdngK4o
-         mUBu+X1E8dffKv17zj8VoWH8eYuaGiqcbGE2+dSR4u7k78sP5LrP867+tPgGW4hZvGiF
-         Av/lJtPzkWj62i22ifgkbFmOAbZxfUpD32lQRS01TpECctDTldS7c1FI4ZrMUDO7/G95
-         sGhZUQN32AiRfa0Y2GcP7qJf8OK6hXnseAKfQqwLQHtWeEVRW0d8hXbKdtR/nUohbjZT
-         aWtmBw6hV+I+GVC46x9IEr9QIrkrtx1FZHaIhnx2pcKZ0mqkoE1qENxBy8yeg0DvW0Ky
-         WMwA==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=oKBnUqxkzb7d7sbIS2OKF3jj3IOW0mcQ4QlWxLRUkk4=;
+        b=uBqiNr0fgkXAjFmgpSWDnnclUsO9GYzmCMMuIY1TkHmli192/qmtJHShThlic5y7Zd
+         OPr76leUe9e8WUGa9OToroJq0Tj0UfVJgw5CERCYUsj3k7YuJXnkVZM2RdQ2rBgnOu+l
+         GMFmJuqGFUP07DTgd551x0QOVYws/DwudfVr3AFBhNXH4j+u7Ep3HYHvDpvkvp6NYE/+
+         yDNwPhKo5AwJ7ke737ZWNRto9N7IEqG6mSODT0aSDT1SsL3ca9Zn0QAZInHj4skkRZbN
+         4Fq8+DIDRm75FYvSvCItmaTVKJkHT+anfdAbkvnYpOxB8YkU1SUPlgMMoZ9VfB6vdc2N
+         NbnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iv2EKBGBW61Sg5j1CuB5OJwL+SL/Rfst3AnSagIhu7w=;
-        b=gywEXfU6UFfspnxCgIhTIaG45GfctduY/G6fUhuVavlwl6fA8wD2/UQgGqHn9E/QSZ
-         mfpJU8T76MXDt0zs+P+m/abcW84pUMpLT+6YF9cGi8t56xSkzvRQD2rUcZuVMPf7pg9L
-         rdlDkCDxYOlEGcKOkTou73SswVJ4ACIYkpS33TZk0oHxT/PKym6HRoPN3swlKwvmEV5i
-         9DE5sWfQTxgq9q+Zh2gMK9DV9IfZ7/Q3zaPmsRUqSpDYLL43Nmt5l6D7ZMnsFGuQqKZA
-         AuTwZ97mvF1tqrIE1aKQMIzEeQ76k/CQzEyS638pHYAixzxl5S4xCx2q1EgNOIaN1MPU
-         sCug==
-X-Gm-Message-State: ANhLgQ24SFvnt/lGdNwrgKPnKZcOcSYq/ftfTT3uWLi6H+YCYvbzCWjp
-        YZldIjG4euanvD6KJef+VimzAc2YcA0m4Er4J8NTs4yj2MA=
-X-Google-Smtp-Source: ADFU+vtsLve3hTxcPcPNZgM2hHwIlDB2c9KIXaQMCbxKanysJOkRpOTC3X4Fwq0AZUcj4mQo3t9tPz/nGajYu9Xoqts=
-X-Received: by 2002:a67:2ec6:: with SMTP id u189mr2060115vsu.200.1583935614813;
- Wed, 11 Mar 2020 07:06:54 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=oKBnUqxkzb7d7sbIS2OKF3jj3IOW0mcQ4QlWxLRUkk4=;
+        b=dow4YIW+gLtngCGOmUfWSkdS8QnfbYhqYdmOhhTLIDbAU0cbK3cZrosayAWiQkiKHM
+         w+rWf43U2R+bkij14Bvt8jayAwiMZDln9BcqspSZLgWCNbpcTVMRyGlrZK1R6EHy17dS
+         WWFK4C0eFyd++YUh+lGAVOZ1i5HMd7lvrCwwMaq1BA8r/24JIuqUb76LCEMjOTwa5BBU
+         jVk/sWQ0RCelh4DEms4Nq50iJ7IEH3DAaS2/fwbSt49LS1I5QwQ929vsLqsL0UmRvQgc
+         m9hG8tCfwwC1JtJ2+ieYe90MGW01RKDnhsWo6cAxwYZr1PL7ipDIATHl02HrNGXXmWIb
+         1pAQ==
+X-Gm-Message-State: ANhLgQ2rRM/xTLMTs2Ue9JpGgicFaw0p6jCRjbJSakWOFzHDCvFrEk6U
+        34EUu3Cvd5rZgx+p6feq8gwiRwJb+RNYwwWAzEE=
+X-Google-Smtp-Source: ADFU+vtx3L9v/dv9bhnwCRxjJ3by7CKBqD6Tb5puANG0eacWkxx7soje+ha8CCckHUVYSpQuCvaW9qTl+yyJA+6hPPY=
+X-Received: by 2002:adf:f08e:: with SMTP id n14mr4585802wro.367.1583935717688;
+ Wed, 11 Mar 2020 07:08:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200212024220.GA32111@seokyung-mobl1> <CAPDyKFr9H2XcgCk9AmHgJfHC+PySh66KxegMJ4yb4aqKSVt3kg@mail.gmail.com>
- <BYAPR11MB269638142E2BF2C6E108B40A9CE20@BYAPR11MB2696.namprd11.prod.outlook.com>
- <CAPDyKFr=hE6diZmaVy-os3rFScHe+8OphBS+edkVGK+Z-J_=HA@mail.gmail.com>
- <BYAPR11MB2696D160D6F5B7C98E0503E79CFF0@BYAPR11MB2696.namprd11.prod.outlook.com>
- <CAPDyKFqqDWMsHEb493p__FNzYaEzE6Ry0bkd-2ng7cdM886zjw@mail.gmail.com>
- <5f3b8cb9-5e55-ee47-46e5-af019d6328b6@intel.com> <CAPDyKFosrju6y5mOKePsNwqgDr=QeBozFTrWKz4MNpsMmeZdCA@mail.gmail.com>
- <1583892806.24941.7.camel@mhfsdcap03> <CAPDyKFrdiiVUrCKR2N=Xbtfy3NhXSaq4m_ziXScdJU3x8G2F+w@mail.gmail.com>
- <053fc1c1-465a-e68a-39cb-796addf808e0@intel.com>
-In-Reply-To: <053fc1c1-465a-e68a-39cb-796addf808e0@intel.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 11 Mar 2020 15:06:18 +0100
-Message-ID: <CAPDyKFrTx-5DWjAUO-Lt-ZPcMAZhn2DWdUr9d=qXG-TsKBpr+A@mail.gmail.com>
-Subject: Re: [PATCH] mmc: mmc: Fix the timing for clock changing in mmc
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Chaotian Jing <chaotian.jing@mediatek.com>,
-        "Seo, Kyungmin" <kyungmin.seo@intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a05:6000:92:0:0:0:0 with HTTP; Wed, 11 Mar 2020 07:08:37
+ -0700 (PDT)
+Reply-To: aakkaavvii@gmail.com
+From:   Abraham Morrison <sambchambers06@gmail.com>
+Date:   Wed, 11 Mar 2020 07:08:37 -0700
+Message-ID: <CA+RS1P0PmX6jkWXihDLipspiLyzP_VkTHS=V8Oih0+ZuXreTcg@mail.gmail.com>
+Subject: Good day!
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Mar 2020 at 11:00, Adrian Hunter <adrian.hunter@intel.com> wrote:
->
-> On 11/03/20 10:57 am, Ulf Hansson wrote:
-> > On Wed, 11 Mar 2020 at 03:13, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
-> >>
-> >> On Tue, 2020-03-10 at 16:41 +0100, Ulf Hansson wrote:
-> >>> On Tue, 10 Mar 2020 at 11:44, Adrian Hunter <adrian.hunter@intel.com> wrote:
-> >>>>
-> >>>> On 10/03/20 11:05 am, Ulf Hansson wrote:
-> >>>>> On Tue, 10 Mar 2020 at 05:28, Seo, Kyungmin <kyungmin.seo@intel.com> wrote:
-> >>>>>>
-> >>>>>> I read the link and patch of Chaotian Jing.
-> >>>>>> I also point out what Chaotian said.
-> >>>>>> Most host controllers have DLL tuning values for each mode. When host controller is set as HS400 mode with 50MHz clock, host controller uses DLL value which is tuned with 200MHz clock.
-> >>>>>>
-> >>>>>> If DLL value in HS400 mode doesn't have the pass range in HS mode, command transfer failing may fail.
-> >>>>>> In order to make robust sdhci driver, I think the patch needs to be considered.
-> >>>>>
-> >>>>> I have, but I am not picking it up in its current form.
-> >>>>>
-> >>>>>> Of course, CMD6 with HS400 mode and 200MHz clock should not cause any problem because it's correct configuration.
-> >>>>>
-> >>>>> Yes, but not for all cases, as I said in my reply in those email-threads.
-> >>>>>
-> >>>>> What I had in mind, is that I I think we should inform
-> >>>>> mmc_hs400_to_hs200() about under what situation it's getting called.
-> >>>>> Depending on that, we should either decrease the clock rate before or
-> >>>>> after we send the CMD6.
-> >>>>>
-> >>>>> Would that work for your case?
-> >>>>
-> >>>> Ulf, would you consider a new call back e.g.
-> >>>
-> >>> That could work, but I am not sure what's best, honestly.
-> >>>
-> >>> The problem may be generic or it could be specific to some host
-> >>> controller? I think we need to answer that question first.
-> >>>
-> >>> What do you think?
-> >>>
-> >>> Br
-> >>> Uffe
-> >>>
-> >> When start to send CMD6 to switch to HS mode, both Host & eMMC device
-> >> are working on HS400 mode, so the timing used is MUST at HS400 mode and
-> >> the clock MUST keep at current clock(usually 200Mhz). after received the
-> >> response of CMD6, Never use CMD13 to polling card status for timing
-> >> switch. if host has ops->card_busy() or caps WAIT_WHILE_BUSY, then use
-> >> it, if not,just do mmc_delay() for specific time.
-> >
-> > The CMD13 is currently not used when polling, because we set the
-> > send_status parameter to false in the calls to __mmc_switch(). So this
-> > should already be covered, according to your suggestions. Right?
-> >
-> > When it comes to keeping the clock rate as is, before sending the CMD6
-> > - I fully agree that it's a good idea when doing a periodic retuning.
-> > As you would expect things to work as they are.
-> >
-> > The problem is, when you have received a CRC error and the re-tuning
-> > is being triggered because of that. In that case it may be a better
-> > option to decrease the clock rate, at least that is what I recall
-> > Adrian needs for his cases. Adrian?
->
-> It seems hardware supports HS400 only at the expected 200MHz frequency.
-
-Yes, that's my understanding as well.
-
-> The assumption then is that the command will be seen by the card but the
-> response may have a CRC error.  So we would need to ignore CRC errors, but
-> it would also be worth waiting the timeout if the card is still busy whether
-> or not there is an error.
-
-Alright, so you're saying that keeping the clock rate to HS400 speed
-(decrease it after CMD6) could be fine, if we implement the above
-instead?
-
->
-> The only way to mitigate errors then is to increase the number of retries.
-
-We already use MMC_CMD_RETRIES for CMD6. Is that sufficient you think
-(again assuming we implement to allow CRC errors for these CMD6
-commands)?
-
-Or are you suggesting we may need a re-try of the hole re-tune thing?
-Maybe a better option is then to simply bail out and do full re-init
-of the card?
-
->
-> >
-> > What will happen when you receive a CRC error and there is re-tuning
-> > triggered, is that something you have seen happening on you boards?
-> >
-> >>
-> >> the next step is that call mmc_set_ios() to set current timing to HS
-> >> mode and clock to 50Mhz to let Host driver that eMMC device has been
-> >> switched to HS mode and Host can switch to HS mode at 50Mhz(may apply
-> >> parameters for this low speed).
-> >
-> > Yep, makes sense.
-> >
-> >>>>
-> >>>> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> >>>> index c2abd417a84a..1bc18fe2632f 100644
-> >>>> --- a/drivers/mmc/core/mmc.c
-> >>>> +++ b/drivers/mmc/core/mmc.c
-> >>>> @@ -1237,7 +1237,10 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
-> >>>>
-> >>>>         /* Reduce frequency to HS */
-> >>>>         max_dtr = card->ext_csd.hs_max_dtr;
-> >>>> -       mmc_set_clock(host, max_dtr);
-> >>>> +       if (host->ops->hs400_to_hs200_prep)
-> >>>> +               host->ops->hs400_to_hs200_prep(host, max_dtr);
-> >>>> +       else
-> >>>> +               mmc_set_clock(host, max_dtr);
-> >>>>
-> >>>>         /* Switch HS400 to HS DDR */
-> >>>>         val = EXT_CSD_TIMING_HS;
-> >>>>
-> >>>>
-
-Kind regards
-Uffe
+Dear friend, I am Mr. Abraham Morrison, did you receive my previous
+letter? I have an important information for you. So if you are
+interested get back to me for more details.
+Thank you.
+Mr. Abraham Morrison.
+.....................
+Caro amigo, sou o Sr. Abraham Morrison, voc=C3=AA recebeu minha carta
+anterior? Eu tenho uma informa=C3=A7=C3=A3o importante para voc=C3=AA. Ent=
+=C3=A3o, se voc=C3=AA
+estiver interessado, volte para mim para mais detalhes.
+Obrigado.
+Sr. Abraham Morrison.
