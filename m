@@ -2,72 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B08ED181926
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 14:06:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C9E718192B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 14:08:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729522AbgCKNGg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 09:06:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42368 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729345AbgCKNGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 09:06:36 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7570220873;
-        Wed, 11 Mar 2020 13:06:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583931995;
-        bh=PlaS74TA52+HyUfV2WJZ2U19MoadXqctbqu4D164gSk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TeWdulkJWMeVeaaEZGETJ9tKpfFNWxoEk6v0ywm9ujxOMwzAYeGDhTcA3XLySgwfL
-         akd7JVKlT7J59GDxrR5A/Xch7VLjquPNM57glysIry3yTkq+Cna3IsKyqc4IjdMpb3
-         xnNuXNI0w1ToAtKSsuA6q14naYS6uMTTkD1MTxcg=
-Date:   Wed, 11 Mar 2020 14:06:28 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Tom Lendacky <thomas.lendacky@amd.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH 4.14 057/126] KVM: SVM: Override default MMIO mask if
- memory encryption is enabled
-Message-ID: <20200311130628.GA3833342@kroah.com>
-References: <20200310124203.704193207@linuxfoundation.org>
- <20200310124207.819562318@linuxfoundation.org>
- <20200310181952.GF9305@linux.intel.com>
- <220a78d4-0e46-a321-49cd-5d1c5827aef0@amd.com>
- <0bab862b-0780-38c3-0c60-b078d61613de@amd.com>
+        id S1729472AbgCKNH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 09:07:58 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:64978 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729331AbgCKNH5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 09:07:57 -0400
+X-UUID: 428ecd7073f44e89a7ac1fcf3f96f3d5-20200311
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=ClGTqPIGoVqVr3jF7yujqXX6Xpj7o2+++464APlQxj8=;
+        b=LV46WzqoLmIqPw8Wv7lHymUdjdvBT1Cdo1c9eAdaXElWx/V/xGaSci8c7/+kVw80LuR0ok4gaXOXA2U18MZyKJ968MVMcJFrIGbjg9jJXctJ5YS7Fs0uWX8k+FmYXas41unGSKcfzTk+LzNeEisLSZaRX6qdRpUhpQOYjZnegyM=;
+X-UUID: 428ecd7073f44e89a7ac1fcf3f96f3d5-20200311
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 888826361; Wed, 11 Mar 2020 21:07:52 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 11 Mar 2020 21:07:50 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 11 Mar 2020 21:06:53 +0800
+Message-ID: <1583932064.29614.6.camel@mtksdaap41>
+Subject: Re: [PATCH v11 4/5] soc / drm: mediatek: Move routing control to
+ mmsys device
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <p.zabel@pengutronix.de>, <airlied@linux.ie>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <ulrich.hecht+renesas@gmail.com>,
+        <laurent.pinchart@ideasonboard.com>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        <linux-media@vger.kernel.org>,
+        "Allison Randal" <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-mediatek@lists.infradead.org>,
+        "Collabora Kernel ML" <kernel@collabora.com>,
+        <dri-devel@lists.freedesktop.org>,
+        "Seiya Wang" <seiya.wang@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <wens@csie.org>,
+        Daniel Vetter <daniel@ffwll.ch>, <linux-clk@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        <devicetree@vger.kernel.org>,
+        "Matthias Brugger" <mbrugger@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <frank-w@public-files.de>, <linux-arm-kernel@lists.infradead.org>,
+        <hsinyi@chromium.org>, Richard Fontana <rfontana@redhat.com>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>, <sean.wang@mediatek.com>,
+        <rdunlap@infradead.org>, <matthias.bgg@kernel.org>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>
+Date:   Wed, 11 Mar 2020 21:07:44 +0800
+In-Reply-To: <20200311115614.1425528-5-enric.balletbo@collabora.com>
+References: <20200311115614.1425528-1-enric.balletbo@collabora.com>
+         <20200311115614.1425528-5-enric.balletbo@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0bab862b-0780-38c3-0c60-b078d61613de@amd.com>
+X-TM-SNTS-SMTP: D78B7E686CD1B535834D80DC0678BB113F1681C82C2C2E34388BCBCE202CC48B2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 03:59:25PM -0500, Tom Lendacky wrote:
-> On 3/10/20 1:42 PM, Tom Lendacky wrote:
-> > On 3/10/20 1:19 PM, Sean Christopherson wrote:
-> >> Has this been tested on the stable kernels?  There's a recent bug report[*]
-> >> that suggests the 4.19 backport of this patch may be causing issues.
-> > 
-> > I missed this went the stable patches went by...  when backported to the
-> > older version of kvm_mmu_set_mmio_spte_mask() in the stable kernels (4.14
-> > and 4.19), the call should have been:
-> > 
-> > kvm_mmu_set_mmio_spte_mask(mask, mask) and not:
-> > 
-> > kvm_mmu_set_mmio_spte_mask(mask, PT_WRITABLE_MASK | PT_USER_MASK);
-> > 
-> > The call in the original upstream patch was:
-> > 
-> > kvm_mmu_set_mmio_spte_mask(mask, mask, PT_WRITABLE_MASK | PT_USER_MASK);
-> 
-> Greg,
-> 
-> I should have asked in the earlier email...  how do you want to address this?
+SGksIEVucmljOg0KDQpPbiBXZWQsIDIwMjAtMDMtMTEgYXQgMTI6NTYgKzAxMDAsIEVucmljIEJh
+bGxldGJvIGkgU2VycmEgd3JvdGU6DQo+IFByb3ZpZGUgYSBtdGtfbW1zeXNfZGRwX2Nvbm5lY3Qo
+KSBhbmQgbXRrX21tc3lzX2Rpc2Nvbm5lY3QoKSBmdW5jdGlvbnMgdG8NCj4gcmVwbGFjZSBtdGtf
+ZGRwX2FkZF9jb21wX3RvX3BhdGgoKSBhbmQgbXRrX2RkcF9yZW1vdmVfY29tcF9mcm9tX3BhdGgo
+KS4NCj4gVGhvc2UgZnVuY3Rpb25zIHdpbGwgYWxsb3cgRFJNIGRyaXZlciBhbmQgb3RoZXJzIHRv
+IGNvbnRyb2wgdGhlIGRhdGENCj4gcGF0aCByb3V0aW5nLg0KPiANCg0KUmV2aWV3ZWQtYnk6IENL
+IEh1IDxjay5odUBtZWRpYXRlay5jb20+DQoNCj4gU2lnbmVkLW9mZi1ieTogRW5yaWMgQmFsbGV0
+Ym8gaSBTZXJyYSA8ZW5yaWMuYmFsbGV0Ym9AY29sbGFib3JhLmNvbT4NCj4gUmV2aWV3ZWQtYnk6
+IE1hdHRoaWFzIEJydWdnZXIgPG1hdHRoaWFzLmJnZ0BnbWFpbC5jb20+DQo+IC0tLQ0KPiANCj4g
+Q2hhbmdlcyBpbiB2MTE6IE5vbmUNCj4gQ2hhbmdlcyBpbiB2MTA6DQo+IC0gU2VsZWN0IENPTkZJ
+R19NVEtfTU1TWVMgKENLKQ0KPiAtIFBhc3MgZGV2aWNlIHBvaW50ZXIgb2YgbW1zeXMgZGV2aWNl
+IGluc3RlYWQgb2YgY29uZmlnIHJlZ3MgKENLKQ0KPiANCj4gQ2hhbmdlcyBpbiB2OToNCj4gLSBJ
+bnRyb2R1Y2VkIGEgbmV3IHBhdGNoIHRvIG1vdmUgcm91dGluZyBjb250cm9sIGludG8gbW1zeXMg
+ZHJpdmVyLg0KPiAtIFJlbW92ZWQgdGhlIHBhdGNoIHRvIHVzZSByZWdtYXAgYXMgaXMgbm90IG5l
+ZWRlZCBhbnltb3JlLg0KPiANCj4gQ2hhbmdlcyBpbiB2ODogTm9uZQ0KPiBDaGFuZ2VzIGluIHY3
+OiBOb25lDQo+IA0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL0tjb25maWcgICAgICAgIHwg
+ICAxICsNCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYyB8ICAxOSAr
+LQ0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZGRwLmMgIHwgMjU2IC0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2Rk
+cC5oICB8ICAgNyAtDQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kcnYuYyAg
+fCAgMTQgKy0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2Rydi5oICB8ICAg
+MiArLQ0KPiAgZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLW1tc3lzLmMgICAgICAgIHwgMjc5ICsr
+KysrKysrKysrKysrKysrKysrKysrKw0KPiAgaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRr
+LW1tc3lzLmggIHwgIDIwICsrDQo+ICA4IGZpbGVzIGNoYW5nZWQsIDMxNiBpbnNlcnRpb25zKCsp
+LCAyODIgZGVsZXRpb25zKC0pDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9saW51eC9z
+b2MvbWVkaWF0ZWsvbXRrLW1tc3lzLmgNCj4gDQoNCg==
 
-I will fix this up now, thanks for pointing out what I got wrong...
-
-greg k-h
