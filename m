@@ -2,52 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F04181B9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:44:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F28C3181BBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:52:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729890AbgCKOoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 10:44:30 -0400
-Received: from mga18.intel.com ([134.134.136.126]:8344 "EHLO mga18.intel.com"
+        id S1729854AbgCKOwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 10:52:22 -0400
+Received: from mga07.intel.com ([134.134.136.100]:9853 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729198AbgCKOo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 10:44:29 -0400
+        id S1729584AbgCKOwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 10:52:22 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 07:44:28 -0700
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 07:52:21 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
-   d="scan'208";a="441701450"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
-  by fmsmga005.fm.intel.com with ESMTP; 11 Mar 2020 07:44:26 -0700
-Subject: Re: [PATCH] mmc: mmc: Fix the timing for clock changing in mmc
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Chaotian Jing <chaotian.jing@mediatek.com>,
-        "Seo, Kyungmin" <kyungmin.seo@intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200212024220.GA32111@seokyung-mobl1>
- <CAPDyKFr9H2XcgCk9AmHgJfHC+PySh66KxegMJ4yb4aqKSVt3kg@mail.gmail.com>
- <BYAPR11MB269638142E2BF2C6E108B40A9CE20@BYAPR11MB2696.namprd11.prod.outlook.com>
- <CAPDyKFr=hE6diZmaVy-os3rFScHe+8OphBS+edkVGK+Z-J_=HA@mail.gmail.com>
- <BYAPR11MB2696D160D6F5B7C98E0503E79CFF0@BYAPR11MB2696.namprd11.prod.outlook.com>
- <CAPDyKFqqDWMsHEb493p__FNzYaEzE6Ry0bkd-2ng7cdM886zjw@mail.gmail.com>
- <5f3b8cb9-5e55-ee47-46e5-af019d6328b6@intel.com>
- <CAPDyKFosrju6y5mOKePsNwqgDr=QeBozFTrWKz4MNpsMmeZdCA@mail.gmail.com>
- <1583892806.24941.7.camel@mhfsdcap03>
- <CAPDyKFrdiiVUrCKR2N=Xbtfy3NhXSaq4m_ziXScdJU3x8G2F+w@mail.gmail.com>
- <053fc1c1-465a-e68a-39cb-796addf808e0@intel.com>
- <CAPDyKFrTx-5DWjAUO-Lt-ZPcMAZhn2DWdUr9d=qXG-TsKBpr+A@mail.gmail.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <d355ac11-21d6-e8f7-d03f-65c55e10aea2@intel.com>
-Date:   Wed, 11 Mar 2020 16:43:40 +0200
+   d="scan'208";a="242703772"
+Received: from psingh6-mobl.amr.corp.intel.com (HELO [10.251.23.209]) ([10.251.23.209])
+  by orsmga003.jf.intel.com with ESMTP; 11 Mar 2020 07:52:20 -0700
+Subject: Re: [PATCH 1/8] soundwire: bus_type: add master_device/driver support
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Hui Wang <hui.wang@canonical.com>, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+References: <20200227223206.5020-1-pierre-louis.bossart@linux.intel.com>
+ <20200227223206.5020-2-pierre-louis.bossart@linux.intel.com>
+ <20200303054136.GP4148@vkoul-mobl>
+ <8a04eda6-cbcf-582f-c229-5d6e4557344b@linux.intel.com>
+ <20200304095312.GT4148@vkoul-mobl>
+ <05dbe43c-abf8-9d5a-d808-35bf4defe4ba@linux.intel.com>
+ <20200305063646.GW4148@vkoul-mobl>
+ <eb30ac49-788f-b856-6fcf-84ae580eb3c8@linux.intel.com>
+ <20200306050115.GC4148@vkoul-mobl>
+ <4fabb135-6fbb-106f-44fd-8155ea716c00@linux.intel.com>
+ <20200311063645.GH4885@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <0fafb567-10e5-a1ea-4a6d-b3c53afb215e@linux.intel.com>
+Date:   Wed, 11 Mar 2020 09:44:42 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrTx-5DWjAUO-Lt-ZPcMAZhn2DWdUr9d=qXG-TsKBpr+A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200311063645.GH4885@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -55,140 +56,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/03/20 4:06 pm, Ulf Hansson wrote:
-> On Wed, 11 Mar 2020 at 11:00, Adrian Hunter <adrian.hunter@intel.com> wrote:
->>
->> On 11/03/20 10:57 am, Ulf Hansson wrote:
->>> On Wed, 11 Mar 2020 at 03:13, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
+
+
+On 3/11/20 1:36 AM, Vinod Koul wrote:
+> On 06-03-20, 09:40, Pierre-Louis Bossart wrote:
+>>>>> Why do you need a extra driver for this. Do you have another set of
+>>>>> device object and driver for DSP code? But you do manage that, right?
+>>>>> I am proposing to simplify the device model here and have only one
+>>>>> device (SOF PCI) and driver (SOF PCI driver), which is created by actual
+>>>>> bus (PCI here) as you have in rest of the driver like HDA, DSP etc.
+>>>>>
+>>>>> I have already recommended is to make the int-sdw a module which is
+>>>>> invoked by SOF PCI driver code (thereby all code uses SOF PCI device and
+>>>>> SOF PCI driver) directly. The DSP in my time for skl was a separate
+>>>>> module but used the parent objects.
+>>>>>
+>>>>> The SOF sdw init (the place where sdw routines are invoked after DSP
+>>>>> load) can call sdw_probe and startup. Based on DSP sequencing you can
+>>>>> call these functions directly without waiting for extra device to be
+>>>>> probed etc.
+>>>>>
+>>>>> I feel your flows will be greatly simplified as a result of this.
 >>>>
->>>> On Tue, 2020-03-10 at 16:41 +0100, Ulf Hansson wrote:
->>>>> On Tue, 10 Mar 2020 at 11:44, Adrian Hunter <adrian.hunter@intel.com> wrote:
->>>>>>
->>>>>> On 10/03/20 11:05 am, Ulf Hansson wrote:
->>>>>>> On Tue, 10 Mar 2020 at 05:28, Seo, Kyungmin <kyungmin.seo@intel.com> wrote:
->>>>>>>>
->>>>>>>> I read the link and patch of Chaotian Jing.
->>>>>>>> I also point out what Chaotian said.
->>>>>>>> Most host controllers have DLL tuning values for each mode. When host controller is set as HS400 mode with 50MHz clock, host controller uses DLL value which is tuned with 200MHz clock.
->>>>>>>>
->>>>>>>> If DLL value in HS400 mode doesn't have the pass range in HS mode, command transfer failing may fail.
->>>>>>>> In order to make robust sdhci driver, I think the patch needs to be considered.
->>>>>>>
->>>>>>> I have, but I am not picking it up in its current form.
->>>>>>>
->>>>>>>> Of course, CMD6 with HS400 mode and 200MHz clock should not cause any problem because it's correct configuration.
->>>>>>>
->>>>>>> Yes, but not for all cases, as I said in my reply in those email-threads.
->>>>>>>
->>>>>>> What I had in mind, is that I I think we should inform
->>>>>>> mmc_hs400_to_hs200() about under what situation it's getting called.
->>>>>>> Depending on that, we should either decrease the clock rate before or
->>>>>>> after we send the CMD6.
->>>>>>>
->>>>>>> Would that work for your case?
->>>>>>
->>>>>> Ulf, would you consider a new call back e.g.
->>>>>
->>>>> That could work, but I am not sure what's best, honestly.
->>>>>
->>>>> The problem may be generic or it could be specific to some host
->>>>> controller? I think we need to answer that question first.
->>>>>
->>>>> What do you think?
->>>>>
->>>>> Br
->>>>> Uffe
->>>>>
->>>> When start to send CMD6 to switch to HS mode, both Host & eMMC device
->>>> are working on HS400 mode, so the timing used is MUST at HS400 mode and
->>>> the clock MUST keep at current clock(usually 200Mhz). after received the
->>>> response of CMD6, Never use CMD13 to polling card status for timing
->>>> switch. if host has ops->card_busy() or caps WAIT_WHILE_BUSY, then use
->>>> it, if not,just do mmc_delay() for specific time.
->>>
->>> The CMD13 is currently not used when polling, because we set the
->>> send_status parameter to false in the calls to __mmc_switch(). So this
->>> should already be covered, according to your suggestions. Right?
->>>
->>> When it comes to keeping the clock rate as is, before sending the CMD6
->>> - I fully agree that it's a good idea when doing a periodic retuning.
->>> As you would expect things to work as they are.
->>>
->>> The problem is, when you have received a CRC error and the re-tuning
->>> is being triggered because of that. In that case it may be a better
->>> option to decrease the clock rate, at least that is what I recall
->>> Adrian needs for his cases. Adrian?
->>
->> It seems hardware supports HS400 only at the expected 200MHz frequency.
-> 
-> Yes, that's my understanding as well.
-> 
->> The assumption then is that the command will be seen by the card but the
->> response may have a CRC error.  So we would need to ignore CRC errors, but
->> it would also be worth waiting the timeout if the card is still busy whether
->> or not there is an error.
-> 
-> Alright, so you're saying that keeping the clock rate to HS400 speed
-> (decrease it after CMD6) could be fine, if we implement the above
-> instead?
-
-Yes, but I would like to try adding a simple retry at the lower frequency as
-well and see how well that works.  I will test that tomorrow.
-
-> 
->>
->> The only way to mitigate errors then is to increase the number of retries.
-> 
-> We already use MMC_CMD_RETRIES for CMD6. Is that sufficient you think
-> (again assuming we implement to allow CRC errors for these CMD6
-> commands)?
-
-That is only 3.  If the CRC errors are random, then trying more times might
-help.
-
-> 
-> Or are you suggesting we may need a re-try of the hole re-tune thing?
-> Maybe a better option is then to simply bail out and do full re-init
-> of the card?
-
-The block driver will try that at some point.  I will see if I can test how
-well that works in this case.
-
-> 
->>
->>>
->>> What will happen when you receive a CRC error and there is re-tuning
->>> triggered, is that something you have seen happening on you boards?
->>>
+>>>> Not at all, no. This is not a simplification but an extremely invasive
+>>>> proposal.
 >>>>
->>>> the next step is that call mmc_set_ios() to set current timing to HS
->>>> mode and clock to 50Mhz to let Host driver that eMMC device has been
->>>> switched to HS mode and Host can switch to HS mode at 50Mhz(may apply
->>>> parameters for this low speed).
+>>>> The parent-child relationship is extremely useful for power management, and
+>>>> guarantees that the PCI device remains on while one or more of the masters
+>>>> are used, and conversely can suspend when all links are idle. I currently
+>>>> don't need to do anything, it's all taken care of by the framework.
+>>>>
+>>>> If I have to do all the power management at the PCI device level, then I
+>>>> will need to keep track of which links are currently active. All these links
+>>>> are used independently, so it's racy as hell to keep track of the usage when
+>>>> the pm framework already does so quite elegantly. You really want to use the
+>>>> pm_runtime_get/put refcount for each master device, not manage them from the
+>>>> PCI level.
 >>>
->>> Yep, makes sense.
+>>> Not at all, you still can call pm_runtime_get/put() calls in sdw module
+>>> for PCI device. That doesn't change at all.
 >>>
->>>>>>
->>>>>> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
->>>>>> index c2abd417a84a..1bc18fe2632f 100644
->>>>>> --- a/drivers/mmc/core/mmc.c
->>>>>> +++ b/drivers/mmc/core/mmc.c
->>>>>> @@ -1237,7 +1237,10 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
->>>>>>
->>>>>>         /* Reduce frequency to HS */
->>>>>>         max_dtr = card->ext_csd.hs_max_dtr;
->>>>>> -       mmc_set_clock(host, max_dtr);
->>>>>> +       if (host->ops->hs400_to_hs200_prep)
->>>>>> +               host->ops->hs400_to_hs200_prep(host, max_dtr);
->>>>>> +       else
->>>>>> +               mmc_set_clock(host, max_dtr);
->>>>>>
->>>>>>         /* Switch HS400 to HS DDR */
->>>>>>         val = EXT_CSD_TIMING_HS;
->>>>>>
->>>>>>
+>>> Only change is for suspend/resume you have callbacks from PCI driver
+>>> rather than pm core.
+>> There are two other related issues that you didn't mention.
+>>
+>> the ASoC layer does require a driver with a 'name' for the components
+>> registered with the master device. So if you don't have a driver for the
+>> master device, the DAIs will be associated with the PCI device.
+>>
+>> But the ASoC core does make pm_runtime calls on its own,
+>>
+>> soc_pcm_open(struct snd_pcm_substream *substream)
+>> {
+>> ...
+>> 	for_each_rtd_components(rtd, i, component)
+>> 		pm_runtime_get_sync(component->dev);
+>>
+>> and if the device that's associated with the DAI is the PCI device, then
+>> that will not result in the relevant master IP being activated, only the PCI
+>> device refcount will be increased - meaning there is no hook that would tell
+>> the PCI layer to turn on a specific link.
+>>
+>> What you are recommending would be an all-or-nothing solution with all links
+>> on or all links off, which beats the purpose of having independent
+>> link-level power management.
 > 
-> Kind regards
-> Uffe
+> Why can't you use dai .startup callback for this?
 > 
+> The ASoC core will do pm_runtime calls that will ensure PCI device is
+> up, DSP firmware downloaded and running.
+> 
+> You can use .startup() to turn on your link and .shutdown to turn off
+> the link.
+
+There are multiple dais per link, and multiple Slave per link, so we 
+would have to refcount and track active dais to understand when the link 
+needs to be turned on/off. It's a duplication of what the pm framework 
+can do at the device/link level, and will likely introduce race conditions.
+
+Not to mention that we'd need to introduce workqueues to turn the link 
+off with a delay, with pm_runtime_put_autosuspend() does for free.
+
+Linux is all about frameworks. For power management, we shall use the 
+power management framework, not reinvent it.
+
 
