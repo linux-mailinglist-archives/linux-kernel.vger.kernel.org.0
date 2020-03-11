@@ -2,223 +2,588 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6EAB180E89
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 04:33:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 774F9180E84
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 04:32:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728113AbgCKDdn convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 10 Mar 2020 23:33:43 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37179 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727506AbgCKDdm (ORCPT
+        id S1727995AbgCKDck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 23:32:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37344 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727659AbgCKDcj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 23:33:42 -0400
-Received: from mail-pf1-f199.google.com ([209.85.210.199])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1jBs5C-0007ly-Kw
-        for linux-kernel@vger.kernel.org; Wed, 11 Mar 2020 03:30:58 +0000
-Received: by mail-pf1-f199.google.com with SMTP id d127so439349pfa.7
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 20:30:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=JAj39y4cSkPD8V1E4/a4ReHRXvM9rblHsG5Ml1/Bwlg=;
-        b=FArtQIeHxPt6kNd3ipYBEZoVQz8EOXzW/HtktkIHxJIGQ4qcrGZHtS33MJdtH1ynd8
-         66qukc35hIHRiy0a43qn8okEklDC3ulI2cRPYIklEcLs8hizgBXwdCI/wQsXhOzjGUeV
-         VrrmnkZACOyhye+NVqFSO3xXhBCcfFe55g4S+dw/+RTcBsVfQzY1Bwazl0V39cpD618n
-         Elcge5xRx7SDISGdPxWuRhLaxzITcMWPa83p0XiQkzFCas/saiF/PpgoQy8pVLOExBkv
-         aQqmbD6/V1Z9u+kP3+62fPWzQ9xBkjZfK8MeXiE4QiRBI95aA5ytMWOvbXJ6dNPUmz3I
-         enqg==
-X-Gm-Message-State: ANhLgQ2UaUk9e2E4dtkZRhZZ6hwkVst3Dqsca1i9/YiJnkQOxBNcpupf
-        ZbKM2eom8khYJu/D+gYGNEXPIWcPgYYGrE5FkalinNxG/QOZEppthCnCwWVUfElSuJv/zwhN5Lg
-        OnEDVBiAvXgmLAqerHLgSjZ2jLmzM/ydTQvtIzn+q7Q==
-X-Received: by 2002:a63:1c4a:: with SMTP id c10mr911465pgm.252.1583897457269;
-        Tue, 10 Mar 2020 20:30:57 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vsEErfC0z0HElIsPQwHJRDDdA2hHxEBoyTBij97kd4MeYBIaxapOby5p099widGMm2WCiMq9w==
-X-Received: by 2002:a63:1c4a:: with SMTP id c10mr911334pgm.252.1583897455506;
-        Tue, 10 Mar 2020 20:30:55 -0700 (PDT)
-Received: from [192.168.1.208] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id u3sm3623345pjv.32.2020.03.10.20.30.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Mar 2020 20:30:54 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: [PATCH v3 2/2] net-sysfs: Ensure begin/complete are called in
- speed_show() and duplex_show()
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <425AF2D4-1FEE-437B-8520-452F818F7DEE@canonical.com>
-Date:   Wed, 11 Mar 2020 11:30:49 +0800
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jouni Hogander <jouni.hogander@unikie.com>,
-        Eric Dumazet <edumazet@google.com>,
+        Tue, 10 Mar 2020 23:32:39 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02B3TPoF026843
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 23:32:36 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yppmyk7dq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 23:32:36 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
+        Wed, 11 Mar 2020 03:32:33 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Mar 2020 03:32:26 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02B3VPUv9503050
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Mar 2020 03:31:25 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4CB8842045;
+        Wed, 11 Mar 2020 03:32:25 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A131342041;
+        Wed, 11 Mar 2020 03:32:24 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Mar 2020 03:32:24 +0000 (GMT)
+Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 834C3A0130;
+        Wed, 11 Mar 2020 14:32:19 +1100 (AEDT)
+Subject: Re: [PATCH v3 20/27] powerpc/powernv/pmem: Forward events to
+ userspace
+From:   "Alastair D'Silva" <alastair@au1.ibm.com>
+To:     Frederic Barrat <fbarrat@linux.ibm.com>
+Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wang Hai <wanghai26@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Kimberly Brown <kimbrownkd@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jiri Pirko <jiri@mellanox.com>, Andrew Lunn <andrew@lunn.ch>,
-        Li RongQing <lirongqing@baidu.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <BEFADD90-2EC7-4B46-8AF4-F1D1CCD81993@canonical.com>
-References: <20200207101005.4454-1-kai.heng.feng@canonical.com>
- <20200207101005.4454-2-kai.heng.feng@canonical.com>
- <425AF2D4-1FEE-437B-8520-452F818F7DEE@canonical.com>
-To:     David Miller <davem@davemloft.net>,
-        Michal Kubecek <mkubecek@suse.cz>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+Date:   Wed, 11 Mar 2020 14:32:23 +1100
+In-Reply-To: <7ee589c0-2c02-9b8e-95a9-743ce29674ec@linux.ibm.com>
+References: <20200221032720.33893-1-alastair@au1.ibm.com>
+         <20200221032720.33893-21-alastair@au1.ibm.com>
+         <7ee589c0-2c02-9b8e-95a9-743ce29674ec@linux.ibm.com>
+Organization: IBM Australia
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20031103-0012-0000-0000-0000038F3534
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20031103-0013-0000-0000-000021CC0233
+Message-Id: <d22899af71549f2768e5e932f0f21a60c39586f6.camel@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-10_17:2020-03-10,2020-03-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ priorityscore=1501 spamscore=0 mlxscore=0 bulkscore=0 lowpriorityscore=0
+ mlxlogscore=999 clxscore=1015 suspectscore=2 adultscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003110020
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> On Feb 20, 2020, at 13:45, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
+On Wed, 2020-03-04 at 12:00 +0100, Frederic Barrat wrote:
 > 
->> 
->> On Feb 7, 2020, at 18:10, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
->> 
->> Device like igb gets runtime suspended when there's no link partner. We
->> can't get correct speed under that state:
->> $ cat /sys/class/net/enp3s0/speed
->> 1000
->> 
->> In addition to that, an error can also be spotted in dmesg:
->> [  385.991957] igb 0000:03:00.0 enp3s0: PCIe link lost
->> 
->> It's because the igb device doesn't get runtime resumed before calling
->> get_link_ksettings().
->> 
->> So let's use a new helper to call begin() and complete() like what
->> dev_ethtool() does, to runtime resume/suspend or power up/down the
->> device properly.
->> 
->> Once this fix is in place, igb can show the speed correctly without link
->> partner:
->> $ cat /sys/class/net/enp3s0/speed
->> -1
->> 
->> -1 here means SPEED_UNKNOWN, which is the correct value when igb is
->> runtime suspended.
->> 
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> Le 21/02/2020 à 04:27, Alastair D'Silva a écrit :
+> > From: Alastair D'Silva <alastair@d-silva.org>
+> > 
+> > Some of the interrupts that the card generates are better handled
+> > by the userspace daemon, in particular:
+> > Controller Hardware/Firmware Fatal
+> > Controller Dump Available
+> > Error Log available
+> > 
+> > This patch allows a userspace application to register an eventfd
+> > with
+> > the driver via SCM_IOCTL_EVENTFD to receive notifications of these
+> > interrupts.
+> > 
+> > Userspace can then identify what events have occurred by calling
+> > SCM_IOCTL_EVENT_CHECK and checking against the SCM_IOCTL_EVENT_FOO
+> > masks.
+> > 
+> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> > ---
+> >   arch/powerpc/platforms/powernv/pmem/ocxl.c    | 216
+> > ++++++++++++++++++
+> >   .../platforms/powernv/pmem/ocxl_internal.h    |   5 +
+> >   include/uapi/nvdimm/ocxl-pmem.h               |  16 ++
+> >   3 files changed, 237 insertions(+)
+> > 
+> > diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl.c
+> > b/arch/powerpc/platforms/powernv/pmem/ocxl.c
+> > index 009d4fd29e7d..e46696d3cc36 100644
+> > --- a/arch/powerpc/platforms/powernv/pmem/ocxl.c
+> > +++ b/arch/powerpc/platforms/powernv/pmem/ocxl.c
+> > @@ -10,6 +10,7 @@
+> >   #include <misc/ocxl.h>
+> >   #include <linux/delay.h>
+> >   #include <linux/ndctl.h>
+> > +#include <linux/eventfd.h>
+> >   #include <linux/fs.h>
+> >   #include <linux/mm_types.h>
+> >   #include <linux/memory_hotplug.h>
+> > @@ -335,11 +336,22 @@ static void free_ocxlpmem(struct ocxlpmem
+> > *ocxlpmem)
+> >   {
+> >   	int rc;
+> >   
+> > +	// Disable doorbells
+> > +	(void)ocxl_global_mmio_set64(ocxlpmem->ocxl_afu,
+> > GLOBAL_MMIO_CHIEC,
+> > +				     OCXL_LITTLE_ENDIAN,
+> > +				     GLOBAL_MMIO_CHI_ALL);
+> > +
+> >   	if (ocxlpmem->nvdimm_bus)
+> >   		nvdimm_bus_unregister(ocxlpmem->nvdimm_bus);
+> >   
+> >   	free_minor(ocxlpmem);
+> >   
+> > +	if (ocxlpmem->irq_addr[1])
+> > +		iounmap(ocxlpmem->irq_addr[1]);
+> > +
+> > +	if (ocxlpmem->irq_addr[0])
+> > +		iounmap(ocxlpmem->irq_addr[0]);
+> > +
+> >   	if (ocxlpmem->cdev.owner)
+> >   		cdev_del(&ocxlpmem->cdev);
+> >   
+> > @@ -443,6 +455,11 @@ static int file_release(struct inode *inode,
+> > struct file *file)
+> >   {
+> >   	struct ocxlpmem *ocxlpmem = file->private_data;
+> >   
+> > +	if (ocxlpmem->ev_ctx) {
+> > +		eventfd_ctx_put(ocxlpmem->ev_ctx);
+> > +		ocxlpmem->ev_ctx = NULL;
+> > +	}
+> > +
+> >   	ocxlpmem_put(ocxlpmem);
+> >   	return 0;
+> >   }
+> > @@ -938,6 +955,51 @@ static int ioctl_controller_stats(struct
+> > ocxlpmem *ocxlpmem,
+> >   	return rc;
+> >   }
+> >   
+> > +static int ioctl_eventfd(struct ocxlpmem *ocxlpmem,
+> > +		 struct ioctl_ocxl_pmem_eventfd __user *uarg)
+> > +{
+> > +	struct ioctl_ocxl_pmem_eventfd args;
+> > +
+> > +	if (copy_from_user(&args, uarg, sizeof(args)))
+> > +		return -EFAULT;
+> > +
+> > +	if (ocxlpmem->ev_ctx)
+> > +		return -EINVAL;
 > 
-> A gentle ping...
+> EBUSY?
+> 
+Ok
 
-Another gentle ping...
+> 
+> > +
+> > +	ocxlpmem->ev_ctx = eventfd_ctx_fdget(args.eventfd);
+> > +	if (!ocxlpmem->ev_ctx)
+> > +		return -EFAULT;
+> 
+> Why not use what eventfd_ctx_fdget() returned? (through some
+> IS_ERR() 
+> and PTR_ERR() convolution)
+> 
+
+Ok
+> 
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int ioctl_event_check(struct ocxlpmem *ocxlpmem, u64 __user
+> > *uarg)
+> > +{
+> > +	u64 val = 0;
+> > +	int rc;
+> > +	u64 chi = 0;
+> > +
+> > +	rc = ocxlpmem_chi(ocxlpmem, &chi);
+> > +	if (rc < 0)
+> > +		return rc;
+> > +
+> > +	if (chi & GLOBAL_MMIO_CHI_ELA)
+> > +		val |= IOCTL_OCXL_PMEM_EVENT_ERROR_LOG_AVAILABLE;
+> > +
+> > +	if (chi & GLOBAL_MMIO_CHI_CDA)
+> > +		val |= IOCTL_OCXL_PMEM_EVENT_CONTROLLER_DUMP_AVAILABLE;
+> > +
+> > +	if (chi & GLOBAL_MMIO_CHI_CFFS)
+> > +		val |= IOCTL_OCXL_PMEM_EVENT_FIRMWARE_FATAL;
+> > +
+> > +	if (chi & GLOBAL_MMIO_CHI_CHFS)
+> > +		val |= IOCTL_OCXL_PMEM_EVENT_HARDWARE_FATAL;
+> > +
+> > +	rc = copy_to_user((u64 __user *) uarg, &val, sizeof(val));
+> > +
+> 
+> copy_to_user doesn't return an errno. Should be:
+> 
+> if (copy_to_user((u64 __user *) uarg, &val, sizeof(val)))
+> 	return -EFAULT;
+> 
+Ok
 
 > 
-> Kai-Heng
+> > +	return rc;
+> > +}
+> > +
+> >   static long file_ioctl(struct file *file, unsigned int cmd,
+> > unsigned long args)
+> >   {
+> >   	struct ocxlpmem *ocxlpmem = file->private_data;
+> > @@ -966,6 +1028,15 @@ static long file_ioctl(struct file *file,
+> > unsigned int cmd, unsigned long args)
+> >   		rc = ioctl_controller_stats(ocxlpmem,
+> >   					    (struct
+> > ioctl_ocxl_pmem_controller_stats __user *)args);
+> >   		break;
+> > +
+> > +	case IOCTL_OCXL_PMEM_EVENTFD:
+> > +		rc = ioctl_eventfd(ocxlpmem,
+> > +				   (struct ioctl_ocxl_pmem_eventfd
+> > __user *)args);
+> > +		break;
+> > +
+> > +	case IOCTL_OCXL_PMEM_EVENT_CHECK:
+> > +		rc = ioctl_event_check(ocxlpmem, (u64 __user *)args);
+> > +		break;
+> >   	}
+> >   
+> >   	return rc;
+> > @@ -1107,6 +1178,146 @@ static void dump_error_log(struct ocxlpmem
+> > *ocxlpmem)
+> >   	kfree(buf);
+> >   }
+> >   
+> > +static irqreturn_t imn0_handler(void *private)
+> > +{
+> > +	struct ocxlpmem *ocxlpmem = private;
+> > +	u64 chi = 0;
+> > +
+> > +	(void)ocxlpmem_chi(ocxlpmem, &chi);
+> > +
+> > +	if (chi & GLOBAL_MMIO_CHI_ELA) {
+> > +		dev_warn(&ocxlpmem->dev, "Error log is available\n");
+> > +
+> > +		if (ocxlpmem->ev_ctx)
+> > +			eventfd_signal(ocxlpmem->ev_ctx, 1);
+> > +	}
+> > +
+> > +	if (chi & GLOBAL_MMIO_CHI_CDA) {
+> > +		dev_warn(&ocxlpmem->dev, "Controller dump is
+> > available\n");
+> > +
+> > +		if (ocxlpmem->ev_ctx)
+> > +			eventfd_signal(ocxlpmem->ev_ctx, 1);
+> > +	}
+> > +
+> > +
 > 
->> ---
->> v3:
->> - Specify -1 means SPEED_UNKNOWN.
->> v2:
->> - Add a new helper with begin/complete and use it in net-sysfs.
->> 
->> include/linux/ethtool.h |  4 ++++
->> net/core/net-sysfs.c    |  4 ++--
->> net/ethtool/ioctl.c     | 33 ++++++++++++++++++++++++++++++++-
->> 3 files changed, 38 insertions(+), 3 deletions(-)
->> 
->> diff --git a/include/linux/ethtool.h b/include/linux/ethtool.h
->> index 95991e4300bf..785ec1921417 100644
->> --- a/include/linux/ethtool.h
->> +++ b/include/linux/ethtool.h
->> @@ -160,6 +160,10 @@ extern int
->> __ethtool_get_link_ksettings(struct net_device *dev,
->> 			     struct ethtool_link_ksettings *link_ksettings);
->> 
->> +extern int
->> +__ethtool_get_link_ksettings_full(struct net_device *dev,
->> +				  struct ethtool_link_ksettings *link_ksettings);
->> +
->> /**
->> * ethtool_intersect_link_masks - Given two link masks, AND them together
->> * @dst: first mask and where result is stored
->> diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
->> index 4c826b8bf9b1..a199e15a080f 100644
->> --- a/net/core/net-sysfs.c
->> +++ b/net/core/net-sysfs.c
->> @@ -201,7 +201,7 @@ static ssize_t speed_show(struct device *dev,
->> 	if (netif_running(netdev)) {
->> 		struct ethtool_link_ksettings cmd;
->> 
->> -		if (!__ethtool_get_link_ksettings(netdev, &cmd))
->> +		if (!__ethtool_get_link_ksettings_full(netdev, &cmd))
->> 			ret = sprintf(buf, fmt_dec, cmd.base.speed);
->> 	}
->> 	rtnl_unlock();
->> @@ -221,7 +221,7 @@ static ssize_t duplex_show(struct device *dev,
->> 	if (netif_running(netdev)) {
->> 		struct ethtool_link_ksettings cmd;
->> 
->> -		if (!__ethtool_get_link_ksettings(netdev, &cmd)) {
->> +		if (!__ethtool_get_link_ksettings_full(netdev, &cmd)) {
->> 			const char *duplex;
->> 
->> 			switch (cmd.base.duplex) {
->> diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
->> index b987052d91ef..faeba247c1fb 100644
->> --- a/net/ethtool/ioctl.c
->> +++ b/net/ethtool/ioctl.c
->> @@ -420,7 +420,9 @@ struct ethtool_link_usettings {
->> 	} link_modes;
->> };
->> 
->> -/* Internal kernel helper to query a device ethtool_link_settings. */
->> +/* Internal kernel helper to query a device ethtool_link_settings. To be called
->> + * inside begin/complete block.
->> + */
->> int __ethtool_get_link_ksettings(struct net_device *dev,
->> 				 struct ethtool_link_ksettings *link_ksettings)
->> {
->> @@ -434,6 +436,35 @@ int __ethtool_get_link_ksettings(struct net_device *dev,
->> }
->> EXPORT_SYMBOL(__ethtool_get_link_ksettings);
->> 
->> +/* Internal kernel helper to query a device ethtool_link_settings. To be called
->> + * outside of begin/complete block.
->> + */
->> +int __ethtool_get_link_ksettings_full(struct net_device *dev,
->> +				      struct ethtool_link_ksettings *link_ksettings)
->> +{
->> +	int rc;
->> +
->> +	ASSERT_RTNL();
->> +
->> +	if (!dev->ethtool_ops->get_link_ksettings)
->> +		return -EOPNOTSUPP;
->> +
->> +	if (dev->ethtool_ops->begin) {
->> +		rc = dev->ethtool_ops->begin(dev);
->> +		if (rc  < 0)
->> +			return rc;
->> +	}
->> +
->> +	memset(link_ksettings, 0, sizeof(*link_ksettings));
->> +	rc = dev->ethtool_ops->get_link_ksettings(dev, link_ksettings);
->> +
->> +	if (dev->ethtool_ops->complete)
->> +		dev->ethtool_ops->complete(dev);
->> +
->> +	return rc;
->> +}
->> +EXPORT_SYMBOL(__ethtool_get_link_ksettings_full);
->> +
->> /* convert ethtool_link_usettings in user space to a kernel internal
->> * ethtool_link_ksettings. return 0 on success, errno on error.
->> */
->> -- 
->> 2.17.1
+> (at least) one empty line too many.
+> 
+
+Ok
+
+> 
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +static irqreturn_t imn1_handler(void *private)
+> > +{
+> > +	struct ocxlpmem *ocxlpmem = private;
+> > +	u64 chi = 0;
+> > +
+> > +	(void)ocxlpmem_chi(ocxlpmem, &chi);
+> > +
+> > +	if (chi & (GLOBAL_MMIO_CHI_CFFS | GLOBAL_MMIO_CHI_CHFS)) {
+> > +		dev_err(&ocxlpmem->dev,
+> > +			"Controller status is fatal, chi=0x%llx, going
+> > offline\n", chi);
+> > +
+> > +		if (ocxlpmem->nvdimm_bus) {
+> > +			nvdimm_bus_unregister(ocxlpmem->nvdimm_bus);
+> > +			ocxlpmem->nvdimm_bus = NULL;
+> > +		}
+> > +
+> > +		if (ocxlpmem->ev_ctx)
+> > +			eventfd_signal(ocxlpmem->ev_ctx, 1);
+> > +	}
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +
+> > +/**
+> > + * ocxlpmem_setup_irq() - Set up the IRQs for the OpenCAPI
+> > Persistent Memory device
+> > + * @ocxlpmem: the device metadata
+> > + * Return: 0 on success, negative on failure
+> > + */
+> > +static int ocxlpmem_setup_irq(struct ocxlpmem *ocxlpmem)
+> > +{
+> > +	int rc;
+> > +	u64 irq_addr;
+> > +
+> > +	rc = ocxl_afu_irq_alloc(ocxlpmem->ocxl_context, &ocxlpmem-
+> > >irq_id[0]);
+> > +	if (rc)
+> > +		return rc;
+> > +
+> > +	rc = ocxl_irq_set_handler(ocxlpmem->ocxl_context, ocxlpmem-
+> > >irq_id[0],
+> > +				  imn0_handler, NULL, ocxlpmem);
+> > +
+> > +	irq_addr = ocxl_afu_irq_get_addr(ocxlpmem->ocxl_context,
+> > ocxlpmem->irq_id[0]);
+> > +	if (!irq_addr)
+> > +		return -EINVAL;
+> > +
+> > +	ocxlpmem->irq_addr[0] = ioremap(irq_addr, PAGE_SIZE);
+> > +	if (!ocxlpmem->irq_addr[0])
+> > +		return -EINVAL;
+> > +
+> > +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
+> > GLOBAL_MMIO_IMA0_OHP,
+> > +				      OCXL_LITTLE_ENDIAN,
+> > +				      (u64)ocxlpmem->irq_addr[0]);
+> > +	if (rc)
+> > +		goto out_irq0;
+> > +
+> > +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
+> > GLOBAL_MMIO_IMA0_CFP,
+> > +				      OCXL_LITTLE_ENDIAN, 0);
+> > +	if (rc)
+> > +		goto out_irq0;
+> 
+> That's a few lines of duplicate code. On the other hand, there's
+> enough 
+> varying parameters between the 2 interrupts that factorizing in a 
+> subfunction would be slightly less readable. So duplicating is
+> probably ok.
+> 
+> 
+> 
+> > +	rc = ocxl_afu_irq_alloc(ocxlpmem->ocxl_context, &ocxlpmem-
+> > >irq_id[1]);
+> > +	if (rc)
+> > +		goto out_irq0;
+> > +
+> > +
+> > +	rc = ocxl_irq_set_handler(ocxlpmem->ocxl_context, ocxlpmem-
+> > >irq_id[1],
+> > +				  imn1_handler, NULL, ocxlpmem);
+> > +	if (rc)
+> > +		goto out_irq0;
+> > +
+> > +	irq_addr = ocxl_afu_irq_get_addr(ocxlpmem->ocxl_context,
+> > ocxlpmem->irq_id[1]);
+> > +	if (!irq_addr) {
+> > +		rc = -EFAULT;
+> > +		goto out_irq0;
+> > +	}
+> > +
+> > +	ocxlpmem->irq_addr[1] = ioremap(irq_addr, PAGE_SIZE);
+> > +	if (!ocxlpmem->irq_addr[1]) {
+> > +		rc = -EINVAL;
+> > +		goto out_irq0;
+> > +	}
+> > +
+> > +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
+> > GLOBAL_MMIO_IMA1_OHP,
+> > +				      OCXL_LITTLE_ENDIAN,
+> > +				      (u64)ocxlpmem->irq_addr[1]);
+> > +	if (rc)
+> > +		goto out_irq1;
+> > +
+> > +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
+> > GLOBAL_MMIO_IMA1_CFP,
+> > +				      OCXL_LITTLE_ENDIAN, 0);
+> > +	if (rc)
+> > +		goto out_irq1;
+> > +
+> > +	// Enable doorbells
+> > +	rc = ocxl_global_mmio_set64(ocxlpmem->ocxl_afu,
+> > GLOBAL_MMIO_CHIE,
+> > +				    OCXL_LITTLE_ENDIAN,
+> > +				    GLOBAL_MMIO_CHI_ELA |
+> > GLOBAL_MMIO_CHI_CDA |
+> > +				    GLOBAL_MMIO_CHI_CFFS |
+> > GLOBAL_MMIO_CHI_CHFS |
+> > +				    GLOBAL_MMIO_CHI_NSCRA);
+> 
+> GLOBAL_MMIO_CHI_NSCRA doesn't seem to be handled in the handlers.
+> 
+
+This will be moved to the overwrite patch.
+
+> 
+> 
+> > +	if (rc)
+> > +		goto out_irq1;
+> > +
+> > +	return 0;
+> > +
+> > +out_irq1:
+> > +	iounmap(ocxlpmem->irq_addr[1]);
+> > +	ocxlpmem->irq_addr[1] = NULL;
+> > +
+> > +out_irq0:
+> > +	iounmap(ocxlpmem->irq_addr[0]);
+> > +	ocxlpmem->irq_addr[0] = NULL;
+> > +
+> > +	return rc;
+> > +}
+> > +
+> >   /**
+> >    * probe_function0() - Set up function 0 for an OpenCAPI
+> > persistent memory device
+> >    * This is important as it enables templates higher than 0 across
+> > all other functions,
+> > @@ -1216,6 +1427,11 @@ static int probe(struct pci_dev *pdev, const
+> > struct pci_device_id *ent)
+> >   		goto err;
+> >   	}
+> >   
+> > +	if (ocxlpmem_setup_irq(ocxlpmem)) {
+> > +		dev_err(&pdev->dev, "Could not set up OCXL IRQs\n");
+> 
+> Like with other patches, rc needs to be set.
+> 
+ok
+
+> 
+> > +		goto err;
+> > +	}
+> > +
+> >   	if (setup_command_metadata(ocxlpmem)) {
+> >   		dev_err(&pdev->dev, "Could not read OCXL command
+> > matada\n");
+> >   		goto err;
+> > diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
+> > b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
+> > index b953ee522ed4..927690f4888f 100644
+> > --- a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
+> > +++ b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
+> > @@ -103,6 +103,10 @@ struct ocxlpmem {
+> >   	struct pci_dev *pdev;
+> >   	struct cdev cdev;
+> >   	struct ocxl_fn *ocxl_fn;
+> > +#define SCM_IRQ_COUNT 2
+> > +	int irq_id[SCM_IRQ_COUNT];
+> > +	struct dev_pagemap irq_pgmap[SCM_IRQ_COUNT];
+> 
+> irq_pgmap is not used.
+
+Ok
+> 
+> 
+> > +	void *irq_addr[SCM_IRQ_COUNT];
+> >   	struct nd_interleave_set nd_set;
+> >   	struct nvdimm_bus_descriptor bus_desc;
+> >   	struct nvdimm_bus *nvdimm_bus;
+> > @@ -113,6 +117,7 @@ struct ocxlpmem {
+> >   	struct command_metadata ns_command;
+> >   	struct resource pmem_res;
+> >   	struct nd_region *nd_region;
+> > +	struct eventfd_ctx *ev_ctx;
+> >   	char fw_version[8+1];
+> >   	u32 timeouts[ADMIN_COMMAND_MAX+1];
+> >   
+> > diff --git a/include/uapi/nvdimm/ocxl-pmem.h
+> > b/include/uapi/nvdimm/ocxl-pmem.h
+> > index add223aa2fdb..988eb0bc413d 100644
+> > --- a/include/uapi/nvdimm/ocxl-pmem.h
+> > +++ b/include/uapi/nvdimm/ocxl-pmem.h
+> > @@ -66,6 +66,20 @@ struct ioctl_ocxl_pmem_controller_stats {
+> >   	__u64 cache_write_latency; /* nanoseconds */
+> >   };
+> >   
+> > +struct ioctl_ocxl_pmem_eventfd {
+> > +	__s32 eventfd;
+> > +	__u32 reserved;
+> > +};
+> > +
+> > +#ifndef BIT_ULL
+> > +#define BIT_ULL(nr)	(1ULL << (nr))
+> > +#endif
+> > +
+> > +#define IOCTL_OCXL_PMEM_EVENT_CONTROLLER_DUMP_AVAILABLE	BIT_ULL
+> > (0)
+> > +#define IOCTL_OCXL_PMEM_EVENT_ERROR_LOG_AVAILABLE	BIT_ULL(1)
+> > +#define IOCTL_OCXL_PMEM_EVENT_HARDWARE_FATAL		BIT_ULL
+> > (2)
+> > +#define IOCTL_OCXL_PMEM_EVENT_FIRMWARE_FATAL		BIT_ULL
+> > (3)
+> > +
+> 
+> I'm not fond of adding a macro with such a generic name as BIT_ULL()
+> in 
+> a user header file. What's wrong with:
+> 
+> #define IOCTL_OCXL_PMEM_EVENT_CONTROLLER_DUMP_AVAILABLE	0x1
+> #define IOCTL_OCXL_PMEM_EVENT_ERROR_LOG_AVAILABLE	0x2
+> #define IOCTL_OCXL_PMEM_EVENT_HARDWARE_FATAL		0x4
+> #define IOCTL_OCXL_PMEM_EVENT_FIRMWARE_FATAL		0x8
+> 
+> 
+
+Nothing, I'll change it.
+
+>    Fred
+> 
+> 
+> >   /* ioctl numbers */
+> >   #define OCXL_PMEM_MAGIC 0x5C
+> >   /* SCM devices */
+> > @@ -74,5 +88,7 @@ struct ioctl_ocxl_pmem_controller_stats {
+> >   #define IOCTL_OCXL_PMEM_CONTROLLER_DUMP_DATA		_IOWR(O
+> > CXL_PMEM_MAGIC, 0x03, struct ioctl_ocxl_pmem_controller_dump_data)
+> >   #define IOCTL_OCXL_PMEM_CONTROLLER_DUMP_COMPLETE	_IO(OCXL_PMEM_M
+> > AGIC, 0x04)
+> >   #define IOCTL_OCXL_PMEM_CONTROLLER_STATS		_IO(OCXL_PMEM_M
+> > AGIC, 0x05)
+> > +#define IOCTL_OCXL_PMEM_EVENTFD				_IOW(OC
+> > XL_PMEM_MAGIC, 0x06, struct ioctl_ocxl_pmem_eventfd)
+> > +#define IOCTL_OCXL_PMEM_EVENT_CHECK			_IOR(OC
+> > XL_PMEM_MAGIC, 0x07, __u64)
+> >   
+> >   #endif /* _UAPI_OCXL_SCM_H */
+> > 
+-- 
+Alastair D'Silva
+Open Source Developer
+Linux Technology Centre, IBM Australia
+mob: 0423 762 819
 
