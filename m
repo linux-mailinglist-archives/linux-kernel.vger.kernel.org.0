@@ -2,121 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 938B1182229
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:21:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26C0918224E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:30:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731066AbgCKTVb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 15:21:31 -0400
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:54305 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730807AbgCKTVa (ORCPT
+        id S1731183AbgCKTaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 15:30:23 -0400
+Received: from haggis.mythic-beasts.com ([46.235.224.141]:38709 "EHLO
+        haggis.mythic-beasts.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731077AbgCKTaX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:21:30 -0400
-Received: by mail-pj1-f66.google.com with SMTP id np16so1434668pjb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:21:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=VEJi8Ua1KT556ICDNdI7F0+UTqFndAFbSPbblW/yU4g=;
-        b=CskmlpgvnMkA+wCApbaonRYRAZxJC54spPJq8d7JehKzT58xoCzRO6Mve3c49n44zK
-         PWaabpLQB2dYbC1TL0adRVYluFtMdH6VS6c57Nq+R2wCQ1fnEEBFcVQbzwH9RJ2dW0Gf
-         YlkYkImwr4Pw4lwLfm270n07AFNPb1Mw2sLP0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=VEJi8Ua1KT556ICDNdI7F0+UTqFndAFbSPbblW/yU4g=;
-        b=qoChOHA2BYF9N3fkibWNVp387XE+GZd5mCbRvDnLzqFyLJh0vcGa4YNNtUfKalBpba
-         lwvjD/L4h3saJ43benAFXSqgcTw/3Ry30pc1YGBfLnfE1rvYH0mgaBfU7su/QLOnmYdK
-         U0DGYCxvvRVkjIr1dNkTkQrsxbOo3efqj0UAtfymRXIvQoKFOXeCEL6vQa7VLRNAXvJs
-         A01Kg2ijOwp0F4PTdNRh/Oa8Mheu245JFQYhTOTCDkNu6f8NvnuuZl5ibS7P/t9SNFne
-         pACiz99vW/wJ+ftxsGbyILu5HBWLLkrgflTNfyb9NvmRTq9k8HBBJWAmerTOpCYbklNS
-         59PQ==
-X-Gm-Message-State: ANhLgQ24VLRCwc9YishHEpHWNPlXxQRp2kUB9QmoZfPh9MB79KdM4Rcw
-        GkH8iPOwzeMehdy0LUpSjnocEw==
-X-Google-Smtp-Source: ADFU+vsktVXh9K4NFSSqaFcAbmhWXGfMzDHwE2OpVAMfq8OnBjo81CK/wXvkV7Zt9DyhUeVelrrm9w==
-X-Received: by 2002:a17:902:bb82:: with SMTP id m2mr4510185pls.197.1583954489691;
-        Wed, 11 Mar 2020 12:21:29 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k1sm48202611pgt.70.2020.03.11.12.21.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 12:21:28 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 12:21:28 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/seccomp: Adjust test fixture counts
-Message-ID: <202003111220.2D3AD27460@keescook>
+        Wed, 11 Mar 2020 15:30:23 -0400
+X-Greylist: delayed 438 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Mar 2020 15:30:22 EDT
+Received: from 204.33.90.146.dyn.plus.net ([146.90.33.204]:54428 helo=slartibartfast.quignogs.org.uk)
+        by haggis.mythic-beasts.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92.3)
+        (envelope-from <peter@bikeshed.quignogs.org.uk>)
+        id 1jC6wY-0008RB-Vy; Wed, 11 Mar 2020 19:23:03 +0000
+From:   peter@bikeshed.quignogs.org.uk
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, linux-doc@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Lister <peter@bikeshed.quignogs.org.uk>
+Subject: [PATCH 1/1] Added double colons and blank lines within kerneldoc to format code snippets as ReST literal blocks.
+Date:   Wed, 11 Mar 2020 19:22:56 +0000
+Message-Id: <20200311192256.15911-2-peter@bikeshed.quignogs.org.uk>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200311192256.15911-1-peter@bikeshed.quignogs.org.uk>
+References: <20200311192256.15911-1-peter@bikeshed.quignogs.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-BlackCat-Spam-Score: 50
+X-Spam-Status: No, score=5.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The seccomp selftest reported the wrong test counts since it was using
-slightly the wrong API for defining text fixtures. Adjust the API usage.
+From: Peter Lister <peter@bikeshed.quignogs.org.uk>
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
+This removes the following warnings from the kernel doc build...
+./drivers/base/platform.c:134: WARNING: Unexpected indentation.
+./drivers/base/platform.c:213: WARNING: Unexpected indentation.
+
+Signed-off-by: Peter Lister <peter@bikeshed.quignogs.org.uk>
 ---
- tools/testing/selftests/seccomp/seccomp_bpf.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/base/platform.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-index a9ad3bd8b2ad..89fb3e0b552e 100644
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -913,7 +913,7 @@ TEST(ERRNO_order)
- 	EXPECT_EQ(12, errno);
- }
- 
--FIXTURE_DATA(TRAP) {
-+FIXTURE(TRAP) {
- 	struct sock_fprog prog;
- };
- 
-@@ -1024,7 +1024,7 @@ TEST_F(TRAP, handler)
- 	EXPECT_NE(0, (unsigned long)sigsys->_call_addr);
- }
- 
--FIXTURE_DATA(precedence) {
-+FIXTURE(precedence) {
- 	struct sock_fprog allow;
- 	struct sock_fprog log;
- 	struct sock_fprog trace;
-@@ -1513,7 +1513,7 @@ void tracer_poke(struct __test_metadata *_metadata, pid_t tracee, int status,
- 	EXPECT_EQ(0, ret);
- }
- 
--FIXTURE_DATA(TRACE_poke) {
-+FIXTURE(TRACE_poke) {
- 	struct sock_fprog prog;
- 	pid_t tracer;
- 	long poked;
-@@ -1821,7 +1821,7 @@ void tracer_ptrace(struct __test_metadata *_metadata, pid_t tracee,
- 		change_syscall(_metadata, tracee, -1, -ESRCH);
- }
- 
--FIXTURE_DATA(TRACE_syscall) {
-+FIXTURE(TRACE_syscall) {
- 	struct sock_fprog prog;
- 	pid_t tracer, mytid, mypid, parent;
- };
-@@ -2326,7 +2326,7 @@ struct tsync_sibling {
- 		}							\
- 	} while (0)
- 
--FIXTURE_DATA(TSYNC) {
-+FIXTURE(TSYNC) {
- 	struct sock_fprog root_prog, apply_prog;
- 	struct tsync_sibling sibling[TSYNC_SIBLINGS];
- 	sem_t started;
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 7fa654f1288b..7fb5cf847253 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -128,7 +128,8 @@ EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource_byname);
+  * request_irq() APIs. This is the same as platform_get_irq(), except that it
+  * does not print an error message if an IRQ can not be obtained.
+  *
+- * Example:
++ * Example: ::
++ *
+  *		int irq = platform_get_irq_optional(pdev, 0);
+  *		if (irq < 0)
+  *			return irq;
+@@ -207,7 +208,8 @@ EXPORT_SYMBOL_GPL(platform_get_irq_optional);
+  * IRQ fails. Device drivers should check the return value for errors so as to
+  * not pass a negative integer value to the request_irq() APIs.
+  *
+- * Example:
++ * Example: ::
++ *
+  *		int irq = platform_get_irq(pdev, 0);
+  *		if (irq < 0)
+  *			return irq;
 -- 
-2.20.1
+2.24.1
 
-
--- 
-Kees Cook
