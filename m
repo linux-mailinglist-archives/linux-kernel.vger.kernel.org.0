@@ -2,74 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 854091816A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 12:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 442B31816A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 12:20:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729001AbgCKLTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 07:19:04 -0400
-Received: from foss.arm.com ([217.140.110.172]:48228 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726684AbgCKLTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 07:19:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 596BA1FB;
-        Wed, 11 Mar 2020 04:19:03 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5B463F6CF;
-        Wed, 11 Mar 2020 04:19:02 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 11:18:57 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: endpoint: Fix clearing start entry in configfs
-Message-ID: <20200311111857.GA517@e121166-lin.cambridge.arm.com>
-References: <1582696343-23049-1-git-send-email-hayashi.kunihiko@socionext.com>
+        id S1729061AbgCKLUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 07:20:21 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36042 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726387AbgCKLUU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 07:20:20 -0400
+Received: by mail-pf1-f196.google.com with SMTP id i13so1155318pfe.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 04:20:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KxW/JHv7DCd6LJdHZguy7LpVn/rmry23ZMXy1XI084k=;
+        b=fBOA7Z4/VSkvDegFBNVqp2pLUAlgBxRv5RhOTNT8p2xHiAPXkjWsHMTxUl1BPV00zJ
+         vMY5dhyEKkfjXmFfYLzpD5a73p+KDdMSaC4nhV9dQ1R32BqiNxXeCSXBpA7Ii2Wer4pC
+         VDfF4BA+tuEYJwFmE32LvvNq/AN2GVAmGN3hs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KxW/JHv7DCd6LJdHZguy7LpVn/rmry23ZMXy1XI084k=;
+        b=V63AFGj7hKySR3UVWdCj1zReqEG6MRdDXyMM4xt1aTftSMb/gBTfojseKbuFZTS+t1
+         S5dECt9+5mLE4RMuTPOQu+TI6uqEdi5jwTvJFvINfju0uJYmrS+QgwrnvXBxnbUQPrLu
+         pkW3k6sE++sMuGup9AGQIhbddWd3hzwtJgjMGLqvmjUO087iBiucEM0hd/YT838lP5kR
+         OdukMPRXTStEO3sKno9UuRhGMR0rDzPzhqtWJY/2uE5gdX1taD0dWvuw8Hd60PsA8dRO
+         GFlZVrl8sQXJFzMtr8Fqiu85zihKnUNzjQsod4knny9QOM2udt2R/LzmLxQ6iVgZiT6m
+         X9rg==
+X-Gm-Message-State: ANhLgQ0VEEv2CA0mk2ySa/OakGJkGcS9GQJTJBZtUpqXpmaY1SCl6Kkl
+        F8HlEiyR2ZO5tqADzfiNNd9syg==
+X-Google-Smtp-Source: ADFU+vvUUJsm4mKY+53aHHx0GkxoPfHJ2XfB3hmp2HvE1iN3ACnAA15TuK1aSNIfg+893OuM9NF9eQ==
+X-Received: by 2002:a63:4d6:: with SMTP id 205mr2392870pge.10.1583925617855;
+        Wed, 11 Mar 2020 04:20:17 -0700 (PDT)
+Received: from localhost ([2401:fa00:8f:203:30f2:7a9c:387e:6c7])
+        by smtp.gmail.com with ESMTPSA id e12sm35842384pff.168.2020.03.11.04.20.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2020 04:20:17 -0700 (PDT)
+From:   David Stevens <stevensd@chromium.org>
+To:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>
+Cc:     Daniel Vetter <daniel@ffwll.ch>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Stevens <stevensd@chromium.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        virtio-dev@lists.oasis-open.org
+Subject: [PATCH v3 0/4] Support virtio cross-device resources
+Date:   Wed, 11 Mar 2020 20:20:00 +0900
+Message-Id: <20200311112004.47138-1-stevensd@chromium.org>
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1582696343-23049-1-git-send-email-hayashi.kunihiko@socionext.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 02:52:23PM +0900, Kunihiko Hayashi wrote:
-> After endpoint has started using configfs, if 0 is written to the entry
-> 'start', the controller stops but the entry value remains 1.
-> 
-> At this time, unlinking the function from the controller, WARN_ON_ONCE()
-> in pci_epc_epf_unlink() will be triggered despite right behavior.
-> 
-> This fixes the issue by clearing the entry when stopping the controller.
-> 
-> Fixes: d74679911610 ("PCI: endpoint: Introduce configfs entry for configuring EP functions")
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  drivers/pci/endpoint/pci-ep-cfs.c | 1 +
->  1 file changed, 1 insertion(+)
+This patchset implements the current proposal for virtio cross-device
+resource sharing [1], with minor changes based on recent comments. It
+is expected that this will be used to import virtio resources into the
+virtio-video driver currently under discussion [2].
 
-Applied to pci/endpoint for v5.7.
+This patchset adds a new hook to dma-buf, for querying the dma-buf's
+underlying virtio UUID. This hook is then plumbed through DRM PRIME
+buffers, and finally implemented in virtgpu.
 
-Thanks,
-Lorenzo
+[1] https://markmail.org/thread/jsaoqy7phrqdcpqu
+[2] https://markmail.org/thread/p5d3k566srtdtute
 
-> 
-> diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
-> index d1288a0..4fead88 100644
-> --- a/drivers/pci/endpoint/pci-ep-cfs.c
-> +++ b/drivers/pci/endpoint/pci-ep-cfs.c
-> @@ -58,6 +58,7 @@ static ssize_t pci_epc_start_store(struct config_item *item, const char *page,
->  
->  	if (!start) {
->  		pci_epc_stop(epc);
-> +		epc_group->start = 0;
->  		return len;
->  	}
->  
-> -- 
-> 2.7.4
-> 
+v2 -> v3 changes:
+ - Remove ifdefs.
+ - Simplify virtgpu_gem_prime_export as it can only be called once.
+ - Use virtio_gpu_vbuffer's objs field instead of abusing data_buf.
+
+David Stevens (4):
+  dma-buf: add support for virtio exported objects
+  drm/prime: add support for virtio exported objects
+  virtio-gpu: add VIRTIO_GPU_F_RESOURCE_UUID feature
+  drm/virtio: Support virtgpu exported resources
+
+ drivers/dma-buf/dma-buf.c              | 12 ++++++
+ drivers/gpu/drm/drm_prime.c            | 23 +++++++++++
+ drivers/gpu/drm/virtio/virtgpu_drv.c   |  3 ++
+ drivers/gpu/drm/virtio/virtgpu_drv.h   | 18 +++++++++
+ drivers/gpu/drm/virtio/virtgpu_kms.c   |  4 ++
+ drivers/gpu/drm/virtio/virtgpu_prime.c | 41 +++++++++++++++++--
+ drivers/gpu/drm/virtio/virtgpu_vq.c    | 55 ++++++++++++++++++++++++++
+ include/drm/drm_drv.h                  | 10 +++++
+ include/linux/dma-buf.h                | 18 +++++++++
+ include/uapi/linux/virtio_gpu.h        | 19 +++++++++
+ 10 files changed, 200 insertions(+), 3 deletions(-)
+
+-- 
+2.25.1.481.gfbce0eb801-goog
+
