@@ -2,65 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D63F7181223
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 08:42:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E905C181205
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 08:35:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728425AbgCKHlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 03:41:02 -0400
-Received: from m177134.mail.qiye.163.com ([123.58.177.134]:16660 "EHLO
-        m177134.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726362AbgCKHlC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 03:41:02 -0400
-X-Greylist: delayed 519 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Mar 2020 03:41:01 EDT
-Received: from ubuntu.localdomain (unknown [58.251.74.226])
-        by m17618.mail.qiye.163.com (Hmail) with ESMTPA id 4719C4E207F;
-        Wed, 11 Mar 2020 15:32:16 +0800 (CST)
-From:   Li Tao <tao.li@vivo.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
+        id S1728383AbgCKHfJ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 03:35:09 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:37010 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726160AbgCKHfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 03:35:09 -0400
+Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id 8A9A3905D61B99ACD7FD;
+        Wed, 11 Mar 2020 15:35:03 +0800 (CST)
+Received: from DGGEMM421-HUB.china.huawei.com (10.1.198.38) by
+ DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 11 Mar 2020 15:35:02 +0800
+Received: from DGGEMM528-MBX.china.huawei.com ([169.254.8.90]) by
+ dggemm421-hub.china.huawei.com ([10.1.198.38]) with mapi id 14.03.0439.000;
+ Wed, 11 Mar 2020 15:34:56 +0800
+From:   "Zhoujian (jay)" <jianjay.zhou@huawei.com>
+To:     zhukeqian <zhukeqian1@huawei.com>, Marc Zyngier <maz@kernel.org>
+CC:     "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         James Morse <james.morse@arm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     wenhu.pku@gmail.com, Li Tao <tao.li@vivo.com>
-Subject: [PATCH] arm64: kexec_file: Fixed code style.
-Date:   Wed, 11 Mar 2020 15:31:55 +0800
-Message-Id: <20200311073156.125251-1-tao.li@vivo.com>
-X-Mailer: git-send-email 2.17.1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUlXWQgYFAkeWUFZQ1VKTklCQkNCSU9JTk5ITFlXWShZQU
-        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nio6FCo4EDgyODMNQxkQT0w4
-        Ah8aFD5VSlVKTkNIQkpKQkhCSUxOVTMWGhIXVQ8aFFUXEjsNEg0UVRgUFkVZV1kSC1lBWU5DVUlO
-        SlVMT1VJSU1ZV1kIAVlBSkNJSTcG
-X-HM-Tid: 0a70c88222989376kuws4719c4e207f
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        "Huangweidong (C)" <weidong.huang@huawei.com>,
+        "wangxin (U)" <wangxinxin.wang@huawei.com>
+Subject: RE: [RFC] KVM: arm64: support enabling dirty log graually in small
+ chunks
+Thread-Topic: [RFC] KVM: arm64: support enabling dirty log graually in small
+ chunks
+Thread-Index: AQHV9fES7bnu3RiLvUOZvoLEbVPgkKg/noOAgAFalYCAAFE+gIABLpcAgACIxzA=
+Date:   Wed, 11 Mar 2020 07:34:55 +0000
+Message-ID: <B2D15215269B544CADD246097EACE7474BB64495@DGGEMM528-MBX.china.huawei.com>
+References: <20200309085727.1106-1-zhukeqian1@huawei.com>
+ <4b85699ec1d354cc73f5302560231f86@misterjones.org>
+ <64925c8b-af3d-beb5-bc9b-66ef1e47f92d@huawei.com>
+ <a642a79ea9190542a9098e4c9dc5a9f2@kernel.org>
+ <9ddefc54-dd5b-0555-0aaa-00a3a23febcf@huawei.com>
+In-Reply-To: <9ddefc54-dd5b-0555-0aaa-00a3a23febcf@huawei.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.173.228.206]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unnecessary blank.
 
-Signed-off-by: Li Tao <tao.li@vivo.com>
----
- arch/arm64/kernel/machine_kexec_file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index dd3ae80..b40c3b0 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -121,7 +121,7 @@ static int setup_dtb(struct kimage *image,
- 
- 	/* add kaslr-seed */
- 	ret = fdt_delprop(dtb, off, FDT_PROP_KASLR_SEED);
--	if  (ret == -FDT_ERR_NOTFOUND)
-+	if (ret == -FDT_ERR_NOTFOUND)
- 		ret = 0;
- 	else if (ret)
- 		goto out;
--- 
-1.9.1
+> -----Original Message-----
+> From: zhukeqian
+> Sent: Wednesday, March 11, 2020 3:20 PM
+> To: Marc Zyngier <maz@kernel.org>
+> Cc: kvmarm@lists.cs.columbia.edu; kvm@vger.kernel.org;
+> linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Zhoujian (jay)
+> <jianjay.zhou@huawei.com>; Sean Christopherson
+> <sean.j.christopherson@intel.com>; Paolo Bonzini <pbonzini@redhat.com>;
+> James Morse <james.morse@arm.com>; Julien Thierry
+> <julien.thierry.kdev@gmail.com>; Suzuki K Poulose <suzuki.poulose@arm.com>
+> Subject: Re: [RFC] KVM: arm64: support enabling dirty log graually in small chunks
+> 
+> Hi Marc,
+> 
+> On 2020/3/10 21:16, Marc Zyngier wrote:
+> > On 2020-03-10 08:26, zhukeqian wrote:
+> >> Hi Marc,
+> >>
+> >> On 2020/3/9 19:45, Marc Zyngier wrote:
+> >>> Kegian,
+> >
+> > [...]
+> >
+> >>> Is there a userspace counterpart to it?
+> >>>
+> >> As this KVM/x86 related changes have not been merged to mainline
+> >> kernel, some little modification is needed on mainline Qemu.
+> >
+> > Could you please point me to these changes?
+> I made some changes locally listed below.
+> 
+> However, Qemu can choose to enable KVM_DIRTY_LOG_INITIALLY_SET or not.
+> Here I made no judgement on dirty_log_manual_caps because I just want to
+> verify the optimization of this patch.
+> 
+> diff --git a/accel/kvm/kvm-all.c b/accel/kvm/kvm-all.c index
+> 439a4efe52..1611f644a4 100644
+> --- a/accel/kvm/kvm-all.c
+> +++ b/accel/kvm/kvm-all.c
+> @@ -2007,14 +2007,16 @@ static int kvm_init(MachineState *ms)
+>      s->coalesced_pio = s->coalesced_mmio &&
+>                         kvm_check_extension(s,
+> KVM_CAP_COALESCED_PIO);
+> 
+> -    s->manual_dirty_log_protect =
+> +    uint64_t dirty_log_manual_caps =
+>          kvm_check_extension(s,
+> KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2);
+> -    if (s->manual_dirty_log_protect) {
+> -        ret = kvm_vm_enable_cap(s,
+> KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2, 0, 1);
+> +    if (dirty_log_manual_caps) {
+> +        ret = kvm_vm_enable_cap(s,
+> KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2, 0,
+> +                                dirty_log_manual_caps);
+>          if (ret) {
+>              warn_report("Trying to enable
+> KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2 "
+>                          "but failed.  Falling back to the legacy mode. ");
+> -            s->manual_dirty_log_protect = false;
+> +        } else {
+> +            s->manual_dirty_log_protect = true;
+>          }
+>      }
 
+FYI: I had submitted a patch to the Qemu community some days ago:
+https://patchwork.kernel.org/patch/11419191/
+
+> >
+> >> As I tested this patch on a 128GB RAM Linux VM with no huge pages,
+> >> the time of enabling dirty log will decrease obviously.
+> >
+> > I'm not sure how realistic that is. Not having huge pages tends to
+> > lead to pretty bad performance in general...
+> Sure, this has no effect on guests which are all of huge pages.
+> 
+> For my understanding, once a guest has normal pages (maybe are initialized at
+> beginning or dissloved from huge pages), it can benefit from this patch.
+
+Yes, I agree.
+
+
+
+Regards,
+Jay Zhou
