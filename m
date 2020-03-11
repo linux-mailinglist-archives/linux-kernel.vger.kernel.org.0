@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B84BA18259D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 00:14:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 367B61825A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 00:14:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731485AbgCKXOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 19:14:17 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37013 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731338AbgCKXOP (ORCPT
+        id S1731513AbgCKXOX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 19:14:23 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34429 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731473AbgCKXOQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 19:14:15 -0400
-Received: by mail-pl1-f194.google.com with SMTP id f16so1827083plj.4
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 16:14:14 -0700 (PDT)
+        Wed, 11 Mar 2020 19:14:16 -0400
+Received: by mail-pf1-f196.google.com with SMTP id 23so2226175pfj.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 16:14:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=M5YJLKJcxwEPId9+i+O/beL+j/9lm96wUEn1DNYymac=;
-        b=ZXDsY4AAGMrW8ORBp2CoIvZNFzwrJQ0+R9NPUeFJwxmDBONJr4Nian5wotzxXzjFO2
-         vuXyKTotxNlzQqS8XQjkp5wlUQ15yNgJkXKuyumC7KlRrPMed3ayY/XCjLcDiRS5R1F4
-         G19dsHJAEUZedOT0ZLQmA+7u6OVHR0xQuBrVU=
+        bh=pz+R6/bajFiKzuDg21R/p73E7Dnb/exoWqB7bjIzotw=;
+        b=jSndEF9AasufRC8A5cwEtAu5taaitC5tcTcTjAKzjbTOxXxNypnb1Rg3xMWdy37RS0
+         8iiZD5NEjCF03LnN64o4uY/Y71JVnxTuCWxxjs2hYDK3QT1w00LSO6HlBi7YRBd6eAvj
+         Glo0pEBnllScOhYw0fKkSCvSp1JVRzHvZx5tQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=M5YJLKJcxwEPId9+i+O/beL+j/9lm96wUEn1DNYymac=;
-        b=SStncxda0YI+fmpFG3C+0rpGZbteWJfbcGL4W998RxuwGUahIVG9psBSGdPgI2xOTW
-         ec9WvhJxOf0zfufUJAuw40/E9VZdSzeRJzPuajbfNPRkbD/qJu009MbvKSlMdjal1Qme
-         FB3VPyK3y79fe66QpEPPwc1XeWhIUEYK2WA+ve5e9+ppcV+30kZqm7BCaGA44Wo65xmO
-         o9weZVmb5CwWMbe7KiJOB5h0ys4xBuE/fQl9tRe8qr1AuZu0widFju0iR9maw8UUzzS/
-         PO5x8w4xdJpfd3dLBdG0GF7o24B0SrYewiSzx7bDmEjPML8MBIfvB81YYUhN7SjNPjSs
-         qedA==
-X-Gm-Message-State: ANhLgQ2SLoM/y49or8xpFWLsZREg4q3b8T9yXNtBlnW3A48pyZFMHHzH
-        fpMZie5j2emjb+9qpIXrMulpBw==
-X-Google-Smtp-Source: ADFU+vt15BF/iHu6Jo59dmAQcWMKOAgo8Zm7TY1fXqWSkm1ezuyQB2gDubvfPczCT8mAEGbBp7Zh5g==
-X-Received: by 2002:a17:90a:357:: with SMTP id 23mr1091055pjf.192.1583968454151;
-        Wed, 11 Mar 2020 16:14:14 -0700 (PDT)
+        bh=pz+R6/bajFiKzuDg21R/p73E7Dnb/exoWqB7bjIzotw=;
+        b=So22tFCyN4VNSJz5T7KSUCVFlBLMQHp4xx1tjp4lxLXWKSoUf/wgFt8+BEpAkycfMN
+         19QNKcPSky7CX8ks9yXEKeZ68rnexd/ynU0ALLl2dcWAj6SBNAQoK/G7itR/puNOE4Gd
+         Ql+R+/ET9fmTr1F8o3GyW0+YOPWVazOaUV3YfuZbjPoipXKzwMWf3MeVRIwnfuOBDOUZ
+         THzlHDW4d9HOVMejmtwKy35p0dQQ3OMDSorzfjx1ZcAuCZUG3DLmAl0fGEjUAFaswkXh
+         OuYKb8B7eks0M4ELKzarBKt/KaHOypzOt8XmYyAqniU8qEqCB1FR5O43MLaNycAPuqUA
+         c6Ew==
+X-Gm-Message-State: ANhLgQ2EmTNYd6fFxGe4tYyPogVBB2B4w0jtCgzGHrr6/w4RP9OHTwFS
+        4P2hIkgdO3Eum+R0RWNeuatzjg==
+X-Google-Smtp-Source: ADFU+vu3hctvPwyWe4hOmGeRglVH3FlBt2UmhtU0gyCwNzZZICUwyFSB2Itc1xN7oobQquYNQgeR4Q==
+X-Received: by 2002:aa7:8711:: with SMTP id b17mr2845654pfo.315.1583968455549;
+        Wed, 11 Mar 2020 16:14:15 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id g75sm2606334pje.37.2020.03.11.16.14.12
+        by smtp.gmail.com with ESMTPSA id g75sm2606334pje.37.2020.03.11.16.14.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 16:14:13 -0700 (PDT)
+        Wed, 11 Mar 2020 16:14:15 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -50,9 +50,9 @@ Cc:     mka@chromium.org, Rajendra Nayak <rnayak@codeaurora.org>,
         evgreen@chromium.org, Lina Iyer <ilina@codeaurora.org>,
         swboyd@chromium.org, Douglas Anderson <dianders@chromium.org>,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFT PATCH v2 02/10] drivers: qcom: rpmh-rsc: Document the register layout better
-Date:   Wed, 11 Mar 2020 16:13:40 -0700
-Message-Id: <20200311161104.RFT.v2.2.Iaddc29b72772e6ea381238a0ee85b82d3903e5f2@changeid>
+Subject: [RFT PATCH v2 03/10] drivers: qcom: rpmh-rsc: Fold tcs_ctrl_write() into its single caller
+Date:   Wed, 11 Mar 2020 16:13:41 -0700
+Message-Id: <20200311161104.RFT.v2.3.Ie88ce5ccfc0c6055903ccca5286ae28ed3b85ed3@changeid>
 X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
 In-Reply-To: <20200311231348.129254-1-dianders@chromium.org>
 References: <20200311231348.129254-1-dianders@chromium.org>
@@ -63,119 +63,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Perhaps it's just me, it took a really long time to understand what
-the register layout of rpmh-rsc was just from the #defines.  Let's add
-a bunch of comments describing which blocks are part of other blocks.
+I was trying to write documentation for the functions in rpmh-rsc and
+I got to tcs_ctrl_write().  The documentation for the function would
+have been: "This is the core of rpmh_rsc_write_ctrl_data(); all the
+caller does is error-check and then call this".
+
+Having the error checks in a separate function doesn't help for
+anything since:
+- There are no other callers that need to bypass the error checks.
+- It's less documenting.  When I read tcs_ctrl_write() I kept
+  wondering if I need to handle cases other than ACTIVE_ONLY or cases
+  with more commands than could fit in a TCS.  This is obvious when
+  the error checks and code are together.
+- The function just isn't that long, so there's no problem
+  understanding the combined function.
+
+Things were even more confusing because the two functions names didn't
+make obvious (at least to me) their relationship.
+
+Simplify by folding one function into the other.
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Maulik Shah <mkshah@codeaurora.org>
 ---
 
-Changes in v2:
-- Now prose in comments instead of struct definitions.
-- Pretty ASCII art from Stephen.
+Changes in v2: None
 
- drivers/soc/qcom/rpmh-rsc.c | 78 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 73 insertions(+), 5 deletions(-)
+ drivers/soc/qcom/rpmh-rsc.c | 39 ++++++++++++++++---------------------
+ 1 file changed, 17 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index b87b79f0347d..02c8e0ffbbe4 100644
+index 02c8e0ffbbe4..799847b08038 100644
 --- a/drivers/soc/qcom/rpmh-rsc.c
 +++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -37,14 +37,24 @@
- #define DRV_NCPT_MASK			0x1F
- #define DRV_NCPT_SHIFT			27
+@@ -550,27 +550,6 @@ static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
+ 	return 0;
+ }
  
--/* Register offsets */
-+/*
-+ * Register offsets within a TCS.
-+ *
-+ * TCSs are stored one after another; multiply tcs_id by RSC_DRV_TCS_OFFSET
-+ * to find a given TCS and add one of the below to find a register.
-+ */
- #define RSC_DRV_IRQ_ENABLE		0x00
- #define RSC_DRV_IRQ_STATUS		0x04
--#define RSC_DRV_IRQ_CLEAR		0x08
--#define RSC_DRV_CMD_WAIT_FOR_CMPL	0x10
-+#define RSC_DRV_IRQ_CLEAR		0x08	/* w/o; write 1 to clear */
-+#define RSC_DRV_CMD_WAIT_FOR_CMPL	0x10	/* 1 bit per command */
- #define RSC_DRV_CONTROL			0x14
--#define RSC_DRV_STATUS			0x18
--#define RSC_DRV_CMD_ENABLE		0x1C
-+#define RSC_DRV_STATUS			0x18	/* zero if tcs is busy */
-+#define RSC_DRV_CMD_ENABLE		0x1C	/* 1 bit per command */
-+
-+/*
-+ * Commands (up to 16) start at 0x30 in a TCS; multiply command index
-+ * by RSC_DRV_CMD_OFFSET and add one of the below to find a register.
-+ */
- #define RSC_DRV_CMD_MSGID		0x30
- #define RSC_DRV_CMD_ADDR		0x34
- #define RSC_DRV_CMD_DATA		0x38
-@@ -61,6 +71,64 @@
- #define CMD_STATUS_ISSUED		BIT(8)
- #define CMD_STATUS_COMPL		BIT(16)
- 
-+/*
-+ * Here's a high level overview of how all the registers in RPMH work
-+ * together:
-+ *
-+ * - The main rpmh-rsc address is the base of a register space that can
-+ *   be used to find overall configuration of the hardware
-+ *   (DRV_PRNT_CHLD_CONFIG).  Also found within the rpmh-rsc register
-+ *   space are all the TCS blocks.  The offset of the TCS blocks is
-+ *   specified in the device tree by "qcom,tcs-offset" and used to
-+ *   compute tcs_base.
-+ * - TCS blocks come one after another.  Type, count, and order are
-+ *   specified by the device tree as "qcom,tcs-config".
-+ * - Each TCS block has some registers, then space for up to 16 commands.
-+ *   Note that though address space is reserved for 16 commands, fewer
-+ *   might be present.  See ncpt (num cmds per TCS).
-+ * - The first TCS block is special in that it has registers to control
-+ *   interrupts (RSC_DRV_IRQ_XXX).  Space for these registers is reserved
-+ *   in all TCS blocks to make the math easier, but only the first one
-+ *   matters.
-+ *
-+ * Here's a picture:
-+ *
-+ *  +---------------------------------------------------+
-+ *  |RSC                                                |
-+ *  | ctrl                                              |
-+ *  |                                                   |
-+ *  | Drvs:                                             |
-+ *  | +-----------------------------------------------+ |
-+ *  | |DRV0                                           | |
-+ *  | | ctrl                                          | |
-+ *  | |                                               | |
-+ *  | | TCSs:                                         | |
-+ *  | | +------------------------------------------+  | |
-+ *  | | |TCS0  |  |  |  |  |  |  |  |  |  |  |  |  |  | |
-+ *  | | | IRQ  | 0| 1| 2| 3| 4| 5| .| .| .| .|14|15|  | |
-+ *  | | | ctrl |  |  |  |  |  |  |  |  |  |  |  |  |  | |
-+ *  | | +------------------------------------------+  | |
-+ *  | | +------------------------------------------+  | |
-+ *  | | |TCS1  |  |  |  |  |  |  |  |  |  |  |  |  |  | |
-+ *  | | |      | 0| 1| 2| 3| 4| 5| .| .| .| .|14|15|  | |
-+ *  | | | ctrl |  |  |  |  |  |  |  |  |  |  |  |  |  | |
-+ *  | | +------------------------------------------+  | |
-+ *  | | +------------------------------------------+  | |
-+ *  | | |TCS2  |  |  |  |  |  |  |  |  |  |  |  |  |  | |
-+ *  | | |      | 0| 1| 2| 3| 4| 5| .| .| .| .|14|15|  | |
-+ *  | | | ctrl |  |  |  |  |  |  |  |  |  |  |  |  |  | |
-+ *  | | +------------------------------------------+  | |
-+ *  | |                    ......                     | |
-+ *  | +-----------------------------------------------+ |
-+ *  | +-----------------------------------------------+ |
-+ *  | |DRV1                                           | |
-+ *  | | (same as DRV0)                                | |
-+ *  | +-----------------------------------------------+ |
-+ *  |                      ......                       |
-+ *  +---------------------------------------------------+
-+ */
-+
-+
- static u32 read_tcs_cmd(struct rsc_drv *drv, int reg, int tcs_id, int cmd_id)
+-static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
+-{
+-	struct tcs_group *tcs;
+-	int tcs_id = 0, cmd_id = 0;
+-	unsigned long flags;
+-	int ret;
+-
+-	tcs = get_tcs_for_msg(drv, msg);
+-	if (IS_ERR(tcs))
+-		return PTR_ERR(tcs);
+-
+-	spin_lock_irqsave(&tcs->lock, flags);
+-	/* find the TCS id and the command in the TCS to write to */
+-	ret = find_slots(tcs, msg, &tcs_id, &cmd_id);
+-	if (!ret)
+-		__tcs_buffer_write(drv, tcs_id, cmd_id, msg);
+-	spin_unlock_irqrestore(&tcs->lock, flags);
+-
+-	return ret;
+-}
+-
+ /**
+  * rpmh_rsc_write_ctrl_data: Write request to the controller
+  *
+@@ -581,6 +560,11 @@ static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
+  */
+ int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv, const struct tcs_request *msg)
  {
- 	return readl_relaxed(drv->tcs_base + RSC_DRV_TCS_OFFSET * tcs_id + reg +
++	struct tcs_group *tcs;
++	int tcs_id = 0, cmd_id = 0;
++	unsigned long flags;
++	int ret;
++
+ 	if (!msg || !msg->cmds || !msg->num_cmds ||
+ 	    msg->num_cmds > MAX_RPMH_PAYLOAD) {
+ 		pr_err("Payload error\n");
+@@ -591,7 +575,18 @@ int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv, const struct tcs_request *msg)
+ 	if (msg->state == RPMH_ACTIVE_ONLY_STATE)
+ 		return -EINVAL;
+ 
+-	return tcs_ctrl_write(drv, msg);
++	tcs = get_tcs_for_msg(drv, msg);
++	if (IS_ERR(tcs))
++		return PTR_ERR(tcs);
++
++	spin_lock_irqsave(&tcs->lock, flags);
++	/* find the TCS id and the command in the TCS to write to */
++	ret = find_slots(tcs, msg, &tcs_id, &cmd_id);
++	if (!ret)
++		__tcs_buffer_write(drv, tcs_id, cmd_id, msg);
++	spin_unlock_irqrestore(&tcs->lock, flags);
++
++	return ret;
+ }
+ 
+ static int rpmh_probe_tcs_config(struct platform_device *pdev,
 -- 
 2.25.1.481.gfbce0eb801-goog
 
