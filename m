@@ -2,75 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60E32181CB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:45:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3553181CBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:47:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730130AbgCKPpB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 11:45:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35932 "EHLO mail.kernel.org"
+        id S1729995AbgCKPrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 11:47:16 -0400
+Received: from foss.arm.com ([217.140.110.172]:51138 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729716AbgCKPpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 11:45:00 -0400
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AE4C2074F;
-        Wed, 11 Mar 2020 15:44:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583941499;
-        bh=PFGUByZEZTBls3DOx4QmCSCySBxN4HHWWP3hytIxz6k=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=B933aFpcNlMJxmS8HIBv1ozND2nqR1JpFud+7CWKxeDc9Iy0XBV44M5fNbDRY5Xl9
-         vm3dG6mVkT9Yg6CMQ7i8ect5XDgIYYnz1EaF0Avd4vGhfg4PsJ48QSaZ9BkQyfU3O4
-         jSMb0T8qX71Ap4tF8QRvB6t/NL5+pK8ob/tWNIUY=
-Received: by mail-qk1-f179.google.com with SMTP id d8so2528445qka.2;
-        Wed, 11 Mar 2020 08:44:59 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ0kUXHHRRTNgU3Ve5bciPsbhNnHai7idqKirGq3oAbWwu9RsNbj
-        7hOakcWNwr8SAQKZgQdgfwTmKNqFvcq47r0fcg==
-X-Google-Smtp-Source: ADFU+vuw15q6epFZCXVJuZ1Xg31IOj2uW3MXifAIuvdbqLoaajvp1prFnelurSmWkqVzjoRj7mM7gpt70hmkQJ36bhw=
-X-Received: by 2002:ae9:f205:: with SMTP id m5mr3442629qkg.152.1583941498611;
- Wed, 11 Mar 2020 08:44:58 -0700 (PDT)
+        id S1729742AbgCKPrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 11:47:16 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDDA431B;
+        Wed, 11 Mar 2020 08:47:15 -0700 (PDT)
+Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B4833F6CF;
+        Wed, 11 Mar 2020 08:47:14 -0700 (PDT)
+Subject: Re: [PATCH] ARM: dts: dra7: Add bus_dma_limit for L3 bus
+To:     Tony Lindgren <tony@atomide.com>, Roger Quadros <rogerq@ti.com>
+Cc:     Tero Kristo <t-kristo@ti.com>, hch@lst.de, robh+dt@kernel.org,
+        nm@ti.com, nsekhar@ti.com, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200310115309.31354-1-rogerq@ti.com>
+ <e7df4db7-6fe1-cfa4-841b-ddd395864bb8@ti.com>
+ <20200310154829.GS37466@atomide.com>
+ <d2e217a4-4a45-bc46-4610-84e6c8567d5f@ti.com>
+ <20200311152347.GW37466@atomide.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <e031b768-8fb8-ce62-a644-69925757cbc6@arm.com>
+Date:   Wed, 11 Mar 2020 15:47:12 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20200117170352.16040-1-olivier.moysan@st.com> <20200121220022.GA12737@bogus>
- <6a49bf6c-8851-a65c-5606-563776e07c08@st.com>
-In-Reply-To: <6a49bf6c-8851-a65c-5606-563776e07c08@st.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 11 Mar 2020 10:44:45 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKGy6Ec57RC_N-KZfKgGij4nn-BEdNQqXCd9dH_yPY6ew@mail.gmail.com>
-Message-ID: <CAL_JsqKGy6Ec57RC_N-KZfKgGij4nn-BEdNQqXCd9dH_yPY6ew@mail.gmail.com>
-Subject: Re: [PATCH v3] ASoC: dt-bindings: stm32: convert spdfirx to json-schema
-To:     Olivier MOYSAN <olivier.moysan@st.com>
-Cc:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200311152347.GW37466@atomide.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 3:20 AM Olivier MOYSAN <olivier.moysan@st.com> wrote:
->
-> Hi Rob,
->
-> I did not report your reviewed-by tag, as I have made a extra change in v2.
-> This change is related to dmas property reported in v2 change log.
-> Sorry, this extra change was indeed not clearly highlighted in log comments.
+On 11/03/2020 3:23 pm, Tony Lindgren wrote:
+> * Roger Quadros <rogerq@ti.com> [200311 07:21]:
+>>
+>>
+>> On 10/03/2020 17:48, Tony Lindgren wrote:
+>>> * Tero Kristo <t-kristo@ti.com> [200310 14:46]:
+>>>> On 10/03/2020 13:53, Roger Quadros wrote:
+>>>>> The L3 interconnect can access only 32-bits of address.
+>>>>> Add the dma-ranges property to reflect this limit.
+>>>>>
+>>>>> This will ensure that no device under L3 is
+>>>>> given > 32-bit address for DMA.
+>>>>>
+>>>>> Issue was observed only with SATA on DRA7-EVM with 4GB RAM
+>>>>> and CONFIG_ARM_LPAE enabled. This is because the controller
+>>>>> can perform 64-bit DMA and was setting the dma_mask to 64-bit.
+>>>>>
+>>>>> Setting the correct bus_dma_limit fixes the issue.
+>>>>
+>>>> This seems kind of messy to modify almost every DT node because of this....
+>>>> Are you sure this is the only way to get it done? No way to modify the sata
+>>>> node only which is impacted somehow?
+>>>>
+>>>> Also, what if you just pass 0xffffffff to the dma-ranges property? That
+>>>> would avoid modifying every node I guess.
+>>>
+>>> Also, I think these interconnects are not limited to 32-bit access.
+>>
+>> But from Table 2-1. L3_MAIN Memory Map
+>>
+>> Start address	0x0000_0000
+>> End address	0xFFFF_FFFF
+>>
+>> So it is 32-bit limit, right?
+> 
+> Hmm so what war Robin saying earlier that DMA access seems to be
+> limited to lower 2GB only though?
 
-Indeed you did mention it, I just missed it. Anyways, it's a minor
-change and my R-by still stands.
+That's the lower 2GB *of DRAM*, which occupies the upper 2GB of the L3 
+memory map ;)
 
-I'd resend this to make sure it's in Mark's inbox again.
-
-Rob
+Robin.
