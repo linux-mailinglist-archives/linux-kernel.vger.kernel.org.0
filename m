@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E2EB181812
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 13:35:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12F3218181B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 13:35:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729410AbgCKMfK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 08:35:10 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36092 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729320AbgCKMfJ (ORCPT
+        id S1729440AbgCKMfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 08:35:14 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40508 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729412AbgCKMfM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 08:35:09 -0400
-Received: by mail-wr1-f68.google.com with SMTP id s5so2410641wrg.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 05:35:09 -0700 (PDT)
+        Wed, 11 Mar 2020 08:35:12 -0400
+Received: by mail-wm1-f68.google.com with SMTP id e26so1915400wme.5
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 05:35:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lNuzy8ycpqr3FLs4zmHBBSdqqrGsf8gVzDzvMcY50JI=;
-        b=cwJE67DocEpbh5BKtuvUxtT+LM8kGi4/xJPmyjW8KDs6uDodbf8fgF9z7rrrE8/N4j
-         Zft/9qqCBX3c8HGjIWMYzXpJMuQAOBcGnNdOl/NKj+046V4RK1e9VJ3G7sIWzIoEzkgV
-         1zsB9PjEjSLpn6E9KR95nB9ZzakygZH/BxEXDiuX2XubDV1/wlo3xDfijcYP36uRpC+8
-         GmsHW2AEz1p9K27im9xGCpsN+bjsPSDj/gEI+JYrp1LgLzTT2mziix5hJwi1VrTX7bA0
-         OTVuac56ZI53DK/Jn/P9b6fZN/QWB66O/RmhSksbTAdegbPx/wrD6yKN/6B8eABSXEtK
-         yroQ==
+        bh=qtTX7EM1d6h/uC42my2sgJ8i9nRiLu7iFeIbg2tcgXs=;
+        b=yu5/OhSa/aCJePUy90xslVuooEX+/2dj6XTUQ9x7U9JYlXGW+WfmKPxMCS+RWVjuvR
+         6kNhPVOzM20irZoWcPIXC5Sz6nFgJWXfHIIHVRNnOQ+CH2QjGYOxVwDqdMnemSdu8UWu
+         SS3RnmzWsAfwCUmEQn1YG7/P8rH/Xcq/nM+rxlzrM9E5L5fIzCumYWqigHRV30BHW4wu
+         oXqKF365o8dY95kRIy87qF6Jqa2obcnwRb1Rs14OigKZxHiqxsYCcNo61A/I2XNDJl40
+         QDzt54WS9MeV0GKTgCOFB9RO5P2iRPr+RUbfDZ0R6g6pUn6mMcrUHSHxmM5H589w5PRC
+         Xxtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lNuzy8ycpqr3FLs4zmHBBSdqqrGsf8gVzDzvMcY50JI=;
-        b=FK2QwaBj4vacncB/5XFMAcuO2KJB/CrIgAgp1BYtzbvOSeP2PpHd58zGGzOOlN2ODm
-         sY6ZpfKMMe4nb/PRMAwTQsYWcByfdFOIVpoKjP22WHdxzvhNrsqwHh3/y5mZ/szmtdSi
-         9TFRz9llQTv5nfNOhpFeeaoHoGCMUo3rl5qjr/sGLvFlQeJmU+dmNZhBSeDf8e5oAjqv
-         Z4INyq3lrXPOBAPFRiVN6++5/mzassgpkyN6KQSeWNZ3Zuim+7j5Dj9TjU2ACks4WCgx
-         tfsmrP5VXTygK9wpzjzrUJqQ7U3sFpw19rnTCsVQmA1k2+wa2isUG+T0X+QZvm95Abr9
-         ztRQ==
-X-Gm-Message-State: ANhLgQ3l19QB5HaeQZv8qyaTPu0Th6Gy1gEGDNY4VSeivvIKJ00mPpiZ
-        1eTSMGGVQ6VLlEEbRsDohr3SgQ==
-X-Google-Smtp-Source: ADFU+vs4BEZokW6i2VW9147V1l12EpLto/m3bG4MOwCtWbE4q/Zuimm9URFd7dry6hdivmMrBJcGlA==
-X-Received: by 2002:adf:f002:: with SMTP id j2mr4457829wro.296.1583930108514;
-        Wed, 11 Mar 2020 05:35:08 -0700 (PDT)
+        bh=qtTX7EM1d6h/uC42my2sgJ8i9nRiLu7iFeIbg2tcgXs=;
+        b=etAQuw1cq0x5ulliDzgPs9BtZ7WDh7D0xw2kgFuSQ5LiJLy8UCjVfRgSktcS/byVrK
+         yZUtmbkvNh/9iJgFT+spc1TrTF3N3ArcFQ8AkHyHzNofTvYU6Nk+N6nRpy9hAR09vyro
+         lrNiquBzktZkZ3nhZ61imzSmH+2nFFoMIRsOebw7NaZkWRsnzWcr42PoWPzKsH6NtpZD
+         i66wxSsDfLndl4XAqg9fxs1v9KR1xiz6Tgi9vsrlq8dJ6DaSfevEmUwP09PatFXcwSQ1
+         oUlyoBlvMRj/hG1hD6X5rxb3n1jhuGaffVN6/1j95kAVw3HBJrgeNawVXY4ZELezJ6+3
+         mhkg==
+X-Gm-Message-State: ANhLgQ3/bon+0as4jPsMAH+YuZFU2D9gLFsu6wgzIl6zCGBaJuNfMOxW
+        TKbX0fcLF6/ij8+HaDoTEGWOaQ==
+X-Google-Smtp-Source: ADFU+vtnvILyF3Zc67x9wUJYRN0XGPqBQlx8RvzSHeYOfi2xFeqCC0M6n6wEo9V7OBH9XYdtbFiQWw==
+X-Received: by 2002:a1c:3585:: with SMTP id c127mr3596215wma.124.1583930110019;
+        Wed, 11 Mar 2020 05:35:10 -0700 (PDT)
 Received: from xps7590.local ([2a02:2450:102f:13b8:9087:3e80:4ebc:ae7b])
-        by smtp.gmail.com with ESMTPSA id m25sm7822732wml.35.2020.03.11.05.35.07
+        by smtp.gmail.com with ESMTPSA id m25sm7822732wml.35.2020.03.11.05.35.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 05:35:08 -0700 (PDT)
+        Wed, 11 Mar 2020 05:35:09 -0700 (PDT)
 From:   Robert Foss <robert.foss@linaro.org>
 To:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
         mark.rutland@arm.com, catalin.marinas@arm.com, will@kernel.org,
@@ -55,9 +55,9 @@ To:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Loic Poulain <loic.poulain@linaro.org>
 Cc:     Robert Foss <robert.foss@linaro.org>
-Subject: [v1 2/6] arm64: dts: apq8016-sbc: Add CCI/Sensor nodes
-Date:   Wed, 11 Mar 2020 13:34:57 +0100
-Message-Id: <20200311123501.18202-3-robert.foss@linaro.org>
+Subject: [v1 3/6] arm64: dts: sdm845: Add i2c-qcom-cci node
+Date:   Wed, 11 Mar 2020 13:34:58 +0100
+Message-Id: <20200311123501.18202-4-robert.foss@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200311123501.18202-1-robert.foss@linaro.org>
 References: <20200311123501.18202-1-robert.foss@linaro.org>
@@ -68,103 +68,169 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Loic Poulain <loic.poulain@linaro.org>
+The sdm845 SOC ships with a CCI controller, which
+has two CCI/I2C buses.
 
-Add cci device to msm8916.dtsi.
-Add default 96boards camera node for db410c (apq8016-sbc).
-
-Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
 Signed-off-by: Robert Foss <robert.foss@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi | 75 +++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ arch/arm64/boot/dts/qcom/sdm845-db845c.dts |   4 +
+ arch/arm64/boot/dts/qcom/sdm845.dtsi       | 110 +++++++++++++++++++++
+ 2 files changed, 114 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-index 037e26b3f8d5..a3e6982f4f93 100644
---- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-@@ -495,6 +495,81 @@
- 		wcnss@a21b000 {
- 			status = "okay";
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
+index eb77aaa6a819..a6b6837c3d68 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
++++ b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
+@@ -583,3 +583,7 @@
+ 		bias-pull-up;
+ 	};
+ };
++
++&cci {
++	status = "ok";
++};
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index d42302b8889b..b7f5c0b0f6af 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -5,6 +5,7 @@
+  * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+  */
+ 
++#include <dt-bindings/clock/qcom,camcc-sdm845.h>
+ #include <dt-bindings/clock/qcom,dispcc-sdm845.h>
+ #include <dt-bindings/clock/qcom,gcc-sdm845.h>
+ #include <dt-bindings/clock/qcom,gpucc-sdm845.h>
+@@ -717,6 +718,14 @@
+ 			#power-domain-cells = <1>;
  		};
-+
-+		camera_vdddo_1v8: fixedregulator@0 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "camera_vdddo";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-always-on;
+ 
++		clock_camcc: clock-controller@ad00000 {
++			compatible = "qcom,sdm845-camcc";
++			reg = <0 0xad00000 0 0x10000>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			#power-domain-cells = <1>;
 +		};
 +
-+		camera_vdda_2v8: fixedregulator@1 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "camera_vdda";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			regulator-always-on;
-+		};
-+
-+		camera_vddd_1v5: fixedregulator@2 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "camera_vddd";
-+			regulator-min-microvolt = <1500000>;
-+			regulator-max-microvolt = <1500000>;
-+			regulator-always-on;
-+		};
-+
-+		cci@1b0c000 {
-+			status = "ok";
-+			i2c-bus@0 {
-+				camera_rear@3b {
-+					compatible = "ovti,ov5640";
-+					reg = <0x3b>;
-+
-+					enable-gpios = <&msmgpio 34 GPIO_ACTIVE_HIGH>;
-+					reset-gpios = <&msmgpio 35 GPIO_ACTIVE_LOW>;
-+					pinctrl-names = "default";
-+					pinctrl-0 = <&camera_rear_default>;
-+
-+					clocks = <&gcc GCC_CAMSS_MCLK0_CLK>;
-+					clock-names = "xclk";
-+					clock-frequency = <23880000>;
-+
-+					vdddo-supply = <&camera_vdddo_1v8>;
-+					vdda-supply = <&camera_vdda_2v8>;
-+					vddd-supply = <&camera_vddd_1v5>;
-+
-+					/* No camera mezzanine by default */
-+					status = "okay";
-+
-+					port {
-+						ov5640_ep: endpoint {
-+							clock-lanes = <1>;
-+							data-lanes = <0 2>;
-+							remote-endpoint = <&csiphy0_ep>;
-+						};
-+					};
+ 		qfprom@784000 {
+ 			compatible = "qcom,qfprom";
+ 			reg = <0 0x00784000 0 0x8ff>;
+@@ -1451,6 +1460,60 @@
+ 			gpio-ranges = <&tlmm 0 0 150>;
+ 			wakeup-parent = <&pdc_intc>;
+ 
++			cci0_default: cci0_default {
++				/* SDA, SCL */
++				pinmux {
++					function = "cci_i2c";
++					pins = "gpio17", "gpio18";
++				};
++				pinconf {
++					pins = "gpio17", "gpio18";
++					bias-pull-up;
++					drive-strength = <2>; /* 2 mA */
 +				};
 +			};
-+		};
 +
-+		camss@1b00000 {
-+			status = "ok";
-+			ports {
++			cci0_sleep: cci0_sleep {
++				/* SDA, SCL */
++				mux {
++					pins = "gpio17", "gpio18";
++					function = "cci_i2c";
++				};
++
++				config {
++					pins = "gpio17", "gpio18";
++					drive-strength = <2>; /* 2 mA */
++					bias-pull-down;
++				};
++			};
++
++			cci1_default: cci1_default {
++				/* SDA, SCL */
++				pinmux {
++					function = "cci_i2c";
++					pins = "gpio19", "gpio20";
++				};
++				pinconf {
++					pins = "gpio19", "gpio20";
++					bias-pull-up;
++					drive-strength = <2>; /* 2 mA */
++				};
++			};
++
++			cci1_sleep: cci1_sleep {
++				/* SDA, SCL */
++				mux {
++					pins = "gpio19", "gpio20";
++					function = "cci_i2c";
++				};
++
++				config {
++					pins = "gpio19", "gpio20";
++					drive-strength = <2>; /* 2 mA */
++					bias-pull-down;
++				};
++			};
++
+ 			qspi_clk: qspi-clk {
+ 				pinmux {
+ 					pins = "gpio95";
+@@ -2608,6 +2671,53 @@
+ 			#reset-cells = <1>;
+ 		};
+ 
++		cci: cci@ac4a000 {
++			compatible = "qcom,sdm845-cci";
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			reg = <0 0xac4a000 0 0x4000>;
++			interrupts = <GIC_SPI 460 IRQ_TYPE_EDGE_RISING>;
++			power-domains = <&clock_camcc TITAN_TOP_GDSC>;
++
++			clocks = <&clock_camcc CAM_CC_CAMNOC_AXI_CLK>,
++				<&clock_camcc CAM_CC_SOC_AHB_CLK>,
++				<&clock_camcc CAM_CC_SLOW_AHB_CLK_SRC>,
++				<&clock_camcc CAM_CC_CPAS_AHB_CLK>,
++				<&clock_camcc CAM_CC_CCI_CLK>,
++				<&clock_camcc CAM_CC_CCI_CLK_SRC>;
++			clock-names = "camnoc_axi_clk",
++				"soc_ahb_clk",
++				"slow_ahb_src_clk",
++				"cpas_ahb_clk",
++				"cci",
++				"cci_clk_src";
++
++			assigned-clocks = <&clock_camcc CAM_CC_CAMNOC_AXI_CLK>,
++				<&clock_camcc CAM_CC_CCI_CLK>;
++			assigned-clock-rates = <80000000>, <37500000>;
++
++			pinctrl-names = "default", "sleep";
++			pinctrl-0 = <&cci0_default &cci1_default>;
++			pinctrl-1 = <&cci0_sleep &cci1_sleep>;
++
++			status = "disabled";
++
++			i2c-bus@0 {
++				reg = <0>;
++				clock-frequency = <1000000>;
 +				#address-cells = <1>;
 +				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					csiphy0_ep: endpoint {
-+						clock-lanes = <1>;
-+						data-lanes = <0 2>;
-+						remote-endpoint = <&ov5640_ep>;
-+						status = "okay";
-+					};
-+				};
++			};
++
++			i2c-bus@1 {
++				reg = <1>;
++				clock-frequency = <1000000>;
++				#address-cells = <1>;
++				#size-cells = <0>;
 +			};
 +		};
- 	};
- 
- 	usb2513 {
++
+ 		mdss: mdss@ae00000 {
+ 			compatible = "qcom,sdm845-mdss";
+ 			reg = <0 0x0ae00000 0 0x1000>;
 -- 
 2.20.1
 
