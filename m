@@ -2,114 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63EC91820A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:21:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FE2E1820CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:27:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730808AbgCKSVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 14:21:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34566 "EHLO mail.kernel.org"
+        id S1730832AbgCKS1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 14:27:45 -0400
+Received: from mga07.intel.com ([134.134.136.100]:25702 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730677AbgCKSVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:21:33 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 756F52072F;
-        Wed, 11 Mar 2020 18:21:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583950892;
-        bh=EMTCcOIumdt7jEeudStF/nDyAUTZ9+64dBQJKN/EsCs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pNyDx7AIzb6Z8gnHZtLGHSTGfrLVHI7ISZtKRl/W/4N8aHSNsMMXhVQI9aIVRZY65
-         UcSfexfQDroVVkYxjUgMgIGK1V7Z3DbBBpIc3HAI53WDUznw14tsPtXfl0UPquNv7+
-         sXwWK+yCO5HduWIprk+5ucTWMRPSxpApl4VnAO/0=
-Date:   Wed, 11 Mar 2020 11:21:30 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     NeilBrown <neilb@suse.com>, Josh Triplett <josh@joshtriplett.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Jessica Yu <jeyu@kernel.org>, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] kmod: make request_module() return an error when
- autoloading is disabled
-Message-ID: <20200311182130.GA41227@sol.localdomain>
-References: <20200310223731.126894-1-ebiggers@kernel.org>
- <20200311043221.GK11244@42.do-not-panic.com>
- <20200311052620.GD46757@gmail.com>
- <20200311063130.GL11244@42.do-not-panic.com>
- <20200311173545.GA20006@gmail.com>
- <20200311180002.GN11244@42.do-not-panic.com>
+        id S1730468AbgCKS1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 14:27:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 11:27:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
+   d="scan'208";a="236370876"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
+  by fmsmga008.fm.intel.com with ESMTP; 11 Mar 2020 11:27:44 -0700
+Message-ID: <664cf142449b0a1ef7f09d04111f96ff84738e28.camel@intel.com>
+Subject: Re: [PATCH V1 01/13] selftests/resctrl: Fix feature detection
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>,
+        "babu.moger@amd.com" <babu.moger@amd.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Wed, 11 Mar 2020 11:22:57 -0700
+In-Reply-To: <b83ba95d-9f0f-4d4f-b68c-c5a612afece4@intel.com>
+References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
+         <7e3e4b91f5786a489e68eecda21e1d8049b60181.1583657204.git.sai.praneeth.prakhya@intel.com>
+         <a7407b0d-4e4d-d0cf-621c-769d218fdace@intel.com>
+         <FFF73D592F13FD46B8700F0A279B802F57307F89@ORSMSX114.amr.corp.intel.com>
+         <d0409729-b546-f0b9-4944-cbe5c9a74f76@intel.com>
+         <FFF73D592F13FD46B8700F0A279B802F573084EC@ORSMSX114.amr.corp.intel.com>
+         <b83ba95d-9f0f-4d4f-b68c-c5a612afece4@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200311180002.GN11244@42.do-not-panic.com>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 06:00:02PM +0000, Luis Chamberlain wrote:
-> On Wed, Mar 11, 2020 at 10:35:45AM -0700, Eric Biggers wrote:
-> > On Wed, Mar 11, 2020 at 06:31:30AM +0000, Luis Chamberlain wrote:
-> > > On Tue, Mar 10, 2020 at 10:26:20PM -0700, Eric Biggers wrote:
-> > > > On Wed, Mar 11, 2020 at 04:32:21AM +0000, Luis Chamberlain wrote:
-> > > > > On Tue, Mar 10, 2020 at 03:37:31PM -0700, Eric Biggers wrote:
-> > > > > > From: Eric Biggers <ebiggers@google.com>
-> > > > > > 
-> > > > > > It's long been possible to disable kernel module autoloading completely
-> > > > > > by setting /proc/sys/kernel/modprobe to the empty string.  This can be
-> > > > > > preferable
-> > > > > 
-> > > > > preferable but ... not documented. Or was this documented or recommended
-> > > > > somewhere?
-> > > > > 
-> > > > > > to setting it to a nonexistent file since it avoids the
-> > > > > > overhead of an attempted execve(), avoids potential deadlocks, and
-> > > > > > avoids the call to security_kernel_module_request() and thus on
-> > > > > > SELinux-based systems eliminates the need to write SELinux rules to
-> > > > > > dontaudit module_request.
+Hi Reinette,
+
+On Wed, 2020-03-11 at 11:06 -0700, Reinette Chatre wrote:
+> Hi Sai,
+> 
+> On 3/9/2020 3:51 PM, Prakhya, Sai Praneeth wrote:
+> > > -----Original Message-----
+> > > From: Reinette Chatre <reinette.chatre@intel.com>
+> > > Sent: Monday, March 9, 2020 3:34 PM
+> > 
+> > [SNIP]
+> > 
+> > > > That's a good point and makes sense to me. I think we could fix it in
+> > > > two ways 1. grep for strings in dmesg but that will still leave
+> > > > ambiguity in deciding b/w mbm and cqm because kernel prints "resctrl:
+> > > > L3
+> > > monitoring detected" for both the features 2. Check in "info" directory
+> > > > 	a. For cat_l3, we could search for info/L3
+> > > > 	b. For mba, we could search for info/MB
+> > > > 	c. For cqm and mbm, we could search for specified string in
+> > > > info/L3_MON/mon_features
 > > > > 
-> > > > Not that I know of, though I didn't look too hard.  proc(5) mentions
-> > > > /proc/sys/kernel/modprobe but doesn't mention the empty string case.
-> > > > 
-> > > > In any case, it's been supported for a long time, and it's useful for the
-> > > > reasons I mentioned.
+> > > > I think option 2 might be better because it can handle all cases,
+> > > > please let me
+> > > know what you think.
 > > > 
-> > > Sure. I think then its important to document it as such then, or perhaps
-> > > make a kconfig option which sets this to empty and document it on the
-> > > kconfig entry.
+> > > I agree. For the reasons you mention and also that (1) may not be
+> > > possible if the
+> > > loglevel prevents those lines from being printed.
 > > 
-> > I'll send a man-pages patch to document it in proc(5).
-> > 
-> > Most users, including the one I have in mind, should just be able to run
-> > 'echo > /proc/sys/kernel/modprobe' early in the boot process.  So I don't think
-> > the need for a kconfig option to control the default value has been clearly
-> > demonstrated yet.  You're certainly welcome to send a patch for it if you
-> > believe it would be useful, though.
+> > Makes sense. I will work on the fix.
 > 
-> When doing a rewrite of some of this code I did wonder who would use
-> this and clear it out. A kconfig entry would remove any doubt over its
-> use and would allow one to skip the userspace / early init requirement
-> to empty it out, therefore actually being safer because you are not
-> racing against modules being loaded.
-> 
-> Is avoiding the race more suitable for your needs than echo'ing early on boot?
-> 
+> One more note about this ... from what I can tell the test for a feature
+> currently fails if the platform does not support the feature. Would it
+> be possible to just skip the test in this case instead?
 
-Maybe.  It would avoid the chance of races, but I haven't seen any yet.
-Also, our userspace has to support old kernels, so we still need the
-'echo > /proc/sys/kernel/modprobe' anyway.  If that turns out to be good enough,
-then it makes things easier for everyone.
+That's because the output of the test should be just "ok" or "not ok".
 
-If setting the default at build time turns out to be needed, then sure in that
-case I'll send a patch that adds a kconfig option to do that.  But I'm first
-trying to use the existing kernel functionality.
+I can change it to something like "# Skip <test_name> because platform doesn't
+support the feature", but not really sure if it complies with TAP 13 protocol.
 
-Also, a kconfig option isn't really a substitute for documenting this existing
-sysctl.  We still need to document it properly in proc(5) and
-Documentation/admin-guide/sysctl/kernel.rst.
+Regards,
+Sai
 
-- Eric
