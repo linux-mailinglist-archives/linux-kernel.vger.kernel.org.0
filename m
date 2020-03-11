@@ -2,86 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03D5D18207B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:13:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98C22182099
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:19:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730729AbgCKSN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 14:13:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57278 "EHLO mail.kernel.org"
+        id S1730789AbgCKSSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 14:18:54 -0400
+Received: from mga12.intel.com ([192.55.52.136]:56037 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730468AbgCKSN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:13:29 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 348BC206BE;
-        Wed, 11 Mar 2020 18:13:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583950409;
-        bh=ywyU0I2pFfVGHGXJ3lsV7XvDHc17/BALKZKiVvbKPvk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zXX8nF7OoRzxs30fAd20+QRXUUDSh4Il9PolKoz+3ww95VqTPfoEcg1nDM0RoMi4W
-         Su9Jk2kCxiFpTpGNKPuAKTty0PoysAHKqFvaC66M3OVsc1By4efUGW2lax623Cc4j6
-         j6+PE1qxGZ5KVBL3Ij1ppHYnDpAPy3JNggk+M6sY=
-Date:   Wed, 11 Mar 2020 19:13:26 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.5 000/189] 5.5.9-stable review
-Message-ID: <20200311181326.GD3970258@kroah.com>
-References: <20200310123639.608886314@linuxfoundation.org>
- <a98e88fd-8e52-4f27-5e06-878241d65d4e@roeck-us.net>
+        id S1730677AbgCKSSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 14:18:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 11:18:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
+   d="scan'208";a="353937802"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
+  by fmsmga001.fm.intel.com with ESMTP; 11 Mar 2020 11:18:53 -0700
+Message-ID: <2a950833c6f2e31c987cee5101fc13eddb36a468.camel@intel.com>
+Subject: Re: [PATCH V1 09/13] selftests/resctrl: Modularize fill_buf for new
+ CAT test case
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>, shuah@kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        tony.luck@intel.com, babu.moger@amd.com, james.morse@arm.com,
+        ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 11 Mar 2020 11:14:06 -0700
+In-Reply-To: <2b7e2ef2-8e80-1e5e-41ac-4fc4726425ac@intel.com>
+References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
+         <43b368952bb006ee973311d9c9ae0eb53d8e7f60.1583657204.git.sai.praneeth.prakhya@intel.com>
+         <4c84be1d-8839-2c85-b294-7e3c454240bb@intel.com>
+         <7a1f93d4516a7de99c5dbc4afd6279d6fe7aa126.camel@intel.com>
+         <50cb755f-e112-5d71-11fa-a7cbc951d91e@intel.com>
+         <588d18133c0ad76b375a920b6e6cc1598564163a.camel@intel.com>
+         <2b7e2ef2-8e80-1e5e-41ac-4fc4726425ac@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a98e88fd-8e52-4f27-5e06-878241d65d4e@roeck-us.net>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 03:05:59PM -0700, Guenter Roeck wrote:
-> On 3/10/20 5:37 AM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.5.9 release.
-> > There are 189 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
+HI Reinette,
+
+On Wed, 2020-03-11 at 11:10 -0700, Reinette Chatre wrote:
+> Hi Sai,
+> 
+> On 3/11/2020 10:45 AM, Sai Praneeth Prakhya wrote:
+> > On Wed, 2020-03-11 at 08:44 -0700, Reinette Chatre wrote:
+> > > On 3/10/2020 6:04 PM, Sai Praneeth Prakhya wrote:
+> > > > On Tue, 2020-03-10 at 14:59 -0700, Reinette Chatre wrote:
+> > > > > On 3/6/2020 7:40 PM, Sai Praneeth Prakhya wrote:
+> > > > > > Currently fill_buf (in-built benchmark) runs as a separate process
+> > > > > > a
+> > > > > > 
 > > 
-> > Responses should be made by Thu, 12 Mar 2020 12:34:10 +0000.
-> > Anything received after that time might be too late.
+
+[SNIP]
+
+> > > Maintaining the end pointer is unusual. The start of the buffer and the
+> > > size are known properties that the end of the buffer can be computed
+> > > from. Not a problem, it just seems inconsistent that some of the buffer
+> > > functions operate on the start pointer and size while others operate on
+> > > the start pointer and end pointer.
 > > 
+> > Ok.. makes sense. I will try to make it consistent by using endptr all the
+> > time. One advantage of using endptr is that we could just compute endptr
+> > once
+> > and use it when needed by passing it as variable (will try to not make it
+> > global variable).
 > 
-> For v5.5.8-190-g11e07aec0780:
-> 
-> 
-> Build results:
-> 	total: 157 pass: 152 fail: 5
-> Failed builds:
-> 	csky:defconfig
-> 	csky:allnoconfig
-> 	csky:tinyconfig
-> 	m68k:defconfig
-> 	m68k:sun3_defconfig
-> Qemu test results:
-> 	total: 423 pass: 418 fail: 5
-> Failed tests:
-> 	arm:sx1:sx1_defconfig:initrd
-> 	arm:sx1:sx1_defconfig:sd:rootfs
-> 	arm:sx1:sx1_defconfig:flash32,26,3:rootfs
-> 	q800:m68040:mac_defconfig:initrd
-> 	q800:m68040:mac_defconfig:rootfs
-> 
-> csky:
-> 
-> kernel/fork.c:2588:2: error: #error clone3 requires copy_thread_tls support in arch
->  2588 | #error clone3 requires copy_thread_tls support in arch
+> This may add unnecessary complexity because from what I can tell some of
+> those calls require buffer size and this would then require needing to
+> recompute the buffer size based on the start and end pointers. Do you
+> really need the end pointer? Can you not just use the start pointer and
+> buffer size?
 
-Ok, found this one.  Sasha was wiring up csky syscalls and missed this
-one...
+Ok.. makes sense. Will use buffer size.
 
-thanks,
+Regards,
+Sai
 
-greg k-h
