@@ -2,91 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F8A8181C7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:40:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB510181C85
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:41:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729921AbgCKPk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 11:40:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35670 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729646AbgCKPk1 (ORCPT
+        id S1729999AbgCKPlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 11:41:24 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:32935 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729646AbgCKPlX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 11:40:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=2wDqbzy4p+ADOIQGPx6abUEnpO1J3QKNv3y9EsiIDN8=; b=fJxv1glQSnLEFtVQ1j8y4taKtP
-        juvNwosAsFEOa6+kHG7CAUec4kiQ1D0EQiMjkdu1ecbHYQw/w9YlgrG2wzla974SEcC5w0a0QpycO
-        VmJzQygTBKwjwRNgxd3L/SjKaTftghHStcR3jBmlIFhIh+4ZvH5IsHvdv3Hob/PYXlsoTiHXhQ4eV
-        Gqc346Bq8gMhpLkydrWdf5B3e3Ja4uO821t20sfeEfSLLSK1bfZ59pV9nzVEdsiKUy4M9s9EPVY05
-        ywRvs/Mx0v6FuGZCV9nUp+GD7iN0bVsymGGZxuwXShQ5uRaCyIluBhE5hMNpKEFlqtooXzcmlCvUi
-        exXHcvKA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jC3SI-0002RI-27; Wed, 11 Mar 2020 15:39:35 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AFB7F30066E;
-        Wed, 11 Mar 2020 16:39:29 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8997020225666; Wed, 11 Mar 2020 16:39:29 +0100 (CET)
-Date:   Wed, 11 Mar 2020 16:39:29 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     cl@rock-chips.com
-Cc:     heiko@sntech.de, mingo@redhat.com, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        akpm@linux-foundation.org, tglx@linutronix.de, mpe@ellerman.id.au,
-        surenb@google.com, ben.dooks@codethink.co.uk,
-        anshuman.khandual@arm.com, catalin.marinas@arm.com,
-        will@kernel.org, keescook@chromium.org, luto@amacapital.net,
-        wad@chromium.org, mark.rutland@arm.com, geert+renesas@glider.be,
-        george_davis@mentor.com, sudeep.holla@arm.com,
-        linux@armlinux.org.uk, gregkh@linuxfoundation.org, info@metux.net,
-        kstewart@linuxfoundation.org, allison@lohutok.net,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        huangtao@rock-chips.com
-Subject: Re: [PATCH v3 1/1] kthread: do not preempt current task if it is
- going to call schedule()
-Message-ID: <20200311153929.GQ12561@hirez.programming.kicks-ass.net>
-References: <20200306070133.18335-1-cl@rock-chips.com>
- <20200306070133.18335-2-cl@rock-chips.com>
+        Wed, 11 Mar 2020 11:41:23 -0400
+Received: by mail-vs1-f66.google.com with SMTP id n27so1641806vsa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 08:41:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=bRlEXufW+otZULePWW/gKpEh2IixSSza/KchTcrPm2Q=;
+        b=j7kpCO3voHcWqHVyatv0lWnoAAecB8yuezwj9exrXWfCvklFKwRQ6i0yNsnulp2Ilf
+         aYceY31muzNpCzivV9FxEu8Vqy9DpXdlRX/hd8kNQ6eG3AdabEG55fVjKvzhUR24P3NT
+         f64/tJP5KM+lAmMmVfIMAu2FulqGjNZgyGQDQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=bRlEXufW+otZULePWW/gKpEh2IixSSza/KchTcrPm2Q=;
+        b=HU4zpZCpPmR7cn/c53jQWzaA29GLccVk1OS8cHfks0DyjBIkYzScgCUqTLX1jql0gw
+         cDo+b5xRCX6JuUzZlqqQWYgEEu9k6oTcAuQjWMi3Nq/Kgz/gVrknTYj/wyhHT5q63dGu
+         aG1F1Bh6ZTOLoUMT/e/LO78D+976VypYefCChizONLAR6i4Vm/2mNkChnBEEeEWMskDv
+         wuUfXRxyx2ttdji5EMrPpYfWS0TbKSJDuEwwf4CQCXoX430lsA+Z/CILJOPawpoCMHik
+         ECbUVPJz06lj2XPjcEF73NtRew0etY8FlcJpUEvn27f/iRqvlxTmJBV7CxKs3WH6953J
+         RLLQ==
+X-Gm-Message-State: ANhLgQ0KLrbbp0ezn7mZQUfY108W0OzufhhnPSQ0S5Gidh49A10qhuUr
+        1ZyqwdznuuenGvpaRlxzYSJus4pSxpoTLRjpxlReyg==
+X-Google-Smtp-Source: ADFU+vvSyAbSz8PejFXbhO8Lv/TfLKzTjntPjsDPEH44gWzlhFI7DeDejvMB2sioeNFkEu7pKQf9Yw6dVWhEPsCxVc8=
+X-Received: by 2002:a67:f641:: with SMTP id u1mr2388964vso.86.1583941282719;
+ Wed, 11 Mar 2020 08:41:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200306070133.18335-2-cl@rock-chips.com>
+References: <20200308212334.213841-1-abhishekpandit@chromium.org> <C9E912BC-01E0-4E5D-ABC9-DBA932231E50@holtmann.org>
+In-Reply-To: <C9E912BC-01E0-4E5D-ABC9-DBA932231E50@holtmann.org>
+From:   Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Date:   Wed, 11 Mar 2020 08:41:08 -0700
+Message-ID: <CANFp7mVQyzwb1MnDjid9TSBb_15OmyJ85doZQNpyd-2J-SAN3w@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 0/5] Bluetooth: Handle system suspend gracefully
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Alain Michaud <alainm@chromium.org>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        ChromeOS Bluetooth Upstreaming 
+        <chromeos-bluetooth-upstreaming@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 03:01:33PM +0800, cl@rock-chips.com wrote:
-> From: Liang Chen <cl@rock-chips.com>
-> 
-> when we create a kthread with ktrhead_create_on_cpu(),the child thread
-> entry is ktread.c:ktrhead() which will be preempted by the parent after
-> call complete(done) while schedule() is not called yet,then the parent
-> will call wait_task_inactive(child) but the child is still on the runqueue,
-> so the parent will schedule_hrtimeout() for 1 jiffy,it will waste a lot of
-> time,especially on startup.
-> 
->   parent                             child
-> ktrhead_create_on_cpu()
->   wait_fo_completion(&done) -----> ktread.c:ktrhead()
->                              |----- complete(done);--wakeup and preempted by parent
->  kthread_bind() <------------|  |-> schedule();--dequeue here
->   wait_task_inactive(child)     |
->    schedule_hrtimeout(1 jiffy) -|
-> 
-> So we hope the child just wakeup parent but not preempted by parent, and the
-> child is going to call schedule() soon,then the parent will not call
-> schedule_hrtimeout(1 jiffy) as the child is already dequeue.
-> 
-> The same issue for ktrhead_park()&&kthread_parkme().
-> This patch can save 120ms on rk312x startup with CONFIG_HZ=300.
-> 
-> Signed-off-by: Liang Chen <cl@rock-chips.com>
+Sure -- patch incoming in a few minutes.
 
-Thanks!
+On Wed, Mar 11, 2020 at 8:03 AM Marcel Holtmann <marcel@holtmann.org> wrote=
+:
+>
+> Hi Abhishek,
+>
+> > This patch series prepares the Bluetooth controller for system suspend
+> > by disconnecting all devices and preparing the event filter and LE
+> > whitelist with devices that can wake the system from suspend.
+> >
+> > The main motivation for doing this is so we can enable Bluetooth as
+> > a wake up source during suspend without it being noisy. Bluetooth shoul=
+d
+> > wake the system when a HID device receives user input but otherwise not
+> > send any events to the host.
+> >
+> > This patch series was tested on several Chromebooks with both btusb and
+> > hci_serdev on kernel 4.19. The set of tests was basically the following=
+:
+> > * Reconnects after suspend succeed
+> > * HID devices can wake the system from suspend (needs some related blue=
+z
+> >  changes to call the Set Wake Capable management command)
+> > * System properly pauses and unpauses discovery + advertising around
+> >  suspend
+> > * System does not wake from any events from non wakeable devices
+> >
+> > Series 2 has refactored the change into multiple smaller commits as
+> > requested. I tried to simplify some of the whitelist filtering edge
+> > cases but unfortunately it remains quite complex.
+> >
+> > Series 3 has refactored it further and should have resolved the
+> > whitelisting complexity in series 2.
+> >
+> > Series 4 adds a fix to check for powered down and powering down adapter=
+s.
+> >
+> > Series 5 moves set_wake_capable to the last patch in the series and
+> > changes BT_DBG to bt_dev_dbg.
+> >
+> > Please review and provide any feedback.
+>
+> so I was planning to apply patches 1-4. The only thing that I noticed was=
+ that patch 2 introduces the following warning.
+>
+>   CC      net/bluetooth/hci_request.o
+> net/bluetooth/hci_request.c: In function =E2=80=98hci_req_prepare_suspend=
+=E2=80=99:
+> net/bluetooth/hci_request.c:973:6: warning: unused variable =E2=80=98old_=
+state=E2=80=99 [-Wunused-variable]
+>   973 |  int old_state;
+>       |      ^~~~~~~~~
+>
+> I think this variable should only be introduced in patch 4. Are you able =
+to respin this series so that the variable moves to patch 4. If not, I can =
+try to fix this myself.
+>
+> Regards
+>
+> Marcel
+>
