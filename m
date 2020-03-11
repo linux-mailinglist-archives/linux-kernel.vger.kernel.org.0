@@ -2,540 +2,322 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02EB21819B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 14:28:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24E8D18196E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 14:18:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbgCKN2p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 09:28:45 -0400
-Received: from fw-tnat-cam5.arm.com ([217.140.106.53]:39963 "EHLO
-        cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729103AbgCKN2o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 09:28:44 -0400
-X-Greylist: delayed 633 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Mar 2020 09:28:43 EDT
-Received: from e123370-lin.nice.Arm.com (e123370-lin.nice.arm.com [10.34.104.64])
-        by cam-smtp0.cambridge.arm.com (8.13.8/8.13.8) with ESMTP id 02BDI2Xt004408;
-        Wed, 11 Mar 2020 13:18:02 GMT
-From:   Olivier Deprez <olivier.deprez@arm.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] drivers: firmware: ARM debug filesystem
-Date:   Wed, 11 Mar 2020 14:18:02 +0100
-Message-Id: <20200311131802.29921-1-olivier.deprez@arm.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729541AbgCKNSY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 09:18:24 -0400
+Received: from mail-co1nam11on2055.outbound.protection.outlook.com ([40.107.220.55]:64385
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729232AbgCKNSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 09:18:24 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LGJDu7BfAJbJW6M5fCzrHAMJl/W9KjiGn9B39tTx1MHJvrN74cZ3Bte7vwsY37oGSO0DH+Ua78l7QF1BilREb2nvEwiH322bAdOgnNRw5fhigxtP8qpcr1gVWmjiaolAl9R/FSQTbVmn69xG4AtKst7qOA+FT6uAcIFEQusJnvt7wPmZkrTkfmEZzWrb5t8HRhxKinjqiKZq6pNGBCuy8zCPIGoeRCTCMs6dBsYIuiahCXrFf0+jbQYb4/dLwAv0tEsjNT1rprd8nDOw3jHZvjcOTZ0HmuRxBLl8FCnWJP2TXa0Cqae7eWegSfg8AHWgYLxe6+kQhuyn6Cfr2lBYHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lrThXZkjgIZaBgvlf0qoh0kcPiuLhBphetOpt30Wl7M=;
+ b=ng+VRtyWnSYvMUWlw52vsYh6w2toT3XA3B1HHGpqvmIdeb8rC+r6B7sOpzzOzI6dFBRJhLFnryqkwgIh+mczP5qRGiV1T2qt4q3MLMN07r/zrlSntIajqZI9+QUk+9GYWIxUe3Us2kEGI5MQFV8wW14TDCVz3ss6pbF18uLYP4kLycY2tcTVQ9yzp64EbdMbu2QNXMh6I1x9FOU0r3ZAd90wSfgJ9E/byjXiLzIR1VxwHo+SWOzOJILyt1gJwY7RcHyeKJfZkZgdT+gy4WHax+rSKtx5ufVUuMHDm3Hf2uIvZXx7SBenyX7po/HpQWx5d3QmCDacLtR6z8EqCp8gnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lrThXZkjgIZaBgvlf0qoh0kcPiuLhBphetOpt30Wl7M=;
+ b=QBcIL3XCsK3kzYSoN6rs+XqkiPxPNphg14fMQsKOKEvjFzE+83kwkxNIgFadcYQpWZEw0lbQaPKz6sJfMg8O/yhKHu1lRNx5FpteAPre9rMSUl4tz7h2lWaOCz21c8sdg5EC+qht/0aGueLgQSjeHb9Qdqe49I+ZQb1uAY7rhDc=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Christian.Koenig@amd.com; 
+Received: from DM5PR12MB1705.namprd12.prod.outlook.com (2603:10b6:3:10c::22)
+ by DM5PR12MB1451.namprd12.prod.outlook.com (2603:10b6:4:d::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.17; Wed, 11 Mar 2020 13:18:20 +0000
+Received: from DM5PR12MB1705.namprd12.prod.outlook.com
+ ([fe80::d40e:7339:8605:bc92]) by DM5PR12MB1705.namprd12.prod.outlook.com
+ ([fe80::d40e:7339:8605:bc92%11]) with mapi id 15.20.2793.018; Wed, 11 Mar
+ 2020 13:18:20 +0000
+Subject: Re: [PATCH 3/3] RFC: dma-buf: Add an API for importing and exporting
+ sync files (v4)
+To:     Jason Ekstrand <jason@jlekstrand.net>
+Cc:     airlied@redhat.com, jessehall@google.com, jajones@nvidia.com,
+        daniels@collabora.com, hoegsberg@google.com,
+        daniel.vetter@ffwll.ch, bas@basnieuwenhuizen.nl,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Greg Hackmann <ghackmann@google.com>,
+        Chenbo Feng <fengc@google.com>, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        linux-kernel@vger.kernel.org
+References: <20200303190318.522103-1-jason@jlekstrand.net>
+ <20200311034351.1275197-1-jason@jlekstrand.net>
+ <20200311034351.1275197-3-jason@jlekstrand.net>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Message-ID: <bcd22ed3-c1fe-c018-5cb2-a077562eb1ff@amd.com>
+Date:   Wed, 11 Mar 2020 14:18:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+In-Reply-To: <20200311034351.1275197-3-jason@jlekstrand.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: FR2P281CA0011.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a::21) To DM5PR12MB1705.namprd12.prod.outlook.com
+ (2603:10b6:3:10c::22)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7] (2a02:908:1252:fb60:be8a:bd56:1f94:86e7) by FR2P281CA0011.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:a::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16 via Frontend Transport; Wed, 11 Mar 2020 13:18:17 +0000
+X-Originating-IP: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 4cc76f37-e918-47ac-288f-08d7c5beab23
+X-MS-TrafficTypeDiagnostic: DM5PR12MB1451:
+X-Microsoft-Antispam-PRVS: <DM5PR12MB14519AD72BA75A88E6A6AE9483FC0@DM5PR12MB1451.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-Forefront-PRVS: 0339F89554
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(396003)(346002)(136003)(376002)(199004)(36756003)(86362001)(31686004)(6666004)(31696002)(478600001)(4326008)(6486002)(5660300002)(8936002)(66946007)(54906003)(316002)(2906002)(16526019)(8676002)(7416002)(6916009)(186003)(66556008)(81156014)(2616005)(52116002)(81166006)(66476007);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1451;H:DM5PR12MB1705.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: tunja+SRvum3Ce13cC9n9/QqbdfiCzMiatwCY1xpsDVXyjy8IuTetZK6t8/LdG07ddYFZ08p9kEeS6JNdrJf1TYrJVjuPy9igadEw5FJJU/ALNFF6YryCxY3kPvKPpdUNOye+66i/9vjw+N/vVbL2UIZxFEfeYWq4aTMBNqWp9eRK4l15yuyK0CRUTaPuK7Hrxf5LZoUsYiXO1YJTXWPz8rxN/xKLUTlVXCNZmIQmBE0Ud+ACE8fOxXiUzTgTe9c3Y/5D5A811D61tQm4bH2lMYqRXP4W+xgcUW6VtffKCe3q7zmU+OQN87Mi89+EOqME8XlhzHYGO0W/ja0ZYHrsnDfauQjthBqyicHrHX680pYJU0ovpsRsFUjX8gOpd6jetYPcFylHmNNYPXkgISrqdLbjBCT7Uz9SyZZ7jrN4G6chec8ANvYnKd4VDs09cXc
+X-MS-Exchange-AntiSpam-MessageData: 321WkAqk8XNkss6YSG5o0GiCp1tHsfSTzT9mPPYcsakwN7fJ9Yi1RZJUVBJFGSLTpk70cwgp8tEDnKlFOM1BqQZQSU01oiQWBxQH5D3B95eIyubkF/PWdowxhDCU50t19vGuQkc/vuTQL46IGbP25/wGO3QEz46PN96EKkaxhp6v2P1BBrkX3/kwHwUMHH0PV2d5NZaRoHebZeDaZE6ItA==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4cc76f37-e918-47ac-288f-08d7c5beab23
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2020 13:18:20.7248
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8OJATtBygH+gYcDrZMYVFHUVRJ5eP/6D3fJUGWvSiuOtqej8ecLizU7MQRQG6fco
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1451
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements the kernel driver part of a generic firmware
-debug interface. It requires a specific support in the Trusted Firmware
-to expose such interface. It consists in a set of 9p primitives invoked
-through SMC. This permits access to an internal firmware namespace
-using unix-like paths.
+Am 11.03.20 um 04:43 schrieb Jason Ekstrand:
+> Explicit synchronization is the future.  At least, that seems to be what
+> most userspace APIs are agreeing on at this point.  However, most of our
+> Linux APIs (both userspace and kernel UAPI) are currently built around
+> implicit synchronization with dma-buf.  While work is ongoing to change
+> many of the userspace APIs and protocols to an explicit synchronization
+> model, switching over piecemeal is difficult due to the number of
+> potential components involved.  On the kernel side, many drivers use
+> dma-buf including GPU (3D/compute), display, v4l, and others.  In
+> userspace, we have X11, several Wayland compositors, 3D drivers, compute
+> drivers (OpenCL etc.), media encode/decode, and the list goes on.
+>
+> This patch provides a path forward by allowing userspace to manually
+> manage the fences attached to a dma-buf.  Alternatively, one can think
+> of this as making dma-buf's implicit synchronization simply a carrier
+> for an explicit fence.  This is accomplished by adding two IOCTLs to
+> dma-buf for importing and exporting a sync file to/from the dma-buf.
+> This way a userspace component which is uses explicit synchronization,
+> such as a Vulkan driver, can manually set the write fence on a buffer
+> before handing it off to an implicitly synchronized component such as a
+> Wayland compositor or video encoder.  In this way, each of the different
+> components can be upgraded to an explicit synchronization model one at a
+> time as long as the userspace pieces connecting them are aware of it and
+> import/export fences at the right times.
+>
+> There is a potential race condition with this API if userspace is not
+> careful.  A typical use case for implicit synchronization is to wait for
+> the dma-buf to be ready, use it, and then signal it for some other
+> component.  Because a sync_file cannot be created until it is guaranteed
+> to complete in finite time, userspace can only signal the dma-buf after
+> it has already submitted the work which uses it to the kernel and has
+> received a sync_file back.  There is no way to atomically submit a
+> wait-use-signal operation.  This is not, however, really a problem with
+> this API so much as it is a problem with explicit synchronization
+> itself.  The way this is typically handled is to have very explicit
+> ownership transfer points in the API or protocol which ensure that only
+> one component is using it at any given time.  Both X11 (via the PRESENT
+> extension) and Wayland provide such ownership transfer points via
+> explicit present and idle messages.
+>
+> The decision was intentionally made in this patch to make the import and
+> export operations IOCTLs on the dma-buf itself rather than as a DRM
+> IOCTL.  This makes it the import/export operation universal across all
+> components which use dma-buf including GPU, display, v4l, and others.
+> It also means that a userspace component can do the import/export
+> without access to the DRM fd which may be tricky to get in cases where
+> the client communicates with DRM via a userspace API such as OpenGL or
+> Vulkan.  At a future date we may choose to add direct import/export APIs
+> to components such as drm_syncobj to avoid allocating a file descriptor
+> and going through two ioctls.  However, that seems to be something of a
+> micro-optimization as import/export operations are likely to happen at a
+> rate of a few per frame of rendered or decoded video.
+>
+> v2 (Jason Ekstrand):
+>   - Use a wrapper dma_fence_array of all fences including the new one
+>     when importing an exclusive fence.
+>
+> v3 (Jason Ekstrand):
+>   - Lock around setting shared fences as well as exclusive
+>   - Mark SIGNAL_SYNC_FILE as a read-write ioctl.
+>   - Initialize ret to 0 in dma_buf_wait_sync_file
+>
+> v4 (Jason Ekstrand):
+>   - Use the new dma_resv_get_singleton helper
+>
+> Signed-off-by: Jason Ekstrand <jason@jlekstrand.net>
+> ---
+>   drivers/dma-buf/dma-buf.c    | 96 ++++++++++++++++++++++++++++++++++++
+>   include/uapi/linux/dma-buf.h | 13 ++++-
+>   2 files changed, 107 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> index d4097856c86b..09973c689866 100644
+> --- a/drivers/dma-buf/dma-buf.c
+> +++ b/drivers/dma-buf/dma-buf.c
+> @@ -20,6 +20,7 @@
+>   #include <linux/debugfs.h>
+>   #include <linux/module.h>
+>   #include <linux/seq_file.h>
+> +#include <linux/sync_file.h>
+>   #include <linux/poll.h>
+>   #include <linux/dma-resv.h>
+>   #include <linux/mm.h>
+> @@ -348,6 +349,95 @@ static long dma_buf_set_name(struct dma_buf *dmabuf, const char __user *buf)
+>   	return ret;
+>   }
+>   
+> +static long dma_buf_wait_sync_file(struct dma_buf *dmabuf,
+> +				   const void __user *user_data)
+> +{
+> +	struct dma_buf_sync_file arg;
+> +	struct dma_fence *fence;
+> +	int ret = 0;
+> +
+> +	if (copy_from_user(&arg, user_data, sizeof(arg)))
+> +		return -EFAULT;
+> +
+> +	if (arg.flags != 0 && arg.flags != DMA_BUF_SYNC_FILE_SYNC_WRITE)
+> +		return -EINVAL;
+> +
+> +	fence = sync_file_get_fence(arg.fd);
+> +	if (!fence)
+> +		return -EINVAL;
+> +
+> +	dma_resv_lock(dmabuf->resv, NULL);
+> +
+> +	if (arg.flags & DMA_BUF_SYNC_FILE_SYNC_WRITE) {
+> +		struct dma_fence *singleton = NULL;
+> +		ret = dma_resv_get_singleton(dmabuf->resv, fence, &singleton);
+> +		if (!ret && singleton)
+> +			dma_resv_add_excl_fence(dmabuf->resv, singleton);
+> +	} else {
+> +		dma_resv_add_shared_fence(dmabuf->resv, fence);
+> +	}
 
-Signed-off-by: Olivier Deprez <olivier.deprez@arm.com>
----
- drivers/firmware/Kconfig       |  10 +
- drivers/firmware/Makefile      |   2 +
- drivers/firmware/arm_debugfs.c | 411 +++++++++++++++++++++++++++++++++
- 3 files changed, 423 insertions(+)
- create mode 100644 drivers/firmware/arm_debugfs.c
+You also need to create a singleton when adding a shared fences.
 
+The problem is that shared fences must always signal after exclusive 
+ones and you can't guarantee that for the fence you add here.
 
-This kernel driver patch illustrates the concept of a generic firmware debug
-interface. The intent is for firmware to expose debug data by means of abstracted
-directories and files. The primitives are borrowed from 9p. At the user level,
-simple open/read/write/close function wrappers are provided. Those wrappers
-translate into calling the firmware through SMC eventually passing parameters
-through a shared buffer.
+Regards,
+Christian.
 
-Following design proposal:
-https://lists.trustedfirmware.org/pipermail/tf-a/2019-November/000123.html
-
-The TF-A firmware side is merged and visible at:
-https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/tree/lib/debugfs
-
-Documentation:
-https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/tree/docs/components/debugfs-design.rst
-https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/tree/docs/components/arm-sip-service.rst
-
-The design is still open to evolve. Please provide comments on the general
-concept/acceptance.
-
-Example of exposed firmware data: fip image flash contents
-
-/ # find /sys/kernel/debug/tfa
-/sys/kernel/debug/tfa
-/sys/kernel/debug/tfa/fip
-/sys/kernel/debug/tfa/blobs
-/sys/kernel/debug/tfa/blobs/fip.bin
-/sys/kernel/debug/tfa/blobs/ctl
-/sys/kernel/debug/tfa/dev
-
-/ # xxd -l32 /sys/kernel/debug/tfa/blobs/fip.bin
-00000000: 0100 64aa 7856 3412 0000 0000 0000 0000  ..d.xV4.........
-00000010: 5ff9 ec0b 4d22 3e4d a544 c39d 81c7 3f0a  _...M">M.D....?.
-
-/ # cksum /sys/kernel/debug/tfa/blobs/fip.bin
-4222949163 1048576 /sys/kernel/debug/tfa/blobs/fip.bin
-
-
-
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index 86d2901ad87a..e5c5caecdd86 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -82,6 +82,16 @@ config ARM_SCPI_POWER_DOMAIN
- 	  This enables support for the SCPI power domains which can be
- 	  enabled or disabled via the SCP firmware
- 
-+config ARM_DEBUGFS
-+       bool "ARM TF-A debugfs"
-+       help
-+         Select Y to implement a firmware debug filesystem accessed
-+         through kernel debug sysfs.
-+
-+         This feature depends on a Trusted-Firmware-A build option
-+         (USE_DEBUGFS). It exposes an internal filesystem used to
-+         peek/poke firmware data through file abstractions.
-+
- config EDD
- 	tristate "BIOS Enhanced Disk Drive calls determine boot disk"
- 	depends on X86
-diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
-index 33dcc099e021..52159d8c94ca 100644
---- a/drivers/firmware/Makefile
-+++ b/drivers/firmware/Makefile
-@@ -2,10 +2,12 @@
- #
- # Makefile for the linux kernel.
- #
-+obj-$(CONFIG_ARM_DEBUGFS)	+= arm_debugfs.o
- obj-$(CONFIG_ARM_PSCI_FW)	+= psci.o
- obj-$(CONFIG_ARM_PSCI_CHECKER)	+= psci_checker.o
- obj-$(CONFIG_ARM_SCPI_PROTOCOL)	+= arm_scpi.o
- obj-$(CONFIG_ARM_SCPI_POWER_DOMAIN) += scpi_pm_domain.o
-+
- obj-$(CONFIG_DMI)		+= dmi_scan.o
- obj-$(CONFIG_DMI_SYSFS)		+= dmi-sysfs.o
- obj-$(CONFIG_EDD)		+= edd.o
-diff --git a/drivers/firmware/arm_debugfs.c b/drivers/firmware/arm_debugfs.c
-new file mode 100644
-index 000000000000..9e64228b9c05
---- /dev/null
-+++ b/drivers/firmware/arm_debugfs.c
-@@ -0,0 +1,411 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * Copyright (C) 2020 ARM Limited
-+ */
-+
-+/* #define DEBUG */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/debugfs.h>
-+#include <linux/arm-smccc.h>
-+#include <linux/slab.h>
-+#include <linux/uaccess.h>
-+
-+#define VERSION_MAJOR		0
-+#define VERSION_MINOR		2
-+
-+#define ARM_SIP_SVC_DEBUGFS	(0xC2000030)
-+
-+#define SMC_OK			(0)
-+
-+#define ARM_DEBUGFS_MOUNT	0
-+#define ARM_DEBUGFS_CREATE	1
-+#define ARM_DEBUGFS_OPEN	2
-+#define ARM_DEBUGFS_CLOSE	3
-+#define ARM_DEBUGFS_READ	4
-+#define ARM_DEBUGFS_WRITE	5
-+#define ARM_DEBUGFS_SEEK	6
-+#define ARM_DEBUGFS_BIND	7
-+#define ARM_DEBUGFS_STAT	8
-+#define ARM_DEBUGFS_INIT	10
-+#define ARM_DEBUGFS_VERSION	11
-+
-+#define NAMELEN			13 /* Maximum length of a file name */
-+#define MAX_PATH_LEN		256
-+
-+#define QID_CHDIR		0x8000
-+
-+#define ARM_DEBUGFS_KSEEK_SET	(0)
-+
-+enum devflags {
-+	ARM_DEBUGFS_OREAD   = 1 << 0,
-+	ARM_DEBUGFS_OWRITE  = 1 << 1,
-+	ARM_DEBUGFS_ORDWR   = 1 << 2,
-+	ARM_DEBUGFS_OBIND   = 1 << 3,
-+	ARM_DEBUGFS_ODIR    = 1 << 4,
-+	ARM_DEBUGFS_OSTAT   = 1 << 5,
-+};
-+
-+struct dir {
-+	char name[NAMELEN];
-+	long length;
-+	unsigned char mode;
-+	unsigned char type;
-+	unsigned char dev;
-+	unsigned short qid;
-+};
-+
-+union debugfs_parms {
-+	struct {
-+		char fname[MAX_PATH_LEN];
-+	} open;
-+
-+	struct mount {
-+		char srv[MAX_PATH_LEN];
-+		char where[MAX_PATH_LEN];
-+		char spec[MAX_PATH_LEN];
-+	} mount;
-+
-+	struct {
-+		char path[MAX_PATH_LEN];
-+		struct dir dir;
-+	} stat;
-+
-+	struct {
-+		char oldpath[MAX_PATH_LEN];
-+		char newpath[MAX_PATH_LEN];
-+	} bind;
-+};
-+
-+static struct {
-+	void *shared_buffer;
-+	struct dentry *tfa_rootdir;
-+	void *read_buffer;
-+
-+	/* This mutex protects the shared buffer and forbids concurrent */
-+	/* entry into the debugfs internal firmware layers.             */
-+	struct mutex debugfs_lock;
-+} g;
-+
-+static int version(void)
-+{
-+	struct arm_smccc_res res;
-+
-+	arm_smccc_1_1_smc(ARM_SIP_SVC_DEBUGFS, ARM_DEBUGFS_VERSION, &res);
-+
-+	return (res.a0 == SMC_OK) ? res.a1 : -EIO;
-+}
-+
-+static int tfa_9p_init(void *shared_buffer)
-+{
-+	struct arm_smccc_res res;
-+	phys_addr_t buffer_phys;
-+
-+	buffer_phys = virt_to_phys(shared_buffer);
-+	if (!buffer_phys)
-+		return -ENOMEM;
-+
-+	pr_debug("shared buffer 0x%p (PA 0x%llx)\n",
-+		 shared_buffer, buffer_phys);
-+
-+	/* Pass the kernel allocated shared buffer PA */
-+	arm_smccc_1_1_smc(ARM_SIP_SVC_DEBUGFS, ARM_DEBUGFS_INIT, buffer_phys,
-+			  &res);
-+
-+	return res.a0;
-+}
-+
-+static int open(const char *name, int flags)
-+{
-+	union debugfs_parms *parms = g.shared_buffer;
-+	struct arm_smccc_res res;
-+
-+	mutex_lock(&g.debugfs_lock);
-+	strlcpy(parms->open.fname, name, MAX_PATH_LEN);
-+	arm_smccc_1_1_smc(ARM_SIP_SVC_DEBUGFS, ARM_DEBUGFS_OPEN, flags, &res);
-+	mutex_unlock(&g.debugfs_lock);
-+
-+	return (res.a0 == SMC_OK) ? res.a1 : -EIO;
-+}
-+
-+static int read(int fd, void *buf, size_t size)
-+{
-+	struct arm_smccc_res res;
-+	int ret = -EIO;
-+
-+	mutex_lock(&g.debugfs_lock);
-+	arm_smccc_1_1_smc(ARM_SIP_SVC_DEBUGFS, ARM_DEBUGFS_READ, fd, size,
-+			  &res);
-+
-+	if (res.a0 != SMC_OK)
-+		goto exit_unlock;
-+
-+	if (res.a1 > size) {
-+		ret = -EIO;
-+		goto exit_unlock;
-+	}
-+
-+	memcpy(buf, g.shared_buffer, size);
-+	ret = res.a1;
-+
-+exit_unlock:
-+	mutex_unlock(&g.debugfs_lock);
-+
-+	return ret;
-+}
-+
-+static int seek(int fd, long off, int whence)
-+{
-+	struct arm_smccc_res res;
-+
-+	mutex_lock(&g.debugfs_lock);
-+	arm_smccc_1_1_smc(ARM_SIP_SVC_DEBUGFS, ARM_DEBUGFS_SEEK, fd, off,
-+			  whence, &res);
-+	mutex_unlock(&g.debugfs_lock);
-+
-+	return (res.a0 == SMC_OK) ? res.a1 : -EIO;
-+}
-+
-+static int stat(const char *name, struct dir *entry)
-+{
-+	union debugfs_parms *parms = g.shared_buffer;
-+	struct arm_smccc_res res;
-+
-+	mutex_lock(&g.debugfs_lock);
-+	strlcpy(parms->stat.path, name, MAX_PATH_LEN);
-+	arm_smccc_1_1_smc(ARM_SIP_SVC_DEBUGFS, ARM_DEBUGFS_STAT, &res);
-+	mutex_unlock(&g.debugfs_lock);
-+
-+	if (res.a0 == SMC_OK)
-+		memcpy(entry, &parms->stat.dir, sizeof(struct dir));
-+
-+	return (res.a0 == SMC_OK) ? res.a1 : -EIO;
-+}
-+
-+static int close(int fd)
-+{
-+	struct arm_smccc_res res;
-+
-+	mutex_lock(&g.debugfs_lock);
-+	arm_smccc_1_1_smc(ARM_SIP_SVC_DEBUGFS, ARM_DEBUGFS_CLOSE, fd, &res);
-+	mutex_unlock(&g.debugfs_lock);
-+
-+	return (res.a0 == SMC_OK) ? 0 : -EIO;
-+}
-+
-+static void dir_print(struct dir *dir)
-+{
-+	pr_devel("%s name %s, len %ld, mode %d, type %d, dev %d, qid 0x%x\n",
-+		 __func__, dir->name, dir->length, dir->mode, dir->type,
-+		 dir->dev, dir->qid);
-+}
-+
-+ssize_t debugfs_read(struct file *file, char __user *user_buf, size_t length,
-+		     loff_t *offset)
-+{
-+	char *debugfs_path, *tfa_path, *buf = (char *)g.read_buffer;
-+	char pathname[MAX_PATH_LEN];
-+	int ret, fd, read_size = 0;
-+	struct dir dir_entry;
-+
-+	if (!offset || !user_buf || !length)
-+		return 0;
-+
-+	/* Convert path object to an ascii absolute path string */
-+	debugfs_path = d_path(&file->f_path, pathname, MAX_PATH_LEN);
-+	if (!debugfs_path || IS_ERR(debugfs_path))
-+		return 0;
-+
-+	/* Extrapolate the relative path in the firmware 9p hierarchy */
-+	tfa_path = strstr(debugfs_path, "/tfa/");
-+	if (!tfa_path)
-+		return 0;
-+
-+	/* Skip debugfs absolute directory path */
-+	tfa_path += 4;
-+
-+	/* Check file presence and get file size */
-+	ret = stat(tfa_path, &dir_entry);
-+	if (ret < 0) {
-+		pr_err("%s stat failed\n", __func__);
-+		return 0;
-+	}
-+
-+	/* Discard read operation if offset is out of bounds */
-+	if (*offset >= dir_entry.length)
-+		return 0;
-+
-+	fd = open(tfa_path, ARM_DEBUGFS_OREAD);
-+	if (fd < 0) {
-+		pr_err("%s open failed\n", __func__);
-+		return 0;
-+	}
-+
-+	if (*offset > 0) {
-+		ret = seek(fd, *offset, ARM_DEBUGFS_KSEEK_SET);
-+		if (ret < 0) {
-+			pr_err("%s seek failed ret=%d\n", __func__, ret);
-+			goto exit_close;
-+		}
-+	}
-+
-+	/* Restrict length to one page frame size maximum */
-+	if (length > PAGE_SIZE)
-+		length = PAGE_SIZE;
-+
-+	read_size = read(fd, buf, length);
-+	if (read_size <= 0) {
-+		pr_err("%s read failed ret=%d\n", __func__, read_size);
-+		goto exit_close;
-+	}
-+
-+	if (copy_to_user(user_buf, buf, read_size)) {
-+		pr_err("%s copy to user failed\n", __func__);
-+		goto exit_close;
-+	}
-+
-+	*offset += read_size;
-+
-+exit_close:
-+	ret = close(fd);
-+	if (ret < 0)
-+		pr_err("%s close failed\n", __func__);
-+
-+	return read_size;
-+}
-+
-+const struct file_operations debugfs_ops = {
-+	.read = debugfs_read
-+};
-+
-+static int arm_debugfs_walk_dir(struct dentry *parent_dir, const char *path)
-+{
-+	int ret, fd;
-+	struct dir dir;
-+	struct dentry *dent, *fent;
-+	char abs_path[MAX_PATH_LEN];
-+
-+	/* open root directory */
-+	fd = open(path, ARM_DEBUGFS_OREAD);
-+	if (fd < 0) {
-+		pr_err("open failed %d\n", fd);
-+		return -EIO;
-+	}
-+
-+	/* read directory entries */
-+	do {
-+		ret = read(fd, &dir, sizeof(dir));
-+		if (ret > 0) {
-+			dir_print(&dir);
-+			if (dir.qid & QID_CHDIR) {
-+				dent = debugfs_create_dir(dir.name, parent_dir);
-+				snprintf(abs_path, MAX_PATH_LEN, "%s%s/",
-+					 path, dir.name);
-+				(void)arm_debugfs_walk_dir(dent, abs_path);
-+			} else {
-+				fent = debugfs_create_file(dir.name, O_RDONLY,
-+							   parent_dir, NULL,
-+							   &debugfs_ops);
-+			}
-+		}
-+	} while (ret > 0);
-+
-+	/* close root directory handle */
-+	ret = close(fd);
-+	if (ret < 0) {
-+		pr_err("close failed %d\n", ret);
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __init arm_debugfs_init(void)
-+{
-+	int ret;
-+
-+	/* Requires debugfs framework */
-+	ret = debugfs_initialized();
-+	if (!ret)
-+		return ret;
-+
-+	/*
-+	 * Request ARM TF-A debugfs interface version also used as
-+	 * a means to detect such interface presence.
-+	 */
-+	ret = version();
-+	if (ret < 0) {
-+		pr_err("%s failed getting interface version.\n", __func__);
-+		return ret;
-+	}
-+
-+	pr_debug("%s interface version 0x%x\n", __func__, ret);
-+
-+	/* Create a top-level debugfs directory */
-+	g.tfa_rootdir = debugfs_create_dir("tfa", NULL);
-+	if (!g.tfa_rootdir)
-+		return -EIO;
-+
-+	/* Allocate a shared buffer page */
-+	g.shared_buffer = (void *)__get_free_page(GFP_KERNEL);
-+	if (!g.shared_buffer)
-+		goto exit_dir;
-+
-+	g.read_buffer = kzalloc(PAGE_SIZE, GFP_KERNEL);
-+	if (!g.read_buffer)
-+		goto exit_free_shared_buffer;
-+
-+	/* Initialize ARM firmware debugfs interface */
-+	ret = tfa_9p_init(g.shared_buffer);
-+	if (ret)
-+		goto exit_free_read_buffer;
-+
-+	mutex_init(&g.debugfs_lock);
-+
-+	ret = arm_debugfs_walk_dir(g.tfa_rootdir, "/");
-+	if (ret)
-+		goto exit_mutex_destroy;
-+
-+	pr_info("ARM TF-A debugfs v%u.%u interface initialized.\n",
-+		VERSION_MAJOR, VERSION_MINOR);
-+
-+	return 0;
-+
-+exit_mutex_destroy:
-+	mutex_destroy(&g.debugfs_lock);
-+
-+exit_free_read_buffer:
-+	kfree(g.read_buffer);
-+
-+exit_free_shared_buffer:
-+	free_page((uintptr_t)g.shared_buffer);
-+
-+exit_dir:
-+	debugfs_remove_recursive(g.tfa_rootdir);
-+
-+	return ret;
-+}
-+module_init(arm_debugfs_init);
-+
-+static void __exit arm_debugfs_exit(void)
-+{
-+	debugfs_remove_recursive(g.tfa_rootdir);
-+	mutex_destroy(&g.debugfs_lock);
-+	free_page((uintptr_t)g.shared_buffer);
-+	pr_info("ARM debugfs exited.\n");
-+}
-+module_exit(arm_debugfs_exit);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("ARM debugfs");
-+MODULE_VERSION("0.2");
--- 
-2.17.1
+> +
+> +	dma_resv_unlock(dmabuf->resv);
+> +
+> +	dma_fence_put(fence);
+> +
+> +	return ret;
+> +}
+> +
+> +static long dma_buf_signal_sync_file(struct dma_buf *dmabuf,
+> +				     void __user *user_data)
+> +{
+> +	struct dma_buf_sync_file arg;
+> +	struct dma_fence *fence = NULL;
+> +	struct sync_file *sync_file;
+> +	int fd, ret;
+> +
+> +	if (copy_from_user(&arg, user_data, sizeof(arg)))
+> +		return -EFAULT;
+> +
+> +	if (arg.flags != 0 && arg.flags != DMA_BUF_SYNC_FILE_SYNC_WRITE)
+> +		return -EINVAL;
+> +
+> +	fd = get_unused_fd_flags(O_CLOEXEC);
+> +	if (fd < 0)
+> +		return fd;
+> +
+> +	if (arg.flags & DMA_BUF_SYNC_FILE_SYNC_WRITE) {
+> +		/* We need to include both the exclusive fence and all of
+> +		 * the shared fences in our fence.
+> +		 */
+> +		ret = dma_resv_get_singleton(dmabuf->resv, NULL, &fence);
+> +		if (ret)
+> +			goto err_put_fd;
+> +	} else {
+> +		fence = dma_resv_get_excl_rcu(dmabuf->resv);
+> +	}
+> +
+> +	if (!fence)
+> +		fence = dma_fence_get_stub();
+> +
+> +	sync_file = sync_file_create(fence);
+> +
+> +	dma_fence_put(fence);
+> +
+> +	if (!sync_file) {
+> +		ret = -EINVAL;
+> +		goto err_put_fd;
+> +	}
+> +
+> +	fd_install(fd, sync_file->file);
+> +
+> +	arg.fd = fd;
+> +	if (copy_to_user(user_data, &arg, sizeof(arg)))
+> +		return -EFAULT;
+> +
+> +	return 0;
+> +
+> +err_put_fd:
+> +	put_unused_fd(fd);
+> +	return ret;
+> +}
+> +
+>   static long dma_buf_ioctl(struct file *file,
+>   			  unsigned int cmd, unsigned long arg)
+>   {
+> @@ -390,6 +480,12 @@ static long dma_buf_ioctl(struct file *file,
+>   	case DMA_BUF_SET_NAME:
+>   		return dma_buf_set_name(dmabuf, (const char __user *)arg);
+>   
+> +	case DMA_BUF_IOCTL_WAIT_SYNC_FILE:
+> +		return dma_buf_wait_sync_file(dmabuf, (const void __user *)arg);
+> +
+> +	case DMA_BUF_IOCTL_SIGNAL_SYNC_FILE:
+> +		return dma_buf_signal_sync_file(dmabuf, (void __user *)arg);
+> +
+>   	default:
+>   		return -ENOTTY;
+>   	}
+> diff --git a/include/uapi/linux/dma-buf.h b/include/uapi/linux/dma-buf.h
+> index dbc7092e04b5..86e07acca90c 100644
+> --- a/include/uapi/linux/dma-buf.h
+> +++ b/include/uapi/linux/dma-buf.h
+> @@ -37,8 +37,17 @@ struct dma_buf_sync {
+>   
+>   #define DMA_BUF_NAME_LEN	32
+>   
+> +struct dma_buf_sync_file {
+> +	__u32 flags;
+> +	__s32 fd;
+> +};
+> +
+> +#define DMA_BUF_SYNC_FILE_SYNC_WRITE	(1 << 0)
+> +
+>   #define DMA_BUF_BASE		'b'
+> -#define DMA_BUF_IOCTL_SYNC	_IOW(DMA_BUF_BASE, 0, struct dma_buf_sync)
+> -#define DMA_BUF_SET_NAME	_IOW(DMA_BUF_BASE, 1, const char *)
+> +#define DMA_BUF_IOCTL_SYNC	    _IOW(DMA_BUF_BASE, 0, struct dma_buf_sync)
+> +#define DMA_BUF_SET_NAME	    _IOW(DMA_BUF_BASE, 1, const char *)
+> +#define DMA_BUF_IOCTL_WAIT_SYNC_FILE	_IOW(DMA_BUF_BASE, 2, struct dma_buf_sync)
+> +#define DMA_BUF_IOCTL_SIGNAL_SYNC_FILE	_IOWR(DMA_BUF_BASE, 3, struct dma_buf_sync)
+>   
+>   #endif
 
