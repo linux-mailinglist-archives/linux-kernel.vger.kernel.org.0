@@ -2,143 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57F1E182466
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 23:05:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BACEA18246B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 23:05:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729846AbgCKWFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 18:05:23 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:40803 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729518AbgCKWFV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 18:05:21 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jC9TZ-0001hF-U2; Wed, 11 Mar 2020 23:05:18 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 99E231C2249;
-        Wed, 11 Mar 2020 23:05:17 +0100 (CET)
-Date:   Wed, 11 Mar 2020 22:05:17 -0000
-From:   "tip-bot2 for Hans de Goede" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/timers] x86/tsc_msr: Use named struct initializers
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200223140610.59612-1-hdegoede@redhat.com>
-References: <20200223140610.59612-1-hdegoede@redhat.com>
+        id S1730002AbgCKWFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 18:05:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40342 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729506AbgCKWFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 18:05:35 -0400
+Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E0E820739;
+        Wed, 11 Mar 2020 22:05:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583964335;
+        bh=ycz1YvJMQ8Djb+Q4YGZvnbsSd5DxIIjDJvR0r4AEbac=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=HZRZE7SLa+VlCrTowruUOD6ZZLZ9oC+Z0wksNaUGoxSRAG+oNNxNQ8n0LNh/4R0oX
+         YU6hWt/vqCumtq3KNLfMf/QYqXJQryQI9CSXvaGfUOOs0KxqOVPaYSKpV6172MSk8Q
+         UPBAwRyK0+mfSlgtmShwfYs2ouICUKdO9Wdpkt3c=
+Date:   Wed, 11 Mar 2020 17:05:33 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Austin.Bolen@dell.com
+Cc:     sathyanarayanan.kuppuswamy@linux.intel.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com
+Subject: Re: [PATCH v17 09/12] PCI/AER: Allow clearing Error Status Register
+ in FF mode
+Message-ID: <20200311220533.GA196637@google.com>
 MIME-Version: 1.0
-Message-ID: <158396431730.28353.16602854182721546383.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <38277b0f6c2e4c5d88e741b7354c72d1@AUSX13MPC107.AMER.DELL.COM>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/timers branch of tip:
+On Tue, Mar 10, 2020 at 08:06:21PM +0000, Austin.Bolen@dell.com wrote:
+> On 3/10/2020 2:33 PM, Bjorn Helgaas wrote:
 
-Commit-ID:     812c2d7506fde7cdf83cb2532810a65782b51741
-Gitweb:        https://git.kernel.org/tip/812c2d7506fde7cdf83cb2532810a65782b51741
-Author:        Hans de Goede <hdegoede@redhat.com>
-AuthorDate:    Sun, 23 Feb 2020 15:06:08 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 11 Mar 2020 22:57:39 +01:00
+> > If that's possible, it would be nice to update the metadata for the
+> > "Downstream Port Containment related Enhancements" ECN as well.  That
+> > one currently says "ECR - CardBus Header Proposal", which means that's
+> > what's in the window title bar and icons in the panel.
+> 
+> Sure, I'll check.
 
-x86/tsc_msr: Use named struct initializers
-
-Use named struct initializers for the freq_desc struct-s initialization
-and change the "u8 msr_plat" to a "bool use_msr_plat" to make its meaning
-more clear instead of relying on a comment to explain it.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20200223140610.59612-1-hdegoede@redhat.com
-
----
- arch/x86/kernel/tsc_msr.c | 28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
-
-diff --git a/arch/x86/kernel/tsc_msr.c b/arch/x86/kernel/tsc_msr.c
-index e0cbe4f..5fa41ac 100644
---- a/arch/x86/kernel/tsc_msr.c
-+++ b/arch/x86/kernel/tsc_msr.c
-@@ -22,10 +22,10 @@
-  * read in MSR_PLATFORM_ID[12:8], otherwise in MSR_PERF_STAT[44:40].
-  * Unfortunately some Intel Atom SoCs aren't quite compliant to this,
-  * so we need manually differentiate SoC families. This is what the
-- * field msr_plat does.
-+ * field use_msr_plat does.
-  */
- struct freq_desc {
--	u8 msr_plat;	/* 1: use MSR_PLATFORM_INFO, 0: MSR_IA32_PERF_STATUS */
-+	bool use_msr_plat;
- 	u32 freqs[MAX_NUM_FREQS];
- };
- 
-@@ -35,31 +35,39 @@ struct freq_desc {
-  * by MSR based on SDM.
-  */
- static const struct freq_desc freq_desc_pnw = {
--	0, { 0, 0, 0, 0, 0, 99840, 0, 83200 }
-+	.use_msr_plat = false,
-+	.freqs = { 0, 0, 0, 0, 0, 99840, 0, 83200 },
- };
- 
- static const struct freq_desc freq_desc_clv = {
--	0, { 0, 133200, 0, 0, 0, 99840, 0, 83200 }
-+	.use_msr_plat = false,
-+	.freqs = { 0, 133200, 0, 0, 0, 99840, 0, 83200 },
- };
- 
- static const struct freq_desc freq_desc_byt = {
--	1, { 83300, 100000, 133300, 116700, 80000, 0, 0, 0 }
-+	.use_msr_plat = true,
-+	.freqs = { 83300, 100000, 133300, 116700, 80000, 0, 0, 0 },
- };
- 
- static const struct freq_desc freq_desc_cht = {
--	1, { 83300, 100000, 133300, 116700, 80000, 93300, 90000, 88900, 87500 }
-+	.use_msr_plat = true,
-+	.freqs = { 83300, 100000, 133300, 116700, 80000, 93300, 90000,
-+		   88900, 87500 },
- };
- 
- static const struct freq_desc freq_desc_tng = {
--	1, { 0, 100000, 133300, 0, 0, 0, 0, 0 }
-+	.use_msr_plat = true,
-+	.freqs = { 0, 100000, 133300, 0, 0, 0, 0, 0 },
- };
- 
- static const struct freq_desc freq_desc_ann = {
--	1, { 83300, 100000, 133300, 100000, 0, 0, 0, 0 }
-+	.use_msr_plat = true,
-+	.freqs = { 83300, 100000, 133300, 100000, 0, 0, 0, 0 },
- };
- 
- static const struct freq_desc freq_desc_lgm = {
--	1, { 78000, 78000, 78000, 78000, 78000, 78000, 78000, 78000 }
-+	.use_msr_plat = true,
-+	.freqs = { 78000, 78000, 78000, 78000, 78000, 78000, 78000, 78000 },
- };
- 
- static const struct x86_cpu_id tsc_msr_cpu_ids[] = {
-@@ -91,7 +99,7 @@ unsigned long cpu_khz_from_msr(void)
- 		return 0;
- 
- 	freq_desc = (struct freq_desc *)id->driver_data;
--	if (freq_desc->msr_plat) {
-+	if (freq_desc->use_msr_plat) {
- 		rdmsr(MSR_PLATFORM_INFO, lo, hi);
- 		ratio = (lo >> 8) & 0xff;
- 	} else {
+FWIW, the PCI Firmware Specification, Rev 3.2, dated "Final - Jan 28,
+2019" also has the same metadata problem.
