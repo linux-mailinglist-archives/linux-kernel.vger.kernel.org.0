@@ -2,99 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EF60181F3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:22:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81ABA181F45
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:23:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730605AbgCKRVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:21:41 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:34643 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730441AbgCKRVY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:21:24 -0400
-Received: by mail-pj1-f65.google.com with SMTP id 39so1759762pjo.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:21:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=48QMmtUizH1thzm0jNujCj845cQ2EXOxCkSOb8ufm7M=;
-        b=hBmJYWBfK3SX/U+Wa4lao0YnvSduvT0NJG7V47ocA+P7MefK8eMomjpe/u+lfXRu15
-         xn2lsBH74aGiSSYjBxFvcQm5wdnJipqlMRNpIOXkiI+AmYbIVDCGXMTkE3S2azr3V/iG
-         82LN/7oe0JmAHSXXbhgxIZZvf2n5P7G6lOJCw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=48QMmtUizH1thzm0jNujCj845cQ2EXOxCkSOb8ufm7M=;
-        b=l2LGNsQVwYfd7c7Axq34CUu0q4O7WAjU9WkHEb34GazHO++rNCtdlsME3RSAK9O8Hy
-         Fnn5bJrzeGwXEACxilvhCcbLt72thhkIbW1Ktq5UEqln0m75LEf/mx+x0BUuIETfgkiu
-         JQFwo1StroECOzGlJvWE9B/QjmAeQTLOi7FVbn64bMhV0WO3Usj3RwhC0L5+5pLqzihY
-         ih0+6SwBsumWk7YVsARTq7T+wEptAIrpxxnsdaOCQ8D/UdIfjwAEzsSeDF34wMzcKxhA
-         Akar1tu79rF9SjI3PpjarYo4jjB6kVUVw/ayCwPH6PzMznVJs+hfsuIQUwCqPgaq7z4m
-         0tRg==
-X-Gm-Message-State: ANhLgQ01adWN8Kan1cOnf9BBREHEHMC5ZeyTI5XTn6cqUYLm57yjHjjs
-        ASwbltgY5nHiwurWGZJPYF/Zdg==
-X-Google-Smtp-Source: ADFU+vtS/zoEiYrbfBlqHQlR3ycd/w8ksv3ZJl14F8NXwUqH9zruMZSDylPWrhrRh1sygoxYbEZgXg==
-X-Received: by 2002:a17:902:8509:: with SMTP id bj9mr4163017plb.123.1583947282062;
-        Wed, 11 Mar 2020 10:21:22 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q187sm51566754pfq.185.2020.03.11.10.21.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 10:21:21 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 10:21:20 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux@armlinux.org.uk, Emese Revfy <re.emese@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Laura Abbott <labbott@redhat.com>,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH v3] ARM: smp: add support for per-task stack canaries
-Message-ID: <202003111020.D543B4332@keescook>
-References: <20181206083257.9596-1-ard.biesheuvel@linaro.org>
- <20200309164931.GA23889@roeck-us.net>
+        id S1730429AbgCKRWi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:22:38 -0400
+Received: from verein.lst.de ([213.95.11.211]:60536 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730351AbgCKRWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:22:38 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id CC68568B05; Wed, 11 Mar 2020 18:22:34 +0100 (CET)
+Date:   Wed, 11 Mar 2020 18:22:34 +0100
+From:   "hch@lst.de" <hch@lst.de>
+To:     "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
+Cc:     "hch@lst.de" <hch@lst.de>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: 5.5 XFS getdents regression?
+Message-ID: <20200311172234.GA26340@lst.de>
+References: <72c5fd8e9a23dde619f70f21b8100752ec63e1d2.camel@nokia.com> <20200310221406.GO10776@dread.disaster.area> <862b6c718957aff7156bf04964b7242f5075e8a7.camel@nokia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200309164931.GA23889@roeck-us.net>
+In-Reply-To: <862b6c718957aff7156bf04964b7242f5075e8a7.camel@nokia.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 09:49:31AM -0700, Guenter Roeck wrote:
-> On Thu, Dec 06, 2018 at 09:32:57AM +0100, Ard Biesheuvel wrote:
-> > On ARM, we currently only change the value of the stack canary when
-> > switching tasks if the kernel was built for UP. On SMP kernels, this
-> > is impossible since the stack canary value is obtained via a global
-> > symbol reference, which means
-> > a) all running tasks on all CPUs must use the same value
-> > b) we can only modify the value when no kernel stack frames are live
-> >    on any CPU, which is effectively never.
+On Wed, Mar 11, 2020 at 05:06:16PM +0000, Rantala, Tommi T. (Nokia - FI/Espoo) wrote:
+> On Wed, 2020-03-11 at 09:14 +1100, Dave Chinner wrote:
+> > On Tue, Mar 10, 2020 at 08:45:58AM +0000, Rantala, Tommi T. (Nokia -
+> > FI/Espoo) wrote:
+> > > Hello,
+> > > 
+> > > One of my GitLab CI jobs stopped working after upgrading server
+> > > 5.4.18-
+> > > 100.fc30.x86_64 -> 5.5.7-100.fc30.x86_64.
+> > > (tested 5.5.8-100.fc30.x86_64 too, no change)
+> > > The server is fedora30 with XFS rootfs.
+> > > The problem reproduces always, and takes only couple minutes to run.
+> > > 
+> > > The CI job fails in the beginning when doing "git clean" in docker
+> > > container, and failing to rmdir some directory:
+> > > "warning: failed to remove 
+> > > .vendor/pkg/mod/golang.org/x/net@v0.0.0-20200114155413-6afb5195e5aa/in
+> > > tern
+> > > al/socket: Directory not empty"
+> > > 
+> > > Quick google search finds some other people reporting similar problems
+> > > with 5.5.0:
+> > > https://gitlab.com/gitlab-org/gitlab-runner/issues/3185
 > > 
-> > So instead, use a GCC plugin to add a RTL pass that replaces each
-> > reference to the address of the __stack_chk_guard symbol with an
-> > expression that produces the address of the 'stack_canary' field
-> > that is added to struct thread_info. This way, each task will use
-> > its own randomized value.
-> > 
-> > Cc: Russell King <linux@armlinux.org.uk>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Emese Revfy <re.emese@gmail.com>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Laura Abbott <labbott@redhat.com>
-> > Cc: kernel-hardening@lists.openwall.com
-> > Acked-by: Nicolas Pitre <nico@linaro.org>
-> > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > Which appears to be caused by multiple gitlab processes modifying
+> > the directory at the same time. i.e. something is adding an entry to
+> > the directory at the same time something is trying to rm -rf it.
+> > That's a race condition, and would lead to the exact symptoms you
+> > see here, depending on where in the directory the new entry is
+> > added.
 > 
-> Since this patch is in the tree, cc-option no longer works on
-> the arm architecture if CONFIG_STACKPROTECTOR_PER_TASK is enabled.
+> OK traced "execve" with strace too, and it shows that it's "git clean
+> -ffdx" command (single process) that is being executed in the container,
+> which is doing the cleanup.
 > 
-> Any idea how to fix that ? 
+> Tested with 5.6-rc5, it's failing the same way.
+> 
+> Spent some time to bisect this, and the problem is introduced by this:
+> 
+> commit 263dde869bd09b1a709fd92118c7fff832773689
+> Author: Christoph Hellwig <hch@lst.de>
+> Date:   Fri Nov 8 15:05:32 2019 -0800
+> 
+>     xfs: cleanup xfs_dir2_block_getdents
+>     
+>     Use an offset as the main means for iteration, and only do pointer
+>     arithmetics to find the data/unused entries.
+>     
+>     Signed-off-by: Christoph Hellwig <hch@lst.de>
+>     Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+>     Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> 
+> 
+> 
+> Hmmmmm, looking at that commit, I think it slighty changed how the
+> "offset" is used compared to how the pointers were used.
+> 
+> This cures the issue for me, tested (briefly) on top of 5.6-rc5.
+> Does it make sense...?
+> (Email client probably damages white-space, sorry, I'll send this properly
+> signed-off with git-send-email if it's OK)
 
-I thought Arnd sent a patch to fix it and it got picked up?
+Thanks, this looks good.  Although I wonder if the slightly different
+version below might be a little more elegant?
 
--- 
-Kees Cook
+diff --git a/fs/xfs/xfs_dir2_readdir.c b/fs/xfs/xfs_dir2_readdir.c
+index 0d3b640cf1cc..871ec22c9aee 100644
+--- a/fs/xfs/xfs_dir2_readdir.c
++++ b/fs/xfs/xfs_dir2_readdir.c
+@@ -147,7 +147,7 @@ xfs_dir2_block_getdents(
+ 	xfs_off_t		cook;
+ 	struct xfs_da_geometry	*geo = args->geo;
+ 	int			lock_mode;
+-	unsigned int		offset;
++	unsigned int		offset, next_offset;
+ 	unsigned int		end;
+ 
+ 	/*
+@@ -173,9 +173,10 @@ xfs_dir2_block_getdents(
+ 	 * Loop over the data portion of the block.
+ 	 * Each object is a real entry (dep) or an unused one (dup).
+ 	 */
+-	offset = geo->data_entry_offset;
+ 	end = xfs_dir3_data_end_offset(geo, bp->b_addr);
+-	while (offset < end) {
++	for (offset = geo->data_entry_offset;
++	     offset < end;
++	     offset = next_offset) {
+ 		struct xfs_dir2_data_unused	*dup = bp->b_addr + offset;
+ 		struct xfs_dir2_data_entry	*dep = bp->b_addr + offset;
+ 		uint8_t filetype;
+@@ -184,14 +185,15 @@ xfs_dir2_block_getdents(
+ 		 * Unused, skip it.
+ 		 */
+ 		if (be16_to_cpu(dup->freetag) == XFS_DIR2_DATA_FREE_TAG) {
+-			offset += be16_to_cpu(dup->length);
++			next_offset = offset + be16_to_cpu(dup->length);
+ 			continue;
+ 		}
+ 
+ 		/*
+ 		 * Bump pointer for the next iteration.
+ 		 */
+-		offset += xfs_dir2_data_entsize(dp->i_mount, dep->namelen);
++		next_offset = offset +
++			xfs_dir2_data_entsize(dp->i_mount, dep->namelen);
+ 
+ 		/*
+ 		 * The entry is before the desired starting point, skip it.
