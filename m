@@ -2,54 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F28C3181BBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:52:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F645181B9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:45:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729854AbgCKOwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 10:52:22 -0400
-Received: from mga07.intel.com ([134.134.136.100]:9853 "EHLO mga07.intel.com"
+        id S1729863AbgCKOpj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 10:45:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729584AbgCKOwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 10:52:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 07:52:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
-   d="scan'208";a="242703772"
-Received: from psingh6-mobl.amr.corp.intel.com (HELO [10.251.23.209]) ([10.251.23.209])
-  by orsmga003.jf.intel.com with ESMTP; 11 Mar 2020 07:52:20 -0700
-Subject: Re: [PATCH 1/8] soundwire: bus_type: add master_device/driver support
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Hui Wang <hui.wang@canonical.com>, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>
-References: <20200227223206.5020-1-pierre-louis.bossart@linux.intel.com>
- <20200227223206.5020-2-pierre-louis.bossart@linux.intel.com>
- <20200303054136.GP4148@vkoul-mobl>
- <8a04eda6-cbcf-582f-c229-5d6e4557344b@linux.intel.com>
- <20200304095312.GT4148@vkoul-mobl>
- <05dbe43c-abf8-9d5a-d808-35bf4defe4ba@linux.intel.com>
- <20200305063646.GW4148@vkoul-mobl>
- <eb30ac49-788f-b856-6fcf-84ae580eb3c8@linux.intel.com>
- <20200306050115.GC4148@vkoul-mobl>
- <4fabb135-6fbb-106f-44fd-8155ea716c00@linux.intel.com>
- <20200311063645.GH4885@vkoul-mobl>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <0fafb567-10e5-a1ea-4a6d-b3c53afb215e@linux.intel.com>
-Date:   Wed, 11 Mar 2020 09:44:42 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1729198AbgCKOpj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 10:45:39 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC42020650;
+        Wed, 11 Mar 2020 14:45:36 +0000 (UTC)
+Date:   Wed, 11 Mar 2020 10:45:36 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Artem Savkov <asavkov@redhat.com>
+Subject: [GIT PULL] ftrace: Return the first found result in lookup_rec()
+Message-ID: <20200311104536.59de3c5a@gandalf.local.home>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20200311063645.GH4885@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -57,87 +35,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Linus,
 
-On 3/11/20 1:36 AM, Vinod Koul wrote:
-> On 06-03-20, 09:40, Pierre-Louis Bossart wrote:
->>>>> Why do you need a extra driver for this. Do you have another set of
->>>>> device object and driver for DSP code? But you do manage that, right?
->>>>> I am proposing to simplify the device model here and have only one
->>>>> device (SOF PCI) and driver (SOF PCI driver), which is created by actual
->>>>> bus (PCI here) as you have in rest of the driver like HDA, DSP etc.
->>>>>
->>>>> I have already recommended is to make the int-sdw a module which is
->>>>> invoked by SOF PCI driver code (thereby all code uses SOF PCI device and
->>>>> SOF PCI driver) directly. The DSP in my time for skl was a separate
->>>>> module but used the parent objects.
->>>>>
->>>>> The SOF sdw init (the place where sdw routines are invoked after DSP
->>>>> load) can call sdw_probe and startup. Based on DSP sequencing you can
->>>>> call these functions directly without waiting for extra device to be
->>>>> probed etc.
->>>>>
->>>>> I feel your flows will be greatly simplified as a result of this.
->>>>
->>>> Not at all, no. This is not a simplification but an extremely invasive
->>>> proposal.
->>>>
->>>> The parent-child relationship is extremely useful for power management, and
->>>> guarantees that the PCI device remains on while one or more of the masters
->>>> are used, and conversely can suspend when all links are idle. I currently
->>>> don't need to do anything, it's all taken care of by the framework.
->>>>
->>>> If I have to do all the power management at the PCI device level, then I
->>>> will need to keep track of which links are currently active. All these links
->>>> are used independently, so it's racy as hell to keep track of the usage when
->>>> the pm framework already does so quite elegantly. You really want to use the
->>>> pm_runtime_get/put refcount for each master device, not manage them from the
->>>> PCI level.
->>>
->>> Not at all, you still can call pm_runtime_get/put() calls in sdw module
->>> for PCI device. That doesn't change at all.
->>>
->>> Only change is for suspend/resume you have callbacks from PCI driver
->>> rather than pm core.
->> There are two other related issues that you didn't mention.
->>
->> the ASoC layer does require a driver with a 'name' for the components
->> registered with the master device. So if you don't have a driver for the
->> master device, the DAIs will be associated with the PCI device.
->>
->> But the ASoC core does make pm_runtime calls on its own,
->>
->> soc_pcm_open(struct snd_pcm_substream *substream)
->> {
->> ...
->> 	for_each_rtd_components(rtd, i, component)
->> 		pm_runtime_get_sync(component->dev);
->>
->> and if the device that's associated with the DAI is the PCI device, then
->> that will not result in the relevant master IP being activated, only the PCI
->> device refcount will be increased - meaning there is no hook that would tell
->> the PCI layer to turn on a specific link.
->>
->> What you are recommending would be an all-or-nothing solution with all links
->> on or all links off, which beats the purpose of having independent
->> link-level power management.
-> 
-> Why can't you use dai .startup callback for this?
-> 
-> The ASoC core will do pm_runtime calls that will ensure PCI device is
-> up, DSP firmware downloaded and running.
-> 
-> You can use .startup() to turn on your link and .shutdown to turn off
-> the link.
-
-There are multiple dais per link, and multiple Slave per link, so we 
-would have to refcount and track active dais to understand when the link 
-needs to be turned on/off. It's a duplication of what the pm framework 
-can do at the device/link level, and will likely introduce race conditions.
-
-Not to mention that we'd need to introduce workqueues to turn the link 
-off with a delay, with pm_runtime_put_autosuspend() does for free.
-
-Linux is all about frameworks. For power management, we shall use the 
-power management framework, not reinvent it.
+Have ftrace lookup_rec() return a consistent record otherwise it
+can break live patching.
 
 
+Please pull the latest trace-v5.6-rc4 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+trace-v5.6-rc4
+
+Tag SHA1: 3bedd0c3802cdffacf9fd6a4cac9f3fa6a4da477
+Head SHA1: d9815bff6b379ff46981bea9dfeb146081eab314
+
+
+Artem Savkov (1):
+      ftrace: Return the first found result in lookup_rec()
+
+----
+ kernel/trace/ftrace.c | 2 ++
+ 1 file changed, 2 insertions(+)
+---------------------------
+commit d9815bff6b379ff46981bea9dfeb146081eab314
+Author: Artem Savkov <asavkov@redhat.com>
+Date:   Fri Mar 6 18:43:17 2020 +0100
+
+    ftrace: Return the first found result in lookup_rec()
+    
+    It appears that ip ranges can overlap so. In that case lookup_rec()
+    returns whatever results it got last even if it found nothing in last
+    searched page.
+    
+    This breaks an obscure livepatch late module patching usecase:
+      - load livepatch
+      - load the patched module
+      - unload livepatch
+      - try to load livepatch again
+    
+    To fix this return from lookup_rec() as soon as it found the record
+    containing searched-for ip. This used to be this way prior lookup_rec()
+    introduction.
+    
+    Link: http://lkml.kernel.org/r/20200306174317.21699-1-asavkov@redhat.com
+    
+    Cc: stable@vger.kernel.org
+    Fixes: 7e16f581a817 ("ftrace: Separate out functionality from ftrace_location_range()")
+    Signed-off-by: Artem Savkov <asavkov@redhat.com>
+    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 3f7ee102868a..fd81c7de77a7 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -1547,6 +1547,8 @@ static struct dyn_ftrace *lookup_rec(unsigned long start, unsigned long end)
+ 		rec = bsearch(&key, pg->records, pg->index,
+ 			      sizeof(struct dyn_ftrace),
+ 			      ftrace_cmp_recs);
++		if (rec)
++			break;
+ 	}
+ 	return rec;
+ }
