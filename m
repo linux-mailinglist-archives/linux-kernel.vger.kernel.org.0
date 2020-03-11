@@ -2,116 +2,366 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3A8918191E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 14:06:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26678181927
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 14:06:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729515AbgCKNGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 09:06:01 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:51271 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729345AbgCKNGB (ORCPT
+        id S1729535AbgCKNGj convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 09:06:39 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:32933 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729345AbgCKNGj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 09:06:01 -0400
-X-UUID: a88d23ee84d24c6f87ab8de3e23780a0-20200311
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=Mp2aZPUa6vRdl4F4YlSPXJ1sI5MSD/01Q/eOy0GtTQI=;
-        b=iyj05Fw0ZIkoFngYSieienICJb8iu/QUVoBTVNlGmL+GyI5SB+CJ59Cq8HqSyTeO4MJQ7s3q3FxEE1+RhG1IhFZvT4bP32K4AzR1jDPhL4jZjPjQ8oBpIWtb64oiqmQQ2uiAKz6A4NMBGx6gWHuUGcQN/xX66qoKzUDU9JKN+9k=;
-X-UUID: a88d23ee84d24c6f87ab8de3e23780a0-20200311
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 257172720; Wed, 11 Mar 2020 21:05:54 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 11 Mar 2020 21:05:52 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 11 Mar 2020 21:05:01 +0800
-Message-ID: <1583931952.29614.5.camel@mtksdaap41>
-Subject: Re: [PATCH v11 3/5] clk / soc: mediatek: Move mt8173 MMSYS to
- platform driver
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <p.zabel@pengutronix.de>, <airlied@linux.ie>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <ulrich.hecht+renesas@gmail.com>,
-        <laurent.pinchart@ideasonboard.com>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        <linux-media@vger.kernel.org>,
-        "Allison Randal" <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-mediatek@lists.infradead.org>,
-        "Collabora Kernel ML" <kernel@collabora.com>,
-        <dri-devel@lists.freedesktop.org>,
-        "Seiya Wang" <seiya.wang@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <wens@csie.org>,
-        Daniel Vetter <daniel@ffwll.ch>, <linux-clk@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        <devicetree@vger.kernel.org>,
-        "Matthias Brugger" <mbrugger@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <frank-w@public-files.de>, <linux-arm-kernel@lists.infradead.org>,
-        <hsinyi@chromium.org>, Richard Fontana <rfontana@redhat.com>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>, <sean.wang@mediatek.com>,
-        <rdunlap@infradead.org>, <matthias.bgg@kernel.org>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Fabien Parent <fparent@baylibre.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Owen Chen <owen.chen@mediatek.com>
-Date:   Wed, 11 Mar 2020 21:05:52 +0800
-In-Reply-To: <20200311115614.1425528-4-enric.balletbo@collabora.com>
-References: <20200311115614.1425528-1-enric.balletbo@collabora.com>
-         <20200311115614.1425528-4-enric.balletbo@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Wed, 11 Mar 2020 09:06:39 -0400
+Received: by mail-vs1-f66.google.com with SMTP id n27so1272250vsa.0;
+        Wed, 11 Mar 2020 06:06:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=oaTeqhC6qgLSXZl/UFMFW2Fmg1FWD9E96HastlfJM/o=;
+        b=V0lehw8G3MgX057tpXXzeVaBjco+QXY+0ZH8AwC84ftOrf2qihCZe2asnBfqfJyxNP
+         OMEJ0vNvKp7BDsuK/hAc0dfBgo4MCYsVudRuWCv9k1nxI23VCOxv/G4Z2uYK0jPAE+yp
+         aOCN/x4PCvTep01oM3a3OCXTdfZHU4cu+uG91k+wLtvuyj53PUOVBZlCU7yuRxPVnc6U
+         QUDzzzcBgdKiL9hgZ39DqFxHIytMTEU7OMas3fc7qJz2iFbBKDwqz/GRuMMgP1wnxFBg
+         tSheUxpIfDEsJFiqYf6xfnkFzqLEimbFW8V0/is/2QyLuCxONl4NVB2eGKJdDmacoB4Z
+         Ghmg==
+X-Gm-Message-State: ANhLgQ36J/aAPURkGDewbKepwjguwoR8i8HSIeABgukVtc2dP2MM/ag1
+        jfCwciQ6m5x0ejyY3mYk7iCKT02J5Yw92jARXV8=
+X-Google-Smtp-Source: ADFU+vvWAOxeEh3q5fXOdUlwbjev6h/RPoWQoIn4jFYvSrBr7JFgpO2C6xg1ZMko6lqbAhcN1p1CmI81qYmXgH6OeDY=
+X-Received: by 2002:a67:1b87:: with SMTP id b129mr1940386vsb.87.1583931996768;
+ Wed, 11 Mar 2020 06:06:36 -0700 (PDT)
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: D784D3DAEEA661B9A0D6E2A96065163283990E8ECB339D1E7BA070311362A5752000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <cover.1583136624.git.mchehab+huawei@kernel.org> <6385a411d000dad005b78647629e43700580ecf0.1583136624.git.mchehab+huawei@kernel.org>
+In-Reply-To: <6385a411d000dad005b78647629e43700580ecf0.1583136624.git.mchehab+huawei@kernel.org>
+From:   Masanori Goto <gotom@debian.or.jp>
+Date:   Wed, 11 Mar 2020 22:06:25 +0900
+Message-ID: <CALZLnaHY7rtLXHNmUv77Sj6X06MGXoR_cXBmABp_CockmMJM+A@mail.gmail.com>
+Subject: Re: [PATCH 24/42] docs: scsi: convert NinjaSCSI.txt to ReST
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        YOKOTA Hiroshi <yokota@netlab.is.tsukuba.ac.jp>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEVucmljOg0KDQpPbiBXZWQsIDIwMjAtMDMtMTEgYXQgMTI6NTYgKzAxMDAsIEVucmljIEJh
-bGxldGJvIGkgU2VycmEgd3JvdGU6DQo+IEZyb206IE1hdHRoaWFzIEJydWdnZXIgPG1icnVnZ2Vy
-QHN1c2UuY29tPg0KPiANCj4gVGhlcmUgaXMgbm8gc3Ryb25nIHJlYXNvbiBmb3IgdGhpcyB0byB1
-c2UgQ0xLX09GX0RFQ0xBUkUgaW5zdGVhZCBvZg0KPiBiZWluZyBhIHBsYXRmb3JtIGRyaXZlci4g
-UGx1cywgTU1TWVMgcHJvdmlkZXMgY2xvY2tzIGJ1dCBhbHNvIGEgc2hhcmVkDQo+IHJlZ2lzdGVy
-IHNwYWNlIGZvciB0aGUgbWVkaWF0ZWstZHJtIGFuZCB0aGUgbWVkaWF0ZWstbWRwDQo+IGRyaXZl
-ci4gU28gbW92ZSB0aGUgTU1TWVMgY2xvY2tzIHRvIGEgbmV3IHBsYXRmb3JtIGRyaXZlciBhbmQg
-YWxzbw0KPiBjcmVhdGUgYSBuZXcgTU1TWVMgcGxhdGZvcm0gZHJpdmVyIGluIGRyaXZlcnMvc29j
-L21lZGlhdGVrIHRoYXQNCj4gaW5zdGFudGlhdGVzIHRoZSBjbG9jayBkcml2ZXIuDQo+IA0KDQpS
-ZXZpZXdlZC1ieTogQ0sgSHUgPGNrLmh1QG1lZGlhdGVrLmNvbT4NCg0KPiBTaWduZWQtb2ZmLWJ5
-OiBNYXR0aGlhcyBCcnVnZ2VyIDxtYnJ1Z2dlckBzdXNlLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTog
-RW5yaWMgQmFsbGV0Ym8gaSBTZXJyYSA8ZW5yaWMuYmFsbGV0Ym9AY29sbGFib3JhLmNvbT4NCj4g
-LS0tDQo+IA0KPiBDaGFuZ2VzIGluIHYxMToNCj4gLSBMZWF2ZSB0aGUgY2xvY2tzIHBhcnQgaW4g
-ZHJpdmVycy9jbGsgKGNsay1tdDgxNzMtbW0pDQo+IC0gSW5zdGFudGlhdGUgdGhlIGNsb2NrIGRy
-aXZlciBmcm9tIHRoZSBtdGstbW1zeXMgZHJpdmVyLg0KPiAtIEFkZCBkZWZhdWx0IGNvbmZpZyBv
-cHRpb24gdG8gbm90IGJyZWFrIGFueXRoaW5nLg0KPiAtIFJlbW92ZWQgdGhlIFJldmlld2VkLWJ5
-IENLIHRhZyBhcyBjaGFuZ2VkIHRoZSBvcmdhbml6YXRpb24uDQo+IA0KPiBDaGFuZ2VzIGluIHYx
-MDoNCj4gLSBSZW5hbWVkIHRvIGJlIGdlbmVyaWMgbXRrLW1tc3lzDQo+IC0gQWRkIGRyaXZlciBk
-YXRhIHN1cHBvcnQgdG8gYmUgYWJsZSB0byBzdXBwb3J0IGRpZmVyZW50IFNvQ3MNCj4gDQo+IENo
-YW5nZXMgaW4gdjk6DQo+IC0gTW92ZSBtbXN5cyB0byBkcml2ZXJzL3NvYy9tZWRpYXRlayAoQ0sp
-DQo+IA0KPiBDaGFuZ2VzIGluIHY4Og0KPiAtIEJlIGEgYnVpbHRpbl9wbGF0Zm9ybV9kcml2ZXIg
-bGlrZSBvdGhlciBtZWRpYXRlayBtbXN5cyBkcml2ZXJzLg0KPiANCj4gQ2hhbmdlcyBpbiB2NzoN
-Cj4gLSBGcmVlIGNsa19kYXRhLT5jbGtzIGFzIHdlbGwNCj4gLSBHZXQgcmlkIG9mIHByaXZhdGUg
-ZGF0YSBzdHJ1Y3R1cmUNCj4gDQo+ICBkcml2ZXJzL2Nsay9tZWRpYXRlay9LY29uZmlnICAgICAg
-ICAgfCAgIDcgKysNCj4gIGRyaXZlcnMvY2xrL21lZGlhdGVrL01ha2VmaWxlICAgICAgICB8ICAg
-MSArDQo+ICBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ4MTczLW1tLmMgfCAxNDYgKysrKysr
-KysrKysrKysrKysrKysrKysrKysrDQo+ICBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ4MTcz
-LmMgICAgfCAxMDQgLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAgZHJpdmVycy9zb2MvbWVkaWF0ZWsv
-S2NvbmZpZyAgICAgICAgIHwgICA4ICsrDQo+ICBkcml2ZXJzL3NvYy9tZWRpYXRlay9NYWtlZmls
-ZSAgICAgICAgfCAgIDEgKw0KPiAgZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLW1tc3lzLmMgICAg
-IHwgIDUwICsrKysrKysrKw0KPiAgNyBmaWxlcyBjaGFuZ2VkLCAyMTMgaW5zZXJ0aW9ucygrKSwg
-MTA0IGRlbGV0aW9ucygtKQ0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL21lZGlh
-dGVrL2Nsay1tdDgxNzMtbW0uYw0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvc29jL21l
-ZGlhdGVrL210ay1tbXN5cy5jDQo+IA0KDQo+ICBvYmotJChDT05GSUdfQ09NTU9OX0NMS19NVDgx
-ODNfQ0FNU1lTKSArPSBjbGstbXQ4MTgzLWNhbS5vDQoNCg0K
+2020年3月2日(月) 17:17 Mauro Carvalho Chehab <mchehab+huawei@kernel.org>:
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Acked-by: GOTO Masanori <gotom@debian.or.jp>
 
+> ---
+>  .../scsi/{NinjaSCSI.txt => NinjaSCSI.rst}     | 198 +++++++++++-------
+>  Documentation/scsi/index.rst                  |   1 +
+>  MAINTAINERS                                   |   4 +-
+>  drivers/scsi/pcmcia/Kconfig                   |   2 +-
+>  4 files changed, 121 insertions(+), 84 deletions(-)
+>  rename Documentation/scsi/{NinjaSCSI.txt => NinjaSCSI.rst} (28%)
+>
+> diff --git a/Documentation/scsi/NinjaSCSI.txt b/Documentation/scsi/NinjaSCSI.rst
+> similarity index 28%
+> rename from Documentation/scsi/NinjaSCSI.txt
+> rename to Documentation/scsi/NinjaSCSI.rst
+> index ac8db8ceec77..999a6ed5bf7e 100644
+> --- a/Documentation/scsi/NinjaSCSI.txt
+> +++ b/Documentation/scsi/NinjaSCSI.rst
+> @@ -1,127 +1,163 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+>
+> -         WorkBiT NinjaSCSI-3/32Bi driver for Linux
+> +=========================================
+> +WorkBiT NinjaSCSI-3/32Bi driver for Linux
+> +=========================================
+>
+>  1. Comment
+> - This is Workbit corp.'s(http://www.workbit.co.jp/) NinjaSCSI-3
+> +==========
+> +
+> +This is Workbit corp.'s(http://www.workbit.co.jp/) NinjaSCSI-3
+>  for Linux.
+>
+>  2. My Linux environment
+> -Linux kernel: 2.4.7 / 2.2.19
+> -pcmcia-cs:    3.1.27
+> -gcc:          gcc-2.95.4
+> -PC card:      I-O data PCSC-F (NinjaSCSI-3)
+> -              I-O data CBSC-II in 16 bit mode (NinjaSCSI-32Bi)
+> -SCSI device:  I-O data CDPS-PX24 (CD-ROM drive)
+> -              Media Intelligent MMO-640GT (Optical disk drive)
+> +=======================
+> +
+> +:Linux kernel: 2.4.7 / 2.2.19
+> +:pcmcia-cs:    3.1.27
+> +:gcc:          gcc-2.95.4
+> +:PC card:      I-O data PCSC-F (NinjaSCSI-3),
+> +               I-O data CBSC-II in 16 bit mode (NinjaSCSI-32Bi)
+> +:SCSI device:  I-O data CDPS-PX24 (CD-ROM drive),
+> +               Media Intelligent MMO-640GT (Optical disk drive)
+>
+>  3. Install
+> -[1] Check your PC card is true "NinjaSCSI-3" card.
+> +==========
+> +
+> +(a) Check your PC card is true "NinjaSCSI-3" card.
+> +
+>      If you installed pcmcia-cs already, pcmcia reports your card as UNKNOWN
+>      card, and write ["WBT", "NinjaSCSI-3", "R1.0"] or some other string to
+>      your console or log file.
+> +
+>      You can also use "cardctl" program (this program is in pcmcia-cs source
+>      code) to get more info.
+>
+> -# cat /var/log/messages
+> -...
+> -Jan  2 03:45:06 lindberg cardmgr[78]: unsupported card in socket 1
+> -Jan  2 03:45:06 lindberg cardmgr[78]:   product info: "WBT", "NinjaSCSI-3", "R1.0"
+> -...
+> -# cardctl ident
+> -Socket 0:
+> -  no product info available
+> -Socket 1:
+> -  product info: "IO DATA", "CBSC16       ", "1"
+> +    ::
+>
+> +       # cat /var/log/messages
+> +       ...
+> +       Jan  2 03:45:06 lindberg cardmgr[78]: unsupported card in socket 1
+> +       Jan  2 03:45:06 lindberg cardmgr[78]:   product info: "WBT", "NinjaSCSI-3", "R1.0"
+> +       ...
+> +       # cardctl ident
+> +       Socket 0:
+> +         no product info available
+> +       Socket 1:
+> +         product info: "IO DATA", "CBSC16       ", "1"
+>
+> -[2] Get the Linux kernel source, and extract it to /usr/src.
+> +
+> +(b) Get the Linux kernel source, and extract it to /usr/src.
+>      Because the NinjaSCSI driver requires some SCSI header files in Linux
+>      kernel source, I recommend rebuilding your kernel; this eliminates
+>      some versioning problems.
+> -$ cd /usr/src
+> -$ tar -zxvf linux-x.x.x.tar.gz
+> -$ cd linux
+> -$ make config
+> -...
+>
+> -[3] If you use this driver with Kernel 2.2, unpack pcmcia-cs in some directory
+> +    ::
+> +
+> +       $ cd /usr/src
+> +       $ tar -zxvf linux-x.x.x.tar.gz
+> +       $ cd linux
+> +       $ make config
+> +       ...
+> +
+> +(c) If you use this driver with Kernel 2.2, unpack pcmcia-cs in some directory
+>      and make & install. This driver requires the pcmcia-cs header file.
+> -$ cd /usr/src
+> -$ tar zxvf cs-pcmcia-cs-3.x.x.tar.gz
+> -...
+>
+> -[4] Extract this driver's archive somewhere, and edit Makefile, then do make.
+> -$ tar -zxvf nsp_cs-x.x.tar.gz
+> -$ cd nsp_cs-x.x
+> -$ emacs Makefile
+> -...
+> -$ make
+> +    ::
+>
+> -[5] Copy nsp_cs.ko to suitable place, like /lib/modules/<Kernel version>/pcmcia/ .
+> +       $ cd /usr/src
+> +       $ tar zxvf cs-pcmcia-cs-3.x.x.tar.gz
+> +       ...
+> +
+> +(d) Extract this driver's archive somewhere, and edit Makefile, then do make::
+> +
+> +       $ tar -zxvf nsp_cs-x.x.tar.gz
+> +       $ cd nsp_cs-x.x
+> +       $ emacs Makefile
+> +       ...
+> +       $ make
+> +
+> +(e) Copy nsp_cs.ko to suitable place, like /lib/modules/<Kernel version>/pcmcia/ .
+> +
+> +(f) Add these lines to /etc/pcmcia/config .
+>
+> -[6] Add these lines to /etc/pcmcia/config .
+>      If you use pcmcia-cs-3.1.8 or later, we can use "nsp_cs.conf" file.
+>      So, you don't need to edit file. Just copy to /etc/pcmcia/ .
+>
+> --------------------------------------
+> -device "nsp_cs"
+> -  class "scsi" module "nsp_cs"
+> -
+> -card "WorkBit NinjaSCSI-3"
+> -  version "WBT", "NinjaSCSI-3", "R1.0"
+> -  bind "nsp_cs"
+> -
+> -card "WorkBit NinjaSCSI-32Bi (16bit)"
+> -  version "WORKBIT", "UltraNinja-16", "1"
+> -  bind "nsp_cs"
+> -
+> -# OEM
+> -card "WorkBit NinjaSCSI-32Bi (16bit) / IO-DATA"
+> -  version "IO DATA", "CBSC16       ", "1"
+> -  bind "nsp_cs"
+> -
+> -# OEM
+> -card "WorkBit NinjaSCSI-32Bi (16bit) / KME-1"
+> -  version "KME    ", "SCSI-CARD-001", "1"
+> -  bind "nsp_cs"
+> -card "WorkBit NinjaSCSI-32Bi (16bit) / KME-2"
+> -  version "KME    ", "SCSI-CARD-002", "1"
+> -  bind "nsp_cs"
+> -card "WorkBit NinjaSCSI-32Bi (16bit) / KME-3"
+> -  version "KME    ", "SCSI-CARD-003", "1"
+> -  bind "nsp_cs"
+> -card "WorkBit NinjaSCSI-32Bi (16bit) / KME-4"
+> -  version "KME    ", "SCSI-CARD-004", "1"
+> -  bind "nsp_cs"
+> --------------------------------------
+> -
+> -[7] Start (or restart) pcmcia-cs.
+> -# /etc/rc.d/rc.pcmcia start        (BSD style)
+> -or
+> -# /etc/init.d/pcmcia start         (SYSV style)
+> +    ::
+> +
+> +       device "nsp_cs"
+> +         class "scsi" module "nsp_cs"
+> +
+> +       card "WorkBit NinjaSCSI-3"
+> +         version "WBT", "NinjaSCSI-3", "R1.0"
+> +         bind "nsp_cs"
+> +
+> +       card "WorkBit NinjaSCSI-32Bi (16bit)"
+> +         version "WORKBIT", "UltraNinja-16", "1"
+> +         bind "nsp_cs"
+> +
+> +       # OEM
+> +       card "WorkBit NinjaSCSI-32Bi (16bit) / IO-DATA"
+> +         version "IO DATA", "CBSC16       ", "1"
+> +         bind "nsp_cs"
+> +
+> +       # OEM
+> +       card "WorkBit NinjaSCSI-32Bi (16bit) / KME-1"
+> +         version "KME    ", "SCSI-CARD-001", "1"
+> +         bind "nsp_cs"
+> +       card "WorkBit NinjaSCSI-32Bi (16bit) / KME-2"
+> +         version "KME    ", "SCSI-CARD-002", "1"
+> +         bind "nsp_cs"
+> +       card "WorkBit NinjaSCSI-32Bi (16bit) / KME-3"
+> +         version "KME    ", "SCSI-CARD-003", "1"
+> +         bind "nsp_cs"
+> +       card "WorkBit NinjaSCSI-32Bi (16bit) / KME-4"
+> +         version "KME    ", "SCSI-CARD-004", "1"
+> +         bind "nsp_cs"
+> +
+> +(f) Start (or restart) pcmcia-cs::
+> +
+> +       # /etc/rc.d/rc.pcmcia start        (BSD style)
+> +
+> +    or::
+> +
+> +       # /etc/init.d/pcmcia start         (SYSV style)
+>
+>
+>  4. History
+> +==========
+> +
+>  See README.nin_cs .
+>
+>  5. Caution
+> - If you eject card when doing some operation for your SCSI device or suspend
+> +==========
+> +
+> +If you eject card when doing some operation for your SCSI device or suspend
+>  your computer, you encount some *BAD* error like disk crash.
+> - It works good when I using this driver right way. But I'm not guarantee
+> +
+> +It works good when I using this driver right way. But I'm not guarantee
+>  your data. Please backup your data when you use this driver.
+>
+>  6. Known Bugs
+> - In 2.4 kernel, you can't use 640MB Optical disk. This error comes from
+> +=============
+> +
+> +In 2.4 kernel, you can't use 640MB Optical disk. This error comes from
+>  high level SCSI driver.
+>
+>  7. Testing
+> - Please send me some reports(bug reports etc..) of this software.
+> +==========
+> +
+> +Please send me some reports(bug reports etc..) of this software.
+>  When you send report, please tell me these or more.
+> -       card name
+> -       kernel version
+> -       your SCSI device name(hard drive, CD-ROM, etc...)
+> +
+> +       - card name
+> +       - kernel version
+> +       - your SCSI device name(hard drive, CD-ROM, etc...)
+>
+>  8. Copyright
+> +============
+> +
+>   See GPL.
+>
+>
+> diff --git a/Documentation/scsi/index.rst b/Documentation/scsi/index.rst
+> index a2545efbb407..eb2df0e0dcb7 100644
+> --- a/Documentation/scsi/index.rst
+> +++ b/Documentation/scsi/index.rst
+> @@ -28,5 +28,6 @@ Linux SCSI Subsystem
+>     lpfc
+>     megaraid
+>     ncr53c8xx
+> +   NinjaSCSI
+>
+>     scsi_transport_srp/figures
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 6d28bfc72259..2f441cf59b4b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11861,7 +11861,7 @@ NINJA SCSI-3 / NINJA SCSI-32Bi (16bit/CardBus) PCMCIA SCSI HOST ADAPTER DRIVER
+>  M:     YOKOTA Hiroshi <yokota@netlab.is.tsukuba.ac.jp>
+>  W:     http://www.netlab.is.tsukuba.ac.jp/~yokota/izumi/ninja/
+>  S:     Maintained
+> -F:     Documentation/scsi/NinjaSCSI.txt
+> +F:     Documentation/scsi/NinjaSCSI.rst
+>  F:     drivers/scsi/pcmcia/nsp_*
+>
+>  NINJA SCSI-32Bi/UDE PCI/CARDBUS SCSI HOST ADAPTER DRIVER
+> @@ -11869,7 +11869,7 @@ M:      GOTO Masanori <gotom@debian.or.jp>
+>  M:     YOKOTA Hiroshi <yokota@netlab.is.tsukuba.ac.jp>
+>  W:     http://www.netlab.is.tsukuba.ac.jp/~yokota/izumi/ninja/
+>  S:     Maintained
+> -F:     Documentation/scsi/NinjaSCSI.txt
+> +F:     Documentation/scsi/NinjaSCSI.rst
+>  F:     drivers/scsi/nsp32*
+>
+>  NIOS2 ARCHITECTURE
+> diff --git a/drivers/scsi/pcmcia/Kconfig b/drivers/scsi/pcmcia/Kconfig
+> index dc9b74c9348a..9696b6b5591f 100644
+> --- a/drivers/scsi/pcmcia/Kconfig
+> +++ b/drivers/scsi/pcmcia/Kconfig
+> @@ -36,7 +36,7 @@ config PCMCIA_NINJA_SCSI
+>         help
+>           If you intend to attach this type of PCMCIA SCSI host adapter to
+>           your computer, say Y here and read
+> -         <file:Documentation/scsi/NinjaSCSI.txt>.
+> +         <file:Documentation/scsi/NinjaSCSI.rst>.
+>
+>           Supported cards:
+>
+> --
+> 2.21.1
+>
