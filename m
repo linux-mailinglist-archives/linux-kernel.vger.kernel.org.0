@@ -2,101 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AC1A181D10
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:58:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84148181D4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:13:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730004AbgCKP6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 11:58:17 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36629 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729841AbgCKP6R (ORCPT
+        id S1730187AbgCKQM5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 12:12:57 -0400
+Received: from gateway20.websitewelcome.com ([192.185.4.169]:44397 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730172AbgCKQM5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 11:58:17 -0400
-Received: by mail-lj1-f193.google.com with SMTP id g12so2943931ljj.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 08:58:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qsEQHYE0y+y5d13UNRJfwErW7gYfQrzha/Ji2nKV2Bs=;
-        b=f70eOhsn4kSqi3NuTTLjoO+0Wc9NXo5nwZCyVCcqLPSEsncA2DAh2CuIxREXn5KSOl
-         OHpNolXQuH5Jg2g/thOX9CzTzmWGZL/Q5/P36kufFk26yh34tjg9B5qfWo5ztc56e4u1
-         SdIutscSxzCZADCUL9zQUcpJawXtUAEAdYyog=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qsEQHYE0y+y5d13UNRJfwErW7gYfQrzha/Ji2nKV2Bs=;
-        b=V3em0/q3ga8wazP5stthxwP1tSWlFINtlEfHCyHONgk9z46rne2paxdu7b9il0meSy
-         49gTcpxowBas4TYfKBXc+qssgVQBhRkv+gK+iZJO+FqcF5iEN4WcjGqs0Y5dKHbu6W9r
-         42lj4Tm52e2B8anyHT4wiQn99FZIosW3N3S9dhvkCpF/EQgTcmUgTkyaHra8zXoWbsIm
-         ++JApbr3gwwVlLQHs3XQYWonBkyxX1sMq1bfGJ+w6p/HXfIMaW+mKDw3LQ9xD/cJE0VZ
-         oBsFC5woe5oLdnce1hPHCcYd86TEmcpDBefVb9F5qeyrUFIFD1j6BwrZHI055jn02g0D
-         PzPw==
-X-Gm-Message-State: ANhLgQ3VwwbL04fKnTftQEXYMTOAKPceQ/RrUyTh4Qcjg9o/lL8JWNLE
-        e1he8nY0tQMo0GTFsevWVVL8ZH97GtQ=
-X-Google-Smtp-Source: ADFU+vvMFyGdzdJ/pkCJRKuBqeP1NRUU+FlBn5WFeDuxMFEnzXGnL8MaHznppi90xqLDBxgn9Ow7nA==
-X-Received: by 2002:a2e:8ec7:: with SMTP id e7mr2444055ljl.36.1583942294645;
-        Wed, 11 Mar 2020 08:58:14 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id h24sm13849546ljc.36.2020.03.11.08.58.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 08:58:13 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id j15so2178624lfk.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 08:58:12 -0700 (PDT)
-X-Received: by 2002:a19:6144:: with SMTP id m4mr2504756lfk.192.1583942292581;
- Wed, 11 Mar 2020 08:58:12 -0700 (PDT)
+        Wed, 11 Mar 2020 12:12:57 -0400
+X-Greylist: delayed 1447 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Mar 2020 12:12:56 EDT
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id BADF740DBE61B
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 09:28:43 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id C3WMjpUHmSl8qC3WMjQFgG; Wed, 11 Mar 2020 10:43:46 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=3i0tZ6VUT9ayplPHL2UUSqmRafZXT88cIoIL540L3iM=; b=OpztcXRgfZ2/MGS27k1f4voZHT
+        xXFYfSFmrX9E+yfjgVYj5g2lPtdZN++7Voh0DTfHt8I7+tQGRbbTg8cJix17V4gvGriEBD7pzriAF
+        sdZgs6UtRYgaYvxQfQjERJ/YYMNBDn1/WPTlPY/iPrAyQi0nukbWOYmN56U8hkaS6ACSXUp/0XaaC
+        PFUa/C+MuR2NU1DSW5uOw0SqxrK6a4MYea8pa/tIB5wTWZ9NJjyhxEGCUVUQu7aFxbOAoLy/KopRq
+        nj3e1dge7JGpk8Yd7Iae0g36wT1f8uySJQsB+X3wLoU6GCuaHsJ2KqpVkMcM1xNM5oXHdHEvG1lj8
+        gKA43fYw==;
+Received: from [200.39.15.97] (port=13388 helo=[192.168.43.132])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1jC3WL-002v4F-Io; Wed, 11 Mar 2020 10:43:46 -0500
+Subject: Re: [PATCH] mmc: Replace zero-length array with flexible-array member
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200226223125.GA20630@embeddedor>
+ <CAPDyKFpCczkLfzbRHV5WEzuMOseMj19mV=j1w6=hNX9K8YN1JQ@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <7fe54f8f-52ed-c819-550c-a775c2afdde6@embeddedor.com>
+Date:   Wed, 11 Mar 2020 10:46:01 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <bug-206175-5873@https.bugzilla.kernel.org/> <bug-206175-5873-S6PaNNClEr@https.bugzilla.kernel.org/>
- <CAHk-=wi4GS05j67V0D_cRXRQ=_Jh-NT0OuNpF-JFsDFj7jZK9A@mail.gmail.com>
- <20200310162342.GA4483@lst.de> <CAHk-=wgB2YMM6kw8W0wq=7efxsRERL14OHMOLU=Nd1OaR+sXvw@mail.gmail.com>
- <20200310182546.GA9268@lst.de> <20200311152453.GB23704@lst.de>
- <e70dd793-e8b8-ab0c-6027-6c22b5a99bfc@gmx.com> <20200311154328.GA24044@lst.de>
- <19498990-fb97-b739-cd19-6a6415ba88a2@gmx.com>
-In-Reply-To: <19498990-fb97-b739-cd19-6a6415ba88a2@gmx.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 11 Mar 2020 08:57:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=widmu42C4eTQ9uDM+njZE1s5ARmx7E+1SHH1XznTFOwyg@mail.gmail.com>
-Message-ID: <CAHk-=widmu42C4eTQ9uDM+njZE1s5ARmx7E+1SHH1XznTFOwyg@mail.gmail.com>
-Subject: Re: [Bug 206175] Fedora >= 5.4 kernels instantly freeze on boot
- without producing any display output
-To:     "Artem S. Tashkinov" <aros@gmx.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        iommu <iommu@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAPDyKFpCczkLfzbRHV5WEzuMOseMj19mV=j1w6=hNX9K8YN1JQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.39.15.97
+X-Source-L: No
+X-Exim-ID: 1jC3WL-002v4F-Io
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.132]) [200.39.15.97]:13388
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 8:53 AM Artem S. Tashkinov <aros@gmx.com> wrote:
->
-> I'm not sure I can call or do anything because the system is dead and
-> I'm looking at the kernel panic message. The console is dead. The root
-> file system is not yet mounted. Initrd can't be loaded either. I have no
-> COM port/console. I have no debugging abilities whatsoever. I can only
-> compile kernels and try running them.
 
-Christoph just wanted you to use the image you booted with - you can
-do it while using a working and entirely unrealted kernel.
 
-But I think Christoph's second email was right on the money: the
-platform device code used to (accidentally) always use that special
-kmalloc()'ed memory, and the "always use kfree() to release" then
-happened to work.
+On 3/11/20 10:34, Ulf Hansson wrote:
 
-But with the change, platform devices use that allocations inside the
-platform device itself, and the kfree() now does bad things and
-corrupts the kmalloc lists.
+>>
+>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+>> [2] https://github.com/KSPP/linux/issues/21
+>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Applied for next, thanks!
+> 
 
-So that finally makes sense of why that commit would cause odd
-problems for you. I'm actually surprised it didn't cause problems for
-others, but it's an error path, and presumably it normally never
-triggers.
+Thanks, Ulf.
+--
+Gustavo
 
-                Linus
-
-              Linus
+> Kind regards
+> Uffe
+> 
