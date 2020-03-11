@@ -2,177 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3061181FAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:38:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86B20181F8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:34:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730570AbgCKRil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:38:41 -0400
-Received: from mga18.intel.com ([134.134.136.126]:22480 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729852AbgCKRil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:38:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 10:38:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
-   d="scan'208";a="261211208"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
-  by orsmga002.jf.intel.com with ESMTP; 11 Mar 2020 10:38:39 -0700
-Message-ID: <04c252f59062450e14642fcbef4b85845f6a7427.camel@intel.com>
-Subject: Re: [PATCH V1 11/13] selftests/resctrl: Change Cache Quality
- Monitoring (CQM) test
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     Reinette Chatre <reinette.chatre@intel.com>, shuah@kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        tony.luck@intel.com, babu.moger@amd.com, james.morse@arm.com,
-        ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 11 Mar 2020 10:33:52 -0700
-In-Reply-To: <e7c85e35-9efb-77da-a33f-dd9447a6cf07@intel.com>
-References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
-         <26086dda86f062bba4116878a012a553503924b2.1583657204.git.sai.praneeth.prakhya@intel.com>
-         <e7bd79cf-4da8-7a61-ac09-4d124315fa93@intel.com>
-         <cf8fbdebd8096900d47a97f0e23a852d94df257a.camel@intel.com>
-         <e7c85e35-9efb-77da-a33f-dd9447a6cf07@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        id S1730453AbgCKRe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:34:26 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34596 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726099AbgCKReZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:34:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583948063;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YxDI+gJiBUTsbW70/4a/jRnjqZbO21J+vKCSG+NYW2I=;
+        b=cE+csesKC5qSYLInQPHHV5C5JwoxFIPEnYtnABqYpnLSDCMfL9XVV2NdozsE7Q1BwLBGXA
+        tq00mS7iHGwakVJ8Ylksw47cy3FyjCMtOcwFgulBxbUGm41S9eji1HTYLvKH3Fai5KGFJI
+        Ztykffe+ySserYSq6aW8t0kkgifw29o=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-65-x_M0gZcdMA-ImuOio__G3Q-1; Wed, 11 Mar 2020 13:34:20 -0400
+X-MC-Unique: x_M0gZcdMA-ImuOio__G3Q-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DB2B2107ACC4;
+        Wed, 11 Mar 2020 17:34:18 +0000 (UTC)
+Received: from localhost (unknown [10.36.118.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0554D60FC2;
+        Wed, 11 Mar 2020 17:34:06 +0000 (UTC)
+Date:   Wed, 11 Mar 2020 17:34:05 +0000
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
+        dgilbert@redhat.com, mst@redhat.com,
+        Sebastien Boeuf <sebastien.boeuf@intel.com>,
+        kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH 04/20] virtio: Implement get_shm_region for PCI transport
+Message-ID: <20200311173405.GI281087@stefanha-x1.localdomain>
+References: <20200304165845.3081-1-vgoyal@redhat.com>
+ <20200304165845.3081-5-vgoyal@redhat.com>
+ <20200310110437.GI140737@stefanha-x1.localdomain>
+ <20200310181936.GC38440@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200310181936.GC38440@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="TKDEsImF70pdVIl+"
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Reinette,
+--TKDEsImF70pdVIl+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2020-03-11 at 10:19 -0700, Reinette Chatre wrote:
-> Hi Sai,
-> 
-> On 3/10/2020 7:46 PM, Sai Praneeth Prakhya wrote:
-> > On Tue, 2020-03-10 at 15:18 -0700, Reinette Chatre wrote:
-> > > On 3/6/2020 7:40 PM, Sai Praneeth Prakhya wrote:
-> > > >  		.mum_resctrlfs	= 0,
-> > > >  		.filename	= RESULT_FILE_NAME,
-> > > > -		.mask		= ~(long_mask << n) & long_mask,
-> > > > -		.span		= cache_size * n / count_of_bits,
-> > > >  		.num_of_runs	= 0,
-> > > > -		.setup		= cqm_setup,
-> > > > +		.setup		= cqm_setup
-> > > >  	};
-> > > > +	int ret;
-> > > > +	char schemata[64];
-> > > > +	unsigned long long_mask;
-> > > >  
-> > > > -	if (strcmp(benchmark_cmd[0], "fill_buf") == 0)
-> > > > -		sprintf(benchmark_cmd[1], "%lu", param.span);
-> > > > +	ret = remount_resctrlfs(1);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > 
-> > > Here resctrl is remounted and followed by some changes to the root
-> > > group's schemata. That is followed by a call to resctrl_val that
-> > > attempts to remount resctrl again that will undo all the configurations
-> > > inbetween.
-> > 
-> > No, it wouldn't because mum_resctrlfs is 0. When resctrl FS is already
-> > mounted
-> > and mum_resctrlfs is 0, then remount_resctrlfs() is a noop.
-> > 
-> 
-> I missed that. Thank you.
-> 
-> fyi ... when I tried these tests I encountered the following error
-> related to unmounting:
-> 
-> [SNIP]
-> ok Write schema "L3:1=7fff" to resctrl FS
-> ok Write schema "L3:1=ffff" to resctrl FS
-> ok Write schema "L3:1=1ffff" to resctrl FS
-> ok Write schema "L3:1=3ffff" to resctrl FS
-> # Unable to umount resctrl: Device or resource busy
-> # Results are displayed in (Bytes)
-> ok CQM: diff within 5% for mask 1
-> # alloc_llc_cache_size: 2883584
-> # avg_llc_occu_resc: 2973696
-> ok CQM: diff within 5% for mask 3
-> [SNIP]
-> 
-> This seems to originate from resctrl_val() that forces an unmount but if
-> that fails the error is not propagated.
+On Tue, Mar 10, 2020 at 02:19:36PM -0400, Vivek Goyal wrote:
+> On Tue, Mar 10, 2020 at 11:04:37AM +0000, Stefan Hajnoczi wrote:
+> > On Wed, Mar 04, 2020 at 11:58:29AM -0500, Vivek Goyal wrote:
+> > > diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virt=
+io_pci_modern.c
+> > > index 7abcc50838b8..52f179411015 100644
+> > > --- a/drivers/virtio/virtio_pci_modern.c
+> > > +++ b/drivers/virtio/virtio_pci_modern.c
+> > > @@ -443,6 +443,111 @@ static void del_vq(struct virtio_pci_vq_info *i=
+nfo)
+> > >  =09vring_del_virtqueue(vq);
+> > >  }
+> > > =20
+> > > +static int virtio_pci_find_shm_cap(struct pci_dev *dev,
+> > > +                                   u8 required_id,
+> > > +                                   u8 *bar, u64 *offset, u64 *len)
+> > > +{
+> > > +=09int pos;
+> > > +
+> > > +        for (pos =3D pci_find_capability(dev, PCI_CAP_ID_VNDR);
+> >=20
+> > Please fix the mixed tabs vs space indentation in this patch.
+>=20
+> Will do. There are plenty of these in this patch.
+>=20
+> >=20
+> > > +static bool vp_get_shm_region(struct virtio_device *vdev,
+> > > +=09=09=09      struct virtio_shm_region *region, u8 id)
+> > > +{
+> > > +=09struct virtio_pci_device *vp_dev =3D to_vp_device(vdev);
+> > > +=09struct pci_dev *pci_dev =3D vp_dev->pci_dev;
+> > > +=09u8 bar;
+> > > +=09u64 offset, len;
+> > > +=09phys_addr_t phys_addr;
+> > > +=09size_t bar_len;
+> > > +=09int ret;
+> > > +
+> > > +=09if (!virtio_pci_find_shm_cap(pci_dev, id, &bar, &offset, &len)) {
+> > > +=09=09return false;
+> > > +=09}
+> > > +
+> > > +=09ret =3D pci_request_region(pci_dev, bar, "virtio-pci-shm");
+> > > +=09if (ret < 0) {
+> > > +=09=09dev_err(&pci_dev->dev, "%s: failed to request BAR\n",
+> > > +=09=09=09__func__);
+> > > +=09=09return false;
+> > > +=09}
+> > > +
+> > > +=09phys_addr =3D pci_resource_start(pci_dev, bar);
+> > > +=09bar_len =3D pci_resource_len(pci_dev, bar);
+> > > +
+> > > +        if (offset + len > bar_len) {
+> > > +                dev_err(&pci_dev->dev,
+> > > +                        "%s: bar shorter than cap offset+len\n",
+> > > +                        __func__);
+> > > +                return false;
+> > > +        }
+> > > +
+> > > +=09region->len =3D len;
+> > > +=09region->addr =3D (u64) phys_addr + offset;
+> > > +
+> > > +=09return true;
+> > > +}
+> >=20
+> > Missing pci_release_region()?
+>=20
+> Good catch. We don't have a mechanism to call pci_relese_region() and=20
+> virtio-mmio device's ->get_shm_region() implementation does not even
+> seem to reserve the resources.
+>=20
+> So how about we leave this resource reservation to the caller.
+> ->get_shm_region() just returns the addr/len pair of requested resource.
+>=20
+> Something like this patch.
+>=20
+> ---
+>  drivers/virtio/virtio_pci_modern.c |    8 --------
+>  fs/fuse/virtio_fs.c                |   13 ++++++++++---
+>  2 files changed, 10 insertions(+), 11 deletions(-)
+>=20
+> Index: redhat-linux/fs/fuse/virtio_fs.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- redhat-linux.orig/fs/fuse/virtio_fs.c=092020-03-10 09:13:34.624565666=
+ -0400
+> +++ redhat-linux/fs/fuse/virtio_fs.c=092020-03-10 14:11:10.970284651 -040=
+0
+> @@ -763,11 +763,18 @@ static int virtio_fs_setup_dax(struct vi
+>  =09if (!have_cache) {
+>  =09=09dev_notice(&vdev->dev, "%s: No cache capability\n", __func__);
+>  =09=09return 0;
+> -=09} else {
+> -=09=09dev_notice(&vdev->dev, "Cache len: 0x%llx @ 0x%llx\n",
+> -=09=09=09   cache_reg.len, cache_reg.addr);
+>  =09}
+> =20
+> +=09if (!devm_request_mem_region(&vdev->dev, cache_reg.addr, cache_reg.le=
+n,
+> +=09=09=09=09     dev_name(&vdev->dev))) {
+> +=09=09dev_warn(&vdev->dev, "could not reserve region addr=3D0x%llx"
+> +=09=09=09 " len=3D0x%llx\n", cache_reg.addr, cache_reg.len);
+> +=09=09return -EBUSY;
+> +        }
+> +
+> +=09dev_notice(&vdev->dev, "Cache len: 0x%llx @ 0x%llx\n", cache_reg.len,
+> +=09=09   cache_reg.addr);
+> +
+>  =09pgmap =3D devm_kzalloc(&vdev->dev, sizeof(*pgmap), GFP_KERNEL);
+>  =09if (!pgmap)
+>  =09=09return -ENOMEM;
+> Index: redhat-linux/drivers/virtio/virtio_pci_modern.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- redhat-linux.orig/drivers/virtio/virtio_pci_modern.c=092020-03-10 08:=
+51:36.886565666 -0400
+> +++ redhat-linux/drivers/virtio/virtio_pci_modern.c=092020-03-10 13:43:15=
+.168753543 -0400
+> @@ -511,19 +511,11 @@ static bool vp_get_shm_region(struct vir
+>  =09u64 offset, len;
+>  =09phys_addr_t phys_addr;
+>  =09size_t bar_len;
+> -=09int ret;
+> =20
+>  =09if (!virtio_pci_find_shm_cap(pci_dev, id, &bar, &offset, &len)) {
+>  =09=09return false;
+>  =09}
+> =20
+> -=09ret =3D pci_request_region(pci_dev, bar, "virtio-pci-shm");
+> -=09if (ret < 0) {
+> -=09=09dev_err(&pci_dev->dev, "%s: failed to request BAR\n",
+> -=09=09=09__func__);
+> -=09=09return false;
+> -=09}
+> -
+>  =09phys_addr =3D pci_resource_start(pci_dev, bar);
+>  =09bar_len =3D pci_resource_len(pci_dev, bar);
 
-Yes, that's right and it's a good test. I didn't encounter this issue during
-my testing because I wasn't using resctrl FS from other terminals (I think you
-were using resctrl FS from other terminal and hence resctrl_test was unable to
-unmount it).
+Do pci_resource_start()/pci_resource_len() work on a BAR where
+pci_request_region() hasn't been called yet?  (I haven't checked the
+code, sorry...)
 
-I think the error should not be propagated because unmounting resctrl FS
-shouldn't stop us from checking the results. If measuring values reports an
-error then we shouldn't check for results.
+Assuming yes, then my next question is whether devm_request_mem_region()
+works in both the VIRTIO PCI and MMIO cases?
 
-> > > > diff --git a/tools/testing/selftests/resctrl/resctrl_val.c
-> > > > b/tools/testing/selftests/resctrl/resctrl_val.c
-> > > > index 271cb5c976f5..c59fad6cb9b0 100644
-> > > > --- a/tools/testing/selftests/resctrl/resctrl_val.c
-> > > > +++ b/tools/testing/selftests/resctrl/resctrl_val.c
-> > > > @@ -705,29 +705,21 @@ int resctrl_val(char **benchmark_cmd, struct
-> > > > resctrl_val_param *param)
-> > > >  		goto out;
-> > > >  	}
-> > > >  
-> > > > -	/* Give benchmark enough time to fully run */
-> > > > -	sleep(1);
-> > > > -
-> > > >  	/* Test runs until the callback setup() tells the test to
-> > > > stop. */
-> > > >  	while (1) {
-> > > > +		ret = param->setup(param);
-> > > > +		if (ret) {
-> > > > +			ret = 0;
-> > > > +			break;
-> > > > +		}
-> > > > +
-> > > > +		/* Measure vals sleeps for a second */
-> > > >  		if ((strcmp(resctrl_val, "mbm") == 0) ||
-> > > >  		    (strcmp(resctrl_val, "mba") == 0)) {
-> > > > -			ret = param->setup(param);
-> > > > -			if (ret) {
-> > > > -				ret = 0;
-> > > > -				break;
-> > > > -			}
-> > > > -
-> 
-> (I refer to the above snippet in my comment below)
-> 
-> > > >  			ret = measure_vals(param, &bw_resc_start);
-> > > >  			if (ret)
-> > > >  				break;
-> > > >  		} else if (strcmp(resctrl_val, "cqm") == 0) {
-> > > > -			ret = param->setup(param);
-> > > > -			if (ret) {
-> > > > -				ret = 0;
-> > > > -				break;
-> > > > -			}
-> > > > -			sleep(1);
-> > > >  			ret = measure_cache_vals(param, bm_pid);
-> > > >  			if (ret)
-> > > >  				break;
-> > > 
-> > > This change affects not just the cache monitoring test. Could this
-> > > change be extracted into its own patch to be clear what is done here and
-> > > how it impacts the other tests?
-> > 
-> > This change shouldn't impact other tests (i.e. CAT) because CAT will not
-> > call
-> > resctrl_val().
-> 
-> I was referring to the snippet above that seems to impact the "mbm" and
-> "mba" tests by moving the call to "param->setup" for the them.
+If yes, then this looks like a solution, though the need for
+devm_request_mem_region() should be explained in the vp_get_shm_region()
+doc comments so that callers remember to make that call.  Or maybe it
+can be included in vp_get_shm_region().
 
-Ok.. makes sense. Sure! I will make it into separate patch.
+Stefan
 
-Regards,
-Sai
+--TKDEsImF70pdVIl+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl5pIQ0ACgkQnKSrs4Gr
+c8hRcwgAllE7XHaHgyhW//Kd35rBaIMwficvtTMl5oYcfsKBVGTrjWnaAYzbseXT
+s/UX6DzqH/qO3skX5n9rq5tlVwW1POLhLYSjtXB0GFeC/utVMyQKrcdlYUAYeHFF
+bROTGHuMNT0b3YbZiiHbA08BWfcuTOfhtzEwUPajlf+D8LvY11d1lyDGXb2GxcRI
+vIx5hpsok29/NpOn2KgYcUSTZ1f8jk7mHnMscCRjvp9o8WJVCt7nIT2tJYYRuOKE
++VCiza9iW/P8w+PrwdQj1lraakETWKPmDXQPjCz5BUyyDrqDJr7RMDY+KdPrll0l
+kDFkAzr2D64PwzwaXaM3sNXecZXK4w==
+=pAoo
+-----END PGP SIGNATURE-----
+
+--TKDEsImF70pdVIl+--
 
