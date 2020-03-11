@@ -2,89 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC8F5182207
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:17:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A306818220D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:19:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731085AbgCKTRg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 15:17:36 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43051 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730807AbgCKTRe (ORCPT
+        id S1731086AbgCKTTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 15:19:15 -0400
+Received: from mail-pl1-f181.google.com ([209.85.214.181]:37138 "EHLO
+        mail-pl1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730807AbgCKTTP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:17:34 -0400
-Received: by mail-ed1-f68.google.com with SMTP id dc19so4241599edb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:17:33 -0700 (PDT)
+        Wed, 11 Mar 2020 15:19:15 -0400
+Received: by mail-pl1-f181.google.com with SMTP id f16so1543028plj.4;
+        Wed, 11 Mar 2020 12:19:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IoGQYT+rchnYF2zG5DEg3NeiNAoLKHCeyEY/yuvUhRg=;
-        b=Qty98XX/5cZd1xLOpIdrTlHmSOxWrvAJPpba33iF+RhyOUDdezy7/AvSYh58mnyJK6
-         UjTrcRQsHNLdkJSG4Rw3egxSyRm+NO5u/ziM5sEJ4syzSi/ofv//CVi/NySuuemFXjvN
-         ZeoLd5zBi2yI+dJQt1ARKHz//BShoSnycvkQPPAa0mD1VCftEOwQPOKdsBjzXtMib2am
-         BCC6ytK1fgh3Zw+e4CK/xxJ4RSHoAl0xoSWbEHV74NfcywU4Sr8i4XQ/fpmXYceMyRQA
-         DMasFvXlCVaYwJH6VlOT0huN4mo+9H8IzPTNwLw8MkGeLZ+H01zkXm4mEPrOf4DnyaJj
-         BcDw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AgA8NXVVreTrbc68nE5t9RxNm/CfbmPdVBm+V/xZGZA=;
+        b=Ra5czn0cz8MQvrnhNDEap6qccGc/050Ie9lY8KvZSJx8DwxM1ldR4EKQSh5WEqaxyS
+         xYF9hUZqIDIQT3/lMwdgozbCBLLtUHRKYiEbi4jw4duvuwQOtElG9/7wO44JP0eczHRM
+         Dxsp6Bk+7yOQH4ZtBE0QVZM9RTqDk8Mwsn7lKwTiMqig9txszVT9Cf8hOh6jehBZkYGr
+         1/1bZjX/DLPSpaaBK7DGubvYsRwUorTmARB3R/VM7r9hyt9bspIR8HkN3kcvc/DTY7Hr
+         RBopIs3D719sXwKTDQ7EnjBQ3Skg3Sg35c8707QLuftGu777U7MWzc+ZUFUKozNZmMHR
+         EkyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=IoGQYT+rchnYF2zG5DEg3NeiNAoLKHCeyEY/yuvUhRg=;
-        b=chXamRYPlWeZgldlQGzk4uYP8aJNa6RiFXU/dsYXxAvFsntuA8joGSiGqoh5cbl+zw
-         jVMqA4wvogl1lxBYsihaBgs5E2HmG7WwKo8+8byIql7/1a+m5S304hsAHF03ncHyjYoc
-         UtsWbW9N1yc5B/uS4phFKrFq8imrYJonkLun+Sr4xYCQNWv+u1yIMp1po5u6Y9wHa6MA
-         r1AgHWINLozYB6yDJj8vnsUMrucy7URiyFaRHy39tDiJhblBS3sVzwjCDeHEtinQRZF5
-         d5F3Ei+pN7rThHf40deZWgmtkiIGH2tBKQhsbj9TssqfQySvrtsUbRvv9Zm71C4O5d49
-         nUkg==
-X-Gm-Message-State: ANhLgQ3Pho9/UiC6pks0fn0IHGteBZcH/HdHYdmINNuIyItf33rKcsCh
-        RUl9aO/Q9Oysv/YN9KPG95HAgQ==
-X-Google-Smtp-Source: ADFU+vvqObpUv4yT5hu9m1ZZe/ETe+eJynYIwhQ0IE0wZjybZQc/WQoS5nOBi4wA7jf1jEJxVN6wFw==
-X-Received: by 2002:a50:ed97:: with SMTP id h23mr3364514edr.197.1583954252557;
-        Wed, 11 Mar 2020 12:17:32 -0700 (PDT)
-Received: from [192.168.0.38] ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id k11sm482932ejr.92.2020.03.11.12.17.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 12:17:31 -0700 (PDT)
-Subject: Re: [RESEND][PATCH v8 1/6] usb: dwc3: Registering a role switch in
- the DRD code.
-To:     John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Cc:     Yu Chen <chenyu56@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        ShuFan Lee <shufan_lee@richtek.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jun Li <lijun.kernel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Guillaume Gardet <Guillaume.Gardet@arm.com>,
-        Jack Pham <jackp@codeaurora.org>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20200311172109.45134-1-john.stultz@linaro.org>
- <20200311172109.45134-2-john.stultz@linaro.org>
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Message-ID: <7337bea7-1449-e6e3-4c65-1bb802a2c316@linaro.org>
-Date:   Wed, 11 Mar 2020 19:17:48 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        bh=AgA8NXVVreTrbc68nE5t9RxNm/CfbmPdVBm+V/xZGZA=;
+        b=OfEI5tVw70NbNwDWTNgzMKnxkresNMK6QtkayJQ2zwo3cMn8YdrIMBpr/CLCwcvki9
+         vDfFQpG5KN8Nx1zhE+SVTvNHwxz9++VH7jnpOoqaIk+vF8aYU3jGFeVXlwb4uM8yYa6q
+         CEIxtKCe9I4QdMRM4Uwy0qMjhaO5vZ+Gor6NUGYBBSVvJko9+jXN0QZXAdn1GXKW1A7c
+         UXPInVDDJAmlpJcmoa/+gu5HixFK17/jsDZ8fOi/Xl1KTDtTj0OiIndtGWPiz7smPYSo
+         TNSAF8Gy5EV6VxBQK5dTbv1i/txaIwfKAN20kO3v9JqNnYOoMTzqIgnmeObCfUwlaAkc
+         p7gQ==
+X-Gm-Message-State: ANhLgQ1ObXuP0kGb+m7TwprnAYsVamYHDdMGhgPSHYEwONbjm2/Eqndk
+        RiKrCzVP+Slz2+iZU0HlOZM=
+X-Google-Smtp-Source: ADFU+vut6cvW5Ep/5MnHwgb71GM6QOKN+GXWUmMoSF0wCH4v2hNV7CL9paPgi4pfd+r34U5ISQ9Azw==
+X-Received: by 2002:a17:902:b10c:: with SMTP id q12mr4569032plr.303.1583954354047;
+        Wed, 11 Mar 2020 12:19:14 -0700 (PDT)
+Received: from localhost.localdomain ([103.46.201.94])
+        by smtp.gmail.com with ESMTPSA id z17sm3792673pff.12.2020.03.11.12.19.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 12:19:13 -0700 (PDT)
+From:   Aman Sharma <amanharitsh123@gmail.com>
+Cc:     amanharitsh123@gmail.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <amurray@thegoodpenguin.co.uk>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
+        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Mans Rullgard <mans@mansr.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: [PATCH 0/5] Handled return value of platform_get_irq correctly
+Date:   Thu, 12 Mar 2020 00:49:01 +0530
+Message-Id: <cover.1583952275.git.amanharitsh123@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20200311172109.45134-2-john.stultz@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +static int dwc3_usb_role_switch_set(struct device *dev, enum usb_role role)
+As mentioned by Bjorn Helgaas in a private mail, the return value of
+platform_get_irq must be checked against the conditon of strictly
+smaller than 0 and if check must return the value recieved from
+platform_get_irq rather than any other macro like -ENODEV.
 
-@bjorn found an API change that explodes this one.
+Aman Sharma (5):
+  pci: handled return value of platform_get_irq correctly
+  pci: added check for return value of platform_get_irq
+  pci: handled return value of platform_get_irq correctly
+  pci: handled return value of platform_get_irq correctly
+  pci: added check for return value of platform_get_irq
 
-Fixed here: https://lkml.org/lkml/2020/3/11/1034
+ drivers/pci/controller/pci-aardvark.c  | 3 +++
+ drivers/pci/controller/pci-v3-semi.c   | 4 ++--
+ drivers/pci/controller/pcie-mediatek.c | 3 +++
+ drivers/pci/controller/pcie-mobiveil.c | 4 ++--
+ drivers/pci/controller/pcie-tango.c    | 4 ++--
+ 5 files changed, 12 insertions(+), 6 deletions(-)
+
+-- 
+2.20.1
+
