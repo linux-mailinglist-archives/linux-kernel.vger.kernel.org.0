@@ -2,75 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A4B5181BB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:51:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7CB8181BC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:54:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729931AbgCKOu7 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 10:50:59 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:56256 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729844AbgCKOu7 (ORCPT
+        id S1729905AbgCKOyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 10:54:14 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41124 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729584AbgCKOyO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 10:50:59 -0400
-Received: from [172.20.10.2] (x59cc8a78.dyn.telefonica.de [89.204.138.120])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 7DF0DCECDF;
-        Wed, 11 Mar 2020 16:00:25 +0100 (CET)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: [Bluez PATCH v1] Bluetooth: L2CAP: handle l2cap config request
- during open state
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20200310180642.Bluez.v1.1.I50b301a0464eb68e3d62721bf59e11ed2617c415@changeid>
-Date:   Wed, 11 Mar 2020 15:50:56 +0100
-Cc:     Bluez mailing list <linux-bluetooth@vger.kernel.org>,
-        ChromeOS Bluetooth Upstreaming 
-        <chromeos-bluetooth-upstreaming@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jakub Kicinski <kuba@kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <BBDABF4D-E4CC-49D7-ADCF-6913B2DE9FF0@holtmann.org>
-References: <20200310180642.Bluez.v1.1.I50b301a0464eb68e3d62721bf59e11ed2617c415@changeid>
-To:     Howard Chung <howardchung@google.com>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        Wed, 11 Mar 2020 10:54:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Mime-Version:Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=V5VwQ3DE+z7Gin8QWO2wlhFBBFKjYu8MYUyeDZvDjTA=; b=s7mN0sk0ngR79fsppXGLXlZ25a
+        BbEbycKQ6SlQpPxENYqRwMB3Ui4KjmHwO8VuX+i/7Gcp6xhg07dPwX2TQDU9gfA6O9DbWuUWrx9oN
+        5voV9t1b+QRgSacgBtgO/BSXQaOZJILYXddD+l6j1yh6WN3NHXhuh2UkkLcnWjJ0GJ2BaMrjS0Vyk
+        mogt6hgkeMc3gs+2RlX7SpqbSZeij2R1crYr/BrNDaR4LT18Ej5OBoP0h6/SlRDYye4ylj4gsLNmN
+        vlJkiVIPrWRgf0kUpoSf8/2npEwkHMNJ6bYx/OA78Kbc3tRTcIKYjClnz09vNknffTV/2d2U/amsp
+        RicCxsqQ==;
+Received: from [54.239.6.186] (helo=u0c626add9cce5a.drs10.amazon.com)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jC2kC-0000sD-0Z; Wed, 11 Mar 2020 14:54:00 +0000
+Message-ID: <f09bacf3029edfc7f90097f7fc6e41176ddd4873.camel@kernel.org>
+Subject: Re: [PATCH] virtio: virtio_console: add missing
+ MODULE_DEVICE_TABLE() for rproc serial
+From:   Amit Shah <amit@kernel.org>
+To:     Alexander Lobakin <alobakin@dlink.ru>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sjur Brandeland <sjur.brandeland@stericsson.com>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        virtualization@lists.linux-foundation.org, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 11 Mar 2020 15:53:56 +0100
+In-Reply-To: <20200310110538.19254-1-alobakin@dlink.ru>
+References: <20200310110538.19254-1-alobakin@dlink.ru>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Howard,
+On Tue, 2020-03-10 at 14:05 +0300, Alexander Lobakin wrote:
+> rproc_serial_id_table lacks an exposure to module devicetable, so
+> when remoteproc firmware requests VIRTIO_ID_RPROC_SERIAL, no uevent
+> is generated and no module autoloading occurs.
+> Add missing MODULE_DEVICE_TABLE() annotation and move the existing
+> one for VIRTIO_ID_CONSOLE right to the table itself.
+> 
+> Fixes: 1b6370463e88 ("virtio_console: Add support for remoteproc
+> serial")
+> Cc: <stable@vger.kernel.org> # v3.8+
+> Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
 
-> According to Core Spec Version 5.2 | Vol 3, Part A 6.1.5,
-> the incoming L2CAP_ConfigReq should be handled during
-> OPEN state.
-> 
-> Signed-off-by: Howard Chung <howardchung@google.com>
-> 
+Reviewed-by: Amit Shah <amit@kernel.org>
+
+Thanks,
+
 > ---
+>  drivers/char/virtio_console.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> net/bluetooth/l2cap_core.c | 3 ++-
-> 1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
-> index 697c0f7f2c1a..5e6e35ab44dd 100644
-> --- a/net/bluetooth/l2cap_core.c
-> +++ b/net/bluetooth/l2cap_core.c
-> @@ -4300,7 +4300,8 @@ static inline int l2cap_config_req(struct l2cap_conn *conn,
-> 		return 0;
-> 	}
-> 
-> -	if (chan->state != BT_CONFIG && chan->state != BT_CONNECT2) {
-> +	if (chan->state != BT_CONFIG && chan->state != BT_CONNECT2 &&
-> +	    chan->state != BT_CONNECTED) {
-> 		cmd_reject_invalid_cid(conn, cmd->ident, chan->scid,
-> 				       chan->dcid);
-> 		goto unlock;
-
-Any chance you can add a btmon trace excerpt for this to the commit message. It would be good to have the before and after here included.
-
-Regards
-
-Marcel
+> diff --git a/drivers/char/virtio_console.c
+> b/drivers/char/virtio_console.c
+> index 4df9b40d6342..7e1bc0f580a2 100644
+> --- a/drivers/char/virtio_console.c
+> +++ b/drivers/char/virtio_console.c
+> @@ -2116,6 +2116,7 @@ static struct virtio_device_id id_table[] = {
+>  	{ VIRTIO_ID_CONSOLE, VIRTIO_DEV_ANY_ID },
+>  	{ 0 },
+>  };
+> +MODULE_DEVICE_TABLE(virtio, id_table);
+>  
+>  static unsigned int features[] = {
+>  	VIRTIO_CONSOLE_F_SIZE,
+> @@ -2128,6 +2129,7 @@ static struct virtio_device_id
+> rproc_serial_id_table[] = {
+>  #endif
+>  	{ 0 },
+>  };
+> +MODULE_DEVICE_TABLE(virtio, rproc_serial_id_table);
+>  
+>  static unsigned int rproc_serial_features[] = {
+>  };
+> @@ -2280,6 +2282,5 @@ static void __exit fini(void)
+>  module_init(init);
+>  module_exit(fini);
+>  
+> -MODULE_DEVICE_TABLE(virtio, id_table);
+>  MODULE_DESCRIPTION("Virtio console driver");
+>  MODULE_LICENSE("GPL");
 
