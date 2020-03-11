@@ -2,114 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E4561816EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 12:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF2E31816EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 12:36:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729217AbgCKLgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 07:36:24 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38479 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729165AbgCKLgW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 07:36:22 -0400
-Received: by mail-wm1-f67.google.com with SMTP id n2so1717625wmc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 04:36:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4dSjMYJm/Ra5sgQShi2pf7+T6koKZ++HOxR0wa0eN84=;
-        b=MjzLEDmFJ/aZXSENFbjIyt0KVvyajh+YnB/ueDBs1bz0YgVO03hmugfnPZdvU3vt/6
-         BBGbHwfSuITh/mzCoIh3L9H5Xm7GhvVopaYxlbzYHEaFpzzGBm5bpH1E14+QPAQj+/Zi
-         oz0hJV8Uo0RnjvYx3X/NcoKRTSUE0mxzyaIKrecwFNg9w6OfLfFVZZFSS3L63oEAv3NN
-         M85rjg8MG6w/3q6GdZ3z8lcHkRCHWQCV7MT+N8waXX1F6iOwXpQFA9n/FzKQ98EPl1ZW
-         LenVwfClcI7m9C49N7ZiYFpAR+wdIAWAcAfIClt6Na8GpVqOHnsERF9aA/UbB7Dslj4m
-         DcyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4dSjMYJm/Ra5sgQShi2pf7+T6koKZ++HOxR0wa0eN84=;
-        b=rBSlP7tnNJXNVxyZucMAnsl8a7NRUbO96CDcA7EVGIqv2pJvF8UysaFlrFt+2zHB8Z
-         UTyjknZ0bVSB2PVz2/k3WOsSYhbe9AF2cV9Ki6azlsC+vvl3QaFgMa8+5o/DLTjIW5q2
-         /LjhlK42xpPjiWaZrLD+BnKsMKUKtuW4g6cOuJpTpGgZZi6pcowpOqTukhtycXF0Kva5
-         qA40BIL1tyzVkJJFI5vfMDK4mrvu1gfsN32rlGzqwQzZIEJujz9d1vQOg5TP6CsWSAH0
-         belYAKktH4IOXKmbH4uZNgtMpuaHEDQRkhJgof9TVN0edL+ViCpw9uIbYSZy3FQQIQtu
-         tbfg==
-X-Gm-Message-State: ANhLgQ12vTULUUpbbtQTaPVpR7yZjeHMjPGVuU2SZYoAdnmbJ85Hfq86
-        AXIXJfSpnWWlYS45bHDWpn/rbQ==
-X-Google-Smtp-Source: ADFU+vt+eNgeMdW8z+nYMrd8Bxe7xSf0Y8oplVFQFkTzkOPeN1bEt3y5GLgzl+F32+wHlT+zM65jyA==
-X-Received: by 2002:a1c:1d88:: with SMTP id d130mr3473216wmd.138.1583926580522;
-        Wed, 11 Mar 2020 04:36:20 -0700 (PDT)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id c8sm61650537wru.7.2020.03.11.04.36.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 04:36:19 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     broonie@kernel.org, vkoul@kernel.org
-Cc:     pierre-louis.bossart@linux.intel.com, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 2/2] ASoC: wsa881x: mark read_only_wordlength flag
-Date:   Wed, 11 Mar 2020 11:35:45 +0000
-Message-Id: <20200311113545.23773-3-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200311113545.23773-1-srinivas.kandagatla@linaro.org>
-References: <20200311113545.23773-1-srinivas.kandagatla@linaro.org>
+        id S1729152AbgCKLgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 07:36:11 -0400
+Received: from mga07.intel.com ([134.134.136.100]:61402 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725834AbgCKLgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 07:36:11 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 04:36:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,540,1574150400"; 
+   d="scan'208";a="353866031"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by fmsmga001.fm.intel.com with SMTP; 11 Mar 2020 04:36:04 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Wed, 11 Mar 2020 13:36:03 +0200
+Date:   Wed, 11 Mar 2020 13:36:03 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?iso-8859-1?Q?Jos=E9?= Roberto de Souza 
+        <jose.souza@intel.com>, Lucas De Marchi <lucas.demarchi@intel.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Manasi Navare <manasi.d.navare@intel.com>,
+        Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
+        Matt Roper <matthew.d.roper@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Ramalingam C <ramalingam.c@intel.com>,
+        Uma Shankar <uma.shankar@intel.com>,
+        intel-gfx@lists.freedesktop.org,
+        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] drm/i915: Init lspcon after HPD in intel_dp_detect()
+Message-ID: <20200311113603.GU13686@intel.com>
+References: <20200214175646.25532-1-kai.heng.feng@canonical.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200214175646.25532-1-kai.heng.feng@canonical.com>
+X-Patchwork-Hint: comment
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-WSA881x works in PDM mode so the wordlength is fixed, which also makes
-the only field "WordLength" in DPN_BlockCtrl1 register a read-only.
-Writing to this register will throw up errors with Qualcomm Controller.
-So use ro_blockctrl1_reg flag to mark this field as read-only so that
-core will not write to this register.
+On Sat, Feb 15, 2020 at 01:56:27AM +0800, Kai-Heng Feng wrote:
+> On HP 800 G4 DM, if HDMI cable isn't plugged before boot, the HDMI port
+> becomes useless and never responds to cable hotplugging:
+> [    3.031904] [drm:lspcon_init [i915]] *ERROR* Failed to probe lspcon
+> [    3.031945] [drm:intel_ddi_init [i915]] *ERROR* LSPCON init failed on port D
+> 
+> Seems like the lspcon chip on the system in question only gets powered
+> after the cable is plugged.
+> 
+> So let's call lspcon_init() dynamically to properly initialize the
+> lspcon chip and make HDMI port work.
+> 
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+> v4:
+>  - Trust VBT in intel_infoframe_init().
+>  - Init lspcon in intel_dp_detect().
+> 
+> v3:
+>  - Make sure it's handled under long HPD case.
+> 
+> v2: 
+>  - Move lspcon_init() inside of intel_dp_hpd_pulse().
+> 
+>  drivers/gpu/drm/i915/display/intel_ddi.c  | 17 +----------------
+>  drivers/gpu/drm/i915/display/intel_dp.c   | 13 ++++++++++++-
+>  drivers/gpu/drm/i915/display/intel_hdmi.c |  2 +-
+>  3 files changed, 14 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/display/intel_ddi.c b/drivers/gpu/drm/i915/display/intel_ddi.c
+> index 33f1dc3d7c1a..ca717434b406 100644
+> --- a/drivers/gpu/drm/i915/display/intel_ddi.c
+> +++ b/drivers/gpu/drm/i915/display/intel_ddi.c
+> @@ -4741,7 +4741,7 @@ void intel_ddi_init(struct drm_i915_private *dev_priv, enum port port)
+>  		&dev_priv->vbt.ddi_port_info[port];
+>  	struct intel_digital_port *intel_dig_port;
+>  	struct intel_encoder *encoder;
+> -	bool init_hdmi, init_dp, init_lspcon = false;
+> +	bool init_hdmi, init_dp;
+>  	enum phy phy = intel_port_to_phy(dev_priv, port);
+>  
+>  	init_hdmi = port_info->supports_dvi || port_info->supports_hdmi;
+> @@ -4754,7 +4754,6 @@ void intel_ddi_init(struct drm_i915_private *dev_priv, enum port port)
+>  		 * is initialized before lspcon.
+>  		 */
+>  		init_dp = true;
+> -		init_lspcon = true;
+>  		init_hdmi = false;
+>  		DRM_DEBUG_KMS("VBT says port %c has lspcon\n", port_name(port));
+>  	}
+> @@ -4833,20 +4832,6 @@ void intel_ddi_init(struct drm_i915_private *dev_priv, enum port port)
+>  			goto err;
+>  	}
+>  
+> -	if (init_lspcon) {
+> -		if (lspcon_init(intel_dig_port))
+> -			/* TODO: handle hdmi info frame part */
+> -			DRM_DEBUG_KMS("LSPCON init success on port %c\n",
+> -				port_name(port));
+> -		else
+> -			/*
+> -			 * LSPCON init faied, but DP init was success, so
+> -			 * lets try to drive as DP++ port.
+> -			 */
+> -			DRM_ERROR("LSPCON init failed on port %c\n",
+> -				port_name(port));
+> -	}
+> -
+>  	intel_infoframe_init(intel_dig_port);
+>  
+>  	return;
+> diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
+> index c7424e2a04a3..43117aa86292 100644
+> --- a/drivers/gpu/drm/i915/display/intel_dp.c
+> +++ b/drivers/gpu/drm/i915/display/intel_dp.c
+> @@ -5663,8 +5663,19 @@ intel_dp_detect(struct drm_connector *connector,
+>  	/* Can't disconnect eDP */
+>  	if (intel_dp_is_edp(intel_dp))
+>  		status = edp_detect(intel_dp);
+> -	else if (intel_digital_port_connected(encoder))
+> +	else if (intel_digital_port_connected(encoder)) {
+> +		if (intel_bios_is_lspcon_present(dev_priv, dig_port->base.port) &&
+> +		    !dig_port->lspcon.active) {
+> +			if (lspcon_init(dig_port))
+> +				DRM_DEBUG_KMS("LSPCON init success on port %c\n",
+> +					      port_name(dig_port->base.port));
+> +			else
+> +				DRM_DEBUG_KMS("LSPCON init failed on port %c\n",
+> +					      port_name(dig_port->base.port));
+> +		}
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- sound/soc/codecs/wsa881x.c | 4 ++++
- 1 file changed, 4 insertions(+)
+I was going to ask what happens when you unplug+replug, but looks like
+we already have lspcon_resume()in intel_dp_detect_dpcd(). This should
+be there as well. In fact I think we should just move all the logic
+into the lspcon code and let it decide on its own whether to take the init
+path or the resume path (assuming there is even any difference between
+the two).
 
-diff --git a/sound/soc/codecs/wsa881x.c b/sound/soc/codecs/wsa881x.c
-index b59f1d0e7f84..35b44b297f9e 100644
---- a/sound/soc/codecs/wsa881x.c
-+++ b/sound/soc/codecs/wsa881x.c
-@@ -394,6 +394,7 @@ static struct sdw_dpn_prop wsa_sink_dpn_prop[WSA881X_MAX_SWR_PORTS] = {
- 		.min_ch = 1,
- 		.max_ch = 1,
- 		.simple_ch_prep_sm = true,
-+		.read_only_wordlength = true,
- 	}, {
- 		/* COMP */
- 		.num = 2,
-@@ -401,6 +402,7 @@ static struct sdw_dpn_prop wsa_sink_dpn_prop[WSA881X_MAX_SWR_PORTS] = {
- 		.min_ch = 1,
- 		.max_ch = 1,
- 		.simple_ch_prep_sm = true,
-+		.read_only_wordlength = true,
- 	}, {
- 		/* BOOST */
- 		.num = 3,
-@@ -408,6 +410,7 @@ static struct sdw_dpn_prop wsa_sink_dpn_prop[WSA881X_MAX_SWR_PORTS] = {
- 		.min_ch = 1,
- 		.max_ch = 1,
- 		.simple_ch_prep_sm = true,
-+		.read_only_wordlength = true,
- 	}, {
- 		/* VISENSE */
- 		.num = 4,
-@@ -415,6 +418,7 @@ static struct sdw_dpn_prop wsa_sink_dpn_prop[WSA881X_MAX_SWR_PORTS] = {
- 		.min_ch = 1,
- 		.max_ch = 1,
- 		.simple_ch_prep_sm = true,
-+		.read_only_wordlength = true,
- 	}
- };
- 
+Not sure what we should do with the lspcon_resume() call in
+intel_dp_encoder_reset()...
+
+> +
+>  		status = intel_dp_detect_dpcd(intel_dp);
+> +	}
+>  	else
+>  		status = connector_status_disconnected;
+>  
+> diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
+> index 93ac0f296852..27a5aa8cefc9 100644
+> --- a/drivers/gpu/drm/i915/display/intel_hdmi.c
+> +++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
+> @@ -3100,7 +3100,7 @@ void intel_infoframe_init(struct intel_digital_port *intel_dig_port)
+>  		intel_dig_port->set_infoframes = g4x_set_infoframes;
+>  		intel_dig_port->infoframes_enabled = g4x_infoframes_enabled;
+>  	} else if (HAS_DDI(dev_priv)) {
+> -		if (intel_dig_port->lspcon.active) {
+> +		if (intel_bios_is_lspcon_present(dev_priv, intel_dig_port->base.port)) {
+>  			intel_dig_port->write_infoframe = lspcon_write_infoframe;
+>  			intel_dig_port->read_infoframe = lspcon_read_infoframe;
+>  			intel_dig_port->set_infoframes = lspcon_set_infoframes;
+> -- 
+> 2.17.1
+
 -- 
-2.21.0
-
+Ville Syrjälä
+Intel
