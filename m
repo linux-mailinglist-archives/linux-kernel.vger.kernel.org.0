@@ -2,67 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2945C181FAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:39:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DC31181F9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:35:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730575AbgCKRjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:39:22 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11629 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729852AbgCKRjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:39:22 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 43322579B4F62CF1EA02;
-        Thu, 12 Mar 2020 01:39:17 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.58) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.487.0; Thu, 12 Mar 2020 01:39:08 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <broonie@kernel.org>
-CC:     <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mtd@lists.infradead.org>, <rdunlap@infradead.org>,
-        <linux-next@vger.kernel.org>, <joe@perches.com>,
-        <Tudor.Ambarus@microchip.com>, <sfr@canb.auug.org.au>,
-        <chenxiang66@hisilicon.com>, John Garry <john.garry@huawei.com>
-Subject: [PATCH] spi: Stop selecting MTD_SPI_NOR for SPI_HISI_SFC_V3XX
-Date:   Thu, 12 Mar 2020 01:35:15 +0800
-Message-ID: <1583948115-239907-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
+        id S1730618AbgCKRfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:35:23 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:32856 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730366AbgCKRfX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:35:23 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 79F2C293DC6;
+        Wed, 11 Mar 2020 17:35:21 +0000 (GMT)
+Date:   Wed, 11 Mar 2020 18:35:17 +0100
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     "Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "shiva.linuxworks@gmail.com" <shiva.linuxworks@gmail.com>
+Subject: Re: [EXT] Re: [PATCH v6 0/6] Add new series Micron SPI NAND devices
+Message-ID: <20200311183517.054cc300@collabora.com>
+In-Reply-To: <MN2PR08MB6397BAEC050EF2C1A9CE8CDAB8FC0@MN2PR08MB6397.namprd08.prod.outlook.com>
+References: <20200309115230.7207-1-sshivamurthy@micron.com>
+        <20200311164932.23cc7a42@xps13>
+        <MN2PR08MB6397BAEC050EF2C1A9CE8CDAB8FC0@MN2PR08MB6397.namprd08.prod.outlook.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.58]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By selecting MTD_SPI_NOR for SPI_HISI_SFC_V3XX, we may introduce unmet
-dependencies:
+On Wed, 11 Mar 2020 17:33:41 +0000
+"Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com> wrote:
 
-WARNING: unmet direct dependencies detected for MTD_SPI_NOR
-  Depends on [m]: MTD [=m] && SPI_MASTER [=y]
-  Selected by [y]:
-  - SPI_HISI_SFC_V3XX [=y] && SPI [=y] && SPI_MASTER [=y] && (ARM64 && ACPI [=y] || COMPILE_TEST [=y]) && HAS_IOMEM [=y]
+> Hi Miquel,
+> 
+> > 
+> > Hi Shiva,
+> > 
+> > shiva.linuxworks@gmail.com wrote on Mon,  9 Mar 2020 12:52:24 +0100:
+> >   
+> > > From: Shivamurthy Shastri <sshivamurthy@micron.com>
+> > >
+> > > This patchset is for the new series of Micron SPI NAND devices, and the
+> > > following links are their datasheets.
+> > >
+> > > M78A:
+> > > [1] https://www.micron.com/~/media/documents/products/data-  
+> > sheet/nand-flash/70-series/m78a_1gb_3v_nand_spi.pdf  
+> > > [2] https://www.micron.com/~/media/documents/products/data-  
+> > sheet/nand-flash/70-series/m78a_1gb_1_8v_nand_spi.pdf  
+> > >
+> > > M79A:
+> > > [3] https://www.micron.com/~/media/documents/products/data-  
+> > sheet/nand-flash/70-series/m79a_2gb_1_8v_nand_spi.pdf  
+> > > [4] https://www.micron.com/~/media/documents/products/data-  
+> > sheet/nand-flash/70-series/m79a_ddp_4gb_3v_nand_spi.pdf  
+> > >
+> > > M70A:
+> > > [5] https://www.micron.com/~/media/documents/products/data-  
+> > sheet/nand-flash/70-series/m70a_4gb_3v_nand_spi.pdf  
+> > > [6] https://www.micron.com/~/media/documents/products/data-  
+> > sheet/nand-flash/70-series/m70a_4gb_1_8v_nand_spi.pdf  
+> > > [7] https://www.micron.com/~/media/documents/products/data-  
+> > sheet/nand-flash/70-series/m70a_ddp_8gb_3v_nand_spi.pdf  
+> > > [8] https://www.micron.com/~/media/documents/products/data-  
+> > sheet/nand-flash/70-series/m70a_ddp_8gb_1_8v_nand_spi.pdf  
+> > >
+> > > Changes since v5:
+> > > -----------------
+> > >
+> > > 1. Rebased series to v5.6-rc1.  
+> > 
+> > I am very sorry but actually I had issues applying all your patches not
+> > because they were not based on v5.6-rc1, but because since then I
+> > applied a patch changing the detection that changed the content of a
+> > lot of structures (including in Micron's patches).
+> > 
+> > Can you please rebase again on top of the current nand/next? I am very
+> > sorry for this extra work, this is my mistake.
+> > 
+> > Head should be:
+> > 
+> > 	a5d53ad26a8b ("mtd: rawnand: brcmnand: Add support for flash-edu
+> > for dma transfers")
+> > 
+> > And the culprit commit is:
+> > 
+> > 	f1541773af49 ("mtd: spinand: rework detect procedure for different
+> > READ_ID operation")  
+> 
+> 
+> I will rebase and send the patches.
+> Meanwhile, there will be small code change because of the READ_ID patch.
+> 
+> Do I need to drop Reviewed-by from Boris?
 
-Since MTD_SPI_NOR is only selected by SPI_HISI_SFC_V3XX for practical
-reasons - slave devices use the spi-nor driver, enabled by MTD_SPI_NOR -
-just drop it.
-
-Signed-off-by: John Garry <john.garry@huawei.com>
-
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 66c6c0d77ea7..ad1a2547a414 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -299,7 +299,6 @@ config SPI_HISI_SFC_V3XX
- 	tristate "HiSilicon SPI-NOR Flash Controller for Hi16XX chipsets"
- 	depends on (ARM64 && ACPI) || COMPILE_TEST
- 	depends on HAS_IOMEM
--	select MTD_SPI_NOR
- 	help
- 	  This enables support for HiSilicon v3xx SPI-NOR flash controller
- 	  found in hi16xx chipsets.
--- 
-2.17.1
-
+Nope, you can keep it.
