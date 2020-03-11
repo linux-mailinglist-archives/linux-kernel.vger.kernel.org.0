@@ -2,184 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66CE0181510
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 10:36:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55C7E181523
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 10:39:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728893AbgCKJf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 05:35:29 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:46560 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728444AbgCKJf2 (ORCPT
+        id S1728982AbgCKJiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 05:38:15 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:65362 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728892AbgCKJiE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 05:35:28 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583919327; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=QyNiJ+0qok89TnybJL0siB5PS2p4435lMsK9Zo6fR2M=; b=cYqOo1+pBgEC+1hZlPyge3gO6swsE5uSAvcWbsbDXAufuiVcPseSZjKuj8FUd19ZxcG4kq1z
- AdRIQAP/H+epcyaMiKfkNW3fuBRccj5XgzIZT7lsPMshjiDF4xW5jueKx3D6jPTF1nJTd7qQ
- rbH9Xrp6ZY/1qFuCehyk+C7M05k=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e68b0dd.7f22429b1768-smtp-out-n03;
- Wed, 11 Mar 2020 09:35:25 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 58BECC4478C; Wed, 11 Mar 2020 09:35:24 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [10.206.13.37] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C69D4C432C2;
-        Wed, 11 Mar 2020 09:35:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C69D4C432C2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
-Subject: Re: [RFT PATCH 2/9] drivers: qcom: rpmh-rsc: Document the register
- layout better
-To:     Douglas Anderson <dianders@chromium.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>, mka@chromium.org,
-        evgreen@chromium.org, swboyd@chromium.org,
-        Lina Iyer <ilina@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200306235951.214678-1-dianders@chromium.org>
- <20200306155707.RFT.2.Iaddc29b72772e6ea381238a0ee85b82d3903e5f2@changeid>
-From:   Maulik Shah <mkshah@codeaurora.org>
-Message-ID: <285d3315-7558-d9f6-fe65-24d8ad07949d@codeaurora.org>
-Date:   Wed, 11 Mar 2020 15:05:18 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <20200306155707.RFT.2.Iaddc29b72772e6ea381238a0ee85b82d3903e5f2@changeid>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+        Wed, 11 Mar 2020 05:38:04 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02B9UI6T041942;
+        Wed, 11 Mar 2020 05:37:58 -0400
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ypsgvrg4k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Mar 2020 05:37:58 -0400
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02B9ZLcx003078;
+        Wed, 11 Mar 2020 09:37:57 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma05wdc.us.ibm.com with ESMTP id 2ypjxr3te3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Mar 2020 09:37:57 +0000
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02B9btrK29163852
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Mar 2020 09:37:55 GMT
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BC0766E053;
+        Wed, 11 Mar 2020 09:37:55 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 12D4C6E054;
+        Wed, 11 Mar 2020 09:37:55 +0000 (GMT)
+Received: from sofia.ibm.com (unknown [9.85.122.202])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Mar 2020 09:37:54 +0000 (GMT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 0D1312E3219; Wed, 11 Mar 2020 15:07:47 +0530 (IST)
+From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+To:     Nathan Lynch <nathanl@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Subject: [PATCH v3 0/6] Track and expose idle PURR and SPURR ticks
+Date:   Wed, 11 Mar 2020 15:07:35 +0530
+Message-Id: <1583919461-27405-1-git-send-email-ego@linux.vnet.ibm.com>
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-11_02:2020-03-10,2020-03-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0
+ mlxlogscore=999 phishscore=0 impostorscore=0 mlxscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003110061
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Doug,
+From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
 
-On 3/7/2020 5:29 AM, Douglas Anderson wrote:
-> Perhaps it's just me, it took a really long time to understand what
-> the register layout of rpmh-rsc was just from the #defines.  
-i don't understand why register layout is so important for you to understand?
+Hi,
 
-besides, i think all required registers are properly named with #define
+This is the third version of the patches to track and expose idle PURR
+and SPURR ticks. These patches are required by tools such as lparstat
+to compute system utilization for capacity planning purposes.
 
-for e.g.
-/* Register offsets */
-#define RSC_DRV_IRQ_ENABLE              0x00
-#define RSC_DRV_IRQ_STATUS              0x04
-#define RSC_DRV_IRQ_CLEAR               0x08
+The previous versions can be found here:
+v2: https://lkml.org/lkml/2020/2/21/21
+v1: https://lore.kernel.org/patchwork/cover/1159341/
 
-now when you want to enable/disable irq in driver code, its pretty simple to figure out
-that we need to read/write at RSC_DRV_IRQ_ENABLE offset.
+They key changes from v2 are:
 
-this seems unnecessary change to me, can you please drop this when you spin v2?
+    - The prolog and epilog functions have been named
+      pseries_idle_prolog() and pseries_idle_epilog() respectively to
+      indicate their pseries specific nature.
 
-Thanks,
-Maulik
-> It's much
-> easier to understand this if we define some structures.  At the moment
-> these structures aren't used at all (so think of them as
-> documentation), but to me they really help in understanding.
->
-> These structures were all figured out from the #defines and
-> reading/writing functions.  Anything that wasn't used in the driver is
-> marked as "opaque".
->
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
->
->  drivers/soc/qcom/rpmh-rsc.c | 67 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 67 insertions(+)
->
-> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-> index 5c88b8cd5bf8..0a409988d103 100644
-> --- a/drivers/soc/qcom/rpmh-rsc.c
-> +++ b/drivers/soc/qcom/rpmh-rsc.c
-> @@ -61,6 +61,73 @@
->  #define CMD_STATUS_ISSUED		BIT(8)
->  #define CMD_STATUS_COMPL		BIT(16)
->  
-> +/*
-> + * The following structures aren't used in the code anywhere (right now), but
-> + * help to document how the register space is laid out.  In other words it's
-> + * another way to visualize the "Register offsets".
-> + *
-> + * Couch this in a bogus #ifdef instead of comments to allow the embedded
-> + * comments to work.
-> + */
-> +#ifdef STRUCTS_TO_DOCUMENT_HW_REGISTER_MAP
-> +
-> +/* 0x14 = 20 bytes big (see RSC_DRV_CMD_OFFSET) */
-> +struct tcs_cmd_hw {
-> +	u32 msgid;
-> +	u32 addr;
-> +	u32 data;
-> +	u32 status;
-> +	u32 resp_data;
-> +};
-> +
-> +/* 0x2a0 = 672 bytes big (see RSC_DRV_TCS_OFFSET) */
-> +struct tcs_hw {
-> +	/*
-> +	 * These are only valid on TCS 0 but are present everywhere.
-> +	 * Contains 1 bit per TCS.
-> +	 */
-> +	u32 irq_enable;
-> +	u32 irq_status;
-> +	u32 irq_clear;			/* Write only; write 1 to clear */
-> +
-> +	char opaque_00c[0x4];
-> +
-> +	u32 cmd_wait_for_cmpl;		/* Bit field, 1 bit per command */
-> +	u32 control;
-> +	u32 status;			/* status is 0 if tcs is busy */
-> +	u32 cmd_enable;			/* Bit field, 1 bit per command */
-> +
-> +	char opaque_01c[0x10];
-> +
-> +	struct tcs_cmd_hw tcs_cmd_hw[MAX_CMDS_PER_TCS];
-> +
-> +	char opaque_170[0x130];
-> +};
-> +
-> +/* Example for sc7180 based on current dts */
-> +struct rpmh_rsc_hw_sc7180 {
-> +	char opaque_000[0xc];
-> +
-> +	u32 prnt_chld_config;
-> +
-> +	char opaque_010[0xcf0];
-> +
-> +	/*
-> +	 * Offset 0xd00 aka qcom,tcs-offset from device tree.  Presumably
-> +	 * could be different for different SoCs?  Currently driver stores
-> +	 * a pointer to the first tcs in tcs_base.
-> +	 *
-> +	 * Count of various TCS entries also comes from dts.
-> +	 */
-> +	struct tcs_hw active[2];
-> +	struct tcs_hw sleep[3];
-> +	struct tcs_hw wake[3];
-> +	struct tcs_hw control[1];
-> +};
-> +
-> +#endif /* STRUCTS_TO_DOCUMENT_HW_REGISTER_MAP */
-> +
-> +
->  static u32 read_tcs_cmd(struct rsc_drv *drv, int reg, int tcs_id, int cmd_id)
->  {
->  	return readl_relaxed(drv->tcs_base + RSC_DRV_TCS_OFFSET * tcs_id + reg +
+    - Fixed the Documentation for
+      /sys/devices/system/cpu/cpuX/idle_spurr as pointed out by
+      Nathan Lynch.
+
+    - Introduces a patch (Patch 6/6) to send an IPI in order to read
+      and cache the values of purr, spurr, idle_purr and idle_spurr of
+      the target CPU when any one of them is read via sysfs. These
+      cached values will be presented if any of these sysfs are read
+      within the next 10ms. If these sysfs files are read after 10ms
+      from the earlier IPI, a fresh IPI is issued to read and cache
+      the values again. This minimizes the number of IPIs required to
+      be sent when these values are read back-to-back via the sysfs
+      interface.
+
+Test-results: While reading the four sysfs files back-to-back for a
+given CPU every second for 100 seconds.
+    
+    Without patch 6/6 (Without caching): 
+                 16 [XICS 2 Edge IPI] = 422 times
+                 DBL [Doorbell interrupts] = 13 times
+                 Total : 435 IPIs.
+    
+    With patch 6/6 (With caching):
+                  16 [XICS 2 Edge IPI] = 111 times
+                  DBL [Doorbell interrupts] = 17 times
+                  Total : 128 IPIs.
+Motivation:
+===========
+On PSeries LPARs, the data centers planners desire a more accurate
+view of system utilization per resource such as CPU to plan the system
+capacity requirements better. Such accuracy can be obtained by reading
+PURR/SPURR registers for CPU resource utilization.
+
+Tools such as lparstat which are used to compute the utilization need
+to know [S]PURR ticks when the cpu was busy or idle. The [S]PURR
+counters are already exposed through sysfs.  We already account for
+PURR ticks when we go to idle so that we can update the VPA area. This
+patchset extends support to account for SPURR ticks when idle, and
+expose both via per-cpu sysfs files.
+
+These patches are required for enhancement to the lparstat utility
+that compute the CPU utilization based on PURR and SPURR which can be
+found here :
+https://groups.google.com/forum/#!topic/powerpc-utils-devel/fYRo69xO9r4
+
+
+With the patches, when lparstat is run on a LPAR running CPU-Hogs,
+=========================================================================
+sudo ./src/lparstat -E 1 3
+System Configuration
+type=Dedicated mode=Capped smt=8 lcpu=2 mem=4834176 kB cpus=0 ent=2.00 
+---Actual---                 -Normalized-
+%busy  %idle   Frequency     %busy  %idle
+------ ------  ------------- ------ ------
+1  99.99   0.00  3.35GHz[111%] 110.99   0.00
+2 100.00   0.00  3.35GHz[111%] 111.00   0.00
+3 100.00   0.00  3.35GHz[111%] 111.00   0.00
+=========================================================================
+
+When lparstat is run on an LPAR that is idle,
+=========================================================================
+$ sudo ./src/lparstat -E 1 3
+System Configuration
+type=Dedicated mode=Capped smt=8 lcpu=2 mem=4834176 kB cpus=0 ent=2.00 
+---Actual---                 -Normalized-
+%busy  %idle   Frequency     %busy  %idle
+------ ------  ------------- ------ ------
+1   0.71  99.30  2.18GHz[ 72%]   0.53  71.48
+2   0.56  99.44  2.11GHz[ 70%]   0.43  69.57
+3   0.54  99.46  2.11GHz[ 70%]   0.43  69.57
+=========================================================================
+     
+
+Gautham R. Shenoy (6):
+  powerpc: Move idle_loop_prolog()/epilog() functions to header file
+  powerpc/idle: Add accessor function to always read latest idle PURR
+  powerpc/pseries: Account for SPURR ticks on idle CPUs
+  powerpc/sysfs: Show idle_purr and idle_spurr for every CPU
+  Documentation: Document sysfs interfaces purr, spurr, idle_purr, idle_spurr
+  pseries/sysfs: Minimise IPI noise while reading [idle_][s]purr
+
+ Documentation/ABI/testing/sysfs-devices-system-cpu |  39 ++++++
+ arch/powerpc/include/asm/idle.h                    |  89 ++++++++++++++
+ arch/powerpc/kernel/sysfs.c                        | 133 +++++++++++++++++++--
+ arch/powerpc/platforms/pseries/setup.c             |   8 +-
+ drivers/cpuidle/cpuidle-pseries.c                  |  39 ++----
+ 5 files changed, 267 insertions(+), 41 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/idle.h
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.9.4
+
