@@ -2,94 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 141F61822D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:55:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6550C1822B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:45:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387449AbgCKTzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 15:55:03 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:48822 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387418AbgCKTzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:55:02 -0400
-Received: from zn.tnic (p200300EC2F12AA006409EF873197E31D.dip0.t-ipconnect.de [IPv6:2003:ec:2f12:aa00:6409:ef87:3197:e31d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4932B1EC0CE5;
-        Wed, 11 Mar 2020 20:44:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1583955884;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qhR6fZY9T1iS1MlozbrwkvsgypJ7t9l1Cqgx8z0l+kI=;
-        b=QxSjkDa88cjKLLavCeDIljf3TJTfbpfbXYijlZarldmJUMiZo8E2ovyQL0oOO0w3QRL619
-        4rZ5pA3j48Xqft54Rhc+/eNztqXUw93f+Y+SKPGkqGvHi+1vFhT1fIuqAugLvom2WqzvWf
-        4p1J9rX8TTK11yvJ3fSlQV0Cex0eCWA=
-Date:   Wed, 11 Mar 2020 20:44:46 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        Hector Marco-Gisbert <hecmargi@upv.es>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will@kernel.org>, Jann Horn <jannh@google.com>,
-        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] x86/elf: Add table to document READ_IMPLIES_EXEC
-Message-ID: <20200311194446.GL3470@zn.tnic>
-References: <20200225051307.6401-1-keescook@chromium.org>
- <20200225051307.6401-2-keescook@chromium.org>
+        id S1731131AbgCKTpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 15:45:06 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46297 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730913AbgCKTpF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 15:45:05 -0400
+Received: by mail-ot1-f66.google.com with SMTP id 111so3366092oth.13
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:45:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oV6RDMEr0DsUD3DHB/8n4G2/2iDeZ0eLNZSWiNXyaYM=;
+        b=xKbtf0BnQk2BwtdQKQs7iuKaaF2pVL9Zhrk9eB97r+Pw62Z0Mc0PJJEGVcj1qQO3+c
+         2Ah6Uc0wfIAHqSse+Qtuy4aRzHAuGHtrw8F0AlY2s7cXDuKS/wgq4uDY2EhpjwALHi6Q
+         T+Teel11DLCqp0DOeJ7tN2MxihFchjCh/SpxspvF+0YxSE56L2eexVX762pccmO1/yml
+         FrN04tjCQ8Ai7F5iTk4XZIcci6KQsJ6SYMFLHuAQna7AX0Hw+FOeJpjZcqnHvioYooe7
+         t24RVM7ZnnyLImbtmRaUdiK6Q62zjDnJR+5IdY+f/atp2UdHwvCeIoGDSRPY3y1wQwsj
+         /ivg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oV6RDMEr0DsUD3DHB/8n4G2/2iDeZ0eLNZSWiNXyaYM=;
+        b=FcLO92B/32NbgFhvnpF9Rb/tbr/oqsLG7J1tTX91yDvSBZkEqDVwDuzXOqwo27MeT6
+         5br2/I+/V/1V1ckw/Pm2cwzL5CLGgV6wSQVCaelRmSpBSJP0teYsz3tmeFpRls1wMuDh
+         VDsaxCh+rlXBYlXjRfE6OOLugasXPvpWg0q4NUoz/PIF99sjMJBPyl35bkUTL82HKigI
+         eV1a8sdX4jWLZAVdAyYVioeVvCgdevM8GZdfg2hn6WjfFgVOIkzS+nNlbsURtS4VuN0x
+         EQw3Xn6gtrbBGVgvJj6nfNrPLLuQuUYvF23to9DT2CXMuo7yngxFDpaGY5u8J1HKOM/t
+         mthQ==
+X-Gm-Message-State: ANhLgQ0N/t/AotX8S5rbAfsEuCbLlugQgMUThqczDhcfQX04g3/xPJkc
+        ROqB0llvYiSeGVrdfnNbR66uvmdyMs6atTysm/jpGg==
+X-Google-Smtp-Source: ADFU+vuiGPlZRPXW6M5wIKU0EkZlFtqjjR8FoEm6ZPVcrHo0mOHeyQGIqaYDMzGR9l74VwCe9fS+4J5P7I3NGcElo48=
+X-Received: by 2002:a4a:9e15:: with SMTP id t21mr1447319ook.70.1583955904880;
+ Wed, 11 Mar 2020 12:45:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200225051307.6401-2-keescook@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200311172109.45134-1-john.stultz@linaro.org>
+ <20200311172109.45134-2-john.stultz@linaro.org> <7337bea7-1449-e6e3-4c65-1bb802a2c316@linaro.org>
+In-Reply-To: <7337bea7-1449-e6e3-4c65-1bb802a2c316@linaro.org>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Wed, 11 Mar 2020 12:44:54 -0700
+Message-ID: <CALAqxLXEZQnH3a8z9CGf52VUbb-ZHX-R78DPM1psJhV9_bs35g@mail.gmail.com>
+Subject: Re: [RESEND][PATCH v8 1/6] usb: dwc3: Registering a role switch in
+ the DRD code.
+To:     "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, Yu Chen <chenyu56@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        ShuFan Lee <shufan_lee@richtek.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jun Li <lijun.kernel@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Guillaume Gardet <Guillaume.Gardet@arm.com>,
+        Jack Pham <jackp@codeaurora.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ozenn Mon, Feb 24, 2020 at 09:13:02PM -0800, Kees Cook wrote:
-> Add a table to document the current behavior of READ_IMPLIES_EXEC in
-> preparation for changing the behavior.
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-> ---
->  arch/x86/include/asm/elf.h | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/elf.h b/arch/x86/include/asm/elf.h
-> index 69c0f892e310..733f69c2b053 100644
-> --- a/arch/x86/include/asm/elf.h
-> +++ b/arch/x86/include/asm/elf.h
-> @@ -281,6 +281,25 @@ extern u32 elf_hwcap2;
->  /*
->   * An executable for which elf_read_implies_exec() returns TRUE will
->   * have the READ_IMPLIES_EXEC personality flag set automatically.
-> + *
-> + * The decision process for determining the results are:
-> + *
-> + *              CPU: | lacks NX*  | has NX, ia32     | has NX, x86_64 |
-> + * ELF:              |            |                  |                |
-> + * -------------------------------|------------------|----------------|
-> + * missing GNU_STACK | exec-all   | exec-all         | exec-all       |
-> + * GNU_STACK == RWX  | exec-all   | exec-all         | exec-all       |
-> + * GNU_STACK == RW   | exec-none  | exec-none        | exec-none      |
+On Wed, Mar 11, 2020 at 12:17 PM Bryan O'Donoghue
+<bryan.odonoghue@linaro.org> wrote:
+>
+> > +static int dwc3_usb_role_switch_set(struct device *dev, enum usb_role role)
+>
+> @bjorn found an API change that explodes this one.
+>
+> Fixed here: https://lkml.org/lkml/2020/3/11/1034
 
-In all those tables, you wanna do:
+Huh. I wonder why I don't see that causing trouble in my testing.  :/
 
-s/GNU_STACK/PT_GNU_STACK/g
+Oddly, trying to use your patch results in build failures for me... Is
+the api change something in -next?
 
-so that it is clear what this define is.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+thanks
+-john
