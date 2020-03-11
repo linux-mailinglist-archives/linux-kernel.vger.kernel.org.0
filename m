@@ -2,90 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7440F1812B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:14:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 163941812BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:16:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbgCKIOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 04:14:52 -0400
-Received: from mga11.intel.com ([192.55.52.93]:11849 "EHLO mga11.intel.com"
+        id S1728585AbgCKIPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 04:15:43 -0400
+Received: from mga12.intel.com ([192.55.52.136]:5732 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726362AbgCKIOv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 04:14:51 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1728533AbgCKIPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 04:15:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 01:14:51 -0700
-X-ExtLoop1: 1
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 01:15:42 -0700
 X-IronPort-AV: E=Sophos;i="5.70,540,1574150400"; 
-   d="scan'208";a="236215354"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga008.fm.intel.com with ESMTP; 11 Mar 2020 01:14:48 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jBwVu-008gZ3-U2; Wed, 11 Mar 2020 10:14:50 +0200
-Date:   Wed, 11 Mar 2020 10:14:50 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Tobias Schramm <t.schramm@manjaro.org>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] power: supply: add CellWise cw2015 fuel gauge
- driver
-Message-ID: <20200311081450.GZ1922688@smile.fi.intel.com>
-References: <20200309160346.2203680-1-t.schramm@manjaro.org>
- <20200309160346.2203680-3-t.schramm@manjaro.org>
- <20200310101050.GG1922688@smile.fi.intel.com>
- <eb732216-dd19-f18d-9ace-e14c7e8de991@manjaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb732216-dd19-f18d-9ace-e14c7e8de991@manjaro.org>
+   d="scan'208";a="236353114"
+Received: from mkuta-mobl.ger.corp.intel.com (HELO localhost) ([10.249.39.69])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 01:15:38 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Wambui Karuga <wambui.karugax@gmail.com>, airlied@linux.ie,
+        daniel@ffwll.ch, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, intel-gfx@lists.freedesktop.org
+Subject: Re: [PATCH v2 14/17] drm/i915: have *_debugfs_init() functions return void.
+In-Reply-To: <20200310133121.27913-15-wambui.karugax@gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20200310133121.27913-1-wambui.karugax@gmail.com> <20200310133121.27913-15-wambui.karugax@gmail.com>
+Date:   Wed, 11 Mar 2020 10:15:55 +0200
+Message-ID: <87y2s7l32c.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 07:55:42PM +0100, Tobias Schramm wrote:
+On Tue, 10 Mar 2020, Wambui Karuga <wambui.karugax@gmail.com> wrote:
+> Since commit 987d65d01356 (drm: debugfs: make
+> drm_debugfs_create_files() never fail), drm_debugfs_create_files() never
+> fails and should return void. Therefore, remove its use as the
+> return value of debugfs_init() functions and have the functions return
+> void.
+>
+> v2: convert intel_display_debugfs_register() stub to return void too.
+>
+> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
 
-> >> +static int cw_read_word(struct cw_battery *cw_bat, u8 reg, u16 *val)
-> >> +{
-> >> +	u8 reg_val[2];
-> >> +	int ret;
-> >> +
-> >> +	ret = regmap_raw_read(cw_bat->regmap, reg, reg_val, 2);
-> >> +	*val = (reg_val[0] << 8) + reg_val[1];
-> >> +	return ret;
-> >> +}
-> > 
-> > NIH BE type of readings? Can REGMAP_ENDIAN_BIG help?
-> 
-> Not really, or can it? Registers on the cw2015 are a wild mix of single
-> bytes and words. There does not seem to be a per register override for
-> reg_/val_bits.
-
-I see.
-Perhaps
-
-	__be16 value;
+Reviewed-by: Jani Nikula <jani.nikula@intel.com>
 
 
-	ret = regmap(..., (...)value, sizeof(value));
-	if (ret)
-		return ret; // note, you missed this in above.
-
-	*val = be16_to_cpu(value);
-	return 0;
+> ---
+>  drivers/gpu/drm/i915/display/intel_display_debugfs.c | 8 ++++----
+>  drivers/gpu/drm/i915/display/intel_display_debugfs.h | 4 ++--
+>  drivers/gpu/drm/i915/i915_debugfs.c                  | 8 ++++----
+>  drivers/gpu/drm/i915/i915_debugfs.h                  | 4 ++--
+>  4 files changed, 12 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/display/intel_display_debugfs.c b/drivers/gpu/drm/i915/display/intel_display_debugfs.c
+> index 1e6eb7f2f72d..424f4e52f783 100644
+> --- a/drivers/gpu/drm/i915/display/intel_display_debugfs.c
+> +++ b/drivers/gpu/drm/i915/display/intel_display_debugfs.c
+> @@ -1927,7 +1927,7 @@ static const struct {
+>  	{"i915_edp_psr_debug", &i915_edp_psr_debug_fops},
+>  };
+>  
+> -int intel_display_debugfs_register(struct drm_i915_private *i915)
+> +void intel_display_debugfs_register(struct drm_i915_private *i915)
+>  {
+>  	struct drm_minor *minor = i915->drm.primary;
+>  	int i;
+> @@ -1940,9 +1940,9 @@ int intel_display_debugfs_register(struct drm_i915_private *i915)
+>  				    intel_display_debugfs_files[i].fops);
+>  	}
+>  
+> -	return drm_debugfs_create_files(intel_display_debugfs_list,
+> -					ARRAY_SIZE(intel_display_debugfs_list),
+> -					minor->debugfs_root, minor);
+> +	drm_debugfs_create_files(intel_display_debugfs_list,
+> +				 ARRAY_SIZE(intel_display_debugfs_list),
+> +				 minor->debugfs_root, minor);
+>  }
+>  
+>  static int i915_panel_show(struct seq_file *m, void *data)
+> diff --git a/drivers/gpu/drm/i915/display/intel_display_debugfs.h b/drivers/gpu/drm/i915/display/intel_display_debugfs.h
+> index a3bea1ce04c2..c922c1745bfe 100644
+> --- a/drivers/gpu/drm/i915/display/intel_display_debugfs.h
+> +++ b/drivers/gpu/drm/i915/display/intel_display_debugfs.h
+> @@ -10,10 +10,10 @@ struct drm_connector;
+>  struct drm_i915_private;
+>  
+>  #ifdef CONFIG_DEBUG_FS
+> -int intel_display_debugfs_register(struct drm_i915_private *i915);
+> +void intel_display_debugfs_register(struct drm_i915_private *i915);
+>  int intel_connector_debugfs_add(struct drm_connector *connector);
+>  #else
+> -static inline int intel_display_debugfs_register(struct drm_i915_private *i915) { return 0; }
+> +static inline void intel_display_debugfs_register(struct drm_i915_private *i915) {}
+>  static inline int intel_connector_debugfs_add(struct drm_connector *connector) { return 0; }
+>  #endif
+>  
+> diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
+> index 8f2525e4ce0f..de313199c714 100644
+> --- a/drivers/gpu/drm/i915/i915_debugfs.c
+> +++ b/drivers/gpu/drm/i915/i915_debugfs.c
+> @@ -2392,7 +2392,7 @@ static const struct i915_debugfs_files {
+>  	{"i915_guc_log_relay", &i915_guc_log_relay_fops},
+>  };
+>  
+> -int i915_debugfs_register(struct drm_i915_private *dev_priv)
+> +void i915_debugfs_register(struct drm_i915_private *dev_priv)
+>  {
+>  	struct drm_minor *minor = dev_priv->drm.primary;
+>  	int i;
+> @@ -2409,7 +2409,7 @@ int i915_debugfs_register(struct drm_i915_private *dev_priv)
+>  				    i915_debugfs_files[i].fops);
+>  	}
+>  
+> -	return drm_debugfs_create_files(i915_debugfs_list,
+> -					I915_DEBUGFS_ENTRIES,
+> -					minor->debugfs_root, minor);
+> +	drm_debugfs_create_files(i915_debugfs_list,
+> +				 I915_DEBUGFS_ENTRIES,
+> +				 minor->debugfs_root, minor);
+>  }
+> diff --git a/drivers/gpu/drm/i915/i915_debugfs.h b/drivers/gpu/drm/i915/i915_debugfs.h
+> index 6da39c76ab5e..1de2736f1248 100644
+> --- a/drivers/gpu/drm/i915/i915_debugfs.h
+> +++ b/drivers/gpu/drm/i915/i915_debugfs.h
+> @@ -12,10 +12,10 @@ struct drm_i915_private;
+>  struct seq_file;
+>  
+>  #ifdef CONFIG_DEBUG_FS
+> -int i915_debugfs_register(struct drm_i915_private *dev_priv);
+> +void i915_debugfs_register(struct drm_i915_private *dev_priv);
+>  void i915_debugfs_describe_obj(struct seq_file *m, struct drm_i915_gem_object *obj);
+>  #else
+> -static inline int i915_debugfs_register(struct drm_i915_private *dev_priv) { return 0; }
+> +static inline void i915_debugfs_register(struct drm_i915_private *dev_priv) {}
+>  static inline void i915_debugfs_describe_obj(struct seq_file *m, struct drm_i915_gem_object *obj) {}
+>  #endif
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Jani Nikula, Intel Open Source Graphics Center
