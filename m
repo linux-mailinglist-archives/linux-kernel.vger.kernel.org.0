@@ -2,237 +2,540 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65993181968
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 14:18:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02EB21819B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 14:28:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729501AbgCKNRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 09:17:55 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39628 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729232AbgCKNRz (ORCPT
+        id S1729614AbgCKN2p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 09:28:45 -0400
+Received: from fw-tnat-cam5.arm.com ([217.140.106.53]:39963 "EHLO
+        cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729103AbgCKN2o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 09:17:55 -0400
-Received: by mail-pf1-f196.google.com with SMTP id w65so1319357pfb.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 06:17:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id;
-        bh=vrtm4mTBXLkyB+Sw62aumVRdIfeHDvffoJwWFM/8N3Y=;
-        b=Ib3HXPLIXFOBbWd+GDPehqS/CfQFc0ubSOsPABUHVsJMsJzu7B74aQP8OEzbVXoBdC
-         Fsbcx/GcKDDoG4Cbz4wlOLbGgsIxMYbfdokVaCHR5HqmyTPyA8hi+JTKsgQgu1QdvAlR
-         R9zzJhro1lKKzRVqYXnTEYQwolr/0e1WfDQSEklDyIqVIY2CnsAvGDPkjOD2t43qYpRJ
-         B9LkIseutQRVjumEytN2E3QKCK+5QgrPZo6MsxxL30VcXvP/rhAA/cP4p9/fbdLm+Y5L
-         s1/iwO4Tthwtej2xoKeyCO6tNFtk9XcNMQE0VdjRTgJ/i2wFY/eyUY/fUqLS0pznHBOo
-         c+2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=vrtm4mTBXLkyB+Sw62aumVRdIfeHDvffoJwWFM/8N3Y=;
-        b=nCK+wdH8UM5V6HSSlT1xvex7egYn9+CjB+IGVOVGYXp9JXWCYWQBdjHfr576E7FmKp
-         sfShgArTjV7xETOmQgztyJ6n3nEpdcUk0HkDXH9WdO+TOvJXbp8534ta9d3KWP9D8wMh
-         NozR91XZ5gi0MeRS1Ehj1P38Cgd8UO4RCzc/sbkdTYK5HnvRcvIEBLJ0EatOSCrdJTFq
-         34JhkZzc/E1CxiNhhDHUHLLZQUQQ2uZe/bhsYBEB5MQvuJWtTCReOXkdXCG50RObcCjq
-         TlWUptMW+R6kTstQuNkERQh9f2LLh4kBxuWmrVwKSe6D2UzrUZFVzVNFC2YPCtE/d7h2
-         o2cA==
-X-Gm-Message-State: ANhLgQ3EOXcqJAHyvMRzNh0MFwigitcjGdCLUXEkRZtEle3Eafarqkju
-        CZsW56C12h634qOHMIaVuqM=
-X-Google-Smtp-Source: ADFU+vtq1nWVaSzlbgb6ufEbxbvcCnfC+F9Npcyl4jGZnsg6Jp5RR8NJfxXGq4d+0B0QQ7ozSM5qOA==
-X-Received: by 2002:a62:6490:: with SMTP id y138mr2854394pfb.96.1583932673834;
-        Wed, 11 Mar 2020 06:17:53 -0700 (PDT)
-Received: from localhost.localdomain ([2405:204:287:fb4d:18bc:a849:c699:3914])
-        by smtp.gmail.com with ESMTPSA id s18sm637434pfe.194.2020.03.11.06.17.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 06:17:53 -0700 (PDT)
-From:   Shreeya Patel <shreeya.patel23498@gmail.com>
-To:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com,
-        sbrivio@redhat.com, daniel.baluta@gmail.com,
-        nramas@linux.microsoft.com, hverkuil@xs4all.nl,
-        shreeya.patel23498@gmail.com, Larry.Finger@lwfinger.net
-Subject: [Outreachy kernel] [PATCH v4] Staging: rtl8188eu: rtw_mlme: Add space around operators
-Date:   Wed, 11 Mar 2020 18:47:42 +0530
-Message-Id: <20200311131742.31068-1-shreeya.patel23498@gmail.com>
+        Wed, 11 Mar 2020 09:28:44 -0400
+X-Greylist: delayed 633 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Mar 2020 09:28:43 EDT
+Received: from e123370-lin.nice.Arm.com (e123370-lin.nice.arm.com [10.34.104.64])
+        by cam-smtp0.cambridge.arm.com (8.13.8/8.13.8) with ESMTP id 02BDI2Xt004408;
+        Wed, 11 Mar 2020 13:18:02 GMT
+From:   Olivier Deprez <olivier.deprez@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] drivers: firmware: ARM debug filesystem
+Date:   Wed, 11 Mar 2020 14:18:02 +0100
+Message-Id: <20200311131802.29921-1-olivier.deprez@arm.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add space around operators for improving the code
-readability.
-Reported by checkpatch.pl
+This patch implements the kernel driver part of a generic firmware
+debug interface. It requires a specific support in the Trusted Firmware
+to expose such interface. It consists in a set of 9p primitives invoked
+through SMC. This permits access to an internal firmware namespace
+using unix-like paths.
 
-git diff -w shows no difference.
-diff of the .o files before and after the changes shows no difference.
-
-Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
+Signed-off-by: Olivier Deprez <olivier.deprez@arm.com>
 ---
+ drivers/firmware/Kconfig       |  10 +
+ drivers/firmware/Makefile      |   2 +
+ drivers/firmware/arm_debugfs.c | 411 +++++++++++++++++++++++++++++++++
+ 3 files changed, 423 insertions(+)
+ create mode 100644 drivers/firmware/arm_debugfs.c
 
-shreeya@Shreeya-Patel:~git/kernels/staging$ git diff -w drivers/staging/rtl8188eu/core/
-shreeya@Shreeya-Patel:~git/kernels/staging$
 
-shreeya@Shreeya-Patel:~git/kernels/staging/drivers/staging/rtl8188eu/core$ diff rtw_mlme_old.o rtw_mlme.o
-shreeya@Shreeya-Patel:~git/kernels/staging/drivers/staging/rtl8188eu/core$
+This kernel driver patch illustrates the concept of a generic firmware debug
+interface. The intent is for firmware to expose debug data by means of abstracted
+directories and files. The primitives are borrowed from 9p. At the user level,
+simple open/read/write/close function wrappers are provided. Those wrappers
+translate into calling the firmware through SMC eventually passing parameters
+through a shared buffer.
 
-Changes in v4
-  - Move important statements into the commit message.
-Changes in v3
-  - Make the diff output explanation more readable.
+Following design proposal:
+https://lists.trustedfirmware.org/pipermail/tf-a/2019-November/000123.html
 
-Changes in v2
-  - Include the file name in Subject to make it more specific.
-  - Add the output of diff of the .o files before and after the changes
-to show no difference.
-  - Add the output of git diff -w to show no difference.
+The TF-A firmware side is merged and visible at:
+https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/tree/lib/debugfs
 
- drivers/staging/rtl8188eu/core/rtw_mlme.c | 40 +++++++++++------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+Documentation:
+https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/tree/docs/components/debugfs-design.rst
+https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/tree/docs/components/arm-sip-service.rst
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-index 8da955e8343b..9de2d421f6b1 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-@@ -149,7 +149,7 @@ static void _rtw_free_network(struct mlme_priv *pmlmepriv, struct wlan_network *
- 	    (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE)))
- 		lifetime = 1;
- 	if (!isfreeall) {
--		delta_time = (curr_time - pnetwork->last_scanned)/HZ;
-+		delta_time = (curr_time - pnetwork->last_scanned) / HZ;
- 		if (delta_time < lifetime)/*  unit:sec */
- 			return;
- 	}
-@@ -249,8 +249,8 @@ void rtw_generate_random_ibss(u8 *pibss)
- 	pibss[1] = 0x11;
- 	pibss[2] = 0x87;
- 	pibss[3] = (u8)(curtime & 0xff);/* p[0]; */
--	pibss[4] = (u8)((curtime>>8) & 0xff);/* p[1]; */
--	pibss[5] = (u8)((curtime>>16) & 0xff);/* p[2]; */
-+	pibss[4] = (u8)((curtime >> 8) & 0xff);/* p[1]; */
-+	pibss[5] = (u8)((curtime >> 16) & 0xff);/* p[2]; */
- }
+The design is still open to evolve. Please provide comments on the general
+concept/acceptance.
+
+Example of exposed firmware data: fip image flash contents
+
+/ # find /sys/kernel/debug/tfa
+/sys/kernel/debug/tfa
+/sys/kernel/debug/tfa/fip
+/sys/kernel/debug/tfa/blobs
+/sys/kernel/debug/tfa/blobs/fip.bin
+/sys/kernel/debug/tfa/blobs/ctl
+/sys/kernel/debug/tfa/dev
+
+/ # xxd -l32 /sys/kernel/debug/tfa/blobs/fip.bin
+00000000: 0100 64aa 7856 3412 0000 0000 0000 0000  ..d.xV4.........
+00000010: 5ff9 ec0b 4d22 3e4d a544 c39d 81c7 3f0a  _...M">M.D....?.
+
+/ # cksum /sys/kernel/debug/tfa/blobs/fip.bin
+4222949163 1048576 /sys/kernel/debug/tfa/blobs/fip.bin
+
+
+
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index 86d2901ad87a..e5c5caecdd86 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -82,6 +82,16 @@ config ARM_SCPI_POWER_DOMAIN
+ 	  This enables support for the SCPI power domains which can be
+ 	  enabled or disabled via the SCP firmware
  
- u8 *rtw_get_capability_from_ie(u8 *ie)
-@@ -357,9 +357,9 @@ void update_network(struct wlan_bssid_ex *dst, struct wlan_bssid_ex *src,
- 			rssi_final = rssi_ori;
- 	} else {
- 		if (sq_smp != 101) { /* from the right channel */
--			ss_final = ((u32)(src->PhyInfo.SignalStrength)+(u32)(dst->PhyInfo.SignalStrength)*4)/5;
--			sq_final = ((u32)(src->PhyInfo.SignalQuality)+(u32)(dst->PhyInfo.SignalQuality)*4)/5;
--			rssi_final = (src->Rssi+dst->Rssi*4)/5;
-+			ss_final = ((u32)(src->PhyInfo.SignalStrength) + (u32)(dst->PhyInfo.SignalStrength) * 4) / 5;
-+			sq_final = ((u32)(src->PhyInfo.SignalQuality) + (u32)(dst->PhyInfo.SignalQuality) * 4) / 5;
-+			rssi_final = (src->Rssi + dst->Rssi * 4) / 5;
- 		} else {
- 			/* bss info not receiving from the right channel, use the original RX signal infos */
- 			ss_final = dst->PhyInfo.SignalStrength;
-@@ -510,7 +510,7 @@ static int rtw_is_desired_network(struct adapter *adapter, struct wlan_network *
- 	privacy = pnetwork->network.Privacy;
- 
- 	if (check_fwstate(pmlmepriv, WIFI_UNDER_WPS)) {
--		if (rtw_get_wps_ie(pnetwork->network.ies+_FIXED_IE_LENGTH_, pnetwork->network.ie_length-_FIXED_IE_LENGTH_, NULL, &wps_ielen))
-+		if (rtw_get_wps_ie(pnetwork->network.ies + _FIXED_IE_LENGTH_, pnetwork->network.ie_length - _FIXED_IE_LENGTH_, NULL, &wps_ielen))
- 			return true;
- 		else
- 			return false;
-@@ -925,7 +925,7 @@ static void rtw_joinbss_update_network(struct adapter *padapter, struct wlan_net
- 	switch (pnetwork->network.InfrastructureMode) {
- 	case Ndis802_11Infrastructure:
- 		if (pmlmepriv->fw_state & WIFI_UNDER_WPS)
--			pmlmepriv->fw_state = WIFI_STATION_STATE|WIFI_UNDER_WPS;
-+			pmlmepriv->fw_state = WIFI_STATION_STATE | WIFI_UNDER_WPS;
- 		else
- 			pmlmepriv->fw_state = WIFI_STATION_STATE;
- 		break;
-@@ -1097,14 +1097,14 @@ static u8 search_max_mac_id(struct adapter *padapter)
- #if defined(CONFIG_88EU_AP_MODE)
- 	if (check_fwstate(pmlmepriv, WIFI_AP_STATE)) {
- 		for (aid = pstapriv->max_num_sta; aid > 0; aid--) {
--			if (pstapriv->sta_aid[aid-1])
-+			if (pstapriv->sta_aid[aid - 1])
- 				break;
- 		}
- 		mac_id = aid + 1;
- 	} else
- #endif
- 	{/* adhoc  id =  31~2 */
--		for (mac_id = NUM_STA-1; mac_id >= IBSS_START_MAC_ID; mac_id--) {
-+		for (mac_id = NUM_STA - 1; mac_id >= IBSS_START_MAC_ID; mac_id--) {
- 			if (pmlmeinfo->FW_sta_info[mac_id].status == 1)
- 				break;
- 		}
-@@ -1123,7 +1123,7 @@ void rtw_stassoc_hw_rpt(struct adapter *adapter, struct sta_info *psta)
- 
- 	macid = search_max_mac_id(adapter);
- 	rtw_hal_set_hwreg(adapter, HW_VAR_TX_RPT_MAX_MACID, (u8 *)&macid);
--	media_status = (psta->mac_id<<8)|1; /*   MACID|OPMODE:1 connect */
-+	media_status = (psta->mac_id << 8) | 1; /*   MACID|OPMODE:1 connect */
- 	rtw_hal_set_hwreg(adapter, HW_VAR_H2C_MEDIA_STATUS_RPT, (u8 *)&media_status);
- }
- 
-@@ -1213,7 +1213,7 @@ void rtw_stadel_event_callback(struct adapter *adapter, u8 *pbuf)
- 	if (mac_id >= 0) {
- 		u16 media_status;
- 
--		media_status = (mac_id<<8)|0; /*   MACID|OPMODE:0 means disconnect */
-+		media_status = (mac_id << 8) | 0; /*   MACID|OPMODE:0 means disconnect */
- 		/* for STA, AP, ADHOC mode, report disconnect stauts to FW */
- 		rtw_hal_set_hwreg(adapter, HW_VAR_H2C_MEDIA_STATUS_RPT, (u8 *)&media_status);
- 	}
-@@ -1640,7 +1640,7 @@ int rtw_restruct_wmm_ie(struct adapter *adapter, u8 *in_ie, u8 *out_ie, uint in_
- 	for (i = 12; i < in_len; i += (in_ie[i + 1] + 2) /* to the next IE element */) {
- 		ielength = initial_out_len;
- 
--		if (in_ie[i] == 0xDD && in_ie[i+2] == 0x00 && in_ie[i+3] == 0x50  && in_ie[i+4] == 0xF2 && in_ie[i+5] == 0x02 && i+5 < in_len) {
-+		if (in_ie[i] == 0xDD && in_ie[i + 2] == 0x00 && in_ie[i + 3] == 0x50  && in_ie[i + 4] == 0xF2 && in_ie[i + 5] == 0x02 && i + 5 < in_len) {
- 			/* WMM element ID and OUI */
- 			/* Append WMM IE to the last index of out_ie */
- 
-@@ -1734,13 +1734,13 @@ int rtw_restruct_sec_ie(struct adapter *adapter, u8 *in_ie, u8 *out_ie, uint in_
- 		authmode = _WPA2_IE_ID_;
- 
- 	if (check_fwstate(pmlmepriv, WIFI_UNDER_WPS)) {
--		memcpy(out_ie+ielength, psecuritypriv->wps_ie, psecuritypriv->wps_ie_len);
-+		memcpy(out_ie + ielength, psecuritypriv->wps_ie, psecuritypriv->wps_ie_len);
- 
- 		ielength += psecuritypriv->wps_ie_len;
- 	} else if ((authmode == _WPA_IE_ID_) || (authmode == _WPA2_IE_ID_)) {
- 		/* copy RSN or SSN */
--		memcpy(&out_ie[ielength], &psecuritypriv->supplicant_ie[0], psecuritypriv->supplicant_ie[1]+2);
--		ielength += psecuritypriv->supplicant_ie[1]+2;
-+		memcpy(&out_ie[ielength], &psecuritypriv->supplicant_ie[0], psecuritypriv->supplicant_ie[1] + 2);
-+		ielength += psecuritypriv->supplicant_ie[1] + 2;
- 		rtw_report_sec_ie(adapter, authmode, psecuritypriv->supplicant_ie);
- 	}
- 
-@@ -1865,7 +1865,7 @@ unsigned int rtw_restructure_ht_ie(struct adapter *padapter, u8 *in_ie, u8 *out_
- 
- 	phtpriv->ht_option = false;
- 
--	p = rtw_get_ie(in_ie+12, _HT_CAPABILITY_IE_, &ielen, in_len-12);
-+	p = rtw_get_ie(in_ie + 12, _HT_CAPABILITY_IE_, &ielen, in_len - 12);
- 
- 	if (p && ielen > 0) {
- 		struct ieee80211_ht_cap ht_cap;
-@@ -1904,16 +1904,16 @@ unsigned int rtw_restructure_ht_ie(struct adapter *padapter, u8 *in_ie, u8 *out_
- 		else
- 			ht_cap.ampdu_params_info |= IEEE80211_HT_CAP_AMPDU_DENSITY & 0x00;
- 
--		rtw_set_ie(out_ie+out_len, _HT_CAPABILITY_IE_,
-+		rtw_set_ie(out_ie + out_len, _HT_CAPABILITY_IE_,
- 			   sizeof(struct ieee80211_ht_cap),
- 			   (unsigned char *)&ht_cap, pout_len);
- 
- 		phtpriv->ht_option = true;
- 
--		p = rtw_get_ie(in_ie+12, _HT_ADD_INFO_IE_, &ielen, in_len-12);
-+		p = rtw_get_ie(in_ie + 12, _HT_ADD_INFO_IE_, &ielen, in_len - 12);
- 		if (p && (ielen == sizeof(struct ieee80211_ht_addt_info))) {
- 			out_len = *pout_len;
--			rtw_set_ie(out_ie+out_len, _HT_ADD_INFO_IE_, ielen, p+2, pout_len);
-+			rtw_set_ie(out_ie + out_len, _HT_ADD_INFO_IE_, ielen, p + 2, pout_len);
- 		}
- 	}
- 	return phtpriv->ht_option;
++config ARM_DEBUGFS
++       bool "ARM TF-A debugfs"
++       help
++         Select Y to implement a firmware debug filesystem accessed
++         through kernel debug sysfs.
++
++         This feature depends on a Trusted-Firmware-A build option
++         (USE_DEBUGFS). It exposes an internal filesystem used to
++         peek/poke firmware data through file abstractions.
++
+ config EDD
+ 	tristate "BIOS Enhanced Disk Drive calls determine boot disk"
+ 	depends on X86
+diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
+index 33dcc099e021..52159d8c94ca 100644
+--- a/drivers/firmware/Makefile
++++ b/drivers/firmware/Makefile
+@@ -2,10 +2,12 @@
+ #
+ # Makefile for the linux kernel.
+ #
++obj-$(CONFIG_ARM_DEBUGFS)	+= arm_debugfs.o
+ obj-$(CONFIG_ARM_PSCI_FW)	+= psci.o
+ obj-$(CONFIG_ARM_PSCI_CHECKER)	+= psci_checker.o
+ obj-$(CONFIG_ARM_SCPI_PROTOCOL)	+= arm_scpi.o
+ obj-$(CONFIG_ARM_SCPI_POWER_DOMAIN) += scpi_pm_domain.o
++
+ obj-$(CONFIG_DMI)		+= dmi_scan.o
+ obj-$(CONFIG_DMI_SYSFS)		+= dmi-sysfs.o
+ obj-$(CONFIG_EDD)		+= edd.o
+diff --git a/drivers/firmware/arm_debugfs.c b/drivers/firmware/arm_debugfs.c
+new file mode 100644
+index 000000000000..9e64228b9c05
+--- /dev/null
++++ b/drivers/firmware/arm_debugfs.c
+@@ -0,0 +1,411 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * Copyright (C) 2020 ARM Limited
++ */
++
++/* #define DEBUG */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/debugfs.h>
++#include <linux/arm-smccc.h>
++#include <linux/slab.h>
++#include <linux/uaccess.h>
++
++#define VERSION_MAJOR		0
++#define VERSION_MINOR		2
++
++#define ARM_SIP_SVC_DEBUGFS	(0xC2000030)
++
++#define SMC_OK			(0)
++
++#define ARM_DEBUGFS_MOUNT	0
++#define ARM_DEBUGFS_CREATE	1
++#define ARM_DEBUGFS_OPEN	2
++#define ARM_DEBUGFS_CLOSE	3
++#define ARM_DEBUGFS_READ	4
++#define ARM_DEBUGFS_WRITE	5
++#define ARM_DEBUGFS_SEEK	6
++#define ARM_DEBUGFS_BIND	7
++#define ARM_DEBUGFS_STAT	8
++#define ARM_DEBUGFS_INIT	10
++#define ARM_DEBUGFS_VERSION	11
++
++#define NAMELEN			13 /* Maximum length of a file name */
++#define MAX_PATH_LEN		256
++
++#define QID_CHDIR		0x8000
++
++#define ARM_DEBUGFS_KSEEK_SET	(0)
++
++enum devflags {
++	ARM_DEBUGFS_OREAD   = 1 << 0,
++	ARM_DEBUGFS_OWRITE  = 1 << 1,
++	ARM_DEBUGFS_ORDWR   = 1 << 2,
++	ARM_DEBUGFS_OBIND   = 1 << 3,
++	ARM_DEBUGFS_ODIR    = 1 << 4,
++	ARM_DEBUGFS_OSTAT   = 1 << 5,
++};
++
++struct dir {
++	char name[NAMELEN];
++	long length;
++	unsigned char mode;
++	unsigned char type;
++	unsigned char dev;
++	unsigned short qid;
++};
++
++union debugfs_parms {
++	struct {
++		char fname[MAX_PATH_LEN];
++	} open;
++
++	struct mount {
++		char srv[MAX_PATH_LEN];
++		char where[MAX_PATH_LEN];
++		char spec[MAX_PATH_LEN];
++	} mount;
++
++	struct {
++		char path[MAX_PATH_LEN];
++		struct dir dir;
++	} stat;
++
++	struct {
++		char oldpath[MAX_PATH_LEN];
++		char newpath[MAX_PATH_LEN];
++	} bind;
++};
++
++static struct {
++	void *shared_buffer;
++	struct dentry *tfa_rootdir;
++	void *read_buffer;
++
++	/* This mutex protects the shared buffer and forbids concurrent */
++	/* entry into the debugfs internal firmware layers.             */
++	struct mutex debugfs_lock;
++} g;
++
++static int version(void)
++{
++	struct arm_smccc_res res;
++
++	arm_smccc_1_1_smc(ARM_SIP_SVC_DEBUGFS, ARM_DEBUGFS_VERSION, &res);
++
++	return (res.a0 == SMC_OK) ? res.a1 : -EIO;
++}
++
++static int tfa_9p_init(void *shared_buffer)
++{
++	struct arm_smccc_res res;
++	phys_addr_t buffer_phys;
++
++	buffer_phys = virt_to_phys(shared_buffer);
++	if (!buffer_phys)
++		return -ENOMEM;
++
++	pr_debug("shared buffer 0x%p (PA 0x%llx)\n",
++		 shared_buffer, buffer_phys);
++
++	/* Pass the kernel allocated shared buffer PA */
++	arm_smccc_1_1_smc(ARM_SIP_SVC_DEBUGFS, ARM_DEBUGFS_INIT, buffer_phys,
++			  &res);
++
++	return res.a0;
++}
++
++static int open(const char *name, int flags)
++{
++	union debugfs_parms *parms = g.shared_buffer;
++	struct arm_smccc_res res;
++
++	mutex_lock(&g.debugfs_lock);
++	strlcpy(parms->open.fname, name, MAX_PATH_LEN);
++	arm_smccc_1_1_smc(ARM_SIP_SVC_DEBUGFS, ARM_DEBUGFS_OPEN, flags, &res);
++	mutex_unlock(&g.debugfs_lock);
++
++	return (res.a0 == SMC_OK) ? res.a1 : -EIO;
++}
++
++static int read(int fd, void *buf, size_t size)
++{
++	struct arm_smccc_res res;
++	int ret = -EIO;
++
++	mutex_lock(&g.debugfs_lock);
++	arm_smccc_1_1_smc(ARM_SIP_SVC_DEBUGFS, ARM_DEBUGFS_READ, fd, size,
++			  &res);
++
++	if (res.a0 != SMC_OK)
++		goto exit_unlock;
++
++	if (res.a1 > size) {
++		ret = -EIO;
++		goto exit_unlock;
++	}
++
++	memcpy(buf, g.shared_buffer, size);
++	ret = res.a1;
++
++exit_unlock:
++	mutex_unlock(&g.debugfs_lock);
++
++	return ret;
++}
++
++static int seek(int fd, long off, int whence)
++{
++	struct arm_smccc_res res;
++
++	mutex_lock(&g.debugfs_lock);
++	arm_smccc_1_1_smc(ARM_SIP_SVC_DEBUGFS, ARM_DEBUGFS_SEEK, fd, off,
++			  whence, &res);
++	mutex_unlock(&g.debugfs_lock);
++
++	return (res.a0 == SMC_OK) ? res.a1 : -EIO;
++}
++
++static int stat(const char *name, struct dir *entry)
++{
++	union debugfs_parms *parms = g.shared_buffer;
++	struct arm_smccc_res res;
++
++	mutex_lock(&g.debugfs_lock);
++	strlcpy(parms->stat.path, name, MAX_PATH_LEN);
++	arm_smccc_1_1_smc(ARM_SIP_SVC_DEBUGFS, ARM_DEBUGFS_STAT, &res);
++	mutex_unlock(&g.debugfs_lock);
++
++	if (res.a0 == SMC_OK)
++		memcpy(entry, &parms->stat.dir, sizeof(struct dir));
++
++	return (res.a0 == SMC_OK) ? res.a1 : -EIO;
++}
++
++static int close(int fd)
++{
++	struct arm_smccc_res res;
++
++	mutex_lock(&g.debugfs_lock);
++	arm_smccc_1_1_smc(ARM_SIP_SVC_DEBUGFS, ARM_DEBUGFS_CLOSE, fd, &res);
++	mutex_unlock(&g.debugfs_lock);
++
++	return (res.a0 == SMC_OK) ? 0 : -EIO;
++}
++
++static void dir_print(struct dir *dir)
++{
++	pr_devel("%s name %s, len %ld, mode %d, type %d, dev %d, qid 0x%x\n",
++		 __func__, dir->name, dir->length, dir->mode, dir->type,
++		 dir->dev, dir->qid);
++}
++
++ssize_t debugfs_read(struct file *file, char __user *user_buf, size_t length,
++		     loff_t *offset)
++{
++	char *debugfs_path, *tfa_path, *buf = (char *)g.read_buffer;
++	char pathname[MAX_PATH_LEN];
++	int ret, fd, read_size = 0;
++	struct dir dir_entry;
++
++	if (!offset || !user_buf || !length)
++		return 0;
++
++	/* Convert path object to an ascii absolute path string */
++	debugfs_path = d_path(&file->f_path, pathname, MAX_PATH_LEN);
++	if (!debugfs_path || IS_ERR(debugfs_path))
++		return 0;
++
++	/* Extrapolate the relative path in the firmware 9p hierarchy */
++	tfa_path = strstr(debugfs_path, "/tfa/");
++	if (!tfa_path)
++		return 0;
++
++	/* Skip debugfs absolute directory path */
++	tfa_path += 4;
++
++	/* Check file presence and get file size */
++	ret = stat(tfa_path, &dir_entry);
++	if (ret < 0) {
++		pr_err("%s stat failed\n", __func__);
++		return 0;
++	}
++
++	/* Discard read operation if offset is out of bounds */
++	if (*offset >= dir_entry.length)
++		return 0;
++
++	fd = open(tfa_path, ARM_DEBUGFS_OREAD);
++	if (fd < 0) {
++		pr_err("%s open failed\n", __func__);
++		return 0;
++	}
++
++	if (*offset > 0) {
++		ret = seek(fd, *offset, ARM_DEBUGFS_KSEEK_SET);
++		if (ret < 0) {
++			pr_err("%s seek failed ret=%d\n", __func__, ret);
++			goto exit_close;
++		}
++	}
++
++	/* Restrict length to one page frame size maximum */
++	if (length > PAGE_SIZE)
++		length = PAGE_SIZE;
++
++	read_size = read(fd, buf, length);
++	if (read_size <= 0) {
++		pr_err("%s read failed ret=%d\n", __func__, read_size);
++		goto exit_close;
++	}
++
++	if (copy_to_user(user_buf, buf, read_size)) {
++		pr_err("%s copy to user failed\n", __func__);
++		goto exit_close;
++	}
++
++	*offset += read_size;
++
++exit_close:
++	ret = close(fd);
++	if (ret < 0)
++		pr_err("%s close failed\n", __func__);
++
++	return read_size;
++}
++
++const struct file_operations debugfs_ops = {
++	.read = debugfs_read
++};
++
++static int arm_debugfs_walk_dir(struct dentry *parent_dir, const char *path)
++{
++	int ret, fd;
++	struct dir dir;
++	struct dentry *dent, *fent;
++	char abs_path[MAX_PATH_LEN];
++
++	/* open root directory */
++	fd = open(path, ARM_DEBUGFS_OREAD);
++	if (fd < 0) {
++		pr_err("open failed %d\n", fd);
++		return -EIO;
++	}
++
++	/* read directory entries */
++	do {
++		ret = read(fd, &dir, sizeof(dir));
++		if (ret > 0) {
++			dir_print(&dir);
++			if (dir.qid & QID_CHDIR) {
++				dent = debugfs_create_dir(dir.name, parent_dir);
++				snprintf(abs_path, MAX_PATH_LEN, "%s%s/",
++					 path, dir.name);
++				(void)arm_debugfs_walk_dir(dent, abs_path);
++			} else {
++				fent = debugfs_create_file(dir.name, O_RDONLY,
++							   parent_dir, NULL,
++							   &debugfs_ops);
++			}
++		}
++	} while (ret > 0);
++
++	/* close root directory handle */
++	ret = close(fd);
++	if (ret < 0) {
++		pr_err("close failed %d\n", ret);
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static int __init arm_debugfs_init(void)
++{
++	int ret;
++
++	/* Requires debugfs framework */
++	ret = debugfs_initialized();
++	if (!ret)
++		return ret;
++
++	/*
++	 * Request ARM TF-A debugfs interface version also used as
++	 * a means to detect such interface presence.
++	 */
++	ret = version();
++	if (ret < 0) {
++		pr_err("%s failed getting interface version.\n", __func__);
++		return ret;
++	}
++
++	pr_debug("%s interface version 0x%x\n", __func__, ret);
++
++	/* Create a top-level debugfs directory */
++	g.tfa_rootdir = debugfs_create_dir("tfa", NULL);
++	if (!g.tfa_rootdir)
++		return -EIO;
++
++	/* Allocate a shared buffer page */
++	g.shared_buffer = (void *)__get_free_page(GFP_KERNEL);
++	if (!g.shared_buffer)
++		goto exit_dir;
++
++	g.read_buffer = kzalloc(PAGE_SIZE, GFP_KERNEL);
++	if (!g.read_buffer)
++		goto exit_free_shared_buffer;
++
++	/* Initialize ARM firmware debugfs interface */
++	ret = tfa_9p_init(g.shared_buffer);
++	if (ret)
++		goto exit_free_read_buffer;
++
++	mutex_init(&g.debugfs_lock);
++
++	ret = arm_debugfs_walk_dir(g.tfa_rootdir, "/");
++	if (ret)
++		goto exit_mutex_destroy;
++
++	pr_info("ARM TF-A debugfs v%u.%u interface initialized.\n",
++		VERSION_MAJOR, VERSION_MINOR);
++
++	return 0;
++
++exit_mutex_destroy:
++	mutex_destroy(&g.debugfs_lock);
++
++exit_free_read_buffer:
++	kfree(g.read_buffer);
++
++exit_free_shared_buffer:
++	free_page((uintptr_t)g.shared_buffer);
++
++exit_dir:
++	debugfs_remove_recursive(g.tfa_rootdir);
++
++	return ret;
++}
++module_init(arm_debugfs_init);
++
++static void __exit arm_debugfs_exit(void)
++{
++	debugfs_remove_recursive(g.tfa_rootdir);
++	mutex_destroy(&g.debugfs_lock);
++	free_page((uintptr_t)g.shared_buffer);
++	pr_info("ARM debugfs exited.\n");
++}
++module_exit(arm_debugfs_exit);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("ARM debugfs");
++MODULE_VERSION("0.2");
 -- 
 2.17.1
 
