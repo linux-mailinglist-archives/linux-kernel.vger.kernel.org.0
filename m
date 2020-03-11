@@ -2,77 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC249181BD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:56:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EB5C181BE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:59:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729869AbgCKO4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 10:56:08 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:45812 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729521AbgCKO4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 10:56:07 -0400
-Received: from zn.tnic (p200300EC2F12AA00E5C435974B72A9DE.dip0.t-ipconnect.de [IPv6:2003:ec:2f12:aa00:e5c4:3597:4b72:a9de])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 834C71EC0BF2;
-        Wed, 11 Mar 2020 15:56:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1583938566;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=92qwRm+YOA18EqQyRIQCHO5hSt3TQ0QTKu3/BKRY/WM=;
-        b=sNkNrzhdtUbjn39ZqLFHkdiOJgk6qMzncEQPLfKgcqq409n7qijV04mih0quVL9x2/qM80
-        FPRKcfwatCBps4LdMQmgDZiRyrs71keb8txORKXgewxntIX4D8Mj2YlGos5Xjyst94YFqa
-        Dw7/Px4d6L8QTTv+JyzP6cRcSG9a3SQ=
-Date:   Wed, 11 Mar 2020 15:56:11 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Joerg Roedel <jroedel@suse.de>
+        id S1729848AbgCKO65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 10:58:57 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38596 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729309AbgCKO64 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 10:58:56 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jC2os-0002Ez-Pt; Wed, 11 Mar 2020 15:58:50 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 598211C2209;
+        Wed, 11 Mar 2020 15:58:50 +0100 (CET)
+Date:   Wed, 11 Mar 2020 14:58:50 -0000
+From:   "tip-bot2 for Tom Lendacky" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/ioremap: Map EFI runtime services data as
+ encrypted for SEV
 Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Bruce Rogers <brogers@suse.com>
-Subject: Re: [PATCH] x86/ioremap: Map EFI runtime services data as encrypted
- for SEV
-Message-ID: <20200311145610.GC3470@zn.tnic>
-References: <2d9e16eb5b53dc82665c95c6764b7407719df7a0.1582645327.git.thomas.lendacky@amd.com>
- <20200310124003.GE29372@zn.tnic>
- <20200310130321.GH7028@suse.de>
- <20200310163738.GF29372@zn.tnic>
- <20200310174712.GG29372@zn.tnic>
- <20200311090447.GI7028@suse.de>
+        Borislav Petkov <bp@suse.de>, Joerg Roedel <jroedel@suse.de>,
+        <stable@vger.kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: =?utf-8?q?=3C2d9e16eb5b53dc82665c95c6764b7407719df7a0=2E15826?=
+ =?utf-8?q?45327=2Egit=2Ethomas=2Elendacky=40amd=2Ecom=3E?=
+References: =?utf-8?q?=3C2d9e16eb5b53dc82665c95c6764b7407719df7a0=2E158264?=
+ =?utf-8?q?5327=2Egit=2Ethomas=2Elendacky=40amd=2Ecom=3E?=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200311090447.GI7028@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <158393873003.28353.16382331068625290742.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 10:04:47AM +0100, Joerg Roedel wrote:
-> Hi,
-> 
-> On Tue, Mar 10, 2020 at 06:47:31PM +0100, Borislav Petkov wrote:
-> > Ok, here's what I have. @joro, I know it is trivially different from the
-> > version you tested but I'd appreciate it if you ran it again, just to be
-> > sure.
-> 
-> Looks good and ested it, works fine.
-> 
-> Reviewed-by: Joerg Roedel <jroedel@suse.de>
-> Tested-by: Joerg Roedel <jroedel@suse.de>
+The following commit has been merged into the x86/urgent branch of tip:
 
-Thanks man!
+Commit-ID:     985e537a4082b4635754a57f4f95430790afee6a
+Gitweb:        https://git.kernel.org/tip/985e537a4082b4635754a57f4f95430790afee6a
+Author:        Tom Lendacky <thomas.lendacky@amd.com>
+AuthorDate:    Tue, 10 Mar 2020 18:35:57 +01:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Wed, 11 Mar 2020 15:54:54 +01:00
 
--- 
-Regards/Gruss,
-    Boris.
+x86/ioremap: Map EFI runtime services data as encrypted for SEV
 
-https://people.kernel.org/tglx/notes-about-netiquette
+The dmidecode program fails to properly decode the SMBIOS data supplied
+by OVMF/UEFI when running in an SEV guest. The SMBIOS area, under SEV, is
+encrypted and resides in reserved memory that is marked as EFI runtime
+services data.
+
+As a result, when memremap() is attempted for the SMBIOS data, it
+can't be mapped as regular RAM (through try_ram_remap()) and, since
+the address isn't part of the iomem resources list, it isn't mapped
+encrypted through the fallback ioremap().
+
+Add a new __ioremap_check_other() to deal with memory types like
+EFI_RUNTIME_SERVICES_DATA which are not covered by the resource ranges.
+
+This allows any runtime services data which has been created encrypted,
+to be mapped encrypted too.
+
+ [ bp: Move functionality to a separate function. ]
+
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Joerg Roedel <jroedel@suse.de>
+Tested-by: Joerg Roedel <jroedel@suse.de>
+Cc: <stable@vger.kernel.org> # 5.3
+Link: https://lkml.kernel.org/r/2d9e16eb5b53dc82665c95c6764b7407719df7a0.1582645327.git.thomas.lendacky@amd.com
+---
+ arch/x86/mm/ioremap.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+index 44e4beb..935a91e 100644
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -106,6 +106,19 @@ static unsigned int __ioremap_check_encrypted(struct resource *res)
+ 	return 0;
+ }
+ 
++/*
++ * The EFI runtime services data area is not covered by walk_mem_res(), but must
++ * be mapped encrypted when SEV is active.
++ */
++static void __ioremap_check_other(resource_size_t addr, struct ioremap_desc *desc)
++{
++	if (!sev_active())
++		return;
++
++	if (efi_mem_type(addr) == EFI_RUNTIME_SERVICES_DATA)
++		desc->flags |= IORES_MAP_ENCRYPTED;
++}
++
+ static int __ioremap_collect_map_flags(struct resource *res, void *arg)
+ {
+ 	struct ioremap_desc *desc = arg;
+@@ -124,6 +137,9 @@ static int __ioremap_collect_map_flags(struct resource *res, void *arg)
+  * To avoid multiple resource walks, this function walks resources marked as
+  * IORESOURCE_MEM and IORESOURCE_BUSY and looking for system RAM and/or a
+  * resource described not as IORES_DESC_NONE (e.g. IORES_DESC_ACPI_TABLES).
++ *
++ * After that, deal with misc other ranges in __ioremap_check_other() which do
++ * not fall into the above category.
+  */
+ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
+ 				struct ioremap_desc *desc)
+@@ -135,6 +151,8 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
+ 	memset(desc, 0, sizeof(struct ioremap_desc));
+ 
+ 	walk_mem_res(start, end, desc, __ioremap_collect_map_flags);
++
++	__ioremap_check_other(addr, desc);
+ }
+ 
+ /*
