@@ -2,54 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82918181757
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 13:02:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE39418175C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 13:03:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729232AbgCKMCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 08:02:16 -0400
-Received: from foss.arm.com ([217.140.110.172]:48688 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729026AbgCKMCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 08:02:16 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9C891FB;
-        Wed, 11 Mar 2020 05:02:15 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.71])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF18B3F6CF;
-        Wed, 11 Mar 2020 05:02:14 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 12:02:12 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] arm64: Mark call_smc_arch_workaround_1 as __maybe_unused
-Message-ID: <20200311120212.GE3216816@arrakis.emea.arm.com>
-References: <20200310232544.8792-1-natechancellor@gmail.com>
+        id S1729268AbgCKMC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 08:02:57 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:22069 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729026AbgCKMC4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 08:02:56 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1583928176; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=EPwXWRLBatAS36UEQmnN9AxkJYR2loK0yjlgdQridsc=; b=nMErF/AogdDyQ4ytawArvw5v9t5OZ+y0vRV9VIzoM1BPHEGiykwfRJaTaIR++olqqWu9cVdp
+ ysXRexsTWlYMK7hw1QMVE8sMp6vWhNtPwVuOQXnZogARcCBCPjWzdQY3EzYe78OdPnG92wzG
+ PmYyY2aDVVsNV3xaGYmOsqB6HQg=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e68d359.7fe690b577a0-smtp-out-n03;
+ Wed, 11 Mar 2020 12:02:33 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 9D582C433CB; Wed, 11 Mar 2020 12:02:33 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.0
+Received: from [10.206.13.37] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mkshah)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3FCAAC433BA;
+        Wed, 11 Mar 2020 12:02:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3FCAAC433BA
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
+Subject: Re: [RFT PATCH 4/9] drivers: qcom: rpmh-rsc: Remove get_tcs_of_type()
+ abstraction
+To:     Douglas Anderson <dianders@chromium.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>, mka@chromium.org,
+        evgreen@chromium.org, swboyd@chromium.org,
+        Lina Iyer <ilina@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200306235951.214678-1-dianders@chromium.org>
+ <20200306155707.RFT.4.Ia348ade7c6ed1d0d952ff2245bc854e5834c8d9a@changeid>
+From:   Maulik Shah <mkshah@codeaurora.org>
+Message-ID: <95770b22-f681-9801-5c5e-67aa16071267@codeaurora.org>
+Date:   Wed, 11 Mar 2020 17:32:27 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200310232544.8792-1-natechancellor@gmail.com>
+In-Reply-To: <20200306155707.RFT.4.Ia348ade7c6ed1d0d952ff2245bc854e5834c8d9a@changeid>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 04:25:44PM -0700, Nathan Chancellor wrote:
-> When building allnoconfig:
-> 
-> arch/arm64/kernel/cpu_errata.c:174:13: warning: unused function
-> 'call_smc_arch_workaround_1' [-Wunused-function]
-> static void call_smc_arch_workaround_1(void)
->             ^
-> 1 warning generated.
-> 
-> Follow arch/arm and mark this function as __maybe_unused.
-> 
-> Fixes: 4db61fef16a1 ("arm64: kvm: Modernize __smccc_workaround_1_smc_start annotations")
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Hi,
 
-Applied. Thanks.
+On 3/7/2020 5:29 AM, Douglas Anderson wrote:
+> The get_tcs_of_type() function doesn't provide any value.  It's not
+> conceptually difficult to access a value in an array, even if that
+> value is in a structure and we want a pointer to the value.  Having
+> the function in there makes me feel like it's doing something fancier
+> like looping or searching.  Remove it.
+>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+>
+>  drivers/soc/qcom/rpmh-rsc.c | 13 +++----------
+>  1 file changed, 3 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+> index 099603bf14bf..a1298035bcd2 100644
+> --- a/drivers/soc/qcom/rpmh-rsc.c
+> +++ b/drivers/soc/qcom/rpmh-rsc.c
+> @@ -169,17 +169,10 @@ static bool tcs_is_free(struct rsc_drv *drv, int tcs_id)
+>  	       read_tcs_reg(drv, RSC_DRV_STATUS, tcs_id);
+>  }
+>  
+> -static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
+> -{
+> -	return &drv->tcs[type];
+> -}
+> -
+>  static int tcs_invalidate(struct rsc_drv *drv, int type)
+>  {
+>  	int m;
+> -	struct tcs_group *tcs;
+> -
+> -	tcs = get_tcs_of_type(drv, type);
+> +	struct tcs_group *tcs = &drv->tcs[type];
+>  
+>  	spin_lock(&tcs->lock);
+>  	if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS)) {
+> @@ -245,9 +238,9 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
+>  	 * dedicated AMC, and therefore would invalidate the sleep and wake
+>  	 * TCSes before making an active state request.
+>  	 */
+> -	tcs = get_tcs_of_type(drv, type);
+> +	tcs = &drv->tcs[type];
+>  	if (msg->state == RPMH_ACTIVE_ONLY_STATE && !tcs->num_tcs) {
+> -		tcs = get_tcs_of_type(drv, WAKE_TCS);
+> +		tcs = &drv->tcs[WAKE_TCS];
+>  		if (tcs->num_tcs) {
+>  			ret = rpmh_rsc_invalidate(drv);
+>  			if (ret)
+Reviewed-by: Maulik Shah <mkshah@codeaurora.org>
+
+Thanks,
+Maulik
 
 -- 
-Catalin
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
