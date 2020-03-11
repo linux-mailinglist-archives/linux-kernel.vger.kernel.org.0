@@ -2,62 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE520181EED
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:15:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44913181F14
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:18:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730446AbgCKRPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:15:22 -0400
-Received: from mga03.intel.com ([134.134.136.65]:12743 "EHLO mga03.intel.com"
+        id S1730416AbgCKRSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:18:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730236AbgCKRPV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:15:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 10:15:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
-   d="scan'208";a="231756380"
-Received: from hhuan26-mobl1.amr.corp.intel.com ([10.252.135.72])
-  by orsmga007.jf.intel.com with ESMTP; 11 Mar 2020 10:15:18 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v28 14/22] selftests/x86: Add a selftest for SGX
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
- <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com>
- <20200306053210.GA16297@wind.enjellic.com>
- <op.0g923rgpwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
- <20200311091313.GA8094@wind.enjellic.com>
-Date:   Wed, 11 Mar 2020 12:15:17 -0500
+        id S1730059AbgCKRSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:18:05 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB58220736;
+        Wed, 11 Mar 2020 17:18:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583947085;
+        bh=kSRd2vWUlnNIgg7VJGv6T4EyBaZG9+3GbIsDwtJPOLw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XYKE+mrP7iqEs6IES9OU+6rgpsZQLgvsE9pMapPflmYEkyJlu5B/q4lmRuaHdzrSN
+         QW0bR/ChigYgeV+OEjJikRzsPQeWiozwOykBkHi2JNMAeqM55nPdb5FZpuQYtn5eJE
+         OYEEDpNCabuyYlp2uRw/fDRfmA9He3pw7ky+tx5s=
+Date:   Wed, 11 Mar 2020 18:18:02 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     torvalds@linux-foundation.org, aros@gmx.com,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: Re: [PATCH] device core: fix dma_mask handling in
+ platform_device_register_full
+Message-ID: <20200311171802.GA3952198@kroah.com>
+References: <20200311160710.376090-1-hch@lst.de>
+ <20200311161423.GA3941932@kroah.com>
+ <20200311161551.GA24878@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel Corp
-Message-ID: <op.0hbrjrc1wjvjmi@hhuan26-mobl1.amr.corp.intel.com>
-In-Reply-To: <20200311091313.GA8094@wind.enjellic.com>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200311161551.GA24878@lst.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Mar 2020 04:13:13 -0500, Dr. Greg <greg@enjellic.com> wrote:
+On Wed, Mar 11, 2020 at 05:15:51PM +0100, Christoph Hellwig wrote:
+> On Wed, Mar 11, 2020 at 05:14:23PM +0100, Greg KH wrote:
+> > On Wed, Mar 11, 2020 at 05:07:10PM +0100, Christoph Hellwig wrote:
+> > > Ever since the generic platform device code started allocating DMA masks
+> > > itself the code to allocate and leak a private DMA mask in
+> > > platform_device_register_full has been superflous.  More so the fact that
+> > > it unconditionally frees the DMA mask allocation in the failure path
+> > > can lead to slab corruption if the function fails later on for a device
+> > > where it didn't allocate the mask.  Just remove the offending code.
+> > > 
+> > > Fixes: cdfee5623290 ("driver core: initialize a default DMA mask for platform device")
+> > > Reported-by: Artem S. Tashkinov <aros@gmx.com>
+> > > Tested-by: Artem S. Tashkinov <aros@gmx.com>
+> > 
+> > No s-o-b from you?  :(
+> > 
+> > I can take this, or Linus, you can take this now if you want to as well:
+> 
+> Sorry, here it is:
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-...
->
-> Do you remember, off the top of your head, having to address guard
-> pages differently?
->
-No, we did not make changes specific to guard pages.
+Is this still needed with the patch that Linus just committed to his
+tree?
 
-Haitao
+thanks,
+
+greg k-h
