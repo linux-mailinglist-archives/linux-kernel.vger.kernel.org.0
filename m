@@ -2,129 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14327181B36
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:31:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A74F181B45
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 15:32:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729848AbgCKObC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 10:31:02 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39693 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729309AbgCKObB (ORCPT
+        id S1729892AbgCKOcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 10:32:53 -0400
+Received: from smtprelay0134.hostedemail.com ([216.40.44.134]:57708 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729473AbgCKOcw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 10:31:01 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r15so2906223wrx.6;
-        Wed, 11 Mar 2020 07:30:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VjzeEKChSA5U1RVRAuBtpoNW2CBTxFFw13vMlkz5Qxk=;
-        b=EHqlZFnV23fFnJW6akKlxvTs10LaICmJ/QCOlISSxIB0cw/p6s1ifiyS3OZVNq7Cra
-         /3936DKt8/JFJz9DaopJG5InbBeZvZQeuOQZ6Aed3ghopyfvrWaRZCF1LE/x6R5kBpJn
-         0/A1PFt0H4dOR0eMsY0VrYnR0krQmusq1cJRptn09df4Qfb6qmziQ+zua6UH2O+eMec2
-         Bw8N02JXEbs4uNpXpKNEvAUIqsava8YurAY6JtdU3NoMUaC9nfqn1m24q5apukcQLlnC
-         b1m2mUIIDODwT1Dp8udTeIrQeUioqm9GfvpINHA4RYsiD3ooKoLqmsKQjaZJENIv0tX0
-         dBGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VjzeEKChSA5U1RVRAuBtpoNW2CBTxFFw13vMlkz5Qxk=;
-        b=DzRst48KUcc5LxTJIMV84RcHd5Zq9i5tTZEs5gVRaQs+VNV+VEFCOeaNDmaVmg90uf
-         uaDyXF6E7KnF5SOSQjLZAq9GH2wJ2JRFDv3iF/XBG3ya8qXO819JHRDtDTVW+eaMIhxh
-         2yqb6Ld9lBAjxCAWH4ShfM5LTXwOvbb/02fgccV1/bN5RdzB1EBs1duAexRQeZVECQhF
-         T1OSBqaXSb4ZxX248UN56K82DJ5qwwu5M5g6+S9hTMk0pVVKNn9/iXwAOOSYketdqNXF
-         pIMhNthn+oMUFMfZMi25rfMPPFr+sepu3JP4Lm5p4E8pf7+e1ETjTGdgueRc44EGW2LL
-         lZlw==
-X-Gm-Message-State: ANhLgQ3/7b/RwVt7OfnVXNpbROxeoa+blDIczej8jd+bTiRrLFXidvRS
-        lSN+sJ1iGevVqig3tTHcvCc=
-X-Google-Smtp-Source: ADFU+vuCLwEwQ5JWv5ljZuN0njk0gngoUTdcQ0yYvpJ5vzAu66rQL6Q1YmXNCUN1Wmmj/p+P6gqpCA==
-X-Received: by 2002:a5d:5090:: with SMTP id a16mr4872952wrt.191.1583937058668;
-        Wed, 11 Mar 2020 07:30:58 -0700 (PDT)
-Received: from localhost (pD9E516A9.dip0.t-ipconnect.de. [217.229.22.169])
-        by smtp.gmail.com with ESMTPSA id 138sm3297085wmb.21.2020.03.11.07.30.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 07:30:57 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 15:30:53 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Vidya Sagar <vidyas@nvidia.com>, bhelgaas@google.com,
-        robh+dt@kernel.org, jonathanh@nvidia.com, andrew.murray@arm.com,
-        kishon@ti.com, gustavo.pimentel@synopsys.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V5 0/5] Add support for PCIe endpoint mode in Tegra194
-Message-ID: <20200311143053.GB494173@ulmo>
-References: <20200303181052.16134-1-vidyas@nvidia.com>
- <20200311105141.GA30083@e121166-lin.cambridge.arm.com>
+        Wed, 11 Mar 2020 10:32:52 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id CCB4710052861;
+        Wed, 11 Mar 2020 14:32:51 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1568:1593:1594:1711:1714:1730:1747:1777:1792:2393:2525:2553:2560:2563:2682:2685:2828:2859:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3866:3867:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:9025:10004:10400:10848:11232:11658:11914:12043:12297:12438:12555:12740:12760:12895:12986:13069:13311:13357:13439:14181:14659:14721:21080:21433:21451:21627:21811:21939:30054:30060:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: sheet55_18d17c0d0ac3d
+X-Filterd-Recvd-Size: 1720
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 11 Mar 2020 14:32:50 +0000 (UTC)
+Message-ID: <891a42ad8d8fd7beca911845108e1ded022ef3f7.camel@perches.com>
+Subject: Re: [PATCH -next 005/491] ARM/UNIPHIER ARCHITECTURE: Use
+ fallthrough;
+From:   Joe Perches <joe@perches.com>
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Wed, 11 Mar 2020 07:31:07 -0700
+In-Reply-To: <CAK7LNAS7GAk9yXkPhbS3ByU+n9Gb-rk0PeLcXLCNwpW1B22aeg@mail.gmail.com>
+References: <cover.1583896344.git.joe@perches.com>
+         <dae0878058223a42c77d725b8d7c5845a7ef9dc0.1583896348.git.joe@perches.com>
+         <CAK7LNAS7GAk9yXkPhbS3ByU+n9Gb-rk0PeLcXLCNwpW1B22aeg@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i9LlY+UWpKt15+FH"
-Content-Disposition: inline
-In-Reply-To: <20200311105141.GA30083@e121166-lin.cambridge.arm.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2020-03-11 at 14:15 +0900, Masahiro Yamada wrote:
+> On Wed, Mar 11, 2020 at 2:07 PM Joe Perches <joe@perches.com> wrote:
+> > Convert the various uses of fallthrough comments to fallthrough;
+> > 
+> > Done via script
+> > Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe.com/
+> > 
+> > Signed-off-by: Joe Perches <joe@perches.com>
+> 
+> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> 
+> 
+> But, I think the patch subject should be prefixed:
+> "serial: 8250_uniphier:"
 
---i9LlY+UWpKt15+FH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah thanks, that's difficult to script though.
 
-On Wed, Mar 11, 2020 at 10:52:00AM +0000, Lorenzo Pieralisi wrote:
-> On Tue, Mar 03, 2020 at 11:40:47PM +0530, Vidya Sagar wrote:
-> > Tegra194 has three (C0, C4 & C5) dual mode PCIe controllers that can op=
-erate
-> > either in root port mode or in end point mode but only in one mode at a=
- time.
-> > Platform P2972-0000 supports enabling endpoint mode for C5 controller. =
-This
-> > patch series adds support for PCIe endpoint mode in both the driver as =
-well as
-> > in DT.
-> > This patch series depends on the changes made for Synopsys DesignWare e=
-ndpoint
-> > mode subsystem that are recently accepted.
-> > @ https://patchwork.kernel.org/project/linux-pci/list/?series=3D202211
-> > which in turn depends on the patch made by Kishon
-> > @ https://patchwork.kernel.org/patch/10975123/
-> > which is also under review.
-> >=20
-> > V5:
-> > * Rebased patch-2 on top of Lorenzo's pci/endpoint branch
-> > * Removed unwanted header files inclusion in patch-5
->=20
-> Applied patches 1,2,5 to pci/endpoint for v5.7, please let me know
-> if something is missing.
 
-Great, thanks! I've picked up patches 3 and 4 into the Tegra tree for
-v5.7.
-
-Thierry
-
---i9LlY+UWpKt15+FH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5o9hkACgkQ3SOs138+
-s6EhXg//cjYE1EBraQovAb9Meb89XpZgwlbTBz4wVpX5gGBnmOdMVLAJdqSbXdVQ
-AxZT3EVQOzy24ZqGwb118iN3a28CNYU9FLUdZM/UoPnA4NHC0Dk62cIeWUly7FU7
-geukEaBFNJSl/6EPuAo0Qobgow0Yn5anvPjKgpZ+0BKK/e/+aUYZNzFs0vpde9xq
-9PPsB1rGj0KrrDSnAFS1hxrL85yL8B5Hz2X//Zm/WFgC3C7X2lSSCL9z4RWyeT1F
-pNc41o45blCOmcA2wZi7WbaMCYkyBvQyjEmBPBTnF/6P3R+J3XWtyWcTJOSwgjby
-MHLshrbG0T4HNxFtbZ38G14Q//mCu5kYuGWLW/P3187nejD2XF1wNGYSqmwE9Eny
-zcOH7tqEofowLvCjLa3BZtHiSiAxRdwuLY4Q6nh1tEydpQqo5bKp3A52B6vjdqoo
-7GBhLvJ6tIal+dZUxI7nMz7wPdb53TrMws6rhQ4/bcb1oprZwXQzL8DGoNij6aBl
-kYU0OvWb1Wh9t+EbLa3BKdupY/OuBVK1zu6/mH1+MYTD/FZviyj+EXH8rPLbzki5
-THwdnIDEs0dvf3nEfIjXnyVfr+QrVOsrsKOpyfjHq3N0yGeOXavt1Su/XHZ8mBDX
-r2nBg9NWA2vPlngiW49ndo080lFoiG3mGmRwgk21+1HJIDdPcys=
-=QA1n
------END PGP SIGNATURE-----
-
---i9LlY+UWpKt15+FH--
