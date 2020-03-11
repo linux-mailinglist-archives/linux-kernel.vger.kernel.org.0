@@ -2,79 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6714181590
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 11:12:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F019181595
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 11:14:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728668AbgCKKMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 06:12:05 -0400
-Received: from elvis.franken.de ([193.175.24.41]:33982 "EHLO elvis.franken.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726044AbgCKKMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 06:12:05 -0400
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1jByLL-00075u-00; Wed, 11 Mar 2020 11:12:03 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 4A00BC0FDD; Wed, 11 Mar 2020 11:11:55 +0100 (CET)
-Date:   Wed, 11 Mar 2020 11:11:55 +0100
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mips <linux-mips@vger.kernel.org>
-Subject: [GIT PULL] MIPS fixes for v5.6
-Message-ID: <20200311101155.GA9476@alpha.franken.de>
+        id S1728966AbgCKKNW convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 06:13:22 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:32969 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbgCKKNW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 06:13:22 -0400
+X-Originating-IP: 90.89.41.158
+Received: from xps13 (lfbn-tou-1-1473-158.w90-89.abo.wanadoo.fr [90.89.41.158])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id D912D40010;
+        Wed, 11 Mar 2020 10:13:13 +0000 (UTC)
+Date:   Wed, 11 Mar 2020 11:13:12 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Mikhail Kshevetskiy <mikhail.kshevetskiy@oktetlabs.ru>
+Cc:     richard@nod.at, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mtd: spinand: wait for erase completion before
+ writing bad block maker
+Message-ID: <20200311111312.5c175916@xps13>
+In-Reply-To: <20200310203224.410198-1-mikhail.kshevetskiy@oktetlabs.ru>
+References: <20200310203224.410198-1-mikhail.kshevetskiy@oktetlabs.ru>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Mikhail,
 
-here are some small MIPS fixes for v5.6. Please pull.
+Mikhail Kshevetskiy <mikhail.kshevetskiy@oktetlabs.ru> wrote on Tue, 10
+Mar 2020 23:32:23 +0300:
 
-Thomas.
+> SPI flash will discard any write operation while it is busy with block
+> erasing. As result bad block marker will not be writed to a flash.
+> To fix it just wait for completion of erase operation.
+> 
+> The erasing code is almost the same as in spinand_erase(). The only
+> difference is: we ignore ERASE_FAILED status.
+> 
+> This patch also improve error handling a bit.
+> 
+> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@oktetlabs.ru>
 
-The following changes since commit 3234f4ed3066a58cd5ce8edcf752fa4fe0c95cb5:
+Thanks a lot for sharing this!
 
-  MAINTAINERS: Hand MIPS over to Thomas (2020-02-24 22:43:18 -0800)
+Actually Frieder sent a fix for that I already added to nand/next,
+please have a look at:
+https://lore.kernel.org/linux-mtd/20200218100432.32433-1-frieder.schrempf@kontron.de/
 
-are available in the Git repository at:
+If you think I'm missing something else, please tell me!
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git tags/mips_fixes_5.6.1
+> ---
+>  drivers/mtd/nand/spi/core.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+> index 89f6beefb01c..bb4eac400b0f 100644
+> --- a/drivers/mtd/nand/spi/core.c
+> +++ b/drivers/mtd/nand/spi/core.c
+> @@ -610,6 +610,7 @@ static int spinand_markbad(struct nand_device *nand, const struct nand_pos *pos)
+>  		.oobbuf.out = spinand->oobbuf,
+>  	};
+>  	int ret;
+> +	u8 status;
+>  
+>  	/* Erase block before marking it bad. */
+>  	ret = spinand_select_target(spinand, pos->target);
+> @@ -620,7 +621,14 @@ static int spinand_markbad(struct nand_device *nand, const struct nand_pos *pos)
+>  	if (ret)
+>  		return ret;
+>  
+> -	spinand_erase_op(spinand, pos);
+> +	ret = spinand_erase_op(spinand, pos);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* ignore status as erase may fail for bad blocks */
+> +	spinand_wait(spinand, &status);
+> +	if (ret)
+> +		return ret;
+>  
+>  	memset(spinand->oobbuf, 0, 2);
+>  	return spinand_write_page(spinand, &req);
 
-for you to fetch changes up to f7d5f5655ef7e5d2a128f6696ac35256e83b119b:
-
-  MAINTAINERS: Correct MIPS patchwork URL (2020-03-09 12:10:01 +0100)
-
-----------------------------------------------------------------
-A few MIPS fixes:
-
-- DT fixes for CI20
-
-- Fix command line handling
-
-- Correct patchwork URL
-
-----------------------------------------------------------------
-H. Nikolaus Schaller (2):
-      MIPS: DTS: CI20: fix PMU definitions for ACT8600
-      MIPS: DTS: CI20: fix interrupt for pcf8563 RTC
-
-Paul Cercueil (1):
-      MIPS: Fix CONFIG_MIPS_CMDLINE_DTB_EXTEND handling
-
-Thomas Bogendoerfer (1):
-      MAINTAINERS: Correct MIPS patchwork URL
-
- MAINTAINERS                         |  2 +-
- arch/mips/boot/dts/ingenic/ci20.dts | 44 +++++++++++++++++++++++--------------
- arch/mips/kernel/setup.c            |  3 ++-
- 3 files changed, 31 insertions(+), 18 deletions(-)
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Thanks,
+Miquèl
