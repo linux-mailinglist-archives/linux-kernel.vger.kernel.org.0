@@ -2,118 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4297180F5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 06:08:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F753180F94
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 06:14:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728445AbgCKFH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 01:07:57 -0400
-Received: from smtprelay0192.hostedemail.com ([216.40.44.192]:42648 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728384AbgCKFHv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 01:07:51 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 933DE18224506;
-        Wed, 11 Mar 2020 05:07:49 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:541:800:960:967:973:982:988:989:1260:1311:1314:1345:1359:1437:1515:1534:1542:1711:1730:1747:1777:1792:2194:2199:2393:2525:2560:2563:2682:2685:2859:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3865:3866:3867:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4225:4321:5007:6119:6261:9025:9592:10004:10848:11026:11473:11657:11658:11914:12043:12296:12297:12438:12555:12679:12895:12986:13894:14181:14394:14721:21080:21433:21627:21811:21939:21987:30054,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: dust64_2714a444d1e09
-X-Filterd-Recvd-Size: 3604
-Received: from joe-laptop.perches.com (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 11 Mar 2020 05:07:48 +0000 (UTC)
-From:   Joe Perches <joe@perches.com>
-To:     Rasesh Mody <rmody@marvell.com>,
-        Sudarsana Kalluru <skalluru@marvell.com>,
-        GR-Linux-NIC-Dev@marvell.com
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        id S1727297AbgCKFOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 01:14:02 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:33872 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726472AbgCKFOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 01:14:02 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C858A1A08C2;
+        Wed, 11 Mar 2020 06:13:59 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5BBFD1A064A;
+        Wed, 11 Mar 2020 06:13:56 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id D851D4024E;
+        Wed, 11 Mar 2020 13:13:51 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH -next 031/491] BROCADE BNA 10 GIGABIT ETHERNET DRIVER: Use fallthrough;
-Date:   Tue, 10 Mar 2020 21:51:45 -0700
-Message-Id: <ea7518e03a5bda3fb9de0f25a0e6624d4d6e7eea.1583896349.git.joe@perches.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1583896344.git.joe@perches.com>
-References: <cover.1583896344.git.joe@perches.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/2] thermal: qoriq: Use devm_add_action_or_reset() to handle all cleanups
+Date:   Wed, 11 Mar 2020 13:07:31 +0800
+Message-Id: <1583903252-2058-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the various uses of fallthrough comments to fallthrough;
+Use devm_add_action_or_reset() to handle all cleanups of failure in
+.probe and .remove, then .remove callback can be dropped.
 
-Done via script
-Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe.com/
-
-Signed-off-by: Joe Perches <joe@perches.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/net/ethernet/brocade/bna/bfa_ioc.c   | 8 +++-----
- drivers/net/ethernet/brocade/bna/bna_enet.c  | 2 +-
- drivers/net/ethernet/brocade/bna/bna_tx_rx.c | 3 +--
- 3 files changed, 5 insertions(+), 8 deletions(-)
+ drivers/thermal/qoriq_thermal.c | 35 ++++++++++++++---------------------
+ 1 file changed, 14 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/net/ethernet/brocade/bna/bfa_ioc.c b/drivers/net/ethernet/brocade/bna/bfa_ioc.c
-index e17bfc..e9248c 100644
---- a/drivers/net/ethernet/brocade/bna/bfa_ioc.c
-+++ b/drivers/net/ethernet/brocade/bna/bfa_ioc.c
-@@ -321,7 +321,7 @@ bfa_ioc_sm_getattr(struct bfa_ioc *ioc, enum ioc_event event)
- 	case IOC_E_PFFAILED:
- 	case IOC_E_HWERROR:
- 		del_timer(&ioc->ioc_timer);
--		/* fall through */
-+		fallthrough;
- 	case IOC_E_TIMEOUT:
- 		ioc->cbfn->enable_cbfn(ioc->bfa, BFA_STATUS_IOC_FAILURE);
- 		bfa_fsm_set_state(ioc, bfa_ioc_sm_fail);
-@@ -780,8 +780,7 @@ bfa_iocpf_sm_enabling(struct bfa_iocpf *iocpf, enum iocpf_event event)
+diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
+index 874bc46..67a8d84 100644
+--- a/drivers/thermal/qoriq_thermal.c
++++ b/drivers/thermal/qoriq_thermal.c
+@@ -228,6 +228,14 @@ static const struct regmap_access_table qoriq_rd_table = {
+ 	.n_yes_ranges	= ARRAY_SIZE(qoriq_yes_ranges),
+ };
  
- 	case IOCPF_E_INITFAIL:
- 		del_timer(&ioc->iocpf_timer);
--		/* fall through */
--
-+		fallthrough;
- 	case IOCPF_E_TIMEOUT:
- 		bfa_nw_ioc_hw_sem_release(ioc);
- 		if (event == IOCPF_E_TIMEOUT)
-@@ -849,8 +848,7 @@ bfa_iocpf_sm_disabling(struct bfa_iocpf *iocpf, enum iocpf_event event)
++static void qoriq_tmu_action(void *p)
++{
++	struct qoriq_tmu_data *data = p;
++
++	regmap_write(data->regmap, REGS_TMR, TMR_DISABLE);
++	clk_disable_unprepare(data->clk);
++}
++
+ static int qoriq_tmu_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+@@ -278,6 +286,10 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
- 	case IOCPF_E_FAIL:
- 		del_timer(&ioc->iocpf_timer);
--		/* fall through*/
--
-+		fallthrough;
- 	case IOCPF_E_TIMEOUT:
- 		bfa_ioc_set_cur_ioc_fwstate(ioc, BFI_IOC_FAIL);
- 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_disabling_sync);
-diff --git a/drivers/net/ethernet/brocade/bna/bna_enet.c b/drivers/net/ethernet/brocade/bna/bna_enet.c
-index 40107a9..a2c983 100644
---- a/drivers/net/ethernet/brocade/bna/bna_enet.c
-+++ b/drivers/net/ethernet/brocade/bna/bna_enet.c
-@@ -1084,7 +1084,7 @@ bna_enet_sm_cfg_wait(struct bna_enet *enet,
++	ret = devm_add_action_or_reset(dev, qoriq_tmu_action, data);
++	if (ret)
++		return ret;
++
+ 	/* version register offset at: 0xbf8 on both v1 and v2 */
+ 	ret = regmap_read(data->regmap, REGS_IPBRR(0), &ver);
+ 	if (ret) {
+@@ -290,35 +302,17 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
  
- 	case ENET_E_CHLD_STOPPED:
- 		bna_enet_rx_start(enet);
--		/* Fall through */
-+		fallthrough;
- 	case ENET_E_FWRESP_PAUSE:
- 		if (enet->flags & BNA_ENET_F_PAUSE_CHANGED) {
- 			enet->flags &= ~BNA_ENET_F_PAUSE_CHANGED;
-diff --git a/drivers/net/ethernet/brocade/bna/bna_tx_rx.c b/drivers/net/ethernet/brocade/bna/bna_tx_rx.c
-index b5ecbfe..cd2bfb 100644
---- a/drivers/net/ethernet/brocade/bna/bna_tx_rx.c
-+++ b/drivers/net/ethernet/brocade/bna/bna_tx_rx.c
-@@ -1636,8 +1636,7 @@ bna_bfi_rx_enet_start(struct bna_rx *rx)
- 						&q1->qpt);
- 			cfg_req->q_cfg[i].qs.rx_buffer_size =
- 				htons((u16)q1->buffer_size);
--			/* Fall through */
+ 	ret = qoriq_tmu_calibration(dev, data);	/* TMU calibration */
+ 	if (ret < 0)
+-		goto err;
++		return ret;
+ 
+ 	ret = qoriq_tmu_register_tmu_zone(dev, data);
+ 	if (ret < 0) {
+ 		dev_err(dev, "Failed to register sensors\n");
+-		ret = -ENODEV;
+-		goto err;
++		return ret;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, data);
+ 
+ 	return 0;
 -
-+			fallthrough;
- 		case BNA_RXP_SINGLE:
- 			/* Large/Single RxQ */
- 			bfi_enet_datapath_q_init(&cfg_req->q_cfg[i].ql.q,
+-err:
+-	clk_disable_unprepare(data->clk);
+-
+-	return ret;
+-}
+-
+-static int qoriq_tmu_remove(struct platform_device *pdev)
+-{
+-	struct qoriq_tmu_data *data = platform_get_drvdata(pdev);
+-
+-	/* Disable monitoring */
+-	regmap_write(data->regmap, REGS_TMR, TMR_DISABLE);
+-
+-	clk_disable_unprepare(data->clk);
+-
+-	return 0;
+ }
+ 
+ static int __maybe_unused qoriq_tmu_suspend(struct device *dev)
+@@ -365,7 +359,6 @@ static struct platform_driver qoriq_tmu = {
+ 		.of_match_table	= qoriq_tmu_match,
+ 	},
+ 	.probe	= qoriq_tmu_probe,
+-	.remove	= qoriq_tmu_remove,
+ };
+ module_platform_driver(qoriq_tmu);
+ 
 -- 
-2.24.0
+2.7.4
 
