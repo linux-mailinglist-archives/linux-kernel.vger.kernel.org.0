@@ -2,113 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 432F6181D22
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:03:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 346AD181D27
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 17:05:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730075AbgCKQDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 12:03:39 -0400
-Received: from elvis.franken.de ([193.175.24.41]:34571 "EHLO elvis.franken.de"
+        id S1730092AbgCKQFJ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 12:05:09 -0400
+Received: from mga14.intel.com ([192.55.52.115]:2894 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729704AbgCKQDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 12:03:39 -0400
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1jC3pW-0006pD-00; Wed, 11 Mar 2020 17:03:34 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 2C0B2C102E; Wed, 11 Mar 2020 17:03:07 +0100 (CET)
-Date:   Wed, 11 Mar 2020 17:03:07 +0100
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     afzal mohammed <afzal.mohd.ma@gmail.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Keguang Zhang <keguang.zhang@gmail.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        John Crispin <john@phrozen.org>
-Subject: Re: [PATCH v4] MIPS: Replace setup_irq() by request_irq()
-Message-ID: <20200311160307.GA15464@alpha.franken.de>
-References: <20200304203144.GA4323@alpha.franken.de>
- <20200305115759.3186-1-afzal.mohd.ma@gmail.com>
- <20200311053126.GA48442@ubuntu-m2-xlarge-x86>
- <20200311090308.GA5060@afzalpc>
- <20200311104217.GA10615@alpha.franken.de>
- <20200311131210.GA5115@afzalpc>
+        id S1729956AbgCKQFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 12:05:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 09:05:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
+   d="scan'208";a="441729684"
+Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
+  by fmsmga005.fm.intel.com with ESMTP; 11 Mar 2020 09:05:07 -0700
+Received: from orsmsx155.amr.corp.intel.com (10.22.240.21) by
+ ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 11 Mar 2020 09:05:07 -0700
+Received: from orsmsx115.amr.corp.intel.com ([169.254.4.100]) by
+ ORSMSX155.amr.corp.intel.com ([169.254.7.148]) with mapi id 14.03.0439.000;
+ Wed, 11 Mar 2020 09:05:07 -0700
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Wei Huang <wei.huang2@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "bp@suse.de" <bp@suse.de>,
+        "yazen.ghannam@amd.com" <yazen.ghannam@amd.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "smita.koralahallichannabasappa@amd.com" 
+        <smita.koralahallichannabasappa@amd.com>
+Subject: RE: [PATCH 1/1] x86/mce/amd: Add PPIN support for AMD MCE
+Thread-Topic: [PATCH 1/1] x86/mce/amd: Add PPIN support for AMD MCE
+Thread-Index: AQHV91/AwhhvsPm2/U2ZVZmNlYO+oqhDjQBg
+Date:   Wed, 11 Mar 2020 16:05:07 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7F59AA85@ORSMSX115.amr.corp.intel.com>
+References: <20200311044409.2717587-1-wei.huang2@amd.com>
+In-Reply-To: <20200311044409.2717587-1-wei.huang2@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200311131210.GA5115@afzalpc>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 06:42:10PM +0530, afzal mohammed wrote:
-> Hi Thomas,
-> 
-> On Wed, Mar 11, 2020 at 11:42:17AM +0100, Thomas Bogendoerfer wrote:
-> > On Wed, Mar 11, 2020 at 02:33:08PM +0530, afzal mohammed wrote:
-> 
-> > > diff --git a/arch/mips/kernel/cevt-r4k.c b/arch/mips/kernel/cevt-r4k.c
-> 
-> > >  int r4k_clockevent_init(void)
-> > >  {
-> > > -	unsigned long flags = IRQF_PERCPU | IRQF_TIMER | IRQF_SHARED;
-> > > +	unsigned long flags = IRQF_PERCPU | IRQF_TIMER;
-> 
-> > I don't see why this should help. In my tree only sgi-ip30 removes
-> > IRQF_SHARED from flags, but then it uses setup_percpu_irq().
-> > What do I miss ?
-> 
-> You did not miss anything. Though it works, i took a wrong route
-> following the tags & arrived at that solution in a hurry.
-> (struct irqaction used in sgi-ip30 was used here earlier w/ setup_irq).
-> 
-> The problem is sanity checks in request_irq() [ rather in
-> request_thread_iq() ]
-> 
-> 
-> 	if (((irqflags & IRQF_SHARED) && !dev_id) ||
-> 	    (!(irqflags & IRQF_SHARED) && (irqflags & IRQF_COND_SUSPEND)) ||
-> 	    ((irqflags & IRQF_NO_SUSPEND) && (irqflags & IRQF_COND_SUSPEND)))
-> 		return -EINVAL;
-> 
-> If IRQF_SHARED is passed, it exepcts a non-NULL dev_id, here it is
-> NULL, setup_irq() doesn't have any check like that.
++		if ((val & 3UL) == 2UL)
++			set_cpu_cap(c, X86_FEATURE_PPIN);
 
-so request_irq() is not a 1:1 replacement for our current setup_irq().
-Or put it the another way our setup_irq() might be buggy, when used for
-shared interrupts.
+You may have copied a bug of mine from upstream. We recently found
+a system where the BIOS enabled PPIN and set the lock bit.
 
-> So i think proper solution is to add a non NULL dev_id, as removing
-> IRQF_SHARED might affect some platforms that might be using that
-> interrupt line shared.
-> 
-> Patch with non-NULL dev_id below, it works w/ Nathan's test case.
+If that is possible on AMD, then you should just check for enabled at this
+point. "if (val & 2UL)"
 
-I'm not sure, I like the adding of string pointers as dev_id arguments
-in your patch. How can we make sure they are unique enough for the use
-case ? I guess using handler as dev_id does a better job here.
+See this commit in TIP tree:
 
-And before doing that, lets clean up some of the IRQF_SHARED usage first.
-All sni IRQF_SHARED can go away, the interrupt lines are exclusive there. 
+59b5809655bd ("x86/mce: Fix logic and comments around MSR_PPIN_CTL")
 
-loongson2ef/lemote-2f/irq.c: looks like the only user of
-LOONGSON_NORTH_BRIDGE_IRQ, so IRQF_SHARED could go as well.
-Could someone confirm that ?
+Otherwise looks fine:
 
-All other need to stay, IMHO.
+Acked-by: Tony Luck <tony.luck@intel.com>
 
-And v4 is already in mips-next, so I need an incremental patch please.
-
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+-Tony
