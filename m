@@ -2,133 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89BEC1812AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:11:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DF751812B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 09:15:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728339AbgCKIL2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 04:11:28 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:46615 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726198AbgCKIL1 (ORCPT
+        id S1728562AbgCKIPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 04:15:30 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34065 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728533AbgCKIP3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 04:11:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583914286;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mclFMWusgTyOtMcXNsfUg9sVqxkjUF7Bq9avEjcdG/I=;
-        b=QAlhgRn1m8LI6avl4qT+oMSftsWS8txCzkBiOOX9P4bxj7lOg2NvyhRyp5+CkM2POdcAbb
-        PaWTtlAuTqiYCbSRXMC7FJM/2ZtY2py59elONVcQvS/FBp+sFYQ01DvK7VRKIshBZmiid+
-        eVMNJtUTVqD/1ofeVovtPQPahQJ8o4c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-494-sWznBkZzPgyeEBOnUFWxYg-1; Wed, 11 Mar 2020 04:11:22 -0400
-X-MC-Unique: sWznBkZzPgyeEBOnUFWxYg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 980BC107ACC4;
-        Wed, 11 Mar 2020 08:11:20 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D1E6610372C5;
-        Wed, 11 Mar 2020 08:11:06 +0000 (UTC)
-Date:   Wed, 11 Mar 2020 16:10:59 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     John Garry <john.garry@huawei.com>
-Cc:     axboe@kernel.dk, jejb@linux.ibm.com, martin.petersen@oracle.com,
-        hare@suse.de, bvanassche@acm.org, hch@infradead.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        esc.storagedev@microsemi.com, chenxiang66@hisilicon.com,
-        Hannes Reinecke <hare@suse.com>
-Subject: Re: [PATCH RFC v2 12/24] hpsa: use reserved commands
-Message-ID: <20200311081059.GC31504@ming.t460p>
-References: <1583857550-12049-1-git-send-email-john.garry@huawei.com>
- <1583857550-12049-13-git-send-email-john.garry@huawei.com>
+        Wed, 11 Mar 2020 04:15:29 -0400
+Received: by mail-lf1-f66.google.com with SMTP id i19so912393lfl.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 01:15:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jOjGU3wzPeEBTqciAiFkvPsk2Rvz1207yuRzp5ZI22A=;
+        b=YMXe1meY0Ry5dt0/YTi6LD2sq1y8JA1K2tw35d9SXB0Xym/fasJSX8xopFbMTgljmj
+         sbYAHPNr4yllnJJOaM5wjDKD1oc9jZokEZ3Gx7zfLcCSd3QLvWBbE6livByO6dwqAYW/
+         psWCXu+76CX86sU2phB/p8OlYE4basp0ucgsKtZEpFRpEGIGJ27Rvo2YPfmVgrQOvMJZ
+         HRdyaeQdcIpV+t/2OkpW+VXO+fVdeVVcwdW5ucWr1KwzUlSBYyztaOZ27gALMBu8CSDb
+         O9X+q16RSbkyr92sDBV1JeQyQt0Nj8z5UzfEXdRcplhQgLuIIPjumry22fN/9S+4W82G
+         YTeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jOjGU3wzPeEBTqciAiFkvPsk2Rvz1207yuRzp5ZI22A=;
+        b=qmiPWJ9o3jJkOvUnDmXSUE0DjF227HAXPyBG3WQ34kgBSo/NJowKC1AZNx0h0XR3mX
+         dZnO4wGsOy6LXMurKZJg2P78rWGVfUQOIVbE6FSTY1G98Dibmj1NXOwFHum7QrZn5MlQ
+         uhMpF+xW+mC4SfMaBIJT2r7ep0NcUW1l3o9Tk0uncgeTuRyjnzj5TkSnwPryfJHn9f6c
+         ZzNd9ASxTWPMHX4xZVPO62UkPMQf82E5vZp1624DfwAq88YNhB7c3tmIOAQpOR/KI7n1
+         vyQer1aZYO0outuT95Kn2FdZAMG56TS9JwtYbJ/BaE3wUEgEUe6tagfYmz9ffzPFXtyn
+         Me+g==
+X-Gm-Message-State: ANhLgQ22nvpSrvYaKBYNzVvEuGyXaXs5EC+I5i9uFyt9osIVhUYds+AP
+        I5vv9nUP3iu8rUGHfZTXw7CTnc+R7jDy8JsaQuEq1w==
+X-Google-Smtp-Source: ADFU+vtU+ZEVtgT1sRTyfkr5wdmsCjOAh2UsHK9kBDRX6mc/raNw9j4ccsDe9UmOZY6oJ2zA3l2Wkl7mbV+SJIFkYsk=
+X-Received: by 2002:a19:4c08:: with SMTP id z8mr1374387lfa.95.1583914526981;
+ Wed, 11 Mar 2020 01:15:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1583857550-12049-13-git-send-email-john.garry@huawei.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 11 Mar 2020 13:43:19 +0530
+Message-ID: <CA+G9fYt0W2P4WaEg=KSziBtDA6riTATdp-eS6QM4Ft4LzAoUOA@mail.gmail.com>
+Subject: Re: [PATCH 5.5 000/189] 5.5.9-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 12:25:38AM +0800, John Garry wrote:
-> From: Hannes Reinecke <hare@suse.com>
-> 
-> Enable the use of reserved commands, and drop the hand-crafted
-> command allocation.
-> 
-> Signed-off-by: Hannes Reinecke <hare@suse.com>
-> ---
->  drivers/scsi/hpsa.c | 147 ++++++++++++++------------------------------
->  drivers/scsi/hpsa.h |   1 -
->  2 files changed, 45 insertions(+), 103 deletions(-)
-> 
-> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-> index 703f824584fe..c14dd4b6e598 100644
-> --- a/drivers/scsi/hpsa.c
-> +++ b/drivers/scsi/hpsa.c
-> @@ -244,10 +244,6 @@ static struct hpsa_scsi_dev_t
->  	*hpsa_find_device_by_sas_rphy(struct ctlr_info *h,
->  		struct sas_rphy *rphy);
->  
-> -#define SCSI_CMD_BUSY ((struct scsi_cmnd *)&hpsa_cmd_busy)
-> -static const struct scsi_cmnd hpsa_cmd_busy;
-> -#define SCSI_CMD_IDLE ((struct scsi_cmnd *)&hpsa_cmd_idle)
-> -static const struct scsi_cmnd hpsa_cmd_idle;
->  static int number_of_controllers;
->  
->  static irqreturn_t do_hpsa_intr_intx(int irq, void *dev_id);
-> @@ -342,7 +338,7 @@ static inline struct ctlr_info *shost_to_hba(struct Scsi_Host *sh)
->  
->  static inline bool hpsa_is_cmd_idle(struct CommandList *c)
->  {
-> -	return c->scsi_cmd == SCSI_CMD_IDLE;
-> +	return c->scsi_cmd == NULL;
->  }
->  
->  /* extract sense key, asc, and ascq from sense data.  -1 means invalid. */
-> @@ -2445,7 +2441,12 @@ static void hpsa_cmd_resolve_events(struct ctlr_info *h,
->  	 * this command has completed.  Then, check to see if the handler is
->  	 * waiting for this command, and, if so, wake it.
->  	 */
-> -	c->scsi_cmd = SCSI_CMD_IDLE;
-> +	if (c->scsi_cmd && c->cmd_type == CMD_IOCTL_PEND) {
-> +		struct scsi_cmnd *scmd = c->scsi_cmd;
-> +
-> +		scsi_put_reserved_cmd(scmd);
-> +	}
-> +	c->scsi_cmd = NULL;
->  	mb();	/* Declare command idle before checking for pending events. */
->  	if (dev) {
->  		atomic_dec(&dev->commands_outstanding);
-> @@ -5502,7 +5503,6 @@ static void hpsa_cmd_init(struct ctlr_info *h, int index,
->  	c->ErrDesc.Addr = cpu_to_le64((u64) err_dma_handle);
->  	c->ErrDesc.Len = cpu_to_le32((u32) sizeof(*c->err_info));
->  	c->h = h;
-> -	c->scsi_cmd = SCSI_CMD_IDLE;
->  }
->  
->  static void hpsa_preinitialize_commands(struct ctlr_info *h)
-> @@ -5803,6 +5803,7 @@ static int hpsa_scsi_host_alloc(struct ctlr_info *h)
->  	sh->max_lun = HPSA_MAX_LUN;
->  	sh->max_id = HPSA_MAX_LUN;
->  	sh->can_queue = h->nr_cmds - HPSA_NRESERVED_CMDS;
-> +	sh->nr_reserved_cmds = HPSA_NRESERVED_CMDS;
+On Tue, 10 Mar 2020 at 18:27, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.5.9 release.
+> There are 189 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 12 Mar 2020 12:34:10 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.5.9-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.5.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Now .nr_reserved_cmds has been passed to blk-mq, you need to increase
-sh->can_queue to h->nr_cmds, because .can_queue is the whole queue depth
-(include the part of reserved tags), otherwise, IO tags will be
-decreased.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Not look into other drivers, I guess they need such change too.
+Summary
+------------------------------------------------------------------------
 
-Thanks,
-Ming
+kernel: 5.5.9-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-5.5.y
+git commit: 11e07aec07807683209513e2ad4a41bd7ee8a250
+git describe: v5.5.8-190-g11e07aec0780
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.5-oe/bui=
+ld/v5.5.8-190-g11e07aec0780
 
+No regressions (compared to build v5.5.8)
+
+No fixes (compared to build v5.5.8)
+
+Ran 27520 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c
+- hi6220-hikey
+- i386
+- juno-r2
+- nxp-ls2088
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15
+- x86
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* install-android-platform-tools-r2800
+* kselftest
+* libgpiod
+* libhugetlbfs
+* linux-log-parser
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-crypto-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-securebits-tests
+* perf
+* ltp-dio-tests
+* ltp-io-tests
+* ltp-sched-tests
+* ltp-syscalls-tests
+* v4l2-compliance
+* kvm-unit-tests
+* ltp-cve-tests
+* ltp-ipc-tests
+* network-basic-tests
+* spectre-meltdown-checker-test
+* ltp-cap_bounds-64k-page_size-tests
+* ltp-cap_bounds-kasan-tests
+* ltp-commands-64k-page_size-tests
+* ltp-commands-kasan-tests
+* ltp-containers-64k-page_size-tests
+* ltp-containers-kasan-tests
+* ltp-cpuhotplug-64k-page_size-tests
+* ltp-cpuhotplug-kasan-tests
+* ltp-crypto-64k-page_size-tests
+* ltp-crypto-kasan-tests
+* ltp-cve-kasan-tests
+* ltp-dio-64k-page_size-tests
+* ltp-dio-kasan-tests
+* ltp-fcntl-locktests-64k-page_size-tests
+* ltp-fcntl-locktests-kasan-tests
+* ltp-filecaps-64k-page_size-tests
+* ltp-filecaps-kasan-tests
+* ltp-fs-64k-page_size-tests
+* ltp-fs-kasan-tests
+* ltp-fs_bind-64k-page_size-tests
+* ltp-fs_bind-kasan-tests
+* ltp-fs_perms_simple-64k-page_size-tests
+* ltp-fs_perms_simple-kasan-tests
+* ltp-fsx-64k-page_size-tests
+* ltp-fsx-kasan-tests
+* ltp-hugetlb-64k-page_size-tests
+* ltp-hugetlb-kasan-tests
+* ltp-io-64k-page_size-tests
+* ltp-io-kasan-tests
+* ltp-ipc-64k-page_size-tests
+* ltp-ipc-kasan-tests
+* ltp-math-64k-page_size-tests
+* ltp-math-kasan-tests
+* ltp-mm-64k-page_size-tests
+* ltp-mm-kasan-tests
+* ltp-nptl-64k-page_size-tests
+* ltp-nptl-kasan-tests
+* ltp-pty-64k-page_size-tests
+* ltp-pty-kasan-tests
+* ltp-sched-64k-page_size-tests
+* ltp-sched-kasan-tests
+* ltp-securebits-64k-page_size-tests
+* ltp-securebits-kasan-tests
+* ltp-syscalls-64k-page_size-tests
+* ltp-syscalls-compat-tests
+* ltp-syscalls-kasan-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
