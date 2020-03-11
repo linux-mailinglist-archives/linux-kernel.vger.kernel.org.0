@@ -2,172 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03D81182027
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:59:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECBC918201E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:58:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730716AbgCKR7E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:59:04 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:32929 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730682AbgCKR65 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:58:57 -0400
-Received: by mail-wr1-f68.google.com with SMTP id a25so3850859wrd.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:58:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+0g3TUuCJUm9ZTQt2upCbsRVi7/9EKui7ktihNwzaDc=;
-        b=TsTUXdsh8sqrSedFXRED2/dAg2vNMf1h5465VRoyvVgEc9E6uIUY6+CBePtQ7zR1oe
-         rpM6XhSyyZf+l4tpClm2v/slstLRScfHQ5bJ3bmzMKR/z8iXTrdI8vWlN13rfV0/0BIN
-         VvPOlu4Lw6whyjKKQtY5C+HGahEQW+YW85KXhBNjHc5D1Gy3XJNsuCFomtR0sgtKh7WL
-         WwUrr1mU4WdB7rgCM798dEmsLgiQbZNDfaRRPVfFT5biQ8Qt+P6LmbQolFayf7gJXCYH
-         /NAtaaScmV3PHAfQieHXFxyICJNhOqwJjqH5nCTc5fi5gJqbkNm1e+JSEAY+UgzTYUGS
-         jGUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+0g3TUuCJUm9ZTQt2upCbsRVi7/9EKui7ktihNwzaDc=;
-        b=djDMpB+EWrIYF7LgOuprjg63kppfn1d0n0EELWhQ0bkyZh0ygxMrokW4dMbbEJ6eOT
-         GAUY5hKWdtdlckOJy6YMsq7MRG4fPveIOZIImvUcMg1JzjsUBXWSmoAbP1xZrnp0kbp8
-         V3sdVWDVzW/J3p2Vn02+XCsxAmgMJbsoaYRhsLP2diVLJuLk6jrRjKlmUs70BU44n/MZ
-         417Q0ba4KHjwzISO5rc9ri3i6UORmJpNvSENV99O+R+yxAaofpKErxMpsq3T+IngpsyX
-         l5wbPmpzPsr4mUmu8WiBiyE5GMTuMwu4xLepTqE5h5iHIV12TNacV7vyY/IbIPny3RpB
-         HuuQ==
-X-Gm-Message-State: ANhLgQ1JW9iPG3hZP+cchStXsVjkp7QeSiP/wP7BuKgm82XAJbuFsUhT
-        eeRLC56zIj0p0Z87KoAindI=
-X-Google-Smtp-Source: ADFU+vsKK8iU4vOE0efdx2GcHjG39PrZbK6UdA0kUPdWOm9fR83Am8uyH9ngW7dnVspNsuO5kZVC/w==
-X-Received: by 2002:a05:6000:1081:: with SMTP id y1mr5666948wrw.52.1583949535510;
-        Wed, 11 Mar 2020 10:58:55 -0700 (PDT)
-Received: from opensdev.fritz.box (business-178-015-117-054.static.arcor-ip.net. [178.15.117.54])
-        by smtp.gmail.com with ESMTPSA id l18sm1502107wrr.17.2020.03.11.10.58.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 10:58:54 -0700 (PDT)
-From:   shiva.linuxworks@gmail.com
-X-Google-Original-From: sshivamurthy@micron.com
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Shivamurthy Shastri <sshivamurthy@micron.com>
-Subject: [PATCH v7 6/6] mtd: spinand: micron: Add new Micron SPI NAND devices with multiple dies
-Date:   Wed, 11 Mar 2020 18:57:35 +0100
-Message-Id: <20200311175735.2007-7-sshivamurthy@micron.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200311175735.2007-1-sshivamurthy@micron.com>
-References: <20200311175735.2007-1-sshivamurthy@micron.com>
+        id S1730587AbgCKR6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:58:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47484 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730450AbgCKR6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:58:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 5C5B3AFA1;
+        Wed, 11 Mar 2020 17:58:02 +0000 (UTC)
+Subject: Re: [PATCH] mm,page_alloc,cma: conditionally prefer cma pageblocks
+ for movable allocations
+To:     Rik van Riel <riel@surriel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, Roman Gushchin <guro@fb.com>,
+        Qian Cai <cai@lca.pw>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>
+References: <20200306150102.3e77354b@imladris.surriel.com>
+ <20200307143849.a2fcb81a9626dad3ee46471f@linux-foundation.org>
+ <2f3e2cde7b94dfdb8e1f0532d1074e07ef675bc4.camel@surriel.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <5ed7f24b-d21b-75a1-ff74-49a9e21a7b39@suse.cz>
+Date:   Wed, 11 Mar 2020 18:58:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <2f3e2cde7b94dfdb8e1f0532d1074e07ef675bc4.camel@surriel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shivamurthy Shastri <sshivamurthy@micron.com>
+On 3/8/20 2:23 PM, Rik van Riel wrote:
+> On Sat, 2020-03-07 at 14:38 -0800, Andrew Morton wrote:
+>> On Fri, 6 Mar 2020 15:01:02 -0500 Rik van Riel <riel@surriel.com>
+>> wrote:
+> 
+>> > --- a/mm/page_alloc.c
+>> > +++ b/mm/page_alloc.c
+>> > @@ -2711,6 +2711,18 @@ __rmqueue(struct zone *zone, unsigned int
+>> > order, int migratetype,
+>> >  {
+>> >  	struct page *page;
+>> >  
+>> > +	/*
+>> > +	 * Balance movable allocations between regular and CMA areas by
+>> > +	 * allocating from CMA when over half of the zone's free memory
+>> > +	 * is in the CMA area.
+>> > +	 */
+>> > +	if (migratetype == MIGRATE_MOVABLE &&
+>> > +	    zone_page_state(zone, NR_FREE_CMA_PAGES) >
+>> > +	    zone_page_state(zone, NR_FREE_PAGES) / 2) {
+>> > +		page = __rmqueue_cma_fallback(zone, order);
+>> > +		if (page)
+>> > +			return page;
+>> > +	}
+>> >  retry:
+>> >  	page = __rmqueue_smallest(zone, order, migratetype);
+>> >  	if (unlikely(!page)) {
+>> 
+>> __rmqueue() is a hot path (as much as any per-page operation can be a
+>> hot path).  What is the impact here?
+> 
+> That is a good question. For MIGRATE_MOVABLE allocations,
+> most allocations seem to be order 0, which go through the
+> per cpu pages array, and rmqueue_pcplist, or be order 9.
+> 
+> For order 9 allocations, other things seem likely to dominate
+> the allocation anyway, while for order 0 allocations the
+> pcp list should take away the sting?
 
-Add device table for new Micron SPI NAND devices, which have multiple
-dies.
+I agree it should be in the noise. But please do put it behind CONFIG_CMA
+#ifdef. My x86_64 desktop distro kernel doesn't have CONFIG_CMA. Even if this is
+effectively no-op with __rmqueue_cma_fallback() returning NULL immediately, I
+think the compiler cannot eliminate the two zone_page_state()'s which are
+atomic_long_read(), even if it's just ultimately READ_ONCE() here, that's a
+volatile cast which means elimination not possible AFAIK? Other architectures
+might be even more involved.
 
-Also, enable support to select the dies.
+Otherwise I agree this is a reasonable solution until CMA is rewritten.
 
-Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
----
- drivers/mtd/nand/spi/micron.c | 58 +++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
-
-diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
-index d6fd63008782..5d370cfcdaaa 100644
---- a/drivers/mtd/nand/spi/micron.c
-+++ b/drivers/mtd/nand/spi/micron.c
-@@ -20,6 +20,14 @@
- 
- #define MICRON_CFG_CR			BIT(0)
- 
-+/*
-+ * As per datasheet, die selection is done by the 6th bit of Die
-+ * Select Register (Address 0xD0).
-+ */
-+#define MICRON_DIE_SELECT_REG	0xD0
-+
-+#define MICRON_SELECT_DIE(x)	((x) << 6)
-+
- static SPINAND_OP_VARIANTS(read_cache_variants,
- 		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_X4_OP(0, 1, NULL, 0),
-@@ -66,6 +74,20 @@ static const struct mtd_ooblayout_ops micron_8_ooblayout = {
- 	.free = micron_8_ooblayout_free,
- };
- 
-+static int micron_select_target(struct spinand_device *spinand,
-+				unsigned int target)
-+{
-+	struct spi_mem_op op = SPINAND_SET_FEATURE_OP(MICRON_DIE_SELECT_REG,
-+						      spinand->scratchbuf);
-+
-+	if (target > 1)
-+		return -EINVAL;
-+
-+	*spinand->scratchbuf = MICRON_SELECT_DIE(target);
-+
-+	return spi_mem_exec_op(spinand->spimem, &op);
-+}
-+
- static int micron_8_ecc_get_status(struct spinand_device *spinand,
- 				   u8 status)
- {
-@@ -137,6 +159,18 @@ static const struct spinand_info micron_spinand_table[] = {
- 		     0,
- 		     SPINAND_ECCINFO(&micron_8_ooblayout,
- 				     micron_8_ecc_get_status)),
-+	/* M79A 4Gb 3.3V */
-+	SPINAND_INFO("MT29F4G01ADAGD",
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x36),
-+		     NAND_MEMORG(1, 2048, 128, 64, 2048, 80, 2, 1, 2),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     0,
-+		     SPINAND_ECCINFO(&micron_8_ooblayout,
-+				     micron_8_ecc_get_status),
-+		     SPINAND_SELECT_TARGET(micron_select_target)),
- 	/* M70A 4Gb 3.3V */
- 	SPINAND_INFO("MT29F4G01ABAFD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x34),
-@@ -159,6 +193,30 @@ static const struct spinand_info micron_spinand_table[] = {
- 		     SPINAND_HAS_CR_FEAT_BIT,
- 		     SPINAND_ECCINFO(&micron_8_ooblayout,
- 				     micron_8_ecc_get_status)),
-+	/* M70A 8Gb 3.3V */
-+	SPINAND_INFO("MT29F8G01ADAFD",
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x46),
-+		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 2),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_CR_FEAT_BIT,
-+		     SPINAND_ECCINFO(&micron_8_ooblayout,
-+				     micron_8_ecc_get_status),
-+		     SPINAND_SELECT_TARGET(micron_select_target)),
-+	/* M70A 8Gb 1.8V */
-+	SPINAND_INFO("MT29F8G01ADBFD",
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x47),
-+		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 2),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_CR_FEAT_BIT,
-+		     SPINAND_ECCINFO(&micron_8_ooblayout,
-+				     micron_8_ecc_get_status),
-+		     SPINAND_SELECT_TARGET(micron_select_target)),
- };
- 
- static int micron_spinand_init(struct spinand_device *spinand)
--- 
-2.17.1
+> What I do not know is how much impact this change would
+> have on other allocations, like order 3 or order 4 network
+> buffer allocations from irq context...
+> 
+> Are there cases in particular that we should be testing?
+> 
 
