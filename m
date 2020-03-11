@@ -2,134 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66687181F89
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:33:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3061181FAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:38:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730389AbgCKRdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:33:49 -0400
-Received: from mail-eopbgr750089.outbound.protection.outlook.com ([40.107.75.89]:13594
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726099AbgCKRds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:33:48 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SqgdoSPvPd6gDO7S1yw8ErmHh23MiGNtL8Mm7lcSOyEqAfSv7MH755pCqrsD+qUAP8EBlhKjzUVnp8At/RNJkEgiCtSqyUfDPsmQ/TuktQWZ6m2vW55pGrIfSpwBxmo2lGeVaeaqczvfAKNgo+sc2LZsLuLsa+EaLyanzJIXKLzqh97O48FAGeRuu/Dg+iUYcVAR1IhFjKbExM6mKJpGq7YLeDv5wElA4NJlkTe51LKrTIJPxzb8qzhCFKX+Cz2vURtythgmo6FTqRQVhDG/vU5MQBfh6USpNUKYj3NIMhTV3KLQmXnbRyc3DOBXq/mFeAPOVxH0cLxi6EjaYNbHnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dWhV3jmCXxDWPeTdzbQSVVspoCjPdH5Uq6CkBDOgp2I=;
- b=IDqI9uZpJ7K/EaIUIQaZ/USb1bMLC3z2eQ4uuN2egf92CChP44vXpXsAXhdKP1K1KO1db3fnlgfep3OrmBKMs/4TDIcphiWGS8xGTd8oixRYcusy87tIcatqfTBRkB8cVt56AamaCl9tOPyIa3c7QhEn6QYAgy+xwOy79OXHDAr3CYXcZzBLlaARU7ICX4cCQokmbRkOOvg3o1RjH8RUSUP9K0TtldJIMxt0CJ9V7HPm02euyMLwdcvFdIMNckD+Q066l6KSBIjoC4ZWJY5/xS2Bzgz9eeBvKX2mxAWlJovtWQ4QDsuQv8yEBpSxDwS6z5iCV735exj2rJocAnNhgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
- dkim=pass header.d=micron.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dWhV3jmCXxDWPeTdzbQSVVspoCjPdH5Uq6CkBDOgp2I=;
- b=HgpKqJidu2Y5W9A4SSYggtF8GPBLusJKaLkvEUm/BYcGIbjaGtRqgP0hgdd39fMNt1/Tq/ZdCDWyMv0m+xsL64geXxN+DzAnBOT89YeS8OxttuJ20VFhWS9dao4U0syp2Sb2rExscHzB19Bv+UTEJCItIrKzVlIk19x4Zz4XueY=
-Received: from MN2PR08MB6397.namprd08.prod.outlook.com (2603:10b6:208:1aa::10)
- by MN2PR08MB5936.namprd08.prod.outlook.com (2603:10b6:208:11a::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.14; Wed, 11 Mar
- 2020 17:33:41 +0000
-Received: from MN2PR08MB6397.namprd08.prod.outlook.com
- ([fe80::884a:b0f5:3cf5:f4a4]) by MN2PR08MB6397.namprd08.prod.outlook.com
- ([fe80::884a:b0f5:3cf5:f4a4%4]) with mapi id 15.20.2793.018; Wed, 11 Mar 2020
- 17:33:41 +0000
-From:   "Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>
-CC:     Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "shiva.linuxworks@gmail.com" <shiva.linuxworks@gmail.com>
-Subject: RE: [EXT] Re: [PATCH v6 0/6] Add new series Micron SPI NAND devices
-Thread-Topic: [EXT] Re: [PATCH v6 0/6] Add new series Micron SPI NAND devices
-Thread-Index: AQHV97yqdMFOd0WUj0Kd2FcGzJVvLKhDpJ6Q
-Date:   Wed, 11 Mar 2020 17:33:41 +0000
-Message-ID: <MN2PR08MB6397BAEC050EF2C1A9CE8CDAB8FC0@MN2PR08MB6397.namprd08.prod.outlook.com>
-References: <20200309115230.7207-1-sshivamurthy@micron.com>
- <20200311164932.23cc7a42@xps13>
-In-Reply-To: <20200311164932.23cc7a42@xps13>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-rorf: true
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcc3NoaXZhbXVydGh5XGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctNzE1YWU1ODctNjNiZS0xMWVhLWIxZWEtOTgzYjhmNzQ1MjUxXGFtZS10ZXN0XDcxNWFlNTg5LTYzYmUtMTFlYS1iMWVhLTk4M2I4Zjc0NTI1MWJvZHkudHh0IiBzej0iMjM0MSIgdD0iMTMyMjg0MjE2MTk1MDkyMTM1IiBoPSJOVHVwYk54WXdxbU5kaURRQ3ZIdkV5eFFMV009IiBpZD0iIiBibD0iMCIgYm89IjEiIGNpPSJjQUFBQUVSSFUxUlNSVUZOQ2dVQUFIQUFBQUNuRHJNenkvZlZBU3VBZ3YreE1QZGZLNENDLzdFdzkxOEFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUJBQUFCQUFBQUlTQjI1d0FBQUFBQUFBQUFBQUFBQUE9PSIvPjwvbWV0YT4=
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sshivamurthy@micron.com; 
-x-originating-ip: [165.225.86.136]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: dc52d287-c8bf-445c-0c44-08d7c5e2576c
-x-ms-traffictypediagnostic: MN2PR08MB5936:|MN2PR08MB5936:|MN2PR08MB5936:
-x-microsoft-antispam-prvs: <MN2PR08MB5936EB61C70B962F6D849135B8FC0@MN2PR08MB5936.namprd08.prod.outlook.com>
-x-ms-exchange-transport-forked: True
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0339F89554
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(396003)(366004)(39860400002)(346002)(199004)(5660300002)(478600001)(966005)(2906002)(55236004)(7696005)(54906003)(81156014)(71200400001)(6506007)(8676002)(86362001)(81166006)(9686003)(110136005)(55016002)(4326008)(66446008)(64756008)(66556008)(66476007)(33656002)(316002)(66946007)(52536014)(26005)(76116006)(186003)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR08MB5936;H:MN2PR08MB6397.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: micron.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: AjykihFX52q5/+Ha6jc1Jo9JnTpH0SMm9xiJZoFBGFLtF80HAG6jaCL7jHoM3Iw/Gfk5jcr5sFhnpwPYVX37TdaBLXsZ1JxyhBqc+OL4hvOMefBal6VmoMrO8lPKMfQbuHMcLFrsYItRI7Wr437+XATF4FXuAbQdR6w9JP7yGo3UP6TnF/jPdHbH8xiCHOQNcABLew+Ncd8/ch6BnaZtFnYJuniAUbcU5CFILs8IpbS8vyxi2gDGVZLA78YrIwQ3GzMyZqo9v03wd6rKYd2NcNYJbKemYyXI7D6bgdAExYQ2DPuuKhZSUOjywDDmcdbXdv4gYzfhx/XOri2BeY/8n0fX8tG2T5VIqNBrKthgHSAig1MOR9vyvBNck0wGLqDK93KgViwdnpAR4BBNM6H+xlYSFPZ98xZv4Zr+Zbfpaiu8Qzjvx4rJ8GjCPwOqp+7X04b6ZHzDwVaMajSDNScmWeAXnT9PSkq4mVKDQlQPCGiCZvods8mOcu01+vXY/oFIQMigDEK3UDdsKBAxpzviHQ==
-x-ms-exchange-antispam-messagedata: 2ZBuwFxcJEFwmmZyzSSOOKQvIfHhMD547fYrnXroDtdnIeJ/j9GIhOFgwXsCGO3D4r5kV4fMVFxyG4dPfvWvuDrS9ZhMr0GhPdPdJLxMolM4w5yz+Htvy0w+Z0LH6hZxkNVbvNXsyCWaWFle+oH2lA==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1730570AbgCKRil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:38:41 -0400
+Received: from mga18.intel.com ([134.134.136.126]:22480 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729852AbgCKRil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:38:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 10:38:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
+   d="scan'208";a="261211208"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
+  by orsmga002.jf.intel.com with ESMTP; 11 Mar 2020 10:38:39 -0700
+Message-ID: <04c252f59062450e14642fcbef4b85845f6a7427.camel@intel.com>
+Subject: Re: [PATCH V1 11/13] selftests/resctrl: Change Cache Quality
+ Monitoring (CQM) test
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>, shuah@kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        tony.luck@intel.com, babu.moger@amd.com, james.morse@arm.com,
+        ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 11 Mar 2020 10:33:52 -0700
+In-Reply-To: <e7c85e35-9efb-77da-a33f-dd9447a6cf07@intel.com>
+References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
+         <26086dda86f062bba4116878a012a553503924b2.1583657204.git.sai.praneeth.prakhya@intel.com>
+         <e7bd79cf-4da8-7a61-ac09-4d124315fa93@intel.com>
+         <cf8fbdebd8096900d47a97f0e23a852d94df257a.camel@intel.com>
+         <e7c85e35-9efb-77da-a33f-dd9447a6cf07@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-X-OriginatorOrg: micron.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc52d287-c8bf-445c-0c44-08d7c5e2576c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2020 17:33:41.5138
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wS1E46hHTeYaRZz3O9+xUMD8ZcHGjoKZHoa5i2uMc7KdayuK07Y4w57pSIxtoxV6ap0zu8ydt5GXNSJ0teYf3Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR08MB5936
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTWlxdWVsLA0KDQo+IA0KPiBIaSBTaGl2YSwNCj4gDQo+IHNoaXZhLmxpbnV4d29ya3NAZ21h
-aWwuY29tIHdyb3RlIG9uIE1vbiwgIDkgTWFyIDIwMjAgMTI6NTI6MjQgKzAxMDA6DQo+IA0KPiA+
-IEZyb206IFNoaXZhbXVydGh5IFNoYXN0cmkgPHNzaGl2YW11cnRoeUBtaWNyb24uY29tPg0KPiA+
-DQo+ID4gVGhpcyBwYXRjaHNldCBpcyBmb3IgdGhlIG5ldyBzZXJpZXMgb2YgTWljcm9uIFNQSSBO
-QU5EIGRldmljZXMsIGFuZCB0aGUNCj4gPiBmb2xsb3dpbmcgbGlua3MgYXJlIHRoZWlyIGRhdGFz
-aGVldHMuDQo+ID4NCj4gPiBNNzhBOg0KPiA+IFsxXSBodHRwczovL3d3dy5taWNyb24uY29tL34v
-bWVkaWEvZG9jdW1lbnRzL3Byb2R1Y3RzL2RhdGEtDQo+IHNoZWV0L25hbmQtZmxhc2gvNzAtc2Vy
-aWVzL203OGFfMWdiXzN2X25hbmRfc3BpLnBkZg0KPiA+IFsyXSBodHRwczovL3d3dy5taWNyb24u
-Y29tL34vbWVkaWEvZG9jdW1lbnRzL3Byb2R1Y3RzL2RhdGEtDQo+IHNoZWV0L25hbmQtZmxhc2gv
-NzAtc2VyaWVzL203OGFfMWdiXzFfOHZfbmFuZF9zcGkucGRmDQo+ID4NCj4gPiBNNzlBOg0KPiA+
-IFszXSBodHRwczovL3d3dy5taWNyb24uY29tL34vbWVkaWEvZG9jdW1lbnRzL3Byb2R1Y3RzL2Rh
-dGEtDQo+IHNoZWV0L25hbmQtZmxhc2gvNzAtc2VyaWVzL203OWFfMmdiXzFfOHZfbmFuZF9zcGku
-cGRmDQo+ID4gWzRdIGh0dHBzOi8vd3d3Lm1pY3Jvbi5jb20vfi9tZWRpYS9kb2N1bWVudHMvcHJv
-ZHVjdHMvZGF0YS0NCj4gc2hlZXQvbmFuZC1mbGFzaC83MC1zZXJpZXMvbTc5YV9kZHBfNGdiXzN2
-X25hbmRfc3BpLnBkZg0KPiA+DQo+ID4gTTcwQToNCj4gPiBbNV0gaHR0cHM6Ly93d3cubWljcm9u
-LmNvbS9+L21lZGlhL2RvY3VtZW50cy9wcm9kdWN0cy9kYXRhLQ0KPiBzaGVldC9uYW5kLWZsYXNo
-LzcwLXNlcmllcy9tNzBhXzRnYl8zdl9uYW5kX3NwaS5wZGYNCj4gPiBbNl0gaHR0cHM6Ly93d3cu
-bWljcm9uLmNvbS9+L21lZGlhL2RvY3VtZW50cy9wcm9kdWN0cy9kYXRhLQ0KPiBzaGVldC9uYW5k
-LWZsYXNoLzcwLXNlcmllcy9tNzBhXzRnYl8xXzh2X25hbmRfc3BpLnBkZg0KPiA+IFs3XSBodHRw
-czovL3d3dy5taWNyb24uY29tL34vbWVkaWEvZG9jdW1lbnRzL3Byb2R1Y3RzL2RhdGEtDQo+IHNo
-ZWV0L25hbmQtZmxhc2gvNzAtc2VyaWVzL203MGFfZGRwXzhnYl8zdl9uYW5kX3NwaS5wZGYNCj4g
-PiBbOF0gaHR0cHM6Ly93d3cubWljcm9uLmNvbS9+L21lZGlhL2RvY3VtZW50cy9wcm9kdWN0cy9k
-YXRhLQ0KPiBzaGVldC9uYW5kLWZsYXNoLzcwLXNlcmllcy9tNzBhX2RkcF84Z2JfMV84dl9uYW5k
-X3NwaS5wZGYNCj4gPg0KPiA+IENoYW5nZXMgc2luY2UgdjU6DQo+ID4gLS0tLS0tLS0tLS0tLS0t
-LS0NCj4gPg0KPiA+IDEuIFJlYmFzZWQgc2VyaWVzIHRvIHY1LjYtcmMxLg0KPiANCj4gSSBhbSB2
-ZXJ5IHNvcnJ5IGJ1dCBhY3R1YWxseSBJIGhhZCBpc3N1ZXMgYXBwbHlpbmcgYWxsIHlvdXIgcGF0
-Y2hlcyBub3QNCj4gYmVjYXVzZSB0aGV5IHdlcmUgbm90IGJhc2VkIG9uIHY1LjYtcmMxLCBidXQg
-YmVjYXVzZSBzaW5jZSB0aGVuIEkNCj4gYXBwbGllZCBhIHBhdGNoIGNoYW5naW5nIHRoZSBkZXRl
-Y3Rpb24gdGhhdCBjaGFuZ2VkIHRoZSBjb250ZW50IG9mIGENCj4gbG90IG9mIHN0cnVjdHVyZXMg
-KGluY2x1ZGluZyBpbiBNaWNyb24ncyBwYXRjaGVzKS4NCj4gDQo+IENhbiB5b3UgcGxlYXNlIHJl
-YmFzZSBhZ2FpbiBvbiB0b3Agb2YgdGhlIGN1cnJlbnQgbmFuZC9uZXh0PyBJIGFtIHZlcnkNCj4g
-c29ycnkgZm9yIHRoaXMgZXh0cmEgd29yaywgdGhpcyBpcyBteSBtaXN0YWtlLg0KPiANCj4gSGVh
-ZCBzaG91bGQgYmU6DQo+IA0KPiAJYTVkNTNhZDI2YThiICgibXRkOiByYXduYW5kOiBicmNtbmFu
-ZDogQWRkIHN1cHBvcnQgZm9yIGZsYXNoLWVkdQ0KPiBmb3IgZG1hIHRyYW5zZmVycyIpDQo+IA0K
-PiBBbmQgdGhlIGN1bHByaXQgY29tbWl0IGlzOg0KPiANCj4gCWYxNTQxNzczYWY0OSAoIm10ZDog
-c3BpbmFuZDogcmV3b3JrIGRldGVjdCBwcm9jZWR1cmUgZm9yIGRpZmZlcmVudA0KPiBSRUFEX0lE
-IG9wZXJhdGlvbiIpDQoNCg0KSSB3aWxsIHJlYmFzZSBhbmQgc2VuZCB0aGUgcGF0Y2hlcy4NCk1l
-YW53aGlsZSwgdGhlcmUgd2lsbCBiZSBzbWFsbCBjb2RlIGNoYW5nZSBiZWNhdXNlIG9mIHRoZSBS
-RUFEX0lEIHBhdGNoLg0KDQpEbyBJIG5lZWQgdG8gZHJvcCBSZXZpZXdlZC1ieSBmcm9tIEJvcmlz
-Pw0KDQpUaGFua3MsDQpTaGl2YQ0K
+Hi Reinette,
+
+On Wed, 2020-03-11 at 10:19 -0700, Reinette Chatre wrote:
+> Hi Sai,
+> 
+> On 3/10/2020 7:46 PM, Sai Praneeth Prakhya wrote:
+> > On Tue, 2020-03-10 at 15:18 -0700, Reinette Chatre wrote:
+> > > On 3/6/2020 7:40 PM, Sai Praneeth Prakhya wrote:
+> > > >  		.mum_resctrlfs	= 0,
+> > > >  		.filename	= RESULT_FILE_NAME,
+> > > > -		.mask		= ~(long_mask << n) & long_mask,
+> > > > -		.span		= cache_size * n / count_of_bits,
+> > > >  		.num_of_runs	= 0,
+> > > > -		.setup		= cqm_setup,
+> > > > +		.setup		= cqm_setup
+> > > >  	};
+> > > > +	int ret;
+> > > > +	char schemata[64];
+> > > > +	unsigned long long_mask;
+> > > >  
+> > > > -	if (strcmp(benchmark_cmd[0], "fill_buf") == 0)
+> > > > -		sprintf(benchmark_cmd[1], "%lu", param.span);
+> > > > +	ret = remount_resctrlfs(1);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > 
+> > > Here resctrl is remounted and followed by some changes to the root
+> > > group's schemata. That is followed by a call to resctrl_val that
+> > > attempts to remount resctrl again that will undo all the configurations
+> > > inbetween.
+> > 
+> > No, it wouldn't because mum_resctrlfs is 0. When resctrl FS is already
+> > mounted
+> > and mum_resctrlfs is 0, then remount_resctrlfs() is a noop.
+> > 
+> 
+> I missed that. Thank you.
+> 
+> fyi ... when I tried these tests I encountered the following error
+> related to unmounting:
+> 
+> [SNIP]
+> ok Write schema "L3:1=7fff" to resctrl FS
+> ok Write schema "L3:1=ffff" to resctrl FS
+> ok Write schema "L3:1=1ffff" to resctrl FS
+> ok Write schema "L3:1=3ffff" to resctrl FS
+> # Unable to umount resctrl: Device or resource busy
+> # Results are displayed in (Bytes)
+> ok CQM: diff within 5% for mask 1
+> # alloc_llc_cache_size: 2883584
+> # avg_llc_occu_resc: 2973696
+> ok CQM: diff within 5% for mask 3
+> [SNIP]
+> 
+> This seems to originate from resctrl_val() that forces an unmount but if
+> that fails the error is not propagated.
+
+Yes, that's right and it's a good test. I didn't encounter this issue during
+my testing because I wasn't using resctrl FS from other terminals (I think you
+were using resctrl FS from other terminal and hence resctrl_test was unable to
+unmount it).
+
+I think the error should not be propagated because unmounting resctrl FS
+shouldn't stop us from checking the results. If measuring values reports an
+error then we shouldn't check for results.
+
+> > > > diff --git a/tools/testing/selftests/resctrl/resctrl_val.c
+> > > > b/tools/testing/selftests/resctrl/resctrl_val.c
+> > > > index 271cb5c976f5..c59fad6cb9b0 100644
+> > > > --- a/tools/testing/selftests/resctrl/resctrl_val.c
+> > > > +++ b/tools/testing/selftests/resctrl/resctrl_val.c
+> > > > @@ -705,29 +705,21 @@ int resctrl_val(char **benchmark_cmd, struct
+> > > > resctrl_val_param *param)
+> > > >  		goto out;
+> > > >  	}
+> > > >  
+> > > > -	/* Give benchmark enough time to fully run */
+> > > > -	sleep(1);
+> > > > -
+> > > >  	/* Test runs until the callback setup() tells the test to
+> > > > stop. */
+> > > >  	while (1) {
+> > > > +		ret = param->setup(param);
+> > > > +		if (ret) {
+> > > > +			ret = 0;
+> > > > +			break;
+> > > > +		}
+> > > > +
+> > > > +		/* Measure vals sleeps for a second */
+> > > >  		if ((strcmp(resctrl_val, "mbm") == 0) ||
+> > > >  		    (strcmp(resctrl_val, "mba") == 0)) {
+> > > > -			ret = param->setup(param);
+> > > > -			if (ret) {
+> > > > -				ret = 0;
+> > > > -				break;
+> > > > -			}
+> > > > -
+> 
+> (I refer to the above snippet in my comment below)
+> 
+> > > >  			ret = measure_vals(param, &bw_resc_start);
+> > > >  			if (ret)
+> > > >  				break;
+> > > >  		} else if (strcmp(resctrl_val, "cqm") == 0) {
+> > > > -			ret = param->setup(param);
+> > > > -			if (ret) {
+> > > > -				ret = 0;
+> > > > -				break;
+> > > > -			}
+> > > > -			sleep(1);
+> > > >  			ret = measure_cache_vals(param, bm_pid);
+> > > >  			if (ret)
+> > > >  				break;
+> > > 
+> > > This change affects not just the cache monitoring test. Could this
+> > > change be extracted into its own patch to be clear what is done here and
+> > > how it impacts the other tests?
+> > 
+> > This change shouldn't impact other tests (i.e. CAT) because CAT will not
+> > call
+> > resctrl_val().
+> 
+> I was referring to the snippet above that seems to impact the "mbm" and
+> "mba" tests by moving the call to "param->setup" for the them.
+
+Ok.. makes sense. Sure! I will make it into separate patch.
+
+Regards,
+Sai
+
