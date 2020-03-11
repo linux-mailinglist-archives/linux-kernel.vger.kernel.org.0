@@ -2,47 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79E541810D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 07:34:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E3471810D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 07:37:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728272AbgCKGeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 02:34:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52144 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbgCKGeF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 02:34:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=PXWJMkmYQZtzBqa9T6Z/OooTHl
-        iLs9oLlg6UBOsvnoharqwzOsHoLebB9KBGfGmMc42QR+rRzOtEAsIu7Js0uSfsCsPluEjZEY4gm+T
-        yRWZ6YCPEuyAOvYHMqhZ8CDu1T9iGjvnV36RcZHcp55Nnjj7Hds0A2BhzBLV1i4w6vgV6yleZ3fdt
-        sOj29SBcRXElRDCQvqk2ez4+996Vsp0e4tX/laNomiHC/I3xHXfKk47l5DDsd2md1mcWpKIJI38AI
-        y97/mDjGFzH0W15VdZZrSBeo922COCKsiN6sg/hXF+Dx3iRDQvGZNd6ZuhfU2V8Wfr8uV9RtCQ57h
-        qFwBKxBA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jBuwP-0005Ba-7P; Wed, 11 Mar 2020 06:34:05 +0000
-Date:   Tue, 10 Mar 2020 23:34:05 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] xfs: clear PF_MEMALLOC before exiting xfsaild thread
-Message-ID: <20200311063405.GA13368@infradead.org>
-References: <20200309181332.GJ1752567@magnolia>
- <20200309185714.42850-1-ebiggers@kernel.org>
+        id S1728237AbgCKGhZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 02:37:25 -0400
+Received: from mga12.intel.com ([192.55.52.136]:63106 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726198AbgCKGhZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 02:37:25 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 23:37:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,539,1574150400"; 
+   d="scan'208";a="236188930"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.141])
+  by fmsmga008.fm.intel.com with ESMTP; 10 Mar 2020 23:37:22 -0700
+Date:   Wed, 11 Mar 2020 14:35:19 +0800
+From:   Xu Yilun <yilun.xu@intel.com>
+To:     Wu Hao <hao.wu@intel.com>
+Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>
+Subject: Re: [PATCH 4/7] fpga: dfl: afu: add interrupt support for error
+  reporting
+Message-ID: <20200311063519.GC4193@yilunxu-OptiPlex-7050>
+References: <1583749790-10837-1-git-send-email-yilun.xu@intel.com>
+ <1583749790-10837-5-git-send-email-yilun.xu@intel.com>
+ <20200310103921.GD28396@hao-dev>
+ <20200310164738.GC30868@yilunxu-OptiPlex-7050>
+ <20200311024356.GA26202@hao-dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200309185714.42850-1-ebiggers@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200311024356.GA26202@hao-dev>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good,
+On Wed, Mar 11, 2020 at 10:43:56AM +0800, Wu Hao wrote:
+> On Wed, Mar 11, 2020 at 12:47:38AM +0800, Xu Yilun wrote:
+> > On Tue, Mar 10, 2020 at 06:39:21PM +0800, Wu Hao wrote:
+> > > On Mon, Mar 09, 2020 at 06:29:47PM +0800, Xu Yilun wrote:
+> > > > Error reporting interrupt is very useful to notify users that some
+> > > > errors are detected by the hardware. Once users are notified, they
+> > > > could query hardware logged error states, no need to continuously
+> > > > poll on these states.
+> > > > 
+> > > > This patch follows the common DFL interrupt notification and handling
+> > > > mechanism, implements two ioctl commands below for user to query
+> > > > hardware capability, and set/unset interrupt triggers.
+> > > > 
+> > > >  Ioctls:
+> > > >  * DFL_FPGA_PORT_ERR_GET_INFO
+> > > >    get error reporting feature info, including num_irqs which is used to
+> > > >    determine whether/how many interrupts it supports.
+> > > > 
+> > > >  * DFL_FPGA_PORT_ERR_SET_IRQ
+> > > >    set/unset given eventfds as error interrupt triggers.
+> > > > 
+> > > > Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+> > > > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> > > > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> > > > ---
+> > > >  drivers/fpga/dfl-afu-error.c  | 69 +++++++++++++++++++++++++++++++++++++++++++
+> > > >  drivers/fpga/dfl-afu-main.c   |  4 +++
+> > > >  include/uapi/linux/fpga-dfl.h | 34 +++++++++++++++++++++
+> > > >  3 files changed, 107 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/fpga/dfl-afu-error.c b/drivers/fpga/dfl-afu-error.c
+> > > > index c1467ae..a2c5454 100644
+> > > > --- a/drivers/fpga/dfl-afu-error.c
+> > > > +++ b/drivers/fpga/dfl-afu-error.c
+> > > > @@ -15,6 +15,7 @@
+> > > >   */
+> > > >  
+> > > >  #include <linux/uaccess.h>
+> > > > +#include <linux/fpga-dfl.h>
+> > > >  
+> > > >  #include "dfl-afu.h"
+> > > >  
+> > > > @@ -219,6 +220,73 @@ static void port_err_uinit(struct platform_device *pdev,
+> > > >  	afu_port_err_mask(&pdev->dev, true);
+> > > >  }
+> > > >  
+> > > > +static long
+> > > > +port_err_get_info(struct platform_device *pdev,
+> > > > +		  struct dfl_feature *feature, unsigned long arg)
+> > > > +{
+> > > > +	struct dfl_fpga_port_err_info info;
+> > > > +
+> > > > +	info.flags = 0;
+> > > > +	info.capability = 0;
+> > > 
+> > > as flags and capability are not used at this moment, so actually it only exposes
+> > > irq information to user. I understand flags and capability are used for
+> > > future extension, but it may not work without argsz, as we never know what
+> > > comes next, e.g. a capability requires > 32bit can't fit into this ioctl.
+> > > So maybe just a ioctl for IRQ_INFO is enough for now.
+> > > 
+> > > How do you think?
+> > 
+> > Yes the flags & capability are for future extension.
+> > 
+> > The capability field is planned to a bitmask, each bit could indicate the feature
+> > has some capability or not. So it could describe up to 32 capabilities.
+> > I think it would be enough for one sub feature.
+> > 
+> > With this field, users could get a general description of capabilities with one
+> > ioctl. If some capability has more detailed info, we may add addtional ioctl to
+> > fetch it. This is how it works without argsz. Does it make sense?
+> > 
+> > And same definition for flag field. The flag fields could contain some
+> > bool running state represented by each bit.
+> 
+> This should work for some cases, but kernel doc (core-api/ioctl.rst) says it's
+> better to avoid bitfield completely. I understand it's possible to extend this
+> ioctl with flags and capability, even we can define if flags = A, then given 
+> capability = definition B, if flags = C, then capbaility definition is D, to
+> maximum the usage for extension, but it may make this interface very very
+> complicated to users. This should be the same reason why you didn't put irq
+> info into capability directly. Another reason is, in my understanding, it
+> choices ioctl to expose irq info becasue user must use ioctl to set irq, for
+> other capabilities which doesn't use device file, then some sysfs may be enough
+> for their own functions.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Thanks for clarify this, I'll remove the flags & capability fields
+
+Yilun
+
+> 
+> Thanks
+> Hao
