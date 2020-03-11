@@ -2,87 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 519E2182044
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:01:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF4DC182052
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:03:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730692AbgCKSBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 14:01:11 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43387 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730468AbgCKSBK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:01:10 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c144so1753931pfb.10;
-        Wed, 11 Mar 2020 11:01:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4rbFCslqjgH4sXZwXRxajxY2P/fkCA2L0OS7xWGtM24=;
-        b=gEBaAL1S79UPP4QUiKP2Fi8zuRAbPMoOO44U4NArFUQrk9iyjBNphW8J+WOGy5UUz2
-         /zyMIuEPLwLXK82aBe7LVi3564xY/MrR0CKArKWmwlh+ipou1AMILeOYU2Y5GDsnNWh9
-         K5emTXokFSQ+FzIgp9e3N68iiVX50fbpviPtVQ2BkIdeJ2970TbHl/8G3vyte6NE3LYa
-         i1D4U0o6jNZOVI5KKQ4cB3FQ7xgwVIzxkq6Kqey8Rw3ioabICTXSFL/+tnE5LIS9AGHc
-         M7aniFuRKCtDCAvowATGCK8nZgyPXN/90Zko5w71s7x/DL/Bea4eUB/zyhdWGBwQoI/M
-         AV3Q==
-X-Gm-Message-State: ANhLgQ07O9LW/6KbhYJo4Qbrsdnlad5yDUUfqs2MLg1v4jmq0nIoQ2a1
-        GqzSqenoDf4W9S+7xuwlesAuw5ArxUw=
-X-Google-Smtp-Source: ADFU+vv3iN5bf6Nx81FXMawuf3VzC8L33BaYvuVyxtyYoRAzzmsqgFyyXWtfhSheMAx7NV680qGZ1Q==
-X-Received: by 2002:a63:6202:: with SMTP id w2mr3994411pgb.154.1583949669546;
-        Wed, 11 Mar 2020 11:01:09 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id w190sm1323524pfc.219.2020.03.11.11.01.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 11:01:08 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id D91F14028E; Wed, 11 Mar 2020 18:01:07 +0000 (UTC)
-Date:   Wed, 11 Mar 2020 18:01:07 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Jessica Yu <jeyu@kernel.org>
-Subject: Re: [PATCH] kmod: make request_module() return an error when
- autoloading is disabled
-Message-ID: <20200311180107.GO11244@42.do-not-panic.com>
-References: <20200310223731.126894-1-ebiggers@kernel.org>
- <202003111026.2BBE41C@keescook>
- <20200311174134.GB20006@gmail.com>
+        id S1730627AbgCKSD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 14:03:26 -0400
+Received: from mga01.intel.com ([192.55.52.88]:21410 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730468AbgCKSD0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 14:03:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 11:03:24 -0700
+X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
+   d="scan'208";a="277469185"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.251.23.31]) ([10.251.23.31])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Mar 2020 11:03:26 -0700
+Subject: Re: [PATCH V1 11/13] selftests/resctrl: Change Cache Quality
+ Monitoring (CQM) test
+To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        shuah@kernel.org, linux-kselftest@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        tony.luck@intel.com, babu.moger@amd.com, james.morse@arm.com,
+        ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
+ <26086dda86f062bba4116878a012a553503924b2.1583657204.git.sai.praneeth.prakhya@intel.com>
+ <e7bd79cf-4da8-7a61-ac09-4d124315fa93@intel.com>
+ <cf8fbdebd8096900d47a97f0e23a852d94df257a.camel@intel.com>
+ <e7c85e35-9efb-77da-a33f-dd9447a6cf07@intel.com>
+ <04c252f59062450e14642fcbef4b85845f6a7427.camel@intel.com>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <e0bada87-9464-2d08-c4cb-751e30866585@intel.com>
+Date:   Wed, 11 Mar 2020 11:03:23 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200311174134.GB20006@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <04c252f59062450e14642fcbef4b85845f6a7427.camel@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 10:41:34AM -0700, Eric Biggers wrote:
-> On Wed, Mar 11, 2020 at 10:28:07AM -0700, Kees Cook wrote:
-> > On Tue, Mar 10, 2020 at 03:37:31PM -0700, Eric Biggers wrote:
-> > > From: Eric Biggers <ebiggers@google.com>
-> > > 
-> > > It's long been possible to disable kernel module autoloading completely
-> > > by setting /proc/sys/kernel/modprobe to the empty string.  This can be
-> > 
-> > Hunh. I've never seen that before. :) I've always used;
-> > 
-> > echo 1 > /proc/sys/kernel/modules_disabled
-> > 
-> > Regardless,
-> > 
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > 
+Hi Sai,
+
+On 3/11/2020 10:33 AM, Sai Praneeth Prakhya wrote:
+> On Wed, 2020-03-11 at 10:19 -0700, Reinette Chatre wrote:
+>> On 3/10/2020 7:46 PM, Sai Praneeth Prakhya wrote:
+>>> On Tue, 2020-03-10 at 15:18 -0700, Reinette Chatre wrote:
+>>>> On 3/6/2020 7:40 PM, Sai Praneeth Prakhya wrote:
+>>>>>  		.mum_resctrlfs	= 0,
+>>>>>  		.filename	= RESULT_FILE_NAME,
+>>>>> -		.mask		= ~(long_mask << n) & long_mask,
+>>>>> -		.span		= cache_size * n / count_of_bits,
+>>>>>  		.num_of_runs	= 0,
+>>>>> -		.setup		= cqm_setup,
+>>>>> +		.setup		= cqm_setup
+>>>>>  	};
+>>>>> +	int ret;
+>>>>> +	char schemata[64];
+>>>>> +	unsigned long long_mask;
+>>>>>  
+>>>>> -	if (strcmp(benchmark_cmd[0], "fill_buf") == 0)
+>>>>> -		sprintf(benchmark_cmd[1], "%lu", param.span);
+>>>>> +	ret = remount_resctrlfs(1);
+>>>>> +	if (ret)
+>>>>> +		return ret;
+>>>>
+>>>> Here resctrl is remounted and followed by some changes to the root
+>>>> group's schemata. That is followed by a call to resctrl_val that
+>>>> attempts to remount resctrl again that will undo all the configurations
+>>>> inbetween.
+>>>
+>>> No, it wouldn't because mum_resctrlfs is 0. When resctrl FS is already
+>>> mounted
+>>> and mum_resctrlfs is 0, then remount_resctrlfs() is a noop.
+>>>
+>>
+>> I missed that. Thank you.
+>>
+>> fyi ... when I tried these tests I encountered the following error
+>> related to unmounting:
+>>
+>> [SNIP]
+>> ok Write schema "L3:1=7fff" to resctrl FS
+>> ok Write schema "L3:1=ffff" to resctrl FS
+>> ok Write schema "L3:1=1ffff" to resctrl FS
+>> ok Write schema "L3:1=3ffff" to resctrl FS
+>> # Unable to umount resctrl: Device or resource busy
+>> # Results are displayed in (Bytes)
+>> ok CQM: diff within 5% for mask 1
+>> # alloc_llc_cache_size: 2883584
+>> # avg_llc_occu_resc: 2973696
+>> ok CQM: diff within 5% for mask 3
+>> [SNIP]
+>>
+>> This seems to originate from resctrl_val() that forces an unmount but if
+>> that fails the error is not propagated.
 > 
-> modules_disabled is different because it disables *all* module loading, not just
-> autoloading.
+> Yes, that's right and it's a good test. I didn't encounter this issue during
+> my testing because I wasn't using resctrl FS from other terminals (I think you
+> were using resctrl FS from other terminal and hence resctrl_test was unable to
+> unmount it).
 
-Clarifying this on your patch would be useful, otherwise its lost
-tribal knowledge.
+I was not explicitly testing for this but this may have been the case.
 
- LUis
+As a sidenote ... could remount_resctrlfs() be called consistently? It
+seems to switch between being called with true/false and 1/0. Since its
+parameter type is boolean using true/false seems most appropriate.
+
+> I think the error should not be propagated because unmounting resctrl FS
+> shouldn't stop us from checking the results. If measuring values reports an
+> error then we shouldn't check for results.
+
+This sounds right. It is inconsistent though ... the CQM test unmounts
+resctrl after it is run but the CAT test does not. Looking closer the
+CAT test seems to leave its artifacts around in resctrl and this should
+be cleaned up.
+
+I am not sure about the expectations here. Unmounting resctrl after a
+test is run is indeed the easiest to clean up and may be ok. It may be a
+surprise to the user though. Perhaps there can be a snippet in the
+README that warns people about this?
+
+Thank you very much
+
+Reinette
