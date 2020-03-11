@@ -2,68 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92D42181C45
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:26:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C586181C3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:23:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729841AbgCKP0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 11:26:43 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11628 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729100AbgCKP0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 11:26:43 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id CE1AC8C30EC35FF521E6;
-        Wed, 11 Mar 2020 23:26:30 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.58) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.487.0; Wed, 11 Mar 2020 23:26:23 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Luo Jiaxing <luojiaxing@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH] scsi: hisi_sas: Use dev_err() in read_iost_itct_cache_v3_hw()
-Date:   Wed, 11 Mar 2020 23:22:24 +0800
-Message-ID: <1583940144-230800-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
+        id S1729929AbgCKPXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 11:23:14 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:59652 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729473AbgCKPXO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 11:23:14 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: dafna)
+        with ESMTPSA id AA96427FD37
+Subject: Re: [PATCH] dt-bindings: input: atmel_mxt_ts: convert
+ atmel,maxtouch.txt to yaml
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, nick@shmanahar.org,
+        dmitry.torokhov@gmail.com, mark.rutland@arm.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        ludovic.desroches@microchip.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, enric.balletbo@collabora.com,
+        helen.koike@collabora.com, ezequiel@collabora.com,
+        kernel@collabora.com, dafna3@gmail.com
+References: <20200303172533.30602-1-dafna.hirschfeld@collabora.com>
+ <20200310211437.GA18992@bogus>
+From:   Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+Message-ID: <f612396e-e5e2-db76-6297-a108b53e4000@collabora.com>
+Date:   Wed, 11 Mar 2020 16:23:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.58]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200310211437.GA18992@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luo Jiaxing <luojiaxing@huawei.com>
+Hi,
+Thanks for the review
 
-The print of pr_err() does not come with device information, so replace
-it with dev_err(). Also improve the grammar in the message.
+On 10.03.20 22:14, Rob Herring wrote:
+> On Tue, Mar 03, 2020 at 07:25:33PM +0200, Dafna Hirschfeld wrote:
+>> Convert the binding file atmel,maxtouch.txt to yaml format.
+>> Also change the file name in the MAINTAINERS file.
+>>
+>> This was tested and verified on ARM and ARM64 with:
+>>
+>> make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+>> make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+>>
+>> Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+>> ---
+>>   .../bindings/input/atmel,maxtouch.txt         | 41 ------------
+>>   .../bindings/input/atmel,maxtouch.yaml        | 64 +++++++++++++++++++
+>>   MAINTAINERS                                   |  2 +-
+>>   3 files changed, 65 insertions(+), 42 deletions(-)
+>>   delete mode 100644 Documentation/devicetree/bindings/input/atmel,maxtouch.txt
+>>   create mode 100644 Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
+>> deleted file mode 100644
+>> index c88919480d37..000000000000
+>> --- a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
+>> +++ /dev/null
+>> @@ -1,41 +0,0 @@
+>> -Atmel maXTouch touchscreen/touchpad
+>> -
+>> -Required properties:
+>> -- compatible:
+>> -    atmel,maxtouch
+>> -
+>> -    The following compatibles have been used in various products but are
+>> -    deprecated:
+>> -	atmel,qt602240_ts
+>> -	atmel,atmel_mxt_ts
+>> -	atmel,atmel_mxt_tp
+>> -	atmel,mXT224
+>> -
+>> -- reg: The I2C address of the device
+>> -
+>> -- interrupts: The sink for the touchpad's IRQ output
+>> -    See ../interrupt-controller/interrupts.txt
+>> -
+>> -Optional properties for main touchpad device:
+>> -
+>> -- linux,gpio-keymap: When enabled, the SPT_GPIOPWN_T19 object sends messages
+>> -    on GPIO bit changes. An array of up to 8 entries can be provided
+>> -    indicating the Linux keycode mapped to each bit of the status byte,
+>> -    starting at the LSB. Linux keycodes are defined in
+>> -    <dt-bindings/input/input.h>.
+>> -
+>> -    Note: the numbering of the GPIOs and the bit they start at varies between
+>> -    maXTouch devices. You must either refer to the documentation, or
+>> -    experiment to determine which bit corresponds to which input. Use
+>> -    KEY_RESERVED for unused padding values.
+>> -
+>> -- reset-gpios: GPIO specifier for the touchscreen's reset pin (active low)
+>> -
+>> -Example:
+>> -
+>> -	touch@4b {
+>> -		compatible = "atmel,maxtouch";
+>> -		reg = <0x4b>;
+>> -		interrupt-parent = <&gpio>;
+>> -		interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_LEVEL_LOW>;
+>> -	};
+>> diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml b/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+>> new file mode 100644
+>> index 000000000000..024dc4ded4f3
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+>> @@ -0,0 +1,64 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/input/atmel,maxtouch.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Atmel maXTouch touchscreen/touchpad
+>> +
+>> +maintainers:
+>> +  - Nick Dyer <nick@shmanahar.org>
+>> +
+>> +description: |
+>> +  Atmel maXTouch touchscreen/touchpad
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: atmel,maxtouch
+>> +
+>> +  reg:
+>> +    description: The I2C address of the device
+>> +    maxItems: 1
+>> +
+>> +  interrupts:
+>> +    description: The sink for the touchpad's IRQ output
+> 
+> How many? Needs 'maxItems: 1'> 
+> You can drop the description.
+> 
+>> +
+>> +  linux,gpio-keymap:
+>> +    description:
+>> +      When enabled, the SPT_GPIOPWN_T19 object sends messages
+>> +      on GPIO bit changes. An array of up to 8 entries can be provided
+>> +      indicating the Linux keycode mapped to each bit of the status byte,
+>> +      starting at the LSB. Linux keycodes are defined in
+>> +      <dt-bindings/input/input.h>.
+>> +      Note, the numbering of the GPIOs and the bit they start at varies between
+>> +      maXTouch devices. You must either refer to the documentation, or
+>> +      experiment to determine which bit corresponds to which input. Use
+>> +      KEY_RESERVED for unused padding values.
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +    maxItems: 8
+>> +
+>> +  reset-gpios:
+>> +    description: GPIO specifier for the touchscreen's reset pin (active low)
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +
+>> +additionalProperties: true
+> 
+> That's the default and we generally want this to be 'false'.
+but many nodes has more properties not described here so I could not
+set it to false.
 
-Signed-off-by: Luo Jiaxing <luojiaxing@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
-
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index a2debe0c8185..374885aa8d77 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -2938,6 +2938,7 @@ static void read_iost_itct_cache_v3_hw(struct hisi_hba *hisi_hba,
- {
- 	u32 cache_dw_size = HISI_SAS_IOST_ITCT_CACHE_DW_SZ *
- 			    HISI_SAS_IOST_ITCT_CACHE_NUM;
-+	struct device *dev = hisi_hba->dev;
- 	u32 *buf = cache;
- 	u32 i, val;
- 
-@@ -2950,7 +2951,7 @@ static void read_iost_itct_cache_v3_hw(struct hisi_hba *hisi_hba,
- 	}
- 
- 	if (val != 0xffffffff) {
--		pr_err("Issue occur when reading IOST/ITCT cache!\n");
-+		dev_err(dev, "Issue occurred in reading IOST/ITCT cache!\n");
- 		return;
- 	}
- 
--- 
-2.17.1
-
+thanks,
+Dafna
+> 
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +    #include <dt-bindings/gpio/tegra-gpio.h>
+>> +    i2c {
+>> +          #address-cells = <1>;
+>> +          #size-cells = <0>;
+>> +          touch@4b {
+>> +                compatible = "atmel,maxtouch";
+>> +                reg = <0x4b>;
+>> +                interrupt-parent = <&gpio>;
+>> +                interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_LEVEL_LOW>;
+>> +          };
+>> +    };
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 46fdb834d1fb..d553aa315734 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -2877,7 +2877,7 @@ ATMEL MAXTOUCH DRIVER
+>>   M:	Nick Dyer <nick@shmanahar.org>
+>>   T:	git git://github.com/ndyer/linux.git
+>>   S:	Maintained
+>> -F:	Documentation/devicetree/bindings/input/atmel,maxtouch.txt
+>> +F:	Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+>>   F:	drivers/input/touchscreen/atmel_mxt_ts.c
+>>   
+>>   ATMEL WIRELESS DRIVER
+>> -- 
+>> 2.17.1
+>>
