@@ -2,141 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0029C182092
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:17:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F91B182096
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:18:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730869AbgCKSRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 14:17:13 -0400
-Received: from foss.arm.com ([217.140.110.172]:53276 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730847AbgCKSRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:17:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E01C61063;
-        Wed, 11 Mar 2020 11:17:06 -0700 (PDT)
-Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 074853F6CF;
-        Wed, 11 Mar 2020 11:17:05 -0700 (PDT)
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com
-Subject: [PATCH v2 9/9] sched/topology: Define and use shortcut pointers for wakeup sd_flag scan
-Date:   Wed, 11 Mar 2020 18:16:01 +0000
-Message-Id: <20200311181601.18314-10-valentin.schneider@arm.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200311181601.18314-1-valentin.schneider@arm.com>
-References: <20200311181601.18314-1-valentin.schneider@arm.com>
+        id S1730761AbgCKSSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 14:18:39 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:45852 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730677AbgCKSSi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 14:18:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583950717;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IIEuNm0s1KSd9ucNBIED5u8XC49ZUleRh3A+TtaDM9A=;
+        b=KJ8fFFHckcEzm/tOgMlOhjukcLZa6Bhpj8Y8fqcrEGjUUhkjJdL6y4N1MpXpKffmsv0CSv
+        /0T8quhQoWgflpt3zJ5o6qoiWwhZqiAyoyEBJkXSlPai30WTvPDKMA3Ac5zocoGRKs56pJ
+        ZpiJwu2uwyQ9TqGSJPEFNTtlRH935HI=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-13-m9lhqwNmM3qj11U6qp1tYw-1; Wed, 11 Mar 2020 14:18:35 -0400
+X-MC-Unique: m9lhqwNmM3qj11U6qp1tYw-1
+Received: by mail-wr1-f69.google.com with SMTP id z13so1313506wrv.7
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 11:18:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IIEuNm0s1KSd9ucNBIED5u8XC49ZUleRh3A+TtaDM9A=;
+        b=tcaZELvTkjRCFDrGMXhTvDZB664pU/5m2KJP3ZLwVtECcxSL/joXofwYodkxVBCgV5
+         wAAU5NFnrKUO+vuBZYHbAnunKD3rHdXKpcueRkvxIwHO8Gk49GdwgKIH/x/HaHJUOxLU
+         Hxiv7H+eciswJwke28otl1QVO0IgXBugyViHQdE84wR15F0DS4TAQTCJhhVX76AylV2V
+         0NihvaWIel09muFLG7ZgRGkMwD0z/FoxbokwmTTmwXIK9F3nM9M9+Em8Whp3dO3T+pv7
+         8+hWik578hfeI14NUtFNB9icrk9kzcSMrEzU6xJpWqks4YrIgoXXA0+GGMKEwriB9xpv
+         YpMg==
+X-Gm-Message-State: ANhLgQ3Kg4ewxxLeiN2tpARFMvKQKxA15rk0W/P6SgkroeCoNAtq4Fo4
+        ybUnBp45lHUmrFDue9XyIXe9R4xqmqZ6w7BfnYJ8xMYlj7/QDEaWp5Vasm0E4oWFvBv880SMEMl
+        OeO2N2B9UzfMJwtLkPsWjsP2+
+X-Received: by 2002:a1c:cc06:: with SMTP id h6mr35462wmb.118.1583950713295;
+        Wed, 11 Mar 2020 11:18:33 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vull0VAoH6OT00g7UtPFzzvBf5edDKUbKJ3cpfh/bStE6A6kp/2YRlGvAJBVLJS4Bh77Ftt5Q==
+X-Received: by 2002:a1c:cc06:: with SMTP id h6mr35442wmb.118.1583950713010;
+        Wed, 11 Mar 2020 11:18:33 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-fc7e-fd47-85c1-1ab3.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:fc7e:fd47:85c1:1ab3])
+        by smtp.gmail.com with ESMTPSA id r9sm1977728wma.47.2020.03.11.11.18.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2020 11:18:32 -0700 (PDT)
+Subject: Re: [PATCH v4 1/3] x86/tsc_msr: Use named struct initializers
+To:     Andy Shevchenko <andy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     Vipul Kumar <vipulk0511@gmail.com>,
+        Vipul Kumar <vipul_kumar@mentor.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>,
+        Cedric Hombourger <Cedric_Hombourger@mentor.com>,
+        Len Brown <len.brown@intel.com>,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Gayatri Kammela <gayatri.kammela@intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20200223140610.59612-1-hdegoede@redhat.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <9705677f-f52e-938f-a84a-8db8afc9fc8f@redhat.com>
+Date:   Wed, 11 Mar 2020 19:18:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200223140610.59612-1-hdegoede@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reworking select_task_rq_fair()'s domain walk exposed that !want_affine
-wakeups only look for highest sched_domain with the required sd_flag
-set. This is something we can cache at sched domain build time to slightly
-optimize select_task_rq_fair(). Note that this isn't a "free" optimization:
-it costs us 3 pointers per CPU.
+Hi,
 
-Add cached per-CPU pointers for the highest domains with SD_BALANCE_WAKE,
-SD_BALANCE_EXEC and SD_BALANCE_FORK. Use them in select_task_rq_fair().
+On 2/23/20 3:06 PM, Hans de Goede wrote:
+> Use named struct initializers for the freq_desc struct-s initialization
+> and change the "u8 msr_plat" to a "bool use_msr_plat" to make its meaning
+> more clear instead of relying on a comment to explain it.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
----
- kernel/sched/fair.c     | 25 +++++++++++++------------
- kernel/sched/sched.h    |  3 +++
- kernel/sched/topology.c | 12 ++++++++++++
- 3 files changed, 28 insertions(+), 12 deletions(-)
+I believe that this series is ready for merging now? Can we
+please get this merged?
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a6fca6817e92..40fb97062157 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6595,17 +6595,6 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
- 	int want_affine = 0;
- 	int sd_flag;
- 
--	switch (wake_flags & (WF_TTWU | WF_FORK | WF_EXEC)) {
--	case WF_TTWU:
--		sd_flag = SD_BALANCE_WAKE;
--		break;
--	case WF_FORK:
--		sd_flag = SD_BALANCE_FORK;
--		break;
--	default:
--		sd_flag = SD_BALANCE_EXEC;
--	}
--
- 	if (wake_flags & WF_TTWU) {
- 		record_wakee(p);
- 
-@@ -6621,7 +6610,19 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
- 
- 	rcu_read_lock();
- 
--	sd = highest_flag_domain(cpu, sd_flag);
-+	switch (wake_flags & (WF_TTWU | WF_FORK | WF_EXEC)) {
-+	case WF_TTWU:
-+		sd_flag = SD_BALANCE_WAKE;
-+		sd = rcu_dereference(per_cpu(sd_balance_wake, cpu));
-+		break;
-+	case WF_FORK:
-+		sd_flag = SD_BALANCE_FORK;
-+		sd = rcu_dereference(per_cpu(sd_balance_fork, cpu));
-+		break;
-+	default:
-+		sd_flag = SD_BALANCE_EXEC;
-+		sd = rcu_dereference(per_cpu(sd_balance_exec, cpu));
-+	}
- 
- 	/*
- 	 * If !want_affine, we just look for the highest domain where
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index ad2106245e12..3a0e38f2f713 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1393,6 +1393,9 @@ DECLARE_PER_CPU(int, sd_llc_size);
- DECLARE_PER_CPU(int, sd_llc_id);
- DECLARE_PER_CPU(struct sched_domain_shared __rcu *, sd_llc_shared);
- DECLARE_PER_CPU(struct sched_domain __rcu *, sd_numa);
-+DECLARE_PER_CPU(struct sched_domain __rcu *, sd_balance_wake);
-+DECLARE_PER_CPU(struct sched_domain __rcu *, sd_balance_fork);
-+DECLARE_PER_CPU(struct sched_domain __rcu *, sd_balance_exec);
- DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_packing);
- DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity);
- extern struct static_key_false sched_asym_cpucapacity;
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 6077b23f9723..0270252a964b 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -610,6 +610,9 @@ DEFINE_PER_CPU(int, sd_llc_size);
- DEFINE_PER_CPU(int, sd_llc_id);
- DEFINE_PER_CPU(struct sched_domain_shared __rcu *, sd_llc_shared);
- DEFINE_PER_CPU(struct sched_domain __rcu *, sd_numa);
-+DEFINE_PER_CPU(struct sched_domain __rcu *, sd_balance_wake);
-+DEFINE_PER_CPU(struct sched_domain __rcu *, sd_balance_fork);
-+DEFINE_PER_CPU(struct sched_domain __rcu *, sd_balance_exec);
- DEFINE_PER_CPU(struct sched_domain __rcu *, sd_asym_packing);
- DEFINE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity);
- DEFINE_STATIC_KEY_FALSE(sched_asym_cpucapacity);
-@@ -636,6 +639,15 @@ static void update_top_cache_domain(int cpu)
- 	sd = lowest_flag_domain(cpu, SD_NUMA);
- 	rcu_assign_pointer(per_cpu(sd_numa, cpu), sd);
- 
-+	sd = highest_flag_domain(cpu, SD_BALANCE_WAKE);
-+	rcu_assign_pointer(per_cpu(sd_balance_wake, cpu), sd);
-+
-+	sd = highest_flag_domain(cpu, SD_BALANCE_FORK);
-+	rcu_assign_pointer(per_cpu(sd_balance_fork, cpu), sd);
-+
-+	sd = highest_flag_domain(cpu, SD_BALANCE_EXEC);
-+	rcu_assign_pointer(per_cpu(sd_balance_exec, cpu), sd);
-+
- 	sd = highest_flag_domain(cpu, SD_ASYM_PACKING);
- 	rcu_assign_pointer(per_cpu(sd_asym_packing, cpu), sd);
- 
--- 
-2.24.0
+Regards,
+
+Hans
+
+
+> ---
+>   arch/x86/kernel/tsc_msr.c | 28 ++++++++++++++++++----------
+>   1 file changed, 18 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/tsc_msr.c b/arch/x86/kernel/tsc_msr.c
+> index e0cbe4f2af49..5fa41ac3feb1 100644
+> --- a/arch/x86/kernel/tsc_msr.c
+> +++ b/arch/x86/kernel/tsc_msr.c
+> @@ -22,10 +22,10 @@
+>    * read in MSR_PLATFORM_ID[12:8], otherwise in MSR_PERF_STAT[44:40].
+>    * Unfortunately some Intel Atom SoCs aren't quite compliant to this,
+>    * so we need manually differentiate SoC families. This is what the
+> - * field msr_plat does.
+> + * field use_msr_plat does.
+>    */
+>   struct freq_desc {
+> -	u8 msr_plat;	/* 1: use MSR_PLATFORM_INFO, 0: MSR_IA32_PERF_STATUS */
+> +	bool use_msr_plat;
+>   	u32 freqs[MAX_NUM_FREQS];
+>   };
+>   
+> @@ -35,31 +35,39 @@ struct freq_desc {
+>    * by MSR based on SDM.
+>    */
+>   static const struct freq_desc freq_desc_pnw = {
+> -	0, { 0, 0, 0, 0, 0, 99840, 0, 83200 }
+> +	.use_msr_plat = false,
+> +	.freqs = { 0, 0, 0, 0, 0, 99840, 0, 83200 },
+>   };
+>   
+>   static const struct freq_desc freq_desc_clv = {
+> -	0, { 0, 133200, 0, 0, 0, 99840, 0, 83200 }
+> +	.use_msr_plat = false,
+> +	.freqs = { 0, 133200, 0, 0, 0, 99840, 0, 83200 },
+>   };
+>   
+>   static const struct freq_desc freq_desc_byt = {
+> -	1, { 83300, 100000, 133300, 116700, 80000, 0, 0, 0 }
+> +	.use_msr_plat = true,
+> +	.freqs = { 83300, 100000, 133300, 116700, 80000, 0, 0, 0 },
+>   };
+>   
+>   static const struct freq_desc freq_desc_cht = {
+> -	1, { 83300, 100000, 133300, 116700, 80000, 93300, 90000, 88900, 87500 }
+> +	.use_msr_plat = true,
+> +	.freqs = { 83300, 100000, 133300, 116700, 80000, 93300, 90000,
+> +		   88900, 87500 },
+>   };
+>   
+>   static const struct freq_desc freq_desc_tng = {
+> -	1, { 0, 100000, 133300, 0, 0, 0, 0, 0 }
+> +	.use_msr_plat = true,
+> +	.freqs = { 0, 100000, 133300, 0, 0, 0, 0, 0 },
+>   };
+>   
+>   static const struct freq_desc freq_desc_ann = {
+> -	1, { 83300, 100000, 133300, 100000, 0, 0, 0, 0 }
+> +	.use_msr_plat = true,
+> +	.freqs = { 83300, 100000, 133300, 100000, 0, 0, 0, 0 },
+>   };
+>   
+>   static const struct freq_desc freq_desc_lgm = {
+> -	1, { 78000, 78000, 78000, 78000, 78000, 78000, 78000, 78000 }
+> +	.use_msr_plat = true,
+> +	.freqs = { 78000, 78000, 78000, 78000, 78000, 78000, 78000, 78000 },
+>   };
+>   
+>   static const struct x86_cpu_id tsc_msr_cpu_ids[] = {
+> @@ -91,7 +99,7 @@ unsigned long cpu_khz_from_msr(void)
+>   		return 0;
+>   
+>   	freq_desc = (struct freq_desc *)id->driver_data;
+> -	if (freq_desc->msr_plat) {
+> +	if (freq_desc->use_msr_plat) {
+>   		rdmsr(MSR_PLATFORM_INFO, lo, hi);
+>   		ratio = (lo >> 8) & 0xff;
+>   	} else {
+> 
 
