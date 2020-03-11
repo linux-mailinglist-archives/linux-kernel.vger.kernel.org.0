@@ -2,166 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F8BA1822CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:51:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6588D1822D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 20:53:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731215AbgCKTvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 15:51:14 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39700 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731030AbgCKTvN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:51:13 -0400
-Received: by mail-pg1-f193.google.com with SMTP id s2so1757679pgv.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 12:51:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=bEbLn60MatMY03Vz8TeE0dyBSEdNX1ebEYntbweJuus=;
-        b=kmneJE/E/emo/Td6UCnKU/32NDvRw/nBoZicVqzuxBCWpm5iG8fX02sFQBI0JvB3+J
-         aqHGUFrXMVFIn6B8JgGNHHQj/rdtI+g/cgqFZiH5mloGj1OHyBnTjoA9VumS3J5wRE1Q
-         WEwWrbo/RBVh3B2ko8HDeuFYcziESr7cZl+8nRI/wVqVRd904yac66ZYjZWCLn17i+31
-         +gKjNbkoQJ4wthQTQ7uKLN6ht8ZcSRQaQSvaYi5RcuYNkP4+fxT+RUKxOPo9XoqCdeCJ
-         3W6hblO2KQdXVy0mcu9wi+9NST0m55Hjm+NeANKDMATlMN6Q+AOZEZrRh8tFtpOgLH+C
-         NeeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=bEbLn60MatMY03Vz8TeE0dyBSEdNX1ebEYntbweJuus=;
-        b=jN2r4e031/7PcRuqaapcSzKGQm2Zn+foLVcxHZefJ7zNwmDCBFgeQEKniKNSNqZXmV
-         D++ykEKryeqpxETK8+fWoVb+0VeY8iXa9K9dZa0ODk+bROkmeIoYL2w8xZB7ClH59fz0
-         yX9qW6QbB3789V2wjSojtzMFSNqHsW+uI/5L0yMkEjBy/l18SyFA/qMOrBLM60TITiOO
-         edFTVWND9czXKKJeMyZdah55Wd4mqMiZYYTLmuMNRPmkXu+eWPqAxEPNXysznQv1BRF0
-         iNsmuRQx/HXvwsj1Bx3ZI7WH5gItL+VON/A0QiMDEVGOVByF39zN/KAchYUt3wzyUlz5
-         SmYQ==
-X-Gm-Message-State: ANhLgQ0PdmmkjllhWSrRAeepYd/cpEBHy65mpongLqu4r91LVRohe4/r
-        IHWIDYq8xe6o08cTHuuzfab2ew==
-X-Google-Smtp-Source: ADFU+vvGMdQQLQxm0XcO/IMv0j89hOM1EAvpHbUo1Jp3dwwCwmeE7+Eohjtm5Si4J6N350GGvOyM7w==
-X-Received: by 2002:a63:8343:: with SMTP id h64mr4182670pge.73.1583956272565;
-        Wed, 11 Mar 2020 12:51:12 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id a3sm29260287pfi.161.2020.03.11.12.51.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 12:51:11 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 12:51:11 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-cc:     Michal Hocko <mhocko@kernel.org>,
-        Robert Kolchmeyer <rkolchmeyer@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch] mm, oom: make a last minute check to prevent unnecessary
- memcg oom kills
-In-Reply-To: <54d56b12-3f75-1382-cc12-a8e63e24ce1f@I-love.SAKURA.ne.jp>
-Message-ID: <alpine.DEB.2.21.2003111248250.171292@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.2003101454580.142656@chino.kir.corp.google.com> <20200310221938.GF8447@dhcp22.suse.cz> <alpine.DEB.2.21.2003101547090.177273@chino.kir.corp.google.com> <54d56b12-3f75-1382-cc12-a8e63e24ce1f@I-love.SAKURA.ne.jp>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S2387426AbgCKTxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 15:53:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52748 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731030AbgCKTxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 15:53:19 -0400
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D008C20738;
+        Wed, 11 Mar 2020 19:53:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583956399;
+        bh=tdw1K1yZNkMlalSB2DrIpOQZ4ZujojveOndEdIh1POE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mjp6ttGth2utmaXT57xPBZagIByGCbPpqqz+SQJ9Nuj4p33UyxfReRVBEu5glEa6e
+         1+NviPHVfW6ruFOVdVCpBG/OuOlWbsNRRwVnIJm8xNtdAGDHjiZTgvOO+JXn7BRNSP
+         dWslNT+B1zX/wTNv/N0TZ3Ty1l6/YnEplWO2QP30=
+Received: by mail-qk1-f178.google.com with SMTP id f3so3384153qkh.1;
+        Wed, 11 Mar 2020 12:53:17 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ19Qv59L+JezdnKvEntKNcwgFkFwo9t2gpV+x5Hk6Q29pIDajtk
+        cqrHKhQCZbzXPUry7s+6v1bnfunZxu6v9N9udQ==
+X-Google-Smtp-Source: ADFU+vucVpbYPdluXnU/rbjyy9j5DWdSrdu9Uo5rswhWT4MR6C36BDlqrvkEqWEYhW37ivNZ71WxhDQlWTYiNiRtkfg=
+X-Received: by 2002:a37:2cc6:: with SMTP id s189mr4492038qkh.223.1583956396701;
+ Wed, 11 Mar 2020 12:53:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <1580969461-16981-1-git-send-email-yamonkar@cadence.com> <1580969461-16981-3-git-send-email-yamonkar@cadence.com>
+In-Reply-To: <1580969461-16981-3-git-send-email-yamonkar@cadence.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 11 Mar 2020 14:53:05 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKRjJEJCr51HW178JSDmwEGMwfN-eHKDRkb482bQ2yALg@mail.gmail.com>
+Message-ID: <CAL_JsqKRjJEJCr51HW178JSDmwEGMwfN-eHKDRkb482bQ2yALg@mail.gmail.com>
+Subject: Re: [PATCH v4 02/13] dt-bindings: phy: Add Cadence MHDP PHY bindings
+ in YAML format.
+To:     Yuti Amonkar <yamonkar@cadence.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime@cerno.tech>, Jyri Sarha <jsarha@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Praneeth Bajjuri <praneeth@ti.com>,
+        Milind Parab <mparab@cadence.com>,
+        Swapnil Kashinath Jakhade <sjakhade@cadence.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Mar 2020, Tetsuo Handa wrote:
+On Thu, Feb 6, 2020 at 12:11 AM Yuti Amonkar <yamonkar@cadence.com> wrote:
+>
+> - Add Cadence MHDP PHY bindings in YAML format.
+> - Add Torrent PHY reference clock bindings.
+> - Add sub-node bindings for each group of PHY lanes based on PHY type.
+>   Each sub-node includes properties such as master lane number, link reset,
+>   phy type, number of lanes etc.
+> - Add reset support including PHY reset and individual lane reset.
+> - Add a new compatible string used for TI SoCs using Torrent PHY.
+> This will not affect ABI as the driver has never been functional,
+> and therefore do not exist in any active use case.
+>
+> Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
+> ---
+>  .../bindings/phy/phy-cadence-torrent.yaml     | 143 ++++++++++++++++++
+>  1 file changed, 143 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
+> new file mode 100644
+> index 000000000000..9f94be1dce6e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
+> @@ -0,0 +1,143 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/phy/phy-cadence-torrent.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Cadence Torrent SD0801 PHY binding for DisplayPort
+> +
+> +description:
+> +  This binding describes the Cadence SD0801 PHY (also known as Torrent PHY)
+> +  hardware included with the Cadence MHDP DisplayPort controller.
+> +
+> +maintainers:
+> +  - Swapnil Jakhade <sjakhade@cadence.com>
+> +  - Yuti Amonkar <yamonkar@cadence.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - cdns,torrent-phy
+> +      - ti,j721e-serdes-10g
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description:
+> +      PHY reference clock. Must contain an entry in clock-names.
+> +
+> +  clock-names:
+> +    const: refclk
+> +
+> +  reg:
+> +    minItems: 1
+> +    maxItems: 2
+> +    items:
+> +      - description: Offset of the Torrent PHY configuration registers.
+> +      - description: Offset of the DPTX PHY configuration registers.
+> +
+> +  reg-names:
+> +    minItems: 1
+> +    maxItems: 2
+> +    items:
+> +      - const: torrent_phy
+> +      - const: dptx_phy
+> +
+> +  resets:
+> +    maxItems: 1
+> +    description:
+> +      Torrent PHY reset.
+> +      See Documentation/devicetree/bindings/reset/reset.txt
+> +
+> +patternProperties:
+> +  '^phy@[0-7]+$':
+> +    type: object
+> +    description:
+> +      Each group of PHY lanes with a single master lane should be represented as a sub-node.
+> +    properties:
+> +      reg:
+> +        description:
+> +          The master lane number. This is the lowest numbered lane in the lane group.
+> +
+> +      resets:
+> +        minItems: 1
+> +        maxItems: 4
+> +        description:
+> +          Contains list of resets, one per lane, to get all the link lanes out of reset.
+> +
+> +      "#phy-cells":
+> +        const: 0
+> +
+> +      cdns,phy-type:
+> +        description:
+> +          Specifies the type of PHY for which the group of PHY lanes is used.
+> +          Refer include/dt-bindings/phy/phy.h. Constants from the header should be used.
+> +        allOf:
+> +          - $ref: /schemas/types.yaml#/definitions/uint32
+> +          - enum: [1, 2, 3, 4, 5, 6]
+> +
+> +      cdns,num-lanes:
+> +        description:
+> +          Number of DisplayPort lanes.
+> +        allOf:
+> +          - $ref: /schemas/types.yaml#/definitions/uint32
+> +          - enum: [1, 2, 4]
+> +        default: 4
+> +
+> +      cdns,max-bit-rate:
+> +        description:
+> +          Maximum DisplayPort link bit rate to use, in Mbps
+> +        allOf:
+> +          - $ref: /schemas/types.yaml#/definitions/uint32
+> +          - enum: [2160, 2430, 2700, 3240, 4320, 5400, 8100]
+> +        default: 8100
+> +
+> +    required:
+> +      - reg
+> +      - resets
+> +      - "#phy-cells"
+> +      - cdns,phy-type
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - clocks
+> +  - clock-names
+> +  - reg
+> +  - reg-names
+> +  - resets
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/phy/phy.h>
+> +    torrent_phy: phy@f0fb500000 {
 
-> > The patch certainly prevents unnecessary oom kills when there is a pending 
-> > victim that uncharges its memory between invoking the oom killer and 
-> > finding MMF_OOM_SKIP in the list of eligible tasks and its much more 
-> > common on systems with limited cpu cores.
-> 
-> I think that it is dump_header() which currently spends much time (due to
-> synchronous printing) enough to make "the second memcg oom kill shows usage
-> is >40MB below its limit of 100MB" happen. Shouldn't we call dump_header()
-> and then do the last check and end with "but did not kill anybody" message?
-> 
+The example still fails, now in linux-next:
 
-Lol, I actually did that for internal testing as well :)  I didn't like 
-how it spammed the kernel log and then basically said "just kidding, 
-nothing was oom killed."
+Documentation/devicetree/bindings/phy/phy-cadence-torrent.example.dt.yaml:
+phy@f0fb500000: '#phy-cells' is a required property
 
-But if you think this would helpful I can propose it as v2.
----
- include/linux/memcontrol.h |  7 +++++++
- mm/memcontrol.c            |  2 +-
- mm/oom_kill.c              | 14 +++++++++++++-
- 3 files changed, 21 insertions(+), 2 deletions(-)
+This is because of the node name 'phy' and this node is not a phy
+provider (the child nodes are). Just use 'torrent-phy@...' here.
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -445,6 +445,8 @@ void mem_cgroup_iter_break(struct mem_cgroup *, struct mem_cgroup *);
- int mem_cgroup_scan_tasks(struct mem_cgroup *,
- 			  int (*)(struct task_struct *, void *), void *);
- 
-+unsigned long mem_cgroup_margin(struct mem_cgroup *memcg);
-+
- static inline unsigned short mem_cgroup_id(struct mem_cgroup *memcg)
- {
- 	if (mem_cgroup_disabled())
-@@ -945,6 +947,11 @@ static inline int mem_cgroup_scan_tasks(struct mem_cgroup *memcg,
- 	return 0;
- }
- 
-+static inline unsigned long mem_cgroup_margin(struct mem_cgroup *memcg)
-+{
-+	return 0;
-+}
-+
- static inline unsigned short mem_cgroup_id(struct mem_cgroup *memcg)
- {
- 	return 0;
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1286,7 +1286,7 @@ void mem_cgroup_update_lru_size(struct lruvec *lruvec, enum lru_list lru,
-  * Returns the maximum amount of memory @mem can be charged with, in
-  * pages.
-  */
--static unsigned long mem_cgroup_margin(struct mem_cgroup *memcg)
-+unsigned long mem_cgroup_margin(struct mem_cgroup *memcg)
- {
- 	unsigned long margin = 0;
- 	unsigned long count;
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -934,7 +934,6 @@ static void __oom_kill_process(struct task_struct *victim, const char *message)
- 	mmdrop(mm);
- 	put_task_struct(victim);
- }
--#undef K
- 
- /*
-  * Kill provided task unless it's secured by setting
-@@ -982,6 +981,18 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 	 */
- 	oom_group = mem_cgroup_get_oom_group(victim, oc->memcg);
- 
-+	/* One last check: do we *really* need to kill? */
-+	if (is_memcg_oom(oc)) {
-+		unsigned long margin = mem_cgroup_margin(oc->memcg);
-+
-+		if (unlikely(margin >= (1 << oc->order))) {
-+			put_task_struct(victim);
-+			pr_info("Suppressed oom kill, %lukB of memory can be charged\n",
-+				K(margin));
-+			return;
-+		}
-+	}
-+
- 	__oom_kill_process(victim, message);
- 
- 	/*
-@@ -994,6 +1005,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 		mem_cgroup_put(oom_group);
- 	}
- }
-+#undef K
- 
- /*
-  * Determines whether the kernel must panic because of the panic_on_oom sysctl.
+> +          compatible = "cdns,torrent-phy";
+> +          reg = <0xf0 0xfb500000 0x0 0x00100000>,
+> +                <0xf0 0xfb030a00 0x0 0x00000040>;
+> +          reg-names = "torrent_phy", "dptx_phy";
+> +          resets = <&phyrst 0>;
+> +          clocks = <&ref_clk>;
+> +          clock-names = "refclk";
+> +          #address-cells = <1>;
+> +          #size-cells = <0>;
+> +          torrent_phy_dp: phy@0 {
+> +                    reg = <0>;
+> +                    resets = <&phyrst 1>, <&phyrst 2>,
+> +                             <&phyrst 3>, <&phyrst 4>;
+> +                    #phy-cells = <0>;
+> +                    cdns,phy-type = <PHY_TYPE_DP>;
+> +                    cdns,num-lanes = <4>;
+> +                    cdns,max-bit-rate = <8100>;
+> +          };
+> +    };
+> +...
+> --
+> 2.20.1
+>
