@@ -2,103 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAF5018200E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:51:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8211A182021
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 18:58:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730629AbgCKRv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 13:51:57 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46144 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730487AbgCKRv5 (ORCPT
+        id S1730665AbgCKR6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 13:58:52 -0400
+Received: from mail-wm1-f47.google.com ([209.85.128.47]:39790 "EHLO
+        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730450AbgCKR6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:51:57 -0400
-Received: by mail-pl1-f193.google.com with SMTP id w12so1420949pll.13
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:51:56 -0700 (PDT)
+        Wed, 11 Mar 2020 13:58:51 -0400
+Received: by mail-wm1-f47.google.com with SMTP id f7so3153153wml.4
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 10:58:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=a5g25PDEXPRR99KehOK1iE2Gu80HzFKYuNkkikGwIFI=;
-        b=eNRE/qbm63stiKXIvgwIlV+IxOrzorOkM4iow7B6RZUpJva1559bRWMvw2agkD7Mis
-         2YTH3veSMsgbKxZyscQrguxH0BD1nYGckFuQ/fdaY2NKujUR7G6NuenUZTTOfFuGSGgH
-         Qxht0ueO4ugRgmAZGeX2WtSxnNFHitwKoKXgM=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=D0MmJxY6JdQ6gZeoOlIDmYiScwpgWMOLFKV0aKt57H0=;
+        b=KfhjLI+11lfhCg/ocC5rckfQmrjWJic2uNKWFfImfjqyRwZLXIDBgsDNrtjljyRynH
+         GdURhYfMl5lUtixt0hF66fG5ie8/CZQ9TwvV14k60xkaKNTepFbbcr973/zys4k1Nrs9
+         3fLLRTmnOxomYLegaGsox085+SbGpG+ufgRJJBvHAkcLWyA3vl2dVPF8jNdKtkyuepDj
+         yMWSvbtopBCWYA9sDUgRxWjF8BYWgAkL8+dk+6FBPkJNjLexq7E7aOb+LUDOlxl3xK1a
+         8MZ8g19bz3o6fdrQrtbyvMDgr3oJKQ/tIxYBhkYtTKARST421XYhh11bi5YDhF3Fuda5
+         obWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=a5g25PDEXPRR99KehOK1iE2Gu80HzFKYuNkkikGwIFI=;
-        b=T25G6Ogje0Ex7XoeG53CfvEJmUhrVaxAsDZYxWtbO6YOH8mk7U/iB9kaCV+ypYAlKo
-         j4zPJ/I3N3+FLGAAnbgp3+xq/+OteCeSfQosbuV5OGjqAbZKAykqyfLyQd8K1TUGesBU
-         y4iZ50CoxUhEYC2YdJCd5teH6nIUSUtVfWg8xKNVnByrKSSRUV3YaUP/+J3KUz0YqWJ/
-         t7jSUsmQLvv1oFmO4bYv6KS7q6uWswe+8yRKAJusz9iLfTxzJn9chd3BI1UX5EZ0RmYU
-         QR0mTycMQT8/auo0qsqAUB8qbXWUgVKmfp84Ydk6moFgd9NrJHmVMH4DGhaz7gPTIEDW
-         oESA==
-X-Gm-Message-State: ANhLgQ0PyW2Vi+Dyf66ZdD0ng0+kgxBPZIv+6jVLIZr4m5oXlvyve/tY
-        xazE10kBXJQfnI0U2w1mrrxoLw==
-X-Google-Smtp-Source: ADFU+vsBi+bUj1VxZCycAe0rgyooLlJtfjkUSx8xr00Nuup+ET1asdfp4FcWsNKm5fSW9KpT0NQn8w==
-X-Received: by 2002:a17:902:bc4c:: with SMTP id t12mr3853587plz.54.1583949115991;
-        Wed, 11 Mar 2020 10:51:55 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id d3sm5730078pfq.126.2020.03.11.10.51.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 10:51:54 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 10:51:53 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Sandeep Maheswaram <sanm@codeaurora.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>
-Subject: Re: [PATCH v4 4/4] arm64: dts: qcom: sc7180: Correct qmp phy reset
- entries
-Message-ID: <20200311175153.GB144492@google.com>
-References: <1583928252-21246-1-git-send-email-sanm@codeaurora.org>
- <1583928252-21246-5-git-send-email-sanm@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1583928252-21246-5-git-send-email-sanm@codeaurora.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=D0MmJxY6JdQ6gZeoOlIDmYiScwpgWMOLFKV0aKt57H0=;
+        b=ZfZ4yeChVNHlzDlN9CgClDb3OD3sVQSe1485VTQ8RYvjKzT7jQZaSf+YyjVUpBZYVG
+         ZZlZqwYHgQlx3wcKp1v3ApvBLxYP9p9w5G4Xa9uYdMJhdani6L1Lx50w9+08HGtg3RJc
+         JPHoIbWcUX+fhmxtancasEKBV00MlrLiryx7CQwokzS0JUSsz645X7DMl7JBeuBUiDDw
+         oAEo3J+l3Ry7NQJaBDYIQ8vXnhLOUcD/wbqo68frauzQM9xzM8HHhsVQ4+KUoEEKpTIn
+         T5sQNqg22VM7M3VEiZBI5Pc5WJm09a3aiVcztoPuqJGdvvLfbnkjRqN2iL9hYy3GXq0d
+         b4+Q==
+X-Gm-Message-State: ANhLgQ2en9h+sThtcq5GguOYbA3KQe1U7rvRmEg32hoUowp4GQqNEn1O
+        rfr46PVzYF3gGj3gyiRRoLI=
+X-Google-Smtp-Source: ADFU+vva0oWNwwcrUmHlZ4NWdzEHtYTEf73OgVui5Nkk1uBnR1wtjMNBg1BPy56FUaXPkyV0VToN5g==
+X-Received: by 2002:a1c:9690:: with SMTP id y138mr985818wmd.65.1583949527159;
+        Wed, 11 Mar 2020 10:58:47 -0700 (PDT)
+Received: from opensdev.fritz.box (business-178-015-117-054.static.arcor-ip.net. [178.15.117.54])
+        by smtp.gmail.com with ESMTPSA id l18sm1502107wrr.17.2020.03.11.10.58.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 10:58:46 -0700 (PDT)
+From:   shiva.linuxworks@gmail.com
+X-Google-Original-From: sshivamurthy@micron.com
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Chuanhong Guo <gch981213@gmail.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Shivamurthy Shastri <sshivamurthy@micron.com>
+Subject: [PATCH v7 0/6] Add new series Micron SPI NAND devices
+Date:   Wed, 11 Mar 2020 18:57:29 +0100
+Message-Id: <20200311175735.2007-1-sshivamurthy@micron.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sandeep,
+From: Shivamurthy Shastri <sshivamurthy@micron.com>
 
-This patch landed in Bjorn's tree (arm64-for-5.7 branch). In case you have
-to re-spin the series there is no need to include it.
+This patchset is for the new series of Micron SPI NAND devices, and the
+following links are their datasheets.
 
-On Wed, Mar 11, 2020 at 05:34:12PM +0530, Sandeep Maheswaram wrote:
-> The phy reset entries were incorrect.so swapped them.
-> 
-> Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
-> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
->  arch/arm64/boot/dts/qcom/sc7180.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> index 9d112aa..253274d 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> @@ -1306,8 +1306,8 @@
->  				 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>;
->  			clock-names = "aux", "cfg_ahb", "ref", "com_aux";
->  
-> -			resets = <&gcc GCC_USB3_DP_PHY_PRIM_BCR>,
-> -				 <&gcc GCC_USB3_PHY_PRIM_BCR>;
-> +			resets = <&gcc GCC_USB3_PHY_PRIM_BCR>,
-> +				 <&gcc GCC_USB3_DP_PHY_PRIM_BCR>;
->  			reset-names = "phy", "common";
->  
->  			usb_1_ssphy: phy@88e9200 {
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
-> 
+M78A:
+[1] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m78a_1gb_3v_nand_spi.pdf
+[2] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m78a_1gb_1_8v_nand_spi.pdf
+
+M79A:
+[3] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m79a_2gb_1_8v_nand_spi.pdf
+[4] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m79a_ddp_4gb_3v_nand_spi.pdf
+
+M70A:
+[5] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_4gb_3v_nand_spi.pdf
+[6] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_4gb_1_8v_nand_spi.pdf
+[7] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_ddp_8gb_3v_nand_spi.pdf
+[8] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_ddp_8gb_1_8v_nand_spi.pdf
+
+Changes since v6:
+-----------------
+
+1. Rebased series to nand/next.
+2. Added Reviewed-by from Boris.
+
+Changes since v5:
+-----------------
+
+1. Rebased series to v5.6-rc1.
+
+Changes since v4:
+-----------------
+
+1. Patch 2 is separated into two as per the comment by Boris.
+2. Renamed MICRON_CFG_CONTI_READ into MICRON_CFG_CR.
+3. Reworked die selection function as per the comment by Boris.
+
+Changes since v3:
+-----------------
+
+1. Patch 3 and 4 reworked as follows
+   - Patch 3 introducing the Continuous read feature
+   - Patch 4 adding devices with the feature
+
+Changes since v2:
+-----------------
+
+1. Patch commit messages have been modified.
+2. Handled devices with Continuous Read feature with vendor specific flag.
+3. Reworked die selection function as per the comment.
+
+Changes since v1:
+-----------------
+
+1. The patch split into multiple patches.
+2. Added comments for selecting the die.
+
+Shivamurthy Shastri (6):
+  mtd: spinand: micron: Generalize the OOB layout structure and function
+    names
+  mtd: spinand: micron: Describe the SPI NAND device MT29F2G01ABAGD
+  mtd: spinand: micron: Add new Micron SPI NAND devices
+  mtd: spinand: micron: identify SPI NAND device with Continuous Read
+    mode
+  mtd: spinand: micron: Add M70A series Micron SPI NAND devices
+  mtd: spinand: micron: Add new Micron SPI NAND devices with multiple
+    dies
+
+ drivers/mtd/nand/spi/micron.c | 158 +++++++++++++++++++++++++++++++---
+ include/linux/mtd/spinand.h   |   1 +
+ 2 files changed, 145 insertions(+), 14 deletions(-)
+
+-- 
+2.17.1
+
