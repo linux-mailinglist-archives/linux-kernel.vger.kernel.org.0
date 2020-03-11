@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C984182109
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:42:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23BAA182107
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 19:42:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730852AbgCKSmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 14:42:11 -0400
+        id S1730979AbgCKSmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 14:42:02 -0400
 Received: from mga18.intel.com ([134.134.136.126]:27194 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730960AbgCKSl6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:41:58 -0400
+        id S1730954AbgCKSmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 14:42:01 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 11:41:58 -0700
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Mar 2020 11:42:00 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; 
-   d="scan'208";a="441776275"
+   d="scan'208";a="441776290"
 Received: from fjan-mobl.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.251.25.157])
-  by fmsmga005.fm.intel.com with ESMTP; 11 Mar 2020 11:41:56 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 11 Mar 2020 11:41:58 -0700
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -31,9 +31,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Hui Wang <hui.wang@canonical.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH 09/16] soundwire: cadence: move clock/SSP related inits to dedicated function
-Date:   Wed, 11 Mar 2020 13:41:21 -0500
-Message-Id: <20200311184128.4212-10-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH 10/16] soundwire: cadence: make SSP interval programmable
+Date:   Wed, 11 Mar 2020 13:41:22 -0500
+Message-Id: <20200311184128.4212-11-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200311184128.4212-1-pierre-louis.bossart@linux.intel.com>
 References: <20200311184128.4212-1-pierre-louis.bossart@linux.intel.com>
@@ -44,49 +44,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This helps isolate code and align with recommended programming flows
+In multi-master mode, the IP will only accept SSP intervals with
+integer relationships between the frame rate and the gsync frequency.
+
+E.g for a 48kHz frame rate and 4 kHz gsync signal, the SSP interval
+can only be 1, 2, 3, 4, 6, 12.
+
+To simplify we only allow one SSP per gsync interval.
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/cadence_master.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ drivers/soundwire/cadence_master.c | 7 ++++---
+ drivers/soundwire/cadence_master.h | 3 +++
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-index 22ff66d38a4a..91fe89a246ee 100644
+index 91fe89a246ee..4a7e7329ff0d 100644
 --- a/drivers/soundwire/cadence_master.c
 +++ b/drivers/soundwire/cadence_master.c
-@@ -1043,11 +1043,7 @@ static u32 cdns_set_initial_frame_shape(int n_rows, int n_cols)
- 	return val;
- }
+@@ -183,7 +183,6 @@ MODULE_PARM_DESC(cdns_mcp_int_mask, "Cadence MCP IntMask");
+ #define CDNS_PDI_CONFIG_PORT			GENMASK(4, 0)
  
--/**
-- * sdw_cdns_init() - Cadence initialization
-- * @cdns: Cadence instance
-- */
--int sdw_cdns_init(struct sdw_cdns *cdns)
-+static void cdns_init_clock_ctrl(struct sdw_cdns *cdns)
- {
+ /* Driver defaults */
+-#define CDNS_DEFAULT_SSP_INTERVAL		0x18
+ #define CDNS_TX_TIMEOUT				2000
+ 
+ #define CDNS_SCP_RX_FIFOLEVEL			0x2
+@@ -1048,6 +1047,7 @@ static void cdns_init_clock_ctrl(struct sdw_cdns *cdns)
  	struct sdw_bus *bus = &cdns->bus;
  	struct sdw_master_prop *prop = &bus->prop;
-@@ -1073,6 +1069,18 @@ int sdw_cdns_init(struct sdw_cdns *cdns)
- 	/* Set SSP interval to default value */
- 	cdns_writel(cdns, CDNS_MCP_SSP_CTRL0, CDNS_DEFAULT_SSP_INTERVAL);
- 	cdns_writel(cdns, CDNS_MCP_SSP_CTRL1, CDNS_DEFAULT_SSP_INTERVAL);
-+}
-+
-+/**
-+ * sdw_cdns_init() - Cadence initialization
-+ * @cdns: Cadence instance
-+ */
-+int sdw_cdns_init(struct sdw_cdns *cdns)
-+{
-+	u32 val;
-+	int ret;
-+
-+	cdns_init_clock_ctrl(cdns);
+ 	u32 val;
++	u32 ssp_interval;
+ 	int divider;
  
- 	/* reset msg_count to default value of FIFOLEVEL */
- 	cdns->msg_count = cdns_readl(cdns, CDNS_MCP_FIFOLEVEL);
+ 	/* Set clock divider */
+@@ -1067,8 +1067,9 @@ static void cdns_init_clock_ctrl(struct sdw_cdns *cdns)
+ 	cdns_writel(cdns, CDNS_MCP_FRAME_SHAPE_INIT, val);
+ 
+ 	/* Set SSP interval to default value */
+-	cdns_writel(cdns, CDNS_MCP_SSP_CTRL0, CDNS_DEFAULT_SSP_INTERVAL);
+-	cdns_writel(cdns, CDNS_MCP_SSP_CTRL1, CDNS_DEFAULT_SSP_INTERVAL);
++	ssp_interval = prop->default_frame_rate / SDW_CADENCE_GSYNC_HZ;
++	cdns_writel(cdns, CDNS_MCP_SSP_CTRL0, ssp_interval);
++	cdns_writel(cdns, CDNS_MCP_SSP_CTRL1, ssp_interval);
+ }
+ 
+ /**
+diff --git a/drivers/soundwire/cadence_master.h b/drivers/soundwire/cadence_master.h
+index e8fa5c7e09f4..b410656f8194 100644
+--- a/drivers/soundwire/cadence_master.h
++++ b/drivers/soundwire/cadence_master.h
+@@ -5,6 +5,9 @@
+ #ifndef __SDW_CADENCE_H
+ #define __SDW_CADENCE_H
+ 
++#define SDW_CADENCE_GSYNC_KHZ		4 /* 4 kHz */
++#define SDW_CADENCE_GSYNC_HZ		(SDW_CADENCE_GSYNC_KHZ * 1000)
++
+ /**
+  * struct sdw_cdns_pdi: PDI (Physical Data Interface) instance
+  *
 -- 
 2.20.1
 
