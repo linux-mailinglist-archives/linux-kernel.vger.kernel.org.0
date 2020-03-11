@@ -2,130 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98768181872
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 13:47:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9237F1818DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 13:55:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbgCKMq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 08:46:56 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54256 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729384AbgCKMq4 (ORCPT
+        id S1729414AbgCKMzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 08:55:43 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:43928 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729320AbgCKMzm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 08:46:56 -0400
-Received: from mail-wm1-f70.google.com ([209.85.128.70])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <gpiccoli@canonical.com>)
-        id 1jC0lB-0002tx-9z
-        for linux-kernel@vger.kernel.org; Wed, 11 Mar 2020 12:46:53 +0000
-Received: by mail-wm1-f70.google.com with SMTP id y7so864694wmd.4
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 05:46:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=tvJQ44fhgXDdQWn9cAVor3F6zkLzPnJd2Xj0RCMCHmY=;
-        b=nduHtIep0fyr6ZpZ0p7e6BmfoCm7ct6slTMO/qlCgUfg3is3mN+4/uUWbDOr3kQdN8
-         hg9CqCf93lNF0I732E8bhBasmxldLkdHNn7OMivjSc45NQdCEsGIRsg/5wPbOS4aFte6
-         RvbrIeRcuMrwfu/DJahoahreLdhA3Xv7mdBZjzwN34gI9Nm8hqlr4WLrO8CUYu7OkYbI
-         /dVBT1sHJIW+XHysmOZbGdp14PqiD+PkacNTfvR6fU7NIo7mpcfZDbGw+q5gMW4FYWWs
-         Fug1DM5Qdaw4xoOqwPzrt7E8QTlyYnrP0ehHk/sZtUyx3CPGSsgyVl6GCSlzfFnWkVDQ
-         Le9A==
-X-Gm-Message-State: ANhLgQ3svYaVW9YIgEYDkorxP8HAT85pXXJ2kP8iD+Cywsjv/0dhn3mn
-        ePBoablrzVCrD+DiYccNzygzQlSTakgjmYSkGBSjRQi/V5tWdqqEHFpdOmbjZcmeaZNEe9IQpy8
-        QTLYw2VFmZpD3fdESmL1cyDQRIbg4Uq2DhaZhgxKCDw==
-X-Received: by 2002:adf:a4d2:: with SMTP id h18mr4479065wrb.90.1583930812954;
-        Wed, 11 Mar 2020 05:46:52 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vtAy92hJw4Au2IdrMrzzgrgGedx1iAVmYY2M7Bh+NAeJKr0TODVlWeXtDrPpdu/KAZGYTygCg==
-X-Received: by 2002:adf:a4d2:: with SMTP id h18mr4479040wrb.90.1583930812703;
-        Wed, 11 Mar 2020 05:46:52 -0700 (PDT)
-Received: from [192.168.1.75] (189-47-87-73.dsl.telesp.net.br. [189.47.87.73])
-        by smtp.gmail.com with ESMTPSA id b5sm28652028wrj.1.2020.03.11.05.46.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Mar 2020 05:46:51 -0700 (PDT)
-Subject: Re: [PATCH] panic: Add sysctl/cmdline to dump all CPUs backtraces on
- oops event
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        tglx@linutronix.de, kernel@gpiccoli.net
-References: <20200310163700.19186-1-gpiccoli@canonical.com>
- <93f20e59-41b1-48ad-b0eb-e670b18994d5@infradead.org>
- <20200310182647.59f6ea73aad3aca619065f1e@linux-foundation.org>
-From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gpiccoli@canonical.com; prefer-encrypt=mutual; keydata=
- mQENBFpVBxcBCADPNKmu2iNKLepiv8+Ssx7+fVR8lrL7cvakMNFPXsXk+f0Bgq9NazNKWJIn
- Qxpa1iEWTZcLS8ikjatHMECJJqWlt2YcjU5MGbH1mZh+bT3RxrJRhxONz5e5YILyNp7jX+Vh
- 30rhj3J0vdrlIhPS8/bAt5tvTb3ceWEic9mWZMsosPavsKVcLIO6iZFlzXVu2WJ9cov8eQM/
- irIgzvmFEcRyiQ4K+XUhuA0ccGwgvoJv4/GWVPJFHfMX9+dat0Ev8HQEbN/mko/bUS4Wprdv
- 7HR5tP9efSLucnsVzay0O6niZ61e5c97oUa9bdqHyApkCnGgKCpg7OZqLMM9Y3EcdMIJABEB
- AAG0LUd1aWxoZXJtZSBHLiBQaWNjb2xpIDxncGljY29saUBjYW5vbmljYWwuY29tPokBNwQT
- AQgAIQUCWmClvQIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDOR5EF9K/7Gza3B/9d
- 5yczvEwvlh6ksYq+juyuElLvNwMFuyMPsvMfP38UslU8S3lf+ETukN1S8XVdeq9yscwtsRW/
- 4YoUwHinJGRovqy8gFlm3SAtjfdqysgJqUJwBmOtcsHkmvFXJmPPGVoH9rMCUr9s6VDPox8f
- q2W5M7XE9YpsfchS/0fMn+DenhQpV3W6pbLtuDvH/81GKrhxO8whSEkByZbbc+mqRhUSTdN3
- iMpRL0sULKPVYbVMbQEAnfJJ1LDkPqlTikAgt3peP7AaSpGs1e3pFzSEEW1VD2jIUmmDku0D
- LmTHRl4t9KpbU/H2/OPZkrm7809QovJGRAxjLLPcYOAP7DUeltveuQENBFpVBxcBCADbxD6J
- aNw/KgiSsbx5Sv8nNqO1ObTjhDR1wJw+02Bar9DGuFvx5/qs3ArSZkl8qX0X9Vhptk8rYnkn
- pfcrtPBYLoux8zmrGPA5vRgK2ItvSc0WN31YR/6nqnMfeC4CumFa/yLl26uzHJa5RYYQ47jg
- kZPehpc7IqEQ5IKy6cCKjgAkuvM1rDP1kWQ9noVhTUFr2SYVTT/WBHqUWorjhu57/OREo+Tl
- nxI1KrnmW0DbF52tYoHLt85dK10HQrV35OEFXuz0QPSNrYJT0CZHpUprkUxrupDgkM+2F5LI
- bIcaIQ4uDMWRyHpDbczQtmTke0x41AeIND3GUc+PQ4hWGp9XABEBAAGJAR8EGAEIAAkFAlpV
- BxcCGwwACgkQzkeRBfSv+xv1wwgAj39/45O3eHN5pK0XMyiRF4ihH9p1+8JVfBoSQw7AJ6oU
- 1Hoa+sZnlag/l2GTjC8dfEGNoZd3aRxqfkTrpu2TcfT6jIAsxGjnu+fUCoRNZzmjvRziw3T8
- egSPz+GbNXrTXB8g/nc9mqHPPprOiVHDSK8aGoBqkQAPZDjUtRwVx112wtaQwArT2+bDbb/Y
- Yh6gTrYoRYHo6FuQl5YsHop/fmTahpTx11IMjuh6IJQ+lvdpdfYJ6hmAZ9kiVszDF6pGFVkY
- kHWtnE2Aa5qkxnA2HoFpqFifNWn5TyvJFpyqwVhVI8XYtXyVHub/WbXLWQwSJA4OHmqU8gDl
- X18zwLgdiQ==
-Message-ID: <64a6c1c0-9514-e823-3507-a131c7daa578@canonical.com>
-Date:   Wed, 11 Mar 2020 09:46:45 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 11 Mar 2020 08:55:42 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02BCtHkD007419;
+        Wed, 11 Mar 2020 07:55:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583931317;
+        bh=48Zh5AGbANDxkAALhrTBL8IRtDqvahqwmRcvUOxVdiU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=aTpp+PrQ4Oar5nf76xssq6nNaaL6C9ffrxSfPVSyJ+RAzXqqzmAD/cx1bnMP4AAC7
+         lYnP0+PKHn0kDttEDJLAZ0wVVyTZB0Xh6FZASv/2V8jaEaj9gilHyd7bPEwLUccZD1
+         VSM5Fu8bnBZqYWjEPMkgRFU6wn65cYxOB97CuMB8=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02BCtH0a113914
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 11 Mar 2020 07:55:17 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 11
+ Mar 2020 07:55:16 -0500
+Received: from localhost.localdomain (10.64.41.19) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 11 Mar 2020 07:55:17 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 02BCtFIT120884;
+        Wed, 11 Mar 2020 07:55:15 -0500
+Subject: Re: [PATCH 2/3] dt-bindings: leds: Add binding for sgm3140
+To:     Luca Weiss <luca@z3ntu.xyz>, <linux-leds@vger.kernel.org>
+CC:     Heiko Stuebner <heiko@sntech.de>, Icenowy Zheng <icenowy@aosc.io>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <~postmarketos/upstreaming@lists.sr.ht>
+References: <20200309203558.305725-1-luca@z3ntu.xyz>
+ <20200309203558.305725-3-luca@z3ntu.xyz>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <4f848ab3-0e76-ae63-0771-758b1eaa0660@ti.com>
+Date:   Wed, 11 Mar 2020 07:49:35 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200310182647.59f6ea73aad3aca619065f1e@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200309203558.305725-3-luca@z3ntu.xyz>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/03/2020 22:26, Andrew Morton wrote:
-> On Tue, 10 Mar 2020 13:59:15 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->>> +oops_all_cpu_backtrace:
->>> +================
->>> +
->>> +Determines if kernel should NMI all CPUs to dump their backtraces when
->>
->> I would much prefer that to be written without using NMI as a verb.
-> 
-> "Non maskably interrupt" ;)
-> 
-> I think it's OK.  Concise and the meaning is clear.
+Luca
 
-Hi Andrew, good idea heheh
-Thank you and all that reviewed the grammar/wording, certainly I can
-change that and resubmit.
+On 3/9/20 3:35 PM, Luca Weiss wrote:
+> Add YAML devicetree binding for SGMICRO SGM3140 charge pump used for
+> camera flash LEDs.
+>
+> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> ---
+> Changes since RFC:
+> - new patch
+>
+> I'm not sure about the completeness of this binding as it doesn't
+> mention the led subnode at all.
+> The only existing led yaml binding is leds/leds-max77650.yaml which
+> mentions the subnode but duplicates properties from documented in
+> leds/common.txt.
+>
+>   .../bindings/leds/leds-sgm3140.yaml           | 53 +++++++++++++++++++
+>   1 file changed, 53 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
+> new file mode 100644
+> index 000000000000..be9384573d02
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
+> @@ -0,0 +1,53 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/leds-sgm3140.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: SGMICRO SGM3140 500mA Buck/Boost Charge Pump LED Driver
+> +
+> +maintainers:
+> +  - Luca Weiss <luca@z3ntu.xyz>
+> +
+> +description: |
+> +  The SGM3140 is a current-regulated charge pump which can regulate two current
+> +  levels for Flash and Torch modes.
+> +
+> +  It is controlled with two GPIO pins.
+Please define "It".  Not sure what is controlled here.
 
 
-> 
-> 
-> Why do we need the kernel boot parameter?  Isn't
-> /proc/sys/kernel/oops_all_cpu_backtrace sufficient?
-> 
+Dan
 
-I kept the kernel parameter as a consistency thing - every sysctl
-"*_all_cpubacktrace" has a respective kernel parameter, so I did the
-same (and if we get an oops booting a new kernel, this is maybe useful
-depending on the point we get the oops). But if it's a problem for you,
-I can remove the kernel parameter, your choice.
-
-Cheers,
-
-
-Guilherme
