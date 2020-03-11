@@ -2,103 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13EC518170B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 12:49:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 857DB181715
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 12:50:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729140AbgCKLtV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 07:49:21 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47348 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729016AbgCKLtU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 07:49:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583927359;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=F5OgNaYAikVgpZYOSNk5y2jqMOtP53edDDqZVD/pDRE=;
-        b=RYu1tv+QbJaZlAuU5XuoKwZiYxM/hJbhRqklnpmWshRELnoL5dHaF041C+xE7mXqqrx+Lc
-        8wnWdA/54zISNbi+yfl6huFpSwX9wPJ19K9ACS66VWr0yxcmGkKAJq4125SeAYNDnJpQQK
-        85qAMaV7QvGRvjzvCyZBT6C15ApwCBY=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-392-ttlULYhYOi2cB9E766cMrg-1; Wed, 11 Mar 2020 07:49:18 -0400
-X-MC-Unique: ttlULYhYOi2cB9E766cMrg-1
-Received: by mail-wr1-f69.google.com with SMTP id n11so341790wrs.13
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 04:49:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=F5OgNaYAikVgpZYOSNk5y2jqMOtP53edDDqZVD/pDRE=;
-        b=OQ4pk3eiOLFB2SYl/XiNcxNiJMY9ucfP7jZjCf2lD1z0TaE9Gfxs/Y/qUjD9cpjVFw
-         c9mLWEzUApB0f91xB45dg12DQSb/dT6ynyWYKPegGbvYJw1HQtbRS+ARuPtodc70ry2/
-         5yzoE9KNin5YKRy1+NqRfhp85+UnXXsqaDG5MU1jHVoliuRTHYJd7R8ZIm2kP/o5Bxzu
-         yW1HdAjwgqqbgl3XwChf/wfW9bajTCMZ8MbQENSvFFiFWVYo+LvY5o/CtHxzJ8C/+qhh
-         GyxRN2JoyfzEdocT5Uu5aZwTcpSrMdr7h64dbiYnWvNna8XDlHD8LEgz3pr5T1C1D5ok
-         wqmA==
-X-Gm-Message-State: ANhLgQ2fh2c9guyUaHoH/nYOa0IWJMl04PaRcgDWR8EFGW30Yj2TCTak
-        EqrAUP+s5xtshEBTPWwM5pyqEs37OfMAU5XOWYkS47jfk2sQ7dQv0/3xUo029VTx7SuLI7iabVw
-        wm2k3lu7Zpln3PWrDR/bQGi/m
-X-Received: by 2002:a5d:6a4d:: with SMTP id t13mr4127278wrw.344.1583927356339;
-        Wed, 11 Mar 2020 04:49:16 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vsLTPh5QjDF4BVIWhl7Hz6t3aq6gMtSaIcj8l84Z5nkZqsVtENlcA0VXwUD8mRF8pmkrPvYTA==
-X-Received: by 2002:a5d:6a4d:: with SMTP id t13mr4127247wrw.344.1583927356118;
-        Wed, 11 Mar 2020 04:49:16 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id c4sm8261810wml.7.2020.03.11.04.49.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 04:49:14 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Liran Alon <liran.alon@oracle.com>,
-        Miaohe Lin <linmiaohe@huawei.com>
-Subject: Re: [RFC PATCH] KVM: nVMX: nested_vmx_handle_enlightened_vmptrld() can be static
-In-Reply-To: <20200310200830.GA84412@69fab159caf3>
-References: <20200309155216.204752-4-vkuznets@redhat.com> <20200310200830.GA84412@69fab159caf3>
-Date:   Wed, 11 Mar 2020 12:49:13 +0100
-Message-ID: <87d09jaz7q.fsf@vitty.brq.redhat.com>
+        id S1729229AbgCKLue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 07:50:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50018 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729016AbgCKLue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 07:50:34 -0400
+Received: from onda.lan (unknown [217.110.198.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B861E2146E;
+        Wed, 11 Mar 2020 11:50:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583927433;
+        bh=0QZIZ6z4r//h99dqhvoPJr28cgoyW+Awh/esZL/Xdlo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=faex73CAVSzJi+pmyTcYP9sIGrW4npHmO5kYhOVghj7YOD5ZWLX5JuwjxXzv3SBCk
+         Ald909m2mEjZrEr9OlPEm+Tqu5uPZfiIAEAfIMB2fzEbOs/ZP+IqEgiuAfTiLBGkjP
+         9DPC/Ywctl/wD8GhzwH4zNmtJvhX+wglDSXW5aLc=
+Date:   Wed, 11 Mar 2020 12:50:24 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        Kai =?UTF-8?B?TcOka2lzYXJh?= <Kai.Makisara@kolumbus.fi>,
+        linux-scsi@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        YOKOTA Hiroshi <yokota@netlab.is.tsukuba.ac.jp>,
+        megaraidlinux.pdl@broadcom.com,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        esc.storagedev@microsemi.com, Doug Gilbert <dgilbert@interlog.com>,
+        HighPoint Linux Team <linux@highpoint-tech.com>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Hannes Reinecke <hare@suse.com>, dc395x@twibble.org,
+        Oliver Neukum <oliver@neukum.org>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        "Juergen E. Fischer" <fischer@norbit.de>,
+        Khalid Aziz <khalid@gonehiking.org>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Jamie Lenehan <lenehan@twibble.org>,
+        Ali Akcaagac <aliakc@web.de>,
+        Don Brace <don.brace@microsemi.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Avri Altman <avri.altman@wdc.com>,
+        GOTO Masanori <gotom@debian.or.jp>
+Subject: Re: [PATCH 00/42] Manually convert SCSI documentation to ReST
+ format
+Message-ID: <20200311125024.6acd2567@onda.lan>
+In-Reply-To: <yq14kuvu6cc.fsf@oracle.com>
+References: <cover.1583136624.git.mchehab+huawei@kernel.org>
+        <yq14kuvu6cc.fsf@oracle.com>
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kbuild test robot <lkp@intel.com> writes:
+Hi Martin,
 
-> Fixes: e3fd8bda412e ("KVM: nVMX: properly handle errors in nested_vmx_handle_enlightened_vmptrld()")
-> Signed-off-by: kbuild test robot <lkp@intel.com>
-> ---
->  nested.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index 65df8bcbb9c86..1d9ab1e9933fb 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -1910,7 +1910,7 @@ static int copy_vmcs12_to_enlightened(struct vcpu_vmx *vmx)
->   * This is an equivalent of the nested hypervisor executing the vmptrld
->   * instruction.
->   */
-> -enum nested_evmptrld_status nested_vmx_handle_enlightened_vmptrld(
-> +static enum nested_evmptrld_status nested_vmx_handle_enlightened_vmptrld(
->  	struct kvm_vcpu *vcpu, bool from_launch)
->  {
->  	struct vcpu_vmx *vmx = to_vmx(vcpu);
->
+Em Tue, 10 Mar 2020 19:40:19 -0400
+"Martin K. Petersen" <martin.petersen@oracle.com> escreveu:
 
-Yea,
+> 
+> Mauro,
+> 
+> > This patch series manually convert all SCSI documentation files to
+> > ReST.
+> >
+> > This is part of a bigger series that finaly finishes the migration to
+> > ReST.  After that, we can focus on more interesting tasks from the
+> > documentation PoV, like cleaning obsolete stuff and filling the gaps.
+> 
+> Applied to 5.7/scsi-queue.
+> 
+> For some reason patch 23 didn't show up in the mbox so I had a bunch of
+> conflicts due to the ncr53c8xx entry missing from index.rst. I thought
+> you had somehow lost that patch along the way and decided to proceed
+> regardless. However, it turns out the patch was missing due to a lore
+> issue. By the time I figured out what the problem was, I had made it to
+> the end of the series. And as a result, in my tree the ncr53c8xx patch
+> comes last.
 
-I accidentially dropped 'static' in PATCH3, will restore it in v2.
+No problem. Yeah, sometimes some of those patches are big, and
+vger ends by silently dropping the big guys.
 
-Thanks!
+Btw, maybe due to the conflict you had, I double-checked that two
+files ended by being deleted instead of converted (looking at
+today's linux-next).
 
--- 
-Vitaly
+So, I'm sending a followup patch re-adding them after the conversion.
 
+Feel free to either apply it as a separate patch at the end or to
+fold with the previously applied patches. Whatever works best for you.
+
+Regards,
+Mauro
