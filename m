@@ -2,34 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC994181CD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:49:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84D77181CDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:50:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730107AbgCKPtf convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 11:49:35 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:39541 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729921AbgCKPtf (ORCPT
+        id S1730114AbgCKPuO convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 11:50:14 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:53777 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729991AbgCKPuN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 11:49:35 -0400
+        Wed, 11 Mar 2020 11:50:13 -0400
 X-Originating-IP: 90.89.41.158
 Received: from xps13 (lfbn-tou-1-1473-158.w90-89.abo.wanadoo.fr [90.89.41.158])
         (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 502E640008;
-        Wed, 11 Mar 2020 15:49:33 +0000 (UTC)
-Date:   Wed, 11 Mar 2020 16:49:32 +0100
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id B843BE0004;
+        Wed, 11 Mar 2020 15:50:11 +0000 (UTC)
+Date:   Wed, 11 Mar 2020 16:50:11 +0100
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     shiva.linuxworks@gmail.com
-Cc:     Boris Brezillon <boris.brezillon@collabora.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Shivamurthy Shastri <sshivamurthy@micron.com>
-Subject: Re: [PATCH v6 0/6] Add new series Micron SPI NAND devices
-Message-ID: <20200311164932.23cc7a42@xps13>
-In-Reply-To: <20200309115230.7207-1-sshivamurthy@micron.com>
-References: <20200309115230.7207-1-sshivamurthy@micron.com>
+To:     Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
+Cc:     vigneshr@ti.com, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH v4 0/2] mtd: spinand: toshiba: Support for new Kioxia
+ Serial NAND
+Message-ID: <20200311165011.63a3d82e@xps13>
+In-Reply-To: <cover.1583834323.git.ytc-mb-yfuruyama7@kioxia.com>
+References: <cover.1583834323.git.ytc-mb-yfuruyama7@kioxia.com>
 Organization: Bootlin
 X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
@@ -40,38 +37,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shiva,
+Hi Yoshio,
 
-shiva.linuxworks@gmail.com wrote on Mon,  9 Mar 2020 12:52:24 +0100:
+Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com> wrote on Wed, 11 Mar
+2020 10:47:04 +0900:
 
-> From: Shivamurthy Shastri <sshivamurthy@micron.com>
+> First patch is to rename function name becase of add new device.
+> Second patch is to supprot for new device.
 > 
-> This patchset is for the new series of Micron SPI NAND devices, and the
-> following links are their datasheets.
+> Yoshio Furuyama (2):
+>   mtd: spinand: toshiba: Rename function name to change suffix and
+>     prefix (8Gbit)
+>   mtd: spinand: toshiba: Support for new Kioxia Serial NAND
 > 
-> M78A:
-> [1] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m78a_1gb_3v_nand_spi.pdf
-> [2] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m78a_1gb_1_8v_nand_spi.pdf
+>  drivers/mtd/nand/spi/toshiba.c | 173 +++++++++++++++++++++++++++++++----------
+>  1 file changed, 130 insertions(+), 43 deletions(-)
 > 
-> M79A:
-> [3] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m79a_2gb_1_8v_nand_spi.pdf
-> [4] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m79a_ddp_4gb_3v_nand_spi.pdf
-> 
-> M70A:
-> [5] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_4gb_3v_nand_spi.pdf
-> [6] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_4gb_1_8v_nand_spi.pdf
-> [7] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_ddp_8gb_3v_nand_spi.pdf
-> [8] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_ddp_8gb_1_8v_nand_spi.pdf
-> 
-> Changes since v5:
-> -----------------
-> 
-> 1. Rebased series to v5.6-rc1.
 
 I am very sorry but actually I had issues applying all your patches not
 because they were not based on v5.6-rc1, but because since then I
 applied a patch changing the detection that changed the content of a
-lot of structures (including in Micron's patches).
+lot of structures (including in Toshiba's driver).
 
 Can you please rebase again on top of the current nand/next? I am very
 sorry for this extra work, this is my mistake.
@@ -86,3 +72,4 @@ And the culprit commit is:
 
 Thanks,
 Miquèl
+
