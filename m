@@ -2,61 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FE6018143F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 10:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECFA7181448
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 10:15:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728886AbgCKJLt convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 05:11:49 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:38104 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbgCKJLt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 05:11:49 -0400
-Received: from p5b127c69.dip0.t-ipconnect.de ([91.18.124.105] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1jBxOz-0000b0-QO; Wed, 11 Mar 2020 10:11:45 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: remove rockchip,grf from vop nodes for px30
-Date:   Wed, 11 Mar 2020 10:11:45 +0100
-Message-ID: <3610438.YMqP0VFAyP@phil>
-In-Reply-To: <20200309081600.3887-1-jbx6244@gmail.com>
-References: <20200309081600.3887-1-jbx6244@gmail.com>
+        id S1728895AbgCKJMw convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Mar 2020 05:12:52 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46735 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728512AbgCKJMw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 05:12:52 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n15so1507796wrw.13
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 02:12:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=DjVadGIIur79/OuZIKT94tQZE5zzLHXHVbjho/zrSHw=;
+        b=hpSr4oM+pdZbXPQuOFGeVbIYLembHKbDuBywdcC9W0Csv+yYQdcvGxx0Ojj2x4ffkq
+         +qH36o1p+6ofEtOxIbWjhyjiBGRgy1omL77oRt5ky7OkYaQJKkvj8XukUknXUXAPxcb+
+         nKFVlJJmQfZK7yoTCMg/eBcqAXWrDlGlGlc2mjSfCxuHVlwkSWf+agSE7k/buvRtHhHY
+         uBOPDA175fGPsO3UeCYOcjs2+Pu0am/N+Q0wlw1s+CdpcciGFYH0uHiareGVU3lC/2da
+         nTCbAnWYxkhE3kJdZIbrcDpU5oRxGropPeX8DA2AA2SI5p/fx5KfGyOhrHc5t43BQGv2
+         P9Bw==
+X-Gm-Message-State: ANhLgQ3QMoPSBcQRNOJPP7/oHqwoOFa4/Yr99X/HAfBQpyo5mUl30a2R
+        SolJBwDP35i7vB+oMr9twcB9Ew==
+X-Google-Smtp-Source: ADFU+vuDpI2JRPXpT7JNNMSexbsuj8A1c5B6CChe1t0n69G3u0BdAObvAUcr85rIrdmKlq5+/Fasfg==
+X-Received: by 2002:adf:ee48:: with SMTP id w8mr3259969wro.290.1583917970100;
+        Wed, 11 Mar 2020 02:12:50 -0700 (PDT)
+Received: from Google-Pixel-3a.fritz.box (ip5f5bf7ec.dynamic.kabel-deutschland.de. [95.91.247.236])
+        by smtp.gmail.com with ESMTPSA id 133sm8119781wmd.5.2020.03.11.02.12.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2020 02:12:49 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 10:12:48 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <1583914756-45674-1-git-send-email-tangbin@cmss.chinamobile.com>
+References: <1583914756-45674-1-git-send-email-tangbin@cmss.chinamobile.com>
 MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Subject: Re: [PATCH] pid:fix a return value in alloc_pid
+To:     tangbin <tangbin@cmss.chinamobile.com>
+CC:     oleg@redhat.com, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+Message-ID: <AB48A556-E570-42B7-A7C2-5CCEA7AD6696@ubuntu.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 9. M�rz 2020, 09:16:00 CET schrieb Johan Jonker:
-> An experimental test with the command below without
-> additional properties in 'rockchip-vop.yaml' gives this error:
+On March 11, 2020 9:19:16 AM GMT+01:00, tangbin <tangbin@cmss.chinamobile.com> wrote:
+>When I doing a make about linux-next in X86 right now,it prompts a 
+>warning about "‘retval’ may be used uninitialized in this function
+>[-Wmaybe-uninitialized]". So I found that undefined 'retval' initially
+>in alloc_pid(),so the return ERR_PTR(retval) was an uncertain value.
+>Kmem_cache_alloc() is for sapce,so it will return ERR_PTR(-ENOMEM) if 
+>unsuccessful.
+>
+>Signed-off-by: tangbin <tangbin@cmss.chinamobile.com>
+>---
+> kernel/pid.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/kernel/pid.c b/kernel/pid.c
+>index ff6cd67..f214094 100644
+>--- a/kernel/pid.c
+>+++ b/kernel/pid.c
+>@@ -177,7 +177,7 @@ struct pid *alloc_pid(struct pid_namespace *ns,
+>pid_t *set_tid,
 > 
-> arch/arm64/boot/dts/rockchip/px30-evb.dt.yaml: vop@ff470000:
-> 'power-domains', 'rockchip,grf'
-> do not match any of the regexes: 'pinctrl-[0-9]+'
-> arch/arm64/boot/dts/rockchip/px30-evb.dt.yaml: vop@ff460000:
-> 'power-domains', 'rockchip,grf'
-> do not match any of the regexes: 'pinctrl-[0-9]+'
+> 	pid = kmem_cache_alloc(ns->pid_cachep, GFP_KERNEL);
+> 	if (!pid)
+>-		return ERR_PTR(retval);
+>+		return ERR_PTR(-ENOMEM);
 > 
-> 'rockchip,grf' is not used by the Rockchip VOP driver,
-> so remove it from 'vop' nodes in 'px30.dtsi'.
-> 
-> make ARCH=arm64 dtbs_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/display/
-> rockchip/rockchip-vop.yaml
-> 
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> 	tmp = ns;
+> 	pid->level = ns->level;
 
-applied for 5.7
+There's already a fixed version in my tree for this.
+https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/commit/?h=fixes&id=10dab84caf400f2f5f8b010ebb0c7c4272ec5093
 
-Thanks
-Heiko
-
-
+Thanks!
+Christian
