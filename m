@@ -2,96 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FF4B1815E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 11:33:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FF791815FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 11:38:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729058AbgCKKdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 06:33:12 -0400
-Received: from vps.xff.cz ([195.181.215.36]:54436 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726097AbgCKKdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 06:33:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-        t=1583922789; bh=dRISzFx2JBnu+jblONlXo7Qz3C235IdzslaBDbRSJHw=;
-        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
-        b=lTVVuMBW551I+CuYrT2Oxr3TGIBNfsxiJ1SiQdI+OsJhMR+XiqK2ksEvOKHZ98q2H
-         C2/OtC4nHLT7KTA4QTSDyYmzgcjKUxeUOpLsaYCgxlMh6Mwxw2c6AJlcL/K4faBiWd
-         0usBx2r7fLnIWusnXeVqJdru43cWl2x3aWIF/yp0=
-Date:   Wed, 11 Mar 2020 11:33:09 +0100
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] Writes stoped working on f2fs after the compression
- support was added
-Message-ID: <20200311103309.m52hdut7mt7crt7g@core.my.home>
-Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20200224143149.au6hvmmfw4ajsq2g@core.my.home>
- <39712bf4-210b-d7b6-cbb1-eb57585d991a@huawei.com>
- <20200225120814.gjm4dby24cs22lux@core.my.home>
- <20200225122706.d6pngz62iwyowhym@core.my.home>
- <72d28eba-53b9-b6f4-01a5-45b2352f4285@huawei.com>
- <20200226121143.uag224cqzqossvlv@core.my.home>
- <20200226180557.le2fr66fyuvrqker@core.my.home>
- <7b62f506-f737-9fb2-6e8e-4b1c454f03b2@huawei.com>
- <20200306120203.2p34ezryzxb2jeuk@core.my.home>
- <0ce08d13-ca00-2823-94eb-8274c332a8ef@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0ce08d13-ca00-2823-94eb-8274c332a8ef@huawei.com>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
+        id S1728973AbgCKKiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 06:38:06 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:49781 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726684AbgCKKiF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 06:38:05 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1583923085; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=sybUymT2tahVIh0Sofyvb7j/sJL1ubpg84loPZROPYM=; b=NRkbCNZFdlJLIWCl2JtXkaXCQpuysMPVugEXL9W0DMvDy3ajqx/fK/gXIa7iePnRphgazSm+
+ XSzV6DSO8ArY2+zv7wcJLbzZlZHL4KsGEKTG9bMkGXGDB3QVJRedlg/dnn8XuMwF5Iz9bJbA
+ c3kScijJi8FaJM06SRpQJ+oyp8k=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e68bf8b.7fe380132340-smtp-out-n02;
+ Wed, 11 Mar 2020 10:38:03 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 2DE3DC433BA; Wed, 11 Mar 2020 10:38:03 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stummala)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9E3B3C433CB;
+        Wed, 11 Mar 2020 10:38:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9E3B3C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Sahitya Tummala <stummala@codeaurora.org>,
+        Pradeep P V K <ppvk@codeaurora.org>
+Subject: [PATCH] block: Fix use-after-free issue accessing struct io_cq
+Date:   Wed, 11 Mar 2020 16:07:50 +0530
+Message-Id: <1583923070-22245-1-git-send-email-stummala@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+There is a potential race between ioc_release_fn() and
+ioc_clear_queue() as shown below, due to which below kernel
+crash is observed. It also can result into use-after-free
+issue.
 
-On Wed, Mar 11, 2020 at 05:02:10PM +0800, Chao Yu wrote:
-> Hi,
-> 
-> Sorry for the delay.
-> 
-> On 2020/3/6 20:02, Ondřej Jirman wrote:
-> > Hello,
-> > 
-> > On Thu, Feb 27, 2020 at 10:01:50AM +0800, Chao Yu wrote:
-> >> On 2020/2/27 2:05, Ondřej Jirman wrote:
-> >>>
-> >>> No issue after 7h uptime either. So I guess this patch solved it for some
-> >>> reason.
-> >>
-> >> I hope so as well, I will send a formal patch for this.
-> > 
-> > So I had it happen again, even with the patches. This time in f2fs_rename2:
-> 
-> Oops, it looks previous fix patch just cover the root cause... :(
-> 
-> Did this issue still happen frequently? If it is, would you please apply patch
-> that prints log during down/up semaphore.
+context#1:				context#2:
+ioc_release_fn()			__ioc_clear_queue() gets the same icq
+->spin_lock(&ioc->lock);		->spin_lock(&ioc->lock);
+->ioc_destroy_icq(icq);
+  ->list_del_init(&icq->q_node);
+  ->call_rcu(&icq->__rcu_head,
+  	icq_free_icq_rcu);
+->spin_unlock(&ioc->lock);
+					->ioc_destroy_icq(icq);
+					  ->hlist_del_init(&icq->ioc_node);
+					  This results into below crash as this memory
+					  is now used by icq->__rcu_head in context#1.
+					  There is a chance that icq could be free'd
+					  as well.
 
-Not frequently. Just once. I couldn't afford FS corruption during update,
-so I reverted the compression support shortly after.
+22150.386550:   <6> Unable to handle kernel write to read-only memory
+at virtual address ffffffaa8d31ca50
+...
+Call trace:
+22150.607350:   <2>  ioc_destroy_icq+0x44/0x110
+22150.611202:   <2>  ioc_clear_queue+0xac/0x148
+22150.615056:   <2>  blk_cleanup_queue+0x11c/0x1a0
+22150.619174:   <2>  __scsi_remove_device+0xdc/0x128
+22150.623465:   <2>  scsi_forget_host+0x2c/0x78
+22150.627315:   <2>  scsi_remove_host+0x7c/0x2a0
+22150.631257:   <2>  usb_stor_disconnect+0x74/0xc8
+22150.635371:   <2>  usb_unbind_interface+0xc8/0x278
+22150.639665:   <2>  device_release_driver_internal+0x198/0x250
+22150.644897:   <2>  device_release_driver+0x24/0x30
+22150.649176:   <2>  bus_remove_device+0xec/0x140
+22150.653204:   <2>  device_del+0x270/0x460
+22150.656712:   <2>  usb_disable_device+0x120/0x390
+22150.660918:   <2>  usb_disconnect+0xf4/0x2e0
+22150.664684:   <2>  hub_event+0xd70/0x17e8
+22150.668197:   <2>  process_one_work+0x210/0x480
+22150.672222:   <2>  worker_thread+0x32c/0x4c8
 
-But I wasn't stressing the system much with FS activity after applying the
-initial fix.
+Fix this by adding a new ICQ_DESTROYED flag in ioc_destroy_icq() to
+indicate this icq is once marked as destroyed. Also, ensure
+__ioc_clear_queue() is accessing icq within rcu_read_lock/unlock so
+that icq doesn't get free'd up while it is still using it.
 
-> And once we revert compression support patch, this issue will disappear, right?
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Co-developed-by: Pradeep P V K <ppvk@codeaurora.org>
+Signed-off-by: Pradeep P V K <ppvk@codeaurora.org>
+---
+ block/blk-ioc.c           | 7 +++++++
+ include/linux/iocontext.h | 1 +
+ 2 files changed, 8 insertions(+)
 
-Yes, AFAIK. I reverted it and run a few cycles of install 500MiB worth of
-packages, uninstall the packages with pacman. And it didn't re-occur. I never
-saw any issues with compression support patch reverted.
-
-> Btw, did you try other hardware which is not Arm v7?
-
-Yes, but I didn't ever see it on anything else. Just on two 8 core cortexes A7.
-(2 clusters)
-
-regards,
-	o.
+diff --git a/block/blk-ioc.c b/block/blk-ioc.c
+index 5ed59ac..9df50fb 100644
+--- a/block/blk-ioc.c
++++ b/block/blk-ioc.c
+@@ -84,6 +84,7 @@ static void ioc_destroy_icq(struct io_cq *icq)
+ 	 * making it impossible to determine icq_cache.  Record it in @icq.
+ 	 */
+ 	icq->__rcu_icq_cache = et->icq_cache;
++	icq->flags |= ICQ_DESTROYED;
+ 	call_rcu(&icq->__rcu_head, icq_free_icq_rcu);
+ }
+ 
+@@ -212,15 +213,21 @@ static void __ioc_clear_queue(struct list_head *icq_list)
+ {
+ 	unsigned long flags;
+ 
++	rcu_read_lock();
+ 	while (!list_empty(icq_list)) {
+ 		struct io_cq *icq = list_entry(icq_list->next,
+ 						struct io_cq, q_node);
+ 		struct io_context *ioc = icq->ioc;
+ 
+ 		spin_lock_irqsave(&ioc->lock, flags);
++		if (icq->flags & ICQ_DESTROYED) {
++			spin_unlock_irqrestore(&ioc->lock, flags);
++			continue;
++		}
+ 		ioc_destroy_icq(icq);
+ 		spin_unlock_irqrestore(&ioc->lock, flags);
+ 	}
++	rcu_read_unlock();
+ }
+ 
+ /**
+diff --git a/include/linux/iocontext.h b/include/linux/iocontext.h
+index dba15ca..1dcd919 100644
+--- a/include/linux/iocontext.h
++++ b/include/linux/iocontext.h
+@@ -8,6 +8,7 @@
+ 
+ enum {
+ 	ICQ_EXITED		= 1 << 2,
++	ICQ_DESTROYED		= 1 << 3,
+ };
+ 
+ /*
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
