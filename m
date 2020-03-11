@@ -2,132 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF809181194
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 08:16:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8520418119B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 08:18:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbgCKHQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 03:16:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39490 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726160AbgCKHQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 03:16:21 -0400
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CAF5A208C3;
-        Wed, 11 Mar 2020 07:16:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583910981;
-        bh=OQIeb4oj8r6aT9zrf+ckOYy531/qz6nDOVCUb0TQuxU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PEWHmPatR+Metyz2pN2PIn+lc0oPlTzr34YQam5O/lpbq0OXTuRat4ADPVIE6H+p7
-         WEy6/dZbEiUkSX2sud5UK18LvNfmefUqhP97G9i/8xWe79LAHG+uahsKto1NyWUx/c
-         8jVaoqxKmfsFh3F+CZptkLDyC6ncQrvsuEdm2c5w=
-Date:   Wed, 11 Mar 2020 15:16:14 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Li Yang <leoyang.li@nxp.com>
-Subject: Re: [PATCH 1/3] arm64: dts: ls1028a: sl28: fix on-board EEPROMS
-Message-ID: <20200311071613.GL29269@dragon>
-References: <20200225175756.29508-1-michael@walle.cc>
- <20200225175756.29508-2-michael@walle.cc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200225175756.29508-2-michael@walle.cc>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1728369AbgCKHRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 03:17:39 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44792 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728122AbgCKHRj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 03:17:39 -0400
+Received: by mail-pl1-f194.google.com with SMTP id d9so649836plo.11
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 00:17:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=squBFUjN3FHwduE2kZhvBbwfKol4LXAfrZYrdHNYjik=;
+        b=K5VX87u4t54A+svwF9a/rHW7ErlPK7KdQ4IdOs39W5GpUTjd2Fx2fg9ehpzTzIZpXY
+         MSvVfbZzx9lmj5dy/gGe3tj7jTwC+pbLhMaf8SdaLyQHs3F89ccZXR57D6XVv6hmexGF
+         I/6BsEnALel6CV7MPCsNk7ANfDfZg+nffvunnr1Ya1mpsLK0XeL8Qg/8/1W86hPwBPe8
+         GTb+Ikxw3QkV8K3n40BFuBCek7sRLYfZ28DMDUpJMVVbXtu+St1Syh6suGUhnQoIC7aG
+         OjWI3rbyknp8mXahTQYkxvOo4Z0iqH2nbg02tdlhHcH1WLwAsKXqHm0aUAULt2vM7cqB
+         w/IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=squBFUjN3FHwduE2kZhvBbwfKol4LXAfrZYrdHNYjik=;
+        b=OnrRqBwCMBCcLlhkBZ36/7I0mjzIOrhFfGmK2WLpOJwB1a0Mzfb717QNwN5BXDhVRS
+         PoUjsCXdGFWEfNDX3Q2I483idi2suBj826deZGjQAWENwDwmEyKS/0r+XV8SyFsMKcuj
+         qCdbjRNbuLV7ltpPnTrvTu/UENQI4QZMyL94zZqkR1iLXXr969q8TDcTJPQilbJvPsdJ
+         tMOfuQI35UCSMNnFFbySebYQ7GVdsi3OzjfZJRA0J0NWapu2pMkLDDWvN96xglSu0z/Q
+         3Zm8macbx/OKH/Q51lZXStP6JyZnqYggPHMDbnhzKF9TtPuzRu8OwWKWNDarf7mT5dJk
+         n3/Q==
+X-Gm-Message-State: ANhLgQ0xUkJt2NKmVoKrElYOkYCltpnt91jkjbCcVwUmwWhcK9QKGMJM
+        PsE5fqmtSyxmuR72Eltbxl5aL+ce
+X-Google-Smtp-Source: ADFU+vtRqXgD4C6vYsYMSW754u7UjRetxGpaRvgJ9CARDbqc+FdqKioHUdtnXpgQ2Jblj4UIW99cgA==
+X-Received: by 2002:a17:902:7c0d:: with SMTP id x13mr1803377pll.93.1583911056029;
+        Wed, 11 Mar 2020 00:17:36 -0700 (PDT)
+Received: from ZB-PF114XEA.360buyad.local ([103.90.76.242])
+        by smtp.gmail.com with ESMTPSA id g18sm4352904pfh.174.2020.03.11.00.17.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 00:17:35 -0700 (PDT)
+From:   Zhenzhong Duan <zhenzhong.duan@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
+        miguel.ojeda.sandonis@gmail.com, willy@haproxy.com,
+        ksenija.stanojevic@gmail.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, mpm@selenic.com,
+        herbert@gondor.apana.org.au, jonathan@buzzard.org.uk,
+        benh@kernel.crashing.org, davem@davemloft.net,
+        b.zolnierkie@samsung.com, rjw@rjwysocki.net, pavel@ucw.cz,
+        len.brown@intel.com, Zhenzhong Duan <zhenzhong.duan@gmail.com>
+Subject: [PATCH v2 0/2] clean up misc device minor numbers
+Date:   Wed, 11 Mar 2020 15:16:52 +0800
+Message-Id: <20200311071654.335-1-zhenzhong.duan@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 06:57:54PM +0100, Michael Walle wrote:
-> The module itself has another EEPROM at 50h on I2C4. The EEPROM on the
-> carriers is located at 57h on I2C3. Fix that in the device trees.
-> 
-> Signed-off-by: Michael Walle <michael@walle.cc>
+Some of the misc device minor numbers definitions spread in different
+local c files, specially some are duplicate number with different
+name, some are same name with conflict numbers, some prefer dynamic
+minors.
 
-Doesn't apply to my branch.
+This patchset try to address all of them.
 
-Shawn
+Thanks Willy and Miguel help building test on ARM arch, no new change
+on ARM part in v2 so it should pass build on ARM obviously.
 
-> ---
->  .../fsl-ls1028a-kontron-kbox-a-230-ls.dts          |  6 +++---
->  .../fsl-ls1028a-kontron-sl28-var3-ads2.dts         | 14 ++++++++------
->  .../dts/freescale/fsl-ls1028a-kontron-sl28.dts     |  6 ++++++
->  3 files changed, 17 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dts
-> index aaf3c04771c3..32f6c80414bc 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dts
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dts
-> @@ -18,10 +18,10 @@
->  		     "kontron,sl28", "fsl,ls1028a";
->  };
->  
-> -&i2c4 {
-> -	eeprom@50 {
-> +&i2c3 {
-> +	eeprom@57 {
->  		compatible = "atmel,24c32";
-> -		reg = <0x50>;
-> +		reg = <0x57>;
->  		pagesize = <32>;
->  	};
->  };
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
-> index 20fd86746f94..ff4a43986290 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
-> @@ -80,6 +80,14 @@
->  	};
->  };
->  
-> +&i2c3 {
-> +	eeprom@57 {
-> +		compatible = "atmel,24c64";
-> +		reg = <0x57>;
-> +		pagesize = <32>;
-> +	};
-> +};
-> +
->  &i2c4 {
->  	status = "okay";
->  
-> @@ -92,12 +100,6 @@
->  		assigned-clocks = <&mclk>;
->  		assigned-clock-rates = <1250000>;
->  	};
-> -
-> -	eeprom@50 {
-> -		compatible = "atmel,24c32";
-> -		reg = <0x50>;
-> -		pagesize = <32>;
-> -	};
->  };
->  
->  &sai5 {
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
-> index c60a444ad09d..4ba6aae45ef1 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
-> @@ -181,6 +181,12 @@
->  
->  &i2c4 {
->  	status = "okay";
-> +
-> +	eeprom@50 {
-> +		compatible = "atmel,24c32";
-> +		reg = <0x50>;
-> +		pagesize = <32>;
-> +	};
->  };
->  
->  &lpuart1 {
-> -- 
-> 2.20.1
-> 
+PATCH3 "speakup: misc: Use dynamic minor numbers for speakup devices"
+is dropped in v2, will process it separately if there is response from
+maintainer later.
+
+v2:
+PATCH1: keep HWRNG_MINOR name and fix RNG_MISCDEV_MINOR per Herbert.
+PATCH2: fix typo error with PXA3XX_GCU_MINOR per Arnd.
+
+Zhenzhong Duan (2):
+  misc: cleanup minor number definitions in c file into miscdevice.h
+  misc: move FLASH_MINOR into miscdevice.h and fix conflicts
+
+ arch/arm/include/asm/nwflash.h   |  1 -
+ arch/um/drivers/random.c         |  4 +---
+ drivers/auxdisplay/charlcd.c     |  2 --
+ drivers/auxdisplay/panel.c       |  2 --
+ drivers/char/applicom.c          |  1 -
+ drivers/char/nwbutton.h          |  1 -
+ drivers/char/nwflash.c           |  2 +-
+ drivers/char/toshiba.c           |  2 --
+ drivers/macintosh/ans-lcd.c      |  2 +-
+ drivers/macintosh/ans-lcd.h      |  2 --
+ drivers/macintosh/via-pmu.c      |  3 ---
+ drivers/sbus/char/envctrl.c      |  2 --
+ drivers/sbus/char/flash.c        |  4 +---
+ drivers/sbus/char/uctrl.c        |  2 --
+ drivers/video/fbdev/pxa3xx-gcu.c |  7 +++----
+ include/linux/miscdevice.h       | 12 ++++++++++++
+ kernel/power/user.c              |  2 --
+ 17 files changed, 19 insertions(+), 32 deletions(-)
+
+-- 
+1.8.3.1
+
