@@ -2,193 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A532318163D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 11:53:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2629D18163E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 11:53:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729111AbgCKKw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 06:52:57 -0400
-Received: from mx04.melco.co.jp ([192.218.140.144]:36642 "EHLO
-        mx04.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729001AbgCKKww (ORCPT
+        id S1729122AbgCKKxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 06:53:05 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56512 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728917AbgCKKxC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 06:52:52 -0400
-Received: from mr04.melco.co.jp (mr04 [133.141.98.166])
-        by mx04.melco.co.jp (Postfix) with ESMTP id 45BB03A4421;
-        Wed, 11 Mar 2020 19:52:50 +0900 (JST)
-Received: from mr04.melco.co.jp (unknown [127.0.0.1])
-        by mr04.imss (Postfix) with ESMTP id 48cphL1GdBzRk8b;
-        Wed, 11 Mar 2020 19:52:50 +0900 (JST)
-Received: from mf04_second.melco.co.jp (unknown [192.168.20.184])
-        by mr04.melco.co.jp (Postfix) with ESMTP id 48cphL0ypFzRk5L;
-        Wed, 11 Mar 2020 19:52:50 +0900 (JST)
-Received: from mf04.melco.co.jp (unknown [133.141.98.184])
-        by mf04_second.melco.co.jp (Postfix) with ESMTP id 48cphL0xPxzRjFt;
-        Wed, 11 Mar 2020 19:52:50 +0900 (JST)
-Received: from tux532.tad.melco.co.jp (unknown [133.141.243.226])
-        by mf04.melco.co.jp (Postfix) with ESMTP id 48cphL0SzmzRjFp;
-        Wed, 11 Mar 2020 19:52:50 +0900 (JST)
-Received:  from tux532.tad.melco.co.jp
-        by tux532.tad.melco.co.jp (unknown) with ESMTP id 02BAqn0V028972;
-        Wed, 11 Mar 2020 19:52:49 +0900
-Received: from tux390.tad.melco.co.jp (tux390.tad.melco.co.jp [127.0.0.1])
-        by postfix.imss70 (Postfix) with ESMTP id C905C17E075;
-        Wed, 11 Mar 2020 19:52:49 +0900 (JST)
-Received: from tux554.tad.melco.co.jp (tadpost1.tad.melco.co.jp [10.168.7.223])
-        by tux390.tad.melco.co.jp (Postfix) with ESMTP id B30E317E073;
-        Wed, 11 Mar 2020 19:52:49 +0900 (JST)
-Received: from tux554.tad.melco.co.jp
-        by tux554.tad.melco.co.jp (unknown) with ESMTP id 02BAqm0x017644;
-        Wed, 11 Mar 2020 19:52:49 +0900
-From:   Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-To:     Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp
-Cc:     Mori.Takahiro@ab.MitsubishiElectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] staging: exfat: standardize checksum calculation
-Date:   Wed, 11 Mar 2020 19:52:45 +0900
-Message-Id: <20200311105245.125564-5-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200311105245.125564-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-References: <20200311105245.125564-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+        Wed, 11 Mar 2020 06:53:02 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 0F241295F37;
+        Wed, 11 Mar 2020 10:53:00 +0000 (GMT)
+Date:   Wed, 11 Mar 2020 11:52:57 +0100
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     shiva.linuxworks@gmail.com
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Shivamurthy Shastri <sshivamurthy@micron.com>
+Subject: Re: [PATCH v6 4/6] mtd: spinand: micron: identify SPI NAND device
+ with Continuous Read mode
+Message-ID: <20200311115257.2a15e63c@collabora.com>
+In-Reply-To: <20200309115230.7207-5-sshivamurthy@micron.com>
+References: <20200309115230.7207-1-sshivamurthy@micron.com>
+        <20200309115230.7207-5-sshivamurthy@micron.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-- Remove redundant code of calc_checksum_2byte() and rename to calc_checksum16.
-- Replace checksum calculation in __load_upcase_table() with calc_checksum32().
+On Mon,  9 Mar 2020 12:52:28 +0100
+shiva.linuxworks@gmail.com wrote:
 
-Reviewed-by: Takahiro Mori <Mori.Takahiro@ab.MitsubishiElectric.co.jp>
-Signed-off-by: Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
----
- drivers/staging/exfat/exfat.h      |  3 ++-
- drivers/staging/exfat/exfat_core.c | 40 ++++++++----------------------
- drivers/staging/exfat/exfat_nls.c  |  3 +--
- 3 files changed, 14 insertions(+), 32 deletions(-)
+> From: Shivamurthy Shastri <sshivamurthy@micron.com>
+> 
+> Add SPINAND_HAS_CR_FEAT_BIT flag to identify the SPI NAND device with
+> the Continuous Read mode.
+> 
+> Some of the Micron SPI NAND devices have the "Continuous Read" feature
+> enabled by default, which does not fit the subsystem needs.
+> 
+> In this mode, the READ CACHE command doesn't require the starting column
+> address. The device always output the data starting from the first
+> column of the cache register, and once the end of the cache register
+> reached, the data output continues through the next page. With the
+> continuous read mode, it is possible to read out the entire block using
+> a single READ command, and once the end of the block reached, the output
+> pins become High-Z state. However, during this mode the read command
+> doesn't output the OOB area.
+> 
+> Hence, we disable the feature at probe time.
+> 
+> Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
 
-diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index 95c2a6ef0e71..4e6e6c4b20e5 100644
---- a/drivers/staging/exfat/exfat.h
-+++ b/drivers/staging/exfat/exfat.h
-@@ -601,7 +601,8 @@ bool is_dir_empty(struct super_block *sb, struct chain_t *p_dir);
- /* name conversion functions */
- s32 get_num_entries(struct super_block *sb, struct chain_t *p_dir,
- 		    struct uni_name_t *p_uniname, s32 *entries);
--u16 calc_checksum_2byte(void *data, s32 len, u16 chksum, s32 type);
-+u16 calc_checksum16(void *data, int len, u16 chksum, int type);
-+u32 calc_checksum32(void *data, int len, u32 chksum, int type);
- 
- /* name resolution functions */
- s32 resolve_path(struct inode *inode, char *path, struct chain_t *p_dir,
-diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
-index 07c876bb1759..d14e9b345903 100644
---- a/drivers/staging/exfat/exfat_core.c
-+++ b/drivers/staging/exfat/exfat_core.c
-@@ -588,14 +588,6 @@ static s32 __load_upcase_table(struct super_block *sb, sector_t sector,
- 
- 		for (i = 0; i < p_bd->sector_size && index <= 0xFFFF; i += 2) {
- 			uni = GET16(((u8 *)tmp_bh->b_data) + i);
--
--			checksum = ((checksum & 1) ? 0x80000000 : 0) +
--				   (checksum >> 1) + *(((u8 *)tmp_bh->b_data) +
--						       i);
--			checksum = ((checksum & 1) ? 0x80000000 : 0) +
--				   (checksum >> 1) + *(((u8 *)tmp_bh->b_data) +
--						       (i + 1));
--
- 			if (skip) {
- 				pr_debug("skip from 0x%X ", index);
- 				index += uni;
-@@ -626,6 +618,8 @@ static s32 __load_upcase_table(struct super_block *sb, sector_t sector,
- 				index++;
- 			}
- 		}
-+		checksum = calc_checksum32(tmp_bh->b_data, i, checksum,
-+					   CS_DEFAULT);
- 	}
- 	if (index >= 0xFFFF && utbl_checksum == checksum) {
- 		if (tmp_bh)
-@@ -1096,8 +1090,7 @@ void update_dir_checksum(struct super_block *sb, struct chain_t *p_dir,
- 	exfat_buf_lock(sb, sector);
- 
- 	num_entries = (s32)file_ep->num_ext + 1;
--	chksum = calc_checksum_2byte((void *)file_ep, DENTRY_SIZE, 0,
--				     CS_DIR_ENTRY);
-+	chksum = calc_checksum16(file_ep, DENTRY_SIZE, 0, CS_DIR_ENTRY);
- 
- 	for (i = 1; i < num_entries; i++) {
- 		ep = get_entry_in_dir(sb, p_dir, entry + i, NULL);
-@@ -1106,8 +1099,7 @@ void update_dir_checksum(struct super_block *sb, struct chain_t *p_dir,
- 			return;
- 		}
- 
--		chksum = calc_checksum_2byte((void *)ep, DENTRY_SIZE, chksum,
--					     CS_DEFAULT);
-+		chksum = calc_checksum16(ep, DENTRY_SIZE, chksum, CS_DEFAULT);
- 	}
- 
- 	SET16_A(file_ep->checksum, chksum);
-@@ -1192,8 +1184,7 @@ void update_dir_checksum_with_entry_set(struct super_block *sb,
- 	ep = (struct dentry_t *)&es->__buf;
- 	for (i = 0; i < es->num_entries; i++) {
- 		pr_debug("%s ep %p\n", __func__, ep);
--		chksum = calc_checksum_2byte((void *)ep, DENTRY_SIZE, chksum,
--					     chksum_type);
-+		chksum = calc_checksum16(ep, DENTRY_SIZE, chksum, chksum_type);
- 		ep++;
- 		chksum_type = CS_DEFAULT;
- 	}
-@@ -1997,25 +1988,16 @@ s32 exfat_calc_num_entries(struct uni_name_t *p_uniname)
- 	return (len - 1) / 15 + 3;
- }
- 
--u16 calc_checksum_2byte(void *data, s32 len, u16 chksum, s32 type)
-+u16 calc_checksum16(void *data, int len, u16 chksum, int type)
- {
- 	int i;
- 	u8 *c = (u8 *)data;
- 
--	switch (type) {
--	case CS_DIR_ENTRY:
--		for (i = 0; i < len; i++, c++) {
--			if ((i == 2) || (i == 3))
--				continue;
--			chksum = (((chksum & 1) << 15) |
--				  ((chksum & 0xFFFE) >> 1)) + (u16)*c;
--		}
--		break;
--	default
--			:
--		for (i = 0; i < len; i++, c++)
--			chksum = (((chksum & 1) << 15) |
--				  ((chksum & 0xFFFE) >> 1)) + (u16)*c;
-+	for (i = 0; i < len; i++, c++) {
-+		if (unlikely(type == CS_DIR_ENTRY &&
-+			     (i == 2 || i == 3)))
-+			continue;
-+		chksum = ((chksum & 1) << 15 | chksum >> 1) + (u16)*c;
- 	}
- 	return chksum;
- }
-diff --git a/drivers/staging/exfat/exfat_nls.c b/drivers/staging/exfat/exfat_nls.c
-index 91e8b0c4dce7..bda6613b4773 100644
---- a/drivers/staging/exfat/exfat_nls.c
-+++ b/drivers/staging/exfat/exfat_nls.c
-@@ -204,8 +204,7 @@ void nls_cstring_to_uniname(struct super_block *sb,
- 	}
- 
- 	p_uniname->name_len = j;
--	p_uniname->name_hash = calc_checksum_2byte(upname, j << 1, 0,
--						   CS_DEFAULT);
-+	p_uniname->name_hash = calc_checksum16(upname, j << 1, 0, CS_DEFAULT);
- 
- 	if (p_lossy)
- 		*p_lossy = lossy;
--- 
-2.25.1
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+
+> ---
+>  drivers/mtd/nand/spi/micron.c | 16 ++++++++++++++++
+>  include/linux/mtd/spinand.h   |  1 +
+>  2 files changed, 17 insertions(+)
+> 
+> diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
+> index 5fd1f921ef12..ff0a3c01441d 100644
+> --- a/drivers/mtd/nand/spi/micron.c
+> +++ b/drivers/mtd/nand/spi/micron.c
+> @@ -18,6 +18,8 @@
+>  #define MICRON_STATUS_ECC_4TO6_BITFLIPS	(3 << 4)
+>  #define MICRON_STATUS_ECC_7TO8_BITFLIPS	(5 << 4)
+>  
+> +#define MICRON_CFG_CR			BIT(0)
+> +
+>  static SPINAND_OP_VARIANTS(read_cache_variants,
+>  		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
+>  		SPINAND_PAGE_READ_FROM_CACHE_X4_OP(0, 1, NULL, 0),
+> @@ -153,8 +155,22 @@ static int micron_spinand_detect(struct spinand_device *spinand)
+>  	return 1;
+>  }
+>  
+> +static int micron_spinand_init(struct spinand_device *spinand)
+> +{
+> +	/*
+> +	 * M70A device series enable Continuous Read feature at Power-up,
+> +	 * which is not supported. Disable this bit to avoid any possible
+> +	 * failure.
+> +	 */
+> +	if (spinand->flags & SPINAND_HAS_CR_FEAT_BIT)
+> +		return spinand_upd_cfg(spinand, MICRON_CFG_CR, 0);
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct spinand_manufacturer_ops micron_spinand_manuf_ops = {
+>  	.detect = micron_spinand_detect,
+> +	.init = micron_spinand_init,
+>  };
+>  
+>  const struct spinand_manufacturer micron_spinand_manufacturer = {
+> diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
+> index 4ea558bd3c46..333149b2855f 100644
+> --- a/include/linux/mtd/spinand.h
+> +++ b/include/linux/mtd/spinand.h
+> @@ -270,6 +270,7 @@ struct spinand_ecc_info {
+>  };
+>  
+>  #define SPINAND_HAS_QE_BIT		BIT(0)
+> +#define SPINAND_HAS_CR_FEAT_BIT		BIT(1)
+>  
+>  /**
+>   * struct spinand_info - Structure used to describe SPI NAND chips
 
