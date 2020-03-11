@@ -2,196 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F9D181CFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:54:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AB01181D0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 16:55:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730166AbgCKPyT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 11:54:19 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46681 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730020AbgCKPyS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 11:54:18 -0400
-Received: by mail-pg1-f193.google.com with SMTP id y30so1418212pga.13
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 08:54:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UQ0OJGqx9y8PbagWWxfJr8CPaEUs61KVO0K7RI/Bams=;
-        b=Zg4zLo92mNg84NZwOR02qwywzJC2QW8Ixq9XK4kine/CFTGanPBPS9vxl3x+My2Lih
-         gM349l6zXScatHO9anMIp9QA2/irCy/U0Yl1gV3Dn1qstx8NY7AGKwNKKXeVK8Lcav77
-         vVcZPuKGNnyxvHGjtTN+m2xijmowpkgU5qNdI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UQ0OJGqx9y8PbagWWxfJr8CPaEUs61KVO0K7RI/Bams=;
-        b=uInIGPg9bSwLwInZA/2C5MBHkykzn8c94LbpTnVtxniVajBGInxVVlD8xyYoGB6wfq
-         YY/AAInnSBGaoQi3CvGbbE6Lm5NWPdoha4tHiuEhPKLxLIIbZo35giOHy5zHrzvgYNev
-         eaUFN5Q85gpjZLcdExi6tUyCb15X6qqm++vhVfVT5OGWUgCyQuQxB68NEiO6yu6aEKQE
-         8LuTnn5yzCm1drfUrF657dSMV4Js5o8bX1iT/XfZQNsnGZM1pa1a5YthLKPbwJO0qItC
-         +zIiGFmxGVVcijPL5Kq9X33czJ/GTREdcCSYDvSN5IjMsz+0HQr2nHICvDsZsjtl0Htu
-         yVsg==
-X-Gm-Message-State: ANhLgQ2OEYjbezwXpwJ6ERHeKtuyt4oCE7Dn+PkTPUqORWS4JtI+aXXO
-        8jelI+oNltY99jmiD1KnA3NyBQ==
-X-Google-Smtp-Source: ADFU+vthNTkKRYkQywTRmo+IRBYKKqkzUIXrO4JWQcPkxkCdkFSinFSxB7ekGAo4wyhQxVpcH3cLVw==
-X-Received: by 2002:a63:514f:: with SMTP id r15mr3354739pgl.432.1583942057001;
-        Wed, 11 Mar 2020 08:54:17 -0700 (PDT)
-Received: from apsdesk.mtv.corp.google.com ([2620:15c:202:1:e09a:8d06:a338:aafb])
-        by smtp.gmail.com with ESMTPSA id a71sm13756265pfa.162.2020.03.11.08.54.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 08:54:16 -0700 (PDT)
-From:   Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-To:     marcel@holtmann.org, luiz.dentz@gmail.com, alainm@chromium.org
-Cc:     linux-bluetooth@vger.kernel.org,
-        chromeos-bluetooth-upstreaming@chromium.org,
-        Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jakub Kicinski <kuba@kernel.org>
-Subject: [RFC PATCH v6 5/5] Bluetooth: Add mgmt op set_wake_capable
-Date:   Wed, 11 Mar 2020 08:54:04 -0700
-Message-Id: <20200311085359.RFC.v6.5.I797e2f4cb824299043e771f3ab9cef86ee09f4db@changeid>
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-In-Reply-To: <20200311155404.209990-1-abhishekpandit@chromium.org>
-References: <20200311155404.209990-1-abhishekpandit@chromium.org>
+        id S1730207AbgCKPzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 11:55:03 -0400
+Received: from verein.lst.de ([213.95.11.211]:60118 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730053AbgCKPzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 11:55:02 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 90D1268B05; Wed, 11 Mar 2020 16:54:58 +0100 (CET)
+Date:   Wed, 11 Mar 2020 16:54:58 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     He Zhe <zhe.he@windriver.com>
+Cc:     Christoph Hellwig <hch@lst.de>, jack@suse.cz,
+        Jens Axboe <axboe@kernel.dk>, viro@zeniv.linux.org.uk,
+        bvanassche@acm.org, keith.busch@intel.com, tglx@linutronix.de,
+        mwilck@suse.com, yuyufen@huawei.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: disk revalidation updates and OOM
+Message-ID: <20200311155458.GA24376@lst.de>
+References: <93b395e6-5c3f-0157-9572-af0f9094dbd7@windriver.com> <20200310074018.GB26381@lst.de> <75865e17-48f8-a63a-3a29-f995115ffcfc@windriver.com> <20200310162647.GA6361@lst.de> <f48683d9-7854-ba5f-da3a-7ef987a539b8@windriver.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f48683d9-7854-ba5f-da3a-7ef987a539b8@windriver.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the system is suspended, only some connected Bluetooth devices
-cause user input that should wake the system (mostly HID devices). Add
-a list to keep track of devices that can wake the system and add
-a management API to let userspace tell the kernel whether a device is
-wake capable or not. For LE devices, the wakeable property is added to
-the connection parameter and can only be modified after calling
-add_device.
+On Wed, Mar 11, 2020 at 12:03:43PM +0800, He Zhe wrote:
+> >> 979c690d block: move clearing bd_invalidated into check_disk_size_change
+> >> f0b870d block: remove (__)blkdev_reread_part as an exported API
+> >> 142fe8f block: fix bdev_disk_changed for non-partitioned devices
+> >> a1548b6 block: move rescan_partitions to fs/block_dev.c
+> > Just to make sure we are on the same page:  if you revert all four it
+> > works, if you rever all but
+> >
+> > a1548b6 block: move rescan_partitions to fs/block_dev.c
+> >
+> > it doesn't?
+> 
+> After reverting 142fe8f, rescan_partitions would be called in block/ioctl.c
+> and cause a build failure. So I need to also revert a1548b6 to provide
+> rescan_partitions.
+> 
+> OR if I manually add the following diff instead of reverting a1548b6, then yes,
+> it works too.
 
-Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
----
+Ok, so 142fe8f is good except for the build failure.
 
-Changes in v6: None
-Changes in v5:
-* Wakeable entries moved to other commits
-* Patch moved to end of series
-
-Changes in v4: None
-Changes in v3:
-* Added wakeable property to le_conn_param
-* Use wakeable list for BR/EDR and wakeable property for LE
-
-Changes in v2: None
-
- include/net/bluetooth/mgmt.h |  7 +++++
- net/bluetooth/mgmt.c         | 51 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 58 insertions(+)
-
-diff --git a/include/net/bluetooth/mgmt.h b/include/net/bluetooth/mgmt.h
-index f41cd87550dc..17bbdcbeb67e 100644
---- a/include/net/bluetooth/mgmt.h
-+++ b/include/net/bluetooth/mgmt.h
-@@ -674,6 +674,13 @@ struct mgmt_cp_set_blocked_keys {
- 
- #define MGMT_OP_SET_WIDEBAND_SPEECH	0x0047
- 
-+#define MGMT_OP_SET_WAKE_CAPABLE	0x0048
-+#define MGMT_SET_WAKE_CAPABLE_SIZE	8
-+struct mgmt_cp_set_wake_capable {
-+	struct mgmt_addr_info addr;
-+	u8 wake_capable;
-+} __packed;
-+
- #define MGMT_EV_CMD_COMPLETE		0x0001
- struct mgmt_ev_cmd_complete {
- 	__le16	opcode;
-diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-index 6552003a170e..96f9f9f4086d 100644
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-@@ -108,6 +108,7 @@ static const u16 mgmt_commands[] = {
- 	MGMT_OP_SET_APPEARANCE,
- 	MGMT_OP_SET_BLOCKED_KEYS,
- 	MGMT_OP_SET_WIDEBAND_SPEECH,
-+	MGMT_OP_SET_WAKE_CAPABLE,
- };
- 
- static const u16 mgmt_events[] = {
-@@ -4768,6 +4769,48 @@ static int set_fast_connectable(struct sock *sk, struct hci_dev *hdev,
- 	return err;
- }
- 
-+static int set_wake_capable(struct sock *sk, struct hci_dev *hdev, void *data,
-+			    u16 len)
-+{
-+	struct mgmt_cp_set_wake_capable *cp = data;
-+	struct hci_conn_params *params;
-+	int err;
-+	u8 status = MGMT_STATUS_FAILED;
-+	u8 addr_type = cp->addr.type == BDADDR_BREDR ?
-+			       cp->addr.type :
-+			       le_addr_type(cp->addr.type);
-+
-+	bt_dev_dbg(hdev, "Set wake capable %pMR (type 0x%x) = 0x%x\n",
-+		   &cp->addr.bdaddr, addr_type, cp->wake_capable);
-+
-+	if (cp->addr.type == BDADDR_BREDR) {
-+		if (cp->wake_capable)
-+			err = hci_bdaddr_list_add(&hdev->wakeable,
-+						  &cp->addr.bdaddr, addr_type);
-+		else
-+			err = hci_bdaddr_list_del(&hdev->wakeable,
-+						  &cp->addr.bdaddr, addr_type);
-+
-+		if (!err || err == -EEXIST || err == -ENOENT)
-+			status = MGMT_STATUS_SUCCESS;
-+
-+		goto done;
-+	}
-+
-+	/* Add wakeable param to le connection parameters */
-+	params = hci_conn_params_lookup(hdev, &cp->addr.bdaddr, addr_type);
-+	if (params) {
-+		params->wakeable = cp->wake_capable;
-+		status = MGMT_STATUS_SUCCESS;
-+	}
-+
-+done:
-+	err = mgmt_cmd_complete(sk, hdev->id, MGMT_OP_SET_WAKE_CAPABLE, status,
-+				cp, sizeof(*cp));
-+
-+	return err;
-+}
-+
- static void set_bredr_complete(struct hci_dev *hdev, u8 status, u16 opcode)
- {
- 	struct mgmt_pending_cmd *cmd;
-@@ -5896,6 +5939,13 @@ static int remove_device(struct sock *sk, struct hci_dev *hdev,
- 			err = hci_bdaddr_list_del(&hdev->whitelist,
- 						  &cp->addr.bdaddr,
- 						  cp->addr.type);
-+
-+			/* Don't check result since it either succeeds or device
-+			 * wasn't there (not wakeable or invalid params as
-+			 * covered by deleting from whitelist).
-+			 */
-+			hci_bdaddr_list_del(&hdev->wakeable, &cp->addr.bdaddr,
-+					    cp->addr.type);
- 			if (err) {
- 				err = mgmt_cmd_complete(sk, hdev->id,
- 							MGMT_OP_REMOVE_DEVICE,
-@@ -7099,6 +7149,7 @@ static const struct hci_mgmt_handler mgmt_handlers[] = {
- 	{ set_blocked_keys,	   MGMT_OP_SET_BLOCKED_KEYS_SIZE,
- 						HCI_MGMT_VAR_LEN },
- 	{ set_wideband_speech,	   MGMT_SETTING_SIZE },
-+	{ set_wake_capable,	   MGMT_SET_WAKE_CAPABLE_SIZE },
- };
- 
- void mgmt_index_added(struct hci_dev *hdev)
--- 
-2.25.1.481.gfbce0eb801-goog
-
+Do 142fe8f and 979c690d work with the build fix applied? (f0b870d
+shouldn't be interesting for this case).
