@@ -2,147 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A4AB1823CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 22:25:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 335BE1823D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Mar 2020 22:27:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729479AbgCKVZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 17:25:41 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33637 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729102AbgCKVZl (ORCPT
+        id S1729518AbgCKV1a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 17:27:30 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:25270 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbgCKV1a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 17:25:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583961939;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IjfIPBthPl8u65C2XDaDaETsD9HwFlq+W0NT+KQRiNc=;
-        b=MQGWctOaWUM3/ovyb/NRqtLUyEEzNtaUbn98dVdssvwQkztldQLKb3MArPXkIjQ9/qNw+p
-        CkdQvSK8d9Ssc6TJUcY/OBY+LBPytKg8cDBp6hCRz/FcmkKaxk4zoWvjKsKwjh4G2GU1Fw
-        iQ2dMR5AFM7YOIsDG1YDSvAfv2AOn5Q=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-186-9covld2_PmyP2ZQoNDKetw-1; Wed, 11 Mar 2020 17:25:35 -0400
-X-MC-Unique: 9covld2_PmyP2ZQoNDKetw-1
-Received: by mail-wm1-f69.google.com with SMTP id s20so536577wmj.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 14:25:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IjfIPBthPl8u65C2XDaDaETsD9HwFlq+W0NT+KQRiNc=;
-        b=DleFUjdPn3ZAEjZ0P/Bv/g3Gs9lrqonv9J4ZwvH9A7gqLq9v3IHvw0w59GFvTRqYmr
-         uYEXSlKVQSNuBCQoV+cunHeS4PQA4NQPyx6RIepTti8ylWou4ney7YaXouC7XvUHzvYF
-         1OlkjPiQVpEgO+/RHHX7twnzJm3daMxLP2DHnqcnDCTUENrNPl3aVsDWBhhtKXkxsNhB
-         DrfY1Gg8KHwCwpo72ZAGjSm2m7bd0V1CohCueHfColmxqb3bQpp98SS/p3/Jh9q5lGVS
-         AlQwo6M940awy1XxGjuP9AUBGaYHCFIoJGFs1YKF7G1qOm8SkVj2inek+gsZ40kMndvv
-         vIOg==
-X-Gm-Message-State: ANhLgQ3RDtGPaNbzL9Uc5nhHg2J8X/ZXtg7twaIlwWkUkccNO1QmxsMH
-        4MmFbOoXB8WTK8+eROc22U21ITt1DppDGtmbBdSUeW6EYvs7+lkUMEzI/AyZ0NiD+SjCi+Bf1/y
-        4RY5WmA5YD5E+jAA0NScDF/Jz
-X-Received: by 2002:a5d:420c:: with SMTP id n12mr6433059wrq.173.1583961933542;
-        Wed, 11 Mar 2020 14:25:33 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vuhcZpxl+Rv9fxaoaW66vMAwPmm6H7sPYDLITq3Y6Dnqf9sIeOWwVEoWbfjnEziA6KhGk9QCA==
-X-Received: by 2002:a5d:420c:: with SMTP id n12mr6433040wrq.173.1583961933335;
-        Wed, 11 Mar 2020 14:25:33 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c0c-fe00-fc7e-fd47-85c1-1ab3.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:fc7e:fd47:85c1:1ab3])
-        by smtp.gmail.com with ESMTPSA id f207sm10601024wme.9.2020.03.11.14.25.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 14:25:32 -0700 (PDT)
-Subject: Re: [PATCH resend] x86/purgatory: Make sure we fail the build if
- purgatory.ro has missing symbols
-To:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Borislav Petkov <bp@alien8.de>
-Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200221165941.508653-1-hdegoede@redhat.com>
- <202003010150.eyjF3gp0%lkp@intel.com>
- <b9a34773-ab38-a3c7-3e35-7da95dc625f4@redhat.com>
- <20200311204813.GM3470@zn.tnic> <20200311212000.GA4022430@rani.riverdale.lan>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <33a87683-8944-72f7-2c86-aa9b3c0ed64b@redhat.com>
-Date:   Wed, 11 Mar 2020 22:25:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Wed, 11 Mar 2020 17:27:30 -0400
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id 02BLRBlU030179;
+        Thu, 12 Mar 2020 06:27:12 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 02BLRBlU030179
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1583962032;
+        bh=kbWqPD/5BVvh1Qw3PprVads8y98YV6jmA2+olTbwLms=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=18Say0DVwJzy3gpsxMTKW5SkOv+13lGEM7tgb+0qmFhEIyEkRf84WpHoZuotGExam
+         l28CjbWiBsjOYYXTXVorUHVhMrd7MzH9Q32umpYDelnuV0sU4A8VADqP1ALhjFP4G0
+         mRsBJ5/NDhplezTHmOFa9ArTTcj/4Lg7ADJoKM4fs4JVIMP+8M2AzRfdnusdbRg4hW
+         Uy3sDgiK0Zzi9/OYCXPEN273qR3jrQDjsuOQh307z9hswIZ26qEdFPEfVQTPiEGT3R
+         5DrFo5wwbv+b6l/JJfDmNeDWI5Rk5H3kl1HLU7aBLvf/0JkU66+W6clD8/mhlFKXD7
+         GVevVj14Bht7A==
+X-Nifty-SrcIP: [209.85.222.43]
+Received: by mail-ua1-f43.google.com with SMTP id v16so228158ual.9;
+        Wed, 11 Mar 2020 14:27:12 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ3yK2KfmUhOoNwwSbvDgEtB/IG0gXSlwyl6pE9+rO5fgdBTm2xW
+        qvvXoRSvmkeh0tB3pNYPcBZMNMJ5gf05C9EIpQo=
+X-Google-Smtp-Source: ADFU+vthn3wrUbYgxaw18lalX3Fw7yiaP0FsvMtzVrj2ofhcX57g6NmsivMdiollhWbVip3FO3S0/MuqENwOOl0kuY8=
+X-Received: by 2002:ab0:28d8:: with SMTP id g24mr1754195uaq.121.1583962030875;
+ Wed, 11 Mar 2020 14:27:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200311212000.GA4022430@rani.riverdale.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200311062925.5163-1-masahiroy@kernel.org> <20200311093143.GB279080@splinter>
+ <20200311104756.GA1972672@hmswarspite.think-freely.org> <20200311112833.GA284417@splinter>
+ <20200311173053.GB1972672@hmswarspite.think-freely.org>
+In-Reply-To: <20200311173053.GB1972672@hmswarspite.think-freely.org>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Thu, 12 Mar 2020 06:26:34 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARSbP-DY5wdXtB0cxHfwgmFYE0QvxYACk8GuMQhTvj_WQ@mail.gmail.com>
+Message-ID: <CAK7LNARSbP-DY5wdXtB0cxHfwgmFYE0QvxYACk8GuMQhTvj_WQ@mail.gmail.com>
+Subject: Re: [PATCH] net: drop_monitor: use IS_REACHABLE() to guard net_dm_hw_report()
+To:     Neil Horman <nhorman@tuxdriver.com>
+Cc:     Ido Schimmel <idosch@mellanox.com>, Jiri Pirko <jiri@mellanox.com>,
+        Networking <netdev@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI,
+On Thu, Mar 12, 2020 at 2:31 AM Neil Horman <nhorman@tuxdriver.com> wrote:
+>
+> On Wed, Mar 11, 2020 at 01:28:33PM +0200, Ido Schimmel wrote:
+> > On Wed, Mar 11, 2020 at 06:47:56AM -0400, Neil Horman wrote:
+> > > On Wed, Mar 11, 2020 at 11:31:43AM +0200, Ido Schimmel wrote:
+> > > > On Wed, Mar 11, 2020 at 03:29:25PM +0900, Masahiro Yamada wrote:
+> > > > > In net/Kconfig, NET_DEVLINK implies NET_DROP_MONITOR.
+> > > > >
+> > > > > The original behavior of the 'imply' keyword prevents NET_DROP_MONITOR
+> > > > > from being 'm' when NET_DEVLINK=y.
+> > > > >
+> > > > > With the planned Kconfig change that relaxes the 'imply', the
+> > > > > combination of NET_DEVLINK=y and NET_DROP_MONITOR=m would be allowed.
+> > > > >
+> > > > > Use IS_REACHABLE() to avoid the vmlinux link error for this case.
+> > > > >
+> > > > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > > >
+> > > > Thanks, Masahiro.
+> > > >
+> > > > Neil, Jiri, another option (long term) is to add a raw tracepoint (not
+> > > > part of ABI) in devlink and have drop monitor register its probe on it
+> > > > when monitoring.
+> > > >
+> > > > Two advantages:
+> > > > 1. Consistent with what drop monitor is already doing with kfree_skb()
+> > > > tracepoint
+> > > > 2. We can remove 'imply NET_DROP_MONITOR' altogether
+> > > >
+> > > > What do you think?
+> > > >
+> > > Agreed, I think I like this implementation better.
+> >
+> > OK, but I don't want to block Masahiro. I think we can go with his patch
+> > and then I'll add the raw tracepoint in the next release.
+> >
+> Yeah, ok, I can agree with that
+> Acked-by: Neil Horman <nhorman@tuxdriver.com>
 
-On 3/11/20 10:20 PM, Arvind Sankar wrote:
-> On Wed, Mar 11, 2020 at 09:49:54PM +0100, Borislav Petkov wrote:
->> On Sat, Feb 29, 2020 at 07:12:57PM +0100, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 2/29/20 6:16 PM, kbuild test robot wrote:
->>>> Hi Hans,
->>>>
->>>> I love your patch! Yet something to improve:
->>>>
->>>> [auto build test ERROR on tip/x86/core]
->>>> [also build test ERROR on v5.6-rc3 next-20200228]
->>>> [cannot apply to tip/auto-latest]
->>>> [if your patch is applied to the wrong git tree, please drop us a note to help
->>>> improve the system. BTW, we also suggest to use '--base' option to specify the
->>>> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
->>>>
->>>> url:    https://github.com/0day-ci/linux/commits/Hans-de-Goede/x86-purgatory-Make-sure-we-fail-the-build-if-purgatory-ro-has-missing-symbols/20200223-040035
->>>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git 248ed51048c40d36728e70914e38bffd7821da57
->>>> config: x86_64-randconfig-s1-20200229 (attached as .config)
->>>> compiler: gcc-4.9 (Debian 4.9.2-10+deb8u1) 4.9.2
->>>> reproduce:
->>>>           # save the attached .config to linux build tree
->>>>           make ARCH=x86_64
->>>>
->>>> If you fix the issue, kindly add following tag
->>>> Reported-by: kbuild test robot <lkp@intel.com>
->>>>
->>>> All errors (new ones prefixed by >>):
->>>>
->>>>      ld: arch/x86/purgatory/purgatory.ro: in function `kstrtoull':
->>>>>> (.text+0x2b0e): undefined reference to `ftrace_likely_update'
->>>
->>> AFAICT this is the patch working as intended and pointing out an actual issue
->>> with the purgatory code. Which shows that we really should get this
->>> patch merged...
->>
->> ... and break the build? I don't think so.
->>
->> I know, it would fail silently now but I don't recall anyone complaining
->> about it. So it was a don't care so far.
->>
->> IOW, first this ftrace_likely_update thing needs to be sorted out and
->> then this merged.
->>
->> Thx.
->>
->> -- 
->> Regards/Gruss,
->>      Boris.
->>
->> https://people.kernel.org/tglx/notes-about-netiquette
-> 
-> Hans, I think adding -DDISABLE_BRANCH_PROFILING to PURGATORY_CFLAGS
-> might fix this.
 
-Yes I was just looking into doing that myself, I agree that that
-should fix this. I will mail out a new patch-series with that as
-preparation patch soon.
+Thanks, I will insert this patch before the kconfig change
+with your Ack.
 
-Regards,
 
-Hans
-
+-- 
+Best Regards
+Masahiro Yamada
