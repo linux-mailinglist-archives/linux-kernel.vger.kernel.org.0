@@ -2,77 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E1751836ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:09:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95A0C1836F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:11:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbgCLRJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 13:09:48 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44343 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbgCLRJs (ORCPT
+        id S1726689AbgCLRLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 13:11:18 -0400
+Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:35588 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725268AbgCLRLO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 13:09:48 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l18so8435307wru.11
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 10:09:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QEESwEEJWVk/Eaie2wY+AKo8HU4RSekgrz+DHvxmm5E=;
-        b=dpPEQIvpVfuOgU6AmC+A57NwArmXTZaDNTHjN8QoeqJuHN8YX4WC4af9BgX2fC2YHo
-         waxiAFjkmisGXMJrpZ2Lp0WwhGWQluI9ZqrVlsoimGCJ0cOkjl/7V69uZU/IjmS3z4zP
-         F0okTfOQ0LxnKIaVSKhA5WEHd1va+aUSR0a5sfPQ7MBEUbTJgmzkRwV7TJrXZ9DyT7uZ
-         6Yh+RvsFaX41Nl0Ze/H6x3mQWBquZcDQWCBe5LLw5P3ScIaT8lvLMlV0BQc2oTV8nZOR
-         1k1rPUtZwHnZPlmV9fS38zIDKg87G+5Q6pK8b/KtTqLgIR/ucwK0e5Ozene0MDaHRo2G
-         r/pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QEESwEEJWVk/Eaie2wY+AKo8HU4RSekgrz+DHvxmm5E=;
-        b=MsUkDLL01EU+6C4ZO5pEFgqJn9PEBqA+YP6LwHYThQAlnK2gvmKRt1X0AL2HCMEZsb
-         1rQhsWdmzQ0toL1i+RMz9dSLVFggZCzFSoKu5gpbh/qmFPy6y+FkWYyAp5HhtdTCe3qa
-         YhAG3YO/RcUNyyuVApwhtcMNV8Gsdr4MZk5ADuUFjjCWIRojRCtuYY0Y6x1KbGuoeG+Z
-         c3FPsp4ll2lp2qKt3vbsu0v1EplZU1rg32UXBmTS7njMZUkrF2ZZHta0ITY5rXUTOVck
-         S6N4d0+WihDlnmS1VWLtqCmf7pbhLqfBEH+AzeNxM70dzTjQ8Cc0zZI3yUaYsg5cCBq3
-         JTdw==
-X-Gm-Message-State: ANhLgQ2myMHHkitnLEOoRis4MCfZy8ufDmM2E4TbBhxgMeybpeIVfwIN
-        fPwM36Es6VHafCeB84TlEA==
-X-Google-Smtp-Source: ADFU+vsscIblCfkyjI7U5u1LcYlZrU/edQsOnnaoqZAKPyti+cuA4nnArYjtbW9q9ubdiiVC7GJ/pg==
-X-Received: by 2002:adf:ec45:: with SMTP id w5mr11889324wrn.230.1584032984978;
-        Thu, 12 Mar 2020 10:09:44 -0700 (PDT)
-Received: from avx2 ([46.53.253.3])
-        by smtp.gmail.com with ESMTPSA id d1sm13661714wrw.52.2020.03.12.10.09.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2020 10:09:44 -0700 (PDT)
-Date:   Thu, 12 Mar 2020 20:09:42 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] sched: make nr_running() return "unsigned int"
-Message-ID: <20200312170942.GA7151@avx2>
-References: <20200311210608.GA4517@avx2>
- <20200312104427.GR12561@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200312104427.GR12561@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 12 Mar 2020 13:11:14 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id AA662C108A;
+        Thu, 12 Mar 2020 17:11:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1584033073; bh=JctjT8ZZB3iGiymejL3UkVZ9bMIbCL4Z7Cm4bSq+Rac=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VbdaxuRE/sDXULz7i8tqvuBSPauwJNtx8llrBmIzXeZV+nNrAvhFQ1ctRZ7bVk6Jy
+         6OE7rwePbWh7p0WNM9QMjnzhRVmLpcfHbOZOWGD+GBcLWlpUgLS4+SBpzIXOY5Kfny
+         +tREujQg2815XcPBR9iFnTX242mudETHJ/N262xd94o+4T6QPoT5gRrX9vqGor5I+l
+         TV/8yl014BY9de+QuO8nu9ODqxXlAddLFrkNDlqX2zidta0EgIVXDVwoDoZQy28dnB
+         +FQN1GL81lB7d8oXH3j6UrxZYohVHI1s57cKMVLPrZUqyNGz1Wy+uPRh+Nm6e75Bn3
+         YI2+qy1rNrusg==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id A430CA0061;
+        Thu, 12 Mar 2020 17:11:07 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/2] net: phy: XLGMII define and usage in PHYLINK
+Date:   Thu, 12 Mar 2020 18:10:08 +0100
+Message-Id: <cover.1584031294.git.Jose.Abreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 11:44:27AM +0100, Peter Zijlstra wrote:
-> On Thu, Mar 12, 2020 at 12:06:08AM +0300, Alexey Dobriyan wrote:
-> > I don't anyone have been crazy enough to spawn 2^32 threads.
-> > It'd require absurd amounts of physical memory.
-> 
-> And we're going to 5 level page-tables because 48 bits physical isn't
-> enough. 57 bits of physical is plenty space to spawn that many tasks and
-> still have some left over.
-> 
-> Now 32 bit tasks is indeed insane, but memory isn't the problem. The
-> actual limit is the pid-space, which is 30 bits.
+Adds XLGMII defines and usage in PHYLINK.
 
-Indeed, pid space limit is even better!
+Patch 1/2, adds the define for it, whilst 2/2 adds the usage of it in
+PHYLINK.
+
+---
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+
+Jose Abreu (2):
+  net: phy: Add XLGMII interface define
+  net: phylink: Add XLGMII support
+
+ drivers/net/phy/phylink.c | 27 +++++++++++++++++++++++++++
+ include/linux/phy.h       |  3 +++
+ 2 files changed, 30 insertions(+)
+
+-- 
+2.7.4
+
