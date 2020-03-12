@@ -2,106 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7550182D26
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 11:11:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD804182D2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 11:12:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbgCLKLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 06:11:43 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:41771 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbgCLKLn (ORCPT
+        id S1726636AbgCLKMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 06:12:44 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39154 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbgCLKMn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 06:11:43 -0400
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1jCKoV-00089R-23; Thu, 12 Mar 2020 11:11:39 +0100
-Message-ID: <e66f788ae84b13df9ff8d28129c089431f1af9b4.camel@pengutronix.de>
-Subject: Re: [PATCH] Input: synaptics-rmi4 - Do not set reduced reporting
- mode thresholds are not set by the driver
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Peter Hutterer <peter.hutterer@who-t.net>,
-        Andrew Duggan <aduggan@synaptics.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Paul Hollinsky <phollinsky@holtechnik.com>,
-        Christopher Heiny <Cheiny@synaptics.com>,
-        kernel@pengutronix.de, patchwork-lst@pengutronix.de
-Date:   Thu, 12 Mar 2020 11:11:36 +0100
-In-Reply-To: <20200312031422.GA1823643@jelly>
-References: <20200312005549.29922-1-aduggan@synaptics.com>
-         <20200312031422.GA1823643@jelly>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Thu, 12 Mar 2020 06:12:43 -0400
+Received: by mail-pf1-f195.google.com with SMTP id w65so3030262pfb.6
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 03:12:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=g2ic8RCgE8xfXSotQsLJPMX+SIIxXdgAWghsG0UmqWY=;
+        b=G+UNAh6wj/c0SGz5GhPSr+VYq88055m5ZZtvU0lGNrZyPFoDBu4p2FqlJVbHL/0EUl
+         6ARFETg2dQqDIZvvCsZcC4vZgzQ/u3QoEqcHtqMHvJUDVrmr3IDXqXgtNF8Jk2zJj0Bo
+         SkAT9oTLszdsWdZwcJ1HgX6P1ICWSXNQdtu/iGNnBZyYFIPlEeqB33DuXHZ9T1e6nCNm
+         qsdslFvy+BKwlPpw7fWakLpmb321bPsUvyvoOvrkrCz7G/hpLnLamMC3W3UN4XnrgEoL
+         SJ/l+N9kwwd6BEVVF+n3HteQBjQY1arEZRxvnFSreA83IHR9Q9hU6IEvl6EZDs+yDaji
+         uUcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=g2ic8RCgE8xfXSotQsLJPMX+SIIxXdgAWghsG0UmqWY=;
+        b=NZTFZc6OER7eOMq9FXH0TVXd+1Dmlgs3sqtWVyrEj1STMvCHXqxSfum1Dlm7FWv62g
+         31RsNrMbbNeJLg5IEbpnu3ys13QAOGTvq7McfpJc+SWY0ypWkGPvW0WerzDLA+xkJMEo
+         N/6dHZofoBLWUD+yybUWdrziflqW0GYBmf98A/zwy3g6ND4q7/NkoOMHxT0H7sPDq4eE
+         DJR6hU0JQIOMTLim+fhYjzfy5kHPBPYvaryOCPyjazDAgoEj9KC+Ydva1UdV44ATMq9q
+         ZN6c7XzRhKiFBv+YWlD26JXhIklwNIbw2FcB6Kgrbsc/AMYF+NPcTi6p7QWkXbIR/yoK
+         /ILQ==
+X-Gm-Message-State: ANhLgQ0JIBtjzTMH55Tt34z6hnjCm59v1XFoCCpDQTkwy5YCzxKHbUCw
+        6RnbLKjBDnccoBtvfiiE6yLueg==
+X-Google-Smtp-Source: ADFU+vsNpY0Hm54zBz9SHVmV3vmk513jLZGv0nsBMg1SxW2mhGr4zvQGzyTXRNQMCzGHjdW03YDzuA==
+X-Received: by 2002:a63:b216:: with SMTP id x22mr6869446pge.198.1584007960467;
+        Thu, 12 Mar 2020 03:12:40 -0700 (PDT)
+Received: from localhost ([122.171.122.128])
+        by smtp.gmail.com with ESMTPSA id k5sm8173410pju.29.2020.03.12.03.12.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Mar 2020 03:12:39 -0700 (PDT)
+Date:   Thu, 12 Mar 2020 15:42:32 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Sricharan R <sricharan@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: qcom: Add support for krait based socs
+Message-ID: <20200312101232.fmjs3zjl3gud5myh@vireshk-i7>
+References: <20200219205546.6800-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200219205546.6800-1-ansuelsmth@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
-
-On Do, 2020-03-12 at 13:14 +1000, Peter Hutterer wrote:
-> Hi Andrew,
+On 19-02-20, 21:55, Ansuel Smith wrote:
+> In Certain QCOM SoCs like ipq8064, apq8064, msm8960, msm8974
+> that has KRAIT processors the voltage/current value of each OPP
+> varies based on the silicon variant in use.
 > 
-> On Wed, Mar 11, 2020 at 05:55:49PM -0700, Andrew Duggan wrote:
-> > The previous patch "c5ccf2ad3d33 (Input: synaptics-rmi4 - switch to
-> > reduced reporting mode)" enabled reduced reporting mode
-> > unintentionally
-> > on some devices, if the firmware was configured with default Delta
-> > X/Y
-> > threshold values. The result unintentionally degrade the
-> > performance of
-> > some touchpads.
+> The required OPP related data is determined based on
+> the efuse value. This is similar to the existing code for
+> kryo cores. So adding support for krait cores here.
 > 
-> could this be the cause of a stuttering cursor on a P50 as well?
-> A recording in the issue below shows the cursor moving by ~25 units per
-> event, regardless of the time between those events.
-> https://gitlab.freedesktop.org/libinput/libinput/issues/448
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/opp/qcom-nvmem-cpufreq.txt       |   3 +-
+>  drivers/cpufreq/Kconfig.arm                   |   2 +-
+>  drivers/cpufreq/cpufreq-dt-platdev.c          |   5 +
+>  drivers/cpufreq/qcom-cpufreq-nvmem.c          | 181 ++++++++++++++++--
+>  4 files changed, 173 insertions(+), 18 deletions(-)
 
-Yes, that's very much possible, as reduced reporting mode is about only
-reporting events once they cross a predefined movement threshold.
+Can someone from Qcom team review this ?
 
-Regards,
-Lucas
-
-> thanks!
-> 
-> Cheers,
->    Peter
-> 
-> > This patch checks to see that the driver is modifying the delta X/Y
-> > thresholds before modifying the reporting mode.
-> > 
-> > Signed-off-by: Andrew Duggan <aduggan@synaptics.com>
-> > ---
-> >  drivers/input/rmi4/rmi_f11.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/input/rmi4/rmi_f11.c
-> > b/drivers/input/rmi4/rmi_f11.c
-> > index 6adea8a3e8fb..ffa39ab153f2 100644
-> > --- a/drivers/input/rmi4/rmi_f11.c
-> > +++ b/drivers/input/rmi4/rmi_f11.c
-> > @@ -1203,8 +1203,8 @@ static int rmi_f11_initialize(struct
-> > rmi_function *fn)
-> >  	 * If distance threshold values are set, switch to reduced
-> > reporting
-> >  	 * mode so they actually get used by the controller.
-> >  	 */
-> > -	if (ctrl->ctrl0_11[RMI_F11_DELTA_X_THRESHOLD] ||
-> > -	    ctrl->ctrl0_11[RMI_F11_DELTA_Y_THRESHOLD]) {
-> > +	if (sensor->axis_align.delta_x_threshold ||
-> > +	    sensor->axis_align.delta_y_threshold) {
-> >  		ctrl->ctrl0_11[0] &= ~RMI_F11_REPORT_MODE_MASK;
-> >  		ctrl->ctrl0_11[0] |= RMI_F11_REPORT_MODE_REDUCED;
-> >  	}
-> > -- 
-> > 2.20.1
-> > 
-
+-- 
+viresh
