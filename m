@@ -2,107 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0737718271F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 03:49:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA3E182736
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 04:00:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387662AbgCLCs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 22:48:58 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37605 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387486AbgCLCs6 (ORCPT
+        id S2387692AbgCLDAA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 23:00:00 -0400
+Received: from aclms1.advantech.com.tw ([61.58.41.199]:53506 "EHLO
+        ACLMS1.advantech.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387609AbgCLDAA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 22:48:58 -0400
-Received: by mail-wr1-f65.google.com with SMTP id 6so5459662wre.4
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 19:48:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=QLA/ZeP5E+/XKg+thdAk/GAfXLemsbPUzfmLzefR4iU=;
-        b=BsqWiVnoFjNmsxzp4AMqJLWxCydHypxZEk71wcYFG27kREUTPwDKA+TuKbuksONw83
-         7BIxQtqhyuhbbvnWcUlW2QTX6z0kA8Uuj3OdRXcEgiZjqcCphd2yCSuKLAe7oRpWri16
-         ueq6XSYxnckqKM1gfXhDBXGP/9INNfN7En+dQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=QLA/ZeP5E+/XKg+thdAk/GAfXLemsbPUzfmLzefR4iU=;
-        b=KWB0J6hTkaWEs4DAoXFaRdDm0hAFz63lxCuFFAEz85YIW2bX3GpIqG7Q02b+MyGycx
-         uCBY4JrSSKqcAK7zEMW8t+LgolzqYYdxUpDzU/o1/HXaXUdAc7FS4Srvxs0YKPI/hFSB
-         2tjDaBxsRu3syLmAV5ftslH7U0BAsafd7/BIOnzlvPEuTQ0FlIbpehbGP9/rQC9gtsTl
-         u2uORBOEIJhxNqUN/kiu4b3Lwc74t9J28A0eb2otdctV7pooq4Mr134iKkvf3IlnzISG
-         gXOx9Mwu0UqIFRTfqEGdIkUTQTSnd4NH4KzGaRe8lxg9ioqeAVHU15s86goXhv0rtZTI
-         ga/A==
-X-Gm-Message-State: ANhLgQ23T8Ieu9pVf94XcWc/BNtj3xQjxbgXKcTOj7g+RrbWzhibKAQT
-        q6dKzLf0cFzDQeYHWMDyQXsoGQ==
-X-Google-Smtp-Source: ADFU+vtOfWTBwVMeozjXM01zS5SS3/RA91m9EmLIxJQG8dUujJybcBR1lLn/EeOLLDsnZPgFqeoAYw==
-X-Received: by 2002:adf:8bda:: with SMTP id w26mr7667756wra.126.1583981336263;
-        Wed, 11 Mar 2020 19:48:56 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id 9sm10759451wmx.32.2020.03.11.19.48.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 19:48:55 -0700 (PDT)
-Subject: Re: [PATCH] checkpatch: always allow C99 SPDX License Identifer
- comments
-To:     Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-References: <20200311191128.7896-1-scott.branden@broadcom.com>
- <2c4b42d1fb0bdb6604a72b2a10d49f9eae4b0ff4.camel@perches.com>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <7056bd62-4251-f9bb-2b97-15f93a1e7142@broadcom.com>
-Date:   Wed, 11 Mar 2020 19:48:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 11 Mar 2020 23:00:00 -0400
+X-Greylist: delayed 602 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Mar 2020 22:59:59 EDT
+Received: from taipei08.ADVANTECH.CORP (unverified [172.20.0.235]) by ACLMS1.advantech.com.tw
+ (Clearswift SMTPRS 5.6.0) with ESMTP id <Tdddac63711ac14014bd38@ACLMS1.advantech.com.tw>;
+ Thu, 12 Mar 2020 10:49:55 +0800
+Received: from ADVANTECH.CORP (172.17.10.74) by taipei08.ADVANTECH.CORP
+ (172.20.0.235) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 12 Mar
+ 2020 10:49:54 +0800
+From:   <Amy.Shih@advantech.com.tw>
+To:     <she90122@gmail.com>
+CC:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <amy.shih@advantech.com.tw>, <oakley.ding@advantech.com.tw>,
+        <jia.sui@advantech.com.cn>, <yuechao.zhao@advantech.com.cn>
+Subject: [v1,1/1] Fix the incorrect quantity for fan & temp attributes.
+Date:   Thu, 12 Mar 2020 02:49:34 +0000
+Message-ID: <20200312024934.3533-1-Amy.Shih@advantech.com.tw>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <2c4b42d1fb0bdb6604a72b2a10d49f9eae4b0ff4.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Originating-IP: [172.17.10.74]
+X-ClientProxiedBy: ACLDAG.ADVANTECH.CORP (172.20.2.88) To
+ taipei08.ADVANTECH.CORP (172.20.0.235)
+X-StopIT: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe,
+From: Amy Shih <amy.shih@advantech.com.tw>
 
-On 2020-03-11 7:26 p.m., Joe Perches wrote:
-> On Wed, 2020-03-11 at 12:11 -0700, Scott Branden wrote:
->> Always allow C99 comment styles if SPDK-License-Identifier is in comment
->> even if C99_COMMENT_TOLERANCE is specified in the --ignore options.
-> Why is this useful?
-This is useful because if you run checkpatch with 
---ignore=C99_COMMENT_TOLERANCE
-right now it will warn on almost every .c file in the linux kernel due 
-to the decision to
-use // SPDX-License-Identifier: at the start of every c file
+nct7904d supports 12 fan tachometers input and 13 temperatures
+(TEMP_CH1~4 and LTD + DTS TCPU1~8), fix the quantity for fan & temp
+attributes.
 
-With this change checkpatch will stop complaining about this single 
-outlier // in the file
-and allow you to enforce no other C99 // style comments in the patch.
+Signed-off-by: Amy Shih <amy.shih@advantech.com.tw>
+---
+ drivers/hwmon/nct7904.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-It would have been a lot nicer if /* SPDX-License-Identifier: xxxx */ 
-was used instead...
->
->> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
->> ---
->>   scripts/checkpatch.pl | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
->> index a63380c6b0d2..c8b429dd6b51 100755
->> --- a/scripts/checkpatch.pl
->> +++ b/scripts/checkpatch.pl
->> @@ -3852,8 +3852,8 @@ sub process {
->>   			}
->>   		}
->>   
->> -# no C99 // comments
->> -		if ($line =~ m{//}) {
->> +# no C99 // comments except for SPDX-License-Identifier
->> +		if ($line =~ m{//} && $rawline !~ /SPDX-License-Identifier:/) {
->>   			if (ERROR("C99_COMMENTS",
->>   				  "do not use C99 // comments\n" . $herecurr) &&
->>   			    $fix) {
+diff --git a/drivers/hwmon/nct7904.c b/drivers/hwmon/nct7904.c
+index 281c81e..1f5743d 100644
+--- a/drivers/hwmon/nct7904.c
++++ b/drivers/hwmon/nct7904.c
+@@ -7,6 +7,11 @@
+  *
+  * Copyright (c) 2019 Advantech
+  * Author: Amy.Shih <amy.shih@advantech.com.tw>
++ *
++ * Supports the following chips:
++ *
++ * Chip        #vin  #fan  #pwm  #temp  #dts  chip ID
++ * nct7904d     20    12    4     5      8    0xc5
+  */
+ 
+ #include <linux/module.h>
+@@ -820,6 +825,10 @@ static int nct7904_detect(struct i2c_client *client,
+ 			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM,
+ 			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM,
+ 			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM,
++			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM,
++			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM,
++			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM,
++			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM,
+ 			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM),
+ 	HWMON_CHANNEL_INFO(pwm,
+ 			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
+@@ -853,6 +862,18 @@ static int nct7904_detect(struct i2c_client *client,
+ 			   HWMON_T_CRIT_HYST,
+ 			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
+ 			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
++			   HWMON_T_CRIT_HYST,
++			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
++			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
++			   HWMON_T_CRIT_HYST,
++			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
++			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
++			   HWMON_T_CRIT_HYST,
++			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
++			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
++			   HWMON_T_CRIT_HYST,
++			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
++			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
+ 			   HWMON_T_CRIT_HYST),
+ 	NULL
+ };
+-- 
+1.8.3.1
 
