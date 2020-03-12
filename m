@@ -2,148 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 537191830A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 13:52:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F2291830AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 13:55:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbgCLMwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 08:52:13 -0400
-Received: from mail-db8eur05on2078.outbound.protection.outlook.com ([40.107.20.78]:21217
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725268AbgCLMwM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 08:52:12 -0400
+        id S1727212AbgCLMy7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 08:54:59 -0400
+Received: from mx0b-002c1b01.pphosted.com ([148.163.155.12]:18412 "EHLO
+        mx0b-002c1b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726632AbgCLMy6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 08:54:58 -0400
+X-Greylist: delayed 316 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Mar 2020 08:54:58 EDT
+Received: from pps.filterd (m0127842.ppops.net [127.0.0.1])
+        by mx0b-002c1b01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02CCr87U023681;
+        Thu, 12 Mar 2020 05:54:21 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint20171006;
+ bh=L3ykhozuoV+rOVNWMAajI21yAIRTGCml/nuygnf/V44=;
+ b=I05pp4BpR+Oc525KVV5bRyZlfKFu2yvlomentw0VhjlRPflhPU6OH0UBsKtr5UCYLava
+ uhhOeHVO4VfwXYxO+xg7r3JXDO8zbCsLBxdR4CTxQ5XJq9GSTdGrClW9r5MJCZJlIRsb
+ lzpqbyRh4zppF5AZwBWN158iO9pL3COBo2b8BeauGDStofW0eNGFEHdEyKZjK5pfmvcf
+ 24KMI5mewTvyT8wlaXIM8Gjl3gFOZQhkXdLfIbnean3uM9zBxooYomsBc1A/dhgMDY+y
+ +OBVRkKaCqSSPUhjGOJg5g1PPBKJXOSQDrOAtDGuuoVRBOu2xLw98s61PWDmNKgQfp8M cg== 
+Received: from nam02-cy1-obe.outbound.protection.outlook.com (mail-cys01nam02lp2052.outbound.protection.outlook.com [104.47.37.52])
+        by mx0b-002c1b01.pphosted.com with ESMTP id 2yqf32rut5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Mar 2020 05:54:21 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MKSF+t/+pjHrYFaFNc64oOWWuT9fp/BvCD5KGKr2qA7DhBA1GIx/YFlT4t9ZcphenFSqsIQT+Td1YHmyqmm2UDpGaGoGTyFbTG7gPb0IEqFSiYyO71eCZBWJC9WaxxMmOkHYF2HguDU9ywiiwynsMC0hxJz+puqLNheEwuhBVEDdOjtnVXzenoOw2PSG4kClgxPmjV3g4gV0prwLUKOwzXJLSubg34WcrxSLICrct2yhDRftfHaK0+BkWPm9Yg3M6KNbT8UHOUDrqSmDC4JV8OwtQ7ijfYR+U9OVALhZc2/m4ssDbX9xD2mWS4R+OOjiexFzJpOOibP+Hzz0V7uB8w==
+ b=kpgPqZae/Bqgl3WwpD5tHPtfBlErF8vnjPf3wgVLOI/TFPDWVjn22+FiUIqcfjbKgaqstfLk/VNV7R84EHW5yOQbLJH+0faEMkK2MZzVDYHKy7+AqSxO3rwLNJMjy5Be2fsYtws2+9+tZ/UInppdi5X5KBp8jKfNgHbAZoCae6lYWu6FvPwf/oVsSVOL7lWIZbAd5YG4CS79wHpZ4AMcpnFSkrlV5p3nk7oIo0jwLyFEIF6jcVQG5htusJZ6XVgsZ6wZ63QdVIRXddK9Or+k9rmwkYsWYYgho6wKSuAGdMKUJ6dX2Ag+tQ2UY5GLf9tAlpCntVy2tDmH/jT9LIMQtw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NMlkpGjjqlVkePQgdW4PoF4ZNUYh8QQdqleQCyOz1M8=;
- b=dW/57FsQzluWR1vqC0DcqZ2sad9Equk50QkA2FTmHJXaEJk1fXNbh3FZq4yp6WjLxFQK0yfEX1NBoY77p3SoxM2BE4FeW//tC8aiDnKi1fpDvoKOeV1jo3TW2zTA+27rUox19+5Pqzbx5Kz/V9qAhV/TyfBwX1yABG7AJDo18V0pH9H1xgZ+lb2jAgR/xPPvTEtPwxnxsSzLm/umtVzysFqoHHsnbnxQypzduUM5ack9b53dKpfhtoRaoxpMjyDvvHH5sf5iC4+PupA5k5OPuUktINGXsRPcVQuRuMUhPYGRrb0WA0+t8qq4ux5UM8J6yTVTnPsWHMl8gJWHpFV0NA==
+ bh=L3ykhozuoV+rOVNWMAajI21yAIRTGCml/nuygnf/V44=;
+ b=dcG77ZHI014kDvNgBhq9ne0Q6sFVcbAcZqIuFajTqW/BbQCKEs7LD6WEsoTfqzLhfLVP197OxK2wAbMkU8MWAPsPlyKVhdyn6nFUWdh97Q2PunptHfTyBPua4dQRoCPmdvIM8c7Ql76nceTcJLaQ+cmbB68XA+aLLL9GAeiigsLcImcjptrlsDkkDxfElMh7LVFZcwXZRCC61IvCPw7NmZl551wAhvNfUgvudG0Vwq5lgY/e9gNnlAFJmPAUVLwPsiqUdmz6uBjoLENLC0ILyCaMEH8ZSzx0A4wZ8umMXedx0z4LXNZUTktuoRzbCWpf7qQ5YYHfALR3gNwtWn6sHA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NMlkpGjjqlVkePQgdW4PoF4ZNUYh8QQdqleQCyOz1M8=;
- b=qGKMK4fY2O5RggqqJbiP5FGbcMMJFLPFYsoJjivNfLMKtJ/fYOUj8i/q9GoPC9I/pwzxm949092cEy4W2jzFIW9TTwoLlmjv39dvGn9IT5FayMi04vy6DLriJy8spBdiLSBA346jdYXOcT0jQRtH0afPUx7uxeXT+KvC6HVBwSQ=
-Received: from AM0PR04MB7171.eurprd04.prod.outlook.com (10.186.130.205) by
- AM0PR04MB5747.eurprd04.prod.outlook.com (20.178.119.212) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.14; Thu, 12 Mar 2020 12:52:05 +0000
-Received: from AM0PR04MB7171.eurprd04.prod.outlook.com
- ([fe80::b8df:72f3:9624:1256]) by AM0PR04MB7171.eurprd04.prod.outlook.com
- ([fe80::b8df:72f3:9624:1256%7]) with mapi id 15.20.2793.018; Thu, 12 Mar 2020
- 12:52:05 +0000
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-CC:     Baolin Wang <baolin.wang@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Silvano Di Ninno <silvano.dininno@nxp.com>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+ smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
+ dkim=pass header.d=nutanix.com; arc=none
+Received: from BL0PR02MB5601.namprd02.prod.outlook.com (2603:10b6:208:88::10)
+ by BL0PR02MB5394.namprd02.prod.outlook.com (2603:10b6:208:37::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.17; Thu, 12 Mar
+ 2020 12:54:19 +0000
+Received: from BL0PR02MB5601.namprd02.prod.outlook.com
+ ([fe80::ddf8:e6cc:908f:a98c]) by BL0PR02MB5601.namprd02.prod.outlook.com
+ ([fe80::ddf8:e6cc:908f:a98c%6]) with mapi id 15.20.2814.007; Thu, 12 Mar 2020
+ 12:54:19 +0000
+From:   Ivan Teterevkov <ivan.teterevkov@nutanix.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     "corbet@lwn.net" <corbet@lwn.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "pawan.kumar.gupta@linux.intel.com" 
+        <pawan.kumar.gupta@linux.intel.com>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "oneukum@suse.com" <oneukum@suse.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v4 1/2] crypto: engine - support for parallel requests
-Thread-Topic: [PATCH v4 1/2] crypto: engine - support for parallel requests
-Thread-Index: AQHV9ZwplCPBsoqUKkWl+/E0XiXZQA==
-Date:   Thu, 12 Mar 2020 12:52:05 +0000
-Message-ID: <AM0PR04MB71718435E87539AAFFF2A9568CFD0@AM0PR04MB7171.eurprd04.prod.outlook.com>
-References: <1583707893-23699-1-git-send-email-iuliana.prodan@nxp.com>
- <1583707893-23699-2-git-send-email-iuliana.prodan@nxp.com>
- <20200312032553.GB19920@gondor.apana.org.au>
- <AM0PR04MB71710B3535153286D9F31F8B8CFD0@AM0PR04MB7171.eurprd04.prod.outlook.com>
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: RE: [PATCH] mm/vmscan: add vm_swappiness configuration knobs
+Thread-Topic: [PATCH] mm/vmscan: add vm_swappiness configuration knobs
+Thread-Index: AdX3zHNqbuFpQvKERxyPueA21j6FDgAg7liAAAcXdAA=
+Date:   Thu, 12 Mar 2020 12:54:19 +0000
+Message-ID: <BL0PR02MB5601B50A2D9AEE6318D51893E9FD0@BL0PR02MB5601.namprd02.prod.outlook.com>
+References: <BL0PR02MB560167492CA4094C91589930E9FC0@BL0PR02MB5601.namprd02.prod.outlook.com>
+ <20200312092531.GU23944@dhcp22.suse.cz>
+In-Reply-To: <20200312092531.GU23944@dhcp22.suse.cz>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=iuliana.prodan@nxp.com; 
-x-originating-ip: [92.121.36.197]
+x-originating-ip: [62.254.189.133]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f2627186-502b-4929-89dc-08d7c6842ad4
-x-ms-traffictypediagnostic: AM0PR04MB5747:|AM0PR04MB5747:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB5747DED26DB4E2555E257A4C8CFD0@AM0PR04MB5747.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-office365-filtering-correlation-id: f004e9f3-cf40-41c2-e964-08d7c6847ae1
+x-ms-traffictypediagnostic: BL0PR02MB5394:
+x-microsoft-antispam-prvs: <BL0PR02MB53945260CE682FC33A4508E2E9FD0@BL0PR02MB5394.namprd02.prod.outlook.com>
+x-proofpoint-crosstenant: true
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
 x-forefront-prvs: 0340850FCD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(366004)(346002)(396003)(39860400002)(199004)(5660300002)(66556008)(81166006)(66446008)(8676002)(81156014)(2906002)(6916009)(54906003)(7696005)(53546011)(6506007)(86362001)(55016002)(478600001)(9686003)(52536014)(44832011)(71200400001)(64756008)(76116006)(91956017)(66476007)(66946007)(4326008)(26005)(316002)(8936002)(33656002)(186003)(7416002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5747;H:AM0PR04MB7171.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(366004)(396003)(39860400002)(199004)(6506007)(86362001)(33656002)(4326008)(55016002)(26005)(316002)(71200400001)(8676002)(8936002)(7696005)(66946007)(66556008)(81156014)(76116006)(52536014)(2906002)(81166006)(64756008)(66446008)(5660300002)(66476007)(478600001)(9686003)(44832011)(186003)(7416002)(54906003)(6916009);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR02MB5394;H:BL0PR02MB5601.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: nutanix.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: SX30wrVV1092TGcK3/kbALdXbJqjSmeogTAO+vMWI+LLMqvaK94CcPVtJrsq9cRIVOTLoz/7buWeEgh/rAjrsyxNdb3FwfE5W+7tiPnzUwtOtq7oPzM9oluZLW+Z2BzdY6d9BJIgLazmpgpygiNrzW+uWnblfy/jrk0xnP+SJVB+jfS87qEW6zxISadFlolPu3mK8mKy6+CAwmZ39kUgk3zzuNYV0Fk89Fsf5lSQvE2k5RpJrgQq9VojhxHo5zKCZJCMGRP92R6wF2sLTCzOVFqDVcCXnzoQCjKRzQPpBe3/fSq1O3mdWWpqANc37XXh5xE5LV7ue1rzxOGZXu4nj+GC0j3+RY3JgIkYK6xsi2RWqiaej8is7UnM3juCjaeYoXIhUosIh9M/GX3M/FkMlzj6/w7nXeg4HXkRWhRJ5tRf6GsP2zP9l1fVHsl7aHxh
-x-ms-exchange-antispam-messagedata: 8SNG6hdWdwqVcjbopxT9bHzFl/9VjJD1Kp9/tPplYIrHyA/pmRnK8uk2d8nRXAO3Amt4rMyt1XWCYNNC4mSVxNtEX4EnH/21iz+n/tnUs8RrNg4ysTl3ftTlA6xVW+Zc/Ke3KNLU4uyWbbtsEemJ0Q==
+x-microsoft-antispam-message-info: RjlnF77M70fd9ENMQ/EuYCyJ6rPCgLNqYM21pG+55EvnWvZhiOgRDPx03AjoXWRU2JTqi7Uar9VPRgcT5tBAd3EL4uX+eXZfO5Cqfz+OB5oGi2X2kjywLLu/RehG2BZfNHk+gpMQx7Lt/vlY6U0dKF1ZaxAVvS6BNL4Q3VUnR/5nBcHFeRzfu5+fN8ZsJMN31CBctbBV5Hn1vhFyG279eAgGZ9sUN3FJcK5LB3AtLcKpCVlXicco6a8CfMa33hUe0ZBqPYFN4ahID6E696aonzCC6Ps2CR1csypthfJ/0MjazdQY3Pr29P/MY8Zv/X4TxPElALTD6qrcHiMpWYnLRN9FWKKKJCONiHNJD9aZ6gqVRsDog7aLMA+UghzsYX98MCs8qJMuFMlC4tgiS9Ai9zn0j+HyxXHQlDmB4DY5szUR3/0A4DsLohzsfNtzkc8A
+x-ms-exchange-antispam-messagedata: 8GQqVdgMr2ueYOjOZPwTzQM130V6C2rDVCGflyoDByYUHM/+dPsNWN9qqMgT9jSXHq7ftIiA9awKdyTX176CTXoOkFc3CDOy0EXmKRzvly4T396TgPkjG8IShGDUuNPbSg5KVaQqMbiPEY6ruyt/2A==
+x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2627186-502b-4929-89dc-08d7c6842ad4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2020 12:52:05.1773
+X-OriginatorOrg: nutanix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f004e9f3-cf40-41c2-e964-08d7c6847ae1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2020 12:54:19.4423
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-id: bb047546-786f-4de1-bd75-24e5b6f79043
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pFtxvncvMsWds0Jd01tw4bqqrUCPmWb6Xs7dzf2KKCJVecY2JOBTXpyzb8xREMvbFjXAtxayFVvnPGf+JQLgzw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5747
+X-MS-Exchange-CrossTenant-userprincipalname: IyrE3lQPGjcGkhF5zKQtURcGS+KFqm0mPaJairhHo3Jc0rFXDZdROZen15xqjYarjOWOCzt1dpTZtU2xwMRmBnvm/TTVuUzFxsaQomvQPIQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB5394
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-12_04:2020-03-11,2020-03-12 signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/12/2020 2:45 PM, Iuliana Prodan wrote:=0A=
-> On 3/12/2020 5:26 AM, Herbert Xu wrote:=0A=
->> On Mon, Mar 09, 2020 at 12:51:32AM +0200, Iuliana Prodan wrote:=0A=
->>>=0A=
->>>    	ret =3D enginectx->op.do_one_request(engine, async_req);=0A=
->>> -	if (ret) {=0A=
->>> -		dev_err(engine->dev, "Failed to do one request from queue: %d\n", re=
-t);=0A=
->>> -		goto req_err;=0A=
->>> +	can_enq_more =3D ret;=0A=
->>> +	if (can_enq_more < 0) {=0A=
->>> +		dev_err(engine->dev, "Failed to do one request from queue: %d\n",=0A=
->>> +			ret);=0A=
->>> +		goto req_err_1;=0A=
->>> +	}=0A=
->>=0A=
->> So this now includes the case of the hardware queue being full=0A=
->> and the request needs to be queued until space opens up again.=0A=
->> In this case, we should not do dev_err.  So you need to be able=0A=
->> to distinguish between the hardware queue being full vs. a real=0A=
->> fatal error on the request (e.g., out-of-memory or some hardware=0A=
->> failure).=0A=
->>=0A=
-> There are two aspects here:=0A=
-> - if all requests go through crypto-engine, and, in this case, if there=
-=0A=
-> is no space in hw queue, do_one_req returns 0, and actually there will=0A=
-> be no case of do_one_request() < 0;=0A=
-> - if there are other requests (non crypto API) that go to hw for=0A=
-> execution (in CAAM we have split key or RNG) those might occupy the hw=0A=
-> queue, after crypto-engine returns that it still has space. This case=0A=
-> wasn't supported before my modifications and neither with these patches.=
-=0A=
-> This use-case can be solved by retrying to send the request to hw -=0A=
-> enqueue it back to crypto-engine, in the head of the queue (to keep the=
-=0A=
-> order, and send it again to hw).=0A=
-> I've tried this, but it implies modifications in all drivers. For=0A=
-> example, a driver, in case of error, it frees the resources of the=0A=
-> request. So, will need to map again a request.=0A=
-> =0A=
-=0A=
-I believe this recovery mechanism should be handled in other patch (series)=
-.=0A=
-Herbert, what is your proposal to move forward?=0A=
-=0A=
-Thanks,=0A=
-Iulia=0A=
-=0A=
+On Thurs, 12 Mar 2020, Michal Hocko wrote:
+
+> On Wed 11-03-20 17:45:58, Ivan Teterevkov wrote:
+> > This patch adds a couple of knobs:
+> >
+> > - The configuration option (CONFIG_VM_SWAPPINESS).
+> > - The command line parameter (vm_swappiness).
+> >
+> > The default value is preserved, but now defined by CONFIG_VM_SWAPPINESS=
+.
+> >
+> > Historically, the default swappiness is set to the well-known value
+> > 60, and this works well for the majority of cases. The vm_swappiness
+> > is also exposed as the kernel parameter that can be changed at runtime =
+too,
+> e.g.
+> > with sysctl.
+> >
+> > This approach might not suit well some configurations, e.g.
+> > systemd-based distros, where systemd is put in charge of the cgroup
+> > controllers, including the memory one. In such cases, the default
+> > swappiness 60 is copied across the cgroup subtrees early at startup,
+> > when systemd is arranging the slices for its services, before the
+> > sysctl.conf or tmpfiles.d/*.conf changes are applied.
+> >
+> > One could run a script to traverse the cgroup trees later and set the
+> > desired memory.swappiness individually in each occurrence when the
+> > runtime is set up, but this would require some amount of work to
+> > implement properly. Instead, why not set the default swappiness as earl=
+y as
+> possible?
+>=20
+> I have to say I am not a great fan of more tunning for swappiness as this=
+ is quite
+> a poor tunning for many years already. It essentially does nothing in man=
+y cases
+> because the reclaim process ignores to value in many cases (have a look a
+> get_scan_count. I have seen quite some reports that setting a specific va=
+lue for
+> vmswappiness didn't make any change. The knob itself has a terrible seman=
+tic to
+> begin with because there is no way to express I really prefer to swap rat=
+her than
+> page cache reclaim.
+>=20
+> This all makes me think that swappiness is a historical mistake that we s=
+hould
+> rather make obsolete than promote even further.
+
+Absolutely agree, the semantics of the vm_swappiness is perplexing.
+Moreover, the same get_scan_count treats vm_swappiness and cgroups
+memory.swappiness differently, in particular, 0 disables the memcg swap.
+
+Certainly, the patch adds some additional exposure to a parameter that
+is not trivial to tackle but it's already getting created with a magic
+number which is also confusing. Is there any harm to be done by the patch
+considering the already existing sysctl interface to that knob?
+
+> --
+> Michal Hocko
+> SUSE Labs
