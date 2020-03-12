@@ -2,89 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1CCB1839DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 20:53:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4743C183A08
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 20:57:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbgCLTxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 15:53:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725268AbgCLTxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 15:53:22 -0400
-Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727053AbgCLT5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 15:57:24 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:44064 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726822AbgCLT5X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 15:57:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584043042;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/qb4wFG53QR3ePPXzBjbOc/jfWAkGnV+htN3KtJo1bw=;
+        b=eGBSWPjS0a6Xba6dPLwEYa0SXbCOOxvmBS7FYe9vxpLvpj/JwJ34P6GqR1PDSXl5FhuvwP
+        SrRi/gfhSE5ggkb1xsPTPztuXrFZ4IrrjK0oYPLuV94yH5XTZMfIgQN1qoznQKlVV1yidK
+        Leoq4XR2z0sWbtoNsaFwm6SujqMzros=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-354-Kh9XhrrzOdGT5JkywWoHag-1; Thu, 12 Mar 2020 15:57:20 -0400
+X-MC-Unique: Kh9XhrrzOdGT5JkywWoHag-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1412206E9;
-        Thu, 12 Mar 2020 19:53:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584042801;
-        bh=poV+EblAH9g8FbaAVlYH45IwSThQzxJ75LREtJe1pjs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=QgYiV9kxEXU13feQOJYWn0rdviqTF3XtmqQUQaWrLmRoAah6vHvrIbzY1dRIuOuA3
-         tts/m4bSB+SWhvt8pF+CQ/kujJx1Xxs95MnP1XT2vf8aizcqtr94BrmwhgYsRujROB
-         OfqJDJH3oaMh/kHPTIX10EYgoQXdHAGAmsQFdfVc=
-Date:   Thu, 12 Mar 2020 14:53:19 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc:     Austin.Bolen@dell.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ashok.raj@intel.com
-Subject: Re: [PATCH v17 09/12] PCI/AER: Allow clearing Error Status Register
- in FF mode
-Message-ID: <20200312195319.GA162308@google.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D6F47107ACC9;
+        Thu, 12 Mar 2020 19:57:18 +0000 (UTC)
+Received: from treble (ovpn-122-137.rdu2.redhat.com [10.10.122.137])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C5C6B5C1B5;
+        Thu, 12 Mar 2020 19:57:16 +0000 (UTC)
+Date:   Thu, 12 Mar 2020 14:57:14 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Dave Jones <dsj@fb.com>, Jann Horn <jannh@google.com>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 03/14] x86/entry/64: Fix unwind hints in register
+ clearing code
+Message-ID: <20200312195714.gc5jalix2dp57dyb@treble>
+References: <cb9b03b2a391b064573c152696d99017f76e8603.1584033751.git.jpoimboe@redhat.com>
+ <DECA668C-B7EA-4663-8ABB-5B9E0495F498@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a4b4b4b0-3c56-51a0-4237-dd439fca3150@linux.intel.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <DECA668C-B7EA-4663-8ABB-5B9E0495F498@amacapital.net>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 04:07:59PM -0700, Kuppuswamy Sathyanarayanan wrote:
-> On 3/11/20 3:23 PM, Bjorn Helgaas wrote:
-> > Is any synchronization needed here between the EDR path and the
-> > hotplug/enumeration path?
->
-> If we want to follow the implementation note step by step (in
-> sequence) then we need some synchronization between EDR path and
-> enumeration path. But if it's OK to achieve the same end result by
-> following steps out of sequence then we don't need to create any
-> dependency between EDR and enumeration paths. Currently we follow
-> the latter approach.
+On Thu, Mar 12, 2020 at 12:29:29PM -0700, Andy Lutomirski wrote:
+> > On Mar 12, 2020, at 10:31 AM, Josh Poimboeuf <jpoimboe@redhat.com> wr=
+ote:
+> >=20
+> > =EF=BB=BFThe PUSH_AND_CLEAR_REGS macro zeroes each register immediate=
+ly after
+> > pushing it.  If an NMI or exception hits after a register is cleared,
+> > but before the UNWIND_HINT_REGS annotation, the ORC unwinder will
+> > wrongly think the previous value of the register was zero.  This can
+> > confuse the unwinding process and cause it to exit early.
+> >=20
+> > Because ORC is simpler than DWARF, there are a limited number of unwi=
+nd
+> > annotation states, so it's not possible to add an individual unwind h=
+int
+> > after each push/clear combination.  Instead, the register clearing
+> > instructions need to be consolidated and moved to after the
+> > UNWIND_HINT_REGS annotation.
+>=20
+> I don=E2=80=99t suppose you know how bad t he performance hit is on a n=
+on-PTI machine?
 
-What would the synchronization look like?
+Hm, what does it have to do with PTI?  Should I run a syscall
+microbenchmark?
 
-Ideally I think it would be better to follow the order in the
-flowchart if it's not too onerous.  That will make the code easier to
-understand.  The current situation with this dependency on pciehp and
-what it will do leaves a lot of things implicit.
+--=20
+Josh
 
-What happens if CONFIG_PCIE_EDR=y but CONFIG_HOTPLUG_PCI_PCIE=n?
-
-IIUC, when DPC triggers, pciehp is what fields the DLLSC interrupt and
-unbinds the drivers and removes the devices.  If that doesn't happen,
-and Linux clears the DPC trigger to bring the link back up, will those
-drivers try to operate uninitialized devices?
-
-Does EDR need a dependency on CONFIG_HOTPLUG_PCI_PCIE?
-
-> For example, consider the case in flow chart where after sending
-> success _OST, firmware decides to stop the recovery of the device.
-> 
-> if we follow the flow chart as is then the steps should be,
-> 
-> 1. clear the DPC status trigger
-> 2. Send success code via _OST, and wait for return from _OST
-> 3. if successful return then enumerate the child devices and
-> reassign bus numbers.
-> 
-> In current approach the steps followed are,
-> 
-> 1. Clear the DPC status trigger.
-> 2. Send success code via _OST
-> 2. In parallel, LINK UP event path will enumerate the child devices.
-> 3. if firmware decides not to recover the device, then LINK DOWN
-> event will eventually remove them again.
