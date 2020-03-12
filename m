@@ -2,262 +2,286 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05E28183122
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:23:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9188C1830C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:00:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbgCLNW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:22:58 -0400
-Received: from mx0b-002c1b01.pphosted.com ([148.163.155.12]:39900 "EHLO
-        mx0b-002c1b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725978AbgCLNW6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:22:58 -0400
-Received: from pps.filterd (m0127842.ppops.net [127.0.0.1])
-        by mx0b-002c1b01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02CCd8CQ006630;
-        Thu, 12 Mar 2020 05:48:24 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint20171006;
- bh=8GA/JcmvOIdjbFtI2qkXuFwFE0oCqdARTGdk//fqsT4=;
- b=QC2aZGNPeF1j7ssKflddzZBBFhmU/JaJsSSxuZeOgDcLaI/xlQylZW0iVeb17dgSEYxd
- 6J54iqkrdnLw4AqKMWz1kWInJWw+38gT/SCr/janKQ8QN/9oqK/yiR/sW9sDeBa+OPoO
- Q1eChSogapnQOkpVFPdNJVIELyIP2/5LIjSI4LG4f5h6CkxE/bhYV9pHSghpUOFJjVH5
- p93bV13jEvqPdUGaUKrMd8kQlaWHLAN/c9CkOqtCRcfPdVC+E4O6ip0q35VrFHTlmz4V
- OtNylR5BwMq5i3Gwn2BGuN2OHmLGL2BGttbE0K+OVasW01FESMd4WFu3rs/m+qHl3D8r gA== 
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2109.outbound.protection.outlook.com [104.47.55.109])
-        by mx0b-002c1b01.pphosted.com with ESMTP id 2yqf32rug2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Mar 2020 05:48:24 -0700
+        id S1726731AbgCLNAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:00:41 -0400
+Received: from mail-vi1eur05on2085.outbound.protection.outlook.com ([40.107.21.85]:36046
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726194AbgCLNAl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 09:00:41 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aIrcv6AiggXebWBDd1LTtKHT5JpcEZkJcCrDwuY1c7NbGSMF2wAk64Et0Vr5NxQZ+3aYw7mttLpBVyMqLf3HZozZCvx2v+VTmNDrQtgTHATTf67dBct8QJK1DGeeTNZp+3x2kNqGH09u0ayDrxmYdlEuzBBDNrWyY2XCvHt6TI0dKKvIVDPWZJzcjtulIiB6iVFqzrZsDlkGdbVgvWv5mpagnBQKzkkvPo4kPxmNnbBX4hmLd2HPjsDkTrybW4muRMgC78QYkn0QxOeFTlURj7Ugx0QAP72x4gFdV3ocTGlqFmlYV+e2T90N6Du6wNSVicCz5RxQ8DKlDWuTyG9w4Q==
+ b=L+PVLJ47pWD9A6TgpeYr8sr3LdVxGzNe/HOkT5rSrzzNnNMqpzrjgJDDARbBItbs7BsmLm7SlBXAsZlvHGzs8YO8frfwrUoolQxKLnIs+AMeTMgTPHZgbJ6eBcbLcrXHqPQISlPTm8LLFP0fbFGHED/3vR6X5BYeFqDLzXSwhQEvVSXqVDKOH1wDXSIADBBMd1pjvXtXQYFh1RcDqULC5Acvg3QlWN9boy2B7gbg+lT2sUeN5LcOi1S7WsMEuRaQW3rGvcDm7OovLX8shN5mCFnZPc5OsduuI30WobS+Vdaz9itWmzXcx1astGMaoTMXyZLQXiII0CrITsTTrCNPww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8GA/JcmvOIdjbFtI2qkXuFwFE0oCqdARTGdk//fqsT4=;
- b=cgCe9SLpB3bpXzw4Npj7Z4PaYIpa79m0aoZrCFE89sWoyx0+EtbCa+DIJLBtSieTG9DlYDqRgcExhkK2uPV+uzxbsk34ir5+QiQCzNC8lQvF3Zo/eVLP/6Y/1vy+zn2+uvTfh3XAdclbe/yzNHZuO0KcZdUh2V02fVrvQwqDh66alci1lBBJsMWpla1HzdC+1fv3hkItdKGLjAStxbVwQW4MxzXxqWv2rg7YA7hkOBw8dPVNfK5jVMza/OIlxvqp93ar2SmnEMR/99znw5nDsC2P3ZLFUU/DErff9cSHOX5foxkq7kwhA2blihPq34jnieYSRkp03ZSEVUUYU+HjaA==
+ bh=EzJC0FjLHLmbysK/PlopxS6z2Y5+VWe4mc4RSXrAzaE=;
+ b=NtfESWqcdLq4TRymZdajHvuUQiA2IGl9PRqJpjy8oBl/WQXVJ7SPaUV07h1yZt/8f/BVMlKaB+23GSabh7VMRC7MGdEJ2j1hRJIYZiYUY0gJpjNymRWGARRP1neTe39H6g5lowVtpPuiwV545TCYgte+WpldkdOeja4BJfP3incXe9yPDqA4NSxDjn8RH0N6iNmdlQZV/fRPpINTgr5LTklGpLOi/bqrJBvc67v6vnpIOQgNwTw605JzXJqai+WoljOHcY6F6lM5hdQv/FYKoA9ufC6P7u/RV4q1lT25Ff0l/Qn5zmDGacW8bmM+Pdcf5bYDVyV9XOXoemwtCCc0Fg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
- dkim=pass header.d=nutanix.com; arc=none
-Received: from BL0PR02MB5601.namprd02.prod.outlook.com (2603:10b6:208:88::10)
- by BL0PR02MB5394.namprd02.prod.outlook.com (2603:10b6:208:37::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.17; Thu, 12 Mar
- 2020 12:48:22 +0000
-Received: from BL0PR02MB5601.namprd02.prod.outlook.com
- ([fe80::ddf8:e6cc:908f:a98c]) by BL0PR02MB5601.namprd02.prod.outlook.com
- ([fe80::ddf8:e6cc:908f:a98c%6]) with mapi id 15.20.2814.007; Thu, 12 Mar 2020
- 12:48:22 +0000
-From:   Ivan Teterevkov <ivan.teterevkov@nutanix.com>
-To:     David Rientjes <rientjes@google.com>
-CC:     "corbet@lwn.net" <corbet@lwn.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "pawan.kumar.gupta@linux.intel.com" 
-        <pawan.kumar.gupta@linux.intel.com>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "oneukum@suse.com" <oneukum@suse.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EzJC0FjLHLmbysK/PlopxS6z2Y5+VWe4mc4RSXrAzaE=;
+ b=ak7W0hxmqjNjqbmmk64inFMjHd72oYiTl0G3HDWyS8JFwV25Y00+OisahzeW7K0Rp78AZpc6mOlUBsfXTJKn8IycFJrtiYY4aApdknmc2hhZIhewqiWk3zfTwWSwZkPEYCFkhuMFiNpLhnNPtVFYtJq3LI2oz39JJPhIOgPaH18=
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.51.23) by
+ VI1PR04MB5661.eurprd04.prod.outlook.com (20.178.127.88) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.17; Thu, 12 Mar 2020 13:00:34 +0000
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::9547:9dfa:76b8:71b1]) by VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::9547:9dfa:76b8:71b1%7]) with mapi id 15.20.2793.018; Thu, 12 Mar 2020
+ 13:00:33 +0000
+From:   Peter Chen <peter.chen@nxp.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: RE: [PATCH] mm/vmscan: add vm_swappiness configuration knobs
-Thread-Topic: [PATCH] mm/vmscan: add vm_swappiness configuration knobs
-Thread-Index: AdX3zHNqbuFpQvKERxyPueA21j6FDgAD0RWAACPlSzA=
-Date:   Thu, 12 Mar 2020 12:48:22 +0000
-Message-ID: <BL0PR02MB5601808F36BE202813E9D562E9FD0@BL0PR02MB5601.namprd02.prod.outlook.com>
-References: <BL0PR02MB560167492CA4094C91589930E9FC0@BL0PR02MB5601.namprd02.prod.outlook.com>
- <alpine.DEB.2.21.2003111227230.171292@chino.kir.corp.google.com>
-In-Reply-To: <alpine.DEB.2.21.2003111227230.171292@chino.kir.corp.google.com>
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 1/1] regulator: fixed: add system pm routines for pinctrl
+Thread-Topic: [PATCH 1/1] regulator: fixed: add system pm routines for pinctrl
+Thread-Index: AQHV+FpZgufkrsn3KkuJmHgdNm1nAKhE1zoAgAAUhIA=
+Date:   Thu, 12 Mar 2020 13:00:33 +0000
+Message-ID: <20200312130037.GG14625@b29397-desktop>
+References: <20200312103804.24174-1-peter.chen@nxp.com>
+ <20200312114712.GA4038@sirena.org.uk>
+In-Reply-To: <20200312114712.GA4038@sirena.org.uk>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [62.254.189.133]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peter.chen@nxp.com; 
+x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d86b2342-960b-42d2-af6f-08d7c683a5ec
-x-ms-traffictypediagnostic: BL0PR02MB5394:
-x-microsoft-antispam-prvs: <BL0PR02MB5394092E586D2F494F6CB51AE9FD0@BL0PR02MB5394.namprd02.prod.outlook.com>
-x-proofpoint-crosstenant: true
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 1b6977d5-5121-4a2d-fca7-08d7c6855a09
+x-ms-traffictypediagnostic: VI1PR04MB5661:|VI1PR04MB5661:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB566101EB27FC173B9F7D303F8BFD0@VI1PR04MB5661.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
 x-forefront-prvs: 0340850FCD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(366004)(396003)(39860400002)(199004)(6506007)(86362001)(33656002)(4326008)(55016002)(26005)(316002)(71200400001)(8676002)(8936002)(7696005)(66946007)(66556008)(81156014)(76116006)(52536014)(2906002)(81166006)(64756008)(66446008)(5660300002)(66476007)(478600001)(9686003)(44832011)(186003)(7416002)(54906003)(6916009);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR02MB5394;H:BL0PR02MB5601.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: nutanix.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(366004)(136003)(39860400002)(346002)(396003)(376002)(199004)(1076003)(5660300002)(478600001)(44832011)(86362001)(186003)(26005)(33716001)(53546011)(8936002)(2906002)(6506007)(33656002)(71200400001)(4326008)(9686003)(76116006)(54906003)(81156014)(66446008)(6512007)(81166006)(6916009)(66946007)(91956017)(6486002)(64756008)(66556008)(8676002)(66476007)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5661;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Xy/zmVSvxubRH65+qpwaALSw194iFNRzwDjNy628l5vjRWCPqk6KwExq2D5b9t0kXrhe7CsT4VFnjGMpdTTDpY5stBaaQM/uW2nlPKKuc9ErfRaBkf3zxejQs/xU7rQcVUvici4+KFwbg5tClaAGpiSLvp1xfQ8bN6OJVANwo2KciQTkgob4ge5AxaJHBHEncDqeKYz6Y/mzAMfYVj0p90tG8DAbRx602tpomVzgiHa0n47PV2F3Yu/fVxMS/F7bX7nCuPwILHIC+lo0qPVHEKirbKFifKAL3Gzk+VNihtFXatK0rDaFDcZPJtICMglQb9OGDnxhzpqLti48f3o6qreQYCa4H8Vph9df5K5+Y7CloE1I8tP/PoME7/mbx0C8zhkb9NVduntbAEEN8Mzy8XoLpXCMh4vAtFG+cY6sSKryIf5dm782roOGbjICDG4X
-x-ms-exchange-antispam-messagedata: AYmqrfwa6yZksHLR7lxNLIGAa03wqywEvPuXR4wCJfwLA5ZBCivgnSQImD9/VkJyifSRudpq6uVU8ye6r3q9TbtkxZbbNpHBtCM4y0EGBL3yywx27M1sRL1hsEmi8ECEIGlMBb8+2NT2YhlS/kOnSQ==
-x-ms-exchange-transport-forked: True
+x-microsoft-antispam-message-info: ApBuzj3Pqk/Nm5v8U/syYsYWu7J+oyfH8PpU0+o+4fDU+rpeQ81ZbN6+KnghLWv4zp1ip6Ea6B1Sx2Kg9Dc2vocQAUK4HmtcO0nzA2FCJnIo5N2AKIakBD2hZ5bOT26TuauwsyIkB6toB8Jg8lcG9W4wl5hINFc9o0IWS4WZgtjYEZsnd+RxVL8+R7/vG9qBD7dpjFDJSfVNhyeWunTx1KENdvNmnIgEaQu09mEZl7IWjlKlF4nKEi+opkSduOpEBBrN2hCQ7KXIkQkhD8SzIgIDvHR6nW7zD+smyxS496s8GU+H71DRrs5LlpUooxuvDsN1FRQZ9fJKZfR8W9EmvCT/G5tmrLyZ0oTpKGRsB3kCc3DA3qWkgoZpDIusddiSFr7FUVIBotMt+UH+M/Nf7trmWHeXbfLsU72GL1vyw02e78ShDUfpM0TEDoecUWdD
+x-ms-exchange-antispam-messagedata: TIL7fvzOeQwptzdaiJwT/q7LXlG7RcVDGQALhC3a+n7xlwP3nQMj/Hq4umBJHDx6CwX1gJ5dcUKlf3NaFtBgClKLa/EGJORq06blmTaHNSE1p7IU/lf8f7gLbdhvKIjdp4uhe16AK22BYgO3QH36iQ==
 Content-Type: text/plain; charset="us-ascii"
+Content-ID: <169200CA697D2346902491140D9A956D@eurprd04.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: nutanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d86b2342-960b-42d2-af6f-08d7c683a5ec
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2020 12:48:22.2172
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b6977d5-5121-4a2d-fca7-08d7c6855a09
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2020 13:00:33.8729
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: bb047546-786f-4de1-bd75-24e5b6f79043
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cCCLJ2Ik9QUsx4XVdtfPo6VHerR2TBnHDx5nqiC5GQmjL3VhftiwO9z1Ff91gJ4LcYEwBtHewxHJ0kOplqbfbOymLmu8a1lkDICfMgy6+rE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB5394
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-12_04:2020-03-11,2020-03-12 signatures=0
-X-Proofpoint-Spam-Reason: safe
+X-MS-Exchange-CrossTenant-userprincipalname: D8YS6w42JaUlwP/yDm/rsfBFVAp/D/dnUSIvNW4OE08zFnbSX6D/q4pPNyjTJ44fzIs9WevUajtRuVU2C8clHA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5661
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Mar 2020, David Rientjes wrote:
-
-> On Wed, 11 Mar 2020, Ivan Teterevkov wrote:
+On 20-03-12 11:47:12, Mark Brown wrote:
+> On Thu, Mar 12, 2020 at 06:38:04PM +0800, Peter Chen wrote:
+> > At some systems, the pinctrl setting will be lost and needs to
+> > set as "sleep" state to save power consumption after system
+> > enters suspend. So, we need to configure pinctrl as "sleep" state
+> > when system enters suspend, and set it as "default" state after
+> > system resume. In this way, the pinctrl value can be recovered
+> > as "default" state after resuming.
 >=20
-> > This patch adds a couple of knobs:
-> >
-> > - The configuration option (CONFIG_VM_SWAPPINESS).
-> > - The command line parameter (vm_swappiness).
-> >
-> > The default value is preserved, but now defined by CONFIG_VM_SWAPPINESS=
-.
-> >
-> > Historically, the default swappiness is set to the well-known value 60,
-> > and this works well for the majority of cases. The vm_swappiness is als=
-o
-> > exposed as the kernel parameter that can be changed at runtime too, e.g=
-.
-> > with sysctl.
-> >
-> > This approach might not suit well some configurations, e.g. systemd-bas=
-ed
-> > distros, where systemd is put in charge of the cgroup controllers,
-> > including the memory one. In such cases, the default swappiness 60
-> > is copied across the cgroup subtrees early at startup, when systemd
-> > is arranging the slices for its services, before the sysctl.conf
-> > or tmpfiles.d/*.conf changes are applied.
-> >
->=20
-> Seems like something that can be fully handled by an initscript that woul=
-d
-> set the sysctl and then iterate the memcg hierarchy propagating the
-> non-default value.  I don't think that's too much of an ask if userspace
-> wants to manipulate the swappiness value.
->=20
+> Which pins exactly is this controlling?  I would not expect a fixed
+> voltage regulator to have pinctrl support, this feels like it's papering
+> over some other issue.
 
-This is exactly what I'm trying to avoid: in some distros there is no way
-to tackle the configuration early enough, e.g. in systemd-based systems
-the systemd is the process that starts first and arranges memcg in a way
-it's configured, but unfortunately, it doesn't offer the swappiness knob.
+Sorry, I forget sending dts patch. We use fixed gpio regulator to control
+USB VBus.
 
-There could be a script to iterate the memcg later, but there would be a
-race condition with the system entity that's put in charge of the memcg
-because the configuration can't be changed atomically, e.g. a possible
-script could iterate the memcg tree and update each memory.swappiness
-while systemd is creating another slice or scope subtree.
+grep -rn reg_usb_otg_vbus arch/arm/boot/dts/*
 
-> Or maybe we can be more clever: have memcg->swappiness store -1 by defaul=
-t
-> unless it is changed by the user explicitly and then have
-> mem_cgroup_swappiness() return vm_swappiness for this value.  If the user
-> overwrites it, it's intended.
->=20
+arch/arm/boot/dts/imx53-m53evk.dts:82:		reg_usb_otg_vbus: regulator@4 {
+arch/arm/boot/dts/imx53-m53evk.dts:367:	vbus-supply =3D <&reg_usb_otg_vbus>=
+;
+arch/arm/boot/dts/imx53-ppd.dts:95:	reg_usb_otg_vbus: regulator-usb-otg-vbu=
+s {
+arch/arm/boot/dts/imx53-ppd.dts:650:	vbus-supply =3D <&reg_usb_otg_vbus>;
+arch/arm/boot/dts/imx6dl-riotboard.dts:69:	reg_usb_otg_vbus: regulator-usbo=
+tgvbus {
+arch/arm/boot/dts/imx6dl-riotboard.dts:339:	vbus-supply =3D <&reg_usb_otg_v=
+bus>;
+arch/arm/boot/dts/imx6dl-yapp4-common.dtsi:83:	reg_usb_otg_vbus: regulator-=
+usb-otg-vbus {
+arch/arm/boot/dts/imx6dl-yapp4-common.dtsi:571:	vbus-supply =3D <&reg_usb_o=
+tg_vbus>;
+arch/arm/boot/dts/imx6-logicpd-baseboard.dtsi:72:	reg_usb_otg_vbus: regulat=
+or-otg-vbus {
+arch/arm/boot/dts/imx6-logicpd-baseboard.dtsi:351:	vbus-supply =3D <&reg_us=
+b_otg_vbus>;
+arch/arm/boot/dts/imx6q-apalis-eval.dts:237:&reg_usb_otg_vbus {
+arch/arm/boot/dts/imx6q-apalis-eval.dts:279:	vbus-supply =3D <&reg_usb_otg_=
+vbus>;
+arch/arm/boot/dts/imx6q-apalis-ixora.dts:240:&reg_usb_otg_vbus {
+arch/arm/boot/dts/imx6q-apalis-ixora.dts:282:	vbus-supply =3D <&reg_usb_otg=
+_vbus>;
+arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts:236:&reg_usb_otg_vbus {
+arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts:278:	vbus-supply =3D <&reg_us=
+b_otg_vbus>;
+arch/arm/boot/dts/imx6q-arm2.dts:34:		reg_usb_otg_vbus: regulator@1 {
+arch/arm/boot/dts/imx6q-arm2.dts:188:	vbus-supply =3D <&reg_usb_otg_vbus>;
+arch/arm/boot/dts/imx6q-ba16.dtsi:122:	reg_usb_otg_vbus: regulator-usbotgvb=
+us {
+arch/arm/boot/dts/imx6q-ba16.dtsi:378:	vbus-supply =3D <&reg_usb_otg_vbus>;
+arch/arm/boot/dts/imx6q-cm-fx6.dts:93:	reg_usb_otg_vbus: usb_otg_vbus {
+arch/arm/boot/dts/imx6q-cm-fx6.dts:471:	vbus-supply =3D <&reg_usb_otg_vbus>=
+;
+arch/arm/boot/dts/imx6q-dhcom-som.dtsi:26:	reg_usb_otg_vbus: regulator-usb-=
+otg-vbus {
+arch/arm/boot/dts/imx6q-dhcom-som.dtsi:442:	vbus-supply =3D <&reg_usb_otg_v=
+bus>;
+arch/arm/boot/dts/imx6qdl-apalis.dtsi:81:	reg_usb_otg_vbus: regulator-usb-o=
+tg-vbus {
+arch/arm/boot/dts/imx6qdl-apf6dev.dtsi:102:	reg_usb_otg_vbus: regulator-usb=
+-otg-vbus {
+arch/arm/boot/dts/imx6qdl-apf6dev.dtsi:250:	vbus-supply =3D <&reg_usb_otg_v=
+bus>;
+arch/arm/boot/dts/imx6qdl-dfi-fs700-m60.dtsi:16:		reg_usb_otg_vbus: regulat=
+or@1 {
+arch/arm/boot/dts/imx6qdl-dfi-fs700-m60.dtsi:175:	vbus-supply =3D <&reg_usb=
+_otg_vbus>;
+arch/arm/boot/dts/imx6qdl-gw51xx.dtsi:70:	reg_usb_otg_vbus: regulator-usb-o=
+tg-vbus {
+arch/arm/boot/dts/imx6qdl-gw51xx.dtsi:312:	vbus-supply =3D <&reg_usb_otg_vb=
+us>;
+arch/arm/boot/dts/imx6qdl-gw52xx.dtsi:93:	reg_usb_otg_vbus: regulator-usb-o=
+tg-vbus {
+arch/arm/boot/dts/imx6qdl-gw52xx.dtsi:392:	vbus-supply =3D <&reg_usb_otg_vb=
+us>;
+arch/arm/boot/dts/imx6qdl-gw53xx.dtsi:93:	reg_usb_otg_vbus: regulator-usb-o=
+tg-vbus {
+arch/arm/boot/dts/imx6qdl-gw53xx.dtsi:383:	vbus-supply =3D <&reg_usb_otg_vb=
+us>;
+arch/arm/boot/dts/imx6qdl-gw54xx.dtsi:102:		reg_usb_otg_vbus: regulator@3 {
+arch/arm/boot/dts/imx6qdl-gw54xx.dtsi:451:	vbus-supply =3D <&reg_usb_otg_vb=
+us>;
+arch/arm/boot/dts/imx6qdl-gw551x.dtsi:98:	reg_usb_otg_vbus: regulator-usb-o=
+tg-vbus {
+arch/arm/boot/dts/imx6qdl-gw551x.dtsi:402:	vbus-supply =3D <&reg_usb_otg_vb=
+us>;
+arch/arm/boot/dts/imx6qdl-gw553x.dtsi:104:	reg_usb_otg_vbus: regulator-usb-=
+otg-vbus {
+arch/arm/boot/dts/imx6qdl-gw553x.dtsi:352:	vbus-supply =3D <&reg_usb_otg_vb=
+us>;
+arch/arm/boot/dts/imx6qdl-gw560x.dtsi:177:	reg_usb_otg_vbus: regulator-usb-=
+otg-vbus {
+arch/arm/boot/dts/imx6qdl-gw560x.dtsi:485:	vbus-supply =3D <&reg_usb_otg_vb=
+us>;
+arch/arm/boot/dts/imx6qdl-gw5903.dtsi:124:	reg_usb_otg_vbus: regulator-usb-=
+otg-vbus {
+arch/arm/boot/dts/imx6qdl-gw5903.dtsi:390:	vbus-supply =3D <&reg_usb_otg_vb=
+us>;
+arch/arm/boot/dts/imx6qdl-gw5904.dtsi:132:	reg_usb_otg_vbus: regulator-usb-=
+otg-vbus {
+arch/arm/boot/dts/imx6qdl-gw5904.dtsi:423:	vbus-supply =3D <&reg_usb_otg_vb=
+us>;
+arch/arm/boot/dts/imx6qdl-gw5907.dtsi:70:	reg_usb_otg_vbus: regulator-usb-o=
+tg-vbus {
+arch/arm/boot/dts/imx6qdl-gw5907.dtsi:238:	vbus-supply =3D <&reg_usb_otg_vb=
+us>;
+arch/arm/boot/dts/imx6qdl-icore.dtsi:64:	reg_usb_otg_vbus: regulator-usb-ot=
+g-vbus {
+arch/arm/boot/dts/imx6qdl-icore.dtsi:271:	vbus-supply =3D <&reg_usb_otg_vbu=
+s>;
+arch/arm/boot/dts/imx6qdl-icore-rqs.dtsi:71:	reg_usb_otg_vbus: regulator-us=
+b-otg-vbus {
+arch/arm/boot/dts/imx6qdl-icore-rqs.dtsi:246:	vbus-supply =3D <&reg_usb_otg=
+_vbus>;
+arch/arm/boot/dts/imx6qdl-nit6xlite.dtsi:41:		reg_usb_otg_vbus: regulator@2=
+ {
+arch/arm/boot/dts/imx6qdl-nit6xlite.dtsi:545:	vbus-supply =3D <&reg_usb_otg=
+_vbus>;
+arch/arm/boot/dts/imx6qdl-nitrogen6_max.dtsi:50:		reg_usb_otg_vbus: regulat=
+or@3 {
+arch/arm/boot/dts/imx6qdl-nitrogen6_max.dtsi:790:	vbus-supply =3D <&reg_usb=
+_otg_vbus>;
+arch/arm/boot/dts/imx6qdl-nitrogen6_som2.dtsi:193:	reg_usb_otg_vbus: regula=
+tor-usb-otg-vbus {
+arch/arm/boot/dts/imx6qdl-nitrogen6_som2.dtsi:688:	vbus-supply =3D <&reg_us=
+b_otg_vbus>;
+arch/arm/boot/dts/imx6qdl-nitrogen6x.dtsi:43:		reg_usb_otg_vbus: regulator@=
+2 {
+arch/arm/boot/dts/imx6qdl-nitrogen6x.dtsi:638:	vbus-supply =3D <&reg_usb_ot=
+g_vbus>;
+arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi:22:		reg_usb_otg_vbus: regulat=
+or@0 {
+arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi:423:	vbus-supply =3D <&reg_usb=
+_otg_vbus>;
+arch/arm/boot/dts/imx6qdl-rex.dtsi:41:		reg_usb_otg_vbus: regulator@2 {
+arch/arm/boot/dts/imx6qdl-rex.dtsi:345:	vbus-supply =3D <&reg_usb_otg_vbus>=
+;
+arch/arm/boot/dts/imx6qdl-sabreauto.dtsi:96:	reg_usb_otg_vbus: regulator-us=
+b-otg-vbus {
+arch/arm/boot/dts/imx6qdl-sabreauto.dtsi:830:	vbus-supply =3D <&reg_usb_otg=
+_vbus>;
+arch/arm/boot/dts/imx6qdl-sabrelite.dtsi:80:		reg_usb_otg_vbus: regulator@2=
+ {
+arch/arm/boot/dts/imx6qdl-sabrelite.dtsi:729:	vbus-supply =3D <&reg_usb_otg=
+_vbus>;
+arch/arm/boot/dts/imx6qdl-sabresd.dtsi:20:	reg_usb_otg_vbus: regulator-usb-=
+otg-vbus {
+arch/arm/boot/dts/imx6qdl-sabresd.dtsi:780:	vbus-supply =3D <&reg_usb_otg_v=
+bus>;
+arch/arm/boot/dts/imx6qdl-ts4900.dtsi:75:	reg_usb_otg_vbus: regulator-usb-o=
+tg-vbus {
+arch/arm/boot/dts/imx6qdl-ts4900.dtsi:454:	vbus-supply =3D <&reg_usb_otg_vb=
+us>;
+arch/arm/boot/dts/imx6qdl-ts7970.dtsi:116:	reg_usb_otg_vbus: regulator-usb-=
+otg-vbus {
+arch/arm/boot/dts/imx6qdl-ts7970.dtsi:549:	vbus-supply =3D <&reg_usb_otg_vb=
+us>;
+arch/arm/boot/dts/imx6qdl-var-dart.dtsi:457:	vbus-supply =3D <&reg_usb_otg_=
+vbus>;
+arch/arm/boot/dts/imx6qdl-wandboard.dtsi:76:	reg_usb_otg_vbus: regulator-us=
+botgvbus {
+arch/arm/boot/dts/imx6qdl-wandboard.dtsi:338:	vbus-supply =3D <&reg_usb_otg=
+_vbus>;
+arch/arm/boot/dts/imx6q-dms-ba16.dts:12:	reg_usb_otg_vbus: regulator-usbotg=
+vbus {
+arch/arm/boot/dts/imx6q-dms-ba16.dts:122:	vbus-supply =3D <&reg_usb_otg_vbu=
+s>;
+arch/arm/boot/dts/imx6q-evi.dts:70:	reg_usb_otg_vbus: regulator-usbotgvbus =
+{
+arch/arm/boot/dts/imx6q-evi.dts:226:	vbus-supply =3D <&reg_usb_otg_vbus>;
+arch/arm/boot/dts/imx6q-gw5400-a.dts:102:		reg_usb_otg_vbus: regulator@3 {
+arch/arm/boot/dts/imx6q-gw5400-a.dts:369:	vbus-supply =3D <&reg_usb_otg_vbu=
+s>;
+arch/arm/boot/dts/imx6q-marsboard.dts:62:	reg_usb_otg_vbus: regulator-usb-o=
+tg-vbus {
+arch/arm/boot/dts/imx6q-marsboard.dts:205:	vbus-supply =3D <&reg_usb_otg_vb=
+us>;
+arch/arm/boot/dts/imx6q-novena.dts:180:	reg_usb_otg_vbus: regulator-usb-otg=
+-vbus {
+arch/arm/boot/dts/imx6q-novena.dts:492:	vbus-supply =3D <&reg_usb_otg_vbus>=
+;
+arch/arm/boot/dts/imx6q-pistachio.dts:88:	reg_usb_otg_vbus: regulator-usb_v=
+bus {
+arch/arm/boot/dts/imx6q-pistachio.dts:623:	vbus-supply =3D <&reg_usb_otg_vb=
+us>;
+arch/arm/boot/dts/imx6q-var-dt6customboard.dts:109:	reg_usb_otg_vbus: regul=
+ator-usbotgvbus {
+arch/arm/boot/dts/imx6q-var-dt6customboard.dts:223:	vbus-supply =3D <&reg_u=
+sb_otg_vbus>;
+arch/arm/boot/dts/imx6ul-pico.dtsi:54:	reg_usb_otg_vbus: regulator-usb-otg-=
+vbus {
+arch/arm/boot/dts/imx6ul-pico.dtsi:224:	vbus-supply =3D <&reg_usb_otg_vbus>=
+;
 
-Does it mean that -1 would become a reference to the vm_swappiness
-or the parent's memory.swappiness? It sounds interesting and if so then
-it would address my issues with the swappiness but would also change
-the existing memcg behaviour: if the referred-to value changed, would
-the memory.swappiness backed by -1 also change?
+--=20
 
-> So there are a couple options here but I don't think one of them is to ad=
-d
-> a new config option or kernel command line option.
->=20
-
-The vm_swappiness starts its lifespan in the kernel and thus
-why not to facilitate it with a simple "constructor" there?
-
-> > One could run a script to traverse the cgroup trees later and set the
-> > desired memory.swappiness individually in each occurrence when the runt=
-ime
-> > is set up, but this would require some amount of work to implement
-> > properly. Instead, why not set the default swappiness as early as possi=
-ble?
-> >
-> > Signed-off-by: Ivan Teterevkov <ivan.teterevkov@nutanix.com>
-> > ---
-> >  .../admin-guide/kernel-parameters.txt         |  4 ++++
-> >  mm/Kconfig                                    | 10 ++++++++
-> >  mm/vmscan.c                                   | 24 ++++++++++++++++++-
-> >  3 files changed, 37 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt
-> b/Documentation/admin-guide/kernel-parameters.txt
-> > index c07815d230bc..5d54a4303522 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -5317,6 +5317,10 @@
-> >  			  P	Enable page structure init time poisoning
-> >  			  -	Disable all of the above options
-> >
-> > +	vm_swappiness=3D	[KNL]
-> > +			Sets the default vm_swappiness.
-> > +			Ranges from 0 to 100, the default value is 60.
-> > +
-> >  	vmalloc=3Dnn[KMG]	[KNL,BOOT] Forces the vmalloc area to have an
-> exact
-> >  			size of <nn>. This can be used to increase the
-> >  			minimum size (128MB on x86). It can also be used to
-> diff --git a/mm/Kconfig b/mm/Kconfig index ab80933be65f..ec59c19e578e
-> 100644
-> > --- a/mm/Kconfig
-> > +++ b/mm/Kconfig
-> > @@ -739,4 +739,14 @@ config ARCH_HAS_HUGEPD  config
-> MAPPING_DIRTY_HELPERS
-> >          bool
-> >
-> > +config VM_SWAPPINESS
-> > +	int "Default memory swappiness"
-> > +	default 60
-> > +	range 0 100
-> > +	help
-> > +	  Sets the default vm_swappiness, that could be changed later
-> > +	  in the runtime, e.g. kernel command line, sysctl, etc.
-> > +
-> > +	  Higher value means more swappy. Historically, defaults to 60.
-> > +
-> >  endmenu
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index 876370565455..7d2d3550f698 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -163,7 +163,29 @@ struct scan_control {
-> >  /*
-> >   * From 0 .. 100.  Higher means more swappy.
-> >   */
-> > -int vm_swappiness =3D 60;
-> > +int vm_swappiness =3D CONFIG_VM_SWAPPINESS;
-> > +
-> > +static int __init swappiness_cmdline(char *str) {
-> > +	int val, err;
-> > +
-> > +	if (!str)
-> > +		return -EINVAL;
-> > +
-> > +	err =3D kstrtoint(str, 10, &val);
-> > +	if (err)
-> > +		return -EINVAL;
-> > +
-> > +	if (val < 0 || val > 100)
-> > +		return -EINVAL;
-> > +
-> > +	vm_swappiness =3D val;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +early_param("vm_swappiness", swappiness_cmdline);
-> > +
-> >  /*
-> >   * The total number of pages which are beyond the high watermark withi=
-n all
-> >   * zones.
+Thanks,
+Peter Chen=
