@@ -2,260 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88287182BAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 09:59:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72B75182BE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 10:08:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbgCLI6v convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 12 Mar 2020 04:58:51 -0400
-Received: from mga07.intel.com ([134.134.136.100]:12996 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725978AbgCLI6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 04:58:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 01:58:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,544,1574150400"; 
-   d="scan'208";a="236757961"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by orsmga008.jf.intel.com with ESMTP; 12 Mar 2020 01:58:47 -0700
-Received: from fmsmsx119.amr.corp.intel.com (10.18.124.207) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 12 Mar 2020 01:58:47 -0700
-Received: from bgsmsx101.gar.corp.intel.com (10.223.4.170) by
- FMSMSX119.amr.corp.intel.com (10.18.124.207) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 12 Mar 2020 01:58:47 -0700
-Received: from BGSMSX107.gar.corp.intel.com ([169.254.9.15]) by
- BGSMSX101.gar.corp.intel.com ([169.254.1.153]) with mapi id 14.03.0439.000;
- Thu, 12 Mar 2020 14:28:43 +0530
-From:   "Laxminarayan Bharadiya, Pankaj" 
-        <pankaj.laxminarayan.bharadiya@intel.com>
-To:     =?iso-8859-1?Q?Ville_Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-CC:     "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "tzimmermann@suse.de" <tzimmermann@suse.de>,
-        "mripard@kernel.org" <mripard@kernel.org>,
-        "mihail.atanassov@arm.com" <mihail.atanassov@arm.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        "Souza, Jose" <jose.souza@intel.com>,
-        Juha-Pekka Heikkila <juhapekka.heikkila@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Nautiyal, Ankit K" <ankit.k.nautiyal@intel.com>
-Subject: RE: [RFC][PATCH 3/5] drm/i915: Enable scaling filter for plane and
- pipe
-Thread-Topic: [RFC][PATCH 3/5] drm/i915: Enable scaling filter for plane and
- pipe
-Thread-Index: AQHV66uR0nE+V83KFEm4O/sSi5gKVahBt/iAgAMIn3A=
-Date:   Thu, 12 Mar 2020 08:58:42 +0000
-Message-ID: <E92BA18FDE0A5B43B7B3DA7FCA031286057B2BE5@BGSMSX107.gar.corp.intel.com>
-References: <20200225070545.4482-1-pankaj.laxminarayan.bharadiya@intel.com>
- <20200225070545.4482-4-pankaj.laxminarayan.bharadiya@intel.com>
- <20200310160545.GI13686@intel.com>
-In-Reply-To: <20200310160545.GI13686@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.223.10.10]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        id S1726487AbgCLJIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 05:08:17 -0400
+Received: from mail-eopbgr70079.outbound.protection.outlook.com ([40.107.7.79]:43142
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725268AbgCLJIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 05:08:17 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Q/r2CACUh1RM9nI1W5bQijlRC1AtFcWnf6zTwheavIi4CrGfPvLPnf80w5M7uvcrarpU1d/1LmX0Im/KjdnnybDL0Wq9iDfHj21Riuo2iMjdtauG4mJ8icLDKCm6Z6eR8YpkitIzzwy5fXNwseLir71VKEZMmVqD3RwKrKd/K8yK9AxVsR5atFmtk1XOyvcBA1NoBXOo2caLi3pbiLvPSv+3vyI/FrmARqjLiTsmEzSJ12aEmbUEtfgLkdLDirdAH5mzB369LMwpTbUfcLllIvb03ljuoRwd1IRJoVw4ZBj3wrkJ6xWIPbRor9mJayjD/zpa8nNeapqIu+9tvTsUog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oRjLCQJWrM1aPkx/Qqdka0pExz6sPTgr302SVuR4obY=;
+ b=VT4mehY2aglw9xtdKPEkLICk0iy7l88gS5pl7q7We3M+qxXpppmciXOrKbfqbz7mxN5MxRZQMMkakHIIhfrdlmbuI8I+30viScsm8czq+olfQPblbYH8t88gltfSg0IeWJlqiTl9Qg3P9QUz6FohKQAwCYwxrtR4xQqKtqBiW+d2ynb1njiX/0qcI71RU2sE7FimZ1mNEybdORVkB1yyeEdd/BbpKAcJ9vAQMk5rHkAaWnWbJQbsWzLGHAY6ElG9k7P/BkVN4pvVKKy+s8mc193qnvm91I3Nehbzh6kopjKQlc50mi0IIRIVBF1bZ4no/qVUWMOqXmVUixhA729llQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oRjLCQJWrM1aPkx/Qqdka0pExz6sPTgr302SVuR4obY=;
+ b=SrHUvGlkPVTsaSpr1ojRNuaD2cDB5TJiMTyipAIYibR8KfG3L9cM/8MrJMG70SzwvNEWoZZg4K0CNv3iqNpuIUuaYMdepfjll+j1xhYG3QLTA/HiRIzH6SzBmX3INBlOvLIF6G/ixHxG10jeb3w5LkCjUMmgHVgDmZOIwAMdoWg=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5795.eurprd04.prod.outlook.com (20.178.118.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.17; Thu, 12 Mar 2020 09:08:12 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::548f:4941:d4eb:4c11]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::548f:4941:d4eb:4c11%6]) with mapi id 15.20.2793.018; Thu, 12 Mar 2020
+ 09:08:12 +0000
+From:   peng.fan@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de,
+        leonard.crestez@nxp.com, sboyd@kernel.org, abel.vesa@nxp.com
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Anson.Huang@nxp.com, daniel.baluta@nxp.com, aford173@gmail.com,
+        ping.bai@nxp.com, jun.li@nxp.com, l.stach@pengutronix.de,
+        andrew.smirnov@gmail.com, agx@sigxcpu.org, angus@akkea.ca,
+        heiko@sntech.de, fugang.duan@nxp.com, linux-clk@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 00/10] clk: imx: fixes and improve for i.MX8M
+Date:   Thu, 12 Mar 2020 17:01:22 +0800
+Message-Id: <1584003692-25523-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR02CA0052.apcprd02.prod.outlook.com
+ (2603:1096:4:54::16) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR02CA0052.apcprd02.prod.outlook.com (2603:1096:4:54::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2814.14 via Frontend Transport; Thu, 12 Mar 2020 09:08:05 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 7a7531ae-7f73-4deb-7c05-08d7c664e3da
+X-MS-TrafficTypeDiagnostic: AM0PR04MB5795:|AM0PR04MB5795:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB5795E3C95540454B1ACC2E8188FD0@AM0PR04MB5795.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 0340850FCD
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(346002)(366004)(136003)(376002)(199004)(6666004)(52116002)(66946007)(6506007)(9686003)(6486002)(86362001)(66476007)(66556008)(6512007)(5660300002)(4326008)(956004)(36756003)(966005)(16526019)(26005)(186003)(478600001)(7416002)(2906002)(316002)(81166006)(2616005)(81156014)(8676002)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5795;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ko4X6I1e7/wyVEJ5G8njboCQRBwnSnDJq33vVSQ2UawEnDKVlC+mzN1+x+uKEb1FVfDKx1EVeL38duEEXWsOP0X06enhnrTPaN/zd/bGPyVFmWagh9YFbR9rzBgsCq7quEE92kwx0daaPJF6p2TCwMZRbxLjcFZiHbJN3jPTyM9q9uy3iz80iAT41u7zIe/mLuDWUtlFcOtfvgCbyLteptQp8EiIf67MuEjLTvvVJFNYVcIrsXp9tUXyCSFS055kBxDTamgOYzf2GGrpeMgo7EVYZ4MXQp4Muk7TCRLChwTr1P/gnthnLxUKHHcbWrldRq8wIBZY/OmAxEZVkorAsQQay8Cm8tkgBUfa7ldGH9PJIyZS9bgRXiz4Yt5K2YDGTquZlzQtNl6b17Y+ZW2BFfHGopHhSXrIQAXSXuhRCkrQDvZ+K+WdGG2yF5EAbtXQo6Ri/abB9MY0Yx1Ifi8PH29pZsyaK9/DkE0qVBDCLldxx6r+sQq572I+wUx395W2i3FofyKpkGdObEF3QMINYw==
+X-MS-Exchange-AntiSpam-MessageData: zyzREH5ALsEHE7vGFoDL+3FlPHD4Xttcybn6y3fMhJJY76LHHjHOgWnt7dQGbpbKWZVvwzAiaMP0fDX9p3lbOG6X3L7LAMJc4iyviOIvYdkK1ROY9rJ2gMnCBhW51mmyyJbgk+zCqY2OKgVMAx4scg==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a7531ae-7f73-4deb-7c05-08d7c664e3da
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2020 09:08:12.0089
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yr4TFWN5N8rSTPnIUoNO0/zHQx2kcRsvjJStYA+i3AQvUUmivM2RCjIaXat0H/fTns4cblpESsknjg1aNnmXrQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5795
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Peng Fan <peng.fan@nxp.com>
 
+Patches based on for-next
 
-> -----Original Message-----
-> From: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Sent: 10 March 2020 21:36
-> To: Laxminarayan Bharadiya, Pankaj
-> <pankaj.laxminarayan.bharadiya@intel.com>
-> Cc: jani.nikula@linux.intel.com; daniel@ffwll.ch; intel-
-> gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org; airlied@linux.ie;
-> maarten.lankhorst@linux.intel.com; tzimmermann@suse.de;
-> mripard@kernel.org; mihail.atanassov@arm.com; Joonas Lahtinen
-> <joonas.lahtinen@linux.intel.com>; Vivi, Rodrigo <rodrigo.vivi@intel.com>;
-> Chris Wilson <chris@chris-wilson.co.uk>; Souza, Jose
-> <jose.souza@intel.com>; Juha-Pekka Heikkila
-> <juhapekka.heikkila@gmail.com>; linux-kernel@vger.kernel.org; Nautiyal,
-> Ankit K <ankit.k.nautiyal@intel.com>
-> Subject: Re: [RFC][PATCH 3/5] drm/i915: Enable scaling filter for plane and
-> pipe
-> 
-> On Tue, Feb 25, 2020 at 12:35:43PM +0530, Pankaj Bharadiya wrote:
-> > Attach scaling filter property for crtc and plane and program the
-> > scaler control register for the selected filter type.
-> >
-> > This is preparatory patch to enable Nearest-neighbor integer scaling.
-> >
-> > Signed-off-by: Pankaj Bharadiya
-> > <pankaj.laxminarayan.bharadiya@intel.com>
-> > Signed-off-by: Ankit Nautiyal <ankit.k.nautiyal@intel.com>
-> > ---
-> >  drivers/gpu/drm/i915/display/intel_display.c | 17 +++++++++++++++--
-> > drivers/gpu/drm/i915/display/intel_sprite.c  | 12 +++++++++++-
-> >  drivers/gpu/drm/i915/i915_reg.h              |  1 +
-> >  3 files changed, 27 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/i915/display/intel_display.c
-> > b/drivers/gpu/drm/i915/display/intel_display.c
-> > index 3031e64ee518..b5903ef3c5a0 100644
-> > --- a/drivers/gpu/drm/i915/display/intel_display.c
-> > +++ b/drivers/gpu/drm/i915/display/intel_display.c
-> > @@ -6242,6 +6242,8 @@ static void skl_pfit_enable(const struct
-> intel_crtc_state *crtc_state)
-> >  	struct intel_crtc *crtc = to_intel_crtc(crtc_state->uapi.crtc);
-> >  	struct drm_i915_private *dev_priv = to_i915(crtc->base.dev);
-> >  	enum pipe pipe = crtc->pipe;
-> > +	const struct drm_crtc_state *state = &crtc_state->uapi;
-> > +	u32 scaling_filter = PS_FILTER_MEDIUM;
-> >  	const struct intel_crtc_scaler_state *scaler_state =
-> >  		&crtc_state->scaler_state;
-> >
-> > @@ -6258,6 +6260,11 @@ static void skl_pfit_enable(const struct
-> intel_crtc_state *crtc_state)
-> >  		pfit_w = (crtc_state->pch_pfit.size >> 16) & 0xFFFF;
-> >  		pfit_h = crtc_state->pch_pfit.size & 0xFFFF;
-> >
-> > +		if (state->scaling_filter ==
-> > +		    DRM_SCALING_FILTER_NEAREST_NEIGHBOR) {
-> > +			scaling_filter = PS_FILTER_PROGRAMMED;
-> > +		}
-> 
-> Just make that a function that can be used all over.
-> skl_scaler_filter(scaling_filter) or something.
-> 
-> > +
-> >  		hscale = (crtc_state->pipe_src_w << 16) / pfit_w;
-> >  		vscale = (crtc_state->pipe_src_h << 16) / pfit_h;
-> >
-> > @@ -6268,8 +6275,10 @@ static void skl_pfit_enable(const struct
-> > intel_crtc_state *crtc_state)
-> >
-> >  		spin_lock_irqsave(&dev_priv->uncore.lock, irqflags);
-> >
-> > -		intel_de_write_fw(dev_priv, SKL_PS_CTRL(pipe, id),
-> PS_SCALER_EN |
-> > -				  PS_FILTER_MEDIUM | scaler_state-
-> >scalers[id].mode);
-> > +		intel_de_write_fw(dev_priv, SKL_PS_CTRL(pipe, id),
-> > +				  PS_SCALER_EN |
-> > +				  scaling_filter |
-> > +				  scaler_state->scalers[id].mode);
-> >  		intel_de_write_fw(dev_priv, SKL_PS_VPHASE(pipe, id),
-> >  				  PS_Y_PHASE(0) |
-> PS_UV_RGB_PHASE(uv_rgb_vphase));
-> >  		intel_de_write_fw(dev_priv, SKL_PS_HPHASE(pipe, id), @@
-> -16695,6
-> > +16704,10 @@ static int intel_crtc_init(struct drm_i915_private *dev_priv,
-> enum pipe pipe)
-> >  		dev_priv->plane_to_crtc_mapping[i9xx_plane] = crtc;
-> >  	}
-> >
-> > +
-> > +	if (INTEL_GEN(dev_priv) >= 11)
-> 
-> gen >= 10 actually. Even glk seems to have it but bspec says not to use it on
-> glk. Supposedly not validated.
-> 
-> ilk/snb/ivb pfits also has programmable coefficients actually. So IMO we
-> should enable this on those as well.
+Patch 1,2 is to fix the lockdep warning reported by Leonard
+Patch 3 is to fix pll mux bit
+Patch 4 is align with other i.MX8M using gate
+Patch 5 is to simplify i.MX8MP clk root using composite
 
-OK. I need to explore bspec more for these platforms.
-To begin with I would like to stick to gen >=10.
+Patch 3~5 is actually https://patchwork.kernel.org/patch/11402761/
+with a minimal change to patch 5 here.
 
-> 
-> The bigger problem will be how is userspace supposed to use this if it's a crtc
-> property? Those will not get automagically exposed via xrandr.
-> 
-> > +		drm_crtc_enable_scaling_filter(&crtc->base);
-> > +
-> >  	intel_color_init(crtc);
-> >
-> >  	drm_WARN_ON(&dev_priv->drm, drm_crtc_index(&crtc->base) !=
-> > crtc->pipe); diff --git a/drivers/gpu/drm/i915/display/intel_sprite.c
-> > b/drivers/gpu/drm/i915/display/intel_sprite.c
-> > index 7abeefe8dce5..fd7b31a21723 100644
-> > --- a/drivers/gpu/drm/i915/display/intel_sprite.c
-> > +++ b/drivers/gpu/drm/i915/display/intel_sprite.c
-> > @@ -414,6 +414,12 @@ skl_program_scaler(struct intel_plane *plane,
-> >  	u16 y_hphase, uv_rgb_hphase;
-> >  	u16 y_vphase, uv_rgb_vphase;
-> >  	int hscale, vscale;
-> > +	const struct drm_plane_state *state = &plane_state->uapi;
-> > +	u32 scaling_filter = PS_FILTER_MEDIUM;
-> > +
-> > +	if (state->scaling_filter ==
-> DRM_SCALING_FILTER_NEAREST_NEIGHBOR) {
-> > +		scaling_filter = PS_FILTER_PROGRAMMED;
-> > +	}
-> >
-> >  	hscale = drm_rect_calc_hscale(&plane_state->uapi.src,
-> >  				      &plane_state->uapi.dst,
-> > @@ -441,7 +447,8 @@ skl_program_scaler(struct intel_plane *plane,
-> >  	}
-> >
-> >  	intel_de_write_fw(dev_priv, SKL_PS_CTRL(pipe, scaler_id),
-> > -			  PS_SCALER_EN | PS_PLANE_SEL(plane->id) | scaler-
-> >mode);
-> > +			  scaling_filter | PS_SCALER_EN |
-> > +			  PS_PLANE_SEL(plane->id) | scaler->mode);
-> >  	intel_de_write_fw(dev_priv, SKL_PS_VPHASE(pipe, scaler_id),
-> >  			  PS_Y_PHASE(y_vphase) |
-> PS_UV_RGB_PHASE(uv_rgb_vphase));
-> >  	intel_de_write_fw(dev_priv, SKL_PS_HPHASE(pipe, scaler_id), @@
-> > -3104,6 +3111,9 @@ skl_universal_plane_create(struct drm_i915_private
-> > *dev_priv,
-> >
-> >  	drm_plane_create_zpos_immutable_property(&plane->base,
-> plane_id);
-> >
-> > +	if (INTEL_GEN(dev_priv) >= 11)
-> 
-> also gen>=10
-> 
-> Also this patch breaks things as we don't yet have the code to program the
-> coefficients. So the series needs to be reordered.
+Patch 6 is to use composite core clk for A53 clk root
+Patch 7,8,9 is actually to fix CORE/BUS clk slice issue.
+ This issue is triggerred after we update U-Boot to include
+ the A53 clk fixes to sources from PLL, not from A53 root clk,
+ because of the signoff timing is 1GHz. U-Boot set the A53 root
+ mux to 2, sys pll2 500MHz. Kernel will set the A53 root mux to
+ 4, sys pll1 800MHz, then gate off sys pll2 500MHz. Then kernel
+ will gate off A53 root because clk_ignore_unsed, A53 directly sources
+ PLL, so it is ok to gate off A53 root. However when gate off A53
+ root clk, system hang, because the original mux sys pll2 500MHz
+ gated off with CLK_OPS_PARENT_ENABLE flag.
 
-Will reorder the series.
+ It is lucky that we not met issue for other core/bus clk slice
+ except A53 ROOT core slice. But it is always triggerred after
+ U-Boot and Linux both switch to use ARM PLL for A53 core, but
+ have different mux settings for A53 root clk slice.
 
-Thanks,
-Pankaj
-> 
-> > +		drm_plane_enable_scaling_filter(&plane->base);
-> > +
-> >  	drm_plane_helper_add(&plane->base, &intel_plane_helper_funcs);
-> >
-> >  	return plane;
-> > diff --git a/drivers/gpu/drm/i915/i915_reg.h
-> > b/drivers/gpu/drm/i915/i915_reg.h index f45b5e86ec63..34923b1c284c
-> > 100644
-> > --- a/drivers/gpu/drm/i915/i915_reg.h
-> > +++ b/drivers/gpu/drm/i915/i915_reg.h
-> > @@ -7212,6 +7212,7 @@ enum {
-> >  #define PS_PLANE_SEL(plane) (((plane) + 1) << 25)
-> >  #define PS_FILTER_MASK         (3 << 23)
-> >  #define PS_FILTER_MEDIUM       (0 << 23)
-> > +#define PS_FILTER_PROGRAMMED   (1 << 23)
-> >  #define PS_FILTER_EDGE_ENHANCE (2 << 23)
-> >  #define PS_FILTER_BILINEAR     (3 << 23)
-> >  #define PS_VERT3TAP            (1 << 21)
-> > --
-> > 2.23.0
-> 
-> --
-> Ville Syrjälä
-> Intel
+ So the three patches is to address this issue.
+
+ Not expect this merge in 5.6 release. Since this patchset is
+ worked out based on for-next and for-next will have conflicts
+ if the patchset based on master. And to make things easier,
+ we let all core/bus use composite api.
+
+Patch 10 is make memrepair as critical.
+
+Peng Fan (10):
+  arm64: dts: imx8m: assign clocks for A53
+  clk: imx8m: drop clk_hw_set_parent for A53
+  clk: imx: imx8mp: fix pll mux bit
+  clk: imx8mp: Define gates for pll1/2 fixed dividers
+  clk: imx8mp: use imx8m_clk_hw_composite_core to simplify code
+  clk: imx8m: migrate A53 clk root to use composite core
+  clk: imx: add mux ops for i.MX8M composite clk
+  clk: imx: add imx8m_clk_hw_composite_bus
+  clk: imx: use imx8m_clk_hw_composite_bus for i.MX8M bus clk slice
+  clk: imx8mp: mark memrepair clock as critical
+
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi |  10 +-
+ arch/arm64/boot/dts/freescale/imx8mn.dtsi |  10 +-
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi |  11 ++-
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi |   9 +-
+ drivers/clk/imx/clk-composite-8m.c        |  74 ++++++++++++++-
+ drivers/clk/imx/clk-imx8mm.c              |  27 +++---
+ drivers/clk/imx/clk-imx8mn.c              |  25 +++--
+ drivers/clk/imx/clk-imx8mp.c              | 150 +++++++++++++++---------------
+ drivers/clk/imx/clk-imx8mq.c              |  29 +++---
+ drivers/clk/imx/clk.h                     |   7 ++
+ include/dt-bindings/clock/imx8mp-clock.h  |  28 +++++-
+ 11 files changed, 247 insertions(+), 133 deletions(-)
+
+-- 
+2.16.4
+
