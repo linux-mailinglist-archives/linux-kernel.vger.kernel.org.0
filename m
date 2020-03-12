@@ -2,129 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B4A5183BD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:01:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C52E5183BD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:00:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbgCLWBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 18:01:41 -0400
-Received: from mga05.intel.com ([192.55.52.43]:57083 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726513AbgCLWBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 18:01:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 15:01:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,546,1574150400"; 
-   d="scan'208";a="354231414"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Mar 2020 15:01:40 -0700
-Received: from [10.7.201.16] (skuppusw-desk.jf.intel.com [10.7.201.16])
-        by linux.intel.com (Postfix) with ESMTP id 7A42A58033E;
-        Thu, 12 Mar 2020 15:01:40 -0700 (PDT)
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH v17 09/12] PCI/AER: Allow clearing Error Status Register
- in FF mode
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Austin.Bolen@dell.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ashok.raj@intel.com
-References: <20200312195319.GA162308@google.com>
-From:   Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Organization: Intel
-Message-ID: <951fc29a-1462-ef46-d9a2-5e1cd50bf90a@linux.intel.com>
-Date:   Thu, 12 Mar 2020 14:59:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726676AbgCLWAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 18:00:31 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:53069 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbgCLWAa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 18:00:30 -0400
+Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 02CLxOr0088649;
+        Fri, 13 Mar 2020 06:59:24 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav110.sakura.ne.jp);
+ Fri, 13 Mar 2020 06:59:24 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav110.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 02CLxOUL088644
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 13 Mar 2020 06:59:24 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v2] Add kernel config option for fuzz testing.
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>, Jiri Slaby <jslaby@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20200307135822.3894-1-penguin-kernel@I-love.SAKURA.ne.jp>
+ <6f2e27de-c820-7de3-447d-cd9f7c650add@suse.com>
+ <20200308065258.GE3983392@kroah.com>
+ <3e9f47f7-a6c1-7cec-a84f-e621ae5426be@suse.com>
+ <CACT4Y+a6KExbggs4mg8pvoD554PcDqQNW4sM15X-tc=YONCzYw@mail.gmail.com>
+ <20200311101115.53139149@gandalf.local.home>
+ <CACT4Y+Z5co4HyQBj6-uUdqT2Vk=6jgT-aQXuPtjx3qV4C_pZ7g@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <7e0d2bbf-71c2-395c-9a42-d3d6d3ee4fa4@i-love.sakura.ne.jp>
+Date:   Fri, 13 Mar 2020 06:59:22 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200312195319.GA162308@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACT4Y+Z5co4HyQBj6-uUdqT2Vk=6jgT-aQXuPtjx3qV4C_pZ7g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+On 2020/03/13 4:23, Dmitry Vyukov wrote:
+>> Or teach the fuzz tool not to do specific bad things.
+> 
+> We do some of this.
+> But generally it's impossible for anything that involves memory
+> indirections, or depends on the exact type of fd (e.g. all ioctl's),
+> etc. Boils down to halting problem and ability to predict exact
+> behavior of arbitrary programs.
 
-On 3/12/20 12:53 PM, Bjorn Helgaas wrote:
-> On Wed, Mar 11, 2020 at 04:07:59PM -0700, Kuppuswamy Sathyanarayanan wrote:
->> On 3/11/20 3:23 PM, Bjorn Helgaas wrote:
->>> Is any synchronization needed here between the EDR path and the
->>> hotplug/enumeration path?
->> If we want to follow the implementation note step by step (in
->> sequence) then we need some synchronization between EDR path and
->> enumeration path. But if it's OK to achieve the same end result by
->> following steps out of sequence then we don't need to create any
->> dependency between EDR and enumeration paths. Currently we follow
->> the latter approach.
-> What would the synchronization look like?
-we might need some way to disable the enumeration path till
-we get response from firmware.
+I would like to enable changes like below only if CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING=y .
 
-In native hot plug case, I think we can do it in two ways.
+Since TASK_RUNNING threads are not always running on CPUs (in syzbot, the kernel is
+tested on a VM with only 2 CPUs, which means that many threads are simply waiting for
+CPU time to be assigned), dumping locks held by all threads gives us more clue when
+e.g. khungtask fired. But since lockdep_print_held_locks() is racy, I assume that
+this change won't be accepted unless CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING=y .
 
-1. Disable hotplug notification in slot ctl registers.
-     (pcie_disable_notification())
-2. Some how block hotplug driver from processing the new
-     events (not sure how feasible its).
+Also, for another example, limit number of memory pages /dev/ion driver can consume only if
+CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING=y ( https://github.com/google/syzkaller/issues/1267 ),
+for limiting number of memory pages is a user-visible change while we need to avoid false
+alarms caused by consuming all memory pages.
 
-Following method 1 would be easy, But I am not sure whether
-its alright to disable them randomly. I think, unless we
-clear the status as well, we might get some issues due to stale
-notification history.
+In other words, while majority of things CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING=y would
+do "disable this", there would be a few "enable this" and "change this".
 
-For ACPI event case, I am not sure whether we have some
-communication protocol in place to disable receiving ACPI
-events temporarily.
-
-For polling model, we need to disable to the polling
-timer thread till we receive _OST response from firmware.
->
-> Ideally I think it would be better to follow the order in the
-> flowchart if it's not too onerous.
-None of the above changes will be pretty and I think it will
-not be simple as well.
->   That will make the code easier to
-> understand.  The current situation with this dependency on pciehp and
-> what it will do leaves a lot of things implicit.
->
-> What happens if CONFIG_PCIE_EDR=y but CONFIG_HOTPLUG_PCI_PCIE=n?
->
-> IIUC, when DPC triggers, pciehp is what fields the DLLSC interrupt and
-> unbinds the drivers and removes the devices.
-
->   If that doesn't happen,
-> and Linux clears the DPC trigger to bring the link back up, will those
-> drivers try to operate uninitialized devices?
-I don't think this will happen. In DPC reset_link before we bring
-up the device we wait for link to go down first
-using pcie_wait_for_link(pdev, false) function.
->
-> Does EDR need a dependency on CONFIG_HOTPLUG_PCI_PCIE?
-No, enumeration can happen other ways as well (ACPI events, polling, etc).
->
->> For example, consider the case in flow chart where after sending
->> success _OST, firmware decides to stop the recovery of the device.
->>
->> if we follow the flow chart as is then the steps should be,
->>
->> 1. clear the DPC status trigger
->> 2. Send success code via _OST, and wait for return from _OST
->> 3. if successful return then enumerate the child devices and
->> reassign bus numbers.
->>
->> In current approach the steps followed are,
->>
->> 1. Clear the DPC status trigger.
->> 2. Send success code via _OST
->> 2. In parallel, LINK UP event path will enumerate the child devices.
->> 3. if firmware decides not to recover the device, then LINK DOWN
->> event will eventually remove them again.
-
--- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 32406ef0d6a2..1bc7878768fc 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -695,6 +695,7 @@ static void print_lock(struct held_lock *hlock)
+ static void lockdep_print_held_locks(struct task_struct *p)
+ {
+ 	int i, depth = READ_ONCE(p->lockdep_depth);
++	bool unreliable;
+ 
+ 	if (!depth)
+ 		printk("no locks held by %s/%d.\n", p->comm, task_pid_nr(p));
+@@ -705,10 +706,12 @@ static void lockdep_print_held_locks(struct task_struct *p)
+ 	 * It's not reliable to print a task's held locks if it's not sleeping
+ 	 * and it's not the current task.
+ 	 */
+-	if (p->state == TASK_RUNNING && p != current)
+-		return;
++	unreliable = p->state == TASK_RUNNING && p != current;
+ 	for (i = 0; i < depth; i++) {
+-		printk(" #%d: ", i);
++		if (unreliable)
++			printk(" #%d?: ", i);
++		else
++			printk(" #%d: ", i);
+ 		print_lock(p->held_locks + i);
+ 	}
+ }
 
