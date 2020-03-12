@@ -2,58 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5173183170
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:31:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92F2F183186
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:32:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbgCLNbh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:31:37 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50464 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbgCLNbg (ORCPT
+        id S1727431AbgCLNbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:31:40 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45036 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727384AbgCLNbi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:31:36 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a5so6118098wmb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:31:35 -0700 (PDT)
+        Thu, 12 Mar 2020 09:31:38 -0400
+Received: by mail-wr1-f65.google.com with SMTP id l18so7444944wru.11
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:31:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mKsXFRcK8AcNaumHFcbmSoneU4WCI5BNbLya6zWwdso=;
-        b=yGpVXdf/zvaZ2oK6Mt2+1GDAOyAcjE2YL1fV8629Sl0fjgJVBfCic1VwugB4VQba3I
-         3QveKXHMnoAegaDY0ROjo174WbRvRCFA5sWlFur932L2a0dceZAXJDFyDaY5+5A+5YQI
-         gNC2vQqUjVLeasn5PxXhMAAa7j/16lkRClmD8g5CGiEYmRvidQtzxIKvij4ppKqbZRJ9
-         RkonPce8pXKdXw86YvlInePQdX8c1ic7TFrlbZy+1zYerMEU8IIr5GeiLhknxM4jhMEE
-         lugULtEYx7q1Bn7ALGTjrbKvlBzUa/kFM7fjsRe4EgyRj6vQWW02NEqOYJiEk3YcI7Oh
-         V+PQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=MQB/nJ2X838Fvt+sBkmGr/0pMCoouvYo1EdeUXM4YMQ=;
+        b=BJ0XuBYV3ToSPW3UIl6Isc2lumsrYzXzC9pIKP6HzoLx2m5H8VgaPnkaYEyU3nSSyY
+         1tLzCAypjVjCczuqqKDKV1kSM0jlkColhbhQeyFQVhbrpWHVd+cqIdpfBucm5Cs8CUNT
+         g2JsfKMI1p2KNINJQGW/uTtMsJczcoyPXXZnlpjb8lmdv/EKBNzm0oLEWDR+wc3cC7Qf
+         DMCctXTjXci5kB54gBeQKBFgYHiFdJuJ8DwI2USTDOz+pcXtLVEBQNuo9vJANXAlIU0c
+         /cnYnC4QN9G/AkoiOE6XME3Ja/GQJj1cvbdw9h8QOh351jbLfIus+wLy4M2iFBemZPwy
+         BIKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mKsXFRcK8AcNaumHFcbmSoneU4WCI5BNbLya6zWwdso=;
-        b=b6p85Q9/6l8HMjDsGTfb8cEBdZUj41SuiY4E4KX334qc7YJbJ/FQBbDAnbKL3xlvHv
-         1ah5NpSWNpeOx05pTIqCYmTAvJg02fowgv9O2JaPkkp7SYhi98YyzDEs9RKzbVpKhm6k
-         TCMl3I6zm6wL7Ff8EisVnw3Irel8+G0H4bRZoGBqGgg2AWP7JwSVEKM6zhDuhce1Rtq+
-         2XzciTyg9k7KdmN6vDI5fHiO57lnUPbDMsNq6LnxiYM0OjY9i3nDroBoU8pNrTERQ5b7
-         pTVSeV7m+Hzb5uS1G/GM6EqmD1p2AHfndEifYo/aT2yXyQ6E94nd8VRwPBb6oDo/O1Bc
-         rvRg==
-X-Gm-Message-State: ANhLgQ1G5TpjBTtszOnyIxMdUlc+fKWpt1KMghsKm5HgnDk+9lHrsXb3
-        lV8VuKmUtYUqGkkt68HHYPmXXw==
-X-Google-Smtp-Source: ADFU+vu4/CzgwwWNZw4DY6j6M6oytrcB21iZBNHToT/4H+n6Y97GqaxPnIoWB+xUtDlIT2K+uneEpQ==
-X-Received: by 2002:a1c:c5:: with SMTP id 188mr4903051wma.89.1584019894533;
-        Thu, 12 Mar 2020 06:31:34 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=MQB/nJ2X838Fvt+sBkmGr/0pMCoouvYo1EdeUXM4YMQ=;
+        b=MgGMTMLsr8T1AHYDW5/Ttiu2Vu0HNT0B9NAPwo0KI0sWDMFyduU57gjPzch3tc2RtG
+         Z43n2thxSMQ4OCTMPsCH0VJyaptZWdwNS87I7SNaYt6dJLNn/B1AUcINS1NLIMwZ/P65
+         trykx+IC/CRRqDBUmLN2RVjWsxdseT/8d0qxuGHaCyVRN0YFVbalykJVB8O+7QCzbd6j
+         lnZYE+qjggTHAbN3+xRxu6A7S8uTMBbq6JlIoVnhr2JE6Y8SjIiJI4svf1MB814W/OFP
+         gdAYkKX2mkSsCFk3hSkqfCLm8YGU2mmPlt0qIg552LhAV746BBAdhxaSOxfcePE76v62
+         xJFA==
+X-Gm-Message-State: ANhLgQ2E3aKz2KNSBSZ9SQVFA7Eiaa4id1yJxGBuVqguVViuML39rsFM
+        td6Kwqha0MpYSvoj+SJRyou2XgWMhmM7oQ==
+X-Google-Smtp-Source: ADFU+vttYTaI+DCiNmB1UvQy1EL7nMlpTXWyEiRnY5WHDphDcEObnDSPJFvd3uSrVxGbrKBpFiiYCQ==
+X-Received: by 2002:a5d:6703:: with SMTP id o3mr101991wru.137.1584019895265;
+        Thu, 12 Mar 2020 06:31:35 -0700 (PDT)
 Received: from bender.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id m21sm12242885wmi.27.2020.03.12.06.31.33
+        by smtp.gmail.com with ESMTPSA id m21sm12242885wmi.27.2020.03.12.06.31.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2020 06:31:33 -0700 (PDT)
+        Thu, 12 Mar 2020 06:31:34 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     broonie@kernel.org
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-spi@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/9] spi: meson-spicc: add support for AXG and G12A variants
-Date:   Thu, 12 Mar 2020 14:31:22 +0100
-Message-Id: <20200312133131.26430-1-narmstrong@baylibre.com>
+Subject: [PATCH 1/9] spi: meson-spicc: remove unused variables
+Date:   Thu, 12 Mar 2020 14:31:23 +0100
+Message-Id: <20200312133131.26430-2-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20200312133131.26430-1-narmstrong@baylibre.com>
+References: <20200312133131.26430-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,40 +63,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SPICC controller in Amlogic AXG & G12A is capable of driving the
-CLK/MOSI/SS signal lines through the idle state which avoid the signals
-floating in unexpected state, is capable of using linear clock divider
-to reach a much fine tuned range of clocks, while the old controller only
-uses a power of two clock divider, result at a more coarse clock range and
-finally is capable of running at 80M clock.
+Remove unused variables from spicc data struct.
 
-The SPICC controller in Amlogic G12A takes the source clock from a specific
-clock instead of the bus clock and has a different FIFO size and doesn't
-handle the RX Half interrupt the same way as GXL & AXG variants. Thus
-the burst management is simplified and takes in account a variable FIFO
-size.
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/spi/spi-meson-spicc.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Now the controller can support frequencies higher than 30MHz, we need
-the setup the I/O line delays in regard of the SPI clock frequency.
-
-Neil Armstrong (7):
-  spi: meson-spicc: remove unused variables
-  spi: meson-spicc: support max 80MHz clock
-  spi: meson-spicc: add min sclk for each compatible
-  spi: meson-spicc: setup IO line delay
-  spi: meson-spicc: adapt burst handling for G12A support
-  dt-bindings: spi: amlogic,meson-gx-spicc: add Amlogic G12A compatible
-  spi: meson-spicc: add support for Amlogic G12A
-
-Sunny Luo (2):
-  spi: meson-spicc: enhance output enable feature
-  spi: meson-spicc: add a linear clock divider support
-
- .../bindings/spi/amlogic,meson-gx-spicc.yaml  |  22 +
- drivers/spi/Kconfig                           |   1 +
- drivers/spi/spi-meson-spicc.c                 | 496 +++++++++++++-----
- 3 files changed, 392 insertions(+), 127 deletions(-)
-
+diff --git a/drivers/spi/spi-meson-spicc.c b/drivers/spi/spi-meson-spicc.c
+index 7f5680fe2568..8425e5ae1273 100644
+--- a/drivers/spi/spi-meson-spicc.c
++++ b/drivers/spi/spi-meson-spicc.c
+@@ -130,9 +130,7 @@ struct meson_spicc_device {
+ 	u8				*rx_buf;
+ 	unsigned int			bytes_per_word;
+ 	unsigned long			tx_remain;
+-	unsigned long			txb_remain;
+ 	unsigned long			rx_remain;
+-	unsigned long			rxb_remain;
+ 	unsigned long			xfer_remain;
+ 	bool				is_burst_end;
+ 	bool				is_last_burst;
 -- 
 2.22.0
 
