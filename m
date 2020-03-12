@@ -2,108 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0873182AF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 09:15:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4656B182B00
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 09:18:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbgCLIPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 04:15:48 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:39304 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726395AbgCLIPs (ORCPT
+        id S1726314AbgCLISY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 04:18:24 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:53575 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725978AbgCLISX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 04:15:48 -0400
-Received: by mail-io1-f68.google.com with SMTP id c19so3684915ioo.6
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 01:15:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=SbKHysQUbZ/dh7ia72ifq4ypokfVjTOV8KRXEk2mm6E=;
-        b=HW/3yzeGLwYUzKgBotCvQil10b5k3PMgnqNLNwh4LYMxBBipDNZnTparjCBsw75jmT
-         LR9bPRQUyiMcBVQ35pZ+4gCO0TFQgxHSKGUJ4J6wd1Muuemsw5Rv5KJk4mRF4r/spil1
-         kQ8MTVoYKrKO+mokZ0szhFARBQvPl5m6Mld7cpaKjIh9gSb1g3NlBBOgjynzb2UJlx2u
-         Wnaiv/p6g90hBTsTSECFMiuM/twzlKLd/W9nDKBjg82bdFJvQB28bdn5t69t6p861hjA
-         CuscM4BElkTTRIkaN0VRMuHvM/RMrtXYwHOo9RFcCGDj3w+tzVDHE75cJvEgoBVQWMPC
-         4zbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=SbKHysQUbZ/dh7ia72ifq4ypokfVjTOV8KRXEk2mm6E=;
-        b=bMTeQjo/deOgIZKe7BUihwKon4AVHuPhFSYDQ7nJ6BEqKmIh9itfk117MKTq9wnz4+
-         648O0+KlgHmdvh7lGx5MEGQv8NbAN7nelGwRuldI5Da68wI1wFYxdLSE0NZVLnGAuu6S
-         PAY6cjyhQlvh5x/h87afCtBcu30JfeSU6pAioYrqXGQUPiq12pP8cJ6elW30UcRo7R/L
-         816u6jGq7DDAjF8nvHZEGWlzZ8mTU5jCwyezNzUUBF/WxPCkrGpWi2yuqUWqMBo7Kuqk
-         kyN5KM7q/zzxo7gcdPk05uErSTXqw6j9ePC8kB6wwV9wjtAT2ZJqd7/8jV9LYjS1lsYy
-         PxhQ==
-X-Gm-Message-State: ANhLgQ0l4FbvU8bVe7xXhcDSurX/t+69DjqtAqez3Qf4FAMa0dbHhdEf
-        8Qh2PyJUY/gHrByTP+XHgOiXiZeeiVXVKk2qrMXtfQ==
-X-Google-Smtp-Source: ADFU+vsJK2Pg25haw7j27ecIOeODy3FgQxTo1Tl+FnV3LFLR4OX/Io9NTwxxprxHSAuuuRB9Jd4i/CNZrzCHWMxnj0M=
-X-Received: by 2002:a5e:c70c:: with SMTP id f12mr6552071iop.130.1584000947547;
- Thu, 12 Mar 2020 01:15:47 -0700 (PDT)
+        Thu, 12 Mar 2020 04:18:23 -0400
+Received: from mail-qk1-f174.google.com ([209.85.222.174]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MPGiR-1ixeyW1XrB-00PfGV; Thu, 12 Mar 2020 09:18:21 +0100
+Received: by mail-qk1-f174.google.com with SMTP id f198so4800468qke.11;
+        Thu, 12 Mar 2020 01:18:21 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ1r8eylYx5ZZgyOYeaWDUr2YY6K/7mHqhZigjsuOFYPBL+rGaPb
+        18RFSsZ1o8s758nUVCgeVpU+Por0NG+K10uQ6/8=
+X-Google-Smtp-Source: ADFU+vsNBs5U8MSP0AIhbOTyNZM5zKZbj9kd12yMxihKBGNpLlSYTCDKKw9EkzMHsXQTWNCKK3QEcXCPnNyHrsJ3iYg=
+X-Received: by 2002:a37:a4d6:: with SMTP id n205mr6736993qke.352.1584001100024;
+ Thu, 12 Mar 2020 01:18:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200211131240.15853-1-brgl@bgdev.pl> <20200211131240.15853-4-brgl@bgdev.pl>
- <20200308135117.7c60c881@why> <CAMRc=Me0AE7OgEVjiUfRUNODYoGj+LYy+1zGsGkXKput9AeKrA@mail.gmail.com>
-In-Reply-To: <CAMRc=Me0AE7OgEVjiUfRUNODYoGj+LYy+1zGsGkXKput9AeKrA@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 12 Mar 2020 09:15:36 +0100
-Message-ID: <CAMRc=MdsQbm=L8sjJhnCcW+kb3UHHneSGqgCbTvWwsenCeMwxw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] irq/domain: add a new callback to domain ops
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-iio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20200311225736.32147-1-rdunlap@infradead.org> <20200311225736.32147-2-rdunlap@infradead.org>
+In-Reply-To: <20200311225736.32147-2-rdunlap@infradead.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 12 Mar 2020 09:18:04 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1ah3hJOJugJmYGcr48fN1SR6crSgAgGocZxqAgL5r0ew@mail.gmail.com>
+Message-ID: <CAK8P3a1ah3hJOJugJmYGcr48fN1SR6crSgAgGocZxqAgL5r0ew@mail.gmail.com>
+Subject: Re: [PATCH 1/3 v2] char: group dev configs togther
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:sPAakDjeihxQelG+jj4ZoHRdrd6ZRt0zJa1JTqtWPNmrThhOUmQ
+ xlZ+f1nOTUOX0o8JF+rW/IlEflQltQT//UV8V3tq/0i7xWt/nFi7/IgCLwuWPggDFc/UpQa
+ ScY7sRmOPoenjx2DCZmJFqejkcJSq0GXH6L01Y3Bu/E+CAdG3pGi/IWIljaY4pvZs6uWj6v
+ S/3xdcjbIH5lXXAx8FgVQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2WA180O+chk=:kNlHsfIKuGyMDvxPtcylCJ
+ 23YGUee/0URwHDkLBQL2s4ckQVM1MWY2MB45pTXzbsMO1GGDfoSPVnkgW2RaQ12wohTesWQki
+ 2E70qCWXiwZL1js8K8WqliE6RyorNy7F19Tv0Uj9jAlwYyzTigGbv5gynS1my7XO9gapUVj5h
+ zxvobFzP6iQCSm16uTRpgPx2rDUPSuuDRiFpuhPabJhO6LLI2ktyi9MJztXbgqQuejf+1n1JM
+ bNVDbbV5iIsc3i0KcJ9EG27Lqp7b0O6Dm41C5KlSs0KdppAlT9qkYIFuM5v+FVWEKjeVql7x5
+ uiZi9ESqh62Ras2zRqJS1gAkhfQmljCo3W+dPGI5rFJLhXP+6Aq95l/h6YffV3CJ8EwoR+aeo
+ YnoPPxhKTubjjK/2WeSD0hArDU6/OFL2gDkM+2lSRsoM8P/FNp8qZiG1zECSove1llC4Cl3Mb
+ jheQkatWnTNgUeu/Br9chLmpQL+m2oaWGiIeKlDCwGRLkaWPgcl6mHIwf53OkZcArJzb+hNOI
+ j4hPsiV7rIlP+O9URXh/Bogcaz2OYCNO8VacncFFcdQJhqb6mCJ4GMJagpUpI9bJtYfiJp1T6
+ jOIX50RVhmxVRppZ8UvmD70bLbg0NVJXlZuu7odkwOUwnxIHooS13grn6X7f6k1eBAivDZe3S
+ bzaVGEvf0zcBXyMDRqZD7JpEf9i+oBoL0/H2guwstpUOCmphu+VJNP4z/t/cUveh21piQpIlS
+ K6jcvgnuzhmpT/oagt6U+hmr0Nu8mqF/lA+TbLxRmYzUZxsPXV3pzBR4C9K1cFGCrusSjXm4X
+ 657SpbMqORTQw3thky3B7tc7OBye00AaX4ZglfkCmiTwOhUc9Q=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-niedz., 8 mar 2020 o 18:59 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82=
-(a):
+On Wed, Mar 11, 2020 at 11:57 PM Randy Dunlap <rdunlap@infradead.org> wrote:
 >
-> niedz., 8 mar 2020 o 14:51 Marc Zyngier <maz@kernel.org> napisa=C5=82(a):
-> >
-> > On Tue, 11 Feb 2020 14:12:37 +0100
-> > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> >
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> > > Add the remove() callback to irq_domain_ops which can be used to
-> > > automatically dispose of any host data associated with the domain whe=
-n
-> > > irq_domain_remove() is called.
-> >
-> > I have a hard time buying this. Whatever data that is associated to the
-> > domain is already owned known by whoever created the domain the first
-> > place.
-> >
-> > Since the expected use case is that whoever created the domain also
-> > destroys it, the caller is already in a position to do its own cleanup,
-> > and we don't need any of this.
-> >
-> > So please explain what you are trying to achieve here.
-> >
+> Group /dev/{mem,kmem,nvram,raw,port} driver configs together.
+> This also means that tty configs are now grouped together instead
+> of being split up.
 >
-> I'm mainly trying to remove irq_domain_remove_sim() and make it
-> possible to destroy the interrupt simulator domain with regular
-> irq_domain_remove(). If you prefer that we retain this routine as is,
-> I can limit this series to the first two patches, but I assumed the
-> fewer functions in the interface, the better. If you have a different
-> idea on how to do this - please let me know too.
+> This just moves Kconfig lines around. There are no other changes.
 >
-> Bartosz
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jiri Slaby <jslaby@suse.com>
+> Cc: linux-serial@vger.kernel.org
 
-While this is being discussed - are the first two patches
-uncontroversial enough to make it into v5.7?
+Looks good to me. /dev/raw might not fit into this list, but it's hard
+to come up with a clear definition anyway, and this is definitely
+better than before.
 
-Bartosz
+Acked-by: Arnd Bergmann <arnd@arndb.de>
