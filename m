@@ -2,80 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68DA0182B17
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 09:21:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0FC8182B1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 09:23:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbgCLIVq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 04:21:46 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:52263 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbgCLIVq (ORCPT
+        id S1726548AbgCLIXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 04:23:00 -0400
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:41132 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbgCLIXA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 04:21:46 -0400
-Received: from mail-qt1-f180.google.com ([209.85.160.180]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MIxmm-1it05q2ztK-00KOMq; Thu, 12 Mar 2020 09:21:44 +0100
-Received: by mail-qt1-f180.google.com with SMTP id m33so3657984qtb.3;
-        Thu, 12 Mar 2020 01:21:44 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ1A/IfHUyqD3GeB85kBOFDXJP9EBXp/bjL2OVWjwCovuNgYb+gV
-        pl2Z0oXc/SWU0ZH4Yx0LD3ad5+KrEpKqyBLdVQA=
-X-Google-Smtp-Source: ADFU+vtOQNPznjYe/Sy/lYyrfux9hY5ptAw2nqB8sEyYtJ/TLiMgVZg/2vWZibfn8pDuNY2sEmExUqnpy/rOO3Z723o=
-X-Received: by 2002:aed:3b4c:: with SMTP id q12mr6098643qte.18.1584001303366;
- Thu, 12 Mar 2020 01:21:43 -0700 (PDT)
+        Thu, 12 Mar 2020 04:23:00 -0400
+Received: by mail-qv1-f68.google.com with SMTP id a10so2168929qvq.8
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 01:22:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=P9izz9GwKEkmwA2CN2dI9HFL+pLvd99ZgSLtApoaeDU=;
+        b=XdThVGVLJ8fCTlPp04bt767nww/R0JNiDAgMPRu09nMpRox4DHlFpxcQWyDiIzhi4l
+         zPVbbL4xp6o5xCpctS7Jp/3wRpRJ0j2+c141ucsFPPZ3W/hCO0WyUNj59CUWyKWUbpCr
+         ceV9QtJMukXVzTgsXjnC0BIyprWSiwrhx5yp6mZbqXTFDAYTZ43cmbHSTcodDP8d1Y/K
+         u1Kv5F3EC1oaAjdZLlagq368xSL7t3dTHl7DcezV1iAJSdaZ4v0Epmd4C570b1Ec2YZi
+         /Db/T+9bJl2eydi+gBR8XLQvTZ7bd020wd8IQb/8d11ruupX0FCBQYpAd3ggUotu2DJd
+         W7IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=P9izz9GwKEkmwA2CN2dI9HFL+pLvd99ZgSLtApoaeDU=;
+        b=RXxPFZxcbH6k5kaj0ek+W0lqI/NUNco+3D34EhLWAzppc9F6IMVkNWDG1FHTYo53AY
+         pspRHzog4SE3Wjk4epsOOEZ72RX4zSlth47IWAF9Wj842AU/5bv1RocTG9qJP3sHKmLt
+         IW8+5ZH3kut5eXkFWX6Cvxl7PzJSV4Da3xatRcEU3kPHRsQHbdYr/6TCkCTOg4pE+cRH
+         YTeXh32Pj1uQT0Z+rORll1D/DI0zwL+XofZ8c1nLa18DhhpeajU9OV23cjGKxDDd0pxO
+         MOsMqkATvaKuRlwX5pWNKj9XqXk62VpTTwRkf7yGMxP+4U8GCNyfipEFMZshi/Ll9dhf
+         EgwA==
+X-Gm-Message-State: ANhLgQ2p6AzNDd2TXICGwKd9tR2auDy3q+Rtf5baJlKEc081Y4YBb2kb
+        H6Z8x+Cgu67wAnhCQTpaKZoqwYysZHzVQh82QMe2AqRq
+X-Google-Smtp-Source: ADFU+vsJMDMQ1KzRZrYFym7/k0h4j5yi56oLBBmOZI8IRsJ++T2KNTs2w7I/VIUzjgv1K8oDQuyP8jHKibG5FlX1gps=
+X-Received: by 2002:ad4:5429:: with SMTP id g9mr6058767qvt.134.1584001379162;
+ Thu, 12 Mar 2020 01:22:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200311225736.32147-1-rdunlap@infradead.org> <20200311225736.32147-4-rdunlap@infradead.org>
-In-Reply-To: <20200311225736.32147-4-rdunlap@infradead.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 12 Mar 2020 09:21:27 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a3RJ=6Gdz-GGGoqB9n9TRdhpuYwwiJO1mJ8500OguYpAg@mail.gmail.com>
-Message-ID: <CAK8P3a3RJ=6Gdz-GGGoqB9n9TRdhpuYwwiJO1mJ8500OguYpAg@mail.gmail.com>
-Subject: Re: [PATCH 3/3 v2] tty: reorganize tty & serial menus
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+References: <1583780521-45702-1-git-send-email-opendmb@gmail.com>
+ <CAMpxmJXNQQTxRWZSP0RZTUuefAk3+AeDMVeVkgERy7f9X=CBsA@mail.gmail.com> <7fcc5cb2-5fdb-d1cf-e55b-c0f2d407e072@gmail.com>
+In-Reply-To: <7fcc5cb2-5fdb-d1cf-e55b-c0f2d407e072@gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Thu, 12 Mar 2020 09:22:47 +0100
+Message-ID: <CAMpxmJX40tfNUqrqDwa+GEGAD9QuLym=jLi2MPuQX-FZS2Z9sQ@mail.gmail.com>
+Subject: Re: [PATCH V2] gpio: brcmstb: support gpio-line-names property
+To:     Doug Berger <opendmb@gmail.com>
+Cc:     Gregory Fong <gregory.0xf0@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:krMIOC6iue83XsEuQ/nY9eWlQawjPX2hCkjC9gf+NWTIQRqwxPj
- ji5rVchQb1tloRlX90KtJBU8HhIUL6PUMv5Icb9vYEkuDICGa1YyTYZ3jRmGr3+2lv7UJ8l
- cAZ0Z9nubCNPdqNChGFIZT632CK5P8gxqmWair328X4SDi+EDM+nSXbURkOrPfoIcju2jY9
- prAuSXwOA3jpy6iKIcnew==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:jTxOpbX2+ek=:+1VQYEqz2i0UmlerZRJFqE
- rBmc11qY5a+A52yJIGsdHDfw/JT2cRUlnV2TATuRrxqVYzxtb2ZV1KvntbSBvaAElU+HR64fR
- 6AVdp2YlPxXQkcHD60ZP9o5oKLMmsgZqS2VnCP2xC7s38wUUDqqg9AGhdoXrHvKISOo8jdEF4
- +VL5j5ZXGpCp6ufpFvPn6JErwCHzwz6vFe7LEIZKwavch56BgcvGWeJ9pTv/Y+ILaJoZ63Psy
- Uh+rXp7QpFR9jcdG5yP5PjE5DTAwLmerZOEDVMsgogi0FwzoeZlv8lY6eDJoK1CaI7hngRmku
- Gza6jIb4an4cdk+h8sDluHFuSH5RO42SX+2x+PMOmpKjgiJcLLa1ihOv+L7tBJSY11fX8BEZL
- pm7jw0P/RWqv/015cQ1ReTs9n2hUdXAASgzgrdYaPsFkILing1xcKdDUoWtV4d64y9sAEcOH1
- R7iBlDFvUDREqVm908pTwQZJW0siDxmCJItpXxBft64Z+01vUKk2aAq+dMtMOeCarRxTxqkM6
- pkm6PBZHxK8sj7Gsq54OFK5iNRUfODCJYq+G4UdaeqpHolrvbJnteo9ws9oveUWUuMw0st5pj
- vlNOaeFrE3/GJVWhYYoqUtfrTKRmunktcHiJxXq936W70CEjqttAyQBjpFHjrdeL6rJQ4LeNB
- iEQVf5wP0gjmAHhX/t1au8yHvZDid68BQ/wtcOK01VSybDCV6rryD+KcoAWgFFBQViUan8wn7
- MRw3bWBn1eNPpGF8mWr1CYhKi5/4QC2VRSWBkuBORt3zzEvw8CeJ3bMAyk7J6ANncDeYIOSyB
- MP+LW5HFYoE75GzZND8rqyCjyv/2kdnvh2DoSu72qH8vJQjmkY=
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 11:57 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+=C5=9Br., 11 mar 2020 o 20:03 Doug Berger <opendmb@gmail.com> napisa=C5=82(=
+a):
 >
-> Move LDISC_AUTOLOAD ahead of the Serial drivers menu.
+> The label names are viewed as a convenience for the user and are not
+> necessary for the proper functionality of the driver and device, so we
+> don't want to prevent the driver from succeeding at probe due to an
+> error in the gpio-line-names property. The bank->gc.names member is
+> still made non-NULL which is what we really care about to prevent the
+> misapplication of label names by devprop_gpiochip_set_names().
 >
-> Move the Serial drivers menu ahead of the Non-standard serial port
-> support menu.
+> In fact, it is expected that the device-tree will only include label
+> strings up to the last GPIO of interest so the ENODATA error is
+> considered a valid result to terminate any further labeling so there is
+> no need for an error message in that case.
 >
-> Move NOZOMI out of the SERIAL_NONSTANDARD area since it does not
-> depend on SERIAL_NONSTANDARD and it breaks the SERIAL_NONSTANDARD
-> menu list.
+> Other error results are unexpected so an error message indicating the
+> consequence of the error is appropriate here.
 >
-> Alphabetize the remaining drivers (in tty/Kconfig) by their prompt strings.
-> [The drivers in tty/hvc/Kconfig and tty/serial/Kconfig have not
-> been alphabetized.]
+> I'm not sure which aspect is confusing to you, so it's not clear to me
+> how best to comment the code. I can hazard a guess, but if you have a
+> suggestion I'm happy to submit a v3.
 >
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jiri Slaby <jslaby@suse.com>
+> Thanks for taking the time to review this,
+>     Doug
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+No it's fine, thank you for the explanation.
+
+Bartosz
