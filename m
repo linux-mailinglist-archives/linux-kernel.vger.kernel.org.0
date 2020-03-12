@@ -2,162 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E383F183CF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 00:03:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02D1A183D0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 00:08:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726837AbgCLXDA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 19:03:00 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:33784 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbgCLXDA (ORCPT
+        id S1726822AbgCLXIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 19:08:30 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:58099 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726752AbgCLXIa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 19:03:00 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A2B7F5F;
-        Fri, 13 Mar 2020 00:02:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1584054177;
-        bh=n1RmDaPINq/9UEwuYap1gQ4IHXGw18k1yY1Z161d2l8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=j0RzlUpFWNePXY9BtYpu/R2uq3jNPUKgnQGwJF0K3Nz0EG3g4AuRS/fbjYO2/3ImW
-         e8f0pYaoq5lQdcGdl0VaHfek8/F/HWkmijLUyU6rU0ujXnseBFkZ/CmAFDXCHGhcTh
-         TF7GLUK33rMLlZhRKGreLMqV66Gg2tzb9p+WKG5E=
-Date:   Fri, 13 Mar 2020 01:02:53 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] media: i2c: ov5645: Switch to assigned-clock-rates
-Message-ID: <20200312230253.GB30932@pendragon.ideasonboard.com>
-References: <1584047552-20166-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1584047552-20166-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdUgMHjU_ZANzJbxQji6K7Pdc-jD4C7JatQc-OtN=jJt_w@mail.gmail.com>
- <OSBPR01MB3590906C6121D1DFFF4ABF0DAAFD0@OSBPR01MB3590.jpnprd01.prod.outlook.com>
+        Thu, 12 Mar 2020 19:08:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584054509;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=h4wdU2a9XoFrutcCJNoK3uetDhXcg3rLVvbtWHaFulA=;
+        b=bvju6hx1UPnwzfQvOV/dgPNYBoUthv9xdCNTekULK/aT9amNV+f8hh+pz2NpLc/uZMOQ/g
+        pkzRB9Zxq46X/1p7q1tOaPOrRZHPsMRan0SgQtgNMzM/FHOTqRnMxximbh3nkGruTP1F2h
+        mip0UmbasBKWOZwWGiY+3Ez75vvghkg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-444-DfpokljDPvucxZeEsqrfkg-1; Thu, 12 Mar 2020 19:08:27 -0400
+X-MC-Unique: DfpokljDPvucxZeEsqrfkg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D02AA107ACC9;
+        Thu, 12 Mar 2020 23:08:25 +0000 (UTC)
+Received: from localhost (ovpn-121-102.rdu2.redhat.com [10.10.121.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 859551001902;
+        Thu, 12 Mar 2020 23:08:22 +0000 (UTC)
+From:   Bruno Meneguele <bmeneg@redhat.com>
+To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc:     GLin@suse.com, davem@davemloft.net, kuba@kernel.org,
+        ast@kernel.org, Bruno Meneguele <bmeneg@redhat.com>
+Subject: [PATCH v2] net/bpfilter: fix dprintf usage for /dev/kmsg
+Date:   Thu, 12 Mar 2020 20:08:20 -0300
+Message-Id: <20200312230820.2132069-1-bmeneg@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <OSBPR01MB3590906C6121D1DFFF4ABF0DAAFD0@OSBPR01MB3590.jpnprd01.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Prabhakar,
+The bpfilter UMH code was recently changed to log its informative message=
+s to
+/dev/kmsg, however this interface doesn't support SEEK_CUR yet, used by
+dprintf(). As result dprintf() returns -EINVAL and doesn't log anything.
 
-On Thu, Mar 12, 2020 at 09:52:38PM +0000, Prabhakar Mahadev Lad wrote:
-> On 12 March 2020 21:42, Geert Uytterhoeven wrote:
-> > On Thu, Mar 12, 2020 at 10:13 PM Lad Prabhakar wrote:
-> > > This patch switches to assigned-clock-rates for specifying the clock rate.
-> > > The clk-conf.c internally handles setting the clock rate when
-> > > assigned-clock-rates is passed.
-> > >
-> > > The driver now sets the clock frequency only if the deprecated
-> > > property clock-frequency is defined instead assigned-clock-rates, this
-> > > is to avoid breakage with existing DT binaries.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Thanks for your patch!
-> >
-> > > --- a/drivers/media/i2c/ov5645.c
-> > > +++ b/drivers/media/i2c/ov5645.c
-> > > @@ -1055,6 +1055,7 @@ static int ov5645_probe(struct i2c_client *client)
-> > >         struct device_node *endpoint;
-> > >         struct ov5645 *ov5645;
-> > >         u8 chip_id_high, chip_id_low;
-> > > +       bool set_clk = false;
-> > >         unsigned int i;
-> > >         u32 xclk_freq;
-> > >         int ret;
-> > > @@ -1094,10 +1095,17 @@ static int ov5645_probe(struct i2c_client
-> > *client)
-> > >                 return PTR_ERR(ov5645->xclk);
-> > >         }
-> > >
-> > > -       ret = of_property_read_u32(dev->of_node, "clock-frequency",
-> > &xclk_freq);
-> > > +       ret = of_property_read_u32(dev->of_node, "assigned-clock-rates",
-> > > +                                  &xclk_freq);
-> > >         if (ret) {
-> >
-> > I think you can just leave out the above check...
-> >
-> > > -               dev_err(dev, "could not get xclk frequency\n");
-> > > -               return ret;
-> > > +               /* check if deprecated property clock-frequency is defined */
-> > > +               ret = of_property_read_u32(dev->of_node, "clock-frequency",
-> > > +                                          &xclk_freq);
-> > > +               if (ret) {
-> >
-> > ... and ignore the absence of the deprecated property.
-> >
-> > > +                       dev_err(dev, "could not get xclk frequency\n");
-> > > +                       return ret;
-> > > +               }
-> > > +               set_clk = true;
-> >
-> > I.e. just
-> >
-> >         /* check if deprecated property clock-frequency is defined */
-> >         xclk_freq = 0;
-> >         of_property_read_u32(dev->of_node, "clock-frequency", &xclk_freq);
-> >         if (xclk_freq) {
-> >                 ret = clk_set_rate(ov5645->xclk, xclk_freq);
-> >                 if (ret) {
-> >                         dev_err(dev, "could not set xclk frequency\n");
-> >                         return ret;
-> >                 }
-> >         } else {
-> >                 xclk_freq = clk_get_rate(ov5645->xclk, xclk_freq);
-> >         }
-> >
-> I did think about it initially, but realized the clk_get_rate may vary platform to platform
-> for example in G2E clk_get_rate() returns a frequency of 24242424 with
-> assigned-clock-rates set to  24000000 and probe would fail due to a check for
-> external clock must be 24MHz, with 1% tolerance.
+However there already had some discussions about supporting SEEK_CUR into
+/dev/kmsg interface in the past it wasn't concluded. Since the only user =
+of
+that from userspace perspective inside the kernel is the bpfilter UMH
+(userspace) module it's better to correct it here instead waiting a concl=
+usion
+on the interface.
 
-Then you need to handle the tolerance in this driver :-)
+Fixes: 36c4357c63f3 ("net: bpfilter: print umh messages to /dev/kmsg")
+Signed-off-by: Bruno Meneguele <bmeneg@redhat.com>
+---
+ net/bpfilter/main.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-> > >         }
-> > >
-> > >         /* external clock must be 24MHz, allow 1% tolerance */ @@
-> > > -1107,10 +1115,12 @@ static int ov5645_probe(struct i2c_client *client)
-> > >                 return -EINVAL;
-> > >         }
-> > >
-> > > -       ret = clk_set_rate(ov5645->xclk, xclk_freq);
-> > > -       if (ret) {
-> > > -               dev_err(dev, "could not set xclk frequency\n");
-> > > -               return ret;
-> > > +       if (set_clk) {
-> > > +               ret = clk_set_rate(ov5645->xclk, xclk_freq);
-> > > +               if (ret) {
-> > > +                       dev_err(dev, "could not set xclk frequency\n");
-> > > +                       return ret;
-> > > +               }
-> > >
-> > >         }
-> > >
-> > >         for (i = 0; i < OV5645_NUM_SUPPLIES; i++)
+diff --git a/net/bpfilter/main.c b/net/bpfilter/main.c
+index 77396a098fbe..efea4874743e 100644
+--- a/net/bpfilter/main.c
++++ b/net/bpfilter/main.c
+@@ -10,7 +10,7 @@
+ #include <asm/unistd.h>
+ #include "msgfmt.h"
+=20
+-int debug_fd;
++FILE *debug_f;
+=20
+ static int handle_get_cmd(struct mbox_request *cmd)
+ {
+@@ -35,9 +35,10 @@ static void loop(void)
+ 		struct mbox_reply reply;
+ 		int n;
+=20
++		fprintf(debug_f, "testing the buffer\n");
+ 		n =3D read(0, &req, sizeof(req));
+ 		if (n !=3D sizeof(req)) {
+-			dprintf(debug_fd, "invalid request %d\n", n);
++			fprintf(debug_f, "invalid request %d\n", n);
+ 			return;
+ 		}
+=20
+@@ -47,7 +48,7 @@ static void loop(void)
+=20
+ 		n =3D write(1, &reply, sizeof(reply));
+ 		if (n !=3D sizeof(reply)) {
+-			dprintf(debug_fd, "reply failed %d\n", n);
++			fprintf(debug_f, "reply failed %d\n", n);
+ 			return;
+ 		}
+ 	}
+@@ -55,9 +56,10 @@ static void loop(void)
+=20
+ int main(void)
+ {
+-	debug_fd =3D open("/dev/kmsg", 00000002);
+-	dprintf(debug_fd, "Started bpfilter\n");
++	debug_f =3D fopen("/dev/kmsg", "w");
++	setvbuf(debug_f, 0, _IOLBF, 0);
++	fprintf(debug_f, "Started bpfilter\n");
+ 	loop();
+-	close(debug_fd);
++	fclose(debug_f);
+ 	return 0;
+ }
+--=20
+2.24.1
 
--- 
-Regards,
-
-Laurent Pinchart
