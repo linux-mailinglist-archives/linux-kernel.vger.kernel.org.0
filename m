@@ -2,72 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5695183200
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:49:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96D6618320C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:51:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbgCLNto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:49:44 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:60477 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726299AbgCLNto (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:49:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584020983;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CJs8yOMXumhEsBAQIQNOmZwhjwQqs4MeidJ20K6lf6M=;
-        b=ZUXzgAItwOlbusT9W6m0ffsAGzEpiNndLBcJdxW0kUTJIikBspoz+o/iL1msR01a4tGFIE
-        dHQLOj/0kseDgh9K+91NV7SCmv5Bhe5Y4z8qaOLDeTUIl7UKr8FapPqbp7dQB6vE9dIfIK
-        PtyUJLpM/PkTFVkFOELSataTeJYuZs0=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-387-jZYbkkGCNwqYpPfJ6pjZpw-1; Thu, 12 Mar 2020 09:49:42 -0400
-X-MC-Unique: jZYbkkGCNwqYpPfJ6pjZpw-1
-Received: by mail-wr1-f70.google.com with SMTP id l16so1922771wrr.6
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:49:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CJs8yOMXumhEsBAQIQNOmZwhjwQqs4MeidJ20K6lf6M=;
-        b=q9Vje46RE9QNfrAFm8zY37kwHYCXoP2Fknflhuns85jb7B2yMysEzDx7dkNgp6CX7m
-         tqsy0RzJgGDXaYVxEUeNlEMIv6DU56GHCB+1ru8gPfyh5dU74AJINkIrV2fFEfS3qoni
-         KXxiL3V/j/X+zzLvWqf1xhfArWn8as029DLOE64l+Mm9tmE9FMW5rlBHBvox+OM/3Y0P
-         eM6mON+k8Pne5MpDr8pwQn8aE55wi31lzfyAUSM9TRzZVY1x5oE4VMoNhgYKnpmhCqwB
-         qtL/6yyxoigEmeOaQUc9aq1g0oypbiuW+PB4Pb7DiXM0aRgm2NPxwklOnjPsnTO1BajR
-         +IIg==
-X-Gm-Message-State: ANhLgQ3rL/xvjxCUmQAwZSZGXHS6SY5QjXnshaPmvw53IxuKf2vtH74c
-        jopoun0qHuaYwD0ZTasHS76bEKHXl3iF+mMuM1Z7S0nLr7Fyf4aXWMZzCBSFtZgguENxx0jquKN
-        rc2/NR1OlqWuZr9Yi5fceTs8F
-X-Received: by 2002:adf:f847:: with SMTP id d7mr10753585wrq.31.1584020980565;
-        Thu, 12 Mar 2020 06:49:40 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vtKExZ6/bWWQcZnhHrIyO98G2UtYV/EjSkAe+g7eZomMLrn+gXs4sxMr/u97SFeMezwkn3ubQ==
-X-Received: by 2002:adf:f847:: with SMTP id d7mr10753567wrq.31.1584020980343;
-        Thu, 12 Mar 2020 06:49:40 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c0c-fe00-fc7e-fd47-85c1-1ab3.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:fc7e:fd47:85c1:1ab3])
-        by smtp.gmail.com with ESMTPSA id g7sm274970wrs.68.2020.03.12.06.49.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Mar 2020 06:49:39 -0700 (PDT)
-Subject: Re: [tip: irq/core] x86: Select HARDIRQS_SW_RESEND on x86
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     linux-tip-commits@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>
-References: <20200123210242.53367-1-hdegoede@redhat.com>
- <158396292503.28353.1070405680109587154.tip-bot2@tip-bot2>
- <CACRpkdYPy93bDwPe1wHhcwpgN9uXepKXS1Ca5yFmDVks=r0RoQ@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <1cb0397f-e583-3d7e-dff3-2cc916219846@redhat.com>
-Date:   Thu, 12 Mar 2020 14:49:39 +0100
+        id S1727556AbgCLNvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:51:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37738 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727471AbgCLNvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 09:51:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 96743AC8F;
+        Thu, 12 Mar 2020 13:51:39 +0000 (UTC)
+Subject: Re: [PATCH 1/3] powerpc/numa: Set numa_node for all possible cpus
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Sachin Sant <sachinp@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org, Christopher Lameter <cl@linux.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>
+References: <20200311110237.5731-1-srikar@linux.vnet.ibm.com>
+ <20200311110237.5731-2-srikar@linux.vnet.ibm.com>
+ <20200311115735.GM23944@dhcp22.suse.cz>
+ <20200312052707.GA3277@linux.vnet.ibm.com>
+ <C5560C71-483A-41FB-BDE9-526F1E0CFA36@linux.vnet.ibm.com>
+ <5e5c736a-a88c-7c76-fc3d-7bc765e8dcba@suse.cz>
+ <20200312131438.GB3277@linux.vnet.ibm.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <61437352-8b54-38fa-4471-044a65c9d05a@suse.cz>
+Date:   Thu, 12 Mar 2020 14:51:38 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYPy93bDwPe1wHhcwpgN9uXepKXS1Ca5yFmDVks=r0RoQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200312131438.GB3277@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,93 +48,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 3/12/20 2:31 PM, Linus Walleij wrote:
-> On Wed, Mar 11, 2020 at 10:42 PM tip-bot2 for Hans de Goede
-> <tip-bot2@linutronix.de> wrote:
+On 3/12/20 2:14 PM, Srikar Dronamraju wrote:
+> * Vlastimil Babka <vbabka@suse.cz> [2020-03-12 10:30:50]:
 > 
->>          select GENERIC_GETTIMEOFDAY
->>          select GENERIC_VDSO_TIME_NS
->>          select GUP_GET_PTE_LOW_HIGH             if X86_PAE
->> +       select HARDIRQS_SW_RESEND
+>> On 3/12/20 9:23 AM, Sachin Sant wrote:
+>> >> On 12-Mar-2020, at 10:57 AM, Srikar Dronamraju <srikar@linux.vnet.ibm.com> wrote:
+>> >> * Michal Hocko <mhocko@kernel.org> [2020-03-11 12:57:35]:
+>> >>> On Wed 11-03-20 16:32:35, Srikar Dronamraju wrote:
+>> >>>> To ensure a cpuless, memoryless dummy node is not online, powerpc need
+>> >>>> to make sure all possible but not present cpu_to_node are set to a
+>> >>>> proper node.
+>> >>> 
+>> >>> Just curious, is this somehow related to
+>> >>> http://lkml.kernel.org/r/20200227182650.GG3771@dhcp22.suse.cz?
+>> >>> 
+>> >> 
+>> >> The issue I am trying to fix is a known issue in Powerpc since many years.
+>> >> So this surely not a problem after a75056fc1e7c (mm/memcontrol.c: allocate
+>> >> shrinker_map on appropriate NUMA node"). 
+>> >> 
+>> >> I tried v5.6-rc4 + a75056fc1e7c but didnt face any issues booting the
+>> >> kernel. Will work with Sachin/Abdul (reporters of the issue).
 > 
-> Just help me understand the semantics of this thing...
+> I had used v1 and not v2. So my mistake.
 > 
-> According to the text in KConfig:
+>> > I applied this 3 patch series on top of March 11 next tree (commit d44a64766795 )
+>> > The kernel still fails to boot with same call trace.
+>> 
 > 
-> # Tasklet based software resend for pending interrupts on enable_irq()
-> config HARDIRQS_SW_RESEND
->         bool
+> While I am not an expert in the slub area, I looked at the patch
+> a75056fc1e7c and had some thoughts on why this could be causing this issue.
 > 
-> According to
-> commit a4633adcdbc15ac51afcd0e1395de58cee27cf92
+> On the system where the crash happens, the possible number of nodes is much
+> greater than the number of onlined nodes. The pdgat or the NODE_DATA is only
+> available for onlined nodes.
 > 
->      [PATCH] genirq: add genirq sw IRQ-retrigger
+> With a75056fc1e7c memcg_alloc_shrinker_maps, we end up calling kzalloc_node
+> for all possible nodes and in ___slab_alloc we end up looking at the
+> node_present_pages which is NODE_DATA(nid)->node_present_pages.
+> i.e for a node whose pdgat struct is not allocated, we are trying to
+> dereference.
+
+From what we saw, the pgdat does exist, the problem is that slab's per-node data
+doesn't exist for a node that doesn't have present pages, as it would be a waste
+of memory.
+
+Uh actually you are probably right, the NODE_DATA doesn't exist anymore? In
+Sachin's first report [1] we have
+
+[    0.000000] numa:   NODE_DATA [mem 0x8bfedc900-0x8bfee3fff]
+[    0.000000] numa:     NODE_DATA(0) on node 1
+[    0.000000] numa:   NODE_DATA [mem 0x8bfed5200-0x8bfedc8ff]
+
+But in this thread, with your patches Sachin reports:
+
+[    0.000000] numa:   NODE_DATA [mem 0x8bfedc900-0x8bfee3fff]
+
+So I assume it's just node 1. In that case, node_present_pages is really dangerous.
+
+[1]
+https://lore.kernel.org/linux-next/3381CD91-AB3D-4773-BA04-E7A072A63968@linux.vnet.ibm.com/
+
+> Also for a memoryless/cpuless node or possible but not present nodes,
+> node_to_mem_node(node) will still end up as node (atleast on powerpc).
+
+I think that's the place where this would be best to fix.
+
+> I tried with this hunk below and it works.
 > 
->      Enable platforms that do not have a hardware-assisted
-> hardirq-resend mechanism
->      to resend them via a softirq-driven IRQ emulation mechanism.
+> But I am not sure if we need to check at other places were
+> node_present_pages is being called.
+
+I think this seems to defeat the purpose of node_to_mem_node()? Shouldn't it
+return only nodes that are online with present memory?
+CCing Joonsoo who seems to have introduced this in ad2c8144418c ("topology: add
+support for node_to_mem_node() to determine the fallback node")
+
+I think we do need well defined and documented rules around node_to_mem_node(),
+cpu_to_node(), existence of NODE_DATA, various node_states bitmaps etc so
+everyone handles it the same, safe way.
+
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 626cbcbd977f..bddb93bed55e 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -2571,9 +2571,13 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
+>  	if (unlikely(!node_match(page, node))) {
+>  		int searchnode = node;
+>  
+> -		if (node != NUMA_NO_NODE && !node_present_pages(node))
+> -			searchnode = node_to_mem_node(node);
+> -
+> +		if (node != NUMA_NO_NODE) {
+> +			if (!node_online(node) || !node_present_pages(node)) {
+> +				searchnode = node_to_mem_node(node);
+> +				if (!node_online(searchnode))
+> +					searchnode = first_online_node;
+> +			}
+> +		}
+>  		if (unlikely(!node_match(page, searchnode))) {
+>  			stat(s, ALLOC_NODE_MISMATCH);
+>  			deactivate_slab(s, page, c->freelist, c);
 > 
-> so when enable_irq() is called, if the IRQ is already asserted,
-> it will be distributed in the form of a software irq?
+>> > 
+>> 
 > 
-> OK I give up I don't understand the semantics of this thing.
-> 
-> Maybe it's because I think of a register where the IRQ line
-> is just a level IRQ bit thing that stays high as long as the IRQ
-> is not handled.
-> 
-> So I suppose it is for any type of transient IRQ such as
-> edge triggered that happened before the system came back
-> online entirely and now the only remnant of it is a bit in
-> the irchip status register?
-
-The way I understand it is like this:
-
-1. We have an edge triggered IRQ from a peripheral to a
-GPIO controller
-
-2. We have a level triggered IRQ from the GPIO controller to the
-"root" IRQ controller.
-
-3. With modern x86 suspend, we do not really put the entire
-system in a firmware-controller suspend state, instead the CPU is
-halted until any IRQ happens; and there is a power-management
-micro-controller which shuts various things down while the CPU
-is halted leading to similar power consumption as old S3 suspend.
-
-The combination of these 3 means that we must ack the edge
-triggered IRQ at the GPIO controller level even while suspended
-(we briefly wake up for this) to make the level-triggered IRQ
-coming from the GPIO controller low so that we can go back to sleep.
-
-When this happens we record in the kernel IRQ tracking data for
-the edge-triggered IRQ tied to the GPIO (there are no "remnants"
-of it in any chuip registers), that the IRQ needs to be replayed
-on resume. Some IRQ controllers allow writing a register to
-retrigger the IRQ without the level on the external GPIO actually
-changing.
-
-Some IRQ controllers do not allow this, in this case we need to
-emulate this retriggering in software, this is what the
-HARDIRQS_SW_RESEND option is for, this handles this in a generic
-way, so that we do not have to add emulation to every IRQ-chip
-driver where the hardware lacks a "retrigger" register.
-
-> I see that ARM and ARM64 simply just select this. What
-> happens if you do that and why is x86 not selecting it in general?
-
-Erm, "selecting it in general" (well at least on x86) is what
-this patch is doing. But I guess you mean why is this not
-selected on all architectures?  If I've understood tglx correctly
-the HARDIRQS_SW_RESEND option is incompatible with some irq-chip
-drivers. I think it was incompatible with using nested threaded
-handlers are some such...
-
-tglx can probably explain this way better then I can :)
-
-Regards,
-
-Hans
 
