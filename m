@@ -2,54 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9A0718270A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 03:30:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6CB518271B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 03:43:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387662AbgCLC3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 22:29:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:32970 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387608AbgCLC3u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 22:29:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=1Jj6L8vIcZ93mZ6eanG7loVD291lPrGo+W34O45vAww=; b=HIShHKkeQH+3yNOsaYMjZBAn0o
-        LxgYzRbK8kN8tAOUHcRHX18tSVWlTb9yexsxk+5sDZic+MpENzPUMWEFl6V9UvvkEp3W+7AcVF4w+
-        /g1YlvOU/R+R594ghg5lUax6xjXiX5FsG4j0slA/7V7o2Xkyt8vrcjuG/PVZSTaQ4qWiH5qYgen2+
-        VgjPRy36KC55yPk5/d2IO89IvCf/1j7Ao9o/OPxwvZBOjS636jziQ3KRGgBjLfxCgHrV++XGKGbHP
-        uSD4Qe+ER5RmV1cKeWvM9ink9+Pj2V86+AwKqcvP7QgXK6UJhuxpyR1ej5QiSoELlwlF2JlDLPBOF
-        jkDrc7eg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCDbZ-000361-13; Thu, 12 Mar 2020 02:29:49 +0000
-Date:   Wed, 11 Mar 2020 19:29:48 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jules Irenge <jbi.octave@gmail.com>, boqun.feng@gmail.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] backing-dev: refactor wb_congested_put()
-Message-ID: <20200312022948.GH22433@bombadil.infradead.org>
-References: <20200312002156.49023-1-jbi.octave@gmail.com>
- <20200312002156.49023-2-jbi.octave@gmail.com>
- <20200311175919.30523d55b2e5307ba22bbdc0@linux-foundation.org>
+        id S2387694AbgCLCm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 22:42:57 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11664 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387411AbgCLCm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 22:42:56 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 964B35ED28EA7C162979;
+        Thu, 12 Mar 2020 10:42:48 +0800 (CST)
+Received: from ubuntu.huawei.com (10.175.104.215) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.487.0; Thu, 12 Mar 2020 10:42:40 +0800
+From:   tongtiangen <tongtiangen@huawei.com>
+To:     <robdclark@gmail.com>, <sean@poorly.run>, <airlied@linux.ie>,
+        <daniel@ffwll.ch>, <ddavenport@chromium.org>,
+        <gregkh@linuxfoundation.org>, <abhinavk@codeaurora.org>,
+        <jcrouse@codeaurora.org>, <tglx@linutronix.de>,
+        <tongtiangen@huawei.com>
+CC:     <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] drm/msm/dpu: Remove some set but not used variables
+Date:   Thu, 12 Mar 2020 08:25:59 +0800
+Message-ID: <20200312002559.20738-1-tongtiangen@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200311175919.30523d55b2e5307ba22bbdc0@linux-foundation.org>
+Content-Type: text/plain
+X-Originating-IP: [10.175.104.215]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 05:59:19PM -0700, Andrew Morton wrote:
-> hm, it's hard to get excited over this.  Open-coding the
-> refcount_dec_and_lock_irqsave() internals at a callsite in order to
-> make sparse happy.
-> 
-> Is there some other way, using __acquires (for example)?
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-sparse is really bad at conditional lock acquisition.  we have similar
-problems over the vfs.  but we shouldn't be obfuscating our code to make
-the tool happy.
+drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c: In function _dpu_debugfs_show_regset32:
+drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c:142:26: warning: variable priv set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c: In function dpu_kms_prepare_commit:
+drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c:271:21: warning: variable dev set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c: In function _dpu_kms_hw_destroy:
+drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c:555:21: warning: variable dev set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c: In function dpu_kms_hw_init:
+drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c:763:26: warning: variable priv set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c: In function dpu_runtime_suspend:
+drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c:1021:21: warning: variable ddev set but not used [-Wunused-but-set-variable]
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: tongtiangen <tongtiangen@huawei.com>
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+index cb08fafb1dc1..089d1cde39da 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+@@ -138,16 +138,12 @@ static int _dpu_debugfs_show_regset32(struct seq_file *s, void *data)
+ {
+ 	struct dpu_debugfs_regset32 *regset = s->private;
+ 	struct dpu_kms *dpu_kms = regset->dpu_kms;
+-	struct drm_device *dev;
+-	struct msm_drm_private *priv;
+ 	void __iomem *base;
+ 	uint32_t i, addr;
+ 
+ 	if (!dpu_kms->mmio)
+ 		return 0;
+ 
+-	dev = dpu_kms->dev;
+-	priv = dev->dev_private;
+ 	base = dpu_kms->mmio + regset->offset;
+ 
+ 	/* insert padding spaces, if needed */
+@@ -267,8 +263,6 @@ static ktime_t dpu_kms_vsync_time(struct msm_kms *kms, struct drm_crtc *crtc)
+ static void dpu_kms_prepare_commit(struct msm_kms *kms,
+ 		struct drm_atomic_state *state)
+ {
+-	struct dpu_kms *dpu_kms;
+-	struct drm_device *dev;
+ 	struct drm_crtc *crtc;
+ 	struct drm_crtc_state *crtc_state;
+ 	struct drm_encoder *encoder;
+@@ -276,8 +270,6 @@ static void dpu_kms_prepare_commit(struct msm_kms *kms,
+ 
+ 	if (!kms)
+ 		return;
+-	dpu_kms = to_dpu_kms(kms);
+-	dev = dpu_kms->dev;
+ 
+ 	/* Call prepare_commit for all affected encoders */
+ 	for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
+@@ -552,11 +544,8 @@ static long dpu_kms_round_pixclk(struct msm_kms *kms, unsigned long rate,
+ 
+ static void _dpu_kms_hw_destroy(struct dpu_kms *dpu_kms)
+ {
+-	struct drm_device *dev;
+ 	int i;
+ 
+-	dev = dpu_kms->dev;
+-
+ 	if (dpu_kms->hw_intr)
+ 		dpu_hw_intr_destroy(dpu_kms->hw_intr);
+ 	dpu_kms->hw_intr = NULL;
+@@ -760,7 +749,6 @@ static int dpu_kms_hw_init(struct msm_kms *kms)
+ {
+ 	struct dpu_kms *dpu_kms;
+ 	struct drm_device *dev;
+-	struct msm_drm_private *priv;
+ 	int i, rc = -EINVAL;
+ 
+ 	if (!kms) {
+@@ -770,7 +758,6 @@ static int dpu_kms_hw_init(struct msm_kms *kms)
+ 
+ 	dpu_kms = to_dpu_kms(kms);
+ 	dev = dpu_kms->dev;
+-	priv = dev->dev_private;
+ 
+ 	atomic_set(&dpu_kms->bandwidth_ref, 0);
+ 
+@@ -1018,10 +1005,8 @@ static int __maybe_unused dpu_runtime_suspend(struct device *dev)
+ 	int rc = -1;
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct dpu_kms *dpu_kms = platform_get_drvdata(pdev);
+-	struct drm_device *ddev;
+ 	struct dss_module_power *mp = &dpu_kms->mp;
+ 
+-	ddev = dpu_kms->dev;
+ 	rc = msm_dss_enable_clk(mp->clk_config, mp->num_clk, false);
+ 	if (rc)
+ 		DPU_ERROR("clock disable failed rc:%d\n", rc);
+-- 
+2.17.1
+
