@@ -2,124 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A661B1831C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:40:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65C92183208
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:51:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbgCLNkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:40:42 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:46738 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbgCLNkl (ORCPT
+        id S1727422AbgCLNvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:51:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56978 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727315AbgCLNvj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:40:41 -0400
-Received: by mail-il1-f195.google.com with SMTP id e8so5453896ilc.13
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:40:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6fRFcMHQQvgXUMu9ji5eLUkSQJ3mpFpcehi61CBMmK0=;
-        b=q21WvNG+GvuYoEsq+TO9ASqezouRrFYukS0qs9+/FVkQ/489coT/AQ8ax1hFwqHRJU
-         MRhWI8dBvnOqOCK8t7K4nymV9ovnw2DZ6ITSGhPcQl9cZO6PZEj2yf52T8wlLvemuVxF
-         F/ioKw6MzcvahxTLKevhohlkvYngYaJYf8uDkmlqredqzJAnozwoBnCdnnC8RI79G1Ug
-         LMnNNfOeiZFkQQuOGDJl1NkUIAaMwERSX0o0ZZVRxHuhsVXTFuTO/Q+s6c8Cn4boo6Ip
-         Mk6LYop6Mw/YDwISqv03OiREVPKhgO/nwF4l77xSI5oZ+exFIKxvT+PwyJBbPdHIqVnl
-         lUJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6fRFcMHQQvgXUMu9ji5eLUkSQJ3mpFpcehi61CBMmK0=;
-        b=r3bStXsjCBF674E5CU33kzxBYAqK1VEyfcOlSTIQt4jwDZwquM33N+VxBWHt6ilAPg
-         z6gVFhrprMNPQHOAsr/bAek6pvtxHX63R9qjaVwyRh9SUUOeJN3nHY+SqowhFOeF2xSV
-         JdaLf/tKd054F4fD/OP84y42l5AVPtHNon2Iv1Anfby868njUd3Y8sZRf48pafrPMNea
-         Z4Mu35g3vPyBsirw8L0L0Szu6pdjAVdm7Genl2BGVbr1tGWFdx/IizLWTGWdFiu9zUSi
-         YHy6PgqT/E2aY7FaNfX3kTjQFwn7OM4Ysx8mFPVFTGzy2abdNNo08UOTHDfVzI4W5ZnK
-         9k/Q==
-X-Gm-Message-State: ANhLgQ1GuLsSkXubBhIOUfdSun0qi+j3mrX1B/kYjTnYp+YOAIHzVvdr
-        3KP4Rmk9QsPShLFjwrzIufbzJQ==
-X-Google-Smtp-Source: ADFU+vvEvnILZdmJhTtPhXDESn8Hgad55q7JHk/nlWdWJ6hY9yEkpLu3FDp2aj8u4ZaG/1zMS5fIZA==
-X-Received: by 2002:a92:c851:: with SMTP id b17mr2678052ilq.194.1584020440417;
-        Thu, 12 Mar 2020 06:40:40 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id g88sm1381275ila.47.2020.03.12.06.40.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Mar 2020 06:40:39 -0700 (PDT)
-Subject: Re: [PATCH] block: keep bdi->io_pages in sync with max_sectors_kb for
- stacked devices
-To:     Song Liu <song@kernel.org>, Bob Liu <bob.liu@oracle.com>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-block@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-raid <linux-raid@vger.kernel.org>,
-        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-References: <158290150891.4423.13566449569964563258.stgit@buzz>
- <7133c4fb-38d5-cf1f-e259-e12b50efcb32@oracle.com>
- <CAPhsuW6xJeX3=0j69_hdaUnYXPm7VeaXHB06JM=fRZsxPweQng@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ecc07195-872b-1c49-d423-873cfd7243fe@kernel.dk>
-Date:   Thu, 12 Mar 2020 07:40:39 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <CAPhsuW6xJeX3=0j69_hdaUnYXPm7VeaXHB06JM=fRZsxPweQng@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 12 Mar 2020 09:51:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Subject:Cc:To:From:Date:Message-Id:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=6bbE2GpnlDAjnqkrXQiOeX0mGieefOOogMwttobSej8=; b=eiLA87mD5s9G7uaZekLuVfHqJK
+        h0r9k8hIcycEBfzrqjWj1PFZ4MZcNJ3J8ZWg7EiPpxtpjzcGY70R+cYPL3DcgZJEtPkSeTlMjgKuh
+        UlfZ1cNXf3plB1TwsIBWFniKsFojqo7b8AZdjU11Fr3TNK3glVrkb6ppPzmj1m8yibdKPSCFRZ6uM
+        prk3WfCGBw3jld247jAIR+DDPjMBpROn9b97j1sh0XgyFkUoTTJYX/hn0Kc3oiBhlf5p9MaaR8Y0n
+        XGdY+ax2oAZWxSb7p1r/5X/Dv7CrkPUqJDCKswtQ8Rp3anxiVM3/kQSop9z9uUTra9tTX8Cu0G+8f
+        Sg7oxqRw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jCOFM-0006WU-4T; Thu, 12 Mar 2020 13:51:36 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1240C300328;
+        Thu, 12 Mar 2020 14:51:34 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id 0585E2B7403AA; Thu, 12 Mar 2020 14:51:34 +0100 (CET)
+Message-Id: <20200312134107.700205216@infradead.org>
+User-Agent: quilt/0.65
+Date:   Thu, 12 Mar 2020 14:41:07 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     tglx@linutronix.de, jpoimboe@redhat.com
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org
+Subject: [RFC][PATCH 00/16] objtool: vmlinux.o and noinstr validation
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/10/20 3:40 PM, Song Liu wrote:
-> On Mon, Mar 2, 2020 at 4:16 AM Bob Liu <bob.liu@oracle.com> wrote:
->>
->> On 2/28/20 10:51 PM, Konstantin Khlebnikov wrote:
->>> Field bdi->io_pages added in commit 9491ae4aade6 ("mm: don't cap request
->>> size based on read-ahead setting") removes unneeded split of read requests.
->>>
->>> Stacked drivers do not call blk_queue_max_hw_sectors(). Instead they setup
->>> limits of their devices by blk_set_stacking_limits() + disk_stack_limits().
->>> Field bio->io_pages stays zero until user set max_sectors_kb via sysfs.
->>>
->>> This patch updates io_pages after merging limits in disk_stack_limits().
->>>
->>> Commit c6d6e9b0f6b4 ("dm: do not allow readahead to limit IO size") fixed
->>> the same problem for device-mapper devices, this one fixes MD RAIDs.
->>>
->>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
->>> ---
->>>  block/blk-settings.c |    2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/block/blk-settings.c b/block/blk-settings.c
->>> index c8eda2e7b91e..66c45fd79545 100644
->>> --- a/block/blk-settings.c
->>> +++ b/block/blk-settings.c
->>> @@ -664,6 +664,8 @@ void disk_stack_limits(struct gendisk *disk, struct block_device *bdev,
->>>               printk(KERN_NOTICE "%s: Warning: Device %s is misaligned\n",
->>>                      top, bottom);
->>>       }
->>> +
->>> +     t->backing_dev_info->io_pages = t->limits.max_sectors >> (PAGE_SHIFT-9);
->>>  }
->>>  EXPORT_SYMBOL(disk_stack_limits);
->>>
->>>
->>
->> Nitpick.. (PAGE_SHIFT - 9)
->> Reviewed-by: Bob Liu <bob.liu@oracle.com>
-> 
-> Thanks for the fix. I fixed it based on the comments and applied it to md-next.
-> 
-> Jens, I picked the patch to md-next because md is the only user of
-> disk_stack_limits().
-> 
-> Please let me know if you prefer routing it via the block tree.
+Hi all,
 
-That's fine, thanks.
+These patches extend objtool to be able to run on vmlinux.o and validate
+Thomas's proposed noinstr annotation:
 
--- 
-Jens Axboe
+  https://lkml.kernel.org/r/20200310170951.87c29e9c1cfbddd93ccd92b3@kernel.org
+
+ "That's why we want the sections and the annotation. If something calls
+  out of a noinstr section into a regular text section and the call is not
+  annotated at the call site, then objtool can complain and tell you. What
+  Peter and I came up with looks like this:
+
+  noinstr foo()
+	do_protected(); <- Safe because in the noinstr section
+	instr_begin();  <- Marks the begin of a safe region, ignored
+			   by objtool
+	do_stuff();     <- All good
+	instr_end();    <- End of the safe region. objtool starts
+			   looking again
+	do_other_stuff();  <- Unsafe because do_other_stuff() is
+			      not protected
+
+  and:
+
+  noinstr do_protected()
+	bar();          <- objtool will complain here
+  "
+
+It should be accompanied by something like the below; which you'll find in a
+series by Thomas.
+
+---  
+
+--- a/include/asm-generic/sections.h
++++ b/include/asm-generic/sections.h
+@@ -53,6 +53,9 @@ extern char __ctors_start[], __ctors_end
+ /* Start and end of .opd section - used for function descriptors. */
+ extern char __start_opd[], __end_opd[];
+ 
++/* Start and end of instrumentation protected text section */
++extern char __noinstr_text_start[], __noinstr_text_end[];
++
+ extern __visible const void __nosave_begin, __nosave_end;
+ 
+ /* Function descriptor handling (if any).  Override in asm/sections.h */
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -550,6 +550,10 @@
+ #define TEXT_TEXT							\
+ 		ALIGN_FUNCTION();					\
+ 		*(.text.hot TEXT_MAIN .text.fixup .text.unlikely)	\
++		ALIGN_FUNCTION();					\
++		__noinstr_text_start = .;				\
++		*(.noinstr.text)					\
++		__noinstr_text_end = .;					\
+ 		*(.text..refcount)					\
+ 		*(.ref.text)						\
+ 	MEM_KEEP(init.text*)						\
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -120,12 +120,37 @@ void ftrace_likely_update(struct ftrace_
+ /* Annotate a C jump table to allow objtool to follow the code flow */
+ #define __annotate_jump_table __section(.rodata..c_jump_table)
+ 
++/* Begin/end of an instrumentation safe region */
++#define instr_begin() ({						\
++	asm volatile("%c0:\n\t"						\
++		     ".pushsection .discard.instr_begin\n\t"		\
++		     ".long %c0b - .\n\t"				\
++		     ".popsection\n\t" : : "i" (__COUNTER__));		\
++})
++
++#define instr_end() ({							\
++	asm volatile("%c0:\n\t"						\
++		     ".pushsection .discard.instr_end\n\t"		\
++		     ".long %c0b - .\n\t"				\
++		     ".popsection\n\t" : : "i" (__COUNTER__));		\
++})
++
+ #else
+ #define annotate_reachable()
+ #define annotate_unreachable()
+ #define __annotate_jump_table
++#define instr_begin()		do { } while(0)
++#define instr_end()		do { } while(0)
+ #endif
+ 
++#define INSTR(expr) ({			\
++	typeof(({ expr; })) __ret;	\
++	instr_begin();			\
++	__ret = ({ expr; });		\
++	instr_end();			\
++	__ret;				\
++})
++
+ #ifndef ASM_UNREACHABLE
+ # define ASM_UNREACHABLE
+ #endif
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -118,6 +118,11 @@ struct ftrace_likely_data {
+ #define notrace			__attribute__((__no_instrument_function__))
+ #endif
+ 
++/* Section for code which can't be instrumented at all */
++#define noinstr								\
++	notrace __attribute((__section__(".noinstr.text")))
++
++
+ /*
+  * it doesn't make sense on ARM (currently the only user of __naked)
+  * to trace naked functions because then mcount is called without
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -953,7 +953,7 @@ static void check_section(const char *mo
+ 
+ #define DATA_SECTIONS ".data", ".data.rel"
+ #define TEXT_SECTIONS ".text", ".text.unlikely", ".sched.text", \
+-		".kprobes.text", ".cpuidle.text"
++		".kprobes.text", ".cpuidle.text", ".noinstr.text"
+ #define OTHER_TEXT_SECTIONS ".ref.text", ".head.text", ".spinlock.text", \
+ 		".fixup", ".entry.text", ".exception.text", ".text.*", \
+ 		".coldtext"
 
