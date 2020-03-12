@@ -2,81 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9083A183111
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:18:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD190183125
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:23:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbgCLNSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:18:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56518 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726299AbgCLNSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:18:04 -0400
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727231AbgCLNX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:23:27 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:50178 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725978AbgCLNX1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 09:23:27 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1584019406; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=d2Q0lpDfCcmsJqb0M+G4gmffrM2e4pqallkTAPF/tQM=; b=UaMwx1b7krcjiHiEHjWE4NG+YdGAjhGrdL8oCzrPUUPwIaIlthJnVoBmVbL7CydJVhgLT4wA
+ 5JONEWZaznr1IjoIlkoktgzioE1ShY3htifZNJDJ8KYc9wgvpwoWAF2/usuV3G0kNr6EMm69
+ DmaCQJ57skk+NN/ZHP6a2HFwQyk=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e6a37c5.7f76a71c6e30-smtp-out-n04;
+ Thu, 12 Mar 2020 13:23:17 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 6B120C433BA; Thu, 12 Mar 2020 13:23:16 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mkshah-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54126206BE;
-        Thu, 12 Mar 2020 13:18:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584019084;
-        bh=9LvTzccs20EfwHRZkugVuiWmgd25bpPrRl6L8w4/Oz4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zY0iaiEuq+94HEJNC+M3uNNqqWvIuL8LmuYCbrWbvB2ja1QjHiApBUHK6+3t2w3V3
-         r2wjvYgMkprtz2WwMP/UCxCpanZ2I1A9xlCbVCUQS7wjr8zptKjLXjrHXhOmEI72K1
-         j4fWFVMRwBFcA8StaO/AmvEoxFfHjdqyIJEyK6pk=
-Received: by mail-qt1-f181.google.com with SMTP id l20so4264585qtp.4;
-        Thu, 12 Mar 2020 06:18:04 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ1IIqIqrXNDrojz5rre0C9sMJkVFTo0Gk7WhKrQSa2LbHaGpx30
-        HjOL0ESJdSPVaiEoUiHvrm5C/MYaT3IwCEAuVw==
-X-Google-Smtp-Source: ADFU+vuLXMJHQEOc9yZQJjg2VBWDBilY6CR5xhZf9pkeq5kaczXg78bABk9trxq/40GZUQEb4VvUo1jtlgxUuKyHUpc=
-X-Received: by 2002:ac8:59:: with SMTP id i25mr7306219qtg.110.1584019083428;
- Thu, 12 Mar 2020 06:18:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200311210001.5102-1-robh@kernel.org> <20200311214028.GA21800@ravnborg.org>
-In-Reply-To: <20200311214028.GA21800@ravnborg.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 12 Mar 2020 08:17:50 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqK8n-YTsROL+XhjJVtFJzV-aGPxhLOxs1axHq5+TvE-Lg@mail.gmail.com>
-Message-ID: <CAL_JsqK8n-YTsROL+XhjJVtFJzV-aGPxhLOxs1axHq5+TvE-Lg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: display: Fix dtc unit-address warnings in examples
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jyri Sarha <jsarha@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+        (Authenticated sender: mkshah)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A6B5AC433D2;
+        Thu, 12 Mar 2020 13:23:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A6B5AC433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
+From:   Maulik Shah <mkshah@codeaurora.org>
+To:     swboyd@chromium.org, mka@chromium.org, evgreen@chromium.org,
+        bjorn.andersson@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        agross@kernel.org, linus.walleij@linaro.org, tglx@linutronix.de,
+        maz@kernel.org, jason@lakedaemon.net, dianders@chromium.org,
+        rnayak@codeaurora.org, ilina@codeaurora.org, lsrao@codeaurora.org,
+        Maulik Shah <mkshah@codeaurora.org>
+Subject: [RFC v2] pdc: Introduce irq_set_wake call
+Date:   Thu, 12 Mar 2020 18:52:58 +0530
+Message-Id: <1584019379-12085-1-git-send-email-mkshah@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 4:40 PM Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> On Wed, Mar 11, 2020 at 04:00:01PM -0500, Rob Herring wrote:
-> > Extra dtc warnings (roughly what W=1 enables) are now enabled by default
-> > when building the binding examples. These were fixed treewide in
-> > 5.6-rc5, but some new display bindings have been added with new
-> > warnings:
-> >
-> > Documentation/devicetree/bindings/display/panel/raydium,rm68200.example.dts:17.7-27.11: Warning (unit_address_vs_reg): /example-0/dsi@0: node has a unit name, but no reg property
-> > Documentation/devicetree/bindings/display/panel/panel-simple-dsi.example.dts:17.19-31.11: Warning (unit_address_vs_reg): /example-0/mdss_dsi@fd922800: node has a unit name, but no reg property
-> > Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.example.dts:17.7-26.11: Warning (unit_address_vs_reg): /example-0/dsi@0: node has a unit name, but no reg property
-> > Documentation/devicetree/bindings/display/ti/ti,am65x-dss.example.dts:21.27-49.11: Warning (unit_address_format): /example-0/dss@04a00000: unit name should not have leading 0s
-> > Documentation/devicetree/bindings/display/ti/ti,j721e-dss.example.dts:21.27-72.11: Warning (unit_address_format): /example-0/dss@04a00000: unit name should not have leading 0s
-> > Documentation/devicetree/bindings/display/ti/ti,k2g-dss.example.dts:20.27-42.11: Warning (unit_address_format): /example-0/dss@02540000: unit name should not have leading 0s
-> >
-> > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > Cc: Sam Ravnborg <sam@ravnborg.org>
-> > Cc: Jyri Sarha <jsarha@ti.com>
-> > Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
->
-> And I can drop my patch that only fixed the panel/ parts - good.
+Changes in v2:
+- Drop pinctrl irqchip change and update in PDC irqchip change
+- Include more details for .irq_set_wake introduction
+- Address Stephen's comments for CPUidle need not call enable_irq_wake
+- Update cover letter inline to add more detail on problem and solution
 
-It seems I missed some panels. Perhaps ones that are in drm-misc, but
-not in linux-next yet? Keep yours and I'll respin with just the TI
-part.
+irqchip: qcom: pdc: Introduce irq_set_wake call
 
-Rob
+Some drivers using gpio interrupts want to configure gpio for wakeup using
+enable_irq_wake() but during suspend entry disables irq and expects system
+to resume when interrupt occurs. In the driver resume call interrupt is
+re-enabled and removes wakeup capability using disable_irq_wake() one such
+example is cros ec driver.
+
+With [1] in documentation saying "An irq can be disabled with disable_irq()
+and still wake the system as long as the irq has wake enabled".
+
+In such scenario the gpio irq stays disabled at gpio irqchip but needs to
+keep enabled in the hierarchy for wakeup capable parent PDC and GIC irqchip
+to be able to detect and forward wake capable interrupt to CPU when system
+is in sleep state like suspend.
+
+The final status at PDC irq_chip should be an "OR" of "enable" and "wake" calls.
+(i.e. same per below table)
+|--------------------------------------------------|
+| ENABLE in SW | WAKE in SW | PDC & GIC HW Status  |
+|      0       |     0      |     0	           |
+|      0       |     1      |     1	           |
+|      1       |     0      |     1		   |
+|      1       |     1      |     1	           |
+|--------------------------------------------------|
+
+Sending this as an RFC since this series attempts to add support for [1] by
+introducing irq_set_wake call for PDC irqchip from which interrupt can be
+enabled/disabled at PDC (and its parent GIC) hardware.
+
+Note that *ALL* drivers using wakeup capable interrupt with enable_irq_wake()
+and want to disable irq with disable_irq() need to call disable_irq_wake()
+also if they want to stop wakeup capability at parent PDC irqchip.
+Not doing so will lead to system getting woken up from sleep states if wakeup
+capable IRQ comes in.
+
+[1] https://www.spinics.net/lists/kernel/msg3398294.html
+
+Maulik Shah (1):
+  irqchip: qcom: pdc: Introduce irq_set_wake call
+
+ drivers/irqchip/qcom-pdc.c | 115 ++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 108 insertions(+), 7 deletions(-)
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
