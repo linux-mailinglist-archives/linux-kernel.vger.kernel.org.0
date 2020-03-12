@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D3FD182D79
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 11:27:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 638D5182D80
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 11:27:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbgCLK1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 06:27:14 -0400
+        id S1726952AbgCLK1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 06:27:16 -0400
 Received: from mail-eopbgr60061.outbound.protection.outlook.com ([40.107.6.61]:27203
         "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726841AbgCLK1N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 06:27:13 -0400
+        id S1726859AbgCLK1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 06:27:15 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Be7Jej0sWiogwxVVLTJD30mY2k8yUPR1EnHgmxR2uw3yo4iY+FLW3ky4semrOesiTXcePovhAOiUxPkTgzXnurpGSFmG+urU9vZYPUyp7rW0idsg+v8TQUBZ5tIKPMH2WeNMAJJhDLlSCk0iuKwFePGMFl3lfzj8yXf+6doqRZHVsZnMeeTTrmfrTBPLQQu2TrmZy0qB6B4DdlQdai4/j0nRlIC8YBYlPYsvOLtxFAj0R7NeJg749zi/yZxNV65XcUAJf4wa9J3QXUxInxmy1dPg92V0jWlKPeJ9dLqV5HZRSErh9GzcVQoYbg3lNRtwWhotZ3Ul4ZtpYyEKREeaXA==
+ b=duR7sjoqvAPikR+yRv5gLKpYiRXSi2q5Rxm+vKQi1ad+8DzoAKEYGm5Wf3kCdnXWKHv3ht/Nq+ssjUifqbj5yRTnV1NcHP3BU2dGe/JGaUKiLnsdn2yfPhKvaIF7JHPc59Lu8rQCClij1h49BFM9UQ1fdLrwhQNobdjk8v/fTnAodzqUErE2mzw73k7kg3mgA4vwJBc+DRdDjsPXlIBq+bp/JSPvWti7/XQIkqBwm19fDv/qfAXgsyAhzpazYY7cyBSmw431RefI5jmBuP5l+6/PQtJU01+9O/94PAc+4WAa2saC3/vFZ0JMZ3j7j22WmYwbzSySggdBZtxR74ne7A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IPM1nbgdwcb8xtaL+MbpVwbLO8aYAEbl3CkZO/v7p+A=;
- b=PGxMDTGmnH55nls58Hv60fx3kYmXSpAPfnz3Q8BKtOFGZHfKE/HJpn9p5DWtmKhPn0hYKPxSv2ohbvLF7X+hWtRn7hosIJBPwyua4T60JOLKBluIJ0z8ciOpbRM5xcWNDf6rbk6geFwwfeZDcFAw9aW7BLOzHWgdKk0C6LDqr4tMleHQHIoBJvKc2xX+tzSzzAJJHa8FVDJAM91pD66B0ZcDCqDNSa+0mI3NPPUdVn9YA8UV3p/BFRySbdUHIYxuse98hs4M9oPUXpRGEk4RdbhN601e/I/4ucNdg1hotIV2d72hO4t7hBet04EZ4cyF+rtzmQEhAMSDU6mdXJRcQg==
+ bh=rUAUsCpQUZJ9gP+pfE8jSDock7QDQS5zmJjQN2H95gM=;
+ b=j5+9clOsg9FaSirNr9MoaN4ysGfSy8auKbbz4VXaN4cVHhdBoiwK4gxrFRAASTDXUGMnp/BCuaHhqIZ6GoK95+2hA1wCNOmSXh9FZiktpUyq9woqbYAQaO5y+OUCFqIS4ZONQafaJZj0eRbgJyH4rs0dfWVBoQMvoXxd7U4GfeDHtrwFlxdiH7cr85FcJ7sNBiTEngMRwy9SL35pZ9FrbFA0dDwT7QnZbjwucSE23z1nBUicEXCyagrHLzNzIygVqWIzIWq/Qr/VZXvUDYhA5Qljk3OZIwarSEaEh144UZgV3rK1pIY2dv0QL/Si0i3bi9KEuLA/jpuqMXooIQxq/Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IPM1nbgdwcb8xtaL+MbpVwbLO8aYAEbl3CkZO/v7p+A=;
- b=ezAXEEuOb0T9EfDNlqhdCVe1dOqzj7cmqwB0bTf/iMvnBElVBdeI1qFzUEIlERTtP60bEKd69XMsWnofAVT5/nd7kxzpO2ImqkLMjx7+IfokSBGzWq6hMZvl9Q31meipMAUCIEpK1rJbiefabvkskE1GEwm9S5rteRLXldGc7Zs=
+ bh=rUAUsCpQUZJ9gP+pfE8jSDock7QDQS5zmJjQN2H95gM=;
+ b=PzWHygPOaz8HzkJaCFfSqmQVB2YizJVZxaqHLWzgrsz8SozaiH5TAZq9nl6UOHk2eGWvM9sEPxTid6brlxhBwqYI6rGq3T/Cfqr50CCLQHAtGnaBN3aTBtjWxpUrt3Omq9qwpa7FQheoCIEf5QLxDOMNlTa/kAkNsX6YVPyxcEc=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peng.fan@nxp.com; 
 Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
  AM0PR04MB4195.eurprd04.prod.outlook.com (52.134.92.151) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.14; Thu, 12 Mar 2020 10:26:45 +0000
+ 15.20.2814.14; Thu, 12 Mar 2020 10:26:51 +0000
 Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
  ([fe80::548f:4941:d4eb:4c11]) by AM0PR04MB4481.eurprd04.prod.outlook.com
  ([fe80::548f:4941:d4eb:4c11%6]) with mapi id 15.20.2793.018; Thu, 12 Mar 2020
- 10:26:45 +0000
+ 10:26:51 +0000
 From:   peng.fan@nxp.com
 To:     shawnguo@kernel.org, s.hauer@pengutronix.de,
         leonard.crestez@nxp.com, sboyd@kernel.org, abel.vesa@nxp.com
@@ -46,9 +46,9 @@ Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
         andrew.smirnov@gmail.com, agx@sigxcpu.org, angus@akkea.ca,
         heiko@sntech.de, fugang.duan@nxp.com, linux-clk@vger.kernel.org,
         Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V2 02/10] clk: imx8m: drop clk_hw_set_parent for A53
-Date:   Thu, 12 Mar 2020 18:19:36 +0800
-Message-Id: <1584008384-11578-3-git-send-email-peng.fan@nxp.com>
+Subject: [PATCH V2 03/10] clk: imx: imx8mp: fix pll mux bit
+Date:   Thu, 12 Mar 2020 18:19:37 +0800
+Message-Id: <1584008384-11578-4-git-send-email-peng.fan@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1584008384-11578-1-git-send-email-peng.fan@nxp.com>
 References: <1584008384-11578-1-git-send-email-peng.fan@nxp.com>
@@ -58,32 +58,32 @@ X-ClientProxiedBy: SG2PR03CA0113.apcprd03.prod.outlook.com
  (2603:10a6:208:70::15)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR03CA0113.apcprd03.prod.outlook.com (2603:1096:4:91::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2835.7 via Frontend Transport; Thu, 12 Mar 2020 10:26:38 +0000
+Received: from localhost.localdomain (119.31.174.66) by SG2PR03CA0113.apcprd03.prod.outlook.com (2603:1096:4:91::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2835.7 via Frontend Transport; Thu, 12 Mar 2020 10:26:45 +0000
 X-Mailer: git-send-email 2.7.4
 X-Originating-IP: [119.31.174.66]
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 703d7b1d-f90c-49a4-5e88-08d7c66fdcfa
+X-MS-Office365-Filtering-Correlation-Id: 8046d009-1c17-41ec-6fc7-08d7c66fe0d8
 X-MS-TrafficTypeDiagnostic: AM0PR04MB4195:|AM0PR04MB4195:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB4195AD49576751F8C3F7401F88FD0@AM0PR04MB4195.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2582;
+X-Microsoft-Antispam-PRVS: <AM0PR04MB4195F49468B778F30C5D61A888FD0@AM0PR04MB4195.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3631;
 X-Forefront-PRVS: 0340850FCD
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(346002)(376002)(396003)(199004)(956004)(26005)(6512007)(9686003)(2616005)(86362001)(8676002)(186003)(6506007)(81166006)(8936002)(7416002)(6486002)(478600001)(52116002)(69590400007)(316002)(66946007)(66476007)(16526019)(5660300002)(66556008)(36756003)(81156014)(4326008)(2906002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4195;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(346002)(376002)(396003)(199004)(956004)(26005)(6512007)(9686003)(2616005)(86362001)(8676002)(186003)(6506007)(81166006)(6666004)(8936002)(7416002)(6486002)(478600001)(52116002)(69590400007)(316002)(66946007)(66476007)(16526019)(5660300002)(66556008)(36756003)(81156014)(4326008)(2906002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4195;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: BFia3sLkocidA/IW/oboqiUmtdQF8ag03go2CmlKqpqhUDhJF0+i0nLEcXQXSZSbYlVf+jLCo4RiWfGl3C4YccacJ9ILcaL0BQxLLugfVEiBYmUvvygeq944qnTQc4eeJ3ziiQwvZsGu5X871jicgcwttHjiO6jaEfGBuq1Eff7GoaG8KqtmobY+dpjUBYkgWN/PPnJk0Z8UIOIra14KVS9A3zM/DSphAZe6ZmOLmSrEbQri/2j2ApJbeaaJp02PTUb2dSOMvlM1CIhrSUmXfwPaAJy1oYwfBWHga+4HBI68syiUrGwSQoQu2F83UcNDwATcPqFCrM6TLOXVdi8VK7DB6AaDRyN4RZeUL2Bruo5tERebDa7bn/SDvMjXKJP2C48lso/swvapBeogNiN/9gMFEGP3Iw9HO39Qboh2JQ5bnPN851qdL8TjcanWuNsa+YltSij/chkRq3bWzX6U/EchNXxzgSD6Lvyz3X/eHNJCEXQvspvRaM9iWjtyuhUgpQEKTbXt/bURXTZ80nHZ1A==
-X-MS-Exchange-AntiSpam-MessageData: sivi3Gaoel3t8yKYHGjyz9B1hA1dGb8KFuy6Ja/fqh+R7BK8Er5ZoaChbFxo5eLrl0ecP1UoCHTe2ggGfCGT4a/bnsAT9arG0e3qy01uUx6oGd/JQVlIOGk6JhmsHc5LK/iLH5b+qkdDcCO9CH3KRQ==
+X-Microsoft-Antispam-Message-Info: mF63hHsdEv20yGxfzZyroQ9oMaSdPli8f4yhOgexCtcY2e70h/EqOFC/XnFHvdKUo9qNpllpVZ6vX52NOfMBJxBUvtHv5rUh8QoCMsvzf+2nxOkVidEOCSC54J5BIwnFehM1zSdkuTidmIpYuO/11JTf2xRnUMK6dt6xMFl6MdaAqun2kNmsIBh/xfkaUg/ZtkzqQsL2fcCSnfM0ZzuaBBSFcD9e79cblGHMN03/0Q9aZENOfWTsRtXEUnZ1HdjTUGNuCnTSgrkK5ux4mGjVBoqf/D2cdkcbY2sLEzpYpxqvFu76LB2kr0WAGQfYWytEG68kFoCRfN/r/CivgnY5If6ggNQ8AoUIibbWi3157oqk/7VOM8PIz08VdHzm7fC43oWLXkZr/wZWpd63OOJeWEnfuhxarhqVH9ndNrPTabfR/D4xjQnXkJu41T+Tq+ojPuFUmMmzCR/3Jd/IysA34v6J9q8nDrkIWGTNXkY+GnYwMMREgPLRdiLCi0t6Z+thZmHuGzQSaWMPd4aHZ+DxzA==
+X-MS-Exchange-AntiSpam-MessageData: lhFqjPL3ykMoX6q9WiD7lcWT3ZJG/ClHQC/XOOqEgVVgU2z10+/2WzyFQlfyx5Bq/vtRf9rLdKyOWY4jsNbrzmcXV2AgqMZlRRNqa2pQc+wlXNMJuPebjk5CsrjK7kqcqizi71xnNisPg7yWXcrEWw==
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 703d7b1d-f90c-49a4-5e88-08d7c66fdcfa
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2020 10:26:44.9668
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8046d009-1c17-41ec-6fc7-08d7c66fe0d8
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2020 10:26:51.4923
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7wt+wUVD6gbTz2n8q7U9/2M87Asyb6zeTdr2HqrBxnvV50GnG6vdiJnkGSd55GgBWlZ26snNZSYeiXybo2/ALQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8MkY/+1j3ElNe+Qd9GmYcpclgUw4b+nhAWQ+YliAIbRq/0p9kMk8Lj5kDHT68IuZPLzCCN716abcfuOw4UbpwQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4195
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -92,75 +92,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peng Fan <peng.fan@nxp.com>
 
-The parent settings have been moved to dtsi, we no need to
-set parent here. And clk_hw_set_parent will trigger lockdep warning,
-because this api not have prepare_lock.
+Same to i.MX8MN/i.MX8MM, pll BYPASS bit should be kept inside pll
+driver for glitchless freq setting following spec. If exposing the
+bit, that means pll driver and clk driver has two paths to touch
+this bit, which is wrong.
 
-Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
+So use EXT_BYPASS bit here.
+
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/clk/imx/clk-imx8mm.c | 3 ---
- drivers/clk/imx/clk-imx8mn.c | 3 ---
- drivers/clk/imx/clk-imx8mp.c | 3 ---
- drivers/clk/imx/clk-imx8mq.c | 3 ---
- 4 files changed, 12 deletions(-)
+ drivers/clk/imx/clk-imx8mp.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index 925670438f23..5435042a06e3 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -614,9 +614,6 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
- 					   hws[IMX8MM_ARM_PLL_OUT]->clk,
- 					   hws[IMX8MM_CLK_A53_DIV]->clk);
- 
--	clk_hw_set_parent(hws[IMX8MM_CLK_A53_SRC], hws[IMX8MM_SYS_PLL1_800M]);
--	clk_hw_set_parent(hws[IMX8MM_CLK_A53_CORE], hws[IMX8MM_ARM_PLL_OUT]);
--
- 	imx_check_clk_hws(hws, IMX8MM_CLK_END);
- 
- 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index 0bc7070235bd..6cac6ca03e12 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -565,9 +565,6 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 					   hws[IMX8MN_ARM_PLL_OUT]->clk,
- 					   hws[IMX8MN_CLK_A53_DIV]->clk);
- 
--	clk_hw_set_parent(hws[IMX8MN_CLK_A53_SRC], hws[IMX8MN_SYS_PLL1_800M]);
--	clk_hw_set_parent(hws[IMX8MN_CLK_A53_CORE], hws[IMX8MN_ARM_PLL_OUT]);
--
- 	imx_check_clk_hws(hws, IMX8MN_CLK_END);
- 
- 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
 diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 41469e2cc3de..e05ec56df285 100644
+index e05ec56df285..e9ed8a188031 100644
 --- a/drivers/clk/imx/clk-imx8mp.c
 +++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -735,9 +735,6 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 					     hws[IMX8MP_ARM_PLL_OUT]->clk,
- 					     hws[IMX8MP_CLK_A53_DIV]->clk);
+@@ -486,16 +486,16 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MP_SYS_PLL2] = imx_clk_hw_pll14xx("sys_pll2", "sys_pll2_ref_sel", anatop_base + 0x104, &imx_1416x_pll);
+ 	hws[IMX8MP_SYS_PLL3] = imx_clk_hw_pll14xx("sys_pll3", "sys_pll3_ref_sel", anatop_base + 0x114, &imx_1416x_pll);
  
--	clk_hw_set_parent(hws[IMX8MP_CLK_A53_SRC], hws[IMX8MP_SYS_PLL1_800M]);
--	clk_hw_set_parent(hws[IMX8MP_CLK_A53_CORE], hws[IMX8MP_ARM_PLL_OUT]);
--
- 	imx_check_clk_hws(hws, IMX8MP_CLK_END);
+-	hws[IMX8MP_AUDIO_PLL1_BYPASS] = imx_clk_hw_mux_flags("audio_pll1_bypass", anatop_base, 4, 1, audio_pll1_bypass_sels, ARRAY_SIZE(audio_pll1_bypass_sels), CLK_SET_RATE_PARENT);
+-	hws[IMX8MP_AUDIO_PLL2_BYPASS] = imx_clk_hw_mux_flags("audio_pll2_bypass", anatop_base + 0x14, 4, 1, audio_pll2_bypass_sels, ARRAY_SIZE(audio_pll2_bypass_sels), CLK_SET_RATE_PARENT);
+-	hws[IMX8MP_VIDEO_PLL1_BYPASS] = imx_clk_hw_mux_flags("video_pll1_bypass", anatop_base + 0x28, 4, 1, video_pll1_bypass_sels, ARRAY_SIZE(video_pll1_bypass_sels), CLK_SET_RATE_PARENT);
+-	hws[IMX8MP_DRAM_PLL_BYPASS] = imx_clk_hw_mux_flags("dram_pll_bypass", anatop_base + 0x50, 4, 1, dram_pll_bypass_sels, ARRAY_SIZE(dram_pll_bypass_sels), CLK_SET_RATE_PARENT);
+-	hws[IMX8MP_GPU_PLL_BYPASS] = imx_clk_hw_mux_flags("gpu_pll_bypass", anatop_base + 0x64, 4, 1, gpu_pll_bypass_sels, ARRAY_SIZE(gpu_pll_bypass_sels), CLK_SET_RATE_PARENT);
+-	hws[IMX8MP_VPU_PLL_BYPASS] = imx_clk_hw_mux_flags("vpu_pll_bypass", anatop_base + 0x74, 4, 1, vpu_pll_bypass_sels, ARRAY_SIZE(vpu_pll_bypass_sels), CLK_SET_RATE_PARENT);
+-	hws[IMX8MP_ARM_PLL_BYPASS] = imx_clk_hw_mux_flags("arm_pll_bypass", anatop_base + 0x84, 4, 1, arm_pll_bypass_sels, ARRAY_SIZE(arm_pll_bypass_sels), CLK_SET_RATE_PARENT);
+-	hws[IMX8MP_SYS_PLL1_BYPASS] = imx_clk_hw_mux_flags("sys_pll1_bypass", anatop_base + 0x94, 4, 1, sys_pll1_bypass_sels, ARRAY_SIZE(sys_pll1_bypass_sels), CLK_SET_RATE_PARENT);
+-	hws[IMX8MP_SYS_PLL2_BYPASS] = imx_clk_hw_mux_flags("sys_pll2_bypass", anatop_base + 0x104, 4, 1, sys_pll2_bypass_sels, ARRAY_SIZE(sys_pll2_bypass_sels), CLK_SET_RATE_PARENT);
+-	hws[IMX8MP_SYS_PLL3_BYPASS] = imx_clk_hw_mux_flags("sys_pll3_bypass", anatop_base + 0x114, 4, 1, sys_pll3_bypass_sels, ARRAY_SIZE(sys_pll3_bypass_sels), CLK_SET_RATE_PARENT);
++	hws[IMX8MP_AUDIO_PLL1_BYPASS] = imx_clk_hw_mux_flags("audio_pll1_bypass", anatop_base, 16, 1, audio_pll1_bypass_sels, ARRAY_SIZE(audio_pll1_bypass_sels), CLK_SET_RATE_PARENT);
++	hws[IMX8MP_AUDIO_PLL2_BYPASS] = imx_clk_hw_mux_flags("audio_pll2_bypass", anatop_base + 0x14, 16, 1, audio_pll2_bypass_sels, ARRAY_SIZE(audio_pll2_bypass_sels), CLK_SET_RATE_PARENT);
++	hws[IMX8MP_VIDEO_PLL1_BYPASS] = imx_clk_hw_mux_flags("video_pll1_bypass", anatop_base + 0x28, 16, 1, video_pll1_bypass_sels, ARRAY_SIZE(video_pll1_bypass_sels), CLK_SET_RATE_PARENT);
++	hws[IMX8MP_DRAM_PLL_BYPASS] = imx_clk_hw_mux_flags("dram_pll_bypass", anatop_base + 0x50, 16, 1, dram_pll_bypass_sels, ARRAY_SIZE(dram_pll_bypass_sels), CLK_SET_RATE_PARENT);
++	hws[IMX8MP_GPU_PLL_BYPASS] = imx_clk_hw_mux_flags("gpu_pll_bypass", anatop_base + 0x64, 28, 1, gpu_pll_bypass_sels, ARRAY_SIZE(gpu_pll_bypass_sels), CLK_SET_RATE_PARENT);
++	hws[IMX8MP_VPU_PLL_BYPASS] = imx_clk_hw_mux_flags("vpu_pll_bypass", anatop_base + 0x74, 28, 1, vpu_pll_bypass_sels, ARRAY_SIZE(vpu_pll_bypass_sels), CLK_SET_RATE_PARENT);
++	hws[IMX8MP_ARM_PLL_BYPASS] = imx_clk_hw_mux_flags("arm_pll_bypass", anatop_base + 0x84, 28, 1, arm_pll_bypass_sels, ARRAY_SIZE(arm_pll_bypass_sels), CLK_SET_RATE_PARENT);
++	hws[IMX8MP_SYS_PLL1_BYPASS] = imx_clk_hw_mux_flags("sys_pll1_bypass", anatop_base + 0x94, 28, 1, sys_pll1_bypass_sels, ARRAY_SIZE(sys_pll1_bypass_sels), CLK_SET_RATE_PARENT);
++	hws[IMX8MP_SYS_PLL2_BYPASS] = imx_clk_hw_mux_flags("sys_pll2_bypass", anatop_base + 0x104, 28, 1, sys_pll2_bypass_sels, ARRAY_SIZE(sys_pll2_bypass_sels), CLK_SET_RATE_PARENT);
++	hws[IMX8MP_SYS_PLL3_BYPASS] = imx_clk_hw_mux_flags("sys_pll3_bypass", anatop_base + 0x114, 28, 1, sys_pll3_bypass_sels, ARRAY_SIZE(sys_pll3_bypass_sels), CLK_SET_RATE_PARENT);
  
- 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index fdc68db68de5..201c7bbb201f 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -599,9 +599,6 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 					   hws[IMX8MQ_ARM_PLL_OUT]->clk,
- 					   hws[IMX8MQ_CLK_A53_DIV]->clk);
- 
--	clk_hw_set_parent(hws[IMX8MQ_CLK_A53_SRC], hws[IMX8MQ_SYS1_PLL_800M]);
--	clk_hw_set_parent(hws[IMX8MQ_CLK_A53_CORE], hws[IMX8MQ_ARM_PLL_OUT]);
--
- 	imx_check_clk_hws(hws, IMX8MQ_CLK_END);
- 
- 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
+ 	hws[IMX8MP_AUDIO_PLL1_OUT] = imx_clk_hw_gate("audio_pll1_out", "audio_pll1_bypass", anatop_base, 13);
+ 	hws[IMX8MP_AUDIO_PLL2_OUT] = imx_clk_hw_gate("audio_pll2_out", "audio_pll2_bypass", anatop_base + 0x14, 13);
 -- 
 2.16.4
 
