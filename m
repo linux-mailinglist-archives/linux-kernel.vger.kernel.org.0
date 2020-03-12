@@ -2,169 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65C92183208
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:51:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20B0A18320E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:52:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbgCLNvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:51:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56978 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727315AbgCLNvj (ORCPT
+        id S1727512AbgCLNvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:51:43 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46822 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727435AbgCLNvl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:51:39 -0400
+        Thu, 12 Mar 2020 09:51:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Subject:Cc:To:From:Date:Message-Id:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=6bbE2GpnlDAjnqkrXQiOeX0mGieefOOogMwttobSej8=; b=eiLA87mD5s9G7uaZekLuVfHqJK
-        h0r9k8hIcycEBfzrqjWj1PFZ4MZcNJ3J8ZWg7EiPpxtpjzcGY70R+cYPL3DcgZJEtPkSeTlMjgKuh
-        UlfZ1cNXf3plB1TwsIBWFniKsFojqo7b8AZdjU11Fr3TNK3glVrkb6ppPzmj1m8yibdKPSCFRZ6uM
-        prk3WfCGBw3jld247jAIR+DDPjMBpROn9b97j1sh0XgyFkUoTTJYX/hn0Kc3oiBhlf5p9MaaR8Y0n
-        XGdY+ax2oAZWxSb7p1r/5X/Dv7CrkPUqJDCKswtQ8Rp3anxiVM3/kQSop9z9uUTra9tTX8Cu0G+8f
-        Sg7oxqRw==;
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
+        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To;
+        bh=piGWWulTk/Ov0pTiMRYfA+U7bMQU7zVTS0znoAEkY9M=; b=C1/I6q/ODL3KWeoyiZrHLkX910
+        7A+NHYoWvcKw9S/CPZE/6oIs/HdMoTraUzZIx7ZT+zgrnSHzQ/abV+zajN1QegBH1XDtBAHf/td25
+        83a7I7nQqKT9FSIyEDDqDMd7MEhtg3X2+4Ax+ja3g8QIMDUw489do8TKLaJ03YRv8BIvNiLvSlxl2
+        2rL+GTcxz99KpbYtYWw6JQfFuaW87Cz7pX2+LZxd2F0yrh8++bXo8/TzeEeWGHTLC7a+r1TDMBLbE
+        AoUsY+V6faDIqErhJ21aMkxg/siDaxXpVL+gj5kYV9SuLFCYScOPqVr0WswafM/bQP30byIcQv6Y+
+        NhAErP+A==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCOFM-0006WU-4T; Thu, 12 Mar 2020 13:51:36 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jCOFM-0003AP-O1; Thu, 12 Mar 2020 13:51:37 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1240C300328;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3182F305C92;
         Thu, 12 Mar 2020 14:51:34 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 0585E2B7403AA; Thu, 12 Mar 2020 14:51:34 +0100 (CET)
-Message-Id: <20200312134107.700205216@infradead.org>
+        id 08EB72B7403A7; Thu, 12 Mar 2020 14:51:34 +0100 (CET)
+Message-Id: <20200312135041.465550716@infradead.org>
 User-Agent: quilt/0.65
-Date:   Thu, 12 Mar 2020 14:41:07 +0100
+Date:   Thu, 12 Mar 2020 14:41:08 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, jpoimboe@redhat.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org
-Subject: [RFC][PATCH 00/16] objtool: vmlinux.o and noinstr validation
+Subject: [RFC][PATCH 01/16] objtool: Introduce validate_return()
+References: <20200312134107.700205216@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Trivial 'cleanup' to save one indentation level and match
+validate_call().
 
-These patches extend objtool to be able to run on vmlinux.o and validate
-Thomas's proposed noinstr annotation:
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ tools/objtool/check.c |   64 ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 36 insertions(+), 28 deletions(-)
 
-  https://lkml.kernel.org/r/20200310170951.87c29e9c1cfbddd93ccd92b3@kernel.org
-
- "That's why we want the sections and the annotation. If something calls
-  out of a noinstr section into a regular text section and the call is not
-  annotated at the call site, then objtool can complain and tell you. What
-  Peter and I came up with looks like this:
-
-  noinstr foo()
-	do_protected(); <- Safe because in the noinstr section
-	instr_begin();  <- Marks the begin of a safe region, ignored
-			   by objtool
-	do_stuff();     <- All good
-	instr_end();    <- End of the safe region. objtool starts
-			   looking again
-	do_other_stuff();  <- Unsafe because do_other_stuff() is
-			      not protected
-
-  and:
-
-  noinstr do_protected()
-	bar();          <- objtool will complain here
-  "
-
-It should be accompanied by something like the below; which you'll find in a
-series by Thomas.
-
----  
-
---- a/include/asm-generic/sections.h
-+++ b/include/asm-generic/sections.h
-@@ -53,6 +53,9 @@ extern char __ctors_start[], __ctors_end
- /* Start and end of .opd section - used for function descriptors. */
- extern char __start_opd[], __end_opd[];
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1935,6 +1935,41 @@ static int validate_sibling_call(struct
+ 	return validate_call(insn, state);
+ }
  
-+/* Start and end of instrumentation protected text section */
-+extern char __noinstr_text_start[], __noinstr_text_end[];
++static int validate_return(struct symbol *func, struct instruction *insn, struct insn_state *state)
++{
++	if (state->uaccess && !func_uaccess_safe(func)) {
++		WARN_FUNC("return with UACCESS enabled",
++			  insn->sec, insn->offset);
++		return 1;
++	}
 +
- extern __visible const void __nosave_begin, __nosave_end;
- 
- /* Function descriptor handling (if any).  Override in asm/sections.h */
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -550,6 +550,10 @@
- #define TEXT_TEXT							\
- 		ALIGN_FUNCTION();					\
- 		*(.text.hot TEXT_MAIN .text.fixup .text.unlikely)	\
-+		ALIGN_FUNCTION();					\
-+		__noinstr_text_start = .;				\
-+		*(.noinstr.text)					\
-+		__noinstr_text_end = .;					\
- 		*(.text..refcount)					\
- 		*(.ref.text)						\
- 	MEM_KEEP(init.text*)						\
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -120,12 +120,37 @@ void ftrace_likely_update(struct ftrace_
- /* Annotate a C jump table to allow objtool to follow the code flow */
- #define __annotate_jump_table __section(.rodata..c_jump_table)
- 
-+/* Begin/end of an instrumentation safe region */
-+#define instr_begin() ({						\
-+	asm volatile("%c0:\n\t"						\
-+		     ".pushsection .discard.instr_begin\n\t"		\
-+		     ".long %c0b - .\n\t"				\
-+		     ".popsection\n\t" : : "i" (__COUNTER__));		\
-+})
++	if (!state->uaccess && func_uaccess_safe(func)) {
++		WARN_FUNC("return with UACCESS disabled from a UACCESS-safe function",
++			  insn->sec, insn->offset);
++		return 1;
++	}
 +
-+#define instr_end() ({							\
-+	asm volatile("%c0:\n\t"						\
-+		     ".pushsection .discard.instr_end\n\t"		\
-+		     ".long %c0b - .\n\t"				\
-+		     ".popsection\n\t" : : "i" (__COUNTER__));		\
-+})
++	if (state->df) {
++		WARN_FUNC("return with DF set",
++			  insn->sec, insn->offset);
++		return 1;
++	}
 +
- #else
- #define annotate_reachable()
- #define annotate_unreachable()
- #define __annotate_jump_table
-+#define instr_begin()		do { } while(0)
-+#define instr_end()		do { } while(0)
- #endif
- 
-+#define INSTR(expr) ({			\
-+	typeof(({ expr; })) __ret;	\
-+	instr_begin();			\
-+	__ret = ({ expr; });		\
-+	instr_end();			\
-+	__ret;				\
-+})
++	if (func && has_modified_stack_frame(state)) {
++		WARN_FUNC("return with modified stack frame",
++			  insn->sec, insn->offset);
++		return 1;
++	}
 +
- #ifndef ASM_UNREACHABLE
- # define ASM_UNREACHABLE
- #endif
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -118,6 +118,11 @@ struct ftrace_likely_data {
- #define notrace			__attribute__((__no_instrument_function__))
- #endif
- 
-+/* Section for code which can't be instrumented at all */
-+#define noinstr								\
-+	notrace __attribute((__section__(".noinstr.text")))
++	if (state->bp_scratch) {
++		WARN("%s uses BP as a scratch register",
++		     func->name);
++		return 1;
++	}
 +
++	return 0;
++}
 +
  /*
-  * it doesn't make sense on ARM (currently the only user of __naked)
-  * to trace naked functions because then mcount is called without
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -953,7 +953,7 @@ static void check_section(const char *mo
+  * Follow the branch starting at the given instruction, and recursively follow
+  * any other branches (jumps).  Meanwhile, track the frame pointer state at
+@@ -2050,34 +2085,7 @@ static int validate_branch(struct objtoo
+ 		switch (insn->type) {
  
- #define DATA_SECTIONS ".data", ".data.rel"
- #define TEXT_SECTIONS ".text", ".text.unlikely", ".sched.text", \
--		".kprobes.text", ".cpuidle.text"
-+		".kprobes.text", ".cpuidle.text", ".noinstr.text"
- #define OTHER_TEXT_SECTIONS ".ref.text", ".head.text", ".spinlock.text", \
- 		".fixup", ".entry.text", ".exception.text", ".text.*", \
- 		".coldtext"
+ 		case INSN_RETURN:
+-			if (state.uaccess && !func_uaccess_safe(func)) {
+-				WARN_FUNC("return with UACCESS enabled", sec, insn->offset);
+-				return 1;
+-			}
+-
+-			if (!state.uaccess && func_uaccess_safe(func)) {
+-				WARN_FUNC("return with UACCESS disabled from a UACCESS-safe function", sec, insn->offset);
+-				return 1;
+-			}
+-
+-			if (state.df) {
+-				WARN_FUNC("return with DF set", sec, insn->offset);
+-				return 1;
+-			}
+-
+-			if (func && has_modified_stack_frame(&state)) {
+-				WARN_FUNC("return with modified stack frame",
+-					  sec, insn->offset);
+-				return 1;
+-			}
+-
+-			if (state.bp_scratch) {
+-				WARN("%s uses BP as a scratch register",
+-				     func->name);
+-				return 1;
+-			}
+-
+-			return 0;
++			return validate_return(func, insn, &state);
+ 
+ 		case INSN_CALL:
+ 		case INSN_CALL_DYNAMIC:
+
 
