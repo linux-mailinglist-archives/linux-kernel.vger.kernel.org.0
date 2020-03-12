@@ -2,532 +2,936 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31F7B183C26
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:14:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C479183C03
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:11:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbgCLWOD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 18:14:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43318 "EHLO mail.kernel.org"
+        id S1726881AbgCLWLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 18:11:51 -0400
+Received: from mga04.intel.com ([192.55.52.120]:36896 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726513AbgCLWOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 18:14:02 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFBC420716;
-        Thu, 12 Mar 2020 22:14:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584051241;
-        bh=l6XznlB0LB6E3SwsLnoRQRCkqISuNS9iUKDe9y3NVrY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=2V31bPUEkTHrLLsUw3zEB50cLM0o7gx+rdniOVVym9SAqw6r96FF0PCoG+N3XG2Sx
-         AeZJtQpHitYooqFsLZlvujSuuH2Iy4OQ5981md98wLz2TlUp4DcDImNVjnqJMB8sv1
-         HZECUXitj8YNZxYNrlHRzzBYJhL3Yyz0aSjkzjsM=
-Date:   Thu, 12 Mar 2020 23:13:59 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 4.14.173
-Message-ID: <20200312221359.GA616648@kroah.com>
+        id S1726691AbgCLWLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 18:11:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 15:11:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,546,1574150400"; 
+   d="scan'208";a="444098165"
+Received: from vcostago-desk1.jf.intel.com (HELO vcostago-desk1) ([10.54.70.26])
+  by fmsmga006.fm.intel.com with ESMTP; 12 Mar 2020 15:11:48 -0700
+From:   Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To:     Po Liu <Po.Liu@nxp.com>, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc:     po.liu@nxp.com, claudiu.manoil@nxp.com, vladimir.oltean@nxp.com,
+        alexandru.marginean@nxp.com, xiaoliang.yang_1@nxp.com,
+        roy.zang@nxp.com, mingkai.hu@nxp.com, jerry.huang@nxp.com,
+        leoyang.li@nxp.com, michael.chan@broadcom.com, vishal@chelsio.com,
+        saeedm@mellanox.com, leon@kernel.org, jiri@mellanox.com,
+        idosch@mellanox.com, alexandre.belloni@bootlin.com,
+        UNGLinuxDriver@microchip.com, kuba@kernel.org, jhs@mojatatu.com,
+        xiyou.wangcong@gmail.com, john.hurley@netronome.com,
+        simon.horman@netronome.com, pieter.jansenvanvuuren@netronome.com,
+        pablo@netfilter.org, moshe@mellanox.com,
+        ivan.khoronzhuk@linaro.org, m-karicheri2@ti.com,
+        andre.guedes@linux.intel.com, jakub.kicinski@netronome.com,
+        Po Liu <Po.Liu@nxp.com>
+Subject: Re: [RFC,net-next  2/9] net: qos: introduce a gate control flow action
+In-Reply-To: <20200306125608.11717-3-Po.Liu@nxp.com>
+References: <20200306125608.11717-1-Po.Liu@nxp.com> <20200306125608.11717-3-Po.Liu@nxp.com>
+Date:   Thu, 12 Mar 2020 15:14:01 -0700
+Message-ID: <871rpxi5li.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
-Content-Disposition: inline
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---+QahgC5+KEYLbs62
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-I'm announcing the release of the 4.14.173 kernel.
-
-All users of the 4.14 kernel series must upgrade.
-
-The updated 4.14.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
-x-4.14.y
-and can be browsed at the normal kernel.org git web browser:
-	https://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Ds=
-ummary
-
-thanks,
-
-greg k-h
-
-------------
-
- Makefile                                          |    2=20
- arch/arm/boot/dts/dra76x.dtsi                     |    5 +
- arch/arm/boot/dts/ls1021a.dtsi                    |    4=20
- arch/arm/mach-imx/Makefile                        |    2=20
- arch/arm/mach-imx/common.h                        |    4=20
- arch/arm/mach-imx/resume-imx6.S                   |   24 +++++
- arch/arm/mach-imx/suspend-imx6.S                  |   14 --
- arch/mips/kernel/vpe.c                            |    2=20
- arch/powerpc/kernel/cputable.c                    |    4=20
- arch/x86/boot/compressed/pagetable.c              |    3=20
- arch/x86/kernel/cpu/common.c                      |    2=20
- arch/x86/kernel/cpu/mcheck/mce-inject.c           |   14 +-
- arch/x86/kernel/cpu/mcheck/mce.c                  |   22 +---
- arch/x86/kvm/svm.c                                |   43 +++++++++
- arch/x86/kvm/vmx.c                                |   15 +++
- arch/x86/xen/enlighten_pv.c                       |    7 -
- drivers/acpi/acpi_watchdog.c                      |    3=20
- drivers/char/ipmi/ipmi_ssif.c                     |   10 +-
- drivers/char/random.c                             |    5 -
- drivers/devfreq/devfreq.c                         |    4=20
- drivers/dma/coh901318.c                           |    4=20
- drivers/dma/tegra20-apb-dma.c                     |    6 -
- drivers/edac/amd64_edac.c                         |    1=20
- drivers/gpu/drm/i915/gvt/vgpu.c                   |    2=20
- drivers/gpu/drm/msm/dsi/dsi_manager.c             |    7 +
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.c             |    4=20
- drivers/gpu/drm/msm/mdp/mdp5/mdp5_crtc.c          |    4=20
- drivers/gpu/drm/msm/msm_drv.c                     |    8 +
- drivers/hid/hid-core.c                            |    4=20
- drivers/hid/hid-ite.c                             |    5 -
- drivers/hid/usbhid/hiddev.c                       |    2=20
- drivers/hwmon/adt7462.c                           |    2=20
- drivers/i2c/busses/i2c-altera.c                   |    2=20
- drivers/i2c/busses/i2c-jz4780.c                   |   36 -------
- drivers/infiniband/core/cm.c                      |    1=20
- drivers/infiniband/core/iwcm.c                    |    4=20
- drivers/infiniband/core/security.c                |   14 +-
- drivers/infiniband/hw/hfi1/verbs.c                |    4=20
- drivers/infiniband/hw/qib/qib_verbs.c             |    2=20
- drivers/md/dm-cache-target.c                      |    4=20
- drivers/md/dm-integrity.c                         |   15 ++-
- drivers/net/dsa/bcm_sf2.c                         |    3=20
- drivers/net/ethernet/amazon/ena/ena_com.c         |   48 ++++++++--
- drivers/net/ethernet/amazon/ena/ena_com.h         |    9 +
- drivers/net/ethernet/amazon/ena/ena_ethtool.c     |   46 +++++++++
- drivers/net/ethernet/amazon/ena/ena_netdev.c      |    6 -
- drivers/net/ethernet/amazon/ena/ena_netdev.h      |    2=20
- drivers/net/ethernet/apm/xgene/xgene_enet_main.c  |    2=20
- drivers/net/ethernet/aquantia/atlantic/aq_nic.c   |    4=20
- drivers/net/ethernet/cavium/thunder/thunder_bgx.c |   62 ++++++++++++-
- drivers/net/ethernet/cavium/thunder/thunder_bgx.h |    9 +
- drivers/net/ethernet/micrel/ks8851_mll.c          |   53 +----------
- drivers/net/ethernet/qlogic/qede/qede.h           |    2=20
- drivers/net/ethernet/qlogic/qede/qede_rdma.c      |   29 +++++-
- drivers/net/phy/mdio-bcm-iproc.c                  |   20 ++++
- drivers/net/tun.c                                 |   19 +++-
- drivers/net/usb/qmi_wwan.c                        |   43 +++------
- drivers/net/wireless/intel/iwlwifi/pcie/trans.c   |   15 ++-
- drivers/net/wireless/marvell/mwifiex/tdls.c       |   75 +++++-----------
- drivers/nfc/pn544/i2c.c                           |    1=20
- drivers/nvme/host/core.c                          |    2=20
- drivers/s390/cio/blacklist.c                      |    5 -
- drivers/tty/serial/8250/8250_exar.c               |   33 +++++++
- drivers/tty/serial/ar933x_uart.c                  |    8 +
- drivers/tty/serial/mvebu-uart.c                   |    2=20
- drivers/tty/sysrq.c                               |    8 -
- drivers/tty/vt/selection.c                        |   26 ++++-
- drivers/tty/vt/vt.c                               |    2=20
- drivers/usb/core/hub.c                            |    8 +
- drivers/usb/core/port.c                           |   10 +-
- drivers/usb/core/quirks.c                         |    3=20
- drivers/usb/gadget/composite.c                    |   24 +++--
- drivers/usb/gadget/function/f_fs.c                |    5 -
- drivers/usb/gadget/function/u_serial.c            |    4=20
- drivers/usb/host/xhci-ring.c                      |    6 +
- drivers/usb/storage/unusual_devs.h                |    6 +
- drivers/vhost/net.c                               |   13 --
- drivers/video/console/vgacon.c                    |    3=20
- drivers/watchdog/da9062_wdt.c                     |    7 -
- drivers/watchdog/wdat_wdt.c                       |    2=20
- fs/cifs/cifsacl.c                                 |    4=20
- fs/cifs/connect.c                                 |    2=20
- fs/cifs/inode.c                                   |    8 +
- fs/dax.c                                          |    3=20
- fs/ecryptfs/keystore.c                            |    4=20
- fs/ext4/balloc.c                                  |   14 ++
- fs/ext4/ext4.h                                    |   30 +++++-
- fs/ext4/ialloc.c                                  |   23 ++--
- fs/ext4/mballoc.c                                 |   61 ++++++++-----
- fs/ext4/resize.c                                  |   62 ++++++++++---
- fs/ext4/super.c                                   |  103 +++++++++++++++--=
------
- fs/fat/inode.c                                    |   19 +---
- fs/namei.c                                        |    2=20
- include/acpi/actypes.h                            |    3=20
- include/linux/bitops.h                            |    3=20
- include/linux/hid.h                               |    2=20
- include/net/flow_dissector.h                      |    9 +
- include/uapi/linux/usb/charger.h                  |   16 +--
- kernel/audit.c                                    |   40 ++++----
- kernel/auditfilter.c                              |   71 ++++++++-------
- kernel/kprobes.c                                  |   71 +++++++++------
- kernel/trace/trace.c                              |    2=20
- mm/huge_memory.c                                  |   26 +----
- mm/mprotect.c                                     |   38 +++++++-
- net/core/fib_rules.c                              |    2=20
- net/ipv6/ip6_fib.c                                |    7 -
- net/ipv6/route.c                                  |    1=20
- net/mac80211/util.c                               |   18 ++-
- net/netfilter/nf_conntrack_core.c                 |   30 ++++--
- net/netlink/af_netlink.c                          |    5 -
- net/sched/cls_flower.c                            |    1=20
- net/sctp/sm_statefuns.c                           |   29 ++++--
- net/wireless/ethtool.c                            |    8 +
- net/wireless/nl80211.c                            |    1=20
- sound/soc/codecs/pcm512x.c                        |    8 +
- sound/soc/intel/skylake/skl-debug.c               |   32 +++---
- sound/soc/soc-dapm.c                              |    2=20
- sound/soc/soc-pcm.c                               |   16 +--
- sound/soc/soc-topology.c                          |   17 ++-
- tools/perf/ui/browsers/hists.c                    |    1=20
- tools/testing/selftests/lib.mk                    |   23 ++--
- virt/kvm/kvm_main.c                               |   12 +-
- 122 files changed, 1162 insertions(+), 612 deletions(-)
-
-Ahmad Fatoum (1):
-      ARM: imx: build v7_cpu_resume() unconditionally
-
-Aleksa Sarai (1):
-      namei: only return -ECHILD from follow_dotdot_rcu()
-
-Arnaldo Carvalho de Melo (1):
-      perf hists browser: Restore ESC as "Zoom out" of DSO/thread/etc
-
-Arthur Kiyanovski (8):
-      net: ena: fix potential crash when rxfh key is NULL
-      net: ena: fix uses of round_jiffies()
-      net: ena: add missing ethtool TX timestamping indication
-      net: ena: fix incorrect default RSS key
-      net: ena: rss: store hash function as values and not bits
-      net: ena: fix incorrectly saving queue numbers when setting RSS indir=
-ection table
-      net: ena: ena-com.c: prevent NULL pointer dereference
-      net: ena: make ena rxfh support ETH_RSS_HASH_NO_CHANGE
-
-Arun Parameswaran (1):
-      net: phy: restore mdio regs in the iproc mdio driver
-
-Benjamin Poirier (2):
-      ipv6: Fix nlmsg_flags when splitting a multipath route
-      ipv6: Fix route replacement with dev-only route
-
-Bernard Metzler (1):
-      RDMA/iwcm: Fix iwcm work deallocation
-
-Bj=F8rn Mork (2):
-      qmi_wwan: re-add DW5821e pre-production variant
-      qmi_wwan: unconditionally reject 2 ep interfaces
-
-Brian Masney (1):
-      drm/msm/mdp5: rate limit pp done timeout warnings
-
-Brian Norris (1):
-      mwifiex: drop most magic numbers from mwifiex_process_tdls_action_fra=
-me()
-
-Charles Keepax (1):
-      ASoC: dapm: Correct DAPM handling of active widgets during shutdown
-
-Chris Wilson (1):
-      include/linux/bitops.h: introduce BITS_PER_TYPE
-
-Christophe JAILLET (2):
-      MIPS: VPE: Fix a double free and a memory leak in 'release_vpe()'
-      drivers: net: xgene: Fix the order of the arguments of 'alloc_etherde=
-v_mqs()'
-
-Corey Minyard (1):
-      ipmi:ssif: Handle a possible NULL pointer reference
-
-Dan Carpenter (3):
-      ext4: potential crash on allocation error in ext4_alloc_flex_bg_array=
-()
-      hwmon: (adt7462) Fix an error return in ADT7462_REG_VOLT()
-      dmaengine: coh901318: Fix a double lock bug in dma_tc_handle()
-
-Dan Lazewatsky (1):
-      usb: quirks: add NO_LPM quirk for Logitech Screen Share
-
-Daniel Golle (1):
-      serial: ar933x_uart: set UART_CS_{RX,TX}_READY_ORIDE
-
-David Rientjes (1):
-      mm, thp: fix defrag setting if newline is not used
-
-Dennis Dalessandro (1):
-      IB/hfi1, qib: Ensure RCU is locked when accessing list
-
-Desnes A. Nunes do Rosario (1):
-      powerpc: fix hardware PMU exception bug on PowerVM compatibility mode=
- systems
-
-Dmitry Osipenko (3):
-      nfc: pn544: Fix occasional HW initialization failure
-      dmaengine: tegra-apb: Fix use-after-free
-      dmaengine: tegra-apb: Prevent race conditions of tasklet vs free list
-
-Dragos Tarcatu (2):
-      ASoC: topology: Fix memleak in soc_tplg_link_elems_load()
-      ASoC: topology: Fix memleak in soc_tplg_manifest_load()
-
-Eugenio P=E9rez (1):
-      vhost: Check docket sk_family instead of call getname
-
-Eugeniu Rosca (3):
-      usb: core: hub: fix unhandled return by employing a void function
-      usb: core: hub: do error out if usb_autopm_get_interface() fails
-      usb: core: port: do error out if usb_autopm_get_interface() fails
-
-Faiz Abbas (1):
-      arm: dts: dra76x: Fix mmc3 max-frequency
-
-Florian Fainelli (1):
-      net: dsa: bcm_sf2: Forcibly configure IMP port for 1Gb/sec
-
-Frank Sorenson (1):
-      cifs: Fix mode output in debugging statements
-
-Greg Kroah-Hartman (2):
-      Revert "char/random: silence a lockdep splat with printk()"
-      Linux 4.14.173
-
-Gustavo A. R. Silva (1):
-      i2c: altera: Fix potential integer overflow
-
-H.J. Lu (1):
-      x86/boot/compressed: Don't declare __force_order in kaslr_64.c
-
-Hans de Goede (1):
-      HID: ite: Only bind to keyboard USB interface on Acer SW5-012 keyboar=
-d dock
-
-Harigovindan P (1):
-      drm/msm/dsi: save pll state before dsi host is powered off
-
-Jack Pham (1):
-      usb: gadget: composite: Support more than 500mA MaxPower
-
-Jason Baron (1):
-      net: sched: correct flower port blocking
-
-Jason Gunthorpe (1):
-      RMDA/cm: Fix missing ib_cm_destroy_id() in ib_cm_insert_listen()
-
-Jason Wang (1):
-      tuntap: correctly set SOCKWQ_ASYNC_NOSPACE
-
-Jay Dolan (1):
-      serial: 8250_exar: add support for ACCES cards
-
-Jeff Moyer (1):
-      dax: pass NOWAIT flag to iomap_apply
-
-Jethro Beekman (1):
-      net: fib_rules: Correctly set table field when table number exceeds 8=
- bits
-
-Jim Lin (1):
-      usb: storage: Add quirk for Samsung Fit flash
-
-Jiri Benc (1):
-      selftests: fix too long argument
-
-Jiri Slaby (3):
-      vt: selection, close sel_buffer race
-      vt: selection, push console lock down
-      vt: selection, push sel_lock up
-
-Johan Korsnes (2):
-      HID: core: fix off-by-one memset in hid_report_raw_event()
-      HID: core: increase HID report buffer size to 8KiB
-
-Johannes Berg (2):
-      iwlwifi: pcie: fix rb_allocator workqueue allocation
-      mac80211: consider more elements in parsing CRC
-
-John Stultz (1):
-      drm: msm: Fix return type of dsi_mgr_connector_mode_valid for kCFI
-
-Kees Cook (1):
-      x86/xen: Distribute switch variables for initialization
-
-Keith Busch (1):
-      nvme: Fix uninitialized-variable warning
-
-Lars-Peter Clausen (1):
-      usb: gadget: ffs: ffs_aio_cancel(): Save/restore IRQ flags
-
-Maor Gottlieb (1):
-      RDMA/core: Fix pkey and port assignment in get_new_pps
-
-Marco Felsch (1):
-      watchdog: da9062: do not ping the hw during stop()
-
-Marek Vasut (3):
-      net: ks8851-ml: Remove 8-bit bus accessors
-      net: ks8851-ml: Fix 16-bit data access
-      net: ks8851-ml: Fix 16-bit IO operation
-
-Martynas Pumputis (1):
-      netfilter: nf_conntrack: resolve clash for matching conntracks
-
-Masami Hiramatsu (2):
-      kprobes: Set unoptimized flag after unoptimizing code
-      kprobes: Fix optimize_kprobe()/unoptimize_kprobe() cancellation logic
-
-Mathias Nyman (1):
-      xhci: handle port status events for removed USB3 hcd
-
-Matthias Reichl (1):
-      ASoC: pcm512x: Fix unbalanced regulator enable call in probe error pa=
-th
-
-Mel Gorman (1):
-      mm, numa: fix bad pmd by atomically check for pmd_trans_huge when mar=
-king page tables prot_numa
-
-Michal Kalderon (1):
-      qede: Fix race between rdma destroy workqueue and link change event
-
-Mika Westerberg (2):
-      ACPICA: Introduce ACPI_ACCESS_BYTE_WIDTH() macro
-      ACPI: watchdog: Fix gas->access_width usage
-
-Mikulas Patocka (2):
-      dm cache: fix a crash due to incorrect work item cancelling
-      dm integrity: fix a deadlock due to offloading to an incorrect workqu=
-eue
-
-Nathan Chancellor (2):
-      ecryptfs: Fix up bad backport of fe2e082f5da5b4a0a92ae32978f81507ef37=
-ec66
-      RDMA/core: Fix use of logical OR in get_new_pps
-
-Nikolay Aleksandrov (1):
-      net: netlink: cap max groups which will be considered in netlink_bind=
-()
-
-OGAWA Hirofumi (1):
-      fat: fix uninit-memory access for partial initialized inode
-
-Oliver Upton (1):
-      KVM: VMX: check descriptor table exits on instruction emulation
-
-Orson Zhai (1):
-      Revert "PM / devfreq: Modify the device name as devfreq(X) for sysfs"
-
-Paul Moore (2):
-      audit: fix error handling in audit_data_to_entry()
-      audit: always check the netlink payload length in audit_receive_msg()
-
-Pavel Belous (1):
-      net: atlantic: fix potential error handling
-
-Peter Chen (1):
-      usb: charger: assign specific number for enum value
-
-Petr Mladek (2):
-      sysrq: Restore original console_loglevel when sysrq disabled
-      sysrq: Remove duplicated sysrq message
-
-Ronnie Sahlberg (1):
-      cifs: don't leak -EAGAIN for stat() during reconnect
-
-Sameeh Jubran (2):
-      net: ena: rss: fix failure to get indirection table
-      net: ena: ethtool: use correct value for crc32 hash
-
-Sean Christopherson (2):
-      KVM: Check for a bad hva before dropping into the ghc slow path
-      x86/pkeys: Manually set X86_FEATURE_OSPKE to preserve existing changes
-
-Sean Paul (1):
-      drm/msm: Set dma maximum segment size for mdss
-
-Sergey Matyukevich (2):
-      cfg80211: check wiphy driver existence for drvinfo report
-      cfg80211: add missing policy for NL80211_ATTR_STATUS_CODE
-
-Sergey Organov (1):
-      usb: gadget: serial: fix Tx stall after buffer overflow
-
-Steven Rostedt (VMware) (1):
-      tracing: Disable trace_printk() on post poned tests
-
-Suraj Jitindar Singh (2):
-      ext4: fix potential race between s_flex_groups online resizing and ac=
-cess
-      ext4: fix potential race between s_group_info online resizing and acc=
-ess
-
-Takashi Iwai (3):
-      ASoC: intel: skl: Fix pin debug prints
-      ASoC: intel: skl: Fix possible buffer overflow in debug outputs
-      ASoC: pcm: Fix possible buffer overflow in dpcm state sysfs output
-
-Theodore Ts'o (1):
-      ext4: fix potential race between online resizing and write operations
-
-Tim Harvey (1):
-      net: thunderx: workaround BGX TX Underflow issue
-
-Tina Zhang (1):
-      drm/i915/gvt: Separate display reset from ALL_ENGINES reset
-
-Tom Lendacky (1):
-      KVM: SVM: Override default MMIO mask if memory encryption is enabled
-
-Vasily Averin (1):
-      s390/cio: cio_ignore_proc_seq_next should increase position index
-
-Vladimir Oltean (1):
-      ARM: dts: ls1021a: Restore MDIO compatible to gianfar
-
-Wei Yang (1):
-      mm/huge_memory.c: use head to check huge zero page
-
-Wolfram Sang (1):
-      i2c: jz4780: silence log flood on txabrt
-
-Xin Long (1):
-      sctp: move the format error check out of __sctp_sf_do_9_1_abort
-
-Yazen Ghannam (2):
-      x86/mce: Handle varying MCA bank counts
-      EDAC/amd64: Set grain per DIMM
-
-Zhang Xiaoxu (1):
-      vgacon: Fix a UAF in vgacon_invert_region
-
-dan.carpenter@oracle.com (1):
-      HID: hiddev: Fix race in in hiddev_disconnect()
-
-tangbin (1):
-      tty:serial:mvebu-uart:fix a wrong return
-
-
---+QahgC5+KEYLbs62
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAl5qtCcACgkQONu9yGCS
-aT5LrBAArpYIA2XzcrzSzkIXJUsdv7HKz+UTIGLHn/lK+QLq5mhYIZqeCt/O2+Zq
-fXmXWXANSza8WtfPA/AU0i0Brqw9QX6f8ixNtKFpTCPci+5+QoSx6eTY+MuEQult
-A7dcDKUgBFCkOYrXMTVqJ7OXviaCAuh6PLrmBFfSKFZsUodgTlJKIY2gO0EvNCav
-mlF1qIpSC1DSDw6aO1xveNL5m61eKHLzJrLhoO8yugE+YoY4Ccz312fa6gQb1OOT
-f8C8q2vqJYMTcPkvs3GRa2DoBrp6AIx5z9A6kOQCgbhI54FQ2GTnXl7IFwkT3jPk
-W5/1Oza61MfW8EQsGwCSWIlOliH3qxip2FwGTF5FMIQoDtaw2vp8ch8tDaBme3rW
-Fw79mWiZaZE5X/5LMiUSmM4iPQXjqPhG4+nKp+A9nikW2IB+NHhYYVVYCnk/eWpj
-FMlGRZ751FzX9Lr2rTPP3PNHvrjyU7E4w0+7ItaHhw8eJ7l+ZKIJdvMRthE33Ijl
-Hh1FJ736LnLarlsKKwudHjig6xV2mVMuSj+S5DZbg5oVgiVDofKKCDuJdciWT5ow
-H+7JXh0hXYv8wEWnucYsQFN0xQfBd0cE5icx3xFDivP6UXukl8dwd+NRZTCYwtYk
-2iF8emQEGdfoLyP6Dxnq7jKQrovWSIrWc66TU0HcRvtvmPa8ni0=
-=3NeN
------END PGP SIGNATURE-----
-
---+QahgC5+KEYLbs62--
+Po Liu <Po.Liu@nxp.com> writes:
+
+> Introduce a ingress frame gate control flow action. tc create a gate
+> action would provide a gate list to control when open/close state. when
+> the gate open state, the flow could pass but not when gate state is
+> close. The driver would repeat the gate list cyclically. User also could
+> assign a time point to start the gate list by the basetime parameter. if
+> the basetime has passed current time, start time would calculate by the
+> cycletime of the gate list.
+> The action gate behavior try to keep according to the IEEE 802.1Qci spec.
+> For the software simulation, require the user input the clock type.
+>
+> Below is the setting example in user space:
+>
+>> tc qdisc add dev eth0 ingress
+>
+>> tc filter add dev eth0 parent ffff: protocol ip \
+> 	   flower src_ip 192.168.0.20 \
+> 	   action gate index 2 \
+> 	   sched-entry OPEN 200000000 -1 -1 \
+> 	   sched-entry CLOSE 100000000 -1 -1
+>
+>> tc chain del dev eth0 ingress chain 0
+
+A more complex example, showing how it would work for more filters would
+be nice.
+
+For example, filters matching 3 different source IPs (even better, using
+MAC addresses so it would work when you add the 'skip_sw' flag),
+assigning different priorities to them, also showing how the "base-time"
+could be used.
+
+>
+> "sched-entry" follow the name taprio style. gate state is
+> "OPEN"/"CLOSE". Follow the period nanosecond. Then next -1 is internal
+> priority value means which ingress queue should put. "-1" means
+> wildcard. The last value optional specifies the maximum number of
+> MSDU octets that are permitted to pass the gate during the specified
+> time interval.
+>
+> NOTE: This software simulator version not separate the admin/operation
+> state machine. Update setting would overwrite stop the previos setting
+> and waiting new cycle start.
+>
+> Signed-off-by: Po Liu <Po.Liu@nxp.com>
+> ---
+>  include/net/tc_act/tc_gate.h        |  54 +++
+>  include/uapi/linux/pkt_cls.h        |   1 +
+>  include/uapi/linux/tc_act/tc_gate.h |  47 ++
+>  net/sched/Kconfig                   |  15 +
+>  net/sched/Makefile                  |   1 +
+>  net/sched/act_gate.c                | 645 ++++++++++++++++++++++++++++
+>  6 files changed, 763 insertions(+)
+>  create mode 100644 include/net/tc_act/tc_gate.h
+>  create mode 100644 include/uapi/linux/tc_act/tc_gate.h
+>  create mode 100644 net/sched/act_gate.c
+>
+> diff --git a/include/net/tc_act/tc_gate.h b/include/net/tc_act/tc_gate.h
+> new file mode 100644
+> index 000000000000..932a2b91b944
+> --- /dev/null
+> +++ b/include/net/tc_act/tc_gate.h
+> @@ -0,0 +1,54 @@
+> +// SPDX-License-Identifier: (GPL-2.0+)
+> +/* Copyright 2020 NXP */
+> +
+> +#ifndef __NET_TC_gate_H
+> +#define __NET_TC_gate_H
+> +
+> +#include <net/act_api.h>
+> +#include <linux/tc_act/tc_gate.h>
+> +
+> +struct tcfg_gate_entry {
+> +	int			index;
+> +	u8			gate_state;
+> +	u32			interval;
+> +	s32			ipv;
+> +	s32			maxoctets;
+> +	struct list_head	list;
+> +};
+> +
+> +struct tcf_gate_params {
+> +	s32			tcfg_priority;
+> +	u64			tcfg_basetime;
+> +	u64			tcfg_cycletime;
+> +	u64			tcfg_cycletime_ext;
+> +	u32			tcfg_flags;
+> +	s32			tcfg_clockid;
+> +	size_t			num_entries;
+> +	struct list_head	entries;
+> +};
+> +
+> +#define GATE_ACT_GATE_OPEN	BIT(0)
+> +#define GATE_ACT_PENDING	BIT(1)
+> +struct gate_action {
+> +	struct tcf_gate_params param;
+> +	spinlock_t entry_lock;
+> +	u8 current_gate_status;
+> +	ktime_t current_close_time;
+> +	u32 current_entry_octets;
+> +	s32 current_max_octets;
+> +	struct tcfg_gate_entry __rcu *next_entry;
+> +	struct hrtimer hitimer;
+> +	enum tk_offsets tk_offset;
+> +	struct rcu_head rcu;
+> +};
+> +
+> +struct tcf_gate {
+> +	struct tc_action		common;
+> +	struct gate_action __rcu	*actg;
+> +};
+> +#define to_gate(a) ((struct tcf_gate *)a)
+> +
+> +#define get_gate_param(act) ((struct tcf_gate_params *)act)
+> +#define get_gate_action(p) ((struct gate_action *)p)
+> +
+> +#endif
+> diff --git a/include/uapi/linux/pkt_cls.h b/include/uapi/linux/pkt_cls.h
+> index 449a63971451..d1f36a3f94d9 100644
+> --- a/include/uapi/linux/pkt_cls.h
+> +++ b/include/uapi/linux/pkt_cls.h
+> @@ -112,6 +112,7 @@ enum tca_id {
+>  	TCA_ID_CTINFO,
+>  	TCA_ID_MPLS,
+>  	TCA_ID_CT,
+> +	TCA_ID_GATE,
+>  	/* other actions go here */
+>  	__TCA_ID_MAX = 255
+>  };
+> diff --git a/include/uapi/linux/tc_act/tc_gate.h b/include/uapi/linux/tc_act/tc_gate.h
+> new file mode 100644
+> index 000000000000..e1b3a7f2ae7b
+> --- /dev/null
+> +++ b/include/uapi/linux/tc_act/tc_gate.h
+> @@ -0,0 +1,47 @@
+> +// SPDX-License-Identifier: (GPL-2.0+)
+> +/* Copyright 2020 NXP */
+> +
+> +#ifndef __LINUX_TC_GATE_H
+> +#define __LINUX_TC_GATE_H
+> +
+> +#include <linux/pkt_cls.h>
+> +
+> +struct tc_gate {
+> +	tc_gen;
+> +};
+> +
+> +enum {
+> +	TCA_GATE_ENTRY_UNSPEC,
+> +	TCA_GATE_ENTRY_INDEX,
+> +	TCA_GATE_ENTRY_GATE,
+> +	TCA_GATE_ENTRY_INTERVAL,
+> +	TCA_GATE_ENTRY_IPV,
+> +	TCA_GATE_ENTRY_MAX_OCTETS,
+> +	__TCA_GATE_ENTRY_MAX,
+> +};
+> +#define TCA_GATE_ENTRY_MAX (__TCA_GATE_ENTRY_MAX - 1)
+> +
+> +enum {
+> +	TCA_GATE_ONE_ENTRY_UNSPEC,
+> +	TCA_GATE_ONE_ENTRY,
+> +	__TCA_GATE_ONE_ENTRY_MAX,
+> +};
+> +#define TCA_GATE_ONE_ENTRY_MAX (__TCA_GATE_ONE_ENTRY_MAX - 1)
+> +
+> +enum {
+> +	TCA_GATE_UNSPEC,
+> +	TCA_GATE_TM,
+> +	TCA_GATE_PARMS,
+> +	TCA_GATE_PAD,
+> +	TCA_GATE_PRIORITY,
+> +	TCA_GATE_ENTRY_LIST,
+> +	TCA_GATE_BASE_TIME,
+> +	TCA_GATE_CYCLE_TIME,
+> +	TCA_GATE_CYCLE_TIME_EXT,
+> +	TCA_GATE_FLAGS,
+> +	TCA_GATE_CLOCKID,
+> +	__TCA_GATE_MAX,
+> +};
+> +#define TCA_GATE_MAX (__TCA_GATE_MAX - 1)
+> +
+> +#endif
+> diff --git a/net/sched/Kconfig b/net/sched/Kconfig
+> index bfbefb7bff9d..320471a0a21d 100644
+> --- a/net/sched/Kconfig
+> +++ b/net/sched/Kconfig
+> @@ -981,6 +981,21 @@ config NET_ACT_CT
+>  	  To compile this code as a module, choose M here: the
+>  	  module will be called act_ct.
+>  
+> +config NET_ACT_GATE
+> +	tristate "Frame gate list control tc action"
+> +	depends on NET_CLS_ACT
+> +	help
+> +	  Say Y here to allow the control the ingress flow by the gate list
+> +	  control. The frame policing by the time gate list control open/close
+> +	  cycle time. The manipulation will simulate the IEEE 802.1Qci stream
+> +	  gate control behavior. The action could be offload by the tc flower
+> +	  to hardware driver which the hardware own the capability of IEEE
+> +	  802.1Qci.
+> +
+> +	  If unsure, say N.
+> +	  To compile this code as a module, choose M here: the
+> +	  module will be called act_gate.
+> +
+>  config NET_IFE_SKBMARK
+>  	tristate "Support to encoding decoding skb mark on IFE action"
+>  	depends on NET_ACT_IFE
+> diff --git a/net/sched/Makefile b/net/sched/Makefile
+> index 31c367a6cd09..66bbf9a98f9e 100644
+> --- a/net/sched/Makefile
+> +++ b/net/sched/Makefile
+> @@ -30,6 +30,7 @@ obj-$(CONFIG_NET_IFE_SKBPRIO)	+= act_meta_skbprio.o
+>  obj-$(CONFIG_NET_IFE_SKBTCINDEX)	+= act_meta_skbtcindex.o
+>  obj-$(CONFIG_NET_ACT_TUNNEL_KEY)+= act_tunnel_key.o
+>  obj-$(CONFIG_NET_ACT_CT)	+= act_ct.o
+> +obj-$(CONFIG_NET_ACT_GATE)	+= act_gate.o
+>  obj-$(CONFIG_NET_SCH_FIFO)	+= sch_fifo.o
+>  obj-$(CONFIG_NET_SCH_CBQ)	+= sch_cbq.o
+>  obj-$(CONFIG_NET_SCH_HTB)	+= sch_htb.o
+> diff --git a/net/sched/act_gate.c b/net/sched/act_gate.c
+> new file mode 100644
+> index 000000000000..c2c243ca028c
+> --- /dev/null
+> +++ b/net/sched/act_gate.c
+> @@ -0,0 +1,645 @@
+> +// SPDX-License-Identifier: (GPL-2.0+)
+> +/* Copyright 2020 NXP */
+> +
+> +#include <linux/module.h>
+> +#include <linux/types.h>
+> +#include <linux/kernel.h>
+> +#include <linux/string.h>
+> +#include <linux/errno.h>
+> +#include <linux/skbuff.h>
+> +#include <linux/rtnetlink.h>
+> +#include <linux/init.h>
+> +#include <linux/slab.h>
+> +#include <net/act_api.h>
+> +#include <net/netlink.h>
+> +#include <net/pkt_cls.h>
+> +#include <net/tc_act/tc_gate.h>
+> +
+> +static unsigned int gate_net_id;
+> +static struct tc_action_ops act_gate_ops;
+> +
+> +static ktime_t gate_get_time(struct gate_action *gact)
+> +{
+> +	ktime_t mono = ktime_get();
+> +
+> +	switch (gact->tk_offset) {
+> +	case TK_OFFS_MAX:
+> +		return mono;
+> +	default:
+> +		return ktime_mono_to_any(mono, gact->tk_offset);
+> +	}
+> +
+> +	return KTIME_MAX;
+> +}
+> +
+> +static int gate_get_start_time(struct gate_action *gact, ktime_t *start)
+> +{
+> +	struct tcf_gate_params *param = get_gate_param(gact);
+> +	ktime_t now, base, cycle;
+> +	u64 n;
+> +
+> +	base = ns_to_ktime(param->tcfg_basetime);
+> +	now = gate_get_time(gact);
+> +
+> +	if (ktime_after(base, now)) {
+> +		*start = base;
+> +		return 0;
+> +	}
+> +
+> +	cycle = param->tcfg_cycletime;
+> +
+> +	/* cycle time should not be zero */
+> +	if (WARN_ON(!cycle))
+> +		return -EFAULT;
+> +
+> +	n = div64_u64(ktime_sub_ns(now, base), cycle);
+> +	*start = ktime_add_ns(base, (n + 1) * cycle);
+> +	return 0;
+> +}
+> +
+> +static void gate_start_timer(struct gate_action *gact, ktime_t start)
+> +{
+> +	ktime_t expires;
+> +
+> +	expires = hrtimer_get_expires(&gact->hitimer);
+> +	if (expires == 0)
+> +		expires = KTIME_MAX;
+> +
+> +	start = min_t(ktime_t, start, expires);
+> +
+> +	hrtimer_start(&gact->hitimer, start, HRTIMER_MODE_ABS);
+> +}
+> +
+> +static enum hrtimer_restart gate_timer_func(struct hrtimer *timer)
+> +{
+> +	struct gate_action *gact = container_of(timer, struct gate_action,
+> +						hitimer);
+> +	struct tcf_gate_params *p = get_gate_param(gact);
+> +	struct tcfg_gate_entry *next;
+> +	ktime_t close_time, now;
+> +
+> +	spin_lock(&gact->entry_lock);
+> +
+> +	next = rcu_dereference_protected(gact->next_entry,
+> +					 lockdep_is_held(&gact->entry_lock));
+> +
+> +	/* cycle start, clear pending bit, clear total octets */
+> +	gact->current_gate_status = next->gate_state ? GATE_ACT_GATE_OPEN : 0;
+> +	gact->current_entry_octets = 0;
+> +	gact->current_max_octets = next->maxoctets;
+> +
+> +	gact->current_close_time = ktime_add_ns(gact->current_close_time,
+> +						next->interval);
+> +
+> +	close_time = gact->current_close_time;
+> +
+> +	if (list_is_last(&next->list, &p->entries))
+> +		next = list_first_entry(&p->entries,
+> +					struct tcfg_gate_entry, list);
+> +	else
+> +		next = list_next_entry(next, list);
+> +
+> +	now = gate_get_time(gact);
+> +
+> +	if (ktime_after(now, close_time)) {
+> +		ktime_t cycle, base;
+> +		u64 n;
+> +
+> +		cycle = p->tcfg_cycletime;
+> +		base = ns_to_ktime(p->tcfg_basetime);
+> +		n = div64_u64(ktime_sub_ns(now, base), cycle);
+> +		close_time = ktime_add_ns(base, (n + 1) * cycle);
+> +	}
+> +
+> +	rcu_assign_pointer(gact->next_entry, next);
+> +	spin_unlock(&gact->entry_lock);
+> +
+> +	hrtimer_set_expires(&gact->hitimer, close_time);
+> +
+> +	return HRTIMER_RESTART;
+> +}
+> +
+> +static int tcf_gate_act(struct sk_buff *skb, const struct tc_action *a,
+> +			struct tcf_result *res)
+> +{
+> +	struct tcf_gate *g = to_gate(a);
+> +	struct tcf_gate_params *p;
+> +	struct gate_action *gact;
+> +	int action;
+> +
+> +	tcf_lastuse_update(&g->tcf_tm);
+> +	tcf_action_update_bstats(&g->common, skb);
+> +
+
+Please test this with lockdep enabled, I got the feeling that there's a
+missing rcu_read_lock() somewhere around here.
+
+> +	action = READ_ONCE(g->tcf_action);
+> +	gact = rcu_dereference_bh(g->actg);
+> +	p = get_gate_param(gact);
+> +
+> +	if (gact->current_gate_status & GATE_ACT_PENDING)
+> +		return action;
+> +
+> +	if (!(gact->current_gate_status & GATE_ACT_GATE_OPEN))
+> +		goto drop;
+> +
+> +	spin_lock(&gact->entry_lock);
+> +	if (gact->current_max_octets >= 0) {
+> +		gact->current_entry_octets += qdisc_pkt_len(skb);
+> +		if (gact->current_entry_octets > gact->current_max_octets) {
+> +			tcf_action_inc_overlimit_qstats(&g->common);
+> +			spin_unlock(&gact->entry_lock);
+> +			goto drop;
+> +		}
+> +	}
+> +	spin_unlock(&gact->entry_lock);
+> +
+> +	return action;
+> +drop:
+> +	tcf_action_inc_drop_qstats(&g->common);
+> +
+> +	return TC_ACT_SHOT;
+> +}
+> +
+> +static const struct nla_policy entry_policy[TCA_GATE_ENTRY_MAX + 1] = {
+> +	[TCA_GATE_ENTRY_INDEX]		= { .type = NLA_U32 },
+> +	[TCA_GATE_ENTRY_GATE]		= { .type = NLA_FLAG },
+> +	[TCA_GATE_ENTRY_INTERVAL]	= { .type = NLA_U32 },
+> +	[TCA_GATE_ENTRY_IPV]		= { .type = NLA_S32 },
+> +	[TCA_GATE_ENTRY_MAX_OCTETS]	= { .type = NLA_S32 },
+> +};
+> +
+> +static const struct nla_policy gate_policy[TCA_GATE_MAX + 1] = {
+> +	[TCA_GATE_PARMS]		= { .len = sizeof(struct tc_gate) },
+> +	[TCA_GATE_PRIORITY]		= { .type = NLA_S32 },
+> +	[TCA_GATE_ENTRY_LIST]		= { .type = NLA_NESTED },
+> +	[TCA_GATE_BASE_TIME]		= { .type = NLA_U64 },
+> +	[TCA_GATE_CYCLE_TIME]		= { .type = NLA_U64 },
+> +	[TCA_GATE_CYCLE_TIME_EXT]	= { .type = NLA_U64 },
+> +	[TCA_GATE_FLAGS]		= { .type = NLA_U32 },
+> +	[TCA_GATE_CLOCKID]		= { .type = NLA_S32 },
+> +};
+> +
+> +static int fill_gate_entry(struct nlattr **tb, struct tcfg_gate_entry *entry,
+> +			   struct netlink_ext_ack *extack)
+> +{
+> +	u32 interval = 0;
+> +
+> +	if (tb[TCA_GATE_ENTRY_GATE])
+> +		entry->gate_state = 1;
+> +	else
+> +		entry->gate_state = 0;
+> +
+> +	if (tb[TCA_GATE_ENTRY_INTERVAL])
+> +		interval = nla_get_u32(tb[TCA_GATE_ENTRY_INTERVAL]);
+> +
+> +	if (interval == 0) {
+> +		NL_SET_ERR_MSG(extack, "Invalid interval for schedule entry");
+> +		return -EINVAL;
+> +	}
+> +
+> +	entry->interval = interval;
+> +
+> +	if (tb[TCA_GATE_ENTRY_IPV])
+> +		entry->ipv = nla_get_s32(tb[TCA_GATE_ENTRY_IPV]);
+> +	else
+> +		entry->ipv = -1;
+> +
+> +	if (tb[TCA_GATE_ENTRY_MAX_OCTETS])
+> +		entry->maxoctets = nla_get_s32(tb[TCA_GATE_ENTRY_MAX_OCTETS]);
+> +	else
+> +		entry->maxoctets = -1;
+> +
+> +	return 0;
+> +}
+> +
+> +static int parse_gate_entry(struct nlattr *n, struct  tcfg_gate_entry *entry,
+> +			    int index, struct netlink_ext_ack *extack)
+> +{
+> +	struct nlattr *tb[TCA_GATE_ENTRY_MAX + 1] = { };
+> +	int err;
+> +
+> +	err = nla_parse_nested_deprecated(tb, TCA_GATE_ENTRY_MAX, n,
+> +					  entry_policy, NULL);
+> +	if (err < 0) {
+> +		NL_SET_ERR_MSG(extack, "Could not parse nested entry");
+> +		return -EINVAL;
+> +	}
+> +
+> +	entry->index = index;
+> +
+> +	return fill_gate_entry(tb, entry, extack);
+> +}
+> +
+> +static int parse_gate_list(struct nlattr *list,
+> +			   struct tcf_gate_params *sched,
+> +			   struct netlink_ext_ack *extack)
+> +{
+> +	struct nlattr *n;
+> +	int err, rem;
+> +	int i = 0;
+> +
+> +	if (!list)
+> +		return -EINVAL;
+> +
+> +	nla_for_each_nested(n, list, rem) {
+> +		struct tcfg_gate_entry *entry;
+> +
+> +		if (nla_type(n) != TCA_GATE_ONE_ENTRY) {
+> +			NL_SET_ERR_MSG(extack, "Attribute isn't type 'entry'");
+> +			continue;
+> +		}
+> +
+> +		entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+> +		if (!entry) {
+> +			NL_SET_ERR_MSG(extack, "Not enough memory for entry");
+> +			return -ENOMEM;
+> +		}
+> +
+> +		err = parse_gate_entry(n, entry, i, extack);
+> +		if (err < 0) {
+> +			kfree(entry);
+> +			return err;
+> +		}
+> +
+> +		list_add_tail(&entry->list, &sched->entries);
+> +		i++;
+> +	}
+> +
+> +	sched->num_entries = i;
+> +
+> +	return i;
+> +}
+> +
+> +static int tcf_gate_init(struct net *net, struct nlattr *nla,
+> +			 struct nlattr *est, struct tc_action **a,
+> +			 int ovr, int bind, bool rtnl_held,
+> +			 struct tcf_proto *tp, u32 flags,
+> +			 struct netlink_ext_ack *extack)
+> +{
+> +	struct tc_action_net *tn = net_generic(net, gate_net_id);
+> +	enum tk_offsets tk_offset = TK_OFFS_TAI;
+> +	struct nlattr *tb[TCA_GATE_MAX + 1];
+> +	struct tcf_chain *goto_ch = NULL;
+> +	struct tcfg_gate_entry *next;
+> +	struct tcf_gate_params *p;
+> +	struct gate_action *gact;
+> +	s32 clockid = CLOCK_TAI;
+> +	struct tc_gate *parm;
+> +	struct tcf_gate *g;
+> +	int ret = 0, err;
+> +	u64 basetime = 0;
+> +	u32 gflags = 0;
+> +	s32 prio = -1;
+> +	ktime_t start;
+> +	u32 index;
+> +
+> +	if (!nla)
+> +		return -EINVAL;
+> +
+> +	err = nla_parse_nested_deprecated(tb, TCA_GATE_MAX,
+> +					  nla, gate_policy, NULL);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	if (!tb[TCA_GATE_PARMS])
+> +		return -EINVAL;
+> +	parm = nla_data(tb[TCA_GATE_PARMS]);
+> +	index = parm->index;
+> +	err = tcf_idr_check_alloc(tn, &index, a, bind);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	if (err && bind)
+> +		return 0;
+> +
+> +	if (!err) {
+> +		ret = tcf_idr_create_from_flags(tn, index, est, a,
+> +						&act_gate_ops, bind, flags);
+> +		if (ret) {
+> +			tcf_idr_cleanup(tn, index);
+> +			return ret;
+> +		}
+> +
+> +		ret = ACT_P_CREATED;
+> +	} else if (!ovr) {
+> +		tcf_idr_release(*a, bind);
+> +		return -EEXIST;
+> +	}
+> +
+> +	if (tb[TCA_GATE_PRIORITY])
+> +		prio = nla_get_s32(tb[TCA_GATE_PRIORITY]);
+> +
+> +	if (tb[TCA_GATE_BASE_TIME])
+> +		basetime = nla_get_u64(tb[TCA_GATE_BASE_TIME]);
+> +
+> +	if (tb[TCA_GATE_FLAGS])
+> +		gflags = nla_get_u32(tb[TCA_GATE_FLAGS]);
+> +
+> +	if (tb[TCA_GATE_CLOCKID]) {
+> +		clockid = nla_get_s32(tb[TCA_GATE_CLOCKID]);
+> +		switch (clockid) {
+> +		case CLOCK_REALTIME:
+> +			tk_offset = TK_OFFS_REAL;
+> +			break;
+> +		case CLOCK_MONOTONIC:
+> +			tk_offset = TK_OFFS_MAX;
+> +			break;
+> +		case CLOCK_BOOTTIME:
+> +			tk_offset = TK_OFFS_BOOT;
+> +			break;
+> +		case CLOCK_TAI:
+> +			tk_offset = TK_OFFS_TAI;
+> +			break;
+> +		default:
+> +			NL_SET_ERR_MSG(extack, "Invalid 'clockid'");
+> +			goto release_idr;
+> +		}
+> +	}
+> +
+> +	err = tcf_action_check_ctrlact(parm->action, tp, &goto_ch, extack);
+> +	if (err < 0)
+> +		goto release_idr;
+> +
+> +	g = to_gate(*a);
+> +
+> +	gact = kzalloc(sizeof(*gact), GFP_KERNEL);
+> +	if (!gact) {
+> +		err = -ENOMEM;
+> +		goto put_chain;
+> +	}
+> +
+> +	p = get_gate_param(gact);
+> +
+> +	INIT_LIST_HEAD(&p->entries);
+> +	if (tb[TCA_GATE_ENTRY_LIST]) {
+> +		err = parse_gate_list(tb[TCA_GATE_ENTRY_LIST], p, extack);
+> +		if (err < 0)
+> +			goto release_mem;
+> +	}
+> +
+> +	if (tb[TCA_GATE_CYCLE_TIME]) {
+> +		p->tcfg_cycletime = nla_get_u64(tb[TCA_GATE_CYCLE_TIME]);
+> +	} else {
+> +		struct tcfg_gate_entry *entry;
+> +		ktime_t cycle = 0;
+> +
+> +		list_for_each_entry(entry, &p->entries, list)
+> +			cycle = ktime_add_ns(cycle, entry->interval);
+> +		p->tcfg_cycletime = cycle;
+> +	}
+> +
+> +	if (tb[TCA_GATE_CYCLE_TIME_EXT])
+> +		p->tcfg_cycletime_ext =
+> +			nla_get_u64(tb[TCA_GATE_CYCLE_TIME_EXT]);
+> +
+> +	p->tcfg_priority = prio;
+> +	p->tcfg_basetime = basetime;
+> +	p->tcfg_clockid = clockid;
+> +	p->tcfg_flags = gflags;
+> +
+> +	gact->tk_offset = tk_offset;
+> +	spin_lock_init(&gact->entry_lock);
+> +	hrtimer_init(&gact->hitimer, clockid, HRTIMER_MODE_ABS);
+> +	gact->hitimer.function = gate_timer_func;
+
+Hm, having an hrtimer per filter seems kind dangerous, in the sense
+that it seems very hard to configure right.
+
+But I don't have any alternative ideas for now.
+
+> +
+> +	err = gate_get_start_time(gact, &start);
+> +	if (err < 0) {
+> +		NL_SET_ERR_MSG(extack,
+> +			       "Internal error: failed get start time");
+> +		goto release_mem;
+> +	}
+> +
+> +	gact->current_close_time = start;
+> +	gact->current_gate_status = GATE_ACT_GATE_OPEN | GATE_ACT_PENDING;
+> +
+> +	next = list_first_entry(&p->entries, struct tcfg_gate_entry, list);
+> +	rcu_assign_pointer(gact->next_entry, next);
+> +
+> +	gate_start_timer(gact, start);
+> +
+> +	spin_lock_bh(&g->tcf_lock);
+> +	goto_ch = tcf_action_set_ctrlact(*a, parm->action, goto_ch);
+> +	gact = rcu_replace_pointer(g->actg, gact,
+> +				   lockdep_is_held(&g->tcf_lock));
+> +	spin_unlock_bh(&g->tcf_lock);
+> +
+> +	if (goto_ch)
+> +		tcf_chain_put_by_act(goto_ch);
+> +	if (gact)
+> +		kfree_rcu(gact, rcu);
+> +
+> +	if (ret == ACT_P_CREATED)
+> +		tcf_idr_insert(tn, *a);
+> +	return ret;
+> +
+> +release_mem:
+> +	kfree_rcu(gact, rcu);
+> +put_chain:
+> +	if (goto_ch)
+> +		tcf_chain_put_by_act(goto_ch);
+> +release_idr:
+> +	tcf_idr_release(*a, bind);
+> +	return err;
+> +}
+> +
+> +static void tcf_gate_cleanup(struct tc_action *a)
+> +{
+> +	struct tcf_gate *g = to_gate(a);
+> +	struct tcfg_gate_entry *entry, *n;
+> +	struct tcf_gate_params *p;
+> +	struct gate_action *gact;
+> +
+> +	spin_lock_bh(&g->tcf_lock);
+> +	gact = rcu_dereference_protected(g->actg,
+> +					 lockdep_is_held(&g->tcf_lock));
+> +	hrtimer_cancel(&gact->hitimer);
+> +
+> +	p = get_gate_param(gact);
+> +	list_for_each_entry_safe(entry, n, &p->entries, list) {
+> +		list_del(&entry->list);
+> +		kfree(entry);
+> +	}
+> +	spin_unlock_bh(&g->tcf_lock);
+> +
+> +	kfree_rcu(gact, rcu);
+> +}
+> +
+> +static int dumping_entry(struct sk_buff *skb,
+> +			 struct tcfg_gate_entry *entry)
+> +{
+> +	struct nlattr *item;
+> +
+> +	item = nla_nest_start_noflag(skb, TCA_GATE_ONE_ENTRY);
+> +	if (!item)
+> +		return -ENOSPC;
+> +
+> +	if (nla_put_u32(skb, TCA_GATE_ENTRY_INDEX, entry->index))
+> +		goto nla_put_failure;
+> +
+> +	if (entry->gate_state && nla_put_flag(skb, TCA_GATE_ENTRY_GATE))
+> +		goto nla_put_failure;
+> +
+> +	if (nla_put_u32(skb, TCA_GATE_ENTRY_INTERVAL, entry->interval))
+> +		goto nla_put_failure;
+> +
+> +	if (nla_put_s32(skb, TCA_GATE_ENTRY_MAX_OCTETS, entry->maxoctets))
+> +		goto nla_put_failure;
+> +
+> +	if (nla_put_s32(skb, TCA_GATE_ENTRY_IPV, entry->ipv))
+> +		goto nla_put_failure;
+> +
+> +	return nla_nest_end(skb, item);
+> +
+> +nla_put_failure:
+> +	nla_nest_cancel(skb, item);
+> +	return -1;
+> +}
+> +
+> +static int tcf_gate_dump(struct sk_buff *skb, struct tc_action *a,
+> +			 int bind, int ref)
+> +{
+> +	unsigned char *b = skb_tail_pointer(skb);
+> +	struct tcf_gate *g = to_gate(a);
+> +	struct tc_gate opt = {
+> +		.index    = g->tcf_index,
+> +		.refcnt   = refcount_read(&g->tcf_refcnt) - ref,
+> +		.bindcnt  = atomic_read(&g->tcf_bindcnt) - bind,
+> +	};
+> +	struct tcfg_gate_entry *entry;
+> +	struct gate_action *gact;
+> +	struct tcf_gate_params *p;
+> +	struct nlattr *entry_list;
+> +	struct tcf_t t;
+> +
+> +	spin_lock_bh(&g->tcf_lock);
+> +	opt.action = g->tcf_action;
+> +	gact = rcu_dereference_protected(g->actg,
+> +					 lockdep_is_held(&g->tcf_lock));
+> +
+> +	p = get_gate_param(gact);
+> +
+> +	if (nla_put(skb, TCA_GATE_PARMS, sizeof(opt), &opt))
+> +		goto nla_put_failure;
+> +
+> +	if (nla_put_u64_64bit(skb, TCA_GATE_BASE_TIME,
+> +			      p->tcfg_basetime, TCA_GATE_PAD))
+> +		goto nla_put_failure;
+> +
+> +	if (nla_put_u64_64bit(skb, TCA_GATE_CYCLE_TIME,
+> +			      p->tcfg_cycletime, TCA_GATE_PAD))
+> +		goto nla_put_failure;
+> +
+> +	if (nla_put_u64_64bit(skb, TCA_GATE_CYCLE_TIME_EXT,
+> +			      p->tcfg_cycletime_ext, TCA_GATE_PAD))
+> +		goto nla_put_failure;
+> +
+> +	if (nla_put_s32(skb, TCA_GATE_CLOCKID, p->tcfg_clockid))
+> +		goto nla_put_failure;
+> +
+> +	if (nla_put_u32(skb, TCA_GATE_FLAGS, p->tcfg_flags))
+> +		goto nla_put_failure;
+> +
+> +	if (nla_put_s32(skb, TCA_GATE_PRIORITY, p->tcfg_priority))
+> +		goto nla_put_failure;
+> +
+> +	entry_list = nla_nest_start_noflag(skb, TCA_GATE_ENTRY_LIST);
+> +	if (!entry_list)
+> +		goto nla_put_failure;
+> +
+> +	list_for_each_entry(entry, &p->entries, list) {
+> +		if (dumping_entry(skb, entry) < 0)
+> +			goto nla_put_failure;
+> +	}
+> +
+> +	nla_nest_end(skb, entry_list);
+> +
+> +	tcf_tm_dump(&t, &g->tcf_tm);
+> +	if (nla_put_64bit(skb, TCA_GATE_TM, sizeof(t), &t, TCA_GATE_PAD))
+> +		goto nla_put_failure;
+> +	spin_unlock_bh(&g->tcf_lock);
+> +
+> +	return skb->len;
+> +
+> +nla_put_failure:
+> +	spin_unlock_bh(&g->tcf_lock);
+> +	nlmsg_trim(skb, b);
+> +	return -1;
+> +}
+> +
+> +static int tcf_gate_walker(struct net *net, struct sk_buff *skb,
+> +			   struct netlink_callback *cb, int type,
+> +			   const struct tc_action_ops *ops,
+> +			   struct netlink_ext_ack *extack)
+> +{
+> +	struct tc_action_net *tn = net_generic(net, gate_net_id);
+> +
+> +	return tcf_generic_walker(tn, skb, cb, type, ops, extack);
+> +}
+> +
+> +static void tcf_gate_stats_update(struct tc_action *a, u64 bytes, u64 packets,
+> +				  u64 lastuse, u64 dropped, bool hw)
+> +{
+> +	struct tcf_gate *g = to_gate(a);
+> +	struct tcf_t *tm = &g->tcf_tm;
+> +
+> +	tcf_action_update_stats(a, bytes, packets, dropped, hw);
+> +	tm->lastuse = max_t(u64, tm->lastuse, lastuse);
+> +}
+> +
+> +static int tcf_gate_search(struct net *net, struct tc_action **a, u32 index)
+> +{
+> +	struct tc_action_net *tn = net_generic(net, gate_net_id);
+> +
+> +	return tcf_idr_search(tn, a, index);
+> +}
+> +
+> +static size_t tcf_gate_get_fill_size(const struct tc_action *act)
+> +{
+> +	return nla_total_size(sizeof(struct tc_gate));
+> +}
+> +
+> +static struct tc_action_ops act_gate_ops = {
+> +	.kind		=	"gate",
+> +	.id		=	TCA_ID_GATE,
+> +	.owner		=	THIS_MODULE,
+> +	.act		=	tcf_gate_act,
+> +	.dump		=	tcf_gate_dump,
+> +	.init		=	tcf_gate_init,
+> +	.cleanup	=	tcf_gate_cleanup,
+> +	.walk		=	tcf_gate_walker,
+> +	.stats_update	=	tcf_gate_stats_update,
+> +	.get_fill_size	=	tcf_gate_get_fill_size,
+> +	.lookup		=	tcf_gate_search,
+> +	.size		=	sizeof(struct gate_action),
+> +};
+> +
+> +static __net_init int gate_init_net(struct net *net)
+> +{
+> +	struct tc_action_net *tn = net_generic(net, gate_net_id);
+> +
+> +	return tc_action_net_init(net, tn, &act_gate_ops);
+> +}
+> +
+> +static void __net_exit gate_exit_net(struct list_head *net_list)
+> +{
+> +	tc_action_net_exit(net_list, gate_net_id);
+> +}
+> +
+> +static struct pernet_operations gate_net_ops = {
+> +	.init = gate_init_net,
+> +	.exit_batch = gate_exit_net,
+> +	.id   = &gate_net_id,
+> +	.size = sizeof(struct tc_action_net),
+> +};
+> +
+> +static int __init gate_init_module(void)
+> +{
+> +	return tcf_register_action(&act_gate_ops, &gate_net_ops);
+> +}
+> +
+> +static void __exit gate_cleanup_module(void)
+> +{
+> +	tcf_unregister_action(&act_gate_ops, &gate_net_ops);
+> +}
+> +
+> +module_init(gate_init_module);
+> +module_exit(gate_cleanup_module);
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.17.1
+>
+
+-- 
+Vinicius
