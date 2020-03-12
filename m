@@ -2,114 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B71C718262E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 01:20:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A40F182633
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 01:22:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731608AbgCLATt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 20:19:49 -0400
-Received: from mail-qk1-f180.google.com ([209.85.222.180]:42080 "EHLO
-        mail-qk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731525AbgCLATt (ORCPT
+        id S1731603AbgCLAWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 20:22:08 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55302 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbgCLAWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 20:19:49 -0400
-Received: by mail-qk1-f180.google.com with SMTP id e11so4007367qkg.9
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 17:19:48 -0700 (PDT)
+        Wed, 11 Mar 2020 20:22:07 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 6so4181865wmi.5
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 17:22:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=labbott.name; s=google;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=MO+EQlWMy0kzz1J1x9/iOGY80QsD1Dxgz1zaFvELTUk=;
-        b=TOS3dxr5Ig5VZh/pLdbhl97cPhAHs3l8lln+0ZfH48xYNyB1AiqddC4eiEzGqHacnK
-         YWr5Xk4C8gBK+tqIT3tFAukZ+q1A5Fkp4BEDr48ygEUjJLwIQ+US1lHwE5quULAMggSA
-         os3OHpxJ4IZBuMYoTj9fbKLfvnvPjeFUaa2HA=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/Y07gbfPjF/rDVII6hbI+/pDFRnbg5DF5S+FUcUOsKo=;
+        b=MmlVyRPrIaPl3nCRHHcDC/20Sr8pYadVfiz/QxL0Xb1YfW84qOrgiY1GJpzt9CNXb4
+         Y1BzdFWTAMc9X+QbFWvalnFFSCEibFi4NcIdzLhEFg2PHIQuw5MkD8siLW+8fpD8zc2y
+         vWkt6OzVNAuuT0RvZ8F9k467fiktgLv7bjoogUgja0gLjA3L4BZRNl/BUUtAbwlCykvG
+         cPAfaYErTmOXY9WBqr/Mv7tSNMxvnEk08uDIMkMe+EMoYP7nWnfIPjHo6HBUMGJlZPAV
+         rPQVIGrLQeD5i5EUDqVdqCBwy454PzYzB7BBG8AVwXvpHr96sgdXQPhSyMfZotpM1H7j
+         oHMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=MO+EQlWMy0kzz1J1x9/iOGY80QsD1Dxgz1zaFvELTUk=;
-        b=EN++XBY4GonBDwBNDizBDhe5jfrgUQ3dSnII/JyuY0TcWlXlCh82G0AhG1ihcR6adS
-         i3OW/4DcnKt9jkuXwTPaXpI01ixly82+zI3eVMMoAS/TYqlAnICTn0W2h/WUEQejNwKH
-         IYanJr6Nnbgw+mabIzv600PqiEJZE0B/ZCTxaymqW367b7xfAy1FVl78rfJQ0EOUmdUs
-         A8GxGSWeKYEiA9dn5r3IphwNAfC2ypxGd3eFKPM/RC7HQEqC9Rx0FSTdGFSFPaeeer+j
-         gNE2ievwmSKsz2mzDzi/53PfZrPWCo4Algf2Bb+EOIff9SsRpuh7sfWGBkgF3nuW6t3/
-         ykVg==
-X-Gm-Message-State: ANhLgQ2RLUbXptWs37BlboVvw53jtZ3IlKBxXvE68B92JYLRVd8hs23a
-        GRG8QD2XdMQ8ioqBUCGJNjK2Elg6OEU=
-X-Google-Smtp-Source: ADFU+vtUdWuPKWU6jivVJtfRI9yGeYMlXVU0Dr0Ugglypra2uQ3ag3RxvXgdRlxkFfyAdDVIj8IAww==
-X-Received: by 2002:a05:620a:1129:: with SMTP id p9mr5033995qkk.220.1583972387622;
-        Wed, 11 Mar 2020 17:19:47 -0700 (PDT)
-Received: from Lauras-MBP.fios-router.home (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
-        by smtp.gmail.com with ESMTPSA id k14sm1719962qkh.63.2020.03.11.17.19.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 17:19:47 -0700 (PDT)
-To:     tech-board-discuss@lists.linuxfoundation.org,
-        ksummit-discuss@lists.linuxfoundation.org,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/Y07gbfPjF/rDVII6hbI+/pDFRnbg5DF5S+FUcUOsKo=;
+        b=rYsR3UF9K58NCtmxw81QJP8hHudsr+jtQr8xtvdUsBnQSe5c2g9OJNMseEPEumQS+n
+         RQsd/v7hOBIIWO0157feUT5BsT1G7sci10QjXBTOQkKBy1GAn++tY1Cftsl52+h2VjWh
+         VD0ipGTwEnTyTwNcZMfi5sIc736Hoy7MIK0cRQetx4PVsAlrumKTJK/mUUww4WQLVGy3
+         S/zqlg0AD+jH3nxevTmuHcoC1Q24FawQeWraUi4/8Q53xmFW6QVxfNgQMtniLJaSbyBE
+         gz6nOsU7plGNqm00S5xhJMbCRLw+6uzF7czW+UVfVj/ZH6mktljWZfBW4VTWF4OeMcX4
+         Ug5Q==
+X-Gm-Message-State: ANhLgQ3urBJWMvodIeEX7HP+SHNGdTgK8k0Hf7JDmJgpoujcRb/u9whF
+        fC4NeIoGIZO6hHhiollxQA==
+X-Google-Smtp-Source: ADFU+vuCvxULa3JEnprAXgBLXGgXtbV/Ki5Ic449nRaBfHz9jsFrSrK7PdZzKqfirOlGVDXpNDHB/Q==
+X-Received: by 2002:a7b:cd13:: with SMTP id f19mr1344348wmj.10.1583972525650;
+        Wed, 11 Mar 2020 17:22:05 -0700 (PDT)
+Received: from ninjahost.lan (host-2-102-15-144.as13285.net. [2.102.15.144])
+        by smtp.googlemail.com with ESMTPSA id w9sm35254337wrn.35.2020.03.11.17.22.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 17:22:05 -0700 (PDT)
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     boqun.feng@gmail.com
+Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
         linux-kernel@vger.kernel.org
-From:   Laura Abbott <laura@labbott.name>
-Subject: Linux Foundation Technical Advisory Board Elections -- Change to
- charter
-Message-ID: <6d6dd6fa-880f-01fe-6177-281572aed703@labbott.name>
-Date:   Wed, 11 Mar 2020 20:19:46 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:68.0)
- Gecko/20100101 Thunderbird/68.5.0
+Subject: [PATCH 0/1] Refactoring wb_congested_put()
+Date:   Thu, 12 Mar 2020 00:21:55 +0000
+Message-Id: <20200312002156.49023-1-jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On behalf of the Linux Foundation Technical Advisory Board (TAB), I
-would like to announce the following changes to our charter, available
-at https://wiki.linuxfoundation.org/tab/start
+Hi
+I expanded the lock function refcount_dec_and_lock_irqsave(&congested->refcnt, &cgwb_lock, &flags) 
+and rearrange the code so that it can look simple and Sparse will not throw a warning.
+Please feel free to leave me any feedback
+Thanks
 
-- Line 2b that previously read "All members shall be elected by a vote
-amongst all invitees of the Linux Kernel Summit." is changed to "All
-members shall be elected by a vote amongst all attendees of the Linux
-Kernel Summit."
+Jules Irenge (1):
+  backing-dev: refactor wb_congested_put()
 
-This clarifies that kernel summit is no longer invite only.
+ mm/backing-dev.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-- Under meetings and membership, the following line is added
-"The TAB, at its discretion, may set criteria to allow for absentee
-voting for those who are unable to attend the Linux Kernel Summit."
+-- 
+2.24.1
 
-For those who like diff form, this looks like
-
-diff --git a/charter b/charter
-index 45816d7..70b2e56 100644
---- a/charter
-+++ b/charter
-@@ -4,7 +4,8 @@
-      - Promote and Support the programmes with which the TAB is charged 
-to the wider Linux and Open Source Communities.
-    - Meetings and Membership.
-      - The TAB consists of ten voting members.
--    - All members shall be elected by a vote amongst all invitees of 
-the Linux Kernel Summit.
-+    - All members shall be elected by a vote amongst all attendees of 
-the Linux Kernel Summit.
-+    - The TAB, at its discretion, may set criteria to allow for 
-absentee voting for those who are unable to attend the Linux Kernel Summit.
-      - Self nominations for the election shall be accepted from any 
-person, via email to the TAB mailing list, up until the time of the 
-election.
-      - Membership of the TAB shall be for a term of 2 years with 
-staggered 1-year elections.
-      - The TAB shall elect a Chair and Vice-Chair of the TAB from 
-amongst their members to serve a renewable 1 year term.
-
-
-This change is intended to be a follow on to last year's changes to vote
-electronically instead of using paper ballots
-(see 
-https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2019-July/006582.html)
-We will be announcing criteria for absentee voting at a later date.
-
-If you have any questions, feel free to speak up here or privately at
-tab@lists.linuxfoundation.org.
-
-Thanks,
-Laura
