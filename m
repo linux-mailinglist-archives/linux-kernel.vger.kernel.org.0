@@ -2,52 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71456183CEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 00:00:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92D51183CEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 00:01:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbgCLXAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 19:00:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57300 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726770AbgCLXAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 19:00:03 -0400
-Subject: Re: [git pull] vfs.git fixes
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584054003;
-        bh=/uTogcCZcLOhFB2efWnNs6EflYCyYSyozbWixJ6Zm7M=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=0NNjc8hWBH0h5O9eq6k11CE0fWPIBXXBOOElks9kfzwRLLuFrtU/x0yFCetXnq/3k
-         9soTwT9mFcJcuLLgRPOxLXvcCf0F7+kTSgdxsT9ZGVwodr57jAnxeGnfpncl8xtaZH
-         ZOqyyez+Y2BRoy1dhGdZK2RKORoIgOl4I62WCZXs=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200312223709.GM23230@ZenIV.linux.org.uk>
-References: <20200312223709.GM23230@ZenIV.linux.org.uk>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200312223709.GM23230@ZenIV.linux.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
-X-PR-Tracked-Commit-Id: d9a9f4849fe0c9d560851ab22a85a666cddfdd24
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 807f030b44ccbb26a346df6f6438628315d9ad98
-Message-Id: <158405400299.2379.17459309436383555997.pr-tracker-bot@kernel.org>
-Date:   Thu, 12 Mar 2020 23:00:02 +0000
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1726921AbgCLXA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 19:00:59 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33724 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726752AbgCLXA6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 19:00:58 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0EB8E5F;
+        Fri, 13 Mar 2020 00:00:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1584054055;
+        bh=jnmOzIxaCTZh1F1zNSt0BgEhkqnAzDOwvfCybQjDan8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nLveb5QcQBAu4GpysEGt6gXx3fDGzyxucsJXf77FqzvYBnyukI3CNdTOgqTGWljmm
+         Xd8xT0JYCJk0uT7dXNeXlNsQ+vWy/dj/gNzi5x9j0xtJL3Qy7HhP9ZrdN7Xkks4Uy5
+         d28ZIca83jrqkAZVN6CChdChqYy4yPi5QLT5Xgp8=
+Date:   Fri, 13 Mar 2020 01:00:51 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/3] media: i2c: ov5645: Switch to assigned-clock-rates
+Message-ID: <20200312230051.GA30932@pendragon.ideasonboard.com>
+References: <1584047552-20166-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1584047552-20166-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1584047552-20166-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 12 Mar 2020 22:37:09 +0000:
+Hi Prabakhar,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
+Thank you for the patch.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/807f030b44ccbb26a346df6f6438628315d9ad98
+On Thu, Mar 12, 2020 at 09:12:31PM +0000, Lad Prabhakar wrote:
+> This patch switches to assigned-clock-rates for specifying the clock rate.
+> The clk-conf.c internally handles setting the clock rate when
+> assigned-clock-rates is passed.
+> 
+> The driver now sets the clock frequency only if the deprecated property
+> clock-frequency is defined instead assigned-clock-rates, this is to avoid
+> breakage with existing DT binaries.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  drivers/media/i2c/ov5645.c | 24 +++++++++++++++++-------
+>  1 file changed, 17 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> index a6c17d1..6cd16c5 100644
+> --- a/drivers/media/i2c/ov5645.c
+> +++ b/drivers/media/i2c/ov5645.c
+> @@ -1055,6 +1055,7 @@ static int ov5645_probe(struct i2c_client *client)
+>  	struct device_node *endpoint;
+>  	struct ov5645 *ov5645;
+>  	u8 chip_id_high, chip_id_low;
+> +	bool set_clk = false;
+>  	unsigned int i;
+>  	u32 xclk_freq;
+>  	int ret;
+> @@ -1094,10 +1095,17 @@ static int ov5645_probe(struct i2c_client *client)
+>  		return PTR_ERR(ov5645->xclk);
+>  	}
+>  
+> -	ret = of_property_read_u32(dev->of_node, "clock-frequency", &xclk_freq);
+> +	ret = of_property_read_u32(dev->of_node, "assigned-clock-rates",
+> +				   &xclk_freq);
 
-Thank you!
+You shouldn't read the assigned-clock-rates property, you should instead
+get the rate from the clock with clk_get_rate().
+
+>  	if (ret) {
+> -		dev_err(dev, "could not get xclk frequency\n");
+> -		return ret;
+> +		/* check if deprecated property clock-frequency is defined */
+> +		ret = of_property_read_u32(dev->of_node, "clock-frequency",
+> +					   &xclk_freq);
+> +		if (ret) {
+> +			dev_err(dev, "could not get xclk frequency\n");
+> +			return ret;
+> +		}
+> +		set_clk = true;
+>  	}
+>  
+>  	/* external clock must be 24MHz, allow 1% tolerance */
+> @@ -1107,10 +1115,12 @@ static int ov5645_probe(struct i2c_client *client)
+>  		return -EINVAL;
+>  	}
+>  
+> -	ret = clk_set_rate(ov5645->xclk, xclk_freq);
+> -	if (ret) {
+> -		dev_err(dev, "could not set xclk frequency\n");
+> -		return ret;
+> +	if (set_clk) {
+> +		ret = clk_set_rate(ov5645->xclk, xclk_freq);
+> +		if (ret) {
+> +			dev_err(dev, "could not set xclk frequency\n");
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	for (i = 0; i < OV5645_NUM_SUPPLIES; i++)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Regards,
+
+Laurent Pinchart
