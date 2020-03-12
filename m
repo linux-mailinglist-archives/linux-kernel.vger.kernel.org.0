@@ -2,121 +2,565 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B69AB1827C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 05:23:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A3E21827CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 05:34:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387811AbgCLEXx convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 12 Mar 2020 00:23:53 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49792 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387756AbgCLEXx (ORCPT
+        id S1731481AbgCLEdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 00:33:53 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28572 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725978AbgCLEdw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 00:23:53 -0400
-Received: from mail-pj1-f69.google.com ([209.85.216.69])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1jCFNv-0006nE-Av
-        for linux-kernel@vger.kernel.org; Thu, 12 Mar 2020 04:23:51 +0000
-Received: by mail-pj1-f69.google.com with SMTP id na17so2531302pjb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 21:23:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=r+xyaKNdvsLYdWd4l0whYqhAfZ5fJa+bTC8liwizQj8=;
-        b=r7ev4CuhELZqtOYOvw/kGIzqoxueWj6PtSjA/pWAZ2VvLQcqzeXzNlyIyvXYkSMt6E
-         KyYK0IhSZM7i/O7JCFxJekJWZgUhYsnls6I3kv4fiS6erFi7p8FW9rsIwZLuDe/YNNSX
-         a6OYLZERXGuCzJ1VJEWcbEYcegI5B8nRmJGHVf5c0pk5pd5iUaprsX/Bd3LxrkApoWew
-         uXsCFiFKxlrO8bUDdym6NCVkOZZqBZ4mlN8KIZp9HOivSIatAAG8aFGRDUUD8fUs4B7Z
-         70TaFwXgZtk/QJkd13q5JSsnubmgQFAmYrJT69Iqi32QtRwfZgnXJKlXFP5wiqen3cX8
-         b3Cw==
-X-Gm-Message-State: ANhLgQ3su+ecG7f4+lUc7uznQri6aKpA59kKCqKvP350CPZIff8CWHHe
-        tLex++rAbclDNUriEWnkVqGKzakQWQXgiWIu8M/gmZaHBrGrjLDpCKBj/kBLolyZVUMrG6rYaKk
-        MxHqNtGhU7UklFh9jIbQlZyY1Dbubci+ZtpouSZokfw==
-X-Received: by 2002:a63:3f88:: with SMTP id m130mr5785971pga.337.1583987029946;
-        Wed, 11 Mar 2020 21:23:49 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vueaYoQgVXSilktc/GG+jFUFlkXljaxle0Lwg0ZpJTmkVgE8jO6UlWoCcrzZ1mPAFpxNFKfXA==
-X-Received: by 2002:a63:3f88:: with SMTP id m130mr5785959pga.337.1583987029555;
-        Wed, 11 Mar 2020 21:23:49 -0700 (PDT)
-Received: from [192.168.1.208] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id e14sm2181297pfn.196.2020.03.11.21.23.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Mar 2020 21:23:48 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: [PATCH] PCI/PM: Skip link training delay for S3 resume
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <20200311102811.GA2540@lahna.fi.intel.com>
-Date:   Thu, 12 Mar 2020 12:23:46 +0800
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <2C20385C-4BA4-4D6D-935A-AFDB97FAB5ED@canonical.com>
-References: <20200311045249.5200-1-kai.heng.feng@canonical.com>
- <20200311102811.GA2540@lahna.fi.intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        Thu, 12 Mar 2020 00:33:52 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02C4XSFo083139
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 00:33:50 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2yqcp7k1mu-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 00:33:44 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
+        Thu, 12 Mar 2020 04:24:40 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 12 Mar 2020 04:24:33 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02C4OWx649414340
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Mar 2020 04:24:32 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 503905204E;
+        Thu, 12 Mar 2020 04:24:32 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id A612A52050;
+        Thu, 12 Mar 2020 04:24:31 +0000 (GMT)
+Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 85BBDA021A;
+        Thu, 12 Mar 2020 15:24:26 +1100 (AEDT)
+Subject: Re: [PATCH v3 23/27] powerpc/powernv/pmem: Add debug IOCTLs
+From:   "Alastair D'Silva" <alastair@au1.ibm.com>
+To:     Frederic Barrat <fbarrat@linux.ibm.com>
+Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+Date:   Thu, 12 Mar 2020 15:24:30 +1100
+In-Reply-To: <7e0e3b71-d70c-1dee-b630-0c33596b7223@linux.ibm.com>
+References: <20200221032720.33893-1-alastair@au1.ibm.com>
+         <20200221032720.33893-24-alastair@au1.ibm.com>
+         <7e0e3b71-d70c-1dee-b630-0c33596b7223@linux.ibm.com>
+Organization: IBM Australia
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20031204-4275-0000-0000-000003AAE747
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20031204-4276-0000-0000-000038C004D4
+Message-Id: <ac25aa3ba40d54f973e3d9705d6b75a0856eafb4.camel@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-11_15:2020-03-11,2020-03-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ spamscore=0 lowpriorityscore=0 priorityscore=1501 phishscore=0
+ malwarescore=0 adultscore=0 impostorscore=0 mlxscore=0 mlxlogscore=691
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003120022
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-> On Mar 11, 2020, at 18:28, Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
+On Wed, 2020-03-04 at 16:21 +0100, Frederic Barrat wrote:
 > 
-> Hi,
+> Le 21/02/2020 à 04:27, Alastair D'Silva a écrit :
+> > From: Alastair D'Silva <alastair@d-silva.org>
+> > 
+> > These IOCTLs provide low level access to the card to aid in
+> > debugging
+> > controller/FPGA firmware.
+> > 
+> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> > ---
+> >   arch/powerpc/platforms/powernv/pmem/Kconfig |   6 +
+> >   arch/powerpc/platforms/powernv/pmem/ocxl.c  | 249
+> > ++++++++++++++++++++
+> >   include/uapi/nvdimm/ocxl-pmem.h             |  32 +++
+> >   3 files changed, 287 insertions(+)
+> > 
+> > diff --git a/arch/powerpc/platforms/powernv/pmem/Kconfig
+> > b/arch/powerpc/platforms/powernv/pmem/Kconfig
+> > index c5d927520920..3f44429d70c9 100644
+> > --- a/arch/powerpc/platforms/powernv/pmem/Kconfig
+> > +++ b/arch/powerpc/platforms/powernv/pmem/Kconfig
+> > @@ -12,4 +12,10 @@ config OCXL_PMEM
+> >   
+> >   	  Select N if unsure.
+> >   
+> > +config OCXL_PMEM_DEBUG
+> > +	bool "OpenCAPI Persistent Memory debugging"
+> > +	depends on OCXL_PMEM
+> > +	help
+> > +	  Enables low level IOCTLs for OpenCAPI Persistent Memory
+> > firmware development
+> > +
+> >   endif
+> > diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl.c
+> > b/arch/powerpc/platforms/powernv/pmem/ocxl.c
+> > index e01f6f9fc180..d4ce5e9e0521 100644
+> > --- a/arch/powerpc/platforms/powernv/pmem/ocxl.c
+> > +++ b/arch/powerpc/platforms/powernv/pmem/ocxl.c
+> > @@ -1050,6 +1050,235 @@ int req_controller_health_perf(struct
+> > ocxlpmem *ocxlpmem)
+> >   				      GLOBAL_MMIO_HCI_REQ_HEALTH_PERF);
+> >   }
+> >   
+> > +#ifdef CONFIG_OCXL_PMEM_DEBUG
+> > +/**
+> > + * enable_fwdebug() - Enable FW debug on the controller
+> > + * @ocxlpmem: the device metadata
+> > + * Return: 0 on success, negative on failure
+> > + */
+> > +static int enable_fwdebug(const struct ocxlpmem *ocxlpmem)
+> > +{
+> > +	return ocxl_global_mmio_set64(ocxlpmem->ocxl_afu,
+> > GLOBAL_MMIO_HCI,
+> > +				      OCXL_LITTLE_ENDIAN,
+> > +				      GLOBAL_MMIO_HCI_FW_DEBUG);
+> > +}
+> > +
+> > +/**
+> > + * disable_fwdebug() - Disable FW debug on the controller
+> > + * @ocxlpmem: the device metadata
+> > + * Return: 0 on success, negative on failure
+> > + */
+> > +static int disable_fwdebug(const struct ocxlpmem *ocxlpmem)
+> > +{
+> > +	return ocxl_global_mmio_set64(ocxlpmem->ocxl_afu,
+> > GLOBAL_MMIO_HCIC,
+> > +				      OCXL_LITTLE_ENDIAN,
+> > +				      GLOBAL_MMIO_HCI_FW_DEBUG);
+> > +}
+> > +
+> > +static int ioctl_fwdebug(struct ocxlpmem *ocxlpmem,
+> > +			     struct ioctl_ocxl_pmem_fwdebug __user
+> > *uarg)
+> > +{
+> > +	struct ioctl_ocxl_pmem_fwdebug args;
+> > +	u64 val;
+> > +	int i;
+> > +	int rc;
+> > +
+> > +	if (copy_from_user(&args, uarg, sizeof(args)))
+> > +		return -EFAULT;
+> > +
+> > +	// Buffer size must be a multiple of 8
+> > +	if ((args.buf_size & 0x07))
+> > +		return -EINVAL;
+> > +
+> > +	if (args.buf_size > ocxlpmem->admin_command.data_size)
+> > +		return -EINVAL;
+> > +
+> > +	mutex_lock(&ocxlpmem->admin_command.lock);
+> > +
+> > +	rc = enable_fwdebug(ocxlpmem);
+> > +	if (rc)
+> > +		goto out;
+> > +
+> > +	rc = admin_command_request(ocxlpmem, ADMIN_COMMAND_FW_DEBUG);
+> > +	if (rc)
+> > +		goto out;
+> > +
+> > +	// Write DebugAction & FunctionCode
+> > +	val = ((u64)args.debug_action << 56) | ((u64)args.function_code
+> > << 40);
+> > +
+> > +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
+> > +				      ocxlpmem-
+> > >admin_command.request_offset + 0x08,
+> > +				      OCXL_LITTLE_ENDIAN, val);
+> > +	if (rc)
+> > +		goto out;
+> > +
+> > +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
+> > +				      ocxlpmem-
+> > >admin_command.request_offset + 0x10,
+> > +				      OCXL_LITTLE_ENDIAN,
+> > args.debug_parameter_1);
+> > +	if (rc)
+> > +		goto out;
+> > +
+> > +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
+> > +				      ocxlpmem-
+> > >admin_command.request_offset + 0x18,
+> > +				      OCXL_LITTLE_ENDIAN,
+> > args.debug_parameter_2);
+> > +	if (rc)
+> > +		goto out;
+> > +
+> > +	for (i = 0x20; i < 0x38; i += 0x08)
+> > +		rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
+> > +					      ocxlpmem-
+> > >admin_command.request_offset + i,
+> > +					      OCXL_LITTLE_ENDIAN, 0);
+> > +	if (rc)
+> > +		goto out;
 > 
-> On Wed, Mar 11, 2020 at 12:52:49PM +0800, Kai-Heng Feng wrote:
->> Commit ad9001f2f411 ("PCI/PM: Add missing link delays required by the
->> PCIe spec") added a 1100ms delay on resume for bridges that don't
->> support Link Active Reporting.
->> 
->> The commit also states that the delay can be skipped for S3, as the
->> firmware should already handled the case for us.
+> rc is the for loop body. The rc test is not.
 > 
-> Delay can be skipped if the firmware provides _DSM with function 8
-> implemented according to PCI firmwre spec 3.2 sec 4.6.8.
-
-As someone who doesn't have access to the PCI spec...
-Questions below.
+Whoops :)
 
 > 
->> So let's skip the link training delay for S3, to save 1100ms resume
->> time.
->> 
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->> drivers/pci/pci-driver.c | 3 ++-
->> 1 file changed, 2 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
->> index 0454ca0e4e3f..3050375bad04 100644
->> --- a/drivers/pci/pci-driver.c
->> +++ b/drivers/pci/pci-driver.c
->> @@ -916,7 +916,8 @@ static int pci_pm_resume_noirq(struct device *dev)
->> 	pci_fixup_device(pci_fixup_resume_early, pci_dev);
->> 	pcie_pme_root_status_cleanup(pci_dev);
->> 
->> -	if (!skip_bus_pm && prev_state == PCI_D3cold)
->> +	if (!skip_bus_pm && prev_state == PCI_D3cold
->> +	    && !pm_resume_via_firmware())
+> > +
+> > +
+> > +	// Populate admin command buffer
+> > +	if (args.buf_size) {
+> > +		for (i = 0; i < args.buf_size; i += sizeof(u64)) {
+> > +			u64 val;
+> > +
+> > +			if (copy_from_user(&val, &args.buf[i],
+> > sizeof(u64)))
+> > +				return -EFAULT;
 > 
-> So this would need to check for the _DSM result as well. We do evaluate
-> it in pci_acpi_optimize_delay() (drivers/pci/pci-acpi.c) and that ends
-> up lowering ->d3cold_delay so maybe check that here.
-
-Do we need to wait for d3cold_delay here?
-Or we can also skip that as long as pci_acpi_dsm_guid and FUNCTION_DELAY_DSM present?
-
-Kai-Heng
+> need to get rc and goto out because of the mutex
+> 
+Ok
 
 > 
->> 		pci_bridge_wait_for_secondary_bus(pci_dev);
->> 
->> 	if (pci_has_legacy_pm_support(pci_dev))
->> -- 
->> 2.17.1
+> > +
+> > +			rc = ocxl_global_mmio_write64(ocxlpmem-
+> > >ocxl_afu,
+> > +						      ocxlpmem-
+> > >admin_command.data_offset + i,
+> > +						      OCXL_HOST_ENDIAN,
+> > val);
+> > +			if (rc)
+> > +				goto out;
+> > +		}
+> > +	}
+> > +
+> > +	rc = admin_command_execute(ocxlpmem);
+> > +	if (rc)
+> > +		goto out;
+> > +
+> > +	rc = admin_command_complete_timeout(ocxlpmem,
+> > +					    ocxlpmem-
+> > >timeouts[ADMIN_COMMAND_FW_DEBUG]);
+> > +	if (rc < 0)
+> > +		goto out;
+> > +
+> > +	rc = admin_response(ocxlpmem);
+> > +	if (rc < 0)
+> > +		goto out;
+> > +	if (rc != STATUS_SUCCESS) {
+> > +		warn_status(ocxlpmem, "Unexpected status from FW
+> > Debug", rc);
+> > +		goto out;
+> > +	}
+> > +
+> > +	if (args.buf_size) {
+> > +		for (i = 0; i < args.buf_size; i += sizeof(u64)) {
+> > +			u64 val;
+> > +
+> > +			rc = ocxl_global_mmio_read64(ocxlpmem-
+> > >ocxl_afu,
+> > +						     ocxlpmem-
+> > >admin_command.data_offset + i,
+> > +						     OCXL_HOST_ENDIAN,
+> > &val);
+> > +			if (rc)
+> > +				goto out;
+> > +
+> > +			if (copy_to_user(&args.buf[i], &val,
+> > sizeof(u64))) {
+> > +				rc = -EFAULT;
+> > +				goto out;
+> > +			}
+> > +		}
+> > +	}
+> > +
+> > +	rc = admin_response_handled(ocxlpmem);
+> > +	if (rc)
+> > +		goto out;
+> > +
+> > +	rc = disable_fwdebug(ocxlpmem);
+> > +	if (rc)
+> > +		goto out;
+> > +
+> > +out:
+> > +	mutex_unlock(&ocxlpmem->admin_command.lock);
+> > +	return rc;
+> > +}
+> > +
+> > +static int ioctl_shutdown(struct ocxlpmem *ocxlpmem)
+> > +{
+> > +	int rc;
+> > +
+> > +	mutex_lock(&ocxlpmem->admin_command.lock);
+> > +
+> > +	rc = admin_command_request(ocxlpmem, ADMIN_COMMAND_SHUTDOWN);
+> > +	if (rc)
+> > +		goto out;
+> > +
+> > +	rc = admin_command_execute(ocxlpmem);
+> > +	if (rc)
+> > +		goto out;
+> > +
+> > +	rc = admin_command_complete_timeout(ocxlpmem,
+> > ADMIN_COMMAND_SHUTDOWN);
+> > +	if (rc < 0) {
+> > +		dev_warn(&ocxlpmem->dev, "Shutdown timed out\n");
+> > +		goto out;
+> > +	}
+> > +
+> > +	rc = 0;
+> > +	goto out;
+> 
+> We can remove that goto.
+
+Ok
+
+> 
+> No admin_response_handled()? Is that shutting down the full adapter
+> and 
+> we have nobody to talk to? What happens next?
+> 
+
+That's an oversight, we should call admin_response_handled().
+
+> 
+> > +
+> > +out:
+> > +	mutex_unlock(&ocxlpmem->admin_command.lock);
+> > +	return rc;
+> > +}
+> > +
+> > +static int ioctl_mmio_write(struct ocxlpmem *ocxlpmem,
+> > +				struct ioctl_ocxl_pmem_mmio __user
+> > *uarg)
+> > +{
+> > +	struct scm_ioctl_mmio args;
+> > +
+> > +	if (copy_from_user(&args, uarg, sizeof(args)))
+> > +		return -EFAULT;
+> > +
+> > +	return ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
+> > args.address,
+> > +					OCXL_LITTLE_ENDIAN, args.val);
+> > +}
+> > +
+> > +static int ioctl_mmio_read(struct ocxlpmem *ocxlpmem,
+> > +				     struct ioctl_ocxl_pmem_mmio __user
+> > *uarg)
+> > +{
+> > +	struct ioctl_ocxl_pmem_mmio args;
+> > +	int rc;
+> > +
+> > +	if (copy_from_user(&args, uarg, sizeof(args)))
+> > +		return -EFAULT;
+> > +
+> > +	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu, args.address,
+> > +				     OCXL_LITTLE_ENDIAN, &args.val);
+> > +	if (rc)
+> > +		return rc;
+> > +
+> > +	if (copy_to_user(uarg, &args, sizeof(args)))
+> > +		return -EFAULT;
+> > +
+> > +	return 0;
+> > +}
+> > +#else /* CONFIG_OCXL_PMEM_DEBUG */
+> > +static int ioctl_fwdebug(struct ocxlpmem *ocxlpmem,
+> > +			     struct ioctl_ocxl_pmem_fwdebug __user
+> > *uarg)
+> > +{
+> > +	return -EPERM;
+> > +}
+> > +
+> > +static int ioctl_shutdown(struct ocxlpmem *ocxlpmem)
+> > +{
+> > +	return -EPERM;
+> > +}
+> > +
+> > +static int ioctl_mmio_write(struct ocxlpmem *ocxlpmem,
+> > +				struct ioctl_ocxl_pmem_mmio __user
+> > *uarg)
+> > +{
+> > +	return -EPERM;
+> > +}
+> > +
+> > +static int ioctl_mmio_read(struct ocxlpmem *ocxlpmem,
+> > +			       struct ioctl_ocxl_pmem_mmio __user
+> > *uarg)
+> > +{
+> > +	return -EPERM;
+> > +}
+> 
+> The 'else' clause could be dropped, the ioctls will return EINVAL,
+> which 
+> is fine, I think.
+> 
+> 
+
+Ok
+
+> 
+> > +#endif /* CONFIG_OCXL_PMEM_DEBUG */
+> > +
+> >   static long file_ioctl(struct file *file, unsigned int cmd,
+> > unsigned long args)
+> >   {
+> >   	struct ocxlpmem *ocxlpmem = file->private_data;
+> > @@ -1091,6 +1320,26 @@ static long file_ioctl(struct file *file,
+> > unsigned int cmd, unsigned long args)
+> >   	case IOCTL_OCXL_PMEM_REQUEST_HEALTH:
+> >   		rc = req_controller_health_perf(ocxlpmem);
+> >   		break;
+> > +
+> > +	case IOCTL_OCXL_PMEM_FWDEBUG:
+> > +		rc = ioctl_fwdebug(ocxlpmem,
+> > +				   (struct ioctl_ocxl_pmem_fwdebug
+> > __user *)args);
+> > +		break;
+> > +
+> > +	case IOCTL_OCXL_PMEM_SHUTDOWN:
+> > +		rc = ioctl_shutdown(ocxlpmem);
+> > +		break;
+> > +
+> > +	case IOCTL_OCXL_PMEM_MMIO_WRITE:
+> > +		rc = ioctl_mmio_write(ocxlpmem,
+> > +				      (struct ioctl_ocxl_pmem_mmio
+> > __user *)args);
+> > +		break;
+> > +
+> > +	case IOCTL_OCXL_PMEM_MMIO_READ:
+> > +		rc = ioctl_mmio_read(ocxlpmem,
+> > +				     (struct ioctl_ocxl_pmem_mmio
+> > __user *)args);
+> > +		break;
+> > +
+> >   	}
+> >   
+> >   	return rc;
+> > diff --git a/include/uapi/nvdimm/ocxl-pmem.h
+> > b/include/uapi/nvdimm/ocxl-pmem.h
+> > index 0d03abb44001..e20a4f8be82a 100644
+> > --- a/include/uapi/nvdimm/ocxl-pmem.h
+> > +++ b/include/uapi/nvdimm/ocxl-pmem.h
+> > @@ -6,6 +6,28 @@
+> >   #include <linux/types.h>
+> >   #include <linux/ioctl.h>
+> >   
+> > +enum ocxlpmem_fwdebug_action {
+> > +	OCXL_PMEM_FWDEBUG_READ_CONTROLLER_MEMORY = 0x01,
+> > +	OCXL_PMEM_FWDEBUG_WRITE_CONTROLLER_MEMORY = 0x02,
+> > +	OCXL_PMEM_FWDEBUG_ENABLE_FUNCTION = 0x03,
+> > +	OCXL_PMEM_FWDEBUG_DISABLE_FUNCTION = 0x04,
+> > +	OCXL_PMEM_FWDEBUG_GET_PEL = 0x05, // Retrieve Persistent Error
+> > Log
+> > +};
+> > +
+> > +struct ioctl_ocxl_pmem_buffer_info {
+> > +	__u32	admin_command_buffer_size; // out
+> > +	__u32	near_storage_buffer_size; // out
+> > +};
+> > +
+> > +struct ioctl_ocxl_pmem_fwdebug { // All args are inputs
+> > +	enum ocxlpmem_fwdebug_action debug_action;
+> 
+> More kernel ABI problems. My interpretation of the "enumeration 
+> specifiers" section of C99 is that we can't rely on the size of the
+> enum.
+> 
+
+Ok
+
+> 
+> > +	__u16 function_code;
+> > +	__u16 buf_size; // Size of optional data buffer
+> > +	__u64 debug_parameter_1;
+> > +	__u64 debug_parameter_2;
+> > +	__u8 *buf; // Pointer to optional in/out data buffer
+> > +};
+> > +
+> >   #define OCXL_PMEM_ERROR_LOG_ACTION_RESET	(1 << (32-32))
+> >   #define OCXL_PMEM_ERROR_LOG_ACTION_CHKFW	(1 << (53-32))
+> >   #define OCXL_PMEM_ERROR_LOG_ACTION_REPLACE	(1 << (54-32))
+> > @@ -66,6 +88,11 @@ struct ioctl_ocxl_pmem_controller_stats {
+> >   	__u64 cache_write_latency; /* nanoseconds */
+> >   };
+> >   
+> > +struct ioctl_ocxl_pmem_mmio {
+> > +	__u64 address; /* Offset in global MMIO space */
+> > +	__u64 val; /* value to write/was read */
+> > +};
+> 
+> Can we group all the debug data structures together in the header
+> file, 
+> with a comment indicating that they may not be available in the
+> kernel, 
+> depending on the config?
+> 
+
+Ok
+
+>    Fred
+> 
+> 
+> > +
+> >   struct ioctl_ocxl_pmem_eventfd {
+> >   	__s32 eventfd;
+> >   	__u32 reserved;
+> > @@ -92,4 +119,9 @@ struct ioctl_ocxl_pmem_eventfd {
+> >   #define IOCTL_OCXL_PMEM_EVENT_CHECK			_IOR(OC
+> > XL_PMEM_MAGIC, 0x07, __u64)
+> >   #define IOCTL_OCXL_PMEM_REQUEST_HEALTH			_IO(OCX
+> > L_PMEM_MAGIC, 0x08)
+> >   
+> > +#define IOCTL_OCXL_PMEM_FWDEBUG		_IOWR(OCXL_PMEM_MAGIC,
+> > 0xf0, struct ioctl_ocxl_pmem_fwdebug)
+> > +#define IOCTL_OCXL_PMEM_MMIO_WRITE	_IOW(OCXL_PMEM_MAGIC, 0xf1,
+> > struct ioctl_ocxl_pmem_mmio)
+> > +#define IOCTL_OCXL_PMEM_MMIO_READ	_IOWR(OCXL_PMEM_MAGIC, 0xf2,
+> > struct ioctl_ocxl_pmem_mmio)
+> > +#define IOCTL_OCXL_PMEM_SHUTDOWN	_IO(OCXL_PMEM_MAGIC, 0xf3)
+> > +
+> >   #endif /* _UAPI_OCXL_SCM_H */
+> > 
+-- 
+Alastair D'Silva
+Open Source Developer
+Linux Technology Centre, IBM Australia
+mob: 0423 762 819
 
