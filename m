@@ -2,206 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E64A182867
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 06:27:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EC23182832
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 06:20:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387826AbgCLF1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 01:27:07 -0400
-Received: from rcdn-iport-6.cisco.com ([173.37.86.77]:47479 "EHLO
-        rcdn-iport-6.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387758AbgCLF1H (ORCPT
+        id S2387786AbgCLFUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 01:20:06 -0400
+Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:32802 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387677AbgCLFUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 01:27:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=4796; q=dns/txt; s=iport;
-  t=1583990826; x=1585200426;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=gWPmi/A6NTE/04xSmZ4GUabsv9Q6xWhRvS9G9c95CO4=;
-  b=eY27Js1AD+DSuxVpvG6XdkqGGhPqdWqtBnG73/qVQ/mIoLetEPG6OHBj
-   LZdET3HSNjEErsoLrSKPI+I9NRBmaraTJCOM+EVCt6twr0YRn0OLMSu2A
-   sT4wd7IhcwXkDyjRfSS0RgJTr+zT4tY9+MuxB8dXQnK+0HRp5GOcJotR2
-   o=;
-X-IronPort-AV: E=Sophos;i="5.70,543,1574121600"; 
-   d="scan'208";a="740563919"
-Received: from rcdn-core-6.cisco.com ([173.37.93.157])
-  by rcdn-iport-6.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 12 Mar 2020 05:19:59 +0000
-Received: from sjc-ads-7741.cisco.com (sjc-ads-7741.cisco.com [10.30.222.28])
-        by rcdn-core-6.cisco.com (8.15.2/8.15.2) with ESMTP id 02C5JxCm030956;
-        Thu, 12 Mar 2020 05:19:59 GMT
-Received: by sjc-ads-7741.cisco.com (Postfix, from userid 381789)
-        id 6B41B1229; Wed, 11 Mar 2020 22:19:59 -0700 (PDT)
-From:   Manali K Shukla <manashuk@cisco.com>
-To:     bp@alien8.de, linux-edac@vger.kernel.org, mchehab@kernel.org,
-        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
-Cc:     xe-linux-external@cisco.com, Borislav Petkov <bp@suse.de>,
-        Aristeu Rozanski Filho <arozansk@redhat.com>,
-        Justin Ernst <justin.ernst@hpe.com>,
-        Russ Anderson <rja@hpe.com>, Tony Luck <tony.luck@intel.com>,
-        Manali K Shukla <manashuk@cisco.com>
-Subject: [ PATCH stable v4.14] EDAC: Drop per-memory controller buses
-Date:   Wed, 11 Mar 2020 22:19:29 -0700
-Message-Id: <20200312051929.49195-1-manashuk@cisco.com>
-X-Mailer: git-send-email 2.19.1
+        Thu, 12 Mar 2020 01:20:06 -0400
+Received: from mailhost.synopsys.com (badc-mailhost2.synopsys.com [10.192.0.18])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 9BCB7C0F7C;
+        Thu, 12 Mar 2020 05:20:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1583990404; bh=8bevOjEAfmuRsIYA1kjC+u8KZq6/2Mp4q3rvROkjFqI=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=GiF8Adaf/aKnzNOsDywO51duyj7Msg4iPb3wlNNlskURTNJ8C2FGdxYEmAL8u0lo/
+         jry++nP+Qz0Mn/SXDUYiM/CGzH2nb7KCe09zrl+KDUqHAiZsSjDoMEz5RUWjdTO9eI
+         UTw6h/lXev9g5GCp1MNhOYglbNTB1DIHg/lDtrbGeOaWPG1/2xrEacOCRPBQmB06IB
+         dqO7zJWOdrwga3JfV2l/CQ2CWehbZUGJ+tmBnMxSwuJGcBmcIINgSZ9A8AltajBjuc
+         qvPcpXYs9cNGUfll+TBUhXCMB1B/+rCop9fN+ebzCgFake5x/LjLa1Oy6Qjy4p3Mh4
+         RU5cKS6Nxt24Q==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 3734BA0067;
+        Thu, 12 Mar 2020 05:20:00 +0000 (UTC)
+Received: from us01hybrid1.internal.synopsys.com (10.200.27.51) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 11 Mar 2020 22:19:46 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (10.202.3.67) by
+ mrs.synopsys.com (10.200.27.51) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Wed, 11 Mar 2020 22:19:46 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RwZ2F6VnJwV26qE1pvEXvaF2LXHLqAdDXx+PDiBM/lQLZbhT+D6510y1wk1Ebtm+HGAU02nKkoGZxWvurY6gke5VZpPNFpyNgsAKTJPiTWGZbwULsWGorQBIUoXe0seOsBwMAAv5lxivX8BAgZ6gQCJLW6QP+XaEy3jCIcktPWaSSg5T4XUEjftccqEpmi82g6eOZBkkkTFs+rJsZXkKVsP7DJUlhAQkXjg56OcsSaTSpbadbFp29DOPhdiiZS4uyFlEJnigWP3OuJf6qSNJPTBZMcpJXMbqGL+q6dlp2ZAhyzVC50kZtsiHgccEPr0D2h5e7nzKZImTY8w/v3QTaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8bevOjEAfmuRsIYA1kjC+u8KZq6/2Mp4q3rvROkjFqI=;
+ b=UTNUeffY2khY60RL10aghqcTq1TNpm5Q5cfUyVwIBQWtvhvRx/DWFJ09rg4aRFE3osq8Z9VWikgJw9YI6ON2I8QLWUQkaYsGxC4CU71c97hDdVk5Yo9BZPRurPqOhMV30DUu2NAoB8QWNjVCaF5jZTq6rj2IAoMnoEWDAP3+IJCnjCwJWcrtVVSWRoTkGOqT+uNdwo5w+KJmBY6STHPTqxmC9XMj5cwLTngOOfQIUYG8mWCavyRmZfE/RY7ETkTTbBUyR+btL4lL3DE3g/D8s+0PLdhbZ1GmCrXtw4Bu8r9sTGj8kAOEynbz3ZGqwvjeKbUZvi1vIaoKxpyGpZfqFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8bevOjEAfmuRsIYA1kjC+u8KZq6/2Mp4q3rvROkjFqI=;
+ b=qRVYyITxRHwF4N5C5ODP4vNa8z+f0vf9hwjtD9PecbzFjYfTHMq+gKcmjd8j8l4hFSbNSPrYwGuU5UQW9/tLf2v/kX4zPEKMV1VRyXUhlE38x1IqQ4Jt1GOyRm+1dOm4q3zxldnmNwS1tjkc41NaNWtl9cJS07fcYj1TfXDPHMU=
+Received: from CY4PR1201MB0120.namprd12.prod.outlook.com
+ (2603:10b6:910:1c::14) by CY4PR1201MB0118.namprd12.prod.outlook.com
+ (2603:10b6:910:20::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.17; Thu, 12 Mar
+ 2020 05:19:45 +0000
+Received: from CY4PR1201MB0120.namprd12.prod.outlook.com
+ ([fe80::744c:4e95:39be:9d44]) by CY4PR1201MB0120.namprd12.prod.outlook.com
+ ([fe80::744c:4e95:39be:9d44%12]) with mapi id 15.20.2793.018; Thu, 12 Mar
+ 2020 05:19:45 +0000
+From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Eugeniy Paltsev" <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: RE: [PATCH] ARC: [plat-axs10x]: PGU: remove unused encoder-slave
+ property
+Thread-Topic: [PATCH] ARC: [plat-axs10x]: PGU: remove unused encoder-slave
+ property
+Thread-Index: AQHV97sSXdJLSFcleE2SEP2aE78+7qhEbA3A
+Date:   Thu, 12 Mar 2020 05:19:45 +0000
+Message-ID: <CY4PR1201MB0120166216146B447D237095A1FD0@CY4PR1201MB0120.namprd12.prod.outlook.com>
+References: <20200311153724.16140-1-Eugeniy.Paltsev@synopsys.com>
+In-Reply-To: <20200311153724.16140-1-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: =?us-ascii?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYWJyb2RraW5c?=
+ =?us-ascii?Q?YXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRi?=
+ =?us-ascii?Q?YTI5ZTM1Ylxtc2dzXG1zZy0xNDE1ODZmYi02NDIxLTExZWEtODAzMi04OGIx?=
+ =?us-ascii?Q?MTFjZGUyMTdcYW1lLXRlc3RcMTQxNTg2ZmQtNjQyMS0xMWVhLTgwMzItODhi?=
+ =?us-ascii?Q?MTExY2RlMjE3Ym9keS50eHQiIHN6PSI4NDUiIHQ9IjEzMjI4NDYzOTgzMjA1?=
+ =?us-ascii?Q?NzczOCIgaD0iOW1PWU1BZFpvZXhiLzh1TXJHeWF0RTBCZ2dRPSIgaWQ9IiIg?=
+ =?us-ascii?Q?Ymw9IjAiIGJvPSIxIiBjaT0iY0FBQUFFUkhVMVJTUlVGTkNnVUFBQlFKQUFD?=
+ =?us-ascii?Q?S0oyN1dMZmpWQWZLZmRKM1FKaDNSOHA5MG5kQW1IZEVPQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUhBQUFBQ2tDQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUVBQVFBQkFBQUFNb04veHdBQUFBQUFBQUFBQUFBQUFKNEFBQUJtQUdrQWJn?=
+ =?us-ascii?Q?QmhBRzRBWXdCbEFGOEFjQUJzQUdFQWJnQnVBR2tBYmdCbkFGOEFkd0JoQUhR?=
+ =?us-ascii?Q?QVpRQnlBRzBBWVFCeUFHc0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?RUFBQUFBQUFBQUFnQUFBQUFBbmdBQUFHWUFid0IxQUc0QVpBQnlBSGtBWHdC?=
+ =?us-ascii?Q?d0FHRUFjZ0IwQUc0QVpRQnlBSE1BWHdCbkFHWUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFBQUFBQUFBQUFDQUFB?=
+ =?us-ascii?Q?QUFBQ2VBQUFBWmdCdkFIVUFiZ0JrQUhJQWVRQmZBSEFBWVFCeUFIUUFiZ0Js?=
+ =?us-ascii?Q?QUhJQWN3QmZBSE1BWVFCdEFITUFkUUJ1QUdjQVh3QmpBRzhBYmdCbUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUJBQUFBQUFBQUFBSUFBQUFBQUo0QUFBQm1BRzhB?=
+ =?us-ascii?Q?ZFFCdUFHUUFjZ0I1QUY4QWNBQmhBSElBZEFCdUFHVUFjZ0J6QUY4QWN3QmhB?=
+ =?us-ascii?Q?RzBBY3dCMUFHNEFad0JmQUhJQVpRQnpBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFFQUFBQUFBQUFBQWdBQUFBQUFuZ0FBQUdZQWJ3QjFBRzRBWkFCeUFIa0FY?=
+ =?us-ascii?Q?d0J3QUdFQWNnQjBBRzRBWlFCeUFITUFYd0J6QUcwQWFRQmpBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBUUFBQUFBQUFBQUNB?=
+ =?us-ascii?Q?QUFBQUFDZUFBQUFaZ0J2QUhVQWJnQmtBSElBZVFCZkFIQUFZUUJ5QUhRQWJn?=
+ =?us-ascii?Q?QmxBSElBY3dCZkFITUFkQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQkFBQUFBQUFBQUFJQUFBQUFBSjRBQUFCbUFH?=
+ =?us-ascii?Q?OEFkUUJ1QUdRQWNnQjVBRjhBY0FCaEFISUFkQUJ1QUdVQWNnQnpBRjhBZEFC?=
+ =?us-ascii?Q?ekFHMEFZd0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBR1lBYndCMUFHNEFaQUJ5QUhr?=
+ =?us-ascii?Q?QVh3QndBR0VBY2dCMEFHNEFaUUJ5QUhNQVh3QjFBRzBBWXdBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFB?=
+ =?us-ascii?Q?Q0FBQUFBQUNlQUFBQVp3QjBBSE1BWHdCd0FISUFid0JrQUhVQVl3QjBBRjhB?=
+ =?us-ascii?Q?ZEFCeUFHRUFhUUJ1QUdrQWJnQm5BQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFKNEFBQUJ6?=
+ =?us-ascii?Q?QUdFQWJBQmxBSE1BWHdCaEFHTUFZd0J2QUhVQWJnQjBBRjhBY0FCc0FHRUFi?=
+ =?us-ascii?Q?Z0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBRUFBQUFBQUFBQUFnQUFBQUFBbmdBQUFITUFZUUJzQUdVQWN3QmZB?=
+ =?us-ascii?Q?SEVBZFFCdkFIUUFaUUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFBQUFBQUFB?=
+ =?us-ascii?Q?QUFDQUFBQUFBQ2VBQUFBY3dCdUFIQUFjd0JmQUd3QWFRQmpBR1VBYmdCekFH?=
+ =?us-ascii?Q?VUFYd0IwQUdVQWNnQnRBRjhBTVFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUJBQUFBQUFBQUFBSUFBQUFBQUo0QUFB?=
+ =?us-ascii?Q?QnpBRzRBY0FCekFGOEFiQUJwQUdNQVpRQnVBSE1BWlFCZkFIUUFaUUJ5QUcw?=
+ =?us-ascii?Q?QVh3QnpBSFFBZFFCa0FHVUFiZ0IwQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFFQUFBQUFBQUFBQWdBQUFBQUFuZ0FBQUhZQVp3QmZBR3NBWlFC?=
+ =?us-ascii?Q?NUFIY0Fid0J5QUdRQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBUUFBQUFB?=
+ =?us-ascii?Q?QUFBQUNBQUFBQUFBPSIvPjwvbWV0YT4=3D?=
+x-dg-rorf: true
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abrodkin@synopsys.com; 
+x-originating-ip: [183.89.24.137]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a54eafb7-9559-4d9a-dd39-08d7c644fa1c
+x-ms-traffictypediagnostic: CY4PR1201MB0118:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <CY4PR1201MB01187084B01B2A1082A84827A1FD0@CY4PR1201MB0118.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1284;
+x-forefront-prvs: 0340850FCD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(376002)(396003)(366004)(346002)(199004)(66446008)(66476007)(64756008)(66556008)(8676002)(81156014)(8936002)(71200400001)(5660300002)(54906003)(478600001)(86362001)(6636002)(4744005)(316002)(53546011)(52536014)(9686003)(26005)(55016002)(81166006)(2906002)(33656002)(6506007)(186003)(6862004)(107886003)(66946007)(7696005)(76116006)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR1201MB0118;H:CY4PR1201MB0120.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Keuof9zDKp0GucGJC5BekiyyuMXfTi16RSCKJKJRL7CzWTHCi0bNSJrzlYb5NehvlmqbpmZu7kEQDhcwvVaJNYVpE6cCgjVqcJUpsb1NI7kwjfAezvMezIieEV34geuudUVRjhIcG5oDJnwITpzW6nU34VqvMU6R1z5KN9Oi7/l94lME3A945XzgjgMmZgs/H7kEYWiyk8RYmcub9Q7O/Y1TNBwJyMZqp+8MzmKTamloNfEbBBwR1CVNek6I0+pZvqcJtcLOC+obB2E+iAIHfZKUAG+oG9da6x+TfxGTXdRn8o4T3fCsuj0t/iXyW9hF+Zw0Dl+h/QX+BCkJTHROyhCoUTVlqDfJnZ0+sGlJfWW372v+LtnWaPyj1TDfcVF5uaukHcjXNN5vJxcE0tdhu8WvVvPR10LLcbIRdTGwZXJqhFjr3ZmDrBtjQXaSyMu+
+x-ms-exchange-antispam-messagedata: KFKmw4IhrTQmhPJtLs0lGnN84y9R9nMwXWK4MEsFsgjOx/RRMZhM+fI7F1kftjszTKye0uhwTqS+wzeof1SUZrymzc32gcq/8xBB2Girjr6IcgscErtn9xlnpxTBYHo5lA0PdIC9J3OrbHEzvXIb3g==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.30.222.28, sjc-ads-7741.cisco.com
-X-Outbound-Node: rcdn-core-6.cisco.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a54eafb7-9559-4d9a-dd39-08d7c644fa1c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2020 05:19:45.0776
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IrDDK5/aIzgvZwC3Kl1zvLVWgNnx1VDnOTywVzbniw8YKj6o4RtaeNfnuQDmFCZTFGv17fctQaAhVzqCVVSUHg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB0118
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+Hi Eugeniy,
 
-upstream 861e6ed667c83d64a42b0db41a22d6b4de4e913f commit
+> -----Original Message-----
+> From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> Sent: Wednesday, March 11, 2020 10:37 PM
+> To: linux-snps-arc@lists.infradead.org; Vineet Gupta <vgupta@synopsys.com=
+>
+> Cc: linux-kernel@vger.kernel.org; Alexey Brodkin <abrodkin@synopsys.com>;=
+ Eugeniy Paltsev
+> <paltsev@synopsys.com>
+> Subject: [PATCH] ARC: [plat-axs10x]: PGU: remove unused encoder-slave pro=
+perty
+>=20
+> ARC PGU is looking for encoder via endpoint mechanism and doesn't
+> use "encoder-slave" property for a long time. Let's drop unused
+> "encoder-slave" property from ARC PGU node in axs10x.
+>=20
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-... and use the single edac_subsys object returned from
-subsys_system_register(). The idea is to have a single bus
-and multiple devices on it.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-CC: Aristeu Rozanski Filho <arozansk@redhat.com>
-CC: Greg KH <gregkh@linuxfoundation.org>
-CC: Justin Ernst <justin.ernst@hpe.com>
-CC: linux-edac <linux-edac@vger.kernel.org>
-CC: Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: Russ Anderson <rja@hpe.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/20180926152752.GG5584@zn.tnic
-[Manali: backport to v4.14 -stable :
-- removing per-MC bus, this enables to get rid of memory controllers
-  maximum number notion
-- value of max number of memory controllers is 2 * MAX_NUMNODES. On two nodes system MAX_NUMNODES value is ‘1’ and
-  so value of max number of memory controller becomes ‘2’, this patch fixes this issue when there are only 2 nodes on the system
-  and number of memory controllers are more than ‘2’]
-(cherry picked from commit 861e6ed667c83d64a42b0db41a22d6b4de4e913f)
-Signed-off-by: Manali K Shukla <manashuk@cisco.com>
----
- drivers/edac/edac_mc.c       |  9 +--------
- drivers/edac/edac_mc_sysfs.c | 30 ++----------------------------
- include/linux/edac.h         |  6 ------
- 3 files changed, 3 insertions(+), 42 deletions(-)
-
-diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c
-index 329021189c38..2c740edb440f 100644
---- a/drivers/edac/edac_mc.c
-+++ b/drivers/edac/edac_mc.c
-@@ -55,8 +55,6 @@ static LIST_HEAD(mc_devices);
-  */
- static void const *edac_mc_owner;
- 
--static struct bus_type mc_bus[EDAC_MAX_MCS];
--
- int edac_get_report_status(void)
- {
- 	return edac_report;
-@@ -706,11 +704,6 @@ int edac_mc_add_mc_with_groups(struct mem_ctl_info *mci,
- 	int ret = -EINVAL;
- 	edac_dbg(0, "\n");
- 
--	if (mci->mc_idx >= EDAC_MAX_MCS) {
--		pr_warn_once("Too many memory controllers: %d\n", mci->mc_idx);
--		return -ENODEV;
--	}
--
- #ifdef CONFIG_EDAC_DEBUG
- 	if (edac_debug_level >= 3)
- 		edac_mc_dump_mci(mci);
-@@ -750,7 +743,7 @@ int edac_mc_add_mc_with_groups(struct mem_ctl_info *mci,
- 	/* set load time so that error rate can be tracked */
- 	mci->start_time = jiffies;
- 
--	mci->bus = &mc_bus[mci->mc_idx];
-+	mci->bus = edac_get_sysfs_subsys();
- 
- 	if (edac_create_sysfs_mci_device(mci, groups)) {
- 		edac_mc_printk(mci, KERN_WARNING,
-diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
-index a4acfa81dfe0..f519189ab342 100644
---- a/drivers/edac/edac_mc_sysfs.c
-+++ b/drivers/edac/edac_mc_sysfs.c
-@@ -942,27 +942,8 @@ static const struct device_type mci_attr_type = {
- int edac_create_sysfs_mci_device(struct mem_ctl_info *mci,
- 				 const struct attribute_group **groups)
- {
--	char *name;
- 	int i, err;
- 
--	/*
--	 * The memory controller needs its own bus, in order to avoid
--	 * namespace conflicts at /sys/bus/edac.
--	 */
--	name = kasprintf(GFP_KERNEL, "mc%d", mci->mc_idx);
--	if (!name)
--		return -ENOMEM;
--
--	mci->bus->name = name;
--
--	edac_dbg(0, "creating bus %s\n", mci->bus->name);
--
--	err = bus_register(mci->bus);
--	if (err < 0) {
--		kfree(name);
--		return err;
--	}
--
- 	/* get the /sys/devices/system/edac subsys reference */
- 	mci->dev.type = &mci_attr_type;
- 	device_initialize(&mci->dev);
-@@ -978,7 +959,7 @@ int edac_create_sysfs_mci_device(struct mem_ctl_info *mci,
- 	err = device_add(&mci->dev);
- 	if (err < 0) {
- 		edac_dbg(1, "failure: create device %s\n", dev_name(&mci->dev));
--		goto fail_unregister_bus;
-+		goto out;
- 	}
- 
- 	/*
-@@ -1026,10 +1007,8 @@ int edac_create_sysfs_mci_device(struct mem_ctl_info *mci,
- 		device_unregister(&dimm->dev);
- 	}
- 	device_unregister(&mci->dev);
--fail_unregister_bus:
--	bus_unregister(mci->bus);
--	kfree(name);
- 
-+out:
- 	return err;
- }
- 
-@@ -1060,13 +1039,8 @@ void edac_remove_sysfs_mci_device(struct mem_ctl_info *mci)
- 
- void edac_unregister_sysfs(struct mem_ctl_info *mci)
- {
--	struct bus_type *bus = mci->bus;
--	const char *name = mci->bus->name;
--
- 	edac_dbg(1, "Unregistering device %s\n", dev_name(&mci->dev));
- 	device_unregister(&mci->dev);
--	bus_unregister(bus);
--	kfree(name);
- }
- 
- static void mc_attr_release(struct device *dev)
-diff --git a/include/linux/edac.h b/include/linux/edac.h
-index 90f72336aea6..1f5c3f6fd3e5 100644
---- a/include/linux/edac.h
-+++ b/include/linux/edac.h
-@@ -664,10 +664,4 @@ struct mem_ctl_info {
- 	bool fake_inject_ue;
- 	u16 fake_inject_count;
- };
--
--/*
-- * Maximum number of memory controllers in the coherent fabric.
-- */
--#define EDAC_MAX_MCS	2 * MAX_NUMNODES
--
- #endif
--- 
-2.19.1
-
+Acked-by: Alexey Brodkin <abrodkin@synopsys.com>
