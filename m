@@ -2,148 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50B2F1831E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:46:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8B301831F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:47:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbgCLNqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:46:16 -0400
-Received: from foss.arm.com ([217.140.110.172]:35018 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbgCLNqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:46:16 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6917D30E;
-        Thu, 12 Mar 2020 06:46:15 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E0BC73F534;
-        Thu, 12 Mar 2020 06:46:14 -0700 (PDT)
-Date:   Thu, 12 Mar 2020 13:46:13 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     alsa-devel@alsa-project.org, Benson Leung <bleung@chromium.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        devicetree@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: dt-bindings: google, cros-ec-codec: Fix dtc warnings in example" to the asoc tree
-In-Reply-To:  <20200311205841.2710-1-robh@kernel.org>
-Message-Id:  <applied-20200311205841.2710-1-robh@kernel.org>
-X-Patchwork-Hint: ignore
+        id S1727403AbgCLNr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:47:29 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:36694 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725978AbgCLNr2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 09:47:28 -0400
+Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net [72.93.95.157])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 02CDlCBO022469
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Mar 2020 09:47:14 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id BD68C420E5E; Thu, 12 Mar 2020 09:47:12 -0400 (EDT)
+Date:   Thu, 12 Mar 2020 09:47:12 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Joe Perches <joe@perches.com>
+Cc:     Masahiro Yamada <masahiroy@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -next 005/491] ARM/UNIPHIER ARCHITECTURE: Use fallthrough;
+Message-ID: <20200312134712.GE7159@mit.edu>
+References: <cover.1583896344.git.joe@perches.com>
+ <dae0878058223a42c77d725b8d7c5845a7ef9dc0.1583896348.git.joe@perches.com>
+ <CAK7LNAS7GAk9yXkPhbS3ByU+n9Gb-rk0PeLcXLCNwpW1B22aeg@mail.gmail.com>
+ <891a42ad8d8fd7beca911845108e1ded022ef3f7.camel@perches.com>
+ <20200312085606.GA154268@kroah.com>
+ <CAK7LNAS98yeCeFZpKgNRRKcFhXSKWQ7Ka4vP90YcY=ufScZRCw@mail.gmail.com>
+ <fa07756217b3c033c7e5af495a03ff5655947450.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fa07756217b3c033c7e5af495a03ff5655947450.camel@perches.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Thu, Mar 12, 2020 at 02:37:31AM -0700, Joe Perches wrote:
+> As I have suggested a few times, better still
+> would be to have a mechanism for scripted patches
+> applied possibly as single treewide patch.
+> 
+> Likely applied only at an -rc1.
+> 
+> The stated negatives to a treewide mechanism
+> have been difficulty to backport to -stable.
 
-   ASoC: dt-bindings: google, cros-ec-codec: Fix dtc warnings in example
+Any time we do a massive, disruptive change to the code base, it's
+going to cause problems to -stable.  It means that bug fix patches
+won't necessarily auto-apply, and some will require manual fixups
+afterwards
 
-has been applied to the asoc tree at
+Given that this change doesn't really fix any bugs, I'd have to ask
+the question --- is it *worth* it?  We really need to apply a certain
+amount of cost/benefit analysis around this.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+If it were really important, the thing we could do is to apply a
+single treewide patch at some point after the merge window.  I'd
+suggest after -rc2, myself, but reasonable people can differ.  And
+then, if it were *really* important we could run the same script on
+the stable kernels.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+But for changing "/* fallthrough */" to "fallthrough;"
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Does this ***really*** matter?  Why are we tying ourselves up in knots
+trying to do this all at once?
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From b239d0c238126f478d2fcd26ad8ffc346547ce67 Mon Sep 17 00:00:00 2001
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 11 Mar 2020 15:58:41 -0500
-Subject: [PATCH] ASoC: dt-bindings: google, cros-ec-codec: Fix dtc warnings in
- example
-
-Extra dtc warnings (roughly what W=1 enables) are now enabled by default
-when building the binding examples. These were fixed treewide in
-5.6-rc5, but the newly added google,cros-ec-codec schema adds some new
-warnings:
-
-Documentation/devicetree/bindings/sound/google,cros-ec-codec.example.dts:17.28-21.11:
-Warning (unit_address_vs_reg): /example-0/reserved_mem: node has a reg or ranges property, but no unit name
-Documentation/devicetree/bindings/sound/google,cros-ec-codec.example.dts:22.19-32.11:
-Warning (unit_address_vs_reg): /example-0/cros-ec@0: node has a unit name, but no reg property
-Documentation/devicetree/bindings/sound/google,cros-ec-codec.example.dts:26.37-31.15:
-Warning (unit_address_vs_reg): /example-0/cros-ec@0/ec-codec: node has a reg or ranges property, but no unit name
-
-Fixing the above, then results in:
-
-Documentation/devicetree/bindings/sound/google,cros-ec-codec.example.dts:26.13-23:
-Warning (reg_format): /example-0/cros-ec@0:reg: property has invalid length (4 bytes) (#address-cells == 1, #size-cells == 1)
-Documentation/devicetree/bindings/sound/google,cros-ec-codec.example.dts:27.37-32.15:
-Warning (unit_address_vs_reg): /example-0/cros-ec@0/ec-codec: node has a reg or ranges property, but no unit name
-
-Fixes: eadd54c75f1e ("dt-bindings: Convert the binding file google, cros-ec-codec.txt to yaml format.")
-Signed-off-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: alsa-devel@alsa-project.org
-Cc: Benson Leung <bleung@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Guenter Roeck <groeck@chromium.org>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Cheng-Yi Chiang <cychiang@chromium.org>
-Link: https://lore.kernel.org/r/20200311205841.2710-1-robh@kernel.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- .../bindings/sound/google,cros-ec-codec.yaml  | 27 +++++++++++--------
- 1 file changed, 16 insertions(+), 11 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/sound/google,cros-ec-codec.yaml b/Documentation/devicetree/bindings/sound/google,cros-ec-codec.yaml
-index 94a85d0cbf43..c84e656afb0a 100644
---- a/Documentation/devicetree/bindings/sound/google,cros-ec-codec.yaml
-+++ b/Documentation/devicetree/bindings/sound/google,cros-ec-codec.yaml
-@@ -44,19 +44,24 @@ additionalProperties: false
- 
- examples:
-   - |
--    reserved_mem: reserved_mem {
-+    reserved_mem: reserved-mem@52800000 {
-         compatible = "shared-dma-pool";
--        reg = <0 0x52800000 0 0x100000>;
-+        reg = <0x52800000 0x100000>;
-         no-map;
-     };
--    cros-ec@0 {
--        compatible = "google,cros-ec-spi";
--        #address-cells = <2>;
--        #size-cells = <1>;
--        cros_ec_codec: ec-codec {
--            compatible = "google,cros-ec-codec";
--            #sound-dai-cells = <1>;
--            reg = <0x0 0x10500000 0x80000>;
--            memory-region = <&reserved_mem>;
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        cros-ec@0 {
-+            compatible = "google,cros-ec-spi";
-+            #address-cells = <2>;
-+            #size-cells = <1>;
-+            reg = <0>;
-+            cros_ec_codec: ec-codec@10500000 {
-+                compatible = "google,cros-ec-codec";
-+                #sound-dai-cells = <1>;
-+                reg = <0x0 0x10500000 0x80000>;
-+                memory-region = <&reserved_mem>;
-+            };
-         };
-     };
--- 
-2.20.1
-
+					- Ted
