@@ -2,86 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE8BF182C8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 10:36:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0997D182C91
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 10:38:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbgCLJge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 05:36:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725268AbgCLJge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 05:36:34 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 382AD20674;
-        Thu, 12 Mar 2020 09:36:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584005793;
-        bh=CkF0PFlSE0VaAcGMHzTbnIszgGzP+Ca1F4ntluhxkbw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yhv/ncVCTp+GDteHohx416xdzR5v1FJN4II6t81m2v8LTWcQwHfobBI1DKaKIoQ3A
-         1vLN5m0dkGB99wFiGoFZ1l00qN9/a5KwgJbduWM1HPQYbfDPfJaFrIN72yGGSaus4A
-         AOBTVtN3ZEEwSxkcUgxC3rLMCakpYJTaqNPMdMig=
-Date:   Thu, 12 Mar 2020 10:36:31 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Joe Perches <joe@perches.com>, Jiri Slaby <jslaby@suse.com>,
-        linux-serial@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH -next 005/491] ARM/UNIPHIER ARCHITECTURE: Use fallthrough;
-Message-ID: <20200312093631.GB216768@kroah.com>
-References: <cover.1583896344.git.joe@perches.com>
- <dae0878058223a42c77d725b8d7c5845a7ef9dc0.1583896348.git.joe@perches.com>
- <CAK7LNAS7GAk9yXkPhbS3ByU+n9Gb-rk0PeLcXLCNwpW1B22aeg@mail.gmail.com>
- <891a42ad8d8fd7beca911845108e1ded022ef3f7.camel@perches.com>
- <20200312085606.GA154268@kroah.com>
- <CAK7LNAS98yeCeFZpKgNRRKcFhXSKWQ7Ka4vP90YcY=ufScZRCw@mail.gmail.com>
+        id S1726395AbgCLJiT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 05:38:19 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34787 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbgCLJiT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 05:38:19 -0400
+Received: by mail-wr1-f67.google.com with SMTP id z15so6507903wrl.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 02:38:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FNf46Ec3CGDhnh1BuF3u+Qyby4M6Nu5elgafH8NKV8g=;
+        b=f3WKXcxJo/wGVRvm9GX2aaNkRmWHQwjwtZSW7CeW5WesDiLBvCOHVW1itHGIhADdHR
+         eM8YnJ6GWCmI5TwVPsm3LnjhHtFILX0WWLlkbJqT4hGv2EQ08iH/D9ST1T9i41gDSqrl
+         ghsjYoyk18uGo6QoWQTAqysFfPDzIdgZZ2eMbNmAkh+3pHIWtH591AsqHFymXE4CBVHQ
+         Gx4y7Ko3z/QdK4LrJdlp2heN3bXBFjyt/CodeTjqMbyxRkqYXVj3mb0NQLKe8NAN1GMG
+         uX42hcIq8ih2k5sJdNsaboUnKyEINVuxhPK46p8O9nRQLmhGOwELRKKXwJmEIu1r1Pc7
+         gb2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FNf46Ec3CGDhnh1BuF3u+Qyby4M6Nu5elgafH8NKV8g=;
+        b=QKVKvQSaLZn7PxvYKBZlDISi7UoykrB1zfgFEBSfh6T3Umkm+HXFwadahaM75ZOcA/
+         yfWVg/YyMZVuDRQGQIW89xe0rYClUpNoV6ofZFSkS2FlVgJPstoo2BcBF+Q3WrIFUFq4
+         18njw9vF9L8+p0ofaUyR6FnCSr4K4UTafvgGqwKwgl1yIvWCwFVPpNp8VycLYmBqESC+
+         5HgcXCMpiQYIvXYe01B2D4usHuRJuFo6JvV3w7hdWtz/rKISitFS+qwo8rWVE6Kys2st
+         AW0KSr/Y3G4I6hjerXb0XXhBmg8/kHj5wi1sJBLYu7bnc0JtfDiNXP5BWR1G3GULG7N9
+         amoQ==
+X-Gm-Message-State: ANhLgQ3eHZMW3lDkheHbGaOrLQNhjX4klhDFpzTGQfyukRKEEgi1UUP3
+        xn/xUVQw5WSgb8QEExmvxeUDFGLN
+X-Google-Smtp-Source: ADFU+vsJ0GbL9PBJ20GqoLCmqR5b3y/HtGxsx+wtqTrK3uQv+nfPVq6W8Rvs6rqcVzmrAcYoLTC6CA==
+X-Received: by 2002:adf:b3d6:: with SMTP id x22mr9798658wrd.242.1584005897585;
+        Thu, 12 Mar 2020 02:38:17 -0700 (PDT)
+Received: from localhost.localdomain (dslb-178-006-252-224.178.006.pools.vodafone-ip.de. [178.6.252.224])
+        by smtp.gmail.com with ESMTPSA id x16sm8670126wrg.44.2020.03.12.02.38.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2020 02:38:17 -0700 (PDT)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH] staging: rtl8188eu: Add device id for MERCUSYS MW150US v2
+Date:   Thu, 12 Mar 2020 10:36:52 +0100
+Message-Id: <20200312093652.13918-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAS98yeCeFZpKgNRRKcFhXSKWQ7Ka4vP90YcY=ufScZRCw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 06:02:19PM +0900, Masahiro Yamada wrote:
-> On Thu, Mar 12, 2020 at 5:56 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, Mar 11, 2020 at 07:31:07AM -0700, Joe Perches wrote:
-> > > On Wed, 2020-03-11 at 14:15 +0900, Masahiro Yamada wrote:
-> > > > On Wed, Mar 11, 2020 at 2:07 PM Joe Perches <joe@perches.com> wrote:
-> > > > > Convert the various uses of fallthrough comments to fallthrough;
-> > > > >
-> > > > > Done via script
-> > > > > Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe.com/
-> > > > >
-> > > > > Signed-off-by: Joe Perches <joe@perches.com>
-> > > >
-> > > > Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > > >
-> > > >
-> > > > But, I think the patch subject should be prefixed:
-> > > > "serial: 8250_uniphier:"
-> > >
-> > > Yeah thanks, that's difficult to script though.
-> > >
-> > >
-> >
-> > Kernel development is hard :)
-> 
-> 
-> It is strange to process this per-platform
-> and to send out a giant series that
-> consists of 491 patches.
-> 
-> This is very trivial conversion.
-> 
-> I think it is better to have a single patch
-> to convert all files under drivers/tty/serial/,
-> with the patch subject "serial:".
+This device was added to the stand-alone driver on github.
+Add it to the staging driver as well.
 
-I agree.
+Link: https://github.com/lwfinger/rtl8188eu/commit/2141f244c3e7
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+---
+ drivers/staging/rtl8188eu/os_dep/usb_intf.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+index b5d42f411dd8..845c8817281c 100644
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -38,6 +38,7 @@ static const struct usb_device_id rtw_usb_id_tbl[] = {
+ 	{USB_DEVICE(0x2001, 0x331B)}, /* D-Link DWA-121 rev B1 */
+ 	{USB_DEVICE(0x2357, 0x010c)}, /* TP-Link TL-WN722N v2 */
+ 	{USB_DEVICE(0x2357, 0x0111)}, /* TP-Link TL-WN727N v5.21 */
++	{USB_DEVICE(0x2C4E, 0x0102)}, /* MERCUSYS MW150US v2 */
+ 	{USB_DEVICE(0x0df6, 0x0076)}, /* Sitecom N150 v2 */
+ 	{USB_DEVICE(USB_VENDER_ID_REALTEK, 0xffef)}, /* Rosewill RNX-N150NUB */
+ 	{}	/* Terminating entry */
+-- 
+2.25.1
+
