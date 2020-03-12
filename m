@@ -2,176 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68FD0183211
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:52:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2466E1831CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:41:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbgCLNwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:52:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57002 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727498AbgCLNvm (ORCPT
+        id S1727170AbgCLNlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:41:40 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:47056 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726299AbgCLNlk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:51:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To;
-        bh=v9xr6HmXi0QTp0R2R+PP22HJYiYCg07/b2WV9INOx7w=; b=q6dBvJDTVBFxLntf5HP0Mqu4H6
-        zbnYyoLYU2LMivn5NhGn3Gr5TexWExlz+mR0V5BgXG9neI1GPwaqdZ0I3H/DxZ/wvCUxP0x6OhZU5
-        1s7sNB+n6dtGR8nfDVl8fyeFtdr7KI/dnJ+huPv/5Ho0pNSEJOeuARkjdXQnUQLSFRHSpva1rSWGO
-        YHpk/wlcA3IDhgwdcL7tBNjxbnQU0a6w6iX2I83dbycTsY7wjAo9sEjcoeUWBcTakcSMB+DE8Gr0Z
-        Sh/t6lX4p4V6Kg2YnmDUw7XKPsGtL5BAfRgH7AlmzpVQeKFz9jrFEvhcn+u+JWCactObBE/407Ny9
-        cA4jmpMw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCOFP-0006Wu-EZ; Thu, 12 Mar 2020 13:51:39 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        Thu, 12 Mar 2020 09:41:40 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1584020499; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=kxoYFrKaH3QjFdJNKDoikz6gYrpuvqBs9DEBfaq2kGA=;
+ b=hfkCRROSFks2r3k0oIiOUKjtgvN6684XdUQN8mQrKghRxv94AYYYQ7NeBjBWNYCn0JaU4WWT
+ zE3jsSdQ4psUnE+NtyBIhFbq9MdT/qW5g6bfYljgEg2FiUY2OI4mi7g7diDjVXgrBmP1HZAW
+ BZEoCnTTOq+XTMxpUYz+G5XNp6o=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e6a3c13.7fafbb167848-smtp-out-n02;
+ Thu, 12 Mar 2020 13:41:39 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 86707C433CB; Thu, 12 Mar 2020 13:41:39 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=2.0 tests=ALL_TRUSTED,MISSING_DATE,
+        MISSING_MID,SPF_NONE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5EEF4307112;
-        Thu, 12 Mar 2020 14:51:34 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 505B72B92DA0C; Thu, 12 Mar 2020 14:51:34 +0100 (CET)
-Message-Id: <20200312135042.346616828@infradead.org>
-User-Agent: quilt/0.65
-Date:   Thu, 12 Mar 2020 14:41:23 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     tglx@linutronix.de, jpoimboe@redhat.com
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org
-Subject: [RFC][PATCH 16/16] objtool: Optimize !vmlinux.o again
-References: <20200312134107.700205216@infradead.org>
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 96255C433D2;
+        Thu, 12 Mar 2020 13:41:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 96255C433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] iwlegacy: Remove unneeded variable ret
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20200221104303.3901-1-vulab@iscas.ac.cn>
+References: <20200221104303.3901-1-vulab@iscas.ac.cn>
+To:     Xu Wang <vulab@iscas.ac.cn>
+Cc:     stf_xl@wp.pl, davem@davemloft.net, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20200312134139.86707C433CB@smtp.codeaurora.org>
+Date:   Thu, 12 Mar 2020 13:41:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When doing kbuild tests to see if the objtool changes affected those I
-found that there was a measurable regression:
+Xu Wang <vulab@iscas.ac.cn> wrote:
 
-          pre		  post
+> Remove unneeded variable ret used to store return value.
+> 
+> Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
+> Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
 
-  real    1m13.594        1m16.488s
-  user    34m58.246s      35m23.947s
-  sys     4m0.393s        4m27.312s
+Patch applied to wireless-drivers-next.git, thanks.
 
-Perf showed that for small files the increased hash-table sizes were a
-measurable difference. Since we already have -l "vmlinux" to
-distinguish between the modes, make it also use a smaller portion of
-the hash-tables.
+310443268b29 iwlegacy: Remove unneeded variable ret
 
-This flips it into a small win:
+-- 
+https://patchwork.kernel.org/patch/11396229/
 
-  real    1m14.143s
-  user    34m49.292s
-  sys     3m44.746s
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- tools/objtool/elf.c |   40 ++++++++++++++++++++++++++++------------
- tools/objtool/elf.h |    4 ++--
- 2 files changed, 30 insertions(+), 14 deletions(-)
-
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -27,6 +27,21 @@ static inline u32 str_hash(const char *s
- 	return jhash(str, strlen(str), 0);
- }
- 
-+static inline int elf_hash_bits(void)
-+{
-+	return vmlinux ? 20 : 16;
-+}
-+
-+static inline void elf_hash_add(struct hlist_head *table, struct hlist_node *node, u32 key)
-+{
-+	hlist_add_head(node, &table[hash_32(key, elf_hash_bits())]);
-+}
-+
-+static void elf_hash_init(struct hlist_head *table)
-+{
-+	__hash_init(table, 1U << elf_hash_bits());
-+}
-+
- static void rb_add(struct rb_root *tree, struct rb_node *node,
- 		   int (*cmp)(struct rb_node *, const struct rb_node *))
- {
-@@ -300,8 +315,8 @@ static int read_sections(struct elf *elf
- 		}
- 		sec->len = sec->sh.sh_size;
- 
--		hash_add(elf->section_hash, &sec->hash, sec->idx);
--		hash_add(elf->section_name_hash, &sec->name_hash, str_hash(sec->name));
-+		elf_hash_add(elf->section_hash, &sec->hash, sec->idx);
-+		elf_hash_add(elf->section_name_hash, &sec->name_hash, str_hash(sec->name));
- 	}
- 
- 	if (stats)
-@@ -387,8 +402,8 @@ static int read_symbols(struct elf *elf)
- 			entry = &sym->sec->symbol_list;
- 		list_add(&sym->list, entry);
- 
--		hash_add(elf->symbol_hash, &sym->hash, sym->idx);
--		hash_add(elf->symbol_name_hash, &sym->name_hash, str_hash(sym->name));
-+		elf_hash_add(elf->symbol_hash, &sym->hash, sym->idx);
-+		elf_hash_add(elf->symbol_name_hash, &sym->name_hash, str_hash(sym->name));
- 	}
- 
- 	if (stats)
-@@ -497,7 +512,7 @@ static int read_relas(struct elf *elf)
- 			}
- 
- 			list_add_tail(&rela->list, &sec->rela_list);
--			hash_add(elf->rela_hash, &rela->hash, rela_hash(rela));
-+			elf_hash_add(elf->rela_hash, &rela->hash, rela_hash(rela));
- 			nr_rela++;
- 		}
- 		max_rela = max(max_rela, nr_rela);
-@@ -524,15 +539,16 @@ struct elf *elf_read(const char *name, i
- 		perror("malloc");
- 		return NULL;
- 	}
--	memset(elf, 0, sizeof(*elf));
-+	memset(elf, 0, offsetof(struct elf, sections));
- 
--	hash_init(elf->symbol_hash);
--	hash_init(elf->symbol_name_hash);
--	hash_init(elf->section_hash);
--	hash_init(elf->section_name_hash);
--	hash_init(elf->rela_hash);
- 	INIT_LIST_HEAD(&elf->sections);
- 
-+	elf_hash_init(elf->symbol_hash);
-+	elf_hash_init(elf->symbol_name_hash);
-+	elf_hash_init(elf->section_hash);
-+	elf_hash_init(elf->section_name_hash);
-+	elf_hash_init(elf->rela_hash);
-+
- 	elf->fd = open(name, flags);
- 	if (elf->fd == -1) {
- 		fprintf(stderr, "objtool: Can't open '%s': %s\n",
-@@ -671,7 +687,7 @@ struct section *elf_create_section(struc
- 	shstrtab->len += strlen(name) + 1;
- 	shstrtab->changed = true;
- 
--	hash_add(elf->section_hash, &sec->hash, sec->idx);
-+	elf_hash_add(elf->section_hash, &sec->hash, sec->idx);
- 
- 	return sec;
- }
---- a/tools/objtool/elf.h
-+++ b/tools/objtool/elf.h
-@@ -81,8 +81,8 @@ struct elf {
- 	struct list_head sections;
- 	DECLARE_HASHTABLE(symbol_hash, 20);
- 	DECLARE_HASHTABLE(symbol_name_hash, 20);
--	DECLARE_HASHTABLE(section_hash, 16);
--	DECLARE_HASHTABLE(section_name_hash, 16);
-+	DECLARE_HASHTABLE(section_hash, 20);
-+	DECLARE_HASHTABLE(section_name_hash, 20);
- 	DECLARE_HASHTABLE(rela_hash, 20);
- };
- 
-
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
