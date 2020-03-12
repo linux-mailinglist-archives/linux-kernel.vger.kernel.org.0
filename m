@@ -2,109 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87219183363
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:41:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 369D1183367
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:42:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbgCLOl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 10:41:58 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41374 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727083AbgCLOl6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 10:41:58 -0400
-Received: by mail-wr1-f67.google.com with SMTP id s14so7814707wrt.8;
-        Thu, 12 Mar 2020 07:41:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gncaKHlGYMiKjX4sUuFMWjZl82hyQMZIVGetmMWGMr4=;
-        b=ObuVaSHSHRk2Hrq4XpimsPWCcjNXTvsyH7O8FGmhyNND/wlELZmS67Dh9m5M0JPmDo
-         4OVYQ2PclxxWjRwPl0QX5RnMML962Sxh1CH0vbph8jOR4dFjT5zO2qdm72vKvmkgqyxJ
-         FKNtULLgGzA009qznGjeQpagTfV7KJ/tSBE/LRniUAeakIZ6893NdN5/3Z9Fc2jp5Sil
-         /bDAsVttmGd9LSNEfrQjU9pvCQ5vfuqo+Aj29Wi5gKkEFMpq1dlKaMQRZhvwR2xbQ0++
-         KmtqLCfZ8xBFgSVmdzTZ28WKJHDHM1jgc4Hlm6D0/e9aVk6HWCpurfoKlAc+FbJLTqhh
-         PH7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gncaKHlGYMiKjX4sUuFMWjZl82hyQMZIVGetmMWGMr4=;
-        b=a6X9Ed4rF6ZhjAERFPhohsP5qIfzpWf2D1cThj1lhFAf5yafwDJCQ/KtjtTNA8trtQ
-         4PioIDm8gN+8sHvZQlYrIRDvNtYJo3mT1Jw3rJiyp3/6GSHxNIalYBbkzbO1hyPYjCEZ
-         4O5f9y/WjnJDLRtcTh3m+25kNCYu4pi7+VCcujfgn/6vARGmNO3rtpryhcHgcvr3quQn
-         uVHoWUxepSkTfH0sN0+pgX2mWoJVPmrlJIPAmG4imqFOd0owfq0cQZ6pLZK6Lw/Pbvsw
-         pi2aziPc/EtDTMU6NuuijHHbfpoo57aUqrAXG23jwmd+ZhFzXXk4ZT2dmkIZR3fpgXpS
-         RJOw==
-X-Gm-Message-State: ANhLgQ25q7sbSK0yRF8QpVF0BzYLq/eGmSzNXa5yu/Or7tsuxdeqS6at
-        puLUZ6du3BfP2tS9oJ9khAI=
-X-Google-Smtp-Source: ADFU+vtj39tnigbG/Ug6Aihm/fRB/IG2KtNkoyhISRykNe3bOE8YUL2PAmieLwCZ829nAhrgBh9xqQ==
-X-Received: by 2002:adf:eb48:: with SMTP id u8mr11212418wrn.283.1584024116381;
-        Thu, 12 Mar 2020 07:41:56 -0700 (PDT)
-Received: from gabrielDell.schule.local ([37.58.58.229])
-        by smtp.gmail.com with ESMTPSA id h15sm8960869wrw.97.2020.03.12.07.41.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2020 07:41:55 -0700 (PDT)
-From:   Gabriel Ravier <gabravier@gmail.com>
-To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gabriel Ravier <gabravier@gmail.com>
-Subject: [PATCH v2] gpio-hammer: Avoid potential overflow in main
-Date:   Thu, 12 Mar 2020 15:40:16 +0100
-Message-Id: <20200312144015.1848245-1-gabravier@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        id S1727707AbgCLOmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 10:42:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34066 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727083AbgCLOmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 10:42:02 -0400
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E51C2071B;
+        Thu, 12 Mar 2020 14:41:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584024122;
+        bh=3V+qE2bmVHwG3+3FnGVMnNeT4gbtWXLMegY28bMW1zg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jgC1NrhTkMGsvXTSlMZr4SUqqkR6Z2K7ruSHOPy+HXUOJpWt47qnwyRWvVuPQ8VR8
+         voHPgnOT9JH+uq7t4y3CR/eUpupi5T3LtWlyG/N84+ctoA4S61UVedJxYOUQ6Z3ziZ
+         Ry/CeiriWisbaO9wvsJoQQug289ZhMjFzdvAnwvk=
+Date:   Thu, 12 Mar 2020 22:41:53 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, aford@beaconembedded.com,
+        Han Xu <han.xu@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3] arm64: dts: enable fspi in imx8mm dts
+Message-ID: <20200312144152.GE1249@dragon>
+References: <20200306101957.1229406-1-aford173@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200306101957.1229406-1-aford173@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If '-o' was used more than 64 times in a single invocation of gpio-hammer,
-this could lead to an overflow of the 'lines' array. This commit fixes
-this by avoiding the overflow and giving a proper diagnostic back to the
-user
+On Fri, Mar 06, 2020 at 04:19:57AM -0600, Adam Ford wrote:
+> Pull in upstream patch from NXP repo to:
+> enable fspi in imx8mm DT file
+> 
+> Signed-off-by: Han Xu <han.xu@nxp.com>
+> Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Signed-off-by: Gabriel Ravier <gabravier@gmail.com>
----
- tools/gpio/gpio-hammer.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/tools/gpio/gpio-hammer.c b/tools/gpio/gpio-hammer.c
-index 0e0060a6e..d0be21af1 100644
---- a/tools/gpio/gpio-hammer.c
-+++ b/tools/gpio/gpio-hammer.c
-@@ -135,7 +135,14 @@ int main(int argc, char **argv)
- 			device_name = optarg;
- 			break;
- 		case 'o':
--			lines[i] = strtoul(optarg, NULL, 10);
-+			/*
-+			 * Avoid overflow. Do not immediately error, we want to
-+			 * be able to accurately report on the amount of times
-+			 *'-o' was given to give an accurate error message
-+			 */
-+			if (i < GPIOHANDLES_MAX)
-+				lines[i] = strtoul(optarg, NULL, 10);
-+
- 			i++;
- 			break;
- 		case '?':
-@@ -143,6 +150,14 @@ int main(int argc, char **argv)
- 			return -1;
- 		}
- 	}
-+
-+	if (i >= GPIOHANDLES_MAX) {
-+		fprintf(stderr,
-+			"Only %d occurences of '-o' are allowed, %d were found\n",
-+			GPIOHANDLES_MAX, i + 1);
-+		return -1;
-+	}
-+
- 	nlines = i;
- 
- 	if (!device_name || !nlines) {
--- 
-2.24.1
-
+Applied, thanks.
