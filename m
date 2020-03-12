@@ -2,112 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABC241830DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:09:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58ED51830E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:09:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbgCLNJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:09:09 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:42170 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbgCLNJI (ORCPT
+        id S1727365AbgCLNJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:09:12 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46415 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727072AbgCLNJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:09:08 -0400
-Received: by mail-ua1-f67.google.com with SMTP id v16so988706ual.9
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:09:08 -0700 (PDT)
+        Thu, 12 Mar 2020 09:09:11 -0400
+Received: by mail-ot1-f66.google.com with SMTP id 111so6063203oth.13
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:09:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LyzsKuloOrXeAT1eDgIMEyFoe/19CJB+RPiJ8KPwQIw=;
-        b=NeWi4sT4tcbOtVyLPuM+OlmGb0SVww73M2/R4+x0yevjrTcctku9ZniQ0wxvDpbhJ3
-         I4R/OYEqZArLPzoutN66dWfc7JJ37NZL/mNx9nxoeLvvnrgJEWcc1CXVMf+zn3Au+w3U
-         okoA4mIsV2nkwV65aXMAwIswdl64TXCOqmu4YYKwjkzos3miKzEHnZ+GpHOuYx7uLGaE
-         zHIWyCppm77BMtgL6QzXZ1Hmzbggl/6H03ugd/cIfkOT8qbVLz6/gLHeUuFfSjA9Xeoa
-         MPG4tdiKgMXWO+eh5rsKNsC90o+9x14NA86uN0lqIQ3Mf/DoxgdetNVvKcjGiJ0mRcBA
-         R3aA==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=pdhNSS0LwSG6340/VCqgO4fM6CVikX2mBmvb1QW6kC0=;
+        b=Df3G1AmzLPX4VgfJYDx2lXa2xLSYTyUpRBUm661Uuxbn5xWXSX2BBKwmrq1M3ZlA+q
+         FwP6nPD00Xm4VaShzrAjlnvkKx4pxaxuIdfw2lqRGjJdqTftpHRzOdtPUvIuHYY07tOV
+         jcMfYZBPtkGXDM2oBf3V3xe0iVJd9NH10mf5y0Z0XqUyD1YKcpgSd/D07aE5e+Pmhfau
+         6/vtduNwhDUOOQjJ68Z0hFQM7SZMQd98oT86UeNuLjW9uHRa7YZD9ChfaeY4TJPyZSSq
+         qDAMRVl7spbvCx1lOj2DgZW57QypSt8+QgSGKShWk8eaJK8vp3zzlB4p8Ub2AdHzTIWF
+         uecg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LyzsKuloOrXeAT1eDgIMEyFoe/19CJB+RPiJ8KPwQIw=;
-        b=TK5ymRcXE4fM8nrALM6HSyjy4Z9wpY4QEELaiRWHcdKNvcs6LBUDm5CYYZBU2j3z0f
-         EJ0/90yG/7CyFAR96iMVGlNgZwU/EdOiNWokyOMfX7sF80rPKM8w27f5FXfTHewYy5IY
-         IJ0+PSiP2u07eGPFBwVg8QNnM2OS34PojSoqbq/iv6MjbSsOQ4eMAdG1evlQlHDRop7C
-         YFRixZnC0fFgrJJ3W7mnakNhZX90pAYfr5bJQCQ6ZoPpWmQyzT9gTXNQoWPllKzyD4WR
-         i9s1rMOpTvgrQBXR3oLQvudN93ETa+g0dE2HSNbthK5Xpb3QP1hLx1jcActD/6WRgDC1
-         S1hA==
-X-Gm-Message-State: ANhLgQ2cr9D7PHvdhU9swZAXD8SDO6hc+UJABTpXERNDD7B54Rm5UIKt
-        a88plgDPUh/0WkGXxSE60AogwPc+UsNVnyl44Eomrw==
-X-Google-Smtp-Source: ADFU+vvpfThPEsySr4RvSlP6UPDA5AYK/x2Ak/VHoJ9GoNUgCMWeZ+k5a42yKU7sePemyrIkQzJo3xMLVDtx8jEJPkw=
-X-Received: by 2002:ab0:7381:: with SMTP id l1mr4821390uap.104.1584018547554;
- Thu, 12 Mar 2020 06:09:07 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=pdhNSS0LwSG6340/VCqgO4fM6CVikX2mBmvb1QW6kC0=;
+        b=rfdzAjmZ14F6frDQtc45TpDPf9rGuJzMgiAZqVNb+gWTMKGVAcslUa1AmH4MYBFJiz
+         gmXFvU0TIDhFhzYKAk4Ha9qy1N5/u1bMUaH0YQWAgWx9dPW63PNXwZ49ua4XWwZJ5N1Z
+         ChVcLFVJ18Mo3kHVY8IcHiOhh5oD12yQCOWEf9qmmuKOtRNCkIf1ymn9UUJItcYyuWSR
+         cZ9abOxPMhfiMf03HuWTP8ZDJTsklV9mAMHrUIT+LEI0MtxbLzU8ef+N5c38JyPkBa97
+         RNeXfbzoh8NaNGoSAhllYY+qAecrfmx8pIA8URYRRUxdcC4l1jXilQQ9RfUEIkVUBUNk
+         W79Q==
+X-Gm-Message-State: ANhLgQ1D2pRENIpfHu5BuCkDVrPfygSjRVecJn62Q95gHPhJUwfX4KUI
+        sWQ2u+4pxubUk8b7yC0ba8dlmcnXVnqUaUA1SPw=
+X-Google-Smtp-Source: ADFU+vsiwdz36R7kCJWU5GnrdTnka0ha0P0U9+AjWUjYbzL4PLQR7T7YJUmHpjX3bCiWi+SRx9iM4X2jF4dHO+Z6V60=
+X-Received: by 2002:a9d:6254:: with SMTP id i20mr6542503otk.130.1584018550750;
+ Thu, 12 Mar 2020 06:09:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200306174413.20634-1-nsaenzjulienne@suse.de>
-In-Reply-To: <20200306174413.20634-1-nsaenzjulienne@suse.de>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 12 Mar 2020 14:08:31 +0100
-Message-ID: <CAPDyKFp+XwGog_w+8Sv1hYA-Umi6Rt2LYR1fyMEEb9abdb9nGQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/11] Raspbery Pi 4 vmmc regulator support
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        phil@raspberrypi.com,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        DTML <devicetree@vger.kernel.org>
+Received: by 2002:ac9:296e:0:0:0:0:0 with HTTP; Thu, 12 Mar 2020 06:09:10
+ -0700 (PDT)
+Reply-To: antoinm93@yahoo.com
+From:   Mrs Elodie Antoine <marriammichel85@gmail.com>
+Date:   Thu, 12 Mar 2020 06:09:10 -0700
+Message-ID: <CALu+k40oRb=0LUTR2js7qotTHjO++8mpY9QprCbuqn6mk5SSpg@mail.gmail.com>
+Subject: Greetings From Mrs Elodie,
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 6 Mar 2020 at 18:44, Nicolas Saenz Julienne
-<nsaenzjulienne@suse.de> wrote:
->
-> The series first cleans up a common pattern, which is ultimately needed
-> to integrate the regulator with bcm2711's sdhci-iproc. It then
-> introduces the relevant device-tree changes.
->
-> ---
->
-> Changes since v1:
->  - Use helper function istead of quirk
->  - Add GPIO label
->
-> Nicolas Saenz Julienne (11):
->   mmc: sdhci: Introduce sdhci_set_power_and_bus_voltage()
->   mmc: sdhci: arasan: Use sdhci_set_power_and_voltage()
->   mmc: sdhci: milbeaut: Use sdhci_set_power_and_voltage()
->   mmc: sdhci: at91: Use sdhci_set_power_and_voltage()
->   mmc: sdhci: pxav3: Use sdhci_set_power_and_voltage()
->   mmc: sdhci: xenon: Use sdhci_set_power_and_voltage()
->   mmc: sdhci: am654: Use sdhci_set_power_and_voltage()
->   mmc: sdhci: Unexport sdhci_set_power_noreg()
->   mmc: sdhci: iproc: Add custom set_power() callback for bcm2711
->   ARM: dts: bcm2711: Update expgpio's GPIO labels
->   ARM: dts: bcm2711: Add vmmc regulator in emmc2
->
->  arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 13 ++++++++++++-
->  drivers/mmc/host/sdhci-iproc.c        | 17 ++++++++++++++++-
->  drivers/mmc/host/sdhci-milbeaut.c     | 13 +------------
->  drivers/mmc/host/sdhci-of-arasan.c    | 15 ++-------------
->  drivers/mmc/host/sdhci-of-at91.c      | 18 +-----------------
->  drivers/mmc/host/sdhci-pxav3.c        | 20 +-------------------
->  drivers/mmc/host/sdhci-xenon.c        | 20 +-------------------
->  drivers/mmc/host/sdhci.c              | 24 +++++++++++++++++++++---
->  drivers/mmc/host/sdhci.h              |  5 +++--
->  drivers/mmc/host/sdhci_am654.c        | 17 +++--------------
->  10 files changed, 61 insertions(+), 101 deletions(-)
->
-> --
-> 2.25.1
->
+Greetings from Mrs Elodie Antoine,
 
-Patch 1-4, 6, 9 applied for next, thanks!
+Calvary Greetings in the name of the LORD Almighty and Our LORD JESUS
+CHRIST the giver of every good thing. Good day,i know this letter will
+definitely come to you as a huge surprise, but I implore you to take
+the time to go through it carefully as the decision you make will go
+off a long way to determine my future and continued existence. I am
+Mrs Elodie Antoine
+aging widow of 59 years old suffering from long time illness. I have
+some funds I inherited from my late husband,
 
-Kind regards
-Uffe
+The sum of (US$4.5 Million Dollars) and I needed a very honest and God
+fearing  who can withdraw this money then use the funds for Charity
+works. I WISH TO GIVE THIS FUNDS TO YOU FOR CHARITY WORKS. I found
+your email address from the internet after honest prayers  to the LORD
+to bring me a helper and i decided to contact you if you may be
+willing and interested to handle these trust funds in good faith
+before anything happens to me.
+I accept this decision because I do not have any child who will
+inherit this money after I die. I want your urgent reply to me so that
+I will give you the deposit receipt which the  COMPANY issued to me as
+next of kin for immediate transfer of the money to your account in
+your country, to start the good work of God, I want you to use the
+15/percent of the total amount to help yourself in doing the project.
+
+
+I am desperately in keen need of assistance and I have summoned up
+courage to contact you for this task, you must not fail me and the
+millions of the poor people in our todays WORLD. This is no stolen
+money and there are no dangers involved,100% RISK FREE with full legal
+proof. Please if you would be able to use the funds for the Charity
+works kindly let me know immediately.I will appreciate your utmost
+confidentiality and trust in this matter to accomplish my heart
+desire, as I don't want anything that will jeopardize my last wish. I
+want you to take 15 percent of the total money for your personal use
+while 85% of the money will go to charity.I will appreciate your
+utmost confidentiality and trust in this matter to accomplish my heart
+desire, as I don't want anything that will jeopardize my last wish.
+
+
+kindly respond for further details.
+
+Thanks and God bless you,
+
+Mrs Elodie Antoine
