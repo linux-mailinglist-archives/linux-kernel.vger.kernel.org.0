@@ -2,134 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3723183210
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:52:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9559F18321F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:54:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbgCLNv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:51:56 -0400
-Received: from foss.arm.com ([217.140.110.172]:35130 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727270AbgCLNv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:51:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A810D30E;
-        Thu, 12 Mar 2020 06:51:55 -0700 (PDT)
-Received: from [10.37.12.166] (unknown [10.37.12.166])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A2B83F534;
-        Thu, 12 Mar 2020 06:51:54 -0700 (PDT)
-Subject: Re: [PATCH v4 07/13] firmware: arm_scmi: Add notification dispatch
- and delivery
-To:     Cristian Marussi <cristian.marussi@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     sudeep.holla@arm.com, james.quinlan@broadcom.com,
-        Jonathan.Cameron@Huawei.com
-References: <20200304162558.48836-1-cristian.marussi@arm.com>
- <20200304162558.48836-8-cristian.marussi@arm.com>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <45d4aee9-57df-6be9-c176-cf0d03940c21@arm.com>
-Date:   Thu, 12 Mar 2020 13:51:52 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727516AbgCLNx5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:53:57 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47516 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbgCLNx4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 09:53:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Y2yCU3lEqWiUy5deENEWrtQFGN8rUc5B/pd3ZvWDG1Q=; b=bOCaQdvFQPWcZyPG74rxIHya0M
+        NSSnZ8bp91G2eCAtSq3NsCS+68qay12cItBlPavpzUq7KQi+NZA/BnmC3ki4L4oD0NhpJEE/DpFDg
+        WRYwbvjGTfFUjArNRFW5A7MZYfTjXCGBHWj2LQXAKIDgiH6qhC75dRibHJcwo8OItP0xhQAXvxEz1
+        xamMneohPzfF2RJhtz6i8+QLvY1rqQlCIlka1O/dsaREfq5iAoS6DxROyvU3V6A1EPCkqzhypzl1s
+        77vC7cag1uwYR4PtYxRGaQM5Dwj1EfP2jd+fAgG3cSwc4DQEuF0HKHxhRgUBGLdpvE9K3B4O71kHk
+        OQGlNktw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jCOHN-0003I5-1v; Thu, 12 Mar 2020 13:53:41 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 67DDD305E21;
+        Thu, 12 Mar 2020 14:53:39 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 35CDD2010F0F5; Thu, 12 Mar 2020 14:53:39 +0100 (CET)
+Date:   Thu, 12 Mar 2020 14:53:39 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: Instrumentation and RCU
+Message-ID: <20200312135339.GS12561@hirez.programming.kicks-ass.net>
+References: <87mu8p797b.fsf@nanos.tec.linutronix.de>
+ <20200309141546.5b574908@gandalf.local.home>
+ <87fteh73sp.fsf@nanos.tec.linutronix.de>
+ <20200310170951.87c29e9c1cfbddd93ccd92b3@kernel.org>
+ <87pndk5tb4.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20200304162558.48836-8-cristian.marussi@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87pndk5tb4.fsf@nanos.tec.linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Cristian,
-
-just one comment below...
-
-On 3/4/20 4:25 PM, Cristian Marussi wrote:
-> Add core SCMI Notifications dispatch and delivery support logic which is
-> able, at first, to dispatch well-known received events from the RX ISR to
-> the dedicated deferred worker, and then, from there, to final deliver the
-> events to the registered users' callbacks.
+On Tue, Mar 10, 2020 at 12:43:27PM +0100, Thomas Gleixner wrote:
+> That's why we want the sections and the annotation. If something calls
+> out of a noinstr section into a regular text section and the call is not
+> annotated at the call site, then objtool can complain and tell you. What
+> Peter and I came up with looks like this:
 > 
-> Dispatch and delivery is just added here, still not enabled.
+> noinstr foo()
+> 	do_protected(); <- Safe because in the noinstr section
 > 
-> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> ---
-> V3 --> V4
-> - dispatcher now handles dequeuing of events in chunks (header+payload):
->    handling of these in_flight events let us remove one unneeded memcpy
->    on RX interrupt path (scmi_notify)
-> - deferred dispatcher now access their own per-protocol handlers' table
->    reducing locking contention on the RX path
-> V2 --> V3
-> - exposing wq in sysfs via WQ_SYSFS
-> V1 --> V2
-> - splitted out of V1 patch 04
-> - moved from IDR maps to real HashTables to store event_handlers
-> - simplified delivery logic
-> ---
->   drivers/firmware/arm_scmi/notify.c | 334 ++++++++++++++++++++++++++++-
->   drivers/firmware/arm_scmi/notify.h |   9 +
->   2 files changed, 342 insertions(+), 1 deletion(-)
+> 	instr_begin();	<- Marks the begin of a safe region, ignored
+>         		   by objtool
 > 
-> diff --git a/drivers/firmware/arm_scmi/notify.c b/drivers/firmware/arm_scmi/notify.c
+>         do_stuff();     <- All good   
+> 
+>         instr_end();    <- End of the safe region. objtool starts
+> 			   looking again
+> 
+>         do_other_stuff();  <- Unsafe because do_other_stuff() is
+>         		      not protected
+> and:
+> 
+> noinstr do_protected()
+>         bar();		<- objtool will complain here
+> 
+> See?
 
-[snip]
+Find here:
 
-> +
-> +/**
-> + * scmi_notify  - Queues a notification for further deferred processing
-> + *
-> + * This is called in interrupt context to queue a received event for
-> + * deferred processing.
-> + *
-> + * @handle: The handle identifying the platform instance from which the
-> + *	    dispatched event is generated
-> + * @proto_id: Protocol ID
-> + * @evt_id: Event ID (msgID)
-> + * @buf: Event Message Payload (without the header)
-> + * @len: Event Message Payload size
-> + * @ts: RX Timestamp in nanoseconds (boottime)
-> + *
-> + * Return: 0 on Success
-> + */
-> +int scmi_notify(const struct scmi_handle *handle, u8 proto_id, u8 evt_id,
-> +		const void *buf, size_t len, u64 ts)
-> +{
-> +	struct scmi_registered_event *r_evt;
-> +	struct scmi_event_header eh;
-> +	struct scmi_notify_instance *ni = handle->notify_priv;
-> +
-> +	/* Ensure atomic value is updated */
-> +	smp_mb__before_atomic();
-> +	if (unlikely(!atomic_read(&ni->enabled)))
-> +		return 0;
-> +
-> +	r_evt = SCMI_GET_REVT(ni, proto_id, evt_id);
-> +	if (unlikely(!r_evt))
-> +		return -EINVAL;
-> +
-> +	if (unlikely(len > r_evt->evt->max_payld_sz)) {
-> +		pr_err("SCMI Notifications: discard badly sized message\n");
-> +		return -EINVAL;
-> +	}
-> +	if (unlikely(kfifo_avail(&r_evt->proto->equeue.kfifo) <
-> +		     sizeof(eh) + len)) {
-> +		pr_warn("SCMI Notifications: queue full dropping proto_id:%d  evt_id:%d  ts:%lld\n",
-> +			proto_id, evt_id, ts);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	eh.timestamp = ts;
-> +	eh.evt_id = evt_id;
-> +	eh.payld_sz = len;
-> +	kfifo_in(&r_evt->proto->equeue.kfifo, &eh, sizeof(eh));
-> +	kfifo_in(&r_evt->proto->equeue.kfifo, buf, len);
-> +	queue_work(r_evt->proto->equeue.wq,
-> +		   &r_evt->proto->equeue.notify_work);
-
-Is it safe to ignore the return value from the queue_work here?
-
-Regards,
-Lukasz
-
-
+  https://lkml.kernel.org/r/20200312134107.700205216@infradead.org
