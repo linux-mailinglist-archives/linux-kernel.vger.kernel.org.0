@@ -2,76 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B4F5183265
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:07:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DC1118326C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:08:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727605AbgCLOHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 10:07:16 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41607 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbgCLOHP (ORCPT
+        id S1727531AbgCLOIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 10:08:12 -0400
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:42972 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725978AbgCLOIM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 10:07:15 -0400
-Received: by mail-io1-f65.google.com with SMTP id m25so5775075ioo.8
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 07:07:14 -0700 (PDT)
+        Thu, 12 Mar 2020 10:08:12 -0400
+Received: by mail-vk1-f194.google.com with SMTP id e20so1590600vke.9
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 07:08:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oCQZrJERoMLVJX5x1RC4/10D7o7Of6OtemKn4HOrLdo=;
-        b=xYgKvx61D4K49Vvkz8w1kRkqt+NeOXWdiLUS1MBdwmJxvRzERDXCuph6yDN4el87a7
-         LwKf4V4k2gjhHiqLtE3Ei2sAqnRrW8nuRpZWfzqrMrToy8FOe6FE45ghOG0kyLxQJFJi
-         Dp5viiCX/mPV+Kbtx+gkoNohSerKHKasipXZ/JNB4t8GP1XR2EhZwIIGhHs9Ti1jcRl5
-         6VpzNL9+idY3vxZGg/K/H/qTlcNnMGpDccW1I1pUD7h9/wwVQUJTQNrmIQBNPkO1Yv1E
-         +4U6vJhcUKN5IYEx8ZLCqIUp7Rb+Jr4ignKtRV473wjYuaLZRzSguZd8Q32OHC8FsMco
-         Mx9g==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6J9Ig2oz1bb7guvVXYyRNpRVz0RKMu9DYxVEd/SzgXI=;
+        b=H7DN/hrXC5SOfs2915ZbQulRR7iAHtt3uIi89leVhH11cRIYwJ9rIM5rrJTWqrQc9c
+         k6W4+S7mPhWQ2G271UpAF2UqqOBhfUyXVTTOQeRHxJK7VosV9dmfY0UvneGlfP+dqukd
+         ba3Z/Ki7tJ2JemSrkSaxjoOoJtCIg6pMKZ3j9UHyB38C1Ah7aqbxMCC2r+nHacnypqbc
+         r3A4lgiLdqxs92Kk3ltPbguQYkRSI1unHNO6GWPHWvlAERBw4nfA4AMns8o44eOr+zKm
+         BUJ0/BKeCLxznbuOfoSnK76G/tzMHiPgKc78DV+nGGwt69TptpgDvh0rOWdTy6i018Jm
+         ag0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oCQZrJERoMLVJX5x1RC4/10D7o7Of6OtemKn4HOrLdo=;
-        b=JYauAa7vq6yrEsmx1tTs0JgprLs7oL4VP7aV+5izc+YB/kKJmiOaEv+wjNjq55ZXhD
-         NF4WrvcPrdQ5eF2QT9Ego5udyCt1F3Bc76NFu7q6eN/6jPkzutq5dIIqYmtDhykpSdbg
-         xsNqpnRAFNPjw9klqaY2w8PzyEsrQJQt1C9dftvyWN1h8rYe2HzFU2No9p7g2LKNF1ef
-         aGtPpO0DXGdGErdPztm1+V/ECfT360wrmxlNuZZDh5mn+1tYnnfRCaYdHCKhDDboDqXy
-         er3arHOD5xhSILr2fm3r+DKR1n50fSDoSnsO6nr+yY1E65p4BasqUBG7N3f/i7O62D9M
-         KvDw==
-X-Gm-Message-State: ANhLgQ0roBibC/3pHaKH5GeVl6ScLY9SEMdlvb6o5woU31tMUyktGocw
-        aFE+VBtPKEfqEi94M8JKymWYRgmPge+NkA==
-X-Google-Smtp-Source: ADFU+vsD36ki6VGiTjq4LiW76CyWNgNwT3q+tOD2iHOtZOyEJTeKdsK1gWHmB2n7L38BS0zcPcRsdA==
-X-Received: by 2002:a5d:9b12:: with SMTP id y18mr7789355ion.176.1584022032775;
-        Thu, 12 Mar 2020 07:07:12 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id 4sm6131345ill.46.2020.03.12.07.07.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Mar 2020 07:07:10 -0700 (PDT)
-Subject: Re: [PATCH] ahci: Add Intel Comet Lake H RAID PCI ID
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20200227122822.14059-1-kai.heng.feng@canonical.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7d7f9e0b-7410-1642-cc63-ef6fcda93540@kernel.dk>
-Date:   Thu, 12 Mar 2020 08:07:09 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6J9Ig2oz1bb7guvVXYyRNpRVz0RKMu9DYxVEd/SzgXI=;
+        b=HL1r76gL47EXRbceWDXeT5RNhD5hJDMDW8B50s5UFsZlnSfMWnfz/D1CDWkYO6aC3h
+         jMdPw/8rXkX/kmZN1keWBYxGKWDbVi4JLQIj2LuPeyyTB/Lh8Lxw5e7L5fELncMvjqce
+         3rXUBGXKF5Iwg1YEX5Ag7YqzjVK0+5ytJ/SRjKlw/Jwqr7ieQ1JwrYSjg8mxtT4Juz7W
+         ZrHauvcoyodVQQEIu88HU547fot+5Eme+y/hE09pzAYx4BxHf366BOK5O/m0h98M6iiO
+         l7ksOzdLKW1r3emWLs3dQtKB6P7dcYSUJqpnWVTsaEKOnP9hlHMneAngzs5pdY4Tdt9a
+         6uyQ==
+X-Gm-Message-State: ANhLgQ2sITydve6oD98lu5t3RnHq/QqWY7q0xTTXl0oim605xq/X4inC
+        xjXjt3Rhh2JDgYB0TFEkJflc8FcG5CDOEpUMBHuwTw==
+X-Google-Smtp-Source: ADFU+vsGDaiiav8lo5THUgIDY0HPzi+5T5mlfmPdJyURWCmQInX4drk2MUTv+qfoecTOl54d4a4OmoBfL83ZlRl3Who=
+X-Received: by 2002:a1f:5c84:: with SMTP id q126mr5449459vkb.5.1584022089616;
+ Thu, 12 Mar 2020 07:08:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200227122822.14059-1-kai.heng.feng@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1583952275.git.amanharitsh123@gmail.com> <d12a15f496ca472e100798ac2cd256fbfc1de15d.1583952276.git.amanharitsh123@gmail.com>
+In-Reply-To: <d12a15f496ca472e100798ac2cd256fbfc1de15d.1583952276.git.amanharitsh123@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 12 Mar 2020 15:07:58 +0100
+Message-ID: <CACRpkdYv0U0RmT7snp+UejEXecq4wLkhc11DUniUfGYAgyXC=A@mail.gmail.com>
+Subject: Re: [PATCH 1/5] pci: handled return value of platform_get_irq correctly
+To:     Aman Sharma <amanharitsh123@gmail.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <amurray@thegoodpenguin.co.uk>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
+        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Mans Rullgard <mans@mansr.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/27/20 5:28 AM, Kai-Heng Feng wrote:
-> Add the PCI ID to the driver list to support this new device.
+On Wed, Mar 11, 2020 at 8:19 PM Aman Sharma <amanharitsh123@gmail.com> wrote:
 
-Applied for 5.7, thanks.
+> Signed-off-by: Aman Sharma <amanharitsh123@gmail.com>
+> ---
+>  drivers/pci/controller/pci-v3-semi.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pci/controller/pci-v3-semi.c b/drivers/pci/controller/pci-v3-semi.c
+> index bd05221f5a22..a5bf945d2eda 100644
+> --- a/drivers/pci/controller/pci-v3-semi.c
+> +++ b/drivers/pci/controller/pci-v3-semi.c
+> @@ -777,9 +777,9 @@ static int v3_pci_probe(struct platform_device *pdev)
+>
+>         /* Get and request error IRQ resource */
+>         irq = platform_get_irq(pdev, 0);
+> -       if (irq <= 0) {
+> +       if (irq < 0) {
 
--- 
-Jens Axboe
+Have you considered:
+https://lwn.net/Articles/470820/
 
+TL;DR Linus (both of them) are not with you on this.
+
+And that is why the code is written like this.
+
+Do you really have a platform that could return 0 as IRQ
+here? In that case, can we fix it?
+
+>                 dev_err(dev, "unable to obtain PCIv3 error IRQ\n");
+> -               return -ENODEV;
+> +               return irq;
+
+That's OK with me.
+
+Yours,
+Linus Walleij
