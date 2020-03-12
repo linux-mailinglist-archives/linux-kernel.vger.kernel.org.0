@@ -2,118 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2A981830DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:09:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A055B1830D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:08:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbgCLNI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:08:59 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:44146 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727268AbgCLNI6 (ORCPT
+        id S1727225AbgCLNIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:08:37 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40613 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725268AbgCLNIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:08:58 -0400
-Received: by mail-vs1-f68.google.com with SMTP id u24so3597465vso.11
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:08:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c/71/1S9FFPBZLngXcn7eOGZxEYwsgQn+LiJXaTEkt8=;
-        b=piJo3Qvo8x1s8VTBvAp8jS5t4o5VQEuBs+lWQCHYrxpJbtweH35oefXEg9GnzRQtdz
-         61TRYLXGKrksVOp7wxdDFIZl5QZ824OocSJHbPk7P8hZ70jpr88EaUGavwPNoL4Dn36K
-         Nl5oXBejzLR1jLeDJKzYb6ixDcAWzPP7oWG8OeFjKk4/PM28R2Me2D0Tsq7x8rhewXrt
-         r9U/8MqANn4Ec6qJ2Rhiv85PM01uXdt4/JzUZZopZGKv0JxfViBO1WHel4O7GIJWC1qc
-         CC+Rw5K2v3jnnd/eFLnzoQo/ZNl/T0nWcHZQA9pE0ttsgYASG3J1iRFvKPj7l5rZ/lPs
-         Rsiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c/71/1S9FFPBZLngXcn7eOGZxEYwsgQn+LiJXaTEkt8=;
-        b=N8ufiusFBtcRhgXgH7TD9zP+UcwdJqmtL1tippmkGmTYWXBDLX5TFGvqJev4WaP6PG
-         B1d15Cxu4+kOVhmqtX9EK+mu2u4cn7kUka/v1FYqsgAiVKcJc6/X1Sr+ac++U/e51zy1
-         ktakIE8vxO1wHRYK87i4PAMhFS8+75umvcpSVpkJ2arhKL8uwqad0Dcsrj66kQVN6BgW
-         UmEsi6fsO6+yWEN6W4TuzD6QXxK3WmaQvxN5D8MbuWa0LfhNm0hcij86XND2AbOq5YXE
-         jYprbZCqUHDbHY2HPm7tIcL27pQVMQzea5+aiyWQ72U7/S9lo4M6RkvH716NU2ui1/ri
-         j5+Q==
-X-Gm-Message-State: ANhLgQ0DXCof6D19xg79qiptDhRu+OTsZFLolzCAt+YY3kW9+imOVc6Y
-        FYTOuTndHILU+Dtr04mvJRnGflT4Mju3yAFXa3Rdvg==
-X-Google-Smtp-Source: ADFU+vvkBY6+7KljoIBo06yuh++7mQGBlfwWaxlmBrxgvs2H6ahSYqDiyk/zugbPV+nCMOkSfEf3tQK6yQglm6UvXwc=
-X-Received: by 2002:a05:6102:2051:: with SMTP id q17mr5487529vsr.165.1584018537836;
- Thu, 12 Mar 2020 06:08:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200307160556.16226-1-jbx6244@gmail.com>
-In-Reply-To: <20200307160556.16226-1-jbx6244@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 12 Mar 2020 14:08:21 +0100
-Message-ID: <CAPDyKFq22RTPQ2FD+yMYTstyEhqU=6piiiDkEFs4CB5f6uRG4Q@mail.gmail.com>
-Subject: Re: [PATCH v1] dt-bindings: mmc: synopsys-dw-mshc: fix
- clock-freq-min-max in example
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 12 Mar 2020 09:08:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584018516;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=S6bzV9J0z/IVD/ibu5hpuBEpz5XNYpk50t3w61vNfkc=;
+        b=ZVDqfbe1gBtRar3+51oD0XynDDnqtK/tYcxJ1zsBYvaBU+G8FWYGvOySWpBUwE5tCIxG3F
+        nsUlt7c1oaUiSLZo/gWSGrbPrQkZVcV71pziiHD38fN7J9MzGrbd/I2CKoc2qmEcv7YV2e
+        0FbMIy8HTtKwyIC2B3uBuLf26jqRyO0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-178-nM0-vi0hOVqePh4H10z_BQ-1; Thu, 12 Mar 2020 09:08:30 -0400
+X-MC-Unique: nM0-vi0hOVqePh4H10z_BQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 10F35107ACCA;
+        Thu, 12 Mar 2020 13:08:29 +0000 (UTC)
+Received: from MiWiFi-R3L-srv.redhat.com (ovpn-12-43.pek2.redhat.com [10.72.12.43])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A678093501;
+        Thu, 12 Mar 2020 13:08:23 +0000 (UTC)
+From:   Baoquan He <bhe@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, mhocko@suse.com, akpm@linux-foundation.org,
+        david@redhat.com, richard.weiyang@gmail.com, bhe@redhat.com
+Subject: [PATCH v2] mm/sparse.c: Use kvmalloc_node/kvfree to alloc/free memmap for the classic sparse
+Date:   Thu, 12 Mar 2020 21:08:22 +0800
+Message-Id: <20200312130822.6589-1-bhe@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 7 Mar 2020 at 17:06, Johan Jonker <jbx6244@gmail.com> wrote:
->
-> A test with the command below does not detect all errors
-> in combination with 'additionalProperties: false' and
-> allOf:
->   - $ref: "synopsys-dw-mshc-common.yaml#"
-> allOf:
->   - $ref: "mmc-controller.yaml#"
->
-> 'additionalProperties' applies to all properties that are not
-> accounted-for by 'properties' or 'patternProperties' in
-> the immediate schema.
->
-> First when we combine synopsys-dw-mshc.yaml,
-> synopsys-dw-mshc-common.yaml and mmc-controller.yaml it gives
-> this error:
->
-> Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.example.dt.yaml:
-> mmc@12200000: 'clock-freq-min-max' does not match any of the regexes:
-> '^.*@[0-9]+$', '^clk-phase-(legacy|sd-hs|mmc-(hs|hs[24]00|ddr52)|
-> uhs-(sdr(12|25|50|104)|ddr50))$', 'pinctrl-[0-9]+'
->
-> 'clock-freq-min-max' is deprecated, so replace it by 'max-frequency'.
->
-> make ARCH=arm dt_binding_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
->
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+This change makes populate_section_memmap()/depopulate_section_memmap
+much simpler.
 
-Applied for next, thanks!
+Suggested-by: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Baoquan He <bhe@redhat.com>
+---
+v1->v2:
+  The old version only used __get_free_pages() to replace alloc_pages()
+  in populate_section_memmap().
+  http://lkml.kernel.org/r/20200307084229.28251-8-bhe@redhat.com
 
-Kind regards
-Uffe
+ mm/sparse.c | 27 +++------------------------
+ 1 file changed, 3 insertions(+), 24 deletions(-)
 
+diff --git a/mm/sparse.c b/mm/sparse.c
+index bf6c00a28045..362018e82e22 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -734,35 +734,14 @@ static void free_map_bootmem(struct page *memmap)
+ struct page * __meminit populate_section_memmap(unsigned long pfn,
+ 		unsigned long nr_pages, int nid, struct vmem_altmap *altmap)
+ {
+-	struct page *page, *ret;
+-	unsigned long memmap_size = sizeof(struct page) * PAGES_PER_SECTION;
+-
+-	page = alloc_pages(GFP_KERNEL|__GFP_NOWARN, get_order(memmap_size));
+-	if (page)
+-		goto got_map_page;
+-
+-	ret = vmalloc(memmap_size);
+-	if (ret)
+-		goto got_map_ptr;
+-
+-	return NULL;
+-got_map_page:
+-	ret = (struct page *)pfn_to_kaddr(page_to_pfn(page));
+-got_map_ptr:
+-
+-	return ret;
++	return kvmalloc_node(sizeof(struct page) * PAGES_PER_SECTION,
++			     GFP_KERNEL|__GFP_NOWARN, nid);
+ }
+ 
+ static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
+ 		struct vmem_altmap *altmap)
+ {
+-	struct page *memmap = pfn_to_page(pfn);
+-
+-	if (is_vmalloc_addr(memmap))
+-		vfree(memmap);
+-	else
+-		free_pages((unsigned long)memmap,
+-			   get_order(sizeof(struct page) * PAGES_PER_SECTION));
++	kvfree(pfn_to_page(pfn));
+ }
+ 
+ static void free_map_bootmem(struct page *memmap)
+-- 
+2.17.2
 
-> ---
->  Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-> index 05f9f36dc..dd2c1b147 100644
-> --- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-> @@ -62,7 +62,7 @@ examples:
->        cap-mmc-highspeed;
->        cap-sd-highspeed;
->        card-detect-delay = <200>;
-> -      clock-freq-min-max = <400000 200000000>;
-> +      max-frequency = <200000000>;
->        clock-frequency = <400000000>;
->        data-addr = <0x200>;
->        fifo-depth = <0x80>;
-> --
-> 2.11.0
->
