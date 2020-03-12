@@ -2,90 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9559F18321F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:54:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E375418321E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:53:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbgCLNx5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:53:57 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47516 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbgCLNx4 (ORCPT
+        id S1727471AbgCLNxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:53:54 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:45466 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbgCLNxx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:53:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Y2yCU3lEqWiUy5deENEWrtQFGN8rUc5B/pd3ZvWDG1Q=; b=bOCaQdvFQPWcZyPG74rxIHya0M
-        NSSnZ8bp91G2eCAtSq3NsCS+68qay12cItBlPavpzUq7KQi+NZA/BnmC3ki4L4oD0NhpJEE/DpFDg
-        WRYwbvjGTfFUjArNRFW5A7MZYfTjXCGBHWj2LQXAKIDgiH6qhC75dRibHJcwo8OItP0xhQAXvxEz1
-        xamMneohPzfF2RJhtz6i8+QLvY1rqQlCIlka1O/dsaREfq5iAoS6DxROyvU3V6A1EPCkqzhypzl1s
-        77vC7cag1uwYR4PtYxRGaQM5Dwj1EfP2jd+fAgG3cSwc4DQEuF0HKHxhRgUBGLdpvE9K3B4O71kHk
-        OQGlNktw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCOHN-0003I5-1v; Thu, 12 Mar 2020 13:53:41 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 67DDD305E21;
-        Thu, 12 Mar 2020 14:53:39 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 35CDD2010F0F5; Thu, 12 Mar 2020 14:53:39 +0100 (CET)
-Date:   Thu, 12 Mar 2020 14:53:39 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jason Wessel <jason.wessel@windriver.com>
-Subject: Re: Instrumentation and RCU
-Message-ID: <20200312135339.GS12561@hirez.programming.kicks-ass.net>
-References: <87mu8p797b.fsf@nanos.tec.linutronix.de>
- <20200309141546.5b574908@gandalf.local.home>
- <87fteh73sp.fsf@nanos.tec.linutronix.de>
- <20200310170951.87c29e9c1cfbddd93ccd92b3@kernel.org>
- <87pndk5tb4.fsf@nanos.tec.linutronix.de>
+        Thu, 12 Mar 2020 09:53:53 -0400
+Received: by mail-vk1-f193.google.com with SMTP id b187so1572703vkh.12
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:53:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Z0oD7i3z8pfficOabLv0M/bTEhjkqPaLssJvmDail5A=;
+        b=XGNGhjA+oZakkRthns66kwKdYOczWc44o0f6nmIE+9P+JD1xtV+j+TQ50qbdpOUFhG
+         LhyT4hVP5il2+IeqDxSWG3oHssnLUdPhb2QGZW4P26TlOhRD8dymgDTCgY9kLLlave67
+         EOEDX43dM2gVE2zCergAuIOl9d6MMb/SBnY1ZRDKJ3xBvK2kkm2gb5PWRaQ9DcD4tZg9
+         mUpKzlw1XKWk44ePtVeaoBsP0UoJnqd0Z/8JBJxcEOzk0AX8HhkhiiATM9kFWXsKabCF
+         y94ZQxJsgmmo5D/l6kACKs5OsdGvQRdauDOU/rKH67wbbDv2bJBjEYejxlWjKvU2Rc5T
+         k4SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z0oD7i3z8pfficOabLv0M/bTEhjkqPaLssJvmDail5A=;
+        b=SLZaouJMsswQkUJueqIFinK4BibzGYT5xmLJXhPzQivczlWMY54Gw2ljfH0rUy31jp
+         iPwRz+GpxHPGNg4SZk8Fm2oC1YY5cVN/pygVE0po71tBdoDEtmxeXbsPr0H0UN/B+fJ7
+         yCA7Zo8rf7dR+yOmxK9CD2sEOqT9Q1CoZFf1wZLXc82fXqL0l+qr4tTImvvv7b11KEqy
+         kHUNL9lZ128Y1G0rzT6gJ99CHWYYQ8ojZ8IXNt4Zgb9cf+nDQJwihoj0dmIwqEPgZYy+
+         MQ8Z8q31kyEbKr1VbwsJU3VjdnyBKk6VJ/QMS28QYj/4ZJklSsj4WeQF2V08KoDYy5kI
+         /6xg==
+X-Gm-Message-State: ANhLgQ2aSULRlWCsZ1lNaZzHN+VpVaSRM2B6TuZv3Wyr2mpIBMCUxjBA
+        XHfMe4DaxNp7yWnJ2/lmOMJA2ZkO3A/HTeVoGTmOfw==
+X-Google-Smtp-Source: ADFU+vuVL1NOPuHCBM8iDTziNFNqLXKsqy8CqxibQJF49DVt/3ORdnnpWxWaoXsv8YIsobZn/jaqWBgYY3UZvop6j24=
+X-Received: by 2002:a1f:2155:: with SMTP id h82mr5372064vkh.46.1584021231500;
+ Thu, 12 Mar 2020 06:53:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87pndk5tb4.fsf@nanos.tec.linutronix.de>
+References: <20200306132448.13917-1-Sergey.Semin@baikalelectronics.ru> <20200306132516.D45DC8030700@mail.baikalelectronics.ru>
+In-Reply-To: <20200306132516.D45DC8030700@mail.baikalelectronics.ru>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 12 Mar 2020 14:53:40 +0100
+Message-ID: <CACRpkdZxpa6z0zD+vgEV10NLG_CXOvYYr1BSwr_fEDfc_Pxf-w@mail.gmail.com>
+Subject: Re: [PATCH 3/4] gpio: dwapb: Use optional-clocks interface for APB ref-clocks
+To:     Sergey.Semin@baikalelectronics.ru
+Cc:     Hoan Tran <hoan@os.amperecomputing.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 12:43:27PM +0100, Thomas Gleixner wrote:
-> That's why we want the sections and the annotation. If something calls
-> out of a noinstr section into a regular text section and the call is not
-> annotated at the call site, then objtool can complain and tell you. What
-> Peter and I came up with looks like this:
-> 
-> noinstr foo()
-> 	do_protected(); <- Safe because in the noinstr section
-> 
-> 	instr_begin();	<- Marks the begin of a safe region, ignored
->         		   by objtool
-> 
->         do_stuff();     <- All good   
-> 
->         instr_end();    <- End of the safe region. objtool starts
-> 			   looking again
-> 
->         do_other_stuff();  <- Unsafe because do_other_stuff() is
->         		      not protected
-> and:
-> 
-> noinstr do_protected()
->         bar();		<- objtool will complain here
-> 
-> See?
+Hi Sergey,
 
-Find here:
+thanks for your patch!
 
-  https://lkml.kernel.org/r/20200312134107.700205216@infradead.org
+On Fri, Mar 6, 2020 at 2:25 PM <Sergey.Semin@baikalelectronics.ru> wrote:
+
+>         /* Optional bus clock */
+> -       gpio->clk = devm_clk_get(&pdev->dev, "bus");
+> -       if (!IS_ERR(gpio->clk)) {
+> -               err = clk_prepare_enable(gpio->clk);
+> -               if (err) {
+> -                       dev_info(&pdev->dev, "Cannot enable clock\n");
+> -                       return err;
+> -               }
+> +       gpio->clk = devm_clk_get_optional(&pdev->dev, "bus");
+> +       if (IS_ERR(gpio->clk)) {
+> +               dev_info(&pdev->dev, "Cannot get APB clock\n");
+
+Turn this into dev_err() while you're at it.
+
+> +       err = clk_prepare_enable(gpio->clk);
+> +       if (err) {
+> +               dev_info(&pdev->dev, "Cannot enable APB clock\n");
+
+Also this.
+
+With those changes:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
