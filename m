@@ -2,110 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7FDC183590
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 16:55:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 030DE183599
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 16:56:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbgCLPze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 11:55:34 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44209 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726395AbgCLPzd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 11:55:33 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jCQBF-0005ev-Tx; Thu, 12 Mar 2020 16:55:29 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 7E8DE10161D; Thu, 12 Mar 2020 16:55:29 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     linux-tip-commits@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>, x86 <x86@kernel.org>
-Subject: Re: [tip: irq/core] x86: Select HARDIRQS_SW_RESEND on x86
-In-Reply-To: <CACRpkdYPy93bDwPe1wHhcwpgN9uXepKXS1Ca5yFmDVks=r0RoQ@mail.gmail.com>
-References: <20200123210242.53367-1-hdegoede@redhat.com> <158396292503.28353.1070405680109587154.tip-bot2@tip-bot2> <CACRpkdYPy93bDwPe1wHhcwpgN9uXepKXS1Ca5yFmDVks=r0RoQ@mail.gmail.com>
-Date:   Thu, 12 Mar 2020 16:55:29 +0100
-Message-ID: <87mu8lin4e.fsf@nanos.tec.linutronix.de>
+        id S1727909AbgCLP4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 11:56:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55644 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726971AbgCLP4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 11:56:17 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 939EA2067C;
+        Thu, 12 Mar 2020 15:56:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584028576;
+        bh=oGArRq0tEnTFcgyoMZa37IAaS/3wFGT2DjTjAcSByts=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=0v5Gtpi6PGscvk86Ol+1eanIx4sNKYpwoYHBt5ybPAFdYm8Rh9U4azp+iEWMGtW8g
+         Ppgl3SMsLAAwa9x/Uy9i8VqVqhgj6s785tv2kcnNrEM9EXW9o0sBFv4iCPMlnNAy4I
+         nahjkW7VAd1CSjXorfRqqZBvPEXIR3yCQTKR5UUU=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1jCQBy-00CGGM-Sp; Thu, 12 Mar 2020 15:56:15 +0000
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 12 Mar 2020 15:56:14 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     John Garry <john.garry@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Ming Lei <ming.lei@redhat.com>,
+        chenxiang <chenxiang66@hisilicon.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>
+Subject: Re: [PATCH v2] irqchip/gic-v3-its: Balance initial LPI affinity
+ across CPUs
+In-Reply-To: <d23436b5-a207-91e9-be11-f5d0e44b6e12@huawei.com>
+References: <20200312115552.29185-1-maz@kernel.org>
+ <d23436b5-a207-91e9-be11-f5d0e44b6e12@huawei.com>
+Message-ID: <33bc00d1ba25d5fd53de2413c831d723@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.10
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: john.garry@huawei.com, linux-kernel@vger.kernel.org, tglx@linutronix.de, jason@lakedaemon.net, ming.lei@redhat.com, chenxiang66@hisilicon.com, wangzhou1@hisilicon.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus Walleij <linus.walleij@linaro.org> writes:
-> On Wed, Mar 11, 2020 at 10:42 PM tip-bot2 for Hans de Goede
-> Just help me understand the semantics of this thing...
->
-> According to the text in KConfig:
->
-> # Tasklet based software resend for pending interrupts on enable_irq()
-> config HARDIRQS_SW_RESEND
->        bool
->
-> According to
-> commit a4633adcdbc15ac51afcd0e1395de58cee27cf92
->
->     [PATCH] genirq: add genirq sw IRQ-retrigger
->
->     Enable platforms that do not have a hardware-assisted
-> hardirq-resend mechanism
->     to resend them via a softirq-driven IRQ emulation mechanism.
->
-> so when enable_irq() is called, if the IRQ is already asserted,
-> it will be distributed in the form of a software irq?
->
-> OK I give up I don't understand the semantics of this thing.
+Hi John,
 
-Level type interrupts are "resending" in hardware as long as the device
-interrupt is still asserted.
+On 2020-03-12 15:41, John Garry wrote:
+> On 12/03/2020 11:55, Marc Zyngier wrote:
+> 
+> Hi Marc,
+> 
+>> When mapping a LPI, the ITS driver picks the first possible
+>> affinity, which is in most cases CPU0, assuming that if
+>> that's not suitable, someone will come and set the affinity
+>> to something more interesting.
+>> 
+>> It apparently isn't the case, and people complain of poor
+>> performance when many interrupts are glued to the same CPU.
+>> So let's place the interrupts by finding the "least loaded"
+>> CPU (that is, the one that has the fewer LPIs mapped to it).
+>> So called 'managed' interrupts are an interesting case where
+>> the affinity is actually dictated by the kernel itself, and
+>> we should honor this.
+>> 
+>> Reported-by: John Garry <john.garry@huawei.com>
+>> Link: 
+>> https://lore.kernel.org/r/1575642904-58295-1-git-send-email-john.garry@huawei.com
+>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+>> Cc: John Garry <john.garry@huawei.com>
+>> Cc: Ming Lei <ming.lei@redhat.com>
+>> ---
+>> Reviving this at John's request.
+> 
+> Thanks very much. I may request a colleague test this due to possible
+> precautionary office closure.
 
-The problem are edge interrupts.
+Huh. Not great... :-(
 
-    When an edge interrupt is disabled via disable_irq() the core does
-    not mask the chip because if the device raises an interrupt not all
-    interrupt chips latch that and forward it to the CPU on unmask,
-    i.e. some interrupt chips simply ignore an etch when the line is
-    masked.
+> 
+>  The major change is that the
+>> affinity follows the x86 model, as described by Thomas.
+> 
+> There seems to be a subtle difference between this implementation and
+> what Thomas described for managed interrupts handling on x86. That
+> being, managed interrupt loading is counted separately to total
+> interrupts per CPU for x86. That seems quite important so that we
+> spread managed interrupts evenly.
 
-    So when the device raises an edge while the interrupt is disabled
-    the core still handles the hardware interrupt and:
+Hmmm. Yes. That'd require a separate per-CPU counter. Nothing too 
+invasive
+though. I'll roll that in soon. I still wonder about interaction of 
+collocated
+managed and non-managed interrupts, but we can cross that bridge later.
 
-      - masks the interrupt line
-      - sets the pending bit
-      - does not invoke the device handler
+>> I expect this to have an impact on platforms like D05, where
+>> the SAS driver cannot use managed affinity just yet.
+> 
+> I need some blk-mq and SCSI changes to go in first to improve the
+> interrupt handling there, hopefully we can make progress on that soon.
 
-    On enable_irq() the pending bit is checked and if set the interrupt
-    is tried to be retriggered or resent, but only if it's edge type.
-    
-    So if the interrupt chip provides a irq_retrigger() callback the
-    core uses that and only if this fails or is not available it resorts
-    to software "resend" which means queueing it for execution in
-    tasklet context.
-
-> I see that ARM and ARM64 simply just select this. What
-> happens if you do that and why is x86 not selecting it in general?
-
-irq resending on X86 is not really problem free for interrupts
-which are directly connect to the local APIC. The only way which is
-halfways safe is the hardware retrigger. See
-
-    https://lkml.kernel.org/r/20200306130623.590923677@linutronix.de
-    https://lkml.kernel.org/r/20200306130623.684591280@linutronix.de
-
-for the gory details. The GPIO interrupts which hang off behind some
-slow bus or are multiplexed in other ways are not affected by this
-hardware design induced madness.
-
-As I don't know how many other architectures have trainwrecked interrupt
-delivery mechanisms (IA64 definitely does), I'm more than reluctant to
-inflict this on the world unconditionally.
-
-Hope that helps.
+That'd be good.
 
 Thanks,
 
-        tglx
+         M.
+-- 
+Jazz is not dead. It just smells funny...
