@@ -2,49 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91902182926
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 07:35:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C087118292B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 07:35:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388044AbgCLGe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 02:34:56 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:56266 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387958AbgCLGey (ORCPT
+        id S2388053AbgCLGfn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 02:35:43 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:48667 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387786AbgCLGfm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 02:34:54 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5E93E14DD3183;
-        Wed, 11 Mar 2020 23:34:53 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 23:34:52 -0700 (PDT)
-Message-Id: <20200311.233452.1721783439276979858.davem@davemloft.net>
-To:     colin.king@canonical.com
-Cc:     elder@kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] soc: qcom: ipa: fix spelling mistake "cahces" ->
- "caches"
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200311091613.75613-1-colin.king@canonical.com>
-References: <20200311091613.75613-1-colin.king@canonical.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 11 Mar 2020 23:34:53 -0700 (PDT)
+        Thu, 12 Mar 2020 02:35:42 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1jCHRT-0007UG-Vv; Thu, 12 Mar 2020 07:35:39 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1jCHRT-0003U7-3k; Thu, 12 Mar 2020 07:35:39 +0100
+Date:   Thu, 12 Mar 2020 07:35:39 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Sekhar Nori <nsekhar@ti.com>, Vignesh R <vigneshr@ti.com>
+Subject: Re: [PATCH v3 1/5] pwm: omap-dmtimer: Drop unused header file
+Message-ID: <20200312063539.5urgly7scgupqqwi@pengutronix.de>
+References: <20200312042210.17344-1-lokeshvutla@ti.com>
+ <20200312042210.17344-2-lokeshvutla@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200312042210.17344-2-lokeshvutla@ti.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 11 Mar 2020 09:16:13 +0000
-
-> From: Colin Ian King <colin.king@canonical.com>
+On Thu, Mar 12, 2020 at 09:52:06AM +0530, Lokesh Vutla wrote:
+> pwm_omap_dmtimer.h is used only:
+> - to typedef struct omap_dm_timer to pwm_omap_dmtimer
+> - for macro PWM_OMAP_DMTIMER_TRIGGER_OVERFLOW_AND_COMPARE
+> Rest of the file is pretty mush unsed. So reuse omap_dm_timer
+> and OMAP_TIMER_TRIGGER_OVERFLOW_AND_COMPARE in pwm-omap-dmtimer.c
+> and delete the header file.
 > 
-> There is a spelling mistake in a dev_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Acked-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
 
-Applied.
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+
+Thanks
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
