@@ -2,167 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D470182BA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 09:56:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CAC7182BB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 09:59:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbgCLI4r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 04:56:47 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46359 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbgCLI4q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 04:56:46 -0400
-Received: by mail-qk1-f196.google.com with SMTP id f28so4862659qkk.13
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 01:56:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=z8QYpsneXIoe9SovMOA/4KYyhICquWAkxvuswu2VpYA=;
-        b=K7zd2DteqUO5g7aR+aRrrm0Jbhe409/ADCbKZRgd72XlAkaruAry8JOi3BpK0iXmUZ
-         nPP+ApreG4y7od9f5fDSO3m22keq0+lZ8PtPdqIl5nKQiyQCuzg1H7ydtPbyeaK65fD+
-         RYgGsa59vfpe4V3yM6/gHuPnfdfvopWqUcCh3fnM5Q3dSuCXk8gJ+mUjlRga2Nj5Z4uO
-         BZvdDTNnesOKeqz0x8c8+TwgtwjHQopQa91nt+cWzyawlRFEw/SMTaJiayknq3uQ+WSx
-         SX2hiPxtpWfBGCVZnlXl+LDa/dqC6a3WJrN9GBOE48t2BCsYVD2lHC+fXQWlAuYg7BYx
-         Gt6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=z8QYpsneXIoe9SovMOA/4KYyhICquWAkxvuswu2VpYA=;
-        b=sAPZINFElGoEgbwRcS8p7v+ZbapGZDR9NdilDVTSDMsrt8Wzf3rtINUTiuCJjnJLtg
-         G3gCnHXuNun7eZ7KUj83dr7EZUFDQvKpAoEz+h86thdIkhMgNMmm1o12Afdjqr+AGg2v
-         fJ5C2deuxUX22dzwUMQc2m+IA3EtLePk4iC3pFc8iRbwyPt/g4nEmSIQYUZdtCcH3c4C
-         HGnMCF7dxNLoe3LC4duxDxj75n8NYFRperYwc78wQCdwog16Bk6VeEePusmzN2GkOv7X
-         GXtddBQf1MC7HTYTAiA6EMQY4tRB31TigmdVLzeMhGPnLcaJF/wGX9mmE3pmvyS7iDm7
-         d0Sw==
-X-Gm-Message-State: ANhLgQ0nQluR+lv51jobiPqtE2P45kRYQMPmAo6xEezVRt9HLPRYS7FF
-        /dbqNcongiUQKJTVCw+J4bmcSu3DuhrrLmKvLBE=
-X-Google-Smtp-Source: ADFU+vuOtg68aR/K0fY5ljCf9+n8BXGTay/Svcnm+kjMq3CAhhBM8ymLsXxE/F3yxssT/VXlzGO6x/ZbUFU9o45QLsw=
-X-Received: by 2002:a37:6388:: with SMTP id x130mr6638952qkb.429.1584003405724;
- Thu, 12 Mar 2020 01:56:45 -0700 (PDT)
+        id S1726695AbgCLI7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 04:59:15 -0400
+Received: from mail-db8eur05on2128.outbound.protection.outlook.com ([40.107.20.128]:24687
+        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726310AbgCLI7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 04:59:14 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nqC+mO/AYUiPcNXJGRKBuYbtugdxzd88iDpv41xlsnEMKUycamUvCzpo5JMZk0b540QMtlYRUIBVBi5kXp2QV7bJJjcNxBfZzMFSKp1mmRsSw8mpG+UR5SP3EwQrcEkKH5Md5rEXKGk4NUHkPz9RGvBUIkVnikEttSL2w4cx245zX69rq8k5nUXpXjo8bwzZoJJot4zL7Hepz4oXr390PSbaW0kMEV0FGDrX37DpUOiG9/scor+eLx8/pJ6jpNqZ2LXD8puO5XNQyqLV7qafMOh8R7id3ocTFGcE3+PIiRxYNQ9giiI77HotPHOGhgOjjOfahnf6wtLMD/Ju/A+/xQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bVIyJifZ+Mj6NeWUOmYREnc7pAoXEmmx5oIlpEy+W3E=;
+ b=WsL+2vrI8CJEaUQlpuSFJq/sKHzZWR6qLSG92ECYG5vBKGHyjGagAsRXVGXvcJ9ocIyQNo2jM1JTHZ0atrxydDMj+UyUHYMpxZ0Lu440JTz0dLaJQ/lu4cbuEVpRNZCYYbsOWftE6SpZSZuQ/8/unGTn2mhNxTSRBowbQchK20SYhU3g+dky00mWSdE+7DIgWIZ0EyWUZLVOf6ibvZTkzf5qoPQO3BAXUxaEVtK7hB6zkCrZGxg3x8egFpA/6LaHKq8L3wx68AjeRCB3raUt5C7fb70Gyy4b04M6TcC0q6KTx0ut3uPpjpNxrlKj+9VF8xBhiRmJWP9Nl3voAKquRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
+ dkim=pass header.d=nokia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bVIyJifZ+Mj6NeWUOmYREnc7pAoXEmmx5oIlpEy+W3E=;
+ b=xxGrbk+Yw/cF2/E241lR7GPCqi7CKVFhoNwCczQCCvZsh/zsdKJV6hk7blYeEfIL5bVuG+rMYlbYJTJr5MnsYk0ysOxo6GPFUfxJzLWWTZQQHoGbi0YvUY/Xyhn/e6sod3icrI6cstmcBbT3oIgbWWLNwqqJ3uxgG7DGa58PtuU=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=tommi.t.rantala@nokia.com; 
+Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com (10.167.127.12) by
+ HE1PR0702MB3674.eurprd07.prod.outlook.com (10.167.125.142) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.10; Thu, 12 Mar 2020 08:59:10 +0000
+Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com
+ ([fe80::2806:c34c:d469:8e87]) by HE1PR0702MB3675.eurprd07.prod.outlook.com
+ ([fe80::2806:c34c:d469:8e87%5]) with mapi id 15.20.2814.007; Thu, 12 Mar 2020
+ 08:59:10 +0000
+From:   Tommi Rantala <tommi.t.rantala@nokia.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Tommi Rantala <tommi.t.rantala@nokia.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] xfs: fix regression in "cleanup xfs_dir2_block_getdents"
+Date:   Thu, 12 Mar 2020 10:57:28 +0200
+Message-Id: <20200312085728.22187-1-tommi.t.rantala@nokia.com>
+X-Mailer: git-send-email 2.21.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: HE1PR05CA0220.eurprd05.prod.outlook.com
+ (2603:10a6:3:fa::20) To HE1PR0702MB3675.eurprd07.prod.outlook.com
+ (2603:10a6:7:85::12)
 MIME-Version: 1.0
-References: <20200306150102.3e77354b@imladris.surriel.com> <8e67d88f-3ec8-4795-35dc-47e3735e530e@suse.cz>
- <20200311173526.GH96999@carbon.dhcp.thefacebook.com> <CAAmzW4PRCGdZXGceSCfzpesUXNd8GU-zLt-m+t762=WH-BjmoA@mail.gmail.com>
- <20200312023952.GA3040@carbon.lan>
-In-Reply-To: <20200312023952.GA3040@carbon.lan>
-From:   Joonsoo Kim <js1304@gmail.com>
-Date:   Thu, 12 Mar 2020 17:56:34 +0900
-Message-ID: <CAAmzW4MMV8jgboSgHizUoH6wuuztCTJRY7AGN95869rrfH++=Q@mail.gmail.com>
-Subject: Re: [PATCH] mm,page_alloc,cma: conditionally prefer cma pageblocks
- for movable allocations
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, Rik van Riel <riel@surriel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
-        Qian Cai <cai@lca.pw>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from trfedora.emea.nsn-net.net (131.228.2.19) by HE1PR05CA0220.eurprd05.prod.outlook.com (2603:10a6:3:fa::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.20 via Frontend Transport; Thu, 12 Mar 2020 08:59:10 +0000
+X-Mailer: git-send-email 2.21.1
+X-Originating-IP: [131.228.2.19]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: ed8da60a-f3f3-4309-64cb-08d7c663a136
+X-MS-TrafficTypeDiagnostic: HE1PR0702MB3674:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <HE1PR0702MB3674033039B593B743916A32B4FD0@HE1PR0702MB3674.eurprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Forefront-PRVS: 0340850FCD
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(39860400002)(376002)(366004)(396003)(136003)(199004)(6506007)(4326008)(6512007)(2906002)(316002)(66946007)(103116003)(478600001)(81156014)(66476007)(8676002)(66556008)(6666004)(36756003)(81166006)(2616005)(86362001)(8936002)(956004)(5660300002)(186003)(52116002)(26005)(54906003)(16526019)(6486002)(6916009)(1076003);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0702MB3674;H:HE1PR0702MB3675.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: nokia.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: GAmWhk5zZ37hujHAPkg5a8AcRZglTG9Aqdgg7VLYvtapAS3Rvo/iLdZ3UO25dlmXtSqBwqZCxpVTFGskyYCfvSId0cWuEPErbOCuoG7sL8uUj5kUhc3IFiXJ0eQIou01Nww+Jzy9MtqF6ibDLEOZEkSAIZ8zBGwf0/CKe6Z5fm2r+hM0dHrWcYs1i/IfJl5W0VIipZKeomPg7NLPYRUjSpBXqcLE2bI1qizFaeC6HvVdY1BI9+T8Uczv948RfLztwAAN1c8vJek+FLwIQctqDQltbLw4kSyvc2XyLQFusCkjKNFciUR0uieHqOKt0g9Cl3epvJZZLId+WELmDG5Ly9ML25CDq1tnUUD9eKr+tMiCxxf7OO+PkWiZi8HQG1jRYeM/2Ak2rWnVZIUvkdOUQHLSnTxlf0TUE3isaqppLRs068rwLmyYttsIQoXu16Od
+X-MS-Exchange-AntiSpam-MessageData: WhqjOolZcj//+918zHG9P8uNdF/nd+sY+Hqo7NJdzh9tz4q73kI8p6z3SsDC04JK4d6kiqeu+RXJbK8aw3r1DYakWnSY2XFit5nuzfqKTuA239CfLS/eT1WK8U90ZfwgGdkp56Y3AFrmOTGeF1mJxg==
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed8da60a-f3f3-4309-64cb-08d7c663a136
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2020 08:59:10.7011
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EO/3iy18H+PhgctFE8dsFT+dTJOslF60gYSnL41mqbcOiuQ2MXN52thN/OFqs4V4zMqaqBR9LY0OFIpEbCAuLdbIXpUeXFLGh9WHA7DHFcg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0702MB3674
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2020=EB=85=84 3=EC=9B=94 12=EC=9D=BC (=EB=AA=A9) =EC=98=A4=EC=A0=84 11:40, =
-Roman Gushchin <guro@fb.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> On Thu, Mar 12, 2020 at 10:41:28AM +0900, Joonsoo Kim wrote:
-> > Hello, Roman.
->
-> Hello, Joonsoo!
->
-> >
-> > 2020=EB=85=84 3=EC=9B=94 12=EC=9D=BC (=EB=AA=A9) =EC=98=A4=EC=A0=84 2:3=
-5, Roman Gushchin <guro@fb.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
-> > >
-> > > On Wed, Mar 11, 2020 at 09:51:07AM +0100, Vlastimil Babka wrote:
-> > > > On 3/6/20 9:01 PM, Rik van Riel wrote:
-> > > > > Posting this one for Roman so I can deal with any upstream feedba=
-ck and
-> > > > > create a v2 if needed, while scratching my head over the next pie=
-ce of
-> > > > > this puzzle :)
-> > > > >
-> > > > > ---8<---
-> > > > >
-> > > > > From: Roman Gushchin <guro@fb.com>
-> > > > >
-> > > > > Currently a cma area is barely used by the page allocator because
-> > > > > it's used only as a fallback from movable, however kswapd tries
-> > > > > hard to make sure that the fallback path isn't used.
-> > > >
-> > > > Few years ago Joonsoo wanted to fix these kinds of weird MIGRATE_CM=
-A corner
-> > > > cases by using ZONE_MOVABLE instead [1]. Unfortunately it was rever=
-ted due to
-> > > > unresolved bugs. Perhaps the idea could be resurrected now?
-> > >
-> > > Hi Vlastimil!
-> > >
-> > > Thank you for this reminder! I actually looked at it and also asked J=
-oonsoo in private
-> > > about the state of this patch(set). As I understand, Joonsoo plans to=
- resubmit
-> > > it later this year.
-> > >
-> > > What Rik and I are suggesting seems to be much simpler, however it's =
-perfectly
-> > > possible that Joonsoo's solution is preferable long-term.
-> > >
-> > > So if the proposed patch looks ok for now, I'd suggest to go with it =
-and return
-> > > to this question once we'll have a new version of ZONE_MOVABLE soluti=
-on.
-> >
-> > Hmm... utilization is not the only matter for CMA user. The more
-> > important one is
-> > success guarantee of cma_alloc() and this patch would have a bad impact=
- on it.
-> >
-> > A few years ago, I have tested this kind of approach and found that inc=
-reasing
-> > utilization increases cma_alloc() failure. Reason is that the page
-> > allocated with
-> > __GFP_MOVABLE, especially, by sb_bread(), is sometimes pinned by someon=
-e.
-> >
-> > Until now, cma memory isn't used much so this problem doesn't occur eas=
-ily.
-> > However, with this patch, it would happen.
->
-> Sure, but the whole point of cma is to be able to use the cma area
-> effectively by movable pages. Otherwise we can just reserve it and
-> have 100% reliability.
+Commit 263dde869bd09 ("xfs: cleanup xfs_dir2_block_getdents") introduced
+a getdents regression, when it converted the pointer arithmetics to
+offset calculations: offset is updated in the loop already for the next
+iteration, but the updated offset value is used incorrectly in two
+places, where we should have used the not-yet-updated value.
 
-I agree with that cma area should be used effectively. However, cma_alloc()
-failure is functional failure in embedded system so we need to approach
-this problem more carefully. At least, to control the behaviour, configurab=
-le
-option (default is current behaviour) would be necessary.
+This caused for example "git clean -ffdx" failures to cleanup certain
+directory structures when running in a container.
 
-> So I'd focus on fixing page migration issues, rather than trying
-> to keep it empty most of the time.
+Fix the regression by making sure we use proper offset in the loop body.
+Thanks to Christoph Hellwig for suggestion how to best fix the code.
 
-Great! Fixing page migration issue is always good thing!
+Cc: Christoph Hellwig <hch@lst.de>
+Fixes: 263dde869bd09 ("xfs: cleanup xfs_dir2_block_getdents")
+Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
+---
+ fs/xfs/xfs_dir2_readdir.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-> Btw, I've fixed two issues, which dramatically increased the success
-> rate of 1 GB page allocation in my case:
->
-> https://patchwork.kernel.org/patch/11420997/
-> https://lore.kernel.org/patchwork/patch/1202868/
->
-> (They both are on the way to upstream, but not there yet)
->
-> Can you, please, pull them and try?
+diff --git a/fs/xfs/xfs_dir2_readdir.c b/fs/xfs/xfs_dir2_readdir.c
+index 0d3b640cf1cc..871ec22c9aee 100644
+--- a/fs/xfs/xfs_dir2_readdir.c
++++ b/fs/xfs/xfs_dir2_readdir.c
+@@ -147,7 +147,7 @@ xfs_dir2_block_getdents(
+ 	xfs_off_t		cook;
+ 	struct xfs_da_geometry	*geo = args->geo;
+ 	int			lock_mode;
+-	unsigned int		offset;
++	unsigned int		offset, next_offset;
+ 	unsigned int		end;
+ 
+ 	/*
+@@ -173,9 +173,10 @@ xfs_dir2_block_getdents(
+ 	 * Loop over the data portion of the block.
+ 	 * Each object is a real entry (dep) or an unused one (dup).
+ 	 */
+-	offset = geo->data_entry_offset;
+ 	end = xfs_dir3_data_end_offset(geo, bp->b_addr);
+-	while (offset < end) {
++	for (offset = geo->data_entry_offset;
++	     offset < end;
++	     offset = next_offset) {
+ 		struct xfs_dir2_data_unused	*dup = bp->b_addr + offset;
+ 		struct xfs_dir2_data_entry	*dep = bp->b_addr + offset;
+ 		uint8_t filetype;
+@@ -184,14 +185,15 @@ xfs_dir2_block_getdents(
+ 		 * Unused, skip it.
+ 		 */
+ 		if (be16_to_cpu(dup->freetag) == XFS_DIR2_DATA_FREE_TAG) {
+-			offset += be16_to_cpu(dup->length);
++			next_offset = offset + be16_to_cpu(dup->length);
+ 			continue;
+ 		}
+ 
+ 		/*
+ 		 * Bump pointer for the next iteration.
+ 		 */
+-		offset += xfs_dir2_data_entsize(dp->i_mount, dep->namelen);
++		next_offset = offset +
++			xfs_dir2_data_entsize(dp->i_mount, dep->namelen);
+ 
+ 		/*
+ 		 * The entry is before the desired starting point, skip it.
+-- 
+2.21.1
 
-Unfortunately, I lose my test setup for this problem so cannot try it now.
-I will try it as soon as possible.
-
-Anyway, AFAIR, I saw the problem while journal is continually working
-on ext4. Have you checked this case?
-
-Thanks.
