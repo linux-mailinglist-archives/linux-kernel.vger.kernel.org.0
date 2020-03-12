@@ -2,93 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 841CB182C73
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 10:28:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40D0D182C7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 10:31:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbgCLJ1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 05:27:55 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:33298 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbgCLJ1y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 05:27:54 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02C9RoYx050647;
-        Thu, 12 Mar 2020 04:27:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584005270;
-        bh=93Ozw0w3LdMCurx6cSWHKlJdaVIKSKUirOz+tIwd5Us=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=a0UXAzmTDP0go4sAocD8McRdDKrtf2BGKWAjmMa2GxRhGTOz/nLKWZdZiFs+p//Sr
-         PdcnNQAI/xtfy6ia944ma6Y37ecyFcwnmYwK4RroXpWfwXFH7ukvvJlnNVYk47LNyn
-         DTsg8X9JtzXAp5f/TdnNDGdhCCs045zIzKIWww4s=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02C9RoEV096529
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 12 Mar 2020 04:27:50 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 12
- Mar 2020 04:27:50 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 12 Mar 2020 04:27:50 -0500
-Received: from a0132425.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02C9Rjpc036158;
-        Thu, 12 Mar 2020 04:27:48 -0500
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-To:     Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Subject: [PATCH 2/2] arm64: dts: ti: k3-am65-mcu: Add DMA entries for ADC
-Date:   Thu, 12 Mar 2020 14:58:23 +0530
-Message-ID: <20200312092823.21587-2-vigneshr@ti.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200312092823.21587-1-vigneshr@ti.com>
-References: <20200312092823.21587-1-vigneshr@ti.com>
+        id S1726567AbgCLJax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 05:30:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54350 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725268AbgCLJax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 05:30:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 5C0B6AFB4;
+        Thu, 12 Mar 2020 09:30:51 +0000 (UTC)
+Subject: Re: [PATCH 1/3] powerpc/numa: Set numa_node for all possible cpus
+To:     Sachin Sant <sachinp@linux.vnet.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org, Christopher Lameter <cl@linux.com>
+References: <20200311110237.5731-1-srikar@linux.vnet.ibm.com>
+ <20200311110237.5731-2-srikar@linux.vnet.ibm.com>
+ <20200311115735.GM23944@dhcp22.suse.cz>
+ <20200312052707.GA3277@linux.vnet.ibm.com>
+ <C5560C71-483A-41FB-BDE9-526F1E0CFA36@linux.vnet.ibm.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <5e5c736a-a88c-7c76-fc3d-7bc765e8dcba@suse.cz>
+Date:   Thu, 12 Mar 2020 10:30:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
+In-Reply-To: <C5560C71-483A-41FB-BDE9-526F1E0CFA36@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add DMA entries for ADC nodes
+On 3/12/20 9:23 AM, Sachin Sant wrote:
+> 
+> 
+>> On 12-Mar-2020, at 10:57 AM, Srikar Dronamraju <srikar@linux.vnet.ibm.com> wrote:
+>> 
+>> * Michal Hocko <mhocko@kernel.org> [2020-03-11 12:57:35]:
+>> 
+>>> On Wed 11-03-20 16:32:35, Srikar Dronamraju wrote:
+>>>> A Powerpc system with multiple possible nodes and with CONFIG_NUMA
+>>>> enabled always used to have a node 0, even if node 0 does not any cpus
+>>>> or memory attached to it. As per PAPR, node affinity of a cpu is only
+>>>> available once its present / online. For all cpus that are possible but
+>>>> not present, cpu_to_node() would point to node 0.
+>>>> 
+>>>> To ensure a cpuless, memoryless dummy node is not online, powerpc need
+>>>> to make sure all possible but not present cpu_to_node are set to a
+>>>> proper node.
+>>> 
+>>> Just curious, is this somehow related to
+>>> http://lkml.kernel.org/r/20200227182650.GG3771@dhcp22.suse.cz?
+>>> 
+>> 
+>> The issue I am trying to fix is a known issue in Powerpc since many years.
+>> So this surely not a problem after a75056fc1e7c (mm/memcontrol.c: allocate
+>> shrinker_map on appropriate NUMA node"). 
+>> 
+>> I tried v5.6-rc4 + a75056fc1e7c but didnt face any issues booting the
+>> kernel. Will work with Sachin/Abdul (reporters of the issue).
+>> 
+> 
+> I applied this 3 patch series on top of March 11 next tree (commit d44a64766795 )
+> The kernel still fails to boot with same call trace.
 
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Yeah when I skimmed the patches, I don't think they address the issue where
+node_to_mem_node(0) = 0 [1]. You could reapply the debug print patch to verify,
+but it seems very likely. So I'm not surprised you get the same trace.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-index 92629cbdc184..e85498f0dd05 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-@@ -82,6 +82,9 @@ tscadc0: tscadc@40200000 {
- 		assigned-clocks = <&k3_clks 0 2>;
- 		assigned-clock-rates = <60000000>;
- 		clock-names = "adc_tsc_fck";
-+		dmas = <&mcu_udmap 0x7100>,
-+			<&mcu_udmap 0x7101 >;
-+		dma-names = "fifo0", "fifo1";
- 
- 		adc {
- 			#io-channel-cells = <1>;
-@@ -97,6 +100,9 @@ tscadc1: tscadc@40210000 {
- 		assigned-clocks = <&k3_clks 1 2>;
- 		assigned-clock-rates = <60000000>;
- 		clock-names = "adc_tsc_fck";
-+		dmas = <&mcu_udmap 0x7102>,
-+			<&mcu_udmap 0x7103>;
-+		dma-names = "fifo0", "fifo1";
- 
- 		adc {
- 			#io-channel-cells = <1>;
--- 
-2.25.1
+[1] https://lore.kernel.org/linux-next/9a86f865-50b5-7483-9257-dbb08fecd62b@suse.cz/
+
+> [    6.159357] BUG: Kernel NULL pointer dereference on read at 0x000073b0
+> [    6.159363] Faulting instruction address: 0xc0000000003d7174
+> [    6.159368] Oops: Kernel access of bad area, sig: 11 [#1]
+> [    6.159372] LE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=2048 NUMA pSeries
+> [    6.159378] Modules linked in:
+> [    6.159382] CPU: 17 PID: 1 Comm: systemd Not tainted 5.6.0-rc5-next-20200311-autotest+ #1
+> [    6.159388] NIP:  c0000000003d7174 LR: c0000000003d7714 CTR: c000000000400e70
+> [    6.159393] REGS: c0000008b36836d0 TRAP: 0300   Not tainted  (5.6.0-rc5-next-20200311-autotest+)
+> [    6.159398] MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 24004848  XER: 00000000
+> [    6.159406] CFAR: c00000000000dec4 DAR: 00000000000073b0 DSISR: 40000000 IRQMASK: 1
+> [    6.159406] GPR00: c0000000003d7714 c0000008b3683960 c00000000155e300 c0000008b301f500
+> [    6.159406] GPR04: 0000000000000dc0 0000000000000000 c0000000003456f8 c0000008bb198620
+> [    6.159406] GPR08: 00000008ba0f0000 0000000000000001 0000000000000000 0000000000000000
+> [    6.159406] GPR12: 0000000024004848 c00000001ec55e00 0000000000000000 0000000000000000
+> [    6.159406] GPR16: c0000008b0a82048 c000000001595898 c000000001750ca8 0000000000000002
+> [    6.159406] GPR20: c000000001750cb8 c000000001624478 0000000fffffffe0 5deadbeef0000122
+> [    6.159406] GPR24: 0000000000000001 0000000000000dc0 0000000000000000 c0000000003456f8
+> [    6.159406] GPR28: c0000008b301f500 c0000008bb198620 0000000000000000 c00c000002285a40
+> [    6.159453] NIP [c0000000003d7174] ___slab_alloc+0x1f4/0x760
+> [    6.159458] LR [c0000000003d7714] __slab_alloc+0x34/0x60
+> [    6.159462] Call Trace:
+> [    6.159465] [c0000008b3683a40] [c0000008b3683a70] 0xc0000008b3683a70
+> [    6.159471] [c0000008b3683a70] [c0000000003d8b20] __kmalloc_node+0x110/0x490
+> [    6.159477] [c0000008b3683af0] [c0000000003456f8] kvmalloc_node+0x58/0x110
+> [    6.159483] [c0000008b3683b30] [c000000000400f78] mem_cgroup_css_online+0x108/0x270
+> [    6.159489] [c0000008b3683b90] [c000000000236ed8] online_css+0x48/0xd0
+> [    6.159494] [c0000008b3683bc0] [c00000000023ffac] cgroup_apply_control_enable+0x2ec/0x4d0
+> [    6.159501] [c0000008b3683ca0] [c0000000002437c8] cgroup_mkdir+0x228/0x5f0
+> [    6.159506] [c0000008b3683d10] [c000000000521780] kernfs_iop_mkdir+0x90/0xf0
+> [    6.159512] [c0000008b3683d50] [c00000000043f670] vfs_mkdir+0x110/0x230
+> [    6.159517] [c0000008b3683da0] [c000000000443150] do_mkdirat+0xb0/0x1a0
+> [    6.159523] [c0000008b3683e20] [c00000000000b278] system_call+0x5c/0x68
+> [    6.159527] Instruction dump:
+> [    6.159531] 7c421378 e95f0000 714a0001 4082fff0 4bffff64 60000000 60000000 faa10088
+> [    6.159538] 3ea2000c 3ab56178 7b4a1f24 7d55502a <e94a73b0> 2faa0000 409e0394 3d02002a
+> [    6.159545] ---[ end trace 36d65cb66091a5b6 ]—
+> 
+> Boot log attached.
+> 
+> Thanks
+> -Sachin
+> 
 
