@@ -2,339 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23AE9183837
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 19:06:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8388D18383B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 19:07:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbgCLSG5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 14:06:57 -0400
-Received: from mga05.intel.com ([192.55.52.43]:38573 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726414AbgCLSG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 14:06:57 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 11:06:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,545,1574150400"; 
-   d="scan'208";a="277909647"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga002.fm.intel.com with ESMTP; 12 Mar 2020 11:06:51 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jCSEO-0094JE-Gf; Thu, 12 Mar 2020 20:06:52 +0200
-Date:   Thu, 12 Mar 2020 20:06:52 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Saravanan Sekar <sravanhome@gmail.com>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        sre@kernel.org, mchehab+huawei@kernel.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, fabrice.gasnier@st.com,
-        beniamin.bia@analog.com, linus.walleij@linaro.org,
-        u.kleine-koenig@pengutronix.de, fabrizio.castro@bp.renesas.com,
-        info@metux.net, hancock@sedsystems.ca, gregory.clement@bootlin.com,
-        renatogeh@gmail.com, plr.vincent@gmail.com,
-        miquel.raynal@bootlin.com, marcelo.schmitt1@gmail.com,
-        paul@crapouillou.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH 4/5] power: supply: Add support for mps mp2629 battery
- charger
-Message-ID: <20200312180652.GL1922688@smile.fi.intel.com>
-References: <20200312172649.13702-1-sravanhome@gmail.com>
- <20200312172649.13702-5-sravanhome@gmail.com>
+        id S1726703AbgCLSHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 14:07:17 -0400
+Received: from sonic311-14.consmr.mail.bf2.yahoo.com ([74.6.131.124]:45664
+        "EHLO sonic311-14.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726485AbgCLSHQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 14:07:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1584036435; bh=ntCsvVlsVYNXsouoo59ZH21v1wHZ5nZJzCG4NsnkusM=; h=Date:From:Reply-To:Subject:References:From:Subject; b=D7FXcQjq5yGcy+9UIzGvT1auReeucJL/vbt5gI9v1BvxEUiXsH7PXBOKlF2c7onZaQ5lext8c/n4/H0eJE6l0B4524Q/wgMaPPa93cjRGxF3dUjPzeHUHvJp8yze8c+0chOflgmlPog66Q16OAymIRNO2RXG7ALiVaXricMM4PSwy4UbOWip8ZuP305aOzP/V1NlG8D1cIlOIx4SUp4qTiuE6a3e/dW6+5zHwpZZ3DroaN4wRvvotxDvejnN5OoZOEPCK3b15saARpKvYcf6YsC12WqOl3ml6VIE9lQK12fIu8yQnTDkd1as/B8HiVs0s5U701WJUBCz9XrFcHG+6g==
+X-YMail-OSG: w8elTssVM1kLekshqqqpG5dwuLt4rZsZL2SOh1LrJwn5wlfYbp4Oo6MgbqkCpHK
+ .uhAx7852VfKzGg4I6ikFIPUUBk5PEzxIY4c3lcoAQoqzUpGLjINEB35DIrvDvdgIK4EmWS6XUr4
+ yx9tAnzjz9DeC90jwHCw7T904y1bc.NRvrDrAsl5ebjyVwAdbV5SQHYve4OTKYbxb59Z3TXTShTX
+ MDZizxeBoLca.BKF4xZdH_Kejh__hhIAWf9iWfhYccAxyExubF6ANJt6oWoTVDnBrimLvpLHdZEp
+ RmKhIsSAk8AOnhUMmIkhP7Zd.VI8nw3Ut58Beo1GStV_xdfDviaK4tRt3stftTp3FkF3CZrYbZF.
+ r1SFu86mIGN_.9VipNxVUyrE_zCj4IFw9FKYgBOkRXJDFXtX9VhG4NqUpIVlYq5eJj46h_KnAP0w
+ _qfkNKqpPQdcSfsB44acrLOjPKRto6mlqTqbk5UL4mScdHzKK0pyGJ6fpRXijbaZDSY3ixAbvWqb
+ 5FaroBfU8BN_3ORfSrWASolNAy1aTf_mai07nQuGKopYiv.M_x2iots6GKLHfiXI19Ny6NKcyI0u
+ DpMrRMdflra3PIozB8lTnLEHUIs7ztYn9PCUOxyfXaf6zpCMQQF5zwbFDSOQg87817yBbR07s5B0
+ L8RFXiHgbLFbOe_wX7MmhSDk5M99JSA7j02cw46dbsTMdZPplAxBjyAuBuTYb4Ttnu_tsrVxCaao
+ tGsJix6_.Pranuw36rMEpzcih67sQTm58EA5xVAHpYpk6Mf0CAyXQA.yjElilQ5cGHWUcVV8Xopp
+ 1SW7hPCbT1CdPNm1BPRkKtvgHCyw3.ZWmB5iFxsaut04N.SQHGDrGjgNkH6tXu5UHf9z6Yt8nkQZ
+ MGOo9nQ.ZhohduOcIKd6pY0ou6DsDlz9gbfsR7xWJ4Uk_M6tFhvbk.Fc37CQqA_XzOLDUTNVuV3H
+ QglOo0Ca9zTZCX0SddxvMDmw3DaOh47uNvcOmo7QQFeGnZPiA3wmpUOTbxpYMSQyxPvNnpLKLGQj
+ Uj_VvsHAUTHpYzYTg6mtpIkPfCRp0RnOBXbTmxOLlfxGkfxQOiQMtHzpQqVMIRNisnsQezhUObh3
+ exWiIUOVdVclhvZxqolh4UJakqUeIf4t9t0VCc5_cORI1RjA.7fUc1WCUNWkr.p1LMDcH0Fq.CfH
+ 61_A3llKbtQ5e3f7vhA5IguHm6Lon_x9VSjMkUEh2avxD6za.k8JIDEEvcQqqybbsBhsTHkPvv8t
+ RppHQT8B8zOkRsGnXaKXToFZECo6IZ88SHBZfZZ01wMvPbiLdmYMe16dLUJh1Y9rm3tT_7g--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.bf2.yahoo.com with HTTP; Thu, 12 Mar 2020 18:07:15 +0000
+Date:   Thu, 12 Mar 2020 18:07:14 +0000 (UTC)
+From:   "Hello My Dear Beloved Friend," <akanbiakinbobola1@gmail.com>
+Reply-To: miss.aminatouzainab@gmail.com
+Message-ID: <666436464.2618536.1584036434795@mail.yahoo.com>
+Subject: WITH DUE RESPECT YOUR ATTENTION IS VERY VERY NEEDED URGENT.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200312172649.13702-5-sravanhome@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <666436464.2618536.1584036434795.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.15342 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:73.0) Gecko/20100101 Firefox/73.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 06:26:48PM +0100, Saravanan Sekar wrote:
-> The mp2629 provides switching-mode battery charge management for
-> single-cell Li-ion or Li-polymer battery. Driver supports the
-> access/control input source and battery charging parameters.
 
-...
 
->  drivers/power/supply/Kconfig          |  14 +-
 
-Why unrelated changes here?
 
-...
+ATTENTION: DEAR BENEFICIARY CONGRATULATIONS TO YOU,
 
-> +#include <linux/kernel.h>
-> +#include <linux/kthread.h>
-> +#include <linux/device.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/init.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/slab.h>
-> +#include <linux/err.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/iio/consumer.h>
-> +#include <linux/iio/types.h>
-> +#include <linux/power_supply.h>
-> +#include <linux/workqueue.h>
+I RECEIVE YOUR CONTENT OF YOUR EMAIL FROM FEDEX ATM CARD OFFICES YOUR FUNDS SUM OF $10.500,000, 000. MILLION DOLLARS, HAS DISCOVER HERE AFTER THE BOARD OF DIRECTORS MEETINGS, THE UNITED NATIONS GOVERNMENT HAVE DECIDED TO ISSUE YOU YOUR (ATM CARD) VALUED @ TEN MILLION FIVE HUNDRED THOUSAND DOLLARS ($) COMPENSATION FUND THROUGH THIS (ATM) CARD.
 
-All of them are needed?
+THIS IS TO BRING TO YOUR NOTICE THAT YOUR VALUED SUM OF 10.5 MILLION DOLLARS HAS BEING CREDITED IN YOUR NAME AS BENEFICIARY TO THIS (ATM CARD), AND HAS BEEN HANDLE TO THE FOREIGN REMITTANCE DEPARTMENT TO SEND IT TO YOU IN YOUR FAVOR IMMEDIATELY WITHOUT ANY DELAY,
 
-...
+YOU HAVE ACCESS TO MAKE DAILY WITHDRAWALS OF ($5,500) UNITED STATE DOLLARS DAILY.
 
-> +enum mp2629_source_type {
-> +	MP2629_SOURCE_TYPE_NO_INPUT,
-> +	MP2629_SOURCE_TYPE_NON_STD,
-> +	MP2629_SOURCE_TYPE_SDP,
-> +	MP2629_SOURCE_TYPE_CDP,
-> +	MP2629_SOURCE_TYPE_DCP,
-> +	MP2629_SOURCE_TYPE_OTG = 7
+WE RECEIVE YOUR INFORMATIONS AND YOUR HOME ADDRESS OF YOUR COUNTRY AND WE WILL SEND TO YOU YOUR (ATM CARD), WE HAVE ALSO RECEIVED A SIGNAL FROM THE SWISS WORLD BANK TO TRANSFER YOUR BELONGING (ATM) TO YOU WITHIN ONE WEEK, WITHOUT ANY DELAY AS WE RECORD.
 
- + comma? (It is not obvious there will be no extension in the future)
+WE HAVE JUST FINISHED OUR ANNUAL GENERAL MEETING WITH BANK OF AMERICA (BOA).
 
-> +};
-> +
-> +enum {
-> +	INPUT_ILIM,
-> +	INPUT_VLIM,
-> +	CHARGE_ILIM,
-> +	CHARGE_VLIM,
-> +	PRECHARGE,
+FOR MORE INFORMATION PLEASE GET BACK TO ME AS SOON AS POSSIBLE.
 
-> +	TERM_CURRENT
+YOURS
+SINCERELY.
 
-Ditto.
-
-> +};
-
-...
-
-> +static enum power_supply_usb_type mp2629_usb_types[] = {
-> +	POWER_SUPPLY_USB_TYPE_SDP,
-> +	POWER_SUPPLY_USB_TYPE_DCP,
-> +	POWER_SUPPLY_USB_TYPE_CDP,
-> +	POWER_SUPPLY_USB_TYPE_PD_DRP,
-
-> +	POWER_SUPPLY_USB_TYPE_UNKNOWN,
-
-Here it seems other way around, i.e. no comma.
-
-> +};
-> +
-> +static enum power_supply_property mp2629_charger_usb_props[] = {
-> +	POWER_SUPPLY_PROP_ONLINE,
-> +	POWER_SUPPLY_PROP_USB_TYPE,
-> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
-> +	POWER_SUPPLY_PROP_CURRENT_NOW,
-> +	POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
-
-> +	POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT
-
-...but here again, it can be extended.
-
-> +};
-> +
-> +static enum power_supply_property mp2629_charger_bat_props[] = {
-> +	POWER_SUPPLY_PROP_STATUS,
-> +	POWER_SUPPLY_PROP_HEALTH,
-> +	POWER_SUPPLY_PROP_CHARGE_TYPE,
-> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
-> +	POWER_SUPPLY_PROP_CURRENT_NOW,
-> +	POWER_SUPPLY_PROP_CAPACITY,
-> +	POWER_SUPPLY_PROP_PRECHARGE_CURRENT,
-> +	POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT,
-> +	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT,
-> +	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
-> +	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX,
-
-> +	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE_MAX
-
-Ditto.
-
-> +};
-> +
-> +static struct mp2629_prop props[] = {
-> +	MP2629_PROPS(INPUT_ILIM, 100000, 3250000, 50000, 0),
-> +	MP2629_PROPS(INPUT_VLIM, 3800000, 5300000, 100000, 0),
-> +	MP2629_PROPS(CHARGE_ILIM, 320000, 4520000, 40000, 0),
-> +	MP2629_PROPS(CHARGE_VLIM, 3400000, 4670000, 10000, 1),
-> +	MP2629_PROPS(PRECHARGE, 120000, 720000, 40000, 4),
-
-> +	MP2629_PROPS(TERM_CURRENT, 80000, 680000, 40000, 0)
-
-Ditto.
-
-> +};
-
-...
-
-> +static char *adc_chan_name[] = { "mp2629-batt-volt", "mp2629-system-volt",
-> +				 "mp2629-input-volt", "mp2629-batt-current",
-> +				 "mp2629-input-current" };
-
-One item per line, please. And comma in the last, new compatible hw might have
-more channels.
-
-> +	ret = mp2629_get_value(map, prop->reg, &rval);
-> +	if (!ret) {
-> +		rval = (rval & prop->mask) >> prop->shift;
-> +		val->intval = (rval * prop->step) + prop->min;
-> +	}
-
-Sounds like regmap field operation...
-Ditto for similar code.
-
-> +
-> +	return ret;
-> +}
-
-...
-
-
-> +	default:
-> +		ret = -EINVAL;
-> +		break;
-
-return -EINVAL;
-
-...
-
-> +	default:
-> +		ret = -EINVAL;
-> +		break;
-
-Ditto.
-
-...
-
-> +	default:
-> +		ret = -EINVAL;
-> +		break;
-
-Ditto.
-
-...
-
-> +	return (psp == POWER_SUPPLY_PROP_PRECHARGE_CURRENT ||
-> +		psp == POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT ||
-> +		psp == POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT ||
-> +		psp == POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE);
-
-Too many parentheses.
-
-...
-
-> +	return (psp == POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT ||
-> +		psp == POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT);
-
-Ditto.
-
-...
-
-> +	if (kstrtol(buf, 10, &val) < 0)
-> +		return -EINVAL;
-
-Don't shadow the actual error code.
-
-> +
-> +	if (val < 0 && val > 140)
-
-> +		return -EINVAL;
-
-ERANGE is better.
-
-...
-
-> +static DEVICE_ATTR(batt_impedance_compensation, 0644,
-> +		mp2629_sysfs_impedance_show, mp2629_sysfs_impedance_store);
-
-DEVICE_ATTR_RW()
-
-> +static struct attribute *mp2629_charger_sysfs_attrs[] = {
-> +	&dev_attr_batt_impedance_compensation.attr,
-
-> +	NULL,
-
-No comma.
-
-> +};
-
-...
-
-> +static int mp2629_charger_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct mp2629_charger *charger;
-> +	struct mp2629_info *info;
-> +	struct power_supply_config psy_cfg = {0};
-> +	int ret, i;
-
-> +	platform_set_drvdata(pdev, charger);
-
-> +	info = dev_get_drvdata(dev->parent);
-
-Could be assigned in definition block above.
-
-> +	charger->info = info;
-> +	charger->dev = dev;
-> +
-> +	for (i = 0; i < MP2629_ADC_CHAN_END; i++) {
-> +		charger->iiochan[i] = iio_channel_get(dev, adc_chan_name[i]);
-> +		if (IS_ERR(charger->iiochan[i])) {
-> +			ret = PTR_ERR(charger->iiochan[i]);
-> +			goto iio_fail;
-> +		}
-> +	}
-
-> +	return 0;
-> +
-> +iio_fail:
-
-> +	for (i = 0; i < MP2629_ADC_CHAN_END; i++) {
-> +		if (charger->iiochan[i] && !(IS_ERR(charger->iiochan[i])))
-> +			iio_channel_release(charger->iiochan[i]);
-> +	}
-
-	while (i--)
-		iio_channel_release(charger->iiochan[i]);
-
-> +
-> +	dev_err(dev, "driver register fail: %d\n", ret);
-> +	return ret;
-> +}
-
-...
-
-> +	for (i = 0; i < MP2629_ADC_CHAN_END; i++) {
-
-> +		if (charger->iiochan[i])
-
-When this is possible?
-And shouldn't iio_channel_release() take care of NULL pointer? If it doesn't,
-fix it in preparatory patch.
-
-> +			iio_channel_release(charger->iiochan[i]);
-> +	}
-
-...
-
-> +static const struct of_device_id mp2629_charger_of_match[] = {
-> +	{ .compatible = "mps,mp2629_charger"},
-
-> +	{},
-
-No comma.
-
-> +};
-
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+DIRECTOR FEDEX SERVICE (USA).
+MRS. AMINATOU. Z. MAKEL.
