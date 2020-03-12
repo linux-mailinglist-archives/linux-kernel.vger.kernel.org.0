@@ -2,264 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB23183C74
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:28:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACA8D183C7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:29:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbgCLW2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 18:28:50 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:38646 "EHLO inva020.nxp.com"
+        id S1727023AbgCLW3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 18:29:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726865AbgCLW2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 18:28:43 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D5CA81A11C3;
-        Thu, 12 Mar 2020 23:28:41 +0100 (CET)
-Received: from smtp.na-rdc02.nxp.com (usphx01srsp001v.us-phx01.nxp.com [134.27.49.11])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4B22C1A11CD;
-        Thu, 12 Mar 2020 23:28:41 +0100 (CET)
-Received: from right.am.freescale.net (right.am.freescale.net [10.81.116.70])
-        by usphx01srsp001v.us-phx01.nxp.com (Postfix) with ESMTP id C104A40A63;
-        Thu, 12 Mar 2020 15:28:40 -0700 (MST)
-From:   Li Yang <leoyang.li@nxp.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Timur Tabi <timur@kernel.org>, Zhao Qiang <qiang.zhao@nxp.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Li Yang <leoyang.li@nxp.com>
-Subject: [PATCH 6/6] soc: fsl: qe: fix sparse warnings for ucc_slow.c
-Date:   Thu, 12 Mar 2020 17:28:27 -0500
-Message-Id: <20200312222827.17409-7-leoyang.li@nxp.com>
-X-Mailer: git-send-email 2.25.1.377.g2d2118b
-In-Reply-To: <20200312222827.17409-1-leoyang.li@nxp.com>
-References: <20200312222827.17409-1-leoyang.li@nxp.com>
+        id S1726680AbgCLW3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 18:29:39 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4920120637;
+        Thu, 12 Mar 2020 22:29:37 +0000 (UTC)
+Date:   Thu, 12 Mar 2020 18:29:35 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Dmitry Vyukov <dvyukov@google.com>, Jiri Slaby <jslaby@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2] Add kernel config option for fuzz testing.
+Message-ID: <20200312182935.70ed6516@gandalf.local.home>
+In-Reply-To: <7e0d2bbf-71c2-395c-9a42-d3d6d3ee4fa4@i-love.sakura.ne.jp>
+References: <20200307135822.3894-1-penguin-kernel@I-love.SAKURA.ne.jp>
+        <6f2e27de-c820-7de3-447d-cd9f7c650add@suse.com>
+        <20200308065258.GE3983392@kroah.com>
+        <3e9f47f7-a6c1-7cec-a84f-e621ae5426be@suse.com>
+        <CACT4Y+a6KExbggs4mg8pvoD554PcDqQNW4sM15X-tc=YONCzYw@mail.gmail.com>
+        <20200311101115.53139149@gandalf.local.home>
+        <CACT4Y+Z5co4HyQBj6-uUdqT2Vk=6jgT-aQXuPtjx3qV4C_pZ7g@mail.gmail.com>
+        <7e0d2bbf-71c2-395c-9a42-d3d6d3ee4fa4@i-love.sakura.ne.jp>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the following sparse warnings:
+On Fri, 13 Mar 2020 06:59:22 +0900
+Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
 
-drivers/soc/fsl/qe/ucc_slow.c:78:17: warning: incorrect type in assignment (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:78:17:    expected struct ucc_slow *us_regs
-drivers/soc/fsl/qe/ucc_slow.c:78:17:    got struct ucc_slow [noderef] <asn:2> *us_regs
-drivers/soc/fsl/qe/ucc_slow.c:81:18: warning: incorrect type in argument 1 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:81:18:    expected void const volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:81:18:    got restricted __be32 *
-drivers/soc/fsl/qe/ucc_slow.c:90:9: warning: incorrect type in argument 2 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:90:9:    expected void volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:90:9:    got restricted __be32 *
-drivers/soc/fsl/qe/ucc_slow.c:99:17: warning: incorrect type in assignment (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:99:17:    expected struct ucc_slow *us_regs
-drivers/soc/fsl/qe/ucc_slow.c:99:17:    got struct ucc_slow [noderef] <asn:2> *us_regs
-drivers/soc/fsl/qe/ucc_slow.c:102:18: warning: incorrect type in argument 1 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:102:18:    expected void const volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:102:18:    got restricted __be32 *
-drivers/soc/fsl/qe/ucc_slow.c:111:9: warning: incorrect type in argument 2 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:111:9:    expected void volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:111:9:    got restricted __be32 *
-drivers/soc/fsl/qe/ucc_slow.c:172:28: warning: Using plain integer as NULL pointer
-drivers/soc/fsl/qe/ucc_slow.c:174:25: warning: cast removes address space '<asn:2>' of expression
-drivers/soc/fsl/qe/ucc_slow.c:175:25: warning: cast removes address space '<asn:2>' of expression
-drivers/soc/fsl/qe/ucc_slow.c:194:23: warning: incorrect type in assignment (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:194:23:    expected struct ucc_slow_pram *us_pram
-drivers/soc/fsl/qe/ucc_slow.c:194:23:    got void [noderef] <asn:2> *
-drivers/soc/fsl/qe/ucc_slow.c:204:9: warning: incorrect type in argument 2 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:204:9:    expected void volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:204:9:    got restricted __be16 *
-drivers/soc/fsl/qe/ucc_slow.c:229:41: warning: incorrect type in assignment (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:229:41:    expected struct qe_bd *tx_bd
-drivers/soc/fsl/qe/ucc_slow.c:229:41:    got void [noderef] <asn:2> *
-drivers/soc/fsl/qe/ucc_slow.c:232:17: warning: incorrect type in argument 2 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:232:17:    expected void volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:232:17:    got restricted __be32 *
-drivers/soc/fsl/qe/ucc_slow.c:234:17: warning: incorrect type in argument 2 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:234:17:    expected void volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:234:17:    got unsigned int [usertype] *
-drivers/soc/fsl/qe/ucc_slow.c:238:9: warning: incorrect type in argument 2 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:238:9:    expected void volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:238:9:    got restricted __be32 *
-drivers/soc/fsl/qe/ucc_slow.c:239:9: warning: cast from restricted __be32
-drivers/soc/fsl/qe/ucc_slow.c:239:9: warning: incorrect type in argument 1 (different base types)
-drivers/soc/fsl/qe/ucc_slow.c:239:9:    expected unsigned int [usertype] val
-drivers/soc/fsl/qe/ucc_slow.c:239:9:    got restricted __be32 [usertype]
-drivers/soc/fsl/qe/ucc_slow.c:239:9: warning: cast from restricted __be32
-drivers/soc/fsl/qe/ucc_slow.c:239:9: warning: incorrect type in argument 2 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:239:9:    expected void volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:239:9:    got unsigned int [usertype] *
-drivers/soc/fsl/qe/ucc_slow.c:242:26: warning: incorrect type in assignment (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:242:26:    expected struct qe_bd *rx_bd
-drivers/soc/fsl/qe/ucc_slow.c:242:26:    got void [noderef] <asn:2> *
-drivers/soc/fsl/qe/ucc_slow.c:245:17: warning: incorrect type in argument 2 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:245:17:    expected void volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:245:17:    got unsigned int [usertype] *
-drivers/soc/fsl/qe/ucc_slow.c:247:17: warning: incorrect type in argument 2 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:247:17:    expected void volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:247:17:    got restricted __be32 *
-drivers/soc/fsl/qe/ucc_slow.c:251:9: warning: cast from restricted __be32
-drivers/soc/fsl/qe/ucc_slow.c:251:9: warning: incorrect type in argument 1 (different base types)
-drivers/soc/fsl/qe/ucc_slow.c:251:9:    expected unsigned int [usertype] val
-drivers/soc/fsl/qe/ucc_slow.c:251:9:    got restricted __be32 [usertype]
-drivers/soc/fsl/qe/ucc_slow.c:251:9: warning: cast from restricted __be32
-drivers/soc/fsl/qe/ucc_slow.c:251:9: warning: incorrect type in argument 2 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:251:9:    expected void volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:251:9:    got unsigned int [usertype] *
-drivers/soc/fsl/qe/ucc_slow.c:252:9: warning: incorrect type in argument 2 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:252:9:    expected void volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:252:9:    got restricted __be32 *
-drivers/soc/fsl/qe/ucc_slow.c:276:39: warning: mixing different enum types:
-drivers/soc/fsl/qe/ucc_slow.c:276:39:    unsigned int enum ucc_slow_tx_oversampling_rate
-drivers/soc/fsl/qe/ucc_slow.c:276:39:    unsigned int enum ucc_slow_rx_oversampling_rate
-drivers/soc/fsl/qe/ucc_slow.c:296:9: warning: incorrect type in argument 2 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:296:9:    expected void volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:296:9:    got restricted __be16 *
-drivers/soc/fsl/qe/ucc_slow.c:297:9: warning: incorrect type in argument 2 (different address spaces)
-drivers/soc/fsl/qe/ucc_slow.c:297:9:    expected void volatile [noderef] <asn:2> *addr
-drivers/soc/fsl/qe/ucc_slow.c:297:9:    got restricted __be16 *
+> On 2020/03/13 4:23, Dmitry Vyukov wrote:
+> >> Or teach the fuzz tool not to do specific bad things.  
+> > 
+> > We do some of this.
+> > But generally it's impossible for anything that involves memory
+> > indirections, or depends on the exact type of fd (e.g. all ioctl's),
+> > etc. Boils down to halting problem and ability to predict exact
+> > behavior of arbitrary programs.  
+> 
+> I would like to enable changes like below only if CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING=y .
+> 
+> Since TASK_RUNNING threads are not always running on CPUs (in syzbot, the kernel is
+> tested on a VM with only 2 CPUs, which means that many threads are simply waiting for
+> CPU time to be assigned), dumping locks held by all threads gives us more clue when
+> e.g. khungtask fired. But since lockdep_print_held_locks() is racy, I assume that
+> this change won't be accepted unless CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING=y .
+> 
+> Also, for another example, limit number of memory pages /dev/ion driver can consume only if
+> CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING=y ( https://github.com/google/syzkaller/issues/1267 ),
+> for limiting number of memory pages is a user-visible change while we need to avoid false
+> alarms caused by consuming all memory pages.
+> 
+> In other words, while majority of things CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING=y would
+> do "disable this", there would be a few "enable this" and "change this".
 
-Also removed the unneccessary clearing for kzalloc'ed structure.
+I still fear that people will just disable large sections. I've seen this
+before. Developers take the easy way out, and when someone adds a new
+feature that may be dangerous, they will just say "oh turn off fuzzing" and
+be done with it.
 
-Signed-off-by: Li Yang <leoyang.li@nxp.com>
----
- drivers/soc/fsl/qe/ucc_slow.c | 33 +++++++++++++--------------------
- include/soc/fsl/qe/ucc_slow.h | 13 ++++++-------
- 2 files changed, 19 insertions(+), 27 deletions(-)
+As Linus likes to say, when you need to make changes to the kernel to test
+it, you are no longer testing production kernels.
 
-diff --git a/drivers/soc/fsl/qe/ucc_slow.c b/drivers/soc/fsl/qe/ucc_slow.c
-index 274d34449846..7e11be41ab62 100644
---- a/drivers/soc/fsl/qe/ucc_slow.c
-+++ b/drivers/soc/fsl/qe/ucc_slow.c
-@@ -72,7 +72,7 @@ EXPORT_SYMBOL(ucc_slow_restart_tx);
- 
- void ucc_slow_enable(struct ucc_slow_private * uccs, enum comm_dir mode)
- {
--	struct ucc_slow *us_regs;
-+	struct ucc_slow __iomem *us_regs;
- 	u32 gumr_l;
- 
- 	us_regs = uccs->us_regs;
-@@ -93,7 +93,7 @@ EXPORT_SYMBOL(ucc_slow_enable);
- 
- void ucc_slow_disable(struct ucc_slow_private * uccs, enum comm_dir mode)
- {
--	struct ucc_slow *us_regs;
-+	struct ucc_slow __iomem *us_regs;
- 	u32 gumr_l;
- 
- 	us_regs = uccs->us_regs;
-@@ -122,7 +122,7 @@ int ucc_slow_init(struct ucc_slow_info * us_info, struct ucc_slow_private ** ucc
- 	u32 i;
- 	struct ucc_slow __iomem *us_regs;
- 	u32 gumr;
--	struct qe_bd *bd;
-+	struct qe_bd __iomem *bd;
- 	u32 id;
- 	u32 command;
- 	int ret = 0;
-@@ -168,16 +168,9 @@ int ucc_slow_init(struct ucc_slow_info * us_info, struct ucc_slow_private ** ucc
- 		return -ENOMEM;
- 	}
- 
--	uccs->saved_uccm = 0;
--	uccs->p_rx_frame = 0;
- 	us_regs = uccs->us_regs;
--	uccs->p_ucce = (u16 *) & (us_regs->ucce);
--	uccs->p_uccm = (u16 *) & (us_regs->uccm);
--#ifdef STATISTICS
--	uccs->rx_frames = 0;
--	uccs->tx_frames = 0;
--	uccs->rx_discarded = 0;
--#endif				/* STATISTICS */
-+	uccs->p_ucce = &us_regs->ucce;
-+	uccs->p_uccm = &us_regs->uccm;
- 
- 	/* Get PRAM base */
- 	uccs->us_pram_offset =
-@@ -231,24 +224,24 @@ int ucc_slow_init(struct ucc_slow_info * us_info, struct ucc_slow_private ** ucc
- 		/* clear bd buffer */
- 		qe_iowrite32be(0, &bd->buf);
- 		/* set bd status and length */
--		qe_iowrite32be(0, (u32 *)bd);
-+		qe_iowrite32be(0, (u32 __iomem *)bd);
- 		bd++;
- 	}
- 	/* for last BD set Wrap bit */
- 	qe_iowrite32be(0, &bd->buf);
--	qe_iowrite32be(cpu_to_be32(T_W), (u32 *)bd);
-+	qe_iowrite32be(T_W, (u32 __iomem *)bd);
- 
- 	/* Init Rx bds */
- 	bd = uccs->rx_bd = qe_muram_addr(uccs->rx_base_offset);
- 	for (i = 0; i < us_info->rx_bd_ring_len - 1; i++) {
- 		/* set bd status and length */
--		qe_iowrite32be(0, (u32 *)bd);
-+		qe_iowrite32be(0, (u32 __iomem *)bd);
- 		/* clear bd buffer */
- 		qe_iowrite32be(0, &bd->buf);
- 		bd++;
- 	}
- 	/* for last BD set Wrap bit */
--	qe_iowrite32be(cpu_to_be32(R_W), (u32 *)bd);
-+	qe_iowrite32be(R_W, (u32 __iomem *)bd);
- 	qe_iowrite32be(0, &bd->buf);
- 
- 	/* Set GUMR (For more details see the hardware spec.). */
-@@ -273,8 +266,8 @@ int ucc_slow_init(struct ucc_slow_info * us_info, struct ucc_slow_private ** ucc
- 	qe_iowrite32be(gumr, &us_regs->gumr_h);
- 
- 	/* gumr_l */
--	gumr = us_info->tdcr | us_info->rdcr | us_info->tenc | us_info->renc |
--		us_info->diag | us_info->mode;
-+	gumr = (u32)us_info->tdcr | (u32)us_info->rdcr | (u32)us_info->tenc |
-+	       (u32)us_info->renc | (u32)us_info->diag | (u32)us_info->mode;
- 	if (us_info->tci)
- 		gumr |= UCC_SLOW_GUMR_L_TCI;
- 	if (us_info->rinv)
-@@ -289,8 +282,8 @@ int ucc_slow_init(struct ucc_slow_info * us_info, struct ucc_slow_private ** ucc
- 
- 	/* if the data is in cachable memory, the 'global' */
- 	/* in the function code should be set. */
--	uccs->us_pram->tbmr = UCC_BMR_BO_BE;
--	uccs->us_pram->rbmr = UCC_BMR_BO_BE;
-+	qe_iowrite8(UCC_BMR_BO_BE, &uccs->us_pram->tbmr);
-+	qe_iowrite8(UCC_BMR_BO_BE, &uccs->us_pram->rbmr);
- 
- 	/* rbase, tbase are offsets from MURAM base */
- 	qe_iowrite16be(uccs->rx_base_offset, &uccs->us_pram->rbase);
-diff --git a/include/soc/fsl/qe/ucc_slow.h b/include/soc/fsl/qe/ucc_slow.h
-index d187a6be83bc..11a216e4e919 100644
---- a/include/soc/fsl/qe/ucc_slow.h
-+++ b/include/soc/fsl/qe/ucc_slow.h
-@@ -184,7 +184,7 @@ struct ucc_slow_info {
- struct ucc_slow_private {
- 	struct ucc_slow_info *us_info;
- 	struct ucc_slow __iomem *us_regs; /* Ptr to memory map of UCC regs */
--	struct ucc_slow_pram *us_pram;	/* a pointer to the parameter RAM */
-+	struct ucc_slow_pram __iomem *us_pram;	/* a pointer to the parameter RAM */
- 	s32 us_pram_offset;
- 	int enabled_tx;		/* Whether channel is enabled for Tx (ENT) */
- 	int enabled_rx;		/* Whether channel is enabled for Rx (ENR) */
-@@ -196,13 +196,12 @@ struct ucc_slow_private {
- 				   and length for first BD in a frame */
- 	s32 tx_base_offset;	/* first BD in Tx BD table offset (In MURAM) */
- 	s32 rx_base_offset;	/* first BD in Rx BD table offset (In MURAM) */
--	struct qe_bd *confBd;	/* next BD for confirm after Tx */
--	struct qe_bd *tx_bd;	/* next BD for new Tx request */
--	struct qe_bd *rx_bd;	/* next BD to collect after Rx */
-+	struct qe_bd __iomem *confBd;	/* next BD for confirm after Tx */
-+	struct qe_bd __iomem *tx_bd;	/* next BD for new Tx request */
-+	struct qe_bd __iomem *rx_bd;	/* next BD to collect after Rx */
- 	void *p_rx_frame;	/* accumulating receive frame */
--	u16 *p_ucce;		/* a pointer to the event register in memory.
--				 */
--	u16 *p_uccm;		/* a pointer to the mask register in memory */
-+	__be16 __iomem *p_ucce;	/* a pointer to the event register in memory */
-+	__be16 __iomem *p_uccm;	/* a pointer to the mask register in memory */
- 	u16 saved_uccm;		/* a saved mask for the RX Interrupt bits */
- #ifdef STATISTICS
- 	u32 tx_frames;		/* Transmitted frames counters */
--- 
-2.17.1
+> 
+> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> index 32406ef0d6a2..1bc7878768fc 100644
+> --- a/kernel/locking/lockdep.c
+> +++ b/kernel/locking/lockdep.c
+> @@ -695,6 +695,7 @@ static void print_lock(struct held_lock *hlock)
+>  static void lockdep_print_held_locks(struct task_struct *p)
+>  {
+>  	int i, depth = READ_ONCE(p->lockdep_depth);
+> +	bool unreliable;
+>  
+>  	if (!depth)
+>  		printk("no locks held by %s/%d.\n", p->comm, task_pid_nr(p));
+> @@ -705,10 +706,12 @@ static void lockdep_print_held_locks(struct task_struct *p)
+>  	 * It's not reliable to print a task's held locks if it's not sleeping
+>  	 * and it's not the current task.
+>  	 */
+> -	if (p->state == TASK_RUNNING && p != current)
+> -		return;
+> +	unreliable = p->state == TASK_RUNNING && p != current;
+>  	for (i = 0; i < depth; i++) {
+> -		printk(" #%d: ", i);
+> +		if (unreliable)
+> +			printk(" #%d?: ", i);
+> +		else
+> +			printk(" #%d: ", i);
+
+Have you tried submitting this? Has Peter nacked it?
+
+-- Steve
+
+>  		print_lock(p->held_locks + i);
+>  	}
+>  }
 
