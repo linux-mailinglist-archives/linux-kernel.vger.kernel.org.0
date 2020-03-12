@@ -2,163 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CE6318379B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:31:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE8EE183789
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:30:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbgCLRb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 13:31:28 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23774 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726666AbgCLRbR (ORCPT
+        id S1726443AbgCLRas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 13:30:48 -0400
+Received: from mail-wm1-f50.google.com ([209.85.128.50]:39219 "EHLO
+        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbgCLRar (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 13:31:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584034277;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2CM3e15i+9DpcFFaDwqs3PZDJ1aP3WweoWF55vw0+y8=;
-        b=ezLWnqqBJYcA5QNWyltWpb/MCrvp0hNvqWX9FMukgfrGDygnr0Tnq8puV921+ZBa83WBJN
-        Cs6ReIiqbsZTsr9AV8YlK133i0Qx6ubi0GiV4NdCtd+wXrK9ddPyEw0M2wTjFiX0IQplpu
-        zOlZc7rbIKia8dVh1zLTvtPD+vbIBu0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-409--n20pf4PMRWvhtzNWV0afA-1; Thu, 12 Mar 2020 13:31:13 -0400
-X-MC-Unique: -n20pf4PMRWvhtzNWV0afA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8862C10BEC35;
-        Thu, 12 Mar 2020 17:31:11 +0000 (UTC)
-Received: from treble.redhat.com (ovpn-122-137.rdu2.redhat.com [10.10.122.137])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5A8D260BEC;
-        Thu, 12 Mar 2020 17:31:10 +0000 (UTC)
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Dave Jones <dsj@fb.com>, Jann Horn <jannh@google.com>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 14/14] x86/unwind/orc: Add 'unwind_debug' cmdline option
-Date:   Thu, 12 Mar 2020 12:30:33 -0500
-Message-Id: <749b30b074b4acbca8c5af9e787b78c8e670a374.1584033751.git.jpoimboe@redhat.com>
-In-Reply-To: <cover.1584033751.git.jpoimboe@redhat.com>
-References: <cover.1584033751.git.jpoimboe@redhat.com>
-MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-Content-Transfer-Encoding: quoted-printable
+        Thu, 12 Mar 2020 13:30:47 -0400
+Received: by mail-wm1-f50.google.com with SMTP id f7so7285498wml.4;
+        Thu, 12 Mar 2020 10:30:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=xSnW9A8X74vMXdw1AZNYRfnq/dFpU0Q61rYWfM27gUE=;
+        b=dqZ+cS/Prcg+PDSUIoMKAOEp40uZVlpGw5ZOWddF1Z+/e20AXbLSPQFzeZ7bd+Z4q+
+         4uKT3g1n3TNaUsBmQNyL0iatlr3q3BMU+UCYm1losTAgpsFzjIVGBRlrLH+BCJ0lvz/D
+         oW1p+URZaH4dQIOw2PGC3Gmk6LxtBexxtvJAiuqjcQzmxkLbPJp/vSzX+rf0g4fA7rCg
+         XOKvY1oZc0waeoUcTIPSLdIwnf+ZvTUJTNkTK/XYTlFrO3wn2oKTzSPMSmQk1pZ3gUe2
+         mOwHloguKVYmhmfoshAzANf4zmtWL+5AxDuOC0NE8y/jFyi47KCYNQp0zTLsAnlChnyN
+         VWYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xSnW9A8X74vMXdw1AZNYRfnq/dFpU0Q61rYWfM27gUE=;
+        b=CIsmc6oXvfpsIpQIpdyUrm+iV3CoZ2J3zQ94Z8HLoe6IjoFfUBt/Y3NT5fiMT74oqv
+         JtnzEw1F3EGkNVniCDR66ehsOYjGyrezMLO55c6rFY12FI16tOPHvlel1nTUueuPsGCI
+         D5/YwwKdLGqRjFZtOCZuh7leQl9MCWU5nfWnWi5TbHXCmOcaWy2s+sDIgUXBhhapUwyw
+         qudSWTeHvW5H8f6OxBLXTB8TrF2DVGl4TmehYH4ZpaLbi7ZefyGWnZyh9w1nANgmY9mh
+         P2um1FRnvrNwBZw3Dtn9kWSB3NfAJ1UcKYvYxe1tELhEA4jx/p9GCKZQm4I0D/IW170R
+         EjZg==
+X-Gm-Message-State: ANhLgQ0e8FZV/DC5GWoQa0I4vZxqpz7EX6xWYvGojGLtTVB18A+a6K5P
+        3WbxZtux5JgpACY5i3y7B64=
+X-Google-Smtp-Source: ADFU+vuVG0oUJL9NNxpSgAnmiNK0aLUEyjsbXdwHcCKQBXDbnFceiU248kw7koVVOEdnC7MW0sy9zQ==
+X-Received: by 2002:a1c:59c6:: with SMTP id n189mr5786802wmb.178.1584034245527;
+        Thu, 12 Mar 2020 10:30:45 -0700 (PDT)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id x24sm13170222wmc.36.2020.03.12.10.30.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Mar 2020 10:30:44 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     lgirdwood@gmail.com
+Cc:     broonie@kernel.org, heiko@sntech.de, robh+dt@kernel.org,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/2] dt-bindings: sound: convert rockchip spdif bindings to yaml
+Date:   Thu, 12 Mar 2020 18:30:36 +0100
+Message-Id: <20200312173037.21477-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sometimes the one-line ORC unwinder warnings aren't very helpful.  Add a
-new 'unwind_debug' cmdline option which will dump the full stack
-contents of the current task when an error condition is encountered.
+Current dts files with 'spdif' nodes are manually verified.
+In order to automate this process rockchip-spdif.txt
+has to be converted to yaml.
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Also rk3188.dtsi, rk3288.dtsi use an extra fallback string,
+so change this in the documentation.
+
+Changed:
+"rockchip,rk3188-spdif", "rockchip,rk3066-spdif"
+"rockchip,rk3288-spdif", "rockchip,rk3066-spdif"
+
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- .../admin-guide/kernel-parameters.txt         |  6 +++
- arch/x86/kernel/unwind_orc.c                  | 49 ++++++++++++++++++-
- 2 files changed, 54 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/sound/rockchip-spdif.txt   | 45 ----------
+ .../devicetree/bindings/sound/rockchip-spdif.yaml  | 96 ++++++++++++++++++++++
+ 2 files changed, 96 insertions(+), 45 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/rockchip-spdif.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/rockchip-spdif.yaml
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
-ion/admin-guide/kernel-parameters.txt
-index a1b7d3ad2a35..fd7d71b908b2 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5098,6 +5098,12 @@
- 	unknown_nmi_panic
- 			[X86] Cause panic on unknown NMI.
-=20
-+	unwind_debug	[X86-64]
-+			Enable unwinder debug output.  This can be
-+			useful for debugging certain unwinder error
-+			conditions, including corrupt stacks and
-+			bad/missing unwinder metadata.
+diff --git a/Documentation/devicetree/bindings/sound/rockchip-spdif.txt b/Documentation/devicetree/bindings/sound/rockchip-spdif.txt
+deleted file mode 100644
+index ec20c1271..000000000
+--- a/Documentation/devicetree/bindings/sound/rockchip-spdif.txt
++++ /dev/null
+@@ -1,45 +0,0 @@
+-* Rockchip SPDIF transceiver
+-
+-The S/PDIF audio block is a stereo transceiver that allows the
+-processor to receive and transmit digital audio via an coaxial cable or
+-a fibre cable.
+-
+-Required properties:
+-
+-- compatible: should be one of the following:
+-   - "rockchip,rk3066-spdif"
+-   - "rockchip,rk3188-spdif"
+-   - "rockchip,rk3228-spdif"
+-   - "rockchip,rk3288-spdif"
+-   - "rockchip,rk3328-spdif"
+-   - "rockchip,rk3366-spdif"
+-   - "rockchip,rk3368-spdif"
+-   - "rockchip,rk3399-spdif"
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
+-- interrupts: should contain the SPDIF interrupt.
+-- dmas: DMA specifiers for tx dma. See the DMA client binding,
+-  Documentation/devicetree/bindings/dma/dma.txt
+-- dma-names: should be "tx"
+-- clocks: a list of phandle + clock-specifier pairs, one for each entry
+-  in clock-names.
+-- clock-names: should contain following:
+-   - "hclk": clock for SPDIF controller
+-   - "mclk" : clock for SPDIF bus
+-
+-Required properties on RK3288:
+-  - rockchip,grf: the phandle of the syscon node for the general register
+-                   file (GRF)
+-
+-Example for the rk3188 SPDIF controller:
+-
+-spdif: spdif@1011e000 {
+-	compatible = "rockchip,rk3188-spdif", "rockchip,rk3066-spdif";
+-	reg = <0x1011e000 0x2000>;
+-	interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+-	dmas = <&dmac1_s 8>;
+-	dma-names = "tx";
+-	clock-names = "hclk", "mclk";
+-	clocks = <&cru HCLK_SPDIF>, <&cru SCLK_SPDIF>;
+-	#sound-dai-cells = <0>;
+-};
+diff --git a/Documentation/devicetree/bindings/sound/rockchip-spdif.yaml b/Documentation/devicetree/bindings/sound/rockchip-spdif.yaml
+new file mode 100644
+index 000000000..45c6eea30
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/rockchip-spdif.yaml
+@@ -0,0 +1,96 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/rockchip-spdif.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 	usbcore.authorized_default=3D
- 			[USB] Default USB device authorization:
- 			(default -1 =3D authorized except for wireless USB,
-diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
-index 4118013a574a..139b476f848a 100644
---- a/arch/x86/kernel/unwind_orc.c
-+++ b/arch/x86/kernel/unwind_orc.c
-@@ -12,8 +12,13 @@
-=20
- #define orc_warn_current(args...)					\
- ({									\
--	if (state->task =3D=3D current)					\
-+	static bool dumped_before;					\
-+	if (state->task =3D=3D current) {					\
- 		orc_warn(args);						\
-+		if (unwind_debug && !dumped_before)			\
-+			unwind_dump(state);				\
-+		dumped_before =3D true;					\
-+	}								\
- })
-=20
- extern int __start_orc_unwind_ip[];
-@@ -22,11 +27,53 @@ extern struct orc_entry __start_orc_unwind[];
- extern struct orc_entry __stop_orc_unwind[];
-=20
- static bool orc_init __ro_after_init;
-+static bool unwind_debug __ro_after_init;
- static unsigned int lookup_num_blocks __ro_after_init;
-=20
- static DEFINE_MUTEX(sort_mutex);
- static int *cur_orc_ip_table =3D __start_orc_unwind_ip;
- static struct orc_entry *cur_orc_table =3D __start_orc_unwind;
-+static unsigned int lookup_num_blocks __ro_after_init;
++title: Rockchip SPDIF transceiver
 +
-+static int __init unwind_debug_cmdline(char *str)
-+{
-+	unwind_debug =3D true;
++description:
++  The S/PDIF audio block is a stereo transceiver that allows the
++  processor to receive and transmit digital audio via a coaxial or
++  fibre cable.
 +
-+	return 0;
-+}
-+early_param("unwind_debug", unwind_debug_cmdline);
++maintainers:
++  - Heiko Stuebner <heiko@sntech.de>
 +
-+static void unwind_dump(struct unwind_state *state)
-+{
-+	static bool dumped_before;
-+	unsigned long word, *sp;
-+	struct stack_info stack_info =3D {0};
-+	unsigned long visit_mask =3D 0;
++properties:
++  compatible:
++    oneOf:
++      - const: rockchip,rk3066-spdif
++      - const: rockchip,rk3228-spdif
++      - const: rockchip,rk3328-spdif
++      - const: rockchip,rk3366-spdif
++      - const: rockchip,rk3368-spdif
++      - const: rockchip,rk3399-spdif
++      - items:
++          - enum:
++            - rockchip,rk3188-spdif
++            - rockchip,rk3288-spdif
++          - const: rockchip,rk3066-spdif
 +
-+	if (dumped_before)
-+		return;
++  reg:
++    maxItems: 1
 +
-+	dumped_before =3D true;
++  interrupts:
++    maxItems: 1
 +
-+	printk_deferred("unwind stack type:%d next_sp:%p mask:0x%lx graph_idx:%=
-d\n",
-+			state->stack_info.type, state->stack_info.next_sp,
-+			state->stack_mask, state->graph_idx);
++  clocks:
++    items:
++      - description: clock for SPDIF bus
++      - description: clock for SPDIF controller
 +
-+	for (sp =3D __builtin_frame_address(0); sp;
-+	     sp =3D PTR_ALIGN(stack_info.next_sp, sizeof(long))) {
-+		if (get_stack_info(sp, state->task, &stack_info, &visit_mask))
-+			break;
++  clock-names:
++    items:
++      - const: mclk
++      - const: hclk
 +
-+		for (; sp < stack_info.end; sp++) {
++  dmas:
++    items:
++      - description: TX DMA Channel
 +
-+			word =3D READ_ONCE_NOCHECK(*sp);
++  dma-names:
++    items:
++      - const: tx
 +
-+			printk_deferred("%0*lx: %0*lx (%pB)\n", BITS_PER_LONG/4,
-+					(unsigned long)sp, BITS_PER_LONG/4,
-+					word, (void *)word);
-+		}
-+	}
-+}
-=20
- static inline unsigned long orc_ip(const int *ip)
- {
---=20
-2.21.1
++  rockchip,grf:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      The phandle of the syscon node for the GRF register.
++      Required property on RK3288.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - dmas
++  - dma-names
++
++if:
++  properties:
++    compatible:
++      contains:
++        const: rockchip,rk3288-spdif
++
++then:
++  required:
++    - rockchip,grf
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/rk3188-cru-common.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    spdif: spdif@1011e000 {
++      compatible = "rockchip,rk3188-spdif", "rockchip,rk3066-spdif";
++      reg = <0x1011e000 0x2000>;
++      interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
++      clocks = <&cru SCLK_SPDIF>, <&cru HCLK_SPDIF>;
++      clock-names = "mclk", "hclk";
++      dmas = <&dmac1_s 8>;
++      dma-names = "tx";
++    };
+-- 
+2.11.0
 
