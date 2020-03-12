@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D332183793
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:31:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22DE4183799
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:31:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbgCLRbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 13:31:13 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34488 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726637AbgCLRbK (ORCPT
+        id S1726817AbgCLRbV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 13:31:21 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:60216 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726715AbgCLRbM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 13:31:10 -0400
+        Thu, 12 Mar 2020 13:31:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584034269;
+        s=mimecast20190719; t=1584034271;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=hDxUNunCB687wAIPkmJJmgGhqlolBxvPaWThLpEgQnk=;
-        b=Z8M+Lum9SOT7Erxn5GFFag4J7FwkoxDjyTS46/1RSZOpfPoPf4SdZVDXKFVYcE5L9v8htd
-        kE/k+POnSSBRrArDE8pWMCW+zxAzyxOM/XHMetBVTuayEwKoXMD0VcBPDfLLolqq4CMlm9
-        HVpUjuUuxSH22uz5P70ex0SwasvNWVs=
+        bh=mmbFDh1nLx6DN6vwuRgIFrbjI6/U3p21MibXGchguxc=;
+        b=VU5lFMF7VoOLhN/YTmV26n1b5dAirp9jeSdHhyGCEbzdFuhb3cV2JV5tlrXHR2QfnrU2Gv
+        3RtVpTuyjW/zlJ5MExDK1AOFjWM2Q59aSb/+9Rh5GM+N8pD3Rd+vmYsX6q7WRbbs9hI88t
+        13JwQfw7iCC6B4Cx1/xqj9Jg1GuaM30=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-411-2Rrpm0NNPxCKXvu6PLiXNg-1; Thu, 12 Mar 2020 13:31:08 -0400
-X-MC-Unique: 2Rrpm0NNPxCKXvu6PLiXNg-1
+ us-mta-420-EV0Jz1RyMwK2ZfM6rvlAXA-1; Thu, 12 Mar 2020 13:31:09 -0400
+X-MC-Unique: EV0Jz1RyMwK2ZfM6rvlAXA-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1BFED800D48;
-        Thu, 12 Mar 2020 17:31:06 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 741BE10BEC32;
+        Thu, 12 Mar 2020 17:31:07 +0000 (UTC)
 Received: from treble.redhat.com (ovpn-122-137.rdu2.redhat.com [10.10.122.137])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DFCA360BEC;
-        Thu, 12 Mar 2020 17:31:04 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4089260BEC;
+        Thu, 12 Mar 2020 17:31:06 +0000 (UTC)
 From:   Josh Poimboeuf <jpoimboe@redhat.com>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Andy Lutomirski <luto@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 10/14] x86/unwind/orc: Prevent unwinding before ORC initialization
-Date:   Thu, 12 Mar 2020 12:30:29 -0500
-Message-Id: <5b3e0cbab4a5e6cf5e3cab87f18f2ae582ec01d7.1584033751.git.jpoimboe@redhat.com>
+Subject: [PATCH 11/14] x86/unwind/orc: Fix error path for bad ORC entry type
+Date:   Thu, 12 Mar 2020 12:30:30 -0500
+Message-Id: <ee453efaa7b1149545d5bb6600320ead3aa8259b.1584033751.git.jpoimboe@redhat.com>
 In-Reply-To: <cover.1584033751.git.jpoimboe@redhat.com>
 References: <cover.1584033751.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
@@ -57,44 +57,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the unwinder is called before the ORC data has been initialized,
-orc_find() returns NULL, and it tries to fall back to using frame
-pointers.  This can cause some unexpected warnings during boot.
-
-Move the 'orc_init' check from orc_find() to __unwind_init(), so that it
-doesn't even try to unwind from an uninitialized state.
+If the ORC entry type is unknown, nothing else can be done other than
+reporting an error.  Exit the function instead of breaking out of the
+switch statement.
 
 Fixes: ee9f8fce9964 ("x86/unwind: Add the ORC unwinder")
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 ---
- arch/x86/kernel/unwind_orc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/unwind_orc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
-index e9f5a20c69c6..cb11567361cc 100644
+index cb11567361cc..33b80a7f998f 100644
 --- a/arch/x86/kernel/unwind_orc.c
 +++ b/arch/x86/kernel/unwind_orc.c
-@@ -148,9 +148,6 @@ static struct orc_entry *orc_find(unsigned long ip)
- {
- 	static struct orc_entry *orc;
+@@ -537,7 +537,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 	default:
+ 		orc_warn("unknown .orc_unwind entry type %d at %pB\n",
+ 			 orc->type, (void *)orig_ip);
+-		break;
++		goto err;
+ 	}
 =20
--	if (!orc_init)
--		return NULL;
--
- 	if (ip =3D=3D 0)
- 		return &null_orc_entry;
-=20
-@@ -591,6 +588,9 @@ EXPORT_SYMBOL_GPL(unwind_next_frame);
- void __unwind_start(struct unwind_state *state, struct task_struct *task=
-,
- 		    struct pt_regs *regs, unsigned long *first_frame)
- {
-+	if (!orc_init)
-+		goto done;
-+
- 	memset(state, 0, sizeof(*state));
- 	state->task =3D task;
-=20
+ 	/* Find BP: */
 --=20
 2.21.1
 
