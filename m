@@ -2,128 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 225E1183BF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:10:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18E46183BFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:11:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbgCLWKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 18:10:47 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:50343 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbgCLWKo (ORCPT
+        id S1726860AbgCLWLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 18:11:30 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42808 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726834AbgCLWLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 18:10:44 -0400
-Received: from localhost (lfbn-tou-1-1075-236.w90-76.abo.wanadoo.fr [90.76.143.236])
-        (Authenticated sender: antoine.tenart@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id DB61A100008;
-        Thu, 12 Mar 2020 22:10:39 +0000 (UTC)
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com,
-        hkallweit1@gmail.com
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 3/3] net: phy: mscc: fix header defines and descriptions
-Date:   Thu, 12 Mar 2020 23:10:33 +0100
-Message-Id: <20200312221033.777437-4-antoine.tenart@bootlin.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200312221033.777437-1-antoine.tenart@bootlin.com>
-References: <20200312221033.777437-1-antoine.tenart@bootlin.com>
+        Thu, 12 Mar 2020 18:11:30 -0400
+Received: by mail-lf1-f67.google.com with SMTP id t21so6190267lfe.9
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 15:11:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=f+nbJgOAkU3OKGNy5HAiFcAe6BZ2/dfnnfHDkezdsLM=;
+        b=lLp+JNv1GIglmiE7sOrC1qiIR92TS5cKLDQInmmSnSrfr1qRJIqEePz4qZzmCMaXQg
+         WfjeGL9/4gKBTTDka+GpLlLtpbiD1yloqRAJ0j1uaN1RPyfrSudbA4agtp71u5vQLvVh
+         kbfpE2jpEmTv+gLLK2bdDBoWn9tFPGdA8uR+LZOOg0cNSMA//V8Yzq7FYJEWfGS9egxp
+         ssrmkKAtsOcFrY+F+ktTdm/G2ys1pRbkX5kFFOvXt+HDZmd1myZbaTJUa01dn3e+L37B
+         lhEYR0ODVOxYIzPOrxSPTQoqyVKo30x+HMDzyYjtalF/Xk6Pf7WKXUgxp0pP1/UDQYLp
+         ZXFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f+nbJgOAkU3OKGNy5HAiFcAe6BZ2/dfnnfHDkezdsLM=;
+        b=ht1Ul5WQuhYm7nfvRjOudkgrMXWTtTT/M1CvpcQ8mxYkpuvLySpqVpM6OUwmHiXbG/
+         OHxcq+5bAdghyKVTYdCn8n8fbvkzDQiZ2S7zjeRuSse4KTXkIyxPuiwRMAA0y16yR+qc
+         YgMMqjXo2CVfzZsvTpm16kaAbWhWFOJBHMc63h7PIBosEK5yDYREmMqe7tyMuJQ03GNr
+         Oa0SP+tWQ3wFnCsvg7Odgn+TK81LQEfuu4da8DTQWnxTtrrDNQtMjWjoX0bopZMFHUm7
+         VEUqmt1EVgkpgeEUUXz384xCiH1IGaXV8qwYhSjy1SEczazkaTFVv/TmpEbSO8SqGnX6
+         GO7g==
+X-Gm-Message-State: ANhLgQ1NiOLbJzZi5Y4EIYf5mySnx5aDM5mUEavRA0Z0BX1lr8NfhWm6
+        e3pJfcuWsmbkf7yZLUsT2o+UY6JOhbqALpNo/RzRAA==
+X-Google-Smtp-Source: ADFU+vuw+qDSh0ZHQbXiX986v1sXjlwq0l/RRl8ekqAVAeCDt4hyCXShVedgqdcfYfGOHvVzkalKAjAB5l3YONcMxRA=
+X-Received: by 2002:a19:4354:: with SMTP id m20mr2516445lfj.166.1584051087657;
+ Thu, 12 Mar 2020 15:11:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200307023611.204708-1-drosen@google.com> <20200307023611.204708-3-drosen@google.com>
+ <20200307034850.GH23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200307034850.GH23230@ZenIV.linux.org.uk>
+From:   Daniel Rosenberg <drosen@google.com>
+Date:   Thu, 12 Mar 2020 15:11:16 -0700
+Message-ID: <CA+PiJmR=zp9P_Mam2EuVgy-vZftDTGQWuFmuO6asPeU_jEy8OQ@mail.gmail.com>
+Subject: Re: [PATCH v8 2/8] fs: Add standard casefolding support
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cosmetic commit fixing the MSCC PHY header defines and descriptions,
-which were referring the to MSCC Ocelot MAC driver (see
-drivers/net/ethernet/mscc/).
+On Fri, Mar 6, 2020 at 7:48 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Fri, Mar 06, 2020 at 06:36:05PM -0800, Daniel Rosenberg wrote:
+>
+>         Have you even tested that?  Could you tell me where does the calculated
+> hash go?  And just what is it doing trying to check if the name we are about to
+> look up in directory specified by 'dentry' might be pointing to dentry->d_iname?
 
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
- drivers/net/phy/mscc/mscc_fc_buffer.h | 8 ++++----
- drivers/net/phy/mscc/mscc_mac.h       | 8 ++++----
- drivers/net/phy/mscc/mscc_macsec.h    | 8 ++++----
- 3 files changed, 12 insertions(+), 12 deletions(-)
+Turns out I tested exactly not that :/ Ran tests on the wrong kernel.
+I've fixed my setup so that shouldn't happen again. The calculated
+hash there goes exactly nowhere because I failed to copy it back into
+the original qstr.
+I'm trying to see if the name is a small name, which, if my
+understanding is correct, is the only time a name might change from
+underneath you in an RCU context. This assumes that the name either
+comes from the dentry, or is otherwise not subject to changes. It's
+based around the check that take_dentry_name_snapshot does. It does
+feel a bit sketchy to assume that, so I'm very open to other
+suggestions there.
 
-diff --git a/drivers/net/phy/mscc/mscc_fc_buffer.h b/drivers/net/phy/mscc/mscc_fc_buffer.h
-index 7e9c0e877895..3803e826c37d 100644
---- a/drivers/net/phy/mscc/mscc_fc_buffer.h
-+++ b/drivers/net/phy/mscc/mscc_fc_buffer.h
-@@ -1,12 +1,12 @@
- /* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
- /*
-- * Microsemi Ocelot Switch driver
-+ * Driver for Microsemi VSC85xx PHYs
-  *
-  * Copyright (C) 2019 Microsemi Corporation
-  */
- 
--#ifndef _MSCC_OCELOT_FC_BUFFER_H_
--#define _MSCC_OCELOT_FC_BUFFER_H_
-+#ifndef _MSCC_PHY_FC_BUFFER_H_
-+#define _MSCC_PHY_FC_BUFFER_H_
- 
- #define MSCC_FCBUF_ENA_CFG					0x00
- #define MSCC_FCBUF_MODE_CFG					0x01
-@@ -61,4 +61,4 @@
- #define MSCC_FCBUF_FC_READ_THRESH_CFG_RX_THRESH(x)		((x) << 16)
- #define MSCC_FCBUF_FC_READ_THRESH_CFG_RX_THRESH_M		GENMASK(31, 16)
- 
--#endif
-+#endif /* _MSCC_PHY_FC_BUFFER_H_ */
-diff --git a/drivers/net/phy/mscc/mscc_mac.h b/drivers/net/phy/mscc/mscc_mac.h
-index 9420ee5175a6..fcb5ba5e5d03 100644
---- a/drivers/net/phy/mscc/mscc_mac.h
-+++ b/drivers/net/phy/mscc/mscc_mac.h
-@@ -1,12 +1,12 @@
- /* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
- /*
-- * Microsemi Ocelot Switch driver
-+ * Driver for Microsemi VSC85xx PHYs
-  *
-  * Copyright (c) 2017 Microsemi Corporation
-  */
- 
--#ifndef _MSCC_OCELOT_LINE_MAC_H_
--#define _MSCC_OCELOT_LINE_MAC_H_
-+#ifndef _MSCC_PHY_LINE_MAC_H_
-+#define _MSCC_PHY_LINE_MAC_H_
- 
- #define MSCC_MAC_CFG_ENA_CFG					0x00
- #define MSCC_MAC_CFG_MODE_CFG					0x01
-@@ -156,4 +156,4 @@
- #define MSCC_PROC_0_IP_1588_TOP_CFG_STAT_MODE_CTL_PROTOCOL_MODE(x)	(x)
- #define MSCC_PROC_0_IP_1588_TOP_CFG_STAT_MODE_CTL_PROTOCOL_MODE_M	GENMASK(2, 0)
- 
--#endif /* _MSCC_OCELOT_LINE_MAC_H_ */
-+#endif /* _MSCC_PHY_LINE_MAC_H_ */
-diff --git a/drivers/net/phy/mscc/mscc_macsec.h b/drivers/net/phy/mscc/mscc_macsec.h
-index c606c9a65d2d..d0783944d106 100644
---- a/drivers/net/phy/mscc/mscc_macsec.h
-+++ b/drivers/net/phy/mscc/mscc_macsec.h
-@@ -1,12 +1,12 @@
- /* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
- /*
-- * Microsemi Ocelot Switch driver
-+ * Driver for Microsemi VSC85xx PHYs
-  *
-  * Copyright (c) 2018 Microsemi Corporation
-  */
- 
--#ifndef _MSCC_OCELOT_MACSEC_H_
--#define _MSCC_OCELOT_MACSEC_H_
-+#ifndef _MSCC_PHY_MACSEC_H_
-+#define _MSCC_PHY_MACSEC_H_
- 
- #include <net/macsec.h>
- 
-@@ -321,4 +321,4 @@ struct macsec_flow {
- #define MSCC_MS_INTR_CTRL_STATUS_INTR_ENABLE_M		GENMASK(31, 16)
- #define MACSEC_INTR_CTRL_STATUS_ROLLOVER		BIT(5)
- 
--#endif
-+#endif /* _MSCC_PHY_MACSEC_H_ */
--- 
-2.24.1
-
+I'm going through that hassle because the various utf8 functions do a
+lot of dereferencing the string and manipulating pointers by those
+values, expecting them to be consistent. It might be enough to just go
+through that code and add a bunch of checks to make sure we can't
+accidentally walk off of either end.
