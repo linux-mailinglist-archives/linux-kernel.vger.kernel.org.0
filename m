@@ -2,182 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D41DC18322F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:57:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B604618322D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:57:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbgCLN54 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:57:56 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:22824 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727007AbgCLN5z (ORCPT
+        id S1727437AbgCLN5b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:57:31 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37135 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbgCLN5b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:57:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584021474;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zN4QMURyGwKx3cAee714OPFc7P9COefkkQIboHHsPiY=;
-        b=hm6Gv9l1pi08A0UDjESPx7HeMIZimNrTDTOGWuKcT3W7wnKbSP0VyysV1gR+uI61PAymfD
-        DpdawGkUdEEG2M/kxz/2RuZikjkhc7JMXhtQ2K+D04b+1Fxof0mtdkKjFOjB1lu5eYD8qv
-        ySKok9pOL0wQkSaQnOI73kIPGXiAV10=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-458-pecU54h9PLqZM_2sUAaOxg-1; Thu, 12 Mar 2020 09:57:52 -0400
-X-MC-Unique: pecU54h9PLqZM_2sUAaOxg-1
-Received: by mail-ed1-f71.google.com with SMTP id p21so4835861edr.22
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:57:52 -0700 (PDT)
+        Thu, 12 Mar 2020 09:57:31 -0400
+Received: by mail-io1-f67.google.com with SMTP id k4so5767797ior.4
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:57:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PmCzpDN/NMRhyTEmPMiyBIQCmmnvomJEacJijlrbzM4=;
+        b=AVrW7+rSwrTmOjEOzng0oQCcIDCWV2si013XLwgHe6kixGzc7dstefqkGGSrsRVsAa
+         FJE5c8jj9IlF0m0dMAhvHAI8L2U5z6bsisEYr8MliPCpIKguC+xfFP8F0WTnFm4+b0bq
+         Fifux4zNzTJyMwxaYofa0zz8c/fczmTMV72sT6ZMw2K/qkUWZFqYOeB4JqKYqXOoDy7G
+         m/lS4YnuTImXVHmsWTGe4vzNuDCRyyv0A6mKgrn7VmUN3Ao6sR9KYbWhRQSAUju2PiMf
+         TRnCHWJ9L0Q9+VL2EyBZ5TsRl92cRG+4ULNLFYL+96dQGAluT2xt8/JIWGS0S5p/BZ2g
+         j/dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zN4QMURyGwKx3cAee714OPFc7P9COefkkQIboHHsPiY=;
-        b=LS2liYo9w+py7NbNsxN4OdRsOuBM0FxuGbrfHRG6j3ccmIBQ/ZvwWr/Bdhb6AqdCIo
-         oDGhU855fiG9rW6MrPwiA0cmnvJ7Bfe0/5mWS9rbd5JSOytQckpEu9rp/Z0glbECwFUo
-         kCNXsSughXl6/tZGw5JZ3N4/jvMWEKWZQZwMO7H5plY/1VIRGV+3vQbj8bqY5KK1cBcA
-         c0L6s/k1tK+gAobA2JF9pwA0Z1fjGSHfoQdgVinPDTMSoWpC+iho2npaVVcO7R6eZ/C5
-         36yoNoYOOCIqXOtsZRXhDIPUnbhVrHKjjarCiJhw6rO2diWQBAzEaLkBQsUZT2CegsZO
-         EWfQ==
-X-Gm-Message-State: ANhLgQ1A7+cSZ6WpAqsRfvKKTXZ9UzbwYujhc0EynLyS3Xu6+Htygw47
-        0JzLqbWafCKPeQB/dvSuegtWrmDxfka6LQGNfP7hTevO2CRFr1mBUjxqjlLATBzxyfwDbWukFh3
-        x7mXOX1ZX1ucAhE/6yBBFkA1ETDkdnpvYpbJ0swMN
-X-Received: by 2002:a17:906:5612:: with SMTP id f18mr6523581ejq.69.1584021471326;
-        Thu, 12 Mar 2020 06:57:51 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vsUtkqlkRV/GlGhEeYx9r/TPkyiRvoHliJiGVUd6Iiw+RSeU1vRnD18gxm/fh7ts3d837ziKCzb6VyrqOkaKx8=
-X-Received: by 2002:a17:906:5612:: with SMTP id f18mr6523556ejq.69.1584021470975;
- Thu, 12 Mar 2020 06:57:50 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PmCzpDN/NMRhyTEmPMiyBIQCmmnvomJEacJijlrbzM4=;
+        b=UlPbY9/AtpMEaHhKUW2KSpxDAI/UcKoPEj7gbHvhNGfB/vu43wmE9TSb/icuEpobzs
+         uLhOCmp5NZR5XZkrJxA1sb69vifdkdYrlBImAxJSF0Bw2tprbCmCRmHdZQKK9Bjpp0oQ
+         sIFCy07FefsfGnnUCgRGdU79dpl+2+Cy6LlToIkzIs1I3s+7ZKZt3KD/1OR8xcMEstC3
+         M0XZz0OFibucgV7d5fR8GPtCLgsygLGMTQkMH7UNXC0PMFPPvqeYlVZH+rWMRQZr13V/
+         JgboSWxKt03Mebj+zU0K20Pb7P6AbbjaBsLuvYhL9lcRIopF1X+Pn2fcJA8SYRMFTvC0
+         mM8w==
+X-Gm-Message-State: ANhLgQ0ObjGbADOnEXW54gideRmIRrvMmcEQjvT+uVodcrpL80y1aBxk
+        5w9+6m2WK4lD0oOkaeR2i7XoSygJjJjZQg==
+X-Google-Smtp-Source: ADFU+vv2B+H/3LrqYARnBvPi2opWl74wLabWcxLtVxSOKqH6WxbIDjQIp2v88SeHkhRQtUCt0kQj6w==
+X-Received: by 2002:a5d:9708:: with SMTP id h8mr7755881iol.141.1584021448333;
+        Thu, 12 Mar 2020 06:57:28 -0700 (PDT)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id r29sm8822455ilk.76.2020.03.12.06.57.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Mar 2020 06:57:27 -0700 (PDT)
+Subject: Re: [PATCH 1/1] null_blk: describe the usage of fault injection param
+To:     Dongli Zhang <dongli.zhang@oracle.com>, linux-block@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20200304191644.25220-1-dongli.zhang@oracle.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <052ba0ac-e0ec-9607-e5c8-acbee8ab6162@kernel.dk>
+Date:   Thu, 12 Mar 2020 07:57:26 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200312135457.6891749e@canb.auug.org.au> <CAGnkfhztbmpP0=KT-iNbkUGKerhX04ENFsexA4_2cP_RUs0Png@mail.gmail.com>
- <baefdc44-d7cb-4e9e-c46c-b37012cfc40d@kernel.dk>
-In-Reply-To: <baefdc44-d7cb-4e9e-c46c-b37012cfc40d@kernel.dk>
-From:   Matteo Croce <mcroce@redhat.com>
-Date:   Thu, 12 Mar 2020 14:57:14 +0100
-Message-ID: <CAGnkfhwJR0CTy51o5F_YjgXCn7RK7=X1PcNbjhT-Xpw5zg3REg@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the block tree
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Coly Li <colyli@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200304191644.25220-1-dongli.zhang@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 2:07 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 3/12/20 4:12 AM, Matteo Croce wrote:
-> > On Thu, Mar 12, 2020 at 3:55 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >>
-> >> Hi all,
-> >>
-> >> After merging the block tree, today's linux-next build (x86_64
-> >> allmodconfig) failed like this:
-> >>
-> >> In file included from fs/erofs/xattr.h:10,
-> >>                  from fs/erofs/inode.c:7:
-> >> fs/erofs/inode.c: In function 'erofs_read_inode':
-> >> fs/erofs/internal.h:197:31: error: 'PAGE_SECTORS_SHIFT' undeclared (first use in this function); did you mean 'PA_SECTION_SHIFT'?
-> >>   197 | #define LOG_SECTORS_PER_BLOCK PAGE_SECTORS_SHIFT
-> >>       |                               ^~~~~~~~~~~~~~~~~~
-> >> fs/erofs/inode.c:122:30: note: in expansion of macro 'LOG_SECTORS_PER_BLOCK'
-> >>   122 |   inode->i_blocks = nblks << LOG_SECTORS_PER_BLOCK;
-> >>       |                              ^~~~~~~~~~~~~~~~~~~~~
-> >> fs/erofs/internal.h:197:31: note: each undeclared identifier is reported only once for each function it appears in
-> >>   197 | #define LOG_SECTORS_PER_BLOCK PAGE_SECTORS_SHIFT
-> >>       |                               ^~~~~~~~~~~~~~~~~~
-> >> fs/erofs/inode.c:122:30: note: in expansion of macro 'LOG_SECTORS_PER_BLOCK'
-> >>   122 |   inode->i_blocks = nblks << LOG_SECTORS_PER_BLOCK;
-> >>       |                              ^~~~~~~~~~~~~~~~~~~~~
-> >> In file included from fs/erofs/data.c:7:
-> >> fs/erofs/data.c: In function 'erofs_read_raw_page':
-> >> fs/erofs/internal.h:197:31: error: 'PAGE_SECTORS_SHIFT' undeclared (first use in this function); did you mean 'PA_SECTION_SHIFT'?
-> >>   197 | #define LOG_SECTORS_PER_BLOCK PAGE_SECTORS_SHIFT
-> >>       |                               ^~~~~~~~~~~~~~~~~~
-> >> fs/erofs/data.c:226:4: note: in expansion of macro 'LOG_SECTORS_PER_BLOCK'
-> >>   226 |    LOG_SECTORS_PER_BLOCK;
-> >>       |    ^~~~~~~~~~~~~~~~~~~~~
-> >> fs/erofs/internal.h:197:31: note: each undeclared identifier is reported only once for each function it appears in
-> >>   197 | #define LOG_SECTORS_PER_BLOCK PAGE_SECTORS_SHIFT
-> >>       |                               ^~~~~~~~~~~~~~~~~~
-> >> fs/erofs/data.c:226:4: note: in expansion of macro 'LOG_SECTORS_PER_BLOCK'
-> >>   226 |    LOG_SECTORS_PER_BLOCK;
-> >>       |    ^~~~~~~~~~~~~~~~~~~~~
-> >> fs/erofs/data.c: In function 'erofs_bmap':
-> >> fs/erofs/internal.h:197:31: error: 'PAGE_SECTORS_SHIFT' undeclared (first use in this function); did you mean 'PA_SECTION_SHIFT'?
-> >>   197 | #define LOG_SECTORS_PER_BLOCK PAGE_SECTORS_SHIFT
-> >>       |                               ^~~~~~~~~~~~~~~~~~
-> >> fs/erofs/data.c:351:16: note: in expansion of macro 'LOG_SECTORS_PER_BLOCK'
-> >>   351 |   if (block >> LOG_SECTORS_PER_BLOCK >= blks)
-> >>       |                ^~~~~~~~~~~~~~~~~~~~~
-> >>
-> >> Caused by commit
-> >>
-> >>   61c7d3d5e015 ("block: refactor duplicated macros")
-> >>
-> >> I have used the block tree from next-20200311 for today.
-> >>
-> >> --
-> >> Cheers,
-> >> Stephen Rothwell
-> >
-> > Hi,
-> >
-> > I was building a kernel without erofs. Just including
-> > include/linux/blkdev.h will fix it, should I amend the
-> > patch or send a fix?
->
-> I'll drop the patch. I was worried about the patch to begin with,
-> something like this really should be done through cocinelle so there's
-> less concern of a stupid mistake.
->
-> On top of that, somewhat miffed that you'd have a v3 of a patch, yet
-> haven't bothered to even _compile_ the parts you touch. That's
-> inexcusable.
->
-> --
-> Jens Axboe
->
+On 3/4/20 12:16 PM, Dongli Zhang wrote:
+> As null_blk is a very good start point to test block layer, this patch adds
+> description and comments to 'timeout' and 'requeue' to explain how to use
+> fault injection with null_blk.
+> 
+> The nvme has similar with nvme_core.fail_request in the form of comment.
 
-I apologize, I was using a config with all in it but erofs, which was
-moved from staging in 5.4:
+This doesn't apply to for-5.7/drivers, care to resend?
 
-$ grep -e BRD -e ZRAM -e DAX -e MD_RAID -e SDHCI= -e EXT2 -e SWAP -e
-DM_RAID -e EROFS .config
-CONFIG_SWAP=y
-# CONFIG_MEMCG_SWAP is not set
-CONFIG_ARCH_USE_BUILTIN_BSWAP=y
-CONFIG_ARCH_WANTS_THP_SWAP=y
-CONFIG_THP_SWAP=y
-# CONFIG_FRONTSWAP is not set
-CONFIG_MD_RAID0=y
-CONFIG_MD_RAID1=y
-CONFIG_MD_RAID10=y
-CONFIG_MD_RAID456=y
-CONFIG_DM_RAID=y
-CONFIG_MMC_SDHCI=y
-CONFIG_DAX=y
-CONFIG_DEV_DAX=y
-CONFIG_EXT2_FS=y
-# CONFIG_EXT2_FS_XATTR is not set
-# CONFIG_FS_DAX is not set
-# CONFIG_EROFS_FS is not set
-
-I'm running coccinelle with this change appended, and also an all allyesconfig
-
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -16,6 +16,7 @@
- #include <linux/magic.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
-+#include <linux/blkdev.h>
- #include "erofs_fs.h"
-
-Regards,
 -- 
-Matteo Croce
-per aspera ad upstream
+Jens Axboe
 
