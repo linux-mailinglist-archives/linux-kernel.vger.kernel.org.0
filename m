@@ -2,127 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6C5E183636
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 17:33:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B6411837BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:35:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbgCLQc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 12:32:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34672 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726677AbgCLQc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 12:32:59 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4013A206FA;
-        Thu, 12 Mar 2020 16:32:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584030776;
-        bh=XLGjcGJfXkG7wsiKKKJrzQ3EFH/yCmYimdREZIuU5R4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rSkqIGqWdh5Up9ovvgEtHEBobVk1tIXLJXKMrKeaDLNar8pUG9/IMQ9uL9Tqoj3pk
-         l0ykdSXvxzZN7vBXuqrzDJFDUGiIQwc0kwESpxLD/qFmGHTz/i8phn/unQ+UtVqPZE
-         YBlKe91+DyoQoNVyjKM8oBY1+nREOZJhde3GYGA8=
-Date:   Thu, 12 Mar 2020 17:32:53 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Vladimir Stankovic <vladimir.stankovic@displaylink.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-usb <linux-usb@vger.kernel.org>,
-        mausb-host-devel <mausb-host-devel@displaylink.com>
-Subject: Re: [PATCH v3 1/8] usb: Add MA-USB Host kernel module
-Message-ID: <20200312163253.GA435313@kroah.com>
-References: <efe5dbe1-4bd7-43cb-1eea-b6b999dd15e6@displaylink.com>
- <20200312152037.GA383349@kroah.com>
- <a950d4e0-b9e6-ef44-9c83-35958154b36f@displaylink.com>
+        id S1726553AbgCLRfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 13:35:12 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:36122 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbgCLRfL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 13:35:11 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02CHU5oA184657;
+        Thu, 12 Mar 2020 17:30:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : to : cc : subject : references : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=zjwbtzl7AvB+7NnGdPtL8gmsQR0LWewnNP66H9bM+Sg=;
+ b=JnS7ekvW8v1tgjppgCuoMOkj5C5t3S6TG7V2Y51M3OVidNaD97W2yg1lt3jwp8NSb/Ll
+ 9Daf7YOHFv6oiO0GOb8+nffCldlVZUU6ctnjntvTSELW9ezcXo3U7i8s3EbqpcBtCg/L
+ d7db3dI7J1Q0muVWCDQ6tf6c5P1TQnl7Ak/RcOH5MYZw+Bt3sahGge9Lv39KZP+QQ1Rs
+ VRZ5wwD/CyimBLJRidZwOZMPhDrLdGdMppPf7Eboecke7xwRS9plS2Z1Kzgh0miDGDty
+ wMS+3Gbg6UgLg5cOUvDJM6eKmENqZ2SSuq14xISvEvnTlH2GQ+ntQLLllaFigtoHoDYk Gw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2yp9v6e395-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Mar 2020 17:30:15 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02CHSFDd109698;
+        Thu, 12 Mar 2020 17:30:15 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2yqkvn265d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Mar 2020 17:30:15 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02CHUCMl000536;
+        Thu, 12 Mar 2020 17:30:12 GMT
+Received: from [192.168.1.206] (/71.63.128.209) by default (Oracle Beehive
+ Gateway v4.0) with ESMTP ; Thu, 12 Mar 2020 09:34:34 -0700
+USER-AGENT: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+Content-Language: en-US
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a950d4e0-b9e6-ef44-9c83-35958154b36f@displaylink.com>
+Message-ID: <e821d691-67f5-1f29-3c70-0bad13c8ad91@oracle.com>
+Date:   Thu, 12 Mar 2020 09:34:32 -0700 (PDT)
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     Qian Cai <cai@lca.pw>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     Michal Hocko <mhocko@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A.Shutemov" <kirill.shutemov@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 0/2] hugetlbfs: use i_mmap_rwsem for more synchronization
+References: <20200305002650.160855-1-mike.kravetz@oracle.com>
+ <1584028670.7365.182.camel@lca.pw>
+In-Reply-To: <1584028670.7365.182.camel@lca.pw>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9558 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=60
+ mlxlogscore=999 malwarescore=0 adultscore=0 bulkscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003120089
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9558 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=60 spamscore=0 mlxscore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
+ phishscore=0 adultscore=0 clxscore=1015 impostorscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003120089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 05:23:53PM +0100, Vladimir Stankovic wrote:
-> On 12.3.20. 16:20, Greg KH wrote:
-> > On Thu, Mar 12, 2020 at 03:42:30PM +0100, Vladimir Stankovic wrote:
-> >  > Added utility macros, kernel device creation and cleanup, functions for
-> >  > handling log formatting and a placeholder module for MA-USB Host device
-> >  > driver.
-> >  >
-> >  > Signed-off-by: Vladimir Stankovic <vladimir.stankovic@displaylink.com>
-> >  > ---
-> >  > MAINTAINERS | 7 +++
-> >  > drivers/usb/Kconfig | 2 +
-> >  > drivers/usb/Makefile | 2 +
-> >  > drivers/usb/mausb_host/Kconfig | 14 +++++
-> >  > drivers/usb/mausb_host/Makefile | 12 ++++
-> >  > drivers/usb/mausb_host/mausb_core.c | 90 +++++++++++++++++++++++++++++
-> >  > drivers/usb/mausb_host/utils.c | 85 +++++++++++++++++++++++++++
-> >  > drivers/usb/mausb_host/utils.h | 40 +++++++++++++
-> >  > 8 files changed, 252 insertions(+)
-> >  > create mode 100644 drivers/usb/mausb_host/Kconfig
-> >  > create mode 100644 drivers/usb/mausb_host/Makefile
-> >  > create mode 100644 drivers/usb/mausb_host/mausb_core.c
-> >  > create mode 100644 drivers/usb/mausb_host/utils.c
-> >  > create mode 100644 drivers/usb/mausb_host/utils.h
-> >  >
-> >  > diff --git a/MAINTAINERS b/MAINTAINERS
-> >  > index 235ab38ed478..12aac44196d7 100644
-> >  > --- a/MAINTAINERS
-> >  > +++ b/MAINTAINERS
-> >  > @@ -10226,6 +10226,13 @@ W: https://linuxtv.org <https://linuxtv.org>
-> >  > S: Maintained
-> >  > F: drivers/media/radio/radio-maxiradio*
-> >  > +MA USB HOST DRIVER
-> >  > +M: Vladimir Stankovic <vladimir.stankovic@displaylink.com>
-> >  > +L: mausb-host-devel@displaylink.com
-> >  > +W: https://www.displaylink.com <https://www.displaylink.com>
-> >  > +S: Maintained
-> >  > +F: drivers/usb/mausb_host/*
-> >  > +
-> >  > MCAN MMIO DEVICE DRIVER
-> >  > M: Dan Murphy <dmurphy@ti.com>
-> >  > M: Sriram Dash <sriram.dash@samsung.com>
-> > 
-> > Does that patch look correct?
-> > 
-> > Does this apply?
-> > 
-> > Something is odd here :(
-> > 
-> > 
-> >  > diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
-> >  > index 275568abc670..4e92f1fa0fa5 100644
-> >  > --- a/drivers/usb/Kconfig
-> >  > +++ b/drivers/usb/Kconfig
-> >  > @@ -164,6 +164,8 @@ source "drivers/usb/misc/Kconfig"
-> >  > source "drivers/usb/atm/Kconfig"
-> >  > +source "drivers/usb/mausb_host/Kconfig"
-> >  > +
-> >  > endif # USB
-> >  > source "drivers/usb/phy/Kconfig"
-> > 
-> > Yeah, something is really wrong with your email client :(
-> > 
-> > Can you use 'git send-email' to send all of these out so they do not get
-> > corrupted?
-> > 
-> > That will also fix the lack of email threading which this series still
-> > has as well.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> I'd say it's the issue with mail server used by company, since patches and
-> mails were generated via git (i.e. used git imap-send to create mail
-> drafts). One of the reasons we've sent attachments in the first version of
-> the patch was to avoid weird mail client/server issues.
+On 3/12/20 8:57 AM, Qian Cai wrote:
+> On Wed, 2020-03-04 at 16:26 -0800, Mike Kravetz wrote:
+>> While discussing the issue with huge_pte_offset [1], I remembered that
+>> there were more outstanding hugetlb races.  These issues are:
+> 
+> Reverted this series on the top of today's linux-next fixed the hang with LTP
+> move_pages12 on both powerpc and arm64,
+> 
+> # /opt/ltp/testcases/bin/move_pages12
+> tst_test.c:1217: INFO: Timeout per run is 0h 05m 00s
+> move_pages12.c:263: INFO: Free RAM 260577280 kB
+> move_pages12.c:281: INFO: Increasing 2048kB hugepages pool on node 0 to 4
+> move_pages12.c:291: INFO: Increasing 2048kB hugepages pool on node 8 to 4
+> move_pages12.c:207: INFO: Allocating and freeing 4 hugepages on node 0
+> move_pages12.c:207: INFO: Allocating and freeing 4 hugepages on node 8
+> <hang>
 
-If this is an Exchange server, you can give up now, they are known to
-corrupt patches.  There is some "magic" settings you can do to the
-server, but personally I do not know what they are.
+Thank you for finding this.
+I'll dig into it.  It is timing related as it takes a few test runs for
+me to reproduce.
 
-good luck!
-
-greg k-h
+Sorry for the issues.  Feel free to revert upstream and mm tree until
+there is a resolution.
+-- 
+Mike Kravetz
