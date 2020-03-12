@@ -2,293 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62979182FEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 13:09:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BB4A182FFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 13:10:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbgCLMJV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 08:09:21 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:22768 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726784AbgCLMJU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 08:09:20 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584014959; h=Content-Transfer-Encoding: MIME-Version:
- References: In-Reply-To: Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=k/4XOXaAg5rHcwWptb7gDJCZ3eY9V+VWNq1ehOc4CSo=; b=g/PzBPBcPy9N1LJIJh7F0adcoci0LO43JUmeLWcfaIFspDa75jiMcntOmXfpr4qwxq6NTFDU
- mm53kApD1iNPgSM4TnYjI5oRRiWGJUoLqaypgoBO2TCV+LQ1/mjvlmJa6hvRuJfE6TGL1TEB
- k08vGfiZs1rb5GTQ6JFU9mg9uGY=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6a2666.7f6afa060458-smtp-out-n02;
- Thu, 12 Mar 2020 12:09:10 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 52FF2C432C2; Thu, 12 Mar 2020 12:09:09 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0D6F9C433CB;
-        Thu, 12 Mar 2020 12:09:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0D6F9C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org
-Cc:     agross@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        tsoni@codeaurora.org, vnkgutta@codeaurora.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v7 3/3] soc: qcom: apr: Add avs/audio tracking functionality
-Date:   Thu, 12 Mar 2020 17:38:42 +0530
-Message-Id: <20200312120842.21991-4-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200312120842.21991-1-sibis@codeaurora.org>
-References: <20200312120842.21991-1-sibis@codeaurora.org>
+        id S1727152AbgCLMK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 08:10:28 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2554 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725268AbgCLMK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 08:10:28 -0400
+Received: from lhreml705-cah.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id A1C5738194AA22480A3B;
+        Thu, 12 Mar 2020 12:10:25 +0000 (GMT)
+Received: from lhreml717-chm.china.huawei.com (10.201.108.68) by
+ lhreml705-cah.china.huawei.com (10.201.108.46) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 12 Mar 2020 12:10:25 +0000
+Received: from lhreml715-chm.china.huawei.com (10.201.108.66) by
+ lhreml717-chm.china.huawei.com (10.201.108.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 12 Mar 2020 12:10:25 +0000
+Received: from lhreml715-chm.china.huawei.com ([10.201.108.66]) by
+ lhreml715-chm.china.huawei.com ([10.201.108.66]) with mapi id 15.01.1713.004;
+ Thu, 12 Mar 2020 12:10:25 +0000
+From:   Shiju Jose <shiju.jose@huawei.com>
+To:     James Morse <james.morse@arm.com>
+CC:     "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "helgaas@kernel.org" <helgaas@kernel.org>,
+        "lenb@kernel.org" <lenb@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "zhangliguang@linux.alibaba.com" <zhangliguang@linux.alibaba.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Linuxarm <linuxarm@huawei.com>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        tanxiaofei <tanxiaofei@huawei.com>,
+        yangyicong <yangyicong@huawei.com>
+Subject: RE: [PATCH v4 1/2] ACPI: APEI: Add support to notify the vendor
+ specific HW errors
+Thread-Topic: [PATCH v4 1/2] ACPI: APEI: Add support to notify the vendor
+ specific HW errors
+Thread-Index: AQHV3aHpvUUiw2j43UuF7uWUQ9pa06hD2fwAgAADqhA=
+Date:   Thu, 12 Mar 2020 12:10:24 +0000
+Message-ID: <689f0c7cb0fe49d6a9df140cc1b56690@huawei.com>
+References: <Shiju Jose> <20200207103143.20104-1-shiju.jose@huawei.com>
+ <20200207103143.20104-2-shiju.jose@huawei.com>
+ <4967c0e6-b264-a13a-28c7-5ca497442823@arm.com>
+In-Reply-To: <4967c0e6-b264-a13a-28c7-5ca497442823@arm.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.47.88.146]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use PDR helper functions to track the protection domains that the apr
-services are dependent upon on SDM845 SoC, specifically the "avs/audio"
-service running on ADSP Q6.
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
-
-V7:
- * No change
-
- drivers/soc/qcom/Kconfig     |   1 +
- drivers/soc/qcom/apr.c       | 123 ++++++++++++++++++++++++++++++++---
- include/linux/soc/qcom/apr.h |   1 +
- 3 files changed, 116 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 48501f0245b0a..9ac6b0072e8ce 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -200,6 +200,7 @@ config QCOM_APR
- 	tristate "Qualcomm APR Bus (Asynchronous Packet Router)"
- 	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on RPMSG
-+	select QCOM_PDR_HELPERS
- 	help
- 	  Enable APR IPC protocol support between
- 	  application processor and QDSP6. APR is
-diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
-index 4fcc32420c474..1f35b097c6356 100644
---- a/drivers/soc/qcom/apr.c
-+++ b/drivers/soc/qcom/apr.c
-@@ -11,6 +11,7 @@
- #include <linux/workqueue.h>
- #include <linux/of_device.h>
- #include <linux/soc/qcom/apr.h>
-+#include <linux/soc/qcom/pdr.h>
- #include <linux/rpmsg.h>
- #include <linux/of.h>
- 
-@@ -21,6 +22,7 @@ struct apr {
- 	spinlock_t rx_lock;
- 	struct idr svcs_idr;
- 	int dest_domain_id;
-+	struct pdr_handle *pdr;
- 	struct workqueue_struct *rxwq;
- 	struct work_struct rx_work;
- 	struct list_head rx_list;
-@@ -289,6 +291,9 @@ static int apr_add_device(struct device *dev, struct device_node *np,
- 		  id->svc_id + 1, GFP_ATOMIC);
- 	spin_unlock(&apr->svcs_lock);
- 
-+	of_property_read_string_index(np, "qcom,protection-domain",
-+				      1, &adev->service_path);
-+
- 	dev_info(dev, "Adding APR dev: %s\n", dev_name(&adev->dev));
- 
- 	ret = device_register(&adev->dev);
-@@ -300,14 +305,75 @@ static int apr_add_device(struct device *dev, struct device_node *np,
- 	return ret;
- }
- 
--static void of_register_apr_devices(struct device *dev)
-+static int of_apr_add_pd_lookups(struct device *dev)
-+{
-+	const char *service_name, *service_path;
-+	struct apr *apr = dev_get_drvdata(dev);
-+	struct device_node *node;
-+	struct pdr_service *pds;
-+	int ret;
-+
-+	for_each_child_of_node(dev->of_node, node) {
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    0, &service_name);
-+		if (ret < 0)
-+			continue;
-+
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    1, &service_path);
-+		if (ret < 0) {
-+			dev_err(dev, "pdr service path missing: %d\n", ret);
-+			return ret;
-+		}
-+
-+		pds = pdr_add_lookup(apr->pdr, service_name, service_path);
-+		if (IS_ERR(pds) && PTR_ERR(pds) != -EALREADY) {
-+			dev_err(dev, "pdr add lookup failed: %d\n", ret);
-+			return PTR_ERR(pds);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void of_register_apr_devices(struct device *dev, const char *svc_path)
- {
- 	struct apr *apr = dev_get_drvdata(dev);
- 	struct device_node *node;
-+	const char *service_path;
-+	int ret;
- 
- 	for_each_child_of_node(dev->of_node, node) {
- 		struct apr_device_id id = { {0} };
- 
-+		/*
-+		 * This function is called with svc_path NULL during
-+		 * apr_probe(), in which case we register any apr devices
-+		 * without a qcom,protection-domain specified.
-+		 *
-+		 * Then as the protection domains becomes available
-+		 * (if applicable) this function is again called, but with
-+		 * svc_path representing the service becoming available. In
-+		 * this case we register any apr devices with a matching
-+		 * qcom,protection-domain.
-+		 */
-+
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    1, &service_path);
-+		if (svc_path) {
-+			/* skip APR services that are PD independent */
-+			if (ret)
-+				continue;
-+
-+			/* skip APR services whose PD paths don't match */
-+			if (strcmp(service_path, svc_path))
-+				continue;
-+		} else {
-+			/* skip APR services whose PD lookups are registered */
-+			if (ret == 0)
-+				continue;
-+		}
-+
- 		if (of_property_read_u32(node, "reg", &id.svc_id))
- 			continue;
- 
-@@ -318,6 +384,34 @@ static void of_register_apr_devices(struct device *dev)
- 	}
- }
- 
-+static int apr_remove_device(struct device *dev, void *svc_path)
-+{
-+	struct apr_device *adev = to_apr_device(dev);
-+
-+	if (svc_path && adev->service_path) {
-+		if (!strcmp(adev->service_path, (char *)svc_path))
-+			device_unregister(&adev->dev);
-+	} else {
-+		device_unregister(&adev->dev);
-+	}
-+
-+	return 0;
-+}
-+
-+static void apr_pd_status(int state, char *svc_path, void *priv)
-+{
-+	struct apr *apr = (struct apr *)priv;
-+
-+	switch (state) {
-+	case SERVREG_SERVICE_STATE_UP:
-+		of_register_apr_devices(apr->dev, svc_path);
-+		break;
-+	case SERVREG_SERVICE_STATE_DOWN:
-+		device_for_each_child(apr->dev, svc_path, apr_remove_device);
-+		break;
-+	}
-+}
-+
- static int apr_probe(struct rpmsg_device *rpdev)
- {
- 	struct device *dev = &rpdev->dev;
-@@ -343,28 +437,39 @@ static int apr_probe(struct rpmsg_device *rpdev)
- 		return -ENOMEM;
- 	}
- 	INIT_WORK(&apr->rx_work, apr_rxwq);
-+
-+	apr->pdr = pdr_handle_alloc(apr_pd_status, apr);
-+	if (IS_ERR(apr->pdr)) {
-+		dev_err(dev, "Failed to init PDR handle\n");
-+		ret = PTR_ERR(apr->pdr);
-+		goto destroy_wq;
-+	}
-+
- 	INIT_LIST_HEAD(&apr->rx_list);
- 	spin_lock_init(&apr->rx_lock);
- 	spin_lock_init(&apr->svcs_lock);
- 	idr_init(&apr->svcs_idr);
--	of_register_apr_devices(dev);
--
--	return 0;
--}
- 
--static int apr_remove_device(struct device *dev, void *null)
--{
--	struct apr_device *adev = to_apr_device(dev);
-+	ret = of_apr_add_pd_lookups(dev);
-+	if (ret)
-+		goto handle_release;
- 
--	device_unregister(&adev->dev);
-+	of_register_apr_devices(dev, NULL);
- 
- 	return 0;
-+
-+handle_release:
-+	pdr_handle_release(apr->pdr);
-+destroy_wq:
-+	destroy_workqueue(apr->rxwq);
-+	return ret;
- }
- 
- static void apr_remove(struct rpmsg_device *rpdev)
- {
- 	struct apr *apr = dev_get_drvdata(&rpdev->dev);
- 
-+	pdr_handle_release(apr->pdr);
- 	device_for_each_child(&rpdev->dev, NULL, apr_remove_device);
- 	flush_workqueue(apr->rxwq);
- 	destroy_workqueue(apr->rxwq);
-diff --git a/include/linux/soc/qcom/apr.h b/include/linux/soc/qcom/apr.h
-index c5d52e2cb275f..7f0bc3cf4d610 100644
---- a/include/linux/soc/qcom/apr.h
-+++ b/include/linux/soc/qcom/apr.h
-@@ -85,6 +85,7 @@ struct apr_device {
- 	uint16_t	domain_id;
- 	uint32_t	version;
- 	char name[APR_NAME_SIZE];
-+	const char *service_path;
- 	spinlock_t	lock;
- 	struct list_head node;
- };
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+SGkgSmFtZXMsDQoNClRoYW5rcyBmb3IgcmV2aWV3aW5nIHRoZSBjb2RlLg0KDQo+LS0tLS1Pcmln
+aW5hbCBNZXNzYWdlLS0tLS0NCj5Gcm9tOiBsaW51eC1wY2ktb3duZXJAdmdlci5rZXJuZWwub3Jn
+IFttYWlsdG86bGludXgtcGNpLQ0KPm93bmVyQHZnZXIua2VybmVsLm9yZ10gT24gQmVoYWxmIE9m
+IEphbWVzIE1vcnNlDQo+U2VudDogMTEgTWFyY2ggMjAyMCAxNzozMA0KPlRvOiBTaGlqdSBKb3Nl
+IDxzaGlqdS5qb3NlQGh1YXdlaS5jb20+DQo+Q2M6IGxpbnV4LWFjcGlAdmdlci5rZXJuZWwub3Jn
+OyBsaW51eC1wY2lAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj5rZXJuZWxAdmdlci5rZXJuZWwu
+b3JnOyByandAcmp3eXNvY2tpLm5ldDsgaGVsZ2Fhc0BrZXJuZWwub3JnOw0KPmxlbmJAa2VybmVs
+Lm9yZzsgYnBAYWxpZW44LmRlOyB0b255Lmx1Y2tAaW50ZWwuY29tOw0KPmdyZWdraEBsaW51eGZv
+dW5kYXRpb24ub3JnOyB6aGFuZ2xpZ3VhbmdAbGludXguYWxpYmFiYS5jb207DQo+dGdseEBsaW51
+dHJvbml4LmRlOyBMaW51eGFybSA8bGludXhhcm1AaHVhd2VpLmNvbT47IEpvbmF0aGFuIENhbWVy
+b24NCj48am9uYXRoYW4uY2FtZXJvbkBodWF3ZWkuY29tPjsgdGFueGlhb2ZlaSA8dGFueGlhb2Zl
+aUBodWF3ZWkuY29tPjsNCj55YW5neWljb25nIDx5YW5neWljb25nQGh1YXdlaS5jb20+DQo+U3Vi
+amVjdDogUmU6IFtQQVRDSCB2NCAxLzJdIEFDUEk6IEFQRUk6IEFkZCBzdXBwb3J0IHRvIG5vdGlm
+eSB0aGUgdmVuZG9yDQo+c3BlY2lmaWMgSFcgZXJyb3JzDQo+DQo+SGkgU2hpanUsDQo+DQo+T24g
+MDcvMDIvMjAyMCAxMDozMSwgU2hpanUgSm9zZSB3cm90ZToNCj4+IFByZXNlbnRseSBBUEVJIGRv
+ZXMgbm90IHN1cHBvcnQgcmVwb3J0aW5nIHRoZSB2ZW5kb3Igc3BlY2lmaWMgSFcNCj4+IGVycm9y
+cywgcmVjZWl2ZWQgaW4gdGhlIHZlbmRvciBkZWZpbmVkIHRhYmxlIGVudHJpZXMsIHRvIHRoZSB2
+ZW5kb3INCj4+IGRyaXZlcnMgZm9yIGFueSByZWNvdmVyeS4NCj4+DQo+PiBUaGlzIHBhdGNoIGFk
+ZHMgdGhlIHN1cHBvcnQgdG8gcmVnaXN0ZXIgYW5kIHVucmVnaXN0ZXIgdGhlIGVycm9yDQo+PiBo
+YW5kbGluZyBmdW5jdGlvbiBmb3IgdGhlIHZlbmRvciBzcGVjaWZpYyBIVyBlcnJvcnMgYW5kIG5v
+dGlmeSB0aGUNCj4+IHJlZ2lzdGVyZWQga2VybmVsIGRyaXZlci4NCj4NCj5JcyBpdCBwb3NzaWJs
+ZSB0byB1c2UgdGhlIGtlcm5lbCdzIGV4aXN0aW5nIGF0b21pY19ub3RpZmllcl9jaGFpbl9yZWdp
+c3RlcigpIEFQSSBmb3INCj50aGlzPw0KPg0KPlRoZSBvbmUgdGhpbmcgdGhhdCBjYW4ndCBiZSBk
+b25lIGluIHRoZSBzYW1lIHdheSBpcyB0aGUgR1VJRCBmaWx0ZXJpbmcgaW4gZ2hlcy5jLg0KPkVh
+Y2ggZHJpdmVyIHdvdWxkIG5lZWQgdG8gY2hlY2sgaWYgdGhlIGNhbGwgbWF0Y2hlZCBhIEdVSUQg
+dGhleSBrbmV3IGFib3V0LA0KPmFuZCByZXR1cm4gTk9USUZZX0RPTkUgaWYgdGhleSAiZG9uJ3Qg
+Y2FyZSIuDQo+DQo+SSB0aGluayB0aGlzIHBhdGNoIHdvdWxkIGJlIGEgbG90IHNtYWxsZXIgaWYg
+aXQgd2FzIHR3ZWFrZWQgdG8gYmUgYWJsZSB0byB1c2UgdGhlDQo+ZXhpc3RpbmcgQVBJLiBJZiB0
+aGVyZSBpcyBhIHJlYXNvbiBub3QgdG8gdXNlIGl0LCBpdCB3b3VsZCBiZSBnb29kIHRvIGtub3cg
+d2hhdCBpdA0KPmlzLg0KSSB0aGluayB3aGVuIHVzaW5nIGF0b21pY19ub3RpZmllcl9jaGFpbl9y
+ZWdpc3RlciB3ZSBoYXZlIGZvbGxvd2luZyBsaW1pdGF0aW9ucywNCjEuIEFsbCB0aGUgcmVnaXN0
+ZXJlZCBlcnJvciBoYW5kbGVycyB3b3VsZCBnZXQgY2FsbGVkLCB0aG91Z2ggYW4gZXJyb3IgaXMg
+bm90IHJlbGF0ZWQgdG8gdGhvc2UgaGFuZGxlcnMuICAgIA0KICAgIEFsc28gdGhpcyBtYXkgbGVh
+ZCB0byBtaXNoYW5kbGluZyBvZiB0aGUgZXJyb3IgaW5mb3JtYXRpb24gaWYgYSBoYW5kbGVyIGRv
+ZXMgbm90DQogICAgaW1wbGVtZW50IEdVSUQgY2hlY2tpbmcgZXRjLg0KMi4gYXRvbWljX25vdGlm
+aWVyX2NoYWluX3JlZ2lzdGVyIChub3RpZmllcl9jaGFpbl9yZWdpc3RlcikgbG9va3MgbGlrZSBk
+b2VzIG5vdCBzdXBwb3J0IA0KICAgIHBhc3MgdGhlIGhhbmRsZXIncyBwcml2YXRlIGRhdGEgZHVy
+aW5nIHRoZSByZWdpc3RyYXRpb24gd2hpY2ggc3VwcG9zZWQgdG8gDQogICAgcGFzc2VkIGxhdGVy
+IGluIHRoZSBjYWxsIGJhY2sgZnVuY3Rpb24gKm5vdGlmaWVyX2ZuX3QoLi4uICx2b2lkICpkYXRh
+KSB0byB0aGUgaGFuZGxlci4NCjMuIEFsc28gZ290IGRpZmZpY3VsdHkgaW4gcGFzc2luZyB0aGUg
+Z2hlcyBlcnJvciBkYXRhKGFjcGlfaGVzdF9nZW5lcmljX2RhdGEpLCBHVUlEDQogICAgZm9yIHRo
+ZSBlcnJvciByZWNlaXZlZCB0byB0aGUgaGFuZGxlciB0aHJvdWdoIHRoZSBub3RpZmllcl9jaGFp
+biAgY2FsbGJhY2sgaW50ZXJmYWNlLiANCiAgICANClNvcnJ5IGlmIEkgZGlkIG5vdCAgdW5kZXJz
+dG9vZCB5b3VyIHN1Z2dlc3Rpb24gY29ycmVjdGx5Lg0KIA0KPg0KPg0KPj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvYWNwaS9hcGVpL2doZXMuYyBiL2RyaXZlcnMvYWNwaS9hcGVpL2doZXMuYyBpbmRl
+eA0KPj4gMTAzYWNiYi4uNjllMThkNyAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvYWNwaS9hcGVp
+L2doZXMuYw0KPj4gKysrIGIvZHJpdmVycy9hY3BpL2FwZWkvZ2hlcy5jDQo+PiBAQCAtNDkwLDYg
+KzQ5MCwxMDkgQEAgc3RhdGljIHZvaWQgZ2hlc19oYW5kbGVfYWVyKHN0cnVjdA0KPj4gYWNwaV9o
+ZXN0X2dlbmVyaWNfZGF0YSAqZ2RhdGEpDQo+DQo+PiArLyoqDQo+PiArICogZ2hlc191bnJlZ2lz
+dGVyX2V2ZW50X2hhbmRsZXIgLSB1bnJlZ2lzdGVyIHRoZSBwcmV2aW91c2x5DQo+PiArICogcmVn
+aXN0ZXJlZCBldmVudCBoYW5kbGluZyBmdW5jdGlvbi4NCj4+ICsgKiBAc2VjX3R5cGU6IHNlY190
+eXBlIG9mIHRoZSBjb3JyZXNwb25kaW5nIENQRVIuDQo+PiArICogQGRhdGE6IGRyaXZlciBzcGVj
+aWZpYyBkYXRhIHRvIGRpc3Rpbmd1aXNoIGRldmljZXMuDQo+PiArICovDQo+PiArdm9pZCBnaGVz
+X3VucmVnaXN0ZXJfZXZlbnRfaGFuZGxlcihndWlkX3Qgc2VjX3R5cGUsIHZvaWQgKmRhdGEpIHsN
+Cj4+ICsJc3RydWN0IGdoZXNfZXZlbnRfbm90aWZ5ICpldmVudF9ub3RpZnk7DQo+PiArCWJvb2wg
+Zm91bmQgPSBmYWxzZTsNCj4+ICsNCj4+ICsJbXV0ZXhfbG9jaygmZ2hlc19ldmVudF9ub3RpZnlf
+bXV0ZXgpOw0KPj4gKwlyY3VfcmVhZF9sb2NrKCk7DQo+PiArCWxpc3RfZm9yX2VhY2hfZW50cnlf
+cmN1KGV2ZW50X25vdGlmeSwNCj4+ICsJCQkJJmdoZXNfZXZlbnRfaGFuZGxlcl9saXN0LCBsaXN0
+KSB7DQo+PiArCQlpZiAoZ3VpZF9lcXVhbCgmZXZlbnRfbm90aWZ5LT5zZWNfdHlwZSwgJnNlY190
+eXBlKSkgew0KPg0KPj4gKwkJCWlmIChkYXRhICE9IGV2ZW50X25vdGlmeS0+ZGF0YSkNCj4NCj5J
+dCBsb29rcyBsaWtlIHlvdSBuZWVkIG11bHRpcGxlIGRyaXZlcnMgdG8gaGFuZGxlIHRoZSBzYW1l
+IEdVSUQgYmVjYXVzZSBvZg0KPm11bHRpcGxlIHJvb3QgcG9ydHMuIENhbid0IHRoZSBoYW5kbGVy
+IGxvb2t1cCB0aGUgcmlnaHQgZGV2aWNlPw0KVGhpcyBjaGVjayB3YXMgYmVjYXVzZSBHVUlEIGlz
+IHNoYXJlZCBhbW9uZyBtdWx0aXBsZSBkZXZpY2VzIHdpdGggb25lIGRyaXZlciBhcyBzZWVuDQpp
+biB0aGUgQjI4ODlGQzkgZHJpdmVyIChwY2llLWhpc2ktZXJyb3IuYykuIA0KICANCj4NCj4NCj4+
+ICsJCQkJY29udGludWU7DQo+PiArCQkJbGlzdF9kZWxfcmN1KCZldmVudF9ub3RpZnktPmxpc3Qp
+Ow0KPj4gKwkJCWZvdW5kID0gdHJ1ZTsNCj4+ICsJCQlicmVhazsNCj4+ICsJCX0NCj4+ICsJfQ0K
+Pj4gKwlyY3VfcmVhZF91bmxvY2soKTsNCj4+ICsJbXV0ZXhfdW5sb2NrKCZnaGVzX2V2ZW50X25v
+dGlmeV9tdXRleCk7DQo+PiArDQo+PiArCWlmICghZm91bmQpIHsNCj4+ICsJCXByX2VycigiVHJp
+ZWQgdG8gdW5yZWdpc3RlciBhIEdIRVMgZXZlbnQgaGFuZGxlciB0aGF0IGhhcyBub3QNCj5iZWVu
+IHJlZ2lzdGVyZWRcbiIpOw0KPj4gKwkJcmV0dXJuOw0KPj4gKwl9DQo+PiArDQo+PiArCXN5bmNo
+cm9uaXplX3JjdSgpOw0KPj4gKwlrZnJlZShldmVudF9ub3RpZnkpOw0KPj4gK30NCj4+ICtFWFBP
+UlRfU1lNQk9MX0dQTChnaGVzX3VucmVnaXN0ZXJfZXZlbnRfaGFuZGxlcik7DQo+DQo+PiBAQCAt
+NTI1LDExICs2MjgsMTQgQEAgc3RhdGljIHZvaWQgZ2hlc19kb19wcm9jKHN0cnVjdCBnaGVzICpn
+aGVzLA0KPj4NCj4+ICAJCQlsb2dfYXJtX2h3X2Vycm9yKGVycik7DQo+PiAgCQl9IGVsc2Ugew0K
+Pj4gLQkJCXZvaWQgKmVyciA9IGFjcGlfaGVzdF9nZXRfcGF5bG9hZChnZGF0YSk7DQo+PiAtDQo+
+PiAtCQkJbG9nX25vbl9zdGFuZGFyZF9ldmVudChzZWNfdHlwZSwgZnJ1X2lkLCBmcnVfdGV4dCwN
+Cj4+IC0JCQkJCSAgICAgICBzZWNfc2V2LCBlcnIsDQo+PiAtCQkJCQkgICAgICAgZ2RhdGEtPmVy
+cm9yX2RhdGFfbGVuZ3RoKTsNCj4+ICsJCQlpZiAoIWdoZXNfaGFuZGxlX25vbl9zdGFuZGFyZF9l
+dmVudChzZWNfdHlwZSwgZ2RhdGEsDQo+PiArCQkJCQkJCSAgICBzZXYpKSB7DQo+PiArCQkJCXZv
+aWQgKmVyciA9IGFjcGlfaGVzdF9nZXRfcGF5bG9hZChnZGF0YSk7DQo+PiArDQo+PiArCQkJCWxv
+Z19ub25fc3RhbmRhcmRfZXZlbnQoc2VjX3R5cGUsIGZydV9pZCwNCj4+ICsJCQkJCQkgICAgICAg
+ZnJ1X3RleHQsIHNlY19zZXYsIGVyciwNCj4+ICsJCQkJCQkgICAgICAgZ2RhdGEtPmVycm9yX2Rh
+dGFfbGVuZ3RoKTsNCj4+ICsJCQl9DQo+DQo+U28sIGEgc2lkZSBlZmZlY3Qgb2YgdGhlIGtlcm5l
+bCBoYW5kbGluZyB0aGVzZSBpcyB0aGV5IG5vIGxvbmdlciBnZXQgbG9nZ2VkIG91dCBvZg0KPnRy
+YWNlIHBvaW50cz8NCj4NCj5JIGd1ZXNzIHRoZSBkcml2ZXIgdGhlIGNsYWltcyB0aGlzIGxvZ3Mg
+c29tZSBtb3JlIGFjY3VyYXRlIGluZm9ybWF0aW9uLiBBcmUNCj50aGVyZSBleHBlY3RlZCB0byBi
+ZSBhbnkgdXNlci1zcGFjZSBwcm9ncmFtcyBkb2luZyBzb21ldGhpbmcgdXNlZnVsIHdpdGgNCj5C
+Mjg4OUZDOS4uLiB0b2RheT8NClRoZSBCMjg4OUZDOSBkcml2ZXIgZG9lcyBub3QgZXhwZWN0IGFu
+eSBjb3JyZXNwb25kaW5nIHVzZXIgc3BhY2UgcHJvZ3JhbXMuIA0KVGhlIGRyaXZlciBtYWlubHkg
+Zm9yIHRoZSBlcnJvciByZWNvdmVyeSBhbmQgYmFzaWMgZXJyb3IgZGVjb2RpbmcgYW5kIGxvZ2dp
+bmcuDQpQcmV2aW91c2x5IHdlIGFkZGVkIHRoZSBlcnJvciBsb2dnaW5nIGZvciB0aGUgQjI4ODlG
+QzkgaW4gdGhlIHJhc2RhZW1vbi4NCj4NCj4NCj5UaGFua3MsDQo+DQo+SmFtZXMNCg0KVGhhbmtz
+LA0KU2hpanUNCg==
