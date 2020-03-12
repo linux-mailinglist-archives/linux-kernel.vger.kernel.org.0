@@ -2,143 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7A78183281
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:11:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8444E183287
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:12:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbgCLOLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 10:11:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47560 "EHLO mail.kernel.org"
+        id S1727564AbgCLOMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 10:12:14 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:59444 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727123AbgCLOLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 10:11:05 -0400
-Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
+        id S1725978AbgCLOMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 10:12:14 -0400
+Received: from zn.tnic (p200300EC2F0DBF00E89CA278D0B3F041.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:bf00:e89c:a278:d0b3:f041])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10BBE206E7;
-        Thu, 12 Mar 2020 14:11:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584022264;
-        bh=R/lnE+ckVywNCWcx1gHvO2Mh70J2f5SW32TxuQf+zGI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=arv7/+jvUj9iJWfWlYdgqEG39OScPnVN8+yN/RSHbmQJwGazVMLlVu+Tctn3gdPTX
-         FNdntEiwli27ScYUOBN6gfOPY6ZhjBhMcMl/D3RquqPL+Y8s6k9qxCCbZiR8x3ervB
-         d5gWiTZ8T/wMs4bdrTy0xx25QCxA3drilWiFDdc0=
-Date:   Thu, 12 Mar 2020 09:11:02 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Aman Sharma <amanharitsh123@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Andrew Murray <amurray@thegoodpenguin.co.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
-        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        Mans Rullgard <mans@mansr.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH 4/5] pci: handled return value of platform_get_irq
- correctly
-Message-ID: <20200312141102.GA93224@google.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BC5941EC0273;
+        Thu, 12 Mar 2020 15:12:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1584022331;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=wfNb1Zw6/hi8ZTNeWL/A3GZdW3BHt0aPqiRf/ZhGNY0=;
+        b=HnapPjR7Zh6KpfEptHxpz/UIoauZn4rZFFMPtfZziiozlpqnOsyK5gn4BTBT/9pTvpsVfN
+        SsRApaM4W/gH9KTsLnRCy8fBToHLiN4w3t+2ehE7XbW+QCQFlOWKuauEyXmjQV4DlkvrPr
+        kl9cm8eF5m+4k4/qUdr/oBNlkkoLSAA=
+Date:   Thu, 12 Mar 2020 15:12:16 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Kim Phillips <kim.phillips@amd.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH 2/3 RESEND] perf/amd/uncore: Prepare L3 thread mask code
+ for Family 19h support
+Message-ID: <20200312141216.GD15619@zn.tnic>
+References: <20200311191323.13124-1-kim.phillips@amd.com>
+ <20200311191323.13124-2-kim.phillips@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6e413f63-06e3-9613-97dc-ff5968a4f759@free.fr>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20200311191323.13124-2-kim.phillips@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc another Marc]
-
-On Thu, Mar 12, 2020 at 10:53:06AM +0100, Marc Gonzalez wrote:
-> On 11/03/2020 20:19, Aman Sharma wrote:
+On Wed, Mar 11, 2020 at 02:13:22PM -0500, Kim Phillips wrote:
+> In order to better accommodate the upcoming Family 19h support,
+> given the 80-char line limit, we move the existing code into a new
+> l3_thread_slice_mask function, and convert it to use the more
+> readable topology_* helper functions.
 > 
-> > diff --git a/drivers/pci/controller/pcie-tango.c b/drivers/pci/controller/pcie-tango.c
-> > index 21a208da3f59..18c2c4313eb5 100644
-> > --- a/drivers/pci/controller/pcie-tango.c
-> > +++ b/drivers/pci/controller/pcie-tango.c
-> > @@ -273,9 +273,9 @@ static int tango_pcie_probe(struct platform_device *pdev)
-> >  		writel_relaxed(0, pcie->base + SMP8759_ENABLE + offset);
-> >  
-> >  	virq = platform_get_irq(pdev, 1);
-> > -	if (virq <= 0) {
-> > +	if (virq < 0) {
-> >  		dev_err(dev, "Failed to map IRQ\n");
-> > -		return -ENXIO;
-> > +		return virq;
-> >  	}
-> >  
-> >  	irq_dom = irq_domain_create_linear(fwnode, MSI_MAX, &dom_ops, pcie);
+> Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Jiri Olsa <jolsa@redhat.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Michael Petlan <mpetlan@redhat.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: x86@kernel.org
+> ---
+> RESEND.  No changes since original submission 19 Feb 2020:
 > 
-> Weee, here we go again :-)
+> https://lkml.org/lkml/2020/2/19/1192
 > 
-> https://patchwork.kernel.org/patch/11066455/
-> https://patchwork.kernel.org/patch/10006651/
+>  arch/x86/events/amd/uncore.c | 28 +++++++++++++++++++---------
+>  1 file changed, 19 insertions(+), 9 deletions(-)
 > 
-> Last time around, my understanding was that, going forward,
-> the best solution was:
-> 
-> 	virq = platform_get_irq(...)
-> 	if (virq <= 0)
-> 		return virq ? : -ENODEV;
-> 
-> i.e. map 0 to -ENODEV, pass other errors as-is, remove the dev_err
-> 
-> @Bjorn/Lorenzo did you have a change of heart?
+> diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+> index 4d867a752f0e..e635c40ca9c4 100644
+> --- a/arch/x86/events/amd/uncore.c
+> +++ b/arch/x86/events/amd/uncore.c
+> @@ -180,6 +180,23 @@ static void amd_uncore_del(struct perf_event *event, int flags)
+>  	hwc->idx = -1;
+>  }
+>  
+> +/*
+> + * Convert logical cpu number to L3 PMC Config ThreadMask format
+> + */
+> +static u64 l3_thread_slice_mask(int cpu)
+> +{
+> +	unsigned int shift, thread = 0;
+> +	u64 thread_mask, core = topology_core_id(cpu);
+> +
+> +	if (topology_smt_supported() && !topology_is_primary_thread(cpu))
+> +		thread = 1;
+> +
+> +	shift = AMD64_L3_THREAD_SHIFT + 2 * (core % 4) + thread;
+> +	thread_mask = BIT_ULL(shift);
+> +
+> +	return AMD64_L3_SLICE_MASK | thread_mask;
+> +}
+> +
+>  static int amd_uncore_event_init(struct perf_event *event)
+>  {
+>  	struct amd_uncore *uncore;
+> @@ -206,15 +223,8 @@ static int amd_uncore_event_init(struct perf_event *event)
+>  	 * SliceMask and ThreadMask need to be set for certain L3 events in
+>  	 * Family 17h. For other events, the two fields do not affect the count.
+>  	 */
+> -	if (l3_mask && is_llc_event(event)) {
+> -		int thread = 2 * (cpu_data(event->cpu).cpu_core_id % 4);
+> -
+> -		if (smp_num_siblings > 1)
+> -			thread += cpu_data(event->cpu).apicid & 1;
+> -
+> -		hwc->config |= (1ULL << (AMD64_L3_THREAD_SHIFT + thread) &
+> -				AMD64_L3_THREAD_MASK) | AMD64_L3_SLICE_MASK;
+> -	}
+> +	if (l3_mask && is_llc_event(event))
+> +		hwc->config |= l3_thread_slice_mask(event->cpu);
+>  
+>  	uncore = event_to_amd_uncore(event);
+>  	if (!uncore)
+> -- 
 
-Yes.  In 10006651 (Oct 20, 2017), I thought:
+If you carve out functionality into a separate function and then do
+changes to that functionality, you do two patches: the first one is
+doing only the mechanical move only and the second one does the changes.
 
-  irq = platform_get_irq(pdev, 0);
-  if (irq <= 0)
-    return -ENODEV;
+Please do that with that one too.
 
-was fine.  In 11066455 (Aug 7, 2019), I said I thought I was wrong and
-that:
+-- 
+Regards/Gruss,
+    Boris.
 
-  platform_get_irq() is a generic interface and we have to be able to
-  interpret return values consistently.  The overwhelming consensus
-  among platform_get_irq() callers is to treat "irq < 0" as an error,
-  and I think we should follow suit.
-  ...
-  I think the best pattern is:
-
-    irq = platform_get_irq(pdev, i);
-    if (irq < 0)
-      return irq;
-
-I still think what I said in 2019 is the right approach.  I do see
-your comment in 10006651 about this pattern:
-
-  if (virq <= 0)
-    return virq ? : -ENODEV;
-
-but IMHO it's too complicated for general use.  Admittedly, it's not
-*very* complicated, but it's a relatively unusual C idiom and I
-stumble over it every time I see it.  If 0 is a special case I think
-it should be mapped to a negative error in arch-specific code, which I
-think is what Linus T suggested in [1].
-
-I think there's still a large consensus that "irq < 0" is the error
-case.  In the tree today we have about 1400 callers of
-platform_get_irq() and platform_get_irq_byname() [2].  Of those,
-almost 900 check for "irq < 0" [3], while only about 150 check for
-"irq <= 0" [4] and about 15 use some variant of a "irq ? : -ENODEV"
-pattern.
-
-The bottom line is that in drivers/pci, I'd like to see either a
-single style or a compelling argument for why some checks should be
-"irq < 0" and others should be "irq <= 0".
-
-[1] https://yarchive.net/comp/linux/zero.html
-[2] $ git grep "=.*platform_get_irq" | wc -l
-    1422
-[3] $ git grep -A4 "=.*platform_get_irq" | grep "<\s*0" | wc -l
-    894
-[4] $ git grep -A4 "=.*platform_get_irq" | grep "<=\s*0" | wc -l
-    151
-[5] $ git grep -A4 "=.*platform_get_irq" | grep "return.*?.*:.*;" | wc -l
-    15
+https://people.kernel.org/tglx/notes-about-netiquette
