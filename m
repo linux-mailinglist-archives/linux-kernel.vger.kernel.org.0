@@ -2,103 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D8E91832B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:20:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 513E71832B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:21:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbgCLOUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 10:20:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58400 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727390AbgCLOUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 10:20:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id CD2FCB2FA;
-        Thu, 12 Mar 2020 14:20:10 +0000 (UTC)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     boris.ostrovsky@oracle.com, jgross@suse.com,
-        sstabellini@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, jpoimboe@redhat.com
-Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        jslaby@suse.cz, Miroslav Benes <mbenes@suse.cz>
-Subject: [RFC PATCH 2/2] x86/xen: Make the secondary CPU idle tasks reliable
-Date:   Thu, 12 Mar 2020 15:20:07 +0100
-Message-Id: <20200312142007.11488-3-mbenes@suse.cz>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200312142007.11488-1-mbenes@suse.cz>
-References: <20200312142007.11488-1-mbenes@suse.cz>
+        id S1727578AbgCLOVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 10:21:08 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:32817 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727340AbgCLOVI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 10:21:08 -0400
+Received: by mail-wr1-f68.google.com with SMTP id a25so7738007wrd.0;
+        Thu, 12 Mar 2020 07:21:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=E7GG/qxk2/Ufsah3byIBSjxf9JKNhaAWtEG1t3CGtCE=;
+        b=TepIO2vTA1MMEkJNBeuhNJiRhMJ/lQwuoc1g4aB6YPiIWEoSMpY02d/Qx0MZzfr3UK
+         8MFEel+uvi8vjyvyttEhiBv/B7OxKnGLSafT4A5DYvP4xM7BAaETX4yEGfuQHjV18zwK
+         7xTo2NrnEwx5zERAvFRP3BR9tBRqb9dF1KxgeKCf9VyzPHpP9Y7GP1b0w+YQGEDyNcor
+         KxXTToWva61Cy/7fXXC7GaZyy14OSUNnor7uCY2GG/Nb+KicdE19QZuRs9TFAmIf8+nk
+         u7u8ZZi5F8J9e9mhFr3wYEnuJX6FDA8OLq4w2nt54o1n0+DDn9X2WwM66f2/cB5rEWnN
+         7PyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=E7GG/qxk2/Ufsah3byIBSjxf9JKNhaAWtEG1t3CGtCE=;
+        b=TsmXSD9DdWxiQcEJx3qlSXvfGXEE5HHqw93T1/GFtVIhIzFFm1zHik9UHXGFWcOdda
+         y6Ztm2oiqymfU+n45F768JvJhLcJGsiOKxSFVgcorhh+u0KaS1Y9mNVu47+7VQKzYYdy
+         ZNRTGwZpmQTMFBEP8YB9dO6Kv7MpfHGdCyBfGgu644mx8xxwJRmpY4HVfNR51qSHWvRi
+         3ewOQz/DMvHRkkTc4KK15J6H229Nk88a3V0I8GSzZbGFFkOuVFvOkHw4iqwdy6OloQrZ
+         yjLDJZym7zGig9JhQYTf+5hQA6nYWdTf0oHfumRpdbedzkRqlLGSCBLuQkNGiz5OgP20
+         WWaQ==
+X-Gm-Message-State: ANhLgQ3adFAbuojaMIFWbpzrK3hBBCbvSmcPdZlsvUdwMFeU2pDvSDXZ
+        q7kORIRfeWXLdluL1pg9mt8FicDtIoHzEg==
+X-Google-Smtp-Source: ADFU+vuuIQvD7fW6QOLPfSwe+z+Kn26GrxvRyKEi5YHeCnhQyewj6ePbmlkAwdtpHosI/VZfClp3CA==
+X-Received: by 2002:adf:f845:: with SMTP id d5mr10748480wrq.94.1584022865678;
+        Thu, 12 Mar 2020 07:21:05 -0700 (PDT)
+Received: from [10.7.1.8] ([37.58.58.229])
+        by smtp.gmail.com with ESMTPSA id b5sm3901243wrw.86.2020.03.12.07.21.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Mar 2020 07:21:05 -0700 (PDT)
+Subject: Re: [PATCH] gpio-hammer: Avoid potential overflow in main
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20200312094008.1833929-1-gabravier@gmail.com>
+ <CAMpxmJUUth5w8tvZp8mFV-FDz0YivmRWAqsOQSTdze1xagMX8A@mail.gmail.com>
+From:   Gabriel Ravier <gabravier@gmail.com>
+Message-ID: <38cbabe3-151b-1fd6-9d36-f27e9c9aa414@gmail.com>
+Date:   Thu, 12 Mar 2020 15:21:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMpxmJUUth5w8tvZp8mFV-FDz0YivmRWAqsOQSTdze1xagMX8A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The unwinder reports the secondary CPU idle tasks' stack on XEN PV as
-unreliable, which affects at least live patching.
-cpu_initialize_context() sets up the context of the CPU through
-VCPUOP_initialise hypercall. After it is woken up, the idle task starts
-in cpu_bringup_and_idle() function and its stack starts at the offset
-right below pt_regs. The unwinder correctly detects the end of stack
-there but it is confused by NULL return address in the last frame.
-
-RFC: I haven't found the way to teach the unwinder about the state of
-the stack there. Thus the ugly hack using assembly. Similar to what
-startup_xen() has got for boot CPU.
-
-It introduces objtool "unreachable instruction" warning just right after
-the jump to cpu_bringup_and_idle(). It should show the idea what needs
-to be done though, I think. Ideas welcome.
-
-Signed-off-by: Miroslav Benes <mbenes@suse.cz>
----
- arch/x86/xen/smp_pv.c   |  3 ++-
- arch/x86/xen/xen-head.S | 10 ++++++++++
- 2 files changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/xen/smp_pv.c b/arch/x86/xen/smp_pv.c
-index 802ee5bba66c..6b88cdcbef8f 100644
---- a/arch/x86/xen/smp_pv.c
-+++ b/arch/x86/xen/smp_pv.c
-@@ -53,6 +53,7 @@ static DEFINE_PER_CPU(struct xen_common_irq, xen_irq_work) = { .irq = -1 };
- static DEFINE_PER_CPU(struct xen_common_irq, xen_pmu_irq) = { .irq = -1 };
- 
- static irqreturn_t xen_irq_work_interrupt(int irq, void *dev_id);
-+extern unsigned char asm_cpu_bringup_and_idle[];
- 
- static void cpu_bringup(void)
- {
-@@ -309,7 +310,7 @@ cpu_initialize_context(unsigned int cpu, struct task_struct *idle)
- 	 * pointing just below where pt_regs would be if it were a normal
- 	 * kernel entry.
- 	 */
--	ctxt->user_regs.eip = (unsigned long)cpu_bringup_and_idle;
-+	ctxt->user_regs.eip = (unsigned long)asm_cpu_bringup_and_idle;
- 	ctxt->flags = VGCF_IN_KERNEL;
- 	ctxt->user_regs.eflags = 0x1000; /* IOPL_RING1 */
- 	ctxt->user_regs.ds = __USER_DS;
-diff --git a/arch/x86/xen/xen-head.S b/arch/x86/xen/xen-head.S
-index 642f346bfe02..c9a9c0bb79ed 100644
---- a/arch/x86/xen/xen-head.S
-+++ b/arch/x86/xen/xen-head.S
-@@ -56,6 +56,16 @@ SYM_CODE_START(startup_xen)
- 1:
- SYM_CODE_END(startup_xen)
- 	__FINIT
-+
-+.pushsection .text
-+SYM_CODE_START(asm_cpu_bringup_and_idle)
-+	UNWIND_HINT_EMPTY
-+
-+	push $1f
-+	jmp cpu_bringup_and_idle
-+1:
-+SYM_CODE_END(asm_cpu_bringup_and_idle)
-+.popsection
- #endif
- 
- .pushsection .text
--- 
-2.25.1
+Ah, that was accidental. I was applying scripts/Lindent to my code and 
+ended up also having it applied to part of the old code. Didn't think it 
+would hurt, but I guess it makes sense to be this stringent on 
+separating logical changes. Will send a (complete) corrected patch 
+in-reply-to this message.
 
