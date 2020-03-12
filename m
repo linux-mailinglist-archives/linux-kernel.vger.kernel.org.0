@@ -2,140 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 181C8183595
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 16:56:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECC8718358B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 16:54:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbgCLPzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 11:55:49 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41482 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726395AbgCLPzs (ORCPT
+        id S1727641AbgCLPyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 11:54:44 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39518 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727210AbgCLPyn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 11:55:48 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02CFqKGO095859;
-        Thu, 12 Mar 2020 11:55:42 -0400
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yqpyau4bt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Mar 2020 11:55:40 -0400
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02CFmSoN006877;
-        Thu, 12 Mar 2020 15:53:33 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma02wdc.us.ibm.com with ESMTP id 2ypjxrdyky-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Mar 2020 15:53:33 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02CFrXl613632074
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Mar 2020 15:53:33 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6293EAE05C;
-        Thu, 12 Mar 2020 15:53:33 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4A0ECAE062;
-        Thu, 12 Mar 2020 15:53:33 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Mar 2020 15:53:33 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org
-Cc:     aik@ozlabs.ru, david@gibson.dropbear.id.au,
-        linux-kernel@vger.kernel.org, nayna@linux.vnet.ibm.com,
-        gcwilson@linux.ibm.com, jgg@ziepe.ca,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v7 3/3] tpm: ibmvtpm: Add support for TPM2
-Date:   Thu, 12 Mar 2020 11:53:32 -0400
-Message-Id: <20200312155332.671464-4-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200312155332.671464-1-stefanb@linux.vnet.ibm.com>
-References: <20200312155332.671464-1-stefanb@linux.vnet.ibm.com>
+        Thu, 12 Mar 2020 11:54:43 -0400
+Received: by mail-ot1-f66.google.com with SMTP id a9so6780555otl.6;
+        Thu, 12 Mar 2020 08:54:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VQckKS4bw2Pbga6pTDzSkr9i3TfwNTVPnuQDLWOAQ2o=;
+        b=GTyJrd5J18rANcdI5AGiJwgRnhjS1OToaSDJ+BJEjbfQJl/UxQgrZi1CBpmwT+Nqy6
+         XYm6iMRAvd7srjSv0CoIPThYdSj3mzMY7Vvmh8cDwfXLevYWF+cq2vlegKsouPwOHK8p
+         t4e4STpInmSyUzT0Ra9MTyDCUYKaubgq58Rq8SyWs3pUrLWXiss6CY7I6hYqO9PHHTot
+         /Uusp/j7YVpUAsfmqvDou+Y3udi2fON1v1J7kfucCwGSNFy83yxG2GDsxPj7hRMhxpCg
+         69Dh1x8HKej01Tpu02ZbjGAI1OG5GAvF0BDHbqpLo5RWmxqnSc3l3cEvS/JmyUFv6zEh
+         UVpA==
+X-Gm-Message-State: ANhLgQ1dVyFwqjeUKQu5Kq7Hr3IcbOktGiN/hnJ0ZKll1TaTjLEv3Gqj
+        NMFQQnnS0FO6zD+60ajo+Q==
+X-Google-Smtp-Source: ADFU+vsGpjXso/ZYnCWUaOJlyDF4Nk3XtOo/HVgAz+QgUT8q9zV+Axq0QTIkMiZ673RL/MJBnJmIiQ==
+X-Received: by 2002:a05:6830:2361:: with SMTP id r1mr6580348oth.88.1584028482902;
+        Thu, 12 Mar 2020 08:54:42 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t15sm4318535otl.62.2020.03.12.08.54.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2020 08:54:41 -0700 (PDT)
+Received: (nullmailer pid 31196 invoked by uid 1000);
+        Thu, 12 Mar 2020 15:54:40 -0000
+Date:   Thu, 12 Mar 2020 10:54:40 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Johan Jonker <jbx6244@gmail.com>
+Cc:     heiko@sntech.de, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/5] dt-bindings: i2c: convert rockchip i2c bindings
+ to yaml
+Message-ID: <20200312155440.GA29613@bogus>
+References: <20200305143611.10733-1-jbx6244@gmail.com>
+ <20200312155044.GA25292@bogus>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-12_07:2020-03-11,2020-03-12 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- suspectscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999 adultscore=0
- phishscore=0 mlxscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003120082
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200312155044.GA25292@bogus>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+On Thu, Mar 12, 2020 at 10:50:44AM -0500, Rob Herring wrote:
+> On Thu,  5 Mar 2020 15:36:07 +0100, Johan Jonker wrote:
+> > Current dts files with 'i2c' nodes are manually verified.
+> > In order to automate this process i2c-rk3x.txt
+> > has to be converted to yaml. In the new setup
+> > i2c-rk3x.yaml will inherit properties from
+> > i2c-controller.yaml.
+> > 
+> > Also change document name in MAINTAINERS.
+> > 
+> > Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> > ---
+> >  Documentation/devicetree/bindings/i2c/i2c-rk3x.txt |  68 -----------
+> >  .../devicetree/bindings/i2c/i2c-rk3x.yaml          | 129 +++++++++++++++++++++
+> >  MAINTAINERS                                        |   2 +-
+> >  3 files changed, 130 insertions(+), 69 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-rk3x.txt
+> >  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml
+> > 
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Support TPM2 in the IBM vTPM driver. The hypervisor tells us what
-version of TPM is connected through the vio_device_id.
+As this series is all binding changes, I'll take it via the DT tree.
 
-In case a TPM2 device is found, we set the TPM_CHIP_FLAG_TPM2 flag
-and get the command codes attributes table. The driver does
-not need the timeouts and durations, though.
-
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-Acked-by: Nayna Jain <nayna@linux.ibm.com>
-Tested-by: Nayna Jain <nayna@linux.ibm.com>
----
- drivers/char/tpm/tpm.h         | 1 +
- drivers/char/tpm/tpm2-cmd.c    | 2 +-
- drivers/char/tpm/tpm_ibmvtpm.c | 8 ++++++++
- 3 files changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 2b2c225e1190..0fbcede241ea 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -226,6 +226,7 @@ int tpm2_auto_startup(struct tpm_chip *chip);
- void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type);
- unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- int tpm2_probe(struct tpm_chip *chip);
-+int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip);
- int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
- int tpm2_init_space(struct tpm_space *space);
- void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space);
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 760329598b99..76f67b155bd5 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -615,7 +615,7 @@ ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
- 	return rc;
- }
- 
--static int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip)
-+int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip)
- {
- 	struct tpm_buf buf;
- 	u32 nr_commands;
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-index cfe40e7b1ba4..1a49db9e108e 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.c
-+++ b/drivers/char/tpm/tpm_ibmvtpm.c
-@@ -29,6 +29,7 @@ static const char tpm_ibmvtpm_driver_name[] = "tpm_ibmvtpm";
- 
- static const struct vio_device_id tpm_ibmvtpm_device_table[] = {
- 	{ "IBM,vtpm", "IBM,vtpm"},
-+	{ "IBM,vtpm", "IBM,vtpm20"},
- 	{ "", "" }
- };
- MODULE_DEVICE_TABLE(vio, tpm_ibmvtpm_device_table);
-@@ -672,6 +673,13 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
- 	if (rc)
- 		goto init_irq_cleanup;
- 
-+	if (!strcmp(id->compat, "IBM,vtpm20")) {
-+		chip->flags |= TPM_CHIP_FLAG_TPM2;
-+		rc = tpm2_get_cc_attrs_tbl(chip);
-+		if (rc)
-+			goto init_irq_cleanup;
-+	}
-+
- 	if (!wait_event_timeout(ibmvtpm->crq_queue.wq,
- 				ibmvtpm->rtce_buf != NULL,
- 				HZ)) {
--- 
-2.23.0
-
+Rob
