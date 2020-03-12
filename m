@@ -2,101 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58ED51830E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:09:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF1D51830E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:11:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbgCLNJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:09:12 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46415 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbgCLNJL (ORCPT
+        id S1727194AbgCLNK7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:10:59 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:42537 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726254AbgCLNK7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:09:11 -0400
-Received: by mail-ot1-f66.google.com with SMTP id 111so6063203oth.13
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:09:11 -0700 (PDT)
+        Thu, 12 Mar 2020 09:10:59 -0400
+Received: by mail-qk1-f195.google.com with SMTP id e11so5975892qkg.9
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:10:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=pdhNSS0LwSG6340/VCqgO4fM6CVikX2mBmvb1QW6kC0=;
-        b=Df3G1AmzLPX4VgfJYDx2lXa2xLSYTyUpRBUm661Uuxbn5xWXSX2BBKwmrq1M3ZlA+q
-         FwP6nPD00Xm4VaShzrAjlnvkKx4pxaxuIdfw2lqRGjJdqTftpHRzOdtPUvIuHYY07tOV
-         jcMfYZBPtkGXDM2oBf3V3xe0iVJd9NH10mf5y0Z0XqUyD1YKcpgSd/D07aE5e+Pmhfau
-         6/vtduNwhDUOOQjJ68Z0hFQM7SZMQd98oT86UeNuLjW9uHRa7YZD9ChfaeY4TJPyZSSq
-         qDAMRVl7spbvCx1lOj2DgZW57QypSt8+QgSGKShWk8eaJK8vp3zzlB4p8Ub2AdHzTIWF
-         uecg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Fw7HC8zfyv7xlZ8Y772nkRRedqdvBOfOWFl3YVWCR/U=;
+        b=AdZtKeCPQg9PgXC0gviIyq+JosFZw/cAj9pq91dp7zf89VIQDfzUxGcjz8E8TkavhT
+         RXxwgeNdTPjfEsKrFyHeXoXs7WFrhj9ob0zHAdnhajSny3M5b/maHxghCUkR8VcOIgg8
+         s7uOi1wR/QJzem+7e/rCx/FDiXmep2ZF3NmBzvwQXQZTX9kvfEW9Fl1Zpgba+BubQ0EU
+         sFyIF4FLnctOXb1QrFeHZe455H9ZlDTzReH8Cha5blAUVyxNOr4DMlDMzccRxpGsxaLg
+         4+l1Ydhy9ahwwDJucHO68yg8M6y40megUBqte2rt2btM9CIDfaqWnmrbvt3Burx5y9Lg
+         mD4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=pdhNSS0LwSG6340/VCqgO4fM6CVikX2mBmvb1QW6kC0=;
-        b=rfdzAjmZ14F6frDQtc45TpDPf9rGuJzMgiAZqVNb+gWTMKGVAcslUa1AmH4MYBFJiz
-         gmXFvU0TIDhFhzYKAk4Ha9qy1N5/u1bMUaH0YQWAgWx9dPW63PNXwZ49ua4XWwZJ5N1Z
-         ChVcLFVJ18Mo3kHVY8IcHiOhh5oD12yQCOWEf9qmmuKOtRNCkIf1ymn9UUJItcYyuWSR
-         cZ9abOxPMhfiMf03HuWTP8ZDJTsklV9mAMHrUIT+LEI0MtxbLzU8ef+N5c38JyPkBa97
-         RNeXfbzoh8NaNGoSAhllYY+qAecrfmx8pIA8URYRRUxdcC4l1jXilQQ9RfUEIkVUBUNk
-         W79Q==
-X-Gm-Message-State: ANhLgQ1D2pRENIpfHu5BuCkDVrPfygSjRVecJn62Q95gHPhJUwfX4KUI
-        sWQ2u+4pxubUk8b7yC0ba8dlmcnXVnqUaUA1SPw=
-X-Google-Smtp-Source: ADFU+vsiwdz36R7kCJWU5GnrdTnka0ha0P0U9+AjWUjYbzL4PLQR7T7YJUmHpjX3bCiWi+SRx9iM4X2jF4dHO+Z6V60=
-X-Received: by 2002:a9d:6254:: with SMTP id i20mr6542503otk.130.1584018550750;
- Thu, 12 Mar 2020 06:09:10 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Fw7HC8zfyv7xlZ8Y772nkRRedqdvBOfOWFl3YVWCR/U=;
+        b=WviQO3rMkWUsp2Ffx2MRz2RWb/JqHxoEHGV+0j79YutKzPzc/JcmQ9cTkXG00n5prb
+         vpzX8qXw5N6BxcoVVTjJQve/FSIec+wJPzgpsTDZ9WmxkeH9SfoGegreQT/T0EfokUmM
+         Kf6gaiQBI/Gx+IRDiux2WL+X1E31+V87n7NCOY8rZtrrkYUEhTEoDR2KbWPMjA92w0D7
+         YSUx3v59BT/RAnZCebhr++jbmuW81FLyuOW3CQt2TUWM98piHVdeN1VnPCIXiUF/mgTF
+         tR5Vu2ZuPdsHhOzoDfRhGGCWeWWJJDvNV2q2WSmZltAAj+gsThXTn5WMA85A+rozv0y0
+         dSwA==
+X-Gm-Message-State: ANhLgQ29uEf+0ypBI5qyG0zKmMUjadrprvMsjLatmE4cjf30ZE3np16W
+        ZH8PzGPkJmEodgi0Lc+RdtyNBZCUfOEXRjgxBp3tNg==
+X-Google-Smtp-Source: ADFU+vsmLosOjuDP68r5eZPgol6dnmqRd+ZILVuI3Tk+l4vBb9/VptFkuJxMubd5z3NSwovTdmfxm5comn6Ihs5O5vc=
+X-Received: by 2002:a05:620a:1362:: with SMTP id d2mr7822512qkl.120.1584018652254;
+ Thu, 12 Mar 2020 06:10:52 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ac9:296e:0:0:0:0:0 with HTTP; Thu, 12 Mar 2020 06:09:10
- -0700 (PDT)
-Reply-To: antoinm93@yahoo.com
-From:   Mrs Elodie Antoine <marriammichel85@gmail.com>
-Date:   Thu, 12 Mar 2020 06:09:10 -0700
-Message-ID: <CALu+k40oRb=0LUTR2js7qotTHjO++8mpY9QprCbuqn6mk5SSpg@mail.gmail.com>
-Subject: Greetings From Mrs Elodie,
-To:     undisclosed-recipients:;
+References: <20200121134157.20396-1-sakari.ailus@linux.intel.com>
+ <20200121134157.20396-6-sakari.ailus@linux.intel.com> <CAMpxmJU5dG49N2FA0oSQsOfKrCr3KQ1BisON4c+nUJJmZQG=bQ@mail.gmail.com>
+ <20200311085555.GH5379@paasikivi.fi.intel.com>
+In-Reply-To: <20200311085555.GH5379@paasikivi.fi.intel.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Thu, 12 Mar 2020 14:10:32 +0100
+Message-ID: <CAMpxmJVPTKW+sYSJ3dnfF8nLAOKEa4Ob7bpxG0KD3Tkdm+rtYw@mail.gmail.com>
+Subject: Re: [PATCH v4 5/6] at24: Support probing while off
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     linux-i2c <linux-i2c@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-acpi@vger.kernel.org, Bingbu Cao <bingbu.cao@intel.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        Chiranjeevi Rapolu <chiranjeevi.rapolu@intel.com>,
+        Hyungwoo Yang <hyungwoo.yang@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rajmohan Mani <rajmohan.mani@intel.com>,
+        Tomasz Figa <tfiga@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings from Mrs Elodie Antoine,
+=C5=9Br., 11 mar 2020 o 09:56 Sakari Ailus <sakari.ailus@linux.intel.com> n=
+apisa=C5=82(a):
+>
+> Hi Bartosz,
+>
+> Thanks for the reply.
+>
+> On Wed, Jan 29, 2020 at 02:36:17PM +0100, Bartosz Golaszewski wrote:
+> > wt., 21 sty 2020 o 14:41 Sakari Ailus <sakari.ailus@linux.intel.com> na=
+pisa=C5=82(a):
+> > >
+> > > In certain use cases (where the chip is part of a camera module, and =
+the
+> > > camera module is wired together with a camera privacy LED), powering =
+on
+> > > the device during probe is undesirable. Add support for the at24 to
+> > > execute probe while being powered off. For this to happen, a hint in =
+form
+> > > of a device property is required from the firmware.
+> > >
+> > > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > > ---
+> > >  drivers/misc/eeprom/at24.c | 31 +++++++++++++++++++++----------
 
-Calvary Greetings in the name of the LORD Almighty and Our LORD JESUS
-CHRIST the giver of every good thing. Good day,i know this letter will
-definitely come to you as a huge surprise, but I implore you to take
-the time to go through it carefully as the decision you make will go
-off a long way to determine my future and continued existence. I am
-Mrs Elodie Antoine
-aging widow of 59 years old suffering from long time illness. I have
-some funds I inherited from my late husband,
+[snip!]
 
-The sum of (US$4.5 Million Dollars) and I needed a very honest and God
-fearing  who can withdraw this money then use the funds for Charity
-works. I WISH TO GIVE THIS FUNDS TO YOU FOR CHARITY WORKS. I found
-your email address from the internet after honest prayers  to the LORD
-to bring me a helper and i decided to contact you if you may be
-willing and interested to handle these trust funds in good faith
-before anything happens to me.
-I accept this decision because I do not have any child who will
-inherit this money after I die. I want your urgent reply to me so that
-I will give you the deposit receipt which the  COMPANY issued to me as
-next of kin for immediate transfer of the money to your account in
-your country, to start the good work of God, I want you to use the
-15/percent of the total amount to help yourself in doing the project.
+> > >
+> > >  static int at24_remove(struct i2c_client *client)
+> > >  {
+> > > +       bool low_power;
+> > > +
+> > >         pm_runtime_disable(&client->dev);
+> > > -       pm_runtime_set_suspended(&client->dev);
+> > > +       low_power =3D acpi_dev_state_low_power(&client->dev);
+> >
+> > This is inconsistent. You define the low_power field in the context
+> > structure (BTW the name low_power is a bit vague here - without
+> > looking at its assignment it would make me think it's about something
+> > battery-related, how about 'off_at_probe'?) and instead of reusing
+>
+> The field was called probe_powered_off in v1, but I changed it to
+> probe_low_power (and renamed related functions etc.) based on review
+> comments --- for the device may not be powered off actually.
+>
 
+But is it actually ever low-power? What are the possible logical
+states of the device? If I understood correctly: it's either off or on
+at probe - not actually low-power. Am I missing something? In your
+cover letter you're writing: "These patches enable calling (and
+finishing) a driver's probe function without powering on the
+respective device on busses where the practice is to power on the
+device for probe." To me there's no mention of a low-power state,
+which makes the name 'probe_low_power' seem completely unrelated.
 
-I am desperately in keen need of assistance and I have summoned up
-courage to contact you for this task, you must not fail me and the
-millions of the poor people in our todays WORLD. This is no stolen
-money and there are no dangers involved,100% RISK FREE with full legal
-proof. Please if you would be able to use the funds for the Charity
-works kindly let me know immediately.I will appreciate your utmost
-confidentiality and trust in this matter to accomplish my heart
-desire, as I don't want anything that will jeopardize my last wish. I
-want you to take 15 percent of the total money for your personal use
-while 85% of the money will go to charity.I will appreciate your
-utmost confidentiality and trust in this matter to accomplish my heart
-desire, as I don't want anything that will jeopardize my last wish.
+> > this field here, you call acpi_dev_state_low_power() again. Either
+> > don't store the context for the life-time of the device if not
+> > necessary or don't call acpi_dev_state_low_power() at remove, although
+> > the commit message doesn't describe whether the latter is done on
+> > purpose.
+>
+> Right. probe-low-power property has the same effect on remove for
+> consistency, i.e. the device can remain in low power state during remove.
+> This is documented in probe_low_power field documentation in the first
+> patch.
+>
 
+Just please don't store any state if you're not using it outside of
+the probe() function.
 
-kindly respond for further details.
-
-Thanks and God bless you,
-
-Mrs Elodie Antoine
+Bartosz
