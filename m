@@ -2,66 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 168A0182D55
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 11:21:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AE50182D5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 11:23:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbgCLKVn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 06:21:43 -0400
-Received: from smtprelay0016.hostedemail.com ([216.40.44.16]:42982 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725268AbgCLKVn (ORCPT
+        id S1726822AbgCLKXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 06:23:02 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35282 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbgCLKXC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 06:21:43 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 5C1362C94;
-        Thu, 12 Mar 2020 10:21:42 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3350:3622:3865:3866:3867:3868:3871:3872:4321:5007:6119:10004:10400:10848:11232:11658:11914:12043:12297:12679:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21433:21627:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: thumb39_48ee4dd62f451
-X-Filterd-Recvd-Size: 1674
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 12 Mar 2020 10:21:41 +0000 (UTC)
-Message-ID: <81bad451e9ffee6990ffc3571bc7b558c1c26bb3.camel@perches.com>
-Subject: Re: [PATCH -next 006/491] ARM/RISCPC ARCHITECTURE: Use fallthrough;
-From:   Joe Perches <joe@perches.com>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Date:   Thu, 12 Mar 2020 03:19:57 -0700
-In-Reply-To: <20200312101130.GX25745@shell.armlinux.org.uk>
-References: <cover.1583896344.git.joe@perches.com>
-         <fb956ff22b89ac7a7f97489b29ecf13a32de8d06.1583896348.git.joe@perches.com>
-         <20200312101130.GX25745@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Thu, 12 Mar 2020 06:23:02 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d5so6327572wrc.2;
+        Thu, 12 Mar 2020 03:23:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=R39Tv+SJk1mlAAPLn4Outf5Cn4fszK3o5vE5appptCQ=;
+        b=m/GTFAZpm1PoK9CRxkedOWz96yiMDrmJ4OJvKUBr+fD9DtdQvxc/2FFDnQEt0YStqY
+         x9SfI6ajDaK+qNuJbOFFNFVKgFEj++WBuJnMDyLLE74P628Mvp/VhGWeuX7NsqW1lexS
+         IB/gOlQ+QDU93dhY624kh22HQ7u4NKtKUweQAhTkzFPsfUbB5gaF/5IS7oGAsBPNEVF7
+         krYB/h8Capx3EfkVzEKZrKCjppeElKO4u/h4aNGiQBl90nCAp2gqRZeh8y1BDnjkqB5C
+         EFcNfeCEv9KhtVv8bhS56hRrmoHrr3M81QhL1gfOdYG2cnNmPihuI2XJu/bRry6j8WN3
+         f4bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=R39Tv+SJk1mlAAPLn4Outf5Cn4fszK3o5vE5appptCQ=;
+        b=e2NXQAvOeaFjiJxHdjpxqFtM6HQZvnLXNvUJeFbpa2zo+7UDGJwZj4kVKJZVQiu+Mq
+         PyvMd8+0tStFO4dYDdbfMjCn0le81x5Kbr8Zt7antyAMul13qQGUL5vEn8D1wv1G76WE
+         zZwh81z4Nb5KQ98J7G3uGdVfqvIlQQDesu2eujGZ3qFmgUBBvJqA7YhLAxxesxcIQumO
+         aXoelmhXf+mK/BQSPGQLn8Hho6QvDugpeUrr2TFa8MAsoACCvsYXeO5Z874I3atetb1+
+         8KTa0iBGR0xK2N2enZnDhb651MBwSo6AjyIpATViKJaGHJ6z5zCHULkcl+OX9JWNSpbA
+         i9gA==
+X-Gm-Message-State: ANhLgQ3WoqaEWrC0UYlXvVwBTV9z37pQTwqlMKd2zl/h3q299MdtFy68
+        6dhVtz0i+IoSciUddLgjdBo=
+X-Google-Smtp-Source: ADFU+vvIPiE9oEe1sZdLC6ETn26Bj3DUmMFh6IUf3SyWaySqtKrgHzYOT/xCRJ9z9STnzL9EAcaYgA==
+X-Received: by 2002:a05:6000:118c:: with SMTP id g12mr10378257wrx.341.1584008579775;
+        Thu, 12 Mar 2020 03:22:59 -0700 (PDT)
+Received: from localhost (pD9E516A9.dip0.t-ipconnect.de. [217.229.22.169])
+        by smtp.gmail.com with ESMTPSA id 98sm13500854wrm.64.2020.03.12.03.22.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2020 03:22:56 -0700 (PDT)
+Date:   Thu, 12 Mar 2020 11:22:44 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     JC Kuo <jckuo@nvidia.com>, robh@kernel.org, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+        felipe.balbi@linux.intel.com
+Subject: Re: [PATCH v1] dt-binding: usb: add "super-speed-plus"
+Message-ID: <20200312102244.GC1199023@ulmo>
+References: <20200113060046.14448-1-jckuo@nvidia.com>
+ <20200210185821.GA1057764@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5G06lTa6Jq83wMTw"
+Content-Disposition: inline
+In-Reply-To: <20200210185821.GA1057764@kroah.com>
+User-Agent: Mutt/1.13.1 (2019-12-14)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-03-12 at 10:11 +0000, Russell King - ARM Linux admin wrote:
-> On Tue, Mar 10, 2020 at 09:51:20PM -0700, Joe Perches wrote:
-> > Convert the various uses of fallthrough comments to fallthrough;
-> 
-> And the point of what on the face of it seems to be useless churn is?
-> 
-> What compilers support this?
 
-gcc 7.1, clang 9
+--5G06lTa6Jq83wMTw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-clang does not support the /* fallthrough */ comment styles.
+On Mon, Feb 10, 2020 at 10:58:21AM -0800, Greg KH wrote:
+> On Mon, Jan 13, 2020 at 02:00:46PM +0800, JC Kuo wrote:
+> > This commit adds "super-speed-plus" to valid argument list of
+> > "maximum-speed" property.
+> >=20
+> > Signed-off-by: JC Kuo <jckuo@nvidia.com>
+> > ---
+> >  Documentation/devicetree/bindings/usb/generic.txt | 9 +++++----
+> >  1 file changed, 5 insertions(+), 4 deletions(-)
+>=20
+> What ever happened to this?  Did the DT developers see it?
+>=20
+> I suggest resending please so it gets into their queue to review.
 
-clang does support the __attribute__((__fallthrough__))
-and the c++17 [[fallthrough]] weirdness.
+It's been a while and you probably noticed by now, but in case you
+haven't: Rob picked this up into the devicetree tree a few weeks ago, so
+no need to worry about this any longer.
 
-see:
+Thierry
 
-commit 294f69e662d1 ("compiler_attributes.h: Add 'fallthrough' pseudo
-keyword for switch/case use")
+--5G06lTa6Jq83wMTw
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5qDWgACgkQ3SOs138+
+s6FY5xAAwR85ce936jWef2QohmCJ3TQFWmFhJT5xrR4lenXt/X/5CRqHrY/UhFp6
+JDh8UTQytoqUiFBx6qEP6zb7uj1VsrA/dD8vw03/a8mJwSWw7P2sXZc0eSRrSC35
+G2AAq6JLGMDMcXvIGB8mwGrcrbp717KTYD8umwiBUc7qK5U1STNbMS75FzO6bRtN
+7xVk57ED6K9qA76oNVZ2EidzVPTC7l0w/5jBkNwBc3bFwPlxNL/ULtgBYjJAz041
+0s069xWv+OGZyxkG10CaRPCi2erXwYiX2WHivnQJQReY1YHVVqmOOJPTeR11YhTc
+K01Yc+bbKIpyjAPywPDV0oQrOpMb4QPPCjRFzYVJKK66UfNc/ihmlCdXFlN/51/V
+lrV/1/onTP0VKho5LJWfL7S0gJLusbhCBe0TnSnBKpF/R1PW65e6oHqvLUX+Rh/V
+dZMF90Z2JzKzMBSeh4y66GXYzyikFqqAGDt7nEPLTarIyBQD4bbggg0nF7ADVzj7
+HhfSGyCjLVlz8V4G3FN2JHguA1Htjl4We/D5BjghRWQJFBxAvVphJTFi9PDrc/yw
+CH7P4dL1INI4BqJQhxQwpXjJDs4KwS5P4axnBXx9iqXQFTYEWVxOHaX9pKOsI+ix
+cEjOltNEzaPJNS13Zm9Z+aWSdG/3BGLbFOwX7Jfuv1ISOcmBNYc=
+=k0XA
+-----END PGP SIGNATURE-----
+
+--5G06lTa6Jq83wMTw--
