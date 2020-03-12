@@ -2,136 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE648183A17
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 20:59:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 125B6183A23
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 21:03:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbgCLT7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 15:59:42 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35424 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbgCLT7m (ORCPT
+        id S1726824AbgCLUDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 16:03:40 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:57251 "EHLO
+        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726558AbgCLUDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 15:59:42 -0400
-Received: by mail-wm1-f67.google.com with SMTP id m3so7795036wmi.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 12:59:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Ob+DDAJoCv1eNbpOzJsx/saHpEetRfJlb0KnNJ3G6Og=;
-        b=X1qtGcuvtvqFLuJpd+LP+okeBAHhenV4fi3+E47XtLVTi50WomOHJaVXJwKPrIFDNz
-         2cgvozUVrPAkfJ7GJYn2XZchKUpD4GXfk7rc2yCfXHtFbfM5ntfsjQjfwWnt6GkiWKPX
-         DN6er1P1AU3isxcGno53R5S2vZ8pQgAQSPrk8emtJchUerRbWdHHszfgp6DeV03f++2Y
-         eTMbqy3iqlNvvYRKL5hu+qAhApLzaCbPp8q8xLrSjYIJc3Puu8749dkNxIFhnI/TO1w+
-         Px5ldX2pwZszdBWGLq1okMV/XR7fCGe6oaoq0UvtFaYL8U3JVT+YA3vLxWWVzCs9x3+l
-         oU6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Ob+DDAJoCv1eNbpOzJsx/saHpEetRfJlb0KnNJ3G6Og=;
-        b=iU64dwnw9wjIgmHoa+Cz/qJs+PA58BLY2Gx7ajb+lTtAuYsr/MFFngVSytBEAHYkwi
-         vSj7Bq/1Li55Pf+Z3H0DDypL203M0W4r54sBkbQjqvw4xz2b8FHgDPI7bTE/8o6knPx3
-         AZ2dCF8Z69qlIsHjrCVIm/QY+q0Zx7y6UNSygNxI2iQ3lF3WhtPVNvEGVlQ7sMwrM2Hd
-         ok9iv3FmQUrgRAzfVf746u74DZBDKpinZAr94Y89a64J1GeRfeH1C5oT8AYt4BQzt8ff
-         8FVfia/CWHob//BdECQydACMu8IOsZbOfBd23iHlgDT7UiWjZyXnRZUyn/5M0kp/dRkV
-         ESEQ==
-X-Gm-Message-State: ANhLgQ0YGjNpxrWRO3wd6GIRWZ659LWrAb1muwYFa+hHKGCpl/djdK8s
-        DYDfMZcqf6RcdXaSqpx6EQVEV3+xMb0VaA3LwXWkEQ==
-X-Google-Smtp-Source: ADFU+vtNzD+KVArkr1t+ZItRwBiWwgsZ175SQZjbBDipJcKcWr0rV2ntzewY7uSWxCh7efF2btQLS9IY5JEAkPzrMJg=
-X-Received: by 2002:a7b:cc98:: with SMTP id p24mr6032809wma.29.1584043180023;
- Thu, 12 Mar 2020 12:59:40 -0700 (PDT)
+        Thu, 12 Mar 2020 16:03:40 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.west.internal (Postfix) with ESMTP id 01F5F546;
+        Thu, 12 Mar 2020 16:03:38 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Thu, 12 Mar 2020 16:03:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=kNlnuwMcimuimNS6Jo1KZfG1Ry
+        Ya0T1T2FyiTi3yhps=; b=szEVJrm30FaD/kg1b6gDlqEtraYtSwmmiY99s5I0da
+        DGUOk1qh1OTE09WdC6mLCLKvnwvNQut4O/x60UwuZF4IDFwe3jmdgt/8LA9PYTGD
+        kxwzKXmI4aT5CzKTneRyiWrqeXubeJinvsZrpuZfntHWrYr8PYuAYUvRyrYxDEr2
+        hhTTUQGpHFh8T6sX9+fBSSVQVA8nMYCrDcR6kubfb7RsvM+WNwrxjfI1xVdgcrea
+        U3YW+agBt8/SnuDAR2xYvx0GQ09XxKv0GYhAD5BuiVr/B71wLCwZn6X/lTYjTLAf
+        +BhqrA2wa3KYPCHTzrzURJ4oSKGowhYTKTJf3UaEne6Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=kNlnuwMcimuimNS6J
+        o1KZfG1RyYa0T1T2FyiTi3yhps=; b=Jq26f0WXtdpISQKByHKqy5pAnBoRJ3Gq2
+        TLHcfPYJ0vOXBN+fiXG7IZoDj1nizaIeL6OzZ78ov0gLRplTCraQjqZm5Q+zS/dK
+        KZ5oMk2HpTRhEdRi+51+VcCtOwBGJC+3YlCVg0OYmynLAskLqJ5O9IicBq6/znfS
+        ByaiitijbhLihNKL29Z2wghfO88KgV2dES7tzhiZ6Ul8q+ZZDbdyQxhDoKrgGV8J
+        o3rNJJYkWvbdsD8SWkFJ+a3YVW0j81ireEdTP+u/AIFSEWTV5Y8iPQOzSwflsZOP
+        JCIz4ODcvsP9CLJtcLMhFJjDKa2CmR3v7rtCpsIcsbeQAAmeSSMaQ==
+X-ME-Sender: <xms:mZVqXlbRhW-UuPS_KxqETWxRqLabam2TiEgNR6d9a17xpIeXbMh3BA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedruddvhedgudefgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecufghrlhcuvffnffculdejtddmnecujfgurhephf
+    fvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeffrghnihgvlhcuighuuceougig
+    uhesugiguhhuuhdrgiihiieqnecukfhppeduieefrdduudegrddufedvrdegnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepugiguhesugiguhhu
+    uhdrgiihii
+X-ME-Proxy: <xmx:mZVqXrig4A0ckLE0JYOoxNg_NGvedkfPYh-tWWeK3CBW5KEivumZ_g>
+    <xmx:mZVqXs_QJ23jGJuvpMThk2jfEwocc3ZgTUZq32wKEhq7t2Wdl-O2qw>
+    <xmx:mZVqXjP1ZdrsTmgMIiQRfAjTXvxUS17DQEMqh9NEC_Z5bzuHTMS9IA>
+    <xmx:mpVqXnCuAq27hps2dOvVcSyHqa3DnmJCH3kINbzC6y4mvZnY03hwP1fiZqY>
+Received: from dlxu-fedora-R90QNFJV.thefacebook.com (unknown [163.114.132.4])
+        by mail.messagingengine.com (Postfix) with ESMTPA id E4D863060F09;
+        Thu, 12 Mar 2020 16:03:35 -0400 (EDT)
+From:   Daniel Xu <dxu@dxuuu.xyz>
+To:     cgroups@vger.kernel.org, tj@kernel.org, lizefan@huawei.com,
+        hannes@cmpxchg.org, viro@zeniv.linux.org.uk
+Cc:     Daniel Xu <dxu@dxuuu.xyz>, shakeelb@google.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, kernel-team@fb.com
+Subject: [PATCH v3 0/4] Support user xattrs in cgroupfs
+Date:   Thu, 12 Mar 2020 13:03:13 -0700
+Message-Id: <20200312200317.31736-1-dxu@dxuuu.xyz>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-References: <20200312155920.50067-1-glider@google.com> <20200312164922.GC21120@lakrids.cambridge.arm.com>
-In-Reply-To: <20200312164922.GC21120@lakrids.cambridge.arm.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Thu, 12 Mar 2020 20:59:28 +0100
-Message-ID: <CAG_fn=VfRW6Gi-a9WCMwoK1-Nc+i+NFLN3ZyhFAUzr-K3LeaZQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: define __alloc_zeroed_user_highpage
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 5:49 PM Mark Rutland <mark.rutland@arm.com> wrote:
->
-> On Thu, Mar 12, 2020 at 04:59:20PM +0100, glider@google.com wrote:
-> > When running the kernel with init_on_alloc=3D1, calling the default
-> > implementation of __alloc_zeroed_user_highpage() from include/linux/hig=
-hmem.h
-> > leads to double-initialization of the allocated page (first by the page
-> > allocator, then by clear_user_page().
-> > Calling alloc_page_vma() with __GFP_ZERO, similarly to e.g. x86, seems
-> > to be enough to ensure the user page is zeroed only once.
->
-> Just to check, is there a functional ussue beyond the redundant zeroing,
-> or is this jsut a performance issue?
+User extended attributes are useful as metadata storage for kernfs
+consumers like cgroups. Especially in the case of cgroups, it is useful
+to have a central metadata store that multiple processes/services can
+use to coordinate actions.
 
-This is just a performance issue that only manifests when running the
-kernel with init_on_alloc=3D1.
+A concrete example is for userspace out of memory killers. We want to
+let delegated cgroup subtree owners (running as non-root) to be able to
+say "please avoid killing this cgroup". This is especially important for
+desktop linux as delegated subtrees owners are less likely to run as
+root.
 
-> On architectures with real highmem, does GFP_HIGHUSER prevent the
-> allocator from zeroing the page in this case, or is the architecture
-> prevented from allocating from highmem?
+The first two commits set up some stuff for the third commit which
+intro introduce a new flag, KERNFS_ROOT_SUPPORT_USER_XATTR,
+that lets kernfs consumers enable user xattr support. The final commit
+turns on user xattr support for cgroupfs.
 
-I was hoping one of ARM maintainers can answer this question. My
-understanding was that __GFP_ZERO should be sufficient, but there's
-probably something I'm missing.
+Changes from v2:
+- Rephrased commit message for "kernfs: kvmalloc xattr value instead of
+  kmalloc"
 
+Changes from v1:
+- use kvmalloc for xattr values
+- modify simple_xattr_set to return removed size
+- add accounting for total user xattr size per cgroup
 
+Daniel Xu (4):
+  kernfs: kvmalloc xattr value instead of kmalloc
+  kernfs: Add removed_size out param for simple_xattr_set
+  kernfs: Add option to enable user xattrs
+  cgroupfs: Support user xattrs
 
-> Thanks,
-> Mark.
->
-> >
-> > Signed-off-by: Alexander Potapenko <glider@google.com>
-> > ---
-> >  arch/arm64/include/asm/page.h | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/pag=
-e.h
-> > index d39ddb258a049..75d6cd23a6790 100644
-> > --- a/arch/arm64/include/asm/page.h
-> > +++ b/arch/arm64/include/asm/page.h
-> > @@ -21,6 +21,10 @@ extern void __cpu_copy_user_page(void *to, const voi=
-d *from,
-> >  extern void copy_page(void *to, const void *from);
-> >  extern void clear_page(void *to);
-> >
-> > +#define __alloc_zeroed_user_highpage(movableflags, vma, vaddr) \
-> > +     alloc_page_vma(GFP_HIGHUSER | __GFP_ZERO | movableflags, vma, vad=
-dr)
-> > +#define __HAVE_ARCH_ALLOC_ZEROED_USER_HIGHPAGE
-> > +
-> >  #define clear_user_page(addr,vaddr,pg)  __cpu_clear_user_page(addr, va=
-ddr)
-> >  #define copy_user_page(to,from,vaddr,pg) __cpu_copy_user_page(to, from=
-, vaddr)
-> >
-> > --
-> > 2.25.1.481.gfbce0eb801-goog
-> >
+Daniel Xu (4):
+  kernfs: kvmalloc xattr value instead of kmalloc
+  kernfs: Add removed_size out param for simple_xattr_set
+  kernfs: Add option to enable user xattrs
+  cgroupfs: Support user xattrs
 
+ fs/kernfs/inode.c           | 91 ++++++++++++++++++++++++++++++++++++-
+ fs/kernfs/kernfs-internal.h |  2 +
+ fs/xattr.c                  | 17 +++++--
+ include/linux/kernfs.h      | 11 ++++-
+ include/linux/xattr.h       |  3 +-
+ kernel/cgroup/cgroup.c      |  3 +-
+ mm/shmem.c                  |  2 +-
+ 7 files changed, 119 insertions(+), 10 deletions(-)
 
+-- 
+2.21.1
 
---=20
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
