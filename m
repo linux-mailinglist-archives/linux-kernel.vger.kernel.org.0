@@ -2,111 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5F2518397B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 20:32:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DD7F183856
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 19:15:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbgCLTcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 15:32:31 -0400
-Received: from 6.mo7.mail-out.ovh.net ([188.165.39.218]:60798 "EHLO
-        6.mo7.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726483AbgCLTca (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 15:32:30 -0400
-X-Greylist: delayed 2399 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Mar 2020 15:32:30 EDT
-Received: from player728.ha.ovh.net (unknown [10.108.57.178])
-        by mo7.mail-out.ovh.net (Postfix) with ESMTP id BD5BE158796
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 19:13:49 +0100 (CET)
-Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
-        (Authenticated sender: steve@sk2.org)
-        by player728.ha.ovh.net (Postfix) with ESMTPSA id 7C8D11047C29C;
-        Thu, 12 Mar 2020 18:13:36 +0000 (UTC)
-From:   Stephen Kitt <steve@sk2.org>
-To:     Vinod Koul <vkoul@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Tero Kristo <t-kristo@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        dmaengine@vger.kernel.org, linux-doc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
-Subject: [PATCH] docs: driver-api/dma.../provider.rst: fix indents
-Date:   Thu, 12 Mar 2020 19:13:18 +0100
-Message-Id: <20200312181318.1368421-1-steve@sk2.org>
+        id S1726616AbgCLSPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 14:15:38 -0400
+Received: from mga17.intel.com ([192.55.52.151]:29400 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726520AbgCLSPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 14:15:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 11:15:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,545,1574150400"; 
+   d="scan'208";a="442148589"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by fmsmga005.fm.intel.com with ESMTP; 12 Mar 2020 11:15:37 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: x86: Print symbolic names of VMX VM-Exit flags in traces
+Date:   Thu, 12 Mar 2020 11:15:35 -0700
+Message-Id: <20200312181535.23797-1-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 8925290037935820104
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedruddvhedgudduvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecukfhppedtrddtrddtrddtpdekvddrieehrddvhedrvddtudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejvdekrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes some block indentations, formatting them as definitions
-(which seems appropriate given the content), and addressing these
-warnings:
+Use __print_flags() to display the names of VMX flags in VM-Exit traces
+and strip the flags when printing the basic exit reason, e.g. so that a
+failed VM-Entry due to invalid guest state gets recorded as
+"INVALID_STATE FAILED_VMENTRY" instead of "0x80000021".
 
-	Documentation/driver-api/dmaengine/provider.rst:270: WARNING: Unexpected indentation.
-	Documentation/driver-api/dmaengine/provider.rst:273: WARNING: Block quote ends without a blank line; unexpected unindent.
-	Documentation/driver-api/dmaengine/provider.rst:288: WARNING: Unexpected indentation.
-	Documentation/driver-api/dmaengine/provider.rst:290: WARNING: Block quote ends without a blank line; unexpected unindent.
+Opportunstically fix misaligned variables in the kvm_exit and
+kvm_nested_vmexit_inject tracepoints.
 
-Fixes: 7d083ae98357 ("dmaengine: doc: Add sections for per descriptor metadata support")
-Signed-off-by: Stephen Kitt <steve@sk2.org>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- Documentation/driver-api/dmaengine/provider.rst | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ arch/x86/include/uapi/asm/vmx.h |  3 +++
+ arch/x86/kvm/trace.h            | 32 +++++++++++++++++---------------
+ 2 files changed, 20 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/driver-api/dmaengine/provider.rst b/Documentation/driver-api/dmaengine/provider.rst
-index 790a15089f1f..6367a79de47d 100644
---- a/Documentation/driver-api/dmaengine/provider.rst
-+++ b/Documentation/driver-api/dmaengine/provider.rst
-@@ -260,34 +260,35 @@ descriptors. Depending on the architecture the DMA driver can implement either
- or both of the methods and it is up to the client driver to choose which one
- to use.
+diff --git a/arch/x86/include/uapi/asm/vmx.h b/arch/x86/include/uapi/asm/vmx.h
+index e95b72ec19bc..b8ff9e8ac0d5 100644
+--- a/arch/x86/include/uapi/asm/vmx.h
++++ b/arch/x86/include/uapi/asm/vmx.h
+@@ -150,6 +150,9 @@
+ 	{ EXIT_REASON_UMWAIT,                "UMWAIT" }, \
+ 	{ EXIT_REASON_TPAUSE,                "TPAUSE" }
  
--- DESC_METADATA_CLIENT
--
-+DESC_METADATA_CLIENT
-   The metadata buffer is allocated/provided by the client driver and it is
-   attached (via the dmaengine_desc_attach_metadata() helper to the descriptor.
- 
-   From the DMA driver the following is expected for this mode:
--  - DMA_MEM_TO_DEV / DEV_MEM_TO_MEM
++#define VMX_EXIT_REASON_FLAGS \
++	{ VMX_EXIT_REASONS_FAILED_VMENTRY,	"FAILED_VMENTRY" }
 +
-+  DMA_MEM_TO_DEV / DEV_MEM_TO_MEM
-     The data from the provided metadata buffer should be prepared for the DMA
-     controller to be sent alongside of the payload data. Either by copying to a
-     hardware descriptor, or highly coupled packet.
--  - DMA_DEV_TO_MEM
-+  DMA_DEV_TO_MEM
-     On transfer completion the DMA driver must copy the metadata to the client
-     provided metadata buffer before notifying the client about the completion.
-     After the transfer completion, DMA drivers must not touch the metadata
-     buffer provided by the client.
+ #define VMX_ABORT_SAVE_GUEST_MSR_FAIL        1
+ #define VMX_ABORT_LOAD_HOST_PDPTE_FAIL       2
+ #define VMX_ABORT_LOAD_HOST_MSR_FAIL         4
+diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
+index f5b8814d9f83..3cfc8d97b158 100644
+--- a/arch/x86/kvm/trace.h
++++ b/arch/x86/kvm/trace.h
+@@ -219,6 +219,14 @@ TRACE_EVENT(kvm_apic,
+ #define KVM_ISA_VMX   1
+ #define KVM_ISA_SVM   2
  
--- DESC_METADATA_ENGINE
--
-+DESC_METADATA_ENGINE
-   The metadata buffer is allocated/managed by the DMA driver. The client driver
-   can ask for the pointer, maximum size and the currently used size of the
-   metadata and can directly update or read it. dmaengine_desc_get_metadata_ptr()
-   and dmaengine_desc_set_metadata_len() is provided as helper functions.
- 
-   From the DMA driver the following is expected for this mode:
--  - get_metadata_ptr
++#define kvm_print_exit_reason(exit_reason, isa)				\
++	(isa == KVM_ISA_VMX) ?						\
++	__print_symbolic(exit_reason & 0xffff, VMX_EXIT_REASONS) :	\
++	__print_symbolic(exit_reason, SVM_EXIT_REASONS),		\
++	(isa == KVM_ISA_VMX && exit_reason & ~0xffff) ? " " : "",	\
++	(isa == KVM_ISA_VMX) ?						\
++	__print_flags(exit_reason & ~0xffff, " ", VMX_EXIT_REASON_FLAGS) : ""
 +
-+  get_metadata_ptr
-     Should return a pointer for the metadata buffer, the maximum size of the
-     metadata buffer and the currently used / valid (if any) bytes in the buffer.
--  - set_metadata_len
-+
-+  set_metadata_len
-     It is called by the clients after it have placed the metadata to the buffer
-     to let the DMA driver know the number of valid bytes provided.
+ /*
+  * Tracepoint for kvm guest exit:
+  */
+@@ -244,12 +252,10 @@ TRACE_EVENT(kvm_exit,
+ 					   &__entry->info2);
+ 	),
  
-
-base-commit: 7d3d3254adaa61cba896f71497f56901deb618e5
+-	TP_printk("vcpu %u reason %s rip 0x%lx info %llx %llx",
++	TP_printk("vcpu %u reason %s%s%s rip 0x%lx info %llx %llx",
+ 		  __entry->vcpu_id,
+-		 (__entry->isa == KVM_ISA_VMX) ?
+-		 __print_symbolic(__entry->exit_reason, VMX_EXIT_REASONS) :
+-		 __print_symbolic(__entry->exit_reason, SVM_EXIT_REASONS),
+-		 __entry->guest_rip, __entry->info1, __entry->info2)
++		  kvm_print_exit_reason(__entry->exit_reason, __entry->isa),
++		  __entry->guest_rip, __entry->info1, __entry->info2)
+ );
+ 
+ /*
+@@ -582,12 +588,10 @@ TRACE_EVENT(kvm_nested_vmexit,
+ 		__entry->exit_int_info_err	= exit_int_info_err;
+ 		__entry->isa			= isa;
+ 	),
+-	TP_printk("rip: 0x%016llx reason: %s ext_inf1: 0x%016llx "
++	TP_printk("rip: 0x%016llx reason: %s%s%s ext_inf1: 0x%016llx "
+ 		  "ext_inf2: 0x%016llx ext_int: 0x%08x ext_int_err: 0x%08x",
+ 		  __entry->rip,
+-		 (__entry->isa == KVM_ISA_VMX) ?
+-		 __print_symbolic(__entry->exit_code, VMX_EXIT_REASONS) :
+-		 __print_symbolic(__entry->exit_code, SVM_EXIT_REASONS),
++		  kvm_print_exit_reason(__entry->exit_code, __entry->isa),
+ 		  __entry->exit_info1, __entry->exit_info2,
+ 		  __entry->exit_int_info, __entry->exit_int_info_err)
+ );
+@@ -620,13 +624,11 @@ TRACE_EVENT(kvm_nested_vmexit_inject,
+ 		__entry->isa			= isa;
+ 	),
+ 
+-	TP_printk("reason: %s ext_inf1: 0x%016llx "
++	TP_printk("reason: %s%s%s ext_inf1: 0x%016llx "
+ 		  "ext_inf2: 0x%016llx ext_int: 0x%08x ext_int_err: 0x%08x",
+-		 (__entry->isa == KVM_ISA_VMX) ?
+-		 __print_symbolic(__entry->exit_code, VMX_EXIT_REASONS) :
+-		 __print_symbolic(__entry->exit_code, SVM_EXIT_REASONS),
+-		__entry->exit_info1, __entry->exit_info2,
+-		__entry->exit_int_info, __entry->exit_int_info_err)
++		  kvm_print_exit_reason(__entry->exit_code, __entry->isa),
++		  __entry->exit_info1, __entry->exit_info2,
++		  __entry->exit_int_info, __entry->exit_int_info_err)
+ );
+ 
+ /*
 -- 
 2.24.1
 
