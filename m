@@ -2,69 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63868183286
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:12:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B9ED18324A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:04:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbgCLOMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 10:12:09 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:60262 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725978AbgCLOMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 10:12:08 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 08370A387A1824FBB9C2;
-        Thu, 12 Mar 2020 22:11:53 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.487.0; Thu, 12 Mar 2020 22:11:44 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <paulus@samba.org>, <mpe@ellerman.id.au>, <tyreld@linux.ibm.com>,
-        <bhelgaas@google.com>
-CC:     <linuxppc-dev@lists.ozlabs.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
-Subject: [PATCH -next] PCI: rpaphp: remove set but not used variable 'value'
-Date:   Thu, 12 Mar 2020 22:04:12 +0800
-Message-ID: <20200312140412.32373-1-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727514AbgCLOEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 10:04:40 -0400
+Received: from mga02.intel.com ([134.134.136.20]:63187 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727123AbgCLOEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 10:04:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 07:04:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,545,1574150400"; 
+   d="scan'208";a="232063290"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga007.jf.intel.com with SMTP; 12 Mar 2020 07:04:35 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Thu, 12 Mar 2020 16:04:34 +0200
+Date:   Thu, 12 Mar 2020 16:04:34 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
+Cc:     jani.nikula@linux.intel.com, daniel@ffwll.ch,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        airlied@linux.ie, maarten.lankhorst@linux.intel.com,
+        tzimmermann@suse.de, mripard@kernel.org, mihail.atanassov@arm.com,
+        linux-kernel@vger.kernel.org, ankit.k.nautiyal@intel.com
+Subject: Re: [RFC][PATCH 0/5] Introduce drm scaling filter property
+Message-ID: <20200312140434.GG13686@intel.com>
+References: <20200225070545.4482-1-pankaj.laxminarayan.bharadiya@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200225070545.4482-1-pankaj.laxminarayan.bharadiya@intel.com>
+X-Patchwork-Hint: comment
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Tue, Feb 25, 2020 at 12:35:40PM +0530, Pankaj Bharadiya wrote:
+> Integer scaling (IS) is a nearest-neighbor upscaling technique that
+> simply scales up the existing pixels by an integer (i.e., whole
+> number) multiplier. Nearest-neighbor (NN) interpolation works by
+> filling in the missing color values in the upscaled image with that of
+> the coordinate-mapped nearest source pixel value.
+> 
+> Both IS and NN preserve the clarity of the original image. In
+> contrast, traditional upscaling algorithms, such as bilinear or
+> bicubic interpolation, result in blurry upscaled images because they
+> employ interpolation techniques that smooth out the transition from
+> one pixel to another.  Therefore, integer scaling is particularly
+> useful for pixel art games that rely on sharp, blocky images to
+> deliver their distinctive look.
+> 
+> Many gaming communities have been asking for integer-mode scaling
+> support, some links and background:
+> 
+> https://software.intel.com/en-us/articles/integer-scaling-support-on-intel-graphics
+> http://tanalin.com/en/articles/lossless-scaling/
+> https://community.amd.com/thread/209107
+> https://www.nvidia.com/en-us/geforce/forums/game-ready-drivers/13/1002/feature-request-nonblurry-upscaling-at-integer-rat/
+> 
+> This patch series -
+>   - Introduces new scaling filter property to allow userspace to
+>     select  the driver's default scaling filter or Nearest-neighbor(NN)
+>     filter for scaling operations on crtc/plane.
+>   - Implements and enable integer scaling for i915
+> 
+> Userspace patch series link: TBD.
 
-drivers/pci/hotplug/rpaphp_core.c: In function is_php_type:
-drivers/pci/hotplug/rpaphp_core.c:291:16: warning:
-	variable value set but not used [-Wunused-but-set-variable]
+That needs to be done or this will go nowhere.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
----
- drivers/pci/hotplug/rpaphp_core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> Thanks to Shashank for initiating this work. His initial RFC can be
+> found here [1]
+> 
+> [1] https://patchwork.freedesktop.org/patch/337082/
+> 
+> Modifications done in this series -
+>    - refactored code and incorporated initial review comments and
+>      added 2 scaling filter types (default and NN) to begin with.
+>    - added scaling filter property support for planes and new API
+>      helpers for drivers to setup this property.
+>    - rewrote code to enable integer scaling and NN filter for i915
+> 
+> 
+> Pankaj Bharadiya (5):
+>   drm: Introduce scaling filter property
+>   drm/drm-kms.rst: Add Scaling filter property documentation
+>   drm/i915: Enable scaling filter for plane and pipe
+>   drm/i915: Introduce scaling filter related registers and bit fields.
+>   drm/i915/display: Add Nearest-neighbor based integer scaling support
+> 
+>  Documentation/gpu/drm-kms.rst                |   6 ++
+>  drivers/gpu/drm/drm_atomic_uapi.c            |   8 ++
+>  drivers/gpu/drm/drm_crtc.c                   |  16 +++
+>  drivers/gpu/drm/drm_mode_config.c            |  13 +++
+>  drivers/gpu/drm/drm_plane.c                  |  35 +++++++
+>  drivers/gpu/drm/i915/display/intel_display.c | 100 ++++++++++++++++++-
+>  drivers/gpu/drm/i915/display/intel_display.h |   2 +
+>  drivers/gpu/drm/i915/display/intel_sprite.c  |  32 ++++--
+>  drivers/gpu/drm/i915/i915_reg.h              |  21 ++++
+>  include/drm/drm_crtc.h                       |  10 ++
+>  include/drm/drm_mode_config.h                |   6 ++
+>  include/drm/drm_plane.h                      |  14 +++
+>  12 files changed, 252 insertions(+), 11 deletions(-)
+> 
+> -- 
+> 2.23.0
 
-diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
-index e408e40..5d871ef 100644
---- a/drivers/pci/hotplug/rpaphp_core.c
-+++ b/drivers/pci/hotplug/rpaphp_core.c
-@@ -288,11 +288,10 @@ EXPORT_SYMBOL_GPL(rpaphp_check_drc_props);
- 
- static int is_php_type(char *drc_type)
- {
--	unsigned long value;
- 	char *endptr;
- 
- 	/* PCI Hotplug nodes have an integer for drc_type */
--	value = simple_strtoul(drc_type, &endptr, 10);
-+	simple_strtoul(drc_type, &endptr, 10);
- 	if (endptr == drc_type)
- 		return 0;
- 
 -- 
-2.7.4
-
+Ville Syrjälä
+Intel
