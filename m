@@ -2,105 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2F32182E62
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 11:57:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CA44182E75
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 12:01:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbgCLK5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 06:57:12 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:50366 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbgCLK5L (ORCPT
+        id S1726952AbgCLLBb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 07:01:31 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:17232 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726873AbgCLLBa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 06:57:11 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02CAqmUY193383;
-        Thu, 12 Mar 2020 10:56:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=bkTFwY/qkC759TzSl4/piySpqybsugf2XPINCYC//uQ=;
- b=TPFkUlGE55eqlOfEjmgMk6Y5fEgFjP3XiS0HxMLRgvhemaZGv69xf48ebj6Vs4EYTqxn
- XtNOgN9w9NUbOTFDz8SMhn0MynqGz3wuoU0tEhuLs1iitTpWNVg0SRkf16ZTmRn1AdUq
- Hs0AXoipTxPVcrtM9u1pA4wiNdJMM5Lfdc22yump9vGmJbI9qu26PcVPOQxVsMr2OQRA
- tUg5nUrb62GEBUoi/NKZNdXzg2J19tuFAUNQ8PpvzGqFCn1jIkLwVSJrlKg47a59M8up
- kjxrZwr1AP8NENWtjyR21aJkQCNl1JPzOLXtFnRELHQh+l5f5u3mYgjPevCFgQQHvdoQ hg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2ym31urwb7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Mar 2020 10:56:47 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02CAq7Sj143760;
-        Thu, 12 Mar 2020 10:56:47 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2yqgvcnj54-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Mar 2020 10:56:47 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02CAujKB029016;
-        Thu, 12 Mar 2020 10:56:45 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 12 Mar 2020 03:56:44 -0700
-Date:   Thu, 12 Mar 2020 13:56:37 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ian Rogers <irogers@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] perf/core: Fix reversed NULL check in
- perf_event_groups_less()
-Message-ID: <20200312105637.GA8960@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9557 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
- phishscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003120059
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9557 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 lowpriorityscore=0
- spamscore=0 priorityscore=1501 impostorscore=0 bulkscore=0 suspectscore=0
- phishscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003120059
+        Thu, 12 Mar 2020 07:01:30 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id 02CB0sYZ023841;
+        Thu, 12 Mar 2020 20:00:54 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com 02CB0sYZ023841
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1584010854;
+        bh=FK3Dt+IairXqZAlzwKaf65fT4pceVw/ymV+lEzpyvwU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=EPjbWq5S+60gnW/GYriRfzYFGC2zf6zQ5YieJb+cQ1Dq9ySFcxQEB1ryLpMJVpmKX
+         PlFchPDONqqgWYSmFqi0hQtKrSzErg+bON8yWo1z3RQpzC4rj+4+viBBWvSk3v/QIp
+         3JunNIcBKwZD4+sTnd3Ud5g91eHx6jz9mI5tzd5dnUKLBWhHN9KGByDMk0bUZ6BLLn
+         hSHn84Kiv91gk1urV9DhzdNlAmkt36BK9KXagq6P3+4P84A9++tXD7PraqTABNGemk
+         gZ4+xJeLJluiSq4XzDUavJmtAZad7s/FFJZuRMvc+RO31+PRzhY2bh9lqTnXOQGm1I
+         OuvsYkLU9a48g==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mmc: sdhci: use FIELD_GET for preset value bit masks
+Date:   Thu, 12 Mar 2020 20:00:50 +0900
+Message-Id: <20200312110050.21732-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This NULL check is reversed so it leads to a Smatch warning and
-presumably a NULL dereference.
+Use the FIELD_GET macro to get access to the register fields.
+Delete the shift macros.
 
-    kernel/events/core.c:1598 perf_event_groups_less()
-    error: we previously assumed 'right->cgrp->css.cgroup' could be null
-	(see line 1590)
-
-Fixes: 95ed6c707f26 ("perf/cgroup: Order events in RB tree by cgroup id")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- kernel/events/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 6a47c3e54fe9..607c04ec7cfa 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1587,7 +1587,7 @@ perf_event_groups_less(struct perf_event *left, struct perf_event *right)
- 			 */
- 			return true;
+ drivers/mmc/host/sdhci.c | 10 +++++-----
+ drivers/mmc/host/sdhci.h | 10 ++++------
+ 2 files changed, 9 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 63db84481dff..aec6692615c8 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -9,6 +9,7 @@
+  *     - JMicron (hardware and technical support)
+  */
+ 
++#include <linux/bitfield.h>
+ #include <linux/delay.h>
+ #include <linux/dmaengine.h>
+ #include <linux/ktime.h>
+@@ -1766,10 +1767,9 @@ u16 sdhci_calc_clk(struct sdhci_host *host, unsigned int clock,
+ 
+ 			clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+ 			pre_val = sdhci_get_preset_value(host);
+-			div = (pre_val & SDHCI_PRESET_SDCLK_FREQ_MASK)
+-				>> SDHCI_PRESET_SDCLK_FREQ_SHIFT;
++			div = FIELD_GET(SDHCI_PRESET_SDCLK_FREQ_MASK, pre_val);
+ 			if (host->clk_mul &&
+-				(pre_val & SDHCI_PRESET_CLKGEN_SEL_MASK)) {
++				(pre_val & SDHCI_PRESET_CLKGEN_SEL)) {
+ 				clk = SDHCI_PROG_CLOCK_MODE;
+ 				real_div = div + 1;
+ 				clk_mul = host->clk_mul;
+@@ -2227,8 +2227,8 @@ void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 
+ 			sdhci_enable_preset_value(host, true);
+ 			preset = sdhci_get_preset_value(host);
+-			ios->drv_type = (preset & SDHCI_PRESET_DRV_MASK)
+-				>> SDHCI_PRESET_DRV_SHIFT;
++			ios->drv_type = FIELD_GET(SDHCI_PRESET_DRV_MASK,
++						  preset);
  		}
--		if (!right->cgrp || right->cgrp->css.cgroup) {
-+		if (!right->cgrp || !right->cgrp->css.cgroup) {
- 			/*
- 			 * Right has no cgroup but left does, no cgroups come
- 			 * first.
+ 
+ 		/* Re-enable SD Clock */
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index a6a3ddcf97e7..abdcefee24cb 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -9,6 +9,7 @@
+ #ifndef __SDHCI_HW_H
+ #define __SDHCI_HW_H
+ 
++#include <linux/bits.h>
+ #include <linux/scatterlist.h>
+ #include <linux/compiler.h>
+ #include <linux/types.h>
+@@ -267,12 +268,9 @@
+ #define SDHCI_PRESET_FOR_SDR104        0x6C
+ #define SDHCI_PRESET_FOR_DDR50 0x6E
+ #define SDHCI_PRESET_FOR_HS400 0x74 /* Non-standard */
+-#define SDHCI_PRESET_DRV_MASK  0xC000
+-#define SDHCI_PRESET_DRV_SHIFT  14
+-#define SDHCI_PRESET_CLKGEN_SEL_MASK   0x400
+-#define SDHCI_PRESET_CLKGEN_SEL_SHIFT	10
+-#define SDHCI_PRESET_SDCLK_FREQ_MASK   0x3FF
+-#define SDHCI_PRESET_SDCLK_FREQ_SHIFT	0
++#define SDHCI_PRESET_DRV_MASK		GENMASK(15, 14)
++#define SDHCI_PRESET_CLKGEN_SEL		BIT(10)
++#define SDHCI_PRESET_SDCLK_FREQ_MASK	GENMASK(9, 0)
+ 
+ #define SDHCI_SLOT_INT_STATUS	0xFC
+ 
 -- 
-2.20.1
+2.17.1
 
