@@ -2,174 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CC9C182732
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 03:59:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 347DB182739
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 04:00:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387739AbgCLC7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 22:59:02 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:33326 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387680AbgCLC7B (ORCPT
+        id S2387750AbgCLDA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 23:00:29 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37176 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387453AbgCLDA1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 22:59:01 -0400
-Received: by mail-il1-f196.google.com with SMTP id k29so4122860ilg.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 19:59:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TNSqdH25rkbZXOC4Ox8uRLT2VEOtuEyZ2dHYonNu/QI=;
-        b=Aq4ppv/J7eWg+XOWpPvu2fVq/Y33XVySaPn7s+6X5oJE9G6zQt2h1+GpCGrKpVUopP
-         GXlgVXJzDiG2PZoxTOqhy1tIN3Pqy7qT0Urw0U8NtnVyg8rO9mfwIjxWdfqAvzeLHu9z
-         kLmtAFITp6j6hSm9G50l0Mhfs75bsd7QAsKW9j83Y7oSZQHdSIynL+NAVmahGZLvcHKG
-         1FwyVXyA31B7jkVvsmtF0g3cR8Q8n1JmF0zrGqEwb689B7zA0P9g7WCu1Yb3jC+wGOKk
-         dzi575hgyZAUirhW157cKBzWVQjyBD1H0M5E8JhoF6Z+dpAfBujQZ2tl8oyY7CUamweI
-         mxwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TNSqdH25rkbZXOC4Ox8uRLT2VEOtuEyZ2dHYonNu/QI=;
-        b=MNBfRjfYGicrKSuQQngxwb1MSKCGN6KdBOUnz9LZVfzKlPtNhhw8RVCHIf3kz3xOEe
-         SfcOQPm9wH1+joADwVaqCRvPCpZeV/De+aP05+7k0gjdUA7JLPnLRBEc9AmFWacwZcBc
-         IyUmjgiEyKf5hiJ5cJMTJ3TEpUqPjqz7C+JsXY14NsPVP9DZkEv6jhBBS62AcTzsBdX/
-         TUMlV4xfh0+AjhHxC+AgjtAuxcRKQmlm44WgWoDsGBp1WA0dpvaq7bIaLwcs1WGZHTGo
-         i3znG8sDYCGXsZXAGHMKPxblb5x0pxGVx6RibvhucPAZyE6Wh9cojFpm931TPO16Ja1I
-         UlwQ==
-X-Gm-Message-State: ANhLgQ1RIqGsoGY8pYHyx0WwUM6maQLQoYYWn0qDqca7JWRA3CFWjPRa
-        IsqVziopgZYs8TS4VQ3Ck3V315HTKxk=
-X-Google-Smtp-Source: ADFU+vsWFFw1PIFdHwO+VpEKjeZH77nIStlDYCQY0Ffmx86909VW1lzaWSIaX0kvVx6B1LLbVJa4cA==
-X-Received: by 2002:a92:d341:: with SMTP id a1mr6128327ilh.257.1583981939682;
-        Wed, 11 Mar 2020 19:58:59 -0700 (PDT)
-Received: from [172.22.22.26] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.googlemail.com with ESMTPSA id j19sm2058397ioj.41.2020.03.11.19.58.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 19:58:59 -0700 (PDT)
-Subject: Re: [PATCH 1/4] remoteproc: re-check state in
- rproc_trigger_recovery()
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Andy Gross <agross@kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200228183359.16229-1-elder@linaro.org>
- <20200228183359.16229-2-elder@linaro.org> <20200309205633.GF1399@xps15>
- <20200311234409.GH14744@builder>
-From:   Alex Elder <elder@linaro.org>
-Message-ID: <7133ea1c-d50b-a0a0-ab7f-7c99d74771d0@linaro.org>
-Date:   Wed, 11 Mar 2020 21:58:54 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 11 Mar 2020 23:00:27 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02C2xLP7175694;
+        Thu, 12 Mar 2020 03:00:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : to : cc : subject : references : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=Qo/MY1wia4ChrahGN998AHrVHZxgV5G79qHPQfknXEE=;
+ b=upJxzfwZ0MvxTTGNmjZzcj2xWiYLF/vQCjx9sW0pIebH103o6ghhWrKm0de2cyNMkqlj
+ qQlIbNE2HJKH+nkuRN22bYXoyOeWnNi27y3Obp1t8sTgA1gjmqo/r68aqW49SWXqsioT
+ qYxrT3o3q2HGD6gJVuW3XAM4DRuqX5OdyOKdgEjGM3MQC6iAgjkY99G2fY5WNY0urmgq
+ 0DS/CBfH81dBRFPxzj53nFzg0bzQlLSW3PTHT3JagGqvMkU+3T0qUVWM+Cf+yhzBCcSv
+ 8H3o5CBNfwHub1ILPe5qAlR5QZ1mu4Wt4AEMv4w1m8BFrNBNWK6Ya1Ms0U7fVVTzLRWf /A== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2yp7hmbek7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Mar 2020 03:00:16 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02C2wfD3017433;
+        Thu, 12 Mar 2020 03:00:15 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2yp8q1thc4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Mar 2020 03:00:15 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02C30CLw018920;
+        Thu, 12 Mar 2020 03:00:12 GMT
+Received: from localhost (/10.159.134.61) by default (Oracle Beehive Gateway
+ v4.0) with ESMTP ; Wed, 11 Mar 2020 20:00:11 -0700
+USER-AGENT: Mutt/1.9.4 (2018-02-28)
 MIME-Version: 1.0
-In-Reply-To: <20200311234409.GH14744@builder>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Message-ID: <20200312030009.GJ8045@magnolia>
+Date:   Wed, 11 Mar 2020 20:00:09 -0700 (PDT)
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Ira Weiny <ira.weiny@intel.com>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH V5 00/12] Enable per-file/per-directory DAX operations V5
+References: <20200227052442.22524-1-ira.weiny@intel.com>
+ <20200305155144.GA5598@lst.de>
+ <20200309170437.GA271052@iweiny-DESK2.sc.intel.com>
+ <20200311033614.GQ1752567@magnolia>
+ <20200311063942.GE10776@dread.disaster.area> <20200311064412.GA11819@lst.de>
+ <20200312004932.GH10776@dread.disaster.area>
+In-Reply-To: <20200312004932.GH10776@dread.disaster.area>
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9557 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
+ mlxlogscore=999 bulkscore=0 suspectscore=0 mlxscore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003120013
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9557 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0
+ priorityscore=1501 clxscore=1015 mlxscore=0 impostorscore=0
+ mlxlogscore=999 suspectscore=0 phishscore=0 malwarescore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003120013
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/11/20 6:44 PM, Bjorn Andersson wrote:
-> On Mon 09 Mar 13:56 PDT 2020, Mathieu Poirier wrote:
+On Thu, Mar 12, 2020 at 11:49:32AM +1100, Dave Chinner wrote:
+> On Wed, Mar 11, 2020 at 07:44:12AM +0100, Christoph Hellwig wrote:
+> > On Wed, Mar 11, 2020 at 05:39:42PM +1100, Dave Chinner wrote:
+> > > IOWs, the dax_associate_page() related functionality probably needs
+> > > to be a filesystem callout - part of the aops vector, I think, so
+> > > that device dax can still use it. That way XFS can go it's own way,
+> > > while ext4 and device dax can continue to use the existing mechanism
+> > > mechanisn that is currently implemented....
+> > 
+> > s/XFS/XFS with rmap/, as most XFS file systems currently don't have
+> > that enabled we'll also need to keep the legacy path around.
 > 
->> On Fri, Feb 28, 2020 at 12:33:56PM -0600, Alex Elder wrote:
->>> Two places call rproc_trigger_recovery():
->>>   - rproc_crash_handler_work() sets rproc->state to CRASHED under
->>>     protection of the mutex, then calls it if recovery is not
->>>     disabled.  This function is called in workqueue context when
->>>     scheduled in rproc_report_crash().
->>>   - rproc_recovery_write() calls it in two spots, both of which
->>>     the only call it if the rproc->state is CRASHED.
->>>
->>> The mutex is taken right away in rproc_trigger_recovery().  However,
->>> by the time the mutex is acquired, something else might have changed
->>> rproc->state to something other than CRASHED.
->>
->> I'm interested in the "something might have changed" part.  The only thing I can
->> see is if rproc_trigger_recovery() has been called from debugfs between the time
->> the mutex is released but just before rproc_trigger_recovery() is called in
->> rproc_crash_handler_work().  In this case we would be done twice, something your
->> patch prevents.  Have you found other scenarios?
-
-Sorry I didn't respond earlier, I was on vacation and was
-actively trying to avoid getting sucked into work...
-
-I don't expect my answer here will be very satisfying.
-
-I implemented this a long time ago and don't remember all
-the details. But regardless, if one case permits the crash
-handler to be run twice for a single crash, that's one case
-too many.
-
-I started doing some analysis but have stopped for now
-because Bjorn has already decided to accept it.  If you
-want me to provide some more detail just say so and I'll
-spend a little more time on it tomorrow.
-
-					-Alex
-
-> Alex is right, by checking rproc->state outside of the lock
-> rproc_recovery_write() allows for multiple contexts to enter
-> rproc_trigger_recovery() at once.
+> Sure, that's trivially easy to handle in the XFS code once the
+> callouts are in place.
 > 
-> Further more, these multiple context will be held up at the
-> mutex_lock_interruptible() and as each one completes the recovery the
-> subsequent ones will stop the rproc, generate a coredump and then start
-> it again.
-> 
-> 
-> This patch would be to fix the latter problem and allows the next patch
-> to move the check in the debugfs interface in under the mutex. As such
-> I've picked up patch 1, 2 and 4.
-> 
-> Regards,
-> Bjorn
-> 
->> Thanks,
->> Mathieu
->>
->>>
->>> The work that follows that is only appropriate for a remoteproc in
->>> CRASHED state.  So check the state after acquiring the mutex, and
->>> only proceed with the recovery work if the remoteproc is still in
->>> CRASHED state.
->>>
->>> Delay reporting that recovering has begun until after we hold the
->>> mutex and we know the remote processor is in CRASHED state.
->>>
->>> Signed-off-by: Alex Elder <elder@linaro.org>
->>> ---
->>>  drivers/remoteproc/remoteproc_core.c | 12 ++++++++----
->>>  1 file changed, 8 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->>> index 097f33e4f1f3..d327cb31d5c8 100644
->>> --- a/drivers/remoteproc/remoteproc_core.c
->>> +++ b/drivers/remoteproc/remoteproc_core.c
->>> @@ -1653,12 +1653,16 @@ int rproc_trigger_recovery(struct rproc *rproc)
->>>  	struct device *dev = &rproc->dev;
->>>  	int ret;
->>>  
->>> +	ret = mutex_lock_interruptible(&rproc->lock);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	/* State could have changed before we got the mutex */
->>> +	if (rproc->state != RPROC_CRASHED)
->>> +		goto unlock_mutex;
->>> +
->>>  	dev_err(dev, "recovering %s\n", rproc->name);
->>>  
->>> -	ret = mutex_lock_interruptible(&rproc->lock);
->>> -	if (ret)
->>> -		return ret;
->>> -
->>>  	ret = rproc_stop(rproc, true);
->>>  	if (ret)
->>>  		goto unlock_mutex;
->>> -- 
->>> 2.20.1
->>>
+> But, quite frankly, we can enforce rmap to be enabled 
+> enabled because nobody is using a reflink enabled FS w/ DAX right
+> now. Everyone will have to mkfs their filesystems anyway to enable
+> reflink+dax, so we simply don't allow reflink+dax to be enabled
+> unless rmap is also enabled. Simple, easy, trivial.
 
+Heh, this reminds me that I need to get that rmap performance analysis
+report out to the list... it does have a fairly substantial performance
+impact (in its current not-terribly-optimized state) but otoh enables
+self-repair.
+
+--D
+
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
