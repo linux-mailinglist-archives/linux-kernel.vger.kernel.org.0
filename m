@@ -2,161 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EFB81829B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 08:26:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8821A1829BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 08:27:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388128AbgCLH0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 03:26:09 -0400
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:40639 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387930AbgCLH0I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 03:26:08 -0400
-Received: from [192.168.2.10] ([46.9.234.233])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id CIEEjX3RN9Im2CIEHjieaT; Thu, 12 Mar 2020 08:26:06 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1583997966; bh=cpKBziwmXVZm4TJr31kqddsze26dRQVt0z6dUA4yVow=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=WfwI7a8aIRBgaETVwTmZyntAx2Q5uC5R/cCiXQMubf9L5i6hwTfzyH0wpmsUmVnAn
-         8Ts7Clbswhf6NW2YgXWu+695XJWdNNEj0wjNDgmBBBbCfxugW3k1cv5YFBLo/Jjrip
-         Tp9G8iSmtS4s3qibfJzov3jP1wN4hru6/hYqATWvs4mdc3+WclIwSnMaeRxHyZvE7C
-         5k+0DK6n7vxokKQ7fFN4vxd0tu1Mk2LMRCKynIgyElrQUPbp0/RkYRNN2pFrQ4KeZd
-         IdUtd9r1FOCJ3rRzozk2sDkFN3VC2qy4JmOen2x1Ia2NJOluMmk6N2BykXYoBt5rTS
-         HnUeFVDflz16g==
-Subject: Re: [PATCH v2 20/22] media: docs: move driver-specific info to
- driver-api
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        linux-media@vger.kernel.org, Mike Isely <isely@pobox.com>,
-        Andy Walls <awalls@md.metrocast.net>,
-        Antti Palosaari <crope@iki.fi>,
-        Malcolm Priestley <tvboxspy@gmail.com>,
-        Michael Krufky <mkrufky@linuxtv.org>
-References: <cover.1583847556.git.mchehab+huawei@kernel.org>
- <5dc2f7a4f15397d5e811d5bb8d110ee53135cf07.1583847557.git.mchehab+huawei@kernel.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <f321b1c7-4163-10b6-8fe5-fea66aac69cd@xs4all.nl>
-Date:   Thu, 12 Mar 2020 08:26:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S2388123AbgCLH1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 03:27:43 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:36763 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387898AbgCLH1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 03:27:43 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48dL582Qy8z9sP7;
+        Thu, 12 Mar 2020 18:27:40 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1583998060;
+        bh=c+rAYHbp+CWwrpwAgZbZp1cZ0QKLCcf5lW53irVv3PI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=OzGXpN/7wXBQU6t1aFaQaVvZO+aL1CGyxX0Uui0vFCpb7+8QLws07oX+UgD1SBIfI
+         VKxJ4huhnbN/rZAy1UhMyA8uJvgjkjC8EUzz6ps+v+4VWWCRurrsRTsbeFDJkinHcz
+         uxukrM8bx21Ciicge6j2Gl89GfbEJYmIxZ2/GNClVa2CmrGFwaszk7Qz1weyrYTHcR
+         j6Q4FKdDxMGmTBIWvEiWWfks5ivC1jfEm7rI53U4gYrtNLFrQzW/stEoCiicMthUC+
+         A1Cl/4x3T8yMgu3ObF0K+gacLPof8r5pPLIk/Q9md0MNOkeCzdXofpwf09BltQyqxL
+         NMQ+pu4J8gwOQ==
+Date:   Thu, 12 Mar 2020 18:27:25 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>
+Subject: linux-next: build warning after merge of the akpm-current tree
+Message-ID: <20200312182725.618ca518@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <5dc2f7a4f15397d5e811d5bb8d110ee53135cf07.1583847557.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfAWcyoNLtx3vjilk1UNvlXj/XMt0S1hpEFqOzWuqxQ50S9q+Zc+yn0SvmPcZwVjQBYAAzw3/SuGvOPqF7ZtFmltM4oE91/cudx07IZV6sOJ778T55Tz6
- cBt+pSVCsz0nQFU1rtHkpXhK0USNiZ2FlyQQw1tvc/XTKU4xTtEw9DFxKh1IXQRq9yu2UiFsdqoRNHIoiFNQPCYAik5Dc5NU1uc7xPKgXbnJrs5V7mNZdCS2
- RloIDB8Jy+E1l97YRtvM6jhfLoIMy251CKM1ab56qabnRWzRrYIgpqKpGmNq97gCCOL0VnA103NO3j7YRk00uouOgcAyiMH2q8VMDb/rf1FFMdbL1enqWAKk
- bVJXxhBOLVkd6vPUREtsMmwJUOyVbk3EJz0wlSxjEuwLtfrfdfJRszrR3vGpt57p5M/og5hrxe+LZTVZ4g0erw5w4OC3KUWjZg4YNQlj5sBDBNpq/jY=
+Content-Type: multipart/signed; boundary="Sig_/6AnB0cUAvhJeWDf2gBGAu8J";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/10/20 2:43 PM, Mauro Carvalho Chehab wrote:
-> Those documents don't really describe the driver API.
-> 
-> Instead, they contain development-specific information.
-> 
-> Yet, as the main index file describes the content of it as:
-> 
-> 	"how specific kernel subsystems work
-> 	 from the point of view of a kernel developer"
-> 
-> It seems to be the better fit.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  .../media/drivers}/bttv-devel.rst             |  0
->  .../media/drivers}/contributors.rst           |  0
->  .../media/drivers}/cpia2_devel.rst            |  0
->  .../media/drivers}/cx2341x-devel.rst          |  0
->  .../media/drivers}/cx88-devel.rst             |  0
->  .../media/drivers}/davinci-vpbe-devel.rst     |  0
->  .../media/drivers}/dvb-usb.rst                |  0
->  .../media/drivers}/fimc-devel.rst             |  0
->  .../media/drivers}/frontends.rst              |  0
->  .../media/drivers}/index.rst                  | 29 ++++++++++++++++++-
->  .../media/drivers}/pvrusb2.rst                |  0
->  .../media/drivers}/pxa_camera.rst             |  0
->  .../media/drivers}/radiotrack.rst             |  0
->  .../media/drivers}/saa7134-devel.rst          |  0
->  .../media/drivers}/sh_mobile_ceu_camera.rst   |  0
->  .../media/drivers}/tuners.rst                 |  0
->  .../media/drivers}/vimc-devel.rst             |  0
->  Documentation/driver-api/media/index.rst      |  2 ++
->  Documentation/media/index.rst                 |  1 -
->  Documentation/media/v4l-drivers/index.rst     | 14 ---------
->  MAINTAINERS                                   |  8 ++---
->  drivers/media/dvb-frontends/dib3000.h         |  2 +-
->  drivers/media/dvb-frontends/dib3000mb.c       |  2 +-
->  drivers/media/dvb-frontends/eds1547.h         |  2 +-
->  drivers/media/dvb-frontends/z0194a.h          |  2 +-
->  drivers/media/pci/cx18/cx18-streams.c         |  4 +--
->  drivers/media/platform/pxa_camera.c           |  4 +--
->  drivers/media/radio/Kconfig                   |  2 +-
->  drivers/media/usb/dvb-usb-v2/Kconfig          |  2 +-
->  drivers/media/usb/dvb-usb-v2/gl861.c          |  2 +-
->  drivers/media/usb/dvb-usb-v2/lmedm04.c        |  2 +-
->  drivers/media/usb/dvb-usb-v2/lmedm04.h        |  2 +-
->  drivers/media/usb/dvb-usb-v2/mxl111sf.c       |  2 +-
->  drivers/media/usb/dvb-usb-v2/mxl111sf.h       |  2 +-
->  drivers/media/usb/dvb-usb/Kconfig             |  2 +-
->  drivers/media/usb/dvb-usb/a800.c              |  2 +-
->  drivers/media/usb/dvb-usb/af9005-fe.c         |  2 +-
->  drivers/media/usb/dvb-usb/af9005-remote.c     |  2 +-
->  drivers/media/usb/dvb-usb/af9005.c            |  2 +-
->  drivers/media/usb/dvb-usb/af9005.h            |  2 +-
->  drivers/media/usb/dvb-usb/az6027.c            |  2 +-
->  drivers/media/usb/dvb-usb/cxusb.c             |  2 +-
->  drivers/media/usb/dvb-usb/dibusb-common.c     |  2 +-
->  drivers/media/usb/dvb-usb/dibusb-mb.c         |  2 +-
->  drivers/media/usb/dvb-usb/dibusb-mc-common.c  |  2 +-
->  drivers/media/usb/dvb-usb/dibusb-mc.c         |  2 +-
->  drivers/media/usb/dvb-usb/dibusb.h            |  2 +-
->  drivers/media/usb/dvb-usb/digitv.c            |  2 +-
->  drivers/media/usb/dvb-usb/dtt200u-fe.c        |  2 +-
->  drivers/media/usb/dvb-usb/dtt200u.c           |  2 +-
->  drivers/media/usb/dvb-usb/dtt200u.h           |  2 +-
->  drivers/media/usb/dvb-usb/dvb-usb-init.c      |  2 +-
->  drivers/media/usb/dvb-usb/dw2102.c            |  2 +-
->  drivers/media/usb/dvb-usb/gp8psk.c            |  2 +-
->  drivers/media/usb/dvb-usb/gp8psk.h            |  2 +-
->  drivers/media/usb/dvb-usb/m920x.c             |  2 +-
->  drivers/media/usb/dvb-usb/nova-t-usb2.c       |  2 +-
->  drivers/media/usb/dvb-usb/opera1.c            |  2 +-
->  drivers/media/usb/dvb-usb/ttusb2.c            |  2 +-
->  drivers/media/usb/dvb-usb/ttusb2.h            |  2 +-
->  drivers/media/usb/dvb-usb/umt-010.c           |  2 +-
->  drivers/media/usb/dvb-usb/vp702x-fe.c         |  2 +-
->  drivers/media/usb/dvb-usb/vp702x.c            |  2 +-
->  drivers/media/usb/dvb-usb/vp7045-fe.c         |  2 +-
->  drivers/media/usb/dvb-usb/vp7045.c            |  2 +-
->  drivers/media/usb/dvb-usb/vp7045.h            |  2 +-
->  66 files changed, 81 insertions(+), 67 deletions(-)
->  rename Documentation/{media/v4l-drivers => driver-api/media/drivers}/bttv-devel.rst (100%)
->  rename Documentation/{media/dvb-drivers => driver-api/media/drivers}/contributors.rst (100%)
->  rename Documentation/{media/v4l-drivers => driver-api/media/drivers}/cpia2_devel.rst (100%)
->  rename Documentation/{media/v4l-drivers => driver-api/media/drivers}/cx2341x-devel.rst (100%)
->  rename Documentation/{media/v4l-drivers => driver-api/media/drivers}/cx88-devel.rst (100%)
->  rename Documentation/{media/v4l-drivers => driver-api/media/drivers}/davinci-vpbe-devel.rst (100%)
->  rename Documentation/{media/dvb-drivers => driver-api/media/drivers}/dvb-usb.rst (100%)
->  rename Documentation/{media/v4l-drivers => driver-api/media/drivers}/fimc-devel.rst (100%)
->  rename Documentation/{media/dvb-drivers => driver-api/media/drivers}/frontends.rst (100%)
->  rename Documentation/{media/dvb-drivers => driver-api/media/drivers}/index.rst (67%)
->  rename Documentation/{media/v4l-drivers => driver-api/media/drivers}/pvrusb2.rst (100%)
->  rename Documentation/{media/v4l-drivers => driver-api/media/drivers}/pxa_camera.rst (100%)
->  rename Documentation/{media/v4l-drivers => driver-api/media/drivers}/radiotrack.rst (100%)
->  rename Documentation/{media/v4l-drivers => driver-api/media/drivers}/saa7134-devel.rst (100%)
->  rename Documentation/{media/v4l-drivers => driver-api/media/drivers}/sh_mobile_ceu_camera.rst (100%)
->  rename Documentation/{media/v4l-drivers => driver-api/media/drivers}/tuners.rst (100%)
->  rename Documentation/{media/v4l-drivers => driver-api/media/drivers}/vimc-devel.rst (100%)
+--Sig_/6AnB0cUAvhJeWDf2gBGAu8J
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Same question here: can we keep the v4l/dvb split?
+Hi all,
 
-Regards,
+After merging the akpm-current tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-	Hans
+mm/gup.c:119:13: warning: 'put_compound_head' defined but not used [-Wunuse=
+d-function]
+  119 | static void put_compound_head(struct page *page, int refs, unsigned=
+ int flags)
+      |             ^~~~~~~~~~~~~~~~~
+
+Introduced by commit
+
+  6379e529ebe4 ("mm/gup: fixup for 9947ea2c1e608e32 "mm/gup: track FOLL_PIN=
+ pages"")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/6AnB0cUAvhJeWDf2gBGAu8J
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5p5F0ACgkQAVBC80lX
+0GwjOAf/cdZH8I0YAlg+3Fy/ktiK28PhLGJWZjcUtuSZKv50dP9+cxAvTFjwBUtw
+d13vEwqe5JugAadgw5coPwam6SczTs6QPtG+Pya9REV81Pau93UKzNpGk/sPbi5d
+AMTOOAf+PYaQAETGRO0+VD85xi4Dk7Eh6X6rFV1FiLnem0y7WEA5ejpvLIJJZ3mv
+h/660GsYR8dO05THCqp7EftGIUjaDHLsXrx3Tt+ZQSVHsoPh/e5iSnrRqIkQMQCA
++9RjbZwe76AeyP41UXfEML21JCo2LKARnjIH67ecuhMW+mEmWMDFdYkrPaB+PGz2
+KulttTHAVjcvuuMtWrc83IDi7jpQWQ==
+=IB4z
+-----END PGP SIGNATURE-----
+
+--Sig_/6AnB0cUAvhJeWDf2gBGAu8J--
