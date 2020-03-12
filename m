@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CB0C183218
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:52:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9E5A18320B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:51:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbgCLNwT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:52:19 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46846 "EHLO
+        id S1727547AbgCLNvq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:51:46 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46898 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbgCLNvl (ORCPT
+        with ESMTP id S1727488AbgCLNvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:51:41 -0400
+        Thu, 12 Mar 2020 09:51:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=ypgdn1/BQzpX4JG6EoZRPCg1tZz8S0USzOCybKh2HpM=; b=T/tRavQu0pQxLSjK4OqVju7BjP
-        he5dYqS9VoxnKJEGW1de/UGhYdiwS4oM0MQKW0clGtyEicOPwH+YL7YsPcHLgqL1VxAsB1A1OvPmu
-        lylP7WzLMcBMCb6xf49PSqgXXk2JlfzSTzC1BOsfDyxKDF2cCSunKNTCxhMcWN3onV81lwMDWmugl
-        ahRcEfDjz5eCqo20TbjsFI3hzdQDjqFgSIxaVhos4DTbFVOxcC216b+Wi+Ny6o7AHwnFf4dKJqQvv
-        I8tkuvRauw1nnCNERcBtY3YKPMo7VpwKEvAjGCXq9lmAn7uuohTcvPFHJP0ZsXA24Z2HYn8OQFAGA
-        OX7XNy3w==;
+        bh=A4SB7nL5A5D1rfXDQIoWf0ptdUuTjzvdOlKaEe0kkJM=; b=edXimU2BTuc/eLIwRU0iEtWYop
+        BPV9oNWE/e0UB4E05O7eGUVsJRoTvE3H5tugvJYqgax1Kk2Q2DdpS34AftTtkUH3FBTAzVqnH8nmU
+        furQMipX9e3InIpnNkEvjdZ/o+QmZrhRkp7MbUy49ZHi12s2UuG4st8RfTzT4DWAzIJ6Vu9fST0dS
+        KaMtvhBcxGebxYoS8PTkUylQR+jFUjjSj3CqNGP7ATtPtL02JNZeuesjKjFG7+TxuJlVv9NzmPdgf
+        8M3JK8l7vy3TCu2GfWZDJ/ro/u8rCsfMLSWPOJRGBli7LcfiMYxmnds5AskvCIo9l53mnOZRtR3So
+        ci2X3KpA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCOFO-0003Af-Bq; Thu, 12 Mar 2020 13:51:38 +0000
+        id 1jCOFP-0003Aw-4B; Thu, 12 Mar 2020 13:51:39 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5729F3070F9;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5A1113070FF;
         Thu, 12 Mar 2020 14:51:34 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 493742B740B30; Thu, 12 Mar 2020 14:51:34 +0100 (CET)
-Message-Id: <20200312135042.229372998@infradead.org>
+        id 4AFE12B7403A7; Thu, 12 Mar 2020 14:51:34 +0100 (CET)
+Message-Id: <20200312135042.288201372@infradead.org>
 User-Agent: quilt/0.65
-Date:   Thu, 12 Mar 2020 14:41:21 +0100
+Date:   Thu, 12 Mar 2020 14:41:22 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, jpoimboe@redhat.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org
-Subject: [RFC][PATCH 14/16] objtool: Optimize find_rela_by_dest_range()
+Subject: [RFC][PATCH 15/16] objtool: Implement noinstr validation
 References: <20200312134107.700205216@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,75 +47,301 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Perf shows there is significant time in find_rela_by_dest(); this is
-because we have to iterate the address space per byte, looking for
-relocation entries.
+Validate that any call out of .noinstr.text is in between
+instr_begin() and instr_end() annotations.
 
-Optimize this by reducing the address space granularity.
+This annotation is useful to ensure correct behaviour wrt tracing
+sensitive code like entry/exit and idle code. When we run code in a
+sensitive context we want a guarantee no unknown code is ran.
 
-This reduces objtool on vmlinux.o runtime from 4.8 to 4.4 seconds.
+Since this validation relies on knowing the section of call
+destination symbols, we must run it on vmlinux.o instead of on
+individual object files.
+
+Add the -i "noinstr validation only" option because:
+
+ - vmlinux.o isn't 'clean' vs the existing validations
+ - skipping the other validations (which have already been done
+   earlier in the build) saves around a second of runtime.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- tools/objtool/elf.c |   15 +++++++++++----
- tools/objtool/elf.h |   11 ++++++++++-
- 2 files changed, 21 insertions(+), 5 deletions(-)
+ tools/objtool/builtin-check.c |    4 -
+ tools/objtool/builtin.h       |    2 
+ tools/objtool/check.c         |  155 ++++++++++++++++++++++++++++++++++++------
+ tools/objtool/check.h         |    3 
+ 4 files changed, 140 insertions(+), 24 deletions(-)
 
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -204,7 +204,7 @@ struct symbol *find_symbol_by_name(struc
- struct rela *find_rela_by_dest_range(struct section *sec, unsigned long offset,
- 				     unsigned int len)
- {
--	struct rela *rela;
-+	struct rela *rela, *r = NULL;
- 	unsigned long o;
+--- a/tools/objtool/builtin-check.c
++++ b/tools/objtool/builtin-check.c
+@@ -17,7 +17,7 @@
+ #include "builtin.h"
+ #include "check.h"
  
- 	if (!sec->rela)
-@@ -212,12 +212,19 @@ struct rela *find_rela_by_dest_range(str
+-bool no_fp, no_unreachable, retpoline, module, backtrace, uaccess, stats;
++bool no_fp, no_unreachable, retpoline, module, backtrace, uaccess, stats, noinstr, vmlinux;
  
- 	sec = sec->rela;
- 
--	for (o = offset; o < offset + len; o++) {
-+	for (o = offset & RELA_STRIDE_MASK; o < offset + len; o += RELA_STRIDE) {
- 		hash_for_each_possible(sec->elf->rela_hash, rela, hash,
- 				       __rela_hash(o, sec->idx)) {
--			if (rela->sec == sec && rela->offset == o)
--				return rela;
-+			if (rela->sec != sec)
-+				continue;
-+
-+			if (rela->offset >= offset && rela->offset < offset + len) {
-+				if (!r || rela->offset < r->offset)
-+					r = rela;
-+			}
- 		}
-+		if (r)
-+			return r;
- 	}
- 
- 	return NULL;
---- a/tools/objtool/elf.h
-+++ b/tools/objtool/elf.h
-@@ -86,9 +86,18 @@ struct elf {
- 	DECLARE_HASHTABLE(rela_hash, 20);
+ static const char * const check_usage[] = {
+ 	"objtool check [<options>] file.o",
+@@ -32,6 +32,8 @@ const struct option check_options[] = {
+ 	OPT_BOOLEAN('b', "backtrace", &backtrace, "unwind on error"),
+ 	OPT_BOOLEAN('a', "uaccess", &uaccess, "enable uaccess checking"),
+ 	OPT_BOOLEAN('s', "stats", &stats, "print statistics"),
++	OPT_BOOLEAN('i', "noinstr", &noinstr, "noinstr validation only"),
++	OPT_BOOLEAN('l', "vmlinux", &vmlinux, "vmlinux.o validation"),
+ 	OPT_END(),
  };
  
-+#define RELA_STRIDE_BITS	4
-+#define RELA_STRIDE		(1UL << RELA_STRIDE_BITS)
-+#define RELA_STRIDE_MASK	(~(RELA_STRIDE - 1))
+--- a/tools/objtool/builtin.h
++++ b/tools/objtool/builtin.h
+@@ -8,7 +8,7 @@
+ #include <subcmd/parse-options.h>
+ 
+ extern const struct option check_options[];
+-extern bool no_fp, no_unreachable, retpoline, module, backtrace, uaccess, stats;
++extern bool no_fp, no_unreachable, retpoline, module, backtrace, uaccess, stats, noinstr, vmlinux;
+ 
+ extern int cmd_check(int argc, const char **argv);
+ extern int cmd_orc(int argc, const char **argv);
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1292,6 +1292,53 @@ static int read_retpoline_hints(struct o
+ 	return 0;
+ }
+ 
++static int read_instr_hints(struct objtool_file *file)
++{
++	struct section *sec;
++	struct instruction *insn;
++	struct rela *rela;
 +
- static inline u32 __rela_hash(unsigned long offset, int idx)
++	sec = find_section_by_name(file->elf, ".rela.discard.instr_end");
++	if (!sec)
++		return 0;
++
++	list_for_each_entry(rela, &sec->rela_list, list) {
++		if (rela->sym->type != STT_SECTION) {
++			WARN("unexpected relocation symbol type in %s", sec->name);
++			return -1;
++		}
++
++		insn = find_insn(file, rela->sym->sec, rela->addend);
++		if (!insn) {
++			WARN("bad .discard.instr_end entry");
++			return -1;
++		}
++
++		insn->instr--;
++	}
++
++	sec = find_section_by_name(file->elf, ".rela.discard.instr_begin");
++	if (!sec)
++		return 0;
++
++	list_for_each_entry(rela, &sec->rela_list, list) {
++		if (rela->sym->type != STT_SECTION) {
++			WARN("unexpected relocation symbol type in %s", sec->name);
++			return -1;
++		}
++
++		insn = find_insn(file, rela->sym->sec, rela->addend);
++		if (!insn) {
++			WARN("bad .discard.instr_begin entry");
++			return -1;
++		}
++
++		insn->instr++;
++	}
++
++	return 0;
++}
++
+ static void mark_rodata(struct objtool_file *file)
  {
--	u32 ol = offset, oh = offset >> 32;
-+	u32 ol, oh;
-+
-+	offset &= RELA_STRIDE_MASK;
-+
-+	ol = offset;
-+	oh = offset >> 32;
+ 	struct section *sec;
+@@ -1363,6 +1410,10 @@ static int decode_sections(struct objtoo
+ 	if (ret)
+ 		return ret;
  
- 	__jhash_mix(ol, oh, idx);
++	ret = read_instr_hints(file);
++	if (ret)
++		return ret;
++
+ 	return 0;
+ }
  
+@@ -1914,6 +1965,14 @@ static inline const char *call_dest_name
+ 
+ static int validate_call(struct instruction *insn, struct insn_state *state)
+ {
++	if (state->noinstr && state->instr <= 0 &&
++	    (!insn->call_dest || insn->call_dest->sec != insn->sec)) {
++		WARN_FUNC("call to %s() leaves .noinstr.text section",
++				insn->sec, insn->offset, call_dest_name(insn));
++		return 1;
++	}
++
++
+ 	if (state->uaccess && !func_uaccess_safe(insn->call_dest)) {
+ 		WARN_FUNC("call to %s() with UACCESS enabled",
+ 				insn->sec, insn->offset, call_dest_name(insn));
+@@ -1942,6 +2001,12 @@ static int validate_sibling_call(struct
+ 
+ static int validate_return(struct symbol *func, struct instruction *insn, struct insn_state *state)
+ {
++	if (state->noinstr && state->instr > 0) {
++		WARN_FUNC("return with instrumentation enabled",
++			  insn->sec, insn->offset);
++		return 1;
++	}
++
+ 	if (state->uaccess && !func_uaccess_safe(func)) {
+ 		WARN_FUNC("return with UACCESS enabled",
+ 			  insn->sec, insn->offset);
+@@ -2023,6 +2088,9 @@ static int validate_branch(struct objtoo
+ 				return 0;
+ 		}
+ 
++		if (state.noinstr)
++			state.instr += insn->instr;
++
+ 		if (insn->hint) {
+ 			if (insn->restore) {
+ 				struct instruction *save_insn, *i;
+@@ -2355,9 +2423,8 @@ static bool ignore_unreachable_insn(stru
+ 	return false;
+ }
+ 
+-static int validate_functions(struct objtool_file *file)
++static int validate_sec_functions(struct objtool_file *file, struct section *sec)
+ {
+-	struct section *sec;
+ 	struct symbol *func;
+ 	struct instruction *insn;
+ 	struct insn_state state;
+@@ -2370,33 +2437,68 @@ static int validate_functions(struct obj
+ 	       CFI_NUM_REGS * sizeof(struct cfi_reg));
+ 	state.stack_size = initial_func_cfi.cfa.offset;
+ 
+-	for_each_sec(file, sec) {
+-		list_for_each_entry(func, &sec->symbol_list, list) {
+-			if (func->type != STT_FUNC)
+-				continue;
++	/*
++	 * We need the full vmlinux for noinstr validation, otherwise we can
++	 * not correctly determine insn->call_dest->sec (external symbols do
++	 * not have a section).
++	 */
++	if (vmlinux && !strcmp(sec->name, ".noinstr.text"))
++		state.noinstr = true;
+ 
+-			if (!func->len) {
+-				WARN("%s() is missing an ELF size annotation",
+-				     func->name);
+-				warnings++;
+-			}
++	list_for_each_entry(func, &sec->symbol_list, list) {
++		if (func->type != STT_FUNC)
++			continue;
+ 
+-			if (func->pfunc != func || func->alias != func)
+-				continue;
++		if (!func->len) {
++			WARN("%s() is missing an ELF size annotation",
++					func->name);
++			warnings++;
++		}
+ 
+-			insn = find_insn(file, sec, func->offset);
+-			if (!insn || insn->ignore || insn->visited)
+-				continue;
++		if (func->pfunc != func || func->alias != func)
++			continue;
+ 
+-			state.uaccess = func->uaccess_safe;
++		insn = find_insn(file, sec, func->offset);
++		if (!insn || insn->ignore || insn->visited)
++			continue;
+ 
+-			ret = validate_branch(file, func, insn, state);
+-			if (ret && backtrace)
+-				BT_FUNC("<=== (func)", insn);
+-			warnings += ret;
+-		}
++		state.uaccess = func->uaccess_safe;
++
++		ret = validate_branch(file, func, insn, state);
++		if (ret && backtrace)
++			BT_FUNC("<=== (func)", insn);
++		warnings += ret;
++	}
++
++	return warnings;
++}
++
++static int validate_noinstr_functions(struct objtool_file *file)
++{
++	struct section *sec;
++
++	if (!vmlinux) {
++		WARN("noinstr validation needs vmlinux\n");
++		return -1;
+ 	}
+ 
++	sec = find_section_by_name(file->elf, ".noinstr.text");
++	if (!sec) {
++		WARN("No .noinstr.text section");
++		return -1;
++	}
++
++	return validate_sec_functions(file, sec);
++}
++
++static int validate_functions(struct objtool_file *file)
++{
++	struct section *sec;
++	int warnings = 0;
++
++	for_each_sec(file, sec)
++		warnings += validate_sec_functions(file, sec);
++
+ 	return warnings;
+ }
+ 
+@@ -2446,6 +2548,15 @@ int check(const char *_objname, bool orc
+ 	if (list_empty(&file.insn_list))
+ 		goto out;
+ 
++	if (noinstr) {
++		ret = validate_noinstr_functions(&file);
++		if (ret < 0)
++			goto out;
++
++		warnings += ret;
++		goto out;
++	}
++
+ 	if (retpoline) {
+ 		ret = validate_retpoline(&file);
+ 		if (ret < 0)
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -20,6 +20,8 @@ struct insn_state {
+ 	unsigned char type;
+ 	bool bp_scratch;
+ 	bool drap, end, uaccess, df;
++	bool noinstr;
++	s8 instr;
+ 	unsigned int uaccess_stack;
+ 	int drap_reg, drap_offset;
+ 	struct cfi_reg vals[CFI_NUM_REGS];
+@@ -35,6 +37,7 @@ struct instruction {
+ 	unsigned long immediate;
+ 	bool alt_group, dead_end, ignore, hint, save, restore, ignore_alts;
+ 	bool retpoline_safe;
++	s8 instr;
+ 	u8 visited;
+ 	struct symbol *call_dest;
+ 	struct instruction *jump_dest;
 
 
