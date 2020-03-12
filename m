@@ -2,121 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 030DE183599
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 16:56:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09BE518359C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 16:56:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727909AbgCLP4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 11:56:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55644 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726971AbgCLP4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 11:56:17 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 939EA2067C;
-        Thu, 12 Mar 2020 15:56:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584028576;
-        bh=oGArRq0tEnTFcgyoMZa37IAaS/3wFGT2DjTjAcSByts=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=0v5Gtpi6PGscvk86Ol+1eanIx4sNKYpwoYHBt5ybPAFdYm8Rh9U4azp+iEWMGtW8g
-         Ppgl3SMsLAAwa9x/Uy9i8VqVqhgj6s785tv2kcnNrEM9EXW9o0sBFv4iCPMlnNAy4I
-         nahjkW7VAd1CSjXorfRqqZBvPEXIR3yCQTKR5UUU=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1jCQBy-00CGGM-Sp; Thu, 12 Mar 2020 15:56:15 +0000
+        id S1727943AbgCLP4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 11:56:46 -0400
+Received: from outbound-smtp40.blacknight.com ([46.22.139.223]:40299 "EHLO
+        outbound-smtp40.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726971AbgCLP4p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 11:56:45 -0400
+Received: from mail.blacknight.com (pemlinmail02.blacknight.ie [81.17.254.11])
+        by outbound-smtp40.blacknight.com (Postfix) with ESMTPS id 32A3A1C3568
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 15:56:43 +0000 (GMT)
+Received: (qmail 6294 invoked from network); 12 Mar 2020 15:56:42 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 12 Mar 2020 15:56:42 -0000
+Date:   Thu, 12 Mar 2020 15:56:40 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Jirka Hladky <jhladky@redhat.com>
+Cc:     Phil Auld <pauld@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Hillf Danton <hdanton@sina.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/13] Reconcile NUMA balancing decisions with the load
+ balancer v6
+Message-ID: <20200312155640.GX3818@techsingularity.net>
+References: <20200224095223.13361-1-mgorman@techsingularity.net>
+ <20200309191233.GG10065@pauld.bos.csb>
+ <20200309203625.GU3818@techsingularity.net>
+ <20200312095432.GW3818@techsingularity.net>
+ <CAE4VaGA4q4_qfC5qe3zaLRfiJhvMaSb2WADgOcQeTwmPvNat+A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 12 Mar 2020 15:56:14 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     John Garry <john.garry@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Ming Lei <ming.lei@redhat.com>,
-        chenxiang <chenxiang66@hisilicon.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>
-Subject: Re: [PATCH v2] irqchip/gic-v3-its: Balance initial LPI affinity
- across CPUs
-In-Reply-To: <d23436b5-a207-91e9-be11-f5d0e44b6e12@huawei.com>
-References: <20200312115552.29185-1-maz@kernel.org>
- <d23436b5-a207-91e9-be11-f5d0e44b6e12@huawei.com>
-Message-ID: <33bc00d1ba25d5fd53de2413c831d723@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.10
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: john.garry@huawei.com, linux-kernel@vger.kernel.org, tglx@linutronix.de, jason@lakedaemon.net, ming.lei@redhat.com, chenxiang66@hisilicon.com, wangzhou1@hisilicon.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <CAE4VaGA4q4_qfC5qe3zaLRfiJhvMaSb2WADgOcQeTwmPvNat+A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,
-
-On 2020-03-12 15:41, John Garry wrote:
-> On 12/03/2020 11:55, Marc Zyngier wrote:
+On Thu, Mar 12, 2020 at 01:10:36PM +0100, Jirka Hladky wrote:
+> Hi Mel,
 > 
-> Hi Marc,
+> thanks a lot for analyzing it!
 > 
->> When mapping a LPI, the ITS driver picks the first possible
->> affinity, which is in most cases CPU0, assuming that if
->> that's not suitable, someone will come and set the affinity
->> to something more interesting.
->> 
->> It apparently isn't the case, and people complain of poor
->> performance when many interrupts are glued to the same CPU.
->> So let's place the interrupts by finding the "least loaded"
->> CPU (that is, the one that has the fewer LPIs mapped to it).
->> So called 'managed' interrupts are an interesting case where
->> the affinity is actually dictated by the kernel itself, and
->> we should honor this.
->> 
->> Reported-by: John Garry <john.garry@huawei.com>
->> Link: 
->> https://lore.kernel.org/r/1575642904-58295-1-git-send-email-john.garry@huawei.com
->> Signed-off-by: Marc Zyngier <maz@kernel.org>
->> Cc: John Garry <john.garry@huawei.com>
->> Cc: Ming Lei <ming.lei@redhat.com>
->> ---
->> Reviving this at John's request.
+> My big concern is that the performance drop for low threads counts (roughly
+> up to 2x number of NUMA nodes) is not just a rare corner case, but it might
+> be more common.
+
+That is hard to tell. In my case I was seeing the problem running a HPC
+workload, dedicated to that machine and using only 6% of available CPUs. I
+find it unlikely that is common because who acquires such a large machine
+and then uses a tiny percentage of it. Rember also the other points I made
+such as 1M migrations happening in the first few seconds just trying to
+deal with the load balancer and NUMA balancer fighting each other. While
+that might happen to be good for SP, it's not universally good behaviour
+and I've dealt with issues in the past whereby the NUMA balancer would
+get confused and just ramp up the frequency it samples and migrates trying
+to override the load balancer.
+
+> We see the drop for the following benchmarks/tests,
+> especially on 8 NUMA nodes servers. However, four and even 2 NUMA node
+> servers are affected as well.
 > 
-> Thanks very much. I may request a colleague test this due to possible
-> precautionary office closure.
-
-Huh. Not great... :-(
-
+> Numbers show average performance drop (median of runtime collected from 5
+> subsequential runs) compared to vanilla kernel.
 > 
->  The major change is that the
->> affinity follows the x86 model, as described by Thomas.
+> 2x AMD 7351 (EPYC Naples), 8 NUMA nodes
+> ===================================
+> NAS: sp_C test: -50%, peak perf. drop with 8 threads
+
+I hadn't tested 8 threads specifically I think that works out as
+using 12.5% of the available machine. The allowed imbalance between
+nodes means that some SP instances will stack on the same node but not
+the same CPU.
+
+> NAS: mg_D: -10% with 16 threads
+
+While I do not have the most up to date figures available, I found the
+opposite trend at 21 threads (the test case I used were 1/3rd available
+CPUs and as close to maximum CPUs as possible). There I found it was 10%
+faster for an 8 node machine.
+
+For 4 nodes, using a single JVM was performance neutral *on average* but
+much less variable. With one JVM per node, there was a mix of small <2%
+regressions for some thread counts and up to 9% faster on others.
+
+> SPECjvm2008: co_sunflow test: -20% (peak drop with 8 threads)
+> SPECjvm2008: compress and cr_signverify tests: -10%(peak drop with 8
+> threads)
+
+I didn't run SPECjvm for multiple thread sizes so I don't have data yet
+and may not have for another day at least.
+
+> SPECjbb2005: -10% for 16 threads
 > 
-> There seems to be a subtle difference between this implementation and
-> what Thomas described for managed interrupts handling on x86. That
-> being, managed interrupt loading is counted separately to total
-> interrupts per CPU for x86. That seems quite important so that we
-> spread managed interrupts evenly.
 
-Hmmm. Yes. That'd require a separate per-CPU counter. Nothing too 
-invasive
-though. I'll roll that in soon. I still wonder about interaction of 
-collocated
-managed and non-managed interrupts, but we can cross that bridge later.
+I found this to depend in the number of JVMs used and the thread count.
+Slower at low thread counts, faster at higher thread counts but with
+more stable results with the series applied and less NUMA balancer
+activity.
 
->> I expect this to have an impact on platforms like D05, where
->> the SAS driver cannot use managed affinity just yet.
-> 
-> I need some blk-mq and SCSI changes to go in first to improve the
-> interrupt handling there, hopefully we can make progress on that soon.
+This is somewhat of a dilemma. Without the series, the load balancer and
+NUMA balancer use very different criteria on what should happen and
+results are not stable. In some cases acting randomly happens to work
+out and in others it does not and overall it depends on the workload and
+machine. It's very highly dependent on both the workload and the machine
+and it's a question if we want to continue dealing with two parts of the
+scheduler disagreeing on what criteria to use or try to improve the
+reconciled load and memory balancer sharing similar logic.
 
-That'd be good.
+In *general*, I found that the series won a lot more than it lost across
+a spread of workloads and machines but unfortunately it's also an area
+where counter-examples can be found.
 
-Thanks,
-
-         M.
 -- 
-Jazz is not dead. It just smells funny...
+Mel Gorman
+SUSE Labs
