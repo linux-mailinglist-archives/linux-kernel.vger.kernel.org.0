@@ -2,143 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 885061830CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:07:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFBFE1830D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:08:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbgCLNHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:07:21 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:47022 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbgCLNHV (ORCPT
+        id S1727255AbgCLNIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:08:50 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:44964 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbgCLNIt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:07:21 -0400
-Received: by mail-io1-f68.google.com with SMTP id v3so5544721iom.13
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:07:20 -0700 (PDT)
+        Thu, 12 Mar 2020 09:08:49 -0400
+Received: by mail-ua1-f65.google.com with SMTP id a33so2058177uad.11
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:08:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mUPVwLwbl+qGOG5kVPBNHG9adxeUh8JOP6RdVyzLB/I=;
-        b=E+os28dRCW2/v1ohMkOsikz/8hYa7mpints86TuEemrPaYqU6XFgB2aiT2cRuJY/fb
-         nWSpMZV5DwN1EbY83N0wRV2dr4MAFwDe3mDlmZpLuL3F1aEClDztKuAC8FExEsIW2QB2
-         bTWsm3Zev9Fi9+yVqLGy6MqlDPxW8PksROSMyEp7FAj6gDltIaD9ndaQE+X805buhieW
-         n57qicJpBwPBLvI8tHA7wVnhwRY8RfTWtsSIZgRa28eYts4CKOHUhgesF0EyDskOIXls
-         benlZXj9g43xMpir3r2H0EHiCmH7U+NlkRhcYsmy8/hNWwdkY/z2/yp6k+ORpIkBiuVo
-         eQJQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=615uTM0DnrncREOe2KMCqisaLBgj11Sr3HONWNz+aSc=;
+        b=FFA0e+6cg+LOma5AcX0rPtuPzExG8R49KllYxY8XJbVvagwzpy9nhwUHm5t9SIwSDy
+         bIzg+HNhDxnf6ntIDVKSACZilQ8647xb610y0PnN0o/9fG6oi2a0T0X/eRAW46ViGKz6
+         N/+r6mj2bo5SqTs4xFusTNw0mlF3J3Vgeyu6l6W8ylRpdonjlvQqi71TxR47PvvnY7BH
+         RGjFyIOKFeOYJR5bUqiJb+rgBnLLJlgXQb9Pszr1VbbXmNQyyRPd3n+Rj39QzqJKzidI
+         /cTQ90+22AWOQng+9JbvAkZJMaFdP139HdHJQTXrcUAfNkdFGXmDBXHVGsFVMlGaZ9o/
+         49zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mUPVwLwbl+qGOG5kVPBNHG9adxeUh8JOP6RdVyzLB/I=;
-        b=W8mMrxrwuMO9NNNmh21h7094vd5pAx2VF4PrVllm7HHCHQSzYAE6o8wBtOShuAptad
-         2qJ2t09YxmCuzFINp9BQjCVq0COooLKlBD/ZS82ekx0d4W2xZx9CdmIe7DeqdZBYFqT6
-         w7v3/b5O5PjjvxlGszM51ubcCd6raHGUrPanmcVx5YxibLi5tpXK0bjDfqNzfgY8Kne7
-         dNgPDMdscpEwzG1x2s3z31Jqa+j9focD0De8gebofCprvPd329/IB++3MDZBAkxz0Hh/
-         Y1ZfBzsv8lWEVmBC0z6r5OnakUobVvP/RErbu6C8fnVVPw+33ay5YZABblzEXQLvd+LN
-         W05Q==
-X-Gm-Message-State: ANhLgQ3gJCfjH69LdRuGY609oUUxvgc0IEgQN2F6gVNZppUR0nMGOZqv
-        2xIXJV/MVGM4Fadg5qtnurr1uQ==
-X-Google-Smtp-Source: ADFU+vt+fR4+B0ZCsiefMYIUrjnUtYF3XYvh9X83QTCCEfHOKk7fQk2p9JzHbDUoxsiC7hW/VvgQLA==
-X-Received: by 2002:a5d:984e:: with SMTP id p14mr7593477ios.115.1584018439543;
-        Thu, 12 Mar 2020 06:07:19 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id n18sm5383585ilq.38.2020.03.12.06.07.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Mar 2020 06:07:19 -0700 (PDT)
-Subject: Re: linux-next: build failure after merge of the block tree
-To:     Matteo Croce <mcroce@redhat.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Coly Li <colyli@suse.de>
-References: <20200312135457.6891749e@canb.auug.org.au>
- <CAGnkfhztbmpP0=KT-iNbkUGKerhX04ENFsexA4_2cP_RUs0Png@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <baefdc44-d7cb-4e9e-c46c-b37012cfc40d@kernel.dk>
-Date:   Thu, 12 Mar 2020 07:07:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=615uTM0DnrncREOe2KMCqisaLBgj11Sr3HONWNz+aSc=;
+        b=EMY2QfJ/7Cdvm9cBC4epXDji7rhbqLTFhJe87NhTHpom09Y6QJ9gQAYuN2Tb1zHgV4
+         31DYsY49YSo6GiagjaJjazoZpn22yGfrPviwg97xow/kRwVlhCHdc+cJKAWTHLtFLhKo
+         EAlmygzuYp263HGAPrdDO83/vewW12cYV2K6siChYhHiyBnywpgpjeCqB3gi1g61hExl
+         otsAlqPrKi8+7THiBPL7Fwp9uGE03hPAER0ioqgqCsi95fyS1z9OmIVHCNga32xHnZ/m
+         QdIWwZ/YGTj9qoLzkSqWPvmIkXJ8+Gmzf6gySlfFLDxOuk2GTmZKO+ct0HvhI1ymV8OG
+         y//g==
+X-Gm-Message-State: ANhLgQ1M0v+dVxcJpSSAwA0eamGJoyrlIWoHDAuUkP5bR2A0YuDSPC1g
+        mjNGUCAyghsENieV5bb7s7hHezTbsWAcV+hVzTtVJQ==
+X-Google-Smtp-Source: ADFU+vtDr7w0rDYA7tLfhsh1VLaqV9dOvWkxWZQ1ep/cF52NPLjEf9RtpUKr5RXbY+RVuYJD1jc0bFBtl6R7KN9s2/o=
+X-Received: by 2002:a9f:3046:: with SMTP id i6mr4835277uab.15.1584018527825;
+ Thu, 12 Mar 2020 06:08:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAGnkfhztbmpP0=KT-iNbkUGKerhX04ENFsexA4_2cP_RUs0Png@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1583886030-11339-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1583886030-11339-1-git-send-email-skomatineni@nvidia.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 12 Mar 2020 14:08:11 +0100
+Message-ID: <CAPDyKFpAgk0uboGXdmA_m1-2=GK2oRXVv+97ZFFFAtT-ZZo4fw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] sdhci: tegra: Implement Tegra specific set_timeout callback
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Bradley Bolen <bradleybolen@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Aniruddha Tvs Rao <anrao@nvidia.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/12/20 4:12 AM, Matteo Croce wrote:
-> On Thu, Mar 12, 2020 at 3:55 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Hi all,
->>
->> After merging the block tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> In file included from fs/erofs/xattr.h:10,
->>                  from fs/erofs/inode.c:7:
->> fs/erofs/inode.c: In function 'erofs_read_inode':
->> fs/erofs/internal.h:197:31: error: 'PAGE_SECTORS_SHIFT' undeclared (first use in this function); did you mean 'PA_SECTION_SHIFT'?
->>   197 | #define LOG_SECTORS_PER_BLOCK PAGE_SECTORS_SHIFT
->>       |                               ^~~~~~~~~~~~~~~~~~
->> fs/erofs/inode.c:122:30: note: in expansion of macro 'LOG_SECTORS_PER_BLOCK'
->>   122 |   inode->i_blocks = nblks << LOG_SECTORS_PER_BLOCK;
->>       |                              ^~~~~~~~~~~~~~~~~~~~~
->> fs/erofs/internal.h:197:31: note: each undeclared identifier is reported only once for each function it appears in
->>   197 | #define LOG_SECTORS_PER_BLOCK PAGE_SECTORS_SHIFT
->>       |                               ^~~~~~~~~~~~~~~~~~
->> fs/erofs/inode.c:122:30: note: in expansion of macro 'LOG_SECTORS_PER_BLOCK'
->>   122 |   inode->i_blocks = nblks << LOG_SECTORS_PER_BLOCK;
->>       |                              ^~~~~~~~~~~~~~~~~~~~~
->> In file included from fs/erofs/data.c:7:
->> fs/erofs/data.c: In function 'erofs_read_raw_page':
->> fs/erofs/internal.h:197:31: error: 'PAGE_SECTORS_SHIFT' undeclared (first use in this function); did you mean 'PA_SECTION_SHIFT'?
->>   197 | #define LOG_SECTORS_PER_BLOCK PAGE_SECTORS_SHIFT
->>       |                               ^~~~~~~~~~~~~~~~~~
->> fs/erofs/data.c:226:4: note: in expansion of macro 'LOG_SECTORS_PER_BLOCK'
->>   226 |    LOG_SECTORS_PER_BLOCK;
->>       |    ^~~~~~~~~~~~~~~~~~~~~
->> fs/erofs/internal.h:197:31: note: each undeclared identifier is reported only once for each function it appears in
->>   197 | #define LOG_SECTORS_PER_BLOCK PAGE_SECTORS_SHIFT
->>       |                               ^~~~~~~~~~~~~~~~~~
->> fs/erofs/data.c:226:4: note: in expansion of macro 'LOG_SECTORS_PER_BLOCK'
->>   226 |    LOG_SECTORS_PER_BLOCK;
->>       |    ^~~~~~~~~~~~~~~~~~~~~
->> fs/erofs/data.c: In function 'erofs_bmap':
->> fs/erofs/internal.h:197:31: error: 'PAGE_SECTORS_SHIFT' undeclared (first use in this function); did you mean 'PA_SECTION_SHIFT'?
->>   197 | #define LOG_SECTORS_PER_BLOCK PAGE_SECTORS_SHIFT
->>       |                               ^~~~~~~~~~~~~~~~~~
->> fs/erofs/data.c:351:16: note: in expansion of macro 'LOG_SECTORS_PER_BLOCK'
->>   351 |   if (block >> LOG_SECTORS_PER_BLOCK >= blks)
->>       |                ^~~~~~~~~~~~~~~~~~~~~
->>
->> Caused by commit
->>
->>   61c7d3d5e015 ("block: refactor duplicated macros")
->>
->> I have used the block tree from next-20200311 for today.
->>
->> --
->> Cheers,
->> Stephen Rothwell
-> 
-> Hi,
-> 
-> I was building a kernel without erofs. Just including
-> include/linux/blkdev.h will fix it, should I amend the
-> patch or send a fix?
+-trimmed cc list
 
-I'll drop the patch. I was worried about the patch to begin with,
-something like this really should be done through cocinelle so there's
-less concern of a stupid mistake.
+On Thu, 12 Mar 2020 at 00:51, Sowjanya Komatineni
+<skomatineni@nvidia.com> wrote:
+>
+> Tegra host supports HW busy detection and timeouts based on the
+> count programmed in SDHCI_TIMEOUT_CONTROL register and max busy
+> timeout it supports is 11s in finite busy wait mode.
+>
+> Some operations like SLEEP_AWAKE, ERASE and flush cache through
+> SWITCH commands take longer than 11s and Tegra host supports
+> infinite HW busy wait mode where HW waits forever till the card
+> is busy without HW timeout.
+>
+> This patch implements Tegra specific set_timeout sdhci_ops to allow
+> switching between finite and infinite HW busy detection wait modes
+> based on the device command expected operation time.
+>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-On top of that, somewhat miffed that you'd have a v3 of a patch, yet
-haven't bothered to even _compile_ the parts you touch. That's
-inexcusable.
+Applied for next, thanks!
 
--- 
-Jens Axboe
+We should probably tag this for stable as well, don't you think?
 
+Kind regards
+Uffe
+
+
+
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index a25c3a4..fa8f6a4 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -45,6 +45,7 @@
+>  #define SDHCI_TEGRA_CAP_OVERRIDES_DQS_TRIM_SHIFT       8
+>
+>  #define SDHCI_TEGRA_VENDOR_MISC_CTRL                   0x120
+> +#define SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT            BIT(0)
+>  #define SDHCI_MISC_CTRL_ENABLE_SDR104                  0x8
+>  #define SDHCI_MISC_CTRL_ENABLE_SDR50                   0x10
+>  #define SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300          0x20
+> @@ -1227,6 +1228,34 @@ static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
+>         return 0;
+>  }
+>
+> +static void tegra_sdhci_set_timeout(struct sdhci_host *host,
+> +                                   struct mmc_command *cmd)
+> +{
+> +       u32 val;
+> +
+> +       /*
+> +        * HW busy detection timeout is based on programmed data timeout
+> +        * counter and maximum supported timeout is 11s which may not be
+> +        * enough for long operations like cache flush, sleep awake, erase.
+> +        *
+> +        * ERASE_TIMEOUT_LIMIT bit of VENDOR_MISC_CTRL register allows
+> +        * host controller to wait for busy state until the card is busy
+> +        * without HW timeout.
+> +        *
+> +        * So, use infinite busy wait mode for operations that may take
+> +        * more than maximum HW busy timeout of 11s otherwise use finite
+> +        * busy wait mode.
+> +        */
+> +       val = sdhci_readl(host, SDHCI_TEGRA_VENDOR_MISC_CTRL);
+> +       if (cmd && cmd->busy_timeout >= 11 * HZ)
+> +               val |= SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT;
+> +       else
+> +               val &= ~SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT;
+> +       sdhci_writel(host, val, SDHCI_TEGRA_VENDOR_MISC_CTRL);
+> +
+> +       __sdhci_set_timeout(host, cmd);
+> +}
+> +
+>  static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
+>         .write_l    = tegra_cqhci_writel,
+>         .enable = sdhci_tegra_cqe_enable,
+> @@ -1366,6 +1395,7 @@ static const struct sdhci_ops tegra210_sdhci_ops = {
+>         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+>         .voltage_switch = tegra_sdhci_voltage_switch,
+>         .get_max_clock = tegra_sdhci_get_max_clock,
+> +       .set_timeout = tegra_sdhci_set_timeout,
+>  };
+>
+>  static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
+> @@ -1403,6 +1433,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
+>         .voltage_switch = tegra_sdhci_voltage_switch,
+>         .get_max_clock = tegra_sdhci_get_max_clock,
+>         .irq = sdhci_tegra_cqhci_irq,
+> +       .set_timeout = tegra_sdhci_set_timeout,
+>  };
+>
+>  static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+> --
+> 2.7.4
+>
