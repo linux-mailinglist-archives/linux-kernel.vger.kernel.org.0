@@ -2,198 +2,262 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 640401830A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 13:54:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05E28183122
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:23:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbgCLMyn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 08:54:43 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:37703 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbgCLMyn (ORCPT
+        id S1727007AbgCLNW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:22:58 -0400
+Received: from mx0b-002c1b01.pphosted.com ([148.163.155.12]:39900 "EHLO
+        mx0b-002c1b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725978AbgCLNW6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 08:54:43 -0400
-Received: by mail-il1-f196.google.com with SMTP id a6so5339094ilc.4;
-        Thu, 12 Mar 2020 05:54:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dGkwaq8lw7fMLDfPL6B7cGksh4Hi48p1DuxNEtaP3pU=;
-        b=Gf69EOqM6TQqgC3wTSdK4qgWrFm6DxXSZiHEFmOgcazELU2xKkWAc34F0RRQnw/lK3
-         4G/DvyEWuH19UdafLL1H23PvJhDfp0Pdr71urqsapvnAiLFBQgDM3wA0sW1ve9xjjl4S
-         /AKA22xX1nbuFgAgevXyKLe6S0tLzx+OYqrtVIfpUfBFcbjn+BsvxwL0kiNsQRnqrH4/
-         7zf3wLdW5yBqU5GwijW4WYHa85kLU+Mgv3aZXzqM17oeKYST466xcCKjrQK4my/vUV+A
-         oEWswayw/ljYT+wL81GJ0oFCBewwYM0i0acOAAReKGqAi7j8uNHXgz1jEKmjyD1yQ+TL
-         lPcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dGkwaq8lw7fMLDfPL6B7cGksh4Hi48p1DuxNEtaP3pU=;
-        b=JXmy4lUJ4BkEkURIVpe8jme1sqwd/RfoR7binpn1Ae4wqfhRs+01Dp/VOAEwlf8wMK
-         +t/T5rTLfPUXuICaFVYK3wGJicysgDy9T99BTMHLvwWo0iTVnJL57ICLelBfuvhd8uvQ
-         dxpoCt/td8WYSe+3hPBFbRI/ndZ1VzZcDwQ7i+hH4gxrE8hnmRiRSzNlCmNi279wkz3q
-         vOAoPttVJ6HBiOGGwBUeCy6j6tdQVYoJ7hWFqG75IfnaFwCkpnvZJq5+/2PcFJZy0Fc1
-         XKC5smhRTNA3zc9dF6oQjdMmDdVR2NVrU4L29aiTrbuo/C3q8bRtzmaiqApqrvhdQr5e
-         9Pzg==
-X-Gm-Message-State: ANhLgQ2m3jOJad0c1OlnCSKmmd5JAbrDdBu8DGNU9musO3TSwLhn5H74
-        KuXtJwcQexQg0ebOKvVbnhxaiz3ezufTlOe01QriaXZ+
-X-Google-Smtp-Source: ADFU+vv+kpji+ynroJiBDzsRd7WhZYytunKgmF0KXs+VSTXf5eOLwMqu0/hlD41bGO5/ir6ecQTiSgXijOGmBe/G3yA=
-X-Received: by 2002:a92:c008:: with SMTP id q8mr4757821ild.221.1584017681454;
- Thu, 12 Mar 2020 05:54:41 -0700 (PDT)
+        Thu, 12 Mar 2020 09:22:58 -0400
+Received: from pps.filterd (m0127842.ppops.net [127.0.0.1])
+        by mx0b-002c1b01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02CCd8CQ006630;
+        Thu, 12 Mar 2020 05:48:24 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint20171006;
+ bh=8GA/JcmvOIdjbFtI2qkXuFwFE0oCqdARTGdk//fqsT4=;
+ b=QC2aZGNPeF1j7ssKflddzZBBFhmU/JaJsSSxuZeOgDcLaI/xlQylZW0iVeb17dgSEYxd
+ 6J54iqkrdnLw4AqKMWz1kWInJWw+38gT/SCr/janKQ8QN/9oqK/yiR/sW9sDeBa+OPoO
+ Q1eChSogapnQOkpVFPdNJVIELyIP2/5LIjSI4LG4f5h6CkxE/bhYV9pHSghpUOFJjVH5
+ p93bV13jEvqPdUGaUKrMd8kQlaWHLAN/c9CkOqtCRcfPdVC+E4O6ip0q35VrFHTlmz4V
+ OtNylR5BwMq5i3Gwn2BGuN2OHmLGL2BGttbE0K+OVasW01FESMd4WFu3rs/m+qHl3D8r gA== 
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2109.outbound.protection.outlook.com [104.47.55.109])
+        by mx0b-002c1b01.pphosted.com with ESMTP id 2yqf32rug2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Mar 2020 05:48:24 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aIrcv6AiggXebWBDd1LTtKHT5JpcEZkJcCrDwuY1c7NbGSMF2wAk64Et0Vr5NxQZ+3aYw7mttLpBVyMqLf3HZozZCvx2v+VTmNDrQtgTHATTf67dBct8QJK1DGeeTNZp+3x2kNqGH09u0ayDrxmYdlEuzBBDNrWyY2XCvHt6TI0dKKvIVDPWZJzcjtulIiB6iVFqzrZsDlkGdbVgvWv5mpagnBQKzkkvPo4kPxmNnbBX4hmLd2HPjsDkTrybW4muRMgC78QYkn0QxOeFTlURj7Ugx0QAP72x4gFdV3ocTGlqFmlYV+e2T90N6Du6wNSVicCz5RxQ8DKlDWuTyG9w4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8GA/JcmvOIdjbFtI2qkXuFwFE0oCqdARTGdk//fqsT4=;
+ b=cgCe9SLpB3bpXzw4Npj7Z4PaYIpa79m0aoZrCFE89sWoyx0+EtbCa+DIJLBtSieTG9DlYDqRgcExhkK2uPV+uzxbsk34ir5+QiQCzNC8lQvF3Zo/eVLP/6Y/1vy+zn2+uvTfh3XAdclbe/yzNHZuO0KcZdUh2V02fVrvQwqDh66alci1lBBJsMWpla1HzdC+1fv3hkItdKGLjAStxbVwQW4MxzXxqWv2rg7YA7hkOBw8dPVNfK5jVMza/OIlxvqp93ar2SmnEMR/99znw5nDsC2P3ZLFUU/DErff9cSHOX5foxkq7kwhA2blihPq34jnieYSRkp03ZSEVUUYU+HjaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
+ dkim=pass header.d=nutanix.com; arc=none
+Received: from BL0PR02MB5601.namprd02.prod.outlook.com (2603:10b6:208:88::10)
+ by BL0PR02MB5394.namprd02.prod.outlook.com (2603:10b6:208:37::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.17; Thu, 12 Mar
+ 2020 12:48:22 +0000
+Received: from BL0PR02MB5601.namprd02.prod.outlook.com
+ ([fe80::ddf8:e6cc:908f:a98c]) by BL0PR02MB5601.namprd02.prod.outlook.com
+ ([fe80::ddf8:e6cc:908f:a98c%6]) with mapi id 15.20.2814.007; Thu, 12 Mar 2020
+ 12:48:22 +0000
+From:   Ivan Teterevkov <ivan.teterevkov@nutanix.com>
+To:     David Rientjes <rientjes@google.com>
+CC:     "corbet@lwn.net" <corbet@lwn.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "pawan.kumar.gupta@linux.intel.com" 
+        <pawan.kumar.gupta@linux.intel.com>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "oneukum@suse.com" <oneukum@suse.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: RE: [PATCH] mm/vmscan: add vm_swappiness configuration knobs
+Thread-Topic: [PATCH] mm/vmscan: add vm_swappiness configuration knobs
+Thread-Index: AdX3zHNqbuFpQvKERxyPueA21j6FDgAD0RWAACPlSzA=
+Date:   Thu, 12 Mar 2020 12:48:22 +0000
+Message-ID: <BL0PR02MB5601808F36BE202813E9D562E9FD0@BL0PR02MB5601.namprd02.prod.outlook.com>
+References: <BL0PR02MB560167492CA4094C91589930E9FC0@BL0PR02MB5601.namprd02.prod.outlook.com>
+ <alpine.DEB.2.21.2003111227230.171292@chino.kir.corp.google.com>
+In-Reply-To: <alpine.DEB.2.21.2003111227230.171292@chino.kir.corp.google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [62.254.189.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d86b2342-960b-42d2-af6f-08d7c683a5ec
+x-ms-traffictypediagnostic: BL0PR02MB5394:
+x-microsoft-antispam-prvs: <BL0PR02MB5394092E586D2F494F6CB51AE9FD0@BL0PR02MB5394.namprd02.prod.outlook.com>
+x-proofpoint-crosstenant: true
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0340850FCD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(366004)(396003)(39860400002)(199004)(6506007)(86362001)(33656002)(4326008)(55016002)(26005)(316002)(71200400001)(8676002)(8936002)(7696005)(66946007)(66556008)(81156014)(76116006)(52536014)(2906002)(81166006)(64756008)(66446008)(5660300002)(66476007)(478600001)(9686003)(44832011)(186003)(7416002)(54906003)(6916009);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR02MB5394;H:BL0PR02MB5601.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: nutanix.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Xy/zmVSvxubRH65+qpwaALSw194iFNRzwDjNy628l5vjRWCPqk6KwExq2D5b9t0kXrhe7CsT4VFnjGMpdTTDpY5stBaaQM/uW2nlPKKuc9ErfRaBkf3zxejQs/xU7rQcVUvici4+KFwbg5tClaAGpiSLvp1xfQ8bN6OJVANwo2KciQTkgob4ge5AxaJHBHEncDqeKYz6Y/mzAMfYVj0p90tG8DAbRx602tpomVzgiHa0n47PV2F3Yu/fVxMS/F7bX7nCuPwILHIC+lo0qPVHEKirbKFifKAL3Gzk+VNihtFXatK0rDaFDcZPJtICMglQb9OGDnxhzpqLti48f3o6qreQYCa4H8Vph9df5K5+Y7CloE1I8tP/PoME7/mbx0C8zhkb9NVduntbAEEN8Mzy8XoLpXCMh4vAtFG+cY6sSKryIf5dm782roOGbjICDG4X
+x-ms-exchange-antispam-messagedata: AYmqrfwa6yZksHLR7lxNLIGAa03wqywEvPuXR4wCJfwLA5ZBCivgnSQImD9/VkJyifSRudpq6uVU8ye6r3q9TbtkxZbbNpHBtCM4y0EGBL3yywx27M1sRL1hsEmi8ECEIGlMBb8+2NT2YhlS/kOnSQ==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20200310194854.831-1-linux.amoon@gmail.com> <20200310194854.831-6-linux.amoon@gmail.com>
- <20200311144248.GA4455@kozik-lap> <CANAwSgQWYdh3awuMCjUvz6EvnwMq9rDOSBn5EkNcA7OfsjoEwA@mail.gmail.com>
- <20200312113618.GA6206@pi3>
-In-Reply-To: <20200312113618.GA6206@pi3>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Thu, 12 Mar 2020 18:24:30 +0530
-Message-ID: <CANAwSgQOLRAW8zTBfPgBxXkJ8AaXyjGXc8+eQ9PUowOo5zDP6A@mail.gmail.com>
-Subject: Re: [PATCHv3 5/5] clk: samsung: exynos542x: Move FSYS subsystem
- clocks to its sub-CMU
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nutanix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d86b2342-960b-42d2-af6f-08d7c683a5ec
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2020 12:48:22.2172
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: bb047546-786f-4de1-bd75-24e5b6f79043
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: cCCLJ2Ik9QUsx4XVdtfPo6VHerR2TBnHDx5nqiC5GQmjL3VhftiwO9z1Ff91gJ4LcYEwBtHewxHJ0kOplqbfbOymLmu8a1lkDICfMgy6+rE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB5394
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-12_04:2020-03-11,2020-03-12 signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
+On Wed, 11 Mar 2020, David Rientjes wrote:
 
-On Thu, 12 Mar 2020 at 17:06, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Thu, Mar 12, 2020 at 04:04:57PM +0530, Anand Moon wrote:
-> > Hi Krzysztof,
+> On Wed, 11 Mar 2020, Ivan Teterevkov wrote:
+>=20
+> > This patch adds a couple of knobs:
 > >
-> > Thanks for your review comments.
+> > - The configuration option (CONFIG_VM_SWAPPINESS).
+> > - The command line parameter (vm_swappiness).
 > >
-> > On Wed, 11 Mar 2020 at 20:12, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > On Tue, Mar 10, 2020 at 07:48:54PM +0000, Anand Moon wrote:
-> > > > FSYS power domain support usbdrd3, pdma and usb2 power gaiting,
-> > > > hence move FSYS clk setting to sub-CMU block to support power domain
-> > > > on/off sequences for device nodes.
-> > > >
-> > > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > > > ---
-> > > > New patch in the series
-> > > > ---
-> > > >  drivers/clk/samsung/clk-exynos5420.c | 45 +++++++++++++++++++++-------
-> > > >  1 file changed, 34 insertions(+), 11 deletions(-)
-> > > >
-> > > > diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> > > > index c9e5a1fb6653..6c4c47dfcdce 100644
-> > > > --- a/drivers/clk/samsung/clk-exynos5420.c
-> > > > +++ b/drivers/clk/samsung/clk-exynos5420.c
-> > > > @@ -859,12 +859,6 @@ static const struct samsung_div_clock exynos5x_div_clks[] __initconst = {
-> > > >       DIV(0, "dout_maudio0", "mout_maudio0", DIV_MAU, 20, 4),
-> > > >       DIV(0, "dout_maupcm0", "dout_maudio0", DIV_MAU, 24, 8),
-> > > >
-> > > > -     /* USB3.0 */
-> > > > -     DIV(0, "dout_usbphy301", "mout_usbd301", DIV_FSYS0, 12, 4),
-> > > > -     DIV(0, "dout_usbphy300", "mout_usbd300", DIV_FSYS0, 16, 4),
-> > > > -     DIV(0, "dout_usbd301", "mout_usbd301", DIV_FSYS0, 20, 4),
-> > > > -     DIV(0, "dout_usbd300", "mout_usbd300", DIV_FSYS0, 24, 4),
-> > >
-> > > According to clock diagram these are still in CMU TOP, not FSYS.
-> > >
-> > > > -
-> > > >       /* MMC */
-> > > >       DIV(0, "dout_mmc0", "mout_mmc0", DIV_FSYS1, 0, 10),
-> > > >       DIV(0, "dout_mmc1", "mout_mmc1", DIV_FSYS1, 10, 10),
-> > > > @@ -1031,8 +1025,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
-> > > />
-> > > >       /* FSYS Block */
-> > > >       GATE(CLK_TSI, "tsi", "aclk200_fsys", GATE_BUS_FSYS0, 0, 0, 0),
-> > > > -     GATE(CLK_PDMA0, "pdma0", "aclk200_fsys", GATE_BUS_FSYS0, 1, 0, 0),
-> > > > -     GATE(CLK_PDMA1, "pdma1", "aclk200_fsys", GATE_BUS_FSYS0, 2, 0, 0),
-> > > >       GATE(CLK_UFS, "ufs", "aclk200_fsys2", GATE_BUS_FSYS0, 3, 0, 0),
-> > > >       GATE(CLK_RTIC, "rtic", "aclk200_fsys", GATE_IP_FSYS, 9, 0, 0),
-> > > >       GATE(CLK_MMC0, "mmc0", "aclk200_fsys2", GATE_IP_FSYS, 12, 0, 0),
-> > > > @@ -1040,9 +1032,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
-> > > >       GATE(CLK_MMC2, "mmc2", "aclk200_fsys2", GATE_IP_FSYS, 14, 0, 0),
-> > > >       GATE(CLK_SROMC, "sromc", "aclk200_fsys2",
-> > > >                       GATE_IP_FSYS, 17, CLK_IGNORE_UNUSED, 0),
-> > > > -     GATE(CLK_USBH20, "usbh20", "aclk200_fsys", GATE_IP_FSYS, 18, 0, 0),
-> > > > -     GATE(CLK_USBD300, "usbd300", "aclk200_fsys", GATE_IP_FSYS, 19, 0, 0),
-> > > > -     GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_IP_FSYS, 20, 0, 0),
-> > > >       GATE(CLK_SCLK_UNIPRO, "sclk_unipro", "dout_unipro",
-> > > >                       SRC_MASK_FSYS, 24, CLK_SET_RATE_PARENT, 0),
-> > > >
-> > > > @@ -1258,6 +1247,28 @@ static struct exynos5_subcmu_reg_dump exynos5x_gsc_suspend_regs[] = {
-> > > >       { DIV2_RATIO0, 0, 0x30 },       /* DIV dout_gscl_blk_300 */
-> > > >  };
-> > > >
-> > > > +/* USB3.0 */
-> > > > +static const struct samsung_div_clock exynos5x_fsys_div_clks[] __initconst = {
-> > > > +     DIV(0, "dout_usbphy301", "mout_usbd301", DIV_FSYS0, 12, 4),
-> > > > +     DIV(0, "dout_usbphy300", "mout_usbd300", DIV_FSYS0, 16, 4),
-> > > > +     DIV(0, "dout_usbd301", "mout_usbd301", DIV_FSYS0, 20, 4),
-> > > > +     DIV(0, "dout_usbd300", "mout_usbd300", DIV_FSYS0, 24, 4),
-> > > > +};
-> > > > +
-> > > > +static const struct samsung_gate_clock exynos5x_fsys_gate_clks[] __initconst = {
-> > > > +     GATE(CLK_PDMA0, "pdma0", "aclk200_fsys", GATE_BUS_FSYS0, 1, 0, 0),
-> > > > +     GATE(CLK_PDMA1, "pdma1", "aclk200_fsys", GATE_BUS_FSYS0, 2, 0, 0),
-> > > > +     GATE(CLK_USBH20, "usbh20", "aclk200_fsys", GATE_IP_FSYS, 18, 0, 0),
-> > > > +     GATE(CLK_USBD300, "usbd300", "aclk200_fsys", GATE_IP_FSYS, 19, 0, 0),
-> > > > +     GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_IP_FSYS, 20, 0, 0),
-> > > > +};
-> > > > +
-> > > > +static struct exynos5_subcmu_reg_dump exynos5x_fsys_suspend_regs[] = {
-> > > > +     { GATE_IP_FSYS, 0xffffffff, 0xffffffff }, /* FSYS gates */
-> > >
-> > > This looks wrong. GATE_IP_FSYS has fields also for FSYS2 clocks which
-> > > you are not suspending. They do not belong to this CMU.
-> > >
+> > The default value is preserved, but now defined by CONFIG_VM_SWAPPINESS=
+.
 > >
-> > Ok. I change the from GATE_IP_FSYS to GATE_BUS_FSYS0 in the above
-> > exynos5x_fsys_gate_clks to make this consistent to used GATE_BUS_FSYS0 for CMU,
-> > with this change it works as per previously.
->
-> Wait, you should set here proper registers with proper mask.
-
-Yes I will set the proper mask for each as per the Exynos 5422 User Manual.
-
-Here is what I feel
-CLK_GATE_BUS_FSYS0 controls the PHY clock
-CLK_GATE_IP_FSYS controls the IP clock.
-
-So both these field should be part of this FSYS CMU.
-
+> > Historically, the default swappiness is set to the well-known value 60,
+> > and this works well for the majority of cases. The vm_swappiness is als=
+o
+> > exposed as the kernel parameter that can be changed at runtime too, e.g=
+.
+> > with sysctl.
 > >
-> > > Don't you need to save also parts of GATE_BUS_FSYS0?
+> > This approach might not suit well some configurations, e.g. systemd-bas=
+ed
+> > distros, where systemd is put in charge of the cgroup controllers,
+> > including the memory one. In such cases, the default swappiness 60
+> > is copied across the cgroup subtrees early at startup, when systemd
+> > is arranging the slices for its services, before the sysctl.conf
+> > or tmpfiles.d/*.conf changes are applied.
 > >
-> > GATE_BUS_FSYS0 and GATE_IP_FSYS are already part of list
-> > of control register which are saved and restored during suspend and resume
-> > so no point in adding this here, I should drop the GATE_IP_FSYS reg
-> > dump over here.
->
-> Since registers are used in separate sub CMU devices, each should
-> save/restore its part.
+>=20
+> Seems like something that can be fully handled by an initscript that woul=
+d
+> set the sysctl and then iterate the memcg hierarchy propagating the
+> non-default value.  I don't think that's too much of an ask if userspace
+> wants to manipulate the swappiness value.
+>=20
 
-Ok I will add both GATE_BUS_FSYS0 and GATE_IP_FSYS
-reset value over here.
+This is exactly what I'm trying to avoid: in some distros there is no way
+to tackle the configuration early enough, e.g. in systemd-based systems
+the systemd is the process that starts first and arranges memcg in a way
+it's configured, but unfortunately, it doesn't offer the swappiness knob.
 
->
-> Best regards,
-> Krzysztof
->
+There could be a script to iterate the memcg later, but there would be a
+race condition with the system entity that's put in charge of the memcg
+because the configuration can't be changed atomically, e.g. a possible
+script could iterate the memcg tree and update each memory.swappiness
+while systemd is creating another slice or scope subtree.
 
--Anand
+> Or maybe we can be more clever: have memcg->swappiness store -1 by defaul=
+t
+> unless it is changed by the user explicitly and then have
+> mem_cgroup_swappiness() return vm_swappiness for this value.  If the user
+> overwrites it, it's intended.
+>=20
+
+Does it mean that -1 would become a reference to the vm_swappiness
+or the parent's memory.swappiness? It sounds interesting and if so then
+it would address my issues with the swappiness but would also change
+the existing memcg behaviour: if the referred-to value changed, would
+the memory.swappiness backed by -1 also change?
+
+> So there are a couple options here but I don't think one of them is to ad=
+d
+> a new config option or kernel command line option.
+>=20
+
+The vm_swappiness starts its lifespan in the kernel and thus
+why not to facilitate it with a simple "constructor" there?
+
+> > One could run a script to traverse the cgroup trees later and set the
+> > desired memory.swappiness individually in each occurrence when the runt=
+ime
+> > is set up, but this would require some amount of work to implement
+> > properly. Instead, why not set the default swappiness as early as possi=
+ble?
+> >
+> > Signed-off-by: Ivan Teterevkov <ivan.teterevkov@nutanix.com>
+> > ---
+> >  .../admin-guide/kernel-parameters.txt         |  4 ++++
+> >  mm/Kconfig                                    | 10 ++++++++
+> >  mm/vmscan.c                                   | 24 ++++++++++++++++++-
+> >  3 files changed, 37 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt
+> b/Documentation/admin-guide/kernel-parameters.txt
+> > index c07815d230bc..5d54a4303522 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -5317,6 +5317,10 @@
+> >  			  P	Enable page structure init time poisoning
+> >  			  -	Disable all of the above options
+> >
+> > +	vm_swappiness=3D	[KNL]
+> > +			Sets the default vm_swappiness.
+> > +			Ranges from 0 to 100, the default value is 60.
+> > +
+> >  	vmalloc=3Dnn[KMG]	[KNL,BOOT] Forces the vmalloc area to have an
+> exact
+> >  			size of <nn>. This can be used to increase the
+> >  			minimum size (128MB on x86). It can also be used to
+> diff --git a/mm/Kconfig b/mm/Kconfig index ab80933be65f..ec59c19e578e
+> 100644
+> > --- a/mm/Kconfig
+> > +++ b/mm/Kconfig
+> > @@ -739,4 +739,14 @@ config ARCH_HAS_HUGEPD  config
+> MAPPING_DIRTY_HELPERS
+> >          bool
+> >
+> > +config VM_SWAPPINESS
+> > +	int "Default memory swappiness"
+> > +	default 60
+> > +	range 0 100
+> > +	help
+> > +	  Sets the default vm_swappiness, that could be changed later
+> > +	  in the runtime, e.g. kernel command line, sysctl, etc.
+> > +
+> > +	  Higher value means more swappy. Historically, defaults to 60.
+> > +
+> >  endmenu
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index 876370565455..7d2d3550f698 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -163,7 +163,29 @@ struct scan_control {
+> >  /*
+> >   * From 0 .. 100.  Higher means more swappy.
+> >   */
+> > -int vm_swappiness =3D 60;
+> > +int vm_swappiness =3D CONFIG_VM_SWAPPINESS;
+> > +
+> > +static int __init swappiness_cmdline(char *str) {
+> > +	int val, err;
+> > +
+> > +	if (!str)
+> > +		return -EINVAL;
+> > +
+> > +	err =3D kstrtoint(str, 10, &val);
+> > +	if (err)
+> > +		return -EINVAL;
+> > +
+> > +	if (val < 0 || val > 100)
+> > +		return -EINVAL;
+> > +
+> > +	vm_swappiness =3D val;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +early_param("vm_swappiness", swappiness_cmdline);
+> > +
+> >  /*
+> >   * The total number of pages which are beyond the high watermark withi=
+n all
+> >   * zones.
