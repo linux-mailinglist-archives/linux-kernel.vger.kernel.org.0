@@ -2,61 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 600AB183CDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:56:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 240A5183CE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:59:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbgCLW4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 18:56:52 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:36206 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbgCLW4w (ORCPT
+        id S1726863AbgCLW7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 18:59:46 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35846 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbgCLW7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 18:56:52 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id BBECB15842957;
-        Thu, 12 Mar 2020 15:56:50 -0700 (PDT)
-Date:   Thu, 12 Mar 2020 15:56:50 -0700 (PDT)
-Message-Id: <20200312.155650.605586477165565395.davem@davemloft.net>
-To:     joe@perches.com
-Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
-        pablo@netfilter.org, kadlec@netfilter.org, fw@strlen.de,
-        dsahern@kernel.org, edumazet@google.com, kuba@kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-Subject: Re: [PATCH 2/3 V2] inet: Use fallthrough;
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <68a79203af60110b3412155621cfc00381867c94.camel@perches.com>
-References: <cover.1584040050.git.joe@perches.com>
-        <68a79203af60110b3412155621cfc00381867c94.camel@perches.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 12 Mar 2020 15:56:51 -0700 (PDT)
+        Thu, 12 Mar 2020 18:59:45 -0400
+Received: by mail-pg1-f194.google.com with SMTP id c7so3818825pgw.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 15:59:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VRNricm8Yj9j/ffl2iaO9/CyjzXWt5ewl0sNb73zbPc=;
+        b=Ixp5BFMVHtYL3JWaVrufECSQRPl1VA9HVFcHUwsG6HSYnE3npmb4PKviTsu4qvV66x
+         yxIoEfk4e/NoPgD/ULfr87hLnfRK9WtuA73yo0UFJp1Ke/6yDw6s+rGpz6iXS0I+uDhf
+         AEOM3dZQmV4uuqCn5vq2ksmeSVw2YZWf7OMoI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VRNricm8Yj9j/ffl2iaO9/CyjzXWt5ewl0sNb73zbPc=;
+        b=CFTIx32aRqqeRtIZGM0CKIOXGbWONYr2Dl3Ei+b+LjO/M9WanJsTTPMfDgj04uBQB1
+         tKipnNyEIoWwSGndQ9zgSDM1Rd8Z1ypJ57Hl9rNjCPxbg2FPjMY8ypGcP86vUujKisH8
+         GNk+jvGX3svLWHOudk7tfuVpGrFpr24yZt7WIMS+C3dIvnphsTdWp/T2UcS/vkhknw2N
+         eHteR8kotb3T1YkTVzrF+61++fVrERlqjbttVraL34iRa4WyKI5blDoirsT50xq2QoX1
+         cA5sVciCfxOAQLtCgUE1uh83QsgyGuGp48kuBcc/jTRjQbA8kda1NJ19jUYd54mcfjWP
+         XZnw==
+X-Gm-Message-State: ANhLgQ0BbFIWQDsFA9+IjDu2XL6NyVWGHT/cyt8XRDA+fijMh1IXHiZ+
+        tyAKyYDUJaotu+6evr1Yuj1cgOM2xOk=
+X-Google-Smtp-Source: ADFU+vvcfwnO9MhAic5AHub7xGPkerzsDLK//hgUjO+a84b4AKQGip+zXJpWTwv56Ki7FzR6OeFiUg==
+X-Received: by 2002:a63:3d48:: with SMTP id k69mr9549198pga.395.1584053984180;
+        Thu, 12 Mar 2020 15:59:44 -0700 (PDT)
+Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:476b:691:abc3:38db])
+        by smtp.gmail.com with ESMTPSA id v123sm28763161pfb.85.2020.03.12.15.59.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2020 15:59:43 -0700 (PDT)
+From:   Prashant Malani <pmalani@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Prashant Malani <pmalani@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v4 0/4] platform/chrome: Add Type C connector class driver
+Date:   Thu, 12 Mar 2020 15:57:10 -0700
+Message-Id: <20200312225719.14753-1-pmalani@chromium.org>
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joe Perches <joe@perches.com>
-Date: Thu, 12 Mar 2020 15:50:22 -0700
+The following series introduces a Type C port driver for Chrome OS
+devices that have an EC (Embedded Controller). It derives port
+information from ACPI or DT entries. This patch series adds basic
+support, including registering ports, and setting certain basic
+attributes.
 
-> Convert the various uses of fallthrough comments to fallthrough;
-> 
-> Done via script
-> Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe@perches.com/
-> 
-> And by hand:
-> 
-> net/ipv6/ip6_fib.c has a fallthrough comment outside of an #ifdef block
-> that causes gcc to emit a warning if converted in-place.
-> 
-> So move the new fallthrough; inside the containing #ifdef/#endif too.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+v3: https://lkml.org/lkml/2020/2/19/1230
+v2: https://lkml.org/lkml/2020/2/7/646
+v1: https://lkml.org/lkml/2020/2/5/676
 
-Applied to net-next.
+Changes in v4:
+- Updated DT bindings to use the usb-connector.yaml DT bindings
+- Updated initialization code to store port capabilities in the local
+device data struct.
+
+Prashant Malani (4):
+  dt-bindings: Add cros-ec Type C port driver
+  platform/chrome: Add Type C connector class driver
+  platform/chrome: typec: Get PD_CONTROL cmd version
+  platform/chrome: typec: Update port info from EC
+
+ .../bindings/chrome/google,cros-ec-typec.yaml |  48 +++
+ drivers/platform/chrome/Kconfig               |  11 +
+ drivers/platform/chrome/Makefile              |   1 +
+ drivers/platform/chrome/cros_ec_typec.c       | 357 ++++++++++++++++++
+ 4 files changed, 417 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
+ create mode 100644 drivers/platform/chrome/cros_ec_typec.c
+
+-- 
+2.25.1.481.gfbce0eb801-goog
+
