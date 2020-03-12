@@ -2,109 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70788182F2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 12:30:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D0FD182F37
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 12:31:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbgCLLap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 07:30:45 -0400
-Received: from sauhun.de ([88.99.104.3]:41382 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725268AbgCLLap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 07:30:45 -0400
-Received: from localhost (p54B331A0.dip0.t-ipconnect.de [84.179.49.160])
-        by pokefinder.org (Postfix) with ESMTPSA id 66DED2C1ECC;
-        Thu, 12 Mar 2020 12:30:43 +0100 (CET)
-Date:   Thu, 12 Mar 2020 12:30:43 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-i3c@lists.infradead.org,
-        Kieran Bingham <kieran@ksquared.org.uk>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [RFC PATCH 7/7] i2c: core: hand over reserved devices when
- requesting ancillary addresses
-Message-ID: <20200312113042.GD1013@ninjato>
-References: <20200220172403.26062-1-wsa+renesas@sang-engineering.com>
- <20200220172403.26062-8-wsa+renesas@sang-engineering.com>
- <CAMuHMdV-dfjukuSKiFg4vb4Ntn+XWU0XwHPxyoaWs1vtQVg4cw@mail.gmail.com>
- <dc831357-8545-6f6e-71a2-bef282e0bd94@lucaceresoli.net>
+        id S1726986AbgCLLbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 07:31:48 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:50389 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726299AbgCLLbr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 07:31:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584012706;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WYedCD1YUZGy9DvS5CpqX6J6lGrla8oQNj4cy6ig+Vg=;
+        b=VDY3zCsgQpeT9ZwU2Vj41cCMh7YG8eFh8PVzIoMqMka38vsmqq18q0/kGvTDrmNeULK9sg
+        mdKiBbv4m8fF9EkflDhOU49oXl8FBkI0ru96ZjLac98+npIawcZ3hfN34ZEy9H4XS3GYBG
+        AAKvJqcvg5HIReAPX3QdydU/lqmVSGo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-226-z9taIy6tOEyjwrz0qSYHBQ-1; Thu, 12 Mar 2020 07:31:43 -0400
+X-MC-Unique: z9taIy6tOEyjwrz0qSYHBQ-1
+Received: by mail-wm1-f71.google.com with SMTP id n188so2019252wmf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 04:31:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WYedCD1YUZGy9DvS5CpqX6J6lGrla8oQNj4cy6ig+Vg=;
+        b=cCAElxXyVsPT6t9O6tzq/Zd+xrkM9ZTn958PkojZxUalnKhXnT4uYqr+PgDkAhg2mD
+         Ra4Ya4K3vziPQnnMVPkhGsPNqGhElGGuZLyfruRXsd5zZ5Bc1J7XSOsRHJ6SqY1SWbXz
+         omLOvhSrl6PB379dP2Cj+4fRO1UNrtexmuokxEN2+Pr79wxhkcklm1HEq92Ki3JRpWft
+         hThQDv/G/5z7H0JBBGfcoQOxvPZACQbztA6HZUndWkjYP72Z68grJedIqntVFDCBdFup
+         OShJ6PmQXoDM8zisQa809r1T6zkmPOgWIYIbrdCeZLinDnMdKoeBVG4u80IY+63t+azC
+         gcYg==
+X-Gm-Message-State: ANhLgQ3sLKJhoCJD4npZm5Gn/+ME8reCTfRyDS9oMamfLqwCjeh72r6e
+        B2GrW9WPlgtn/hodTuGYTmZ6Vrs6nJdLpZEQKEbrA3L4UPg+i5vwS55JusEA7wBQstStt17rIOT
+        Zy1zwZnrESWDiWGBapKSfo21f
+X-Received: by 2002:adf:f9c4:: with SMTP id w4mr1801709wrr.98.1584012701189;
+        Thu, 12 Mar 2020 04:31:41 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vtOZNckdsTW36SkcK19G1I1mmBeaw6EdevdMDHC0vXO4tTiIePYg+w4kW7dMobF7uNBTP1MJA==
+X-Received: by 2002:adf:f9c4:: with SMTP id w4mr1801684wrr.98.1584012700893;
+        Thu, 12 Mar 2020 04:31:40 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-fc7e-fd47-85c1-1ab3.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:fc7e:fd47:85c1:1ab3])
+        by smtp.gmail.com with ESMTPSA id g5sm7903150wrr.57.2020.03.12.04.31.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Mar 2020 04:31:40 -0700 (PDT)
+Subject: Re: [PATCH v4 2/2] x86/purgatory: Make sure we fail the build if
+ purgatory.ro has missing symbols
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200311214601.18141-1-hdegoede@redhat.com>
+ <20200311214601.18141-3-hdegoede@redhat.com>
+ <20200312001006.GA170175@rani.riverdale.lan>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <3d58e77d-41e5-7927-fe84-4c058015e469@redhat.com>
+Date:   Thu, 12 Mar 2020 12:31:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rz+pwK2yUstbofK6"
-Content-Disposition: inline
-In-Reply-To: <dc831357-8545-6f6e-71a2-bef282e0bd94@lucaceresoli.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200312001006.GA170175@rani.riverdale.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---rz+pwK2yUstbofK6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 3/12/20 1:10 AM, Arvind Sankar wrote:
+> On Wed, Mar 11, 2020 at 10:46:01PM +0100, Hans de Goede wrote:
+>> Since we link purgatory.ro with -r aka we enable "incremental linking"
+>> no checks for unresolved symbols is done while linking purgatory.ro.
+>>
+> 
+> Do we actually need to link purgatory with -r? We could use
+> --emit-relocs to get the relocation sections generated the way the main
+> x86 kernel does, no?
+> 
+> Eg like the below? This would avoid the double-link creating
+> purgatory.chk.
+
+Ok, I've just given that a try and it does indeed catch missing symbols
+I'm not sure if it still generates a working purgatory though (I did
+not try kexec from a kernel with it).
+
+Since this all is somewhat black magic to me, my goal was to not change
+how we build the purgatory while still adding a step which checks for
+missing symbols, as my changes from a while back to unify all the SHA256
+implementations in the kernel had accidentally caused a missing symbol
+which went unnoticed for a while.
+
+Also the same patch, using the 2 step approach has already been merged
+for the s390x purgatory code, so doing it your way would lead to 2
+different approaches in the kernel.
+
+I do agree that your way does seem to be more elegant though...
+
+I also see that the kbuild test robot has managed to come up with
+yet another set of Kconfig options triggering missing symbols.
+
+IMHO this shows that we really need some patch to detect these,
+because clearly there are a lot of config-s with missing symbols
+in the purgatory out there with no-one noticing.
+
+I will send out a v5 of my patch-set changing the first patch to
+also fix the new issue the kbuild test robot has found. I'm going
+to leave this patch as is. If you prefer replacing the second patch
+in the set (this patch) with your solution then that is fine with me.
+
+Regards,
+
+Hans
 
 
-> >> +               strlcpy(reserved_client->name, I2C_DUMMY_DRV_NAME, siz=
-eof(client->name));
->=20
-> Any strong reason for not giving the device a more informative name?
+> diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
+> index fb4ee5444379..5332f95ca1d3 100644
+> --- a/arch/x86/purgatory/Makefile
+> +++ b/arch/x86/purgatory/Makefile
+> @@ -14,8 +14,8 @@ $(obj)/sha256.o: $(srctree)/lib/crypto/sha256.c FORCE
+>   
+>   CFLAGS_sha256.o := -D__DISABLE_EXPORTS
+>   
+> -LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
+> -targets += purgatory.ro
+> +LDFLAGS_purgatory := -e purgatory_start --emit-relocs -nostdlib -z nodefaultlib
+> +targets += purgatory
+>   
+>   KASAN_SANITIZE	:= n
+>   KCOV_INSTRUMENT := n
+> @@ -55,7 +55,7 @@ CFLAGS_sha256.o			+= $(PURGATORY_CFLAGS)
+>   CFLAGS_REMOVE_string.o		+= $(PURGATORY_CFLAGS_REMOVE)
+>   CFLAGS_string.o			+= $(PURGATORY_CFLAGS)
+>   
+> -$(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
+> +$(obj)/purgatory: $(PURGATORY_OBJS) FORCE
+>   		$(call if_changed,ld)
+>   
+>   targets += kexec-purgatory.c
+> @@ -63,7 +63,7 @@ targets += kexec-purgatory.c
+>   quiet_cmd_bin2c = BIN2C   $@
+>         cmd_bin2c = $(objtree)/scripts/bin2c kexec_purgatory < $< > $@
+>   
+> -$(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
+> +$(obj)/kexec-purgatory.c: $(obj)/purgatory FORCE
+>   	$(call if_changed,bin2c)
+>   
+>   obj-$(CONFIG_KEXEC_FILE)	+= kexec-purgatory.o
+> 
 
-Yes, sadly...
-
-> Reading "dummy" in several /sys/bus/i2c/devices/?-????/name files is not
-> helping. Using the 'name' string that is passed to
-> i2c_new_ancillary_device() would be way better, perhaps prefixed by
-> dev->name. But this opens the question of why not doing it in
-
-=2E.. I never liked the plain "dummy" name as well. However, because
-'name' is what we need to bind to a driver we can't have a more
-descriptive or run-time generated name at that place.
-
-> i2c_new_dummy_device() as well, which currently receives no "name"
-> parameter.
-
-I thought about it but discarded the idea because then you still have
-no connection to the driver which created the dummy device. My
-favourite idea so far is to advertise i2c_new_ancillary_device() instead
-of i2c_new_dummy_device(), because there we already have access to the
-client structure. With that, we could add another link in sysfs to the
-main address and vice-versa.
-
-> Of course this is not strictly related to this patch and can be done in
-> a later step.
-
-Exactly.
-
-
---rz+pwK2yUstbofK6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl5qHWIACgkQFA3kzBSg
-KbYqEA//dr8XFHEYXWhQXqlofteHQgPuqLLgw5ruq9PvVCpv51Scsz/RjoUKvanT
-s3/CZjL+MvvHDvvpKjCpW6/ImDM2KSGalPy0ZAQ0GaOtS2aqaLvieLsnxGPF2FLl
-QLBufHNjG6DOkO6PrQ44SLRFvpKw2iBMihmGyJBRjWWMtPrpgw5fO0omoM3IogPj
-t+W0+Fou6p6dgiTYhGCIOYi8YHAHEZt+HPhBExDRHfbeF3K9IXGwA84m8uTCVEP6
-2XZoR4mjO5fbXGMWp5uhB9EtXridUSmUTavnG/vOFki6i8Nw36bscICAgRVaHk3m
-nhK4s53VEt1EB8dyW61ZUAfBqwwCHKfbmRneKpDtytOi7PS2eHrSTC1hCioparvh
-ifGDynlbyaEbJtxmmp2ukgSxLiO9V3r4HgHnnU7L+yUMUApcVX6o7ftRgMjKK4oj
-rYOnylcJyC151MOY4T+2fSl9VCmkcBsz8K5LoU/iN0TF6/x0W3OQ6Nv1p+t1k2oe
-105gZoZ/9d+7ja7MfJB23p0neb8SE0BVgkFtvLkJyvpyEw3f/JMdE1g3fjCAlb4u
-dB0enc8/ncA+yoGOTtN2ADXCPvteTcfK+GC9/Tlmd1HJwWlIWu24IVYJFAg6a4Ln
-HTILjLrr6L9HRNaemVxKdq1c/fTAPMFJB2ReDoHJokKjoTPULn0=
-=WKGM
------END PGP SIGNATURE-----
-
---rz+pwK2yUstbofK6--
