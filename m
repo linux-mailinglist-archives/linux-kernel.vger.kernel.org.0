@@ -2,207 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86F5B183BCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 22:58:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B4A5183BD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:01:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726704AbgCLV6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 17:58:30 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:23647 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726528AbgCLV63 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 17:58:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584050307;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bydTNMJNgIMQ2vZ+TFrMdvYY1Bx3pTEvBd4lxqyQhlg=;
-        b=FTXc51aoJthExlpqhKf65I4WmwEV5NDcNBX33oajIrCB3IC39t+k1+pJJLeLEidLzzDYDO
-        WSG/ahFkA0+K46A45WnUqne0ik1Wm3Gw7ArAlgzxEdVwzArPw28tNXDqLnvA5I9bxtaXLX
-        AI1pODYv725ilTgskUZfJopf+LeB/yw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-440-uopu1BQaMEyDh_EmRcZsbg-1; Thu, 12 Mar 2020 17:58:25 -0400
-X-MC-Unique: uopu1BQaMEyDh_EmRcZsbg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C1D9F18CA240;
-        Thu, 12 Mar 2020 21:58:22 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-16.rdu2.redhat.com [10.10.112.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 26F0A73874;
-        Thu, 12 Mar 2020 21:58:10 +0000 (UTC)
-Date:   Thu, 12 Mar 2020 17:58:08 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 V8 16/16] audit: add capcontid to set contid
- outside init_user_ns
-Message-ID: <20200312215808.bkezqotlhewconiy@madcap2.tricolour.ca>
-References: <cover.1577736799.git.rgb@redhat.com>
- <5941671b6b6b5de28ab2cc80e72f288cf83291d5.1577736799.git.rgb@redhat.com>
- <CAHC9VhQYXQp+C0EHwLuW50yUenfH4KF1xKQdS=bn_OzHfnFmmg@mail.gmail.com>
- <20200205003930.2efpm4tvrisgmj4t@madcap2.tricolour.ca>
- <CAHC9VhSsfBbfYmqLoR=QBgF5_VwbA8Dqqz97MjqwwJ6Jq6fHwA@mail.gmail.com>
- <20200206125135.u4dmybkmvxfgui2b@madcap2.tricolour.ca>
- <CAHC9VhT8RsFtmqD22p_NxJaqoAg+do9mX45Luw9fEkr+nQjvxg@mail.gmail.com>
+        id S1726726AbgCLWBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 18:01:41 -0400
+Received: from mga05.intel.com ([192.55.52.43]:57083 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726513AbgCLWBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 18:01:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 15:01:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,546,1574150400"; 
+   d="scan'208";a="354231414"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 12 Mar 2020 15:01:40 -0700
+Received: from [10.7.201.16] (skuppusw-desk.jf.intel.com [10.7.201.16])
+        by linux.intel.com (Postfix) with ESMTP id 7A42A58033E;
+        Thu, 12 Mar 2020 15:01:40 -0700 (PDT)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v17 09/12] PCI/AER: Allow clearing Error Status Register
+ in FF mode
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Austin.Bolen@dell.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ashok.raj@intel.com
+References: <20200312195319.GA162308@google.com>
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <951fc29a-1462-ef46-d9a2-5e1cd50bf90a@linux.intel.com>
+Date:   Thu, 12 Mar 2020 14:59:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhT8RsFtmqD22p_NxJaqoAg+do9mX45Luw9fEkr+nQjvxg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <20200312195319.GA162308@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-13 16:58, Paul Moore wrote:
-> On Thu, Feb 6, 2020 at 7:52 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2020-02-05 17:56, Paul Moore wrote:
-> > > On Tue, Feb 4, 2020 at 7:39 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > On 2020-01-22 16:29, Paul Moore wrote:
-> > > > > On Tue, Dec 31, 2019 at 2:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > >
-> > > > > > Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
-> > > > > > process in a non-init user namespace the capability to set audit
-> > > > > > container identifiers.
-> > > > > >
-> > > > > > Provide /proc/$PID/audit_capcontid interface to capcontid.
-> > > > > > Valid values are: 1==enabled, 0==disabled
-> > > > >
-> > > > > It would be good to be more explicit about "enabled" and "disabled" in
-> > > > > the commit description.  For example, which setting allows the target
-> > > > > task to set audit container IDs of it's children processes?
-> > > >
-> > > > Ok...
-> > > >
-> > > > > > Report this action in message type AUDIT_SET_CAPCONTID 1022 with fields
-> > > > > > opid= capcontid= old-capcontid=
-> > > > > >
-> > > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > > > ---
-> > > > > >  fs/proc/base.c             | 55 ++++++++++++++++++++++++++++++++++++++++++++++
-> > > > > >  include/linux/audit.h      | 14 ++++++++++++
-> > > > > >  include/uapi/linux/audit.h |  1 +
-> > > > > >  kernel/audit.c             | 35 +++++++++++++++++++++++++++++
-> > > > > >  4 files changed, 105 insertions(+)
-> > >
-> > > ...
-> > >
-> > > > > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > > > > index 1287f0b63757..1c22dd084ae8 100644
-> > > > > > --- a/kernel/audit.c
-> > > > > > +++ b/kernel/audit.c
-> > > > > > @@ -2698,6 +2698,41 @@ static bool audit_contid_isowner(struct task_struct *tsk)
-> > > > > >         return false;
-> > > > > >  }
-> > > > > >
-> > > > > > +int audit_set_capcontid(struct task_struct *task, u32 enable)
-> > > > > > +{
-> > > > > > +       u32 oldcapcontid;
-> > > > > > +       int rc = 0;
-> > > > > > +       struct audit_buffer *ab;
-> > > > > > +
-> > > > > > +       if (!task->audit)
-> > > > > > +               return -ENOPROTOOPT;
-> > > > > > +       oldcapcontid = audit_get_capcontid(task);
-> > > > > > +       /* if task is not descendant, block */
-> > > > > > +       if (task == current)
-> > > > > > +               rc = -EBADSLT;
-> > > > > > +       else if (!task_is_descendant(current, task))
-> > > > > > +               rc = -EXDEV;
-> > > > >
-> > > > > See my previous comments about error code sanity.
-> > > >
-> > > > I'll go with EXDEV.
-> > > >
-> > > > > > +       else if (current_user_ns() == &init_user_ns) {
-> > > > > > +               if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current))
-> > > > > > +                       rc = -EPERM;
-> > > > >
-> > > > > I think we just want to use ns_capable() in the context of the current
-> > > > > userns to check CAP_AUDIT_CONTROL, yes?  Something like this ...
-> > > >
-> > > > I thought we had firmly established in previous discussion that
-> > > > CAP_AUDIT_CONTROL in anything other than init_user_ns was completely irrelevant
-> > > > and untrustable.
-> > >
-> > > In the case of a container with multiple users, and multiple
-> > > applications, one being a nested orchestrator, it seems relevant to
-> > > allow that container to control which of it's processes are able to
-> > > exercise CAP_AUDIT_CONTROL.  Granted, we still want to control it
-> > > within the overall host, e.g. the container in question must be
-> > > allowed to run a nested orchestrator, but allowing the container
-> > > itself to provide it's own granularity seems like the right thing to
-> > > do.
-> >
-> > Looking back to discussion on the v6 patch 2/10 (2019-05-30 15:29 Paul
-> > Moore[1], 2019-07-08 14:05 RGB[2]) , it occurs to me that the
-> > ns_capable(CAP_AUDIT_CONTROL) application was dangerous since there was
-> > no parental accountability in storage or reporting.  Now that is in
-> > place, it does seem a bit more reasonable to allow it, but I'm still not
-> > clear on why we would want both mechanisms now.  I don't understand what
-> > the last line in that email meant: "We would probably still want a
-> > ns_capable(CAP_AUDIT_CONTROL) restriction in this case."  Allow
-> > ns_capable(CAP_AUDIT_CONTROL) to govern these actions, or restrict
-> > ns_capable(CAP_AUDIT_CONTROL) from being used to govern these actions?
-> >
-> > If an unprivileged user has been given capcontid to be able run their
-> > own container orchestrator/engine and spawns a user namespace with
-> > CAP_AUDIT_CONTROL, what matters is capcontid, and not CAP_AUDIT_CONTROL.
-> > I could see needing CAP_AUDIT_CONTROL *in addition* to capcontid to give
-> > it finer grained control, but since capcontid would have to be given to
-> > each process explicitly anways, I don't see the point.
-> >
-> > If that unprivileged user had not been given capcontid,
-> > giving itself or one of its descendants CAP_AUDIT_CONTROL should not let
-> > it jump into the game all of a sudden unless the now chained audit
-> > container identifiers are deemed accountable enough.  And then now we
-> > need those hard limits on container depth and network namespace
-> > container membership.
-> 
-> Perhaps I'm not correctly understanding what you are trying to do with
-> this patchset, but my current understanding is that you are trying to
-> use capcontid to control which child audit container IDs (ACIDs) are
-> allowed to manage their own ACIDs.  Further, I believe that the
-> capcontid setting operates at a per-ACID level, meaning there is no
-> provision for the associated container to further restrict that
-> ability, i.e. no access control granularity below the ACID level.  My
-> thinking is that ns_capable(CAP_AUDIT_CONTROL) could be used within an
-> ACID to increase the granularity of the access controls so that only
-> privileged processes running inside the ACID would be able to manage
-> the ACIDs.  Does that make sense?
+Hi Bjorn,
 
-The capcontid is not inherited like the contid (or contobj) in
-audit_alloc(), so it stops at that process that was granted capcontid.
-That process that was granted capcontid can then explicitly further
-grant capcontid to any of its children should it deem necessary.
+On 3/12/20 12:53 PM, Bjorn Helgaas wrote:
+> On Wed, Mar 11, 2020 at 04:07:59PM -0700, Kuppuswamy Sathyanarayanan wrote:
+>> On 3/11/20 3:23 PM, Bjorn Helgaas wrote:
+>>> Is any synchronization needed here between the EDR path and the
+>>> hotplug/enumeration path?
+>> If we want to follow the implementation note step by step (in
+>> sequence) then we need some synchronization between EDR path and
+>> enumeration path. But if it's OK to achieve the same end result by
+>> following steps out of sequence then we don't need to create any
+>> dependency between EDR and enumeration paths. Currently we follow
+>> the latter approach.
+> What would the synchronization look like?
+we might need some way to disable the enumeration path till
+we get response from firmware.
 
-Since it is a boolean, it defaults to unset in init_struct_audit which
-isn't relevant anyways since that is in the initial user namespace.
-It isn't set in audit_alloc() and would default to false.
-I can set them explicitly both to false to be certain if that makes
-things clearer and more certain.
+In native hot plug case, I think we can do it in two ways.
 
-I still believe ns_capable() is irrelevant here.
+1. Disable hotplug notification in slot ctl registers.
+     (pcie_disable_notification())
+2. Some how block hotplug driver from processing the new
+     events (not sure how feasible its).
 
-> paul moore
+Following method 1 would be easy, But I am not sure whether
+its alright to disable them randomly. I think, unless we
+clear the status as well, we might get some issues due to stale
+notification history.
 
-- RGB
+For ACPI event case, I am not sure whether we have some
+communication protocol in place to disable receiving ACPI
+events temporarily.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+For polling model, we need to disable to the polling
+timer thread till we receive _OST response from firmware.
+>
+> Ideally I think it would be better to follow the order in the
+> flowchart if it's not too onerous.
+None of the above changes will be pretty and I think it will
+not be simple as well.
+>   That will make the code easier to
+> understand.  The current situation with this dependency on pciehp and
+> what it will do leaves a lot of things implicit.
+>
+> What happens if CONFIG_PCIE_EDR=y but CONFIG_HOTPLUG_PCI_PCIE=n?
+>
+> IIUC, when DPC triggers, pciehp is what fields the DLLSC interrupt and
+> unbinds the drivers and removes the devices.
+
+>   If that doesn't happen,
+> and Linux clears the DPC trigger to bring the link back up, will those
+> drivers try to operate uninitialized devices?
+I don't think this will happen. In DPC reset_link before we bring
+up the device we wait for link to go down first
+using pcie_wait_for_link(pdev, false) function.
+>
+> Does EDR need a dependency on CONFIG_HOTPLUG_PCI_PCIE?
+No, enumeration can happen other ways as well (ACPI events, polling, etc).
+>
+>> For example, consider the case in flow chart where after sending
+>> success _OST, firmware decides to stop the recovery of the device.
+>>
+>> if we follow the flow chart as is then the steps should be,
+>>
+>> 1. clear the DPC status trigger
+>> 2. Send success code via _OST, and wait for return from _OST
+>> 3. if successful return then enumerate the child devices and
+>> reassign bus numbers.
+>>
+>> In current approach the steps followed are,
+>>
+>> 1. Clear the DPC status trigger.
+>> 2. Send success code via _OST
+>> 2. In parallel, LINK UP event path will enumerate the child devices.
+>> 3. if firmware decides not to recover the device, then LINK DOWN
+>> event will eventually remove them again.
+
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
