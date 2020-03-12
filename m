@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCE1F18321C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:52:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 331FB183217
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:52:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbgCLNwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:52:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56984 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727403AbgCLNvk (ORCPT
+        id S1727624AbgCLNwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:52:17 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46840 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727461AbgCLNvl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:51:40 -0400
+        Thu, 12 Mar 2020 09:51:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=QbGeewWMk2FA2MtPNB/0FNd9UAqrQnwyvbemtby3IGo=; b=EUksIjxP21c/2p6A8f6lMDZRhe
-        waL8VgfBmVwCI8JUWi01myCfzRMrkSuyvIE5hvM0R2LslnCsuN85VNoxNqzKQ95cqkRRH/4XWBuG4
-        QvH6L4T1FmFmfLk0yhKjaWZsuadhl1VN55hPRclh3TKLIQYO5FQQSBfnf+cLYaxffpu+ZQTsTO1LP
-        RPbP/CjXhP0uExiVVCZqfqSx0FvU7JBdnhY30zPOkqhQqqzKGiJx9osKdLCnYfnkOqJNIeTZfvLvl
-        rZvo5cmZnwwDOuWxSDlbGOoJqwU0QodQ1deeMvZ+YrZugLUYYGpPyrg1LT7yh46kq0KyEjWi2TgyP
-        VV3aIESA==;
+        bh=V7Duu4tbcIT7Gqqhjc4VX+XUii17MaHeZ72gDmdRkTE=; b=vxvv/eNGqAMlrl8no5cVpLOTaa
+        mZrBClebDALcyG8VHOMlcA0Ecuatoy/bNWmdzY5qJ2RyKkP8zshaAdZ46Iopg//S9NE7U7huVMKCd
+        K+JUpMRR5/SdqoSK3pSt0FMWNckmBLspClqMUOEFZ/57G7js5qz3Bc809Fdkx0u6cxmu+oL2ERZff
+        oof/9wGyHFuG34q2OuWCzBnuAAY/P9PyUVlK5cqMEm4mF9S02xEYkgeNrviIkcfoDnA6dWSiU3mZc
+        UuMy4/bafcCDsO/DBoYzlvJ+dN873Z5tGum/znxZoPm5wlFyYJqmFbRkDXSv+GUgtxUgXrCFkpK83
+        nm+zbdwg==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCOFM-0006WV-4J; Thu, 12 Mar 2020 13:51:36 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jCOFM-0003AQ-Nh; Thu, 12 Mar 2020 13:51:37 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 243CF30275A;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 27A49303C41;
         Thu, 12 Mar 2020 14:51:34 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 10B552B740B30; Thu, 12 Mar 2020 14:51:34 +0100 (CET)
-Message-Id: <20200312135041.582646428@infradead.org>
+        id 14A382B740AE6; Thu, 12 Mar 2020 14:51:34 +0100 (CET)
+Message-Id: <20200312135041.641079164@infradead.org>
 User-Agent: quilt/0.65
-Date:   Thu, 12 Mar 2020 14:41:10 +0100
+Date:   Thu, 12 Mar 2020 14:41:11 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, jpoimboe@redhat.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org
-Subject: [RFC][PATCH 03/16] objtool: Rename func_for_each_insn_all()
+Subject: [RFC][PATCH 04/16] objtool: Annotate identity_mapped()
 References: <20200312134107.700205216@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,72 +47,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that func_for_each_insn() is available, rename
-func_for_each_insn_all(). This gets us:
+Normally identity_mapped is not visible to objtool, due to:
 
-  sym_for_each_insn()  - iterate on symbol offset/len
-  func_for_each_insn() - iterate on insn->func
+  arch/x86/kernel/Makefile:OBJECT_FILES_NON_STANDARD_relocate_kernel_$(BITS).o := y
+
+However, when we want to run objtool on vmlinux.o there is no hiding
+it. Without the annotation we'll get complaints about the:
+
+	call 1f
+1:	popq %rB
+
+construct from the add_call_destinations() pass. Because
+identity_mapped() is a SYM_CODE_START_LOCAL_NOALIGN() it is STT_NOTYPE
+and we need sym_for_each_insn() to iterate the actual instructions.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- tools/objtool/check.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/kernel/relocate_kernel_64.S |    2 ++
+ include/linux/frame.h                |   16 ++++++++++++++++
+ tools/objtool/check.c                |    4 ++--
+ 3 files changed, 20 insertions(+), 2 deletions(-)
 
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <linux/linkage.h>
++#include <linux/frame.h>
+ #include <asm/page_types.h>
+ #include <asm/kexec.h>
+ #include <asm/processor-flags.h>
+@@ -210,6 +211,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_ma
+ 	pushq	%rax
+ 	ret
+ SYM_CODE_END(identity_mapped)
++STACK_FRAME_NON_STANDARD(identity_mapped)
+ 
+ SYM_CODE_START_LOCAL_NOALIGN(virtual_mapped)
+ 	movq	RSP(%r8), %rsp
+--- a/include/linux/frame.h
++++ b/include/linux/frame.h
+@@ -3,6 +3,9 @@
+ #define _LINUX_FRAME_H
+ 
+ #ifdef CONFIG_STACK_VALIDATION
++
++#ifndef __ASSEMBLY__
++
+ /*
+  * This macro marks the given function's stack frame as "non-standard", which
+  * tells objtool to ignore the function when doing stack metadata validation.
+@@ -15,6 +18,19 @@
+ 	static void __used __section(.discard.func_stack_frame_non_standard) \
+ 		*__func_stack_frame_non_standard_##func = func
+ 
++#else /* __ASSEMBLY__ */
++
++#define STACK_FRAME_NON_STANDARD(func) \
++	.pushsection .discard.func_stack_frame_non_standard, "aw"; \
++	.align 8; \
++	.type __func_stack_frame_non_standard_##func, @object; \
++	.size __func_stack_frame_non_standard_##func, 8; \
++__func_stack_frame_non_standard_##func: \
++	.quad func; \
++	.popsection
++
++#endif /* __ASSEMBLY */
++
+ #else /* !CONFIG_STACK_VALIDATION */
+ 
+ #define STACK_FRAME_NON_STANDARD(func)
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -72,7 +72,7 @@ static struct instruction *next_insn_sam
- 	return find_insn(file, func->cfunc->sec, func->cfunc->offset);
- }
+@@ -416,7 +416,7 @@ static void add_ignores(struct objtool_f
  
--#define func_for_each_insn_all(file, func, insn)			\
-+#define func_for_each_insn(file, func, insn)				\
- 	for (insn = find_insn(file, func->sec, func->offset);		\
- 	     insn;							\
- 	     insn = next_insn_same_func(file, insn))
-@@ -165,7 +165,7 @@ static bool __dead_end_function(struct o
- 	if (!insn->func)
- 		return false;
- 
--	func_for_each_insn_all(file, func, insn) {
-+	func_for_each_insn(file, func, insn) {
- 		empty = false;
- 
- 		if (insn->type == INSN_RETURN)
-@@ -180,7 +180,7 @@ static bool __dead_end_function(struct o
- 	 * case, the function's dead-end status depends on whether the target
- 	 * of the sibling call returns.
- 	 */
--	func_for_each_insn_all(file, func, insn) {
-+	func_for_each_insn(file, func, insn) {
- 		if (is_sibling_call(insn)) {
- 			struct instruction *dest = insn->jump_dest;
+ 		case STT_SECTION:
+ 			func = find_symbol_by_offset(rela->sym->sec, rela->addend);
+-			if (!func || func->type != STT_FUNC)
++			if (!func || (func->type != STT_FUNC && func->type != STT_NOTYPE))
+ 				continue;
+ 			break;
  
 @@ -425,7 +425,7 @@ static void add_ignores(struct objtool_f
  			continue;
  		}
  
--		func_for_each_insn_all(file, func, insn)
-+		func_for_each_insn(file, func, insn)
+-		func_for_each_insn(file, func, insn)
++		sym_for_each_insn(file, func, insn)
  			insn->ignore = true;
  	}
  }
-@@ -1082,7 +1082,7 @@ static void mark_func_jump_tables(struct
- 	struct instruction *insn, *last = NULL;
- 	struct rela *rela;
- 
--	func_for_each_insn_all(file, func, insn) {
-+	func_for_each_insn(file, func, insn) {
- 		if (!last)
- 			last = insn;
- 
-@@ -1117,7 +1117,7 @@ static int add_func_jump_tables(struct o
- 	struct instruction *insn;
- 	int ret;
- 
--	func_for_each_insn_all(file, func, insn) {
-+	func_for_each_insn(file, func, insn) {
- 		if (!insn->jump_table)
- 			continue;
- 
 
 
