@@ -2,89 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6283318395B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 20:19:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2567E18395F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 20:20:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbgCLTTQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 15:19:16 -0400
-Received: from smtprelay0197.hostedemail.com ([216.40.44.197]:53528 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726873AbgCLTTP (ORCPT
+        id S1726952AbgCLTUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 15:20:17 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47879 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726788AbgCLTUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 15:19:15 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id C1F21249F;
-        Thu, 12 Mar 2020 19:19:14 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:541:800:960:967:973:982:988:989:1260:1311:1314:1345:1359:1437:1515:1534:1541:1711:1730:1747:1777:1792:2393:2525:2560:2563:2682:2685:2859:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3865:3866:3867:3868:3870:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6119:6261:7903:9025:10004:10848:11026:11473:11658:11914:12043:12296:12297:12438:12555:12679:12895:12986:13069:13311:13357:13894:14096:14181:14384:14394:14721:21080:21433:21627:21811:21939:21990:30054,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: plate17_6db8f10d3c737
-X-Filterd-Recvd-Size: 2505
-Received: from joe-laptop.perches.com (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf04.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 12 Mar 2020 19:19:13 +0000 (UTC)
-From:   Joe Perches <joe@perches.com>
-To:     Hans de Goede <hdegoede@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] virt: vbox: Use fallthrough;
-Date:   Thu, 12 Mar 2020 12:17:14 -0700
-Message-Id: <68773b4cd82288b78ca6fcde8c43e249a025378a.1584040050.git.joe@perches.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1584040050.git.joe@perches.com>
-References: <cover.1584040050.git.joe@perches.com>
+        Thu, 12 Mar 2020 15:20:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584040815;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=zztdbDWxyXPT8TNxPiyAdSdtvIMmW1j3jVA5YEcZtvI=;
+        b=VEbK4Zom1dgJwurIz+dDPyDJfNpap4rqIN8Hlq4rMAWgdpdL7xc2eHfmTCiIxSkwM328y1
+        tRbfqxAns8jB2fwktkDBvsUZtIatlLVuiGm8XOxOSc96mFsy1ljOaMHv0dOnk62VWYwbzE
+        89jikr4Crn580kBe5pxV17IdnDM69rI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-454-1NF4AupJPFyuGrwAEQ07hA-1; Thu, 12 Mar 2020 15:20:11 -0400
+X-MC-Unique: 1NF4AupJPFyuGrwAEQ07hA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 664DCDB20;
+        Thu, 12 Mar 2020 19:20:09 +0000 (UTC)
+Received: from treble (ovpn-122-137.rdu2.redhat.com [10.10.122.137])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F3E019C6A;
+        Thu, 12 Mar 2020 19:20:07 +0000 (UTC)
+Date:   Thu, 12 Mar 2020 14:20:05 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     the arch/x86 maintainers <x86@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Dave Jones <dsj@fb.com>, Miroslav Benes <mbenes@suse.cz>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 13/14] x86/unwind/orc: Add more unwinder warnings
+Message-ID: <20200312192005.cv56gzdwwjzttzzy@treble>
+References: <cover.1584033751.git.jpoimboe@redhat.com>
+ <45505e1a05d93f0b80a50868dc8d2c1570f92241.1584033751.git.jpoimboe@redhat.com>
+ <CAG48ez2L5eBfU57_bFnSPSN7DUrocJB56wBLR6cE0e_5DdkURg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAG48ez2L5eBfU57_bFnSPSN7DUrocJB56wBLR6cE0e_5DdkURg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the various uses of fallthrough comments to fallthrough;
+On Thu, Mar 12, 2020 at 08:12:16PM +0100, Jann Horn wrote:
+> On Thu, Mar 12, 2020 at 6:31 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> > Make sure warnings are displayed for all error scenarios (except when
+> > encountering an empty unwind hint).
+> [...]
+> >         /* End-of-stack check for kernel threads: */
+> >         if (orc->sp_reg == ORC_REG_UNDEFINED) {
+> > -               if (!orc->end)
+> > +               if (!orc->end) {
+> > +                       /*
+> > +                        * This is reported as an error for the caller, but
+> > +                        * otherwise it isn't worth warning about.  In theory
+> > +                        * it can only happen when hitting UNWIND_HINT_EMPTY in
+> > +                        * entry code, close to a kernel exit point.
+> > +                        */
+> >                         goto err;
+> 
+> But UNWIND_HINT_EMPTY sets end=1, right? And this is the branch for
+> end==0. What am I missing?
 
-Done via script
-Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe@perches.com/
+You're right.  I need to revisit that comment...
 
-And by hand:
-
-drivers/virt/vboxguest/vboxguest_core.c has a fallthrough comment outside
-of an #ifdef block that causes gcc to emit a warning if converted in-place.
-
-So move the new fallthrough; inside the containing #ifdef/#endif too.
-
-Signed-off-by: Joe Perches <joe@perches.com>
----
- drivers/virt/vboxguest/vboxguest_core.c  | 2 +-
- drivers/virt/vboxguest/vboxguest_utils.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/virt/vboxguest/vboxguest_core.c b/drivers/virt/vboxguest/vboxguest_core.c
-index d823d5..b690a8 100644
---- a/drivers/virt/vboxguest/vboxguest_core.c
-+++ b/drivers/virt/vboxguest/vboxguest_core.c
-@@ -1553,8 +1553,8 @@ int vbg_core_ioctl(struct vbg_session *session, unsigned int req, void *data)
- #ifdef CONFIG_COMPAT
- 	case VBG_IOCTL_HGCM_CALL_32(0):
- 		f32bit = true;
-+		fallthrough;
- #endif
--		/* Fall through */
- 	case VBG_IOCTL_HGCM_CALL(0):
- 		return vbg_ioctl_hgcm_call(gdev, session, f32bit, data);
- 	case VBG_IOCTL_LOG(0):
-diff --git a/drivers/virt/vboxguest/vboxguest_utils.c b/drivers/virt/vboxguest/vboxguest_utils.c
-index 50920b..739618 100644
---- a/drivers/virt/vboxguest/vboxguest_utils.c
-+++ b/drivers/virt/vboxguest/vboxguest_utils.c
-@@ -311,7 +311,7 @@ static u32 hgcm_call_linear_addr_type_to_pagelist_flags(
- 	switch (type) {
- 	default:
- 		WARN_ON(1);
--		/* Fall through */
-+		fallthrough;
- 	case VMMDEV_HGCM_PARM_TYPE_LINADDR:
- 	case VMMDEV_HGCM_PARM_TYPE_LINADDR_KERNEL:
- 		return VMMDEV_HGCM_F_PARM_DIRECTION_BOTH;
 -- 
-2.24.0
+Josh
 
