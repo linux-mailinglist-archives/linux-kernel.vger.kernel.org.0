@@ -2,111 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 247F01839C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 20:47:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A04EF1839E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 20:54:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbgCLTrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 15:47:52 -0400
-Received: from mail.efficios.com ([167.114.26.124]:45420 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbgCLTrw (ORCPT
+        id S1726826AbgCLTyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 15:54:17 -0400
+Received: from smtprelay0009.hostedemail.com ([216.40.44.9]:42674 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725268AbgCLTyQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 15:47:52 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 1E7C4283B3D;
-        Thu, 12 Mar 2020 15:47:51 -0400 (EDT)
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id aOQH6xH2AcoZ; Thu, 12 Mar 2020 15:47:50 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id ABCFB283B3C;
-        Thu, 12 Mar 2020 15:47:50 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com ABCFB283B3C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1584042470;
-        bh=A1HR5wx2ul5UN/781Z2t5qlpWkPcTJFFf8FZtwQy6S0=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=I7XIwjfakzD+Ifo0HlzHk72yMKTKFW2SQR4uZPsMLjCFAmT7H1X/5XqyV/9FAMR2X
-         DM+oMyxtBE/rnPjt2hW3PHY0fE2DtI2XgYspcckeHbnchZwyywjLDAL1q4e3ksB/6O
-         snuzo2y365fmrlkxdgMu6d0AgnN1i4koJP5A5ytLg83TOm2AbvaOpV7QZf9FX+tCQT
-         VKCU7vvkuDNQe7FCkW89i/BkBJckT6wuK2DWcKceDq6A4DYE17lKOklXKgQHzv/Zot
-         ln1eVE+etQHwwZrsd+kaVMlfnJ3OYrGZvNIxNx68XFgZ887Oo7/wao7M1PUiCsFU96
-         bhr2lRGbzncQA==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id TLyBoLL87IdR; Thu, 12 Mar 2020 15:47:50 -0400 (EDT)
-Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
-        by mail.efficios.com (Postfix) with ESMTP id 9B88F283B3A;
-        Thu, 12 Mar 2020 15:47:50 -0400 (EDT)
-Date:   Thu, 12 Mar 2020 15:47:50 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Li Zefan <lizefan@huawei.com>, cgroups <cgroups@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Message-ID: <1289608777.27165.1584042470528.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20200312182618.GE79873@mtj.duckdns.org>
-References: <1251528473.590671.1579196495905.JavaMail.zimbra@efficios.com> <20200219154740.GD698990@mtj.thefacebook.com> <59426509.702.1582127435733.JavaMail.zimbra@efficios.com> <20200219155202.GE698990@mtj.thefacebook.com> <1358308409.804.1582128519523.JavaMail.zimbra@efficios.com> <20200219161222.GF698990@mtj.thefacebook.com> <316507033.21078.1583597207356.JavaMail.zimbra@efficios.com> <20200312182618.GE79873@mtj.duckdns.org>
-Subject: Re: [regression] cpuset: offlined CPUs removed from affinity masks
+        Thu, 12 Mar 2020 15:54:16 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id EB034182CED5B;
+        Thu, 12 Mar 2020 19:54:15 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2540:2553:2560:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6117:7522:7903:7904:8784:9025:10004:10400:10848:10967:11026:11232:11473:11658:11914:12043:12297:12438:12555:12679:12681:12740:12760:12895:12986:13069:13161:13229:13311:13357:13439:13845:14181:14659:14721:21080:21451:21627:21740:21811:30046:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: baby05_7c5504a7ced51
+X-Filterd-Recvd-Size: 2717
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf18.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 12 Mar 2020 19:54:14 +0000 (UTC)
+Message-ID: <62ed1e9972f5d7d8a203e9295c388a70e6e9e0c2.camel@perches.com>
+Subject: Re: [PATCH -next 001/491] MELLANOX ETHERNET INNOVA DRIVERS: Use
+ fallthrough;
+From:   Joe Perches <joe@perches.com>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     David Miller <davem@davemloft.net>, borisp@mellanox.com,
+        saeedm@mellanox.com, leon@kernel.org, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 12 Mar 2020 12:52:30 -0700
+In-Reply-To: <20200312124504.7ee481a9@kicinski-fedora-PC1C0HJN>
+References: <cover.1583896344.git.joe@perches.com>
+         <605f5d4954fcb254fe6fc5c22dc707f29b3b7405.1583896347.git.joe@perches.com>
+         <20200311.232302.1442236068172575398.davem@davemloft.net>
+         <cf74e8fdd3ee99aec86cec4abfdb1ce84b7fd90a.camel@perches.com>
+         <20200312124504.7ee481a9@kicinski-fedora-PC1C0HJN>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.26.124]
-X-Mailer: Zimbra 8.8.15_GA_3901 (ZimbraWebClient - FF73 (Linux)/8.8.15_GA_3895)
-Thread-Topic: cpuset: offlined CPUs removed from affinity masks
-Thread-Index: FByLWuKCPlzdKGK72QNzb8rkGcc4gA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Mar 12, 2020, at 2:26 PM, Tejun Heo tj@kernel.org wrote:
-
-> Hello,
+On Thu, 2020-03-12 at 12:45 -0700, Jakub Kicinski wrote:
+> On Wed, 11 Mar 2020 23:26:59 -0700 Joe Perches wrote:
+> > On Wed, 2020-03-11 at 23:23 -0700, David Miller wrote:
+> > > Joe, please use Subject line subsystem prefixes consistent with what would
+> > > be used for other changes to these drivers.  
+> > 
+> > Not easy to do for scripted patches.
+> > There's no mechanism that scriptable.
 > 
-> On Sat, Mar 07, 2020 at 11:06:47AM -0500, Mathieu Desnoyers wrote:
->> Looking into solving this, one key issue seems to get in the way: cpuset
->> appear to care about not allowing to create a cpuset which has no currently
->> active CPU where to run, e.g.:
-> ...
->> Clearly, there is an intent that cpusets take the active mask into
->> account to prohibit creating an empty cpuset, but nothing prevents
->> cpu hotplug from creating an empty cpuset.
->> 
->> I wonder how to solve this inconsistency ?
+> I have this to show me the top 3 prefixes used for files currently
+> modified in my tree:
 > 
-> Please try cpuset in cgroup2. It shouldn't have those issues.
+> tgs() {
+>     local fs
+> 
+>     fs=$(git status -s | sed -n 's/ M //p')
+> 
+>     git log --oneline --no-merges -- $fs | \
+> 	sed -e's/[^ ]* \(.*\):[^:]*/\1/' | \
+> 	sort | uniq -c | sort -rn | head -3
+> }
+> 
+> You could probably massage it to just give you to top one and feed 
+> that into git commit template?
 
-After figuring how to use cgroup2 (systemd.unified_cgroup_hierarchy=1 boot
-parameter helped tremendously), and testing similar scenarios, it indeed
-seems to have a much saner behavior than cgroup1.
+I had already tried that via:
 
-Considering that the allowed cpu mask is weird wrt cgroup1 and cpu hotplug,
-and that cgroup2 allows thread-level granularity, it does not make much sense
-to prevent the pin_on_cpu() system call I am working on from pinning
-on cpus which are not present in the allowed mask.
+$ cat get_patch_subject_prefix.bash 
+#!/bin/bash
+git log --format="%s" --no-merges -200 --since=2-years-ago $@ | \
+  cut -f1 -d":" | \
+  sort  | uniq -c | sort -rn | head -1 | \
+  sed 's/^[[:space:]]*[[:digit:]]*[[:space:]]*//'
+$ 
 
-I'm currently investigating approaches that would detect situations
-where a thread is pinned onto a CPU which is not part of its allowed
-mask, and set the task prio at MAX_PRIO-1 (the lowest fair priority
-possible) in those cases.
+It doesn't work very well for many of the subsystems.
 
-The basic idea is to allow applications to pin to every possible cpu, but
-not allow them to use this to consume a lot of cpu time on CPUs they
-are not allowed to run.
+For instance, this script produces things like:
 
-Thoughts ?
+ARM/ZYNQ ARCHITECTURE: treewide
+FCOE SUBSYSTEM (libfc, libfcoe, fcoe): scsi
+WOLFSON MICROELECTRONICS DRIVERS: ASoC
 
-Thanks,
+There isn't a great single mechanism for this.
 
-Mathieu
+At various times, I have proposed adding a grammar for
+patch subject titles to MAINTAINERS.
+
+Like:
+https://lore.kernel.org/lkml/1289919077.28741.50.camel@Joe-Laptop/
 
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
