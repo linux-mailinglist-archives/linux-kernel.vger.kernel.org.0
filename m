@@ -2,107 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B5E7183865
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 19:17:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF2FE1838B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 19:29:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbgCLSR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 14:17:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51958 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726761AbgCLSRK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 14:17:10 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E66082076F;
-        Thu, 12 Mar 2020 18:17:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584037030;
-        bh=Hl5xchzWnTmUmJDA9ylXI+yCA+nRbbckYmskZgrnRG8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qC5DF7z0y4f/jmGQDreWy2Z1OJVFJ303SKxwPfcWUItpoIRoqJ5fEyVFxjnIPmcED
-         1TnC1WekgWrL/+WSDfLkIdzgcsElHNqv8Muwc23hx5C+6ThXTX6RL+nb6ar0ojBldg
-         JoaCHndtBtOTFQAIT2fI4wlea7c6chVlledi/fOQ=
-From:   paulmck@kernel.org
-To:     rcu@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH RFC tip/core/rcu 16/16] rcu-tasks: Add stall warnings for RCU Tasks Trace
-Date:   Thu, 12 Mar 2020 11:17:02 -0700
-Message-Id: <20200312181702.8443-16-paulmck@kernel.org>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20200312181618.GA21271@paulmck-ThinkPad-P72>
-References: <20200312181618.GA21271@paulmck-ThinkPad-P72>
+        id S1726692AbgCLS33 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 14:29:29 -0400
+Received: from 4.mo178.mail-out.ovh.net ([46.105.49.171]:47308 "EHLO
+        4.mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbgCLS32 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 14:29:28 -0400
+X-Greylist: delayed 587 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Mar 2020 14:29:28 EDT
+Received: from player711.ha.ovh.net (unknown [10.110.171.125])
+        by mo178.mail-out.ovh.net (Postfix) with ESMTP id 1A9AB8D43F
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 19:19:40 +0100 (CET)
+Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
+        (Authenticated sender: steve@sk2.org)
+        by player711.ha.ovh.net (Postfix) with ESMTPSA id F1411103ABB00;
+        Thu, 12 Mar 2020 18:19:33 +0000 (UTC)
+From:   Stephen Kitt <steve@sk2.org>
+To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        linux-pm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
+Subject: [PATCH] docs: power/pm_qos_interface.rst: fix list
+Date:   Thu, 12 Mar 2020 19:19:25 +0100
+Message-Id: <20200312181925.1373195-1-steve@sk2.org>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 9023806278368447917
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedruddvhedguddufecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecukfhppedtrddtrddtrddtpdekvddrieehrddvhedrvddtudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejuddurdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+This adds a missing separator before a numbered list, fixing
 
-This commit adds RCU CPU stall warnings for RCU Tasks Trace.  These
-dump out any tasks blocking the current grace period, as well as any
-CPUs that have not responded to an IPI request.
+	Documentation/power/pm_qos_interface.rst:12: WARNING: Unexpected indentation.
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Stephen Kitt <steve@sk2.org>
 ---
- kernel/rcu/tasks.h | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+ Documentation/power/pm_qos_interface.rst | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-index 5d7bd48..8cffc1c 100644
---- a/kernel/rcu/tasks.h
-+++ b/kernel/rcu/tasks.h
-@@ -788,8 +788,9 @@ static void rcu_tasks_trace_postscan(void)
+diff --git a/Documentation/power/pm_qos_interface.rst b/Documentation/power/pm_qos_interface.rst
+index 0d62d506caf0..166b2729dc5c 100644
+--- a/Documentation/power/pm_qos_interface.rst
++++ b/Documentation/power/pm_qos_interface.rst
+@@ -7,6 +7,7 @@ performance expectations by drivers, subsystems and user space applications on
+ one of the parameters.
  
- /* Do one scan of the holdout list. */
- static void check_all_holdout_tasks_trace(struct list_head *hop,
--					  bool ndrpt, bool *frptp)
-+					  bool needreport, bool *firstreport)
- {
-+	int cpu;
- 	struct task_struct *g, *t;
- 
- 	list_for_each_entry_safe(t, g, hop, trc_holdout_list) {
-@@ -799,9 +800,32 @@ static void check_all_holdout_tasks_trace(struct list_head *hop,
- 			trc_wait_for_one_reader(t, hop);
- 
- 		// If check succeeded, remove this task from the list.
--		if (READ_ONCE(t->trc_reader_checked))
-+		if (READ_ONCE(t->trc_reader_checked)) {
- 			trc_del_holdout(t);
-+			continue;
-+		} else if (!needreport) {
-+			continue;
-+		}
-+		if (*firstreport) {
-+			pr_err("INFO: rcu_tasks_trace detected stalls on tasks:\n");
-+			*firstreport = false;
-+		}
-+		cpu = task_cpu(t);
-+		pr_alert("%p: %c%c%c nesting: %d%c cpu: %d\n",
-+			 t,
-+			 ".I"[READ_ONCE(t->trc_ipi_to_cpu) > 0],
-+			 ".i"[is_idle_task(t)],
-+			 "N."[cpu < 0 || !tick_nohz_full_cpu(cpu)],
-+			 t->trc_reader_nesting,
-+			 " N"[!!t->trc_reader_need_end],
-+			 cpu);
-+		sched_show_task(t);
- 	}
-+	if (!needreport)
-+		return;
-+	for_each_possible_cpu(cpu)
-+		if (per_cpu(trc_ipi_to_cpu, cpu))
-+			pr_alert("\tIPI outstanding to CPU %d\n", cpu);
- }
- 
- /* Wait for grace period to complete and provide ordering. */
+ Two different PM QoS frameworks are available:
++
+ 1. PM QoS classes for cpu_dma_latency
+ 2. The per-device PM QoS framework provides the API to manage the
+    per-device latency constraints and PM QoS flags.
+
+base-commit: 7d3d3254adaa61cba896f71497f56901deb618e5
 -- 
-2.9.5
+2.24.1
 
