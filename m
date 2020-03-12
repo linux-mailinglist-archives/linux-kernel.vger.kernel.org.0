@@ -2,64 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E7F6182763
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 04:21:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 180FC182769
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 04:26:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731078AbgCLDVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 23:21:08 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:51504 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726485AbgCLDVI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 23:21:08 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R591e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=zhangliguang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TsLZZKv_1583983257;
-Received: from localhost(mailfrom:zhangliguang@linux.alibaba.com fp:SMTPD_---0TsLZZKv_1583983257)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 12 Mar 2020 11:21:05 +0800
-From:   luanshi <zhangliguang@linux.alibaba.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        luanshi <zhangliguang@linux.alibaba.com>
-Subject: [PATCH] irqchip/gic-v3: Move irq_domain_update_bus_token to after checking for NULL domain
-Date:   Thu, 12 Mar 2020 11:20:55 +0800
-Message-Id: <1583983255-44115-1-git-send-email-zhangliguang@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1731555AbgCLD0O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 23:26:14 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:56914 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730913AbgCLD0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 23:26:14 -0400
+Received: from gwarestrin.me.apana.org.au ([192.168.0.7] helo=gwarestrin.arnor.me.apana.org.au)
+        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
+        id 1jCETp-0001y0-P7; Thu, 12 Mar 2020 14:25:54 +1100
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Thu, 12 Mar 2020 14:25:53 +1100
+Date:   Thu, 12 Mar 2020 14:25:53 +1100
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc:     Baolin Wang <baolin.wang@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Silvano Di Ninno <silvano.dininno@nxp.com>,
+        Franck Lenormand <franck.lenormand@nxp.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v4 1/2] crypto: engine - support for parallel requests
+Message-ID: <20200312032553.GB19920@gondor.apana.org.au>
+References: <1583707893-23699-1-git-send-email-iuliana.prodan@nxp.com>
+ <1583707893-23699-2-git-send-email-iuliana.prodan@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1583707893-23699-2-git-send-email-iuliana.prodan@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-irq_domain_update_bus_token should be called after checking for NULL
-domain.
+On Mon, Mar 09, 2020 at 12:51:32AM +0200, Iuliana Prodan wrote:
+>
+>  	ret = enginectx->op.do_one_request(engine, async_req);
+> -	if (ret) {
+> -		dev_err(engine->dev, "Failed to do one request from queue: %d\n", ret);
+> -		goto req_err;
+> +	can_enq_more = ret;
+> +	if (can_enq_more < 0) {
+> +		dev_err(engine->dev, "Failed to do one request from queue: %d\n",
+> +			ret);
+> +		goto req_err_1;
+> +	}
 
-Signed-off-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
----
- drivers/irqchip/irq-gic-v3.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+So this now includes the case of the hardware queue being full
+and the request needs to be queued until space opens up again.
+In this case, we should not do dev_err.  So you need to be able
+to distinguish between the hardware queue being full vs. a real
+fatal error on the request (e.g., out-of-memory or some hardware
+failure).
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index c1f7af9..8e5dd96 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -1581,7 +1581,6 @@ static int __init gic_init_bases(void __iomem *dist_base,
- 
- 	gic_data.domain = irq_domain_create_tree(handle, &gic_irq_domain_ops,
- 						 &gic_data);
--	irq_domain_update_bus_token(gic_data.domain, DOMAIN_BUS_WIRED);
- 	gic_data.rdists.rdist = alloc_percpu(typeof(*gic_data.rdists.rdist));
- 	gic_data.rdists.has_rvpeid = true;
- 	gic_data.rdists.has_vlpis = true;
-@@ -1592,6 +1591,8 @@ static int __init gic_init_bases(void __iomem *dist_base,
- 		goto out_free;
- 	}
- 
-+	irq_domain_update_bus_token(gic_data.domain, DOMAIN_BUS_WIRED);
-+
- 	gic_data.has_rss = !!(typer & GICD_TYPER_RSS);
- 	pr_info("Distributor has %sRange Selector support\n",
- 		gic_data.has_rss ? "" : "no ");
+Thanks,
 -- 
-1.8.3.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
