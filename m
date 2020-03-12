@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 154161827D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 05:39:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 556051827DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 05:39:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731634AbgCLEi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 00:38:59 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42207 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbgCLEi7 (ORCPT
+        id S1731652AbgCLEjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 00:39:02 -0400
+Received: from mail-lj1-f175.google.com ([209.85.208.175]:42268 "EHLO
+        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725978AbgCLEjC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 00:38:59 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q19so4805002ljp.9;
-        Wed, 11 Mar 2020 21:38:58 -0700 (PDT)
+        Thu, 12 Mar 2020 00:39:02 -0400
+Received: by mail-lj1-f175.google.com with SMTP id q19so4805092ljp.9;
+        Wed, 11 Mar 2020 21:39:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=BjPdSfl+t8YwAch/qVVID02ShhhB89UbCThPW66gWLQ=;
-        b=J3ats9uK0YN0GDUacQWNhZ9Q+7kDlCcWnN2vo0ccfIY/D3nP6F87eOqtg56zTZKdyv
-         CIPDgyovCi42xIbwEjbJptkhrFt6J1VIDK0K8sgS4/uyGJnteNpmeleMaQXBP/kLznr2
-         NjAXhin+/hMJlRmbULU6cMXlgpXagldRgTBye+Sly4TOUII2c4u2Li3K9LlqxJwceFG6
-         JcIAR4YpMPOfMRSY4M10O0dMCwd9Y1ayWRsbdwOY/rx0tlSZepQKKpO3+mwTC09NaC8J
-         y716+pTEZsxs26RxQeajI2AO4rO5xD2z2F2kpmE58X655V2354h59GHVVZQ4hGTYLRhv
-         5CrA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=CQ5GKeXvkGqParOGBbk3REWEzXGx6iRtxkKUwPdofu8=;
+        b=PwGzluP0WgYEtjxd6slxjBTCQ2MCXElCaw1aAJM7OdeBX9Y62hglyUeK1LszMY+bD1
+         v7uFtw5T76pg40v3E9xj0x9MZlUalHZGlqKUyw/JbUpi8Z7/7+9OWbWe6GbFZMkFvjxx
+         FUYU2516f9coJD1EzSC46OepIfcp95Ziqde7sxBCCxiwj4lQAfyRiVcb7Cwo5f/ia0gC
+         7vrmllqUbZEpF81R+ugmFFUwM+Ty4hu4T0wGckJtMOa/2Oc4NgSBFWEIhkjcHoomO9Qf
+         4iHz2tXzPdjPffg1XuIOilgBTfA7pFtEcaq7KttUX7KuNr/zCOowaAcMyDT5Wwu60TiC
+         B2MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BjPdSfl+t8YwAch/qVVID02ShhhB89UbCThPW66gWLQ=;
-        b=BambwGLTlHnUm2A6RMsUIfMDqeEPab4t9WyAGZFhS66h0SSckeQq4UZZVRox13BHt0
-         6VuW5sH5CUTxojQXTpoYjp55ajwOL0/oID5M2IBH0Kr6Ue2tEA0n76dkSB1wWEiFnyZm
-         cqYM3pCE6g/JOinBJGuCaVLFvTt7bFe9JWQ1odZVldFHAn3MwgDmYbO6RDTmIDgaVRgU
-         TTCIopQbojxoS+teQqVLdAwUcL0BKDSqPr/1gDa3IiNyUPj5QGHD4osc5INl/VMIEOvy
-         F2VTMlByrlqBuUxmFQ+y9Uz4QDRvuWAfdtorXiE1a3Z26Zu7lYumHqwhV7NTZTMJkt9R
-         khOA==
-X-Gm-Message-State: ANhLgQ1usjzstU2mSit4ESn/uHwKNkdiH6yco2qed6wlXoXH8FUpaaY2
-        xJNFqf1bWeKBNROAnBhMV2Y=
-X-Google-Smtp-Source: ADFU+vu2LZt4dQBS1XvD9C73vqG+rDKvlOnUkwd2xy1BWVo1NQdNEU4cWSfzVugfz8Nv6UzykF9sbA==
-X-Received: by 2002:a2e:9b94:: with SMTP id z20mr3926494lji.147.1583987937218;
-        Wed, 11 Mar 2020 21:38:57 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=CQ5GKeXvkGqParOGBbk3REWEzXGx6iRtxkKUwPdofu8=;
+        b=YueLx3NxQ8GRPcg2g5LR5yuqlACyZncOvVyRrjC0gRrqXbH1g7KGF8GSe0C0/7aoPG
+         ed2oP03yjfIpOXPK2cHDvIq8ZzRGy0HOga9mtd2ofOkdrE6axAh3j5xivwkVsgCykoMD
+         I/qTYOO+TewJLq0gN4rgHj9wr+LqGWUe8QH3npHSYAuvKFnZburtiyV08cZRr04Vj/XH
+         yHXLrJOawknyb1i4WTmicD9g16hm+AkIOCT3opVji/9DqNeKV3I9oNx68Zyty7HjRX6f
+         Ub6zPF1FZq1VQCHcUc3QM3UVVuzEy5q9skrRm8/0NC8Ucq6BFqYA+cqV4AvVx/NJlvDL
+         pSPQ==
+X-Gm-Message-State: ANhLgQ2eDS3Sy/x6Ofd+rl2zkFDxaevLPDeKtXgFSEGYx2Tc+w9bqMw2
+        sYYsxJ1eXzRMfOUnQcphcVU=
+X-Google-Smtp-Source: ADFU+vsFSBXwiw010EUlpXZARd0uRs7BApQJI23fC7SCtptQOH7Z11vbSZqTSLxTOovEFUo57s0srA==
+X-Received: by 2002:a2e:9b90:: with SMTP id z16mr4054714lji.254.1583987940236;
+        Wed, 11 Mar 2020 21:39:00 -0700 (PDT)
 Received: from localhost.localdomain ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id u2sm8872866lfu.3.2020.03.11.21.38.54
+        by smtp.gmail.com with ESMTPSA id u2sm8872866lfu.3.2020.03.11.21.38.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 11 Mar 2020 21:38:56 -0700 (PDT)
+        Wed, 11 Mar 2020 21:38:59 -0700 (PDT)
 From:   Christian Hewitt <christianshewitt@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -52,58 +53,41 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     Christian Hewitt <christianshewitt@gmail.com>,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
         =?UTF-8?q?Jer=C3=B4me=20Brunet?= <jbrunet@baylibre.com>
-Subject: [PATCH v7 0/3] arm64: dts: meson: add dts/bindings for SmartLabs SML-5442TW
-Date:   Thu, 12 Mar 2020 08:38:03 +0400
-Message-Id: <1583987886-6288-1-git-send-email-christianshewitt@gmail.com>
+Subject: [PATCH v7 1/3] dt-bindings: add vendor prefix for SmartLabs LLC
+Date:   Thu, 12 Mar 2020 08:38:04 +0400
+Message-Id: <1583987886-6288-2-git-send-email-christianshewitt@gmail.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1583987886-6288-1-git-send-email-christianshewitt@gmail.com>
+References: <1583987886-6288-1-git-send-email-christianshewitt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds new bindings and a device-tree file for the Smartlabs
-SML-5442TW set-top box. The original attempt [1] was 15-months ago but
-nothing has really changed apart from a change to yaml bindings.
+SmartLabs LLC are a professional integrator of Interactive TV solutions
+and IPTV/VOD devices [1].
 
-The QCA9377 BT device does not have bindings and early experiments to add
-them are partially successful but need further work. I have dropped the
-gpio-hog from the device-tree and will submit changes to add BT once the
-supporting bits exist elsewhere in the kernel.
+[1] https://www.smartlabs.tv/en/about/
 
-v7 - update gpio-led nodes
-   - remove gpio-hog for BT enable
-   - add bindings acks from Rob
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-v6 - removed audio nodes again
-
-v5 - typo in card name
-
-v4 - typos/corrections from Andreas
-   - convert to yaml bindings
-   - add sound node back
-   - confirmed gpio-hog is necessary
-
-v3 - change to Smartlabs LLC
-   - removed sound node
-
-v2 - removed audio nodes
-   - changes soundcard name to "meson-gx-audio"
-   - added missing uart-has-rtscts;
-
-[1] https://patchwork.kernel.org/cover/10674939/
-
-Christian Hewitt (3):
-  dt-bindings: add vendor prefix for SmartLabs LLC
-  dt-bindings: arm: amlogic: add support for the SmartLabs SML-5442TW
-  arm64: dts: meson: add support for the SmartLabs SML-5442TW
-
- Documentation/devicetree/bindings/arm/amlogic.yaml |   1 +
- .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
- arch/arm64/boot/dts/amlogic/Makefile               |   1 +
- .../boot/dts/amlogic/meson-gxl-s905d-sml5442tw.dts | 284 +++++++++++++++++++++
- 4 files changed, 288 insertions(+)
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s905d-sml5442tw.dts
-
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 9e67944..a34ed82 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -901,6 +901,8 @@ patternProperties:
+     description: Sitronix Technology Corporation
+   "^skyworks,.*":
+     description: Skyworks Solutions, Inc.
++  "^smartlabs,.*":
++    description: SmartLabs LLC
+   "^smsc,.*":
+     description: Standard Microsystems Corporation
+   "^snps,.*":
 -- 
 2.7.4
 
