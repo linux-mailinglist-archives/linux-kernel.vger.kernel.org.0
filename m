@@ -2,98 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07BC618393C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 20:09:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21C32183968
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 20:26:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbgCLTJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 15:09:14 -0400
-Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:59557 "EHLO
-        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725268AbgCLTJN (ORCPT
+        id S1726799AbgCLT02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 15:26:28 -0400
+Received: from 10.mo177.mail-out.ovh.net ([46.105.73.133]:37883 "EHLO
+        10.mo177.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbgCLT02 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 15:09:13 -0400
-Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 12 Mar 2020 12:09:12 -0700
-Received: from gurus-linux.qualcomm.com ([10.46.162.81])
-  by ironmsg02-sd.qualcomm.com with ESMTP; 12 Mar 2020 12:09:12 -0700
-Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
-        id 8E90D4B3B; Thu, 12 Mar 2020 12:09:12 -0700 (PDT)
-Date:   Thu, 12 Mar 2020 12:09:12 -0700
-From:   Guru Das Srinagesh <gurus@codeaurora.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v8 01/12] clk: pwm: Use 64-bit division function
-Message-ID: <20200312190859.GA19605@codeaurora.org>
-References: <cover.1583889178.git.gurus@codeaurora.org>
- <338966686a673c241905716c90049993e7bb7d6a.1583889178.git.gurus@codeaurora.org>
- <7506bc2972324fd286dac6327ec73a3a@AcuMS.aculab.com>
- <20200312020938.GA14827@codeaurora.org>
- <fea86a43b28f4493abe0826654369513@AcuMS.aculab.com>
+        Thu, 12 Mar 2020 15:26:28 -0400
+X-Greylist: delayed 596 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Mar 2020 15:26:27 EDT
+Received: from player687.ha.ovh.net (unknown [10.110.171.96])
+        by mo177.mail-out.ovh.net (Postfix) with ESMTP id DF667127C62
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 20:10:17 +0100 (CET)
+Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
+        (Authenticated sender: steve@sk2.org)
+        by player687.ha.ovh.net (Postfix) with ESMTPSA id D21501053114D;
+        Thu, 12 Mar 2020 19:10:04 +0000 (UTC)
+Date:   Thu, 12 Mar 2020 20:10:01 +0100
+From:   Stephen Kitt <steve@sk2.org>
+To:     Vinod Koul <vkoul@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Tero Kristo <t-kristo@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        dmaengine@vger.kernel.org, linux-doc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: driver-api/dma.../provider.rst: fix indents
+Message-ID: <20200312201001.17756b09@heffalump.sk2.org>
+In-Reply-To: <20200312181318.1368421-1-steve@sk2.org>
+References: <20200312181318.1368421-1-steve@sk2.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fea86a43b28f4493abe0826654369513@AcuMS.aculab.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/D1hSsBmuZS=0yQzzXmBo_nm"; protocol="application/pgp-signature"
+X-Ovh-Tracer-Id: 9878927258995543368
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedruddvhedguddvgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkjghfofggtgesghdtreerredtvdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecukfhppedtrddtrddtrddtpdekvddrieehrddvhedrvddtudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrheikeejrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 09:14:09AM +0000, David Laight wrote:
-> From: Guru Das Srinagesh
-> > Sent: 12 March 2020 02:10
-> > On Wed, Mar 11, 2020 at 04:58:24PM +0000, David Laight wrote:
-> > > From: Guru Das Srinagesh
-> > > > Sent: 11 March 2020 01:41
-> > > >
-> > > > Since the PWM framework is switching struct pwm_args.period's datatype
-> > > > to u64, prepare for this transition by using div64_u64 to handle a
-> > > > 64-bit divisor.
-> > > >
-> ...
-> > > > --- a/drivers/clk/clk-pwm.c
-> > > > +++ b/drivers/clk/clk-pwm.c
-> > > > @@ -89,7 +89,7 @@ static int clk_pwm_probe(struct platform_device *pdev)
-> > > >  	}
-> > > >
-> > > >  	if (of_property_read_u32(node, "clock-frequency", &clk_pwm->fixed_rate))
-> > > > -		clk_pwm->fixed_rate = NSEC_PER_SEC / pargs.period;
-> > > > +		clk_pwm->fixed_rate = div64_u64(NSEC_PER_SEC, pargs.period);
-> > >
-> > > That cannot be needed, a 32 bit division is fine.
-> > 
-> > Could you please explain why? I think the use of this function is
-> > warranted in order to handle the division properly with a 64-bit
-> > divisor.
-> ...
-> > > I'd assign pargs.period to an 'unsigned int' variable
-> > > prior to the division (I hate casts - been bitten by them in the past.).
-> > 
-> > Wouldn't this truncate the 64-bit value? The intention behind this patch
-> > is to allow the processing of 64-bit values in full.
-> 
-> You are dividing a 32bit constant by a value.
-> If pargs.period is greater than 2^32 the result is zero.
+--Sig_/D1hSsBmuZS=0yQzzXmBo_nm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the explanation. 
+On Thu, 12 Mar 2020 19:13:18 +0100, Stephen Kitt <steve@sk2.org> wrote:
+> This fixes some block indentations, formatting them as definitions
+> (which seems appropriate given the content), and addressing these
+> warnings:
+>=20
+> 	Documentation/driver-api/dmaengine/provider.rst:270: WARNING:
+> Unexpected indentation.
+> 	Documentation/driver-api/dmaengine/provider.rst:273: WARNING: Block
+> quote ends without a blank line; unexpected unindent.
+> 	Documentation/driver-api/dmaengine/provider.rst:288: WARNING:
+> Unexpected indentation.
+> 	Documentation/driver-api/dmaengine/provider.rst:290: WARNING: Block
+> quote ends without a blank line; unexpected unindent.
 
-> I think you divide by 'fixed_rate' a bit later on - better not be zero.
+... which are already fixed in linux-next, so please ignore this.
 
-Good point, but this issue exists with or without this patch, and fixing
-it is beyond this patch's scope.
+Regards,
 
-Just to check if this patch can be dropped, I tested out compilation
-with this patch reverted and there were no errors, so I'm leaning
-towards dropping this patch unless you have any further comments on how
-to proceed.
+Stephen
 
-Thank you.
+--Sig_/D1hSsBmuZS=0yQzzXmBo_nm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Guru Das.
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAl5qiQkACgkQgNMC9Yht
+g5yjPQ/+IIi6Nyd2DgTkmWshlC+0gijXtvuEY2mvIpUm4MUnJ0QNTmC4ICVJBjHo
++JlNfadJLaxXBqomZ1tEyBh8/9C5sFGkfyar8ofz88lX4ee1A6h8PQL1z39HtXvY
+YlSf1xSdWcjFO6BmLDAMpMBnl40dsGLFYtnSYrCerzj1It4JQUPDTSv5vSdm/Rnq
+IIE4ccNoy1LnkqqqgpsyOtih20U5MJvtZVSl3Pcnbb5SkxpQlE0kHaqZGj6EpDF2
+OIM7sIZj+ADJ+fnMEp1M/IkSCxVu/YBox7m1sOsuTAgMfjbEC6v5FDYHTMtkT/Hh
+Rdpo6HWWTIFPaWFOQC/tKQQfYR63YVHZ8npMrmYwPAzqGFJ4Ql/lWKfFvDOz6XAB
+SbrDt/FgpjN0E7p52ePT7HkPI04xojnzvPMzt+mD3hPOVFIAFQDzwPngI47WFGnK
+ZuUVylhfMVIPmzxzHNuuwjUPDwqiqhPPhfHpHF3mvb8v+urpv20Id5V9YJP1BI2Q
+InwPGeoj27I6jcIJcHijq9GSWRmzpzxyU3janNAAFsQaLZamMwAEOsOt8AaUVA7J
+zT4jSw6gD79MXP5BGMKuN772PIg+7dlf8yY/kW3+jIuuBLVTXX8WRKpazuklS3UZ
+byPY5jWhPt4dnKSzwhXVAL/aGN9wPPgSea5PE6SxSbfVF3xZjAQ=
+=WVyT
+-----END PGP SIGNATURE-----
+
+--Sig_/D1hSsBmuZS=0yQzzXmBo_nm--
