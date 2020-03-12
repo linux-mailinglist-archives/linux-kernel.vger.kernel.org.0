@@ -2,63 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56D321831F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:48:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5695183200
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:49:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbgCLNsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:48:01 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41844 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbgCLNsB (ORCPT
+        id S1727364AbgCLNto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:49:44 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:60477 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726299AbgCLNto (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:48:01 -0400
-Received: by mail-io1-f65.google.com with SMTP id m25so5706532ioo.8
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:48:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JQXIGCXCcQkX5b0h95Wn70qT4Lsg/1L/D4OIHLSiNCA=;
-        b=NlWfLO/fYNg9mLVfR9yLiSb1v37zDB/6P3U6ychPiHzh5TDCvUkTE5txbHWJvt5p0o
-         cYxYiIIgF42V7QUW4zYohjpFh1DByWUcNJGrI5BLB3jo8P/c6DNUSDofvxc71QAI//lh
-         s2rmzVQrJkeA3BpNaZ5Ra+UQauJZkZE7RZR0thXR+bXuy6C29p1kuHZ5vlb/T8rEqrdu
-         fAMvuzFZ+qzz5SWgqnvQTNlRh/yyt+Gwq9ILZ3gR+jqBHmStJJHG6iFv4z8Jc57MSaRZ
-         4KuKPaEkEK0NGzF1pAC+EeVCtxAqOS8Y+K5Zo0A8B4HQ2WG6mEWH79+BEVMb/ZdXa1gE
-         Z8YQ==
+        Thu, 12 Mar 2020 09:49:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584020983;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CJs8yOMXumhEsBAQIQNOmZwhjwQqs4MeidJ20K6lf6M=;
+        b=ZUXzgAItwOlbusT9W6m0ffsAGzEpiNndLBcJdxW0kUTJIikBspoz+o/iL1msR01a4tGFIE
+        dHQLOj/0kseDgh9K+91NV7SCmv5Bhe5Y4z8qaOLDeTUIl7UKr8FapPqbp7dQB6vE9dIfIK
+        PtyUJLpM/PkTFVkFOELSataTeJYuZs0=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-387-jZYbkkGCNwqYpPfJ6pjZpw-1; Thu, 12 Mar 2020 09:49:42 -0400
+X-MC-Unique: jZYbkkGCNwqYpPfJ6pjZpw-1
+Received: by mail-wr1-f70.google.com with SMTP id l16so1922771wrr.6
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:49:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=JQXIGCXCcQkX5b0h95Wn70qT4Lsg/1L/D4OIHLSiNCA=;
-        b=ZoPbSarSqiGX9N7yBTgEZLZpuVscHlzKTQKoZiMT3lWToFqMyxuKumi7ydI1D+H4kc
-         FxndA1XRXAc4jJ3LTwBYDiHryJKyaG+A74ThjmGeHy5SEikgGkNlkDXhyJOKEOx5DmJs
-         KAuB0pEhwUThLPv062LAStS2lcvbGCAqW3EnjDjaI8yUYpHan7/Lh3117GLIiZfRPkEr
-         ffeUE9UcmuMHvJrrC64OVBHn9n92LI1PGCXI1Xw2NleYC/FCwWc01vXz1ttOVkJ1vXPm
-         M6FN9vrQonGxb48V8VpbPCgwADlqkXbgLwF4zLUT+HdYRd70CSbdeMpl0tkvyZ+4/HJH
-         WMoQ==
-X-Gm-Message-State: ANhLgQ0xul49Qh29JtpYpAU9SPYf4++kJ9CRRVYxi9piXymbMgn0NhbM
-        2jOvS0tFjzpRfAulB6vPLj6caWfvUxSKIw==
-X-Google-Smtp-Source: ADFU+vsWK0+qm1KrXJJJWqWO/Zr+xTuuiQe26ah9eyr/b3281WjdadrCklpN3z38eqR/yRWhcY09BQ==
-X-Received: by 2002:a02:b894:: with SMTP id p20mr8035881jam.86.1584020879998;
-        Thu, 12 Mar 2020 06:47:59 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id y71sm4689317ilk.23.2020.03.12.06.47.59
+        bh=CJs8yOMXumhEsBAQIQNOmZwhjwQqs4MeidJ20K6lf6M=;
+        b=q9Vje46RE9QNfrAFm8zY37kwHYCXoP2Fknflhuns85jb7B2yMysEzDx7dkNgp6CX7m
+         tqsy0RzJgGDXaYVxEUeNlEMIv6DU56GHCB+1ru8gPfyh5dU74AJINkIrV2fFEfS3qoni
+         KXxiL3V/j/X+zzLvWqf1xhfArWn8as029DLOE64l+Mm9tmE9FMW5rlBHBvox+OM/3Y0P
+         eM6mON+k8Pne5MpDr8pwQn8aE55wi31lzfyAUSM9TRzZVY1x5oE4VMoNhgYKnpmhCqwB
+         qtL/6yyxoigEmeOaQUc9aq1g0oypbiuW+PB4Pb7DiXM0aRgm2NPxwklOnjPsnTO1BajR
+         +IIg==
+X-Gm-Message-State: ANhLgQ3rL/xvjxCUmQAwZSZGXHS6SY5QjXnshaPmvw53IxuKf2vtH74c
+        jopoun0qHuaYwD0ZTasHS76bEKHXl3iF+mMuM1Z7S0nLr7Fyf4aXWMZzCBSFtZgguENxx0jquKN
+        rc2/NR1OlqWuZr9Yi5fceTs8F
+X-Received: by 2002:adf:f847:: with SMTP id d7mr10753585wrq.31.1584020980565;
+        Thu, 12 Mar 2020 06:49:40 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vtKExZ6/bWWQcZnhHrIyO98G2UtYV/EjSkAe+g7eZomMLrn+gXs4sxMr/u97SFeMezwkn3ubQ==
+X-Received: by 2002:adf:f847:: with SMTP id d7mr10753567wrq.31.1584020980343;
+        Thu, 12 Mar 2020 06:49:40 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-fc7e-fd47-85c1-1ab3.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:fc7e:fd47:85c1:1ab3])
+        by smtp.gmail.com with ESMTPSA id g7sm274970wrs.68.2020.03.12.06.49.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Mar 2020 06:47:59 -0700 (PDT)
-Subject: Re: [PATCH v2] Document genhd capability flags
-To:     Stephen Kitt <steve@sk2.org>, Matthew Wilcox <willy@infradead.org>,
-        Jan Kara <jack@suse.cz>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200307145659.22657-1-steve@sk2.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ec5479a2-138b-3da3-e09a-edaca6292fb6@kernel.dk>
-Date:   Thu, 12 Mar 2020 07:47:58 -0600
+        Thu, 12 Mar 2020 06:49:39 -0700 (PDT)
+Subject: Re: [tip: irq/core] x86: Select HARDIRQS_SW_RESEND on x86
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     linux-tip-commits@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>
+References: <20200123210242.53367-1-hdegoede@redhat.com>
+ <158396292503.28353.1070405680109587154.tip-bot2@tip-bot2>
+ <CACRpkdYPy93bDwPe1wHhcwpgN9uXepKXS1Ca5yFmDVks=r0RoQ@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <1cb0397f-e583-3d7e-dff3-2cc916219846@redhat.com>
+Date:   Thu, 12 Mar 2020 14:49:39 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200307145659.22657-1-steve@sk2.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CACRpkdYPy93bDwPe1wHhcwpgN9uXepKXS1Ca5yFmDVks=r0RoQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,26 +75,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/7/20 7:56 AM, Stephen Kitt wrote:
-> The kernel documentation includes a brief section about genhd
-> capabilities, but it turns out that the only documented
-> capability (GENHD_FL_MEDIA_CHANGE_NOTIFY) isn't used any more.
-> 
-> This patch removes that flag, and documents the rest, based on my
-> understanding of the current uses of these flags in the kernel. The
-> documentation is kept in the header file, alongside the declarations,
-> in the hope that it will be kept up-to-date in future; the kernel
-> documentation is changed to include the documentation generated from
-> the header file.
-> 
-> Because the ultimate goal is to provide some end-user
-> documentation (or end-administrator documentation), the comments are
-> perhaps more user-oriented than might be expected. Since the values
-> are shown to users in hexadecimal, the documentation lists them in
-> hexadecimal, and the constant declarations are adjusted to match.
+Hi,
 
-Applied, thanks.
+On 3/12/20 2:31 PM, Linus Walleij wrote:
+> On Wed, Mar 11, 2020 at 10:42 PM tip-bot2 for Hans de Goede
+> <tip-bot2@linutronix.de> wrote:
+> 
+>>          select GENERIC_GETTIMEOFDAY
+>>          select GENERIC_VDSO_TIME_NS
+>>          select GUP_GET_PTE_LOW_HIGH             if X86_PAE
+>> +       select HARDIRQS_SW_RESEND
+> 
+> Just help me understand the semantics of this thing...
+> 
+> According to the text in KConfig:
+> 
+> # Tasklet based software resend for pending interrupts on enable_irq()
+> config HARDIRQS_SW_RESEND
+>         bool
+> 
+> According to
+> commit a4633adcdbc15ac51afcd0e1395de58cee27cf92
+> 
+>      [PATCH] genirq: add genirq sw IRQ-retrigger
+> 
+>      Enable platforms that do not have a hardware-assisted
+> hardirq-resend mechanism
+>      to resend them via a softirq-driven IRQ emulation mechanism.
+> 
+> so when enable_irq() is called, if the IRQ is already asserted,
+> it will be distributed in the form of a software irq?
+> 
+> OK I give up I don't understand the semantics of this thing.
+> 
+> Maybe it's because I think of a register where the IRQ line
+> is just a level IRQ bit thing that stays high as long as the IRQ
+> is not handled.
+> 
+> So I suppose it is for any type of transient IRQ such as
+> edge triggered that happened before the system came back
+> online entirely and now the only remnant of it is a bit in
+> the irchip status register?
 
--- 
-Jens Axboe
+The way I understand it is like this:
+
+1. We have an edge triggered IRQ from a peripheral to a
+GPIO controller
+
+2. We have a level triggered IRQ from the GPIO controller to the
+"root" IRQ controller.
+
+3. With modern x86 suspend, we do not really put the entire
+system in a firmware-controller suspend state, instead the CPU is
+halted until any IRQ happens; and there is a power-management
+micro-controller which shuts various things down while the CPU
+is halted leading to similar power consumption as old S3 suspend.
+
+The combination of these 3 means that we must ack the edge
+triggered IRQ at the GPIO controller level even while suspended
+(we briefly wake up for this) to make the level-triggered IRQ
+coming from the GPIO controller low so that we can go back to sleep.
+
+When this happens we record in the kernel IRQ tracking data for
+the edge-triggered IRQ tied to the GPIO (there are no "remnants"
+of it in any chuip registers), that the IRQ needs to be replayed
+on resume. Some IRQ controllers allow writing a register to
+retrigger the IRQ without the level on the external GPIO actually
+changing.
+
+Some IRQ controllers do not allow this, in this case we need to
+emulate this retriggering in software, this is what the
+HARDIRQS_SW_RESEND option is for, this handles this in a generic
+way, so that we do not have to add emulation to every IRQ-chip
+driver where the hardware lacks a "retrigger" register.
+
+> I see that ARM and ARM64 simply just select this. What
+> happens if you do that and why is x86 not selecting it in general?
+
+Erm, "selecting it in general" (well at least on x86) is what
+this patch is doing. But I guess you mean why is this not
+selected on all architectures?  If I've understood tglx correctly
+the HARDIRQS_SW_RESEND option is incompatible with some irq-chip
+drivers. I think it was incompatible with using nested threaded
+handlers are some such...
+
+tglx can probably explain this way better then I can :)
+
+Regards,
+
+Hans
 
