@@ -2,162 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57496183105
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:15:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9083A183111
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:18:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbgCLNPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:15:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38463 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbgCLNPr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:15:47 -0400
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jCNgd-0007TJ-18; Thu, 12 Mar 2020 13:15:43 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Todd Kjos <tkjos@android.com>
-Cc:     ard.biesheuvel@linaro.org, ardb@kernel.org, john.stultz@linaro.org,
-        keescook@chromium.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, naresh.kamboju@linaro.org,
-        shuah@kernel.org,
-        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>, hridya@google.com,
-        kernel-team@android.com,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 3/3] binderfs_test: switch from /dev to /tmp as mountpoint
-Date:   Thu, 12 Mar 2020 14:15:31 +0100
-Message-Id: <20200312131531.3615556-3-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200312131531.3615556-1-christian.brauner@ubuntu.com>
-References: <20200311105309.1742827-1-christian.brauner@ubuntu.com>
- <20200312131531.3615556-1-christian.brauner@ubuntu.com>
+        id S1727007AbgCLNSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:18:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726299AbgCLNSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 09:18:04 -0400
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54126206BE;
+        Thu, 12 Mar 2020 13:18:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584019084;
+        bh=9LvTzccs20EfwHRZkugVuiWmgd25bpPrRl6L8w4/Oz4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=zY0iaiEuq+94HEJNC+M3uNNqqWvIuL8LmuYCbrWbvB2ja1QjHiApBUHK6+3t2w3V3
+         r2wjvYgMkprtz2WwMP/UCxCpanZ2I1A9xlCbVCUQS7wjr8zptKjLXjrHXhOmEI72K1
+         j4fWFVMRwBFcA8StaO/AmvEoxFfHjdqyIJEyK6pk=
+Received: by mail-qt1-f181.google.com with SMTP id l20so4264585qtp.4;
+        Thu, 12 Mar 2020 06:18:04 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ1IIqIqrXNDrojz5rre0C9sMJkVFTo0Gk7WhKrQSa2LbHaGpx30
+        HjOL0ESJdSPVaiEoUiHvrm5C/MYaT3IwCEAuVw==
+X-Google-Smtp-Source: ADFU+vuLXMJHQEOc9yZQJjg2VBWDBilY6CR5xhZf9pkeq5kaczXg78bABk9trxq/40GZUQEb4VvUo1jtlgxUuKyHUpc=
+X-Received: by 2002:ac8:59:: with SMTP id i25mr7306219qtg.110.1584019083428;
+ Thu, 12 Mar 2020 06:18:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200311210001.5102-1-robh@kernel.org> <20200311214028.GA21800@ravnborg.org>
+In-Reply-To: <20200311214028.GA21800@ravnborg.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 12 Mar 2020 08:17:50 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqK8n-YTsROL+XhjJVtFJzV-aGPxhLOxs1axHq5+TvE-Lg@mail.gmail.com>
+Message-ID: <CAL_JsqK8n-YTsROL+XhjJVtFJzV-aGPxhLOxs1axHq5+TvE-Lg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: display: Fix dtc unit-address warnings in examples
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jyri Sarha <jsarha@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unprivileged users will be able to create directories in there. The
-unprivileged test for /dev wouldn't have worked on most systems.
+On Wed, Mar 11, 2020 at 4:40 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> On Wed, Mar 11, 2020 at 04:00:01PM -0500, Rob Herring wrote:
+> > Extra dtc warnings (roughly what W=1 enables) are now enabled by default
+> > when building the binding examples. These were fixed treewide in
+> > 5.6-rc5, but some new display bindings have been added with new
+> > warnings:
+> >
+> > Documentation/devicetree/bindings/display/panel/raydium,rm68200.example.dts:17.7-27.11: Warning (unit_address_vs_reg): /example-0/dsi@0: node has a unit name, but no reg property
+> > Documentation/devicetree/bindings/display/panel/panel-simple-dsi.example.dts:17.19-31.11: Warning (unit_address_vs_reg): /example-0/mdss_dsi@fd922800: node has a unit name, but no reg property
+> > Documentation/devicetree/bindings/display/panel/orisetech,otm8009a.example.dts:17.7-26.11: Warning (unit_address_vs_reg): /example-0/dsi@0: node has a unit name, but no reg property
+> > Documentation/devicetree/bindings/display/ti/ti,am65x-dss.example.dts:21.27-49.11: Warning (unit_address_format): /example-0/dss@04a00000: unit name should not have leading 0s
+> > Documentation/devicetree/bindings/display/ti/ti,j721e-dss.example.dts:21.27-72.11: Warning (unit_address_format): /example-0/dss@04a00000: unit name should not have leading 0s
+> > Documentation/devicetree/bindings/display/ti/ti,k2g-dss.example.dts:20.27-42.11: Warning (unit_address_format): /example-0/dss@02540000: unit name should not have leading 0s
+> >
+> > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > Cc: Sam Ravnborg <sam@ravnborg.org>
+> > Cc: Jyri Sarha <jsarha@ti.com>
+> > Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+>
+> And I can drop my patch that only fixed the panel/ parts - good.
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- .../filesystems/binderfs/binderfs_test.c      | 30 +++++++++----------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+It seems I missed some panels. Perhaps ones that are in drm-misc, but
+not in linux-next yet? Keep yours and I'll respin with just the TI
+part.
 
-diff --git a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-index 313ffad15614..d6e61998d20a 100644
---- a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-+++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-@@ -76,7 +76,7 @@ static void __do_binderfs_test(void)
- 
- 	change_mountns();
- 
--	ret = mkdir("/dev/binderfs", 0755);
-+	ret = mkdir("/tmp/binderfs", 0755);
- 	if (ret < 0) {
- 		if (errno != EEXIST)
- 			ksft_exit_fail_msg(
-@@ -86,13 +86,13 @@ static void __do_binderfs_test(void)
- 		keep = true;
- 	}
- 
--	ret = mount(NULL, "/dev/binderfs", "binder", 0, 0);
-+	ret = mount(NULL, "/tmp/binderfs", "binder", 0, 0);
- 	if (ret < 0) {
- 		if (errno != ENODEV)
- 			ksft_exit_fail_msg("%s - Failed to mount binderfs\n",
- 					   strerror(errno));
- 
--		keep ? : rmdir_protect_errno("/dev/binderfs");
-+		keep ? : rmdir_protect_errno("/tmp/binderfs");
- 		ksft_exit_skip(
- 			"The Android binderfs filesystem is not available\n");
- 	}
-@@ -102,7 +102,7 @@ static void __do_binderfs_test(void)
- 
- 	memcpy(device.name, "my-binder", strlen("my-binder"));
- 
--	fd = open("/dev/binderfs/binder-control", O_RDONLY | O_CLOEXEC);
-+	fd = open("/tmp/binderfs/binder-control", O_RDONLY | O_CLOEXEC);
- 	if (fd < 0)
- 		ksft_exit_fail_msg(
- 			"%s - Failed to open binder-control device\n",
-@@ -113,7 +113,7 @@ static void __do_binderfs_test(void)
- 	close(fd);
- 	errno = saved_errno;
- 	if (ret < 0) {
--		keep ? : rmdir_protect_errno("/dev/binderfs");
-+		keep ? : rmdir_protect_errno("/tmp/binderfs");
- 		ksft_exit_fail_msg(
- 			"%s - Failed to allocate new binder device\n",
- 			strerror(errno));
-@@ -126,9 +126,9 @@ static void __do_binderfs_test(void)
- 	/* binder device allocation test passed */
- 	ksft_inc_pass_cnt();
- 
--	fd = open("/dev/binderfs/my-binder", O_CLOEXEC | O_RDONLY);
-+	fd = open("/tmp/binderfs/my-binder", O_CLOEXEC | O_RDONLY);
- 	if (fd < 0) {
--		keep ? : rmdir_protect_errno("/dev/binderfs");
-+		keep ? : rmdir_protect_errno("/tmp/binderfs");
- 		ksft_exit_fail_msg("%s - Failed to open my-binder device\n",
- 				   strerror(errno));
- 	}
-@@ -138,7 +138,7 @@ static void __do_binderfs_test(void)
- 	close(fd);
- 	errno = saved_errno;
- 	if (ret < 0) {
--		keep ? : rmdir_protect_errno("/dev/binderfs");
-+		keep ? : rmdir_protect_errno("/tmp/binderfs");
- 		ksft_exit_fail_msg(
- 			"%s - Failed to open perform BINDER_VERSION request\n",
- 			strerror(errno));
-@@ -150,9 +150,9 @@ static void __do_binderfs_test(void)
- 	/* binder transaction with binderfs binder device passed */
- 	ksft_inc_pass_cnt();
- 
--	ret = unlink("/dev/binderfs/my-binder");
-+	ret = unlink("/tmp/binderfs/my-binder");
- 	if (ret < 0) {
--		keep ? : rmdir_protect_errno("/dev/binderfs");
-+		keep ? : rmdir_protect_errno("/tmp/binderfs");
- 		ksft_exit_fail_msg("%s - Failed to delete binder device\n",
- 				   strerror(errno));
- 	}
-@@ -160,12 +160,12 @@ static void __do_binderfs_test(void)
- 	/* binder device removal passed */
- 	ksft_inc_pass_cnt();
- 
--	ret = unlink("/dev/binderfs/binder-control");
-+	ret = unlink("/tmp/binderfs/binder-control");
- 	if (!ret) {
--		keep ? : rmdir_protect_errno("/dev/binderfs");
-+		keep ? : rmdir_protect_errno("/tmp/binderfs");
- 		ksft_exit_fail_msg("Managed to delete binder-control device\n");
- 	} else if (errno != EPERM) {
--		keep ? : rmdir_protect_errno("/dev/binderfs");
-+		keep ? : rmdir_protect_errno("/tmp/binderfs");
- 		ksft_exit_fail_msg(
- 			"%s - Failed to delete binder-control device but exited with unexpected error code\n",
- 			strerror(errno));
-@@ -175,8 +175,8 @@ static void __do_binderfs_test(void)
- 	ksft_inc_xfail_cnt();
- 
- on_error:
--	ret = umount2("/dev/binderfs", MNT_DETACH);
--	keep ?: rmdir_protect_errno("/dev/binderfs");
-+	ret = umount2("/tmp/binderfs", MNT_DETACH);
-+	keep ?: rmdir_protect_errno("/tmp/binderfs");
- 	if (ret < 0)
- 		ksft_exit_fail_msg("%s - Failed to unmount binderfs\n",
- 				   strerror(errno));
--- 
-2.25.1
-
+Rob
