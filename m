@@ -2,90 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E51818297D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 08:07:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 778A6182980
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 08:10:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387989AbgCLHHC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 03:07:02 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43778 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387767AbgCLHHC (ORCPT
+        id S2388008AbgCLHKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 03:10:10 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45846 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387767AbgCLHKK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 03:07:02 -0400
-Received: by mail-ot1-f66.google.com with SMTP id a6so4987690otb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 00:06:59 -0700 (PDT)
+        Thu, 12 Mar 2020 03:10:10 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 2so2775039pfg.12;
+        Thu, 12 Mar 2020 00:10:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=U3UAIH4AGCVoy4goSEufz/PBsyPz3rG5CGZwxsdNtEA=;
-        b=kpTSXyFlTYNU/tIfEnG3oU9UpIoCgKBTuoqtaTH2T6J1gB0GfVFPUH70dQKCknTHKe
-         q1oqqzyGkQ/abWxuB/eFCo4OBmWikvngCyBTB4dygHapL4WuvxZPdmIGt1uvoOWRIpq2
-         9tYSF7e1EkwqPreGaV5PxUJJtyZWc9+4mnxd+R1nqTKAMRpO0pPd8GgN++iNasxi5ILT
-         xzhC1tZPBAqcJ321Zn0udaipYRMHmcT5smVGX/wb0a8E+p3+tc2YSd1cm7LvYWLOlyAA
-         n0p9nmWng0SQ8yb/G3xbVg21VUWVoCniOofwwsDYRW/LAhStnGnLfFY02BtUpwboAfjf
-         A4Yg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ljw1ounoCZTVG+RnME8ZEWoXQjwz4MM2v65DKn4hE/c=;
+        b=HEivLkFSubwB666Df2bxBcldTFyNFCcVeJlLB4IE3SXpNB+MYnRL5cmEKoaGnwdB6R
+         5AkNJPZ5rOOl23MD0YeEH7MvuVXq+VUPa+LrQsLriASOMMX5Go6dFIBbdLm5rAZH83h2
+         bp61TPv78yl6qw4W8Jeoc5NykErt4zo36Q2R4CvHHG0RjhQMTbtzqGz4EfuvYbv0/ZpM
+         mGihoQP12Xn1+VwAqI/55fLE2YrIdLOyQuwqp7cbfbK57RF5s4prOe726uWlLI4vbnkA
+         pZva6NJCRNH0hh8E6KdFBMwmwEBiVnLai38PfkOW5sm0Xok0E4jguOiTrXGJ/V1n3TsC
+         OjcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=U3UAIH4AGCVoy4goSEufz/PBsyPz3rG5CGZwxsdNtEA=;
-        b=VgOU54oUvagyuFS/ZA1P0U3CVq99PLjY8wzf/DbxPAhsMPlHvZGlPAb7T7izhe7zkG
-         T3EFPLeHarTU5Ncz1ExQ7En8jeUPxbh14a13+aKPU9/KFYaqF72YIi8aOGHnT1fpi5Jj
-         tbTQk2sCXg2Qt6+nYVMUwfUgyeJNqOzCQed1n7Mfgmzweh/PYi3IW6aDLEUQvU7TYh+r
-         JBuVwd58gyXzAMBYr5invrJeI7pMeD7i5EtebYoqXFnXhzThx5dHql00LaksqT3ynEOf
-         rQSzoTIfhXcqc4HRRE5wvAraHivbdpjzYjDTW0U6/joy2TPv80fWdARb95cUyuOxlibA
-         USJQ==
-X-Gm-Message-State: ANhLgQ23HhYAK4gawOBWMO4HEj4VcdOSDEX/OKlq3is4QjL4i50fTU/S
-        cfhROKcM0yI8IxcXcM3jXRNKVZFXCeNfmtXRdZU=
-X-Google-Smtp-Source: ADFU+vuoSQLvJHqD5VfV2rmxV8u1NiJNTuR4c9uvtJovjCcscLJDld8Bfg0sCNzCGAythVwx2stk+i4JSML12Y1ucqY=
-X-Received: by 2002:a9d:7085:: with SMTP id l5mr5035420otj.53.1583996819293;
- Thu, 12 Mar 2020 00:06:59 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ljw1ounoCZTVG+RnME8ZEWoXQjwz4MM2v65DKn4hE/c=;
+        b=WPS+n7j5nl8Ib9lfl9XJfWI8BG0AcXdPsbFBmWnkh5tJro8AS2/5GFX02KhoAEkPYe
+         L98ZVjsYguW7cHJCpksZNoTo67a6hwRCtUsJzd/Dqmm+D+3+xralUlfTC7J4bXibKTXz
+         R+pcrSOFJb/ZCcIaoM374JM1yxu0Nyd6LP1bx7BAQdgdCFLWRtTV9El6Ct8tAEMhTBQ6
+         38NuXs5YfwYb5jniUFMi1ldLUPSkySxCXXzdQLkHJ9NyYkPUFtK8y2xL0dipQTnGeOLO
+         VzumR0iV7O+LjyZESrN1K0rACToGzxbdIOBwEWcY+MSKbBhgWZkHmWt1w126b12ub9Ll
+         YO+g==
+X-Gm-Message-State: ANhLgQ1Tz+wB1uL3amKlh78vCbXV3Rof+5DomcgaKHphPjo2YChQ1jEO
+        ZjYs6p29kJojsuW3iEUiGXo=
+X-Google-Smtp-Source: ADFU+vsa8Kf3tsY8FS7mPDY4biE2SeexdcM7YCIk/K/oVtDeAHxnIOxoQhr5MChQiCBGU9DYXPmQ4g==
+X-Received: by 2002:a63:f44d:: with SMTP id p13mr6613839pgk.113.1583997009092;
+        Thu, 12 Mar 2020 00:10:09 -0700 (PDT)
+Received: from localhost ([106.51.232.35])
+        by smtp.gmail.com with ESMTPSA id 134sm627049pfy.27.2020.03.12.00.10.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 12 Mar 2020 00:10:08 -0700 (PDT)
+Date:   Thu, 12 Mar 2020 12:40:06 +0530
+From:   afzal mohammed <afzal.mohd.ma@gmail.com>
+To:     daniel.lezcano@linaro.org
+Cc:     allison@lohutok.net, baohua@kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com,
+        festevam@gmail.com, gregkh@linuxfoundation.org, info@metux.net,
+        kernel@pengutronix.de, kgene@kernel.org, khilman@baylibre.com,
+        krzk@kernel.org, kstewart@linuxfoundation.org,
+        linus.walleij@linaro.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux@prisktech.co.nz, nsaenzjulienne@suse.de, rjui@broadcom.com,
+        s.hauer@pengutronix.de, sbranden@broadcom.com, shawnguo@kernel.org,
+        tglx@linutronix.de, u.kleine-koenig@pengutronix.de
+Subject: Re: [PATCH v4] clocksource/drivers/timer-cs5535: request irq with
+ non-NULL dev_id
+Message-ID: <20200312071006.GA5415@afzalpc>
+References: <e47ba222-bf4e-d13c-fbd3-6e7952097188@linaro.org>
+ <20200312064817.19000-1-afzal.mohd.ma@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:3bb5:0:0:0:0:0 with HTTP; Thu, 12 Mar 2020 00:06:58
- -0700 (PDT)
-Reply-To: mrmoussadaudaa@gmail.com
-From:   "Mr. Moussa Dauda" <officefilele@gmail.com>
-Date:   Thu, 12 Mar 2020 08:06:58 +0100
-Message-ID: <CAOYDtrwkKv931=aARYKLxzoRRJtG94BNbgbC9RjathbMPCG0gA@mail.gmail.com>
-Subject: I await your urgent response immediately.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200312064817.19000-1-afzal.mohd.ma@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Good Friend,
-
-Good Day,
-
-I am Mr. Moussa Dauda, Director In charge of Auditing and accounting
-department of Bank Of Africa, BOA, I hope that you will not betray or
-expose this trust and confident that i am about to repose on you for
-the mutual benefit of our both families.
-
-I need your urgent assistance in transferring the sum of TEN MILLION
-FIVE HUNDRED THOUSAND UNITED STATES DOLLARS, U$10,500.000.00,
-immediately to your account anywhere you chose.
-
-This is a very highly secret, i will like you to please keep this
-proposal as a top secret or delete it if you are not interested, upon
-receipt of your reply, i will send to you more details about this
-business deal.
-
-I will also direct you on how this deal will be done without any
-problem; you must understand that this is 100% free from risk.
-
-Therefore my questions are:
-
-1. Can you handle this project?
-2. Can I give you this trust?
-If yes, get back to me immediately.
-
-Try and get back to me with this my private email address (
-mrmoussadaudaa@gmail.com )
-
-I will be waiting to hear from you immediately.
+subject was not supposed to have version info, happened by mistake, this
+is an incremental patch on top of v3 that has been applied to the
+timers/drivers/next branch.
 
 Regards
-Mr. Moussa Dauda.
+afzal
