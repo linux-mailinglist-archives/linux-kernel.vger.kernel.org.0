@@ -2,152 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CAC7182BB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 09:59:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70BB8182BA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 09:58:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbgCLI7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 04:59:15 -0400
-Received: from mail-db8eur05on2128.outbound.protection.outlook.com ([40.107.20.128]:24687
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726310AbgCLI7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 04:59:14 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nqC+mO/AYUiPcNXJGRKBuYbtugdxzd88iDpv41xlsnEMKUycamUvCzpo5JMZk0b540QMtlYRUIBVBi5kXp2QV7bJJjcNxBfZzMFSKp1mmRsSw8mpG+UR5SP3EwQrcEkKH5Md5rEXKGk4NUHkPz9RGvBUIkVnikEttSL2w4cx245zX69rq8k5nUXpXjo8bwzZoJJot4zL7Hepz4oXr390PSbaW0kMEV0FGDrX37DpUOiG9/scor+eLx8/pJ6jpNqZ2LXD8puO5XNQyqLV7qafMOh8R7id3ocTFGcE3+PIiRxYNQ9giiI77HotPHOGhgOjjOfahnf6wtLMD/Ju/A+/xQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bVIyJifZ+Mj6NeWUOmYREnc7pAoXEmmx5oIlpEy+W3E=;
- b=WsL+2vrI8CJEaUQlpuSFJq/sKHzZWR6qLSG92ECYG5vBKGHyjGagAsRXVGXvcJ9ocIyQNo2jM1JTHZ0atrxydDMj+UyUHYMpxZ0Lu440JTz0dLaJQ/lu4cbuEVpRNZCYYbsOWftE6SpZSZuQ/8/unGTn2mhNxTSRBowbQchK20SYhU3g+dky00mWSdE+7DIgWIZ0EyWUZLVOf6ibvZTkzf5qoPQO3BAXUxaEVtK7hB6zkCrZGxg3x8egFpA/6LaHKq8L3wx68AjeRCB3raUt5C7fb70Gyy4b04M6TcC0q6KTx0ut3uPpjpNxrlKj+9VF8xBhiRmJWP9Nl3voAKquRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
- dkim=pass header.d=nokia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bVIyJifZ+Mj6NeWUOmYREnc7pAoXEmmx5oIlpEy+W3E=;
- b=xxGrbk+Yw/cF2/E241lR7GPCqi7CKVFhoNwCczQCCvZsh/zsdKJV6hk7blYeEfIL5bVuG+rMYlbYJTJr5MnsYk0ysOxo6GPFUfxJzLWWTZQQHoGbi0YvUY/Xyhn/e6sod3icrI6cstmcBbT3oIgbWWLNwqqJ3uxgG7DGa58PtuU=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=tommi.t.rantala@nokia.com; 
-Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com (10.167.127.12) by
- HE1PR0702MB3674.eurprd07.prod.outlook.com (10.167.125.142) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.10; Thu, 12 Mar 2020 08:59:10 +0000
-Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com
- ([fe80::2806:c34c:d469:8e87]) by HE1PR0702MB3675.eurprd07.prod.outlook.com
- ([fe80::2806:c34c:d469:8e87%5]) with mapi id 15.20.2814.007; Thu, 12 Mar 2020
- 08:59:10 +0000
-From:   Tommi Rantala <tommi.t.rantala@nokia.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Tommi Rantala <tommi.t.rantala@nokia.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] xfs: fix regression in "cleanup xfs_dir2_block_getdents"
-Date:   Thu, 12 Mar 2020 10:57:28 +0200
-Message-Id: <20200312085728.22187-1-tommi.t.rantala@nokia.com>
-X-Mailer: git-send-email 2.21.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: HE1PR05CA0220.eurprd05.prod.outlook.com
- (2603:10a6:3:fa::20) To HE1PR0702MB3675.eurprd07.prod.outlook.com
- (2603:10a6:7:85::12)
+        id S1726487AbgCLI6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 04:58:18 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:31735 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725978AbgCLI6R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 04:58:17 -0400
+X-UUID: 7cbfa43d3c244faf9edc17ff0fa57006-20200312
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=3TDN1j10xZCmKTt4/HmcFKsBFN2EXb3TUfii04A/U8I=;
+        b=iOzxdYppsJNm+1ewnLgQ2d8sdb7jq3GrPSchuyFSJNsLrWOi5Upv12r4SzLG8jfEhjBTop/YwNCPRaCIK1F9VSqcD9QwIoh3iYVKhpbu8rcDUEDdcmPfzRlDPc9bfqaxtUDK6u4aghGTdSU/SuM+gXV0ya1uyndzEJ/rWsR7Ric=;
+X-UUID: 7cbfa43d3c244faf9edc17ff0fa57006-20200312
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <ran.bi@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1079829579; Thu, 12 Mar 2020 16:58:11 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs01n2.mediatek.inc
+ (172.21.101.79) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 12 Mar
+ 2020 16:56:37 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 12 Mar 2020 16:58:06 +0800
+Message-ID: <1584003477.6269.8.camel@mhfsdcap03>
+Subject: Re: [PATCH v10 4/5] rtc: mt6397: Add support for the MediaTek
+ MT6358 RTC
+From:   Ran Bi <ran.bi@mediatek.com>
+To:     Lee Jones <lee.jones@linaro.org>
+CC:     Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        "Sebastian Reichel" <sre@kernel.org>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Richard Fontana" <rfontana@redhat.com>,
+        Josef Friedl <josef.friedl@speed.at>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-rtc@vger.kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        <srv_heupstream@mediatek.com>
+Date:   Thu, 12 Mar 2020 16:57:57 +0800
+In-Reply-To: <20200312074407.GA3142@dell>
+References: <1583918223-22506-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+         <1583918223-22506-5-git-send-email-hsin-hsiung.wang@mediatek.com>
+         <20200312074407.GA3142@dell>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from trfedora.emea.nsn-net.net (131.228.2.19) by HE1PR05CA0220.eurprd05.prod.outlook.com (2603:10a6:3:fa::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.20 via Frontend Transport; Thu, 12 Mar 2020 08:59:10 +0000
-X-Mailer: git-send-email 2.21.1
-X-Originating-IP: [131.228.2.19]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: ed8da60a-f3f3-4309-64cb-08d7c663a136
-X-MS-TrafficTypeDiagnostic: HE1PR0702MB3674:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <HE1PR0702MB3674033039B593B743916A32B4FD0@HE1PR0702MB3674.eurprd07.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-Forefront-PRVS: 0340850FCD
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(39860400002)(376002)(366004)(396003)(136003)(199004)(6506007)(4326008)(6512007)(2906002)(316002)(66946007)(103116003)(478600001)(81156014)(66476007)(8676002)(66556008)(6666004)(36756003)(81166006)(2616005)(86362001)(8936002)(956004)(5660300002)(186003)(52116002)(26005)(54906003)(16526019)(6486002)(6916009)(1076003);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0702MB3674;H:HE1PR0702MB3675.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: GAmWhk5zZ37hujHAPkg5a8AcRZglTG9Aqdgg7VLYvtapAS3Rvo/iLdZ3UO25dlmXtSqBwqZCxpVTFGskyYCfvSId0cWuEPErbOCuoG7sL8uUj5kUhc3IFiXJ0eQIou01Nww+Jzy9MtqF6ibDLEOZEkSAIZ8zBGwf0/CKe6Z5fm2r+hM0dHrWcYs1i/IfJl5W0VIipZKeomPg7NLPYRUjSpBXqcLE2bI1qizFaeC6HvVdY1BI9+T8Uczv948RfLztwAAN1c8vJek+FLwIQctqDQltbLw4kSyvc2XyLQFusCkjKNFciUR0uieHqOKt0g9Cl3epvJZZLId+WELmDG5Ly9ML25CDq1tnUUD9eKr+tMiCxxf7OO+PkWiZi8HQG1jRYeM/2Ak2rWnVZIUvkdOUQHLSnTxlf0TUE3isaqppLRs068rwLmyYttsIQoXu16Od
-X-MS-Exchange-AntiSpam-MessageData: WhqjOolZcj//+918zHG9P8uNdF/nd+sY+Hqo7NJdzh9tz4q73kI8p6z3SsDC04JK4d6kiqeu+RXJbK8aw3r1DYakWnSY2XFit5nuzfqKTuA239CfLS/eT1WK8U90ZfwgGdkp56Y3AFrmOTGeF1mJxg==
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed8da60a-f3f3-4309-64cb-08d7c663a136
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2020 08:59:10.7011
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EO/3iy18H+PhgctFE8dsFT+dTJOslF60gYSnL41mqbcOiuQ2MXN52thN/OFqs4V4zMqaqBR9LY0OFIpEbCAuLdbIXpUeXFLGh9WHA7DHFcg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0702MB3674
+X-TM-SNTS-SMTP: 41489C93ED8253A92B734623EA5AC68DE0AA3C817D3EF1171405B84CD846F7CC2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 263dde869bd09 ("xfs: cleanup xfs_dir2_block_getdents") introduced
-a getdents regression, when it converted the pointer arithmetics to
-offset calculations: offset is updated in the loop already for the next
-iteration, but the updated offset value is used incorrectly in two
-places, where we should have used the not-yet-updated value.
-
-This caused for example "git clean -ffdx" failures to cleanup certain
-directory structures when running in a container.
-
-Fix the regression by making sure we use proper offset in the loop body.
-Thanks to Christoph Hellwig for suggestion how to best fix the code.
-
-Cc: Christoph Hellwig <hch@lst.de>
-Fixes: 263dde869bd09 ("xfs: cleanup xfs_dir2_block_getdents")
-Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
----
- fs/xfs/xfs_dir2_readdir.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/fs/xfs/xfs_dir2_readdir.c b/fs/xfs/xfs_dir2_readdir.c
-index 0d3b640cf1cc..871ec22c9aee 100644
---- a/fs/xfs/xfs_dir2_readdir.c
-+++ b/fs/xfs/xfs_dir2_readdir.c
-@@ -147,7 +147,7 @@ xfs_dir2_block_getdents(
- 	xfs_off_t		cook;
- 	struct xfs_da_geometry	*geo = args->geo;
- 	int			lock_mode;
--	unsigned int		offset;
-+	unsigned int		offset, next_offset;
- 	unsigned int		end;
- 
- 	/*
-@@ -173,9 +173,10 @@ xfs_dir2_block_getdents(
- 	 * Loop over the data portion of the block.
- 	 * Each object is a real entry (dep) or an unused one (dup).
- 	 */
--	offset = geo->data_entry_offset;
- 	end = xfs_dir3_data_end_offset(geo, bp->b_addr);
--	while (offset < end) {
-+	for (offset = geo->data_entry_offset;
-+	     offset < end;
-+	     offset = next_offset) {
- 		struct xfs_dir2_data_unused	*dup = bp->b_addr + offset;
- 		struct xfs_dir2_data_entry	*dep = bp->b_addr + offset;
- 		uint8_t filetype;
-@@ -184,14 +185,15 @@ xfs_dir2_block_getdents(
- 		 * Unused, skip it.
- 		 */
- 		if (be16_to_cpu(dup->freetag) == XFS_DIR2_DATA_FREE_TAG) {
--			offset += be16_to_cpu(dup->length);
-+			next_offset = offset + be16_to_cpu(dup->length);
- 			continue;
- 		}
- 
- 		/*
- 		 * Bump pointer for the next iteration.
- 		 */
--		offset += xfs_dir2_data_entsize(dp->i_mount, dep->namelen);
-+		next_offset = offset +
-+			xfs_dir2_data_entsize(dp->i_mount, dep->namelen);
- 
- 		/*
- 		 * The entry is before the desired starting point, skip it.
--- 
-2.21.1
+T24gVGh1LCAyMDIwLTAzLTEyIGF0IDA3OjQ0ICswMDAwLCBMZWUgSm9uZXMgd3JvdGU6DQo+IE9u
+IFdlZCwgMTEgTWFyIDIwMjAsIEhzaW4tSHNpdW5nIFdhbmcgd3JvdGU6DQo+IA0KPiA+IEZyb206
+IFJhbiBCaSA8cmFuLmJpQG1lZGlhdGVrLmNvbT4NCj4gPiANCj4gPiBUaGlzIGFkZCBzdXBwb3J0
+IGZvciB0aGUgTWVkaWFUZWsgTVQ2MzU4IFJUQy4gRHJpdmVyIHVzaW5nDQo+ID4gY29tcGF0aWJs
+ZSBkYXRhIHRvIHN0b3JlIGRpZmZlcmVudCBSVENfV1JUR1IgYWRkcmVzcyBvZmZzZXQuDQo+ID4g
+VGhpcyByZXBsYWNlIFJUQ19XUlRHUiB0byBSVENfV1JUR1JfTVQ2MzIzIGluIG10NjMyMy1wb3dl
+cm9mZg0KPiA+IGRyaXZlciB3aGljaCBvbmx5IG5lZWRlZCBieSBhcm12NyBDUFUgd2l0aG91dCBB
+VEYuDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogUmFuIEJpIDxyYW4uYmlAbWVkaWF0ZWsuY29t
+Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IEhzaW4tSHNpdW5nIFdhbmcgPGhzaW4taHNpdW5nLndhbmdA
+bWVkaWF0ZWsuY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL3Bvd2VyL3Jlc2V0L210NjMyMy1w
+b3dlcm9mZi5jIHwgIDIgKy0NCj4gPiAgZHJpdmVycy9ydGMvcnRjLW10NjM5Ny5jICAgICAgICAg
+ICAgICB8IDMyICsrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tDQo+ID4gIGluY2x1ZGUv
+bGludXgvbWZkL210NjM5Ny9ydGMuaCAgICAgICAgfCAgOSArKysrKysrKy0NCj4gPiAgMyBmaWxl
+cyBjaGFuZ2VkLCAzMyBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkNCj4gPiANCg0KPC4u
+Lj4NCg0KPiA+ICANCj4gPiAgI2RlZmluZSBSVENfSVJRX1NUQSAgICAgICAgICAgIDB4MDAwMg0K
+PiA+ICAjZGVmaW5lIFJUQ19JUlFfU1RBX0FMICAgICAgICAgQklUKDApDQo+ID4gQEAgLTY1LDYg
+KzY3LDEwIEBADQo+ID4gICNkZWZpbmUgTVRLX1JUQ19QT0xMX0RFTEFZX1VTICAxMA0KPiA+ICAj
+ZGVmaW5lIE1US19SVENfUE9MTF9USU1FT1VUICAgKGppZmZpZXNfdG9fdXNlY3MoSFopKQ0KPiA+
+ICANCj4gPiArc3RydWN0IG10a19ydGNfZGF0YSB7DQo+ID4gKwl1MzIJCQl3cnRncjsNCj4gPiAr
+fTsNCj4gDQo+IERvIHlvdSBleHBlY3QgdG8gYWRkIG1vcmUgcHJvcGVydGllcyB0byB0aGlzIHN0
+cnVjdD8NCj4gDQo+IElmIG5vdCwgaXQgc2VlbXMgYSBiaXQgb3ZlcmtpbGwuDQo+IA0KDQpZZXMs
+IHdlIHdvdWxkIGFkZCBtb3JlIHByb3BlcnRpZXMgaGVyZSBpbiBmdXR1cmUgcGF0Y2hlcy4NCg0K
+PiA+ICBzdHJ1Y3QgbXQ2Mzk3X3J0YyB7DQo+ID4gIAlzdHJ1Y3QgZGV2aWNlICAgICAgICAgICAq
+ZGV2Ow0KPiA+ICAJc3RydWN0IHJ0Y19kZXZpY2UgICAgICAgKnJ0Y19kZXY7DQo+ID4gQEAgLTc0
+LDYgKzgwLDcgQEAgc3RydWN0IG10NjM5N19ydGMgew0KPiA+ICAJc3RydWN0IHJlZ21hcCAgICAg
+ICAgICAgKnJlZ21hcDsNCj4gPiAgCWludCAgICAgICAgICAgICAgICAgICAgIGlycTsNCj4gPiAg
+CXUzMiAgICAgICAgICAgICAgICAgICAgIGFkZHJfYmFzZTsNCj4gPiArCWNvbnN0IHN0cnVjdCBt
+dGtfcnRjX2RhdGEgKmRhdGE7DQo+IA0KPiAnZGF0YScgaXMgYSB0ZXJyaWJsZSB2YXJpYWJsZSBu
+YW1lLg0KPiANCj4gV2h5IGRvIHlvdSBuZWVkIHRvIHN0b3JlIHRoaXM/DQo+IA0KPiBJdCdzIG9u
+ZSB2YXJpYWJsZSB3aGljaCBpcyB1c2VkIG9uY2UgQUZBSUNULg0KPiANCg0KSSB3b3VsZCByZW5h
+bWUgJ2RhdGEnIHRvICdjb25maWcnLg0KDQpUaGlzIHN0cnVjdCB3aWxsIGJlIGV4dGVuZGVkIGlu
+IGZ1dHVyZSBwYXRjaGVzIHRvIGFjaGlldmUgbW9yZSBQTUlDIGNoaXANCmNvbXBhdGliaWxpdHku
+DQoNCj4gPiAgfTsNCj4gPiAgDQo+ID4gICNlbmRpZiAvKiBfTElOVVhfTUZEX01UNjM5N19SVENf
+SF8gKi8NCj4gDQoNCg==
 
