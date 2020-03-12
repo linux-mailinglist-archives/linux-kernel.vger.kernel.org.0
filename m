@@ -2,99 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2EB0183364
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:42:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6D6C18336A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:42:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbgCLOmA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 10:42:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33954 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727083AbgCLOl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 10:41:59 -0400
-Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DFC5206E7;
-        Thu, 12 Mar 2020 14:41:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584024119;
-        bh=rwALx85sL9uxz9h24BYrbFnTq6oyh/cOVDhdniakHzk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=1XtiEyLN/mnOQ3bewdx1k97d0rs0nBAo4iMJlADMpY54tvJoyAfqZRVkn+pY3Mear
-         H3fiV7NixjRk6sHXRrkbfsjJ8wm/5LNnZN+pQJKFaS+gH1B2Iw/0gy43OnwJKu+JXo
-         g4f5WXrBhK/85gaNhjO46JDvgsgtlva/prm2iMWw=
-Date:   Thu, 12 Mar 2020 09:41:57 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Chen Zhou <chenzhou10@huawei.com>
-Cc:     paulus@samba.org, mpe@ellerman.id.au, tyreld@linux.ibm.com,
-        linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] PCI: rpaphp: remove set but not used variable
- 'value'
-Message-ID: <20200312144157.GA110750@google.com>
+        id S1727726AbgCLOmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 10:42:25 -0400
+Received: from eu-smtp-delivery-167.mimecast.com ([146.101.78.167]:49930 "EHLO
+        eu-smtp-delivery-167.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727450AbgCLOmZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 10:42:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=displaylink.com;
+        s=mimecast20151025; t=1584024141;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=R5IdgNseernW6eeYDT3ug8vPqyZRfh3nmsZ+M5JDabg=;
+        b=FB5O/arS9JfRCbYMFjCs5TDCC1THV/m7wqTjHnUOliQ9JldLQbact1NmcuZg09V2D/ZgUB
+        vo1eTpuGvyQsFfoyARX4YsQmYmCm7f7lwW+nMWt/UWGqbs2kVi120MszjEpG85FuaA4bIU
+        SaoeqZr3efrDQoMHxNAEKa6LMxqumnA=
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com
+ (mail-vi1eur05lp2171.outbound.protection.outlook.com [104.47.17.171])
+ (Using TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-211-ksR818cOOHy1roYoqFkhIg-1; Thu, 12 Mar 2020 14:42:19 +0000
+X-MC-Unique: ksR818cOOHy1roYoqFkhIg-1
+Received: from VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM (52.134.27.157) by
+ VI1PR10MB2206.EURPRD10.PROD.OUTLOOK.COM (20.177.60.76) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.14; Thu, 12 Mar 2020 14:42:18 +0000
+Received: from VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::a1b9:204d:15b9:dcc]) by VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::a1b9:204d:15b9:dcc%4]) with mapi id 15.20.2793.013; Thu, 12 Mar 2020
+ 14:42:18 +0000
+From:   Vladimir Stankovic <vladimir.stankovic@displaylink.com>
+Subject: [PATCH v3 0/8] Add MA USB Host driver
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-usb <linux-usb@vger.kernel.org>,
+        mausb-host-devel <mausb-host-devel@displaylink.com>
+Message-ID: <8c24bff9-79a6-ca53-ce8f-fb503163db24@displaylink.com>
+Date:   Thu, 12 Mar 2020 15:42:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+Content-Language: en-US
+X-ClientProxiedBy: VI1PR07CA0241.eurprd07.prod.outlook.com
+ (2603:10a6:802:58::44) To VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:803:37::29)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200312143800.GA109542@google.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [172.17.183.132] (91.208.120.1) by VI1PR07CA0241.eurprd07.prod.outlook.com (2603:10a6:802:58::44) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.7 via Frontend Transport; Thu, 12 Mar 2020 14:42:18 +0000
+X-Originating-IP: [91.208.120.1]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a4c7887d-d9f0-4665-0d00-08d7c6939075
+X-MS-TrafficTypeDiagnostic: VI1PR10MB2206:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR10MB2206057FE769063C70E8F46D91FD0@VI1PR10MB2206.EURPRD10.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-Forefront-PRVS: 0340850FCD
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39840400004)(346002)(376002)(396003)(136003)(199004)(66556008)(66946007)(316002)(66476007)(81156014)(2616005)(956004)(44832011)(26005)(6916009)(2906002)(4326008)(16526019)(107886003)(31696002)(54906003)(5660300002)(36756003)(6486002)(81166006)(8936002)(186003)(16576012)(6666004)(86362001)(8676002)(478600001)(31686004)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR10MB2206;H:VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: yjmwj1q8M5dz3KSya/GYjjntCkthQmzVqWNyD4VOkcQSfIT60Scvmme+iWLTlLJ060ySd4ETIXDgir61pisltXbXrjaQZBCPqhC1+qxz71+nNqvd7eD+oSC11DtWhNJiECCn3uLzarr6QxDUPPX6rEX3cL76On7rKaf/RyKBDLyZyfxBjwi4mtf2v5C543liMIdw8PAxPQUkqnefG7Wu8IiIN8jZ6YUun6Wp76CBOgb6ZNqxMJSpA7vu2aSUAXOCcYtvRaIGBV4PJY9Z5b2Fslg/DnIFfcarAv8172+N06OJVmRbwXfF30pv2DX6quEAawFXQXA0heTgUYXLFaS1glFm72ld5kpz1TsglxdY/eUW3RXISzookTaSJvAVDO1HDLScJF7BVLs28cP875t84di0N8q/Mxb/m97SeFakF3gZVz5u23iGYVYZpgrOpLbP
+X-MS-Exchange-AntiSpam-MessageData: 2YvLhHkmBNIJn/tE3fsN9eEBOdteiZv29Kb+eTVp8wDSDzQVuszPwt9jI6I9BlKH73QIC10800/GHKe5AkNjHrlhtblLnLVnjQRzmUwUp6Fwqjcxie3SYbmojPAHwE8iHekY319fpnogX23AV+KTOQ==
+X-OriginatorOrg: displaylink.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4c7887d-d9f0-4665-0d00-08d7c6939075
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2020 14:42:18.3256
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a4bda75a-b444-4312-9c90-44a7c4b2c91a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RPAi2dUL0baIImOEomx9EVPLv87OuA8X5YlmF4P8NOd+TJSQ3FlnTvmT59KOEmwPVtA53jUoqW+S3SpokAWCywe9SpatXw5+JetTuLNPJI7+dSBLNfk4I3YbOXsGFkxu
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB2206
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: displaylink.com
+Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 09:38:02AM -0500, Bjorn Helgaas wrote:
-> On Thu, Mar 12, 2020 at 10:04:12PM +0800, Chen Zhou wrote:
-> > Fixes gcc '-Wunused-but-set-variable' warning:
-> > 
-> > drivers/pci/hotplug/rpaphp_core.c: In function is_php_type:
-> > drivers/pci/hotplug/rpaphp_core.c:291:16: warning:
-> > 	variable value set but not used [-Wunused-but-set-variable]
-> > 
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-> 
-> Michael, if you want this:
-> 
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> If you don't mind, edit the subject to follow the convention, e.g.,
-> 
->   PCI: rpaphp: Remove unused variable 'value'
-> 
-> Apparently simple_strtoul() is deprecated and we're supposed to use
-> kstrtoul() instead.  Looks like kstrtoul() might simplify the code a
-> little, too, e.g.,
-> 
->   if (kstrtoul(drc_type, 0, &value) == 0)
->     return 1;
-> 
->   return 0;
+Media Agnostic Universal Serial Bus (MA USB) Host driver provides USB
+connectivity over an available network, allowing host device to access
+remote USB devices attached to one or more MA USB devices (accessible
+via network).
 
-I guess there are several other uses of simple_strtoul() in this file.
-Not sure if it's worth changing them all, just this one, or just the
-patch below as-is.
+This driver has been developed to enable the host to communicate
+with DisplayLink products supporting MA USB protocol (MA USB device,
+in terms of MA USB Specification).
 
-> > ---
-> >  drivers/pci/hotplug/rpaphp_core.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
-> > index e408e40..5d871ef 100644
-> > --- a/drivers/pci/hotplug/rpaphp_core.c
-> > +++ b/drivers/pci/hotplug/rpaphp_core.c
-> > @@ -288,11 +288,10 @@ EXPORT_SYMBOL_GPL(rpaphp_check_drc_props);
-> >  
-> >  static int is_php_type(char *drc_type)
-> >  {
-> > -	unsigned long value;
-> >  	char *endptr;
-> >  
-> >  	/* PCI Hotplug nodes have an integer for drc_type */
-> > -	value = simple_strtoul(drc_type, &endptr, 10);
-> > +	simple_strtoul(drc_type, &endptr, 10);
-> >  	if (endptr == drc_type)
-> >  		return 0;
-> >  
-> > -- 
-> > 2.7.4
-> > 
+MA USB protocol used by MA USB Host driver has been implemented in
+accordance with MA USB Specification Release 1.0b.
+
+This driver depends on the functions provided by DisplayLink's
+user-space driver.
+
+v2:
+- Fixed licensing info in headers
+- Reorganized code to lower file count
+- Patch has been split into 8 smaller patches
+
+v3:
+- Fixed nested spinlock usage
+- Implemented IPv6 support
+
+Vladimir Stankovic (8):
+   usb: Add MA-USB Host kernel module
+   usb: mausb_host: Add link layer implementation
+   usb: mausb_host: HCD initialization
+   usb: mausb_host: Implement initial hub handlers
+   usb: mausb_host: Introduce PAL processing
+   usb: mausb_host: Add logic for PAL-to-PAL communication
+   usb: mausb_host: MA-USB PAL events processing
+   usb: mausb_host: Process MA-USB data packets
+
+  MAINTAINERS                                  |    7 +
+  drivers/usb/Kconfig                          |    2 +
+  drivers/usb/Makefile                         |    2 +
+  drivers/usb/mausb_host/Kconfig               |   14 +
+  drivers/usb/mausb_host/Makefile              |   17 +
+  drivers/usb/mausb_host/hcd.c                 | 1897 ++++++++++++++++
+  drivers/usb/mausb_host/hcd.h                 |  162 ++
+  drivers/usb/mausb_host/hpal.c                | 2083 ++++++++++++++++++
+  drivers/usb/mausb_host/hpal.h                |  339 +++
+  drivers/usb/mausb_host/hpal_data.c           |  719 ++++++
+  drivers/usb/mausb_host/hpal_data.h           |   34 +
+  drivers/usb/mausb_host/hpal_events.c         |  611 +++++
+  drivers/usb/mausb_host/hpal_events.h         |   85 +
+  drivers/usb/mausb_host/ip_link.c             |  374 ++++
+  drivers/usb/mausb_host/ip_link.h             |   87 +
+  drivers/usb/mausb_host/ma_usb.h              |  869 ++++++++
+  drivers/usb/mausb_host/mausb_address.h       |   26 +
+  drivers/usb/mausb_host/mausb_core.c          |  212 ++
+  drivers/usb/mausb_host/mausb_driver_status.h |   17 +
+  drivers/usb/mausb_host/mausb_event.h         |  224 ++
+  drivers/usb/mausb_host/utils.c               |  360 +++
+  drivers/usb/mausb_host/utils.h               |   45 +
+  22 files changed, 8186 insertions(+)
+  create mode 100644 drivers/usb/mausb_host/Kconfig
+  create mode 100644 drivers/usb/mausb_host/Makefile
+  create mode 100644 drivers/usb/mausb_host/hcd.c
+  create mode 100644 drivers/usb/mausb_host/hcd.h
+  create mode 100644 drivers/usb/mausb_host/hpal.c
+  create mode 100644 drivers/usb/mausb_host/hpal.h
+  create mode 100644 drivers/usb/mausb_host/hpal_data.c
+  create mode 100644 drivers/usb/mausb_host/hpal_data.h
+  create mode 100644 drivers/usb/mausb_host/hpal_events.c
+  create mode 100644 drivers/usb/mausb_host/hpal_events.h
+  create mode 100644 drivers/usb/mausb_host/ip_link.c
+  create mode 100644 drivers/usb/mausb_host/ip_link.h
+  create mode 100644 drivers/usb/mausb_host/ma_usb.h
+  create mode 100644 drivers/usb/mausb_host/mausb_address.h
+  create mode 100644 drivers/usb/mausb_host/mausb_core.c
+  create mode 100644 drivers/usb/mausb_host/mausb_driver_status.h
+  create mode 100644 drivers/usb/mausb_host/mausb_event.h
+  create mode 100644 drivers/usb/mausb_host/utils.c
+  create mode 100644 drivers/usb/mausb_host/utils.h
+
+--=20
+2.17.1
+
