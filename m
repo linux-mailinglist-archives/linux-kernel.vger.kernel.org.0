@@ -2,107 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 172F6183728
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:15:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA3DC183722
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:15:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbgCLRPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 13:15:10 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:49094 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbgCLRPI (ORCPT
+        id S1726579AbgCLRPA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 13:15:00 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33594 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbgCLROz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 13:15:08 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02CHEvi2118683;
-        Thu, 12 Mar 2020 12:14:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584033297;
-        bh=F1Bl5KRdM8p1lw3n/IaD14JUKZw+gIocUSbFL8V0++U=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=yuwAX0WVPIo2mKAaXZuNoh0A2oc3iOPOXloIX3p1ONeV9BMBZyFVdh50Oda7HAz9r
-         43iycFz2a381YE90mGwTuVq6Ffr6hwa/rFFh1yzxC3KHOo+nd/6pzjeiRJLipdGs70
-         iO6nlfes39FPFm16fF/XXOSp8CAxZAUaxWy/RAlk=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02CHEvwm123158
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 12 Mar 2020 12:14:57 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 12
- Mar 2020 12:14:57 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 12 Mar 2020 12:14:57 -0500
-Received: from [10.24.69.20] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02CHErSN096128;
-        Thu, 12 Mar 2020 12:14:54 -0500
-Subject: Re: [PATCH v3 4/5] pwm: omap-dmtimer: Do not disable pwm before
- changing period/duty_cycle
-To:     Richard Cochran <richardcochran@gmail.com>
-CC:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Vignesh R <vigneshr@ti.com>,
-        <kernel@pengutronix.de>
-References: <20200312042210.17344-1-lokeshvutla@ti.com>
- <20200312042210.17344-5-lokeshvutla@ti.com>
- <20200312064042.p7himm3odxjyzroi@pengutronix.de>
- <f250549f-1e7c-06d6-b2a4-7ae01c06725b@ti.com>
- <20200312084739.isixgdo3txr6rjzg@pengutronix.de>
- <2a5a06cd-7aca-c450-b048-33329d058eca@ti.com>
- <20200312142126.GB2466@localhost>
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-Message-ID: <b8750b79-8703-5d8f-eacf-b3a67cedd252@ti.com>
-Date:   Thu, 12 Mar 2020 22:44:08 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20200312142126.GB2466@localhost>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 12 Mar 2020 13:14:55 -0400
+Received: by mail-wm1-f65.google.com with SMTP id r7so5978670wmg.0;
+        Thu, 12 Mar 2020 10:14:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=/rHi3YAkRAcdMWtqtXDhFmgLSOL8x4zCT7svjD1llso=;
+        b=CZBgUzmx+EEy6Hdu9DInRUBaFiOWh84iUnz4jURnXgTy+86cMmjyL+Xm/IiK5B0HBe
+         mRg9AXxyeAbj6pJKhCGImAXZNQwQYE0+0WpiZ4u841pcqgBHauz7DHWB6rcY64d9niAh
+         fzLFR7ZIA2K5/8mAAROD93RSBqLh2dM0gPW1ekQDJJ6RrLBwIB2qqD3klsEUspWSiurl
+         Ywf3ZObsiUzImDTk30kKZwEhKeGYKFfUFrQW+7c+6DBGCUux0DjKdrBLdjMwcQhsRoSF
+         9XA8tSdQcF/jcTuGbDafn92DvX8CY2bBMBEebdro2EREy+07YkkBxeSb6zHQV2qUfUbU
+         9MxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/rHi3YAkRAcdMWtqtXDhFmgLSOL8x4zCT7svjD1llso=;
+        b=s5TAVHzL5oDKxXf5xCuUV3W3eNXFpjQ4/JvliDwQ6fLnKSAFlBtCAlQBsJI3Ya0cYv
+         9fbXk05GbAiq4YBgvfreR1rbqUZ5cIhvc358kbFz97+vZFEplXqJLKac9f6DpxC98ObH
+         KUKG7Dyv61Fshsoown04dmLlLibxjOlOLj4t3ZazBvD1sF0liS3G73fhoXblO9dZo96M
+         CaTSL5Meerf8z46iMiXFix8o/O6F4Rwt759/mroTX0jbvQI7DMXvGCZzupV4L/hew3gN
+         QcEMV9ir5QHMTdJDWb3si5hYmdP+3a1CRURa3fzvzvb3B5mqOdi1KxmmHBXuH0rKP/rt
+         B9yg==
+X-Gm-Message-State: ANhLgQ3/Am1lrIyFN1wJbfrQwmjtFm8uIuvG9pqz/bT7f0T48Z0Dnab0
+        LDbIx9UdSPMW5as59GumA24=
+X-Google-Smtp-Source: ADFU+vuU7JONushGnh3yAgda3gxF27iAlAIS/lIT8K59ScQnS7AhYwvRjg88gHQjT88rLF0AWIIufQ==
+X-Received: by 2002:a1c:cc06:: with SMTP id h6mr5962352wmb.118.1584033292012;
+        Thu, 12 Mar 2020 10:14:52 -0700 (PDT)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id v10sm3398832wmh.17.2020.03.12.10.14.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Mar 2020 10:14:51 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] ARM: dts: rockchip: remove clock-names property from 'generic-ehci' nodes
+Date:   Thu, 12 Mar 2020 18:14:38 +0100
+Message-Id: <20200312171441.21144-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Richard,
+A test with the command below gives for example this error:
 
-On 12/03/20 7:51 PM, Richard Cochran wrote:
-> On Thu, Mar 12, 2020 at 04:14:34PM +0530, Lokesh Vutla wrote:
->> But the problem here is that inactive breaks between two periods is not desired.
->> Because the pwm is used to generate a 1PPS signal and is continuously
->> synchronized with PTP clock.
-> 
-> The 1-PPS case is the "easy" one.  If the PWM is adjustable on the
-> fly, then people will use it with higher frequency signals.
+arch/arm/boot/dts/rv1108-evb.dt.yaml: usb@30140000:
+'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
 
-Yes, PWM can be adjusted on the fly. TRM does specify that corresponding
-registers(TLDR, TMAR, TCRR) registers can be updated when timer is active.
+'clock-names' is not a valid property name for usb_host nodes with
+compatible string 'generic-ehci', so remove them.
 
->  
->> I am up if this can be solved generically. But updating period is very specific
->> to hardware implementation. Not sure what generic solution can be brought out of
->> this. Please correct me if I am wrong.
-> 
-> What happens today when the PWM frequency or duty cycle are changed
-> while the signal is enabled?
+make ARCH=arm dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/usb/generic-ehci.yaml
 
-Today, PWM is stopped and then period/duty_cycle are updated.
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ arch/arm/boot/dts/rk322x.dtsi | 3 ---
+ arch/arm/boot/dts/rk3288.dtsi | 2 --
+ arch/arm/boot/dts/rv1108.dtsi | 1 -
+ 3 files changed, 6 deletions(-)
 
-> 
-> Do different PWM devices/drivers behave the same way?
-> 
-> Does this series change the behavior of the am335x and friends?
+diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
+index a0acf2ef8..6503247e9 100644
+--- a/arch/arm/boot/dts/rk322x.dtsi
++++ b/arch/arm/boot/dts/rk322x.dtsi
+@@ -722,7 +722,6 @@
+ 		reg = <0x30080000 0x20000>;
+ 		interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru HCLK_HOST0>, <&u2phy0>;
+-		clock-names = "usbhost", "utmi";
+ 		phys = <&u2phy0_host>;
+ 		phy-names = "usb";
+ 		status = "disabled";
+@@ -744,7 +743,6 @@
+ 		reg = <0x300c0000 0x20000>;
+ 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru HCLK_HOST1>, <&u2phy1>;
+-		clock-names = "usbhost", "utmi";
+ 		phys = <&u2phy1_otg>;
+ 		phy-names = "usb";
+ 		status = "disabled";
+@@ -768,7 +766,6 @@
+ 		clocks = <&cru HCLK_HOST2>, <&u2phy1>;
+ 		phys = <&u2phy1_host>;
+ 		phy-names = "usb";
+-		clock-names = "usbhost", "utmi";
+ 		status = "disabled";
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 4745be518..485234f6a 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -601,7 +601,6 @@
+ 		reg = <0x0 0xff500000 0x0 0x100>;
+ 		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru HCLK_USBHOST0>;
+-		clock-names = "usbhost";
+ 		phys = <&usbphy1>;
+ 		phy-names = "usb";
+ 		status = "disabled";
+@@ -644,7 +643,6 @@
+ 		reg = <0x0 0xff5c0000 0x0 0x100>;
+ 		interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru HCLK_HSIC>;
+-		clock-names = "usbhost";
+ 		status = "disabled";
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/rv1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
+index fda16f976..d33e606be 100644
+--- a/arch/arm/boot/dts/rv1108.dtsi
++++ b/arch/arm/boot/dts/rv1108.dtsi
+@@ -495,7 +495,6 @@
+ 		reg = <0x30140000 0x20000>;
+ 		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru HCLK_HOST0>, <&u2phy>;
+-		clock-names = "usbhost", "utmi";
+ 		phys = <&u2phy_host>;
+ 		phy-names = "usb";
+ 		status = "disabled";
+-- 
+2.11.0
 
-Yes, this series  is applicable on all TI OMAP2+ devices with DMTIMER.
-
-[0] http://www.ti.com/lit/ug/spruh73q/spruh73q.pdf Section 20.1.1.1 DMTIMER
-overview Page 4436.
-
-Thanks and regards,
-Lokesh
