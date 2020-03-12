@@ -2,98 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E985182C2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 10:17:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99C3B182C53
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 10:24:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbgCLJRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 05:17:09 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:19183 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbgCLJRI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 05:17:08 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e69fdb70000>; Thu, 12 Mar 2020 02:15:35 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 12 Mar 2020 02:17:07 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 12 Mar 2020 02:17:07 -0700
-Received: from [10.26.11.156] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 12 Mar
- 2020 09:17:05 +0000
-Subject: Re: [PATCH 4.14 000/126] 4.14.173-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20200311130904.819648693@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <bf159c38-fc24-39d7-00a4-e85aa4f3e040@nvidia.com>
-Date:   Thu, 12 Mar 2020 09:17:02 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726595AbgCLJYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 05:24:10 -0400
+Received: from mail-eopbgr130047.outbound.protection.outlook.com ([40.107.13.47]:10534
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726099AbgCLJYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 05:24:10 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FfQW/kTP0vVgac2xyJpDqiIOHGm0FXSQDuwJxSsx8cC6uxZ3GNjIVkLtf2T1TwfzfyPOE/CkVV5tsxEO6gIEBS1P58B1UBfuqZUHnXm489/6MRubuzEpSuBdoxjKsahxhg05pEEvr9qTIY2RuYO+oeReZ6qd89gPp+Ls9KVRwm1ePlIvvKPrgSzT4FZBRzMg63IdzpS9EKek93AmraBWEIoCQGVPovz2KpzdFFpgckorJCkpEgXuxCTLF6CzSY3rzNJCS5ZK7hH9gBbjTTa5/xWrV8zvI6Z8zNSTRv8NqzQT4Q28KzoCOB5auMsB9iEDglmIBAOi9jZKaOvk82w9Ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O1vgNOYIEHm1GJnhcKpeTOncfmcQYdWgzXYLqnqvAKo=;
+ b=Wn8/pfTGFK8j4EY2HNEMCPnGbhiVWY+tvWxPAiC9gZ0QmHZs9p1Kjs7FeUd5rABr88NWsfl+Bq8iuq7i9pDldiwGiVME21ulRavCiPcA94JmcV6i63cGp3GpLF8pkbYl4IH0ZuXgh3pC+o4RLSWa11o8dVQ+MI/luqoF0Vk5rlGoWbSWJb0VpAJ0OrrlDHAkCeN+EREhiov1YrTmPwin1HWZSNEeJcCbchizCu+oeQFLyMIXzLsxqAPtZ919uj1jX/CHeFDgjriBRqiy8wsgAaHI+/hiMIj/wNWhOT2EqXt//D/0ZmZ+aE1JzZ6AuRcC10AZdTXHOzCCmyo1xX3VyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O1vgNOYIEHm1GJnhcKpeTOncfmcQYdWgzXYLqnqvAKo=;
+ b=bo+yZQyM6Er0bk00TkObmTcEh+y6o8WMGoMbmIM/BghYsMikuYokHWI8zPCQGKU2tpFfNMv3calvsM3nskJ357sYeMrrdIoFoSOIkFfoc5jvP8fuUngDVlQ6w6ePgaXBuxGCQIgAGIgo0QR7iQePOk9Jd2UyZkyx5oRngxHaMGU=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5042.eurprd04.prod.outlook.com (20.177.41.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.17; Thu, 12 Mar 2020 09:24:07 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::548f:4941:d4eb:4c11]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::548f:4941:d4eb:4c11%6]) with mapi id 15.20.2793.018; Thu, 12 Mar 2020
+ 09:24:07 +0000
+From:   peng.fan@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        allison@lohutok.net, info@metux.net, Anson.Huang@nxp.com,
+        leonard.crestez@nxp.com, git@andred.net, abel.vesa@nxp.com,
+        ard.biesheuvel@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V1 0/4] ARM: imx: move cpu code to drivers/soc/imx
+Date:   Thu, 12 Mar 2020 17:17:21 +0800
+Message-Id: <1584004645-26720-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR0302CA0001.apcprd03.prod.outlook.com
+ (2603:1096:3:2::11) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
-In-Reply-To: <20200311130904.819648693@linuxfoundation.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1584004536; bh=zB1WxBYgCEvZgU4P+Qhh8M9dCmHsE0BOzp7hDM1iSXc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=BYr1Bp9Ch7t938AkpmGlavrPF3DHB+MrNwxniFP3vWeF6BZJ1C+xc1hNl1U6icTM6
-         7psPruaPWXQdQjduzH65YsKed/2XjTCZU6vBPRUVCK7g+sEqKtDaIVppqwlIpljet+
-         pJ3OQj4vONAjEpaqrt4C7QoPcnt92NcAKlpeK5S/rCqgAdpYU7VMS5qKB0uIot9riX
-         LEFeu/hlkMpNOlF7khdW9o9uV0UlvDq7DZo05Tf4GeGpyLcqnhEuZRQPPGwFYyXVaP
-         GSR7Z9DCDSgq8eLFL2+A/iKUhXQEOerWXhOKMLhy1/B4SdB6JNBcxn917bd9awEwXf
-         QzIPPKpf1KWIQ==
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR0302CA0001.apcprd03.prod.outlook.com (2603:1096:3:2::11) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2835.7 via Frontend Transport; Thu, 12 Mar 2020 09:24:02 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 650cc49a-8ea6-42a8-9d13-08d7c6671d21
+X-MS-TrafficTypeDiagnostic: AM0PR04MB5042:|AM0PR04MB5042:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB5042304AD21149713D065ABA88FD0@AM0PR04MB5042.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 0340850FCD
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(396003)(376002)(39860400002)(346002)(199004)(316002)(52116002)(8676002)(8936002)(6506007)(36756003)(81166006)(81156014)(186003)(6666004)(9686003)(6486002)(16526019)(4326008)(66556008)(66476007)(26005)(7416002)(6512007)(956004)(5660300002)(966005)(86362001)(478600001)(2616005)(2906002)(66946007)(69590400007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5042;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: yGtd1c7ZOpPGUnwU6g3rjvWq3qagwROcKANC6od1SJLPnB/PZndh4IABUcRL/WH0GO+NvRRjN1b3fVOlDJtHa+mX+4Cjbbe0JKPNF0NRYANwXI4c6O0cAboxXZuH1rD6fdqqsNf5i8kKMr6NDWHPp+BIWX7OmgZwERlPlSU3X2YWsYRSifDjYPcz81aRiE6yrfQfUKfi2MLxSTROfa3PbbZBv3Cky2APdubGg7bsYs3DFcBPnyEvBqULYmuLDh6EAsr9hiUOC0Uj+VT9RRioMEm6ryiLNOqe/jeEzEChb32YLj+qOsFcmY1GeTQBXODhDgLanTrJT1cbwJGugnyAfTmWWC88VoCUErwjKjUuodVyL52VirNq73zxU0aVkR5ynRO3b6UyC1D+V2p5TuduX6ih9WEpFWdko34Yp60yme2g62vicrPEgFsyMI9XjcJWgzMgKNos8+imQx+eCOzpyoXQdFzlf/4qIpgqzL8cqgTqx3qXHjmqKejC//lKOv9ZWQ+BNBfg5o0ZScjBbAVP+yNXpXBA5pXe4uKgfjivJfym5nZr8D7ofrNnCbBXGtoKYWSzbsdKXdAUtwcy63yuWw==
+X-MS-Exchange-AntiSpam-MessageData: GQa6UKM3F9mrD+AuaNBakh6bNDC12LffW+5IPQhn2wej0pfDfFgyXAxMSWac5xcmS5rP03L8v9C/Vl1PBnLf+UsQ03PzzcZI5ZBv8pcYJXo69OD8dNMdnOxdiN4p2bewMUvf6ZPS/N8y5dyQRVeVxQ==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 650cc49a-8ea6-42a8-9d13-08d7c6671d21
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2020 09:24:07.0796
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1WIlepKl4+/jRad5pcbBKtBotftHA3zUPMkKAkdsSyktD/JUTLe2yhrR6LAMn77SmwMEzQofuhf+4hRvVRVpbw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5042
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Peng Fan <peng.fan@nxp.com>
 
-On 11/03/2020 13:11, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.173 release.
-> There are 126 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 13 Mar 2020 13:08:24 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.173-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+RFC version :
+https://patchwork.kernel.org/cover/11336433/
 
+Nothing changed in v1, just rename to formal patches
 
-All tests are passing for Tegra ...
+Shawn,
+ The original concern has been eliminated in RFC discussion,
+ so this patchset is ready to be in next.
+Thanks.
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    24 tests:	24 pass, 0 fail
+Follow i.MX8, move the soc device register code to drivers/soc/imx
+to simplify arch/arm/mach-imx/cpu.c
 
-Linux version:	4.14.173-rc2-gc23e0b0dc693
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+I planned to use similar logic as soc-imx8m.c to restructure soc-imx.c
+and merged the two files into one. But not sure, so still keep
+the logic in cpu.c.
 
-Cheers
-Jon
+There is one change is the platform devices are not under
+/sys/devices/soc0 after patch 1/4. Actually ARM64 platform
+devices are not under /sys/devices/soc0, such as i.MX8/8M.
+So it should not hurt to let the platform devices under platform dir.
+
+Peng Fan (4):
+  ARM: imx: use device_initcall for imx_soc_device_init
+  ARM: imx: cpu: drop dead code
+  ARM: imx: move cpu definitions into a header
+  soc: imx: move cpu code to drivers/soc/imx
+
+ arch/arm/mach-imx/common.h       |   1 -
+ arch/arm/mach-imx/cpu.c          | 159 ---------------------------------------
+ arch/arm/mach-imx/mach-imx6q.c   |   8 +-
+ arch/arm/mach-imx/mach-imx6sl.c  |   8 +-
+ arch/arm/mach-imx/mach-imx6sx.c  |   8 +-
+ arch/arm/mach-imx/mach-imx6ul.c  |   8 +-
+ arch/arm/mach-imx/mach-imx7d.c   |   6 --
+ arch/arm/mach-imx/mach-imx7ulp.c |   2 +-
+ arch/arm/mach-imx/mxc.h          |  22 +-----
+ drivers/soc/imx/Makefile         |   3 +
+ drivers/soc/imx/soc-imx.c        | 146 +++++++++++++++++++++++++++++++++++
+ include/soc/imx/cpu.h            |  30 ++++++++
+ 12 files changed, 185 insertions(+), 216 deletions(-)
+ create mode 100644 drivers/soc/imx/soc-imx.c
+ create mode 100644 include/soc/imx/cpu.h
 
 -- 
-nvpublic
+2.16.4
+
