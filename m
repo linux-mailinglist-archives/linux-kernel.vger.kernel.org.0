@@ -2,57 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21F86182C9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 10:40:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F696182CB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 10:50:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbgCLJkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 05:40:18 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34036 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbgCLJkS (ORCPT
+        id S1726681AbgCLJuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 05:50:06 -0400
+Received: from poy.remlab.net ([94.23.215.26]:50958 "EHLO
+        ns207790.ip-94-23-215.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbgCLJuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 05:40:18 -0400
-Received: by mail-wr1-f65.google.com with SMTP id z15so6516178wrl.1;
-        Thu, 12 Mar 2020 02:40:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nIZqiO3olanBqpb8V00tr6xlu/aKR3WtYKMWSraEapQ=;
-        b=kjYPWyyWUUxkfuBZcUJPLcIVx7QylnuWHIRi+umPxZ6/c0nPYq8TuurW35PpZmufNQ
-         5CeFyqpJorb9S0Pj0Z5nItcDT+Uw0O34flWw1cnSaicZ+Llo4lJpU5gMKoKf0leVTP+x
-         Zsq5DeHoJNvtauMDMAyfSfjON5vgNH7c4K3WSHdbq7mM1kLDUfb5D4Gh2JVk57WGjbee
-         FkEWbdAskJ9XHi3EwCVYMPph4iCIN43IXr1ssQeYgFZ1RjjuVkj1L4L0FHZ9OXWGzpsu
-         mikgnPMZ4zt0VOpb4s90Et3BebiDEKjR0UNCOkRcs3rjO3gJvCHZsaqGCDQ1SBsSwpb7
-         xjoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nIZqiO3olanBqpb8V00tr6xlu/aKR3WtYKMWSraEapQ=;
-        b=nqEOyknTC2HvvXfF4xS7LQCIBWpQrPuopWRlGr5IFH1yJDqco50PMejrH/w/o+JYyG
-         rmsgRLKAJQTwWEYRrcCj4LuuA9w8HBhECIpkrmkTTP1IGhiTJNDYAA57JD221WclzIed
-         zylF8aNQhwcQnE1oVfigrEcHZrSSImpY9r0/INIhLak/e/NbvVvAFxA5fHfjH5K+ZZam
-         /yfH9vbXtOCNnsdXkhIMMTYR58oJfLQMF/je5Zho+U4A4+J+bafr9+Zf3zxfNN8rhCtL
-         3Wk/uJotxjcfNZla1QJVuxWYbXLauPJo0J+VxflwsDLE9PDnyPzk+9uzmjK7IdNoCqT9
-         PfXg==
-X-Gm-Message-State: ANhLgQ3fNxk0eKcnzK+/EAlAIUitzrABVoo4w+cg6T/zxmDo1wC0tJhx
-        LIbTBlKQvlSuHoP6uK2+cIg=
-X-Google-Smtp-Source: ADFU+vv1kWRpUSYA1uOmPu+2xRuwtW9nWXk0R1u+yB/fY+6QpohYYxzMi5WjWNP9IskY8c5Fg538Ng==
-X-Received: by 2002:adf:b1d2:: with SMTP id r18mr9637346wra.86.1584006016105;
-        Thu, 12 Mar 2020 02:40:16 -0700 (PDT)
-Received: from localhost.localdomain ([37.58.58.231])
-        by smtp.gmail.com with ESMTPSA id c26sm11604589wmb.8.2020.03.12.02.40.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2020 02:40:15 -0700 (PDT)
-From:   Gabriel Ravier <gabravier@gmail.com>
-To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gabriel Ravier <gabravier@gmail.com>
-Subject: [PATCH] gpio-hammer: Avoid potential overflow in main
-Date:   Thu, 12 Mar 2020 10:40:08 +0100
-Message-Id: <20200312094008.1833929-1-gabravier@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        Thu, 12 Mar 2020 05:50:05 -0400
+Received: from basile.remlab.net (ip6-localhost [IPv6:::1])
+        by ns207790.ip-94-23-215.eu (Postfix) with ESMTP id C0BB35FE21;
+        Thu, 12 Mar 2020 10:40:14 +0100 (CET)
+From:   =?UTF-8?q?R=C3=A9mi=20Denis-Courmont?= <remi@remlab.net>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, maz@kernel.org, james.morse@arm.com,
+        julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com,
+        kvmarm@lists.cs.columbia.edu, will@kernel.org,
+        catalin.marinas@arm.com
+Subject: [PATCH] arm64: use mov_q instead of literal ldr
+Date:   Thu, 12 Mar 2020 11:40:14 +0200
+Message-Id: <20200312094014.153356-1-remi@remlab.net>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,60 +32,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If '-o' was used more than 64 times in a single invocation of gpio-hammer,
-this could lead to an overflow of the 'lines' array. This commit fixes
-this by avoiding the overflow and giving a proper diagnostic back to the
-user
+From: Remi Denis-Courmont <remi.denis.courmont@huawei.com>
 
-Signed-off-by: Gabriel Ravier <gabravier@gmail.com>
+In practice, this requires only 2 instructions, or even only 1 for
+the idmap_pg_dir size (with 4 or 64 KiB pages). Only the MAIR values
+needed more than 2 instructions and it was already converted to mov_q
+by 95b3f74bec203804658e17f86fe20755bb8abcb9.
+
+Signed-off-by: Remi Denis-Courmont <remi.denis.courmont@huawei.com>
 ---
- tools/gpio/gpio-hammer.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/cpu-reset.S       |  2 +-
+ arch/arm64/kernel/hyp-stub.S        |  2 +-
+ arch/arm64/kernel/relocate_kernel.S |  4 +---
+ arch/arm64/kvm/hyp-init.S           | 10 ++++------
+ arch/arm64/mm/proc.S                |  2 +-
+ 5 files changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/tools/gpio/gpio-hammer.c b/tools/gpio/gpio-hammer.c
-index 0e0060a6e..273d33847 100644
---- a/tools/gpio/gpio-hammer.c
-+++ b/tools/gpio/gpio-hammer.c
-@@ -77,7 +77,7 @@ int hammer_device(const char *device_name, unsigned int *lines, int nlines,
+diff --git a/arch/arm64/kernel/cpu-reset.S b/arch/arm64/kernel/cpu-reset.S
+index 32c7bf858dd9..38087b4c0432 100644
+--- a/arch/arm64/kernel/cpu-reset.S
++++ b/arch/arm64/kernel/cpu-reset.S
+@@ -32,7 +32,7 @@
+ ENTRY(__cpu_soft_restart)
+ 	/* Clear sctlr_el1 flags. */
+ 	mrs	x12, sctlr_el1
+-	ldr	x13, =SCTLR_ELx_FLAGS
++	mov_q	x13, SCTLR_ELx_FLAGS
+ 	bic	x12, x12, x13
+ 	pre_disable_mmu_workaround
+ 	msr	sctlr_el1, x12
+diff --git a/arch/arm64/kernel/hyp-stub.S b/arch/arm64/kernel/hyp-stub.S
+index 73d46070b315..e473ead806ed 100644
+--- a/arch/arm64/kernel/hyp-stub.S
++++ b/arch/arm64/kernel/hyp-stub.S
+@@ -63,7 +63,7 @@ el1_sync:
+ 	beq	9f				// Nothing to reset!
  
- 		fprintf(stdout, "[%c] ", swirr[j]);
- 		j++;
--		if (j == sizeof(swirr)-1)
-+		if (j == sizeof(swirr) - 1)
- 			j = 0;
+ 	/* Someone called kvm_call_hyp() against the hyp-stub... */
+-	ldr	x0, =HVC_STUB_ERR
++	mov_q	x0, HVC_STUB_ERR
+ 	eret
  
- 		fprintf(stdout, "[");
-@@ -135,7 +135,14 @@ int main(int argc, char **argv)
- 			device_name = optarg;
- 			break;
- 		case 'o':
--			lines[i] = strtoul(optarg, NULL, 10);
-+			/*
-+			 * Avoid overflow. Do not immediately error, we want to
-+			 * be able to accurately report on the amount of times
-+			 *'-o' was given to give an accurate error message
-+			 */
-+			if (i < GPIOHANDLES_MAX)
-+				lines[i] = strtoul(optarg, NULL, 10);
-+
- 			i++;
- 			break;
- 		case '?':
-@@ -143,6 +150,14 @@ int main(int argc, char **argv)
- 			return -1;
- 		}
- 	}
-+
-+	if (i >= GPIOHANDLES_MAX) {
-+		fprintf(stderr,
-+			"Only %d occurences of '-o' are allowed, %d were found\n",
-+			GPIOHANDLES_MAX, i + 1);
-+		return -1;
-+	}
-+
- 	nlines = i;
+ 9:	mov	x0, xzr
+diff --git a/arch/arm64/kernel/relocate_kernel.S b/arch/arm64/kernel/relocate_kernel.S
+index c1d7db71a726..c40ce496c78b 100644
+--- a/arch/arm64/kernel/relocate_kernel.S
++++ b/arch/arm64/kernel/relocate_kernel.S
+@@ -41,7 +41,7 @@ ENTRY(arm64_relocate_new_kernel)
+ 	cmp	x0, #CurrentEL_EL2
+ 	b.ne	1f
+ 	mrs	x0, sctlr_el2
+-	ldr	x1, =SCTLR_ELx_FLAGS
++	mov_q	x1, SCTLR_ELx_FLAGS
+ 	bic	x0, x0, x1
+ 	pre_disable_mmu_workaround
+ 	msr	sctlr_el2, x0
+@@ -113,8 +113,6 @@ ENTRY(arm64_relocate_new_kernel)
  
- 	if (!device_name || !nlines) {
+ ENDPROC(arm64_relocate_new_kernel)
+ 
+-.ltorg
+-
+ .align 3	/* To keep the 64-bit values below naturally aligned. */
+ 
+ .Lcopy_end:
+diff --git a/arch/arm64/kvm/hyp-init.S b/arch/arm64/kvm/hyp-init.S
+index 84f32cf5abc7..6e6ed5581eed 100644
+--- a/arch/arm64/kvm/hyp-init.S
++++ b/arch/arm64/kvm/hyp-init.S
+@@ -60,7 +60,7 @@ alternative_else_nop_endif
+ 	msr	ttbr0_el2, x4
+ 
+ 	mrs	x4, tcr_el1
+-	ldr	x5, =TCR_EL2_MASK
++	mov_q	x5, TCR_EL2_MASK
+ 	and	x4, x4, x5
+ 	mov	x5, #TCR_EL2_RES1
+ 	orr	x4, x4, x5
+@@ -102,7 +102,7 @@ alternative_else_nop_endif
+ 	 * as well as the EE bit on BE. Drop the A flag since the compiler
+ 	 * is allowed to generate unaligned accesses.
+ 	 */
+-	ldr	x4, =(SCTLR_EL2_RES1 | (SCTLR_ELx_FLAGS & ~SCTLR_ELx_A))
++	mov_q	x4, (SCTLR_EL2_RES1 | (SCTLR_ELx_FLAGS & ~SCTLR_ELx_A))
+ CPU_BE(	orr	x4, x4, #SCTLR_ELx_EE)
+ 	msr	sctlr_el2, x4
+ 	isb
+@@ -142,7 +142,7 @@ reset:
+ 	 * case we coming via HVC_SOFT_RESTART.
+ 	 */
+ 	mrs	x5, sctlr_el2
+-	ldr	x6, =SCTLR_ELx_FLAGS
++	mov_q	x6, SCTLR_ELx_FLAGS
+ 	bic	x5, x5, x6		// Clear SCTL_M and etc
+ 	pre_disable_mmu_workaround
+ 	msr	sctlr_el2, x5
+@@ -155,11 +155,9 @@ reset:
+ 	eret
+ 
+ 1:	/* Bad stub call */
+-	ldr	x0, =HVC_STUB_ERR
++	mov_q	x0, HVC_STUB_ERR
+ 	eret
+ 
+ SYM_CODE_END(__kvm_handle_stub_hvc)
+ 
+-	.ltorg
+-
+ 	.popsection
+diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+index 1b871f141eb4..6bd228067ebc 100644
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@ -411,7 +411,7 @@ SYM_FUNC_START(__cpu_setup)
+ 	 * Set/prepare TCR and TTBR. We use 512GB (39-bit) address range for
+ 	 * both user and kernel.
+ 	 */
+-	ldr	x10, =TCR_TxSZ(VA_BITS) | TCR_CACHE_FLAGS | TCR_SMP_FLAGS | \
++	mov_q	x10, TCR_TxSZ(VA_BITS) | TCR_CACHE_FLAGS | TCR_SMP_FLAGS | \
+ 			TCR_TG_FLAGS | TCR_KASLR_FLAGS | TCR_ASID16 | \
+ 			TCR_TBI0 | TCR_A1 | TCR_KASAN_FLAGS
+ 	tcr_clear_errata_bits x10, x9, x5
 -- 
-2.24.1
+2.25.1
 
