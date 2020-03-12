@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E201183C77
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:29:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 895ED183C75
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:28:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbgCLW27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 18:28:59 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:38598 "EHLO inva020.nxp.com"
+        id S1727015AbgCLW2x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 18:28:53 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:38618 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726808AbgCLW2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726605AbgCLW2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Mar 2020 18:28:42 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 071591A11CE;
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4258E1A11CF;
         Thu, 12 Mar 2020 23:28:41 +0100 (CET)
 Received: from smtp.na-rdc02.nxp.com (usphx01srsp001v.us-phx01.nxp.com [134.27.49.11])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BDF3F1A11BA;
-        Thu, 12 Mar 2020 23:28:40 +0100 (CET)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0304B1A11CB;
+        Thu, 12 Mar 2020 23:28:41 +0100 (CET)
 Received: from right.am.freescale.net (right.am.freescale.net [10.81.116.70])
-        by usphx01srsp001v.us-phx01.nxp.com (Postfix) with ESMTP id 2BBC640AB2;
+        by usphx01srsp001v.us-phx01.nxp.com (Postfix) with ESMTP id 762B440BCF;
         Thu, 12 Mar 2020 15:28:40 -0700 (MST)
 From:   Li Yang <leoyang.li@nxp.com>
 To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
@@ -26,9 +26,9 @@ To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
 Cc:     linux-arm-kernel@lists.infradead.org,
         linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
         Li Yang <leoyang.li@nxp.com>
-Subject: [PATCH 4/6] soc: fsl: qe: fix sparse warnings for qe_ic.c
-Date:   Thu, 12 Mar 2020 17:28:25 -0500
-Message-Id: <20200312222827.17409-5-leoyang.li@nxp.com>
+Subject: [PATCH 5/6] soc: fsl: qe: fix sparse warnings for ucc_fast.c
+Date:   Thu, 12 Mar 2020 17:28:26 -0500
+Message-Id: <20200312222827.17409-6-leoyang.li@nxp.com>
 X-Mailer: git-send-email 2.25.1.377.g2d2118b
 In-Reply-To: <20200312222827.17409-1-leoyang.li@nxp.com>
 References: <20200312222827.17409-1-leoyang.li@nxp.com>
@@ -42,46 +42,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Fixes the following sparse warnings:
 
-drivers/soc/fsl/qe/qe_ic.c:253:32: warning: incorrect type in argument 1 (different base types)
-drivers/soc/fsl/qe/qe_ic.c:253:32:    expected restricted __be32 [noderef] [usertype] <asn:2> *base
-drivers/soc/fsl/qe/qe_ic.c:253:32:    got unsigned int [noderef] [usertype] <asn:2> *regs
-drivers/soc/fsl/qe/qe_ic.c:254:26: warning: incorrect type in argument 1 (different base types)
-drivers/soc/fsl/qe/qe_ic.c:254:26:    expected restricted __be32 [noderef] [usertype] <asn:2> *base
-drivers/soc/fsl/qe/qe_ic.c:254:26:    got unsigned int [noderef] [usertype] <asn:2> *regs
-drivers/soc/fsl/qe/qe_ic.c:269:32: warning: incorrect type in argument 1 (different base types)
-drivers/soc/fsl/qe/qe_ic.c:269:32:    expected restricted __be32 [noderef] [usertype] <asn:2> *base
-drivers/soc/fsl/qe/qe_ic.c:269:32:    got unsigned int [noderef] [usertype] <asn:2> *regs
-drivers/soc/fsl/qe/qe_ic.c:270:26: warning: incorrect type in argument 1 (different base types)
-drivers/soc/fsl/qe/qe_ic.c:270:26:    expected restricted __be32 [noderef] [usertype] <asn:2> *base
-drivers/soc/fsl/qe/qe_ic.c:270:26:    got unsigned int [noderef] [usertype] <asn:2> *regs
-drivers/soc/fsl/qe/qe_ic.c:341:31: warning: incorrect type in argument 1 (different base types)
-drivers/soc/fsl/qe/qe_ic.c:341:31:    expected restricted __be32 [noderef] [usertype] <asn:2> *base
-drivers/soc/fsl/qe/qe_ic.c:341:31:    got unsigned int [noderef] [usertype] <asn:2> *regs
-drivers/soc/fsl/qe/qe_ic.c:357:31: warning: incorrect type in argument 1 (different base types)
-drivers/soc/fsl/qe/qe_ic.c:357:31:    expected restricted __be32 [noderef] [usertype] <asn:2> *base
-drivers/soc/fsl/qe/qe_ic.c:357:31:    got unsigned int [noderef] [usertype] <asn:2> *regs
-drivers/soc/fsl/qe/qe_ic.c:450:26: warning: incorrect type in argument 1 (different base types)
-drivers/soc/fsl/qe/qe_ic.c:450:26:    expected restricted __be32 [noderef] [usertype] <asn:2> *base
-drivers/soc/fsl/qe/qe_ic.c:450:26:    got unsigned int [noderef] [usertype] <asn:2> *regs
+drivers/soc/fsl/qe/ucc_fast.c:218:22: warning: incorrect type in assignment (different base types)
+drivers/soc/fsl/qe/ucc_fast.c:218:22:    expected unsigned int [noderef] [usertype] <asn:2> *p_ucce
+drivers/soc/fsl/qe/ucc_fast.c:218:22:    got restricted __be32 [noderef] <asn:2> *
+drivers/soc/fsl/qe/ucc_fast.c:219:22: warning: incorrect type in assignment (different base types)
+drivers/soc/fsl/qe/ucc_fast.c:219:22:    expected unsigned int [noderef] [usertype] <asn:2> *p_uccm
+drivers/soc/fsl/qe/ucc_fast.c:219:22:    got restricted __be32 [noderef] <asn:2> *
 
 Signed-off-by: Li Yang <leoyang.li@nxp.com>
 ---
- drivers/soc/fsl/qe/qe_ic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/soc/fsl/qe/ucc_fast.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/qe_ic.c b/drivers/soc/fsl/qe/qe_ic.c
-index 0dd5bdb04a14..0390af999900 100644
---- a/drivers/soc/fsl/qe/qe_ic.c
-+++ b/drivers/soc/fsl/qe/qe_ic.c
-@@ -44,7 +44,7 @@
- 
- struct qe_ic {
- 	/* Control registers offset */
--	u32 __iomem *regs;
-+	__be32 __iomem *regs;
- 
- 	/* The remapper for this QEIC */
- 	struct irq_domain *irqhost;
+diff --git a/include/soc/fsl/qe/ucc_fast.h b/include/soc/fsl/qe/ucc_fast.h
+index ba0e838f962a..dc4e79468094 100644
+--- a/include/soc/fsl/qe/ucc_fast.h
++++ b/include/soc/fsl/qe/ucc_fast.h
+@@ -178,10 +178,10 @@ struct ucc_fast_info {
+ struct ucc_fast_private {
+ 	struct ucc_fast_info *uf_info;
+ 	struct ucc_fast __iomem *uf_regs; /* a pointer to the UCC regs. */
+-	u32 __iomem *p_ucce;	/* a pointer to the event register in memory. */
+-	u32 __iomem *p_uccm;	/* a pointer to the mask register in memory. */
++	__be32 __iomem *p_ucce;	/* a pointer to the event register in memory. */
++	__be32 __iomem *p_uccm;	/* a pointer to the mask register in memory. */
+ #ifdef CONFIG_UGETH_TX_ON_DEMAND
+-	u16 __iomem *p_utodr;	/* pointer to the transmit on demand register */
++	__be16 __iomem *p_utodr;/* pointer to the transmit on demand register */
+ #endif
+ 	int enabled_tx;		/* Whether channel is enabled for Tx (ENT) */
+ 	int enabled_rx;		/* Whether channel is enabled for Rx (ENR) */
 -- 
 2.17.1
 
