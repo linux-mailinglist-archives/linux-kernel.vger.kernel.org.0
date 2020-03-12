@@ -2,129 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1B5C182D10
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 11:09:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95917182D15
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 11:10:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgCLKIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 06:08:53 -0400
-Received: from mga06.intel.com ([134.134.136.31]:27100 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725978AbgCLKIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 06:08:52 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 03:08:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,544,1574150400"; 
-   d="scan'208";a="354095719"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 12 Mar 2020 03:08:45 -0700
-Received: by lahna (sSMTP sendmail emulation); Thu, 12 Mar 2020 12:08:44 +0200
-Date:   Thu, 12 Mar 2020 12:08:44 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI/PM: Skip link training delay for S3 resume
-Message-ID: <20200312100844.GR2540@lahna.fi.intel.com>
-References: <20200311045249.5200-1-kai.heng.feng@canonical.com>
- <20200311102811.GA2540@lahna.fi.intel.com>
- <2C20385C-4BA4-4D6D-935A-AFDB97FAB5ED@canonical.com>
- <20200312080424.GH2540@lahna.fi.intel.com>
- <ABD5242B-E118-4811-AA8A-DF7C2A3B2E8B@canonical.com>
+        id S1726677AbgCLKKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 06:10:24 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42490 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbgCLKKX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 06:10:23 -0400
+Received: by mail-oi1-f195.google.com with SMTP id w17so2629053oic.9;
+        Thu, 12 Mar 2020 03:10:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zwwoiowfHNPz9HpeeIjPtaOJgNXOTQ/vvDnMi1D629A=;
+        b=n9l2/tq382/vlPmvwJU2vWJ9Ts81d+MELVbuk+qaQfyUs9mB+vmZjEu0OvMtR2O9hE
+         +6b1gXkWQMZt8lFS50RhT0UtPLn/Cjry7YO1tdxmIg9RC3MjW5oPUyFxNBi353XXSPdA
+         Q+d1pql2n2V86pIKLhvbJoDnQzKcSeVAM5/Ep8AM0EB52tp/gUK01asqSfzkch+YIE7/
+         kZJ5ddpSeUNZuGFleCY0LfT12fGlfWhc1hRo/eNsGIablE+ObOYJa3WTKi8USaj0qpyd
+         djCHxqAsM+3iFIY8LkWK5U2BdlEDavjLOiOSaEUGAGy6bv65Fo1oXT0TM2WnjiqtLyNO
+         Z5/A==
+X-Gm-Message-State: ANhLgQ0OmuvEacVrXlbrogc0zinv/wvMjmSWJpHhdPve2VgZNBx5S4Lj
+        I2yQaDnIY5s5Fv0w2pmXca7tneWkrkHS8sqQr24=
+X-Google-Smtp-Source: ADFU+vt2xrdAlnM+K+3Hl7KD8Ot0CPxqX+cCiLIRU6jFW7JpfLC+f9+Lgd1azWcf6NufNcnKkmCIgjYifaSTuSjCeA8=
+X-Received: by 2002:aca:1a06:: with SMTP id a6mr1923995oia.148.1584007822268;
+ Thu, 12 Mar 2020 03:10:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ABD5242B-E118-4811-AA8A-DF7C2A3B2E8B@canonical.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <1583957020-16359-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1583957020-16359-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 12 Mar 2020 11:10:11 +0100
+Message-ID: <CAMuHMdWqMHGeENswnfk-Hra4JrfELQkLuzY_6JHFRJZWJZPJog@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] Add LVDS panel support to HiHope RZ/G2M
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 05:45:32PM +0800, Kai-Heng Feng wrote:
-> 
-> 
-> > On Mar 12, 2020, at 16:04, Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
-> > 
-> > On Thu, Mar 12, 2020 at 12:23:46PM +0800, Kai-Heng Feng wrote:
-> >> Hi,
-> >> 
-> >>> On Mar 11, 2020, at 18:28, Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
-> >>> 
-> >>> Hi,
-> >>> 
-> >>> On Wed, Mar 11, 2020 at 12:52:49PM +0800, Kai-Heng Feng wrote:
-> >>>> Commit ad9001f2f411 ("PCI/PM: Add missing link delays required by the
-> >>>> PCIe spec") added a 1100ms delay on resume for bridges that don't
-> >>>> support Link Active Reporting.
-> >>>> 
-> >>>> The commit also states that the delay can be skipped for S3, as the
-> >>>> firmware should already handled the case for us.
-> >>> 
-> >>> Delay can be skipped if the firmware provides _DSM with function 8
-> >>> implemented according to PCI firmwre spec 3.2 sec 4.6.8.
-> >> 
-> >> As someone who doesn't have access to the PCI spec...
-> >> Questions below.
-> >> 
-> >>> 
-> >>>> So let's skip the link training delay for S3, to save 1100ms resume
-> >>>> time.
-> >>>> 
-> >>>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> >>>> ---
-> >>>> drivers/pci/pci-driver.c | 3 ++-
-> >>>> 1 file changed, 2 insertions(+), 1 deletion(-)
-> >>>> 
-> >>>> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> >>>> index 0454ca0e4e3f..3050375bad04 100644
-> >>>> --- a/drivers/pci/pci-driver.c
-> >>>> +++ b/drivers/pci/pci-driver.c
-> >>>> @@ -916,7 +916,8 @@ static int pci_pm_resume_noirq(struct device *dev)
-> >>>> 	pci_fixup_device(pci_fixup_resume_early, pci_dev);
-> >>>> 	pcie_pme_root_status_cleanup(pci_dev);
-> >>>> 
-> >>>> -	if (!skip_bus_pm && prev_state == PCI_D3cold)
-> >>>> +	if (!skip_bus_pm && prev_state == PCI_D3cold
-> >>>> +	    && !pm_resume_via_firmware())
-> >>> 
-> >>> So this would need to check for the _DSM result as well. We do evaluate
-> >>> it in pci_acpi_optimize_delay() (drivers/pci/pci-acpi.c) and that ends
-> >>> up lowering ->d3cold_delay so maybe check that here.
-> >> 
-> >> Do we need to wait for d3cold_delay here?
-> >> Or we can also skip that as long as pci_acpi_dsm_guid and FUNCTION_DELAY_DSM present?
-> > 
-> > Actually I think pci_bridge_wait_for_secondary_bus() already takes it
-> > into account. Have you checked if the BIOS has this _DSM implemented in
-> > the first place?
-> 
-> -[0000:00]-+-00.0  Intel Corporation Device 9b44
->            +-1c.0-[03-3b]----00.0-[04-3b]--+-00.0-[05]----00.0  Intel Corporation JHL7540 Thunderbolt 3 NHI [Titan Ridge 2C 2018]
->            |                               +-01.0-[06-3a]--
->            |                               \-02.0-[3b]----00.0  Intel Corporation JHL7540 Thunderbolt 3 USB Controller [Titan Ridge 2C 2018]
-> 
-> 00:1c.0 has _DSM implemented.
-> How do I check for the Thunderbolt device?
+Hi Lad,
 
-Most likely you see it only under the root port (1c.0) so check
-/sys/bus/pci/devices/0000:00:1c.0/firmware_node/path and match that one
-to the ACPI tables.
+On Wed, Mar 11, 2020 at 9:03 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> The HiHope RZ/G2M is advertised as supporting panel idk-1110wr from
+> Advantech, but the panel doesn't come with the board, it has to purchased
+> separatey, therefore this series adds panel support to a new DT.
+>
+> v3->v4
+>  * Included rzg2-advantech-idk-1110wr-panel.dtsi in
+>    r8a774a1-hihope-rzg2m-ex-idk-1110wr.dts file instead of re-inventing
+>    the wheel.
+>  * Dropped the Ack from Laurent for patch 2/2 due to above changes
+>
+> v2->v3
+>  * Included Reviewed-by from Rob and Laurent
+>  * Switched to dual license
+>  * Added myself as the maintainer
+>  * Updated copyright year
+>  * Rebased the patches
+>
+> v1->v2
+>  * fixed a space according to Geert's feedback.
+>
+> Thanks,
+> Prabhakar
+>
+> Fabrizio Castro (2):
+>   dt-bindings: display: Add idk-1110wr binding
+>   arm64: dts: renesas: Add HiHope RZ/G2M board with idk-1110wr display
+>
+>  .../display/panel/advantech,idk-1110wr.yaml        | 69 ++++++++++++++++++++++
+>  arch/arm64/boot/dts/renesas/Makefile               |  1 +
+>  .../r8a774a1-hihope-rzg2m-ex-idk-1110wr.dts        | 52 ++++++++++++++++
+>  3 files changed, 122 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/advantech,idk-1110wr.yaml
+>  create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex-idk-1110wr.dts
 
-> It doesn't seem to have a fixed _ADR so I don't know how to locate it in DSDT/SSDT table.
-> 
-> Log with additional debug message:
-> [  948.813025] ACPI: EC: interrupt unblocked
-> [  948.925017] pcieport 0000:00:01.0: pcie_wait_for_link_delay sleep 1100ms
-> [  949.065466] pcieport 0000:04:00.0: pcie_wait_for_link_delay sleep 1100ms
-> [  949.065468] pcieport 0000:04:02.0: pcie_wait_for_link_delay sleep 1100ms
-> 
-> 00:01.0 is the port for discrete graphics.
+Thanks for the update!
+I've queued the second patch in renesas-devel for v5.7.
 
-There is something wrong somewhere because the 1100ms sleep is totally
-not expected to happen, but I think this is the same issue that we
-discuss on another thread so let's use that thread instead to avoid
-confusion :)
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
