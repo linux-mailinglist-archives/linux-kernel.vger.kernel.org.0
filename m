@@ -2,68 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FA3518312E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:24:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B219D183151
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:26:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbgCLNYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:24:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727123AbgCLNX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:23:59 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6D3D20663;
-        Thu, 12 Mar 2020 13:23:58 +0000 (UTC)
-Date:   Thu, 12 Mar 2020 09:23:55 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masanari Iida <standby24x7@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, shuah@kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] selftests/ftrace: Fix typo in trigger-multihist.tc
-Message-ID: <20200312092355.73d8c019@gandalf.local.home>
-In-Reply-To: <20200312040337.7631-1-standby24x7@gmail.com>
-References: <20200312040337.7631-1-standby24x7@gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727179AbgCLN0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:26:20 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:47103 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbgCLN0U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 09:26:20 -0400
+Received: by mail-pl1-f195.google.com with SMTP id w12so2655873pll.13;
+        Thu, 12 Mar 2020 06:26:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=yadWWPnf9zWB2WeGaGhSOgmwahmFfDSuIeUBZGwtGEM=;
+        b=Q+Vd9GVPbHujjtRQGb4913nMo8ckaAWXGbCJl4pCA37gkJucBloMUBxnvjhqc2izNl
+         OdmAlaGI8hmByyC3nCUN5/gONtRyG0vxuMd1sZr1rHZGWB302jUSE+UR80w31gTlMBfp
+         35tm5odjj2V/0KxG5qGszSOVcpx4mmMmGpGV6jNyN2cWv9/wjunWQX01zvCbU6kbQcLR
+         Supixt5/yAfoA/eQ98UH/MdB//GwK8AG2sBoVMQL94I2LM5j1V5yh4dP99RgfFUA4Hr3
+         i/aHtD8THGwQscBD4uCgPpmrQfnUstRJ7Moow7tEuR66KVsqSBkHUh2JE96iq8VkSeA+
+         w9lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yadWWPnf9zWB2WeGaGhSOgmwahmFfDSuIeUBZGwtGEM=;
+        b=Cc804InnGX+ZNjpjRfMXvKUi1Mn36DYeEb6SNcuF1gcFo/Jk+wWS0r47NR68S542lV
+         3GaEZ3etI3OehmoFUI7dkMLtDhNJQCn+qDuFAKUL8PwMBDpJqPezUJIbqMlB88Axv6Q9
+         sQgzGms/0W7YjyiCORN37fpl5+oa//wTmYIdSJxnMRvf8+4Z+iEIhbAk6RE+PMRjnpKE
+         riQPnq41rUdQ2d/icKYDqYEP/UR7jgu/SxbGTGI0APlksKcVIKWdz30PPORqN9Hek3Ds
+         H6QCaPp71spSb+Xp+wpAYP5r6V8yh/q9hUUwig9PlmE4JKrf59Dors6N14UpkOBQ9Hb3
+         vGmA==
+X-Gm-Message-State: ANhLgQ3ak0RUQx5d+3KKtt3oIa5UvZVRQcCDAoPGqNCgtMSamtukTbA+
+        LYZJ6ySR/JtljVXGUkW0qRk=
+X-Google-Smtp-Source: ADFU+vu+mM7W4MkJK9nhubqnVf7bXv7TCWWm5UXk/S7EldunzGAE3y1IYNikEu9M/prS78fKkvmArg==
+X-Received: by 2002:a17:90a:f311:: with SMTP id ca17mr4201563pjb.6.1584019578882;
+        Thu, 12 Mar 2020 06:26:18 -0700 (PDT)
+Received: from sh03840pcu.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id d5sm49246859pga.36.2020.03.12.06.26.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 12 Mar 2020 06:26:18 -0700 (PDT)
+From:   Baolin Wang <baolin.wang7@gmail.com>
+To:     vkoul@kernel.org, dan.j.williams@intel.com
+Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, baolin.wang7@gmail.com,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dmaengine: sprd: Set request pending flag when DMA controller is active
+Date:   Thu, 12 Mar 2020 21:26:04 +0800
+Message-Id: <02adbe4364ec436ec2c5bc8fd2386bab98edd884.1584019223.git.baolin.wang7@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Mar 2020 13:03:37 +0900
-Masanari Iida <standby24x7@gmail.com> wrote:
+From: Zhenfang Wang <zhenfang.wang@unisoc.com>
 
-> This patch fix a spelling typo in trigger-multihist.tc
-> 
-> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
-> ---
->  .../selftests/ftrace/test.d/trigger/trigger-multihist.tc        | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc
-> index 18fdaab9f570..68ff3f45c720 100644
-> --- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc
-> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc
-> @@ -23,7 +23,7 @@ if [ ! -f events/sched/sched_process_fork/hist ]; then
->      exit_unsupported
->  fi
->  
-> -echo "Test histogram multiple tiggers"
-> +echo "Test histogram multiple triggers"
+On new Spreadtrum platforms, when the CPU enters idle, it will close
+the DMA controllers' clock to save power if the DMA controller is not
+busy. Moreover the DMA controller's busy signal depends on the DMA
+enable flag and the request pending flag.
 
-Winnie the Pooh will be upset.
+When DMA controller starts to transfer data, which means we already
+set the DMA enable flag, but now we should also set the request pending
+flag, in case the DMA clock will be closed accidentally if the CPU
+can not detect the DMA controller's busy signal.
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Zhenfang Wang <zhenfang.wang@unisoc.com>
+Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+---
+ drivers/dma/sprd-dma.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-Shuah, want to take this?
-
--- Steve
-
->  
->  echo 'hist:keys=parent_pid:vals=child_pid' > events/sched/sched_process_fork/trigger
->  echo 'hist:keys=parent_comm:vals=child_pid' >> events/sched/sched_process_fork/trigger
+diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
+index 9a31a315..c327eaa 100644
+--- a/drivers/dma/sprd-dma.c
++++ b/drivers/dma/sprd-dma.c
+@@ -486,6 +486,28 @@ static int sprd_dma_set_2stage_config(struct sprd_dma_chn *schan)
+ 	return 0;
+ }
+ 
++static void sprd_dma_set_pending(struct sprd_dma_chn *schan, bool enable)
++{
++	struct sprd_dma_dev *sdev = to_sprd_dma_dev(&schan->vc.chan);
++	u32 reg, val, req_id;
++
++	if (schan->dev_id == SPRD_DMA_SOFTWARE_UID)
++		return;
++
++	/* The DMA request id always starts from 0. */
++	req_id = schan->dev_id - 1;
++
++	if (req_id < 32) {
++		reg = SPRD_DMA_GLB_REQ_PEND0_EN;
++		val = BIT(req_id);
++	} else {
++		reg = SPRD_DMA_GLB_REQ_PEND1_EN;
++		val = BIT(req_id - 32);
++	}
++
++	sprd_dma_glb_update(sdev, reg, val, enable ? val : 0);
++}
++
+ static void sprd_dma_set_chn_config(struct sprd_dma_chn *schan,
+ 				    struct sprd_dma_desc *sdesc)
+ {
+@@ -532,6 +554,7 @@ static void sprd_dma_start(struct sprd_dma_chn *schan)
+ 	 */
+ 	sprd_dma_set_chn_config(schan, schan->cur_desc);
+ 	sprd_dma_set_uid(schan);
++	sprd_dma_set_pending(schan, true);
+ 	sprd_dma_enable_chn(schan);
+ 
+ 	if (schan->dev_id == SPRD_DMA_SOFTWARE_UID &&
+@@ -543,6 +566,7 @@ static void sprd_dma_start(struct sprd_dma_chn *schan)
+ static void sprd_dma_stop(struct sprd_dma_chn *schan)
+ {
+ 	sprd_dma_stop_and_disable(schan);
++	sprd_dma_set_pending(schan, false);
+ 	sprd_dma_unset_uid(schan);
+ 	sprd_dma_clear_int(schan);
+ 	schan->cur_desc = NULL;
+-- 
+1.9.1
 
