@@ -2,91 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5BAE183C8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:33:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAD02183C88
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:32:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbgCLWdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 18:33:14 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34554 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbgCLWdN (ORCPT
+        id S1726794AbgCLWc4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 18:32:56 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:35854 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726605AbgCLWc4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 18:33:13 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z15so9656863wrl.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 15:33:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8cdz1LFOuab0jNRbzTq73NrqK6B+wszwWghkMP0+ST4=;
-        b=YSPFRA/Mj5hu1kq6SzfqDihHCyZ3cPjjL2R3uOgcx667Cs8k5bOZQ4keT8vtZBMPs3
-         4tC5YK+bcY4lIubGuJ+oZIDqrz8rbNw01mKIEJThYNZMhw6sS2SwXOYk12MLbALHeTwn
-         7wkeaigHRRe4wJNdc7SVB/D4erJ2kUxD9SssI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8cdz1LFOuab0jNRbzTq73NrqK6B+wszwWghkMP0+ST4=;
-        b=gFBBKl7ipUHfWyr3yWrqepl7TFl4jfEyFBoA57iIn7cEP6BbvYd9tEYm2v0aYnddWI
-         GNf78dqliJs2emQugSH2PUWKJGxHyWh24gowkUctXnVpaXJMwP6asCtg/ynzzZoF8K9i
-         GBFbwt9+FA6JtamW6Uvc6fgVvNMYmP/sAzLlcmJPUfOd2cAlhPhL/hQP9nN08PrGsFdT
-         9Fqc7C+jglVrpf7t2A3urICrP1lef9uEBptylcs5l2Tppv/u6mwx2IRSihg9BHAJ+Fql
-         lotfaaLQB7k7cYuQviwO5DtysBLUXp2urNvlxqH+Ghtfy/ixalSvXuziBdz/dhm7vGDh
-         WDOA==
-X-Gm-Message-State: ANhLgQ3r1g9haRctU0TnZ7mrHiNcDI4iAUIZ/QqWSy5TuejQI8Gq4nZz
-        rL7FD31j2nbiU8xxZ1n5WO8bNg==
-X-Google-Smtp-Source: ADFU+vuNtV0lnm2+jA+dT1T640PomcvSoaj/op5jgEAEK0wuosbYcrQa5xp8y5tBq843mAikSXiPyw==
-X-Received: by 2002:adf:f0c8:: with SMTP id x8mr14128631wro.58.1584052391455;
-        Thu, 12 Mar 2020 15:33:11 -0700 (PDT)
-Received: from kevin-Precision-Tower-5810.dhcp.broadcom.net ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id o10sm2964144wrs.65.2020.03.12.15.33.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 12 Mar 2020 15:33:10 -0700 (PDT)
-From:   Kevin Li <kevin-ke.li@broadcom.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Ray Jui <rjui@broadcom.com>, Jaroslav Kysela <perex@perex.cz>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Stephen Boyd <swboyd@chromium.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Kevin Li <kevin-ke.li@broadcom.com>
-Subject: [PATCH v2 0/2] ASoC: brcm: add dsl and pon chip audio driver
-Date:   Thu, 12 Mar 2020 15:32:42 -0700
-Message-Id: <20200312223242.2843-3-kevin-ke.li@broadcom.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200312223242.2843-1-kevin-ke.li@broadcom.com>
-References: <20200312223242.2843-1-kevin-ke.li@broadcom.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 12 Mar 2020 18:32:56 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 0DB2215841951;
+        Thu, 12 Mar 2020 15:32:55 -0700 (PDT)
+Date:   Thu, 12 Mar 2020 15:32:52 -0700 (PDT)
+Message-Id: <20200312.153252.145444897248947088.davem@davemloft.net>
+To:     mkubecek@suse.cz
+Cc:     kuba@kernel.org, netdev@vger.kernel.org, jiri@resnulli.us,
+        andrew@lunn.ch, f.fainelli@gmail.com, linville@tuxdriver.com,
+        johannes@sipsolutions.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 00/15] ethtool netlink interface, part 3
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <cover.1584043144.git.mkubecek@suse.cz>
+References: <cover.1584043144.git.mkubecek@suse.cz>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 12 Mar 2020 15:32:55 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes in v2:
- * Make the comment a C++ one for license header
- * Remove all empty functions
- * Change all variable to use kernel coding style
- * Comment chip TX RX block independently generate I2S bus signals
+From: Michal Kubecek <mkubecek@suse.cz>
+Date: Thu, 12 Mar 2020 21:07:33 +0100 (CET)
 
-Kevin Li (2):
-  ASoC: brcm:  Add DSL/PON SoC audio driver
-  ASoC: brcm:  DSL/PON SoC device tree bindings of audio driver
+> Implementation of more netlink request types:
+> 
+>   - netdev features (ethtool -k/-K, patches 3-6)
+>   - private flags (--show-priv-flags / --set-priv-flags, patches 7-9)
+>   - ring sizes (ethtool -g/-G, patches 10-12)
+>   - channel counts (ethtool -l/-L, patches 13-15)
+> 
+> Patch 1 is a style cleanup suggested in part 2 review and patch 2 updates
+> the mapping between netdev features and legacy ioctl requests (which are
+> still used by ethtool for backward compatibility).
+> 
+> Changes in v2:
+>   - fix netdev reference leaks in error path of ethnl_set_rings() and
+>     ethnl_set_channels() (found by Jakub Kicinski)
+>   - use __set_bit() rather than set_bit() (suggested by David Miller)
+>   - in replies to RINGS_GET and CHANNELS_GET requests, omit ring and
+>     channel types not supported by driver/device (suggested by Jakub
+>     Kicinski)
+>   - more descriptive message size calculations in rings_reply_size() and
+>     channels_reply_size() (suggested by Jakub Kicinski)
+>   - coding style cleanup (suggested by Jakub Kicinski)
 
- .../bindings/sound/brcm,bcm63xx-audio.txt     |  29 ++
- sound/soc/bcm/Kconfig                         |   9 +
- sound/soc/bcm/Makefile                        |   4 +
- sound/soc/bcm/bcm63xx-i2s-whistler.c          | 317 ++++++++++++
- sound/soc/bcm/bcm63xx-i2s.h                   |  90 ++++
- sound/soc/bcm/bcm63xx-pcm-whistler.c          | 485 ++++++++++++++++++
- 6 files changed, 934 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/brcm,bcm63xx-audio.txt
- create mode 100644 sound/soc/bcm/bcm63xx-i2s-whistler.c
- create mode 100644 sound/soc/bcm/bcm63xx-i2s.h
- create mode 100644 sound/soc/bcm/bcm63xx-pcm-whistler.c
-
--- 
-2.25.1
-
+Series applied, thanks Michal.
