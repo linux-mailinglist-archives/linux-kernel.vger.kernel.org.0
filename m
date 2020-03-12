@@ -2,79 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7AC8183A40
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 21:08:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 639CA183A3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 21:08:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbgCLUIB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 16:08:01 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54858 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727161AbgCLUH6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 16:07:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=2PpORpJTPrNcGriWZwtPff3V9dem0kgKDLcFiL16NcQ=; b=Pshp6KqLv/j9DBZvV6G2uN3dq+
-        S5NflfEkjwmGOSuodljk/490Yns3N1V9aUc1hO+fPyRPBmHZLmFq7iqID15Zw25Q05hiuhHd4Gzmy
-        u+T5ECoQ3zvS7Hy/ek3uXsOpNv11ZYqvkRYmrAj1rd6v+6RQ/sfrtfQ34cs2V8bQLvBIhtU08uZ/J
-        6hSsbgKCqthU1l99/QW7lnY6YW+28lYe495cUf6WyJkqpMgV7DpvKs1nfZ85Ho4I07Fe5+oTsoLDp
-        kO8F0UFDiYZL3hkGeSAC0WH7bINyPSCZ5qci9BTG3iQ8lsGp6VQMutFY1XnOYBOFpgGpBcLulKRbH
-        8VRL6c2A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCU7J-0002Ww-P5; Thu, 12 Mar 2020 20:07:42 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CDA4998114E; Thu, 12 Mar 2020 21:07:38 +0100 (CET)
-Date:   Thu, 12 Mar 2020 21:07:38 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Dave Jones <dsj@fb.com>, Jann Horn <jannh@google.com>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 03/14] x86/entry/64: Fix unwind hints in register
- clearing code
-Message-ID: <20200312200738.GB5086@worktop.programming.kicks-ass.net>
-References: <cb9b03b2a391b064573c152696d99017f76e8603.1584033751.git.jpoimboe@redhat.com>
- <DECA668C-B7EA-4663-8ABB-5B9E0495F498@amacapital.net>
- <20200312195714.gc5jalix2dp57dyb@treble>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200312195714.gc5jalix2dp57dyb@treble>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727083AbgCLUHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 16:07:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45110 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727059AbgCLUHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 16:07:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C3C0FAC52;
+        Thu, 12 Mar 2020 20:07:43 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id 757EFE0C79; Thu, 12 Mar 2020 21:07:43 +0100 (CET)
+Message-Id: <0c49efc15415f6fc2cba940d34495c52cb3e6532.1584043144.git.mkubecek@suse.cz>
+In-Reply-To: <cover.1584043144.git.mkubecek@suse.cz>
+References: <cover.1584043144.git.mkubecek@suse.cz>
+From:   Michal Kubecek <mkubecek@suse.cz>
+Subject: [PATCH net-next v2 02/15] ethtool: update mapping of features to
+ legacy ioctl requests
+To:     David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc:     Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        John Linville <linville@tuxdriver.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 12 Mar 2020 21:07:43 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 02:57:14PM -0500, Josh Poimboeuf wrote:
-> On Thu, Mar 12, 2020 at 12:29:29PM -0700, Andy Lutomirski wrote:
-> > > On Mar 12, 2020, at 10:31 AM, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> > > 
-> > > ﻿The PUSH_AND_CLEAR_REGS macro zeroes each register immediately after
-> > > pushing it.  If an NMI or exception hits after a register is cleared,
-> > > but before the UNWIND_HINT_REGS annotation, the ORC unwinder will
-> > > wrongly think the previous value of the register was zero.  This can
-> > > confuse the unwinding process and cause it to exit early.
-> > > 
-> > > Because ORC is simpler than DWARF, there are a limited number of unwind
-> > > annotation states, so it's not possible to add an individual unwind hint
-> > > after each push/clear combination.  Instead, the register clearing
-> > > instructions need to be consolidated and moved to after the
-> > > UNWIND_HINT_REGS annotation.
-> > 
-> > I don’t suppose you know how bad t he performance hit is on a non-PTI machine?
-> 
-> Hm, what does it have to do with PTI?  Should I run a syscall
-> microbenchmark?
+Legacy ioctl request like ETHTOOL_GTXCSUM are still used by ethtool utility
+to get values of legacy flags (which rather work as feature groups). These
+are calculated from values of actual features and request to set them is
+implemented as an attempt to set all features mapping to them but there are
+two inconsistencies:
 
-Mostly that performance with PTI on is abysmal so we don't care about a
-few cycles.
+- tx-checksum-fcoe-crc is shown under tx-checksumming but NETIF_F_FCOE_CRC
+  is not included in ETHTOOL_GTXCSUM/ETHTOOL_STXCSUM
+- tx-scatter-gather-fraglist is shown under scatter-gather but
+  NETIF_F_FRAGLIST is not included in ETHTOOL_GSG/ETHTOOL_SSG
+
+As the mapping in ethtool output is more correct from logical point of
+view, fix ethtool_get_feature_mask() to match it.
+
+Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+---
+ net/ethtool/ioctl.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
+index b2684ffa26de..ae97c82c7052 100644
+--- a/net/ethtool/ioctl.c
++++ b/net/ethtool/ioctl.c
+@@ -198,13 +198,14 @@ static netdev_features_t ethtool_get_feature_mask(u32 eth_cmd)
+ 	switch (eth_cmd) {
+ 	case ETHTOOL_GTXCSUM:
+ 	case ETHTOOL_STXCSUM:
+-		return NETIF_F_CSUM_MASK | NETIF_F_SCTP_CRC;
++		return NETIF_F_CSUM_MASK | NETIF_F_FCOE_CRC_BIT |
++		       NETIF_F_SCTP_CRC;
+ 	case ETHTOOL_GRXCSUM:
+ 	case ETHTOOL_SRXCSUM:
+ 		return NETIF_F_RXCSUM;
+ 	case ETHTOOL_GSG:
+ 	case ETHTOOL_SSG:
+-		return NETIF_F_SG;
++		return NETIF_F_SG | NETIF_F_FRAGLIST;
+ 	case ETHTOOL_GTSO:
+ 	case ETHTOOL_STSO:
+ 		return NETIF_F_ALL_TSO;
+-- 
+2.25.1
+
