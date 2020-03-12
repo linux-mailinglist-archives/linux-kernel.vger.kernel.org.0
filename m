@@ -2,105 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B6411837BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:35:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7699183644
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 17:37:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726553AbgCLRfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 13:35:12 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:36122 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726385AbgCLRfL (ORCPT
+        id S1726483AbgCLQhk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 12:37:40 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35818 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726395AbgCLQhk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 13:35:11 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02CHU5oA184657;
-        Thu, 12 Mar 2020 17:30:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- message-id : date : from : to : cc : subject : references : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=zjwbtzl7AvB+7NnGdPtL8gmsQR0LWewnNP66H9bM+Sg=;
- b=JnS7ekvW8v1tgjppgCuoMOkj5C5t3S6TG7V2Y51M3OVidNaD97W2yg1lt3jwp8NSb/Ll
- 9Daf7YOHFv6oiO0GOb8+nffCldlVZUU6ctnjntvTSELW9ezcXo3U7i8s3EbqpcBtCg/L
- d7db3dI7J1Q0muVWCDQ6tf6c5P1TQnl7Ak/RcOH5MYZw+Bt3sahGge9Lv39KZP+QQ1Rs
- VRZ5wwD/CyimBLJRidZwOZMPhDrLdGdMppPf7Eboecke7xwRS9plS2Z1Kzgh0miDGDty
- wMS+3Gbg6UgLg5cOUvDJM6eKmENqZ2SSuq14xISvEvnTlH2GQ+ntQLLllaFigtoHoDYk Gw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2yp9v6e395-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Mar 2020 17:30:15 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02CHSFDd109698;
-        Thu, 12 Mar 2020 17:30:15 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2yqkvn265d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Mar 2020 17:30:15 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02CHUCMl000536;
-        Thu, 12 Mar 2020 17:30:12 GMT
-Received: from [192.168.1.206] (/71.63.128.209) by default (Oracle Beehive
- Gateway v4.0) with ESMTP ; Thu, 12 Mar 2020 09:34:34 -0700
-USER-AGENT: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-Content-Language: en-US
+        Thu, 12 Mar 2020 12:37:40 -0400
+Received: by mail-wm1-f68.google.com with SMTP id m3so7096576wmi.0;
+        Thu, 12 Mar 2020 09:37:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KLvR3Pv/VwwdNVMVEz53VHzZpwW5bYvxWCFzM4Vnud4=;
+        b=CzukxYm//beRotTxT2Qf+ERZzXI1VAI7lJNakQoHciY8x9FJXbvEdagxVxd72auQHD
+         L/CVnNVF/F+15+hV+B5JiAc2sJHtwVDSHuj3QqDU+F0hVyNyVMvMcfA/YJUP1LmIr1PU
+         usV2f1cx6hiPfVfeHBAMOM+cCR2A+Qr3TE0wM7PGejfxLm9umejsmE4kSK53w7TzBVNO
+         y/3ZhQjL1Svvb13zHh2Vksf/Sjj1CXg9zxX34hpnJU2wrAEOMfd+za6Xzz2q3OIr+xts
+         Mz8JSJRhjHi6EjqxYIoEo/YsJRQsrn5zIyPn4XRQS49dyqULZw22d1QGB/u4bghsMK2P
+         1vQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KLvR3Pv/VwwdNVMVEz53VHzZpwW5bYvxWCFzM4Vnud4=;
+        b=hs2SVnBNnU3rCqHipeSrUI2hOLtwd7oCjtMvE0VKvH1pl5U0o6/CTb7lg/oiqz21Z7
+         H7Bbz5VoNd7jAnvdzvXVmqfepjrm0+9RQdP6OI83E4PD6P7GfJ3IMh2CDN4j/vzQ9AOm
+         eEQJ/aSM4HwnVdhzULeFJ/DIeBpwNCWVKSkz+WNDVGqCWLUC+6e9ZyjDgfvF0ZT/IbHY
+         UOfElnhQOve7edBrz3If+mkkGm8N3LHRDVkmWylzFYWE0CGBsHXS4GwMOvID3gsL0IWl
+         RsKGPCZn1yLshwEAmxPaNRpgPFMEaybwLQgcVVgHvNOVy+N6VnAJGS7Z/lpl4RnXbx5U
+         29VA==
+X-Gm-Message-State: ANhLgQ0KjNXVSC6vy9/1wpSK9VTCqfuWedTYemf6whczIZpY6yvT46zJ
+        SPGtT6OraB1JdTvDYii+L/my94gVslVXECU00VY=
+X-Google-Smtp-Source: ADFU+vujZJQfx4KphaFkawHaVUhWqSnD+Jc07o1eQPnzLq4j7h7Sllg9lla+v7QtoWS4saFzOjAPrMn40v+CV+K24U8=
+X-Received: by 2002:a05:600c:204:: with SMTP id 4mr5394271wmi.112.1584031057921;
+ Thu, 12 Mar 2020 09:37:37 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <e821d691-67f5-1f29-3c70-0bad13c8ad91@oracle.com>
-Date:   Thu, 12 Mar 2020 09:34:32 -0700 (PDT)
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-To:     Qian Cai <cai@lca.pw>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Michal Hocko <mhocko@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A.Shutemov" <kirill.shutemov@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 0/2] hugetlbfs: use i_mmap_rwsem for more synchronization
-References: <20200305002650.160855-1-mike.kravetz@oracle.com>
- <1584028670.7365.182.camel@lca.pw>
-In-Reply-To: <1584028670.7365.182.camel@lca.pw>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9558 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=60
- mlxlogscore=999 malwarescore=0 adultscore=0 bulkscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003120089
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9558 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=60 spamscore=0 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
- phishscore=0 adultscore=0 clxscore=1015 impostorscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003120089
+References: <20200306163848.5910-1-mklntf@gmail.com> <20200311.230402.1496009558967017193.davem@davemloft.net>
+In-Reply-To: <20200311.230402.1496009558967017193.davem@davemloft.net>
+From:   Markus Fuchs <mklntf@gmail.com>
+Date:   Thu, 12 Mar 2020 17:37:26 +0100
+Message-ID: <CADv+quf+7Uh+-soXrN7kLnkre3dL6JACwRimN_KsuQ=01C84zw@mail.gmail.com>
+Subject: Re: [PATCH] net: stmmac: platform: Fix misleading interrupt error msg
+To:     David Miller <davem@davemloft.net>
+Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/12/20 8:57 AM, Qian Cai wrote:
-> On Wed, 2020-03-04 at 16:26 -0800, Mike Kravetz wrote:
->> While discussing the issue with huge_pte_offset [1], I remembered that
->> there were more outstanding hugetlb races.  These issues are:
-> 
-> Reverted this series on the top of today's linux-next fixed the hang with LTP
-> move_pages12 on both powerpc and arm64,
-> 
-> # /opt/ltp/testcases/bin/move_pages12
-> tst_test.c:1217: INFO: Timeout per run is 0h 05m 00s
-> move_pages12.c:263: INFO: Free RAM 260577280 kB
-> move_pages12.c:281: INFO: Increasing 2048kB hugepages pool on node 0 to 4
-> move_pages12.c:291: INFO: Increasing 2048kB hugepages pool on node 8 to 4
-> move_pages12.c:207: INFO: Allocating and freeing 4 hugepages on node 0
-> move_pages12.c:207: INFO: Allocating and freeing 4 hugepages on node 8
-> <hang>
+On Thu, 12 Mar 2020 at 07:04, David Miller <davem@davemloft.net> wrote:
+>
+> From: Markus Fuchs <mklntf@gmail.com>
+> Date: Fri,  6 Mar 2020 17:38:48 +0100
+>
+> > Not every stmmac based platform makes use of the eth_wake_irq or eth_lpi
+> > interrupts. Use the platform_get_irq_byname_optional variant for these
+> > interrupts, so no error message is displayed, if they can't be found.
+> > Rather print an information to hint something might be wrong to assist
+> > debugging on platforms which use these interrupts.
+> >
+> > Signed-off-by: Markus Fuchs <mklntf@gmail.com>
+>
+> What do you mean the error message is misleading right now?
+>
+> It isn't printing anything out at the moment in this situation.
 
-Thank you for finding this.
-I'll dig into it.  It is timing related as it takes a few test runs for
-me to reproduce.
+Hello,
 
-Sorry for the issues.  Feel free to revert upstream and mm tree until
-there is a resolution.
--- 
-Mike Kravetz
+the error messages are
+[    1.206363] socfpga-dwmac ff700000.ethernet: IRQ eth_wake_irq not found
+[    1.213023] socfpga-dwmac ff700000.ethernet: IRQ eth_lpi not found
+
+I tried to explain this in my original post between the --- lines of the patch.
+Maybe this was wrong, so I repost it.
+
+
+On my cyclone V socfpga platform I get error messages after updating to
+Linux Kernel 5.4.24
+
+Starting kernel ...
+
+Deasserting all peripheral resets
+[    1.206363] socfpga-dwmac ff700000.ethernet: IRQ eth_wake_irq not found
+[    1.213023] socfpga-dwmac ff700000.ethernet: IRQ eth_lpi not found
+
+These interrupts don't matter for my platform and many other stmmac based
+ones, as we can see by grepping for 'macirq'.
+
+socfpga.dtsi:                   interrupt-names = "macirq";
+socfpga.dtsi:                   interrupt-names = "macirq";
+sun7i-a20.dtsi:                 interrupt-names = "macirq";
+spear600.dtsi:                  interrupt-names = "macirq", "eth_wake_irq";
+artpec6.dtsi:                   interrupt-names = "macirq", "eth_lpi";
+rk322x.dtsi:                    interrupt-names = "macirq";
+sun9i-a80.dtsi:                 interrupt-names = "macirq";
+spear1310.dtsi:                 interrupt-names = "macirq";
+spear1310.dtsi:                 interrupt-names = "macirq";
+spear1310.dtsi:                 interrupt-names = "macirq";
+spear1310.dtsi:                 interrupt-names = "macirq";
+stih407-family.dtsi:            interrupt-names = "macirq", "eth_wake_irq";
+stm32f429.dtsi:                 interrupt-names = "macirq";
+sun6i-a31.dtsi:                 interrupt-names = "macirq";
+meson.dtsi:                     interrupt-names = "macirq";
+rk3288.dtsi:                    interrupt-names = "macirq", "eth_wake_irq";
+sun8i-r40.dtsi:                 interrupt-names = "macirq";
+sunxi-h3-h5.dtsi:               interrupt-names = "macirq";
+spear3xx.dtsi:                  interrupt-names = "macirq", "eth_wake_irq";
+lpc18xx.dtsi:                   interrupt-names = "macirq";
+stm32h743.dtsi:                 interrupt-names = "macirq";
+socfpga_arria10.dtsi:           interrupt-names = "macirq";
+socfpga_arria10.dtsi:           interrupt-names = "macirq";
+socfpga_arria10.dtsi:           interrupt-names = "macirq";
+rv1108.dtsi:                    interrupt-names = "macirq", "eth_wake_irq";
+spear13xx.dtsi:                 interrupt-names = "macirq", "eth_wake_irq";
+stm32mp151.dtsi:                interrupt-names = "macirq";
+ox820.dtsi:                     interrupt-names = "macirq", "eth_wake_irq";
+sun8i-a83t.dtsi:                interrupt-names = "macirq";
+
+So, in my opinion, the error messages are missleading. I believe
+the right way to handle this would require more changes though. Some
+kind of configuration information, telling which interrupts are required
+by the platform and than conditionally call platform_get_irq_byname().
+This would print an error message, if something is wrong, on the right
+platforms and nothing at all on the others.
