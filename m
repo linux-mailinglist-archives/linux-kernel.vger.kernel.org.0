@@ -2,144 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74491183704
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:12:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 172F6183728
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:15:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbgCLRMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 13:12:19 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40029 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726328AbgCLRMT (ORCPT
+        id S1726678AbgCLRPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 13:15:10 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:49094 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbgCLRPI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 13:12:19 -0400
-Received: by mail-qt1-f193.google.com with SMTP id n5so4977065qtv.7
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 10:12:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dMVelJrz8fF3lspFFmR9UFxMP7yEL5SRbojWYJwpleE=;
-        b=q17v1xD7+lA8wXe7vp0z0myc3y32AN/wsOmHR05q+5Z46xQJ2Zg7PkozNiXWt+Y9Zi
-         bS3nVvMKIxhlhK1Go1qCj5Y8G4UJrS676cdjbPnc8TnKWbf9C0IH4EycUr3TPrJQtR9G
-         ymiKbuctcMhwaXAqWXsBxEZsjVQT+aCIUK7rEmZ6F4M9XE4mF8xvk2pLeODoEFmNPE38
-         aK5r3HQ2WIcHHVbdydQGDA9UIbnajywgrcgE6QMXMNBQnz+H0aHpJB+n0BcHV63/Xbsc
-         rBoLePORPfIFLp7KPQxvmLWTdIUEwPQApQyLDruUnrFnSdD3D933COtX+mub5XvtjCaf
-         eZuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dMVelJrz8fF3lspFFmR9UFxMP7yEL5SRbojWYJwpleE=;
-        b=AFWdT5stSBtVnv8Pj2PaHO2HuH8i+pb2fqDPj2fiS0Ix22/K7/wUdaFatrSnKhIF6c
-         BWpUxf4ceDtMODNAouunVxC+/V8SepnLl/48Gc9UsWKCSHwnYRSe+JbSUU95nWcgOMwu
-         MWo3p6u/Vury+vXzyo2gWfY2vCXguC9IbeCPT6QLEOWseLGC2Tasat/+ICOb/XR+ZION
-         mJiw+iNzz21WIUDnFgwavIPSqCyuXJ4/yHyzE26GQ7Ml1to2xjDq9nTHNL6GTQujuIYe
-         SUS2ijJIWQPK4pTvmZRA1KVl+4eL7jW8X6vWEcSrutv4iphyziDIaNyrXSTWI2aZ8PY7
-         Ck7w==
-X-Gm-Message-State: ANhLgQ0eyTC2LrXOejlv4q2KH3unBePiN9B+xs0Yk4GJ8oYOKcBRtLNZ
-        5UDQd8kW9lhvQ3trt/W91xU=
-X-Google-Smtp-Source: ADFU+vtXpKcQPnH10nXjPcSeZkbkwE8Fn6TN9er5R901MoXFbwsd+Zi4gu+EcVfOcjjbM8T8Qsebrw==
-X-Received: by 2002:ac8:b42:: with SMTP id m2mr8390030qti.67.1584033138091;
-        Thu, 12 Mar 2020 10:12:18 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([177.195.214.213])
-        by smtp.gmail.com with ESMTPSA id j193sm9475302qke.22.2020.03.12.10.12.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2020 10:12:17 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 3023740009; Thu, 12 Mar 2020 14:12:14 -0300 (-03)
-Date:   Thu, 12 Mar 2020 14:12:14 -0300
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] perf record: fix binding of AIO user space buffers to
- nodes
-Message-ID: <20200312171214.GD12036@kernel.org>
-References: <c7ea8ffe-1357-bf9e-3a89-1da1d8e9b75b@linux.intel.com>
- <20200312143152.GA28601@kernel.org>
- <2e01e17a-962d-571b-4407-70aa270cec6a@linux.intel.com>
+        Thu, 12 Mar 2020 13:15:08 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02CHEvi2118683;
+        Thu, 12 Mar 2020 12:14:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584033297;
+        bh=F1Bl5KRdM8p1lw3n/IaD14JUKZw+gIocUSbFL8V0++U=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=yuwAX0WVPIo2mKAaXZuNoh0A2oc3iOPOXloIX3p1ONeV9BMBZyFVdh50Oda7HAz9r
+         43iycFz2a381YE90mGwTuVq6Ffr6hwa/rFFh1yzxC3KHOo+nd/6pzjeiRJLipdGs70
+         iO6nlfes39FPFm16fF/XXOSp8CAxZAUaxWy/RAlk=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02CHEvwm123158
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Mar 2020 12:14:57 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 12
+ Mar 2020 12:14:57 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 12 Mar 2020 12:14:57 -0500
+Received: from [10.24.69.20] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02CHErSN096128;
+        Thu, 12 Mar 2020 12:14:54 -0500
+Subject: Re: [PATCH v3 4/5] pwm: omap-dmtimer: Do not disable pwm before
+ changing period/duty_cycle
+To:     Richard Cochran <richardcochran@gmail.com>
+CC:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, Vignesh R <vigneshr@ti.com>,
+        <kernel@pengutronix.de>
+References: <20200312042210.17344-1-lokeshvutla@ti.com>
+ <20200312042210.17344-5-lokeshvutla@ti.com>
+ <20200312064042.p7himm3odxjyzroi@pengutronix.de>
+ <f250549f-1e7c-06d6-b2a4-7ae01c06725b@ti.com>
+ <20200312084739.isixgdo3txr6rjzg@pengutronix.de>
+ <2a5a06cd-7aca-c450-b048-33329d058eca@ti.com>
+ <20200312142126.GB2466@localhost>
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+Message-ID: <b8750b79-8703-5d8f-eacf-b3a67cedd252@ti.com>
+Date:   Thu, 12 Mar 2020 22:44:08 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e01e17a-962d-571b-4407-70aa270cec6a@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <20200312142126.GB2466@localhost>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Mar 12, 2020 at 07:09:56PM +0300, Alexey Budankov escreveu:
-> 
-> On 12.03.2020 17:31, Arnaldo Carvalho de Melo wrote:
-> > Em Thu, Mar 12, 2020 at 03:21:45PM +0300, Alexey Budankov escreveu:
-> >>
-> >> Correct maxnode parameter value passed to mbind() syscall to be
-> >> the amount of node mask bits to analyze plus 1. Dynamically allocate
-> >> node mask memory depending on the index of node of cpu being profiled.
-> >> Fixes: c44a8b44ca9f ("perf record: Bind the AIO user space buffers to nodes")
-> >> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-> >> ---
-> >>  tools/perf/util/mmap.c | 21 +++++++++++++++------
-> >>  1 file changed, 15 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-> >> index 3b664fa673a6..6d604cd67a95 100644
-> >> --- a/tools/perf/util/mmap.c
-> >> +++ b/tools/perf/util/mmap.c
-> >> @@ -98,20 +98,29 @@ static int perf_mmap__aio_bind(struct mmap *map, int idx, int cpu, int affinity)
-> >>  {
-> >>  	void *data;
-> >>  	size_t mmap_len;
-> >> -	unsigned long node_mask;
-> >> +	unsigned long *node_mask;
-> >> +	unsigned long node_index;
-> >> +	int err = 0;
-> >>  
-> >>  	if (affinity != PERF_AFFINITY_SYS && cpu__max_node() > 1) {
-> >>  		data = map->aio.data[idx];
-> >>  		mmap_len = mmap__mmap_len(map);
-> >> -		node_mask = 1UL << cpu__get_node(cpu);
-> >> -		if (mbind(data, mmap_len, MPOL_BIND, &node_mask, 1, 0)) {
-> >> -			pr_err("Failed to bind [%p-%p] AIO buffer to node %d: error %m\n",
-> >> -				data, data + mmap_len, cpu__get_node(cpu));
-> >> +		node_index = cpu__get_node(cpu);
-> >> +		node_mask = bitmap_alloc(node_index + 1);
-> >> +		if (!node_mask) {
-> >> +			pr_err("Failed to allocate node mask for mbind: error %m\n");
-> >>  			return -1;
-> >>  		}
-> >> +		set_bit(node_index, node_mask);
-> >> +		if (mbind(data, mmap_len, MPOL_BIND, node_mask, node_index + 1 + 1/*nr_bits + 1*/, 0)) {
-> > 
-> >                                                                                   ^^^^^^^^^^^^^^
-> > 										  Leftover?
-> 
-> Intentionally put it here to document kernel behavior for mbind() syscall
-> because currently it is different from the man page [1] documented:
-> 
-> "nodemask points to a bit mask of nodes containing up to maxnode bits.
->  The bit mask size is rounded to the next multiple of sizeof(unsigned
->  long), but the kernel will use bits only up to maxnode.  A NULL value
->  of nodemask or a maxnode value of zero specifies the empty set of
->  nodes.  If the value of maxnode is zero, the nodemask argument is
->  ignored.  Where a nodemask is required, it must contain at least one
->  node that is on-line, allowed by the thread's current cpuset context
->  (unless the MPOL_F_STATIC_NODES mode flag is specified), and contains
->  memory."
+Hi Richard,
 
-Ok, will add the above as a comment above the line with that comment.
- 
-> ~Alexey
+On 12/03/20 7:51 PM, Richard Cochran wrote:
+> On Thu, Mar 12, 2020 at 04:14:34PM +0530, Lokesh Vutla wrote:
+>> But the problem here is that inactive breaks between two periods is not desired.
+>> Because the pwm is used to generate a 1PPS signal and is continuously
+>> synchronized with PTP clock.
 > 
-> [1] http://man7.org/linux/man-pages/man2/mbind.2.html
+> The 1-PPS case is the "easy" one.  If the PWM is adjustable on the
+> fly, then people will use it with higher frequency signals.
 
--- 
+Yes, PWM can be adjusted on the fly. TRM does specify that corresponding
+registers(TLDR, TMAR, TCRR) registers can be updated when timer is active.
 
-- Arnaldo
+>  
+>> I am up if this can be solved generically. But updating period is very specific
+>> to hardware implementation. Not sure what generic solution can be brought out of
+>> this. Please correct me if I am wrong.
+> 
+> What happens today when the PWM frequency or duty cycle are changed
+> while the signal is enabled?
+
+Today, PWM is stopped and then period/duty_cycle are updated.
+
+> 
+> Do different PWM devices/drivers behave the same way?
+> 
+> Does this series change the behavior of the am335x and friends?
+
+Yes, this series  is applicable on all TI OMAP2+ devices with DMTIMER.
+
+[0] http://www.ti.com/lit/ug/spruh73q/spruh73q.pdf Section 20.1.1.1 DMTIMER
+overview Page 4436.
+
+Thanks and regards,
+Lokesh
