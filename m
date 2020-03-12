@@ -2,95 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD2E0182A6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 09:04:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DED01182A76
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 09:06:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388186AbgCLIEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 04:04:45 -0400
-Received: from mga07.intel.com ([134.134.136.100]:9243 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387930AbgCLIEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 04:04:45 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 01:04:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,544,1574150400"; 
-   d="scan'208";a="354073180"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 12 Mar 2020 01:04:25 -0700
-Received: by lahna (sSMTP sendmail emulation); Thu, 12 Mar 2020 10:04:24 +0200
-Date:   Thu, 12 Mar 2020 10:04:24 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI/PM: Skip link training delay for S3 resume
-Message-ID: <20200312080424.GH2540@lahna.fi.intel.com>
-References: <20200311045249.5200-1-kai.heng.feng@canonical.com>
- <20200311102811.GA2540@lahna.fi.intel.com>
- <2C20385C-4BA4-4D6D-935A-AFDB97FAB5ED@canonical.com>
+        id S1727900AbgCLIG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 04:06:29 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:53744 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbgCLIG3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 04:06:29 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02C86KXG105763;
+        Thu, 12 Mar 2020 03:06:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584000380;
+        bh=J5M0FMAC5tNLJClXhjgw9z/u+wvqtVNBtEKQ1U48aok=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=tqC4zg2twBtiPRZcL3GzBPAe1SxMSTj4g9Eei8p7WIXr76mpGiHued15tqXOf6EIS
+         bXgzI7O2R7W/CAIS0bhiKN3Ff/Ac1OZLp4qJUYL1Fo3BtX+x6ckeRhtk+N9vzQYxD3
+         gK+yGHtCfHuE88LeAP8GjrVdT5Xeyvr94AlMgcqc=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02C86Kb9104433
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Mar 2020 03:06:20 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 12
+ Mar 2020 03:06:20 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 12 Mar 2020 03:06:20 -0500
+Received: from [10.24.69.20] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02C86Hlc020278;
+        Thu, 12 Mar 2020 03:06:18 -0500
+Subject: Re: [PATCH v3 4/5] pwm: omap-dmtimer: Do not disable pwm before
+ changing period/duty_cycle
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+CC:     Thierry Reding <thierry.reding@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, Vignesh R <vigneshr@ti.com>
+References: <20200312042210.17344-1-lokeshvutla@ti.com>
+ <20200312042210.17344-5-lokeshvutla@ti.com>
+ <20200312064042.p7himm3odxjyzroi@pengutronix.de>
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+Message-ID: <f250549f-1e7c-06d6-b2a4-7ae01c06725b@ti.com>
+Date:   Thu, 12 Mar 2020 13:35:32 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2C20385C-4BA4-4D6D-935A-AFDB97FAB5ED@canonical.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200312064042.p7himm3odxjyzroi@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 12:23:46PM +0800, Kai-Heng Feng wrote:
-> Hi,
-> 
-> > On Mar 11, 2020, at 18:28, Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
-> > 
-> > Hi,
-> > 
-> > On Wed, Mar 11, 2020 at 12:52:49PM +0800, Kai-Heng Feng wrote:
-> >> Commit ad9001f2f411 ("PCI/PM: Add missing link delays required by the
-> >> PCIe spec") added a 1100ms delay on resume for bridges that don't
-> >> support Link Active Reporting.
-> >> 
-> >> The commit also states that the delay can be skipped for S3, as the
-> >> firmware should already handled the case for us.
-> > 
-> > Delay can be skipped if the firmware provides _DSM with function 8
-> > implemented according to PCI firmwre spec 3.2 sec 4.6.8.
-> 
-> As someone who doesn't have access to the PCI spec...
-> Questions below.
-> 
-> > 
-> >> So let's skip the link training delay for S3, to save 1100ms resume
-> >> time.
-> >> 
-> >> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> >> ---
-> >> drivers/pci/pci-driver.c | 3 ++-
-> >> 1 file changed, 2 insertions(+), 1 deletion(-)
-> >> 
-> >> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> >> index 0454ca0e4e3f..3050375bad04 100644
-> >> --- a/drivers/pci/pci-driver.c
-> >> +++ b/drivers/pci/pci-driver.c
-> >> @@ -916,7 +916,8 @@ static int pci_pm_resume_noirq(struct device *dev)
-> >> 	pci_fixup_device(pci_fixup_resume_early, pci_dev);
-> >> 	pcie_pme_root_status_cleanup(pci_dev);
-> >> 
-> >> -	if (!skip_bus_pm && prev_state == PCI_D3cold)
-> >> +	if (!skip_bus_pm && prev_state == PCI_D3cold
-> >> +	    && !pm_resume_via_firmware())
-> > 
-> > So this would need to check for the _DSM result as well. We do evaluate
-> > it in pci_acpi_optimize_delay() (drivers/pci/pci-acpi.c) and that ends
-> > up lowering ->d3cold_delay so maybe check that here.
-> 
-> Do we need to wait for d3cold_delay here?
-> Or we can also skip that as long as pci_acpi_dsm_guid and FUNCTION_DELAY_DSM present?
+Hi Uwe,
 
-Actually I think pci_bridge_wait_for_secondary_bus() already takes it
-into account. Have you checked if the BIOS has this _DSM implemented in
-the first place?
+On 12/03/20 12:10 PM, Uwe Kleine-König wrote:
+> On Thu, Mar 12, 2020 at 09:52:09AM +0530, Lokesh Vutla wrote:
+>> Only the Timer control register(TCLR) cannot be updated when the timer
+>> is running. Registers like Counter register(TCRR), loader register(TLDR),
+>> match register(TMAR) can be updated when the counter is running. Since
+>> TCLR is not updated in pwm_omap_dmtimer_config(), do not stop the
+>> timer for period/duty_cycle update.
+> 
+> I'm not sure what is sensible here. Stopping the PWM for a short period
+> is bad, but maybe emitting a wrong period isn't better. You can however
+> optimise it if only one of period or duty_cycle changes.
+> 
+> @Thierry, what is your position here? I tend to say a short stop is
+> preferable.
+
+Short stop has side effects especially in the case where 1PPS is generated using
+this PWM. In this case where PWM period is continuously synced with PTP clock,
+cannot expect any breaks in PWM. This doesn't fall in the above limitations as
+well. as duty_cycle is not a worry and only the rising edge is all that matters.
+
+Also any specific reason why you wanted to stop rather than having the mentioned
+limitation? it is just a corner anyway and doesn't happen all the time.
+
+Thanks and regards,
+Lokesh
+
+> 
+>> Tested-by: Tony Lindgren <tony@atomide.com>
+>> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+>> ---
+>>  drivers/pwm/pwm-omap-dmtimer.c | 21 +++++++--------------
+>>  1 file changed, 7 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+>> index 85b17b49980b..c56e7256e923 100644
+>> --- a/drivers/pwm/pwm-omap-dmtimer.c
+>> +++ b/drivers/pwm/pwm-omap-dmtimer.c
+>> @@ -19,6 +19,13 @@
+>>   * Limitations:
+>>   * - When PWM is stopped, timer counter gets stopped immediately. This
+>>   *   doesn't allow the current PWM period to complete and stops abruptly.
+>> + * - When PWM is running and changing both duty cycle and period,
+>> + *   we cannot prevent in software that the output might produce
+>> + *   a period with mixed settings. Especially when period/duty_cyle
+>> + *   is updated while the pwm pin is high, current pwm period/duty_cycle
+>> + *   can get updated as below based on the current timer counter:
+>> + *   	- period for current cycle =  current_period + new period
+>> + *   	- duty_cycle for current period = current period + new duty_cycle.
+> 
+> In case we stay with a short stop, adding something like:
+> 
+>  - The PWM has to be stopped for updates of both period and duty_cycle.
+> 
+> Best regards
+> Uwe
+> 
