@@ -2,115 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0326818325C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:06:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F507183267
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:07:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727320AbgCLOGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 10:06:16 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:45790 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727414AbgCLOGP (ORCPT
+        id S1727613AbgCLOH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 10:07:27 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:41233 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725978AbgCLOH1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 10:06:15 -0400
-Received: by mail-il1-f195.google.com with SMTP id p1so5537668ils.12
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 07:06:13 -0700 (PDT)
+        Thu, 12 Mar 2020 10:07:27 -0400
+Received: by mail-vs1-f68.google.com with SMTP id k188so3730015vsc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 07:07:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Pji13eSFjIMldkU9BYdIbo4HI44T8oed33naqFgVd6s=;
-        b=zssgGwlH8/VmLMRtLhaCwqZbq9RREsK0T5bf6PIvtt1VGFFLfPPnQnZejqOTYcE66h
-         YC0y2su0NF5zACw1HZZsr7rjtUkogTsWqTu6Vm6/ie+LuGi85xrZGApcNLASkl90rCNH
-         N3iKNDAKYS9oq8i9IEow8BJeJKPxUsJrlebRdwIF5eJPTF0cAwRj9ggXLmAxIDhdEZuG
-         PvnpPrEInwbqPNIjvL3PzflYawxDa3mZi2TgaKLvf7ECZzHSxJx3KAoa2ry7Pf7aKJ1S
-         y7gpjNa2PHKgoNp0XyIc9HwCBIQjRNDXD+/sV+kacNjm7ivwd82D7IAXuee/0UJ8BEOm
-         eHVw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=buBSO5k2b4C3kXNX/XPJLGtnWR4DhQhQeL2M9/aAXBc=;
+        b=PL0NMlFZDgWMBsxgRB2pgKNVkX0QVKlDI0Zgo8PzJZAAqc8i0og3nDOyzEF9+WQtsw
+         SC9zrMXfzEX+sEZ3IeFjJQZVBShaMrVOCy2podIC8PitQXH2UCd3sRPjKxbiK+kdwAJ8
+         uga1GbAAMTawwtIWkMjWNKsKhaiEzxvbd2ningh9nfW8kluStifKW2zIib2FqduaatD5
+         aEi2/9tviHac2S6Rn8F+elUSfTJUMvml6l9LH8mhHDrGWgogrDC57/vaZP5XvoFy+U4y
+         WH92eQQiU3LyrEJAzS+mhy526Cg2yWgTtLo5T3AXeS949FRQuBZ0FSBNuU6U8XMeBb9q
+         Ba1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Pji13eSFjIMldkU9BYdIbo4HI44T8oed33naqFgVd6s=;
-        b=rQzng+XSHj2PiJgCQRj1db1jeZsvFymCjPsAgv4Ql7COA0U6gbnwijn6F/XNb5f5yQ
-         GwwgJJpRrSXf1+PkeBseWfc0H8bhuDWozYwHCDWruBCjoBo4pKe8myjOVYlDVwZSx8am
-         0efOyeLm4Z/5RnE6RGLLt0T3e16fmpIFIXM3FEglMRxX2TLlC+9Rw1QDqpQfR7c/aJjG
-         8x8rAISoe/pZ+dThtvBOlQNnrCwFkfx/HWKFpU8Knnb7OHt274VSr5vBOYh4zn8Y+rv9
-         pIxZUdC0/yLpAAznUNyGtis4rTL/4SOxNY1am7VFpQMxb7B28dirRQTl3t0guSNEmNiF
-         76dQ==
-X-Gm-Message-State: ANhLgQ1gYU9JzFinRCbABSUhamE5IZmOKAojS2rcd+VNIC/zS2UAzvRU
-        OLoj63EESfCo9lajEX/h9gzU8w==
-X-Google-Smtp-Source: ADFU+vu/XM+0n/FArOrrpYRuqpoofr0nhTgegl8nM9GcEZ0Y35AWlXD9wYups+i8jASk7u1s54i1cw==
-X-Received: by 2002:a92:c904:: with SMTP id t4mr959353ilp.209.1584021973514;
-        Thu, 12 Mar 2020 07:06:13 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id d1sm6126275ilq.9.2020.03.12.07.06.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Mar 2020 07:06:12 -0700 (PDT)
-Subject: Re: [PATCH v2 0/5] Add support for block disk resize notification
-To:     "Singh, Balbir" <sblbir@amazon.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
-Cc:     "hch@lst.de" <hch@lst.de>,
-        "Chaitanya.Kulkarni@wdc.com" <Chaitanya.Kulkarni@wdc.com>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "mst@redhat.com" <mst@redhat.com>
-References: <20200225200129.6687-1-sblbir@amazon.com>
- <f2b805c1a420a07aa9449ee0ef77766a10e9ff20.camel@amazon.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <05bb1606-4cf1-dba3-22a0-5f8624b43767@kernel.dk>
-Date:   Thu, 12 Mar 2020 08:06:11 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=buBSO5k2b4C3kXNX/XPJLGtnWR4DhQhQeL2M9/aAXBc=;
+        b=ZCwVtTncryPoyi6CaMai3ZK0YOSsvneFZUFroOh0G7ooTei4ep5vER3ln18F4pIZ4o
+         Ex3oe76mOh3cxm+9c1zGblVVm4OQXukX/p1PRwKz+gw7tQ6ftUp4CZjJNmAvljm4i4aD
+         x9mjDbAKzaCU6cLtMadSeJzyAAXPofBP6KQak3ThJa3oD9OOp3IpI48y9HE2IeKGg7hj
+         rPxMEptN228nurxtZM/HY16LGdvjXqZS0V+1hZ6Zy1h8Re9syrwZ6k4A6yUwNjsN9AIN
+         U6UOjUGdptIfLzvH+Zfgbi2dofjyXln/Dfio7bwj+dD+Vy/0gC/SfGaBAgY/FmLr8AgO
+         XjxQ==
+X-Gm-Message-State: ANhLgQ3RFMYUrfOSlHyHSDGlelbz2PTLqHO0urPQrndC7vADULcORxBb
+        /uOXV0pvULIwHJL/NtiTS1NbWo1t5M/Y0f+pV3Lr9Q==
+X-Google-Smtp-Source: ADFU+vvKK/JxbKesCpiaMAfl5MC6dMr3G/EvpE0o1cQyilJQELyMRXAEvEhzVVgWT69tflBxzZwNt+1+f4g7iLxY3Ow=
+X-Received: by 2002:a67:2ec6:: with SMTP id u189mr5576185vsu.200.1584022045458;
+ Thu, 12 Mar 2020 07:07:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <f2b805c1a420a07aa9449ee0ef77766a10e9ff20.camel@amazon.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200306174413.20634-1-nsaenzjulienne@suse.de>
+ <CAPDyKFp+XwGog_w+8Sv1hYA-Umi6Rt2LYR1fyMEEb9abdb9nGQ@mail.gmail.com> <a51badd7ba6fc1938a120b8a3b8a423ca9a3613b.camel@suse.de>
+In-Reply-To: <a51badd7ba6fc1938a120b8a3b8a423ca9a3613b.camel@suse.de>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 12 Mar 2020 15:06:47 +0100
+Message-ID: <CAPDyKFprX9cLXxGQJ9E8H_A-PfWYyrL3SShuJi7-M1KobGWrEQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] Raspbery Pi 4 vmmc regulator support
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        phil@raspberrypi.com,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/2/20 9:03 PM, Singh, Balbir wrote:
-> On Tue, 2020-02-25 at 20:01 +0000, Balbir Singh wrote:
->> Allow block/genhd to notify user space about disk size changes using a
->> new helper set_capacity_revalidate_and_notify(), which is a wrapper
->> on top of set_capacity(). set_capacity_revalidate_and_notify() will only
->> notify
->> iff the current capacity or the target capacity is not zero and the
->> capacity really changes.
->>
->> Background:
->>
->> As a part of a patch to allow sending the RESIZE event on disk capacity
->> change, Christoph (hch@lst.de) requested that the patch be made generic
->> and the hacks for virtio block and xen block devices be removed and
->> merged via a generic helper.
->>
->> This series consists of 5 changes. The first one adds the basic
->> support for changing the size and notifying. The follow up patches
->> are per block subsystem changes. Other block drivers can add their
->> changes as necessary on top of this series. Since not all devices
->> are resizable, the default was to add a new API and let users
->> slowly convert over as needed.
->>
->> Testing:
->> 1. I did some basic testing with an NVME device, by resizing it in
->> the backend and ensured that udevd received the event.
->>
->>
->> Changelog v2:
->> - Rename disk_set_capacity to set_capacity_revalidate_and_notify
->> - set_capacity_revalidate_and_notify can call revalidate disk
->>   if needed, a new bool parameter is passed (suggested by Bob Liu)
->>
-> 
-> Ping? It's not an urgent patchset, I am happy to wait if nothing else is
-> needed.
+On Thu, 12 Mar 2020 at 14:13, Nicolas Saenz Julienne
+<nsaenzjulienne@suse.de> wrote:
+>
+> Hi Ulf,
+>
+> On Thu, 2020-03-12 at 14:08 +0100, Ulf Hansson wrote:
+> > On Fri, 6 Mar 2020 at 18:44, Nicolas Saenz Julienne
+> > <nsaenzjulienne@suse.de> wrote:
+> > > The series first cleans up a common pattern, which is ultimately needed
+> > > to integrate the regulator with bcm2711's sdhci-iproc. It then
+> > > introduces the relevant device-tree changes.
+> > >
+> > > ---
+> > >
+> > > Changes since v1:
+> > >  - Use helper function istead of quirk
+> > >  - Add GPIO label
+> > >
+> > > Nicolas Saenz Julienne (11):
+> > >   mmc: sdhci: Introduce sdhci_set_power_and_bus_voltage()
+> > >   mmc: sdhci: arasan: Use sdhci_set_power_and_voltage()
+> > >   mmc: sdhci: milbeaut: Use sdhci_set_power_and_voltage()
+> > >   mmc: sdhci: at91: Use sdhci_set_power_and_voltage()
+> > >   mmc: sdhci: pxav3: Use sdhci_set_power_and_voltage()
+> > >   mmc: sdhci: xenon: Use sdhci_set_power_and_voltage()
+> > >   mmc: sdhci: am654: Use sdhci_set_power_and_voltage()
+> > >   mmc: sdhci: Unexport sdhci_set_power_noreg()
+> > >   mmc: sdhci: iproc: Add custom set_power() callback for bcm2711
+> > >   ARM: dts: bcm2711: Update expgpio's GPIO labels
+> > >   ARM: dts: bcm2711: Add vmmc regulator in emmc2
+> > >
+> > >  arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 13 ++++++++++++-
+> > >  drivers/mmc/host/sdhci-iproc.c        | 17 ++++++++++++++++-
+> > >  drivers/mmc/host/sdhci-milbeaut.c     | 13 +------------
+> > >  drivers/mmc/host/sdhci-of-arasan.c    | 15 ++-------------
+> > >  drivers/mmc/host/sdhci-of-at91.c      | 18 +-----------------
+> > >  drivers/mmc/host/sdhci-pxav3.c        | 20 +-------------------
+> > >  drivers/mmc/host/sdhci-xenon.c        | 20 +-------------------
+> > >  drivers/mmc/host/sdhci.c              | 24 +++++++++++++++++++++---
+> > >  drivers/mmc/host/sdhci.h              |  5 +++--
+> > >  drivers/mmc/host/sdhci_am654.c        | 17 +++--------------
+> > >  10 files changed, 61 insertions(+), 101 deletions(-)
+> > >
+> > > --
+> > > 2.25.1
+> > >
+> >
+> > Patch 1-4, 6, 9 applied for next, thanks!
+>
+> I think you meant to apply 1-4, 7 and 9. Patch 6 is one of the contentious
+> ones.
 
-It doesn't apply to the 5.7 branches, can you resend against for-5.7/block?
+Yes, that's what I did, but told you about 6. :-)
 
--- 
-Jens Axboe
+Thanks and sorry for the noise.
 
+Kind regards
+Uffe
