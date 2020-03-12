@@ -2,139 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6CB518271B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 03:43:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD1F9182711
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 03:36:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387694AbgCLCm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 22:42:57 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11664 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387411AbgCLCm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 22:42:56 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 964B35ED28EA7C162979;
-        Thu, 12 Mar 2020 10:42:48 +0800 (CST)
-Received: from ubuntu.huawei.com (10.175.104.215) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.487.0; Thu, 12 Mar 2020 10:42:40 +0800
-From:   tongtiangen <tongtiangen@huawei.com>
-To:     <robdclark@gmail.com>, <sean@poorly.run>, <airlied@linux.ie>,
-        <daniel@ffwll.ch>, <ddavenport@chromium.org>,
-        <gregkh@linuxfoundation.org>, <abhinavk@codeaurora.org>,
-        <jcrouse@codeaurora.org>, <tglx@linutronix.de>,
-        <tongtiangen@huawei.com>
-CC:     <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] drm/msm/dpu: Remove some set but not used variables
-Date:   Thu, 12 Mar 2020 08:25:59 +0800
-Message-ID: <20200312002559.20738-1-tongtiangen@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S2387658AbgCLCfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 22:35:55 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43821 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387501AbgCLCfz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 22:35:55 -0400
+Received: by mail-oi1-f196.google.com with SMTP id p125so4001767oif.10;
+        Wed, 11 Mar 2020 19:35:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8OJZ8s4LAFvvLbr1LYlDu6AvwjLr2eKD3RcnrO+l9+M=;
+        b=phTASrbqGplbQZ0J9qq81BbAQWHnb5mliO8intSCodcYFQzfgu384fG0rprHEqkjrg
+         P9CvEQK20yLFBtazpyuwL6H2VP1MMluyxgLPAQxGsxq7YXhD85W546FMlNQgInvkJb86
+         N3vHrKk2yRhRnMdGgGfqAPsr3bpV3c0Qcw+eCUq/yfGn+XqPY0ekDeeVClETG4tpU5Qj
+         m0xsQffi7gybur9azt8O/hd18pqtzkEI4EPkXkJQ6vfn+A2HXu/cqp7AR8Nk2CjD4tlF
+         gjJsqTfmjxWBqGIj1bZpnDPZ7Fb1paa880Roh9MEtYBSbqwhQvWgvZqvhhYRyLEz5Kic
+         eFQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8OJZ8s4LAFvvLbr1LYlDu6AvwjLr2eKD3RcnrO+l9+M=;
+        b=lD/22FZ769vuP3oEmaw+YSW+AAW6vTo1dlLvYD4emxT6aGYOuqJIzKInvN0YxNljFl
+         /7blmbgSeMaM/OtpYdV9l97UiMX5VySfOnQUAYPuijq0711J1BrTERAwnAiCw5TPQFX6
+         CUvxlgwqw3zwcEQ6EqOl8DvLZKtDorkzj96YC4/g7U50UE7Onbmp/K9R4AeIk8xh8hlv
+         Rj7yKfEtDSNtO1cyjNje8xAafaj48I1LdD5MQ9PKfFBUNq8UV6yvYLTUdhc8Ge5fmgjg
+         O/n69bAffGDqotJAn9hcbpwVX02ji2TWx/mOfGI3vobEx7x6tQFDLQYYwBxMGTWTOqyq
+         7rzw==
+X-Gm-Message-State: ANhLgQ3AmskSfc+1FSgn6xkb34ibpGwkERlzMjqTPT6ZSNxALAjoZtNi
+        1kuWUMJ/pCTrgzyKn7/RUyqsxSx6ZLhOXI65L+c=
+X-Google-Smtp-Source: ADFU+vv6quOwJyLsYSdx0o07YDwd6saaCjSttFVyiNsWDmrJbcyplKpBgKJleR6+IcKHECFksg2a0LUIUWZbEHXfYkI=
+X-Received: by 2002:aca:cc81:: with SMTP id c123mr1089651oig.74.1583980554871;
+ Wed, 11 Mar 2020 19:35:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.104.215]
-X-CFilter-Loop: Reflected
+References: <5e098be25c70e07c37e743f84a901f6f756090e0.1583461755.git.baolin.wang7@gmail.com>
+ <20200306204712.dgomi52jzyakylky@earth.universe> <CADBw62owL-G_B7pU87sH2U+0vCNEG9rkMRpHZXL5_9YZcvQfxg@mail.gmail.com>
+ <20200311221856.yh2vr3fybwm3krfc@jupiter.universe>
+In-Reply-To: <20200311221856.yh2vr3fybwm3krfc@jupiter.universe>
+From:   Baolin Wang <baolin.wang7@gmail.com>
+Date:   Thu, 12 Mar 2020 10:35:38 +0800
+Message-ID: <CADBw62pMPrNoTXsfN0Mzs2Vo=ORQLzeabn6bSW2CG_JfE7cebQ@mail.gmail.com>
+Subject: Re: [PATCH v2] power: supply: Allow charger manager can be built as a module
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Thu, Mar 12, 2020 at 6:18 AM Sebastian Reichel <sre@kernel.org> wrote:
+>
+> Hi,
+>
+> On Mon, Mar 09, 2020 at 11:20:41AM +0800, Baolin Wang wrote:
+> > On Sat, Mar 7, 2020 at 4:47 AM Sebastian Reichel <sre@kernel.org> wrote:
+> > > On Fri, Mar 06, 2020 at 10:34:10AM +0800, Baolin Wang wrote:
+> > > > Allow charger manager can be built as a module like other charger
+> > > > drivers.
+> > > >
+> > > > Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+> > > > ---
+> > >
+> > > Thanks, queued. I do not like this driver, but its the best we have
+> > > at the moment.
+> >
+> > Thanks. I understood your concern, do you have any plan to re-design
+> > the charger manager driver in kernel? Or do you have some thoughts
+> > about re-designing it? Now we have some out of tree code to use the
+> > old charger manger, and we'd like to change to the new charger manger
+> > driver and upstream them.
+>
+> I don't have anything ready yet and not enough time unfortunately.
+> The proper way would be to have something equivialent to charger-manager
+> in the power-supply core. The core should be able to monitor batteries
+> and handle connected chargers automatically.  Also there shouldn't be
+> any DT entry for the software managing the charger, since DT is about
+> hardware.
 
-drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c: In function _dpu_debugfs_show_regset32:
-drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c:142:26: warning: variable priv set but not used [-Wunused-but-set-variable]
-drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c: In function dpu_kms_prepare_commit:
-drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c:271:21: warning: variable dev set but not used [-Wunused-but-set-variable]
-drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c: In function _dpu_kms_hw_destroy:
-drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c:555:21: warning: variable dev set but not used [-Wunused-but-set-variable]
-drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c: In function dpu_kms_hw_init:
-drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c:763:26: warning: variable priv set but not used [-Wunused-but-set-variable]
-drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c: In function dpu_runtime_suspend:
-drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c:1021:21: warning: variable ddev set but not used [-Wunused-but-set-variable]
+OK. We'll think about it according to your suggestion. Thanks.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: tongtiangen <tongtiangen@huawei.com>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c | 15 ---------------
- 1 file changed, 15 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index cb08fafb1dc1..089d1cde39da 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -138,16 +138,12 @@ static int _dpu_debugfs_show_regset32(struct seq_file *s, void *data)
- {
- 	struct dpu_debugfs_regset32 *regset = s->private;
- 	struct dpu_kms *dpu_kms = regset->dpu_kms;
--	struct drm_device *dev;
--	struct msm_drm_private *priv;
- 	void __iomem *base;
- 	uint32_t i, addr;
- 
- 	if (!dpu_kms->mmio)
- 		return 0;
- 
--	dev = dpu_kms->dev;
--	priv = dev->dev_private;
- 	base = dpu_kms->mmio + regset->offset;
- 
- 	/* insert padding spaces, if needed */
-@@ -267,8 +263,6 @@ static ktime_t dpu_kms_vsync_time(struct msm_kms *kms, struct drm_crtc *crtc)
- static void dpu_kms_prepare_commit(struct msm_kms *kms,
- 		struct drm_atomic_state *state)
- {
--	struct dpu_kms *dpu_kms;
--	struct drm_device *dev;
- 	struct drm_crtc *crtc;
- 	struct drm_crtc_state *crtc_state;
- 	struct drm_encoder *encoder;
-@@ -276,8 +270,6 @@ static void dpu_kms_prepare_commit(struct msm_kms *kms,
- 
- 	if (!kms)
- 		return;
--	dpu_kms = to_dpu_kms(kms);
--	dev = dpu_kms->dev;
- 
- 	/* Call prepare_commit for all affected encoders */
- 	for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
-@@ -552,11 +544,8 @@ static long dpu_kms_round_pixclk(struct msm_kms *kms, unsigned long rate,
- 
- static void _dpu_kms_hw_destroy(struct dpu_kms *dpu_kms)
- {
--	struct drm_device *dev;
- 	int i;
- 
--	dev = dpu_kms->dev;
--
- 	if (dpu_kms->hw_intr)
- 		dpu_hw_intr_destroy(dpu_kms->hw_intr);
- 	dpu_kms->hw_intr = NULL;
-@@ -760,7 +749,6 @@ static int dpu_kms_hw_init(struct msm_kms *kms)
- {
- 	struct dpu_kms *dpu_kms;
- 	struct drm_device *dev;
--	struct msm_drm_private *priv;
- 	int i, rc = -EINVAL;
- 
- 	if (!kms) {
-@@ -770,7 +758,6 @@ static int dpu_kms_hw_init(struct msm_kms *kms)
- 
- 	dpu_kms = to_dpu_kms(kms);
- 	dev = dpu_kms->dev;
--	priv = dev->dev_private;
- 
- 	atomic_set(&dpu_kms->bandwidth_ref, 0);
- 
-@@ -1018,10 +1005,8 @@ static int __maybe_unused dpu_runtime_suspend(struct device *dev)
- 	int rc = -1;
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct dpu_kms *dpu_kms = platform_get_drvdata(pdev);
--	struct drm_device *ddev;
- 	struct dss_module_power *mp = &dpu_kms->mp;
- 
--	ddev = dpu_kms->dev;
- 	rc = msm_dss_enable_clk(mp->clk_config, mp->num_clk, false);
- 	if (rc)
- 		DPU_ERROR("clock disable failed rc:%d\n", rc);
 -- 
-2.17.1
-
+Baolin Wang
