@@ -2,134 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 512F2183323
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:32:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A216818332F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:33:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727647AbgCLOb5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 10:31:57 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:38276 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbgCLOb4 (ORCPT
+        id S1727641AbgCLOdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 10:33:12 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53012 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727505AbgCLOdM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 10:31:56 -0400
-Received: by mail-qk1-f194.google.com with SMTP id h14so6490606qke.5
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 07:31:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=8K1nRjda5Jf8KV6nORlPAQfyPeNMrEcZMVlTTaj3j5Q=;
-        b=P+QO3CVSGjhT46g+Gzae1jKKuDqsG0FTLyJ9AzZ6iS0mQ2BdQN1V52PQdbzAdhsjpo
-         xSdoCCn6GV9eKWhC9OBgMaJjMvS2gokcpxwqe1FpZv0/2RALmNqJpGATqfqzP2Rg4fpd
-         zdHj9sHtKxWVp3B68yxf0YHluBbr9EZZwkGy+BRP4IbCC3q5BgYZu6HU7isXrKD8D4W6
-         pVeXdyFc0N//hBnA3EWxoXKuW8PlSFrgipyU5fsj9LOIQ5jC8vJuWtbfiGIXa4KI03x0
-         lz1ffo8vKZKC3YR37ki3BzHZcuao5wRbbFqQijX4As0dyuZOk1gwpzlDrrG2J+56rVr9
-         3cxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8K1nRjda5Jf8KV6nORlPAQfyPeNMrEcZMVlTTaj3j5Q=;
-        b=Ce3E6Xs5FXZ9nefuWFBrXhAvMJklm/OCXXK14AbuKI3CNAH2V709RcWRKgRaH8F8ZK
-         uLKTck7eCjxfd16RwqTz3rGsncCdm1MQr1kW7xpJA0JM8UP1gFrbGzVp68+JKTvx3w7A
-         lG9z0QAI9q8JselpOlQtA6bfsfJ1x1Gd6vrvjUlSa9FjOpjB+Ao6WjvEy/EGwkhHOFHW
-         hTG1pbgHIGAy1epT0GcdvQU6dDeT1ln3CZJlN6MipOXBrBwZA8yAldZsKCSNwqNrJLXi
-         ARyHC+I6riyj3MTLKSdI14i3hAzBCwfEYxeEjQ6Cg26VoZfLYVsaBoA4TgpHX3Mvu5vk
-         t2uQ==
-X-Gm-Message-State: ANhLgQ0U/N1QyHwit+bMLiXHLOX5J/bcKkYCmRKvrcDCIhyaj5eFua0e
-        Cd77VCv1IWDmxu59eqTQnE3NXMij
-X-Google-Smtp-Source: ADFU+vtHwQ/KY53TSMzwr9IoQrmqbxKor/wsBaHgQdYXoM+NyU0OSRI10dDSiE7cTnpo3ghXhJlEBQ==
-X-Received: by 2002:a37:6ec7:: with SMTP id j190mr7658411qkc.301.1584023515356;
-        Thu, 12 Mar 2020 07:31:55 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id x19sm27017389qtm.47.2020.03.12.07.31.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2020 07:31:54 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 46EF840009; Thu, 12 Mar 2020 11:31:52 -0300 (-03)
-Date:   Thu, 12 Mar 2020 11:31:52 -0300
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] perf record: fix binding of AIO user space buffers to
- nodes
-Message-ID: <20200312143152.GA28601@kernel.org>
-References: <c7ea8ffe-1357-bf9e-3a89-1da1d8e9b75b@linux.intel.com>
+        Thu, 12 Mar 2020 10:33:12 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B9FC65F;
+        Thu, 12 Mar 2020 15:33:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1584023590;
+        bh=HcQB9Xy2uexkm38VBtX52etqOWXe+C3DlyJo4F6NXB4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ujwItTFWan1VCw9gjNez+hwU1uYE5Q8fFPGn+HqVz7GGlwFMCNWOrM82L2bmzrDaJ
+         yjHrilVwq8Xhi5XfevmbaYUeFl/mYXjdEiuUGJKSZN8LhwyVSeU9dDQTuoxShVda8q
+         M0GjH+zB5oAfoFeMhmdlaBMhiqgg8CT+Vmtsxwm4=
+Date:   Thu, 12 Mar 2020 16:33:07 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Vinay Simha BN <simhavcs@gmail.com>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] dt-binding: Add DSI/LVDS tc358775 bridge bindings
+Message-ID: <20200312143307.GC4876@pendragon.ideasonboard.com>
+References: <1583920112-2680-1-git-send-email-simhavcs@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c7ea8ffe-1357-bf9e-3a89-1da1d8e9b75b@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <1583920112-2680-1-git-send-email-simhavcs@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Mar 12, 2020 at 03:21:45PM +0300, Alexey Budankov escreveu:
+Hello Vinay,
+
+Please take into account the review comments from v1. We can discuss
+them in replies to v1 if you have any question. I'll skip reviewing this
+version.
+
+On Wed, Mar 11, 2020 at 03:18:24PM +0530, Vinay Simha BN wrote:
+> Add yaml documentation for DSI/LVDS tc358775 bridge
 > 
-> Correct maxnode parameter value passed to mbind() syscall to be
-> the amount of node mask bits to analyze plus 1. Dynamically allocate
-> node mask memory depending on the index of node of cpu being profiled.
-> Fixes: c44a8b44ca9f ("perf record: Bind the AIO user space buffers to nodes")
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+> Signed-off-by: Vinay Simha BN <simhavcs@gmail.com>
+> 
 > ---
->  tools/perf/util/mmap.c | 21 +++++++++++++++------
->  1 file changed, 15 insertions(+), 6 deletions(-)
+> v1:
+>  Initial version
+> ---
+>  .../bindings/display/bridge/toshiba-tc358775.yaml  | 174 +++++++++++++++++++++
+>  1 file changed, 174 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
 > 
-> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-> index 3b664fa673a6..6d604cd67a95 100644
-> --- a/tools/perf/util/mmap.c
-> +++ b/tools/perf/util/mmap.c
-> @@ -98,20 +98,29 @@ static int perf_mmap__aio_bind(struct mmap *map, int idx, int cpu, int affinity)
->  {
->  	void *data;
->  	size_t mmap_len;
-> -	unsigned long node_mask;
-> +	unsigned long *node_mask;
-> +	unsigned long node_index;
-> +	int err = 0;
->  
->  	if (affinity != PERF_AFFINITY_SYS && cpu__max_node() > 1) {
->  		data = map->aio.data[idx];
->  		mmap_len = mmap__mmap_len(map);
-> -		node_mask = 1UL << cpu__get_node(cpu);
-> -		if (mbind(data, mmap_len, MPOL_BIND, &node_mask, 1, 0)) {
-> -			pr_err("Failed to bind [%p-%p] AIO buffer to node %d: error %m\n",
-> -				data, data + mmap_len, cpu__get_node(cpu));
-> +		node_index = cpu__get_node(cpu);
-> +		node_mask = bitmap_alloc(node_index + 1);
-> +		if (!node_mask) {
-> +			pr_err("Failed to allocate node mask for mbind: error %m\n");
->  			return -1;
->  		}
-> +		set_bit(node_index, node_mask);
-> +		if (mbind(data, mmap_len, MPOL_BIND, node_mask, node_index + 1 + 1/*nr_bits + 1*/, 0)) {
-
-                                                                                  ^^^^^^^^^^^^^^
-										  Leftover?
-
-> +			pr_err("Failed to bind [%p-%p] AIO buffer to node %lu: error %m\n",
-> +				data, data + mmap_len, node_index);
-> +			err = -1;
-> +		}
-> +		bitmap_free(node_mask);
->  	}
->  
-> -	return 0;
-> +	return err;
->  }
->  #else /* !HAVE_LIBNUMA_SUPPORT */
->  static int perf_mmap__aio_alloc(struct mmap *map, int idx)
-> -- 
-> 2.24.1
-> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml b/Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
+> new file mode 100644
+> index 0000000..e9a9544
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
+> @@ -0,0 +1,174 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/bridge/toshiba-tc358775.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +
+> +title: Toshiba TC358775 DSI to LVDS bridge bindings
+> +
+> +maintainers:
+> +	- Vinay Simha BN <simhavcs@gmail.com>
+> +
+> +description: |
+> +	This binding supports DSI to LVDS bridge TC358775
+> +
+> +properties:
+> + compatible:
+> +	const: toshiba,tc358775
+> +
+> + reg:
+> +   maxItems: 1
+> +   description: i2c address of the bridge, 0x0f
+> +
+> + tc, dsi-lanes: 1
+> +   maxItems: 1
+> +   description: Number of DSI data lanes connected to the DSI host. It should
+> +  be one of 1, 2, 3 or 4.
+> +
+> + tc, dual-link: 1
+> +   maxItems: 1
+> +   description: To configure the LVDS transmitter either as single-link or dual-link.
+> +
+> + vdd-supply:
+> +   maxItems: 1
+> +   description:  1.2V LVDS Power Supply
+> +
+> + vddio-supply:
+> +   maxItems: 1
+> +   description: 1.8V IO Power Supply
+> +
+> + stby-gpios:
+> +   maxItems: 1
+> +   description: Standby pin, Low active
+> +
+> + reset-gpios:
+> +   maxItems: 1
+> +   description: Hardware reset, Low active
+> +
+> + ports:
+> +   type: object
+> +
+> +    properties:
+> +      port@0:
+> +        type: object
+> +        description: |
+> +          DSI Input. The remote endpoint phandle should be a
+> +	  reference to a valid mipi_dsi_host device node.
+> +      port@1:
+> +        type: object
+> +        description: |
+> +          Video port for LVDS output (panel or connector).
+> +
+> +      required:
+> +      - port@0
+> +      - port@1
+> +
+> +required:
+> + - compatible
+> + - reg
+> + - dsi-lanes
+> + - vdd-supply
+> + - vddio-supply
+> + - stby-gpios
+> + - reset-gpios
+> + - ports
+> +
+> +examples:
+> + - |
+> +   i2c@78b8000 {
+> +	/* On High speed expansion */
+> +	label = "HS-I2C2";
+> +	status = "okay";
+> +
+> +	tc_bridge: bridge@f {
+> +		status = "okay";
+> +
+> +		compatible = "toshiba,tc358775";
+> +		reg = <0x0f>;
+> +
+> +		tc,dsi-lanes = <4>;
+> +		tc,dual-link = <0>;
+> +
+> +		vdd-supply = <&pm8916_l2>;
+> +		vddio-supply = <&pm8916_l6>;
+> +
+> +		stby-gpio = <&msmgpio 99 GPIO_ACTIVE_LOW>;
+> +		reset-gpio = <&msmgpio 72 GPIO_ACTIVE_LOW>;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				d2l_in: endpoint {
+> +					remote-endpoint = <&dsi0_out>;
+> +				};
+> +			};
+> +
+> +			port@1 {
+> +				reg = <1>;
+> +				d2l_out: endpoint {
+> +					remote-endpoint = <&panel_in>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +  };
+> +
+> +  panel: auo,b101xtn01 {
+> +		status = "okay";
+> +		compatible = "auo,b101xtn01", "panel-lvds";
+> +		power-supply = <&pm8916_l14>;
+> +
+> +		width-mm = <223>;
+> +		height-mm = <125>;
+> +
+> +		data-mapping = "jeida-24";
+> +
+> +		panel-timing {
+> +			/* 1366x768 @60Hz */
+> +			clock-frequency = <72000000>;
+> +			hactive = <1366>;
+> +			vactive = <768>;
+> +			hsync-len = <70>;
+> +			hfront-porch = <20>;
+> +			hback-porch = <0>;
+> +			vsync-len = <42>;
+> +			vfront-porch = <14>;
+> +			vback-porch = <0>;
+> +		};
+> +
+> +		port {
+> +			panel_in: endpoint {
+> +				remote-endpoint = <&d2l_out>;
+> +			};
+> +		};
+> + };
+> +
+> +  mdss@1a00000 {
+> +	status = "okay";
+> +
+> +	mdp@1a01000 {
+> +		status = "okay";
+> +	};
+> +
+> +	dsi@1a98000 {
+> +		status = "okay";
+> +		..
+> +		ports {
+> +			port@1 {
+> +				dsi0_out: endpoint {
+> +					remote-endpoint = <&d2l_in>;
+> +					data-lanes = <0 1 2 3>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	dsi-phy@1a98300 {
+> +		status = "okay";
+> +		..
+> +	};
+> + };
 
 -- 
+Regards,
 
-- Arnaldo
+Laurent Pinchart
