@@ -2,71 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 180FC182769
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 04:26:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC55518276B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 04:26:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731555AbgCLD0O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 23:26:14 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:56914 "EHLO fornost.hmeau.com"
+        id S1731607AbgCLD0Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 23:26:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730913AbgCLD0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 23:26:14 -0400
-Received: from gwarestrin.me.apana.org.au ([192.168.0.7] helo=gwarestrin.arnor.me.apana.org.au)
-        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
-        id 1jCETp-0001y0-P7; Thu, 12 Mar 2020 14:25:54 +1100
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Thu, 12 Mar 2020 14:25:53 +1100
-Date:   Thu, 12 Mar 2020 14:25:53 +1100
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc:     Baolin Wang <baolin.wang@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Silvano Di Ninno <silvano.dininno@nxp.com>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v4 1/2] crypto: engine - support for parallel requests
-Message-ID: <20200312032553.GB19920@gondor.apana.org.au>
-References: <1583707893-23699-1-git-send-email-iuliana.prodan@nxp.com>
- <1583707893-23699-2-git-send-email-iuliana.prodan@nxp.com>
+        id S1730913AbgCLD0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 23:26:24 -0400
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B05620758;
+        Thu, 12 Mar 2020 03:26:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583983584;
+        bh=08jCRw8Qsj1MjgSuweg+nOPCezUdYX+IRjWXZqx9YBc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hzOFLFjg2PWhvcyUB4aLAMVeI5qLIAzUua4pwXOKzZYX3LXaGSyDcInJyq2cqMLc7
+         g727Gnz9pK9osugdw1h3volU8+VAuoy6OqxBHXzluVRgzdeEge8s46jQiOnwPBXXDa
+         R4Ck6zMNCMZHyzXyrA7idrS8QaOdpJi1ZJAovpoo=
+Received: by mail-wm1-f52.google.com with SMTP id g62so4638174wme.1;
+        Wed, 11 Mar 2020 20:26:23 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ03TDs59qYr0RPdWDkjUtDPskW+KCeJGkW2pl0DLl6EWewCskQL
+        qWVH4TaWHwAiGvWBwWWVW68It9LWoEHw5ZViggw=
+X-Google-Smtp-Source: ADFU+vv74O22275eZMI1PdvaJPZT0b+o0VzwOCB2XmgL16YTTbB4Y8QeGcErTTfFc2dfeiZjtHZvaLJaxKFiUACk2D0=
+X-Received: by 2002:a7b:c118:: with SMTP id w24mr2114631wmi.77.1583983582122;
+ Wed, 11 Mar 2020 20:26:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1583707893-23699-2-git-send-email-iuliana.prodan@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200310174709.24174-1-wens@kernel.org> <20200310181003.wgryf373em5zwlvb@gilmour.lan>
+In-Reply-To: <20200310181003.wgryf373em5zwlvb@gilmour.lan>
+From:   Chen-Yu Tsai <wens@kernel.org>
+Date:   Thu, 12 Mar 2020 11:26:08 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64MeW-qNLa9-ffCvRRYV9sa7FbM9R+c-8z40GW=FajOtQ@mail.gmail.com>
+Message-ID: <CAGb2v64MeW-qNLa9-ffCvRRYV9sa7FbM9R+c-8z40GW=FajOtQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] ARM: dts: sun8i: r40: fix SPI address and reorder nodes
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Chen-Yu Tsai <wens@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 12:51:32AM +0200, Iuliana Prodan wrote:
+On Wed, Mar 11, 2020 at 2:10 AM Maxime Ripard <maxime@cerno.tech> wrote:
 >
->  	ret = enginectx->op.do_one_request(engine, async_req);
-> -	if (ret) {
-> -		dev_err(engine->dev, "Failed to do one request from queue: %d\n", ret);
-> -		goto req_err;
-> +	can_enq_more = ret;
-> +	if (can_enq_more < 0) {
-> +		dev_err(engine->dev, "Failed to do one request from queue: %d\n",
-> +			ret);
-> +		goto req_err_1;
-> +	}
+> On Wed, Mar 11, 2020 at 01:47:06AM +0800, Chen-Yu Tsai wrote:
+> > From: Chen-Yu Tsai <wens@csie.org>
+> >
+> > Hi,
+> >
+> > Here are some fixes for the R40 device tree for v5.6. The base addresses
+> > for SPI2 and SPI3 were incorrect and are fixed. I also found some nodes
+> > were not added in the proper order, possibly because git matched the
+> > incorrect place when applying the patch. These are fixed as well.
+> >
+> > ChenYu
+>
+> Acked-by: Maxime Ripard <mripard@kernel.org>
 
-So this now includes the case of the hardware queue being full
-and the request needs to be queued until space opens up again.
-In this case, we should not do dev_err.  So you need to be able
-to distinguish between the hardware queue being full vs. a real
-fatal error on the request (e.g., out-of-memory or some hardware
-failure).
-
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Merged all three for v5.6 with Andre's Reviewed-by and a reported-by
+for the SPI address base patch.
