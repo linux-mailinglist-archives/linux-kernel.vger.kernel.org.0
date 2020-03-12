@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 125F6183219
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:52:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5989018321B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:52:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbgCLNw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:52:29 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46842 "EHLO
+        id S1727677AbgCLNwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:52:31 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46844 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727464AbgCLNvl (ORCPT
+        with ESMTP id S1727467AbgCLNvl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Mar 2020 09:51:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=NZY8LLu61qP3GV21cOZY0cQ5nNfPOQbo9ZX2uk33ydM=; b=JL9crViKZ2dd2guInTKAM0xXob
-        1KiU3WOzu1yVXW1bLDYxjiD9ZIVaDc+QttJPfAlKuio/DMVA5jYWXDA/dSec92pLr+nGspItBgmZt
-        stsso/sgpbUxd2JyzHQ0yC8kVlJqme26mUbHfXuH+srN7aiIVcM9KoYO1gt2GxPsVnW0zAc5QeSet
-        8oqjfTH9QVK31s8xWZpA1vX9c2+6M0FsCnCjom8QFWj9lZ8Jp1euzkrZh3mghNIKKBskwmqqXy56I
-        m4ZOxBLlVEB1lf4tMC9a9E0EP10E+7Axbs5X2U7OfTmk0mNHjxKy81VYgpv9zucWuUBWFGG4cDrAf
-        3Jfs4ysg==;
+        bh=IT3R/wnPJR6ANDGqxsHfySvScSEJgnsZS5Al5B69paY=; b=hQJ7wqr13PtnKd4paDMXZhysg8
+        s0k3Cl39ojI9FCFVFT6hxi2O6xk6GvD+S5ALAB2DPeN9nM4diJEDpNFrH2i0MzuFWFnjFkSlrgHah
+        9m9lBkWobcIbxp46vvr1HLd9Ljk2tqqjEUjzBySy3+e6a10hltQwlOhWel2vnk7XfMcxkUt4+k4HK
+        S19wO+SJmWvuWFD4XXTh4Ea19YQ+iduU3vtZHF0/ZXiAz4pf4+a5dYQTILRuThVQg9uqJXekE/3va
+        TWF4cJaIG7RHZlaZ/by1BfKvNMFR0jwP0rBXt2l27xDQ66iN3EzQcvdXW8Yu85mBB2RhYtR+MXcSi
+        kCVHxotg==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCOFO-0003Ac-B4; Thu, 12 Mar 2020 13:51:38 +0000
+        id 1jCOFO-0003Ae-BL; Thu, 12 Mar 2020 13:51:38 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 487A330704D;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5079D30705A;
         Thu, 12 Mar 2020 14:51:34 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 34A3A2B92DA13; Thu, 12 Mar 2020 14:51:34 +0100 (CET)
-Message-Id: <20200312135041.994956104@infradead.org>
+        id 3C1542B7403AA; Thu, 12 Mar 2020 14:51:34 +0100 (CET)
+Message-Id: <20200312135042.053418319@infradead.org>
 User-Agent: quilt/0.65
-Date:   Thu, 12 Mar 2020 14:41:17 +0100
+Date:   Thu, 12 Mar 2020 14:41:18 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, jpoimboe@redhat.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org
-Subject: [RFC][PATCH 10/16] objtool: Resize insn_hash
+Subject: [RFC][PATCH 11/16] objtool: Optimize find_symbol_by_name()
 References: <20200312134107.700205216@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,27 +47,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Perf shows we're spending a lot of time in find_insn() and the
-statistics show we have around 3.2 million instruction. Increase the
-hash table size to reduce the bucket load from around 50 to 3.
+Perf showed that find_symbol_by_name() takes time; add a symbol name
+hash.
 
-This shaves about 2s off of objtool on vmlinux.o runtime, down to 16s.
+This shaves another second off of objtool on vmlinux.o runtime, down
+to 15 seconds.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- tools/objtool/check.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/objtool/elf.c |   10 +++++-----
+ tools/objtool/elf.h |    2 ++
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
---- a/tools/objtool/check.h
-+++ b/tools/objtool/check.h
-@@ -50,7 +50,7 @@ struct instruction {
- struct objtool_file {
- 	struct elf *elf;
- 	struct list_head insn_list;
--	DECLARE_HASHTABLE(insn_hash, 16);
-+	DECLARE_HASHTABLE(insn_hash, 20);
- 	bool ignore_unreachables, c_file, hints, rodata;
- };
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -134,13 +134,11 @@ struct symbol *find_symbol_by_offset(str
  
+ struct symbol *find_symbol_by_name(struct elf *elf, const char *name)
+ {
+-	struct section *sec;
+ 	struct symbol *sym;
+ 
+-	list_for_each_entry(sec, &elf->sections, list)
+-		list_for_each_entry(sym, &sec->symbol_list, list)
+-			if (!strcmp(sym->name, name))
+-				return sym;
++	hash_for_each_possible(elf->symbol_name_hash, sym, name_hash, str_hash(name))
++		if (!strcmp(sym->name, name))
++			return sym;
+ 
+ 	return NULL;
+ }
+@@ -365,6 +363,7 @@ static int read_symbols(struct elf *elf)
+ 		list_add(&sym->list, entry);
+ 
+ 		hash_add(elf->symbol_hash, &sym->hash, sym->idx);
++		hash_add(elf->symbol_name_hash, &sym->name_hash, str_hash(sym->name));
+ 	}
+ 
+ 	if (stats)
+@@ -503,6 +502,7 @@ struct elf *elf_read(const char *name, i
+ 	memset(elf, 0, sizeof(*elf));
+ 
+ 	hash_init(elf->symbol_hash);
++	hash_init(elf->symbol_name_hash);
+ 	hash_init(elf->section_hash);
+ 	hash_init(elf->section_name_hash);
+ 	INIT_LIST_HEAD(&elf->sections);
+--- a/tools/objtool/elf.h
++++ b/tools/objtool/elf.h
+@@ -47,6 +47,7 @@ struct symbol {
+ 	struct list_head list;
+ 	struct rb_node node;
+ 	struct hlist_node hash;
++	struct hlist_node name_hash;
+ 	GElf_Sym sym;
+ 	struct section *sec;
+ 	char *name;
+@@ -77,6 +78,7 @@ struct elf {
+ 	char *name;
+ 	struct list_head sections;
+ 	DECLARE_HASHTABLE(symbol_hash, 20);
++	DECLARE_HASHTABLE(symbol_name_hash, 20);
+ 	DECLARE_HASHTABLE(section_hash, 16);
+ 	DECLARE_HASHTABLE(section_name_hash, 16);
+ };
 
 
