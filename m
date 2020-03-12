@@ -2,125 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 163B5182983
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 08:11:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 555CC18298F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 08:12:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388032AbgCLHLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 03:11:36 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:19009 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387767AbgCLHLg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 03:11:36 -0400
-X-IronPort-AV: E=Sophos;i="5.70,543,1574092800"; 
-   d="scan'208";a="86208522"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 12 Mar 2020 15:10:15 +0800
-Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id 6609250A997C;
-        Thu, 12 Mar 2020 15:00:14 +0800 (CST)
-Received: from G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) by
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
- (TLS) id 15.0.1395.4; Thu, 12 Mar 2020 15:10:10 +0800
-Received: from G08CNEXCHPEKD05.g08.fujitsu.local (10.167.33.203) by
- G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) with Microsoft SMTP Server
- (TLS) id 15.0.1395.4; Thu, 12 Mar 2020 15:10:09 +0800
-Received: from TEST.g08.fujitsu.local (10.167.226.147) by
- G08CNEXCHPEKD05.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1395.4 via Frontend Transport; Thu, 12 Mar 2020 15:10:08 +0800
-From:   Cao jin <caoj.fnst@cn.fujitsu.com>
-To:     <x86@kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>
-Subject: [RFC PATCH] x86/apic: Drop superfluous apic_phys
-Date:   Thu, 12 Mar 2020 15:10:07 +0800
-Message-ID: <20200312071007.3212-1-caoj.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.21.1
+        id S2388156AbgCLHMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 03:12:24 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11632 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388069AbgCLHMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 03:12:19 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id ED8102E6CF4DC1D5E059;
+        Thu, 12 Mar 2020 15:12:13 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.56) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.487.0; Thu, 12 Mar 2020 15:12:05 +0800
+From:   Huazhong Tan <tanhuazhong@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <linuxarm@huawei.com>, <kuba@kernel.org>,
+        Huazhong Tan <tanhuazhong@huawei.com>
+Subject: [PATCH net 0/4] net: hns3: fixes for -net
+Date:   Thu, 12 Mar 2020 15:11:02 +0800
+Message-ID: <1583997066-24773-1-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 6609250A997C.A7F72
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
-X-Spam-Status: No
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.56]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-apic_phys seems having totally the same meaning as mp_lapic_addr, except it is
-static, replace it.
+This series includes several bugfixes for the HNS3 ethernet driver.
 
-Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
----
-Not sure if there is still any corner case, but it boots fine.
+[patch 1] fixes an "tc qdisc del" failure.
+[patch 2] fixes SW & HW VLAN table not consistent issue.
+[patch 3] fixes a RMW issue related to VLAN filter switch.
+[patch 4] clears port based VLAN when uploading PF.
 
- arch/x86/kernel/apic/apic.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+Jian Shen (3):
+  net: hns3: fix VF VLAN table entries inconsistent issue
+  net: hns3: fix RMW issue for VLAN filter switch
+  net: hns3: clear port base VLAN when unload PF
 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 5f973fed3c9f..5b7b59951421 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -199,8 +199,6 @@ unsigned int lapic_timer_period = 0;
- 
- static void apic_pm_activate(void);
- 
--static unsigned long apic_phys __ro_after_init;
--
- /*
-  * Get the LAPIC version
-  */
-@@ -1170,7 +1168,7 @@ void clear_local_APIC(void)
- 	u32 v;
- 
- 	/* APIC hasn't been mapped yet */
--	if (!x2apic_mode && !apic_phys)
-+	if (!x2apic_mode && !mp_lapic_addr)
- 		return;
- 
- 	maxlvt = lapic_get_maxlvt();
-@@ -1261,7 +1259,7 @@ void apic_soft_disable(void)
- void disable_local_APIC(void)
- {
- 	/* APIC hasn't been mapped yet */
--	if (!x2apic_mode && !apic_phys)
-+	if (!x2apic_mode && !mp_lapic_addr)
- 		return;
- 
- 	apic_soft_disable();
-@@ -2111,14 +2109,12 @@ void __init init_apic_mappings(void)
- 		pr_info("APIC: disable apic facility\n");
- 		apic_disable();
- 	} else {
--		apic_phys = mp_lapic_addr;
--
- 		/*
- 		 * If the system has ACPI MADT tables or MP info, the LAPIC
- 		 * address is already registered.
- 		 */
- 		if (!acpi_lapic && !smp_found_config)
--			register_lapic_address(apic_phys);
-+			register_lapic_address(mp_lapic_addr);
- 	}
- 
- 	/*
-@@ -2874,11 +2870,11 @@ early_param("apic", apic_set_verbosity);
- 
- static int __init lapic_insert_resource(void)
- {
--	if (!apic_phys)
-+	if (!mp_lapic_addr)
- 		return -1;
- 
- 	/* Put local APIC into the resource map. */
--	lapic_resource.start = apic_phys;
-+	lapic_resource.start = mp_lapic_addr;
- 	lapic_resource.end = lapic_resource.start + PAGE_SIZE - 1;
- 	insert_resource(&iomem_resource, &lapic_resource);
- 
+Yonglong Liu (1):
+  net: hns3: fix "tc qdisc del" failed issue
+
+ drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h    |  1 +
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  2 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 43 ++++++++++++++++++++--
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c |  1 +
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |  3 ++
+ 5 files changed, 45 insertions(+), 5 deletions(-)
+
 -- 
-2.21.1
-
-
+2.7.4
 
