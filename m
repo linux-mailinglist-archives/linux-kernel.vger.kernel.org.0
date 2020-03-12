@@ -2,83 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B3CD18274E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 04:12:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B9A6182754
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 04:14:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387688AbgCLDMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 23:12:02 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:39320 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387453AbgCLDMC (ORCPT
+        id S2387714AbgCLDOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 23:14:33 -0400
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:39593 "EHLO
+        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387453AbgCLDOc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 23:12:02 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02C3Bp2g146961;
-        Thu, 12 Mar 2020 03:11:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2020-01-29;
- bh=OYSuTOTjcPPFisULBlKET82iKgFLW3T6hyi+6amkn/g=;
- b=n2xdJFi95ly0jcbHuXT/wIozg0BWQraJIdgxNCOi1DY8qhoBp7LWFq9R8GXAk4Yyf1yd
- 3KiBbk3yBCPyakxAFz81RKKyYLwQk5cFjsHqjqYrsKseiSXbLWBWEudZ43sULoVsJElW
- WZIDYBy1hrQd1Z/3bty2nbS33LqbzG7ZtT8tIQOGBUt2TDHZ0Uy0irJ2T4vaBt+hwB3o
- j/xwavaqG3bDyQxmP3iV+CSY2rTJlTPACIZY3G4oq9dZFJ/vMI5eygkf9HznEKbY7hOa
- 0GYCkn/eKCHAqE/wRfsWzy/PKXmR9nVVLvSK7c9Xs1ggx9lJlUN7hTGBm6h7MxjWd3yY pA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2ym31uq4j3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Mar 2020 03:11:51 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02C38Wg8114916;
-        Thu, 12 Mar 2020 03:11:51 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2yp8qy921m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Mar 2020 03:11:51 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02C3BoOg023419;
-        Thu, 12 Mar 2020 03:11:50 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 11 Mar 2020 20:11:49 -0700
-To:     John Garry <john.garry@huawei.com>
-Cc:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Luo Jiaxing <luojiaxing@huawei.com>
-Subject: Re: [PATCH] scsi: hisi_sas: Use dev_err() in read_iost_itct_cache_v3_hw()
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1583940144-230800-1-git-send-email-john.garry@huawei.com>
-Date:   Wed, 11 Mar 2020 23:11:47 -0400
-In-Reply-To: <1583940144-230800-1-git-send-email-john.garry@huawei.com> (John
-        Garry's message of "Wed, 11 Mar 2020 23:22:24 +0800")
-Message-ID: <yq1sgie9si4.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        Wed, 11 Mar 2020 23:14:32 -0400
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.47])
+        by mailout.west.internal (Postfix) with ESMTP id 30DA28BB;
+        Wed, 11 Mar 2020 23:14:31 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute7.internal (MEProxy); Wed, 11 Mar 2020 23:14:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=xGzQ7xg6V2hzCeYDub4RmkUI42g
+        VfxcqitmM4leDLF0=; b=bKW0JsLci/UuxZ8NG9T7lPpuouSF/34YF7Yfd5ilSsV
+        gci44yDu+Npb6ka+qY88kNSDzEFDUpGveWwjd9SpK6lwhgtCSMUL85Zt0dgrUtTa
+        CjvJbsOvQBq8DlppW+C/iHTMtssKsbEwzWvFl5wR/0aZDONjlXI7MuH15Vp1mFaL
+        P6UJNv+O8Gxtku3aDXU8lIE5XCMMDbkOczNvGJUQBaBsirqfnnOiRtS+8w7gG541
+        HXjg6ZIERlo4b0EMZ0wfXdhiwMWMWXoPUMN+X6i622oNkU+YfUFzMxGnsd/ysZWK
+        q4EVFA+pkDjgLXSXUVuX9Srl0GPTgT56WzR7TZC+fKA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=xGzQ7x
+        g6V2hzCeYDub4RmkUI42gVfxcqitmM4leDLF0=; b=p8Aa5YdWGRhi+9UBpt1Hmn
+        VzH5XIxjvcBdXEXDvNjWF1veIXqW6TwyVqvBQNAJZ9+9J5EKlZHup6TVB/G4xLFx
+        1xYaIW8z4GtDv415xvLhGuVsAAgH9aATGHzhGQD10B2jA0j5rzY/KhtAjyzXnaco
+        a0e6xk/pX7a2bDbFXcgG1jw5eji+CbvxsWy/nCgMJJbGlIMMWGmwf491zyoge/U6
+        ioF8oYx1h2Merc+/wK9PYiRx79INf2RYdc3B8gfZ3LIMLb+o3r0gMtiuUUu7iItN
+        5C1zhglmDcUypQ6dK/PxUKuMOoCu2Rt5ie0wWTuOMaqWbGiHfDYC48rlYjHvBZ3w
+        ==
+X-ME-Sender: <xms:FalpXliC84yMbBozwweHQ5DU_tGI5CgiWjwIei9ybMQFCXFlN9ML8Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedruddvgedgieelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefrvghtvghr
+    ucfjuhhtthgvrhgvrhcuoehpvghtvghrrdhhuhhtthgvrhgvrhesfihhohdqthdrnhgvth
+    eqnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgnecukfhppeduudejrddv
+    tddrjedurddutdelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepphgvthgvrhdrhhhuthhtvghrvghrseifhhhoqdhtrdhnvght
+X-ME-Proxy: <xmx:FalpXvKDSF5Vq22QhiYb8IKRsaMUJ_l7NM08kJbrEJEJ0E-oFQ2zVw>
+    <xmx:FalpXoBxVUcpkMgb15CExhXefQ8flS_eh0ne-kkLmnMy_77MynyucA>
+    <xmx:FalpXgScpvjGWkQ2llPBEfoDnC9tjikMD5Y96ClFg_O8CHriVynKLQ>
+    <xmx:FqlpXqiSD1BuajlLZNQNNWO0imwLEVK_1wFHkyDHfgr29QnZZCoBDQ>
+Received: from jelly (117-20-71-109.751447.bne.nbn.aussiebb.net [117.20.71.109])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 24ACE30611FB;
+        Wed, 11 Mar 2020 23:14:26 -0400 (EDT)
+Date:   Thu, 12 Mar 2020 13:14:22 +1000
+From:   Peter Hutterer <peter.hutterer@who-t.net>
+To:     Andrew Duggan <aduggan@synaptics.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Paul Hollinsky <phollinsky@holtechnik.com>,
+        Christopher Heiny <Cheiny@synaptics.com>,
+        Lucas Stach <l.stach@pengutronix.de>, kernel@pengutronix.de,
+        patchwork-lst@pengutronix.de
+Subject: Re: [PATCH] Input: synaptics-rmi4 - Do not set reduced reporting
+ mode thresholds are not set by the driver
+Message-ID: <20200312031422.GA1823643@jelly>
+References: <20200312005549.29922-1-aduggan@synaptics.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9557 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0 mlxscore=0
- adultscore=0 suspectscore=0 bulkscore=0 spamscore=0 mlxlogscore=798
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003120014
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9557 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 lowpriorityscore=0
- spamscore=0 priorityscore=1501 impostorscore=0 bulkscore=0 suspectscore=0
- phishscore=0 mlxlogscore=875 mlxscore=0 malwarescore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003120014
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200312005549.29922-1-aduggan@synaptics.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Andrew,
 
-John,
+On Wed, Mar 11, 2020 at 05:55:49PM -0700, Andrew Duggan wrote:
+> The previous patch "c5ccf2ad3d33 (Input: synaptics-rmi4 - switch to
+> reduced reporting mode)" enabled reduced reporting mode unintentionally
+> on some devices, if the firmware was configured with default Delta X/Y
+> threshold values. The result unintentionally degrade the performance of
+> some touchpads.
 
-> The print of pr_err() does not come with device information, so
-> replace it with dev_err(). Also improve the grammar in the message.
+could this be the cause of a stuttering cursor on a P50 as well?
+A recording in the issue below shows the cursor moving by ~25 units per
+event, regardless of the time between those events.
+https://gitlab.freedesktop.org/libinput/libinput/issues/448
 
-Applied to 5.7/scsi-queue, thanks!
+thanks!
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Cheers,
+   Peter
+
+> This patch checks to see that the driver is modifying the delta X/Y
+> thresholds before modifying the reporting mode.
+> 
+> Signed-off-by: Andrew Duggan <aduggan@synaptics.com>
+> ---
+>  drivers/input/rmi4/rmi_f11.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/input/rmi4/rmi_f11.c b/drivers/input/rmi4/rmi_f11.c
+> index 6adea8a3e8fb..ffa39ab153f2 100644
+> --- a/drivers/input/rmi4/rmi_f11.c
+> +++ b/drivers/input/rmi4/rmi_f11.c
+> @@ -1203,8 +1203,8 @@ static int rmi_f11_initialize(struct rmi_function *fn)
+>  	 * If distance threshold values are set, switch to reduced reporting
+>  	 * mode so they actually get used by the controller.
+>  	 */
+> -	if (ctrl->ctrl0_11[RMI_F11_DELTA_X_THRESHOLD] ||
+> -	    ctrl->ctrl0_11[RMI_F11_DELTA_Y_THRESHOLD]) {
+> +	if (sensor->axis_align.delta_x_threshold ||
+> +	    sensor->axis_align.delta_y_threshold) {
+>  		ctrl->ctrl0_11[0] &= ~RMI_F11_REPORT_MODE_MASK;
+>  		ctrl->ctrl0_11[0] |= RMI_F11_REPORT_MODE_REDUCED;
+>  	}
+> -- 
+> 2.20.1
+> 
