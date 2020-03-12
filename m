@@ -2,162 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18265183A25
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 21:03:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 345BA183A33
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 21:07:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbgCLUDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 16:03:46 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:59305 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726483AbgCLUDo (ORCPT
+        id S1726882AbgCLUHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 16:07:06 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54107 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726114AbgCLUHF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 16:03:44 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id EF867389;
-        Thu, 12 Mar 2020 16:03:42 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 12 Mar 2020 16:03:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=u/9dibYxL56wS
-        DkUFjjFnl2n24SOzknBdPH4frj5N3U=; b=ENvdF+Sgt7gz7f41/S9F7NfoVknZD
-        b3ZV92KQFoP8zM0bdMuoYPky7hDlc/n78d6uEgGoSpmNIKiUTYGqokrDFnDtILqD
-        kTvYpSYQlBNoHP0AqIgO5pa1+odrqBwC4jPt1fAlFxAOaeqg3jXdizRc5r7LElla
-        C0N8muKO2TXD24nIqXZTnpDdHZSgdduLkkzczH0RVPxN/WnBgJyMAnBySjNRsr0R
-        KTTN7guo3xD0ytU5V+5R/4CQ/8F9p/e7u6F5nfdaKYM4srLuQH47bnuoWJHnvA4X
-        T5fxnF7Y2SUaBFlhbI3AF9c6+SQSNvYswjiXZSn8xwOoSMkXaJgePX7kA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=u/9dibYxL56wSDkUFjjFnl2n24SOzknBdPH4frj5N3U=; b=XSQZPIvS
-        CDuAexPY51TQweBJusJYe8/kYIF32eNEN4t0BtrtrPzVkU5qRxhnO+FMP1CKei1M
-        IV5yULqou3apxpm8ADWfwwA47UsRj7TyY88tshNjItG5PWntty9wxtICw0zxJPLK
-        9oJxsWJFiQ7oIlY3hbR85wF1A3GiRGp8hM5n3FFTIUiSwCYC2CxEDJQK/+NcArZ9
-        3SjlKdyabA2QnGI3jD1+J1A9iR1Ii4ZBC9Vu2lnmJoc8ljYYSzZf09mR97mM++F4
-        vdgn/wOt0nejSiOlorWPEtw29Tj9g/3hSg0xcfTNJaLVzKiL9MZe9OA5miej6F8/
-        UpUyJvRwz5Lrsg==
-X-ME-Sender: <xms:npVqXqFm9r2OfDZH33nQmf_OxYXX4fo7K9JCX2wasB3PniuA6W0zHQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedruddvhedgudefgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecufghrlhcuvffnffculdejtddmnecujfgurhephf
-    fvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeffrghnihgvlhcuighuuceo
-    ugiguhesugiguhhuuhdrgiihiieqnecukfhppeduieefrdduudegrddufedvrdegnecuve
-    hluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomhepugiguhesugig
-    uhhuuhdrgiihii
-X-ME-Proxy: <xmx:npVqXs6VOK8wVeNFL4XuLfYgHb8XbdH3S8m7X2zT2LuleZtMU-fulA>
-    <xmx:npVqXjZzIXYh45jNzObgf3cLsl-4dC4Xc9sE2rL13i7R38u7uWXWHA>
-    <xmx:npVqXqhjh440iWjZ8MwYiFnY48c7YW7DG2mJ2BA6yl1VqEygriln_Q>
-    <xmx:npVqXjrpc_CVNB0kMkQP1L1XqcEJhKNEDsHhM4_G6pG4G2VQLTJqscZgVIQ>
-Received: from dlxu-fedora-R90QNFJV.thefacebook.com (unknown [163.114.132.4])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 4B8C630614B1;
-        Thu, 12 Mar 2020 16:03:41 -0400 (EDT)
-From:   Daniel Xu <dxu@dxuuu.xyz>
-To:     cgroups@vger.kernel.org, tj@kernel.org, lizefan@huawei.com,
-        hannes@cmpxchg.org, viro@zeniv.linux.org.uk
-Cc:     Daniel Xu <dxu@dxuuu.xyz>, shakeelb@google.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, kernel-team@fb.com
-Subject: [PATCH v3 4/4] cgroupfs: Support user xattrs
-Date:   Thu, 12 Mar 2020 13:03:17 -0700
-Message-Id: <20200312200317.31736-5-dxu@dxuuu.xyz>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200312200317.31736-1-dxu@dxuuu.xyz>
-References: <20200312200317.31736-1-dxu@dxuuu.xyz>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 12 Mar 2020 16:07:05 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 25so7520333wmk.3;
+        Thu, 12 Mar 2020 13:07:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:in-reply-to:references;
+        bh=oVJZ06Uat8mghcu7FmlV2FCnZk1gGTm1Au0/PhDgTnc=;
+        b=PjKn4NjkuLiy7uWakk8HvhwWjS1OXn5oxiCD9mtJRTQ8OlPVnZk70yx+b7yYhseQrj
+         Gh1WVF6zuwIAwbE6U1zpM8evpUKpcqjf0Bk+0oSF8E6UVjuqQV6m+MyxbC8QAzGdVxyB
+         gYuhOyMLXB3Hzjpx7dkBLswfazkSX/j+M8sWv3zCr+AEmISa/z/NE3qLjrWOtznzbp4w
+         OTSgG83s7qXf5ypTh9yLQ6xWnv0cjpUKcxC2XuTeqrQdvk64V7PDm/qMdcKKDvn+RGtA
+         duVRq9WqEr87kW0q+1/jCJbsBANvk6NWU0fejP6uSPbzJYKBZY4Pw+/G2aF0NERW+fzX
+         XyTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references;
+        bh=oVJZ06Uat8mghcu7FmlV2FCnZk1gGTm1Au0/PhDgTnc=;
+        b=nCKfY+Z0woxhfCM3o8XRTUGDXPyuEKyEVaH1CCClc1brmGlsyxZJ2l2t0LShK3oYpL
+         u/zNGGvyprIpI+ojbK/UmpLoe5TnVUVjqsYetBBftEoaUPeStXj9h2KDa/i5RwDvgmCF
+         zrChOncvqAURgtsWtPz4lYg3v+J7LIGYOr2EMtz3rnC7E0OM+hgUgUTvo4Ln7yVp5IrW
+         K9WUkmGxNZDTs8wOu4iHfaie1I9Pg5FosS71/nF3RuEpkbgMmA8we2t2hGGVRhz9Q2zY
+         aKLf8xaJbRr/UAgjge7LaubmGEE8gJlTu6Sm5v8cXy4fS9g2s0pmpsVpCZ8VnWfn1cn8
+         J7hQ==
+X-Gm-Message-State: ANhLgQ06I8tviVAl6gt5OhZ6acBqAZoPeHJNdQXyF6rx6IKZRcAE40WY
+        uo6WLYEHawMfCXrJWY4kiBNwTb9B
+X-Google-Smtp-Source: ADFU+vvVXeFdPNIKq+5cMb0R2iF5gaF0tUh2Ro93R4QnS32tWw4dVHH1UygFTwc2lyHDAKyIy5y32Q==
+X-Received: by 2002:a1c:5502:: with SMTP id j2mr5138310wmb.93.1584043623255;
+        Thu, 12 Mar 2020 13:07:03 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id k18sm26530240wru.94.2020.03.12.13.06.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2020 13:07:01 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     bcm-kernel-feedback-list@broadcom.com,
+        Nick Hudson <skrll@netbsd.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: bcm2835-rpi-zero-w: Add missing pinctrl name
+Date:   Thu, 12 Mar 2020 13:06:57 -0700
+Message-Id: <20200312200658.4524-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200312090345.8352-1-skrll@netbsd.org>
+References: <20200312090345.8352-1-skrll@netbsd.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch turns on xattr support for cgroupfs. This is useful for
-letting non-root owners of delegated subtrees attach metadata to
-cgroups.
+On Thu, 12 Mar 2020 09:03:45 +0000, Nick Hudson <skrll@netbsd.org> wrote:
+> Define the sdhci pinctrl state as "default" so it gets applied
+> correctly and to match all other RPis.
+> 
+> Fixes: 2c7c040c73e9 ("ARM: dts: bcm2835: Add Raspberry Pi Zero W")
+> Signed-off-by: Nick Hudson <skrll@netbsd.org>
+> ---
 
-One use case is for subtree owners to tell a userspace out of memory
-killer to bias away from killing specific subtrees.
-
-Tests:
-
-    [/sys/fs/cgroup]# for i in $(seq 0 130); \
-        do setfattr workload.slice -n user.name$i -v wow; done
-    setfattr: workload.slice: No space left on device
-    setfattr: workload.slice: No space left on device
-    setfattr: workload.slice: No space left on device
-
-    [/sys/fs/cgroup]# for i in $(seq 0 130); \
-        do setfattr workload.slice --remove user.name$i; done
-    setfattr: workload.slice: No such attribute
-    setfattr: workload.slice: No such attribute
-    setfattr: workload.slice: No such attribute
-
-    [/sys/fs/cgroup]# for i in $(seq 0 130); \
-        do setfattr workload.slice -n user.name$i -v wow; done
-    setfattr: workload.slice: No space left on device
-    setfattr: workload.slice: No space left on device
-    setfattr: workload.slice: No space left on device
-
-`seq 0 130` is inclusive, and 131 - 128 = 3, which is the number of
-errors we expect to see.
-
-    [/data]# cat testxattr.c
-    #include <sys/types.h>
-    #include <sys/xattr.h>
-    #include <stdio.h>
-    #include <stdlib.h>
-
-    int main() {
-      char name[256];
-      char *buf = malloc(64 << 10);
-      if (!buf) {
-        perror("malloc");
-        return 1;
-      }
-
-      for (int i = 0; i < 4; ++i) {
-        snprintf(name, 256, "user.bigone%d", i);
-        if (setxattr("/sys/fs/cgroup/system.slice", name, buf,
-                     64 << 10, 0)) {
-          printf("setxattr failed on iteration=%d\n", i);
-          return 1;
-        }
-      }
-
-      return 0;
-    }
-
-    [/data]# ./a.out
-    setxattr failed on iteration=2
-
-    [/data]# ./a.out
-    setxattr failed on iteration=0
-
-    [/sys/fs/cgroup]# setfattr -x user.bigone0 system.slice/
-    [/sys/fs/cgroup]# setfattr -x user.bigone1 system.slice/
-
-    [/data]# ./a.out
-    setxattr failed on iteration=2
-
-Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
----
- kernel/cgroup/cgroup.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 7a39dc882095..ae1d808c0b9b 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1954,7 +1954,8 @@ int cgroup_setup_root(struct cgroup_root *root, u16 ss_mask)
- 
- 	root->kf_root = kernfs_create_root(kf_sops,
- 					   KERNFS_ROOT_CREATE_DEACTIVATED |
--					   KERNFS_ROOT_SUPPORT_EXPORTOP,
-+					   KERNFS_ROOT_SUPPORT_EXPORTOP |
-+					   KERNFS_ROOT_SUPPORT_USER_XATTR,
- 					   root_cgrp);
- 	if (IS_ERR(root->kf_root)) {
- 		ret = PTR_ERR(root->kf_root);
--- 
-2.21.1
-
+Applied to devicetree/fixes, thanks!
+--
+Florian
