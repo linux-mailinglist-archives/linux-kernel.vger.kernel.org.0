@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0E0A18386A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 19:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED70318386C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 19:18:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbgCLSRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 14:17:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51950 "EHLO mail.kernel.org"
+        id S1726986AbgCLSRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 14:17:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726362AbgCLSRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 14:17:05 -0400
+        id S1726599AbgCLSRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 14:17:06 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CCA020739;
-        Thu, 12 Mar 2020 18:17:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09AF92073B;
+        Thu, 12 Mar 2020 18:17:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584037024;
-        bh=fjI+R94EzQwA0tEzSeSTDZ6iCR8SFLgPUT9TV/qWp/I=;
+        s=default; t=1584037025;
+        bh=8csvVhRW3l5KCsMDr6QYUn3YY8DNKrig/Br59Zsgyso=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OPl4FBaD4RxZgn6w4mnc5Ojw6IN77nJImoLIGzaEMcDvhk+DMAQlbUJEJRaG3GjIq
-         bEfKXcAeYDev7NmleS8DmFy1q8C88NV3N0aimUij1wtfW3yS+Qbefgx1hvwfh989ld
-         HG78uAvFJsOhPTwWqfqN+q5SvSrKWiYTaBmdDWa0=
+        b=zUOWK6m2oCPce5Zcj5hEAhQGIF/dz9Zo7wrRTl1/JXfyQS90EQoAs+oqFFW5L9SZC
+         RT+sD7HaVJDt3YhIWuIBa74IM0uh24/BeWSYLXIfT8b4hZo6MjRF9rssLA2Ib8CEOC
+         AVxL7KmXQ34FEQYjwcx3sLFhVLPs5y8WQ7YfttDY=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -32,9 +32,9 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH RFC tip/core/rcu 02/16] rcu: Add per-task state to RCU CPU stall warnings
-Date:   Thu, 12 Mar 2020 11:16:48 -0700
-Message-Id: <20200312181702.8443-2-paulmck@kernel.org>
+Subject: [PATCH RFC tip/core/rcu 03/16] rcutorture: Add flag to produce non-busy-wait task stalls
+Date:   Thu, 12 Mar 2020 11:16:49 -0700
+Message-Id: <20200312181702.8443-3-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20200312181618.GA21271@paulmck-ThinkPad-P72>
 References: <20200312181618.GA21271@paulmck-ThinkPad-P72>
@@ -45,85 +45,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-Currently, an RCU-preempt CPU stall warning simply lists the PIDs of
-those tasks holding up the current grace period.  This can be helpful,
-but more can be even more helpful.
+This commit aids testing of RCU task stall warning messages by adding
+an rcutorture.stall_cpu_block module parameter that results in the
+induced stall sleeping within the RCU read-side critical section.
+Spinning with interrupts disabled is still available via the
+rcutorture.stall_cpu_irqsoff module parameter, and specifying neither
+of these two module parameters will spin with preemption disabled.
 
-To this end, this commit adds the nesting level, whether the task
-things it was preempted in its current RCU read-side critical section,
-whether RCU core has asked this task for a quiescent state, whether the
-expedited-grace-period hint is set, and whether the task believes that
-it is on the blocked-tasks list (it must be, or it would not be printed,
-but if things are broken, best not to take too much for granted).
+Note that sleeping (as opposed to preemption) results in additional
+complaints from RCU at context-switch time, so yet more testing.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/tree_stall.h | 38 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 36 insertions(+), 2 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  5 +++++
+ kernel/rcu/rcutorture.c                         | 13 ++++++++-----
+ 2 files changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-index 502b4dd..6de5a5b 100644
---- a/kernel/rcu/tree_stall.h
-+++ b/kernel/rcu/tree_stall.h
-@@ -192,14 +192,39 @@ static void rcu_print_detail_task_stall_rnp(struct rcu_node *rnp)
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- }
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 6d16b78..17eff15 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4161,6 +4161,11 @@
+ 			Duration of CPU stall (s) to test RCU CPU stall
+ 			warnings, zero to disable.
  
-+// Communicate task state back to the RCU CPU stall warning request.
-+struct rcu_stall_chk_rdr {
-+	struct task_struct *t;
-+	int nesting;
-+	union rcu_special rs;
-+	bool on_blkd_list;
-+};
++	rcutorture.stall_cpu_block= [KNL]
++			Sleep while stalling if set.  This will result
++			in warnings from preemptible RCU in addition
++			to any other stall-related activity.
 +
-+/*
-+ * Report out the state of a not-running task that is stalling the
-+ * current RCU grace period.
-+ */
-+static void check_slow_task(void *arg)
-+{
-+	struct rcu_node *rnp;
-+	struct rcu_stall_chk_rdr *rscrp = arg;
-+	struct task_struct *t = rscrp->t;
-+
-+	rscrp->nesting = t->rcu_read_lock_nesting;
-+	rscrp->rs = t->rcu_read_unlock_special;
-+	rnp = t->rcu_blocked_node;
-+	rscrp->on_blkd_list = !list_empty(&t->rcu_node_entry);
-+}
-+
- /*
-  * Scan the current list of tasks blocked within RCU read-side critical
-  * sections, printing out the tid of each.
+ 	rcutorture.stall_cpu_holdoff= [KNL]
+ 			Time to wait (s) after boot before inducing stall.
+ 
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index b3301f3..f75d466 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -102,6 +102,7 @@ torture_param(int, stall_cpu, 0, "Stall duration (s), zero to disable.");
+ torture_param(int, stall_cpu_holdoff, 10,
+ 	     "Time to wait before starting stall (s).");
+ torture_param(int, stall_cpu_irqsoff, 0, "Disable interrupts while stalling.");
++torture_param(int, stall_cpu_block, 0, "Sleep while stalling.");
+ torture_param(int, stat_interval, 60,
+ 	     "Number of seconds between stats printk()s");
+ torture_param(int, stutter, 5, "Number of seconds to run/halt test");
+@@ -1599,6 +1600,7 @@ static int rcutorture_booster_init(unsigned int cpu)
   */
- static int rcu_print_task_stall(struct rcu_node *rnp)
+ static int rcu_torture_stall(void *args)
  {
--	struct task_struct *t;
- 	int ndetected = 0;
-+	struct rcu_stall_chk_rdr rscr;
-+	struct task_struct *t;
++	int idx;
+ 	unsigned long stop_at;
  
- 	if (!rcu_preempt_blocked_readers_cgp(rnp))
- 		return 0;
-@@ -208,7 +233,16 @@ static int rcu_print_task_stall(struct rcu_node *rnp)
- 	t = list_entry(rnp->gp_tasks->prev,
- 		       struct task_struct, rcu_node_entry);
- 	list_for_each_entry_continue(t, &rnp->blkd_tasks, rcu_node_entry) {
--		pr_cont(" P%d", t->pid);
-+		rscr.t = t;
-+		if (!try_invoke_on_nonrunning_task(t, check_slow_task, &rscr))
-+			pr_cont(" P%d", t->pid);
-+		else
-+			pr_cont(" P%d/%d:%c%c%c%c",
-+				t->pid, rscr.nesting,
-+				".b"[rscr.rs.b.blocked],
-+				".q"[rscr.rs.b.need_qs],
-+				".e"[rscr.rs.b.exp_hint],
-+				".l"[rscr.on_blkd_list]);
- 		ndetected++;
+ 	VERBOSE_TOROUT_STRING("rcu_torture_stall task started");
+@@ -1610,21 +1612,22 @@ static int rcu_torture_stall(void *args)
+ 	if (!kthread_should_stop()) {
+ 		stop_at = ktime_get_seconds() + stall_cpu;
+ 		/* RCU CPU stall is expected behavior in following code. */
+-		rcu_read_lock();
++		idx = cur_ops->readlock();
+ 		if (stall_cpu_irqsoff)
+ 			local_irq_disable();
+-		else
++		else if (!stall_cpu_block)
+ 			preempt_disable();
+ 		pr_alert("rcu_torture_stall start on CPU %d.\n",
+ 			 smp_processor_id());
+ 		while (ULONG_CMP_LT((unsigned long)ktime_get_seconds(),
+ 				    stop_at))
+-			continue;  /* Induce RCU CPU stall warning. */
++			if (stall_cpu_block)
++				schedule_timeout_uninterruptible(HZ);
+ 		if (stall_cpu_irqsoff)
+ 			local_irq_enable();
+-		else
++		else if (!stall_cpu_block)
+ 			preempt_enable();
+-		rcu_read_unlock();
++		cur_ops->readunlock(idx);
+ 		pr_alert("rcu_torture_stall end.\n");
  	}
- 	pr_cont("\n");
+ 	torture_shutdown_absorb("rcu_torture_stall");
 -- 
 2.9.5
 
