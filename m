@@ -2,93 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E049E1826F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 03:09:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C8C9182701
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 03:20:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387630AbgCLCJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 22:09:42 -0400
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:28050 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387501AbgCLCJm (ORCPT
+        id S2387664AbgCLCUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 22:20:23 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:35854 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387655AbgCLCUW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 22:09:42 -0400
-Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 11 Mar 2020 19:09:41 -0700
-Received: from gurus-linux.qualcomm.com ([10.46.162.81])
-  by ironmsg05-sd.qualcomm.com with ESMTP; 11 Mar 2020 19:09:40 -0700
-Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
-        id BF0874B66; Wed, 11 Mar 2020 19:09:40 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 19:09:40 -0700
-From:   Guru Das Srinagesh <gurus@codeaurora.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v8 01/12] clk: pwm: Use 64-bit division function
-Message-ID: <20200312020938.GA14827@codeaurora.org>
-References: <cover.1583889178.git.gurus@codeaurora.org>
- <338966686a673c241905716c90049993e7bb7d6a.1583889178.git.gurus@codeaurora.org>
- <7506bc2972324fd286dac6327ec73a3a@AcuMS.aculab.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7506bc2972324fd286dac6327ec73a3a@AcuMS.aculab.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Wed, 11 Mar 2020 22:20:22 -0400
+Received: by mail-pf1-f202.google.com with SMTP id h125so2766759pfg.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 19:20:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=rcj6bBjC8eeTo0oFTOG03100dOPRd+sT+MeVFj1k6mA=;
+        b=TN0Hk9Vlr9nUe66Kfks1oZvflGet0NTOh+FTOaukrvmsiQhyz1hkirVE+pcJxrjokZ
+         tWHYqt2TtIzz6QyFRErqrCDZwcVWklLYXQZDzeVDAuhDgfxSOz+cAALYjVcLaf318zoq
+         rYRp9b3Mr5gbqIBu20VCBrksnpjvymocYkKKwwqzWWzy6vCuxvYc7jRZ122sol6tkEG2
+         JNxlRbJeYLeThZ2E8c/nXi5wrlyGbVPjq+WstnjMY3t5Fed27YW9+Thl1iVkflatHe0O
+         HLpcY2gt0NQUocPF6a1eJLfZkrCYL8h/SStFxJXpeH74sZTNpuxv1c21ofZyHAWGZMfT
+         iLZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=rcj6bBjC8eeTo0oFTOG03100dOPRd+sT+MeVFj1k6mA=;
+        b=qY/sOB6T+nWg5eSOYY+UkT5AndW/uEnlYc/uRobCK+DgleR8p58TMA+YACAM8DJmYl
+         m88pBxpLGc7S2VPia0eGc+zgCLZltsm5YBBuCy0+oUPqoQZl5voRUgeaD06OG4j5Zuhu
+         UwSwJQ8sm7KIYR+zADZxhmVoPBEaN2vNC/QE7KsBypOr4XnsoT3+HqVsQROmA9Ujqtt8
+         D5Gpwi8TrauCXevfsp/MVnAQkmwKkbiLw9XwJIkl/jZC95iLa7czM+TsZfN00DtMQOfE
+         Yvs1kEUtmonun5Pcvo1RAiR+fij9ZcJfPkOq3U4jbC3TBP720VJq0RCMNeYJSW+B3uMH
+         Rx5Q==
+X-Gm-Message-State: ANhLgQ3DRE+8+hGLmAHG9GhJxjFjYnlxajubXNHVxgQHYYRg+owbbixp
+        pStrKRPAtb+QSNMzqprn3/2nP48DpIg0ug==
+X-Google-Smtp-Source: ADFU+vt1IpdsKjnyDHOBBFNJ/1UpXWbObj4AfBQQ8ULIYIUPaCwDt98YX8rrJ9mZbbobHSxkLh4ho/ykSS30ew==
+X-Received: by 2002:a17:90a:cf0c:: with SMTP id h12mr1679625pju.164.1583979619855;
+ Wed, 11 Mar 2020 19:20:19 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 19:20:14 -0700
+Message-Id: <20200311191939.v2.1.I12c0712e93f74506385b67c6df287658c8fdad04@changeid>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+Subject: [PATCH v2] Bluetooth: clean up connection in hci_cs_disconnect
+From:   Manish Mandlik <mmandlik@google.com>
+To:     marcel@holtmann.org
+Cc:     Alain Michaud <alainm@chromium.org>,
+        linux-bluetooth@vger.kernel.org,
+        Miao-chen Chou <mcchou@chromium.org>,
+        Joseph Hwang <josephsih@chromium.org>,
+        Yoni Shavit <yshavit@chromium.org>,
+        Manish Mandlik <mmandlik@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jakub Kicinski <kuba@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 04:58:24PM +0000, David Laight wrote:
-> From: Guru Das Srinagesh
-> > Sent: 11 March 2020 01:41
-> > 
-> > Since the PWM framework is switching struct pwm_args.period's datatype
-> > to u64, prepare for this transition by using div64_u64 to handle a
-> > 64-bit divisor.
-> > 
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: linux-clk@vger.kernel.org
-> > 
-> > Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
-> > ---
-> >  drivers/clk/clk-pwm.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
-> > index 87fe0b0e..7b1f7a0 100644
-> > --- a/drivers/clk/clk-pwm.c
-> > +++ b/drivers/clk/clk-pwm.c
-> > @@ -89,7 +89,7 @@ static int clk_pwm_probe(struct platform_device *pdev)
-> >  	}
-> > 
-> >  	if (of_property_read_u32(node, "clock-frequency", &clk_pwm->fixed_rate))
-> > -		clk_pwm->fixed_rate = NSEC_PER_SEC / pargs.period;
-> > +		clk_pwm->fixed_rate = div64_u64(NSEC_PER_SEC, pargs.period);
-> 
-> That cannot be needed, a 32 bit division is fine.
+From: Joseph Hwang <josephsih@chromium.org>
 
-Could you please explain why? I think the use of this function is
-warranted in order to handle the division properly with a 64-bit
-divisor.
+In bluetooth core specification 4.2,
+Vol 2, Part E, 7.8.9 LE Set Advertise Enable Command, it says
 
-> More interesting would be whether pargs.period is sane (eg not zero).
+    The Controller shall continue advertising until ...
+    or until a connection is created or ...
+    In these cases, advertising is then disabled.
 
-There is a non-zero check for pargs.period just prior to this line, so
-the code is handling this case already.
+Hence, advertising would be disabled before a connection is
+established. In current kernel implementation, advertising would
+be re-enabled when all connections are terminated.
 
-> I'd assign pargs.period to an 'unsigned int' variable
-> prior to the division (I hate casts - been bitten by them in the past.).
+The correct disconnection flow looks like
 
-Wouldn't this truncate the 64-bit value? The intention behind this patch
-is to allow the processing of 64-bit values in full.
+  < HCI Command: Disconnect
 
-Thank you.
+  > HCI Event: Command Status
+      Status: Success
 
-Guru Das.
+  > HCI Event: Disconnect Complete
+      Status: Success
+
+Specifically, the last Disconnect Complete Event would trigger a
+callback function hci_event.c:hci_disconn_complete_evt() to
+cleanup the connection and re-enable advertising when proper.
+
+However, sometimes, there might occur an exception in the controller
+when disconnection is being executed. The disconnection flow might
+then look like
+
+  < HCI Command: Disconnect
+
+  > HCI Event: Command Status
+      Status: Unknown Connection Identifier
+
+  Note that "> HCI Event: Disconnect Complete" is missing when such an
+exception occurs. This would result in advertising staying disabled
+forever since the connection in question is not cleaned up correctly.
+
+To fix the controller exception issue, we need to do some connection
+cleanup when the disconnect command status indicates an error.
+
+Signed-off-by: Joseph Hwang <josephsih@chromium.org>
+Signed-off-by: Manish Mandlik <mmandlik@google.com>
+---
+
+Changes in v2:
+- Moved "u8 type" declaration inside if block
+
+ net/bluetooth/hci_event.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+index a40ed31f6eb8f..a116114279107 100644
+--- a/net/bluetooth/hci_event.c
++++ b/net/bluetooth/hci_event.c
+@@ -2202,10 +2202,22 @@ static void hci_cs_disconnect(struct hci_dev *hdev, u8 status)
+ 	hci_dev_lock(hdev);
+ 
+ 	conn = hci_conn_hash_lookup_handle(hdev, __le16_to_cpu(cp->handle));
+-	if (conn)
++	if (conn) {
++		u8 type = conn->type;
++
+ 		mgmt_disconnect_failed(hdev, &conn->dst, conn->type,
+ 				       conn->dst_type, status);
+ 
++		/* If the disconnection failed for any reason, the upper layer
++		 * does not retry to disconnect in current implementation.
++		 * Hence, we need to do some basic cleanup here and re-enable
++		 * advertising if necessary.
++		 */
++		hci_conn_del(conn);
++		if (type == LE_LINK)
++			hci_req_reenable_advertising(hdev);
++	}
++
+ 	hci_dev_unlock(hdev);
+ }
+ 
+-- 
+2.25.1.481.gfbce0eb801-goog
+
