@@ -2,151 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98ABA183B6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 22:35:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99CBF183BD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 22:59:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbgCLVf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 17:35:29 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42596 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbgCLVf3 (ORCPT
+        id S1726733AbgCLV7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 17:59:05 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40892 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726513AbgCLV7E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 17:35:29 -0400
-Received: by mail-ed1-f65.google.com with SMTP id n18so9344678edw.9;
-        Thu, 12 Mar 2020 14:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w1zcQ0pwsk6Sv5HkuPglXPmgpcyE2cmpz+kIS0DS4nw=;
-        b=Ns03hq698c5nJGC7j/6c5N9u3dyz/UKqOCtYtrfKIIrjDDTWfxUyd2jEas6KNqlSmI
-         Ld+BKVByi4vsTqlmcAENsFHkbaraOdhSfotILQOcUREF4Wr8Gvch7+9HK/pW48ygG9N9
-         zP9ub4iFy6Oq+NeRdx1ceKEDkdlpyrLpL5HSY0AnNqDioQDmFwlSC2FFeWVTCSlsGPg9
-         hiLLtO0NsC0jVvy2RP1EaRwB9D4U4lGYVFxmN05EKPV76oRZ4r36Ttk73BzYsg7uy3vC
-         ph8W4hF6XzQSy8FczqEZ8QyVw3G/uExf9L8sYjfjKS8wzdZz224ncurQFa6PKElVa6D1
-         C+hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w1zcQ0pwsk6Sv5HkuPglXPmgpcyE2cmpz+kIS0DS4nw=;
-        b=szMqfQiWsShxXw4Gbif1FedP+rhR1a2GfUT81T7DYX1taUkJzGsZqDpoSnj81JApm8
-         jZORb92zT7ps3Yd9+xTQj4J/11KHVV+45fqfmWhNEmtqA2QZzBIfP19KcI6IPJpJIdap
-         NHlhOMBUdycFj2v5/zHlGBdOx3KI9gMgqMf9FD9YHEdABpTY/O8ttrHh67zwX8+y1Anp
-         bBzGVO8ywP7/345dsbWdGSVS9A5SHQW/UNbOSQHU+KhWNQP9j81NGZkVjeo/WGMZ6rJF
-         X86VgJnyLZueRjy/NyHuAcb/RQt0tnm3lYh8Kqsz4TnxwO6aufeyma1+ObmV9Fi52/nT
-         /5Iw==
-X-Gm-Message-State: ANhLgQ15xqXzA/YqGzuGN0S2hfcCs4E9TiAjwLFkBNEtrVhCAbP800X7
-        0C81YUuc5x5vhSZ/X6GV2lkwMLvHrS/0+ybFVnE=
-X-Google-Smtp-Source: ADFU+vsiyvjYIkOLbK9gTV05LGSSgyCx7Z0cDMbSZLbMQjbrdyinTU8gUMl1VUDmDLUkNlpuLq769IWuinYNYh/M5kg=
-X-Received: by 2002:a05:6402:1c0c:: with SMTP id ck12mr10249138edb.145.1584048926737;
- Thu, 12 Mar 2020 14:35:26 -0700 (PDT)
+        Thu, 12 Mar 2020 17:59:04 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02CLrCd5018716;
+        Thu, 12 Mar 2020 17:58:41 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yquesjwfw-23
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Mar 2020 17:58:41 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02CLYri9007977;
+        Thu, 12 Mar 2020 21:36:14 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma02dal.us.ibm.com with ESMTP id 2yqt6q9d6m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Mar 2020 21:36:13 +0000
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02CLaCQB41222408
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Mar 2020 21:36:12 GMT
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 908A86E04E;
+        Thu, 12 Mar 2020 21:36:12 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 30B9F6E04C;
+        Thu, 12 Mar 2020 21:36:11 +0000 (GMT)
+Received: from oc6857751186.ibm.com (unknown [9.160.72.189])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 12 Mar 2020 21:36:10 +0000 (GMT)
+Subject: Re: [PATCH -next] PCI: rpaphp: remove set but not used variable
+ 'value'
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Chen Zhou <chenzhou10@huawei.com>
+Cc:     paulus@samba.org, mpe@ellerman.id.au,
+        linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200312144157.GA110750@google.com>
+From:   Tyrel Datwyler <tyreld@linux.ibm.com>
+Message-ID: <f2297ff2-5ba7-da38-4630-0b8f6af4dea6@linux.ibm.com>
+Date:   Thu, 12 Mar 2020 14:36:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200312164320.22349-1-michael@walle.cc>
-In-Reply-To: <20200312164320.22349-1-michael@walle.cc>
-From:   Vladimir Oltean <olteanv@gmail.com>
-Date:   Thu, 12 Mar 2020 23:35:15 +0200
-Message-ID: <CA+h21hoHMxtxUjHthx2ta9CzQbkF_08Svi7wLU99NqJmoEr36Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] net: dsa: felix: allow the device to be disabled
-To:     Michael Walle <michael@walle.cc>
-Cc:     "moderated list:ARM/Mediatek SoC support" 
-        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200312144157.GA110750@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-12_15:2020-03-11,2020-03-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 phishscore=0
+ mlxlogscore=999 spamscore=0 priorityscore=1501 mlxscore=0 adultscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003120107
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Mar 2020 at 18:44, Michael Walle <michael@walle.cc> wrote:
->
-> If there is no specific configuration of the felix switch in the device
-> tree, but only the default configuration (ie. given by the SoCs dtsi
-> file), the probe fails because no CPU port has been set. On the other
-> hand you cannot set a default CPU port because that depends on the
-> actual board using the switch.
->
-> [    2.701300] DSA: tree 0 has no CPU port
-> [    2.705167] mscc_felix 0000:00:00.5: Failed to register DSA switch: -22
-> [    2.711844] mscc_felix: probe of 0000:00:00.5 failed with error -22
->
-> Thus let the device tree disable this device entirely, like it is also
-> done with the enetc driver of the same SoC.
->
-> Signed-off-by: Michael Walle <michael@walle.cc>
-> ---
->  drivers/net/dsa/ocelot/felix.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/net/dsa/ocelot/felix.c b/drivers/net/dsa/ocelot/felix.c
-> index 69546383a382..531c7710063f 100644
-> --- a/drivers/net/dsa/ocelot/felix.c
-> +++ b/drivers/net/dsa/ocelot/felix.c
-> @@ -699,6 +699,11 @@ static int felix_pci_probe(struct pci_dev *pdev,
->         struct felix *felix;
->         int err;
->
-> +       if (pdev->dev.of_node && !of_device_is_available(pdev->dev.of_node)) {
-> +               dev_info(&pdev->dev, "device is disabled, skipping\n");
-> +               return -ENODEV;
-> +       }
-> +
+On 3/12/20 7:41 AM, Bjorn Helgaas wrote:
+> On Thu, Mar 12, 2020 at 09:38:02AM -0500, Bjorn Helgaas wrote:
+>> On Thu, Mar 12, 2020 at 10:04:12PM +0800, Chen Zhou wrote:
+>>> Fixes gcc '-Wunused-but-set-variable' warning:
+>>>
+>>> drivers/pci/hotplug/rpaphp_core.c: In function is_php_type:
+>>> drivers/pci/hotplug/rpaphp_core.c:291:16: warning:
+>>> 	variable value set but not used [-Wunused-but-set-variable]
+>>>
+>>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>>> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+>>
+>> Michael, if you want this:
+>>
+>> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+>>
+>> If you don't mind, edit the subject to follow the convention, e.g.,
+>>
+>>   PCI: rpaphp: Remove unused variable 'value'
+>>
+>> Apparently simple_strtoul() is deprecated and we're supposed to use
+>> kstrtoul() instead.  Looks like kstrtoul() might simplify the code a
+>> little, too, e.g.,
+>>
+>>   if (kstrtoul(drc_type, 0, &value) == 0)
+>>     return 1;
+>>
+>>   return 0;
+> 
+> I guess there are several other uses of simple_strtoul() in this file.
+> Not sure if it's worth changing them all, just this one, or just the
+> patch below as-is.
 
-IMHO since DSA is already dependent on device tree for PHY bindings,
-it would make more sense to move this there:
+If we are going to change one might as well do them all at once. If the original
+submitter wants to send the follow up that is fine, or I can send a patch when I
+have a minute.
 
-diff --git a/net/dsa/dsa2.c b/net/dsa/dsa2.c
-index e7c30b472034..f7ca01d93928 100644
---- a/net/dsa/dsa2.c
-+++ b/net/dsa/dsa2.c
-@@ -878,7 +878,7 @@ static int dsa_switch_probe(struct dsa_switch *ds)
-        if (!ds->num_ports)
-                return -EINVAL;
+-Tyrel
 
--       if (np) {
-+       if (np && of_device_is_available(np)) {
-                err = dsa_switch_parse_of(ds, np);
-                if (err)
-                        dsa_switch_release_ports(ds);
+> 
+>>> ---
+>>>  drivers/pci/hotplug/rpaphp_core.c | 3 +--
+>>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
+>>> index e408e40..5d871ef 100644
+>>> --- a/drivers/pci/hotplug/rpaphp_core.c
+>>> +++ b/drivers/pci/hotplug/rpaphp_core.c
+>>> @@ -288,11 +288,10 @@ EXPORT_SYMBOL_GPL(rpaphp_check_drc_props);
+>>>  
+>>>  static int is_php_type(char *drc_type)
+>>>  {
+>>> -	unsigned long value;
+>>>  	char *endptr;
+>>>  
+>>>  	/* PCI Hotplug nodes have an integer for drc_type */
+>>> -	value = simple_strtoul(drc_type, &endptr, 10);
+>>> +	simple_strtoul(drc_type, &endptr, 10);
+>>>  	if (endptr == drc_type)
+>>>  		return 0;
+>>>  
+>>> -- 
+>>> 2.7.4
+>>>
 
-so that we could enforce more uniform behavior across device drivers.
-Then you might want to make felix shut up:
-
-diff --git a/drivers/net/dsa/ocelot/felix.c b/drivers/net/dsa/ocelot/felix.c
-index 35124ef7e75b..fbd17fa94bff 100644
---- a/drivers/net/dsa/ocelot/felix.c
-+++ b/drivers/net/dsa/ocelot/felix.c
-@@ -712,10 +712,8 @@ static int felix_pci_probe(struct pci_dev *pdev,
-        felix->ds = ds;
-
-        err = dsa_register_switch(ds);
--       if (err) {
--               dev_err(&pdev->dev, "Failed to register DSA switch: %d\n", err);
-+       if (err)
-                goto err_register_ds;
--       }
-
-        return 0;
-
-This has the disadvantage of not printing the "nice" "device is
-disabled, skipping" message (useless in my opinion), but the advantage
-of also shutting up on -EPROBE_DEFER.
-
->         err = pci_enable_device(pdev);
->         if (err) {
->                 dev_err(&pdev->dev, "device enable failed\n");
-> --
-> 2.20.1
->
-
-Thanks,
--Vladimir
