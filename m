@@ -2,129 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CF16183997
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 20:35:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13C0E183988
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 20:34:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbgCLTfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 15:35:42 -0400
-Received: from mga05.intel.com ([192.55.52.43]:45962 "EHLO mga05.intel.com"
+        id S1726913AbgCLTeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 15:34:19 -0400
+Received: from mga07.intel.com ([134.134.136.100]:62293 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726523AbgCLTfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 15:35:42 -0400
+        id S1726569AbgCLTeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 15:34:17 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 12:35:42 -0700
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 12:34:16 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,545,1574150400"; 
-   d="scan'208";a="243142775"
-Received: from unknown (HELO pbossart-mobl3.amr.corp.intel.com) ([10.251.241.169])
-  by orsmga003.jf.intel.com with ESMTP; 12 Mar 2020 12:35:39 -0700
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Hui Wang <hui.wang@canonical.com>,
-        Rander Wang <rander.wang@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Zhu Yingjiang <yingjiang.zhu@linux.intel.com>,
-        Keyon Jie <yang.jie@linux.intel.com>,
-        Pan Xiuli <xiuli.pan@linux.intel.com>,
-        Fred Oh <fred.oh@linux.intel.com>
-Subject: [PATCH 10/10] Asoc: SOF: Intel: hda: check SoundWire wakeen interrupt in irq thread
-Date:   Thu, 12 Mar 2020 14:33:46 -0500
-Message-Id: <20200312193346.3264-11-pierre-louis.bossart@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200312193346.3264-1-pierre-louis.bossart@linux.intel.com>
-References: <20200312193346.3264-1-pierre-louis.bossart@linux.intel.com>
+   d="scan'208";a="261629956"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 12 Mar 2020 12:34:15 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jCTaw-0005kF-MK; Fri, 13 Mar 2020 03:34:14 +0800
+Date:   Fri, 13 Mar 2020 03:33:54 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:x86/cpu] BUILD SUCCESS
+ 753039ef8b2f1078e5bff8cd42f80578bf6385b0
+Message-ID: <5e6a8ea2.3vMOoXpDr0MgnaW3%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rander Wang <rander.wang@intel.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  x86/cpu
+branch HEAD: 753039ef8b2f1078e5bff8cd42f80578bf6385b0  x86/cpu/amd: Call init_amd_zn() om Family 19h processors too
 
-If pci device is in D0, wakeen interrupt will be
-aggregated at cAVS level as interrupt. This commit
-check the wakeen status and process it in irq thread
+elapsed time: 485m
 
-Signed-off-by: Rander Wang <rander.wang@intel.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+configs tested: 158
+configs skipped: 106
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                               defconfig
+sparc                            allyesconfig
+mips                      fuloong2e_defconfig
+sparc64                           allnoconfig
+c6x                              allyesconfig
+mips                      malta_kvm_defconfig
+s390                          debug_defconfig
+s390                       zfcpdump_defconfig
+i386                              allnoconfig
+i386                             alldefconfig
+i386                             allyesconfig
+i386                                defconfig
+ia64                             alldefconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                                defconfig
+c6x                        evmc6678_defconfig
+nios2                         10m50_defconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
+openrisc                 simple_smp_defconfig
+xtensa                       common_defconfig
+xtensa                          iss_defconfig
+alpha                               defconfig
+csky                                defconfig
+nds32                             allnoconfig
+nds32                               defconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                       m5475evb_defconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+arc                              allyesconfig
+arc                                 defconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+powerpc                             defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allmodconfig
+mips                              allnoconfig
+mips                             allyesconfig
+parisc                            allnoconfig
+parisc                           allyesconfig
+parisc                generic-32bit_defconfig
+parisc                generic-64bit_defconfig
+x86_64               randconfig-a001-20200312
+x86_64               randconfig-a002-20200312
+x86_64               randconfig-a003-20200312
+i386                 randconfig-a001-20200312
+i386                 randconfig-a002-20200312
+i386                 randconfig-a003-20200312
+alpha                randconfig-a001-20200312
+m68k                 randconfig-a001-20200312
+mips                 randconfig-a001-20200312
+nds32                randconfig-a001-20200312
+parisc               randconfig-a001-20200312
+c6x                  randconfig-a001-20200312
+h8300                randconfig-a001-20200312
+microblaze           randconfig-a001-20200312
+nios2                randconfig-a001-20200312
+sparc64              randconfig-a001-20200312
+csky                 randconfig-a001-20200312
+openrisc             randconfig-a001-20200312
+s390                 randconfig-a001-20200312
+sh                   randconfig-a001-20200312
+xtensa               randconfig-a001-20200312
+x86_64               randconfig-b001-20200311
+x86_64               randconfig-b002-20200311
+x86_64               randconfig-b003-20200311
+i386                 randconfig-b001-20200311
+i386                 randconfig-b002-20200311
+i386                 randconfig-b003-20200311
+x86_64               randconfig-c001-20200311
+x86_64               randconfig-c002-20200311
+x86_64               randconfig-c003-20200311
+i386                 randconfig-c001-20200311
+i386                 randconfig-c002-20200311
+i386                 randconfig-c003-20200311
+x86_64               randconfig-c001-20200312
+x86_64               randconfig-c002-20200312
+x86_64               randconfig-c003-20200312
+i386                 randconfig-c001-20200312
+i386                 randconfig-c002-20200312
+i386                 randconfig-c003-20200312
+x86_64               randconfig-e003-20200312
+i386                 randconfig-e003-20200312
+i386                 randconfig-e002-20200312
+x86_64               randconfig-e002-20200312
+x86_64               randconfig-e001-20200312
+i386                 randconfig-e001-20200312
+x86_64               randconfig-f001-20200312
+x86_64               randconfig-f002-20200312
+x86_64               randconfig-f003-20200312
+i386                 randconfig-f001-20200312
+i386                 randconfig-f002-20200312
+i386                 randconfig-f003-20200312
+i386                 randconfig-g003-20200312
+i386                 randconfig-g001-20200312
+x86_64               randconfig-g003-20200312
+x86_64               randconfig-g002-20200312
+x86_64               randconfig-g001-20200312
+i386                 randconfig-g002-20200312
+x86_64               randconfig-h001-20200312
+x86_64               randconfig-h002-20200312
+x86_64               randconfig-h003-20200312
+i386                 randconfig-h001-20200312
+i386                 randconfig-h002-20200312
+i386                 randconfig-h003-20200312
+arm                  randconfig-a001-20200312
+arm64                randconfig-a001-20200312
+ia64                 randconfig-a001-20200312
+powerpc              randconfig-a001-20200312
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                                defconfig
+sh                               allmodconfig
+sh                                allnoconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+sparc                               defconfig
+sparc64                          allmodconfig
+sparc64                          allyesconfig
+sparc64                             defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
+
 ---
- sound/soc/sof/intel/hda.c | 16 ++++++++++++++++
- sound/soc/sof/intel/hda.h |  6 ++++++
- 2 files changed, 22 insertions(+)
-
-diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
-index 9c7a816183b6..b5206dc4607a 100644
---- a/sound/soc/sof/intel/hda.c
-+++ b/sound/soc/sof/intel/hda.c
-@@ -241,6 +241,19 @@ static irqreturn_t hda_dsp_sdw_thread(int irq, void *context)
- 	return sdw_intel_thread(irq, context);
- }
- 
-+static bool hda_sdw_check_wakeen_irq(struct snd_sof_dev *sdev)
-+{
-+	struct sof_intel_hda_dev *hdev;
-+
-+	hdev = sdev->pdata->hw_pdata;
-+	if (hdev->sdw &&
-+	    snd_sof_dsp_read(sdev, HDA_DSP_BAR,
-+			     HDA_DSP_REG_SNDW_WAKE_STS))
-+		return true;
-+
-+	return false;
-+}
-+
- void hda_sdw_process_wakeen(struct snd_sof_dev *sdev)
- {
- 	struct sof_intel_hda_dev *hdev;
-@@ -685,6 +698,9 @@ static irqreturn_t hda_dsp_interrupt_thread(int irq, void *context)
- 	if (hda_dsp_check_sdw_irq(sdev))
- 		hda_dsp_sdw_thread(irq, hdev->sdw);
- 
-+	if (hda_sdw_check_wakeen_irq(sdev))
-+		hda_sdw_process_wakeen(sdev);
-+
- 	/* enable GIE interrupt */
- 	snd_sof_dsp_update_bits(sdev, HDA_DSP_HDA_BAR,
- 				SOF_HDA_INTCTL,
-diff --git a/sound/soc/sof/intel/hda.h b/sound/soc/sof/intel/hda.h
-index 69717a38913c..53f563aa782d 100644
---- a/sound/soc/sof/intel/hda.h
-+++ b/sound/soc/sof/intel/hda.h
-@@ -234,6 +234,7 @@
- #define HDA_DSP_REG_ADSPIS2		(HDA_DSP_GEN_BASE + 0x14)
- 
- #define HDA_DSP_REG_ADSPIS2_SNDW	BIT(5)
-+#define HDA_DSP_REG_SNDW_WAKE_STS      0x2C192
- 
- /* Intel HD Audio Inter-Processor Communication Registers */
- #define HDA_DSP_IPC_BASE		0x40
-@@ -710,6 +711,11 @@ static inline irqreturn_t hda_dsp_sdw_thread(int irq, void *context)
- 	return IRQ_HANDLED;
- }
- 
-+static inline bool hda_sdw_check_wakeen_irq(struct snd_sof_dev *sdev)
-+{
-+	return false;
-+}
-+
- static inline void hda_sdw_process_wakeen(struct snd_sof_dev *sdev)
- {
- }
--- 
-2.20.1
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
