@@ -2,95 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D35F3182705
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 03:22:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAE94182708
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 03:28:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387682AbgCLCWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 22:22:12 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34258 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387501AbgCLCWM (ORCPT
+        id S2387658AbgCLC15 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 22:27:57 -0400
+Received: from smtprelay0140.hostedemail.com ([216.40.44.140]:43998 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387608AbgCLC14 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 22:22:12 -0400
-Received: by mail-oi1-f193.google.com with SMTP id g6so4007540oiy.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 19:22:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:reply-to:mime-version
-         :content-disposition:user-agent;
-        bh=QDfEy2KOrmUWhesuf+lQpYADP8RXEp5zI9wZ50uQ7Yk=;
-        b=vTmw5SUc8ejOLwyQuz78a+gHP0+hcPEIGgwM//iGnKqtg49IfDJCEjiTN3B3Tfby6j
-         iLRVzS8T6NU9WAqWzRUUVz3pXio78rDw/Alb4Hzio/Zo4c5sbBnPUhIhg4l0qxgRVTKo
-         MCnJr1BLr4nngGfCadm9Wst9/8SpBoCXt20mYV+6wXOG1fx8drdEBLO0rA+QGN80na9q
-         1IbBHHk5DWUv/Us2Szy5EIrmckUhZBHLhs2oR927EfsvEWCCcZIToXwXCNhsmR4WyPEH
-         JJdt/q7UEDvEqelPsl12rtHA8F3KL39CLYdyG3P0vXmris8hLe/mQjfGeGQ7rrUdu3wS
-         kKpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :reply-to:mime-version:content-disposition:user-agent;
-        bh=QDfEy2KOrmUWhesuf+lQpYADP8RXEp5zI9wZ50uQ7Yk=;
-        b=YuxCszPf3jvAlQRfCQHf1PiFltcPQVKNV8Gcum2QZrPjO+hxe6DpGtmm/L0rtxg1GI
-         sPNMTn8V5hsmtr/k64ciijEZDNv0a1K7MpsT2RoKCcloR8X0CXNw12D94WdkEboE9ItB
-         V+pMo+PUoyMMsadzSrb+TIetqDdaHVfPbqL77xdK68Cebr22QOBma8RSW7/KzCPaAxuz
-         1fxfSnOYr6C2uC4eHO+W2VZ9aGIL7S3U7DZ6WjROg2LGzesTkoibE0tVXbE1/f3cDiel
-         q44mncYNyhqyu2ZiHDzNaDTZfa+6x8aXns2ULIS41bBUkrkh6xsvsT1QBIRt6E6FeSEU
-         0qnA==
-X-Gm-Message-State: ANhLgQ2A8tyGX9E/H12Dsc/VcAvYrqLTGbO2eXVXccbVr8T1s81hX18N
-        NcQIhS3aUkEoUhSyBd6gOytbb8Q=
-X-Google-Smtp-Source: ADFU+vtlgwvaCigi7XW+CZdEW7bqs/N8beI0ckfUhBWeMJOvjzcm1suhobv5PWyjIj6wEt3i0lUlkQ==
-X-Received: by 2002:a54:4099:: with SMTP id i25mr1106085oii.129.1583979731384;
-        Wed, 11 Mar 2020 19:22:11 -0700 (PDT)
-Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
-        by smtp.gmail.com with ESMTPSA id b16sm878469oov.1.2020.03.11.19.22.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 19:22:10 -0700 (PDT)
-Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:7426:b01e:9a0e:899a])
-        by serve.minyard.net (Postfix) with ESMTPSA id 9C72C18000D;
-        Thu, 12 Mar 2020 02:22:09 +0000 (UTC)
-Date:   Wed, 11 Mar 2020 21:22:08 -0500
-From:   Corey Minyard <minyard@acm.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        openipmi-developer@lists.sourceforge.net,
-        John Donnelly <john.p.donnelly@oracle.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [GIT PULL] IPMI bug fixe for 5.6
-Message-ID: <20200312022208.GH2822@minyard.net>
-Reply-To: minyard@acm.org
+        Wed, 11 Mar 2020 22:27:56 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id D282A75BA;
+        Thu, 12 Mar 2020 02:27:55 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3870:3871:4321:5007:6119:7901:10004:10400:10848:11232:11473:11658:11914:12297:12438:12555:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21627:30054:30062:30064:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: jelly92_ae878a33e84c
+X-Filterd-Recvd-Size: 1807
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf15.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 12 Mar 2020 02:27:54 +0000 (UTC)
+Message-ID: <2c4b42d1fb0bdb6604a72b2a10d49f9eae4b0ff4.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: always allow C99 SPDX License Identifer
+ comments
+From:   Joe Perches <joe@perches.com>
+To:     Scott Branden <scott.branden@broadcom.com>,
+        Andy Whitcroft <apw@canonical.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Date:   Wed, 11 Mar 2020 19:26:12 -0700
+In-Reply-To: <20200311191128.7896-1-scott.branden@broadcom.com>
+References: <20200311191128.7896-1-scott.branden@broadcom.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit ca7e1fd1026c5af6a533b4b5447e1d2f153e28f2:
+On Wed, 2020-03-11 at 12:11 -0700, Scott Branden wrote:
+> Always allow C99 comment styles if SPDK-License-Identifier is in comment
+> even if C99_COMMENT_TOLERANCE is specified in the --ignore options.
 
-  Merge tag 'linux-kselftest-5.6-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest (2020-02-19 17:22:10 -0800)
+Why is this useful?
 
-are available in the Git repository at:
-
-  https://github.com/cminyard/linux-ipmi.git tags/for-linus-5.6-2
-
-for you to fetch changes up to 443d372d6a96cd94ad119e5c14bb4d63a536a7f6:
-
-  ipmi_si: Avoid spurious errors for optional IRQs (2020-03-11 21:15:19 -0500)
-
-----------------------------------------------------------------
-Fix a message spew on some system
-
-The call to platform_get_irq() was changed to print a log if the
-interrupt was not available, and that was causing bogus messages to spew
-out for the IPMI driver.  People have requested that this get in to 5.6
-so I'm sending it along.
-
-----------------------------------------------------------------
-Takashi Iwai (1):
-      ipmi_si: Avoid spurious errors for optional IRQs
-
- drivers/char/ipmi/ipmi_si_platform.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+> ---
+>  scripts/checkpatch.pl | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index a63380c6b0d2..c8b429dd6b51 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -3852,8 +3852,8 @@ sub process {
+>  			}
+>  		}
+>  
+> -# no C99 // comments
+> -		if ($line =~ m{//}) {
+> +# no C99 // comments except for SPDX-License-Identifier
+> +		if ($line =~ m{//} && $rawline !~ /SPDX-License-Identifier:/) {
+>  			if (ERROR("C99_COMMENTS",
+>  				  "do not use C99 // comments\n" . $herecurr) &&
+>  			    $fix) {
 
