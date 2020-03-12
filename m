@@ -2,101 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBDF6183784
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:27:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6A7218379D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:31:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbgCLR1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 13:27:42 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:19010 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726371AbgCLR1l (ORCPT
+        id S1726545AbgCLRa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 13:30:57 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51995 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726194AbgCLRa5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 13:27:41 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584034061; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=sEACIl73HriXGhDAU2H2q10BwiBheQrnYjwTuFhyhEA=; b=Ebvn6/IDqHmId8IDn+Da2mQ3NPDCz6ObACB31ujTxcimYorPL+9lgZRRYfsuzgvf0mjYD2Hr
- YT6QB20fhTuK2tDC6hT5kZi7wrQVE1tRjk91g8UGOgD+Si3rGbIj5be6xpO41yVPd529bvpj
- HlFwNXhX5tfspounQhWS7n3XY/Y=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6a7104.7fe347be70d8-smtp-out-n04;
- Thu, 12 Mar 2020 17:27:32 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 6A02CC44792; Thu, 12 Mar 2020 17:27:30 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [10.46.161.159] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 12 Mar 2020 13:30:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584034256;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=3R2Gqj26CcpZZ/eyppvbqet2wzOeK+LC4RTK9uEl04I=;
+        b=F2C6OCuxD8tX8FdtRyfqDPEYZqJfpU2VzV312ux160TGfM1Ei38QVbqRBWaQ9xeeDX63Cp
+        c8ksBHV4RLQJjL/tEm3micviIN7AzrcbaS6Jtjttu3LRmB72kHA/TyBfasdR95R5q8yIYo
+        FiibXbnVowWSMHPOZjNvuUv37G3VArY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-225-fi-tcavTNiqQ7jN_0gUoaw-1; Thu, 12 Mar 2020 13:30:52 -0400
+X-MC-Unique: fi-tcavTNiqQ7jN_0gUoaw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: asutoshd)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3E66EC43637;
-        Thu, 12 Mar 2020 17:27:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3E66EC43637
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=asutoshd@codeaurora.org
-Subject: Re: [PATCH v2 1/8] scsi: ufs: fix uninitialized tx_lanes in
- ufshcd_disable_tx_lcc()
-To:     Stanley Chu <stanley.chu@mediatek.com>, linux-scsi@vger.kernel.org,
-        martin.petersen@oracle.com, avri.altman@wdc.com,
-        alim.akhtar@samsung.com, jejb@linux.ibm.com
-Cc:     beanhuo@micron.com, cang@codeaurora.org, matthias.bgg@gmail.com,
-        bvanassche@acm.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kuohong.wang@mediatek.com, peter.wang@mediatek.com,
-        chun-hung.wu@mediatek.com, andy.teng@mediatek.com
-References: <20200312110908.14895-1-stanley.chu@mediatek.com>
- <20200312110908.14895-2-stanley.chu@mediatek.com>
-From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
-Message-ID: <cadc9e14-f990-6103-ee73-578d4a28ba1a@codeaurora.org>
-Date:   Thu, 12 Mar 2020 10:27:27 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0F56710BEC26;
+        Thu, 12 Mar 2020 17:30:50 +0000 (UTC)
+Received: from treble.redhat.com (ovpn-122-137.rdu2.redhat.com [10.10.122.137])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7F0CD60BEC;
+        Thu, 12 Mar 2020 17:30:48 +0000 (UTC)
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Dave Jones <dsj@fb.com>, Jann Horn <jannh@google.com>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 00/14] x86/unwind/orc: ORC fixes
+Date:   Thu, 12 Mar 2020 12:30:19 -0500
+Message-Id: <cover.1584033751.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200312110908.14895-2-stanley.chu@mediatek.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Several ORC unwinder cleanups, fixes, and debug improvements.
 
-On 3/12/2020 4:09 AM, Stanley Chu wrote:
-> In ufshcd_disable_tx_lcc(), if ufshcd_dme_get() or ufshcd_dme_peer_get()
-> get fail, uninitialized variable "tx_lanes" may be used as unexpected lane
-> ID for DME configuration.
-> 
-> Fix this issue by initializing "tx_lanes".
-> 
-> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-> ---
-Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
+Jann Horn (1):
+  x86/entry/64: Fix unwind hints in rewind_stack_do_exit()
 
->   drivers/scsi/ufs/ufshcd.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 5698f1164a5e..314e808b0d4e 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -4315,7 +4315,7 @@ EXPORT_SYMBOL_GPL(ufshcd_hba_enable);
->   
->   static int ufshcd_disable_tx_lcc(struct ufs_hba *hba, bool peer)
->   {
-> -	int tx_lanes, i, err = 0;
-> +	int tx_lanes = 0, i, err = 0;
->   
->   	if (!peer)
->   		ufshcd_dme_get(hba, UIC_ARG_MIB(PA_CONNECTEDTXDATALANES),
-> 
+Josh Poimboeuf (12):
+  x86/dumpstack: Add SHOW_REGS_IRET mode
+  objtool: Fix stack offset tracking for indirect CFAs
+  x86/entry/64: Fix unwind hints in register clearing code
+  x86/entry/64: Fix unwind hints in kernel exit path
+  x86/entry/64: Fix unwind hints in __switch_to_asm()
+  x86/unwind/orc: Convert global variables to static
+  x86/unwind: Prevent false warnings for non-current tasks
+  x86/unwind/orc: Prevent unwinding before ORC initialization
+  x86/unwind/orc: Fix error path for bad ORC entry type
+  x86/unwind/orc: Fix premature unwind stoppage due to IRET frames
+  x86/unwind/orc: Add more unwinder warnings
+  x86/unwind/orc: Add 'unwind_debug' cmdline option
 
+Miroslav Benes (1):
+  x86/unwind/orc: Don't skip the first frame for inactive tasks
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-Linux Foundation Collaborative Project
+ .../admin-guide/kernel-parameters.txt         |   6 +
+ arch/x86/entry/calling.h                      |  40 ++--
+ arch/x86/entry/entry_64.S                     |  14 +-
+ arch/x86/include/asm/kdebug.h                 |   1 +
+ arch/x86/include/asm/unwind.h                 |   2 +-
+ arch/x86/kernel/dumpstack.c                   |  27 +--
+ arch/x86/kernel/dumpstack_64.c                |   3 +-
+ arch/x86/kernel/process_64.c                  |   7 +-
+ arch/x86/kernel/unwind_frame.c                |   3 +
+ arch/x86/kernel/unwind_orc.c                  | 185 ++++++++++++++----
+ tools/objtool/check.c                         |   2 +-
+ 11 files changed, 201 insertions(+), 89 deletions(-)
+
+--=20
+2.21.1
+
