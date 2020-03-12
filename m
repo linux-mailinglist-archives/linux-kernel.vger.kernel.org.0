@@ -2,117 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6419E18274B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 04:10:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1BEE182750
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 04:12:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387746AbgCLDKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 23:10:05 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45355 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387731AbgCLDKF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 23:10:05 -0400
-Received: by mail-io1-f67.google.com with SMTP id w9so4149175iob.12
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 20:10:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7UlCPqaifwtaHRBNM9OlkA92uhGP3P8YtjrPHhM2qXA=;
-        b=MymNgzFAjC7botrqgoNNcIOUuAsnEj/YaRhp929DK9qF9NTSCoVLgqQuyUlCuuWbmc
-         xTX8qnat5Lhd0dx2+HvITd9I3p8W2oFWYYiLmPSxLhHu9VDmI3IenMvfEFdho/S8vd2I
-         yuLM73a7S/wx1yoSfX+QL5qO2LsLHWifPuA0hRfAhHp4rftW0kW6WLVBjS4J0fyOpN3O
-         7r/1++AmSjZryTn2MxF74XgpKzfez6QsJWgBfcCvVchXvT9agRNixKTJPc0eob3a5Q1X
-         xoLsGG5eL0WYwn6be71SqmjgQeJZ5NZqTQtoyqlEcSz37jy3pIQVaP16SIN7GWzqFG9X
-         3jyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7UlCPqaifwtaHRBNM9OlkA92uhGP3P8YtjrPHhM2qXA=;
-        b=cG91q3rXz/sY3K5FubsVm0xCFtWDjJ9gf/ZGXQqZROZHsWJCwMlSKqhHRiLWttICXH
-         siJAeXUdn+ygigkgBvO/kJCWwsdYhVqrZqLG5x0X1Ys1D4VALpKiwuIKo0YREut8WMRz
-         zQ0Y5Bwqg/lOGMe0PT+MSAenlMcZzk7bg/0JMxf+cOoXL8lzF2TLHQSmtihZbnc+M7Ew
-         aXrMYCdSpkomBGQDbTuKhPhxd5XITD1CuG3Y1ohnzVe7iuzR60w2lsY7IlV7bPlp2QE+
-         WqRRwOPMPtcnVniiLJezJVhqA8onWg05zguTN+l0Y1szkDpatxYddEE+UMhVLkzl+8GG
-         tVHA==
-X-Gm-Message-State: ANhLgQ04hmwkn6gcP6HC749vChP/s+ZvvyCezjLf2Hs1/lStWkDp54Mx
-        Qj+IxNOMYp3XREjHIRfJwJtIj1U77xU=
-X-Google-Smtp-Source: ADFU+vs/imBUNrCpmlxjMLXtYVDj0Q3NbjhYgAeR0ptUEQhLsK2b4DLsRH6n4QvzTYidB9g45CZyjQ==
-X-Received: by 2002:a6b:6606:: with SMTP id a6mr5411023ioc.8.1583982602672;
-        Wed, 11 Mar 2020 20:10:02 -0700 (PDT)
-Received: from [172.22.22.26] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.googlemail.com with ESMTPSA id y18sm12685362ilg.82.2020.03.11.20.10.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 20:10:02 -0700 (PDT)
-Subject: Re: [PATCH v2 00/17] net: introduce Qualcomm IPA driver (UPDATED)
-To:     Dave Taht <dave.taht@gmail.com>
-Cc:     David Miller <davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Dan Williams <dcbw@redhat.com>,
-        Evan Green <evgreen@google.com>,
-        Eric Caruso <ejcaruso@google.com>,
-        Susheel Yadav Yadagiri <syadagir@codeaurora.org>,
-        Chaitanya Pratapa <cpratapa@codeaurora.org>,
-        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Siddharth Gupta <sidgup@codeaurora.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200306042831.17827-1-elder@linaro.org>
- <CAA93jw5enz6-h1m=7tGFToK+E+8z3aD80pBef4AYkFrS2u3hHQ@mail.gmail.com>
-From:   Alex Elder <elder@linaro.org>
-Message-ID: <e4f436b4-3dd7-970a-9b08-7601fc5428d2@linaro.org>
-Date:   Wed, 11 Mar 2020 22:09:56 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S2387717AbgCLDMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 23:12:14 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:56808 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387453AbgCLDMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 23:12:14 -0400
+Received: from gwarestrin.me.apana.org.au ([192.168.0.7] helo=gwarestrin.arnor.me.apana.org.au)
+        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
+        id 1jCEG9-0001ok-N0; Thu, 12 Mar 2020 14:11:46 +1100
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Thu, 12 Mar 2020 14:11:45 +1100
+Date:   Thu, 12 Mar 2020 14:11:45 +1100
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Zhenzhong Duan <zhenzhong.duan@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, jdike@addtoit.com, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, miguel.ojeda.sandonis@gmail.com,
+        willy@haproxy.com, ksenija.stanojevic@gmail.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, mpm@selenic.com,
+        jonathan@buzzard.org.uk, benh@kernel.crashing.org,
+        davem@davemloft.net, b.zolnierkie@samsung.com, rjw@rjwysocki.net,
+        pavel@ucw.cz, len.brown@intel.com
+Subject: Re: [PATCH v2 1/2] misc: cleanup minor number definitions in c file
+ into miscdevice.h
+Message-ID: <20200312031145.GA19920@gondor.apana.org.au>
+References: <20200311071654.335-1-zhenzhong.duan@gmail.com>
+ <20200311071654.335-2-zhenzhong.duan@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAA93jw5enz6-h1m=7tGFToK+E+8z3aD80pBef4AYkFrS2u3hHQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200311071654.335-2-zhenzhong.duan@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/9/20 11:54 AM, Dave Taht wrote:
-> I am happy to see this driver upstream.
+On Wed, Mar 11, 2020 at 03:16:53PM +0800, Zhenzhong Duan wrote:
+> HWRNG_MINOR and RNG_MISCDEV_MINOR are duplicate definitions, use
+> unified HWRNG_MINOR instead and moved into miscdevice.h
 > 
->> Arnd's concern was that the rmnet_data0 network device does not
->> have the benefit of information about the state of the underlying
->> IPA hardware in order to be effective in controlling TX flow.
->> The feared result is over-buffering of TX packets (bufferbloat).
->> I began working on some simple experiments to see whether (or how
->> much) his concern was warranted.  But it turned out that completing
->> these experiments was much more work than had been hoped.
+> ANSLCD_MINOR and LCD_MINOR are duplicate definitions, use unified
+> LCD_MINOR instead and moved into miscdevice.h
 > 
-> Members of the bufferbloat project *care*, and have tools and testbeds for
-> exploring these issues. It would be good to establish a relationship with
-> the vendor, obtain hardware, and other (technical and financial) support, if
-> possible.
+> MISCDEV_MINOR is renamed to PXA3XX_GCU_MINOR and moved into
+> miscdevice.h
 > 
-> Is there any specific hardware now available (generally or in beta) that
-> can be obtained by us to take a harder look? A contact at linaro or QCA
-> willing discuss options?
+> Other definitions are just moved without any change.
+> 
+> Link: https://lore.kernel.org/lkml/20200120221323.GJ15860@mit.edu/t/
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Build-tested-by: Willy TARREAU <wtarreau@haproxy.com>
+> Build-tested-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@gmail.com>
+> Acked-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  arch/um/drivers/random.c         |  4 +---
+>  drivers/auxdisplay/charlcd.c     |  2 --
+>  drivers/auxdisplay/panel.c       |  2 --
+>  drivers/char/applicom.c          |  1 -
+>  drivers/char/nwbutton.h          |  1 -
+>  drivers/char/toshiba.c           |  2 --
+>  drivers/macintosh/ans-lcd.c      |  2 +-
+>  drivers/macintosh/ans-lcd.h      |  2 --
+>  drivers/macintosh/via-pmu.c      |  3 ---
+>  drivers/sbus/char/envctrl.c      |  2 --
+>  drivers/sbus/char/uctrl.c        |  2 --
+>  drivers/video/fbdev/pxa3xx-gcu.c |  7 +++----
+>  include/linux/miscdevice.h       | 10 ++++++++++
+>  kernel/power/user.c              |  2 --
+>  14 files changed, 15 insertions(+), 27 deletions(-)
 
-There exists some hardware that could be used, but at the moment I have
-not ported this code to operate on it.  It is a current effort however,
-and I will be glad to keep you in the loop on progress.  There are a
-couple of target environments we'd like to support but until last week
-the primary goal was inclusion in the upstream tree.
-
-I will follow up with you after the dust settles a little bit with
-this patch series, maybe in a week or so.  In the mean time I'll
-also find out whether there are any other resources (people and/or
-hardware) available.
-
-					-Alex
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
