@@ -2,84 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04E0B183130
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:24:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FA3518312E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:24:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbgCLNYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:24:03 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:3103 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726571AbgCLNX7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727398AbgCLNYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:24:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727123AbgCLNX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Mar 2020 09:23:59 -0400
-X-UUID: 2556dbb21a3641b4a4ce3fa79f1d3ae5-20200312
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=GAb0a+7kM9bfrtZJR62MQdr6XS0ZdbXUK5GgYwszV3c=;
-        b=J29DnIDjRdt7jZoMClc2x//t9jYMWXrRg+M6kExI1yTvR5kq1jxrTeQcBdUjku9CqufmQuyLfeEjqdAjx1R+ZR1PVO8enn7EQbZ7DvGKbny7Xp/UeTUS0GQxD9tYSr4q71EhA/9YjlCPaC/SQHuDe8sf/SwrkeL6RU4zUKxO+pA=;
-X-UUID: 2556dbb21a3641b4a4ce3fa79f1d3ae5-20200312
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 353618774; Thu, 12 Mar 2020 21:23:54 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 12 Mar 2020 21:22:38 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 12 Mar 2020 21:21:03 +0800
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
-        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
-        <jejb@linux.ibm.com>
-CC:     <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
-        <cang@codeaurora.org>, <matthias.bgg@gmail.com>,
-        <bvanassche@acm.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
-        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
-        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH v3 8/8] scsi: ufs-mediatek: customize the delay for host enabling
-Date:   Thu, 12 Mar 2020 21:23:50 +0800
-Message-ID: <20200312132350.18061-9-stanley.chu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20200312132350.18061-1-stanley.chu@mediatek.com>
-References: <20200312132350.18061-1-stanley.chu@mediatek.com>
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6D3D20663;
+        Thu, 12 Mar 2020 13:23:58 +0000 (UTC)
+Date:   Thu, 12 Mar 2020 09:23:55 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masanari Iida <standby24x7@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, shuah@kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH] selftests/ftrace: Fix typo in trigger-multihist.tc
+Message-ID: <20200312092355.73d8c019@gandalf.local.home>
+In-Reply-To: <20200312040337.7631-1-standby24x7@gmail.com>
+References: <20200312040337.7631-1-standby24x7@gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TWVkaWFUZWsgcGxhdGZvcm0gYW5kIFVGUyBjb250cm9sbGVyIGNhbiBkeW5hbWljYWxseSBjdXN0
-b21pemUNCnRoZSBkZWxheSBmb3IgaG9zdCBlbmFibGluZyBhY2NvcmRpbmcgdG8gZGlmZmVyZW50
-IHNjZW5hcmlvcy4NCg0KRm9yIGV4YW1wbGUsIGZvciBob3N0IGluaXRpYWxpemF0aW9uIHdpdGgg
-bG93LWxldmVsIE1QSFkgY2FsaWJyYXRpb24NCnJlcXVpcmVkLCBsb25nZXIgZGVsYXkgc2hhbGwg
-YmUgZXhwZWN0ZWQuIEJ1dCB0aGUgZGVsYXkgY291bGQgYmUgcmVtb3ZlZA0KaWYgc3VjaCBNUEhZ
-IGNhbGlicmF0aW9uIGNhbiBiZSBza2lwcGVkLCBsaWtlIHJlc3VtZSBmbG93Lg0KDQpTaWduZWQt
-b2ZmLWJ5OiBTdGFubGV5IENodSA8c3RhbmxleS5jaHVAbWVkaWF0ZWsuY29tPg0KLS0tDQogZHJp
-dmVycy9zY3NpL3Vmcy91ZnMtbWVkaWF0ZWsuYyB8IDE0ICsrKysrKysrKysrKysrDQogMSBmaWxl
-IGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKykNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2NzaS91
-ZnMvdWZzLW1lZGlhdGVrLmMgYi9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jDQppbmRl
-eCAwZmY2NzgxNjU0ZmQuLjZmNDM3ZjAwOTFiZiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvc2NzaS91
-ZnMvdWZzLW1lZGlhdGVrLmMNCisrKyBiL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmMN
-CkBAIC03MSw2ICs3MSwxOSBAQCBzdGF0aWMgdm9pZCB1ZnNfbXRrX2NmZ191bmlwcm9fY2coc3Ry
-dWN0IHVmc19oYmEgKmhiYSwgYm9vbCBlbmFibGUpDQogCX0NCiB9DQogDQorc3RhdGljIGludCB1
-ZnNfbXRrX2hjZV9lbmFibGVfbm90aWZ5KHN0cnVjdCB1ZnNfaGJhICpoYmEsDQorCQkJCSAgICAg
-ZW51bSB1ZnNfbm90aWZ5X2NoYW5nZV9zdGF0dXMgc3RhdHVzKQ0KK3sNCisJaWYgKHN0YXR1cyA9
-PSBQUkVfQ0hBTkdFKSB7DQorCQlpZiAoaGJhLT5wbV9vcF9pbl9wcm9ncmVzcykNCisJCQloYmEt
-PmhiYV9lbmFibGVfZGVsYXlfdXMgPSAwOw0KKwkJZWxzZQ0KKwkJCWhiYS0+aGJhX2VuYWJsZV9k
-ZWxheV91cyA9IDEwMDsNCisJfQ0KKw0KKwlyZXR1cm4gMDsNCit9DQorDQogc3RhdGljIGludCB1
-ZnNfbXRrX2JpbmRfbXBoeShzdHJ1Y3QgdWZzX2hiYSAqaGJhKQ0KIHsNCiAJc3RydWN0IHVmc19t
-dGtfaG9zdCAqaG9zdCA9IHVmc2hjZF9nZXRfdmFyaWFudChoYmEpOw0KQEAgLTU1Miw2ICs1NjUs
-NyBAQCBzdGF0aWMgc3RydWN0IHVmc19oYmFfdmFyaWFudF9vcHMgdWZzX2hiYV9tdGtfdm9wcyA9
-IHsNCiAJLm5hbWUgICAgICAgICAgICAgICAgPSAibWVkaWF0ZWsudWZzaGNpIiwNCiAJLmluaXQg
-ICAgICAgICAgICAgICAgPSB1ZnNfbXRrX2luaXQsDQogCS5zZXR1cF9jbG9ja3MgICAgICAgID0g
-dWZzX210a19zZXR1cF9jbG9ja3MsDQorCS5oY2VfZW5hYmxlX25vdGlmeSAgID0gdWZzX210a19o
-Y2VfZW5hYmxlX25vdGlmeSwNCiAJLmxpbmtfc3RhcnR1cF9ub3RpZnkgPSB1ZnNfbXRrX2xpbmtf
-c3RhcnR1cF9ub3RpZnksDQogCS5wd3JfY2hhbmdlX25vdGlmeSAgID0gdWZzX210a19wd3JfY2hh
-bmdlX25vdGlmeSwNCiAJLmFwcGx5X2Rldl9xdWlya3MgICAgPSB1ZnNfbXRrX2FwcGx5X2Rldl9x
-dWlya3MsDQotLSANCjIuMTguMA0K
+On Thu, 12 Mar 2020 13:03:37 +0900
+Masanari Iida <standby24x7@gmail.com> wrote:
+
+> This patch fix a spelling typo in trigger-multihist.tc
+> 
+> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+> ---
+>  .../selftests/ftrace/test.d/trigger/trigger-multihist.tc        | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc
+> index 18fdaab9f570..68ff3f45c720 100644
+> --- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc
+> @@ -23,7 +23,7 @@ if [ ! -f events/sched/sched_process_fork/hist ]; then
+>      exit_unsupported
+>  fi
+>  
+> -echo "Test histogram multiple tiggers"
+> +echo "Test histogram multiple triggers"
+
+Winnie the Pooh will be upset.
+
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+Shuah, want to take this?
+
+-- Steve
+
+>  
+>  echo 'hist:keys=parent_pid:vals=child_pid' > events/sched/sched_process_fork/trigger
+>  echo 'hist:keys=parent_comm:vals=child_pid' >> events/sched/sched_process_fork/trigger
 
