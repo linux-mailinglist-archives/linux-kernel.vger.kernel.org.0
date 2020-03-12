@@ -2,104 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB92C18329D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:15:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE7F41832AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 15:18:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbgCLOPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 10:15:37 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41635 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbgCLOPh (ORCPT
+        id S1727507AbgCLOSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 10:18:02 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:22224 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727123AbgCLOSC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 10:15:37 -0400
-Received: by mail-wr1-f67.google.com with SMTP id s14so7692277wrt.8
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 07:15:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=mrvIFthQhStRb0h9X0TVjnYAU7Y95l7BE/07Zs0KkmU=;
-        b=Gat37HHk/IR5hOfp8StNrofQQOmpXRH6pEZ8csCcEb6VJBlyWEH/itLo+6rzB1x332
-         4T0hPPvhhrsd4lpchwum7yLB3GYsA83Rge2B0luyRVmm7x3C9IWWlbwJSLx4J/IkCtWc
-         3iq+9xvke8xefc2SiwEL5Zl86LRavFa8gCyUsBjsOLjrkbKK3+9GQJpDm9Sfo7Jyr8XS
-         SjDczFadOF1FBblnHcM17/mvIME59SYg+fLvaow0pXNJh9aDETNsvVlH1MiFrSRBMF0G
-         /yfpt4xMtixGAWXt9hjEzabm8ll+f31vjx6y9In21gFro8zXcB0/4ZrG8lHgnI4/vmjo
-         CINQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=mrvIFthQhStRb0h9X0TVjnYAU7Y95l7BE/07Zs0KkmU=;
-        b=hGsiypXgI4UceqHgz042gxfVvcfRS5qTBAXkI/EeT+SZh8wZPe1bXxVTLCScESa+Ff
-         8LzD8FYd+54xjmpHiEiptm4CIdzUREiDp3xILbS6VDlWb3/5yK/vg8u/xmbMnhtygS14
-         LtwgYdw4IgD5s8GIoIxUwIzwuFRFiq0HYad8mUOLjSYZwMsWNPdWYIzrXWUApymMNflx
-         cCKOtDbZwEt7jXZTdz9oCG9jGfLEqf/xgq3w+zT9QCIQnYrIwGJMC7i5PJYCWhdyp0gw
-         2Pa6v9uDgpF0YJ3v9BlC/AUDb0EECULquZK3dZ7YZwsuQ/GlYZyITTePm8JUZ9mIH9k/
-         +bQg==
-X-Gm-Message-State: ANhLgQ1ub+9wcmWg0HsJDngJjCbMfUCvSRM85pVGDCFWhzRpZLIoqBJk
-        H6nRcB6ybtTFKd6cXQ/y6F268JCFCmqjl+Ah84vgCA==
-X-Google-Smtp-Source: ADFU+vunbIhUB+upr9tvSXIUy5Rsh6w6Y/X84qlyHVsfayqsdBwr5bi936oAu3SpuUu2YFjWpTDxR6kp0SMteWKw1ns=
-X-Received: by 2002:adf:f74b:: with SMTP id z11mr11805645wrp.124.1584022535408;
- Thu, 12 Mar 2020 07:15:35 -0700 (PDT)
+        Thu, 12 Mar 2020 10:18:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584022681;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=PN0+tYX8KgdXWCv+Nrp54IwoeQaAKQFLSzluDVTcMDI=;
+        b=a2SczuLbNuc3CqPcWncwvdgM2Z4WarstP52Xapw715cvDomDJB4kYnJNROH1uXFMPDDRYE
+        SMrM7L24Vcl8j/cIUuVnZP9IYvkyCvc+fV9RmCdaS3Ebu/cpzLH+GuOYQMgX1ciIycVm3E
+        10xtliXIEsVluookI/gZSN1NW3ohecE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-380-w_4FET2HN6WwRo9LTTW1pw-1; Thu, 12 Mar 2020 10:17:57 -0400
+X-MC-Unique: w_4FET2HN6WwRo9LTTW1pw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 237758017DF;
+        Thu, 12 Mar 2020 14:17:56 +0000 (UTC)
+Received: from localhost (ovpn-12-43.pek2.redhat.com [10.72.12.43])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DDE4B19925;
+        Thu, 12 Mar 2020 14:17:52 +0000 (UTC)
+Date:   Thu, 12 Mar 2020 22:17:49 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     linux-kernel@vger.kernel.org, willy@infradead.org
+Cc:     linux-mm@kvack.org, mhocko@suse.com, akpm@linux-foundation.org,
+        david@redhat.com, richard.weiyang@gmail.com
+Subject: [PATCH v3] mm/sparse.c: Use kvmalloc_node/kvfree to alloc/free
+ memmap for the classic sparse
+Message-ID: <20200312141749.GL27711@MiWiFi-R3L-srv>
+References: <20200312130822.6589-1-bhe@redhat.com>
 MIME-Version: 1.0
-References: <6c252c3d-5d0a-2a2f-4b8c-60d7622d1146@infradead.org>
-In-Reply-To: <6c252c3d-5d0a-2a2f-4b8c-60d7622d1146@infradead.org>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 12 Mar 2020 10:15:23 -0400
-Message-ID: <CADnq5_PcQW=qf4fNx7v7Q4coLAMr755ykx+YfoxoYchHxivk3Q@mail.gmail.com>
-Subject: Re: [PATCH] drm: amd/acp: fix broken menu structure
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200312130822.6589-1-bhe@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applied.  thanks!
+This change makes populate_section_memmap()/depopulate_section_memmap
+much simpler.
 
-Alex
+Suggested-by: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Baoquan He <bhe@redhat.com>
+---
+v2->v3:
+  Remove __GFP_NOWARN and use array_size when calling kvmalloc_node()
+  per Matthew's comments.
 
-On Thu, Mar 12, 2020 at 4:09 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> Fix the Kconfig dependencies so that the menu is presented
-> correctly by adding a dependency on DRM_AMDGPU to the "menu"
-> Kconfig statement.  This makes a continuous dependency on
-> DRM_AMDGPU in the DRM AMD menus and eliminates a broken menu
-> structure.
->
-> Fixes: a8fe58cec351 ("drm/amd: add ACP driver support")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Alex Deucher <alexander.deucher@amd.com>
-> Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
-> Cc: David (ChunMing) Zhou <David1.Zhou@amd.com>
-> Cc: Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>
-> Cc: amd-gfx@lists.freedesktop.org
-> ---
->  drivers/gpu/drm/amd/acp/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
->
-> --- linux-next.orig/drivers/gpu/drm/amd/acp/Kconfig
-> +++ linux-next/drivers/gpu/drm/amd/acp/Kconfig
-> @@ -1,5 +1,6 @@
->  # SPDX-License-Identifier: MIT
->  menu "ACP (Audio CoProcessor) Configuration"
-> +       depends on DRM_AMDGPU
->
->  config DRM_AMD_ACP
->         bool "Enable AMD Audio CoProcessor IP support"
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+ mm/sparse.c | 27 +++------------------------
+ 1 file changed, 3 insertions(+), 24 deletions(-)
+
+diff --git a/mm/sparse.c b/mm/sparse.c
+index bf6c00a28045..bb99633575b5 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -734,35 +734,14 @@ static void free_map_bootmem(struct page *memmap)
+ struct page * __meminit populate_section_memmap(unsigned long pfn,
+ 		unsigned long nr_pages, int nid, struct vmem_altmap *altmap)
+ {
+-	struct page *page, *ret;
+-	unsigned long memmap_size = sizeof(struct page) * PAGES_PER_SECTION;
+-
+-	page = alloc_pages(GFP_KERNEL|__GFP_NOWARN, get_order(memmap_size));
+-	if (page)
+-		goto got_map_page;
+-
+-	ret = vmalloc(memmap_size);
+-	if (ret)
+-		goto got_map_ptr;
+-
+-	return NULL;
+-got_map_page:
+-	ret = (struct page *)pfn_to_kaddr(page_to_pfn(page));
+-got_map_ptr:
+-
+-	return ret;
++	return kvmalloc_node(array_size(sizeof(struct page),
++			PAGES_PER_SECTION), GFP_KERNEL, nid);
+ }
+ 
+ static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
+ 		struct vmem_altmap *altmap)
+ {
+-	struct page *memmap = pfn_to_page(pfn);
+-
+-	if (is_vmalloc_addr(memmap))
+-		vfree(memmap);
+-	else
+-		free_pages((unsigned long)memmap,
+-			   get_order(sizeof(struct page) * PAGES_PER_SECTION));
++	kvfree(pfn_to_page(pfn));
+ }
+ 
+ static void free_map_bootmem(struct page *memmap)
+-- 
+2.17.2
+
