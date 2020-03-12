@@ -2,135 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E82DC183B58
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 22:32:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0A17183B52
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 22:32:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbgCLVcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 17:32:24 -0400
-Received: from mga02.intel.com ([134.134.136.20]:36118 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726528AbgCLVcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 17:32:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 14:32:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,546,1574150400"; 
-   d="scan'208";a="232205234"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga007.jf.intel.com with ESMTP; 12 Mar 2020 14:32:23 -0700
-Received: from [10.7.201.16] (skuppusw-desk.jf.intel.com [10.7.201.16])
-        by linux.intel.com (Postfix) with ESMTP id 99C3658010D;
-        Thu, 12 Mar 2020 14:32:23 -0700 (PDT)
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH v17 09/12] PCI/AER: Allow clearing Error Status Register
- in FF mode
-To:     Austin.Bolen@dell.com, helgaas@kernel.org
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com
-References: <20200312195319.GA162308@google.com>
- <161a5d15809b47b09200f1806484b907@AUSX13MPC107.AMER.DELL.COM>
-From:   Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Organization: Intel
-Message-ID: <f07d850f-473f-6fa0-81f3-b38a104a5e86@linux.intel.com>
-Date:   Thu, 12 Mar 2020 14:29:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726650AbgCLVcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 17:32:11 -0400
+Received: from mail-mw2nam12on2042.outbound.protection.outlook.com ([40.107.244.42]:48384
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726534AbgCLVcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 17:32:11 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ToCOHUVw5lx3Y7tc994eDWBP7jfhqkrYDb4yugUqeVN0CrJvwzI3ysDQEI/+Uip2L1wlv47cXRdpi6TAc8QIKZhlb8ULEwD8BCnbBcuJ0//L9OiMnUC0gYBczfxtTMnsjwSmdBvBEns7ZyUNK9gCcKeVkn26wsQ/clfi11A+37p2l+D41A5RNXodHnJmb27kNRefYrJpFyOHTcob9zMj0wvrbjiszmkmANyE1d4hdeH1KgWkbFlC/M9fH0Mnij9izkylhFR2ZqmYiGVebYtnWI5/TCECubNqlxaQ9DfVPoAeCIC51qf+5v5Ecrc8yr/shQ5RLWAkw9Tr1R+4+UIgNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=03nBHcQ6MxdHIBo1SrKuP0e1LrxXJUvJ4S79wRCkItI=;
+ b=AaQNPhK9yP88rQj35B0VPT6pObG14czc57osITvTw3RIi2zm3m5cGvRFJmfA1lajJKzmGcoZgE4yrhLndC5XoXFa+c58DgWoSVcLlkyUe3o4cA5AD/EYPZfcy6p54Ah+jxNH31DRM35+3SOdbqTuCtnCu8lxXbtwbIqP42lz3q4bNtkgXSGAcO0LjK88d5lU7KavzE2ZG8tiNtq98MPVDLpBjGzsAo13UGaqvpipu5lf6eeIIepx5go1I3ifOpr2wHkevtLijN6XztvI8qnUBnGC6KOYk9e99ZliZRJl3UdscsyriO6WJTppf21MFOx7pFVZ0y98gCBG5BxmjRHbfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=lixom.net smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=03nBHcQ6MxdHIBo1SrKuP0e1LrxXJUvJ4S79wRCkItI=;
+ b=dNOfdlo+1zi7Ae+R/vX6P0y1EyNOsvs/D1uqKlqSKxAQpqvI+xwxKSnECEwREJRtpghxaqyUQxUSKmnqDeggTRdiYm07Rt44U4rGVtG8xrEGa+wXzyxOPgH7Q8zROtdfYjT2hbiyDlC4YyGUEKuRiCXAtUBiLJJtbJz8m+NK1Ic=
+Received: from CY4PR05CA0017.namprd05.prod.outlook.com (2603:10b6:910:87::30)
+ by DM5PR02MB2793.namprd02.prod.outlook.com (2603:10b6:3:109::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16; Thu, 12 Mar
+ 2020 21:32:08 +0000
+Received: from CY1NAM02FT023.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:910:87:cafe::e5) by CY4PR05CA0017.outlook.office365.com
+ (2603:10b6:910:87::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.8 via Frontend
+ Transport; Thu, 12 Mar 2020 21:32:08 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; lixom.net; dkim=none (message not signed)
+ header.d=none;lixom.net; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT023.mail.protection.outlook.com (10.152.74.237) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2814.13
+ via Frontend Transport; Thu, 12 Mar 2020 21:32:07 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <jolly.shah@xilinx.com>)
+        id 1jCVR1-0001nE-42; Thu, 12 Mar 2020 14:32:07 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <jolly.shah@xilinx.com>)
+        id 1jCVQv-0006jp-TW; Thu, 12 Mar 2020 14:32:01 -0700
+Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <jolly.shah@xilinx.com>)
+        id 1jCVQm-0006iZ-TJ; Thu, 12 Mar 2020 14:31:52 -0700
+From:   Jolly Shah <jolly.shah@xilinx.com>
+To:     olof@lixom.net, mturquette@baylibre.com, sboyd@kernel.org,
+        michal.simek@xilinx.com, arm@kernel.org, linux-clk@vger.kernel.org
+Cc:     rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Jolly Shah <jolly.shah@xilinx.com>
+Subject: [PATCH v2 0/2] drivers: clk: zynqmp: Update fraction clock check from custom type flags
+Date:   Thu, 12 Mar 2020 14:31:37 -0700
+Message-Id: <1584048699-24186-1-git-send-email-jolly.shah@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(136003)(39860400002)(346002)(199004)(81156014)(186003)(81166006)(8676002)(26005)(44832011)(5660300002)(2616005)(9786002)(336012)(8936002)(7696005)(426003)(15650500001)(316002)(70206006)(70586007)(2906002)(36756003)(4326008)(4744005)(356004)(6666004)(478600001)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR02MB2793;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;
 MIME-Version: 1.0
-In-Reply-To: <161a5d15809b47b09200f1806484b907@AUSX13MPC107.AMER.DELL.COM>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ec9af2d1-af7e-48a4-d754-08d7c6ccd119
+X-MS-TrafficTypeDiagnostic: DM5PR02MB2793:
+X-Microsoft-Antispam-PRVS: <DM5PR02MB279397C4F8F693F36DF137A2B8FD0@DM5PR02MB2793.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
+X-Forefront-PRVS: 0340850FCD
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Ba0XtMKXggnlyoPY4IEJx2XPNhPG0AhQXQBDGWhkT+oHhePp57rjJqKKLMGAp0hcDzaIu3j73TUuA4uIRUPYR1e0YBVSawy7+sy4eMAMZuTxL84V29akKgeny5vTYRp6VmjKsyN+Yj7b41VhUYhCGKhX/vTrlGQ8eNwZFvO9JwFx91BwVHDQwF7LDlrV9SvsyiALfnjottzfCIjaSxa8++XlsYJmalSKyEsQgPn1YgctmrXQryqhPuw5h9IL+CVEEqpYqXPr52afcObnHtNqzXrqo13Ufgyog6TYBQ827BSyLhld43j4np1e/NunC+p2696Ba+7x2nObS3wOJLBBiancC8NRRv7LaWnpU2hJGmlldz5c3JL/hc8EBrFTL94ZAkW158vfCZqzvTbRyOwapvJk475NyC/l/rVoKxT5loqxO4zEcdj4XRPAUwcyBdYa
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2020 21:32:07.8693
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec9af2d1-af7e-48a4-d754-08d7c6ccd119
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB2793
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch series adds support for custom type flags passed from
+firmware. It also update  fraction clock check from custom type
+flags since new firmware pass CLK_FRAC flag as a part of custom flags
+instead of clkflags as CLK_FRAC is not common clock framework flag.
 
-On 3/12/20 2:02 PM, Austin.Bolen@dell.com wrote:
-> On 3/12/2020 2:53 PM, Bjorn Helgaas wrote:
->> [EXTERNAL EMAIL]
->>
->> On Wed, Mar 11, 2020 at 04:07:59PM -0700, Kuppuswamy Sathyanarayanan wrote:
->>> On 3/11/20 3:23 PM, Bjorn Helgaas wrote:
->>>> Is any synchronization needed here between the EDR path and the
->>>> hotplug/enumeration path?
->>> If we want to follow the implementation note step by step (in
->>> sequence) then we need some synchronization between EDR path and
->>> enumeration path. But if it's OK to achieve the same end result by
->>> following steps out of sequence then we don't need to create any
->>> dependency between EDR and enumeration paths. Currently we follow
->>> the latter approach.
->> What would the synchronization look like?
->>
->> Ideally I think it would be better to follow the order in the
->> flowchart if it's not too onerous.  That will make the code easier to
->> understand.  The current situation with this dependency on pciehp and
->> what it will do leaves a lot of things implicit.
->>
->> What happens if CONFIG_PCIE_EDR=y but CONFIG_HOTPLUG_PCI_PCIE=n?
->>
->> IIUC, when DPC triggers, pciehp is what fields the DLLSC interrupt and
->> unbinds the drivers and removes the devices.  If that doesn't happen,
->> and Linux clears the DPC trigger to bring the link back up, will those
->> drivers try to operate uninitialized devices?
->>
->> Does EDR need a dependency on CONFIG_HOTPLUG_PCI_PCIE?
->   From one of Sathya's other responses:
->
-> "If hotplug is not supported then there is support to enumerate
-> devices via polling  or ACPI events. But a point to note
-> here is, enumeration path is independent of error handler path, and
-> hence there is no explicit trigger or event from error handler path
-> to enumeration path to kick start the enumeration."
->
-> The EDR standard doesn't have any dependency on hot-plug. It sounds like
-> in the current implementation there's some manual intervention needed if
-> hot-plug is not supported?
-No, there is no need for manual intervention even in non hotplug
-cases.
+This patch series maintains backward compatibility with older version
+of firmware.
+v2:
+ -PATCH[2/2] Correct BIT index of CLK_FRAC in custom_type_flag
 
-For ACPI events case, we would rely on ACPI event to kick start the
-enumeration.  And for polling model, there is an independent polling
-thread which will kick start the enumeration.
+Rajan Vaja (1):
+  drivers: clk: zynqmp: Add support for custom type flags
 
-Above both enumeration models are totally independent and has
-no dependency on error handler thread.
+Tejas Patel (1):
+  drivers: clk: zynqmp: Update fraction clock check from custom type
+    flags
 
-We will decide which model to use based on hardware capability and
-_OSC negotiation or kernel command line option.
-> Ideally recovery would kick in automatically
-> but requiring manual intervention is a good first step.
->
->>> For example, consider the case in flow chart where after sending
->>> success _OST, firmware decides to stop the recovery of the device.
->>>
->>> if we follow the flow chart as is then the steps should be,
->>>
->>> 1. clear the DPC status trigger
->>> 2. Send success code via _OST, and wait for return from _OST
->>> 3. if successful return then enumerate the child devices and
->>> reassign bus numbers.
->>>
->>> In current approach the steps followed are,
->>>
->>> 1. Clear the DPC status trigger.
->>> 2. Send success code via _OST
-> Success in step 2 is assuming device trained and config space is
-> accessible correct?
-yes. we send success code only if the link is trained and on.
-> If device was removed or device config space is not
-> accessible then failure status should be sent via _OST.
-yes.
->
->>> 2. In parallel, LINK UP event path will enumerate the child devices.
->>> 3. if firmware decides not to recover the device, then LINK DOWN
->>> event will eventually remove them again.
->
+ drivers/clk/zynqmp/clk-zynqmp.h | 1 +
+ drivers/clk/zynqmp/clkc.c       | 4 ++++
+ drivers/clk/zynqmp/divider.c    | 6 ++++--
+ 3 files changed, 9 insertions(+), 2 deletions(-)
+
 -- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
+2.7.4
 
