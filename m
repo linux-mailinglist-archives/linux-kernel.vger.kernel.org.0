@@ -2,105 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A055B1830D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:08:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABC241830DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:09:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbgCLNIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:08:37 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40613 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725268AbgCLNIh (ORCPT
+        id S1727340AbgCLNJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:09:09 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:42170 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727072AbgCLNJI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:08:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584018516;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=S6bzV9J0z/IVD/ibu5hpuBEpz5XNYpk50t3w61vNfkc=;
-        b=ZVDqfbe1gBtRar3+51oD0XynDDnqtK/tYcxJ1zsBYvaBU+G8FWYGvOySWpBUwE5tCIxG3F
-        nsUlt7c1oaUiSLZo/gWSGrbPrQkZVcV71pziiHD38fN7J9MzGrbd/I2CKoc2qmEcv7YV2e
-        0FbMIy8HTtKwyIC2B3uBuLf26jqRyO0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-178-nM0-vi0hOVqePh4H10z_BQ-1; Thu, 12 Mar 2020 09:08:30 -0400
-X-MC-Unique: nM0-vi0hOVqePh4H10z_BQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 10F35107ACCA;
-        Thu, 12 Mar 2020 13:08:29 +0000 (UTC)
-Received: from MiWiFi-R3L-srv.redhat.com (ovpn-12-43.pek2.redhat.com [10.72.12.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A678093501;
-        Thu, 12 Mar 2020 13:08:23 +0000 (UTC)
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, mhocko@suse.com, akpm@linux-foundation.org,
-        david@redhat.com, richard.weiyang@gmail.com, bhe@redhat.com
-Subject: [PATCH v2] mm/sparse.c: Use kvmalloc_node/kvfree to alloc/free memmap for the classic sparse
-Date:   Thu, 12 Mar 2020 21:08:22 +0800
-Message-Id: <20200312130822.6589-1-bhe@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+        Thu, 12 Mar 2020 09:09:08 -0400
+Received: by mail-ua1-f67.google.com with SMTP id v16so988706ual.9
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 06:09:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LyzsKuloOrXeAT1eDgIMEyFoe/19CJB+RPiJ8KPwQIw=;
+        b=NeWi4sT4tcbOtVyLPuM+OlmGb0SVww73M2/R4+x0yevjrTcctku9ZniQ0wxvDpbhJ3
+         I4R/OYEqZArLPzoutN66dWfc7JJ37NZL/mNx9nxoeLvvnrgJEWcc1CXVMf+zn3Au+w3U
+         okoA4mIsV2nkwV65aXMAwIswdl64TXCOqmu4YYKwjkzos3miKzEHnZ+GpHOuYx7uLGaE
+         zHIWyCppm77BMtgL6QzXZ1Hmzbggl/6H03ugd/cIfkOT8qbVLz6/gLHeUuFfSjA9Xeoa
+         MPG4tdiKgMXWO+eh5rsKNsC90o+9x14NA86uN0lqIQ3Mf/DoxgdetNVvKcjGiJ0mRcBA
+         R3aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LyzsKuloOrXeAT1eDgIMEyFoe/19CJB+RPiJ8KPwQIw=;
+        b=TK5ymRcXE4fM8nrALM6HSyjy4Z9wpY4QEELaiRWHcdKNvcs6LBUDm5CYYZBU2j3z0f
+         EJ0/90yG/7CyFAR96iMVGlNgZwU/EdOiNWokyOMfX7sF80rPKM8w27f5FXfTHewYy5IY
+         IJ0+PSiP2u07eGPFBwVg8QNnM2OS34PojSoqbq/iv6MjbSsOQ4eMAdG1evlQlHDRop7C
+         YFRixZnC0fFgrJJ3W7mnakNhZX90pAYfr5bJQCQ6ZoPpWmQyzT9gTXNQoWPllKzyD4WR
+         i9s1rMOpTvgrQBXR3oLQvudN93ETa+g0dE2HSNbthK5Xpb3QP1hLx1jcActD/6WRgDC1
+         S1hA==
+X-Gm-Message-State: ANhLgQ2cr9D7PHvdhU9swZAXD8SDO6hc+UJABTpXERNDD7B54Rm5UIKt
+        a88plgDPUh/0WkGXxSE60AogwPc+UsNVnyl44Eomrw==
+X-Google-Smtp-Source: ADFU+vvpfThPEsySr4RvSlP6UPDA5AYK/x2Ak/VHoJ9GoNUgCMWeZ+k5a42yKU7sePemyrIkQzJo3xMLVDtx8jEJPkw=
+X-Received: by 2002:ab0:7381:: with SMTP id l1mr4821390uap.104.1584018547554;
+ Thu, 12 Mar 2020 06:09:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200306174413.20634-1-nsaenzjulienne@suse.de>
+In-Reply-To: <20200306174413.20634-1-nsaenzjulienne@suse.de>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 12 Mar 2020 14:08:31 +0100
+Message-ID: <CAPDyKFp+XwGog_w+8Sv1hYA-Umi6Rt2LYR1fyMEEb9abdb9nGQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] Raspbery Pi 4 vmmc regulator support
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        phil@raspberrypi.com,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change makes populate_section_memmap()/depopulate_section_memmap
-much simpler.
+On Fri, 6 Mar 2020 at 18:44, Nicolas Saenz Julienne
+<nsaenzjulienne@suse.de> wrote:
+>
+> The series first cleans up a common pattern, which is ultimately needed
+> to integrate the regulator with bcm2711's sdhci-iproc. It then
+> introduces the relevant device-tree changes.
+>
+> ---
+>
+> Changes since v1:
+>  - Use helper function istead of quirk
+>  - Add GPIO label
+>
+> Nicolas Saenz Julienne (11):
+>   mmc: sdhci: Introduce sdhci_set_power_and_bus_voltage()
+>   mmc: sdhci: arasan: Use sdhci_set_power_and_voltage()
+>   mmc: sdhci: milbeaut: Use sdhci_set_power_and_voltage()
+>   mmc: sdhci: at91: Use sdhci_set_power_and_voltage()
+>   mmc: sdhci: pxav3: Use sdhci_set_power_and_voltage()
+>   mmc: sdhci: xenon: Use sdhci_set_power_and_voltage()
+>   mmc: sdhci: am654: Use sdhci_set_power_and_voltage()
+>   mmc: sdhci: Unexport sdhci_set_power_noreg()
+>   mmc: sdhci: iproc: Add custom set_power() callback for bcm2711
+>   ARM: dts: bcm2711: Update expgpio's GPIO labels
+>   ARM: dts: bcm2711: Add vmmc regulator in emmc2
+>
+>  arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 13 ++++++++++++-
+>  drivers/mmc/host/sdhci-iproc.c        | 17 ++++++++++++++++-
+>  drivers/mmc/host/sdhci-milbeaut.c     | 13 +------------
+>  drivers/mmc/host/sdhci-of-arasan.c    | 15 ++-------------
+>  drivers/mmc/host/sdhci-of-at91.c      | 18 +-----------------
+>  drivers/mmc/host/sdhci-pxav3.c        | 20 +-------------------
+>  drivers/mmc/host/sdhci-xenon.c        | 20 +-------------------
+>  drivers/mmc/host/sdhci.c              | 24 +++++++++++++++++++++---
+>  drivers/mmc/host/sdhci.h              |  5 +++--
+>  drivers/mmc/host/sdhci_am654.c        | 17 +++--------------
+>  10 files changed, 61 insertions(+), 101 deletions(-)
+>
+> --
+> 2.25.1
+>
 
-Suggested-by: Michal Hocko <mhocko@kernel.org>
-Signed-off-by: Baoquan He <bhe@redhat.com>
----
-v1->v2:
-  The old version only used __get_free_pages() to replace alloc_pages()
-  in populate_section_memmap().
-  http://lkml.kernel.org/r/20200307084229.28251-8-bhe@redhat.com
+Patch 1-4, 6, 9 applied for next, thanks!
 
- mm/sparse.c | 27 +++------------------------
- 1 file changed, 3 insertions(+), 24 deletions(-)
-
-diff --git a/mm/sparse.c b/mm/sparse.c
-index bf6c00a28045..362018e82e22 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -734,35 +734,14 @@ static void free_map_bootmem(struct page *memmap)
- struct page * __meminit populate_section_memmap(unsigned long pfn,
- 		unsigned long nr_pages, int nid, struct vmem_altmap *altmap)
- {
--	struct page *page, *ret;
--	unsigned long memmap_size = sizeof(struct page) * PAGES_PER_SECTION;
--
--	page = alloc_pages(GFP_KERNEL|__GFP_NOWARN, get_order(memmap_size));
--	if (page)
--		goto got_map_page;
--
--	ret = vmalloc(memmap_size);
--	if (ret)
--		goto got_map_ptr;
--
--	return NULL;
--got_map_page:
--	ret = (struct page *)pfn_to_kaddr(page_to_pfn(page));
--got_map_ptr:
--
--	return ret;
-+	return kvmalloc_node(sizeof(struct page) * PAGES_PER_SECTION,
-+			     GFP_KERNEL|__GFP_NOWARN, nid);
- }
- 
- static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
- 		struct vmem_altmap *altmap)
- {
--	struct page *memmap = pfn_to_page(pfn);
--
--	if (is_vmalloc_addr(memmap))
--		vfree(memmap);
--	else
--		free_pages((unsigned long)memmap,
--			   get_order(sizeof(struct page) * PAGES_PER_SECTION));
-+	kvfree(pfn_to_page(pfn));
- }
- 
- static void free_map_bootmem(struct page *memmap)
--- 
-2.17.2
-
+Kind regards
+Uffe
