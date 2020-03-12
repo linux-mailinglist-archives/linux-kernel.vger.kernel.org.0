@@ -2,73 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7145182987
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 08:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E711182997
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 08:13:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388074AbgCLHME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 03:12:04 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:40072 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387767AbgCLHMD (ORCPT
+        id S2388061AbgCLHNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 03:13:34 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:49904 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387957AbgCLHNd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 03:12:03 -0400
-Received: by mail-io1-f70.google.com with SMTP id z207so1081129iof.7
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 00:12:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=NkGoJSV/Bp/D1AVTh2vJ5bc0esVeByDEUU8v4C2fFZI=;
-        b=f8/KlnMJOpLp3U7lanxoQvxZZEb2e0PRhadb2yKLiTEkMSXxLwFEw2HPznUfwlPBra
-         0Lu2vcu4SDiPZvgrLGz3qJ8z8aSAzZG7caHKkzrdTYkJHswflx2qiGYk7eIInGunCVOz
-         2T1k7cgCyd2pgyGQ8pPf9Khg9f4PcIpU3UMcQfU2Eu1/+pZXAs7DArHfYL+RnbowWNlM
-         wIA8BMvGU4WGn9rYaVEVSuIKO0mMZIOFjEuXIQOaCUOlLPA2I4OLNtMP5TQhR8i1weIx
-         Sk+NvyWNBicIHFDR2mAJU15AOIxifpuw8prlPbbmtSZrW9xR7Q9bLb5lFB4N7yWZIlPI
-         FgpQ==
-X-Gm-Message-State: ANhLgQ1xneqIgQ2JRHe3SWcTA9YGTmsOU2FQscC9nY42gyJYxNG2d8fI
-        AJCrj4jzWaDZHVJl421eR/MYYyYx+8GYWKR7s4bmo3ktBp0S
-X-Google-Smtp-Source: ADFU+vu0tdPEZAEJ4MkiMJN9x0Wbxty5U2bPaFvIoXsT+C6ccTSohSa61FoSXLPgeHbcrwZMk4ztdS8AxE6Gq/FdTX412XuVHtKt
+        Thu, 12 Mar 2020 03:13:33 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02C7DBoM010246;
+        Thu, 12 Mar 2020 02:13:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583997191;
+        bh=fjYERfZUgQqc0nG8FGAu3JPItUIvc/HLycHoB+1dJS8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=MAnsAHWYbQnl4E2RuhyzfPrYoPjmkJH9TNu0ubI5w9NKRTidri1yub5+zuWeLobIX
+         iTP0fnFNo6/zLgplDh7cqHidhgLj0RewxcvJKQZLntJz2uvrukxUPIb5Xqk4d0P0HL
+         R9cUaOUohdncf6stuJl910WmUtchTJmg0unByiJc=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02C7DBFD079960
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Mar 2020 02:13:11 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 12
+ Mar 2020 02:13:10 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 12 Mar 2020 02:13:10 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02C7D6DT060795;
+        Thu, 12 Mar 2020 02:13:07 -0500
+Subject: Re: [PATCH v6 2/3] drm: bridge: Add support for Cadence MHDP DPI/DP
+ bridge
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yuti Amonkar <yamonkar@cadence.com>
+CC:     <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>,
+        <maxime@cerno.tech>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <mark.rutland@arm.com>, <a.hajda@samsung.com>,
+        <narmstrong@baylibre.com>, <jonas@kwiboo.se>,
+        <jernej.skrabec@siol.net>, <praneeth@ti.com>, <jsarha@ti.com>,
+        <mparab@cadence.com>, <sjakhade@cadence.com>
+References: <1582712579-28504-1-git-send-email-yamonkar@cadence.com>
+ <1582712579-28504-3-git-send-email-yamonkar@cadence.com>
+ <20200311222053.GE4863@pendragon.ideasonboard.com>
+From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <ef6a6e31-425f-c402-83ab-886221b4a0c3@ti.com>
+Date:   Thu, 12 Mar 2020 09:13:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-Received: by 2002:a02:30c8:: with SMTP id q191mr6475552jaq.34.1583997121957;
- Thu, 12 Mar 2020 00:12:01 -0700 (PDT)
-Date:   Thu, 12 Mar 2020 00:12:01 -0700
-In-Reply-To: <0000000000000ea4b4059fb33201@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c7979105a0a311f6@google.com>
-Subject: Re: WARNING in geneve_exit_batch_net (2)
-From:   syzbot <syzbot+68a8ed58e3d17c700de5@syzkaller.appspotmail.com>
-To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        hdanton@sina.com, jbenc@redhat.com, kadlec@blackhole.kfki.hu,
-        linux-kernel@vger.kernel.org, moshe@mellanox.com,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, sd@queasysnail.net,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200311222053.GE4863@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+Hi Laurent,
 
-commit 4e645b47c4f000a503b9c90163ad905786b9bc1d
-Author: Florian Westphal <fw@strlen.de>
-Date:   Thu Nov 30 23:21:02 2017 +0000
+On 12/03/2020 00:20, Laurent Pinchart wrote:
+>> +	ret = load_firmware(mhdp);
+>> +	if (ret)
+>> +		goto phy_exit;
+>> +
+>> +	drm_bridge_add(&mhdp->bridge);
+> What if someone starts using the bridge before the firmware is
+> operational ? It seems that you should delay bridge registration until
+> the firmware is loaded. It may make it possible to remove
+> bridge_attached and solve the problem you mention in mhdp_fw_cb().
 
-    netfilter: core: make nf_unregister_net_hooks simple wrapper again
+Handling the fw has been a bit of a pain... This is what we came up with to support all the 
+combinations (built-in/module, fw-userspace-helper/direct load, single-output/multiple-outputs).
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1594fbfde00000
-start commit:   63623fd4 Merge tag 'for-linus' of git://git.kernel.org/pub..
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=1794fbfde00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1394fbfde00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9833e26bab355358
-dashboard link: https://syzkaller.appspot.com/bug?extid=68a8ed58e3d17c700de5
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14f08165e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17902329e00000
+The idea is that when the driver is loaded and probed (with or without fw), the DP is "ready". If we 
+don't have fw yet, everything looks fine, but the connector stays in disconnected state. When we get 
+the fw, connector will get connected (only if there's a cable connected, of course).
 
-Reported-by: syzbot+68a8ed58e3d17c700de5@syzkaller.appspotmail.com
-Fixes: 4e645b47c4f0 ("netfilter: core: make nf_unregister_net_hooks simple wrapper again")
+If we register the bridge only when we have fw, two things can happen:
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+- If we get the fw only rather late (in case userspace fw helper), a userspace app (e.g. weston) 
+could already have been started, and failed due to there being no DRM card.
+
+- If we have two displays from the same display controller, say, DP and HDMI, the HDMI will only be 
+available when the DP is available. If the DP fw, for some reason, cannot be loaded, we never get HDMI.
+
+  Tomi
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
