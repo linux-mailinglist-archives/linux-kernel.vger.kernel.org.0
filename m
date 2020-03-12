@@ -2,73 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F041182719
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 03:41:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49D6318271C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 03:45:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387689AbgCLClh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 22:41:37 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:43120 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387501AbgCLClh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 22:41:37 -0400
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 8167120B9C02;
-        Wed, 11 Mar 2020 19:41:36 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8167120B9C02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1583980896;
-        bh=FPn0J0a+i5WpPQn+wWi5l3mA8piuchfQOex4GqLMil0=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=Lq9bjLEBp7SL0Z6FdOGkbsBEfiXIiOB12effq3ESopNg/WxdNEjjthlzf7xMDmeAr
-         ksJOTlMvOTT49LGJ9z22mYxrAW2tGwOg59w69Vo8YhWOaOeJYfGmbJfkDVDbnqwmi4
-         EyWcjHr0Sf3O2tCS609q9IHQZFhVi2bv+KVqVI9E=
-Subject: Re: [Outreachy kernel] [PATCH] Staging: rtl8723bs: rtw_mlme: Remove
- unnecessary conditions
-To:     Shreeya Patel <shreeya.patel23498@gmail.com>,
-        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com,
-        sbrivio@redhat.com, daniel.baluta@gmail.com, hverkuil@xs4all.nl,
-        Larry.Finger@lwfinger.net
-References: <20200311135859.5626-1-shreeya.patel23498@gmail.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <61a6c3d7-6592-b57b-6466-995309302cc2@linux.microsoft.com>
-Date:   Wed, 11 Mar 2020 19:42:06 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S2387609AbgCLCpt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 22:45:49 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59718 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387396AbgCLCps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Mar 2020 22:45:48 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C9BC4A2E5D5E8479C3A3;
+        Thu, 12 Mar 2020 10:45:42 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.487.0; Thu, 12 Mar 2020 10:45:33 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to account compressed blocks in f2fs_compressed_blocks()
+Date:   Thu, 12 Mar 2020 10:45:29 +0800
+Message-ID: <20200312024529.4668-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-In-Reply-To: <20200311135859.5626-1-shreeya.patel23498@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/11/2020 6:58 AM, Shreeya Patel wrote:
+por_fsstress reports inconsistent status in orphan inode, the root cause
+of this is in f2fs_write_raw_pages() we decrease i_compr_blocks incorrectly
+due to wrong calculation in f2fs_compressed_blocks().
 
-> Remove unnecessary if and else conditions since both are leading to the
-> initialization of "phtpriv->ampdu_enable" with the same value.
-> 
-> Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
+So this patch exposes below two functions based on __f2fs_cluster_blocks:
+- f2fs_compressed_blocks: get count of compressed blocks in compressed cluster
+- f2fs_cluster_blocks: get count of valid blocks (including reserved blocks)
+in compressed cluster.
 
-Stating this based on the patch descriptions I have seen.
-Others, please advise\correct me if I am wrong.
+Then use f2fs_compress_blocks() to get correct compressed blocks count in
+f2fs_write_raw_pages().
 
-Patch description should state the problem first[1] and then describe 
-how that is fixed in the given patch.
+sanity_check_inode: inode (ino=ad80) hash inconsistent i_compr_blocks:2, i_blocks:1, run fsck to fix
 
-For example:
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/compress.c | 28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
-In the function rtw_update_ht_cap(), phtpriv->ampdu_enable is set to the 
-same value in both if and else statements.
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 8a9691a1d1d5..744ce2eb6ca7 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -719,8 +719,7 @@ static bool __cluster_may_compress(struct compress_ctx *cc)
+ 	return true;
+ }
+ 
+-/* return # of compressed block addresses */
+-static int f2fs_compressed_blocks(struct compress_ctx *cc)
++static int __f2fs_cluster_blocks(struct compress_ctx *cc, bool compr)
+ {
+ 	struct dnode_of_data dn;
+ 	int ret;
+@@ -743,8 +742,13 @@ static int f2fs_compressed_blocks(struct compress_ctx *cc)
+ 
+ 			blkaddr = data_blkaddr(dn.inode,
+ 					dn.node_page, dn.ofs_in_node + i);
+-			if (blkaddr != NULL_ADDR)
+-				ret++;
++			if (compr) {
++				if (__is_valid_data_blkaddr(blkaddr))
++					ret++;
++			} else {
++				if (blkaddr != NULL_ADDR)
++					ret++;
++			}
+ 		}
+ 	}
+ fail:
+@@ -752,6 +756,18 @@ static int f2fs_compressed_blocks(struct compress_ctx *cc)
+ 	return ret;
+ }
+ 
++/* return # of compressed blocks in compressed cluster */
++static int f2fs_compressed_blocks(struct compress_ctx *cc)
++{
++	return __f2fs_cluster_blocks(cc, true);
++}
++
++/* return # of valid blocks in compressed cluster */
++static int f2fs_cluster_blocks(struct compress_ctx *cc, bool compr)
++{
++	return __f2fs_cluster_blocks(cc, false);
++}
++
+ int f2fs_is_compressed_cluster(struct inode *inode, pgoff_t index)
+ {
+ 	struct compress_ctx cc = {
+@@ -761,7 +777,7 @@ int f2fs_is_compressed_cluster(struct inode *inode, pgoff_t index)
+ 		.cluster_idx = index >> F2FS_I(inode)->i_log_cluster_size,
+ 	};
+ 
+-	return f2fs_compressed_blocks(&cc);
++	return f2fs_cluster_blocks(&cc, false);
+ }
+ 
+ static bool cluster_may_compress(struct compress_ctx *cc)
+@@ -810,7 +826,7 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
+ 	bool prealloc;
+ 
+ retry:
+-	ret = f2fs_compressed_blocks(cc);
++	ret = f2fs_cluster_blocks(cc, false);
+ 	if (ret <= 0)
+ 		return ret;
+ 
+-- 
+2.18.0.rc1
 
-This patch removes this unnecessary if-else statement.
-
-
-[1] Documentation\process\submitting-patches.rst
-        2) Describe your changes
-
-Thanks,
-  -lakshmi
