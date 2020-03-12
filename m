@@ -2,115 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AE50182D5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 11:23:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA5C5182D94
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 11:28:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbgCLKXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 06:23:02 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35282 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbgCLKXC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 06:23:02 -0400
-Received: by mail-wr1-f66.google.com with SMTP id d5so6327572wrc.2;
-        Thu, 12 Mar 2020 03:23:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=R39Tv+SJk1mlAAPLn4Outf5Cn4fszK3o5vE5appptCQ=;
-        b=m/GTFAZpm1PoK9CRxkedOWz96yiMDrmJ4OJvKUBr+fD9DtdQvxc/2FFDnQEt0YStqY
-         x9SfI6ajDaK+qNuJbOFFNFVKgFEj++WBuJnMDyLLE74P628Mvp/VhGWeuX7NsqW1lexS
-         IB/gOlQ+QDU93dhY624kh22HQ7u4NKtKUweQAhTkzFPsfUbB5gaF/5IS7oGAsBPNEVF7
-         krYB/h8Capx3EfkVzEKZrKCjppeElKO4u/h4aNGiQBl90nCAp2gqRZeh8y1BDnjkqB5C
-         EFcNfeCEv9KhtVv8bhS56hRrmoHrr3M81QhL1gfOdYG2cnNmPihuI2XJu/bRry6j8WN3
-         f4bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R39Tv+SJk1mlAAPLn4Outf5Cn4fszK3o5vE5appptCQ=;
-        b=e2NXQAvOeaFjiJxHdjpxqFtM6HQZvnLXNvUJeFbpa2zo+7UDGJwZj4kVKJZVQiu+Mq
-         PyvMd8+0tStFO4dYDdbfMjCn0le81x5Kbr8Zt7antyAMul13qQGUL5vEn8D1wv1G76WE
-         zZwh81z4Nb5KQ98J7G3uGdVfqvIlQQDesu2eujGZ3qFmgUBBvJqA7YhLAxxesxcIQumO
-         aXoelmhXf+mK/BQSPGQLn8Hho6QvDugpeUrr2TFa8MAsoACCvsYXeO5Z874I3atetb1+
-         8KTa0iBGR0xK2N2enZnDhb651MBwSo6AjyIpATViKJaGHJ6z5zCHULkcl+OX9JWNSpbA
-         i9gA==
-X-Gm-Message-State: ANhLgQ3WoqaEWrC0UYlXvVwBTV9z37pQTwqlMKd2zl/h3q299MdtFy68
-        6dhVtz0i+IoSciUddLgjdBo=
-X-Google-Smtp-Source: ADFU+vvIPiE9oEe1sZdLC6ETn26Bj3DUmMFh6IUf3SyWaySqtKrgHzYOT/xCRJ9z9STnzL9EAcaYgA==
-X-Received: by 2002:a05:6000:118c:: with SMTP id g12mr10378257wrx.341.1584008579775;
-        Thu, 12 Mar 2020 03:22:59 -0700 (PDT)
-Received: from localhost (pD9E516A9.dip0.t-ipconnect.de. [217.229.22.169])
-        by smtp.gmail.com with ESMTPSA id 98sm13500854wrm.64.2020.03.12.03.22.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2020 03:22:56 -0700 (PDT)
-Date:   Thu, 12 Mar 2020 11:22:44 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     JC Kuo <jckuo@nvidia.com>, robh@kernel.org, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-        felipe.balbi@linux.intel.com
-Subject: Re: [PATCH v1] dt-binding: usb: add "super-speed-plus"
-Message-ID: <20200312102244.GC1199023@ulmo>
-References: <20200113060046.14448-1-jckuo@nvidia.com>
- <20200210185821.GA1057764@kroah.com>
+        id S1727033AbgCLK2Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 06:28:24 -0400
+Received: from relay.sw.ru ([185.231.240.75]:40258 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725978AbgCLK2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 06:28:23 -0400
+Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1jCL3s-0005To-55; Thu, 12 Mar 2020 13:27:32 +0300
+Subject: Re: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace
+ cred_guard_mutex
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nmjulm.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003021531.C77EF10@keescook>
+ <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+ <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nlii0b.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74xi4kz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <f37a5d68-9674-533f-ee9c-a49174605710@virtuozzo.com>
+Date:   Thu, 12 Mar 2020 13:27:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5G06lTa6Jq83wMTw"
-Content-Disposition: inline
-In-Reply-To: <20200210185821.GA1057764@kroah.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+In-Reply-To: <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 09.03.2020 00:38, Eric W. Biederman wrote:
+> 
+> The cred_guard_mutex is problematic.  The cred_guard_mutex is held
+> over the userspace accesses as the arguments from userspace are read.
+> The cred_guard_mutex is held of PTRACE_EVENT_EXIT as the the other
+> threads are killed.  The cred_guard_mutex is held over
+> "put_user(0, tsk->clear_child_tid)" in exit_mm().
+> 
+> Any of those can result in deadlock, as the cred_guard_mutex is held
+> over a possible indefinite userspace waits for userspace.
+> 
+> Add exec_update_mutex that is only held over exec updating process
+> with the new contents of exec, so that code that needs not to be
+> confused by exec changing the mm and the cred in ways that can not
+> happen during ordinary execution of a process.
+> 
+> The plan is to switch the users of cred_guard_mutex to
+> exec_udpate_mutex one by one.  This lets us move forward while still
+> being careful and not introducing any regressions.
+> 
+> Link: https://lore.kernel.org/lkml/20160921152946.GA24210@dhcp22.suse.cz/
+> Link: https://lore.kernel.org/lkml/AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com/
+> Link: https://lore.kernel.org/linux-fsdevel/20161102181806.GB1112@redhat.com/
+> Link: https://lore.kernel.org/lkml/20160923095031.GA14923@redhat.com/
+> Link: https://lore.kernel.org/lkml/20170213141452.GA30203@redhat.com/
+> Ref: 45c1a159b85b ("Add PTRACE_O_TRACEVFORKDONE and PTRACE_O_TRACEEXIT facilities.")
+> Ref: 456f17cd1a28 ("[PATCH] user-vm-unlock-2.5.31-A2")
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
+>  fs/exec.c                    | 9 +++++++++
+>  include/linux/sched/signal.h | 9 ++++++++-
+>  init/init_task.c             | 1 +
+>  kernel/fork.c                | 1 +
+>  4 files changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index d820a7272a76..ffeebb1f167b 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1014,6 +1014,7 @@ static int exec_mmap(struct mm_struct *mm)
+>  {
+>  	struct task_struct *tsk;
+>  	struct mm_struct *old_mm, *active_mm;
+> +	int ret;
+>  
+>  	/* Notify parent that we're no longer interested in the old VM */
+>  	tsk = current;
+> @@ -1034,6 +1035,11 @@ static int exec_mmap(struct mm_struct *mm)
+>  			return -EINTR;
+>  		}
+>  	}
+> +
+> +	ret = mutex_lock_killable(&tsk->signal->exec_update_mutex);
+> +	if (ret)
+> +		return ret;
 
---5G06lTa6Jq83wMTw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You missed old_mm->mmap_sem unlock. See here:
 
-On Mon, Feb 10, 2020 at 10:58:21AM -0800, Greg KH wrote:
-> On Mon, Jan 13, 2020 at 02:00:46PM +0800, JC Kuo wrote:
-> > This commit adds "super-speed-plus" to valid argument list of
-> > "maximum-speed" property.
-> >=20
-> > Signed-off-by: JC Kuo <jckuo@nvidia.com>
-> > ---
-> >  Documentation/devicetree/bindings/usb/generic.txt | 9 +++++----
-> >  1 file changed, 5 insertions(+), 4 deletions(-)
->=20
-> What ever happened to this?  Did the DT developers see it?
->=20
-> I suggest resending please so it gets into their queue to review.
-
-It's been a while and you probably noticed by now, but in case you
-haven't: Rob picked this up into the devicetree tree a few weeks ago, so
-no need to worry about this any longer.
-
-Thierry
-
---5G06lTa6Jq83wMTw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5qDWgACgkQ3SOs138+
-s6FY5xAAwR85ce936jWef2QohmCJ3TQFWmFhJT5xrR4lenXt/X/5CRqHrY/UhFp6
-JDh8UTQytoqUiFBx6qEP6zb7uj1VsrA/dD8vw03/a8mJwSWw7P2sXZc0eSRrSC35
-G2AAq6JLGMDMcXvIGB8mwGrcrbp717KTYD8umwiBUc7qK5U1STNbMS75FzO6bRtN
-7xVk57ED6K9qA76oNVZ2EidzVPTC7l0w/5jBkNwBc3bFwPlxNL/ULtgBYjJAz041
-0s069xWv+OGZyxkG10CaRPCi2erXwYiX2WHivnQJQReY1YHVVqmOOJPTeR11YhTc
-K01Yc+bbKIpyjAPywPDV0oQrOpMb4QPPCjRFzYVJKK66UfNc/ihmlCdXFlN/51/V
-lrV/1/onTP0VKho5LJWfL7S0gJLusbhCBe0TnSnBKpF/R1PW65e6oHqvLUX+Rh/V
-dZMF90Z2JzKzMBSeh4y66GXYzyikFqqAGDt7nEPLTarIyBQD4bbggg0nF7ADVzj7
-HhfSGyCjLVlz8V4G3FN2JHguA1Htjl4We/D5BjghRWQJFBxAvVphJTFi9PDrc/yw
-CH7P4dL1INI4BqJQhxQwpXjJDs4KwS5P4axnBXx9iqXQFTYEWVxOHaX9pKOsI+ix
-cEjOltNEzaPJNS13Zm9Z+aWSdG/3BGLbFOwX7Jfuv1ISOcmBNYc=
-=k0XA
------END PGP SIGNATURE-----
-
---5G06lTa6Jq83wMTw--
+diff --git a/fs/exec.c b/fs/exec.c
+index 47582cd97f86..d557bac3e862 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1063,8 +1063,11 @@ static int exec_mmap(struct mm_struct *mm)
+ 	}
+ 
+ 	ret = mutex_lock_killable(&tsk->signal->exec_update_mutex);
+-	if (ret)
++	if (ret) {
++		if (old_mm)
++			up_read(&old_mm->mmap_sem);
+ 		return ret;
++	}
+ 
+ 	task_lock(tsk);
+ 	active_mm = tsk->active_mm;
