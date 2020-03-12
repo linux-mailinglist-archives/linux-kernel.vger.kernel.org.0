@@ -2,62 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D939B182EAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 12:11:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1D3E182EB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 12:12:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbgCLLLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 07:11:03 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41091 "EHLO
+        id S1727150AbgCLLMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 07:12:05 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42648 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbgCLLLD (ORCPT
+        with ESMTP id S1726752AbgCLLMF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 07:11:03 -0400
-Received: by mail-wr1-f68.google.com with SMTP id s14so6882483wrt.8
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 04:10:59 -0700 (PDT)
+        Thu, 12 Mar 2020 07:12:05 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v11so6881998wrm.9
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 04:12:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=szSuRMDH1Y0Pi9MXBtobQb6A8iaA4WHScigJxSrHfAc=;
-        b=b2lohf4qITjKNeDm4T/VBYywuF4iQNteGuE+QecO9bnn1k7obBm5hKgnPHnV+mNulF
-         oflfXvpw1sdAaEtYXV04dDB1W+WpREVnpv0qW33PeNjva1y4p/AjX/34ErjBAd0/1kxR
-         Phweo2KYVVLzJZf1jwjF3KictG+fyFGJGO7iCaZ+ZdAkJKlV8TML0GoAw8krqgKJkv/B
-         Vupe00ehArCc5uZ44+AnGzYrYzGS68y4j1SxsRKwJDYQ2e+asGXvuDBAMyyjC55bPliZ
-         wwLcWclVGkcuh3bQ0XdlmYTziGn3BMbHb1alRdV0PpGlOE3KASqCTo8iAiNXGXx10Rnu
-         WE+g==
+        bh=yKVMhGEhHj2nAvWVxK/ozTDgieqKZsKk3C5oNd2q3Mc=;
+        b=rMsUEwK5b57qYCS0YtjFicxSGjju0PHMOEO6LbfrtwixQXZWUMmNw8tLz2nmCAzlGI
+         JYpc50qaz/WsVbrs0/ZNvUC65ZwvXuFADfekz9Lsk1Qo6tPvoxS4XUpjhQGjlu8nNdfK
+         q92CjZSOqgmz7ZQUInDsSV8MZHuzY72bm7BjZkICBRF2SXelBJGCLyBrGqlDbrlqRxlX
+         ZKSX8FS02qHDZZPQX5NdAOMahl/1qdhH2ZnkqZtUM/87XWX3QPFCmImELjrBzS7ANPsM
+         ceO16sYaMf7ipiCLspxciTCWiHnhNIG4JASPwD6ruPcUkmnSGOFbTQOTCG0eVM6OxObv
+         ff5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=szSuRMDH1Y0Pi9MXBtobQb6A8iaA4WHScigJxSrHfAc=;
-        b=s4hM5FWka3ZBaDW/9YoYrQeDR18W1EXe1It/xfMSobljB7/gaJWhk5ZLRWbgPzsZs2
-         fpvyXCMgD0gsyTRGMueCVFz0wu5LYk/gV5s7qC33lYA05wSLgpt8gW1CZY2LUTwLO3y9
-         WxbmOBF0bE1e13HcnXV5r05Ttzj6zr6Ck2/z66gPJtf0kkhmiNXr3sPlG7o0HmRzhBM/
-         iTqmfPdmQA3A+GTP6tdWMef7lm6XO/csFZIQU0rogiTl4kx6YXpdmwZsixJ6wVfhfPn1
-         FkDn0TlIZvvSq9QLJ6r6Iqv9vZegzyoEoeebNxfZJDkARYoaUONaRPFxY98s5Q6uBifP
-         6vtA==
-X-Gm-Message-State: ANhLgQ0E2e8JbqyXObbCvnDB0tnENk6ZhxsI3YltSSEhrO82sJ74zD9y
-        TL41NV9X7nxCZis8mWWFDX/7xQ==
-X-Google-Smtp-Source: ADFU+vs0aWVm/v+GbKjxoFnWaFczJaotYswfS4Jmf6kmvYmS0WBm0J5omBjgNWSAjpp5jSo9ED/8CQ==
-X-Received: by 2002:adf:ef0b:: with SMTP id e11mr10868369wro.115.1584011459005;
-        Thu, 12 Mar 2020 04:10:59 -0700 (PDT)
+        bh=yKVMhGEhHj2nAvWVxK/ozTDgieqKZsKk3C5oNd2q3Mc=;
+        b=bym35VN21EQkBP5jTw+xrijbh6ZY7CxP1dhtz3D4G0kSDmcpMmfNt8Vn3IxyMxuiBR
+         Qpovoje7VFZV/2IAVnxg+HWvYhGS/Ff5YOOHI1j3FnldsjIEkHXWq0vxRa4FnpHW7yRL
+         CwEpwb/tTGmxUlU6ymR3kaQp24d5biR6CoWSRvMyjnpqoFPynnag6yQCQf2Y8PXLL5EA
+         29RzaUdfdADbI+uMptUyUU3wh76PEnGjXijkcg8V/z2axv1jKldaYE4mE6OL0VPFtnEj
+         ztX1D9/AkD4pirjTk1LRResWDwv/lEj9ofT8zsgRMbnV5q627A6R0YYVggrXO4l4x8ew
+         819A==
+X-Gm-Message-State: ANhLgQ2oJ9HFZldYnLRJohNGH6S9RanDp8BhIytaT5vaiK1cz3PYlvxC
+        RhsmiQnAQTyZ2mx3AmcK/0uRwQ==
+X-Google-Smtp-Source: ADFU+vvuhEJ1A6Ra0+pNYlmAUpQkagno2JoCT+VM1Wvj7haaQO4gvg3G3raCXzYU9XoLla9HfBvCkw==
+X-Received: by 2002:adf:e68b:: with SMTP id r11mr9872626wrm.138.1584011523138;
+        Thu, 12 Mar 2020 04:12:03 -0700 (PDT)
 Received: from ?IPv6:2a01:e34:ed2f:f020:3880:fdc2:ef6b:879f? ([2a01:e34:ed2f:f020:3880:fdc2:ef6b:879f])
-        by smtp.googlemail.com with ESMTPSA id q72sm12596564wme.31.2020.03.12.04.10.57
+        by smtp.googlemail.com with ESMTPSA id u20sm12214644wmj.14.2020.03.12.04.12.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Mar 2020 04:10:58 -0700 (PDT)
-Subject: Re: [PATCH v3 0/6] clocksource: timer-ti-dm: Prepare for dynamic pwm
- period updates
-To:     Tony Lindgren <tony@atomide.com>, Lokesh Vutla <lokeshvutla@ti.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        linux-pwm@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        Tero Kristo <t-kristo@ti.com>
-References: <20200305082715.15861-1-lokeshvutla@ti.com>
- <20200306171917.GF37466@atomide.com>
+        Thu, 12 Mar 2020 04:12:02 -0700 (PDT)
+Subject: Re: [PATCH] thermal: add COMPILE_TEST support for i.MX8MM
+To:     Anson Huang <Anson.Huang@nxp.com>, rui.zhang@intel.com,
+        amit.kucheria@verdurent.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+References: <1583509057-8197-1-git-send-email-Anson.Huang@nxp.com>
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
  xsFNBFv/yykBEADDdW8RZu7iZILSf3zxq5y8YdaeyZjI/MaqgnvG/c3WjFaunoTMspeusiFE
@@ -113,12 +107,12 @@ Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
  i6D9VoMMi6ICko/CXUZ77OgLtMsy3JtzTRbn/wRySOY2AsMgg0Sw6yJ0wfrVk6XAMoLGjaVt
  X4iPTvwocEhjvrO4eXCicRBocsIB2qZaIj3mlhk2u4AkSpkKm9cN0KWYFUxlENF4/NKWMK+g
  fGfsCsS3cXXiZpufZFGr+GoHwiELqfLEAQ9AhlrHGCKcgVgTOI6NHg==
-Message-ID: <f40cd563-c05b-90b6-c526-196fcd4fa146@linaro.org>
-Date:   Thu, 12 Mar 2020 12:10:57 +0100
+Message-ID: <7808e8ca-2b2f-05cc-8b34-c2d36a30b4dd@linaro.org>
+Date:   Thu, 12 Mar 2020 12:12:01 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200306171917.GF37466@atomide.com>
+In-Reply-To: <1583509057-8197-1-git-send-email-Anson.Huang@nxp.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -127,27 +121,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/03/2020 18:19, Tony Lindgren wrote:
-> * Lokesh Vutla <lokeshvutla@ti.com> [200305 08:29]:
->> This series fixes dm_timer_ops used for enabling the pwm and enables
->> cpu_pm notifier for context save and restore. This acts as a preparatory
->> series for enabling dynamic period updates for pwm omap dm timer driver.
->>
->> Changes since v2:
->> - Incorporated changes from Tony
+On 06/03/2020 16:37, Anson Huang wrote:
+> Add COMPILE_TEST support to i.MX8MM thermal driver for better compile
+> testing coverage.
 > 
-> I just gave this series another try here and it still works
-> for me just fine and is good to go as far as I'm concerned.
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
 
-How do you want this series to be merged?
+Applied, thanks
 
-Shall I pick the patches falling under drivers/clocksource or ack them?
-
-> Thanks for doing this.
+>  drivers/thermal/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Regards,
-> 
-> Tony
+> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> index 4d6753f..91af271 100644
+> --- a/drivers/thermal/Kconfig
+> +++ b/drivers/thermal/Kconfig
+> @@ -265,7 +265,7 @@ config IMX_SC_THERMAL
+>  
+>  config IMX8MM_THERMAL
+>  	tristate "Temperature sensor driver for Freescale i.MX8MM SoC"
+> -	depends on ARCH_MXC
+> +	depends on ARCH_MXC || COMPILE_TEST
+>  	depends on OF
+>  	help
+>  	  Support for Thermal Monitoring Unit (TMU) found on Freescale i.MX8MM SoC.
 > 
 
 
