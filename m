@@ -2,159 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 678B818311B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:20:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FC76183100
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:15:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbgCLNUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:20:10 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54520 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726299AbgCLNUK (ORCPT
+        id S1727170AbgCLNPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:15:01 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:43307 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725978AbgCLNPB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:20:10 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02CDJKav067158
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 09:20:09 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2yqnuxg1p1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 09:20:00 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Thu, 12 Mar 2020 13:14:45 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 12 Mar 2020 13:14:42 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02CDDfmt45351394
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Mar 2020 13:13:41 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 24C14A405B;
-        Thu, 12 Mar 2020 13:14:41 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1ACD4A4054;
-        Thu, 12 Mar 2020 13:14:39 +0000 (GMT)
-Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Thu, 12 Mar 2020 13:14:38 +0000 (GMT)
-Date:   Thu, 12 Mar 2020 18:44:38 +0530
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev@lists.ozlabs.org, Christopher Lameter <cl@linux.com>
-Subject: Re: [PATCH 1/3] powerpc/numa: Set numa_node for all possible cpus
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <20200311110237.5731-1-srikar@linux.vnet.ibm.com>
- <20200311110237.5731-2-srikar@linux.vnet.ibm.com>
- <20200311115735.GM23944@dhcp22.suse.cz>
- <20200312052707.GA3277@linux.vnet.ibm.com>
- <C5560C71-483A-41FB-BDE9-526F1E0CFA36@linux.vnet.ibm.com>
- <5e5c736a-a88c-7c76-fc3d-7bc765e8dcba@suse.cz>
+        Thu, 12 Mar 2020 09:15:01 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jCNfo-0002Yi-Tt; Thu, 12 Mar 2020 14:14:53 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6DB3C1C223E;
+        Thu, 12 Mar 2020 14:14:52 +0100 (CET)
+Date:   Thu, 12 Mar 2020 13:14:52 -0000
+From:   "tip-bot2 for Kim Phillips" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] perf/amd/uncore: Replace manual sampling check
+ with CAP_NO_INTERRUPT flag
+Cc:     Kim Phillips <kim.phillips@amd.com>, Borislav Petkov <bp@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>, stable@vger.kernel.org,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200311191323.13124-1-kim.phillips@amd.com>
+References: <20200311191323.13124-1-kim.phillips@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <5e5c736a-a88c-7c76-fc3d-7bc765e8dcba@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-TM-AS-GCONF: 00
-x-cbid: 20031213-4275-0000-0000-000003AB2976
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20031213-4276-0000-0000-000038C0483A
-Message-Id: <20200312131438.GB3277@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-12_05:2020-03-11,2020-03-12 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- mlxlogscore=999 phishscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
- suspectscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003120072
+Message-ID: <158401889210.28353.10962157777204769703.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Vlastimil Babka <vbabka@suse.cz> [2020-03-12 10:30:50]:
+The following commit has been merged into the perf/urgent branch of tip:
 
-> On 3/12/20 9:23 AM, Sachin Sant wrote:
-> >> On 12-Mar-2020, at 10:57 AM, Srikar Dronamraju <srikar@linux.vnet.ibm.com> wrote:
-> >> * Michal Hocko <mhocko@kernel.org> [2020-03-11 12:57:35]:
-> >>> On Wed 11-03-20 16:32:35, Srikar Dronamraju wrote:
-> >>>> To ensure a cpuless, memoryless dummy node is not online, powerpc need
-> >>>> to make sure all possible but not present cpu_to_node are set to a
-> >>>> proper node.
-> >>> 
-> >>> Just curious, is this somehow related to
-> >>> http://lkml.kernel.org/r/20200227182650.GG3771@dhcp22.suse.cz?
-> >>> 
-> >> 
-> >> The issue I am trying to fix is a known issue in Powerpc since many years.
-> >> So this surely not a problem after a75056fc1e7c (mm/memcontrol.c: allocate
-> >> shrinker_map on appropriate NUMA node"). 
-> >> 
-> >> I tried v5.6-rc4 + a75056fc1e7c but didnt face any issues booting the
-> >> kernel. Will work with Sachin/Abdul (reporters of the issue).
+Commit-ID:     f967140dfb7442e2db0868b03b961f9c59418a1b
+Gitweb:        https://git.kernel.org/tip/f967140dfb7442e2db0868b03b961f9c59418a1b
+Author:        Kim Phillips <kim.phillips@amd.com>
+AuthorDate:    Wed, 11 Mar 2020 14:13:21 -05:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Thu, 12 Mar 2020 14:08:50 +01:00
 
-I had used v1 and not v2. So my mistake.
+perf/amd/uncore: Replace manual sampling check with CAP_NO_INTERRUPT flag
 
-> > I applied this 3 patch series on top of March 11 next tree (commit d44a64766795 )
-> > The kernel still fails to boot with same call trace.
-> 
+Enable the sampling check in kernel/events/core.c::perf_event_open(),
+which returns the more appropriate -EOPNOTSUPP.
 
-While I am not an expert in the slub area, I looked at the patch
-a75056fc1e7c and had some thoughts on why this could be causing this issue.
+BEFORE:
 
-On the system where the crash happens, the possible number of nodes is much
-greater than the number of onlined nodes. The pdgat or the NODE_DATA is only
-available for onlined nodes.
+  $ sudo perf record -a -e instructions,l3_request_g1.caching_l3_cache_accesses true
+  Error:
+  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (l3_request_g1.caching_l3_cache_accesses).
+  /bin/dmesg | grep -i perf may provide additional information.
 
-With a75056fc1e7c memcg_alloc_shrinker_maps, we end up calling kzalloc_node
-for all possible nodes and in ___slab_alloc we end up looking at the
-node_present_pages which is NODE_DATA(nid)->node_present_pages.
-i.e for a node whose pdgat struct is not allocated, we are trying to
-dereference.
+With nothing relevant in dmesg.
 
-Also for a memoryless/cpuless node or possible but not present nodes,
-node_to_mem_node(node) will still end up as node (atleast on powerpc).
+AFTER:
 
-I tried with this hunk below and it works.
+  $ sudo perf record -a -e instructions,l3_request_g1.caching_l3_cache_accesses true
+  Error:
+  l3_request_g1.caching_l3_cache_accesses: PMU Hardware doesn't support sampling/overflow-interrupts. Try 'perf stat'
 
-But I am not sure if we need to check at other places were
-node_present_pages is being called.
+Fixes: c43ca5091a37 ("perf/x86/amd: Add support for AMD NB and L2I "uncore" counters")
+Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20200311191323.13124-1-kim.phillips@amd.com
+---
+ arch/x86/events/amd/uncore.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 626cbcbd977f..bddb93bed55e 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2571,9 +2571,13 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
- 	if (unlikely(!node_match(page, node))) {
- 		int searchnode = node;
+diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+index a6ea07f..4d867a7 100644
+--- a/arch/x86/events/amd/uncore.c
++++ b/arch/x86/events/amd/uncore.c
+@@ -190,15 +190,12 @@ static int amd_uncore_event_init(struct perf_event *event)
  
--		if (node != NUMA_NO_NODE && !node_present_pages(node))
--			searchnode = node_to_mem_node(node);
+ 	/*
+ 	 * NB and Last level cache counters (MSRs) are shared across all cores
+-	 * that share the same NB / Last level cache. Interrupts can be directed
+-	 * to a single target core, however, event counts generated by processes
+-	 * running on other cores cannot be masked out. So we do not support
+-	 * sampling and per-thread events.
++	 * that share the same NB / Last level cache.  On family 16h and below,
++	 * Interrupts can be directed to a single target core, however, event
++	 * counts generated by processes running on other cores cannot be masked
++	 * out. So we do not support sampling and per-thread events via
++	 * CAP_NO_INTERRUPT, and we do not enable counter overflow interrupts:
+ 	 */
+-	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
+-		return -EINVAL;
 -
-+		if (node != NUMA_NO_NODE) {
-+			if (!node_online(node) || !node_present_pages(node)) {
-+				searchnode = node_to_mem_node(node);
-+				if (!node_online(searchnode))
-+					searchnode = first_online_node;
-+			}
-+		}
- 		if (unlikely(!node_match(page, searchnode))) {
- 			stat(s, ALLOC_NODE_MISMATCH);
- 			deactivate_slab(s, page, c->freelist, c);
-
-> > 
-> 
-
--- 
-Thanks and Regards
-Srikar Dronamraju
-
+-	/* and we do not enable counter overflow interrupts */
+ 	hwc->config = event->attr.config & AMD64_RAW_EVENT_MASK_NB;
+ 	hwc->idx = -1;
+ 
+@@ -306,7 +303,7 @@ static struct pmu amd_nb_pmu = {
+ 	.start		= amd_uncore_start,
+ 	.stop		= amd_uncore_stop,
+ 	.read		= amd_uncore_read,
+-	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
++	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE | PERF_PMU_CAP_NO_INTERRUPT,
+ };
+ 
+ static struct pmu amd_llc_pmu = {
+@@ -317,7 +314,7 @@ static struct pmu amd_llc_pmu = {
+ 	.start		= amd_uncore_start,
+ 	.stop		= amd_uncore_stop,
+ 	.read		= amd_uncore_read,
+-	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
++	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE | PERF_PMU_CAP_NO_INTERRUPT,
+ };
+ 
+ static struct amd_uncore *amd_uncore_alloc(unsigned int cpu)
