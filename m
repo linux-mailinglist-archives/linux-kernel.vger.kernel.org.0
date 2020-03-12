@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C113D183720
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:14:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B151183725
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbgCLROz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 13:14:55 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36382 "EHLO
+        id S1726647AbgCLRPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 13:15:06 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54739 "EHLO
         mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbgCLROz (ORCPT
+        with ESMTP id S1726481AbgCLRO7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 13:14:55 -0400
-Received: by mail-wm1-f68.google.com with SMTP id g62so7243924wme.1;
-        Thu, 12 Mar 2020 10:14:54 -0700 (PDT)
+        Thu, 12 Mar 2020 13:14:59 -0400
+Received: by mail-wm1-f68.google.com with SMTP id n8so6952975wmc.4;
+        Thu, 12 Mar 2020 10:14:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EYdjJi1eg7gwDE8+qiJsI5fjOAKRoOIZdPVPZzHXbKM=;
-        b=M8Hey0ZIup/VKHiqLIq6b3cKb1xTOXZWyT6gZ3p9k0zIiwpnZqOMK/NXvJy6vrxPW0
-         irrMKZk9dIXmf7GvYxSwMBq2s4GuK64k6lzUS+lX9gSflctbgWaPA07GhFj4c1KNHfBf
-         FdE/xvA0ZSd/VSqUaOynJermbkYE5fUHZaaM/ku9/o9z5+1vhkY3QJrAv3N3WBblUQ4B
-         2lQvlu8sQJ+VdF0Jwu5xAYoscqTEAX8SQmIp5tOPVifLuPbaGqCJlgwp7EHj6bsL9+8X
-         ZfBggl6QGE1xt77F0pH7bfdO4/6GU9YDSF/5Sg65sfW4UZj6KL6tauTT2xewUhFqGWVi
-         qZnA==
+        bh=gvIHQy0x0uikDeWAsY+tRBfCVP/6W4keDh1IPsYRgIk=;
+        b=tYXn3PTZuAQXxTt+iA/09QAahXBf7be8mV1OiH1bsJ/2iHNzElyZl1d8X0ap2ALfG7
+         SwUy2N+XS4R7gyNbXNmB5Pv0Q0DXmW77m4UyjfhyLC4XV4ASWtZ8WtdVfszTz4VLcS5u
+         /0LZYB0l/EfhEfvv8bIQwvTDDVa/i2P2OSKQ01qrUQold/cAlJP574BjFAfVFP2XWH/G
+         tfaNHumgsb8O6ijLF93tWM/5TmN3cn7IwxQq3oTH6GmOTgSceFBdoQq3RuQ3Pf5KEH+p
+         jIXJzAkEriGq24vosjrAgkmHJ/wmrk6KNLWydwtqiWfFZAZFyH5j/guQ/3/1Q3Sttdss
+         dU5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=EYdjJi1eg7gwDE8+qiJsI5fjOAKRoOIZdPVPZzHXbKM=;
-        b=cQHTGrMqr4dJzCf76fVHqTdMe7gz7ROhYKvhGL5iWc2VtM2SbIm5oNGEAALGwU/SPt
-         G7c2spcJPE3D3nzSKj807Mo3kjT5Mdw2vjeqLiinwmopVlyVK3psPykPfyPl9ux0bXcZ
-         GKQwTB01pLaUFsWO0kS9GSGICB4bgM1XF0cQ5LwckMWiJXuylnCjWsovr+I8HDh0xSCM
-         FrvnNl3f9oUvMfJnpg+zur1rCTnVyincJNUJ4q3Rs9jex8t9ZsicILjTyHZ7e7qm3anJ
-         eebwfR8ewEXWAJm32GqRRyPDby47aPZBE2hhKAwW7PPDT3LOW40197CEOXdim4esTGjW
-         FA/Q==
-X-Gm-Message-State: ANhLgQ33H5C7iuq0Bxhj0MQ5R3nml4YosJHVPeWczxPg8rFbIPfptaCe
-        aUHszjsjn/c6lpE7jtA7uDY=
-X-Google-Smtp-Source: ADFU+vtU7C/3+s0Pk9eeP2zgYFICLmB/RyyyGdx933hyEaJXNcwP3tqeI/5HWn0ccTbWbpltz9yuHQ==
-X-Received: by 2002:a1c:1b8a:: with SMTP id b132mr5690411wmb.93.1584033293552;
-        Thu, 12 Mar 2020 10:14:53 -0700 (PDT)
+        bh=gvIHQy0x0uikDeWAsY+tRBfCVP/6W4keDh1IPsYRgIk=;
+        b=LVUWWtKgr3oGb62t0KCbz0hpjRvIqeng7DPSsEwgP/tyJO8beBnx0lu5O2luN0E3i1
+         +GQre6iHSzLcYKWcnMnI3eH2yHveNmoS+A04VC09DmveVxv+/uPlbydHJtCehxu7ZDZw
+         4ZmDA6MDGYfmQxsrmBZSAZE0MJjOqcMNV+e3nbLKBaB02n1VJKh9zieHwciqaO21VAtO
+         yenXkmy6B2dSU0aauSu+9/PYI20BHqWcUWPTB7GC+CqMuE+kJGJkQLYp+uslL8bVgCl9
+         HaneCzhMylMOmVnmbS/66H1YR5U//wjaHdoqsF1PlU+hdosEHICRkb0qI89COV+O/8fp
+         BZkQ==
+X-Gm-Message-State: ANhLgQ3/zz0wIVgJQY/GpZwQl6xPwOEczdVmySFSvNuO7jdroAG6bWQG
+        G8BBDIiETu4a2+NiwT4SmmmYsM0R
+X-Google-Smtp-Source: ADFU+vsQ2aPblQLNxCLnKbPMpQn0WV9BgJU3/TShBh84qWgATHucWB5d9a1Rl0/uzCrCVKP230JVBQ==
+X-Received: by 2002:a7b:c082:: with SMTP id r2mr6113172wmh.177.1584033296112;
+        Thu, 12 Mar 2020 10:14:56 -0700 (PDT)
 Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id v10sm3398832wmh.17.2020.03.12.10.14.52
+        by smtp.gmail.com with ESMTPSA id v10sm3398832wmh.17.2020.03.12.10.14.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Mar 2020 10:14:52 -0700 (PDT)
+        Thu, 12 Mar 2020 10:14:54 -0700 (PDT)
 From:   Johan Jonker <jbx6244@gmail.com>
 To:     heiko@sntech.de
 Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] ARM: dts: rockchip: remove clock-names property from 'generic-ohci' nodes
-Date:   Thu, 12 Mar 2020 18:14:39 +0100
-Message-Id: <20200312171441.21144-2-jbx6244@gmail.com>
+Subject: [PATCH 3/4] arm64: dts: rockchip: remove clock-names property from 'generic-ehci' nodes
+Date:   Thu, 12 Mar 2020 18:14:40 +0100
+Message-Id: <20200312171441.21144-3-jbx6244@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20200312171441.21144-1-jbx6244@gmail.com>
 References: <20200312171441.21144-1-jbx6244@gmail.com>
@@ -62,59 +62,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 A test with the command below gives for example this error:
 
-arch/arm/boot/dts/rv1108-evb.dt.yaml: usb@30160000:
+arch/arm64/boot/dts/rockchip/rk3328-evb.dt.yaml: usb@ff5c0000:
 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
 
 'clock-names' is not a valid property name for usb_host nodes with
-compatible string 'generic-ohci', so remove them.
+compatible string 'generic-ehci', so remove them.
 
-make ARCH=arm dtbs_check
-DT_SCHEMA_FILES=Documentation/devicetree/bindings/usb/generic-ohci.yaml
+make ARCH=arm64 dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/usb/generic-ehci.yaml
 
 Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- arch/arm/boot/dts/rk322x.dtsi | 3 ---
- arch/arm/boot/dts/rv1108.dtsi | 1 -
- 2 files changed, 4 deletions(-)
+ arch/arm64/boot/dts/rockchip/px30.dtsi   | 1 -
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi | 1 -
+ arch/arm64/boot/dts/rockchip/rk3368.dtsi | 1 -
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi | 4 ----
+ 4 files changed, 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
-index 6503247e9..06172ebbf 100644
---- a/arch/arm/boot/dts/rk322x.dtsi
-+++ b/arch/arm/boot/dts/rk322x.dtsi
-@@ -732,7 +732,6 @@
- 		reg = <0x300a0000 0x20000>;
- 		interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cru HCLK_HOST0>, <&u2phy0>;
--		clock-names = "usbhost", "utmi";
- 		phys = <&u2phy0_host>;
+diff --git a/arch/arm64/boot/dts/rockchip/px30.dtsi b/arch/arm64/boot/dts/rockchip/px30.dtsi
+index 1bbed660f..be5569b74 100644
+--- a/arch/arm64/boot/dts/rockchip/px30.dtsi
++++ b/arch/arm64/boot/dts/rockchip/px30.dtsi
+@@ -881,7 +881,6 @@
+ 		reg = <0x0 0xff340000 0x0 0x10000>;
+ 		interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru HCLK_HOST>;
+-		clock-names = "usbhost";
+ 		phys = <&u2phy_host>;
  		phy-names = "usb";
- 		status = "disabled";
-@@ -753,7 +752,6 @@
- 		reg = <0x300e0000 0x20000>;
- 		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cru HCLK_HOST1>, <&u2phy1>;
--		clock-names = "usbhost", "utmi";
- 		phys = <&u2phy1_otg>;
- 		phy-names = "usb";
- 		status = "disabled";
-@@ -774,7 +772,6 @@
- 		reg = <0x30120000 0x20000>;
- 		interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cru HCLK_HOST2>, <&u2phy1>;
--		clock-names = "usbhost", "utmi";
- 		phys = <&u2phy1_host>;
- 		phy-names = "usb";
- 		status = "disabled";
-diff --git a/arch/arm/boot/dts/rv1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
-index d33e606be..153868c62 100644
---- a/arch/arm/boot/dts/rv1108.dtsi
-+++ b/arch/arm/boot/dts/rv1108.dtsi
-@@ -505,7 +505,6 @@
- 		reg = <0x30160000 0x20000>;
+ 		power-domains = <&power PX30_PD_USB>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+index d9490f417..ac08d2b70 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+@@ -967,7 +967,6 @@
+ 		reg = <0x0 0xff5c0000 0x0 0x10000>;
  		interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&cru HCLK_HOST0>, <&u2phy>;
 -		clock-names = "usbhost", "utmi";
  		phys = <&u2phy_host>;
+ 		phy-names = "usb";
+ 		status = "disabled";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3368.dtsi b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
+index 2079e877a..1ebb0eef4 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3368.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
+@@ -513,7 +513,6 @@
+ 		reg = <0x0 0xff500000 0x0 0x100>;
+ 		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru HCLK_HOST0>;
+-		clock-names = "usbhost";
+ 		status = "disabled";
+ 	};
+ 
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+index 63355ba7c..bbae92ef3 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+@@ -349,8 +349,6 @@
+ 		interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH 0>;
+ 		clocks = <&cru HCLK_HOST0>, <&cru HCLK_HOST0_ARB>,
+ 			 <&u2phy0>;
+-		clock-names = "usbhost", "arbiter",
+-			      "utmi";
+ 		phys = <&u2phy0_host>;
+ 		phy-names = "usb";
+ 		status = "disabled";
+@@ -375,8 +373,6 @@
+ 		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH 0>;
+ 		clocks = <&cru HCLK_HOST1>, <&cru HCLK_HOST1_ARB>,
+ 			 <&u2phy1>;
+-		clock-names = "usbhost", "arbiter",
+-			      "utmi";
+ 		phys = <&u2phy1_host>;
  		phy-names = "usb";
  		status = "disabled";
 -- 
