@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8122318379C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:31:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D332183793
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:31:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbgCLRbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 13:31:33 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:32675 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726756AbgCLRbP (ORCPT
+        id S1726731AbgCLRbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 13:31:13 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34488 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726637AbgCLRbK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 13:31:15 -0400
+        Thu, 12 Mar 2020 13:31:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584034274;
+        s=mimecast20190719; t=1584034269;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ZMgi7dRW6K2xdoKOFnw94aZt5dMB0jPpXE80FHhc4Ns=;
-        b=gk/ItpzkcZ2BGTsz4aUHbVmwFS6iBHIWDYoutVCSEnzpBQH4hjP6xZXTqCZFqqqeqp73DN
-        m3hsAW1qlnew0eOV32weJkQnVB4SqpaMe4wN61OMn9WaULjDBrOFXz8oqx5S8PkKTKHLbt
-        n47almNNckOCmb1JcODSF+65WXT2/P0=
+        bh=hDxUNunCB687wAIPkmJJmgGhqlolBxvPaWThLpEgQnk=;
+        b=Z8M+Lum9SOT7Erxn5GFFag4J7FwkoxDjyTS46/1RSZOpfPoPf4SdZVDXKFVYcE5L9v8htd
+        kE/k+POnSSBRrArDE8pWMCW+zxAzyxOM/XHMetBVTuayEwKoXMD0VcBPDfLLolqq4CMlm9
+        HVpUjuUuxSH22uz5P70ex0SwasvNWVs=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-9-nlw7P3nfPDa1Pgqc96hLWA-1; Thu, 12 Mar 2020 13:31:09 -0400
-X-MC-Unique: nlw7P3nfPDa1Pgqc96hLWA-1
+ us-mta-411-2Rrpm0NNPxCKXvu6PLiXNg-1; Thu, 12 Mar 2020 13:31:08 -0400
+X-MC-Unique: 2Rrpm0NNPxCKXvu6PLiXNg-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B77A21005509;
-        Thu, 12 Mar 2020 17:31:04 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1BFED800D48;
+        Thu, 12 Mar 2020 17:31:06 +0000 (UTC)
 Received: from treble.redhat.com (ovpn-122-137.rdu2.redhat.com [10.10.122.137])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8BDE060BEC;
-        Thu, 12 Mar 2020 17:31:03 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DFCA360BEC;
+        Thu, 12 Mar 2020 17:31:04 +0000 (UTC)
 From:   Josh Poimboeuf <jpoimboe@redhat.com>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Andy Lutomirski <luto@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 09/14] x86/unwind/orc: Don't skip the first frame for inactive tasks
-Date:   Thu, 12 Mar 2020 12:30:28 -0500
-Message-Id: <9db9db97c301929df7d1279af0ae8415d5f6e44f.1584033751.git.jpoimboe@redhat.com>
+Subject: [PATCH 10/14] x86/unwind/orc: Prevent unwinding before ORC initialization
+Date:   Thu, 12 Mar 2020 12:30:29 -0500
+Message-Id: <5b3e0cbab4a5e6cf5e3cab87f18f2ae582ec01d7.1584033751.git.jpoimboe@redhat.com>
 In-Reply-To: <cover.1584033751.git.jpoimboe@redhat.com>
 References: <cover.1584033751.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
@@ -57,39 +57,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miroslav Benes <mbenes@suse.cz>
+If the unwinder is called before the ORC data has been initialized,
+orc_find() returns NULL, and it tries to fall back to using frame
+pointers.  This can cause some unexpected warnings during boot.
 
-When unwinding an inactive task, the ORC unwinder skips the first frame
-by default.  If both the 'regs' and 'first_frame' parameters of
-unwind_start() are NULL, 'state->sp' and 'first_frame' are later
-initialized to the same value for an inactive task.  Given there is a
-"less than or equal to" comparison used at the end of __unwind_start()
-for skipping stack frames, the first frame is skipped.
-
-Drop the equal part of the comparison and make the behavior equivalent
-to the frame pointer unwinder.
+Move the 'orc_init' check from orc_find() to __unwind_init(), so that it
+doesn't even try to unwind from an uninitialized state.
 
 Fixes: ee9f8fce9964 ("x86/unwind: Add the ORC unwinder")
-Signed-off-by: Miroslav Benes <mbenes@suse.cz>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 ---
- arch/x86/kernel/unwind_orc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/unwind_orc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
-index 45166fd50be3..e9f5a20c69c6 100644
+index e9f5a20c69c6..cb11567361cc 100644
 --- a/arch/x86/kernel/unwind_orc.c
 +++ b/arch/x86/kernel/unwind_orc.c
-@@ -657,7 +657,7 @@ void __unwind_start(struct unwind_state *state, struc=
-t task_struct *task,
- 	/* Otherwise, skip ahead to the user-specified starting frame: */
- 	while (!unwind_done(state) &&
- 	       (!on_stack(&state->stack_info, first_frame, sizeof(long)) ||
--			state->sp <=3D (unsigned long)first_frame))
-+			state->sp < (unsigned long)first_frame))
- 		unwind_next_frame(state);
+@@ -148,9 +148,6 @@ static struct orc_entry *orc_find(unsigned long ip)
+ {
+ 	static struct orc_entry *orc;
 =20
- 	return;
+-	if (!orc_init)
+-		return NULL;
+-
+ 	if (ip =3D=3D 0)
+ 		return &null_orc_entry;
+=20
+@@ -591,6 +588,9 @@ EXPORT_SYMBOL_GPL(unwind_next_frame);
+ void __unwind_start(struct unwind_state *state, struct task_struct *task=
+,
+ 		    struct pt_regs *regs, unsigned long *first_frame)
+ {
++	if (!orc_init)
++		goto done;
++
+ 	memset(state, 0, sizeof(*state));
+ 	state->task =3D task;
+=20
 --=20
 2.21.1
 
