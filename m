@@ -2,160 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A73518357F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 16:53:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9453418359B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 16:56:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbgCLPxO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 11:53:14 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:59468 "EHLO ns.iliad.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726385AbgCLPxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 11:53:14 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 362C221081;
-        Thu, 12 Mar 2020 16:53:12 +0100 (CET)
-Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 1DD28208EC;
-        Thu, 12 Mar 2020 16:53:12 +0100 (CET)
-Subject: Re: [PATCH 4/5] pci: handled return value of platform_get_irq
- correctly
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Aman Sharma <amanharitsh123@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Andrew Murray <amurray@thegoodpenguin.co.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
-        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        Mans Rullgard <mans@mansr.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20200312141102.GA93224@google.com>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <b145096e-8628-c551-4846-2eb5ce0334f6@free.fr>
-Date:   Thu, 12 Mar 2020 16:53:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727919AbgCLP4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 11:56:44 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56332 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726571AbgCLP4o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 11:56:44 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02CFqMTq095906;
+        Thu, 12 Mar 2020 11:55:36 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2yqpyau4a1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Mar 2020 11:55:35 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02CFlGWq019512;
+        Thu, 12 Mar 2020 15:53:33 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma01wdc.us.ibm.com with ESMTP id 2ypjxr5yvr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Mar 2020 15:53:33 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02CFrXqQ13632068
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Mar 2020 15:53:33 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0D1DEAE05C;
+        Thu, 12 Mar 2020 15:53:33 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E8337AE05F;
+        Thu, 12 Mar 2020 15:53:32 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 12 Mar 2020 15:53:32 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org
+Cc:     aik@ozlabs.ru, david@gibson.dropbear.id.au,
+        linux-kernel@vger.kernel.org, nayna@linux.vnet.ibm.com,
+        gcwilson@linux.ibm.com, jgg@ziepe.ca,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v7 0/3] Enable vTPM 2.0 for the IBM vTPM driver
+Date:   Thu, 12 Mar 2020 11:53:29 -0400
+Message-Id: <20200312155332.671464-1-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <20200312141102.GA93224@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Thu Mar 12 16:53:12 2020 +0100 (CET)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-12_07:2020-03-11,2020-03-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ suspectscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999 adultscore=0
+ phishscore=0 mlxscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003120082
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/03/2020 15:11, Bjorn Helgaas wrote:
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-> [+cc another Marc]
+QEMU 5.0 will support the PAPR vTPM device model for TPM 1.2 and TPM 2.0.
+This series of patches enables vTPM 2.0 support for the IBM vTPM driver.
 
-Doh! I should indeed have CCed maz and tglx.
+Regards,
+   Stefan
 
-> On Thu, Mar 12, 2020 at 10:53:06AM +0100, Marc Gonzalez wrote:
->
->> On 11/03/2020 20:19, Aman Sharma wrote:
->>
->>> diff --git a/drivers/pci/controller/pcie-tango.c b/drivers/pci/controller/pcie-tango.c
->>> index 21a208da3f59..18c2c4313eb5 100644
->>> --- a/drivers/pci/controller/pcie-tango.c
->>> +++ b/drivers/pci/controller/pcie-tango.c
->>> @@ -273,9 +273,9 @@ static int tango_pcie_probe(struct platform_device *pdev)
->>>  		writel_relaxed(0, pcie->base + SMP8759_ENABLE + offset);
->>>  
->>>  	virq = platform_get_irq(pdev, 1);
->>> -	if (virq <= 0) {
->>> +	if (virq < 0) {
->>>  		dev_err(dev, "Failed to map IRQ\n");
->>> -		return -ENXIO;
->>> +		return virq;
->>>  	}
->>>  
->>>  	irq_dom = irq_domain_create_linear(fwnode, MSI_MAX, &dom_ops, pcie);
->>
->> Weee, here we go again :-)
->>
->> https://patchwork.kernel.org/patch/11066455/
->> https://patchwork.kernel.org/patch/10006651/
->>
->> Last time around, my understanding was that, going forward,
->> the best solution was:
->>
->> 	virq = platform_get_irq(...)
->> 	if (virq <= 0)
->> 		return virq ? : -ENODEV;
->>
->> i.e. map 0 to -ENODEV, pass other errors as-is, remove the dev_err
->>
->> @Bjorn/Lorenzo did you have a change of heart?
-> 
-> Yes.  In 10006651 (Oct 20, 2017), I thought:
-> 
->   irq = platform_get_irq(pdev, 0);
->   if (irq <= 0)
->     return -ENODEV;
-> 
-> was fine.  In 11066455 (Aug 7, 2019), I said I thought I was wrong and
-> that:
-> 
->   platform_get_irq() is a generic interface and we have to be able to
->   interpret return values consistently.  The overwhelming consensus
->   among platform_get_irq() callers is to treat "irq < 0" as an error,
->   and I think we should follow suit.
->   ...
->   I think the best pattern is:
-> 
->     irq = platform_get_irq(pdev, i);
->     if (irq < 0)
->       return irq;
-> 
-> I still think what I said in 2019 is the right approach.  I do see
-> your comment in 10006651 about this pattern:
-> 
->   if (virq <= 0)
->     return virq ? : -ENODEV;
-> 
-> but IMHO it's too complicated for general use.  Admittedly, it's not
-> *very* complicated, but it's a relatively unusual C idiom and I
-> stumble over it every time I see it.
+- v6->v7:
+  - reverted changes in 1/3 due to xtensa not supporting API call;
+    removed Jarrko's Acked-by
+  - Added Nayna's Acked-by adn Tested-by to all patches
 
-FTR, omitting the middle operand is a GNU extension.
-https://gcc.gnu.org/onlinedocs/gcc/Conditionals.html
-The valid C idiom would be virq ? virq : -ENODEV
+- v5->v6:
+  - Nits in commit texts
 
-> If 0 is a special case I think
-> it should be mapped to a negative error in arch-specific code, which I
-> think is what Linus T suggested in [1].
+- v4->v5:
+  - Added error path in case tpm2_get_cc_attrs_tbl() fails
 
-Lorenzo, being both PCI maintainer and ARM employee should be in a
-good position to change the arch-specific code for arm and arm64?
+- v3->v4:
+  - Dropped patch 3; getting command code attributes table in IBM driver
 
-> I think there's still a large consensus that "irq < 0" is the error
-> case.  In the tree today we have about 1400 callers of
-> platform_get_irq() and platform_get_irq_byname() [2].  Of those,
-> almost 900 check for "irq < 0" [3], while only about 150 check for
-> "irq <= 0" [4] and about 15 use some variant of a "irq ? : -ENODEV"
-> pattern.
-> 
-> The bottom line is that in drivers/pci, I'd like to see either a
-> single style or a compelling argument for why some checks should be
-> "irq < 0" and others should be "irq <= 0".
-> 
-> [1] https://yarchive.net/comp/linux/zero.html
-> [2] $ git grep "=.*platform_get_irq" | wc -l
->     1422
-> [3] $ git grep -A4 "=.*platform_get_irq" | grep "<\s*0" | wc -l
->     894
-> [4] $ git grep -A4 "=.*platform_get_irq" | grep "<=\s*0" | wc -l
->     151
-> [5] $ git grep -A4 "=.*platform_get_irq" | grep "return.*?.*:.*;" | wc -l
->     15
+- v2->v3:
+  - Added fixes tag to patch 2/4; the race seems to have existed
+    since the driver was first added
+  - Renamed tpm2_init to tpm2_init_commands in 3/4
 
-Interesting stats, thanks.
+- v1->v2:
+  - Addressed comments to v1; added patch 3 to handle case when
+    TPM_OPS_AUTO_STARTUP is not set
 
-Regards.
+
+
+Stefan Berger (3):
+  tpm: of: Handle IBM,vtpm20 case when getting log parameters
+  tpm: ibmvtpm: Wait for buffer to be set before proceeding
+  tpm: ibmvtpm: Add support for TPM2
+
+ drivers/char/tpm/eventlog/of.c |  3 ++-
+ drivers/char/tpm/tpm.h         |  1 +
+ drivers/char/tpm/tpm2-cmd.c    |  2 +-
+ drivers/char/tpm/tpm_ibmvtpm.c | 17 +++++++++++++++++
+ drivers/char/tpm/tpm_ibmvtpm.h |  1 +
+ 5 files changed, 22 insertions(+), 2 deletions(-)
+
+-- 
+2.23.0
+
