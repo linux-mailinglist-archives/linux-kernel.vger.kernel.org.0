@@ -2,109 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05C9C18374F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:22:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61FD7183756
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 18:23:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbgCLRWv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 13:22:51 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33239 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbgCLRWu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 13:22:50 -0400
-Received: by mail-wm1-f67.google.com with SMTP id r7so5993601wmg.0;
-        Thu, 12 Mar 2020 10:22:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=AsK4lZiLvTPVWly7O3MtjFY6qfzheagg9cYmbmhqOKY=;
-        b=nPGM5SxvKf5b6JPPp18z82FgPVQEaflZ27VlAmUFrua6iJ5ra4vp4WuhpL6duNYOsG
-         OZt0sJAFBRs34tnwiNPSNAumz2NlmxBfT0ixjWCV/2z39jvzIFlS9gPZ+8q6/PiH/Ul6
-         3nAyRLPlh8uAz0A1j+GhNlZ7/qAmCoqjsThw+E/n6Uojpo/9jdB4a9L6GObTE6MkBUEW
-         3DAdfgaFpab/HPQgrWaggLSWUokxN9gnySRkoec8/QxPfJi2zj77pvftmMQu81ycha/i
-         7T0BVdxox5wLeAhNlP3QboI2CpxdX/VcNcLoSqV9tIR/AHIC9AR2K843AXIXFcihgtMg
-         aSYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=AsK4lZiLvTPVWly7O3MtjFY6qfzheagg9cYmbmhqOKY=;
-        b=rLgpEG+cFof+gUGOqBCSIwNRUXDFVQ173tCMvv9k2zNm24gUacpadrOuQ/7t9kQBch
-         3tsC53mqbkO5DCohFCzHaf1kSkdE6dwCrVGj4i14rxkV12ykPnlM1rSxRrOdnqKds5hc
-         9kfC458Hpm/PzyROPca3P5q+XftHyNCpN/o/4t/hz1g+gD8gafUZSpnRCS1LrO9rvnFQ
-         gdqXfrH4Tt1N2xKF8vkzVU33dv+A5w/ttUEgbvJkE7SPUZOrcXaBOK1mFGnzaHfMrwg1
-         goj9kx5Xreo+yWMY2UJOGoQnykYzTl43DNE7pWEVplQMW2AMxYu4vttMKTlM9rOx6ETh
-         qO/Q==
-X-Gm-Message-State: ANhLgQ1QzUv9+9vFBmyfwC1qR6OV4yoi338pmjEQ99ISKOyKkEMJ7Szx
-        Qf4o5+QRlDPXwlpYMGAbVJaug1+/
-X-Google-Smtp-Source: ADFU+vsUmojL2gcA4UagPD4gg2rCKhbMtgcVCkmNLqEkRNDJPORZpiblkgYC9vuknxd30gcWUo508w==
-X-Received: by 2002:a1c:de82:: with SMTP id v124mr5711167wmg.70.1584033768625;
-        Thu, 12 Mar 2020 10:22:48 -0700 (PDT)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id d7sm2064492wrc.25.2020.03.12.10.22.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Mar 2020 10:22:48 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ARM: dts: rockchip: swap clocks and clock-names values for spdif nodes
-Date:   Thu, 12 Mar 2020 18:22:40 +0100
-Message-Id: <20200312172240.21362-2-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200312172240.21362-1-jbx6244@gmail.com>
-References: <20200312172240.21362-1-jbx6244@gmail.com>
+        id S1726508AbgCLRXq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 13:23:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725268AbgCLRXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 13:23:46 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C6342067C;
+        Thu, 12 Mar 2020 17:23:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584033825;
+        bh=iqV0woTK+1QbFs1jWfR/8C8FIBB4oluJrGxTmnqVE60=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gswYtdvMC1EGaa0AsecLAx8y70uxeabXgKreyJqKoprJOJYs1nQk7+t7R1FdYw25q
+         Br7LSwcTwvVc7fbBtGBF35dvgBru7G5ce1cwtn5GTM94/11qSKcRsHljB0m6hqeCR2
+         T75uS+dsBc59atUIi9qGDfFSezinHb2K8xUT7WRU=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1jCRYd-00CHKE-NI; Thu, 12 Mar 2020 17:23:43 +0000
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 12 Mar 2020 17:23:43 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Auger Eric <eric.auger@redhat.com>
+Cc:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Robert Richter <rrichter@marvell.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: Re: [PATCH v5 01/23] irqchip/gic-v3: Use SGIs without active state if
+ offered
+In-Reply-To: <1fa8ab2f-6766-9dc1-53a6-9cead19a5a7b@redhat.com>
+References: <20200304203330.4967-1-maz@kernel.org>
+ <20200304203330.4967-2-maz@kernel.org>
+ <1fa8ab2f-6766-9dc1-53a6-9cead19a5a7b@redhat.com>
+Message-ID: <0f3c1c819a98deb77261e89eefa10e3f@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.10
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: eric.auger@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, lorenzo.pieralisi@arm.com, jason@lakedaemon.net, rrichter@marvell.com, tglx@linutronix.de, yuzenghui@huawei.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current dts files with 'spdif' nodes are manually verified.
-In order to automate this process rockchip-spdif.txt
-has to be converted to yaml. In the new setup dtbs_check with
-rockchip-spdif.yaml expect clocks and clock-names values
-in the same order. Fix this for some older Rockchip models.
+Hi Eric,
 
-make ARCH=arm dtbs_check
-DT_SCHEMA_FILES=Documentation/devicetree/bindings/sound/rockchip-spdif.yaml
+On 2020-03-12 17:16, Auger Eric wrote:
+> Hi Marc,
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- arch/arm/boot/dts/rk3188.dtsi | 4 ++--
- arch/arm/boot/dts/rk3288.dtsi | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+[...]
 
-diff --git a/arch/arm/boot/dts/rk3188.dtsi b/arch/arm/boot/dts/rk3188.dtsi
-index 24abf214a..2298a8d84 100644
---- a/arch/arm/boot/dts/rk3188.dtsi
-+++ b/arch/arm/boot/dts/rk3188.dtsi
-@@ -182,8 +182,8 @@
- 		compatible = "rockchip,rk3188-spdif", "rockchip,rk3066-spdif";
- 		reg = <0x1011e000 0x2000>;
- 		#sound-dai-cells = <0>;
--		clock-names = "hclk", "mclk";
--		clocks = <&cru HCLK_SPDIF>, <&cru SCLK_SPDIF>;
-+		clocks = <&cru SCLK_SPDIF>, <&cru HCLK_SPDIF>;
-+		clock-names = "mclk", "hclk";
- 		dmas = <&dmac1_s 8>;
- 		dma-names = "tx";
- 		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 485234f6a..07681f1f0 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -944,8 +944,8 @@
- 		compatible = "rockchip,rk3288-spdif", "rockchip,rk3066-spdif";
- 		reg = <0x0 0xff8b0000 0x0 0x10000>;
- 		#sound-dai-cells = <0>;
--		clock-names = "hclk", "mclk";
--		clocks = <&cru HCLK_SPDIF8CH>, <&cru SCLK_SPDIF8CH>;
-+		clocks = <&cru SCLK_SPDIF8CH>, <&cru HCLK_SPDIF8CH>;
-+		clock-names = "mclk", "hclk";
- 		dmas = <&dmac_bus_s 3>;
- 		dma-names = "tx";
- 		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
+>> diff --git a/include/linux/irqchip/arm-gic-v3.h 
+>> b/include/linux/irqchip/arm-gic-v3.h
+>> index 83439bfb6c5b..c29a02678a6f 100644
+>> --- a/include/linux/irqchip/arm-gic-v3.h
+>> +++ b/include/linux/irqchip/arm-gic-v3.h
+>> @@ -57,6 +57,7 @@
+>>  #define GICD_SPENDSGIR			0x0F20
+>> 
+>>  #define GICD_CTLR_RWP			(1U << 31)
+>> +#define GICD_CTLR_nASSGIreq		(1U << 8)
+> I am not able to find this bit in Arm IHI 0069F (ID022020)
+> same for the bit in GICD_TYPER. Do we still miss part of the spec?
+
+See my response to Zenghui (TL;DR: this addition to the spec missed the
+cut-off for revision F and will be added in the next round).
+
+Thanks,
+
+         M.
 -- 
-2.11.0
-
+Jazz is not dead. It just smells funny...
