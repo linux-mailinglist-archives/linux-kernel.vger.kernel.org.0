@@ -2,108 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F932183BD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:01:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB341183BE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 23:04:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbgCLWBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 18:01:06 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:59374 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbgCLWBG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 18:01:06 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02CLr6uN195603;
-        Thu, 12 Mar 2020 22:01:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2020-01-29;
- bh=60ih50iVrwQ1Ke4KG0FuCWK/lXuJySvoGaGu2tb9FGg=;
- b=s+aP4S9/vYgxJqtj+8KLhD5uYMSoIKF7mr4hCxbEzrvj2G238NkJdqhzotgKfeyYc9c3
- WFKzLzawM7vG2Bbdo3iwLQ1EuXtGFXefU2cStEbHfaOAzZoJOad8yOgMl2uveczKzOZ+
- HQzxF5PSAmWTMZCYdilRZFFvWeWW48m/bFOpfgiHBW3dl+VJ0ts1d9xl3FI+52b+wCgU
- 4MRfDN1cgsxJte/oT8X79AuV6gGdkuIuxZOZvreqnFHyFihMRVLGcWSKzAbYg8M3FbTL
- fKaZAimGHLnHCfOXEZYXpczndDu7w8acUpLKq0fQ5nK4Y+xLKt6K+3n9qdPX5rAnzhqS pg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2yqtaervxp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Mar 2020 22:01:03 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02CLqGnO116377;
-        Thu, 12 Mar 2020 22:01:03 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2yqta9kmpt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Mar 2020 22:01:03 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02CM12eD029720;
-        Thu, 12 Mar 2020 22:01:02 GMT
-Received: from localhost.localdomain (/10.211.9.80)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 12 Mar 2020 15:01:01 -0700
-From:   Dongli Zhang <dongli.zhang@oracle.com>
-To:     axboe@kernel.dk
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH for-5.7/drivers v2 1/1] null_blk: describe the usage of fault injection param
-Date:   Thu, 12 Mar 2020 15:01:40 -0700
-Message-Id: <20200312220140.12233-1-dongli.zhang@oracle.com>
-X-Mailer: git-send-email 2.17.1
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9558 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=1 adultscore=0
- mlxlogscore=999 bulkscore=0 phishscore=0 spamscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003120109
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9558 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 priorityscore=1501 suspectscore=1
- mlxlogscore=999 mlxscore=0 adultscore=0 malwarescore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003120109
+        id S1726695AbgCLWEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 18:04:33 -0400
+Received: from mga09.intel.com ([134.134.136.24]:40625 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726514AbgCLWEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 18:04:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 15:04:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,546,1574150400"; 
+   d="scan'208";a="277987570"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga002.fm.intel.com with ESMTP; 12 Mar 2020 15:04:32 -0700
+Received: from [10.7.201.16] (skuppusw-desk.jf.intel.com [10.7.201.16])
+        by linux.intel.com (Postfix) with ESMTP id 0C64C58010D;
+        Thu, 12 Mar 2020 15:04:32 -0700 (PDT)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v17 09/12] PCI/AER: Allow clearing Error Status Register
+ in FF mode
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Austin.Bolen@dell.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ashok.raj@intel.com
+References: <20200312215230.GA195113@google.com>
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <e710fd4c-4c0e-448a-6791-beed334536ce@linux.intel.com>
+Date:   Thu, 12 Mar 2020 15:02:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200312215230.GA195113@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As null_blk is a very good start point to test block layer, this patch
-adds description and comments to 'timeout', 'requeue' and 'init_hctx' to
-explain how to use fault injection with null_blk.
+Hi,
 
-The nvme has similar with nvme_core.fail_request in the form of comment.
+On 3/12/20 2:52 PM, Bjorn Helgaas wrote:
+> On Thu, Mar 12, 2020 at 02:29:58PM -0700, Kuppuswamy Sathyanarayanan wrote:
+>> Hi,
+>>
+>> On 3/12/20 2:02 PM, Austin.Bolen@dell.com wrote:
+>>> On 3/12/2020 2:53 PM, Bjorn Helgaas wrote:
+>>>> On Wed, Mar 11, 2020 at 04:07:59PM -0700, Kuppuswamy Sathyanarayanan wrote:
+>>>>> On 3/11/20 3:23 PM, Bjorn Helgaas wrote:
+>>>>>> Is any synchronization needed here between the EDR path and the
+>>>>>> hotplug/enumeration path?
+>>>>> If we want to follow the implementation note step by step (in
+>>>>> sequence) then we need some synchronization between EDR path and
+>>>>> enumeration path. But if it's OK to achieve the same end result by
+>>>>> following steps out of sequence then we don't need to create any
+>>>>> dependency between EDR and enumeration paths. Currently we follow
+>>>>> the latter approach.
+>>>> What would the synchronization look like?
+>>>>
+>>>> Ideally I think it would be better to follow the order in the
+>>>> flowchart if it's not too onerous.  That will make the code easier to
+>>>> understand.  The current situation with this dependency on pciehp and
+>>>> what it will do leaves a lot of things implicit.
+>>>>
+>>>> What happens if CONFIG_PCIE_EDR=y but CONFIG_HOTPLUG_PCI_PCIE=n?
+>>>>
+>>>> IIUC, when DPC triggers, pciehp is what fields the DLLSC interrupt and
+>>>> unbinds the drivers and removes the devices.  If that doesn't happen,
+>>>> and Linux clears the DPC trigger to bring the link back up, will those
+>>>> drivers try to operate uninitialized devices?
+>>>>
+>>>> Does EDR need a dependency on CONFIG_HOTPLUG_PCI_PCIE?
+>>>    From one of Sathya's other responses:
+>>>
+>>> "If hotplug is not supported then there is support to enumerate
+>>> devices via polling  or ACPI events. But a point to note
+>>> here is, enumeration path is independent of error handler path, and
+>>> hence there is no explicit trigger or event from error handler path
+>>> to enumeration path to kick start the enumeration."
+>>>
+>>> The EDR standard doesn't have any dependency on hot-plug. It sounds like
+>>> in the current implementation there's some manual intervention needed if
+>>> hot-plug is not supported?
+>> No, there is no need for manual intervention even in non hotplug
+>> cases.
+>>
+>> For ACPI events case, we would rely on ACPI event to kick start the
+>> enumeration.  And for polling model, there is an independent polling
+>> thread which will kick start the enumeration.
+> I'm guessing the ACPI case works via hotplug_is_native(): if
+> CONFIG_HOTPLUG_PCI_PCIE=n, pciehp_is_native() returns false, and
+> acpiphp manages hotplug.
+>
+> What if CONFIG_HOTPLUG_PCI_ACPI=n also?
+If none of the auto scans are enabled then we might need some
+manual trigger ( rescan). But this would be needed in native
+DPC case as well.
+>
+> Where is the polling thread?
+drivers/pci/hotplug/pciehp_hpc.c
+>
+>> Above both enumeration models are totally independent and has
+>> no dependency on error handler thread.
+> I see they're currently independent from the EDR thread, but it's not
+> clear to me that there's no dependency.  After all, both EDR and the
+> hotplug paths are operating on the same devices at roughly the same
+> time, so we should have some story about what keeps them from getting
+> in each other's way.
+>
+>> We will decide which model to use based on hardware capability and
+>> _OSC negotiation or kernel command line option.
 
-Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
----
-Changed since v1:
-  - rebase at for-5.7/drivers
-  - describe 'init_hctx' as well
-
- drivers/block/null_blk_main.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/block/null_blk_main.c b/drivers/block/null_blk_main.c
-index 8060ffa4bc75..b324cc5fcaf7 100644
---- a/drivers/block/null_blk_main.c
-+++ b/drivers/block/null_blk_main.c
-@@ -97,14 +97,21 @@ module_param_named(home_node, g_home_node, int, 0444);
- MODULE_PARM_DESC(home_node, "Home node for the device");
- 
- #ifdef CONFIG_BLK_DEV_NULL_BLK_FAULT_INJECTION
-+/*
-+ * For more details about fault injection, please refer to
-+ * Documentation/fault-injection/fault-injection.rst.
-+ */
- static char g_timeout_str[80];
- module_param_string(timeout, g_timeout_str, sizeof(g_timeout_str), 0444);
-+MODULE_PARM_DESC(timeout, "Fault injection. timeout=<interval>,<probability>,<space>,<times>");
- 
- static char g_requeue_str[80];
- module_param_string(requeue, g_requeue_str, sizeof(g_requeue_str), 0444);
-+MODULE_PARM_DESC(requeue, "Fault injection. requeue=<interval>,<probability>,<space>,<times>");
- 
- static char g_init_hctx_str[80];
- module_param_string(init_hctx, g_init_hctx_str, sizeof(g_init_hctx_str), 0444);
-+MODULE_PARM_DESC(init_hctx, "Fault injection to fail hctx init. init_hctx=<interval>,<probability>,<space>,<times>");
- #endif
- 
- static int g_queue_mode = NULL_Q_MQ;
 -- 
-2.17.1
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
