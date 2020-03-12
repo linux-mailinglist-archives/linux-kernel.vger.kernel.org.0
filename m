@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9E5A18320B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:51:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68FD0183211
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 14:52:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbgCLNvq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 09:51:46 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46898 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727488AbgCLNvm (ORCPT
+        id S1727572AbgCLNwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 09:52:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57002 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727498AbgCLNvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Mar 2020 09:51:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=A4SB7nL5A5D1rfXDQIoWf0ptdUuTjzvdOlKaEe0kkJM=; b=edXimU2BTuc/eLIwRU0iEtWYop
-        BPV9oNWE/e0UB4E05O7eGUVsJRoTvE3H5tugvJYqgax1Kk2Q2DdpS34AftTtkUH3FBTAzVqnH8nmU
-        furQMipX9e3InIpnNkEvjdZ/o+QmZrhRkp7MbUy49ZHi12s2UuG4st8RfTzT4DWAzIJ6Vu9fST0dS
-        KaMtvhBcxGebxYoS8PTkUylQR+jFUjjSj3CqNGP7ATtPtL02JNZeuesjKjFG7+TxuJlVv9NzmPdgf
-        8M3JK8l7vy3TCu2GfWZDJ/ro/u8rCsfMLSWPOJRGBli7LcfiMYxmnds5AskvCIo9l53mnOZRtR3So
-        ci2X3KpA==;
+        bh=v9xr6HmXi0QTp0R2R+PP22HJYiYCg07/b2WV9INOx7w=; b=q6dBvJDTVBFxLntf5HP0Mqu4H6
+        zbnYyoLYU2LMivn5NhGn3Gr5TexWExlz+mR0V5BgXG9neI1GPwaqdZ0I3H/DxZ/wvCUxP0x6OhZU5
+        1s7sNB+n6dtGR8nfDVl8fyeFtdr7KI/dnJ+huPv/5Ho0pNSEJOeuARkjdXQnUQLSFRHSpva1rSWGO
+        YHpk/wlcA3IDhgwdcL7tBNjxbnQU0a6w6iX2I83dbycTsY7wjAo9sEjcoeUWBcTakcSMB+DE8Gr0Z
+        Sh/t6lX4p4V6Kg2YnmDUw7XKPsGtL5BAfRgH7AlmzpVQeKFz9jrFEvhcn+u+JWCactObBE/407Ny9
+        cA4jmpMw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCOFP-0003Aw-4B; Thu, 12 Mar 2020 13:51:39 +0000
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jCOFP-0006Wu-EZ; Thu, 12 Mar 2020 13:51:39 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5A1113070FF;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5EEF4307112;
         Thu, 12 Mar 2020 14:51:34 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 4AFE12B7403A7; Thu, 12 Mar 2020 14:51:34 +0100 (CET)
-Message-Id: <20200312135042.288201372@infradead.org>
+        id 505B72B92DA0C; Thu, 12 Mar 2020 14:51:34 +0100 (CET)
+Message-Id: <20200312135042.346616828@infradead.org>
 User-Agent: quilt/0.65
-Date:   Thu, 12 Mar 2020 14:41:22 +0100
+Date:   Thu, 12 Mar 2020 14:41:23 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, jpoimboe@redhat.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org
-Subject: [RFC][PATCH 15/16] objtool: Implement noinstr validation
+Subject: [RFC][PATCH 16/16] objtool: Optimize !vmlinux.o again
 References: <20200312134107.700205216@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,301 +47,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Validate that any call out of .noinstr.text is in between
-instr_begin() and instr_end() annotations.
+When doing kbuild tests to see if the objtool changes affected those I
+found that there was a measurable regression:
 
-This annotation is useful to ensure correct behaviour wrt tracing
-sensitive code like entry/exit and idle code. When we run code in a
-sensitive context we want a guarantee no unknown code is ran.
+          pre		  post
 
-Since this validation relies on knowing the section of call
-destination symbols, we must run it on vmlinux.o instead of on
-individual object files.
+  real    1m13.594        1m16.488s
+  user    34m58.246s      35m23.947s
+  sys     4m0.393s        4m27.312s
 
-Add the -i "noinstr validation only" option because:
+Perf showed that for small files the increased hash-table sizes were a
+measurable difference. Since we already have -l "vmlinux" to
+distinguish between the modes, make it also use a smaller portion of
+the hash-tables.
 
- - vmlinux.o isn't 'clean' vs the existing validations
- - skipping the other validations (which have already been done
-   earlier in the build) saves around a second of runtime.
+This flips it into a small win:
+
+  real    1m14.143s
+  user    34m49.292s
+  sys     3m44.746s
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- tools/objtool/builtin-check.c |    4 -
- tools/objtool/builtin.h       |    2 
- tools/objtool/check.c         |  155 ++++++++++++++++++++++++++++++++++++------
- tools/objtool/check.h         |    3 
- 4 files changed, 140 insertions(+), 24 deletions(-)
+ tools/objtool/elf.c |   40 ++++++++++++++++++++++++++++------------
+ tools/objtool/elf.h |    4 ++--
+ 2 files changed, 30 insertions(+), 14 deletions(-)
 
---- a/tools/objtool/builtin-check.c
-+++ b/tools/objtool/builtin-check.c
-@@ -17,7 +17,7 @@
- #include "builtin.h"
- #include "check.h"
- 
--bool no_fp, no_unreachable, retpoline, module, backtrace, uaccess, stats;
-+bool no_fp, no_unreachable, retpoline, module, backtrace, uaccess, stats, noinstr, vmlinux;
- 
- static const char * const check_usage[] = {
- 	"objtool check [<options>] file.o",
-@@ -32,6 +32,8 @@ const struct option check_options[] = {
- 	OPT_BOOLEAN('b', "backtrace", &backtrace, "unwind on error"),
- 	OPT_BOOLEAN('a', "uaccess", &uaccess, "enable uaccess checking"),
- 	OPT_BOOLEAN('s', "stats", &stats, "print statistics"),
-+	OPT_BOOLEAN('i', "noinstr", &noinstr, "noinstr validation only"),
-+	OPT_BOOLEAN('l', "vmlinux", &vmlinux, "vmlinux.o validation"),
- 	OPT_END(),
- };
- 
---- a/tools/objtool/builtin.h
-+++ b/tools/objtool/builtin.h
-@@ -8,7 +8,7 @@
- #include <subcmd/parse-options.h>
- 
- extern const struct option check_options[];
--extern bool no_fp, no_unreachable, retpoline, module, backtrace, uaccess, stats;
-+extern bool no_fp, no_unreachable, retpoline, module, backtrace, uaccess, stats, noinstr, vmlinux;
- 
- extern int cmd_check(int argc, const char **argv);
- extern int cmd_orc(int argc, const char **argv);
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1292,6 +1292,53 @@ static int read_retpoline_hints(struct o
- 	return 0;
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -27,6 +27,21 @@ static inline u32 str_hash(const char *s
+ 	return jhash(str, strlen(str), 0);
  }
  
-+static int read_instr_hints(struct objtool_file *file)
++static inline int elf_hash_bits(void)
 +{
-+	struct section *sec;
-+	struct instruction *insn;
-+	struct rela *rela;
-+
-+	sec = find_section_by_name(file->elf, ".rela.discard.instr_end");
-+	if (!sec)
-+		return 0;
-+
-+	list_for_each_entry(rela, &sec->rela_list, list) {
-+		if (rela->sym->type != STT_SECTION) {
-+			WARN("unexpected relocation symbol type in %s", sec->name);
-+			return -1;
-+		}
-+
-+		insn = find_insn(file, rela->sym->sec, rela->addend);
-+		if (!insn) {
-+			WARN("bad .discard.instr_end entry");
-+			return -1;
-+		}
-+
-+		insn->instr--;
-+	}
-+
-+	sec = find_section_by_name(file->elf, ".rela.discard.instr_begin");
-+	if (!sec)
-+		return 0;
-+
-+	list_for_each_entry(rela, &sec->rela_list, list) {
-+		if (rela->sym->type != STT_SECTION) {
-+			WARN("unexpected relocation symbol type in %s", sec->name);
-+			return -1;
-+		}
-+
-+		insn = find_insn(file, rela->sym->sec, rela->addend);
-+		if (!insn) {
-+			WARN("bad .discard.instr_begin entry");
-+			return -1;
-+		}
-+
-+		insn->instr++;
-+	}
-+
-+	return 0;
++	return vmlinux ? 20 : 16;
 +}
 +
- static void mark_rodata(struct objtool_file *file)
++static inline void elf_hash_add(struct hlist_head *table, struct hlist_node *node, u32 key)
++{
++	hlist_add_head(node, &table[hash_32(key, elf_hash_bits())]);
++}
++
++static void elf_hash_init(struct hlist_head *table)
++{
++	__hash_init(table, 1U << elf_hash_bits());
++}
++
+ static void rb_add(struct rb_root *tree, struct rb_node *node,
+ 		   int (*cmp)(struct rb_node *, const struct rb_node *))
  {
- 	struct section *sec;
-@@ -1363,6 +1410,10 @@ static int decode_sections(struct objtoo
- 	if (ret)
- 		return ret;
- 
-+	ret = read_instr_hints(file);
-+	if (ret)
-+		return ret;
-+
- 	return 0;
- }
- 
-@@ -1914,6 +1965,14 @@ static inline const char *call_dest_name
- 
- static int validate_call(struct instruction *insn, struct insn_state *state)
- {
-+	if (state->noinstr && state->instr <= 0 &&
-+	    (!insn->call_dest || insn->call_dest->sec != insn->sec)) {
-+		WARN_FUNC("call to %s() leaves .noinstr.text section",
-+				insn->sec, insn->offset, call_dest_name(insn));
-+		return 1;
-+	}
-+
-+
- 	if (state->uaccess && !func_uaccess_safe(insn->call_dest)) {
- 		WARN_FUNC("call to %s() with UACCESS enabled",
- 				insn->sec, insn->offset, call_dest_name(insn));
-@@ -1942,6 +2001,12 @@ static int validate_sibling_call(struct
- 
- static int validate_return(struct symbol *func, struct instruction *insn, struct insn_state *state)
- {
-+	if (state->noinstr && state->instr > 0) {
-+		WARN_FUNC("return with instrumentation enabled",
-+			  insn->sec, insn->offset);
-+		return 1;
-+	}
-+
- 	if (state->uaccess && !func_uaccess_safe(func)) {
- 		WARN_FUNC("return with UACCESS enabled",
- 			  insn->sec, insn->offset);
-@@ -2023,6 +2088,9 @@ static int validate_branch(struct objtoo
- 				return 0;
+@@ -300,8 +315,8 @@ static int read_sections(struct elf *elf
  		}
+ 		sec->len = sec->sh.sh_size;
  
-+		if (state.noinstr)
-+			state.instr += insn->instr;
-+
- 		if (insn->hint) {
- 			if (insn->restore) {
- 				struct instruction *save_insn, *i;
-@@ -2355,9 +2423,8 @@ static bool ignore_unreachable_insn(stru
- 	return false;
- }
- 
--static int validate_functions(struct objtool_file *file)
-+static int validate_sec_functions(struct objtool_file *file, struct section *sec)
- {
--	struct section *sec;
- 	struct symbol *func;
- 	struct instruction *insn;
- 	struct insn_state state;
-@@ -2370,33 +2437,68 @@ static int validate_functions(struct obj
- 	       CFI_NUM_REGS * sizeof(struct cfi_reg));
- 	state.stack_size = initial_func_cfi.cfa.offset;
- 
--	for_each_sec(file, sec) {
--		list_for_each_entry(func, &sec->symbol_list, list) {
--			if (func->type != STT_FUNC)
--				continue;
-+	/*
-+	 * We need the full vmlinux for noinstr validation, otherwise we can
-+	 * not correctly determine insn->call_dest->sec (external symbols do
-+	 * not have a section).
-+	 */
-+	if (vmlinux && !strcmp(sec->name, ".noinstr.text"))
-+		state.noinstr = true;
- 
--			if (!func->len) {
--				WARN("%s() is missing an ELF size annotation",
--				     func->name);
--				warnings++;
--			}
-+	list_for_each_entry(func, &sec->symbol_list, list) {
-+		if (func->type != STT_FUNC)
-+			continue;
- 
--			if (func->pfunc != func || func->alias != func)
--				continue;
-+		if (!func->len) {
-+			WARN("%s() is missing an ELF size annotation",
-+					func->name);
-+			warnings++;
-+		}
- 
--			insn = find_insn(file, sec, func->offset);
--			if (!insn || insn->ignore || insn->visited)
--				continue;
-+		if (func->pfunc != func || func->alias != func)
-+			continue;
- 
--			state.uaccess = func->uaccess_safe;
-+		insn = find_insn(file, sec, func->offset);
-+		if (!insn || insn->ignore || insn->visited)
-+			continue;
- 
--			ret = validate_branch(file, func, insn, state);
--			if (ret && backtrace)
--				BT_FUNC("<=== (func)", insn);
--			warnings += ret;
--		}
-+		state.uaccess = func->uaccess_safe;
-+
-+		ret = validate_branch(file, func, insn, state);
-+		if (ret && backtrace)
-+			BT_FUNC("<=== (func)", insn);
-+		warnings += ret;
-+	}
-+
-+	return warnings;
-+}
-+
-+static int validate_noinstr_functions(struct objtool_file *file)
-+{
-+	struct section *sec;
-+
-+	if (!vmlinux) {
-+		WARN("noinstr validation needs vmlinux\n");
-+		return -1;
+-		hash_add(elf->section_hash, &sec->hash, sec->idx);
+-		hash_add(elf->section_name_hash, &sec->name_hash, str_hash(sec->name));
++		elf_hash_add(elf->section_hash, &sec->hash, sec->idx);
++		elf_hash_add(elf->section_name_hash, &sec->name_hash, str_hash(sec->name));
  	}
  
-+	sec = find_section_by_name(file->elf, ".noinstr.text");
-+	if (!sec) {
-+		WARN("No .noinstr.text section");
-+		return -1;
-+	}
+ 	if (stats)
+@@ -387,8 +402,8 @@ static int read_symbols(struct elf *elf)
+ 			entry = &sym->sec->symbol_list;
+ 		list_add(&sym->list, entry);
+ 
+-		hash_add(elf->symbol_hash, &sym->hash, sym->idx);
+-		hash_add(elf->symbol_name_hash, &sym->name_hash, str_hash(sym->name));
++		elf_hash_add(elf->symbol_hash, &sym->hash, sym->idx);
++		elf_hash_add(elf->symbol_name_hash, &sym->name_hash, str_hash(sym->name));
+ 	}
+ 
+ 	if (stats)
+@@ -497,7 +512,7 @@ static int read_relas(struct elf *elf)
+ 			}
+ 
+ 			list_add_tail(&rela->list, &sec->rela_list);
+-			hash_add(elf->rela_hash, &rela->hash, rela_hash(rela));
++			elf_hash_add(elf->rela_hash, &rela->hash, rela_hash(rela));
+ 			nr_rela++;
+ 		}
+ 		max_rela = max(max_rela, nr_rela);
+@@ -524,15 +539,16 @@ struct elf *elf_read(const char *name, i
+ 		perror("malloc");
+ 		return NULL;
+ 	}
+-	memset(elf, 0, sizeof(*elf));
++	memset(elf, 0, offsetof(struct elf, sections));
+ 
+-	hash_init(elf->symbol_hash);
+-	hash_init(elf->symbol_name_hash);
+-	hash_init(elf->section_hash);
+-	hash_init(elf->section_name_hash);
+-	hash_init(elf->rela_hash);
+ 	INIT_LIST_HEAD(&elf->sections);
+ 
++	elf_hash_init(elf->symbol_hash);
++	elf_hash_init(elf->symbol_name_hash);
++	elf_hash_init(elf->section_hash);
++	elf_hash_init(elf->section_name_hash);
++	elf_hash_init(elf->rela_hash);
 +
-+	return validate_sec_functions(file, sec);
-+}
-+
-+static int validate_functions(struct objtool_file *file)
-+{
-+	struct section *sec;
-+	int warnings = 0;
-+
-+	for_each_sec(file, sec)
-+		warnings += validate_sec_functions(file, sec);
-+
- 	return warnings;
+ 	elf->fd = open(name, flags);
+ 	if (elf->fd == -1) {
+ 		fprintf(stderr, "objtool: Can't open '%s': %s\n",
+@@ -671,7 +687,7 @@ struct section *elf_create_section(struc
+ 	shstrtab->len += strlen(name) + 1;
+ 	shstrtab->changed = true;
+ 
+-	hash_add(elf->section_hash, &sec->hash, sec->idx);
++	elf_hash_add(elf->section_hash, &sec->hash, sec->idx);
+ 
+ 	return sec;
  }
+--- a/tools/objtool/elf.h
++++ b/tools/objtool/elf.h
+@@ -81,8 +81,8 @@ struct elf {
+ 	struct list_head sections;
+ 	DECLARE_HASHTABLE(symbol_hash, 20);
+ 	DECLARE_HASHTABLE(symbol_name_hash, 20);
+-	DECLARE_HASHTABLE(section_hash, 16);
+-	DECLARE_HASHTABLE(section_name_hash, 16);
++	DECLARE_HASHTABLE(section_hash, 20);
++	DECLARE_HASHTABLE(section_name_hash, 20);
+ 	DECLARE_HASHTABLE(rela_hash, 20);
+ };
  
-@@ -2446,6 +2548,15 @@ int check(const char *_objname, bool orc
- 	if (list_empty(&file.insn_list))
- 		goto out;
- 
-+	if (noinstr) {
-+		ret = validate_noinstr_functions(&file);
-+		if (ret < 0)
-+			goto out;
-+
-+		warnings += ret;
-+		goto out;
-+	}
-+
- 	if (retpoline) {
- 		ret = validate_retpoline(&file);
- 		if (ret < 0)
---- a/tools/objtool/check.h
-+++ b/tools/objtool/check.h
-@@ -20,6 +20,8 @@ struct insn_state {
- 	unsigned char type;
- 	bool bp_scratch;
- 	bool drap, end, uaccess, df;
-+	bool noinstr;
-+	s8 instr;
- 	unsigned int uaccess_stack;
- 	int drap_reg, drap_offset;
- 	struct cfi_reg vals[CFI_NUM_REGS];
-@@ -35,6 +37,7 @@ struct instruction {
- 	unsigned long immediate;
- 	bool alt_group, dead_end, ignore, hint, save, restore, ignore_alts;
- 	bool retpoline_safe;
-+	s8 instr;
- 	u8 visited;
- 	struct symbol *call_dest;
- 	struct instruction *jump_dest;
 
 
