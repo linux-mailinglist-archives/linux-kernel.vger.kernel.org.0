@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F9B9182A79
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 09:07:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42FF6182AD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 09:10:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbgCLIHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 04:07:15 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11636 "EHLO huawei.com"
+        id S1726464AbgCLIKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 04:10:49 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60582 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725980AbgCLIHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 04:07:12 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 419272F64CC5DC00F32F;
-        Thu, 12 Mar 2020 16:07:07 +0800 (CST)
+        id S1726028AbgCLIKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 04:10:49 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1656E709E8F712DF93BE;
+        Thu, 12 Mar 2020 16:09:19 +0800 (CST)
 Received: from [127.0.0.1] (10.173.222.27) by DGGEMS402-HUB.china.huawei.com
  (10.3.19.202) with Microsoft SMTP Server id 14.3.487.0; Thu, 12 Mar 2020
- 16:06:59 +0800
-Subject: Re: [PATCH v5 14/23] irqchip/gic-v4.1: Add VSGI allocation/teardown
+ 16:09:12 +0800
+Subject: Re: [PATCH v5 15/23] irqchip/gic-v4.1: Add VSGI property setup
 To:     Marc Zyngier <maz@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <kvmarm@lists.cs.columbia.edu>, <kvm@vger.kernel.org>,
@@ -31,14 +31,14 @@ CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Julien Thierry <julien.thierry.kdev@gmail.com>,
         Suzuki K Poulose <suzuki.poulose@arm.com>
 References: <20200304203330.4967-1-maz@kernel.org>
- <20200304203330.4967-15-maz@kernel.org>
+ <20200304203330.4967-16-maz@kernel.org>
 From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <295ddf97-126e-0f46-e0f5-ab23c4332358@huawei.com>
-Date:   Thu, 12 Mar 2020 16:06:56 +0800
+Message-ID: <830a0777-0c2a-7df4-a7bb-7cc043e97d21@huawei.com>
+Date:   Thu, 12 Mar 2020 16:09:10 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.0
 MIME-Version: 1.0
-In-Reply-To: <20200304203330.4967-15-maz@kernel.org>
+In-Reply-To: <20200304203330.4967-16-maz@kernel.org>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -50,8 +50,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 2020/3/5 4:33, Marc Zyngier wrote:
-> Allocate per-VPE SGIs when initializing the GIC-specific part of the
-> VPE data structure.
+> Add the SGI configuration entry point for KVM to use.
 > 
 > Signed-off-by: Marc Zyngier <maz@kernel.org>
 
