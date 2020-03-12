@@ -2,93 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01AC5182CD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 10:56:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE551182CE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 10:58:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbgCLJ4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 05:56:12 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34172 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbgCLJ4M (ORCPT
+        id S1726795AbgCLJ6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 05:58:50 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:42340 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbgCLJ6s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 05:56:12 -0400
-Received: by mail-wr1-f66.google.com with SMTP id z15so6579649wrl.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 02:56:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :mime-version;
-        bh=OgZKLTHeDttLbT/Br16mrT6HF82SkRK4UDqvqoYSVK8=;
-        b=VVrou6RJ02jppAuZj5G6brHbhPI2wyw5PI/NdaHb7rQREgtAxNRKRJFmxciD/ERHD9
-         IF1zI5RJJG8RiCvyocn7d3op31iH9772k2BWpbwl65lOGP1lBdrZXkLd9Ni+uDstRdRk
-         H17KBdKlOAvoedogTlH/A+K5KFYecDDOGcoVD6ipM/q3bkL5zGUyTXI0F6tfzr/AfCkC
-         OKI6x/VYhd5A5OV6ZPpsORHuMTOeWjmCNNqQTINJkXPT5WC56bwJRmpBadaOpK2VkJ42
-         cOYA1GXaZB9I2x/6inAAjIgYuDzNOQ3WD6Gz3m2cq0cHf+G2VWE1kkiEop1SXiAQ+UpV
-         v2LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:mime-version;
-        bh=OgZKLTHeDttLbT/Br16mrT6HF82SkRK4UDqvqoYSVK8=;
-        b=H415HKACRTn9X1H0DBLTrWpsyeUKeFs6BctaqukMBiiWjeUyY6M/eEElRhxH78vWEq
-         ApfmUiARzUG68fm1Ektln7A0IHDyRMR2oqg8EJeQ1MYNOYdwpPMhYcJF/bal856h6O6e
-         3CBRrVs3811mt7lovmhZMGVUTRBq0BRRSGZB1qNVHtlPIe9yuUCMkct54uDyVJnCBztR
-         OEET2BKEU7UjrYRuPHPWQdocIiIgjks3cqGoun9wG1flMtSKq0FmVYaCyBekI5f6ZYsJ
-         XYs3qLUoVk/LGSSyA+9hdY/44gop/+rtFGbqngTe9pl3aZ84PutYVkAUY0nh3RIs9O8V
-         fcTA==
-X-Gm-Message-State: ANhLgQ1aph8yxxAyR/lG6XL5yHGatRcVSPOithikPsmBgpYEYCzVLOZ8
-        C2ADw0D07h28AeLsIVubBQ==
-X-Google-Smtp-Source: ADFU+vtL5hIx2UE0FAWeqDWK7I9/59hEeOi0QLZYvUWEBU6Sj7CD5Xvdt6TJUqRekwYXOtEskpy4sQ==
-X-Received: by 2002:a5d:4386:: with SMTP id i6mr10157720wrq.412.1584006970772;
-        Thu, 12 Mar 2020 02:56:10 -0700 (PDT)
-Received: from ninjahub.lan (host-2-102-15-144.as13285.net. [2.102.15.144])
-        by smtp.gmail.com with ESMTPSA id a26sm11998273wmm.18.2020.03.12.02.56.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2020 02:56:10 -0700 (PDT)
-From:   Jules Irenge <jbi.octave@gmail.com>
-X-Google-Original-From: Jules Irenge <maxx@ninjahub.org>
-Date:   Thu, 12 Mar 2020 09:56:01 +0000 (GMT)
-To:     Andrew Morton <akpm@linux-foundation.org>
-cc:     Matthew Wilcox <willy@infradead.org>,
-        Jules Irenge <jbi.octave@gmail.com>, boqun.feng@gmail.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] backing-dev: refactor wb_congested_put()
-In-Reply-To: <20200311200023.974009d9a5648b977d5168f6@linux-foundation.org>
-Message-ID: <alpine.LFD.2.21.2003120953520.15830@ninjahub.org>
-References: <20200312002156.49023-1-jbi.octave@gmail.com> <20200312002156.49023-2-jbi.octave@gmail.com> <20200311175919.30523d55b2e5307ba22bbdc0@linux-foundation.org> <20200312022948.GH22433@bombadil.infradead.org>
- <20200311200023.974009d9a5648b977d5168f6@linux-foundation.org>
+        Thu, 12 Mar 2020 05:58:48 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02C9wRsh054691;
+        Thu, 12 Mar 2020 04:58:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584007107;
+        bh=iYZGpxc/4x16TGmIaej35oayuQv5bkMV+LQiaqr8PHY=;
+        h=From:To:CC:Subject:Date;
+        b=mP3iyMkYuIba96hg68IdIlsvvmTm8a0mKL1u+bYt+sIIwWoLDB+T+Zc1RARau78Hz
+         WHayskJEQU5MEM3VV0YrfTfpI8tx/qUShVOlM6RuoPh84rLP+LrgIQNFsy38WKqmIZ
+         FgZ9FCu6DlPnMrKzNiIPtuHjUfpfhk4H4ZWV/d1o=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02C9wR1e104200
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Mar 2020 04:58:27 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 12
+ Mar 2020 04:58:26 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 12 Mar 2020 04:58:26 -0500
+Received: from sokoban.bb.dnainternet.fi (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02C9wOR5089783;
+        Thu, 12 Mar 2020 04:58:25 -0500
+From:   Tero Kristo <t-kristo@ti.com>
+To:     <wim@linux-watchdog.org>, <linux@roeck-us.net>,
+        <linux-watchdog@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>
+Subject: [PATCHv4 0/4] watchdog: add K3 RTI watchdog support
+Date:   Thu, 12 Mar 2020 11:58:04 +0200
+Message-ID: <20200312095808.19907-1-t-kristo@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
+This addresses the comments from Rob against the DT binding doc, and
+does the necessary changes to the driver code based on that (just
+compatible name change on that side.) I retained Guenter's reviewed by
+tag due to the very minor changes to the code.
+
+Version jumps to v4 for all patches here, I happened to post v3 of patch
+#3 before.
+
+-Tero
 
 
-On Wed, 11 Mar 2020, Andrew Morton wrote:
-
-> On Wed, 11 Mar 2020 19:29:48 -0700 Matthew Wilcox <willy@infradead.org> wrote:
-> 
-> > On Wed, Mar 11, 2020 at 05:59:19PM -0700, Andrew Morton wrote:
-> > > hm, it's hard to get excited over this.  Open-coding the
-> > > refcount_dec_and_lock_irqsave() internals at a callsite in order to
-> > > make sparse happy.
-> > > 
-> > > Is there some other way, using __acquires (for example)?
-> > 
-> > sparse is really bad at conditional lock acquisition. 
-> 
-> I can well imagine.
-> 
-> > we have similar
-> > problems over the vfs.  but we shouldn't be obfuscating our code to make
-> > the tool happy.
-> 
-> Perhaps sparse needs a way of being directed to suppress checking
-> across a particular function.
-> 
-> 
-Thanks for the feedback, maybe this is a limitation for Sparse.
-
-I have experienced quite often this problem.
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
