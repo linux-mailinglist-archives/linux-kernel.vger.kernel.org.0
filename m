@@ -2,72 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8388D18383B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 19:07:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03E6F18383C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 19:07:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbgCLSHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 14:07:17 -0400
-Received: from sonic311-14.consmr.mail.bf2.yahoo.com ([74.6.131.124]:45664
-        "EHLO sonic311-14.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726485AbgCLSHQ (ORCPT
+        id S1726715AbgCLSHT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 14:07:19 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:32891 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726485AbgCLSHS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 14:07:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1584036435; bh=ntCsvVlsVYNXsouoo59ZH21v1wHZ5nZJzCG4NsnkusM=; h=Date:From:Reply-To:Subject:References:From:Subject; b=D7FXcQjq5yGcy+9UIzGvT1auReeucJL/vbt5gI9v1BvxEUiXsH7PXBOKlF2c7onZaQ5lext8c/n4/H0eJE6l0B4524Q/wgMaPPa93cjRGxF3dUjPzeHUHvJp8yze8c+0chOflgmlPog66Q16OAymIRNO2RXG7ALiVaXricMM4PSwy4UbOWip8ZuP305aOzP/V1NlG8D1cIlOIx4SUp4qTiuE6a3e/dW6+5zHwpZZ3DroaN4wRvvotxDvejnN5OoZOEPCK3b15saARpKvYcf6YsC12WqOl3ml6VIE9lQK12fIu8yQnTDkd1as/B8HiVs0s5U701WJUBCz9XrFcHG+6g==
-X-YMail-OSG: w8elTssVM1kLekshqqqpG5dwuLt4rZsZL2SOh1LrJwn5wlfYbp4Oo6MgbqkCpHK
- .uhAx7852VfKzGg4I6ikFIPUUBk5PEzxIY4c3lcoAQoqzUpGLjINEB35DIrvDvdgIK4EmWS6XUr4
- yx9tAnzjz9DeC90jwHCw7T904y1bc.NRvrDrAsl5ebjyVwAdbV5SQHYve4OTKYbxb59Z3TXTShTX
- MDZizxeBoLca.BKF4xZdH_Kejh__hhIAWf9iWfhYccAxyExubF6ANJt6oWoTVDnBrimLvpLHdZEp
- RmKhIsSAk8AOnhUMmIkhP7Zd.VI8nw3Ut58Beo1GStV_xdfDviaK4tRt3stftTp3FkF3CZrYbZF.
- r1SFu86mIGN_.9VipNxVUyrE_zCj4IFw9FKYgBOkRXJDFXtX9VhG4NqUpIVlYq5eJj46h_KnAP0w
- _qfkNKqpPQdcSfsB44acrLOjPKRto6mlqTqbk5UL4mScdHzKK0pyGJ6fpRXijbaZDSY3ixAbvWqb
- 5FaroBfU8BN_3ORfSrWASolNAy1aTf_mai07nQuGKopYiv.M_x2iots6GKLHfiXI19Ny6NKcyI0u
- DpMrRMdflra3PIozB8lTnLEHUIs7ztYn9PCUOxyfXaf6zpCMQQF5zwbFDSOQg87817yBbR07s5B0
- L8RFXiHgbLFbOe_wX7MmhSDk5M99JSA7j02cw46dbsTMdZPplAxBjyAuBuTYb4Ttnu_tsrVxCaao
- tGsJix6_.Pranuw36rMEpzcih67sQTm58EA5xVAHpYpk6Mf0CAyXQA.yjElilQ5cGHWUcVV8Xopp
- 1SW7hPCbT1CdPNm1BPRkKtvgHCyw3.ZWmB5iFxsaut04N.SQHGDrGjgNkH6tXu5UHf9z6Yt8nkQZ
- MGOo9nQ.ZhohduOcIKd6pY0ou6DsDlz9gbfsR7xWJ4Uk_M6tFhvbk.Fc37CQqA_XzOLDUTNVuV3H
- QglOo0Ca9zTZCX0SddxvMDmw3DaOh47uNvcOmo7QQFeGnZPiA3wmpUOTbxpYMSQyxPvNnpLKLGQj
- Uj_VvsHAUTHpYzYTg6mtpIkPfCRp0RnOBXbTmxOLlfxGkfxQOiQMtHzpQqVMIRNisnsQezhUObh3
- exWiIUOVdVclhvZxqolh4UJakqUeIf4t9t0VCc5_cORI1RjA.7fUc1WCUNWkr.p1LMDcH0Fq.CfH
- 61_A3llKbtQ5e3f7vhA5IguHm6Lon_x9VSjMkUEh2avxD6za.k8JIDEEvcQqqybbsBhsTHkPvv8t
- RppHQT8B8zOkRsGnXaKXToFZECo6IZ88SHBZfZZ01wMvPbiLdmYMe16dLUJh1Y9rm3tT_7g--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.bf2.yahoo.com with HTTP; Thu, 12 Mar 2020 18:07:15 +0000
-Date:   Thu, 12 Mar 2020 18:07:14 +0000 (UTC)
-From:   "Hello My Dear Beloved Friend," <akanbiakinbobola1@gmail.com>
-Reply-To: miss.aminatouzainab@gmail.com
-Message-ID: <666436464.2618536.1584036434795@mail.yahoo.com>
-Subject: WITH DUE RESPECT YOUR ATTENTION IS VERY VERY NEEDED URGENT.
+        Thu, 12 Mar 2020 14:07:18 -0400
+Received: by mail-pl1-f194.google.com with SMTP id ay11so2981626plb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 11:07:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=o5Rs9S0RYunQW4vpCbkDqGUyyhPOaydkpJow5/jb/es=;
+        b=AncVZ1gcQLTl82u2dTBzHwOLmeA0NJKMbQrX2PCLBsijaiX2atkSN9hoqI5Qb9Npx3
+         8GaIyWKe2T+f3rJk9RzzXQvZCz65ujA0Onk1Krr2sLslYH2+Ej0b5HDR/Z7+nA7cKvv9
+         r3niug17WALbTsxFhepXZT41hlg5nsQurA6/uCQTafgAFIH/wehKB6T2dlHwgkWPGauz
+         zo75aSP9c7eqrU9821PiMNY5XtBF9RQlmaqAvWKIi1b+8qcXzEDWbArHW/eL6vqrpqpu
+         wDzxTcsPCVCzbYiCPYsfZEZD6stNOsNK1RcP4yLw5qLo75IdiEoIsLtKQ1KDcsDH10qc
+         9pCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=o5Rs9S0RYunQW4vpCbkDqGUyyhPOaydkpJow5/jb/es=;
+        b=lAonWZSkV6bAm69PiMVgioQWhKs0/B88VP8F1urLOWN1q8TQ+tdmwHlYFAtaI2uHEl
+         WxdPNZ0EhCJz3d2EZF0OXKCIl2ChsjOjmHueqCx8gF76UQVKeMGIwcH6InuwH9eclTJv
+         ifVO495G568aX6esen9gl5m40MofnBugTYSIFZuxpyn1UjuOuHSu5nMd/vLCOA17k7R2
+         SQpsx0WjKcafew2E8ThEo0ym+QowRgzhXr+rdfs01X+gMd9By7gqUIXje3LgDCiaWKSc
+         btTqqbjxdL3BGe6QYd8BJ5qVZGfOy57fgCpaxHjFWR4Uo1URDxYynAf3RaLiQTzIbkUJ
+         ydEA==
+X-Gm-Message-State: ANhLgQ3HaTq/8KIHJBRwxLFkqU6DE7W5AH9oRWsFxd4x5C92ap/Ek133
+        WPjrIJ9v1kciMGhvThQs/i8k3g==
+X-Google-Smtp-Source: ADFU+vsZ2i5IaQQYazSCYmNou7CThfHcLBtO490lloSMclgQlcjk8rpyVT2JOpYqkc4ADG591zTA5A==
+X-Received: by 2002:a17:902:db83:: with SMTP id m3mr9039744pld.133.1584036437569;
+        Thu, 12 Mar 2020 11:07:17 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id e18sm9603469pjt.41.2020.03.12.11.07.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2020 11:07:16 -0700 (PDT)
+Date:   Thu, 12 Mar 2020 11:07:15 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [patch] mm, oom: prevent soft lockup on memcg oom for UP
+ systems
+In-Reply-To: <202003120012.02C0CEUB043533@www262.sakura.ne.jp>
+Message-ID: <alpine.DEB.2.21.2003121101030.158939@chino.kir.corp.google.com>
+References: <993e7783-60e9-ba03-b512-c829b9e833fd@i-love.sakura.ne.jp> <alpine.DEB.2.21.2003111513180.195367@chino.kir.corp.google.com> <202003120012.02C0CEUB043533@www262.sakura.ne.jp>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <666436464.2618536.1584036434795.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15342 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:73.0) Gecko/20100101 Firefox/73.0
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 12 Mar 2020, Tetsuo Handa wrote:
 
+> > On Thu, 12 Mar 2020, Tetsuo Handa wrote:
+> > > > If you have an alternate patch to try, we can test it.  But since this 
+> > > > cond_resched() is needed anyway, I'm not sure it will change the result.
+> > > 
+> > > schedule_timeout_killable(1) is an alternate patch to try; I don't think
+> > > that this cond_resched() is needed anyway.
+> > > 
+> > 
+> > You are suggesting schedule_timeout_killable(1) in shrink_node_memcgs()?
+> > 
+> 
+> Andrew Morton also mentioned whether cond_resched() in shrink_node_memcgs()
+> is enough. But like you mentioned,
+> 
 
+It passes our testing because this is where the allocator is looping while 
+the victim is trying to exit if only it could be scheduled.
 
+> you can try re-adding sleep outside of oom_lock:
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index d09776cd6e10..3aee7e0eca4e 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1576,6 +1576,7 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  	 */
+>  	ret = should_force_charge() || out_of_memory(&oc);
+>  	mutex_unlock(&oom_lock);
+> +	schedule_timeout_killable(1);
+>  	return ret;
+>  }
+>  
 
-ATTENTION: DEAR BENEFICIARY CONGRATULATIONS TO YOU,
+If current was process chosen for oom kill, this would actually induce the 
+problem, not fix it.
 
-I RECEIVE YOUR CONTENT OF YOUR EMAIL FROM FEDEX ATM CARD OFFICES YOUR FUNDS SUM OF $10.500,000, 000. MILLION DOLLARS, HAS DISCOVER HERE AFTER THE BOARD OF DIRECTORS MEETINGS, THE UNITED NATIONS GOVERNMENT HAVE DECIDED TO ISSUE YOU YOUR (ATM CARD) VALUED @ TEN MILLION FIVE HUNDRED THOUSAND DOLLARS ($) COMPENSATION FUND THROUGH THIS (ATM) CARD.
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 3c4eb750a199..e80158049651 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -3797,7 +3797,6 @@ __alloc_pages_may_oom(gfp_t gfp_mask, unsigned int order,
+>  	 */
+>  	if (!mutex_trylock(&oom_lock)) {
+>  		*did_some_progress = 1;
+> -		schedule_timeout_uninterruptible(1);
+>  		return NULL;
+>  	}
+>  
+> @@ -4590,6 +4589,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+>  
+>  	/* Retry as long as the OOM killer is making progress */
+>  	if (did_some_progress) {
+> +		schedule_timeout_uninterruptible(1);
+>  		no_progress_loops = 0;
+>  		goto retry;
+>  	}
+> 
+> By the way, will you share the reproducer (and how to use the reproducer) ?
+> 
 
-THIS IS TO BRING TO YOUR NOTICE THAT YOUR VALUED SUM OF 10.5 MILLION DOLLARS HAS BEING CREDITED IN YOUR NAME AS BENEFICIARY TO THIS (ATM CARD), AND HAS BEEN HANDLE TO THE FOREIGN REMITTANCE DEPARTMENT TO SEND IT TO YOU IN YOUR FAVOR IMMEDIATELY WITHOUT ANY DELAY,
-
-YOU HAVE ACCESS TO MAKE DAILY WITHDRAWALS OF ($5,500) UNITED STATE DOLLARS DAILY.
-
-WE RECEIVE YOUR INFORMATIONS AND YOUR HOME ADDRESS OF YOUR COUNTRY AND WE WILL SEND TO YOU YOUR (ATM CARD), WE HAVE ALSO RECEIVED A SIGNAL FROM THE SWISS WORLD BANK TO TRANSFER YOUR BELONGING (ATM) TO YOU WITHIN ONE WEEK, WITHOUT ANY DELAY AS WE RECORD.
-
-WE HAVE JUST FINISHED OUR ANNUAL GENERAL MEETING WITH BANK OF AMERICA (BOA).
-
-FOR MORE INFORMATION PLEASE GET BACK TO ME AS SOON AS POSSIBLE.
-
-YOURS
-SINCERELY.
-
-DIRECTOR FEDEX SERVICE (USA).
-MRS. AMINATOU. Z. MAKEL.
+On an UP kernel with swap disabled, you limit a memcg to 100MB and start 
+three processes that each fault 40MB attached to it.  Same reproducer as 
+the "mm, oom: make a last minute check to prevent unnecessary memcg oom 
+kills" patch except in that case there are two cores.
