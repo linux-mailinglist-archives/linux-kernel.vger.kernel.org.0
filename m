@@ -2,105 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB7B2182629
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 01:18:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B71C718262E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Mar 2020 01:20:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731586AbgCLASz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Mar 2020 20:18:55 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:54578 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731448AbgCLASy (ORCPT
+        id S1731608AbgCLATt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Mar 2020 20:19:49 -0400
+Received: from mail-qk1-f180.google.com ([209.85.222.180]:42080 "EHLO
+        mail-qk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731525AbgCLATt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Mar 2020 20:18:54 -0400
-Received: by mail-pj1-f67.google.com with SMTP id np16so1761611pjb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 17:18:52 -0700 (PDT)
+        Wed, 11 Mar 2020 20:19:49 -0400
+Received: by mail-qk1-f180.google.com with SMTP id e11so4007367qkg.9
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Mar 2020 17:19:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3isA1tVj1/AbpkkjvWlQtyvSTX5nP5eHnvOxHnKorV8=;
-        b=CTmv1WbC0xrnbJRiKZdyBIyWeB+rGR+GvhHbj4LPGOcZbO9BgNdSpdcEj4aEJzBDQ3
-         Wuyu53x7TUcxik8cQa8+HFVGonAv4Tt7MJ2Syp1UHO6fcG7EK7nvUSWewSuRve7Aifcm
-         TQ/rcpRnbKxpiKntiCFuy52Lu+CJggCblGtw6XhebnnlG6YVXx4bNS5Y9IkJGlSYiWYT
-         6rMl6wgO8Xra21nZvtOotLDc8/Rj72ak/4LziLxctggtPAhAWAoGtd4hmaFmVBQeEywY
-         mNBnlBKmNSzWhk3w6lWphn1OcbKORmJ/PGy4n1Wh9C+V/0IMFN7TszpixfpkS2kPmalk
-         IV2w==
+        d=labbott.name; s=google;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=MO+EQlWMy0kzz1J1x9/iOGY80QsD1Dxgz1zaFvELTUk=;
+        b=TOS3dxr5Ig5VZh/pLdbhl97cPhAHs3l8lln+0ZfH48xYNyB1AiqddC4eiEzGqHacnK
+         YWr5Xk4C8gBK+tqIT3tFAukZ+q1A5Fkp4BEDr48ygEUjJLwIQ+US1lHwE5quULAMggSA
+         os3OHpxJ4IZBuMYoTj9fbKLfvnvPjeFUaa2HA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3isA1tVj1/AbpkkjvWlQtyvSTX5nP5eHnvOxHnKorV8=;
-        b=j8CM7kw27NdzXdWXBNTuprX/3g5unPl1pbOBcw3PLsHk4XQULFBIdT5ExUJFYRvAxu
-         /OQ1dFRgfm60SWuc4aGCaHsse06IODUkIXoYsqry7FVrinaOxgueo8tRVNQveRJ4IXya
-         PYOvxmVFPoWUQhhZZMZcuzWeEgYQ55LCi6r4ocx3fvjXrd1Gurgj3Z0GFMjlRB6PcX4J
-         1pMPo6Jo/JsjjfWVgBOM8N8PR6JmD0gLJ6sRc1dqh7W2yJdvnjOJF/kMd9wiRVjgi2Gk
-         ekEwQWwigQ5HLhBvmcm1qqRYhJEE3W2lHWf5ui7MIU95iplgbHZZFmyquQMBon2eSMl2
-         YzvA==
-X-Gm-Message-State: ANhLgQ3w6pwKcl0QOTaaojP5NQlGeZ1pK9VN4OUqKjLwUiAe6SPEX5vq
-        WQsHlmAZQ5PkYxiRWiklc245ZzgJ
-X-Google-Smtp-Source: ADFU+vswgzmTTZ+Ndgojb02iVVr1CeuBSH2oCPmu9usv/GeJ3lOAqfCO9/e4U6/j8JekpPsIXF3D5w==
-X-Received: by 2002:a17:90a:25c8:: with SMTP id k66mr1322789pje.90.1583972331962;
-        Wed, 11 Mar 2020 17:18:51 -0700 (PDT)
-Received: from google.com ([2620:15c:211:1:3e01:2939:5992:52da])
-        by smtp.gmail.com with ESMTPSA id j21sm6477775pji.13.2020.03.11.17.18.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 17:18:50 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 17:18:49 -0700
-From:   Minchan Kim <minchan@kernel.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Jann Horn <jannh@google.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Subject: Re: interaction of MADV_PAGEOUT with CoW anonymous mappings?
-Message-ID: <20200312001849.GA96953@google.com>
-References: <CAG48ez0G3JkMq61gUmyQAaCq=_TwHbi1XKzWRooxZkv08PQKuw@mail.gmail.com>
- <20200310184814.GA8447@dhcp22.suse.cz>
- <CAG48ez2pNSKL9ZTH-PQ93+Kc6ObH6Pa1vVg3OS85WT0TB8m3=A@mail.gmail.com>
- <20200310210906.GD8447@dhcp22.suse.cz>
- <cf95db88-968d-fee5-1c15-10d024c09d8a@intel.com>
- <20200311084513.GD23944@dhcp22.suse.cz>
- <CALvZod6b73_ay_kxph143Aj+XBq04Np0z2bK4Rfn8qppihrmTw@mail.gmail.com>
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=MO+EQlWMy0kzz1J1x9/iOGY80QsD1Dxgz1zaFvELTUk=;
+        b=EN++XBY4GonBDwBNDizBDhe5jfrgUQ3dSnII/JyuY0TcWlXlCh82G0AhG1ihcR6adS
+         i3OW/4DcnKt9jkuXwTPaXpI01ixly82+zI3eVMMoAS/TYqlAnICTn0W2h/WUEQejNwKH
+         IYanJr6Nnbgw+mabIzv600PqiEJZE0B/ZCTxaymqW367b7xfAy1FVl78rfJQ0EOUmdUs
+         A8GxGSWeKYEiA9dn5r3IphwNAfC2ypxGd3eFKPM/RC7HQEqC9Rx0FSTdGFSFPaeeer+j
+         gNE2ievwmSKsz2mzDzi/53PfZrPWCo4Algf2Bb+EOIff9SsRpuh7sfWGBkgF3nuW6t3/
+         ykVg==
+X-Gm-Message-State: ANhLgQ2RLUbXptWs37BlboVvw53jtZ3IlKBxXvE68B92JYLRVd8hs23a
+        GRG8QD2XdMQ8ioqBUCGJNjK2Elg6OEU=
+X-Google-Smtp-Source: ADFU+vtUdWuPKWU6jivVJtfRI9yGeYMlXVU0Dr0Ugglypra2uQ3ag3RxvXgdRlxkFfyAdDVIj8IAww==
+X-Received: by 2002:a05:620a:1129:: with SMTP id p9mr5033995qkk.220.1583972387622;
+        Wed, 11 Mar 2020 17:19:47 -0700 (PDT)
+Received: from Lauras-MBP.fios-router.home (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
+        by smtp.gmail.com with ESMTPSA id k14sm1719962qkh.63.2020.03.11.17.19.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2020 17:19:47 -0700 (PDT)
+To:     tech-board-discuss@lists.linuxfoundation.org,
+        ksummit-discuss@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+From:   Laura Abbott <laura@labbott.name>
+Subject: Linux Foundation Technical Advisory Board Elections -- Change to
+ charter
+Message-ID: <6d6dd6fa-880f-01fe-6177-281572aed703@labbott.name>
+Date:   Wed, 11 Mar 2020 20:19:46 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:68.0)
+ Gecko/20100101 Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALvZod6b73_ay_kxph143Aj+XBq04Np0z2bK4Rfn8qppihrmTw@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 04:53:17PM -0700, Shakeel Butt wrote:
-> On Wed, Mar 11, 2020 at 1:45 AM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Tue 10-03-20 15:48:31, Dave Hansen wrote:
-> > > Maybe instead of just punting on MADV_PAGEOUT for map_count>1 we should
-> > > only let it affect the *local* process.  We could still put the page in
-> > > the swap cache, we just wouldn't go do the rmap walk.
-> >
-> > Is it really worth medling with the reclaim code and special case
-> > MADV_PAGEOUT there? I mean it is quite reasonable to have an initial
-> > implementation that doesn't really touch shared pages because that can
-> > lead to all sorts of hard to debug and unexpected problems. So I would
-> > much rather go with a simple patch to check map count first and see
-> > whether somebody actually cares about those shared pages and go from
-> > there.
-> >
-> > Minchan, do you want to take my diff and turn it into the proper patch
-> > or should I do it.
-> >
-> 
-> What about the remote_madvise(MADV_PAGEOUT)? Will your patch disable
-> the pageout from that code path as well for pages with mapcount > 1?
+On behalf of the Linux Foundation Technical Advisory Board (TAB), I
+would like to announce the following changes to our charter, available
+at https://wiki.linuxfoundation.org/tab/start
 
-Maybe, not because process_madvise syscall needs more previliedge(ie,
-PTRACE_MODE_ATTACH_FSCREDS) so I guess it would be more secure.
-So in that case, I want to rely on the LRU chance for shared pages.
+- Line 2b that previously read "All members shall be elected by a vote
+amongst all invitees of the Linux Kernel Summit." is changed to "All
+members shall be elected by a vote amongst all attendees of the Linux
+Kernel Summit."
 
-With that, the manager process could give a hint to several processes
-and finally makes them paging out.
+This clarifies that kernel summit is no longer invite only.
 
-What do you think?
+- Under meetings and membership, the following line is added
+"The TAB, at its discretion, may set criteria to allow for absentee
+voting for those who are unable to attend the Linux Kernel Summit."
+
+For those who like diff form, this looks like
+
+diff --git a/charter b/charter
+index 45816d7..70b2e56 100644
+--- a/charter
++++ b/charter
+@@ -4,7 +4,8 @@
+      - Promote and Support the programmes with which the TAB is charged 
+to the wider Linux and Open Source Communities.
+    - Meetings and Membership.
+      - The TAB consists of ten voting members.
+-    - All members shall be elected by a vote amongst all invitees of 
+the Linux Kernel Summit.
++    - All members shall be elected by a vote amongst all attendees of 
+the Linux Kernel Summit.
++    - The TAB, at its discretion, may set criteria to allow for 
+absentee voting for those who are unable to attend the Linux Kernel Summit.
+      - Self nominations for the election shall be accepted from any 
+person, via email to the TAB mailing list, up until the time of the 
+election.
+      - Membership of the TAB shall be for a term of 2 years with 
+staggered 1-year elections.
+      - The TAB shall elect a Chair and Vice-Chair of the TAB from 
+amongst their members to serve a renewable 1 year term.
+
+
+This change is intended to be a follow on to last year's changes to vote
+electronically instead of using paper ballots
+(see 
+https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2019-July/006582.html)
+We will be announcing criteria for absentee voting at a later date.
+
+If you have any questions, feel free to speak up here or privately at
+tab@lists.linuxfoundation.org.
+
+Thanks,
+Laura
