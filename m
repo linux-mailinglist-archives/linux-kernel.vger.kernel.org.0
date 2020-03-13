@@ -2,148 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6EA0183FC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 04:47:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E714183FCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 04:49:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbgCMDrc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 23:47:32 -0400
-Received: from mail-eopbgr80081.outbound.protection.outlook.com ([40.107.8.81]:17893
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726254AbgCMDrc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 23:47:32 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NZRDIcTSi80wZWAxgNaOD7jnMLCqxkLOu5/hiulH8o1rpoqZW6sOemSapj0sqpCmgIdWHVhzeVCtmrT8A/h7rx8MxvsghktFNPudGhd8MeiywutD0aFX/NyHJnfDP4CRS4p6TJz4rzuutwmV7n2WgY/PaVIP4Kpuu7aIyicsG5SPOldQbhoFBPxrqz/GAN66maKEPBaV+OZprH5W7+XZ015t6GjZGe0he90Vpq03xSpJRMDPVP7pheceNwfHEZbFY6Znr1c9U1L3eLwIv0GHmFmXP5s+lBrN5zZuRG/Kk2QZINw6WNVUi9tvb6zalYIHmWKqrs/8vcRzNwq8//at5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9sHCWz0i9jbEroBPilUbnUd+OLSYhZoxF1ANQy5AC88=;
- b=RH1j012g8GAGX5qDsDsSHHJ+/hEL8ceYd7zfhirn6bukwKceboY0yKuBfNXxbfvK1ExY1PSXyQaBMoTrjgGQNb2zcQ0Q4kIrNbVTLTViJOwmi8YvKyrx+aOpiLgFimfAg6/G/M/DWglyEV0tbUl2bHtPv+SkZtIqnPe5q5awXSRuSFmJPc6rRw/pGOqnfM0MLc7GGVoLqVIVeaD1ircYjsyUbTbLcv+W41d/lEi4NifFEFgFshx8phaaHpFhvvb8ZnQ4ra1+xrHPan+Jzi8mcWeKZvpbx0W2fgNZNDFwYvv2vyl6n1YZeH9uR7TpwTVp3goTkMHSnIsVYQjOmlakfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9sHCWz0i9jbEroBPilUbnUd+OLSYhZoxF1ANQy5AC88=;
- b=flgPGqXcv6kJPYvD9+nBH102JONoqIaYLcU2hhWY9b/eujpD6rOfsBe2TrVZiSNgWeoeLKUdWiV6omx++Fyc412X2ttJqj1TP6FaiNo4yUDfdy7IurXUZ9ojz6F8ESBKwujBL5QIG7WWrveOf39bt+Ixf0q4XTsXwvRKaUzPKnE=
-Received: from VE1PR04MB6496.eurprd04.prod.outlook.com (20.179.232.221) by
- VE1PR04MB6655.eurprd04.prod.outlook.com (20.179.232.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2793.17; Fri, 13 Mar 2020 03:47:25 +0000
-Received: from VE1PR04MB6496.eurprd04.prod.outlook.com
- ([fe80::8cb8:5c41:d843:b66d]) by VE1PR04MB6496.eurprd04.prod.outlook.com
- ([fe80::8cb8:5c41:d843:b66d%5]) with mapi id 15.20.2814.018; Fri, 13 Mar 2020
- 03:47:25 +0000
-From:   Po Liu <po.liu@nxp.com>
-To:     Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC:     Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Alexandru Marginean <alexandru.marginean@nxp.com>,
-        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
-        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>,
-        "michael.chan@broadcom.com" <michael.chan@broadcom.com>,
-        "vishal@chelsio.com" <vishal@chelsio.com>,
-        "saeedm@mellanox.com" <saeedm@mellanox.com>,
-        "leon@kernel.org" <leon@kernel.org>,
-        "jiri@mellanox.com" <jiri@mellanox.com>,
-        "idosch@mellanox.com" <idosch@mellanox.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "UNGLinuxDriver@microchip.com" <UNGLinuxDriver@microchip.com>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "jhs@mojatatu.com" <jhs@mojatatu.com>,
-        "xiyou.wangcong@gmail.com" <xiyou.wangcong@gmail.com>,
-        "john.hurley@netronome.com" <john.hurley@netronome.com>,
-        "simon.horman@netronome.com" <simon.horman@netronome.com>,
-        "moshe@mellanox.com" <moshe@mellanox.com>,
-        "ivan.khoronzhuk@linaro.org" <ivan.khoronzhuk@linaro.org>,
-        "m-karicheri2@ti.com" <m-karicheri2@ti.com>,
-        "andre.guedes@linux.intel.com" <andre.guedes@linux.intel.com>
-Subject: RE: [EXT] Re: [RFC,net-next  2/9] net: qos: introduce a gate control
- flow action
-Thread-Topic: [EXT] Re: [RFC,net-next  2/9] net: qos: introduce a gate control
- flow action
-Thread-Index: AQHV87k3gR0PIY1RlEuDZub3eMl0sKhFj56AgABQnhA=
-Date:   Fri, 13 Mar 2020 03:47:25 +0000
-Message-ID: <VE1PR04MB6496FB9C6C6DC9794826B37092FA0@VE1PR04MB6496.eurprd04.prod.outlook.com>
-References: <20200306125608.11717-1-Po.Liu@nxp.com>
- <20200306125608.11717-3-Po.Liu@nxp.com> <871rpxi5li.fsf@linux.intel.com>
-In-Reply-To: <871rpxi5li.fsf@linux.intel.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=po.liu@nxp.com; 
-x-originating-ip: [119.31.174.68]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: b6aa0a18-2ad5-4f32-1781-08d7c7013e7d
-x-ms-traffictypediagnostic: VE1PR04MB6655:|VE1PR04MB6655:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VE1PR04MB66553ABD68103DA4A0E44C7192FA0@VE1PR04MB6655.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 034119E4F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(199004)(81166006)(2906002)(110136005)(54906003)(8676002)(6506007)(71200400001)(8936002)(81156014)(498600001)(5660300002)(7416002)(26005)(186003)(9686003)(4326008)(86362001)(7696005)(64756008)(66946007)(76116006)(44832011)(52536014)(66446008)(66556008)(55016002)(66476007)(33656002)(142933001);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6655;H:VE1PR04MB6496.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ZmbJxbuyrbLVvgZ02aVOc0gjSYkZa4gpkCA7wvMlidk8WVIe/KOSAblJgo+EmNaDJnootVN9uY1+oWImzr2yuGsvAUWr4Hfo/cI8hDQAoIBF2cXl80ZeQe6oKSw6hJl7PwuY68/xKzfUANEnN37LpUEWBi9KYuuzA5+viM9mvkuHu0U99M4B1OzO4G5f/Kzi6wc3HX/xKBsC4p0LqwqlOAkYO83TvWoyY7VVIfnY7yI2qPLiSDR6THiw6BnjfCdEMtvWqKUhmjR0VrXuX5OZbKiUc5wQFd2QdqKHQbXU5CO12kEOMtjLhY4NrKuusOWk5vei3XfutChctYmuhWFSBTGpdIe99XAwIfDZ1PIJT0DhvwfTmU65GTA9Xw4vwQJbd03FOnB+dPzxYt2byuB6EL25mliK2AeU20az7NcluAkdcHh2icZCujo7Xu/UOMQHYI/R5uZuN/AOSox1UFWuAuA4RBwqO2HVbslwsMUeWXAkcS3hbyiHPS+rVy/QpCNv
-x-ms-exchange-antispam-messagedata: rzDlOeVD9hBcRn0mscM+nM57jcrm5lbeYjgEkaxn7LfvRn4eM2trrrshJSWH0mEVwE7m88wr1RDZH+dsxL5M3icKtcTR0G40MqApEF6m97tXTxf1CedgSLyGAiOPKXOkyQYcU61l9sXpZLOj25uICw==
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S1726491AbgCMDtg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 23:49:36 -0400
+Received: from mga11.intel.com ([192.55.52.93]:9201 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726371AbgCMDtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 23:49:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 20:49:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,546,1574150400"; 
+   d="scan'208";a="235218792"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 12 Mar 2020 20:49:34 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jCbKH-0000zY-To; Fri, 13 Mar 2020 11:49:33 +0800
+Date:   Fri, 13 Mar 2020 11:49:11 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:perf/urgent] BUILD SUCCESS
+ f967140dfb7442e2db0868b03b961f9c59418a1b
+Message-ID: <5e6b02b7.JUUUyo5fGcjJSIHZ%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6aa0a18-2ad5-4f32-1781-08d7c7013e7d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2020 03:47:25.1625
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FeJRyqqBxsfMhMEU4VkJWsojIcOqHAeQtKtX7r+KqNyZmAbbRIDHK1O1Phom2mpy
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6655
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgVmluaWNpdXMsDQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBW
-aW5pY2l1cyBDb3N0YSBHb21lcyA8dmluaWNpdXMuZ29tZXNAaW50ZWwuY29tPg0KPiBTZW50OiAy
-MDIwxOoz1MIxM8jVIDY6MTQNCj4gPj4gdGMgcWRpc2MgYWRkIGRldiBldGgwIGluZ3Jlc3MNCj4g
-Pg0KPiA+PiB0YyBmaWx0ZXIgYWRkIGRldiBldGgwIHBhcmVudCBmZmZmOiBwcm90b2NvbCBpcCBc
-DQo+ID4gICAgICAgICAgZmxvd2VyIHNyY19pcCAxOTIuMTY4LjAuMjAgXA0KPiA+ICAgICAgICAg
-IGFjdGlvbiBnYXRlIGluZGV4IDIgXA0KPiA+ICAgICAgICAgIHNjaGVkLWVudHJ5IE9QRU4gMjAw
-MDAwMDAwIC0xIC0xIFwNCj4gPiAgICAgICAgICBzY2hlZC1lbnRyeSBDTE9TRSAxMDAwMDAwMDAg
-LTEgLTENCj4gPg0KPiA+PiB0YyBjaGFpbiBkZWwgZGV2IGV0aDAgaW5ncmVzcyBjaGFpbiAwDQo+
-IA0KPiBBIG1vcmUgY29tcGxleCBleGFtcGxlLCBzaG93aW5nIGhvdyBpdCB3b3VsZCB3b3JrIGZv
-ciBtb3JlIGZpbHRlcnMNCj4gd291bGQgYmUgbmljZS4NCj4gDQo+IEZvciBleGFtcGxlLCBmaWx0
-ZXJzIG1hdGNoaW5nIDMgZGlmZmVyZW50IHNvdXJjZSBJUHMgKGV2ZW4gYmV0dGVyLCB1c2luZw0K
-PiBNQUMgYWRkcmVzc2VzIHNvIGl0IHdvdWxkIHdvcmsgd2hlbiB5b3UgYWRkIHRoZSAnc2tpcF9z
-dycgZmxhZyksDQo+IGFzc2lnbmluZyBkaWZmZXJlbnQgcHJpb3JpdGllcyB0byB0aGVtLCBhbHNv
-IHNob3dpbmcgaG93IHRoZSAiYmFzZS10aW1lIg0KPiBjb3VsZCBiZSB1c2VkLg0KDQpPaywgSSB3
-b3VsZCB1cGRhdGUgd2l0aCBhIG1vcmUgY2xlYXIgZXhhbXBsZS4NCg0KPiA+DQo+ID4gK3N0YXRp
-YyBpbnQgdGNmX2dhdGVfYWN0KHN0cnVjdCBza19idWZmICpza2IsIGNvbnN0IHN0cnVjdCB0Y19h
-Y3Rpb24gKmEsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCB0Y2ZfcmVzdWx0ICpy
-ZXMpIHsNCj4gPiArICAgICBzdHJ1Y3QgdGNmX2dhdGUgKmcgPSB0b19nYXRlKGEpOw0KPiA+ICsg
-ICAgIHN0cnVjdCB0Y2ZfZ2F0ZV9wYXJhbXMgKnA7DQo+ID4gKyAgICAgc3RydWN0IGdhdGVfYWN0
-aW9uICpnYWN0Ow0KPiA+ICsgICAgIGludCBhY3Rpb247DQo+ID4gKw0KPiA+ICsgICAgIHRjZl9s
-YXN0dXNlX3VwZGF0ZSgmZy0+dGNmX3RtKTsNCj4gPiArICAgICB0Y2ZfYWN0aW9uX3VwZGF0ZV9i
-c3RhdHMoJmctPmNvbW1vbiwgc2tiKTsNCj4gPiArDQo+IA0KPiBQbGVhc2UgdGVzdCB0aGlzIHdp
-dGggbG9ja2RlcCBlbmFibGVkLCBJIGdvdCB0aGUgZmVlbGluZyB0aGF0IHRoZXJlJ3MgYQ0KPiBt
-aXNzaW5nIHJjdV9yZWFkX2xvY2soKSBzb21ld2hlcmUgYXJvdW5kIGhlcmUuDQoNCkkgd2lsbCBh
-ZGQgbG9jayBoZXJlLg0KDQo+IA0KPiA+ICsgICAgIGdhY3QtPnRrX29mZnNldCA9IHRrX29mZnNl
-dDsNCj4gPiArICAgICBzcGluX2xvY2tfaW5pdCgmZ2FjdC0+ZW50cnlfbG9jayk7DQo+ID4gKyAg
-ICAgaHJ0aW1lcl9pbml0KCZnYWN0LT5oaXRpbWVyLCBjbG9ja2lkLCBIUlRJTUVSX01PREVfQUJT
-KTsNCj4gPiArICAgICBnYWN0LT5oaXRpbWVyLmZ1bmN0aW9uID0gZ2F0ZV90aW1lcl9mdW5jOw0K
-PiANCj4gSG0sIGhhdmluZyBhbiBocnRpbWVyIHBlciBmaWx0ZXIgc2VlbXMga2luZCBkYW5nZXJv
-dXMsIGluIHRoZSBzZW5zZSB0aGF0IGl0DQo+IHNlZW1zIHZlcnkgaGFyZCB0byBjb25maWd1cmUg
-cmlnaHQuDQoNClBlciBnYXRlIGFjdGlvbiBleGFjdGx5LiANCg0KPiANCj4gQnV0IEkgZG9uJ3Qg
-aGF2ZSBhbnkgYWx0ZXJuYXRpdmUgaWRlYXMgZm9yIG5vdy4NCg0KWWVzLCBocnRpbWVyIHNob3Vs
-ZCBvbmx5IHN0YXJ0IHdoZW4gc29mdHdhcmUgZ2F0ZSBzaW11bGF0b3IgYmluZGluZy4gQnV0IHNl
-ZW1zIHRoZXJlIGlzIG5vIHdheSB0byBsaW5rIHRoZSBza2lwX2h3IHN0YXRlIHdpdGggdGhlIGdh
-dGUgYWN0aW9uIGluIGN1cnJlbnQgc3RhdGUuIFNvIGhydGltZXIgaGFzIHRvIHN0YXJ0IGF0IGlu
-aXRpYWwgdGltZSB3aGVuIGl0IGlzIGNyZWF0ZS4NCg0KPiANCj4gLS0NCj4gVmluaWNpdXMNCg0K
-QnIsDQpQbyBMaXUNCg==
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  perf/urgent
+branch HEAD: f967140dfb7442e2db0868b03b961f9c59418a1b  perf/amd/uncore: Replace manual sampling check with CAP_NO_INTERRUPT flag
+
+elapsed time: 874m
+
+configs tested: 138
+configs skipped: 106
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                               defconfig
+sparc                            allyesconfig
+mips                      fuloong2e_defconfig
+sparc64                           allnoconfig
+i386                              allnoconfig
+i386                             allyesconfig
+i386                             alldefconfig
+i386                                defconfig
+ia64                             alldefconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                                defconfig
+c6x                              allyesconfig
+c6x                        evmc6678_defconfig
+nios2                         10m50_defconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
+openrisc                 simple_smp_defconfig
+xtensa                       common_defconfig
+xtensa                          iss_defconfig
+alpha                               defconfig
+csky                                defconfig
+nds32                             allnoconfig
+nds32                               defconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                       m5475evb_defconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+x86_64               randconfig-a001-20200311
+x86_64               randconfig-a002-20200311
+x86_64               randconfig-a003-20200311
+i386                 randconfig-a001-20200311
+i386                 randconfig-a002-20200311
+i386                 randconfig-a003-20200311
+x86_64               randconfig-a001-20200312
+x86_64               randconfig-a002-20200312
+x86_64               randconfig-a003-20200312
+i386                 randconfig-a001-20200312
+i386                 randconfig-a002-20200312
+i386                 randconfig-a003-20200312
+alpha                randconfig-a001-20200312
+m68k                 randconfig-a001-20200312
+mips                 randconfig-a001-20200312
+nds32                randconfig-a001-20200312
+parisc               randconfig-a001-20200312
+csky                 randconfig-a001-20200312
+openrisc             randconfig-a001-20200312
+s390                 randconfig-a001-20200312
+sh                   randconfig-a001-20200312
+xtensa               randconfig-a001-20200312
+x86_64               randconfig-b001-20200311
+x86_64               randconfig-b002-20200311
+x86_64               randconfig-b003-20200311
+i386                 randconfig-b001-20200311
+i386                 randconfig-b002-20200311
+i386                 randconfig-b003-20200311
+x86_64               randconfig-c001-20200312
+x86_64               randconfig-c002-20200312
+x86_64               randconfig-c003-20200312
+i386                 randconfig-c001-20200312
+i386                 randconfig-c002-20200312
+i386                 randconfig-c003-20200312
+x86_64               randconfig-c001-20200311
+x86_64               randconfig-c002-20200311
+x86_64               randconfig-c003-20200311
+i386                 randconfig-c001-20200311
+i386                 randconfig-c002-20200311
+i386                 randconfig-c003-20200311
+x86_64               randconfig-e001-20200312
+x86_64               randconfig-e002-20200312
+x86_64               randconfig-e003-20200312
+i386                 randconfig-e001-20200312
+i386                 randconfig-e002-20200312
+i386                 randconfig-e003-20200312
+x86_64               randconfig-f001-20200312
+x86_64               randconfig-f002-20200312
+x86_64               randconfig-f003-20200312
+i386                 randconfig-f001-20200312
+i386                 randconfig-f002-20200312
+i386                 randconfig-f003-20200312
+x86_64               randconfig-h001-20200312
+x86_64               randconfig-h002-20200312
+x86_64               randconfig-h003-20200312
+i386                 randconfig-h001-20200312
+i386                 randconfig-h002-20200312
+i386                 randconfig-h003-20200312
+arm                  randconfig-a001-20200312
+arm64                randconfig-a001-20200312
+ia64                 randconfig-a001-20200312
+powerpc              randconfig-a001-20200312
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+sh                               allmodconfig
+sh                                allnoconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+sparc                               defconfig
+sparc64                          allmodconfig
+sparc64                          allyesconfig
+sparc64                             defconfig
+um                                  defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
