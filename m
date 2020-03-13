@@ -2,98 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6BFE1844DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 11:29:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C69EF1844EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 11:30:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbgCMK30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 06:29:26 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33260 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726055AbgCMK30 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 06:29:26 -0400
-Received: by mail-pl1-f196.google.com with SMTP id ay11so4057325plb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 03:29:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id;
-        bh=kqXMRjosvrMwbkpWYYUMv/eKp41LgZaQN2jfs/TMCUU=;
-        b=EWbg2LKqIyxcTZt54OZrlCbltZOHFk7QAr/BjENsjZfWl63N37tNSXyfPxxA0hTRu3
-         or4rZWujQhztrFqJsYFJUd8k74Q1F4Tqhf2S3hd6rGIxw40W28bThPpt6NfqCcHbHQWA
-         4FXoQ7Pd1UOft3mx57iVigFUPwH0cIsV5yat2JaHnEto1jFCq+jPPaepNxUksBrEPIid
-         vY9b4GzJoo4MUSaptYYtogEF/CGnjXQOAaYUFXQZCP0VmpL2vY5j+nwNFN0guSeNqH7Z
-         D+3voASXKTB12c7Rt0W6n1c5MEXIcUb0v8hC0Y4iv+tApge+jorRS2kNNs5Gpg95KcqX
-         CtFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=kqXMRjosvrMwbkpWYYUMv/eKp41LgZaQN2jfs/TMCUU=;
-        b=kuAejmHZlkWJXls0rYoMt4cpvilA0NfAokzlwvPh2k3HaCNN503aEjagLhXlCQ8kqm
-         STGfVmBQ+LDaUKiUBT1tP/dmvopl4pXvf/nv9OXSQVu4TwGmZz6hXDU5Cesh74ReNczE
-         LFVGxYR9rwAPQleP9/NkZt4F1EPtBrS4MtdVi44VkezAJAWSHDoHKXEFI4JzO8zwlg2P
-         L8qfpWbTLIMvy6t0mBge6rKsChW7bSzRElUIPBbtf8nTeu0FPZkHRQezNAWb/wwI6/Zu
-         w+Ygjfjae4nFhRwY0yifTI1wikxmXxfS7ryi4VNxQASFBYpTu+P3k5T9kqE8InxTmBEi
-         0EIA==
-X-Gm-Message-State: ANhLgQ0QZI6jW+7GpzZhCWjE2MDuUlNJGH+Stc2al4DyL3d3sl4XEHsc
-        yoXY4wW8hPylL2kp4jxkT8pLO/Og
-X-Google-Smtp-Source: ADFU+vsY8iYgbuRFlAd9U61nsaldOQC1hqGGqTzZvDEDjvVId3qGfnZZieGIXk2tsNLODrFDhDxEhQ==
-X-Received: by 2002:a17:902:7592:: with SMTP id j18mr12588240pll.180.1584095365090;
-        Fri, 13 Mar 2020 03:29:25 -0700 (PDT)
-Received: from localhost.localdomain ([2405:204:22f:d418:f8a5:7ca8:f99b:fa30])
-        by smtp.gmail.com with ESMTPSA id u24sm55719326pgo.83.2020.03.13.03.29.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 03:29:24 -0700 (PDT)
-From:   Shreeya Patel <shreeya.patel23498@gmail.com>
-To:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com,
-        sbrivio@redhat.com, daniel.baluta@gmail.com,
-        nramas@linux.microsoft.com, hverkuil@xs4all.nl,
-        shreeya.patel23498@gmail.com, Larry.Finger@lwfinger.net
-Subject: [Outreachy kernel] [PATCH v2] Staging: rtl8723bs: rtw_mlme: Remove unnecessary conditions
-Date:   Fri, 13 Mar 2020 15:59:12 +0530
-Message-Id: <20200313102912.17218-1-shreeya.patel23498@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726667AbgCMKaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 06:30:02 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:59629 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726514AbgCMKaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 06:30:02 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48f2531Yv2z9sPF;
+        Fri, 13 Mar 2020 21:29:59 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1584095400;
+        bh=ennX8Om0QSmahoMa7c4vE0YoL0FkwJ9Ez20dcvWxNck=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=bPutInDY0Yvo5NvIeS90Ri92Wk3oJLBT58/IKabBPDbeyDatP9vTcOsuAPL1TYlBR
+         xyzKD76C9QDbU9b4mojQZQlhJ5qx4yJksL15dLXjBpuVrP9AslHvQR33icU7nlC9vJ
+         6IsyyUJXpxL6UoDVeP57qxLXt9ncC6aULzs9zRfRI+8pvpjRtzs65T8dC5/HTGEBET
+         +kNriPabv+WcmugXM99bL5vl2p7I23py3bTf3n4/bGTewoOSpsWRReYL2Es1HsMY10
+         p7i1Xub0JsjNx3Yv+roXnjeiThfRlzJMW0FiHxQdtGc91rLkGL+jTNucXU21L1TBiI
+         kf4Xqi0w/NQug==
+Date:   Fri, 13 Mar 2020 21:29:55 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Message-ID: <20200313212955.753f3cd2@canb.auug.org.au>
+In-Reply-To: <20200313080209.0c36c2b7@coco.lan>
+References: <20200313131903.3975cdd2@canb.auug.org.au>
+        <20200313080209.0c36c2b7@coco.lan>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/.tCE97I2PM4KWCvibytdaN+";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unnecessary if and else conditions since both are leading to the
-initialization of "phtpriv->ampdu_enable" with the same value.
-Also, remove the unnecessary else-if condition since it does nothing.
+--Sig_/.tCE97I2PM4KWCvibytdaN+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
----
+Hi Mauro,
 
-Changes in v2
-  - Remove unnecessary comments
-  - Remove unnecessary else-if condition which does nothing.
+On Fri, 13 Mar 2020 08:07:35 +0100 Mauro Carvalho Chehab <mchehab@kernel.or=
+g> wrote:
+>
+> Em Fri, 13 Mar 2020 13:19:03 +1100
+> Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
+>=20
+> > After merging the v4l-dvb tree, today's linux-next build (arm
+> > multi_v7_defconfig) failed like this:
+> >=20
+> > ERROR: modpost: "fwnode_get_name" [drivers/media/v4l2-core/v4l2-fwnode.=
+ko] undefined!
+> >=20
+> > Caused by commit
+> >=20
+> >   dfc22c073b78 ("media: v4l2-fwnode: add initial connector parsing supp=
+ort")
+> >=20
+> > I have used the v4l-dvb tree from next-20200312 for today. =20
+> =20
+> Hmm... I double-checked at next-20200312. This function is defined
+> at linux/property.h header:
+>=20
+> 	include/linux/property.h:const char *fwnode_get_name(const struct fwnode=
+_handle *fwnode);
+>=20
+> Its implementation is at drivers/base/property.c, and this is always
+> built, according with drivers/base/Makefile:
+>=20
+> 	obj-y			:=3D component.o core.o bus.o dd.o syscore.o \
+> 				   driver.o class.o platform.o \
+> 				   cpu.o firmware.o init.o map.o devres.o \
+> 				   attribute_container.o transport_class.o \
+> 				   topology.o container.o property.o cacheinfo.o \
+> 				   devcon.o swnode.o
+>=20
+> The v4l2-fwnode.c properly includes include/linux/property.h.
+>=20
+> So, at least up to next-20200312, everything looks fine on my eyes.
+>=20
+> The header is probably there, as the error happened at link stage.
+>=20
+> Maybe there is some merge conflict caused by merging a patch from
+> some other tree that might have renamed or removed its implementation
+> after next-20200312, or changed from obj-y target?
+>=20
+> Or maybe this changeset got reverted?
+>=20
+> 	a7914d1072fb ("device property: Export fwnode_get_name()")
 
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+Unfortunately, that commit is in the usb tree which I merge much later
+than the v4l-dvb tree.  You should not develop against linux-next, and
+you should test your tree standalone as you do not know in which order
+the trees will be merged by Linus (or me).  The solutions here include
+cherry-picking the commit into the v4l-dvb tree (since it is such a
+simple commit and should not cause any complex conflicts) or merge part
+of the usb tree into the v4l-dvb tree (which is possible since Greg
+never rebases his tree).
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 71fcb466019a..d7a58af76ea0 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -2772,16 +2772,7 @@ void rtw_update_ht_cap(struct adapter *padapter, u8 *pie, uint ie_len, u8 channe
- 
- 	/* maybe needs check if ap supports rx ampdu. */
- 	if (!(phtpriv->ampdu_enable) && pregistrypriv->ampdu_enable == 1) {
--		if (pregistrypriv->wifi_spec == 1) {
--			/* remove this part because testbed AP should disable RX AMPDU */
--			/* phtpriv->ampdu_enable = false; */
--			phtpriv->ampdu_enable = true;
--		} else {
--			phtpriv->ampdu_enable = true;
--		}
--	} else if (pregistrypriv->ampdu_enable == 2) {
--		/* remove this part because testbed AP should disable RX AMPDU */
--		/* phtpriv->ampdu_enable = true; */
-+		phtpriv->ampdu_enable = true;
- 	}
- 
- 	/* check Max Rx A-MPDU Size */
--- 
-2.17.1
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/.tCE97I2PM4KWCvibytdaN+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5rYKMACgkQAVBC80lX
+0Gz54ggAgX1HuNYJU8Av84cn0X2podcQTzCWZM8NxDNx1nh85AEGwut6s9Omq9N/
+z4XcP9u6H4XLVze/as6kocU40cbxxBZY2TNcZfeseLWDvsOW0hIR8zdGUeqnLNUb
+vwHFGfCYiVq1FcLyQX+KA31/wE0vRgw6XGaIQPJ0JYtp2eJrxB82yVu+kI71bj3F
+CSJBfaycSM+GgtNyQM5RSodjUdFnF8v93GaVswsuVnhobUwD4xLHjitvs7H98Bht
+mVXhEsfMRdOKU9b8FzOgqLKXV1dCkgZZCCQJUWj/QON4IGRvaeyvECVeZqLnO3tM
+YJRQFEsxTuMg+u1FL1DcPVdsvrMsVw==
+=DsFi
+-----END PGP SIGNATURE-----
+
+--Sig_/.tCE97I2PM4KWCvibytdaN+--
