@@ -2,151 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5B1C1843CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 10:35:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E1DF1843D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 10:35:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbgCMJfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 05:35:14 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:38089 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726377AbgCMJeh (ORCPT
+        id S1726543AbgCMJfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 05:35:52 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:53961 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726420AbgCMJfv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 05:34:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584092076;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=b9csfzgQL1arrRthML64Bn1Sn3mvBEViBOBi0LSzDTM=;
-        b=idFOZvTAFYSa7xXBacqBKcd2EmWVgzGRNy/wFMI98Y2I+WcKqpog77vPsJzQINsSkvFR3x
-        g4ODRy2F3509jtR3BYMyTpckkWYXMRVEzttj7XBIndaZH7kCiRGDRcRYwd75LrgX/PDEJB
-        k1tZXFFRkdiu2FHSdumgjNgWmJi+yC8=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-491-ly4YoN3tOeSNdzbq2Of6iw-1; Fri, 13 Mar 2020 05:34:35 -0400
-X-MC-Unique: ly4YoN3tOeSNdzbq2Of6iw-1
-Received: by mail-wm1-f70.google.com with SMTP id n25so2689568wmi.5
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 02:34:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=b9csfzgQL1arrRthML64Bn1Sn3mvBEViBOBi0LSzDTM=;
-        b=mgLfKi2bHit6DRGaIoNsMW7en/Fp8BpSXQwO0Anwl7RTAOR8y2INmjVXB0uotJbdBD
-         tKpc5+xn91T7RiJgp/wjoYc8ggaGkKzqSE64g9K5TADhsYMykl2sCtB9CGg/v6laijDm
-         2VLuKnSwn1FABpvqtU5aoF5ULyemCjsVSzyaXQFoK7KYnZ7nXlctz07OrXw3/eswPzXD
-         cHFA4vgZAA7S/PkYSL/h4ZCwo2+6o6ZsrG6HSEHOj+ZS522l74ST9TdgP+93V4HcR2PX
-         fELlsRQWMWOl9PZjVSqo7AAw3gxVTU50QWB3mDt7wubZV/rQVNfGuEw4Tm4zxBuzwOVS
-         ta3A==
-X-Gm-Message-State: ANhLgQ1NvMknJ0e+uLMoasr0rRAL4MuuH/V9eO2hMyvqy45/J6xf6LWu
-        n9DbgJ5rUhqkbpGP5JRAeu+9DwJYLve8ak6iT+jRT3c1uiBuqn6xK2ZdugaQCWi4M7vBcx1nE20
-        G+IOK1nsJsR3u+NT1MLfU1+F9
-X-Received: by 2002:a7b:cb42:: with SMTP id v2mr10206255wmj.170.1584092074147;
-        Fri, 13 Mar 2020 02:34:34 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vuUwXziaHoyA1EEaDQKmhBGTd8I4EwnbQQvJ7qV9xq0EdNJGxLx7LH6TG0wt2i7eEVNjyjK+w==
-X-Received: by 2002:a7b:cb42:: with SMTP id v2mr10206222wmj.170.1584092073863;
-        Fri, 13 Mar 2020 02:34:33 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id l83sm16592995wmf.43.2020.03.13.02.34.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 02:34:33 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Toni Spets <toni.spets@iki.fi>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH] KVM: VMX: Condition ENCLS-exiting enabling on CPU support for SGX1
-In-Reply-To: <20200312180416.6679-1-sean.j.christopherson@intel.com>
-References: <20200312180416.6679-1-sean.j.christopherson@intel.com>
-Date:   Fri, 13 Mar 2020 10:34:32 +0100
-Message-ID: <87y2s4pphz.fsf@vitty.brq.redhat.com>
+        Fri, 13 Mar 2020 05:35:51 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id C416522651;
+        Fri, 13 Mar 2020 05:35:50 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Fri, 13 Mar 2020 05:35:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=4cvIqCPlZ1xEDgbaZiR2YWeDjPs
+        At/ZNURBlpwOqIAU=; b=OjOAr+rccJlzOQ1KOUhlTdkUn48hIYnjGG0OWLKiUNk
+        CLD82NW7rWwkLXz7BUdmolRgIe/QNGhtgpZWIaAUeRDcwHBgRUWtVh3y1Nstyeph
+        ZIIDC8ml26TsYnmQOpWBiQQpvneBHMGN/oni2TN5kEdWSqx8NaIR1egC0deoXnmp
+        h06A/kXVptapTlOms0ygp/Rq2C9oEv5SfNiLVk2A90wouGlndbNnT0rSU2b1eb60
+        IdN6Sk4ClntlCTvwOIQKTrDwucDDYeENOHyKbjgFbDO3lnNdP6pZqIV1rmMvgJQW
+        +TF5JcOB7pGvI7EDETqygiJzMLlPUMCt7X8gLMAxHCA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=4cvIqC
+        PlZ1xEDgbaZiR2YWeDjPsAt/ZNURBlpwOqIAU=; b=gvLUyjpARPBP77DHPsudCJ
+        ZCm0565nVJbDiMj5STbf3tb4o/9tYf+QJeZcLe/MG33evCyqDbr0oxbGFaNiAraO
+        C08ZyFL4ioHfE5D61Jvy6hSEuwAeDMyLXa2WiMAK3sBkmvjVvpDMORgth47i/iN/
+        6ddm3ujA7E0nmxAGl8WhJZkIsoR113n/JbB3v/85TKf3oJapUJcAs4LVabLMucu6
+        WgMOvhnkbRGGTYz/scjOPbbgzsOAHzztPW3x8vFt0ef34X/Vz81qdERNmBO4onAh
+        AfIHUeYUjcfmkj1joHBxZB/MsX5obUPjaTjol5GbdQLZMYSSiqGml+W9ZxVRCqjw
+        ==
+X-ME-Sender: <xms:9lNrXvtBoB6NTEMVnsWFCbyhQyFhZ0t4eBroPV69T_5fLaAlemjpAg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedruddvjedgtdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucffohhmrghinhepkhgvrhhnvghlrd
+    horhhgnecukfhppeekfedrkeeirdekledruddtjeenucevlhhushhtvghrufhiiigvpedt
+    necurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomh
+X-ME-Proxy: <xmx:9lNrXqR0N9HwYTe7fcggnFo0rJmrBEGbg4je67zd4HJxUCmBRkSeTQ>
+    <xmx:9lNrXuP-WnqRYp-xjOJK4pu6MfK8sfwGcO4dvmy1XhVxcZthlEyvkw>
+    <xmx:9lNrXqkDuMnGDeDY7dCNacSPchzZnG5DdRIf1zLAJ60IniEhRSd6tQ>
+    <xmx:9lNrXkhuEN2Ii-Q6SY0esMAZb6rqjdt99pdOrv2iNM-zNiPwlfDfVA>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id C5EE83060F09;
+        Fri, 13 Mar 2020 05:35:49 -0400 (EDT)
+Date:   Fri, 13 Mar 2020 10:35:48 +0100
+From:   Greg KH <greg@kroah.com>
+To:     Jani Nikula <jani.nikula@intel.com>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Bird, Tim" <Tim.Bird@sony.com>,
+        "ksummit-discuss@lists.linuxfoundation.org" 
+        <ksummit-discuss@lists.linuxfoundation.org>,
+        "tech-board-discuss@lists.linuxfoundation.org" 
+        <tech-board-discuss@lists.linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [Tech-board-discuss] [Ksummit-discuss] Linux Foundation
+ Technical Advisory Board Elections -- Change to charter
+Message-ID: <20200313093548.GA2089143@kroah.com>
+References: <6d6dd6fa-880f-01fe-6177-281572aed703@labbott.name>
+ <20200312003436.GF1639@pendragon.ideasonboard.com>
+ <MWHPR13MB0895E133EC528ECF50A22100FDFD0@MWHPR13MB0895.namprd13.prod.outlook.com>
+ <20200313031947.GC225435@mit.edu>
+ <87d09gljhj.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87d09gljhj.fsf@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+On Fri, Mar 13, 2020 at 10:58:00AM +0200, Jani Nikula wrote:
+> On Thu, 12 Mar 2020, "Theodore Y. Ts'o" <tytso@mit.edu> wrote:
+> > So that means we need to be smart about how we pick the criteria.
+> > Using a kernel.org account might be a good approach, since it would be
+> > a lot harder for a huge number of sock puppet accounts to meet that
+> > criteria.
+> 
+> Per [1] and [2], kernel.org accounts "are usually reserved for subsystem
+> maintainers or high-profile developers", but apparently it's at the
+> kernel.org admins discretion to decide whether one is ultimately
+> eligible or not. Do we want the kernel.org admin to have the final say
+> on who gets to vote? Do we want to encourage people to have kernel.org
+> accounts for no other reason than to vote?
 
-> Enable ENCLS-exiting (and thus set vmcs.ENCLS_EXITING_BITMAP) only if
-> the CPU supports SGX1.  Per Intel's SDM, all ENCLS leafs #UD if SGX1
-> is not supported[*], i.e. intercepting ENCLS to inject a #UD is
-> unnecessary.
->
-> Avoiding ENCLS-exiting even when it is reported as supported by the CPU
-> works around a reported issue where SGX is "hard" disabled after an S3
-> suspend/resume cycle, i.e. CPUID.0x7.SGX=0 and the VMCS field/control
-> are enumerated as unsupported.  While the root cause of the S3 issue is
-> unknown, it's definitely _not_ a KVM (or kernel) bug, i.e. this is a
-> workaround for what is most likely a hardware or firmware issue.  As a
-> bonus side effect, KVM saves a VMWRITE when first preparing vmcs01 and
-> vmcs02.
->
-> Query CPUID directly instead of going through cpu_data() or cpu_has() to
-> ensure KVM is trapping ENCLS when it's supported in hardware, e.g. even
-> if X86_FEATURE_SGX1 (which doesn't yet exist in upstream) were disabled
-> by the kernel/user.
+We are using the "kernel.org account" as a way to verify that you really
+are part of our developer/maintainer community and that you are part of
+the "web of trust" and an actual person.
 
-I would prefer this paragraph to become a comment right above
-cpu_has_sgx() or I bet we'll be getting a lot of 'avoid open-coding
-boot_cpu_has() ...' patches in the future.
+That is the goal here, if you know of some other way to determine this,
+please let us know.  We went through many iterations of this and at the
+moment, it is the best we can come up with.
 
->
-> Note, SGX must be disabled in BIOS to take advantage of this workaround
->
-> [*] The additional ENCLS CPUID check on SGX1 exists so that SGX can be
->     globally "soft" disabled post-reset, e.g. if #MC bits in MCi_CTL are
->     cleared.  Soft disabled meaning disabling SGX without clearing the
->     primary CPUID bit (in leaf 0x7) and without poking into non-SGX
->     CPU paths, e.g. for the VMCS controls.
->
-> Fixes: 0b665d304028 ("KVM: vmx: Inject #UD for SGX ENCLS instruction in guest")
-> Reported-by: Toni Spets <toni.spets@iki.fi>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->
-> This seems somewhat premature given that we don't yet know if the observed
-> behavior is a logic bug, a one off manufacturing defect, firmware specific,
-> etc...  On the other hand, the change is arguably an optimization
-> irrespective of using it as a workaround.
->
->  arch/x86/kvm/vmx/vmx.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 40b1e6138cd5..50cab98382e7 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -2338,6 +2338,11 @@ static void hardware_disable(void)
->  	kvm_cpu_vmxoff();
->  }
->  
-> +static bool cpu_has_sgx(void)
-> +{
-> +	return cpuid_eax(0) >= 0x12 && (cpuid_eax(0x12) & BIT(0));
-> +}
-> +
->  static __init int adjust_vmx_controls(u32 ctl_min, u32 ctl_opt,
->  				      u32 msr, u32 *result)
->  {
-> @@ -2418,8 +2423,9 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf,
->  			SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE |
->  			SECONDARY_EXEC_PT_USE_GPA |
->  			SECONDARY_EXEC_PT_CONCEAL_VMX |
-> -			SECONDARY_EXEC_ENABLE_VMFUNC |
-> -			SECONDARY_EXEC_ENCLS_EXITING;
-> +			SECONDARY_EXEC_ENABLE_VMFUNC;
-> +		if (cpu_has_sgx())
-> +			opt2 |= SECONDARY_EXEC_ENCLS_EXITING;
->  		if (adjust_vmx_controls(min2, opt2,
->  					MSR_IA32_VMX_PROCBASED_CTLS2,
->  					&_cpu_based_2nd_exec_control) < 0)
+Also, note that the "kernel.org admin" is really a team of people who
+have been doing this for 9 years, it's not a single person responsible
+for giving out new accounts to people that do not meet the obvious
+requirement levels as published on kernel.org
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Furthermore, having a kernel.org account imposes the additional
+> requirement that you're part of the kernel developers web of trust,
 
--- 
-Vitaly
+That is exactly what we want.
 
+> i.e. that you've met other kernel developers in person. Which is a kind
+> of awkward requirement for enabling electronic voting to be inclusive to
+> people who can't attend in person.
+
+Yes, we know that, but it does mean that you are "known" to someone
+else, which is the key here.
+
+> Seems like having a kernel.org account is just a proxy for the criteria,
+> and one that also lacks transparency, and has problems of its own.
+
+What is not transparent about how to get a kernel.org account?
+
+> Not that I'm saying there's an easy solution, but obviously kernel.org
+> account is not as problem free as you might think.
+
+We are not saying it is "problem free", but what really is the problem
+with it?
+
+thanks,
+
+greg k-h
