@@ -2,90 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52911184F06
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:55:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41EE9184F0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:55:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbgCMSzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 14:55:01 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41961 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbgCMSzB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 14:55:01 -0400
-Received: by mail-ed1-f67.google.com with SMTP id m25so13124241edq.8;
-        Fri, 13 Mar 2020 11:54:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2WuB5xXMxFx8qoep56fRjLFlqqVLZxwUqYQw+OOizLU=;
-        b=ce46Gaog+VC1RTePandT+0mydyECZ68AyAEipXfSJ+flhB83WpX1JM4fvvJPdSkobf
-         rrFbfzCYSeP7PR6Z71nP/PqPL3J4d4yOug6SGogzhzuH1uqOIejw/GfdYaOwANPWoM9n
-         2A2k5tj5BMVr9oVME2CkR+IE7GxdzrCg3pA1qXVPm9qxllP20gh51Zx7+pjsCP5gxe8N
-         dFQmckYtfuikA+6RKRf/GrmiX9Io+uFTht9iieTybmJ1tjvVHfS/DyA9qCH2+guOwo7G
-         +WGvBimSemWRtqCsy8xnBtpSH/rFZcChbVNWt/XBOlsfGO6qrhIbiR1Y4NU3UEh55Zw9
-         Gyrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2WuB5xXMxFx8qoep56fRjLFlqqVLZxwUqYQw+OOizLU=;
-        b=pAm9EIZ8tBU+GR54uMbDU2t2wAgfYIk63U0lTqLRKTnaGxyJehG8JmaupYNlpJhXDq
-         kNiKpD4jKZO1HJrbHywUI2/Cg1+6rsdC1EL0MFKo1qqCaLxjgT1hFkd2UxSuFGrJxVYn
-         qbKg8YB3TN/a//eQ06Hp1LkqYVEfpUZ5OazhnifOOMcrrbPwa1GR2ebdLp4vJa+6+GEZ
-         UAHlpaDGzVSEtaK2WBi/zzi2FWFZVoWxUveLACMtsQ9m1nKegxNiU7ayk2uejgu1IJuq
-         WBF5Cj2cXBKlQygsfcYGf29FOKhhJKDjcQbL2IN6pNvyfnksNZiFHKdhrtNuUxV4nd/A
-         LNyg==
-X-Gm-Message-State: ANhLgQ3vv/3XVNE0sguxHjGN/8rttGl5b76VSM9pZdIskzcU2s9pFvkB
-        xfnd9ka1NAG5NeCv2Grz4/s=
-X-Google-Smtp-Source: ADFU+vuK7AU23b5J/6IMctVT/DI9hy1uvQ83h7z91tD7k0pf9nDNbJufUjhUG77sz7Dww8KUVWb6Uw==
-X-Received: by 2002:a50:eb05:: with SMTP id y5mr14849321edp.358.1584125699097;
-        Fri, 13 Mar 2020 11:54:59 -0700 (PDT)
-Received: from Ansuel-XPS.localdomain (host61-50-dynamic.50-79-r.retail.telecomitalia.it. [79.50.50.61])
-        by smtp.googlemail.com with ESMTPSA id p7sm468763ejr.62.2020.03.13.11.54.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 11:54:58 -0700 (PDT)
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     agross@kernel.org
-Cc:     Ansuel Smith <ansuelsmth@gmail.com>,
-        Abhishek Sahu <absahu@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ipq806x: gcc: Added the enable regs and mask for PRNG
-Date:   Fri, 13 Mar 2020 19:54:06 +0100
-Message-Id: <20200313185406.10029-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.25.0
+        id S1727279AbgCMSz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 14:55:58 -0400
+Received: from foss.arm.com ([217.140.110.172]:34896 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726477AbgCMSz5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 14:55:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E2D431B;
+        Fri, 13 Mar 2020 11:55:57 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 967893F534;
+        Fri, 13 Mar 2020 11:55:56 -0700 (PDT)
+Date:   Fri, 13 Mar 2020 18:55:55 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Cheng-Yi Chiang <cychiang@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Benson Leung <bleung@chromium.org>,
+        alsa-devel@alsa-project.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: [PATCH v2] ASoC: dt-bindings: google,cros-ec-codec: Fix dtc
+ warnings in example
+Message-ID: <20200313185555.GM5528@sirena.org.uk>
+References: <20200313180543.20497-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="EOHJn1TVIJfeVXv2"
+Content-Disposition: inline
+In-Reply-To: <20200313180543.20497-1-robh@kernel.org>
+X-Cookie: This page intentionally left blank.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kernel got hanged while reading from /dev/hwrng at the
-time of PRNG clock enable
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
----
- drivers/clk/qcom/gcc-ipq806x.c | 2 ++
- 1 file changed, 2 insertions(+)
+--EOHJn1TVIJfeVXv2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-index b0eee0903807..a8456e09c44d 100644
---- a/drivers/clk/qcom/gcc-ipq806x.c
-+++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -1224,6 +1224,8 @@ static struct clk_rcg prng_src = {
- 		.parent_map = gcc_pxo_pll8_map,
- 	},
- 	.clkr = {
-+		.enable_reg = 0x2e80,
-+		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "prng_src",
- 			.parent_names = gcc_pxo_pll8,
--- 
-2.25.0
+On Fri, Mar 13, 2020 at 01:05:43PM -0500, Rob Herring wrote:
+> Extra dtc warnings (roughly what W=1 enables) are now enabled by default
+> when building the binding examples. These were fixed treewide in
+> 5.6-rc5, but the newly added google,cros-ec-codec schema adds some new
+> warnings:
 
+v1 got applied, could you send an incremental diff please?
+
+--EOHJn1TVIJfeVXv2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5r1zoACgkQJNaLcl1U
+h9A9xQf8D4qo5BE4kR0B6Xezo7p/pdK91FrKE6y5FfQTFK+hVGgN3ysMlWcUxwsR
+hB1NLaFz/0f4w9iHu+vqbd3kZVt6WleRvq/MLJEVI+JHQEIKLfr+XGch+30iPwM7
+lKwLR6O4N0XXDzXAQfXtsM/mP2NQo5iyEtlXIVAn7FI04zuzIuYu+TvU8XxhWn1P
+OTg9c/D0/5P3fakLSPHFFVRTRnNBqgVrI+zh4P+Be4JNjRniOnUBLooa5hu0pWWE
++FyalDVC07RI/LTubgW+S2fkxk5HVjNIgrgOwYkd9sCFvshCO+3D/J8bYRnnRNub
+Uxrn3/ec7Vd/yXBu2B0gpAQyqI8K5Q==
+=pQ/m
+-----END PGP SIGNATURE-----
+
+--EOHJn1TVIJfeVXv2--
