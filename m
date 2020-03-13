@@ -2,248 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B38BA183F1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 03:20:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20F3D183EFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 03:18:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbgCMCUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 22:20:44 -0400
-Received: from 109-230-57-163.dynamic.orange.sk ([109.230.57.163]:43320 "EHLO
-        mail.sammserver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbgCMCUo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 22:20:44 -0400
-X-Greylist: delayed 414 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Mar 2020 22:20:44 EDT
-Received: by mail.sammserver.com (Postfix, from userid 5011)
-        id 606E79680EF; Fri, 13 Mar 2020 03:13:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sammserver.com;
-        s=email; t=1584065629;
-        bh=zfV5kJe2jcMw5pkT2Q5C36ebJ7s9UW+ZS2hPtNF64T0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ieoQhbKAWyD162lQ9DwIU2NAxjTQOvuw2n6WvJ6+nSd8r6crV4BARL8iC/Ihq0JwO
-         A8y9kkkw94fmylfHJt7cHoRxd/6Yb21ic0kfr+rAEwEj5gyQ9+aF//oCbKMHkAS8DC
-         /aIBCJuc2gAbbbxOdFYgXrHci/SLFzL6Eflmu5Kk=
-Received: from fastboi.localdomain (fastboi.wg [10.32.40.5])
-        by mail.sammserver.com (Postfix) with ESMTP id 117679680EC;
-        Fri, 13 Mar 2020 03:13:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sammserver.com;
-        s=email; t=1584065629;
-        bh=zfV5kJe2jcMw5pkT2Q5C36ebJ7s9UW+ZS2hPtNF64T0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ieoQhbKAWyD162lQ9DwIU2NAxjTQOvuw2n6WvJ6+nSd8r6crV4BARL8iC/Ihq0JwO
-         A8y9kkkw94fmylfHJt7cHoRxd/6Yb21ic0kfr+rAEwEj5gyQ9+aF//oCbKMHkAS8DC
-         /aIBCJuc2gAbbbxOdFYgXrHci/SLFzL6Eflmu5Kk=
-Received: by fastboi.localdomain (Postfix, from userid 1000)
-        id ECD9E14226FB; Fri, 13 Mar 2020 03:13:48 +0100 (CET)
-From:   =?UTF-8?q?Samuel=20=C4=8Cavoj?= <sammko@sammserver.com>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     =?UTF-8?q?Samuel=20=C4=8Cavoj?= <sammko@sammserver.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Silvan Jegen <s.jegen@gmail.com>
-Subject: [PATCH v2] HID: Add driver fixing Glorious PC Gaming Race mouse report descriptor
-Date:   Fri, 13 Mar 2020 03:12:38 +0100
-Message-Id: <20200313021236.1069863-1-sammko@sammserver.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200308212729.51336-1-sammko@sammserver.com>
-References: <20200308212729.51336-1-sammko@sammserver.com>
+        id S1726436AbgCMCSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 22:18:47 -0400
+Received: from mga14.intel.com ([192.55.52.115]:25868 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726114AbgCMCSr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 22:18:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 19:18:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,546,1574150400"; 
+   d="scan'208";a="261743728"
+Received: from sqa-gate.sh.intel.com (HELO clx-ap-likexu.tsp.org) ([10.239.48.212])
+  by orsmga002.jf.intel.com with ESMTP; 12 Mar 2020 19:18:42 -0700
+From:   Like Xu <like.xu@linux.intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, kvm@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>,
+        Jim Mattson <jmattson@google.com>,
+        Wanpeng Li <wanpengli@tencent.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Liran Alon <liran.alon@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Liang Kan <kan.liang@linux.intel.com>,
+        Wei Wang <wei.w.wang@intel.com>,
+        Like Xu <like.xu@linux.intel.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v9 00/10] Guest Last Branch Recording Enabling
+Date:   Fri, 13 Mar 2020 10:16:06 +0800
+Message-Id: <20200313021616.112322-1-like.xu@linux.intel.com>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.9 required=5.0 tests=ALL_TRUSTED,BAYES_00
-        autolearn=unavailable autolearn_force=no version=3.4.4
-X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on sammserver.tu
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Glorious Model O mice (and also at least the Model O-, which is
-driver-wise the same mouse) have a bug in the descriptor of HID
-Report with ID 2. This report is used for Consumer Control buttons,
-which can be mapped using the provided Windows only software.
+Hi all,
 
-Here is an excerpt from the original descriptor:
-
-  INPUT(2)[INPUT]
-    Field(0)
-      Flags( Constant Variable Absolute )
-    Field(1)
-      Flags( Constant Variable Absolute )
-    Field(2)
-      Flags( Constant Variable Absolute )
-
-The issue is the Constant flag specified on all 3 fields, which
-causes the hid driver to ignore changes in these fields and
-essentialy causes the buttons to not work at all. The submitted driver
-patches the descriptor to end up with the following:
-
-  INPUT(2)[INPUT]
-    Field(0)
-      Flags( Variable Relative )
-    Field(1)
-      Flags( Variable Relative )
-    Field(2)
-      Flags( Variable Relative )
-
-The Constant bit is reset and the Relative bit has been set in
-order to prevent repeat events when holding down the button.
-
-Additionally, the device name is changed from the hardware-reported
-"SINOWEALTH Wired Gaming Mouse" to "Glorious Model O" or "Glorious
-Model D".
-
-Signed-off-by: Samuel Čavoj <sammko@sammserver.com>
----
-Changes v1 -> v2:
-* Revert accidental removal of unrelated whitespace.
-* Use HID_MAIN_ITEM_* constants instead of a magic number.
-* Add support for the Glorious Model D mouse.
+Please help review your interesting parts in this stable version,
+e.g. the first four patches involve the perf event subsystem
+and the fifth patch concerns the KVM userspace interface.
 
 ---
- drivers/hid/Kconfig        |  7 ++++
- drivers/hid/Makefile       |  1 +
- drivers/hid/hid-glorious.c | 86 ++++++++++++++++++++++++++++++++++++++
- drivers/hid/hid-ids.h      |  4 ++
- 4 files changed, 98 insertions(+)
- create mode 100644 drivers/hid/hid-glorious.c
 
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index 494a39e74939..945533b36010 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -362,6 +362,13 @@ config HID_GFRM
- 	---help---
- 	Support for Google Fiber TV Box remote controls
- 
-+config HID_GLORIOUS
-+	tristate "Glorious PC Gaming Race mice"
-+	depends on HID
-+	help
-+	  Support for Glorious PC Gaming Race mice such as
-+	  the Glorious Model O, O- and D.
-+
- config HID_HOLTEK
- 	tristate "Holtek HID devices"
- 	depends on USB_HID
-diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
-index bfefa365b1ce..be0f38dcf942 100644
---- a/drivers/hid/Makefile
-+++ b/drivers/hid/Makefile
-@@ -48,6 +48,7 @@ obj-$(CONFIG_HID_ELO)		+= hid-elo.o
- obj-$(CONFIG_HID_EZKEY)		+= hid-ezkey.o
- obj-$(CONFIG_HID_GEMBIRD)	+= hid-gembird.o
- obj-$(CONFIG_HID_GFRM)		+= hid-gfrm.o
-+obj-$(CONFIG_HID_GLORIOUS)  += hid-glorious.o
- obj-$(CONFIG_HID_GOOGLE_HAMMER)	+= hid-google-hammer.o
- obj-$(CONFIG_HID_GT683R)	+= hid-gt683r.o
- obj-$(CONFIG_HID_GYRATION)	+= hid-gyration.o
-diff --git a/drivers/hid/hid-glorious.c b/drivers/hid/hid-glorious.c
-new file mode 100644
-index 000000000000..558eb08c19ef
---- /dev/null
-+++ b/drivers/hid/hid-glorious.c
-@@ -0,0 +1,86 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ *  USB HID driver for Glorious PC Gaming Race
-+ *  Glorious Model O, O- and D mice.
-+ *
-+ *  Copyright (c) 2020 Samuel Čavoj <sammko@sammserver.com>
-+ */
-+
-+/*
-+ */
-+
-+#include <linux/hid.h>
-+#include <linux/module.h>
-+
-+#include "hid-ids.h"
-+
-+MODULE_AUTHOR("Samuel Čavoj <sammko@sammserver.com>");
-+MODULE_DESCRIPTION("HID driver for Glorious PC Gaming Race mice");
-+
-+/*
-+ * Glorious Model O and O- specify the const flag in the consumer input
-+ * report descriptor, which leads to inputs being ignored. Fix this
-+ * by patching the descriptor.
-+ */
-+static __u8 *glorious_report_fixup(struct hid_device *hdev, __u8 *rdesc,
-+		unsigned int *rsize)
-+{
-+	if (*rsize == 213 &&
-+		rdesc[84] == 129 && rdesc[112] == 129 && rdesc[140] == 129 &&
-+		rdesc[85] == 3   && rdesc[113] == 3   && rdesc[141] == 3) {
-+		hid_info(hdev, "patching Glorious Model O consumer control report descriptor\n");
-+		rdesc[85] = rdesc[113] = rdesc[141] = \
-+			HID_MAIN_ITEM_VARIABLE | HID_MAIN_ITEM_RELATIVE;
-+	}
-+	return rdesc;
-+}
-+
-+static void glorious_update_name(struct hid_device *hdev)
-+{
-+	const char *model = "Device";
-+
-+	switch (hdev->product) {
-+	case USB_DEVICE_ID_GLORIOUS_MODEL_O:
-+		model = "Model O"; break;
-+	case USB_DEVICE_ID_GLORIOUS_MODEL_D:
-+		model = "Model D"; break;
-+	}
-+
-+	snprintf(hdev->name, sizeof(hdev->name), "%s %s", "Glorious", model);
-+}
-+
-+static int glorious_probe(struct hid_device *hdev,
-+		const struct hid_device_id *id)
-+{
-+	int ret;
-+
-+	hdev->quirks |= HID_QUIRK_INPUT_PER_APP;
-+
-+	ret = hid_parse(hdev);
-+	if (ret)
-+		return ret;
-+
-+	glorious_update_name(hdev);
-+
-+	return hid_hw_start(hdev, HID_CONNECT_DEFAULT);
-+}
-+
-+static const struct hid_device_id glorious_devices[] = {
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_GLORIOUS,
-+		USB_DEVICE_ID_GLORIOUS_MODEL_O) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_GLORIOUS,
-+		USB_DEVICE_ID_GLORIOUS_MODEL_D) },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(hid, glorious_devices);
-+
-+static struct hid_driver glorious_driver = {
-+	.name = "glorious",
-+	.id_table = glorious_devices,
-+	.probe = glorious_probe,
-+	.report_fixup = glorious_report_fixup
-+};
-+
-+module_hid_driver(glorious_driver);
-+
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 3a400ce603c4..ba3fb2117257 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -464,6 +464,10 @@
- #define USB_DEVICE_ID_GENERAL_TOUCH_WIN8_PIT_010A 0x010a
- #define USB_DEVICE_ID_GENERAL_TOUCH_WIN8_PIT_E100 0xe100
- 
-+#define USB_VENDOR_ID_GLORIOUS  0x258a
-+#define USB_DEVICE_ID_GLORIOUS_MODEL_D 0x0033
-+#define USB_DEVICE_ID_GLORIOUS_MODEL_O 0x0036
-+
- #define I2C_VENDOR_ID_GOODIX		0x27c6
- #define I2C_DEVICE_ID_GOODIX_01F0	0x01f0
- 
+The last branch recording (LBR) is a performance monitor unit (PMU)
+feature on Intel processors that records a running trace of the most
+recent branches taken by the processor in the LBR stack. This patch
+series is going to enable this feature for plenty of KVM guests.
+
+The userspace could configure whether it's enabled or not for each
+guest via vm_ioctl KVM_CAP_X86_GUEST_LBR. As a first step, a guest
+could only enable LBR feature if its cpu model is the same as the
+host since the LBR feature is still one of model specific features.
+The record format defined in bits [0,5] of IA32_PERF_CAPABILITIES
+and cpuid PDCM bit is also exposed to the guest when it's enabled.
+
+If it's enabled on the guest, the guest LBR driver would accesses the
+LBR MSR (including IA32_DEBUGCTLMSR and stack MSRs) as host does.
+The first guest access on the LBR related MSRs is always interceptible.
+The KVM trap would create a special LBR event (called guest LBR event)
+which enables the callstack mode and none of hardware counter is bound.
+The host perf would enable and schedule this event as usual. 
+
+Guest's first access to a LBR-related msr gets trapped to KVM, which
+creates a guest LBR perf event. It's a regular LBR perf event which gets
+the LBR facility assigned from the perf subsystem. Once that succeeds,
+the LBR stack msrs are passed through to the guest for efficient accesses.
+However, if another host LBR event comes in and takes over the LBR
+facility, the LBR msrs will be made interceptible, and guest following
+accesses to the LBR msrs will be trapped and meaningless. 
+
+Because saving/restoring tens of LBR MSRs (e.g. 32 LBR stack entries) in
+VMX transition brings too excessive overhead to frequent vmx transition
+itself, the guest LBR event would help save/restore the LBR stack msrs
+during the context switching with the help of native LBR event callstack
+mechanism, including LBR_SELECT msr.
+
+If the guest no longer accesses the LBR-related MSRs within a scheduling
+time slice and the LBR enable bit is unset, vPMU would release its guest
+LBR event as a normal event of a unused vPMC and the pass-through
+state of the LBR stack msrs would be canceled.
+
+You may check more details in each commit message.
+
+---
+
+LBR testcase:
+echo 1 > /proc/sys/kernel/watchdog
+echo 25 > /proc/sys/kernel/perf_cpu_time_max_percent
+echo 5000 > /proc/sys/kernel/perf_event_max_sample_rate
+echo 0 > /proc/sys/kernel/perf_cpu_time_max_percent
+./perf record -b ./br_instr a
+
+- Perf report on the host:
+Samples: 72K of event 'cycles', Event count (approx.): 72512
+Overhead  Command   Source Shared Object           Source Symbol                           Target Symbol                           Basic Block Cycles
+  12.12%  br_instr  br_instr                       [.] cmp_end                             [.] lfsr_cond                           1
+  11.05%  br_instr  br_instr                       [.] lfsr_cond                           [.] cmp_end                             5
+   8.81%  br_instr  br_instr                       [.] lfsr_cond                           [.] cmp_end                             4
+   5.04%  br_instr  br_instr                       [.] cmp_end                             [.] lfsr_cond                           20
+   4.92%  br_instr  br_instr                       [.] lfsr_cond                           [.] cmp_end                             6
+   4.88%  br_instr  br_instr                       [.] cmp_end                             [.] lfsr_cond                           6
+   4.58%  br_instr  br_instr                       [.] cmp_end                             [.] lfsr_cond                           5
+
+- Perf report on the guest:
+Samples: 92K of event 'cycles', Event count (approx.): 92544
+Overhead  Command   Source Shared Object  Source Symbol                                   Target Symbol                                   Basic Block Cycles
+  12.03%  br_instr  br_instr              [.] cmp_end                                     [.] lfsr_cond                                   1
+  11.09%  br_instr  br_instr              [.] lfsr_cond                                   [.] cmp_end                                     5
+   8.57%  br_instr  br_instr              [.] lfsr_cond                                   [.] cmp_end                                     4
+   5.08%  br_instr  br_instr              [.] lfsr_cond                                   [.] cmp_end                                     6
+   5.06%  br_instr  br_instr              [.] cmp_end                                     [.] lfsr_cond                                   20
+   4.87%  br_instr  br_instr              [.] cmp_end                                     [.] lfsr_cond                                   6
+   4.70%  br_instr  br_instr              [.] cmp_end                                     [.] lfsr_cond                                   5
+
+Conclusion: the profiling results on the guest are similar to that on the host.
+
+---
+
+v8->v9 Changelog:
+- using guest_lbr_constraint to create guest LBR event without hw counter;
+  (please check perf changes in patch 0003)
+- rename 'cpuc->vcpu_lbr' to 'cpuc->guest_lbr_enabled';
+  (please check host LBR changes in patch 0004)
+- replace 'pmu->lbr_used' mechanism with lazy release kvm_pmu_lbr_cleanup();
+- refactor IA32_PERF_CAPABILITIES trap via get_perf_capabilities();
+- refactor kvm_pmu_lbr_enable() with kvm_pmu_lbr_setup();
+- simplify model-specific LBR functionality check;
+- rename x86_perf_get_lbr_stack to x86_perf_get_lbr;
+- rename intel_pmu_lbr_confirm() to kvm_pmu_availability_check(); 
+
+Previous:
+https://lore.kernel.org/lkml/1565075774-26671-1-git-send-email-wei.w.wang@intel.com/
+
+Like Xu (7):
+  perf/x86/lbr: Add interface to get basic information about LBR stack
+  perf/x86: Add constraint to create guest LBR event without hw counter
+  perf/x86: Keep LBR stack unchanged on the host for guest LBR event
+  KVM: x86: Add KVM_CAP_X86_GUEST_LBR interface to dis/enable LBR
+    feature
+  KVM: x86/pmu: Add LBR feature emulation via guest LBR event
+  KVM: x86/pmu: Release guest LBR event via vPMU lazy release mechanism
+  KVM: x86: Expose MSR_IA32_PERF_CAPABILITIES to guest for LBR record
+    format
+
+Wei Wang (3):
+  perf/x86: Fix msr variable type for the LBR msrs
+  KVM: x86/pmu: Tweak kvm_pmu_get_msr to pass 'struct msr_data' in
+  KVM: x86: Remove the common trap handler of the MSR_IA32_DEBUGCTLMSR
+
+ Documentation/virt/kvm/api.rst    |  28 +++
+ arch/x86/events/core.c            |   9 +-
+ arch/x86/events/intel/core.c      |  29 +++
+ arch/x86/events/intel/lbr.c       |  55 +++++-
+ arch/x86/events/perf_event.h      |  21 ++-
+ arch/x86/include/asm/kvm_host.h   |   7 +
+ arch/x86/include/asm/perf_event.h |  24 ++-
+ arch/x86/kvm/cpuid.c              |   3 +-
+ arch/x86/kvm/pmu.c                |  28 ++-
+ arch/x86/kvm/pmu.h                |  26 ++-
+ arch/x86/kvm/pmu_amd.c            |   7 +-
+ arch/x86/kvm/vmx/pmu_intel.c      | 291 ++++++++++++++++++++++++++++--
+ arch/x86/kvm/vmx/vmx.c            |   4 +-
+ arch/x86/kvm/vmx/vmx.h            |   2 +
+ arch/x86/kvm/x86.c                |  42 +++--
+ include/linux/perf_event.h        |   7 +
+ include/uapi/linux/kvm.h          |   1 +
+ kernel/events/core.c              |   7 -
+ tools/include/uapi/linux/kvm.h    |   1 +
+ 19 files changed, 540 insertions(+), 52 deletions(-)
+
 -- 
-2.25.1
+2.21.1
 
