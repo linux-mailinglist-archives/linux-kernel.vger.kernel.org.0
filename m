@@ -2,78 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4519418418F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 08:36:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45BBD184185
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 08:31:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbgCMHgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 03:36:54 -0400
-Received: from m177129.mail.qiye.163.com ([123.58.177.129]:40714 "EHLO
-        m177129.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbgCMHgy (ORCPT
+        id S1726414AbgCMHbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 03:31:11 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:41140 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbgCMHbL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 03:36:54 -0400
-X-Greylist: delayed 383 seconds by postgrey-1.27 at vger.kernel.org; Fri, 13 Mar 2020 03:36:43 EDT
-Received: from vivo.com (wm-2.qy.internal [127.0.0.1])
-        by m177129.mail.qiye.163.com (Hmail) with ESMTP id 235F75C18CB;
-        Fri, 13 Mar 2020 15:30:14 +0800 (CST)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Message-ID: <AHwAvQBlCNaKiAIB0AO0Aaoi.3.1584084614127.Hmail.wenhu.wang@vivo.com>
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        trivial@kernel.org
-Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSF0gc2VyaWFsOiBwbDAxMTogZm9ybWF0IGxvbmcgbWVzc2FnZSBzdHJpbmcgaW50byBsaW5lcw==?=
-X-Priority: 3
-X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
-X-Originating-IP: 58.251.74.227
-In-Reply-To: <8eee8b07-3cc3-6ab8-b50f-89cbac0f69ae@suse.cz>
+        Fri, 13 Mar 2020 03:31:11 -0400
+Received: by mail-qt1-f193.google.com with SMTP id l21so6707257qtr.8
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 00:31:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=otjCA0qUOdrbDfCxjamOr2JfsohGEgJgplUkLsbNr4E=;
+        b=ZyaC46HF44G9D3UVtFVFnr1FvCuUAuDuU6fdUNcNPX/xO05FUwGz11D7mK5B+T0WJL
+         cJizWGQUGrSIovoj0XOopxczBCSNjbrIRi89l9uw26i8Lvt6CgEo45yR7hmJg7OI4e24
+         f35T8f6Q1HzUqRmjtzGbnUlp08Km19leQ+RpfkKrpRiCOGUOO3xs3YzZKMr2zQbyhxaV
+         BuhZO6rniiH6gZdR8aDRjy2pR8NApcQ0aS7FiJw7M5xkzCJEYtvpBoAvrtATeAtVRqSy
+         4J0E5zZewUXfqiPwSY4EgshTl8aZwKYT1K8FGdjdJRYwBTklP16RGnH+FSAzJgdk8ae7
+         0mVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=otjCA0qUOdrbDfCxjamOr2JfsohGEgJgplUkLsbNr4E=;
+        b=m5fYSwEQu2sj4Na8aeMteyY/WV9tRdutk0p+8U8RbySeHwntNguc9Z9lmJyHyLnU8v
+         YvCBkTvqV4H8Nd5689AiZ69f96HPZLu0RhGzNvgiS3xnIkhpjNOFw/+tYkPxsTElntf+
+         a3OSKRghWwOvrBXbvr+KWlGCBukA+czGqF0e13FO7ObxLSAqq+y5+8HqyVe/IcpSNQ8E
+         ZoCjU4RQp4/JL6rwtafHClmsCkagu6uEN30ZTRwYxORNsvWKuPl9y5Ke3Pi81kYSr0Se
+         +uLUZJ8Ax8ZZNw5xUTtcGhTB8pCzmZz6Mh2eGFP9v7MokMzILQo07/kXtOMfOz5G+HUP
+         TUBQ==
+X-Gm-Message-State: ANhLgQ0n5wMfajK5MB41oa93UwEtCQMsxx1HuFHEg0xtLEgOkG8QRYtX
+        178AaYKa0PfWDlBZdRACNe4mMZEZ49qo69CKzaLadQ==
+X-Google-Smtp-Source: ADFU+vuv3HwZeTF5PsruoeS+N8rIruzo+vgdaAkOxSLbvfRlYHD1x0nqc8BJf9m+C9//uMqVnG1egWzVQBf8UmOQInY=
+X-Received: by 2002:ac8:f85:: with SMTP id b5mr10932879qtk.158.1584084669617;
+ Fri, 13 Mar 2020 00:31:09 -0700 (PDT)
 MIME-Version: 1.0
-Received: from wenhu.wang@vivo.com( [58.251.74.227) ] by ajax-webmail ( [127.0.0.1] ) ; Fri, 13 Mar 2020 15:30:14 +0800 (GMT+08:00)
-From:   =?UTF-8?B?546L5paH6JmO?= <wenhu.wang@vivo.com>
-Date:   Fri, 13 Mar 2020 15:30:14 +0800 (GMT+08:00)
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZT1VCSktCQkJMTE9CSElDTVlXWShZQU
-        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
-X-HM-Sender-Digest: e1kJHlYWEh9ZQUhNTUxPTkNDTEtLN1dZDB4ZWUEPCQ4eV1kSHx4VD1lB
-        WUc6Mww6DSo5Fzg1GjASOjI5Szo0SzoaFBJVSFVKTkNPS0NPTUpNT01LVTMWGhIXVQweFRMOVQwa
-        FRw7DRINFFUYFBZFWVdZEgtZQVlOQ1VJTkpVTE9VSUlMWVdZCAFZQU9PTkg3Bg++
-X-HM-Tid: 0a70d2ccfc0a6447kurs235f75c18cb
+References: <0000000000000ea4b4059fb33201@google.com> <000000000000c7979105a0a311f6@google.com>
+ <20200313014435.GY979@breakpoint.cc>
+In-Reply-To: <20200313014435.GY979@breakpoint.cc>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 13 Mar 2020 08:30:58 +0100
+Message-ID: <CACT4Y+aPA8byGU=rt5P9tt3wWHL8Wr3t_uiXZ5fJBzAtcc=+AA@mail.gmail.com>
+Subject: Re: WARNING in geneve_exit_batch_net (2)
+To:     Florian Westphal <fw@strlen.de>
+Cc:     syzbot <syzbot+68a8ed58e3d17c700de5@syzkaller.appspotmail.com>,
+        coreteam@netfilter.org, David Miller <davem@davemloft.net>,
+        Hillf Danton <hdanton@sina.com>, Jiri Benc <jbenc@redhat.com>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        LKML <linux-kernel@vger.kernel.org>, moshe@mellanox.com,
+        netdev <netdev@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sabrina Dubroca <sd@queasysnail.net>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogSmlyaSBTbGFieSA8anNsYWJ5QHN1c2UuY3o+CkRhdGU6IDIwMjAtMDMtMTMgMTU6MDM6
-MDUKVG86ICBXQU5HIFdlbmh1IDx3ZW5odS53YW5nQHZpdm8uY29tPixSdXNzZWxsIEtpbmcgPGxp
-bnV4QGFybWxpbnV4Lm9yZy51az4sR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3Vu
-ZGF0aW9uLm9yZz4sbGludXgtc2VyaWFsQHZnZXIua2VybmVsLm9yZyxsaW51eC1rZXJuZWxAdmdl
-ci5rZXJuZWwub3JnCkNjOiAgdHJpdmlhbEBrZXJuZWwub3JnClN1YmplY3Q6IFJlOiBbUEFUQ0hd
-IHNlcmlhbDogcGwwMTE6IGZvcm1hdCBsb25nIG1lc3NhZ2Ugc3RyaW5nIGludG8gbGluZXM+T24g
-MTMuIDAzLiAyMCwgNzo1NiwgV0FORyBXZW5odSB3cm90ZToKPj4gU2VwYXJhdGUgdGhlIG1lc3Nh
-Z2Ugc3RyaW5nIGludG8gbGluZXMgZm9yIHBsMDExX3Byb2JlX2R0X2FsaWFzKCkKPj4gdG8gbWFr
-ZSBpdCBiZXR0ZXIgY29tcGx5IHdpdGgga2VybmVsIGNvZGluZyBzdHlsZSwgYW5kIGFsc28sIG1h
-a2UKPj4gaXQgbW9yZSByZWFkYWJsZS4KPj4gCj4+IEl0IHdvdWxkIHN0aWxsIGJlIGdyZXAgZnJp
-ZW5kbHkgZm9yIHRoZSBzZXBhcmF0ZWQgZm9ybWF0Lgo+PiAKPj4gU2lnbmVkLW9mZi1ieTogV0FO
-RyBXZW5odSA8d2VuaHUud2FuZ0B2aXZvLmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJzL3R0eS9zZXJp
-YWwvYW1iYS1wbDAxMS5jIHwgMyArKy0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMo
-KyksIDEgZGVsZXRpb24oLSkKPj4gCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3R0eS9zZXJpYWwv
-YW1iYS1wbDAxMS5jIGIvZHJpdmVycy90dHkvc2VyaWFsL2FtYmEtcGwwMTEuYwo+PiBpbmRleCAy
-Mjk2YmIwZjk1NzguLmU2OTNiN2FjNWEzYSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy90dHkvc2Vy
-aWFsL2FtYmEtcGwwMTEuYwo+PiArKysgYi9kcml2ZXJzL3R0eS9zZXJpYWwvYW1iYS1wbDAxMS5j
-Cj4+IEBAIC0yNTIzLDcgKzI1MjMsOCBAQCBzdGF0aWMgaW50IHBsMDExX3Byb2JlX2R0X2FsaWFz
-KGludCBpbmRleCwgc3RydWN0IGRldmljZSAqZGV2KQo+PiAgCX0KPj4gIAo+PiAgCWlmIChzZWVu
-X2Rldl93aXRoX2FsaWFzICYmIHNlZW5fZGV2X3dpdGhvdXRfYWxpYXMpCj4+IC0JCWRldl93YXJu
-KGRldiwgImFsaWFzZWQgYW5kIG5vbi1hbGlhc2VkIHNlcmlhbCBkZXZpY2VzIGZvdW5kIGluIGRl
-dmljZSB0cmVlLiBTZXJpYWwgcG9ydCBlbnVtZXJhdGlvbiBtYXkgYmUgdW5wcmVkaWN0YWJsZS5c
-biIpOwo+PiArCQlkZXZfd2FybihkZXYsICJhbGlhc2VkIGFuZCBub24tYWxpYXNlZCBzZXJpYWwg
-ZGV2aWNlcyBmb3VuZCBpbiBkZXZpY2UgdHJlZS4iIFwKPj4gKwkJCSJTZXJpYWwgcG9ydCBlbnVt
-ZXJhdGlvbiBtYXkgYmUgdW5wcmVkaWN0YWJsZS5cbiIpOwo+Cj4xKSBZb3UgcmVtb3ZlZCBhIHNw
-YWNlIGFmdGVyIHRoZSBkb3QKPjIpIHRoZSBiYWNrc2xhc2ggaXMgc3VwZXJmbHVvdXMKPjMpIENv
-ZGluZ1N0eWxlIGNsZWFybHkgc3RhdGVzOgo+IiIiCj5Ib3dldmVyLCBuZXZlciBicmVhayB1c2Vy
-LXZpc2libGUgc3RyaW5ncyBzdWNoIGFzCj5wcmludGsgbWVzc2FnZXMsIGJlY2F1c2UgdGhhdCBi
-cmVha3MgdGhlIGFiaWxpdHkgdG8gZ3JlcCBmb3IgdGhlbS4KPiIiIgo+Cj5Tbywgc29ycnk6Cj5O
-YWNrZWQtYnk6IEppcmkgU2xhYnkgPGpzbGFieUBzdXNlLmN6Pgo+ClN1cmVseSwgc29ycnkgZm9y
-IG15IGZhdWx0LiBPdXQgdG8gcmVmZXJlbmNlIGNvZGluZyBzdHlsZSBvbmNlIG1vcmUgaW4gZGV0
-YWlsLiAKVGhhbmtzLgo+PiAgCj4+ICAJcmV0dXJuIHJldDsKPj4gIH0KPj4gCj4KPgo+LS0gCj5q
-cwo+c3VzZSBsYWJzCgpXZW5odQ0KDQo=
+On Fri, Mar 13, 2020 at 2:45 AM Florian Westphal <fw@strlen.de> wrote:
+>
+> syzbot <syzbot+68a8ed58e3d17c700de5@syzkaller.appspotmail.com> wrote:
+> > syzbot has bisected this bug to:
+> >
+> > commit 4e645b47c4f000a503b9c90163ad905786b9bc1d
+> > Author: Florian Westphal <fw@strlen.de>
+> > Date:   Thu Nov 30 23:21:02 2017 +0000
+> >
+> >     netfilter: core: make nf_unregister_net_hooks simple wrapper again
+>
+> No idea why this turns up, the reproducer doesn't hit any of these code
+> paths.
+
+The attached bisection log usually makes this reasonably transparent.
+It seems that in this case another kernel bug gets in the way of bisection.
+
+> The debug splat is a false-positive; ndo_stop/list_del hasn't run yet.
+> I will send a fix for net tree.
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20200313014435.GY979%40breakpoint.cc.
