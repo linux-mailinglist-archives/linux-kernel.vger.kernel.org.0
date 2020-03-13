@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 925A0184FA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 20:53:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93B91184F8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 20:52:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbgCMTxH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 15:53:07 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:46109 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727386AbgCMTwS (ORCPT
+        id S1727436AbgCMTwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 15:52:22 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:43350 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727360AbgCMTwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 15:52:18 -0400
-Received: by mail-qt1-f196.google.com with SMTP id t13so8605315qtn.13
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 12:52:17 -0700 (PDT)
+        Fri, 13 Mar 2020 15:52:20 -0400
+Received: by mail-qk1-f193.google.com with SMTP id x1so9844005qkx.10
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 12:52:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=K9ou2grAHoRiRwhqAV4lvqbe3cCcX01SZvcbrB6jjJY=;
-        b=UCbm2yN7uaQejw2flDriMY/LSjTshDU5WtvJkOtSAGAbC7A514WKwV/ph3HqHRg9vS
-         y49wYABqSd98f54S7oUT4HQkftM+0x9Y6UHjBgNpfeROvD1mFktzjxiGYmCGW7WQsmzG
-         dql5X8lY2Gi5MxtEWD8XKDOLG7RX0A/OOxE4eBgMfgNWkYvzNRHf95zvRN5raW+wloJV
-         CNrUXm28gzyG+lH8SufySBS+5DJfAzKcdtiz8Tw8j5kN/5N+j6fCWODlBNHh5KjNfGzF
-         sLs0SwWAK7fNHP5pdaK2Ged8lVIrUsTs5bJOHPO6c7PQGbGQUlcFAHPFefyClWlnRiuK
-         anXw==
+        bh=avGZMSb1iKPVA/GqEJwtJuNvc7eOmE5dr3Lq8Ilmmas=;
+        b=f9J5/iM3PgfIkqO/AiGdyq4Gu9JzJCDiT5ITcoEngsbfougYp3zQP0qR6uuFds017n
+         +RPptc79ZAM02I6n4Q0uULlk+Dx8DoI7AD5yUkWTvQPVaZRTg0Ba79FfI+ahmWTTHCrT
+         86Dxswo/ZIZPMOW6HFh9qYBWP91MoaRtwCX/qhU1xsPzZZQse3lAv+v412+zpIpSOSTr
+         U7XEXz+Hby76Q4ba39iFSwg6zRagZ6H233bi6zK8q2vN3bqKRL4VpNbtQe1PG1ncbyaj
+         fP0/J+zk4Y8uHiyYZGPAWP+7cYQSBj9b8xK/0577Mhax69Wf33QwynEQEjBMSc5CcArv
+         CaVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=K9ou2grAHoRiRwhqAV4lvqbe3cCcX01SZvcbrB6jjJY=;
-        b=KLZbeDtG2clEznwNr5qaZ2WaH1k/FrE8jLUEBvzLKmK//71+Iq/2/MXBRmEOvESaH+
-         6KXxMiWNcAoZQqHJ840N8bSi2t3Ph1OeuiCerKBNydHsFai/sd1i/OlR8BwEsZeOQ4ZV
-         jXwYbMxnmsXCkWi1IIk6xV6dCV/lA1tM6ncGWk/77zuqy9eYI3ATmnRcU+iwXL2zebg1
-         lO4GZsEpgUOrWUbxA9xDPFheARpOD/BRjq6gRwBp/J0OUnU+WBRvGVje7ph0IdhVDxuM
-         U6vpB5zFfG3L1NDKSp7n+oXR3tY/exCCHKDrO4c5jIRRP+XXt4cmODgxWw14XaVNJ58D
-         GZKA==
-X-Gm-Message-State: ANhLgQ2kVHirdVvBAhHJeXH43w3lc2EInK/QCynXPDF2sZZjSSb8heOo
-        5yfDNqQDMWDONLLbLFzIDdCrU9Q=
-X-Google-Smtp-Source: ADFU+vum4KIhPjWE4tTIb/Wfw8ruaDRRga6LTQotpy60U+IA7vGUareGadblth9pAL0iPJ6nUTIoXQ==
-X-Received: by 2002:ac8:2bf8:: with SMTP id n53mr6768841qtn.1.1584129137251;
-        Fri, 13 Mar 2020 12:52:17 -0700 (PDT)
+        bh=avGZMSb1iKPVA/GqEJwtJuNvc7eOmE5dr3Lq8Ilmmas=;
+        b=ukIS8X+CWXlD0pUs3qMmr3vYP7nDAEy9yrxIvPSJIUJVh90yCMA68ZjbeGr+30t4T3
+         Gfc5RrAsskf+tdsErIA4YUxaAqJulnK/2/WCKLFi5FhW5STrX4J3o5dTVdoipCZQmmN/
+         GeNC+vanI4hlYz8bPTKTd+OBd2QLksMjFQkyBkqKCWNvVGeVQrUtKz4hNm2rjgW9cTQA
+         QCObm+uSLFOxOEiE6tXME7aPG6kYK62aDFaTbWsuDEuNaM8v8EOnpHoP6BZfLffqc9W+
+         FpuzuU7yvfZkYstE1hnYKWC3BZjin8ymdtDKy5HkHg/K07XMx+5d/GCXbrCVv+Iv4/2r
+         AE4Q==
+X-Gm-Message-State: ANhLgQ3kSSCR3bMEivmaW5lxntux56MV6CN2Q+j6T+1NiAIOKasxTY/k
+        Rvzx4C85Jbqqi9PJdAlzLKNj0jU=
+X-Google-Smtp-Source: ADFU+vvFRkYklZIDNY6UFp7Y5TIgvTyP3ya5n3YUmFQGhJlwfTE2gUtmIF9MdSsds7q1dxw9/TJtFA==
+X-Received: by 2002:a37:b045:: with SMTP id z66mr12729420qke.297.1584129138588;
+        Fri, 13 Mar 2020 12:52:18 -0700 (PDT)
 Received: from localhost.localdomain (174-084-153-250.res.spectrum.com. [174.84.153.250])
-        by smtp.gmail.com with ESMTPSA id i28sm31475599qtc.57.2020.03.13.12.52.16
+        by smtp.gmail.com with ESMTPSA id i28sm31475599qtc.57.2020.03.13.12.52.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 12:52:16 -0700 (PDT)
+        Fri, 13 Mar 2020 12:52:18 -0700 (PDT)
 From:   Brian Gerst <brgerst@gmail.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -53,9 +53,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Andy Lutomirski <luto@kernel.org>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
         Brian Gerst <brgerst@gmail.com>
-Subject: [PATCH v4 06/18] x86-64: Move sys_ni_syscall stub to common.c
-Date:   Fri, 13 Mar 2020 15:51:32 -0400
-Message-Id: <20200313195144.164260-7-brgerst@gmail.com>
+Subject: [PATCH v4 07/18] x86-64: Split X32 syscall table into its own file
+Date:   Fri, 13 Mar 2020 15:51:33 -0400
+Message-Id: <20200313195144.164260-8-brgerst@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200313195144.164260-1-brgerst@gmail.com>
 References: <20200313195144.164260-1-brgerst@gmail.com>
@@ -66,63 +66,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-so it can be available to multiple syscall tables.  Also directly return
--ENOSYS instead of bouncing to the generic sys_ni_syscall().
+Since X32 has its own syscall table now, move it to a separate file.
 
 Signed-off-by: Brian Gerst <brgerst@gmail.com>
 ---
- arch/x86/entry/common.c                | 7 +++++++
- arch/x86/entry/syscall_64.c            | 7 -------
- arch/x86/include/asm/syscall_wrapper.h | 3 +++
- 3 files changed, 10 insertions(+), 7 deletions(-)
+ arch/x86/entry/Makefile      |  1 +
+ arch/x86/entry/syscall_64.c  | 27 ++-------------------------
+ arch/x86/entry/syscall_x32.c | 26 ++++++++++++++++++++++++++
+ 3 files changed, 29 insertions(+), 25 deletions(-)
+ create mode 100644 arch/x86/entry/syscall_x32.c
 
-diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index ec167d8c41cb..c3a8e6513f74 100644
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -439,3 +439,10 @@ __visible long do_fast_syscall_32(struct pt_regs *regs)
- #endif
- }
- #endif
-+
-+#ifdef CONFIG_X86_64
-+SYSCALL_DEFINE0(ni_syscall)
-+{
-+	return -ENOSYS;
-+}
-+#endif
+diff --git a/arch/x86/entry/Makefile b/arch/x86/entry/Makefile
+index 06fc70cf5433..85eb381259c2 100644
+--- a/arch/x86/entry/Makefile
++++ b/arch/x86/entry/Makefile
+@@ -14,4 +14,5 @@ obj-y				+= vdso/
+ obj-y				+= vsyscall/
+ 
+ obj-$(CONFIG_IA32_EMULATION)	+= entry_64_compat.o syscall_32.o
++obj-$(CONFIG_X86_X32_ABI)	+= syscall_x32.o
+ 
 diff --git a/arch/x86/entry/syscall_64.c b/arch/x86/entry/syscall_64.c
-index adf619a856e8..058dc1b73e96 100644
+index 058dc1b73e96..efb85c6dce13 100644
 --- a/arch/x86/entry/syscall_64.c
 +++ b/arch/x86/entry/syscall_64.c
-@@ -8,13 +8,6 @@
+@@ -8,14 +8,13 @@
  #include <asm/asm-offsets.h>
  #include <asm/syscall.h>
  
--extern asmlinkage long sys_ni_syscall(void);
--
--SYSCALL_DEFINE0(ni_syscall)
--{
--	return sys_ni_syscall();
--}
--
- #define __SYSCALL_64(nr, sym, qual) extern asmlinkage long sym(const struct pt_regs *);
- #define __SYSCALL_X32(nr, sym, qual) __SYSCALL_64(nr, sym, qual)
- #include <asm/syscalls_64.h>
-diff --git a/arch/x86/include/asm/syscall_wrapper.h b/arch/x86/include/asm/syscall_wrapper.h
-index 1d96ccebc0d2..0f126e40a464 100644
---- a/arch/x86/include/asm/syscall_wrapper.h
-+++ b/arch/x86/include/asm/syscall_wrapper.h
-@@ -8,6 +8,9 @@
- 
- struct pt_regs;
- 
-+extern asmlinkage long __x64_sys_ni_syscall(const struct pt_regs *regs);
-+extern asmlinkage long __ia32_sys_ni_syscall(const struct pt_regs *regs);
++#define __SYSCALL_X32(nr, sym, qual)
 +
- /* Mapping of registers to parameters for syscalls on x86-64 and x32 */
- #define SC_X86_64_REGS_TO_ARGS(x, ...)					\
- 	__MAP(x,__SC_ARGS						\
+ #define __SYSCALL_64(nr, sym, qual) extern asmlinkage long sym(const struct pt_regs *);
+-#define __SYSCALL_X32(nr, sym, qual) __SYSCALL_64(nr, sym, qual)
+ #include <asm/syscalls_64.h>
+ #undef __SYSCALL_64
+-#undef __SYSCALL_X32
+ 
+ #define __SYSCALL_64(nr, sym, qual) [nr] = sym,
+-#define __SYSCALL_X32(nr, sym, qual)
+ 
+ asmlinkage const sys_call_ptr_t sys_call_table[__NR_syscall_max+1] = {
+ 	/*
+@@ -25,25 +24,3 @@ asmlinkage const sys_call_ptr_t sys_call_table[__NR_syscall_max+1] = {
+ 	[0 ... __NR_syscall_max] = &__x64_sys_ni_syscall,
+ #include <asm/syscalls_64.h>
+ };
+-
+-#undef __SYSCALL_64
+-#undef __SYSCALL_X32
+-
+-#ifdef CONFIG_X86_X32_ABI
+-
+-#define __SYSCALL_64(nr, sym, qual)
+-#define __SYSCALL_X32(nr, sym, qual) [nr] = sym,
+-
+-asmlinkage const sys_call_ptr_t x32_sys_call_table[__NR_syscall_x32_max+1] = {
+-	/*
+-	 * Smells like a compiler bug -- it doesn't work
+-	 * when the & below is removed.
+-	 */
+-	[0 ... __NR_syscall_x32_max] = &__x64_sys_ni_syscall,
+-#include <asm/syscalls_64.h>
+-};
+-
+-#undef __SYSCALL_64
+-#undef __SYSCALL_X32
+-
+-#endif
+diff --git a/arch/x86/entry/syscall_x32.c b/arch/x86/entry/syscall_x32.c
+new file mode 100644
+index 000000000000..d144ced7f582
+--- /dev/null
++++ b/arch/x86/entry/syscall_x32.c
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: GPL-2.0
++/* System call table for x32 ABI. */
++
++#include <linux/linkage.h>
++#include <linux/sys.h>
++#include <linux/cache.h>
++#include <linux/syscalls.h>
++#include <asm/asm-offsets.h>
++#include <asm/syscall.h>
++
++#define __SYSCALL_64(nr, sym, qual)
++
++#define __SYSCALL_X32(nr, sym, qual) extern asmlinkage long sym(const struct pt_regs *);
++#include <asm/syscalls_64.h>
++#undef __SYSCALL_X32
++
++#define __SYSCALL_X32(nr, sym, qual) [nr] = sym,
++
++asmlinkage const sys_call_ptr_t x32_sys_call_table[__NR_syscall_x32_max+1] = {
++	/*
++	 * Smells like a compiler bug -- it doesn't work
++	 * when the & below is removed.
++	 */
++	[0 ... __NR_syscall_x32_max] = &__x64_sys_ni_syscall,
++#include <asm/syscalls_64.h>
++};
 -- 
 2.24.1
 
