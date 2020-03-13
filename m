@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 481F3184DDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:47:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FFA3184DE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:47:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbgCMRr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 13:47:27 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47725 "EHLO
+        id S1727304AbgCMRrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 13:47:46 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47731 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727131AbgCMRrX (ORCPT
+        with ESMTP id S1727146AbgCMRrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 13:47:23 -0400
+        Fri, 13 Mar 2020 13:47:24 -0400
 Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1jCoP2-00017r-Tg; Fri, 13 Mar 2020 18:47:21 +0100
+        id 1jCoP3-00017r-Dx; Fri, 13 Mar 2020 18:47:21 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -26,9 +26,9 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 7/9] lockdep: Add hrtimer context tracing bits
-Date:   Fri, 13 Mar 2020 18:46:59 +0100
-Message-Id: <20200313174701.148376-8-bigeasy@linutronix.de>
+Subject: [PATCH 8/9] lockdep: Annotate irq_work
+Date:   Fri, 13 Mar 2020 18:47:00 +0100
+Message-Id: <20200313174701.148376-9-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200313174701.148376-1-bigeasy@linutronix.de>
 References: <20200313174701.148376-1-bigeasy@linutronix.de>
@@ -39,109 +39,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set current->irq_config =3D 1 for hrtimers which are not marked to expire in
-hard interrupt context during hrtimer_init(). These timers will expire in
-softirq context on PREEMPT_RT.
+Mark irq_work items with IRQ_WORK_HARD_IRQ which should be invoked in
+hardirq context even on PREEMPT_RT. IRQ_WORK without this flag will be
+invoked in softirq context on PREEMPT_RT.
 
-Setting this allows lockdep to differentiate these timers. If a timer is
-marked to expire in hard interrupt context then the timer callback is not
-supposed to acquire a regular spinlock instead of a raw_spinlock in the
-expiry callback.
+Set ->irq_config to 1 for the IRQ_WORK items which are invoked in softirq
+context so lockdep knows that these can safely acquire a spinlock_t.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- include/linux/irqflags.h | 15 +++++++++++++++
- include/linux/sched.h    |  1 +
- kernel/locking/lockdep.c |  2 +-
- kernel/time/hrtimer.c    |  6 +++++-
- 4 files changed, 22 insertions(+), 2 deletions(-)
+ include/linux/irq_work.h |  2 ++
+ include/linux/irqflags.h | 13 +++++++++++++
+ kernel/irq_work.c        |  2 ++
+ kernel/rcu/tree.c        |  1 +
+ kernel/time/tick-sched.c |  1 +
+ 5 files changed, 19 insertions(+)
 
+diff --git a/include/linux/irq_work.h b/include/linux/irq_work.h
+index 02da997ad12ce..3b752e80c017d 100644
+--- a/include/linux/irq_work.h
++++ b/include/linux/irq_work.h
+@@ -18,6 +18,8 @@
+=20
+ /* Doesn't want IPI, wait for tick: */
+ #define IRQ_WORK_LAZY		BIT(2)
++/* Run hard IRQ context, even on RT */
++#define IRQ_WORK_HARD_IRQ	BIT(3)
+=20
+ #define IRQ_WORK_CLAIMED	(IRQ_WORK_PENDING | IRQ_WORK_BUSY)
+=20
 diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
-index fdaf28601cbe1..9c17f9c827aac 100644
+index 9c17f9c827aac..f23f540e0ebba 100644
 --- a/include/linux/irqflags.h
 +++ b/include/linux/irqflags.h
-@@ -56,6 +56,19 @@ do {						\
- do {						\
- 	current->softirq_context--;		\
- } while (0)
-+
-+# define lockdep_hrtimer_enter(__hrtimer)		\
-+	  do {						\
-+		  if (!__hrtimer->is_hard)		\
-+			current->irq_config =3D 1;	\
+@@ -69,6 +69,17 @@ do {						\
+ 			current->irq_config =3D 0;	\
+ 	  } while (0)
+=20
++# define lockdep_irq_work_enter(__work)					\
++	  do {								\
++		  if (!(atomic_read(&__work->flags) & IRQ_WORK_HARD_IRQ))\
++			current->irq_config =3D 1;			\
 +	  } while (0)
-+
-+# define lockdep_hrtimer_exit(__hrtimer)		\
-+	  do {						\
-+		  if (!__hrtimer->is_hard)		\
-+			current->irq_config =3D 0;	\
++# define lockdep_irq_work_exit(__work)					\
++	  do {								\
++		  if (!(atomic_read(&__work->flags) & IRQ_WORK_HARD_IRQ))\
++			current->irq_config =3D 0;			\
 +	  } while (0)
 +
  #else
  # define trace_hardirqs_on()		do { } while (0)
  # define trace_hardirqs_off()		do { } while (0)
-@@ -68,6 +81,8 @@ do {						\
- # define trace_hardirq_exit()		do { } while (0)
- # define lockdep_softirq_enter()	do { } while (0)
+@@ -83,6 +94,8 @@ do {						\
  # define lockdep_softirq_exit()		do { } while (0)
-+# define lockdep_hrtimer_enter(__hrtimer)		do { } while (0)
-+# define lockdep_hrtimer_exit(__hrtimer)		do { } while (0)
+ # define lockdep_hrtimer_enter(__hrtimer)		do { } while (0)
+ # define lockdep_hrtimer_exit(__hrtimer)		do { } while (0)
++# define lockdep_irq_work_enter(__work)		do { } while (0)
++# define lockdep_irq_work_exit(__work)		do { } while (0)
  #endif
 =20
  #if defined(CONFIG_IRQSOFF_TRACER) || \
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 4d3b9ecce0742..933914cdf2197 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -983,6 +983,7 @@ struct task_struct {
- 	unsigned int			softirq_enable_event;
- 	int				softirqs_enabled;
- 	int				softirq_context;
-+	int				irq_config;
- #endif
-=20
- #ifdef CONFIG_LOCKDEP
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 4a9abf8bd9d15..df74531fd9f85 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3879,7 +3879,7 @@ static int check_wait_context(struct task_struct *cur=
-r, struct held_lock *next)
- 		/*
- 		 * Check if force_irqthreads will run us threaded.
+diff --git a/kernel/irq_work.c b/kernel/irq_work.c
+index 828cc30774bc4..48b5d1b6af4d3 100644
+--- a/kernel/irq_work.c
++++ b/kernel/irq_work.c
+@@ -153,7 +153,9 @@ static void irq_work_run_list(struct llist_head *list)
  		 */
--		if (curr->hardirq_threaded)
-+		if (curr->hardirq_threaded || curr->irq_config)
- 			curr_inner =3D LD_WAIT_CONFIG;
- 		else
- 			curr_inner =3D LD_WAIT_SPIN;
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 3a609e7344f3d..8cce72501aea5 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1404,7 +1404,7 @@ static void __hrtimer_init(struct hrtimer *timer, clo=
-ckid_t clock_id,
- 	base =3D softtimer ? HRTIMER_MAX_CLOCK_BASES / 2 : 0;
- 	base +=3D hrtimer_clockid_to_base(clock_id);
- 	timer->is_soft =3D softtimer;
--	timer->is_hard =3D !softtimer;
-+	timer->is_hard =3D !!(mode & HRTIMER_MODE_HARD);
- 	timer->base =3D &cpu_base->clock_base[base];
- 	timerqueue_init(&timer->node);
- }
-@@ -1514,7 +1514,11 @@ static void __run_hrtimer(struct hrtimer_cpu_base *c=
-pu_base,
- 	 */
- 	raw_spin_unlock_irqrestore(&cpu_base->lock, flags);
- 	trace_hrtimer_expire_entry(timer, now);
-+	lockdep_hrtimer_enter(timer);
-+
- 	restart =3D fn(timer);
-+
-+	lockdep_hrtimer_exit(timer);
- 	trace_hrtimer_expire_exit(timer);
- 	raw_spin_lock_irq(&cpu_base->lock);
+ 		flags =3D atomic_fetch_andnot(IRQ_WORK_PENDING, &work->flags);
 =20
++		lockdep_irq_work_enter(work);
+ 		work->func(work);
++		lockdep_irq_work_exit(work);
+ 		/*
+ 		 * Clear the BUSY bit and return to the free state if
+ 		 * no-one else claimed it meanwhile.
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index d91c9156fab2e..5066d1dd30777 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1113,6 +1113,7 @@ static int rcu_implicit_dynticks_qs(struct rcu_data *=
+rdp)
+ 		    !rdp->rcu_iw_pending && rdp->rcu_iw_gp_seq !=3D rnp->gp_seq &&
+ 		    (rnp->ffmask & rdp->grpmask)) {
+ 			init_irq_work(&rdp->rcu_iw, rcu_iw_handler);
++			atomic_set(&rdp->rcu_iw.flags, IRQ_WORK_HARD_IRQ);
+ 			rdp->rcu_iw_pending =3D true;
+ 			rdp->rcu_iw_gp_seq =3D rnp->gp_seq;
+ 			irq_work_queue_on(&rdp->rcu_iw, rdp->cpu);
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 4be756b88a48e..3e2dc9b8858c7 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -245,6 +245,7 @@ static void nohz_full_kick_func(struct irq_work *work)
+=20
+ static DEFINE_PER_CPU(struct irq_work, nohz_full_kick_work) =3D {
+ 	.func =3D nohz_full_kick_func,
++	.flags =3D ATOMIC_INIT(IRQ_WORK_HARD_IRQ),
+ };
+=20
+ /*
 --=20
 2.25.1
 
