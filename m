@@ -2,46 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 126F3184DA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:29:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CEF7184D4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:12:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbgCMR3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 13:29:17 -0400
-Received: from mga04.intel.com ([192.55.52.120]:49216 "EHLO mga04.intel.com"
+        id S1726812AbgCMRL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 13:11:59 -0400
+Received: from foss.arm.com ([217.140.110.172]:33356 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726446AbgCMR3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 13:29:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 10:29:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,549,1574150400"; 
-   d="scan'208";a="237017325"
-Received: from sblancoa-mobl.amr.corp.intel.com (HELO [10.251.232.239]) ([10.251.232.239])
-  by fmsmga008.fm.intel.com with ESMTP; 13 Mar 2020 10:29:13 -0700
-Subject: Re: [PATCH 04/16] soundwire: cadence: handle error cases with
- CONFIG_UPDATE
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
-        jank@cadence.com, srinivas.kandagatla@linaro.org,
-        slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Hui Wang <hui.wang@canonical.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-References: <20200311184128.4212-1-pierre-louis.bossart@linux.intel.com>
- <20200311184128.4212-5-pierre-louis.bossart@linux.intel.com>
- <20200313120855.GF4885@vkoul-mobl>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <77c5b945-4738-f3fe-5e8f-9cffaf9a74c7@linux.intel.com>
-Date:   Fri, 13 Mar 2020 12:09:11 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726414AbgCMRL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 13:11:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5810B31B;
+        Fri, 13 Mar 2020 10:11:58 -0700 (PDT)
+Received: from [10.37.12.40] (unknown [10.37.12.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F1D6B3F534;
+        Fri, 13 Mar 2020 10:11:47 -0700 (PDT)
+Subject: Re: [PATCH v4 2/4] OPP: change parameter to device pointer in
+ dev_pm_opp_of_register_em()
+To:     Quentin Perret <qperret@google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-omap@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-imx@nxp.com, Morten.Rasmussen@arm.com,
+        Dietmar.Eggemann@arm.com, javi.merino@arm.com,
+        cw00.choi@samsung.com, b.zolnierkie@samsung.com, rjw@rjwysocki.net,
+        sudeep.holla@arm.com, viresh.kumar@linaro.org, nm@ti.com,
+        sboyd@kernel.org, rui.zhang@intel.com, amit.kucheria@verdurent.com,
+        daniel.lezcano@linaro.org, mingo@redhat.com, peterz@infradead.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
+        kernel@pengutronix.de, khilman@kernel.org, agross@kernel.org,
+        bjorn.andersson@linaro.org, robh@kernel.org,
+        matthias.bgg@gmail.com, steven.price@arm.com,
+        tomeu.vizoso@collabora.com, alyssa.rosenzweig@collabora.com,
+        airlied@linux.ie, daniel@ffwll.ch, liviu.dudau@arm.com,
+        lorenzo.pieralisi@arm.com, patrick.bellasi@matbug.net,
+        orjan.eide@arm.com, rdunlap@infradead.org
+References: <20200309134117.2331-1-lukasz.luba@arm.com>
+ <20200309134117.2331-3-lukasz.luba@arm.com>
+ <20200313101524.GA150397@google.com>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <3ac8ebf8-9db0-d168-8b80-f7f5ba345f86@arm.com>
+Date:   Fri, 13 Mar 2020 17:11:45 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200313120855.GF4885@vkoul-mobl>
+In-Reply-To: <20200313101524.GA150397@google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -52,32 +60,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 3/13/20 7:08 AM, Vinod Koul wrote:
-> On 11-03-20, 13:41, Pierre-Louis Bossart wrote:
->> config_update() may time out or cannot be use in ClockStopMode
->>
->> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
->> ---
->>   drivers/soundwire/cadence_master.c | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
->> index 71cba2585151..4089c271305a 100644
->> --- a/drivers/soundwire/cadence_master.c
->> +++ b/drivers/soundwire/cadence_master.c
->> @@ -239,6 +239,11 @@ static int cdns_config_update(struct sdw_cdns *cdns)
->>   {
->>   	int ret;
+On 3/13/20 10:15 AM, Quentin Perret wrote:
+> On Monday 09 Mar 2020 at 13:41:15 (+0000), Lukasz Luba wrote:
+>> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+>> index d2b5f062a07b..676b56424886 100644
+>> --- a/drivers/cpufreq/cpufreq-dt.c
+>> +++ b/drivers/cpufreq/cpufreq-dt.c
+>> @@ -275,7 +275,9 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+>>   	policy->cpuinfo.transition_latency = transition_latency;
+>>   	policy->dvfs_possible_from_any_cpu = true;
 >>   
->> +	if (sdw_cdns_is_clock_stop(cdns)) {
->> +		dev_err(cdns->dev, "Cannot program MCP_CONFIG_UPDATE in ClockStopMode\n");
+>> -	dev_pm_opp_of_register_em(policy->cpus);
+>> +	ret = dev_pm_opp_of_register_em(cpu_dev, policy->cpus);
+>> +	if (ret)
+>> +		dev_dbg(cpu_dev, "Couldn't register Energy Model %d\n", ret);
+>>   
+>>   	return 0;
 > 
-> This looks fine but duplicates the log, so maybe you can remove from
-> here or preceding patch... Or use single line as I suggested in that
-> patch and keep this as is.
+> Ah, that answers my comment on patch 01. You're adding the error
+> messages here.
+> 
+> Isn't this more boilerplate for the drivers ? All they do is print the
+> same debug message. Maybe just move it inside dev_pm_opp_of_register_em
+> directly ?
+> 
 
-It doesn't duplicate it. In Patch1 it's a dev_dbg log that's useful for 
-integration, and that function is used in other places (see the 
-soundwire:intel series).
+Agree. I could add a 'fail' label in dev_pm_opp_of_register_em
+something like:
 
-In this patch this is a clear error leading to a master hang.
+--------------------------------->8----------------
+dev_pm_opp_of_register_em
+...
+	nr_opp = dev_pm_opp_get_opp_count(dev);
+	if (nr_opp <= 0) {
+		ret = -EINVAL;
+		goto fail;
+	}
+
+...
+	ret = em_register_perf_domain()
+	if (ret)
+		goto fail;
+
+	return 0;
+
+fail:
+	dev_dbg(cpu_dev, "Couldn't register Energy Model %d\n", ret);
+	return ret
+------------------------8<-----------------
+
+Makes more sense, agree, thank you for your suggestion.
+
+I will remove this
+   if (ret)
+	dev_dbg(cpu_dev, "Couldn't register Energy Model %d\n", ret);
+from the cpufreq drivers.
+
+
+Regards,
+Lukasz
