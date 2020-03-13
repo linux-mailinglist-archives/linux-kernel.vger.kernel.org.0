@@ -2,87 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65539183F54
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 04:10:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9A71183F8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 04:21:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbgCMDKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 23:10:02 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:38984 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726331AbgCMDKC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 23:10:02 -0400
-Received: by mail-oi1-f193.google.com with SMTP id d63so7886951oig.6
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 20:09:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=hbgniz1KICHBiyzs7HbcZAYxLQx9yaTRfc0Ur6qyrFA=;
-        b=l6zu35EC5jZiSfiq/F2OiEI3o+cXYB3vRgVYlzUUW38s2rRFBgCbMoX2dURMXnz1O2
-         bjQYfFrwHKL+Q1YDqnLGN+q/UWu+HiNdg9rea1Ror1O2EUWpBJjyTwgEWFw/YRBVe9jz
-         sibZCw8AfomDGgwi8Muqr2bIaUYa1R8hGck3BtsURH70MTLpHNr0VGBYyCZ3jgDH6gx/
-         PbYzvj7HOk8ClVcY6+nGuHswmzc6fnnl6wcKz9f149IQB9xQVe9IytyZ9VMvPGmgKjf1
-         KvuL0amDV7YQnFNBSB8rHDd32dLBGpDlj7pLpXoS221kPK5b96LP7vfYlaRS5UrGoD7+
-         VNFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=hbgniz1KICHBiyzs7HbcZAYxLQx9yaTRfc0Ur6qyrFA=;
-        b=HRxgDDCxxFs3gw46SrC8LwaqkdNcVyEGoMTHwQ5cQnoDyHWLo4A+pa7Ne0t11w6KYN
-         /3HqArLBVtfK7poKPuf2HuxUrJdQykRBViwZcNDlUW1qqpwd8BEOT3EqaibTtxAYpE4U
-         46LRykzCpApVkRu0u8JMBx6KrkSVvZNi6o7WXiSsSO/bCfuEMjX08YfEbjR7R/WJD38G
-         4FN5L+IgNfeXgU7ts+ATRtmyt/NMeZA93MPQ7yTw2U3VdLg+7f+8igjZE3Gv60L9kqzl
-         h/HS34mei/9ofKGMg2s8ofqnhF0CcUETobO1ljXYK+KZFcPemkmfpXCIo/qZJ3uTHJXz
-         2uOA==
-X-Gm-Message-State: ANhLgQ218SHMjZUlFIm1hOM52qFc5whtS5e40ph6HuoJtPcRBgLHFTDq
-        HMNnuP9jLck/PqoYqE3kwYpu0QiC
-X-Google-Smtp-Source: ADFU+vusI0iP6ekgedOIv+1cpqQPYli+tad0czpVJcz1FWXl5A2DC9qnqyY120IKaK3SNUgrs3J+sg==
-X-Received: by 2002:aca:5f87:: with SMTP id t129mr5460231oib.36.1584068997580;
-        Thu, 12 Mar 2020 20:09:57 -0700 (PDT)
-Received: from localhost.localdomain ([205.204.117.32])
-        by smtp.gmail.com with ESMTPSA id k21sm5794812otn.58.2020.03.12.20.09.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 12 Mar 2020 20:09:57 -0700 (PDT)
-From:   ling.ma.program@gmail.com
-To:     linux-kernel@vger.kernel.org
-Cc:     ling.ml@antfin.com
-Subject: [RFC PATCH] locks:Remove spinlock in unshare_files
-Date:   Fri, 13 Mar 2020 11:10:17 +0800
-Message-Id: <20200313031017.71090-1-ling.ma.program@gmail.com>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        id S1726595AbgCMDT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 23:19:58 -0400
+Received: from mga14.intel.com ([192.55.52.115]:29662 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726246AbgCMDT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 23:19:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 20:19:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,546,1574150400"; 
+   d="scan'208";a="278065549"
+Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.16])
+  by fmsmga002.fm.intel.com with ESMTP; 12 Mar 2020 20:19:56 -0700
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     intel-gvt-dev@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     alex.williamson@redhat.com, zhenyuw@linux.intel.com,
+        pbonzini@redhat.com, kevin.tian@intel.com, peterx@redhat.com,
+        Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH v4 4/7] drm/i915/gvt: hold reference of VFIO group during opening of vgpu
+Date:   Thu, 12 Mar 2020 23:10:25 -0400
+Message-Id: <20200313031025.7936-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200313030548.7705-1-yan.y.zhao@intel.com>
+References: <20200313030548.7705-1-yan.y.zhao@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ma Ling <ling.ml@antfin.com>
+hold reference count of the VFIO group for each vgpu at vgpu opening and
+release the reference at vgpu releasing.
 
-Processor support atomic operation for long/int/short/char type,
-we use the feature to avoid spinlock, which cost hundreds cycles.
-
-Appreciate your comments
-Ling
-
-Signed-off-by: Ma Ling <ling.ml@antfin.com>
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
 ---
- kernel/fork.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/i915/gvt/kvmgt.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 60a1295..fe54600 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -3041,9 +3041,7 @@ int unshare_files(struct files_struct **displaced)
- 		return error;
- 	}
- 	*displaced = task->files;
--	task_lock(task);
--	task->files = copy;
--	task_unlock(task);
-+	WRITE_ONCE(task->files, copy);
- 	return 0;
- }
+diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kvmgt.c
+index 074c4efb58eb..811cee28ae06 100644
+--- a/drivers/gpu/drm/i915/gvt/kvmgt.c
++++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+@@ -131,6 +131,7 @@ struct kvmgt_vdev {
+ 	struct work_struct release_work;
+ 	atomic_t released;
+ 	struct vfio_device *vfio_device;
++	struct vfio_group *vfio_group;
+ };
  
+ static inline struct kvmgt_vdev *kvmgt_vdev(struct intel_vgpu *vgpu)
+@@ -792,6 +793,7 @@ static int intel_vgpu_open(struct mdev_device *mdev)
+ 	struct kvmgt_vdev *vdev = kvmgt_vdev(vgpu);
+ 	unsigned long events;
+ 	int ret;
++	struct vfio_group *vfio_group;
+ 
+ 	vdev->iommu_notifier.notifier_call = intel_vgpu_iommu_notifier;
+ 	vdev->group_notifier.notifier_call = intel_vgpu_group_notifier;
+@@ -814,6 +816,14 @@ static int intel_vgpu_open(struct mdev_device *mdev)
+ 		goto undo_iommu;
+ 	}
+ 
++	vfio_group = vfio_group_get_external_user_from_dev(mdev_dev(mdev));
++	if (IS_ERR_OR_NULL(vfio_group)) {
++		ret = !vfio_group ? -EFAULT : PTR_ERR(vfio_group);
++		gvt_vgpu_err("vfio_group_get_external_user_from_dev failed\n");
++		goto undo_register;
++	}
++	vdev->vfio_group = vfio_group;
++
+ 	/* Take a module reference as mdev core doesn't take
+ 	 * a reference for vendor driver.
+ 	 */
+@@ -830,6 +840,10 @@ static int intel_vgpu_open(struct mdev_device *mdev)
+ 	return ret;
+ 
+ undo_group:
++	vfio_group_put_external_user(vdev->vfio_group);
++	vdev->vfio_group = NULL;
++
++undo_register:
+ 	vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
+ 					&vdev->group_notifier);
+ 
+@@ -884,6 +898,7 @@ static void __intel_vgpu_release(struct intel_vgpu *vgpu)
+ 	kvmgt_guest_exit(info);
+ 
+ 	intel_vgpu_release_msi_eventfd_ctx(vgpu);
++	vfio_group_put_external_user(vdev->vfio_group);
+ 
+ 	vdev->kvm = NULL;
+ 	vgpu->handle = 0;
 -- 
-1.8.3.1
+2.17.1
 
