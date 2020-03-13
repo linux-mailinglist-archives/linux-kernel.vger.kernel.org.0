@@ -2,121 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 369F318474F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 13:56:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C464E184753
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 13:57:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbgCMM4e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 08:56:34 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:49394 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726216AbgCMM4e (ORCPT
+        id S1726770AbgCMM5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 08:57:20 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:61986 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726216AbgCMM5U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 08:56:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584104193;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oFffVLBSrzUJVd5vEtDabzgVlUp9IT+H+W/QmhOzo6U=;
-        b=ekZ6qGKojEKQL9dYsAZ0HIkVitI6dml8zSPcLfInU55AJmlIWJjThdcV/OJ/PpKnpc0IcD
-        kpSDpXIL2gEGLzB+5dOtLdMC4w74FT/mnEEHlfERel8b/ZKDp3wKIRpR/Xqnyo8nBSy8ki
-        GPtK0mYMjEmqRMR26zOHlDzSM4Imy4g=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-206-02CmSrC5PQeF8AD9mm0GyQ-1; Fri, 13 Mar 2020 08:56:31 -0400
-X-MC-Unique: 02CmSrC5PQeF8AD9mm0GyQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5A99A800D50;
-        Fri, 13 Mar 2020 12:56:30 +0000 (UTC)
-Received: from localhost (ovpn-12-51.pek2.redhat.com [10.72.12.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B7F921001902;
-        Fri, 13 Mar 2020 12:56:29 +0000 (UTC)
-Date:   Fri, 13 Mar 2020 20:56:27 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the akpm-current tree
-Message-ID: <20200313125627.GA8518@MiWiFi-R3L-srv>
-References: <20200313214214.4d2e2af6@canb.auug.org.au>
+        Fri, 13 Mar 2020 08:57:20 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02DClKnA009589;
+        Fri, 13 Mar 2020 13:56:56 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=dFQRbdwT/7f+gBH9+dyOD4FlWJJaQW4FMkJJu11OLHg=;
+ b=c3WxFLMqs7WJqsERfVZuitaYbW6YG/rz6Wlt6hpiSsZZnlLZ+JgifiCNHbIprQhserIm
+ tP/m9ZjN3RePvwqo8ERFVvpEUpoiHjMIWJOH4pYrCFvpZ2uNclrBkP+UWDbhZrsWgXE5
+ eoxjwWwHOoUHpSa/IYt1IKBIeuMQE2Ci/Fklv6OVLafQ3ve1xCOhWyAskkde/1VEVF0a
+ 759VvPXETdaRqRwBwyNQsCnekzG690v6a5f9IuLc/fkeWKXpvrz2KA0YAGliAj0bEJDp
+ kCxTGjTNP4h5JM84p3AqCBHRd7TYQBK3btDtIoI1plr9zojuJqRhqMYOSmrvywUmqZvY 7w== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2yqt838py1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 13 Mar 2020 13:56:56 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8696910003D;
+        Fri, 13 Mar 2020 13:56:53 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 58CE72A88E3;
+        Fri, 13 Mar 2020 13:56:53 +0100 (CET)
+Received: from lmecxl0912.lme.st.com (10.75.127.48) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 13 Mar
+ 2020 13:56:52 +0100
+Subject: Re: [PATCH v3 0/4] STM32 early console
+To:     Erwan Le Ray <erwan.leray@st.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Olof Johansson <olof@lixom.net>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Nathan Huckleberry <nhuck15@gmail.com>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        Clement Peron <peron.clem@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>
+References: <20200203140425.26579-1-erwan.leray@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <a8776663-3951-c06a-8e22-66451c886818@st.com>
+Date:   Fri, 13 Mar 2020 13:56:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200313214214.4d2e2af6@canb.auug.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <20200203140425.26579-1-erwan.leray@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-13_04:2020-03-12,2020-03-13 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/13/20 at 09:42pm, Stephen Rothwell wrote:
-> Hi all,
+Hi Erwan
+
+On 2/3/20 3:04 PM, Erwan Le Ray wrote:
+> Add UART instance configuration to STM32 F4 and F7 early console.
+> Add STM32 H7 and MP1 early console support.
 > 
-> After merging the akpm-current tree, today's linux-next build (x86_64
-> allnoconfig) produced this warning:
+> Changes in v3:
+> - fix a missing condition for STM32MP1
+>    
+> Changes in v2:
+> - split "[PATCH] ARM: debug: stm32: add UART early console configuration"
+>    into separate patches as suggested by Clement into [1]
 > 
-> mm/sparse.c:311:12: warning: 'fill_subsection_map' defined but not used [-Wunused-function]
->   311 | static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
->       |            ^~~~~~~~~~~~~~~~~~~
-> mm/sparse.c:306:13: warning: 'is_subsection_map_empty' defined but not used [-Wunused-function]
->   306 | static bool is_subsection_map_empty(struct mem_section *ms)
->       |             ^~~~~~~~~~~~~~~~~~~~~~~
-> mm/sparse.c:301:12: warning: 'clear_subsection_map' defined but not used [-Wunused-function]
->   301 | static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
->       |            ^~~~~~~~~~~~~~~~~~~~
+> [1] https://lkml.org/lkml/2019/4/10/199
 > 
-> Introduced by commits
+> Erwan Le Ray (4):
+>    ARM: debug: stm32: add UART early console configuration for STM32F4
+>    ARM: debug: stm32: add UART early console configuration for STM32F7
+>    ARM: debug: stm32: add UART early console support for STM32H7
+>    ARM: debug: stm32: add UART early console support for STM32MP1
 > 
->   38eb09ac7c29 ("mm/sparse.c: introduce new function fill_subsection_map()")
->   334411156ba6 ("mm/sparse.c: introduce a new function clear_subsection_map()")
+>   arch/arm/Kconfig.debug         | 42 +++++++++++++++++++++++++++++-----
+>   arch/arm/include/debug/stm32.S |  9 ++++----
+>   2 files changed, 40 insertions(+), 11 deletions(-)
+> 
 
-Hi Stephen,
+Series applied on stm32-next.
 
-I made below change, but I can't triger these warnings. Could you try
-below patch, see if it's works?
-
-
-From 9be668f1e30b6bb4ed5f4a07e7d3bb76d3f58f35 Mon Sep 17 00:00:00 2001
-From: Baoquan He <bhe@redhat.com>
-Date: Fri, 13 Mar 2020 20:25:54 +0800
-Subject: [PATCH] mm/sparse.c: fix the building warning with !SPARSEMEM
-
-Stephen reported below warnings are seen with allnoconfig on x86_64.
-Fix it by making those dummy functions sub-section map handling visible
-with CONFIG_SPARSEMEM enabled.
-
-mm/sparse.c:311:12: warning: 'fill_subsection_map' defined but not used [-Wunused-function]
-  311 | static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
-      |            ^~~~~~~~~~~~~~~~~~~
-mm/sparse.c:306:13: warning: 'is_subsection_map_empty' defined but not used [-Wunused-function]
-  306 | static bool is_subsection_map_empty(struct mem_section *ms)
-      |             ^~~~~~~~~~~~~~~~~~~~~~~
-mm/sparse.c:301:12: warning: 'clear_subsection_map' defined but not used [-Wunused-function]
-  301 | static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
-      |            ^~~~~~~~~~~~~~~~~~~~
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
----
- mm/sparse.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 362018e82e22..9e08d118719f 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -293,7 +293,7 @@ static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
- 
- 	return rc;
- }
--#else
-+#elif defined(CONFIG_SPARSEMEM)
- void __init subsection_map_init(unsigned long pfn, unsigned long nr_pages)
- {
- }
--- 
-2.17.2
-
+Regards
+Alex
