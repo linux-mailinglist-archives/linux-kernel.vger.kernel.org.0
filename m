@@ -2,87 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0FF8184818
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 14:29:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 603CF184812
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 14:29:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbgCMN3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 09:29:40 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40240 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726479AbgCMN3i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 09:29:38 -0400
-Received: by mail-wm1-f66.google.com with SMTP id z12so1106946wmf.5;
-        Fri, 13 Mar 2020 06:29:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GUHN0X5sdrI7D0GMcD6M5Z+3axinNY1E4lzMr1PVACQ=;
-        b=G1C54Bdb16WNvSIBd1FwsBhkuDdryGinNrlo8xqYr7AGyLpVtPTtNffGmu5s3IB1Mp
-         xPh5AwgNANFWWIG72b7V7Q8EQgEB9VLMRISdv4vZHRWhZla3ClqFfoJB6UlQ2WpPA/BD
-         OSGWBT/MADHWNNtv66MqlucLcqi1PbRJHsfO2TnpszE9t/MoZP+37qFzFxWhom/MGeEC
-         FlnYVdCPZLOFgzc6ljTbHMEedF05VuLmxcr8K8fepYkadg+ib18o9CCL9sPIralJOiza
-         uD7T3VTPWw+8BnKdm/X/KCsfRSwXLQ8vjweE8oTwFpLrpkrdTBm7HSaslkksP/4gjo8N
-         3jmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=GUHN0X5sdrI7D0GMcD6M5Z+3axinNY1E4lzMr1PVACQ=;
-        b=pCWu9YfHh/aLQXqdvzAXS4gkRo1BAVt0+GP/DC6XR3qAf8LYd0vGUXSWvWD2ZfMA6X
-         ctJRjEVZmCJkUgQfAzt9LQijBPX6SVR+L2l686pqkuuI9idphoTNTxCfAfrHkEMIF5mv
-         97J6B64dgGdVQEduuTD+zqM1bcmrLF3J4jiDbjA5jfDsIbV2eqMrO1MwKdLd5Vg0Bo5g
-         Jet9GuxGlOOdFb4RU2DcrjrAOQSb76l75oNh0noK27ORVXHpBy1uQ03HnbX0KXlwvbii
-         aBzBJ+8K9MPVXPt1ZixQrdwge4HCCtvo3GTt+FhsGnEOM1E1pBJ8bFf+b4EIzHttJpWz
-         /6gw==
-X-Gm-Message-State: ANhLgQ161T6zD+fsuR8IZu9OYyInjRACTILwLgxQvH8yKd0z7050XAwd
-        J6i423WNAeikZwfMxtYAzSY=
-X-Google-Smtp-Source: ADFU+vsqxMJxy9G94+rLdzbFa6PMVw0t6uXOSQDXS2UJ1O6jpUhOXYstXxO0/H6x2XH1SMXnO4Mwyw==
-X-Received: by 2002:a1c:ba42:: with SMTP id k63mr11203124wmf.71.1584106175901;
-        Fri, 13 Mar 2020 06:29:35 -0700 (PDT)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id z19sm17576705wma.41.2020.03.13.06.29.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Mar 2020 06:29:35 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     jic23@kernel.org
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        heiko@sntech.de, robh+dt@kernel.org, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] dt-bindings: iio: adc: rockchip-saradc: add description for px30
-Date:   Fri, 13 Mar 2020 14:29:26 +0100
-Message-Id: <20200313132926.10543-3-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200313132926.10543-1-jbx6244@gmail.com>
-References: <20200313132926.10543-1-jbx6244@gmail.com>
+        id S1726643AbgCMN3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 09:29:30 -0400
+Received: from foss.arm.com ([217.140.110.172]:55308 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726479AbgCMN3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 09:29:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3D3530E;
+        Fri, 13 Mar 2020 06:29:29 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 34DE53F67D;
+        Fri, 13 Mar 2020 06:29:29 -0700 (PDT)
+Date:   Fri, 13 Mar 2020 13:29:27 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Peter Chen <peter.chen@nxp.com>
+Cc:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 1/1] regulator: fixed: add system pm routines for pinctrl
+Message-ID: <20200313132927.GH5528@sirena.org.uk>
+References: <20200312103804.24174-1-peter.chen@nxp.com>
+ <20200312114712.GA4038@sirena.org.uk>
+ <20200312130037.GG14625@b29397-desktop>
+ <20200312143723.GF4038@sirena.org.uk>
+ <20200312150330.GH14625@b29397-desktop>
+ <20200312150710.GG4038@sirena.org.uk>
+ <20200313030851.GI14625@b29397-desktop>
+ <20200313121103.GD5528@sirena.org.uk>
+ <20200313131635.GA28281@b29397-desktop>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="U3BNvdZEnlJXqmh+"
+Content-Disposition: inline
+In-Reply-To: <20200313131635.GA28281@b29397-desktop>
+X-Cookie: This page intentionally left blank.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The description below is already in use for px30.dtsi,
-but was somehow never added to a document, so add
-"rockchip,px30-saradc", "rockchip,rk3399-saradc"
-for saradc nodes on a px30 platform to rockchip-saradc.yaml.
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml | 1 +
- 1 file changed, 1 insertion(+)
+--U3BNvdZEnlJXqmh+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
-index d3b78604b..5f398d882 100644
---- a/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
-@@ -17,6 +17,7 @@ properties:
-       - const: rockchip,rk3399-saradc
-       - items:
-           - enum:
-+            - rockchip,px30-saradc
-             - rockchip,rk3308-saradc
-             - rockchip,rk3328-saradc
-             - rockchip,rv1108-saradc
--- 
-2.11.0
+On Fri, Mar 13, 2020 at 01:16:31PM +0000, Peter Chen wrote:
 
+> Most of pins for controlling fixed regulator on or off is GPIO, but how
+> GPIO driver handles this? We usually configure pin as GPIO function at
+> its user's node (Eg, reset pin for most drivers), but not GPIO node,
+
+The GPIO driver knows what signals it's supposed to be generating, it
+should be able to configure pins for this.  Setting the pinctrl stuff on
+the consumer seems like for example setting the pinctrl for a SPI
+controller on the SPI device rather than the controller device which
+would be a bit weird.
+
+> GPIO node is usually per SoC, not per board level.
+
+Sure, and it's totally normal for boards to add configuration to nodes
+that are part of the SoC.  Again I'm a bit confused about why GPIOs are
+expected to be different here.
+
+> So, I am wondering why fixed regulator can't have a pin in pinctrl.
+> If you grep the dts, there are already several fixed regulator has
+> pinctrl.
+
+Obviously those pinctrl settings currently don't actually do anything...
+
+--U3BNvdZEnlJXqmh+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5rirYACgkQJNaLcl1U
+h9BWMgf+KO8LRDX1+oCXN2eOj1Pe7eWX9uuZQ/JLPi2Vyrv1xIsMXcHbf3p+ZjMT
+Mm8e0a7B2ohAGHBBRWY76qRRoWsuSGqMHl9NkezUQr1XQdSUiFJ4XTdzBIU/auC8
+Cb3xsnDn7XOqgft3aCBv9nNP/sNxesWDMwjXaytgytnFtBwW1NZLvckk7PS95KpQ
+gXfGCPT68VEJwXEHzomCRx8BwmgEXN8Yxe9H1IfZ8Au28Hl6BUk10PSkoiyI7SPi
+MlOGy/dZQ1mc0B3MCeS86/xINpEewq27tuYYDuxIsatmPclYIrfQjgGdBaTR88pM
+AyxZ/JpAWWjLr6fG+vfVZ2Zhd6fSng==
+=o51x
+-----END PGP SIGNATURE-----
+
+--U3BNvdZEnlJXqmh+--
