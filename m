@@ -2,170 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E944118519E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 23:28:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 916021851A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 23:30:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbgCMW2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 18:28:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726534AbgCMW2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 18:28:22 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727577AbgCMWaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 18:30:13 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:25220 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727561AbgCMWaJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 18:30:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584138607;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bJRqmbszSA1oTVb3wgjwQJD7tdcXqWuFXrwdcjYeYK0=;
+        b=TxRKfk2BChSDvXQx89glPN8S9Wf/OnZ6y+gBCVeMYjNRIGsYKuvbYch3OA1zXW68OQfNVL
+        /R5zNofG9Df3BtJ/r+p0yZi6fP4B0mY1E6ggWJFQQ80SiDC8Q9RQbShb57CYh8JC3OOfS+
+        cJcZmaST1J/+JcyOtywfAFkh6s9XQIA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-164-teosRALzMJGa4azdSSx5Aw-1; Fri, 13 Mar 2020 18:30:04 -0400
+X-MC-Unique: teosRALzMJGa4azdSSx5Aw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 865902074B;
-        Fri, 13 Mar 2020 22:28:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584138500;
-        bh=HAfrWG3tnsOSw0BweDtQkVvI8TXB+u1VcKIlapo/b3U=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=SYmK9eoVfoNe9t7XmF4/gywii/xZgw1crX5njzaUdfwDQbvYNHzuklFsQN6I2W2IM
-         Xz2N4n213C9CtRW5sT7jLb4Y+3DIbRph3tdW6EiCWLKygcCGqfGS42uh5xfv13D2d7
-         P4BXDDLITitrLinUqPDf+oULDPg1ogyhp+d1Xebw=
-Subject: Re: cross-compiling vm, confusion over output directory
-To:     "Bird, Tim" <Tim.Bird@sony.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        shuah <shuah@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <MWHPR13MB0895E9C11DB4E72158445944FDFA0@MWHPR13MB0895.namprd13.prod.outlook.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <598c2cfe-debd-3f4c-532f-f78422118451@kernel.org>
-Date:   Fri, 13 Mar 2020 16:28:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 83B7D1060DB1;
+        Fri, 13 Mar 2020 22:30:02 +0000 (UTC)
+Received: from x1.home (ovpn-116-28.phx2.redhat.com [10.3.116.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CCB5094940;
+        Fri, 13 Mar 2020 22:29:58 +0000 (UTC)
+Date:   Fri, 13 Mar 2020 16:29:58 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Yan Zhao <yan.y.zhao@intel.com>
+Cc:     intel-gvt-dev@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhenyuw@linux.intel.com,
+        pbonzini@redhat.com, kevin.tian@intel.com, peterx@redhat.com,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        "Neo Jia (cjia@nvidia.com)" <cjia@nvidia.com>
+Subject: Re: [PATCH v4 0/7] use vfio_dma_rw to read/write IOVAs from CPU
+ side
+Message-ID: <20200313162958.5bfb5b82@x1.home>
+In-Reply-To: <20200313030548.7705-1-yan.y.zhao@intel.com>
+References: <20200313030548.7705-1-yan.y.zhao@intel.com>
+Organization: Red Hat
 MIME-Version: 1.0
-In-Reply-To: <MWHPR13MB0895E9C11DB4E72158445944FDFA0@MWHPR13MB0895.namprd13.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tim,
+[Cc +NVIDIA]
 
-You are using an ancient email address for me.
+On Thu, 12 Mar 2020 23:05:48 -0400
+Yan Zhao <yan.y.zhao@intel.com> wrote:
 
-Use either shuah@kernel.org or skhan@linuxfoundation.org
+> It is better for a device model to use IOVAs to read/write memory to
+> perform some sort of virtual DMA on behalf of the device.
+> 
+> patch 1 exports VFIO group to external user so that it can hold the group
+> reference until finishing using of it. It saves ~500 cycles that are spent
+> on VFIO group looking up, referencing and dereferencing. (this data is
+> measured with 1 VFIO user).
+> 
+> patch 2 introduces interface vfio_dma_rw().
+> 
+> patch 3 introduces interfaces vfio_group_pin_pages() and
+> vfio_group_unpin_pages() to get rid of VFIO group looking-up in
+> vfio_pin_pages() and vfio_unpin_pages().
+> 
+> patch 4-5 let kvmgt switch from calling kvm_read/write_guest() to calling
+> vfio_dma_rw to rw IOVAs.
+> 
+> patch 6 let kvmgt switch to use lighter version of vfio_pin/unpin_pages(),
+> i.e. vfio_group_pin/unpin_pages()
+> 
+> patch 7 enables kvmgt to read/write IOVAs of size larger than PAGE_SIZE.
 
-On 3/13/20 4:14 PM, Bird, Tim wrote:
-> I was working on fixing the cross-compilation for the selftests/vm tests.
-> Currently, there are two issues in my testing:
-> 
-> 1) problem: required library missing from some cross-compile environments:
-> tools/testing/selftests/vm/mlock-random-test.c requires libcap
-> be installed.  The target line for mlock-random-test in
-> tools/testing/selftests/vm/Makefile looks like this:
-> 
-> $(OUTPUT)/mlock-random-test: LDLIBS += -lcap
+This looks pretty good to me, hopefully Kirti and Neo can find some
+advantage with this series as well.  Given that we're also trying to
+get the migration interface and dirty page tracking integrated for
+v5.7, would it make sense to merge the first 3 patches via my next
+branch?  This is probably the easiest way to update the dirty tracking.
+Thanks,
 
-You can use TEST_GEN_PROGS and define LDFLAGS for lcap
+Alex
 
+> Performance:
 > 
-> and mlock-random-test.c has this include line:
-> #include <sys/capability.h>
+> Comparison between vfio_dma_rw() and kvm_read/write_guest():
 > 
-> this is confusing, since this is different from the header file
-> linux/capability.h.  It is associated with the capability library (libcap)
-> and not the kernel.  In any event, on some distros and in some
-> cross-compile SDKs the package containing these files is not installed
-> by default.
+> 1. avergage CPU cycles of each interface measured with 1 running VM:
+>  --------------------------------------------------
+> |  rw       |          avg cycles of               |
+> |  size     | (vfio_dma_rw - kvm_read/write_guest) |
+> |---------- ---------------------------------------|
+> | <= 1 page |            +155 ~ +195               |        
+> |--------------------------------------------------|
+> | 5 pages   |                -530                  |
+> |--------------------------------------------------|
+> | 20 pages  |           -2005 ~ -2533              |
+>  --------------------------------------------------
 > 
-> Once this library is installed, things progress farther.  Using an Ubuntu
-> system, you can install the cross version of this library (for arm64) by doing:
-> $ sudo apt install libcap-dev:arm64
+> 2. average scores
 > 
-> 1) solution:
-> I would like to add some meta-data about this build dependency, by putting
-> something in the settings file as a hint to CI build systems.  Specifically, I'd like to
-> create the file 'tools/testing/selftests/vm/settings', with the content:
-> NEED_LIB=cap
+> base: base code before applying code in this series. use
+> kvm_read/write_pages() to rw IOVAs
 > 
-> We already use settings for other meta-data about a test (right now, just a
-> non-default timeout value), but I don't want to create a new file or syntax
-> for this build dependency data.
+> base + this series: use vfio_dma_rw() to read IOVAs and use
+> vfio_group_pin/unpin_pages(), and kvmgt is able to rw several pages
+> at a time.
 > 
-> Let me know what you think.
+> Scores of benchmarks running in 1 VM each:
+>  -----------------------------------------------------------------
+> |                    | glmark2 | lightsmark | openarena | heavens |
+> |-----------------------------------------------------------------|
+> |       base         |  1248   |  219.70    |  114.9    |   560   |
+> |-----------------------------------------------------------------|
+> |base + this series  |  1248   |  225.8     |   115     |   559   |
+>  -----------------------------------------------------------------
 > 
-> I may follow up with some script in the kernel source tree to check these
-> dependencies, independent of any CI system.  I have such a script in Fuego
-> that I could submit, but it would need some work to fit into the kernel build
-> flow for kselftest.  The goal would be to provide a nicely formatted warning,
-> with a recommendation for a package install.  But that's more work than
-> I think is needed right now just to let developers know there's a build dependency
-> here.
+> Sum of scores of two benchmark instances running in 2 VMs each:
+>  -------------------------------------------------------
+> |                    | glmark2 | lightsmark | openarena |
+> |-------------------------------------------------------|
+> |       base         |  812    |  211.46    |  115.3    |
+> |-------------------------------------------------------|
+> |base + this series  |  814    |  214.69    |  115.9    |
+>  -------------------------------------------------------
 > 
-> 2) problem: reference to source-relative header file
-> the Makefile for vm uses a relative path for include directories.
-> Specifically, it has the line:
-> CFLAGS = -Wall -I ../../../../../usr/include $(EXTRA_CFLAGS)
 > 
-> I believe this needs to reference kernel include files from the
-> output directory, not the source directory.
+> Changelogs:
+> v3 --> v4:
+> - rebased to 5.6.0-rc4+
+> - adjust wrap position for vfio_group_get_external_user_from_dev() in
+>   header file.(Alex)
+> - updated function description of vfio_group_get_external_user_from_dev()
+>   (Alex)
+> - fixed Error path group reference leaking in
+>   vfio_group_get_external_user_from_dev()  (Alex)
+> - reurn 0 for success or errno in vfio_dma_rw_chunk(). (Alex)
+> - renamed iova to user_iova in interface vfio_dam_rw().
+> - renamed vfio_pin_pages_from_group() and vfio_unpin_pages_from_group() to
+>   vfio_group_pin_pages() and vfio_group_unpin_pages()
+> - renamed user_pfn to user_iova_pfn in vfio_group_pin_pages() and
+>   vfio_group_unpin_pages()
 > 
-> With the relative include directory path, the program userfaultfd.c
-> gets compilation error like this:
+> v2 --> v3:
+> - add vfio_group_get_external_user_from_dev() to improve performance (Alex)
+> - add vfio_pin/unpin_pages_from_group() to avoid repeated looking up of
+>   VFIO group in vfio_pin/unpin_pages() (Alex)
+> - add a check for IOMMU_READ permission. (Alex)
+> - rename vfio_iommu_type1_rw_dma_nopin() to
+>   vfio_iommu_type1_dma_rw_chunk(). (Alex)
+> - in kvmgt, change "write ? vfio_dma_rw(...,true) :
+>   vfio_dma_rw(...,false)" to vfio_dma_rw(dev, gpa, buf, len, write)
+>   (Alex and Paolo)
+> - in kvmgt, instead of read/write context pages 1:1, combining the
+>   reads/writes of continuous IOVAs to take advantage of vfio_dma_rw() for
+>   faster crossing page boundary accesses.
 > 
-> userfaultfd.c:267:21: error: 'UFFD_API_RANGE_IOCTLS_BASIC' undeclared here (not in a function)
->    .expected_ioctls = UFFD_API_RANGE_IOCTLS_BASIC,
->                       ^
-> userfaultfd.c: In function 'uffd_poll_thread':
-> userfaultfd.c:529:8: error: 'UFFD_EVENT_FORK' undeclared (first use in this function)
->     case UFFD_EVENT_FORK:
->          ^
-> userfaultfd.c:529:8: note: each undeclared identifier is reported only once for each function it appears in
-> userfaultfd.c:531:18: error: 'union <anonymous>' has no member named 'fork'
->      uffd = msg.arg.fork.ufd;
->                    ^
+> v1 --> v2:
+> - rename vfio_iova_rw to vfio_dma_rw, vfio iommu driver ops .iova_rw
+> to .dma_rw. (Alex).
+> - change iova and len from unsigned long to dma_addr_t and size_t,
+> respectively. (Alex)
+> - fix possible overflow in dma->vaddr + iova - dma->iova + offset (Alex)
+> - split DMAs from on page boundary to on max available size to eliminate
+>   redundant searching of vfio_dma and switching mm. (Alex)
+> - add a check for IOMMU_WRITE permission.
 > 
-> 2) incomplete solution:
-> I originally changed this line to read:
-> CFLAGS = -Wall -I $(KBUILD_OUTPUT)/usr/include $(EXTRA_CFLAGS)
+> 
+> Yan Zhao (7):
+>   vfio: allow external user to get vfio group from device
+>   vfio: introduce vfio_dma_rw to read/write a range of IOVAs
+>   vfio: avoid inefficient operations on VFIO group in
+>     vfio_pin/unpin_pages
+>   drm/i915/gvt: hold reference of VFIO group during opening of vgpu
+>   drm/i915/gvt: subsitute kvm_read/write_guest with vfio_dma_rw
+>   drm/i915/gvt: switch to user vfio_group_pin/upin_pages
+>   drm/i915/gvt: rw more pages a time for shadow context
+> 
+>  drivers/gpu/drm/i915/gvt/kvmgt.c     |  46 ++++---
+>  drivers/gpu/drm/i915/gvt/scheduler.c |  97 ++++++++++-----
+>  drivers/vfio/vfio.c                  | 180 +++++++++++++++++++++++++++
+>  drivers/vfio/vfio_iommu_type1.c      |  76 +++++++++++
+>  include/linux/vfio.h                 |  13 ++
+>  5 files changed, 360 insertions(+), 52 deletions(-)
 > 
 
-Take a look at seccomp patch I sent out. Use the approach used
-in this patch.
-
-https://lore.kernel.org/linux-kselftest/20200313212404.24552-1-skhan@linuxfoundation.org/T/#u
-
-> This works when the output directory is specified using KBUILD_OUTPUT,
-> but not when the output directory is specified using O=
-> I'm not sure what happens when the output directory is specified
-> with a non-source-tree current working directory.
-> 
-> In any event, while researching a proper solution to this, I found
-> the following in tools/testing/selftests/Makefile:
-> 
-> If compiling with ifneq ($(O),)
->      BUILD := $(O)
-> else
->      ifneq ($(KBUILD_OUTPUT),)
->          BUILD := $(KBUILD_OUTPUT)/kselftest
->      else
->          BUILD := $(shell pwd)
->          DEFAULT_INSTALL_HDR_PATH := 1
->      endif
-> endif
-> 
-> This doesn't seem right.  It looks like the selftests Makefile treats a directory
-> passed in using O= different from one specified using KBUILD_OUTPUT
-> or the current working directory.
-> In the KBUILD_OUTPUT case, you get an extra 'kselftest' directory layer
-> that you don't get for the other two.
-
-Are you using
-
-git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git 
-kernelci branch
-
-This is fixed and that is the very first patch I sent.
-
-I also applied the patch to
-
-git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next 
-branch
-
-thanks,
--- Shuah
