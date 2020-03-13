@@ -2,65 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E235D18525F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 00:33:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD2FB185266
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 00:36:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbgCMXdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 19:33:14 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:52286 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbgCMXdO (ORCPT
+        id S1727590AbgCMXgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 19:36:11 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:37594 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726637AbgCMXgL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 19:33:14 -0400
-Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 02DNWvre053999;
-        Sat, 14 Mar 2020 08:32:57 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav107.sakura.ne.jp);
- Sat, 14 Mar 2020 08:32:57 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav107.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 02DNWvNF053995
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 14 Mar 2020 08:32:57 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [patch] mm, oom: prevent soft lockup on memcg oom for UP systems
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <202003120012.02C0CEUB043533@www262.sakura.ne.jp>
- <alpine.DEB.2.21.2003121101030.158939@chino.kir.corp.google.com>
- <202003130015.02D0F9uT079462@www262.sakura.ne.jp>
- <alpine.DEB.2.21.2003131457370.242651@chino.kir.corp.google.com>
- <fa5d7060-4e6e-16d5-2c37-fec6019b4d62@i-love.sakura.ne.jp>
-Message-ID: <8395df04-9b7a-0084-4bb5-e430efe18b97@i-love.sakura.ne.jp>
-Date:   Sat, 14 Mar 2020 08:32:54 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Fri, 13 Mar 2020 19:36:11 -0400
+Received: by mail-pj1-f66.google.com with SMTP id ca13so5198084pjb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 16:36:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8yb3Smk+WA2kNJUHhi0CWWEYTegjFeAzvGSfP7GO6hE=;
+        b=TflqlyHTwj9HWSK9TQZowQOwFWsskqIaBoymjzHlLwmtLBJMVYPsTb+R3GWOs1v7Ti
+         xlvTgLPvWJed7HLrQH8YrIMgOeF6jKFF9CIgnSc1hJ4qmjM7hSyNWEs8ClRU/KW6Y1vm
+         e1Q0pVlXHRzHL8W8jn4mh54p4elTmSHBw8/VvAy7UGeulkhCyW/CaFWV2qcpiXjHwHUO
+         UfKHHNJ6SknFlGqR7h2epcW8wVWlUC21bgck0h9n1j7wBEqPC0heISglpGIB6/heU2lY
+         JJkeNi9Xcvu5HkXCOP4hNipZMybBhCnY/Ei6jGUFNbrgm4a3uyXJ/jZk0ftJRfrsv1tt
+         kjwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8yb3Smk+WA2kNJUHhi0CWWEYTegjFeAzvGSfP7GO6hE=;
+        b=Uo/2l4V9rXx5PaOy+7NdhOeH9Ka5ocqwvhtRvRy2Aomh+u+QxfIefnML7lWk1/Z+Gk
+         JE8w0Q6rk9MRHAS/PMuM85+v05vCpcKyGv6IWhHvc5x5qbx614B5GC9PJJlUs37QLpOs
+         Xj6h/jkjB302tdtBStpel922TO7emnxNXmTQ/wFSNiLIOost4Hrm56uTdOuwt+mLytLB
+         lNhRbsPBfI7KP57XP3Gklm114FqN4lhEJlABGZ9vb861aftiZNV34Lte6mCwSGr2++ii
+         gV5uawfVc5GGQtWFxvNDgteYqH7Gd3ZYtAnARdXR+wsD5faALzm/lmlhPcsQ/63Nbo8z
+         kVdA==
+X-Gm-Message-State: ANhLgQ1pfZu3M8hKVRdSCre0y69fMgUNW2qZETnFH3Bc/zWJ4vPBBfrl
+        mqlmcwf1HHKhIUU641RRk7xt+NxdZouzg1sdseFWk0mlzmg=
+X-Google-Smtp-Source: ADFU+vslN70O13CIstyDYtjFT6z/TCx8Q8y8naQJ4HvhFoYnijLayIc1CiIYxlFlDENFpInoZkezf8Yo91jWhTHpC3w=
+X-Received: by 2002:a17:90b:d8d:: with SMTP id bg13mr11892026pjb.29.1584142567940;
+ Fri, 13 Mar 2020 16:36:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <fa5d7060-4e6e-16d5-2c37-fec6019b4d62@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200228191821.42412-1-davidgow@google.com>
+In-Reply-To: <20200228191821.42412-1-davidgow@google.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Fri, 13 Mar 2020 16:35:56 -0700
+Message-ID: <CAFd5g446OxmrseU=U-n7D1bL3OdgFF=sYZmUg2utx_Sa9LEF1w@mail.gmail.com>
+Subject: Re: [PATCH v4] Documentation: kunit: Make the KUnit documentation
+ less UML-specific
+To:     David Gow <davidgow@google.com>
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Frank Rowand <frank.rowand@sony.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/03/14 8:15, Tetsuo Handa wrote:
-> If current thread is
-> an OOM victim, schedule_timeout_killable(1) will give other threads (including
-> the OOM reaper kernel thread) CPU time to run.
+On Fri, Feb 28, 2020 at 11:18 AM David Gow <davidgow@google.com> wrote:
+>
+> Remove some of the outmoded "Why KUnit" rationale, and move some
+> UML-specific information to the kunit_tool page. Also update the Getting
+> Started guide to mention running tests without the kunit_tool wrapper.
+>
+> Signed-off-by: David Gow <davidgow@google.com>
+> Reviewed-by: Frank Rowand <frank.rowand@sony.com>
 
-If current thread is an OOM victim, schedule_timeout_killable(1) will give other
-threads (including the OOM reaper kernel thread) CPU time to run, by leaving
-try_charge() path due to should_force_charge() == true and reaching do_exit() path
-instead of returning to userspace code doing "for (;;);".
-
-Unless the problem is that current thread cannot reach should_force_charge() check,
-schedule_timeout_killable(1) should work.
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
