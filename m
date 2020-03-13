@@ -2,113 +2,240 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F27C183F4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 04:08:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D631183F82
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 04:18:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbgCMDIw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 23:08:52 -0400
-Received: from mail-eopbgr70043.outbound.protection.outlook.com ([40.107.7.43]:23621
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726331AbgCMDIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 23:08:51 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nRFK7ZniZ3Alm2VjR9hrxKJennRZEr1n39PUDwhAZcI/MX9LaClRMck4Z+4jCfGBmzz3pOLJmF5UbMI6vvmjpK7etqMOZ/xrbt0etbo6C8V8YUCgw/g6utrQC9PhwEK1rli7HBCopszPabx8BS40d6ts7NzK36x/GagMa0852hMqRHDhRDWeJFZe4WyYECLHgC8PS6NkoprzzaPfaT4C13UFIXzlyooMpLcgHESrchfVVTci+eGUzKPuUhC0TjiUHShAFvV/a3KIRNTw1/DqVNbsd10zE7VHFesA9A1t2i9+64rdUI+J7+scievW3b2lu5YVi1AvSoKKls7K3K9rWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ar5taA56XLik3dPQeFsVGrUfD445/K5UbmP4xtxYbGk=;
- b=OcSTIo5FFJHreggNuogL+axmjPBE9LZ44Aoy2yTuwmXyAdfdXTSdd6QzfruFWX7IvIXD7wtRLCUxIPOnAHjaocNZ8LYz991ciPOEA69SxOB5DBxqv3IiyVGRNB/dcPPAcheUb9W24cWGgVRT+0MegycoQ+W/FOMNLjBtODWEMwCLiQpMLsIC+Blkfg4IZFfCc1z7BSRFh4PmCDIzL0FRadIGn9hhWEVK/+cg0VPNINvKvaZ/Zq3Mu2vnY+ontJRQprN80IDDNYQXkWMp+fSIZ/YtEP9ukJXAGtX3Fk/BMNBK1Ewcn080ICsg6nwMeL8GBhLAwdeDlIK52dFNgf+tRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ar5taA56XLik3dPQeFsVGrUfD445/K5UbmP4xtxYbGk=;
- b=GcB7bD2+xkd8MrQkMHQZeO1tufIo0FZwl42FQZGfifVbj0JCetz6zJdP3eDMLvWeAiDz3m7KV5ojDrp2kSYFv0lVdCf4Knb2S3Eibxbz5zw/dF4ecnJHepKFx90N655gaEpg0N2Bn9mluDvPbmoU/IGG/5O9kfYBPrI9oclYpnI=
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.51.23) by
- VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.51.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2793.17; Fri, 13 Mar 2020 03:08:48 +0000
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::9547:9dfa:76b8:71b1]) by VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::9547:9dfa:76b8:71b1%7]) with mapi id 15.20.2793.018; Fri, 13 Mar 2020
- 03:08:48 +0000
-From:   Peter Chen <peter.chen@nxp.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 1/1] regulator: fixed: add system pm routines for pinctrl
-Thread-Topic: [PATCH 1/1] regulator: fixed: add system pm routines for pinctrl
-Thread-Index: AQHV+FpZgufkrsn3KkuJmHgdNm1nAKhE1zoAgAAUhICAABsJgIAAB0wAgAABBgCAAMmjgA==
-Date:   Fri, 13 Mar 2020 03:08:48 +0000
-Message-ID: <20200313030851.GI14625@b29397-desktop>
-References: <20200312103804.24174-1-peter.chen@nxp.com>
- <20200312114712.GA4038@sirena.org.uk> <20200312130037.GG14625@b29397-desktop>
- <20200312143723.GF4038@sirena.org.uk> <20200312150330.GH14625@b29397-desktop>
- <20200312150710.GG4038@sirena.org.uk>
-In-Reply-To: <20200312150710.GG4038@sirena.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peter.chen@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 4211b07c-136f-4932-7e8e-08d7c6fbd97e
-x-ms-traffictypediagnostic: VI1PR04MB5327:|VI1PR04MB5327:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB5327B5C4FBDA79704B28AC248BFA0@VI1PR04MB5327.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 034119E4F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(376002)(346002)(396003)(366004)(39860400002)(136003)(199004)(66446008)(66946007)(33656002)(71200400001)(91956017)(66556008)(76116006)(66476007)(316002)(33716001)(64756008)(5660300002)(26005)(6506007)(6512007)(186003)(9686003)(6916009)(6486002)(4326008)(4744005)(53546011)(2906002)(81156014)(44832011)(54906003)(81166006)(86362001)(1076003)(478600001)(8676002)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5327;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: nUuYm8uFG6O+EoRIu0Sem2a7/uKC0qE5eVnnW0xcmkn5iFc2s4qitCFkPN61Sq39uynjuhuRpJUWrnkQy5s2BAFUiABYd+cDYCDMw9zghIk5ibRat7FRTSF+aF/fehXitdwwv9Nr0B6mFxneFxsd9pXLSOWMdNSawo1VVVg66NeliZ8wFofKrMBqgWn4+YQUMJDEl2ME8lJ3g9VjMDJxHsGCqcee109orJ3yWcpQOiDOCskvg6WpaHZtQbQ4FRQHXiJbPaFmEKoOPgW2CQ3wCAXl4+Z28YotbDqxkhTrL2pNlb3akEbZiZ3ZHBFecNDm3DjYw3jRlPHioon2uUIe/8GD++UTFi1xOaPlyLrppd8shSz+InapooWwggBsOYK97UaNmvuFQwwJX8ipHJEtrFBbnFZIzJvsz2Cq5KmqrLAzJPEikRWATu6oZagA5+jE
-x-ms-exchange-antispam-messagedata: SyCA6VwcOtSW7QdON7j+QOACj2NihLAEuYygJvRgEEAujRUpYLyOP7jUpNI3PXX1OVLbchdTJq82Ucph3jKVZBleWM+Jbg4Zw6CSC0pONaXZbtfjZfbGd3ogZDAOQTWpgXANoGkccfQtu7quyxZ+yg==
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <7857552FA995FB4AA07CA7F99A6EEA02@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4211b07c-136f-4932-7e8e-08d7c6fbd97e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2020 03:08:48.1802
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gXu2RY18VIxmkjtZYlv3sOAmkrRJFCgaM89AAY9NmWQ+jC8xb99zmvfeXBR+gFokBoJBj94cB9C7neF8MtWC+A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5327
+        id S1726780AbgCMDSg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 23:18:36 -0400
+Received: from mga17.intel.com ([192.55.52.151]:3814 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726390AbgCMDSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 23:18:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 20:18:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,546,1574150400"; 
+   d="scan'208";a="278065177"
+Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.16])
+  by fmsmga002.fm.intel.com with ESMTP; 12 Mar 2020 20:18:32 -0700
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     intel-gvt-dev@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     alex.williamson@redhat.com, zhenyuw@linux.intel.com,
+        pbonzini@redhat.com, kevin.tian@intel.com, peterx@redhat.com,
+        Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH v4 2/7] vfio: introduce vfio_dma_rw to read/write a range of IOVAs
+Date:   Thu, 12 Mar 2020 23:09:01 -0400
+Message-Id: <20200313030901.7830-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200313030548.7705-1-yan.y.zhao@intel.com>
+References: <20200313030548.7705-1-yan.y.zhao@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-03-12 15:07:10, Mark Brown wrote:
-> On Thu, Mar 12, 2020 at 03:03:26PM +0000, Peter Chen wrote:
-> > On 20-03-12 14:37:23, Mark Brown wrote:
->=20
-> > > Surely it's the GPIO controller that needs pinctrl support then?
->=20
-> > But the pinctrl register value for this gpio will be cleared after
-> > suspend, we need to restore it, otherwise, the function will be not
-> > gpio. See below patch:
->=20
-> I'd expect that this would be handled by the GPIO driver, the user
-> shouldn't need to care.
+vfio_dma_rw will read/write a range of user space memory pointed to by
+IOVA into/from a kernel buffer without enforcing pinning the user space
+memory.
 
-GPIO function is just our case for this fixed regulator, other users for
-this fixed regulator may set pinctrl as other functions.
+TODO: mark the IOVAs to user space memory dirty if they are written in
+vfio_dma_rw().
 
-Here, it is just save and restore pinctrl value for fixed regulator
-driver, not related to GPIO.
+Cc: Kevin Tian <kevin.tian@intel.com>
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+---
+ drivers/vfio/vfio.c             | 49 +++++++++++++++++++++
+ drivers/vfio/vfio_iommu_type1.c | 76 +++++++++++++++++++++++++++++++++
+ include/linux/vfio.h            |  5 +++
+ 3 files changed, 130 insertions(+)
 
---=20
+diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
+index 97b972bfb735..6997f711b925 100644
+--- a/drivers/vfio/vfio.c
++++ b/drivers/vfio/vfio.c
+@@ -1999,6 +1999,55 @@ int vfio_unpin_pages(struct device *dev, unsigned long *user_pfn, int npage)
+ }
+ EXPORT_SYMBOL(vfio_unpin_pages);
+ 
++
++/*
++ * This interface allows the CPUs to perform some sort of virtual DMA on
++ * behalf of the device.
++ *
++ * CPUs read/write from/into a range of IOVAs pointing to user space memory
++ * into/from a kernel buffer.
++ *
++ * As the read/write of user space memory is conducted via the CPUs and is
++ * not a real device DMA, it is not necessary to pin the user space memory.
++ *
++ * The caller needs to call vfio_group_get_external_user() or
++ * vfio_group_get_external_user_from_dev() prior to calling this interface,
++ * so as to prevent the VFIO group from disposal in the middle of the call.
++ * But it can keep the reference to the VFIO group for several calls into
++ * this interface.
++ * After finishing using of the VFIO group, the caller needs to release the
++ * VFIO group by calling vfio_group_put_external_user().
++ *
++ * @group [in]		: VFIO group
++ * @user_iova [in]	: base IOVA of a user space buffer
++ * @data [in]		: pointer to kernel buffer
++ * @len [in]		: kernel buffer length
++ * @write		: indicate read or write
++ * Return error code on failure or 0 on success.
++ */
++int vfio_dma_rw(struct vfio_group *group, dma_addr_t user_iova,
++		void *data, size_t len, bool write)
++{
++	struct vfio_container *container;
++	struct vfio_iommu_driver *driver;
++	int ret = 0;
++
++	if (!group || !data || len <= 0)
++		return -EINVAL;
++
++	container = group->container;
++	driver = container->iommu_driver;
++
++	if (likely(driver && driver->ops->dma_rw))
++		ret = driver->ops->dma_rw(container->iommu_data,
++					  user_iova, data, len, write);
++	else
++		ret = -ENOTTY;
++
++	return ret;
++}
++EXPORT_SYMBOL(vfio_dma_rw);
++
+ static int vfio_register_iommu_notifier(struct vfio_group *group,
+ 					unsigned long *events,
+ 					struct notifier_block *nb)
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index a177bf2c6683..9fdfae1cb17a 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -27,6 +27,7 @@
+ #include <linux/iommu.h>
+ #include <linux/module.h>
+ #include <linux/mm.h>
++#include <linux/mmu_context.h>
+ #include <linux/rbtree.h>
+ #include <linux/sched/signal.h>
+ #include <linux/sched/mm.h>
+@@ -2305,6 +2306,80 @@ static int vfio_iommu_type1_unregister_notifier(void *iommu_data,
+ 	return blocking_notifier_chain_unregister(&iommu->notifier, nb);
+ }
+ 
++static int vfio_iommu_type1_dma_rw_chunk(struct vfio_iommu *iommu,
++					 dma_addr_t user_iova, void *data,
++					 size_t count, bool write,
++					 size_t *copied)
++{
++	struct mm_struct *mm;
++	unsigned long vaddr;
++	struct vfio_dma *dma;
++	bool kthread = current->mm == NULL;
++	size_t offset;
++
++	*copied = 0;
++
++	dma = vfio_find_dma(iommu, user_iova, 1);
++	if (!dma)
++		return -EINVAL;
++
++	if ((write && !(dma->prot & IOMMU_WRITE)) ||
++			!(dma->prot & IOMMU_READ))
++		return -EPERM;
++
++	mm = get_task_mm(dma->task);
++
++	if (!mm)
++		return -EPERM;
++
++	if (kthread)
++		use_mm(mm);
++	else if (current->mm != mm)
++		goto out;
++
++	offset = user_iova - dma->iova;
++
++	if (count > dma->size - offset)
++		count = dma->size - offset;
++
++	vaddr = dma->vaddr + offset;
++
++	if (write)
++		*copied = __copy_to_user((void __user *)vaddr, data,
++					 count) ? 0 : count;
++	else
++		*copied = __copy_from_user(data, (void __user *)vaddr,
++					   count) ? 0 : count;
++	if (kthread)
++		unuse_mm(mm);
++out:
++	mmput(mm);
++	return *copied ? 0 : -EFAULT;
++}
++
++static int vfio_iommu_type1_dma_rw(void *iommu_data, dma_addr_t user_iova,
++				   void *data, size_t count, bool write)
++{
++	struct vfio_iommu *iommu = iommu_data;
++	int ret = 0;
++	size_t done;
++
++	mutex_lock(&iommu->lock);
++	while (count > 0) {
++		ret = vfio_iommu_type1_dma_rw_chunk(iommu, user_iova, data,
++						    count, write, &done);
++		if (ret)
++			break;
++
++		count -= done;
++		data += done;
++		user_iova += done;
++	}
++
++	mutex_unlock(&iommu->lock);
++	return ret;
++}
++
+ static const struct vfio_iommu_driver_ops vfio_iommu_driver_ops_type1 = {
+ 	.name			= "vfio-iommu-type1",
+ 	.owner			= THIS_MODULE,
+@@ -2317,6 +2392,7 @@ static const struct vfio_iommu_driver_ops vfio_iommu_driver_ops_type1 = {
+ 	.unpin_pages		= vfio_iommu_type1_unpin_pages,
+ 	.register_notifier	= vfio_iommu_type1_register_notifier,
+ 	.unregister_notifier	= vfio_iommu_type1_unregister_notifier,
++	.dma_rw			= vfio_iommu_type1_dma_rw,
+ };
+ 
+ static int __init vfio_iommu_type1_init(void)
+diff --git a/include/linux/vfio.h b/include/linux/vfio.h
+index fb71e0ac0e76..34b2fdf4de6e 100644
+--- a/include/linux/vfio.h
++++ b/include/linux/vfio.h
+@@ -82,6 +82,8 @@ struct vfio_iommu_driver_ops {
+ 					     struct notifier_block *nb);
+ 	int		(*unregister_notifier)(void *iommu_data,
+ 					       struct notifier_block *nb);
++	int		(*dma_rw)(void *iommu_data, dma_addr_t user_iova,
++				  void *data, size_t count, bool write);
+ };
+ 
+ extern int vfio_register_iommu_driver(const struct vfio_iommu_driver_ops *ops);
+@@ -109,6 +111,9 @@ extern int vfio_pin_pages(struct device *dev, unsigned long *user_pfn,
+ extern int vfio_unpin_pages(struct device *dev, unsigned long *user_pfn,
+ 			    int npage);
+ 
++extern int vfio_dma_rw(struct vfio_group *group, dma_addr_t user_iova,
++		       void *data, size_t len, bool write);
++
+ /* each type has independent events */
+ enum vfio_notify_type {
+ 	VFIO_IOMMU_NOTIFY = 0,
+-- 
+2.17.1
 
-Thanks,
-Peter Chen=
