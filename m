@@ -2,124 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1C4D1840DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 07:31:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AAFA1840E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 07:39:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbgCMGby (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 02:31:54 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36323 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbgCMGby (ORCPT
+        id S1726377AbgCMGjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 02:39:25 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:54692 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbgCMGjY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 02:31:54 -0400
-Received: by mail-io1-f67.google.com with SMTP id d15so8261697iog.3;
-        Thu, 12 Mar 2020 23:31:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gwo18I+qhDyK0f9CRK6fxLCdLThMsDTks/uef8gm4kY=;
-        b=arC548UFw58zPiZMTGpKSTA6C6cShe4/2dw/ERpegDkNqAfCg04TZN4DNuXAGiPlWr
-         wpIlPtGJ8GPVxD37ww0/w34k112uvnTr9PsHbgyAiKqDeKaTewKk4XNcZL3L1tLv/2Ty
-         zhQaCGOfFI4vhmKGlFgoFBweHPRg9V4g50Cg4rmKpBG1oULr/u58nB5rowQucqVdBFDC
-         taW9/oROrxRrnjSpEKQiok8fJOJ9zvNbuhGz9A+i/aAJOr4VSfxZSZb2aS4P5uMEe/F6
-         9Q/rIiQfE5+nL17Egz0+euMGpKMeuYP5t2KK/XV6aDHDZVyI+pT+jdTTsK+Bl2C+vh78
-         JTHA==
-X-Gm-Message-State: ANhLgQ0vLxbb7Qf1CtK3POF+QhCCMG9wEy8KvB0KkXthXDXKSdlgNBJf
-        kmxekXZfdla1cQouxOd53WTgJoMlPyH+Z8GESaAVT+cW
-X-Google-Smtp-Source: ADFU+vsYn7olWjR5ZdnVzmHpadFtCBryj55XjQULGF5Jf4ExDfr1NLEO1VzBnFywsf13xgwymPRjhRkizQCmf4VjPIo=
-X-Received: by 2002:a6b:8ec2:: with SMTP id q185mr10907291iod.180.1584081112766;
- Thu, 12 Mar 2020 23:31:52 -0700 (PDT)
+        Fri, 13 Mar 2020 02:39:24 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02D6cLBh045507;
+        Fri, 13 Mar 2020 01:38:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584081501;
+        bh=WnpTMzvGCYaYRe1U/C0Li2r73YcUNVNL0RBtJe7C5ek=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ZZU9PqB4WRSyYzB+VHvVQFyK7EmiAjq7ufZBHjGSu7rHcr2wMpyGythnWr56MEX4x
+         jKgXdxchUY48lmtQdykvq64KXsvJoMlqcgXzwCR6gQ//zVXgq0+6FZ8wPsxjJuoGfb
+         7K65LjX1xfW1E8gPKPGXagL9Rca4Yks2WNscriOI=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02D6cL6q015872;
+        Fri, 13 Mar 2020 01:38:21 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 13
+ Mar 2020 01:38:21 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 13 Mar 2020 01:38:21 -0500
+Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02D6cAZB046397;
+        Fri, 13 Mar 2020 01:38:11 -0500
+Subject: Re: [PATCH 04/23] mtd: spi-nor: Expose stuctures and functions to
+ manufacturer drivers
+To:     <Tudor.Ambarus@microchip.com>, <bbrezillon@kernel.org>,
+        <linux-mtd@lists.infradead.org>
+CC:     <miquel.raynal@bootlin.com>, <richard@nod.at>, <joel@jms.id.au>,
+        <andrew@aj.id.au>, <Nicolas.Ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>,
+        <matthias.bgg@gmail.com>, <vz@mleia.com>,
+        <michal.simek@xilinx.com>, <ludovic.barre@st.com>,
+        <john.garry@huawei.com>, <tglx@linutronix.de>,
+        <nishkadg.linux@gmail.com>, <michael@walle.cc>,
+        <dinguyen@kernel.org>, <thor.thayer@linux.intel.com>,
+        <swboyd@chromium.org>, <opensource@jilayne.com>,
+        <mika.westerberg@linux.intel.com>, <kstewart@linuxfoundation.org>,
+        <allison@lohutok.net>, <jethro@fortanix.com>, <info@metux.net>,
+        <alexander.sverdlin@nokia.com>, <rfontana@redhat.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-aspeed@lists.ozlabs.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20200302180730.1886678-1-tudor.ambarus@microchip.com>
+ <20200302180730.1886678-5-tudor.ambarus@microchip.com>
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <6b30b61b-c8e6-956e-b8b0-b795dfc9648f@ti.com>
+Date:   Fri, 13 Mar 2020 12:08:49 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-References: <1584069257-30896-1-git-send-email-lixing@loongson.cn> <1584069257-30896-3-git-send-email-lixing@loongson.cn>
-In-Reply-To: <1584069257-30896-3-git-send-email-lixing@loongson.cn>
-From:   Huacai Chen <chenhc@lemote.com>
-Date:   Fri, 13 Mar 2020 14:38:20 +0800
-Message-ID: <CAAhV-H6_eouq_i9RRntTVk2kwEDf62zSoy1Xz9rD30cVjKcRyg@mail.gmail.com>
-Subject: Re: [PATCH v2 Resend 3/3] KVM: MIPS: Support kvm modules autoprobed
- when startup system
-To:     Xing Li <lixing@loongson.cn>
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>, kvm@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, maobibo@loongson.cn,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200302180730.1886678-5-tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Lixing,
 
-On Fri, Mar 13, 2020 at 11:14 AM Xing Li <lixing@loongson.cn> wrote:
->
-> Currently, the module_init of kvm_mips_init cannot force the kvm
-> modules insmod when startup system.
->
-> Add new feature CPU_MIPS_VZ in elf_hwcap to support KVM auto probe
-> when hardware virtualization supported.
-I think this patch is not suitable, because:
-1, KVM has VZ mode and TE mode, you only consider VZ mode?
-2, As X86 does, you can use udev or modprobe.conf to autoprobe kvm module.
 
-Regards,
-Huacai
->
-> Signed-off-by: Xing Li <lixing@loongson.cn>
-> ---
->  arch/mips/include/uapi/asm/hwcap.h | 1 +
->  arch/mips/kernel/cpu-probe.c       | 4 +++-
->  arch/mips/kvm/mips.c               | 3 ++-
->  3 files changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/mips/include/uapi/asm/hwcap.h b/arch/mips/include/uapi/asm/hwcap.h
-> index 1ade1da..9e66509 100644
-> --- a/arch/mips/include/uapi/asm/hwcap.h
-> +++ b/arch/mips/include/uapi/asm/hwcap.h
-> @@ -17,5 +17,6 @@
->  #define HWCAP_LOONGSON_MMI  (1 << 11)
->  #define HWCAP_LOONGSON_EXT  (1 << 12)
->  #define HWCAP_LOONGSON_EXT2 (1 << 13)
-> +#define HWCAP_MIPS_VZ       (1 << 14)
->
->  #endif /* _UAPI_ASM_HWCAP_H */
-> diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
-> index c543326..b305269 100644
-> --- a/arch/mips/kernel/cpu-probe.c
-> +++ b/arch/mips/kernel/cpu-probe.c
-> @@ -2242,8 +2242,10 @@ void cpu_probe(void)
->         if (cpu_has_loongson_ext2)
->                 elf_hwcap |= HWCAP_LOONGSON_EXT2;
->
-> -       if (cpu_has_vz)
-> +       if (cpu_has_vz) {
->                 cpu_probe_vz(c);
-> +               elf_hwcap |= HWCAP_MIPS_VZ;
-> +       }
->
->         cpu_probe_vmbits(c);
->
-> diff --git a/arch/mips/kvm/mips.c b/arch/mips/kvm/mips.c
-> index 1109924..1da5df3 100644
-> --- a/arch/mips/kvm/mips.c
-> +++ b/arch/mips/kvm/mips.c
-> @@ -19,6 +19,7 @@
->  #include <linux/sched/signal.h>
->  #include <linux/fs.h>
->  #include <linux/memblock.h>
-> +#include <linux/cpufeature.h>
->
->  #include <asm/fpu.h>
->  #include <asm/page.h>
-> @@ -1742,7 +1743,7 @@ static void __exit kvm_mips_exit(void)
->         unregister_die_notifier(&kvm_mips_csr_die_notifier);
->  }
->
-> -module_init(kvm_mips_init);
-> +module_cpu_feature_match(MIPS_VZ, kvm_mips_init);
->  module_exit(kvm_mips_exit);
->
->  EXPORT_TRACEPOINT_SYMBOL(kvm_exit);
-> --
-> 2.1.0
->
+On 02/03/20 11:37 pm, Tudor.Ambarus@microchip.com wrote:
+> From: Boris Brezillon <bbrezillon@kernel.org>
+> 
+> Expose the flash_info struct and the generic set_4byte() implementations.
+> Some manufacturers rely on the generic set_4byte() implementations.
+> Remove the static specifier and expose their prototypes in core.h.
+> 
+> Signed-off-by: Boris Brezillon <bbrezillon@kernel.org>
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+
+Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
+
+-- 
+Regards
+Vignesh
