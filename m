@@ -2,94 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B0C918480B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 14:26:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55B8E184815
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 14:29:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbgCMN05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 09:26:57 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36173 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbgCMN05 (ORCPT
+        id S1726713AbgCMN3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 09:29:36 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54923 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726479AbgCMN3g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 09:26:57 -0400
-Received: by mail-wr1-f65.google.com with SMTP id s5so12135722wrg.3;
-        Fri, 13 Mar 2020 06:26:54 -0700 (PDT)
+        Fri, 13 Mar 2020 09:29:36 -0400
+Received: by mail-wm1-f66.google.com with SMTP id n8so9945476wmc.4;
+        Fri, 13 Mar 2020 06:29:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=hGTtD4LLU6z8nLYoqJKtaVgPwNbnoGTn8gZTvLe4N9c=;
-        b=U2Uo01NM91NeBSJVW7uzYrj/clfD2+uDJn2m4bO9PQGnqG9CONH5kjfrKGbB9kawLl
-         UosbWPOXW/QVxzhxAX5JADqAQcJnZkZFXWyT8hJN7kZRM3hAivHdpHaYS5dwB013jV9a
-         nhFTaA+p6bTYIcgeLrgYQEfK5iHcY9GXnAvWveEnRMlxrJPzD4GAFqPT0wdBipKkxWSF
-         8PUAG1CpXxlydZs0yZlAwx8gG6zdOtjmL688rc+4Iqhx+Sp5g0TAmvGJmHemf2t4DPXK
-         TlOy5e89BbW+pwPRdA7DhYiZ07Z2DCTZhbuetN9ETxY8CuUqAYwTKz+LA4/G9tTKIH3I
-         YNGw==
+        bh=lEkfce6ps+UhmXb+c5fNG4aKtiEwyEYC75rMDl9C7ik=;
+        b=lgLZJy0utG5SoquafA2HUHEAEzHi6MbriJ8r9wAgdDRgVB2UtbAZqIS9doBFyBn3qu
+         Q2bNE2bCyi7HWDSFqYn8JmXEjvphB0AqR1ZNHDbsufLASftuPV69RiuqYldlc6/WN7Ha
+         zR5lmfpQ7nri6Bca+EYYbwZ5kKoQhFK4gp95yK+5hWrYljn5dtHXRw0sAedWmvk/fGXX
+         2tRzWrz68bGvC0eIpVNS8fkhSIiGMkNhXRDVw8IoG6JWL8vNqt2WKRdw6qeOwDtpEcVC
+         ixNbQEOScjAkEd0eBflSBkhNSc/7DDrBk60Lniac6tGbGmJ0OjLgDfdN9w42I5//RhQl
+         bsbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=hGTtD4LLU6z8nLYoqJKtaVgPwNbnoGTn8gZTvLe4N9c=;
-        b=JCjvwRuf5oUFHqHGONU227wnHt7q8naKvC/STYGCVbqaFLrMdCzJUIFQXoZWW64VIu
-         HiRc+3Tj/AQUkJmF8QMQ6vXj0ZXSgFsw21MKAyyE8/7bXwP8/u/DTkXUEX51kNIuDY87
-         vDVdZ748vCreXEJjOOrD3kK9Hu1dktVCnJQz/Z+IXnB3a+twIEEVvceSK918DRCHW8oW
-         UKfLCnqBn0ZOP0kY7e6kwrNfgOhFtmD8lu1iHDAjsyAYGTJDXbIuKO48BZ6G3JYc+Ziq
-         AxMQHO0vFLuB+JakQaVhOlGAJbcnnMRXDD30lSYRLq4uuoda9tJ+R/cKye1vBMPyDava
-         OOQA==
-X-Gm-Message-State: ANhLgQ12BwB4MmXIe8tDoS7pCwT+Hed48oaJkk3dFWM3yOzQzV3MPVO9
-        ppcyW80hF1ka0gBCqRvsKqE=
-X-Google-Smtp-Source: ADFU+vv9CSAECvZnYj48mBzZNjuL7qHzUdi9abc7khFeX05zaTMSUwv7MmoseyxxldsKLgNVD8282g==
-X-Received: by 2002:a5d:65c5:: with SMTP id e5mr17438260wrw.161.1584106013666;
-        Fri, 13 Mar 2020 06:26:53 -0700 (PDT)
+        bh=lEkfce6ps+UhmXb+c5fNG4aKtiEwyEYC75rMDl9C7ik=;
+        b=VGFb7jX9zITq7B2H23XeFWGTZIYA4G26AfIa45JEGW26MwOrVYrZIfMWqnVcj3FzEm
+         h5xQCTVmyBfuv9/69U8kETQwstpYHcRXwS8tlw/BnVdXdtL3VsTGEXENOnzXT35izw3O
+         T2uViDgJZkz4f3BiudubxlGcoJCa4qK0HzWwcd9r9bt+HfVICWs5oaGWLosPfjn5DSYD
+         Yo+SLYlwTV1u5Te13L+ncALGV9yaM86Rd3+raO0yF79pIBr1/ZA82l2L9N86vQkhg+M5
+         JqbJThnhCxYL0EILREDVyCc5fss31/4eLz8+/srwmTIC2M7lMj6ycAaRfhkydmJ8asYe
+         jGbg==
+X-Gm-Message-State: ANhLgQ1UiLiAQtT9dlAmiXANg5R8egK2Sy8/PpkzG3FLKA8gMN6+SXk0
+        ib0dr+Gfm7wYHU8aoPgOzps=
+X-Google-Smtp-Source: ADFU+vuwLQmmZnIs6S6VI+FSvk9wQ+gnswe4ErfBUUselxUc9eSD+2hTZU+er34sHCdtoP1Bo4k4Mg==
+X-Received: by 2002:a1c:68d5:: with SMTP id d204mr10866750wmc.15.1584106173975;
+        Fri, 13 Mar 2020 06:29:33 -0700 (PDT)
 Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id w67sm12994428wmb.41.2020.03.13.06.26.52
+        by smtp.gmail.com with ESMTPSA id z19sm17576705wma.41.2020.03.13.06.29.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Mar 2020 06:26:53 -0700 (PDT)
+        Fri, 13 Mar 2020 06:29:33 -0700 (PDT)
 From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+To:     jic23@kernel.org
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        heiko@sntech.de, robh+dt@kernel.org, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: rockchip: remove clock-frequency from saradc node rv1108
-Date:   Fri, 13 Mar 2020 14:26:46 +0100
-Message-Id: <20200313132646.10317-1-jbx6244@gmail.com>
+Subject: [PATCH v1 1/3] dt-bindings: iio: adc: convert rockchip saradc bindings to yaml
+Date:   Fri, 13 Mar 2020 14:29:24 +0100
+Message-Id: <20200313132926.10543-1-jbx6244@gmail.com>
 X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An experimental test with the command below gives these errors:
-
-arch/arm/boot/dts/rv1108-elgin-r1.dt.yaml: adc@1038c000:
-'clock-frequency'
-does not match any of the regexes: 'pinctrl-[0-9]+'
-arch/arm/boot/dts/rv1108-evb.dt.yaml: adc@1038c000:
-'clock-frequency'
-does not match any of the regexes: 'pinctrl-[0-9]+'
-
-'clock-frequency' is not a valid property for a saradc node,
-so remove it.
-
-make ARCH=arm dtbs_check
-DT_SCHEMA_FILES=Documentation/devicetree/bindings/iio/adc/
-rockchip-saradc.yaml
+Current dts files with 'saradc' nodes are manually verified.
+In order to automate this process rockchip-saradc.txt
+has to be converted to yaml.
 
 Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- arch/arm/boot/dts/rv1108.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+ .../bindings/iio/adc/rockchip-saradc.txt           | 37 ----------
+ .../bindings/iio/adc/rockchip-saradc.yaml          | 79 ++++++++++++++++++++++
+ 2 files changed, 79 insertions(+), 37 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/iio/adc/rockchip-saradc.txt
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
 
-diff --git a/arch/arm/boot/dts/rv1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
-index 153868c62..f9cfe2c80 100644
---- a/arch/arm/boot/dts/rv1108.dtsi
-+++ b/arch/arm/boot/dts/rv1108.dtsi
-@@ -366,7 +366,6 @@
- 		reg = <0x1038c000 0x100>;
- 		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
- 		#io-channel-cells = <1>;
--		clock-frequency = <1000000>;
- 		clocks = <&cru SCLK_SARADC>, <&cru PCLK_SARADC>;
- 		clock-names = "saradc", "apb_pclk";
- 		status = "disabled";
+diff --git a/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.txt b/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.txt
+deleted file mode 100644
+index c2c50b598..000000000
+--- a/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.txt
++++ /dev/null
+@@ -1,37 +0,0 @@
+-Rockchip Successive Approximation Register (SAR) A/D Converter bindings
+-
+-Required properties:
+-- compatible: should be "rockchip,<name>-saradc" or "rockchip,rk3066-tsadc"
+-   - "rockchip,saradc": for rk3188, rk3288
+-   - "rockchip,rk3066-tsadc": for rk3036
+-   - "rockchip,rk3328-saradc", "rockchip,rk3399-saradc": for rk3328
+-   - "rockchip,rk3399-saradc": for rk3399
+-   - "rockchip,rv1108-saradc", "rockchip,rk3399-saradc": for rv1108
+-
+-- reg: physical base address of the controller and length of memory mapped
+-       region.
+-- interrupts: The interrupt number to the cpu. The interrupt specifier format
+-              depends on the interrupt controller.
+-- clocks: Must contain an entry for each entry in clock-names.
+-- clock-names: Shall be "saradc" for the converter-clock, and "apb_pclk" for
+-               the peripheral clock.
+-- vref-supply: The regulator supply ADC reference voltage.
+-- #io-channel-cells: Should be 1, see ../iio-bindings.txt
+-
+-Optional properties:
+-- resets: Must contain an entry for each entry in reset-names if need support
+-	  this option. See ../reset/reset.txt for details.
+-- reset-names: Must include the name "saradc-apb".
+-
+-Example:
+-	saradc: saradc@2006c000 {
+-		compatible = "rockchip,saradc";
+-		reg = <0x2006c000 0x100>;
+-		interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&cru SCLK_SARADC>, <&cru PCLK_SARADC>;
+-		clock-names = "saradc", "apb_pclk";
+-		resets = <&cru SRST_SARADC>;
+-		reset-names = "saradc-apb";
+-		#io-channel-cells = <1>;
+-		vref-supply = <&vcc18>;
+-	};
+diff --git a/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
+new file mode 100644
+index 000000000..2908788b3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
+@@ -0,0 +1,79 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/adc/rockchip-saradc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Rockchip Successive Approximation Register (SAR) A/D Converter
++
++maintainers:
++  - Heiko Stuebner <heiko@sntech.de>
++
++properties:
++  compatible:
++    oneOf:
++      - const: rockchip,saradc
++      - const: rockchip,rk3066-tsadc
++      - const: rockchip,rk3399-saradc
++      - items:
++          - enum:
++            - rockchip,rk3328-saradc
++            - rockchip,rv1108-saradc
++          - const: rockchip,rk3399-saradc
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: converter clock
++      - description: peripheral clock
++
++  clock-names:
++    items:
++      - const: saradc
++      - const: apb_pclk
++
++  resets:
++    maxItems: 1
++
++  reset-names:
++    const: saradc-apb
++
++  vref-supply:
++    description:
++      The regulator supply for the ADC reference voltage.
++
++  "#io-channel-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - vref-supply
++  - "#io-channel-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/rk3288-cru.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    saradc: saradc@2006c000 {
++      compatible = "rockchip,saradc";
++      reg = <0x2006c000 0x100>;
++      interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++      clocks = <&cru SCLK_SARADC>, <&cru PCLK_SARADC>;
++      clock-names = "saradc", "apb_pclk";
++      resets = <&cru SRST_SARADC>;
++      reset-names = "saradc-apb";
++      vref-supply = <&vcc18>;
++      #io-channel-cells = <1>;
++    };
 -- 
 2.11.0
 
