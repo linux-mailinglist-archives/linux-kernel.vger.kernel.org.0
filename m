@@ -2,298 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19749184FA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 20:53:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33AA6184FA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 20:54:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727618AbgCMTxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 15:53:10 -0400
-Received: from mga11.intel.com ([192.55.52.93]:10904 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727386AbgCMTxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 15:53:08 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 12:53:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,549,1574150400"; 
-   d="scan'208";a="278346361"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by fmsmga002.fm.intel.com with SMTP; 13 Mar 2020 12:53:02 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 13 Mar 2020 21:53:01 +0200
-Date:   Fri, 13 Mar 2020 21:53:01 +0200
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     "Laxminarayan Bharadiya, Pankaj" 
-        <pankaj.laxminarayan.bharadiya@intel.com>
-Cc:     "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "tzimmermann@suse.de" <tzimmermann@suse.de>,
-        "mripard@kernel.org" <mripard@kernel.org>,
-        "mihail.atanassov@arm.com" <mihail.atanassov@arm.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        "Souza, Jose" <jose.souza@intel.com>,
-        "De Marchi, Lucas" <lucas.demarchi@intel.com>,
-        "Roper, Matthew D" <matthew.d.roper@intel.com>,
-        "Deak, Imre" <imre.deak@intel.com>,
-        "Shankar, Uma" <uma.shankar@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Nautiyal, Ankit K" <ankit.k.nautiyal@intel.com>
-Subject: Re: [RFC][PATCH 5/5] drm/i915/display: Add Nearest-neighbor based
- integer scaling support
-Message-ID: <20200313195301.GQ13686@intel.com>
-References: <20200225070545.4482-1-pankaj.laxminarayan.bharadiya@intel.com>
- <20200225070545.4482-6-pankaj.laxminarayan.bharadiya@intel.com>
- <20200310161723.GK13686@intel.com>
- <E92BA18FDE0A5B43B7B3DA7FCA031286057B2C55@BGSMSX107.gar.corp.intel.com>
- <20200312135438.GF13686@intel.com>
- <E92BA18FDE0A5B43B7B3DA7FCA031286057B474F@BGSMSX107.gar.corp.intel.com>
+        id S1727363AbgCMTyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 15:54:12 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:47393 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726480AbgCMTyM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 15:54:12 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TsVCDSU_1584129245;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TsVCDSU_1584129245)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 14 Mar 2020 03:54:07 +0800
+Subject: Re: [PATCH 1/2] mm: swap: make page_evictable() inline
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1584124476-76534-1-git-send-email-yang.shi@linux.alibaba.com>
+ <CALvZod4W9kkh578Kix7+M9Jkwm1sxx2zvvPG+0Us3R8bEkpEpg@mail.gmail.com>
+ <520b3295-9fb8-04a7-6215-9bfda4f1a268@linux.alibaba.com>
+ <CALvZod6VQ4PWNh=LKifx-8CfUMeeafE0ZoEswG3x2pXxKbRAxA@mail.gmail.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <94283259-a0ee-d134-48da-cf5400baaba1@linux.alibaba.com>
+Date:   Fri, 13 Mar 2020 12:54:04 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <E92BA18FDE0A5B43B7B3DA7FCA031286057B474F@BGSMSX107.gar.corp.intel.com>
-X-Patchwork-Hint: comment
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CALvZod6VQ4PWNh=LKifx-8CfUMeeafE0ZoEswG3x2pXxKbRAxA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 08:45:35AM +0000, Laxminarayan Bharadiya, Pankaj wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > Sent: 12 March 2020 19:25
-> > To: Laxminarayan Bharadiya, Pankaj
-> > <pankaj.laxminarayan.bharadiya@intel.com>
-> > Cc: jani.nikula@linux.intel.com; daniel@ffwll.ch; intel-
-> > gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org; airlied@linux.ie;
-> > maarten.lankhorst@linux.intel.com; tzimmermann@suse.de;
-> > mripard@kernel.org; mihail.atanassov@arm.com; Joonas Lahtinen
-> > <joonas.lahtinen@linux.intel.com>; Vivi, Rodrigo <rodrigo.vivi@intel.com>;
-> > Chris Wilson <chris@chris-wilson.co.uk>; Souza, Jose <jose.souza@intel.com>;
-> > De Marchi, Lucas <lucas.demarchi@intel.com>; Roper, Matthew D
-> > <matthew.d.roper@intel.com>; Deak, Imre <imre.deak@intel.com>; Shankar,
-> > Uma <uma.shankar@intel.com>; linux-kernel@vger.kernel.org; Nautiyal, Ankit K
-> > <ankit.k.nautiyal@intel.com>
-> > Subject: Re: [RFC][PATCH 5/5] drm/i915/display: Add Nearest-neighbor based
-> > integer scaling support
-> > 
-> > On Thu, Mar 12, 2020 at 09:13:24AM +0000, Laxminarayan Bharadiya, Pankaj
-> > wrote:
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > > > Sent: 10 March 2020 21:47
-> > > > To: Laxminarayan Bharadiya, Pankaj
-> > > > <pankaj.laxminarayan.bharadiya@intel.com>
-> > > > Cc: jani.nikula@linux.intel.com; daniel@ffwll.ch; intel-
-> > > > gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org;
-> > > > airlied@linux.ie; maarten.lankhorst@linux.intel.com;
-> > > > tzimmermann@suse.de; mripard@kernel.org; mihail.atanassov@arm.com;
-> > > > Joonas Lahtinen <joonas.lahtinen@linux.intel.com>; Vivi, Rodrigo
-> > > > <rodrigo.vivi@intel.com>; Chris Wilson <chris@chris-wilson.co.uk>;
-> > > > Souza, Jose <jose.souza@intel.com>; De Marchi, Lucas
-> > > > <lucas.demarchi@intel.com>; Roper, Matthew D
-> > > > <matthew.d.roper@intel.com>; Deak, Imre <imre.deak@intel.com>;
-> > > > Shankar, Uma <uma.shankar@intel.com>; linux- kernel@vger.kernel.org;
-> > > > Nautiyal, Ankit K <ankit.k.nautiyal@intel.com>
-> > > > Subject: Re: [RFC][PATCH 5/5] drm/i915/display: Add Nearest-neighbor
-> > > > based integer scaling support
-> > > >
-> > > > On Tue, Feb 25, 2020 at 12:35:45PM +0530, Pankaj Bharadiya wrote:
-> > > > > Integer scaling (IS) is a nearest-neighbor upscaling technique
-> > > > > that simply scales up the existing pixels by an integer (i.e.,
-> > > > > whole
-> > > > > number) multiplier.Nearest-neighbor (NN) interpolation works by
-> > > > > filling in the missing color values in the upscaled image with
-> > > > > that of the coordinate-mapped nearest source pixel value.
-> > > > >
-> > > > > Both IS and NN preserve the clarity of the original image. Integer
-> > > > > scaling is particularly useful for pixel art games that rely on
-> > > > > sharp, blocky images to deliver their distinctive look.
-> > > > >
-> > > > > Program the scaler filter coefficients to enable the NN filter if
-> > > > > scaling filter property is set to
-> > > > > DRM_SCALING_FILTER_NEAREST_NEIGHBOR
-> > > > > and enable integer scaling.
-> > > > >
-> > > > > Bspec: 49247
-> > > > >
-> > > > > Signed-off-by: Pankaj Bharadiya
-> > > > > <pankaj.laxminarayan.bharadiya@intel.com>
-> > > > > Signed-off-by: Ankit Nautiyal <ankit.k.nautiyal@intel.com>
-> > > > > ---
-> > > > >  drivers/gpu/drm/i915/display/intel_display.c | 83
-> > > > > +++++++++++++++++++-  drivers/gpu/drm/i915/display/intel_display.h
-> > > > > +++++++++++++++++++|
-> > > > > 2 +  drivers/gpu/drm/i915/display/intel_sprite.c  | 20 +++--
-> > > > >  3 files changed, 97 insertions(+), 8 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/gpu/drm/i915/display/intel_display.c
-> > > > > b/drivers/gpu/drm/i915/display/intel_display.c
-> > > > > index b5903ef3c5a0..6d5f59203258 100644
-> > > > > --- a/drivers/gpu/drm/i915/display/intel_display.c
-> > > > > +++ b/drivers/gpu/drm/i915/display/intel_display.c
-> > > > > @@ -6237,6 +6237,73 @@ void skl_scaler_disable(const struct
-> > > > intel_crtc_state *old_crtc_state)
-> > > > >  		skl_detach_scaler(crtc, i);
-> > > > >  }
-> > > > >
-> > > > > +/**
-> > > > > + *  Theory behind setting nearest-neighbor integer scaling:
-> > > > > + *
-> > > > > + *  17 phase of 7 taps requires 119 coefficients in 60 dwords per set.
-> > > > > + *  The letter represents the filter tap (D is the center tap)
-> > > > > +and the number
-> > > > > + *  represents the coefficient set for a phase (0-16).
-> > > > > + *
-> > > > > + *         +------------+------------------------+------------------------+
-> > > > > + *         |Index value | Data value coeffient 1 | Data value coeffient 2 |
-> > > > > + *         +------------+------------------------+------------------------+
-> > > > > + *         |   00h      |          B0            |          A0            |
-> > > > > + *         +------------+------------------------+------------------------+
-> > > > > + *         |   01h      |          D0            |          C0            |
-> > > > > + *         +------------+------------------------+------------------------+
-> > > > > + *         |   02h      |          F0            |          E0            |
-> > > > > + *         +------------+------------------------+------------------------+
-> > > > > + *         |   03h      |          A1            |          G0            |
-> > > > > + *         +------------+------------------------+------------------------+
-> > > > > + *         |   04h      |          C1            |          B1            |
-> > > > > + *         +------------+------------------------+------------------------+
-> > > > > + *         |   ...      |          ...           |          ...           |
-> > > > > + *         +------------+------------------------+------------------------+
-> > > > > + *         |   38h      |          B16           |          A16           |
-> > > > > + *         +------------+------------------------+------------------------+
-> > > > > + *         |   39h      |          D16           |          C16           |
-> > > > > + *         +------------+------------------------+------------------------+
-> > > > > + *         |   3Ah      |          F16           |          C16           |
-> > > > > + *         +------------+------------------------+------------------------+
-> > > > > + *         |   3Bh      |        Reserved        |          G16           |
-> > > > > + *         +------------+------------------------+------------------------+
-> > > > > + *
-> > > > > + *  To enable nearest-neighbor scaling:  program scaler
-> > > > > +coefficents with
-> > > > > + *  the center tap (Dxx) values set to 1 and all other values set
-> > > > > +to
-> > > > > +0 as per
-> > > > > + *  SCALER_COEFFICIENT_FORMAT
-> > > > > + *
-> > > > > + */
-> > > > > +void skl_setup_nearest_neighbor_filter(struct drm_i915_private
-> > > > *dev_priv,
-> > > > > +				  enum pipe pipe, int scaler_id)
-> > > >
-> > > > skl_scaler_...
-> > > >
-> > > > > +{
-> > > > > +
-> > > > > +	int coeff = 0;
-> > > > > +	int phase = 0;
-> > > > > +	int tap;
-> > > > > +	int val = 0;
-> > > >
-> > > > Needlessly wide scope for most of these.
-> > > >
-> > > > > +
-> > > > > +	/*enable the index auto increment.*/
-> > > > > +	intel_de_write_fw(dev_priv, SKL_PS_COEF_INDEX_SET0(pipe,
-> > > > scaler_id),
-> > > > > +			  _PS_COEE_INDEX_AUTO_INC);
-> > > > > +
-> > > > > +	for (phase = 0; phase < 17; phase++) {
-> > > > > +		for (tap = 0; tap < 7; tap++) {
-> > > > > +			coeff++;
-> > > >
-> > > > Can be part of the % check.
-> > >
-> > > OK.
-> > >
-> > > >
-> > > > > +			if (tap == 3)
-> > > > > +				val = (phase % 2) ? (0x800) : (0x800 << 16);
-> > > >
-> > > > Parens overload.
-> > >
-> > > OK. Will remove.
-> > > >
-> > > > > +
-> > > > > +			if (coeff % 2 == 0) {
-> > > > > +				intel_de_write_fw(dev_priv,
-> > > > SKL_PS_COEF_DATA_SET0(pipe, scaler_id), val);
-> > > > > +				val = 0;
-> > > >
-> > > > Can drop this val=0 if you move the variable into tight scope and
-> > > > initialize there.
-> > >
-> > > Moving val=0 initialization to the tight scope will not work here as
-> > > we need to retain "val" and write only when 2 coefficients are ready
-> > > (since 2 coefficients are packed in 1 dword).
-> > >
-> > > e.g. for (12th , 11th)  coefficients, coefficient reg value should be ( (0 << 16) |
-> > 0x800).
-> > > If we initialize val = 0 in tight loop, 0 will be written to  coefficient register.
-> > 
-> > Hmm, right. I guess I'd try to rearrange this to iterate the registers directly
-> > instead of the phases and taps. Something like this perhaps:
-> > 
-> > static int cnl_coef_tap(int i)
-> > {
-> > 	return i % 7;
-> > }
-> > 
-> > static u16 cnl_coef(int t)
-> 
-> cnl_coef -> cnl_nearest_filter_coef.  Right?
 
-Right.
 
-> 
-> > {
-> > 	return t == 3 ? 0x0800 : 0x3000;
-> > }
-> > 
-> > static void cnl_program_nearest_filter_coefs(void)
-> > {
-> > 	int i;
-> > 
-> > 	for (i = 0; i < 17 * 7; i += 2) {
-> > 		uint32_t tmp;
-> > 		int t;
-> > 
-> > 		t = cnl_coef_tap(i);
-> > 		tmp = cnl_nearest_filter_coef(t);
-> > 
-> > 		t = cnl_coef_tap(i + 1);
-> > 		tmp |= cnl_nearest_filter_coef(t) << 16;
-> > 
-> > 		intel_de_write_fw(tmp);
-> > 	}
-> > }
-> > 
-> > More readable I think. The downside being all those modulo operations but
-> > hopefully that's all in the noise when it comes to performance.
-> 
-> Looks better, thanks for spending time on this.
-> I will try this out.
-> 
-> Thanks,
-> Pankaj 
-> > 
-> > --
-> > Ville Syrjälä
-> > Intel
+On 3/13/20 12:50 PM, Shakeel Butt wrote:
+> On Fri, Mar 13, 2020 at 12:46 PM Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>>
+>>
+>> On 3/13/20 12:33 PM, Shakeel Butt wrote:
+>>> On Fri, Mar 13, 2020 at 11:34 AM Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>>>> When backporting commit 9c4e6b1a7027 ("mm, mlock, vmscan: no more
+>>>> skipping pagevecs") to our 4.9 kernel, our test bench noticed around 10%
+>>>> down with a couple of vm-scalability's test cases (lru-file-readonce,
+>>>> lru-file-readtwice and lru-file-mmap-read).  I didn't see that much down
+>>>> on my VM (32c-64g-2nodes).  It might be caused by the test configuration,
+>>>> which is 32c-256g with NUMA disabled and the tests were run in root memcg,
+>>>> so the tests actually stress only one inactive and active lru.  It
+>>>> sounds not very usual in mordern production environment.
+>>>>
+>>>> That commit did two major changes:
+>>>> 1. Call page_evictable()
+>>>> 2. Use smp_mb to force the PG_lru set visible
+>>>>
+>>>> It looks they contribute the most overhead.  The page_evictable() is a
+>>>> function which does function prologue and epilogue, and that was used by
+>>>> page reclaim path only.  However, lru add is a very hot path, so it
+>>>> sounds better to make it inline.  However, it calls page_mapping() which
+>>>> is not inlined either, but the disassemble shows it doesn't do push and
+>>>> pop operations and it sounds not very straightforward to inline it.
+>>>>
+>>>> Other than this, it sounds smp_mb() is not necessary for x86 since
+>>>> SetPageLRU is atomic which enforces memory barrier already, replace it
+>>>> with smp_mb__after_atomic() in the following patch.
+>>>>
+>>>> With the two fixes applied, the tests can get back around 5% on that
+>>>> test bench and get back normal on my VM.  Since the test bench
+>>>> configuration is not that usual and I also saw around 6% up on the
+>>>> latest upstream, so it sounds good enough IMHO.
+>>>>
+>>>> The below is test data (lru-file-readtwice throughput) against the v5.6-rc4:
+>>>>           mainline        w/ inline fix
+>>>>             150MB            154MB
+>>>>
+>>> What is the test setup for the above experiment? I would like to get a repro.
+>> Just startup a VM with two nodes, then run case-lru-file-readtwice or
+>> case-lru-file-readonce in vm-scalability in root memcg or with memcg
+>> disabled.  Then get the average throughput (dd result) from the test.
+>> Our test bench uses the script from lkp, but I just ran it manually.
+>> Single node VM should be more obvious showed in my test.
+>>
+> Thanks, I will try this on a real machine
 
--- 
-Ville Syrjälä
-Intel
+Real machine should be better. Our test bench is bare metal with NUMA 
+disabled. On my test VM it is not that obvious.
+
+
