@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5D09184343
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 10:07:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D94818433F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 10:07:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726495AbgCMJHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 05:07:23 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34533 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbgCMJHW (ORCPT
+        id S1726571AbgCMJHY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 05:07:24 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34538 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726467AbgCMJHX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 05:07:22 -0400
-Received: by mail-wr1-f65.google.com with SMTP id z15so11052381wrl.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 02:07:19 -0700 (PDT)
+        Fri, 13 Mar 2020 05:07:23 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z15so11052447wrl.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 02:07:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=noym7N9HZ+0j3iemfyMolfTdAyqS68kNioWo1cBTRwM=;
-        b=ehu6PcgPt850KQjzoV4GQagTdcUkLwYwh710xe+NU9v3iKlSKlhiukznVO0+fscCuX
-         ScMV50BTelVKnRfFRKF9i6Vqn+RkQNHi1mN91q7nY0c0GYa9PXXbs+WXKLhWFVuew+vu
-         BmmzNXNA8BPF9/bpDsmnAjsV7wcjvbQe5l9Gn8oVQYrxWIoI8fouyIhVJLhMr7iH4ubA
-         FoLE1KQn+dGzWQPq0mepHbGk8DAZRmrZ9xpg3G8PiOnY/eZAr2u2NVRRzFhETaB8BqA8
-         ZK4NEQXE18nuIuTn8tuluoTFL3TfuMX8qP3OUMCxsUjq9/wZWXwGqY5VofbKyzUZ2v8U
-         nmeg==
+        bh=2HPMaT81MXCeebofnnf7zx0HVEbfvu9bFZLYLQmZDe4=;
+        b=VeEpgcp6B7SCz97YksAWPlVAixQ9a1T2llnI8xmaAIqQWVuisecj1ExtzzyvhDYKNM
+         zONGsxO4cTO0O891qd52BsaYjV8Tmc7P9OohTp3ZwOgF6r7cNP30MDODqLy7LYxXv+fU
+         7WXw1rNmICnU4w1n4D6DQehhwBxR1iY5opur9vb4TsE4EDo/6CdWZJC/SAGZouNj+sco
+         pKnfvceozF9c3esMmpUoPEZ1pJd65YVC4NUPxt1AxCX38ntIT/cSckmi5bALe3qluDxI
+         TWRhDZH1lW5Hvh/aOwYr0xFdxxcVXyBIxu2ds74vHim4/9hR/vYZri672YWGRfqKZ1jj
+         WU2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=noym7N9HZ+0j3iemfyMolfTdAyqS68kNioWo1cBTRwM=;
-        b=PuXmMgVHxvMmD5MAzbhNHTv3YI9m+ekeYN3NToDGE0TulhKoNOMNt2uPmM5pS36liT
-         Qo/DeMZKaRsz0ai4QcKUTZ9yTml/EZzDwAO2ABJJLJMIxW+D4Cb1GXNBrqBv6VrtrSYQ
-         /AS3EWvDb0U1aDJs5eFttst0vNAs2YAp23hgcYqVB569/bSRFFDCAfcjHSU+7yOnCMc+
-         IwzIOgOQkwTqit4qH86EUDyJ393zy+O/S8QCEPG/wlF+YmUugj10B942IoyB/BDhdlJ0
-         73zyEx0T4GwvGc62f5Go+hdZtL0pZefh5UGaza4IVMlawZ/7DmqX18YtByBRCK01Vl5z
-         HoNA==
-X-Gm-Message-State: ANhLgQ10R+gAl28/Q2EXx8GQMf+3zaK5RR8gGuwnUFImiYiSsaIlRqzC
-        ncSb/fI8a1LNHxxf4wQucZmITw==
-X-Google-Smtp-Source: ADFU+vvGEUqKOHAbXHeHU9sk0wLV/5ZlhtBmNDC8otoQy0IjrRf1k/8Ec6KWw0KmFvH2+W0feRZgzA==
-X-Received: by 2002:adf:c40e:: with SMTP id v14mr16353044wrf.408.1584090438334;
-        Fri, 13 Mar 2020 02:07:18 -0700 (PDT)
+        bh=2HPMaT81MXCeebofnnf7zx0HVEbfvu9bFZLYLQmZDe4=;
+        b=GWrDEnHsFoZKAC/ZKaRWUy5VX3CuOzLeHdpKKgWYdsbyGGHefsidDT/N4ZK35DOObp
+         5kjRU4IJ8Gd8DGnIm4w9sUibyEfu5cG/JT/0hys6fKJ7DpcFrvfuy7RkS7xaJPorpcm+
+         25qefHsgBkOvqqykN39h3s69pdfCCnPCs+t0Iq43bz4x+UzqHrSAlNoCN2Tyv3PuxAeB
+         g6SoZ+Ja0ZDQT11BQF/buGAha7AuyeiT/tbidVYooMeydKYkvbwKYe+QV8nBOOYVUmWS
+         F7gI5tOJ9JfegLzsx7x4gyvj5z7Sftl4RtZjc5UczPqT2HT/+ZIJK6pY9TtjcF93B2dr
+         5q4Q==
+X-Gm-Message-State: ANhLgQ0tTrza1BnPcodDes05igvLW+wKl/2P32dbqd122v6ilVEoSgP6
+        x6CGmC8+UcOS8iTtO2wKX010uQ==
+X-Google-Smtp-Source: ADFU+vtCUP2jexc1cRHOBRmdco0djB5phQgI4eSon4Q+TxQ5jXY0QSBxqsTqU+wd5RHjgAaSyI3+6A==
+X-Received: by 2002:adf:9f48:: with SMTP id f8mr16528447wrg.199.1584090439399;
+        Fri, 13 Mar 2020 02:07:19 -0700 (PDT)
 Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2])
-        by smtp.gmail.com with ESMTPSA id i1sm61872399wrs.18.2020.03.13.02.07.17
+        by smtp.gmail.com with ESMTPSA id i1sm61872399wrs.18.2020.03.13.02.07.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 02:07:17 -0700 (PDT)
+        Fri, 13 Mar 2020 02:07:18 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     khilman@baylibre.com
 Cc:     linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 1/4] arm64: dts: meson-g12: split emmc pins to select 4 or 8 bus width
-Date:   Fri, 13 Mar 2020 10:07:10 +0100
-Message-Id: <20200313090713.15147-2-narmstrong@baylibre.com>
+Subject: [PATCH 2/4] arm64: dts: meson-g12: add the SPIFC nodes
+Date:   Fri, 13 Mar 2020 10:07:11 +0100
+Message-Id: <20200313090713.15147-3-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20200313090713.15147-1-narmstrong@baylibre.com>
 References: <20200313090713.15147-1-narmstrong@baylibre.com>
@@ -63,176 +63,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Khadas VIM3 shares the eMMC pins 4 to 7 with the SPI NOR, in order
-to enable the eMMC and the SPI NOR interface, we need to omit the
-4 last pins from the eMMC pinctrl.
-
-As it was done for the Khadas VIM2, split the eMMC pinctrls in ctrl, data
-and ds pins with either 4bits data or 8bits data, and update the current
-board accordingly.
+Add the controller and pinctrl nodes to enable the SPI Flash Controller
+on the Amlogic G12A and compatible SoCs.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- .../boot/dts/amlogic/meson-g12-common.dtsi    | 40 ++++++++++++++-----
- .../boot/dts/amlogic/meson-g12a-sei510.dts    |  2 +-
- .../boot/dts/amlogic/meson-g12a-u200.dts      |  2 +-
- .../boot/dts/amlogic/meson-g12a-x96-max.dts   |  2 +-
- .../boot/dts/amlogic/meson-g12b-odroid-n2.dts |  2 +-
- .../boot/dts/amlogic/meson-g12b-ugoos-am6.dts |  2 +-
- .../boot/dts/amlogic/meson-khadas-vim3.dtsi   |  2 +-
- .../boot/dts/amlogic/meson-sm1-sei610.dts     |  2 +-
- 8 files changed, 37 insertions(+), 17 deletions(-)
+ .../boot/dts/amlogic/meson-g12-common.dtsi    | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-index 87b9a47a51b9..d09efb86ec33 100644
+index d09efb86ec33..56a9f8eadf01 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-@@ -295,17 +295,9 @@
+@@ -593,6 +593,17 @@
  						};
  					};
  
--					emmc_pins: emmc {
-+					emmc_ctrl_pins: emmc-ctrl {
- 						mux-0 {
--							groups = "emmc_nand_d0",
--								 "emmc_nand_d1",
--								 "emmc_nand_d2",
--								 "emmc_nand_d3",
--								 "emmc_nand_d4",
--								 "emmc_nand_d5",
--								 "emmc_nand_d6",
--								 "emmc_nand_d7",
--								 "emmc_cmd";
-+							groups = "emmc_cmd";
- 							function = "emmc";
- 							bias-pull-up;
- 							drive-strength-microamp = <4000>;
-@@ -319,6 +311,34 @@
- 						};
- 					};
- 
-+					emmc_data_4b_pins: emmc-data-4b {
-+						mux-0 {
-+							groups = "emmc_nand_d0",
-+								 "emmc_nand_d1",
-+								 "emmc_nand_d2",
-+								 "emmc_nand_d3";
-+							function = "emmc";
-+							bias-pull-up;
-+							drive-strength-microamp = <4000>;
++					nor_pins: nor {
++						mux {
++							groups = "nor_d",
++							       "nor_q",
++							       "nor_c",
++							       "nor_cs";
++							function = "nor";
++							bias-disable;
 +						};
 +					};
 +
-+					emmc_data_8b_pins: emmc-data-8b {
-+						mux-0 {
-+							groups = "emmc_nand_d0",
-+								 "emmc_nand_d1",
-+								 "emmc_nand_d2",
-+								 "emmc_nand_d3",
-+								 "emmc_nand_d4",
-+								 "emmc_nand_d5",
-+								 "emmc_nand_d6",
-+								 "emmc_nand_d7";
-+							function = "emmc";
-+							bias-pull-up;
-+							drive-strength-microamp = <4000>;
-+						};
-+					};
-+
- 					emmc_ds_pins: emmc-ds {
+ 					pdm_din0_a_pins: pdm-din0-a {
  						mux {
- 							groups = "emmc_nand_ds";
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-index 168f460e11fa..b00d0468c753 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-@@ -472,7 +472,7 @@
- /* eMMC */
- &sd_emmc_c {
- 	status = "okay";
--	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
-+	pinctrl-0 = <&emmc_ctrl_pins>, <&emmc_data_8b_pins>, <&emmc_ds_pins>;
- 	pinctrl-1 = <&emmc_clk_gate_pins>;
- 	pinctrl-names = "default", "clk-gate";
+ 							groups = "pdm_din0_a";
+@@ -2071,6 +2082,15 @@
+ 				amlogic,channel-interrupts = <64 65 66 67 68 69 70 71>;
+ 			};
  
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
-index 2a324f0136e3..a26bfe72550f 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
-@@ -271,7 +271,7 @@
- /* eMMC */
- &sd_emmc_c {
- 	status = "okay";
--	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
-+	pinctrl-0 = <&emmc_ctrl_pins>, <&emmc_data_8b_pins>, <&emmc_ds_pins>;
- 	pinctrl-1 = <&emmc_clk_gate_pins>;
- 	pinctrl-names = "default", "clk-gate";
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-index 4f2596d82989..1b07c8c06eac 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-@@ -443,7 +443,7 @@
- /* eMMC */
- &sd_emmc_c {
- 	status = "okay";
--	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
-+	pinctrl-0 = <&emmc_ctrl_pins>, <&emmc_data_8b_pins>, <&emmc_ds_pins>;
- 	pinctrl-1 = <&emmc_clk_gate_pins>;
- 	pinctrl-names = "default", "clk-gate";
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-index 8830d3844885..b59ae1a297f2 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-@@ -435,7 +435,7 @@
- /* eMMC */
- &sd_emmc_c {
- 	status = "okay";
--	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
-+	pinctrl-0 = <&emmc_ctrl_pins>, <&emmc_data_8b_pins>, <&emmc_ds_pins>;
- 	pinctrl-1 = <&emmc_clk_gate_pins>;
- 	pinctrl-names = "default", "clk-gate";
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts
-index ccd0bced01e8..325e448eb09c 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts
-@@ -485,7 +485,7 @@
- /* eMMC */
- &sd_emmc_c {
- 	status = "okay";
--	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
-+	pinctrl-0 = <&emmc_ctrl_pins>, <&emmc_data_8b_pins>, <&emmc_ds_pins>;
- 	pinctrl-1 = <&emmc_clk_gate_pins>;
- 	pinctrl-names = "default", "clk-gate";
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi b/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
-index 90815fa25ec6..b6f22a0bd318 100644
---- a/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
-@@ -312,7 +312,7 @@
- /* eMMC */
- &sd_emmc_c {
- 	status = "okay";
--	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
-+	pinctrl-0 = <&emmc_ctrl_pins>, <&emmc_data_8b_pins>, <&emmc_ds_pins>;
- 	pinctrl-1 = <&emmc_clk_gate_pins>;
- 	pinctrl-names = "default", "clk-gate";
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-index a8bb3fa9fec9..71cc730a4913 100644
---- a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-@@ -518,7 +518,7 @@
- /* eMMC */
- &sd_emmc_c {
- 	status = "okay";
--	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
-+	pinctrl-0 = <&emmc_ctrl_pins>, <&emmc_data_8b_pins>, <&emmc_ds_pins>;
- 	pinctrl-1 = <&emmc_clk_gate_pins>;
- 	pinctrl-names = "default", "clk-gate";
- 
++			spifc: spi@14000 {
++				compatible = "amlogic,meson-gxbb-spifc";
++				status = "disabled";
++				reg = <0x0 0x14000 0x0 0x80>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				clocks = <&clkc CLKID_CLK81>;
++			};
++
+ 			pwm_ef: pwm@19000 {
+ 				compatible = "amlogic,meson-g12a-ee-pwm";
+ 				reg = <0x0 0x19000 0x0 0x20>;
 -- 
 2.22.0
 
