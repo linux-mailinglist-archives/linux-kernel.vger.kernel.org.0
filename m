@@ -2,171 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32560185143
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 22:39:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4726C18513B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 22:33:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbgCMVjb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 17:39:31 -0400
-Received: from esa5.hc3370-68.iphmx.com ([216.71.155.168]:57338 "EHLO
-        esa5.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbgCMVja (ORCPT
+        id S1727352AbgCMVdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 17:33:17 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:23310 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726480AbgCMVdQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 17:39:30 -0400
-X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Fri, 13 Mar 2020 17:39:29 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1584135569;
-  h=from:subject:to:message-id:date:mime-version:
-   content-transfer-encoding;
-  bh=VP/Qw4JTNdWBbkmT5IWEt7CBirmzVblVVsyTuAghECo=;
-  b=JkWP+kVL97c/F+fBGUImVDlJqI6aOH3H93EosUbiO7pc18+utKd4gWjR
-   N0DxanuuFj2Y6NB0pqtEzJs5B6ZWblD863Fsn5evd9h/cRCeL7l+xhKa3
-   9Q1s/JTQnBYMFLbSzyWrElPqsKR9vql5Zzd8qiflnqOPiBXWMuML5m8rv
-   Q=;
-Authentication-Results: esa5.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=Pass smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  andrew.cooper3@citrix.com) identity=pra;
-  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="andrew.cooper3@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa5.hc3370-68.iphmx.com: domain of
-  Andrew.Cooper3@citrix.com designates 162.221.158.21 as
-  permitted sender) identity=mailfrom;
-  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="Andrew.Cooper3@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
-  ip4:168.245.78.127 ~all"
-Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: K5Or6YnvMo6Ir8kPaFGpkmjBk8pNyikuRoBsNmy5ODlm49Dim46DNixdqkVDSzBcJxujyfGCgQ
- UgIoXZdaYfwTugo23MY/HTKKuLrVlOk/mq9GLQjsN2efAEhUz3Y8bGLLnGwNKwV87GqEUI6t1M
- UZMNNqp1U6GwPAjIRFrkU0q6pTx2av085pT+wgmKhrZKo60Eaj0TcEykXUFd9z+nN9VdQBFlPI
- 7NSspCx9OCfr6RX9dFucoyYlwy3W+gsXb3SZj9Kn3ak2iJdjaLqzZKVQOy7dCOEmTJt4AAHTwu
- 7GY=
-X-SBRS: 2.7
-X-MesageID: 14283297
-X-Ironport-Server: esa5.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.70,550,1574139600"; 
-   d="scan'208";a="14283297"
-From:   Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: x86/apic: Dead code in setup_local_APIC()
-Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
- 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
- 6+ahAA==
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Message-ID: <0c2c3380-4e2f-5cbb-41eb-38057f008c5f@citrix.com>
-Date:   Fri, 13 Mar 2020 21:32:19 +0000
+        Fri, 13 Mar 2020 17:33:16 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 02DLNlHw008775;
+        Fri, 13 Mar 2020 14:33:13 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=subject : to : cc :
+ references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=facebook;
+ bh=9eot6XuRO9xzJK5tkc47l+yTmb1JYsicJZJXW3GFXKE=;
+ b=KbHhbruP9ukZyEE+CmCKmX7ZrZjOdjVE+t+wxXtWIsLb0m8DMb4Yqvhq4EqLhea/pcoJ
+ dq5i11rMwcsED4dhodFpPXIqAldE95BUmQpO58p9s3mBvG5uWe6VNgdC3WYCZ5wwpuFo
+ g/qFdzDadfS6uKv2qY4Sp0EO5Pa5KxP3ddg= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0089730.ppops.net with ESMTP id 2yqt7eefxm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Fri, 13 Mar 2020 14:33:13 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Fri, 13 Mar 2020 14:33:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Vo0Ky02LHQ/RnUQfubjwVL9K14YJtvLIksL9G83i9OdGh7EKPud1fwX3ppVao0AdrVvH2ZzuqMcD2+xkteBRc3G34SgsezaC6WHWE/Ot+cCvJNT1ng1bTAiUANdHyDiQTRLrC5jqb0HJRWwSMLNJ00pUl68PMkJVTJN9F+fyUbtwEckIPwt1CQI4QRmfyapYbRM8RP1eDUrucSB+nHEniBKYHiR0AHHzIk/LKLa3H3bxEg02geY8O+a4fc8UkslZr6NYRHizrguczgwaYdjVsl5sceHRq/EojTxASPj0GvUHfpVxG5kXcGjckgGpHhnHjfoBPo8eVrnvTpDvlTiN5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9eot6XuRO9xzJK5tkc47l+yTmb1JYsicJZJXW3GFXKE=;
+ b=AA/SobSVzMqoaqKis8Hzv4GR5jVRHaf47gPeWr+l8LKPUu6Ap5p23IoLEcMFQwOzYcf2RshyA2fOGiiBGUS8WijjHncHPgDoB3z+6GCCe4WfZmT6tcRAn983MYlpe64k6edZ06BmtBJjO8xc5F1TnP7IeCekUZWBqD1VpVyMy05NiXd+EvbOGDHkhCwSVA941GEgVKHe5b1WgbPhTJqQcOXuDmQb4fAJTafUvvzBF0bPD/McTa5KX0Nqvx5/UyhEA5AD4+xFDjLZ6QwtBEa6QcQSIGBJO/gpQYQf+4ldaCa31QALv+J4XXyyDudDYoKo6Gq256hKOqis26CMgpTSjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9eot6XuRO9xzJK5tkc47l+yTmb1JYsicJZJXW3GFXKE=;
+ b=lJMf5S7XGdF4/EfJWGSWQXZvXwcj4bK8Ld5ZE4tS94oXqSLjNcVF1ts5hoVX7C/s/044h4hzBZpXXwkFZP2/f9/hYkhQ94iVJ1LYABs0xoMD0GS8nz6YIIfWqJY9AnGAV8yOsYMq9QsfTPBiSVKW+aGheumkyO6USa0pkhR4rHE=
+Received: from BYAPR15MB2790.namprd15.prod.outlook.com (2603:10b6:a03:15a::31)
+ by BYAPR15MB2599.namprd15.prod.outlook.com (2603:10b6:a03:15a::25) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.18; Fri, 13 Mar
+ 2020 21:33:11 +0000
+Received: from BYAPR15MB2790.namprd15.prod.outlook.com
+ ([fe80::4c56:ea:2fa5:88f5]) by BYAPR15MB2790.namprd15.prod.outlook.com
+ ([fe80::4c56:ea:2fa5:88f5%2]) with mapi id 15.20.2814.007; Fri, 13 Mar 2020
+ 21:33:11 +0000
+Subject: Re: [GIT PULL] io_uring fixes for 5.6-rc
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>, Tejun Heo <tj@kernel.org>
+CC:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <00e5ab7d-f0ad-bc94-204a-d2b7fb88f594@fb.com>
+ <CAHk-=wgGN-9dmso4L+6RWdouEg4zQfd74m23K6c9E_=Qua+H1Q@mail.gmail.com>
+From:   Jens Axboe <axboe@fb.com>
+Message-ID: <cb853c40-820a-b05e-1a1b-50770565e69c@fb.com>
+Date:   Fri, 13 Mar 2020 15:33:09 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+ Thunderbird/68.4.1
+In-Reply-To: <CAHk-=wgGN-9dmso4L+6RWdouEg4zQfd74m23K6c9E_=Qua+H1Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR07CA0075.namprd07.prod.outlook.com
+ (2603:10b6:a03:12b::16) To BYAPR15MB2790.namprd15.prod.outlook.com
+ (2603:10b6:a03:15a::31)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL01.citrite.net (10.69.22.125)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.1.188] (66.219.217.145) by BYAPR07CA0075.namprd07.prod.outlook.com (2603:10b6:a03:12b::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.18 via Frontend Transport; Fri, 13 Mar 2020 21:33:10 +0000
+X-Originating-IP: [66.219.217.145]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 31260096-3f88-403d-c3aa-08d7c7962116
+X-MS-TrafficTypeDiagnostic: BYAPR15MB2599:
+X-Microsoft-Antispam-PRVS: <BYAPR15MB25997B75CFA7C7844B4351ADC0FA0@BYAPR15MB2599.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:2043;
+X-Forefront-PRVS: 034119E4F6
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(346002)(39860400002)(366004)(199004)(956004)(6486002)(16526019)(4326008)(31696002)(186003)(31686004)(86362001)(36756003)(26005)(2616005)(5660300002)(54906003)(478600001)(110136005)(8676002)(2906002)(81166006)(52116002)(53546011)(16576012)(316002)(81156014)(66556008)(66476007)(8936002)(66946007);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2599;H:BYAPR15MB2790.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 8fSTk2lrt6/O8CaR+eeU1BEhkA9KrL4LcahSln61E4Dk1j5SNKLaruAKXxuFoyly+Phsu4jkKoZGXvNg2eddNOFuwWASNP8/RIFDSCKh3V1Y1NzAmXrDzq8O00Lf1QaoHSuDX+ADsQvlP+FeNhiMFfIMk4fIM5u6quakvYnEc1cKJHNK+6Jm9Irl26/4yy7JQwkzpMrCoRxF+BKrD7JVagfeN0zM9Gsis3hmzIKd7F2XiD0nIpANb/ljPcCswwNBa34U4YXtAXDwstBXaDNgnON+osMggXnPAEztmTnKCy8Yizm1kGEGLbZ7+71Gc0k593rderz6GRYAk/26F9deLFYneDEqVcJa9haMm36eTYqgi7CpwtulDgJp2bbn80q8d4JvCLHj89LJVrXnYk9a+Wch+F0ADjiWyX8j+431iYh1gb2WRmcLS5t+IOjfS8GW
+X-MS-Exchange-AntiSpam-MessageData: XjqIu85qzosJ3bKpE+VdYJH/Xvue5fVxVB8mEuBPSmMv4Tvlwzitl0svBLGn0+6xUiuZYZih02PCiIe2QICMJFDwzkH48bISMdmGBCBDOObJVCkCGTk9IJjMtF3S1x2S3UA5KTPhDwtcq6IY7+Xy+g==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31260096-3f88-403d-c3aa-08d7c7962116
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2020 21:33:11.1935
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EHKdrm88yxiE+is5mt+6bnzIRCNIfcwpOonavSvG2oQq5p+Ko59MAbH2BWv9ZoEp
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2599
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-13_09:2020-03-12,2020-03-13 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
+ priorityscore=1501 mlxscore=0 phishscore=0 bulkscore=0 clxscore=1011
+ adultscore=0 impostorscore=0 mlxlogscore=999 spamscore=0 malwarescore=0
+ suspectscore=2 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003130096
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 3/13/20 2:18 PM, Linus Torvalds wrote:
+> On Fri, Mar 13, 2020 at 10:50 AM Jens Axboe <axboe@fb.com> wrote:
+>>
+>> Just a single fix here, improving the RCU callback ordering from last
+>> week. After a bit more perusing by Paul, he poked a hole in the
+>> original.
+> 
+> Ouch.
+> 
+> If I read this patch correctly, you're now adding a rcu_barrier() onto
+> the system workqueue for each io_uring context freeing op.
 
-c/s 2640da4ccc "x86/apic: Soft disable APIC before initializing it" had
-a (perhaps unintended) consequence for the setup of LVT0.
+It's actually not quite that bad, it's for every context that's used
+registered file. That will generally be long term use cases, like server
+backend kind of stuff, not for short lived or "normal" use cases.
 
-Later, LVT0's mask bit is sampled to determine whether the BSP should be
-configured to accept ExtINT messages.
+> This makes me worry:
+> 
+>  - I think system_wq is unordered, so does it even guarantee that the
+> rcu_barrier happens after whatever work you're expecting it to be
+> after?
 
-Because soft reset unconditionally masks the LVT registers, the
-following patch could be taken to drop dead code:
+The ordering is wrt an rcu callback that's already queued. So we don't
+care about ordering of other work at all, we just care about issuing
+that rcu_barrier() before we exit + free, so we know that the existing
+(if any) rcu callback has run.
 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 5f973fed3c9f..b80032d2dfeb 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1723,8 +1723,7 @@ static void setup_local_APIC(void)
-        /*
-         * TODO: set up through-local-APIC from through-I/O-APIC? --macro
-         */
--       value = apic_read(APIC_LVT0) & APIC_LVT_MASKED;
--       if (!cpu && (pic_mode || !value || skip_ioapic_setup)) {
-+       if (!cpu && (pic_mode || skip_ioapic_setup)) {
-                value = APIC_DM_EXTINT;
-                apic_printk(APIC_VERBOSE, "enabled ExtINT on CPU#%d\n",
-cpu);
-        } else {
+> Or is it using a workqueue not because it wants to serialize with any
+> other work, but because it needs to use rcu_barrier in a context where
+> it can't sleep?
 
+Really just using a workqueue because we already have one for this
+particular item, and that takes the latency of needing the rcu barrier
+out of the fast path for the application.
 
-However, the comment just out of context above says that ExtINT is
-deliberately configured even symmetric-IO mode, in case some interrupts
-are using the PIC.  If that is the intended behaviour, then 2640da4ccc
-regressed it.
+> But the commit message does seem to imply that ordering is important..
 
-One option would be to sample LVT0.MASK before clearing SPIV.EN, but if
-the intention is to allow ExtINT in symmetric-IO mode, then its
-configuration shouldn't be based on its previous value.
+Only for a previous rcu callback, not for work items!
 
-Thoughts?
+>  - doesn't this have the potential to flood the system_wq be full of
+> flushing things that all could take a while..
+> 
+> I've pulled it, and it may all be correct, just chalk this message up
+> to "Linus got nervous looking at it".
 
-~Andrew
+All good, always appreciate extra eyes on it! We could do the
+rcu_barrier() inline and just take the hit there, and there's also room
+to be a bit smarter and only do the barrier if we know we have to. But
+since this is 5.6 material, I didn't want to complicate things further.
 
-(I'm actually debugging why Xen can't find a timer IRQ on this platform,
-but its not my system and I'm playing spot-the-difference with Linux
-based on some photos of a boot log.  I don't think this difference is
-relevant to my bug, but it also doesn't appear to be intentional on the
-Linux side either.)
+-- 
+Jens Axboe
+
