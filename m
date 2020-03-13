@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2477E184F96
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 20:53:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEBD1184F95
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 20:53:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbgCMTwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727555AbgCMTwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 13 Mar 2020 15:52:39 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:36355 "EHLO
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37135 "EHLO
         mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727492AbgCMTwd (ORCPT
+        with ESMTP id S1727499AbgCMTwe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 15:52:33 -0400
-Received: by mail-qt1-f195.google.com with SMTP id m33so8648626qtb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 12:52:32 -0700 (PDT)
+        Fri, 13 Mar 2020 15:52:34 -0400
+Received: by mail-qt1-f195.google.com with SMTP id l20so8649341qtp.4
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 12:52:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4FhTJdnl5pdkYt0oFxRR6UWqPDOG1Ij7jaDgGDQxS4k=;
-        b=E9HIkdg9ipTI4OBD2Gh7AQJafEHFmNBLDR/+5818ytFUyTm8WS0nxSOPVCdx+iQfyz
-         ViXsgdiiiFbVL56vXufRrUljG8/YmCk4GPg7mhz7PR1ufDER3+gv1KwcHWED/iAh1siF
-         pg1B45ldfx0cLdFhzNvF34/NDRIpHpuhAjanMNoiKf8ZEh9+TNngUiRbstYV4ILafYTu
-         t6qQejhH2gOb97f/WCrKB9BXhNgNhCsnKfx1gWniMrFzZ00s4QJczzWhx2u4DBft6vW1
-         j5pVJQjoTVGQNmgeyK+l+s9XCaa4PP2ECTG1fWLCUpqCSCs0C/Ka3MDn0E0+elvI8YpC
-         oqhw==
+        bh=asHgh1PP/dXumDoerrsVIvym6uaLF0Cebu4CCENRqXo=;
+        b=CM//KSRP1iDlug/0eKM7vRGHM5t55OL5pO4IWR1efQLEmYSAJPUZhNZobYux0UfzVb
+         S/7pfdk0oQxK7ZnBEF3eXK05B1+qxO6F1w9QmwE6ybz89+0Y30HnmluxKYZH306yq/Vt
+         k9u7BP25BplbiAn+DTw/79CbMBT77QiEjzOMa+U2orEpTi/WLXnJb6frwa44leaVpkus
+         E8FWA6s4zBXH/tXcERWgEvwA5cCA/06Oa6bpd7zX8lCHKUUPy0ANaQC/1HjeTzX1cQOC
+         CY73X84KcboLVeElC70a3PPENH7/QbrO8p9KNI6i7Xvo40JwiA6t1rAFP6xLWE0769I7
+         eh1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4FhTJdnl5pdkYt0oFxRR6UWqPDOG1Ij7jaDgGDQxS4k=;
-        b=Z8lt7wYqAJu2sjbQwdECCqd/8BaQpCgXjpzNlRWTDd4YiLI/ad9wsjpRjVkeSVxdJb
-         WSIAPu4u75rXM8qNDzb3s61piOPXV7kf3pbNTuUxbCQA482m/4rPqt03kkiRbFWXuLEa
-         ZPlWiJBx09CuW3wOh2TzBtbzf549c6f6+LvXYYu8L38cy+yXWhsX22R3m9jBZV8IefD5
-         5lt5LkLEILjJYBskZybMsurXzb0EFlXB7SvO6ThwwwoxdHVHr9erbYE7gxtTniTlAz34
-         Buc3LMCkMkXxiqj+Cf9azYxbg93ooVuzKVBbQAi+zzLHuL/RXW8N1qKfT/+avB2XpsBe
-         fpYg==
-X-Gm-Message-State: ANhLgQ2GQb4H+UJQUFw/78G+yMjPJdG4RpyNtNRqmVQ2BhLDqLflHIRd
-        kqjTztmKSTTiqUkLvw1ZmqlsMus=
-X-Google-Smtp-Source: ADFU+vsNhxo+80FQeRsNJK4GehAK3NO4DmGu9aFZCtl2E3CIrklhP+YGQZCtDuNL2GoWjEt71KEkfA==
-X-Received: by 2002:aed:2169:: with SMTP id 96mr14630820qtc.124.1584129151355;
-        Fri, 13 Mar 2020 12:52:31 -0700 (PDT)
+        bh=asHgh1PP/dXumDoerrsVIvym6uaLF0Cebu4CCENRqXo=;
+        b=txqWj18EgKjU/zrTLYmRsvStGq1Im95iWxLTK4t9jnO+oQ63k3F5uksfLgQ/W9p3MW
+         A4ynJyajkUXO+Mo19bh45iQf6DFzayyW6UV/qUlml0H20wNymvhExWZhYH1T1biHvM18
+         E0U6+s0rF1av+V1meGVJP1vqfCxkV7Fug5lSCJ3qX91iV1dISkJzqp1nqDcMxBtNbQCV
+         NAWJG/DgJuBjOk+1DIkrl3nXiSPQwO2ArNugoM9l740jEAxHGmv8UXKFGpI+luI1hSRy
+         JKC7vW/7GGy6HrZ7g2rNkntgChjGbM3e8R4GYn4jfUHagBo6liPGBJmhM8RkJgymogc7
+         NiCQ==
+X-Gm-Message-State: ANhLgQ1m/mAYHJ6aUJtcXOgwFwk75vpG8A+Alk/HMQY+/pQDaFWRupWT
+        My6OIfmIpPRcunWccuAq8PvpWpg=
+X-Google-Smtp-Source: ADFU+vsas33/T1wls90LzJe/jnlvuo7MSv76eqsmkBQ9+WYGCIXlVM8QKM+2HWiSJZMleCmzUxSkcA==
+X-Received: by 2002:aed:30ce:: with SMTP id 72mr13731312qtf.89.1584129152724;
+        Fri, 13 Mar 2020 12:52:32 -0700 (PDT)
 Received: from localhost.localdomain (174-084-153-250.res.spectrum.com. [174.84.153.250])
-        by smtp.gmail.com with ESMTPSA id i28sm31475599qtc.57.2020.03.13.12.52.30
+        by smtp.gmail.com with ESMTPSA id i28sm31475599qtc.57.2020.03.13.12.52.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 12:52:30 -0700 (PDT)
+        Fri, 13 Mar 2020 12:52:32 -0700 (PDT)
 From:   Brian Gerst <brgerst@gmail.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -53,9 +53,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Andy Lutomirski <luto@kernel.org>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
         Brian Gerst <brgerst@gmail.com>
-Subject: [PATCH v4 16/18] x86-32: Enable pt_regs based syscalls
-Date:   Fri, 13 Mar 2020 15:51:42 -0400
-Message-Id: <20200313195144.164260-17-brgerst@gmail.com>
+Subject: [PATCH v4 17/18] x86: Drop asmlinkage from syscalls
+Date:   Fri, 13 Mar 2020 15:51:43 -0400
+Message-Id: <20200313195144.164260-18-brgerst@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200313195144.164260-1-brgerst@gmail.com>
 References: <20200313195144.164260-1-brgerst@gmail.com>
@@ -66,320 +66,159 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable pt_regs based syscalls for 32-bit.  This makes the 32-bit native
-kernel consistent with the 64-bit kernel, and improves the syscall
-interface by not needing to push all 6 potential arguments onto the stack.
+asmlinkage is no longer required since the syscall ABI is now fully under
+x86 architecture control.  This makes the 32-bit native syscalls a bit more
+effecient by passing in regs via EAX instead of on the stack.
 
 Signed-off-by: Brian Gerst <brgerst@gmail.com>
 Reviewed-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
 ---
- arch/x86/Kconfig                       |   2 +-
- arch/x86/entry/common.c                |  15 ----
- arch/x86/entry/syscall_32.c            |  15 +---
- arch/x86/include/asm/syscall.h         |   6 --
- arch/x86/include/asm/syscall_wrapper.h | 111 ++++++++++++++-----------
- arch/x86/include/asm/syscalls.h        |  29 -------
- 6 files changed, 64 insertions(+), 114 deletions(-)
+ arch/x86/entry/syscall_32.c            |  2 +-
+ arch/x86/entry/syscall_64.c            |  2 +-
+ arch/x86/entry/syscall_x32.c           |  4 ++--
+ arch/x86/include/asm/syscall.h         |  2 +-
+ arch/x86/include/asm/syscall_wrapper.h | 31 ++++++++++++--------------
+ 5 files changed, 19 insertions(+), 22 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 532f52b99094..b65f07a06549 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -30,7 +30,6 @@ config X86_64
- 	select MODULES_USE_ELF_RELA
- 	select NEED_DMA_MAP_STATE
- 	select SWIOTLB
--	select ARCH_HAS_SYSCALL_WRAPPER
- 
- config FORCE_DYNAMIC_FTRACE
- 	def_bool y
-@@ -79,6 +78,7 @@ config X86
- 	select ARCH_HAS_STRICT_KERNEL_RWX
- 	select ARCH_HAS_STRICT_MODULE_RWX
- 	select ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
-+	select ARCH_HAS_SYSCALL_WRAPPER
- 	select ARCH_HAS_UBSAN_SANITIZE_ALL
- 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
- 	select ARCH_MIGHT_HAVE_ACPI_PDC		if ACPI
-diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index c3a8e6513f74..76735ec813e6 100644
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -334,20 +334,7 @@ static __always_inline void do_syscall_32_irqs_on(struct pt_regs *regs)
- 
- 	if (likely(nr < IA32_NR_syscalls)) {
- 		nr = array_index_nospec(nr, IA32_NR_syscalls);
--#ifdef CONFIG_IA32_EMULATION
- 		regs->ax = ia32_sys_call_table[nr](regs);
--#else
--		/*
--		 * It's possible that a 32-bit syscall implementation
--		 * takes a 64-bit parameter but nonetheless assumes that
--		 * the high bits are zero.  Make sure we zero-extend all
--		 * of the args.
--		 */
--		regs->ax = ia32_sys_call_table[nr](
--			(unsigned int)regs->bx, (unsigned int)regs->cx,
--			(unsigned int)regs->dx, (unsigned int)regs->si,
--			(unsigned int)regs->di, (unsigned int)regs->bp);
--#endif /* CONFIG_IA32_EMULATION */
- 	}
- 
- 	syscall_return_slowpath(regs);
-@@ -440,9 +427,7 @@ __visible long do_fast_syscall_32(struct pt_regs *regs)
- }
- #endif
- 
--#ifdef CONFIG_X86_64
- SYSCALL_DEFINE0(ni_syscall)
- {
- 	return -ENOSYS;
- }
--#endif
 diff --git a/arch/x86/entry/syscall_32.c b/arch/x86/entry/syscall_32.c
-index 41ec9c66fe15..097413c705ad 100644
+index 097413c705ad..86eb0d89d46f 100644
 --- a/arch/x86/entry/syscall_32.c
 +++ b/arch/x86/entry/syscall_32.c
-@@ -4,33 +4,22 @@
- #include <linux/linkage.h>
- #include <linux/sys.h>
- #include <linux/cache.h>
-+#include <linux/syscalls.h>
+@@ -8,7 +8,7 @@
  #include <asm/unistd.h>
  #include <asm/syscall.h>
  
--#ifdef CONFIG_IA32_EMULATION
--/* On X86_64, we use struct pt_regs * to pass parameters to syscalls */
- #define __SYSCALL_I386(nr, sym) extern asmlinkage long __ia32_##sym(const struct pt_regs *);
--#define __sys_ni_syscall __ia32_sys_ni_syscall
--#else /* CONFIG_IA32_EMULATION */
--#define __SYSCALL_I386(nr, sym) extern asmlinkage long sym(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
--extern asmlinkage long sys_ni_syscall(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
--#define __sys_ni_syscall sys_ni_syscall
--#endif /* CONFIG_IA32_EMULATION */
+-#define __SYSCALL_I386(nr, sym) extern asmlinkage long __ia32_##sym(const struct pt_regs *);
++#define __SYSCALL_I386(nr, sym) extern long __ia32_##sym(const struct pt_regs *);
  
  #include <asm/syscalls_32.h>
  #undef __SYSCALL_I386
+diff --git a/arch/x86/entry/syscall_64.c b/arch/x86/entry/syscall_64.c
+index 66d3e65e3b6b..1594ec72bcbb 100644
+--- a/arch/x86/entry/syscall_64.c
++++ b/arch/x86/entry/syscall_64.c
+@@ -11,7 +11,7 @@
+ #define __SYSCALL_X32(nr, sym)
+ #define __SYSCALL_COMMON(nr, sym) __SYSCALL_64(nr, sym)
  
--#ifdef CONFIG_IA32_EMULATION
- #define __SYSCALL_I386(nr, sym) [nr] = __ia32_##sym,
--#else /* CONFIG_IA32_EMULATION */
--#define __SYSCALL_I386(nr, sym) [nr] = sym,
--#endif /* CONFIG_IA32_EMULATION */
+-#define __SYSCALL_64(nr, sym) extern asmlinkage long __x64_##sym(const struct pt_regs *);
++#define __SYSCALL_64(nr, sym) extern long __x64_##sym(const struct pt_regs *);
+ #include <asm/syscalls_64.h>
+ #undef __SYSCALL_64
  
- __visible const sys_call_ptr_t ia32_sys_call_table[__NR_ia32_syscall_max+1] = {
- 	/*
- 	 * Smells like a compiler bug -- it doesn't work
- 	 * when the & below is removed.
- 	 */
--	[0 ... __NR_ia32_syscall_max] = &__sys_ni_syscall,
-+	[0 ... __NR_ia32_syscall_max] = &__ia32_sys_ni_syscall,
- #include <asm/syscalls_32.h>
- };
+diff --git a/arch/x86/entry/syscall_x32.c b/arch/x86/entry/syscall_x32.c
+index 2fb09efd7b40..3d8d70d3896c 100644
+--- a/arch/x86/entry/syscall_x32.c
++++ b/arch/x86/entry/syscall_x32.c
+@@ -10,8 +10,8 @@
+ 
+ #define __SYSCALL_64(nr, sym)
+ 
+-#define __SYSCALL_X32(nr, sym) extern asmlinkage long __x32_##sym(const struct pt_regs *);
+-#define __SYSCALL_COMMON(nr, sym) extern asmlinkage long __x64_##sym(const struct pt_regs *);
++#define __SYSCALL_X32(nr, sym) extern long __x32_##sym(const struct pt_regs *);
++#define __SYSCALL_COMMON(nr, sym) extern long __x64_##sym(const struct pt_regs *);
+ #include <asm/syscalls_64.h>
+ #undef __SYSCALL_X32
+ #undef __SYSCALL_COMMON
 diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
-index f4d010d0fa30..bb427d8cb1ef 100644
+index bb427d8cb1ef..7cbf733d11af 100644
 --- a/arch/x86/include/asm/syscall.h
 +++ b/arch/x86/include/asm/syscall.h
-@@ -16,13 +16,7 @@
+@@ -16,7 +16,7 @@
  #include <asm/thread_info.h>	/* for TS_COMPAT */
  #include <asm/unistd.h>
  
--#ifdef CONFIG_X86_64
- typedef asmlinkage long (*sys_call_ptr_t)(const struct pt_regs *);
--#else
--typedef asmlinkage long (*sys_call_ptr_t)(unsigned long, unsigned long,
--					  unsigned long, unsigned long,
--					  unsigned long, unsigned long);
--#endif /* CONFIG_X86_64 */
+-typedef asmlinkage long (*sys_call_ptr_t)(const struct pt_regs *);
++typedef long (*sys_call_ptr_t)(const struct pt_regs *);
  extern const sys_call_ptr_t sys_call_table[];
  
  #if defined(CONFIG_X86_32)
 diff --git a/arch/x86/include/asm/syscall_wrapper.h b/arch/x86/include/asm/syscall_wrapper.h
-index 0f126e40a464..5e13e2caf2e4 100644
+index 5e13e2caf2e4..e10efa1454bc 100644
 --- a/arch/x86/include/asm/syscall_wrapper.h
 +++ b/arch/x86/include/asm/syscall_wrapper.h
-@@ -11,6 +11,47 @@ struct pt_regs;
- extern asmlinkage long __x64_sys_ni_syscall(const struct pt_regs *regs);
- extern asmlinkage long __ia32_sys_ni_syscall(const struct pt_regs *regs);
+@@ -8,8 +8,8 @@
  
-+/*
-+ * Instead of the generic __SYSCALL_DEFINEx() definition, the x86 version takes
-+ * struct pt_regs *regs as the only argument of the syscall stub(s) named as:
-+ * __x64_sys_*()         - 64-bit native syscall
-+ * __ia32_sys_*()        - 32-bit native syscall or common compat syscall
-+ * __ia32_compat_sys_*() - 32-bit compat syscall
-+ * __x32_compat_sys_*()  - 64-bit X32 compat syscall
-+ *
-+ * The registers are decoded according to the ABI:
-+ * 64-bit: RDI, RSI, RDX, R10, R8, R9
-+ * 32-bit: EBX, ECX, EDX, ESI, EDI, EBP
-+ *
-+ * The stub then passes the decoded arguments to the __se_sys_*() wrapper to
-+ * perform sign-extension (omitted for zero-argument syscalls).  Finally the
-+ * arguments are passed to the __do_sys_*() function which is the actual
-+ * syscall.  These wrappers are marked as inline so the compiler can optimize
-+ * the functions where appropriate.
-+ *
-+ * Example assembly (slightly re-ordered for better readability):
-+ *
-+ * <__x64_sys_recv>:		<-- syscall with 4 parameters
-+ *	callq	<__fentry__>
-+ *
-+ *	mov	0x70(%rdi),%rdi	<-- decode regs->di
-+ *	mov	0x68(%rdi),%rsi	<-- decode regs->si
-+ *	mov	0x60(%rdi),%rdx	<-- decode regs->dx
-+ *	mov	0x38(%rdi),%rcx	<-- decode regs->r10
-+ *
-+ *	xor	%r9d,%r9d	<-- clear %r9
-+ *	xor	%r8d,%r8d	<-- clear %r8
-+ *
-+ *	callq	__sys_recvfrom	<-- do the actual work in __sys_recvfrom()
-+ *				    which takes 6 arguments
-+ *
-+ *	cltq			<-- extend return value to 64-bit
-+ *	retq			<-- return
-+ *
-+ * This approach avoids leaking random user-provided register content down
-+ * the call chain.
-+ */
-+
- /* Mapping of registers to parameters for syscalls on x86-64 and x32 */
- #define SC_X86_64_REGS_TO_ARGS(x, ...)					\
- 	__MAP(x,__SC_ARGS						\
-@@ -68,6 +109,26 @@ extern asmlinkage long __ia32_sys_ni_syscall(const struct pt_regs *regs);
- #define __X64_SYS_NI(name)
- #endif /* CONFIG_X86_64 */
+ struct pt_regs;
  
-+#if defined(CONFIG_X86_32) || defined(CONFIG_IA32_EMULATION)
-+#define __IA32_SYS_STUB0(name)						\
-+	__SYS_STUB0(ia32, sys_##name)
-+
-+#define __IA32_SYS_STUBx(x, name, ...)					\
-+	__SYS_STUBx(ia32, sys##name,					\
-+		    SC_IA32_REGS_TO_ARGS(x, __VA_ARGS__))
-+
-+#define __IA32_COND_SYSCALL(name)					\
-+	__COND_SYSCALL(ia32, sys_##name)
-+
-+#define __IA32_SYS_NI(name)						\
-+	__SYS_NI(ia32, sys_##name)
-+#else /* CONFIG_X86_32 || CONFIG_IA32_EMULATION */
-+#define __IA32_SYS_STUB0(name)
-+#define __IA32_SYS_STUBx(x, name, ...)
-+#define __IA32_COND_SYSCALL(name)
-+#define __IA32_SYS_NI(name)
-+#endif /* CONFIG_X86_32 || CONFIG_IA32_EMULATION */
-+
- #ifdef CONFIG_IA32_EMULATION
+-extern asmlinkage long __x64_sys_ni_syscall(const struct pt_regs *regs);
+-extern asmlinkage long __ia32_sys_ni_syscall(const struct pt_regs *regs);
++extern long __x64_sys_ni_syscall(const struct pt_regs *regs);
++extern long __ia32_sys_ni_syscall(const struct pt_regs *regs);
+ 
  /*
-  * For IA32 emulation, we need to handle "compat" syscalls *and* create
-@@ -90,27 +151,11 @@ extern asmlinkage long __ia32_sys_ni_syscall(const struct pt_regs *regs);
- #define __IA32_COMPAT_SYS_NI(name)					\
- 	__SYS_NI(ia32, compat_sys_##name)
+  * Instead of the generic __SYSCALL_DEFINEx() definition, the x86 version takes
+@@ -66,22 +66,21 @@ extern asmlinkage long __ia32_sys_ni_syscall(const struct pt_regs *regs);
+ 	      ,,(unsigned int)regs->di,,(unsigned int)regs->bp)
  
--#define __IA32_SYS_STUB0(name)						\
--	__SYS_STUB0(ia32, sys_##name)
--
--#define __IA32_SYS_STUBx(x, name, ...)					\
--	__SYS_STUBx(ia32, sys##name,					\
--		    SC_IA32_REGS_TO_ARGS(x, __VA_ARGS__))
--
--#define __IA32_COND_SYSCALL(name)					\
--	__COND_SYSCALL(ia32, sys_##name)
--
--#define __IA32_SYS_NI(name)						\
--	__SYS_NI(ia32, sys_##name)
- #else /* CONFIG_IA32_EMULATION */
- #define __IA32_COMPAT_SYS_STUB0(name)
- #define __IA32_COMPAT_SYS_STUBx(x, name, ...)
- #define __IA32_COMPAT_COND_SYSCALL(name)
- #define __IA32_COMPAT_SYS_NI(name)
--#define __IA32_SYS_STUB0(name)
--#define __IA32_SYS_STUBx(x, name, ...)
--#define __IA32_COND_SYSCALL(name)
--#define __IA32_SYS_NI(name)
- #endif /* CONFIG_IA32_EMULATION */
+ #define __SYS_STUB0(abi, name)						\
+-	asmlinkage long __##abi##_##name(const struct pt_regs *regs);	\
++	long __##abi##_##name(const struct pt_regs *regs);		\
+ 	ALLOW_ERROR_INJECTION(__##abi##_##name, ERRNO);			\
+-	asmlinkage long __##abi##_##name(const struct pt_regs *regs)	\
++	long __##abi##_##name(const struct pt_regs *regs)		\
+ 		__alias(__do_##name);
  
+ #define __SYS_STUBx(abi, name, ...)					\
+-	asmlinkage long __##abi##_##name(const struct pt_regs *regs);	\
++	long __##abi##_##name(const struct pt_regs *regs);		\
+ 	ALLOW_ERROR_INJECTION(__##abi##_##name, ERRNO);			\
+-	asmlinkage long __##abi##_##name(const struct pt_regs *regs)	\
++	long __##abi##_##name(const struct pt_regs *regs)		\
+ 	{								\
+ 		return __se_##name(__VA_ARGS__);			\
+ 	}
  
-@@ -180,40 +225,6 @@ extern asmlinkage long __ia32_sys_ni_syscall(const struct pt_regs *regs);
+ #define __COND_SYSCALL(abi, name)					\
+-	asmlinkage __weak long						\
+-	__##abi##_##name(const struct pt_regs *__unused)		\
++	__weak long __##abi##_##name(const struct pt_regs *__unused)	\
+ 	{								\
+ 		return sys_ni_syscall();				\
+ 	}
+@@ -192,11 +191,11 @@ extern asmlinkage long __ia32_sys_ni_syscall(const struct pt_regs *regs);
+  * of them.
+  */
+ #define COMPAT_SYSCALL_DEFINE0(name)					\
+-	static asmlinkage long						\
++	static long							\
+ 	__do_compat_sys_##name(const struct pt_regs *__unused);		\
+ 	__IA32_COMPAT_SYS_STUB0(name)					\
+ 	__X32_COMPAT_SYS_STUB0(name)					\
+-	static asmlinkage long						\
++	static long							\
+ 	__do_compat_sys_##name(const struct pt_regs *__unused)
  
- #endif /* CONFIG_COMPAT */
+ #define COMPAT_SYSCALL_DEFINEx(x, name, ...)					\
+@@ -248,12 +247,10 @@ extern asmlinkage long __ia32_sys_ni_syscall(const struct pt_regs *regs);
+  */
+ #define SYSCALL_DEFINE0(sname)						\
+ 	SYSCALL_METADATA(_##sname, 0);					\
+-	static asmlinkage long						\
+-	__do_sys_##sname(const struct pt_regs *__unused);		\
++	static long __do_sys_##sname(const struct pt_regs *__unused);	\
+ 	__X64_SYS_STUB0(sname)						\
+ 	__IA32_SYS_STUB0(sname)						\
+-	static asmlinkage long						\
+-	__do_sys_##sname(const struct pt_regs *__unused)
++	static long __do_sys_##sname(const struct pt_regs *__unused)
  
--
--/*
-- * Instead of the generic __SYSCALL_DEFINEx() definition, this macro takes
-- * struct pt_regs *regs as the only argument of the syscall stub named
-- * __x64_sys_*(). It decodes just the registers it needs and passes them on to
-- * the __se_sys_*() wrapper performing sign extension and then to the
-- * __do_sys_*() function doing the actual job. These wrappers and functions
-- * are inlined (at least in very most cases), meaning that the assembly looks
-- * as follows (slightly re-ordered for better readability):
-- *
-- * <__x64_sys_recv>:		<-- syscall with 4 parameters
-- *	callq	<__fentry__>
-- *
-- *	mov	0x70(%rdi),%rdi	<-- decode regs->di
-- *	mov	0x68(%rdi),%rsi	<-- decode regs->si
-- *	mov	0x60(%rdi),%rdx	<-- decode regs->dx
-- *	mov	0x38(%rdi),%rcx	<-- decode regs->r10
-- *
-- *	xor	%r9d,%r9d	<-- clear %r9
-- *	xor	%r8d,%r8d	<-- clear %r8
-- *
-- *	callq	__sys_recvfrom	<-- do the actual work in __sys_recvfrom()
-- *				    which takes 6 arguments
-- *
-- *	cltq			<-- extend return value to 64-bit
-- *	retq			<-- return
-- *
-- * This approach avoids leaking random user-provided register content down
-- * the call chain.
-- *
-- * If IA32_EMULATION is enabled, this macro generates an additional wrapper
-- * named __ia32_sys_*() which decodes the struct pt_regs *regs according
-- * to the i386 calling convention (bx, cx, dx, si, di, bp).
-- */
- #define __SYSCALL_DEFINEx(x, name, ...)					\
- 	static long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__));	\
- 	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
-diff --git a/arch/x86/include/asm/syscalls.h b/arch/x86/include/asm/syscalls.h
-index 91b7b6e1a115..06cbdca634d6 100644
---- a/arch/x86/include/asm/syscalls.h
-+++ b/arch/x86/include/asm/syscalls.h
-@@ -17,33 +17,4 @@
- /* kernel/ioport.c */
- long ksys_ioperm(unsigned long from, unsigned long num, int turn_on);
+ #define COND_SYSCALL(name)						\
+ 	__X64_COND_SYSCALL(name)					\
+@@ -268,8 +265,8 @@ extern asmlinkage long __ia32_sys_ni_syscall(const struct pt_regs *regs);
+  * For VSYSCALLS, we need to declare these three syscalls with the new
+  * pt_regs-based calling convention for in-kernel use.
+  */
+-asmlinkage long __x64_sys_getcpu(const struct pt_regs *regs);
+-asmlinkage long __x64_sys_gettimeofday(const struct pt_regs *regs);
+-asmlinkage long __x64_sys_time(const struct pt_regs *regs);
++long __x64_sys_getcpu(const struct pt_regs *regs);
++long __x64_sys_gettimeofday(const struct pt_regs *regs);
++long __x64_sys_time(const struct pt_regs *regs);
  
--#ifdef CONFIG_X86_32
--/*
-- * These definitions are only valid on pure 32-bit systems; x86-64 uses a
-- * different syscall calling convention
-- */
--asmlinkage long sys_ioperm(unsigned long, unsigned long, int);
--asmlinkage long sys_iopl(unsigned int);
--
--/* kernel/ldt.c */
--asmlinkage long sys_modify_ldt(int, void __user *, unsigned long);
--
--/* kernel/signal.c */
--asmlinkage long sys_rt_sigreturn(void);
--
--/* kernel/tls.c */
--asmlinkage long sys_set_thread_area(struct user_desc __user *);
--asmlinkage long sys_get_thread_area(struct user_desc __user *);
--
--/* X86_32 only */
--
--/* kernel/signal.c */
--asmlinkage long sys_sigreturn(void);
--
--/* kernel/vm86_32.c */
--struct vm86_struct;
--asmlinkage long sys_vm86old(struct vm86_struct __user *);
--asmlinkage long sys_vm86(unsigned long, unsigned long);
--
--#endif /* CONFIG_X86_32 */
- #endif /* _ASM_X86_SYSCALLS_H */
+ #endif /* _ASM_X86_SYSCALL_WRAPPER_H */
 -- 
 2.24.1
 
