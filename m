@@ -2,158 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99B79184BB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 16:51:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3270184BAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 16:50:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbgCMPvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 11:51:03 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:40604 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726406AbgCMPvD (ORCPT
+        id S1726968AbgCMPuw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 11:50:52 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:37315 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726406AbgCMPuw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 11:51:03 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02DFokWQ062890;
-        Fri, 13 Mar 2020 10:50:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584114646;
-        bh=sw8xlZHIlf4g2cDDVFzQRIZvMM32aQJO8l8rxyUESq4=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=pBONp+s+NOTdgnO43z2J0iIgOJlRcq/zn/U5I04lO66LqZmx1TBo1gm2U+BRFXm/B
-         3KLcepSoRf58xaAE4q0R2i+Yb8Z+3jIv/428qe7jQHV5EkZguKfR6BjmVWUPI0FsHg
-         PacDjPl1DvgFG4m/bzPAtwNszPgSerKiotUhBRvw=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02DFokdH001437;
-        Fri, 13 Mar 2020 10:50:46 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 13
- Mar 2020 10:50:46 -0500
-Received: from localhost.localdomain (10.64.41.19) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 13 Mar 2020 10:50:46 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 02DFojLq110462;
-        Fri, 13 Mar 2020 10:50:46 -0500
-Date:   Fri, 13 Mar 2020 21:20:45 +0530
-From:   Pratyush Yadav <p.yadav@ti.com>
-To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>
-CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [PATCH v3 00/12] mtd: spi-nor: add xSPI Octal DTR support
-Message-ID: <20200313155042.qof24ulzxfiguilp@ti.com>
-References: <20200313154645.29293-1-p.yadav@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20200313154645.29293-1-p.yadav@ti.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 13 Mar 2020 11:50:52 -0400
+Received: by mail-pl1-f201.google.com with SMTP id t12so5750213plo.4
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 08:50:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=eVmA9NNLkJ9r6wHykxZnxklaK4+O9W87gli6+oUvaSc=;
+        b=IcXI39oT2ZNkUUgz6GoA6/U6ExT4ULIi8KVYTiAqH4VORWfRY28VcMnVklHfN6GOyf
+         I/HYqgXVmIn6VUE3+sHvoaVPe2HqKkwEOS/+ZOYnn2uiERmLgQc8Chwi+Uo4gix+qE+Z
+         WVr2uNDLpXTgJZb6KrojURlkR7/ebNNbTiVCFKksRVfwGbD/HGblltprQhYh3ZZK2XEE
+         liohZOsIS9TdorAK2ocIcCP+y5Uh/gIq0XXVcCx0HlTz/Y2iBsczRSy8DyLn73eEIJOr
+         pWwq549tqptYlnD+XzcDEkzsVZjUO+/nQV1o87KhFmKNIh3G+A3vIZsBG2JZZlI9hjTP
+         WMhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=eVmA9NNLkJ9r6wHykxZnxklaK4+O9W87gli6+oUvaSc=;
+        b=ABiZh4W0RazVsEnCpoWGbHZ6Fr22cDkTgO5zIHFD8f9hjFb6mITOCLJxUPkT+SpxcH
+         nVLOycoiP2kGQTUG7hrvWFN3KO0IC/7QqWYn3JBZDDF0rmURdftf47B/4WW9k37h6XsN
+         D/vHwWvveTcW6eovVneBMA+1mL+kCHsY0P8EpZzjpmsyChDliGGZl6HJjxmwLX4lhqtt
+         I3GHdLo88XawJEAKtkJKqzMnNtzxYkQo6iLZoIUhcl/ogTGg/FBKyhhZ1Y+5/STjDHE6
+         xgrlbV3gTH+V8gi36xZfOxgoTLLydIW2xzCmRvelEBFQ+OesDFQ2GsQ2okJeHBAEohfY
+         tPYA==
+X-Gm-Message-State: ANhLgQ3O9cxRS2lIgfsKqY1LH2o8+e214v0Uk6JxHgwtQ8UXtCfWL4wk
+        trVLPtt6tuQ0As/Kt+KPEwbMJeOY994t
+X-Google-Smtp-Source: ADFU+vuHsce+aXNrgiT0n0TIjSDxGmOcV65WFHFx9JOxVyBmdZdjQ3fIhXUlSi5KBZGuC05rzhDkCaOMAzfu
+X-Received: by 2002:a17:90b:94a:: with SMTP id dw10mr10525477pjb.105.1584114651018;
+ Fri, 13 Mar 2020 08:50:51 -0700 (PDT)
+Date:   Fri, 13 Mar 2020 08:50:47 -0700
+Message-Id: <20200313155047.22339-1-irogers@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+Subject: [PATCH v2] perf tools: give synthetic mmap events an inode generation
+From:   Ian Rogers <irogers@google.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Cc:     Stephane Eranian <eranian@google.com>,
+        Ian Rogers <irogers@google.com>, iri Olsa <jolsa@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Cc Boris. Forgot to add you when sending.
+When mmap2 events are synthesized the ino_generation isn't being set
+leading to uninitialized memory being compared.
+Caught with clang's -fsanitize=memory.
 
-On 13/03/20 09:16PM, Pratyush Yadav wrote:
-> Hi,
-> 
-> This series adds support for octal DTR flashes in the spi-nor framework,
-> and then adds hooks for the Cypress Semper flash which is an xSPI
-> compliant Octal DTR flash.
-> 
-> This series assumes that the flash is handed to the kernel in Legacy SPI
-> mode. That is why there is no tracking of the state the flash is in.
-> Ability to detect the flash mode and then run the SFDP procedure in that
-> mode will be added as a follow up series.
-> 
-> Tested on TI J721e EVM with 1-bit ECC on the Cypress flash.
-> 
-> v1 can be found at [0]. v2 can be found at [1].
-> 
-> [0] https://lore.kernel.org/linux-mtd/20200211133348.15558-1-p.yadav@ti.com/
-> [1] https://lore.kernel.org/linux-mtd/20200226093703.19765-1-p.yadav@ti.com/
-> 
-> Changes in v3:
-> - Drop the DT properties "spi-rx-dtr" and "spi-tx-dtr". Instead, if
->   later a need is felt to disable DTR in case someone has a board with
->   Octal DTR capable flash but does not support DTR transactions for some
->   reason, a property like "spi-no-dtr" can be added.
-> 
-> - Remove mode bits SPI_RX_DTR and SPI_TX_DTR.
-> 
-> - Remove the Cadence Quadspi controller patch to un-block this series. I
->   will submit it as a separate patch.
-> 
-> - Rebase on latest 'master' and fix merge conflicts.
-> 
-> - Update read and write dirmap templates to use DTR.
-> 
-> - Rename 'is_dtr' to 'dtr'.
-> 
-> - Make 'dtr' a bitfield.
-> 
-> - Reject DTR ops in spi_mem_default_supports_op().
-> 
-> - Update atmel-quadspi to reject DTR ops. All other controller drivers
->   call spi_mem_default_supports_op() so they will automatically reject
->   DTR ops.
-> 
-> - Add support for both enabling and disabling DTR modes.
-> 
-> - Perform a Software Reset on flashes that support it when shutting
->   down.
-> 
-> - Disable Octal DTR mode on suspend, and re-enable it on resume.
-> 
-> - Drop enum 'spi_mem_cmd_ext' and make command opcode u16 instead.
->   Update spi-nor to use the 2-byte command instead of the command
->   extension. Since we still need a "extension type", mode that enum to
->   spi-nor and name it 'spi_nor_cmd_ext'.
-> 
-> - Default variable address width to 3 to fix SMPT parsing.
-> 
-> - Drop non-volatile change to uniform sector mode and rely on parsing
->   SMPT.
-> 
-> Pratyush Yadav (12):
->   spi: spi-mem: allow specifying whether an op is DTR or not
->   spi: atmel-quadspi: reject DTR ops
->   spi: spi-mem: allow specifying a command's extension
->   mtd: spi-nor: add support for DTR protocol
->   mtd: spi-nor: default to address width of 3 for configurable widths
->   mtd: spi-nor: get command opcode extension type from BFPT
->   mtd: spi-nor: parse xSPI Profile 1.0 table
->   mtd: spi-nor: use dummy cycle and address width info from SFDP
->   mtd: spi-nor: enable octal DTR mode when possible
->   mtd: spi-nor: perform a Soft Reset on shutdown
->   mtd: spi-nor: Disable Octal DTR mode on suspend.
->   mtd: spi-nor: add support for Cypress Semper flash
-> 
->  drivers/mtd/spi-nor/spi-nor.c | 692 ++++++++++++++++++++++++++++++----
->  drivers/spi/atmel-quadspi.c   |   4 +
->  drivers/spi/spi-mem.c         |   3 +
->  include/linux/mtd/spi-nor.h   |  73 +++-
->  include/linux/spi/spi-mem.h   |  13 +-
->  5 files changed, 702 insertions(+), 83 deletions(-)
-> 
-> --
-> 2.25.0
-> 
+==124733==WARNING: MemorySanitizer: use-of-uninitialized-value
+    #0 0x55a96a6a65cc in __dso_id__cmp tools/perf/util/dsos.c:23:6
+    #1 0x55a96a6a81d5 in dso_id__cmp tools/perf/util/dsos.c:38:9
+    #2 0x55a96a6a717f in __dso__cmp_long_name tools/perf/util/dsos.c:74:15
+    #3 0x55a96a6a6c4c in __dsos__findnew_link_by_longname_id tools/perf/util/dsos.c:106:12
+    #4 0x55a96a6a851e in __dsos__findnew_by_longname_id tools/perf/util/dsos.c:178:9
+    #5 0x55a96a6a7798 in __dsos__find_id tools/perf/util/dsos.c:191:9
+    #6 0x55a96a6a7b57 in __dsos__findnew_id tools/perf/util/dsos.c:251:20
+    #7 0x55a96a6a7a57 in dsos__findnew_id tools/perf/util/dsos.c:259:17
+    #8 0x55a96a7776ae in machine__findnew_dso_id tools/perf/util/machine.c:2709:9
+    #9 0x55a96a77dfcf in map__new tools/perf/util/map.c:193:10
+    #10 0x55a96a77240a in machine__process_mmap2_event tools/perf/util/machine.c:1670:8
+    #11 0x55a96a7741a3 in machine__process_event tools/perf/util/machine.c:1882:9
+    #12 0x55a96a6aee39 in perf_event__process tools/perf/util/event.c:454:9
+    #13 0x55a96a87d633 in perf_tool__process_synth_event tools/perf/util/synthetic-events.c:63:9
+    #14 0x55a96a87f131 in perf_event__synthesize_mmap_events tools/perf/util/synthetic-events.c:403:7
+    #15 0x55a96a8815d6 in __event__synthesize_thread tools/perf/util/synthetic-events.c:548:9
+    #16 0x55a96a882bff in __perf_event__synthesize_threads tools/perf/util/synthetic-events.c:681:3
+    #17 0x55a96a881ec2 in perf_event__synthesize_threads tools/perf/util/synthetic-events.c:750:9
+    #18 0x55a96a562b26 in synth_all tools/perf/tests/mmap-thread-lookup.c:136:9
+    #19 0x55a96a5623b1 in mmap_events tools/perf/tests/mmap-thread-lookup.c:174:8
+    #20 0x55a96a561fa0 in test__mmap_thread_lookup tools/perf/tests/mmap-thread-lookup.c:230:2
+    #21 0x55a96a52c182 in run_test tools/perf/tests/builtin-test.c:378:9
+    #22 0x55a96a52afc1 in test_and_print tools/perf/tests/builtin-test.c:408:9
+    #23 0x55a96a52966e in __cmd_test tools/perf/tests/builtin-test.c:603:4
+    #24 0x55a96a52855d in cmd_test tools/perf/tests/builtin-test.c:747:9
+    #25 0x55a96a2844d4 in run_builtin tools/perf/perf.c:312:11
+    #26 0x55a96a282bd0 in handle_internal_command tools/perf/perf.c:364:8
+    #27 0x55a96a284097 in run_argv tools/perf/perf.c:408:2
+    #28 0x55a96a282223 in main tools/perf/perf.c:538:3
 
+  Uninitialized value was stored to memory at
+    #1 0x55a96a6a18f7 in dso__new_id tools/perf/util/dso.c:1230:14
+    #2 0x55a96a6a78ee in __dsos__addnew_id tools/perf/util/dsos.c:233:20
+    #3 0x55a96a6a7bcc in __dsos__findnew_id tools/perf/util/dsos.c:252:21
+    #4 0x55a96a6a7a57 in dsos__findnew_id tools/perf/util/dsos.c:259:17
+    #5 0x55a96a7776ae in machine__findnew_dso_id tools/perf/util/machine.c:2709:9
+    #6 0x55a96a77dfcf in map__new tools/perf/util/map.c:193:10
+    #7 0x55a96a77240a in machine__process_mmap2_event tools/perf/util/machine.c:1670:8
+    #8 0x55a96a7741a3 in machine__process_event tools/perf/util/machine.c:1882:9
+    #9 0x55a96a6aee39 in perf_event__process tools/perf/util/event.c:454:9
+    #10 0x55a96a87d633 in perf_tool__process_synth_event tools/perf/util/synthetic-events.c:63:9
+    #11 0x55a96a87f131 in perf_event__synthesize_mmap_events tools/perf/util/synthetic-events.c:403:7
+    #12 0x55a96a8815d6 in __event__synthesize_thread tools/perf/util/synthetic-events.c:548:9
+    #13 0x55a96a882bff in __perf_event__synthesize_threads tools/perf/util/synthetic-events.c:681:3
+    #14 0x55a96a881ec2 in perf_event__synthesize_threads tools/perf/util/synthetic-events.c:750:9
+    #15 0x55a96a562b26 in synth_all tools/perf/tests/mmap-thread-lookup.c:136:9
+    #16 0x55a96a5623b1 in mmap_events tools/perf/tests/mmap-thread-lookup.c:174:8
+    #17 0x55a96a561fa0 in test__mmap_thread_lookup tools/perf/tests/mmap-thread-lookup.c:230:2
+    #18 0x55a96a52c182 in run_test tools/perf/tests/builtin-test.c:378:9
+    #19 0x55a96a52afc1 in test_and_print tools/perf/tests/builtin-test.c:408:9
+
+  Uninitialized value was stored to memory at
+    #0 0x55a96a7725af in machine__process_mmap2_event tools/perf/util/machine.c:1646:25
+    #1 0x55a96a7741a3 in machine__process_event tools/perf/util/machine.c:1882:9
+    #2 0x55a96a6aee39 in perf_event__process tools/perf/util/event.c:454:9
+    #3 0x55a96a87d633 in perf_tool__process_synth_event tools/perf/util/synthetic-events.c:63:9
+    #4 0x55a96a87f131 in perf_event__synthesize_mmap_events tools/perf/util/synthetic-events.c:403:7
+    #5 0x55a96a8815d6 in __event__synthesize_thread tools/perf/util/synthetic-events.c:548:9
+    #6 0x55a96a882bff in __perf_event__synthesize_threads tools/perf/util/synthetic-events.c:681:3
+    #7 0x55a96a881ec2 in perf_event__synthesize_threads tools/perf/util/synthetic-events.c:750:9
+    #8 0x55a96a562b26 in synth_all tools/perf/tests/mmap-thread-lookup.c:136:9
+    #9 0x55a96a5623b1 in mmap_events tools/perf/tests/mmap-thread-lookup.c:174:8
+    #10 0x55a96a561fa0 in test__mmap_thread_lookup tools/perf/tests/mmap-thread-lookup.c:230:2
+    #11 0x55a96a52c182 in run_test tools/perf/tests/builtin-test.c:378:9
+    #12 0x55a96a52afc1 in test_and_print tools/perf/tests/builtin-test.c:408:9
+    #13 0x55a96a52966e in __cmd_test tools/perf/tests/builtin-test.c:603:4
+    #14 0x55a96a52855d in cmd_test tools/perf/tests/builtin-test.c:747:9
+    #15 0x55a96a2844d4 in run_builtin tools/perf/perf.c:312:11
+    #16 0x55a96a282bd0 in handle_internal_command tools/perf/perf.c:364:8
+    #17 0x55a96a284097 in run_argv tools/perf/perf.c:408:2
+    #18 0x55a96a282223 in main tools/perf/perf.c:538:3
+
+  Uninitialized value was created by a heap allocation
+    #0 0x55a96a22f60d in malloc llvm/llvm-project/compiler-rt/lib/msan/msan_interceptors.cpp:925:3
+    #1 0x55a96a882948 in __perf_event__synthesize_threads tools/perf/util/synthetic-events.c:655:15
+    #2 0x55a96a881ec2 in perf_event__synthesize_threads tools/perf/util/synthetic-events.c:750:9
+    #3 0x55a96a562b26 in synth_all tools/perf/tests/mmap-thread-lookup.c:136:9
+    #4 0x55a96a5623b1 in mmap_events tools/perf/tests/mmap-thread-lookup.c:174:8
+    #5 0x55a96a561fa0 in test__mmap_thread_lookup tools/perf/tests/mmap-thread-lookup.c:230:2
+    #6 0x55a96a52c182 in run_test tools/perf/tests/builtin-test.c:378:9
+    #7 0x55a96a52afc1 in test_and_print tools/perf/tests/builtin-test.c:408:9
+    #8 0x55a96a52966e in __cmd_test tools/perf/tests/builtin-test.c:603:4
+    #9 0x55a96a52855d in cmd_test tools/perf/tests/builtin-test.c:747:9
+    #10 0x55a96a2844d4 in run_builtin tools/perf/perf.c:312:11
+    #11 0x55a96a282bd0 in handle_internal_command tools/perf/perf.c:364:8
+    #12 0x55a96a284097 in run_argv tools/perf/perf.c:408:2
+    #13 0x55a96a282223 in main tools/perf/perf.c:538:3
+
+SUMMARY: MemorySanitizer: use-of-uninitialized-value tools/perf/util/dsos.c:23:6 in __dso_id__cmp
+
+v2 fixed a white space issue.
+
+Acked-by: iri Olsa <jolsa@kernel.org>
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/synthetic-events.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
+index dd3e6f43fb86..3f28af39f9c6 100644
+--- a/tools/perf/util/synthetic-events.c
++++ b/tools/perf/util/synthetic-events.c
+@@ -345,6 +345,7 @@ int perf_event__synthesize_mmap_events(struct perf_tool *tool,
+ 			continue;
+ 
+ 		event->mmap2.ino = (u64)ino;
++		event->mmap2.ino_generation = 0;
+ 
+ 		/*
+ 		 * Just like the kernel, see __perf_event_mmap in kernel/perf_event.c
 -- 
-Regards,
-Pratyush Yadav
-Texas Instruments India
+2.25.1.481.gfbce0eb801-goog
+
