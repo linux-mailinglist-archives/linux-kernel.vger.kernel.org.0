@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AA811841A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 08:44:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26A5A1841B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 08:50:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726495AbgCMHov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 03:44:51 -0400
-Received: from mail-eopbgr80073.outbound.protection.outlook.com ([40.107.8.73]:51936
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        id S1726393AbgCMHuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 03:50:06 -0400
+Received: from mail-am6eur05on2085.outbound.protection.outlook.com ([40.107.22.85]:46368
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726060AbgCMHos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 03:44:48 -0400
+        id S1726216AbgCMHuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 03:50:06 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MKpEVfXd7pbW9wbtJB4D+HASW+o0Ebh81PntPC5oy9JLbiixUaOXFVXjUyFJeaAGXikAPrvqB6UGIw+Wd8ibBi+ZEeVLByfBrGjgW9ewC4PXq9MHAPiIMpStSS4xFjXM0u/Eu0QluPHfhmZtF+KPAMhYsyVku7gWQWaZUcCD1iPVPGERTaMlI7df7KWE7BTdA8Z+pQjMScQ+jxAKLA45wnGio1+EnSjjFhiC20J/U82UxYU0wIDut1JYncxA9hF2U+zeDGVeFLpHMT3oHg3FHib8VpI4MtSx+zfr/Ua/YGf5czPh+k0/FqzkNA5PuWN7S0puEX6tUx3XZLmPl6js7g==
+ b=aNveq3kR5ZjRbn1tNv1s8GHMry8tRxf7Wm/3iASwqDLuluXcdUSfCMNeewH5tnP1Ag90UpSNR5p43I8rAXUZQ8c46odKQTQ812u2sIbMIh/MhR596ER8j+R+j9n+8uzyoHcGcieS1AP/AZSsfq0LtOkqFPFOMJH/Cz+91IdbKjcuAYYgpRrEigbroeWM1acWZFjOQHqQ9I8OJDPTf6+uGwmDN44KFSRcj7oQ7m3Tv/3kUG6u3GQofH9AzfwtWkWgCuaKQ00ouzPL3tIhzsgK7WCChAC+PNqkh171v+/c1xK39ivovCYILGJKhfUNzaFFn/559Wg7RWB5x4YnCU2eXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ai388t4pbrHUWWvXOdgsXw4crg3dgRkaRBSyIkjwYGk=;
- b=R+cVdS7yNsW49QsYXpwUAY0lzDoKP6O/oil4iCZSAtl6fIKzhNeRzqBlV4yjdf+iX/Lu8zsWwnHihr3/qATIz2fo6Bkhpd4q2Pb/BcyvQFnktlLIwQeBqDVXVqWrENFWIU/lZ2f8oLgZrW3cStWN3rkL3lEwmaxMJG5h+vx2cgio3olxDuB45G/ESIN/YD0iO17ZBElYdbBhC6Gv7yAxrfhlNJ013djpXcgOUPPBbNaejCOF8F6RC+gjrOQDYqaO7/bqOSQT+CVv2kYEuh6KMV46mCdzDmJNTcpKYveC24/ep/0BSxXse2i++figIkSxEdBb/QtWck5xGt9EmTkWzQ==
+ bh=OYRjk7xIK0yv1tj8YXANcUvjtHeYdp5QImFTkzKPn/Q=;
+ b=YRzD1Pdu2rTpAsF5hgNgjHt3VO3UPtEOQSAagISJOJtF2PPjj1tfSRB6U09RZCQBtf9UfbMmtYAIyFWcb/Lc6LSlpJQIfi/7gcp6B9o7x0diAfV+nrd26ps9blaSUnx/1l1gcMlSbhMpycoxPKXE6V9n/piC7ZefSOsVXNpWNQTz5VelcBhyNKH488bonJt6uWZYvFl/HekMWG24o+wmePTZYxJ2nKQIdxulRUd6lIz/Ilq2/ZR7yY4jk8QVyasLcyMNbSTYzViAxOYi2gXqF1kqC2dhpS6hBn4EGCRGmzpPMbdO8KplrexkHEKqkPUfeOzV2p5rADdjdXdJT9hPuQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ai388t4pbrHUWWvXOdgsXw4crg3dgRkaRBSyIkjwYGk=;
- b=AlQmI+7HKR9b7SBrnTsHHmEQhbcdSu2Xx+uJwlM59wtXNcV9X0vKmcLnMQtV5+VqQWmpCeyl6adX9JwSbTEsJ3Yx4SkRQB8ER3Gel+y7QZLE637JyS6ySg44Mj4SKmEvQGD3WSmT31/qm9AFxe9WGVOttinnC5gaULKuQjq7HOg=
+ bh=OYRjk7xIK0yv1tj8YXANcUvjtHeYdp5QImFTkzKPn/Q=;
+ b=mN0fs1VjJiqn/SgB0o4q87cKUkZaxfPQvMsG7WqErj5cWGB4NT0AXzERGthZXdoZOkKdCwauX0s+9HU8DeY9iIQgqDweQVPkyIl0EmUFCKqnxeagBozyYyF24+y1CMHH4bgfrXOTz//AjrzkQmZjrkKpNz5H27sINb3XTChlimE=
 Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB4705.eurprd04.prod.outlook.com (20.176.214.214) with Microsoft SMTP
+ AM0PR04MB6002.eurprd04.prod.outlook.com (20.178.114.33) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.14; Fri, 13 Mar 2020 07:44:43 +0000
+ 15.20.2793.20; Fri, 13 Mar 2020 07:47:26 +0000
 Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
  ([fe80::548f:4941:d4eb:4c11]) by AM0PR04MB4481.eurprd04.prod.outlook.com
  ([fe80::548f:4941:d4eb:4c11%6]) with mapi id 15.20.2793.018; Fri, 13 Mar 2020
- 07:44:43 +0000
+ 07:47:26 +0000
 From:   Peng Fan <peng.fan@nxp.com>
 To:     Abel Vesa <abel.vesa@nxp.com>, Rob Herring <robh@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -52,14 +52,14 @@ CC:     dl-linux-imx <linux-imx@nxp.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         Abel Vesa <abel.vesa@nxp.com>
-Subject: RE: [RFC 02/11] arm64: dts: imx8mp: Add AIPS 4 and 5
-Thread-Topic: [RFC 02/11] arm64: dts: imx8mp: Add AIPS 4 and 5
-Thread-Index: AQHV8TqlJIxDUMbhF0CTiGOzlk4moKhGM6iA
-Date:   Fri, 13 Mar 2020 07:44:43 +0000
-Message-ID: <AM0PR04MB44814EAE53E091499C639F3188FA0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+Subject: RE: [RFC 04/11] clk: imx: Add gate shared for i.MX8MP audiomix
+Thread-Topic: [RFC 04/11] clk: imx: Add gate shared for i.MX8MP audiomix
+Thread-Index: AQHV8TqlpdEwDmBs0U+iFgh60sh+aKhGNI2w
+Date:   Fri, 13 Mar 2020 07:47:26 +0000
+Message-ID: <AM0PR04MB44817B0DBC695577617CFC8C88FA0@AM0PR04MB4481.eurprd04.prod.outlook.com>
 References: <1583226206-19758-1-git-send-email-abel.vesa@nxp.com>
- <1583226206-19758-3-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1583226206-19758-3-git-send-email-abel.vesa@nxp.com>
+ <1583226206-19758-5-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1583226206-19758-5-git-send-email-abel.vesa@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -69,90 +69,199 @@ authentication-results: spf=none (sender IP is )
 x-originating-ip: [119.31.174.68]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 90a22e50-89c5-49c8-8224-08d7c7226518
-x-ms-traffictypediagnostic: AM0PR04MB4705:|AM0PR04MB4705:
+x-ms-office365-filtering-correlation-id: 5e604eb9-e424-40cd-2768-08d7c722c646
+x-ms-traffictypediagnostic: AM0PR04MB6002:|AM0PR04MB6002:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB4705826ADCD8D53CB897D17488FA0@AM0PR04MB4705.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-microsoft-antispam-prvs: <AM0PR04MB6002F3097CA08E1CB8A5F58188FA0@AM0PR04MB6002.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
 x-forefront-prvs: 034119E4F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(39860400002)(346002)(136003)(396003)(366004)(199004)(71200400001)(110136005)(4326008)(76116006)(8676002)(9686003)(55016002)(86362001)(33656002)(66556008)(66946007)(64756008)(66476007)(26005)(186003)(66446008)(6636002)(7416002)(316002)(2906002)(478600001)(81166006)(52536014)(44832011)(54906003)(5660300002)(7696005)(6506007)(81156014)(8936002)(32563001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4705;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(376002)(136003)(396003)(346002)(199004)(76116006)(66556008)(66446008)(9686003)(7696005)(66476007)(66946007)(86362001)(64756008)(55016002)(33656002)(71200400001)(478600001)(4326008)(316002)(5660300002)(110136005)(54906003)(6506007)(6636002)(44832011)(52536014)(8676002)(81166006)(8936002)(26005)(2906002)(81156014)(186003)(7416002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6002;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: w9ZJUtRfYHz3YAB4gX3J+rxam1nkwtZfCHAvWZtXbbbAX3m2VLSLvdxDhLTqNWIYwGKJ33NRcra2mdKt8m2Ql6H56VslKqILKxDhPhsX1PVIuGy7XFTEeFjdm281XydsI+E3jLDXx6L0qixCwQm0ziIhBDuL4r+mwEvqJRHcZNNK1C+rNkRAChEgcstUMfLDFASZm/QU9nMCr8n/nQ3OUswBVzqlG1cWsEa9VMo9guEYRge/36P4uW+RBn5XOL1dA+HKQOGKmrfMtuQ0VIIRbquBAkBUqc7zUvh7EsCCP/iHLbwYsX7W2oKlkM3LWUAhsYpKQEfiXk5pkalkQ7ik+mGsgOpzOksRshzQcHkIwDUy1WF9RNYONBBo3MgJwwwxCX/FUH2aJ64maQ81Kia/Z1KCN+u5fV41SDDdvWbIqFrDoPtfMh6GOPb+KiGSSTuc4JzKI131SZHZSGxDUPxoYoC75LQv8nYbBFvEXe1xBfSAYHrcoM0lhFHlEDdA6dsibvTXqz46cfBqMQz5N0zm3Q==
-x-ms-exchange-antispam-messagedata: bhb6xHcRK0huRitZgwerF3TQdDVVw66DZpJUVkbOghsks++4jr2CIGaqk5wxH54GdZn7m11ZAQpFdz3dWHFQZHiKiGOS5sJASHGsQMaN4IOj+hb0KUlO5CdpAPFlJueee6jBfy7JN6kL0lLsBZkvVg==
+x-microsoft-antispam-message-info: yaG+pDZAMEcQ8D1HFrMIYh+B6+fobrcmV6gnMcpur9MCZWEdQFY6bVPMd4lPkvnTnkswChKTiT3hmCX5KCNWef3AqEllrZ/wWsqp3sEzivYN1bLayJFVf+ixMR2xl5CTvXC3ft95R/hwmtg8g6EI/RprasVLroAHPpLzQRwGeEx1N2sJTDfRZLMsxRpB5Hx6Ixt1GPn7F0yoQfWT1qy7tNSKYRU++479/Y2WVyB0gOZes/lHYF+d87ltQMsmdioERtWGHPaX4tFBbREWuJw75WyjDfk091b6O6H7WQ7MUCMtLdE1NkGU12XoisaU6OJxivs4Qw/GgqcHw95wLR8RHxLUF0M29Mv0aWlXGYfRfutYKl6yr4P9VHbxd+8tjPQY8U2MsTgFARKPjEjjzsyM1T6qasEUwuKg9RFfMrICm7MA073Qkx665IQLLHoOXTgipYDCrBeeoA8bAhp2Tae8GlYRJb9z8qJ4eq0/29tsjpWAJQp30rDECSj3qoMufPHO
+x-ms-exchange-antispam-messagedata: WTqjGsi0eKl22pr6otW+uoq8f0WnXcwL4CvNJrRYvswdFxmXn6pon10eyJNTS6ilxWRsKC2kldZy3hnktVMiFKZFNRce78H+8ZkIqWjmqCKWXyX0kIIuA1jc8zPZpmv7KnH/AE/89OjxBLsM+RErJw==
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90a22e50-89c5-49c8-8224-08d7c7226518
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2020 07:44:43.3475
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e604eb9-e424-40cd-2768-08d7c722c646
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2020 07:47:26.3517
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nexJETpg4UQP4/k7DHUnoo60Lean89EP17GHk9fz6njgROUuSTzxVEkq5XasHKVs60D85NF3Q7V+lwpM5/AsKQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4705
+X-MS-Exchange-CrossTenant-userprincipalname: xYKC/OfQ7LkFDv+Jl7+wwnunDKuKAUSFn3go7gR1jmFLLCi3/BzA5SXqd+qLgIIdg47rXZ2EP1+H7ZB1IjQyXA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6002
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Subject: [RFC 02/11] arm64: dts: imx8mp: Add AIPS 4 and 5
+> Subject: [RFC 04/11] clk: imx: Add gate shared for i.MX8MP audiomix
 >=20
-> There are 5 AIPS maps in total, according to the RM. Add the missing ones
-> here.
+> The newer i.MX platform use some gates that have a shared control bit
+> between them.
+
+Could the existing clk_hw_register_gate2 handle your case?
+
+Thanks,
+Peng.
 >=20
 > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 > ---
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+>  drivers/clk/imx/Makefile          |   2 +-
+>  drivers/clk/imx/clk-gate-shared.c | 111
+> ++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk.h             |   4 ++
+>  3 files changed, 116 insertions(+), 1 deletion(-)  create mode 100644
+> drivers/clk/imx/clk-gate-shared.c
 >=20
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> index 71b0c8f..a997ca7 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> @@ -603,6 +603,22 @@
->  			};
->  		};
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile index
+> 928f874c..799a8ef 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -27,7 +27,7 @@ obj-$(CONFIG_MXC_CLK_SCU) +=3D \
 >=20
-> +		aips4: bus@32c00000 {
-> +			compatible =3D "simple-bus";
-
-"fsl,aips-bus", "simple-bus";
-
-> +			reg =3D <0x32c00000 0x400000>;
-
-Size is 64KB
-
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <1>;
-> +			ranges;
-> +		};
+>  obj-$(CONFIG_CLK_IMX8MM) +=3D clk-imx8mm.o
+>  obj-$(CONFIG_CLK_IMX8MN) +=3D clk-imx8mn.o
+> -obj-$(CONFIG_CLK_IMX8MP) +=3D clk-imx8mp.o
+> +obj-$(CONFIG_CLK_IMX8MP) +=3D clk-imx8mp.o clk-gate-shared.o
+>  obj-$(CONFIG_CLK_IMX8MQ) +=3D clk-imx8mq.o
+>  obj-$(CONFIG_CLK_IMX8QXP) +=3D clk-imx8qxp.o clk-imx8qxp-lpcg.o
+>=20
+> diff --git a/drivers/clk/imx/clk-gate-shared.c
+> b/drivers/clk/imx/clk-gate-shared.c
+> new file mode 100644
+> index 00000000..961a0e3
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-gate-shared.c
+> @@ -0,0 +1,111 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2019 NXP.
+> + */
 > +
-> +		aips5: bus@30c00000 {
-> +			compatible =3D "simple-bus";
-> +			reg =3D <0x30c00000 0x400000>;
-
-Ditto. Please correct compatible and reg.
-
-Without this, I think there is no need to only
-add bus here? It might be better to also include
-subnodes under aips bus.
-
-Regards,
-Peng.
-
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <1>;
-> +			ranges;
-> +		};
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/slab.h>
+> +#include "clk.h"
 > +
->  		gic: interrupt-controller@38800000 {
->  			compatible =3D "arm,gic-v3";
->  			reg =3D <0x38800000 0x10000>,
+> +/**
+> + * struct clk_gate_shared - i.MX specific gate clock having the gate
+> +flag
+> + * shared with other gate clocks
+> + */
+> +struct clk_gate_shared {
+> +	struct clk_gate	gate;
+> +	spinlock_t	*lock;
+> +	unsigned int	*share_count;
+> +};
+> +
+> +static int clk_gate_shared_enable(struct clk_hw *hw) {
+> +	struct clk_gate *gate =3D to_clk_gate(hw);
+> +	struct clk_gate_shared *shgate =3D container_of(gate,
+> +					struct clk_gate_shared, gate);
+> +	unsigned long flags =3D 0;
+> +	int ret =3D 0;
+> +
+> +	spin_lock_irqsave(shgate->lock, flags);
+> +
+> +	if (shgate->share_count && (*shgate->share_count)++ > 0)
+> +		goto out;
+> +
+> +	ret =3D clk_gate_ops.enable(hw);
+> +out:
+> +	spin_unlock_irqrestore(shgate->lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+> +static void clk_gate_shared_disable(struct clk_hw *hw) {
+> +	struct clk_gate *gate =3D to_clk_gate(hw);
+> +	struct clk_gate_shared *shgate =3D container_of(gate,
+> +					struct clk_gate_shared, gate);
+> +	unsigned long flags =3D 0;
+> +
+> +	spin_lock_irqsave(shgate->lock, flags);
+> +
+> +	if (shgate->share_count) {
+> +		if (WARN_ON(*shgate->share_count =3D=3D 0))
+> +			goto out;
+> +		else if (--(*shgate->share_count) > 0)
+> +			goto out;
+> +	}
+> +
+> +	clk_gate_ops.disable(hw);
+> +out:
+> +	spin_unlock_irqrestore(shgate->lock, flags); }
+> +
+> +static int clk_gate_shared_is_enabled(struct clk_hw *hw) {
+> +	return clk_gate_ops.is_enabled(hw);
+> +}
+> +
+> +static const struct clk_ops clk_gate_shared_ops =3D {
+> +	.enable =3D clk_gate_shared_enable,
+> +	.disable =3D clk_gate_shared_disable,
+> +	.is_enabled =3D clk_gate_shared_is_enabled, };
+> +
+> +struct clk_hw *imx_dev_clk_hw_gate_shared(struct device *dev, const char
+> *name,
+> +				const char *parent, void __iomem *reg,
+> +				u8 shift, unsigned int *share_count) {
+> +	struct clk_gate_shared *shgate;
+> +	struct clk_gate *gate;
+> +	struct clk_hw *hw;
+> +	struct clk_init_data init;
+> +	int ret;
+> +
+> +	shgate =3D kzalloc(sizeof(*shgate), GFP_KERNEL);
+> +	if (!shgate)
+> +		return ERR_PTR(-ENOMEM);
+> +	gate =3D &shgate->gate;
+> +
+> +	init.name =3D name;
+> +	init.ops =3D &clk_gate_shared_ops;
+> +	init.flags =3D CLK_OPS_PARENT_ENABLE;
+> +	init.parent_names =3D parent ? &parent : NULL;
+> +	init.num_parents =3D parent ? 1 : 0;
+> +
+> +	gate->reg =3D reg;
+> +	gate->bit_idx =3D shift;
+> +	gate->lock =3D NULL;
+> +	gate->hw.init =3D &init;
+> +	shgate->lock =3D &imx_ccm_lock;
+> +	shgate->share_count =3D share_count;
+> +
+> +	hw =3D &gate->hw;
+> +
+> +	ret =3D clk_hw_register(NULL, hw);
+> +	if (ret) {
+> +		kfree(shgate);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	return hw;
+> +}
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h index
+> f074dd8..51d6c26 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -151,6 +151,10 @@ struct clk_hw *imx_clk_hw_sscg_pll(const char
+> *name,
+>  				void __iomem *base,
+>  				unsigned long flags);
+>=20
+> +struct clk_hw *imx_dev_clk_hw_gate_shared(struct device *dev, const char
+> *name,
+> +				const char *parent, void __iomem *reg,
+> +				u8 shift, unsigned int *share_count);
+> +
+>  enum imx_pllv3_type {
+>  	IMX_PLLV3_GENERIC,
+>  	IMX_PLLV3_SYS,
 > --
 > 2.7.4
 
