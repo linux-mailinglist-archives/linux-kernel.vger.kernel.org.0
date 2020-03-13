@@ -2,112 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B408183EE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:58:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0644E183EEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 03:05:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbgCMB6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 21:58:17 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37244 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbgCMB6R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 21:58:17 -0400
-Received: by mail-qt1-f195.google.com with SMTP id l20so6287329qtp.4;
-        Thu, 12 Mar 2020 18:58:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=88CKdz/NKjVak04/lN/5uD3uM5mQKrmtijz9vSkeFgg=;
-        b=pjSAOZwt9ryPLjEr9Hn+KApbAgGbTkRLnUUH65gnKwCdCkYwq6qZSG+nWJ2u4BqHK0
-         tY7/ToQXdluH6nYEh0LlaNONnotFWYeWQs7ksBcJwWZSMbZAKiWOCD/mpDmNLmNx73Zs
-         gCrn6ASGGxo23xeiOF+49pKCeuxy0UG9CtM2APILEqad5ipMKu2R/gDgkETqpzZY0S9l
-         KsgrTyJW49G/BOUCKMgudmmuBywylqv8Xu4EXoXh0YXqE5BxR3lmju3MMUSBinST6SAC
-         uYWe7YaaLMmgtI9jRzkTANe0kcvacI7UN5ylAZgsiCvqfGuyG00pqVMrO+S0hdF49UYM
-         RSNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=88CKdz/NKjVak04/lN/5uD3uM5mQKrmtijz9vSkeFgg=;
-        b=udlrYVGVyAHLu67RuvmwUjZvJeN4PzC1q2oa114gKwLMZNDRE4QIJqCTWctMwHmDoR
-         wc6u4afJkd2aMQ+BcG0pvzGBJSZWFaqbBSN3L06VXhJD+KZoxVqCbEYSOub7JctnSplT
-         lHOgOrWt0yRnDro8swQ12ocN7aXdr00L3/a0wIXSlLxsdh4zjHElsTCOFdiG9t5mMQgT
-         TKiiQfXnjWkRlAXpjlRYZq9DLJ/vu6qoibTqBSk2CEsF2HxnOoq86nKtbekE0JQXcwld
-         KZvtazrmSDZY9MDLTMcCIR1PVNOhAMUHoIh8Y2rdlFhi/1jJOUAIYm7zqVQ8ufRYoZ0q
-         tzuw==
-X-Gm-Message-State: ANhLgQ03DQsh6lNzIa9OdbLEz/OXtHri+2T4KY7XTzaANq/Xurr0JXir
-        s/xbKvtoM8+px1dtX3QdAhfLKO/tuPhq6HZ5QavsGQ==
-X-Google-Smtp-Source: ADFU+vvK5+cSY2SJjGHWhKW0xQKWTvae4atVpKpb9h+cuGuLEZkISiyaRiiGVQ5/eNNFTISVK0wd8Lq7pxHaHGITVPM=
-X-Received: by 2002:ac8:5298:: with SMTP id s24mr10110299qtn.54.1584064696061;
- Thu, 12 Mar 2020 18:58:16 -0700 (PDT)
+        id S1726331AbgCMCFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 22:05:08 -0400
+Received: from mail-db8eur05on2072.outbound.protection.outlook.com ([40.107.20.72]:38091
+        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726099AbgCMCFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 22:05:08 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=To0N281RWkUwUgzM8kLesiOrwDQ0P6s/Qjce0DCJyUh7yVSU909bfoqZrq2c0X2R0Dmd6s0rFAVGvNdNYiphZC80XGzPEJtSd/8dy3AOqAkPLHprHItywh7r2I2PTbxsjUwmOM+AVuXws1dJ3MFFw/vcPdvsznRedoOmYqehib1oQSmGjVE/iGSeo8/8lwtSqE3Ip2hV58982PwA9lVyWHHuejSp/vlyWfBx/8A58U/NkhEqb18p+qH6YqUZocL4N8Pntow1P7wU2tXY46Cy6EBv50DFFONtlvzrM1tZj2cOf1SOUH8gtvcWHu8xxMVHbTCzIrhLfZ3ZKAUbuvajqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZiXC1bkJhvkPhtJJc2/V1Kn8ft8EI+LD5V+/7IkcqlI=;
+ b=k4bHetj2rzSZK3Iszpxt1EMwt4D9YDlWVa4rdEEpD3dp0n7DLoVf0+foGDHhbocsR9WvajuqmegHFyStQT8F19AwL2XqrfZ0wOgYvWPm4EcYroAeGY4YJNj5eQAhJ0UQcPDspMFH4HESDw8140X1ZgSpheBPfpF5Qe6bu55AJ5ltYV3y1uzb6ICxut+T8c4BYadiVb50DY6ujCssEecS62XDG20JIQllG8lSGBOS7smwnNPyRAaJlwCjZyFAQRbx+o0xaA2QKhpcPPwGgJlTwSfIeY8mQqc1e6tEJ21cgNN7pXaYmz/V40bZ0GmhAgnya8vvzP28ZIXnnxLvNNAX3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZiXC1bkJhvkPhtJJc2/V1Kn8ft8EI+LD5V+/7IkcqlI=;
+ b=ic+gFwS7msvMwX6K1HnkBNqgu+n++7yW8MkblFcLgsh3+yJfziGsek4w4BGK8FWgMmHGTcGTeE0B6Cmqs0SfS3HZUUrnxzAS4Brxq5TtHNjGHFK5dkUX42h4/oUNnHuPtSUHq/5+4ccYQou2kjcSkwxUYwOGMSJ5nyaIjzr1NPM=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6324.eurprd04.prod.outlook.com (20.179.34.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.17; Fri, 13 Mar 2020 02:05:05 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::548f:4941:d4eb:4c11]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::548f:4941:d4eb:4c11%6]) with mapi id 15.20.2793.018; Fri, 13 Mar 2020
+ 02:05:05 +0000
+From:   peng.fan@nxp.com
+To:     broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org
+Cc:     linux-imx@nxp.com, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2] regmap: debugfs: check count when read regmap file
+Date:   Fri, 13 Mar 2020 09:58:07 +0800
+Message-Id: <1584064687-12964-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR03CA0112.apcprd03.prod.outlook.com
+ (2603:1096:4:91::16) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
-References: <cover.1583725533.git.shengjiu.wang@nxp.com> <24f69c50925b93afd7a706bd888ee25d27247c78.1583725533.git.shengjiu.wang@nxp.com>
- <20200309211943.GB11333@Asurada-Nvidia.nvidia.com>
-In-Reply-To: <20200309211943.GB11333@Asurada-Nvidia.nvidia.com>
-From:   Shengjiu Wang <shengjiu.wang@gmail.com>
-Date:   Fri, 13 Mar 2020 09:58:05 +0800
-Message-ID: <CAA+D8ANwQ_orAxtVCxsAOJ8b2bRxM9myD+N8Ce7okNZK7q9g9w@mail.gmail.com>
-Subject: Re: [PATCH v5 1/7] ASoC: dt-bindings: fsl_asrc: Add new property fsl,asrc-format
-To:     Nicolin Chen <nicoleotsuka@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Timur Tabi <timur@kernel.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR03CA0112.apcprd03.prod.outlook.com (2603:1096:4:91::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2835.7 via Frontend Transport; Fri, 13 Mar 2020 02:05:02 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 9ec3658b-4c2b-4daf-2df6-08d7c6f2f25e
+X-MS-TrafficTypeDiagnostic: AM0PR04MB6324:|AM0PR04MB6324:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB6324CF4CCECA4E9ED453CB1888FA0@AM0PR04MB6324.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
+X-Forefront-PRVS: 034119E4F6
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(39860400002)(136003)(376002)(366004)(396003)(199004)(2906002)(478600001)(52116002)(86362001)(316002)(66556008)(9686003)(81166006)(6512007)(4326008)(81156014)(8936002)(6486002)(956004)(66946007)(8676002)(66476007)(6506007)(69590400007)(186003)(5660300002)(26005)(2616005)(36756003)(16526019);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6324;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: U+mRxw7MuNlAM6dM1lbR79g3gsg4NYaXbBeuwgLt+ukX9TdDenRqNMwWAOybd3SaQecoNwiKrKN6nU0BN7N+BgxC4P4KtJsICnEU9V36Z6cvv6+4NYk2o6aaZ12LyJ7stBj5FSfOtTC5YN11qxZ8xT7GNY7iiGYeJnaifiXBivkFEswe4xovs/NgRsT9kFailv6NdmAbD7GD+pEf4CmbQJrBHfa+z4SU4Xo9i1De85g5R19PzHpaCg5DpIBy8lbbRnyVzEoc3gnQJMJrTSODXmLGKk2a4Ws4jZHH2YOmaA599M1ys9cgqv6xYfFAo7DND0x3egPmGfMRafurLebHH4inn5o8pKv6ZJVxDVmF4GM5T/eRukY9iIYhKKTARj7FKw3fPlzMHjdWIRO167XWakAHODf7u+wbjY5/ZFcdlss4UR1rlSkk8VlwQO6vnf15BrmE+GxktJAYTL6Ku/GGEGA4vkY7yTtzbswCm2dyKFdbLIJ3o5sEP5HcQo8ctQsG
+X-MS-Exchange-AntiSpam-MessageData: n1XuXhBx/RnR+y/9dYzmJ7+BIZFaHerJKXeZBFmLL95q2JLtjZX6pU/E5aipioOFX/M+KBIczESOpbF5rqNsdAtEVbCaxOy3j2gFey5xEGLE67G9iXwApES9R2Yk21f79WbxvpEcrZNf/cx2vdwjbA==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ec3658b-4c2b-4daf-2df6-08d7c6f2f25e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2020 02:05:05.0775
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /f3oYFpQObBsI/QKbc74ZsDkaDzltcSjNL7bP/fGVnzX9dcqerqBmrnIBYL/Z3objjKMHLEBprQBr+/NHUOAdQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6324
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob
+From: Peng Fan <peng.fan@nxp.com>
 
-On Tue, Mar 10, 2020 at 5:20 AM Nicolin Chen <nicoleotsuka@gmail.com> wrote:
->
-> On Mon, Mar 09, 2020 at 11:58:28AM +0800, Shengjiu Wang wrote:
-> > In order to support new EASRC and simplify the code structure,
-> > We decide to share the common structure between them. This bring
-> > a problem that EASRC accept format directly from devicetree, but
-> > ASRC accept width from devicetree.
-> >
-> > In order to align with new ESARC, we add new property fsl,asrc-format.
-> > The fsl,asrc-format can replace the fsl,asrc-width, then driver
-> > can accept format from devicetree, don't need to convert it to
-> > format through width.
-> >
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > ---
-> >  Documentation/devicetree/bindings/sound/fsl,asrc.txt | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/sound/fsl,asrc.txt b/Documentation/devicetree/bindings/sound/fsl,asrc.txt
-> > index cb9a25165503..780455cf7f71 100644
-> > --- a/Documentation/devicetree/bindings/sound/fsl,asrc.txt
-> > +++ b/Documentation/devicetree/bindings/sound/fsl,asrc.txt
-> > @@ -51,6 +51,11 @@ Optional properties:
-> >                         will be in use as default. Otherwise, the big endian
-> >                         mode will be in use for all the device registers.
-> >
-> > +   - fsl,asrc-format : Defines a mutual sample format used by DPCM Back
-> > +                       Ends, which can replace the fsl,asrc-width.
-> > +                       The value is SNDRV_PCM_FORMAT_S16_LE, or
-> > +                       SNDRV_PCM_FORMAT_S24_LE
->
-> I am still holding the concern at the DT binding of this format,
-> as it uses values from ASoC header file instead of a dt-binding
-> header file -- not sure if we can do this. Let's wait for Rob's
-> comments.
+When executing the following command, we met kernel dump.
+dmesg -c > /dev/null; cd /sys;
+for i in `ls /sys/kernel/debug/regmap/* -d`; do
+	echo "Checking regmap in $i";
+	cat $i/registers;
+done && grep -ri "0x02d0" *;
 
-Could you please share your comments or proposal about
-Nicolin's concern?
+It is because the count value is too big, and kmalloc fails. So add an
+upper bound check to allow max size `PAGE_SIZE << (MAX_ORDER - 1)`.
 
-best regards
-wang shengjiu
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/base/regmap/regmap-debugfs.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
+index e72843fe41df..089e5dc7144a 100644
+--- a/drivers/base/regmap/regmap-debugfs.c
++++ b/drivers/base/regmap/regmap-debugfs.c
+@@ -227,6 +227,9 @@ static ssize_t regmap_read_debugfs(struct regmap *map, unsigned int from,
+ 	if (*ppos < 0 || !count)
+ 		return -EINVAL;
+ 
++	if (count > (PAGE_SIZE << (MAX_ORDER - 1)))
++		count = PAGE_SIZE << (MAX_ORDER - 1);
++
+ 	buf = kmalloc(count, GFP_KERNEL);
+ 	if (!buf)
+ 		return -ENOMEM;
+@@ -371,6 +374,9 @@ static ssize_t regmap_reg_ranges_read_file(struct file *file,
+ 	if (*ppos < 0 || !count)
+ 		return -EINVAL;
+ 
++	if (count > (PAGE_SIZE << (MAX_ORDER - 1)))
++		count = PAGE_SIZE << (MAX_ORDER - 1);
++
+ 	buf = kmalloc(count, GFP_KERNEL);
+ 	if (!buf)
+ 		return -ENOMEM;
+-- 
+2.16.4
+
