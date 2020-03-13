@@ -2,119 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B659D1842C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 09:36:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BD821842C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 09:37:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbgCMIg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 04:36:28 -0400
-Received: from mga07.intel.com ([134.134.136.100]:46987 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726365AbgCMIg1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 04:36:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 01:36:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,548,1574150400"; 
-   d="scan'208";a="322729313"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga001.jf.intel.com with ESMTP; 13 Mar 2020 01:36:26 -0700
-Received: from [10.226.39.34] (unknown [10.226.39.34])
-        by linux.intel.com (Postfix) with ESMTP id 160B3580107;
-        Fri, 13 Mar 2020 01:36:23 -0700 (PDT)
-Subject: Re: [PATCH v4 2/3] dt-bindings: phy: Add YAML schemas for Intel
- Combophy
-From:   Dilip Kota <eswara.kota@linux.intel.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
-        qi-ming.wu@intel.com, yixin.zhu@intel.com
-References: <cover.1583127977.git.eswara.kota@linux.intel.com>
- <9f049a5fccd080bd5d8e9a697b96d4c40a413a0a.1583127977.git.eswara.kota@linux.intel.com>
- <20200303015051.GA780@bogus>
- <5b71670d-91a6-9760-f4da-1b6f014a1ea2@linux.intel.com>
- <CAL_JsqLKFbaiaeNAq_b9xDQRWVG8dXkWt2+cKucRPEzynC20XQ@mail.gmail.com>
- <068bcf8c-83b0-57ee-3fb8-c0fe1bf6e5d8@linux.intel.com>
-Message-ID: <80c837f0-b708-5f5a-ae65-cd20ae71a2d6@linux.intel.com>
-Date:   Fri, 13 Mar 2020 16:36:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726543AbgCMIh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 04:37:26 -0400
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:38291 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726300AbgCMIhZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 04:37:25 -0400
+Received: from [192.168.2.10] ([46.9.234.233])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id Cfokj1LVWhVf8CfoojOB6e; Fri, 13 Mar 2020 09:37:22 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1584088642; bh=NPDVj0hDHGTudN6m2hDl5vDuc6roQ9SfR7NRCqmST08=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=VJFK31PlgtKdUTAxIara79MLK1CVGweGI7JNsxuMwfny6tUCzfmjwR/Ok+rBhCKm4
+         vp/K0TVQtSUjMWbHGxUDrQAFg7qn36l23L1SrvnibLCOJVEAiy0hPhG8AMB+eahLBa
+         zBe/m0OAedra3RvsdPdODrLiTOW3jDKEcC/EpK0Q8d9B93ZuZGt2RhsIF/OzDtjWVj
+         FIMNOITjFlfVHzTCZY99QEPe0KVgRhKor1Lg31JEZ7/mj4l1aWUv6jkWdC7zcu52cX
+         6H+m3TxXVjNJB49bjlSU+JZS/43x61R9UZfQ3u086crPMOhFkaelvXKp62VVnWtQA6
+         +irAiNbazUH4Q==
+Subject: Re: [PATCH 0/8] media: i2c: adv748x: add support for HDMI audio
+To:     Alex Riesen <alexander.riesen@cetitec.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20200113141459.GA3606@pflmari>
+ <e93e6e1e-11dc-d505-7287-46b115a4a609@xs4all.nl>
+ <20200313083107.GB3832@pflmari>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <4ab3dd9f-26fb-ce38-170c-bba4b3777455@xs4all.nl>
+Date:   Fri, 13 Mar 2020 09:37:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <068bcf8c-83b0-57ee-3fb8-c0fe1bf6e5d8@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200313083107.GB3832@pflmari>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfEcFIdVlB9n0Nfwlt2moC+Rr0T6Ztdr9G19F2RB1eRFOSl2wOxKv/b8i6Fz/VKQa8SUmHLYTHSddHNm5REyThEuU4PFzEJRphQtUmiTZzUYoCoyecA3w
+ +BVXVJyWIZrIZKDL8z9L1TKRYFZknkUQyQ49SMwmjXgVCW4xmoRqsX9rdGNHDMGRTUtODvQOlV2as0WcL9kKkaPO9suFLNN2HM061XgDf45b28+2X69DP51V
+ WNRc6ARJs1Bv9pdWRHNTHVEg3pqd+pdo8nAQctf0AIlR7RzV7c2RSeuDVFwTUFoid+F/7XZaPTxrDH1j+C2P8nuQ87NdnuDSfJ6vNyjmGjbl2TW6jHfeWGRh
+ JYcODhFG4JNDPDKexZmMwpUJzeuwmLQ8b1rDhNGXOFYGfSphmsMzNazI5OMqMuAU45q9BeIBFuYDZCGq8gmIfAVr1MYc/neBUfTmc6DPYAUOHHUuytXTLOXU
+ RfrwpaDirMluhPP5UUgb7Vqn6kstrSTyRvV9R6EIRuJOu+sSXC/0tQgGdni3Fdoe/CpFGmI9TVCVpRDc3K91dCYoqvYoFGxxyYOuGoGpfFQr2qWrkIoCMsNs
+ OMs=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On 3/13/20 9:31 AM, Alex Riesen wrote:
+> Hi Hans,
+> 
+> Hans Verkuil, Fri, Mar 13, 2020 09:21:05 +0100:
+>> As a general note for this series: it might be better to have two
+>> patch series: one for patches 1 and 3-6 (not sure whether 5 can be included
+>> or not), and one where the public API changes (i.e. new V4L2 audio controls)
+>> are added. The first can probably be merged fairly quickly, the second will
+>> likely require more iterations since public API patches always take much longer
+>> before they are mature.
+> 
+> I see. After the discussion started, I started to have suspicions of my own
+> regarding the V4L2 ioctls. Except for log-status, which is a practical
+> diagnostics feature (even supported by v4l2-ctl), I'm thinking about dropping
+> them altogether in favor of audio soc DAI implementation.
+> The DAI implementation does all we ever needed from the device. Besides,
+> selecting a I2S protocol variant from user space (I2S vs I2S/TDM) never felt
+> right.
 
-On 3/4/2020 5:16 PM, Dilip Kota wrote:
->
-> On 3/4/2020 12:26 AM, Rob Herring wrote:
->> On Tue, Mar 3, 2020 at 3:24 AM Dilip Kota 
->> <eswara.kota@linux.intel.com> wrote:
->>>
->>> On 3/3/2020 9:50 AM, Rob Herring wrote:
->>>> On Mon, Mar 02, 2020 at 04:43:24PM +0800, Dilip Kota wrote:
->>>>> Combophy subsystem provides PHY support to various
->>>>> controllers, viz. PCIe, SATA and EMAC.
->>>>> Adding YAML schemas for the same.
-...
->>>>> +  - |
->>>>> +    #include <dt-bindings/phy/phy-intel-combophy.h>
->>>>> +    combophy@d0a00000 {
->>>>> +        compatible = "intel,combophy-lgm", "intel,combo-phy";
->>>>> +        clocks = <&cgu0 1>;
->>>>> +        reg = <0xd0a00000 0x40000>,
->>>>> +              <0xd0a40000 0x1000>;
->>>>> +        reg-names = "core", "app";
->>>>> +        resets = <&rcu0 0x50 6>,
->>>>> +                 <&rcu0 0x50 17>;
->>>>> +        reset-names = "phy", "core";
->>>>> +        intel,syscfg = <&sysconf 0>;
->>>>> +        intel,hsio = <&hsiol 0>;
->>>>> +        intel,phy-mode = <COMBO_PHY_PCIE>;
->>>>> +
->>>>> +        phy@0 {
->>>> You need a 'reg' property to go with a unit-address.
->>>>
->>>> Really, I'd just simplify this to make parent 'resets' be 4 entries 
->>>> and
->>>> put '#phy-cells = <1>;' in the parent. Then you don't need these child
->>>> nodes.
->>> If child nodes are not present, use case like PCIe controller-0 using
->>> phy@0 and PCIe controller-1 using phy@1 wont be possible.
->> Yes, it will be.
->>
->> For controller-0:
->> phys = <&phy 0>;
->>
->> For controller-1:
->> phys = <&phy 1>;
->
-> OH got it, arg cell can be utilized for PHY id.
-> I started working on your suggestion in simplifying it, but below 
-> point is haunting while doing the changes. So felt to check with you 
-> whether the better one is going with existing DT node or the one 
-> without child nodes!.
->      Existing DT node skeleton, replicates hardware design ComboPhy 
-> with 2 PHYs. (ComboPhy as parent node and 2PHYs as child nodes)
-In the patchwork, i see the patch state is 'Change Requested', so felt 
-to keep a remainder mail for your inputs on above query.
-I have waiting to push the appropriate code changes based on your comment.
+That sounds like what everyone else does as well.
 
-Thanks,
-Dilip
+> 
+> Shall I submit the log-status separately?
 
->
+Yes please. In my experience, log status is a very nice and very useful feature.
+
+If you have other sensible cleanups, then feel free to add those as well.
+
+Regards,
+
+	Hans
+
+> 
 > Regards,
-> Dilip
->
->>
->> Rob
+> Alex
+> 
+>> On 1/13/20 3:14 PM, Alex Riesen wrote:
+>>> This adds minimal support for controlling the audio output I2S port available
+>>> on ADV7481 and ADV7482 HDMI decoder devices by ADI. The port carries audio
+>>> signal from the decoded HDMI stream.
+>>>
+>>> An ADV7482 on the Renesas Salvator-X ES1.1 was used during development of this
+>>> code.
+>>>
+>>> Alex Riesen (8):
+>>>  1. media: adv748x: add a device-specific wrapper for register block read
+>>>  2. media: adv748x: add audio mute control and output selection ioctls
+>>>  3. media: adv748x: add log_status ioctl
+>>>  4. media: adv748x: reserve space for the audio (I2S) port in the driver
+>>>     structures
+>>>  5. media: adv748x: add an ASoC DAI definition to the driver
+>>>  6. media: adv748x: reduce amount of code for bitwise modification of
+>>>     device registers
+>>>  7. dt-bindings: adv748x: add information about serial audio interface
+>>>     (I2S/TDM)
+>>>  8. arm64: dts: renesas: salvator: add a connection from adv748x codec
+>>>     (HDMI input) to the R-Car SoC
+>>>
+>>>  .../devicetree/bindings/media/i2c/adv748x.txt |  13 +-
+>>>  .../dts/renesas/r8a7795-es1-salvator-x.dts    |  24 +-
+>>>  .../boot/dts/renesas/salvator-common.dtsi     |  35 +-
+>>>  drivers/media/i2c/adv748x/adv748x-core.c      |  54 +++
+>>>  drivers/media/i2c/adv748x/adv748x-hdmi.c      | 355 ++++++++++++++++++
+>>>  drivers/media/i2c/adv748x/adv748x.h           |  53 ++-
+>>>  6 files changed, 523 insertions(+), 11 deletions(-)
+>>>
+
