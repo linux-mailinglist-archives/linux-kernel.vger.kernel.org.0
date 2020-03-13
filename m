@@ -2,166 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24D5B18512F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 22:31:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32560185143
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 22:39:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbgCMVbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 17:31:36 -0400
-Received: from mail-eopbgr1400109.outbound.protection.outlook.com ([40.107.140.109]:17739
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726526AbgCMVbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 17:31:36 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=A4u0To51Tf19sD3IF9sCozzoj4WH6wYBb/UMTEUV7JC6HWMi2G0M+rSz9s5qkeiLcsgcfUuvTk5pHjCBRHu4rrVC/L1Zin7LxXbOY/frjxdKv5OfDQBcjojkDsKJzTnMVAVT13RqGR/SY7WLsLz+h3Mbs58s6/roHwo58z9hezP3DRwyCZpvor4ZU1v543FAteTno7SOLOojmJSild/8h07jfxPwtrJyVd71G5xAjB+nYGI+AGj1LG+dRcvBsvpaxfgS9zjKW/R7Hcx/iz4b44zSf/0wtgQPfCRdnXUgGyLiL0xa/YnDc1r1m7GbiSbxWccwdURCsQTP1ORmfwGvng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vV2QmqIooT0Wmx0w6qL2kYJsrRy8ZQ0IaXs+/XWX+ag=;
- b=MUqYjCC8NgG6XDJvyvlrZ8VJ7InBZAm8wDxOD7LnsTDIo6vkjYlblwjucfMWow72u40TDH1Ijd5nMTHi/KFxL+C6eP+hDA/rQ5Ggd0D1xopdxKBQWMokZjKXcx7nI0aDjVNEHcBoC/1EoQj4zn1WAcpQMeUSBTP93vVrCyWpvC92TDZyBktxMeqqVYAXNiyz9a1gLB3PYwZFMITgRgJQw9vhn5+Das+NECxy5RViFjw/YJo7FeymCjHUkewbgBWuc11IfQjagPkYWhWODd1FMEPF6yupciWIw7TAQgyNNz7meiTqG7rjWZwDjsu4tp7hY72xDTCHQf3goRI5+WNXTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vV2QmqIooT0Wmx0w6qL2kYJsrRy8ZQ0IaXs+/XWX+ag=;
- b=seULNl1uWF7QQKqajHYadrGnujS2agfpWw9uKxz0LzILkZpWFoR6j9VLAkN9hYclBQpo8BpawPgTRyeBzmOk8CTIt63/9nxiYB/5H3n+MSkTwGAxGWC8AxdQk0f+Zm9zpyVjwbviGh/tRccY955eo5qvDD7pqqiqJN/RPUV9+0s=
-Received: from OSBPR01MB3590.jpnprd01.prod.outlook.com (20.178.97.80) by
- OSBPR01MB1781.jpnprd01.prod.outlook.com (52.134.226.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.14; Fri, 13 Mar 2020 21:31:26 +0000
-Received: from OSBPR01MB3590.jpnprd01.prod.outlook.com
- ([fe80::6df0:eb47:a259:b94b]) by OSBPR01MB3590.jpnprd01.prod.outlook.com
- ([fe80::6df0:eb47:a259:b94b%7]) with mapi id 15.20.2793.018; Fri, 13 Mar 2020
- 21:31:25 +0000
-From:   Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v3 3/4] media: i2c: ov5645: Set maximum leverage of
- external clock frequency to 24480000
-Thread-Topic: [PATCH v3 3/4] media: i2c: ov5645: Set maximum leverage of
- external clock frequency to 24480000
-Thread-Index: AQHV+XwslyzFUyDDwkSkajiEN3hGNKhHCGKAgAAA6iA=
-Date:   Fri, 13 Mar 2020 21:31:25 +0000
-Message-ID: <OSBPR01MB359079EAA32E0DCBF63C6886AAFA0@OSBPR01MB3590.jpnprd01.prod.outlook.com>
-References: <1584133954-6953-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1584133954-6953-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200313212345.GM4751@pendragon.ideasonboard.com>
-In-Reply-To: <20200313212345.GM4751@pendragon.ideasonboard.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=prabhakar.mahadev-lad.rj@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: a6b91b17-44e5-4599-c62c-08d7c795e26b
-x-ms-traffictypediagnostic: OSBPR01MB1781:
-x-microsoft-antispam-prvs: <OSBPR01MB17816026777D095FADAD3F81AAFA0@OSBPR01MB1781.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 034119E4F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(199004)(86362001)(8936002)(66476007)(52536014)(5660300002)(6506007)(81156014)(33656002)(186003)(66556008)(81166006)(8676002)(66446008)(26005)(64756008)(2906002)(66946007)(71200400001)(53546011)(76116006)(54906003)(7696005)(55016002)(6916009)(7416002)(9686003)(498600001)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB1781;H:OSBPR01MB3590.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Cjvx6wa6/fS6/vfLZMlPnyGjoX2lw39AfflI1rllFdcFIwd677bPplM4ZpxyAK1Bm/pJ0tFk6HKT4KE+kp65pLrfYYmTOtVn1rY/sToo+XERJtSqUK2MFBFyd9WA8mvt1tW/wL7SaHzrbw1x1LufiBMP9zqh5OXLiWag9Ayfb70/yD+guaVONlyl2WtWLgsbozG61M+ucB3kFqem+UJgFAk8G6X0d2bC6w+evupSMd9ajzG9aZxDvcV/HPpZ9TkfpaanXeCBAgsGG5HgddDx9NU8WSuqcbmJrWsCn2Sw1usLC60tCyZBGFkQCZAXP7kcU10hcMrniUljWIDTt6P5mW6ANa6JFnTpLzoyNNSL/wwAcQmxZJwIcTizojTo23iF9cCyPHw8dKKIXlutsP+qC5NjTLSItyJCgLBDo7up4yFoz2Vpm+KLY3pnl8Rh7Ajy
-x-ms-exchange-antispam-messagedata: LJBHEOY9wgBNwCnQXU2qF0ZDcYwfbC//p3p+V6uI1kZm+oiODFzzst0ZYCYLY4HzfpV35yMJLv0qW02FCk26tPF55IfgKZwOR1+xPXS8CwfEcv5LHa4e7RE5VP0TE7wfSydFxQmUhgtakasqbOkCzQ==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727064AbgCMVjb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 17:39:31 -0400
+Received: from esa5.hc3370-68.iphmx.com ([216.71.155.168]:57338 "EHLO
+        esa5.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726534AbgCMVja (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 17:39:30 -0400
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Fri, 13 Mar 2020 17:39:29 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1584135569;
+  h=from:subject:to:message-id:date:mime-version:
+   content-transfer-encoding;
+  bh=VP/Qw4JTNdWBbkmT5IWEt7CBirmzVblVVsyTuAghECo=;
+  b=JkWP+kVL97c/F+fBGUImVDlJqI6aOH3H93EosUbiO7pc18+utKd4gWjR
+   N0DxanuuFj2Y6NB0pqtEzJs5B6ZWblD863Fsn5evd9h/cRCeL7l+xhKa3
+   9Q1s/JTQnBYMFLbSzyWrElPqsKR9vql5Zzd8qiflnqOPiBXWMuML5m8rv
+   Q=;
+Authentication-Results: esa5.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=Pass smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  andrew.cooper3@citrix.com) identity=pra;
+  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="andrew.cooper3@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa5.hc3370-68.iphmx.com: domain of
+  Andrew.Cooper3@citrix.com designates 162.221.158.21 as
+  permitted sender) identity=mailfrom;
+  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="Andrew.Cooper3@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
+  ip4:168.245.78.127 ~all"
+Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: K5Or6YnvMo6Ir8kPaFGpkmjBk8pNyikuRoBsNmy5ODlm49Dim46DNixdqkVDSzBcJxujyfGCgQ
+ UgIoXZdaYfwTugo23MY/HTKKuLrVlOk/mq9GLQjsN2efAEhUz3Y8bGLLnGwNKwV87GqEUI6t1M
+ UZMNNqp1U6GwPAjIRFrkU0q6pTx2av085pT+wgmKhrZKo60Eaj0TcEykXUFd9z+nN9VdQBFlPI
+ 7NSspCx9OCfr6RX9dFucoyYlwy3W+gsXb3SZj9Kn3ak2iJdjaLqzZKVQOy7dCOEmTJt4AAHTwu
+ 7GY=
+X-SBRS: 2.7
+X-MesageID: 14283297
+X-Ironport-Server: esa5.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.70,550,1574139600"; 
+   d="scan'208";a="14283297"
+From:   Andrew Cooper <andrew.cooper3@citrix.com>
+Subject: x86/apic: Dead code in setup_local_APIC()
+Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
+ 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
+ 6+ahAA==
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Message-ID: <0c2c3380-4e2f-5cbb-41eb-38057f008c5f@citrix.com>
+Date:   Fri, 13 Mar 2020 21:32:19 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6b91b17-44e5-4599-c62c-08d7c795e26b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2020 21:31:25.7893
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: McSjNVSAdl4MyvggEmhPPAmGRp8hKv/rCQzvKFU0QcSgaZY2p5CgfL3oKa/Cwr23Ad/Uq0wB2g/4OQRgtXaX8N8AHPMYvm7Nqy5gCo0Vz0xs7zbaqv7P2CLUhKoMgSSp
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1781
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL01.citrite.net (10.69.22.125)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTGF1cmVudCwNCg0KVGhhbmsgeW91IGZvciB0aGUgcmV2aWV3Lg0KDQo+IC0tLS0tT3JpZ2lu
-YWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IExhdXJlbnQgUGluY2hhcnQgPGxhdXJlbnQucGluY2hh
-cnRAaWRlYXNvbmJvYXJkLmNvbT4NCj4gU2VudDogMTMgTWFyY2ggMjAyMCAyMToyNA0KPiBUbzog
-UHJhYmhha2FyIE1haGFkZXYgTGFkIDxwcmFiaGFrYXIubWFoYWRldi1sYWQucmpAYnAucmVuZXNh
-cy5jb20+DQo+IENjOiBNYXVybyBDYXJ2YWxobyBDaGVoYWIgPG1jaGVoYWJAa2VybmVsLm9yZz47
-IFNoYXduIEd1bw0KPiA8c2hhd25ndW9Aa2VybmVsLm9yZz47IFNhc2NoYSBIYXVlciA8cy5oYXVl
-ckBwZW5ndXRyb25peC5kZT47DQo+IFBlbmd1dHJvbml4IEtlcm5lbCBUZWFtIDxrZXJuZWxAcGVu
-Z3V0cm9uaXguZGU+OyBSb2IgSGVycmluZw0KPiA8cm9iaCtkdEBrZXJuZWwub3JnPjsgTWFyayBS
-dXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT47IFNha2FyaQ0KPiBBaWx1cyA8c2FrYXJpLmFp
-bHVzQGxpbnV4LmludGVsLmNvbT47IE5YUCBMaW51eCBUZWFtIDxsaW51eC1pbXhAbnhwLmNvbT47
-DQo+IE1hZ251cyBEYW1tIDxtYWdudXMuZGFtbUBnbWFpbC5jb20+OyBFemVxdWllbCBHYXJjaWEN
-Cj4gPGV6ZXF1aWVsQGNvbGxhYm9yYS5jb20+OyBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0QGxp
-bnV4LW02OGsub3JnPjsNCj4gZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5l
-bEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXJlbmVzYXMtDQo+IHNvY0B2Z2VyLmtlcm5lbC5vcmc7
-IEZhYmlvIEVzdGV2YW0gPGZlc3RldmFtQGdtYWlsLmNvbT47IGxpbnV4LQ0KPiBtZWRpYUB2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBTdWJq
-ZWN0OiBSZTogW1BBVENIIHYzIDMvNF0gbWVkaWE6IGkyYzogb3Y1NjQ1OiBTZXQgbWF4aW11bSBs
-ZXZlcmFnZSBvZg0KPiBleHRlcm5hbCBjbG9jayBmcmVxdWVuY3kgdG8gMjQ0ODAwMDANCj4NCj4g
-SGkgUHJhYmhha2FyLA0KPg0KPiBUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4NCj4NCj4gT24gRnJp
-LCBNYXIgMTMsIDIwMjAgYXQgMDk6MTI6MzNQTSArMDAwMCwgTGFkIFByYWJoYWthciB3cm90ZToN
-Cj4gPiBXaGlsZSB0ZXN0aW5nIG9uIFJlbmVzYXMgUlovRzJFIHBsYXRmb3JtLCBub3RpY2VkIHRo
-ZSBjbG9jayBmcmVxdWVuY3kNCj4gPiB0byBiZSAyNDI0MjQyNCBhcyBhIHJlc3VsdCB0aGUgcHJv
-YmUgZmFpbGVkLiBIb3dldmVyIGluY3JlYXNpbmcgdGhlDQo+ID4gbWF4aW11bSBsZXZlcmFnZSBv
-ZiBleHRlcm5hbCBjbG9jayBmcmVxdWVuY3kgdG8gMjQ0ODAwMDAgZml4ZXMgdGhpcw0KPiA+IGlz
-c3VlLiBTaW5jZSB0aGlzIGRpZmZlcmVuY2UgaXMgc21hbGwgZW5vdWdoIGFuZCBpcyBpbnNpZ25p
-ZmljYW50IHNldA0KPiA+IHRoZSBzYW1lIGluIHRoZSBkcml2ZXIuDQo+ID4NCj4gPiBTaWduZWQt
-b2ZmLWJ5OiBMYWQgUHJhYmhha2FyIDxwcmFiaGFrYXIubWFoYWRldi0NCj4gbGFkLnJqQGJwLnJl
-bmVzYXMuY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL21lZGlhL2kyYy9vdjU2NDUuYyB8IDYg
-KysrKy0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25z
-KC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZWRpYS9pMmMvb3Y1NjQ1LmMgYi9k
-cml2ZXJzL21lZGlhL2kyYy9vdjU2NDUuYw0KPiA+IGluZGV4IDRmYmFiZjMuLmI0OTM1OWIgMTAw
-NjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9tZWRpYS9pMmMvb3Y1NjQ1LmMNCj4gPiArKysgYi9kcml2
-ZXJzL21lZGlhL2kyYy9vdjU2NDUuYw0KPiA+IEBAIC0xMTA3LDggKzExMDcsMTAgQEAgc3RhdGlj
-IGludCBvdjU2NDVfcHJvYmUoc3RydWN0IGkyY19jbGllbnQgKmNsaWVudCkNCj4gPiAgfQ0KPiA+
-DQo+ID4gIHhjbGtfZnJlcSA9IGNsa19nZXRfcmF0ZShvdjU2NDUtPnhjbGspOw0KPiA+IC0vKiBl
-eHRlcm5hbCBjbG9jayBtdXN0IGJlIDI0TUh6LCBhbGxvdyAxJSB0b2xlcmFuY2UgKi8NCj4gPiAt
-aWYgKHhjbGtfZnJlcSA8IDIzNzYwMDAwIHx8IHhjbGtfZnJlcSA+IDI0MjQwMDAwKSB7DQo+ID4g
-Ky8qIGV4dGVybmFsIGNsb2NrIG11c3QgYmUgMjRNSHosIGFsbG93IGEgbWluaW11bSAxJSBhbmQg
-YQ0KPiBtYXhpbXVtIG9mIDIlDQo+ID4gKyAqIHRvbGVyYW5jZQ0KPg0KPiBTbyB3aGVyZSBkbyB0
-aGVzZSBudW1iZXJzIGNvbWUgZnJvbSA/IEkgdW5kZXJzdGFuZCB0aGF0IDIlIGlzIHdoYXQgeW91
-DQo+IG5lZWQgdG8gbWFrZSB5b3VyIGNsb2NrIGZpdCBpbiB0aGUgcmFuZ2UsIGJ1dCB3aHkgLTEl
-LysyJSBpbnN0ZWFkIG9mIC0NCj4gMiUvKzIlID8gQW5kIHdoeSBub3QgMi41IG9yIDMlID8gVGhl
-IHNlbnNvciBkYXRhc2hlZXQgZG9jdW1lbnRzIHRoZQ0KPiByYW5nZSBvZiBzdXBwb3J0ZWQgeHZj
-bGsgZnJlcXVlbmNpZXMgdG8gYmUgNk1IeiB0byA1NE1Iei4gSSB1bmRlcnN0YW5kDQo+IHRoYXQg
-UExMIHBhcmFtZXRlcnMgZGVwZW5kIG9uIHRoZSBjbG9jayBmcmVxdWVuY3ksIGJ1dCBjb3VsZCB0
-aGV5IGJlDQo+IGNhbGN1bGF0ZWQgaW5zdGVhZCBvZiBoYXJkY29kZWQsIHRvIGF2b2lkIHJlcXVp
-cmluZyBhbiBleGFjdCAyNE1IeiBpbnB1dA0KPiBmcmVxdWVuY3kgPw0KPg0KVG8gYmUgaG9uZXN0
-IEkgZG9uJ3QgaGF2ZSB0aGUgZGF0YXNoZWV0IGZvciBvdjU2NDUsIHRoZSBmbHllciBzYXlzIDYt
-NTRNaHogYnV0IHRoZQ0KbG9ncy9jb21tZW50IHNheXMgMjRNaHouDQoNCkNoZWVycywNCi0tUHJh
-Ymhha2FyDQoNCj4gPiArICovDQo+ID4gK2lmICh4Y2xrX2ZyZXEgPCAyMzc2MDAwMCB8fCB4Y2xr
-X2ZyZXEgPiAyNDQ4MDAwMCkgew0KPiA+ICBkZXZfZXJyKGRldiwgImV4dGVybmFsIGNsb2NrIGZy
-ZXF1ZW5jeSAldSBpcyBub3QNCj4gc3VwcG9ydGVkXG4iLA0KPiA+ICB4Y2xrX2ZyZXEpOw0KPiA+
-ICByZXR1cm4gLUVJTlZBTDsNCj4NCj4gLS0NCj4gUmVnYXJkcywNCj4NCj4gTGF1cmVudCBQaW5j
-aGFydA0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEdtYkgsIEdlc2NoYWVmdHNmdWVo
-cmVyL1ByZXNpZGVudDogQ2Fyc3RlbiBKYXVjaCwgU2l0eiBkZXIgR2VzZWxsc2NoYWZ0L1JlZ2lz
-dGVyZWQgb2ZmaWNlOiBEdWVzc2VsZG9yZiwgQXJjYWRpYXN0cmFzc2UgMTAsIDQwNDcyIER1ZXNz
-ZWxkb3JmLCBHZXJtYW55LCBIYW5kZWxzcmVnaXN0ZXIvQ29tbWVyY2lhbCBSZWdpc3RlcjogRHVl
-c3NlbGRvcmYsIEhSQiAzNzA4IFVTdC1JRE5yLi9UYXggaWRlbnRpZmljYXRpb24gbm8uOiBERSAx
-MTkzNTM0MDYgV0VFRS1SZWcuLU5yLi9XRUVFIHJlZy4gbm8uOiBERSAxNDk3ODY0Nw0K
+Hello,
+
+c/s 2640da4ccc "x86/apic: Soft disable APIC before initializing it" had
+a (perhaps unintended) consequence for the setup of LVT0.
+
+Later, LVT0's mask bit is sampled to determine whether the BSP should be
+configured to accept ExtINT messages.
+
+Because soft reset unconditionally masks the LVT registers, the
+following patch could be taken to drop dead code:
+
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 5f973fed3c9f..b80032d2dfeb 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1723,8 +1723,7 @@ static void setup_local_APIC(void)
+        /*
+         * TODO: set up through-local-APIC from through-I/O-APIC? --macro
+         */
+-       value = apic_read(APIC_LVT0) & APIC_LVT_MASKED;
+-       if (!cpu && (pic_mode || !value || skip_ioapic_setup)) {
++       if (!cpu && (pic_mode || skip_ioapic_setup)) {
+                value = APIC_DM_EXTINT;
+                apic_printk(APIC_VERBOSE, "enabled ExtINT on CPU#%d\n",
+cpu);
+        } else {
+
+
+However, the comment just out of context above says that ExtINT is
+deliberately configured even symmetric-IO mode, in case some interrupts
+are using the PIC.  If that is the intended behaviour, then 2640da4ccc
+regressed it.
+
+One option would be to sample LVT0.MASK before clearing SPIV.EN, but if
+the intention is to allow ExtINT in symmetric-IO mode, then its
+configuration shouldn't be based on its previous value.
+
+Thoughts?
+
+~Andrew
+
+(I'm actually debugging why Xen can't find a timer IRQ on this platform,
+but its not my system and I'm playing spot-the-difference with Linux
+based on some photos of a boot log.  I don't think this difference is
+relevant to my bug, but it also doesn't appear to be intentional on the
+Linux side either.)
