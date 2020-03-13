@@ -2,110 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85872184EB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:35:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7102184EBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:36:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbgCMSfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 14:35:17 -0400
-Received: from hr2.samba.org ([144.76.82.148]:59188 "EHLO hr2.samba.org"
+        id S1727085AbgCMSgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 14:36:51 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:60254 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727295AbgCMSfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 14:35:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Message-ID:Cc:To:From:Date;
-        bh=WW96sv0//Vhg79QaiYlSOEgUUQBStmetDMf4TONIc6M=; b=kIlHxupkrQOi9TzlSzfbE4/bDL
-        uXCSnq22mxKKsPp4wsY2SjwgRHrGGUjd5PkshA6/Ij7StaJi+8cCOXa+2uy4ujPSwXlu4A9n3fflf
-        XkyYa3DkycxsDmAzUHRsrhw/lk4UQEuZG4SUx77yN3+V1HapwvdE+wEtw1OqGFv2+0PFrzzEuTaf/
-        UILafbWfwJ6SVlMnnuB2/AhboOh8yg4LEOd40ctbA5s+rP3kSe79DPDaQA93TxktwMI4ekakTqtcG
-        6UsWH3CbrSZH8DYC3XwCombBEVbF1GH+zILxk/YiipBOVfVlGS6LpdTFyGanweoKoy2YO/1N0o8Q9
-        RhjdcWajNX5yyJ0vVHYm3FrfIeucAWOay4dqo9PauHbqEoCHY1eujrUgDXPg4HMaIlFtRVnOC6Q4E
-        1KLWYGQz1OmRlsyhTOvvjXdzI88D+i+MKn2RMug3oipCgs+yrtta2s96ODrrQVXqGTHTk2wQZX736
-        ghOoK4n2imWOy9qW7TdbFV1f;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1jCp9J-00029j-FH; Fri, 13 Mar 2020 18:35:09 +0000
-Date:   Fri, 13 Mar 2020 11:35:03 -0700
-From:   Jeremy Allison <jra@samba.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Stefan Metzmacher <metze@samba.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ralph =?iso-8859-1?Q?B=F6hme?= <slow@samba.org>,
-        Volker Lendecke <vl@sernet.de>
-Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
-Message-ID: <20200313183503.GA29092@jeremy-acer>
-Reply-To: Jeremy Allison <jra@samba.org>
-References: <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
- <20200310005549.adrn3yf4mbljc5f6@yavin>
- <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
- <580352.1583825105@warthog.procyon.org.uk>
- <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
- <3d209e29-e73d-23a6-5c6f-0267b1e669b6@samba.org>
- <CAHk-=wgu3Wo_xcjXnwski7JZTwQFaMmKD0hoTZ=hqQv3-YojSg@mail.gmail.com>
- <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
- <20200313095901.tdv4vl7envypgqfz@yavin>
- <20200313182844.GO23230@ZenIV.linux.org.uk>
+        id S1726339AbgCMSgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 14:36:51 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1jCpAv-0002bu-Ds; Fri, 13 Mar 2020 12:36:50 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1jCpAv-0000hP-0P; Fri, 13 Mar 2020 12:36:49 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Fri, 13 Mar 2020 12:36:08 -0600
+Message-Id: <20200313183608.2646-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200313182844.GO23230@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, bhelgaas@google.com, bigeasy@linutronix.de, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE,MYRULES_NO_TEXT,SURBL_BLOCKED,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.2
+Subject: [PATCH] PCI/switchtec: Fix init_completion race condition with poll_wait()
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 06:28:44PM +0000, Al Viro wrote:
-> On Fri, Mar 13, 2020 at 08:59:01PM +1100, Aleksa Sarai wrote:
-> > On 2020-03-12, Stefan Metzmacher <metze@samba.org> wrote:
-> > > Am 12.03.20 um 17:24 schrieb Linus Torvalds:
-> > > > But yes, if we have a major package like samba use it, then by all
-> > > > means let's add linkat2(). How many things are we talking about? We
-> > > > have a number of system calls that do *not* take flags, but do do
-> > > > pathname walking. I'm thinking things like "mkdirat()"?)
-> > > 
-> > > I haven't looked them up in detail yet.
-> > > Jeremy can you provide a list?
-> > > 
-> > > Do you think we could route some of them like mkdirat() and mknodat()
-> > > via openat2() instead of creating new syscalls?
-> > 
-> > I have heard some folks asking for a way to create a directory and get a
-> > handle to it atomically -- so arguably this is something that could be
-> > inside openat2()'s feature set (O_MKDIR?). But I'm not sure how popular
-> > of an idea this is.
-> 
-> For fuck sake, *NO*!
-> 
-> We don't need any more multiplexors from hell.  mkdir() and open() have
-> deeply different interpretation of pathnames (and anyone who asks for
-> e.g. traversals of dangling symlinks on mkdir() is insane).  Don't try to
-> mix those; even O_TMPFILE had been a mistake.
-> 
-> Folks, we'd paid very dearly for the atomic_open() merge.  We are _still_
-> paying for it - and keep finding bugs induced by the convoluted horrors
-> in that thing (see yesterday pull from vfs.git#fixes for the latest crop).
-> I hope to get into more or less sane shape (part - this cycle, with
-> followups in the next one), but the last thing we need is more complexity
-> in the area.
+The call to init_completion() in mrpc_queue_cmd() can theoretically
+race with the call to poll_wait() in switchtec_dev_poll().
 
-Can we disentangle the laudable desire to keep kernel internals
-simple (which I completely agree with :-) from the desire to
-keep user-space interfaces simple ?
+  poll()			write()
+    switchtec_dev_poll()   	  switchtec_dev_write()
+      poll_wait(&s->comp.wait);      mrpc_queue_cmd()
+			               init_completion(&s->comp)
+				         init_waitqueue_head(&s->comp.wait)
 
-Having some way of doing a mkdir() that returns an open fd
-on the new directory *is* a very useful thing for many applications,
-but I really don't care how the kernel implements it. We have so much
-Linux-specific code already that one more thing won't matter :-).
+To my knowledge, no one has hit this bug, but we should fix it for
+correctness.
+
+Fix this by using reinit_completion() instead of init_completion() in
+mrpc_queue_cmd().
+
+Fixes: 080b47def5e5 ("MicroSemi Switchtec management interface driver")
+Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+---
+ drivers/pci/switch/switchtec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
+index a823b4b8ef8a..81dc7ac01381 100644
+--- a/drivers/pci/switch/switchtec.c
++++ b/drivers/pci/switch/switchtec.c
+@@ -175,7 +175,7 @@ static int mrpc_queue_cmd(struct switchtec_user *stuser)
+ 	kref_get(&stuser->kref);
+ 	stuser->read_len = sizeof(stuser->data);
+ 	stuser_set_state(stuser, MRPC_QUEUED);
+-	init_completion(&stuser->comp);
++	reinit_completion(&stuser->comp);
+ 	list_add_tail(&stuser->list, &stdev->mrpc_queue);
+ 
+ 	mrpc_cmd_submit(stdev);
+-- 
+2.20.1
+
