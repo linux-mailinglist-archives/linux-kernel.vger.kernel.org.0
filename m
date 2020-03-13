@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32AC7184DE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:47:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD0A7184DDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:47:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbgCMRrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 13:47:35 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47760 "EHLO
+        id S1727198AbgCMRr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 13:47:28 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47718 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727224AbgCMRrd (ORCPT
+        with ESMTP id S1727085AbgCMRrW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 13:47:33 -0400
+        Fri, 13 Mar 2020 13:47:22 -0400
 Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1jCoP0-00017r-0C; Fri, 13 Mar 2020 18:47:18 +0100
+        id 1jCoP1-00017r-Bs; Fri, 13 Mar 2020 18:47:19 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -25,13 +25,10 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Subject: [PATCH 3/9] pci/switchtec: Don't abuse completion wait queue for poll
-Date:   Fri, 13 Mar 2020 18:46:55 +0100
-Message-Id: <20200313174701.148376-4-bigeasy@linutronix.de>
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 4/9] sched/swait: Prepare usage in completions
+Date:   Fri, 13 Mar 2020 18:46:56 +0100
+Message-Id: <20200313174701.148376-5-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200313174701.148376-1-bigeasy@linutronix.de>
 References: <20200313174701.148376-1-bigeasy@linutronix.de>
@@ -42,131 +39,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The poll callback is abusing the completion wait queue and sticks it into
-poll_wait() to wake up pollers after a command has completed.
+From: Thomas Gleixner <tglx@linutronix.de>
 
-First of all it's a layering violation as it imposes restrictions on the
-inner workings of completions. Just because C allows to do so does not
-justify that in any way. The proper way to do such things is to post
-patches which extend the core infrastructure and not by silently abusing
-it.
+As a preparation to use simple wait queues for completions:
 
-Aside of that the implementation is seriously broken:
+  - Provide swake_up_all_locked() to support complete_all()
+  - Make __prepare_to_swait() public available
 
- 1) It cannot work with EPOLLEXCLUSIVE
+This is done to enable the usage of complete() within truly atomic contexts
+on a PREEMPT_RT enabled kernel.
 
- 2) It's racy:
-
-  poll()	      	  	 write()
-   switchtec_dev_poll()		   switchtec_dev_write()
-    poll_wait(&s->comp.wait);        mrpc_queue_cmd()
-    				       init_completion(&s->comp)
-					 init_waitqueue_head(&s->comp.wait)
-
-Replace it with a regular wait queue which removes the completion abuse and
-cures #1 and #2 above.
-
-Cc: Kurt Schwemmer <kurt.schwemmer@microsemi.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/pci/switch/switchtec.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ kernel/sched/sched.h | 3 +++
+ kernel/sched/swait.c | 8 +++++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-index a823b4b8ef8a9..e69cac84b605f 100644
---- a/drivers/pci/switch/switchtec.c
-+++ b/drivers/pci/switch/switchtec.c
-@@ -52,10 +52,11 @@ struct switchtec_user {
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 9ea647835fd6f..fdc77e7963242 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2492,3 +2492,6 @@ static inline bool is_per_cpu_kthread(struct task_str=
+uct *p)
+ 	return true;
+ }
+ #endif
++
++void swake_up_all_locked(struct swait_queue_head *q);
++void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wa=
+it);
+diff --git a/kernel/sched/swait.c b/kernel/sched/swait.c
+index e83a3f8449f65..c528f238c68d6 100644
+--- a/kernel/sched/swait.c
++++ b/kernel/sched/swait.c
+@@ -32,6 +32,12 @@ void swake_up_locked(struct swait_queue_head *q)
+ }
+ EXPORT_SYMBOL(swake_up_locked);
 =20
- 	enum mrpc_state state;
++void swake_up_all_locked(struct swait_queue_head *q)
++{
++	while (!list_empty(&q->task_list))
++		swake_up_locked(q);
++}
++
+ void swake_up_one(struct swait_queue_head *q)
+ {
+ 	unsigned long flags;
+@@ -69,7 +75,7 @@ void swake_up_all(struct swait_queue_head *q)
+ }
+ EXPORT_SYMBOL(swake_up_all);
 =20
--	struct completion comp;
-+	wait_queue_head_t cmd_comp;
- 	struct kref kref;
- 	struct list_head list;
-=20
-+	bool cmd_done;
- 	u32 cmd;
- 	u32 status;
- 	u32 return_code;
-@@ -77,7 +78,7 @@ static struct switchtec_user *stuser_create(struct switch=
-tec_dev *stdev)
- 	stuser->stdev =3D stdev;
- 	kref_init(&stuser->kref);
- 	INIT_LIST_HEAD(&stuser->list);
--	init_completion(&stuser->comp);
-+	init_waitqueue_head(&stuser->cmd_comp);
- 	stuser->event_cnt =3D atomic_read(&stdev->event_cnt);
-=20
- 	dev_dbg(&stdev->dev, "%s: %p\n", __func__, stuser);
-@@ -175,7 +176,7 @@ static int mrpc_queue_cmd(struct switchtec_user *stuser)
- 	kref_get(&stuser->kref);
- 	stuser->read_len =3D sizeof(stuser->data);
- 	stuser_set_state(stuser, MRPC_QUEUED);
--	init_completion(&stuser->comp);
-+	stuser->cmd_done =3D false;
- 	list_add_tail(&stuser->list, &stdev->mrpc_queue);
-=20
- 	mrpc_cmd_submit(stdev);
-@@ -222,7 +223,8 @@ static void mrpc_complete_cmd(struct switchtec_dev *std=
-ev)
- 		memcpy_fromio(stuser->data, &stdev->mmio_mrpc->output_data,
- 			      stuser->read_len);
- out:
--	complete_all(&stuser->comp);
-+	stuser->cmd_done =3D true;
-+	wake_up_interruptible(&stuser->cmd_comp);
- 	list_del_init(&stuser->list);
- 	stuser_put(stuser);
- 	stdev->mrpc_busy =3D 0;
-@@ -529,10 +531,11 @@ static ssize_t switchtec_dev_read(struct file *filp, =
-char __user *data,
- 	mutex_unlock(&stdev->mrpc_mutex);
-=20
- 	if (filp->f_flags & O_NONBLOCK) {
--		if (!try_wait_for_completion(&stuser->comp))
-+		if (!stuser->cmd_done)
- 			return -EAGAIN;
- 	} else {
--		rc =3D wait_for_completion_interruptible(&stuser->comp);
-+		rc =3D wait_event_interruptible(stuser->cmd_comp,
-+					      stuser->cmd_done);
- 		if (rc < 0)
- 			return rc;
- 	}
-@@ -580,7 +583,7 @@ static __poll_t switchtec_dev_poll(struct file *filp, p=
-oll_table *wait)
- 	struct switchtec_dev *stdev =3D stuser->stdev;
- 	__poll_t ret =3D 0;
-=20
--	poll_wait(filp, &stuser->comp.wait, wait);
-+	poll_wait(filp, &stuser->cmd_comp, wait);
- 	poll_wait(filp, &stdev->event_wq, wait);
-=20
- 	if (lock_mutex_and_test_alive(stdev))
-@@ -588,7 +591,7 @@ static __poll_t switchtec_dev_poll(struct file *filp, p=
-oll_table *wait)
-=20
- 	mutex_unlock(&stdev->mrpc_mutex);
-=20
--	if (try_wait_for_completion(&stuser->comp))
-+	if (stuser->cmd_done)
- 		ret |=3D EPOLLIN | EPOLLRDNORM;
-=20
- 	if (stuser->event_cnt !=3D atomic_read(&stdev->event_cnt))
-@@ -1272,7 +1275,8 @@ static void stdev_kill(struct switchtec_dev *stdev)
-=20
- 	/* Wake up and kill any users waiting on an MRPC request */
- 	list_for_each_entry_safe(stuser, tmpuser, &stdev->mrpc_queue, list) {
--		complete_all(&stuser->comp);
-+		stuser->cmd_done =3D true;
-+		wake_up_interruptible(&stuser->cmd_comp);
- 		list_del_init(&stuser->list);
- 		stuser_put(stuser);
- 	}
+-static void __prepare_to_swait(struct swait_queue_head *q, struct swait_qu=
+eue *wait)
++void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wa=
+it)
+ {
+ 	wait->task =3D current;
+ 	if (list_empty(&wait->task_list))
 --=20
 2.25.1
 
