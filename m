@@ -2,115 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0232183FB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 04:34:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48F59183FA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 04:28:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbgCMDeO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 23:34:14 -0400
-Received: from mail-eopbgr70077.outbound.protection.outlook.com ([40.107.7.77]:29806
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726254AbgCMDeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 23:34:14 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cu8dIOVqgEnFOolf8YqFV2YxGixmHIOkBTUxS9R0PP/zFA2/xEIAti10ys4ObEJeYxNFvgdIuTrw6jnyJc9AdA8ZfFm7lAVzJA94HlURrLO3LK+TNnkdAbUQVH7ClvvqwF3DpCt7/EFNGqLH1a/3XnewgMp4v9AZ6PBd3vVW2MAaDxQa3NT6q4HNC08cpeaQa0g0ibLU+Fn7JLzylZ/MnrWctWQO2zfSRdWqfZ8Ep2t41IcdpuW32ICO2MjKsqduyf+DCKFJJieZq0kpozEaI87mSQ3jxHZ6bFZONpq3/vxInTjS7NDiY5Ju913liBFpz96ww2tdkyxd3IHekEhy5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w7YZQHG8z16cUe8rr8Z4fTVt5wMLwJRDLNyCE5kFwdo=;
- b=Bord0qL5g078dJ9WtGyuWjf8g9X67g7jWDcr4dX98JrckD1/m8cVolkVC8Bc7cYe5/ck9xt80nIv6zEw5aW+V9YCfUvcN51nCWDmpKLKkJLcSbrh9LGT8IOXiLaPGRSqUZR9ffP/TUApjPJWpZoENKI7oTF9sZBq04FXW8gkksBy2ZqQxGBc5SioYvSbBuyq61wOryhTw6pwzjP3RJEGGNK7kD1wmLP2QNty2BJWQNzYU15BgavS4ElljfoLxXndHSYfULBuDWqLeXpn9TSVqri3FKbrRd2xHf/12CuwTTSfy9x5QJuXjMa1MI5vhdrNb6/KRZIEGJcZ+d2tzghb5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w7YZQHG8z16cUe8rr8Z4fTVt5wMLwJRDLNyCE5kFwdo=;
- b=K6wE6hPvi1wvJDI2bmqTyVZq0sI67H545m5X3mjSYU7/GYAMcHKBUg/p9sZKrxdh147RrS/zRgzIE+tdLeMURq+2LRd8YWFWh22qTfNAgfYEM4TPuo4kohRmwUq9h3sBJ7OMIWnl2CZgRnTi+xc5dpE3TXxm64UUZwYCLleOU4w=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB4979.eurprd04.prod.outlook.com (20.177.40.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2793.17; Fri, 13 Mar 2020 03:34:10 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::548f:4941:d4eb:4c11]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::548f:4941:d4eb:4c11%6]) with mapi id 15.20.2793.018; Fri, 13 Mar 2020
- 03:34:10 +0000
-From:   peng.fan@nxp.com
-To:     shawnguo@kernel.org, sboyd@kernel.org, s.hauer@pengutronix.de,
-        linus.walleij@linaro.org, arnd@arndb.de
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        aisheng.dong@nxp.com, stefan@agner.ch, Anson.Huang@nxp.com,
-        abel.vesa@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH 3/3] soc: imx: select ARM_GIC_V3 for i.MX8M
-Date:   Fri, 13 Mar 2020 11:27:16 +0800
-Message-Id: <1584070036-26447-4-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584070036-26447-1-git-send-email-peng.fan@nxp.com>
-References: <1584070036-26447-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR06CA0178.apcprd06.prod.outlook.com
- (2603:1096:1:1e::32) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
+        id S1726446AbgCMD2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 23:28:12 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:14260 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726390AbgCMD2L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 23:28:11 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200313032809epoutp01057f1679a6e83f283d0b6ef564502d67~7v1qLut0l1569015690epoutp01F
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 03:28:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200313032809epoutp01057f1679a6e83f283d0b6ef564502d67~7v1qLut0l1569015690epoutp01F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1584070089;
+        bh=LumW01sok70NYv3csTOzeqtO4np/nnp3DVMEzFed64k=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=H/AkDgIrA923qgJs1Dx+ZgMq/B4tTE+2bGauIrE0r9TigPu9iX+y0fT7Z076rfAPS
+         g0H/6Gq2jmGMiphWl2Zd+v9L4ffDVrymAwLoMquT1AC1jtbxjviDAoiLv3lqS4M9YK
+         w+vcnxdPhyR34skSGbvciH0cypodfNNwIUJfOk58=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200313032809epcas1p2c78f8116541ff3e8773cd949099f5cca~7v1p0ci7L1233512335epcas1p2m;
+        Fri, 13 Mar 2020 03:28:09 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.162]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 48drkJ1JSBzMqYls; Fri, 13 Mar
+        2020 03:28:08 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F6.64.57028.8CDFA6E5; Fri, 13 Mar 2020 12:28:08 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200313032807epcas1p266c68c32f767b2db2024f0a281cb2aa2~7v1oMnmZ_0717707177epcas1p2I;
+        Fri, 13 Mar 2020 03:28:07 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200313032807epsmtrp23340cf1fc53fc4211aeffd67ca6aece5~7v1oL8a750478204782epsmtrp2O;
+        Fri, 13 Mar 2020 03:28:07 +0000 (GMT)
+X-AuditID: b6c32a35-4f3ff7000001dec4-0d-5e6afdc8285d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C7.A2.04215.7CDFA6E5; Fri, 13 Mar 2020 12:28:07 +0900 (KST)
+Received: from [10.253.104.82] (unknown [10.253.104.82]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200313032806epsmtip20c1288afa4e7fd694c00e64296d5b8b8~7v1nTOeNc2399123991epsmtip2S;
+        Fri, 13 Mar 2020 03:28:06 +0000 (GMT)
+Subject: Re: [PATCH v2 1/2] mmap: remove inline of vm_unmapped_area
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     willy@infradead.org, walken@google.com, bp@suse.de,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        jaewon31.kim@gmail.com
+From:   Jaewon Kim <jaewon31.kim@samsung.com>
+Message-ID: <5E6AFDBE.4090808@samsung.com>
+Date:   Fri, 13 Mar 2020 12:27:58 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+        Thunderbird/38.7.2
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR06CA0178.apcprd06.prod.outlook.com (2603:1096:1:1e::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2793.16 via Frontend Transport; Fri, 13 Mar 2020 03:34:05 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 09e29b08-9471-4dcb-6abe-08d7c6ff64a8
-X-MS-TrafficTypeDiagnostic: AM0PR04MB4979:|AM0PR04MB4979:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB497979C7838E586679E55DD688FA0@AM0PR04MB4979.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3383;
-X-Forefront-PRVS: 034119E4F6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(39860400002)(396003)(136003)(346002)(199004)(81156014)(66476007)(478600001)(66556008)(8936002)(956004)(8676002)(52116002)(66946007)(2616005)(81166006)(4744005)(26005)(7416002)(69590400007)(86362001)(6486002)(4326008)(36756003)(6666004)(316002)(6506007)(2906002)(5660300002)(9686003)(6512007)(186003)(16526019);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4979;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Pg/70JwQ4evkZjZlFXuNBvIzWLUTtZemd2SIjWQZphLoi6daI371+xgDBEn+BxP66+81URcRCBWHjkIpUw7GiarPMoXJsfOXOtc3K+ongPlnpalLd+J5y+LoiNVA3C7R+DUHHpvtwMIEwDD7+m39SafgX1Vlkk0IMv2SA7BIAlXQQm7VInUbePJ5qIkGfmzxBBmelM3fb51E7y5evA5yKz2A+XdlfDwqP13mgQbGCVfGlMxcU02GuIqpMtnSCbLbGjkbLeTEuOWiLl9iynjbS2Q+6ADrS7DoUP14Xyw53PHTlitcvxevi6tDZIFf1ErMM1b9sgWZopVuLnZoPAR44fryYBoeqjRM7AGx4e1HYBvFCqsyZd10mQ3DCQ+IyU9YlECg2sqEmtgpG1r17vuh7r4QrJaCtiruhPxeFHQ7RChI12bOnr/RTzPx3Ve5enyZb3DRI2AE9Wjd2JyNu50d6CKrmjf91OmqBsn0PGbHCbGw3tEX+me9r4m4Nn+87O+m
-X-MS-Exchange-AntiSpam-MessageData: QhHCb+0RYdIZ8rdcmnzf2+0OkWG4LQ7IUOeJ9eycdhs9IhMSPsUjVVI/OxOBal4Z2e47QPaEt5z/ZH20arKqHrREKeqQNpN0hq+HMqpxb3RZk79NbwxyztV8JzcMjXEC4LpalkmvYFv/qqEbCahCXA==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09e29b08-9471-4dcb-6abe-08d7c6ff64a8
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2020 03:34:10.7421
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7MsmcOGgFttpMPqrIt5wa5EQ1OauLH9UjvSlsNc8BGyqL3VSM1PWl94Ao7iXmCl8Zmhn/+r5BjgH0fNH4waMLg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4979
+In-Reply-To: <20200312200259.7b79b38341bde97609fde99a@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRTm9W53U5reptlhWa5LBS7UzTW7lkZQ1A2NhIKkwHmnt83aF7ub
+        lGHND6Qv+7B+5LKQIpQypC1Tp0LOUCO0orIfVkIfSpFWihUNrd1dI/8955znnOc5532lmPw6
+        rpAWW52sw8qYSTxKdL83SZ08MHswX322VUzVtzTj1IVzSdRpXx2invvrcept8x8xNVdbRgV/
+        1eObJXSH542EbvC6aF+TivZO1UrogctBEe17fJSe9q7IlewzZ5pYpoh1KFlroa2o2GrMIrN3
+        67fodelqTbImg1pPKq2Mhc0it+bkJm8rNoe8kMoSxuwKpXIZjiNTN2U6bC4nqzTZOGcWydqL
+        zHaN2p7CMRbOZTWmFNosGzRqdZouxCwwm85O9orsv8WHP/fcRW70RXQKRUqBWAcPZ4OIx3Ki
+        HcHgRziFokJ4CkHNZJ9YCH4guN/lj/jX4X7Cd/OFbgRzwS+YEEwgePluMDwrltgC068rxTyO
+        I5Lh1rg/TMKICgTPhh9I+AJOrIWvDbVhkoxQQXP7U4zHImI1zDx9hfN4CZEH7Ve/I4GzGB7V
+        fQgbjySy4f3QybAljEiEytYrYQEgRnAI+L/Ne90KP9quzW8aC5/770kErIDpyW5caKhEMFHn
+        Q0JQheCNtwYJLC3UnOEtSUMSSdDiTxXSK6EjeBUJytEwOXNGzFOAkMGJarlAWQNVYzNiASfA
+        7NzYPKbhxcn6+aNWR8CQt010Hik9C5bzLFjI81+5AWG3UDxr5yxGltPYNQsf2YvC/1Ola0eX
+        hnICiJAicpFMHX8wXy5mSrgjlgACKUbGyfSJxny5rIg5Uso6bHqHy8xyAaQL3fsCplhSaAv9
+        dqtTr9GlabVaal36+nSdllwqM0yF5hBGxskeYlk76/jXFyGNVLjRqtsZe6InhhqWj3283deZ
+        cPliy2js/nJd+fZAGjXc0v2p8MOeRLl7deeuHeObCxTn0gwlo5eyZRk7h0fKHh8utdxQ5bnd
+        rfSKA+PkjWO7D8TfvbNsY6Ohq6eyK0YeNZ7iuUmebzKYPKMV+qA/52deRO5IjGFHb8zP/uNr
+        ogd8e4sbSRFnYjQqzMExfwEastRTtQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsWy7bCSvO7xv1lxBtuuCFnMWb+GzWJiv6ZF
+        9+aZjBaXd81hs7i35j+rxb9JtRa/f8xhc2D32DnrLrvHgk2lHptXaHls+jSJ3ePEjN8sHptP
+        V3t83iQXwB7FZZOSmpNZllqkb5fAldH37jBLwS/WilcHNzI2ML5h6WLk5JAQMJFoOA9ic3EI
+        CexmlFi6fzMzREJG4s35p0AJDiBbWOLw4WKQsJDAa0aJ9jmGILawgLPE5zvNrCC2iICuxKrn
+        u5gh5rQxSXz7vIsdJMEs0MQo8WaxMojNJqAt8X7BJLAGXgEtiTU7LoDtYhFQlfh64TobiC0q
+        ECGxet01ZogaQYmTM5+AHcop4C3x+FwnE8g9zALqEuvnCUGMl5do3jqbeQKj4CwkHbMQqmYh
+        qVrAyLyKUTK1oDg3PbfYsMAoL7Vcrzgxt7g0L10vOT93EyM4FrS0djCeOBF/iFGAg1GJh9dA
+        LCtOiDWxrLgy9xCjBAezkghvvHx6nBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe+fxjkUIC6Ykl
+        qdmpqQWpRTBZJg5OqQZGf7lrifwdXxcccz/36M1Bwc9O2p6n9wX92HuqeE30jj2aE/ze71hZ
+        dv7QOx/1093MfzbPr45Yo20fX7bfzvsaz/rDe82Wu206f1LVtOXclmXcTGqGU1WEFi3qXeF0
+        VK7/TlbvZv6akGxnDdttjEUJqzuZUgpjOzNZq268LVXeyVqw0XpZlXK3EktxRqKhFnNRcSIA
+        tu0jKoECAAA=
+X-CMS-MailID: 20200313032807epcas1p266c68c32f767b2db2024f0a281cb2aa2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200313011430epcas1p129e4033f12b9c02f71443e0b359a26e5
+References: <20200313011420.15995-1-jaewon31.kim@samsung.com>
+        <CGME20200313011430epcas1p129e4033f12b9c02f71443e0b359a26e5@epcas1p1.samsung.com>
+        <20200313011420.15995-2-jaewon31.kim@samsung.com>
+        <20200312200259.7b79b38341bde97609fde99a@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
 
-Select ARM_GIC_V3, then it is able to use gic v3 driver in aarch32
-mode linux on aarch64 hardware. For aarch64 mode, it not hurts
-to select ARM_GIC_V3.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/soc/imx/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/soc/imx/Kconfig b/drivers/soc/imx/Kconfig
-index 70019cefa617..0b69024296d5 100644
---- a/drivers/soc/imx/Kconfig
-+++ b/drivers/soc/imx/Kconfig
-@@ -21,6 +21,7 @@ config SOC_IMX8M
- 	bool "i.MX8M SoC family support"
- 	depends on ARCH_MXC || COMPILE_TEST
- 	default ARCH_MXC && ARM64
-+	select ARM_GIC_V3
- 	help
- 	  If you say yes here you get support for the NXP i.MX8M family
- 	  support, it will provide the SoC info like SoC family,
--- 
-2.16.4
+On 2020년 03월 13일 12:02, Andrew Morton wrote:
+> On Fri, 13 Mar 2020 10:14:19 +0900 Jaewon Kim <jaewon31.kim@samsung.com> wrote:
+>
+>> In prepration for next patch remove inline of vm_unmapped_area and move
+>> code to mmap.c. There is no logical change.
+>>
+>> Also remove unmapped_area[_topdown] out of mm.h, there is no code
+>> calling to them.
+>>
+> Patches seem reasonable.
+>
+>> -extern unsigned long unmapped_area(struct vm_unmapped_area_info *info);
+>> -extern unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info);
+> I believe these can now be made static to mmap.c
+Correct.
+Let me wait for the 2/2 patch to be reviewed, and resubmit this 1/2 patch with having static if need.
+Thank you for your comment.
+>
+>
+>
+>
 
