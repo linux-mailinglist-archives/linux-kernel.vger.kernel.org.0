@@ -2,127 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A23131844EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 11:30:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4F041844F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 11:33:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbgCMKaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 06:30:03 -0400
-Received: from mga02.intel.com ([134.134.136.20]:20815 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726508AbgCMKaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 06:30:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 03:30:02 -0700
-X-IronPort-AV: E=Sophos;i="5.70,548,1574150400"; 
-   d="scan'208";a="237179068"
-Received: from unknown (HELO localhost) ([10.252.52.87])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 03:29:59 -0700
-From:   Jani Nikula <jani.nikula@intel.com>
-To:     Greg KH <greg@kroah.com>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Bird\, Tim" <Tim.Bird@sony.com>,
-        "ksummit-discuss\@lists.linuxfoundation.org" 
-        <ksummit-discuss@lists.linuxfoundation.org>,
-        "tech-board-discuss\@lists.linuxfoundation.org" 
-        <tech-board-discuss@lists.linuxfoundation.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [Tech-board-discuss] [Ksummit-discuss] Linux Foundation Technical Advisory Board Elections -- Change to charter
-In-Reply-To: <20200313093548.GA2089143@kroah.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <6d6dd6fa-880f-01fe-6177-281572aed703@labbott.name> <20200312003436.GF1639@pendragon.ideasonboard.com> <MWHPR13MB0895E133EC528ECF50A22100FDFD0@MWHPR13MB0895.namprd13.prod.outlook.com> <20200313031947.GC225435@mit.edu> <87d09gljhj.fsf@intel.com> <20200313093548.GA2089143@kroah.com>
-Date:   Fri, 13 Mar 2020 12:30:20 +0200
-Message-ID: <877dzolf7n.fsf@intel.com>
+        id S1726437AbgCMKdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 06:33:12 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:39312 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726055AbgCMKdM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 06:33:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584095591;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mGqpef0nt52hPE//tC+LYeJOZpKY1PtNUY8TQrYwFq8=;
+        b=FAmYQmtvV9U+cUQit3OCce1dYOpL7gsyG7VpPAM4fkLYfFiR+bP9HIu9jpNjEv6YgLV6YH
+        BRT8fiPfWHu+j7wZvwPstSyTMChY6HWyh0y+Oaxk1LwvIIwcf/yCjFclAr8QEZzAkMEv3h
+        v+r3vD827Y9l90CwBONl15QDZ0CHvqg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-441-1TngnJVWMMWTGG00PNSQbg-1; Fri, 13 Mar 2020 06:33:07 -0400
+X-MC-Unique: 1TngnJVWMMWTGG00PNSQbg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E17448017CC;
+        Fri, 13 Mar 2020 10:33:04 +0000 (UTC)
+Received: from krava (ovpn-205-229.brq.redhat.com [10.40.205.229])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1364E5C1BB;
+        Fri, 13 Mar 2020 10:33:01 +0000 (UTC)
+Date:   Fri, 13 Mar 2020 11:32:59 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, will@kernel.org, ak@linux.intel.com,
+        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
+        james.clark@arm.com, qiangqing.zhang@nxp.com
+Subject: Re: [PATCH 6/6] perf test: Add pmu-events test
+Message-ID: <20200313103259.GC389625@krava>
+References: <1583406486-154841-1-git-send-email-john.garry@huawei.com>
+ <1583406486-154841-7-git-send-email-john.garry@huawei.com>
+ <20200309084924.GA65888@krava>
+ <82c3fbfe-4ddc-db7d-c17f-29ca6f11e60c@huawei.com>
+ <20200309152635.GD67774@krava>
+ <6691dd26-7c53-26f0-b583-131707ede608@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6691dd26-7c53-26f0-b583-131707ede608@huawei.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Mar 2020, Greg KH <greg@kroah.com> wrote:
-> On Fri, Mar 13, 2020 at 10:58:00AM +0200, Jani Nikula wrote:
->> On Thu, 12 Mar 2020, "Theodore Y. Ts'o" <tytso@mit.edu> wrote:
->> > So that means we need to be smart about how we pick the criteria.
->> > Using a kernel.org account might be a good approach, since it would be
->> > a lot harder for a huge number of sock puppet accounts to meet that
->> > criteria.
->> 
->> Per [1] and [2], kernel.org accounts "are usually reserved for subsystem
->> maintainers or high-profile developers", but apparently it's at the
->> kernel.org admins discretion to decide whether one is ultimately
->> eligible or not. Do we want the kernel.org admin to have the final say
->> on who gets to vote? Do we want to encourage people to have kernel.org
->> accounts for no other reason than to vote?
->
-> We are using the "kernel.org account" as a way to verify that you really
-> are part of our developer/maintainer community and that you are part of
-> the "web of trust" and an actual person.
->
-> That is the goal here, if you know of some other way to determine this,
-> please let us know.  We went through many iterations of this and at the
-> moment, it is the best we can come up with.
+On Mon, Mar 09, 2020 at 04:20:52PM +0000, John Garry wrote:
+> > > 
+> > > The events in test_cpu_aliases[] or test_uncore_aliases[] are checked
+> > > against the events from pmu-events/arch/test/test_cpu/*.json
+> > 
+> 
+> Hi Jirka,
+> 
+> > I don't understand the benefit of this.. so IIUC:
+> > 
+> >    - jevents will go through arch/test and populate pmu-events/pmu-events.c
+> >      with:
+> >         struct pmu_event pme_test_cpu[] ...
+> >         struct pmu_events_map pmu_events_map_test ...
+> 
+> Right. And the idea is that pme_test_cpu[] can be used as generic set of
+> events for testing on any arch/cpuid. (note: I'll just ignore uncore events
+> for the moment)
+> 
+> > 
+> >    - so we actualy have the parsed json events in C structs and we can go
+> >      through them and check it contains fields with strings that we expect
+> 
+> No, we use pme_test_cpu[] to generate the event aliases for a PMU, and
+> verify that the aliases are as expected.
+> 
+> > 
+> >    - you go through all detected pmus and check if the tests events we
+> >      generated are matching some of the events from these pmus,
+> 
+> Not exactly.
+> 
+> >      and that's where I'm lost ;-) why?
+> 
+> So consider the "cpu" HW PMU. During normal operation, we create the event
+> aliases for this PMU in pmu_lookup()->pmu_add_cpu_aliases(). This step looks
+> up a map of cpu events for that CPUID, and then creates the event aliases
+> for that PMU from that map.
+> 
+> I want the test to recreate this and verify that the events from the test
+> JSONs will have event aliases created properly.
 
-Ted's mail seemed like it was thrown around as an idea, not something
-you're settling on.
+aah ok, my first objective was to have some way to test pmu-events
+changes we plan to do and their affect to generated pmu-event.c
 
-> Also, note that the "kernel.org admin" is really a team of people who
-> have been doing this for 9 years, it's not a single person responsible
-> for giving out new accounts to people that do not meet the obvious
-> requirement levels as published on kernel.org
->
->> Furthermore, having a kernel.org account imposes the additional
->> requirement that you're part of the kernel developers web of trust,
->
-> That is exactly what we want.
+you want to test the code paths after that.. perfect
 
-Fair enough.
+> 
+> So in the test when we scan the PMUs and find "cpu" HW PMU, we create a test
+> PMU with the same name, create the event aliases from pme_test_cpu[] for
+> that test PMU, and then verify that the event aliases created are as
+> expected. Then the test PMU is deleted.
+> 
+> So overall the test covers:
+> a. jevents code to generate the struct pmu_event []
+> b. util/pmu.c code to create the event aliases for a given PMU
+> 
+> Note: the test does not (yet) cover matching of events declared in the HW
+> PMU sysfs folder. I'm talking about these, for example:
 
->> i.e. that you've met other kernel developers in person. Which is a kind
->> of awkward requirement for enabling electronic voting to be inclusive to
->> people who can't attend in person.
->
-> Yes, we know that, but it does mean that you are "known" to someone
-> else, which is the key here.
->
->> Seems like having a kernel.org account is just a proxy for the criteria,
->> and one that also lacks transparency, and has problems of its own.
->
-> What is not transparent about how to get a kernel.org account?
+ok
 
-There is no way of knowing whether you're eligible to vote until you
-apply for a kernel.org account and either get approved or rejected.
+> 
+> $ ls /sys/bus/event_source/devices/cpu/events/
+> branch-instructions  cache-references  el-abort     el-start ref-cycles
+> ...
+> 
+> > 
+> > > 
+> > > > 
+> > > > or as I'm thinking about that now, would it be enough
+> > > > to check pme_test_cpu array to have string that we
+> > > > expect?
+> > > 
+> > > Right, I might change this.
+> > > 
+> > > So currently we iterate the PMU aliases to ensure that we have a matching
+> > > event in pme_test_cpu[]. It may be better to iterate the events in
+> > > pme_test_cpu[] to ensure that we have an alias.
+> > 
+> > that's what I described above.. I dont understand the connection/value
+> > of this tests
+> > 
+> > > 
+> > > The problem here is uncore PMUs. They have the "Unit" field, which is used
+> > > for matching the PMU. So we cannot ensure test events from uncore.json will
+> > > always have an event alias created per PMU. But maybe I could use
+> > > pmu_uncore_alias_match() to check if the test event matches in this case.
+> > 
+> > hum I guess I don't follow all the details.. but some more explanation
+> > of the test would be great
+> 
+> Let's just concentrate on core PMU ATM :)
 
-The current "obvious" requirement levels are not obvious to me. How many
-contributions is enough? Is everyone in MAINTAINERS eligible, or do you
-have to be a high-profile maintainer/developer? What is a high-profile
-developer? How many people in the web of trust must you have met in
-person?
+ok, thanks,
+jirka
 
-And it actually seems like you think it's a good thing the admin team
-can make a subjective decision on the above.
-
-It may seem completely transparent and fair and objective on the
-*inside*, but it does not look that way on the *outside*. Which is kind
-of the definition of transparent. Or lack of.
-
->> Not that I'm saying there's an easy solution, but obviously kernel.org
->> account is not as problem free as you might think.
->
-> We are not saying it is "problem free", but what really is the problem
-> with it?
-
-Seems that some of what I thought was a bug is a feature for you, so I
-suppose it's better to focus on the transparency.
-
-On that note, and since this relates to the charter, how's the "The TAB
-shall provide transparent and timely reporting (through any mechanism it
-deems appropriate) to the Community at large on all of its activities"
-coming along...?
-
-BR,
-Jani.
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
