@@ -2,342 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 699E618418D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 08:36:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54C04184192
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 08:38:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbgCMHgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 03:36:03 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:34530 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbgCMHgD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 03:36:03 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02D7ZqTZ061475;
-        Fri, 13 Mar 2020 02:35:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584084952;
-        bh=PLjf14JR395choWfI7mnyRBRT0i7Bl/Wgaz1RQFuEYU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=RW7lRKlx1kb8vDZn9XuWSL/lCBqAq0rWnbtVJzIlstdwEyoTI662FY5eTc0tHHQHP
-         tmjYmQJs6G1jA+4krdGZ1DKuUOKxOsAMenfj5C+zUzExtm3RoDAVAHK7dcQ46M59xd
-         /5nRXRaH7rAWGK3JY0YlxHsjs/7n8TCrrXLduPsg=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02D7Zq0A090870;
-        Fri, 13 Mar 2020 02:35:52 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 13
- Mar 2020 02:35:51 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 13 Mar 2020 02:35:51 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02D7ZmWT007777;
-        Fri, 13 Mar 2020 02:35:49 -0500
-Subject: Re: [PATCH v1 1/3] driver core: Break infinite loop when deferred
- probe can't be satisfied
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
-        <grant.likely@arm.com>, Mark Brown <broonie@kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Andrzej Hajda <a.hajda@samsung.com>
-References: <20200309141111.40576-1-andriy.shevchenko@linux.intel.com>
- <ad68e006-8a9f-7183-6313-77a5fc3f18f2@ti.com>
- <20200312105402.GU1922688@smile.fi.intel.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <3b0586f4-0af4-3a17-7a4b-e73910f66bff@ti.com>
-Date:   Fri, 13 Mar 2020 09:35:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200312105402.GU1922688@smile.fi.intel.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1726395AbgCMHif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 03:38:35 -0400
+Received: from mail-eopbgr60068.outbound.protection.outlook.com ([40.107.6.68]:24606
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726216AbgCMHif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 03:38:35 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gnYZYpp9kyD0VH6RjkY0NGwI31V0rHvgEdVDwBBvvFTYf6ociL8665mhlFyy0VS3i03D/oRAt23NnYE+iG9+ghuuMpOBw/0C/3jifDcg2uOGYQS10yH5UbAO9rTpcvG8BXdfk4OCxsMZnM3tLLIhn3xMUkQ+//gv4b3pKOz4W90swoK5jifUtcKLq4NefaEHaE9BAmpPsiCq2MZ/K9U5rqGexODDMzfaNw8DVXwefELqgER16mwqPOBWpU7ftoLiYy1clAPFg/lsyR0cFSLACYWGZiZRnUTkLeqle2/wIDeay716pXDIK1Qyk5lrL5Ft3hrb1NfycmslsvFs1JL3cg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7zSF2nYz1TiVEtUXL8yn14ilYDZ9PM0mVaSfic0mKks=;
+ b=is6ecwZPUB+TUA4VRjBsSXZwpi/HQBHu7o187dqk0XEgkUCK9iKkuMUQ/j/FzYMWIqsTet/s2ggQuUsmvZAtGBNDPDTQo4XPakxlMlDOidjdM3gnLi9OslLGFQLE+rSnn3PUkmglIAL3RxOPmgcxig9nAgY5p3UCeGyM7AiwhYzglhtPb4B3fh0ELrM/0jxX7NZDyJmdrl6PUnlhyHP1GBVb3VeKoMF2cPtbbBVHt5IsaWg+A50Jj7hNtU+HpkWPrOIBU2zM2bt8nXJB1HohIasPIJkpwpba13FAMULWerTlwSJ89fNRXzX85jCEwgUKtL204ZT5Rq1/E0lPhCqScw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7zSF2nYz1TiVEtUXL8yn14ilYDZ9PM0mVaSfic0mKks=;
+ b=XqAj3LgheLtOs1d/m0T11mJJ7cN5AImo8KHHMcWiZCG9voAPsBCI2bTtsDQfyxoaZsynsaVpF3IN3EbfF3Nm2mLIZj7U2N8WhGSPsR+v9jxLk/0FGgpD68aNY+vWnKG9P2UV9sGIJU2x3kgLdCdVNQj8971ge5CSxtB7Y3h0Ciw=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4705.eurprd04.prod.outlook.com (20.176.214.214) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.14; Fri, 13 Mar 2020 07:38:31 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::548f:4941:d4eb:4c11]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::548f:4941:d4eb:4c11%6]) with mapi id 15.20.2793.018; Fri, 13 Mar 2020
+ 07:38:31 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
+        "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>
+CC:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH V6 0/4] mailbox/firmware: imx: support SCU channel type
+Thread-Topic: [PATCH V6 0/4] mailbox/firmware: imx: support SCU channel type
+Thread-Index: AQHV8emRGg+Z0s59ZUi7vGFwjsJP+qhFwwuggABtClA=
+Date:   Fri, 13 Mar 2020 07:38:31 +0000
+Message-ID: <AM0PR04MB4481D74E3C38B047562F419988FA0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1583300977-2327-1-git-send-email-peng.fan@nxp.com>
+ <VI1PR04MB7023455D0FE9766FFBE1EE5EEEFD0@VI1PR04MB7023.eurprd04.prod.outlook.com>
+ <AM0PR04MB448123609B2FE8F5ECAF1F4388FA0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB448123609B2FE8F5ECAF1F4388FA0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: d34f8c54-a4f5-4b65-cd87-08d7c7218773
+x-ms-traffictypediagnostic: AM0PR04MB4705:|AM0PR04MB4705:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB4705ACA74FB5B642E1CC62CF88FA0@AM0PR04MB4705.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2276;
+x-forefront-prvs: 034119E4F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(39860400002)(346002)(136003)(396003)(366004)(199004)(71200400001)(110136005)(2940100002)(4326008)(76116006)(8676002)(9686003)(55016002)(86362001)(33656002)(15650500001)(66556008)(66946007)(64756008)(66476007)(26005)(186003)(66446008)(316002)(966005)(2906002)(478600001)(81166006)(52536014)(44832011)(54906003)(5660300002)(7696005)(6506007)(53546011)(81156014)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4705;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: fo9w1M6Kv3EKltWzvcKpaTrmbVwSM6OfLVidCF1Hl6ZVPiH3MISXe2DkClafegary4ltF/3supvPl24rIBql0i7RDDHHynyzJu1ga7OlZgFFGQZ+ByupRARM4C92HL2/NKEjn4/ChF9ohZwEgGeysj1JmEawF6hldEhPlFlYMYLZPPCYcxDsRgmbNlVJDGZcFC0G0bwElx5cGixM7HegskiPbgaR0Vpgo2sR0O+oPgyEGacIPKL7ioM9KWsvkxAyL01LY7pfjyVmW5kIQCTEqEPAsj4bhLb9WuKHBlhw5uIWPW98K+vpmI7pdWA3Sun7L17Q4InL+0tG7bVNZD/mewlVrJz91Aq3gB5t/iM6pVxEfkPFBDMDNButFcajaZb/0bgOkF8cAfko7TlMQRCkfmu2KXpFwJ0KrGik781eG5FBA91JWFj3u0JXXoc7mlPfHXqNENeZbFYVNa43gIYJMP9U2j1Y4vI8rKX8inMI7MKAkKqTVunn0JyLEpfifydem1kvlW8zqTgfkgslWUExqQ==
+x-ms-exchange-antispam-messagedata: 6+4gixYVtNbgUqIu71sVVhLSxija6lZLq607eceDJtk1AZqMgimTInb/oc5MlL0AO6JYtbs0l3CKg5jsLyhWCGWaJncJF8U4riRVarUdsdy5SC/2Cc3B5VGJWmO1oxsalSfeWzyCULqEAzn+8LnE+w==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d34f8c54-a4f5-4b65-cd87-08d7c7218773
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2020 07:38:31.5136
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OcugRavhZRW8l+NZuNGR+51eDHv0mEhIR59JhYYxWiVmERhX89CWW7tQdIkTnwIpoTTUjRFtax6MR64KZkGdVw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4705
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+> Subject: RE: [PATCH V6 0/4] mailbox/firmware: imx: support SCU channel
+> type
+>=20
+> Hi Leonard,
+>=20
+> > Subject: Re: [PATCH V6 0/4] mailbox/firmware: imx: support SCU channel
+> > type
+> >
+> > On 2020-03-04 7:55 AM, Peng Fan wrote:
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > V6:
+> > >   Add Oleksij's R-b tag
+> > >   Patch 3/4, per
+> > https://www.kernel.org/doc/Documentation/printk-formats.txt
+> > >   should use %zu for printk sizeof
+> > >
+> > > V5:
+> > >   Move imx_mu_dcfg below imx_mu_priv
+> > >   Add init hooks to imx_mu_dcfg
+> > >   drop __packed __aligned
+> > >   Add more debug msg
+> > >   code style cleanup
+> > >
+> > > V4:
+> > >   Drop IMX_MU_TYPE_[GENERIC, SCU]
+> > >   Pack MU chans init to separate function
+> > >   Add separate function for SCU chans init and xlate
+> > >   Add santity check to msg hdr.size
+> > >   Limit SCU MU chans to 6, TX0/RX0/RXDB[0-3]
+> > >
+> > > V3:
+> > >   Rebase to Shawn's for-next
+> > >   Include fsl,imx8-mu-scu compatible
+> > >   Per Oleksij's comments, introduce generic tx/rx and added scu mu ty=
+pe
+> > >   Check fsl,imx8-mu-scu in firmware driver for fast_ipc
+> > >
+> > > V2:
+> > >   Drop patch 1/3 which added fsl,scu property
+> > >   Force to use scu channel type when machine has node compatible
+> > "fsl,imx-scu"
+> > >   Force imx-scu to use fast_ipc
+> > >
+> > >   I not found a generic method to make SCFW message generic enough,
+> > SCFW
+> > >   message is not fixed length including TX and RX. And it use TR0/RR0
+> > >   interrupt.
+> > >
+> > > V1:
+> > > Sorry to bind the mailbox/firmware patch together. This is make it
+> > > to understand what changed to support using 1 TX and 1 RX channel
+> > > for SCFW message.
+> > >
+> > > Per i.MX8QXP Reference mannual, there are several message using
+> > > examples. One of them is:
+> > > Passing short messages: Transmit register(s) can be used to pass
+> > > short messages from one to four words in length. For example, when a
+> > > four-word message is desired, only one of the registers needs to
+> > > have its corresponding interrupt enable bit set at the receiver side.
+> > >
+> > > This patchset is to using this for SCFW message to replace four TX
+> > > and four RX method.
+> >
+> > Tested-by: Leonard Crestez <leonard.crestez@nxp.com>
+> >
+>=20
+> Thanks for the test.
+>=20
+> > My stress tests pass on imx8qxp with this patcheset, however
+> > performance is not greatly improved. My guess is that this happens
+> > because of too many interrupts.
+>=20
+> Might be. Could you share your testcase?
+>=20
+> >
+> > Is there really a reason to enable TIE? Spinning on TE bits without
+> > any interrupts should be just plain faster.
+>=20
+> I could try to disable TIE and give a try. If performance improves lot, I=
+ could
+> change to non TX interrupt.
 
-On 12/03/2020 12.54, Andy Shevchenko wrote:
-> On Wed, Mar 11, 2020 at 10:32:32AM +0200, Peter Ujfalusi wrote:
->> Hi Andy,
->>
->> On 09/03/2020 16.11, Andy Shevchenko wrote:
->>> Consider the following scenario.
->>>
->>> The main driver of USB OTG controller (dwc3-pci), which has the following
->>> functional dependencies on certain platform:
->>> - ULPI (tusb1210)
->>> - extcon (tested with extcon-intel-mrfld)
->>>
->>> Note, that first driver, tusb1210, is available at the moment of
->>> dwc3-pci probing, while extcon-intel-mrfld is built as a module and
->>> won't appear till user space does something about it.
->>>
->>> This is depicted by kernel configuration excerpt:
->>>
->>> 	CONFIG_PHY_TUSB1210=y
->>> 	CONFIG_USB_DWC3=y
->>> 	CONFIG_USB_DWC3_ULPI=y
->>> 	CONFIG_USB_DWC3_DUAL_ROLE=y
->>> 	CONFIG_USB_DWC3_PCI=y
->>> 	CONFIG_EXTCON_INTEL_MRFLD=m
->>>
->>> In the Buildroot environment the modules are probed by alphabetical ordering
->>> of their modaliases. The latter comes to the case when USB OTG driver will be
->>> probed first followed by extcon one.
->>>
->>> So, if the platform anticipates extcon device to be appeared, in the above case
->>> we will get deferred probe of USB OTG, because of ordering.
->>>
->>> Since current implementation, done by the commit 58b116bce136 ("drivercore:
->>> deferral race condition fix") counts the amount of triggered deferred probe,
->>> we never advance the situation -- the change makes it to be an infinite loop.
->>>
->>> ---8<---8<---
->>>
->>> [   22.187127] driver_deferred_probe_trigger <<< 1
->>>
->>> ...here is the late initcall triggers deferred probe...
->>>
->>> [   22.191725] platform dwc3.0.auto: deferred_probe_work_func in deferred list
->>>
->>> ...dwc3.0.auto is the only device in the deferred list...
->>>
->>> [   22.198727] platform dwc3.0.auto: deferred_probe_work_func 1 <<< counter 1
->>>
->>> ...the counter before mutex is unlocked is kept the same...
->>>
->>> [   22.205663] platform dwc3.0.auto: Retrying from deferred list
->>>
->>> ...mutes has been unlocked, we try to re-probe the driver...
->>>
->>> [   22.211487] bus: 'platform': driver_probe_device: matched device dwc3.0.auto with driver dwc3
->>> [   22.220060] bus: 'platform': really_probe: probing driver dwc3 with device dwc3.0.auto
->>
->> here dwc3 does ulpi_register_interface() which will make the tusb1210 to
->> probe as it is an ulpi_driver.
->>
->>> [   22.238735] bus: 'ulpi': driver_probe_device: matched device dwc3.0.auto.ulpi with driver tusb1210
->>> [   22.247743] bus: 'ulpi': really_probe: probing driver tusb1210 with device dwc3.0.auto.ulpi
->>> [   22.256292] driver: 'tusb1210': driver_bound: bound to device 'dwc3.0.auto.ulpi'
->>> [   22.263723] driver_deferred_probe_trigger <<< 2
->>>
->>> ...the dwc3.0.auto probes ULPI, we got successful bound and bumped counter...
->>>
->>> [   22.268304] bus: 'ulpi': really_probe: bound device dwc3.0.auto.ulpi to driver tusb1210
->>
->> and it probes fine as it has no dependencies.
->>
->>> [   22.276697] platform dwc3.0.auto: Driver dwc3 requests probe deferral
->>>
->>> ...but extcon driver is still missing...
->>
->> and the dwc3 will ulpi_unregister_interface() which makes the tusb1210
->> to be removed as a result since the ulpi bus it was sitting on disappeared.
->>
->>>
->>> [   22.283174] platform dwc3.0.auto: Added to deferred list
->>> [   22.288513] platform dwc3.0.auto: driver_deferred_probe_add_trigger local counter: 1 new counter 2
->>>
->>> ...and since we had a successful probe, we got counter mismatch...
->>>
->>> [   22.297490] driver_deferred_probe_trigger <<< 3
->>> [   22.302074] platform dwc3.0.auto: deferred_probe_work_func 2 <<< counter 3
->>>
->>> ...at the end we have a new counter and loop repeats again, see 22.198727...
->>>
->>> ---8<---8<---
->>
->> Nice
->>
->>> Revert of the commit helps, but it is probably not helpful for the initially
->>> found regression. Artem Bityutskiy suggested to use counter of the successful
->>> probes instead. This fixes above mentioned case and shouldn't prevent driver
->>> to reprobe deferred ones.
->>
->> Hrm, but at 22.256292 the tusb1210 is successfully bound which would
->> increment the probe_okay?
->>
->> Ah, I see you effectively counting the probes, increment the probe_okay
->> on bound and decrement it in release of the driver.
->>
->> It surely going to balance back in your case as dwc3 registers the ulpi
->> interface (which triggers probes on the ulpi bus) and when dwc3 defers
->> it unregisters the ulpi interface (which causes the drivers to be
->> removed as well).
->>
->> I think in theory this should not break the original fix if I play that
->> (parallel probing of drivers with dependencies) scenario down in my head ;)
->>
->> Let me see, successful probe will trigger the deferred list always.
->> If any driver successfully probed between the start of really_probe and
->> the driver which is probing got deferred then the counter should
->> indicate that -> we will reprobe the driver by kicking the deferred list.
->>
->> Unfortunately I don't have a setup to test this, but I trust you and
->> Artem enough to:
->>
->> Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> 
-> Thank you, Peter!
-> 
-> Yes, under "successful probe" we understand the one that has stayed probed
-> after the deferred trigger cycle. That's why a decrement counter is essential
-> to make this scheme work.
-> 
-> Ideally I would like to get Grant's comment on / test of this...
+After rethinking about this, we need TX interrupt, otherwise we have to
+use TX_POLL which is slower or let the client kick the TX state machine.
 
-I fixed up Grant's email address to get his attention you are seeking for...
+Compared with original method, this already reduces to use 1 TX and 1 RX
+interrupt. This already good for system.
 
-- Péter
+Thanks,
+Peng.
 
-> 
->>> Fixes: 58b116bce136 ("drivercore: deferral race condition fix")
->>> Suggested-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
->>> Cc: Grant Likely <grant.likely@linaro.org>
->>> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
->>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>> Cc: Mark Brown <broonie@kernel.org>
->>> Cc: Felipe Balbi <balbi@kernel.org>
->>> Cc: Andrzej Hajda <a.hajda@samsung.com>
->>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->>> ---
->>>  drivers/base/dd.c | 39 +++++++++++++++++++++------------------
->>>  1 file changed, 21 insertions(+), 18 deletions(-)
->>>
->>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
->>> index b25bcab2a26b..43720beb5300 100644
->>> --- a/drivers/base/dd.c
->>> +++ b/drivers/base/dd.c
->>> @@ -53,7 +53,6 @@
->>>  static DEFINE_MUTEX(deferred_probe_mutex);
->>>  static LIST_HEAD(deferred_probe_pending_list);
->>>  static LIST_HEAD(deferred_probe_active_list);
->>> -static atomic_t deferred_trigger_count = ATOMIC_INIT(0);
->>>  static struct dentry *deferred_devices;
->>>  static bool initcalls_done;
->>>  
->>> @@ -147,17 +146,6 @@ static bool driver_deferred_probe_enable = false;
->>>   * This functions moves all devices from the pending list to the active
->>>   * list and schedules the deferred probe workqueue to process them.  It
->>>   * should be called anytime a driver is successfully bound to a device.
->>> - *
->>> - * Note, there is a race condition in multi-threaded probe. In the case where
->>> - * more than one device is probing at the same time, it is possible for one
->>> - * probe to complete successfully while another is about to defer. If the second
->>> - * depends on the first, then it will get put on the pending list after the
->>> - * trigger event has already occurred and will be stuck there.
->>> - *
->>> - * The atomic 'deferred_trigger_count' is used to determine if a successful
->>> - * trigger has occurred in the midst of probing a driver. If the trigger count
->>> - * changes in the midst of a probe, then deferred processing should be triggered
->>> - * again.
->>>   */
->>>  static void driver_deferred_probe_trigger(void)
->>>  {
->>> @@ -170,7 +158,6 @@ static void driver_deferred_probe_trigger(void)
->>>  	 * into the active list so they can be retried by the workqueue
->>>  	 */
->>>  	mutex_lock(&deferred_probe_mutex);
->>> -	atomic_inc(&deferred_trigger_count);
->>>  	list_splice_tail_init(&deferred_probe_pending_list,
->>>  			      &deferred_probe_active_list);
->>>  	mutex_unlock(&deferred_probe_mutex);
->>> @@ -350,6 +337,19 @@ static void __exit deferred_probe_exit(void)
->>>  }
->>>  __exitcall(deferred_probe_exit);
->>>  
->>> +/*
->>> + * Note, there is a race condition in multi-threaded probe. In the case where
->>> + * more than one device is probing at the same time, it is possible for one
->>> + * probe to complete successfully while another is about to defer. If the second
->>> + * depends on the first, then it will get put on the pending list after the
->>> + * trigger event has already occurred and will be stuck there.
->>> + *
->>> + * The atomic 'probe_okay' is used to determine if a successful probe has
->>> + * occurred in the midst of probing another driver. If the count changes in
->>> + * the midst of a probe, then deferred processing should be triggered again.
->>> + */
->>> +static atomic_t probe_okay = ATOMIC_INIT(0);
->>> +
->>>  /**
->>>   * device_is_bound() - Check if device is bound to a driver
->>>   * @dev: device to check
->>> @@ -375,6 +375,7 @@ static void driver_bound(struct device *dev)
->>>  	pr_debug("driver: '%s': %s: bound to device '%s'\n", dev->driver->name,
->>>  		 __func__, dev_name(dev));
->>>  
->>> +	atomic_inc(&probe_okay);
->>>  	klist_add_tail(&dev->p->knode_driver, &dev->driver->p->klist_devices);
->>>  	device_links_driver_bound(dev);
->>>  
->>> @@ -481,18 +482,18 @@ static atomic_t probe_count = ATOMIC_INIT(0);
->>>  static DECLARE_WAIT_QUEUE_HEAD(probe_waitqueue);
->>>  
->>>  static void driver_deferred_probe_add_trigger(struct device *dev,
->>> -					      int local_trigger_count)
->>> +					      int local_probe_okay_count)
->>>  {
->>>  	driver_deferred_probe_add(dev);
->>>  	/* Did a trigger occur while probing? Need to re-trigger if yes */
->>> -	if (local_trigger_count != atomic_read(&deferred_trigger_count))
->>> +	if (local_probe_okay_count != atomic_read(&probe_okay))
->>>  		driver_deferred_probe_trigger();
->>>  }
->>>  
->>>  static int really_probe(struct device *dev, struct device_driver *drv)
->>>  {
->>>  	int ret = -EPROBE_DEFER;
->>> -	int local_trigger_count = atomic_read(&deferred_trigger_count);
->>> +	int local_probe_okay_count = atomic_read(&probe_okay);
->>>  	bool test_remove = IS_ENABLED(CONFIG_DEBUG_TEST_DRIVER_REMOVE) &&
->>>  			   !drv->suppress_bind_attrs;
->>>  
->>> @@ -509,7 +510,7 @@ static int really_probe(struct device *dev, struct device_driver *drv)
->>>  
->>>  	ret = device_links_check_suppliers(dev);
->>>  	if (ret == -EPROBE_DEFER)
->>> -		driver_deferred_probe_add_trigger(dev, local_trigger_count);
->>> +		driver_deferred_probe_add_trigger(dev, local_probe_okay_count);
->>>  	if (ret)
->>>  		return ret;
->>>  
->>> @@ -619,7 +620,7 @@ static int really_probe(struct device *dev, struct device_driver *drv)
->>>  	case -EPROBE_DEFER:
->>>  		/* Driver requested deferred probing */
->>>  		dev_dbg(dev, "Driver %s requests probe deferral\n", drv->name);
->>> -		driver_deferred_probe_add_trigger(dev, local_trigger_count);
->>> +		driver_deferred_probe_add_trigger(dev, local_probe_okay_count);
->>>  		break;
->>>  	case -ENODEV:
->>>  	case -ENXIO:
->>> @@ -1148,6 +1149,8 @@ static void __device_release_driver(struct device *dev, struct device *parent)
->>>  		dev_pm_set_driver_flags(dev, 0);
->>>  
->>>  		klist_remove(&dev->p->knode_driver);
->>> +		atomic_dec(&probe_okay);
->>> +
->>>  		device_pm_check_callbacks(dev);
->>>  		if (dev->bus)
->>>  			blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
->>>
->>
->> - Péter
->>
->> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
->> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-> 
+>=20
+> Oleksij, do you agree?
+>=20
+> Thanks,
+> Peng.
+>=20
+> >
+> > >
+> > > Peng Fan (4):
+> > >    dt-bindings: mailbox: imx-mu: add SCU MU support
+> > >    mailbox: imx: restructure code to make easy for new MU
+> > >    mailbox: imx: add SCU MU support
+> > >    firmware: imx-scu: Support one TX and one RX
+> > >
+> > >   .../devicetree/bindings/mailbox/fsl,mu.txt         |   2 +
+> > >   drivers/firmware/imx/imx-scu.c                     |  54 ++++-
+> > >   drivers/mailbox/imx-mailbox.c                      | 267
+> > +++++++++++++++++----
+> > >   3 files changed, 260 insertions(+), 63 deletions(-)
+> > >
+> > >
+> > > base-commit: 770fbb32d34e5d6298cc2be590c9d2fd6069aa17
+> > >
 
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
