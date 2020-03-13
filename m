@@ -2,147 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B90A184985
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 15:37:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC94F1849D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 15:46:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbgCMOhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 10:37:48 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:46447 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbgCMOhr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 10:37:47 -0400
-Received: by mail-qt1-f196.google.com with SMTP id t13so7608192qtn.13;
-        Fri, 13 Mar 2020 07:37:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IWiLFXJoL3qzIWPZA+/ObRS+WhWUeKdoLxXVkW4bKYs=;
-        b=brZ2kJbjo1lXXEUpoExW2a/8G0/kWb1PeWR+PPjo6qWE07rGKGJJJfKSYDBWaEOBfb
-         HY2Zuz1UULlojcdDUKrOG4Mgy1PsVmYAIQdf31LXqqWJMM2Ty+twX9y8qAArRwNuopbS
-         hbvBiStgtszXEpjHoeNm4f/jTFXWmNGbx9Hb/HZYh2krtxLnDdKp8slf8rMDcDMdeVes
-         KreGLJHoT4ZlcBvE2unTECFt8JW2/OE4AWozICObqdK80uWYqvALjqzAaJI/ymPGI6wQ
-         ptUYbezk4AEjWaXlSmzvkjiSbmhUVQCbzfDkXTBRv32wB1TfzHnOAbh5pi1SJoQzPbRW
-         be9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IWiLFXJoL3qzIWPZA+/ObRS+WhWUeKdoLxXVkW4bKYs=;
-        b=aTS+AYlBm6nHQtv/mdsDNYeNW36nInAGOH5v9d7jtWmTvUSDHMh7zjyIy2zIMFjRL7
-         WZijX4dOlIKOck/aVgicZxSjP4bmJnqqZPKT2zzcDq4JjvgtBGXTbSUciM10cXKQz9kE
-         RI1R/sD3f/eblBVOK6K9HcpUmzKJxeTts/8U4MnmuiW076riMERLNUXvRP0o1hxxChkZ
-         OWNG/tyzehJ7NMWtkcMBurkQq6lv8OcHq1KherxAsa6JjZ4XDc/9mjbz5hCeajFHMTvS
-         6NeF1rg8YU9bWJ/aIw4AIVR17x4nAi1+yc71WzsjxTUpKops3VHAGiPS709j0mdSMoSS
-         9KLA==
-X-Gm-Message-State: ANhLgQ2eAcKQFgG3SO2KKE5mFmJY2LsPPzw/2KuiidOmZ3vUDLRQRgMG
-        a2egovvcPVcuVAsvkMZ8xnA=
-X-Google-Smtp-Source: ADFU+vvlub9/e063qHJY4ONDofRHLu3BpPYkMPUk0Qd2gV0L32YCNySXCwj+Bj5/yZrupMY4cVTAkg==
-X-Received: by 2002:ac8:ac1:: with SMTP id g1mr12820614qti.287.1584110266692;
-        Fri, 13 Mar 2020 07:37:46 -0700 (PDT)
-Received: from ubuntu (ool-45785633.dyn.optonline.net. [69.120.86.51])
-        by smtp.gmail.com with ESMTPSA id w30sm5476313qtw.21.2020.03.13.07.37.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 07:37:45 -0700 (PDT)
-Date:   Fri, 13 Mar 2020 10:37:43 -0400
-From:   Vivek Unune <npcomplete13@gmail.com>
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, heiko@sntech.de,
-        ezequiel@collabora.com, akash@openedev.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Add Hugsun X99 IR receiver and
- power led
-Message-ID: <20200313143743.GA92675@ubuntu>
-References: <20200313000112.19419-1-npcomplete13@gmail.com>
- <7f294dd5-3188-e2d6-dd49-4b2afb04455a@gmail.com>
- <20200313142005.GA25349@ubuntu>
- <4deb154d-3095-7d18-fbf9-85b60f57765f@gmail.com>
+        id S1726810AbgCMOq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 10:46:57 -0400
+Received: from smtp2.ustc.edu.cn ([202.38.64.46]:57740 "EHLO ustc.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726481AbgCMOq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 10:46:56 -0400
+Received: from xhacker (unknown [101.86.20.80])
+        by newmailweb.ustc.edu.cn (Coremail) with SMTP id LkAmygAnL5M7m2teLr88AA--.11016S2;
+        Fri, 13 Mar 2020 22:39:56 +0800 (CST)
+Date:   Fri, 13 Mar 2020 22:38:14 +0800
+From:   Jisheng Zhang <jszhang3@mail.ustc.edu.cn>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH 1/4] regulator: bindings: add MPS mp8869 voltage regulator
+Message-ID: <20200313223814.07e40543@xhacker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4deb154d-3095-7d18-fbf9-85b60f57765f@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LkAmygAnL5M7m2teLr88AA--.11016S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw4fCrWkGr4fWr4xCr47twb_yoW8XrWxpF
+        4DCFsxCr40yF1xWa1fGa4Iya1rXr48Ca4rCF12yw4Fgas8A3Zrt390kryrAF18Ar4kJFW5
+        ArZ8Cry8Kw1Iv3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUyFb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
+        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
+        jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
+        8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8Jw
+        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E
+        4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGV
+        WUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_
+        Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rV
+        W3JVWrJr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8
+        JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8TCJPUUUUU==
+X-CM-SenderInfo: xmv2xttqjtqzxdloh3xvwfhvlgxou0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 03:29:59PM +0100, Johan Jonker wrote:
-> Hi Vivek,
-> 
-> On 3/13/20 3:20 PM, Vivek Unune wrote:
-> > On Fri, Mar 13, 2020 at 09:32:27AM +0100, Johan Jonker wrote:
-> >> Hi Vivek,
-> >>
-> >> The 'power-led' need some changes.
-> >>
-> >> From leds-gpio.yaml:
-> >>
-> >> patternProperties:
-> >>   # The first form is preferred, but fall back to just 'led' anywhere in the
-> >>   # node name to at least catch some child nodes.
-> >>   "(^led-[0-9a-f]$|led)":
-> >>     type: object
-> >>
-> >> Test with:
-> >> make -k ARCH=arm64 dtbs_check
-> >>
-> >> arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dt.yaml: leds:
-> >> power-led:linux,default-trigger:0: 'none' is not one of ['backlight',
-> >> 'default-on', 'heartbeat', 'disk-activity', 'ide-disk', 'timer', 'pattern']
-> >>
-> >> On 3/13/20 1:01 AM, Vivek Unune wrote:
-> >>>  - Add Hugsun X99 IR receiver and power led
-> >>>  - Remove pwm0 node as it interferes with pwer LED gpio
-> >>
-> >> pwer => power
-> >>
-> > 
-> > Hi Johan,
-> > 
-> > I'll fix those in my next version. Here's what I intended to to:
-> > 
-> 
-> > 1. Rename 'power-led' node to 'led-power'
-> 
-> The first form is preferred.
-> Put 'led-power' in a regex tester with ^led-[0-9a-f]$
-> https://regex101.com/
-> Your regular expression does not match the subject string.
-> 
-> Test 'led-0'
-> Full match
-> 
+From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 
-Hi Johan,
+The MP8869 from Monolithic Power Systems is a single output dc/dc
+converter with voltage control over i2c.
 
-Thanks for quick reply. 
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+---
+ .../devicetree/bindings/regulator/mp886x.txt       | 25 ++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/mp886x.txt
 
-Indeed led-power won't work. Although I'm trying to figure out the dtbs_check
-Currently, make compains that it's missing.
-I'll verify this properly without having you to verify it next time.
-
-Thanks,
-
-Vivek
+diff --git a/Documentation/devicetree/bindings/regulator/mp886x.txt b/Documentation/devicetree/bindings/regulator/mp886x.txt
+new file mode 100644
+index 00000000..6858e38
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/mp886x.txt
+@@ -0,0 +1,25 @@
++Monolithic Power Systems MP8869 voltage regulator
++
++Required properties:
++- compatible: "mps,mp8869";
++- reg: I2C slave address.
++- enable-gpios: enable gpios.
++- mps,fb-voltage-divider: An array of two integers containing the resistor
++  values R1 and R2 of the feedback voltage divider in kilo ohms.
++
++Any property defined as part of the core regulator binding, defined in
++./regulator.txt, can also be used.
++
++Example:
++
++	vcpu: regulator@62 {
++		compatible = "mps,mp8869";
++		regulator-name = "vcpu";
++		regulator-min-microvolt = <700000>;
++		regulator-max-microvolt = <850000>;
++		regulator-always-on;
++		regulator-boot-on;
++		enable-gpios = <&porta 1 GPIO_ACTIVE_LOW>;
++		mps,fb-voltage-divider = <80 240>;
++		reg = <0x62>;
++	};
+-- 
+2.7.4
 
 
-> >>>  		regulator-max-microvolt = <5000000>;
-> >>>  	};
-> >>>  
-> >>> +	leds {
-> >>> +		compatible = "gpio-leds";
-> >>> +		pinctrl-names = "default";
-> >>> +		pinctrl-0 = <&power_led_gpio>;
-> >>> +
-> >>> +		power-led {
-> >>> +			label = "blue:power";
-> >>> +			gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_HIGH>;
-> >>> +			default-state = "on";
-> >>> +			linux,default-trigger = "none";
-> >>> +		};
-> >>> +	};
-> >>> +
-> 
