@@ -2,274 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BF741848F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 15:16:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E20C1848FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 15:16:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbgCMOQL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 10:16:11 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:38688 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726526AbgCMOQL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 10:16:11 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A0AE61A1497;
-        Fri, 13 Mar 2020 15:16:06 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 92DA41A146B;
-        Fri, 13 Mar 2020 15:16:06 +0100 (CET)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 7BEC1203CE;
-        Fri, 13 Mar 2020 15:16:06 +0100 (CET)
-Date:   Fri, 13 Mar 2020 16:16:06 +0200
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC 10/11] reset: imx: Add audiomix reset controller support
-Message-ID: <20200313141606.euumtuizm562zghv@fsr-ub1664-175>
-References: <1583226206-19758-1-git-send-email-abel.vesa@nxp.com>
- <1583226206-19758-11-git-send-email-abel.vesa@nxp.com>
- <ac6eb54c01cce4ec52560ac622e024ab47f2136c.camel@pengutronix.de>
+        id S1726911AbgCMOQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 10:16:22 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:4654 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726874AbgCMOQV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 10:16:21 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e6b95570000>; Fri, 13 Mar 2020 07:14:47 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 13 Mar 2020 07:16:20 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 13 Mar 2020 07:16:20 -0700
+Received: from [10.26.11.156] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 13 Mar
+ 2020 14:16:18 +0000
+Subject: Re: [PATCH] backlight: lp855x: Ensure regulators are disabled on
+ probe failure
+To:     Daniel Thompson <daniel.thompson@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>
+CC:     Milo Kim <milo.kim@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+References: <20200224140748.2182-1-jonathanh@nvidia.com>
+ <20200224143732.rreev3ypou26hvx3@holly.lan>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <6ec74817-968b-ab5e-6566-56bbb9b67599@nvidia.com>
+Date:   Fri, 13 Mar 2020 14:16:16 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac6eb54c01cce4ec52560ac622e024ab47f2136c.camel@pengutronix.de>
-User-Agent: NeoMutt/20180622
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <20200224143732.rreev3ypou26hvx3@holly.lan>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1584108887; bh=EKNVkhNRFooWTuQAuVXUIF52AnlF8L6H6GznFVFM9h4=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=lS83ri4NbaFqPyhoKbLqmkCEe3AgsW3k/m5m62gN9bq7V314Au+APvqTQNgPlqlsB
+         pDPu/VR9NZfdx1/3MN+eaSHjMdXQnoBtT77/kW3yrvG01srNHhmFnbLazEQyI0QWlX
+         ccsAna1axRLfJIiXKOVn7aGwyjoYvmli3KdF4KqhSjv8ZsNULtgrTZ9zfxrnvRZGS4
+         Xzj331mbOmXuukiIGnRI1Y/kqFJz+X0Aj4qieHxseYx3348O1L0LlcnpPcXaoOc+yC
+         JHdUEzsiWpdJwpxvP3yGufQLBBG3uxBiq7usviHsstbQ42aFMn8VozH2tPArI4cyc/
+         b9zCDGar1+SPg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-03-04 12:41:33, Philipp Zabel wrote:
-> Hi Abel,
-> 
-> On Tue, 2020-03-03 at 11:03 +0200, Abel Vesa wrote:
-> > The imx-mix MFD driver registers some devices, one of which, in case of
-> > audiomix, maps correctly to a reset controller type. This driver registers
-> > a reset controller for that. For now, only the EARC specific resets are added.
-> > 
-> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
-> > ---
-> >  drivers/reset/Kconfig                          |   7 ++
-> >  drivers/reset/Makefile                         |   1 +
-> >  drivers/reset/reset-imx-audiomix.c             | 122 +++++++++++++++++++++++++
-> >  include/dt-bindings/reset/imx-audiomix-reset.h |  15 +++
-> >  4 files changed, 145 insertions(+)
-> >  create mode 100644 drivers/reset/reset-imx-audiomix.c
-> >  create mode 100644 include/dt-bindings/reset/imx-audiomix-reset.h
-> > 
-> > diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> > index d9efbfd..2f8d9b3 100644
-> > --- a/drivers/reset/Kconfig
-> > +++ b/drivers/reset/Kconfig
-> > @@ -81,6 +81,13 @@ config RESET_INTEL_GW
-> >  	  Say Y to control the reset signals provided by reset controller.
-> >  	  Otherwise, say N.
-> >  
-> > +config RESET_IMX_AUDIOMIX
-> > +	bool "i.MX Audiomix Reset Driver" if COMPILE_TEST
-> > +	depends on HAS_IOMEM
-> > +	default ARCH_MXC
-> > +	help
-> > +	  This enables the audiomix reset controller driver for i.MX SoCs.
-> > +
-> >  config RESET_LANTIQ
-> >  	bool "Lantiq XWAY Reset Driver" if COMPILE_TEST
-> >  	default SOC_TYPE_XWAY
-> > diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> > index 249ed35..cf23d38 100644
-> > --- a/drivers/reset/Makefile
-> > +++ b/drivers/reset/Makefile
-> > @@ -12,6 +12,7 @@ obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
-> >  obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
-> >  obj-$(CONFIG_RESET_IMX7) += reset-imx7.o
-> >  obj-$(CONFIG_RESET_INTEL_GW) += reset-intel-gw.o
-> > +obj-$(CONFIG_RESET_IMX_AUDIOMIX) += reset-imx-audiomix.o
-> >  obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
-> >  obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
-> >  obj-$(CONFIG_RESET_MESON) += reset-meson.o
-> > diff --git a/drivers/reset/reset-imx-audiomix.c b/drivers/reset/reset-imx-audiomix.c
-> > new file mode 100644
-> > index 00000000..d1c62ef
-> > --- /dev/null
-> > +++ b/drivers/reset/reset-imx-audiomix.c
-> > @@ -0,0 +1,122 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright 2019 NXP.
-> > + */
-> > +
-> > +#include <dt-bindings/reset/imx-audiomix-reset.h>
-> > +#include <linux/err.h>
-> > +#include <linux/io.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_address.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/pm_runtime.h>
-> > +#include <linux/reset-controller.h>
-> > +
-> > +#define IMX_AUDIOMIX_EARC_CTRL_REG	0x200
-> > +
-> > +#define IMX_AUDIOMIX_EARC_RESET_BIT	0x0
-> > +#define IMX_AUDIOMIX_EARC_PHY_RESET_BIT	0x1
-> > +
-> > +struct imx_audiomix_reset_data {
-> > +	void __iomem *base;
-> > +	struct reset_controller_dev rcdev;
-> > +	spinlock_t lock;
-> > +};
-> > +
-> > +static int imx_audiomix_reset_set(struct reset_controller_dev *rcdev,
-> > +			  unsigned long id, bool assert)
-> > +{
-> > +	struct imx_audiomix_reset_data *drvdata = container_of(rcdev,
-> > +			struct imx_audiomix_reset_data, rcdev);
-> > +	void __iomem *reg_addr = drvdata->base;
-> > +	unsigned long flags;
-> > +	unsigned int offset;
-> > +	u32 reg;
-> > +
-> > +	switch (id) {
-> > +	case IMX_AUDIOMIX_EARC_PHY_RESET:
-> > +		reg_addr += IMX_AUDIOMIX_EARC_CTRL_REG;
-> > +		offset = IMX_AUDIOMIX_EARC_PHY_RESET_BIT;
-> > +		break;
-> > +	case IMX_AUDIOMIX_EARC_RESET:
-> > +		reg_addr += IMX_AUDIOMIX_EARC_CTRL_REG;
-> > +		offset = IMX_AUDIOMIX_EARC_RESET_BIT;
-> > +		break;
-> > +	default:
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	if (assert) {
-> > +		pm_runtime_get_sync(rcdev->dev);
-> 
-> This seems wrong. Why is the runtime PM reference count incremented when
-> a reset is asserted ...
+Hi Lee, Daniel,
 
-The audiomix IP has its own power domain. 
+On 24/02/2020 14:37, Daniel Thompson wrote:
+> On Mon, Feb 24, 2020 at 02:07:48PM +0000, Jon Hunter wrote:
+>> If probing the LP885x backlight fails after the regulators have been
+>> enabled, then the following warning is seen when releasing the
+>> regulators ...
+>>
+>>  WARNING: CPU: 1 PID: 289 at drivers/regulator/core.c:2051 _regulator_put.part.28+0x158/0x160
+>>  Modules linked in: tegra_xudc lp855x_bl(+) host1x pwm_tegra ip_tables x_tables ipv6 nf_defrag_ipv6
+>>  CPU: 1 PID: 289 Comm: systemd-udevd Not tainted 5.6.0-rc2-next-20200224 #1
+>>  Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
+>>
+>>  ...
+>>
+>>  Call trace:
+>>   _regulator_put.part.28+0x158/0x160
+>>   regulator_put+0x34/0x50
+>>   devm_regulator_release+0x10/0x18
+>>   release_nodes+0x12c/0x230
+>>   devres_release_all+0x34/0x50
+>>   really_probe+0x1c0/0x370
+>>   driver_probe_device+0x58/0x100
+>>   device_driver_attach+0x6c/0x78
+>>   __driver_attach+0xb0/0xf0
+>>   bus_for_each_dev+0x68/0xc8
+>>   driver_attach+0x20/0x28
+>>   bus_add_driver+0x160/0x1f0
+>>   driver_register+0x60/0x110
+>>   i2c_register_driver+0x40/0x80
+>>   lp855x_driver_init+0x20/0x1000 [lp855x_bl]
+>>   do_one_initcall+0x58/0x1a0
+>>   do_init_module+0x54/0x1d0
+>>   load_module+0x1d80/0x21c8
+>>   __do_sys_finit_module+0xe8/0x100
+>>   __arm64_sys_finit_module+0x18/0x20
+>>   el0_svc_common.constprop.3+0xb0/0x168
+>>   do_el0_svc+0x20/0x98
+>>   el0_sync_handler+0xf4/0x1b0
+>>   el0_sync+0x140/0x180
+>>
+>> Fix this by ensuring that the regulators are disabled, if enabled, on
+>> probe failure.
+>>
+>> Finally, ensure that the vddio regulator is disabled in the driver
+>> remove handler.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> 
+> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+I received a bounce from Milo's email and so I am not sure that his
+email address is still valid.
 
-The way I see it, when the last deassert is done, there is no point
-in keeping the audiomix on. So, unless the clock controller part of it does it,
-the audiomix will be powered down.
+Can either of you pick this up?
 
-> 
-> > +		spin_lock_irqsave(&drvdata->lock, flags);
-> > +		reg = readl(reg_addr);
-> > +		writel(reg & ~BIT(offset), reg_addr);
-> > +		spin_unlock_irqrestore(&drvdata->lock, flags);
-> > +	} else {
-> > +		spin_lock_irqsave(&drvdata->lock, flags);
-> > +		reg = readl(reg_addr);
-> > +		writel(reg | BIT(offset), reg_addr);
-> > +		spin_unlock_irqrestore(&drvdata->lock, flags);
-> > +		pm_runtime_put(rcdev->dev);
-> 
-> ... and decremented when a reset is deasserted?
-> 
-> Apart from the runtime PM handling this looks like it could reuse reset-
-> simple.
-> 
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int imx_audiomix_reset_assert(struct reset_controller_dev *rcdev,
-> > +			     unsigned long id)
-> > +{
-> > +	return imx_audiomix_reset_set(rcdev, id, true);
-> > +}
-> > +
-> > +static int imx_audiomix_reset_deassert(struct reset_controller_dev *rcdev,
-> > +			       unsigned long id)
-> > +{
-> > +	return imx_audiomix_reset_set(rcdev, id, false);
-> > +}
-> > +
-> > +static const struct reset_control_ops imx_audiomix_reset_ops = {
-> > +	.assert		= imx_audiomix_reset_assert,
-> > +	.deassert	= imx_audiomix_reset_deassert,
-> > +};
-> > +
-> > +static int imx_audiomix_reset_probe(struct platform_device *pdev)
-> > +{
-> > +	struct imx_audiomix_reset_data *drvdata;
-> > +	struct device *dev = &pdev->dev;
-> > +
-> > +	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
-> > +	if (drvdata == NULL)
-> > +		return -ENOMEM;
-> > +
-> > +	drvdata->base = dev_get_drvdata(dev->parent);
-> > +
-> > +	platform_set_drvdata(pdev, drvdata);
-> > +
-> > +	pm_runtime_enable(dev);
-> > +
-> > +	spin_lock_init(&drvdata->lock);
-> > +
-> > +	drvdata->rcdev.owner     = THIS_MODULE;
-> > +	drvdata->rcdev.nr_resets = IMX_AUDIOMIX_RESET_NUM;
-> > +	drvdata->rcdev.ops       = &imx_audiomix_reset_ops;
-> > +	drvdata->rcdev.of_node   = dev->of_node;
-> > +	drvdata->rcdev.dev	 = dev;
-> > +
-> > +	return devm_reset_controller_register(dev, &drvdata->rcdev);
-> > +}
-> > +
-> > +static const struct of_device_id imx_audiomix_reset_dt_ids[] = {
-> > +	{ .compatible = "fsl,imx8mp-audiomix-reset", },
-> > +	{ /* sentinel */ },
-> > +};
-> > +
-> > +static struct platform_driver imx_audiomix_reset_driver = {
-> > +	.probe	= imx_audiomix_reset_probe,
-> > +	.driver = {
-> > +		.name		= KBUILD_MODNAME,
-> > +		.of_match_table	= imx_audiomix_reset_dt_ids,
-> > +	},
-> > +};
-> > +module_platform_driver(imx_audiomix_reset_driver);
-> > diff --git a/include/dt-bindings/reset/imx-audiomix-reset.h b/include/dt-bindings/reset/imx-audiomix-reset.h
-> > new file mode 100644
-> > index 00000000..2e26878
-> > --- /dev/null
-> > +++ b/include/dt-bindings/reset/imx-audiomix-reset.h
-> > @@ -0,0 +1,15 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright 2019 NXP.
-> > + */
-> > +
-> > +#ifndef DT_BINDING_RESET_IMX_AUDIOMIX_H
-> > +#define DT_BINDING_RESET_IMX_AUDIOMIX_H
-> > +
-> > +#define IMX_AUDIOMIX_EARC_RESET		0x0
-> > +#define IMX_AUDIOMIX_EARC_PHY_RESET	0x1
-> > +
-> > +#define IMX_AUDIOMIX_RESET_NUM		2
-> > +
-> > +#endif
-> > +
-> 
-> The imx-audiomix-reset.h change should go into a separate patch,
-> together with the binding docs for fsl,imx8mp-audiomix-reset.
-> 
-> regards
-> Philipp
+Not sure if we should update the MAINTAINERS as well?
+
+Jon
+
+-- 
+nvpublic
