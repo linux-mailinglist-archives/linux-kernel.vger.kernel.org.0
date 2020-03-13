@@ -2,412 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36583184AD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 16:34:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BE7A184AD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 16:35:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbgCMPej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 11:34:39 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:34848 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbgCMPej (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 11:34:39 -0400
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jCmKZ-0001Aa-Fc; Fri, 13 Mar 2020 15:34:35 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     gregkh@linuxfoundation.org, tkjos@android.com,
-        keescook@chromium.org, linux-kernel@vger.kernel.org
-Cc:     christian.brauner@ubuntu.com, ard.biesheuvel@linaro.org,
-        ardb@kernel.org, arve@android.com, hridya@google.com,
-        joel@joelfernandes.org, john.stultz@linaro.org,
-        kernel-team@android.com, linux-kselftest@vger.kernel.org,
-        maco@android.com, naresh.kamboju@linaro.org, shuah@kernel.org,
-        Todd Kjos <tkjos@google.com>
-Subject: [PATCH v2] binderfs: port to new mount api
-Date:   Fri, 13 Mar 2020 16:34:27 +0100
-Message-Id: <20200313153427.141789-1-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200312131531.3615556-1-christian.brauner@ubuntu.com>
-References: <20200312131531.3615556-1-christian.brauner@ubuntu.com>
+        id S1727036AbgCMPfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 11:35:00 -0400
+Received: from mail-co1nam11on2040.outbound.protection.outlook.com ([40.107.220.40]:6132
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726446AbgCMPe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 11:34:59 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LBpUja6u9YtOEpIogQu36NBpoRZFCqToRoLdDCdMC+oHr/dcRfnwEyV0/23YSAKVYRBKVx7KoB9A0uaPWLaAKTLVYsLvXq0mFZvYhzpAcqFWqzAlY1MpicJZoh6kTAaxHUS5iV/x2SP+wlr6rmejZ168d5Um0epafGj3iWQVuPsjzJkh7Du8MlYObsQEDiWxx+pzXYhlDE/XxQG1lAO+rAybH2vvz/j/mdthpGG3remmOXl/90t4iJj2BoTWYfU0ISMSjnPH9mBraxJ/IOFD2xYFjFo6kCcIM+m3LiI69Jq8pUg4J4kvas/xuwQW+ztZjGl3IVuSIi9PGSfCQUD7bA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1QrJXH34Af3wy3eOaPZ8mFRizX/izUQ397oGXnT4LNc=;
+ b=AoLkyIDOBUP47bi/60h6ou6ySxQVPTxhP1qHPSp6EevqvyJl5smFHkV5Dlmp2Gp/tPKMMaYOw9p1Dufq0fCc/pXt6xUJJGw5h6r/OPkHyjZ6VUvKMkJyf9lG0qDnAf0s86Z7T/Wp77v0AiXgVPY0N7SWjFdordakt/9eHdbqVnOLJ+Y87Dma3K1fw2NPp0cdbIBrnnALzSxK1FFGuhaTuHUSHvB075x3+3gF3KfTE7ledla6woVho362FQabd2xXFQ0rNFKpepFpA00kfg5VKeZ1EaxsH0Kf8ZWnmLVGeX32Yo0uVSP6JfCDBlaxvzQcqSeXPSIAYcpaSLfqS0Icqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=silabs.com; dmarc=pass action=none header.from=silabs.com;
+ dkim=pass header.d=silabs.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=silabs.onmicrosoft.com; s=selector2-silabs-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1QrJXH34Af3wy3eOaPZ8mFRizX/izUQ397oGXnT4LNc=;
+ b=hhG9YDXAhCx9iWmRGbE6g46Dxwz5C/+4pRZXwwWZ5DkaPZSdm3b0x0V7+b3JKsV2FRGGbApo3hxT3yw+xAE1xlKf34LpIYUDrPhFt+7T5Qwg+FCcV0PxtcBjPhwR1sTULuio0+4jBQ9wv9/xqL4tTqwcq8nZf3f6rdW2eUShSl0=
+Received: from MN2PR11MB4063.namprd11.prod.outlook.com (2603:10b6:208:13f::22)
+ by MN2PR11MB3550.namprd11.prod.outlook.com (2603:10b6:208:ee::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.17; Fri, 13 Mar
+ 2020 15:34:43 +0000
+Received: from MN2PR11MB4063.namprd11.prod.outlook.com
+ ([fe80::ade4:5702:1c8b:a2b3]) by MN2PR11MB4063.namprd11.prod.outlook.com
+ ([fe80::ade4:5702:1c8b:a2b3%7]) with mapi id 15.20.2814.018; Fri, 13 Mar 2020
+ 15:34:43 +0000
+From:   =?iso-8859-1?Q?J=E9r=F4me_Pouiller?= <Jerome.Pouiller@silabs.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: [PATCH 3/5] staging: wfx: make warning about pending frame less
+ scary
+Thread-Topic: [PATCH 3/5] staging: wfx: make warning about pending frame less
+ scary
+Thread-Index: AQHV9sSohBK2XnsHaUKZ+zJWfUL/nqhFB/mAgAGkUgA=
+Date:   Fri, 13 Mar 2020 15:34:43 +0000
+Message-ID: <6287924.ghGFUMk3OD@pc-42>
+References: <20200310101356.182818-1-Jerome.Pouiller@silabs.com>
+ <20200310101356.182818-4-Jerome.Pouiller@silabs.com>
+ <20200312143019.GN11561@kadam>
+In-Reply-To: <20200312143019.GN11561@kadam>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Jerome.Pouiller@silabs.com; 
+x-originating-ip: [37.71.187.125]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7b3fa763-bf0c-469d-3911-08d7c7640dce
+x-ms-traffictypediagnostic: MN2PR11MB3550:
+x-microsoft-antispam-prvs: <MN2PR11MB35508EA16C5337AEFC184BA993FA0@MN2PR11MB3550.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:206;
+x-forefront-prvs: 034119E4F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(366004)(396003)(39850400004)(136003)(346002)(376002)(199004)(186003)(81166006)(8936002)(71200400001)(26005)(54906003)(316002)(2906002)(8676002)(4326008)(478600001)(81156014)(64756008)(6916009)(6506007)(6486002)(91956017)(76116006)(66446008)(66476007)(6512007)(66574012)(33716001)(9686003)(66946007)(5660300002)(66556008)(86362001)(39026012);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3550;H:MN2PR11MB4063.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: silabs.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: KeC1LVAD8/qlYhyNhaOUUhCqk0Qc0pmYWhiXpyGAGS7wkE2/ykWOmfNqMQv7ofFF+3ZT5PjWd4b+LBaQ5jwJx6Rmp+AyAy9ChJAcWJafvc4sBdIHD622aSnxb+U5hAdcO5gi77reTkmIFZz2C0BXqP35wnADOBW8/InXqeR1c0y09LnGycH38cmzi1v9eUA0J4V4dD8GdI/LescuIy14SE5hxhuRD4qUntQUgutCojLtNbO/vwXX1tgaA5wQz47C9+MYcggltJ+d0X71CB+X4Y8+AEESxqB9Vm3W/mjdducLnCKIlksU/o6Q0Yns4UgdnOgPiyhzXZpy+l8e1mxkYpLMoQuzQ73IrUvwXvRXErqYmJUrJbHt6dqpVa/VX3nQuBS//PCKUeAJXPOqhza5MvSIpJO4w9GeKdWDkd7C0SpRpCI50Ia6CpFZrHUXmd0tJdPbtg0SNGGgTq0HUGsNnWgo4PUCYhIC/O6OqLK5IztGkQWhICNZ8qjXpHY+5W3E
+x-ms-exchange-antispam-messagedata: HAJtEkw55bCDqxWPYO8URB915Y2BB5R6hkTGiMViiMBjXh+xymQyqu6yKuNe8s+Yy1GtjruX5LZbs3AuMrGt99Axvp/lc873tP4zJemSKH/aLE2xnrm4IojEtkRCP1rKNMAHIEKMexV9HawCz0fV5w==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <6C67A06F0BF48A49A32F1DC4F83F5FCB@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: silabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b3fa763-bf0c-469d-3911-08d7c7640dce
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2020 15:34:43.6451
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 54dbd822-5231-4b20-944d-6f4abcd541fb
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Cg0qYDQrOFu3VX4FyV//cEciTGTtF4voQG5B3NxdK99t1nOPuZX1JLrT79t+0b/FsCiso/sHCZPe2/mf4fGeAA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3550
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When I first wrote binderfs the new mount api had not yet landed. Now
-that it has been around for a little while and a bunch of filesystems
-have already been ported we should do so too. When Al sent his
-mount-api-conversion pr he requested that binderfs (and a few others) be
-ported separately. It's time we port binderfs. We can make use of the
-new option parser, get nicer infrastructure and it will be easier if we
-ever add any new mount options.
+On Thursday 12 March 2020 15:30:19 CET Dan Carpenter wrote:
+> On Tue, Mar 10, 2020 at 11:13:54AM +0100, Jerome Pouiller wrote:
+[...]
+> So it really helps me if the commit message restates the subject.  The
+> truth is that I don't really even like the advice that Josh wrote in
+> the howto about patch descriptions.  I normally start by explaining the
+> problem then how I solved it.  But I try not to be a pedant, so long as
+> I can understand the problem and the patch that's fine.  So how I would
+> write this commit message is:
+>=20
+>     The warning message about releasing a station while Tx is in
+>     progress will trigger a stack trace, possibly a reboot depending
+>     on the configuration, and a syzbot email.  It's not necessarily
+>     a big deal that transmission is still in process so let's make the
+>     warning less scary.
 
-This survives testing with the binderfs selftests:
+Indeed, my idea was the reviewers start by reading subjects and then read
+the body of the commit. I will care now.
 
-for i in `seq 1 1000`; do ./binderfs_test; done
 
-including the new stress tests I sent out for review today:
+> > Signed-off-by: J=E9r=F4me Pouiller <jerome.pouiller@silabs.com>
+> > ---
+> >  drivers/staging/wfx/sta.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/staging/wfx/sta.c b/drivers/staging/wfx/sta.c
+> > index 03d0f224ffdb..010e13bcd33e 100644
+> > --- a/drivers/staging/wfx/sta.c
+> > +++ b/drivers/staging/wfx/sta.c
+> > @@ -605,7 +605,9 @@ int wfx_sta_remove(struct ieee80211_hw *hw, struct =
+ieee80211_vif *vif,
+> >       int i;
+> >
+> >       for (i =3D 0; i < ARRAY_SIZE(sta_priv->buffered); i++)
+> > -             WARN(sta_priv->buffered[i], "release station while Tx is =
+in progress");
+> > +             if (sta_priv->buffered[i])
+> > +                     dev_warn(wvif->wdev->dev, "release station while =
+%d pending frame on queue %d",
+> > +                              sta_priv->buffered[i], i);
+>=20
+> Why print a warning message at all if this is a normal situation?  Just
+> delete the whole thing.
 
- TAP version 13
- 1..1
- # selftests: filesystems/binderfs: binderfs_test
- # [==========] Running 3 tests from 1 test cases.
- # [ RUN      ] global.binderfs_stress
- # [  XFAIL!  ] Tests are not run as root. Skipping privileged tests
- # [==========] Running 3 tests from 1 test cases.
- # [ RUN      ] global.binderfs_stress
- # [       OK ] global.binderfs_stress
- # [ RUN      ] global.binderfs_test_privileged
- # [       OK ] global.binderfs_test_privileged
- # [ RUN      ] global.binderfs_test_unprivileged
- # # Allocated new binder device with major 243, minor 4, and name my-binder
- # # Detected binder version: 8
- # [==========] Running 3 tests from 1 test cases.
- # [ RUN      ] global.binderfs_stress
- # [       OK ] global.binderfs_stress
- # [ RUN      ] global.binderfs_test_privileged
- # [       OK ] global.binderfs_test_privileged
- # [ RUN      ] global.binderfs_test_unprivileged
- # [       OK ] global.binderfs_test_unprivileged
- # [==========] 3 / 3 tests passed.
- # [  PASSED  ]
- ok 1 selftests: filesystems/binderfs: binderfs_test
+I saw cases where it happened and it seems harmless. In add, this code
+is going to be released with 5.6. So, the WARN have to be removed.
 
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
-/* v2 */
-- Christian Brauner <christian.brauner@ubuntu.com>:
-  - Commit message adapted to new stresstest output after porting to
-    XFAIL infrastructure.
-    For the stresstest patchset see:
-    https://lore.kernel.org/r/20200313152420.138777-1-christian.brauner@ubuntu.com
----
- drivers/android/binderfs.c | 200 +++++++++++++++++++------------------
- 1 file changed, 104 insertions(+), 96 deletions(-)
+However, I think it is not normal. Even if it is harmless, it is the
+symptom of something unclean.
 
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index f303106b3362..9ecad74183a3 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -18,7 +18,7 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/mount.h>
--#include <linux/parser.h>
-+#include <linux/fs_parser.h>
- #include <linux/radix-tree.h>
- #include <linux/sched.h>
- #include <linux/seq_file.h>
-@@ -48,26 +48,30 @@ static dev_t binderfs_dev;
- static DEFINE_MUTEX(binderfs_minors_mutex);
- static DEFINE_IDA(binderfs_minors);
- 
--enum {
-+enum binderfs_param {
- 	Opt_max,
- 	Opt_stats_mode,
--	Opt_err
- };
- 
- enum binderfs_stats_mode {
--	STATS_NONE,
--	STATS_GLOBAL,
-+	binderfs_stats_mode_unset,
-+	binderfs_stats_mode_global,
- };
- 
--static const match_table_t tokens = {
--	{ Opt_max, "max=%d" },
--	{ Opt_stats_mode, "stats=%s" },
--	{ Opt_err, NULL     }
-+static const struct constant_table binderfs_param_stats[] = {
-+	{ "global", binderfs_stats_mode_global },
-+	{}
- };
- 
--static inline struct binderfs_info *BINDERFS_I(const struct inode *inode)
-+const struct fs_parameter_spec binderfs_fs_parameters[] = {
-+	fsparam_u32("max",	Opt_max),
-+	fsparam_enum("stats",	Opt_stats_mode, binderfs_param_stats),
-+	{}
-+};
-+
-+static inline struct binderfs_info *BINDERFS_SB(const struct super_block *sb)
- {
--	return inode->i_sb->s_fs_info;
-+	return sb->s_fs_info;
- }
- 
- bool is_binderfs_device(const struct inode *inode)
-@@ -246,7 +250,7 @@ static long binder_ctl_ioctl(struct file *file, unsigned int cmd,
- static void binderfs_evict_inode(struct inode *inode)
- {
- 	struct binder_device *device = inode->i_private;
--	struct binderfs_info *info = BINDERFS_I(inode);
-+	struct binderfs_info *info = BINDERFS_SB(inode->i_sb);
- 
- 	clear_inode(inode);
- 
-@@ -264,97 +268,84 @@ static void binderfs_evict_inode(struct inode *inode)
- 	}
- }
- 
--/**
-- * binderfs_parse_mount_opts - parse binderfs mount options
-- * @data: options to set (can be NULL in which case defaults are used)
-- */
--static int binderfs_parse_mount_opts(char *data,
--				     struct binderfs_mount_opts *opts)
-+static int binderfs_fs_context_parse_param(struct fs_context *fc,
-+					   struct fs_parameter *param)
- {
--	char *p, *stats;
--	opts->max = BINDERFS_MAX_MINOR;
--	opts->stats_mode = STATS_NONE;
--
--	while ((p = strsep(&data, ",")) != NULL) {
--		substring_t args[MAX_OPT_ARGS];
--		int token;
--		int max_devices;
--
--		if (!*p)
--			continue;
--
--		token = match_token(p, tokens, args);
--		switch (token) {
--		case Opt_max:
--			if (match_int(&args[0], &max_devices) ||
--			    (max_devices < 0 ||
--			     (max_devices > BINDERFS_MAX_MINOR)))
--				return -EINVAL;
--
--			opts->max = max_devices;
--			break;
--		case Opt_stats_mode:
--			if (!capable(CAP_SYS_ADMIN))
--				return -EINVAL;
-+	int opt;
-+	struct binderfs_mount_opts *ctx = fc->fs_private;
-+	struct fs_parse_result result;
- 
--			stats = match_strdup(&args[0]);
--			if (!stats)
--				return -ENOMEM;
-+	opt = fs_parse(fc, binderfs_fs_parameters, param, &result);
-+	if (opt < 0)
-+		return opt;
- 
--			if (strcmp(stats, "global") != 0) {
--				kfree(stats);
--				return -EINVAL;
--			}
-+	switch (opt) {
-+	case Opt_max:
-+		if (result.uint_32 > BINDERFS_MAX_MINOR)
-+			return invalfc(fc, "Bad value for '%s'", param->key);
- 
--			opts->stats_mode = STATS_GLOBAL;
--			kfree(stats);
--			break;
--		default:
--			pr_err("Invalid mount options\n");
--			return -EINVAL;
--		}
-+		ctx->max = result.uint_32;
-+		break;
-+	case Opt_stats_mode:
-+		if (!capable(CAP_SYS_ADMIN))
-+			return -EPERM;
-+
-+		ctx->stats_mode = result.uint_32;
-+		break;
-+	default:
-+		return invalfc(fc, "Unsupported parameter '%s'", param->key);
- 	}
- 
- 	return 0;
- }
- 
--static int binderfs_remount(struct super_block *sb, int *flags, char *data)
-+static int binderfs_fs_context_reconfigure(struct fs_context *fc)
- {
--	int prev_stats_mode, ret;
--	struct binderfs_info *info = sb->s_fs_info;
-+	struct binderfs_mount_opts *ctx = fc->fs_private;
-+	struct binderfs_info *info = BINDERFS_SB(fc->root->d_sb);
- 
--	prev_stats_mode = info->mount_opts.stats_mode;
--	ret = binderfs_parse_mount_opts(data, &info->mount_opts);
--	if (ret)
--		return ret;
--
--	if (prev_stats_mode != info->mount_opts.stats_mode) {
--		pr_err("Binderfs stats mode cannot be changed during a remount\n");
--		info->mount_opts.stats_mode = prev_stats_mode;
--		return -EINVAL;
--	}
-+	if (info->mount_opts.stats_mode != ctx->stats_mode)
-+		return invalfc(fc, "Binderfs stats mode cannot be changed during a remount");
- 
-+	info->mount_opts.stats_mode = ctx->stats_mode;
-+	info->mount_opts.max = ctx->max;
- 	return 0;
- }
- 
--static int binderfs_show_mount_opts(struct seq_file *seq, struct dentry *root)
-+static int binderfs_show_options(struct seq_file *seq, struct dentry *root)
- {
--	struct binderfs_info *info;
-+	struct binderfs_info *info = BINDERFS_SB(root->d_sb);
- 
--	info = root->d_sb->s_fs_info;
- 	if (info->mount_opts.max <= BINDERFS_MAX_MINOR)
- 		seq_printf(seq, ",max=%d", info->mount_opts.max);
--	if (info->mount_opts.stats_mode == STATS_GLOBAL)
-+
-+	switch (info->mount_opts.stats_mode) {
-+	case binderfs_stats_mode_unset:
-+		break;
-+	case binderfs_stats_mode_global:
- 		seq_printf(seq, ",stats=global");
-+		break;
-+	}
- 
- 	return 0;
- }
- 
-+static void binderfs_put_super(struct super_block *sb)
-+{
-+	struct binderfs_info *info = sb->s_fs_info;
-+
-+	if (info && info->ipc_ns)
-+		put_ipc_ns(info->ipc_ns);
-+
-+	kfree(info);
-+	sb->s_fs_info = NULL;
-+}
-+
- static const struct super_operations binderfs_super_ops = {
- 	.evict_inode    = binderfs_evict_inode,
--	.remount_fs	= binderfs_remount,
--	.show_options	= binderfs_show_mount_opts,
-+	.show_options	= binderfs_show_options,
- 	.statfs         = simple_statfs,
-+	.put_super	= binderfs_put_super,
- };
- 
- static inline bool is_binderfs_control_device(const struct dentry *dentry)
-@@ -653,10 +644,11 @@ static int init_binder_logs(struct super_block *sb)
- 	return ret;
- }
- 
--static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
-+static int binderfs_fill_super(struct super_block *sb, struct fs_context *fc)
- {
- 	int ret;
- 	struct binderfs_info *info;
-+	struct binderfs_mount_opts *ctx = fc->fs_private;
- 	struct inode *inode = NULL;
- 	struct binderfs_device device_info = { 0 };
- 	const char *name;
-@@ -689,16 +681,14 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
- 
- 	info->ipc_ns = get_ipc_ns(current->nsproxy->ipc_ns);
- 
--	ret = binderfs_parse_mount_opts(data, &info->mount_opts);
--	if (ret)
--		return ret;
--
- 	info->root_gid = make_kgid(sb->s_user_ns, 0);
- 	if (!gid_valid(info->root_gid))
- 		info->root_gid = GLOBAL_ROOT_GID;
- 	info->root_uid = make_kuid(sb->s_user_ns, 0);
- 	if (!uid_valid(info->root_uid))
- 		info->root_uid = GLOBAL_ROOT_UID;
-+	info->mount_opts.max = ctx->max;
-+	info->mount_opts.stats_mode = ctx->stats_mode;
- 
- 	inode = new_inode(sb);
- 	if (!inode)
-@@ -730,36 +720,54 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
- 			name++;
- 	}
- 
--	if (info->mount_opts.stats_mode == STATS_GLOBAL)
-+	if (info->mount_opts.stats_mode == binderfs_stats_mode_global)
- 		return init_binder_logs(sb);
- 
- 	return 0;
- }
- 
--static struct dentry *binderfs_mount(struct file_system_type *fs_type,
--				     int flags, const char *dev_name,
--				     void *data)
-+static int binderfs_fs_context_get_tree(struct fs_context *fc)
- {
--	return mount_nodev(fs_type, flags, data, binderfs_fill_super);
-+	return get_tree_nodev(fc, binderfs_fill_super);
- }
- 
--static void binderfs_kill_super(struct super_block *sb)
-+static void binderfs_fs_context_free(struct fs_context *fc)
- {
--	struct binderfs_info *info = sb->s_fs_info;
-+	struct binderfs_mount_opts *ctx = fc->fs_private;
- 
--	kill_litter_super(sb);
-+	kfree(ctx);
-+}
- 
--	if (info && info->ipc_ns)
--		put_ipc_ns(info->ipc_ns);
-+static const struct fs_context_operations binderfs_fs_context_ops = {
-+	.free		= binderfs_fs_context_free,
-+	.get_tree	= binderfs_fs_context_get_tree,
-+	.parse_param	= binderfs_fs_context_parse_param,
-+	.reconfigure	= binderfs_fs_context_reconfigure,
-+};
- 
--	kfree(info);
-+static int binderfs_init_fs_context(struct fs_context *fc)
-+{
-+	struct binderfs_mount_opts *ctx = fc->fs_private;
-+
-+	ctx = kzalloc(sizeof(struct binderfs_mount_opts), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	ctx->max = BINDERFS_MAX_MINOR;
-+	ctx->stats_mode = binderfs_stats_mode_unset;
-+
-+	fc->fs_private = ctx;
-+	fc->ops = &binderfs_fs_context_ops;
-+
-+	return 0;
- }
- 
- static struct file_system_type binder_fs_type = {
--	.name		= "binder",
--	.mount		= binderfs_mount,
--	.kill_sb	= binderfs_kill_super,
--	.fs_flags	= FS_USERNS_MOUNT,
-+	.name			= "binder",
-+	.init_fs_context	= binderfs_init_fs_context,
-+	.parameters		= binderfs_fs_parameters,
-+	.kill_sb		= kill_litter_super,
-+	.fs_flags		= FS_USERNS_MOUNT,
- };
- 
- int __init init_binderfs(void)
+So, I think that dev_warn() is the correct level of notification.
 
-base-commit: f17f06a0c7794d3a7c2425663738823354447472
--- 
-2.25.1
+(I should have included that in the commit log)
+
+--=20
+J=E9r=F4me Pouiller
 
