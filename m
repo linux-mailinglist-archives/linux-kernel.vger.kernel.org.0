@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECFFC184F87
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 20:52:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 085A9184FA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 20:53:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbgCMTwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 15:52:10 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:37630 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbgCMTwK (ORCPT
+        id S1727637AbgCMTxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 15:53:21 -0400
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:43872 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbgCMTwL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 15:52:10 -0400
-Received: by mail-qk1-f195.google.com with SMTP id z25so9809639qkj.4
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 12:52:09 -0700 (PDT)
+        Fri, 13 Mar 2020 15:52:11 -0400
+Received: by mail-qv1-f68.google.com with SMTP id c28so5274913qvb.10
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 12:52:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eDh+B8ezDyS7P1M5dHGOp61NFK6nBb9D6/mMiEKkThY=;
-        b=gv1TwQ4WfMGa0bIyP7sheC/vrqt7SmVT1bAgS4wl30b5vBvEg9G3tI7pkK36AuTy8Z
-         8QdwdpLpxEsdUYUxQKW7Az8sxO/GoYbmEt4zox1v7PYz+59BUXX+336Ut1INvj5nt4mw
-         vwt7SVKxmTniNlRVn56RVaL1ON8x5O/GQiawHzXT1ddchhX439SfxNaEbQ9bGYNA6zP7
-         qnN4PTyUKvqmfSDb1BwcxA+taeI+e6m+pFzSykjzednNa5L1A8/ZuDt9vSxq8YqfBQpp
-         0UWOB1V6pwaBuzCkwzvjWVyectvj6SDqqYSzFp49X65rTjO6yOt8s38TmWoEYt2f+DHd
-         +Y/w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=G29QVsSkkUqrG7r9BJsozRWYfilk+qJH9OFfvcUGx+c=;
+        b=uuks+c+iko6sK8gAZ8x2eh2lvkTkLwTmS9U3SJvMU6EAK1/al8QkfMh5M6EZY/7IOg
+         32r+IVU18h2vtfcYUrccGZXE89MYw7xaKPvkeY/91K1hALW5NCQFsREAhXfAdo4jPubo
+         aM9TPm1SRF4Qv0ropbwj5wZQg3sxtVYqxj8NX0HHxdD5V/SRD/gyF4HPA8OGYTfD7eWo
+         K71/aq5FwQxXme3d9n3Ql0EdYetIGPdAztXuouU+YOKAaUE9ORDALGJ5wuFCw5dtdNnQ
+         kLB67HRgj2bRpKNW8iq96W35UGZU0tdBEB0v+vWu5y5LuYPZ2q6fhhfwvSZfs3yKWDAN
+         rDEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eDh+B8ezDyS7P1M5dHGOp61NFK6nBb9D6/mMiEKkThY=;
-        b=RvpAbtG4RwME5JdvLcEqYH/s6taFWolxeZ7doi943aS6s/ljAXObmWNViFJcNH3qf/
-         GvX5MzQZgTaWfaJfFb8JNMl2O5h1+O9sz5FMZFBSkOeOO93bdHq4NDc/g1Whp8xeNDQE
-         oCevr4WhcIk3Qp6wLEI++Zl+o82S0zZ4g1fCqnj550Ihs/6ntFZnh2rXqTinox2Esdqr
-         DZutHEetQend7LLGMe+6DANwkhyDHBAX7ExWYnyRTDaDCXxQ0Zi/TJCxl2QNTAr+i/2n
-         We28iLndt0tfTG2dcgr4EUtbPqBVlOgHLKTvnNH5QjfeCsGh7yeir7qaqX/EXhUDZFnz
-         5F+w==
-X-Gm-Message-State: ANhLgQ3QHgEXjcUqgd25qR27ocgW48IiEwRIlQrGhLDoIDMf+7Pl+dTR
-        0buA9SbuSsnfRjxr8rRdrziuYnw=
-X-Google-Smtp-Source: ADFU+vs8oyPEjGCxkZJzqb1FopUx8jhGJeEZLfiq2SRn6qL03D6jXwG7eOfjpnfvwy9JOgDOmUO+2A==
-X-Received: by 2002:a37:6357:: with SMTP id x84mr12291892qkb.490.1584129128966;
-        Fri, 13 Mar 2020 12:52:08 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=G29QVsSkkUqrG7r9BJsozRWYfilk+qJH9OFfvcUGx+c=;
+        b=dIldqxqhrbkP7S/83p6nIXmwgg/abnXjcSEyHhFHCYU9Xg8FOA5QxDlyMjY92AJn+0
+         gwKDjVRl8JijoKl2bDJZDGdcO6yc7BnmCd1Bkn0Xg1uV/CwdTjZujsoYH6MBro5MG8av
+         F4buXNf1yHRpgd+f6r7Zcb9GQjXApwuCKOhdf3b7mkn8Mwlmi2qU3M6YxCl+sd1OdXjD
+         y7lr9JECqcFLZ6sggneyKBPi8wLsh5Gofx7rjqtp1oOBMY2KzfgFoG6/RR43n7jWTMQ/
+         xH6ZL7JtyILTJEvhM/Rk8gyN6/0mMo44Jb9J7ZI3dz0R26gDVc+qTOnwzd5wUN96is/2
+         eSzA==
+X-Gm-Message-State: ANhLgQ031UpjnnFwrQvzwtZOTjMvUrHqxs2p3CnIFx/bmhByzVRNjRGV
+        8wj2ktO/70Gfbzd4ymeNitJa6KY=
+X-Google-Smtp-Source: ADFU+vutB/qVW46p09l9In1lmXWrLGMlHhmPnpUlZm4qltUKIcDb0z77ElLGOIKW/nqsOnQJKieRNQ==
+X-Received: by 2002:a05:6214:10c1:: with SMTP id r1mr14164281qvs.70.1584129130249;
+        Fri, 13 Mar 2020 12:52:10 -0700 (PDT)
 Received: from localhost.localdomain (174-084-153-250.res.spectrum.com. [174.84.153.250])
-        by smtp.gmail.com with ESMTPSA id i28sm31475599qtc.57.2020.03.13.12.52.07
+        by smtp.gmail.com with ESMTPSA id i28sm31475599qtc.57.2020.03.13.12.52.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 12:52:08 -0700 (PDT)
+        Fri, 13 Mar 2020 12:52:09 -0700 (PDT)
 From:   Brian Gerst <brgerst@gmail.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -53,10 +53,12 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Andy Lutomirski <luto@kernel.org>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
         Brian Gerst <brgerst@gmail.com>
-Subject: [PATCH v4 00/18] x86: syscall wrapper cleanups
-Date:   Fri, 13 Mar 2020 15:51:26 -0400
-Message-Id: <20200313195144.164260-1-brgerst@gmail.com>
+Subject: [PATCH v4 01/18] x86, syscalls: Refactor SYSCALL_DEFINEx macros
+Date:   Fri, 13 Mar 2020 15:51:27 -0400
+Message-Id: <20200313195144.164260-2-brgerst@gmail.com>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200313195144.164260-1-brgerst@gmail.com>
+References: <20200313195144.164260-1-brgerst@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,81 +66,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series cleans up the x86 syscall wrapper code and converts
-the 32-bit native kernel over to pt_regs based syscalls.  This makes
-the 32-bit syscall interface consistent with 64-bit, and a bit more
-effecient by not blindly pushing all 6 potential arguments onto the
-stack.
+Pull the common code out from the SYSCALL_DEFINEx macros into a new
+__SYS_STUBx macro.  Also conditionalize the X64 version in preparation for
+enabling syscall wrappers on 32-bit native kernels.
 
-Changes since v3:
-- Addressed feedback from v3
-- Split the X32 syscall table into its own file
-- Move the ABI prefix from the syscall table to the wrapper macros
-- Additional cleanups
-- Changed series title due to broader scope
+Signed-off-by: Brian Gerst <brgerst@gmail.com>
+Reviewed-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
+---
+ arch/x86/include/asm/syscall_wrapper.h | 49 +++++++++++++-------------
+ 1 file changed, 24 insertions(+), 25 deletions(-)
 
-Changes since v2:
-- Moved adding the [compat_]sys_ prefix to the ABI-level macros
-
-Changes since v1:
-- Split patch 1 into multiple patches
-- Updated comments and patch notes to clarify changes
-
-Brian Gerst (18):
-  x86, syscalls: Refactor SYSCALL_DEFINEx macros
-  x86, syscalls: Refactor SYSCALL_DEFINE0 macros
-  x86, syscalls: Refactor COND_SYSCALL macros
-  x86, syscalls: Refactor SYS_NI macros
-  x86-64: Use syscall wrappers for x32_rt_sigreturn
-  x86-64: Move sys_ni_syscall stub to common.c
-  x86-64: Split X32 syscall table into its own file
-  x86: Move max syscall number calculation to syscallhdr.sh
-  x86-64: Remove ptregs qualifier from syscall table
-  x86: Remove syscall qualifier support
-  x86-64: Add __SYSCALL_COMMON()
-  x86: Remove ABI prefixes from functions in syscall tables
-  x86: Clean up syscall_32.tbl
-  x86, syscalls: Rename 32-bit specific syscalls
-  x86: Use IA32-specific wrappers for syscalls taking 64-bit arguments
-  x86-32: Enable pt_regs based syscalls
-  x86: Drop asmlinkage from syscalls
-  x86: Remove unneeded includes
-
- arch/x86/Kconfig                            |   2 +-
- arch/x86/entry/Makefile                     |   1 +
- arch/x86/entry/common.c                     |  18 +-
- arch/x86/entry/syscall_32.c                 |  19 +-
- arch/x86/entry/syscall_64.c                 |  39 +-
- arch/x86/entry/syscall_x32.c                |  29 +
- arch/x86/entry/syscalls/syscall_32.tbl      | 818 ++++++++++----------
- arch/x86/entry/syscalls/syscall_64.tbl      | 740 +++++++++---------
- arch/x86/entry/syscalls/syscallhdr.sh       |   7 +
- arch/x86/entry/syscalls/syscalltbl.sh       |  44 +-
- arch/x86/entry/vdso/vdso32/vclock_gettime.c |   1 +
- arch/x86/ia32/Makefile                      |   2 +-
- arch/x86/include/asm/sighandling.h          |   5 -
- arch/x86/include/asm/syscall.h              |  11 +-
- arch/x86/include/asm/syscall_wrapper.h      | 287 +++----
- arch/x86/include/asm/syscalls.h             |  34 -
- arch/x86/include/asm/unistd.h               |   7 +
- arch/x86/kernel/Makefile                    |   2 +
- arch/x86/kernel/asm-offsets_32.c            |   9 -
- arch/x86/kernel/asm-offsets_64.c            |  36 -
- arch/x86/kernel/ldt.c                       |   1 -
- arch/x86/kernel/process.c                   |   1 -
- arch/x86/kernel/process_32.c                |   1 -
- arch/x86/kernel/process_64.c                |   1 -
- arch/x86/kernel/signal.c                    |   4 +-
- arch/x86/{ia32 => kernel}/sys_ia32.c        | 143 ++--
- arch/x86/kernel/sys_x86_64.c                |   1 -
- arch/x86/um/Makefile                        |   1 +
- arch/x86/um/sys_call_table_32.c             |   6 +-
- arch/x86/um/sys_call_table_64.c             |   9 +-
- arch/x86/um/user-offsets.c                  |  15 -
- 31 files changed, 1086 insertions(+), 1208 deletions(-)
- create mode 100644 arch/x86/entry/syscall_x32.c
- rename arch/x86/{ia32 => kernel}/sys_ia32.c (78%)
-
+diff --git a/arch/x86/include/asm/syscall_wrapper.h b/arch/x86/include/asm/syscall_wrapper.h
+index e2389ce9bf58..a1c090bde063 100644
+--- a/arch/x86/include/asm/syscall_wrapper.h
++++ b/arch/x86/include/asm/syscall_wrapper.h
+@@ -21,6 +21,22 @@ struct pt_regs;
+ 	      ,,(unsigned int)regs->dx,,(unsigned int)regs->si		\
+ 	      ,,(unsigned int)regs->di,,(unsigned int)regs->bp)
+ 
++#define __SYS_STUBx(abi, name, ...)					\
++	asmlinkage long __##abi##_##name(const struct pt_regs *regs);	\
++	ALLOW_ERROR_INJECTION(__##abi##_##name, ERRNO);			\
++	asmlinkage long __##abi##_##name(const struct pt_regs *regs)	\
++	{								\
++		return __se_##name(__VA_ARGS__);			\
++	}
++
++#ifdef CONFIG_X86_64
++#define __X64_SYS_STUBx(x, name, ...)					\
++	__SYS_STUBx(x64, sys##name,					\
++		    SC_X86_64_REGS_TO_ARGS(x, __VA_ARGS__))
++#else /* CONFIG_X86_64 */
++#define __X64_SYS_STUBx(x, name, ...)
++#endif /* CONFIG_X86_64 */
++
+ #ifdef CONFIG_IA32_EMULATION
+ /*
+  * For IA32 emulation, we need to handle "compat" syscalls *and* create
+@@ -39,20 +55,12 @@ struct pt_regs;
+ 	}
+ 
+ #define __IA32_COMPAT_SYS_STUBx(x, name, ...)				\
+-	asmlinkage long __ia32_compat_sys##name(const struct pt_regs *regs);\
+-	ALLOW_ERROR_INJECTION(__ia32_compat_sys##name, ERRNO);		\
+-	asmlinkage long __ia32_compat_sys##name(const struct pt_regs *regs)\
+-	{								\
+-		return __se_compat_sys##name(SC_IA32_REGS_TO_ARGS(x,__VA_ARGS__));\
+-	}
++	__SYS_STUBx(ia32, compat_sys##name,				\
++		    SC_IA32_REGS_TO_ARGS(x, __VA_ARGS__))
+ 
+ #define __IA32_SYS_STUBx(x, name, ...)					\
+-	asmlinkage long __ia32_sys##name(const struct pt_regs *regs);	\
+-	ALLOW_ERROR_INJECTION(__ia32_sys##name, ERRNO);			\
+-	asmlinkage long __ia32_sys##name(const struct pt_regs *regs)	\
+-	{								\
+-		return __se_sys##name(SC_IA32_REGS_TO_ARGS(x,__VA_ARGS__));\
+-	}
++	__SYS_STUBx(ia32, sys##name,					\
++		    SC_IA32_REGS_TO_ARGS(x, __VA_ARGS__))
+ 
+ /*
+  * To keep the naming coherent, re-define SYSCALL_DEFINE0 to create an alias
+@@ -82,7 +90,7 @@ struct pt_regs;
+ 
+ #else /* CONFIG_IA32_EMULATION */
+ #define __IA32_COMPAT_SYS_STUBx(x, name, ...)
+-#define __IA32_SYS_STUBx(x, fullname, name, ...)
++#define __IA32_SYS_STUBx(x, name, ...)
+ #endif /* CONFIG_IA32_EMULATION */
+ 
+ 
+@@ -101,12 +109,8 @@ struct pt_regs;
+ 	}
+ 
+ #define __X32_COMPAT_SYS_STUBx(x, name, ...)				\
+-	asmlinkage long __x32_compat_sys##name(const struct pt_regs *regs);\
+-	ALLOW_ERROR_INJECTION(__x32_compat_sys##name, ERRNO);		\
+-	asmlinkage long __x32_compat_sys##name(const struct pt_regs *regs)\
+-	{								\
+-		return __se_compat_sys##name(SC_X86_64_REGS_TO_ARGS(x,__VA_ARGS__));\
+-	}
++	__SYS_STUBx(x32, compat_sys##name,				\
++		    SC_X86_64_REGS_TO_ARGS(x, __VA_ARGS__))
+ 
+ #else /* CONFIG_X86_X32 */
+ #define __X32_COMPAT_SYS_STUB0(x, name)
+@@ -192,14 +196,9 @@ struct pt_regs;
+  * to the i386 calling convention (bx, cx, dx, si, di, bp).
+  */
+ #define __SYSCALL_DEFINEx(x, name, ...)					\
+-	asmlinkage long __x64_sys##name(const struct pt_regs *regs);	\
+-	ALLOW_ERROR_INJECTION(__x64_sys##name, ERRNO);			\
+ 	static long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__));	\
+ 	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
+-	asmlinkage long __x64_sys##name(const struct pt_regs *regs)	\
+-	{								\
+-		return __se_sys##name(SC_X86_64_REGS_TO_ARGS(x,__VA_ARGS__));\
+-	}								\
++	__X64_SYS_STUBx(x, name, __VA_ARGS__)				\
+ 	__IA32_SYS_STUBx(x, name, __VA_ARGS__)				\
+ 	static long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))	\
+ 	{								\
 -- 
 2.24.1
 
