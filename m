@@ -2,96 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80066184E1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:56:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD325184E37
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:57:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbgCMR4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 13:56:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39822 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726637AbgCMR4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 13:56:11 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A57320746;
-        Fri, 13 Mar 2020 17:56:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584122170;
-        bh=AAEHbdTZnL6d7Gr3nuqbX2Ida62RwmUvzgcJbhcDcZA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pLoGD2BLHuWnmuwR3FCgqZMnqxYZ0X2OEV6TzKJA/wugGHSexcEQs6q00affCU/37
-         kzERWpO9BMPm0/E+H28LUYKY1l5WV5VeMf5cxAVYzZY33jq9g8DkvxDIHAVAJN2XhM
-         cmCusoj2BI6gVXH0z0fyi+bOFKoCAHiQBxyDYYYg=
-Date:   Fri, 13 Mar 2020 18:56:08 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Dejin Zheng <zhengdejin5@gmail.com>
-Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers: provide devm_platform_ioremap_and_get_resource()
-Message-ID: <20200313175608.GA2306127@kroah.com>
-References: <20200313171902.31836-1-zhengdejin5@gmail.com>
+        id S1727137AbgCMR5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 13:57:30 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41772 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726461AbgCMR5a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 13:57:30 -0400
+Received: by mail-ot1-f67.google.com with SMTP id s15so11004979otq.8;
+        Fri, 13 Mar 2020 10:57:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=kLdCsylq7ymvsLWW1Tomdsn2gQzxTDWi2whnqygK6E8=;
+        b=crn+EoBRDxNCs4yLokjdGnB0IF8CdtJr8HtGcg/pFU4+oLyV0mR+33cE0+XvB5Ev0+
+         VNqcW9LtUXfexaMhb38N42qH2/E2HyZm6jlPp/ZsoqXZmqNWxTuB2E2wmQfrobZ3i/fP
+         l7dPjC1UPolNLWfkGXgkzc/QcipQ3ypXdFv5BNIKCphDoCtupgtCILdkvOTETGGwFTDx
+         cvSIdgD2mBqsManudZ8/evRvBIwmTeF8F0dLNCgpVZRo+LYoBR4fKkQm0SJ4/xkGQ1bo
+         vXAlXoiiAKPOcSGX+lWmybgwROgZIGEnycGnX2VUtMxZGCijjcBC2kLiXlb9AnBIG1px
+         TZXA==
+X-Gm-Message-State: ANhLgQ1rJZFMAE1S7LXqfbvEp9KFD9AOwhaItfm+tIVcCW52KiAB/gco
+        UAxNhy1lVchSUi8ALU0d+SdQUx+3jbk/me1ZBUcKyUfu
+X-Google-Smtp-Source: ADFU+vtweMgXIzJn2iPLwZF3jGereyWgy3X44S6BAEkg8nTVJYfPgZLH6IbraHsv5pyOvDW7Ro+68vaNw/6kklmhv3g=
+X-Received: by 2002:a9d:7653:: with SMTP id o19mr11654242otl.118.1584122249475;
+ Fri, 13 Mar 2020 10:57:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200313171902.31836-1-zhengdejin5@gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 13 Mar 2020 18:57:18 +0100
+Message-ID: <CAJZ5v0jcZsixVWpfb=OkWNPD8Q=DC-Q-gvEzLh7vkCksT3a0HA@mail.gmail.com>
+Subject: [GIT PULL] Power management fix for v5.6-rc6
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 14, 2020 at 01:19:02AM +0800, Dejin Zheng wrote:
-> Since commit "drivers: provide devm_platform_ioremap_resource()",
-> It was wrap platform_get_resource() and devm_ioremap_resource() as
-> single helper devm_platform_ioremap_resource(). but now, many drivers
-> still used platform_get_resource() and devm_ioremap_resource()
-> together in the kernel tree. The reason can not be replaced is they
-> still need use the resource variables obtained by platform_get_resource().
-> so provide this helper.
-> 
-> Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
-> ---
->  drivers/base/platform.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index 7fa654f1288b..b3e2409effae 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -62,6 +62,24 @@ struct resource *platform_get_resource(struct platform_device *dev,
->  EXPORT_SYMBOL_GPL(platform_get_resource);
->  
->  #ifdef CONFIG_HAS_IOMEM
-> +/**
-> + * devm_platform_ioremap_and_get_resource - call devm_ioremap_resource() for a
-> + *					    platform device and get resource
-> + *
-> + * @pdev: platform device to use both for memory resource lookup as well as
-> + *        resource management
-> + * @index: resource index
-> + * @res: get the resource
-> + */
-> +void __iomem *
-> +devm_platform_ioremap_and_get_resource(struct platform_device *pdev,
-> +				unsigned int index, struct resource **res)
-> +{
-> +	*res = platform_get_resource(pdev, IORESOURCE_MEM, index);
-> +	return devm_ioremap_resource(&pdev->dev, *res);
-> +}
-> +EXPORT_SYMBOL_GPL(devm_platform_ioremap_and_get_resource);
-> +
->  /**
->   * devm_platform_ioremap_resource - call devm_ioremap_resource() for a platform
->   *				    device
-> -- 
-> 2.25.0
-> 
+Hi Linus,
 
-I can not take new api functions without some real users of the function
-at the same time.
+Please pull from the tag
 
-Please make a patch series modifing drivers to use this new function and
-I will be glad to review it then.
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-5.6-rc6
 
-thanks,
+with top-most commit bce74b1feb01accc6654a1f3e37958478d3a4fbc
 
-greg k-h
+ Merge tag 'linux-cpupower-5.6-rc6' of
+git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux
+
+on top of commit 2c523b344dfa65a3738e7039832044aa133c75fb
+
+ Linux 5.6-rc5
+
+to receive a power management fix for 5.6-rc6.
+
+This fixes cpupower utility build failures with -fno-common
+enabled (Mike Gilbert).
+
+Thanks!
+
+
+---------------
+
+Mike Gilbert (1):
+      cpupower: avoid multiple definition with gcc -fno-common
+
+---------------
+
+ tools/power/cpupower/utils/idle_monitor/amd_fam14h_idle.c  | 2 +-
+ tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c    | 2 +-
+ tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c | 2 ++
+ tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h | 2 +-
+ 4 files changed, 5 insertions(+), 3 deletions(-)
