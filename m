@@ -2,61 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD56183EE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:56:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84113183EE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:55:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbgCMB4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 21:56:01 -0400
-Received: from m177134.mail.qiye.163.com ([123.58.177.134]:27839 "EHLO
-        m177134.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbgCMB4B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 21:56:01 -0400
-X-Greylist: delayed 533 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Mar 2020 21:55:59 EDT
-Received: from lcc-VirtualBox.vivo.xyz (unknown [58.251.74.226])
-        by m17617.mail.qiye.163.com (Hmail) with ESMTPA id 22393261536;
-        Fri, 13 Mar 2020 09:47:04 +0800 (CST)
-From:   Chucheng Luo <luochucheng@vivo.com>
-To:     Hans de Goede <hdegoede@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     wenhu.wang@vivo.com, trivial@kernel.org,
-        Chucheng Luo <luochucheng@vivo.com>
-Subject: [PATCH] fs: Fix missing 'bit' in comment
-Date:   Fri, 13 Mar 2020 09:46:55 +0800
-Message-Id: <20200313014655.28967-1-luochucheng@vivo.com>
-X-Mailer: git-send-email 2.17.1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUlXWQgYFAkeWUFZTVVISk9LS0tKSUJNQkJMSllXWShZQU
-        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OCo6Qyo*NTgwKDETCxQtCRwN
-        FDdPFBhVSlVKTkNPS01PS0lPT0NJVTMWGhIXVRcOFBgTDhgTHhUcOw0SDRRVGBQWRVlXWRILWUFZ
-        TkNVSU5KVUxPVUlJTVlXWQgBWUFKTkhLNwY+
-X-HM-Tid: 0a70d192cf389375kuws22393261536
+        id S1726364AbgCMBzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 21:55:07 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:43625 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726194AbgCMBzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 21:55:06 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48dpfv08WZz9sQx;
+        Fri, 13 Mar 2020 12:55:02 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1584064504;
+        bh=Oe3ismlq739fmrVVvyGbgIVXeF+BRmS6+YyGbgOEgw0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=V3BfsLIJ+e/hULC3ZlLht/uHfO5y9O34dKyAelJeKUuIq0IjomUWwDjluAex8d3iB
+         IGUrCxxZmc6jj0L67VBxZckypxcEB4tPsGxa/ob22nw6OonC9wLgxT2+PMBBm2G/KU
+         oUSkbtfHGgB2VSKTeMbNsPUPK24zllLHuZW4+i/5nCwBtHl1T6FF/rV16GKVvvbV9E
+         ndsl2SApzjcaRgt22WmruLpk1xz5VFYUF14x+VEUYpmr+Y0WUcl6tqNeNquK7U7VqV
+         kIGSrfJ7YpcSs1e/XsB8227oRE19hYOYJaOrKCswYReuSqKqsLj/0utClJ5GMitXE9
+         scujTWox9NnoQ==
+Date:   Fri, 13 Mar 2020 12:54:54 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: linux-next: build failure after merge of the pci tree
+Message-ID: <20200313125454.6314a687@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/MwBqppDMHPigmi0FDsWwnm9";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The missing word may make it hard for other developers to
-understand it.
+--Sig_/MwBqppDMHPigmi0FDsWwnm9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Chucheng Luo <luochucheng@vivo.com>
----
- fs/vboxsf/dir.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi all,
 
-diff --git a/fs/vboxsf/dir.c b/fs/vboxsf/dir.c
-index dd147b490982..4d569f14a8d8 100644
---- a/fs/vboxsf/dir.c
-+++ b/fs/vboxsf/dir.c
-@@ -134,7 +134,7 @@ static bool vboxsf_dir_emit(struct file *dir, struct dir_context *ctx)
- 		d_type = vboxsf_get_d_type(info->info.attr.mode);
- 
- 		/*
--		 * On 32 bit systems pos is 64 signed, while ino is 32 bit
-+		 * On 32-bit systems pos is 64-bit signed, while ino is 32-bit
- 		 * unsigned so fake_ino may overflow, check for this.
- 		 */
- 		if ((ino_t)(ctx->pos + 1) != (u64)(ctx->pos + 1)) {
--- 
-2.17.1
+After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
+In file included from <command-line>:32:
+./usr/include/linux/pcitest.h:25:2: error: unknown type name 'bool'
+   25 |  bool use_dma;
+      |  ^~~~
+
+Caused by commit
+
+  f6628e69c581 ("tools: PCI: Add 'd' command line option to support DMA")
+
+I have used the pci tree from next-20200312 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/MwBqppDMHPigmi0FDsWwnm9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5q5+4ACgkQAVBC80lX
+0GwAGgf6Azu/zqCqW3/1HAjctt6rSEJ4NCWSNzQ4tUwTKybCrIRzSCekzRFoYvrl
+jqkWekWTf/HT7TMKGrIVxvgwN3NP5Lm90FN3B7QXKQlRzwDNombQ7hfzVVqwab0/
+0uIExOTrQghg6tD7IMp5Zm8CZ/9XdNYy64tNAkFWYns2R5sGGmnqFrVbejinxj8+
+rNfBLTdejAOZWnQ/np2yhd4nY+YFH+xzYmmIIXtoWGI1xD6plhQ6Pxxm7CZ2w46q
+w/hhp6ga5Rtsuf8qkqnhdIQAYQzTfNPJs/DDHzRge1qYgE1yF+C0TLR/56W0ZBd+
+W8ffJ3QxvLllU+soqU8Frbnrpv5beg==
+=H2gt
+-----END PGP SIGNATURE-----
+
+--Sig_/MwBqppDMHPigmi0FDsWwnm9--
