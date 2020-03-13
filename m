@@ -2,148 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07E8A1840D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 07:31:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E0F51840DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 07:37:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbgCMGbv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 02:31:51 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11670 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726001AbgCMGbv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 02:31:51 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 0ED352C1F36F6B23641E;
-        Fri, 13 Mar 2020 14:31:01 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.487.0; Fri, 13 Mar
- 2020 14:30:56 +0800
-Subject: Re: [PATCH] f2fs: fix long latency due to discard during umount
-To:     Sahitya Tummala <stummala@codeaurora.org>
-CC:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1584011671-20939-1-git-send-email-stummala@codeaurora.org>
- <fa7d88ee-01e2-e82c-6c79-f24b90fbd472@huawei.com>
- <20200313033912.GJ20234@codeaurora.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <a8f01157-0b1b-d83a-488d-bb48cf8954ab@huawei.com>
-Date:   Fri, 13 Mar 2020 14:30:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726406AbgCMGha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 02:37:30 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:60876 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726060AbgCMGha (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 02:37:30 -0400
+X-IronPort-AV: E=Sophos;i="5.70,547,1574092800"; 
+   d="scan'208";a="86262345"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 13 Mar 2020 14:37:22 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id 983A250A9984;
+        Fri, 13 Mar 2020 14:27:21 +0800 (CST)
+Received: from G08CNEXCHPEKD05.g08.fujitsu.local (10.167.33.203) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1395.4; Fri, 13 Mar 2020 14:37:18 +0800
+Received: from TEST.g08.fujitsu.local (10.167.226.147) by
+ G08CNEXCHPEKD05.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1395.4 via Frontend Transport; Fri, 13 Mar 2020 14:37:17 +0800
+From:   Cao jin <caoj.fnst@cn.fujitsu.com>
+To:     <x86@kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>
+Subject: [RFC PATCH] x86/apic: Drop superfluous apic_phys
+Date:   Fri, 13 Mar 2020 14:37:15 +0800
+Message-ID: <20200313063715.7523-1-caoj.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-In-Reply-To: <20200313033912.GJ20234@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: 983A250A9984.A55C0
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/3/13 11:39, Sahitya Tummala wrote:
-> On Fri, Mar 13, 2020 at 10:20:04AM +0800, Chao Yu wrote:
->> On 2020/3/12 19:14, Sahitya Tummala wrote:
->>> F2FS already has a default timeout of 5 secs for discards that
->>> can be issued during umount, but it can take more than the 5 sec
->>> timeout if the underlying UFS device queue is already full and there
->>> are no more available free tags to be used. In that case, submit_bio()
->>> will wait for the already queued discard requests to complete to get
->>> a free tag, which can potentially take way more than 5 sec.
->>>
->>> Fix this by submitting the discard requests with REQ_NOWAIT
->>> flags during umount. This will return -EAGAIN for UFS queue/tag full
->>> scenario without waiting in the context of submit_bio(). The FS can
->>> then handle these requests by retrying again within the stipulated
->>> discard timeout period to avoid long latencies.
->>>
->>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
->>> ---
->>>  fs/f2fs/segment.c | 14 +++++++++++++-
->>>  1 file changed, 13 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index fb3e531..a06bbac 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -1124,10 +1124,13 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
->>>  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
->>>  	struct list_head *wait_list = (dpolicy->type == DPOLICY_FSTRIM) ?
->>>  					&(dcc->fstrim_list) : &(dcc->wait_list);
->>> -	int flag = dpolicy->sync ? REQ_SYNC : 0;
->>> +	int flag;
->>>  	block_t lstart, start, len, total_len;
->>>  	int err = 0;
->>>  
->>> +	flag = dpolicy->sync ? REQ_SYNC : 0;
->>> +	flag |= dpolicy->type == DPOLICY_UMOUNT ? REQ_NOWAIT : 0;
->>> +
->>>  	if (dc->state != D_PREP)
->>>  		return 0;
->>>  
->>> @@ -1203,6 +1206,11 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
->>>  		bio->bi_end_io = f2fs_submit_discard_endio;
->>>  		bio->bi_opf |= flag;
->>>  		submit_bio(bio);
->>> +		if ((flag & REQ_NOWAIT) && (dc->error == -EAGAIN)) {
->>
->> If we want to update dc->state, we need to cover it with dc->lock.
-> 
-> Sure, will update it.
-> 
->>
->>> +			dc->state = D_PREP;
->>
->> BTW, one dc can be referenced by multiple bios, so dc->state could be updated to
->> D_DONE later by f2fs_submit_discard_endio(), however we just relocate it to
->> pending list... which is inconsistent status.
-> 
-> In that case dc->bio_ref will reflect it and until it becomes 0, the dc->state
-> will not be updated to D_DONE in f2fs_submit_discard_endio()?
+apic_phys seems having totally the same meaning as mp_lapic_addr,
+except it is static, replace it.
 
-__submit_discard_cmd()
- lock()
- dc->state = D_SUBMIT;
- dc->bio_ref++;
- unlock()
-...
- submit_bio()
-				f2fs_submit_discard_endio()
-				 dc->error = -EAGAIN;
-				 lock()
-				 dc->bio_ref--;
+Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
+---
+Not sure if there is still any corner case, but it boots fine.
 
- dc->state = D_PREP;
+ arch/x86/kernel/apic/apic.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-				 dc->state = D_DONE;
-				 unlock()
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 5f973fed3c9f..5b7b59951421 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -199,8 +199,6 @@ unsigned int lapic_timer_period = 0;
+ 
+ static void apic_pm_activate(void);
+ 
+-static unsigned long apic_phys __ro_after_init;
+-
+ /*
+  * Get the LAPIC version
+  */
+@@ -1170,7 +1168,7 @@ void clear_local_APIC(void)
+ 	u32 v;
+ 
+ 	/* APIC hasn't been mapped yet */
+-	if (!x2apic_mode && !apic_phys)
++	if (!x2apic_mode && !mp_lapic_addr)
+ 		return;
+ 
+ 	maxlvt = lapic_get_maxlvt();
+@@ -1261,7 +1259,7 @@ void apic_soft_disable(void)
+ void disable_local_APIC(void)
+ {
+ 	/* APIC hasn't been mapped yet */
+-	if (!x2apic_mode && !apic_phys)
++	if (!x2apic_mode && !mp_lapic_addr)
+ 		return;
+ 
+ 	apic_soft_disable();
+@@ -2111,14 +2109,12 @@ void __init init_apic_mappings(void)
+ 		pr_info("APIC: disable apic facility\n");
+ 		apic_disable();
+ 	} else {
+-		apic_phys = mp_lapic_addr;
+-
+ 		/*
+ 		 * If the system has ACPI MADT tables or MP info, the LAPIC
+ 		 * address is already registered.
+ 		 */
+ 		if (!acpi_lapic && !smp_found_config)
+-			register_lapic_address(apic_phys);
++			register_lapic_address(mp_lapic_addr);
+ 	}
+ 
+ 	/*
+@@ -2874,11 +2870,11 @@ early_param("apic", apic_set_verbosity);
+ 
+ static int __init lapic_insert_resource(void)
+ {
+-	if (!apic_phys)
++	if (!mp_lapic_addr)
+ 		return -1;
+ 
+ 	/* Put local APIC into the resource map. */
+-	lapic_resource.start = apic_phys;
++	lapic_resource.start = mp_lapic_addr;
+ 	lapic_resource.end = lapic_resource.start + PAGE_SIZE - 1;
+ 	insert_resource(&iomem_resource, &lapic_resource);
+ 
+-- 
+2.21.1
 
-So finally, dc's state is D_DONE, and it's in wait list, then will be relocated
-to pending list.
 
-> 
-> Thanks,
-> 
->>
->> Thanks,
->>
->>> +			err = dc->error;
->>> +			break;
->>> +		}
->>>  
->>>  		atomic_inc(&dcc->issued_discard);
->>>  
->>> @@ -1510,6 +1518,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>>  			}
->>>  
->>>  			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
->>> +			if (dc->error == -EAGAIN) {
->>> +				congestion_wait(BLK_RW_ASYNC, HZ/50);
->>> +				__relocate_discard_cmd(dcc, dc);
->>> +			}
->>>  
->>>  			if (issued >= dpolicy->max_requests)
->>>  				break;
->>>
-> 
+
