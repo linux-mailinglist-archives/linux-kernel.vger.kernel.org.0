@@ -2,76 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51D87184654
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 13:01:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCA35184634
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 12:52:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbgCMMBN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 08:01:13 -0400
-Received: from one.firstfloor.org ([193.170.194.197]:40168 "EHLO
-        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbgCMMBM (ORCPT
+        id S1726621AbgCMLwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 07:52:43 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:35647 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726479AbgCMLwn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 08:01:12 -0400
-X-Greylist: delayed 606 seconds by postgrey-1.27 at vger.kernel.org; Fri, 13 Mar 2020 08:01:12 EDT
-Received: by one.firstfloor.org (Postfix, from userid 503)
-        id AB0A08684B; Fri, 13 Mar 2020 12:51:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
-        s=mail; t=1584100262;
-        bh=n7ebr8CIADsM9tj3H3JRlE7EP41LvIJXYOqe5sj5lqQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jmVephLyA1jYljk7iIclfJA1dr9azRpru+nJgTyJckKMaG8CBSSnfRdV/yjUxcdQz
-         6bFxkMnPz2ufG+StfF9dEqD7RCgkx2j06wqVbIVd12U65FIXqpRRtRggV2V6PByZVx
-         4r0N/WpnBlArZuov1h66MTDtZmvJBCY3mbu8W/58=
-Date:   Fri, 13 Mar 2020 04:51:02 -0700
-From:   Andi Kleen <andi@firstfloor.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Andi Kleen <andi@firstfloor.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] x86: Add trace points to (nearly) all vectors
-Message-ID: <20200313115100.3gdbfxkplrbe6wvy@two.firstfloor.org>
-References: <20200312231916.132753-1-andi@firstfloor.org>
- <742AF79F-BAE4-4E6C-944D-10C3E6F66CD0@amacapital.net>
+        Fri, 13 Mar 2020 07:52:43 -0400
+Received: by mail-qt1-f193.google.com with SMTP id v15so7199021qto.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 04:52:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8cRWFjyCHf4GbZngel1T0mk3vG3kUKL4H8h3Gu1F5vc=;
+        b=vvMDVjCvFZRY94q/QctMHV4zqZKu/fniPXWxclWBr/efdOMn9B1AkRJYokIsXwJBtl
+         0BZX6gyJu0sF/jwMULqmshOuGP0gTF1vDC0T3gW0Pgw0gkLzFQ9p0YifRI/hJFyyoVa3
+         w/Rd2Hb2WKT1x8alCcCx40ln9bbVCmSKx7MwFJ7VWH8GbdGpovM+sGerMFop2xTM0ZoD
+         EcIlgw0Exb1PPtV28vo+UxQfhaX6+HUrEumiizshiZENCj3lyXR1BA8ytNIwB050MT4Y
+         KuwFOd3upDiwE3ymO6eNVgsJ8RnXPQTyNbPSUY/AK49VSbX8nBb8kt5jDWwT1ewDXefI
+         F/cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8cRWFjyCHf4GbZngel1T0mk3vG3kUKL4H8h3Gu1F5vc=;
+        b=i865oaphyxsVH+UHFB2M6MkFjY4XR0JNyvAU+JXzXAAG4yvkKlUudT+JutOdy/FcHn
+         H9FPOr5pU6aKUdu3pI+l3l7oBk6oIPWb8OM084eXnjzqOm0i4RKsG8XBjufrAIYOfBAK
+         hPlA0TryCgLcsSB0FsjvTSvyPD8We4jXd9/NgCpTR4h8R+DHoE0Q9B+3VoIHzX691fr+
+         xCkJAXs3K/AvKtqiTXEzYZ6PUq1MY4ojWmCDRA8NXoFpQaEZCu2WcIA0Izzi/6VSE97V
+         HMamJMU7pXolf6jk35sgqO4T9eOyE5JEhkn+1pYFtNwlws9AXbomzQbmrpCKVMltyv20
+         w5nA==
+X-Gm-Message-State: ANhLgQ0K7LUdFwtA5rEQ85vLPZYe4T6Mi0aNZUPEYl0IHiRNQrOUrSCn
+        qwYQM+hcCkFC+VUT/0tCJoR0tg==
+X-Google-Smtp-Source: ADFU+vsWGdut+OD1aT3cywZs4Qd0ImcH4W8QDnCl8GceUnkjxcV8rOm5RbBlWtSGE2uu8nqZngvqyA==
+X-Received: by 2002:ac8:4b4e:: with SMTP id e14mr11973622qts.144.1584100362009;
+        Fri, 13 Mar 2020 04:52:42 -0700 (PDT)
+Received: from localhost.localdomain (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.gmail.com with ESMTPSA id 199sm11031143qkm.7.2020.03.13.04.52.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Mar 2020 04:52:41 -0700 (PDT)
+From:   Alex Elder <elder@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Miller <davem@davemloft.net>,
+        David Dai <daidavid1@codeaurora.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] arm64: dts: sdm845: add/update IPA information
+Date:   Fri, 13 Mar 2020 06:52:35 -0500
+Message-Id: <20200313115237.10491-1-elder@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <742AF79F-BAE4-4E6C-944D-10C3E6F66CD0@amacapital.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 04:39:04PM -0700, Andy Lutomirski wrote:
-> 
-> > On Mar 12, 2020, at 4:19 PM, Andi Kleen <andi@firstfloor.org> wrote:
-> > 
-> > ﻿From: Andi Kleen <ak@linux.intel.com>
-> > 
-> > In some scenarios it can be useful to count or trace every kernel
-> > entry.
-> 
-> Can you elaborate?  What problem does this solve?
+Bjorn, these patches implement the DTS changes required for the
+Qualcomm IPA driver to support the SDM845 SoC.  The first adds the
+basic IPA information, which would be needed for kernel versions
+prior to v5.7.  The second updates the interconnect providers as
+required because of this commit:
+  b303f9f0050b arm64: dts: sdm845: Redefine interconnect provider DT nodes
 
-So that we know how often or where kernel entries happen,
-how long every kernel execution is, and also can do an accurate break
-down.
+David Miller has reverted the first of these from net-next.
+  https://lore.kernel.org/netdev/20200312.154852.115271760293062652.davem@davemloft.net/
 
-> 
-> > Most entry paths are covered by trace points already,
-> > but some of the more obscure entry points do not have
-> > trace points.
-> > 
-> > The most common uncovered one was KVM async page fault.
-> 
-> NAK.  This path is going away. 
+As agreed, please apply these to the Qualcomm tree if you find them
+acceptable after review.  They are based on the qcom/arm64-for-5.7
+branch.
 
-Okay. Can you provide details? When will it go away?
+Thanks.
 
-Anyways KVM async is just one case, my patch covers lots of other cases
-too. Even if KVM async goes away it still makes sense
-for the other entry points and can be easily rebased (just drop
-that hunk)
+					-Alex
 
--Andi
+Alex Elder (2):
+  arm64: dts: sdm845: add IPA information
+  arm64: dts: sdm845: update IPA interconnect providers
 
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 52 ++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+
+-- 
+2.20.1
