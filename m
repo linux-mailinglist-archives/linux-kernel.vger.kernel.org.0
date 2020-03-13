@@ -2,103 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D120183EB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:39:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC9AE183EC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:45:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbgCMBjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 21:39:21 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11640 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726546AbgCMBjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 21:39:21 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id F35E4EF00CE69FBB0358;
-        Fri, 13 Mar 2020 09:39:17 +0800 (CST)
-Received: from [127.0.0.1] (10.173.222.27) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.487.0; Fri, 13 Mar 2020
- 09:39:10 +0800
-Subject: Re: [PATCH v5 01/23] irqchip/gic-v3: Use SGIs without active state if
- offered
-To:     Marc Zyngier <maz@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        "Robert Richter" <rrichter@marvell.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Eric Auger" <eric.auger@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        "Julien Thierry" <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-References: <20200304203330.4967-1-maz@kernel.org>
- <20200304203330.4967-2-maz@kernel.org>
- <63f6530a-9369-31e6-88d0-5337173495b9@huawei.com>
- <51b2c74fdbcca049cc01be6d78c7c693@kernel.org>
- <1bff1835ba7d6e22edb836d38cf16a14@kernel.org>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <3e20f3c3-0312-bd29-dcfc-2afee764ef19@huawei.com>
-Date:   Fri, 13 Mar 2020 09:39:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        id S1726436AbgCMBpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 21:45:02 -0400
+Received: from Chamillionaire.breakpoint.cc ([193.142.43.52]:33468 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726194AbgCMBpC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 21:45:02 -0400
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+        (envelope-from <fw@strlen.de>)
+        id 1jCZNL-00086Z-QQ; Fri, 13 Mar 2020 02:44:35 +0100
+Date:   Fri, 13 Mar 2020 02:44:35 +0100
+From:   Florian Westphal <fw@strlen.de>
+To:     syzbot <syzbot+68a8ed58e3d17c700de5@syzkaller.appspotmail.com>
+Cc:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        hdanton@sina.com, jbenc@redhat.com, kadlec@blackhole.kfki.hu,
+        linux-kernel@vger.kernel.org, moshe@mellanox.com,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, sd@queasysnail.net,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Subject: Re: WARNING in geneve_exit_batch_net (2)
+Message-ID: <20200313014435.GY979@breakpoint.cc>
+References: <0000000000000ea4b4059fb33201@google.com>
+ <000000000000c7979105a0a311f6@google.com>
 MIME-Version: 1.0
-In-Reply-To: <1bff1835ba7d6e22edb836d38cf16a14@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.173.222.27]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000c7979105a0a311f6@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
-
-On 2020/3/12 20:05, Marc Zyngier wrote:
-> On 2020-03-12 09:28, Marc Zyngier wrote:
->> Hi Zenghui,
->>
->> On 2020-03-12 06:30, Zenghui Yu wrote:
->>> Hi Marc,
->>>
->>> On 2020/3/5 4:33, Marc Zyngier wrote:
->>>> To allow the direct injection of SGIs into a guest, the GICv4.1
->>>> architecture has to sacrifice the Active state so that SGIs look
->>>> a lot like LPIs (they are injected by the same mechanism).
->>>>
->>>> In order not to break existing software, the architecture gives
->>>> offers guests OSs the choice: SGIs with or without an active
->>>> state. It is the hypervisors duty to honor the guest's choice.
->>>>
->>>> For this, the architecture offers a discovery bit indicating whether
->>>> the GIC supports GICv4.1 SGIs (GICD_TYPER2.nASSGIcap), and another
->>>> bit indicating whether the guest wants Active-less SGIs or not
->>>> (controlled by GICD_CTLR.nASSGIreq).
->>>
->>> I still can't find the description of these two bits in IHI0069F.
->>> Are they actually architected and will be available in the future
->>> version of the spec?  I want to confirm it again since this has a
->>> great impact on the KVM code, any pointers?
->>
->> Damn. The bits *are* in the engineering spec version 19 (unfortunately
->> not a public document, but I believe you should have access to it).
->>
->> If the bits have effectively been removed from the spec, I'll drop the
->> GICv4.1 code from the 5.7 queue until we find a way to achieve the same
->> level of support.
->>
->> I've emailed people inside ARM to find out.
+syzbot <syzbot+68a8ed58e3d17c700de5@syzkaller.appspotmail.com> wrote:
+> syzbot has bisected this bug to:
 > 
-> I've now had written confirmation that the bits are still there.
+> commit 4e645b47c4f000a503b9c90163ad905786b9bc1d
+> Author: Florian Westphal <fw@strlen.de>
+> Date:   Thu Nov 30 23:21:02 2017 +0000
 > 
-> It is just that the current revision of the documentation was cut *before*
-> they made it into the architecture (there seem to be a 6 month delay 
-> between
-> the architecture being sampled and the documentation being released).
+>     netfilter: core: make nf_unregister_net_hooks simple wrapper again
 
-I see. Thanks for the confirmation!
+No idea why this turns up, the reproducer doesn't hit any of these code
+paths.
 
-
-Zenghui
-
+The debug splat is a false-positive; ndo_stop/list_del hasn't run yet.
+I will send a fix for net tree.
