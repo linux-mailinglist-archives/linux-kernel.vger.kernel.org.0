@@ -2,173 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7167185220
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 00:13:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A8AB185223
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 00:15:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727601AbgCMXNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 19:13:02 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43475 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbgCMXM6 (ORCPT
+        id S1726982AbgCMXP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 19:15:57 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:55895 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726736AbgCMXP5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 19:12:58 -0400
-Received: by mail-pg1-f195.google.com with SMTP id u12so5863766pgb.10
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 16:12:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jVB9ateUNPWjDSRVGMb+4rgbxEOqdavmk19dJVvZMIM=;
-        b=ClF8fqoBumZSnRpv0Utqo38yv0uvnElq5GseaaNLk/d0T0DTwHAZdaKo5jwGvqJDyU
-         RoNsMHO1KDZdq+giL7q3wYKY9HUW0QO045PUqWadbPDAOdsYSOrHjG1QQg/cYr4ufbU4
-         JnTVX7waraMyka1dAVcE/afVQf2yXqlDROpgE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jVB9ateUNPWjDSRVGMb+4rgbxEOqdavmk19dJVvZMIM=;
-        b=og5YtDxS3za4os+4SFcAB7+cvA+wtToA/N/7vI7IpjReWjvXA309TxmpgqyaP6Tcib
-         R990R6RzPCiz0xwYnR0RiiNigo//jKgiks/nHGPZ+cLVY3GJ5KTSeeVmk5GvWke+AEKA
-         zmHIWmCW4BjBqZQAW8sehhf1e2oO8pb9k8C9QbTyIj8Kks/Mj+ZVOss0X6BIroQXJPrx
-         fht1WXDdbFtb/ZxHuE9kqNwW3IJqs8662WXCUgMY+rFWTXCp31JFAPj3BcWix7u2xotm
-         i30dOiDmtnascdj1A0deroR1xlfjBFBoxPpzUylJvjxbIXA5+FMHEP653AB4q2bjWRuv
-         dR4w==
-X-Gm-Message-State: ANhLgQ1WUzrzKubOl5ErMgrLtomO39fp0GVfxItAzpR6d4+mzxgSgtda
-        LI4JMlez6BI42WyIVfI72kAU3C/mXCw=
-X-Google-Smtp-Source: ADFU+vuW5MY2BTvDr6DsWnU09ruFOrR5LSI5+g6PygmDmDlEm+j/U5jO/QNzQgn9N62SKP200VkfvA==
-X-Received: by 2002:a63:445:: with SMTP id 66mr14736826pge.351.1584141177002;
-        Fri, 13 Mar 2020 16:12:57 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id p21sm58790400pfn.103.2020.03.13.16.12.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 16:12:55 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] selftests/harness: Handle timeouts cleanly
-Date:   Fri, 13 Mar 2020 16:12:52 -0700
-Message-Id: <20200313231252.64999-3-keescook@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200313231252.64999-1-keescook@chromium.org>
-References: <20200313231252.64999-1-keescook@chromium.org>
+        Fri, 13 Mar 2020 19:15:57 -0400
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 02DNFZl8040143;
+        Sat, 14 Mar 2020 08:15:35 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav405.sakura.ne.jp);
+ Sat, 14 Mar 2020 08:15:35 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav405.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 02DNFZr8040140
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 14 Mar 2020 08:15:35 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [patch] mm, oom: prevent soft lockup on memcg oom for UP systems
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <202003120012.02C0CEUB043533@www262.sakura.ne.jp>
+ <alpine.DEB.2.21.2003121101030.158939@chino.kir.corp.google.com>
+ <202003130015.02D0F9uT079462@www262.sakura.ne.jp>
+ <alpine.DEB.2.21.2003131457370.242651@chino.kir.corp.google.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <fa5d7060-4e6e-16d5-2c37-fec6019b4d62@i-love.sakura.ne.jp>
+Date:   Sat, 14 Mar 2020 08:15:32 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.2003131457370.242651@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a selftest would timeout before, the program would just fall over
-and no accounting of failures would be reported (i.e. it would result in
-an incomplete TAP report). Instead, add an explicit SIGALRM handler to
-cleanly catch and report the timeout.
+On 2020/03/14 7:01, David Rientjes wrote:
+> The entire issue is that the victim never gets a chance to run because the 
+> allocator doesn't give it a chance to run on an UP system.  Your patch is 
+> broken because if the victim is current, you've lost your golden 
+> opportunity to actually exit and ceded control to the allocator that will 
+> now starve the victim.
+> 
 
-Before:
+I still cannot understand. There is no need to give CPU time to OOM victims.
+We just need to give CPU time to the OOM reaper kernel thread till the OOM
+reaper kernel thread sets MMF_OOM_SKIP to OOM victims. If current thread is
+an OOM victim, schedule_timeout_killable(1) will give other threads (including
+the OOM reaper kernel thread) CPU time to run. That is similar with your
+cond_resched() patch (except that cond_resched() might fail to give other
+threads CPU time to run if current thread has realtime priority), isn't it?
 
-	[==========] Running 2 tests from 2 test cases.
-	[ RUN      ] timeout.finish
-	[       OK ] timeout.finish
-	[ RUN      ] timeout.too_long
-	Alarm clock
-
-After:
-
-	[==========] Running 2 tests from 2 test cases.
-	[ RUN      ] timeout.finish
-	[       OK ] timeout.finish
-	[ RUN      ] timeout.too_long
-	timeout.too_long: Test terminated by timeout
-	[     FAIL ] timeout.too_long
-	[==========] 1 / 2 tests passed.
-	[  FAILED  ]
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- tools/testing/selftests/kselftest_harness.h | 53 ++++++++++++++++++++-
- 1 file changed, 51 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-index c7b67e379219..2902f6a78f8a 100644
---- a/tools/testing/selftests/kselftest_harness.h
-+++ b/tools/testing/selftests/kselftest_harness.h
-@@ -639,7 +639,8 @@ struct __test_metadata {
- 	int termsig;
- 	int passed;
- 	int trigger; /* extra handler after the evaluation */
--	int timeout;
-+	int timeout;	/* seconds to wait for test timeout */
-+	bool timed_out;	/* did this test timeout instead of exiting? */
- 	__u8 step;
- 	bool no_print; /* manual trigger when TH_LOG_STREAM is not available */
- 	struct __test_metadata *prev, *next;
-@@ -696,15 +697,63 @@ static inline int __bail(int for_realz, bool no_print, __u8 step)
- 	return 0;
- }
- 
-+struct __test_metadata *__active_test;
-+static void __timeout_handler(int sig, siginfo_t *info, void *ucontext)
-+{
-+	struct __test_metadata *t = __active_test;
-+
-+	/* Sanity check handler execution environment. */
-+	if (!t) {
-+		fprintf(TH_LOG_STREAM,
-+			"no active test in SIGARLM handler!?\n");
-+		abort();
-+	}
-+	if (sig != SIGALRM || sig != info->si_signo) {
-+		fprintf(TH_LOG_STREAM,
-+			"%s: SIGALRM handler caught signal %d!?\n",
-+			t->name, sig != SIGALRM ? sig : info->si_signo);
-+		abort();
-+	}
-+
-+	t->timed_out = true;
-+	kill(t->pid, SIGKILL);
-+}
-+
- void __wait_for_test(struct __test_metadata *t)
- {
-+	struct sigaction action = {
-+		.sa_sigaction = __timeout_handler,
-+		.sa_flags = SA_SIGINFO,
-+	};
-+	struct sigaction saved_action;
- 	int status;
- 
-+	if (sigaction(SIGALRM, &action, &saved_action)) {
-+		t->passed = 0;
-+		fprintf(TH_LOG_STREAM,
-+			"%s: unable to install SIGARLM handler\n",
-+			t->name);
-+		return;
-+	}
-+	__active_test = t;
-+	t->timed_out = false;
- 	alarm(t->timeout);
- 	waitpid(t->pid, &status, 0);
- 	alarm(0);
-+	if (sigaction(SIGALRM, &saved_action, NULL)) {
-+		t->passed = 0;
-+		fprintf(TH_LOG_STREAM,
-+			"%s: unable to uninstall SIGARLM handler\n",
-+			t->name);
-+		return;
-+	}
-+	__active_test = NULL;
- 
--	if (WIFEXITED(status)) {
-+	if (t->timed_out) {
-+		t->passed = 0;
-+		fprintf(TH_LOG_STREAM,
-+			"%s: Test terminated by timeout\n", t->name);
-+	} else if (WIFEXITED(status)) {
- 		t->passed = t->termsig == -1 ? !WEXITSTATUS(status) : 0;
- 		if (t->termsig != -1) {
- 			fprintf(TH_LOG_STREAM,
--- 
-2.20.1
-
+So, please explain the mechanism why cond_resched() works but
+schedule_timeout_killable(1) cannot work.
