@@ -2,191 +2,445 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E14A61842C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 09:36:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FEC8184249
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 09:16:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbgCMIgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 04:36:52 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11673 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726365AbgCMIgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 04:36:51 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id E0B99E8F17E00DE4C12A;
-        Fri, 13 Mar 2020 16:15:54 +0800 (CST)
-Received: from [127.0.0.1] (10.184.189.50) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.487.0; Fri, 13 Mar 2020
- 16:15:48 +0800
-Subject: Re: [PATCH] ocfs2: fix a null pointer derefrence in
- ocfs2_block_group_clear_bits()
-To:     Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>, Jan Kara <jack@suse.com>
-References: <1d38573d-61c7-be60-334e-c263caf7465c@huawei.com>
- <c56390f0-9f01-cd71-0b8e-b83d746bab74@huawei.com>
- <f702081e-1953-c2c1-76e4-f441302ab2f3@huawei.com>
- <7c5c64a8-0629-b301-6cbb-91d1c9f75fa0@linux.alibaba.com>
- <8017150f-0fa1-2804-4934-5e64ad04ae6e@huawei.com>
-CC:     piao jun <piaojun@huawei.com>,
-        ocfs2-devel <ocfs2-devel@oss.oracle.com>,
-        linux ext4 <linux-ext4@vger.kernel.org>,
-        linux kernel <linux-kernel@vger.kernel.org>
-From:   lishan <lishan24@huawei.com>
-Message-ID: <d96c776b-20de-c653-a032-bbd3f1df1793@huawei.com>
-Date:   Fri, 13 Mar 2020 16:15:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+        id S1726477AbgCMIQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 04:16:21 -0400
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:60833 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726371AbgCMIQU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 04:16:20 -0400
+Received: from [192.168.2.10] ([46.9.234.233])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id CfUKj1GG5hVf8CfUNjO8bW; Fri, 13 Mar 2020 09:16:17 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1584087377; bh=nP79N0yOwSx8yKGwqAW504OdT/Y72TUWVCiVmG3B1A4=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=QWyeXvAy9Guf59EIPaFULSKa6qK31U3k2LLk7Jock2ge5n5DcKjiyCTebt+wY8iz1
+         BOCkCRQPC1aitJ0UL/eF6RWWKCG2725+S9vqRv31s2TGXnBC8Tqq5HgU1U7Der+LeX
+         qd3qz19cif3ZAIg7IbVli7020SRQxbBZoLqOp9yFEIdbZfQNYsZt1Ngt6SvzkfScTn
+         IzamoCLGQMk8EPt6pkUrU9BGRhGd0v+Xml4j0pe/lO+1EdC/+jzu8oyeanidqaG56R
+         vDWS8xf6qIHxSPjn2qRqa47Qer494bH6E4VBXxOj3QrJuRIzEbPyIkew5hsWK1mgoz
+         bDw/pKJVyAwpQ==
+Subject: Re: [PATCH 2/8] media: adv748x: add audio mute control and output
+ selection ioctls
+To:     Alex Riesen <alexander.riesen@cetitec.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <cover.1578924232.git.alexander.riesen@cetitec.com>
+ <20200113141521.GC3606@pflmari>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <ff34078d-895d-08c8-c64f-768e75388038@xs4all.nl>
+Date:   Fri, 13 Mar 2020 09:16:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <8017150f-0fa1-2804-4934-5e64ad04ae6e@huawei.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20200113141521.GC3606@pflmari>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.189.50]
-X-CFilter-Loop: Reflected
+X-CMAE-Envelope: MS4wfKfeYNFFGRobPFSOTEI7B9w8TK8aojO5c062aoWeZ3/mtuWJfxdHCSCOUpa16sOCyNspr5wgKwX5TT40iEWHjUh+S5npKQCL8BLzkTwNpIyskWxt7HgN
+ hxFnIp1iMExxpo95KQnf1bWvjbsLiCVONyJ3XK+4j3GlqPn4IujImFC+Wb7FqDBzFtAy+9CdSbjMDN4kLWphnYL9QwjzLEw+RNXZLWCGPF4nUag6TV1jDsJN
+ TkakaYHL6wsXTi95DfE1puENWphP4SR12XK7wM9OOfjJ+i6WiQ4LDrckS1zzpY+yTLWXYx1OQne/p/q+CG8d6LH+fgWhQKFTIvMJ0lCH6rlSmNHTwS4kSmms
+ HNUoDJSF46NxoHf6ZMsthh5eXpPJYVexb/SgxgYEM0pPvBVFR+KcdCiKwimsvozXxFmEwFErjro38ULkqxAWgA6OA+WBv+ZIf5dbSNRMSK+2Y0Vf2kHRPdiO
+ UN4MqYGa2MX1p6TQqCatFZl5XLmGq6CrHQZhhfK0rBQdPg4yupf7Od+AsD6wATpQhXAxqm7RLDTiV90pK9dravuzk55J85hIrbyfeXN7ueSLS7l62HRgtxzB
+ 620=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping ?
-to Jan Kara
+Hi Alex,
 
-On 2020/3/12 10:38, lishan wrote:
-> Hi, Jan Kara:
+I apologize for the (very) slow reply, but better late than never.
+
+On 1/13/20 3:15 PM, Alex Riesen wrote:
+> This change implements audio-related V4L2 ioctls for the HDMI subdevice.
+
+This is really where things go wrong. These V4L2 audio ioctls are meant for
+old PCI TV tuner devices where the audio was implemented as audio jack outputs
+that are typically looped back to audio inputs on a (PCI) soundcard. And when
+these ioctls were designed ALSA didn't even exist.
+
+None of that applies here.
+
+Generally an hdmi driver will configure the i2s audio automatically, which is
+typically connected to the SoC and controlled by the ALSA driver of the SoC,
+but there may well be missing features (audio never got a lot of attention in
+hdmi receivers). So what I would like to know is: what features are missing?
+
+Anything missing can likely be resolved by adding HDMI audio specific V4L2 controls,
+which would be the right approach for this.
+
+So I would expect to see a proposal for V4L2_CID_DV_RX_AUDIO_ controls to be
+added here:
+
+https://linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/ext-ctrls-dv.html
+
+Regards,
+
+	Hans
+
 > 
-> I have a long-standing problem,
-> In the ocfs2 file system, there is a panic problem related to b_committed_data,
-> details can be found in the historical mail.
+> The master audio clock is configured for 256fs, as supported by the only
+> device available at the moment. For the same reason, the TDM slot is
+> formatted using left justification of its bits.
 > 
-> Refer to the old version of the ext3 file system,
-> ocfs2 file system uses the undo process to ensure that metadata
-> which is not committed to disk is not reused.
+> Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
+> ---
+>  drivers/media/i2c/adv748x/adv748x-core.c |   6 +
+>  drivers/media/i2c/adv748x/adv748x-hdmi.c | 182 +++++++++++++++++++++++
+>  drivers/media/i2c/adv748x/adv748x.h      |  42 ++++++
+>  3 files changed, 230 insertions(+)
 > 
-> I understand that for transactions that have not been committed,
-> b_committed_data will not be NULL, so,
-> in what scenario do you think b_committed_data will be set to NULL?
+> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+> index bc49aa93793c..b6067ffb1e0d 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-core.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+> @@ -150,6 +150,12 @@ static int adv748x_write_check(struct adv748x_state *state, u8 page, u8 reg,
+>  	return *error;
+>  }
+>  
+> +int adv748x_update_bits(struct adv748x_state *state, u8 page, u8 reg, u8 mask,
+> +			u8 value)
+> +{
+> +	return regmap_update_bits(state->regmap[page], reg, mask, value);
+> +}
+> +
+>  /* adv748x_write_block(): Write raw data with a maximum of I2C_SMBUS_BLOCK_MAX
+>   * size to one or more registers.
+>   *
+> diff --git a/drivers/media/i2c/adv748x/adv748x-hdmi.c b/drivers/media/i2c/adv748x/adv748x-hdmi.c
+> index c557f8fdf11a..9bc9237c9116 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-hdmi.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c
+> @@ -5,6 +5,7 @@
+>   * Copyright (C) 2017 Renesas Electronics Corp.
+>   */
+>  
+> +#include <linux/version.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+>  
+> @@ -603,11 +604,186 @@ static const struct v4l2_subdev_pad_ops adv748x_pad_ops_hdmi = {
+>  	.enum_dv_timings = adv748x_hdmi_enum_dv_timings,
+>  };
+>  
+> +static int adv748x_hdmi_audio_mute(struct adv748x_hdmi *hdmi, int enable)
+> +{
+> +	struct adv748x_state *state = adv748x_hdmi_to_state(hdmi);
+> +
+> +	return hdmi_update(state, ADV748X_HDMI_MUTE_CTRL,
+> +			   ADV748X_HDMI_MUTE_CTRL_MUTE_AUDIO,
+> +			   enable ? 0xff : 0);
+> +}
+> +
+> +
+> +#define HDMI_AOUT_NONE 0
+> +#define HDMI_AOUT_I2S 1
+> +#define HDMI_AOUT_I2S_TDM 2
+> +
+> +static int adv748x_hdmi_enumaudout(struct adv748x_hdmi *hdmi,
+> +				   struct v4l2_audioout *a)
+> +{
+> +	switch (a->index) {
+> +	case HDMI_AOUT_NONE:
+> +		strlcpy(a->name, "None", sizeof(a->name));
+> +		break;
+> +	case HDMI_AOUT_I2S:
+> +		strlcpy(a->name, "I2S/stereo", sizeof(a->name));
+> +		break;
+> +	case HDMI_AOUT_I2S_TDM:
+> +		strlcpy(a->name, "I2S-TDM/multichannel", sizeof(a->name));
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int adv748x_hdmi_g_audout(struct adv748x_hdmi *hdmi,
+> +				 struct v4l2_audioout *a)
+> +{
+> +	a->index = hdmi->audio_out;
+> +	return adv748x_hdmi_enumaudout(hdmi, a);
+> +}
+> +
+> +static int set_audio_pads_state(struct adv748x_state *state, int on)
+> +{
+> +	return io_update(state, ADV748X_IO_PAD_CONTROLS,
+> +			 ADV748X_IO_PAD_CONTROLS_TRI_AUD |
+> +			 ADV748X_IO_PAD_CONTROLS_PDN_AUD,
+> +			 on ? 0 : 0xff);
+> +}
+> +
+> +static int set_dpll_mclk_fs(struct adv748x_state *state, int fs)
+> +{
+> +	if (fs % 128 || fs > 768)
+> +		return -EINVAL;
+> +	return dpll_update(state, ADV748X_DPLL_MCLK_FS,
+> +			   ADV748X_DPLL_MCLK_FS_N_MASK, (fs / 128) - 1);
+> +}
+> +
+> +static int set_i2s_format(struct adv748x_state *state, uint outmode,
+> +			  uint bitwidth)
+> +{
+> +	return hdmi_update(state, ADV748X_HDMI_I2S,
+> +			   ADV748X_HDMI_I2SBITWIDTH_MASK |
+> +			   ADV748X_HDMI_I2SOUTMODE_MASK,
+> +			   (outmode << ADV748X_HDMI_I2SOUTMODE_SHIFT) |
+> +			   bitwidth);
+> +}
+> +
+> +static int set_i2s_tdm_mode(struct adv748x_state *state, int is_tdm)
+> +{
+> +	int ret;
+> +
+> +	ret = hdmi_update(state, ADV748X_HDMI_AUDIO_MUTE_SPEED,
+> +			  ADV748X_MAN_AUDIO_DL_BYPASS |
+> +			  ADV748X_AUDIO_DELAY_LINE_BYPASS,
+> +			  is_tdm ? 0xff : 0);
+> +	if (ret < 0)
+> +		goto fail;
+> +	ret = hdmi_update(state, ADV748X_HDMI_REG_6D,
+> +			  ADV748X_I2S_TDM_MODE_ENABLE,
+> +			  is_tdm ? 0xff : 0);
+> +	if (ret < 0)
+> +		goto fail;
+> +	ret = set_i2s_format(state, ADV748X_I2SOUTMODE_LEFT_J, 24);
+> +fail:
+> +	return ret;
+> +}
+> +
+> +static int set_audio_out(struct adv748x_state *state, int aout)
+> +{
+> +	int ret;
+> +
+> +	switch (aout) {
+> +	case HDMI_AOUT_NONE:
+> +		ret = set_audio_pads_state(state, 0);
+> +		break;
+> +	case HDMI_AOUT_I2S:
+> +		ret = set_dpll_mclk_fs(state, 256);
+> +		if (ret < 0)
+> +			goto fail;
+> +		ret = set_i2s_tdm_mode(state, 1);
+> +		if (ret < 0)
+> +			goto fail;
+> +		ret = set_audio_pads_state(state, 1);
+> +		if (ret < 0)
+> +			goto fail;
+> +		break;
+> +	case HDMI_AOUT_I2S_TDM:
+> +		ret = set_dpll_mclk_fs(state, 256);
+> +		if (ret < 0)
+> +			goto fail;
+> +		ret = set_i2s_tdm_mode(state, 1);
+> +		if (ret < 0)
+> +			goto fail;
+> +		ret = set_audio_pads_state(state, 1);
+> +		if (ret < 0)
+> +			goto fail;
+> +		break;
+> +	default:
+> +		ret = -EINVAL;
+> +		goto fail;
+> +	}
+> +	return 0;
+> +fail:
+> +	return ret;
+> +}
+> +
+> +static int adv748x_hdmi_s_audout(struct adv748x_hdmi *hdmi,
+> +				 const struct v4l2_audioout *a)
+> +{
+> +	struct adv748x_state *state = adv748x_hdmi_to_state(hdmi);
+> +	int ret = set_audio_out(state, a->index);
+> +
+> +	if (ret == 0)
+> +		hdmi->audio_out = a->index;
+> +	return ret;
+> +}
+> +
+> +static long adv748x_hdmi_querycap(struct adv748x_hdmi *hdmi,
+> +				  struct v4l2_capability *cap)
+> +{
+> +	struct adv748x_state *state = adv748x_hdmi_to_state(hdmi);
+> +
+> +	cap->version = LINUX_VERSION_CODE;
+> +	strlcpy(cap->driver, state->dev->driver->name, sizeof(cap->driver));
+> +	strlcpy(cap->card, "hdmi", sizeof(cap->card));
+> +	snprintf(cap->bus_info, sizeof(cap->bus_info), "i2c:%d-%04x",
+> +		 i2c_adapter_id(state->client->adapter),
+> +		 state->client->addr);
+> +	cap->device_caps = V4L2_CAP_AUDIO | V4L2_CAP_VIDEO_CAPTURE;
+> +	cap->capabilities = V4L2_CAP_DEVICE_CAPS;
+> +	return 0;
+> +}
+> +
+> +static long adv748x_hdmi_ioctl(struct v4l2_subdev *sd,
+> +			       unsigned int cmd, void *arg)
+> +{
+> +	struct adv748x_hdmi *hdmi = adv748x_sd_to_hdmi(sd);
+> +
+> +	switch (cmd) {
+> +	case VIDIOC_ENUMAUDOUT:
+> +		return adv748x_hdmi_enumaudout(hdmi, arg);
+> +	case VIDIOC_S_AUDOUT:
+> +		return adv748x_hdmi_s_audout(hdmi, arg);
+> +	case VIDIOC_G_AUDOUT:
+> +		return adv748x_hdmi_g_audout(hdmi, arg);
+> +	case VIDIOC_QUERYCAP:
+> +		return adv748x_hdmi_querycap(hdmi, arg);
+> +	}
+> +	return -ENOTTY;
+> +}
+> +
+> +static const struct v4l2_subdev_core_ops adv748x_core_ops_hdmi = {
+> +	.ioctl = adv748x_hdmi_ioctl,
+> +};
+> +
+>  /* -----------------------------------------------------------------------------
+>   * v4l2_subdev_ops
+>   */
+>  
+>  static const struct v4l2_subdev_ops adv748x_ops_hdmi = {
+> +	.core = &adv748x_core_ops_hdmi,
+>  	.video = &adv748x_video_ops_hdmi,
+>  	.pad = &adv748x_pad_ops_hdmi,
+>  };
+> @@ -633,6 +809,8 @@ static int adv748x_hdmi_s_ctrl(struct v4l2_ctrl *ctrl)
+>  	int ret;
+>  	u8 pattern;
+>  
+> +	if (ctrl->id == V4L2_CID_AUDIO_MUTE)
+> +		return adv748x_hdmi_audio_mute(hdmi, ctrl->val);
+>  	/* Enable video adjustment first */
+>  	ret = cp_clrset(state, ADV748X_CP_VID_ADJ,
+>  			ADV748X_CP_VID_ADJ_ENABLE,
+> @@ -697,6 +875,8 @@ static int adv748x_hdmi_init_controls(struct adv748x_hdmi *hdmi)
+>  	v4l2_ctrl_new_std(&hdmi->ctrl_hdl, &adv748x_hdmi_ctrl_ops,
+>  			  V4L2_CID_HUE, ADV748X_CP_HUE_MIN,
+>  			  ADV748X_CP_HUE_MAX, 1, ADV748X_CP_HUE_DEF);
+> +	v4l2_ctrl_new_std(&hdmi->ctrl_hdl, &adv748x_hdmi_ctrl_ops,
+> +			  V4L2_CID_AUDIO_MUTE, 0, 1, 1, 1);
+>  
+>  	/*
+>  	 * Todo: V4L2_CID_DV_RX_POWER_PRESENT should also be supported when
+> @@ -755,6 +935,8 @@ int adv748x_hdmi_init(struct adv748x_hdmi *hdmi)
+>  
+>  void adv748x_hdmi_cleanup(struct adv748x_hdmi *hdmi)
+>  {
+> +	adv748x_hdmi_audio_mute(hdmi, 1);
+> +	set_audio_out(adv748x_hdmi_to_state(hdmi), HDMI_AOUT_NONE);
+>  	v4l2_device_unregister_subdev(&hdmi->sd);
+>  	media_entity_cleanup(&hdmi->sd.entity);
+>  	v4l2_ctrl_handler_free(&hdmi->ctrl_hdl);
+> diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+> index db6346a06351..fdda6982e437 100644
+> --- a/drivers/media/i2c/adv748x/adv748x.h
+> +++ b/drivers/media/i2c/adv748x/adv748x.h
+> @@ -128,6 +128,7 @@ struct adv748x_hdmi {
+>  		u32 present;
+>  		unsigned int blocks;
+>  	} edid;
+> +	int audio_out;
+>  };
+>  
+>  #define adv748x_ctrl_to_hdmi(ctrl) \
+> @@ -224,6 +225,11 @@ struct adv748x_state {
+>  
+>  #define ADV748X_IO_VID_STD		0x05
+>  
+> +#define ADV748X_IO_PAD_CONTROLS		0x0e
+> +#define ADV748X_IO_PAD_CONTROLS_TRI_AUD	BIT(5)
+> +#define ADV748X_IO_PAD_CONTROLS_PDN_AUD	BIT(1)
+> +#define ADV748X_IO_PAD_CONTROLS1	0x1d
+> +
+>  #define ADV748X_IO_10			0x10	/* io_reg_10 */
+>  #define ADV748X_IO_10_CSI4_EN		BIT(7)
+>  #define ADV748X_IO_10_CSI1_EN		BIT(6)
+> @@ -246,7 +252,21 @@ struct adv748x_state {
+>  #define ADV748X_IO_REG_FF		0xff
+>  #define ADV748X_IO_REG_FF_MAIN_RESET	0xff
+>  
+> +/* DPLL Map */
+> +#define ADV748X_DPLL_MCLK_FS		0xb5
+> +#define ADV748X_DPLL_MCLK_FS_N_MASK	GENMASK(2, 0)
+> +
+>  /* HDMI RX Map */
+> +#define ADV748X_HDMI_I2S		0x03	/* I2S mode and width */
+> +#define ADV748X_HDMI_I2SBITWIDTH_MASK	GENMASK(4, 0)
+> +#define ADV748X_HDMI_I2SOUTMODE_SHIFT	5
+> +#define ADV748X_HDMI_I2SOUTMODE_MASK	\
+> +	GENMASK(6, ADV748X_HDMI_I2SOUTMODE_SHIFT)
+> +#define ADV748X_I2SOUTMODE_I2S 0
+> +#define ADV748X_I2SOUTMODE_RIGHT_J 1
+> +#define ADV748X_I2SOUTMODE_LEFT_J 2
+> +#define ADV748X_I2SOUTMODE_SPDIF 3
+> +
+>  #define ADV748X_HDMI_LW1		0x07	/* line width_1 */
+>  #define ADV748X_HDMI_LW1_VERT_FILTER	BIT(7)
+>  #define ADV748X_HDMI_LW1_DE_REGEN	BIT(5)
+> @@ -258,6 +278,16 @@ struct adv748x_state {
+>  #define ADV748X_HDMI_F1H1		0x0b	/* field1 height_1 */
+>  #define ADV748X_HDMI_F1H1_INTERLACED	BIT(5)
+>  
+> +#define ADV748X_HDMI_MUTE_CTRL		0x1a
+> +#define ADV748X_HDMI_MUTE_CTRL_MUTE_AUDIO BIT(4)
+> +#define ADV748X_HDMI_MUTE_CTRL_WAIT_UNMUTE_MASK	GENMASK(3, 1)
+> +#define ADV748X_HDMI_MUTE_CTRL_NOT_AUTO_UNMUTE	BIT(0)
+> +
+> +#define ADV748X_HDMI_AUDIO_MUTE_SPEED	0x0f
+> +#define ADV748X_HDMI_AUDIO_MUTE_SPEED_MASK	GENMASK(4, 0)
+> +#define ADV748X_MAN_AUDIO_DL_BYPASS BIT(7)
+> +#define ADV748X_AUDIO_DELAY_LINE_BYPASS BIT(6)
+> +
+>  #define ADV748X_HDMI_HFRONT_PORCH	0x20	/* hsync_front_porch_1 */
+>  #define ADV748X_HDMI_HFRONT_PORCH_MASK	0x1fff
+>  
+> @@ -279,6 +309,9 @@ struct adv748x_state {
+>  #define ADV748X_HDMI_TMDS_1		0x51	/* hdmi_reg_51 */
+>  #define ADV748X_HDMI_TMDS_2		0x52	/* hdmi_reg_52 */
+>  
+> +#define ADV748X_HDMI_REG_6D		0x6d	/* hdmi_reg_6d */
+> +#define ADV748X_I2S_TDM_MODE_ENABLE BIT(7)
+> +
+>  /* HDMI RX Repeater Map */
+>  #define ADV748X_REPEATER_EDID_SZ	0x70	/* primary_edid_size */
+>  #define ADV748X_REPEATER_EDID_SZ_SHIFT	4
+> @@ -393,14 +426,23 @@ int adv748x_write(struct adv748x_state *state, u8 page, u8 reg, u8 value);
+>  int adv748x_write_block(struct adv748x_state *state, int client_page,
+>  			unsigned int init_reg, const void *val,
+>  			size_t val_len);
+> +int adv748x_update_bits(struct adv748x_state *state, u8 page, u8 reg,
+> +			u8 mask, u8 value);
+>  
+>  #define io_read(s, r) adv748x_read(s, ADV748X_PAGE_IO, r)
+>  #define io_write(s, r, v) adv748x_write(s, ADV748X_PAGE_IO, r, v)
+>  #define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~m) | v)
+> +#define io_update(s, r, m, v) adv748x_update_bits(s, ADV748X_PAGE_IO, r, m, v)
+>  
+>  #define hdmi_read(s, r) adv748x_read(s, ADV748X_PAGE_HDMI, r)
+>  #define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, r+1)) & m)
+>  #define hdmi_write(s, r, v) adv748x_write(s, ADV748X_PAGE_HDMI, r, v)
+> +#define hdmi_update(s, r, m, v) \
+> +	adv748x_update_bits(s, ADV748X_PAGE_HDMI, r, m, v)
+> +
+> +#define dpll_read(s, r) adv748x_read(s, ADV748X_PAGE_DPLL, r)
+> +#define dpll_update(s, r, m, v) \
+> +	adv748x_update_bits(s, ADV748X_PAGE_DPLL, r, m, v)
+>  
+>  #define repeater_read(s, r) adv748x_read(s, ADV748X_PAGE_REPEATER, r)
+>  #define repeater_write(s, r, v) adv748x_write(s, ADV748X_PAGE_REPEATER, r, v)
 > 
-> Thanks,
-> Shan
-> 
-> On 2020/3/11 9:15, Joseph Qi wrote:
->>
->>
->> On 2020/3/9 16:26, lishan wrote:
->>> A NULL pointer panic dereference in ocfs2_block_group_clear_bits() happen again.
->>> The information of NULL pointer stack as follows:
->>>
->>> PID: 81866  TASK: ffffa07c3c21ae80  CPU: 66  COMMAND: "fallocate"
->>>   #0 [ffff0000b4d6b0b0] machine_kexec at ffff0000800a2954
->>>   #1 [ffff0000b4d6b110] __crash_kexec at ffff0000801bab34
->>>   #2 [ffff0000b4d6b2a0] panic at ffff0000800f02cc
->>>   #3 [ffff0000b4d6b380] die at ffff00008008f6ac
->>>   #4 [ffff0000b4d6b3d0] bug_handler at ffff00008008f744
->>>   #5 [ffff0000b4d6b400] brk_handler at ffff000080085d1c
->>>   #6 [ffff0000b4d6b420] do_debug_exception at ffff000080081194
->>>   #7 [ffff0000b4d6b630] el1_dbg at ffff00008008332c
->>>       PC: ffff00000190e9c0  [_ocfs2_free_suballoc_bits+1608]
->>>       LR: ffff00000190e990  [_ocfs2_free_suballoc_bits+1560]
->>>       SP: ffff0000b4d6b640  PSTATE: 60400009
->>>      X29: ffff0000b4d6b650  X28: 0000000000000000  X27: 00000000000052f3
->>>      X26: ffff807c511a9570  X25: ffff807ca0054000  X24: 00000000000052f2
->>>      X23: 0000000000000001  X22: ffff807c7cde7a90  X21: ffff0000811d9000
->>>      X20: ffff807c5e7d2000  X19: ffff00000190c768  X18: 0000000000000000
->>>      X17: 0000000000000000  X16: ffff000080a032f0  X15: 0000000000000000
->>>      X14: ffffffffffffffff  X13: fffffffffffffff7  X12: ffffffffffffffff
->>>      X11: 0000000000000038  X10: 0101010101010101   X9: ffffffffffffffff
->>>       X8: 7f7f7f7f7f7f7f7f   X7: 0000000000000000   X6: 0000000000000080
->>>       X5: 0000000000000000   X4: 0000000000000002   X3: ffff00000199f390
->>>       X2: a603c08321456e00   X1: ffff807c7cde7a90   X0: 0000000000000000
->>>   #8 [ffff0000b4d6b650] _ocfs2_free_suballoc_bits at ffff00000190e9bc [ocfs2]
->>>   #9 [ffff0000b4d6b710] _ocfs2_free_clusters at ffff0000019110d4 [ocfs2]
->>>  #10 [ffff0000b4d6b790] ocfs2_free_clusters at ffff000001913e94 [ocfs2]
->>>  #11 [ffff0000b4d6b7d0] __ocfs2_flush_truncate_log at ffff0000018b5294 [ocfs2]
->>>  #12 [ffff0000b4d6b8a0] ocfs2_remove_btree_range at ffff0000018bb34c [ocfs2]
->>>  #13 [ffff0000b4d6b960] ocfs2_commit_truncate at ffff0000018bc76c [ocfs2]
->>>  #14 [ffff0000b4d6ba60] ocfs2_wipe_inode at ffff0000018e57bc [ocfs2]
->>>  #15 [ffff0000b4d6bb00] ocfs2_evict_inode at ffff0000018e5db8 [ocfs2]
->>>  #16 [ffff0000b4d6bb70] evict at ffff000080365040
->>>  #17 [ffff0000b4d6bba0] iput at ffff0000803655d8
->>>  #18 [ffff0000b4d6bbe0] ocfs2_dentry_iput at ffff0000018c60a0 [ocfs2]
->>>  #19 [ffff0000b4d6bc30] dentry_unlink_inode at ffff00008035ef58
->>>  #20 [ffff0000b4d6bc50] __dentry_kill at ffff000080360384
->>>  #21 [ffff0000b4d6bc80] dentry_kill at ffff000080360670
->>>  #22 [ffff0000b4d6bcb0] dput at ffff00008036093c
->>>  #23 [ffff0000b4d6bcf0] __fput at ffff000080343930
->>>  #24 [ffff0000b4d6bd40] ____fput at ffff000080343aac
->>>  #25 [ffff0000b4d6bd60] task_work_run at ffff0000801172fc
->>>
->>> The direct panic reason is that bh2jh (group_bh)-> b_committed_data is null.
->>> It is presumed that the network was disconnected during the write process,
->>> causing the transaction abort. as follows:
->>> jbd2_journal_abort
->>>   .......
->>>   jbd2_journal_commit_transaction
->>>     jh->b_committed_data = NULL;
->>>
->>> _ocfs2_free_suballoc_bits
->>>   ocfs2_block_group_clear_bits
->>>     // undo_bg is now set to null
->>>     BUG_ON(!undo_bg);
->>>
->>> When applying for free space, if b_committed_data is null,
->>> it will be directly occupied, as follows:
->>> ocfs2_cluster_group_search
->>>   ocfs2_block_group_find_clear_bits
->>>     ocfs2_test_bg_bit_allocatable:
->>>       bg = (struct ocfs2_group_desc *) bh2jh(bg_bh)->b_committed_data;
->>>       if (bg)
->>>         ret = !ocfs2_test_bit(nr, (unsigned long *)bg->bg_bitmap);
->>>       else
->>>         ret = 1;
->>> b_committed_data is an intermediate state backup for bitmap transaction commits,
->>> newly applied space can overwrite previous dirty data,
->>> so, I think, while free clusters, if b_committed_data is null, ignore it.
->>> Host panic directly, too violent.
->>>
->>> Signed-off-by: Shan Li <lishan24@huawei.com>
->>> Reviewed-by: Jun Piao <piaojun@huawei.com>
->>> ---
->>>  fs/ocfs2/suballoc.c | 9 +++++++--
->>>  1 file changed, 7 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
->>> index 939df99d2dec..aaf1b3cbd984 100644
->>> --- a/fs/ocfs2/suballoc.c
->>> +++ b/fs/ocfs2/suballoc.c
->>> @@ -2412,14 +2412,19 @@ static int ocfs2_block_group_clear_bits(handle_t *handle,
->>>  	if (undo_fn) {
->>>  		spin_lock(&jh->b_state_lock);
->>>  		undo_bg = (struct ocfs2_group_desc *) jh->b_committed_data;
->>> -		BUG_ON(!undo_bg);
->>> +		if (!undo_bg)
->>> +			mlog(ML_NOTICE, "%s: group descriptor # %llu (device %s) journal "
->>> +					"b_committed_data had been cleared.\n",
->>> +					OCFS2_SB(alloc_inode->i_sb)->uuid_str,
->>> +					(unsigned long long)le64_to_cpu(bg->bg_blkno),
->>> +					alloc_inode->i_sb->s_id);
->>
->> Seems a kind of workaround.
->> I am worrying about other abnormal cases of NULL b_committed_data, it
->> may lead to a corrupt filesystem.
->> So how about isolating the journal abort case?
->>
->> Thanks,
->> Joseph
->>
->>>  	}
->>>
->>>  	tmp = num_bits;
->>>  	while(tmp--) {
->>>  		ocfs2_clear_bit((bit_off + tmp),
->>>  				(unsigned long *) bg->bg_bitmap);
->>> -		if (undo_fn)
->>> +		if (undo_fn && undo_bg)
->>>  			undo_fn(bit_off + tmp,
->>>  				(unsigned long *) undo_bg->bg_bitmap);
->>>  	}
->>>
->>
->> .
->>
 
