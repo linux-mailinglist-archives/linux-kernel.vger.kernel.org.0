@@ -2,96 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85B87183E5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:10:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 786EB183E66
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:12:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbgCMBKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 21:10:04 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:37751 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbgCMBKD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 21:10:03 -0400
-Received: by mail-pj1-f65.google.com with SMTP id ca13so3411306pjb.2;
-        Thu, 12 Mar 2020 18:10:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JoS9gKP72CxM9wL/8rqap0rRd7oEMG26UJbDZ6ej9mo=;
-        b=KqmYdOKXjvDhXHHXbusj9Xg64lAkRzcxICwiJNytvsA5uvgGGMJTcZlGmR6JY0nxyM
-         ct/cBWcojS9O++hECwYqE+pRcyFi8HkUwP2L9C/HsfzThcO9mlwXWzJYYjJMpZd7Qqel
-         /AfkrUJ3PSIepByfREAYT64UnkVYntSohGqxirSPa6hkCyYlVVrw967fQPMQO9UKVBEQ
-         MlaIXIYwrLW9cAWdg8tax4d2B4cNZitP4+9lu4TtaWQmSQvkGwdbyAsplXYsbIQPkWQf
-         D8s85nu/R0bT8bDuam8lVWejYwpJjNMs+6e4Ylz8v764d5JBbVDzq0FHgRB0wej1ZOhu
-         FC6A==
-X-Gm-Message-State: ANhLgQ3crDRqJ8j6td0QOcvkXGnL3bTQSl1CB2VYSEDrOuDi2xddwmFP
-        QJTofA3eW9gTi4EYYJx6iyU=
-X-Google-Smtp-Source: ADFU+vtC3CFe+9QrqzySXKbbNCl05Fk+gDPOapW1z0IeEoOULkqqvJDnUzbx3iRiBn+k5DrEOnMQOQ==
-X-Received: by 2002:a17:902:7007:: with SMTP id y7mr10431072plk.208.1584061800891;
-        Thu, 12 Mar 2020 18:10:00 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id w9sm2577359pfd.94.2020.03.12.18.09.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2020 18:09:59 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id E7ED64028E; Fri, 13 Mar 2020 01:09:58 +0000 (UTC)
-Date:   Fri, 13 Mar 2020 01:09:58 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>
-Subject: Re: [PATCH v2 4/4] selftests: kmod: test disabling module autoloading
-Message-ID: <20200313010958.GU11244@42.do-not-panic.com>
-References: <20200312202552.241885-1-ebiggers@kernel.org>
- <20200312202552.241885-5-ebiggers@kernel.org>
+        id S1727041AbgCMBLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 21:11:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34804 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726647AbgCMBLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 21:11:01 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB4E6206EB;
+        Fri, 13 Mar 2020 01:11:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584061860;
+        bh=TEhRFrpawswa0VRvFVCjf+8OILPkxfhTDLFyVjMmpEE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=utT4IPvSMNs5NDLHLnLyaHb5oCiakpOInlrShehr72IQLv+OXghq4Gl0JkQcP+2Hy
+         C/7QvSNiAPlkcHq/lf8HSsFnWT1iQHDlLbV/XpWtfn7LWl0BGJOmVY+4VummSTfJ5b
+         S0REST5/XBWfmlAyXmMg5XmI5ATqNK4trJBp47PQ=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200312202552.241885-5-ebiggers@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3028e04887c7b8a6ffc150c016aa63281461b434.1582533919.git-series.maxime@cerno.tech>
+References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech> <3028e04887c7b8a6ffc150c016aa63281461b434.1582533919.git-series.maxime@cerno.tech>
+Subject: Re: [PATCH 16/89] clk: bcm: rpi: Add clock id to data
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+To:     Eric Anholt <eric@anholt.net>, Maxime Ripard <maxime@cerno.tech>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date:   Thu, 12 Mar 2020 18:11:00 -0700
+Message-ID: <158406186006.149997.5509023363442666918@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 01:25:52PM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Test that request_module() fails with -ENOENT when
-> /proc/sys/kernel/modprobe contains (a) a nonexistent path, and (b) an
-> empty path.
-> 
-> Case (b) is a regression test for the patch "kmod: make request_module()
-> return an error when autoloading is disabled".
-> 
-> Tested with 'kmod.sh -t 0010 && kmod.sh -t 0011', and also simply with
-> 'kmod.sh' to run all kmod tests.
-> 
-> Note: get_test_count() and get_test_enabled() were broken for test
-> numbers above 9 due to awk interpreting a field specification like
-> '$0010' as octal rather than decimal.  So I fixed that too.
-> 
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jeff Vander Stoep <jeffv@google.com>
-> Cc: Jessica Yu <jeyu@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: NeilBrown <neilb@suse.com>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+Quoting Maxime Ripard (2020-02-24 01:06:18)
+> The driver has really only supported one clock so far and has hardcoded t=
+he
+> ID used in communications with the firmware in all the functions
+> implementing the clock framework hooks. Let's store that in the clock data
+> structure so that we can support more clocks later on.
+>=20
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
 
-Thanks!
-
-Can you split up the get_test_count()/get_test_enabled() fix into
-another patch though? 
-
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-
-  Luis
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
