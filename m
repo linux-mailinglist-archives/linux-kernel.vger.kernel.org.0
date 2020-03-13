@@ -2,244 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA305184045
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 06:23:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5049818407D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 06:27:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbgCMFXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 01:23:06 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:40651 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726236AbgCMFXF (ORCPT
+        id S1726387AbgCMF1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 01:27:14 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:53805 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbgCMF1N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 01:23:05 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1jCcmf-00005R-2y; Fri, 13 Mar 2020 06:22:57 +0100
-Received: from ore by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1jCcmc-0006cy-MG; Fri, 13 Mar 2020 06:22:54 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Marek Vasut <marex@denx.de>, David Jander <david@protonic.nl>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v4 4/4] net: phy: tja11xx: add delayed registration of TJA1102 PHY1
-Date:   Fri, 13 Mar 2020 06:22:52 +0100
-Message-Id: <20200313052252.25389-5-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200313052252.25389-1-o.rempel@pengutronix.de>
-References: <20200313052252.25389-1-o.rempel@pengutronix.de>
+        Fri, 13 Mar 2020 01:27:13 -0400
+Received: by mail-pj1-f66.google.com with SMTP id l36so3566428pjb.3;
+        Thu, 12 Mar 2020 22:27:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gLleOVVIH1V4ng51RzCsvVcqilo8Qnn64XoABi5t8sI=;
+        b=Nfv/t9lScGUJzQyLLwDN4KfRRcwbIjDjzCXdJJoF7OZ4cVAwhHJVcLMR6gUf7+bfJl
+         XlHjHYVXFIrzINfAT80FFXOFqWiZ8Nz0QlxChpc1kIOB7XPasm2sgnO+7gatcWIMfn7/
+         l4WpuUsELHNGj272Flu10BXp2VcbLddrz+zPuvCm+lQCb3ebYL30/zwBcnnmv9EahB5R
+         iD/5szY5+YGS1xOJaTTgNNmGNfWOLoUB0Lt/wSED/bJqhHeJYA6hfGRMNQpMAX/svHwn
+         JuDh8upfKSwiW0w6PSGnZ1GWHrIWZtgU+WfuPg9d82h/axv1DLp1drDF8OYbAVFRqlzU
+         Df3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=gLleOVVIH1V4ng51RzCsvVcqilo8Qnn64XoABi5t8sI=;
+        b=MtQlo6+k5dM1Kl0usRdOIjRABnt6hRjVf//Ga3LqsQuSlm9wbPbcLbT+AOrOyNt7q2
+         R6pUIpRfIhV+RTXivDI9WWPamnAsSGFJnoCUJws6mJ+iiLGSeUzfmkWcW4cuRXuMHWJL
+         Q91uGjS2eBFYM+uLVG3S4ouHowyJaUerqh5GfpeJx6zkm4VF9guPwIxn7wM2prUq7hpZ
+         ecTQWdBL4nG1J+0UUJUGZG1Ufs8iiGHP/N13FRlC6wD4ISWjYMOy5Dmw4wTJ8PYAAANQ
+         AP4Ojp+1erl5aiVaIY4hPCdpbwd5Uo79gWG2thNCgpeo11N+aAwUO7ji2Yf1xLh1L/wF
+         bivQ==
+X-Gm-Message-State: ANhLgQ2Dc8kC6llNpxN6ma3MP6GsXYpgIyDi0nAR84WcM0xoIHhlGTRR
+        0xb/bcc4mi44F7Tfuh1HlZtslMHM
+X-Google-Smtp-Source: ADFU+vuF/uyCroH964x3emJVaVrqPgtwjQpRBMY6p+hOkhStOd55ElhfdsOpHGJRGqbWOT/64VGVCQ==
+X-Received: by 2002:a17:902:aa88:: with SMTP id d8mr11371971plr.201.1584077230174;
+        Thu, 12 Mar 2020 22:27:10 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id x6sm55904813pfi.83.2020.03.12.22.27.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Mar 2020 22:27:09 -0700 (PDT)
+Subject: Re: [PATCH] watchdog: orion: use 0 for unset heartbeat
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        wim@linux-watchdog.org
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200313031312.1485-1-chris.packham@alliedtelesis.co.nz>
+From:   Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+Message-ID: <5d58b64d-e053-9f7f-49fe-682dc87fe817@roeck-us.net>
+Date:   Thu, 12 Mar 2020 22:27:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20200313031312.1485-1-chris.packham@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TJA1102 is a dual PHY package with PHY0 having proper PHYID and PHY1
-having no ID. On one hand it is possible to for PHY detection by
-compatible, on other hand we should be able to reset complete chip
-before PHY1 configured it, and we need to define dependencies for proper
-power management.
+On 3/12/20 8:13 PM, Chris Packham wrote:
+> If the heartbeat module param is not specified we would get an error
+> message
+> 
+>   watchdog: f1020300.watchdog: driver supplied timeout (4294967295) out of range
+>   watchdog: f1020300.watchdog: falling back to default timeout (171)
+> 
+> This is because we were initialising heartbeat to -1. By removing the
+> initialisation (thus letting the C run time initialise it to 0) we
+> silence the warning message and the default timeout is still used.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-We can solve it by defining PHY1 as child of PHY0:
-	tja1102_phy0: ethernet-phy@4 {
-		reg = <0x4>;
+Good catch.
 
-		interrupts-extended = <&gpio5 8 IRQ_TYPE_LEVEL_LOW>;
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-		reset-gpios = <&gpio5 9 GPIO_ACTIVE_LOW>;
-		reset-assert-us = <20>;
-		reset-deassert-us = <2000>;
-
-		tja1102_phy1: ethernet-phy@5 {
-			reg = <0x5>;
-
-			interrupts-extended = <&gpio5 8 IRQ_TYPE_LEVEL_LOW>;
-		};
-	};
-
-The PHY1 should be a subnode of PHY0 and registered only after PHY0 was
-completely reset and initialized.
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/phy/nxp-tja11xx.c | 112 +++++++++++++++++++++++++++++++---
- 1 file changed, 105 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/phy/nxp-tja11xx.c b/drivers/net/phy/nxp-tja11xx.c
-index a064e4ab3616..2bde9386baf1 100644
---- a/drivers/net/phy/nxp-tja11xx.c
-+++ b/drivers/net/phy/nxp-tja11xx.c
-@@ -6,11 +6,14 @@
- #include <linux/delay.h>
- #include <linux/ethtool.h>
- #include <linux/kernel.h>
-+#include <linux/mdio.h>
- #include <linux/mii.h>
- #include <linux/module.h>
- #include <linux/phy.h>
- #include <linux/hwmon.h>
- #include <linux/bitfield.h>
-+#include <linux/of_mdio.h>
-+#include <linux/of_irq.h>
- 
- #define PHY_ID_MASK			0xfffffff0
- #define PHY_ID_TJA1100			0x0180dc40
-@@ -57,6 +60,8 @@
- struct tja11xx_priv {
- 	char		*hwmon_name;
- 	struct device	*hwmon_dev;
-+	struct phy_device *phydev;
-+	struct work_struct phy_register_work;
- };
- 
- struct tja11xx_phy_stats {
-@@ -333,16 +338,12 @@ static const struct hwmon_chip_info tja11xx_hwmon_chip_info = {
- 	.info		= tja11xx_hwmon_info,
- };
- 
--static int tja11xx_probe(struct phy_device *phydev)
-+static int tja11xx_hwmon_register(struct phy_device *phydev,
-+				  struct tja11xx_priv *priv)
- {
- 	struct device *dev = &phydev->mdio.dev;
--	struct tja11xx_priv *priv;
- 	int i;
- 
--	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv)
--		return -ENOMEM;
--
- 	priv->hwmon_name = devm_kstrdup(dev, dev_name(dev), GFP_KERNEL);
- 	if (!priv->hwmon_name)
- 		return -ENOMEM;
-@@ -360,6 +361,103 @@ static int tja11xx_probe(struct phy_device *phydev)
- 	return PTR_ERR_OR_ZERO(priv->hwmon_dev);
- }
- 
-+static int tja11xx_probe(struct phy_device *phydev)
-+{
-+	struct device *dev = &phydev->mdio.dev;
-+	struct tja11xx_priv *priv;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->phydev = phydev;
-+
-+	return tja11xx_hwmon_register(phydev, priv);
-+}
-+
-+static void tja1102_p1_register(struct work_struct *work)
-+{
-+	struct tja11xx_priv *priv = container_of(work, struct tja11xx_priv,
-+						 phy_register_work);
-+	struct phy_device *phydev_phy0 = priv->phydev;
-+	struct mii_bus *bus = phydev_phy0->mdio.bus;
-+	struct device *dev = &phydev_phy0->mdio.dev;
-+	struct device_node *np = dev->of_node;
-+	struct device_node *child;
-+	int ret;
-+
-+	for_each_available_child_of_node(np, child) {
-+		struct phy_device *phy;
-+		int addr;
-+
-+		addr = of_mdio_parse_addr(dev, child);
-+		if (addr < 0) {
-+			dev_err(dev, "Can't parse addr\n");
-+			continue;
-+		} else if (addr != phydev_phy0->mdio.addr + 1) {
-+			/* Currently we care only about double PHY chip TJA1102.
-+			 * If some day NXP will decide to bring chips with more
-+			 * PHYs, this logic should be reworked.
-+			 */
-+			dev_err(dev, "Unexpected address. Should be: %i\n",
-+				phydev_phy0->mdio.addr + 1);
-+			continue;
-+		}
-+
-+		if (mdiobus_is_registered_device(bus, addr)) {
-+			dev_err(dev, "device is already registered\n");
-+			continue;
-+		}
-+
-+		/* Real PHY ID of Port 1 is 0 */
-+		phy = phy_device_create(bus, addr, PHY_ID_TJA1102, false, NULL);
-+		if (IS_ERR(phy)) {
-+			dev_err(dev, "Can't create PHY device for Port 1: %i\n",
-+				addr);
-+			continue;
-+		}
-+
-+		/* Overwrite parent device. phy_device_create() set parent to
-+		 * the mii_bus->dev, which is not correct in case.
-+		 */
-+		phy->mdio.dev.parent = dev;
-+
-+		ret = __of_mdiobus_register_phy(bus, phy, child, addr);
-+		if (ret) {
-+			/* All resources needed for Port 1 should be already
-+			 * available for Port 0. Both ports use the same
-+			 * interrupt line, so -EPROBE_DEFER would make no sense
-+			 * here.
-+			 */
-+			dev_err(dev, "Can't register Port 1. Unexpected error: %i\n",
-+				ret);
-+			phy_device_free(phy);
-+		}
-+	}
-+}
-+
-+static int tja1102_p0_probe(struct phy_device *phydev)
-+{
-+	struct device *dev = &phydev->mdio.dev;
-+	struct tja11xx_priv *priv;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->phydev = phydev;
-+	INIT_WORK(&priv->phy_register_work, tja1102_p1_register);
-+
-+	ret = tja11xx_hwmon_register(phydev, priv);
-+	if (ret)
-+		return ret;
-+
-+	schedule_work(&priv->phy_register_work);
-+
-+	return 0;
-+}
-+
- static int tja1102_match_phy_device(struct phy_device *phydev, bool port0)
- {
- 	int ret;
-@@ -443,7 +541,7 @@ static struct phy_driver tja11xx_driver[] = {
- 	}, {
- 		.name		= "NXP TJA1102 Port 0",
- 		.features       = PHY_BASIC_T1_FEATURES,
--		.probe		= tja11xx_probe,
-+		.probe		= tja1102_p0_probe,
- 		.soft_reset	= tja11xx_soft_reset,
- 		.config_init	= tja11xx_config_init,
- 		.read_status	= tja11xx_read_status,
--- 
-2.25.1
+> ---
+>  drivers/watchdog/orion_wdt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/orion_wdt.c b/drivers/watchdog/orion_wdt.c
+> index 8e6dfe76f9c9..4ddb4ea2e4a3 100644
+> --- a/drivers/watchdog/orion_wdt.c
+> +++ b/drivers/watchdog/orion_wdt.c
+> @@ -52,7 +52,7 @@
+>  #define WDT_A370_RATIO		(1 << WDT_A370_RATIO_SHIFT)
+>  
+>  static bool nowayout = WATCHDOG_NOWAYOUT;
+> -static int heartbeat = -1;		/* module parameter (seconds) */
+> +static int heartbeat;		/* module parameter (seconds) */
+>  
+>  struct orion_watchdog;
+>  
+> 
 
