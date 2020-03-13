@@ -2,83 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0C5A1843C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 10:35:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5B1C1843CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 10:35:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbgCMJej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 05:34:39 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:12079 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726543AbgCMJei (ORCPT
+        id S1726842AbgCMJfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 05:35:14 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:38089 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726377AbgCMJeh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 05:34:38 -0400
-X-UUID: 688c0dbc8df94d6bb51056bf3da10502-20200313
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=y4fidyRMowL3surEo6zhd1R+r3Ch90oXxAv9QuI8xU0=;
-        b=sWLBUWp4Hr3buMy3YPTagFHWIMAX+m6BdkYF9m0ovRbTnsg4ncGG2W6WdFP8q2Y+LqjTk5Im+ke2VCH5pb66HGCwS16aFZnhBHWHhAene1tVpeq4DRQLyDYEZ8PUMTCeJs8jllbA+9gQL5wD6PvK1GMIouDcoALHGJ8uALpflfQ=;
-X-UUID: 688c0dbc8df94d6bb51056bf3da10502-20200313
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <henryc.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 514878430; Fri, 13 Mar 2020 17:34:32 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 13 Mar 2020 17:31:41 +0800
-Received: from mtksdaap41.mediatek.inc (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 13 Mar 2020 17:33:42 +0800
-From:   Henry Chen <henryc.chen@mediatek.com>
-To:     Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Ryan Case <ryandcase@chromium.org>,
-        Mark Brown <broonie@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Boichat <drinkcat@google.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Arvin Wang <arvin.wang@mediatek.com>,
-        Mike Turquette <mturquette@linaro.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>,
-        Henry Chen <henryc.chen@mediatek.com>
-Subject: [PATCH V4 10/13] arm64: dts: mt8183: add dvfsrc related nodes
-Date:   Fri, 13 Mar 2020 17:34:23 +0800
-Message-ID: <1584092066-24425-11-git-send-email-henryc.chen@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1584092066-24425-1-git-send-email-henryc.chen@mediatek.com>
-References: <1584092066-24425-1-git-send-email-henryc.chen@mediatek.com>
+        Fri, 13 Mar 2020 05:34:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584092076;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=b9csfzgQL1arrRthML64Bn1Sn3mvBEViBOBi0LSzDTM=;
+        b=idFOZvTAFYSa7xXBacqBKcd2EmWVgzGRNy/wFMI98Y2I+WcKqpog77vPsJzQINsSkvFR3x
+        g4ODRy2F3509jtR3BYMyTpckkWYXMRVEzttj7XBIndaZH7kCiRGDRcRYwd75LrgX/PDEJB
+        k1tZXFFRkdiu2FHSdumgjNgWmJi+yC8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-491-ly4YoN3tOeSNdzbq2Of6iw-1; Fri, 13 Mar 2020 05:34:35 -0400
+X-MC-Unique: ly4YoN3tOeSNdzbq2Of6iw-1
+Received: by mail-wm1-f70.google.com with SMTP id n25so2689568wmi.5
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 02:34:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=b9csfzgQL1arrRthML64Bn1Sn3mvBEViBOBi0LSzDTM=;
+        b=mgLfKi2bHit6DRGaIoNsMW7en/Fp8BpSXQwO0Anwl7RTAOR8y2INmjVXB0uotJbdBD
+         tKpc5+xn91T7RiJgp/wjoYc8ggaGkKzqSE64g9K5TADhsYMykl2sCtB9CGg/v6laijDm
+         2VLuKnSwn1FABpvqtU5aoF5ULyemCjsVSzyaXQFoK7KYnZ7nXlctz07OrXw3/eswPzXD
+         cHFA4vgZAA7S/PkYSL/h4ZCwo2+6o6ZsrG6HSEHOj+ZS522l74ST9TdgP+93V4HcR2PX
+         fELlsRQWMWOl9PZjVSqo7AAw3gxVTU50QWB3mDt7wubZV/rQVNfGuEw4Tm4zxBuzwOVS
+         ta3A==
+X-Gm-Message-State: ANhLgQ1NvMknJ0e+uLMoasr0rRAL4MuuH/V9eO2hMyvqy45/J6xf6LWu
+        n9DbgJ5rUhqkbpGP5JRAeu+9DwJYLve8ak6iT+jRT3c1uiBuqn6xK2ZdugaQCWi4M7vBcx1nE20
+        G+IOK1nsJsR3u+NT1MLfU1+F9
+X-Received: by 2002:a7b:cb42:: with SMTP id v2mr10206255wmj.170.1584092074147;
+        Fri, 13 Mar 2020 02:34:34 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vuUwXziaHoyA1EEaDQKmhBGTd8I4EwnbQQvJ7qV9xq0EdNJGxLx7LH6TG0wt2i7eEVNjyjK+w==
+X-Received: by 2002:a7b:cb42:: with SMTP id v2mr10206222wmj.170.1584092073863;
+        Fri, 13 Mar 2020 02:34:33 -0700 (PDT)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id l83sm16592995wmf.43.2020.03.13.02.34.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Mar 2020 02:34:33 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Toni Spets <toni.spets@iki.fi>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH] KVM: VMX: Condition ENCLS-exiting enabling on CPU support for SGX1
+In-Reply-To: <20200312180416.6679-1-sean.j.christopherson@intel.com>
+References: <20200312180416.6679-1-sean.j.christopherson@intel.com>
+Date:   Fri, 13 Mar 2020 10:34:32 +0100
+Message-ID: <87y2s4pphz.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: DB2F051B1CE46416C0FA451C46FB79B651A5F200F22551BD3162F8468D7B5AA92000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QWRkIEREUiBFTUkgcHJvdmlkZXIgZGljdGF0aW5nIGRyYW0gaW50ZXJjb25uZWN0IGJ1cyBwZXJm
-b3JtYW5jZSBmb3VuZCBvbg0KTVQ4MTgzLWJhc2VkIHBsYXRmb3Jtcw0KDQpTaWduZWQtb2ZmLWJ5
-OiBIZW5yeSBDaGVuIDxoZW5yeWMuY2hlbkBtZWRpYXRlay5jb20+DQotLS0NCiBhcmNoL2FybTY0
-L2Jvb3QvZHRzL21lZGlhdGVrL210ODE4My5kdHNpIHwgNSArKysrKw0KIDEgZmlsZSBjaGFuZ2Vk
-LCA1IGluc2VydGlvbnMoKykNCg0KZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVk
-aWF0ZWsvbXQ4MTgzLmR0c2kgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL21lZGlhdGVrL210ODE4My5k
-dHNpDQppbmRleCBjMGQwOGM4Li41N2E1NWEzIDEwMDY0NA0KLS0tIGEvYXJjaC9hcm02NC9ib290
-L2R0cy9tZWRpYXRlay9tdDgxODMuZHRzaQ0KKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9tZWRp
-YXRlay9tdDgxODMuZHRzaQ0KQEAgLTEyLDYgKzEyLDcgQEANCiAjaW5jbHVkZSA8ZHQtYmluZGlu
-Z3MvcmVzZXQtY29udHJvbGxlci9tdDgxODMtcmVzZXRzLmg+DQogI2luY2x1ZGUgIm10ODE4My1w
-aW5mdW5jLmgiDQogI2luY2x1ZGUgPGR0LWJpbmRpbmdzL3NvYy9tdGssZHZmc3JjLmg+DQorI2lu
-Y2x1ZGUgPGR0LWJpbmRpbmdzL2ludGVyY29ubmVjdC9tdGssbXQ4MTgzLWVtaS5oPg0KIA0KIC8g
-ew0KIAljb21wYXRpYmxlID0gIm1lZGlhdGVrLG10ODE4MyI7DQpAQCAtMTY0LDYgKzE2NSwxMCBA
-QA0KIAkJcmVnID0gPDAgMHgxMDAxMjAwMCAwIDB4MTAwMD47DQogCQljbG9ja3MgPSA8JmluZnJh
-Y2ZnIENMS19JTkZSQV9EVkZTUkM+Ow0KIAkJY2xvY2stbmFtZXMgPSAiZHZmc3JjIjsNCisJCWRk
-cl9lbWk6IGludGVyY29ubmVjdCB7DQorCQkJY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDgxODMt
-ZW1pIjsNCisJCQkjaW50ZXJjb25uZWN0LWNlbGxzID0gPDE+Ow0KKwkJfTsNCiAJfTsNCiANCiAJ
-dGltZXIgew0KLS0gDQoxLjkuMQ0K
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
+
+> Enable ENCLS-exiting (and thus set vmcs.ENCLS_EXITING_BITMAP) only if
+> the CPU supports SGX1.  Per Intel's SDM, all ENCLS leafs #UD if SGX1
+> is not supported[*], i.e. intercepting ENCLS to inject a #UD is
+> unnecessary.
+>
+> Avoiding ENCLS-exiting even when it is reported as supported by the CPU
+> works around a reported issue where SGX is "hard" disabled after an S3
+> suspend/resume cycle, i.e. CPUID.0x7.SGX=0 and the VMCS field/control
+> are enumerated as unsupported.  While the root cause of the S3 issue is
+> unknown, it's definitely _not_ a KVM (or kernel) bug, i.e. this is a
+> workaround for what is most likely a hardware or firmware issue.  As a
+> bonus side effect, KVM saves a VMWRITE when first preparing vmcs01 and
+> vmcs02.
+>
+> Query CPUID directly instead of going through cpu_data() or cpu_has() to
+> ensure KVM is trapping ENCLS when it's supported in hardware, e.g. even
+> if X86_FEATURE_SGX1 (which doesn't yet exist in upstream) were disabled
+> by the kernel/user.
+
+I would prefer this paragraph to become a comment right above
+cpu_has_sgx() or I bet we'll be getting a lot of 'avoid open-coding
+boot_cpu_has() ...' patches in the future.
+
+>
+> Note, SGX must be disabled in BIOS to take advantage of this workaround
+>
+> [*] The additional ENCLS CPUID check on SGX1 exists so that SGX can be
+>     globally "soft" disabled post-reset, e.g. if #MC bits in MCi_CTL are
+>     cleared.  Soft disabled meaning disabling SGX without clearing the
+>     primary CPUID bit (in leaf 0x7) and without poking into non-SGX
+>     CPU paths, e.g. for the VMCS controls.
+>
+> Fixes: 0b665d304028 ("KVM: vmx: Inject #UD for SGX ENCLS instruction in guest")
+> Reported-by: Toni Spets <toni.spets@iki.fi>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>
+> This seems somewhat premature given that we don't yet know if the observed
+> behavior is a logic bug, a one off manufacturing defect, firmware specific,
+> etc...  On the other hand, the change is arguably an optimization
+> irrespective of using it as a workaround.
+>
+>  arch/x86/kvm/vmx/vmx.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 40b1e6138cd5..50cab98382e7 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -2338,6 +2338,11 @@ static void hardware_disable(void)
+>  	kvm_cpu_vmxoff();
+>  }
+>  
+> +static bool cpu_has_sgx(void)
+> +{
+> +	return cpuid_eax(0) >= 0x12 && (cpuid_eax(0x12) & BIT(0));
+> +}
+> +
+>  static __init int adjust_vmx_controls(u32 ctl_min, u32 ctl_opt,
+>  				      u32 msr, u32 *result)
+>  {
+> @@ -2418,8 +2423,9 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf,
+>  			SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE |
+>  			SECONDARY_EXEC_PT_USE_GPA |
+>  			SECONDARY_EXEC_PT_CONCEAL_VMX |
+> -			SECONDARY_EXEC_ENABLE_VMFUNC |
+> -			SECONDARY_EXEC_ENCLS_EXITING;
+> +			SECONDARY_EXEC_ENABLE_VMFUNC;
+> +		if (cpu_has_sgx())
+> +			opt2 |= SECONDARY_EXEC_ENCLS_EXITING;
+>  		if (adjust_vmx_controls(min2, opt2,
+>  					MSR_IA32_VMX_PROCBASED_CTLS2,
+>  					&_cpu_based_2nd_exec_control) < 0)
+
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+
+-- 
+Vitaly
 
