@@ -2,109 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71785184342
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 10:07:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F569184346
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 10:08:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbgCMJH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 05:07:29 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39702 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726486AbgCMJHX (ORCPT
+        id S1726642AbgCMJIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 05:08:07 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35622 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726464AbgCMJIH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 05:07:23 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r15so11061534wrx.6
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 02:07:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Yoy0Boq040f9O0QHUfL99rfr3yZcYOtkMxHX2mJBUoI=;
-        b=cCKgut1i8Sc+EKPT9DRFmKJrBypE/0XUpuzxQIHOMtV+E+MOlxyOuqm5Z4pGLVP971
-         kvv3q1TgjWtqKM9jeZhNgb5ec9MOGKi+w5ry+E4RQLrxtRw1FH8jteBEe/tqJmtj9UL4
-         V7eKJtym3FVR15PjDhy7+Kf2FjwjR5iA3ThwPmGT2nk+yoIHNgZidgJ8OLIX1kz36DbF
-         HpVqtJFGyR8zzJ8kJLBxgIML6dZIWV5hOMVR5gHliu37f2kstA1mXrH5F4ploIAHUtKI
-         yx9P3sAXan4JzAEJzbLqflO6ItYqJpJFx4OItfbk/Ic1Ss/fVRtBwict6neAU1fmfycs
-         M8sw==
+        Fri, 13 Mar 2020 05:08:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584090486;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wl+yNGtuWXWkfGSGtM8HBlvrUGjPCbpwXBezEmRx7rc=;
+        b=WTkoZztpTO5WBTsxiK3XBDQLkF82TXRtCl4XJgnUaQs+An7B2liwtpYf3cW83RqoOsN2A5
+        xIVKDizdFv7Z+IoGK2+tgkPUBPqxEZ5NAmZD5yXt7/4DODlomx59XlfIVPk8praFeDQBme
+        LjHE0o7ubK/KVL6pBaOQ6GnwSOW8pd8=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-131-ZkiuPHt0OmCFdJTxDkx95A-1; Fri, 13 Mar 2020 05:08:04 -0400
+X-MC-Unique: ZkiuPHt0OmCFdJTxDkx95A-1
+Received: by mail-wm1-f72.google.com with SMTP id f207so3171702wme.6
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 02:08:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Yoy0Boq040f9O0QHUfL99rfr3yZcYOtkMxHX2mJBUoI=;
-        b=d+jI8fbZ5uQDAdZHMAZdr4ptmaY6aQNGI0zb8531xK7odQHM928N6bxy62ZYa3x8E8
-         vEiZvMwAJDG9R6a4cMrlM7yyZ90KWXRWwiiNoCfYRcjXsxrhFJhTsb6tnxPjVbmYLA9h
-         wIrwvgbh/JM6/wzQEOkOOGzdPXWA73MyAtT70rueyU20oapsYppXemXV/L5DjlxDSumJ
-         wKVsvbFhxjEU8WppFcccsX2e4k1T3PUoaCVdS02VhfGUOUZzpriCVXZkoQZW/QYcAstV
-         N7fCEumHtom3WisDF0jepI/zt2SZIEFN0rV16NxNenRIWmKJ+4wOGjccAWu7iL0v38at
-         HOwQ==
-X-Gm-Message-State: ANhLgQ1iKfWKphLaAIIk7EMJ42TkiVQBmRN8leb9dtlVkH923mEYVtTP
-        RABn7As5iMcqE0K5T7/UdAigOA==
-X-Google-Smtp-Source: ADFU+vsZuMu3i6rVyy8NzpYVntivu5t4nefjuS0CH3GYC/pYx7aDo3sECAdmYZqRmUHyXeo/gKr6eg==
-X-Received: by 2002:adf:eb51:: with SMTP id u17mr17457196wrn.29.1584090441559;
-        Fri, 13 Mar 2020 02:07:21 -0700 (PDT)
-Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2])
-        by smtp.gmail.com with ESMTPSA id i1sm61872399wrs.18.2020.03.13.02.07.20
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=wl+yNGtuWXWkfGSGtM8HBlvrUGjPCbpwXBezEmRx7rc=;
+        b=MybUfd2vjtwX0L0O/gDlAswHn7K7/VdoB7C7LZudy5xEok6kblFp675MBm2ayk2Jug
+         vb6tlnriF5Ac7YzeA3ftJiDGoRfWFIDbBmLgVwZT5FXoSOVWyrUV5a6v0PFEir5p2BUT
+         aFxoEOCKcoUW8RdBJtFelxZEBJw1jtx3I12n1OTt3nPiaKHap7G/MD3DnpCaLfIYTTTV
+         U6CxScWd/+ZcoAVTML89d6KwFSopye6xF5pzcLYu7oiCXm99cvjxciNZe7WZ8+8uDnzs
+         J4bdDKtKP2BDlYBTiIRsyzIvfEyiXZscrtadvbKaicvWpM9UqZvnOyW87AHxO4FeES57
+         u75Q==
+X-Gm-Message-State: ANhLgQ3XbKOu+AKEXSp+iH5eYjy9JYHi1ChN9XplZZwwn3OUDoT5LWBn
+        JCEGGau3PGli5F1MrK2T0gXnX2AB6qBNpby65plrwxVZSgy8uv+F1JyMd+9JPFtWX82MPqseCLv
+        mXU3fg9llDQodrIQ68QUK07It
+X-Received: by 2002:a7b:c4d6:: with SMTP id g22mr4716938wmk.79.1584090483178;
+        Fri, 13 Mar 2020 02:08:03 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vuuGYVrX3d9NDPj6bLJOiHXmXO+iiPtI2qoFJ6vPVqe8f2YiQ7CXhiXwjGV1CBmokIarAb43A==
+X-Received: by 2002:a7b:c4d6:: with SMTP id g22mr4716906wmk.79.1584090482942;
+        Fri, 13 Mar 2020 02:08:02 -0700 (PDT)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id a1sm39008132wru.75.2020.03.13.02.08.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 02:07:21 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 4/4] arm64: dts: meson-g12b-odroid-n2: add SPIFC controller node
-Date:   Fri, 13 Mar 2020 10:07:13 +0100
-Message-Id: <20200313090713.15147-5-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200313090713.15147-1-narmstrong@baylibre.com>
-References: <20200313090713.15147-1-narmstrong@baylibre.com>
+        Fri, 13 Mar 2020 02:08:02 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Jim Mattson <jmattson@google.com>, Wanpeng Li <kernellwp@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH] KVM: VMX: Micro-optimize vmexit time when not exposing PMU
+In-Reply-To: <CALMp9eTSBpaPYKE6toPCbSfCQGhM9M4=1Z1FFBGQ9Bm_pKSpuQ@mail.gmail.com>
+References: <1584007547-4802-1-git-send-email-wanpengli@tencent.com> <87r1xxrhb0.fsf@vitty.brq.redhat.com> <CALMp9eTSBpaPYKE6toPCbSfCQGhM9M4=1Z1FFBGQ9Bm_pKSpuQ@mail.gmail.com>
+Date:   Fri, 13 Mar 2020 10:08:01 +0100
+Message-ID: <877dzor5am.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add disabled SPIFC controller node with instruction on how to enable
-it while lowering capabilities of the eMMC controller from 8bits bus
-width to 4bits bus width, it's data pins 4 to 7 being shared with
-the SPI NOR controller pins.
+Jim Mattson <jmattson@google.com> writes:
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- .../boot/dts/amlogic/meson-g12b-odroid-n2.dts | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+> On Thu, Mar 12, 2020 at 3:36 AM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>
+>> Also, speaking about cloud providers and the 'micro' nature of this
+>> optimization, would it rather make sense to introduce a static branch
+>> (the policy to disable vPMU is likely to be host wide, right)?
+>
+> Speaking for a cloud provider, no, the policy is not likely to be host-wide.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-index b59ae1a297f2..169ea283d4ee 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-@@ -451,6 +451,27 @@
- 	vqmmc-supply = <&flash_1v8>;
- };
- 
-+/*
-+ * EMMC_D4, EMMC_D5, EMMC_D6 and EMMC_D7 pins are shared between SPI NOR pins
-+ * and eMMC Data 4 to 7 pins.
-+ * Replace emmc_data_8b_pins to emmc_data_4b_pins from sd_emmc_c pinctrl-0,
-+ * and change bus-width to 4 then spifc can be enabled.
-+ * The SW1 slide should also be set to the correct position.
-+ */
-+&spifc {
-+	status = "disabled";
-+	pinctrl-0 = <&nor_pins>;
-+	pinctrl-names = "default";
-+
-+	mx25u64: spi-flash@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "mxicy,mx25u6435f", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <104000000>;
-+	};
-+};
-+
- &tdmif_b {
- 	status = "okay";
- };
+Ah, then it's just my flawed picture of the world where hosts only run
+instances of the same type/family because it's mych easier to partition
+them this way.
+
+Scratch the static branch idea then.
+
 -- 
-2.22.0
+Vitaly
 
