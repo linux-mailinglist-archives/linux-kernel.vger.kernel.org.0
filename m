@@ -2,83 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8E9F183FC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 04:42:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE3B7183FCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 04:47:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbgCMDmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 23:42:53 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:37055 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726377AbgCMDmx (ORCPT
+        id S1726475AbgCMDrn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 23:47:43 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35977 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726328AbgCMDrn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 23:42:53 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A4BD08365A;
-        Fri, 13 Mar 2020 16:42:49 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1584070969;
-        bh=jiMFXGvBhCI5xK4iuBLsegdABOplq4HGKYU6z5QIHQ0=;
-        h=From:To:Cc:Subject:Date;
-        b=oZng4u7mbjanyfvvbVMxgRn36M0EK+F19nclv9E1iLkTJzBqhjryAFiVZdtD2bA5K
-         c4cjOKED4cnG4wBxEzOZ6giitHAaURPpNOZIPg104yfb/gQPoAWXu6i8gl88tgzMOx
-         V40BsAIxvVX7dcExkN170vWWv+dJTOiG5WCcJfgRLxWx2humBzvmbQ6udyD8ON41av
-         95fHQLrFbz6qd0tcpMhsgvTF68+35gVDrhxFMWdoUbtKj91xw8wRy4zKG7Hu3JIBvD
-         Xq0BVNXkjfEm0tUBOIVPUzp4nIg5mpdmuTO7vMSeA1iu9Q4VWkRxr3KTjRjKMhmuhg
-         n25ZiKgPpNQsg==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5e6b01370000>; Fri, 13 Mar 2020 16:42:49 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
-        by smtp (Postfix) with ESMTP id 1F15C13EED5;
-        Fri, 13 Mar 2020 16:42:47 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 2F9A628006E; Fri, 13 Mar 2020 16:42:47 +1300 (NZDT)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     thierry.reding@gmail.com, u.kleine-koenig@pengutronix.de,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com
-Cc:     linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH] gpio: mvebu: avoid error message for optional IRQ
-Date:   Fri, 13 Mar 2020 16:42:44 +1300
-Message-Id: <20200313034244.26336-1-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.25.1
+        Thu, 12 Mar 2020 23:47:43 -0400
+Received: by mail-lf1-f68.google.com with SMTP id s1so6686048lfd.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 20:47:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zZDSoQx95Ubh+HBfrSp1XYVgSVN4vHwFBPkS+obSa4E=;
+        b=Kdmhl+ACaCBaiNEXRGmux/wGkICP1PetJy1ChTyCtljceocmEmO3tf89WV8uWoKH2d
+         pWZI1u+MjlrMgxgmeDdyXFqfRCQ4OxjTofDEyXIDK7hupYqQDEk4cUhUnAnNN2LAQpuh
+         +gczt4gPC3h6+WrKt/nA8L2HLmlgwaLi+QboL7uc5ERrAk4XVkTxXERJsq6EICHd4f2J
+         TtbH59IfV6VvTqF07HP0ZwpGl69Tuo7DIyFRIQJgVAwv6ortFs6WFiQmePAU7CJm/da7
+         RndmDsBVODLneg5Z4L24u0pp+/JV+sJdOldEjvio5gsJKPtabUpyiRKx+utbevsTxbkW
+         EmIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zZDSoQx95Ubh+HBfrSp1XYVgSVN4vHwFBPkS+obSa4E=;
+        b=HpghAOsZo8g/qI/nf2hG9PNrT6U9O/1sj4MHnPvsyNbMxco2qHK4IRVgTVlEuXFaBk
+         X67/ZDhgcgt+DSFOnmOnta9D662u85TklfMDH7Sbi3i3fAWA1QVfEtc5HF3/Xo/Yks3C
+         GiAMdgM57OBdFqrMUlUjw/VBXkLmQRe/Xnv3Ppm2xj2FpKU9fbxJKLC5HyPc37xf7gMx
+         30v95Kg+nz02iAy5SR2GG025Seul4iSVgvljbWFFVoFNX8g7+DTQCQYzfG823OzH9YSE
+         Z7WONY6NtRjl6GwFwjkHt8Yi7HDr/Dlrjy1DX0XMswmzVHq+KGfZC1YrkB0/KHFEsnyq
+         iK0Q==
+X-Gm-Message-State: ANhLgQ34T1He+LsXpBPeYbqOL3E7CANUR4+1AQPXylHl4ldlp4VzA4xZ
+        biinnFQLktzbCZ+fKz8KtHhSYSkND5eMlj+qsKY=
+X-Google-Smtp-Source: ADFU+vtaeosP6hJkETgIFM8xGMedLYGzWkquPOyhzA82L8Z2QNLxYdCinWQ9cUB0TEQ/Lqk5kHIjpEpjCNGpUgBgWfI=
+X-Received: by 2002:ac2:522e:: with SMTP id i14mr3965188lfl.133.1584071261314;
+ Thu, 12 Mar 2020 20:47:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+References: <1584065460-22205-1-git-send-email-jrdr.linux@gmail.com> <20200312195850.29693d4e55ec27ae11443c0f@linux-foundation.org>
+In-Reply-To: <20200312195850.29693d4e55ec27ae11443c0f@linux-foundation.org>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Fri, 13 Mar 2020 09:17:22 +0530
+Message-ID: <CAFqt6zZ4ceum_SHmQgub8EKJxNQ26_-UfzvK-kcejqH67QHHtA@mail.gmail.com>
+Subject: Re: [PATCH] mm/hmm.c : Remove additional check for lockdep_assert_held()
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Linux-MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-platform_get_irq() will generate an error message if the requested irq
-is not present
+On Fri, Mar 13, 2020 at 8:28 AM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Fri, 13 Mar 2020 07:41:00 +0530 Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>
+> > walk_page_range() already has a check for lockdep_assert_held().
+> > So additional check for lockdep_assert_held() can be removed from
+> > hmm_range_fault().
+> >
+> > ...
+> >
+> > --- a/mm/hmm.c
+> > +++ b/mm/hmm.c
+> > @@ -681,7 +681,6 @@ long hmm_range_fault(struct hmm_range *range, unsigned int flags)
+> >       struct mm_struct *mm = range->notifier->mm;
+> >       int ret;
+> >
+> > -     lockdep_assert_held(&mm->mmap_sem);
+> >
+> >       do {
+> >               /* If range is no longer valid force retry. */
+>
+> It isn't very obvious that hmm_range_fault() is and will only be called
+> from walk_page_range() (is it?)
+>
 
-  mvebu-gpio f1010140.gpio: IRQ index 3 not found
-
-use platform_get_irq_optional() to avoid the error message being
-generated.
-
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
- drivers/gpio/gpio-mvebu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index d2b999c7987f..3c9f4fb3d5a2 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -1247,7 +1247,7 @@ static int mvebu_gpio_probe(struct platform_device =
-*pdev)
- 	 * pins.
- 	 */
- 	for (i =3D 0; i < 4; i++) {
--		int irq =3D platform_get_irq(pdev, i);
-+		int irq =3D platform_get_irq_optional(pdev, i);
-=20
- 		if (irq < 0)
- 			continue;
---=20
-2.25.1
-
+Sorry Andrew, didn't get this part ?
+* hmm_range_fault() is and will only be called
+ from walk_page_range() (is it?) *
