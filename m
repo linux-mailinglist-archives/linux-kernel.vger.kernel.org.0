@@ -2,95 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04297183F14
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 03:19:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B190C183F0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 03:19:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbgCMCTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 22:19:34 -0400
-Received: from mga14.intel.com ([192.55.52.115]:25868 "EHLO mga14.intel.com"
+        id S1726674AbgCMCTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 22:19:11 -0400
+Received: from ozlabs.org ([203.11.71.1]:43833 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726613AbgCMCTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 22:19:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 19:19:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,546,1574150400"; 
-   d="scan'208";a="261743892"
-Received: from sqa-gate.sh.intel.com (HELO clx-ap-likexu.tsp.org) ([10.239.48.212])
-  by orsmga002.jf.intel.com with ESMTP; 12 Mar 2020 19:19:27 -0700
-From:   Like Xu <like.xu@linux.intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, kvm@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>,
-        Jim Mattson <jmattson@google.com>,
-        Wanpeng Li <wanpengli@tencent.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Liran Alon <liran.alon@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Liang Kan <kan.liang@linux.intel.com>,
-        Wei Wang <wei.w.wang@intel.com>,
-        Like Xu <like.xu@linux.intel.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v9 10/10] KVM: x86: Remove the common trap handler of the MSR_IA32_DEBUGCTLMSR
-Date:   Fri, 13 Mar 2020 10:16:16 +0800
-Message-Id: <20200313021616.112322-11-like.xu@linux.intel.com>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200313021616.112322-1-like.xu@linux.intel.com>
-References: <20200313021616.112322-1-like.xu@linux.intel.com>
+        id S1726620AbgCMCTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 22:19:08 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48dqBd3LZWz9sSW;
+        Fri, 13 Mar 2020 13:19:05 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1584065946;
+        bh=NVMEuaQx4TxOWTt4RbY0DGYKQCDGpPDgE1FjtwKP62g=;
+        h=Date:From:To:Cc:Subject:From;
+        b=OXZtnXflXSgETNQG9tzLywnQqzVk0BwXxjOA0ddMxYjFqGMvNhdUBmre2f14XQUms
+         ENMNmBs/lIQPsEjDLv/rAKVy6qpb+JE6opcuZiWNtQDDJFAvr6GnvZX1qa5pPuJ1eN
+         SdjphArhLeBoP2hDi3jgc7HjzosZYwWwh2JZZ1g/10wL6Wo3pgbp+XIPKsj6naDWxk
+         /iRt6/vlOwXksbjBBXnmtu4UCKbdnHtMU19AkycLOfi2G6jQ4tMbThv0KUvJuEEx2f
+         +L5TXNNJNcD3ipHWIBfEvnrgzAAlxvnmhStGW680vKhjBKZ1WNvt3QLiNvCtkq/3Jd
+         uMbPBlJSNe+4g==
+Date:   Fri, 13 Mar 2020 13:19:03 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Message-ID: <20200313131903.3975cdd2@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/aaVrJ9xWlerAddN4drz9MQ1";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Wang <wei.w.wang@intel.com>
+--Sig_/aaVrJ9xWlerAddN4drz9MQ1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The debugctl msr is not completely identical on AMD and Intel CPUs, for
-example, FREEZE_LBRS_ON_PMI is supported by Intel CPUs only. Now, this
-msr is handled separately in svm.c and intel_pmu.c. So remove the
-common debugctl msr handling code in kvm_get/set_msr_common.
+Hi all,
 
-Signed-off-by: Wei Wang <wei.w.wang@intel.com>
----
- arch/x86/kvm/x86.c | 13 -------------
- 1 file changed, 13 deletions(-)
+After merging the v4l-dvb tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 3771d5fb2524..5ad36e71b3eb 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2756,18 +2756,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 			return 1;
- 		}
- 		break;
--	case MSR_IA32_DEBUGCTLMSR:
--		if (!data) {
--			/* We support the non-activated case already */
--			break;
--		} else if (data & ~(DEBUGCTLMSR_LBR | DEBUGCTLMSR_BTF)) {
--			/* Values other than LBR and BTF are vendor-specific,
--			   thus reserved and should throw a #GP */
--			return 1;
--		}
--		vcpu_unimpl(vcpu, "%s: MSR_IA32_DEBUGCTLMSR 0x%llx, nop\n",
--			    __func__, data);
--		break;
- 	case 0x200 ... 0x2ff:
- 		return kvm_mtrr_set_msr(vcpu, msr, data);
- 	case MSR_IA32_APICBASE:
-@@ -3025,7 +3013,6 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	switch (msr_info->index) {
- 	case MSR_IA32_PLATFORM_ID:
- 	case MSR_IA32_EBL_CR_POWERON:
--	case MSR_IA32_DEBUGCTLMSR:
- 	case MSR_IA32_LASTBRANCHFROMIP:
- 	case MSR_IA32_LASTBRANCHTOIP:
- 	case MSR_IA32_LASTINTFROMIP:
--- 
-2.21.1
+ERROR: modpost: "fwnode_get_name" [drivers/media/v4l2-core/v4l2-fwnode.ko] =
+undefined!
 
+Caused by commit
+
+  dfc22c073b78 ("media: v4l2-fwnode: add initial connector parsing support")
+
+I have used the v4l-dvb tree from next-20200312 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/aaVrJ9xWlerAddN4drz9MQ1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5q7ZcACgkQAVBC80lX
+0GyThggAokPa7fqKCMQneit5QBLLZcBkldmDSeJ029oNeEefcFSqSeafcDr1uynQ
+7K4phlybJFhpkEJ7U2o1Wc8fACBv6/Fq7QST1INm+vp+VKPeDM5Aq9CSYIP3qjhI
+jqWne8+4OrO99AgNm3maphfoPTweri2b9VDR7mcoKsEZGnCabsauS7T2mERsis6O
+eR/J039gfqBu7XFtaMP+2FmMBcF4qyX+vW6VFjN6IIX5KXbk6myo+M5eKUaR7TzP
+C6n93me0Zptg3gjnXIbgXK+Fbyq79S3f0IeOXlHHkR3MKIjrN5JkJPeW3g2mYDA5
+Lb943M/XV1FOlLALi8SsvE7Ezfhu4Q==
+=02CG
+-----END PGP SIGNATURE-----
+
+--Sig_/aaVrJ9xWlerAddN4drz9MQ1--
