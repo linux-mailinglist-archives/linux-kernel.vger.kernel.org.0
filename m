@@ -2,49 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8068A18459E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 12:09:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFBAB1845A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 12:10:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbgCMLJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 07:09:15 -0400
-Received: from verein.lst.de ([213.95.11.211]:41995 "EHLO verein.lst.de"
+        id S1726616AbgCMLKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 07:10:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60604 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726414AbgCMLJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 07:09:15 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 6D18968C4E; Fri, 13 Mar 2020 12:09:13 +0100 (CET)
-Date:   Fri, 13 Mar 2020 12:09:13 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Balbir Singh <sblbir@amazon.com>
-Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, axboe@kernel.dk,
-        Chaitanya.Kulkarni@wdc.com, hch@lst.de,
-        Someswarudu Sangaraju <ssomesh@amazon.com>
-Subject: Re: [PATCH v3 1/5] block/genhd: Notify udev about capacity change
-Message-ID: <20200313110913.GA8264@lst.de>
-References: <20200313053009.19866-1-sblbir@amazon.com> <20200313053009.19866-2-sblbir@amazon.com>
+        id S1726365AbgCMLKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 07:10:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 80966AD32;
+        Fri, 13 Mar 2020 11:10:06 +0000 (UTC)
+Date:   Fri, 13 Mar 2020 12:10:04 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Dave Jones <dsj@fb.com>, Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 01/14] x86/dumpstack: Add SHOW_REGS_IRET mode
+In-Reply-To: <2b2c601047136a4dbe42ed58715071e5323b5dae.1584033751.git.jpoimboe@redhat.com>
+Message-ID: <alpine.LSU.2.21.2003131128180.30076@pobox.suse.cz>
+References: <cover.1584033751.git.jpoimboe@redhat.com> <2b2c601047136a4dbe42ed58715071e5323b5dae.1584033751.git.jpoimboe@redhat.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200313053009.19866-2-sblbir@amazon.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 05:30:05AM +0000, Balbir Singh wrote:
-> Allow block/genhd to notify user space (via udev) about disk size changes
-> using a new helper set_capacity_revalidate_and_notify(), which is a wrapper
-> on top of set_capacity(). set_capacity_revalidate_and_notify() will only
-> notify via udev if the current capacity or the target capacity is not zero
-> and iff the capacity changes.
+On Thu, 12 Mar 2020, Josh Poimboeuf wrote:
+
+> Now that __show_regs() has the concept of "modes" to indicate which
+> registers should be displayed, replace show_iret_regs() with a new
+> SHOW_REGS_IRET mode.  This is only a cleanup and doesn't change any
+> behavior.
 > 
-> Suggested-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Someswarudu Sangaraju <ssomesh@amazon.com>
-> Signed-off-by: Balbir Singh <sblbir@amazon.com>
-> Reviewed-by: Bob Liu <bob.liu@oracle.com>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> ---
+>  arch/x86/include/asm/kdebug.h |  1 +
+>  arch/x86/kernel/dumpstack.c   | 27 ++++++++++-----------------
+>  arch/x86/kernel/process_64.c  |  7 ++++++-
+>  3 files changed, 17 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kdebug.h b/arch/x86/include/asm/kdebug.h
+> index 247ab14c6309..6112227368e7 100644
+> --- a/arch/x86/include/asm/kdebug.h
+> +++ b/arch/x86/include/asm/kdebug.h
+> @@ -23,6 +23,7 @@ enum die_val {
+>  };
+>  
+>  enum show_regs_mode {
+> +	SHOW_REGS_IRET,
+>  	SHOW_REGS_SHORT,
+>  	/*
+>  	 * For when userspace crashed, but we don't think it's our fault, and
+> diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+> index ae64ec7f752f..8a9ff25779ec 100644
+> --- a/arch/x86/kernel/dumpstack.c
+> +++ b/arch/x86/kernel/dumpstack.c
+> @@ -126,15 +126,8 @@ void show_ip(struct pt_regs *regs, const char *loglvl)
+>  	show_opcodes(regs, loglvl);
+>  }
+>  
+> -void show_iret_regs(struct pt_regs *regs)
+> -{
+> -	show_ip(regs, KERN_DEFAULT);
+> -	printk(KERN_DEFAULT "RSP: %04x:%016lx EFLAGS: %08lx", (int)regs->ss,
+> -		regs->sp, regs->flags);
+> -}
+> -
 
-Looks good,
+There is also declaration of show_iret_regs() in 
+arch/x86/include/asm/kdebug.h which can be removed now.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Miroslav
