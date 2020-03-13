@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EDB8184EBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:35:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C0C7184EB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:35:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727548AbgCMSf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 14:35:27 -0400
-Received: from mga06.intel.com ([134.134.136.31]:28644 "EHLO mga06.intel.com"
+        id S1727531AbgCMSfP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 14:35:15 -0400
+Received: from mga06.intel.com ([134.134.136.31]:28646 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727347AbgCMSej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 14:34:39 -0400
+        id S1727357AbgCMSek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 14:34:40 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 11:34:39 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 11:34:40 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,549,1574150400"; 
-   d="scan'208";a="442506100"
+   d="scan'208";a="442506107"
 Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.45])
-  by fmsmga005.fm.intel.com with ESMTP; 13 Mar 2020 11:34:38 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 13 Mar 2020 11:34:39 -0700
 From:   kan.liang@linux.intel.com
 To:     acme@kernel.org, jolsa@redhat.com, peterz@infradead.org,
         mingo@redhat.com, linux-kernel@vger.kernel.org
@@ -28,9 +28,9 @@ Cc:     namhyung@kernel.org, adrian.hunter@intel.com,
         alexey.budankov@linux.intel.com, vitaly.slobodskoy@intel.com,
         pavel.gerasimov@intel.com, mpe@ellerman.id.au, eranian@google.com,
         ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V3 09/17] perf thread: Add a knob for LBR stitch approach
-Date:   Fri, 13 Mar 2020 11:33:11 -0700
-Message-Id: <20200313183319.17739-10-kan.liang@linux.intel.com>
+Subject: [PATCH V3 10/17] perf tools: Save previous sample for LBR stitching approach
+Date:   Fri, 13 Mar 2020 11:33:12 -0700
+Message-Id: <20200313183319.17739-11-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200313183319.17739-1-kan.liang@linux.intel.com>
 References: <20200313183319.17739-1-kan.liang@linux.intel.com>
@@ -41,53 +41,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-The LBR stitch approach should be disabled by default. Because
-- The stitching approach base on LBR call stack technology. The known
-limitations of LBR call stack technology still apply to the approach,
-e.g. Exception handing such as setjmp/longjmp will have calls/returns
-not match.
-- This approach is not full proof. There can be cases where it creates
-incorrect call stacks from incorrect matches. There is no attempt to
-validate any matches in another way.
+To retrieve the overwritten LBRs from previous sample for LBR stitching
+approach, perf has to save the previous sample.
 
-The 'lbr_stitch_enable' is used to indicate whether enable LBR stitch
-approach, which is disabled by default. The following patch will
-introduce a new option for each tools to enable the LBR stitch
-approach.
+Only allocate the struct lbr_stitch once, when LBR stitching approach
+is enabled and kernel supports hw_idx.
 
 Reviewed-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- tools/perf/util/thread.c | 1 +
- tools/perf/util/thread.h | 3 +++
- 2 files changed, 4 insertions(+)
+ tools/perf/util/machine.c | 23 +++++++++++++++++++++++
+ tools/perf/util/thread.c  |  1 +
+ tools/perf/util/thread.h  | 16 ++++++++++++++++
+ 3 files changed, 40 insertions(+)
 
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index f1661dd3ca69..d91e11bfc8ca 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2261,6 +2261,21 @@ static int lbr_callchain_add_lbr_ip(struct thread *thread,
+ 	return 0;
+ }
+ 
++static bool alloc_lbr_stitch(struct thread *thread)
++{
++	if (thread->lbr_stitch)
++		return true;
++
++	thread->lbr_stitch = calloc(1, sizeof(struct lbr_stitch));
++	if (!thread->lbr_stitch)
++		goto err;
++
++err:
++	pr_warning("Failed to allocate space for stitched LBRs. Disable LBR stitch\n");
++	thread->lbr_stitch_enable = false;
++	return false;
++}
++
+ /*
+  * Recolve LBR callstack chain sample
+  * Return:
+@@ -2277,6 +2292,7 @@ static int resolve_lbr_callchain_sample(struct thread *thread,
+ {
+ 	struct ip_callchain *chain = sample->callchain;
+ 	int chain_nr = min(max_stack, (int)chain->nr), i;
++	struct lbr_stitch *lbr_stitch;
+ 	u64 branch_from = 0;
+ 	int err;
+ 
+@@ -2289,6 +2305,13 @@ static int resolve_lbr_callchain_sample(struct thread *thread,
+ 	if (i == chain_nr)
+ 		return 0;
+ 
++	if (thread->lbr_stitch_enable && !sample->no_hw_idx &&
++	    alloc_lbr_stitch(thread)) {
++		lbr_stitch = thread->lbr_stitch;
++
++		memcpy(&lbr_stitch->prev_sample, sample, sizeof(*sample));
++	}
++
+ 	if (callchain_param.order == ORDER_CALLEE) {
+ 		/* Add kernel ip */
+ 		err = lbr_callchain_add_kernel_ip(thread, cursor, sample,
 diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-index 28b719388028..1f080db23615 100644
+index 1f080db23615..8d0da260c84c 100644
 --- a/tools/perf/util/thread.c
 +++ b/tools/perf/util/thread.c
-@@ -47,6 +47,7 @@ struct thread *thread__new(pid_t pid, pid_t tid)
- 		thread->tid = tid;
- 		thread->ppid = -1;
- 		thread->cpu = -1;
-+		thread->lbr_stitch_enable = false;
- 		INIT_LIST_HEAD(&thread->namespaces_list);
- 		INIT_LIST_HEAD(&thread->comm_list);
- 		init_rwsem(&thread->namespaces_lock);
+@@ -111,6 +111,7 @@ void thread__delete(struct thread *thread)
+ 
+ 	exit_rwsem(&thread->namespaces_lock);
+ 	exit_rwsem(&thread->comm_lock);
++	thread__free_stitch_list(thread);
+ 	free(thread);
+ }
+ 
 diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-index 20b96b5d1f15..95294050cff2 100644
+index 95294050cff2..5fe239bd8f17 100644
 --- a/tools/perf/util/thread.h
 +++ b/tools/perf/util/thread.h
-@@ -46,6 +46,9 @@ struct thread {
- 	struct srccode_state	srccode_state;
- 	bool			filter;
- 	int			filter_entry_depth;
+@@ -13,6 +13,7 @@
+ #include <strlist.h>
+ #include <intlist.h>
+ #include "rwsem.h"
++#include "event.h"
+ 
+ struct addr_location;
+ struct map;
+@@ -20,6 +21,10 @@ struct perf_record_namespaces;
+ struct thread_stack;
+ struct unwind_libunwind_ops;
+ 
++struct lbr_stitch {
++	struct perf_sample		prev_sample;
++};
 +
-+	/* LBR call stack stitch */
-+	bool			lbr_stitch_enable;
+ struct thread {
+ 	union {
+ 		struct rb_node	 rb_node;
+@@ -49,6 +54,7 @@ struct thread {
+ 
+ 	/* LBR call stack stitch */
+ 	bool			lbr_stitch_enable;
++	struct lbr_stitch	*lbr_stitch;
  };
  
  struct machine;
+@@ -145,4 +151,14 @@ static inline bool thread__is_filtered(struct thread *thread)
+ 	return false;
+ }
+ 
++static inline void thread__free_stitch_list(struct thread *thread)
++{
++	struct lbr_stitch *lbr_stitch = thread->lbr_stitch;
++
++	if (!lbr_stitch)
++		return;
++
++	free(thread->lbr_stitch);
++}
++
+ #endif	/* __PERF_THREAD_H */
 -- 
 2.17.1
 
