@@ -2,49 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F4AB1850C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 22:13:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B5AC1850B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 22:13:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbgCMVNG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 17:13:06 -0400
-Received: from smtprelay0208.hostedemail.com ([216.40.44.208]:45916 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727521AbgCMVNE (ORCPT
+        id S1727326AbgCMVMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 17:12:48 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:33087 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726637AbgCMVMs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 17:13:04 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id A3FFA18224082;
-        Fri, 13 Mar 2020 21:13:03 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1560:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3868:3870:3874:4321:4362:5007:10004:10400:10848:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14659:21080:21627:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: mind55_8f06b55a7b03e
-X-Filterd-Recvd-Size: 1064
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf13.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 13 Mar 2020 21:13:02 +0000 (UTC)
-Message-ID: <9d1467ed16423c8fdb2e18534505dd13b8d83edd.camel@perches.com>
-Subject: Re: [PATCH] scripts/spelling.txt: add more spellings to spelling.txt
-From:   Joe Perches <joe@perches.com>
-To:     Colin King <colin.king@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 13 Mar 2020 14:11:19 -0700
-In-Reply-To: <20200313174946.228216-1-colin.king@canonical.com>
-References: <20200313174946.228216-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 13 Mar 2020 17:12:48 -0400
+X-IronPort-AV: E=Sophos;i="5.70,550,1574089200"; 
+   d="scan'208";a="41835027"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 14 Mar 2020 06:12:43 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E2D6B40E09D5;
+        Sat, 14 Mar 2020 06:12:38 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 0/4] ov5645: Switch to assigned-clock-rates
+Date:   Fri, 13 Mar 2020 21:12:30 +0000
+Message-Id: <1584133954-6953-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2020-03-13 at 17:49 +0000, Colin King wrote:
-> Here are some of the more common spelling mistakes and typos that I've
-> found while fixing up spelling mistakes in the kernel since November 2019
+Hi All,
 
-Thanks Colin.
+This patch series adds support for using assigned-clock-rates for
+specifying clock rates for ov5645 driver
 
+Thanks,
+Prabhakar
+
+Changed for v3:
+* Dropped reading assigned-clock-rates
+* Increased the maximum clock frequency to 24480000
+
+Changes for v2:
+* Instead of completely dropping clock-frequency property marked it as
+  deprecated.
+* Split up imx6qdl-wandboard.dtsi changes as separate patch.
+
+Lad Prabhakar (4):
+  media: dt-bindings: media: i2c: Switch to assigned-clock-rates
+  media: i2c: ov5645: Switch to assigned-clock-rates
+  media: i2c: ov5645: Set maximum leverage of external clock frequency
+    to 24480000
+  ARM: dts: imx6qdl-wandboard: Switch to assigned-clock-rates for ov5645
+    node
+
+ .../devicetree/bindings/media/i2c/ov5645.txt       |  5 ++--
+ arch/arm/boot/dts/imx6qdl-wandboard.dtsi           |  3 ++-
+ drivers/media/i2c/ov5645.c                         | 27 ++++++++++++----------
+ 3 files changed, 20 insertions(+), 15 deletions(-)
+
+-- 
+2.7.4
 
