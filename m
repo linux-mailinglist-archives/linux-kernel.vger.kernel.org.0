@@ -2,140 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A2B71842A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 09:31:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F7771842B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 09:32:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbgCMIbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 04:31:22 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:40135 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726495AbgCMIbV (ORCPT
+        id S1726510AbgCMIcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 04:32:32 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34360 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726406AbgCMIcc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 04:31:21 -0400
-Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1Mr9O4-1jiCrb2HEU-00oFj6; Fri, 13 Mar 2020 09:31:09 +0100
-Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
-        by mail.cetitecgmbh.com (Postfix) with ESMTP id C340E650117;
-        Fri, 13 Mar 2020 08:31:08 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at cetitec.com
-Received: from mail.cetitecgmbh.com ([127.0.0.1])
-        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id cxOrl4KuroB3; Fri, 13 Mar 2020 09:31:08 +0100 (CET)
-Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
-        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 5C8C964FBDA;
-        Fri, 13 Mar 2020 09:31:08 +0100 (CET)
-Received: from pflmari.corp.cetitec.com (10.10.2.141) by
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Fri, 13 Mar 2020 09:31:08 +0100
-Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
-        id EB30A804F8; Fri, 13 Mar 2020 09:31:07 +0100 (CET)
-Date:   Fri, 13 Mar 2020 09:31:07 +0100
-From:   Alex Riesen <alexander.riesen@cetitec.com>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
-CC:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 0/8] media: i2c: adv748x: add support for HDMI audio
-Message-ID: <20200313083107.GB3832@pflmari>
-Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devel@driverdev.osuosl.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20200113141459.GA3606@pflmari>
- <e93e6e1e-11dc-d505-7287-46b115a4a609@xs4all.nl>
+        Fri, 13 Mar 2020 04:32:32 -0400
+Received: by mail-wm1-f65.google.com with SMTP id x3so7284367wmj.1;
+        Fri, 13 Mar 2020 01:32:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YOjRw+C/n7E7oX+y3x4aSohu3eoOKr98HtVKwmdSAa4=;
+        b=h/J4nlTWt0nrIB0e5vOXjzg4dei8f3MbKT7FrmAgrJ17CJ2JgoLp7E5jP9iyeB7/TK
+         8j+vk99Yi4sSnia6lKaFs2yZd7kN3BJUzA3ibmGJizd9MybjhPCpM1DQxml1f+UckGaa
+         bLVCTNz00BwGw1kbYepy0UllCfMMZxdXSqoWILxrPgCFTYB4LuM/8xPnmEU9pR8Rm8Nm
+         RItxLPXcWUE97QScsbsj3G7VvB+fJVCZj/xbAZaoOiSxpernmqx2D23bDdohKMLQYK0t
+         axQ90bnZNUy8KVEpLLLkhNBg9MyO/8DBz/ME1wT3dUdIfHtVC/l7PhL8ifz67tHK/G/T
+         75sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YOjRw+C/n7E7oX+y3x4aSohu3eoOKr98HtVKwmdSAa4=;
+        b=WBIn4tYpTOfLQwMrcaihVmnwdRtrUp05Us1feW/Ubeyqcpt1Yxz9kYQk4InbCdwaRq
+         h7Oa0oU4VDG6j789HQKkzxRwHjeE+EJj/XgW9PP7bianBFmrxwqzwEgTM3Yj+PAGyMkj
+         vKElH2B0OzfvOFhOSBCS9jiJULTder68gchHFzGNOgkmYU35vbwgnqu0InkbqzWdcega
+         enY2ZnT6/esemi2MRMMq4Z7EzAYzdfUxqNiM2/97mlx1UcIJ05P4HHpHTkfyquT1gIVA
+         +fHuKe3vZO96xQ55UYxlkOQgXZdbLasiWyLq8v9EcpT0Pq9g63+SYpc8QgZ0TI6R+EIm
+         Sb1g==
+X-Gm-Message-State: ANhLgQ1Jy3rh5CaRIKDe4UiZ9Zd5XDcCb6VON5gyuVfyJR6SUECzpfYR
+        Wh7l3ofYGeXTXdLrpkcEViD+BvEg
+X-Google-Smtp-Source: ADFU+vs1FL/6bDgN+NsmfFq6d3hMjZ5VBsz8S+087YMkOLZhXOVbxR4B1049/l8ONxxTnnk72txSGA==
+X-Received: by 2002:a7b:cb97:: with SMTP id m23mr9351116wmi.140.1584088349511;
+        Fri, 13 Mar 2020 01:32:29 -0700 (PDT)
+Received: from [192.168.2.1] (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id h10sm4144167wrb.24.2020.03.13.01.32.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Mar 2020 01:32:29 -0700 (PDT)
+Subject: Re: [PATCH] arm64: dts: rockchip: Add Hugsun X99 IR receiver and
+ power led
+To:     Vivek Unune <npcomplete13@gmail.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com, heiko@sntech.de, ezequiel@collabora.com,
+        akash@openedev.com
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20200313000112.19419-1-npcomplete13@gmail.com>
+From:   Johan Jonker <jbx6244@gmail.com>
+Message-ID: <7f294dd5-3188-e2d6-dd49-4b2afb04455a@gmail.com>
+Date:   Fri, 13 Mar 2020 09:32:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <e93e6e1e-11dc-d505-7287-46b115a4a609@xs4all.nl>
-X-Originating-IP: [10.10.2.141]
-X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A290D7F536A627063
-X-Provags-ID: V03:K1:fjYydfuJxQy/H8udIdxXYJOsSL6CEuFrOL2Fk27fHc9ELzJwygD
- tSR2eDKm9wVKROUb22OoSignvMm//2ihBwndyENNAK1vw/GGwbcPzSuRsgCu/zXswPhjrJn
- QsZzGMdofYcDj+izAhTTtYzE5VeqCNqGS4xRBqOAryw0OIO6FHPkMRAt/l4/5JB4YS/HPn4
- kp84HfyyRUDGN8AOVHeUQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:nKFlS+QJRi8=:1hjS7oGd246sQU4texx2hz
- 4v7AJxdCoJqx8xpbGKHdB9Pvql+H9DIKCZmGbdhJ61fgZfWZgzxSnlk+ZAEbigmrPk0kKyKrW
- PHPZDGOpXzDeA8Ef2W0HEQjyfAQuCKobDjYHbVMh/nyAglluh2o47IDnbhoxkSZhw7pcafeba
- K2HqgerOeNZAUqNArlqJ1NqQ/3OwMFA9DPEM2qWzQ8fUMBlA9fWoTMrvlWCWd2WcQAYlstWIy
- o70LXvpY+iDiRz+c3WYjesFkIMry8EVlFrXYohAfYxhwQCVTiuLQORvwwvJSZtvU9R01sdamG
- yaY0BJYKO4U1QmMrP9BQV5e7e4CY5urvdeO3Ix4e3um3lS0qmnupPFlw7D/Yep7Dlxmo53mGy
- bjyUacXnvTtr30ea36Q5GDn4qDIt5dehhaSOjQmZpaGXLWI8zRv5mvbGAnkL+AhM4l2GoS6Dz
- K7ofXW9K11lGMcq0xZcT5ZyHg1/7yYqz//H0oyCneSERixHlNZqMaMagyrUvD0vwTUHXzA4zO
- 2i0PaJyzb+1gcT7XIHEvQQbM9wYFO1aCbeVmW/MHE6PM439FQGxZQr8X+LNgjUatujp5nkggt
- 6iDjtuATX6TQ/NjqSTSqkdEpMQVRbJ9Fx6bJal80kQOK+DlABQFHLHWntV2BNNoMyQup653l3
- LofCZS37X6F/5PQRn01zznxopDl2SjoAzAO5NyhlPqYAANlXqzk1Wn8YsdwoBddys6LRWz2WN
- C6nb47Ai2HZ1IYQxf59b00qmuIywIUKxMaFIZKYdl3uxm/p7qByxHkNpBAzdPxQXsXtC5QGho
- /Vegu7uGUml07e2l1aSEQlYklRNoFYobAa7tzF1fnLzLgiuj4TfGQZvwveoH3k1M1jZiZ1a
+In-Reply-To: <20200313000112.19419-1-npcomplete13@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
+Hi Vivek,
 
-Hans Verkuil, Fri, Mar 13, 2020 09:21:05 +0100:
-> As a general note for this series: it might be better to have two
-> patch series: one for patches 1 and 3-6 (not sure whether 5 can be included
-> or not), and one where the public API changes (i.e. new V4L2 audio controls)
-> are added. The first can probably be merged fairly quickly, the second will
-> likely require more iterations since public API patches always take much longer
-> before they are mature.
+The 'power-led' need some changes.
 
-I see. After the discussion started, I started to have suspicions of my own
-regarding the V4L2 ioctls. Except for log-status, which is a practical
-diagnostics feature (even supported by v4l2-ctl), I'm thinking about dropping
-them altogether in favor of audio soc DAI implementation.
-The DAI implementation does all we ever needed from the device. Besides,
-selecting a I2S protocol variant from user space (I2S vs I2S/TDM) never felt
-right.
+From leds-gpio.yaml:
 
-Shall I submit the log-status separately?
+patternProperties:
+  # The first form is preferred, but fall back to just 'led' anywhere in the
+  # node name to at least catch some child nodes.
+  "(^led-[0-9a-f]$|led)":
+    type: object
 
-Regards,
-Alex
+Test with:
+make -k ARCH=arm64 dtbs_check
 
-> On 1/13/20 3:14 PM, Alex Riesen wrote:
-> > This adds minimal support for controlling the audio output I2S port available
-> > on ADV7481 and ADV7482 HDMI decoder devices by ADI. The port carries audio
-> > signal from the decoded HDMI stream.
-> > 
-> > An ADV7482 on the Renesas Salvator-X ES1.1 was used during development of this
-> > code.
-> > 
-> > Alex Riesen (8):
-> >  1. media: adv748x: add a device-specific wrapper for register block read
-> >  2. media: adv748x: add audio mute control and output selection ioctls
-> >  3. media: adv748x: add log_status ioctl
-> >  4. media: adv748x: reserve space for the audio (I2S) port in the driver
-> >     structures
-> >  5. media: adv748x: add an ASoC DAI definition to the driver
-> >  6. media: adv748x: reduce amount of code for bitwise modification of
-> >     device registers
-> >  7. dt-bindings: adv748x: add information about serial audio interface
-> >     (I2S/TDM)
-> >  8. arm64: dts: renesas: salvator: add a connection from adv748x codec
-> >     (HDMI input) to the R-Car SoC
-> > 
-> >  .../devicetree/bindings/media/i2c/adv748x.txt |  13 +-
-> >  .../dts/renesas/r8a7795-es1-salvator-x.dts    |  24 +-
-> >  .../boot/dts/renesas/salvator-common.dtsi     |  35 +-
-> >  drivers/media/i2c/adv748x/adv748x-core.c      |  54 +++
-> >  drivers/media/i2c/adv748x/adv748x-hdmi.c      | 355 ++++++++++++++++++
-> >  drivers/media/i2c/adv748x/adv748x.h           |  53 ++-
-> >  6 files changed, 523 insertions(+), 11 deletions(-)
-> > 
+arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dt.yaml: leds:
+power-led:linux,default-trigger:0: 'none' is not one of ['backlight',
+'default-on', 'heartbeat', 'disk-activity', 'ide-disk', 'timer', 'pattern']
+
+On 3/13/20 1:01 AM, Vivek Unune wrote:
+>  - Add Hugsun X99 IR receiver and power led
+>  - Remove pwm0 node as it interferes with pwer LED gpio
+
+pwer => power
+
+>    Also, it's not used in factory firmware
+>    
+
+> Tested with Libreelec kernel v5.6
+
+Test with linux-next.
+
+git clone -- depth 1
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+
+> 
+> Signed-off-by: Vivek Unune <npcomplete13@gmail.com>
+> ---
+>  .../boot/dts/rockchip/rk3399-hugsun-x99.dts   | 37 +++++++++++++++++--
+>  1 file changed, 33 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+> index d69a613fb65a..df425e164a2e 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+> @@ -29,6 +29,26 @@
+>  		regulator-max-microvolt = <5000000>;
+>  	};
+>  
+> +	ir-receiver {
+> +		compatible = "gpio-ir-receiver";
+> +		gpios = <&gpio0 RK_PA6 GPIO_ACTIVE_LOW>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&ir_rx>;
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&power_led_gpio>;
+> +
+> +		power-led {
+> +			label = "blue:power";
+> +			gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_HIGH>;
+> +			default-state = "on";
+> +			linux,default-trigger = "none";
+> +		};
+> +	};
+> +
+>  	vcc_sys: vcc-sys {
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "vcc_sys";
+> @@ -483,6 +503,18 @@
+>  		};
+>  	};
+>  
+> +	ir {
+> +		ir_rx: ir-rx {
+> +			rockchip,pins = <0 RK_PA6 1 &pcfg_pull_none>;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		power_led_gpio: power-led-gpio {
+> +			rockchip,pins = <4 RK_PC2 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +	};
+> +
+>  	pmic {
+>  		pmic_int_l: pmic-int-l {
+>  			rockchip,pins =
+> @@ -539,10 +572,6 @@
+>  	};
+>  };
+>  
+> -&pwm0 {
+> -	status = "okay";
+> -};
+> -
+>  &pwm2 {
+>  	status = "okay";
+>  	pinctrl-0 = <&pwm2_pin_pull_down>;
+> 
+
