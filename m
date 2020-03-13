@@ -2,331 +2,674 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49FB5184D99
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:27:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C69CB184DA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:30:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbgCMR1x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 13:27:53 -0400
-Received: from mga05.intel.com ([192.55.52.43]:6291 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726414AbgCMR1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 13:27:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 10:27:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,549,1574150400"; 
-   d="scan'208";a="261954964"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 13 Mar 2020 10:27:50 -0700
-Received: from [10.255.182.54] (abudanko-mobl.ccr.corp.intel.com [10.255.182.54])
-        by linux.intel.com (Postfix) with ESMTP id E0E9258049A;
-        Fri, 13 Mar 2020 10:27:42 -0700 (PDT)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v1] perf tool: make Perf tool aware of SELinux access control
-Organization: Intel Corp.
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Message-ID: <b8a0669e-36e4-a0e8-fd35-3dbd890d2170@linux.intel.com>
-Date:   Fri, 13 Mar 2020 20:27:40 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727064AbgCMRaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 13:30:01 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2560 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726446AbgCMRaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 13:30:01 -0400
+Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id E73F9DCA517B5CFB16BB;
+        Fri, 13 Mar 2020 17:29:56 +0000 (GMT)
+Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
+ lhreml702-cah.china.huawei.com (10.201.108.43) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 13 Mar 2020 17:29:56 +0000
+Received: from localhost (10.202.226.57) by lhreml710-chm.china.huawei.com
+ (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Fri, 13 Mar
+ 2020 17:29:55 +0000
+Date:   Fri, 13 Mar 2020 17:29:54 +0000
+From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To:     SeongJae Park <sjpark@amazon.com>
+CC:     <akpm@linux-foundation.org>, SeongJae Park <sjpark@amazon.de>,
+        <aarcange@redhat.com>, <yang.shi@linux.alibaba.com>,
+        <acme@kernel.org>, <alexander.shishkin@linux.intel.com>,
+        <amit@kernel.org>, <brendan.d.gregg@gmail.com>,
+        <brendanhiggins@google.com>, <cai@lca.pw>,
+        <colin.king@canonical.com>, <corbet@lwn.net>, <dwmw@amazon.com>,
+        <jolsa@redhat.com>, <kirill@shutemov.name>, <mark.rutland@arm.com>,
+        <mgorman@suse.de>, <minchan@kernel.org>, <mingo@redhat.com>,
+        <namhyung@kernel.org>, <peterz@infradead.org>,
+        <rdunlap@infradead.org>, <rientjes@google.com>,
+        <rostedt@goodmis.org>, <shuah@kernel.org>, <sj38.park@gmail.com>,
+        <vbabka@suse.cz>, <vdavydov.dev@gmail.com>, <linux-mm@kvack.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 02/14] mm/damon: Implement region based sampling
+Message-ID: <20200313172954.00001f3c@Huawei.com>
+In-Reply-To: <20200224123047.32506-3-sjpark@amazon.com>
+References: <20200224123047.32506-1-sjpark@amazon.com>
+        <20200224123047.32506-3-sjpark@amazon.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.57]
+X-ClientProxiedBy: lhreml723-chm.china.huawei.com (10.201.108.74) To
+ lhreml710-chm.china.huawei.com (10.201.108.61)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 24 Feb 2020 13:30:35 +0100
+SeongJae Park <sjpark@amazon.com> wrote:
 
-Extend Perf tool with the check of /sys/fs/selinux/enforce value and notify 
-in case access to perf_event_open() syscall is restricted by the enforced 
-SELinux policy settings.
+> From: SeongJae Park <sjpark@amazon.de>
+> 
+> This commit implements DAMON's basic access check and region based
+> sampling mechanisms.  This change would seems make no sense, mainly
+> because it is only a part of the DAMON's logics.  Following two commits
+> will make more sense.
+> 
+> This commit also exports `lookup_page_ext()` to GPL modules because
+> DAMON uses the function but also supports the module build.
+> 
+> Basic Access Check
+> ------------------
+> 
+> DAMON basically reports what pages are how frequently accessed.  Note
+> that the frequency is not an absolute number of accesses, but a relative
+> frequency among the pages of the target workloads.
+> 
+> Users can control the resolution of the reports by setting two time
+> intervals, ``sampling interval`` and ``aggregation interval``.  In
+> detail, DAMON checks access to each page per ``sampling interval``,
+> aggregates the results (counts the number of the accesses to each page),
+> and reports the aggregated results per ``aggregation interval``.  For
+> the access check of each page, DAMON uses the Accessed bits of PTEs.
+> 
+> This is thus similar to common periodic access checks based access
+> tracking mechanisms, which overhead is increasing as the size of the
+> target process grows.
+> 
+> Region Based Sampling
+> ---------------------
+> 
+> To avoid the unbounded increase of the overhead, DAMON groups a number
+> of adjacent pages that assumed to have same access frequencies into a
+> region.  As long as the assumption (pages in a region have same access
+> frequencies) is kept, only one page in the region is required to be
+> checked.  Thus, for each ``sampling interval``, DAMON randomly picks one
+> page in each region and clears its Accessed bit.  After one more
+> ``sampling interval``, DAMON reads the Accessed bit of the page and
+> increases the access frequency of the region if the bit has set
+> meanwhile.  Therefore, the monitoring overhead is controllable by
+> setting the number of regions.
+> 
+> Nonetheless, this scheme cannot preserve the quality of the output if
+> the assumption is not kept.  Following commit will introduce how we can
+> make the guarantee with best effort.
+> 
+> Signed-off-by: SeongJae Park <sjpark@amazon.de>
 
-Testing and evaluation (Fedora 31 x86_64 with enforced Targeted policy extended
-by perf_event class (see refpolicy [1] master branch)):
+Came across a minor issue inline.  kthread_run calls kthread_create.
+That gives a potential sleep while atomic issue given the spin lock.
 
-[root@host ~]# ps -Z
-LABEL                               PID TTY          TIME CMD
-unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 3960 pts/1 00:00:00 bash
-unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 4167 pts/1 00:00:00 ps
+Can probably be fixed by preallocating the thread then starting it later.
 
-[root@host ~]# ls -alhZ /usr/local/bin/
-total 56M
-drwxr-xr-x.  2 root root       system_u:object_r:bin_t:s0     4.0K Mar  4 12:27 .
-drwxr-xr-x. 12 root root       system_u:object_r:usr_t:s0     4.0K Jul 25  2019 ..
--rwxr-xr-x.  1 root root       system_u:object_r:bin_t:s0     4.1M Jan 23  2017 bash
--rwxr-xr-x.  1 root root       system_u:object_r:bin_t:s0     4.1M Jan 23  2017 bash.before_shellshock_patch
-...
--rwxr-xr-x.  1 root root       system_u:object_r:bin_t:s0      372 May 14  2019 flask
--rwxr-xr-x.  1 root root       unconfined_u:object_r:bin_t:s0  24M Mar  4 12:15 perf     <== unprivileged users (perf_event_paranoid)
--rwxr-x---.  1 root perf_users unconfined_u:object_r:bin_t:s0  24M Mar  4 12:19 perf.cap <== perf_users (CAP_SYS_ADMIN)
--rwxr-xr-x.  1 root root       system_u:object_r:bin_t:s0      44K Dec  8  2016 spiff
-...
-lrwxrwxrwx.  1 root root       system_u:object_r:bin_t:s0        4 Aug 21  2018 zstdmt -> zstd
+Jonathan
+> ---
+>  mm/damon.c    | 509 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>  mm/page_ext.c |   1 +
+>  2 files changed, 510 insertions(+)
+> 
+> diff --git a/mm/damon.c b/mm/damon.c
+> index aafdca35b7b8..6bdeb84d89af 100644
+> --- a/mm/damon.c
+> +++ b/mm/damon.c
+> @@ -9,9 +9,14 @@
+>  
+>  #define pr_fmt(fmt) "damon: " fmt
+>  
+> +#include <linux/delay.h>
+> +#include <linux/kthread.h>
+>  #include <linux/mm.h>
+>  #include <linux/module.h>
+> +#include <linux/page_idle.h>
+>  #include <linux/random.h>
+> +#include <linux/sched/mm.h>
+> +#include <linux/sched/task.h>
+>  #include <linux/slab.h>
+>  
+>  #define damon_get_task_struct(t) \
+> @@ -51,7 +56,24 @@ struct damon_task {
+>  	struct list_head list;
+>  };
+>  
+> +/*
+> + * For each 'sample_interval', DAMON checks whether each region is accessed or
+> + * not.  It aggregates and keeps the access information (number of accesses to
+> + * each region) for each 'aggr_interval' time.
+> + *
+> + * All time intervals are in micro-seconds.
+> + */
+>  struct damon_ctx {
+> +	unsigned long sample_interval;
+> +	unsigned long aggr_interval;
+> +	unsigned long min_nr_regions;
+> +
+> +	struct timespec64 last_aggregation;
+> +
+> +	struct task_struct *kdamond;
+> +	bool kdamond_stop;
+> +	spinlock_t kdamond_lock;
+> +
+>  	struct rnd_state rndseed;
+>  
+>  	struct list_head tasks_list;	/* 'damon_task' objects */
+> @@ -204,6 +226,493 @@ static unsigned int nr_damon_regions(struct damon_task *t)
+>  	return ret;
+>  }
+>  
+> +/*
+> + * Get the mm_struct of the given task
+> + *
+> + * Callser should put the mm_struct after use, unless it is NULL.
+> + *
+> + * Returns the mm_struct of the task on success, NULL on failure
+> + */
+> +static struct mm_struct *damon_get_mm(struct damon_task *t)
+> +{
+> +	struct task_struct *task;
+> +	struct mm_struct *mm;
+> +
+> +	task = damon_get_task_struct(t);
+> +	if (!task)
+> +		return NULL;
+> +
+> +	mm = get_task_mm(task);
+> +	put_task_struct(task);
+> +	return mm;
+> +}
+> +
+> +/*
+> + * Size-evenly split a region into 'nr_pieces' small regions
+> + *
+> + * Returns 0 on success, or negative error code otherwise.
+> + */
+> +static int damon_split_region_evenly(struct damon_ctx *ctx,
+> +		struct damon_region *r, unsigned int nr_pieces)
+> +{
+> +	unsigned long sz_orig, sz_piece, orig_end;
+> +	struct damon_region *piece = NULL, *next;
+> +	unsigned long start;
+> +
+> +	if (!r || !nr_pieces)
+> +		return -EINVAL;
+> +
+> +	orig_end = r->vm_end;
+> +	sz_orig = r->vm_end - r->vm_start;
+> +	sz_piece = sz_orig / nr_pieces;
+> +
+> +	if (!sz_piece)
+> +		return -EINVAL;
+> +
+> +	r->vm_end = r->vm_start + sz_piece;
+> +	next = damon_next_region(r);
+> +	for (start = r->vm_end; start + sz_piece <= orig_end;
+> +			start += sz_piece) {
+> +		piece = damon_new_region(ctx, start, start + sz_piece);
+> +		damon_add_region(piece, r, next);
+> +		r = piece;
+> +	}
+> +	if (piece)
+> +		piece->vm_end = orig_end;
+> +	return 0;
+> +}
+> +
+> +struct region {
+> +	unsigned long start;
+> +	unsigned long end;
+> +};
+> +
+> +static unsigned long sz_region(struct region *r)
+> +{
+> +	return r->end - r->start;
+> +}
+> +
+> +static void swap_regions(struct region *r1, struct region *r2)
+> +{
+> +	struct region tmp;
+> +
+> +	tmp = *r1;
+> +	*r1 = *r2;
+> +	*r2 = tmp;
+> +}
+> +
+> +/*
+> + * Find the three regions in an address space
+> + *
+> + * vma		the head vma of the target address space
+> + * regions	an array of three 'struct region's that results will be saved
+> + *
+> + * This function receives an address space and finds three regions in it which
+> + * separated by the two biggest unmapped regions in the space.  Please refer to
+> + * below comments of 'damon_init_regions_of()' function to know why this is
+> + * necessary.
+> + *
+> + * Returns 0 if success, or negative error code otherwise.
+> + */
+> +static int damon_three_regions_in_vmas(struct vm_area_struct *vma,
+> +		struct region regions[3])
+> +{
+> +	struct region gap = {0,}, first_gap = {0,}, second_gap = {0,};
+> +	struct vm_area_struct *last_vma = NULL;
+> +	unsigned long start = 0;
+> +
+> +	/* Find two biggest gaps so that first_gap > second_gap > others */
+> +	for (; vma; vma = vma->vm_next) {
+> +		if (!last_vma) {
+> +			start = vma->vm_start;
+> +			last_vma = vma;
+> +			continue;
+> +		}
+> +		gap.start = last_vma->vm_end;
+> +		gap.end = vma->vm_start;
+> +		if (sz_region(&gap) > sz_region(&second_gap)) {
+> +			swap_regions(&gap, &second_gap);
+> +			if (sz_region(&second_gap) > sz_region(&first_gap))
+> +				swap_regions(&second_gap, &first_gap);
+> +		}
+> +		last_vma = vma;
+> +	}
+> +
+> +	if (!sz_region(&second_gap) || !sz_region(&first_gap))
+> +		return -EINVAL;
+> +
+> +	/* Sort the two biggest gaps by address */
+> +	if (first_gap.start > second_gap.start)
+> +		swap_regions(&first_gap, &second_gap);
+> +
+> +	/* Store the result */
+> +	regions[0].start = start;
+> +	regions[0].end = first_gap.start;
+> +	regions[1].start = first_gap.end;
+> +	regions[1].end = second_gap.start;
+> +	regions[2].start = second_gap.end;
+> +	regions[2].end = last_vma->vm_end;
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Get the three regions in the given task
+> + *
+> + * Returns 0 on success, negative error code otherwise.
+> + */
+> +static int damon_three_regions_of(struct damon_task *t,
+> +				struct region regions[3])
+> +{
+> +	struct mm_struct *mm;
+> +	int ret;
+> +
+> +	mm = damon_get_mm(t);
+> +	if (!mm)
+> +		return -EINVAL;
+> +
+> +	down_read(&mm->mmap_sem);
+> +	ret = damon_three_regions_in_vmas(mm->mmap, regions);
+> +	up_read(&mm->mmap_sem);
+> +
+> +	mmput(mm);
+> +	return ret;
+> +}
+> +
+> +/*
+> + * Initialize the monitoring target regions for the given task
+> + *
+> + * t	the given target task
+> + *
+> + * Because only a number of small portions of the entire address space
+> + * is acutally mapped to the memory and accessed, monitoring the unmapped
+> + * regions is wasteful.  That said, because we can deal with small noises,
+> + * tracking every mapping is not strictly required but could even incur a high
+> + * overhead if the mapping frequently changes or the number of mappings is
+> + * high.  Nonetheless, this may seems very weird.  DAMON's dynamic regions
+> + * adjustment mechanism, which will be implemented with following commit will
+> + * make this more sense.
+> + *
+> + * For the reason, we convert the complex mappings to three distinct regions
+> + * that cover every mapped areas of the address space.  Also the two gaps
+> + * between the three regions are the two biggest unmapped areas in the given
+> + * address space.  In detail, this function first identifies the start and the
+> + * end of the mappings and the two biggest unmapped areas of the address space.
+> + * Then, it constructs the three regions as below:
+> + *
+> + *     [mappings[0]->start, big_two_unmapped_areas[0]->start)
+> + *     [big_two_unmapped_areas[0]->end, big_two_unmapped_areas[1]->start)
+> + *     [big_two_unmapped_areas[1]->end, mappings[nr_mappings - 1]->end)
+> + *
+> + * As usual memory map of processes is as below, the gap between the heap and
+> + * the uppermost mmap()-ed region, and the gap between the lowermost mmap()-ed
+> + * region and the stack will be two biggest unmapped regions.  Because these
+> + * gaps are exceptionally huge areas in usual address space, excluding these
+> + * two biggest unmapped regions will be sufficient to make a trade-off.
+> + *
+> + *   <heap>
+> + *   <BIG UNMAPPED REGION 1>
+> + *   <uppermost mmap()-ed region>
+> + *   (other mmap()-ed regions and small unmapped regions)
+> + *   <lowermost mmap()-ed region>
+> + *   <BIG UNMAPPED REGION 2>
+> + *   <stack>
+> + */
+> +static void damon_init_regions_of(struct damon_ctx *c, struct damon_task *t)
+> +{
+> +	struct damon_region *r;
+> +	struct region regions[3];
+> +	int i;
+> +
+> +	if (damon_three_regions_of(t, regions)) {
+> +		pr_err("Failed to get three regions of task %lu\n", t->pid);
+> +		return;
+> +	}
+> +
+> +	/* Set the initial three regions of the task */
+> +	for (i = 0; i < 3; i++) {
+> +		r = damon_new_region(c, regions[i].start, regions[i].end);
+> +		damon_add_region_tail(r, t);
+> +	}
+> +
+> +	/* Split the middle region into 'min_nr_regions - 2' regions */
+> +	r = damon_nth_region_of(t, 1);
+> +	if (damon_split_region_evenly(c, r, c->min_nr_regions - 2))
+> +		pr_warn("Init middle region failed to be split\n");
+> +}
+> +
+> +/* Initialize '->regions_list' of every task */
+> +static void kdamond_init_regions(struct damon_ctx *ctx)
+> +{
+> +	struct damon_task *t;
+> +
+> +	damon_for_each_task(ctx, t)
+> +		damon_init_regions_of(ctx, t);
+> +}
+> +
+> +/*
+> + * Check whether the given region has accessed since the last check
+> + *
+> + * mm	'mm_struct' for the given virtual address space
+> + * r	the region to be checked
+> + */
+> +static void kdamond_check_access(struct damon_ctx *ctx,
+> +			struct mm_struct *mm, struct damon_region *r)
+> +{
+> +	pte_t *pte = NULL;
+> +	pmd_t *pmd = NULL;
+> +	spinlock_t *ptl;
+> +
+> +	if (follow_pte_pmd(mm, r->sampling_addr, NULL, &pte, &pmd, &ptl))
+> +		goto mkold;
+> +
+> +	/* Read the page table access bit of the page */
+> +	if (pte && pte_young(*pte))
+> +		r->nr_accesses++;
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +	else if (pmd && pmd_young(*pmd))
+> +		r->nr_accesses++;
+> +#endif	/* CONFIG_TRANSPARENT_HUGEPAGE */
+> +
+> +	spin_unlock(ptl);
+> +
+> +mkold:
+> +	/* mkold next target */
+> +	r->sampling_addr = damon_rand(ctx, r->vm_start, r->vm_end);
+> +
+> +	if (follow_pte_pmd(mm, r->sampling_addr, NULL, &pte, &pmd, &ptl))
+> +		return;
+> +
+> +	if (pte) {
+> +		if (pte_young(*pte)) {
+> +			clear_page_idle(pte_page(*pte));
+> +			set_page_young(pte_page(*pte));
+> +		}
+> +		*pte = pte_mkold(*pte);
+> +	}
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +	else if (pmd) {
+> +		if (pmd_young(*pmd)) {
+> +			clear_page_idle(pmd_page(*pmd));
+> +			set_page_young(pmd_page(*pmd));
+> +		}
+> +		*pmd = pmd_mkold(*pmd);
+> +	}
+> +#endif
+> +
+> +	spin_unlock(ptl);
+> +}
+> +
+> +/*
+> + * Check whether a time interval is elapsed
+> + *
+> + * baseline	the time to check whether the interval has elapsed since
+> + * interval	the time interval (microseconds)
+> + *
+> + * See whether the given time interval has passed since the given baseline
+> + * time.  If so, it also updates the baseline to current time for next check.
+> + *
+> + * Returns true if the time interval has passed, or false otherwise.
+> + */
+> +static bool damon_check_reset_time_interval(struct timespec64 *baseline,
+> +		unsigned long interval)
+> +{
+> +	struct timespec64 now;
+> +
+> +	ktime_get_coarse_ts64(&now);
+> +	if ((timespec64_to_ns(&now) - timespec64_to_ns(baseline)) <
+> +			interval * 1000)
+> +		return false;
+> +	*baseline = now;
+> +	return true;
+> +}
+> +
+> +/*
+> + * Check whether it is time to flush the aggregated information
+> + */
+> +static bool kdamond_aggregate_interval_passed(struct damon_ctx *ctx)
+> +{
+> +	return damon_check_reset_time_interval(&ctx->last_aggregation,
+> +			ctx->aggr_interval);
+> +}
+> +
+> +/*
+> + * Reset the aggregated monitoring results
+> + */
+> +static void kdamond_flush_aggregated(struct damon_ctx *c)
+> +{
+> +	struct damon_task *t;
+> +	struct damon_region *r;
+> +
+> +	damon_for_each_task(c, t) {
+> +		damon_for_each_region(r, t)
+> +			r->nr_accesses = 0;
+> +	}
+> +}
+> +
+> +/*
+> + * Check whether current monitoring should be stopped
+> + *
+> + * If users asked to stop, need stop.  Even though no user has asked to stop,
+> + * need stop if every target task has dead.
+> + *
+> + * Returns true if need to stop current monitoring.
+> + */
+> +static bool kdamond_need_stop(struct damon_ctx *ctx)
+> +{
+> +	struct damon_task *t;
+> +	struct task_struct *task;
+> +	bool stop;
+> +
+> +	spin_lock(&ctx->kdamond_lock);
+> +	stop = ctx->kdamond_stop;
+> +	spin_unlock(&ctx->kdamond_lock);
+> +	if (stop)
+> +		return true;
+> +
+> +	damon_for_each_task(ctx, t) {
+> +		task = damon_get_task_struct(t);
+> +		if (task) {
+> +			put_task_struct(task);
+> +			return false;
+> +		}
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +/*
+> + * The monitoring daemon that runs as a kernel thread
+> + */
+> +static int kdamond_fn(void *data)
+> +{
+> +	struct damon_ctx *ctx = (struct damon_ctx *)data;
+> +	struct damon_task *t;
+> +	struct damon_region *r, *next;
+> +	struct mm_struct *mm;
+> +
+> +	pr_info("kdamond (%d) starts\n", ctx->kdamond->pid);
+> +	kdamond_init_regions(ctx);
+> +	while (!kdamond_need_stop(ctx)) {
+> +		damon_for_each_task(ctx, t) {
+> +			mm = damon_get_mm(t);
+> +			if (!mm)
+> +				continue;
+> +			damon_for_each_region(r, t)
+> +				kdamond_check_access(ctx, mm, r);
+> +			mmput(mm);
+> +		}
+> +
+> +		if (kdamond_aggregate_interval_passed(ctx))
+> +			kdamond_flush_aggregated(ctx);
+> +
+> +		usleep_range(ctx->sample_interval, ctx->sample_interval + 1);
+> +	}
+> +	damon_for_each_task(ctx, t) {
+> +		damon_for_each_region_safe(r, next, t)
+> +			damon_destroy_region(r);
+> +	}
+> +	pr_info("kdamond (%d) finishes\n", ctx->kdamond->pid);
+> +	spin_lock(&ctx->kdamond_lock);
+> +	ctx->kdamond = NULL;
+> +	spin_unlock(&ctx->kdamond_lock);
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Controller functions
+> + */
+> +
+> +/*
+> + * Start or stop the kdamond
+> + *
+> + * Returns 0 if success, negative error code otherwise.
+> + */
+> +static int damon_turn_kdamond(struct damon_ctx *ctx, bool on)
+> +{
+> +	spin_lock(&ctx->kdamond_lock);
+> +	ctx->kdamond_stop = !on;
+> +	if (!ctx->kdamond && on) {
+> +		ctx->kdamond = kthread_run(kdamond_fn, ctx, "kdamond");
 
-[root@host ~]# getenforce
-Enforcing
+Can't do this under a spin lock.
 
-=== Access by unprivileged user ===
+> +		if (!ctx->kdamond)
+> +			goto fail;
+> +		goto success;
+> +	}
+> +	if (ctx->kdamond && !on) {
+> +		spin_unlock(&ctx->kdamond_lock);
+> +		while (true) {
+> +			spin_lock(&ctx->kdamond_lock);
+> +			if (!ctx->kdamond)
+> +				goto success;
+> +			spin_unlock(&ctx->kdamond_lock);
+> +
+> +			usleep_range(ctx->sample_interval,
+> +					ctx->sample_interval * 2);
+> +		}
+> +	}
+> +
+> +	/* tried to turn on while turned on, or turn off while turned off */
+> +
+> +fail:
+> +	spin_unlock(&ctx->kdamond_lock);
+> +	return -EINVAL;
+> +
+> +success:
+> +	spin_unlock(&ctx->kdamond_lock);
+> +	return 0;
+> +}
+> +
+> +/*
+> + * This function should not be called while the kdamond is running.
+> + */
+> +static int damon_set_pids(struct damon_ctx *ctx,
+> +			unsigned long *pids, ssize_t nr_pids)
+> +{
+> +	ssize_t i;
+> +	struct damon_task *t, *next;
+> +
+> +	damon_for_each_task_safe(ctx, t, next)
+> +		damon_destroy_task(t);
+> +
+> +	for (i = 0; i < nr_pids; i++) {
+> +		t = damon_new_task(pids[i]);
+> +		if (!t) {
+> +			pr_err("Failed to alloc damon_task\n");
+> +			return -ENOMEM;
+> +		}
+> +		damon_add_task_tail(ctx, t);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Set attributes for the monitoring
+> + *
+> + * sample_int		time interval between samplings
+> + * aggr_int		time interval between aggregations
+> + * min_nr_reg		minimal number of regions
+> + *
+> + * This function should not be called while the kdamond is running.
+> + * Every time interval is in micro-seconds.
+> + *
+> + * Returns 0 on success, negative error code otherwise.
+> + */
+> +static int damon_set_attrs(struct damon_ctx *ctx, unsigned long sample_int,
+> +		unsigned long aggr_int, unsigned long min_nr_reg)
+> +{
+> +	if (min_nr_reg < 3) {
+> +		pr_err("min_nr_regions (%lu) should be bigger than 2\n",
+> +				min_nr_reg);
+> +		return -EINVAL;
+> +	}
+> +
+> +	ctx->sample_interval = sample_int;
+> +	ctx->aggr_interval = aggr_int;
+> +	ctx->min_nr_regions = min_nr_reg;
+> +	return 0;
+> +}
+> +
+>  static int __init damon_init(void)
+>  {
+>  	pr_info("init\n");
+> diff --git a/mm/page_ext.c b/mm/page_ext.c
+> index 4ade843ff588..71169b45bba9 100644
+> --- a/mm/page_ext.c
+> +++ b/mm/page_ext.c
+> @@ -131,6 +131,7 @@ struct page_ext *lookup_page_ext(const struct page *page)
+>  					MAX_ORDER_NR_PAGES);
+>  	return get_entry(base, index);
+>  }
+> +EXPORT_SYMBOL_GPL(lookup_page_ext);
+>  
+>  static int __init alloc_node_page_ext(int nid)
+>  {
 
-[user@host ~]$ ps -Z
-LABEL                               PID TTY          TIME CMD
-unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 4043 pts/2 00:00:00 bash
-unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 4168 pts/2 00:00:00 ps
-
-[user@host ~]$ /usr/local/bin/perf stat -- ls
-Error:
-Access to performance monitoring and observability operations is limited.
-SELinux Enforcing mode is enabled and can limit access to performance
-monitoring and observability operations. Inspect system audit records
-for more perf_event access control information and adjusting the policy.
-Consider adjusting /proc/sys/kernel/perf_event_paranoid setting to open
-access to performance monitoring and observability operations for users
-without CAP_SYS_ADMIN capability. perf_event_paranoid setting is -1:
-  -1: Allow use of (almost) all events by all users
-      Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK
->= 0: Disallow raw and ftrace function tracepoint access
->= 1: Disallow CPU event access
->= 2: Disallow kernel profiling
-To make the adjusted perf_event_paranoid setting permanent preserve it
-in /etc/sysctl.conf (e.g. kernel.perf_event_paranoid = <setting>)
-
-[root@host ~]# journalctl --follow
-... audit[4186]: AVC avc:  denied  { open } for  pid=4186 comm="perf" scontext=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 tcontext=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 tclass=perf_event permissive=0
-... audit[4186]: AVC avc:  denied  { open } for  pid=4186 comm="perf" scontext=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 tcontext=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 tclass=perf_event permissive=0
-... setroubleshoot[4194]: SELinux is preventing perf from open access on the perf_event labeled unconfined_t. For complete SELinux messages run: sealert -l 9a6f3db2-3d8f-461e-afad-0b5c3a9c3b9d
-... python3[4194]: SELinux is preventing perf from open access on the perf_event labeled unconfined_t.
-                                          
-                                          *****  Plugin catchall (100. confidence) suggests   **************************
-                                          
-                                          If you believe that perf should be allowed open access on perf_event labeled unconfined_t by default.
-                                          Then you should report this as a bug.
-                                          You can generate a local policy module to allow this access.
-                                          Do
-                                          allow this access for now by executing:
-                                          # ausearch -c 'perf' --raw | audit2allow -M my-perf
-                                          # semodule -X 300 -i my-perf.pp
-                                          
-=== Access by perf privileged user ===
-
-[user@host ~]$ ps -Z
-LABEL                               PID TTY          TIME CMD
-unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 4043 pts/2 00:00:00 bash
-unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 4168 pts/2 00:00:00 ps
-
-[user@host ~]$ libcap/progs/getcap /usr/local/bin/perf.cap
-/usr/local/bin/perf.cap = cap_sys_ptrace,cap_syslog,cap_sys_admin+ep
-
-[user@host ~]$ /usr/local/bin/perf.cap stat -- ls
-Error:
-Access to performance monitoring and observability operations is limited.
-SELinux Enforcing mode is enabled and can limit access to performance
-monitoring and observability operations. Inspect system audit records
-for more perf_event access control information and adjusting the policy.
-Consider adjusting /proc/sys/kernel/perf_event_paranoid setting to open
-access to performance monitoring and observability operations for users
-without CAP_SYS_ADMIN capability. perf_event_paranoid setting is -1:
-  -1: Allow use of (almost) all events by all users
-      Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK
->= 0: Disallow raw and ftrace function tracepoint access
->= 1: Disallow CPU event access
->= 2: Disallow kernel profiling
-To make the adjusted perf_event_paranoid setting permanent preserve it
-in /etc/sysctl.conf (e.g. kernel.perf_event_paranoid = <setting>)
-
-[root@host ~]# journalctl --follow
-
-... audit[3926]: AVC avc:  denied  { open } for  pid=3926 comm="perf.cap" scontext=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 tcontext=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 tclass=perf_event permissive=0
-... audit[3926]: AVC avc:  denied  { open } for  pid=3926 comm="perf.cap" scontext=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 tcontext=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 tclass=perf_event permissive=0
-
-... setroubleshoot[3934]: SELinux is preventing perf from open access on the perf_event labeled unconfined_t. For complete SELinux messages run: sealert -l 9a6f3db2-3d8f-461e-afad-0b5c3a9c3b9d
-... python3[3934]: SELinux is preventing perf from open access on the perf_event labeled unconfined_t.
-                                          
-                                          *****  Plugin catchall (100. confidence) suggests   **************************
-                                          
-                                          If you believe that perf should be allowed open access on perf_event labeled unconfined_t by default.
-                                          Then you should report this as a bug.
-                                          You can generate a local policy module to allow this access.
-                                          Do
-                                          allow this access for now by executing:
-                                          # ausearch -c 'perf' --raw | audit2allow -M my-perf
-                                          # semodule -X 300 -i my-perf.pp
-                                          
-=== Open access to performance monitoring and observability operations in unconfined_t domain ===
-
-[root@host ~]# ausearch -c 'perf' --raw | audit2allow -M my-perf && cat my-perf.te
-
-module my-perf 1.0;
-
-require {
-	type unconfined_t;
-	class perf_event { cpu kernel open read tracepoint write };
-}
-
-#============= unconfined_t ==============
-allow unconfined_t self:perf_event { cpu kernel open read tracepoint write };
-
-[root@host ~]# semodule -X 300 -i my-perf.pp
-
-[user@host ~]$ ps -Z
-LABEL                               PID TTY          TIME CMD
-unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 4043 pts/2 00:00:00 bash
-unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 4168 pts/2 00:00:00 ps
-
-[user@host ~]$ /usr/local/bin/perf stat -- ls
-Desktop  Documents  Downloads  intel  Music  perf.data	perf.data.old  Pictures  Public  Templates  Videos
-
- Performance counter stats for 'ls':
-
-              0.72 msec task-clock:u              #    0.655 CPUs utilized          
-                 0      context-switches:u        #    0.000 K/sec                  
-                 0      cpu-migrations:u          #    0.000 K/sec                  
-                98      page-faults:u             #    0.137 M/sec                  
-           908,356      cycles:u                  #    1.266 GHz                    
-           729,984      instructions:u            #    0.80  insn per cycle         
-           142,774      branches:u                #  198.968 M/sec                  
-             8,238      branch-misses:u           #    5.77% of all branches        
-
-       0.001095239 seconds time elapsed
-
-       0.001147000 seconds user
-       0.000000000 seconds sys
-
-[user@host ~]$ /usr/local/bin/perf stat -a
-Error:
-Access to performance monitoring and observability operations is limited.
-SELinux Enforcing mode is enabled and can limit access to performance
-monitoring and observability operations. Inspect system audit records
-for more perf_event access control information and adjusting the policy.
-Consider adjusting /proc/sys/kernel/perf_event_paranoid setting to open
-access to performance monitoring and observability operations for users
-without CAP_SYS_ADMIN capability. perf_event_paranoid setting is -1:
-  -1: Allow use of (almost) all events by all users
-      Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK
->= 0: Disallow raw and ftrace function tracepoint access
->= 1: Disallow CPU event access
->= 2: Disallow kernel profiling
-To make the adjusted perf_event_paranoid setting permanent preserve it
-in /etc/sysctl.conf (e.g. kernel.perf_event_paranoid = <setting>)
-
-[user@host ~]$ /usr/local/bin/perf.cap stat -a
-^C
- Performance counter stats for 'system wide':
-
-         13,427.05 msec cpu-clock                 #    7.997 CPUs utilized          
-               783      context-switches          #    0.058 K/sec                  
-                29      cpu-migrations            #    0.002 K/sec                  
-                 6      page-faults               #    0.000 K/sec                  
-       161,084,874      cycles                    #    0.012 GHz                    
-       146,823,131      instructions              #    0.91  insn per cycle         
-        12,164,802      branches                  #    0.906 M/sec                  
-           380,350      branch-misses             #    3.13% of all branches        
-
-       1.678938906 seconds time elapsed
-
-[1] https://github.com/SELinuxProject/refpolicy
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- tools/perf/util/cloexec.c |  4 ++--
- tools/perf/util/evsel.c   | 40 +++++++++++++++++++++++----------------
- 2 files changed, 26 insertions(+), 18 deletions(-)
-
-diff --git a/tools/perf/util/cloexec.c b/tools/perf/util/cloexec.c
-index a12872f2856a..9c8ec816261b 100644
---- a/tools/perf/util/cloexec.c
-+++ b/tools/perf/util/cloexec.c
-@@ -65,7 +65,7 @@ static int perf_flag_probe(void)
- 		return 1;
- 	}
- 
--	WARN_ONCE(err != EINVAL && err != EBUSY,
-+	WARN_ONCE(err != EINVAL && err != EBUSY && err != EACCES,
- 		  "perf_event_open(..., PERF_FLAG_FD_CLOEXEC) failed with unexpected error %d (%s)\n",
- 		  err, str_error_r(err, sbuf, sizeof(sbuf)));
- 
-@@ -83,7 +83,7 @@ static int perf_flag_probe(void)
- 	if (fd >= 0)
- 		close(fd);
- 
--	if (WARN_ONCE(fd < 0 && err != EBUSY,
-+	if (WARN_ONCE(fd < 0 && err != EBUSY && err != EACCES,
- 		      "perf_event_open(..., 0) failed unexpectedly with error %d (%s)\n",
- 		      err, str_error_r(err, sbuf, sizeof(sbuf))))
- 		return -1;
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 816d930d774e..f03ce1d362d3 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -2493,32 +2493,40 @@ int perf_evsel__open_strerror(struct evsel *evsel, struct target *target,
- 			      int err, char *msg, size_t size)
- {
- 	char sbuf[STRERR_BUFSIZE];
--	int printed = 0;
-+	int printed = 0, enforced = 0;
- 
- 	switch (err) {
- 	case EPERM:
- 	case EACCES:
-+		printed += scnprintf(msg + printed, size - printed,
-+			"Access to performance monitoring and observability operations is limited.\n");
-+
-+		if (!sysfs__read_int("fs/selinux/enforce", &enforced)) {
-+			if (enforced) {
-+				printed += scnprintf(msg + printed, size - printed,
-+					"SELinux Enforcing mode is enabled and can limit access to performance\n"
-+					"monitoring and observability operations. Inspect system audit records\n"
-+					"for more perf_event access control information and adjusting the policy.\n");
-+			}
-+		}
-+
- 		if (err == EPERM)
--			printed = scnprintf(msg, size,
--				"No permission to enable %s event.\n\n",
-+			printed += scnprintf(msg, size,
-+				"No permission to enable %s event.\n",
- 				perf_evsel__name(evsel));
- 
- 		return scnprintf(msg + printed, size - printed,
--		 "You may not have permission to collect %sstats.\n\n"
--		 "Consider tweaking /proc/sys/kernel/perf_event_paranoid,\n"
--		 "which controls use of the performance events system by\n"
--		 "unprivileged users (without CAP_SYS_ADMIN).\n\n"
--		 "The current value is %d:\n\n"
-+		 "Consider adjusting /proc/sys/kernel/perf_event_paranoid setting to open\n"
-+		 "access to performance monitoring and observability operations for users\n"
-+		 "without CAP_SYS_ADMIN capability. perf_event_paranoid setting is %d:\n"
- 		 "  -1: Allow use of (almost) all events by all users\n"
- 		 "      Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK\n"
--		 ">= 0: Disallow ftrace function tracepoint by users without CAP_SYS_ADMIN\n"
--		 "      Disallow raw tracepoint access by users without CAP_SYS_ADMIN\n"
--		 ">= 1: Disallow CPU event access by users without CAP_SYS_ADMIN\n"
--		 ">= 2: Disallow kernel profiling by users without CAP_SYS_ADMIN\n\n"
--		 "To make this setting permanent, edit /etc/sysctl.conf too, e.g.:\n\n"
--		 "	kernel.perf_event_paranoid = -1\n" ,
--				 target->system_wide ? "system-wide " : "",
--				 perf_event_paranoid());
-+		 ">= 0: Disallow raw and ftrace function tracepoint access\n"
-+		 ">= 1: Disallow CPU event access\n"
-+		 ">= 2: Disallow kernel profiling\n"
-+		 "To make the adjusted perf_event_paranoid setting permanent preserve it\n"
-+		 "in /etc/sysctl.conf (e.g. kernel.perf_event_paranoid = <setting>)",
-+		 perf_event_paranoid());
- 	case ENOENT:
- 		return scnprintf(msg, size, "The %s event is not supported.",
- 				 perf_evsel__name(evsel));
--- 
-2.24.1
 
