@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF13D184341
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 10:07:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71785184342
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 10:07:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726533AbgCMJHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 05:07:23 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46396 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726464AbgCMJHW (ORCPT
+        id S1726605AbgCMJH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 05:07:29 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39702 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726486AbgCMJHX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 05:07:22 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n15so11024709wrw.13
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 02:07:21 -0700 (PDT)
+        Fri, 13 Mar 2020 05:07:23 -0400
+Received: by mail-wr1-f65.google.com with SMTP id r15so11061534wrx.6
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 02:07:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KrJf+EGLXE8nvYgZtr6atvulE/NcTou2lZGP+D+d2qw=;
-        b=BOVKBU0Ujuzg0xDGWTs/W1y0roYbWeUvMBriY4xI3p+BCY48nGP4y+J7KmoYc6mhYP
-         cThTepp8+g70rWRbmqNvc1ofqIv7gOpAdSUT15RROZDKtVgDGycvvVc9rvEI2zMdZw1W
-         ZC9opbu8pF43mYmDBythnQVVQh/AS0FHU6sC431mSosuX4Pn9wloX4IH4/Kc7ousft3H
-         sbe+51tKPQydX1ojL3RPgC2B4QiiKzZ2Vx1SntQktZexGrz+lWHygUAdYMXdMifLTS7c
-         gj34RDmRDa/JzjiZAPJGm+j2uOrLuLj23zsAQwy4EfJ7U9B3rNFVJS/J+IV4TVPaW4Hg
-         nHNw==
+        bh=Yoy0Boq040f9O0QHUfL99rfr3yZcYOtkMxHX2mJBUoI=;
+        b=cCKgut1i8Sc+EKPT9DRFmKJrBypE/0XUpuzxQIHOMtV+E+MOlxyOuqm5Z4pGLVP971
+         kvv3q1TgjWtqKM9jeZhNgb5ec9MOGKi+w5ry+E4RQLrxtRw1FH8jteBEe/tqJmtj9UL4
+         V7eKJtym3FVR15PjDhy7+Kf2FjwjR5iA3ThwPmGT2nk+yoIHNgZidgJ8OLIX1kz36DbF
+         HpVqtJFGyR8zzJ8kJLBxgIML6dZIWV5hOMVR5gHliu37f2kstA1mXrH5F4ploIAHUtKI
+         yx9P3sAXan4JzAEJzbLqflO6ItYqJpJFx4OItfbk/Ic1Ss/fVRtBwict6neAU1fmfycs
+         M8sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KrJf+EGLXE8nvYgZtr6atvulE/NcTou2lZGP+D+d2qw=;
-        b=JP/PkHVX3Fr5iOedegewv1SNrp3WJ2r/Tt/8i8PJeJEFFDpxMfN8toqy/yTySAUnch
-         1YBkYXTHU9qlmP4cKKOUpCN8VHFCk+atf67ekMql2EdKWr96w30pXAS7ke4QnXH3cPdk
-         6stg7uRPZWgLRkBTjIlPO/3XHrqYXMNH0fb3GxSkI0pT3fPGwTrZXvUzIpkCqc2YkVe4
-         gDol+bfqwNYBb4/iYrdF4R8oe9gMfXi5a1BUnmRGpAi7dHhZ+QUSpnaA1rI6NUYlJSi4
-         QdbPpPCti5PBOsC2AXLTbvUm4/nOzj/DpHY/TyN/FqUdJ3OT9AGWxm+AjMyx6+AdHmvK
-         nbzg==
-X-Gm-Message-State: ANhLgQ0WAJ6gRRZGVzsZemt2fbXAa4tjvE4DavUMR4HIqfzQQgcUGv9q
-        FtdDoVivPl733c76Fumj2R17yA==
-X-Google-Smtp-Source: ADFU+vu0BdY5m1oq1hZ64fBK3Lt0+33tWgB3mGxdT6gg9HNBrGg14nro/t4yX9kgtHUi01cFFBaogQ==
-X-Received: by 2002:a5d:4004:: with SMTP id n4mr15867133wrp.48.1584090440564;
-        Fri, 13 Mar 2020 02:07:20 -0700 (PDT)
+        bh=Yoy0Boq040f9O0QHUfL99rfr3yZcYOtkMxHX2mJBUoI=;
+        b=d+jI8fbZ5uQDAdZHMAZdr4ptmaY6aQNGI0zb8531xK7odQHM928N6bxy62ZYa3x8E8
+         vEiZvMwAJDG9R6a4cMrlM7yyZ90KWXRWwiiNoCfYRcjXsxrhFJhTsb6tnxPjVbmYLA9h
+         wIrwvgbh/JM6/wzQEOkOOGzdPXWA73MyAtT70rueyU20oapsYppXemXV/L5DjlxDSumJ
+         wKVsvbFhxjEU8WppFcccsX2e4k1T3PUoaCVdS02VhfGUOUZzpriCVXZkoQZW/QYcAstV
+         N7fCEumHtom3WisDF0jepI/zt2SZIEFN0rV16NxNenRIWmKJ+4wOGjccAWu7iL0v38at
+         HOwQ==
+X-Gm-Message-State: ANhLgQ1iKfWKphLaAIIk7EMJ42TkiVQBmRN8leb9dtlVkH923mEYVtTP
+        RABn7As5iMcqE0K5T7/UdAigOA==
+X-Google-Smtp-Source: ADFU+vsZuMu3i6rVyy8NzpYVntivu5t4nefjuS0CH3GYC/pYx7aDo3sECAdmYZqRmUHyXeo/gKr6eg==
+X-Received: by 2002:adf:eb51:: with SMTP id u17mr17457196wrn.29.1584090441559;
+        Fri, 13 Mar 2020 02:07:21 -0700 (PDT)
 Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2])
-        by smtp.gmail.com with ESMTPSA id i1sm61872399wrs.18.2020.03.13.02.07.19
+        by smtp.gmail.com with ESMTPSA id i1sm61872399wrs.18.2020.03.13.02.07.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 02:07:20 -0700 (PDT)
+        Fri, 13 Mar 2020 02:07:21 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     khilman@baylibre.com
 Cc:     linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 3/4] arm64: dts: khadas-vim3: add SPIFC controller node
-Date:   Fri, 13 Mar 2020 10:07:12 +0100
-Message-Id: <20200313090713.15147-4-narmstrong@baylibre.com>
+Subject: [PATCH 4/4] arm64: dts: meson-g12b-odroid-n2: add SPIFC controller node
+Date:   Fri, 13 Mar 2020 10:07:13 +0100
+Message-Id: <20200313090713.15147-5-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20200313090713.15147-1-narmstrong@baylibre.com>
 References: <20200313090713.15147-1-narmstrong@baylibre.com>
@@ -70,40 +70,41 @@ the SPI NOR controller pins.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- .../boot/dts/amlogic/meson-khadas-vim3.dtsi   | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ .../boot/dts/amlogic/meson-g12b-odroid-n2.dts | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi b/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
-index b6f22a0bd318..f09854560938 100644
---- a/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
-@@ -328,6 +328,26 @@
- 	vqmmc-supply = <&emmc_1v8>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
+index b59ae1a297f2..169ea283d4ee 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
+@@ -451,6 +451,27 @@
+ 	vqmmc-supply = <&flash_1v8>;
  };
  
 +/*
-+ * EMMC_D4, EMMC_D5, EMMC_D6 and EMMC_D7 pins are shared between SPI NOR CS
++ * EMMC_D4, EMMC_D5, EMMC_D6 and EMMC_D7 pins are shared between SPI NOR pins
 + * and eMMC Data 4 to 7 pins.
 + * Replace emmc_data_8b_pins to emmc_data_4b_pins from sd_emmc_c pinctrl-0,
 + * and change bus-width to 4 then spifc can be enabled.
++ * The SW1 slide should also be set to the correct position.
 + */
 +&spifc {
 +	status = "disabled";
 +	pinctrl-0 = <&nor_pins>;
 +	pinctrl-names = "default";
 +
-+	w25q32: spi-flash@0 {
++	mx25u64: spi-flash@0 {
 +		#address-cells = <1>;
 +		#size-cells = <1>;
-+		compatible = "winbond,w25q128fw", "jedec,spi-nor";
++		compatible = "mxicy,mx25u6435f", "jedec,spi-nor";
 +		reg = <0>;
 +		spi-max-frequency = <104000000>;
 +	};
 +};
 +
- &uart_A {
+ &tdmif_b {
  	status = "okay";
- 	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
+ };
 -- 
 2.22.0
 
