@@ -2,151 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90481183EA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:26:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2FB9183EBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:41:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbgCMB0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 21:26:19 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:42478 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726620AbgCMB0T (ORCPT
+        id S1726726AbgCMBlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 21:41:36 -0400
+Received: from m177126.mail.qiye.163.com ([123.58.177.126]:5417 "EHLO
+        m177126.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbgCMBlg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 21:26:19 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584062778; h=In-Reply-To: Content-Type: MIME-Version:
- References: Message-ID: Subject: Cc: To: From: Date: Sender;
- bh=DMvCcIAMOenOFGODAkqdoJHng9kOVkfWjVR4kCCv2yI=; b=fRIau9xaG4U2N9Jm4cSol2JRk7bQvOEH8gYdboN2eD/3Ey2KCj6q8lo/bHpoTWWEEp6cv4XV
- VaTRCdkzJdVbFk35yvMPcliA2045DzchQnM6qM7AA5YVas4zRRWBoshCXm/x/U2cXw9HSpEy
- kxjOkAFQohz3UvyP4qvTOAuSbNs=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6ae134.7f8b3f055bc8-smtp-out-n05;
- Fri, 13 Mar 2020 01:26:12 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 5BF21C433D2; Fri, 13 Mar 2020 01:26:11 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: stummala)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0F6F0C433CB;
-        Fri, 13 Mar 2020 01:26:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F6F0C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-Date:   Fri, 13 Mar 2020 06:56:04 +0530
-From:   Sahitya Tummala <stummala@codeaurora.org>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: fix long latency due to discard during umount
-Message-ID: <20200313012604.GI20234@codeaurora.org>
-References: <1584011671-20939-1-git-send-email-stummala@codeaurora.org>
- <20200312170242.GA185506@google.com>
+        Thu, 12 Mar 2020 21:41:36 -0400
+X-Greylist: delayed 332 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Mar 2020 21:41:35 EDT
+Received: from vivo.com (wm-5 [127.0.0.1])
+        by m177126.mail.qiye.163.com (Hmail) with ESMTP id 34ADF182C0B;
+        Fri, 13 Mar 2020 09:35:28 +0800 (CST)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <APYA*ADSCJWJ*JO7xH64KaqT.3.1584063328152.Hmail.luochucheng@vivo.com>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, wenhu.wang@vivo.com,
+        trivial@kernel.org
+Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSF0gRml4IG1pc3NpbmcgJ2JpdCcgaW4gY29tbWVudA==?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
+X-Originating-IP: 58.251.74.226
+In-Reply-To: <B95E9CA5-2E6A-4F8B-9B8F-BC4F4D49CBF3@dilger.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200312170242.GA185506@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: from luochucheng@vivo.com( [58.251.74.226) ] by ajax-webmail ( [127.0.0.1] ) ; Fri, 13 Mar 2020 09:35:28 +0800 (GMT+08:00)
+From:   =?UTF-8?B?572X5qWa5oiQ?= <luochucheng@vivo.com>
+Date:   Fri, 13 Mar 2020 09:35:28 +0800 (GMT+08:00)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZT1VLTkhCQkJCS0tDSkxDTFlXWShZQU
+        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
+X-HM-Sender-Digest: e1kJHlYWEh9ZQUhNTU1OQkNCSUlON1dZDB4ZWUEPCQ4eV1kSHx4VD1lB
+        WUc6KyI6UTo*KDgxLDFRMTRMAzNNTzAaCi9VSFVKTkNPS01ISElDTkpMVTMWGhIXVRcOFBgTDhgT
+        HhUcOw0SDRRVGBQWRVlXWRILWUFZTkNVSU5KVUxPVUlJTVlXWQgBWUFPSklCNwY+
+X-HM-Tid: 0a70d18830076458kurs34adf182c0b
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 10:02:42AM -0700, Jaegeuk Kim wrote:
-> On 03/12, Sahitya Tummala wrote:
-> > F2FS already has a default timeout of 5 secs for discards that
-> > can be issued during umount, but it can take more than the 5 sec
-> > timeout if the underlying UFS device queue is already full and there
-> > are no more available free tags to be used. In that case, submit_bio()
-> > will wait for the already queued discard requests to complete to get
-> > a free tag, which can potentially take way more than 5 sec.
-> > 
-> > Fix this by submitting the discard requests with REQ_NOWAIT
-> > flags during umount. This will return -EAGAIN for UFS queue/tag full
-> > scenario without waiting in the context of submit_bio(). The FS can
-> > then handle these requests by retrying again within the stipulated
-> > discard timeout period to avoid long latencies.
-> > 
-> > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> > ---
-> >  fs/f2fs/segment.c | 14 +++++++++++++-
-> >  1 file changed, 13 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index fb3e531..a06bbac 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -1124,10 +1124,13 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
-> >  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> >  	struct list_head *wait_list = (dpolicy->type == DPOLICY_FSTRIM) ?
-> >  					&(dcc->fstrim_list) : &(dcc->wait_list);
-> > -	int flag = dpolicy->sync ? REQ_SYNC : 0;
-> > +	int flag;
-> >  	block_t lstart, start, len, total_len;
-> >  	int err = 0;
-> >  
-> > +	flag = dpolicy->sync ? REQ_SYNC : 0;
-> > +	flag |= dpolicy->type == DPOLICY_UMOUNT ? REQ_NOWAIT : 0;
-> > +
-> >  	if (dc->state != D_PREP)
-> >  		return 0;
-> >  
-> > @@ -1203,6 +1206,11 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
-> >  		bio->bi_end_io = f2fs_submit_discard_endio;
-> >  		bio->bi_opf |= flag;
-> >  		submit_bio(bio);
-> > +		if ((flag & REQ_NOWAIT) && (dc->error == -EAGAIN)) {
-> > +			dc->state = D_PREP;
-> > +			err = dc->error;
-> > +			break;
-> > +		}
-> >  
-> >  		atomic_inc(&dcc->issued_discard);
-> >  
-> > @@ -1510,6 +1518,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >  			}
-> >  
-> >  			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
-> > +			if (dc->error == -EAGAIN) {
-> > +				congestion_wait(BLK_RW_ASYNC, HZ/50);
-> 
-> 						--> need to be DEFAULT_IO_TIMEOUT
-
-Yes, i will update it.
-
-> 
-> > +				__relocate_discard_cmd(dcc, dc);
-> 
-> It seems we need to submit bio first, and then move dc to wait_list, if there's
-> no error, in __submit_discard_cmd().
-
-Yes, that is not changed and it still happens for the failed request
-that is re-queued here too when it gets submitted again later.
-
-I am requeuing the discard request failed with -EAGAIN error back to 
-dcc->pend_list[] from wait_list. It will call submit_bio() for this request
-and also move to wait_list when it calls __submit_discard_cmd() again next
-time. Please let me know if I am missing anything?
-
-Thanks,
-
-> 
-> > +			}
-> >  
-> >  			if (issued >= dpolicy->max_requests)
-> >  				break;
-> > -- 
-> > Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-
--- 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+VGhhdCBzb3VuZHMgcmVhc29uYWJsZS4gSSB3aWxsIHN1Ym1pdCBhIG5ldyBwYXRjaCBiYXNlZCBv
+biAnMzItYml0JyBhbmQgJzY0LWJpdCcKCkZyb206IEFuZHJlYXMgRGlsZ2VyIDxhZGlsZ2VyQGRp
+bGdlci5jYT4KRGF0ZTogMjAyMC0wMy0xMyAwNToyNzo0OApUbzogIEhhbnMgZGUgR29lZGUgPGhk
+ZWdvZWRlQHJlZGhhdC5jb20+CkNjOiAgQ2h1Y2hlbmcgTHVvIDxsdW9jaHVjaGVuZ0B2aXZvLmNv
+bT4sTGludXggRlMgRGV2ZWwgPGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnPixsaW51eC1r
+ZXJuZWxAdmdlci5rZXJuZWwub3JnLHdlbmh1LndhbmdAdml2by5jb20sdHJpdmlhbEBrZXJuZWwu
+b3JnClN1YmplY3Q6IFJlOiBbUEFUQ0hdIEZpeCBtaXNzaW5nICdiaXQnIGluIGNvbW1lbnQ+T24g
+TWFyIDEyLCAyMDIwLCBhdCA0OjQwIEFNLCBIYW5zIGRlIEdvZWRlIDxoZGVnb2VkZUByZWRoYXQu
+Y29tPiB3cm90ZToKPj4gCj4+IEhpLAo+PiAKPj4gT24gMy8xMi8yMCA4OjQwIEFNLCBDaHVjaGVu
+ZyBMdW8gd3JvdGU6Cj4+PiBUaGUgbWlzc2luZyB3b3JkIG1heSBtYWtlIGl0IGhhcmQgZm9yIG90
+aGVyIGRldmVsb3BlcnMgdG8KPj4+IHVuZGVyc3RhbmQgaXQuCj4+PiBTaWduZWQtb2ZmLWJ5OiBD
+aHVjaGVuZyBMdW8gPGx1b2NodWNoZW5nQHZpdm8uY29tPgo+PiAKPj4gVGhhbmtzIGZvciBjYXRj
+aGluZyB0aGlzOgo+PiAKPj4gQWNrZWQtYnk6IEhhbnMgZGUgR29lZGUgPGhkZWdvZWRlQHJlZGhh
+dC5jb20+Cj4KPk5vdCB0byBuaXQtcGljaywgYnV0IHRoZXNlIHNob3VsZCBwcm9wZXJseSBiZSB3
+cml0dGVuIGFzICIzMi1iaXQiIGFuZCAiNjQtYml0Ii4KPlRoYXQgY2FuIGJlIGVhc2lseSBmaXhl
+ZCBpbiB0aGUgcGF0Y2ggYmVmb3JlIHVwc3RyZWFtIHN1Ym1pc3Npb24uCj4KPkNoZWVycywgQW5k
+cmVhcwo+Cj4+IFJlZ2FyZHMsCj4+IAo+PiBIYW5zCj4+IAo+PiAKPj4+IC0tLQo+Pj4gIGZzL3Zi
+b3hzZi9kaXIuYyB8IDIgKy0KPj4+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEg
+ZGVsZXRpb24oLSkKPj4+IGRpZmYgLS1naXQgYS9mcy92Ym94c2YvZGlyLmMgYi9mcy92Ym94c2Yv
+ZGlyLmMKPj4+IGluZGV4IGRkMTQ3YjQ5MDk4Mi4uYmU0ZjcyNjI1ZDM2IDEwMDY0NAo+Pj4gLS0t
+IGEvZnMvdmJveHNmL2Rpci5jCj4+PiArKysgYi9mcy92Ym94c2YvZGlyLmMKPj4+IEBAIC0xMzQs
+NyArMTM0LDcgQEAgc3RhdGljIGJvb2wgdmJveHNmX2Rpcl9lbWl0KHN0cnVjdCBmaWxlICpkaXIs
+IHN0cnVjdCBkaXJfY29udGV4dCAqY3R4KQo+Pj4gIAkJZF90eXBlID0gdmJveHNmX2dldF9kX3R5
+cGUoaW5mby0+aW5mby5hdHRyLm1vZGUpOwo+Pj4gICAgCQkvKgo+Pj4gLQkJICogT24gMzIgYml0
+IHN5c3RlbXMgcG9zIGlzIDY0IHNpZ25lZCwgd2hpbGUgaW5vIGlzIDMyIGJpdAo+Pj4gKwkJICog
+T24gMzIgYml0IHN5c3RlbXMgcG9zIGlzIDY0IGJpdCBzaWduZWQsIHdoaWxlIGlubyBpcyAzMiBi
+aXQKPj4+ICAJCSAqIHVuc2lnbmVkIHNvIGZha2VfaW5vIG1heSBvdmVyZmxvdywgY2hlY2sgZm9y
+IHRoaXMuCj4+PiAgCQkgKi8KPj4+ICAJCWlmICgoaW5vX3QpKGN0eC0+cG9zICsgMSkgIT0gKHU2
+NCkoY3R4LT5wb3MgKyAxKSkgewo+PiAKPgo+Cj5DaGVlcnMsIEFuZHJlYXMKPgo+Cj4KPgo+Cg0K
+DQo=
