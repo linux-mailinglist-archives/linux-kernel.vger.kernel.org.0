@@ -2,225 +2,239 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60418184E9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:32:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECCB2184EA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:34:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbgCMSco (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 14:32:44 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:20669 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726339AbgCMSco (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 14:32:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584124362;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3m4Rn0qHyWmTm14emhIRtvuFR2s0moOwY/yLhDcqE5E=;
-        b=Gj23aJ5xQhE/W86xMZ5FgzJsBqhNi03Xv5pUwf2L/mZRBqPvs657wSDgmaog82uhE3p0sL
-        b17i3eFUAJ4DDgu6y06xOVv/ytmb8bcof1U3zblVPQE47lVVHXRP4rrnERRJtk5ybZ+lt1
-        d8TSfzYiYTmZH/saCRW1Rh5JdXwA/G8=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-336-TiLfddWbMR-3wSVwrS5L8A-1; Fri, 13 Mar 2020 14:32:41 -0400
-X-MC-Unique: TiLfddWbMR-3wSVwrS5L8A-1
-Received: by mail-io1-f69.google.com with SMTP id d13so6992774ioo.23
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 11:32:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3m4Rn0qHyWmTm14emhIRtvuFR2s0moOwY/yLhDcqE5E=;
-        b=LkGMLdLVme4oqJ24A0iYwG+wW7hp+EvO2ltvbnAzL4faJAMXW2vWh9XzszLHGCZlZq
-         uRM82KePQ1/4tgyA1GetWtP0DjWjKmlHu/w5Y6skEbDJcxvKLkSCP9hZE9zxYZoh6sPQ
-         rfaPezoTLlZJx/ps80DenAE5Em/TezTljFRRltiqZwnJt8PmXA2HaUfgPTSRNQAgKMwL
-         mlBaPe389UD95jTV6TMD8vFIF5KWxaTgxQUG2zUMuLZPknH3qjGPvyugLGisg+FVSLWS
-         z6BpxOYJzxyCWFdmokmLfmInoSQr8w3hjJRqCrr5OohD5BgSBGLO+CHYvXV0MUcBUzit
-         4irg==
-X-Gm-Message-State: ANhLgQ0ZJDbo3iOVH7bK7PX17PbZeyDjnPXC/jtLI7PaDY3OS97Mctii
-        ELOl47QcbbK+gOaLAfexBmolo8mlgEJTDBN6PZ5ausZ19GT3kewNToAAfCd/mTG0H2GQHqqNUAo
-        +B4icANnnO7yU2YFwwDN1mjKp2S7CZRaXCvIeo6ws
-X-Received: by 2002:a92:9f4e:: with SMTP id u75mr14766193ili.116.1584124360279;
-        Fri, 13 Mar 2020 11:32:40 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vthyy+v4v/Q4P5In4zddVuAOvxBXuwSwvMbS3t3Zx+C9rEXBfmwE6XdtCY2jQpgH5/KwJjQ1vpCgv1QI0zp2n8=
-X-Received: by 2002:a92:9f4e:: with SMTP id u75mr14766155ili.116.1584124359900;
- Fri, 13 Mar 2020 11:32:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
- <20200303233609.713348-22-jarkko.sakkinen@linux.intel.com>
- <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
- <254f1e35-4302-e55f-c00d-0f91d9503498@fortanix.com> <CAOASepOm8-2UCdEnVMopEprMGWjkYUbUTX++dHaqCafi2ju8mA@mail.gmail.com>
- <20200313164622.GC5181@linux.intel.com>
-In-Reply-To: <20200313164622.GC5181@linux.intel.com>
-From:   Nathaniel McCallum <npmccallum@redhat.com>
-Date:   Fri, 13 Mar 2020 14:32:29 -0400
-Message-ID: <CAOASepN1hxSgxVJAJiAbSmuCTCHd=95Mnvh6BKNSPJs=EpAmbQ@mail.gmail.com>
-Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, Neil Horman <nhorman@redhat.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
-        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
-        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
-        cedric.xing@intel.com, Patrick Uiterwijk <puiterwijk@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Connor Kuehl <ckuehl@redhat.com>,
-        Harald Hoyer <harald@redhat.com>,
-        Lily Sturmann <lsturman@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727212AbgCMSe2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 14:34:28 -0400
+Received: from mga06.intel.com ([134.134.136.31]:28623 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726620AbgCMSe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 14:34:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 11:34:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,549,1574150400"; 
+   d="scan'208";a="442506045"
+Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.45])
+  by fmsmga005.fm.intel.com with ESMTP; 13 Mar 2020 11:34:26 -0700
+From:   kan.liang@linux.intel.com
+To:     acme@kernel.org, jolsa@redhat.com, peterz@infradead.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org
+Cc:     namhyung@kernel.org, adrian.hunter@intel.com,
+        mathieu.poirier@linaro.org, ravi.bangoria@linux.ibm.com,
+        alexey.budankov@linux.intel.com, vitaly.slobodskoy@intel.com,
+        pavel.gerasimov@intel.com, mpe@ellerman.id.au, eranian@google.com,
+        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V3 00/17] Stitch LBR call stack (Perf Tools)
+Date:   Fri, 13 Mar 2020 11:33:02 -0700
+Message-Id: <20200313183319.17739-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 12:46 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Fri, Mar 13, 2020 at 11:48:54AM -0400, Nathaniel McCallum wrote:
-> > Thinking about this more carefully, I still think that at least part
-> > of my critique still stands.
-> >
-> > __vdso_sgx_enter_enclave() doesn't use the x86-64 ABI. This means that
-> > there will always be an assembly wrapper for
-> > __vdso_sgx_enter_enclave(). But because __vdso_sgx_enter_enclave()
-> > doesn't save %rbx, the wrapper is forced to in order to be called from
-> > C.
-> >
-> > A common pattern for the wrapper will be to do something like this:
-> >
-> > # void enter_enclave(rdi, rsi, rdx, unused, r8, r9, @tcs, @e,
-> > @handler, @leaf, @vdso)
-> > enter_enclave:
-> >     push %rbx
-> >     push $0 /* align */
-> >     push 0x48(%rsp)
-> >     push 0x48(%rsp)
-> >     push 0x48(%rsp)
-> >
-> >     mov 0x70(%rsp), %eax
-> >     call *0x68(%rsp)
-> >
-> >     add $0x20, %rsp
-> >     pop %rbx
-> >     ret
-> >
-> > Because __vdso_sgx_enter_enclave() doesn't preserve %rbx, the wrapper
-> > is forced to reposition stack parameters in a performance-critical
-> > path. On the other hand, if __vdso_sgx_enter_enclave() preserved %rbx,
-> > you could implement the above as:
-> >
-> > # void enter_enclave(rdi, rsi, rdx, unused, r8, r9, @tcs, @e,
-> > @handler, @leaf, @vdso)
-> > enter_enclave:
-> >     mov 0x20(%rsp), %eax
-> >     jmp *0x28(%rsp)
-> >
-> > This also implies that if __vdso_sgx_enter_enclave() took @leaf as a
-> > stack parameter and preserved %rbx, it would be x86-64 ABI compliant
-> > enough to call from C if the enclave preserves all callee-saved
-> > registers besides %rbx (Enarx does).
-> >
-> > What are the downsides of this approach? It also doesn't harm the more
-> > extended case when you need to use an assembly wrapper to setup
-> > additional registers. This can still be done. It does imply an extra
-> > push and mov instruction. But because there are currently an odd
-> > number of stack function parameters, the push also removes an
-> > alignment instruction where the stack is aligned before the call to
-> > __vdso_sgx_enter_enclave() (likely). Further, the push and mov are
-> > going to be performed by *someone* in order to call
-> > __vdso_sgx_enter_enclave() from C.
-> >
-> > Therefore, I'd like to propose that __vdso_sgx_enter_enclave():
-> >   * Preserve %rbx.
->
-> At first glance, that looks sane.  Being able to call __vdso... from C
-> would certainly be nice.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Agreed. I think ergonomically we want __vdso...() to be called from C
-and the handler to be implemented in asm (optionally); without
-breaking the ability to call __vdso..() from asm in special cases.
+Changes since V2:
+- Check strdup() in Patch 1
+- Split several patches into smaller patches
 
-I think all ergonomic issues get solved by the following:
-   * Pass a void * into the handler from C through __vdso...().
-   * Allow the handler to pop parameters off of the output stack without hacks.
+Changes since V1:
+- Rebase on top of commit 5100c2b77049 ("perf header: Add check for
+  unexpected use of reserved membrs in event attr")
+- Fix compling error with GCC9 in patch 1.
 
-This allows the handler to pop extra arguments off the stack and write
-them into the memory at the void *. Then the handler can be very small
-and pass logic back to the caller of __vdso...().
 
-Here's what this all means for the enclave. For maximum usability, the
-enclave should preserve all callee-saved registers (except %rbx, which
-is preserved by __vdso..()). For each ABI rule that the enclave
-breaks, you need logic in a handler to fix it. So if you push return
-params on the stack, the handler needs to undo that.
+The kernel patches have been merged into linux-next.
+  commit bbfd5e4fab63 ("perf/core: Add new branch sample type for HW
+index of raw branch records")
+  commit db278b90c326 ("perf/x86/intel: Output LBR TOS information
+correctly")
 
-This doesn't compromise the ability to treat __vsdo...() like ENCLU if
-you need the full power. But it does make it significantly easier to
-consume when you don't have special needs. So as I see it, __vdso...()
-should:
+Start from Haswell, Linux perf can utilize the existing Last Branch
+Record (LBR) facility to record call stack. However, the depth of the
+reconstructed LBR call stack limits to the number of LBR registers.
+E.g. on skylake, the depth of reconstructed LBR call stack is <= 32
+That's because HW will overwrite the oldest LBR registers when it's
+full.
 
-1. preserve %rbx
-2. take leaf in %rcx
-3. gain a void* stack param which is passed to the handler
-4. sub/add to %rsp rather than save/restore
+However, the overwritten LBRs may still be retrieved from previous
+sample. At that moment, HW hasn't overwritten the LBR registers yet.
+Perf tools can stitch those overwritten LBRs on current call stacks to
+get a more complete call stack.
 
-That would make this a very usable and fast interface without
-sacrificing any of its current power.
+To determine if LBRs can be stitched, the maximum number of LBRs is
+required. Patch 1 - 4 retrieve the capabilities information from sysfs
+and save them in perf header.
 
-> >   * Take the leaf as an additional stack parameter instead of passing
-> > it in %rax.
->
-> Does the leaf even need to be a stack param?  Wouldn't it be possible to
-> use %rcx as @leaf instead of @unusued?  E.g.
+Patch 5 - 12 implements the LBR stitching approach.
 
-Even better!
+Users can use the options introduced in patch 13-16 to enable the LBR
+stitching approach for perf report, script, top and c2c.
 
-> int __vdso_sgx_enter_enclave(unsigned long rdi, unsigned long rsi,
->                              unsigned long rdx, unsigned int leaf,
->                              unsigned long r8,  unsigned long r9,
->                              void *tcs, struct sgx_enclave_exception *e,
->                              sgx_enclave_exit_handler_t handler)
-> {
->         push    %rbp
->         mov     %rsp, %rbp
->         push    %rbx
->
->         mov     %ecx, %eax
-> .Lenter_enclave
->         cmp     $0x2, %eax
->         jb      .Linvalid_leaf
->         cmp     $0x3, %eax
->         ja      .Linvalid_leaf
->
->         mov     0x0x10(%rbp), %rbx
->         lea     .Lasync_exit_pointer(%rip), %rcx
->
-> .Lasync_exit_pointer:
-> .Lenclu_eenter_eresume:
->         enclu
->
->         xor     %eax, %eax
->
-> .Lhandle_exit:
->         cmp     $0, 0x20(%rbp)
->         jne     .Linvoke_userspace_handler
->
-> .Lout
->         pop     %rbx
->         leave
->         ret
-> }
->
->
-> > Then C can call it without additional overhead. And people who need to
-> > "extend" the C ABI can still do so.
-> >
->
+Patch 17 adds a fast path for duplicate entries check. It benefits all
+call stack parsing, not just for stitch LBR call stack. It can be
+merged independently.
+
+The stitching approach base on LBR call stack technology. The known
+limitations of LBR call stack technology still apply to the approach,
+e.g. Exception handing such as setjmp/longjmp will have calls/returns
+not match.
+This approach is not full proof. There can be cases where it creates
+incorrect call stacks from incorrect matches. There is no attempt
+to validate any matches in another way. So it is not enabled by default.
+However in many common cases with call stack overflows it can recreate
+better call stacks than the default lbr call stack output. So if there
+are problems with LBR overflows this is a possible workaround.
+
+Regression:
+Users may collect LBR call stack on a machine with new perf tool and
+new kernel (support LBR TOS). However, they may parse the perf.data with
+old perf tool (not support LBR TOS). The old tool doesn't check
+attr.branch_sample_type. Users probably get incorrect information
+without any warning.
+
+Performance impact:
+The processing time may increase with the LBR stitching approach
+enabled. The impact depends on the increased depth of call stacks.
+
+For a simple test case tchain_edit with 43 depth of call stacks.
+perf record --call-graph lbr -- ./tchain_edit
+perf report --stitch-lbr
+
+Without --stitch-lbr, perf report only display 32 depth of call stacks.
+With --stitch-lbr, perf report can display all 43 depth of call stacks.
+The depth of call stacks increase 34.3%.
+
+Correspondingly, the processing time of perf report increases 39%,
+Without --stitch-lbr:                           11.0 sec
+With --stitch-lbr:                              15.3 sec
+
+The source code of tchain_edit.c is something similar as below.
+noinline void f43(void)
+{
+        int i;
+        for (i = 0; i < 10000;) {
+
+                if(i%2)
+                        i++;
+                else
+                        i++;
+        }
+}
+
+noinline void f42(void)
+{
+        int i;
+        for (i = 0; i < 100; i++) {
+                f43();
+                f43();
+                f43();
+        }
+}
+
+noinline void f41(void)
+{
+        int i;
+        for (i = 0; i < 100; i++) {
+                f42();
+                f42();
+                f42();
+        }
+}
+noinline void f40(void)
+{
+        f41();
+}
+
+... ...
+
+noinline void f32(void)
+{
+        f33();
+}
+
+noinline void f31(void)
+{
+        int i;
+
+        for (i = 0; i < 10000; i++) {
+                if(i%2)
+                        i++;
+                else
+                        i++;
+        }
+
+        f32();
+}
+
+noinline void f30(void)
+{
+        f31();
+}
+
+... ...
+
+noinline void f1(void)
+{
+        f2();
+}
+
+int main()
+{
+        f1();
+}
+
+Kan Liang (17):
+  perf pmu: Add support for PMU capabilities
+  perf header: Support CPU PMU capabilities
+  perf record: Clear HEADER_CPU_PMU_CAPS for non LBR call stack mode
+  perf stat: Clear HEADER_CPU_PMU_CAPS
+  perf machine: Remove the indent in resolve_lbr_callchain_sample
+  perf machine: Refine the function for LBR call stack reconstruction
+  perf machine: Factor out lbr_callchain_add_kernel_ip()
+  perf machine: Factor out lbr_callchain_add_lbr_ip()
+  perf thread: Add a knob for LBR stitch approach
+  perf tools: Save previous sample for LBR stitching approach
+  perf tools: Save previous cursor nodes for LBR stitching approach
+  perf tools: Stitch LBR call stack
+  perf report: Add option to enable the LBR stitching approach
+  perf script: Add option to enable the LBR stitching approach
+  perf top: Add option to enable the LBR stitching approach
+  perf c2c: Add option to enable the LBR stitching approach
+  perf hist: Add fast path for duplicate entries check approach
+
+ tools/perf/Documentation/perf-c2c.txt         |  11 +
+ tools/perf/Documentation/perf-report.txt      |  11 +
+ tools/perf/Documentation/perf-script.txt      |  11 +
+ tools/perf/Documentation/perf-top.txt         |   9 +
+ .../Documentation/perf.data-file-format.txt   |  16 +
+ tools/perf/builtin-c2c.c                      |   6 +
+ tools/perf/builtin-record.c                   |   3 +
+ tools/perf/builtin-report.c                   |   6 +
+ tools/perf/builtin-script.c                   |   6 +
+ tools/perf/builtin-stat.c                     |   1 +
+ tools/perf/builtin-top.c                      |  11 +
+ tools/perf/util/branch.h                      |  19 +-
+ tools/perf/util/callchain.h                   |   8 +
+ tools/perf/util/env.h                         |   3 +
+ tools/perf/util/header.c                      | 110 +++++
+ tools/perf/util/header.h                      |   1 +
+ tools/perf/util/hist.c                        |  23 +
+ tools/perf/util/machine.c                     | 423 +++++++++++++++---
+ tools/perf/util/pmu.c                         |  98 ++++
+ tools/perf/util/pmu.h                         |  12 +
+ tools/perf/util/sort.c                        |   2 +-
+ tools/perf/util/sort.h                        |   2 +
+ tools/perf/util/thread.c                      |   2 +
+ tools/perf/util/thread.h                      |  35 ++
+ tools/perf/util/top.h                         |   1 +
+ 25 files changed, 760 insertions(+), 70 deletions(-)
+
+-- 
+2.17.1
 
