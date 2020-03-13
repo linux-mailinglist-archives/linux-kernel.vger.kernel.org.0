@@ -2,120 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6006184E96
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:28:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF2AC184EA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:33:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbgCMS2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 14:28:14 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:51062 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726303AbgCMS2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 14:28:14 -0400
-Received: from zn.tnic (p200300EC2F0E1E007CE2C412F47CBB57.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:1e00:7ce2:c412:f47c:bb57])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A39751EC0CFA;
-        Fri, 13 Mar 2020 19:28:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1584124091;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=af9vjc4SquL5k1ASGpNOj3EgxDCubcDdq9ji+QbhQt8=;
-        b=CtTyW0QWLBk9PH5U05eB/gbz26N5Km1JMuXqil5w11lS+K/n2AUvagxumMPHyeRE7UU54k
-        +P31fVn6rZ3fG/GD7YqR12zjfVFXPdcICphsaNYMnMOFqAma+VMHvIZPWh/NVnhR2QbnHs
-        EgrK8qc6K3cKHG1Gagyk5uKFb1JvcSM=
-Date:   Fri, 13 Mar 2020 19:28:15 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] x86/purgatory: Disable various profiling and
- sanitizing options
-Message-ID: <20200313182815.GF8142@zn.tnic>
-References: <20200312114951.56009-1-hdegoede@redhat.com>
+        id S1727156AbgCMSdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 14:33:51 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45386 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbgCMSdv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 14:33:51 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jCp36-00AyVa-Sz; Fri, 13 Mar 2020 18:28:45 +0000
+Date:   Fri, 13 Mar 2020 18:28:44 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Stefan Metzmacher <metze@samba.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeremy Allison <jra@samba.org>,
+        Ralph =?iso-8859-1?Q?B=F6hme?= <slow@samba.org>,
+        Volker Lendecke <vl@sernet.de>
+Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
+Message-ID: <20200313182844.GO23230@ZenIV.linux.org.uk>
+References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
+ <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
+ <20200310005549.adrn3yf4mbljc5f6@yavin>
+ <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
+ <580352.1583825105@warthog.procyon.org.uk>
+ <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
+ <3d209e29-e73d-23a6-5c6f-0267b1e669b6@samba.org>
+ <CAHk-=wgu3Wo_xcjXnwski7JZTwQFaMmKD0hoTZ=hqQv3-YojSg@mail.gmail.com>
+ <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
+ <20200313095901.tdv4vl7envypgqfz@yavin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200312114951.56009-1-hdegoede@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200313095901.tdv4vl7envypgqfz@yavin>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 12:49:50PM +0100, Hans de Goede wrote:
-> Since the purgatory is a special stand-alone binary, we need to disable
-
-Pls use passive voice in your commit message: no "we" or "I", etc, and
-describe your changes in imperative mood.
-
-Also, pls read section "2) Describe your changes" in
-Documentation/process/submitting-patches.rst for more details.
-
-> various profiling and sanitizing options. Having these options enabled
-> typically will cause dependency on various special symbols exported by
-> special libs / stubs used by these frameworks. Since the purgatory is
-> special we do not link against these stubs causing missing symbols in
-> the purgatory if we do not disable these options.
+On Fri, Mar 13, 2020 at 08:59:01PM +1100, Aleksa Sarai wrote:
+> On 2020-03-12, Stefan Metzmacher <metze@samba.org> wrote:
+> > Am 12.03.20 um 17:24 schrieb Linus Torvalds:
+> > > But yes, if we have a major package like samba use it, then by all
+> > > means let's add linkat2(). How many things are we talking about? We
+> > > have a number of system calls that do *not* take flags, but do do
+> > > pathname walking. I'm thinking things like "mkdirat()"?)
+> > 
+> > I haven't looked them up in detail yet.
+> > Jeremy can you provide a list?
+> > 
+> > Do you think we could route some of them like mkdirat() and mknodat()
+> > via openat2() instead of creating new syscalls?
 > 
-> This commit syncs the set of disabled profiling and sanitizing options
+> I have heard some folks asking for a way to create a directory and get a
+> handle to it atomically -- so arguably this is something that could be
+> inside openat2()'s feature set (O_MKDIR?). But I'm not sure how popular
+> of an idea this is.
 
-Avoid having "This patch" or "This commit" in the commit message. It is
-tautologically useless.
+For fuck sake, *NO*!
 
-Also, do
+We don't need any more multiplexors from hell.  mkdir() and open() have
+deeply different interpretation of pathnames (and anyone who asks for
+e.g. traversals of dangling symlinks on mkdir() is insane).  Don't try to
+mix those; even O_TMPFILE had been a mistake.
 
-$ git grep 'This patch' Documentation/process
+Folks, we'd paid very dearly for the atomic_open() merge.  We are _still_
+paying for it - and keep finding bugs induced by the convoluted horrors
+in that thing (see yesterday pull from vfs.git#fixes for the latest crop).
+I hope to get into more or less sane shape (part - this cycle, with
+followups in the next one), but the last thing we need is more complexity
+in the area.
 
-for more details.
+Keep the semantics simple and regular; corner cases _suck_.  "Infinitely
+extensible (without review)" is no virtue.  And having nowhere to hide
+very special flags for very special kludges is a bloody good thing.
 
-Those two review comments apply to patch 2's commit message too, pls fix
-them there too.
+Every fucking time we had a multiplexed syscall, it had been a massive
+source of trouble.  IF it has a uniform semantics - fine; we don't need
+arseloads of read_this(2)/read_that(2).  But when you need pages upon
+pages to describe the subtle differences in the interpretation of
+its arguments, you have already lost.  It will be full of corner
+cases, they will get zero testing and they will rot.  Inevitably.  All
+the faster for the lack of people who would be able to keep all of that
+in head.
 
-> with that from drivers/firmware/efi/libstub/Makefile, adding
-> -DDISABLE_BRANCH_PROFILING to the CFLAGS and setting:
-> 
-> GCOV_PROFILE                    := n
-> UBSAN_SANITIZE                  := n
-> 
-> This fixes broken references to ftrace_likely_update when
-> CONFIG_TRACE_BRANCH_PROFILING is enabled and to __gcov_init and
-> __gcov_exit when CONFIG_GCOV_KERNEL is enabled.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
-> Changes in v5:
-> -Not only add -DDISABLE_BRANCH_PROFILING to the CFLAGS but also set:
->  GCOV_PROFILE                    := n
->  UBSAN_SANITIZE                  := n
-> 
-> Changes in v4:
-> -This is a new patch in v4 of this series
-> ---
->  arch/x86/purgatory/Makefile | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-
-$ test-apply.sh -g /tmp/01-x86-purgatory-disable_various_profiling_and_sanitizing_options.patch
-checking file arch/x86/purgatory/Makefile
-Hunk #1 FAILED at 17.
-Hunk #2 succeeded at 27 (offset 2 lines).
-1 out of 2 hunks FAILED
-
-This happens because tip/master already has KCSAN merged in and it adds
-
-KCSAN_SANITIZE  := n
-
-there.
-
-Please redo the patches against current tip/master.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+We do have a mechanism for multiplexing; on amd64 it lives in do_syscall_64().
+We really don't need openat2() turning into another one.  Syscall table
+slots are not in a short supply, and the level of review one gets from
+"new syscall added" is higher than from "make fubar(2) recognize a new
+member in options->union_full_of_crap if it has RESOLVE_TO_WANK_WITH_RIGHT_HAND
+set in options->flags, affecting its behaviour in some odd ways".
+Which is a good thing, damnit.
