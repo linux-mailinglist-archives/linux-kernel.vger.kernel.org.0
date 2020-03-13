@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F00E4184F9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 20:53:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EAC9184F8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 20:52:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbgCMTxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 15:53:03 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33479 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727413AbgCMTwW (ORCPT
+        id S1726895AbgCMTw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 15:52:26 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:33741 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727355AbgCMTwW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 13 Mar 2020 15:52:22 -0400
-Received: by mail-qk1-f195.google.com with SMTP id p62so14715149qkb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 12:52:20 -0700 (PDT)
+Received: by mail-qt1-f193.google.com with SMTP id d22so8672792qtn.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 12:52:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bVyWwFJqViC83OcoKVFg7qqvJmczpS8nLV1bfH3wEfY=;
-        b=FJYWlSa0iFHDmYPqCNHxVXM60K0i+L7YdQWHwadM7xZtSRF426AYbgsezNsvccCfnk
-         VVOprL2+3OqKYw3zMxNdr1GeKhUI/5gufWsAdCwH4zET5d6TtrMB0FTNmS8pb81LGhc3
-         RMzEtXH9ITFgmlqpRKhSNZEyj25E5DRr/YpZUiCdhlwXhyBWW8lkDLXjw0gtESLVgCIT
-         iO/ugnjFQLucaq3uETvTY15+wQPQUUedU8uOML8YheRjunM6KJkrpa7e8w1DTtqXVUQc
-         OGuOYRqLl+PBXqORVKznx0c/AjGq1lxJJHILpbgGhniqiQ1kRbThEAnPMv0vMlQKauUD
-         PIvQ==
+        bh=yRLPPaada1Gnu8tlz6LNuClHSQtdTE6w4ywYYXvxjAE=;
+        b=YEfYGcvdrfPfo7nhpDLeybFQPPPWi6PS5cwnR9KJl5ERjQXW5NJ+gqrdxcw49qCdU1
+         r8SYLURTCTmz6xYCQ1WnCP0SMG8qo27cRn9bdUX7uIT3uoX61hF5eAWRt2iNaib1W01l
+         PEKz0qtES86oJ6og8KGM1YnCR61IfhPavNrWpXj/ECkXG2QdrgWxUb12B2ocRytQhQpz
+         xPLNDYfqmLD7bdMDrRQj3bnelePopXYrs4tt+Hm7/bi/+JxfHVTH1NemL5FsjQymg3Mb
+         epFRgazyaWZ1wUyfmAgbfaXOkMBYcGf8w+lgSP/6iXgSkjQl6Fvrzs0+zwnQM7TYGczj
+         2GPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bVyWwFJqViC83OcoKVFg7qqvJmczpS8nLV1bfH3wEfY=;
-        b=ICbr7YvUi9ZDOw2FNRxYuNKl3m7EbEN3g4t8bqp7yfD5ENPAIpADwSVc6fr+ikI1Il
-         TtWVCrdx0IOUodMXyuZvxxUdxEIFlajgUDaniYz39xbFxt00Umt46ugWIdaRN0MDDPRg
-         uE4cjDSsYovSHTNSUjq2nA2NTWBcgxLBrhkpESmG12v55c5M5Dzhg675jAZUjxqtpDBX
-         ZA1qU8vNll8XBwH3QuCIl9TRgDenpoDaCGqunJ+Hf/Cqe8vOIujftt5U26MuMeBD7B9N
-         nZFpq049fLr6RCTY8E60deUDpWlbqCL5G9Fvej4DfKOvgDHh+G97ao061EwWrpSkXV6b
-         jbAA==
-X-Gm-Message-State: ANhLgQ0quF0JwMl0dztRSN7jr60Guvi7QdRnxBsw0sXsIS+45tmXQHW5
-        0V4gcEM2eq7rpmBW+cWYbPskd8s=
-X-Google-Smtp-Source: ADFU+vug9MaMcE8moTva0rkR+CQWVRmPvewhPHJUYwyiFS6c4B0S9Pkh2/odlwFzBHdH9SN1nDH+FQ==
-X-Received: by 2002:a37:9dc9:: with SMTP id g192mr14943877qke.50.1584129139858;
-        Fri, 13 Mar 2020 12:52:19 -0700 (PDT)
+        bh=yRLPPaada1Gnu8tlz6LNuClHSQtdTE6w4ywYYXvxjAE=;
+        b=i8MDpdAYOeFxT4BfG88NcyWrp+V+gzO8scU2X1OYp/S7He1MfQuChMQbKjZsRE8Kul
+         4hQzPL0uFxxaQzokXnJlL8CTWNZSrZcqK7y6zRV2AwEW8RzeGG9kIKxDi5kkONLqRE3s
+         Db+xN27WPksWy+L0lIa65AEIAeUnqWokgL3ejc6CJXRqElkQgkayrICz4nt1N8ASKBMH
+         DU6gLoend+sJym52xj3yr3ScnYYKwboSBN63gpj36SAF3TXL59xT71Zf9X6va4K6Z5aw
+         2ZcmF3gwA7CQrMK5ieZ/rbxD3/g980iQ8oZqw6kASyVDmKFxUWcoohssVr+5SWr2YYrh
+         Jq7A==
+X-Gm-Message-State: ANhLgQ3ZMXSNa1xwwQxhKL+DS9dgxv0oaGNxKyStkg9xTfJ7PJ2/yvOm
+        77QpiwuoDa+53Lr2AT9/2Dvh4c4=
+X-Google-Smtp-Source: ADFU+vsmKCR2EeiXkztqSAukKtbildNSWWbbnHFcKP8XeGidyIfBKk1J3q2uzNpLP5OoSTD+PXQ1kg==
+X-Received: by 2002:ac8:1608:: with SMTP id p8mr14410376qtj.123.1584129141097;
+        Fri, 13 Mar 2020 12:52:21 -0700 (PDT)
 Received: from localhost.localdomain (174-084-153-250.res.spectrum.com. [174.84.153.250])
-        by smtp.gmail.com with ESMTPSA id i28sm31475599qtc.57.2020.03.13.12.52.18
+        by smtp.gmail.com with ESMTPSA id i28sm31475599qtc.57.2020.03.13.12.52.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 12:52:19 -0700 (PDT)
+        Fri, 13 Mar 2020 12:52:20 -0700 (PDT)
 From:   Brian Gerst <brgerst@gmail.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -53,9 +53,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Andy Lutomirski <luto@kernel.org>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
         Brian Gerst <brgerst@gmail.com>
-Subject: [PATCH v4 08/18] x86: Move max syscall number calculation to syscallhdr.sh
-Date:   Fri, 13 Mar 2020 15:51:34 -0400
-Message-Id: <20200313195144.164260-9-brgerst@gmail.com>
+Subject: [PATCH v4 09/18] x86-64: Remove ptregs qualifier from syscall table
+Date:   Fri, 13 Mar 2020 15:51:35 -0400
+Message-Id: <20200313195144.164260-10-brgerst@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200313195144.164260-1-brgerst@gmail.com>
 References: <20200313195144.164260-1-brgerst@gmail.com>
@@ -66,317 +66,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using an array in asm-offsets to calculate the max syscall
-number, calculate it when writing out the syscall headers.
+Now that the fast syscall path is removed, the ptregs qualifier is unused.
 
 Signed-off-by: Brian Gerst <brgerst@gmail.com>
 ---
- arch/x86/entry/syscall_32.c                 |  6 ++--
- arch/x86/entry/syscall_64.c                 |  2 +-
- arch/x86/entry/syscall_x32.c                |  6 ++--
- arch/x86/entry/syscalls/syscallhdr.sh       |  7 ++++
- arch/x86/entry/vdso/vdso32/vclock_gettime.c |  1 +
- arch/x86/include/asm/syscall.h              |  3 --
- arch/x86/include/asm/unistd.h               |  7 ++++
- arch/x86/kernel/asm-offsets_32.c            |  9 ------
- arch/x86/kernel/asm-offsets_64.c            | 36 ---------------------
- arch/x86/um/sys_call_table_32.c             |  2 +-
- arch/x86/um/sys_call_table_64.c             |  2 +-
- arch/x86/um/user-offsets.c                  | 15 ---------
- 12 files changed, 24 insertions(+), 72 deletions(-)
+ arch/x86/entry/syscalls/syscall_64.tbl | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/entry/syscall_32.c b/arch/x86/entry/syscall_32.c
-index 7d17b3addbbb..3207cf685cde 100644
---- a/arch/x86/entry/syscall_32.c
-+++ b/arch/x86/entry/syscall_32.c
-@@ -4,7 +4,7 @@
- #include <linux/linkage.h>
- #include <linux/sys.h>
- #include <linux/cache.h>
--#include <asm/asm-offsets.h>
-+#include <asm/unistd.h>
- #include <asm/syscall.h>
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 0b5a25bc9998..e8fb7222a3bd 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -23,7 +23,7 @@
+ 12	common	brk			__x64_sys_brk
+ 13	64	rt_sigaction		__x64_sys_rt_sigaction
+ 14	common	rt_sigprocmask		__x64_sys_rt_sigprocmask
+-15	64	rt_sigreturn		__x64_sys_rt_sigreturn/ptregs
++15	64	rt_sigreturn		__x64_sys_rt_sigreturn
+ 16	64	ioctl			__x64_sys_ioctl
+ 17	common	pread64			__x64_sys_pread64
+ 18	common	pwrite64		__x64_sys_pwrite64
+@@ -64,10 +64,10 @@
+ 53	common	socketpair		__x64_sys_socketpair
+ 54	64	setsockopt		__x64_sys_setsockopt
+ 55	64	getsockopt		__x64_sys_getsockopt
+-56	common	clone			__x64_sys_clone/ptregs
+-57	common	fork			__x64_sys_fork/ptregs
+-58	common	vfork			__x64_sys_vfork/ptregs
+-59	64	execve			__x64_sys_execve/ptregs
++56	common	clone			__x64_sys_clone
++57	common	fork			__x64_sys_fork
++58	common	vfork			__x64_sys_vfork
++59	64	execve			__x64_sys_execve
+ 60	common	exit			__x64_sys_exit
+ 61	common	wait4			__x64_sys_wait4
+ 62	common	kill			__x64_sys_kill
+@@ -180,7 +180,7 @@
+ 169	common	reboot			__x64_sys_reboot
+ 170	common	sethostname		__x64_sys_sethostname
+ 171	common	setdomainname		__x64_sys_setdomainname
+-172	common	iopl			__x64_sys_iopl/ptregs
++172	common	iopl			__x64_sys_iopl
+ 173	common	ioperm			__x64_sys_ioperm
+ 174	64	create_module
+ 175	common	init_module		__x64_sys_init_module
+@@ -330,7 +330,7 @@
+ 319	common	memfd_create		__x64_sys_memfd_create
+ 320	common	kexec_file_load		__x64_sys_kexec_file_load
+ 321	common	bpf			__x64_sys_bpf
+-322	64	execveat		__x64_sys_execveat/ptregs
++322	64	execveat		__x64_sys_execveat
+ 323	common	userfaultfd		__x64_sys_userfaultfd
+ 324	common	membarrier		__x64_sys_membarrier
+ 325	common	mlock2			__x64_sys_mlock2
+@@ -356,7 +356,7 @@
+ 432	common	fsmount			__x64_sys_fsmount
+ 433	common	fspick			__x64_sys_fspick
+ 434	common	pidfd_open		__x64_sys_pidfd_open
+-435	common	clone3			__x64_sys_clone3/ptregs
++435	common	clone3			__x64_sys_clone3
+ 437	common	openat2			__x64_sys_openat2
+ 438	common	pidfd_getfd		__x64_sys_pidfd_getfd
  
- #ifdef CONFIG_IA32_EMULATION
-@@ -22,11 +22,11 @@ extern asmlinkage long sys_ni_syscall(unsigned long, unsigned long, unsigned lon
- 
- #define __SYSCALL_I386(nr, sym, qual) [nr] = sym,
- 
--__visible const sys_call_ptr_t ia32_sys_call_table[__NR_syscall_compat_max+1] = {
-+__visible const sys_call_ptr_t ia32_sys_call_table[__NR_ia32_syscall_max+1] = {
- 	/*
- 	 * Smells like a compiler bug -- it doesn't work
- 	 * when the & below is removed.
- 	 */
--	[0 ... __NR_syscall_compat_max] = &__sys_ni_syscall,
-+	[0 ... __NR_ia32_syscall_max] = &__sys_ni_syscall,
- #include <asm/syscalls_32.h>
- };
-diff --git a/arch/x86/entry/syscall_64.c b/arch/x86/entry/syscall_64.c
-index efb85c6dce13..5dc6846979df 100644
---- a/arch/x86/entry/syscall_64.c
-+++ b/arch/x86/entry/syscall_64.c
-@@ -5,7 +5,7 @@
- #include <linux/sys.h>
- #include <linux/cache.h>
- #include <linux/syscalls.h>
--#include <asm/asm-offsets.h>
-+#include <asm/unistd.h>
- #include <asm/syscall.h>
- 
- #define __SYSCALL_X32(nr, sym, qual)
-diff --git a/arch/x86/entry/syscall_x32.c b/arch/x86/entry/syscall_x32.c
-index d144ced7f582..95abb6da0ecc 100644
---- a/arch/x86/entry/syscall_x32.c
-+++ b/arch/x86/entry/syscall_x32.c
-@@ -5,7 +5,7 @@
- #include <linux/sys.h>
- #include <linux/cache.h>
- #include <linux/syscalls.h>
--#include <asm/asm-offsets.h>
-+#include <asm/unistd.h>
- #include <asm/syscall.h>
- 
- #define __SYSCALL_64(nr, sym, qual)
-@@ -16,11 +16,11 @@
- 
- #define __SYSCALL_X32(nr, sym, qual) [nr] = sym,
- 
--asmlinkage const sys_call_ptr_t x32_sys_call_table[__NR_syscall_x32_max+1] = {
-+asmlinkage const sys_call_ptr_t x32_sys_call_table[__NR_x32_syscall_max+1] = {
- 	/*
- 	 * Smells like a compiler bug -- it doesn't work
- 	 * when the & below is removed.
- 	 */
--	[0 ... __NR_syscall_x32_max] = &__x64_sys_ni_syscall,
-+	[0 ... __NR_x32_syscall_max] = &__x64_sys_ni_syscall,
- #include <asm/syscalls_64.h>
- };
-diff --git a/arch/x86/entry/syscalls/syscallhdr.sh b/arch/x86/entry/syscalls/syscallhdr.sh
-index 12fbbcfe7ef3..cc1e63857427 100644
---- a/arch/x86/entry/syscalls/syscallhdr.sh
-+++ b/arch/x86/entry/syscalls/syscallhdr.sh
-@@ -15,14 +15,21 @@ grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
-     echo "#define ${fileguard} 1"
-     echo ""
- 
-+    max=0
-     while read nr abi name entry ; do
- 	if [ -z "$offset" ]; then
- 	    echo "#define __NR_${prefix}${name} $nr"
- 	else
- 	    echo "#define __NR_${prefix}${name} ($offset + $nr)"
-         fi
-+
-+	max=$nr
-     done
- 
-+    echo ""
-+    echo "#ifdef __KERNEL__"
-+    echo "#define __NR_${prefix}syscall_max $max"
-+    echo "#endif"
-     echo ""
-     echo "#endif /* ${fileguard} */"
- ) > "$out"
-diff --git a/arch/x86/entry/vdso/vdso32/vclock_gettime.c b/arch/x86/entry/vdso/vdso32/vclock_gettime.c
-index 9242b28418d5..1e82bd43286c 100644
---- a/arch/x86/entry/vdso/vdso32/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vdso32/vclock_gettime.c
-@@ -13,6 +13,7 @@
-  */
- #undef CONFIG_64BIT
- #undef CONFIG_X86_64
-+#undef CONFIG_COMPAT
- #undef CONFIG_PGTABLE_LEVELS
- #undef CONFIG_ILLEGAL_POINTER_VALUE
- #undef CONFIG_SPARSEMEM_VMEMMAP
-diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
-index d20ffc518cf4..f4d010d0fa30 100644
---- a/arch/x86/include/asm/syscall.h
-+++ b/arch/x86/include/asm/syscall.h
-@@ -13,7 +13,6 @@
- #include <uapi/linux/audit.h>
- #include <linux/sched.h>
- #include <linux/err.h>
--#include <asm/asm-offsets.h>	/* For NR_syscalls */
- #include <asm/thread_info.h>	/* for TS_COMPAT */
- #include <asm/unistd.h>
- 
-@@ -28,8 +27,6 @@ extern const sys_call_ptr_t sys_call_table[];
- 
- #if defined(CONFIG_X86_32)
- #define ia32_sys_call_table sys_call_table
--#define __NR_syscall_compat_max __NR_syscall_max
--#define IA32_NR_syscalls NR_syscalls
- #endif
- 
- #if defined(CONFIG_IA32_EMULATION)
-diff --git a/arch/x86/include/asm/unistd.h b/arch/x86/include/asm/unistd.h
-index a7dd080749ce..c1c3d31b15c0 100644
---- a/arch/x86/include/asm/unistd.h
-+++ b/arch/x86/include/asm/unistd.h
-@@ -13,10 +13,13 @@
- #  define __ARCH_WANT_SYS_OLD_MMAP
- #  define __ARCH_WANT_SYS_OLD_SELECT
- 
-+#  define __NR_ia32_syscall_max __NR_syscall_max
-+
- # else
- 
- #  include <asm/unistd_64.h>
- #  include <asm/unistd_64_x32.h>
-+#  include <asm/unistd_32_ia32.h>
- #  define __ARCH_WANT_SYS_TIME
- #  define __ARCH_WANT_SYS_UTIME
- #  define __ARCH_WANT_COMPAT_SYS_PREADV64
-@@ -26,6 +29,10 @@
- 
- # endif
- 
-+# define NR_syscalls (__NR_syscall_max + 1)
-+# define X32_NR_syscalls (__NR_x32_syscall_max + 1)
-+# define IA32_NR_syscalls (__NR_ia32_syscall_max + 1)
-+
- # define __ARCH_WANT_NEW_STAT
- # define __ARCH_WANT_OLD_READDIR
- # define __ARCH_WANT_OLD_STAT
-diff --git a/arch/x86/kernel/asm-offsets_32.c b/arch/x86/kernel/asm-offsets_32.c
-index 2b4256ebe86e..6e043f295a60 100644
---- a/arch/x86/kernel/asm-offsets_32.c
-+++ b/arch/x86/kernel/asm-offsets_32.c
-@@ -7,11 +7,6 @@
- 
- #include <asm/ucontext.h>
- 
--#define __SYSCALL_I386(nr, sym, qual) [nr] = 1,
--static char syscalls[] = {
--#include <asm/syscalls_32.h>
--};
--
- /* workaround for a warning with -Wmissing-prototypes */
- void foo(void);
- 
-@@ -63,10 +58,6 @@ void foo(void)
- 	OFFSET(stack_canary_offset, stack_canary, canary);
- #endif
- 
--	BLANK();
--	DEFINE(__NR_syscall_max, sizeof(syscalls) - 1);
--	DEFINE(NR_syscalls, sizeof(syscalls));
--
- 	BLANK();
- 	DEFINE(EFI_svam, offsetof(efi_runtime_services_t, set_virtual_address_map));
- }
-diff --git a/arch/x86/kernel/asm-offsets_64.c b/arch/x86/kernel/asm-offsets_64.c
-index 24d2fde30d00..c2a47016f243 100644
---- a/arch/x86/kernel/asm-offsets_64.c
-+++ b/arch/x86/kernel/asm-offsets_64.c
-@@ -5,30 +5,6 @@
- 
- #include <asm/ia32.h>
- 
--#define __SYSCALL_64(nr, sym, qual) [nr] = 1,
--#define __SYSCALL_X32(nr, sym, qual)
--static char syscalls_64[] = {
--#include <asm/syscalls_64.h>
--};
--#undef __SYSCALL_64
--#undef __SYSCALL_X32
--
--#ifdef CONFIG_X86_X32_ABI
--#define __SYSCALL_64(nr, sym, qual)
--#define __SYSCALL_X32(nr, sym, qual) [nr] = 1,
--static char syscalls_x32[] = {
--#include <asm/syscalls_64.h>
--};
--#undef __SYSCALL_64
--#undef __SYSCALL_X32
--#endif
--
--#define __SYSCALL_I386(nr, sym, qual) [nr] = 1,
--static char syscalls_ia32[] = {
--#include <asm/syscalls_32.h>
--};
--#undef __SYSCALL_I386
--
- #if defined(CONFIG_KVM_GUEST) && defined(CONFIG_PARAVIRT_SPINLOCKS)
- #include <asm/kvm_para.h>
- #endif
-@@ -90,17 +66,5 @@ int main(void)
- 	DEFINE(stack_canary_offset, offsetof(struct fixed_percpu_data, stack_canary));
- 	BLANK();
- #endif
--
--	DEFINE(__NR_syscall_max, sizeof(syscalls_64) - 1);
--	DEFINE(NR_syscalls, sizeof(syscalls_64));
--
--#ifdef CONFIG_X86_X32_ABI
--	DEFINE(__NR_syscall_x32_max, sizeof(syscalls_x32) - 1);
--	DEFINE(X32_NR_syscalls, sizeof(syscalls_x32));
--#endif
--
--	DEFINE(__NR_syscall_compat_max, sizeof(syscalls_ia32) - 1);
--	DEFINE(IA32_NR_syscalls, sizeof(syscalls_ia32));
--
- 	return 0;
- }
-diff --git a/arch/x86/um/sys_call_table_32.c b/arch/x86/um/sys_call_table_32.c
-index 9649b5ad2ca2..a0d75c560030 100644
---- a/arch/x86/um/sys_call_table_32.c
-+++ b/arch/x86/um/sys_call_table_32.c
-@@ -7,7 +7,7 @@
- #include <linux/linkage.h>
- #include <linux/sys.h>
- #include <linux/cache.h>
--#include <generated/user_constants.h>
-+#include <asm/unistd.h>
- #include <asm/syscall.h>
- 
- #define __NO_STUBS
-diff --git a/arch/x86/um/sys_call_table_64.c b/arch/x86/um/sys_call_table_64.c
-index c8bc7fb8cbd6..fa97740badd5 100644
---- a/arch/x86/um/sys_call_table_64.c
-+++ b/arch/x86/um/sys_call_table_64.c
-@@ -7,7 +7,7 @@
- #include <linux/linkage.h>
- #include <linux/sys.h>
- #include <linux/cache.h>
--#include <generated/user_constants.h>
-+#include <asm/unistd.h>
- #include <asm/syscall.h>
- 
- #define __NO_STUBS
-diff --git a/arch/x86/um/user-offsets.c b/arch/x86/um/user-offsets.c
-index 5b37b7f952dd..c51dd8363d25 100644
---- a/arch/x86/um/user-offsets.c
-+++ b/arch/x86/um/user-offsets.c
-@@ -9,18 +9,6 @@
- #include <linux/ptrace.h>
- #include <asm/types.h>
- 
--#ifdef __i386__
--#define __SYSCALL_I386(nr, sym, qual) [nr] = 1,
--static char syscalls[] = {
--#include <asm/syscalls_32.h>
--};
--#else
--#define __SYSCALL_64(nr, sym, qual) [nr] = 1,
--static char syscalls[] = {
--#include <asm/syscalls_64.h>
--};
--#endif
--
- #define DEFINE(sym, val) \
- 	asm volatile("\n->" #sym " %0 " #val : : "i" (val))
- 
-@@ -94,7 +82,4 @@ void foo(void)
- 	DEFINE(UM_PROT_READ, PROT_READ);
- 	DEFINE(UM_PROT_WRITE, PROT_WRITE);
- 	DEFINE(UM_PROT_EXEC, PROT_EXEC);
--
--	DEFINE(__NR_syscall_max, sizeof(syscalls) - 1);
--	DEFINE(NR_syscalls, sizeof(syscalls));
- }
+@@ -374,7 +374,7 @@
+ 517	x32	recvfrom		__x32_compat_sys_recvfrom
+ 518	x32	sendmsg			__x32_compat_sys_sendmsg
+ 519	x32	recvmsg			__x32_compat_sys_recvmsg
+-520	x32	execve			__x32_compat_sys_execve/ptregs
++520	x32	execve			__x32_compat_sys_execve
+ 521	x32	ptrace			__x32_compat_sys_ptrace
+ 522	x32	rt_sigpending		__x32_compat_sys_rt_sigpending
+ 523	x32	rt_sigtimedwait		__x32_compat_sys_rt_sigtimedwait_time64
+@@ -399,6 +399,6 @@
+ 542	x32	getsockopt		__x32_compat_sys_getsockopt
+ 543	x32	io_setup		__x32_compat_sys_io_setup
+ 544	x32	io_submit		__x32_compat_sys_io_submit
+-545	x32	execveat		__x32_compat_sys_execveat/ptregs
++545	x32	execveat		__x32_compat_sys_execveat
+ 546	x32	preadv2			__x32_compat_sys_preadv64v2
+ 547	x32	pwritev2		__x32_compat_sys_pwritev64v2
 -- 
 2.24.1
 
