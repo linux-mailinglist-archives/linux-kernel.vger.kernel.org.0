@@ -2,378 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D7E41843AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 10:33:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5583C1843C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 10:35:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbgCMJdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 05:33:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35922 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbgCMJda (ORCPT
+        id S1726836AbgCMJfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 05:35:01 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:61434 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726652AbgCMJem (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 05:33:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=8pIGnk90C/eQbLnJ8p/15sfKmAvXSjOcwPwug3juja8=; b=sh9MXIhMbMo/jyATdPSOXudhHQ
-        RAfYggc+QFxGmSCG2DbiXet21j7htLbmuakEwuPEsVTrSWNMYhaGSrcoj5Gh8nUzspgVTa98SicQE
-        XrAh1FHucHldANEXZEBGVBcjaZ4V0k0BxPhJIrxY/LEzXu2QtCdS9ubYgedFZZPkAvfvazWmagsZD
-        o4yMRmLzCdzVEvMW+yA08A+Ax85RnlHOEdwKaocMuWVvTWZ3s53c1CtKfxMwEo9bCqAOcCHnpQ3Vj
-        jKU/B0Yj1ZS2obQDcjp4cTEqsZwhq4hAVyfNLzZPbG6DkhpbVf/jKE+Sn5JLB4N+VVosLcINBIkMZ
-        7bbuTV0Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCgh6-0005WP-67; Fri, 13 Mar 2020 09:33:28 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D01153011E0;
-        Fri, 13 Mar 2020 10:33:25 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9759A214344F4; Fri, 13 Mar 2020 10:33:25 +0100 (CET)
-Date:   Fri, 13 Mar 2020 10:33:25 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Boqun Feng <boqun.feng@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        Qian Cai <cai@lca.pw>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] locking/lockdep: Avoid recursion in
- lockdep_count_{for,back}ward_deps()
-Message-ID: <20200313093325.GW12561@hirez.programming.kicks-ass.net>
-References: <20200312151258.128036-1-boqun.feng@gmail.com>
+        Fri, 13 Mar 2020 05:34:42 -0400
+X-UUID: f6085f581c4046c19a0df2d94e57a980-20200313
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=MidtCNAIajigGXAw4rqwNT0zFAWiQXn5poURNmnBH+M=;
+        b=u99Emqlc65OIXVqVjlVr0smg7ATjK4DBU6wjgCIe7gFEOMukRL6y5yfuvafLfATkZy9e4I5TSFzWllmZ6uCkGTaeChxcLGrGB1wkaW2oYrQYl2Uau3FU2W+APMSRYD7kbMwArnq8tY/+uH0pc2l7xgzmpDJdgDYxDJk10N4348Y=;
+X-UUID: f6085f581c4046c19a0df2d94e57a980-20200313
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <henryc.chen@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1363436086; Fri, 13 Mar 2020 17:34:30 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 13 Mar 2020 17:32:16 +0800
+Received: from mtksdaap41.mediatek.inc (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 13 Mar 2020 17:33:40 +0800
+From:   Henry Chen <henryc.chen@mediatek.com>
+To:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Ryan Case <ryandcase@chromium.org>,
+        Mark Brown <broonie@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Boichat <drinkcat@google.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Arvin Wang <arvin.wang@mediatek.com>,
+        Mike Turquette <mturquette@linaro.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Subject: [PATCH V4 00/13] Add driver for dvfsrc, support for active state of scpsys
+Date:   Fri, 13 Mar 2020 17:34:13 +0800
+Message-ID: <1584092066-24425-1-git-send-email-henryc.chen@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200312151258.128036-1-boqun.feng@gmail.com>
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 11:12:55PM +0800, Boqun Feng wrote:
+VGhlIHBhdGNoc2V0cyBhZGQgc3VwcG9ydCBmb3IgTWVkaWFUZWsgaGFyZHdhcmUgbW9kdWxlIG5h
+bWVkIERWRlNSQw0KKGR5bmFtaWMgdm9sdGFnZSBhbmQgZnJlcXVlbmN5IHNjYWxpbmcgcmVzb3Vy
+Y2UgY29sbGVjdG9yKS4gVGhlIERWRlNSQyBpcw0KYSBIVyBtb2R1bGUgd2hpY2ggaXMgdXNlZCB0
+byBjb2xsZWN0IGFsbCB0aGUgcmVxdWVzdHMgZnJvbSBib3RoIHNvZnR3YXJlDQphbmQgaGFyZHdh
+cmUgYW5kIHR1cm4gaW50byB0aGUgZGVjaXNpb24gb2YgbWluaW11bSBvcGVyYXRpbmcgdm9sdGFn
+ZSBhbmQNCm1pbmltdW0gRFJBTSBmcmVxdWVuY3kgdG8gZnVsZmlsbCB0aG9zZSByZXF1ZXN0cy4N
+Cg0KU28sIFRoaXMgc2VyaWVzIGlzIHRvIGltcGxlbWVudCB0aGUgZHZmc3JjIGRyaXZlciB0byBj
+b2xsZWN0IGFsbCB0aGUNCnJlcXVlc3RzIG9mIG9wZXJhdGluZyB2b2x0YWdlIG9yIERSQU0gYmFu
+ZHdpZHRoIGZyb20gb3RoZXIgZGV2aWNlIGRyaXZlcnMNCmxpa2VzIEdQVS9DYW1lcmEgdGhyb3Vn
+aCAzIGZyYW1ld29ya3MgYmFzaWNhbGx5Og0KDQoxLiBpbnRlcmNvbm5lY3QgZnJhbWV3b3JrOiB0
+byBhZ2dyZWdhdGUgdGhlIGJhbmR3aWR0aA0KICAgcmVxdWlyZW1lbnRzIGZyb20gZGlmZmVyZW50
+IGNsaWVudHMNCg0KWzFdIGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvY292ZXIvMTA3NjYz
+MjkvDQoNCkJlbG93IGlzIHRoZSBlbWkgYmFuZHdpZHRoIG1hcCBvZiBtdDgxODMuIFRoZXJlIGhh
+cyBhIGh3IG1vZHVsZSAiRFJBTSBzY2hlZHVsZXIiDQp3aGljaCB1c2VkIHRvIGNvbnRyb2wgdGhl
+IHRocm91Z2hwdXQuIFRoZSBEVkZTUkMgd2lsbCBjb2xsZWN0IGZvcmVjYXN0IGRhdGENCm9mIGRy
+YW0gYmFuZHdpZHRoIGZyb20gU1cgY29uc3VtZXJzKGNhbWVyYS9ncHUuLi4pLCBhbmQgYWNjb3Jk
+aW5nIHRoZSBmb3JlY2FzdA0KdG8gY2hhbmdlIHRoZSBEUkFNIGZyZXF1ZW5jeQ0KDQogICAgICAg
+ICAgIElDQyBwcm92aWRlciAgICAgICAgIElDQyBOb2Rlcw0KICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIC0tLS0gICAgICAgICAgLS0tLQ0KICAgICAgICAgICAtLS0tLS0tLS0gICAgICAgfENQ
+VSB8ICAgfC0tLT58VlBVIHwNCiAgLS0tLS0gICB8ICAgICAgICAgfC0tLS0tPiAtLS0tICAgIHwg
+ICAgIC0tLS0NCiB8RFJBTSB8LS18RFJBTSAgICAgfCAgICAgICAtLS0tICAgIHwgICAgIC0tLS0N
+CiB8ICAgICB8LS18c2NoZWR1bGVyfC0tLS0tPnxHUFUgfCAgIHwtLS0+fERJU1B8DQogfCAgICAg
+fC0tfChFTUkpICAgIHwgICAgICAgLS0tLSAgICB8ICAgICAtLS0tDQogfCAgICAgfC0tfCAgICAg
+ICAgIHwgICAgICAgLS0tLS0gICB8ICAgICAtLS0tDQogIC0tLS0tICAgfCAgICAgICAgIHwtLS0t
+LT58TU1TWVN8LS18LS0tPnxWREVDfA0KICAgICAgICAgICAtLS0tLS0tLS0gICAgICAgIC0tLS0t
+ICAgfCAgICAgLS0tLQ0KICAgICAgICAgICAgIC98XCAgICAgICAgICAgICAgICAgICAgfCAgICAg
+LS0tLQ0KICAgICAgICAgICAgICB8Y2hhbmdlIERSQU0gZnJlcSAgICAgfC0tLT58VkVOQ3wNCiAg
+ICAgICAgICAgLS0tLS0tLS0tLSAgICAgICAgICAgICAgIHwgICAgIC0tLS0NCiAgICAgICAgICB8
+ICBEVkZTUiAgIHwgICAgICAgICAgICAgIHwNCiAgICAgICAgICB8ICAgICAgICAgIHwgICAgICAg
+ICAgICAgIHwgICAgIC0tLS0NCiAgICAgICAgICAgLS0tLS0tLS0tLSAgICAgICAgICAgICAgIHwt
+LS0+fElNRyB8DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgICAtLS0t
+DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgICAtLS0tDQogICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8LS0tPnxDQU0gfA0KICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0tLQ0KDQoyLiBBY3RpdmUgc3RhdGUgbWFuYWdl
+bWVudCBvZiBwb3dlciBkb21haW5zWzFdOiB0byBoYW5kbGUgdGhlIG9wZXJhdGluZw0KICAgdm9s
+dGFnZS9kcmFtIG9wcCByZXF1aXJlbWVudCBmcm9tIGRpZmZlcmVudCBwb3dlciBkb21haW5zDQoN
+ClsyXSBodHRwczovL2x3bi5uZXQvQXJ0aWNsZXMvNzQ0MDQ3Lw0KDQozLiBSZWd1YWx0b3IgZnJh
+bWV3b3JrOiB0byBoYW5kbGUgdGhlIG9wZXJhdGluZyB2b2x0YWdlIHJlcXVpcmVtZW50IGZyb20g
+dXNlciBvcg0KICAgY29zdW1lciB3aGljaCBub3QgYmVsb25nIGFueSBwb3dlciBkb21haW4NCg0K
+Q2hhbmdlcyBpbiBWNDoNCiogQWRkIGFja2VkIFRBRyBvbiBkdC1iaW5kaW5ncyBwYXRjaGVzLiAo
+Um9iKQ0KKiBEZWNsYXJhdGlvbiBvZiBlbWlfaWNjX2FnZ3JlZ2F0ZSBzaW5jZSB0aGUgcHJvdG90
+eXBlIG9mIGFnZ3JlZ2F0ZSBmdW5jdGlvbg0KaGFzIGNoYW5nZWQgbWVhbndoaWxlLiAoR2Vvcmdp
+KQ0KKiBVc2VkIGVtaV9pY2NfcmVtb3ZlIGluc3RlYWQgb2YgaWNjX3Byb3ZpZGVyX2RlbCBvbiBw
+cm9iZS4gKEdlb3JnaSkNCiogQWRkIGR2ZnNyYyByZWd1bGF0b3IgZHJpdmVyIGludG8gc2VyaWVz
+Lg0KKiBCdWcgZml4ZWQgb2YgbXQ4MTgzX2dldF9jdXJyZW50X2xldmVsLg0KKiBBZGQgbXV0ZXgg
+cHJvdGVjdGlvbiBmb3IgcHN0YXRlIG9wZXJhdGlvbiBvbiBkdmZzcmNfc2V0X3BlcmZvcm1hbmNl
+Lg0KDQpDaGFuZ2VzIGluIFYzOg0KKiBSZW1vdmUgUkZDIGZyb20gdGhlIHN1YmplY3QgcHJlZml4
+IG9mIHRoZSBzZXJpZXMNCiogQ29tYmluZSBkdC1iaW5kaW5nIHBhdGNoIGFuZCBtb3ZlIGludGVy
+Y29ubmVjdCBkdC1iaW5kaW5nIGRvY3VtZW50IGludG8NCmR2ZnNyYy4gKFJvYikNCiogUmVtb3Zl
+IHVudXNlZCBoZWFkZXIsIGFkZCB1bml0IGRlc2NpcnB0aW9uIHRvIHRoZSBiYW5kd2lkdGgsIHJl
+bmFtZSBjb21wYXRpYmxlDQpuYW1lIG9uIGludGVyY29ubmVjdCBkcml2ZXIuIChHZW9yZ2kpDQoq
+IEZpeGVkIHNvbWUgY29kaW5nIHN0eWxlOiBjaGVjayBmbG93LCBuYW1pbmcsIHVzZWQgcmVhZHhf
+cG9sbF90aW1lb3V0DQpvbiBkdmZzcmMgZHJpdmVyLiAoUnlhbikNCiogUmVuYW1lIGludGVyY29u
+bmVjdCBkcml2ZXIgbXQ4MTgzLmMgdG8gbXRrLWVtaS5jDQoqIFJlbmFtZSBpbnRlcmNvbm5lY3Qg
+aGVhZGVyIG10ayxtdDgxODMuaCB0byBtdGssZW1pLmgNCiogbXRrLXNjcHN5cy5jOiBBZGQgb3Bw
+IHRhYmxlIGNoZWNrIGZpcnN0IHRvIGF2b2lkIE9GIHJ1bnRpbWUgcGFyc2UgZmFpbGVkDQoNCkNo
+YW5nZXMgaW4gUkZDIFYyOg0KKiBSZW1vdmUgdGhlIERUIHByb3BlcnR5IGRyYW1fdHlwZS4gKFJv
+YikNCiogVXNlZCBnZW5lcmljIGR0cyBwcm9wZXJ0eSAnb3BwLWxldmVsJyB0byBnZXQgdGhlIHBl
+cmZvcm1hY2Ugc3RhdGUuIChTdGVwaGVuKQ0KKiBSZW1vdmUgdW5lY2Vzc2FyeSBkZXBlbmRlbmN5
+IGNvbmZpZyBvbiBLY29uZmlnLiAoU3RlcGhlbikNCiogUmVtb3ZlIHVudXNlZCBoZWFkZXIgZmls
+ZSwgZml4ZWQgc29tZSBjb2Rpbmcgc3R5bGUgaXNzdWUsIHR5cG8sDQplcnJvciBoYW5kbGluZyBv
+biBkdmZzcmMgZHJpdmVyLiAoTmljb2xhcy9TdGVwaGVuKQ0KKiBSZW1vdmUgaXJxIGhhbmRsZXIg
+b24gZHZmc3JjIGRyaXZlci4gKFN0ZXBoZW4pDQoqIFJlbW92ZSBpbml0IHRhYmxlIG9uIGR2ZnNy
+YyBkcml2ZXIsIGNvbWJpbmUgaHcgaW5pdCBvbiB0cnVzdHpvbmUuDQoqIEFkZCBpbnRlcmNvbm5l
+Y3Qgc3VwcG9ydCBvZiBtdDgxODMgdG8gYWdncmVnYXRlIHRoZSBlbWkgYmFuZHdpZHRoLg0KKEdl
+b3JnaSkNCg0KVjM6IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvY292ZXIvMTExMTg4Njcv
+DQpSRkMgVjI6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3BhdGNod29yay9wYXRjaC8xMDY4MTEz
+Lw0KUkZDIFYxOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9wYXRjaHdvcmsvY292ZXIvMTAyODUz
+NS8NCg==
 
-Thanks!
-
-> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> index 32406ef0d6a2..5142a6b11bf5 100644
-> --- a/kernel/locking/lockdep.c
-> +++ b/kernel/locking/lockdep.c
-> @@ -1719,9 +1719,11 @@ unsigned long lockdep_count_forward_deps(struct lock_class *class)
->  	this.class = class;
->  
->  	raw_local_irq_save(flags);
-> +	current->lockdep_recursion = 1;
->  	arch_spin_lock(&lockdep_lock);
->  	ret = __lockdep_count_forward_deps(&this);
->  	arch_spin_unlock(&lockdep_lock);
-> +	current->lockdep_recursion = 0;
->  	raw_local_irq_restore(flags);
->  
->  	return ret;
-> @@ -1746,9 +1748,11 @@ unsigned long lockdep_count_backward_deps(struct lock_class *class)
->  	this.class = class;
->  
->  	raw_local_irq_save(flags);
-> +	current->lockdep_recursion = 1;
->  	arch_spin_lock(&lockdep_lock);
->  	ret = __lockdep_count_backward_deps(&this);
->  	arch_spin_unlock(&lockdep_lock);
-> +	current->lockdep_recursion = 0;
->  	raw_local_irq_restore(flags);
->  
->  	return ret;
-
-This copies a bad pattern though; all the sites that do not check
-lockdep_recursion_count first really should be using ++/-- instead. But
-I just found there are indeed already a few sites that violate this.
-
-I've taken this patch and done a general fixup on top.
-
----
-Subject: locking/lockdep: Fix bad recursion pattern
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Fri Mar 13 09:56:38 CET 2020
-
-There were two patterns for lockdep_recursion:
-
-Pattern-A:
-	if (current->lockdep_recursion)
-		return
-
-	current->lockdep_recursion = 1;
-	/* do stuff */
-	current->lockdep_recursion = 0;
-
-Pattern-B:
-	current->lockdep_recursion++;
-	/* do stuff */
-	current->lockdep_recursion--;
-
-But a third pattern has emerged:
-
-Pattern-C:
-	current->lockdep_recursion = 1;
-	/* do stuff */
-	current->lockdep_recursion = 0;
-
-And while this isn't broken per-se, it is highly dangerous because it
-doesn't nest properly.
-
-Get rid of all Pattern-C instances and shore up Pattern-A with a
-warning.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- kernel/locking/lockdep.c |   74 +++++++++++++++++++++++++----------------------
- 1 file changed, 40 insertions(+), 34 deletions(-)
-
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -389,6 +389,12 @@ void lockdep_on(void)
- }
- EXPORT_SYMBOL(lockdep_on);
- 
-+static inline void lockdep_recursion_finish(void)
-+{
-+	if (WARN_ON_ONCE(--current->lockdep_recursion))
-+		current->lockdep_recursion = 0;
-+}
-+
- void lockdep_set_selftest_task(struct task_struct *task)
- {
- 	lockdep_selftest_task_struct = task;
-@@ -1719,11 +1725,11 @@ unsigned long lockdep_count_forward_deps
- 	this.class = class;
- 
- 	raw_local_irq_save(flags);
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	arch_spin_lock(&lockdep_lock);
- 	ret = __lockdep_count_forward_deps(&this);
- 	arch_spin_unlock(&lockdep_lock);
--	current->lockdep_recursion = 0;
-+	current->lockdep_recursion--;
- 	raw_local_irq_restore(flags);
- 
- 	return ret;
-@@ -1748,11 +1754,11 @@ unsigned long lockdep_count_backward_dep
- 	this.class = class;
- 
- 	raw_local_irq_save(flags);
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	arch_spin_lock(&lockdep_lock);
- 	ret = __lockdep_count_backward_deps(&this);
- 	arch_spin_unlock(&lockdep_lock);
--	current->lockdep_recursion = 0;
-+	current->lockdep_recursion--;
- 	raw_local_irq_restore(flags);
- 
- 	return ret;
-@@ -3433,9 +3439,9 @@ void lockdep_hardirqs_on(unsigned long i
- 	if (DEBUG_LOCKS_WARN_ON(current->hardirq_context))
- 		return;
- 
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	__trace_hardirqs_on_caller(ip);
--	current->lockdep_recursion = 0;
-+	lockdep_recursion_finish();
- }
- NOKPROBE_SYMBOL(lockdep_hardirqs_on);
- 
-@@ -3491,7 +3497,7 @@ void trace_softirqs_on(unsigned long ip)
- 		return;
- 	}
- 
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	/*
- 	 * We'll do an OFF -> ON transition:
- 	 */
-@@ -3506,7 +3512,7 @@ void trace_softirqs_on(unsigned long ip)
- 	 */
- 	if (curr->hardirqs_enabled)
- 		mark_held_locks(curr, LOCK_ENABLED_SOFTIRQ);
--	current->lockdep_recursion = 0;
-+	lockdep_recursion_finish();
- }
- 
- /*
-@@ -3759,9 +3765,9 @@ void lockdep_init_map(struct lockdep_map
- 			return;
- 
- 		raw_local_irq_save(flags);
--		current->lockdep_recursion = 1;
-+		current->lockdep_recursion++;
- 		register_lock_class(lock, subclass, 1);
--		current->lockdep_recursion = 0;
-+		lockdep_recursion_finish();
- 		raw_local_irq_restore(flags);
- 	}
- }
-@@ -4441,11 +4447,11 @@ void lock_set_class(struct lockdep_map *
- 		return;
- 
- 	raw_local_irq_save(flags);
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	check_flags(flags);
- 	if (__lock_set_class(lock, name, key, subclass, ip))
- 		check_chain_key(current);
--	current->lockdep_recursion = 0;
-+	lockdep_recursion_finish();
- 	raw_local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(lock_set_class);
-@@ -4458,11 +4464,11 @@ void lock_downgrade(struct lockdep_map *
- 		return;
- 
- 	raw_local_irq_save(flags);
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	check_flags(flags);
- 	if (__lock_downgrade(lock, ip))
- 		check_chain_key(current);
--	current->lockdep_recursion = 0;
-+	lockdep_recursion_finish();
- 	raw_local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(lock_downgrade);
-@@ -4483,11 +4489,11 @@ void lock_acquire(struct lockdep_map *lo
- 	raw_local_irq_save(flags);
- 	check_flags(flags);
- 
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	trace_lock_acquire(lock, subclass, trylock, read, check, nest_lock, ip);
- 	__lock_acquire(lock, subclass, trylock, read, check,
- 		       irqs_disabled_flags(flags), nest_lock, ip, 0, 0);
--	current->lockdep_recursion = 0;
-+	lockdep_recursion_finish();
- 	raw_local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(lock_acquire);
-@@ -4501,11 +4507,11 @@ void lock_release(struct lockdep_map *lo
- 
- 	raw_local_irq_save(flags);
- 	check_flags(flags);
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	trace_lock_release(lock, ip);
- 	if (__lock_release(lock, ip))
- 		check_chain_key(current);
--	current->lockdep_recursion = 0;
-+	lockdep_recursion_finish();
- 	raw_local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(lock_release);
-@@ -4521,9 +4527,9 @@ int lock_is_held_type(const struct lockd
- 	raw_local_irq_save(flags);
- 	check_flags(flags);
- 
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	ret = __lock_is_held(lock, read);
--	current->lockdep_recursion = 0;
-+	lockdep_recursion_finish();
- 	raw_local_irq_restore(flags);
- 
- 	return ret;
-@@ -4542,9 +4548,9 @@ struct pin_cookie lock_pin_lock(struct l
- 	raw_local_irq_save(flags);
- 	check_flags(flags);
- 
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	cookie = __lock_pin_lock(lock);
--	current->lockdep_recursion = 0;
-+	lockdep_recursion_finish();
- 	raw_local_irq_restore(flags);
- 
- 	return cookie;
-@@ -4561,9 +4567,9 @@ void lock_repin_lock(struct lockdep_map
- 	raw_local_irq_save(flags);
- 	check_flags(flags);
- 
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	__lock_repin_lock(lock, cookie);
--	current->lockdep_recursion = 0;
-+	lockdep_recursion_finish();
- 	raw_local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(lock_repin_lock);
-@@ -4578,9 +4584,9 @@ void lock_unpin_lock(struct lockdep_map
- 	raw_local_irq_save(flags);
- 	check_flags(flags);
- 
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	__lock_unpin_lock(lock, cookie);
--	current->lockdep_recursion = 0;
-+	lockdep_recursion_finish();
- 	raw_local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(lock_unpin_lock);
-@@ -4716,10 +4722,10 @@ void lock_contended(struct lockdep_map *
- 
- 	raw_local_irq_save(flags);
- 	check_flags(flags);
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	trace_lock_contended(lock, ip);
- 	__lock_contended(lock, ip);
--	current->lockdep_recursion = 0;
-+	lockdep_recursion_finish();
- 	raw_local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(lock_contended);
-@@ -4736,9 +4742,9 @@ void lock_acquired(struct lockdep_map *l
- 
- 	raw_local_irq_save(flags);
- 	check_flags(flags);
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	__lock_acquired(lock, ip);
--	current->lockdep_recursion = 0;
-+	lockdep_recursion_finish();
- 	raw_local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(lock_acquired);
-@@ -4963,7 +4969,7 @@ static void free_zapped_rcu(struct rcu_h
- 
- 	raw_local_irq_save(flags);
- 	arch_spin_lock(&lockdep_lock);
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 
- 	/* closed head */
- 	pf = delayed_free.pf + (delayed_free.index ^ 1);
-@@ -4975,7 +4981,7 @@ static void free_zapped_rcu(struct rcu_h
- 	 */
- 	call_rcu_zapped(delayed_free.pf + delayed_free.index);
- 
--	current->lockdep_recursion = 0;
-+	current->lockdep_recursion--;
- 	arch_spin_unlock(&lockdep_lock);
- 	raw_local_irq_restore(flags);
- }
-@@ -5022,11 +5028,11 @@ static void lockdep_free_key_range_reg(v
- 
- 	raw_local_irq_save(flags);
- 	arch_spin_lock(&lockdep_lock);
--	current->lockdep_recursion = 1;
-+	current->lockdep_recursion++;
- 	pf = get_pending_free();
- 	__lockdep_free_key_range(pf, start, size);
- 	call_rcu_zapped(pf);
--	current->lockdep_recursion = 0;
-+	current->lockdep_recursion--;
- 	arch_spin_unlock(&lockdep_lock);
- 	raw_local_irq_restore(flags);
- 
