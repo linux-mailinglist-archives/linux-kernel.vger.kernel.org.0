@@ -2,102 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BBA8184E68
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:12:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 545E3184E74
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:16:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbgCMSMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 14:12:03 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:59974 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726477AbgCMSMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 14:12:03 -0400
-Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
-        by ale.deltatee.com with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id S1727104AbgCMSQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 14:16:12 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52377 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726303AbgCMSQM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 14:16:12 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
-        (envelope-from <logang@deltatee.com>)
-        id 1jComa-0002J7-J4; Fri, 13 Mar 2020 12:11:41 -0600
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-References: <20200313174701.148376-1-bigeasy@linutronix.de>
- <20200313174701.148376-4-bigeasy@linutronix.de>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <4d3a997d-ced4-3dbe-d766-0b1e9fc35b29@deltatee.com>
-Date:   Fri, 13 Mar 2020 12:11:38 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        (envelope-from <ore@pengutronix.de>)
+        id 1jCoqp-0007rb-Gk; Fri, 13 Mar 2020 19:16:03 +0100
+Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ore@pengutronix.de>)
+        id 1jCoqn-0002TA-On; Fri, 13 Mar 2020 19:16:01 +0100
+Date:   Fri, 13 Mar 2020 19:16:01 +0100
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Marek Vasut <marex@denx.de>, David Jander <david@protonic.nl>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] dt-bindings: net: phy: Add support for NXP TJA11xx
+Message-ID: <20200313181601.sbxdrqdjqfj3xn3e@pengutronix.de>
+References: <20200313052252.25389-1-o.rempel@pengutronix.de>
+ <20200313052252.25389-2-o.rempel@pengutronix.de>
+ <545d5e46-644a-51fb-0d67-881dfe23e9d8@gmail.com>
+ <20200313181056.GA29732@lunn.ch>
 MIME-Version: 1.0
-In-Reply-To: <20200313174701.148376-4-bigeasy@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.73.163.230
-X-SA-Exim-Rcpt-To: linux-pci@vger.kernel.org, bhelgaas@google.com, kurt.schwemmer@microsemi.com, tglx@linutronix.de, torvalds@linux-foundation.org, rostedt@goodmis.org, joel@joelfernandes.org, paulmck@kernel.org, will@kernel.org, mingo@kernel.org, peterz@infradead.org, linux-kernel@vger.kernel.org, bigeasy@linutronix.de
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_EXCLUSIVE autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: Re: [PATCH 3/9] pci/switchtec: Don't abuse completion wait queue for
- poll
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="h5xqpdlw2psmzsqz"
+Content-Disposition: inline
+In-Reply-To: <20200313181056.GA29732@lunn.ch>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 19:11:37 up 119 days,  9:30, 137 users,  load average: 0.10, 0.06,
+ 0.01
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--h5xqpdlw2psmzsqz
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2020-03-13 11:46 a.m., Sebastian Andrzej Siewior wrote:
-> The poll callback is abusing the completion wait queue and sticks it into
-> poll_wait() to wake up pollers after a command has completed.
-> 
-> First of all it's a layering violation as it imposes restrictions on the
-> inner workings of completions. Just because C allows to do so does not
-> justify that in any way. The proper way to do such things is to post
-> patches which extend the core infrastructure and not by silently abusing
-> it.
+On Fri, Mar 13, 2020 at 07:10:56PM +0100, Andrew Lunn wrote:
+> > > diff --git a/Documentation/devicetree/bindings/net/nxp,tja11xx.yaml b=
+/Documentation/devicetree/bindings/net/nxp,tja11xx.yaml
+> > > new file mode 100644
+> > > index 000000000000..42be0255512b
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/net/nxp,tja11xx.yaml
+> > > @@ -0,0 +1,61 @@
+> > > +# SPDX-License-Identifier: GPL-2.0+
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/net/nxp,tja11xx.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: NXP TJA11xx PHY
+> > > +
+> > > +maintainers:
+> > > +  - Andrew Lunn <andrew@lunn.ch>
+> > > +  - Florian Fainelli <f.fainelli@gmail.com>
+> > > +  - Heiner Kallweit <hkallweit1@gmail.com>
+> > > +
+> > > +description:
+> > > +  Bindings for NXP TJA11xx automotive PHYs
+> > > +
+> > > +allOf:
+> > > +  - $ref: ethernet-phy.yaml#
+> > > +
+> > > +patternProperties:
+> > > +  "^ethernet-phy@[0-9a-f]+$":
+> > > +    type: object
+> > > +    description: |
+> > > +      Some packages have multiple PHYs. Secondary PHY should be defi=
+nes as
+> > > +      subnode of the first (parent) PHY.
+> >=20
+> >=20
+> > There are QSGMII PHYs which have 4 PHYs embedded and AFAICT they are
+> > defined as 4 separate Ethernet PHY nodes and this would not be quite a
+> > big stretch to represent them that way compared to how they are.
+> >=20
+> > I would recommend doing the same thing and not bend the MDIO framework
+> > to support the registration of "nested" Ethernet PHY nodes.
+>=20
+> Hi Florian
+>=20
+> The issue here is the missing PHY ID in the secondary PHY. Because of
+> that, the secondary does not probe in the normal way. We need the
+> primary to be involved to some degree. It needs to register it. What
+> i'm not so clear on is if it just needs to register it, or if these
+> sub nodes are actually needed, given the current code.
 
-As I've said previously, I disagree with this approach. Open coding
-standard primitives sweeps issues under the rug and is a step backwards
-for code quality. Calling it a layering violation is just one opinion
-and if it is, the better solution would be to create an interface you
-find appropriate so that it isn't one.
+There are a bit more dependencies:
+- PHY0 is responsible for health monitoring. If some thing wrong, it may
+  shut down complete chip.
+- We have shared reset. It make no sense to probe PHY1 before PHY0 with
+  more controlling options will be probed
+- It is possible bat dangerous to use PHY1 without PHY0.
 
-> Aside of that the implementation is seriously broken:
-> 
->  1) It cannot work with EPOLLEXCLUSIVE
+Regards,
+Oleksij
 
-Why? You don't explain this. And I don't see how this patch would change
-anything to do with the call to poll_wait(). All you've done is
-open-code the completion.
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
-Not that it matters that much, having multiple waiters poll on this
-interface can pretty much never happen. It only makes sense for the
-process who submitted the write to poll on the interface.
+--h5xqpdlw2psmzsqz
+Content-Type: application/pgp-signature; name="signature.asc"
 
->  2) It's racy:
-> 
->   poll()	      	  	 write()
->    switchtec_dev_poll()		   switchtec_dev_write()
->     poll_wait(&s->comp.wait);        mrpc_queue_cmd()
->     				       init_completion(&s->comp)
-> 					 init_waitqueue_head(&s->comp.wait)
+-----BEGIN PGP SIGNATURE-----
 
-That's a nice catch! But wouldn't an easier solution be to change the
-code to use reinit_completion() instead of using the bug to justify a
-different change?
+iQIzBAABCAAdFiEERBNZvwSgvmcMY/T74omh9DUaUbMFAl5rzd0ACgkQ4omh9DUa
+UbNpEw/+LHH8MzgLbJS3H6AZLbBx73nKWAZSeS0xsINrSfeBd5XgyBHIUOVugm0p
+wML9tUFMXvgemYhgB1vJkywFsB2gJjw1Yc2RwJI5W1j9agZmOIeAJX0cgbHhTBFP
+NX9DitLsN1+AnaTHj/q7OTbf3B/PBnh9qPjNrMjGuyEvN0UZP36dUw7mVe+KjUEo
+NkOejzVqDEvGB4Vnq0TjOx4aJla8bpOI95X4NAbGEMb9bTg/+9f/W3RBzVpKk9k4
+gi2qX3hAzryMmgVEOsPzjSZD5a4Y8oF5Ioc4PRxzFS8axtF38UMKYn2E3rTpkfBH
+xGnk5sQMoRv5wFLY6xkg61qrZEY1GzJWXTMWvo9oyjvRF1EIq90dFRGBCyouDJPu
+3lHmWY0WaoLw45E7UFonbEEt3aAaZ1tjhf4QT3cytgJmCTh1hcUmW0nzn9xQRmAQ
+eS7W+4Q4dK1mjn98BkUwyxgXYIo1SS4OQhHCpYpnvglTlwTZCbKgjEBE4nvLpTGn
++JlOvqAOZt0uxtnPRM5TJAriNIOYqXPmC+sP5CoVUOSNvYl+HBVZB7OYGOkJg1/N
+A9NlW5HOp1iFL2ytNDdE8yPDigjdCuJB+lW6qKtNr7a0YVgVltWpNaKlbpJhSngE
+GWwdUPlHkGPSm6IBh3aeWNPV42Lof8KuUgIpffFBjrsAF5J1308=
+=l+DD
+-----END PGP SIGNATURE-----
 
-Thanks,
-
-Logan
+--h5xqpdlw2psmzsqz--
