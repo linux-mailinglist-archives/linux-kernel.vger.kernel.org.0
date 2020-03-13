@@ -2,83 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19A341848E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 15:11:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 821C01848EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 15:12:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbgCMOLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 10:11:01 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55351 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbgCMOLA (ORCPT
+        id S1726930AbgCMOM0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 10:12:26 -0400
+Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:33094 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726713AbgCMOMZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 10:11:00 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 6so10113201wmi.5
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 07:10:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pTkIuFS+sGaAC8JwXfK5lVK6SYN5Se9MVMEv67XiNyk=;
-        b=cJoJ3AzHZmwtZp40v4ICGMZ3Ajp7ofahUeU14HAvuKUqTyvuR8LSLilmLXPz1OKLj0
-         eGkjod9Y94A1RJyiwamaaS3MsFttxA2C5yKvxv/GHnNNd84hqPWBF5lGG6mi172kLsRX
-         xoPMyIR23wjH7d8/b/SAg23nr+J01v60kuwgQd8mh/eyLss8kCh2b3CNdjrM/G6lCunt
-         MsVHqXH1/vRzLjef2+Ob3ISr52uNkYnouj/37RlpMpE63sX5BErPRieM3hXbQy3pnr5d
-         ODhCOQfovpDUjXFEa77tR1D9LMpW5jAlBnQrBMI6vbsqV984k1QMVfCt1JVW5wsU1R/D
-         wKlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pTkIuFS+sGaAC8JwXfK5lVK6SYN5Se9MVMEv67XiNyk=;
-        b=qQnlYis6cQ1rcJd9b3/V06OJC1lE07y4ee6TelzwIbtxvg59eYb/Kos0Qq4s7YLgtx
-         rmcKRSWUBFpEuTRPyAdrvpeTTP3wDUYzOCwdrTxiFXTndL1lso8atAmjVsSvFgphxU9H
-         LL7I/XIEFOgcgX2YQFnlsM68zlRFdQUmxD+ZLRtHuusbr2hRL8aP7BnW059uwPiFi4qL
-         UoH0TPgSLJ/l6ZEaZOGGLhAcweR67pT25oK033vmzUtCEfuyT/uCeofN7FmBCr04qPeO
-         IvlFsSlpo9y307sJCRgNk50hj12APjFMjSDsbi0AMA3jnCqfVJ0uSSEzZLo2gFt6MftB
-         0A0Q==
-X-Gm-Message-State: ANhLgQ3cYjqnaTGLX4du3oYEyDvNBiaWD0omrOzfOk1HKRzEB9ABLkSs
-        j1oiiPDRP1TI0P8snjgJP9SS8XFNIlQOUHV3Ecs7mQ==
-X-Google-Smtp-Source: ADFU+vubSgPtN/iCfASN0cO8puw9z3lOn8G/GuxIIUBghEfV9l49vr7BkkAFDcpEp8y0kg+5TTraf7jD1ht6FcmWgnc=
-X-Received: by 2002:a7b:cc98:: with SMTP id p24mr10437048wma.29.1584108658739;
- Fri, 13 Mar 2020 07:10:58 -0700 (PDT)
+        Fri, 13 Mar 2020 10:12:25 -0400
+Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id B53F6C0FAD;
+        Fri, 13 Mar 2020 14:12:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1584108745; bh=dK092ZStMcpJfLv1Zi5vxQbrvIHTEKlEuMUGMwAVQhA=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=aJ5c0RSH1tv150l2asoh/BINWxodvTlZuSmyJ/hJZEhRZC7mfTU4LWMtx5hgHwa+G
+         51/EXkDUw0WCd8ef6058w+mqudcdaIA4lxm64uXOca2Xj5OhDhXaM/n2R99gzyv+Pm
+         u+0ltlN2l/LuSEePYdvqg6CUjywqE4Nr+v/nTX31yAiIADo1ZfE+9oRXNnQc2VXtTF
+         loNri9m5y3HwQgDjMm0hKw/JuHjB0sHkQqezbtCNZigfT8QKSD1ha2QoZNy5gt6sSW
+         cXTXIz3acwIA5W+nNnMFjnHPA3fNPtv/dw9cepCPxD2nqqsNlOhZzBP84Gy+/pCkPk
+         EDHvKBnyIc0ug==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 1EC7AA008A;
+        Fri, 13 Mar 2020 14:12:22 +0000 (UTC)
+Received: from us01hybrid1.internal.synopsys.com (10.200.27.51) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 13 Mar 2020 07:11:39 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (10.202.3.67) by
+ mrs.synopsys.com (10.200.27.51) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 13 Mar 2020 07:11:38 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FgkmngwqCauQ+WgteU5rACs5v01KFKO6gHk37AkxBeeO6PCq3PlYwoVb0SzliJkRAxyPsQFOjIVPjTv5JHajiEwQC6KsDpfnhzJN03LPBEW8N8YdS4JAdrt06939GPtGluyZ6LJcnVDZa1R7EZvEhdryRlExqmOg5gB7GPVeekRDsJ9dz5buD4sZgPhesxWapkuVkR2e/eyzX38kTSXCCFJO9AYCZq6xMt2T2VGev+Gb8XCJpyqCFhb+RC0itPMGtokDdhC70GKCKd6oKLsgV73Nliy3J4VRw6/5LvhWybr2nzqR53nIoFoKqtVQKV+addQOPTxI9TYa9KF6+C8RQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yFQT7AW2IFUHXX+1hxyIaEC8DTDiAPapvdE1eNdfBfg=;
+ b=PBZ5oK59GTHY0s3oQAxXp91w7CXOpxtULfWCSos0Yb/zOq6wBHFEzHSuUu4O5DdyQRrfYkPBqBMVed2IIafD72lnb2TH6ZxjKFZWUjAKSx1zdibaqWcyvmo5izrt/77pS76P2pc4p9OkD7+0GBvwP4NCdQmNRN8HTGjVzjrnhmflzOxn5c3J7Zq60TFmQDo9kF+gt8R+IGjcgOtSRS1cSdUzmwlaYpQCjiF6vzNUVLWqW+VkLArV+cZwW70AM0J5dWaCXLW5G9aBRylPjJyRAQvVZzs5kj0h8nPXiF5UDog7TeS+ujucsQvbMzmlt0C/dfVuWxdHVnnHSZXPW38tvQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yFQT7AW2IFUHXX+1hxyIaEC8DTDiAPapvdE1eNdfBfg=;
+ b=JQTE7N33xQ8VzxUuBkpwX/uBQPPydwXzSqhuKfv5Z+WnTSGCpEdv596saHNOF8S0fk0yVIoOwGqAUiH8iFpB3h6UU4ITR5aCvOOXP5uyrGA9UIf/+DY+wk5uTm09Xpx4cmdPTAC6IHvRCLqgfHB0aQjNQaEwe8KSBRFlF99Vl1Q=
+Received: from BN8PR12MB3266.namprd12.prod.outlook.com (2603:10b6:408:6e::17)
+ by BN8PR12MB3539.namprd12.prod.outlook.com (2603:10b6:408:9d::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.14; Fri, 13 Mar
+ 2020 14:11:36 +0000
+Received: from BN8PR12MB3266.namprd12.prod.outlook.com
+ ([fe80::c9ed:b08e:f3c5:42fa]) by BN8PR12MB3266.namprd12.prod.outlook.com
+ ([fe80::c9ed:b08e:f3c5:42fa%7]) with mapi id 15.20.2793.018; Fri, 13 Mar 2020
+ 14:11:36 +0000
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next 1/4] net: phy: xpcs: Clear latched value of RX/TX
+ fault
+Thread-Topic: [PATCH net-next 1/4] net: phy: xpcs: Clear latched value of
+ RX/TX fault
+Thread-Index: AQHV+T0DV8FPfrDj6UiwCwoiz8iVCahGjUYAgAABUYA=
+Date:   Fri, 13 Mar 2020 14:11:36 +0000
+Message-ID: <BN8PR12MB3266F7ACE6A778CAA883F8F1D3FA0@BN8PR12MB3266.namprd12.prod.outlook.com>
+References: <cover.1584106347.git.Jose.Abreu@synopsys.com>
+ <50f3dd2ab58fecfea1156aaf8dbfa99d0c7b36be.1584106347.git.Jose.Abreu@synopsys.com>
+ <20200313140122.GC25745@shell.armlinux.org.uk>
+In-Reply-To: <20200313140122.GC25745@shell.armlinux.org.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=joabreu@synopsys.com; 
+x-originating-ip: [198.182.37.200]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0218ae8b-a6fb-4996-2bf7-08d7c7587158
+x-ms-traffictypediagnostic: BN8PR12MB3539:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BN8PR12MB3539373888F13A6FE25A5314D3FA0@BN8PR12MB3539.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 034119E4F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(376002)(346002)(136003)(396003)(199004)(52536014)(26005)(478600001)(6916009)(2906002)(8936002)(71200400001)(81156014)(81166006)(5660300002)(8676002)(7696005)(86362001)(55016002)(6506007)(66476007)(66946007)(76116006)(54906003)(64756008)(316002)(9686003)(66446008)(33656002)(66556008)(186003)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR12MB3539;H:BN8PR12MB3266.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: WXLVpY8kmB5tNBsZLukOdO8A87KcLC6uQyKHJ4ejegMoT4z7JBBifrzT/2JbReA9aYXoeFNf6mNASAi3WhQcoGFng7oIvele1uC2HKEIE7FwaHt9hbLIXW3+1Ts2R9ijmIj6l/5qaee2HPW51FDVARD4QwkK+Ue+/0FwWOUjYBgbwS56+jkbGS0aMXrRPpMxKONdSJHqmbv22xi8Cbe65U94p4CyORm97rXRbLGZwuQJgtUt1lshweFI3vzCdPAKAx+xC7EkAIAnydzEeObP25EOzdQyVp6dyTfxqaaFt50a/YvSVx/1/UYGkuOJAgBkqrd285GEMJFJpEu3BL0juoGbMpClH71Vqwwd+nb25utHG2bEpLXw9utcDaYgGaPhXmG9CXbomXwA11jjKVZxqZtLUeXhm0CIMt4daec+B0ZI8csIh/UBNcNxA7X92XYT
+x-ms-exchange-antispam-messagedata: yY1ycO6q3YjNv1XAc8ZXnZRfe/oNYYEM8Nc4fLB8qJyCntTMO0NvJxe4Dbhv3K7/n1u3y1rzhdmRci8nlIGN9oGHpgfls9lB/VaYEWs3Q85d2JQT/KhmzJnn2Q7t54oSsr7hjBofTetpMM1j2qtIuw==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <000000000000938a57059f7cafe4@google.com> <20200307235437.GW15444@sol.localdomain>
- <20200308032434.GX15444@sol.localdomain> <CAG_fn=X8UkYx5=3ARUtW3+asc+3tEdeBg=1NKS9VzChSCp33Yg@mail.gmail.com>
- <20200309181154.GB1073@sol.localdomain>
-In-Reply-To: <20200309181154.GB1073@sol.localdomain>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Fri, 13 Mar 2020 15:10:45 +0100
-Message-ID: <CAG_fn=U=ti=YB553DCC-_gmbiHR6=xBG4HQbyc54R3sdGCY=LA@mail.gmail.com>
-Subject: Re: KMSAN: uninit-value in snapshot_compat_ioctl
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     syzbot <syzbot+af962bf9e7e27bccd025@syzkaller.appspotmail.com>,
-        len.brown@intel.com, LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0218ae8b-a6fb-4996-2bf7-08d7c7587158
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2020 14:11:36.6928
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: f4nSbclHA1gax5BO0ay3MfiQ/LHjOx5R1QoNW+y7SJDwuNcTgPVPEouheGGiPsIXBveQ7D8WRhxgnCRdCO1xxg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3539
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 9, 2020 at 7:11 PM Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Mon, Mar 09, 2020 at 12:53:28PM +0100, 'Alexander Potapenko' via syzkaller-bugs wrote:
-> > > > Looks like a KMSAN false positive?  As far as I can tell, the memory is being
-> > > > initialized by put_user() called under set_fs(KERNEL_DS).
-> >
-> > Why? put_user() doesn't write to kernel memory, instead it copies a
-> > value to the userspace.
-> > That's why KMSAN performs kmsan_check_memory() on it.
-> > It would actually be better if KMSAN printed an kernel-infoleak warning instead.
->
-> When under set_fs(KERNEL_DS), the userspace access functions like put_user() and
-> copy_to_user() can write to kernel memory.  It's discouraged and people have
-> been trying to get rid of uses of set_fs(), but a lot still remain, since
-> sometimes it's useful to allow code to operate on both user and kernel memory.
-> A common example is kernel_read().
+From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Date: Mar/13/2020, 14:01:22 (UTC+00:00)
 
-Ah, you're right. We can simply check that the target address is in
-the userspace before actually reporting the error.
+> On Fri, Mar 13, 2020 at 02:39:40PM +0100, Jose Abreu wrote:
+> > When reading RX/TX fault register we may have latched values from Link
+> > down. Clear the latched value first and then read it again to make sure
+> > no old errors are flagged and that new errors are caught.
+>=20
+> The purpose of the latched link down is so that software can respond
+> to a momentary loss of link with a possible change in the negotiation
+> results.  That is why IEEE 802.3 wants a link loss to be a latched
+> event.
+>=20
+> Double-reading the status register loses that information, and hides
+> it from phylink.  A change in negotiation, which can occur very
+> quickly on fiber links) can go unnoticed if the latching is not
+> propagated up through phylink.
+>=20
+> If the negotiation parameters have changed, and pcs_get_state() does
+> not report that the link has failed, then mac_link_up() will _not_ be
+> called with the new link parameters, and the MAC will continue using
+> the old ones.  Therefore, it is very important that any link-down
+> event is reported to phylink.
+>=20
+> Phylink currently doesn't respond to a link-down event reported via
+> PCS by re-checking after processing the link loss, but it could do,
+> which would improve it's behaviour in that scenario.  I would prefer
+> this resolution, rather than your proposed double-reading of the
+> status register to "lose" the link-down event.
+>=20
+> I do have some patches that make that easier, but they're delayed
+> behind the mass of patches that I still have outstanding - and trying
+> to get progress on getting phylink patches merged has been glacial,
+> and fraught with problems this time around.
+
+This is not link status register. Its TX / RX fault and its latched high.=20
+Link status is another register and we only read it once because of the=20
+above reasons you mentioned.
+
+When in 10GKR, this seems to always go up after link transition, hence we=20
+added the double read.
+
+I just read your reply to patch 2/4 of this series and it looks like the=20
+two patches are correlated.
+
+---
+Thanks,
+Jose Miguel Abreu
