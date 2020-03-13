@@ -2,161 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17097184157
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 08:12:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED76018415D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 08:14:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbgCMHMa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 03:12:30 -0400
-Received: from mga02.intel.com ([134.134.136.20]:7824 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726832AbgCMHM1 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 03:12:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 00:12:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,547,1574150400"; 
-   d="scan'208";a="266642324"
-Received: from kbl.sh.intel.com ([10.239.159.24])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Mar 2020 00:12:24 -0700
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v2 14/14] perf diff: Filter out streams by changed functions
-Date:   Fri, 13 Mar 2020 15:11:18 +0800
-Message-Id: <20200313071118.11983-15-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200313071118.11983-1-yao.jin@linux.intel.com>
-References: <20200313071118.11983-1-yao.jin@linux.intel.com>
+        id S1726486AbgCMHOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 03:14:31 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51883 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbgCMHOa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 03:14:30 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1jCeWW-0001RC-J0; Fri, 13 Mar 2020 08:14:24 +0100
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1jCeWW-00042G-26; Fri, 13 Mar 2020 08:14:24 +0100
+Date:   Fri, 13 Mar 2020 08:14:24 +0100
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Message-ID: <20200313071423.c4t3onkft4r66hav@pengutronix.de>
+References: <20200313131903.3975cdd2@canb.auug.org.au>
+ <20200313064807.op4ghjsc22du3q4e@pengutronix.de>
+ <20200313080514.3f65c8d9@coco.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200313080514.3f65c8d9@coco.lan>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 08:13:26 up 118 days, 22:32, 137 users,  load average: 0.09, 0.07,
+ 0.02
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sometime some changes are not reflected in the source code,
-e.g. changing the compiler option. So for this, we can't get
-the changes by diffing the source code lines.
+On 20-03-13 08:05, Mauro Carvalho Chehab wrote:
+> Em Fri, 13 Mar 2020 07:48:07 +0100
+> Marco Felsch <m.felsch@pengutronix.de> escreveu:
+> 
+> > Hi Stephen,
+> > 
+> > On 20-03-13 13:19, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > After merging the v4l-dvb tree, today's linux-next build (arm
+> > > multi_v7_defconfig) failed like this:
+> > > 
+> > > ERROR: modpost: "fwnode_get_name" [drivers/media/v4l2-core/v4l2-fwnode.ko] undefined!
+> > > 
+> > > Caused by commit
+> > > 
+> > >   dfc22c073b78 ("media: v4l2-fwnode: add initial connector parsing support")
+> > > 
+> > > I have used the v4l-dvb tree from next-20200312 for today.  
+> > 
+> > I'm sorry for that. I put my branch on our 0day to test most of the
+> > compile configs. Obviously this casae wasn't covered..
+> > 
+> > @Sakari
+> > I will send a patch to fix this by adding:
+> > EXPORT_SYMBOL_GPL(fwnode_get_name).
+> 
+> There is already such patch at next-20200312:
 
-This patch introduces a new perf-diff option "--changed-func".
-It passes the names of changed functions then perf-diff can
-know what functions are changed.
+You're right. This answers my question why I got no build errors..
 
-For example,
-perf diff --stream --changed-func main --changed-func rand
+Regards,
+  Marco
 
-It passes the function list {"main", "rand"} to perf-diff.
-Now perf-diff knows the functions "main" and "rand" in new perf
-data file are changed.
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/Documentation/perf-diff.txt |  5 +++++
- tools/perf/builtin-diff.c              | 30 ++++++++++++++++++++++++--
- 2 files changed, 33 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-diff.txt b/tools/perf/Documentation/perf-diff.txt
-index 296fea98ac07..784598c12e26 100644
---- a/tools/perf/Documentation/perf-diff.txt
-+++ b/tools/perf/Documentation/perf-diff.txt
-@@ -196,6 +196,11 @@ OPTIONS
- 	Source code directory corresponding to perf.data. Should be
- 	used with --stream and --before.
- 
-+--changed-func=::
-+	The given function is changed in new perf data file. This option
-+	needs to be used with --stream option. Multiple functions can be given
-+	by using this option more than once.
-+
- COMPARISON
- ----------
- The comparison is governed by the baseline file. The baseline perf.data
-diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
-index 98e9ab8c69ce..5e5f29105fe1 100644
---- a/tools/perf/builtin-diff.c
-+++ b/tools/perf/builtin-diff.c
-@@ -27,6 +27,7 @@
- #include "util/block-info.h"
- #include "util/srclist.h"
- #include "util/callchain.h"
-+#include "util/strlist.h"
- #include <linux/err.h>
- #include <linux/zalloc.h>
- #include <subcmd/pager.h>
-@@ -49,6 +50,7 @@ struct perf_diff {
- 	bool				 src_cmp;
- 	bool				 stream;
- 	struct srclist			*src_list;
-+	struct strlist			*func_list;
- 	u64				 total_cycles;
- 	float				 min_percent;
- };
-@@ -1017,7 +1019,8 @@ static int process_base_stream(struct data__file *data_base,
- 		if (!es_pair)
- 			return -1;
- 
--		callchain_match_streams(es_base, es_pair, pdiff.src_list, NULL);
-+		callchain_match_streams(es_base, es_pair, pdiff.src_list,
-+					pdiff.func_list);
- 		callchain_stream_report(es_base, es_pair);
- 	}
- 
-@@ -1043,7 +1046,7 @@ static int process_base_stream(struct data__file *data_base,
- 		block_hists_addr2line(&rep_pair->hist.block_hists, pair_dir);
- 
- 		block_info__match_report(rep_base, rep_pair,
--					 pdiff.src_list, NULL, NULL);
-+					 pdiff.src_list, pdiff.func_list, NULL);
- 
- 		fprintf(stdout, "%s", title);
- 
-@@ -1213,6 +1216,24 @@ static struct callchain_streams *create_evsel_streams(struct evlist *evlist,
- 	return evsel_streams;
- }
- 
-+static int parse_func(const struct option *opt __maybe_unused,
-+		      const char *str, int unset __maybe_unused)
-+{
-+	int ret;
-+
-+	if (!pdiff.func_list) {
-+		pdiff.func_list = strlist__new(NULL, NULL);
-+		if (!pdiff.func_list)
-+			return -ENOMEM;
-+	}
-+
-+	ret = strlist__add(pdiff.func_list, str);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static int __cmd_diff(void)
- {
- 	struct data__file *d;
-@@ -1312,6 +1333,9 @@ static int __cmd_diff(void)
- 	if (pdiff.src_list)
- 		srclist__delete(pdiff.src_list);
- 
-+	if (pdiff.func_list)
-+		strlist__delete(pdiff.func_list);
-+
- 	return ret;
- }
- 
-@@ -1390,6 +1414,8 @@ static const struct option options[] = {
- 	OPT_CALLBACK(0, "percent-limit", &pdiff, "percent",
- 		     "Don't show entries under that percent",
- 		     parse_percent_limit),
-+	OPT_CALLBACK(0, "changed-func", NULL, "func",
-+		     "Given function is changed", parse_func),
- 	OPT_END()
- };
- 
--- 
-2.17.1
-
+> $ git show a7914d1072fb8ddeb2ec87bba1d28812483a3565
+> commit a7914d1072fb8ddeb2ec87bba1d28812483a3565
+> Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Date:   Mon Mar 2 16:53:51 2020 +0300
+> 
+>     device property: Export fwnode_get_name()
+>     
+>     This makes it possible to take advantage of the function in
+>     the device drivers.
+>     
+>     Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+>     Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>     Link: https://lore.kernel.org/r/20200302135353.56659-8-heikki.krogerus@linux.intel.com
+>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> diff --git a/drivers/base/property.c b/drivers/base/property.c
+> index 511f6d7acdfe..5f35c0ccf5e0 100644
+> --- a/drivers/base/property.c
+> +++ b/drivers/base/property.c
+> @@ -566,6 +566,7 @@ const char *fwnode_get_name(const struct fwnode_handle *fwnode)
+>  {
+>         return fwnode_call_ptr_op(fwnode, get_name);
+>  }
+> +EXPORT_SYMBOL_GPL(fwnode_get_name);
+>  
+>  /**
+>   * fwnode_get_name_prefix - Return the prefix of node for printing purposes
+> 
+> 
+> 
+> 
+> Thanks,
+> Mauro
