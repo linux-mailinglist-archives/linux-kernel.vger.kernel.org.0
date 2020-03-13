@@ -2,147 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28541184EAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:35:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63086184EB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:35:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727463AbgCMSe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 14:34:57 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:45552 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727383AbgCMSet (ORCPT
+        id S1727486AbgCMSfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 14:35:06 -0400
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:50132 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727279AbgCMSfB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 14:34:49 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TsV0Vh4_1584124476;
-Received: from localhost(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TsV0Vh4_1584124476)
+        Fri, 13 Mar 2020 14:35:01 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04397;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TsUkHy3_1584124485;
+Received: from localhost(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TsUkHy3_1584124485)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 14 Mar 2020 02:34:45 +0800
+          Sat, 14 Mar 2020 02:34:53 +0800
 From:   Yang Shi <yang.shi@linux.alibaba.com>
 To:     shakeelb@google.com, vbabka@suse.cz, akpm@linux-foundation.org
 Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] mm: swap: make page_evictable() inline
-Date:   Sat, 14 Mar 2020 02:34:35 +0800
-Message-Id: <1584124476-76534-1-git-send-email-yang.shi@linux.alibaba.com>
+Subject: [PATCH 2/2] mm: swap: use smp_mb__after_atomic() to order LRU bit set
+Date:   Sat, 14 Mar 2020 02:34:36 +0800
+Message-Id: <1584124476-76534-2-git-send-email-yang.shi@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1584124476-76534-1-git-send-email-yang.shi@linux.alibaba.com>
+References: <1584124476-76534-1-git-send-email-yang.shi@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When backporting commit 9c4e6b1a7027 ("mm, mlock, vmscan: no more
-skipping pagevecs") to our 4.9 kernel, our test bench noticed around 10%
-down with a couple of vm-scalability's test cases (lru-file-readonce,
-lru-file-readtwice and lru-file-mmap-read).  I didn't see that much down
-on my VM (32c-64g-2nodes).  It might be caused by the test configuration,
-which is 32c-256g with NUMA disabled and the tests were run in root memcg,
-so the tests actually stress only one inactive and active lru.  It
-sounds not very usual in mordern production environment.
+Memory barrier is needed after setting LRU bit, but smp_mb() is too
+strong.  Some architectures, i.e. x86, imply memory barrier with atomic
+operations, so replacing it with smp_mb__after_atomic() sounds better,
+which is nop on strong ordered machines, and full memory barriers on
+others.  With this change the vm-calability cases would perform better
+on x86, I saw total 6% improvement with this patch and previous inline
+fix.
 
-That commit did two major changes:
-1. Call page_evictable()
-2. Use smp_mb to force the PG_lru set visible
-
-It looks they contribute the most overhead.  The page_evictable() is a
-function which does function prologue and epilogue, and that was used by
-page reclaim path only.  However, lru add is a very hot path, so it
-sounds better to make it inline.  However, it calls page_mapping() which
-is not inlined either, but the disassemble shows it doesn't do push and
-pop operations and it sounds not very straightforward to inline it.
-
-Other than this, it sounds smp_mb() is not necessary for x86 since
-SetPageLRU is atomic which enforces memory barrier already, replace it
-with smp_mb__after_atomic() in the following patch.
-
-With the two fixes applied, the tests can get back around 5% on that
-test bench and get back normal on my VM.  Since the test bench
-configuration is not that usual and I also saw around 6% up on the
-latest upstream, so it sounds good enough IMHO.
-
-The below is test data (lru-file-readtwice throughput) against the v5.6-rc4:
-	mainline	w/ inline fix
-          150MB            154MB
-
-With this patch the throughput gets 2.67% up.  The data with using
-smp_mb__after_atomic() is showed in the following patch.
+The test data (lru-file-readtwice throughput) against v5.6-rc4:
+	mainline	w/ inline fix	w/ both (adding this)
+	150MB		154MB		159MB
 
 Fixes: 9c4e6b1a7027 ("mm, mlock, vmscan: no more skipping pagevecs")
 Cc: Shakeel Butt <shakeelb@google.com>
 Cc: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 ---
- include/linux/swap.h | 24 +++++++++++++++++++++++-
- mm/vmscan.c          | 23 -----------------------
- 2 files changed, 23 insertions(+), 24 deletions(-)
+ mm/swap.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 1e99f7a..297eb66 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -374,7 +374,29 @@ extern unsigned long mem_cgroup_shrink_node(struct mem_cgroup *mem,
- #define node_reclaim_mode 0
- #endif
+diff --git a/mm/swap.c b/mm/swap.c
+index cf39d24..118bac4 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -945,20 +945,20 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
+ 	 * #0: __pagevec_lru_add_fn		#1: clear_page_mlock
+ 	 *
+ 	 * SetPageLRU()				TestClearPageMlocked()
+-	 * smp_mb() // explicit ordering	// above provides strict
++	 * MB() 	// explicit ordering	// above provides strict
+ 	 *					// ordering
+ 	 * PageMlocked()			PageLRU()
+ 	 *
+ 	 *
+ 	 * if '#1' does not observe setting of PG_lru by '#0' and fails
+ 	 * isolation, the explicit barrier will make sure that page_evictable
+-	 * check will put the page in correct LRU. Without smp_mb(), SetPageLRU
++	 * check will put the page in correct LRU. Without MB(), SetPageLRU
+ 	 * can be reordered after PageMlocked check and can make '#1' to fail
+ 	 * the isolation of the page whose Mlocked bit is cleared (#0 is also
+ 	 * looking at the same page) and the evictable page will be stranded
+ 	 * in an unevictable LRU.
+ 	 */
+-	smp_mb();
++	smp_mb__after_atomic();
  
--extern int page_evictable(struct page *page);
-+/*
-+ * page_evictable - test whether a page is evictable
-+ * @page: the page to test
-+ *
-+ * Test whether page is evictable--i.e., should be placed on active/inactive
-+ * lists vs unevictable list.
-+ *
-+ * Reasons page might not be evictable:
-+ * (1) page's mapping marked unevictable
-+ * (2) page is part of an mlocked VMA
-+ *
-+ */
-+static inline int page_evictable(struct page *page)
-+{
-+	int ret;
-+
-+	/* Prevent address_space of inode and swap cache from being freed */
-+	rcu_read_lock();
-+	ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
-+	rcu_read_unlock();
-+	return ret;
-+}
-+
- extern void check_move_unevictable_pages(struct pagevec *pvec);
- 
- extern int kswapd_run(int nid);
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 8763705..855c395 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -4277,29 +4277,6 @@ int node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned int order)
- }
- #endif
- 
--/*
-- * page_evictable - test whether a page is evictable
-- * @page: the page to test
-- *
-- * Test whether page is evictable--i.e., should be placed on active/inactive
-- * lists vs unevictable list.
-- *
-- * Reasons page might not be evictable:
-- * (1) page's mapping marked unevictable
-- * (2) page is part of an mlocked VMA
-- *
-- */
--int page_evictable(struct page *page)
--{
--	int ret;
--
--	/* Prevent address_space of inode and swap cache from being freed */
--	rcu_read_lock();
--	ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
--	rcu_read_unlock();
--	return ret;
--}
--
- /**
-  * check_move_unevictable_pages - check pages for evictability and move to
-  * appropriate zone lru list
+ 	if (page_evictable(page)) {
+ 		lru = page_lru(page);
 -- 
 1.8.3.1
 
