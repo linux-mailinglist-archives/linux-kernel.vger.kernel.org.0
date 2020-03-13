@@ -2,119 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00ABC184312
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 10:01:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E56A184309
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 10:00:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbgCMJBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 05:01:37 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:47666 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726477AbgCMJBa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 05:01:30 -0400
-X-UUID: 595db0c9b32647f89175d7b12988628d-20200313
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=QqYl5LbBQOmFjlV2531kF8pt73Ft9iKLdEjT8hrrzj0=;
-        b=KJBEab5id3u03qcVueQav1dvRvsp8vT2uH28Q/gQ1iMfcRD0j9LeM81YFGU4LTVbm7O6OILDES6Qv/ocRZIXJwXrDsBCn0ysDAgzXGgayv2Vd2778/zhgzgD9Ng5vJeSEEMQAQn1nSeCvNp5iVARkApc4YtGLNVTAeX48REmvdI=;
-X-UUID: 595db0c9b32647f89175d7b12988628d-20200313
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 385964533; Fri, 13 Mar 2020 17:01:23 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 13 Mar 2020 16:59:10 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 13 Mar 2020 17:00:33 +0800
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
-        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
-        <jejb@linux.ibm.com>
-CC:     <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
-        <cang@codeaurora.org>, <matthias.bgg@gmail.com>,
-        <bvanassche@acm.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
-        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
-        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH v4 8/8] scsi: ufs-mediatek: customize the delay for host enabling
-Date:   Fri, 13 Mar 2020 17:01:03 +0800
-Message-ID: <20200313090103.15390-9-stanley.chu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20200313090103.15390-1-stanley.chu@mediatek.com>
-References: <20200313090103.15390-1-stanley.chu@mediatek.com>
+        id S1726495AbgCMJA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 05:00:28 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43468 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726055AbgCMJA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 05:00:28 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 628A81046C273E8B1C8A;
+        Fri, 13 Mar 2020 17:00:23 +0800 (CST)
+Received: from huawei.com (10.175.105.18) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.487.0; Fri, 13 Mar 2020
+ 17:00:19 +0800
+From:   linmiaohe <linmiaohe@huawei.com>
+To:     <maz@kernel.org>
+CC:     <james.morse@arm.com>, <julien.thierry.kdev@gmail.com>,
+        <suzuki.poulose@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH RESEND] KVM: arm: fix missing free_percpu_irq in kvm_timer_hyp_init()
+Date:   Fri, 13 Mar 2020 17:03:09 +0800
+Message-ID: <1584090189-20301-1-git-send-email-linmiaohe@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+X-Originating-IP: [10.175.105.18]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TWVkaWFUZWsgcGxhdGZvcm0gYW5kIFVGUyBjb250cm9sbGVyIGNhbiBkeW5hbWljYWxseSBjdXN0
-b21pemUNCnRoZSBkZWxheSBmb3IgaG9zdCBlbmFibGluZyBhY2NvcmRpbmcgdG8gZGlmZmVyZW50
-IHNjZW5hcmlvcy4NCg0KRm9yIGV4YW1wbGUsIGlmIFVuaVBybyBlbnRlcnMgbG93ZXItcG93ZXIg
-bW9kZSwgc3VjaCBkZWxheSBjYW4NCmJlIG1pbmltaXplZCwgb3RoZXJ3aXNlIGxvbmdlciBkZWxh
-eSBzaGFsbCBiZSBleHBlY3RlZC4NCg0KU2lnbmVkLW9mZi1ieTogU3RhbmxleSBDaHUgPHN0YW5s
-ZXkuY2h1QG1lZGlhdGVrLmNvbT4NCi0tLQ0KIGRyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVr
-LmMgfCA0MyArKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0NCiBkcml2ZXJzL3Njc2kv
-dWZzL3Vmcy1tZWRpYXRlay5oIHwgIDEgKw0KIDIgZmlsZXMgY2hhbmdlZCwgMzUgaW5zZXJ0aW9u
-cygrKSwgOSBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2NzaS91ZnMvdWZz
-LW1lZGlhdGVrLmMgYi9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jDQppbmRleCAwZmY2
-NzgxNjU0ZmQuLmMwZmQ3ZDJlNGQwZCAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvc2NzaS91ZnMvdWZz
-LW1lZGlhdGVrLmMNCisrKyBiL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmMNCkBAIC0z
-MCwxMSArMzAsNiBAQA0KICNkZWZpbmUgdWZzX210a19kZXZpY2VfcmVzZXRfY3RybChoaWdoLCBy
-ZXMpIFwNCiAJdWZzX210a19zbWMoVUZTX01US19TSVBfREVWSUNFX1JFU0VULCBoaWdoLCByZXMp
-DQogDQotI2RlZmluZSB1ZnNfbXRrX3VuaXByb19wb3dlcmRvd24oaGJhLCBwb3dlcmRvd24pIFwN
-Ci0JdWZzaGNkX2RtZV9zZXQoaGJhLCBcDQotCQkgICAgICAgVUlDX0FSR19NSUJfU0VMKFZTX1VO
-SVBST1BPV0VSRE9XTkNPTlRST0wsIDApLCBcDQotCQkgICAgICAgcG93ZXJkb3duKQ0KLQ0KIHN0
-YXRpYyB2b2lkIHVmc19tdGtfY2ZnX3VuaXByb19jZyhzdHJ1Y3QgdWZzX2hiYSAqaGJhLCBib29s
-IGVuYWJsZSkNCiB7DQogCXUzMiB0bXA7DQpAQCAtNzEsNiArNjYsMjEgQEAgc3RhdGljIHZvaWQg
-dWZzX210a19jZmdfdW5pcHJvX2NnKHN0cnVjdCB1ZnNfaGJhICpoYmEsIGJvb2wgZW5hYmxlKQ0K
-IAl9DQogfQ0KIA0KK3N0YXRpYyBpbnQgdWZzX210a19oY2VfZW5hYmxlX25vdGlmeShzdHJ1Y3Qg
-dWZzX2hiYSAqaGJhLA0KKwkJCQkgICAgIGVudW0gdWZzX25vdGlmeV9jaGFuZ2Vfc3RhdHVzIHN0
-YXR1cykNCit7DQorCXN0cnVjdCB1ZnNfbXRrX2hvc3QgKmhvc3QgPSB1ZnNoY2RfZ2V0X3Zhcmlh
-bnQoaGJhKTsNCisNCisJaWYgKHN0YXR1cyA9PSBQUkVfQ0hBTkdFKSB7DQorCQlpZiAoaG9zdC0+
-dW5pcHJvX2xwbSkNCisJCQloYmEtPmhiYV9lbmFibGVfZGVsYXlfdXMgPSAwOw0KKwkJZWxzZQ0K
-KwkJCWhiYS0+aGJhX2VuYWJsZV9kZWxheV91cyA9IDYwMDsNCisJfQ0KKw0KKwlyZXR1cm4gMDsN
-Cit9DQorDQogc3RhdGljIGludCB1ZnNfbXRrX2JpbmRfbXBoeShzdHJ1Y3QgdWZzX2hiYSAqaGJh
-KQ0KIHsNCiAJc3RydWN0IHVmc19tdGtfaG9zdCAqaG9zdCA9IHVmc2hjZF9nZXRfdmFyaWFudCho
-YmEpOw0KQEAgLTMyNCwxMiArMzM0LDI2IEBAIHN0YXRpYyBpbnQgdWZzX210a19wd3JfY2hhbmdl
-X25vdGlmeShzdHJ1Y3QgdWZzX2hiYSAqaGJhLA0KIAlyZXR1cm4gcmV0Ow0KIH0NCiANCitzdGF0
-aWMgaW50IHVmc19tdGtfdW5pcHJvX3NldF9wbShzdHJ1Y3QgdWZzX2hiYSAqaGJhLCB1MzIgbHBt
-KQ0KK3sNCisJaW50IHJldDsNCisJc3RydWN0IHVmc19tdGtfaG9zdCAqaG9zdCA9IHVmc2hjZF9n
-ZXRfdmFyaWFudChoYmEpOw0KKw0KKwlyZXQgPSB1ZnNoY2RfZG1lX3NldChoYmEsDQorCQkJICAg
-ICBVSUNfQVJHX01JQl9TRUwoVlNfVU5JUFJPUE9XRVJET1dOQ09OVFJPTCwgMCksDQorCQkJICAg
-ICBscG0pOw0KKwlpZiAoIXJldCkNCisJCWhvc3QtPnVuaXByb19scG0gPSBscG07DQorDQorCXJl
-dHVybiByZXQ7DQorfQ0KKw0KIHN0YXRpYyBpbnQgdWZzX210a19wcmVfbGluayhzdHJ1Y3QgdWZz
-X2hiYSAqaGJhKQ0KIHsNCiAJaW50IHJldDsNCiAJdTMyIHRtcDsNCiANCi0JdWZzX210a191bmlw
-cm9fcG93ZXJkb3duKGhiYSwgMCk7DQorCXVmc19tdGtfdW5pcHJvX3NldF9wbShoYmEsIDApOw0K
-IA0KIAkvKg0KIAkgKiBTZXR0aW5nIFBBX0xvY2FsX1RYX0xDQ19FbmFibGUgdG8gMCBiZWZvcmUg
-bGluayBzdGFydHVwDQpAQCAtNDM3LDcgKzQ2MSw3IEBAIHN0YXRpYyBpbnQgdWZzX210a19saW5r
-X3NldF9ocG0oc3RydWN0IHVmc19oYmEgKmhiYSkNCiAJaWYgKGVycikNCiAJCXJldHVybiBlcnI7
-DQogDQotCWVyciA9IHVmc19tdGtfdW5pcHJvX3Bvd2VyZG93bihoYmEsIDApOw0KKwllcnIgPSB1
-ZnNfbXRrX3VuaXByb19zZXRfcG0oaGJhLCAwKTsNCiAJaWYgKGVycikNCiAJCXJldHVybiBlcnI7
-DQogDQpAQCAtNDU4LDEwICs0ODIsMTAgQEAgc3RhdGljIGludCB1ZnNfbXRrX2xpbmtfc2V0X2xw
-bShzdHJ1Y3QgdWZzX2hiYSAqaGJhKQ0KIHsNCiAJaW50IGVycjsNCiANCi0JZXJyID0gdWZzX210
-a191bmlwcm9fcG93ZXJkb3duKGhiYSwgMSk7DQorCWVyciA9IHVmc19tdGtfdW5pcHJvX3NldF9w
-bShoYmEsIDEpOw0KIAlpZiAoZXJyKSB7DQogCQkvKiBSZXN1bWUgVW5pUHJvIHN0YXRlIGZvciBm
-b2xsb3dpbmcgZXJyb3IgcmVjb3ZlcnkgKi8NCi0JCXVmc19tdGtfdW5pcHJvX3Bvd2VyZG93biho
-YmEsIDApOw0KKwkJdWZzX210a191bmlwcm9fc2V0X3BtKGhiYSwgMCk7DQogCQlyZXR1cm4gZXJy
-Ow0KIAl9DQogDQpAQCAtNTUyLDYgKzU3Niw3IEBAIHN0YXRpYyBzdHJ1Y3QgdWZzX2hiYV92YXJp
-YW50X29wcyB1ZnNfaGJhX210a192b3BzID0gew0KIAkubmFtZSAgICAgICAgICAgICAgICA9ICJt
-ZWRpYXRlay51ZnNoY2kiLA0KIAkuaW5pdCAgICAgICAgICAgICAgICA9IHVmc19tdGtfaW5pdCwN
-CiAJLnNldHVwX2Nsb2NrcyAgICAgICAgPSB1ZnNfbXRrX3NldHVwX2Nsb2NrcywNCisJLmhjZV9l
-bmFibGVfbm90aWZ5ICAgPSB1ZnNfbXRrX2hjZV9lbmFibGVfbm90aWZ5LA0KIAkubGlua19zdGFy
-dHVwX25vdGlmeSA9IHVmc19tdGtfbGlua19zdGFydHVwX25vdGlmeSwNCiAJLnB3cl9jaGFuZ2Vf
-bm90aWZ5ICAgPSB1ZnNfbXRrX3B3cl9jaGFuZ2Vfbm90aWZ5LA0KIAkuYXBwbHlfZGV2X3F1aXJr
-cyAgICA9IHVmc19tdGtfYXBwbHlfZGV2X3F1aXJrcywNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3Nj
-c2kvdWZzL3Vmcy1tZWRpYXRlay5oIGIvZHJpdmVycy9zY3NpL3Vmcy91ZnMtbWVkaWF0ZWsuaA0K
-aW5kZXggNGM3ODdiOTlmZTQxLi41YmJkM2U5Y2JhZTIgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3Nj
-c2kvdWZzL3Vmcy1tZWRpYXRlay5oDQorKysgYi9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRl
-ay5oDQpAQCAtOTEsNiArOTEsNyBAQCBlbnVtIHsNCiBzdHJ1Y3QgdWZzX210a19ob3N0IHsNCiAJ
-c3RydWN0IHVmc19oYmEgKmhiYTsNCiAJc3RydWN0IHBoeSAqbXBoeTsNCisJYm9vbCB1bmlwcm9f
-bHBtOw0KIAlib29sIHJlZl9jbGtfZW5hYmxlZDsNCiAJdTE2IHJlZl9jbGtfdW5nYXRpbmdfd2Fp
-dF91czsNCiAJdTE2IHJlZl9jbGtfZ2F0aW5nX3dhaXRfdXM7DQotLSANCjIuMTguMA0K
+From: Miaohe Lin <linmiaohe@huawei.com>
+
+When host_ptimer_irq request irq resource failed, we forget to release the
+host_vtimer_irq resource already requested. Fix this missing irq release
+and other similar scenario.
+
+Fixes: 9e01dc76be6a ("KVM: arm/arm64: arch_timer: Assign the phys timer on VHE systems")
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+---
+ virt/kvm/arm/arch_timer.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/virt/kvm/arm/arch_timer.c b/virt/kvm/arm/arch_timer.c
+index e2bb5bd60227..fe958255ae2b 100644
+--- a/virt/kvm/arm/arch_timer.c
++++ b/virt/kvm/arm/arch_timer.c
+@@ -935,7 +935,7 @@ int kvm_timer_hyp_init(bool has_gic)
+ 					    kvm_get_running_vcpus());
+ 		if (err) {
+ 			kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
+-			goto out_free_irq;
++			goto out_free_vtime_irq;
+ 		}
+ 
+ 		static_branch_enable(&has_gic_active_state);
+@@ -960,7 +960,7 @@ int kvm_timer_hyp_init(bool has_gic)
+ 		if (err) {
+ 			kvm_err("kvm_arch_timer: can't request ptimer interrupt %d (%d)\n",
+ 				host_ptimer_irq, err);
+-			return err;
++			goto out_free_vtime_irq;
+ 		}
+ 
+ 		if (has_gic) {
+@@ -968,7 +968,7 @@ int kvm_timer_hyp_init(bool has_gic)
+ 						    kvm_get_running_vcpus());
+ 			if (err) {
+ 				kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
+-				goto out_free_irq;
++				goto out_free_ptime_irq;
+ 			}
+ 		}
+ 
+@@ -977,14 +977,17 @@ int kvm_timer_hyp_init(bool has_gic)
+ 		kvm_err("kvm_arch_timer: invalid physical timer IRQ: %d\n",
+ 			info->physical_irq);
+ 		err = -ENODEV;
+-		goto out_free_irq;
++		goto out_free_vtime_irq;
+ 	}
+ 
+ 	cpuhp_setup_state(CPUHP_AP_KVM_ARM_TIMER_STARTING,
+ 			  "kvm/arm/timer:starting", kvm_timer_starting_cpu,
+ 			  kvm_timer_dying_cpu);
+ 	return 0;
+-out_free_irq:
++
++out_free_ptime_irq:
++	free_percpu_irq(host_ptimer_irq, kvm_get_running_vcpus());
++out_free_vtime_irq:
+ 	free_percpu_irq(host_vtimer_irq, kvm_get_running_vcpus());
+ 	return err;
+ }
+-- 
+2.19.1
 
