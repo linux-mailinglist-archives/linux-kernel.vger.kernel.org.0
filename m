@@ -2,85 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30F2E1849CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 15:46:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80A2E1849DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 15:47:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbgCMOqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 10:46:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52010 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726481AbgCMOqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 10:46:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1A3D4AC46;
-        Fri, 13 Mar 2020 14:46:29 +0000 (UTC)
-Subject: Re: [PATCH v2] mm/sparse.c: Use kvmalloc_node/kvfree to alloc/free
- memmap for the classic sparse
-To:     Matthew Wilcox <willy@infradead.org>,
-        Wei Yang <richard.weiyang@gmail.com>
-Cc:     Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@suse.com, akpm@linux-foundation.org,
-        david@redhat.com
-References: <20200312130822.6589-1-bhe@redhat.com>
- <20200312133416.GI22433@bombadil.infradead.org>
- <20200312141826.djb7osbekhcnuexv@master>
- <20200312142535.GK22433@bombadil.infradead.org>
- <20200312225055.ksn4ujtkpjgkqiaf@master>
- <20200313000041.GM22433@bombadil.infradead.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <c5b8328f-a46f-6f5b-2ef0-e1d8a375fa8e@suse.cz>
-Date:   Fri, 13 Mar 2020 15:46:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726984AbgCMOrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 10:47:40 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:36479 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbgCMOrk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 10:47:40 -0400
+Received: by mail-il1-f196.google.com with SMTP id h3so9166058ils.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 07:47:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Ro1R5ehcYhRf1s0gupnhw5Q+nbHwvID0ows7ral5AwA=;
+        b=UULHVhHoV9B8wA8pT06k5F7CEKhKPJTemEriB5P4jsfUl+0MFuocFV+cKfEBUwJOZR
+         44SDm19Y7MNYFx7IBYDxU1eeSaW08Y1QdU5wPqJ476lvQgn0/8iH8LZarWTvyzQ8f8Pq
+         /yfiAazoYMLLCZA+WD2VvC0CB+j3dinbmK52mQS15VrJHiRU+hrdzgsvFqZQERc3wsoQ
+         g+ZBlhE9WbwRtM/eaNTiBOiVTrV5D3Y6m0xAntdjTsJR7LHKx3cw/ImN5JlKvRE2sZTY
+         CaoeXluOwsKMbIdEpQHSRSCk8Y3XWPOtb/vcDpCSafXtfOW3R/wFvDbweG9ep+FTXkfs
+         6jCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Ro1R5ehcYhRf1s0gupnhw5Q+nbHwvID0ows7ral5AwA=;
+        b=tKqLShk3TTeXMEsyrFFcSd12F1e+Ic3exe1KBb9GCrffy0z3zZV9tVzysClZbiW1UF
+         LfFkcx9Ukasj96SJV4fCHN76xbFHDTYf4WePrfma95jAf/YKsPEaNu8sW481mVF8nOQx
+         Z4JZYLcWcOSZybmNISMc+mM91p4OC+T12es3MRxFbf/bboAPTntHqB1Qe8yikI0PnhIW
+         9ZDNtVOCxW9DQvGNmb7bCwJF5A6RtHVmshlSzvO9VDRh+j/BRP0OvMphUhZG0AotA3vM
+         2VICkswkZXz/vGJO0DmsZcIvG99mtvLFklEiZE7ZPHF8BbbtAFE/OQqPrEUkz1Q4J/TQ
+         9LlA==
+X-Gm-Message-State: ANhLgQ23dMWpZsgpi/njMm2sTsxexaAm38+qr2ptQ9uRwF9ITn7FfkrB
+        gdXKS/ERSP0EcSsBu6cmLuZ/f/WFvUHLz5L6DseoOg==
+X-Google-Smtp-Source: ADFU+vsUQdVDGeuArwH8++3efQ8y7YMk8cNafYrhvyIqxS2kFexBfegk6QvD0SkMs57BFtt65r+sa+KzO6NudDFAdpc=
+X-Received: by 2002:a92:d191:: with SMTP id z17mr14076733ilz.287.1584110859057;
+ Fri, 13 Mar 2020 07:47:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200313000041.GM22433@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200224094158.28761-1-brgl@bgdev.pl> <20200224094158.28761-3-brgl@bgdev.pl>
+ <CACRpkdZSooH+mXbimgT-hnaC2gO1nTi+rY7UmUhVg9bk1j+Eow@mail.gmail.com>
+In-Reply-To: <CACRpkdZSooH+mXbimgT-hnaC2gO1nTi+rY7UmUhVg9bk1j+Eow@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 13 Mar 2020 15:47:28 +0100
+Message-ID: <CAMRc=Mf2Mx+rB7du8D66WP=Js0wuK8x44aT9H2q6JhLJvrOcVQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] gpiolib: use kref in gpio_desc
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Khouloud Touil <ktouil@baylibre.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/13/20 1:00 AM, Matthew Wilcox wrote:
-> On Thu, Mar 12, 2020 at 10:50:55PM +0000, Wei Yang wrote:
->> On Thu, Mar 12, 2020 at 07:25:35AM -0700, Matthew Wilcox wrote:
->> >Yes, I thought about that.  I decided it wasn't a problem, as long as
->> >the struct page remains aligned, and we now have a guarantee that allocations
->> >above 512 bytes in size are aligned.  With a 64 byte struct page, as long
->> 
->> Where is this 512 bytes condition comes from?
-> 
-> Filesystems need to do I/Os from kmalloc addresses and those I/Os need to
-> be 512 byte aligned.
+czw., 12 mar 2020 o 11:35 Linus Walleij <linus.walleij@linaro.org> napisa=
+=C5=82(a):
+>
+> Hi Bartosz,
+>
+> I'm struggling to figure out if this is the right way to count
+> references for gpio descriptors.
+>
+> I cleared up the situation of why we don't want to add kref
+> to gpio_chip in the previous message: I think we got that covered.
+> (If I'm not wrong about it, and I am frequently wrong.)
+>
+> This mail is about contrasting the suggested gpio_desc
+> kref with the existing managed resources, i.e. the
+> devm_* mechanisms.
+>
+> devm_* macros are elusive because they do not use
+> reference counting at all.
+>
+> Instead they put every devm_* requested resource with
+> a destruction function on a list associated with the struct
+> device. Functions get put on that list when we probe a
+> device driver, and the list is iterated and all release functions
+> are called when we exit .probe() with error or after calling the
+> optional .remove() function on the module. (More or less.)
+>
+> This means anything devm_* managed lives and dies
+> with the device driver attaching to the device.
+> Documentation/driver-api/driver-model/devres.rst
+>
+> If the intention of the patch is that this action is associated
+> with the detachment of the driver, then we are reinventing
+> the wheel we already invented.
+>
 
-To clarify, the guarantee exist for every power of two size. The I/O usecase was
-part of the motivation for the guarantee, but there is not 512 byte limit. But
-that means there is also no guarantee for a non-power-of-two size above (or
-below) 512 bytes. Currently this only matters for sizes that fall into the 96
-byte or 192 byte caches. With SLOB it can be any size.
+In this case I was thinking about a situation where we pass a
+requested descriptor to some other framework (nvmem in this case)
+which internally doesn't know anything about who manages this resource
+externally. Now we can of course simply not do anything about it and
+expect the user (who passed us the descriptor) to handle the resources
+correctly. But what happens if the user releases the descriptor not on
+driver detach but somewhere else for whatever reason while nvmem
+doesn't know about it? It may try to use the descriptor which will now
+be invalid. Reference counting in this case would help IMHO.
 
-So what I'm saying the allocations should make sure they are power of two and
-then they will be aligned. The page size of 64bytes depends on some debugging
-options being disabled, right?
+Bart
 
->> >as we're allocating at least 8 pages, we know it'll be naturally aligned.
->> >
->> >Your calculation doesn't take into account the size of struct page.
->> >128M / 64k is indeed 2k, but you forgot to multiply by 64, which takes
->> >us to 128kB.
->> 
->> You are right. While would there be other combination? Or in the future?
->> 
->> For example, there are definitions of
->> 
->> #define SECTION_SIZE_BITS       26
->> #define SECTION_SIZE_BITS       24
->> 
->> Are we sure it won't break some thing?
-> 
-> As I said, once it's at least 512 bytes, it'll be 512 byte aligned.  And I
-> can't see us having sections smaller than 8 pages, can you?
-> 
-
+> E.g. to devm_* it doesn't really matter if someone else is
+> using a struct gpio_desc, or not, but if the current driver
+> is using it, it will be kept around until that driver detaches.
+> No reference counting needed for that.
+>
+> So is this related to your problem or do I just get things
+> wrong?
