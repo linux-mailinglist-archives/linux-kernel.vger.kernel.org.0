@@ -2,87 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBCE81844E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 11:29:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6BFE1844DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 11:29:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbgCMK3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 06:29:45 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:38238 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726597AbgCMK3p (ORCPT
+        id S1726455AbgCMK30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 06:29:26 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33260 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbgCMK30 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 06:29:45 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584095384; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=fgDWAMgUeJqRKJwknQJfUuQdOToB6apgOLXfL6tOhyY=; b=pNrutdlRpttnu3GCnjYLqNy0A3+3NHftC6vizmN+5ApuKDVucxOReZ67RkvynApXHOuLLthM
- jUolppEICtQx+9a+qbC3rK0HZE6jckzf7ne/w6WKQK92W0Aqh8heOCqgX2u3xaUsXTlR4RnT
- wRjkJX2IoibQ5/j0Ln6GdLE08Xc=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6b6097.7fba7a8ea960-smtp-out-n01;
- Fri, 13 Mar 2020 10:29:43 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id ABF4EC44792; Fri, 13 Mar 2020 10:29:43 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from akashast-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: akashast)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 45019C432C2;
-        Fri, 13 Mar 2020 10:29:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 45019C432C2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=akashast@codeaurora.org
-From:   Akash Asthana <akashast@codeaurora.org>
-To:     robh+dt@kernel.org, agross@kernel.org, mark.rutland@arm.com
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mgautam@codeaurora.org,
-        rojay@codeaurora.org, c_skakit@codeaurora.org, mka@chromium.org,
-        Akash Asthana <akashast@codeaurora.org>
-Subject: [PATCH V5 3/3] dt-bindings: geni-se: Add binding for UART pin swap
-Date:   Fri, 13 Mar 2020 15:59:10 +0530
-Message-Id: <1584095350-841-4-git-send-email-akashast@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584095350-841-1-git-send-email-akashast@codeaurora.org>
-References: <1584095350-841-1-git-send-email-akashast@codeaurora.org>
+        Fri, 13 Mar 2020 06:29:26 -0400
+Received: by mail-pl1-f196.google.com with SMTP id ay11so4057325plb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 03:29:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id;
+        bh=kqXMRjosvrMwbkpWYYUMv/eKp41LgZaQN2jfs/TMCUU=;
+        b=EWbg2LKqIyxcTZt54OZrlCbltZOHFk7QAr/BjENsjZfWl63N37tNSXyfPxxA0hTRu3
+         or4rZWujQhztrFqJsYFJUd8k74Q1F4Tqhf2S3hd6rGIxw40W28bThPpt6NfqCcHbHQWA
+         4FXoQ7Pd1UOft3mx57iVigFUPwH0cIsV5yat2JaHnEto1jFCq+jPPaepNxUksBrEPIid
+         vY9b4GzJoo4MUSaptYYtogEF/CGnjXQOAaYUFXQZCP0VmpL2vY5j+nwNFN0guSeNqH7Z
+         D+3voASXKTB12c7Rt0W6n1c5MEXIcUb0v8hC0Y4iv+tApge+jorRS2kNNs5Gpg95KcqX
+         CtFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=kqXMRjosvrMwbkpWYYUMv/eKp41LgZaQN2jfs/TMCUU=;
+        b=kuAejmHZlkWJXls0rYoMt4cpvilA0NfAokzlwvPh2k3HaCNN503aEjagLhXlCQ8kqm
+         STGfVmBQ+LDaUKiUBT1tP/dmvopl4pXvf/nv9OXSQVu4TwGmZz6hXDU5Cesh74ReNczE
+         LFVGxYR9rwAPQleP9/NkZt4F1EPtBrS4MtdVi44VkezAJAWSHDoHKXEFI4JzO8zwlg2P
+         L8qfpWbTLIMvy6t0mBge6rKsChW7bSzRElUIPBbtf8nTeu0FPZkHRQezNAWb/wwI6/Zu
+         w+Ygjfjae4nFhRwY0yifTI1wikxmXxfS7ryi4VNxQASFBYpTu+P3k5T9kqE8InxTmBEi
+         0EIA==
+X-Gm-Message-State: ANhLgQ0QZI6jW+7GpzZhCWjE2MDuUlNJGH+Stc2al4DyL3d3sl4XEHsc
+        yoXY4wW8hPylL2kp4jxkT8pLO/Og
+X-Google-Smtp-Source: ADFU+vsY8iYgbuRFlAd9U61nsaldOQC1hqGGqTzZvDEDjvVId3qGfnZZieGIXk2tsNLODrFDhDxEhQ==
+X-Received: by 2002:a17:902:7592:: with SMTP id j18mr12588240pll.180.1584095365090;
+        Fri, 13 Mar 2020 03:29:25 -0700 (PDT)
+Received: from localhost.localdomain ([2405:204:22f:d418:f8a5:7ca8:f99b:fa30])
+        by smtp.gmail.com with ESMTPSA id u24sm55719326pgo.83.2020.03.13.03.29.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Mar 2020 03:29:24 -0700 (PDT)
+From:   Shreeya Patel <shreeya.patel23498@gmail.com>
+To:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com,
+        sbrivio@redhat.com, daniel.baluta@gmail.com,
+        nramas@linux.microsoft.com, hverkuil@xs4all.nl,
+        shreeya.patel23498@gmail.com, Larry.Finger@lwfinger.net
+Subject: [Outreachy kernel] [PATCH v2] Staging: rtl8723bs: rtw_mlme: Remove unnecessary conditions
+Date:   Fri, 13 Mar 2020 15:59:12 +0530
+Message-Id: <20200313102912.17218-1-shreeya.patel23498@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentation to support RX/TX/CTS/RTS pin swap in HW.
+Remove unnecessary if and else conditions since both are leading to the
+initialization of "phtpriv->ampdu_enable" with the same value.
+Also, remove the unnecessary else-if condition since it does nothing.
 
-Signed-off-by: Akash Asthana <akashast@codeaurora.org>
+Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
 ---
-Changes in V5:
- -  As per Matthias's comment, remove rx-tx-cts-rts-swap property from UART 
-    child node.
 
- Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+Changes in v2
+  - Remove unnecessary comments
+  - Remove unnecessary else-if condition which does nothing.
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml
-index 533400b..85f9028 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml
-@@ -172,6 +172,12 @@ patternProperties:
-           - description: UART core irq
-           - description: Wakeup irq (RX GPIO)
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+index 71fcb466019a..d7a58af76ea0 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+@@ -2772,16 +2772,7 @@ void rtw_update_ht_cap(struct adapter *padapter, u8 *pie, uint ie_len, u8 channe
  
-+      rx-tx-swap:
-+        description: RX and TX pins are swapped
-+
-+      cts-rts-swap:
-+        description: CTS and RTS pins are swapped
-+
-     required:
-       - compatible
-       - interrupts
+ 	/* maybe needs check if ap supports rx ampdu. */
+ 	if (!(phtpriv->ampdu_enable) && pregistrypriv->ampdu_enable == 1) {
+-		if (pregistrypriv->wifi_spec == 1) {
+-			/* remove this part because testbed AP should disable RX AMPDU */
+-			/* phtpriv->ampdu_enable = false; */
+-			phtpriv->ampdu_enable = true;
+-		} else {
+-			phtpriv->ampdu_enable = true;
+-		}
+-	} else if (pregistrypriv->ampdu_enable == 2) {
+-		/* remove this part because testbed AP should disable RX AMPDU */
+-		/* phtpriv->ampdu_enable = true; */
++		phtpriv->ampdu_enable = true;
+ 	}
+ 
+ 	/* check Max Rx A-MPDU Size */
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
+2.17.1
+
