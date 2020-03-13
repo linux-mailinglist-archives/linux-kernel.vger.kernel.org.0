@@ -2,225 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57AB918402B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 06:07:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EC01184035
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 06:13:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbgCMFHp convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 13 Mar 2020 01:07:45 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39699 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726328AbgCMFHp (ORCPT
+        id S1726414AbgCMFNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 01:13:14 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:28090 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726365AbgCMFNO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 01:07:45 -0400
-Received: from mail-pj1-f69.google.com ([209.85.216.69])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1jCcXt-0006db-Gq
-        for linux-kernel@vger.kernel.org; Fri, 13 Mar 2020 05:07:41 +0000
-Received: by mail-pj1-f69.google.com with SMTP id ay5so3605194pjb.7
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 22:07:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=ncQzByjuwOcAKkawPEjHT5r1qKMEPZtwsVn5fEPFz1E=;
-        b=aJRNjOF0Bl9M2EO58Ya5sJAwBu+xTEEtlh161ZYmL56+jdBXUdh6eITc1AAUoQFdaE
-         hH9zXnLWYsu6CWEo/1JxC+phezg1dQ0QdlQA9xjzka19ttdvTtTw4ccOQITZATOmeWVE
-         Y6UnGc+e/lQKhZN6OOUFQEkNEpnvTlVV0BOvYj7EuR/hiD0oqMvOPEUEh4bdCuZDIaF6
-         shFNsDyFPk+3xGTNcQSosCGDTrXJK3rBvvUseKNHt+aZGQ1wfnnYwd7BsZ6txWJFO3eX
-         4R/i6+unJ93h+DE7xYZrVOb8ZY54wQP06wwSirRutjb1pbfhheUhGPikq1aZX/iRBeN4
-         x6Zg==
-X-Gm-Message-State: ANhLgQ0ScJQT+Kyht/p4bN4nbY8OXG1bw8oolerIoU3hZ/dNSycyoUoF
-        gtqEsfnY+4yvmSYxj1YGRJVPv8s0rYBH1nnB3SU1Jf5qNZnU6ee0muLaFGxt8x9yVorEBeggzu4
-        A1Q/owB3x+9B3p/eKa0IdCpUwB93crBRHAFb6LqII7Q==
-X-Received: by 2002:a17:902:b497:: with SMTP id y23mr11533276plr.81.1584076059907;
-        Thu, 12 Mar 2020 22:07:39 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vuMJeZd+QaCu4khzw5Eqa7w9dixEYSS8h3WxUI+oPjopXK4CM4tuTtOTorwFo4uXVo0cOhpTg==
-X-Received: by 2002:a17:902:b497:: with SMTP id y23mr11533231plr.81.1584076059449;
-        Thu, 12 Mar 2020 22:07:39 -0700 (PDT)
-Received: from [192.168.1.208] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id f69sm3931635pfa.124.2020.03.12.22.07.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Mar 2020 22:07:38 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: Thunderbolt, direct-complete and long suspend/resume time of
- Suspend-to-idle
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <20200312104158.GS2540@lahna.fi.intel.com>
-Date:   Fri, 13 Mar 2020 13:07:35 +0800
-Cc:     Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        "Shih-Yuan Lee (FourDollars)" <sylee@canonical.com>,
-        Tiffany <tiffany.wang@canonical.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <452D9D7F-A4D1-4628-8E9B-D88E2C919D7A@canonical.com>
-References: <02700895-048F-4EA1-9E18-4883E83AE210@canonical.com>
- <20200311103840.GB2540@lahna.fi.intel.com>
- <E3DA71C8-96A7-482E-B41F-8145979F88F4@canonical.com>
- <20200312081509.GI2540@lahna.fi.intel.com>
- <C687BE86-1CCB-417B-8546-77F76127B266@canonical.com>
- <20200312104158.GS2540@lahna.fi.intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        Fri, 13 Mar 2020 01:13:14 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1584076393; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=EvnTMH+qZB325+j+Mam9+Ki9mILaWC3EQ/KKtvEmMkM=; b=oZCvMVNJT0yUzR2z+1Lx2OAAzx8A8IP+Lau1DBSOqC4fGoECvQOtcNPHWyyk17b9nvmZdGdm
+ /WBEQQGDPiw3DRkdq7kycjew/1Omks+uxr2PZ6KunZRc07+qw/lzSEhYADwLYcgK3NhSpupk
+ gX23bYrVKtTxpV9RrJkc5fVOF7g=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e6b1655.7f870ac0e110-smtp-out-n03;
+ Fri, 13 Mar 2020 05:12:53 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id B0D10C43636; Fri, 13 Mar 2020 05:12:52 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stummala)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id EFD02C433D2;
+        Fri, 13 Mar 2020 05:12:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EFD02C433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+Date:   Fri, 13 Mar 2020 10:42:46 +0530
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, stummala@codeaurora.org
+Subject: Re: [PATCH] f2fs: fix long latency due to discard during umount
+Message-ID: <20200313051245.GK20234@codeaurora.org>
+References: <1584011671-20939-1-git-send-email-stummala@codeaurora.org>
+ <20200312170242.GA185506@google.com>
+ <20200313012604.GI20234@codeaurora.org>
+ <20200313014535.GA72547@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200313014535.GA72547@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 12, 2020 at 06:45:35PM -0700, Jaegeuk Kim wrote:
+> On 03/13, Sahitya Tummala wrote:
+> > On Thu, Mar 12, 2020 at 10:02:42AM -0700, Jaegeuk Kim wrote:
+> > > On 03/12, Sahitya Tummala wrote:
+> > > > F2FS already has a default timeout of 5 secs for discards that
+> > > > can be issued during umount, but it can take more than the 5 sec
+> > > > timeout if the underlying UFS device queue is already full and there
+> > > > are no more available free tags to be used. In that case, submit_bio()
+> > > > will wait for the already queued discard requests to complete to get
+> > > > a free tag, which can potentially take way more than 5 sec.
+> > > > 
+> > > > Fix this by submitting the discard requests with REQ_NOWAIT
+> > > > flags during umount. This will return -EAGAIN for UFS queue/tag full
+> > > > scenario without waiting in the context of submit_bio(). The FS can
+> > > > then handle these requests by retrying again within the stipulated
+> > > > discard timeout period to avoid long latencies.
+> > > > 
+> > > > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> > > > ---
+> > > >  fs/f2fs/segment.c | 14 +++++++++++++-
+> > > >  1 file changed, 13 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > > > index fb3e531..a06bbac 100644
+> > > > --- a/fs/f2fs/segment.c
+> > > > +++ b/fs/f2fs/segment.c
+> > > > @@ -1124,10 +1124,13 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+> > > >  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> > > >  	struct list_head *wait_list = (dpolicy->type == DPOLICY_FSTRIM) ?
+> > > >  					&(dcc->fstrim_list) : &(dcc->wait_list);
+> > > > -	int flag = dpolicy->sync ? REQ_SYNC : 0;
+> > > > +	int flag;
+> > > >  	block_t lstart, start, len, total_len;
+> > > >  	int err = 0;
+> > > >  
+> > > > +	flag = dpolicy->sync ? REQ_SYNC : 0;
+> > > > +	flag |= dpolicy->type == DPOLICY_UMOUNT ? REQ_NOWAIT : 0;
+> > > > +
+> > > >  	if (dc->state != D_PREP)
+> > > >  		return 0;
+> > > >  
+> > > > @@ -1203,6 +1206,11 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+> > > >  		bio->bi_end_io = f2fs_submit_discard_endio;
+> > > >  		bio->bi_opf |= flag;
+> > > >  		submit_bio(bio);
+> > > > +		if ((flag & REQ_NOWAIT) && (dc->error == -EAGAIN)) {
+> > > > +			dc->state = D_PREP;
+> > > > +			err = dc->error;
+> > > > +			break;
+> > > > +		}
+> > > >  
+> > > >  		atomic_inc(&dcc->issued_discard);
+> > > >  
+> > > > @@ -1510,6 +1518,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> > > >  			}
+> > > >  
+> > > >  			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+> > > > +			if (dc->error == -EAGAIN) {
+> > > > +				congestion_wait(BLK_RW_ASYNC, HZ/50);
+> > > 
+> > > 						--> need to be DEFAULT_IO_TIMEOUT
+> > 
+> > Yes, i will update it.
+> > 
+> > > 
+> > > > +				__relocate_discard_cmd(dcc, dc);
+> > > 
+> > > It seems we need to submit bio first, and then move dc to wait_list, if there's
+> > > no error, in __submit_discard_cmd().
+> > 
+> > Yes, that is not changed and it still happens for the failed request
+> > that is re-queued here too when it gets submitted again later.
+> > 
+> > I am requeuing the discard request failed with -EAGAIN error back to 
+> > dcc->pend_list[] from wait_list. It will call submit_bio() for this request
+> > and also move to wait_list when it calls __submit_discard_cmd() again next
+> > time. Please let me know if I am missing anything?
+> 
+> This patch has no problem, but I'm thinking that __submit_discard_cmd() needs
+> to return with any values by assumption where the waiting list should have
+> submitted commands.
 
+I think dc->queued will indicated that dc is moved to wait_list. This can be
+used along with return value to take right action. Can you check if this
+works?
 
-> On Mar 12, 2020, at 18:41, Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
-> 
-> On Thu, Mar 12, 2020 at 06:10:45PM +0800, Kai-Heng Feng wrote:
->> 
->> 
->>> On Mar 12, 2020, at 16:15, Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
->>> 
->>> On Thu, Mar 12, 2020 at 12:41:08PM +0800, Kai-Heng Feng wrote:
->>>> 
->>>> 
->>>>> On Mar 11, 2020, at 18:38, Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
->>>>> 
->>>>> On Wed, Mar 11, 2020 at 01:39:51PM +0800, Kai-Heng Feng wrote:
->>>>>> Hi,
->>>>>> 
->>>>>> I am currently investigating long suspend and resume time of suspend-to-idle.
->>>>>> It's because Thunderbolt bridges need to wait for 1100ms [1] for runtime-resume on system suspend, and also for system resume.
->>>>>> 
->>>>>> I made a quick hack to the USB driver and xHCI driver to support direct-complete, but I failed to do so for the parent PCIe bridge as it always disables the direct-complete [2], since device_may_wakeup() returns true for the device:
->>>>>> 
->>>>>> 	/* Avoid direct_complete to let wakeup_path propagate. */
->>>>>> 		if (device_may_wakeup(dev) || dev->power.wakeup_path)
->>>>>> 			dev->power.direct_complete = false;
->>>>> 
->>>>> You need to be careful here because otherwise you end up situation where
->>>>> the link is not properly trained and we tear down the whole tree of
->>>>> devices which is worse than waiting bit more for resume.
->>>> 
->>>> My idea is to direct-complete when there's no PCI or USB device
->>>> plugged into the TBT, and use pm_reuqest_resume() in complete() so it
->>>> won't block resume() or resume_noirq().
->>> 
->>> Before doing that..
->>> 
->>>>>> Once the direct-complete is disabled, system suspend/resume is used hence the delay in [1] is making the resume really slow. 
->>>>>> So how do we make suspend-to-idle faster? I have some ideas but I am not sure if they are feasible:
->>>>>> - Make PM core know the runtime_suspend() already use the same wakeup as suspend(), so it doesn't need to use device_may_wakeup() check to determine direct-complete.
->>>>>> - Remove the DPM_FLAG_NEVER_SKIP flag in pcieport driver, and use pm_request_resume() in its complete() callback to prevent blocking the resume process.
->>>>>> - Reduce the 1100ms delay. Maybe someone knows the values used in macOS and Windows...
->>>>> 
->>>>> Which system this is? ICL?
->>>> 
->>>> CML-H + Titan Ridge.
->>> 
->>> .. we should really understand this better because CML-H PCH root ports
->>> and Titan/Alpine Ridge downstream ports all support active link
->>> reporting so instead of the 1000+100ms you should see something like
->>> this:
->> 
->> Root port for discrete graphics:
->> # lspci -vvnn -s 00:01.0                    
->> 00:01.0 PCI bridge [0604]: Intel Corporation Xeon E3-1200 v5/E3-1500 v5/6th Gen Core Processor PCIe Controller (x16) [8086:1901] (rev 02) (prog-if 00 [Normal decode])
->>        Capabilities: [a0] Express (v2) Root Port (Slot+), MSI 00
->>                LnkCap: Port #2, Speed 8GT/s, Width x16, ASPM L0s L1, Exit Latency L0s <256ns, L1 <8us
->>                        ClockPM- Surprise- LLActRep- BwNot+ ASPMOptComp+
->>                LnkCtl: ASPM L0s L1 Enabled; RCB 64 bytes Disabled- CommClk+
->>                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
-> 
-> Interesting, Titan Ridge is connected to the graphics slot, no? What
-> system this is?
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index a06bbac..91df060 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1478,7 +1478,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+        struct list_head *pend_list;
+        struct discard_cmd *dc, *tmp;
+        struct blk_plug plug;
+-       int i, issued = 0;
++       int i, err, issued = 0;
+        bool io_interrupted = false;
 
-No, TBT connects to another port, which supports link active reporting.
-This is just to show not all CML-H ports support that.
+        if (dpolicy->timeout != 0)
+@@ -1517,8 +1517,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+                                break;
+                        }
 
-> 
->> Thunderbolt ports:
->> # lspci -vvvv -s 04:00
->> 04:00.0 PCI bridge [0604]: Intel Corporation JHL7540 Thunderbolt 3 Bridge [Titan Ridge 2C 2018] [8086:15e7] (rev 06) (prog-if 00 [Normal decode])
->>        Capabilities: [c0] Express (v2) Downstream Port (Slot+), MSI 00
->>                LnkCap: Port #0, Speed 2.5GT/s, Width x4, ASPM L1, Exit Latency L0s <64ns, L1 <1us
->>                        ClockPM- Surprise- LLActRep- BwNot+ ASPMOptComp+
->>                LnkCtl: ASPM L1 Enabled; Disabled- CommClk+
->>                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
-> 
-> This one leads to the TBT NHI.
-> 
->> # lspci -vvnn -s 04:01
->> 04:01.0 PCI bridge [0604]: Intel Corporation JHL7540 Thunderbolt 3 Bridge [Titan Ridge 2C 2018] [8086:15e7] (rev 06) (prog-if 00 [Normal decode])
->>        Capabilities: [c0] Express (v2) Downstream Port (Slot+), MSI 00
->>                LnkCap: Port #1, Speed 2.5GT/s, Width x4, ASPM L1, Exit Latency L0s <64ns, L1 <1us
->>                        ClockPM- Surprise- LLActRep+ BwNot+ ASPMOptComp+
->>                LnkCtl: ASPM L1 Enabled; Disabled- CommClk-
->>                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
-> 
-> This one is one of the extension downstream ports and it supports active
-> link reporting.
-> 
->> # lspci -vvnn -s 04:02 
->> 04:02.0 PCI bridge [0604]: Intel Corporation JHL7540 Thunderbolt 3 Bridge [Titan Ridge 2C 2018] [8086:15e7] (rev 06) (prog-if 00 [Normal decode])
->>        Capabilities: [c0] Express (v2) Downstream Port (Slot+), MSI 00
->>                LnkCap: Port #2, Speed 2.5GT/s, Width x4, ASPM L1, Exit Latency L0s <64ns, L1 <1us
->>                        ClockPM- Surprise- LLActRep- BwNot+ ASPMOptComp+
->>                LnkCtl: ASPM L1 Enabled; Disabled- CommClk+
->>                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
-> 
-> This one leads to the xHCI.
-> 
->> So both CML-H PCH and TBT ports report "LLActRep-".
-> 
-> So in pci_bridge_wait_for_secondary_bus() we only call
-> pcie_wait_for_link_delay() if the port supports speeds higher than 5
-> GT/s (gen2). Now if I read the above correct all the ports except the
-> root port support 2.5 GT/s (gen1) speeds so we should go to the
-> msleep(delay) branch and not call pcie_wait_for_link_delay() at all:
-> 
->        if (pcie_get_speed_cap(dev) <= PCIE_SPEED_5_0GT) {
->                pci_dbg(dev, "waiting %d ms for downstream link\n", delay);
->                msleep(delay);
->        } else {
->                pci_dbg(dev, "waiting %d ms for downstream link, after activation\n",
->                        delay);
->                if (!pcie_wait_for_link_delay(dev, true, delay)) {
->                        /* Did not train, no need to wait any further */
->                        return;
->                }
->        }
-> 
-> Only explanation I have is that delay itself is set to 1000ms for some
-> reason. Can you check if that's the case and then maybe check where that
-> delay is coming from?
-> 
->>> 1. Wait for the link + 100ms for the root port
->>> 2. Wait for the link + 100ms for the Titan Ridge downstream ports
->>>   (these are run paraller wrt all Titan Ridge downstream ports that have
->>>    something connected)
->>> 
->>> If there is a TBT device connected then 2. is repeated for it and so on.
->>> 
->>> So the 1000ms+ is really unexpected. Are you running mainline kernel and
->>> if so, can you share dmesg with CONFIG_PCI_DEBUG=y so we can see the
->>> delays there? Maybe also add some debugging to
->>> pcie_wait_for_link_delay() where it checks for the
->>> !pdev->link_active_reporting and waits for 1100ms.
->> 
->> I added the debug log in another thread and it does reach !pdev->link_active_reporting.
-> 
-> Hmm, based on the above that should not happen :-(
-> 
->> Let me see if patch link active reporting for the ports in PCI quirks can help.
-> 
-> Let's first investigate bit more to understand what is going on.
-> 
-> I suggest to create kernel.org bugzilla about this. Please include full
-> dmesg and 'sudo lspci -vv' output at least and of course the steps you
-> use to reproduce this.
+-                       __submit_discard_cmd(sbi, dpolicy, dc, &issued);
+-                       if (dc->error == -EAGAIN) {
++                       err = __submit_discard_cmd(sbi, dpolicy, dc, &issued);
++                       if (err && err != -EAGAIN) {
++                               __remove_discard_cmd(sbi, dc);
++                       } else if (err == -EAGAIN && dc->queued) {
+                                congestion_wait(BLK_RW_ASYNC, HZ/50);
+                                __relocate_discard_cmd(dcc, dc);
+                        }
 
-https://bugzilla.kernel.org/show_bug.cgi?id=206837
+thanks,
+> 
+> > 
+> > Thanks,
+> > 
+> > > 
+> > > > +			}
+> > > >  
+> > > >  			if (issued >= dpolicy->max_requests)
+> > > >  				break;
+> > > > -- 
+> > > > Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+> > > > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> > 
+> > -- 
+> > --
+> > Sent by a consultant of the Qualcomm Innovation Center, Inc.
+> > The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
 
-Kai-Heng
-
+-- 
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
