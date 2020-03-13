@@ -2,94 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 190A7184E2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:56:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80066184E1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:56:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbgCMR4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 13:56:46 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:37570 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726865AbgCMR4n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 13:56:43 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02DHucv1001108;
-        Fri, 13 Mar 2020 12:56:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584122198;
-        bh=/Dw8KFsaIkFkfgLKZhRV5MXpefmC30Xga+RKXA8psqw=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=ke/ZcVzjLNANCq1l6dgVZ9hVLo1SDlq5XkDXHHp5TFFAKBNsrt2xHhMMJU5PpU18Y
-         0iX/zIOJE6e1EYwCnXQbXoSc25FFF+Mdi5Ucg4tNJ47EAa4Wa95VsgNR2BAH74Gj3I
-         r2Y5LQFGqya4zS4A5TUtEK6qqtX/E5daDr3mBLWE=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02DHubxK047580;
-        Fri, 13 Mar 2020 12:56:38 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 13
- Mar 2020 12:56:37 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 13 Mar 2020 12:56:37 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02DHua2m028293;
-        Fri, 13 Mar 2020 12:56:36 -0500
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-To:     Rob Herring <robh+dt@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>, Roger Quadros <rogerq@ti.com>,
-        <devicetree@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>
-CC:     Murali Karicheri <m-karicheri2@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH net-next v3 10/10] arm64: defconfig: ti: k3: enable dma and networking
-Date:   Fri, 13 Mar 2020 19:55:11 +0200
-Message-ID: <20200313175511.2155-11-grygorii.strashko@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200313175511.2155-1-grygorii.strashko@ti.com>
-References: <20200313175511.2155-1-grygorii.strashko@ti.com>
+        id S1727341AbgCMR4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 13:56:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39822 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726637AbgCMR4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 13:56:11 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A57320746;
+        Fri, 13 Mar 2020 17:56:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584122170;
+        bh=AAEHbdTZnL6d7Gr3nuqbX2Ida62RwmUvzgcJbhcDcZA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pLoGD2BLHuWnmuwR3FCgqZMnqxYZ0X2OEV6TzKJA/wugGHSexcEQs6q00affCU/37
+         kzERWpO9BMPm0/E+H28LUYKY1l5WV5VeMf5cxAVYzZY33jq9g8DkvxDIHAVAJN2XhM
+         cmCusoj2BI6gVXH0z0fyi+bOFKoCAHiQBxyDYYYg=
+Date:   Fri, 13 Mar 2020 18:56:08 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Dejin Zheng <zhengdejin5@gmail.com>
+Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers: provide devm_platform_ioremap_and_get_resource()
+Message-ID: <20200313175608.GA2306127@kroah.com>
+References: <20200313171902.31836-1-zhengdejin5@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200313171902.31836-1-zhengdejin5@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable TI K3 AM654x/J721E DMA and networking options.
+On Sat, Mar 14, 2020 at 01:19:02AM +0800, Dejin Zheng wrote:
+> Since commit "drivers: provide devm_platform_ioremap_resource()",
+> It was wrap platform_get_resource() and devm_ioremap_resource() as
+> single helper devm_platform_ioremap_resource(). but now, many drivers
+> still used platform_get_resource() and devm_ioremap_resource()
+> together in the kernel tree. The reason can not be replaced is they
+> still need use the resource variables obtained by platform_get_resource().
+> so provide this helper.
+> 
+> Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
+> ---
+>  drivers/base/platform.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> index 7fa654f1288b..b3e2409effae 100644
+> --- a/drivers/base/platform.c
+> +++ b/drivers/base/platform.c
+> @@ -62,6 +62,24 @@ struct resource *platform_get_resource(struct platform_device *dev,
+>  EXPORT_SYMBOL_GPL(platform_get_resource);
+>  
+>  #ifdef CONFIG_HAS_IOMEM
+> +/**
+> + * devm_platform_ioremap_and_get_resource - call devm_ioremap_resource() for a
+> + *					    platform device and get resource
+> + *
+> + * @pdev: platform device to use both for memory resource lookup as well as
+> + *        resource management
+> + * @index: resource index
+> + * @res: get the resource
+> + */
+> +void __iomem *
+> +devm_platform_ioremap_and_get_resource(struct platform_device *pdev,
+> +				unsigned int index, struct resource **res)
+> +{
+> +	*res = platform_get_resource(pdev, IORESOURCE_MEM, index);
+> +	return devm_ioremap_resource(&pdev->dev, *res);
+> +}
+> +EXPORT_SYMBOL_GPL(devm_platform_ioremap_and_get_resource);
+> +
+>  /**
+>   * devm_platform_ioremap_resource - call devm_ioremap_resource() for a platform
+>   *				    device
+> -- 
+> 2.25.0
+> 
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+I can not take new api functions without some real users of the function
+at the same time.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4db223dbc549..13cd865d7d4b 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -283,6 +283,7 @@ CONFIG_SMSC911X=y
- CONFIG_SNI_AVE=y
- CONFIG_SNI_NETSEC=y
- CONFIG_STMMAC_ETH=m
-+CONFIG_TI_K3_AM65_CPSW_NUSS=y
- CONFIG_MDIO_BUS_MUX_MMIOREG=y
- CONFIG_MARVELL_PHY=m
- CONFIG_MARVELL_10G_PHY=m
-@@ -698,6 +699,8 @@ CONFIG_QCOM_HIDMA_MGMT=y
- CONFIG_QCOM_HIDMA=y
- CONFIG_RCAR_DMAC=y
- CONFIG_RENESAS_USB_DMAC=m
-+CONFIG_TI_K3_UDMA=y
-+CONFIG_TI_K3_UDMA_GLUE_LAYER=y
- CONFIG_VFIO=y
- CONFIG_VFIO_PCI=y
- CONFIG_VIRTIO_PCI=y
--- 
-2.17.1
+Please make a patch series modifing drivers to use this new function and
+I will be glad to review it then.
 
+thanks,
+
+greg k-h
