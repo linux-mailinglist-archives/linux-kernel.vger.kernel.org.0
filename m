@@ -2,95 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD2FC184EA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:33:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28541184EAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:35:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbgCMSdz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 14:33:55 -0400
-Received: from mail-qv1-f67.google.com ([209.85.219.67]:44620 "EHLO
-        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbgCMSdy (ORCPT
+        id S1727463AbgCMSe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 14:34:57 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:45552 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727383AbgCMSet (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 14:33:54 -0400
-Received: by mail-qv1-f67.google.com with SMTP id w5so5124256qvp.11
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 11:33:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IatxmkA0MPPH/jxsQO3JS1Cap5XHBwRG57sBC+1NLQ0=;
-        b=Mo+6UwjpfLDeIQqUqahaBvF3Qki4vOpHA3enGGY+JrV4bpihJ1ZZXHdQOctDeqMbZI
-         HuX7MabUSyaedE/pcCGyk1r4RMC4LLAYVYy2YzLs5sl7tKolLMOvir9jVJ1f5Rc7p8Ty
-         1qp7LmO3VAuHEZPDSAo+ylMkISEuMpOCMjtbC9vjiexEaAvE855JiFnM6It6oJbMr5t9
-         nrOiagHAV+IFcqkPRgjGKnSmFvMRqREZg0nfsVnwgqlOqLsPRYorkal/cD6DukGEXvhR
-         en3VgFnUN+FHjWG2VdC0RPDp1c2gaKK0uNPm5d7Zrm4A7nVXpaxMRUSXZEyvHtEbEWKQ
-         ALYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IatxmkA0MPPH/jxsQO3JS1Cap5XHBwRG57sBC+1NLQ0=;
-        b=ZPaSegcoxFoipbkD2TUY1VEa7V8VGyRWvz7QYEJwJuM3rGglp+5DZ6QcG8EWeWbEVJ
-         G2uyz/KpzeXxBxdHuuRFyVtGb9y/3WsLXCbG4sa58j2MlfavAm2/2UHbqKFEq00pOmZ1
-         cImXgsWACztqZHQYeYMMLTv1Eyou9mld4EsW8C3woK7EfZKnOM1faub1k/h3/3kEQhwQ
-         1nZRdrturBPEIt/CSI5qavJSK6SecIlF+V0B7vUqaKyhgG9gvcWL7aBvqtn1bqYiSK7R
-         /Vv1SqXMneVP0/DQxwa19bKkLmzpOyL7ch3bPGLqpjmIxw8pjrhXjXVvCW9Eg2SZh0I/
-         aSKw==
-X-Gm-Message-State: ANhLgQ08dd9adw7qpFqKmUC9n47havaCPHsMXE31gW2hUnGt3ZEu3je5
-        QZEkrnvxKdi/YU28FOSBqBo=
-X-Google-Smtp-Source: ADFU+vvvDSLHNVDbCO01PMMfpsU4J2V32lm/IjBkopPYn4j7c7wkv8rmCR3bc5lS7HEHc1yCa6k90Q==
-X-Received: by 2002:ad4:5642:: with SMTP id bl2mr14091018qvb.11.1584124433196;
-        Fri, 13 Mar 2020 11:33:53 -0700 (PDT)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id l92sm3917781qte.25.2020.03.13.11.33.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 11:33:52 -0700 (PDT)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Fri, 13 Mar 2020 14:33:50 -0400
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, "H.J. Lu" <hjl.tools@gmail.com>
-Subject: Re: [PATCH v2] x86/boot: Correct relocation destination on old
- linkers
-Message-ID: <20200313183349.GA1544820@rani.riverdale.lan>
-References: <20200111190015.3257863-1-nivedita@alum.mit.edu>
- <20200207214926.3564079-1-nivedita@alum.mit.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200207214926.3564079-1-nivedita@alum.mit.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 13 Mar 2020 14:34:49 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TsV0Vh4_1584124476;
+Received: from localhost(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TsV0Vh4_1584124476)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 14 Mar 2020 02:34:45 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     shakeelb@google.com, vbabka@suse.cz, akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] mm: swap: make page_evictable() inline
+Date:   Sat, 14 Mar 2020 02:34:35 +0800
+Message-Id: <1584124476-76534-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 04:49:26PM -0500, Arvind Sankar wrote:
-> For the 32-bit kernel, as described in commit 6d92bc9d483a ("x86/build:
-> Build compressed x86 kernels as PIE"), pre-2.26 binutils generates
-> R_386_32 relocations in PIE mode.  Since the startup code does not
-> perform relocation, any reloc entry with R_386_32 will remain as 0 in
-> the executing code.
-> 
-> Commit 974f221c84b0 ("x86/boot: Move compressed kernel to the end of the
-> decompression buffer") added a new symbol _end but did not mark it
-> hidden, which doesn't give the correct offset on older linkers. This
-> causes the compressed kernel to be copied beyond the end of the
-> decompression buffer, rather than flush against it. This region of
-> memory may be reserved or already allocated for other purposes by the
-> bootloader.
-> 
-> Mark _end as hidden to fix. This changes the relocation from R_386_32 to
-> R_386_RELATIVE even on the pre-2.26 binutils.
-> 
-> For 64-bit, this is not strictly necessary, as the 64-bit kernel is only
-> built as PIE if the linker supports -z noreloc-overflow, which implies
-> binutils-2.27+, but for consistency, mark _end as hidden here too.
-> 
+When backporting commit 9c4e6b1a7027 ("mm, mlock, vmscan: no more
+skipping pagevecs") to our 4.9 kernel, our test bench noticed around 10%
+down with a couple of vm-scalability's test cases (lru-file-readonce,
+lru-file-readtwice and lru-file-mmap-read).  I didn't see that much down
+on my VM (32c-64g-2nodes).  It might be caused by the test configuration,
+which is 32c-256g with NUMA disabled and the tests were run in root memcg,
+so the tests actually stress only one inactive and active lru.  It
+sounds not very usual in mordern production environment.
 
-Gentle reminder.
+That commit did two major changes:
+1. Call page_evictable()
+2. Use smp_mb to force the PG_lru set visible
 
-https://lore.kernel.org/lkml/20200207214926.3564079-1-nivedita@alum.mit.edu/
+It looks they contribute the most overhead.  The page_evictable() is a
+function which does function prologue and epilogue, and that was used by
+page reclaim path only.  However, lru add is a very hot path, so it
+sounds better to make it inline.  However, it calls page_mapping() which
+is not inlined either, but the disassemble shows it doesn't do push and
+pop operations and it sounds not very straightforward to inline it.
+
+Other than this, it sounds smp_mb() is not necessary for x86 since
+SetPageLRU is atomic which enforces memory barrier already, replace it
+with smp_mb__after_atomic() in the following patch.
+
+With the two fixes applied, the tests can get back around 5% on that
+test bench and get back normal on my VM.  Since the test bench
+configuration is not that usual and I also saw around 6% up on the
+latest upstream, so it sounds good enough IMHO.
+
+The below is test data (lru-file-readtwice throughput) against the v5.6-rc4:
+	mainline	w/ inline fix
+          150MB            154MB
+
+With this patch the throughput gets 2.67% up.  The data with using
+smp_mb__after_atomic() is showed in the following patch.
+
+Fixes: 9c4e6b1a7027 ("mm, mlock, vmscan: no more skipping pagevecs")
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+---
+ include/linux/swap.h | 24 +++++++++++++++++++++++-
+ mm/vmscan.c          | 23 -----------------------
+ 2 files changed, 23 insertions(+), 24 deletions(-)
+
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 1e99f7a..297eb66 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -374,7 +374,29 @@ extern unsigned long mem_cgroup_shrink_node(struct mem_cgroup *mem,
+ #define node_reclaim_mode 0
+ #endif
+ 
+-extern int page_evictable(struct page *page);
++/*
++ * page_evictable - test whether a page is evictable
++ * @page: the page to test
++ *
++ * Test whether page is evictable--i.e., should be placed on active/inactive
++ * lists vs unevictable list.
++ *
++ * Reasons page might not be evictable:
++ * (1) page's mapping marked unevictable
++ * (2) page is part of an mlocked VMA
++ *
++ */
++static inline int page_evictable(struct page *page)
++{
++	int ret;
++
++	/* Prevent address_space of inode and swap cache from being freed */
++	rcu_read_lock();
++	ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
++	rcu_read_unlock();
++	return ret;
++}
++
+ extern void check_move_unevictable_pages(struct pagevec *pvec);
+ 
+ extern int kswapd_run(int nid);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 8763705..855c395 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -4277,29 +4277,6 @@ int node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned int order)
+ }
+ #endif
+ 
+-/*
+- * page_evictable - test whether a page is evictable
+- * @page: the page to test
+- *
+- * Test whether page is evictable--i.e., should be placed on active/inactive
+- * lists vs unevictable list.
+- *
+- * Reasons page might not be evictable:
+- * (1) page's mapping marked unevictable
+- * (2) page is part of an mlocked VMA
+- *
+- */
+-int page_evictable(struct page *page)
+-{
+-	int ret;
+-
+-	/* Prevent address_space of inode and swap cache from being freed */
+-	rcu_read_lock();
+-	ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
+-	rcu_read_unlock();
+-	return ret;
+-}
+-
+ /**
+  * check_move_unevictable_pages - check pages for evictability and move to
+  * appropriate zone lru list
+-- 
+1.8.3.1
+
