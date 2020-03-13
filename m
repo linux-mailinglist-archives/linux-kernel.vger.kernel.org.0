@@ -2,170 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9C92183EEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 03:00:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0C2C183EF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 03:08:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbgCMCAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 22:00:22 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42003 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbgCMCAW (ORCPT
+        id S1726390AbgCMCI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 22:08:56 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:52623 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbgCMCI4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 22:00:22 -0400
-Received: by mail-pl1-f193.google.com with SMTP id t3so3447032plz.9
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 19:00:21 -0700 (PDT)
+        Thu, 12 Mar 2020 22:08:56 -0400
+Received: by mail-pj1-f67.google.com with SMTP id f15so3346004pjq.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 19:08:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=ULqLDVd2kkqniHcxRjAej9mWnrKAKa7fjvePHBiV/bU=;
-        b=q5T8cai91O4phd6Vaaykn9whcXBcEuuQZWE5Ke77vprEFCayr01ooxsz+cTajraJN5
-         2NCuYSDe2McfZej7ckrOAoyb6W1r+bs7mvdnePfhnznlSf0jJASidDUYUNZEvbMuI9+6
-         HApmx5YS+jOl7jl3Dm2xrBGqhRRu/M0ttmPF9VFFJfaIi/nkarysoI3YKTwCC8uBDhtx
-         1VZiaLGzS5jnnibEaeaZxrUyqrvLv85IIEq4mlVhE1BBzFaHBLgXRki1jBnDrXLAwqP1
-         9RMUHMTuWklF0zr6apEgSO7sutkt/spSMhm6/x03K4qwVWSTSsNLResGF/KMvDFiyPEU
-         RY6A==
+        bh=6UIHhrii+PcyoxAnOQshJ7x6jz3aQd0Zby/DnhIzfq0=;
+        b=CLo7Mw1jrvzDulQDPztJ+80D+fkpsgE9fgeAlZToS71hqAFmlUB2sMLuTZpIjRUHkF
+         qK4kmVqlBe/kk0lgE/0sCQFKRzMO6Jdop/e9tKZt4PvMZK2etnPssklgsHxOmy4fQig6
+         A7HrO0sNttqTddmNTsA+XxDYe57quskTKvBzhDGy8jlkSgZe3R8S8tFpXTFNUYYwGzdI
+         Kr+U6dB7YrUY6eVdNKg2yNJyGNgAYYTmeP6/NibTHLvkOXynIhpyyX8pWH7mnEbi3QoC
+         9EoCwBcLvovwnfpAMdFENFMeM5la+R39m2I+t2vV9uucaY+aqPDg1/ZrSa7HKwM1gm7T
+         tjpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ULqLDVd2kkqniHcxRjAej9mWnrKAKa7fjvePHBiV/bU=;
-        b=WH3Jes1aekGkl/YMSzx4IEh5O22RXpMkZhGJsiVd34BiOe0dicuyQD8xp+8aftw28y
-         y+80blWGhlD2oPIFToxLZIifzG5I/Db5f1vWLQO8C0T0erwBd4/ZEcDm6dyLQoj+MCDH
-         YdHmJ0l67Tk0rnHbd30GJKoyZBfDYAJu3RJm0nLQ31cRHXprKoaQLmdoY1VHI4TBqBmh
-         UkCWPeY9rz+UeK2F7wrL3zBhIyGg2PkDxXodtfqDet8QvU8UOq8YeascOUg7G08PTl2Q
-         CQF3I85rTfLCIciuJYGM6lNFQA5Qs77KvkidfWm9NfwWdfvfZlro/MeyfTmKGZW7na9D
-         I8SQ==
-X-Gm-Message-State: ANhLgQ3ggSSEIU/HSpm5dSCwQgJdZ37tdBkG2lazzhNij87MI+7DoCIE
-        S3TGOsAUK1AhbrA0H0Vg58Q=
-X-Google-Smtp-Source: ADFU+vv37YBJnDPGWsEgmZkosR1mP2+GO9n5l20/bA83dh1j15B1BxsiDccwfdYjU8+Ck1M608Z+OA==
-X-Received: by 2002:a17:90b:4c47:: with SMTP id np7mr7285128pjb.140.1584064821234;
-        Thu, 12 Mar 2020 19:00:21 -0700 (PDT)
+        bh=6UIHhrii+PcyoxAnOQshJ7x6jz3aQd0Zby/DnhIzfq0=;
+        b=sRIwSSzsS+ryl8WCEvjZ8+3Pka5sEW9QOr/VrGMBbmZB0jgY1jv5ki5ItXdzOyMno7
+         /b5kIhOcGPMqzrAEv2bjPnEMfsrOc1VuKuVubhSBhQ1b29laJGqYxd1+U1RyVYuh//DM
+         a7B4bOSwkuuT2rQU4rmQKir0LE+/EhGaB0zFnbMhuCaTbrCqWGAasRDLc2boVF09WeAB
+         au2jUKIBECFSe3ymJFvxQ6S2cmt/7fsAPaWagmrltVuE+qJTvTKdJoS++KqPTS64Hxum
+         i9dP2YvI1ZX9hfD9saLGZRMY4J8JJMkO+lDwZr5Fzi1l9OWRNAnv/gRxaleH0DfCVsxv
+         Rj/w==
+X-Gm-Message-State: ANhLgQ0JsjC4syLsTDp5SeT7OWT0pXK9yaaYCtX/G95Bk1pnpFewLdoU
+        iJIFCBAsrSGdhbNHoF0OjOQ=
+X-Google-Smtp-Source: ADFU+vuutzwBmcIdOCi8oQVsDTjhXluTb57K0NN9SVwUs1eLvmIYsApAiIHBj/rV/kBV+HB5FJcjJg==
+X-Received: by 2002:a17:902:8a8f:: with SMTP id p15mr11018356plo.45.1584065334674;
+        Thu, 12 Mar 2020 19:08:54 -0700 (PDT)
 Received: from google.com ([2620:15c:211:1:3e01:2939:5992:52da])
-        by smtp.gmail.com with ESMTPSA id b25sm5364108pfp.201.2020.03.12.19.00.19
+        by smtp.gmail.com with ESMTPSA id o126sm9027476pfb.140.2020.03.12.19.08.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2020 19:00:19 -0700 (PDT)
-Date:   Thu, 12 Mar 2020 19:00:18 -0700
+        Thu, 12 Mar 2020 19:08:53 -0700 (PDT)
+Date:   Thu, 12 Mar 2020 19:08:51 -0700
 From:   Minchan Kim <minchan@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, Jann Horn <jannh@google.com>,
-        Linux-MM <linux-mm@kvack.org>,
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Jann Horn <jannh@google.com>, Linux-MM <linux-mm@kvack.org>,
         kernel list <linux-kernel@vger.kernel.org>,
         Daniel Colascione <dancol@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
         "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: interaction of MADV_PAGEOUT with CoW anonymous mappings?
-Message-ID: <20200313020018.GC68817@google.com>
+Message-ID: <20200313020851.GD68817@google.com>
 References: <CAG48ez0G3JkMq61gUmyQAaCq=_TwHbi1XKzWRooxZkv08PQKuw@mail.gmail.com>
  <20200312082248.GS23944@dhcp22.suse.cz>
  <20200312201602.GA68817@google.com>
- <bd35c17d-8766-cba5-09b3-87970de4c731@intel.com>
+ <20200312204155.GE23944@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bd35c17d-8766-cba5-09b3-87970de4c731@intel.com>
+In-Reply-To: <20200312204155.GE23944@dhcp22.suse.cz>
 User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 02:41:07PM -0700, Dave Hansen wrote:
-> One other fun thing.  I have a "victim" thread sitting in a loop doing:
+On Thu, Mar 12, 2020 at 09:41:55PM +0100, Michal Hocko wrote:
+> On Thu 12-03-20 13:16:02, Minchan Kim wrote:
+> > On Thu, Mar 12, 2020 at 09:22:48AM +0100, Michal Hocko wrote:
+> [...]
+> > > From eca97990372679c097a88164ff4b3d7879b0e127 Mon Sep 17 00:00:00 2001
+> > > From: Michal Hocko <mhocko@suse.com>
+> > > Date: Thu, 12 Mar 2020 09:04:35 +0100
+> > > Subject: [PATCH] mm: do not allow MADV_PAGEOUT for CoW pages
+> > > 
+> > > Jann has brought up a very interesting point [1]. While shared pages are
+> > > excluded from MADV_PAGEOUT normally, CoW pages can be easily reclaimed
+> > > that way. This can lead to all sorts of hard to debug problems. E.g.
+> > > performance problems outlined by Daniel [2]. There are runtime
+> > > environments where there is a substantial memory shared among security
+> > > domains via CoW memory and a easy to reclaim way of that memory, which
+> > > MADV_{COLD,PAGEOUT} offers, can lead to either performance degradation
+> > > in for the parent process which might be more privileged or even open
+> > > side channel attacks. The feasibility of the later is not really clear
+> > 
+> > I am not sure it's a good idea to mention performance stuff because
+> > it's rather arguble. You and Johannes already pointed it out when I sbumit
+> > early draft which had shared page filtering out logic due to performance
+> > reason. You guys suggested the shared pages has higher chance to be touched
+> > so that if it's really hot pages, that whould keep in the memory. I agree.
 > 
-> 	sleep(1)
-> 	memcpy(&garbage, buffer, sz);
-> 
-> The "attacker" is doing
-> 
-> 	madvise(buffer, sz, MADV_PAGEOUT);
-> 
-> in a loop.  That, oddly enough doesn't cause the victim to page fault.
-> But, if I do:
-> 
-> 	memcpy(&garbage, buffer, sz);
-> 	madvise(buffer, sz, MADV_PAGEOUT);
-> 
-> It *does* cause the memory to get paged out.  The MADV_PAGEOUT code
-> actually has a !pte_present() check.  It will punt on a PTE if it sees
-> it.  In other words, if a page is in the swap cache but not mapped by a
-> pte_present() PTE, MADV_PAGEOUT won't touch it.
-> 
-> Shouldn't MADV_PAGEOUT be able to find and reclaim those pages?  Patch
-> attached.
+> Yes, the hot memory is likely to be referenced but the point was an
+> unexpected latency because of the major fault. I have to say that I have
+
+I don't understand your point here. If it's likely to be referenced
+among several processes, it doesn't have the major fault latency.
+What's your point here?
+
+> underestimated the issue because I was not aware of runtimes mentioned
+> in the referenced links. Essentially a lot of CoW memory shared over
+> security domains.
+
+I tend to agree about security part in the description, but still don't
+agree with performance concern in the description so I'd like to remove
+it in the description. Current situation is caused by security concern
+unfortunately, not performance reason.
 
 > 
+> > I think the only reason at this moment is just vulnerability.
+> > 
+> > > to me TBH but there is no real reason for exposure at this stage. It
+> > > seems there is no real use case to depend on reclaiming CoW memory via
+> > > madvise at this stage so it is much easier to simply disallow it and
+> > > this is what this patch does. Put it simply MADV_{PAGEOUT,COLD} can
+> > > operate only on the exclusively owned memory which is a straightforward
+> > > semantic.
+> > > 
+> > > [1] http://lkml.kernel.org/r/CAG48ez0G3JkMq61gUmyQAaCq=_TwHbi1XKzWRooxZkv08PQKuw@mail.gmail.com
+> > > [2] http://lkml.kernel.org/r/CAKOZueua_v8jHCpmEtTB6f3i9e2YnmX4mqdYVWhV4E=Z-n+zRQ@mail.gmail.com
+> > > 
+> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > > ---
+> > >  mm/madvise.c | 12 +++++++++---
+> > >  1 file changed, 9 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/mm/madvise.c b/mm/madvise.c
+> > > index 43b47d3fae02..4bb30ed6c8d2 100644
+> > > --- a/mm/madvise.c
+> > > +++ b/mm/madvise.c
+> > > @@ -335,12 +335,14 @@ static int madvise_cold_or_pageout_pte_range(pmd_t *pmd,
+> > >  		}
+> > >  
+> > >  		page = pmd_page(orig_pmd);
+> > > +
+> > > +		/* Do not interfere with other mappings of this page */
+> > 
+> > 
+> > How about this?
+> > /*
+> >  * paging out only single mapped private pages for anonymous mapping,
+> >  * otherwise, it opens a side channel.
+> >  */
 > 
-> ---
-> 
->  b/mm/madvise.c |   38 +++++++++++++++++++++++++++++++-------
->  1 file changed, 31 insertions(+), 7 deletions(-)
-> 
-> diff -puN mm/madvise.c~madv-pageout-find-swap-cache mm/madvise.c
-> --- a/mm/madvise.c~madv-pageout-find-swap-cache	2020-03-12 14:24:45.178775035 -0700
-> +++ b/mm/madvise.c	2020-03-12 14:35:49.706773378 -0700
-> @@ -248,6 +248,36 @@ static void force_shm_swapin_readahead(s
->  #endif		/* CONFIG_SWAP */
->  
->  /*
-> + * Given a PTE, find the corresponding 'struct page'.  Also handles
-> + * non-present swap PTEs.
-> + */
-> +struct page *pte_to_reclaim_page(struct vm_area_struct *vma,
-> +				 unsigned long addr, pte_t ptent)
-> +{
-> +	swp_entry_t entry;
-> +
-> +	/* Totally empty PTE: */
-> +	if (pte_none(ptent))
-> +		return NULL;
-> +
-> +	/* A normal, present page is mapped: */
-> +	if (pte_present(ptent))
-> +		return vm_normal_page(vma, addr, ptent);
-> +
+> I am not sure this is much more helpful without a larger context. I
+> would stick with the wording unless you insist.
 
-Please check is_swap_pte first.
+The comment you provides explain what code does, not *why*.
+Comment is always lack of explaining the whole story but we try to
+demonstrate a certain context to make reader careful.
+Havind said, I will not insist on it.
 
-> +	entry = pte_to_swp_entry(vmf->orig_pte);
-> +	/* Is it one of the "swap PTEs" that's not really swap? */
-> +	if (non_swap_entry(entry))
-> +		return false;
-> +
-> +	/*
-> +	 * The PTE was a true swap entry.  The page may be in the
-> +	 * swap cache.  If so, find it and return it so it may be
-> +	 * reclaimed.
-> +	 */
-> +	return lookup_swap_cache(entry, vma, addr);
-
-If we go with handling only exclusived owned page for anon,
-I think we should apply the rule to swap cache, too.
-
-Do you mind posting it as formal patch?
-
-Thanks for the explain about vulnerability and the patch, Dave!
-
-> +}
-> +
-> +/*
->   * Schedule all required I/O operations.  Do not wait for completion.
->   */
->  static long madvise_willneed(struct vm_area_struct *vma,
-> @@ -389,13 +419,7 @@ regular_page:
->  	for (; addr < end; pte++, addr += PAGE_SIZE) {
->  		ptent = *pte;
->  
-> -		if (pte_none(ptent))
-> -			continue;
-> -
-> -		if (!pte_present(ptent))
-> -			continue;
-> -
-> -		page = vm_normal_page(vma, addr, ptent);
-> +		page = pte_to_reclaim_page(vma, addr, ptent);
->  		if (!page)
->  			continue;
->  
-> _
-
+Thanks.
