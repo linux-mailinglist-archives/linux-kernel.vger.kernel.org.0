@@ -2,84 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B190C183F0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 03:19:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CA6A183F19
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 03:20:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbgCMCTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 22:19:11 -0400
-Received: from ozlabs.org ([203.11.71.1]:43833 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbgCMCTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 22:19:08 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48dqBd3LZWz9sSW;
-        Fri, 13 Mar 2020 13:19:05 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1584065946;
-        bh=NVMEuaQx4TxOWTt4RbY0DGYKQCDGpPDgE1FjtwKP62g=;
-        h=Date:From:To:Cc:Subject:From;
-        b=OXZtnXflXSgETNQG9tzLywnQqzVk0BwXxjOA0ddMxYjFqGMvNhdUBmre2f14XQUms
-         ENMNmBs/lIQPsEjDLv/rAKVy6qpb+JE6opcuZiWNtQDDJFAvr6GnvZX1qa5pPuJ1eN
-         SdjphArhLeBoP2hDi3jgc7HjzosZYwWwh2JZZ1g/10wL6Wo3pgbp+XIPKsj6naDWxk
-         /iRt6/vlOwXksbjBBXnmtu4UCKbdnHtMU19AkycLOfi2G6jQ4tMbThv0KUvJuEEx2f
-         +L5TXNNJNcD3ipHWIBfEvnrgzAAlxvnmhStGW680vKhjBKZ1WNvt3QLiNvCtkq/3Jd
-         uMbPBlJSNe+4g==
-Date:   Fri, 13 Mar 2020 13:19:03 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Subject: linux-next: build failure after merge of the v4l-dvb tree
-Message-ID: <20200313131903.3975cdd2@canb.auug.org.au>
+        id S1726802AbgCMCTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 22:19:52 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:33313 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbgCMCTv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 22:19:51 -0400
+Received: by mail-qk1-f193.google.com with SMTP id p62so10077126qkb.0;
+        Thu, 12 Mar 2020 19:19:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pktZUkJhZ989W+vJIraSaCZ1FCtyBz516+gaNJ90Vgs=;
+        b=jTVHpbRoj6btsip1/T8KXdZbo5gKq4gzME+ntCVbqmvcInzGNiW53fmLzwm2XkxRaO
+         KOwN+i9La1jPNywjDdWVchmnjqCTfr7OM/l39xDrNHMYOYbbAX1gBTC9E8y4OSP/iQiE
+         mtGsTQjv/wUV5NtR8LIEPRnccTllHMBhCYsefg3izwHPaWeTDZn2Rk/sOdLYly3UOc/c
+         b6VzcqTQOsF/FLX6Zy09BD6hKMHEFDLvbrI9ILdq8klobIZBbkGwTnXlX2u7aRmqELQy
+         DMFTil5s5fKtJw79AiDs5rU65enLZIAvf/tEQKExMCuIoqBP1byi9B+/qRsxbm/58Jd7
+         xgeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pktZUkJhZ989W+vJIraSaCZ1FCtyBz516+gaNJ90Vgs=;
+        b=Txduk106H9dMDonKd3LEfq9we8pZB7zeKZiPbozLaeuo0Uoo3nvJOnX03dQ3o9/J66
+         zSsa189DcYVHkr8PJyb68s9ArewcNl44r4/6jkBTJtHAOFh50CiKuL4roQt8H0l9Kzxi
+         bl5ExE/Kq6DSr2cdIXKd0L/f5XJtG54oBeMDzHc6RvORlwgCutmUyQrgqDSRaZ59S0wK
+         MrR69TxZG70VQpkBUUFfMTcIGjDF2J5M30vP5WU4hB3YzjM6IvkkQfntl6Gt+G0Q92Pu
+         23N4L0qnG7eLxNJLqoTdKUyy7wB+BhCOvmhYHa6MLtCG3FfSLMT8/DcCcDhMayZu9U7U
+         fdBQ==
+X-Gm-Message-State: ANhLgQ34WF4fiGmPkQIP+LZaZL3p52ABmq72Gbw3Q8PdhvLoyywCM6Ux
+        ixPDG7czoqPEKoKO9i4YcS7qZpOIKpL95jvk4OQ=
+X-Google-Smtp-Source: ADFU+vtodrMhsnbgv1DLR4VQsEBdTtkVF8ZTLE1OXuNkcbtF3C7RnOKjx77zI5S8mvl36ghHLA3xzg/bHHw/B0DVzlQ=
+X-Received: by 2002:a05:620a:539:: with SMTP id h25mr4196246qkh.395.1584065989504;
+ Thu, 12 Mar 2020 19:19:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/aaVrJ9xWlerAddN4drz9MQ1";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <9bc2631ff3ab60fc607a5215e561aace83c0e8ca.1583464821.git.baolin.wang7@gmail.com>
+ <20200312191616.GA9697@bogus>
+In-Reply-To: <20200312191616.GA9697@bogus>
+From:   Baolin Wang <baolin.wang7@gmail.com>
+Date:   Fri, 13 Mar 2020 10:19:38 +0800
+Message-ID: <CADBw62r6xvRW6i3f8NDf-OWTNimE_B8ewoFuOfcMgRUkM8B7gA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: mailbox: Add the Spreadtrum mailbox documentation
+To:     Rob Herring <robh@kernel.org>
+Cc:     mark.rutland@arm.com, jassisinghbrar@gmail.com,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/aaVrJ9xWlerAddN4drz9MQ1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Rob,
 
-Hi all,
+On Fri, Mar 13, 2020 at 3:16 AM Rob Herring <robh@kernel.org> wrote:
+>
+> On Fri, Mar 06, 2020 at 02:07:21PM +0800, Baolin Wang wrote:
+> > From: Baolin Wang <baolin.wang@unisoc.com>
+> >
+> > Add the Spreadtrum mailbox documentation.
+> >
+> > Signed-off-by: Baolin Wang <baolin.wang@unisoc.com>
+> > Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+> > ---
+> >  .../devicetree/bindings/mailbox/sprd-mailbox.yaml  | 56 ++++++++++++++++++++++
+> >  1 file changed, 56 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/mailbox/sprd-mailbox.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/mailbox/sprd-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/sprd-mailbox.yaml
+> > new file mode 100644
+> > index 0000000..2f2fdcf
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mailbox/sprd-mailbox.yaml
+> > @@ -0,0 +1,56 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: "http://devicetree.org/schemas/mailbox/sprd-mailbox.yaml#"
+> > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> > +
+> > +title: Spreadtrum mailbox controller bindings
+> > +
+> > +maintainers:
+> > +  - Orson Zhai <orsonzhai@gmail.com>
+> > +  - Baolin Wang <baolin.wang7@gmail.com>
+> > +  - Chunyan Zhang <zhang.lyra@gmail.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - sprd,sc9860-mailbox
+> > +
+> > +  reg:
+> > +    minItems: 2
+>
+> Need to define what each entry is.
 
-After merging the v4l-dvb tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Sure
 
-ERROR: modpost: "fwnode_get_name" [drivers/media/v4l2-core/v4l2-fwnode.ko] =
-undefined!
+>
+> > +
+> > +  interrupts:
+> > +    minItems: 2
+> > +    description:
+> > +      Contains the inbox and outbox interrupt information.
+>
+> The description should be split to define each entry:
+>
+> items:
+>   - description: inbox interrupt
+>   - description: outbox interrupt
 
-Caused by commit
+Sure.
 
-  dfc22c073b78 ("media: v4l2-fwnode: add initial connector parsing support")
+>
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: enable
+> > +
+> > +  "#mbox-cells":
+> > +    const: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - "#mbox-cells"
+> > +  - clocks
+> > +  - clock-names
+>
+> Add:
+>
+> additionalProperties: false
 
-I have used the v4l-dvb tree from next-20200312 for today.
+OK. Thanks for your comments.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/aaVrJ9xWlerAddN4drz9MQ1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5q7ZcACgkQAVBC80lX
-0GyThggAokPa7fqKCMQneit5QBLLZcBkldmDSeJ029oNeEefcFSqSeafcDr1uynQ
-7K4phlybJFhpkEJ7U2o1Wc8fACBv6/Fq7QST1INm+vp+VKPeDM5Aq9CSYIP3qjhI
-jqWne8+4OrO99AgNm3maphfoPTweri2b9VDR7mcoKsEZGnCabsauS7T2mERsis6O
-eR/J039gfqBu7XFtaMP+2FmMBcF4qyX+vW6VFjN6IIX5KXbk6myo+M5eKUaR7TzP
-C6n93me0Zptg3gjnXIbgXK+Fbyq79S3f0IeOXlHHkR3MKIjrN5JkJPeW3g2mYDA5
-Lb943M/XV1FOlLALi8SsvE7Ezfhu4Q==
-=02CG
------END PGP SIGNATURE-----
-
---Sig_/aaVrJ9xWlerAddN4drz9MQ1--
+-- 
+Baolin Wang
