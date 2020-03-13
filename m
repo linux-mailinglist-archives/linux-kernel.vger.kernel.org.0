@@ -2,232 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA57D18504A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 21:28:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CAE218504F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 21:29:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbgCMU2z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 16:28:55 -0400
-Received: from mga11.intel.com ([192.55.52.93]:13217 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726591AbgCMU2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 16:28:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 13:28:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,549,1574150400"; 
-   d="scan'208";a="390025823"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga004.jf.intel.com with ESMTP; 13 Mar 2020 13:28:53 -0700
-Received: from [10.7.201.16] (skuppusw-desk.jf.intel.com [10.7.201.16])
-        by linux.intel.com (Postfix) with ESMTP id C61625805EA;
-        Fri, 13 Mar 2020 13:28:53 -0700 (PDT)
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH v17 09/12] PCI/AER: Allow clearing Error Status Register
- in FF mode
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Austin.Bolen@dell.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ashok.raj@intel.com,
-        Russell Currey <ruscur@russell.cc>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>
-References: <20200313192816.GA127896@google.com>
-From:   Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Organization: Intel
-Message-ID: <66fc072e-1955-c3fc-fca3-08d1924744bb@linux.intel.com>
-Date:   Fri, 13 Mar 2020 13:26:28 -0700
+        id S1727409AbgCMU3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 16:29:22 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45927 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726620AbgCMU3V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 16:29:21 -0400
+Received: by mail-wr1-f67.google.com with SMTP id t2so3678865wrx.12;
+        Fri, 13 Mar 2020 13:29:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:references:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=490+CG9QfTRf0k+IoKMcNqFIwfT4CQ6yVuzCCGzoGaI=;
+        b=M8+jbamQYND25WIBqurvq0w/FMrI1ErVjXZEnmjaDtv57JQ8lctz1slql1yLcYICqx
+         LbxY2Xvv8SA/IrApaG6qW3an9O57L0cfypuzwkEHtVSt5bCc00pcoNRW48y3o6g+X41o
+         9YOWAsyaZT5Ba8wsYP/BNs0alamNbym0ivaQ2W+WEpaOEfw0nYCpg/hM6b7u9i4ggna/
+         OjMuNJkuHXqEMbVWuZrE2pDvT2+kX3/Oh4mjFcIGG7qOXzPh5g9DX2pYi2K632eVdFnQ
+         NuTgGbmpMJjC83WOuaPHTdVPfniS12byCKNplbwgRSKNAUaQXcv8R1uuiSeUzwiPa/fO
+         raog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=490+CG9QfTRf0k+IoKMcNqFIwfT4CQ6yVuzCCGzoGaI=;
+        b=nNBeMWr3OdTMfkQqlJDkoDJwVXwMtoWwfJtF2mssRYFZ6OsaNkgC9wK1ehhWhpKojG
+         nD6sX3YC3LUVRgu+ev/8tUoxs7HnbRp/ZnmoLGbQ+4R3S3Ck9YBNeupf+yj+wNR26rqG
+         UQ5Yu8TVu5O4vn78GRBElLLPuRlOe2Sa85/1LtL6COOlTBOny2ahYlrWFA7GyugcIryF
+         O72RGoLsmBm1diDbmLXdDeW0E7k1Vu48iLS2sRQ/4Vr3EDRW/Zs+Tym2LbV9rSWX/+qG
+         cvL9Qe6iRn8lzOIbwAJ8dwld0m9VQ/zizOnj2UzEL3/ZZ14CdIKl0oOEMaoAgkzcyq+E
+         m0KA==
+X-Gm-Message-State: ANhLgQ1pbmpjnX90PdRTEPXkforOfXxhhCDsr8SjUeWvMjAJiUYxvSwd
+        XdAdTbVLt9wG4sMaqrO4I6jBXMbb
+X-Google-Smtp-Source: ADFU+vsppbGBa5i5BOIYwlTf/MMa9JUDV/0zt1h17+9u5sSWfiJUBKBPOrO+xQd4XnOLhA5v3ZdOeA==
+X-Received: by 2002:a5d:46cc:: with SMTP id g12mr19344608wrs.42.1584131356899;
+        Fri, 13 Mar 2020 13:29:16 -0700 (PDT)
+Received: from [192.168.43.52] ([109.126.140.227])
+        by smtp.gmail.com with ESMTPSA id b6sm24433704wrv.43.2020.03.13.13.29.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Mar 2020 13:29:16 -0700 (PDT)
+Subject: Re: [PATCH 5.6] io_uring: NULL-deref for IOSQE_{ASYNC,DRAIN}
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <3fff749b19ae1c3c2d59e88462a8a5bfc9e6689f.1584127615.git.asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <bc3baf1c-0629-3989-c7c1-bc7c84ac8ae5@gmail.com>
+Date:   Fri, 13 Mar 2020 23:28:24 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200313192816.GA127896@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <3fff749b19ae1c3c2d59e88462a8a5bfc9e6689f.1584127615.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+On 13/03/2020 22:29, Pavel Begunkov wrote:
+> Processing links, io_submit_sqe() prepares requests, drops sqes, and
+> passes them with sqe=NULL to io_queue_sqe(). There IOSQE_DRAIN and/or
+> IOSQE_ASYNC requests will go through the same prep, which doesn't expect
+> sqe=NULL and fail with NULL pointer deference.
+> 
+> Always do full prepare including io_alloc_async_ctx() for linked
+> requests, and then it can skip the second preparation.
 
-On 3/13/20 12:28 PM, Bjorn Helgaas wrote:
-> [+cc Russell, Sam, Oliver since we're talking about the error recovery
-> flow.  The code we're talking about is at [1]]
->
-> On Thu, Mar 12, 2020 at 11:22:13PM -0700, Kuppuswamy, Sathyanarayanan wrote:
->> On 3/12/2020 3:32 PM, Bjorn Helgaas wrote:
->>> On Thu, Mar 12, 2020 at 02:59:15PM -0700, Kuppuswamy Sathyanarayanan wrote:
->>>> On 3/12/20 12:53 PM, Bjorn Helgaas wrote:
->>>>> On Wed, Mar 11, 2020 at 04:07:59PM -0700, Kuppuswamy Sathyanarayanan wrote:
->>>>>> On 3/11/20 3:23 PM, Bjorn Helgaas wrote:
->>>>>>> Is any synchronization needed here between the EDR path and the
->>>>>>> hotplug/enumeration path?
->>>>>> If we want to follow the implementation note step by step (in
->>>>>> sequence) then we need some synchronization between EDR path and
->>>>>> enumeration path. But if it's OK to achieve the same end result by
->>>>>> following steps out of sequence then we don't need to create any
->>>>>> dependency between EDR and enumeration paths. Currently we follow
->>>>>> the latter approach.
->>>>> What would the synchronization look like?
->>>> we might need some way to disable the enumeration path till
->>>> we get response from firmware.
->>>>
->>>> In native hot plug case, I think we can do it in two ways.
->>>>
->>>> 1. Disable hotplug notification in slot ctl registers.
->>>>       (pcie_disable_notification())
->>>> 2. Some how block hotplug driver from processing the new
->>>>       events (not sure how feasible its).
->>>>
->>>> Following method 1 would be easy, But I am not sure whether
->>>> its alright to disable them randomly. I think, unless we
->>>> clear the status as well, we might get some issues due to stale
->>>> notification history.
->>>>
->>>> For ACPI event case, I am not sure whether we have some
->>>> communication protocol in place to disable receiving ACPI
->>>> events temporarily.
->>>>
->>>> For polling model, we need to disable to the polling
->>>> timer thread till we receive _OST response from firmware.
->>>>> Ideally I think it would be better to follow the order in the
->>>>> flowchart if it's not too onerous.
->>>> None of the above changes will be pretty and I think it will
->>>> not be simple as well.
->>>>>     That will make the code easier to
->>>>> understand.  The current situation with this dependency on pciehp and
->>>>> what it will do leaves a lot of things implicit.
->>>>>
->>>>> What happens if CONFIG_PCIE_EDR=y but CONFIG_HOTPLUG_PCI_PCIE=n?
->>>>>
->>>>> IIUC, when DPC triggers, pciehp is what fields the DLLSC interrupt and
->>>>> unbinds the drivers and removes the devices.
->>>>>    If that doesn't happen, and Linux clears the DPC trigger to bring
->>>>>    the link back up, will those drivers try to operate uninitialized
->>>>>    devices?
->>>> I don't think this will happen. In DPC reset_link before we bring up
->>>> the device we wait for link to go down first using
->>>> pcie_wait_for_link(pdev, false) function.
->>> I understand that, but these child devices were reset when DPC
->>> disabled the link.  When the link comes back up, their BARs
->>> contain zeros.
->>>
->>> If CONFIG_HOTPLUG_PCI_PCIE=y, the DLLSC interrupt will cause
->>> pciehp to unbind the driver.  It seems like the unbind races with
->>> the EDR notify handler.
->> Agree. But even if there is a race condition, after clearing DPC
->> trigger status, if hotplug driver properly removes/re-enumerates the
->> driver then the end result will still be same. There should be no
->> functional impact.
->>
->>> If pciehp unbinds the driver before edr_handle_event() calls
->>> pcie_do_recovery(), this seems fine -- we'll call
->>> dpc_reset_link(), which brings up the link, we won't call any
->>> driver callbacks because there's no driver, and another DLLSC
->>> interrupt will cause pciehp to re-enumerate, which will
->>> re-initialize the device, then rebind the driver.
->>>
->>> If the EDR notify handler runs before pciehp unbinds the driver,
->> In the above case, from the kernel perspective device is still
->> accessible and IIUC, it will try to recover it in pcie_do_recovery()
->> using one of the callbacks.
->>
->> int (*mmio_enabled)(struct pci_dev *dev);
->> int (*slot_reset)(struct pci_dev *dev);
->> void (*resume)(struct pci_dev *dev);
->>
->> One of these callbacks will do pci_restore_state() to restore the
->> device, and IO will not attempted in these callbacks until the device
->> is successfully recovered.
-> That might be what *should* happen, but I don't think it's what
-> *does* happen.
->
-> I don't think we use .mmio_enabled() and .slot_reset() for EDR
-> because Linux EDR currently depends on DPC, so we'll be using
-> dpc_reset_link(), which normally returns PCI_ERS_RESULT_RECOVERED,
-> so pcie_do_recovery() skips .mmio_enabled() and .slot_reset().
-After our discussion about non-hotplug cases, I am thinking
-that reset_link() callback should not return
-PCI_ERS_RESULT_RECOVERED in non hotplug cases. If
-successfully reset-ed, it should return PCI_ERS_RESULT_NEED_RESET.
-This will enable pcie_do_recovery() to proceed to .slot_reset() to
-successfully recover the device.
+Hmm, found unreliably failing the across-fork test. I don't know whether it's
+this patch specific, but need to take a look there first.
 
-Any comments ?
->
-> I looked at the first few .resume() implementations (FWIW, I used [2]
-> to find them), and none of them calls pci_restore_state() before doing
-> I/O to the device:
->
->    ioat_pcie_error_resume()
->    pci_resume() (hfi1)
->    qib_pci_resume()
->    cxl_pci_resume()
->    genwqe_err_resume()
->    ...
->
-> But I assume you've tested EDR with some driver that *does* call
-> pci_restore_state()?  Or maybe you have pciehp enabled,
-Yes. I have tested it only with hotplug enabled. Let me try to disable
-hotplug and verify the cases.
-> and it always
-> wins the race and unbinds the driver before the EDR notification?  It
-> would be interesting to make pciehp *lose* the race and see if
-> anything breaks.
->
-> pci-error-recovery.rst does not mention any requirement for the driver
-> to call pci_restore_state(), and I think any state restoration like
-> that should be the responsibility of the PCI core, not the driver.
->
->>> couldn't EDR bring up the link and call driver .mmio_enabled() before
->>> the device has been initialized?
->> Calling mmio_enabled in this case should not be a problem right?
->>
->> Please check the following content from
->> Documentation/PCI/pci-error-recovery.rst. IIUC (following content),
->> IO will not be attempted until the device is successfully
->> re-configured.
->>
->> STEP 2: MMIO Enabled
->> --------------------
->> This callback is made if all drivers on a segment agree that they can
->> try to recover and if no automatic link reset was performed by the HW.
->> If the platform can't just re-enable IOs without a slot reset or a link
->> reset, it will not call this callback, and instead will have gone
->> directly to STEP 3 (Link Reset) or STEP 4 (Slot Reset)
->>
->>> If CONFIG_HOTPLUG_PCI_PCIE=n and CONFIG_HOTPLUG_PCI_ACPI=y, I could
->>> believe that the situations are similar to the above.
->>>
->>> What if CONFIG_HOTPLUG_PCI_PCIE=n and CONFIG_HOTPLUG_PCI_ACPI=n?  Then
->>> I assume there's nothing to unbind the driver, so pcie_do_recovery()
->>> will call the driver .mmio_enabled() and other recovery callbacks on a
->>> device that hasn't been initialized?
->> probably in .slot_reset() callback device config will be restored and it
->> will make the device functional again.
-> I don't think .mmio_enabled() is a problem because IIUC, the device
-> should not have been reset before calling .mmio_enabled().
-In hotplug case, it is possible. since reset_link() is called before
-.mmio_enabled, the device might be in reset state by the time
-.mmio_enabled is called.
->
-> But I think .slot_reset() *is* a problem.  I looked at several
-> .slot_reset() implementations ([3]); some called pci_restore_state(),
-> but many did not.
->
-> If no hotplug driver is enabled, I think the .slot_reset() callbacks
-> that do not call pci_restore_state() are broken.
-Yes. Agree. May be the documentation needs to be explicit about it ?
->
->> Also since in above case hotplug is not supported, topology change will
->> not be supported.
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/log/?h=review/edr
-> [2] F='\.resume'; git grep -A 10 "struct pci_error_handlers" | grep "$F\s*=" | sed -e "s/.*$F\s*=\s*//" -e 's/,\s*$//'
-> [3] F='\.slot_reset'; git grep -A 10 "struct pci_error_handlers" | grep "$F\s*=" | sed -e "s/.*$F\s*=\s*//" -e 's/,\s*$//'
+> 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  fs/io_uring.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 55afae6f0cf4..9d43efbec960 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -4813,6 +4813,9 @@ static int io_req_defer_prep(struct io_kiocb *req,
+>  {
+>  	ssize_t ret = 0;
+>  
+> +	if (!sqe)
+> +		return 0;
+> +
+>  	if (io_op_defs[req->opcode].file_table) {
+>  		ret = io_grab_files(req);
+>  		if (unlikely(ret))
+> @@ -5655,6 +5658,11 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+>  		if (sqe_flags & (IOSQE_IO_LINK|IOSQE_IO_HARDLINK)) {
+>  			req->flags |= REQ_F_LINK;
+>  			INIT_LIST_HEAD(&req->link_list);
+> +
+> +			if (io_alloc_async_ctx(req)) {
+> +				ret = -EAGAIN;
+> +				goto err_req;
+> +			}
+>  			ret = io_req_defer_prep(req, sqe);
+>  			if (ret)
+>  				req->flags |= REQ_F_FAIL_LINK;
+> 
 
 -- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
-
+Pavel Begunkov
