@@ -2,298 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9748C184D06
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 17:53:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B15DD184D9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:29:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbgCMQx2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 12:53:28 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:56853 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbgCMQx2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 12:53:28 -0400
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 5143823EC2;
-        Fri, 13 Mar 2020 17:53:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1584118404;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=o/s4NtXKYsxA4RgfwWhA3zpVJzNOf9dpb3C9XBdpNbg=;
-        b=BRd65QOjqf7cKLLcB24LvuK7LUkR5xgsbHrFHLM3TuWylZ9xIxOujPPIK19DqbvhY3px2/
-        Sggp/yOfW6Ia7UX05KEXyIuqiP7a6dlGek0KDpQqKQTH6OkCkyTlbUPXONWCHcB4pW+d+y
-        Ew/y71urxnX0ui2oWJJlD1DTqSMOJ00=
+        id S1727020AbgCMR3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 13:29:02 -0400
+Received: from mga06.intel.com ([134.134.136.31]:24214 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726414AbgCMR3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 13:29:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 10:29:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,549,1574150400"; 
+   d="scan'208";a="237017256"
+Received: from sblancoa-mobl.amr.corp.intel.com (HELO [10.251.232.239]) ([10.251.232.239])
+  by fmsmga008.fm.intel.com with ESMTP; 13 Mar 2020 10:28:49 -0700
+Subject: Re: [PATCH 1/8] soundwire: bus_type: add master_device/driver support
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Hui Wang <hui.wang@canonical.com>, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+References: <20200303054136.GP4148@vkoul-mobl>
+ <8a04eda6-cbcf-582f-c229-5d6e4557344b@linux.intel.com>
+ <20200304095312.GT4148@vkoul-mobl>
+ <05dbe43c-abf8-9d5a-d808-35bf4defe4ba@linux.intel.com>
+ <20200305063646.GW4148@vkoul-mobl>
+ <eb30ac49-788f-b856-6fcf-84ae580eb3c8@linux.intel.com>
+ <20200306050115.GC4148@vkoul-mobl>
+ <4fabb135-6fbb-106f-44fd-8155ea716c00@linux.intel.com>
+ <20200311063645.GH4885@vkoul-mobl>
+ <0fafb567-10e5-a1ea-4a6d-b3c53afb215e@linux.intel.com>
+ <20200313115011.GD4885@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <4cb16467-87d0-ef99-e471-9eafa9e669d2@linux.intel.com>
+Date:   Fri, 13 Mar 2020 11:54:49 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20200313115011.GD4885@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 13 Mar 2020 17:53:24 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Esben Haabendal <eha@deif.com>,
-        angelo@sysam.it, andrew.smirnov@gmail.com,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Wei Chen <weic@nvidia.com>, Mohamed Hosny <mhosny@nvidia.com>,
-        peng.ma@nxp.com
-Subject: Re: [PATCH v3 0/7] NXP DSPI bugfixes and support for LS1028A
-In-Reply-To: <CA+h21hqk+pVrGgHx4iTshfE3i4WF7VANPfMf2ykPFpL3=ragag@mail.gmail.com>
-References: <20200310125542.5939-1-olteanv@gmail.com>
- <615284875b709f602d57e4a4621a83c1@walle.cc>
- <CA+h21hrYoHVDvsxT1EPWhYprL+zNHfE4MW7k4HxiK7ma4ZWn1g@mail.gmail.com>
- <59b07b7d70603c6b536a7354ed0ea8d8@walle.cc>
- <4ba077c80143c8ec679066e6d8cedca2@walle.cc>
- <CA+h21hqk+pVrGgHx4iTshfE3i4WF7VANPfMf2ykPFpL3=ragag@mail.gmail.com>
-Message-ID: <4b77ccec9d0de0615985ebf60db9cf67@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.10
-X-Spamd-Bar: +
-X-Spam-Level: *
-X-Rspamd-Server: web
-X-Spam-Status: No, score=1.40
-X-Spam-Score: 1.40
-X-Rspamd-Queue-Id: 5143823EC2
-X-Spamd-Result: default: False [1.40 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         FREEMAIL_ENVRCPT(0.00)[gmail.com];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[15];
-         FREEMAIL_TO(0.00)[gmail.com];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,arm.com,deif.com,sysam.it,gmail.com,embeddedor.com,nvidia.com,nxp.com];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 2020-03-13 17:37, schrieb Vladimir Oltean:
-> Hi Michael,
+
+>>>> the ASoC layer does require a driver with a 'name' for the components
+>>>> registered with the master device. So if you don't have a driver for the
+>>>> master device, the DAIs will be associated with the PCI device.
+>>>>
+>>>> But the ASoC core does make pm_runtime calls on its own,
+>>>>
+>>>> soc_pcm_open(struct snd_pcm_substream *substream)
+>>>> {
+>>>> ...
+>>>> 	for_each_rtd_components(rtd, i, component)
+>>>> 		pm_runtime_get_sync(component->dev);
+>>>>
+>>>> and if the device that's associated with the DAI is the PCI device, then
+>>>> that will not result in the relevant master IP being activated, only the PCI
+>>>> device refcount will be increased - meaning there is no hook that would tell
+>>>> the PCI layer to turn on a specific link.
+>>>>
+>>>> What you are recommending would be an all-or-nothing solution with all links
+>>>> on or all links off, which beats the purpose of having independent
+>>>> link-level power management.
+>>>
+>>> Why can't you use dai .startup callback for this?
+>>>
+>>> The ASoC core will do pm_runtime calls that will ensure PCI device is
+>>> up, DSP firmware downloaded and running.
+>>>
+>>> You can use .startup() to turn on your link and .shutdown to turn off
+>>> the link.
+>>
+>> There are multiple dais per link, and multiple Slave per link, so we would
+>> have to refcount and track active dais to understand when the link needs to
+>> be turned on/off. It's a duplication of what the pm framework can do at the
+>> device/link level, and will likely introduce race conditions.
+>>
+>> Not to mention that we'd need to introduce workqueues to turn the link off
+>> with a delay, with pm_runtime_put_autosuspend() does for free.
 > 
-> On Fri, 13 Mar 2020 at 18:07, Michael Walle <michael@walle.cc> wrote:
->> 
->> Am 2020-03-10 16:22, schrieb Michael Walle:
->> > Hi Vladimir,
->> >
->> > Am 2020-03-10 15:56, schrieb Vladimir Oltean:
->> >>> (2) Also, reading the flash, every second time there is
->> >>> (reproducibly)
->> >>> an
->> >>> IO error:
->> >>>
->> >>> # hexdump -C /dev/mtd0
->> >>> 00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff
->> >>> |huhu............|
->> >>> 00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
->> >>> |................|
->> >>> *
->> >>> 01000000
->> >>> # hexdump -C /dev/mtd0
->> >>> 00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff
->> >>> |huhu............|
->> >>> 00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
->> >>> |................|
->> >>> *
->> >>> hexdump: /dev/mtd0: Input/output error
->> >>> 00dc0000
->> >>> # hexdump -C /dev/mtd0
->> >>> 00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff
->> >>> |huhu............|
->> >>> 00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
->> >>> |................|
->> >>> *
->> >>> 01000000
->> >>> # hexdump -C /dev/mtd0
->> >>> 00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff
->> >>> |huhu............|
->> >>> 00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
->> >>> |................|
->> >>> *
->> >>> hexdump: /dev/mtd0: Input/output error
->> >>> 00e6a000
->> >>>
->> >>
->> >> Just to be clear, issue 2 is seen only after you abort another
->> >> transaction, right?
->> >
->> > No, just normal uninterrupted reading. Just tried it right after
->> > reboot. Doesn't seem to be every second time though, just random
->> > which makes me wonder if that is another problem now. Also the
->> > last successful reading is random.
->> 
->> 
->> Ok I guess I know what the root cause is. This is an extract of
->> the current code:
->> 
->> > static int dspi_transfer_one_message(struct spi_controller *ctlr,
->> >                                    struct spi_message *message)
->> > {
->> > ..
->> >       /* Kick off the interrupt train */
->> >       dspi_fifo_write(dspi);
->> >
->> >       status = wait_event_interruptible(dspi->waitq,
->> >                                         dspi->waitflags);
->> >       dspi->waitflags = 0;
->> > ..
->> > }
->> >
->> > static int dspi_rxtx(struct fsl_dspi *dspi)
->> > {
->> >       dspi_fifo_read(dspi);
->> >
->> >       if (!dspi->len)
->> >               /* Success! */
->> >               return 0;
->> >
->> >       dspi_fifo_write(dspi);
->> >
->> >       return -EINPROGRESS;
->> > }
->> 
->> dspi_rxtx() is used in the ISR. Both dspi_fifo_write() and dspi_rxtx()
->> access shared data like, dspi->words_in_flight. In the EIO error case
->> the following bytes_sent is -1, because dspi->words_in_flight is -1.
->> 
->> > /* Update total number of bytes that were transferred */
->> > bytes_sent = dspi->words_in_flight * dspi->oper_word_size;
->> 
->> words_in_flight is always -1 after dspi_fifo_read() was called. In
->> the error case, the ISR kicks in right in the middle of the execution
->> of dspi_fifo_write() in dspi_transfer_one_message().
->> 
->> > static void dspi_fifo_write(struct fsl_dspi *dspi)
->> > {
->> > ..
->> >       if (dspi->devtype_data->trans_mode == DSPI_EOQ_MODE)
->> >               dspi_eoq_fifo_write(dspi);
->> >        else
->> >               dspi_xspi_fifo_write(dspi);
->> 
->> Now if the ISR is executed right here..
->> 
->> >
->> >       /* Update total number of bytes that were transferred */
->> >       bytes_sent = dspi->words_in_flight * dspi->oper_word_size;
->> 
->> .. words_in_flight might be -1.
->> 
->> >       msg->actual_length += bytes_sent;
->> 
->> and bytes_sent is negative. And this causes an IO error because
->> the returned overall message length doesn't match.
->> 
->> >       dspi->progress += bytes_sent / DIV_ROUND_UP(xfer->bits_per_word, 8);
->> > ..
->> > }
->> 
->> I could not reproduce the issue with the following patch. I don't
->> know if I got the locking correct though or if there is a better
->> way to go.
->> 
->> 
->> diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
->> index 8b16de9ed382..578fedeb16a0 100644
->> --- a/drivers/spi/spi-fsl-dspi.c
->> +++ b/drivers/spi/spi-fsl-dspi.c
->> @@ -224,6 +224,7 @@ struct fsl_dspi {
->>          u16                                     tx_cmd;
->>          const struct fsl_dspi_devtype_data      *devtype_data;
->> 
->> +       spinlock_t lock;
->>          wait_queue_head_t                       waitq;
->>          u32                                     waitflags;
->> 
->> @@ -873,14 +874,20 @@ static void dspi_fifo_write(struct fsl_dspi 
->> *dspi)
->> 
->>   static int dspi_rxtx(struct fsl_dspi *dspi)
->>   {
->> +       unsigned long flags;
->> +
->> +       spin_lock_irqsave(&dspi->lock, flags);
->>          dspi_fifo_read(dspi);
->> 
->> -       if (!dspi->len)
->> +       if (!dspi->len) {
->>                  /* Success! */
->> +               spin_unlock_irqrestore(&dspi->lock, flags);
->>                  return 0;
->> +       }
->> 
->>          dspi_fifo_write(dspi);
->> 
->> +       spin_unlock_irqrestore(&dspi->lock, flags);
->>          return -EINPROGRESS;
->>   }
->> 
->> @@ -950,7 +957,9 @@ static int dspi_transfer_one_message(struct
->> spi_controller *ctlr,
->>          struct fsl_dspi *dspi = spi_controller_get_devdata(ctlr);
->>          struct spi_device *spi = message->spi;
->>          struct spi_transfer *transfer;
->> +       unsigned long flags;
->>          int status = 0;
->> +       int i = 0;
->> 
->>          if (dspi->irq)
->>                  dspi_enable_interrupts(dspi, true);
->> @@ -1009,7 +1018,9 @@ static int dspi_transfer_one_message(struct
->> spi_controller *ctlr,
->>                                  goto out;
->>                  } else if (dspi->irq) {
->>                          /* Kick off the interrupt train */
->> +                       spin_lock_irqsave(&dspi->lock, flags);
->>                          dspi_fifo_write(dspi);
->> +                       spin_unlock_irqrestore(&dspi->lock, flags);
->> 
->>                          status = 
->> wait_event_interruptible(dspi->waitq,
->> 
->> dspi->waitflags);
->> @@ -1301,6 +1312,7 @@ static int dspi_probe(struct platform_device
->> *pdev)
->>          ctlr->cleanup = dspi_cleanup;
->>          ctlr->slave_abort = dspi_slave_abort;
->>          ctlr->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LSB_FIRST;
->> +       spin_lock_init(&dspi->lock);
->> 
->>          pdata = dev_get_platdata(&pdev->dev);
->>          if (pdata) {
->> 
->> 
->> 
->> -michael
+> Yes sure, that seems to be the cost unfortunately. While it might feel I
+> am blocking but the real block here is the hw design which gives you a
+> monolith whereas it should have been different devices. If you have a
+> 'device' for sdw or a standalone controller we would not be debating
+> this..
+
+The hardware is what it is. The ACPI spec is what it is.
+
+I am just pragmatic and making platforms work with that's available 
+*today*, and I don't have time or interest in revisiting what might have 
+been.
+
+>> Linux is all about frameworks. For power management, we shall use the power
+>> management framework, not reinvent it.
 > 
-> Thanks for taking such a close look. I haven't had the time to follow 
-> up.
-> Indeed, the ISR, and therefore dspi_fifo_read, can execute before
-> dspi->words_in_flight was populated correctly. And bad things will
-> happen in that case.
-> But I wouldn't introduce a spin lock that disables interrupts on the
-> local CPU just for that - it's too complicated for this driver.
+> This reminds me, please talk to Mika and Rafael, they had similar
+> problems with lpss etc and IIRC they were working on splices to solve
+> this.. Its been some time (few years now) so maybe they have a
+> solution..
 
-Sure. It was just a quick test whether the problem actually goes away.
+We've been discussing this since October, I don't really have any 
+appetite for looking into new concepts when the existing framework just 
+does what we need.
 
-> I would just keep the SPI interrupt quiesced via SPI_RSER and enable
-> it only once it's safe, aka after updating dspi->words_in_flight.
+It's really down to your objection to the use of 'struct driver'... For 
+ASoC support we only need the .name and .pm_ops, so there's really no 
+possible path forward otherwise.
 
-I didn't want to move the interrupt_enable() around. I leave this up to
-you ;)
+Like I said, we have 3 options
 
--michael
+a) stay with platform devices for now. You will need to have a 
+conversation with Greg on this.
+
+b) use a minimal sdw_master_device with a minimal 'struct driver' use.
+
+c) use a more elaborate solution suggested in this patchset and yes that 
+means the Qualcomm driver would need to change a bit.
+
+Pick one or suggest something that is implementable. The first version 
+of the patches was provided in October, the last RFC was provided on 
+January 31, time's up. At the moment you are preventing ASoC integration 
+from moving forward.
+
+Thanks
+-Pierre
