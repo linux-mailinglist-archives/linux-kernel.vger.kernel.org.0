@@ -2,70 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F462184751
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 13:57:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43538184756
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 13:59:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbgCMM5B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 08:57:01 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:55846 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbgCMM5B (ORCPT
+        id S1726628AbgCMM7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 08:59:23 -0400
+Received: from smtprelay0116.hostedemail.com ([216.40.44.116]:51554 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726216AbgCMM7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 08:57:01 -0400
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jCjrz-0003QK-Mg; Fri, 13 Mar 2020 12:56:55 +0000
-Date:   Fri, 13 Mar 2020 13:56:54 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     ard.biesheuvel@linaro.org, ardb@kernel.org, arve@android.com,
-        gregkh@linuxfoundation.org, hridya@google.com,
-        joel@joelfernandes.org, john.stultz@linaro.org,
-        kernel-team@android.com, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, maco@android.com,
-        naresh.kamboju@linaro.org, shuah@kernel.org, tkjos@android.com,
-        Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH] binderfs: port to new mount api
-Message-ID: <20200313125654.km6obuwuvv6tlroa@wittgenstein>
-References: <20200312131531.3615556-1-christian.brauner@ubuntu.com>
- <20200312212420.4032188-1-christian.brauner@ubuntu.com>
- <202003121655.486AB8E3@keescook>
- <20200313125551.hqhoick2vpnecvvx@wittgenstein>
+        Fri, 13 Mar 2020 08:59:23 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id CFC0318010A45;
+        Fri, 13 Mar 2020 12:59:21 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:1801:2393:2525:2560:2563:2682:2685:2693:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3865:3866:3867:3870:3871:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4605:5007:7903:8985:9025:10004:10400:10848:11026:11232:11233:11473:11657:11658:11914:12043:12050:12297:12438:12555:12740:12760:12895:12986:13161:13229:13439:14096:14097:14180:14181:14394:14659:14721:21060:21080:21433:21451:21611:21627:21811:30054:30060:30070:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: idea77_3485785e1df18
+X-Filterd-Recvd-Size: 3039
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf20.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 13 Mar 2020 12:59:20 +0000 (UTC)
+Message-ID: <d67ed65313f3a1579c1cf88348e8853c5cca4598.camel@perches.com>
+Subject: [PATCH] drm/amd/powerplay: Move fallthrough; into containing
+ #ifdef/#endif
+From:   Joe Perches <joe@perches.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Alex Deucher <alexdeucher@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Fri, 13 Mar 2020 05:57:37 -0700
+In-Reply-To: <20200313205748.03d30145@canb.auug.org.au>
+References: <20200313205748.03d30145@canb.auug.org.au>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200313125551.hqhoick2vpnecvvx@wittgenstein>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 01:55:53PM +0100, Christian Brauner wrote:
-> On Thu, Mar 12, 2020 at 04:56:11PM -0700, Kees Cook wrote:
-> > On Thu, Mar 12, 2020 at 10:24:20PM +0100, Christian Brauner wrote:
-> > > It's time we port binderfs to the new mount api. We can make use of the
-> > > new option parser, get nicer infrastructure and it will be easiert if we
-> > > ever add any new mount options.
-> > > 
-> > > This survives testing with the binderfs selftests:
-> > > 
-> > > for i in `seq 1 1000`; do ./binderfs_test; done
-> > > 
-> > > including the new stress tests I sent out for review today:
-> > > 
-> > >  [==========] Running 3 tests from 1 test cases.
-> > >  [ RUN      ] global.binderfs_stress
-> > >  [       OK ] global.binderfs_stress
-> > >  [ RUN      ] global.binderfs_test_privileged
-> > >  # Tests are not run as root. Skipping privileged tests
-> > >  [       OK ] global.binderfs_test_privileged
-> > 
-> > I would use the XFAIL harness infrastructure for these kinds of skips.
-> 
-> Hmyeah, will do.
+The automated conversion of /* fallthrough */ comments converted
+a comment outside of an #ifdef/#endif case block that should be
+inside the block.
 
-For the selftests I sent out earlier that is.
-This patch doesn't touch them. I just ran this patch on top of the
-new stress test to show it passes.
+Move the fallthrough inside the block to silence the warning.
+
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+
+On Fri, 2020-03-13 at 20:57 +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the amdgpu tree, today's linux-next build (powerpc
+> allyesconfig) produced this warning:
+> 
+> In file included from include/linux/compiler_types.h:59,
+>                  from <command-line>:
+> drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/smu7_hwmgr.c: In function 'smu7_request_link_speed_change_before_state_change':
+> include/linux/compiler_attributes.h:200:41: warning: statement will never be executed [-Wswitch-unreachable]
+>   200 | # define fallthrough                    __attribute__((__fallthrough__))
+>       |                                         ^~~~~~~~~~~~~
+> drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/smu7_hwmgr.c:3706:4: note: in expansion of macro 'fallthrough'
+>  3706 |    fallthrough;
+>       |    ^~~~~~~~~~~
+> 
+> Introduced by commit
+> 
+>   e86efa063cd1 ("AMD POWERPLAY: Use fallthrough;")
+
+This is also one of the #ifdef/#endif pairs
+where the fallthrough is outside of the #endif.
+
+https://lore.kernel.org/lkml/cover.1584040050.git.joe@perches.com/
+
+Here is a delta patch for this.
+Let me know if another form is needed.
+
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+index fc5236c..774048 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+@@ -3702,8 +3702,8 @@ static int smu7_request_link_speed_change_before_state_change(
+ 		case PP_PCIEGen2:
+ 			if (0 == amdgpu_acpi_pcie_performance_request(hwmgr->adev, PCIE_PERF_REQ_GEN2, false))
+ 				break;
+-#endif
+ 			fallthrough;
++#endif
+ 		default:
+ 			data->force_pcie_gen = smu7_get_current_pcie_speed(hwmgr);
+ 			break;
+-- 
+2.24.0
+
+
