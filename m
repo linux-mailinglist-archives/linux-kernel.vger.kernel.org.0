@@ -2,62 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E545B184E90
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:25:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6006184E96
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:28:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbgCMSZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 14:25:26 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:43784 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbgCMSZZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 14:25:25 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 207BC159D338F;
-        Fri, 13 Mar 2020 11:25:25 -0700 (PDT)
-Date:   Fri, 13 Mar 2020 11:25:24 -0700 (PDT)
-Message-Id: <20200313.112524.278974546399568453.davem@davemloft.net>
-To:     elder@linaro.org
-Cc:     kuba@kernel.org, netdev@vger.kernel.org,
+        id S1726967AbgCMS2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 14:28:14 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:51062 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726303AbgCMS2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 14:28:14 -0400
+Received: from zn.tnic (p200300EC2F0E1E007CE2C412F47CBB57.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:1e00:7ce2:c412:f47c:bb57])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A39751EC0CFA;
+        Fri, 13 Mar 2020 19:28:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1584124091;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=af9vjc4SquL5k1ASGpNOj3EgxDCubcDdq9ji+QbhQt8=;
+        b=CtTyW0QWLBk9PH5U05eB/gbz26N5Km1JMuXqil5w11lS+K/n2AUvagxumMPHyeRE7UU54k
+        +P31fVn6rZ3fG/GD7YqR12zjfVFXPdcICphsaNYMnMOFqAma+VMHvIZPWh/NVnhR2QbnHs
+        EgrK8qc6K3cKHG1Gagyk5uKFb1JvcSM=
+Date:   Fri, 13 Mar 2020 19:28:15 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] soc: qcom: ipa: build IPA when COMPILE_TEST is enabled
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200313121126.7825-1-elder@linaro.org>
-References: <20200313121126.7825-1-elder@linaro.org>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 13 Mar 2020 11:25:25 -0700 (PDT)
+Subject: Re: [PATCH v5 1/2] x86/purgatory: Disable various profiling and
+ sanitizing options
+Message-ID: <20200313182815.GF8142@zn.tnic>
+References: <20200312114951.56009-1-hdegoede@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200312114951.56009-1-hdegoede@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Elder <elder@linaro.org>
-Date: Fri, 13 Mar 2020 07:11:26 -0500
+On Thu, Mar 12, 2020 at 12:49:50PM +0100, Hans de Goede wrote:
+> Since the purgatory is a special stand-alone binary, we need to disable
 
-> Make CONFIG_QCOM_IPA optionally dependent on CONFIG_COMPILE_TEST.
+Pls use passive voice in your commit message: no "we" or "I", etc, and
+describe your changes in imperative mood.
+
+Also, pls read section "2) Describe your changes" in
+Documentation/process/submitting-patches.rst for more details.
+
+> various profiling and sanitizing options. Having these options enabled
+> typically will cause dependency on various special symbols exported by
+> special libs / stubs used by these frameworks. Since the purgatory is
+> special we do not link against these stubs causing missing symbols in
+> the purgatory if we do not disable these options.
 > 
-> Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Alex Elder <elder@linaro.org>
+> This commit syncs the set of disabled profiling and sanitizing options
+
+Avoid having "This patch" or "This commit" in the commit message. It is
+tautologically useless.
+
+Also, do
+
+$ git grep 'This patch' Documentation/process
+
+for more details.
+
+Those two review comments apply to patch 2's commit message too, pls fix
+them there too.
+
+> with that from drivers/firmware/efi/libstub/Makefile, adding
+> -DDISABLE_BRANCH_PROFILING to the CFLAGS and setting:
+> 
+> GCOV_PROFILE                    := n
+> UBSAN_SANITIZE                  := n
+> 
+> This fixes broken references to ftrace_likely_update when
+> CONFIG_TRACE_BRANCH_PROFILING is enabled and to __gcov_init and
+> __gcov_exit when CONFIG_GCOV_KERNEL is enabled.
+> 
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 > ---
+> Changes in v5:
+> -Not only add -DDISABLE_BRANCH_PROFILING to the CFLAGS but also set:
+>  GCOV_PROFILE                    := n
+>  UBSAN_SANITIZE                  := n
 > 
-> David, this implements a suggestion made by Jakub Kicinski.  I tested
-> it with GCC 9.2.1 for x86 and found no errors or warnings in the IPA
-> code.  It is the last IPA change I plan to make for v5.7.
-> 
-> Once reviewed and found acceptable, it should go through net-next.
+> Changes in v4:
+> -This is a new patch in v4 of this series
+> ---
+>  arch/x86/purgatory/Makefile | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-When I try to use this I end up with the following Kconfig warnings:
+$ test-apply.sh -g /tmp/01-x86-purgatory-disable_various_profiling_and_sanitizing_options.patch
+checking file arch/x86/purgatory/Makefile
+Hunk #1 FAILED at 17.
+Hunk #2 succeeded at 27 (offset 2 lines).
+1 out of 2 hunks FAILED
 
-WARNING: unmet direct dependencies detected for QCOM_SCM
-  Depends on [n]: ARM || ARM64
-  Selected by [m]:
-  - QCOM_MDT_LOADER [=m]
+This happens because tip/master already has KCSAN merged in and it adds
 
-So this needs more work.
+KCSAN_SANITIZE  := n
 
+there.
+
+Please redo the patches against current tip/master.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
