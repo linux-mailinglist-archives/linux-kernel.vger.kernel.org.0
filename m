@@ -2,196 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF6061851E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 23:50:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F06731851FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 00:03:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbgCMWuX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 18:50:23 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:39910 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727717AbgCMWuW (ORCPT
+        id S1727054AbgCMW7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 18:59:52 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33952 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726591AbgCMW7w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 18:50:22 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02DMoHi0030059;
-        Fri, 13 Mar 2020 17:50:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584139817;
-        bh=nHfSppZELfgaerGJtOvbPZcBECIqXDeUoFzdmnJQKSA=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=oNVzsVR2JbwZKCrq/lAS0Dvikna/wpvw411mBkWrDMkNu7ETYNbDTxwCta7kTB2TC
-         0FT5L3dY1KEVtLGsEedt2l+ifA5dFtUY/i6jgVUFbw6HdMNwWY90DOrM16p27TRLrd
-         hVSkTEl44veHrz1dNXBpMJdPNgGJJ6uBpJodQNtk=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02DMoHtC032916
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 13 Mar 2020 17:50:17 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 13
- Mar 2020 17:50:16 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 13 Mar 2020 17:50:16 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02DMoFgO010080;
-        Fri, 13 Mar 2020 17:50:16 -0500
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Tony Lindgren <tony@atomide.com>
-CC:     Sekhar Nori <nsekhar@ti.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        netdev <netdev@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH net-next 11/11] net: ethernet: ti: cpsw: enable cpts irq
-Date:   Sat, 14 Mar 2020 00:49:14 +0200
-Message-ID: <20200313224914.5997-12-grygorii.strashko@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200313224914.5997-1-grygorii.strashko@ti.com>
-References: <20200313224914.5997-1-grygorii.strashko@ti.com>
+        Fri, 13 Mar 2020 18:59:52 -0400
+Received: by mail-lf1-f67.google.com with SMTP id i19so9218026lfl.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 15:59:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HWS5+OO45KCQA5QZcdbsnGmNQp6lkquwGjGiNv3JKdc=;
+        b=khnySYO5WT1cMupKaoHzf9IZWc4QaM2lpqEdF+qwWmzriNscqK+yj6geYC3zyZz1yX
+         eYvcxPyIqm2CkjaMV0npdrtMNaGmMxppzqrHlBhWBGqOn8jvhj6QcLe640EKzAeKCKy6
+         QUMRttpypFL1KkKTr+zJkUsennbvBepBwtSTCt5nyVus4AF0Do/3rpuf/L74ypfeMXeP
+         AOVKJVPkUATBwAWlR41/YBv+WGrGtuE9alu1Lsgc2zQh+ThPiO6RiM+tVQtRkgGQHB5w
+         ZGDXYle2IcDAzxoHToMj//L1/yGQCqCYmOtRkTLYXJNG1g1cppIL/9bZvID4RqBWIFXv
+         TemA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HWS5+OO45KCQA5QZcdbsnGmNQp6lkquwGjGiNv3JKdc=;
+        b=tXDfxigUSw/gV4Pn0fcyfPmX70KGH8Mpwne0xwkyuyomYjl6/8NynyMmYV0GVTDzgo
+         9dHy0jH+FcFFJZbqOm+FGlI4TtmS5DAvuaTtYcbWzimTjDIE2WlUUT+yqyTY6AEmbyn8
+         TpEuWsV76qIr+zUdEYH0TAPVjIKB864g1VO+whkp1mI3/Ga9oCnECF2aeVRSYjTQwpPq
+         PrlA3KUJI2GMEGVq+hMlgNWGk/r8Pqh8iw30hBllTrObj2aV9xFe8gQvg+knj7LI/yXj
+         rIBekGeIXiBhIsS6UHgjCPX1T/IAn0UAvoLFPnjhcM9I0G+xPKnTTFVIgLb5cpG2tf8i
+         /miQ==
+X-Gm-Message-State: ANhLgQ1kxSMDPC95bYiCMFQF90sBEdY5h5py3ibgkBWqxkKZM19P7pMF
+        ZSTWl0DFQL0xzyRdsa6qJgoxOgjRYwEw52rIblaD
+X-Google-Smtp-Source: ADFU+vv8q3Bmu7rpYOUbo3wmyVU8hXCXnpf62lwEBTwRg1ToKZ1AfJqrXdIt/3KcZpky7g7yjeEsJ1m2/Jrl9SGeIz4=
+X-Received: by 2002:ac2:43ce:: with SMTP id u14mr9872354lfl.100.1584140388874;
+ Fri, 13 Mar 2020 15:59:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <CAKT=dDnFpj2hJd5z73pfcrhXXacDpPVyKzC7+K94tsX=+e_BHg@mail.gmail.com>
+ <20200302235044.59163-1-zzyiwei@google.com> <20200303090703.32b2ad68@gandalf.local.home>
+ <20200303141505.GA3405@kroah.com> <20200303093104.260b1946@gandalf.local.home>
+ <20200303155639.GA437469@kroah.com>
+In-Reply-To: <20200303155639.GA437469@kroah.com>
+From:   Yiwei Zhang <zzyiwei@google.com>
+Date:   Fri, 13 Mar 2020 15:59:37 -0700
+Message-ID: <CAKT=dDnT_d-C2jfcgD+OFvJ=vkqxvQDmg3nAErvs9tXS6iifpw@mail.gmail.com>
+Subject: Re: [PATCH v4] gpu/trace: add a gpu total memory usage tracepoint
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     mingo@redhat.com, elder@kernel.org, federico.vaga@cern.ch,
+        tony.luck@intel.com, vilhelm.gray@gmail.com,
+        Linus Walleij <linus.walleij@linaro.org>, tglx@linutronix.de,
+        yamada.masahiro@socionext.com, paul.walmsley@sifive.com,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Dariusz Marcinkiewicz <darekm@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        linux-kernel@vger.kernel.org,
+        Prahlad Kilambi <prahladk@google.com>,
+        android-kernel <android-kernel@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CPSW misc IRQ need be enabled for CPTS event_pend IRQs processing. This
-patch adds corresponding support to CPSW driver.
+On Tue, Mar 3, 2020 at 7:56 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Mar 03, 2020 at 09:31:04AM -0500, Steven Rostedt wrote:
+> > On Tue, 3 Mar 2020 15:15:05 +0100
+> > Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > > On Tue, Mar 03, 2020 at 09:07:03AM -0500, Steven Rostedt wrote:
+> > > >
+> > > > Greg,
+> > > >
+> > > > You acked this patch before, did you want to ack it again, and I'll take it
+> > > > in my tree?
+> > >
+> > > Sure, but where did my ack go?  What changed from previous versions???
+> > >
+> > > Anyway, the patch seems sane enough to me:
+> > >
+> > > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >
+> > Your previous ack was was here:
+> >
+> >   https://lore.kernel.org/lkml/20200213004029.GA2500609@kroah.com/
+>
+> Yeah, I remember that.
+>
+> > And the patch changed since then (although, only cosmetically), so your ack
+> > was removed. The diff between this patch and the patch you acked is this:
+> >
+> > -- Steve
+> >
+> > diff --git a/include/trace/events/gpu_mem.h b/include/trace/events/gpu_mem.h
+> > index 3b632a2b5100..1897822a9150 100644
+> > --- a/include/trace/events/gpu_mem.h
+> > +++ b/include/trace/events/gpu_mem.h
+> > @@ -28,34 +28,27 @@
+> >   *
+> >   */
+> >  TRACE_EVENT(gpu_mem_total,
+> > -     TP_PROTO(
+> > -             uint32_t gpu_id,
+> > -             uint32_t pid,
+> > -             uint64_t size
+> > -     ),
+> > -     TP_ARGS(
+> > -             gpu_id,
+> > -             pid,
+> > -             size
+> > -     ),
+> > +
+> > +     TP_PROTO(uint32_t gpu_id, uint32_t pid, uint64_t size),
+> > +
+> > +     TP_ARGS(gpu_id, pid, size),
+> > +
+> >       TP_STRUCT__entry(
+> >               __field(uint32_t, gpu_id)
+> >               __field(uint32_t, pid)
+> >               __field(uint64_t, size)
+> >       ),
+> > +
+> >       TP_fast_assign(
+> >               __entry->gpu_id = gpu_id;
+> >               __entry->pid = pid;
+> >               __entry->size = size;
+> >       ),
+> > -     TP_printk(
+> > -             "gpu_id=%u "
+> > -             "pid=%u "
+> > -             "size=%llu",
+> > +
+> > +     TP_printk("gpu_id=%u pid=%u size=%llu",
+> >               __entry->gpu_id,
+> >               __entry->pid,
+> > -             __entry->size
+> > -     )
+> > +             __entry->size)
+> >  );
+> >
+> >  #endif /* _TRACE_GPU_MEM_H */
+>
+> thanks for the diff, my ack still stands.
+>
+> greg k-h
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/net/ethernet/ti/cpsw.c      | 21 +++++++++++++++++++++
- drivers/net/ethernet/ti/cpsw_new.c  | 20 ++++++++++++++++++++
- drivers/net/ethernet/ti/cpsw_priv.c | 12 ++++++++++++
- drivers/net/ethernet/ti/cpsw_priv.h |  2 ++
- 4 files changed, 55 insertions(+)
+Hi guys, thanks for all the help throughout this. After struggling a
+while, I failed to figure out when the next merge window is. Could you
+help point me to the release calendar or something?  Thanks again!
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index a27cb1b2190f..d93d0480b010 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -1572,6 +1572,12 @@ static int cpsw_probe(struct platform_device *pdev)
- 		return irq;
- 	cpsw->irqs_table[1] = irq;
- 
-+	/* get misc irq*/
-+	irq = platform_get_irq(pdev, 3);
-+	if (irq <= 0)
-+		return irq;
-+	cpsw->misc_irq = irq;
-+
- 	/*
- 	 * This may be required here for child devices.
- 	 */
-@@ -1706,6 +1712,21 @@ static int cpsw_probe(struct platform_device *pdev)
- 		goto clean_unregister_netdev_ret;
- 	}
- 
-+	if (!cpsw->cpts)
-+		goto skip_cpts;
-+
-+	ret = devm_request_irq(&pdev->dev, cpsw->misc_irq, cpsw_misc_interrupt,
-+			       0, dev_name(&pdev->dev), cpsw);
-+	if (ret < 0) {
-+		dev_err(dev, "error attaching misc irq (%d)\n", ret);
-+		goto clean_unregister_netdev_ret;
-+	}
-+
-+	/* Enable misc CPTS evnt_pend IRQ */
-+	cpts_set_irqpoll(cpsw->cpts, false);
-+	writel(0x10, &cpsw->wr_regs->misc_en);
-+
-+skip_cpts:
- 	cpsw_notice(priv, probe,
- 		    "initialized device (regs %pa, irq %d, pool size %d)\n",
- 		    &ss_res->start, cpsw->irqs_table[0], descs_pool_size);
-diff --git a/drivers/net/ethernet/ti/cpsw_new.c b/drivers/net/ethernet/ti/cpsw_new.c
-index 2ee685493147..04f6f8079bfa 100644
---- a/drivers/net/ethernet/ti/cpsw_new.c
-+++ b/drivers/net/ethernet/ti/cpsw_new.c
-@@ -1900,6 +1900,11 @@ static int cpsw_probe(struct platform_device *pdev)
- 		return irq;
- 	cpsw->irqs_table[1] = irq;
- 
-+	irq = platform_get_irq_byname(pdev, "misc");
-+	if (irq <= 0)
-+		return irq;
-+	cpsw->misc_irq = irq;
-+
- 	platform_set_drvdata(pdev, cpsw);
- 	/* This may be required here for child devices. */
- 	pm_runtime_enable(dev);
-@@ -1979,6 +1984,21 @@ static int cpsw_probe(struct platform_device *pdev)
- 		goto clean_unregister_netdev;
- 	}
- 
-+	if (!cpsw->cpts)
-+		goto skip_cpts;
-+
-+	ret = devm_request_irq(dev, cpsw->misc_irq, cpsw_misc_interrupt,
-+			       0, dev_name(&pdev->dev), cpsw);
-+	if (ret < 0) {
-+		dev_err(dev, "error attaching misc irq (%d)\n", ret);
-+		goto clean_unregister_netdev;
-+	}
-+
-+	/* Enable misc CPTS evnt_pend IRQ */
-+	cpts_set_irqpoll(cpsw->cpts, false);
-+	writel(0x10, &cpsw->wr_regs->misc_en);
-+
-+skip_cpts:
- 	ret = cpsw_register_notifiers(cpsw);
- 	if (ret)
- 		goto clean_unregister_netdev;
-diff --git a/drivers/net/ethernet/ti/cpsw_priv.c b/drivers/net/ethernet/ti/cpsw_priv.c
-index 099208927400..9d098c802c6d 100644
---- a/drivers/net/ethernet/ti/cpsw_priv.c
-+++ b/drivers/net/ethernet/ti/cpsw_priv.c
-@@ -114,6 +114,18 @@ irqreturn_t cpsw_rx_interrupt(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+irqreturn_t cpsw_misc_interrupt(int irq, void *dev_id)
-+{
-+	struct cpsw_common *cpsw = dev_id;
-+
-+	writel(0, &cpsw->wr_regs->misc_en);
-+	cpdma_ctlr_eoi(cpsw->dma, CPDMA_EOI_MISC);
-+	cpts_misc_interrupt(cpsw->cpts);
-+	writel(0x10, &cpsw->wr_regs->misc_en);
-+
-+	return IRQ_HANDLED;
-+}
-+
- int cpsw_tx_mq_poll(struct napi_struct *napi_tx, int budget)
- {
- 	struct cpsw_common	*cpsw = napi_to_cpsw(napi_tx);
-diff --git a/drivers/net/ethernet/ti/cpsw_priv.h b/drivers/net/ethernet/ti/cpsw_priv.h
-index b8d7b924ee3d..bf4e179b4ca4 100644
---- a/drivers/net/ethernet/ti/cpsw_priv.h
-+++ b/drivers/net/ethernet/ti/cpsw_priv.h
-@@ -350,6 +350,7 @@ struct cpsw_common {
- 	bool				rx_irq_disabled;
- 	bool				tx_irq_disabled;
- 	u32 irqs_table[IRQ_NUM];
-+	int misc_irq;
- 	struct cpts			*cpts;
- 	struct devlink *devlink;
- 	int				rx_ch_num, tx_ch_num;
-@@ -442,6 +443,7 @@ int cpsw_run_xdp(struct cpsw_priv *priv, int ch, struct xdp_buff *xdp,
- 		 struct page *page, int port);
- irqreturn_t cpsw_tx_interrupt(int irq, void *dev_id);
- irqreturn_t cpsw_rx_interrupt(int irq, void *dev_id);
-+irqreturn_t cpsw_misc_interrupt(int irq, void *dev_id);
- int cpsw_tx_mq_poll(struct napi_struct *napi_tx, int budget);
- int cpsw_tx_poll(struct napi_struct *napi_tx, int budget);
- int cpsw_rx_mq_poll(struct napi_struct *napi_rx, int budget);
--- 
-2.17.1
-
+Best,
+Yiwei
