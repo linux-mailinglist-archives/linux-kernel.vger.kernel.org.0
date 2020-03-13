@@ -2,130 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55F2F184B66
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 16:46:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33AA9184B7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 16:47:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbgCMPp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 11:45:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726926AbgCMPpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 11:45:55 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF5E920724;
-        Fri, 13 Mar 2020 15:45:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584114355;
-        bh=/N1wgZESVKWP6KVjaSbiwILH85i8xFK95LFFyo4x1rE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=D3DD6qqKms7TlPEM19TNtCICsddIc5yjc0fPsOHqZPjCg6WKD+DgYgCS+1XRBAmNN
-         HRdVgTJlHagJl727dl3lDQQCGQCu+X/vcpwxqYa4CLMoICBWruIilp8v/zykq3TZOk
-         P6HBO+KYOjJVSOegcXgBT3z1N69A4EK2S0T4M3T4=
-Subject: Re: [PATCH] kunit/kunit_kernel: Rebuild .config if .kunitconfig is
- modified
-To:     Russell Currey <ruscur@russell.cc>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        David Gow <davidgow@google.com>
-Cc:     SeongJae Park <sj38.park@gmail.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        SeongJae Park <sjpark@amazon.de>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Bjorn Helgaas <bhelgaas@google.com>, shuah <shuah@kernel.org>
-References: <CAFd5g448555=dKFQMbjJ6G=tvtfF5oJgTtTgGx+38Ls3VqHo5g@mail.gmail.com>
- <20200205021428.8007-1-sj38.park@gmail.com>
- <CABVgOSmFAZN3KRYkHVg5bb-m-UorB7+9=f9vAqW2ECABzpa9zQ@mail.gmail.com>
- <CAFd5g45eys-JoaW-sgnkjwysehe4oxUL1THNifc7+v1xkgSRww@mail.gmail.com>
- <009fe3f5-7b27-46c4-90a7-ff97cbd8c931@www.fastmail.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <b13a1268-1542-ec1c-3316-c194597f7849@kernel.org>
-Date:   Fri, 13 Mar 2020 09:45:40 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727179AbgCMPrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 11:47:11 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:43848 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbgCMPrK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 11:47:10 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02DFkpMx111156;
+        Fri, 13 Mar 2020 10:46:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584114411;
+        bh=0dMsf4DYliKZ83tWSPvhlqALpn5mL3GmCMMJqyYrE8c=;
+        h=From:To:CC:Subject:Date;
+        b=c3p903BlIQnmIPf6Gbg0hmBbYhHR9P1okNG6qelJVOkU77Zz2soQEE/cvVUcqBnOp
+         +jTPOYkYtXJ1Y6AcFwP/u+oRfBnvXSJ94PMdm0Gasj1ZphgYjSCw5TISkrYTpTIVyC
+         bZXfEnhqQ/tlhUOW8k7O6a2JIqnj85nxxAq5uR20=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02DFkpes126450;
+        Fri, 13 Mar 2020 10:46:51 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 13
+ Mar 2020 10:46:50 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 13 Mar 2020 10:46:51 -0500
+Received: from pratyush-OptiPlex-790.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02DFkkSE034352;
+        Fri, 13 Mar 2020 10:46:47 -0500
+From:   Pratyush Yadav <p.yadav@ti.com>
+To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Mark Brown <broonie@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+CC:     Pratyush Yadav <p.yadav@ti.com>, <linux-mtd@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Sekhar Nori <nsekhar@ti.com>
+Subject: [PATCH v3 00/12] mtd: spi-nor: add xSPI Octal DTR support
+Date:   Fri, 13 Mar 2020 21:16:33 +0530
+Message-ID: <20200313154645.29293-1-p.yadav@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <009fe3f5-7b27-46c4-90a7-ff97cbd8c931@www.fastmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/20 3:09 PM, Russell Currey wrote:
-> On Thu, Feb 6, 2020, at 7:00 AM, Brendan Higgins wrote:
->> On Wed, Feb 5, 2020 at 9:58 AM David Gow <davidgow@google.com> wrote:
->>>
->>> One thing we'd like to do with kunit_tool is to make its functionality
->>> a bit more independent: in particular, allowing the configuration,
->>> running the kernel, and parsing the results to be done independently.
->>>
->>> If that's the case, it may make sense for "kunit.py run" or similar to
->>> not do anything with the .config, and to relegate that to a separate
->>> "configuration" step, which would allow someone to modify the
->>> configuration themselves (e.g., using make menuconfig) and re-run the
->>> tests, but also allow the config to be explicitly regenerated when
->>> helpful.
->>>
->>> Exactly what that'd end up looking like (and to what extent we'd still
->>> want to support a single command that'd do both) are still up in the
->>> air: but I think a general "separation of concerns" like this is
->>> probably the right path forward for kunit_tool.
->>
->> You and I have talked about splitting up kunit_tool's functionality
->> before. I agree with the idea.
->>
->> I imagine it that we would have
->>
->> - configuration
->> - running tests
->> - dmesg/TAP parsing
->>
->> as separate runnable scripts. I think that would make it a lot easier
->> for people with various test bed setups to reuse our code in their
->> test harness.
->>
->> Nevertheless, I think it would also be nice to have, as Ted has
->> previously suggested, a short easy to remember one line command that
->> just works; it is easily said, and much harder to do, but I think it
->> is at odds with the separation of functionality. I guess one solution
->> might just be to have these three separate tools, and then the classic
->> kunit.py script that combines the functionalities in a single step, or
->> as Ted suggested we could have some sort of default "make kunit"
->> command or something like that. I am not really sure what is best
->> here.
->>
->> It doesn't address the problem of separation of functionality in
->> anyway, but one way we could achieve the idea of having a command that
->> just works, is by putting a line in MAINTAINERS file entries that have
->> a command that a maintainer expects a submitter to run before sending
->> a patch to LKML. That might at least make it possible to hack together
->> a single line KUnit command for every relevant MAINTAINERS entry.
->> (Obviously there is no reason we have to do this particular idea just
->> for KUnit. We could do this for other tests as well.) Russel, I think
->> this was your idea at LCA?
-> 
-> Hi Brendan, it wasn't me, it was someone in the audience during questions in my
-> testing talk.  I don't recall who.
-> 
-> They were suggesting a script like get_maintainers - i.e. get_tests - that for a
-> given file/patch/commit it gives you a suggested set of tests, whether that's
-> KUnit you can run there and then, or selftests you can run once it's booted,
-> or maybe external test suites that are relevant.
-> 
+Hi,
 
-I like this idea of get_tests type script that could be run separately
-as well as part of check_patch or get_maintainers will serve as a
-reminder or hint to patch submitter.
+This series adds support for octal DTR flashes in the spi-nor framework,
+and then adds hooks for the Cypress Semper flash which is an xSPI
+compliant Octal DTR flash.
 
-We have some pieces in the MAINTAINERS file now. Selftest files are
-usually listed under subsystem entries. get_tests could leverage
-that and we will definitely more information to for a complete set
-of tests for a subsystem.
+This series assumes that the flash is handed to the kernel in Legacy SPI
+mode. That is why there is no tracking of the state the flash is in.
+Ability to detect the flash mode and then run the SFDP procedure in that
+mode will be added as a follow up series.
 
-thanks,
--- Shuah
+Tested on TI J721e EVM with 1-bit ECC on the Cypress flash.
+
+v1 can be found at [0]. v2 can be found at [1].
+
+[0] https://lore.kernel.org/linux-mtd/20200211133348.15558-1-p.yadav@ti.com/
+[1] https://lore.kernel.org/linux-mtd/20200226093703.19765-1-p.yadav@ti.com/
+
+Changes in v3:
+- Drop the DT properties "spi-rx-dtr" and "spi-tx-dtr". Instead, if
+  later a need is felt to disable DTR in case someone has a board with
+  Octal DTR capable flash but does not support DTR transactions for some
+  reason, a property like "spi-no-dtr" can be added.
+
+- Remove mode bits SPI_RX_DTR and SPI_TX_DTR.
+
+- Remove the Cadence Quadspi controller patch to un-block this series. I
+  will submit it as a separate patch.
+
+- Rebase on latest 'master' and fix merge conflicts.
+
+- Update read and write dirmap templates to use DTR.
+
+- Rename 'is_dtr' to 'dtr'.
+
+- Make 'dtr' a bitfield.
+
+- Reject DTR ops in spi_mem_default_supports_op().
+
+- Update atmel-quadspi to reject DTR ops. All other controller drivers
+  call spi_mem_default_supports_op() so they will automatically reject
+  DTR ops.
+
+- Add support for both enabling and disabling DTR modes.
+
+- Perform a Software Reset on flashes that support it when shutting
+  down.
+
+- Disable Octal DTR mode on suspend, and re-enable it on resume.
+
+- Drop enum 'spi_mem_cmd_ext' and make command opcode u16 instead.
+  Update spi-nor to use the 2-byte command instead of the command
+  extension. Since we still need a "extension type", mode that enum to
+  spi-nor and name it 'spi_nor_cmd_ext'.
+
+- Default variable address width to 3 to fix SMPT parsing.
+
+- Drop non-volatile change to uniform sector mode and rely on parsing
+  SMPT.
+
+Pratyush Yadav (12):
+  spi: spi-mem: allow specifying whether an op is DTR or not
+  spi: atmel-quadspi: reject DTR ops
+  spi: spi-mem: allow specifying a command's extension
+  mtd: spi-nor: add support for DTR protocol
+  mtd: spi-nor: default to address width of 3 for configurable widths
+  mtd: spi-nor: get command opcode extension type from BFPT
+  mtd: spi-nor: parse xSPI Profile 1.0 table
+  mtd: spi-nor: use dummy cycle and address width info from SFDP
+  mtd: spi-nor: enable octal DTR mode when possible
+  mtd: spi-nor: perform a Soft Reset on shutdown
+  mtd: spi-nor: Disable Octal DTR mode on suspend.
+  mtd: spi-nor: add support for Cypress Semper flash
+
+ drivers/mtd/spi-nor/spi-nor.c | 692 ++++++++++++++++++++++++++++++----
+ drivers/spi/atmel-quadspi.c   |   4 +
+ drivers/spi/spi-mem.c         |   3 +
+ include/linux/mtd/spi-nor.h   |  73 +++-
+ include/linux/spi/spi-mem.h   |  13 +-
+ 5 files changed, 702 insertions(+), 83 deletions(-)
+
+--
+2.25.0
+
