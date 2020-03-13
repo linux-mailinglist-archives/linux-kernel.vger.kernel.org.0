@@ -2,142 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0239418522C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 00:18:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 496AD18522E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 00:19:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbgCMXSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 19:18:09 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35730 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbgCMXSH (ORCPT
+        id S1727345AbgCMXS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 19:18:59 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:36483 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726534AbgCMXS7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 19:18:07 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 7so5888499pgr.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 16:18:05 -0700 (PDT)
+        Fri, 13 Mar 2020 19:18:59 -0400
+Received: by mail-il1-f195.google.com with SMTP id h3so10763286ils.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 16:18:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=5ldfOi5ONLbPwzyRrxGXEvBjlKjPPvku4R0mnSJkLVE=;
-        b=Fm0aJIBLLWT6DaaZbI9PQAulKV6KQqmYdmWI7JjyHtFTMW7gs7aqhkl7b2LuLRtSkd
-         /c+SrNqnS7qp9lST7sRRQDadN8CcZP7cWKn6mU3g2AcEsFWAW1bqtKepu4PDLagnQxnf
-         hAP/FX3UKzzVhJ91P9KaIkl/sAD3QWGy+v6OU=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H+ochZsnjp+nULBUUFjbPYvrQxl/WHyAk9Sli/WeJEM=;
+        b=R1Vej5Byynd7VIHn9payGZbkP7KlEoNC8RVbdP7UJ8P8/MOGUV5nzqojxlZPbx32gd
+         oPF+5rO9mZv0rVmMwy1K8x2mRSj2Y8OO6HZbk0D7EXBve+ssA0aLjZOspgcOZU/4SBRB
+         WlPBghJN2+P53C/cibvOCl6/8G0AZ99SD8nqnKmIrX9M2jJBy6zm2fR+e+rJT2GrZDb6
+         BvTkbT9wOxkQqS5Sc/Sbf29KPRR+9PcMR3lZZggm9R/OFtIU2BEA5Q0LbQ8X5xGK819J
+         +fzSXpYDeTf2bnFTVx5WvbRorppn0X5/zDP4v1G44I3ODBru5oCejcYfRJGj2dmqf+S4
+         CPtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=5ldfOi5ONLbPwzyRrxGXEvBjlKjPPvku4R0mnSJkLVE=;
-        b=C3ytRi0oz1cryj0jGFSX0sva9zkmp4ipykjBrY7ZiYDTT+SnU19RYg+qQGQcoItn1/
-         84Si2zndAruXy2ZuGSm1EqJU7x0i2b634M5eFlesHZLgMqbYH7Pjz4elJiG0iaAPEbua
-         OmbMscvi8GMOLagwUDc11LAkuIiXvJsLnJN9COUxqXb5hoJ/QdAh7gfcauxX8Mx8XzI8
-         6cvCXs5iQeo6iWcBXc1ybXFA+Df9La1ZEJdmLnTwco+ypnwB+daHN+DU2DsyqliIMS4V
-         pLHueJGhX1fdv5OE49AwoUTvBK9fc/zkEG+2mx/BGfTAvX2f3grsimCVUScW37h/X8z/
-         xeXQ==
-X-Gm-Message-State: ANhLgQ0h3zBRPrKlK3E7jOeDE7GGBAFapswUKC6oao8csApVvnPRbxyj
-        iRbylJD5J5bwWbhQcxQpCdFHoA==
-X-Google-Smtp-Source: ADFU+vs2gW1Jr/RUSgdC70UiRNwBxLRo2xZ2n+fKy8IdDt4Cr7wxF7y0z64FvaehW2RHASU+siQkcg==
-X-Received: by 2002:aa7:86d2:: with SMTP id h18mr13869948pfo.313.1584141485099;
-        Fri, 13 Mar 2020 16:18:05 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y15sm35693731pfl.149.2020.03.13.16.18.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 16:18:04 -0700 (PDT)
-Date:   Fri, 13 Mar 2020 16:18:03 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     shuah@kernel.org, luto@amacapital.net, wad@chromium.org,
-        daniel@iogearbox.net, kafai@fb.com, yhs@fb.com, andriin@fb.com,
-        gregkh@linuxfoundation.org, tglx@linutronix.de,
-        khilman@baylibre.com, mpe@ellerman.id.au,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v3] selftests: Fix seccomp to support relocatable build
- (O=objdir)
-Message-ID: <202003131615.D132E9E9@keescook>
-References: <20200313212404.24552-1-skhan@linuxfoundation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H+ochZsnjp+nULBUUFjbPYvrQxl/WHyAk9Sli/WeJEM=;
+        b=CmgRZ2OJlebSP76ktBjIsybSivr3vCeniK0AgvdSZPnzRMukNVyiAstBoOKW+JHUXU
+         X+r9ewXjZr7MK7xya2KnwfKcLEZhtT94UWegka/tKM9MIjyrkWIcfCzMNGanj4BWa6Dh
+         IstDp7NuX3hUUfPLwhklOE86kxfK8gqwS33Yhu0AFfaKnXY05RthRmSGrSUP3JQbvFB8
+         tN99zVwUeZQgRfwB2bgMvkjc61JXwIh87/lHOY2CZjfS6mo4f+seNR77UZ5UDTUhWza8
+         FD47aG3F/uMYEAH2Gpb7lhiOToIkKSrHlt0MpUEmDBV5gpF0HjfwC35yN8vvhrM+AdKy
+         Zh1A==
+X-Gm-Message-State: ANhLgQ2E9wXjytndB303UblbEjshBNe1pkGtbyUEY+C3u5+GkZYrFZgf
+        Wm5JSIbYJq4hkAkDkl691P/RPcnVeR/iuCjalYM=
+X-Google-Smtp-Source: ADFU+vuvMkFrSIvt1cIgCp/9ZXcNxJMYgLzoQ88Ta4HMOygBLKBzooMHryYn4YYBZg6/ozPzqUj3T7nTIjHZ/lF5tno=
+X-Received: by 2002:a92:860f:: with SMTP id g15mr15699025ild.297.1584141538349;
+ Fri, 13 Mar 2020 16:18:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200313212404.24552-1-skhan@linuxfoundation.org>
+References: <20200313184909.4560-1-hqjagain@gmail.com> <20200313184909.4560-2-hqjagain@gmail.com>
+ <20200313191426.GO22433@bombadil.infradead.org>
+In-Reply-To: <20200313191426.GO22433@bombadil.infradead.org>
+From:   Qiujun Huang <hqjagain@gmail.com>
+Date:   Sat, 14 Mar 2020 07:18:47 +0800
+Message-ID: <CAJRQjodgLgZShiA4twc6FyNspyoL5h7kGtfeOC9UA=4nD_8Qxg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] radix-tree: fix kernel-doc for radix_tree_find_next_bit
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     gregkh@linuxfoundation.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 03:24:04PM -0600, Shuah Khan wrote:
-> Fix seccomp relocatable builds. This is a simple fix to use the right
-> lib.mk variable TEST_GEN_PROGS with dependency on kselftest_harness.h
-> header, and defining LDFLAGS for pthread lib.
-> 
-> Removes custom clean rule which is no longer necessary with the use of
-> TEST_GEN_PROGS. 
-> 
-> Uses $(OUTPUT) defined in lib.mk to handle build relocation.
-> 
-> The following use-cases work with this change:
-> 
-> In seccomp directory:
-> make all and make clean
-> 
-> From top level from main Makefile:
-> make kselftest-install O=objdir ARCH=arm64 HOSTCC=gcc \
->  CROSS_COMPILE=aarch64-linux-gnu- TARGETS=seccomp
-> 
-> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-> ---
-> 
-> Changes since v2:
-> -- Using TEST_GEN_PROGS is sufficient to generate objects.
->    Addresses review comments from Kees Cook.
-> 
->  tools/testing/selftests/seccomp/Makefile | 18 ++++++++----------
->  1 file changed, 8 insertions(+), 10 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/seccomp/Makefile b/tools/testing/selftests/seccomp/Makefile
-> index 1760b3e39730..a0388fd2c3f2 100644
-> --- a/tools/testing/selftests/seccomp/Makefile
-> +++ b/tools/testing/selftests/seccomp/Makefile
-> @@ -1,17 +1,15 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -all:
-> -
-> -include ../lib.mk
-> +CFLAGS += -Wl,-no-as-needed -Wall
-> +LDFLAGS += -lpthread
->  
->  .PHONY: all clean
+I thought it's better to update the function description as it could
+be more readable from source code.
 
-Isn't this line redundant to ../lib.mk's?
-
->  
-> -BINARIES := seccomp_bpf seccomp_benchmark
-> -CFLAGS += -Wl,-no-as-needed -Wall
-> +include ../lib.mk
-> +
-> +# OUTPUT set by lib.mk
-> +TEST_GEN_PROGS := $(OUTPUT)/seccomp_bpf $(OUTPUT)/seccomp_benchmark
->  
-> -seccomp_bpf: seccomp_bpf.c ../kselftest_harness.h
-> -	$(CC) $(CFLAGS) $(LDFLAGS) $< -lpthread -o $@
-> +$(TEST_GEN_PROGS): ../kselftest_harness.h
->  
-> -TEST_PROGS += $(BINARIES)
-> -EXTRA_CLEAN := $(BINARIES)
-> +all: $(TEST_GEN_PROGS)
-
-And isn't this one too?
-
-I think if those are removed it should all still work? Regardless:
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
->  
-> -all: $(BINARIES)
-> -- 
-> 2.20.1
-> 
-
--- 
-Kees Cook
+On Sat, Mar 14, 2020 at 3:14 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Sat, Mar 14, 2020 at 02:49:08AM +0800, Qiujun Huang wrote:
+> >   * radix_tree_find_next_bit - find the next set bit in a memory region
+> >   *
+> >   * @addr: The address to base the search on
+> > - * @size: The bitmap size in bits
+> > + * @tag: The tag index (< RADIX_TREE_MAX_TAGS)
+> >   * @offset: The bitnumber to start searching at
+> >   *
+> >   * Unrollable variant of find_next_bit() for constant size arrays.
+> > - * Tail bits starting from size to roundup(size, BITS_PER_LONG) must be zero.
+> > - * Returns next bit offset, or size if nothing found.
+> > + * Returns next bit offset, or RADIX_TREE_MAP_SIZE if nothing found.
+> >   */
+> >  static __always_inline unsigned long
+> >  radix_tree_find_next_bit(struct radix_tree_node *node, unsigned int tag,
+>
+> Ugh, this is a static function with kernel-doc.  What a waste of time ;-(
