@@ -2,75 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFAE11850EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 22:22:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4744B1850FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 22:23:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbgCMVW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 17:22:28 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46479 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbgCMVW1 (ORCPT
+        id S1727525AbgCMVXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 17:23:52 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58376 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727052AbgCMVXw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 17:22:27 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n15so13859653wrw.13
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 14:22:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=u/As81EyZrntuNgJKlbKQgyjl02SHiQYq3mu31UtGaM=;
-        b=EApjgvHkraPqTujXYIeIs7uddFGQHVktFG9/9WMHetJkGfd65z0Ej4D33C8XwxQm7i
-         oEcauFIN3G42Iq/jdr3vgB9ZGYdBjIHfxzuB1uU49LwZfu2lZSVmFXrnuJQJEREAJsDN
-         WLjuWjTw9XocO9tfm/LqsWCWBaOWTG+4uHS70=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=u/As81EyZrntuNgJKlbKQgyjl02SHiQYq3mu31UtGaM=;
-        b=OdmInvdKfo6N+9tFzmL+Il/9tg7jVnHuKU/iFKDHR4ReOrzbJjk/SM7sz0rGYeKl/E
-         YUs9jqBwVXzD8/wULEvqUzla91GVhOvxn7P/Xol3X6/Yuq51TbTVxqv0dRf0kasWW7bJ
-         vRSPLVx937MQdAhZD4e3H+OudEow0bvUEgo/NoDUKM36xtxaV1ySxlPpBAso+BYoVYzR
-         h+VK86wZgxIHCL0rXg963EpLGkedUiD+0TR2FPyJPqAmdXGQ85QiPqyrW2wPRjRwpGsW
-         tVYphByJ/Zcnlw2VWTrupggmHgWkY0x9o7mPVc2IwtHZln34hF2xeucNpoSBzSVXo2gt
-         vEGg==
-X-Gm-Message-State: ANhLgQ2Ryvn/S4Bss45Ww1hdJxHOKNfj/JBNO9iPftbvBZUjNNKR9glH
-        /vID3KSLAo5u3cvAJ/qv0VmhG3zLf4w=
-X-Google-Smtp-Source: ADFU+vs2LTPEPBmNY4UbQfY1yiOeCJumZuSexjeMELStR2bv6c3DS8UBgz737MqbwVjhuEF0q568cg==
-X-Received: by 2002:adf:f289:: with SMTP id k9mr13459520wro.220.1584134545757;
-        Fri, 13 Mar 2020 14:22:25 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id q13sm30222861wrs.91.2020.03.13.14.22.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 14:22:25 -0700 (PDT)
-Date:   Fri, 13 Mar 2020 22:22:22 +0100
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] fuse fixes for 5.6-rc6
-Message-ID: <20200313212222.GD28467@miu.piliscsaba.redhat.com>
+        Fri, 13 Mar 2020 17:23:52 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 589F32D6;
+        Fri, 13 Mar 2020 22:23:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1584134629;
+        bh=IMhiV5Vz2k3pdowwWoR/Qmpwd2H11u0gvTUhvGhrkpA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cScPnew9RSEDN1y6Bo/x86i3wEKy0MJ4GhQWNbCMn/G/d8Q7+Wr/Jet/KQ1ZmdV9y
+         AYjE1YhPmlrrIW0zAfFtOVVL+dI1jLg0ST/7YW0uLCu87SJvE5gu0c7+EIH6fhmMSM
+         AEnyqZCGg3arV/tDA+KNWVeSmY1Z6qTa2N14cSGk=
+Date:   Fri, 13 Mar 2020 23:23:45 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 3/4] media: i2c: ov5645: Set maximum leverage of
+ external clock frequency to 24480000
+Message-ID: <20200313212345.GM4751@pendragon.ideasonboard.com>
+References: <1584133954-6953-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1584133954-6953-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <1584133954-6953-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Prabhakar,
 
-Please pull from:
+Thank you for the patch.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-5.6-rc6
+On Fri, Mar 13, 2020 at 09:12:33PM +0000, Lad Prabhakar wrote:
+> While testing on Renesas RZ/G2E platform, noticed the clock frequency to
+> be 24242424 as a result the probe failed. However increasing the maximum
+> leverage of external clock frequency to 24480000 fixes this issue. Since
+> this difference is small enough and is insignificant set the same in the
+> driver.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  drivers/media/i2c/ov5645.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> index 4fbabf3..b49359b 100644
+> --- a/drivers/media/i2c/ov5645.c
+> +++ b/drivers/media/i2c/ov5645.c
+> @@ -1107,8 +1107,10 @@ static int ov5645_probe(struct i2c_client *client)
+>  	}
+>  
+>  	xclk_freq = clk_get_rate(ov5645->xclk);
+> -	/* external clock must be 24MHz, allow 1% tolerance */
+> -	if (xclk_freq < 23760000 || xclk_freq > 24240000) {
+> +	/* external clock must be 24MHz, allow a minimum 1% and a maximum of 2%
+> +	 * tolerance
 
-Fix an Oops introduced in v5.4.
+So where do these numbers come from ? I understand that 2% is what you
+need to make your clock fit in the range, but why -1%/+2% instead of
+-2%/+2% ? And why not 2.5 or 3% ? The sensor datasheet documents the
+range of supported xvclk frequencies to be 6MHz to 54MHz. I understand
+that PLL parameters depend on the clock frequency, but could they be
+calculated instead of hardcoded, to avoid requiring an exact 24MHz input
+frequency ?
 
-Thanks,
-Miklos
+> +	 */
+> +	if (xclk_freq < 23760000 || xclk_freq > 24480000) {
+>  		dev_err(dev, "external clock frequency %u is not supported\n",
+>  			xclk_freq);
+>  		return -EINVAL;
 
-----------------------------------------------------------------
-Miklos Szeredi (1):
-      fuse: fix stack use after return
+-- 
+Regards,
 
----
- fs/fuse/dev.c    | 6 +++---
- fs/fuse/fuse_i.h | 2 ++
- 2 files changed, 5 insertions(+), 3 deletions(-)
+Laurent Pinchart
