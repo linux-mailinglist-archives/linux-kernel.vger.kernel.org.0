@@ -2,100 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4697A183FA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 04:29:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B94A183FBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 04:38:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbgCMD3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 23:29:22 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42022 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726254AbgCMD3V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 23:29:21 -0400
-Received: by mail-pf1-f195.google.com with SMTP id x2so3977120pfn.9;
-        Thu, 12 Mar 2020 20:29:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:date:from:to:cc:subject:mime-version:content-disposition
-         :user-agent;
-        bh=vu1mPV5qkLwCnUIC3q92piC5wqu0Lr6m+RWkyhwC2Yc=;
-        b=Cdd3DkLK6UcsCMaFBHgqJwwqXFvibtSujs8UwceTcyohmIWzLVryFfb9v/InGxoS5P
-         1MgO9M/br27LxR5e3eVsZZgUKrjLUjgQ74yBR2otd/bMBY7nQHJEIYWMYsaKQOTBsEyY
-         z1XUSoebQli9lGDEgwKVxpJOnJYG4LevF0+4Pb81cNBMvXvkBOsrgUMBBMYcVga36od8
-         9XJLkwf8c3g0++Zh+kxyK6Z6tXAxacyZgZhEyS3T+Z7LWtARlUDE3VFFPMvskiVfHnXb
-         W+yTTODl+S3Cnc9DCrqAlWyORL/lV1oJJYTwQJnepQFgq/NTliLQ0o83MdIIwC3eSpT7
-         3cDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:mime-version
-         :content-disposition:user-agent;
-        bh=vu1mPV5qkLwCnUIC3q92piC5wqu0Lr6m+RWkyhwC2Yc=;
-        b=tEjtj34G45hUvbm1xLAPBCAMG3Le+lo55IL+wBFm9O01LcaJGUqAMIYQLQLKZy8RBJ
-         kC1zsNJgk+WWy2DJ1+UgglagwIIh0dQ7NGj7IVN6/oT8M1NbiRTkNwijSYq5KHzSGnzt
-         cINsrQIdijREoV68sr+LH9F/jZ0JOxVpLVS2vIOwbpr2Am8/pcS7vfKQ+7D5FAHdZVqB
-         TW72oBOXU7n4Ktx5CRKyeVO25CWsNBWfB0vils4Zd7bDLee816NP26dy9m+0vVZnivNm
-         lw83pZjWKhnVdOyuyNhSZJ5ryV1VsAJ78GPszODcTC0WWq8Mjkli4aCMAWTvWNf8iqVb
-         Li7w==
-X-Gm-Message-State: ANhLgQ1U5Z3bov3gzJodwbvqwy10vexPvfP1skn8rSFW/9lZrc2Ps550
-        kSmhRDtz5H7UCF+MdTAoveg=
-X-Google-Smtp-Source: ADFU+vvoZ/9VLBpjGCRZTRn32q0wnyM03wQW61IIHlT44brOLEj9kIbI1opDxCPexjrw54elb5kvTQ==
-X-Received: by 2002:a62:e306:: with SMTP id g6mr9298330pfh.312.1584070158478;
-        Thu, 12 Mar 2020 20:29:18 -0700 (PDT)
-Received: from SARKAR ([43.224.157.41])
-        by smtp.gmail.com with ESMTPSA id h24sm15017607pfn.49.2020.03.12.20.29.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2020 20:29:17 -0700 (PDT)
-Message-ID: <5e6afe0d.1c69fb81.25912.f2eb@mx.google.com>
-X-Google-Original-Message-ID: <20200313032913.GA28957@rohitsarkar5398@gmail.com>
-Date:   Fri, 13 Mar 2020 08:59:13 +0530
-From:   Rohit Sarkar <rohitsarkar5398@gmail.com>
-To:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     jic23@kernel.org, alexandru.Ardelean@analog.com,
-        dragos.bogdan@kernel.org
-Subject: [PATCH] iio: health: max30100: use generic property handler
+        id S1726406AbgCMDif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 23:38:35 -0400
+Received: from mail-eopbgr70050.outbound.protection.outlook.com ([40.107.7.50]:12848
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726299AbgCMDie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 23:38:34 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Xw3O+xCyXl1BH24oLTqPmx12huJNfZRW/EKLsDgz37VNx5QXvAjYQF9D2oUKyeLUa11H5XiGb7KKL57ZOC8+kraLSco+D0P6gXrRCv5O0aerR2ELzDi1qk2Els2aHXkHj4GghxgGozdXbS1Moa4DHV/gxR/mivV51Ft4uw1y/WwtNIC/tW4noMJOk6A0FLD1jj5BioDxvRGR8Luiv+1tNpDJ5+WTClwKRLTM0FISAZ4J2M3fz1A0XUcdtsyiBa7a81wWYwqyuTWzjLdxoPeBxir124LNNvK8MVRMkCkp4F7m5kwbFsJ7a8dYlHHBBIhx0XwsnxXPohEAHwvHrDCE1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=25tS1woafAGnBsmjPt2TuVzG3pkzNgKxfL60vBicqkc=;
+ b=IJDIb0lL6QijCapYomR6qg4vTzovdqSahv6gsDHtMoxsMkKzmtQElOxsnWw1SzbRJcWfq8v5Qjl/ErG88U4bOrtnrW7HrWggNowNnway3M5cZlRUd2BUl06yy9+4+8O4s7Bu8NusZb8dEPQ1mSldQj4cXUezPUQX15dTTJ3OSoiSGvaObPgCY1Uc4zjQK0TwtBJa4+iGXa/Z328jNSrqnc4Z0+HqU5Q7EU5C0tqM9bSSZZPiuEt0uGzO328gaQZKbFu734z6HoSlmebnRfuhRSWCqYPWk65jTRS+MpYJ/YYgOiLtmhWpFBF4WjkDuZz1ynpnduJ5v3RRqDFn0KUfnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=25tS1woafAGnBsmjPt2TuVzG3pkzNgKxfL60vBicqkc=;
+ b=jMx/eEV5UPupXev39wQ7+M/eB+lOgpIinTJuoDxU4mr/7oU01F6PSlEKmVxMkomxasMrBXTAY0liTnVnEQcy+gfkcmkU3wmfSsaZi8zKG9IBrazLorKZgsZXEpQ32Ygom8K5SwsrBLbfTqMKo+sLBHb6ecOSOt29PMSNulrBGeo=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4979.eurprd04.prod.outlook.com (20.177.40.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.17; Fri, 13 Mar 2020 03:38:30 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::548f:4941:d4eb:4c11]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::548f:4941:d4eb:4c11%6]) with mapi id 15.20.2793.018; Fri, 13 Mar 2020
+ 03:38:29 +0000
+From:   peng.fan@nxp.com
+To:     robh+dt@kernel.org, mark.rutland@arm.com, arnd@arndb.de,
+        shawnguo@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] ARM: dts: Makefile: build arm64 device tree
+Date:   Fri, 13 Mar 2020 11:31:54 +0800
+Message-Id: <1584070314-26495-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR06CA0158.apcprd06.prod.outlook.com
+ (2603:1096:1:1e::12) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR06CA0158.apcprd06.prod.outlook.com (2603:1096:1:1e::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2814.13 via Frontend Transport; Fri, 13 Mar 2020 03:38:26 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 5429b77c-0beb-4d50-c3b4-08d7c6fffef7
+X-MS-TrafficTypeDiagnostic: AM0PR04MB4979:|AM0PR04MB4979:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB497929438D651F14C28037F988FA0@AM0PR04MB4979.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-Forefront-PRVS: 034119E4F6
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(39860400002)(396003)(136003)(346002)(199004)(81156014)(66476007)(478600001)(66556008)(8936002)(956004)(8676002)(52116002)(66946007)(2616005)(81166006)(4744005)(26005)(69590400007)(86362001)(6486002)(4326008)(36756003)(6666004)(316002)(6506007)(2906002)(5660300002)(9686003)(6512007)(186003)(16526019);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4979;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: +gYT5VLb5ntIxlEwM+D0BK36fxtrg2ALS8Vb80aq5tayv5hD4rQAkHcitJaLIXcKdWO43ixnS/zDDG0/A7LRrYvFpNy8KwWR60ZwtYDLslRN5yvIIi9mEf0UhJW4IOiMCzq9B+6KN5n5qVsVY1j2IBRcIXrSzaz6sNIS9+K15stjWHRwEkAkoaQDcKaTNVF116+yJmxfEV5jnmAOU2wCZyu8rzAqfPFT3xGqe88FzplB3XYomiRIirfjCR5I35gBn8lLM1qBQ0QRaWV6ytuti7Q1kuKyoOE+e//Tlar9n7cDhDe227JgPHKS1hv9kj7JeydbSXUDei337JwtUxI5iGdjndV/COHiRShrhCfCtGmylMa7PrT9SJqZH2Z0ODNAyEzgq6ek+9kNrx97DCFYDgzkKtukh/F7xe6Pubxj0fLnWgozAqXyo+Kx1ecjan7H/WvOemDkVFuvyKohj+k+eVfO7p6SBnYMVNqWcGDZZMYRIJ2DEN2SGQFGbraBaAzI
+X-MS-Exchange-AntiSpam-MessageData: R7976ptjbbfFsFcMbIDNmBRI5ic1Ixs/U3dJBE6o30vL3I3HqsK9+vmrI3UmFh43SxM6FKlE4It2qW95E6OcbRm+CSUAAoKxD2EGHjWUAUF1+AU1TwmZ+nGojcABt52T9/2rb0zNAZ0hUS29lQ9kPw==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5429b77c-0beb-4d50-c3b4-08d7c6fffef7
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2020 03:38:29.8181
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ntTFqXvUg+bDR69zV4EdPYQkW+dNzG5AxoYuZVTgojbfYYkcJ8Fw5+58clQoVB2TU0GHhRchAgJFxGnO0XkAmg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4979
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of of_property_read_xxx use device_property_read_xxx as it is
-compatible with ACPI too as opposed to only device tree.
+From: Peng Fan <peng.fan@nxp.com>
 
-Signed-off-by: Rohit Sarkar <rohitsarkar5398@gmail.com>
+To support aarch32 mode linux on aarch64 hardware, we need
+build the device tree, so include the arm64 device tree path.
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/iio/health/max30100.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iio/health/max30100.c b/drivers/iio/health/max30100.c
-index 84010501762d..8249c6b36818 100644
---- a/drivers/iio/health/max30100.c
-+++ b/drivers/iio/health/max30100.c
-@@ -16,7 +16,7 @@
- #include <linux/irq.h>
- #include <linux/i2c.h>
- #include <linux/mutex.h>
--#include <linux/of.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
- #include <linux/iio/iio.h>
- #include <linux/iio/buffer.h>
-@@ -267,11 +267,10 @@ static int max30100_get_current_idx(unsigned int val, int *reg)
- static int max30100_led_init(struct max30100_data *data)
- {
- 	struct device *dev = &data->client->dev;
--	struct device_node *np = dev->of_node;
- 	unsigned int val[2];
- 	int reg, ret;
- 
--	ret = of_property_read_u32_array(np, "maxim,led-current-microamp",
-+	ret = device_property_read_u32_array(dev, "maxim,led-current-microamp",
- 					(unsigned int *) &val, 2);
- 	if (ret) {
- 		/* Default to 24 mA RED LED, 50 mA IR LED */
+V1:
+ This is just the device tree part. Besides this,
+ I am not sure whether need to create a standalone defconfig under arm32
+ for aarch32 mode linux on aarch64 hardware, or use multi_v7_defconfig.
+ multi_v7_defconfig should be ok, need to include LPAE config.
+
+ arch/arm/boot/dts/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index e874fbf5a1f3..ff0161c1df5f 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1341,3 +1341,5 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
+ 	aspeed-bmc-opp-zaius.dtb \
+ 	aspeed-bmc-portwell-neptune.dtb \
+ 	aspeed-bmc-quanta-q71l.dtb
++
++subdir-y += ../../../../arch/arm64/boot/dts
 -- 
-2.23.0.385.gbc12974a89
+2.16.4
 
