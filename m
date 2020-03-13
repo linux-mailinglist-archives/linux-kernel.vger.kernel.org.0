@@ -2,116 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62E70185209
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 00:05:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83E2618520F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 00:07:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbgCMXF3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 19:05:29 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:48890 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbgCMXF3 (ORCPT
+        id S1727361AbgCMXHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 19:07:08 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:34906 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726681AbgCMXHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 19:05:29 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 4408C20029;
-        Sat, 14 Mar 2020 00:05:23 +0100 (CET)
-Date:   Sat, 14 Mar 2020 00:05:21 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jyri Sarha <jsarha@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH v2] dt-bindings: display: ti: Fix dtc unit-address
- warnings in examples
-Message-ID: <20200313230521.GA8476@ravnborg.org>
-References: <20200313180727.23044-1-robh@kernel.org>
+        Fri, 13 Mar 2020 19:07:08 -0400
+Received: by mail-pj1-f67.google.com with SMTP id mq3so5159169pjb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 16:07:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=YjbeAASRxVOPMkN7/k08zahcNwyqWMrHIMLC8DbMIpM=;
+        b=YslUW2pfVMnfg1Z7vDx7kVxYX7M8lA3l4iX8R/tJALOvRGhfxMpSgqh9M8lDsJxNqe
+         V9kfWy3gw7ciHNeZVKFvSAxfmIkXhs74LtvdU9OF7EXCBnmmPYorlpfXFP3mE7FsutK4
+         +U3C8q3UhMA3xOgGnTvDMh4Ggx3Quw6NUPvwU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=YjbeAASRxVOPMkN7/k08zahcNwyqWMrHIMLC8DbMIpM=;
+        b=hRXXAXmuvzvRw/Ofb4Dalg5d/g386pJPzpK3uLP9/UIb7mLA2YviDI5+XLAs8P8ecD
+         vdIijRKEbPANv2hXpYJPFx7zRzl6IkvASUwgOzN4v9kW9MjsGO8dg5tNS+WP1szzsd7S
+         dFu4LQnp8HjGV/27orfQCZsKULKlqzAqJ7I48RHj20bXgt7RoOahutYhYbSUY4w23hLz
+         IN2qQbuVfG2rkXTCNXPcZ0c/QdyNXqX1z5B+0SUy4tnhxdi3fh23SToiL4rAsQzcr8ic
+         48c04TOZP5hKvCJOTQzX67WTzVPh57mIyH1usvNSUqOX9AKf4V7lTSu0raY5SzY3AS85
+         /wAw==
+X-Gm-Message-State: ANhLgQ1b07p7gXuU3dik4rA0FMvhyKXn6nzN2lk26H0k+v5h97Mo9Tw8
+        hYf7CDGEhU3JY0c3edoi1iioXw==
+X-Google-Smtp-Source: ADFU+vsjpJFbDTmP2Mj6kKU9HPiCTTc9F4IfGANT420mBIsMskEl9ufDcLy386Y8WDgYY6BqxsKbQg==
+X-Received: by 2002:a17:902:6ac7:: with SMTP id i7mr15101905plt.66.1584140827565;
+        Fri, 13 Mar 2020 16:07:07 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id t142sm48696399pgb.31.2020.03.13.16.07.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Mar 2020 16:07:06 -0700 (PDT)
+Date:   Fri, 13 Mar 2020 16:07:05 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     gregkh@linuxfoundation.org, tkjos@android.com,
+        linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
+        ardb@kernel.org, arve@android.com, hridya@google.com,
+        joel@joelfernandes.org, john.stultz@linaro.org,
+        kernel-team@android.com, linux-kselftest@vger.kernel.org,
+        maco@android.com, naresh.kamboju@linaro.org, shuah@kernel.org
+Subject: Re: [PATCH v2 1/3] binderfs: port tests to test harness
+ infrastructure
+Message-ID: <202003131607.BA18A88D2F@keescook>
+References: <20200312131531.3615556-1-christian.brauner@ubuntu.com>
+ <20200313152420.138777-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200313180727.23044-1-robh@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=sozttTNsAAAA:8
-        a=VwQbUJbxAAAA:8 a=7gkXJVJtAAAA:8 a=k4r3PqWcPq6Qy1X7_v8A:9
-        a=rbD8nFOAu45xlIuL:21 a=UehPyaCQOHXEbEJC:21 a=CjuIK1q_8ugA:10
-        a=aeg5Gbbo78KNqacMgKqU:22 a=AjGcO6oz07-iQ99wixmX:22
-        a=E9Po1WZjFZOl8hwRPBS3:22
+In-Reply-To: <20200313152420.138777-1-christian.brauner@ubuntu.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 01:07:27PM -0500, Rob Herring wrote:
-> Extra dtc warnings (roughly what W=1 enables) are now enabled by default
-> when building the binding examples. These were fixed treewide in
-> 5.6-rc5, but some new display bindings have been added with new
-> warnings:
+On Fri, Mar 13, 2020 at 04:24:18PM +0100, Christian Brauner wrote:
+> Makes for nicer output and prepares for additional tests.
 > 
-> Documentation/devicetree/bindings/display/ti/ti,am65x-dss.example.dts:21.27-49.11: Warning (unit_address_format): /example-0/dss@04a00000: unit name should not have leading 0s
-> Documentation/devicetree/bindings/display/ti/ti,j721e-dss.example.dts:21.27-72.11: Warning (unit_address_format): /example-0/dss@04a00000: unit name should not have leading 0s
-> Documentation/devicetree/bindings/display/ti/ti,k2g-dss.example.dts:20.27-42.11: Warning (unit_address_format): /example-0/dss@02540000: unit name should not have leading 0s
-> 
-> Cc: Jyri Sarha <jsarha@ti.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Kees Cook <keescook@chromium.org>:
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-Kees
 
 > ---
-> v2:
->  - Drop panel fixes as there's another patch fixing the 3 panels plus
->    others.
-Will revisit the panel/ fixes patch and apply tomorrow.
-
-	Sam
-
+> /* v2 */
+> - Kees Cook <keescook@chromium.org>:
+>   - Switch to XFAIL() to skip tests.
 > ---
->  Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml | 2 +-
->  Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml | 2 +-
->  Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml   | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
+>  .../selftests/filesystems/binderfs/Makefile   |  2 ++
+>  .../filesystems/binderfs/binderfs_test.c      | 31 +++++++++----------
+>  2 files changed, 17 insertions(+), 16 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> index cac61a998203..aa5543a64526 100644
-> --- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> +++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> @@ -121,7 +121,7 @@ examples:
->      #include <dt-bindings/interrupt-controller/irq.h>
->      #include <dt-bindings/soc/ti,sci_pm_domain.h>
+> diff --git a/tools/testing/selftests/filesystems/binderfs/Makefile b/tools/testing/selftests/filesystems/binderfs/Makefile
+> index 58cb659b56b4..75315d9ba7a9 100644
+> --- a/tools/testing/selftests/filesystems/binderfs/Makefile
+> +++ b/tools/testing/selftests/filesystems/binderfs/Makefile
+> @@ -3,4 +3,6 @@
+>  CFLAGS += -I../../../../../usr/include/
+>  TEST_GEN_PROGS := binderfs_test
 >  
-> -    dss: dss@04a00000 {
-> +    dss: dss@4a00000 {
->              compatible = "ti,am65x-dss";
->              reg =   <0x0 0x04a00000 0x0 0x1000>, /* common */
->                      <0x0 0x04a02000 0x0 0x1000>, /* vidl1 */
-> diff --git a/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
-> index ade9b2f513f5..6d47cd7206c2 100644
-> --- a/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
-> +++ b/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
-> @@ -154,7 +154,7 @@ examples:
->      #include <dt-bindings/interrupt-controller/irq.h>
->      #include <dt-bindings/soc/ti,sci_pm_domain.h>
+> +binderfs_test: binderfs_test.c ../../kselftest.h ../../kselftest_harness.h
+> +
+>  include ../../lib.mk
+> diff --git a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> index 8c2ed962e1c7..0cfca65e095a 100644
+> --- a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> +++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> @@ -15,7 +15,9 @@
+>  #include <unistd.h>
+>  #include <linux/android/binder.h>
+>  #include <linux/android/binderfs.h>
+> +
+>  #include "../../kselftest.h"
+> +#include "../../kselftest_harness.h"
 >  
-> -    dss: dss@04a00000 {
-> +    dss: dss@4a00000 {
->              compatible = "ti,j721e-dss";
->              reg =   <0x00 0x04a00000 0x00 0x10000>, /* common_m */
->                      <0x00 0x04a10000 0x00 0x10000>, /* common_s0*/
-> diff --git a/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
-> index 385bd060ccf9..7cb37053e95b 100644
-> --- a/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
-> +++ b/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
-> @@ -81,7 +81,7 @@ examples:
->      #include <dt-bindings/interrupt-controller/arm-gic.h>
->      #include <dt-bindings/interrupt-controller/irq.h>
+>  static ssize_t write_nointr(int fd, const void *buf, size_t count)
+>  {
+> @@ -132,7 +134,7 @@ static void rmdir_protect_errno(const char *dir)
+>  	errno = saved_errno;
+>  }
 >  
-> -    dss: dss@02540000 {
-> +    dss: dss@2540000 {
->              compatible = "ti,k2g-dss";
->              reg =   <0x02540000 0x400>,
->                      <0x02550000 0x1000>,
+> -static void __do_binderfs_test(void)
+> +static int __do_binderfs_test(void)
+>  {
+>  	int fd, ret, saved_errno;
+>  	size_t len;
+> @@ -160,8 +162,7 @@ static void __do_binderfs_test(void)
+>  					   strerror(errno));
+>  
+>  		keep ? : rmdir_protect_errno("/dev/binderfs");
+> -		ksft_exit_skip(
+> -			"The Android binderfs filesystem is not available\n");
+> +		return 1;
+>  	}
+>  
+>  	/* binderfs mount test passed */
+> @@ -250,26 +251,24 @@ static void __do_binderfs_test(void)
+>  
+>  	/* binderfs unmount test passed */
+>  	ksft_inc_pass_cnt();
+> +	return 0;
+>  }
+>  
+> -static void binderfs_test_privileged()
+> +TEST(binderfs_test_privileged)
+>  {
+>  	if (geteuid() != 0)
+> -		ksft_print_msg(
+> -			"Tests are not run as root. Skipping privileged tests\n");
+> -	else
+> -		__do_binderfs_test();
+> +		XFAIL(return, "Tests are not run as root. Skipping privileged tests");
+> +
+> +	if (__do_binderfs_test() == 1)
+> +		XFAIL(return, "The Android binderfs filesystem is not available");
+>  }
+>  
+> -static void binderfs_test_unprivileged()
+> +TEST(binderfs_test_unprivileged)
+>  {
+>  	change_to_userns();
+> -	__do_binderfs_test();
+> -}
+>  
+> -int main(int argc, char *argv[])
+> -{
+> -	binderfs_test_privileged();
+> -	binderfs_test_unprivileged();
+> -	ksft_exit_pass();
+> +	if (__do_binderfs_test() == 1)
+> +		XFAIL(return, "The Android binderfs filesystem is not available");
+>  }
+> +
+> +TEST_HARNESS_MAIN
+> 
+> base-commit: 2c523b344dfa65a3738e7039832044aa133c75fb
 > -- 
-> 2.20.1
+> 2.25.1
+> 
+
+-- 
+Kees Cook
