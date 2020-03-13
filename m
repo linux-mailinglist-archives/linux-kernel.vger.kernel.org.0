@@ -2,83 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 687261846BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 13:20:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 214241846BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 13:22:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbgCMMUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 08:20:51 -0400
-Received: from mail-pg1-f169.google.com ([209.85.215.169]:34689 "EHLO
-        mail-pg1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbgCMMUu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 08:20:50 -0400
-Received: by mail-pg1-f169.google.com with SMTP id t3so4922169pgn.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 05:20:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mbs/iiV47rfQlC22F3NJw1KeqJdaSB+dKcS/cxMTah8=;
-        b=kYnHMwYJxUH+aLE+Q1eAIgAPP7BZXYhc3sN5bZ3zZjUfiCFl6CwFngoHm6IU0gyqlW
-         hXA1qAtN+i8zwQHcX8QaXcIE9lG+auWxOh2zSN1cJq4reQp4mv/ml+7TSeFShC0ntxHz
-         xsV+UVOCNZ5fLT5KtFNP0TkwM6Q8o/bbbocbX66iOaVL0ZoswXfdsKrtLw3ss6Db5Zn0
-         mZxBIg3+YoJm1Vymh2JYfVWdpZWeakLvOJnNELd3lnNcS8wVCN2ytZmGIPQ5q+7qbr/f
-         wvRLFNzcQ9gdo0s9w1trvqL4Y+VR5Fz3V6BUCyYJy8GExSu+C98rZtoyHgcdLrciUkwL
-         9X2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mbs/iiV47rfQlC22F3NJw1KeqJdaSB+dKcS/cxMTah8=;
-        b=K5G7w/ZcwIzu3eRLXYMq3HU6xsYESQOKiEolJJXnp43TLxjLqudjEKECToL6/57mKv
-         4ff43SXa7YLT/JcqqvqXAsu115X1Kw8Ewv/SiM86PryZy+1bXXkXl11XWopC5EQmWULa
-         DLEM9Qh/FYDOmuXBlmy1nQtcF3G7ZYS4PY2d8dux3Vz0jjFUotfLxmr8/jsIRUFnGbEz
-         zDauWAVEC8NkDzAg2uq0sVjz5plMomRBXvJK+6kjz2WUjO21L9wRp/Zvnxru4ibzdDlE
-         bFcIEUhM2Vv2CVRIGVIiXbvaeaVVR2uerLrNJBck9W8KKXjyLk2U3s4E5SmbxSL0qxNE
-         5MFg==
-X-Gm-Message-State: ANhLgQ00iw38dkCNZAxLwF3FUBv4b1xSd4Tyun2Wjfu91h5AYonjzekz
-        yR9P7f2u04MC528BsUugeD8=
-X-Google-Smtp-Source: ADFU+vtmuWjwxs6sGeXAr28yTx70DBYNc3NYVXxwG3G6TUGxUsGWCbqxaAAd54L1sF4lScvU2vvWBA==
-X-Received: by 2002:aa7:988f:: with SMTP id r15mr13623071pfl.252.1584102049990;
-        Fri, 13 Mar 2020 05:20:49 -0700 (PDT)
-Received: from localhost ([106.51.232.35])
-        by smtp.gmail.com with ESMTPSA id a6sm12138038pfb.104.2020.03.13.05.20.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 13 Mar 2020 05:20:49 -0700 (PDT)
-Date:   Fri, 13 Mar 2020 17:50:47 +0530
-From:   afzal mohammed <afzal.mohd.ma@gmail.com>
-To:     linux-c6x-dev@linux-c6x.org, linux-kernel@vger.kernel.org
-Cc:     Mark Salter <msalter@redhat.com>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>
-Subject: Re: [PATCH v3] c6x: replace setup_irq() by request_irq()
-Message-ID: <20200313122047.GA7004@afzalpc>
-References: <20200304004143.3960-1-afzal.mohd.ma@gmail.com>
+        id S1726655AbgCMMWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 08:22:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57890 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726216AbgCMMWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 08:22:02 -0400
+Received: from localhost (unknown [171.76.107.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2942620724;
+        Fri, 13 Mar 2020 12:22:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584102122;
+        bh=rDGI2YkB+1Ot7lMJwobaCUfsDpwRFEEBsurwzvYrh94=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mANDAO2tC3XFzypAK7l7i3+Ay/pbKCW6EKkbRLWZFrtgCkBNIkPveguoVTsYRrQhE
+         cBoBan2NSSSHy0p6kkomf1NeA6JZ+dMhxIheAN08u+2iT2ZAkbRipIyu1IcET2UK+C
+         mTsv6PEdfAczPNPbZJgz7kzQBxEzXdVlrwJKJ/tk=
+Date:   Fri, 13 Mar 2020 17:51:56 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
+        slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        Rander Wang <rander.wang@intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+Subject: Re: [PATCH 05/16] soundwire: cadence: add clock_stop/restart routines
+Message-ID: <20200313122156.GG4885@vkoul-mobl>
+References: <20200311184128.4212-1-pierre-louis.bossart@linux.intel.com>
+ <20200311184128.4212-6-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200304004143.3960-1-afzal.mohd.ma@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20200311184128.4212-6-pierre-louis.bossart@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark Salter,
+On 11-03-20, 13:41, Pierre-Louis Bossart wrote:
 
-On Wed, Mar 04, 2020 at 06:11:43AM +0530, afzal mohammed wrote:
+> @@ -225,12 +225,30 @@ static int cdns_clear_bit(struct sdw_cdns *cdns, int offset, u32 value)
+>  			return 0;
+>  
+>  		timeout--;
+> -		udelay(50);
+> +		usleep_range(50, 100);
 
-> Hi Mark Salter,
-> 
-> i believe you are the maintainer of c6x, if you are okay w/ this change,
-> please consider taking it thr' your tree, else please let me know.
+this seems okay change, but unrelated to this patch
 
-i am seeing the last signoff by you in arch/c6x around 2 years back, so
-seems nowadays you are not sending pull request for c6x.
+> +int sdw_cdns_clock_stop(struct sdw_cdns *cdns, bool block_wake)
+> +{
+> +	bool slave_present = false;
+> +	struct sdw_slave *slave;
+> +	u32 status;
+> +	int ret;
+> +
+> +	/* Check suspend status */
+> +	status = cdns_readl(cdns, CDNS_MCP_STAT);
+> +	if (status & CDNS_MCP_STAT_CLK_STOP) {
+> +		dev_dbg(cdns->dev, "Clock is already stopped\n");
+> +		return 1;
 
-If you are planning to send this patch upstream, let me know or if you
-are preferring to ack this so that this can be routed via tglx, please
-do so (you had acked v1, since there were minor changes, i removed it
-on newer versions).
+return of 1..? Does that indicate success/fail..?
 
-Regards
-afzal
+-- 
+~Vinod
