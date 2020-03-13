@@ -2,93 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3696D184122
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 07:57:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B88FD18412B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 08:05:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbgCMG5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 02:57:47 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37343 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725809AbgCMG5r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 02:57:47 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 6so10652027wre.4
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 23:57:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=6UokMBrb16XQMjC4W5sYs9WXunu7bAf0zdkEZSA1/Y0=;
-        b=HkEhqaoqriTLHMwDsQ+HcWjYWLeJg3o3VNYxxD17YF4huyCrbqahOQ25xrDRBc5XkZ
-         ahVJhtOYx5OwmqlgqetRY57OUauHWsy4a2hI7VYOgecM3nwWzYohetC20vd7VeYPjtT0
-         Lq8HL+7DtmHgGkCp/SyI4TzVXC5LHfTo0h8RBpgUnxbBhjI3j77ZAs4meDa+TTAwVZaS
-         Xhqyc+0xcOSJ3SrROvnV3ZOAf0kkLQDq2v//4oP0XfgNUcYU7q9/SDWZckd1hILnQlJD
-         6HuRcO5lP3w812MFyiTZ9PwEzyKl3NDqd6oZOvQ8hRZUThA23xxJR9PK9gULH6o6+kP3
-         2wKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=6UokMBrb16XQMjC4W5sYs9WXunu7bAf0zdkEZSA1/Y0=;
-        b=iMRayLHePzUkM+HdFgr5ZoDP60WNR8UFC+2btWKktMx9RS5jqQWqlAEiIuZh3E/c+G
-         ZToPkq3/UTEcdjMh6DH5pzTmv+qQ7nRfqETOIAXhmwQtSKUQRVwYxnGbJotJNTzeNBpx
-         IYrtNznbYdcqNHfouq9e/dN6HO5gMNNw4zEZZI6B/rYViD07J+aY2r+3rdEAynCa0VQ3
-         MIOowGm6u/6E4J1OYmDguK64HsIs1En4XFCWMmWB4sVRsqHZoZxACb7jxNpTTVat7daT
-         5CR3uYnioYN8bKaZ0rtXkgNeBDvXowODP+9gvLmrHu1UHYEt8Zh4+bNO9eVheVd9TcaL
-         o7Iw==
-X-Gm-Message-State: ANhLgQ0A79lSzEmvWJcYvPd6xr8oXTtgOQKApvm7C5961D6e9+Got/NY
-        d4YFj5UqvBnqJsYYEXBW0CCKZcOwztI=
-X-Google-Smtp-Source: ADFU+vtPRRNVEQLgyP8VUHznw/0msUHZl1/lVK8dOh1PtBwBJvIf60zucDN4Hp5aQdvy3XNiMG10YA==
-X-Received: by 2002:adf:9501:: with SMTP id 1mr16048790wrs.426.1584082665009;
-        Thu, 12 Mar 2020 23:57:45 -0700 (PDT)
-Received: from dell ([2.27.167.19])
-        by smtp.gmail.com with ESMTPSA id m21sm15198787wmi.27.2020.03.12.23.57.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2020 23:57:44 -0700 (PDT)
-Date:   Fri, 13 Mar 2020 06:58:28 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2] mfd: dln2: Fix sanity checking for endpoints
-Message-ID: <20200313065828.GB3142@dell>
-References: <20200226145158.13396-1-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200226145158.13396-1-andriy.shevchenko@linux.intel.com>
+        id S1726461AbgCMHFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 03:05:50 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:36290 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726060AbgCMHFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 03:05:50 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8A2ED1A1282;
+        Fri, 13 Mar 2020 08:05:48 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4B7461A132F;
+        Fri, 13 Mar 2020 08:05:43 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 340FF40245;
+        Fri, 13 Mar 2020 15:05:37 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     dmitry.torokhov@gmail.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        robh@kernel.org, linux-input@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] input: keyboard: imx_sc_key: Use devm_add_action_or_reset() to handle all cleanups
+Date:   Fri, 13 Mar 2020 14:59:11 +0800
+Message-Id: <1584082751-17047-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Feb 2020, Andy Shevchenko wrote:
+Use devm_add_action_or_reset() to handle all cleanups of failure in
+.probe and .remove, then .remove callback can be dropped.
 
-> While the commit 2b8bd606b1e6 ("mfd: dln2: More sanity checking for endpoints")
-> tries to harden the sanity checks it made at the same time a regression,
-> i.e.  mixed in and out endpoints. Obviously it should have been not tested on
-> real hardware at that time, but unluckily it didn't happen.
-> 
-> So, fix above mentioned typo and make device being enumerated again.
-> 
-> While here, introduce an enumerator for magic values to prevent similar issue
-> to happen in the future.
-> 
-> Fixes: 2b8bd606b1e6 ("mfd: dln2: More sanity checking for endpoints")
-> Cc: Oliver Neukum <oneukum@suse.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> v2: Add enumerator (Lee)
->  drivers/mfd/dln2.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/input/keyboard/imx_sc_key.c | 33 +++++++++++++++------------------
+ 1 file changed, 15 insertions(+), 18 deletions(-)
 
-Applied, thanks.
-
+diff --git a/drivers/input/keyboard/imx_sc_key.c b/drivers/input/keyboard/imx_sc_key.c
+index 2672fd4..eab5dfb 100644
+--- a/drivers/input/keyboard/imx_sc_key.c
++++ b/drivers/input/keyboard/imx_sc_key.c
+@@ -96,6 +96,15 @@ static void imx_sc_check_for_events(struct work_struct *work)
+ 				      msecs_to_jiffies(REPEAT_INTERVAL));
+ }
+ 
++static void imx_sc_key_action(void *data)
++{
++	struct imx_key_drv_data *priv = data;
++
++	imx_scu_irq_group_enable(SC_IRQ_GROUP_WAKE, SC_IRQ_BUTTON, false);
++	imx_scu_irq_unregister_notifier(&priv->key_notifier);
++	cancel_delayed_work_sync(&priv->check_work);
++}
++
+ static int imx_sc_key_probe(struct platform_device *pdev)
+ {
+ 	struct imx_key_drv_data *priv;
+@@ -146,27 +155,16 @@ static int imx_sc_key_probe(struct platform_device *pdev)
+ 		return error;
+ 	}
+ 
++	error = devm_add_action_or_reset(&pdev->dev, imx_sc_key_action, &priv);
++	if (error)
++		return error;
++
+ 	priv->key_notifier.notifier_call = imx_sc_key_notify;
+ 	error = imx_scu_irq_register_notifier(&priv->key_notifier);
+-	if (error) {
+-		imx_scu_irq_group_enable(SC_IRQ_GROUP_WAKE, SC_IRQ_BUTTON,
+-					 false);
++	if (error)
+ 		dev_err(&pdev->dev, "failed to register scu notifier\n");
+-		return error;
+-	}
+-
+-	return 0;
+-}
+-
+-static int imx_sc_key_remove(struct platform_device *pdev)
+-{
+-	struct imx_key_drv_data *priv = platform_get_drvdata(pdev);
+-
+-	imx_scu_irq_group_enable(SC_IRQ_GROUP_WAKE, SC_IRQ_BUTTON, false);
+-	imx_scu_irq_unregister_notifier(&priv->key_notifier);
+-	cancel_delayed_work_sync(&priv->check_work);
+ 
+-	return 0;
++	return error;
+ }
+ 
+ static const struct of_device_id imx_sc_key_ids[] = {
+@@ -181,7 +179,6 @@ static struct platform_driver imx_sc_key_driver = {
+ 		.of_match_table = imx_sc_key_ids,
+ 	},
+ 	.probe = imx_sc_key_probe,
+-	.remove = imx_sc_key_remove,
+ };
+ module_platform_driver(imx_sc_key_driver);
+ 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.7.4
+
