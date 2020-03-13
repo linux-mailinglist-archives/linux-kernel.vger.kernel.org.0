@@ -2,83 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43C57184C0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 17:10:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41374184C17
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 17:12:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbgCMQKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 12:10:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726480AbgCMQKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 12:10:23 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B8CD2072C;
-        Fri, 13 Mar 2020 16:10:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584115822;
-        bh=B47v85trEWvjV/lzKS2P3e07BiG8jYMtvyGlf1skrfw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=seaW/ZYd0aXN5SgqyFlnl4kSLtqoDKP8TliSQ3i0Q53m4sCK1YU8bJ1a6qlGaHr4X
-         BrZee8SEmHmW8x9xOjqxZVr0dfAmp4VOxRChmKuYj1Khu6nkenoj1K0KEWcFg15I3P
-         lcd/h45POIXuc49iOEqu8SdveQ9M50HQzZUsJeOU=
-Subject: Re: [PATCH] dma-buf: heaps: bugfix for selftest failure
-To:     Leon He <hexiaolong2008@gmail.com>, sumit.semwal@linaro.org
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, Leon He <leon.he@unisoc.com>,
-        shuah <shuah@kernel.org>
-References: <1583300076-28392-1-git-send-email-leon.he@unisoc.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <9be2873c-79c2-2d02-f15a-1e6e0ff7e898@kernel.org>
-Date:   Fri, 13 Mar 2020 10:10:21 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726810AbgCMQMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 12:12:43 -0400
+Received: from mail-sz.amlogic.com ([211.162.65.117]:12635 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbgCMQMn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 12:12:43 -0400
+Received: from [10.28.90.144] (10.28.90.144) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Sat, 14 Mar 2020
+ 00:13:10 +0800
+Subject: Re: [PATCH 1/2] dt-bindings: watchdog: Add arm,smc-wdt watchdog
+ arm,smc-wdt compatible
+To:     Julius Werner <jwerner@chromium.org>
+CC:     Evan Benn <evanbenn@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>,
+        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Yonghui Yu <yonghui.yu@amlogic.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guenter Roeck <linux@roeck-us.net>
+References: <20200214062637.216209-1-evanbenn@chromium.org>
+ <20200214172512.1.I02ebc5b8743b1a71e0e15f68ea77e506d4e6f840@changeid>
+ <20200219223046.GA16537@bogus>
+ <CAODwPW8JspiUtyU4CC95w9rbNRyUF-Aeb9TuPm1PzmP6u=y1EA@mail.gmail.com>
+ <20200219232005.GA9737@roeck-us.net>
+ <CAKz_xw2hvHL=a4s37dmuCTWDbxefQFR3rfcaNiWYJY4T+jqabA@mail.gmail.com>
+ <e42320b8-266f-0b0e-b20b-b72228510e81@amlogic.com>
+ <CAODwPW94KX46PzSrf_uuEFPKudXor=26d=g3Qta5veRfxmMDUA@mail.gmail.com>
+ <1326f594-3cfd-c03d-4f2c-50eeb75724b2@amlogic.com>
+ <CAODwPW8WwntWb_=dg2J3AMy-gHw2QvNj_g98SufN13+AuGnUSg@mail.gmail.com>
+ <b4ba821a-eef6-4aea-1eba-897171b92c41@amlogic.com>
+ <CAKz_xw2T1UceCwFZnBxg6WVp2D4+MziyvQPdU6tEnR_BdLh-PQ@mail.gmail.com>
+ <ad28aa47-0490-937f-898f-0e4695ef6ec6@amlogic.com>
+ <CAODwPW9oxx33hkO3kv2_G8YyLWvigVHkfJU7xUHLVgB7QU2i3Q@mail.gmail.com>
+From:   Xingyu Chen <xingyu.chen@amlogic.com>
+Message-ID: <6e846246-dfd5-c002-cd61-41c2d11a2e54@amlogic.com>
+Date:   Sat, 14 Mar 2020 00:13:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-In-Reply-To: <1583300076-28392-1-git-send-email-leon.he@unisoc.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAODwPW9oxx33hkO3kv2_G8YyLWvigVHkfJU7xUHLVgB7QU2i3Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+X-Originating-IP: [10.28.90.144]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/3/20 10:34 PM, Leon He wrote:
-> If the 'name' array in check_vgem() was not initialized to null, the
-> value of name[4] may be random. Which will cause strcmp(name, "vgem")
-> failed.
+Hi, Julius
 
-Nit: "to fail" instead of "failed"
+On 2020/3/12 3:24, Julius Werner wrote:
+>> - *_INIT and *GETTIMEOUT.      Although your driver does not need them, could you take them as options in your driver ?
+> The driver already has SMCWD_INFO which is used during probe to
+> retrieve the minimum and maximum timeout values supported by the
+> hardware at probe time. Maybe it would make sense to rename that to
+> INIT (which would still return those values, but can also do whatever
+> initialization needs to be done in TF)?
+Yes，INIT would make sense for me.
+> GETTIMELEFT I agree we can
+> implement optionally, and other platforms would just return a
+> PSCI_RET_NOT_SUPPORTED for that.
+>
+>> - *_RESETNOW.      It is used to reset the system right now, similar to your SOFT RESET. could you reserve an operation index in ATF ?
+> Just curious, why do you need this? Shouldn't you use the PSCI
+> standard SYSTEM_RESET SMC for that? (If you want to control exactly
+> how the platform is reset, you could also use SYSTEM_RESET2 with a
+> vendor-defined reset_type.)
+I just wanted it to be compatible with other OS，and I  think it over, 
+maybe I can also use the
+PSCI interface to execuate the system reset on the other OS. Anyway, 
+please ignore this request.
 
-
-> 
-> Signed-off-by: Leon He <leon.he@unisoc.com>
-> ---
->   tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-> index cd5e1f6..21f3d19 100644
-> --- a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-> +++ b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-> @@ -22,7 +22,7 @@
->   static int check_vgem(int fd)
->   {
->   	drm_version_t version = { 0 };
-> -	char name[5];
-> +	char name[5] = { 0 };
->   	int ret;
->   
->   	version.name_len = 4;
-> 
-
-return !strcmp(name, "vgem");
-
-While you are at it, why not change strcmp() to strncmp()?
-
-thanks,
--- Shuah
-
-
+Thanks.
+>
+> .
