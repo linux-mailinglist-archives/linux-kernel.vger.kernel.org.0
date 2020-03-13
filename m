@@ -2,115 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF37D18426C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 09:18:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F53C184277
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 09:21:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbgCMISU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 04:18:20 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:42688 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726443AbgCMIST (ORCPT
+        id S1726461AbgCMIVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 04:21:11 -0400
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:54945 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726230AbgCMIVL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 04:18:19 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02D8IIU7121468;
-        Fri, 13 Mar 2020 03:18:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584087498;
-        bh=l2gu9rs8h39sF4Bj86NFmN/6VGZaDVO6RMYS9HjLJdA=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=gHGVMVlW1yHEhETMEozYCoOW2fzuleSHAijyUYN0mAz1FK2pdsiVfoZ5Rxpsq0qsG
-         C6MV0hdbNdhSn7p4Jt7zisiWzpA/AEZTq0qQ1okqwO70piguyx1weWAER3TcMhsDLc
-         zJG/zga+Be81kf3JaU559V6lVJbmSFCWvAp6cgXY=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02D8IIvo022177;
-        Fri, 13 Mar 2020 03:18:18 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 13
- Mar 2020 03:18:02 -0500
-Received: from localhost.localdomain (10.64.41.19) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 13 Mar 2020 03:18:02 -0500
-Received: from sokoban.bb.dnainternet.fi (ileax41-snat.itg.ti.com [10.172.224.153])
-        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 02D8HQll097835;
-        Fri, 13 Mar 2020 03:18:01 -0500
-From:   Tero Kristo <t-kristo@ti.com>
-To:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
-        <linux-remoteproc@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <mathieu.poirier@linaro.org>,
-        <s-anna@ti.com>, <afd@ti.com>, Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv8 15/15] remoteproc/omap: Switch to SPDX license identifiers
-Date:   Fri, 13 Mar 2020 10:17:18 +0200
-Message-ID: <20200313081718.30612-16-t-kristo@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200313081718.30612-1-t-kristo@ti.com>
-References: <20200313081718.30612-1-t-kristo@ti.com>
+        Fri, 13 Mar 2020 04:21:11 -0400
+Received: from [192.168.2.10] ([46.9.234.233])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id CfZ3j1HP0hVf8CfZ6jO98M; Fri, 13 Mar 2020 09:21:09 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1584087669; bh=XOx2gtrl0/QdQw4FtDRbotgoOYOMw8gbaDUKtBrXmIU=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=f9n1dUEocS4ZbKtJv1ujdPQ+Sb6+Z2baEEGpQe73vOdLOHnQ+fKmXsMHIzatbxnmB
+         xxTdqa1lUSHiJJjqlPfzZRbuVmAiOPa4azzajjYqywen+hYMgRi54ELArDDahA69Ip
+         WauM5r0lewkJgbCuYfeG3LlmhKrEAqC79D5U1qPCAmdCusSk9StFd8NTEjIdGQYwYk
+         8iO/QUfWGN5Chb+4+44oxWG0wbfLBZmX9cyY7SIGKK1YuqtETz3onH/+kx01Vqv67T
+         8iX++s7J6iwO4BuZhkge0tINE7y4PkYeOVPaoWlhaNgdNG8SW3ixQ2FWMYoaz7zU0g
+         y0B87Pixn+Jjg==
+Subject: Re: [PATCH 0/8] media: i2c: adv748x: add support for HDMI audio
+To:     Alex Riesen <alexander.riesen@cetitec.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20200113141459.GA3606@pflmari>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <e93e6e1e-11dc-d505-7287-46b115a4a609@xs4all.nl>
+Date:   Fri, 13 Mar 2020 09:21:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20200113141459.GA3606@pflmari>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfO/W7Ox867vsX2/fQCV+/X9vTuQGo/HQDazp7UvW8nqZsCyj7IkNo50nZuDB6xx2OB/oqZxaNPwA2ybQtLJHH4UFyKbbfRIjzY2yy2WZUa/2NA93YL7a
+ TwkUzK5wcpPQlxxDkuWlo7xW9lU5KjOcElOLWDktwzE3kfCXyt22exvZfmWCfKpLFQkIno+fjRS1S95ikcDhW/wGnpQO/kws0BiaQ912gCuoer1N9+A3/vmf
+ J7TTAxuUEkb/yFMnBNXhEh7z9TOMY3Qo9ifmd32AiEnE6z+TgZlt2ts2I4xgRbEuVVWEyCPtUTW2hJjkHv9QaiZtkKrGqaUvyfM0sPiSJR6jVqra1cwq+Ghm
+ 3MTkO0zdiBsRBPNjeb8lURM1QubTtoCRIgOX9NRaoKGcpNQVtgZbhdQ+63hyTssfm7VWy1PluCwjwCI1mknicCKA0qD1to86bTC0CdfIZoWT+XghdJYwJOzA
+ KiX4tmq2ccDiBA3wqJP+IMrbXN7FR5FsVx7OFt2TKyZLXQS5UlOEhkFq9kz4m9ZJvNYpwEgr5rUbhPZBgIEaPCzelCBO9VmcogrHCvc5meY7CUDHQHg7+bcP
+ jFk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suman Anna <s-anna@ti.com>
+Hi Alex,
 
-Use the appropriate SPDX license identifiers in various OMAP remoteproc
-source files and drop the previous boilerplate license text.
+Again, sorry for the late reply.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Andrew F. Davis <afd@ti.com>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/remoteproc/omap_remoteproc.h | 27 +--------------------------
- 1 file changed, 1 insertion(+), 26 deletions(-)
+Patch 2/8 has its own comment since that approach won't work.
 
-diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
-index 13f17d9135c0..828e13256c02 100644
---- a/drivers/remoteproc/omap_remoteproc.h
-+++ b/drivers/remoteproc/omap_remoteproc.h
-@@ -1,35 +1,10 @@
-+/* SPDX-License-Identifier: BSD-3-Clause */
- /*
-  * Remote processor messaging
-  *
-  * Copyright (C) 2011-2020 Texas Instruments, Inc.
-  * Copyright (C) 2011 Google, Inc.
-  * All rights reserved.
-- *
-- * Redistribution and use in source and binary forms, with or without
-- * modification, are permitted provided that the following conditions
-- * are met:
-- *
-- * * Redistributions of source code must retain the above copyright
-- *   notice, this list of conditions and the following disclaimer.
-- * * Redistributions in binary form must reproduce the above copyright
-- *   notice, this list of conditions and the following disclaimer in
-- *   the documentation and/or other materials provided with the
-- *   distribution.
-- * * Neither the name Texas Instruments nor the names of its
-- *   contributors may be used to endorse or promote products derived
-- *   from this software without specific prior written permission.
-- *
-- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- 
- #ifndef _OMAP_RPMSG_H
--- 
-2.17.1
+As a general note for this series: it might be better to have two
+patch series: one for patches 1 and 3-6 (not sure whether 5 can be included
+or not), and one where the public API changes (i.e. new V4L2 audio controls)
+are added. The first can probably be merged fairly quickly, the second will
+likely require more iterations since public API patches always take much longer
+before they are mature.
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Regards,
+
+	Hans
+
+On 1/13/20 3:14 PM, Alex Riesen wrote:
+> This adds minimal support for controlling the audio output I2S port available
+> on ADV7481 and ADV7482 HDMI decoder devices by ADI. The port carries audio
+> signal from the decoded HDMI stream.
+> 
+> An ADV7482 on the Renesas Salvator-X ES1.1 was used during development of this
+> code.
+> 
+> Alex Riesen (8):
+>   media: adv748x: add a device-specific wrapper for register block read
+>   media: adv748x: add audio mute control and output selection ioctls
+>   media: adv748x: add log_status ioctl
+>   media: adv748x: reserve space for the audio (I2S) port in the driver
+>     structures
+>   media: adv748x: add an ASoC DAI definition to the driver
+>   media: adv748x: reduce amount of code for bitwise modification of
+>     device registers
+>   dt-bindings: adv748x: add information about serial audio interface
+>     (I2S/TDM)
+>   arm64: dts: renesas: salvator: add a connection from adv748x codec
+>     (HDMI input) to the R-Car SoC
+> 
+>  .../devicetree/bindings/media/i2c/adv748x.txt |  13 +-
+>  .../dts/renesas/r8a7795-es1-salvator-x.dts    |  24 +-
+>  .../boot/dts/renesas/salvator-common.dtsi     |  35 +-
+>  drivers/media/i2c/adv748x/adv748x-core.c      |  54 +++
+>  drivers/media/i2c/adv748x/adv748x-hdmi.c      | 355 ++++++++++++++++++
+>  drivers/media/i2c/adv748x/adv748x.h           |  53 ++-
+>  6 files changed, 523 insertions(+), 11 deletions(-)
+> 
+
