@@ -2,187 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACD32184F50
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 20:33:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E14EC184F52
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 20:34:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbgCMTc5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 15:32:57 -0400
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:44816 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbgCMTc5 (ORCPT
+        id S1727210AbgCMTeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 15:34:03 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43885 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbgCMTeC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 15:32:57 -0400
-Received: by mail-qv1-f68.google.com with SMTP id w5so5245229qvp.11
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 12:32:56 -0700 (PDT)
+        Fri, 13 Mar 2020 15:34:02 -0400
+Received: by mail-oi1-f196.google.com with SMTP id p125so10642945oif.10
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 12:34:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=gj9REod3DKifQOZS7jRssU7uxrigdjGriKDVOD9FDY4=;
-        b=IJGARbfcszD6qRADLeGRmq6DwquToF24a+o3x4Rm9lXqdAO7Y4ajQPBKnfLyjCSpVs
-         p55sVqoWqKfxV0qdTFKSLo1mUfqMPLyXYNGiUCShKuu5Lsr/m2bHeD8zkiJDgjFKR6VS
-         fnxm6r1HINTVP64O4VdIKvjxUPfXVQiQQ/C7HCoeZ0hhuZGHe/BodEpe2IVibAYF8ZHo
-         1IleNIkinIjv8XPMrGyp6723jlM5VDx4ez+DMdQgp1ElZ3xCF1dZrxdXPPn9QEPC+APx
-         o37ZzLi7aidLZhhh8LPmiZ4DkPFScIDFcKX/fIcfL3AzGew2vqTi7MoazXna0v2rTGzx
-         0lEQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Wb4/KS6+9uhEG0B4TwSigcUJLPiMeOYxLqlueo3jlPY=;
+        b=I2DYXq4wlPraz2yYvmEBl6cJPy+kZcx9eML4K5Lu6Ymfoj4Vt+HtkujwCjlRvMMXjO
+         Mu11l0fUPAK2FeIrPyU+VrCFEAUnyO2zIJpGosjgBSID4zNAlPWlIzVDER9bSOtK6eoB
+         Tm2MQK2sUPrxjtCM+2CLduS0jF0aLXeFsGZiqyLP86hPmZF7fHSTciMfgnZb99X457A/
+         rIm7nlzzRk6dKKj9f5bny7/RNNsVgjbo7RmexmwtNQf6BmOFHdDoMI3JJDRqTmkXpCiH
+         h8670GqFZEtAQDKQgUr4fkL4JZjPYk8dhFwSK9nL4EqvPVFrcLSkIEG473+VuH2xAz2Z
+         D1Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=gj9REod3DKifQOZS7jRssU7uxrigdjGriKDVOD9FDY4=;
-        b=iTUb9ZASCcLadQAiITasxZv2Kb78a3wLi0yplBc6E1NLfeLrZhwUVzE2ZLRpQwU/aC
-         Y0L1WwC8RmZUke4IB3BAl1ksVOnkl0QK/KO/c7cY9MT1DTPfJtiOlEKsGjkvJCXgp6AU
-         Jub4PYZh9OAnj31E/QDJuRgW/BqhZpjP7gCSyqHhg7WdjSOpfnMZh7vNihMDPxb/IRz8
-         RBFpWACSNk3vYQRk/3/aGwYoKt8f5jWOsTlKeJFDr0RmN4/SpTSVB/+TkZn6cXz6PZcr
-         KiMnPIsaJmQeHnZEN4F0S+EKQpZX7uODkepXHjRYhr4288LibtRd1iK7iMIwYc3Sn28k
-         Gv8Q==
-X-Gm-Message-State: ANhLgQ1+oJCgwELdc+Sk//CwtrI6FRk5oisK6ZnHjfItE+2paU8RZkaf
-        UBkpKjgqsY/+oF3gHI0WSQLSQg==
-X-Google-Smtp-Source: ADFU+vvAqAy0nwqXoSeUM2kZD1c0rqzXoPkdFXLjBWDLx3OtMbOCQPajaI3CAcpQdZdeeuSKrvsmIQ==
-X-Received: by 2002:a05:6214:14a:: with SMTP id x10mr14237720qvs.158.1584127975394;
-        Fri, 13 Mar 2020 12:32:55 -0700 (PDT)
-Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id r29sm9142532qtj.76.2020.03.13.12.32.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Mar 2020 12:32:54 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: [PATCH] timer: silenct a lockdep splat with debugobjects
-From:   Qian Cai <cai@lca.pw>
-In-Reply-To: <20200313180811.GD12521@hirez.programming.kicks-ass.net>
-Date:   Fri, 13 Mar 2020 15:32:52 -0400
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>, sboyd@kernel.org,
-        rostedt@goodmis.org, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4FFD109D-EAC1-486F-8548-AA1F5E024120@lca.pw>
-References: <20200313154221.1566-1-cai@lca.pw>
- <20200313180811.GD12521@hirez.programming.kicks-ass.net>
-To:     Peter Zijlstra <peterz@infradead.org>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wb4/KS6+9uhEG0B4TwSigcUJLPiMeOYxLqlueo3jlPY=;
+        b=UWGX3yWQ21POtDIahmTQF316mXiCNmRAYbcXLXth7KRpmZl22JDxVqP4L71Gx8OBAI
+         yTWUQJWAQFlLBOmpNf3zBf3Z7JU7QGmfU6XRgNG0oH7z6uamlo0TAQY19joT0Sd9r0js
+         cvh/p2jstVcfap6gMxUYwILj49jiaPUQaHOscAu5uSjuFDXx3y/970Ohnh8R5tZhumVx
+         z9RML0IWkwQYniSD/KPEFNcB9i//lPAGI7jue5cYAHWcPtw71Afz5HVEXo6M+Ks6sOB8
+         Ea7pG0NMq1BjSNKcMUwBZ6pfe38lFeR15m4JUcTg8NpTFBh1IZIkyG/lAbswxOz6/kvN
+         ieAA==
+X-Gm-Message-State: ANhLgQ2hC99sWodJyxkIIY/STpsy4q69NFiuYy2rgIlnDBht7nOwOh85
+        hF8K416Huy9GxKVLJcnypZEZ8NcwJrsXDQ8k7HHh1Se7
+X-Google-Smtp-Source: ADFU+vuZ7tGVbK62NPw97jFsj8xgjZ9obwM2nBww/pDbRIMb+cNXkiwCRmQtfT+Jdaj9kGjLblHNmHEiFu8cj13Xe/w=
+X-Received: by 2002:aca:af93:: with SMTP id y141mr8043044oie.144.1584128041488;
+ Fri, 13 Mar 2020 12:34:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <1584124476-76534-1-git-send-email-yang.shi@linux.alibaba.com>
+In-Reply-To: <1584124476-76534-1-git-send-email-yang.shi@linux.alibaba.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Fri, 13 Mar 2020 12:33:50 -0700
+Message-ID: <CALvZod4W9kkh578Kix7+M9Jkwm1sxx2zvvPG+0Us3R8bEkpEpg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: swap: make page_evictable() inline
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 13, 2020 at 11:34 AM Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>
+> When backporting commit 9c4e6b1a7027 ("mm, mlock, vmscan: no more
+> skipping pagevecs") to our 4.9 kernel, our test bench noticed around 10%
+> down with a couple of vm-scalability's test cases (lru-file-readonce,
+> lru-file-readtwice and lru-file-mmap-read).  I didn't see that much down
+> on my VM (32c-64g-2nodes).  It might be caused by the test configuration,
+> which is 32c-256g with NUMA disabled and the tests were run in root memcg,
+> so the tests actually stress only one inactive and active lru.  It
+> sounds not very usual in mordern production environment.
+>
+> That commit did two major changes:
+> 1. Call page_evictable()
+> 2. Use smp_mb to force the PG_lru set visible
+>
+> It looks they contribute the most overhead.  The page_evictable() is a
+> function which does function prologue and epilogue, and that was used by
+> page reclaim path only.  However, lru add is a very hot path, so it
+> sounds better to make it inline.  However, it calls page_mapping() which
+> is not inlined either, but the disassemble shows it doesn't do push and
+> pop operations and it sounds not very straightforward to inline it.
+>
+> Other than this, it sounds smp_mb() is not necessary for x86 since
+> SetPageLRU is atomic which enforces memory barrier already, replace it
+> with smp_mb__after_atomic() in the following patch.
+>
+> With the two fixes applied, the tests can get back around 5% on that
+> test bench and get back normal on my VM.  Since the test bench
+> configuration is not that usual and I also saw around 6% up on the
+> latest upstream, so it sounds good enough IMHO.
+>
+> The below is test data (lru-file-readtwice throughput) against the v5.6-rc4:
+>         mainline        w/ inline fix
+>           150MB            154MB
+>
 
+What is the test setup for the above experiment? I would like to get a repro.
 
-> On Mar 13, 2020, at 2:08 PM, Peter Zijlstra <peterz@infradead.org> =
-wrote:
->=20
-> On Fri, Mar 13, 2020 at 11:42:21AM -0400, Qian Cai wrote:
->> psi_enqueue() calls add_timer() with pi->lock and rq->lock held which
->> in-turn could allcate with debugobjcets in the locking order,
->>=20
->> pi->lock
->>  rq->lock
->>    base->lock
->>      batched_entropy_u32.lock
->>=20
->> while the random code could always call into the scheduler via
->> try_to_wake_up() in the locking order,
->>=20
->> batched_entropy_u32.lock
->>  pi->lock
->>=20
->> Thus, it could generate a lockdep splat below right after boot. =
-Ideally,
->> psi_enqueue() might be able to be called without either pi->lock or
->> rq->lock held, but it is tricky to do.
->>=20
->> Since,
->>=20
->> 1) debugobjects is only used in a debug kernel.
->> 2) the chance to trigger a real deadlock is relative low.
->> 3) once the splat happened, it will disable lockdep to prevent it =
-from
->>   catching any more important issues later.
->>=20
->> just silent the splat by temporarily lettting lockdep ignore lockes
->> inside debug_timer_activate() which sounds like a reasonable tradeoff
->> for debug kernels.
->=20
->=20
->> diff --git a/kernel/time/timer.c b/kernel/time/timer.c
->> index 4820823515e9..27bfb8376d71 100644
->> --- a/kernel/time/timer.c
->> +++ b/kernel/time/timer.c
->> @@ -1036,7 +1036,13 @@ __mod_timer(struct timer_list *timer, unsigned =
-long expires, unsigned int option
->> 		}
->> 	}
->>=20
->> +	/*
->> +	 * It will allocate under rq->lock and trigger a lockdep slat =
-with
->> +	 * random code. Don't disable lockdep with debugobjects.
->> +	 */
->> +	lockdep_off();
->> 	debug_timer_activate(timer);
->> +	lockdep_on();
->>=20
->> 	timer->expires =3D expires;
->> 	/*
->=20
-> You have to be f'ing kidding me. You've just earned yourself a =
-lifetime
-> membership of 'the tinker crew'.
->=20
->> 00: [  321.355501] -> #3 (batched_entropy_u32.lock){-.-.}:
->> 00: [  321.355523]        lock_acquire+0x212/0x460
->> 00: [  321.355536]        _raw_spin_lock_irqsave+0xc4/0xe0
->> 00: [  321.355551]        get_random_u32+0x5a/0x138
->> 00: [  321.355564]        new_slab+0x188/0x760
->> 00: [  321.355576]        ___slab_alloc+0x5d2/0x928
->> 00: [  321.355589]        __slab_alloc+0x52/0x88
->> 00: [  321.355801]        kmem_cache_alloc+0x34a/0x558
->> 00: [  321.355819]        fill_pool+0x29e/0x490
->> 00: [  321.355835]        __debug_object_init+0xa0/0x828
->> 00: [  321.355848]        debug_object_activate+0x200/0x368
->> 00: [  321.355864]        add_timer+0x242/0x538
->> 00: [  321.355877]        queue_delayed_work_on+0x13e/0x148
->> 00: [  321.355893]        init_mm_internals+0x4c6/0x550
->> 00: [  321.355905]        kernel_init_freeable+0x224/0x590
->> 00: [  321.355921]        kernel_init+0x22/0x188
->> 00: [  321.355933]        ret_from_fork+0x30/0x34
->=20
-> Did you actually look at debug_object_activate() and read?
->=20
-> The only reason that is calling into __debug_object_init() is because =
-it
-> hadn't been initialized yet when it got activated. That *immediately*
-> should've been a clue.
->=20
-> You can initialize this stuff early. For instance:
->=20
->  INIT_DELAYED_WORK()
->    __INIT_DELAYED_WORK()
->      __init_timer()
->        init_timer_key()
-> 	  debug_init()
-> 	    debug_timer_init()
-> 	      debug_object_init()
-> 	        __debug_object_init()
->=20
-> And we're right at where the above callchain goes wrong.
->=20
-> Now, it actually looks like kernel/sched/psi.c actually initializes =
-all
-> delayed works it uses. This then leaves other random delayed works to
-> establish the base->lock <- entropy.lock relation.
->=20
-> This just means we need to find and kill all such delayed_work users
-> that fail to properly initialize their data structure.
-
-Well, in mm/vmstat.c (init_mm_internals) case for example, it was =
-initialized
-as a static,
-
-static DECLARE_DEFERRABLE_WORK(shepherd, vmstat_shepherd);
-
-which will not call __debug_object_init().=20
-
-
-
+> With this patch the throughput gets 2.67% up.  The data with using
+> smp_mb__after_atomic() is showed in the following patch.
+>
+> Fixes: 9c4e6b1a7027 ("mm, mlock, vmscan: no more skipping pagevecs")
+> Cc: Shakeel Butt <shakeelb@google.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> ---
+>  include/linux/swap.h | 24 +++++++++++++++++++++++-
+>  mm/vmscan.c          | 23 -----------------------
+>  2 files changed, 23 insertions(+), 24 deletions(-)
+>
+> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> index 1e99f7a..297eb66 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -374,7 +374,29 @@ extern unsigned long mem_cgroup_shrink_node(struct mem_cgroup *mem,
+>  #define node_reclaim_mode 0
+>  #endif
+>
+> -extern int page_evictable(struct page *page);
+> +/*
+> + * page_evictable - test whether a page is evictable
+> + * @page: the page to test
+> + *
+> + * Test whether page is evictable--i.e., should be placed on active/inactive
+> + * lists vs unevictable list.
+> + *
+> + * Reasons page might not be evictable:
+> + * (1) page's mapping marked unevictable
+> + * (2) page is part of an mlocked VMA
+> + *
+> + */
+> +static inline int page_evictable(struct page *page)
+> +{
+> +       int ret;
+> +
+> +       /* Prevent address_space of inode and swap cache from being freed */
+> +       rcu_read_lock();
+> +       ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
+> +       rcu_read_unlock();
+> +       return ret;
+> +}
+> +
+>  extern void check_move_unevictable_pages(struct pagevec *pvec);
+>
+>  extern int kswapd_run(int nid);
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 8763705..855c395 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -4277,29 +4277,6 @@ int node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned int order)
+>  }
+>  #endif
+>
+> -/*
+> - * page_evictable - test whether a page is evictable
+> - * @page: the page to test
+> - *
+> - * Test whether page is evictable--i.e., should be placed on active/inactive
+> - * lists vs unevictable list.
+> - *
+> - * Reasons page might not be evictable:
+> - * (1) page's mapping marked unevictable
+> - * (2) page is part of an mlocked VMA
+> - *
+> - */
+> -int page_evictable(struct page *page)
+> -{
+> -       int ret;
+> -
+> -       /* Prevent address_space of inode and swap cache from being freed */
+> -       rcu_read_lock();
+> -       ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
+> -       rcu_read_unlock();
+> -       return ret;
+> -}
+> -
+>  /**
+>   * check_move_unevictable_pages - check pages for evictability and move to
+>   * appropriate zone lru list
+> --
+> 1.8.3.1
+>
