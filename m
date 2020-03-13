@@ -2,115 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9A0B184DEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:48:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 493F6184DF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:50:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbgCMRsg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 13:48:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37578 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726637AbgCMRsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 13:48:35 -0400
-Received: from localhost (unknown [213.57.247.131])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD81D206E9;
-        Fri, 13 Mar 2020 17:48:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584121714;
-        bh=RTV73rV9tbgZdgxhjVpHf5cbOgrjF4jkzZeN0BW3HjQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rTBDRlbNcvDK/M91AaxB/KKnHxKNQs5wEAymm0R3zmKwmKgdJygpE4ZsGPQ9coL9N
-         OYVFjHI3f6jp625auhfZc1YBPcOjdbUwuqBfrp6tAIUn89ZPdKMAFrRhzWScGBrRKX
-         LQ2mB2q61tTaRHFX3muuqAdvw4OuG3GM3e94uy3U=
-Date:   Fri, 13 Mar 2020 19:48:27 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Jaewon Kim <jaewon31.kim@samsung.com>, adobriyan@gmail.com,
-        akpm@linux-foundation.org, labbott@redhat.com,
-        sumit.semwal@linaro.org, minchan@kernel.org, ngupta@vflare.org,
-        sergey.senozhatsky.work@gmail.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, jaewon31.kim@gmail.com,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/3] meminfo: introduce extra meminfo
-Message-ID: <20200313174827.GA67638@unreal>
-References: <CGME20200311034454epcas1p2ef0c0081971dd82282583559398e58b2@epcas1p2.samsung.com>
- <20200311034441.23243-1-jaewon31.kim@samsung.com>
- <af4ace34-0db2-dd17-351f-eaa806f0a6ac@suse.cz>
+        id S1727192AbgCMRt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 13:49:58 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36186 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbgCMRt5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 13:49:57 -0400
+Received: by mail-ot1-f66.google.com with SMTP id j14so11021780otq.3;
+        Fri, 13 Mar 2020 10:49:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ikJY8jL+WwN9m0h/0ly8EPxlXvIn8mr2TN/3Ad+1Sjw=;
+        b=so5fYZSoCwaFwWyqYnzVHGf7R/BRTOLM0pxs/dR3qdTZ6zLyvss4/5eIoDD+FTJNin
+         9y0AnkjYIoZb+chMW7BbRXnVfr9Z2ca1NP30yrHHAtbTXAgk9dNOoKzW63lQc4yeI5WQ
+         zSs7Pmgq8NoKeneJPe1rSMv9j3oImG4Z/lEskFJpRChMmb3oqZ1GU+JAYFnzcKcwtoq5
+         bjkQSt6g/nZyyDEVnDx9C1XDmcQOJJqYHWFXFOuUArR5xWPIcMi5egEvCD//IVrH/EbG
+         9UqcLjpK63Q173FzarBGGR1Hs2ZpqkNqILmCMN9BjIUbeh0nQi+CxyIlJi5VYwVJSgRH
+         lSsw==
+X-Gm-Message-State: ANhLgQ0XrmWrh2NkhUjAVUv6E7z5iHQBiAjaHHK1bJT15f9AMOsts64G
+        Ecb1pmiAlwj5u/ricw7X6Blh/tDVIUyi6Cmi09U=
+X-Google-Smtp-Source: ADFU+vscUcNl0XqoPtGNKufJ6d5QVPnoK1rJaGUBAwvppGXXEvwIKjNWZWqU+cwx4LdvkSpguWD67ibiRm73DRPkOAE=
+X-Received: by 2002:a9d:67d7:: with SMTP id c23mr12349631otn.262.1584121796924;
+ Fri, 13 Mar 2020 10:49:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af4ace34-0db2-dd17-351f-eaa806f0a6ac@suse.cz>
+References: <20200304113248.1143057-1-mail@maciej.szmigiero.name> <20200312161751.GA5245@fuller.cnet>
+In-Reply-To: <20200312161751.GA5245@fuller.cnet>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 13 Mar 2020 18:49:45 +0100
+Message-ID: <CAJZ5v0jLOKj5LN5Kmredixomer4BKdBPNwP7gOf7A0tS_WMbDQ@mail.gmail.com>
+Subject: Re: [PATCH v2] cpuidle-haltpoll: allow force loading on hosts without
+ the REALTIME hint
+To:     Marcelo Tosatti <mtosatti@redhat.com>
+Cc:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        kvm-devel <kvm@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 04:19:36PM +0100, Vlastimil Babka wrote:
-> +CC linux-api, please include in future versions as well
+On Thu, Mar 12, 2020 at 5:36 PM Marcelo Tosatti <mtosatti@redhat.com> wrote:
 >
-> On 3/11/20 4:44 AM, Jaewon Kim wrote:
-> > /proc/meminfo or show_free_areas does not show full system wide memory
-> > usage status. There seems to be huge hidden memory especially on
-> > embedded Android system. Because it usually have some HW IP which do not
-> > have internal memory and use common DRAM memory.
+> On Wed, Mar 04, 2020 at 12:32:48PM +0100, Maciej S. Szmigiero wrote:
+> > From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
 > >
-> > In Android system, most of those hidden memory seems to be vmalloc pages
-> > , ion system heap memory, graphics memory, and memory for DRAM based
-> > compressed swap storage. They may be shown in other node but it seems to
-> > useful if /proc/meminfo shows all those extra memory information. And
-> > show_mem also need to print the info in oom situation.
+> > Before commit 1328edca4a14 ("cpuidle-haltpoll: Enable kvm guest polling
+> > when dedicated physical CPUs are available") the cpuidle-haltpoll driver
+> > could also be used in scenarios when the host does not advertise the
+> > KVM_HINTS_REALTIME hint.
 > >
-> > Fortunately vmalloc pages is alread shown by commit 97105f0ab7b8
-> > ("mm: vmalloc: show number of vmalloc pages in /proc/meminfo"). Swap
-> > memory using zsmalloc can be seen through vmstat by commit 91537fee0013
-> > ("mm: add NR_ZSMALLOC to vmstat") but not on /proc/meminfo.
+> > While the behavior introduced by the aforementioned commit makes sense as
+> > the default there are cases where the old behavior is desired, for example,
+> > when other kernel changes triggered by presence by this hint are unwanted,
+> > for some workloads where the latency benefit from polling overweights the
+> > loss from idle CPU capacity that otherwise would be available, or just when
+> > running under older Qemu versions that lack this hint.
 > >
-> > Memory usage of specific driver can be various so that showing the usage
-> > through upstream meminfo.c is not easy. To print the extra memory usage
-> > of a driver, introduce following APIs. Each driver needs to count as
-> > atomic_long_t.
+> > Let's provide a typical "force" module parameter that allows restoring the
+> > old behavior.
 > >
-> > int register_extra_meminfo(atomic_long_t *val, int shift,
-> > 			   const char *name);
-> > int unregister_extra_meminfo(atomic_long_t *val);
+> > Signed-off-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
+> > ---
+> >  drivers/cpuidle/cpuidle-haltpoll.c | 12 ++++++++++--
+> >  1 file changed, 10 insertions(+), 2 deletions(-)
 > >
-> > Currently register ION system heap allocator and zsmalloc pages.
-> > Additionally tested on local graphics driver.
+> > Changes from v1:
+> > Make the module parameter description more general, don't unnecessarily
+> > break a line in haltpoll_init().
 > >
-> > i.e) cat /proc/meminfo | tail -3
-> > IonSystemHeap:    242620 kB
-> > ZsPages:          203860 kB
-> > GraphicDriver:    196576 kB
+> > diff --git a/drivers/cpuidle/cpuidle-haltpoll.c b/drivers/cpuidle/cpuidle-haltpoll.c
+> > index b0ce9bc78113..db124bc1ca2c 100644
+> > --- a/drivers/cpuidle/cpuidle-haltpoll.c
+> > +++ b/drivers/cpuidle/cpuidle-haltpoll.c
+> > @@ -18,6 +18,10 @@
+> >  #include <linux/kvm_para.h>
+> >  #include <linux/cpuidle_haltpoll.h>
 > >
-> > i.e.) show_mem on oom
-> > <6>[  420.856428]  Mem-Info:
-> > <6>[  420.856433]  IonSystemHeap:32813kB ZsPages:44114kB GraphicDriver::13091kB
-> > <6>[  420.856450]  active_anon:957205 inactive_anon:159383 isolated_anon:0
+> > +static bool force __read_mostly;
+> > +module_param(force, bool, 0444);
+> > +MODULE_PARM_DESC(force, "Load unconditionally");
+> > +
+> >  static struct cpuidle_device __percpu *haltpoll_cpuidle_devices;
+> >  static enum cpuhp_state haltpoll_hp_state;
+> >
+> > @@ -90,6 +94,11 @@ static void haltpoll_uninit(void)
+> >       haltpoll_cpuidle_devices = NULL;
+> >  }
+> >
+> > +static bool haltpool_want(void)
+> > +{
+> > +     return kvm_para_has_hint(KVM_HINTS_REALTIME) || force;
+> > +}
+> > +
+> >  static int __init haltpoll_init(void)
+> >  {
+> >       int ret;
+> > @@ -101,8 +110,7 @@ static int __init haltpoll_init(void)
+> >
+> >       cpuidle_poll_state_init(drv);
+> >
+> > -     if (!kvm_para_available() ||
+> > -             !kvm_para_has_hint(KVM_HINTS_REALTIME))
+> > +     if (!kvm_para_available() || !haltpool_want())
+> >               return -ENODEV;
+> >
+> >       ret = cpuidle_register_driver(drv);
 >
-> I like the idea and the dynamic nature of this, so that drivers not present
-> wouldn't add lots of useless zeroes to the output.
-> It also makes simpler the decisions of "what is important enough to need its own
-> meminfo entry".
->
-> The suggestion for hunting per-driver /sys files would only work if there was a
-> common name to such files so once can find(1) them easily.
-> It also doesn't work for the oom/failed alloc warning output.
+> Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
 
-Of course there is a need to have a stable name for such an output, this
-is why driver/core should be responsible for that and not drivers authors.
-
-The use case which I had in mind slightly different than to look after OOM.
-
-I'm interested to optimize our drivers in their memory footprint to
-allow better scale in SR-IOV mode where one device creates many separate
-copies of itself. Those copies easily can take gigabytes of RAM due to
-the need to optimize for high-performance networking. Sometimes the
-amount of memory and not HW is actually limits the scale factor.
-
-So I would imagine this feature being used as an aid for the driver
-developers and not for the runtime decisions.
-
-My 2-cents.
-
-Thanks
+I'm taking this as a Reviewed-by, thanks!
