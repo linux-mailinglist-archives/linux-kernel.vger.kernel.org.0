@@ -2,67 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73160184AB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 16:28:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F252B184AC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 16:30:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbgCMP2r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 11:28:47 -0400
-Received: from mga11.intel.com ([192.55.52.93]:54958 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726446AbgCMP2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 11:28:46 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 08:28:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,549,1574150400"; 
-   d="scan'208";a="232450431"
-Received: from mlitka-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.155.148])
-  by orsmga007.jf.intel.com with ESMTP; 13 Mar 2020 08:28:39 -0700
-Date:   Fri, 13 Mar 2020 17:28:37 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-Subject: Re: [PATCH v2 1/2] KEYS: Don't write out to userspace while holding
- key semaphore
-Message-ID: <20200313152837.GB142269@linux.intel.com>
-References: <20200308170410.14166-1-longman@redhat.com>
- <20200308170410.14166-2-longman@redhat.com>
- <20200313010425.GA11360@linux.intel.com>
- <e2dc038b-0283-0bf6-45f6-ad2dd0775e81@redhat.com>
+        id S1727041AbgCMPaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 11:30:20 -0400
+Received: from mail.baikalelectronics.com ([87.245.175.226]:33058 "EHLO
+        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbgCMPaU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 11:30:20 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id 0303280307C4;
+        Fri, 13 Mar 2020 15:30:17 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at baikalelectronics.ru
+Received: from mail.baikalelectronics.ru ([127.0.0.1])
+        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id zabMnJuGEewt; Fri, 13 Mar 2020 18:30:16 +0300 (MSK)
+Date:   Fri, 13 Mar 2020 18:29:28 +0300
+From:   Sergey Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
+        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
+        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Hoan Tran <hoan@os.amperecomputing.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/4] gpio: dwapb: Fix reference clocks usage
+Message-ID: <20200313152928.54lk2wi42auh2nat@ubsrv2.baikal.int>
+References: <20200306132505.8D3B88030795@mail.baikalelectronics.ru>
+ <CACRpkdbq9aTkf6-DctXKabyd2=Rr8GPii02_8jQP49SFuTo_SQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <e2dc038b-0283-0bf6-45f6-ad2dd0775e81@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <CACRpkdbq9aTkf6-DctXKabyd2=Rr8GPii02_8jQP49SFuTo_SQ@mail.gmail.com>
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 09:29:47AM -0400, Waiman Long wrote:
-> One way to do that is to extract the down_read/up_read block into a
-> helper function and then have 2 separate paths - one for length
-> retrieval and another one for reading the key. I think that will make
-> the code a bit easier easier to read.
+On Thu, Mar 12, 2020 at 02:58:33PM +0100, Linus Walleij wrote:
+> On Fri, Mar 6, 2020 at 2:25 PM <Sergey.Semin@baikalelectronics.ru> wrote:
+> 
+> > From: Serge Semin <fancer.lancer@gmail.com>
+> >
+> > There is no need in any fixes to have the Baikal-T1 SoC DW GPIO controllers
+> > supported by the kernel DW APB GPIO driver. It works for them just fine with
+> > no modifications. But still there is a room for optimizations there.
+> >
+> > First of all as it tends to be traditional for all Baikal-T1 SoC related
+> > patchset we replaced the legacy plain text-based dt-binding file with
+> > yaml-based one. Baikal-T1 DW GPIO port A supports a debounce functionality,
+> > but in order to use it the corresponding reference clock must be enabled.
+> > We added support of that clock in the driver and made sure the dt-bindings
+> > had its declaration. In addition seeing both APB and debounce reference
+> > clocks are optional, we replaced the standard devm_clk_get() usage with
+> > the function of optional clocks acquisition.
+> >
+> > This patchset is rebased and tested on the mainline Linux kernel 5.6-rc4:
+> > commit 98d54f81e36b ("Linux 5.6-rc4").
+> >
+> > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> > Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+> > Cc: Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>
+> > Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
+> > Cc: Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>
+> > Cc: Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>
+> > Cc: Vadim Vlasov <V.Vlasov@baikalelectronics.ru>
+> > Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> > Cc: Paul Burton <paulburton@kernel.org>
+> > Cc: Ralf Baechle <ralf@linux-mips.org>
+> > Cc: Hoan Tran <hoan@os.amperecomputing.com>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: linux-gpio@vger.kernel.org
+> > Cc: devicetree@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> 
+> I like these patches, once Rob is happy with the bindings I'll be
+> happy to merge them. I haven't heard from Hoan Tran in a while,
+> so if we don't hear from him this time either I would suggest you
+> also add yourself as maintainer for this driver, if you don't mind.
 > 
 > Thanks,
-> Longman
+> Linus Walleij
 
-If it is not too much trouble for you, I think this would be a legit
-cleanup to do.
+Hello Linus,
+Thanks for positive response. I'll resend the patchset soon in the
+email-threaded form together with two extra patches, which will
+add me to the MAINTAINERS list and to the dt-schema of the driver.
+If Hoan Tran will show up before you merge them, just drop these two
+new patches.
 
-/Jarkko
+Regards,
+-Sergey
+
