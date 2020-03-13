@@ -2,104 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAC50184C7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 17:29:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F59F184D9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:28:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbgCMQ3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 12:29:23 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41904 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726533AbgCMQ3X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 12:29:23 -0400
-Received: by mail-ed1-f65.google.com with SMTP id m25so12577169edq.8
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 09:29:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KQ+pObvU67uvaK3l1r4Ceb5YYAtUXZc7zlplXO9TGzk=;
-        b=wNEa9VbCq5ppXpJfo1/v31ZhKG8uPf7PzMenc8z6vmEiPRA9w/pPKyW5PupisZ+2wm
-         /1jR1aTmSmwc3VGYzygElLlxIeYf8iDy+ZYBCCFSAzNIo4Qhqf2EVsQY2xdC+JJray49
-         u01vKpsXb8UXTPq9xL8qVflCmkWMFcPy3ohoVOFO6yr5Wx5vOxDNototKpEKY+8oXZNU
-         ZY3T4uEoba21JC3zCnFHzr6tNBDmVkym5KePwLGcs3xFJU7aw/cie5ZNNSC+vyHPPitf
-         6TxueY9wS4q7IPVNWnMTG7h0eYTj8SBvSH5GSRB+1Qrpcnnc6Wf/I+hp69E09N7FxlEV
-         0bxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KQ+pObvU67uvaK3l1r4Ceb5YYAtUXZc7zlplXO9TGzk=;
-        b=fn6rCtRqFmBvDBRrGHe4xrLLzYBFBhZi1bVJPDz6S9HW6IVWPCQy8penqRUdCXo+Oy
-         oiE+/ikuO+GDQY0MqwdUBBjMtOMsMzM8oiD4PQf494TamP7Lv4khh9U3X68o7wTUvaj5
-         VhzxcMYtnq0Ao+ELv50PZLIMsLc96Wm/g1FwqG0dNqbFSGTwnP1J6bXyisQwHnuHDWpn
-         ZfWZD1CS32iV4cWohBCD2Hf7/DILIixtNEsEU4qDwgpa/4HoFt6OVMSJProCuoYCoFZn
-         4ddnHZdmXo/Enh9ug0FGE+MMUmji1J3G0dyuY4wnpwcPR3ecXEMdTeNB92CHQTSt4DNA
-         7QCA==
-X-Gm-Message-State: ANhLgQ1es9u6czHf9jMJUniUWhAFJpZij0EYYzzjmNLCkI9nIzHNl2nW
-        MTLkljEcsrYuz5bl2wN/bsQa/+6zwMpsB3HZKH+y
-X-Google-Smtp-Source: ADFU+vuL+b7H+tHmfIL9uEWtaqijyChHCYny1ByjHCCYsp9IHY7VBWU/eiFjWL7wPzp8K/OQLrQaC/SDlvMtNAtsA5M=
-X-Received: by 2002:a17:907:105a:: with SMTP id oy26mr3891035ejb.308.1584116962089;
- Fri, 13 Mar 2020 09:29:22 -0700 (PDT)
+        id S1726860AbgCMR23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 13:28:29 -0400
+Received: from mga02.intel.com ([134.134.136.20]:49477 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726414AbgCMR22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 13:28:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 10:28:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,549,1574150400"; 
+   d="scan'208";a="237017140"
+Received: from sblancoa-mobl.amr.corp.intel.com (HELO [10.251.232.239]) ([10.251.232.239])
+  by fmsmga008.fm.intel.com with ESMTP; 13 Mar 2020 10:28:23 -0700
+Subject: Re: [PATCH 03/16] soundwire: cadence: add interface to check clock
+ status
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Hui Wang <hui.wang@canonical.com>, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>,
+        Rander Wang <rander.wang@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+References: <20200311184128.4212-1-pierre-louis.bossart@linux.intel.com>
+ <20200311184128.4212-4-pierre-louis.bossart@linux.intel.com>
+ <20200313120607.GE4885@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <816cc363-5b49-9b04-54a4-be4f53001cc5@linux.intel.com>
+Date:   Fri, 13 Mar 2020 11:31:01 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <cover.1577736799.git.rgb@redhat.com> <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
- <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com>
- <3142237.YMNxv0uec1@x2> <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
- <CAHC9VhS09b_fM19tn7pHZzxfyxcHnK+PJx80Z9Z1hn8-==4oLA@mail.gmail.com> <20200312193037.2tb5f53yeisfq4ta@madcap2.tricolour.ca>
-In-Reply-To: <20200312193037.2tb5f53yeisfq4ta@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 13 Mar 2020 12:29:10 -0400
-Message-ID: <CAHC9VhQoVOzy_b9W6h+kmizKr1rPkC4cy5aYoKT2i0ZgsceNDg@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
-        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200313120607.GE4885@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 3:30 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-02-13 16:44, Paul Moore wrote:
-> > This is a bit of a thread-hijack, and for that I apologize, but
-> > another thought crossed my mind while thinking about this issue
-> > further ... Once we support multiple auditd instances, including the
-> > necessary record routing and duplication/multiple-sends (the host
-> > always sees *everything*), we will likely need to find a way to "trim"
-> > the audit container ID (ACID) lists we send in the records.  The
-> > auditd instance running on the host/initns will always see everything,
-> > so it will want the full container ACID list; however an auditd
-> > instance running inside a container really should only see the ACIDs
-> > of any child containers.
->
-> Agreed.  This should be easy to check and limit, preventing an auditd
-> from seeing any contid that is a parent of its own contid.
->
-> > For example, imagine a system where the host has containers 1 and 2,
-> > each running an auditd instance.  Inside container 1 there are
-> > containers A and B.  Inside container 2 there are containers Y and Z.
-> > If an audit event is generated in container Z, I would expect the
-> > host's auditd to see a ACID list of "1,Z" but container 1's auditd
-> > should only see an ACID list of "Z".  The auditd running in container
-> > 2 should not see the record at all (that will be relatively
-> > straightforward).  Does that make sense?  Do we have the record
-> > formats properly designed to handle this without too much problem (I'm
-> > not entirely sure we do)?
->
-> I completely agree and I believe we have record formats that are able to
-> handle this already.
 
-I'm not convinced we do.  What about the cases where we have a field
-with a list of audit container IDs?  How do we handle that?
 
--- 
-paul moore
-www.paul-moore.com
+>> +/**
+>> + * sdw_cdns_is_clock_stop: Check clock status
+>> + *
+>> + * @cdns: Cadence instance
+>> + */
+>> +bool sdw_cdns_is_clock_stop(struct sdw_cdns *cdns)
+>> +{
+>> +	u32 status;
+>> +
+>> +	status = cdns_readl(cdns, CDNS_MCP_STAT) & CDNS_MCP_STAT_CLK_STOP;
+>> +	if (status) {
+>> +		dev_dbg(cdns->dev, "Clock is stopped\n");
+>> +		return true;
+>> +	}
+> 
+> This can be further optimized to:
+> 
+>          return !!(cdns_readl(cdns, CDNS_MCP_STAT) & CDNS_MCP_STAT_CLK_STOP);
+
+The logs are very useful for debug.
