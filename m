@@ -2,84 +2,298 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 848B2184F88
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 20:52:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19749184FA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 20:53:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbgCMTwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 15:52:12 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36762 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbgCMTwK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 15:52:10 -0400
-Received: by mail-lf1-f68.google.com with SMTP id s1so8867025lfd.3;
-        Fri, 13 Mar 2020 12:52:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jIzR2VF5pztT8bGJoCnv210VBMIFx941tvF4lgwyJhk=;
-        b=H/4G0a4inqFmyc/ZgU9YotdnJII5m3EQDJJrxGps6EtV0QFXrC//vl5+03L3cOHdGy
-         rMuPqzftPUB77oaFRc0jdyTu0Yd6DIIQSwMTTRG/sHMUExTW8d1AayCkiDJJQG10AnNu
-         wF51wj5tDrEa/x/K4FUtkoVv7DcbniTMXF8sWXczVij4/XuwPKHrgdF/Dsuj3PyShFF8
-         JlyZvWRVMrR+UgaSu/cQLLQTUZ0gyWV/trt4RNPtAcBWFKC1fRpRh6qJlYAIB2iiHe7x
-         S7sAQ+KVKb6x3q9rQahoc4H/t+Vfyzt/KUe9t3Hd9nhA2g22AnR9lR6X+FdWPH39Wlfr
-         QVkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jIzR2VF5pztT8bGJoCnv210VBMIFx941tvF4lgwyJhk=;
-        b=BihbkNG7oQ9vxR4qDFz2nU8scLKdMEWWqYyJDLbga6k6uWXJfxqllEF6wURbwSOMs6
-         BvH2QO8RF3/Xo6KxRKSBLxdhVFIbElQoxb1hgTfjm1XqrVAN3afxpjDO8nBPrC7p+G7n
-         qqyIGL5XZFVJU01FcQ8llbOjTuNVhgz88oQKNAcLffB0I+jZLbDM+XznR/G+Q8XEUE6n
-         2/ZdRLZSxWSIf0jGippVRVJOVfMCES+Bvc21AnrLg1LIxvRq9zgByIpk0vOlEaBAdT2V
-         YaL9+WxG2w0fX42LErzKxWVIJEN8Zh/kY5pzwyi/ANcI+FdvQ2l9ma+CIIBjuAJ5/rME
-         nC6g==
-X-Gm-Message-State: ANhLgQ3eg2Yh4rJxL7q6Eo4+311fSzEpBLSOFqP9rcilEDNIaNx9dGy+
-        G+BboGZAYDO7IUWIv3sDkqmdOoyO/TOHOqtsyg8=
-X-Google-Smtp-Source: ADFU+vuyob2kNVFX2qwNK4cHEIyyfQOOrYJ9edLrWt/ZgCK5EyTlrU/7fRLKklUBicSDGHyC6BLUkY/zy7R10T1EXd0=
-X-Received: by 2002:a19:a401:: with SMTP id q1mr9255620lfc.157.1584129126306;
- Fri, 13 Mar 2020 12:52:06 -0700 (PDT)
+        id S1727618AbgCMTxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 15:53:10 -0400
+Received: from mga11.intel.com ([192.55.52.93]:10904 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727386AbgCMTxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 15:53:08 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 12:53:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,549,1574150400"; 
+   d="scan'208";a="278346361"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by fmsmga002.fm.intel.com with SMTP; 13 Mar 2020 12:53:02 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Fri, 13 Mar 2020 21:53:01 +0200
+Date:   Fri, 13 Mar 2020 21:53:01 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     "Laxminarayan Bharadiya, Pankaj" 
+        <pankaj.laxminarayan.bharadiya@intel.com>
+Cc:     "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "tzimmermann@suse.de" <tzimmermann@suse.de>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "mihail.atanassov@arm.com" <mihail.atanassov@arm.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        "Souza, Jose" <jose.souza@intel.com>,
+        "De Marchi, Lucas" <lucas.demarchi@intel.com>,
+        "Roper, Matthew D" <matthew.d.roper@intel.com>,
+        "Deak, Imre" <imre.deak@intel.com>,
+        "Shankar, Uma" <uma.shankar@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Nautiyal, Ankit K" <ankit.k.nautiyal@intel.com>
+Subject: Re: [RFC][PATCH 5/5] drm/i915/display: Add Nearest-neighbor based
+ integer scaling support
+Message-ID: <20200313195301.GQ13686@intel.com>
+References: <20200225070545.4482-1-pankaj.laxminarayan.bharadiya@intel.com>
+ <20200225070545.4482-6-pankaj.laxminarayan.bharadiya@intel.com>
+ <20200310161723.GK13686@intel.com>
+ <E92BA18FDE0A5B43B7B3DA7FCA031286057B2C55@BGSMSX107.gar.corp.intel.com>
+ <20200312135438.GF13686@intel.com>
+ <E92BA18FDE0A5B43B7B3DA7FCA031286057B474F@BGSMSX107.gar.corp.intel.com>
 MIME-Version: 1.0
-References: <20200313135850.2329f480@canb.auug.org.au>
-In-Reply-To: <20200313135850.2329f480@canb.auug.org.au>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Fri, 13 Mar 2020 12:51:54 -0700
-Message-ID: <CAADnVQ+r3hMEtqbkhm1j9HyXYxSNihbX=VCR9erUGXoE72Pwsg@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the jc_docs tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stephen Kitt <steve@sk2.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <E92BA18FDE0A5B43B7B3DA7FCA031286057B474F@BGSMSX107.gar.corp.intel.com>
+X-Patchwork-Hint: comment
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 7:59 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the bpf-next tree got a conflict in:
->
->   Documentation/admin-guide/sysctl/kernel.rst
->
-> between commit:
->
->   a3cb66a50852 ("docs: pretty up sysctl/kernel.rst")
->
-> from the jc_docs tree and commit:
->
->   c480a3b79cbc ("docs: sysctl/kernel: Document BPF entries")
->
-> from the bpf-next tree.
+On Fri, Mar 13, 2020 at 08:45:35AM +0000, Laxminarayan Bharadiya, Pankaj wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> > Sent: 12 March 2020 19:25
+> > To: Laxminarayan Bharadiya, Pankaj
+> > <pankaj.laxminarayan.bharadiya@intel.com>
+> > Cc: jani.nikula@linux.intel.com; daniel@ffwll.ch; intel-
+> > gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org; airlied@linux.ie;
+> > maarten.lankhorst@linux.intel.com; tzimmermann@suse.de;
+> > mripard@kernel.org; mihail.atanassov@arm.com; Joonas Lahtinen
+> > <joonas.lahtinen@linux.intel.com>; Vivi, Rodrigo <rodrigo.vivi@intel.com>;
+> > Chris Wilson <chris@chris-wilson.co.uk>; Souza, Jose <jose.souza@intel.com>;
+> > De Marchi, Lucas <lucas.demarchi@intel.com>; Roper, Matthew D
+> > <matthew.d.roper@intel.com>; Deak, Imre <imre.deak@intel.com>; Shankar,
+> > Uma <uma.shankar@intel.com>; linux-kernel@vger.kernel.org; Nautiyal, Ankit K
+> > <ankit.k.nautiyal@intel.com>
+> > Subject: Re: [RFC][PATCH 5/5] drm/i915/display: Add Nearest-neighbor based
+> > integer scaling support
+> > 
+> > On Thu, Mar 12, 2020 at 09:13:24AM +0000, Laxminarayan Bharadiya, Pankaj
+> > wrote:
+> > >
+> > >
+> > > > -----Original Message-----
+> > > > From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> > > > Sent: 10 March 2020 21:47
+> > > > To: Laxminarayan Bharadiya, Pankaj
+> > > > <pankaj.laxminarayan.bharadiya@intel.com>
+> > > > Cc: jani.nikula@linux.intel.com; daniel@ffwll.ch; intel-
+> > > > gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org;
+> > > > airlied@linux.ie; maarten.lankhorst@linux.intel.com;
+> > > > tzimmermann@suse.de; mripard@kernel.org; mihail.atanassov@arm.com;
+> > > > Joonas Lahtinen <joonas.lahtinen@linux.intel.com>; Vivi, Rodrigo
+> > > > <rodrigo.vivi@intel.com>; Chris Wilson <chris@chris-wilson.co.uk>;
+> > > > Souza, Jose <jose.souza@intel.com>; De Marchi, Lucas
+> > > > <lucas.demarchi@intel.com>; Roper, Matthew D
+> > > > <matthew.d.roper@intel.com>; Deak, Imre <imre.deak@intel.com>;
+> > > > Shankar, Uma <uma.shankar@intel.com>; linux- kernel@vger.kernel.org;
+> > > > Nautiyal, Ankit K <ankit.k.nautiyal@intel.com>
+> > > > Subject: Re: [RFC][PATCH 5/5] drm/i915/display: Add Nearest-neighbor
+> > > > based integer scaling support
+> > > >
+> > > > On Tue, Feb 25, 2020 at 12:35:45PM +0530, Pankaj Bharadiya wrote:
+> > > > > Integer scaling (IS) is a nearest-neighbor upscaling technique
+> > > > > that simply scales up the existing pixels by an integer (i.e.,
+> > > > > whole
+> > > > > number) multiplier.Nearest-neighbor (NN) interpolation works by
+> > > > > filling in the missing color values in the upscaled image with
+> > > > > that of the coordinate-mapped nearest source pixel value.
+> > > > >
+> > > > > Both IS and NN preserve the clarity of the original image. Integer
+> > > > > scaling is particularly useful for pixel art games that rely on
+> > > > > sharp, blocky images to deliver their distinctive look.
+> > > > >
+> > > > > Program the scaler filter coefficients to enable the NN filter if
+> > > > > scaling filter property is set to
+> > > > > DRM_SCALING_FILTER_NEAREST_NEIGHBOR
+> > > > > and enable integer scaling.
+> > > > >
+> > > > > Bspec: 49247
+> > > > >
+> > > > > Signed-off-by: Pankaj Bharadiya
+> > > > > <pankaj.laxminarayan.bharadiya@intel.com>
+> > > > > Signed-off-by: Ankit Nautiyal <ankit.k.nautiyal@intel.com>
+> > > > > ---
+> > > > >  drivers/gpu/drm/i915/display/intel_display.c | 83
+> > > > > +++++++++++++++++++-  drivers/gpu/drm/i915/display/intel_display.h
+> > > > > +++++++++++++++++++|
+> > > > > 2 +  drivers/gpu/drm/i915/display/intel_sprite.c  | 20 +++--
+> > > > >  3 files changed, 97 insertions(+), 8 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/gpu/drm/i915/display/intel_display.c
+> > > > > b/drivers/gpu/drm/i915/display/intel_display.c
+> > > > > index b5903ef3c5a0..6d5f59203258 100644
+> > > > > --- a/drivers/gpu/drm/i915/display/intel_display.c
+> > > > > +++ b/drivers/gpu/drm/i915/display/intel_display.c
+> > > > > @@ -6237,6 +6237,73 @@ void skl_scaler_disable(const struct
+> > > > intel_crtc_state *old_crtc_state)
+> > > > >  		skl_detach_scaler(crtc, i);
+> > > > >  }
+> > > > >
+> > > > > +/**
+> > > > > + *  Theory behind setting nearest-neighbor integer scaling:
+> > > > > + *
+> > > > > + *  17 phase of 7 taps requires 119 coefficients in 60 dwords per set.
+> > > > > + *  The letter represents the filter tap (D is the center tap)
+> > > > > +and the number
+> > > > > + *  represents the coefficient set for a phase (0-16).
+> > > > > + *
+> > > > > + *         +------------+------------------------+------------------------+
+> > > > > + *         |Index value | Data value coeffient 1 | Data value coeffient 2 |
+> > > > > + *         +------------+------------------------+------------------------+
+> > > > > + *         |   00h      |          B0            |          A0            |
+> > > > > + *         +------------+------------------------+------------------------+
+> > > > > + *         |   01h      |          D0            |          C0            |
+> > > > > + *         +------------+------------------------+------------------------+
+> > > > > + *         |   02h      |          F0            |          E0            |
+> > > > > + *         +------------+------------------------+------------------------+
+> > > > > + *         |   03h      |          A1            |          G0            |
+> > > > > + *         +------------+------------------------+------------------------+
+> > > > > + *         |   04h      |          C1            |          B1            |
+> > > > > + *         +------------+------------------------+------------------------+
+> > > > > + *         |   ...      |          ...           |          ...           |
+> > > > > + *         +------------+------------------------+------------------------+
+> > > > > + *         |   38h      |          B16           |          A16           |
+> > > > > + *         +------------+------------------------+------------------------+
+> > > > > + *         |   39h      |          D16           |          C16           |
+> > > > > + *         +------------+------------------------+------------------------+
+> > > > > + *         |   3Ah      |          F16           |          C16           |
+> > > > > + *         +------------+------------------------+------------------------+
+> > > > > + *         |   3Bh      |        Reserved        |          G16           |
+> > > > > + *         +------------+------------------------+------------------------+
+> > > > > + *
+> > > > > + *  To enable nearest-neighbor scaling:  program scaler
+> > > > > +coefficents with
+> > > > > + *  the center tap (Dxx) values set to 1 and all other values set
+> > > > > +to
+> > > > > +0 as per
+> > > > > + *  SCALER_COEFFICIENT_FORMAT
+> > > > > + *
+> > > > > + */
+> > > > > +void skl_setup_nearest_neighbor_filter(struct drm_i915_private
+> > > > *dev_priv,
+> > > > > +				  enum pipe pipe, int scaler_id)
+> > > >
+> > > > skl_scaler_...
+> > > >
+> > > > > +{
+> > > > > +
+> > > > > +	int coeff = 0;
+> > > > > +	int phase = 0;
+> > > > > +	int tap;
+> > > > > +	int val = 0;
+> > > >
+> > > > Needlessly wide scope for most of these.
+> > > >
+> > > > > +
+> > > > > +	/*enable the index auto increment.*/
+> > > > > +	intel_de_write_fw(dev_priv, SKL_PS_COEF_INDEX_SET0(pipe,
+> > > > scaler_id),
+> > > > > +			  _PS_COEE_INDEX_AUTO_INC);
+> > > > > +
+> > > > > +	for (phase = 0; phase < 17; phase++) {
+> > > > > +		for (tap = 0; tap < 7; tap++) {
+> > > > > +			coeff++;
+> > > >
+> > > > Can be part of the % check.
+> > >
+> > > OK.
+> > >
+> > > >
+> > > > > +			if (tap == 3)
+> > > > > +				val = (phase % 2) ? (0x800) : (0x800 << 16);
+> > > >
+> > > > Parens overload.
+> > >
+> > > OK. Will remove.
+> > > >
+> > > > > +
+> > > > > +			if (coeff % 2 == 0) {
+> > > > > +				intel_de_write_fw(dev_priv,
+> > > > SKL_PS_COEF_DATA_SET0(pipe, scaler_id), val);
+> > > > > +				val = 0;
+> > > >
+> > > > Can drop this val=0 if you move the variable into tight scope and
+> > > > initialize there.
+> > >
+> > > Moving val=0 initialization to the tight scope will not work here as
+> > > we need to retain "val" and write only when 2 coefficients are ready
+> > > (since 2 coefficients are packed in 1 dword).
+> > >
+> > > e.g. for (12th , 11th)  coefficients, coefficient reg value should be ( (0 << 16) |
+> > 0x800).
+> > > If we initialize val = 0 in tight loop, 0 will be written to  coefficient register.
+> > 
+> > Hmm, right. I guess I'd try to rearrange this to iterate the registers directly
+> > instead of the phases and taps. Something like this perhaps:
+> > 
+> > static int cnl_coef_tap(int i)
+> > {
+> > 	return i % 7;
+> > }
+> > 
+> > static u16 cnl_coef(int t)
+> 
+> cnl_coef -> cnl_nearest_filter_coef.  Right?
 
-I dropped this commit from bpf-next, since it causes unnecessary conflicts.
-Please steer it via Jon's tree.
-Thanks
+Right.
+
+> 
+> > {
+> > 	return t == 3 ? 0x0800 : 0x3000;
+> > }
+> > 
+> > static void cnl_program_nearest_filter_coefs(void)
+> > {
+> > 	int i;
+> > 
+> > 	for (i = 0; i < 17 * 7; i += 2) {
+> > 		uint32_t tmp;
+> > 		int t;
+> > 
+> > 		t = cnl_coef_tap(i);
+> > 		tmp = cnl_nearest_filter_coef(t);
+> > 
+> > 		t = cnl_coef_tap(i + 1);
+> > 		tmp |= cnl_nearest_filter_coef(t) << 16;
+> > 
+> > 		intel_de_write_fw(tmp);
+> > 	}
+> > }
+> > 
+> > More readable I think. The downside being all those modulo operations but
+> > hopefully that's all in the noise when it comes to performance.
+> 
+> Looks better, thanks for spending time on this.
+> I will try this out.
+> 
+> Thanks,
+> Pankaj 
+> > 
+> > --
+> > Ville Syrjälä
+> > Intel
+
+-- 
+Ville Syrjälä
+Intel
