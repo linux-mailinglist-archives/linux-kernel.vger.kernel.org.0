@@ -2,135 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 656C2183ED1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:47:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFD56183EE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:56:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbgCMBqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 21:46:53 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48536 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbgCMBqw (ORCPT
+        id S1726443AbgCMB4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 21:56:01 -0400
+Received: from m177134.mail.qiye.163.com ([123.58.177.134]:27839 "EHLO
+        m177134.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbgCMB4B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 21:46:52 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: koike)
-        with ESMTPSA id E643B28DA67
-From:   Helen Koike <helen.koike@collabora.com>
-To:     linux-media@vger.kernel.org
-Cc:     mchehab@kernel.org, linux-kernel@vger.kernel.org,
-        tfiga@chromium.org, linux-rockchip@lists.infradead.org,
-        hans.verkuil@cisco.com, kernel@collabora.com,
-        Helen Koike <helen.koike@collabora.com>
-Subject: [PATCH 3/3] media: staging: rkisp1: cap: serialize start/stop stream
-Date:   Thu, 12 Mar 2020 22:46:26 -0300
-Message-Id: <20200313014626.3103091-4-helen.koike@collabora.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200313014626.3103091-1-helen.koike@collabora.com>
-References: <20200313014626.3103091-1-helen.koike@collabora.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 12 Mar 2020 21:56:01 -0400
+X-Greylist: delayed 533 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Mar 2020 21:55:59 EDT
+Received: from lcc-VirtualBox.vivo.xyz (unknown [58.251.74.226])
+        by m17617.mail.qiye.163.com (Hmail) with ESMTPA id 22393261536;
+        Fri, 13 Mar 2020 09:47:04 +0800 (CST)
+From:   Chucheng Luo <luochucheng@vivo.com>
+To:     Hans de Goede <hdegoede@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     wenhu.wang@vivo.com, trivial@kernel.org,
+        Chucheng Luo <luochucheng@vivo.com>
+Subject: [PATCH] fs: Fix missing 'bit' in comment
+Date:   Fri, 13 Mar 2020 09:46:55 +0800
+Message-Id: <20200313014655.28967-1-luochucheng@vivo.com>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUlXWQgYFAkeWUFZTVVISk9LS0tKSUJNQkJMSllXWShZQU
+        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OCo6Qyo*NTgwKDETCxQtCRwN
+        FDdPFBhVSlVKTkNPS01PS0lPT0NJVTMWGhIXVRcOFBgTDhgTHhUcOw0SDRRVGBQWRVlXWRILWUFZ
+        TkNVSU5KVUxPVUlJTVlXWQgBWUFKTkhLNwY+
+X-HM-Tid: 0a70d192cf389375kuws22393261536
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to support simultaneous streaming from both capture devices,
-start/stop vb2 calls need to be serialized to allow multiple concurrent
-calls.
+The missing word may make it hard for other developers to
+understand it.
 
-This is required to synchronize who starts/stops the shared entities in
-the pipeline.
-
-Signed-off-by: Helen Koike <helen.koike@collabora.com>
-
+Signed-off-by: Chucheng Luo <luochucheng@vivo.com>
 ---
+ fs/vboxsf/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/staging/media/rkisp1/rkisp1-capture.c | 9 +++++++++
- drivers/staging/media/rkisp1/rkisp1-common.h  | 2 ++
- drivers/staging/media/rkisp1/rkisp1-dev.c     | 2 ++
- 3 files changed, 13 insertions(+)
-
-diff --git a/drivers/staging/media/rkisp1/rkisp1-capture.c b/drivers/staging/media/rkisp1/rkisp1-capture.c
-index e665381b5af0..30d7a72aa554 100644
---- a/drivers/staging/media/rkisp1/rkisp1-capture.c
-+++ b/drivers/staging/media/rkisp1/rkisp1-capture.c
-@@ -935,6 +935,8 @@ static void rkisp1_vb2_stop_streaming(struct vb2_queue *queue)
- 	struct rkisp1_device *rkisp1 = cap->rkisp1;
- 	int ret;
+diff --git a/fs/vboxsf/dir.c b/fs/vboxsf/dir.c
+index dd147b490982..4d569f14a8d8 100644
+--- a/fs/vboxsf/dir.c
++++ b/fs/vboxsf/dir.c
+@@ -134,7 +134,7 @@ static bool vboxsf_dir_emit(struct file *dir, struct dir_context *ctx)
+ 		d_type = vboxsf_get_d_type(info->info.attr.mode);
  
-+	mutex_lock(&cap->rkisp1->stream_lock);
-+
- 	rkisp1_stream_stop(cap);
- 	media_pipeline_stop(&node->vdev.entity);
- 	ret = rkisp1_pipeline_sink_walk(&node->vdev.entity, NULL,
-@@ -954,6 +956,8 @@ static void rkisp1_vb2_stop_streaming(struct vb2_queue *queue)
- 		dev_err(rkisp1->dev, "power down failed error:%d\n", ret);
- 
- 	rkisp1_dummy_buf_destroy(cap);
-+
-+	mutex_unlock(&cap->rkisp1->stream_lock);
- }
- 
- /*
-@@ -998,6 +1002,8 @@ rkisp1_vb2_start_streaming(struct vb2_queue *queue, unsigned int count)
- 	struct media_entity *entity = &cap->vnode.vdev.entity;
- 	int ret;
- 
-+	mutex_lock(&cap->rkisp1->stream_lock);
-+
- 	ret = rkisp1_dummy_buf_create(cap);
- 	if (ret)
- 		goto err_ret_buffers;
-@@ -1027,6 +1033,8 @@ rkisp1_vb2_start_streaming(struct vb2_queue *queue, unsigned int count)
- 		goto err_pipe_disable;
- 	}
- 
-+	mutex_unlock(&cap->rkisp1->stream_lock);
-+
- 	return 0;
- 
- err_pipe_disable:
-@@ -1040,6 +1048,7 @@ rkisp1_vb2_start_streaming(struct vb2_queue *queue, unsigned int count)
- 	rkisp1_dummy_buf_destroy(cap);
- err_ret_buffers:
- 	rkisp1_return_all_buffers(cap, VB2_BUF_STATE_QUEUED);
-+	mutex_unlock(&cap->rkisp1->stream_lock);
- 
- 	return ret;
- }
-diff --git a/drivers/staging/media/rkisp1/rkisp1-common.h b/drivers/staging/media/rkisp1/rkisp1-common.h
-index 369a401b098a..f74fca3985e3 100644
---- a/drivers/staging/media/rkisp1/rkisp1-common.h
-+++ b/drivers/staging/media/rkisp1/rkisp1-common.h
-@@ -244,6 +244,7 @@ struct rkisp1_debug {
-  * @rkisp1_capture: capture video device
-  * @stats: ISP statistics output device
-  * @params: ISP input parameters device
-+ * @stream_lock: lock to serialize start/stop streaming in capture devices.
-  */
- struct rkisp1_device {
- 	void __iomem *base_addr;
-@@ -263,6 +264,7 @@ struct rkisp1_device {
- 	struct rkisp1_params params;
- 	struct media_pipeline pipe;
- 	struct vb2_alloc_ctx *alloc_ctx;
-+	struct mutex stream_lock;
- 	struct rkisp1_debug debug;
- };
- 
-diff --git a/drivers/staging/media/rkisp1/rkisp1-dev.c b/drivers/staging/media/rkisp1/rkisp1-dev.c
-index 558126e66465..2977c494925f 100644
---- a/drivers/staging/media/rkisp1/rkisp1-dev.c
-+++ b/drivers/staging/media/rkisp1/rkisp1-dev.c
-@@ -472,6 +472,8 @@ static int rkisp1_probe(struct platform_device *pdev)
- 	dev_set_drvdata(dev, rkisp1);
- 	rkisp1->dev = dev;
- 
-+	mutex_init(&rkisp1->stream_lock);
-+
- 	rkisp1->base_addr = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(rkisp1->base_addr))
- 		return PTR_ERR(rkisp1->base_addr);
+ 		/*
+-		 * On 32 bit systems pos is 64 signed, while ino is 32 bit
++		 * On 32-bit systems pos is 64-bit signed, while ino is 32-bit
+ 		 * unsigned so fake_ino may overflow, check for this.
+ 		 */
+ 		if ((ino_t)(ctx->pos + 1) != (u64)(ctx->pos + 1)) {
 -- 
-2.25.0
+2.17.1
 
