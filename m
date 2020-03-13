@@ -2,72 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DAB11844AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 11:17:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F352C18449D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 11:16:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbgCMKRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 06:17:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47510 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726364AbgCMKRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 06:17:19 -0400
-Received: from localhost.localdomain (unknown [171.76.107.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C321320752;
-        Fri, 13 Mar 2020 10:17:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584094639;
-        bh=eOHdzKsuiDRxoSeOKx1T/q3qpP4W3MG5l3YkkamaGsA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qsvw6gJC9EUFUTUlvPKrcV18uMpume8SkblzARhMPsFVi4/0BmnsE9jRETmSwJhFJ
-         2cFAIRQ9bYNs45hs9PjemzdVn3TNbJ07pUlRBk4NI1vGX2e5Ht/bx+4Chfz6aQOscK
-         ft+Hx/lwnuHdCsjvBaE22hGzTyWTKeoltGiIOPeM=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Patrick Lai <plai@codeaurora.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 9/9] ALSA: compress: bump the version
-Date:   Fri, 13 Mar 2020 15:46:27 +0530
-Message-Id: <20200313101627.1561365-10-vkoul@kernel.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200313101627.1561365-1-vkoul@kernel.org>
-References: <20200313101627.1561365-1-vkoul@kernel.org>
+        id S1726485AbgCMKQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 06:16:49 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33527 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbgCMKQs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 06:16:48 -0400
+Received: by mail-ot1-f68.google.com with SMTP id g15so9507949otr.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 03:16:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Jua92NQloJZLKybkpufWAYb9BLz9N/qiUngHkqkKW74=;
+        b=Semho+Hqn5Du/45WFb+kV+8sNpKG1q+fXnIxCAtXJ/cQLymINRbOc5eDeWBCAnFjrv
+         pkpooLzYODOE2RJgbzpq/w4GWPpi4u+GVbhQ3hJHgzmA6VQEN1BOmVEahcTwgWJjsep9
+         F54xMvl5VVe80e79HVVLYL9y8j22fe0F3JQa/Ro5s9kEOSZ8uR2pednAKJHKMSYcRHRA
+         0PqWpkLHK2eHNTrURqXPEkH30sIPXaGnI5nyGt9qrNExHQqd7y5tei9YnBInII2BmjPZ
+         9Jby8vr5cEiaK6TifjAQPVGLLd1Zdt8bP0IN/1/h95Wz3GVFZOHuwNqlV1CyayyHNkA2
+         ET+w==
+X-Gm-Message-State: ANhLgQ36dUPNeFN4buIJ+QOOkDZsAIsoIXwvu43jHqix9R4JzBmw2H1u
+        knjqBgJhpLOkyWWSbXCdBUhL0B/SMUmDU9ZOG7E=
+X-Google-Smtp-Source: ADFU+vtPD5EjMs8XWjMLmd1y66lVZWhosnYNobYGDQsn++67Rqv2tj1vpKQAPtjj2I9seOiikClZpaGzcgYTR/O4YBQ=
+X-Received: by 2002:a9d:b89:: with SMTP id 9mr10423838oth.297.1584094607744;
+ Fri, 13 Mar 2020 03:16:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <6d6dd6fa-880f-01fe-6177-281572aed703@labbott.name>
+ <20200312003436.GF1639@pendragon.ideasonboard.com> <MWHPR13MB0895E133EC528ECF50A22100FDFD0@MWHPR13MB0895.namprd13.prod.outlook.com>
+ <20200313031947.GC225435@mit.edu> <87d09gljhj.fsf@intel.com>
+ <20200313093548.GA2089143@kroah.com> <24c64c56-947b-4267-33b8-49a22f719c81@suse.cz>
+ <20200313100755.GA2161605@kroah.com>
+In-Reply-To: <20200313100755.GA2161605@kroah.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 13 Mar 2020 11:16:36 +0100
+Message-ID: <CAMuHMdVSxS1R2osYJh29aKGaqMw3NkTRgqgRWuhu4euygAAXVg@mail.gmail.com>
+Subject: Re: [Ksummit-discuss] [Tech-board-discuss] Linux Foundation Technical
+ Advisory Board Elections -- Change to charter
+To:     Greg KH <greg@kroah.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, "Bird, Tim" <Tim.Bird@sony.com>,
+        "ksummit-discuss@lists.linuxfoundation.org" 
+        <ksummit-discuss@lists.linuxfoundation.org>,
+        "tech-board-discuss@lists.linuxfoundation.org" 
+        <tech-board-discuss@lists.linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have added support for bunch of new decoders and parameters for
-decoders. To help users find the support bump the version up to 0,2,0.
+Hi Greg,
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- include/uapi/sound/compress_offload.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, Mar 13, 2020 at 11:08 AM Greg KH <greg@kroah.com> wrote:
+> On Fri, Mar 13, 2020 at 10:41:57AM +0100, Vlastimil Babka wrote:
+> > On 3/13/20 10:35 AM, Greg KH wrote:
+> > >> Not that I'm saying there's an easy solution, but obviously kernel.org
+> > >> account is not as problem free as you might think.
+> > >
+> > > We are not saying it is "problem free", but what really is the problem
+> > > with it?
+> >
+> > IIUC there is no problem for its current use, but it would be rather restrictive
+> > if it was used as the only criterion for being able to vote for TAB remotely.
+>
+> Given that before now, there has not be any way to vote for the TAB
+> remotely, it's less restrictive :)
 
-diff --git a/include/uapi/sound/compress_offload.h b/include/uapi/sound/compress_offload.h
-index 56d95673ce0f..7184265c0b0d 100644
---- a/include/uapi/sound/compress_offload.h
-+++ b/include/uapi/sound/compress_offload.h
-@@ -31,7 +31,7 @@
- #include <sound/compress_params.h>
- 
- 
--#define SNDRV_COMPRESS_VERSION SNDRV_PROTOCOL_VERSION(0, 1, 2)
-+#define SNDRV_COMPRESS_VERSION SNDRV_PROTOCOL_VERSION(0, 2, 0)
- /**
-  * struct snd_compressed_buffer - compressed buffer
-  * @fragment_size: size of buffer fragment in bytes
+But people without kernel.org accounts could still vote in person before,
+right?
+
+Obviously the next step beyond "has a kernel.org account" is "is listed
+in MAINTAINERS".  All of these can be assumed to be real humans, too.
+However, that's still more restrictive than before, as it rules out people
+who are not maintainers.
+
+So next step would be developers/maintainers with an SoB.  I think it's still
+safe to assume they are real humans, too.
+Add a minimum number of commits[*] to raise the bar a little bit, and avoid
+the whitespace-fixers who just want to vote.
+
+[*] And e.g. count commits more than one year ago half, more than N years
+    ago 1/2^N.  Perhaps add another penalty for staging cleanups ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.24.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
