@@ -2,86 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84113183EE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:55:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B408183EE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:58:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726364AbgCMBzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 21:55:07 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:43625 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726194AbgCMBzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 21:55:06 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48dpfv08WZz9sQx;
-        Fri, 13 Mar 2020 12:55:02 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1584064504;
-        bh=Oe3ismlq739fmrVVvyGbgIVXeF+BRmS6+YyGbgOEgw0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=V3BfsLIJ+e/hULC3ZlLht/uHfO5y9O34dKyAelJeKUuIq0IjomUWwDjluAex8d3iB
-         IGUrCxxZmc6jj0L67VBxZckypxcEB4tPsGxa/ob22nw6OonC9wLgxT2+PMBBm2G/KU
-         oUSkbtfHGgB2VSKTeMbNsPUPK24zllLHuZW4+i/5nCwBtHl1T6FF/rV16GKVvvbV9E
-         ndsl2SApzjcaRgt22WmruLpk1xz5VFYUF14x+VEUYpmr+Y0WUcl6tqNeNquK7U7VqV
-         kIGSrfJ7YpcSs1e/XsB8227oRE19hYOYJaOrKCswYReuSqKqsLj/0utClJ5GMitXE9
-         scujTWox9NnoQ==
-Date:   Fri, 13 Mar 2020 12:54:54 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: linux-next: build failure after merge of the pci tree
-Message-ID: <20200313125454.6314a687@canb.auug.org.au>
+        id S1726393AbgCMB6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 21:58:17 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37244 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726114AbgCMB6R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 21:58:17 -0400
+Received: by mail-qt1-f195.google.com with SMTP id l20so6287329qtp.4;
+        Thu, 12 Mar 2020 18:58:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=88CKdz/NKjVak04/lN/5uD3uM5mQKrmtijz9vSkeFgg=;
+        b=pjSAOZwt9ryPLjEr9Hn+KApbAgGbTkRLnUUH65gnKwCdCkYwq6qZSG+nWJ2u4BqHK0
+         tY7/ToQXdluH6nYEh0LlaNONnotFWYeWQs7ksBcJwWZSMbZAKiWOCD/mpDmNLmNx73Zs
+         gCrn6ASGGxo23xeiOF+49pKCeuxy0UG9CtM2APILEqad5ipMKu2R/gDgkETqpzZY0S9l
+         KsgrTyJW49G/BOUCKMgudmmuBywylqv8Xu4EXoXh0YXqE5BxR3lmju3MMUSBinST6SAC
+         uYWe7YaaLMmgtI9jRzkTANe0kcvacI7UN5ylAZgsiCvqfGuyG00pqVMrO+S0hdF49UYM
+         RSNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=88CKdz/NKjVak04/lN/5uD3uM5mQKrmtijz9vSkeFgg=;
+        b=udlrYVGVyAHLu67RuvmwUjZvJeN4PzC1q2oa114gKwLMZNDRE4QIJqCTWctMwHmDoR
+         wc6u4afJkd2aMQ+BcG0pvzGBJSZWFaqbBSN3L06VXhJD+KZoxVqCbEYSOub7JctnSplT
+         lHOgOrWt0yRnDro8swQ12ocN7aXdr00L3/a0wIXSlLxsdh4zjHElsTCOFdiG9t5mMQgT
+         TKiiQfXnjWkRlAXpjlRYZq9DLJ/vu6qoibTqBSk2CEsF2HxnOoq86nKtbekE0JQXcwld
+         KZvtazrmSDZY9MDLTMcCIR1PVNOhAMUHoIh8Y2rdlFhi/1jJOUAIYm7zqVQ8ufRYoZ0q
+         tzuw==
+X-Gm-Message-State: ANhLgQ03DQsh6lNzIa9OdbLEz/OXtHri+2T4KY7XTzaANq/Xurr0JXir
+        s/xbKvtoM8+px1dtX3QdAhfLKO/tuPhq6HZ5QavsGQ==
+X-Google-Smtp-Source: ADFU+vvK5+cSY2SJjGHWhKW0xQKWTvae4atVpKpb9h+cuGuLEZkISiyaRiiGVQ5/eNNFTISVK0wd8Lq7pxHaHGITVPM=
+X-Received: by 2002:ac8:5298:: with SMTP id s24mr10110299qtn.54.1584064696061;
+ Thu, 12 Mar 2020 18:58:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/MwBqppDMHPigmi0FDsWwnm9";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <cover.1583725533.git.shengjiu.wang@nxp.com> <24f69c50925b93afd7a706bd888ee25d27247c78.1583725533.git.shengjiu.wang@nxp.com>
+ <20200309211943.GB11333@Asurada-Nvidia.nvidia.com>
+In-Reply-To: <20200309211943.GB11333@Asurada-Nvidia.nvidia.com>
+From:   Shengjiu Wang <shengjiu.wang@gmail.com>
+Date:   Fri, 13 Mar 2020 09:58:05 +0800
+Message-ID: <CAA+D8ANwQ_orAxtVCxsAOJ8b2bRxM9myD+N8Ce7okNZK7q9g9w@mail.gmail.com>
+Subject: Re: [PATCH v5 1/7] ASoC: dt-bindings: fsl_asrc: Add new property fsl,asrc-format
+To:     Nicolin Chen <nicoleotsuka@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Timur Tabi <timur@kernel.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/MwBqppDMHPigmi0FDsWwnm9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Rob
 
-Hi all,
+On Tue, Mar 10, 2020 at 5:20 AM Nicolin Chen <nicoleotsuka@gmail.com> wrote:
+>
+> On Mon, Mar 09, 2020 at 11:58:28AM +0800, Shengjiu Wang wrote:
+> > In order to support new EASRC and simplify the code structure,
+> > We decide to share the common structure between them. This bring
+> > a problem that EASRC accept format directly from devicetree, but
+> > ASRC accept width from devicetree.
+> >
+> > In order to align with new ESARC, we add new property fsl,asrc-format.
+> > The fsl,asrc-format can replace the fsl,asrc-width, then driver
+> > can accept format from devicetree, don't need to convert it to
+> > format through width.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  Documentation/devicetree/bindings/sound/fsl,asrc.txt | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/sound/fsl,asrc.txt b/Documentation/devicetree/bindings/sound/fsl,asrc.txt
+> > index cb9a25165503..780455cf7f71 100644
+> > --- a/Documentation/devicetree/bindings/sound/fsl,asrc.txt
+> > +++ b/Documentation/devicetree/bindings/sound/fsl,asrc.txt
+> > @@ -51,6 +51,11 @@ Optional properties:
+> >                         will be in use as default. Otherwise, the big endian
+> >                         mode will be in use for all the device registers.
+> >
+> > +   - fsl,asrc-format : Defines a mutual sample format used by DPCM Back
+> > +                       Ends, which can replace the fsl,asrc-width.
+> > +                       The value is SNDRV_PCM_FORMAT_S16_LE, or
+> > +                       SNDRV_PCM_FORMAT_S24_LE
+>
+> I am still holding the concern at the DT binding of this format,
+> as it uses values from ASoC header file instead of a dt-binding
+> header file -- not sure if we can do this. Let's wait for Rob's
+> comments.
 
-After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Could you please share your comments or proposal about
+Nicolin's concern?
 
-In file included from <command-line>:32:
-./usr/include/linux/pcitest.h:25:2: error: unknown type name 'bool'
-   25 |  bool use_dma;
-      |  ^~~~
-
-Caused by commit
-
-  f6628e69c581 ("tools: PCI: Add 'd' command line option to support DMA")
-
-I have used the pci tree from next-20200312 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/MwBqppDMHPigmi0FDsWwnm9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5q5+4ACgkQAVBC80lX
-0GwAGgf6Azu/zqCqW3/1HAjctt6rSEJ4NCWSNzQ4tUwTKybCrIRzSCekzRFoYvrl
-jqkWekWTf/HT7TMKGrIVxvgwN3NP5Lm90FN3B7QXKQlRzwDNombQ7hfzVVqwab0/
-0uIExOTrQghg6tD7IMp5Zm8CZ/9XdNYy64tNAkFWYns2R5sGGmnqFrVbejinxj8+
-rNfBLTdejAOZWnQ/np2yhd4nY+YFH+xzYmmIIXtoWGI1xD6plhQ6Pxxm7CZ2w46q
-w/hhp6ga5Rtsuf8qkqnhdIQAYQzTfNPJs/DDHzRge1qYgE1yF+C0TLR/56W0ZBd+
-W8ffJ3QxvLllU+soqU8Frbnrpv5beg==
-=H2gt
------END PGP SIGNATURE-----
-
---Sig_/MwBqppDMHPigmi0FDsWwnm9--
+best regards
+wang shengjiu
