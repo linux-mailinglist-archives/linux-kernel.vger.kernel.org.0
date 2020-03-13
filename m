@@ -2,170 +2,331 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5884B1849A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 15:41:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90AFC1849B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 15:43:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbgCMOlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 10:41:16 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:52821 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbgCMOlQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 10:41:16 -0400
-Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
-  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="Tudor.Ambarus@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa6.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa6.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: CZLTi7xejXP6nNOhldVOWZxB9MGkC6uPZqQHUFTXGT4h1XIXpNmD3EwjJXQMhO54F0cD/D/p6M
- oi15h+MLBEvcagd4nHMqrF4vOWVUiHxGDhFZvYbjZMgrk01I0UkTJ2QORxUkf3IZBvnHbA96SJ
- 0QeJmA4sWyn6LZYkvkZbHQYbV4JDVnEy8/6/s7ZegJ3Tymkfn6HDImBBlSQ4nX1QVdLC7R2PjJ
- MA5gCn27HRHAIXMADdjNkZJL7s3DeRhOHS1dOTM785wgxSU/dY6utr/iOxf5yeQDuH+L40RG7c
- Io8=
-X-IronPort-AV: E=Sophos;i="5.70,548,1574146800"; 
-   d="scan'208";a="5565075"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Mar 2020 07:41:15 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 13 Mar 2020 07:41:09 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Fri, 13 Mar 2020 07:41:14 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OGSmoyDvA7qYqozNUPjzJ3IHnlBSGsfGIIbIJAB/7gVS6MYAj669QIpAuOqnuGO4l89+2kd/P4jvs8TZFTwofEzc/r9yPOC7216p+ED8kMtp+gmCTRT0h/9WuzXrvlH/CtD7jAsc2RdnFHWgcrlpOn81UDjVBvluIEfVM9zN+0R3EaPrrRkXJTV9MmLx4wsZcja7gLMIU8rFJeoIgsKLhuVuzAy5MBTwtkjv7G0vwhItS5HjlUznMSyOQocnS5jmvXiXxWoTG9waEgt6JUhyAtsrXFL7Nv6DHCb7Fa6Xmso/MAsJPLgyzgP2pZ6peJ7MnNIGhZi7iCa2lcgb7TFaCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OiiqScKYOQgqjtCf3Jvx9xSnPRY3R9+15OBZ544Xs5k=;
- b=W98hDcm2f09lu79RugnNqtXZ14jPwGAxoSFKWiMxIIHVvTS/Yzxf/+h3rN3UgWlGSW44YVF0+yyhOKjqnH5gTn8gAEu6WPDh7o/Z5QLoLfpV85Pw2t3PRjhEO7T/wh4sSjtFvaUoHcC/JcjGOdZcJZIVsSYYw1V4RQddD8eOdhTYFkkFer6vzsWGG89fbojihq+RYABNxFiUo4DWu8K36y1PN80lpkdFszLBthD5cldV30/wf/6rDE639RphMYvwuHVhqJZAx+lQvKhZyz7H2chmayrAWhcpn/XgFCISszbgm/8DLxDBnNoWxvjQT2A2w9LLfCEP9uBK2v0UHrUjlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OiiqScKYOQgqjtCf3Jvx9xSnPRY3R9+15OBZ544Xs5k=;
- b=ryXUt4pHa5iUhF99TTwSUXnocpEH4pL+ENVBsrduVyx9QRzUW/haG+H7PTcqMEjUIeg8B8uMu7+rTfkps0QklRoSLHmHiN0nM0LOYE9F+cWDU6B4qCnH34gDzP3EqL6oouqzDvclPkzuQtAsFYrqZlkftTl+ZoEyZSz6IPaXb18=
-Received: from MN2PR11MB4448.namprd11.prod.outlook.com (2603:10b6:208:193::29)
- by MN2PR11MB4581.namprd11.prod.outlook.com (2603:10b6:208:26c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.18; Fri, 13 Mar
- 2020 14:41:12 +0000
-Received: from MN2PR11MB4448.namprd11.prod.outlook.com
- ([fe80::3c8f:7a55:cbd:adfb]) by MN2PR11MB4448.namprd11.prod.outlook.com
- ([fe80::3c8f:7a55:cbd:adfb%5]) with mapi id 15.20.2793.018; Fri, 13 Mar 2020
- 14:41:12 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <linux-mtd@lists.infradead.org>
-CC:     <vigneshr@ti.com>, <bbrezillon@kernel.org>,
-        <kstewart@linuxfoundation.org>, <alexandre.belloni@bootlin.com>,
-        <linux-aspeed@lists.ozlabs.org>, <thor.thayer@linux.intel.com>,
-        <jethro@fortanix.com>, <rfontana@redhat.com>,
-        <miquel.raynal@bootlin.com>, <opensource@jilayne.com>,
-        <richard@nod.at>, <michal.simek@xilinx.com>,
-        <Ludovic.Desroches@microchip.com>, <joel@jms.id.au>,
-        <nishkadg.linux@gmail.com>, <john.garry@huawei.com>,
-        <vz@mleia.com>, <alexander.sverdlin@nokia.com>,
-        <matthias.bgg@gmail.com>, <tglx@linutronix.de>,
-        <swboyd@chromium.org>, <mika.westerberg@linux.intel.com>,
-        <allison@lohutok.net>, <linux-arm-kernel@lists.infradead.org>,
-        <andrew@aj.id.au>, <Nicolas.Ferre@microchip.com>,
-        <linux-kernel@vger.kernel.org>, <dinguyen@kernel.org>,
-        <michael@walle.cc>, <ludovic.barre@st.com>,
-        <linux-mediatek@lists.infradead.org>, <info@metux.net>
-Subject: Re: [PATCH 02/23] mtd: spi-nor: Prepare core / manufacturer code
- split
-Thread-Topic: [PATCH 02/23] mtd: spi-nor: Prepare core / manufacturer code
- split
-Thread-Index: AQHV+UVw1zBm6vyq6ku0E2TrNmSLbg==
-Date:   Fri, 13 Mar 2020 14:41:12 +0000
-Message-ID: <25973821.h3VOFtvjmD@192.168.1.3>
-References: <20200302180730.1886678-1-tudor.ambarus@microchip.com>
- <20200302180730.1886678-3-tudor.ambarus@microchip.com>
- <c5ef3581-e589-1206-3856-dc4000c0b511@ti.com>
-In-Reply-To: <c5ef3581-e589-1206-3856-dc4000c0b511@ti.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [94.177.32.156]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: abfeb9f3-7d34-4d92-2bd3-08d7c75c9390
-x-ms-traffictypediagnostic: MN2PR11MB4581:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR11MB45817EC5F57CA3A3D8644990F0FA0@MN2PR11MB4581.namprd11.prod.outlook.com>
-x-bypassexternaltag: True
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-forefront-prvs: 034119E4F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(366004)(346002)(396003)(136003)(199004)(6506007)(86362001)(53546011)(4326008)(5660300002)(4744005)(81156014)(2906002)(8936002)(81166006)(186003)(8676002)(66556008)(64756008)(316002)(66946007)(76116006)(91956017)(66476007)(66446008)(478600001)(6486002)(7406005)(7416002)(71200400001)(14286002)(9686003)(26005)(6512007)(54906003)(6916009)(39026012);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB4581;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: LWL/dymZXlFhMLKmOJyLYZ30P1PxKWwLqjWMWzJFIEPfRGt+TVJyR6ma57wbdrlSo8PqhTqDANcA6unWdmZMQblrh6vtp2IAfkZgdhfqsAMuaWW/VKE7AgAgo6dOPkmZn7h6+ovbgKVKB54vSxIaO+KwRd+FkQK2Wq4ccR0xW9F3ijAcMPXR4FPDe2zIRv7cz8ukDl0FNpHZk1mDKfYxKYPejn8qQfzE0xPvpiKqt0v++dvLJJJMl4V7ikKqEZdK4j9brkwVoWURzRtrruZnuZt1Jm82UO5oCYton/M5pq1TS+3MyILvgRQ/5NZs8LvUxtawa31s2mJpd06KHvnRVnWlPh9Xb4bkZMpIQP18YXfp8w/yoQuU3u4DfBu6J1PV7lQa9WU6e4bgq+OLmQtJy2M2PukiwzaJcq+WSMKQoYvLNqY25TEHD0pXQne/ie8i8JIuOEwX4AFCrBIHJgvR+Ln/q1xhK+93RpUsG4jXsgA9ZvrR3goloPpIZDjvMY1b
-x-ms-exchange-antispam-messagedata: drXGHBeEAYx3vBt40sRR74rJRqaWk2ULvt7FCmHom5NHvPS/x8a/bEXUOifPmGX2LmuxBXfUoZYSeA+N6kgOqRHtU9Is2Rw1T66vxyaSdjxvKN7wWUkNOL4PrKl4KbXZdBYFH9N4azXEumLXhIAsEw==
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <D29F883B4B0D684CB6732488EA51455E@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726826AbgCMOnN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 10:43:13 -0400
+Received: from smtp2.ustc.edu.cn ([202.38.64.46]:56142 "EHLO ustc.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726436AbgCMOnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 10:43:13 -0400
+Received: from xhacker (unknown [101.86.20.80])
+        by newmailweb.ustc.edu.cn (Coremail) with SMTP id LkAmygBXX9_8m2tewcI8AA--.11132S2;
+        Fri, 13 Mar 2020 22:43:08 +0800 (CST)
+Date:   Fri, 13 Mar 2020 22:41:19 +0800
+From:   Jisheng Zhang <jszhang3@mail.ustc.edu.cn>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH 2/4] regulator: add support for MP8869 regulator
+Message-ID: <20200313224119.5ff15265@xhacker>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: abfeb9f3-7d34-4d92-2bd3-08d7c75c9390
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2020 14:41:12.0833
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rPFeuGzLyVLtU0zNI65kwzfypp76xUgknCUE6l5PfvHalsMmt6G/hTgFhsQVkokJJLzIXlU7afZyNnrTB7xfcVCFE3vwKd7F/pzMmDhA0YI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4581
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LkAmygBXX9_8m2tewcI8AA--.11132S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3XryUuFW5GryrJr4kAry5urg_yoW3Zr4DpF
+        45GFy3Ar48ZFWfGFWxCF9Fk3WYqan2gw1xAryfGw4avanxtFyfZF1DZryavF95Gr95CF1j
+        yayUCayxuF47XFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUyFb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
+        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
+        jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
+        8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8Jw
+        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E
+        4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGV
+        WUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_
+        Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rV
+        W3JVWrJr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8
+        JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8HGQDUUUUU==
+X-CM-SenderInfo: xmv2xttqjtqzxdloh3xvwfhvlgxou0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, March 13, 2020 8:08:44 AM EET Vignesh Raghavendra wrote:
-> On 02/03/20 11:37 pm, Tudor.Ambarus@microchip.com wrote:
-> > From: Boris Brezillon <bbrezillon@kernel.org>
-> >=20
-> > Move all SPI NOR controller drivers to a controllers/ sub-directory
-> > so that we only have SPI NOR related source files under
-> > drivers/mtd/spi-nor/.
-> >=20
-> > Rename spi-nor.c into core.c, we are about to split this file in multip=
-le
-> > source files (one per manufacturer, plus one for the SFDP parsing logic=
-).
-> >=20
-> > Signed-off-by: Boris Brezillon <bbrezillon@kernel.org>
-> > Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
->=20
-> Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
->=20
->=20
-> But there are at least two drivers being moved from spi-nor to spi/
-> which would conflict with this change.
->=20
+From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 
-I'll merge the immutable tag provided by Mark and respin this series on top=
- of=20
-it, there will be no conflicts.
+The MP8869 from Monolithic Power Systems is a single output DC/DC
+converter. The voltage can be controlled via I2C.
 
-Cheers,
-ta
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+---
+ drivers/regulator/Kconfig  |   7 ++
+ drivers/regulator/Makefile |   1 +
+ drivers/regulator/mp886x.c | 229 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 237 insertions(+)
+ create mode 100644 drivers/regulator/mp886x.c
+
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 074a2ef..2f73eee 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -624,6 +624,13 @@ config REGULATOR_MP8859
+ 	  Say M here if you want to include support for the regulator as a
+ 	  module. The module will be named "mp8859".
+ 
++config REGULATOR_MP886X
++	tristate "MPS MP8869 regulator driver"
++	depends on I2C && (OF || COMPILE_TEST)
++	select REGMAP_I2C
++	help
++	  This driver supports the MP8869 voltage regulator.
++
+ config REGULATOR_MPQ7920
+ 	tristate "Monolithic MPQ7920 PMIC"
+ 	depends on I2C && OF
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index c0d6b96..39611df 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -79,6 +79,7 @@ obj-$(CONFIG_REGULATOR_MC13892) += mc13892-regulator.o
+ obj-$(CONFIG_REGULATOR_MC13XXX_CORE) +=  mc13xxx-regulator-core.o
+ obj-$(CONFIG_REGULATOR_MCP16502) += mcp16502.o
+ obj-$(CONFIG_REGULATOR_MP8859) += mp8859.o
++obj-$(CONFIG_REGULATOR_MP886X) += mp886x.o
+ obj-$(CONFIG_REGULATOR_MPQ7920) += mpq7920.o
+ obj-$(CONFIG_REGULATOR_MT6311) += mt6311-regulator.o
+ obj-$(CONFIG_REGULATOR_MT6323)	+= mt6323-regulator.o
+diff --git a/drivers/regulator/mp886x.c b/drivers/regulator/mp886x.c
+new file mode 100644
+index 00000000..2f0f54b
+--- /dev/null
++++ b/drivers/regulator/mp886x.c
+@@ -0,0 +1,229 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// MP8869 regulator driver
++//
++// Copyright (C) 2020 Synaptics Incorporated
++//
++// Author: Jisheng Zhang <jszhang@kernel.org>
++
++#include <linux/gpio/consumer.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/regmap.h>
++#include <linux/regulator/driver.h>
++#include <linux/regulator/of_regulator.h>
++
++#define MP886X_VSEL		0x00
++#define  MP886X_V_BOOT		(1 << 7)
++#define MP886X_SYSCNTLREG1	0x01
++#define  MP886X_MODE		(1 << 0)
++#define  MP886X_GO		(1 << 6)
++#define  MP886X_EN		(1 << 7)
++
++struct mp886x_device_info {
++	struct device *dev;
++	struct regulator_desc desc;
++	struct regulator_init_data *regulator;
++	struct gpio_desc *en_gpio;
++	u32 r[2];
++	unsigned sel;
++};
++
++static int mp886x_set_mode(struct regulator_dev *rdev, unsigned int mode)
++{
++	switch (mode) {
++	case REGULATOR_MODE_FAST:
++		regmap_update_bits(rdev->regmap, MP886X_SYSCNTLREG1,
++				   MP886X_MODE, MP886X_MODE);
++		break;
++	case REGULATOR_MODE_NORMAL:
++		regmap_update_bits(rdev->regmap, MP886X_SYSCNTLREG1,
++				   MP886X_MODE, 0);
++		break;
++	default:
++		return -EINVAL;
++	}
++	return 0;
++}
++
++static unsigned int mp886x_get_mode(struct regulator_dev *rdev)
++{
++	u32 val;
++	int ret;
++
++	ret = regmap_read(rdev->regmap, MP886X_SYSCNTLREG1, &val);
++	if (ret < 0)
++		return ret;
++	if (val & MP886X_MODE)
++		return REGULATOR_MODE_FAST;
++	else
++		return REGULATOR_MODE_NORMAL;
++}
++
++static int mp8869_set_voltage_sel(struct regulator_dev *rdev, unsigned sel)
++{
++	int ret;
++
++	ret = regmap_update_bits(rdev->regmap, MP886X_SYSCNTLREG1,
++				 MP886X_GO, MP886X_GO);
++	if (ret < 0)
++		return ret;
++
++	sel <<= ffs(rdev->desc->vsel_mask) - 1;
++	return regmap_update_bits(rdev->regmap, rdev->desc->vsel_reg,
++				  MP886X_V_BOOT | rdev->desc->vsel_mask, sel);
++}
++
++static inline unsigned int mp8869_scale(unsigned int uv, u32 r1, u32 r2)
++{
++	u32 tmp = uv * r1 / r2;
++	return uv + tmp;
++}
++
++static int mp8869_get_voltage_sel(struct regulator_dev *rdev)
++{
++	struct mp886x_device_info *di = rdev_get_drvdata(rdev);
++	int ret, uv;
++	unsigned int val;
++	bool fbloop;
++
++	ret = regmap_read(rdev->regmap, rdev->desc->vsel_reg, &val);
++	if (ret)
++		return ret;
++
++	fbloop = val & MP886X_V_BOOT;
++	if (fbloop) {
++		uv = rdev->desc->min_uV;
++		uv = mp8869_scale(uv, di->r[0], di->r[1]);
++		return regulator_map_voltage_linear(rdev, uv, uv);
++	}
++
++	val &= rdev->desc->vsel_mask;
++	val >>= ffs(rdev->desc->vsel_mask) - 1;
++
++	return val;
++}
++
++static const struct regulator_ops mp8869_regulator_ops = {
++	.set_voltage_sel = mp8869_set_voltage_sel,
++	.get_voltage_sel = mp8869_get_voltage_sel,
++	.set_voltage_time_sel = regulator_set_voltage_time_sel,
++	.map_voltage = regulator_map_voltage_linear,
++	.list_voltage = regulator_list_voltage_linear,
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.set_mode = mp886x_set_mode,
++	.get_mode = mp886x_get_mode,
++};
++
++static int mp886x_regulator_register(struct mp886x_device_info *di,
++				     struct regulator_config *config)
++{
++	struct regulator_desc *rdesc = &di->desc;
++	struct regulator_dev *rdev;
++
++	rdesc->name = "mp886x-reg";
++	rdesc->supply_name = "vin";
++	rdesc->ops = of_device_get_match_data(di->dev);
++	rdesc->type = REGULATOR_VOLTAGE;
++	rdesc->n_voltages = 128;
++	rdesc->enable_reg = MP886X_SYSCNTLREG1;
++	rdesc->enable_mask = MP886X_EN;
++	rdesc->min_uV = 600000;
++	rdesc->uV_step = 10000;
++	rdesc->vsel_reg = MP886X_VSEL;
++	rdesc->vsel_mask = 0x3f;
++	rdesc->owner = THIS_MODULE;
++
++	rdev = devm_regulator_register(di->dev, &di->desc, config);
++	if (IS_ERR(rdev))
++		return PTR_ERR(rdev);
++	di->sel = rdesc->ops->get_voltage_sel(rdev);
++	return 0;
++}
++
++static const struct regmap_config mp886x_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++};
++
++static int mp886x_i2c_probe(struct i2c_client *client,
++			    const struct i2c_device_id *id)
++{
++	struct device *dev = &client->dev;
++	struct device_node *np = dev->of_node;
++	struct mp886x_device_info *di;
++	struct regulator_config config = { };
++	struct regmap *regmap;
++	int ret;
++
++	di = devm_kzalloc(dev, sizeof(struct mp886x_device_info), GFP_KERNEL);
++	if (!di)
++		return -ENOMEM;
++
++	di->regulator = of_get_regulator_init_data(dev, np, &di->desc);
++	if (!di->regulator) {
++		dev_err(dev, "Platform data not found!\n");
++		return -EINVAL;
++	}
++
++	ret = of_property_read_u32_array(np, "mps,fb-voltage-divider",
++					 di->r, 2);
++	if (ret)
++		return ret;
++
++	di->en_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_HIGH);
++	if (IS_ERR(di->en_gpio))
++		return PTR_ERR(di->en_gpio);
++
++	di->dev = dev;
++
++	regmap = devm_regmap_init_i2c(client, &mp886x_regmap_config);
++	if (IS_ERR(regmap)) {
++		dev_err(dev, "Failed to allocate regmap!\n");
++		return PTR_ERR(regmap);
++	}
++	i2c_set_clientdata(client, di);
++
++	config.dev = di->dev;
++	config.init_data = di->regulator;
++	config.regmap = regmap;
++	config.driver_data = di;
++	config.of_node = np;
++
++	ret = mp886x_regulator_register(di, &config);
++	if (ret < 0)
++		dev_err(dev, "Failed to register regulator!\n");
++	return ret;
++}
++
++static const struct of_device_id mp886x_dt_ids[] = {
++	{
++		.compatible = "mps,mp8869",
++		.data = &mp8869_regulator_ops
++	},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, mp886x_dt_ids);
++
++static const struct i2c_device_id mp886x_id[] = {
++	{ "mp886x", },
++	{ },
++};
++MODULE_DEVICE_TABLE(i2c, mp886x_id);
++
++static struct i2c_driver mp886x_regulator_driver = {
++	.driver = {
++		.name = "mp886x-regulator",
++		.of_match_table = of_match_ptr(mp886x_dt_ids),
++	},
++	.probe = mp886x_i2c_probe,
++	.id_table = mp886x_id,
++};
++module_i2c_driver(mp886x_regulator_driver);
++
++MODULE_AUTHOR("Jisheng Zhang <jszhang@kernel.org>");
++MODULE_DESCRIPTION("MP886x regulator driver");
++MODULE_LICENSE("GPL v2");
+-- 
+2.7.4
+
 
