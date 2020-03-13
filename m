@@ -2,119 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B21A5184C0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 17:10:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B72EF184C0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 17:10:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbgCMQKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 12:10:09 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42672 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbgCMQKJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 12:10:09 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q19so11095101ljp.9
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 09:10:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Lc+TP9X/BI4s1ZOmMJJExFGcSgfoK31/UWMx2IREy7U=;
-        b=WUkPN4Wxp/NqTBgJtvLPZHaL5YWWT4h6el7l/K39lgDGtaleAy/V3UhoGaGubxN3SP
-         1G278PShBfkS38pzHUgZdQZ2LNEeV+MZPVck/R5NKf4R1mhAa8xiO0bbCXZvUDBqcsK7
-         VaXxJPfbe2lQ+9AfTj/6yY8KJGGSI0sgy6kDbm8BO6Nn5STWEUuW9z9wo0nmLFQsWmZr
-         g0+62Db3M8tl5V5/+OBAgUub0X/27PAd+Fb/9kV38l7rr4N4pUODqlWSo5lsls/B8zKL
-         SZ1a9QPc0dWzC7I4ilLGpkqaBwF+DTUvVk4fFoa5k/VC9IbfJZrjWsup7TVNl2yU6Y4N
-         XTcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Lc+TP9X/BI4s1ZOmMJJExFGcSgfoK31/UWMx2IREy7U=;
-        b=p0ddYCp4zl0qMDrTKGTi/0RguYGsr23TuRs3jNpV2xY0TmM7gxUvFRunCENEWndGFg
-         caHYPN+o6WX4nGTKlXVr9pL3j1nCkLV62U05vlVgtUZaON4PGlTEZA1a9/QD/ZVfrdv2
-         ApzViu2/3k3WMiLedgUAh56vpZlUtwTxB1vIVSOQumTE+2i4btJ7PfFAq7kz34MvjMyF
-         CnBOHTsUfBruqebXwHPRPmAWOgRQP0bq4HFPiX8RoRGgbJgaXfKGSC+zdZ+e0d45tJTG
-         eaqw8/FPxgSYzlaPxE3Z2MxxbK8kGt4iNwgwfaDL9/tUquFCsMdQ3uOdY5UplYT2uEYt
-         B3hw==
-X-Gm-Message-State: ANhLgQ3/fYc5nIJvTVsf+Cvl+h8hzbuNH1UjICQIaFhuuZfi91Z3tqmq
-        Iwzzp9S7Lk+2Io3AKe5yp+xAIh/esuEjnJW8m5ynsw==
-X-Google-Smtp-Source: ADFU+vsRYQgGwBmyIdQpBHKqIX+xC/FgAeHQZpOpC1IxZt1Zj2kLuD4UfuVbCwMBCq2tDzsoed+Qq/szOEBf8JCPQEA=
-X-Received: by 2002:a2e:8112:: with SMTP id d18mr8498758ljg.137.1584115806555;
- Fri, 13 Mar 2020 09:10:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200312165429.990-1-vincent.guittot@linaro.org>
- <jhjr1xwjz96.mognet@arm.com> <CAKfTPtCQZMOz9HzdiWg5g9O+W=hC5E-fiG8YVHWCcODjFRfefQ@mail.gmail.com>
- <jhjpndgjxxk.mognet@arm.com> <jhj4kuspgse.mognet@arm.com> <CAKfTPtD67EKA46i12FHpJQT4gTzaH=ASAyb2dhv4=owPHBRSdQ@mail.gmail.com>
- <CAKfTPtBZgvTBYR+kYjj9dHq8_25mG19CZmYzY5s33ijSHdLGyQ@mail.gmail.com> <jhj36acp88q.mognet@arm.com>
-In-Reply-To: <jhj36acp88q.mognet@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 13 Mar 2020 17:09:55 +0100
-Message-ID: <CAKfTPtAMmYONX+qxp1Awj+XpqkWU3ootcyv7iar7e6z5nSczpw@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: improve spreading of utilization
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727085AbgCMQKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 12:10:24 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:54962 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726442AbgCMQKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 12:10:23 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 376221A14F2;
+        Fri, 13 Mar 2020 17:10:22 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2AD011A14E2;
+        Fri, 13 Mar 2020 17:10:22 +0100 (CET)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 9C78220465;
+        Fri, 13 Mar 2020 17:10:21 +0100 (CET)
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] clk: imx: clk-gate2: Pass the device to the register function
+Date:   Fri, 13 Mar 2020 18:10:19 +0200
+Message-Id: <1584115819-17778-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Mar 2020 at 16:47, Valentin Schneider
-<valentin.schneider@arm.com> wrote:
->
->
-> On Fri, Mar 13 2020, Vincent Guittot wrote:
-> >> > And with more coffee that's another Doh, ASYM_PACKING would end up as
-> >> > migrate_task. So this only affects the reduced capacity migration, which
-> >>
-> >> yes  ASYM_PACKING uses migrate_task and the case of reduced capacity
-> >> would use it too and would not be impacted by this patch. I say
-> >> "would" because the original rework of load balance got rid of this
-> >> case. I'm going to prepare a separate fix  for this
-> >
-> > After more thought, I think that we are safe for reduced capacity too
-> > because this is handled in the migrate_load case. In my previous
-> > reply, I was thinking of  the case where rq is not overloaded but cpu
-> > has reduced capacity which is not handled. But in such case, we don't
-> > have to force the migration of the task because there is still enough
-> > capacity otherwise rq would be overloaded and we are back to the case
-> > already handled
-> >
->
-> Good point on the capacity reduction vs group_is_overloaded.
->
-> That said, can't we also reach this with migrate_task? Say the local
+The device needs to be passed on to the clk_hw_register.
 
-The test has only been added for migrate_util so migrate_task is not impacted
+Fixes: 1f9aec9662566189 ("clk: imx: clk-gate2: Switch to clk_hw based API")
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/clk/imx/clk-gate2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> group is entirely idle, and the busiest group has a few non-idle CPUs
-> but they all have at most 1 running task. AFAICT we would still go to
-> calculate_imbalance(), and try to balance out the number of idle CPUs.
+diff --git a/drivers/clk/imx/clk-gate2.c b/drivers/clk/imx/clk-gate2.c
+index 72a7698..ce0060e 100644
+--- a/drivers/clk/imx/clk-gate2.c
++++ b/drivers/clk/imx/clk-gate2.c
+@@ -154,7 +154,7 @@ struct clk_hw *clk_hw_register_gate2(struct device *dev, const char *name,
+ 	gate->hw.init = &init;
+ 	hw = &gate->hw;
+ 
+-	ret = clk_hw_register(NULL, hw);
++	ret = clk_hw_register(dev, hw);
+ 	if (ret) {
+ 		kfree(gate);
+ 		return ERR_PTR(ret);
+-- 
+2.7.4
 
-such case is handled by migrate_task when we try to even the number of
-tasks between groups
-
->
-> If the migration_type is migrate_util, that can't happen because of this
-> change. Since we have this progressive balancing strategy (tasks -> util
-> -> load), it's a bit odd to have this "gap" in the middle where we get
-> one less possibility to trigger active balance, don't you think? That
-> is, providing I didn't say nonsense again :)
-
-Right now, I can't think of a use case that could trigger such
-situation because we use migrate_util when source is overloaded which
-means that there is at least one waiting task and we favor this task
-in priority
-
->
-> It's not a super big deal, but I think it's nice if we can maintain a
-> consistent / gradual migration policy.
->
-> >>
-> >> > might be hard to notice in benchmarks.
