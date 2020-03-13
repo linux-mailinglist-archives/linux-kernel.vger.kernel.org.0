@@ -2,117 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E569B1850A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 22:07:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F4AB1850C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 22:13:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbgCMVHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 17:07:05 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39943 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbgCMVHE (ORCPT
+        id S1727535AbgCMVNG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 17:13:06 -0400
+Received: from smtprelay0208.hostedemail.com ([216.40.44.208]:45916 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727521AbgCMVNE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 17:07:04 -0400
-Received: by mail-wr1-f67.google.com with SMTP id f3so6843457wrw.7
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 14:07:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ctrrvsauAYuF+5TZRvlwZdq08mz1JQ5bpHPFrWuBNr4=;
-        b=Svo7zeocU6WeReAJ0ARsPwMuvSxptIHLhgPIFefBnZPEgG3FnK7tlqkWb7i3HOx5vL
-         VqIJixbFQCwfd8MGlA7fSHwwWQNaHCqOvQ9m3WtJIB+UnsMRMYMZKMn/00sakmoj55Xu
-         Z3/TNEbyJZzM2ZGXSyR73sB/2Nk0vJcW+6GyPWiNj7nO5yA9XRhdmKNWsopYUJtYt4QW
-         VV9bGGawnMGRYIRVN8R4lXD7VyZ/Xuu0K7XeOBl2nODRTmHtzKpY5GY+42fn66+vKffB
-         VfdATghzXSOLKiTo7jvnVseKl8R7tuI2mE+U+32kp57yPJ1VQV/w4ar6oX00nmofuiwC
-         6Bjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ctrrvsauAYuF+5TZRvlwZdq08mz1JQ5bpHPFrWuBNr4=;
-        b=D/hbG2msGClne5wieYWFCmLFLhHfzvOdlNruLpqGWutb6HaBo6MwEtZq3HtIvlvasV
-         qY+4SaYp3/6UKXWCc0PEM8Hlj39dzKSGxoqFWHyrgGu8IBPkvq5Lt4iLr0wbBq/JVbQz
-         +x4WEHPeVuB5Zpqbob36HfjSDjwQ9qpy8vctZLsDMUOFr4iPFi9/BUprGnMDH9o7zxkl
-         ABA6MN3VpqkD1ycGhrh2+GRI/iN9s+sF6UWNdvTz2AByS3OaNfyeVJJGsCF3KgWg9yYf
-         /9ic2K+8v+hMWVUvEaaA6qihYbhcqvWPGuylFBtqw1U2wuMl1sEaAjUQfblMsWZEAqCI
-         FJqg==
-X-Gm-Message-State: ANhLgQ0Maj4skNXpEkkS/oov0+GsUznUALnB6iaHQ0as22Mmg+VN+xux
-        fBIXaQArgtUG5vzh4LeySpY104x7sEHjcr0DYlnC9A==
-X-Google-Smtp-Source: ADFU+vsIUBmJY+qJUpydM7cUlRZIlWdsbcgH0EazC9FLlBHdfGb9NDjL1C/xJGV9L08jQ8hdqvDculuC7IAjSKJD3C8=
-X-Received: by 2002:adf:91c3:: with SMTP id 61mr6714394wri.384.1584133622854;
- Fri, 13 Mar 2020 14:07:02 -0700 (PDT)
+        Fri, 13 Mar 2020 17:13:04 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id A3FFA18224082;
+        Fri, 13 Mar 2020 21:13:03 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1560:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3868:3870:3874:4321:4362:5007:10004:10400:10848:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14659:21080:21627:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: mind55_8f06b55a7b03e
+X-Filterd-Recvd-Size: 1064
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 13 Mar 2020 21:13:02 +0000 (UTC)
+Message-ID: <9d1467ed16423c8fdb2e18534505dd13b8d83edd.camel@perches.com>
+Subject: Re: [PATCH] scripts/spelling.txt: add more spellings to spelling.txt
+From:   Joe Perches <joe@perches.com>
+To:     Colin King <colin.king@canonical.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 13 Mar 2020 14:11:19 -0700
+In-Reply-To: <20200313174946.228216-1-colin.king@canonical.com>
+References: <20200313174946.228216-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-References: <1583941433-15876-1-git-send-email-tharvey@gateworks.com>
- <20200313153151.e5nmsbr6yrzchdxi@rric.localdomain> <20200313191230.qrrlo7ht24fhfhvj@rric.localdomain>
- <CAJ+vNU0q7wW8JPC8FjEkD4a-ZJc1QAmVNne0w1T4MX9pd4bCyg@mail.gmail.com> <20200313202444.vdfdowbudlsxmqsf@rric.localdomain>
-In-Reply-To: <20200313202444.vdfdowbudlsxmqsf@rric.localdomain>
-From:   Tim Harvey <tharvey@gateworks.com>
-Date:   Fri, 13 Mar 2020 14:06:50 -0700
-Message-ID: <CAJ+vNU1S+z1xLAW2nxpGTZN_6wzr0+t=4q5NDRVpCc92d_98hQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: thunderx: fix irq_request_resources
-To:     Robert Richter <rrichter@marvell.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 1:24 PM Robert Richter <rrichter@marvell.com> wrote:
->
-> On 13.03.20 12:41:19, Tim Harvey wrote:
-> > On Fri, Mar 13, 2020 at 12:12 PM Robert Richter <rrichter@marvell.com> wrote:
-> > >
-> > > On 13.03.20 16:31:51, Robert Richter wrote:
-> > > > On 11.03.20 08:43:53, Tim Harvey wrote:
-> > > > > If there are no parent resources do not call irq_chip_request_resources_parent
-> > > > > at all as this will return an error.
-> > > > >
-> > > > > This resolves a regression where devices using a thunderx gpio as an interrupt
-> > > > > would fail probing.
-> > > > >
-> > > > > Fixes: 0d04d0c ("gpio: thunderx: Use the default parent apis for {request,release}_resources")
-> > > > > Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> > > > > ---
-> > > > >  drivers/gpio/gpio-thunderx.c | 9 ++++++---
-> > > > >  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> > > Looking at the original code, the parent resources are requested only
-> > > if existing. So the change is ok.
-> > >
-> > > On the other hand, the overall change using irq_chip_{request,
-> > > release}_resources_parent() became pointless now. It is unreadable and
-> > > more complex now. Thus, commit 0d04d0c should just be reverted.
-> > >
-> > > The function interface is limited. Instead of letting the child device
-> > > deal with the parent, parent requests should be handled directly in
-> > > irq_request_resources(). Another aspect is that the code for this
-> > > driver has been already removed upstream and ti_sci_inta_msi.c is the
-> > > last remaining user of it. This speaks also for a removal by a revert.
->
-> > A revert does make the most sense to me and it works for 5.2, 5.3, and
-> > 5.5 but the revert fails for 5.4 and needs some manual intervention.
->
-> v5.4 should additionally revert a7fc89f9d5fc ("gpio: thunderx: Switch
-> to GPIOLIB_IRQCHIP"). v5.5 contains this revert too (a564ac35d605
-> Revert "gpio: thunderx: Switch to GPIOLIB_IRQCHIP") and the code in
-> that area is the same then for all kernels from 5.2 to 5.5, which is
-> basically a revert back to 5.1. I think this is ok.
->
-> Do you have a particular test case to test the driver that I can use
-> for my own testing?
->
+On Fri, 2020-03-13 at 17:49 +0000, Colin King wrote:
+> Here are some of the more common spelling mistakes and typos that I've
+> found while fixing up spelling mistakes in the kernel since November 2019
 
-Robert,
+Thanks Colin.
 
-The hardware I have has an interrupt controller with its upstream
-interrupt to an OctoenTX GPIO (and its driver is in progress and not
-yet accepted upstream which means this issue in 5.2/5.3/5.4 doesn't
-affect me). I'm unclear if you just need a device that has an
-interrupt on the OcteonTX GPIO or if the device has to be an interrupt
-controller to trigger the issue as is my case.
 
-Tim
