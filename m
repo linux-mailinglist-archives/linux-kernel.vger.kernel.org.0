@@ -2,127 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0644E183EEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 03:05:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9C92183EEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 03:00:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726331AbgCMCFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 22:05:08 -0400
-Received: from mail-db8eur05on2072.outbound.protection.outlook.com ([40.107.20.72]:38091
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726099AbgCMCFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 22:05:08 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=To0N281RWkUwUgzM8kLesiOrwDQ0P6s/Qjce0DCJyUh7yVSU909bfoqZrq2c0X2R0Dmd6s0rFAVGvNdNYiphZC80XGzPEJtSd/8dy3AOqAkPLHprHItywh7r2I2PTbxsjUwmOM+AVuXws1dJ3MFFw/vcPdvsznRedoOmYqehib1oQSmGjVE/iGSeo8/8lwtSqE3Ip2hV58982PwA9lVyWHHuejSp/vlyWfBx/8A58U/NkhEqb18p+qH6YqUZocL4N8Pntow1P7wU2tXY46Cy6EBv50DFFONtlvzrM1tZj2cOf1SOUH8gtvcWHu8xxMVHbTCzIrhLfZ3ZKAUbuvajqQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZiXC1bkJhvkPhtJJc2/V1Kn8ft8EI+LD5V+/7IkcqlI=;
- b=k4bHetj2rzSZK3Iszpxt1EMwt4D9YDlWVa4rdEEpD3dp0n7DLoVf0+foGDHhbocsR9WvajuqmegHFyStQT8F19AwL2XqrfZ0wOgYvWPm4EcYroAeGY4YJNj5eQAhJ0UQcPDspMFH4HESDw8140X1ZgSpheBPfpF5Qe6bu55AJ5ltYV3y1uzb6ICxut+T8c4BYadiVb50DY6ujCssEecS62XDG20JIQllG8lSGBOS7smwnNPyRAaJlwCjZyFAQRbx+o0xaA2QKhpcPPwGgJlTwSfIeY8mQqc1e6tEJ21cgNN7pXaYmz/V40bZ0GmhAgnya8vvzP28ZIXnnxLvNNAX3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZiXC1bkJhvkPhtJJc2/V1Kn8ft8EI+LD5V+/7IkcqlI=;
- b=ic+gFwS7msvMwX6K1HnkBNqgu+n++7yW8MkblFcLgsh3+yJfziGsek4w4BGK8FWgMmHGTcGTeE0B6Cmqs0SfS3HZUUrnxzAS4Brxq5TtHNjGHFK5dkUX42h4/oUNnHuPtSUHq/5+4ccYQou2kjcSkwxUYwOGMSJ5nyaIjzr1NPM=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6324.eurprd04.prod.outlook.com (20.179.34.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2793.17; Fri, 13 Mar 2020 02:05:05 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::548f:4941:d4eb:4c11]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::548f:4941:d4eb:4c11%6]) with mapi id 15.20.2793.018; Fri, 13 Mar 2020
- 02:05:05 +0000
-From:   peng.fan@nxp.com
-To:     broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org
-Cc:     linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V2] regmap: debugfs: check count when read regmap file
-Date:   Fri, 13 Mar 2020 09:58:07 +0800
-Message-Id: <1584064687-12964-1-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR03CA0112.apcprd03.prod.outlook.com
- (2603:1096:4:91::16) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
+        id S1726423AbgCMCAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 22:00:22 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42003 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbgCMCAW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 22:00:22 -0400
+Received: by mail-pl1-f193.google.com with SMTP id t3so3447032plz.9
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Mar 2020 19:00:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ULqLDVd2kkqniHcxRjAej9mWnrKAKa7fjvePHBiV/bU=;
+        b=q5T8cai91O4phd6Vaaykn9whcXBcEuuQZWE5Ke77vprEFCayr01ooxsz+cTajraJN5
+         2NCuYSDe2McfZej7ckrOAoyb6W1r+bs7mvdnePfhnznlSf0jJASidDUYUNZEvbMuI9+6
+         HApmx5YS+jOl7jl3Dm2xrBGqhRRu/M0ttmPF9VFFJfaIi/nkarysoI3YKTwCC8uBDhtx
+         1VZiaLGzS5jnnibEaeaZxrUyqrvLv85IIEq4mlVhE1BBzFaHBLgXRki1jBnDrXLAwqP1
+         9RMUHMTuWklF0zr6apEgSO7sutkt/spSMhm6/x03K4qwVWSTSsNLResGF/KMvDFiyPEU
+         RY6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ULqLDVd2kkqniHcxRjAej9mWnrKAKa7fjvePHBiV/bU=;
+        b=WH3Jes1aekGkl/YMSzx4IEh5O22RXpMkZhGJsiVd34BiOe0dicuyQD8xp+8aftw28y
+         y+80blWGhlD2oPIFToxLZIifzG5I/Db5f1vWLQO8C0T0erwBd4/ZEcDm6dyLQoj+MCDH
+         YdHmJ0l67Tk0rnHbd30GJKoyZBfDYAJu3RJm0nLQ31cRHXprKoaQLmdoY1VHI4TBqBmh
+         UkCWPeY9rz+UeK2F7wrL3zBhIyGg2PkDxXodtfqDet8QvU8UOq8YeascOUg7G08PTl2Q
+         CQF3I85rTfLCIciuJYGM6lNFQA5Qs77KvkidfWm9NfwWdfvfZlro/MeyfTmKGZW7na9D
+         I8SQ==
+X-Gm-Message-State: ANhLgQ3ggSSEIU/HSpm5dSCwQgJdZ37tdBkG2lazzhNij87MI+7DoCIE
+        S3TGOsAUK1AhbrA0H0Vg58Q=
+X-Google-Smtp-Source: ADFU+vv37YBJnDPGWsEgmZkosR1mP2+GO9n5l20/bA83dh1j15B1BxsiDccwfdYjU8+Ck1M608Z+OA==
+X-Received: by 2002:a17:90b:4c47:: with SMTP id np7mr7285128pjb.140.1584064821234;
+        Thu, 12 Mar 2020 19:00:21 -0700 (PDT)
+Received: from google.com ([2620:15c:211:1:3e01:2939:5992:52da])
+        by smtp.gmail.com with ESMTPSA id b25sm5364108pfp.201.2020.03.12.19.00.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2020 19:00:19 -0700 (PDT)
+Date:   Thu, 12 Mar 2020 19:00:18 -0700
+From:   Minchan Kim <minchan@kernel.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, Jann Horn <jannh@google.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: interaction of MADV_PAGEOUT with CoW anonymous mappings?
+Message-ID: <20200313020018.GC68817@google.com>
+References: <CAG48ez0G3JkMq61gUmyQAaCq=_TwHbi1XKzWRooxZkv08PQKuw@mail.gmail.com>
+ <20200312082248.GS23944@dhcp22.suse.cz>
+ <20200312201602.GA68817@google.com>
+ <bd35c17d-8766-cba5-09b3-87970de4c731@intel.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR03CA0112.apcprd03.prod.outlook.com (2603:1096:4:91::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2835.7 via Frontend Transport; Fri, 13 Mar 2020 02:05:02 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 9ec3658b-4c2b-4daf-2df6-08d7c6f2f25e
-X-MS-TrafficTypeDiagnostic: AM0PR04MB6324:|AM0PR04MB6324:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB6324CF4CCECA4E9ED453CB1888FA0@AM0PR04MB6324.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
-X-Forefront-PRVS: 034119E4F6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(39860400002)(136003)(376002)(366004)(396003)(199004)(2906002)(478600001)(52116002)(86362001)(316002)(66556008)(9686003)(81166006)(6512007)(4326008)(81156014)(8936002)(6486002)(956004)(66946007)(8676002)(66476007)(6506007)(69590400007)(186003)(5660300002)(26005)(2616005)(36756003)(16526019);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6324;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: U+mRxw7MuNlAM6dM1lbR79g3gsg4NYaXbBeuwgLt+ukX9TdDenRqNMwWAOybd3SaQecoNwiKrKN6nU0BN7N+BgxC4P4KtJsICnEU9V36Z6cvv6+4NYk2o6aaZ12LyJ7stBj5FSfOtTC5YN11qxZ8xT7GNY7iiGYeJnaifiXBivkFEswe4xovs/NgRsT9kFailv6NdmAbD7GD+pEf4CmbQJrBHfa+z4SU4Xo9i1De85g5R19PzHpaCg5DpIBy8lbbRnyVzEoc3gnQJMJrTSODXmLGKk2a4Ws4jZHH2YOmaA599M1ys9cgqv6xYfFAo7DND0x3egPmGfMRafurLebHH4inn5o8pKv6ZJVxDVmF4GM5T/eRukY9iIYhKKTARj7FKw3fPlzMHjdWIRO167XWakAHODf7u+wbjY5/ZFcdlss4UR1rlSkk8VlwQO6vnf15BrmE+GxktJAYTL6Ku/GGEGA4vkY7yTtzbswCm2dyKFdbLIJ3o5sEP5HcQo8ctQsG
-X-MS-Exchange-AntiSpam-MessageData: n1XuXhBx/RnR+y/9dYzmJ7+BIZFaHerJKXeZBFmLL95q2JLtjZX6pU/E5aipioOFX/M+KBIczESOpbF5rqNsdAtEVbCaxOy3j2gFey5xEGLE67G9iXwApES9R2Yk21f79WbxvpEcrZNf/cx2vdwjbA==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ec3658b-4c2b-4daf-2df6-08d7c6f2f25e
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2020 02:05:05.0775
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /f3oYFpQObBsI/QKbc74ZsDkaDzltcSjNL7bP/fGVnzX9dcqerqBmrnIBYL/Z3objjKMHLEBprQBr+/NHUOAdQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6324
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bd35c17d-8766-cba5-09b3-87970de4c731@intel.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On Thu, Mar 12, 2020 at 02:41:07PM -0700, Dave Hansen wrote:
+> One other fun thing.  I have a "victim" thread sitting in a loop doing:
+> 
+> 	sleep(1)
+> 	memcpy(&garbage, buffer, sz);
+> 
+> The "attacker" is doing
+> 
+> 	madvise(buffer, sz, MADV_PAGEOUT);
+> 
+> in a loop.  That, oddly enough doesn't cause the victim to page fault.
+> But, if I do:
+> 
+> 	memcpy(&garbage, buffer, sz);
+> 	madvise(buffer, sz, MADV_PAGEOUT);
+> 
+> It *does* cause the memory to get paged out.  The MADV_PAGEOUT code
+> actually has a !pte_present() check.  It will punt on a PTE if it sees
+> it.  In other words, if a page is in the swap cache but not mapped by a
+> pte_present() PTE, MADV_PAGEOUT won't touch it.
+> 
+> Shouldn't MADV_PAGEOUT be able to find and reclaim those pages?  Patch
+> attached.
 
-When executing the following command, we met kernel dump.
-dmesg -c > /dev/null; cd /sys;
-for i in `ls /sys/kernel/debug/regmap/* -d`; do
-	echo "Checking regmap in $i";
-	cat $i/registers;
-done && grep -ri "0x02d0" *;
+> 
+> 
+> ---
+> 
+>  b/mm/madvise.c |   38 +++++++++++++++++++++++++++++++-------
+>  1 file changed, 31 insertions(+), 7 deletions(-)
+> 
+> diff -puN mm/madvise.c~madv-pageout-find-swap-cache mm/madvise.c
+> --- a/mm/madvise.c~madv-pageout-find-swap-cache	2020-03-12 14:24:45.178775035 -0700
+> +++ b/mm/madvise.c	2020-03-12 14:35:49.706773378 -0700
+> @@ -248,6 +248,36 @@ static void force_shm_swapin_readahead(s
+>  #endif		/* CONFIG_SWAP */
+>  
+>  /*
+> + * Given a PTE, find the corresponding 'struct page'.  Also handles
+> + * non-present swap PTEs.
+> + */
+> +struct page *pte_to_reclaim_page(struct vm_area_struct *vma,
+> +				 unsigned long addr, pte_t ptent)
+> +{
+> +	swp_entry_t entry;
+> +
+> +	/* Totally empty PTE: */
+> +	if (pte_none(ptent))
+> +		return NULL;
+> +
+> +	/* A normal, present page is mapped: */
+> +	if (pte_present(ptent))
+> +		return vm_normal_page(vma, addr, ptent);
+> +
 
-It is because the count value is too big, and kmalloc fails. So add an
-upper bound check to allow max size `PAGE_SIZE << (MAX_ORDER - 1)`.
+Please check is_swap_pte first.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/base/regmap/regmap-debugfs.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> +	entry = pte_to_swp_entry(vmf->orig_pte);
+> +	/* Is it one of the "swap PTEs" that's not really swap? */
+> +	if (non_swap_entry(entry))
+> +		return false;
+> +
+> +	/*
+> +	 * The PTE was a true swap entry.  The page may be in the
+> +	 * swap cache.  If so, find it and return it so it may be
+> +	 * reclaimed.
+> +	 */
+> +	return lookup_swap_cache(entry, vma, addr);
 
-diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
-index e72843fe41df..089e5dc7144a 100644
---- a/drivers/base/regmap/regmap-debugfs.c
-+++ b/drivers/base/regmap/regmap-debugfs.c
-@@ -227,6 +227,9 @@ static ssize_t regmap_read_debugfs(struct regmap *map, unsigned int from,
- 	if (*ppos < 0 || !count)
- 		return -EINVAL;
- 
-+	if (count > (PAGE_SIZE << (MAX_ORDER - 1)))
-+		count = PAGE_SIZE << (MAX_ORDER - 1);
-+
- 	buf = kmalloc(count, GFP_KERNEL);
- 	if (!buf)
- 		return -ENOMEM;
-@@ -371,6 +374,9 @@ static ssize_t regmap_reg_ranges_read_file(struct file *file,
- 	if (*ppos < 0 || !count)
- 		return -EINVAL;
- 
-+	if (count > (PAGE_SIZE << (MAX_ORDER - 1)))
-+		count = PAGE_SIZE << (MAX_ORDER - 1);
-+
- 	buf = kmalloc(count, GFP_KERNEL);
- 	if (!buf)
- 		return -ENOMEM;
--- 
-2.16.4
+If we go with handling only exclusived owned page for anon,
+I think we should apply the rule to swap cache, too.
+
+Do you mind posting it as formal patch?
+
+Thanks for the explain about vulnerability and the patch, Dave!
+
+> +}
+> +
+> +/*
+>   * Schedule all required I/O operations.  Do not wait for completion.
+>   */
+>  static long madvise_willneed(struct vm_area_struct *vma,
+> @@ -389,13 +419,7 @@ regular_page:
+>  	for (; addr < end; pte++, addr += PAGE_SIZE) {
+>  		ptent = *pte;
+>  
+> -		if (pte_none(ptent))
+> -			continue;
+> -
+> -		if (!pte_present(ptent))
+> -			continue;
+> -
+> -		page = vm_normal_page(vma, addr, ptent);
+> +		page = pte_to_reclaim_page(vma, addr, ptent);
+>  		if (!page)
+>  			continue;
+>  
+> _
 
