@@ -2,108 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF2AC184EA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:33:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D50F4184E98
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:29:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbgCMSdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 14:33:51 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:45386 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbgCMSdv (ORCPT
+        id S1726866AbgCMS3T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 14:29:19 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34590 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbgCMS3T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 14:33:51 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCp36-00AyVa-Sz; Fri, 13 Mar 2020 18:28:45 +0000
-Date:   Fri, 13 Mar 2020 18:28:44 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Stefan Metzmacher <metze@samba.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeremy Allison <jra@samba.org>,
-        Ralph =?iso-8859-1?Q?B=F6hme?= <slow@samba.org>,
-        Volker Lendecke <vl@sernet.de>
-Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
-Message-ID: <20200313182844.GO23230@ZenIV.linux.org.uk>
-References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
- <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
- <20200310005549.adrn3yf4mbljc5f6@yavin>
- <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
- <580352.1583825105@warthog.procyon.org.uk>
- <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
- <3d209e29-e73d-23a6-5c6f-0267b1e669b6@samba.org>
- <CAHk-=wgu3Wo_xcjXnwski7JZTwQFaMmKD0hoTZ=hqQv3-YojSg@mail.gmail.com>
- <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
- <20200313095901.tdv4vl7envypgqfz@yavin>
+        Fri, 13 Mar 2020 14:29:19 -0400
+Received: by mail-io1-f66.google.com with SMTP id h131so10508522iof.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 11:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rgpCisfwliu4dA/jyaDv1MUiSRkvdH5MLMeJWdZUnqI=;
+        b=mpD39hF35AgrU7AYEjSQ5nIyCMV3v/hcL//P5TRI6b+2wKLWSozHIsme/iJ/rmGotH
+         1xHe9X3Vi4k/fFBOXiahhQl7s4FykK5VXBJyUA+cE0409JJvM/AbLqPM9TYXBpFlLqTB
+         PrShPCwAn9C05xrSOr/pHs4hRFEJR3I6DWdrDeV80NcADsyPDgYHWB15pF89zimUK1Y5
+         U4PnJfybeN0MV4ngBcE2hLYBuSUHVQdPtnJUk6JTa3U6t1fJX3qIJcO4bhlg/kmNVjfa
+         VlxKOjyEDEf1jBHKILfAjuKbyu6EykXk+n190ACwD339qv3pYCALJ0ZgwlbCWdibvZVv
+         lHVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rgpCisfwliu4dA/jyaDv1MUiSRkvdH5MLMeJWdZUnqI=;
+        b=tOhG28+smRi0c0TFbdDrLu35Q+Ms3xuoL1N7/FK9x6L4rLIWiocDB+Mi2uacadCISE
+         rIjUj4wQv3w2I/TAe6H0IMPuj73VdlQ5m+xYUyfLESxhVcERfYMNcmbTVw2pg0dmR29l
+         6kbA+YaFzdXMRkX8GLp++BAdiUkY/oo/7aqLDvbhsFVzlN4HziQlPaptWL090SUu1W+c
+         Qd+OQq/KL5XEcZqfKyzeDED5PznQWUMln58h3/fPkxPaluDAGYRopFdzUmBM6xZkNhd4
+         7WYPLUzLajOaw9lzHk+lDLunhmiijGKdb3UQAWU7RZaqn0qQxA9dSFD6D+nb5Y4h4ch9
+         7Fpg==
+X-Gm-Message-State: ANhLgQ0/UKZC5sX2y7Gzqf9w9XmqM4Z1s5bje3xG6wvS41qlUArxq/JM
+        HY+0aqY+U25SIhP9yvUDr+fWaQM/l8g=
+X-Google-Smtp-Source: ADFU+vvpM0wd2O7ifP4eXZtrqD9vKFHM5Ib/Y8jdC2N8E3k+3ekJEo86DBUb+v/Wr+W1/3Wl0jxnkw==
+X-Received: by 2002:a05:6638:19a:: with SMTP id a26mr14422046jaq.137.1584124158661;
+        Fri, 13 Mar 2020 11:29:18 -0700 (PDT)
+Received: from [172.22.22.26] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.googlemail.com with ESMTPSA id b5sm5103751iln.64.2020.03.13.11.29.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Mar 2020 11:29:18 -0700 (PDT)
+Subject: Re: [PATCH] soc: qcom: ipa: build IPA when COMPILE_TEST is enabled
+To:     David Miller <davem@davemloft.net>
+Cc:     kuba@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200313121126.7825-1-elder@linaro.org>
+ <20200313.112524.278974546399568453.davem@davemloft.net>
+From:   Alex Elder <elder@linaro.org>
+Message-ID: <f886a27f-e7ff-3ad9-01ba-6b9fb0045b41@linaro.org>
+Date:   Fri, 13 Mar 2020 13:29:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200313095901.tdv4vl7envypgqfz@yavin>
+In-Reply-To: <20200313.112524.278974546399568453.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 08:59:01PM +1100, Aleksa Sarai wrote:
-> On 2020-03-12, Stefan Metzmacher <metze@samba.org> wrote:
-> > Am 12.03.20 um 17:24 schrieb Linus Torvalds:
-> > > But yes, if we have a major package like samba use it, then by all
-> > > means let's add linkat2(). How many things are we talking about? We
-> > > have a number of system calls that do *not* take flags, but do do
-> > > pathname walking. I'm thinking things like "mkdirat()"?)
-> > 
-> > I haven't looked them up in detail yet.
-> > Jeremy can you provide a list?
-> > 
-> > Do you think we could route some of them like mkdirat() and mknodat()
-> > via openat2() instead of creating new syscalls?
+On 3/13/20 1:25 PM, David Miller wrote:
+> From: Alex Elder <elder@linaro.org>
+> Date: Fri, 13 Mar 2020 07:11:26 -0500
 > 
-> I have heard some folks asking for a way to create a directory and get a
-> handle to it atomically -- so arguably this is something that could be
-> inside openat2()'s feature set (O_MKDIR?). But I'm not sure how popular
-> of an idea this is.
+>> Make CONFIG_QCOM_IPA optionally dependent on CONFIG_COMPILE_TEST.
+>>
+>> Suggested-by: Jakub Kicinski <kuba@kernel.org>
+>> Signed-off-by: Alex Elder <elder@linaro.org>
+>> ---
+>>
+>> David, this implements a suggestion made by Jakub Kicinski.  I tested
+>> it with GCC 9.2.1 for x86 and found no errors or warnings in the IPA
+>> code.  It is the last IPA change I plan to make for v5.7.
+>>
+>> Once reviewed and found acceptable, it should go through net-next.
+> 
+> When I try to use this I end up with the following Kconfig warnings:
 
-For fuck sake, *NO*!
+I'm very sorry about that.  I'll look it over again and fix it.
 
-We don't need any more multiplexors from hell.  mkdir() and open() have
-deeply different interpretation of pathnames (and anyone who asks for
-e.g. traversals of dangling symlinks on mkdir() is insane).  Don't try to
-mix those; even O_TMPFILE had been a mistake.
+I got another report today from LKFT saying that there's a different
+problem when ARM64 is built 64KB pages.  I'll address both of them in
+an update.
 
-Folks, we'd paid very dearly for the atomic_open() merge.  We are _still_
-paying for it - and keep finding bugs induced by the convoluted horrors
-in that thing (see yesterday pull from vfs.git#fixes for the latest crop).
-I hope to get into more or less sane shape (part - this cycle, with
-followups in the next one), but the last thing we need is more complexity
-in the area.
+					-Alex
+ 
+> WARNING: unmet direct dependencies detected for QCOM_SCM
+>   Depends on [n]: ARM || ARM64
+>   Selected by [m]:
+>   - QCOM_MDT_LOADER [=m]
+> 
+> So this needs more work.
+> 
 
-Keep the semantics simple and regular; corner cases _suck_.  "Infinitely
-extensible (without review)" is no virtue.  And having nowhere to hide
-very special flags for very special kludges is a bloody good thing.
-
-Every fucking time we had a multiplexed syscall, it had been a massive
-source of trouble.  IF it has a uniform semantics - fine; we don't need
-arseloads of read_this(2)/read_that(2).  But when you need pages upon
-pages to describe the subtle differences in the interpretation of
-its arguments, you have already lost.  It will be full of corner
-cases, they will get zero testing and they will rot.  Inevitably.  All
-the faster for the lack of people who would be able to keep all of that
-in head.
-
-We do have a mechanism for multiplexing; on amd64 it lives in do_syscall_64().
-We really don't need openat2() turning into another one.  Syscall table
-slots are not in a short supply, and the level of review one gets from
-"new syscall added" is higher than from "make fubar(2) recognize a new
-member in options->union_full_of_crap if it has RESOLVE_TO_WANK_WITH_RIGHT_HAND
-set in options->flags, affecting its behaviour in some odd ways".
-Which is a good thing, damnit.
