@@ -2,75 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FE701849A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 15:40:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60C9C184970
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 15:34:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726569AbgCMOk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 10:40:57 -0400
-Received: from smtp2.ustc.edu.cn ([202.38.64.46]:55076 "EHLO ustc.edu.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726216AbgCMOk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 10:40:56 -0400
-X-Greylist: delayed 313 seconds by postgrey-1.27 at vger.kernel.org; Fri, 13 Mar 2020 10:40:55 EDT
-Received: from xhacker (unknown [101.86.20.80])
-        by newmailweb.ustc.edu.cn (Coremail) with SMTP id LkAmygBXX987mmteVro8AA--.11102S2;
-        Fri, 13 Mar 2020 22:35:40 +0800 (CST)
-Date:   Fri, 13 Mar 2020 22:33:35 +0800
-From:   Jisheng Zhang <jszhang3@mail.ustc.edu.cn>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 0/4] regulator: add MP8867/MP8869 support
-Message-ID: <20200313223335.7480ebaf@xhacker>
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726810AbgCMOef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 10:34:35 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51672 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726406AbgCMOee (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 10:34:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=NHZPe3dzdQ+iNkBRliZVEUBgYfzQuU1kZVe3hGShyMo=; b=1nmA48x/SGbvi37QnEIsGDzOvb
+        I9PeNgy1XMTXIZ93ZEHIkvfJAmQqy3hq5b8EwNZ22Eljxlbb81y5wEKmYr3w+IcY+J3qdVF2DVeOf
+        XUc9YA9XgAAW79otZupc+Vn2Q2dqYxtk+UBXrfWpg/Twt3W1eP83Wu3xZthtO9gppljv/4ljruNlO
+        +Hcw3kLewcna6PWNlj/lAZ5KKsvOhttMnkOYsA5X8SwuvCsdDM0rEFUQPkO8nsZnIJNbDjdB+/BtJ
+        muAnt6IikYvkcvQuZbwmrX1W1gE/YD3UZr7uliKk+uaPVPitrntbBPLiZj68+2t95GX7/4GVCx5uv
+        Sfj8D5Xg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jClOR-0006Kp-Bw; Fri, 13 Mar 2020 14:34:31 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1CF30300470;
+        Fri, 13 Mar 2020 15:34:29 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0E8F32BE08CCC; Fri, 13 Mar 2020 15:34:29 +0100 (CET)
+Date:   Fri, 13 Mar 2020 15:34:29 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     tglx@linutronix.de, jpoimboe@redhat.com
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [RFC][PATCH 04/16] objtool: Annotate identity_mapped()
+Message-ID: <20200313143429.GB12521@hirez.programming.kicks-ass.net>
+References: <20200312134107.700205216@infradead.org>
+ <20200312135041.641079164@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LkAmygBXX987mmteVro8AA--.11102S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xryktw13Zw1DArW3ZryxKrg_yoW3WrbEkw
-        1xAa4xGw4DZFs5CFW0vFsFg3y5CF4jg3yxJF13KrZYvFy7Za4UG3sxZry7AF48Ja1UZrnF
-        gw1xJr40vr13WjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbFkYjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
-        A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMc
-        vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2Iq
-        xVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r
-        106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AK
-        xVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7
-        xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWU
-        JVW8JbIYCTnIWIevJa73UjIFyTuYvjxU29YwUUUUU
-X-CM-SenderInfo: xmv2xttqjtqzxdloh3xvwfhvlgxou0/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200312135041.641079164@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+On Thu, Mar 12, 2020 at 02:41:11PM +0100, Peter Zijlstra wrote:
 
-The MP8867/MP8869 from Monolithic Power Systems is a single output
-DC/DC converter. The voltage can be controlled via I2C.
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -416,7 +416,7 @@ static void add_ignores(struct objtool_f
+>  
+>  		case STT_SECTION:
+>  			func = find_symbol_by_offset(rela->sym->sec, rela->addend);
+> -			if (!func || func->type != STT_FUNC)
+> +			if (!func || (func->type != STT_FUNC && func->type != STT_NOTYPE))
+>  				continue;
+>  			break;
+>  
+> @@ -425,7 +425,7 @@ static void add_ignores(struct objtool_f
+>  			continue;
+>  		}
+>  
+> -		func_for_each_insn(file, func, insn)
+> +		sym_for_each_insn(file, func, insn)
+>  			insn->ignore = true;
+>  	}
+>  }
 
-Jisheng Zhang (4):
-  regulator: bindings: add MPS mp8869 voltage regulator
-  regulator: add support for MP8869 regulator
-  dt-bindings: mp886x: Document MP8867 support
-  regulator: mp886x: add MP8867 support
 
- .../devicetree/bindings/regulator/mp886x.txt       |  27 ++
- drivers/regulator/Kconfig                          |   7 +
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/mp886x.c                         | 289
- +++++++++++++++++++++ 4 files changed, 324 insertions(+)
- create mode 100644
- Documentation/devicetree/bindings/regulator/mp886x.txt create mode
- 100644 drivers/regulator/mp886x.c
+This conflicts with:
 
--- 
-2.7.4
+  7acfe5315312 ("objtool: Improve call destination function detection")
 
+which wasn't in the tree we were working against :/
 
+I've resolved it something like so.
+
+---
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -406,7 +406,7 @@ static void add_ignores(struct objtool_f
+ {
+ 	struct instruction *insn;
+ 	struct section *sec;
+-	struct symbol *func;
++	struct symbol *sym;
+ 	struct rela *rela;
+ 
+ 	sec = find_section_by_name(file->elf, ".rela.discard.func_stack_frame_non_standard");
+@@ -416,12 +416,12 @@ static void add_ignores(struct objtool_f
+ 	list_for_each_entry(rela, &sec->rela_list, list) {
+ 		switch (rela->sym->type) {
+ 		case STT_FUNC:
+-			func = rela->sym;
++			sym = rela->sym;
+ 			break;
+ 
+ 		case STT_SECTION:
+-			func = find_func_by_offset(rela->sym->sec, rela->addend);
+-			if (!func)
++			sym = find_symbol_by_offset(rela->sym->sec, rela->addend);
++			if (!sym || (sym->type != STT_FUNC || sym->type != STT_NOTYPE))
+ 				continue;
+ 			break;
+ 
+@@ -430,7 +430,7 @@ static void add_ignores(struct objtool_f
+ 			continue;
+ 		}
+ 
+-		sym_for_each_insn(file, func, insn)
++		sym_for_each_insn(file, sym, insn)
+ 			insn->ignore = true;
+ 	}
+ }
