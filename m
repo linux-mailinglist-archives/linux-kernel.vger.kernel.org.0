@@ -2,119 +2,250 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 655AC184798
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 14:13:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E470A1847B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 14:14:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbgCMNNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 09:13:17 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36178 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726526AbgCMNNR (ORCPT
+        id S1726757AbgCMNOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 09:14:17 -0400
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:34652 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbgCMNOR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 09:13:17 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02DD7L64023461;
-        Fri, 13 Mar 2020 14:13:01 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=oUI8ZXDq4EiPObS+0wbkrkh1Q7HpkSyN8K/N9gjWHwY=;
- b=CMYrR8XBBnQtWJkA0eWefudDD9tn9gsZT+GMJWILTLOZQXISvjGUkZozI5RgrAlEej7E
- K26gR/vCvzJnXvccC54NJ5ZY7qlXk61EkVin6FWr+6iogkfVCuvRjv1Z3qK+viYZyNCz
- Al4pVtZs3kkxEH7UgQ6ZzB19S8CcN4dhLO1Wkrd1mHzpl6q0+crBBGjg0FT2Ru5QYzbN
- Ac1lulXTPrDkN6+Zpqlce1abtkUexXV0v7QcHq5VUzr3C8LzIbe0y4+YTqFfFPmq+m6e
- QVf95UmlFyj9+62dckN+X2O6Nrqcl4GZh1EYhaGTrWTH6d3n0wMgjPy468bX+P2eQzo+ Cg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2yqt82guej-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 Mar 2020 14:13:01 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CA20310002A;
-        Fri, 13 Mar 2020 14:13:00 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 849672A8913;
-        Fri, 13 Mar 2020 14:13:00 +0100 (CET)
-Received: from lmecxl0912.lme.st.com (10.75.127.49) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 13 Mar
- 2020 14:12:59 +0100
-Subject: Re: [PATCH] ARM: dts: stm32: add cpu clock-frequency property on
- stm32mp15x
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC:     <kernel@pengutronix.de>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200224172031.27868-1-a.fatoum@pengutronix.de>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <e5a6ce75-061d-fa75-8fe6-285b4259952f@st.com>
-Date:   Fri, 13 Mar 2020 14:12:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 13 Mar 2020 09:14:17 -0400
+Received: by mail-vk1-f195.google.com with SMTP id w67so2608023vkf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 06:14:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=r5nej1zKnErVM5m54Oa8OEYdJkqeTYbYSG60lIVS6MM=;
+        b=AlM5pRFdaXDjEYep11vgb+5n8li/qmCjD7OTv2H8gwaG4LR5CLy7UD/hPFTWaKbdLn
+         qpUzrJj65b/u5moBdm1Z8zmDvNtnwbfkpurjBgjpSiD6fvuyec4p3KZ0lsqQg+hXdk/I
+         x94A/LTz7EzPkaIo9LSAQO93wnDnBB7pfQpQ1fSINeagF4IHQnN9s+EENifH2Bopa43O
+         ocHMUFUw+q1QqiMvnKdzGmhuaF8ypliYhDnspbR0eAHkIbPN1MYe/mnci5D0ZKusbmol
+         nqei0veUc+3zGDmKDx9i5aJ1ca8D9rH9VBRQO5koUw+rEv+o7V2BwR8Phon75UtiGia5
+         sdhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r5nej1zKnErVM5m54Oa8OEYdJkqeTYbYSG60lIVS6MM=;
+        b=XnHk9voI4Cl2gfUNca32DJffIttoGfEgWKPN1RIu11SxARWOGE0W93RXw0vPhoTLRk
+         fLhtuPmHPQBgsjxxn0tSe+YgPoejLtdi3u1RT8L+jDX7nwD3j6t7okdCl/EC8udZ0rEd
+         8MHOsUdOuSm56lSm8FAWUm3JBedPCD64pxKlw/ESUB0PjpynKbWskA/uJxUj2Twa8zfx
+         XFsM6TTJ7MtvIWABCg0S96iawVq6kRh8gphctDQlRJC1q5ix1Dx7Vrh2Q5fnpB/VxJgl
+         4Lge7vpUpXc4AbjIV3SeB1ne+PvrXA1KtpQbqimvbqL0+kfktxUuGzCmfgpKeswD5E+a
+         TYDg==
+X-Gm-Message-State: ANhLgQ3Ibobvst50CbFxV4nD5BtYjEMUEc4hHxWw8jOci9XJPTACPwrE
+        zGnXR+TNkPfCTBf+08UMPWRDE63Ov6BQBeCXeErWIg==
+X-Google-Smtp-Source: ADFU+vsIHMtphZ7t20Aii8tQJpMdxFA3wJFF6idsgMVs2k35O6ilYeLCvXoAQk+u9++kmhpmSvDedexyES6m1u95NLA=
+X-Received: by 2002:a1f:52c5:: with SMTP id g188mr8502433vkb.25.1584105255211;
+ Fri, 13 Mar 2020 06:14:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200224172031.27868-1-a.fatoum@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG8NODE3.st.com (10.75.127.24) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-13_04:2020-03-12,2020-03-13 signatures=0
+References: <1574254593-16078-1-git-send-email-thara.gopinath@linaro.org>
+ <1574254593-16078-5-git-send-email-thara.gopinath@linaro.org>
+ <CAPDyKFqBusMHWNHBCMXx6TxFO=8B6ytoyvvSfi14Z=-ahBDV5A@mail.gmail.com> <ac341c33-003a-587a-7078-84a7f0c01a3a@linaro.org>
+In-Reply-To: <ac341c33-003a-587a-7078-84a7f0c01a3a@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 13 Mar 2020 14:13:37 +0100
+Message-ID: <CAPDyKFotwoiDkF6Ru39rOv+GxF7dgXG6tc0oQHMim8yKB2hRvQ@mail.gmail.com>
+Subject: Re: [Patch v4 4/7] thermal: Add generic power domain warming device driver.
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ahmad
+[...]
 
-On 2/24/20 6:20 PM, Ahmad Fatoum wrote:
-> All of the STM32MP151[1], STM32MP153[2] and STM32MP157[3] have their
-> Cortex-A7 cores running at 650 MHz.
-> 
-> Add the clock-frequency property to CPU nodes to avoid warnings about
-> them missing.
-> 
-> [1]: https://www.st.com/en/microcontrollers-microprocessors/stm32mp151.html
-> [2]: https://www.st.com/en/microcontrollers-microprocessors/stm32mp153.html
-> [3]: https://www.st.com/en/microcontrollers-microprocessors/stm32mp157.html
-> 
-> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> >> +static struct thermal_cooling_device_ops pd_warming_device_ops = {
+> >> +       .get_max_state  = ::pd_wdev_get_max_state,
+> >> +       .get_cur_state  = pd_wdev_get_cur_state,
+> >> +       .set_cur_state  = pd_wdev_set_cur_state,
+> >> +};
+> >> +
+> >> +struct thermal_cooling_device *
+> >> +pwr_domain_warming_register(struct device *parent, char *pd_name, int pd_id)
+> >
+> > Maybe rename this to: thermal_of_pd_warming_register()
+>
+> How about pd_of_warming_register? It is consistent with other cooling
+> device register like cpuidle_of_cooling_register and
+> cpufreq_of_cooling_register.
 
-Applied on stm32-next.
+Well, we actually have the following:
+of_devfreq_cooling_register()
+of_cpufreq_cooling_register()
+cpuidle_of_cooling_register()
 
-Thanks.
-Alex
+So maybe this is the most consistent. :-)
+of_pd_warming_register()
 
-> ---
->   arch/arm/boot/dts/stm32mp151.dtsi | 1 +
->   arch/arm/boot/dts/stm32mp153.dtsi | 1 +
->   2 files changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/stm32mp151.dtsi b/arch/arm/boot/dts/stm32mp151.dtsi
-> index fb41d0778b00..fd46a8e11126 100644
-> --- a/arch/arm/boot/dts/stm32mp151.dtsi
-> +++ b/arch/arm/boot/dts/stm32mp151.dtsi
-> @@ -17,6 +17,7 @@ cpus {
->   
->   		cpu0: cpu@0 {
->   			compatible = "arm,cortex-a7";
-> +			clock-frequency = <650000000>;
->   			device_type = "cpu";
->   			reg = <0>;
->   		};
-> diff --git a/arch/arm/boot/dts/stm32mp153.dtsi b/arch/arm/boot/dts/stm32mp153.dtsi
-> index 2d759fc6015c..6d9ab08667fc 100644
-> --- a/arch/arm/boot/dts/stm32mp153.dtsi
-> +++ b/arch/arm/boot/dts/stm32mp153.dtsi
-> @@ -10,6 +10,7 @@ / {
->   	cpus {
->   		cpu1: cpu@1 {
->   			compatible = "arm,cortex-a7";
-> +			clock-frequency = <650000000>;
->   			device_type = "cpu";
->   			reg = <1>;
->   		};
-> 
+>
+> > Moreover, I think you could replace the "struct device *parent", with
+> > a "struct device_node *node" as in-parameter. That's all you need,
+> > right?
+>
+> You mean pd_wdev->dev.parent need not be populated ? The device
+> in this case will be created under /sys/devices which I do not think
+> is the correct.
+
+Good point!
+
+> With a parent device specified, the power controller that resides the
+> power domain that can act as the warming dev, becomes the parent of the
+> warming dev. In case of this patch series, for the mx warming dev,
+> 179c0000.rsc/179c0000.rsc\:power-controller/ becomes the parent.(The
+> device will be created under
+> /sys/devices/platform/soc\@0/179c0000.rsc/179c0000.rsc\:power-controller/)
+>
+> Other way might be to register the warming device under virtual devices
+> as a new category of devices.
+
+No, that sounds wrong.
+
+Another option is to create a specific bus type for these new
+pd_warming devices. But I admit that sounds a bit too much, let's
+assign a parent.
+
+>
+> I prefer to keep it as a child of the power controller device, but I am
+> open to explore other options and to re-do this bit. What do you think?
+
+Sure, sorry for the noise.
+
+>
+> >
+> >> +{
+> >> +       struct pd_warming_device *pd_wdev;
+> >> +       struct of_phandle_args pd_args;
+> >> +       int ret;
+> >> +
+> >> +       pd_wdev = kzalloc(sizeof(*pd_wdev), GFP_KERNEL);
+> >> +       if (!pd_wdev)
+> >> +               return ERR_PTR(-ENOMEM);
+> >> +
+> >> +       dev_set_name(&pd_wdev->dev, "%s_warming_dev", pd_name);
+> >
+> > Perhaps skip the in-param *pd_name and make use of the suggested
+> > "struct device_node *node", the index and something with "warming...",
+> > when setting the name.
+>
+> Won't the index have to be in-param in this case ?
+
+Isn't that already the case?
+
+Huh, long time since I reviewed this.
+
+>
+> >
+> > Just an idea, as to simplify for the caller.
+> >
+> >> +       pd_wdev->dev.parent = parent;
+> >
+> > This isn't needed, I think.
+
+So ignore this comment, as discussed above.
+
+> >
+> >> +
+> >> +       ret = device_register(&pd_wdev->dev);
+> >> +       if (ret)
+> >> +               goto error;
+> >> +
+> >> +       pd_args.np = parent->of_node;
+> >> +       pd_args.args[0] = pd_id;
+> >> +       pd_args.args_count = 1;
+> >> +
+> >> +       ret = of_genpd_add_device(&pd_args, &pd_wdev->dev);
+> >> +
+> >
+> > White space.
+>
+> Will fix it.
+>
+> >
+> >> +       if (ret)
+> >> +               goto error;
+> >> +
+> >> +       ret = dev_pm_genpd_performance_state_count(&pd_wdev->dev);
+> >> +       if (ret < 0)
+> >> +               goto error;
+> >> +
+> >> +       pd_wdev->max_state = ret - 1;
+> >> +       pm_runtime_enable(&pd_wdev->dev);
+> >> +       pd_wdev->runtime_resumed = false;
+> >> +
+> >> +       pd_wdev->cdev = thermal_of_cooling_device_parent_register
+> >> +                                       (NULL, parent, pd_name, pd_wdev,
+> >> +                                        &pd_warming_device_ops);
+> >
+> > As stated in patch3, I don't get it why you need to use this new API
+> > for "parents".
+>
+> I agree with you. I cannot re-collect my thought process for this API.
+> I compiled and tested using the regular API and everything works fine.
+> I will drop patch 3 and use the thermal_of_cooling_device_register here.
+
+Great, one confusing piece seems to go away then. :-)
+
+>
+> >
+> >> +       if (IS_ERR(pd_wdev->cdev)) {
+> >> +               pr_err("unable to register %s cooling device\n", pd_name);
+> >> +               pm_runtime_disable(&pd_wdev->dev);
+> >> +               ret = PTR_ERR(pd_wdev->cdev);
+> >> +               goto error;
+> >> +       }
+> >> +
+> >> +       return pd_wdev->cdev;
+> >> +error:
+> >> +       put_device(&pd_wdev->dev);
+> >
+> > If device_register() succeeds you need to call device_unregister(),
+> > rather than put_device() as a part of the error handling.
+>
+> Will fix this.
+>
+> >
+> >> +       kfree(pd_wdev);
+> >
+> > You need a ->release() callback to manage kfree(), after you called
+> > device_register().
+>
+> mm?? I did not get this. What release callback? You mean for power
+> controller driver to call ?
+
+No, this how life cycle management of devices should be implemented.
+
+Have a look at genpd_release_dev() - and see how that is being used
+for genpd's virtual devices, that should explain more.
+
+>
+> >
+> >> +       return ERR_PTR(ret);
+> >
+> > Another thing is missing in the error path, which is to remove the
+> > device for the genpd. I think calling pm_genpd_remove_device() should
+> > work fine here.
+>
+> I will fix this. I am thinking this will be be needed in
+> pwr_domain_warming_unregister as well.
+
+Yep.
+
+Kind regards
+Uffe
