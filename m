@@ -2,114 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F252B184AC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 16:30:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A26B184ABC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 16:29:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbgCMPaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 11:30:20 -0400
-Received: from mail.baikalelectronics.com ([87.245.175.226]:33058 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbgCMPaU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 11:30:20 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 0303280307C4;
-        Fri, 13 Mar 2020 15:30:17 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at baikalelectronics.ru
-Received: from mail.baikalelectronics.ru ([127.0.0.1])
-        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zabMnJuGEewt; Fri, 13 Mar 2020 18:30:16 +0300 (MSK)
-Date:   Fri, 13 Mar 2020 18:29:28 +0300
-From:   Sergey Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
-        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
-        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Hoan Tran <hoan@os.amperecomputing.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] gpio: dwapb: Fix reference clocks usage
-Message-ID: <20200313152928.54lk2wi42auh2nat@ubsrv2.baikal.int>
-References: <20200306132505.8D3B88030795@mail.baikalelectronics.ru>
- <CACRpkdbq9aTkf6-DctXKabyd2=Rr8GPii02_8jQP49SFuTo_SQ@mail.gmail.com>
+        id S1726893AbgCMP36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 11:29:58 -0400
+Received: from mga12.intel.com ([192.55.52.136]:59583 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726446AbgCMP36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 11:29:58 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 08:29:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,549,1574150400"; 
+   d="scan'208";a="278261684"
+Received: from mlitka-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.155.148])
+  by fmsmga002.fm.intel.com with ESMTP; 13 Mar 2020 08:29:52 -0700
+Date:   Fri, 13 Mar 2020 17:29:50 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, aik@ozlabs.ru,
+        david@gibson.dropbear.id.au, linux-kernel@vger.kernel.org,
+        nayna@linux.vnet.ibm.com, gcwilson@linux.ibm.com, jgg@ziepe.ca,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: Re: [PATCH v7 2/3] tpm: ibmvtpm: Wait for buffer to be set before
+ proceeding
+Message-ID: <20200313152950.GC142269@linux.intel.com>
+References: <20200312155332.671464-1-stefanb@linux.vnet.ibm.com>
+ <20200312155332.671464-3-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACRpkdbq9aTkf6-DctXKabyd2=Rr8GPii02_8jQP49SFuTo_SQ@mail.gmail.com>
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+In-Reply-To: <20200312155332.671464-3-stefanb@linux.vnet.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 02:58:33PM +0100, Linus Walleij wrote:
-> On Fri, Mar 6, 2020 at 2:25 PM <Sergey.Semin@baikalelectronics.ru> wrote:
+On Thu, Mar 12, 2020 at 11:53:31AM -0400, Stefan Berger wrote:
+> From: Stefan Berger <stefanb@linux.ibm.com>
 > 
-> > From: Serge Semin <fancer.lancer@gmail.com>
-> >
-> > There is no need in any fixes to have the Baikal-T1 SoC DW GPIO controllers
-> > supported by the kernel DW APB GPIO driver. It works for them just fine with
-> > no modifications. But still there is a room for optimizations there.
-> >
-> > First of all as it tends to be traditional for all Baikal-T1 SoC related
-> > patchset we replaced the legacy plain text-based dt-binding file with
-> > yaml-based one. Baikal-T1 DW GPIO port A supports a debounce functionality,
-> > but in order to use it the corresponding reference clock must be enabled.
-> > We added support of that clock in the driver and made sure the dt-bindings
-> > had its declaration. In addition seeing both APB and debounce reference
-> > clocks are optional, we replaced the standard devm_clk_get() usage with
-> > the function of optional clocks acquisition.
-> >
-> > This patchset is rebased and tested on the mainline Linux kernel 5.6-rc4:
-> > commit 98d54f81e36b ("Linux 5.6-rc4").
-> >
-> > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> > Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
-> > Cc: Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>
-> > Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
-> > Cc: Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>
-> > Cc: Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>
-> > Cc: Vadim Vlasov <V.Vlasov@baikalelectronics.ru>
-> > Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> > Cc: Paul Burton <paulburton@kernel.org>
-> > Cc: Ralf Baechle <ralf@linux-mips.org>
-> > Cc: Hoan Tran <hoan@os.amperecomputing.com>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: linux-gpio@vger.kernel.org
-> > Cc: devicetree@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
+> Synchronize with the results from the CRQs before continuing with
+> the initialization. This avoids trying to send TPM commands while
+> the rtce buffer has not been allocated, yet.
 > 
-> I like these patches, once Rob is happy with the bindings I'll be
-> happy to merge them. I haven't heard from Hoan Tran in a while,
-> so if we don't hear from him this time either I would suggest you
-> also add yourself as maintainer for this driver, if you don't mind.
+> This patch fixes an existing race condition that may occurr if the
+> hypervisor does not quickly respond to the VTPM_GET_RTCE_BUFFER_SIZE
+> request sent during initialization and therefore the ibmvtpm->rtce_buf
+> has not been allocated at the time the first TPM command is sent.
 > 
-> Thanks,
-> Linus Walleij
+> Fixes: 132f76294744 ("Add new device driver to support IBM vTPM")
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> Acked-by: Nayna Jain <nayna@linux.ibm.com>
+> Tested-by: Nayna Jain <nayna@linux.ibm.com>
+> ---
+>  drivers/char/tpm/tpm_ibmvtpm.c | 9 +++++++++
+>  drivers/char/tpm/tpm_ibmvtpm.h | 1 +
+>  2 files changed, 10 insertions(+)
+> 
+> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+> index 78cc52690177..cfe40e7b1ba4 100644
+> --- a/drivers/char/tpm/tpm_ibmvtpm.c
+> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
+> @@ -571,6 +571,7 @@ static irqreturn_t ibmvtpm_interrupt(int irq, void *vtpm_instance)
+>  	 */
+>  	while ((crq = ibmvtpm_crq_get_next(ibmvtpm)) != NULL) {
+>  		ibmvtpm_crq_process(crq, ibmvtpm);
+> +		wake_up_interruptible(&ibmvtpm->crq_queue.wq);
+>  		crq->valid = 0;
+>  		smp_wmb();
+>  	}
+> @@ -618,6 +619,7 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
+>  	}
+>  
+>  	crq_q->num_entry = CRQ_RES_BUF_SIZE / sizeof(*crq_q->crq_addr);
+> +	init_waitqueue_head(&crq_q->wq);
+>  	ibmvtpm->crq_dma_handle = dma_map_single(dev, crq_q->crq_addr,
+>  						 CRQ_RES_BUF_SIZE,
+>  						 DMA_BIDIRECTIONAL);
+> @@ -670,6 +672,13 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
+>  	if (rc)
+>  		goto init_irq_cleanup;
+>  
+> +	if (!wait_event_timeout(ibmvtpm->crq_queue.wq,
+> +				ibmvtpm->rtce_buf != NULL,
+> +				HZ)) {
+> +		dev_err(dev, "CRQ response timed out\n");
+> +		goto init_irq_cleanup;
+> +	}
+> +
+>  	return tpm_chip_register(chip);
+>  init_irq_cleanup:
+>  	do {
+> diff --git a/drivers/char/tpm/tpm_ibmvtpm.h b/drivers/char/tpm/tpm_ibmvtpm.h
+> index 7983f1a33267..b92aa7d3e93e 100644
+> --- a/drivers/char/tpm/tpm_ibmvtpm.h
+> +++ b/drivers/char/tpm/tpm_ibmvtpm.h
+> @@ -26,6 +26,7 @@ struct ibmvtpm_crq_queue {
+>  	struct ibmvtpm_crq *crq_addr;
+>  	u32 index;
+>  	u32 num_entry;
+> +	wait_queue_head_t wq;
+>  };
+>  
+>  struct ibmvtpm_dev {
+> -- 
+> 2.23.0
+> 
 
-Hello Linus,
-Thanks for positive response. I'll resend the patchset soon in the
-email-threaded form together with two extra patches, which will
-add me to the MAINTAINERS list and to the dt-schema of the driver.
-If Hoan Tran will show up before you merge them, just drop these two
-new patches.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Regards,
--Sergey
-
+/Jarkko
