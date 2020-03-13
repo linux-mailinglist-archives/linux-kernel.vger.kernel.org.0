@@ -2,102 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08BA918463C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 12:52:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CA93184642
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 12:53:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbgCMLws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 07:52:48 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33899 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbgCMLwr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 07:52:47 -0400
-Received: by mail-qt1-f193.google.com with SMTP id 59so7190939qtb.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 04:52:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=EJYEwhvvykhNvLjfomJTk+7wfFhPwkWPWJYIsxK+5ik=;
-        b=WHJUb0/IaXI8YcDSsvqHVkiPkhBDtqH3G5v2AxaXMmjzE/v8jmczleWms+uAsMI/3b
-         Epb2+MASyIy28CDMCjlAhiccteW/2XOnn89UAbJyPDCisRmVM3sbY1zz7RboW4xGOlyb
-         iiW+iaQ01QvGTk0YkEFZMaGSVeYpotCjYe8UHBdflbY66Eqd/q1nJNzvUVnPywKUMlWx
-         979eYmyVlHyNAobDzaJsWSv/9DzlZWR38drY0TMzDHiTZhWo6kY1R5RppESnLc89vHBW
-         6DoOXQIrB04CYSNdGJIZe+svMlcmaw1rkTAPLoNqEy0diOdYI8TuazDEyDCNd9TmLipY
-         3ROA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=EJYEwhvvykhNvLjfomJTk+7wfFhPwkWPWJYIsxK+5ik=;
-        b=i7jzvZ0IexDm1wc18FJOs80wL2BbLmzCFqY0pEKM+tj1rb8B6E6cU7BNjTvQRMcKR0
-         F2uBq4CQ9dYGQURnt4MUYxR1+A68uIEDVGydt0De4KBHhygLujGlzAmVsmHbMuu+vKr+
-         +KRPXZfY2filomUabvvFk/TfH6DUTarVzs64aG8ThnLjSVl9OP1//F3Y7inJMlFDd0GU
-         NXzcmXuuwJTzkQglJS/w2MPZKqpmYnG6hseUGydiALmV9rNezTA1DVMvcXxuFM7sVl0I
-         hi+kc/3JX/Dm4BG1ccZu3/OgKpAGY36qOGBxNWA9YVM06as6bNxyz8IdWwfeq+0zrvar
-         KEIA==
-X-Gm-Message-State: ANhLgQ0cksx3oZgdMM9remRV7DKLRM+UAzngHNoQMiHYWwrGSgN+cuHv
-        RI2IIkJOm8j4uGLJM6ggEmHFCw==
-X-Google-Smtp-Source: ADFU+vvej74YRXY/m6GfPvQUsq2YU9gpzqc0nY21UEsUUCQi5bwxmriEBtGWTbteSOh6z5lB/G3bYA==
-X-Received: by 2002:ac8:4e14:: with SMTP id c20mr11766098qtw.141.1584100365397;
-        Fri, 13 Mar 2020 04:52:45 -0700 (PDT)
-Received: from localhost.localdomain (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.gmail.com with ESMTPSA id 199sm11031143qkm.7.2020.03.13.04.52.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 04:52:44 -0700 (PDT)
-From:   Alex Elder <elder@linaro.org>
-To:     David Dai <daidavid1@codeaurora.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Miller <davem@davemloft.net>,
-        Evan Green <evgreen@chromium.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: sdm845: update IPA interconnect providers
-Date:   Fri, 13 Mar 2020 06:52:37 -0500
-Message-Id: <20200313115237.10491-3-elder@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200313115237.10491-1-elder@linaro.org>
-References: <20200313115237.10491-1-elder@linaro.org>
+        id S1726733AbgCMLxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 07:53:04 -0400
+Received: from foss.arm.com ([217.140.110.172]:53476 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726495AbgCMLxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 07:53:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9724D30E;
+        Fri, 13 Mar 2020 04:53:03 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6E923F534;
+        Fri, 13 Mar 2020 04:53:02 -0700 (PDT)
+Date:   Fri, 13 Mar 2020 11:53:00 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     James Clark <james.clark@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        nd@arm.com
+Subject: Re: [PATCH v6 0/3] perf tools: Add support for some spe events
+Message-ID: <20200313115300.GE42546@lakrids.cambridge.arm.com>
+References: <20200228160126.GI36089@lakrids.cambridge.arm.com>
+ <20200306152520.28233-1-james.clark@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200306152520.28233-1-james.clark@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit:
-  b303f9f0050b arm64: dts: sdm845: Redefine interconnect provider DT nodes
-removed/redefined the interconnect provider node(s) used for IPA.
+On Fri, Mar 06, 2020 at 03:25:17PM +0000, James Clark wrote:
+> Hi Mark,
+> 
+> Yes I think this is something I can look into. For now I have removed
+> that last patch because the current patch set already works very similarly anyway
+> and allows people to use SPE in perf:
+> 
+>     ./perf record -e arm_spe_0/branch_filter=1/
+> vs
+>     ./perf record -e arm_spe/branch-misses/pp
 
-Update the IPA interconnect specifications accordingly.
+Thanks, FWIW that looks fine to me.
 
-Signed-off-by: Alex Elder <elder@linaro.org>
----
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+> Also I don't have access to any big.LITTLE hardware with SPE so wouldn't be able
+> to test collating all the SPE PMUs.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 0ebe12e4c07f..e0fd1f0c9b07 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1734,9 +1734,10 @@
- 			clock-names = "core";
- 
- 			interconnects =
--				<&rsc_hlos MASTER_IPA &rsc_hlos SLAVE_EBI1>,
--				<&rsc_hlos MASTER_IPA &rsc_hlos SLAVE_IMEM>,
--				<&rsc_hlos MASTER_APPSS_PROC &rsc_hlos SLAVE_IPA_CFG>;
-+				<&aggre2_noc MASTER_IPA &mem_noc SLAVE_EBI1>,
-+				<&aggre2_noc MASTER_IPA &system_noc SLAVE_IMEM>,
-+				<&gladiator_noc MASTER_APPSS_PROC
-+					&config_noc SLAVE_IPA_CFG>;
- 			interconnect-names = "memory",
- 					     "imem",
- 					     "config";
--- 
-2.20.1
+Likewise, I just want to make sure we don't back ourselves into a
+corner.
 
+Otherwise, I have no comments on these patches, so feel free to take
+that as:
+
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+Mark.
+
+> 
+> Thanks
+> James
+> 
+> Tan Xiaojun (3):
+>   perf tools: Move arm-spe-pkt-decoder.h/c to the new dir
+>   perf tools: Add support for "report" for some spe events
+>   perf report: Add SPE options to --itrace argument
+> 
+>  tools/perf/Documentation/itrace.txt           |   5 +-
+>  tools/perf/util/Build                         |   2 +-
+>  tools/perf/util/arm-spe-decoder/Build         |   1 +
+>  .../util/arm-spe-decoder/arm-spe-decoder.c    | 225 ++++++
+>  .../util/arm-spe-decoder/arm-spe-decoder.h    |  66 ++
+>  .../arm-spe-pkt-decoder.c                     |   0
+>  .../arm-spe-pkt-decoder.h                     |   2 +
+>  tools/perf/util/arm-spe.c                     | 747 +++++++++++++++++-
+>  tools/perf/util/auxtrace.c                    |  13 +
+>  tools/perf/util/auxtrace.h                    |  13 +-
+>  10 files changed, 1032 insertions(+), 42 deletions(-)
+>  create mode 100644 tools/perf/util/arm-spe-decoder/Build
+>  create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
+>  create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+>  rename tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.c (100%)
+>  rename tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.h (96%)
+> 
+> -- 
+> 2.17.1
+> 
