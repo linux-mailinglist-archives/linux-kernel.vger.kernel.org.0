@@ -2,73 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F59F184D9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:28:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A715184C89
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 17:32:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgCMR23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 13:28:29 -0400
-Received: from mga02.intel.com ([134.134.136.20]:49477 "EHLO mga02.intel.com"
+        id S1726709AbgCMQcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 12:32:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726414AbgCMR22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 13:28:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 10:28:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,549,1574150400"; 
-   d="scan'208";a="237017140"
-Received: from sblancoa-mobl.amr.corp.intel.com (HELO [10.251.232.239]) ([10.251.232.239])
-  by fmsmga008.fm.intel.com with ESMTP; 13 Mar 2020 10:28:23 -0700
-Subject: Re: [PATCH 03/16] soundwire: cadence: add interface to check clock
- status
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Hui Wang <hui.wang@canonical.com>, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>,
-        Rander Wang <rander.wang@intel.com>,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>
-References: <20200311184128.4212-1-pierre-louis.bossart@linux.intel.com>
- <20200311184128.4212-4-pierre-louis.bossart@linux.intel.com>
- <20200313120607.GE4885@vkoul-mobl>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <816cc363-5b49-9b04-54a4-be4f53001cc5@linux.intel.com>
-Date:   Fri, 13 Mar 2020 11:31:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726480AbgCMQcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 12:32:17 -0400
+Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C71B206BE;
+        Fri, 13 Mar 2020 16:32:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584117137;
+        bh=UJ9uLMaNsCdSFf3b8zBqQuLODCb8Yutk8T7Vp7hT9Sg=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=UE/g3LjyhJa8gflDX21ggALqOZagI2f93Me8yQnI6/xIFheEZYxT2wicWbDM/SkVk
+         iilOTh/8AuagnAWQaMa10epUpGAJSb15ctVjxHlstwD41960w9mcUs2Ug0DnVAjm8J
+         F1eno/74++40wsX6qm5egffxPECDlXa2F31dU6Es=
+Date:   Fri, 13 Mar 2020 17:32:14 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Lucas Tanure <tanure@linux.com>
+cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] HID: appleir: Remove unnecessary goto label
+In-Reply-To: <7c4c591bc1aa9e269cbf764a03e64d32dd6e6e96.1582998175.git.tanure@linux.com>
+Message-ID: <nycvar.YFH.7.76.2003131731490.19500@cbobk.fhfr.pm>
+References: <7c4c591bc1aa9e269cbf764a03e64d32dd6e6e96.1582998175.git.tanure@linux.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20200313120607.GE4885@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, 29 Feb 2020, Lucas Tanure wrote:
 
-
->> +/**
->> + * sdw_cdns_is_clock_stop: Check clock status
->> + *
->> + * @cdns: Cadence instance
->> + */
->> +bool sdw_cdns_is_clock_stop(struct sdw_cdns *cdns)
->> +{
->> +	u32 status;
->> +
->> +	status = cdns_readl(cdns, CDNS_MCP_STAT) & CDNS_MCP_STAT_CLK_STOP;
->> +	if (status) {
->> +		dev_dbg(cdns->dev, "Clock is stopped\n");
->> +		return true;
->> +	}
+> Signed-off-by: Lucas Tanure <tanure@linux.com>
+> ---
+>  drivers/hid/hid-appleir.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 > 
-> This can be further optimized to:
-> 
->          return !!(cdns_readl(cdns, CDNS_MCP_STAT) & CDNS_MCP_STAT_CLK_STOP);
+> diff --git a/drivers/hid/hid-appleir.c b/drivers/hid/hid-appleir.c
+> index bf8d4afe0d6a..aafc285b538f 100644
+> --- a/drivers/hid/hid-appleir.c
+> +++ b/drivers/hid/hid-appleir.c
+> @@ -284,10 +284,8 @@ static int appleir_probe(struct hid_device *hid, const struct hid_device_id *id)
+>  	struct appleir *appleir;
+>  
+>  	appleir = kzalloc(sizeof(struct appleir), GFP_KERNEL);
+> -	if (!appleir) {
+> -		ret = -ENOMEM;
+> -		goto allocfail;
+> -	}
+> +	if (!appleir)
+> +		return -ENOMEM;
+>  
+>  	appleir->hid = hid;
+>  
+> @@ -314,7 +312,6 @@ static int appleir_probe(struct hid_device *hid, const struct hid_device_id *id)
+>  	return 0;
+>  fail:
+>  	kfree(appleir);
+> -allocfail:
+>  	return ret;
+>  }
 
-The logs are very useful for debug.
+Applied, thanks.
+
+-- 
+Jiri Kosina
+SUSE Labs
+
