@@ -2,83 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63086184EB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:35:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85872184EB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:35:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbgCMSfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 14:35:06 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:50132 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727279AbgCMSfB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 14:35:01 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04397;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TsUkHy3_1584124485;
-Received: from localhost(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TsUkHy3_1584124485)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 14 Mar 2020 02:34:53 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     shakeelb@google.com, vbabka@suse.cz, akpm@linux-foundation.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mm: swap: use smp_mb__after_atomic() to order LRU bit set
-Date:   Sat, 14 Mar 2020 02:34:36 +0800
-Message-Id: <1584124476-76534-2-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1584124476-76534-1-git-send-email-yang.shi@linux.alibaba.com>
-References: <1584124476-76534-1-git-send-email-yang.shi@linux.alibaba.com>
+        id S1727543AbgCMSfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 14:35:17 -0400
+Received: from hr2.samba.org ([144.76.82.148]:59188 "EHLO hr2.samba.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727295AbgCMSfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 14:35:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Message-ID:Cc:To:From:Date;
+        bh=WW96sv0//Vhg79QaiYlSOEgUUQBStmetDMf4TONIc6M=; b=kIlHxupkrQOi9TzlSzfbE4/bDL
+        uXCSnq22mxKKsPp4wsY2SjwgRHrGGUjd5PkshA6/Ij7StaJi+8cCOXa+2uy4ujPSwXlu4A9n3fflf
+        XkyYa3DkycxsDmAzUHRsrhw/lk4UQEuZG4SUx77yN3+V1HapwvdE+wEtw1OqGFv2+0PFrzzEuTaf/
+        UILafbWfwJ6SVlMnnuB2/AhboOh8yg4LEOd40ctbA5s+rP3kSe79DPDaQA93TxktwMI4ekakTqtcG
+        6UsWH3CbrSZH8DYC3XwCombBEVbF1GH+zILxk/YiipBOVfVlGS6LpdTFyGanweoKoy2YO/1N0o8Q9
+        RhjdcWajNX5yyJ0vVHYm3FrfIeucAWOay4dqo9PauHbqEoCHY1eujrUgDXPg4HMaIlFtRVnOC6Q4E
+        1KLWYGQz1OmRlsyhTOvvjXdzI88D+i+MKn2RMug3oipCgs+yrtta2s96ODrrQVXqGTHTk2wQZX736
+        ghOoK4n2imWOy9qW7TdbFV1f;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1jCp9J-00029j-FH; Fri, 13 Mar 2020 18:35:09 +0000
+Date:   Fri, 13 Mar 2020 11:35:03 -0700
+From:   Jeremy Allison <jra@samba.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Stefan Metzmacher <metze@samba.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ralph =?iso-8859-1?Q?B=F6hme?= <slow@samba.org>,
+        Volker Lendecke <vl@sernet.de>
+Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
+Message-ID: <20200313183503.GA29092@jeremy-acer>
+Reply-To: Jeremy Allison <jra@samba.org>
+References: <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
+ <20200310005549.adrn3yf4mbljc5f6@yavin>
+ <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
+ <580352.1583825105@warthog.procyon.org.uk>
+ <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
+ <3d209e29-e73d-23a6-5c6f-0267b1e669b6@samba.org>
+ <CAHk-=wgu3Wo_xcjXnwski7JZTwQFaMmKD0hoTZ=hqQv3-YojSg@mail.gmail.com>
+ <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
+ <20200313095901.tdv4vl7envypgqfz@yavin>
+ <20200313182844.GO23230@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200313182844.GO23230@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory barrier is needed after setting LRU bit, but smp_mb() is too
-strong.  Some architectures, i.e. x86, imply memory barrier with atomic
-operations, so replacing it with smp_mb__after_atomic() sounds better,
-which is nop on strong ordered machines, and full memory barriers on
-others.  With this change the vm-calability cases would perform better
-on x86, I saw total 6% improvement with this patch and previous inline
-fix.
+On Fri, Mar 13, 2020 at 06:28:44PM +0000, Al Viro wrote:
+> On Fri, Mar 13, 2020 at 08:59:01PM +1100, Aleksa Sarai wrote:
+> > On 2020-03-12, Stefan Metzmacher <metze@samba.org> wrote:
+> > > Am 12.03.20 um 17:24 schrieb Linus Torvalds:
+> > > > But yes, if we have a major package like samba use it, then by all
+> > > > means let's add linkat2(). How many things are we talking about? We
+> > > > have a number of system calls that do *not* take flags, but do do
+> > > > pathname walking. I'm thinking things like "mkdirat()"?)
+> > > 
+> > > I haven't looked them up in detail yet.
+> > > Jeremy can you provide a list?
+> > > 
+> > > Do you think we could route some of them like mkdirat() and mknodat()
+> > > via openat2() instead of creating new syscalls?
+> > 
+> > I have heard some folks asking for a way to create a directory and get a
+> > handle to it atomically -- so arguably this is something that could be
+> > inside openat2()'s feature set (O_MKDIR?). But I'm not sure how popular
+> > of an idea this is.
+> 
+> For fuck sake, *NO*!
+> 
+> We don't need any more multiplexors from hell.  mkdir() and open() have
+> deeply different interpretation of pathnames (and anyone who asks for
+> e.g. traversals of dangling symlinks on mkdir() is insane).  Don't try to
+> mix those; even O_TMPFILE had been a mistake.
+> 
+> Folks, we'd paid very dearly for the atomic_open() merge.  We are _still_
+> paying for it - and keep finding bugs induced by the convoluted horrors
+> in that thing (see yesterday pull from vfs.git#fixes for the latest crop).
+> I hope to get into more or less sane shape (part - this cycle, with
+> followups in the next one), but the last thing we need is more complexity
+> in the area.
 
-The test data (lru-file-readtwice throughput) against v5.6-rc4:
-	mainline	w/ inline fix	w/ both (adding this)
-	150MB		154MB		159MB
+Can we disentangle the laudable desire to keep kernel internals
+simple (which I completely agree with :-) from the desire to
+keep user-space interfaces simple ?
 
-Fixes: 9c4e6b1a7027 ("mm, mlock, vmscan: no more skipping pagevecs")
-Cc: Shakeel Butt <shakeelb@google.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
----
- mm/swap.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/mm/swap.c b/mm/swap.c
-index cf39d24..118bac4 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -945,20 +945,20 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
- 	 * #0: __pagevec_lru_add_fn		#1: clear_page_mlock
- 	 *
- 	 * SetPageLRU()				TestClearPageMlocked()
--	 * smp_mb() // explicit ordering	// above provides strict
-+	 * MB() 	// explicit ordering	// above provides strict
- 	 *					// ordering
- 	 * PageMlocked()			PageLRU()
- 	 *
- 	 *
- 	 * if '#1' does not observe setting of PG_lru by '#0' and fails
- 	 * isolation, the explicit barrier will make sure that page_evictable
--	 * check will put the page in correct LRU. Without smp_mb(), SetPageLRU
-+	 * check will put the page in correct LRU. Without MB(), SetPageLRU
- 	 * can be reordered after PageMlocked check and can make '#1' to fail
- 	 * the isolation of the page whose Mlocked bit is cleared (#0 is also
- 	 * looking at the same page) and the evictable page will be stranded
- 	 * in an unevictable LRU.
- 	 */
--	smp_mb();
-+	smp_mb__after_atomic();
- 
- 	if (page_evictable(page)) {
- 		lru = page_lru(page);
--- 
-1.8.3.1
-
+Having some way of doing a mkdir() that returns an open fd
+on the new directory *is* a very useful thing for many applications,
+but I really don't care how the kernel implements it. We have so much
+Linux-specific code already that one more thing won't matter :-).
