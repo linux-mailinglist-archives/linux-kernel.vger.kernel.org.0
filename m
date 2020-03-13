@@ -2,155 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B26B2184EAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:35:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD2FC184EA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 19:33:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbgCMSex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 14:34:53 -0400
-Received: from mga06.intel.com ([134.134.136.31]:28647 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727420AbgCMSes (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 14:34:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 11:34:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,549,1574150400"; 
-   d="scan'208";a="442506152"
-Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.45])
-  by fmsmga005.fm.intel.com with ESMTP; 13 Mar 2020 11:34:47 -0700
-From:   kan.liang@linux.intel.com
-To:     acme@kernel.org, jolsa@redhat.com, peterz@infradead.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc:     namhyung@kernel.org, adrian.hunter@intel.com,
-        mathieu.poirier@linaro.org, ravi.bangoria@linux.ibm.com,
-        alexey.budankov@linux.intel.com, vitaly.slobodskoy@intel.com,
-        pavel.gerasimov@intel.com, mpe@ellerman.id.au, eranian@google.com,
-        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V3 17/17] perf hist: Add fast path for duplicate entries check
-Date:   Fri, 13 Mar 2020 11:33:19 -0700
-Message-Id: <20200313183319.17739-18-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200313183319.17739-1-kan.liang@linux.intel.com>
-References: <20200313183319.17739-1-kan.liang@linux.intel.com>
+        id S1727195AbgCMSdz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 14:33:55 -0400
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:44620 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbgCMSdy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 14:33:54 -0400
+Received: by mail-qv1-f67.google.com with SMTP id w5so5124256qvp.11
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 11:33:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IatxmkA0MPPH/jxsQO3JS1Cap5XHBwRG57sBC+1NLQ0=;
+        b=Mo+6UwjpfLDeIQqUqahaBvF3Qki4vOpHA3enGGY+JrV4bpihJ1ZZXHdQOctDeqMbZI
+         HuX7MabUSyaedE/pcCGyk1r4RMC4LLAYVYy2YzLs5sl7tKolLMOvir9jVJ1f5Rc7p8Ty
+         1qp7LmO3VAuHEZPDSAo+ylMkISEuMpOCMjtbC9vjiexEaAvE855JiFnM6It6oJbMr5t9
+         nrOiagHAV+IFcqkPRgjGKnSmFvMRqREZg0nfsVnwgqlOqLsPRYorkal/cD6DukGEXvhR
+         en3VgFnUN+FHjWG2VdC0RPDp1c2gaKK0uNPm5d7Zrm4A7nVXpaxMRUSXZEyvHtEbEWKQ
+         ALYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IatxmkA0MPPH/jxsQO3JS1Cap5XHBwRG57sBC+1NLQ0=;
+        b=ZPaSegcoxFoipbkD2TUY1VEa7V8VGyRWvz7QYEJwJuM3rGglp+5DZ6QcG8EWeWbEVJ
+         G2uyz/KpzeXxBxdHuuRFyVtGb9y/3WsLXCbG4sa58j2MlfavAm2/2UHbqKFEq00pOmZ1
+         cImXgsWACztqZHQYeYMMLTv1Eyou9mld4EsW8C3woK7EfZKnOM1faub1k/h3/3kEQhwQ
+         1nZRdrturBPEIt/CSI5qavJSK6SecIlF+V0B7vUqaKyhgG9gvcWL7aBvqtn1bqYiSK7R
+         /Vv1SqXMneVP0/DQxwa19bKkLmzpOyL7ch3bPGLqpjmIxw8pjrhXjXVvCW9Eg2SZh0I/
+         aSKw==
+X-Gm-Message-State: ANhLgQ08dd9adw7qpFqKmUC9n47havaCPHsMXE31gW2hUnGt3ZEu3je5
+        QZEkrnvxKdi/YU28FOSBqBo=
+X-Google-Smtp-Source: ADFU+vvvDSLHNVDbCO01PMMfpsU4J2V32lm/IjBkopPYn4j7c7wkv8rmCR3bc5lS7HEHc1yCa6k90Q==
+X-Received: by 2002:ad4:5642:: with SMTP id bl2mr14091018qvb.11.1584124433196;
+        Fri, 13 Mar 2020 11:33:53 -0700 (PDT)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id l92sm3917781qte.25.2020.03.13.11.33.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Mar 2020 11:33:52 -0700 (PDT)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Fri, 13 Mar 2020 14:33:50 -0400
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, "H.J. Lu" <hjl.tools@gmail.com>
+Subject: Re: [PATCH v2] x86/boot: Correct relocation destination on old
+ linkers
+Message-ID: <20200313183349.GA1544820@rani.riverdale.lan>
+References: <20200111190015.3257863-1-nivedita@alum.mit.edu>
+ <20200207214926.3564079-1-nivedita@alum.mit.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200207214926.3564079-1-nivedita@alum.mit.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Fri, Feb 07, 2020 at 04:49:26PM -0500, Arvind Sankar wrote:
+> For the 32-bit kernel, as described in commit 6d92bc9d483a ("x86/build:
+> Build compressed x86 kernels as PIE"), pre-2.26 binutils generates
+> R_386_32 relocations in PIE mode.  Since the startup code does not
+> perform relocation, any reloc entry with R_386_32 will remain as 0 in
+> the executing code.
+> 
+> Commit 974f221c84b0 ("x86/boot: Move compressed kernel to the end of the
+> decompression buffer") added a new symbol _end but did not mark it
+> hidden, which doesn't give the correct offset on older linkers. This
+> causes the compressed kernel to be copied beyond the end of the
+> decompression buffer, rather than flush against it. This region of
+> memory may be reserved or already allocated for other purposes by the
+> bootloader.
+> 
+> Mark _end as hidden to fix. This changes the relocation from R_386_32 to
+> R_386_RELATIVE even on the pre-2.26 binutils.
+> 
+> For 64-bit, this is not strictly necessary, as the 64-bit kernel is only
+> built as PIE if the linker supports -z noreloc-overflow, which implies
+> binutils-2.27+, but for consistency, mark _end as hidden here too.
+> 
 
-Perf checks the duplicate entries in a callchain before adding an entry.
-However the check is very slow especially with deeper call stack.
-Almost ~50% elapsed time of perf report is spent on the check when the
-call stack is always depth of 32.
+Gentle reminder.
 
-The hist_entry__cmp() is used to compare the new entry with the old
-entries. It will go through all the available sorts in the sort_list,
-and call the specific cmp of each sort, which is very slow.
-Actually, for most cases, there are no duplicate entries in callchain.
-The symbols are usually different. It's much faster to do a quick check
-for symbols first. Only do the full cmp when the symbols are exactly the
-same.
-The quick check is only to check symbols, not dso. Export
-_sort__sym_cmp.
-
- $perf record --call-graph lbr ./tchain_edit_64
-
- Without the patch
- $time perf report --stdio
- real    0m21.142s
- user    0m21.110s
- sys     0m0.033s
-
- With the patch
- $time perf report --stdio
- real    0m10.977s
- user    0m10.948s
- sys     0m0.027s
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/util/hist.c | 23 +++++++++++++++++++++++
- tools/perf/util/sort.c |  2 +-
- tools/perf/util/sort.h |  2 ++
- 3 files changed, 26 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index e74a5acf66d9..311d6d119f3c 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -1057,6 +1057,20 @@ iter_next_cumulative_entry(struct hist_entry_iter *iter,
- 	return fill_callchain_info(al, node, iter->hide_unresolved);
- }
- 
-+static bool
-+hist_entry__fast__sym_diff(struct hist_entry *left,
-+			   struct hist_entry *right)
-+{
-+	struct symbol *sym_l = left->ms.sym;
-+	struct symbol *sym_r = right->ms.sym;
-+
-+	if (!sym_l && !sym_r)
-+		return left->ip != right->ip;
-+
-+	return !!_sort__sym_cmp(sym_l, sym_r);
-+}
-+
-+
- static int
- iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
- 			       struct addr_location *al)
-@@ -1083,6 +1097,7 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
- 	};
- 	int i;
- 	struct callchain_cursor cursor;
-+	bool fast = hists__has(he_tmp.hists, sym);
- 
- 	callchain_cursor_snapshot(&cursor, &callchain_cursor);
- 
-@@ -1093,6 +1108,14 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
- 	 * It's possible that it has cycles or recursive calls.
- 	 */
- 	for (i = 0; i < iter->curr; i++) {
-+		/*
-+		 * For most cases, there are no duplicate entries in callchain.
-+		 * The symbols are usually different. Do a quick check for
-+		 * symbols first.
-+		 */
-+		if (fast && hist_entry__fast__sym_diff(he_cache[i], &he_tmp))
-+			continue;
-+
- 		if (hist_entry__cmp(he_cache[i], &he_tmp) == 0) {
- 			/* to avoid calling callback function */
- 			iter->he = NULL;
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index ab0cfd790ad0..33e0fa1bc203 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -234,7 +234,7 @@ static int64_t _sort__addr_cmp(u64 left_ip, u64 right_ip)
- 	return (int64_t)(right_ip - left_ip);
- }
- 
--static int64_t _sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r)
-+int64_t _sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r)
- {
- 	if (!sym_l || !sym_r)
- 		return cmp_null(sym_l, sym_r);
-diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
-index 6c862d62d052..c3c3c68cbfdd 100644
---- a/tools/perf/util/sort.h
-+++ b/tools/perf/util/sort.h
-@@ -309,5 +309,7 @@ int64_t
- sort__daddr_cmp(struct hist_entry *left, struct hist_entry *right);
- int64_t
- sort__dcacheline_cmp(struct hist_entry *left, struct hist_entry *right);
-+int64_t
-+_sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r);
- char *hist_entry__srcline(struct hist_entry *he);
- #endif	/* __PERF_SORT_H */
--- 
-2.17.1
-
+https://lore.kernel.org/lkml/20200207214926.3564079-1-nivedita@alum.mit.edu/
