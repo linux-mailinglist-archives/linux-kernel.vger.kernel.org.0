@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6115F18503E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 21:25:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CBF8185041
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 21:25:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbgCMUZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 16:25:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47594 "EHLO mail.kernel.org"
+        id S1727435AbgCMUZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 16:25:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726480AbgCMUZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 16:25:07 -0400
-Subject: Re: [GIT PULL] MMC fixes for v5.6-rc6 take2
+        id S1727383AbgCMUZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 16:25:08 -0400
+Subject: Re: [GIT PULL] Power management fix for v5.6-rc6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1584131107;
-        bh=qh59NKk5b/UE7bO+HoSw6wEWZNyF+IwN4tPCJCBfzf8=;
+        bh=25YpGDthvkqDKq8fdchPfoJFDDmdYXlIqN3Oz3tiHMU=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=AQhS98z7eejlitvHDOnM6dvQ4tzkobq8tXXd7qAY6ikVPBuJ/Ad9kVFjNcKVgYFNO
-         ePzZAiklxTeOZlQ13OMg3vt41IUcmqq/oVp51AydNhmpU9nu6At1K7goRQNq2ZfOXv
-         5jy5KitdtiSkd8mApRc/E5XBZttkbhuoU03y87mE=
+        b=EQ70V2Q6/n+byeA+Z8bTNpJopyqMiSyBLJrCbgAUXN5XRzyZB9B3uClt+mlEqKu5n
+         ARm7md59LVYdcpYV2T0lUcXvv+YN1Dr1UiMnmFKKKdB8+Q9gplWbUAHR9cSdSqk6Ek
+         1Pa6F+a1wzgWE6pTxitfvGaUedEw7CpSKQi83yyE=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200313123202.23685-1-ulf.hansson@linaro.org>
-References: <20200313123202.23685-1-ulf.hansson@linaro.org>
+In-Reply-To: <CAJZ5v0jcZsixVWpfb=OkWNPD8Q=DC-Q-gvEzLh7vkCksT3a0HA@mail.gmail.com>
+References: <CAJZ5v0jcZsixVWpfb=OkWNPD8Q=DC-Q-gvEzLh7vkCksT3a0HA@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200313123202.23685-1-ulf.hansson@linaro.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git
- tags/mmc-v5.6-rc1-2
-X-PR-Tracked-Commit-Id: 18d200460cd73636d4f20674085c39e32b4e0097
+X-PR-Tracked-Message-Id: <CAJZ5v0jcZsixVWpfb=OkWNPD8Q=DC-Q-gvEzLh7vkCksT3a0HA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.6-rc6
+X-PR-Tracked-Commit-Id: bce74b1feb01accc6654a1f3e37958478d3a4fbc
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d36561296bb510bf339750ea22efaa660277642e
-Message-Id: <158413110734.9951.15489734490072348773.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 78511edc2dd4c7b9f74f3b544093c854b7bd7744
+Message-Id: <158413110780.9951.6005924479376345266.pr-tracker-bot@kernel.org>
 Date:   Fri, 13 Mar 2020 20:25:07 +0000
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 13 Mar 2020 13:32:02 +0100:
+The pull request you sent on Fri, 13 Mar 2020 18:57:18 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.6-rc1-2
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.6-rc6
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d36561296bb510bf339750ea22efaa660277642e
+https://git.kernel.org/torvalds/c/78511edc2dd4c7b9f74f3b544093c854b7bd7744
 
 Thank you!
 
