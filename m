@@ -2,166 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9429218457E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 12:04:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8646C184587
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 12:04:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbgCMLEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 07:04:20 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50207 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbgCMLEN (ORCPT
+        id S1726734AbgCMLEz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 07:04:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50432 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726387AbgCMLEz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 07:04:13 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a5so9446778wmb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 04:04:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KmK9rPbQ7ZkiTZPfd7jr8oEpxHT6uehvlGdRiVCfa9E=;
-        b=bHeV3oZzGpOJp9X2/+ayJxINfN/+cGoX+D+XUhTs6Q4RfuCAcephVcJEMljWUqg0oY
-         TfV385qnmaVVyq5bXflo/xOe/PW6CJyP7UWZx+Ile8m8rEY48+pmBcBK7vOK/frIvihh
-         jJWxEC/zdw6oE6+NhGS7Y8H/sqWrUhsmqilh55QnUxolhvqTSVDJV67t24HGXxksGqmo
-         2TVgjbWh3d5khSKPFOyWy8L3nXOtL/siZ07IAxXHCcZioSLCFldpaNLx30kHkN2IATKe
-         /kZo0Av80UuI6B3c6Kja3n+wEg4K5XwWh/TC8zULaBHxtjGmpRFxf0aoN+y7As+iRpRe
-         wUig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KmK9rPbQ7ZkiTZPfd7jr8oEpxHT6uehvlGdRiVCfa9E=;
-        b=Zpybe0hO8+/iigO7v5kHJKxkw6hUDAJkidYliSBVEI5z+tIrtw71nNcYuVxJUDm4++
-         1HYL44UJOeS/8ta0WuCzAWz1kKmT1WsvRSYr+LDJxQOBOiCzhKu3ufkUIDigcGG2otvM
-         pmTwQFvNJpMbIC5+kNI+EDTk6WYv0TZiDWVioe3gnQlqY2KGerxKeLtoKdgjfef/Ae3Q
-         FWMsyS1kEMRQvOVhZRobRZT2GwcEHchwYskzqI+8m62pj0xCwzQkhHcIVWCW64431GqF
-         9zfqY9HFZU4YNS3uAo/BWwWw64CzwBa94SGmc+ScVaqHjTXgOY9VNDmHLJZkus/jsJ65
-         MU0A==
-X-Gm-Message-State: ANhLgQ3w90asVeUMhQCEnTQgvm4HWT4ayOM7w1xkkD5J8GkfVz0XDYch
-        l3rcFxHuPuDXoaPosC7eon5IVA==
-X-Google-Smtp-Source: ADFU+vsecmaXEqCn3VzdzRxpowdlFf1VRTVp8EqTIdciEiR4i/mJkERoqke1oLtWuG4/wpapMep3Bw==
-X-Received: by 2002:a7b:cb17:: with SMTP id u23mr10778712wmj.12.1584097452112;
-        Fri, 13 Mar 2020 04:04:12 -0700 (PDT)
-Received: from xps7590.local ([2a02:2450:102f:13b8:c814:5be4:577e:3bd5])
-        by smtp.gmail.com with ESMTPSA id r23sm23578052wrr.93.2020.03.13.04.04.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 04:04:11 -0700 (PDT)
-From:   Robert Foss <robert.foss@linaro.org>
-To:     Dongchun Zhu <dongchun.zhu@mediatek.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Robert Foss <robert.foss@linaro.org>
-Subject: [v2 3/3] media: ov8856: Implement sensor module revision identification
-Date:   Fri, 13 Mar 2020 12:03:50 +0100
-Message-Id: <20200313110350.10864-4-robert.foss@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200313110350.10864-1-robert.foss@linaro.org>
-References: <20200313110350.10864-1-robert.foss@linaro.org>
+        Fri, 13 Mar 2020 07:04:55 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02DB35ml076016
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 07:04:53 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2yqyhtamg5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 07:04:52 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Fri, 13 Mar 2020 11:04:49 -0000
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 13 Mar 2020 11:04:45 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02DB4ivV40239484
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Mar 2020 11:04:44 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 02E884204F;
+        Fri, 13 Mar 2020 11:04:44 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8041D4204D;
+        Fri, 13 Mar 2020 11:04:41 +0000 (GMT)
+Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Fri, 13 Mar 2020 11:04:41 +0000 (GMT)
+Date:   Fri, 13 Mar 2020 16:34:40 +0530
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Joonsoo Kim <js1304@gmail.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Sachin Sant <sachinp@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Christopher Lameter <cl@linux.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>
+Subject: Re: [PATCH 1/3] powerpc/numa: Set numa_node for all possible cpus
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20200311110237.5731-2-srikar@linux.vnet.ibm.com>
+ <20200311115735.GM23944@dhcp22.suse.cz>
+ <20200312052707.GA3277@linux.vnet.ibm.com>
+ <C5560C71-483A-41FB-BDE9-526F1E0CFA36@linux.vnet.ibm.com>
+ <5e5c736a-a88c-7c76-fc3d-7bc765e8dcba@suse.cz>
+ <20200312131438.GB3277@linux.vnet.ibm.com>
+ <61437352-8b54-38fa-4471-044a65c9d05a@suse.cz>
+ <20200312161310.GC3277@linux.vnet.ibm.com>
+ <e115048c-be38-c298-b8d1-d4b513e7d2fb@suse.cz>
+ <CAAmzW4OFy51BhAT62tdVQD52NNMWm+UPgoGAX97omY7P+nJ+5w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <CAAmzW4OFy51BhAT62tdVQD52NNMWm+UPgoGAX97omY7P+nJ+5w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 20031311-0012-0000-0000-0000039069FE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20031311-0013-0000-0000-000021CD3F2C
+Message-Id: <20200313110440.GA25144@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-13_04:2020-03-12,2020-03-13 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ bulkscore=0 phishscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
+ suspectscore=0 adultscore=0 clxscore=1015 mlxlogscore=999
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003130060
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Query the sensor for its module revision, and compare it
-to known revisions.
-Currently only the '1B' revision has been added.
+* Joonsoo Kim <js1304@gmail.com> [2020-03-13 18:47:49]:
 
-Signed-off-by: Robert Foss <robert.foss@linaro.org>
----
- drivers/media/i2c/ov8856.c | 54 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 48 insertions(+), 6 deletions(-)
+> > >>
+> > >> > Also for a memoryless/cpuless node or possible but not present nodes,
+> > >> > node_to_mem_node(node) will still end up as node (atleast on powerpc).
+> > >>
+> > >> I think that's the place where this would be best to fix.
+> > >>
+> > >
+> > > Maybe. I thought about it but the current set_numa_mem semantics are apt
+> > > for memoryless cpu node and not for possible nodes.  We could have upto 256
+> > > possible nodes and only 2 nodes (1,2) with cpu and 1 node (1) with memory.
+> > > node_to_mem_node seems to return what is set in set_numa_mem().
+> > > set_numa_mem() seems to say set my numa_mem node for the current memoryless
+> > > node to the param passed.
+> > >
+> > > But how do we set numa_mem for all the other 253 possible nodes, which
+> > > probably will have 0 as default?
+> > >
+> > > Should we introduce another API such that we could update for all possible
+> > > nodes?
+> >
+> > If we want to rely on node_to_mem_node() to give us something safe for each
+> > possible node, then probably it would have to be like that, yeah.
+> >
+> > >> > I tried with this hunk below and it works.
+> > >> >
+> > >> > But I am not sure if we need to check at other places were
+> > >> > node_present_pages is being called.
+> > >>
+> > >> I think this seems to defeat the purpose of node_to_mem_node()? Shouldn't it
+> > >> return only nodes that are online with present memory?
+> > >> CCing Joonsoo who seems to have introduced this in ad2c8144418c ("topology: add
+> > >> support for node_to_mem_node() to determine the fallback node")
+> > >>
+> > >
+> > > Agree
+> 
+> I lost all the memory about it. :)
+> Anyway, how about this?
+> 
+> 1. make node_present_pages() safer
+> static inline node_present_pages(nid)
+> {
+> if (!node_online(nid)) return 0;
+> return (NODE_DATA(nid)->node_present_pages);
+> }
+> 
 
-diff --git a/drivers/media/i2c/ov8856.c b/drivers/media/i2c/ov8856.c
-index db61eed223e8..39662d3d86dd 100644
---- a/drivers/media/i2c/ov8856.c
-+++ b/drivers/media/i2c/ov8856.c
-@@ -34,6 +34,18 @@
- #define OV8856_MODE_STANDBY		0x00
- #define OV8856_MODE_STREAMING		0x01
- 
-+/* define 1B module revision */
-+#define OV8856_1B_MODULE		0x02
-+
-+/* the OTP read-out buffer is at 0x7000 and 0xf is the offset
-+ * of the byte in the OTP that means the module revision
-+ */
-+#define OV8856_MODULE_REVISION		0x700f
-+#define OV8856_OTP_MODE_CTRL		0x3d84
-+#define OV8856_OTP_LOAD_CTRL		0x3d81
-+#define OV8856_OTP_MODE_AUTO		0x00
-+#define OV8856_OTP_LOAD_CTRL_ENABLE	BIT(0)
-+
- /* vertical-timings from sensor */
- #define OV8856_REG_VTS			0x380e
- #define OV8856_VTS_MAX			0x7fff
-@@ -711,6 +723,25 @@ static int ov8856_test_pattern(struct ov8856 *ov8856, u32 pattern)
- 				OV8856_REG_VALUE_08BIT, pattern);
- }
- 
-+static int ov8856_check_revision(struct ov8856 *ov8856)
-+{
-+	int ret;
-+
-+	ret = ov8856_write_reg(ov8856, OV8856_REG_MODE_SELECT,
-+			       OV8856_REG_VALUE_08BIT, OV8856_MODE_STREAMING);
-+	if (ret)
-+		return ret;
-+
-+	ret = ov8856_write_reg(ov8856, OV8856_OTP_MODE_CTRL,
-+			       OV8856_REG_VALUE_08BIT, OV8856_OTP_MODE_AUTO);
-+	if (ret)
-+		return ret;
-+
-+	return ov8856_write_reg(ov8856, OV8856_OTP_LOAD_CTRL,
-+				OV8856_REG_VALUE_08BIT,
-+				OV8856_OTP_LOAD_CTRL_ENABLE);
-+}
-+
- static int ov8856_set_ctrl(struct v4l2_ctrl *ctrl)
- {
- 	struct ov8856 *ov8856 = container_of(ctrl->handler,
-@@ -1144,6 +1175,23 @@ static int ov8856_identify_module(struct ov8856 *ov8856)
- 		return -ENXIO;
- 	}
- 
-+	/* check sensor hardware revision */
-+	ret = ov8856_check_revision(ov8856);
-+	if (ret) {
-+		dev_err(&client->dev, "failed to check sensor revision");
-+		return ret;
-+	}
-+
-+	ret = ov8856_read_reg(ov8856, OV8856_MODULE_REVISION,
-+			      OV8856_REG_VALUE_08BIT, &val);
-+	if (ret)
-+		return ret;
-+
-+	dev_info(&client->dev, "OV8856 revision %x (%s) at address 0x%02x\n",
-+		val,
-+		val == OV8856_1B_MODULE ? "1B" : "unknown revision",
-+		client->addr);
-+
- 	return 0;
- }
- 
-@@ -1254,12 +1302,6 @@ static int ov8856_probe(struct i2c_client *client)
- 		return PTR_ERR(ov8856->xvclk);
- 	}
- 
--	ret = clk_set_rate(ov8856->xvclk, OV8856_XVCLK_24);
--	if (ret < 0) {
--		dev_err(&client->dev, "failed to set xvclk rate (24MHz)\n");
--		return ret;
--	}
--
- 	ov8856->reset_gpio = devm_gpiod_get(&client->dev, "reset",
- 					       GPIOD_OUT_HIGH);
- 	if (IS_ERR(ov8856->reset_gpio)) {
+Yes this would help.
+
+> 2. make node_to_mem_node() safer for all cases
+> In ppc arch's mem_topology_setup(void)
+> for_each_present_cpu(cpu) {
+>  numa_setup_cpu(cpu);
+>  mem_node = node_to_mem_node(numa_mem_id());
+>  if (!node_present_pages(mem_node)) {
+>   _node_numa_mem_[numa_mem_id()] = first_online_node;
+>  }
+> }
+> 
+
+But here as discussed above, we miss the case of possible but not present nodes.
+For such nodes, the above change may not update, resulting in they still
+having 0. And node 0 can be only possible but not present.
+
 -- 
-2.20.1
+Thanks and Regards
+Srikar Dronamraju
 
