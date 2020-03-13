@@ -2,117 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 681941848A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 14:59:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40D541848AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 15:00:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgCMN7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 09:59:44 -0400
-Received: from foss.arm.com ([217.140.110.172]:55748 "EHLO foss.arm.com"
+        id S1726859AbgCMOAN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 10:00:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726674AbgCMN7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 09:59:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B429730E;
-        Fri, 13 Mar 2020 06:59:43 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 975403F67D;
-        Fri, 13 Mar 2020 06:59:42 -0700 (PDT)
-Date:   Fri, 13 Mar 2020 13:59:40 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Qi Liu <liuqi115@huawei.com>, will@kernel.org, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, linuxarm@huawei.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] perf:Add driver for HiSilicon PCIe PMU
-Message-ID: <20200313135940.GK42546@lakrids.cambridge.arm.com>
-References: <1584014816-1908-1-git-send-email-liuqi115@huawei.com>
- <49a04327-b58b-3103-f992-97e8838c41df@arm.com>
+        id S1726691AbgCMOAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 10:00:13 -0400
+Received: from localhost (unknown [213.57.247.131])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 503B72072C;
+        Fri, 13 Mar 2020 14:00:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584108012;
+        bh=tpA9x5BqxVqJ3K4DxnDtZse8/g9LA1WAfhCt+n3yzYo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dp9nZOzkRItzuMHRn2K9grvCYB2YKGzeT/I0XJfxHM617+lLQF9Y4KMX+uD02xdPi
+         GhHimt7EidxyGSy30ImjFwXdSNDZSyTxZm47II6gVPcApD+DLXcbJbEFIxn4lRzhhP
+         UruCxcsRHFyfTV6AIT7dt294rNMLZGMALpUQKOlo=
+Date:   Fri, 13 Mar 2020 16:00:06 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Doug Ledford <dledford@redhat.com>,
+        Gal Pressman <galpress@amazon.com>,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Mark Zhang <markz@mellanox.com>,
+        Yishai Hadas <yishaih@mellanox.com>
+Subject: Re: [PATCH rdma-next v1 00/11] Add Enhanced Connection Established
+ (ECE)
+Message-ID: <20200313140006.GJ31504@unreal>
+References: <20200310091438.248429-1-leon@kernel.org>
+ <20200313135303.GA25305@ziepe.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <49a04327-b58b-3103-f992-97e8838c41df@arm.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <20200313135303.GA25305@ziepe.ca>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 01:23:53PM +0000, Robin Murphy wrote:
-> On 2020-03-12 12:06 pm, Qi Liu wrote:
-> > From: Qi liu <liuqi115@huawei.com>
+On Fri, Mar 13, 2020 at 10:53:03AM -0300, Jason Gunthorpe wrote:
+> On Tue, Mar 10, 2020 at 11:14:27AM +0200, Leon Romanovsky wrote:
+> > From: Leon Romanovsky <leonro@mellanox.com>
+> >
+> > Changelog:
+> >  v1: Dropped field_avail patch in favor of mass conversion to use function
+> >      which already exists in the kernel code.
+> >  v0: https://lore.kernel.org/lkml/20200305150105.207959-1-leon@kernel.org
+> >
+> > Enhanced Connection Established or ECE is new negotiation scheme
+> > introduced in IBTA v1.4 to exchange extra information about nodes
+> > capabilities and later negotiate them at the connection establishment
+> > phase.
+> >
+> > The RDMA-CM messages (REQ, REP, SIDR_REQ and SIDR_REP) were extended
+> > to carry two fields, one new and another gained new functionality:
+> >  * VendorID is a new field that indicates that common subset of vendor
+> >    option bits are supported as indicated by that VendorID.
+> >  * AttributeModifier already exists, but overloaded to indicate which
+> >    vendor options are supported by this VendorID.
+> >
+> > This is kernel part of such functionality which is responsible to get data
+> > from librdmacm and properly create and handle RDMA-CM messages.
+> >
+> > Thanks
+> >
+> > Leon Romanovsky (11):
+> >   RDMA/mlx4: Delete duplicated offsetofend implementation
+> >   RDMA/mlx5: Use offsetofend() instead of duplicated variant
+> >   RDMA/cm: Delete not implemented CM peer to peer communication
+>
+> These ones applied to for-next
 
-[...]
+Thanks
 
-> > +#define HISI_PCIE_EVENT_SHIFT_M			GENMASK(15, 0)
-> > +#define HISI_PCIE_SUBEVENT_SHIFT_M		GENMASK(31, 16)
-> > +#define HISI_PCIE_SUBEVENT_SHIFT_S		16
-> > +#define HISI_PCIE_PORT_SHIFT_M			GENMASK(7, 0)
-> > +#define HISI_PCIE_FUNC_SHIFT_M			GENMASK(15, 8)
-> > +#define HISI_PCIE_FUNC_SHIFT_S			8
-> 
-> So "SHIFT_S" means "shift" and "SHIFT_M" actually means "mask"? That's
-> unnecessarily confusing. Furthermore it might be helpful if there was a more
-> obvious distinction between hardware register fields and config fields.
+>
+> >   RDMA/efa: Use in-kernel offsetofend() to check field availability
+>
+> This needs resending
 
-Also, If you use the FIELD_GET() and FIELD_PREP() helpers, you only need
-to define the mask. See <linux/bitfield.h>.
+I'm not convinced yet.
 
-> > +int hisi_pcie_pmu_event_init(struct perf_event *event)
-> > +{
-> > +	struct hisi_pcie_pmu *pcie_pmu = to_pcie_pmu(event->pmu);
-> > +	struct hw_perf_event *hwc = &event->hw;
-> > +	u32 subevent_id, event_id, func_id, port_id;
-> > +
-> > +	if (event->attr.type != event->pmu->type)
-> > +		return -ENOENT;
-> > +
-> > +	/*
-> > +	 * We do not support sampling as the counters are all shared by all
-> > +	 * CPU cores in a CPU die(SCCL). Also we do not support attach to a
-> 
-> Do the PCIe counters have anything to do with CPU clusters at all?
-> 
-> > +	 * task(per-process mode)
-> > +	 */
-> > +	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
-> > +		return -EOPNOTSUPP;
-> > +
-> > +	/*
-> > +	 * The uncore counters not specific to any CPU, so cannot
-> > +	 * support per-task
-> > +	 */
-> > +	if (event->cpu < 0)
-> > +		return -EINVAL;
-> > +
-> > +	/*
-> > +	 * Validate if the events in group does not exceed the
-> > +	 * available counters in hardware.
-> > +	 */
-> > +	if (!hisi_validate_event_group(event))
-> > +		return -EINVAL;
-> > +
-> > +	event_id = event->attr.config && HISI_PCIE_EVENT_SHIFT_M;
-> 
-> Really? Are you sure you've tested this properly?
+>
+> >   RDMA/cm: Add Enhanced Connection Establishment (ECE) bits
+> >   RDMA/uapi: Add ECE definitions to UCMA
+> >   RDMA/ucma: Extend ucma_connect to receive ECE parameters
+> >   RDMA/ucma: Deliver ECE parameters through UCMA events
+> >   RDMA/cm: Send and receive ECE parameter over the wire
+> >   RDMA/cma: Connect ECE to rdma_accept
+> >   RDMA/cma: Provide ECE reject reason
+>
+> These need userspace to not be RFC
 
-If you had:
+Sure, thanks.
 
-#define HISI_PCI_EVENT_ID	GENMASK(15, 0)
-#define HISI_PCI_SUBEVENT_ID	GENMASK(31, 16)
-
-... here you could do:
-
-	event_id = FIELD_GET(HISI_PCI_EVENT_ID, event->attr.config);
-
-> 
-> > +	subevent_id = (event->attr.config && HISI_PCIE_SUBEVENT_SHIFT_M)
-> > +		       >> HISI_PCIE_SUBEVENT_SHIFT_S;
-
-... and:
-
-	subevent_id = FIELD_GET(HISI_PCI_SUBEVENT_ID, event->attr.config);
-
-... and so on for other fields.
-
-Thanks,
-Mark.
+>
+> Jason
