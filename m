@@ -2,109 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA5331850EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 22:20:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7B441850F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 22:23:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbgCMVUm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 17:20:42 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44099 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbgCMVUl (ORCPT
+        id S1727468AbgCMVXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 17:23:43 -0400
+Received: from smtprelay0073.hostedemail.com ([216.40.44.73]:47840 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726534AbgCMVXn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 17:20:41 -0400
-Received: by mail-wr1-f67.google.com with SMTP id l18so13824152wru.11;
-        Fri, 13 Mar 2020 14:20:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:references:in-reply-to:subject:date:message-id
-         :mime-version:content-transfer-encoding:thread-index
-         :content-language;
-        bh=gHe0Jr3HHrqFSICLL6R/jKSDOkoJC7KnN5A4sHFyiB8=;
-        b=Li6ryXbsDCxLw1jPemU5VFLcp1LNm0D0/N8RhaEzW5zkXtPC/DkbfXkY2x8dOdXGKb
-         tvQZg3alfE1LKV2ZzENp4XUHk7Ej8wvtQx8u4bDgCoazTiXHUChzpxHboNp5BiqRy1u4
-         0ol6piCk0zcJoqdTgaZC1eHp3Q2Sk0LVpeaE8pBI0CD/YroC5F0I6QOzBQNePHuUmr3K
-         /HrDSupsomnIzpS5YNzFO4MaXrgbA+LYuxvq71/excaFBXolJvp70ToZwNKBC7cO1C12
-         V9c1xMZzxdYGQGiyjeeHRfXQaYgmPQ/f+bNnmnXyEqb7rtB84FdzUmVsUPzCqlosbJk1
-         RpAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:references:in-reply-to:subject:date
-         :message-id:mime-version:content-transfer-encoding:thread-index
-         :content-language;
-        bh=gHe0Jr3HHrqFSICLL6R/jKSDOkoJC7KnN5A4sHFyiB8=;
-        b=hAZy7oefAoBKtdriOBhhynzc9foSqLfKrQIPI+4WVAVZkLpfduR7ZZzQ4YU1wcir93
-         36ObEyTfMD4UAaRwyzoWOe+XS6x6NpWB0zjiGvwTY4udTYWs/H8Sv9iL5mwOr9tqiIbG
-         28pr4m2iVesoPp2trPIyAdPrDvooMlY2a8qtJsHJi8B6wagO3nmASysmC3a4ioJD6MUu
-         mDt35UKTcIY+vDQTXB4tYh06VYa8vMXyfCCfA+AUWOmGKUo5BNMqIDXa+C9+JGyjN9ai
-         bZIzFQa76bJ1JlqMTRpDHeLgxXly0y8JMF3gHAYrPjSDs+ze+XLrIF4a/1hPTG5rmR3V
-         /jgg==
-X-Gm-Message-State: ANhLgQ2Hm4cmEQ6Xaa8WtZFnTPb70xegtTWEAw96MWj9qR/LKVxcbmNx
-        Y+FdJ12IEGJXM4P+xuxl+jI=
-X-Google-Smtp-Source: ADFU+vuQ9gKOmA8OfdL5F/xdisstDpTQKTtu4YS8f9MRoHfC6gjqinz0F5xszMLlyow+1EZ2NDjG+g==
-X-Received: by 2002:a5d:440a:: with SMTP id z10mr4590724wrq.177.1584134439897;
-        Fri, 13 Mar 2020 14:20:39 -0700 (PDT)
-Received: from AnsuelXPS ([2001:470:b467:1:44af:5966:96b9:9aa4])
-        by smtp.gmail.com with ESMTPSA id p10sm17533703wru.4.2020.03.13.14.20.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Mar 2020 14:20:39 -0700 (PDT)
-From:   <ansuelsmth@gmail.com>
-To:     "'Stephen Boyd'" <sboyd@kernel.org>, <agross@kernel.org>
-Cc:     "'Abhishek Sahu'" <absahu@codeaurora.org>,
-        "'Bjorn Andersson'" <bjorn.andersson@linaro.org>,
-        "'Michael Turquette'" <mturquette@baylibre.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200313185406.10029-1-ansuelsmth@gmail.com> <158413140244.164562.11497203149584037524@swboyd.mtv.corp.google.com>
-In-Reply-To: <158413140244.164562.11497203149584037524@swboyd.mtv.corp.google.com>
-Subject: R: [PATCH] ipq806x: gcc: Added the enable regs and mask for PRNG
-Date:   Fri, 13 Mar 2020 22:20:36 +0100
-Message-ID: <00e201d5f97d$3e76a9d0$bb63fd70$@gmail.com>
+        Fri, 13 Mar 2020 17:23:43 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 42BE018017528;
+        Fri, 13 Mar 2020 21:23:42 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:968:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2559:2562:2729:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3871:3872:4225:4250:4321:5007:7903:10004:10400:10848:11026:11232:11657:11658:11914:12043:12048:12297:12679:12740:12760:12895:13069:13255:13311:13357:13439:13972:14096:14097:14659:14721:21080:21627:21990:30054:30056:30070:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: magic84_5a52c2e86bc2d
+X-Filterd-Recvd-Size: 2535
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 13 Mar 2020 21:23:40 +0000 (UTC)
+Message-ID: <25a1aca2c993ecb70ba7cd9c9e38bce9170a98b0.camel@perches.com>
+Subject: Re: [Outreachy kernel] [PATCH v2] Staging: rtl8723bs: rtw_mlme:
+ Remove unnecessary conditions
+From:   Joe Perches <joe@perches.com>
+To:     Shreeya Patel <shreeya.patel23498@gmail.com>,
+        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com,
+        sbrivio@redhat.com, daniel.baluta@gmail.com,
+        nramas@linux.microsoft.com, hverkuil@xs4all.nl,
+        Larry.Finger@lwfinger.net
+Date:   Fri, 13 Mar 2020 14:21:57 -0700
+In-Reply-To: <20200313102912.17218-1-shreeya.patel23498@gmail.com>
+References: <20200313102912.17218-1-shreeya.patel23498@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHIdlTVZX/WdQxRzReDjkwhjOOSdAGrUdrmqFSxueA=
-Content-Language: it
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 2020-03-13 at 15:59 +0530, Shreeya Patel wrote:
+> Remove unnecessary if and else conditions since both are leading to the
+> initialization of "phtpriv->ampdu_enable" with the same value.
+> Also, remove the unnecessary else-if condition since it does nothing.
+[]
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+[]
+> @@ -2772,16 +2772,7 @@ void rtw_update_ht_cap(struct adapter *padapter, u8 *pie, uint ie_len, u8 channe
+>  
+>  	/* maybe needs check if ap supports rx ampdu. */
+>  	if (!(phtpriv->ampdu_enable) && pregistrypriv->ampdu_enable == 1) {
+> -		if (pregistrypriv->wifi_spec == 1) {
+> -			/* remove this part because testbed AP should disable RX AMPDU */
+> -			/* phtpriv->ampdu_enable = false; */
+> -			phtpriv->ampdu_enable = true;
+> -		} else {
+> -			phtpriv->ampdu_enable = true;
+> -		}
+> -	} else if (pregistrypriv->ampdu_enable == 2) {
+> -		/* remove this part because testbed AP should disable RX AMPDU */
+> -		/* phtpriv->ampdu_enable = true; */
+> +		phtpriv->ampdu_enable = true;
 
+This isn't the same test.
 
-> -----Messaggio originale-----
-> Da: Stephen Boyd <sboyd@kernel.org>
-> Inviato: venerd=C3=AC 13 marzo 2020 21:30
-> A: Ansuel Smith <ansuelsmth@gmail.com>; agross@kernel.org
-> Cc: Ansuel Smith <ansuelsmth@gmail.com>; Abhishek Sahu
-> <absahu@codeaurora.org>; Bjorn Andersson
-> <bjorn.andersson@linaro.org>; Michael Turquette
-> <mturquette@baylibre.com>; linux-arm-msm@vger.kernel.org; linux-
-> clk@vger.kernel.org; linux-kernel@vger.kernel.org
-> Oggetto: Re: [PATCH] ipq806x: gcc: Added the enable regs and mask for
-> PRNG
->=20
-> Quoting Ansuel Smith (2020-03-13 11:54:06)
-> > kernel got hanged while reading from /dev/hwrng at the
-> > time of PRNG clock enable
-> >
-> > Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->=20
-> Is Abhishek the author? Otherwise the tag chain here looks wrong.
->=20
+This could be:
+ 	if ((!(phtpriv->ampdu_enable) && pregistrypriv->ampdu_enable == 1)) ||
+	    pregistrypriv->ampdu_enable == 2)
+		phtpriv->ampdu_enable = true;
 
-Yes Abhishek is the author.
+Though it is probably more sensible to just set
+phtpriv->ampdu_enable without testing whether or
+not it's already set:
 
-> > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
->=20
-> Is there some Fixes: tag we can get here too?
->=20
+	if (pregistrypriv->ampdu_enable == 1 ||
+	    pregistrypriv->ampdu_enable == 2)
+		phtpriv->ampdu_enable = true;
 
-Think  I should put the commit that added the gcc. Right?
-
-> > ---
-> >  drivers/clk/qcom/gcc-ipq806x.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
 
