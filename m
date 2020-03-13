@@ -2,107 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 682331851FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 00:03:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EDD218520C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 00:05:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbgCMXC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 19:02:57 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:54172 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726684AbgCMXC4 (ORCPT
+        id S1727467AbgCMXFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 19:05:32 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:44447 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726681AbgCMXFb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 19:02:56 -0400
-Received: by mail-pg1-f202.google.com with SMTP id c33so6962337pgl.20
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 16:02:54 -0700 (PDT)
+        Fri, 13 Mar 2020 19:05:31 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h16so9104882qtr.11;
+        Fri, 13 Mar 2020 16:05:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=u6W8EPudCxoS1C+Gxr8h5SKLukwTLV40TMQzqhE2icg=;
-        b=Dle5S5K+y36+frHurRqiaRO5zBtsrs1pm49+PtG4VbQFQlHXmMdPjxNDUGCNQJkee8
-         NhMpB8nIkBkQ5Sh9ptwLz1epP6A6dNKVsNiG9S8W506AZ9Bq849CsHouSry6093kVuC6
-         M9em74UD4HUQz6rfZtamAsPXNV3qCptA8bTOfkCkWbLxpkm2NJIiqEd9gMp9bBTYuC8O
-         w0YuoCMNKx7AT0P536RAKPUpoZ+TyUN6l2/8odjxqIU2rFhfi5IvqVw6PoeRAzTwGUew
-         Uv5q5ueNqDouvY/j/xcFjM3ckvU+GDDQ35tExT3Q6IEDOWSILXrrQps5XMfd2Ik++ADm
-         oV+g==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K19tWYumSLxb2jgL1zYdrr/V94anTYSOiMqlc5VxdrE=;
+        b=alFec87BZpXN0KlqpPOND8yBwUN3qvnWceUs7RmxNXeRDLzbLwA4DYwSftKfaQlb/5
+         7CAPgS3YNllTd3voPPiwGOMxjOQZSYwCJA51vA5c2WrbGD0dXJDIk37PRPc9mHoyySa/
+         gIQjUk+ytd9tDQFbOxNsYc6bySk+TmEccp59iajt3fu5Fv8UiXif7ksXa1pNMPrSv3II
+         c0pFJjeFk7YuM2R/Dsl0S74VPm2Wq6bFgbInkAYrPMvMgz2NxorHElKI3Z7GPyyxPvOO
+         UHvD8Ewk/06FHXmloZqLkhsG/pS6FtdDbTO7EKDWK1SBmLHKgaVYuYCuUu7HS5LfHfbd
+         JtQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=u6W8EPudCxoS1C+Gxr8h5SKLukwTLV40TMQzqhE2icg=;
-        b=SKVyBnHcKCJtHX2jnp39BmErd6mmq3cqovM48tRVrNk3pw8zd/yiKhjK5MtYeTXfxx
-         M7TO4GNwMDe0sB5KE36OejC5s4IFEHfc7qlbZXRw+kLEwo+ps17meiVrbhAPyk6P7LZs
-         PkyYWWQxzczE6nKH2J/5shkt1n237lmDogdhiuyz8ooitnBTBcAbdEFYHnbljzqnMUl0
-         FaE533rhe0VjbBFDb+5ydR1DuCSywHD4A/E4QJAY9uBF9sgr0HKCmVvju84jRg4JNTLO
-         +NsSf8R3c5ldXKNmb2U+VPEvJOEdbMLFSOXQ/SY85ijGicXlzBbVz73cAclAiEzvSltq
-         BJCQ==
-X-Gm-Message-State: ANhLgQ2d5/XU5euMbMzpTTwdOvNZ2WPIiDe/aUt9EvEw3aluVaIcc7jS
-        ftSP326SMtmhnbLkl7AawljAmwdFJodP
-X-Google-Smtp-Source: ADFU+vuy3ZEDEBn9mrZ+kHWul/1Viuc3dqdBxNUlcbugY+w11L+dRnHCC/nchc62Xd6BCHEwfWay7wPNnPqg
-X-Received: by 2002:a65:5306:: with SMTP id m6mr15467704pgq.5.1584140573528;
- Fri, 13 Mar 2020 16:02:53 -0700 (PDT)
-Date:   Fri, 13 Mar 2020 16:02:49 -0700
-Message-Id: <20200313230249.78825-1-irogers@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-Subject: [PATCH] perf parse-events: fix 3 use after frees
-From:   Ian Rogers <irogers@google.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Leo Yan <leo.yan@linaro.org>, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Cc:     Stephane Eranian <eranian@google.com>,
-        Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K19tWYumSLxb2jgL1zYdrr/V94anTYSOiMqlc5VxdrE=;
+        b=cxPVexytEVah9blDzmMz4R5n/i6iI78FtLFAMt2XgUB9rnr36xoFICUT2PIupWfFV/
+         At5nEHNs/WjgWQf8DWKH/Yd60dfBdutC3q4GSGbKYyFrHhwGYN+A6cTPUbhCd9YDepCj
+         +cj3IBbaK047pygZ5WgpkIa+HQot3nNzFmCPLjqGWc/Z8DEc6CcL3itqHQZI8nTpj17n
+         A+R1uaQMERD7guOx2JiIP0KNfo9P1vygUDn+fP+qd95I6LBecrNYHLTaX5sgbzGSm6fb
+         eP+EcUdz24NZdfRtfk9Vk/U4DM6y82fz0+C+xi6LEOtjsfcsd53SB5/QVDK0Lohj+VHq
+         eqyw==
+X-Gm-Message-State: ANhLgQ3u5Jt1eUw5kcx35yrO0NNAIN/7ujeKZnCVJ7cSsEm4zESixHVi
+        4m+P6sI6DtBqK1sS43TXquY=
+X-Google-Smtp-Source: ADFU+vu2A0jQITKSfb9D6lzWugdRnkulN3l3qRdmwJK7GenwUubT5WBUEj4UMaYTfXtbMNN5smwyEQ==
+X-Received: by 2002:ac8:6685:: with SMTP id d5mr15145698qtp.170.1584140730346;
+        Fri, 13 Mar 2020 16:05:30 -0700 (PDT)
+Received: from localhost.localdomain (ool-45785633.dyn.optonline.net. [69.120.86.51])
+        by smtp.googlemail.com with ESMTPSA id i1sm25756015qtg.31.2020.03.13.16.05.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Mar 2020 16:05:29 -0700 (PDT)
+From:   Vivek Unune <npcomplete13@gmail.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, heiko@sntech.de,
+        npcomplete13@gmail.com, ezequiel@collabora.com, jbx6244@gmail.com,
+        akash@openedev.com
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] arm64: dts: rockchip: Add Hugsun X99 IR receiver and power led
+Date:   Fri, 13 Mar 2020 19:05:13 -0400
+Message-Id: <20200313230513.123049-1-npcomplete13@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reproducible with a clang asan build and then running perf test in
-particular 'Parse event definition strings'.
+ - Add Hugsun X99 IR receiver and power led
+ - Remove pwm0 node as it interferes with power LED gpio
+   pwm0 is not used in factory firmware as well
 
-Signed-off-by: Ian Rogers <irogers@google.com>
+Tested with LibreElec linux-next-20200305
+
+Signed-off-by: Vivek Unune <npcomplete13@gmail.com>
 ---
- tools/perf/util/parse-events.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Changes in v2:
+	- Changed led trigger from none to default-on
+	- Changed led node name from power-led to led-0
+---
+ .../boot/dts/rockchip/rk3399-hugsun-x99.dts   | 37 +++++++++++++++++--
+ 1 file changed, 33 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index a14995835d85..593b6b03785d 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -1449,7 +1449,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
- 		evsel = __add_event(list, &parse_state->idx, &attr, NULL, pmu, NULL,
- 				    auto_merge_stats, NULL);
- 		if (evsel) {
--			evsel->pmu_name = name;
-+			evsel->pmu_name = name ? strdup(name) : NULL;
- 			evsel->use_uncore_alias = use_uncore_alias;
- 			return 0;
- 		} else {
-@@ -1497,7 +1497,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
- 		evsel->snapshot = info.snapshot;
- 		evsel->metric_expr = info.metric_expr;
- 		evsel->metric_name = info.metric_name;
--		evsel->pmu_name = name;
-+		evsel->pmu_name = name ? strdup(name) : NULL;
- 		evsel->use_uncore_alias = use_uncore_alias;
- 		evsel->percore = config_term_percore(&evsel->config_terms);
- 	}
-@@ -1547,7 +1547,7 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 				if (!parse_events_add_pmu(parse_state, list,
- 							  pmu->name, head,
- 							  true, true)) {
--					pr_debug("%s -> %s/%s/\n", config,
-+					pr_debug("%s -> %s/%s/\n", str,
- 						 pmu->name, alias->str);
- 					ok++;
- 				}
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+index d69a613fb65a..df425e164a2e 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+@@ -29,6 +29,26 @@
+ 		regulator-max-microvolt = <5000000>;
+ 	};
+ 
++	ir-receiver {
++		compatible = "gpio-ir-receiver";
++		gpios = <&gpio0 RK_PA6 GPIO_ACTIVE_LOW>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&ir_rx>;
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&power_led_gpio>;
++
++		led-0 {
++			label = "blue:power";
++			gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++			linux,default-trigger = "default-on";
++		};
++	};
++
+ 	vcc_sys: vcc-sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc_sys";
+@@ -483,6 +503,18 @@
+ 		};
+ 	};
+ 
++	ir {
++		ir_rx: ir-rx {
++			rockchip,pins = <0 RK_PA6 1 &pcfg_pull_none>;
++		};
++	};
++
++	leds {
++		power_led_gpio: power-led-gpio {
++			rockchip,pins = <4 RK_PC2 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
+ 	pmic {
+ 		pmic_int_l: pmic-int-l {
+ 			rockchip,pins =
+@@ -539,10 +572,6 @@
+ 	};
+ };
+ 
+-&pwm0 {
+-	status = "okay";
+-};
+-
+ &pwm2 {
+ 	status = "okay";
+ 	pinctrl-0 = <&pwm2_pin_pull_down>;
 -- 
-2.25.1.481.gfbce0eb801-goog
+2.20.1
 
