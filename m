@@ -2,69 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84309184C90
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 17:33:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B633F184D9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 18:28:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbgCMQd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 12:33:28 -0400
-Received: from mga09.intel.com ([134.134.136.24]:20734 "EHLO mga09.intel.com"
+        id S1726883AbgCMR2o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 13:28:44 -0400
+Received: from mga05.intel.com ([192.55.52.43]:6348 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726406AbgCMQd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 12:33:28 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726414AbgCMR2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 13:28:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 09:33:27 -0700
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2020 10:28:43 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,549,1574150400"; 
-   d="scan'208";a="278284491"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga002.fm.intel.com with ESMTP; 13 Mar 2020 09:33:26 -0700
-Date:   Fri, 13 Mar 2020 09:33:26 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Nathaniel McCallum <npmccallum@redhat.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, Neil Horman <nhorman@redhat.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
-        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
-        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
-        cedric.xing@intel.com, Patrick Uiterwijk <puiterwijk@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jethro Beekman <jethro@fortanix.com>
-Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-Message-ID: <20200313163326.GB5181@linux.intel.com>
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
- <20200303233609.713348-22-jarkko.sakkinen@linux.intel.com>
- <CAOASepO2=KCzT+wdXWz2tUNvi6NyzNJ3KwvBMtH_P1TO8Yr_mQ@mail.gmail.com>
- <20200313005252.GA1292@linux.intel.com>
- <CAOASepMN1fmDaPjJJ-rpbLNPGUzE2LNB69s3X5mDBEhXziZ_UQ@mail.gmail.com>
+   d="scan'208";a="237017183"
+Received: from sblancoa-mobl.amr.corp.intel.com (HELO [10.251.232.239]) ([10.251.232.239])
+  by fmsmga008.fm.intel.com with ESMTP; 13 Mar 2020 10:28:28 -0700
+Subject: Re: [PATCH 07/16] soundwire: cadence: mask Slave interrupt before
+ stopping clock
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Hui Wang <hui.wang@canonical.com>, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+References: <20200311184128.4212-1-pierre-louis.bossart@linux.intel.com>
+ <20200311184128.4212-8-pierre-louis.bossart@linux.intel.com>
+ <20200313122444.GH4885@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <4b7d3e8c-b803-c6ae-3072-93f8187604c4@linux.intel.com>
+Date:   Fri, 13 Mar 2020 11:33:53 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOASepMN1fmDaPjJJ-rpbLNPGUzE2LNB69s3X5mDBEhXziZ_UQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20200313122444.GH4885@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 12:07:55PM -0400, Nathaniel McCallum wrote:
-> On Thu, Mar 12, 2020 at 8:52 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> > FWIW, if the handler reaaaly wanted to pop off the stack, it could do so,
-> > fixup the stack, and then re-call __vdso_sgx_enter_enclave() instead of
-> > returning (to the original __vdso_sgx_enter_enclave()).
-> 
-> My understanding from the documentation issue above was that *if* you
-> wanted to push parameters back on the stack during enclave exit, you
-> would *have* to supply a handler so it could pop the parameters and
-> reset the stack. Which is why restoring %rsp from %rbx didn't make
-> sense to me.
 
-Yep.
+>> +/**
+>> + * sdw_cdns_enable_slave_interrupt() - Enable SDW slave interrupts
+>> + * @cdns: Cadence instance
+>> + * @state: boolean for true/false
+>> + */
+>> +static void cdns_enable_slave_interrupts(struct sdw_cdns *cdns, bool state)
+> 
+> Do you want to rename this as cdns_configure_slave_interrupts, with
+> argument as enable/disable... ?
+
+this follows the convention we already have with:
+
+int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns, bool state);
+
+but it just deals with slave interrupts only.
