@@ -2,152 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE05D183F91
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 04:21:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 025EE183F9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 04:23:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbgCMDUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 23:20:03 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:60573 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726616AbgCMDUC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Mar 2020 23:20:02 -0400
-Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net [72.93.95.157])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 02D3Jl1l001090
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Mar 2020 23:19:48 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 140EE420E5E; Thu, 12 Mar 2020 23:19:47 -0400 (EDT)
-Date:   Thu, 12 Mar 2020 23:19:47 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     "Bird, Tim" <Tim.Bird@sony.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Laura Abbott <laura@labbott.name>,
-        "ksummit-discuss@lists.linuxfoundation.org" 
-        <ksummit-discuss@lists.linuxfoundation.org>,
-        "tech-board-discuss@lists.linuxfoundation.org" 
-        <tech-board-discuss@lists.linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [Ksummit-discuss] Linux Foundation Technical Advisory Board
- Elections -- Change to charter
-Message-ID: <20200313031947.GC225435@mit.edu>
-References: <6d6dd6fa-880f-01fe-6177-281572aed703@labbott.name>
- <20200312003436.GF1639@pendragon.ideasonboard.com>
- <MWHPR13MB0895E133EC528ECF50A22100FDFD0@MWHPR13MB0895.namprd13.prod.outlook.com>
+        id S1726508AbgCMDXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 23:23:34 -0400
+Received: from mga06.intel.com ([134.134.136.31]:36154 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726246AbgCMDXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Mar 2020 23:23:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 20:23:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,546,1574150400"; 
+   d="scan'208";a="232280339"
+Received: from likexu-mobl1.ccr.corp.intel.com (HELO [10.238.4.82]) ([10.238.4.82])
+  by orsmga007.jf.intel.com with ESMTP; 12 Mar 2020 20:23:29 -0700
+Reply-To: like.xu@intel.com
+Subject: Re: [PATCH] KVM: VMX: Micro-optimize vmexit time when not exposing
+ PMU
+To:     Wanpeng Li <kernellwp@gmail.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+References: <1584007547-4802-1-git-send-email-wanpengli@tencent.com>
+ <87r1xxrhb0.fsf@vitty.brq.redhat.com>
+ <CANRm+Cwawew=Xygxmzr2jmgPAKqDxvkqxxzjvoxnRRjC_Jx9Xw@mail.gmail.com>
+From:   "Xu, Like" <like.xu@intel.com>
+Organization: Intel OTC
+Message-ID: <79141339-3506-1fe4-2e69-8430f4c202bd@intel.com>
+Date:   Fri, 13 Mar 2020 11:23:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MWHPR13MB0895E133EC528ECF50A22100FDFD0@MWHPR13MB0895.namprd13.prod.outlook.com>
+In-Reply-To: <CANRm+Cwawew=Xygxmzr2jmgPAKqDxvkqxxzjvoxnRRjC_Jx9Xw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 09:28:09PM +0000, Bird, Tim wrote:
-> I agree with Laurent.  I'm not sure how to solve this problem, but
-> I think you need something to indicate the voter approval policy
-> besides "the TAB will decide it, and can change it when they like".
-> 
-> I suppose the pool of voters has been decided historically by the Kernel
-> Summit invitation committee.  Some randomness was introduced by
-> allowing voting by attendees from whatever event the Linux Foundation
-> co-located with the Kernel Summit.  I think in practical terms,
-> this means that recently the voting pool was self-selected (somewhat), but
-> was skewed towards people who could travel, or had employer support.
-> But in any event, the selection of the voting pool was done by people outside
-> the TAB (or at least not necessarily inside the TAB), and without any eye towards
-> skewing the election results.  That is, I don't think the kernel summit invitation
-> committee, or the LF event staff, ever considered TAB voting in their KS attendee
-> selection or event pairing choices.
+Hi Wanpeng,
 
-(Speaking personally for myself)
+On 2020/3/12 19:05, Wanpeng Li wrote:
+> On Thu, 12 Mar 2020 at 18:36, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>> Wanpeng Li <kernellwp@gmail.com> writes:
+>>
+>>> From: Wanpeng Li <wanpengli@tencent.com>
+>>>
+>>> PMU is not exposed to guest by most of cloud providers since the bad performance
+>>> of PMU emulation and security concern. However, it calls perf_guest_switch_get_msrs()
+>>> and clear_atomic_switch_msr() unconditionally even if PMU is not exposed to the
+>>> guest before each vmentry.
+>>>
+>>> ~1.28% vmexit time reduced can be observed by kvm-unit-tests/vmexit.flat on my
+>>> SKX server.
+>>>
+>>> Before patch:
+>>> vmcall 1559
+>>>
+>>> After patch:
+>>> vmcall 1539
+>>>
+>>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>>> ---
+>>>   arch/x86/kvm/vmx/vmx.c | 3 +++
+>>>   1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+>>> index 40b1e61..fd526c8 100644
+>>> --- a/arch/x86/kvm/vmx/vmx.c
+>>> +++ b/arch/x86/kvm/vmx/vmx.c
+>>> @@ -6441,6 +6441,9 @@ static void atomic_switch_perf_msrs(struct vcpu_vmx *vmx)
+>>>        int i, nr_msrs;
+>>>        struct perf_guest_switch_msr *msrs;
+>>>
+>>> +     if (!vcpu_to_pmu(&vmx->vcpu)->version)
+>>> +             return;
+>>> +
+>>>        msrs = perf_guest_get_msrs(&nr_msrs);
+>>>
+>>>        if (!msrs)
+>> Personally, I'd prefer this to be expressed as
+>>
+>> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+>> index 40b1e6138cd5..ace92076c90f 100644
+>> --- a/arch/x86/kvm/vmx/vmx.c
+>> +++ b/arch/x86/kvm/vmx/vmx.c
+>> @@ -6567,7 +6567,9 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
+>>
+>>          pt_guest_enter(vmx);
+>>
+>> -       atomic_switch_perf_msrs(vmx);
+>> +       if (vcpu_to_pmu(&vmx->vcpu)->version)
+We may use 'vmx->vcpu.arch.pmu.version'.
 
-The choice to include whatever LF event the Kernel Summit was
-colocated with was a choice that was made by the TAB on an ad-hoc
-basis.  There is nothing about that in the TAB charter at all.  So
-we've *already* been doing things in a way that is not consistent with
-TAB charter --- for years and years.
+I would vote in favor of adding the "unlikely (vmx->vcpu.arch.pmu.version)"
+check to the atomic_switch_perf_msrs(), which follows pt_guest_enter(vmx).
 
-Starting last year, we experimented with electronic voting.  We didn't
-change the composition of who could vote (it was anyone attending
-Plumbers), but one of the reasons was that we didn't want to change
-two variables at once.
+>> +               atomic_switch_perf_msrs(vmx);
+>> +
+> I just hope the beautiful codes before, I testing this version before
+> sending out the patch, ~30 cycles can be saved which means that ~2%
+> vmexit time, will update in next version. Let's wait Paolo for other
+> opinions below.
 
-We haven't made any final decisions yet about how the pool of voters
-might be expanded.  But it might include (for example) people who have
-user accounts on kernel.org.  Or historically, one of the pools from
-which the kernel summitte attendee list would be drawn included
-everyone who at least N Signed-off-by:, Reviewed-by:, etc.  Since
-there was a Kernel Summit program committee filtering who got invites
-(and there was non-trivial overlap between the program committee and
-the TAB), in theory that very much could influence the TAB elections.
-Expanding the pool to those who were interested and who were attending
-the colocated event very much decreased that effect, but there has
-always been a human filtering element.
+You may factor the cost of the "pmu-> version check' itself (~10 cycles)
+into your overall 'micro-optimize' revenue.
 
-One of the potential failures that having a human filtering element
-prevents is the Sad/Rabid Puppies scenario:
+Thanks,
+Like Xu
+>
+>      Wanpeng
+>
+>> Also, (not knowing much about PMU), is
+>> "vcpu_to_pmu(&vmx->vcpu)->version" check correct?
+>>
+>> E.g. in intel_is_valid_msr() correct for Intel PMU or is it stated
+>> somewhere that it is generic rule?
+>>
+>> Also, speaking about cloud providers and the 'micro' nature of this
+>> optimization, would it rather make sense to introduce a static branch
+>> (the policy to disable vPMU is likely to be host wide, right)?
+>>
+>> --
+>> Vitaly
+>>
 
-https://slate.com/culture/2016/04/sad-and-rabid-puppies-are-trying-to-game-the-hugo-award-shortlists-again-in-2016.html
-
-So for example, if we set some rule like, a single Signed-off-by: is
-enough to get a vote, what would happen over a few months, a thousand
-spelling/whitespace "trivial" patches, all from different sock puppet
-accounts, show up and get absorbed into the tree?  With a human
-program committee, it's easy for humans to say, "Ha, ha.  No."  But if
-we use a mechnical rule, and badly chosen criteria, it might be really
-easy for some mischief makers to carry out a Sad Puppies style attack
-on the voting system.
-
-On the flip side, having humans deciding who can and can't vote has
-other really bad effects regarding the election's legitimacy.  It
-worked 5+ years ago, because it was simpler times, and the formal
-reason for the selection was attendance to a closed technical meeting,
-and we later decided to hang the TAB elections off of it.
-
-So that means we need to be smart about how we pick the criteria.
-Using a kernel.org account might be a good approach, since it would be
-a lot harder for a huge number of sock puppet accounts to meet that
-criteria.  We don't have a final proposal for something which can be
-objectively measured, but can't be easily gamed by someone who is
-trying to subvert the system.  It is pretty clear, though, that we
-need to have that clearly articulated, in writing, *before* we start
-the nomination for the next round of TAB candidates.
-
-I will also point out that we may not have much of a choice about
-switching to something besides "people who attend the colocated event
-where the Kernel Summit is held".  The program/organizing committees
-for LPC, KS, and MS, are continuing to make plans in the hope that the
-COVID-19 pandemic will have subsided enough that it will be safe to
-hold an conference of 400-500 people in Halifax.  However, nobody
-knows if that is the case.  If you look at this article from the
-Lanclet medical journal article, "How will country-based mitigation
-measures influence the course of the COVID-19 epidemic?":
-
-https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(20)30567-5/fulltext
-
-The takeaway is it's really not clear how long it will take for the
-COVID-19 pandemic to run its course --- but some of their sample
-curves extend out for of 5-6 months or longer.  So while we are
-continuing to plan that LPC will take place, it's only responsible to
-consider what we should do if in fact health and safety restrictions
-are such that we might not be able to hold *any* Linux systems
-conferences in 2020.
-
-In that case, we might be forced to either keep TAB members in place
-beyond their original elected term, or we might have to go to a pure
-electronic voting for the upcoming TAB election.  I very much hope
-that won't be the case, but we need to be prepared for that
-eventuality.
-
-(I'll keep silent about what I think of the current US
-Administration's competence in steering us through this crisis, except
-to note that in South Korea, they are testing 10,000 people a day,
-using drive-through centers, and we haven't been able to test that
-many *total* so far in the US, and there are Biogen employees in
-Boston and Life Care Center employees in Kirkland, Washington, who are
-still waiting for COVID-19 test availability....)
-
-						- Ted
