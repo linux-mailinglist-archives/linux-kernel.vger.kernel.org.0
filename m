@@ -2,110 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 227F8185859
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:04:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCA30185882
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:13:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbgCOCEo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 22:04:44 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:60384 "EHLO inva021.nxp.com"
+        id S1727732AbgCOCNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:13:37 -0400
+Received: from mga14.intel.com ([192.55.52.115]:41895 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726130AbgCOCEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:04:44 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6951520155F;
-        Sat, 14 Mar 2020 08:17:49 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 12B13201561;
-        Sat, 14 Mar 2020 08:17:45 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8931D402A5;
-        Sat, 14 Mar 2020 15:17:39 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     srinivas.kandagatla@linaro.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] nvmem: mxs-ocotp: Use devm_add_action_or_reset() for cleanup
-Date:   Sat, 14 Mar 2020 15:11:11 +0800
-Message-Id: <1584169871-418-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726917AbgCOCNh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Mar 2020 22:13:37 -0400
+IronPort-SDR: iY7P3VHkW2PCbv4CGRrqvwkdCRcE9GTewldOMgKhU4SbbAplqeIVPFovZ+KfF8SK74GYn4mKa6
+ I6/UTHFubeUA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2020 00:51:47 -0700
+IronPort-SDR: lJkLpeeG5viF6B/T6Z8Q6WmK6S3b2+tI0KaCMSrNzN1isbFcG1cRGrE1eUdv9H4M+dsy3E0R+B
+ 534vbjtJgJ3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,551,1574150400"; 
+   d="scan'208";a="416537519"
+Received: from lxy-clx-4s.sh.intel.com ([10.239.43.160])
+  by orsmga005.jf.intel.com with ESMTP; 14 Mar 2020 00:51:43 -0700
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@kernel.org>, tony.luck@intel.com
+Cc:     peterz@infradead.org, fenghua.yu@intel.com,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: [PATCH v4 00/10] x86/split_lock: Add feature split lock detection support in kvm
+Date:   Sat, 14 Mar 2020 15:34:04 +0800
+Message-Id: <20200314073414.184213-1-xiaoyao.li@intel.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_add_action_or_reset() for cleanup to call clk_unprepare(),
-which can simplify the error handling in .probe, and .remove callback
-can be dropped.
+This series aims to add the virtualization of split lock detection for
+guest, while containing some fixes of native kernel split lock handling. 
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/nvmem/mxs-ocotp.c | 30 +++++++++++-------------------
- 1 file changed, 11 insertions(+), 19 deletions(-)
+Note, this series is based on the kernel patch[1].
 
-diff --git a/drivers/nvmem/mxs-ocotp.c b/drivers/nvmem/mxs-ocotp.c
-index 8e4898d..588ab56 100644
---- a/drivers/nvmem/mxs-ocotp.c
-+++ b/drivers/nvmem/mxs-ocotp.c
-@@ -130,6 +130,11 @@ static const struct of_device_id mxs_ocotp_match[] = {
- };
- MODULE_DEVICE_TABLE(of, mxs_ocotp_match);
- 
-+static void mxs_ocotp_action(void *data)
-+{
-+	clk_unprepare(data);
-+}
-+
- static int mxs_ocotp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -160,39 +165,26 @@ static int mxs_ocotp_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	ret = devm_add_action_or_reset(&pdev->dev, mxs_ocotp_action, otp->clk);
-+	if (ret)
-+		return ret;
-+
- 	data = match->data;
- 
- 	ocotp_config.size = data->size;
- 	ocotp_config.priv = otp;
- 	ocotp_config.dev = dev;
- 	otp->nvmem = devm_nvmem_register(dev, &ocotp_config);
--	if (IS_ERR(otp->nvmem)) {
--		ret = PTR_ERR(otp->nvmem);
--		goto err_clk;
--	}
-+	if (IS_ERR(otp->nvmem))
-+		return PTR_ERR(otp->nvmem);
- 
- 	platform_set_drvdata(pdev, otp);
- 
- 	return 0;
--
--err_clk:
--	clk_unprepare(otp->clk);
--
--	return ret;
--}
--
--static int mxs_ocotp_remove(struct platform_device *pdev)
--{
--	struct mxs_ocotp *otp = platform_get_drvdata(pdev);
--
--	clk_unprepare(otp->clk);
--
--	return 0;
- }
- 
- static struct platform_driver mxs_ocotp_driver = {
- 	.probe = mxs_ocotp_probe,
--	.remove = mxs_ocotp_remove,
- 	.driver = {
- 		.name = "mxs-ocotp",
- 		.of_match_table = mxs_ocotp_match,
+Patch 1 is new added one in this series, that is the enhancement and fix
+for kernel split lock detction. It ensure X86_FEATURE_SPLIT_LOCK_DETECT
+flag is set after verifying the feature is really supported.
+And it explicitly turn off split lock when sld_off instead of assuming
+BIOS/firmware leaves it cleared.
+
+Patch 2 optimizes the runtime MSR accessing.
+
+Patch 3-5 are the preparation for enabling split lock detection
+virtualization in KVM.
+
+Patch 6-7 fixes the issue in kvm emulator and guest when host truns
+split lock detect on.
+
+Patch 8-10 implement the virtualization of split lock detection in kvm.
+
+[1]: https://lore.kernel.org/lkml/158031147976.396.8941798847364718785.tip-bot2@tip-bot2/ 
+
+v4:
+ - Add patch 1 to rework the initialization flow of split lock
+   detection.
+ - Drop percpu MSR_TEST_CTRL cache, just use a static variable to cache
+   the reserved/unused bit of MSR_TEST_CTRL. [Sean]
+ - Add new option for split_lock_detect kernel param.
+ - Changlog refinement. [Sean]
+ - Add a new patch to enable MSR_TEST_CTRL for intel guest. [Sean]
+
+Xiaoyao Li (10):
+  x86/split_lock: Rework the initialization flow of split lock detection
+  x86/split_lock: Avoid runtime reads of the TEST_CTRL MSR
+  x86/split_lock: Re-define the kernel param option for
+    split_lock_detect
+  x86/split_lock: Export handle_user_split_lock()
+  x86/split_lock: Add and export several functions for KVM
+  kvm: x86: Emulate split-lock access as a write
+  kvm: vmx: Extend VMX's #AC interceptor to handle split lock #AC
+    happens in guest
+  kvm: x86: Emulate MSR IA32_CORE_CAPABILITIES
+  kvm: vmx: Enable MSR_TEST_CTRL for intel guest
+  x86: vmx: virtualize split lock detection
+
+ .../admin-guide/kernel-parameters.txt         |   5 +-
+ arch/x86/include/asm/cpu.h                    |  29 ++++-
+ arch/x86/include/asm/kvm_host.h               |   1 +
+ arch/x86/kernel/cpu/intel.c                   | 119 +++++++++++++-----
+ arch/x86/kernel/traps.c                       |   2 +-
+ arch/x86/kvm/cpuid.c                          |   7 +-
+ arch/x86/kvm/vmx/vmx.c                        |  75 ++++++++++-
+ arch/x86/kvm/vmx/vmx.h                        |   1 +
+ arch/x86/kvm/x86.c                            |  42 ++++++-
+ 9 files changed, 235 insertions(+), 46 deletions(-)
+
 -- 
-2.7.4
+2.20.1
 
