@@ -2,61 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 996BF185293
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 00:55:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94466185314
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 01:00:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbgCMXyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 19:54:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727545AbgCMXyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 19:54:33 -0400
-Received: from kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com (unknown [163.114.132.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2B7D2074E;
-        Fri, 13 Mar 2020 23:54:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584143673;
-        bh=0P9xgH7QzMeqwIkpaOz8z3Oty6VKgtDzU10MFU8QqIM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SEsD46NmZwwJSYW3lqbSIEGUWlW+cPCbVN/mwhr4gXYDDrvenNCKGLNmumcSR5hYN
-         2J474AqFGzxoB1ZlpJUGuMyzxJDjQdxni7ScdTgUKCFVNVwNSaS5n1fVxLnn99hhJy
-         KjUDneamQhmJc5it1COWuIwk5FT0RXYsgOrGvw5o=
-Date:   Fri, 13 Mar 2020 16:54:30 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     shuah@kernel.org, luto@amacapital.net, wad@chromium.org,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH 3/5] kselftest: run tests by fixture
-Message-ID: <20200313165430.7f7e35b8@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <202003131626.8EF371151@keescook>
-References: <20200313031752.2332565-1-kuba@kernel.org>
-        <20200313031752.2332565-4-kuba@kernel.org>
-        <202003131626.8EF371151@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727674AbgCNAAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 20:00:09 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:52057 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726853AbgCNAAJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Mar 2020 20:00:09 -0400
+Received: by mail-pj1-f65.google.com with SMTP id hg10so1042502pjb.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Mar 2020 17:00:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=F1pA8I6qcaZlWcjwnRAs8TnrPPPQ0hCgFlpwmxQ+nAg=;
+        b=DP89160wPxqR7NlCIDr3dcbuICiikU1SQ2Ihh9o7IH0D4jfoUJvpXD8Ur+TmEjBbp8
+         57Y7LqM4tKCZTHpZUJ0Bt7C3NxH91QQISz4F74OF+Olo0yYV5xdrq8rh1zbrRb48cK2N
+         sJiEkX4p4MHNFo33p05/nP2lDPqeSJ6r052KmbXs7vN5m8JbXUKi/6waPiM2wVZrH63c
+         x1xwKUoWmy4HqRfCDhP/7qqpjFjObCnNyD5/Sy2xrKo7BZhRW4g2WzzKxqsGikIPU/jr
+         sqO+mA16DoAOSpanmC+rtZjVLsqydrjSkzidDJ2VC1ICDxrDoy6xznXmeG9uUIPpwc08
+         WYsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=F1pA8I6qcaZlWcjwnRAs8TnrPPPQ0hCgFlpwmxQ+nAg=;
+        b=G25YJZ/lyFb6/JrRDE3SLl74Mxs5NA1rPkbCGOV4SaM4Xjw1GjRtDEY0XElT+pnlc7
+         Rs9JiyqjR5w3SRwyf2uWqtya3cpmwwgeQd+dM0sHm64jnMishsjEC96y7uFyzVXpDDDn
+         Kd0D8IQGcT+uSU51jCiT7F0EXPcjABtBJmCflSf2J/v77pp2Xx089ORZTwmAlr+sEGXV
+         AB5tMnui3sji+dRwo6J6XzZydTeH64lWSddFiyde5T/Ptk/t3p/CJnDKJE37Zxb4RSS1
+         eIfgNyTR7Ljb00QHwUGW0S79M9LoJA4QgcVT3ocgXBBN679SfIzZrCpjzZYp0xpqH+/b
+         2BaA==
+X-Gm-Message-State: ANhLgQ3NvV24Ipfij7j/hYUThthdaprHxSEJRQFaOFAMfSEdOG67I2Nt
+        Ow9+JtfB8WQqxt9StGgOreY=
+X-Google-Smtp-Source: ADFU+vs9FQC3C1QjAMHIEA/p8eRKRIlA9KNGtJyFYQfe8Mw8yp5WDzG7vbzV9YmfU6KzBAypnnkoBg==
+X-Received: by 2002:a17:902:8207:: with SMTP id x7mr15216856pln.185.1584144008118;
+        Fri, 13 Mar 2020 17:00:08 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id e187sm7011450pfe.50.2020.03.13.17.00.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Mar 2020 17:00:07 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     robin.murphy@arm.com, m.szyprowski@samsung.com, hch@lst.de
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: [RFC][PATCH] dma-mapping: align default segment_boundary_mask with dma_mask
+Date:   Fri, 13 Mar 2020 17:00:07 -0700
+Message-Id: <20200314000007.13778-1-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Mar 2020 16:27:54 -0700 Kees Cook wrote:
-> On Thu, Mar 12, 2020 at 08:17:50PM -0700, Jakub Kicinski wrote:
-> > Now that all tests have a fixture object move from a global
-> > list of tests to a list of tests per fixture.
-> > 
-> > Order of tests may change as we will now group and run test
-> > fixture by fixture, rather than in declaration order.  
-> 
-> I'm not convinced about this change. Declaration order is a pretty
-> intuitive result that I'd like to keep for the harness.
-> 
-> Can this change be avoided and still keep the final results of a
-> "mutable" fixture?
+More and more drivers set dma_masks above DMA_BIT_MAKS(32) while
+only a handful of drivers call dma_set_seg_boundary(). This means
+that most drivers have a 4GB segmention boundary because DMA API
+returns DMA_BIT_MAKS(32) as a default value, though they might be
+able to handle things above 32-bit.
 
-Sure! I will abandon the reorg of the lists then, keep just the list of
-tests, and have each test point to its fixture. Which then may contain
-param sets.
+This might result in a situation that iommu_map_sg() cuts an IOVA
+region, larger than 4GB, into discontiguous pieces and creates a
+faulty IOVA mapping that overlaps some physical memory being out
+of the scatter list, which might lead to some random kernel panic
+after DMA overwrites that faulty IOVA space.
+
+We have CONFIG_DMA_API_DEBUG_SG in kernel/dma/debug.c that checks
+such situations to prevent bad things from happening. However, it
+is not a mandatory check. And one might not think of enabling it
+when debugging a random kernel panic until figuring out that it's
+related to iommu_map_sg().
+
+A safer solution may be to align the default segmention boundary
+with the configured dma_mask, so DMA API may create a contiguous
+IOVA space as a device "expect" -- what tries to make sense is:
+Though it's device driver's responsibility to set dma_parms, it
+is not fair or even safe to apply a 4GB boundary here, which was
+added a decade ago to work for up-to-4GB mappings at that time.
+
+This patch updates the default segment_boundary_mask by aligning
+it with dma_mask.
+
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+---
+ include/linux/dma-mapping.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index 330ad58fbf4d..0df0ee92eba1 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -736,7 +736,7 @@ static inline unsigned long dma_get_seg_boundary(struct device *dev)
+ {
+ 	if (dev->dma_parms && dev->dma_parms->segment_boundary_mask)
+ 		return dev->dma_parms->segment_boundary_mask;
+-	return DMA_BIT_MASK(32);
++	return (unsigned long)dma_get_mask(dev);
+ }
+ 
+ static inline int dma_set_seg_boundary(struct device *dev, unsigned long mask)
+-- 
+2.17.1
+
