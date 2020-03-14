@@ -2,76 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A88EC1857AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:45:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0D4E1857E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:47:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbgCOBp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 21:45:58 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42268 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbgCOBp5 (ORCPT
+        id S1726744AbgCOBq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 21:46:58 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:45012 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726847AbgCOBq5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 21:45:57 -0400
-Received: by mail-ed1-f65.google.com with SMTP id b21so6952550edy.9;
-        Sat, 14 Mar 2020 18:45:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oJNL3gJVarSfgnj/xZ8e1v4N3wwQZ3+G6UH5cn1DZKY=;
-        b=epp1F7RQF8dyE+jDoYIGqnJXXh3ngzWRGV7uzTbzk3TBCNgfaQaE8d4dP2ZLmY0DJ+
-         CqSokF0zE3/F9p9fRxEWpIMiAXrS/nCmyNHzSCTYQLcrYNzd7x5mfl90UwohECYXsfT/
-         T+cOD8uSccH4CUcKAp+o4BDtUl/fPJzpibrNPizUCc5kLAg8jOxbcszNVGkg7yL50sML
-         XWHS5I3LiyZZUDt2w7jvlfh5d8vZCDHfsE5tm1KoQYVXFSa5nJ92Prk7Xj1vWsCcdx5q
-         nTHX8yaD4nATlMCEq7WHQ5vQOa6lx5mcUGaDqjcV7+3e1HCe0KiC3s/YiNqLKt0rMpED
-         SxZw==
-X-Gm-Message-State: ANhLgQ0YjwXcGyf10wNoie90C2n2odVuDtz0YW+5EN9MCmd+CtcLW+Xg
-        AEAvenBETF7zE1U0DuWyu0acfLLf
-X-Google-Smtp-Source: ADFU+vsKOOL2UHib0/pNgwvknqu0ygBfBLObd+RRWf136IE+uExXy8WOyTcRRaS8oCCPzf515dqUtg==
-X-Received: by 2002:a17:906:9405:: with SMTP id q5mr16440276ejx.317.1584211552602;
-        Sat, 14 Mar 2020 11:45:52 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id v17sm350384edb.27.2020.03.14.11.45.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 14 Mar 2020 11:45:51 -0700 (PDT)
-Date:   Sat, 14 Mar 2020 19:45:49 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 3/3] power: charger: max14577: Add proper dt-compatible
- strings
-Message-ID: <20200314184549.GA20063@kozik-lap>
-References: <20200220145127.21273-1-m.szyprowski@samsung.com>
- <CGME20200220145135eucas1p1ba181cef65c7a4f91a254ee35e022f08@eucas1p1.samsung.com>
- <20200220145127.21273-3-m.szyprowski@samsung.com>
+        Sat, 14 Mar 2020 21:46:57 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1584236817; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=VXbg0PkR8DzxPJz/MiykCW0CnZd/L0YGnzp2Lz0Y0eE=; b=dU2kijWkfofioMrxupypsc3dIaHRj2wxU8BetvrDbprYWehffAm0fMX0mqChvGW9PkmOBCqA
+ fXCkR+CuP7pllDzL0X2zFjmiFs76GFxAn+qT9xL7rHE18rZuVkUaBOQjbKXCr5KPLL1Eg5kf
+ xZLebyKfY8VUPLSS0Lg34MFBYHE=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e6d268b.7fb83f309a40-smtp-out-n01;
+ Sat, 14 Mar 2020 18:46:35 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 6AE8FC432C2; Sat, 14 Mar 2020 18:46:35 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [192.168.0.104] (unknown [183.82.137.168])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1366FC433CB;
+        Sat, 14 Mar 2020 18:46:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1366FC433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v5 3/5] dt-bindings: clock: Add YAML schemas for the QCOM
+ MSS clock bindings
+To:     Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org
+References: <1582540703-6328-1-git-send-email-tdas@codeaurora.org>
+ <1582540703-6328-4-git-send-email-tdas@codeaurora.org>
+ <20200224184201.GA6030@bogus>
+ <eec22330-2bf4-f4f5-3d28-6b69aa71f992@codeaurora.org>
+ <CAL_JsqKRr3aOpcbPOtkArxnnJOBd-XaUGRVesR_CnA11pFHYXQ@mail.gmail.com>
+ <158267707817.177367.4165827948994155128@swboyd.mtv.corp.google.com>
+ <CAL_JsqJiB08vtDKP18Xzdzan-2TFVxJJ-rFgvXsqVHKB5-L18g@mail.gmail.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <888d1371-2eea-1cf2-5633-715fb047bbbb@codeaurora.org>
+Date:   Sun, 15 Mar 2020 00:16:27 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200220145127.21273-3-m.szyprowski@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAL_JsqJiB08vtDKP18Xzdzan-2TFVxJJ-rFgvXsqVHKB5-L18g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 03:51:27PM +0100, Marek Szyprowski wrote:
-> Add device tree compatible strings and create proper modalias structures
-> to let this driver load automatically if compiled as module, because
-> max14577 MFD driver creates MFD cells with such compatible strings.
+I have combined all the bindings in the same patch to avoid any YAML 
+dependency.
+
+On 2/26/2020 7:40 PM, Rob Herring wrote:
+> On Tue, Feb 25, 2020 at 6:31 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>>
+>> Quoting Rob Herring (2020-02-25 05:58:19)
+>>> On Mon, Feb 24, 2020 at 11:49 PM Taniya Das <tdas@codeaurora.org> wrote:
+>>>>
+>>>> Hi Rob,
+>>>>
+>>>> On 2/25/2020 12:12 AM, Rob Herring wrote:
+>>>>
+>>>>>
+>>>>> My bot found errors running 'make dt_binding_check' on your patch:
+>>>>>
+>>>>> Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
+>>>>> Error: Documentation/devicetree/bindings/clock/qcom,sc7180-mss.example.dts:21.26-27 syntax error
+>>>>> FATAL ERROR: Unable to parse input tree
+>>>>> scripts/Makefile.lib:300: recipe for target 'Documentation/devicetree/bindings/clock/qcom,sc7180-mss.example.dt.yaml' failed
+>>>>> make[1]: *** [Documentation/devicetree/bindings/clock/qcom,sc7180-mss.example.dt.yaml] Error 1
+>>>>> Makefile:1263: recipe for target 'dt_binding_check' failed
+>>>>> make: *** [dt_binding_check] Error 2
+>>>>>
+>>>>> See https://patchwork.ozlabs.org/patch/1242999
+>>>>> Please check and re-submit.
+>>>>>
+>>>>
+>>>> The error shows syntax error at line 21, below is the example.dts from
+>>>> my tree and would compile for me as I have the dependency of the include
+>>>> file when I compile.
+>>>
+>>> The header should be part of this patch if possible.
+>>>
+>>
+>> Are patches tested in isolation instead of in series? I see this define
+>> in the first patch in this series so it seems like automated checkers
+>> should be able to apply the patches in series and see if they still
+>> work, unless that is broken somehow.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/power/supply/max14577_charger.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+> The series should be applied, but it's all very fragile. It's going to
+> stay that way until someone else writes and maintains the applying
+> patches to git logic.
+> 
+> In any case, the header is part of the binding (being an ABI) not the
+> driver, so it belongs in the binding patch.
+> 
+> 
+> However, in this case, the problem was pointed out in v4 to be a typo
+> in GCC_MSS_MFAB_AXIS_CLK.
+> 
+> Rob
+> 
 
-The approach is still being discussed (in patch #1) so this should be
-applied if patch #1 is also accepted. In such case:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
-Best regards,
-Krzysztof
+--
