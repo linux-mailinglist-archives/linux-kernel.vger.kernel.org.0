@@ -2,49 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D6991859E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 04:55:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 829C2185A0C
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 05:21:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbgCODzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 23:55:31 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:35228 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727447AbgCODza (ORCPT
+        id S1726743AbgCOEVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 00:21:14 -0400
+Received: from mail-qk1-f198.google.com ([209.85.222.198]:39432 "EHLO
+        mail-qk1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725872AbgCOEVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 23:55:30 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D245815B75279;
-        Sat, 14 Mar 2020 20:55:29 -0700 (PDT)
-Date:   Sat, 14 Mar 2020 20:55:29 -0700 (PDT)
-Message-Id: <20200314.205529.1083905174692087370.davem@davemloft.net>
-To:     Jose.Abreu@synopsys.com
-Cc:     netdev@vger.kernel.org, Joao.Pinto@synopsys.com, andrew@lunn.ch,
-        f.fainelli@gmail.com, hkallweit1@gmail.com, linux@armlinux.org.uk,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 0/2] net: phy: XLGMII define and usage in
- PHYLINK
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <cover.1584031294.git.Jose.Abreu@synopsys.com>
-References: <cover.1584031294.git.Jose.Abreu@synopsys.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 14 Mar 2020 20:55:30 -0700 (PDT)
+        Sun, 15 Mar 2020 00:21:14 -0400
+Received: by mail-qk1-f198.google.com with SMTP id a21so13518352qkg.6
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 21:21:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=H5UL55Jt0P8+lhekSBof6CJMLz8v0e26Cnd2rcAgXuU=;
+        b=EoIXp6VqlhKhTHUjA0WJwtcTeSfQ+tL3RBvIyqlXFGMEpt6yHXHvGVEpHoizUXn9Ti
+         N1gtkyvGnt6qOv8hc9uUt7CMoi7/E4hLMQQyuYfmN2ufT1r8CSBTpNa0CQGN/8AACU5s
+         7uczGc1UwnOli2FGqcBame6DWgdtwzbWORKf8suSTJix1xTUgRHeJQrgNKRoPBQMzl5t
+         B8U8gpadCH49unzzlIVaQr9vLbku/eZ98VSU/znWpb9XCUKi+vSd2dAqCO5vr7zpQlj6
+         HwF97Y2Wzk0gdA9zMOlPUsSjAKbHhcsiLHGrdIh1UcWMKZXAYB37XLI9kGUljY4l9CJK
+         AlNg==
+X-Gm-Message-State: ANhLgQ22qmGUC2/mrYHdjnCMHXCjDjBmk4V2XmwPVxKEQFaBN3y3pdjm
+        nQeuFPQSpGgDNhAhPNYuB95TKjkF1QHGIdHlIuQV6K4FAuY0
+X-Google-Smtp-Source: ADFU+vuMuZRQB4plQWTVVNLqwBcbrFI1SQwYA3uqfRjAyzEhpvXcwloMBXgVy/yGvQ7oZDstiPZt9V3wkVKoQhD/DqzkLaxTcBBW
+MIME-Version: 1.0
+X-Received: by 2002:a05:6638:266:: with SMTP id x6mr15874404jaq.46.1584159902975;
+ Fri, 13 Mar 2020 21:25:02 -0700 (PDT)
+Date:   Fri, 13 Mar 2020 21:25:02 -0700
+In-Reply-To: <CAM_iQpUo0L0+J7aGTvUsBWZ=A8cGxyN7oJVjqyent+9OCbJ_Jg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000048ca0c05a0c8f8a8@google.com>
+Subject: Re: WARNING: ODEBUG bug in tcf_queue_work
+From:   syzbot <syzbot+9c2df9fd5e9445b74e01@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, jhs@mojatatu.com, jiri@resnulli.us,
+        kuba@kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Date: Thu, 12 Mar 2020 18:10:08 +0100
+Hello,
 
-> Adds XLGMII defines and usage in PHYLINK.
-> 
-> Patch 1/2, adds the define for it, whilst 2/2 adds the usage of it in
-> PHYLINK.
+syzbot has tested the proposed patch and the reproducer did not trigger crash:
 
-Series applied, thanks Jose.
+Reported-and-tested-by: syzbot+9c2df9fd5e9445b74e01@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         29311b74 cls_route: remove the old filter from hashtable
+git tree:       https://github.com/congwang/linux.git tcindex
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8e8e51c36c1e1ca7
+dashboard link: https://syzkaller.appspot.com/bug?extid=9c2df9fd5e9445b74e01
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Note: testing is done by a robot and is best-effort only.
