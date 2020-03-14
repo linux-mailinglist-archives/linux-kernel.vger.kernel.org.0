@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 144041858A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:16:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C313A1858CB
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:23:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbgCOCQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 22:16:48 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39696 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727053AbgCOCQs (ORCPT
+        id S1727907AbgCOCXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:23:53 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:35291 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727222AbgCOCXw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:16:48 -0400
-Received: by mail-pg1-f194.google.com with SMTP id b22so1439292pgb.6;
-        Sat, 14 Mar 2020 19:16:47 -0700 (PDT)
+        Sat, 14 Mar 2020 22:23:52 -0400
+Received: by mail-il1-f196.google.com with SMTP id v6so1926964ilq.2;
+        Sat, 14 Mar 2020 19:23:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gYq5XOfqQjLgXmjjatxoqh+sT7kdm5qTJhz0juqtyOs=;
-        b=VN6pTaaxim91WzS/m9eDEsE6VQC2UU0D9iLbneT/JDpuoQGnJF9nuFHR9upM/nwZ1k
-         CDjjpbjoDm/OuqqpylCCU0aM74hHrjVnm2OV3yUtN6umKIhi+yr/W5gUeSTB7v3GIEL+
-         FOpOi9ctfep9BVZLr221j94do5MRGWqGMgRsXj0ovEsyCJGM61IPJK71fv1AiAc5fi8r
-         C68euv+YIAoSASc6MasPC37MJPlWin2iKlIXh60Cb1LerjpDoTt6Z28SA6mw3+KnMoaO
-         Csf1lry1N+Nj/6OIh+Sfj0U+v0oMZGh6+gEhoMysnWSx1zgw3PKXsK0F5igosAE8TUat
-         0jpw==
+        bh=bolGqQxhWdWgpU69XRMnXiz0W60KCuDWQ2z7xXlvj8E=;
+        b=B8W0+FWWYJN6WqgwttmprjGZlMBoY9aBQyq3jJHauz+tUTSsJhMYccjD+haAXovvGZ
+         uYXGReUyVM1xMUHz3ikiugYUTqM/xfrZ7UL0yCorZWLbFGaH1aDbuLd42pj/acAqqMB3
+         +eyDeQGvDxDBAdHnGnSwSzVdxtyO6/Qy0AXC4tzz8LhVC7Am4Xx0/oUj9yy1JVdgwa+7
+         +2QuCA5Ui1x6YchRfuADgUBNsIM//sAEWH+2qGt6yybMQkivhoWBT9qJtu4qrPx99D2V
+         rEomakD2K2od0Yj6D2pmWeA7JINHnwt6y3bumHe65bYWQFO7MLY2xnoJSt3/nIt0y3zh
+         AXCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gYq5XOfqQjLgXmjjatxoqh+sT7kdm5qTJhz0juqtyOs=;
-        b=ZW6wMFvRJ/Mu/E2a+KsirFtIN3QKHd9rRuMsZGGyJ1cfCM/Dg3WITboxUEW1aS9vQT
-         GMBaNtYGA3gR0On0HmOnBpgaPovuBhOKHpeKrXZ1G8e/i6EoOQoC/Qz93qp6BNUtrpdT
-         xaQd3XZTonxlIh1Rsn8B29HovRCZywLdEWOpK0FcvaL1fd6mt4ycwF29gfc8WfZ+huRl
-         2kX2lZkR0QsmYd7H+dbPRXDWMykr8vTXlJadJO2JuacpbF/8803TEy8cr0gQhzhsgCrh
-         ur5R3MMKmCmahJw1SFG7ehn55ebzLnaDgGm0fDZ4Q7he1W0OcgNyzao1ww+rsV8SpAuG
-         Qy6A==
-X-Gm-Message-State: ANhLgQ3C6drXDua0t5phfR0cjyMlLaC4Paun76Ce9LCFCLc0YgtlV6cs
-        zYG4c65z/hTQcWJgXL1lLA2xbU9Q
-X-Google-Smtp-Source: ADFU+vtZwujMqGMWtPI+Td3zqf/d5OQwWoJbIi4pdRHew+9QThjOgENoIl6Mck41/v+RcXWXhEjagw==
-X-Received: by 2002:a63:9143:: with SMTP id l64mr15889990pge.75.1584163624286;
-        Fri, 13 Mar 2020 22:27:04 -0700 (PDT)
+        bh=bolGqQxhWdWgpU69XRMnXiz0W60KCuDWQ2z7xXlvj8E=;
+        b=HjKgulUOENWpZZq+XviiRaQl7WV+JHPQFznUdb6hhmCx5THRDmdTuetzcZh9NTyGDV
+         V0Vz5AgTsj7GdGYjGQ/oOoDby2I11DxhBdNAJo7gQudYqpKYUQrsBnvGhQTgnhCfUEMN
+         Ux3LnZ/IQ+AWytnXzbAtiyqeZA1zWplVQKS1VPEJxRBjUenMd/hX0qbStDVzKuNc++mg
+         nAxLJyYLdT7cK3puT3hE3iOV6MVm94gaj4N6UUFxAE/9333B3jkp2etyUWWhr2RQCJGj
+         fR3QLYdVEJns3e511VGY97GUkxGHuVRN9EI0gmgQlZzCAJeuPcyuDne3R2Cs863Mr/Fe
+         S8DQ==
+X-Gm-Message-State: ANhLgQ3KuhoxN682wS6XUZ936V28UtF8XiGj15gxW/vJXAflm1MM0HQl
+        R74NePzBv72r+8uU4KZ/1VjtAUO5
+X-Google-Smtp-Source: ADFU+vv29Ok1TmkzoC9UWO3LDApVs8zw0AH3uafkrwoNY+zDHYFb5jJpLgUc2dBlZokjE3JuF1U5yg==
+X-Received: by 2002:a63:f243:: with SMTP id d3mr16185919pgk.254.1584163628426;
+        Fri, 13 Mar 2020 22:27:08 -0700 (PDT)
 Received: from localhost ([216.24.188.11])
-        by smtp.gmail.com with ESMTPSA id k3sm2500525pgr.40.2020.03.13.22.27.03
+        by smtp.gmail.com with ESMTPSA id z20sm29316118pge.62.2020.03.13.22.27.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 13 Mar 2020 22:27:03 -0700 (PDT)
+        Fri, 13 Mar 2020 22:27:08 -0700 (PDT)
 From:   Dejin Zheng <zhengdejin5@gmail.com>
 To:     gregkh@linuxfoundation.org, rafael@kernel.org, hminas@synopsys.com,
         mathias.nyman@intel.com, bgolaszewski@baylibre.com, arnd@arndb.de,
@@ -52,9 +52,9 @@ To:     gregkh@linuxfoundation.org, rafael@kernel.org, hminas@synopsys.com,
         treding@nvidia.com, tglx@linutronix.de, suzuki.poulose@arm.com,
         hdegoede@redhat.com, linux-usb@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Dejin Zheng <zhengdejin5@gmail.com>
-Subject: [PATCH v2 3/4] usb: host: hisilicon: convert to devm_platform_ioremap_and_get_resource
-Date:   Sat, 14 Mar 2020 13:26:37 +0800
-Message-Id: <20200314052638.6008-4-zhengdejin5@gmail.com>
+Subject: [PATCH v2 4/4] usb: dwc2: convert to devm_platform_ioremap_and_get_resource
+Date:   Sat, 14 Mar 2020 13:26:38 +0800
+Message-Id: <20200314052638.6008-5-zhengdejin5@gmail.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200314052638.6008-1-zhengdejin5@gmail.com>
 References: <20200314052638.6008-1-zhengdejin5@gmail.com>
@@ -71,22 +71,22 @@ get the resource for use by the following code.
 
 Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
 ---
- drivers/usb/host/xhci-histb.c | 3 +--
+ drivers/usb/dwc2/platform.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-histb.c b/drivers/usb/host/xhci-histb.c
-index 3c4abb5a1c3f..a314139e5343 100644
---- a/drivers/usb/host/xhci-histb.c
-+++ b/drivers/usb/host/xhci-histb.c
-@@ -219,8 +219,7 @@ static int xhci_histb_probe(struct platform_device *pdev)
- 	if (irq < 0)
- 		return irq;
+diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
+index 3c6ce09a6db5..56eec2b95eaf 100644
+--- a/drivers/usb/dwc2/platform.c
++++ b/drivers/usb/dwc2/platform.c
+@@ -392,8 +392,7 @@ static int dwc2_driver_probe(struct platform_device *dev)
+ 		return retval;
+ 	}
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	histb->ctrl = devm_ioremap_resource(&pdev->dev, res);
-+	histb->ctrl = devm_platform_ioremap_and_get_resource(pdev, 0, &res);
- 	if (IS_ERR(histb->ctrl))
- 		return PTR_ERR(histb->ctrl);
+-	res = platform_get_resource(dev, IORESOURCE_MEM, 0);
+-	hsotg->regs = devm_ioremap_resource(&dev->dev, res);
++	hsotg->regs = devm_platform_ioremap_and_get_resource(dev, 0, &res);
+ 	if (IS_ERR(hsotg->regs))
+ 		return PTR_ERR(hsotg->regs);
  
 -- 
 2.25.0
