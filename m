@@ -2,168 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D59D01859D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 04:50:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B92121859BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 04:37:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbgCODuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 23:50:18 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:33523 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbgCODuS (ORCPT
+        id S1727549AbgCODhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 23:37:35 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46390 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbgCODhf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 23:50:18 -0400
-Received: by mail-vk1-f196.google.com with SMTP id d11so2168215vko.0;
-        Sat, 14 Mar 2020 20:50:16 -0700 (PDT)
+        Sat, 14 Mar 2020 23:37:35 -0400
+Received: by mail-pl1-f195.google.com with SMTP id w12so6210377pll.13
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 20:37:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dPG+5nHaG+yMaeQo2rL7AF5LO5E5t2o4wvjjJ/5g6Ww=;
-        b=i9qLu0Db3D3Rf/N4q8UxSjIt0hPhJSynIn3pXNM0cLts9JJqqfWknz38IyX1g5ikJf
-         hMBvpPo1qVVFoKVyv1YLbvKI5+9Vc+ARQFj9u0CM+dziY+QBh+kBe0JUCJy3qHgeHGkt
-         IQtNexkWb/iQz92NR/cNs+WXFI3y4eM0WhlfgVQu18QcIZNUTVfuQ3aH0cf5r+wzoWPB
-         R4mCYy6InbcdHDAYM0sSDFtEm4uiqJLxaz/LKEltHaU3SF3fUteAYzGu7ElhW0PXB49R
-         l7WPMJVCOaH2REB0iO9KLYk4i8Yjn05BhA7XSjFTeAIBbPhYNKKTpvqPF7ZrYRzwAUmd
-         l5Ow==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=/+9Q8TJ7jtUHpxRJyGUZ1bL86SBe7tVjOmhbbOA4p4w=;
+        b=SG5VD3z4MI8OduY4+2c3wYVTGDxZx6rfjOy9JvWLiHNHsY2hQyAoP0lwTCXSev6QbO
+         ROubWXIRQkgbTJ2+P2NPwnxQAY5jSgsq9oNiRl6qOQO/u3mz/NKMzUiyFaxap0XDRYb6
+         7OU8qGPjTqzxy+OwjkGyUlU9h6kWIB3H7s8mEMK/rPlLR51mo5OWHJs74cop8QLPfT/M
+         8G+6wBz5Rvc2qvVTMnuPdBquQbW9CwJksbbU/Kqx3lyrrMq9BBBbh9BTuD7+eOTroTsM
+         M/+Hlfot730nD9afcqDOp6rhHNZPe9QxozAI2p3v21Lkcu5LrtghZVuXsyC9Qd5P97o3
+         0bNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dPG+5nHaG+yMaeQo2rL7AF5LO5E5t2o4wvjjJ/5g6Ww=;
-        b=Hu+DFCkHPaNhanJT+M+PGS3D4dqMfOobdKvpfb5K5lgxcGlE3ulVt/AWMyDHeJ8Sfe
-         IJ72YxapzBbF4c/30YER4UD/z1aYTM24/5Zel8EHHi6RYU+bXLn3V9RBeAgrdKtGH6xa
-         vQktv/Asum4hrxlC/hJ7IRLDt0Mvh3iXoNf0H2p1gNBFd8P4PErX6rXpScSrHm1q4wmb
-         Z0/sqw6A3M0yoU228K2mdlmL/+PBrW7cBV4TjaX8O/P/XDRqtY4RnazC1gW86f8hnFQK
-         Mm7HYGZlE7YkV/ex62rXvxTDLh6jHso8mJtfBFoWAw14JCgolnp7YAr8k4PFPU+XKgga
-         YlAQ==
-X-Gm-Message-State: ANhLgQ0u/ON5Dmz1xXUNSjfg/I7sJKll/Is+jzRlLQRgya8xtYBV3vDt
-        ddBFjFPDvv+ZZvC1Oyu6afdJEIst
-X-Google-Smtp-Source: ADFU+vsN+N2CoUaX39Eq9MU2Ptt8MTH4IEoo5sPUITDknirnwoXpWrZPAj1e8cFqTl5/yOBaPKm4Tg==
-X-Received: by 2002:a17:902:780b:: with SMTP id p11mr18508190pll.61.1584201427240;
-        Sat, 14 Mar 2020 08:57:07 -0700 (PDT)
-Received: from ast-mbp ([2620:10d:c090:400::5:1356])
-        by smtp.gmail.com with ESMTPSA id 13sm61342367pfi.78.2020.03.14.08.57.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Mar 2020 08:57:06 -0700 (PDT)
-Date:   Sat, 14 Mar 2020 08:57:03 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "yzaikin@google.com" <yzaikin@google.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "bristot@redhat.com" <bristot@redhat.com>,
-        "mingo@kernel.org" <mingo@kernel.org>
-Subject: Re: [RFC bpf-next 0/2] sharing bpf runtime stats with /dev/bpf_stats
-Message-ID: <20200314155703.bmtojqeofzxbqqhu@ast-mbp>
-References: <20200314003518.3114452-1-songliubraving@fb.com>
- <20200314024322.vymr6qkxsf6nzpum@ast-mbp.dhcp.thefacebook.com>
- <E7BBB6E4-F911-47D4-A4BC-3DF3D29B557B@fb.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/+9Q8TJ7jtUHpxRJyGUZ1bL86SBe7tVjOmhbbOA4p4w=;
+        b=WKtIOIjSgJJFIWSsFvy1A5k38b8s+ZMZ02mLL/NNfegILc6uztb6CVTsFtBW0Njdac
+         TsjYZpqTH5aRgQsxIEDYXyor8VTH3pseV3LR6z35gZAcBODlKfKj3TOqjnHPaJFlYES0
+         /gnqwTrzyu1S0roI1mayhPbme+ZRfMp+dl4J9LFcK6kmEEMHd3vF0CbgG1tpReQnUC7h
+         zpN+/59et8swk2E6kb9T1/wwDTfY06RIIatpLDZpSfj6TgsLGy8n2x3iosudL0ozorYx
+         nOwUM35ZBF8uZVf2epM2GSac1DEMpqtHcqAinYJBhkqtrhx1N1XbRN5XlP6BLa7hc/qX
+         SzJQ==
+X-Gm-Message-State: ANhLgQ3k2DYSWclMqhp5O8cfW/03Fuv0fmcJlSnr6GtcFJ9qig3awYCU
+        +7PhaDsoJTTwjPR+QqLYkGLWlRomkV7+RA==
+X-Google-Smtp-Source: ADFU+vtUob9/wk2Xo5IPPKPI0Pio7lMK+3XwsB2YuJ0xrn4KtFRW2bv81Vj2/I2bo284+Z7N4zVwcw==
+X-Received: by 2002:aa7:8b03:: with SMTP id f3mr20486548pfd.133.1584201520387;
+        Sat, 14 Mar 2020 08:58:40 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id n7sm3779560pgm.28.2020.03.14.08.58.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Mar 2020 08:58:39 -0700 (PDT)
+Subject: Re: [PATCH 5.6] io_uring: NULL-deref for IOSQE_{ASYNC,DRAIN}
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <3fff749b19ae1c3c2d59e88462a8a5bfc9e6689f.1584127615.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <62bc8817-5777-7f79-3c27-028a770e2f3b@kernel.dk>
+Date:   Sat, 14 Mar 2020 09:58:38 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <E7BBB6E4-F911-47D4-A4BC-3DF3D29B557B@fb.com>
+In-Reply-To: <3fff749b19ae1c3c2d59e88462a8a5bfc9e6689f.1584127615.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 14, 2020 at 03:47:50AM +0000, Song Liu wrote:
+On 3/13/20 1:29 PM, Pavel Begunkov wrote:
+> Processing links, io_submit_sqe() prepares requests, drops sqes, and
+> passes them with sqe=NULL to io_queue_sqe(). There IOSQE_DRAIN and/or
+> IOSQE_ASYNC requests will go through the same prep, which doesn't expect
+> sqe=NULL and fail with NULL pointer deference.
 > 
-> 
-> > On Mar 13, 2020, at 7:43 PM, Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-> > 
-> > On Fri, Mar 13, 2020 at 05:35:16PM -0700, Song Liu wrote:
-> >> Motivation (copied from 2/2):
-> >> 
-> >> ======================= 8< =======================
-> >> Currently, sysctl kernel.bpf_stats_enabled controls BPF runtime stats.
-> >> Typical userspace tools use kernel.bpf_stats_enabled as follows:
-> >> 
-> >>  1. Enable kernel.bpf_stats_enabled;
-> >>  2. Check program run_time_ns;
-> >>  3. Sleep for the monitoring period;
-> >>  4. Check program run_time_ns again, calculate the difference;
-> >>  5. Disable kernel.bpf_stats_enabled.
-> >> 
-> >> The problem with this approach is that only one userspace tool can toggle
-> >> this sysctl. If multiple tools toggle the sysctl at the same time, the
-> >> measurement may be inaccurate.
-> >> 
-> >> To fix this problem while keep backward compatibility, introduce
-> >> /dev/bpf_stats. sysctl kernel.bpf_stats_enabled will only change the
-> >> lowest bit of the static key. /dev/bpf_stats, on the other hand, adds 2
-> >> to the static key for each open fd. The runtime stats is enabled when
-> >> kernel.bpf_stats_enabled == 1 or there is open fd to /dev/bpf_stats.
-> >> 
-> >> With /dev/bpf_stats, user space tool would have the following flow:
-> >> 
-> >>  1. Open a fd to /dev/bpf_stats;
-> >>  2. Check program run_time_ns;
-> >>  3. Sleep for the monitoring period;
-> >>  4. Check program run_time_ns again, calculate the difference;
-> >>  5. Close the fd.
-> >> ======================= 8< =======================
-> >> 
-> >> 1/2 adds a few new API to jump_label.
-> >> 2/2 adds the /dev/bpf_stats and adjust kernel.bpf_stats_enabled handler.
-> >> 
-> >> Please share your comments.
-> > 
-> > Conceptually makes sense to me. Few comments:
-> > 1. I don't understand why +2 logic is necessary.
-> > Just do +1 for every FD and change proc_do_static_key() from doing
-> > explicit enable/disable to do +1/-1 as well on transition from 0->1 and 1->0.
-> > The handler would need to check that 1->1 and 0->0 is a nop.
-> 
-> With the +2/-2 logic, we use the lowest bit of the counter to remember 
-> the value of the sysctl. Otherwise, we cannot tell whether we are making
-> 0->1 transition or 1->1 transition. 
+> Always do full prepare including io_alloc_async_ctx() for linked
+> requests, and then it can skip the second preparation.
 
-that can be another static int var in the handler.
-and no need for patch 1.
+Thanks, applied.
 
-> > 
-> > 2. /dev is kinda awkward. May be introduce a new bpf command that returns fd?
-> 
-> Yeah, I also feel /dev is awkward. fd from bpf command sounds great. 
-> 
-> > 
-> > 3. Instead of 1 and 2 tweak sysctl to do ++/-- unconditionally?
-> > Like repeated sysctl kernel.bpf_stats_enabled=1 will keep incrementing it
-> > and would need equal amount of sysctl kernel.bpf_stats_enabled=0 to get
-> > it back to zero where it will stay zero even if users keep spamming
-> > sysctl kernel.bpf_stats_enabled=0.
-> > This way current services that use sysctl will keep working as-is.
-> > Multiple services that currently collide on sysctl will magically start
-> > working without any changes to them. It is still backwards compatible.
-> 
-> I think this is not fully backwards compatible. With current logic, the 
-> following sequence disables stats eventually. 
-> 
->   sysctl kernel.bpf_stats_enabled=1
->   sysctl kernel.bpf_stats_enabled=1
->   sysctl kernel.bpf_stats_enabled=0
-> 
-> The same sequence will not disable stats with the ++/-- sysctl. 
+-- 
+Jens Axboe
 
-sure, but if a process holding an fd 'sysctl kernel.bpf_stats_enabled=0'
-won't disable stats either. So it's also not backwards compatible. imo it's a
-change in behavior whichever way, but either approach doesn't break user space.
-An advantage of not doing an fd is that some user that really wants to have
-stats disabled for performance benchmarking can do
-'sysctl kernel.bpf_stats_enabled=0' few times and the stats will be off.
-We can also make 'sysctl kernel.bpf_stats_enabled' to return current counter,
-so humans can see how many daemons are doing stats collection at that very
-moment.
-We can also do both new fd via bpf syscall and ++/-- via sysctl, but imo
-++/-- via sysctl is enough to address the issue of multiple stats collecting
-daemons. The patch would be small enough that we can push it via bpf tree
-and into older kernels as arguable 'fix'.
