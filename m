@@ -2,95 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 578DD185A0B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 05:20:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9E67185A02
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 05:10:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbgCOEUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 00:20:51 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:28898 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725872AbgCOEUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 00:20:50 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48fYyz3cWFz9txPk;
-        Sat, 14 Mar 2020 08:26:35 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=wOCV1qop; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id ja4ZH3fYw32p; Sat, 14 Mar 2020 08:26:35 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48fYyz2N73z9txPj;
-        Sat, 14 Mar 2020 08:26:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1584170795; bh=GCMtTnndF9n61PXcYeOSu2bKjOaCnpQzS0ox12E/r/s=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=wOCV1qopX53qf7SOj4LCfFwkp5YuYtI2n7HuwNC8/rCUYAX1dqXIxKP+7LaXftY/K
-         66Aa4civy8g9ewjxdt/6y8Hzf1w5Nuk6aBIWaSehN3JmY7AwDQLsV6U/ZsHTUmyvHz
-         8eMcwi/v74+2eHKlIRJb27L9pLrTCRS9KlpN13FM=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2F5698B772;
-        Sat, 14 Mar 2020 08:26:36 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 1giGPQDHWGID; Sat, 14 Mar 2020 08:26:36 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8D4FC8B768;
-        Sat, 14 Mar 2020 08:26:34 +0100 (CET)
-Subject: Re: [PATCH v3] powerpc/fsl-85xx: fix compile error
-To:     WANG Wenhu <wenhu.wang@vivo.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Allison Randal <allison@lohutok.net>,
-        Richard Fontana <rfontana@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     kernel@vivo.com, trivial@kernel.org,
-        stable <stable@vger.kernel.org>
-References: <20200314051035.64552-1-wenhu.wang@vivo.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <bd9799ae-d306-a478-25ff-ec3c7f083cfe@c-s.fr>
-Date:   Sat, 14 Mar 2020 08:26:23 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <20200314051035.64552-1-wenhu.wang@vivo.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        id S1726250AbgCOEKT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 00:10:19 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38925 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgCOEKT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 00:10:19 -0400
+Received: by mail-wm1-f66.google.com with SMTP id f7so14380797wml.4;
+        Sat, 14 Mar 2020 21:10:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=7NszvAXb9CGNqwT7dYeN3INhVSTlKBvqRmiaZIGgUzM=;
+        b=n+liN5FZupOzuGmaL8W0VktGX+braNF2HwHqE4seR4kZiiex5TQZtj04W8EtxZmx4U
+         N7mE03CKIQLzpncNE7yyQ09H6quoTKYstglmWXP3LhUtIZFh0jpumW8LqsW4n0aYNu5E
+         9Zsda/e4+bVvPPea+hDL96ZY/Un+MMEko9W15c6R4h0gGHl1FKReRQ+O/qaUHi4rpz31
+         mE8oVXifg5I+uCgDvF8+B0njfnmctgZY6IZAk4BeeTta8N+fg++CYNS1dtGmFiAHuhNJ
+         h9ef3+9fGWIBNBEcI944HQfRxvk6l3tz04Tl6SJ4M+8dLIsYsa1ro7rfgL8rD96BGbKW
+         EFTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=7NszvAXb9CGNqwT7dYeN3INhVSTlKBvqRmiaZIGgUzM=;
+        b=Tmlno+NuQnDfIWyxElYaw53OfcDweB5O4gV7uqc5XUONjouwFXkJKepnLOpXfHUweR
+         8Lf+0qmlovwbiCArmHdB8Dwl+NOdq1/V/HJMQdVeZ2FJ1KEeuTpQ1tnYBX3NsosQYCIW
+         AT9ddpWDsLofJgLlkJTKQ99DPlMxnCz4/3X+QqQqhxPYLYTaQQk3IgYRxR5hXIYtnv/g
+         ND1/QijKCNmT7699V512yMe8jz5HS/Jo63NFNXGcsQFB7naOKIpQyJr3OdDNLOO8AZql
+         Xj251NdVHoSaPqc2zoD0KEXSJMu+ahoY1SZjfyYvPnI5wcitSRfnjTJFswQWxm36l9GC
+         Okzw==
+X-Gm-Message-State: ANhLgQ0M4z43tTly+GEgvbFRzY4e8i4c5wXJmhxBhXwJmwob8HCyUkuo
+        v9NlcWsMox4bHAEMOBdDBDiQCZp+
+X-Google-Smtp-Source: ADFU+vttRMhC6z4KeEiI90Sln9kvzZ3oD5DpV2H2KhdjIUk7TSHX42UtdII4c1he6JrDUQ6cxbKKBQ==
+X-Received: by 2002:a7b:cb17:: with SMTP id u23mr16873136wmj.12.1584185482872;
+        Sat, 14 Mar 2020 04:31:22 -0700 (PDT)
+Received: from 640k.localdomain ([93.56.174.5])
+        by smtp.gmail.com with ESMTPSA id n186sm454515wme.25.2020.03.14.04.31.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 14 Mar 2020 04:31:22 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     linmiaohe@huawei.com, vkuznets@redhat.com
+Subject: [PATCH] KVM: X86: correct meaningless kvm_apicv_activated() check
+Date:   Sat, 14 Mar 2020 12:31:20 +0100
+Message-Id: <1584185480-3556-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+After test_and_set_bit() for kvm->arch.apicv_inhibit_reasons, we will
+always get false when calling kvm_apicv_activated() because it's sure
+apicv_inhibit_reasons do not equal to 0.
 
+What the code wants to do, is check whether APICv was *already* active
+and if so skip the costly request; we can do this using cmpxchg.
 
-Le 14/03/2020 à 06:10, WANG Wenhu a écrit :
-> Include "linux/of_address.h" to fix the compile error for
-> mpc85xx_l2ctlr_of_probe() when compiling fsl_85xx_cache_sram.c.
-> 
->    CC      arch/powerpc/sysdev/fsl_85xx_l2ctlr.o
-> arch/powerpc/sysdev/fsl_85xx_l2ctlr.c: In function ‘mpc85xx_l2ctlr_of_probe’:
-> arch/powerpc/sysdev/fsl_85xx_l2ctlr.c:90:11: error: implicit declaration of function ‘of_iomap’; did you mean ‘pci_iomap’? [-Werror=implicit-function-declaration]
->    l2ctlr = of_iomap(dev->dev.of_node, 0);
->             ^~~~~~~~
->             pci_iomap
-> arch/powerpc/sysdev/fsl_85xx_l2ctlr.c:90:9: error: assignment makes pointer from integer without a cast [-Werror=int-conversion]
->    l2ctlr = of_iomap(dev->dev.of_node, 0);
->           ^
-> cc1: all warnings being treated as errors
-> scripts/Makefile.build:267: recipe for target 'arch/powerpc/sysdev/fsl_85xx_l2ctlr.o' failed
-> make[2]: *** [arch/powerpc/sysdev/fsl_85xx_l2ctlr.o] Error 1
-> 
-> Fixes: commit 6db92cc9d07d ("powerpc/85xx: add cache-sram support")
-> Cc: stable <stable@vger.kernel.org>
-> Signed-off-by: WANG Wenhu <wenhu.wang@vivo.com>
+Reported-by: Miaohe Lin <linmiaohe@huawei.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/x86.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index a7cb85231330..49efa4529662 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -8049,19 +8049,26 @@ void kvm_vcpu_update_apicv(struct kvm_vcpu *vcpu)
+  */
+ void kvm_request_apicv_update(struct kvm *kvm, bool activate, ulong bit)
+ {
++	unsigned long old, new, expected;
++
+ 	if (!kvm_x86_ops->check_apicv_inhibit_reasons ||
+ 	    !kvm_x86_ops->check_apicv_inhibit_reasons(bit))
+ 		return;
+ 
+-	if (activate) {
+-		if (!test_and_clear_bit(bit, &kvm->arch.apicv_inhibit_reasons) ||
+-		    !kvm_apicv_activated(kvm))
+-			return;
+-	} else {
+-		if (test_and_set_bit(bit, &kvm->arch.apicv_inhibit_reasons) ||
+-		    kvm_apicv_activated(kvm))
+-			return;
+-	}
++	old = READ_ONCE(kvm->arch.apicv_inhibit_reasons);
++	do {
++		expected = new = old;
++		if (activate)
++			__clear_bit(bit, &new);
++		else
++			__set_bit(bit, &new);
++		if (new == old)
++			break;
++		old = cmpxchg(&kvm->arch.apicv_inhibit_reasons, expected, new);
++	} while (old != expected);
++
++	if ((old == 0) == (new == 0))
++		return;
+ 
+ 	trace_kvm_apicv_update_request(activate, bit);
+ 	if (kvm_x86_ops->pre_update_apicv_exec_ctrl)
+-- 
+1.8.3.1
 
