@@ -2,108 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85A1C185874
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:09:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 478CA1858D5
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:24:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbgCOCJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 22:09:46 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37699 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726599AbgCOCJq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:09:46 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a141so14272951wme.2
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 19:09:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ccS1Io8/tHjBzzXmHi5hIITMhMP463waFk/FT4O6b9c=;
-        b=UB05glchFZAl8zn/zEVTCAbaSZjJAoMX616sX7k12GQs0VQpsJ23m8fe05YmrSK4II
-         h+EmU+omPYHmSXBFhkdYXLmd9F/2scxD+cOuVYS+Afi/ZsrYjWX96/922LspJ6cRyU1O
-         SGJPq8h1/oB/zJ2KQMrbdORZEgem+cuz3tHUwfFz6OML+1dt0yXkUtIdwqEB2ZhdF/HT
-         pltvYCSwsNMLqAnHPvI4u9ez4ktI1SULwImMlz2GC0Cyt7gCG7ay5Uo2R3Oj33gyDoTz
-         ttV4ZlTieQaiTieNb5m4RcG/Nxs2b2C670tnZlsPkfNXezf58dJy5tExAEiWOLmg0LVa
-         RoiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ccS1Io8/tHjBzzXmHi5hIITMhMP463waFk/FT4O6b9c=;
-        b=ABJBFbqMCnqj790/oBX5NH2mGwhZ6uwUOEHPLkuRAZ9ywXt+MrINaeZ8+OLVsrSPAv
-         if3fOBQn09UG9W3kt+DrYx2XDwya9b9b1EAaMYwthSHnhjseOeNBZuxjp1ESAkf7Zmbb
-         wb10aLkuU/EcYXaGAnz4W+PGew62O9C9IosbKXCD7iGKxTULv/uMIlFQUkYVduIfsR+S
-         WLHY15pIBbJN8gb85yNDQ5W8Uc+s7A6f0vPEswljDYehuV3CcnQlXUSU1ckxA4pNHBUu
-         O1VGa/NuPiuvlflMVznoMH8gd7y0JEFv8YkSgcSL1XgTfjVqfIGPD1KVswXqRWOiYhON
-         lqNw==
-X-Gm-Message-State: ANhLgQ3Pb8W+8pDysmIWSRwYBmpRJIBi7oQNMYXOa86iNOL4QUroJ3jv
-        Mvas9uIiY6FonpskHaJ/5JJ9kv4S
-X-Google-Smtp-Source: ADFU+vtyoSycP4u50lg2zaM0POhefKJvMpVU3xwj1ZCN1pfGM8WTTr+uq/9CJATpEVxH+hoBMmnT6w==
-X-Received: by 2002:a1c:6745:: with SMTP id b66mr16906246wmc.30.1584198608562;
-        Sat, 14 Mar 2020 08:10:08 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id s22sm20213613wmc.16.2020.03.14.08.10.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 14 Mar 2020 08:10:07 -0700 (PDT)
-Date:   Sat, 14 Mar 2020 15:10:06 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-        mhocko@suse.com, akpm@linux-foundation.org
-Subject: Re: [PATCH v2] x86/mm: Remove the redundant conditional check
-Message-ID: <20200314151006.gnkyf4xpqve6b3wx@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20200311011823.27740-1-bhe@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200311011823.27740-1-bhe@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1727979AbgCOCYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:24:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39078 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727913AbgCOCYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Mar 2020 22:24:12 -0400
+Subject: Re: [GIT PULL] clk fixes for v5.6-rc5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584203708;
+        bh=nlkSd9dZ2OzupyIAX3ttyXzPZ+1/uu0Tt8oO6gT4tTg=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=zh4FGvEyBRXlInS75a2kUSdTtzf7g9HUQ7+EDh1ZSdyiINAMJL24+a7W1uRlq8FII
+         1JCDnZ/BexU3Wj/5EbAvM+czCk5q0p19EHhecQrzWgjmsDg2dMzkFm7GOTtnEeiwzg
+         FXirIhNvRU/415hL8+uCKd98JrrwLvMNKOZJ+a0w=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200314012722.234270-1-sboyd@kernel.org>
+References: <20200314012722.234270-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200314012722.234270-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+ tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: 20055448dc1b439c87d0cb602e6d0469b0a3aaad
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 69a4d0baeeb14b6a3c47570a0ac2e0fc4474f0e0
+Message-Id: <158420370808.8641.17291481150926081366.pr-tracker-bot@kernel.org>
+Date:   Sat, 14 Mar 2020 16:35:08 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 09:18:23AM +0800, Baoquan He wrote:
->In commit f70029bbaacb ("mm, memory_hotplug: drop CONFIG_MOVABLE_NODE"),
->the dependency on CONFIG_MOVABLE_NODE was removed for N_MEMORY. Before
->commit f70029bbaacb, CONFIG_HIGHMEM && !CONFIG_MOVABLE_NODE could make
->(N_MEMORY == N_NORMAL_MEMORY) be true. After commit f70029bbaacb, N_MEMORY
->doesn't have any chance to be equal to N_NORMAL_MEMORY. So the conditional
->check in paging_init() doesn't make sense any more. Let's remove it.
->
->Signed-off-by: Baoquan He <bhe@redhat.com>
+The pull request you sent on Fri, 13 Mar 2020 18:27:22 -0700:
 
-The change looks good. While I have one question, we set default value for
-N_HIGH_MEMORY. Why we don't clear this too?
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/69a4d0baeeb14b6a3c47570a0ac2e0fc4474f0e0
 
->---
->v1->v2:
->  Update patch log to make the description clearer per Michal's
->  suggestion.
->
-> arch/x86/mm/init_64.c | 3 +--
-> 1 file changed, 1 insertion(+), 2 deletions(-)
->
->diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
->index abbdecb75fad..0a14711d3a93 100644
->--- a/arch/x86/mm/init_64.c
->+++ b/arch/x86/mm/init_64.c
->@@ -818,8 +818,7 @@ void __init paging_init(void)
-> 	 *	 will not set it back.
-> 	 */
-> 	node_clear_state(0, N_MEMORY);
->-	if (N_MEMORY != N_NORMAL_MEMORY)
->-		node_clear_state(0, N_NORMAL_MEMORY);
->+	node_clear_state(0, N_NORMAL_MEMORY);
-> 
-> 	zone_sizes_init();
-> }
->-- 
->2.17.2
+Thank you!
 
 -- 
-Wei Yang
-Help you, Help me
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
