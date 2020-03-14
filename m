@@ -2,226 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85C4E1856B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:29:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 358281856D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:30:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbgCOB3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 21:29:11 -0400
-Received: from mail-oln040092074027.outbound.protection.outlook.com ([40.92.74.27]:63812
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726682AbgCOB3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 21:29:07 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Lj2QAR3fyzt55tNewV+HVaQwzPSdYVGluuTRC3FCSRXv3q6n8kmKxB3VdkBaZzcPXWYDh+BaOAKbkdJmUgacjlVF9ulRlyCteCLjyGMRUnplrFrjMZy1ObBeO+9jtzUgFowqunAtBaoptwkuyl6JBxrWyJaYRY6MzyKtQqgMhpVaieOIFPVNjks2g4+bOdQ3BiIZIHhczEwZBbdfpjODIoxSTKu/rLGoWPRjHhyXKNKpJLx+y4qZuxiSTuDMDV6/As9leO3BW7QNp+kmdcQweuaoiXnCocr2AtDP/crujaCjb2OrD/AVsxp0pKADff6XI8TT2Wo07wLea0Y+ibQgqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RaNHNTXco7dC0LKO/lrZy/NgK6an+A8UGbJpG7c+e40=;
- b=Y/iJWSoBSGkkUI1wY1XRFpt3r8hvlVHwxYcshwN/sFNpIyYw34HZuX4iShyMOH/FSjvB718OsSbP2ObpdFowAN/PjPeQ2nC535j1wN6GZP/g9yFyLfp7VvIz2ao0tiaBQhSl7UFw5kRThvWN84wL/5wtq1CluzB9OnKbOt0J21HxEZNkk1y7nH8b6OnSpEU86Uk6FUo1eun2BEWtPWthVaX/kcR7FtPQ7Jzx8RmSxzKEHSrp9dmk7TuEaHVzzKuNZ36D2a+EG8/gKm6XmTFFg7zJ2eVH/hfHCxHVwTBU+EdbCe6+rJ4K9pOKBte1x72ahJRglBPsX2e0f2qYlpyXbQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hotmail.de; dmarc=pass action=none header.from=hotmail.de;
- dkim=pass header.d=hotmail.de; arc=none
-Received: from DB3EUR04FT026.eop-eur04.prod.protection.outlook.com
- (2a01:111:e400:7e0c::3b) by
- DB3EUR04HT135.eop-eur04.prod.protection.outlook.com (2a01:111:e400:7e0c::357)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.13; Sat, 14 Mar
- 2020 10:02:25 +0000
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.24.53) by
- DB3EUR04FT026.mail.protection.outlook.com (10.152.24.206) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.13 via Frontend Transport; Sat, 14 Mar 2020 10:02:25 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:BD2C72D9285EAE5C2552CA84FE4A830EED809BF9432C3B6F1FBFBED07DA9B213;UpperCasedChecksum:B8ABAE09E7C5A03152C084FB04CDE5892C360733E9845E02793A2837A8C5CCA3;SizeAsReceived:10340;Count:50
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2814.018; Sat, 14 Mar 2020
- 10:02:25 +0000
-Subject: Re: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace
- cred_guard_mutex
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87a74xi4kz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87r1y8dqqz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
- <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
- <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
- <f37a5d68-9674-533f-ee9c-a49174605710@virtuozzo.com>
- <87d09hn4kt.fsf@x220.int.ebiederm.org>
- <dbce35c7-c060-cfd8-bde1-98fd9a0747a9@virtuozzo.com>
- <87lfo5lju6.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170E9E71B9F84330B098BADE4FA0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <6002ac56-025a-d50f-e89d-1bf42a072323@virtuozzo.com>
- <AM6PR03MB5170CF763987C24F22B38838E4FB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Message-ID: <AM6PR03MB5170813CDCAA105535F84C93E4FB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Sat, 14 Mar 2020 11:02:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-In-Reply-To: <AM6PR03MB5170CF763987C24F22B38838E4FB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FRYP281CA0006.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::16)
- To AM6PR03MB5170.eurprd03.prod.outlook.com (2603:10a6:20b:ca::23)
-X-Microsoft-Original-Message-ID: <5fc2d244-e019-a8c2-12cd-5becc1f64431@hotmail.de>
+        id S1727113AbgCOBaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 21:30:08 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:20685 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726979AbgCOBaH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Mar 2020 21:30:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584235804;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VrADU/PINzBsLrlwn0rNGO/SJpZ9lJsqfzDpikUYU20=;
+        b=gT7wIDcpCqMUlmG7QrCF0AUczxLxt1XOU2AnwtM1FpivvviVITbDB5+nuNFQCQK9VK7cvH
+        KdvtxhvQeAH/7cCTaKFjmiFlPBZ6nFLRWGwwn3A1TSgGn5gaVKoYxlvPA22B7ZoepJmVKH
+        bvHNIdFRHPQ23fyxhbiaENLkZ91S4ZY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-492-RM77OEpTPjauMLoiGcXSRA-1; Sat, 14 Mar 2020 10:23:40 -0400
+X-MC-Unique: RM77OEpTPjauMLoiGcXSRA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 84481800D4E;
+        Sat, 14 Mar 2020 14:23:38 +0000 (UTC)
+Received: from krava (ovpn-204-34.brq.redhat.com [10.40.204.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4E5995C1B0;
+        Sat, 14 Mar 2020 14:23:35 +0000 (UTC)
+Date:   Sat, 14 Mar 2020 15:23:32 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Ian Rogers <irogers@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] perf mem2node: avoid double free related to realloc
+Message-ID: <20200314142332.GB492969@krava>
+References: <20200314042826.166953-1-irogers@google.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.1.101] (92.77.140.102) by FRYP281CA0006.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.18 via Frontend Transport; Sat, 14 Mar 2020 10:02:22 +0000
-X-Microsoft-Original-Message-ID: <5fc2d244-e019-a8c2-12cd-5becc1f64431@hotmail.de>
-X-TMN:  [8BKZP+A/aEwb1zWiEIcHxcohTDDRQT0B]
-X-MS-PublicTrafficType: Email
-X-IncomingHeaderCount: 50
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: 4386b005-a97d-4763-147e-08d7c7fecbd4
-X-MS-TrafficTypeDiagnostic: DB3EUR04HT135:
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: yv+f1E8//TivHezlLJswCtUkxwxWFD00NYI8UW+Qp1QXKf25MInLATc6tHQJtQaqGvFvo+jhya4Zfd32v3LFTXGUFr2S9CS+1llHsKQ2Q9J7P2agoCtr3kldW1Xu6o7dr8nbjVRylepnKmzaFL6KXjT+Qim+2hbYDnDysNT4ra/cRbuc2hp6IKf+uRjW739u+A+XPTTGuV4tkRdMWXpFS5iuMbpRlSzXbAsFJTq5yVc=
-X-MS-Exchange-AntiSpam-MessageData: 13WqQVIE9ylqnsCOYhuHE1G70dAATh6wD2uA7zvA9E+YpeCurxiHsMz+hu4CCkjKugdmHcN7cq3UYYMwPYiMz0QxbG9vFqAw3Fpqe6+V/bzcMGS1PTNfx1n66wp1S3XttTFb/4ACf7IwDEAJmitNLA==
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4386b005-a97d-4763-147e-08d7c7fecbd4
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2020 10:02:25.4716
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3EUR04HT135
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200314042826.166953-1-irogers@google.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/14/20 10:57 AM, Bernd Edlinger wrote:
-> On 3/13/20 10:13 AM, Kirill Tkhai wrote:
->>
->> Despite this should fix the problem, this looks like a broken puzzle.
->>
->> We can't use bprm->cred as an identifier whether the mutex was locked or not.
->> We can check for bprm->cred in regard to cred_guard_mutex, because of there is
->> strong rule: "cred_guard_mutex is becomes locked together with bprm->cred assignment
->> (see prepare_bprm_creds()), and it becomes unlocked together with bprm->cred zeroing".
->> Take attention on modularity of all this: there is no dependencies between anything else.
->>
->> In regard to newly introduced exec_update_mutex, your fix and source patch way look like
->> an obfuscation. The mutex becomes deadly glued to unrelated bprm->cred and bprm->mm,
->> and this introduces the problems in the future modifications and support of all involved
->> entities. If someone wants to move some functions in relation to each other, there will
->> be a pain, and this person will have to go again the same dependencies and bug way,
->> Eric stepped on in the original patch.
->>
+On Fri, Mar 13, 2020 at 09:28:26PM -0700, Ian Rogers wrote:
+> Realloc of size zero is a free not an error, avoid this causing a double
+> free. Caught by clang's address sanitizer:
 > 
-> Okay, yes, valid points you make, thanks.
-> I just wanted to understand what was exactly wrong with this patch,
-> since the failure mode looked a lot like it was failing because of
-> something clobbering the data unexpectedly.
+> ==2634==ERROR: AddressSanitizer: attempting double-free on 0x6020000015f0 in thread T0:
+>     #0 0x5649659297fd in free llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:123:3
+>     #1 0x5649659e9251 in __zfree tools/lib/zalloc.c:13:2
+>     #2 0x564965c0f92c in mem2node__exit tools/perf/util/mem2node.c:114:2
+>     #3 0x564965a08b4c in perf_c2c__report tools/perf/builtin-c2c.c:2867:2
+>     #4 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
+>     #5 0x564965944348 in run_builtin tools/perf/perf.c:312:11
+>     #6 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
+>     #7 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
+>     #8 0x564965942e41 in main tools/perf/perf.c:538:3
 > 
+> 0x6020000015f0 is located 0 bytes inside of 1-byte region [0x6020000015f0,0x6020000015f1)
+> freed by thread T0 here:
+>     #0 0x564965929da3 in realloc third_party/llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:164:3
+>     #1 0x564965c0f55e in mem2node__init tools/perf/util/mem2node.c:97:16
+>     #2 0x564965a08956 in perf_c2c__report tools/perf/builtin-c2c.c:2803:8
+>     #3 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
+>     #4 0x564965944348 in run_builtin tools/perf/perf.c:312:11
+>     #5 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
+>     #6 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
+>     #7 0x564965942e41 in main tools/perf/perf.c:538:3
 > 
-> So I have posted a few updated patch for the failed one here:
+> previously allocated by thread T0 here:
+>     #0 0x564965929c42 in calloc third_party/llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:154:3
+>     #1 0x5649659e9220 in zalloc tools/lib/zalloc.c:8:9
+>     #2 0x564965c0f32d in mem2node__init tools/perf/util/mem2node.c:61:12
+>     #3 0x564965a08956 in perf_c2c__report tools/perf/builtin-c2c.c:2803:8
+>     #4 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
+>     #5 0x564965944348 in run_builtin tools/perf/perf.c:312:11
+>     #6 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
+>     #7 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
+>     #8 0x564965942e41 in main tools/perf/perf.c:538:3
 > 
-> [PATCH v3 5/5] exec: Add a exec_update_mutex to replace cred_guard_mutex
-> [PATCH] pidfd: Use new infrastructure to fix deadlocks in execve
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/mem2node.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> which replaces these:
-> [PATCH v2 5/5] exec: Add a exec_update_mutex to replace cred_guard_mutex
-> https://lore.kernel.org/lkml/87zhcq4jdj.fsf_-_@x220.int.ebiederm.org/
-> 
-> [PATCH] pidfd: Stop taking cred_guard_mutex 
-> https://lore.kernel.org/lkml/87wo7svy96.fsf_-_@x220.int.ebiederm.org/
-> 
-> 
-> and a new patch series to fix deadlock in ptrace_attach and update doc:
-> [PATCH 0/2] exec: Fix dead-lock in de_thread with ptrace_attach
-> [PATCH 1/2] exec: Fix dead-lock in de_thread with ptrace_attach
-> [PATCH 2/2] doc: Update documentation of ->exec_*_mutex
-> 
-> 
-> Other patches needed, still valid:
-> 
-> [PATCH v2 1/5] exec: Only compute current once in flush_old_exec
-> https://lore.kernel.org/lkml/87pndm5y3l.fsf_-_@x220.int.ebiederm.org/
-> 
-> [PATCH v2 2/5] exec: Factor unshare_sighand out of de_thread and call it separately
-> https://lore.kernel.org/lkml/87k13u5y26.fsf_-_@x220.int.ebiederm.org/
+> diff --git a/tools/perf/util/mem2node.c b/tools/perf/util/mem2node.c
+> index 797d86a1ab09..7f97aa69eb65 100644
+> --- a/tools/perf/util/mem2node.c
+> +++ b/tools/perf/util/mem2node.c
+> @@ -95,7 +95,7 @@ int mem2node__init(struct mem2node *map, struct perf_env *env)
+>  
+>  	/* Cut unused entries, due to merging. */
+>  	tmp_entries = realloc(entries, sizeof(*entries) * j);
+> -	if (tmp_entries)
+> +	if (j == 0 || tmp_entries)
+
+nice catch.. I wonder if we should fail in here, or at least
+warn that there're no entris.. which is really strange ;-)
+
+thanks,
+jirka
+
+>  		entries = tmp_entries;
+>  
+>  	for (i = 0; i < j; i++) {
+> -- 
+> 2.25.1.481.gfbce0eb801-goog
 > 
 
-Ah, sorry, forgot this one:
-[PATCH v2 3/5] exec: Move cleanup of posix timers on exec out of de_thread
-https://lore.kernel.org/lkml/87eeu25y14.fsf_-_@x220.int.ebiederm.org/
-
-> [PATCH v2 4/5] exec: Move exec_mmap right after de_thread in flush_old_exec
-> https://lore.kernel.org/lkml/875zfe5xzb.fsf_-_@x220.int.ebiederm.org/
-> 
-> [PATCH 1/4] exec: Fix a deadlock in ptrace
-> https://lore.kernel.org/lkml/AM6PR03MB517033EAD25BED15CC84E17DE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
-> 
-> [PATCH 2/4] selftests/ptrace: add test cases for dead-locks
-> https://lore.kernel.org/lkml/AM6PR03MB51703199741A2C27A78980FFE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
-> 
-> [PATCH 3/4] mm: docs: Fix a comment in process_vm_rw_core
-> https://lore.kernel.org/lkml/AM6PR03MB5170ED6D4D216EEEEF400136E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
-> 
-> [PATCH 4/4] kernel: doc: remove outdated comment cred.c
-> https://lore.kernel.org/lkml/AM6PR03MB517039DB07AB641C194FEA57E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
-> 
-> [PATCH 1/4] kernel/kcmp.c: Use new infrastructure to fix deadlocks in execve
-> https://lore.kernel.org/lkml/AM6PR03MB517057A2269C3A4FB287B76EE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
-> 
-> [PATCH 2/4] proc: Use new infrastructure to fix deadlocks in execve
-> https://lore.kernel.org/lkml/AM6PR03MB51705D211EC8E7EA270627B1E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
-> 
-> [PATCH 3/4] proc: io_accounting: Use new infrastructure to fix deadlocks in execve
-> https://lore.kernel.org/lkml/AM6PR03MB5170BD2476E35068E182EFA4E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
-> 
-> [PATCH 4/4] perf: Use new infrastructure to fix deadlocks in execve
-> https://lore.kernel.org/lkml/AM6PR03MB517035DEEDB9C8699CB6B34EE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
-> 
-> 
-> I think most of the existing patches are already approved, but if
-> there are still change requests, please let me know.
-> 
-> 
-> Thanks
-> Bernd.
-> 
-
-Hope it is correct now.
-I haven't seen the new patches on the kernel archives yet,
-so I cannot add URLs for them.
-
-Bernd.
