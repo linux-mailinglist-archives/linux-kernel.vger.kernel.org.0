@@ -2,76 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8532B1858A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:15:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1634818590F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:30:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbgCOCPi convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 14 Mar 2020 22:15:38 -0400
-Received: from mail-pj1-f70.google.com ([209.85.216.70]:56332 "EHLO
-        mail-pj1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbgCOCPi (ORCPT
+        id S1727927AbgCOCan (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:30:43 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:35264 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727913AbgCOCan (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:15:38 -0400
-Received: by mail-pj1-f70.google.com with SMTP id f94so6707528pjg.6
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 19:15:36 -0700 (PDT)
+        Sat, 14 Mar 2020 22:30:43 -0400
+Received: by mail-qt1-f194.google.com with SMTP id v15so11215240qto.2
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 19:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=rySLrb6e8pdxDloLytBEUWmIP8HvBNLPxIuJLcg1j9c=;
+        b=h9YhYCfhuvcoOK9JuTSnuiXg2cILoy3ExIWXtsaJYq8huKBTSezqcgybwNUJnF31OD
+         8M4XkdAA+wF3Kc0hz30O/kK9eMooTs7yoqdIBJNfvWQnNRWRGMPcYzXrJl2zdeF1j7va
+         J8XdxMT0KmL8llAYJuvJtfAv+moo5flCUCJCh/tlglJ+fFmIUPVbZ1fac7bCjKhbkCn+
+         rZJerUAJLBThHl7kvNkOSCFj/J2Gim7L2OHs8nEEBbbGF0yG+oMEoxI1m7Q6XmwEaoXK
+         TKHu+SSgJteucaBn++J1ylejcFocesa/O0LZlk7VxDKA6TPZDYhdjLA4ADjt7vhRjRdb
+         KZMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to:content-transfer-encoding;
-        bh=+QdPalM1/7ayitV9XmteLgnXaS2hu+LX/EwtXkNn8sI=;
-        b=WroxuWoa6rDunFq6qFviGZ3hPmKIh1N+mykuUUgbZp2JzgC3p9shFnFtVECXReSbZI
-         awto5MyPgf6gidE/c5hCypvT2n+nnCi8sMuO5pFLOnHbO5ls+jW/1YdoZp7+B4R8l5dR
-         TrwiV4W9oI5xen+RzgM3I0iLWpRCOOQuiTbO9DluTRDJiIbUC9hOKqRLdytBprMx/tAo
-         9az12fcRwk7ZLEV0WWSjiLmeRSdUja8vWBlXOlXvP0iYXHSSf9tcIxXTzGICEC4s1ePe
-         +D3AtEvu7uiiT4YYtp4aRAYyOh06SA+r9Yr/k67OhEjHKYIAxB45EJ3RHXm/INtGK51N
-         TuIg==
-X-Gm-Message-State: ANhLgQ0riZWkvU9vzZ1JGtLZN82Z4VCGCyGfNKUfbyyq07cpF/mxjA58
-        bsRR7fvz2tie3YtTSke3yGGqItIHCIanxy/8hu41dDBBTFP3
-X-Google-Smtp-Source: ADFU+vsvmmvzF0I4nMIQXyBWKmywCRss6IV6wvF4RwqOdkw0XwU5mtrUilZd8jdSs9quwxi/+KGtd7aYDnIYchTEyVeGinshxzTm
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=rySLrb6e8pdxDloLytBEUWmIP8HvBNLPxIuJLcg1j9c=;
+        b=JhRDjOaonqK8YV42UY33zrvj5wzA/F+edIBCT0BWKt/ZN6R5hTKF0ujXWhEzSpzuur
+         MkkvnNzWc5Z0VcDCMLYmyV/GLszMY92DGL/3vOBPLis82OZFcOfM68lOdW8vgMlL/H1Q
+         fIjoJKTSHvJNVmh4WSPuTL7T4GWG5PV2Ia9/OathCIoiH0wFAJINsykjfE5nsrpJimNs
+         umb4B9SOD7jRnHE+9oeB/Ofz39DIeOk9TJgSYxdQAl6n24Cz0R5ofxvPq/bJnUK3yu97
+         kATB9K7uNkJMk3Pf/MOUo9nEXo7hJs6nJc9QiIW8IuU+vYMB3wOv7AmsMFn2YZatYDeA
+         Jhug==
+X-Gm-Message-State: ANhLgQ0Blr9/So9ms7hm/VI25agbSsgWv1iLg3O3X9ixH/zXbOEJgio1
+        /2NcR93G6d/eqGfrjSwH3A1z9qN4wAbHTbrh+P3MYlfr
+X-Google-Smtp-Source: ADFU+vsJ8OZ/Dhr0DwwgkL8CDPySYZHLYuNtMBF50V178xoCgQ3+Wbsy6eqrOFGI1hDMkk7GA6AGM8FMlDHfqPtuVxs=
+X-Received: by 2002:a02:3f4c:: with SMTP id c12mr12249418jaf.115.1584206617074;
+ Sat, 14 Mar 2020 10:23:37 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a92:aa87:: with SMTP id p7mr18089913ill.63.1584206402340;
- Sat, 14 Mar 2020 10:20:02 -0700 (PDT)
-Date:   Sat, 14 Mar 2020 10:20:02 -0700
-In-Reply-To: <000000000000cdbe79059ce82948@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dccd2405a0d3cb04@google.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in bitmap_ipmac_destroy
-From:   syzbot <syzbot+a85062dec5d65617cc1c@syzkaller.appspotmail.com>
-To:     a@unstable.cc, arvid.brodin@alten.se,
-        b.a.t.m.a.n@lists.open-mesh.org, coreteam@netfilter.org,
-        davem@davemloft.net, florent.fourcot@wifirst.fr, fw@strlen.de,
-        jeremy@azazel.net, johannes.berg@intel.com,
-        kadlec@blackhole.kfki.hu, kadlec@netfilter.org,
-        linux-kernel@vger.kernel.org, mareklindner@neomailbox.ch,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, sw@simonwunderlich.de,
-        syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+Received: by 2002:a02:63c1:0:0:0:0:0 with HTTP; Sat, 14 Mar 2020 10:23:36
+ -0700 (PDT)
+From:   Omar Ousman <omarousman25@gmail.com>
+Date:   Sat, 14 Mar 2020 18:23:36 +0100
+X-Google-Sender-Auth: e3Esaw6NMf2t59gU8aF8hbfxq5E
+Message-ID: <CAOdk3H=BWVFSbBHnPp89pkv5eyhE_YLWx_uztwjom2+untGdDQ@mail.gmail.com>
+Subject: You received my last mail,,,,
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot suspects this bug was fixed by commit:
+I am Mr.Omar Ousman, a regional managing director (CORIS BANK
+INTERNATIONAL) Ouagadougou Burkina Faso, in my department we have
+US$9,500.0000 million united state dollars, to transfer into your
+account as a dormant fund.If you are interested to use this fund to
+help the orphans around the world contact and send me your personal
+information for more details to my email omarousman25@gmail.com
 
-commit 32c72165dbd0e246e69d16a3ad348a4851afd415
-Author: Kadlecsik József <kadlec@blackhole.kfki.hu>
-Date:   Sun Jan 19 21:06:49 2020 +0000
+Your full names..........
+Your country of origin..........
+Your occupation..........
+Your Age..........
+Your Mobile Number..........
 
-    netfilter: ipset: use bitmap infrastructure completely
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10aef753e00000
-start commit:   4703d911 Merge tag 'xarray-5.5' of git://git.infradead.org..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=83c00afca9cf5153
-dashboard link: https://syzkaller.appspot.com/bug?extid=a85062dec5d65617cc1c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1301ed85e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b7b79ee00000
-
-If the result looks correct, please mark the bug fixed by replying with:
-
-#syz fix: netfilter: ipset: use bitmap infrastructure completely
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Best Regards,
