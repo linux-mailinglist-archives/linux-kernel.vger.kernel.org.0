@@ -2,105 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 992421858D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:24:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 705151858CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:23:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbgCOCYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 22:24:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727949AbgCOCYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:24:15 -0400
-Received: from pali.im (pali.im [31.31.79.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CF412076B;
-        Sat, 14 Mar 2020 12:35:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584189352;
-        bh=qgg7WrnvRyYwWJnUtOh7aYkmAMkwN0LJEDyWXZeOOyA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yFsIb53KtqiL9/2/7M1bXjavMsvmNgnLnL4zmAQqzR9vivGrsYC+D5KKlwU6oQH+m
-         KOxA1A+rjt4RGGhTZ1XOpguhpG5Bc8Lio1N6R3Lmybm70LYO/md8PEXgBNlj72bt8i
-         jW0VdW+AI27mrciJeKuSTD41F7pVfE/AGUMnBX+k=
-Received: by pali.im (Postfix)
-        id A60F9A98; Sat, 14 Mar 2020 13:35:49 +0100 (CET)
-Date:   Sat, 14 Mar 2020 13:35:49 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Change email address for Pali =?utf-8?B?Um9ow6Fy?=
-Message-ID: <20200314123549.new6pjdmn6dvile6@pali>
-References: <20200307104237.8199-1-pali@kernel.org>
- <20200312211526.oahg6mdbvkxlkezi@pali>
- <dbfc7f174e4c75b74ca105e565cd3cba57b9ae73.camel@perches.com>
+        id S1727897AbgCOCXn convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 14 Mar 2020 22:23:43 -0400
+Received: from mail-il1-f197.google.com ([209.85.166.197]:37111 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727222AbgCOCXm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Mar 2020 22:23:42 -0400
+Received: by mail-il1-f197.google.com with SMTP id c26so1362381ila.4
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 19:23:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to:content-transfer-encoding;
+        bh=j2SmXJOFlNVNX3IBInWb2HEJ3kFsGIlnIYBHVv47Fmg=;
+        b=C11TZAkLMycQAitXzDwLWxGWk6EU4iLgrKxJvxBnIVJ9ncITtlq0YfU3q7+WxHXL1E
+         28hFC61FkgfmsSdWyR7W1Rw7nuFGJEqW8AAbUJ3ueZpBQZ88o0B5JbxF/oxdnuByzGHp
+         Qm5UWOIVJD28300ryAgz9OuH/RZM7ipWrVO4/Vn2UTojJf+MHHTYgmlQO7EUj7891J6J
+         W5wK8riaSrggk0QGVdvFDyL/SM/pAMAU+Hq3/2ETgDmhDi710Ke6Baz4jhbXcE0LXsEF
+         NCgym0Jpn6uG/Gh6rDiXJA2GXIagTS8+ucIs5y7zqTG79oOsNZLAiEWgyqo5aiAR6Fjx
+         XHLg==
+X-Gm-Message-State: ANhLgQ1O9TbEHtGxQ2VWIr0cyd9runE6jppRATV3RqvxwuzSjZ+qg9t/
+        wvGJK8dJiSsGSIUoJGqc0AexeI9ulCtZYZwK07N/2l/J5v2I
+X-Google-Smtp-Source: ADFU+vuJBPZ1PMOOzQo98cA9c5gJcvaAaQ6f/LSVIdRh9X4dB9T+eheUju1sRb7NyyPU97BKERRNFdBNpuxA4sPOAFveN366df7X
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dbfc7f174e4c75b74ca105e565cd3cba57b9ae73.camel@perches.com>
-User-Agent: NeoMutt/20180716
+X-Received: by 2002:a92:d842:: with SMTP id h2mr17075595ilq.34.1584191402876;
+ Sat, 14 Mar 2020 06:10:02 -0700 (PDT)
+Date:   Sat, 14 Mar 2020 06:10:02 -0700
+In-Reply-To: <000000000000204b4d059cd6d766@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d3278d05a0d04d97@google.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in bitmap_port_destroy
+From:   syzbot <syzbot+b96275fd6ad891076ced@syzkaller.appspotmail.com>
+To:     arvid.brodin@alten.se, coreteam@netfilter.org,
+        dan.carpenter@oracle.com, davem@davemloft.net,
+        florent.fourcot@wifirst.fr, fw@strlen.de, hdanton@sina.com,
+        jeremy@azazel.net, johannes.berg@intel.com,
+        kadlec@blackhole.kfki.hu, kadlec@netfilter.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 12 March 2020 14:19:29 Joe Perches wrote:
-> On Thu, 2020-03-12 at 22:15 +0100, Pali Rohár wrote:
-> > On Saturday 07 March 2020 11:42:37 Pali Rohár wrote:
-> > > For security reasons I stopped using gmail account and kernel address is
-> > > now up-to-date alias to my personal address.
-> > > 
-> > > People periodically send me emails to address which they found in source
-> > > code of drivers, so this change reflects state where people can contact me.
-> > > 
-> > > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > > ---
-> > 
-> > Greg, could you or someone else help me where to (re)send this patch?
-> > MAINTAINERS file does not specify who is maintainer of MAINTAINERS file
-> > itself and scripts/get_maintainer.pl did not help me too. Main entry is
-> > LKML list.
-> 
-> MAINTAINERS has no maintainer.  It's updated by many.
-> Andrew Morton sometimes picks up patches like this.
-> As a last resort, you could sent the patch to Linus Torvalds.
+syzbot suspects this bug was fixed by commit:
 
-Hi Joe! Thank you for reply and clarification of status. I'm adding
-Andrew to the loop.
+commit 32c72165dbd0e246e69d16a3ad348a4851afd415
+Author: Kadlecsik József <kadlec@blackhole.kfki.hu>
+Date:   Sun Jan 19 21:06:49 2020 +0000
 
-Andrew, could you pick up this patch?
+    netfilter: ipset: use bitmap infrastructure completely
 
-> > As this change is across more subsystems I do not know who can take such
-> > patch and I do not thing it make sense to split such change into more
-> > patches (one for each subsystem).
-> 
-> You should add a .mailmap entry too.
-> 
-> > >  .../ABI/testing/sysfs-platform-dell-laptop       |  8 ++++----
-> > >  MAINTAINERS                                      | 16 ++++++++--------
-> > >  arch/arm/mach-omap2/omap-secure.c                |  2 +-
-> > >  arch/arm/mach-omap2/omap-secure.h                |  2 +-
-> > >  arch/arm/mach-omap2/omap-smc.S                   |  2 +-
-> > >  drivers/char/hw_random/omap3-rom-rng.c           |  4 ++--
-> > >  drivers/hwmon/dell-smm-hwmon.c                   |  4 ++--
-> > >  drivers/platform/x86/dell-laptop.c               |  4 ++--
-> > >  drivers/platform/x86/dell-rbtn.c                 |  4 ++--
-> > >  drivers/platform/x86/dell-rbtn.h                 |  2 +-
-> > >  drivers/platform/x86/dell-smbios-base.c          |  4 ++--
-> > >  drivers/platform/x86/dell-smbios-smm.c           |  2 +-
-> > >  drivers/platform/x86/dell-smbios.h               |  2 +-
-> > >  drivers/platform/x86/dell-smo8800.c              |  2 +-
-> > >  drivers/platform/x86/dell-wmi.c                  |  4 ++--
-> > >  drivers/power/supply/bq2415x_charger.c           |  4 ++--
-> > >  drivers/power/supply/bq27xxx_battery.c           |  2 +-
-> > >  drivers/power/supply/isp1704_charger.c           |  2 +-
-> > >  drivers/power/supply/rx51_battery.c              |  4 ++--
-> > >  fs/udf/ecma_167.h                                |  2 +-
-> > >  fs/udf/osta_udf.h                                |  2 +-
-> > >  include/linux/power/bq2415x_charger.h            |  2 +-
-> > >  tools/laptop/freefall/freefall.c                 |  2 +-
-> > >  23 files changed, 41 insertions(+), 41 deletions(-)
-> 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=106f42a9e00000
+start commit:   131701c6 Merge tag 'leds-5.5-rc8' of git://git.kernel.org/..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=83c00afca9cf5153
+dashboard link: https://syzkaller.appspot.com/bug?extid=b96275fd6ad891076ced
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15fba721e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1339726ee00000
+
+If the result looks correct, please mark the bug fixed by replying with:
+
+#syz fix: netfilter: ipset: use bitmap infrastructure completely
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
