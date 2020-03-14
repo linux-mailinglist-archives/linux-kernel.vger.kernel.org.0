@@ -2,93 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D30471858B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:18:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 992421858D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:24:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbgCOCS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 22:18:29 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:42224 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727520AbgCOCS3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:18:29 -0400
-X-Greylist: delayed 2387 seconds by postgrey-1.27 at vger.kernel.org; Sat, 14 Mar 2020 22:18:27 EDT
-Received: from relay10.mail.gandi.net (unknown [217.70.178.230])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id 27F5B3A3405;
-        Sat, 14 Mar 2020 12:26:29 +0000 (UTC)
-Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id C566A240009;
-        Sat, 14 Mar 2020 12:24:55 +0000 (UTC)
-Date:   Sat, 14 Mar 2020 13:24:55 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Ran Bi <ran.bi@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        YT Shen <yt.shen@mediatek.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Flora Fu <flora.fu@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: Re: [PATCH v3 0/4] Add Support for MediaTek MT2712 RTC
-Message-ID: <20200314122455.GC4518@piout.net>
-References: <20200226051303.22560-1-ran.bi@mediatek.com>
+        id S1728021AbgCOCYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:24:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39112 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727949AbgCOCYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Mar 2020 22:24:15 -0400
+Received: from pali.im (pali.im [31.31.79.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CF412076B;
+        Sat, 14 Mar 2020 12:35:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584189352;
+        bh=qgg7WrnvRyYwWJnUtOh7aYkmAMkwN0LJEDyWXZeOOyA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yFsIb53KtqiL9/2/7M1bXjavMsvmNgnLnL4zmAQqzR9vivGrsYC+D5KKlwU6oQH+m
+         KOxA1A+rjt4RGGhTZ1XOpguhpG5Bc8Lio1N6R3Lmybm70LYO/md8PEXgBNlj72bt8i
+         jW0VdW+AI27mrciJeKuSTD41F7pVfE/AGUMnBX+k=
+Received: by pali.im (Postfix)
+        id A60F9A98; Sat, 14 Mar 2020 13:35:49 +0100 (CET)
+Date:   Sat, 14 Mar 2020 13:35:49 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Change email address for Pali =?utf-8?B?Um9ow6Fy?=
+Message-ID: <20200314123549.new6pjdmn6dvile6@pali>
+References: <20200307104237.8199-1-pali@kernel.org>
+ <20200312211526.oahg6mdbvkxlkezi@pali>
+ <dbfc7f174e4c75b74ca105e565cd3cba57b9ae73.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200226051303.22560-1-ran.bi@mediatek.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dbfc7f174e4c75b74ca105e565cd3cba57b9ae73.camel@perches.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/02/2020 13:12:59+0800, Ran Bi wrote:
-> This patchset add support to MT2712 RTC. MT2712 RTC is a SoC based RTC
-> with different architecture compared to MT7622 RTC.
+On Thursday 12 March 2020 14:19:29 Joe Perches wrote:
+> On Thu, 2020-03-12 at 22:15 +0100, Pali Rohár wrote:
+> > On Saturday 07 March 2020 11:42:37 Pali Rohár wrote:
+> > > For security reasons I stopped using gmail account and kernel address is
+> > > now up-to-date alias to my personal address.
+> > > 
+> > > People periodically send me emails to address which they found in source
+> > > code of drivers, so this change reflects state where people can contact me.
+> > > 
+> > > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > > ---
+> > 
+> > Greg, could you or someone else help me where to (re)send this patch?
+> > MAINTAINERS file does not specify who is maintainer of MAINTAINERS file
+> > itself and scripts/get_maintainer.pl did not help me too. Main entry is
+> > LKML list.
 > 
-> Changes in V3:
-> 1. change struct mt2712_rtc
-> 2. use 100 as year offset
-> 3. change irq handle thread
-> 4. remove useless rtc time check
-> 5. not modify struct rtc_time in set_time/set_alarm functions
-> 6. modify rtc init function
-> 7. add power lost flag for get_time/set_time functions
-> 8. add .alarm_irq_enable callback
-> 9. set rtc->range_min and rtc->range_max to do range checking
-> 10. use fixed driver name
-> 
-> Changes in V2:
-> 1. change minimum year from 1968 to 2000
-> 2. fix lock usage
-> 3. stop to calculate useless day of week
-> 4. stop to set default date after init
-> 5. change the prefix of functions
-> 6. use devm_request_threaded_irq() to replace request_threaded_irq()
-> 7. add mt2712 rtc related files into MAINTAINERS
-> 
-> Ran Bi (4):
->   bindings: rtc: add bindings for MT2712 RTC
->   rtc: add support for the MediaTek MT2712 RTC
->   arm64: dts: add RTC nodes for MT2712
->   MAINTAINERS: add MT2712 RTC files
-> 
+> MAINTAINERS has no maintainer.  It's updated by many.
+> Andrew Morton sometimes picks up patches like this.
+> As a last resort, you could sent the patch to Linus Torvalds.
 
-Applied 1,2 and 4, thanks!
+Hi Joe! Thank you for reply and clarification of status. I'm adding
+Andrew to the loop.
 
+Andrew, could you pick up this patch?
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> > As this change is across more subsystems I do not know who can take such
+> > patch and I do not thing it make sense to split such change into more
+> > patches (one for each subsystem).
+> 
+> You should add a .mailmap entry too.
+> 
+> > >  .../ABI/testing/sysfs-platform-dell-laptop       |  8 ++++----
+> > >  MAINTAINERS                                      | 16 ++++++++--------
+> > >  arch/arm/mach-omap2/omap-secure.c                |  2 +-
+> > >  arch/arm/mach-omap2/omap-secure.h                |  2 +-
+> > >  arch/arm/mach-omap2/omap-smc.S                   |  2 +-
+> > >  drivers/char/hw_random/omap3-rom-rng.c           |  4 ++--
+> > >  drivers/hwmon/dell-smm-hwmon.c                   |  4 ++--
+> > >  drivers/platform/x86/dell-laptop.c               |  4 ++--
+> > >  drivers/platform/x86/dell-rbtn.c                 |  4 ++--
+> > >  drivers/platform/x86/dell-rbtn.h                 |  2 +-
+> > >  drivers/platform/x86/dell-smbios-base.c          |  4 ++--
+> > >  drivers/platform/x86/dell-smbios-smm.c           |  2 +-
+> > >  drivers/platform/x86/dell-smbios.h               |  2 +-
+> > >  drivers/platform/x86/dell-smo8800.c              |  2 +-
+> > >  drivers/platform/x86/dell-wmi.c                  |  4 ++--
+> > >  drivers/power/supply/bq2415x_charger.c           |  4 ++--
+> > >  drivers/power/supply/bq27xxx_battery.c           |  2 +-
+> > >  drivers/power/supply/isp1704_charger.c           |  2 +-
+> > >  drivers/power/supply/rx51_battery.c              |  4 ++--
+> > >  fs/udf/ecma_167.h                                |  2 +-
+> > >  fs/udf/osta_udf.h                                |  2 +-
+> > >  include/linux/power/bq2415x_charger.h            |  2 +-
+> > >  tools/laptop/freefall/freefall.c                 |  2 +-
+> > >  23 files changed, 41 insertions(+), 41 deletions(-)
+> 
