@@ -2,146 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E016185746
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:35:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 621C718582F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:57:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbgCOBfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 21:35:55 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:46322 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726825AbgCOBfu (ORCPT
+        id S1727561AbgCOB5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 21:57:32 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34683 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726853AbgCOB5c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 21:35:50 -0400
-Received: by mail-qk1-f195.google.com with SMTP id f28so19900269qkk.13
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 18:35:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dyh7Hx4P5azfX0v8IUQDrnTKYHqh3YH9V1fzoLax7D4=;
-        b=HjZqb4hMbE+P/gX5sK4vL0TAQV0kiEwHksv2Vw9O9KQGXap9nZ8sbJ9yTF/uJ2EHGQ
-         OvEo8DHfjMOEqRv9n9GxLjow4jcZHGuInWbX4gy66qrR1S668/PGWJhcyDn/NxhY7wiP
-         kR4IJTyadLrL3Bg0rMxhNI1pSX1Ab2URRn9J1tC/42tL5ocwETcTIkzXj0EuvXpjYfQH
-         jWC/W+mHUjXcWUrU7j8QWvRvgdGAaP+Hj775QvYKr8uIwa4l7yNyWSjXJzkY93FC0fMM
-         FSTnW5LXa6DfAKL95sCQeASBlVzX2iTPjPxBSQAhE37EhOKprgpzNw0Cp+ah42U2WSoL
-         E92w==
+        Sat, 14 Mar 2020 21:57:32 -0400
+Received: by mail-ed1-f67.google.com with SMTP id i24so13489883eds.1;
+        Sat, 14 Mar 2020 18:57:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dyh7Hx4P5azfX0v8IUQDrnTKYHqh3YH9V1fzoLax7D4=;
-        b=N6oe8fWfUeRQG8mePOUbsx9kqel/itwWPasMPcrTVid4tyZWI5KVCyOPdlt88M81+9
-         JDS8P+a06+Gb0dmhtQVAGYkoXPHVEPSzD9EFWcEAFlGVFf1q7AGM7og/g7VJAII8JlaI
-         K46PH5tWHk0GaGvCF8ORoNlAbm0MRgyMML6QaChV0t927aKCX+6+XvE3p3KP/F/5Aftv
-         vPimAcbKqv7y4bOnxIj6S73vopAkCWkHJf7Fvvqym1sCyDf6pjnG4pPNuOBtsd2e4le1
-         Eze4+75anroxP0D+ubq/joLBaJ45/InrVbneNv+z9Z9J4s6yP8lnMeaLRj45xXm44MEv
-         MY4g==
-X-Gm-Message-State: ANhLgQ3iUIYbhwo7pPmPkbKmnORNAn9U/RDtJ/6o8RTPJQCP46tq9ALy
-        1GL4eU24ym9wz2IVWyqxxYBwjmzY3CZ1WNpPvnMNyoGi
-X-Google-Smtp-Source: ADFU+vubTNjzoYc+Mt1YwQiEPLfMUjhYM0Zp2sjxCXIPNaBYloJFyw4DarM1wVm87d4QoiH9nnB79GsfpgvxqJrzDlI=
-X-Received: by 2002:a25:6c0a:: with SMTP id h10mr23810528ybc.47.1584204891686;
- Sat, 14 Mar 2020 09:54:51 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IGvteHNkCAAe9RzBu1B2j4q+4lEY8L8k3NmOvCcX8OE=;
+        b=KhwANvBcrTq2q2W5HVumXxXVfw3LRtfnYku9FMQ1suJpsKfm1z2FlTffMfi3FsbB/z
+         IVMP/udmVbpgTjKW5cNUjWgiV1tKC8kDYSO0gLZpwjEWBWrION7WTmd0TM8EJEgQOH8Z
+         eTNelbIFbn3OAHSNgYbM8h0d7qMMar0Bl4C/Siv215MIThh7Rb/Hf0UciLgjp0hufgBs
+         MnR1vOy4s76cXpYBYvMXauY51h/rWdykIJmS97Fx3tj838dCUXZmEtIBBj0R4eAOSpVR
+         EBiUdAe2DM/dJPL/nSR1jjY9CpXC1ER/ag4dJbFKldpE8HvCU6JNzqH4ubhvlpC7RmUQ
+         G6SA==
+X-Gm-Message-State: ANhLgQ2UywbPP/WnWS3yPZBN1VwWm8GBWPebJYVOudtwHeZJK9YCOcaC
+        R5m0GQ0kZ9ASWJ39wq6Xl9I4uG1JtWA=
+X-Google-Smtp-Source: ADFU+vvqta4B+r9p/W0zTELooOA9Cc7fWz4UD77LqxM6UYcl+Sd+u1u4HEDyOkSEfBTCw7OTPTESnQ==
+X-Received: by 2002:a50:d657:: with SMTP id c23mr19074934edj.18.1584210014117;
+        Sat, 14 Mar 2020 11:20:14 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.125])
+        by smtp.googlemail.com with ESMTPSA id n6sm2172656ejy.23.2020.03.14.11.20.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 14 Mar 2020 11:20:13 -0700 (PDT)
+Date:   Sat, 14 Mar 2020 19:20:10 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCHv3 2/5] ARM: dts: exynos: Add missing usbdrd3 suspend clk
+Message-ID: <20200314182010.GB17580@kozik-lap>
+References: <20200310194854.831-1-linux.amoon@gmail.com>
+ <20200310194854.831-3-linux.amoon@gmail.com>
+ <CANAwSgR4fJK0uVANv-x-=iSL_hAKD8kvazACUsY9Meu5xonuqQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200313230249.78825-1-irogers@google.com> <20200314135925.GA492969@krava>
-In-Reply-To: <20200314135925.GA492969@krava>
-From:   Ian Rogers <irogers@google.com>
-Date:   Sat, 14 Mar 2020 09:54:40 -0700
-Message-ID: <CAP-5=fWO8Ufw9EmjC3TsOJwbzqQsv4OBtNiGAjiMtRtRo60yJQ@mail.gmail.com>
-Subject: Re: [PATCH] perf parse-events: fix 3 use after frees
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Leo Yan <leo.yan@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Stephane Eranian <eranian@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANAwSgR4fJK0uVANv-x-=iSL_hAKD8kvazACUsY9Meu5xonuqQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 14, 2020 at 6:59 AM Jiri Olsa <jolsa@redhat.com> wrote:
->
-> On Fri, Mar 13, 2020 at 04:02:49PM -0700, Ian Rogers wrote:
-> > Reproducible with a clang asan build and then running perf test in
-> > particular 'Parse event definition strings'.
+On Sat, Mar 14, 2020 at 07:02:33PM +0530, Anand Moon wrote:
+> Hi Krzysztof,
+> 
+> On Wed, 11 Mar 2020 at 01:19, Anand Moon <linux.amoon@gmail.com> wrote:
 > >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/util/parse-events.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > Add new compatible strings for USBDRD3 for adding missing
+> > suspend clk, exynos5422 usbdrd3 support two clk USBD300 and
+> > SCLK_USBD300, so add missing suspemd_clk for Exynos542x DWC3 nodes.
 > >
-> > diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-> > index a14995835d85..593b6b03785d 100644
-> > --- a/tools/perf/util/parse-events.c
-> > +++ b/tools/perf/util/parse-events.c
-> > @@ -1449,7 +1449,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
-> >               evsel = __add_event(list, &parse_state->idx, &attr, NULL, pmu, NULL,
-> >                                   auto_merge_stats, NULL);
-> >               if (evsel) {
-> > -                     evsel->pmu_name = name;
-> > +                     evsel->pmu_name = name ? strdup(name) : NULL;
-> >                       evsel->use_uncore_alias = use_uncore_alias;
-> >                       return 0;
-> >               } else {
-> > @@ -1497,7 +1497,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
-> >               evsel->snapshot = info.snapshot;
-> >               evsel->metric_expr = info.metric_expr;
-> >               evsel->metric_name = info.metric_name;
-> > -             evsel->pmu_name = name;
-> > +             evsel->pmu_name = name ? strdup(name) : NULL;
->
-> so it's pmu->name pointer.. does pmu get destroyed before the evsel?
-> also should we free that then like below?
->
-> >               evsel->use_uncore_alias = use_uncore_alias;
-> >               evsel->percore = config_term_percore(&evsel->config_terms);
-> >       }
-> > @@ -1547,7 +1547,7 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
-> >                               if (!parse_events_add_pmu(parse_state, list,
-> >                                                         pmu->name, head,
-> >                                                         true, true)) {
-> > -                                     pr_debug("%s -> %s/%s/\n", config,
-> > +                                     pr_debug("%s -> %s/%s/\n", str,
->
-> nice catch ;-)
->
-> >                                                pmu->name, alias->str);
-> >                                       ok++;
-> >                               }
-> > --
-> > 2.25.1.481.gfbce0eb801-goog
-> >
->
-> thanks,
-> jirka
->
->
-> ---
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index 816d930d774e..15ccd193483f 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -1287,6 +1287,7 @@ void perf_evsel__exit(struct evsel *evsel)
->         perf_thread_map__put(evsel->core.threads);
->         zfree(&evsel->group_name);
->         zfree(&evsel->name);
-> +       zfree(&evsel->pmu_name);
->         perf_evsel__object.fini(evsel);
->  }
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> 
+> My assumption based on the FSYS clock source diagram below was bit wrong.
+> [0] https://imgur.com/gallery/zAiBoyh
+> 
+> And again re-looking into the driver source code, it turn out their
+> are *6 clock*
+> Here is the correct mapping as per the Exynos5420 clock driver.
+> 
+> USB-(phy@12100000)
+> |___________________CLK_SCLK_USBD300
+> |___________________CLK_SCLK_USBPHY300
+> 
+> USB-(phy@12500000)
+> |___________________CLK_SCLK_USBD301
+> |___________________CLK_SCLK_USBPHY301
+> 
+> USB-(dwc3@12000000)
+> |___________________CLK_USBD300
+> USB-(dwc3@12400000)
+> |___________________CLK_USBD301
+> 
+> Note: As per Exynos 5422 user manual, There are some more USB CLK
+> configuration missing in GATE_IP_FSYS. So we could enable another dwc3 clk,
+> If needed I would like too add this missing clk code and enable this
+> clk for dwc3 driver.
+> 
+> For some reason we already use CLK_USBD300 and CLK_USBD301
+> for PHY nodes, which lead to this confusion. So we need to update PHY clock
+> CLK_USBD300 with CLK_SCLK_USBD300 and clock CLK_USBD301 with CLK_SCLK_USBD301.
+> 
+> Please share your thought on linking PHY nodes above and add new DWC3 clock
+> and enable this clock.
 
-Agreed on the zfree! I'll upload a v2 with it. I've tested with
-address sanitizer in case of double frees, etc. I haven't yet fuzz
-tested the latest version of parse events, libfuzz detects memory
-leaks between iterations so I expect there will be future small
-patches like this coming.
+The real clock topology of Exynos5422 is not properly reflected in the
+kernel. However cleaning this up is quite big task.
 
-Thanks,
-Ian
+
+Best regards,
+Krzysztof
+
