@@ -2,109 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A23621856BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A75EA1856C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:29:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbgCOB3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 21:29:32 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:17674 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726853AbgCOB32 (ORCPT
+        id S1727024AbgCOB3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 21:29:53 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33917 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbgCOB3v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 21:29:28 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584235767; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=bab8s4tBbO8m9drWNuWpC59mcIOm3kFwBEnRSL7ZdyI=; b=qymA10elxloBvMPcsYKYwJgzNzh4SpqLLr0HS0aO21Te+zsfvP5pcAshv4oxzcFX7GgmXEjv
- 0eJIotShpab5K15GNRIkhgCUJS9qWIFADo0EjzWyH/2GCW+MmasrbgOBNszfUT5yKPlq41VM
- fYi219mdyugpgqGvT7cg9yCOuXI=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6d2768.7f0a8051d0d8-smtp-out-n04;
- Sat, 14 Mar 2020 18:50:16 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id CEA46C43636; Sat, 14 Mar 2020 18:50:14 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EC741C433CB;
-        Sat, 14 Mar 2020 18:50:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EC741C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v6 0/3] Add modem Clock controller (MSS CC) driver for SC7180
-Date:   Sun, 15 Mar 2020 00:19:55 +0530
-Message-Id: <1584211798-10332-1-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Sat, 14 Mar 2020 21:29:51 -0400
+Received: by mail-wm1-f68.google.com with SMTP id x3so10618607wmj.1;
+        Sat, 14 Mar 2020 18:29:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=MdAMJmGRrUWNR3TnrWQJWlEsL/rPdcDMZT589VL4k7k=;
+        b=PolnriIplP1QDNROgQ1dylop9To27slCK5uqrKfKdBbekoCNFT/OLobU7dG3cKboYB
+         MU//eTuoUI7T5i6B7tydGtvTtdwVEeeBUH/B16G1i4RoBfv85xUuFVKcWLI8vRHOqfdU
+         a867e7aScshL4JXEnVY4fjZMn6Ahnmk8Y9FMgiYOf58dR0IurMsoeDR/xAC1S4Kw+Z9m
+         xpxFpOAQiXatccTeSP5z1XJcQ0HC9wYS8RDfsP0nNw5hukMh/DxuixTkfAjF4Ra0Ph5T
+         rM83BdLg9zVYPe04jdDDFKTmxclPcGE9Y1u3zmdosgo8AfsqTATZB3Yn2YJgphZ4c7/1
+         0kBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MdAMJmGRrUWNR3TnrWQJWlEsL/rPdcDMZT589VL4k7k=;
+        b=cnlPkWcwA6A1V5ePFLa15CkIgjrseAFNaj+bgRdQBVp68a2xKK5tHBAs4XLCsCtHqC
+         NWxkBoSimXeqqEYGXIsXeamnYlkoEG8DG6M2Xlfx9L3nbbqlx9+YYuDrmrIu99jt4WHu
+         oftBZM94er3EhalptzBnsvIr88fdn0fnz5NZeyVFKIFU++PehGoUiTWh1Vidbr/4uxnY
+         J+fMM3iIbBzxICRwo/EeKSpE0T/et+fYRg34zaNJuyuoGaOhw6HBQ5BEiuusoRYqQTPj
+         ezuDObwJry+ijseMW31u/t18wUvdhLvdXcNEdt0U9iEOmlErdhfxAvaHuh5YPlsKvZw5
+         0oTQ==
+X-Gm-Message-State: ANhLgQ05UT1khs5JEnfxIYQ4Z7O68GbvYwPxqJ+Xp5/iZuerphxSEmdP
+        6S7yWU7hIBd+++npjS0oV2GoOA6Blbk=
+X-Google-Smtp-Source: ADFU+vtfdljSeqJJQhrgJp7NKZswNejaixyPKYbgD/BUJCJpyQFZKprGJFjj+IOtZPh/8qFRtbdXMw==
+X-Received: by 2002:a05:600c:286:: with SMTP id 6mr18285028wmk.101.1584225836482;
+        Sat, 14 Mar 2020 15:43:56 -0700 (PDT)
+Received: from localhost.localdomain ([79.115.60.40])
+        by smtp.gmail.com with ESMTPSA id 133sm23690732wmd.5.2020.03.14.15.43.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Mar 2020 15:43:55 -0700 (PDT)
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     broonie@kernel.org
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, eha@deif.com, angelo@sysam.it,
+        andrew.smirnov@gmail.com, gustavo@embeddedor.com, weic@nvidia.com,
+        mhosny@nvidia.com, michael@walle.cc, peng.ma@nxp.com
+Subject: [PATCH v3 00/12] NXP DSPI bugfixes and support for LS1028A
+Date:   Sun, 15 Mar 2020 00:43:28 +0200
+Message-Id: <20200314224340.1544-1-olteanv@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[v6]
- * Combine the Documentation YAML schema and clock IDs for GCC MSS and
-   MSS clocks.
- * Remove a unnecessary header file inclusion, define the max_registers for
-   regmap and also update the fw_name to remove _clk suffix.
- * Update the copyright year.
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
 
-[v5]
- * Update the clock ID for GCC_MSS_NAV_AXIS_CLK to GCC_MSS_NAV_AXI_CLK
+This series addresses a few issues that were missed during the previous
+series "[PATCH 00/12] TCFQ to XSPI migration for NXP DSPI driver", on
+SoCs other than LS1021A and LS1043A. DMA mode has been completely broken
+by that series, and XSPI mode never worked on little-endian controllers.
 
-[v4]
- * Split the GCC MSS clocks and Modem clock driver.
- * Update mss_regmap_config to const.
- * Rename the Documentation binding as per the latest convention.
- * Minor comments of clock-names/clocks properties updated.
+Then it introduces support for the LS1028A chip, whose compatible has
+recently been documented here:
 
-[v3]
-  * Add clocks/clock-names required for the MSS clock controller.
-  * Add pm_ops to enable/disable the required dependent clock.
-  * Add parent_data for the MSS clocks.
-  * Update the GCC MSS clocks from _CBCR to _CLK.
+https://lore.kernel.org/linux-devicetree/20200218171418.18297-1-michael@walle.cc/
 
-[v2]
-  * Update the license for the documentation and fix minor comments in the
-    YAML bindings.
+The device tree for the LS1028A SoC is extended with DMA channels
+definition, such that even though the default operating mode is XSPI,
+one can simply change DSPI_XSPI_MODE to DSPI_DMA_MODE in the
+devtype_data structure of the driver and use that instead.
 
-[v1]
-  * Add driver support for Modem clock controller for SC7180 and also
-    update device tree bindings for the various clocks supported in the
-    clock controller.
+I don't expect the "fixes" patches to reach very far down the stable
+pipe, since there has been pretty heavy refactoring in this driver.
 
-Taniya Das (3):
-  dt-bindings: clock: Add YAML schemas for the QCOM MSS clock bindings
-  clk: qcom: gcc: Add support for modem clocks in GCC
-  clk: qcom: Add modem clock controller driver for SC7180
+For testing, benchmarking and debugging, the mikroBUS connector on the
+LS1028A-RDB is made available via spidev.
 
- .../devicetree/bindings/clock/qcom,sc7180-mss.yaml |  62 +++++++++
- drivers/clk/qcom/Kconfig                           |   9 ++
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/gcc-sc7180.c                      |  72 ++++++++++-
- drivers/clk/qcom/mss-sc7180.c                      | 143 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sc7180.h        |   7 +-
- include/dt-bindings/clock/qcom,mss-sc7180.h        |  12 ++
- 7 files changed, 304 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml
- create mode 100644 drivers/clk/qcom/mss-sc7180.c
- create mode 100644 include/dt-bindings/clock/qcom,mss-sc7180.h
+Vladimir Oltean (12):
+  spi: spi-fsl-dspi: Don't access reserved fields in SPI_MCR
+  spi: spi-fsl-dspi: Fix little endian access to PUSHR CMD and TXDATA
+  spi: spi-fsl-dspi: Fix bits-per-word acceleration in DMA mode
+  spi: spi-fsl-dspi: Avoid reading more data than written in EOQ mode
+  spi: spi-fsl-dspi: Protect against races on dspi->words_in_flight
+  spi: spi-fsl-dspi: Replace interruptible wait queue with a simple
+    completion
+  spi: spi-fsl-dspi: Avoid NULL pointer in dspi_slave_abort for non-DMA
+    mode
+  spi: spi-fsl-dspi: Fix interrupt-less DMA mode taking an XSPI code
+    path
+  spi: spi-fsl-dspi: Move invariant configs out of
+    dspi_transfer_one_message
+  spi: spi-fsl-dspi: Add support for LS1028A
+  arm64: dts: ls1028a: Specify the DMA channels for the DSPI controllers
+  arm64: dts: ls1028a-rdb: Add a spidev node for the mikroBUS
 
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+ .../boot/dts/freescale/fsl-ls1028a-rdb.dts    |  14 ++
+ .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |   6 +
+ drivers/spi/spi-fsl-dspi.c                    | 227 +++++++++---------
+ 3 files changed, 138 insertions(+), 109 deletions(-)
+
+-- 
+2.17.1
+
