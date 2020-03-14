@@ -2,142 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F8AB18542B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 04:13:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACD5A18542F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 04:16:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbgCNDNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 23:13:14 -0400
-Received: from st43p00im-zteg10063401.me.com ([17.58.63.175]:35003 "EHLO
-        st43p00im-zteg10063401.me.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726467AbgCNDNO (ORCPT
+        id S1726918AbgCNDQO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 23:16:14 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:65480 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726559AbgCNDQM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 23:13:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-        t=1584155592; bh=XVg9MvTPmWfYV3MDEBTqmqWRsnFid69lEYXtgfapPy4=;
-        h=Date:From:To:Subject:Message-ID:Content-Type;
-        b=CZSIjUYIeLflaR99z6LjMM3ISLMMAIHfD/GW6W7w3YdhKwr8XVknPlOMTwsqojZLu
-         a/nO0yaQ2DxWPZ3ao25p9gmBnItaNWH12DSp12ZS6A/oT03I4FOmYeAMvKgMlc4rCT
-         eJjV0yOJdHqRIDtnttasJOGMMVUhkLHR0Xtpx5QuQM1f7bTJXqcDdMB923Uosw87D5
-         3A7u75njBoN/mZPB0s1F0ZOFwyc2J11C8f7ra8qmTlgDvnwbtTyO/FswRK+8/qi7/M
-         B96KMkPMkCXjJQLVsYUw6ahJTJ079kHVDfX8064Yh2rgLqwFhyDcxF0e7Cnb0P9STY
-         baMQA9dKDc2ww==
-Received: from shwetrath.localdomain (unknown [66.199.8.131])
-        by st43p00im-zteg10063401.me.com (Postfix) with ESMTPSA id DA50D4A016B;
-        Sat, 14 Mar 2020 03:13:11 +0000 (UTC)
-Date:   Fri, 13 Mar 2020 23:13:10 -0400
-From:   Vijay Thakkar <vijaythakkar@me.com>
-To:     Kim Phillips <kim.phillips@amd.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>,
-        Jon Grimm <jon.grimm@amd.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] perf vendor events amd: update Zen1 events to V2
-Message-ID: <20200314031310.GA66224@shwetrath.localdomain>
-References: <20200228175639.39171-1-vijaythakkar@me.com>
- <20200228175639.39171-4-vijaythakkar@me.com>
- <77552e9e-7fca-7186-24cc-6a8a87d4b7b6@amd.com>
+        Fri, 13 Mar 2020 23:16:12 -0400
+X-UUID: c779de278cab48e0a6a91a5c8bc88aa4-20200314
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=Cp6nxJDmK0by+hyxNgFAHL/aGR7OEaDHIQICFVZiGaQ=;
+        b=NAxn80v6BI852R+Ii3cMKJ4RmIW4wwZ7+AUJp1okdJU2yE0ObCm/sAOpLsOSDTn7QedDBuYmtJ6JEkKfR48I7dLIDbp0wANVIiVqTpGidlqhBxILbRnHpiS8de/jCm9cyyz9dAbeDdsk/1zCEG1mnnhpBml8xHJGpFecpZaZSRs=;
+X-UUID: c779de278cab48e0a6a91a5c8bc88aa4-20200314
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1218980132; Sat, 14 Mar 2020 11:16:04 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sat, 14 Mar 2020 11:15:31 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sat, 14 Mar 2020 11:15:58 +0800
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
+        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
+        <jejb@linux.ibm.com>
+CC:     <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
+        <cang@codeaurora.org>, <matthias.bgg@gmail.com>,
+        <bvanassche@acm.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
+        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
+        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
+Subject: [PATCH v1 0/2] scsi: ufs: add error recovery for suspend and resume in ufs-mediatek
+Date:   Sat, 14 Mar 2020 11:15:58 +0800
+Message-ID: <20200314031600.10616-1-stanley.chu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77552e9e-7fca-7186-24cc-6a8a87d4b7b6@amd.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2020-03-13_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-2003140016
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 5C892599D836B07E4273D5D50073766BC77ACDA29FAE6827C18AF61F3F5B7CE52000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I think I may have accidentally deleted your review of Patch 2 so I am
-replying to that here. Still quite new to mutt, sorry :p
-
-> > +  {                                                                                                  
-> > +    "EventName": "ls_tablewalker.perf_mon_tablewalk_alloc_iside",                                    
-> > +    "EventCode": "0x46",                                                                             
-> > +    "BriefDescription": "Tablewalker allocation.",                                                   
-> > +    "PublicDescription": "Tablewalker allocation.",                                                  
-> > +    "UMask": "0xc"                                                                                   
-> > +  },                                                                                                 
-> > +  {                                                                                                  
-> > +    "EventName": "ls_tablewalker.perf_mon_tablewalk_alloc_dside",                                    
-> > +    "EventCode": "0x46",                                                                             
-> > +    "BriefDescription": "Tablewalker allocation.",                                                   
-> > +    "PublicDescription": "Tablewalker allocation.",                                                  
-> > +    "UMask": "0x3"                                                                                   
-> > +  },                                                                                                 
->                                                                                                         
-> I see each of the two tablewalkers got consolidated into their own                                      
-> unit mask groups?  Any reason we couldn't leave the original
-> instances there, and add these in addition?  In any case we'd need
-> clarification of which 'side' are the both counting - I or D - in
-> a single BriefDescription here.
-
-So these have not been changed since zen1, and are still present as is
-in the mainline. Zen2 PPR version 55803 Rev 0.54 does not include them.
-But I see that these have been updated even for zen1 in the latest PPR
-version 54945 Rev 3.03 so I will add them for both.
-
-> I thought we agreed to call these LS MAB Allocates by Type", like the text in the
-> later PPR for AMD Family 17h Model 31h B0 - 55803 Rev 0.54 - Sep 12, 2019?
-> 
-> DC Miss By Type is probably less correct given the MAB != DC, and the name of
-> the event is "LsMabAlloc".
-> 
-> FWIW, a MAB is a Miss address buffer (seen in the Model 71h PPR's MCA_CTL_LS
-> register definition).
-
-Ah I am really sorry, I must have missed these. Should be fixed now.
-
-> Another case where it's hard to make out what the event is counting
-> in general: Make its PublicDescription a single Breifdescription?
-Yeah, I agree. Will merge the descriptions.
-
-> +  {
-> +    "EventName": "ls_refills_from_sys.ls_mabresp_rmt_dram",
-> +    "EventCode": "0x43",
-> +    "BriefDescription": "DRAM or IO from different die.",
-> +    "PublicDescription": "Demand Data Cache Fills by Data Source. DRAM or IO from different die.",
-> +    "UMask": "0x40"
-> +  },
-> +  {
-> +    "EventName": "ls_refills_from_sys.ls_mabresp_rmt_cache",
-> +    "EventCode": "0x43",
-> +    "BriefDescription": "Hit in cache; Remote CCX and the address's Home Node is on a different die.",
-> +    "PublicDescription": "Demand Data Cache Fills by Data Source. Hit in cache; Remote CCX and the address's Home Node is on a different die.",
-> +    "UMask": "0x10"
-> +  },
-> +  {
-> +    "EventName": "ls_refills_from_sys.ls_mabresp_lcl_dram",
-> +    "EventCode": "0x43",
-> +    "BriefDescription": "DRAM or IO from this thread's die.",
-> +    "PublicDescription": "Demand Data Cache Fills by Data Source. DRAM or IO from this thread's die.",
-> +    "UMask": "0x8"
-> +  },
-> +  {
-> +    "EventName": "ls_refills_from_sys.ls_mabresp_lcl_cache",
-> +    "EventCode": "0x43",
-> +    "BriefDescription": "Hit in cache; local CCX (not Local L2), or Remote CCX and the address's Home Node is on this thread's die.",
-> +    "PublicDescription": "Demand Data Cache Fills by Data Source. Hit in cache; local CCX (not Local L2), or Remote CCX and the address's Home Node is on this thread's die.",
-> +    "UMask": "0x2"
-> +  },
-> +  {
-> +    "EventName": "ls_refills_from_sys.ls_mabresp_lcl_l2",
-> +    "EventCode": "0x43",
-> +    "BriefDescription": "Local L2 hit.",
-> +    "PublicDescription": "Demand Data Cache Fills by Data Source. Local L2 hit.",
-> +    "UMask": "0x1"
-> +  },
-
-These events are ripe for fusing the public description with the brief
-one too, so I will do so as well.
-
--Vijay
+SGksDQoNClRoaXMgcGF0Y2hzZXQgYWRkcyBlcnJvciByZWNvdmVyeSBmbG93IGZvciBzdXNwZW5k
+IGFuZCByZXN1bWUgaW4gdWZzLW1lZGlhdGVrIGRyaXZlci4NCg0KU3RhbmxleSBDaHUgKDIpOg0K
+ICBzY3NpOiB1ZnM6IGV4cG9ydCB1ZnNoY2RfbGlua19yZWNvdmVyeSBmb3IgdmVuZG9yJ3MgZXJy
+b3IgcmVjb3ZlcnkNCiAgc2NzaTogdWZzLW1lZGlhdGVrOiBhZGQgZXJyb3IgcmVjb3ZlcnkgZm9y
+IHN1c3BlbmQgYW5kIHJlc3VtZQ0KDQogZHJpdmVycy9zY3NpL3Vmcy91ZnMtbWVkaWF0ZWsuYyB8
+IDEyICsrKysrKysrKystLQ0KIGRyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmMgICAgICAgfCAgMyAr
+Ky0NCiBkcml2ZXJzL3Njc2kvdWZzL3Vmc2hjZC5oICAgICAgIHwgIDEgKw0KIDMgZmlsZXMgY2hh
+bmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCg0KLS0gDQoyLjE4LjANCg==
 
