@@ -2,60 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D53A2185856
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:03:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D30471858B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:18:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbgCOCDe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 22:03:34 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:47065 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727360AbgCOCDa (ORCPT
+        id S1727740AbgCOCS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:18:29 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:42224 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727520AbgCOCS3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:03:30 -0400
-Received: by mail-io1-f67.google.com with SMTP id v3so13609552iom.13
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 19:03:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=dIOWH66Cx8mA3aM3owLmeDsaR0Qvv/BPBihgQluVabY=;
-        b=kWW3qyjX3ZYfE6hACSYznKe/zdbkwIiAyU7wriq7Imy3tNusR/RR4waNEUzXnZ9n9j
-         Bpnbxep5TuHY8Aq5uNbXxRILsthtUtAQlXnj0Txd5wxD8BRnKs5X2GjHZoMddsqBwyrC
-         OF8cHJGa8DJLatn/dMaq9uJiS6FXSDoeooiBZD+FN9EmhHx2UP4M4Fge7ekiBnOO9E0/
-         llL1CrfPuvjNKxJPSTPMhlYiREkGS4j6mShnO4nx/QZDTnffsoSoHTz7tjMYW6ejKpVS
-         wo752apwX96CifUfuh/50IzgsD+F7QYnUtIC0NZpIsAykLwHuKvpJXEJuXBzqXdFDQ7F
-         ZD5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=dIOWH66Cx8mA3aM3owLmeDsaR0Qvv/BPBihgQluVabY=;
-        b=UCOxSq3R3t1UlJp2aWGfkXMmoj5ipbmW46zbCD0PoPFUbJlUAuDlHqPuvUD5Bs6vJs
-         z5C5zRAw4nzIAAPA83K43fTkvT71b+GA2Soj32z+VoFwpmsGgv9D2FfgGdcpQdBS4hs9
-         XpdxErCZamyfiyw2f+8CkI2WhbfYYh6cTUajFEVNikg1aO8+2IffWy1F6BvHHIc5dEpU
-         jZVkhpcEAVLEY/0CHkmx5bx03jdwO8X0ZI494IPr0Z1qC3aOPFU4Hp7WlftH9ZlM0rmM
-         oKVH1FuEN0mXXWv12jHI0I7a9MTRWX4Mag2gvwaeyK2bVt1KYoZ5XD3udThAsHY5M0KL
-         /Wgw==
-X-Gm-Message-State: ANhLgQ1PEg7YDRQW/hYAKaKwxLFFmd3PVwAvkmiJwQ3W36h+f185LTI4
-        waSMN44VJHSNgrAMcT8NEvB602qwFXj29RtVIFyHW8sT
-X-Google-Smtp-Source: ADFU+vv7twviS3zv50ozkdSCE43sP9lixTAW20BRXrVTbgkdP8mwjd9ejf/IM2EdFgPMdC3qnL0b+QpiqqJpBCmbOcU=
-X-Received: by 2002:a02:3506:: with SMTP id k6mr17701356jaa.104.1584187926644;
- Sat, 14 Mar 2020 05:12:06 -0700 (PDT)
+        Sat, 14 Mar 2020 22:18:29 -0400
+X-Greylist: delayed 2387 seconds by postgrey-1.27 at vger.kernel.org; Sat, 14 Mar 2020 22:18:27 EDT
+Received: from relay10.mail.gandi.net (unknown [217.70.178.230])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 27F5B3A3405;
+        Sat, 14 Mar 2020 12:26:29 +0000 (UTC)
+Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id C566A240009;
+        Sat, 14 Mar 2020 12:24:55 +0000 (UTC)
+Date:   Sat, 14 Mar 2020 13:24:55 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Ran Bi <ran.bi@mediatek.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        YT Shen <yt.shen@mediatek.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Flora Fu <flora.fu@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>
+Subject: Re: [PATCH v3 0/4] Add Support for MediaTek MT2712 RTC
+Message-ID: <20200314122455.GC4518@piout.net>
+References: <20200226051303.22560-1-ran.bi@mediatek.com>
 MIME-Version: 1.0
-Received: by 2002:a92:8f91:0:0:0:0:0 with HTTP; Sat, 14 Mar 2020 05:12:06
- -0700 (PDT)
-Reply-To: michellegoodman45@gmail.com
-From:   Michelle Goodman <micheelegoodman54@gmail.com>
-Date:   Sat, 14 Mar 2020 12:12:06 +0000
-Message-ID: <CAHdzUB34KV71SH5vBb80UN8M6ZhcA6xataSSs6s4QD3dcpkcjA@mail.gmail.com>
-Subject: From Michelle
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200226051303.22560-1-ran.bi@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo liebe Hoffnung, hast du bitte meine Nachricht erhalten?
-Ich brauche eine sofortige Antwort
-Danke
-Michelle
+On 26/02/2020 13:12:59+0800, Ran Bi wrote:
+> This patchset add support to MT2712 RTC. MT2712 RTC is a SoC based RTC
+> with different architecture compared to MT7622 RTC.
+> 
+> Changes in V3:
+> 1. change struct mt2712_rtc
+> 2. use 100 as year offset
+> 3. change irq handle thread
+> 4. remove useless rtc time check
+> 5. not modify struct rtc_time in set_time/set_alarm functions
+> 6. modify rtc init function
+> 7. add power lost flag for get_time/set_time functions
+> 8. add .alarm_irq_enable callback
+> 9. set rtc->range_min and rtc->range_max to do range checking
+> 10. use fixed driver name
+> 
+> Changes in V2:
+> 1. change minimum year from 1968 to 2000
+> 2. fix lock usage
+> 3. stop to calculate useless day of week
+> 4. stop to set default date after init
+> 5. change the prefix of functions
+> 6. use devm_request_threaded_irq() to replace request_threaded_irq()
+> 7. add mt2712 rtc related files into MAINTAINERS
+> 
+> Ran Bi (4):
+>   bindings: rtc: add bindings for MT2712 RTC
+>   rtc: add support for the MediaTek MT2712 RTC
+>   arm64: dts: add RTC nodes for MT2712
+>   MAINTAINERS: add MT2712 RTC files
+> 
+
+Applied 1,2 and 4, thanks!
+
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
