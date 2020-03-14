@@ -2,100 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78628185868
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:07:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85A1C185874
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:09:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbgCOCHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 22:07:17 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34735 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbgCOCHQ (ORCPT
+        id S1727380AbgCOCJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:09:46 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37699 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726599AbgCOCJq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:07:16 -0400
-Received: by mail-ed1-f65.google.com with SMTP id i24so13505641eds.1;
-        Sat, 14 Mar 2020 19:07:14 -0700 (PDT)
+        Sat, 14 Mar 2020 22:09:46 -0400
+Received: by mail-wm1-f66.google.com with SMTP id a141so14272951wme.2
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 19:09:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=owNdHbXOWvXX+OlxzZcv65vzJGoyLsxbbtN7CwBZUdI=;
-        b=MeALrmArJtRbuiamFVBTOFlHV4itXzG5e8wOZhzp68mdH9SHNTMTC4ozlazK8OxMF8
-         zKdTSjVj40QQY2vPxc0ESGrfym+h6/rk/Gb6wx2jbAVven+pAHY9+d8d9Cc9+WJrvzHX
-         pUlq3KoqK+GXX7lqf3w9udtpZ6EIMz8q+r7V9d7bB1fjPAZv15DyNmQ4sauXIhPkhXsh
-         oUFZ3dwmI7skBYGeGjsYPwSD7zsIII3Kffz3BIaXjSpB1w+Akk7yCwA6Rwj2A1Zm6VsM
-         Epf03zpI6QxSBN0SzFGjoFL6RxhWl3HCs14VOFKaFon7EfpwNe5kh/z6WXQADNUzeGaZ
-         TZfw==
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ccS1Io8/tHjBzzXmHi5hIITMhMP463waFk/FT4O6b9c=;
+        b=UB05glchFZAl8zn/zEVTCAbaSZjJAoMX616sX7k12GQs0VQpsJ23m8fe05YmrSK4II
+         h+EmU+omPYHmSXBFhkdYXLmd9F/2scxD+cOuVYS+Afi/ZsrYjWX96/922LspJ6cRyU1O
+         SGJPq8h1/oB/zJ2KQMrbdORZEgem+cuz3tHUwfFz6OML+1dt0yXkUtIdwqEB2ZhdF/HT
+         pltvYCSwsNMLqAnHPvI4u9ez4ktI1SULwImMlz2GC0Cyt7gCG7ay5Uo2R3Oj33gyDoTz
+         ttV4ZlTieQaiTieNb5m4RcG/Nxs2b2C670tnZlsPkfNXezf58dJy5tExAEiWOLmg0LVa
+         RoiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=owNdHbXOWvXX+OlxzZcv65vzJGoyLsxbbtN7CwBZUdI=;
-        b=TEGdCApc7hXJ6lRliZ16q+GrwRmG93k/YoUPoCJ9n8Dp6+dnPhKqe4m05ikvzus1F+
-         bLw8y4n9KLtiR3uajgo6o0HhSaxV0ev7MYr+B5Hin2pLIy30B4O/5in/DedDEHih8ZZe
-         PUWjrsXBRGcPyozKCuP91VWTGBi5aMvorZQvjrijfBx7MdMAtoGXO0mIHTiFhYH2Rkwh
-         cE+E3MzwtK+1zabHa9JQhTSoszCdfJVKkXIkPjLj29CKTEWPNU9eERTxh8hxeAJqrxc4
-         9sgAjwrkvwCqbOsLe1XWASDiixm5t9LbC+MZF5K2ecGAo70+JX/vrEga4uGcrwwjm/AU
-         xbDw==
-X-Gm-Message-State: ANhLgQ19xJNSBFdDpis7bnMWQ+akZY9DeKTjO7iIg2HGx1SWcCBEYGEG
-        AVAXJfxbi9baBDdvF9owL8IILfTe
-X-Google-Smtp-Source: ADFU+vsoCpaYAcicq37YrSeOXYcEWIKD99iwmm+7yeuQpkomIFb41onnAG26ZzpxMyrKYrbL8FB2qg==
-X-Received: by 2002:a17:906:54b:: with SMTP id k11mr16615900eja.179.1584195978147;
-        Sat, 14 Mar 2020 07:26:18 -0700 (PDT)
-Received: from felia.fritz.box ([2001:16b8:2d83:b000:18:83ff:47cd:7417])
-        by smtp.gmail.com with ESMTPSA id v13sm751777edr.88.2020.03.14.07.26.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Mar 2020 07:26:17 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: correct typo in new NXP LAYERSCAPE GEN4
-Date:   Sat, 14 Mar 2020 15:25:59 +0100
-Message-Id: <20200314142559.13505-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ccS1Io8/tHjBzzXmHi5hIITMhMP463waFk/FT4O6b9c=;
+        b=ABJBFbqMCnqj790/oBX5NH2mGwhZ6uwUOEHPLkuRAZ9ywXt+MrINaeZ8+OLVsrSPAv
+         if3fOBQn09UG9W3kt+DrYx2XDwya9b9b1EAaMYwthSHnhjseOeNBZuxjp1ESAkf7Zmbb
+         wb10aLkuU/EcYXaGAnz4W+PGew62O9C9IosbKXCD7iGKxTULv/uMIlFQUkYVduIfsR+S
+         WLHY15pIBbJN8gb85yNDQ5W8Uc+s7A6f0vPEswljDYehuV3CcnQlXUSU1ckxA4pNHBUu
+         O1VGa/NuPiuvlflMVznoMH8gd7y0JEFv8YkSgcSL1XgTfjVqfIGPD1KVswXqRWOiYhON
+         lqNw==
+X-Gm-Message-State: ANhLgQ3Pb8W+8pDysmIWSRwYBmpRJIBi7oQNMYXOa86iNOL4QUroJ3jv
+        Mvas9uIiY6FonpskHaJ/5JJ9kv4S
+X-Google-Smtp-Source: ADFU+vtyoSycP4u50lg2zaM0POhefKJvMpVU3xwj1ZCN1pfGM8WTTr+uq/9CJATpEVxH+hoBMmnT6w==
+X-Received: by 2002:a1c:6745:: with SMTP id b66mr16906246wmc.30.1584198608562;
+        Sat, 14 Mar 2020 08:10:08 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id s22sm20213613wmc.16.2020.03.14.08.10.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 14 Mar 2020 08:10:07 -0700 (PDT)
+Date:   Sat, 14 Mar 2020 15:10:06 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+        mhocko@suse.com, akpm@linux-foundation.org
+Subject: Re: [PATCH v2] x86/mm: Remove the redundant conditional check
+Message-ID: <20200314151006.gnkyf4xpqve6b3wx@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20200311011823.27740-1-bhe@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200311011823.27740-1-bhe@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 3edeb49525bb ("dt-bindings: PCI: Add NXP Layerscape SoCs PCIe Gen4
-controller") includes a new entry in MAINTAINERS, but slipped in a typo in
-one of the file entries.
+On Wed, Mar 11, 2020 at 09:18:23AM +0800, Baoquan He wrote:
+>In commit f70029bbaacb ("mm, memory_hotplug: drop CONFIG_MOVABLE_NODE"),
+>the dependency on CONFIG_MOVABLE_NODE was removed for N_MEMORY. Before
+>commit f70029bbaacb, CONFIG_HIGHMEM && !CONFIG_MOVABLE_NODE could make
+>(N_MEMORY == N_NORMAL_MEMORY) be true. After commit f70029bbaacb, N_MEMORY
+>doesn't have any chance to be equal to N_NORMAL_MEMORY. So the conditional
+>check in paging_init() doesn't make sense any more. Let's remove it.
+>
+>Signed-off-by: Baoquan He <bhe@redhat.com>
 
-Hence, since then, ./scripts/get_maintainer.pl --self-test complains:
+The change looks good. While I have one question, we set default value for
+N_HIGH_MEMORY. Why we don't clear this too?
 
-  warning: no file matches F: \
-    drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-Correct the typo in PCI DRIVER FOR NXP LAYERSCAPE GEN4 CONTROLLER.
+>---
+>v1->v2:
+>  Update patch log to make the description clearer per Michal's
+>  suggestion.
+>
+> arch/x86/mm/init_64.c | 3 +--
+> 1 file changed, 1 insertion(+), 2 deletions(-)
+>
+>diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+>index abbdecb75fad..0a14711d3a93 100644
+>--- a/arch/x86/mm/init_64.c
+>+++ b/arch/x86/mm/init_64.c
+>@@ -818,8 +818,7 @@ void __init paging_init(void)
+> 	 *	 will not set it back.
+> 	 */
+> 	node_clear_state(0, N_MEMORY);
+>-	if (N_MEMORY != N_NORMAL_MEMORY)
+>-		node_clear_state(0, N_NORMAL_MEMORY);
+>+	node_clear_state(0, N_NORMAL_MEMORY);
+> 
+> 	zone_sizes_init();
+> }
+>-- 
+>2.17.2
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-applies cleanly on next-20200313
-
-Hou, please ack.
-Rob, please pick this patch (it is not urgent, though).
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 32a95d162f06..77eede976d0f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12858,7 +12858,7 @@ L:	linux-pci@vger.kernel.org
- L:	linux-arm-kernel@lists.infradead.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
--F:	drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
-+F:	drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
- 
- PCI DRIVER FOR GENERIC OF HOSTS
- M:	Will Deacon <will@kernel.org>
-
-base-commit: 2e602db729948ce577bf07e2b113f2aa806b62c7
 -- 
-2.17.1
-
+Wei Yang
+Help you, Help me
