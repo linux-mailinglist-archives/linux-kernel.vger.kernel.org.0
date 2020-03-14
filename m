@@ -2,86 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AD981858DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:24:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C61D18586E
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:07:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbgCOCYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 22:24:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39076 "EHLO mail.kernel.org"
+        id S1727672AbgCOCHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:07:39 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:51809 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727795AbgCOCYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:24:12 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727566AbgCOCHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Mar 2020 22:07:39 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C2B320768;
-        Sat, 14 Mar 2020 10:30:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584181806;
-        bh=kNjWWFHcWwZVWCXm90WyCgrVQq1EsdBwg9y6RA30dQA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=CDiWb53zp6W/g7Xhr+SfRFbEkL5S0tGtmAFhC4f942Vc+mWxa9E1KxEOBMOAgbh9W
-         e89Y62H36O28yx1jbAnhC09MOSsQjRgUs2ck5lFVJPn1WwzYADidQqudwHesqqJN0r
-         1KYSDB7p920e0uZk3H9csIs6sKbQUE2xQ/u7pkug=
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1jD43Q-00CgAB-Bo; Sat, 14 Mar 2020 10:30:04 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Salter <msalter@redhat.com>,
-        Robert Richter <rrichter@marvell.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] irqchip fixes for 5.6, take #2
-Date:   Sat, 14 Mar 2020 10:30:00 +0000
-Message-Id: <20200314103000.2413-1-maz@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48ffVF0jzxz9sPF;
+        Sat, 14 Mar 2020 21:50:29 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1584183030;
+        bh=FH952WJu0tC2cJHlEJcqvTFIqkewn2RqDAMQP+CMBsI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=qrvZ3ct8fNKwsBUCRvjX3oC2+FibfJ3kFNEopUy8ytNjpdiuBCSGnZ81UqkNA43LA
+         ZeLf1KzL+g/496ePvfcSwZt50InEByrSkxJE9EGU7eFyOLQixjrGEu73KIYZiABHIE
+         ddPWctCuOTGGwHstbjQrSuXMpNU/i0rwYXMnWZRnP5gqijzPI1JT2E4+xZ6lcffrGZ
+         H6VYLQ1jkIJrYndSkuqeiVWiN2vnagWxQS3NvO4A6jvo0vJNvH0cOEdRTLnM0+O0dC
+         PvjLc3v31D3wUYeL/X0ec32EUtACRLDb8F6kePkFYByTNrCIjuFcbIQOky4VF00AGD
+         gKY6KLN1UCL4g==
+Date:   Sat, 14 Mar 2020 21:50:23 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: linux-next: Fixes tag needs some work in the sound-asoc tree
+Message-ID: <20200314215023.36d41bb9@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: tglx@linutronix.de, catalin.marinas@arm.com, msalter@redhat.com, rrichter@marvell.com, tharvey@gateworks.com, jason@lakedaemon.net, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: multipart/signed; boundary="Sig_/JidOrxxZIwyci3zaP.++HE7";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+--Sig_/JidOrxxZIwyci3zaP.++HE7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This is hopefully the last irqchip update for 5.6. This time, a single
-patch working around a hardware issue on the Cavium ThunderX and its
-derivatives.
+Hi all,
 
-Please pull.
+n commit
 
-	M.
+  5c82813ce43e ("ASoC: Intel: boards: drop reverse deps for SND_HDA_CODEC_H=
+DMI")
 
-The following changes since commit 5186a6cc3ef5a3fa327c258924ef098b0de77006:
+Fixes tag
 
-  irqchip/gic-v3-its: Rename VPENDBASER/VPROPBASER accessors (2020-02-08 10:01:33 +0000)
+  Fixes: aa2b4a5 ('ASoC: Intel: boards: fix incorrect HDMI Kconfig dependen=
+cy')
 
-are available in the Git repository at:
+has these problem(s):
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git tags/irqchip-fixes-5.6-2
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
 
-for you to fetch changes up to d01fd161e85904064290435f67f4ed59af5daf74:
+--=20
+Cheers,
+Stephen Rothwell
 
-  irqchip/gic-v3: Workaround Cavium erratum 38539 when reading GICD_TYPER2 (2020-03-14 10:15:19 +0000)
+--Sig_/JidOrxxZIwyci3zaP.++HE7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-----------------------------------------------------------------
-irqchip fixes for 5.6, take #2
+-----BEGIN PGP SIGNATURE-----
 
-- Add workaround for Cavium/Marvell ThunderX unimplemented GIC registers
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5stu8ACgkQAVBC80lX
+0Gw3mgf8CMSfxE1yDJu/d/r8M8C2FnqFqDSRBniWr4Vz+wgPpheArQ/qEF2c3EH3
++QR9AIJmuPFRi4fFF/dGiAGVEPjytY2IyMWVJnvUwcyopMJBURX3RF6gupstaibX
+k14+ek1ofJVmD3lnTL/KZK8XWdBtUAwT8MsYqQ0e4Qp99cC5BSkHaaS2oBfa4XEW
+yZpU98Xh0C4i1GTu3Vlo/AKA7uhFF7rTtcGQawE0cl8BVa8p6vH8RYTqfLBAPyEw
+w3UrEIpOGKdS9oBif6cZ0NwbSsN7KeLPcB/UrAGGi6wDDWVEjx2JTIA8YEE2ai/X
+f3R1Z4f5WWLuGJqhhSmnAgP2SB9TmQ==
+=CU9u
+-----END PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Marc Zyngier (1):
-      irqchip/gic-v3: Workaround Cavium erratum 38539 when reading GICD_TYPER2
-
- Documentation/arm64/silicon-errata.rst |  2 ++
- drivers/irqchip/irq-gic-v3.c           | 30 +++++++++++++++++++++++++++++-
- 2 files changed, 31 insertions(+), 1 deletion(-)
+--Sig_/JidOrxxZIwyci3zaP.++HE7--
