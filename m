@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65C76185747
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:35:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D17EF185756
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:36:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726922AbgCOBfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 21:35:53 -0400
-Received: from mail.v3.sk ([167.172.186.51]:54312 "EHLO shell.v3.sk"
+        id S1727291AbgCOBg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 21:36:28 -0400
+Received: from mail.v3.sk ([167.172.186.51]:54310 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726130AbgCOBfr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726598AbgCOBfr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 14 Mar 2020 21:35:47 -0400
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id BA624E020C;
-        Sat, 14 Mar 2020 10:16:54 +0000 (UTC)
+        by zimbra.v3.sk (Postfix) with ESMTP id B6D06E0211;
+        Sat, 14 Mar 2020 10:16:55 +0000 (UTC)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id xh0HfYM3Qg4W; Sat, 14 Mar 2020 10:16:52 +0000 (UTC)
+        with ESMTP id QtgEdfX4CAdx; Sat, 14 Mar 2020 10:16:53 +0000 (UTC)
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 938B3E020F;
-        Sat, 14 Mar 2020 10:16:52 +0000 (UTC)
+        by zimbra.v3.sk (Postfix) with ESMTP id A9C69E020B;
+        Sat, 14 Mar 2020 10:16:53 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id a20QndrDObfn; Sat, 14 Mar 2020 10:16:52 +0000 (UTC)
+        with ESMTP id qhBQUlD3JXul; Sat, 14 Mar 2020 10:16:52 +0000 (UTC)
 Received: from furthur.lan (unknown [109.183.109.54])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id C5926E020A;
-        Sat, 14 Mar 2020 10:16:51 +0000 (UTC)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 5F1D2DFF03;
+        Sat, 14 Mar 2020 10:16:52 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Andrzej Hajda <a.hajda@samsung.com>
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
@@ -40,9 +40,9 @@ Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 1/3] dt-bindings: Add vendor prefix for Chrontel, Inc.
-Date:   Sat, 14 Mar 2020 11:16:25 +0100
-Message-Id: <20200314101627.336939-2-lkundrak@v3.sk>
+Subject: [PATCH v3 2/3] dt-bindings: display: Add Chrontel CH7033 Video Encoder binding
+Date:   Sat, 14 Mar 2020 11:16:26 +0100
+Message-Id: <20200314101627.336939-3-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200314101627.336939-1-lkundrak@v3.sk>
 References: <20200314101627.336939-1-lkundrak@v3.sk>
@@ -53,33 +53,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Chrontel makes encoders for video displays and perhaps other stuff.
-Their web site is http://www.chrontel.com/.
+Add binding document for the Chrontel CH7033 VGA/DVI/HDMI Encoder.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
 ---
+Changes since v3:
+- Fixed the example so that it validates
+
 Changes since v1:
-- Collect Rob's ack
+- Dual licensed with BSD-2-Clause
+- Collected Rob's reviewed-by tag
 
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ .../display/bridge/chrontel,ch7033.yaml       | 77 +++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/chro=
+ntel,ch7033.yaml
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Doc=
-umentation/devicetree/bindings/vendor-prefixes.yaml
-index a2da166df1bc7..0ab86d876f4d2 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -185,6 +185,8 @@ patternProperties:
-     description: ChipOne
-   "^chipspark,.*":
-     description: ChipSPARK
-+  "^chrontel,.*":
-+    description: Chrontel, Inc.
-   "^chrp,.*":
-     description: Common Hardware Reference Platform
-   "^chunghwa,.*":
+diff --git a/Documentation/devicetree/bindings/display/bridge/chrontel,ch=
+7033.yaml b/Documentation/devicetree/bindings/display/bridge/chrontel,ch7=
+033.yaml
+new file mode 100644
+index 0000000000000..9f38f55fc9904
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/chrontel,ch7033.ya=
+ml
+@@ -0,0 +1,77 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright (C) 2019,2020 Lubomir Rintel <lkundrak@v3.sk>
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/bridge/chrontel,ch7033.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Chrontel CH7033 Video Encoder Device Tree Bindings
++
++maintainers:
++  - Lubomir Rintel <lkundrak@v3.sk>
++
++properties:
++  compatible:
++    const: chrontel,ch7033
++
++  reg:
++    maxItems: 1
++    description: I2C address of the device
++
++  ports:
++    type: object
++
++    properties:
++      port@0:
++        type: object
++        description: |
++          Video port for RGB input.
++
++      port@1:
++        type: object
++        description: |
++          DVI port, should be connected to a node compatible with the
++          dvi-connector binding.
++
++    required:
++      - port@0
++      - port@1
++
++required:
++  - compatible
++  - reg
++  - ports
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells =3D <1>;
++        #size-cells =3D <0>;
++
++        vga-dvi-encoder@76 {
++            compatible =3D "chrontel,ch7033";
++            reg =3D <0x76>;
++
++            ports {
++                #address-cells =3D <1>;
++                #size-cells =3D <0>;
++
++                port@0 {
++                    reg =3D <0>;
++                    endpoint {
++                        remote-endpoint =3D <&lcd0_rgb_out>;
++                    };
++                };
++
++                port@1 {
++                    reg =3D <1>;
++                    endpoint {
++                        remote-endpoint =3D <&dvi_in>;
++                    };
++                };
++
++            };
++        };
++    };
 --=20
 2.25.1
 
