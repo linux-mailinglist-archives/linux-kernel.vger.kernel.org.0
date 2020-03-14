@@ -2,145 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10B1D1859B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 04:36:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4441B1859B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 04:33:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbgCODgn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 23:36:43 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35863 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbgCODgm (ORCPT
+        id S1727230AbgCODdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 23:33:52 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37310 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726648AbgCODdw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 23:36:42 -0400
-Received: by mail-ed1-f67.google.com with SMTP id b18so12929555edu.3;
-        Sat, 14 Mar 2020 20:36:38 -0700 (PDT)
+        Sat, 14 Mar 2020 23:33:52 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w13so14074248oih.4
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 20:33:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:date:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=IEb+NSlMbsrypsWmkX+nuM5EY+ct1whAxHi5by7wFZk=;
+        b=bG5aihcWf/+r0MsUj2isrV4f3QSpFroQialqMuYStk5Nevs/PLSH6f2w49GWMx/oP6
+         G2MdC00xkDVCEADr0Rjp6z5PRXrNvhCBgrvybUrvH4yVOZZh4GS9qNPsTlUlZ7B+4Fev
+         9VT71bq8ZUBkWy2isWKKxhVd2GqnDj/abb8FkanwvIqVSVBlYXXPBrO3P9qaOUKvrAOV
+         5x9sgvgdOlhXYH8lPEK7hfNHKkhKgf5w6dLTb/V0Ns1TIfcsJFplgHxrVOaNvSsa2pWy
+         Sv/vGKqaEOmcV4kIUnJaUSZQU6+cumfyNoLy6T3rP8xyGpb9jJXOF0Y+h07gSmgKJqlO
+         tNCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HXvNDpxcelYwn8PoDas8bnx/K7bC0ycG2928PB68YGs=;
-        b=YKAAoy3guDILzf55rJrqHmS33DFr7gLhgpzlqAL2ccq2l5WsrnIE9qn161aqpjK7P4
-         j8oC9WlEOBkqHTQoL8/VvNP7LItZX00rcSqGiYtjFKRJdAa/TbjhzCDlI9iVnSzpOQ6S
-         6mbDdaTIwVEdoH9HX/IFMXbMeT0nYyAtYFbMpAvoJgCTkE3zf/jAyY2Jav/pARQfgb8G
-         KqE6eokb2XaJtLg45bt1aJAVK/nRPp50FygJ/5tGOu0kSKdKVVu70zimmVwXlhNQDLne
-         keKPDpQFl6J89nYScWw41RjBOcbNhN+fxDVWsifa1/gk2oUkPwRKtEMH/D3+nXBwdP0I
-         YV7g==
-X-Gm-Message-State: ANhLgQ14vXV6zipNzFSjRtlenpI2Gz32OQ5cniuzqAyTDkbanPQr6fap
-        uJBau2miUm6TxStwJXjRprkoXOQxI3o=
-X-Google-Smtp-Source: ADFU+vv8nT7z/vEu1bvfu6+AMeellIORI/K4LaHKfZcEsgQyhBKLzYnFTNlP0g88C9JmPdb6eGvarg==
-X-Received: by 2002:a17:907:429c:: with SMTP id ny20mr14725961ejb.278.1584183783358;
-        Sat, 14 Mar 2020 04:03:03 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id 94sm2657013eda.7.2020.03.14.04.03.00
+        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=IEb+NSlMbsrypsWmkX+nuM5EY+ct1whAxHi5by7wFZk=;
+        b=S5Nfydxtt42MYdfxw71kJfcJgQUzLHN7SdvUlHyi1RMEkLr4v/t8oGQcOtpXDyTaVq
+         uS10BzC4S1JDyCn1ylV6RVvIXARL9sEGpByrTcT5Wm3uZ6DJdeXDgiCifYg+7OgiyLqL
+         Y/LxriIfm0N5rBaYzcVmZMxGDY4hVAuAH4aB7jJ0TXIEIX7QNcH+dukuhSDiw1IpOep+
+         u7vSa3cmXdGx+pZVWSBdxXsLSFX9FJH9NcL4pogoD++XIHEyL3ZK9swoB8HzU483TshB
+         K1wqWkHEQkltJt1GN/EIfJUaeDxcOGIWBvqtPl5yL4rCPyfS0b6kH73r9ks5MkGGG+2a
+         5g2A==
+X-Gm-Message-State: ANhLgQ3abCGCFgSom2be3vdlAnKcWiqwVmafJIUtBTIYZSQ2HN1sz/ZW
+        ygrsI0lIGrhJ/heTFf1mypYDS2UdJ+o=
+X-Google-Smtp-Source: ADFU+vvWDA/UB5PKw9LjOeGxLGURwiON+mQeVoXZ4PlIhdgEdD1da3aGdyT6lGwiv2m6wxkHaHO2lA==
+X-Received: by 2002:a17:90a:c715:: with SMTP id o21mr15127998pjt.160.1584185301961;
+        Sat, 14 Mar 2020 04:28:21 -0700 (PDT)
+Received: from Shreeya-Patel ([113.193.35.211])
+        by smtp.googlemail.com with ESMTPSA id 8sm21886437pfp.67.2020.03.14.04.28.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 14 Mar 2020 04:03:02 -0700 (PDT)
-Date:   Sat, 14 Mar 2020 12:02:58 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jiri Slaby <jirislaby@gmail.com>,
-        Nick Kossifidis <mickflemm@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Jon Mason <jdmason@kudzu.us>, Allen Hubbe <allenbh@gmail.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-ntb@googlegroups.com,
-        virtualization@lists.linux-foundation.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 1/9] iomap: Constify ioreadX() iomem argument
- (as in generic implementation)
-Message-ID: <20200314110258.GA16135@kozik-lap>
-References: <20200219175007.13627-1-krzk@kernel.org>
- <20200219175007.13627-2-krzk@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200219175007.13627-2-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Sat, 14 Mar 2020 04:28:21 -0700 (PDT)
+Message-ID: <4deeaef8f8e0f23a9adbfd7d98840624e2994cf2.camel@gmail.com>
+Subject: Re: [Outreachy kernel] [PATCH v2] Staging: rtl8723bs: rtw_mlme:
+ Remove unnecessary conditions
+From:   Shreeya Patel <shreeya.patel23498@gmail.com>
+To:     Joe Perches <joe@perches.com>, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com, sbrivio@redhat.com,
+        daniel.baluta@gmail.com, nramas@linux.microsoft.com,
+        hverkuil@xs4all.nl, Larry.Finger@lwfinger.net
+Date:   Sat, 14 Mar 2020 16:58:16 +0530
+In-Reply-To: <25a1aca2c993ecb70ba7cd9c9e38bce9170a98b0.camel@perches.com>
+References: <20200313102912.17218-1-shreeya.patel23498@gmail.com>
+         <25a1aca2c993ecb70ba7cd9c9e38bce9170a98b0.camel@perches.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 06:49:59PM +0100, Krzysztof Kozlowski wrote:
-> The ioreadX() and ioreadX_rep() helpers have inconsistent interface.  On
-> some architectures void *__iomem address argument is a pointer to const,
-> on some not.
-> 
-> Implementations of ioreadX() do not modify the memory under the address
-> so they can be converted to a "const" version for const-safety and
-> consistency among architectures.
-> 
-> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+On Fri, 2020-03-13 at 14:21 -0700, Joe Perches wrote:
 
-Hi Arnd,
+Hi Joe,
 
-This patch touches multipel file systems so no one is brave enough to
-pick it up. However you are mentioned as maintainer of generic asm
-headers so maybe you could apply it to arm-soc?
+> On Fri, 2020-03-13 at 15:59 +0530, Shreeya Patel wrote:
+> > Remove unnecessary if and else conditions since both are leading to
+> > the
+> > initialization of "phtpriv->ampdu_enable" with the same value.
+> > Also, remove the unnecessary else-if condition since it does
+> > nothing.
+> 
+> []
+> > diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c
+> > b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+> 
+> []
+> > @@ -2772,16 +2772,7 @@ void rtw_update_ht_cap(struct adapter
+> > *padapter, u8 *pie, uint ie_len, u8 channe
+> >  
+> >  	/* maybe needs check if ap supports rx ampdu. */
+> >  	if (!(phtpriv->ampdu_enable) && pregistrypriv->ampdu_enable ==
+> > 1) {
+> > -		if (pregistrypriv->wifi_spec == 1) {
+> > -			/* remove this part because testbed AP should
+> > disable RX AMPDU */
+> > -			/* phtpriv->ampdu_enable = false; */
+> > -			phtpriv->ampdu_enable = true;
+> > -		} else {
+> > -			phtpriv->ampdu_enable = true;
+> > -		}
+> > -	} else if (pregistrypriv->ampdu_enable == 2) {
+> > -		/* remove this part because testbed AP should disable
+> > RX AMPDU */
+> > -		/* phtpriv->ampdu_enable = true; */
+> > +		phtpriv->ampdu_enable = true;
+> 
+> This isn't the same test.
+> 
+> This could be:
+>  	if ((!(phtpriv->ampdu_enable) && pregistrypriv->ampdu_enable ==
+> 1)) ||
+> 	    pregistrypriv->ampdu_enable == 2)
+> 		phtpriv->ampdu_enable = true;
+> 
+> Though it is probably more sensible to just set
+> phtpriv->ampdu_enable without testing whether or
+> not it's already set:
+> 
+> 	if (pregistrypriv->ampdu_enable == 1 ||
+> 	    pregistrypriv->ampdu_enable == 2)
+> 		phtpriv->ampdu_enable = true;
 
-Best regards,
-Krzysztof
+But the else-if block which I removed in v2 of this patch had nothing
+in the block.
+It was not assigning any value to "phtpriv->ampdu_enable". ( basically
+it was empty and useless)
+
+Now as per your suggestion if I do the change then the value of
+"phtpriv->ampdu_enable" will be changed to true when we have
+"pregistrypriv->ampdu_enable == 2" condition. But in real it should be
+the same as it was by default coming from the start of the function.
+( This is because the else-if block was empty and doing nothing )
+
+Please let me know if I was able to make you understand my point of
+view here. Also, please correct me if I am wrong.
+
+
+Thanks
 
 
 > 
-> ---
 > 
-> Changes since v1:
-> 1. Constify also ioreadX_rep() and mmio_insX(),
-> 2. Squash lib+alpha+powerpc+parisc+sh into one patch for bisectability,
-> 3. Add Geert's review.
-> 4. Add Arnd's review.
-> ---
->  arch/alpha/include/asm/core_apecs.h   |  6 +--
->  arch/alpha/include/asm/core_cia.h     |  6 +--
->  arch/alpha/include/asm/core_lca.h     |  6 +--
->  arch/alpha/include/asm/core_marvel.h  |  4 +-
->  arch/alpha/include/asm/core_mcpcia.h  |  6 +--
->  arch/alpha/include/asm/core_t2.h      |  2 +-
->  arch/alpha/include/asm/io.h           | 12 ++---
->  arch/alpha/include/asm/io_trivial.h   | 16 +++---
->  arch/alpha/include/asm/jensen.h       |  2 +-
->  arch/alpha/include/asm/machvec.h      |  6 +--
->  arch/alpha/kernel/core_marvel.c       |  2 +-
->  arch/alpha/kernel/io.c                | 12 ++---
->  arch/parisc/include/asm/io.h          |  4 +-
->  arch/parisc/lib/iomap.c               | 72 +++++++++++++--------------
->  arch/powerpc/kernel/iomap.c           | 28 +++++------
->  arch/sh/kernel/iomap.c                | 22 ++++----
->  include/asm-generic/iomap.h           | 28 +++++------
->  include/linux/io-64-nonatomic-hi-lo.h |  4 +-
->  include/linux/io-64-nonatomic-lo-hi.h |  4 +-
->  lib/iomap.c                           | 30 +++++------
->  20 files changed, 136 insertions(+), 136 deletions(-)
-> 
+
