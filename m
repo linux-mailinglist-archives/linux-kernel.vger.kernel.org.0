@@ -2,129 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 397321859C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 04:40:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B1D1859B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 04:36:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbgCODkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 23:40:51 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:37486 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726653AbgCODkv (ORCPT
+        id S1727448AbgCODgn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 23:36:43 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35863 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbgCODgm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 23:40:51 -0400
-Received: by mail-qk1-f193.google.com with SMTP id z25so15299879qkj.4;
-        Sat, 14 Mar 2020 20:40:50 -0700 (PDT)
+        Sat, 14 Mar 2020 23:36:42 -0400
+Received: by mail-ed1-f67.google.com with SMTP id b18so12929555edu.3;
+        Sat, 14 Mar 2020 20:36:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xWfNlXspNXP/Z3scX2GkjvDWCTPuiHmONTso2D85LQ0=;
-        b=sGtaPxoOYlnTE5+b5zUoJ5Qn4z0EdmGqcfdkyzpvc+A+oNj2ctggTsHy7R5k5KZaSS
-         bJmMY5PSsrpz4laFSZ4Cvu1/UjYJvYiDHDndj8EmjUyw16JFuCWraRfLM2fLieGE1rw/
-         t4GXZD+7QD+JKa0naTB5pkynZPCLuLQGIggS7Itm3YqeYqhRene0PWAK7SwTR5eN9yQl
-         +vJlMoXeZ6j0Q6fHxZXu9BH5N9pQBpt0VboKIs4enjv3glrDqAwo24UUnZ50iNeQXMLS
-         LYpw3WcitaT3FUhFNW5aVWy/LP1RCkHJmHHxiXiFyS60KPOk0PPhc36PkRXhY7LOVeLY
-         VzFA==
-X-Gm-Message-State: ANhLgQ3XMB+dMlygbKdQ6riMKlTY/fWvpG4+Pa5qXNxz0mSZPa0BgrSc
-        UYxcEye81dVp7IqW0xfZETMUf2fnx688Aje0f6bitg==
-X-Google-Smtp-Source: ADFU+vt9NbYnSnppxGI7xOTmGfRR3RSs/QZOhkMGUVuMhiPSyyT3vdhguRYt/HjQ0hyrQs/pQ8sEHfBxb3po2QAZY0w=
-X-Received: by 2002:a9d:1d07:: with SMTP id m7mr6029839otm.167.1584182450168;
- Sat, 14 Mar 2020 03:40:50 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HXvNDpxcelYwn8PoDas8bnx/K7bC0ycG2928PB68YGs=;
+        b=YKAAoy3guDILzf55rJrqHmS33DFr7gLhgpzlqAL2ccq2l5WsrnIE9qn161aqpjK7P4
+         j8oC9WlEOBkqHTQoL8/VvNP7LItZX00rcSqGiYtjFKRJdAa/TbjhzCDlI9iVnSzpOQ6S
+         6mbDdaTIwVEdoH9HX/IFMXbMeT0nYyAtYFbMpAvoJgCTkE3zf/jAyY2Jav/pARQfgb8G
+         KqE6eokb2XaJtLg45bt1aJAVK/nRPp50FygJ/5tGOu0kSKdKVVu70zimmVwXlhNQDLne
+         keKPDpQFl6J89nYScWw41RjBOcbNhN+fxDVWsifa1/gk2oUkPwRKtEMH/D3+nXBwdP0I
+         YV7g==
+X-Gm-Message-State: ANhLgQ14vXV6zipNzFSjRtlenpI2Gz32OQ5cniuzqAyTDkbanPQr6fap
+        uJBau2miUm6TxStwJXjRprkoXOQxI3o=
+X-Google-Smtp-Source: ADFU+vv8nT7z/vEu1bvfu6+AMeellIORI/K4LaHKfZcEsgQyhBKLzYnFTNlP0g88C9JmPdb6eGvarg==
+X-Received: by 2002:a17:907:429c:: with SMTP id ny20mr14725961ejb.278.1584183783358;
+        Sat, 14 Mar 2020 04:03:03 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.125])
+        by smtp.googlemail.com with ESMTPSA id 94sm2657013eda.7.2020.03.14.04.03.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 14 Mar 2020 04:03:02 -0700 (PDT)
+Date:   Sat, 14 Mar 2020 12:02:58 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Dave Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jiri Slaby <jirislaby@gmail.com>,
+        Nick Kossifidis <mickflemm@gmail.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Jon Mason <jdmason@kudzu.us>, Allen Hubbe <allenbh@gmail.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-ntb@googlegroups.com,
+        virtualization@lists.linux-foundation.org,
+        linux-arch@vger.kernel.org
+Subject: Re: [RESEND PATCH v2 1/9] iomap: Constify ioreadX() iomem argument
+ (as in generic implementation)
+Message-ID: <20200314110258.GA16135@kozik-lap>
+References: <20200219175007.13627-1-krzk@kernel.org>
+ <20200219175007.13627-2-krzk@kernel.org>
 MIME-Version: 1.0
-References: <20200304113248.1143057-1-mail@maciej.szmigiero.name>
- <20200312161751.GA5245@fuller.cnet> <CAJZ5v0jLOKj5LN5Kmredixomer4BKdBPNwP7gOf7A0tS_WMbDQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jLOKj5LN5Kmredixomer4BKdBPNwP7gOf7A0tS_WMbDQ@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Sat, 14 Mar 2020 11:40:38 +0100
-Message-ID: <CAJZ5v0gSLR+K2698rwbv0j9-sbSNX98HUFDQfTHoom+gYtHrdw@mail.gmail.com>
-Subject: Re: [PATCH v2] cpuidle-haltpoll: allow force loading on hosts without
- the REALTIME hint
-To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        kvm-devel <kvm@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200219175007.13627-2-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 6:49 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Thu, Mar 12, 2020 at 5:36 PM Marcelo Tosatti <mtosatti@redhat.com> wrote:
-> >
-> > On Wed, Mar 04, 2020 at 12:32:48PM +0100, Maciej S. Szmigiero wrote:
-> > > From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
-> > >
-> > > Before commit 1328edca4a14 ("cpuidle-haltpoll: Enable kvm guest polling
-> > > when dedicated physical CPUs are available") the cpuidle-haltpoll driver
-> > > could also be used in scenarios when the host does not advertise the
-> > > KVM_HINTS_REALTIME hint.
-> > >
-> > > While the behavior introduced by the aforementioned commit makes sense as
-> > > the default there are cases where the old behavior is desired, for example,
-> > > when other kernel changes triggered by presence by this hint are unwanted,
-> > > for some workloads where the latency benefit from polling overweights the
-> > > loss from idle CPU capacity that otherwise would be available, or just when
-> > > running under older Qemu versions that lack this hint.
-> > >
-> > > Let's provide a typical "force" module parameter that allows restoring the
-> > > old behavior.
-> > >
-> > > Signed-off-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
-> > > ---
-> > >  drivers/cpuidle/cpuidle-haltpoll.c | 12 ++++++++++--
-> > >  1 file changed, 10 insertions(+), 2 deletions(-)
-> > >
-> > > Changes from v1:
-> > > Make the module parameter description more general, don't unnecessarily
-> > > break a line in haltpoll_init().
-> > >
-> > > diff --git a/drivers/cpuidle/cpuidle-haltpoll.c b/drivers/cpuidle/cpuidle-haltpoll.c
-> > > index b0ce9bc78113..db124bc1ca2c 100644
-> > > --- a/drivers/cpuidle/cpuidle-haltpoll.c
-> > > +++ b/drivers/cpuidle/cpuidle-haltpoll.c
-> > > @@ -18,6 +18,10 @@
-> > >  #include <linux/kvm_para.h>
-> > >  #include <linux/cpuidle_haltpoll.h>
-> > >
-> > > +static bool force __read_mostly;
-> > > +module_param(force, bool, 0444);
-> > > +MODULE_PARM_DESC(force, "Load unconditionally");
-> > > +
-> > >  static struct cpuidle_device __percpu *haltpoll_cpuidle_devices;
-> > >  static enum cpuhp_state haltpoll_hp_state;
-> > >
-> > > @@ -90,6 +94,11 @@ static void haltpoll_uninit(void)
-> > >       haltpoll_cpuidle_devices = NULL;
-> > >  }
-> > >
-> > > +static bool haltpool_want(void)
-> > > +{
-> > > +     return kvm_para_has_hint(KVM_HINTS_REALTIME) || force;
-> > > +}
-> > > +
-> > >  static int __init haltpoll_init(void)
-> > >  {
-> > >       int ret;
-> > > @@ -101,8 +110,7 @@ static int __init haltpoll_init(void)
-> > >
-> > >       cpuidle_poll_state_init(drv);
-> > >
-> > > -     if (!kvm_para_available() ||
-> > > -             !kvm_para_has_hint(KVM_HINTS_REALTIME))
-> > > +     if (!kvm_para_available() || !haltpool_want())
-> > >               return -ENODEV;
-> > >
-> > >       ret = cpuidle_register_driver(drv);
-> >
-> > Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
->
-> I'm taking this as a Reviewed-by, thanks!
+On Wed, Feb 19, 2020 at 06:49:59PM +0100, Krzysztof Kozlowski wrote:
+> The ioreadX() and ioreadX_rep() helpers have inconsistent interface.  On
+> some architectures void *__iomem address argument is a pointer to const,
+> on some not.
+> 
+> Implementations of ioreadX() do not modify the memory under the address
+> so they can be converted to a "const" version for const-safety and
+> consistency among architectures.
+> 
+> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-Patch applied as 5.7 material, thanks!
+Hi Arnd,
+
+This patch touches multipel file systems so no one is brave enough to
+pick it up. However you are mentioned as maintainer of generic asm
+headers so maybe you could apply it to arm-soc?
+
+Best regards,
+Krzysztof
+
+
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Constify also ioreadX_rep() and mmio_insX(),
+> 2. Squash lib+alpha+powerpc+parisc+sh into one patch for bisectability,
+> 3. Add Geert's review.
+> 4. Add Arnd's review.
+> ---
+>  arch/alpha/include/asm/core_apecs.h   |  6 +--
+>  arch/alpha/include/asm/core_cia.h     |  6 +--
+>  arch/alpha/include/asm/core_lca.h     |  6 +--
+>  arch/alpha/include/asm/core_marvel.h  |  4 +-
+>  arch/alpha/include/asm/core_mcpcia.h  |  6 +--
+>  arch/alpha/include/asm/core_t2.h      |  2 +-
+>  arch/alpha/include/asm/io.h           | 12 ++---
+>  arch/alpha/include/asm/io_trivial.h   | 16 +++---
+>  arch/alpha/include/asm/jensen.h       |  2 +-
+>  arch/alpha/include/asm/machvec.h      |  6 +--
+>  arch/alpha/kernel/core_marvel.c       |  2 +-
+>  arch/alpha/kernel/io.c                | 12 ++---
+>  arch/parisc/include/asm/io.h          |  4 +-
+>  arch/parisc/lib/iomap.c               | 72 +++++++++++++--------------
+>  arch/powerpc/kernel/iomap.c           | 28 +++++------
+>  arch/sh/kernel/iomap.c                | 22 ++++----
+>  include/asm-generic/iomap.h           | 28 +++++------
+>  include/linux/io-64-nonatomic-hi-lo.h |  4 +-
+>  include/linux/io-64-nonatomic-lo-hi.h |  4 +-
+>  lib/iomap.c                           | 30 +++++------
+>  20 files changed, 136 insertions(+), 136 deletions(-)
+> 
