@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85DAE185798
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:42:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E717C18575D
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:36:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbgCOBmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 21:42:04 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:60386 "EHLO
+        id S1727352AbgCOBgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 21:36:54 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:61944 "EHLO
         mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726530AbgCOBmD (ORCPT
+        by vger.kernel.org with ESMTP id S1727334AbgCOBgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 21:42:03 -0400
+        Sat, 14 Mar 2020 21:36:54 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584236522; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1584236213; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=JylJ2rTy/Spa9FGV/rDNvZeuTPw7s+H4qdIzU9nL+wo=; b=DKZpTLRozsaGVqnfQ8BCWLkeiYIjAo8CkgqEA1iLKMmDoUqPFWaCsK3cfHLY2I4vprgUFsxl
- ym8tFaS4VHkNy3O5zdsynHGnkoe9UQRQMF9DMOKXfxwPhldwJRNuxf20Xx3HDQUUCGhaKgWC
- Z1A6WpWAq/xKbTlMbc6nA41MlPw=
+ bh=jonzZp63L40u3yfPOPtIkP2E/IYQDyZzE0IebztJjEc=; b=ITfYkerg+ADEqcMsRnQv+rfReQnAwnMtGoi8AFn6bMM7Ofv9Ip910rVomXIFWx0ILUQSwIGo
+ mpowVzATUI9vv0hyZzL98hPIKEF8nEvXihCRW+WVWSL1rQhQbaDfNYgAFyh+TN8kPzbLP9Zi
+ 9kE4TsinVY++Dclf1py0zaZkGvc=
 X-Mailgun-Sending-Ip: 104.130.122.27
 X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6d276f.7ff632690068-smtp-out-n01;
- Sat, 14 Mar 2020 18:50:23 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e6d277b.7fbaa34f7068-smtp-out-n03;
+ Sat, 14 Mar 2020 18:50:35 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 86F10C433D2; Sat, 14 Mar 2020 18:50:22 +0000 (UTC)
+        id 3A63AC433D2; Sat, 14 Mar 2020 18:50:34 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
         aws-us-west-2-caf-mail-1.web.codeaurora.org
 X-Spam-Level: 
@@ -34,9 +34,9 @@ Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outsi
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BFDD2C433D2;
-        Sat, 14 Mar 2020 18:50:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BFDD2C433D2
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5EBA0C433CB;
+        Sat, 14 Mar 2020 18:50:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5EBA0C433CB
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -49,9 +49,9 @@ Cc:     David Brown <david.brown@linaro.org>,
         Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
         robh@kernel.org, robh+dt@kernel.org,
         Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v6 1/3] dt-bindings: clock: Add YAML schemas for the QCOM MSS clock bindings
-Date:   Sun, 15 Mar 2020 00:19:56 +0530
-Message-Id: <1584211798-10332-2-git-send-email-tdas@codeaurora.org>
+Subject: [PATCH v6 3/3] clk: qcom: Add modem clock controller driver for SC7180
+Date:   Sun, 15 Mar 2020 00:19:58 +0530
+Message-Id: <1584211798-10332-4-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1584211798-10332-1-git-send-email-tdas@codeaurora.org>
 References: <1584211798-10332-1-git-send-email-tdas@codeaurora.org>
@@ -60,131 +60,199 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Modem Subsystem clock provider have a bunch of generic properties
-that are needed in a device tree. Add a YAML schemas for those.
-
-Add clock ids for GCC MSS and MSS clocks which are required to bring
-the modem out of reset.
+Add support for the modem clock controller found on SC7180
+based devices. This would allow modem drivers to probe and
+control their clocks.
 
 Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
- .../devicetree/bindings/clock/qcom,sc7180-mss.yaml | 62 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sc7180.h        |  7 ++-
- include/dt-bindings/clock/qcom,mss-sc7180.h        | 12 +++++
- 3 files changed, 80 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml
- create mode 100644 include/dt-bindings/clock/qcom,mss-sc7180.h
+ drivers/clk/qcom/Kconfig      |   9 +++
+ drivers/clk/qcom/Makefile     |   1 +
+ drivers/clk/qcom/mss-sc7180.c | 143 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 153 insertions(+)
+ create mode 100644 drivers/clk/qcom/mss-sc7180.c
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 15cdcdc..4225f86 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -280,6 +280,15 @@ config SC_GPUCC_7180
+ 	  Say Y if you want to support graphics controller devices and
+ 	  functionality such as 3D graphics.
+
++config SC_MSS_7180
++	tristate "SC7180 Modem Clock Controller"
++	select SC_GCC_7180
++	help
++	  Support for the Modem Subsystem clock controller on Qualcomm
++	  Technologies, Inc on SC7180 devices.
++	  Say Y if you want to use the Modem branch clocks of the Modem
++	  subsystem clock controller to reset the MSS subsystem.
++
+ config SC_VIDEOCC_7180
+ 	tristate "SC7180 Video Clock Controller"
+ 	select SC_GCC_7180
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 656a87e..9135592 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -50,6 +50,7 @@ obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
+ obj-$(CONFIG_SC_DISPCC_7180) += dispcc-sc7180.o
+ obj-$(CONFIG_SC_GCC_7180) += gcc-sc7180.o
+ obj-$(CONFIG_SC_GPUCC_7180) += gpucc-sc7180.o
++obj-$(CONFIG_SC_MSS_7180) += mss-sc7180.o
+ obj-$(CONFIG_SC_VIDEOCC_7180) += videocc-sc7180.o
+ obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
+ obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
+diff --git a/drivers/clk/qcom/mss-sc7180.c b/drivers/clk/qcom/mss-sc7180.c
 new file mode 100644
-index 0000000..72493dd
+index 0000000..673fa1a
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml
-@@ -0,0 +1,62 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/bindings/clock/qcom,sc7180-mss.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Modem Clock Controller Binding
-+
-+maintainers:
-+  - Taniya Das <tdas@codeaurora.org>
-+
-+description: |
-+  Qualcomm modem clock control module which supports the clocks.
-+
-+  See also dt-bindings/clock/qcom,mss-sc7180.h.
-+
-+properties:
-+  compatible:
-+    enum:
-+       - qcom,sc7180-mss
-+
-+  clocks:
-+    items:
-+      - description: gcc_mss_mfab_axi clock from GCC
-+      - description: gcc_mss_nav_axi clock from GCC
-+      - description: gcc_mss_cfg_ahb clock from GCC
-+
-+  clock-names:
-+    items:
-+      - const: gcc_mss_mfab_axis
-+      - const: gcc_mss_nav_axi
-+      - const: cfg_ahb
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-sc7180.h>
-+    clock-controller@41a8000 {
-+      compatible = "qcom,sc7180-mss";
-+      reg = <0 0x041a8000 0 0x8000>;
-+      clocks = <&gcc GCC_MSS_MFAB_AXIS_CLK>,
-+               <&gcc GCC_MSS_NAV_AXI_CLK>,
-+               <&gcc GCC_MSS_CFG_AHB_CLK>;
-+      clock-names = "gcc_mss_mfab_axis",
-+                    "gcc_mss_nav_axi",
-+                    "cfg_ahb";
-+      #clock-cells = <1>;
-+    };
-+...
-diff --git a/include/dt-bindings/clock/qcom,gcc-sc7180.h b/include/dt-bindings/clock/qcom,gcc-sc7180.h
-index e8029b2e..1258fd0 100644
---- a/include/dt-bindings/clock/qcom,gcc-sc7180.h
-+++ b/include/dt-bindings/clock/qcom,gcc-sc7180.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
-  */
- 
- #ifndef _DT_BINDINGS_CLK_QCOM_GCC_SC7180_H
-@@ -132,6 +132,11 @@
- #define GCC_VIDEO_GPLL0_DIV_CLK_SRC				122
- #define GCC_VIDEO_THROTTLE_AXI_CLK				123
- #define GCC_VIDEO_XO_CLK					124
-+#define GCC_MSS_CFG_AHB_CLK					125
-+#define GCC_MSS_MFAB_AXIS_CLK					126
-+#define GCC_MSS_NAV_AXI_CLK					127
-+#define GCC_MSS_Q6_MEMNOC_AXI_CLK				128
-+#define GCC_MSS_SNOC_AXI_CLK					129
- 
- /* GCC resets */
- #define GCC_QUSB2PHY_PRIM_BCR					0
-diff --git a/include/dt-bindings/clock/qcom,mss-sc7180.h b/include/dt-bindings/clock/qcom,mss-sc7180.h
-new file mode 100644
-index 0000000..f15a9de
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,mss-sc7180.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
++++ b/drivers/clk/qcom/mss-sc7180.c
+@@ -0,0 +1,143 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
 + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
 + */
 +
-+#ifndef _DT_BINDINGS_CLK_QCOM_MSS_SC7180_H
-+#define _DT_BINDINGS_CLK_QCOM_MSS_SC7180_H
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++#include <linux/module.h>
++#include <linux/pm_clock.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
 +
-+#define MSS_AXI_CRYPTO_CLK	0
-+#define MSS_AXI_NAV_CLK		1
++#include <dt-bindings/clock/qcom,mss-sc7180.h>
 +
-+#endif
--- 
++#include "clk-regmap.h"
++#include "clk-branch.h"
++#include "common.h"
++
++static struct clk_branch mss_axi_nav_clk = {
++	.halt_reg = 0x20bc,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x20bc,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "mss_axi_nav_clk",
++			.parent_data = &(const struct clk_parent_data){
++				.fw_name = "gcc_mss_nav_axi",
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch mss_axi_crypto_clk = {
++	.halt_reg = 0x20cc,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x20cc,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "mss_axi_crypto_clk",
++			.parent_data = &(const struct clk_parent_data){
++				.fw_name = "gcc_mss_mfab_axis",
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static const struct regmap_config mss_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.fast_io	= true,
++	.max_register	= 0x41aa0cc,
++};
++
++static struct clk_regmap *mss_sc7180_clocks[] = {
++	[MSS_AXI_CRYPTO_CLK] = &mss_axi_crypto_clk.clkr,
++	[MSS_AXI_NAV_CLK] = &mss_axi_nav_clk.clkr,
++};
++
++static const struct qcom_cc_desc mss_sc7180_desc = {
++	.config = &mss_regmap_config,
++	.clks = mss_sc7180_clocks,
++	.num_clks = ARRAY_SIZE(mss_sc7180_clocks),
++};
++
++static int mss_sc7180_probe(struct platform_device *pdev)
++{
++	int ret;
++
++	pm_runtime_enable(&pdev->dev);
++	ret = pm_clk_create(&pdev->dev);
++	if (ret)
++		goto disable_pm_runtime;
++
++	ret = pm_clk_add(&pdev->dev, "cfg_ahb");
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to acquire iface clock\n");
++		goto destroy_pm_clk;
++	}
++
++	ret = qcom_cc_probe(pdev, &mss_sc7180_desc);
++	if (ret < 0)
++		goto destroy_pm_clk;
++
++	return 0;
++
++destroy_pm_clk:
++	pm_clk_destroy(&pdev->dev);
++
++disable_pm_runtime:
++	pm_runtime_disable(&pdev->dev);
++
++	return ret;
++}
++
++static int mss_sc7180_remove(struct platform_device *pdev)
++{
++	pm_clk_destroy(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++
++	return 0;
++}
++
++static const struct dev_pm_ops mss_sc7180_pm_ops = {
++	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
++};
++
++static const struct of_device_id mss_sc7180_match_table[] = {
++	{ .compatible = "qcom,sc7180-mss" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, mss_sc7180_match_table);
++
++static struct platform_driver mss_sc7180_driver = {
++	.probe		= mss_sc7180_probe,
++	.remove		= mss_sc7180_remove,
++	.driver		= {
++		.name		= "sc7180-mss",
++		.of_match_table = mss_sc7180_match_table,
++		.pm = &mss_sc7180_pm_ops,
++	},
++};
++
++static int __init mss_sc7180_init(void)
++{
++	return platform_driver_register(&mss_sc7180_driver);
++}
++subsys_initcall(mss_sc7180_init);
++
++static void __exit mss_sc7180_exit(void)
++{
++	platform_driver_unregister(&mss_sc7180_driver);
++}
++module_exit(mss_sc7180_exit);
++
++MODULE_DESCRIPTION("QTI MSS SC7180 Driver");
++MODULE_LICENSE("GPL v2");
+--
 Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
 of the Code Aurora Forum, hosted by the  Linux Foundation.
