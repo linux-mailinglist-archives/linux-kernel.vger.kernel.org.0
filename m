@@ -2,225 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF55C18574C
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:36:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA7771857AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:44:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbgCOBgE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 21:36:04 -0400
-Received: from esa4.mentor.iphmx.com ([68.232.137.252]:49691 "EHLO
-        esa4.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727002AbgCOBgA (ORCPT
+        id S1726781AbgCOBok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 21:44:40 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:15378 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726248AbgCOBoj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 21:36:00 -0400
-X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Sat, 14 Mar 2020 21:35:59 EDT
-IronPort-SDR: WNqQ90tfooloLtUjIzRFhtAWlcUNuKCojvc39CrmuyUnPQH4IsMCjaX9QtrbqwgA58OJ83eMRW
- pvfuQHALONo+eJ6gz5+BjJHP+A4SpDm4Pb6+V/b31Dde1/jCqlyQN7QJ5r60tQ1XU/8O+jsODl
- PbNunbElPLPy8q+ouAbW7MTFJ33j9SAb3QHhRziphBUcYSSqYCipZNlwoQnUeWlGjF/vD6CCbt
- UF1j/j1WFy4TuYEQDkivjR199GRLEOe43fv2EddWttL3x0zRFKymsIKw/cl0WTkWMC7EeSc8fa
- PY4=
-X-IronPort-AV: E=Sophos;i="5.70,554,1574150400"; 
-   d="asc'?scan'208";a="46773069"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa4.mentor.iphmx.com with ESMTP; 14 Mar 2020 14:07:40 -0800
-IronPort-SDR: /RLQV7rNI7rWdaYuKuF0cHArVKFRjEu3Tv94u7m/K2L7NdynM7zDqi0boFnq57eiBBY8L7GtUH
- NpJVTMq3D4wlJugDwW3hVty+K2rzVGXdcXxGcZ6GFFhudEFzCazyXxiP6amkMb3sSLRt34LtTR
- YLvK8Ow1OVEJHfmjniyO2bNyR22k9cstAmocZxu+/VZ1aHpt7jGodTFdGPDR37WnESP+tbfMBs
- zy6FCUn+XFrI+xQkDObNMiV/3OtKIvJNASwHYbJpsrT8dWB9LesnEBfZlajvyvIckgXvrM6EHO
- dpA=
-From:   Thomas Schwinge <thomas@codesourcery.com>
-To:     Woody Suwalski <terraluna977@gmail.com>,
-        Christian =?utf-8?Q?K=C3=B6ni?= =?utf-8?Q?g?= 
-        <christian.koenig@amd.com>, Christoph Hellwig <hch@lst.de>
-CC:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Alexander Deucher <alexander.deucher@amd.com>,
-        Pavel Machek <pavel@ucw.cz>, Thomas Backlund <tmb@mageia.org>,
-        Meelis Roos <mroos@linux.ee>
-Subject: Re: Regression in 5.4 kernel on 32-bit Radeon IBM T40
-In-Reply-To: <66a6b0ea-4ee8-1a0d-b259-568059d54e09@gmail.com>
-References: <400f6ce9-e360-0860-ca2a-fb8bccdcdc9b@gmail.com>
- <20200109141436.GA22111@lst.de>
- <9ad75215-3ff1-ee76-9985-12fd78d6aa5f@amd.com>
- <67f60d13-a245-5561-1372-7d68f35969f3@gmail.com>
- <66a6b0ea-4ee8-1a0d-b259-568059d54e09@gmail.com>
-User-Agent: Notmuch/0.29.1+93~g67ed7df (https://notmuchmail.org) Emacs/26.1 (i686-pc-linux-gnu)
-Date:   Sat, 14 Mar 2020 23:06:51 +0100
-Message-ID: <87imj6si9w.fsf@dirichlet.schwinge.homeip.net>
+        Sat, 14 Mar 2020 21:44:39 -0400
+X-IronPort-AV: E=Sophos;i="5.70,554,1574118000"; 
+   d="scan'208";a="440346552"
+Received: from lfbn-bor-1-797-11.w86-234.abo.wanadoo.fr (HELO function.home) ([86.234.239.11])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Mar 2020 23:21:29 +0100
+Received: from samy by function.home with local (Exim 4.93)
+        (envelope-from <samuel.thibault@ens-lyon.org>)
+        id 1jDF9s-004ML5-HH; Sat, 14 Mar 2020 23:21:28 +0100
+Date:   Sat, 14 Mar 2020 23:21:28 +0100
+From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Zhenzhong Duan <zhenzhong.duan@gmail.com>,
+        linux-kernel@vger.kernel.org, jdike@addtoit.com, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, miguel.ojeda.sandonis@gmail.com,
+        willy@haproxy.com, ksenija.stanojevic@gmail.com, arnd@arndb.de,
+        mpm@selenic.com, herbert@gondor.apana.org.au,
+        jonathan@buzzard.org.uk, benh@kernel.crashing.org,
+        davem@davemloft.net, b.zolnierkie@samsung.com, rjw@rjwysocki.net,
+        pavel@ucw.cz, len.brown@intel.com,
+        William Hubbs <w.d.hubbs@gmail.com>,
+        Chris Brannon <chris@the-brannons.com>,
+        Kirk Reiser <kirk@reisers.ca>
+Subject: Re: [PATCH RFC 3/3] speakup: misc: Use dynamic minor numbers for
+ speakup devices
+Message-ID: <20200314222128.mo4q3m72qoy76ayx@function>
+Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Zhenzhong Duan <zhenzhong.duan@gmail.com>,
+        linux-kernel@vger.kernel.org, jdike@addtoit.com, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, miguel.ojeda.sandonis@gmail.com,
+        willy@haproxy.com, ksenija.stanojevic@gmail.com, arnd@arndb.de,
+        mpm@selenic.com, herbert@gondor.apana.org.au,
+        jonathan@buzzard.org.uk, benh@kernel.crashing.org,
+        davem@davemloft.net, b.zolnierkie@samsung.com, rjw@rjwysocki.net,
+        pavel@ucw.cz, len.brown@intel.com,
+        William Hubbs <w.d.hubbs@gmail.com>,
+        Chris Brannon <chris@the-brannons.com>,
+        Kirk Reiser <kirk@reisers.ca>
+References: <20200309021747.626-1-zhenzhong.duan@gmail.com>
+ <20200309021747.626-4-zhenzhong.duan@gmail.com>
+ <20200309071506.GB4095204@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
-        boundary="_41aa890b-3091-490d-b17c-395cfbf074d0_"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200309071506.GB4095204@kroah.com>
+Organization: I am not organized
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---_41aa890b-3091-490d-b17c-395cfbf074d0_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
------------------
-Mentor Graphics (Deutschland) GmbH, Arnulfstra=DFe 201, 80634 M=FCnchen / G=
-ermany
-Registergericht M=FCnchen HRB 106955, Gesch=E4ftsf=FChrer: Thomas Heurung, =
-Alexander Walter
+Greg KH, le lun. 09 mars 2020 08:15:06 +0100, a ecrit:
+> On Mon, Mar 09, 2020 at 10:17:47AM +0800, Zhenzhong Duan wrote:
+> > Arnd notes in the link:
+> >    | To clarify: the only numbers that I think should be changed to dynamic
+> >    | allocation are for drivers/staging/speakup. While this is a fairly old
+> >    | subsystem, I would expect that it being staging means we can be a
+> >    | little more progressive with the changes.
+> > 
+> > This releases misc device minor numbers 25-27 for dynamic usage.
+> > 
+> > Link: https://lore.kernel.org/lkml/20200120221323.GJ15860@mit.edu/t/
+> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Zhenzhong Duan <zhenzhong.duan@gmail.com>
 
---_41aa890b-3091-490d-b17c-395cfbf074d0_
-Content-Type: message/rfc822
+Acked-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
 
-Received: from SVR-ORW-MBX-07.mgc.mentorg.com (147.34.90.207) by
- SVR-ORW-MBX-05.mgc.mentorg.com (147.34.90.205) with Microsoft SMTP Server
- (TLS) id 15.0.1473.3; Sat, 14 Mar 2020 15:07:30 -0700
-Received: from tftp-cs (147.34.91.1) by SVR-ORW-MBX-07.mgc.mentorg.com
- (147.34.90.207) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Sat, 14 Mar 2020 15:07:30 -0700
-Received: by tftp-cs (Postfix, from userid 49978)
-	id CA0ECC2296; Sat, 14 Mar 2020 15:07:36 -0700 (PDT)
-From: Thomas Schwinge <thomas@codesourcery.com>
-To: Woody Suwalski <terraluna977@gmail.com>, Christian =?utf-8?Q?K=C3=B6ni?=
- =?utf-8?Q?g?= <christian.koenig@amd.com>, Christoph Hellwig <hch@lst.de>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	Alexander Deucher <alexander.deucher@amd.com>, Pavel Machek <pavel@ucw.cz>,
-	Thomas Backlund <tmb@mageia.org>, Meelis Roos <mroos@linux.ee>
-Subject: Re: Regression in 5.4 kernel on 32-bit Radeon IBM T40
-In-Reply-To: <66a6b0ea-4ee8-1a0d-b259-568059d54e09@gmail.com>
-References: <400f6ce9-e360-0860-ca2a-fb8bccdcdc9b@gmail.com>
- <20200109141436.GA22111@lst.de>
- <9ad75215-3ff1-ee76-9985-12fd78d6aa5f@amd.com>
- <67f60d13-a245-5561-1372-7d68f35969f3@gmail.com>
- <66a6b0ea-4ee8-1a0d-b259-568059d54e09@gmail.com>
-User-Agent: Notmuch/0.29.1+93~g67ed7df (https://notmuchmail.org) Emacs/26.1 (i686-pc-linux-gnu)
-Date: Sat, 14 Mar 2020 23:06:51 +0100
-Message-ID: <87imj6si9w.fsf@dirichlet.schwinge.homeip.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg=pgp-sha512;
-	protocol="application/pgp-signature"
-Return-Path: tschwing@mentor.com
-X-MS-Exchange-Organization-OriginalArrivalTime: 14 Mar 2020 22:07:30.5302
- (UTC)
-X-MS-Exchange-Forest-ArrivalHubServer: SVR-ORW-MBX-07.mgc.mentorg.com
-X-MS-Exchange-Organization-AuthSource: SVR-ORW-MBX-07.mgc.mentorg.com
-X-MS-Exchange-Organization-AuthAs: Internal
-X-MS-Exchange-Organization-AuthMechanism: 10
-X-MS-Exchange-Organization-Cross-Premises-Headers-Processed: SVR-ORW-MBX-07.mgc.mentorg.com
-X-MS-Exchange-Organization-MessageHighPrecisionLatencyInProgress: LSRV=SVR-ORW-MBX-07.mgc.mentorg.com:TOTAL-FE=0.203|SMRPI-FrontendProxyAgent=0.005|SMRPI=0.005|SMR=0.160;2020-03-14T22:07:30.733Z
-X-MS-Exchange-Organization-OriginalClientIPAddress: 147.34.90.207
-X-MS-Exchange-Organization-OriginalServerIPAddress: 147.34.90.205
-X-MS-Exchange-Organization-Network-Message-Id: 3dcc8ff0-c08c-4576-6a04-08d7c864172f
-X-MS-Exchange-Organization-OriginalSize: 6329
-X-MS-Exchange-Organization-HygienePolicy: Standard
-X-MS-Exchange-Organization-MessageLatency: SRV=SVR-ORW-MBX-07.mgc.mentorg.com:TOTAL-FE=0.218|SMRPI-FrontendProxyAgent=0.005|SMRPI=0.005|SMR=0.160|SMS=0.015
-X-MS-Exchange-Organization-AVStamp-Enterprise: 1.0
-X-MS-Exchange-Organization-Recipient-Limit-Verified: True
-X-MS-Exchange-Organization-Transport-Properties: DeliveryPriority=Normal
-X-MS-Exchange-Organization-Prioritization: 1
-X-MS-Exchange-Organization-Rules-Execution-History: TransportVersioned.Tamer
- Ahmed
+> > Cc: William Hubbs <w.d.hubbs@gmail.com>
+> > Cc: Chris Brannon <chris@the-brannons.com>
+> > Cc: Kirk Reiser <kirk@reisers.ca>
+> > Cc: Samuel Thibault <samuel.thibault@ens-lyon.org>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >  drivers/staging/speakup/devsynth.c     | 10 +++-------
+> >  drivers/staging/speakup/speakup_soft.c | 14 +++++++-------
+> >  2 files changed, 10 insertions(+), 14 deletions(-)
+> 
+> speakup, while being in staging, has been around for a very long time,
+> so we might break things if we change their minor numbers.
+> 
+> I'd need an ACK from the speakup maintainers/developers before I can
+> take this as I don't have any way to verify what their systems look
+> like.
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+I believe it will be fine to use dynamic minor numbers, since the /dev
+entries are autocreated nowadays, and the espeakup and speechd-up don't
+use hardcoded minor values.
 
-Hi!
-
-Has any progress been made regarding the issue reported here?
-
-Having updated the software (here: Linux kernel), I'm running into the
-same issue on my venerable ;-) Thinkpad T42 with:
-
-    01:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/AT=
-I] RV200/M7 [Mobility Radeon 7500]
-
-I lack knowledge of the specific graphics hardware/memory interface as
-well as Linux kernel graphics/memory stack at that level, but I'll be
-happy to try any suggestions, or test patches etc.
-
-On 2020-01-09T21:40:50-0500, Woody Suwalski <terraluna977@gmail.com> wrote:
-> Woody Suwalski wrote:
->> Christian K=C3=B6nig wrote:
->>> Am 09.01.20 um 15:14 schrieb Christoph Hellwig:
->>>> On Sat, Dec 14, 2019 at 10:17:15PM -0500, Woody Suwalski wrote:
->>>>> Regression in 5.4 kernel on 32-bit Radeon IBM T40
->>>>> triggered by
->>>>> commit 33b3ad3788aba846fc8b9a065fe2685a0b64f713
->>>>> Author: Christoph Hellwig <hch@lst.de>
->>>>> Date:=C2=A0=C2=A0 Thu Aug 15 09:27:00 2019 +0200
->>>>>
->>>>> The above patch has triggered a display problem on IBM Thinkpad=20
->>>>> T40, where
->>>>> the screen is covered with a lots of random short black horizontal=20
->>>>> lines,
->>>>> or distorted letters in X terms.
->>>>>
->>>>> The culprit seems to be that the dma_get_required_mask() is=20
->>>>> returning a
->>>>> value 0x3fffffff
->>>>> which is smaller than dma_get_mask()0xffffffff.That results in
->>>>> dma_addressing_limited()=3D=3D0 in ttm_bo_device(), and using 40-bits=
- dma
->>>>> instead of 32-bits.
->>>> Which is the intended behavior assuming your system has 1GB of memory.
->>>> Does it?
->>>
->>> Assuming the system doesn't have the 1GB split up somehow crazy over=20
->>> the address space that should indeed work as intended.
->>>
->>>>
->>>>> If I hardcode "1" as the last parameter to ttm_bo_device_init() in=20
->>>>> place of
->>>>> a call to dma_addressing_limited(),the problem goes away.
-
-I'm confirming that hack "resolves" the issue.
-
->>>> I'll need some help from the drm / radeon / TTM maintainers if there=20
->>>> are
->>>> any other side effects from not passing the need_dma32 paramters.
->>>> Obviously if the device doesn't have more than 32-bits worth of dram=20
->>>> and
->>>> no DMA offset we can't feed unaddressable memory to the device.
->>>> Unfortunately I have a very hard time following the implementation of
->>>> the TTM pool if it does anything else in this case.
->>>
->>> The only other thing which comes to mind is using huge pages. Can you=20
->>> try a kernel with CONFIG_TRANSPARENT_HUGEPAGE disabled?
->>
->> Yes, the box has 1G of RAM, and unfortunately nope,=20
->> TRANSPARENT_HUGEPAGE is not on. I am attaching the .config, maybe you=20
->> can find some insanity there... Also - for reference - a minimalistic=20
->> patch fixing symptoms (but not addressing the root cause=C2=A0 :-( )
->>
->> I can try to rebuild the kernel with HIGHMEM off, although I am not=20
->> optimistic it will change anything. But at least it should simplify=20
->> the 1G split...
->>
->> So if you have any other ideas - pls let me know..
->>
-> Interesting. Rebuilding the kernel with HIMEM disabled actually solves=20
-> the display problem. The debug lines show exactly same values for=20
-> dma_get_required_mask() and dma_get_mask(), yet now it works OK... So=20
-> what has solved it???
-
-That I have not yet tried.
-
-
-Gr=C3=BC=C3=9Fe
- Thomas
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAEBCgAdFiEE7KZCCFfzmIiKFvCOphHFmisdAgYFAl5tVXwACgkQphHFmisd
-AgY3wAwAoOYpUrZ/3xFY2GaefxB27TuNulTAMNP8Ggb2tSZfAjvc8s/e+HRuxRjL
-Ri4DFsZ38Is6OlXONfak24tZeXaxEDNqiDbib0+mFXD6saGECbNCkvpujaaT+wsf
-E8Uph7Olh9mwL6C6I65w049voxw+T2pz79wIp8Y71sIBf1N5rONY9oYyBe9BhYTu
-BbQaV6zZ7PY0ZisL1Pb61kBNtEdoUBubJHCbsuPGU5SKTWeG1M6o4h2+Co/T7dvF
-ggfqx1vGu+RWQgHSiNTEmZqKrcMGgM9npeBU5Kb6fdeIyZZmnuZyXo734XGiDGD+
-va2JTFLJLlqoh8TtbD7icyRPYj0rdGYG6rm1IqRs6/BUBnrHnYak1wylBkDPkLbq
-3ssTN1+wMmv3HV4KLvAv9bhcP31l3gDAPqhJL7FxPvuYuZmtK7T7ugBsWuDlqLJh
-NFSb6jSP1yLPbaHsU1aWIB2QMsYj5L7MCKVyG0O/v05MLZf0OGfNAHnn1tZ74b5R
-Zh8E+AOl
-=JFLI
------END PGP SIGNATURE-----
---=-=-=--
-
---_41aa890b-3091-490d-b17c-395cfbf074d0_--
+Thanks for making sure,
+Samuel
