@@ -2,75 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 705151858CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:23:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECA33185848
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:02:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727897AbgCOCXn convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 14 Mar 2020 22:23:43 -0400
-Received: from mail-il1-f197.google.com ([209.85.166.197]:37111 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727222AbgCOCXm (ORCPT
+        id S1727382AbgCOCCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:02:15 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:37083 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726550AbgCOCCP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:23:42 -0400
-Received: by mail-il1-f197.google.com with SMTP id c26so1362381ila.4
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 19:23:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to:content-transfer-encoding;
-        bh=j2SmXJOFlNVNX3IBInWb2HEJ3kFsGIlnIYBHVv47Fmg=;
-        b=C11TZAkLMycQAitXzDwLWxGWk6EU4iLgrKxJvxBnIVJ9ncITtlq0YfU3q7+WxHXL1E
-         28hFC61FkgfmsSdWyR7W1Rw7nuFGJEqW8AAbUJ3ueZpBQZ88o0B5JbxF/oxdnuByzGHp
-         Qm5UWOIVJD28300ryAgz9OuH/RZM7ipWrVO4/Vn2UTojJf+MHHTYgmlQO7EUj7891J6J
-         W5wK8riaSrggk0QGVdvFDyL/SM/pAMAU+Hq3/2ETgDmhDi710Ke6Baz4jhbXcE0LXsEF
-         NCgym0Jpn6uG/Gh6rDiXJA2GXIagTS8+ucIs5y7zqTG79oOsNZLAiEWgyqo5aiAR6Fjx
-         XHLg==
-X-Gm-Message-State: ANhLgQ1O9TbEHtGxQ2VWIr0cyd9runE6jppRATV3RqvxwuzSjZ+qg9t/
-        wvGJK8dJiSsGSIUoJGqc0AexeI9ulCtZYZwK07N/2l/J5v2I
-X-Google-Smtp-Source: ADFU+vuJBPZ1PMOOzQo98cA9c5gJcvaAaQ6f/LSVIdRh9X4dB9T+eheUju1sRb7NyyPU97BKERRNFdBNpuxA4sPOAFveN366df7X
+        Sat, 14 Mar 2020 22:02:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584237733;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Eqzcg40TBoSMhAurr5qREzKJZ7xEUxgoofqeeoS/NZ4=;
+        b=O47sW7e2pDOW5WC8jlCEAbB6eOWrWYLaw1VbLyXqVwtacDjFsd5n56XzCeXIqbivDzLEiG
+        TnW4aGtEWn9Tv7R+Th8CeE72m4IvrT3H9TbWsnYjxpGkIVGT1AQEdMwnXI9evaYuxyQREK
+        /SOQ9pfHJkbfw/J9+jCJDLCA/9tk3QU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-364-a7j_hPgqOiu76FN7ROwQpw-1; Sat, 14 Mar 2020 09:59:34 -0400
+X-MC-Unique: a7j_hPgqOiu76FN7ROwQpw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C60EC18CA241;
+        Sat, 14 Mar 2020 13:59:31 +0000 (UTC)
+Received: from krava (ovpn-204-34.brq.redhat.com [10.40.204.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D6DBA73861;
+        Sat, 14 Mar 2020 13:59:27 +0000 (UTC)
+Date:   Sat, 14 Mar 2020 14:59:25 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Ian Rogers <irogers@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Leo Yan <leo.yan@linaro.org>, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] perf parse-events: fix 3 use after frees
+Message-ID: <20200314135925.GA492969@krava>
+References: <20200313230249.78825-1-irogers@google.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d842:: with SMTP id h2mr17075595ilq.34.1584191402876;
- Sat, 14 Mar 2020 06:10:02 -0700 (PDT)
-Date:   Sat, 14 Mar 2020 06:10:02 -0700
-In-Reply-To: <000000000000204b4d059cd6d766@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d3278d05a0d04d97@google.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in bitmap_port_destroy
-From:   syzbot <syzbot+b96275fd6ad891076ced@syzkaller.appspotmail.com>
-To:     arvid.brodin@alten.se, coreteam@netfilter.org,
-        dan.carpenter@oracle.com, davem@davemloft.net,
-        florent.fourcot@wifirst.fr, fw@strlen.de, hdanton@sina.com,
-        jeremy@azazel.net, johannes.berg@intel.com,
-        kadlec@blackhole.kfki.hu, kadlec@netfilter.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
-        syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200313230249.78825-1-irogers@google.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot suspects this bug was fixed by commit:
+On Fri, Mar 13, 2020 at 04:02:49PM -0700, Ian Rogers wrote:
+> Reproducible with a clang asan build and then running perf test in
+> particular 'Parse event definition strings'.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/parse-events.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> index a14995835d85..593b6b03785d 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -1449,7 +1449,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
+>  		evsel = __add_event(list, &parse_state->idx, &attr, NULL, pmu, NULL,
+>  				    auto_merge_stats, NULL);
+>  		if (evsel) {
+> -			evsel->pmu_name = name;
+> +			evsel->pmu_name = name ? strdup(name) : NULL;
+>  			evsel->use_uncore_alias = use_uncore_alias;
+>  			return 0;
+>  		} else {
+> @@ -1497,7 +1497,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
+>  		evsel->snapshot = info.snapshot;
+>  		evsel->metric_expr = info.metric_expr;
+>  		evsel->metric_name = info.metric_name;
+> -		evsel->pmu_name = name;
+> +		evsel->pmu_name = name ? strdup(name) : NULL;
 
-commit 32c72165dbd0e246e69d16a3ad348a4851afd415
-Author: Kadlecsik József <kadlec@blackhole.kfki.hu>
-Date:   Sun Jan 19 21:06:49 2020 +0000
+so it's pmu->name pointer.. does pmu get destroyed before the evsel?
+also should we free that then like below?
 
-    netfilter: ipset: use bitmap infrastructure completely
+>  		evsel->use_uncore_alias = use_uncore_alias;
+>  		evsel->percore = config_term_percore(&evsel->config_terms);
+>  	}
+> @@ -1547,7 +1547,7 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
+>  				if (!parse_events_add_pmu(parse_state, list,
+>  							  pmu->name, head,
+>  							  true, true)) {
+> -					pr_debug("%s -> %s/%s/\n", config,
+> +					pr_debug("%s -> %s/%s/\n", str,
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=106f42a9e00000
-start commit:   131701c6 Merge tag 'leds-5.5-rc8' of git://git.kernel.org/..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=83c00afca9cf5153
-dashboard link: https://syzkaller.appspot.com/bug?extid=b96275fd6ad891076ced
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15fba721e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1339726ee00000
+nice catch ;-)
 
-If the result looks correct, please mark the bug fixed by replying with:
+>  						 pmu->name, alias->str);
+>  					ok++;
+>  				}
+> -- 
+> 2.25.1.481.gfbce0eb801-goog
+> 
 
-#syz fix: netfilter: ipset: use bitmap infrastructure completely
+thanks,
+jirka
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+---
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 816d930d774e..15ccd193483f 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1287,6 +1287,7 @@ void perf_evsel__exit(struct evsel *evsel)
+ 	perf_thread_map__put(evsel->core.threads);
+ 	zfree(&evsel->group_name);
+ 	zfree(&evsel->name);
++	zfree(&evsel->pmu_name);
+ 	perf_evsel__object.fini(evsel);
+ }
+ 
+
