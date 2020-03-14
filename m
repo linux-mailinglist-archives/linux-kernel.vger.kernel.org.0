@@ -2,71 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A41F185A13
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 05:35:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 936DE185A26
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 06:15:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbgCOEeR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 00:34:17 -0400
-Received: from smtprelay0212.hostedemail.com ([216.40.44.212]:33592 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726136AbgCOEeR (ORCPT
+        id S1726936AbgCOFPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 01:15:17 -0400
+Received: from mail-pj1-f70.google.com ([209.85.216.70]:52406 "EHLO
+        mail-pj1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbgCOFPQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 00:34:17 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 8B2AC837F24C;
-        Sun, 15 Mar 2020 04:34:16 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:968:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:4321:5007:10004:10400:10848:11232:11658:11914:12048:12297:12740:12760:12895:13069:13255:13311:13357:13439:13972:14096:14097:14659:14721:21080:21627:21990:30054:30056:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: blood54_7c668a58d7328
-X-Filterd-Recvd-Size: 1907
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf06.hostedemail.com (Postfix) with ESMTPA;
-        Sun, 15 Mar 2020 04:34:14 +0000 (UTC)
-Message-ID: <1c31f0e1a0fe8ee268f27289f6f820c7e48596d5.camel@perches.com>
-Subject: Re: [Outreachy kernel] [PATCH v2] Staging: rtl8723bs: rtw_mlme:
- Remove unnecessary conditions
-From:   Joe Perches <joe@perches.com>
-To:     Shreeya Patel <shreeya.patel23498@gmail.com>,
-        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com,
-        sbrivio@redhat.com, daniel.baluta@gmail.com,
-        nramas@linux.microsoft.com, hverkuil@xs4all.nl,
-        Larry.Finger@lwfinger.net
-Date:   Sat, 14 Mar 2020 21:32:29 -0700
-In-Reply-To: <4deeaef8f8e0f23a9adbfd7d98840624e2994cf2.camel@gmail.com>
-References: <20200313102912.17218-1-shreeya.patel23498@gmail.com>
-         <25a1aca2c993ecb70ba7cd9c9e38bce9170a98b0.camel@perches.com>
-         <4deeaef8f8e0f23a9adbfd7d98840624e2994cf2.camel@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Sun, 15 Mar 2020 01:15:16 -0400
+Received: by mail-pj1-f70.google.com with SMTP id hg14so4542712pjb.2
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 22:15:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=/CZuM0+mbO6NyqR+mLDX0oKlbyLZj3NtZHFhJDcGVng=;
+        b=HGgcsCquxH8cxMR4OGyivFDVMm+XTBlYjrq/iGY6nt5DRop4mPDZyt7NZRIy+3VZdw
+         l4o4cdwAo2w7fdtIMhURwhSXRC3nisBlwi4Bz/Mo+KR5/xpFaw08tO6j9nZioSW29KhT
+         4Pmi+yeFWu5fOo+HS52rbHKrAKzqaEuI3SzriaEy5z6KDQP2d6ipflTj1EQlXl3w2gyi
+         zfp4m++/6jWUyQg5+lO196NVbjJ9hel7p+5vlBM2urEHs5bmwVwawZfO2FhJihmZV3qZ
+         u1x/RujylRCHylf+hJ3qy4RkbROvJOndhpQHl4Q3/ebR/DqW+PmjAWL5V/HAfLZ8s8dm
+         YlnQ==
+X-Gm-Message-State: ANhLgQ2ksD1Zj194mz2ZZ1XZ1/C6MGUNQyIl5oNhp5OuKq0XKkETQcp4
+        O3b9JLapxAJtz3zZufE3DPNOTjvsLfFpJ7z53goZmejsYbCW
+X-Google-Smtp-Source: ADFU+vsd7B6zM7k661+N9RLASlT7wDY115i+NOnn4ChlOdfINGGNLgluD9/L+k0eJ+9HakWUkF332HYt3wzwxnDAhQKyCHW7keRq
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:79cf:: with SMTP id u198mr2189717ilc.23.1584158642104;
+ Fri, 13 Mar 2020 21:04:02 -0700 (PDT)
+Date:   Fri, 13 Mar 2020 21:04:02 -0700
+In-Reply-To: <CADG63jCSHu7dQ118GEuhXBi0H4CW3cBqB5F2qKiyeVzNb0U+wg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000021721505a0c8ad76@google.com>
+Subject: Re: WARNING: refcount bug in sctp_wfree
+From:   syzbot <syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com>
+To:     anenbupt@gmail.com, davem@davemloft.net, kuba@kernel.org,
+        linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org,
+        marcelo.leitner@gmail.com, netdev@vger.kernel.org,
+        nhorman@tuxdriver.com, syzkaller-bugs@googlegroups.com,
+        vyasevich@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2020-03-14 at 16:58 +0530, Shreeya Patel wrote:
-> This could be:
-> >  	if ((!(phtpriv->ampdu_enable) && pregistrypriv->ampdu_enable ==
-> > 1)) ||
-> > 	    pregistrypriv->ampdu_enable == 2)
-> > 		phtpriv->ampdu_enable = true;
-> > 
-> > Though it is probably more sensible to just set
-> > phtpriv->ampdu_enable without testing whether or
-> > not it's already set:
-> > 
-> > 	if (pregistrypriv->ampdu_enable == 1 ||
-> > 	    pregistrypriv->ampdu_enable == 2)
-> > 		phtpriv->ampdu_enable = true;
-> 
-> But the else-if block which I removed in v2 of this patch had nothing
-> in the block.
-> It was not assigning any value to "phtpriv->ampdu_enable". ( basically
-> it was empty and useless)
+Hello,
 
-Right, I misread the deletions from patch.
+syzbot tried to test the proposed patch but build/boot failed:
 
+failed to checkout kernel repo https://github.com/hqj/hqjagain_test.git/scup_wfree: failed to run ["git" "fetch" "https://github.com/hqj/hqjagain_test.git" "scup_wfree"]: exit status 128
+fatal: couldn't find remote ref scup_wfree
+
+
+
+Tested on:
+
+commit:         [unknown 
+git tree:       https://github.com/hqj/hqjagain_test.git scup_wfree
+dashboard link: https://syzkaller.appspot.com/bug?extid=cea71eec5d6de256d54d
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
 
