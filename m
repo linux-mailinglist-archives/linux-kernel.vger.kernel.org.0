@@ -2,232 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ACA21858A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:16:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4483F1858D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:24:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbgCOCQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 22:16:23 -0400
-Received: from v6.sk ([167.172.42.174]:49694 "EHLO v6.sk"
+        id S1728005AbgCOCYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:24:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727180AbgCOCQX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:16:23 -0400
-Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id 9126F60EEC;
-        Sat, 14 Mar 2020 10:56:56 +0000 (UTC)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] leds: ariel: Add driver for status LEDs on Dell Wyse 3020
-Date:   Sat, 14 Mar 2020 11:56:52 +0100
-Message-Id: <20200314105652.351708-1-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.25.1
+        id S1727917AbgCOCYN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Mar 2020 22:24:13 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0CDC2073E;
+        Sat, 14 Mar 2020 11:20:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584184825;
+        bh=dQfzPYyCYdN+44zCm9AjIC54G7c/pVQL8vwGNg36xK8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ztNmQ9imaYg944LP2Tp1jJ8ZgvjqCngYPQRGC11tXYfpCbCRmX3lG6VlrNhesKoiL
+         2jq4LXNkX4Yb0W7o68AWIZup5z+o12xuG9ESxbf7yoT1mGRh7uQotFPOSRNMjiMtiy
+         zqzD4xyg/t8ifygN/+2fSg+esmPPWYBk9U4Jz0X0=
+Date:   Sat, 14 Mar 2020 12:20:22 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Ruslan Bilovol <ruslan.bilovol@gmail.com>
+Cc:     Kelsey Skunberg <skunberg.kelsey@gmail.com>, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        bodong@mellanox.com, ddutile@redhat.com, rbilovol@cisco.com
+Subject: Re: [PATCH v3 1/4] PCI: sysfs: Define device attributes with
+ DEVICE_ATTR*
+Message-ID: <20200314112022.GA53794@kroah.com>
+References: <20190813204513.4790-1-skunberg.kelsey@gmail.com>
+ <20190815153352.86143-2-skunberg.kelsey@gmail.com>
+ <CAB=otbSYozS-ZfxB0nCiNnxcbqxwrHOSYxJJtDKa63KzXbXgpw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAB=otbSYozS-ZfxB0nCiNnxcbqxwrHOSYxJJtDKa63KzXbXgpw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds support for controlling the LEDs attached to the Embedded
-Controller on a Dell Wyse 3020 "Ariel" board.
+On Sat, Mar 14, 2020 at 12:51:47PM +0200, Ruslan Bilovol wrote:
+> On Thu, Aug 15, 2019 at 7:01 PM Kelsey Skunberg
+> <skunberg.kelsey@gmail.com> wrote:
+> >
+> > Defining device attributes should be done through the helper
+> > DEVICE_ATTR_RO(), DEVICE_ATTR_WO(), or similar. Change all instances using
+> > __ATTR* to now use its equivalent DEVICE_ATTR*.
+> >
+> > Example of old:
+> >
+> > static struct device_attribute dev_name_##_attr=__ATTR_RO(_name);
+> >
+> > Example of new:
+> >
+> > static DEVICE_ATTR_RO(_name);
+> >
+> > Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
+> > ---
+> >  drivers/pci/pci-sysfs.c | 59 +++++++++++++++++++----------------------
+> >  1 file changed, 27 insertions(+), 32 deletions(-)
+> >
+> > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> > index 965c72104150..8af7944fdccb 100644
+> > --- a/drivers/pci/pci-sysfs.c
+> > +++ b/drivers/pci/pci-sysfs.c
+> > @@ -464,9 +464,7 @@ static ssize_t dev_rescan_store(struct device *dev,
+> >         }
+> >         return count;
+> >  }
+> > -static struct device_attribute dev_rescan_attr = __ATTR(rescan,
+> > -                                                       (S_IWUSR|S_IWGRP),
+> > -                                                       NULL, dev_rescan_store);
+> > +static DEVICE_ATTR(rescan, (S_IWUSR | S_IWGRP), NULL, dev_rescan_store);
+> >
+> >  static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
+> >                             const char *buf, size_t count)
+> > @@ -480,9 +478,8 @@ static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
+> >                 pci_stop_and_remove_bus_device_locked(to_pci_dev(dev));
+> >         return count;
+> >  }
+> > -static struct device_attribute dev_remove_attr = __ATTR_IGNORE_LOCKDEP(remove,
+> > -                                                       (S_IWUSR|S_IWGRP),
+> > -                                                       NULL, remove_store);
+> > +static DEVICE_ATTR_IGNORE_LOCKDEP(remove, (S_IWUSR | S_IWGRP), NULL,
+> > +                                 remove_store);
+> >
+> >  static ssize_t dev_bus_rescan_store(struct device *dev,
+> >                                     struct device_attribute *attr,
+> > @@ -504,7 +501,7 @@ static ssize_t dev_bus_rescan_store(struct device *dev,
+> >         }
+> >         return count;
+> >  }
+> > -static DEVICE_ATTR(rescan, (S_IWUSR|S_IWGRP), NULL, dev_bus_rescan_store);
+> > +static DEVICE_ATTR(bus_rescan, (S_IWUSR | S_IWGRP), NULL, dev_bus_rescan_store);
+> 
+> This patch renamed 'rescan' to 'bus_rescan' and broke my userspace application.
+> There is also mismatch now between real functionality and documentation
+> Documentation/ABI/testing/sysfs-bus-pci which still contains old "rescan"
+> descriptions.
+> 
+> Another patch from this patch series also renamed 'rescan' to 'dev_rescan'
+> 
+> Here is a comparison between two stable kernels (with and without this
+> patch series):
+> 
+> v5.4
+> # find /sys -name '*rescan'
+> /sys/devices/pci0000:00/0000:00:01.2/dev_rescan
+> /sys/devices/pci0000:00/0000:00:01.0/dev_rescan
+> /sys/devices/pci0000:00/0000:00:04.0/dev_rescan
+> /sys/devices/pci0000:00/0000:00:00.0/dev_rescan
+> /sys/devices/pci0000:00/pci_bus/0000:00/bus_rescan
+> /sys/devices/pci0000:00/0000:00:01.3/dev_rescan
+> /sys/devices/pci0000:00/0000:00:03.0/dev_rescan
+> /sys/devices/pci0000:00/0000:00:01.1/dev_rescan
+> /sys/devices/pci0000:00/0000:00:02.0/dev_rescan
+> /sys/devices/pci0000:00/0000:00:05.0/dev_rescan
+> /sys/bus/pci/rescan
+> 
+> v4.19
+> # find /sys -name '*rescan'
+> /sys/devices/pci0000:00/0000:00:01.2/rescan
+> /sys/devices/pci0000:00/0000:00:01.0/rescan
+> /sys/devices/pci0000:00/0000:00:04.0/rescan
+> /sys/devices/pci0000:00/0000:00:00.0/rescan
+> /sys/devices/pci0000:00/pci_bus/0000:00/rescan
+> /sys/devices/pci0000:00/0000:00:01.3/rescan
+> /sys/devices/pci0000:00/0000:00:03.0/rescan
+> /sys/devices/pci0000:00/0000:00:01.1/rescan
+> /sys/devices/pci0000:00/0000:00:02.0/rescan
+> /sys/devices/pci0000:00/0000:00:05.0/rescan
+> /sys/bus/pci/rescan
+> 
+> Do we maintain this kind of API as non-changeable?
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
-The associated MFD driver is here:
-https://lore.kernel.org/lkml/20200309203818.31266-5-lkundrak@v3.sk/
+Yeah, that's a bug and should be fixed, sorry for missing that on
+review.
 
- drivers/leds/Kconfig      |  11 +++
- drivers/leds/Makefile     |   1 +
- drivers/leds/leds-ariel.c | 144 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 156 insertions(+)
- create mode 100644 drivers/leds/leds-ariel.c
+Kelsey, can you fix this up?
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index d82f1dea37111..66424ee54cc01 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -83,6 +83,17 @@ config LEDS_APU
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called leds-apu.
- 
-+config LEDS_ARIEL
-+	tristate "Dell Wyse 3020 status LED support"
-+	depends on LEDS_CLASS
-+	depends on (MACH_MMP3_DT && MFD_ENE_KB3930) || COMPILE_TEST
-+	help
-+	  This driver adds support for controlling the front panel status
-+	  LEDs on Dell Wyse 3020 (Ariel) board via the KB3930 Embedded
-+	  Controller.
-+
-+	  Say Y to if your machine is a Dell Wyse 3020 thin client.
-+
- config LEDS_AS3645A
- 	tristate "AS3645A and LM3555 LED flash controllers support"
- 	depends on I2C && LEDS_CLASS_FLASH
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index d7e1107753fb1..bf3b22038d113 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -10,6 +10,7 @@ obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
- obj-$(CONFIG_LEDS_88PM860X)		+= leds-88pm860x.o
- obj-$(CONFIG_LEDS_AAT1290)		+= leds-aat1290.o
- obj-$(CONFIG_LEDS_APU)			+= leds-apu.o
-+obj-$(CONFIG_LEDS_ARIEL)		+= leds-ariel.o
- obj-$(CONFIG_LEDS_AS3645A)		+= leds-as3645a.o
- obj-$(CONFIG_LEDS_AN30259A)		+= leds-an30259a.o
- obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
-diff --git a/drivers/leds/leds-ariel.c b/drivers/leds/leds-ariel.c
-new file mode 100644
-index 0000000000000..d2c11761f0301
---- /dev/null
-+++ b/drivers/leds/leds-ariel.c
-@@ -0,0 +1,144 @@
-+// SPDX-License-Identifier: BSD-2-Clause OR GPL-2.0-or-later
-+/*
-+ * Dell Wyse 3020 a.k.a. "Ariel" Embedded Controller LED Driver
-+ *
-+ * Copyright (C) 2020 Lubomir Rintel
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/leds.h>
-+#include <linux/regmap.h>
-+#include <linux/of_platform.h>
-+
-+enum ec_index {
-+	EC_BLUE_LED	= 0x01,
-+	EC_AMBER_LED	= 0x02,
-+	EC_GREEN_LED	= 0x03,
-+};
-+
-+enum {
-+	EC_LED_OFF	= 0x00,
-+	EC_LED_STILL	= 0x01,
-+	EC_LED_FADE	= 0x02,
-+	EC_LED_BLINK	= 0x03,
-+};
-+
-+struct ariel_led {
-+	struct regmap *ec_ram;
-+	enum ec_index ec_index;
-+	struct led_classdev led_cdev;
-+};
-+
-+#define led_cdev_to_ariel_led(c) container_of(c, struct ariel_led, led_cdev)
-+
-+static enum led_brightness ariel_led_get(struct led_classdev *led_cdev)
-+{
-+	struct ariel_led *led = led_cdev_to_ariel_led(led_cdev);
-+	unsigned int led_status = 0;
-+
-+	if (regmap_read(led->ec_ram, led->ec_index, &led_status))
-+		return LED_OFF;
-+
-+	if (led_status == EC_LED_STILL)
-+		return LED_FULL;
-+	else
-+		return LED_OFF;
-+}
-+
-+static void ariel_led_set(struct led_classdev *led_cdev,
-+			  enum led_brightness brightness)
-+{
-+	struct ariel_led *led = led_cdev_to_ariel_led(led_cdev);
-+
-+	if (brightness == LED_OFF)
-+		regmap_write(led->ec_ram, led->ec_index, EC_LED_OFF);
-+	else
-+		regmap_write(led->ec_ram, led->ec_index, EC_LED_STILL);
-+}
-+
-+static int ariel_blink_set(struct led_classdev *led_cdev,
-+			   unsigned long *delay_on, unsigned long *delay_off)
-+{
-+	struct ariel_led *led = led_cdev_to_ariel_led(led_cdev);
-+
-+	if (*delay_on == 0 && *delay_off == 0)
-+		return -EINVAL;
-+
-+	if (*delay_on == 0) {
-+		regmap_write(led->ec_ram, led->ec_index, EC_LED_OFF);
-+	} else if (*delay_off == 0) {
-+		regmap_write(led->ec_ram, led->ec_index, EC_LED_STILL);
-+	} else {
-+		*delay_on = 500;
-+		*delay_off = 500;
-+		regmap_write(led->ec_ram, led->ec_index, EC_LED_BLINK);
-+	}
-+
-+	return 0;
-+}
-+
-+static int ariel_led_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct ariel_led *leds;
-+	struct regmap *ec_ram;
-+	int ret;
-+
-+	leds = devm_kcalloc(dev, 3, sizeof(*leds), GFP_KERNEL);
-+	if (!leds)
-+		return -ENOMEM;
-+
-+	ec_ram = dev_get_regmap(dev->parent, "ec_ram");
-+	if (!ec_ram)
-+		return -ENODEV;
-+
-+	leds[0].ec_ram = ec_ram;
-+	leds[0].ec_index = EC_BLUE_LED;
-+	leds[0].led_cdev.name = "ariel:blue:power",
-+	leds[0].led_cdev.brightness_get = ariel_led_get;
-+	leds[0].led_cdev.brightness_set = ariel_led_set;
-+	leds[0].led_cdev.blink_set = ariel_blink_set;
-+	leds[0].led_cdev.default_trigger = "default-on";
-+
-+	ret = devm_led_classdev_register(dev, &leds[0].led_cdev);
-+	if (ret)
-+		return ret;
-+
-+	leds[1].ec_ram = ec_ram;
-+	leds[1].ec_index = EC_AMBER_LED;
-+	leds[1].led_cdev.name = "ariel:amber:status",
-+	leds[1].led_cdev.brightness_get = ariel_led_get;
-+	leds[1].led_cdev.brightness_set = ariel_led_set;
-+	leds[1].led_cdev.blink_set = ariel_blink_set;
-+
-+	ret = devm_led_classdev_register(dev, &leds[1].led_cdev);
-+	if (ret)
-+		return ret;
-+
-+	leds[2].ec_ram = ec_ram;
-+	leds[2].ec_index = EC_GREEN_LED;
-+	leds[2].led_cdev.name = "ariel:green:status",
-+	leds[2].led_cdev.brightness_get = ariel_led_get;
-+	leds[2].led_cdev.brightness_set = ariel_led_set;
-+	leds[2].led_cdev.blink_set = ariel_blink_set;
-+	leds[2].led_cdev.default_trigger = "default-on";
-+
-+	ret = devm_led_classdev_register(dev, &leds[2].led_cdev);
-+	if (ret)
-+		return ret;
-+
-+	dev_info(dev, "Dell Wyse 3020 LEDs\n");
-+	return 0;
-+}
-+
-+static struct platform_driver ariel_led_driver = {
-+	.probe = ariel_led_probe,
-+	.driver = {
-+		.name = "dell-wyse-ariel-led",
-+	},
-+};
-+module_platform_driver(ariel_led_driver);
-+
-+MODULE_AUTHOR("Lubomir Rintel <lkundrak@v3.sk>");
-+MODULE_DESCRIPTION("Dell Wyse 3020 Status LEDs Driver");
-+MODULE_LICENSE("Dual BSD/GPL");
--- 
-2.25.1
+thanks,
 
+greg k-h
