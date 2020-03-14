@@ -2,72 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D57331859B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 04:35:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 227B51859C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 04:40:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbgCODfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 23:35:21 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:39805 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726506AbgCODfV (ORCPT
+        id S1727430AbgCODkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 23:40:12 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24398 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726668AbgCODkL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 23:35:21 -0400
+        Sat, 14 Mar 2020 23:40:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584243320;
+        s=mimecast20190719; t=1584243610;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=0LyD0PJgIGGLoQzoojfk9tWf5U8ULkM9R+XCQsoyJqs=;
-        b=RqqPZTQVjg390cDJb3QMUqUizuBobFPD2UFO9LMrPVFF+O9XBo5/DzKF5sP5hHK5uXZrPP
-        KX/ErysS+fmSAIFCCQG1Xn9NmKwdtk7kMJEQMyunWPlU6d7C7IHg2hUzTSdfmIjjEPmHTp
-        QhvUx45rgloTX9Z/IDH2BZCJwAjwTWk=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-442-FmR8M-COMgqboDJOSxCuzQ-1; Sat, 14 Mar 2020 07:31:31 -0400
-X-MC-Unique: FmR8M-COMgqboDJOSxCuzQ-1
-Received: by mail-wr1-f70.google.com with SMTP id u12so3375773wrw.10
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 04:31:31 -0700 (PDT)
+        bh=7mUmgqOIFOdKgmbkoQ0zespckuiZdF8ycwVxiswURFM=;
+        b=cuhKXD2JoWMcCLwfw5DqmA6ZZvk1QBAp0wZrhs4q2gkrPjV/ObUMLEjeWEiY+LaHsQ0v84
+        RlgxXKYrIS8Rp0nkg+BcsCO+2YLdRhwJJEQJvyQ69gclcHE1Rgftfk4jnvNIr2xB4se6kN
+        jXSfQBliixw0AcywWJmRCYXAkUqqCaY=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-156-Pw3YuW3APQWkuirTtbakpw-1; Sat, 14 Mar 2020 07:37:44 -0400
+X-MC-Unique: Pw3YuW3APQWkuirTtbakpw-1
+Received: by mail-wr1-f69.google.com with SMTP id u12so3382473wrw.10
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 04:37:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=0LyD0PJgIGGLoQzoojfk9tWf5U8ULkM9R+XCQsoyJqs=;
-        b=RblEegJmrElqLqiH5HY92oJcswvIWXCr4BK8Nxn7btUjoqMZ2xn0NENHvHkQtsZplA
-         CS5IeFMhT/BOTbePCl3rZSt5BhBdFirCifiNHUjY7bvq0hnOeqbd+GqJr+Hgbnc8RUza
-         3KftLesmKWmajitxFh6jbSzMt1NU2xmDpZjYudBR1h7D2KwEPi31UnnK0gwQnk7P//jY
-         rcS+s+nZG258nLs22O/SdrQYDPtBjGnBJpLTdx4OoeAili0LrrRjGx3D8qXstTdeZlRC
-         yny3HkeCu0U0ogw+RdYtyuz9EFivA23Pde+09M82b3GAPXCWhgqsxitLW4DknPwuwkrP
-         bzrg==
-X-Gm-Message-State: ANhLgQ1HnsaP2CHpO5yaSgtX7cicD7gkMZE6fB6j7ETYTk5Tebl3WR3m
-        0xxEv10j5P2gMRzJ1iHddWL0iXLnRwkIRQc4096O5uN7py6VmfvAQrCVP+U9VJSUC2bDrIhVko4
-        6V+mW6+jks57qBBC2WGH/R6Ar
-X-Received: by 2002:a1c:23d5:: with SMTP id j204mr16789896wmj.59.1584185490037;
-        Sat, 14 Mar 2020 04:31:30 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vs7P00MYsmC+SvAzqAncBQeg6TZFVmmUDSznYiD+XlMbi+A+TDwdXXwziZQe0yzu+wo3xeiRA==
-X-Received: by 2002:a1c:23d5:: with SMTP id j204mr16789874wmj.59.1584185489799;
-        Sat, 14 Mar 2020 04:31:29 -0700 (PDT)
+        bh=7mUmgqOIFOdKgmbkoQ0zespckuiZdF8ycwVxiswURFM=;
+        b=UNWq+U1vxabWfBv98hiapV9uQIIBj6lNk/PkTpWmnZhRxBpAhCgWcALKaiapKy+i6f
+         Ycimovx++pP1XuNdqfdWLVaPGe1shCiJeym+C/o5vnUPbiUisUs26bjVn7xUqoJ6r8cM
+         LXg4rqkJBVKPRfX4opqNC3Re3bnwJBwwqmuBVgeFQLkTPoIPcpz29cppJKQWHLSWv3rr
+         qB+zY6elsL3SqQzy8ndxhzQkr/w8ZVpagUp0YCfmNTW/0QxvO4n/OGpUpnF0y5hSqNNL
+         SNpjBXDUAwYa4erFrrgfgMBUuC+E7lGiLZXAou1APIRERZYD3vH40Rrvyhm8BEupZYv5
+         T03A==
+X-Gm-Message-State: ANhLgQ2dr1e7fjkU6G3Ww8EEFaQ+bZZcfCUuCfqs9gGsKyvTqn1qLuZ9
+        O+ZbADSYgKCzo/SsPJb1UM/NHhRmjVOtaAXXIafPfcC105vjNxsSYWVXRodpSL21/eI9t8HqGQQ
+        jZOsiAk6PA2i9dR79Ifu/z32M
+X-Received: by 2002:a5d:6a0e:: with SMTP id m14mr24146631wru.202.1584185863205;
+        Sat, 14 Mar 2020 04:37:43 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vtNGoRby/wRfjauVrobYr5jBC5s8q6oSM+F2dujPpEvIkjrwFi5vDmCl73ddSAQ4SsdWa43Zw==
+X-Received: by 2002:a5d:6a0e:: with SMTP id m14mr24146612wru.202.1584185862992;
+        Sat, 14 Mar 2020 04:37:42 -0700 (PDT)
 Received: from ?IPv6:2001:b07:6468:f312:7de8:5d90:2370:d1ac? ([2001:b07:6468:f312:7de8:5d90:2370:d1ac])
-        by smtp.gmail.com with ESMTPSA id y3sm47966512wrm.46.2020.03.14.04.31.28
+        by smtp.gmail.com with ESMTPSA id f17sm76798128wrj.28.2020.03.14.04.37.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Mar 2020 04:31:29 -0700 (PDT)
-Subject: Re: [PATCH] KVM: X86: avoid meaningless kvm_apicv_activated() check
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        linmiaohe <linmiaohe@huawei.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        rkrcmar@redhat.com, sean.j.christopherson@intel.com,
-        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com
-References: <1582597279-32297-1-git-send-email-linmiaohe@huawei.com>
- <87d0a2n8g9.fsf@vitty.brq.redhat.com>
+        Sat, 14 Mar 2020 04:37:42 -0700 (PDT)
+Subject: Re: [PATCH v2 0/2] kvm: selftests: Introduce TEST_FAIL and convert
+To:     Wainer dos Santos Moschetta <wainersm@redhat.com>,
+        kvm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        sean.j.christopherson@intel.com, shuah@kernel.org,
+        tglx@linutronix.de, thuth@redhat.com
+References: <20200310025059.9301-1-wainersm@redhat.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <7c0aedea-36dc-bd84-b7ba-1aa6d1cceb11@redhat.com>
-Date:   Sat, 14 Mar 2020 12:31:28 +0100
+Message-ID: <61b30d46-316c-5ef6-179f-fc394d352766@redhat.com>
+Date:   Sat, 14 Mar 2020 12:37:41 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <87d0a2n8g9.fsf@vitty.brq.redhat.com>
+In-Reply-To: <20200310025059.9301-1-wainersm@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -76,47 +74,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/02/20 13:43, Vitaly Kuznetsov wrote:
-> If I'm not mistaken, the logic this function was supposed to implement
-> is: change the requested bit to the requested state and, if
-> kvm_apicv_activated() changed (we set the first bit or cleared the
-> last), proceed with KVM_REQ_APICV_UPDATE. What if we re-write it like
+On 10/03/20 03:50, Wainer dos Santos Moschetta wrote:
+> Introduce the TEST_FAIL macro and change the tests/utilities
+> to use it.
 > 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 2103101eca78..b97b8ff4a789 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -8027,19 +8027,19 @@ EXPORT_SYMBOL_GPL(kvm_vcpu_update_apicv);
->   */
->  void kvm_request_apicv_update(struct kvm *kvm, bool activate, ulong bit)
->  {
-> +       bool apicv_was_activated = kvm_apicv_activated(kvm);
-> +
->         if (!kvm_x86_ops->check_apicv_inhibit_reasons ||
->             !kvm_x86_ops->check_apicv_inhibit_reasons(bit))
->                 return;
->  
-> -       if (activate) {
-> -               if (!test_and_clear_bit(bit, &kvm->arch.apicv_inhibit_reasons) ||
-> -                   !kvm_apicv_activated(kvm))
-> -                       return;
-> -       } else {
-> -               if (test_and_set_bit(bit, &kvm->arch.apicv_inhibit_reasons) ||
-> -                   kvm_apicv_activated(kvm))
-> -                       return;
-> -       }
-> +       if (activate)
-> +               clear_bit(bit, &kvm->arch.apicv_inhibit_reasons);
-> +       else
-> +               set_bit(bit, &kvm->arch.apicv_inhibit_reasons);
-> +
-> +       if (kvm_apicv_activated(kvm) == apicv_was_activated)
-> +               return;
+> v1 -> v2:
+> - Completed the conversion to TEST_FAIL.
+> 
+> v1:
+> - [RFC PATCH 0/1] kvm: selftests: Add TEST_FAIL macro
+>   https://lore.kernel.org/kvm/20200305172532.9360-1-wainersm@redhat.com/
+> 
+> Wainer dos Santos Moschetta (2):
+>   selftests: kvm: Introduce the TEST_FAIL macro
+>   selftests: kvm: Uses TEST_FAIL in tests/utilities
+> 
+>  tools/testing/selftests/kvm/dirty_log_test.c  |  7 +++----
+>  .../testing/selftests/kvm/include/test_util.h |  3 +++
+>  .../selftests/kvm/lib/aarch64/processor.c     | 17 +++++++--------
+>  .../testing/selftests/kvm/lib/aarch64/ucall.c |  2 +-
+>  tools/testing/selftests/kvm/lib/io.c          | 12 +++++------
+>  tools/testing/selftests/kvm/lib/kvm_util.c    | 21 ++++++++-----------
+>  .../selftests/kvm/lib/x86_64/processor.c      |  5 ++---
+>  .../kvm/x86_64/cr4_cpuid_sync_test.c          |  4 ++--
+>  .../testing/selftests/kvm/x86_64/evmcs_test.c |  6 +++---
+>  .../testing/selftests/kvm/x86_64/state_test.c |  6 +++---
+>  .../selftests/kvm/x86_64/svm_vmcall_test.c    |  6 ++----
+>  .../kvm/x86_64/vmx_close_while_nested_test.c  |  4 ++--
+>  .../selftests/kvm/x86_64/vmx_dirty_log_test.c |  6 +++---
+>  .../kvm/x86_64/vmx_tsc_adjust_test.c          |  4 ++--
+>  14 files changed, 49 insertions(+), 54 deletions(-)
+> 
 
-Yes, I got to the same conclusion before seeing you message.  Another
-possibility is to use cmpxchg, which I slightly prefer because if there
-are multiple concurrent updates it has some possibilities of avoiding
-the atomic operation and consequent cacheline bouncing.  I've sent a patch.
+Queued, thanks.
 
 Paolo
 
