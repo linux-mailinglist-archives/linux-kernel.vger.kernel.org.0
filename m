@@ -2,168 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48A05185733
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:33:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65882185752
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:36:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbgCOBd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 21:33:57 -0400
-Received: from mail-oln040092066041.outbound.protection.outlook.com ([40.92.66.41]:39502
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726713AbgCOBd5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 21:33:57 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Q2JGEaFYwYJEyZPREVztBw/1m9NJvuDWX90umxUK/jlJldCzw6ipz3fKm0jSf3L9ww5zTjsC9TYonX9rTtVrqyG0P+24nlSoCS1WTLzCHzTPsrFivWoJHC25qWRUXfkPGonnDSUqpjZEuYB3CQlsU24R+naQAcPwHv3JI9dqb65HexU8O2zl4Crj1NNyLmc80OZ3YM/8S7VpB8b4jdu7Xlq6uMh4ihw+5kAW20NtzBWtVcWQY+HjhZ7ISawmBAad7n6DpWgFIAuR056OM9Ue03iAtG8fv0EJnGrnUgnpyLMU+KSxAKgEbuv0yoUuQAbRR1HUdKDQR2O6Dgfj+NTPVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FbE3uweMaaHJaWUfWTHug4W4TVzDc7pJcDEE3TtdOYE=;
- b=TTKUMfThpECLe7G+jrCqcmYdw/WLzd2W4tKW254D4d+uDk3aPjk94SdgyHFmyJOu8d/0fsWGPVyTwAeUOyr7MErp5h7SUtYg7Ncl9anfskp/2t3VpPqOrUasKGHrkll0ijaqwgLRwwUXQl0DmkMTx4nrCJ4PrrfbjmmGRWeCiQPyIKPGw+D89z3sdPnCDVQfs9uANYuGmgfDTOez7gWVHuA0pxsUj2Agjc/1BNfWSs24EiwnNdZYaPQFtzYs+6DL5zpLehAFY3+9vYiTcbVxC4dhFmkrlXeEyOlTLcQ5T4+f0KyTNsWH8K3RfvTtDW4fAXhRPd2cgUffofhrblNgew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hotmail.de; dmarc=pass action=none header.from=hotmail.de;
- dkim=pass header.d=hotmail.de; arc=none
-Received: from HE1EUR01FT018.eop-EUR01.prod.protection.outlook.com
- (2a01:111:e400:7e18::34) by
- HE1EUR01HT012.eop-EUR01.prod.protection.outlook.com (2a01:111:e400:7e18::79)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.14; Sat, 14 Mar
- 2020 09:12:46 +0000
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.0.51) by
- HE1EUR01FT018.mail.protection.outlook.com (10.152.0.175) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.14 via Frontend Transport; Sat, 14 Mar 2020 09:12:46 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:EEFED189FB7E781DFD65E1EB063B25B78C1D5D6E449ACC0F326C3EFD86AFDEBD;UpperCasedChecksum:763318C5EF22B2B27EBCBE92ECB34B0D0C5CA3D20A0C9E8BB989FABAA0EAECF1;SizeAsReceived:10376;Count:50
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2814.018; Sat, 14 Mar 2020
- 09:12:46 +0000
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-Subject: [PATCH 0/2] exec: Fix dead-lock in de_thread with ptrace_attach
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87v9nlii0b.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87a74xi4kz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87r1y8dqqz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
- <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
- <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
- <f37a5d68-9674-533f-ee9c-a49174605710@virtuozzo.com>
- <87d09hn4kt.fsf@x220.int.ebiederm.org>
- <dbce35c7-c060-cfd8-bde1-98fd9a0747a9@virtuozzo.com>
- <87lfo5lju6.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170E9E71B9F84330B098BADE4FA0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <6002ac56-025a-d50f-e89d-1bf42a072323@virtuozzo.com>
-Message-ID: <AM6PR03MB5170396D87DED49FE00BC624E4FB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Sat, 14 Mar 2020 10:12:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-In-Reply-To: <6002ac56-025a-d50f-e89d-1bf42a072323@virtuozzo.com>
+        id S1727275AbgCOBgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 21:36:24 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:29017 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727234AbgCOBgX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Mar 2020 21:36:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584236182;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6C3WExn7s+xj+iSv2VKzXJvMQvMfExOgXpF/HdM+nvg=;
+        b=UnBFkpLruBDqtzOk9yN5HLWGvOe2LJLLV+/bEnO+Af5yZQPRdV714EoOK3Auz+4knNykZb
+        S0RAnXlaPrRNQtxt0SI2roEWo+H+hUtNEfA+QbIWJIUVFXHU4ud86qHJz6GBoGO4mniVSK
+        EUWEpStFYNheQjC2R0/PL3a9Bs7iKTk=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-200-RrVBvTQ_Pi6uH57W_vpnHg-1; Sat, 14 Mar 2020 05:32:31 -0400
+X-MC-Unique: RrVBvTQ_Pi6uH57W_vpnHg-1
+Received: by mail-wr1-f71.google.com with SMTP id o9so5691815wrw.14
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 02:32:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6C3WExn7s+xj+iSv2VKzXJvMQvMfExOgXpF/HdM+nvg=;
+        b=WOPTi0hA66AvKgNM9tc/rUp1xDf2ZL8ttneovlmwE5xUH66sEAg8rOrTsis74BJPip
+         YOTrGftHmiCeNF9gExrxnwj8LoWvAV1SVHayN+p7jpV5/atolHCqiWVExC/Ye8D2+k4L
+         5PDyKgXKlRGnb2UhQzaDV5XQasg2miU1Q+z84M6os/pKLQkcX2qBTVL2MPiRX3c2sdsR
+         fMrugdh8wb0WACvaZIMzST+fxGluMZcXiMCngYXErsgMItC1035usTr5yqRs6MC6ilXw
+         iVAYtvjcLbmR4ZGW4vrRJUr2OZCaeaQNw6tAtsuTOzHsPBCL2LiKDqVbu30YvikLRTf3
+         D+kA==
+X-Gm-Message-State: ANhLgQ2OnyfRvco8a2yd3+cEKaU9v4hKS4szgCdk8hNZQQpNyM66sstN
+        dRrK1b/XCiVaUBLWMH2cuTkDsWdDUaoN2NsCvVyzpRFvBKBZM0mDwlp0tq+2YQUjTpEi/98+y7k
+        TXFaQW/PjiP8kw1bM0IvBTuUJ
+X-Received: by 2002:adf:d4d1:: with SMTP id w17mr23696442wrk.206.1584178349763;
+        Sat, 14 Mar 2020 02:32:29 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vsPmKZzpKZ83gTWVwn+FLz5ACaVlHI/Tl1KtX0Nw1x+AfeobYV5T7TZwv62Nyh+1yh2nTWf5A==
+X-Received: by 2002:adf:d4d1:: with SMTP id w17mr23696423wrk.206.1584178349535;
+        Sat, 14 Mar 2020 02:32:29 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:7de8:5d90:2370:d1ac? ([2001:b07:6468:f312:7de8:5d90:2370:d1ac])
+        by smtp.gmail.com with ESMTPSA id a199sm11539997wme.29.2020.03.14.02.32.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Mar 2020 02:32:29 -0700 (PDT)
+Subject: Re: [PATCH] KVM: VMX: Condition ENCLS-exiting enabling on CPU support
+ for SGX1
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Toni Spets <toni.spets@iki.fi>
+References: <20200312180416.6679-1-sean.j.christopherson@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <62c80927-b174-398b-b340-c66560811172@redhat.com>
+Date:   Sat, 14 Mar 2020 10:32:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <20200312180416.6679-1-sean.j.christopherson@intel.com>
 Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZRAP278CA0006.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:10::16) To AM6PR03MB5170.eurprd03.prod.outlook.com
- (2603:10a6:20b:ca::23)
-X-Microsoft-Original-Message-ID: <85f93145-03c3-9eab-458b-eca9e4f96dca@hotmail.de>
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.1.101] (92.77.140.102) by ZRAP278CA0006.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:10::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.14 via Frontend Transport; Sat, 14 Mar 2020 09:12:44 +0000
-X-Microsoft-Original-Message-ID: <85f93145-03c3-9eab-458b-eca9e4f96dca@hotmail.de>
-X-TMN:  [HGNVDl+fo+q1MOx4BdQVKdKGq4mHjN9J]
-X-MS-PublicTrafficType: Email
-X-IncomingHeaderCount: 50
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: 6c6f3025-896e-4494-0afd-08d7c7f7dc2c
-X-MS-TrafficTypeDiagnostic: HE1EUR01HT012:
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: syS9h4UbqfmM+o42cKahLPKcRkr07jSOIAN0IPZZsqtVAeQySjJJpQg17ZJiwj+i4NWCvKBz/LONLLwc9W0j8XJjETowVPJowNpTL4r+muwxEPOGgCKRto9ahb6o80dPH1XQzHthuEfn9w2ZiUaU3Yr1Dgt5TwolqIofUsPjsKX3aZju+LnXm+FBnkZ7t7eg
-X-MS-Exchange-AntiSpam-MessageData: B2plmnkFfYINcAorh99ZPutdmrWMWqDd18F6vKzATcQctW0FjSc87W1JRGYq7wy4fjC3Veov/kcWAQk+uRV4y+RFEoBOGSrky2u04BLgk1B5OuU3vlabGQHugYiqEDLg+7otLdX/yis3pe03w2ULzA==
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c6f3025-896e-4494-0afd-08d7c7f7dc2c
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2020 09:12:46.5945
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR01HT012
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This completes the new infrastructure patch, and replaces the
-cred_guard_mutex with an exec_guard_mutex, and a boolean, that
-is set, when a dead-lock situation is detected.
+On 12/03/20 19:04, Sean Christopherson wrote:
+> Enable ENCLS-exiting (and thus set vmcs.ENCLS_EXITING_BITMAP) only if
+> the CPU supports SGX1.  Per Intel's SDM, all ENCLS leafs #UD if SGX1
+> is not supported[*], i.e. intercepting ENCLS to inject a #UD is
+> unnecessary.
+> 
+> Avoiding ENCLS-exiting even when it is reported as supported by the CPU
+> works around a reported issue where SGX is "hard" disabled after an S3
+> suspend/resume cycle, i.e. CPUID.0x7.SGX=0 and the VMCS field/control
+> are enumerated as unsupported.  While the root cause of the S3 issue is
+> unknown, it's definitely _not_ a KVM (or kernel) bug, i.e. this is a
+> workaround for what is most likely a hardware or firmware issue.  As a
+> bonus side effect, KVM saves a VMWRITE when first preparing vmcs01 and
+> vmcs02.
+> 
+> Query CPUID directly instead of going through cpu_data() or cpu_has() to
+> ensure KVM is trapping ENCLS when it's supported in hardware, e.g. even
+> if X86_FEATURE_SGX1 (which doesn't yet exist in upstream) were disabled
+> by the kernel/user.
+> 
+> Note, SGX must be disabled in BIOS to take advantage of this workaround
+> 
+> [*] The additional ENCLS CPUID check on SGX1 exists so that SGX can be
+>     globally "soft" disabled post-reset, e.g. if #MC bits in MCi_CTL are
+>     cleared.  Soft disabled meaning disabling SGX without clearing the
+>     primary CPUID bit (in leaf 0x7) and without poking into non-SGX
+>     CPU paths, e.g. for the VMCS controls.
+> 
+> Fixes: 0b665d304028 ("KVM: vmx: Inject #UD for SGX ENCLS instruction in guest")
+> Reported-by: Toni Spets <toni.spets@iki.fi>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+> 
+> This seems somewhat premature given that we don't yet know if the observed
+> behavior is a logic bug, a one off manufacturing defect, firmware specific,
+> etc...  On the other hand, the change is arguably an optimization
+> irrespective of using it as a workaround.
+> 
+>  arch/x86/kvm/vmx/vmx.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 40b1e6138cd5..50cab98382e7 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -2338,6 +2338,11 @@ static void hardware_disable(void)
+>  	kvm_cpu_vmxoff();
+>  }
+>  
+> +static bool cpu_has_sgx(void)
+> +{
+> +	return cpuid_eax(0) >= 0x12 && (cpuid_eax(0x12) & BIT(0));
+> +}
+> +
+>  static __init int adjust_vmx_controls(u32 ctl_min, u32 ctl_opt,
+>  				      u32 msr, u32 *result)
+>  {
+> @@ -2418,8 +2423,9 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf,
+>  			SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE |
+>  			SECONDARY_EXEC_PT_USE_GPA |
+>  			SECONDARY_EXEC_PT_CONCEAL_VMX |
+> -			SECONDARY_EXEC_ENABLE_VMFUNC |
+> -			SECONDARY_EXEC_ENCLS_EXITING;
+> +			SECONDARY_EXEC_ENABLE_VMFUNC;
+> +		if (cpu_has_sgx())
+> +			opt2 |= SECONDARY_EXEC_ENCLS_EXITING;
+>  		if (adjust_vmx_controls(min2, opt2,
+>  					MSR_IA32_VMX_PROCBASED_CTLS2,
+>  					&_cpu_based_2nd_exec_control) < 0)
+> 
 
-I also change ptrace_traceme to use the new mutex, but I consider
-it a bug, that it didn't take any mutex previously since it calls
-security_ptrace_traceme, and all the security modules operate under
-the assumption that execve is not operating in parallel.
+Queued, thanks.
 
-This patch fixes the test case tools/testing/selftests/ptrace/vmaccess:
+Paolo
 
-[==========] Running 2 tests from 1 test cases.
-[ RUN      ] global.vmaccess
-[       OK ] global.vmaccess
-[ RUN      ] global.attach
-[       OK ] global.attach  <= this was still failing
-[==========] 2 / 2 tests passed.
-[  PASSED  ]
-
-Yes, it is an API change, but only in some very special case,
-so I would exepect this to be un-noticeable to user space applications.
-
-Bernd Edlinger (2):
-  exec: Fix dead-lock in de_thread with ptrace_attach
-  doc: Update documentation of ->exec_*_mutex
-
- Documentation/security/credentials.rst | 29 +++++++++++++++-------
- fs/exec.c                              | 44 +++++++++++++++++++++++++++-------
- fs/proc/base.c                         | 13 ++++++----
- include/linux/sched/signal.h           | 14 +++++++----
- init/init_task.c                       |  2 +-
- kernel/cred.c                          |  2 +-
- kernel/fork.c                          |  2 +-
- kernel/ptrace.c                        | 20 +++++++++++++---
- kernel/seccomp.c                       | 15 +++++++-----
- 9 files changed, 102 insertions(+), 39 deletions(-)
-
--- 
-1.9.1
