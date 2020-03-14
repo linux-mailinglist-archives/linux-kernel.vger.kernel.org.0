@@ -2,161 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2E08185AB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 06:55:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28041185AC2
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 07:21:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbgCOFyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 01:54:25 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45336 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbgCOFyZ (ORCPT
+        id S1727238AbgCOGU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 02:20:58 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:36894 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726963AbgCOGU6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 01:54:25 -0400
-Received: by mail-qt1-f195.google.com with SMTP id z8so7987213qto.12
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 22:54:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P0PhmrWeYl62ooXY9u66tmOzjBc59eyH8e2oVcv2a7c=;
-        b=m79lNpOHHSDx2lT8mnquQ6YULXxg+AAU5CS/1Ja4BZcXjEpRk6VIsXEOHcO5Vm/MbH
-         K+U8Q9CB5VtkIzKLZSTvDpS/neXNWJhTRtqZM7yAADKbttr3jLeqrSzO0yJDuIHg0R41
-         h1ayMebv1ZYhCdsoqszPFGUHYqiPX9n9bVwde0LxD2YacQe/M92lLF/b960b5nmbUort
-         h7Jbn7U+oYbkCI7q98Uz+SeKCescRgiH0OnjUB+LhJT5TCaID6JhVVMbzlPl1RWrgnL0
-         TbkZY8/1w30H02Im67KcMjiv9b+82TtYFu1pdTZdeVgQ/rcjLFBhSzhJU8TTxUorD1QQ
-         kHLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P0PhmrWeYl62ooXY9u66tmOzjBc59eyH8e2oVcv2a7c=;
-        b=gN9Wgbjz5XVXctqnnN26iwXrDqoYHXQPIBVerWTl70PRs68Gm5CecKW+pjsKSoorlF
-         ueiTGty5oZBFcovd1Qj6rSNEdAwae8vAv2+Caf+kyual+EIiyZnkSmjxhj3VXrgvcEOT
-         DfhyhRHV8ZYK/Odl8i4l1Unwqlh1vZwWJNNv4U2SoxHmQy9SOReEiRNruJ00bbh/smG5
-         9URdnSf+avYxWEznFYc6ottLphiklOenlPAzqRQP6xEP+fBK1vhzjuh6DcQo+wB6r4U1
-         2/Wqkc43m3BbWF9bAlXW9TWnmVsgw9SAnlUH/hekv33x7D34Iml6bPQN9ME7900SxvD0
-         JMpQ==
-X-Gm-Message-State: ANhLgQ0d2ajQDDKVvtyzNnnY96R7W/I42UQWFoCLgx270+yKNHktN/H3
-        tuSLOhzQSrsNA62+5fx2AJc/HPmLBVwcyrTeZ4FmfA==
-X-Google-Smtp-Source: ADFU+vuLS+MRFOI4yDq1e0EY5BK/oeTo7K7UN2ogG5TWl9GMUgjO84Bth010w/kG+V2wEOGKmtnt1vyUKwuuEIGW+3E=
-X-Received: by 2002:ac8:6697:: with SMTP id d23mr19728067qtp.257.1584251661560;
- Sat, 14 Mar 2020 22:54:21 -0700 (PDT)
+        Sun, 15 Mar 2020 02:20:58 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02EIGXJJ057712;
+        Sat, 14 Mar 2020 13:16:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584209793;
+        bh=1lwJPvwq3CWt6lu29dsx5P0wKL1ky88ljQV85C0kOk0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=f/bl7Gzgbcnd3eMLfvWxPNyl/ky5CJ0W2N/4ATfZ30oW4ndD5ECenql2F53YUBqxB
+         UZP0B+1dV62iPIKhcczvEDn6kTI8OAqQOKHJFzhXmABPkm8fA8MbC3Dd4+O/CvyMLW
+         +nB1k/M/k6Mh2vhjPd/pHFSyWM9b2DVdoIfEmIZw=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02EIGXGo005896;
+        Sat, 14 Mar 2020 13:16:33 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Sat, 14
+ Mar 2020 13:16:33 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Sat, 14 Mar 2020 13:16:33 -0500
+Received: from [10.1.3.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02EIGVZR040802;
+        Sat, 14 Mar 2020 13:16:31 -0500
+Subject: Re: [PATCH v2] dt-bindings: display: ti: Fix dtc unit-address
+ warnings in examples
+To:     Rob Herring <robh@kernel.org>, <dri-devel@lists.freedesktop.org>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+References: <20200313180727.23044-1-robh@kernel.org>
+From:   Jyri Sarha <jsarha@ti.com>
+Autocrypt: addr=jsarha@ti.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <0699349c-83a8-fb34-2287-ed02b26bfe4d@ti.com>
+Date:   Sat, 14 Mar 2020 20:16:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200307135822.3894-1-penguin-kernel@I-love.SAKURA.ne.jp>
- <6f2e27de-c820-7de3-447d-cd9f7c650add@suse.com> <20200308065258.GE3983392@kroah.com>
- <3e9f47f7-a6c1-7cec-a84f-e621ae5426be@suse.com> <CACT4Y+a6KExbggs4mg8pvoD554PcDqQNW4sM15X-tc=YONCzYw@mail.gmail.com>
- <20200311101115.53139149@gandalf.local.home> <CACT4Y+Z5co4HyQBj6-uUdqT2Vk=6jgT-aQXuPtjx3qV4C_pZ7g@mail.gmail.com>
- <7e0d2bbf-71c2-395c-9a42-d3d6d3ee4fa4@i-love.sakura.ne.jp> <20200312182935.70ed6516@gandalf.local.home>
-In-Reply-To: <20200312182935.70ed6516@gandalf.local.home>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sun, 15 Mar 2020 06:54:10 +0100
-Message-ID: <CACT4Y+Zg4nCUrXnLXtBeaPRiBNp9XZqNzMnxGzzNEQ8n+h16wA@mail.gmail.com>
-Subject: Re: [PATCH v2] Add kernel config option for fuzz testing.
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Jiri Slaby <jslaby@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200313180727.23044-1-robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 11:29 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Fri, 13 Mar 2020 06:59:22 +0900
-> Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> > On 2020/03/13 4:23, Dmitry Vyukov wrote:
-> > >> Or teach the fuzz tool not to do specific bad things.
-> > >
-> > > We do some of this.
-> > > But generally it's impossible for anything that involves memory
-> > > indirections, or depends on the exact type of fd (e.g. all ioctl's),
-> > > etc. Boils down to halting problem and ability to predict exact
-> > > behavior of arbitrary programs.
-> >
-> > I would like to enable changes like below only if CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING=y .
-> >
-> > Since TASK_RUNNING threads are not always running on CPUs (in syzbot, the kernel is
-> > tested on a VM with only 2 CPUs, which means that many threads are simply waiting for
-> > CPU time to be assigned), dumping locks held by all threads gives us more clue when
-> > e.g. khungtask fired. But since lockdep_print_held_locks() is racy, I assume that
-> > this change won't be accepted unless CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING=y .
-> >
-> > Also, for another example, limit number of memory pages /dev/ion driver can consume only if
-> > CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING=y ( https://github.com/google/syzkaller/issues/1267 ),
-> > for limiting number of memory pages is a user-visible change while we need to avoid false
-> > alarms caused by consuming all memory pages.
-> >
-> > In other words, while majority of things CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING=y would
-> > do "disable this", there would be a few "enable this" and "change this".
->
-> I still fear that people will just disable large sections. I've seen this
-> before. Developers take the easy way out, and when someone adds a new
-> feature that may be dangerous, they will just say "oh turn off fuzzing" and
-> be done with it.
->
-> As Linus likes to say, when you need to make changes to the kernel to test
-> it, you are no longer testing production kernels.
+On 13/03/2020 20:07, Rob Herring wrote:
+> Extra dtc warnings (roughly what W=1 enables) are now enabled by default
+> when building the binding examples. These were fixed treewide in
+> 5.6-rc5, but some new display bindings have been added with new
+> warnings:
+> 
+> Documentation/devicetree/bindings/display/ti/ti,am65x-dss.example.dts:21.27-49.11: Warning (unit_address_format): /example-0/dss@04a00000: unit name should not have leading 0s
+> Documentation/devicetree/bindings/display/ti/ti,j721e-dss.example.dts:21.27-72.11: Warning (unit_address_format): /example-0/dss@04a00000: unit name should not have leading 0s
+> Documentation/devicetree/bindings/display/ti/ti,k2g-dss.example.dts:20.27-42.11: Warning (unit_address_format): /example-0/dss@02540000: unit name should not have leading 0s
+> 
+> Cc: Jyri Sarha <jsarha@ti.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+
+Acked-by: Jyri Sarha <jsarha@ti.com>
+
+> ---
+> v2:
+>  - Drop panel fixes as there's another patch fixing the 3 panels plus
+>    others.
+> ---
+>  Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml | 2 +-
+>  Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml | 2 +-
+>  Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml   | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+> index cac61a998203..aa5543a64526 100644
+> --- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+> +++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+> @@ -121,7 +121,7 @@ examples:
+>      #include <dt-bindings/interrupt-controller/irq.h>
+>      #include <dt-bindings/soc/ti,sci_pm_domain.h>
+>  
+> -    dss: dss@04a00000 {
+> +    dss: dss@4a00000 {
+>              compatible = "ti,am65x-dss";
+>              reg =   <0x0 0x04a00000 0x0 0x1000>, /* common */
+>                      <0x0 0x04a02000 0x0 0x1000>, /* vidl1 */
+> diff --git a/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
+> index ade9b2f513f5..6d47cd7206c2 100644
+> --- a/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
+> +++ b/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
+> @@ -154,7 +154,7 @@ examples:
+>      #include <dt-bindings/interrupt-controller/irq.h>
+>      #include <dt-bindings/soc/ti,sci_pm_domain.h>
+>  
+> -    dss: dss@04a00000 {
+> +    dss: dss@4a00000 {
+>              compatible = "ti,j721e-dss";
+>              reg =   <0x00 0x04a00000 0x00 0x10000>, /* common_m */
+>                      <0x00 0x04a10000 0x00 0x10000>, /* common_s0*/
+> diff --git a/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
+> index 385bd060ccf9..7cb37053e95b 100644
+> --- a/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
+> +++ b/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
+> @@ -81,7 +81,7 @@ examples:
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>      #include <dt-bindings/interrupt-controller/irq.h>
+>  
+> -    dss: dss@02540000 {
+> +    dss: dss@2540000 {
+>              compatible = "ti,k2g-dss";
+>              reg =   <0x02540000 0x400>,
+>                      <0x02550000 0x1000>,
+> 
 
 
-Well, it's tradeoffs all the way down.
-For example, KASAN also radically affects the kernel (changes just
-every line of code). There still should be final testing of the actual
-production build of course. But I would say generally one wants to
-test with KASAN enabled all the time.
-Or, it also depends on the baseline. If our baseline is "everybody is
-crazy about testing, ready to prioritize it on top of everything else
-and spend infinite amounts of time on it", then there may be better
-solutions. But if our baseline is "no testing at all", or "we have to
-disable whole subsystems b/c we don't have better realistic options
-and only few people willing to spend at least some time on it", then
-it may be a good practical solution ;)
-
-
-> > diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> > index 32406ef0d6a2..1bc7878768fc 100644
-> > --- a/kernel/locking/lockdep.c
-> > +++ b/kernel/locking/lockdep.c
-> > @@ -695,6 +695,7 @@ static void print_lock(struct held_lock *hlock)
-> >  static void lockdep_print_held_locks(struct task_struct *p)
-> >  {
-> >       int i, depth = READ_ONCE(p->lockdep_depth);
-> > +     bool unreliable;
-> >
-> >       if (!depth)
-> >               printk("no locks held by %s/%d.\n", p->comm, task_pid_nr(p));
-> > @@ -705,10 +706,12 @@ static void lockdep_print_held_locks(struct task_struct *p)
-> >        * It's not reliable to print a task's held locks if it's not sleeping
-> >        * and it's not the current task.
-> >        */
-> > -     if (p->state == TASK_RUNNING && p != current)
-> > -             return;
-> > +     unreliable = p->state == TASK_RUNNING && p != current;
-> >       for (i = 0; i < depth; i++) {
-> > -             printk(" #%d: ", i);
-> > +             if (unreliable)
-> > +                     printk(" #%d?: ", i);
-> > +             else
-> > +                     printk(" #%d: ", i);
->
-> Have you tried submitting this? Has Peter nacked it?
->
-> -- Steve
->
-> >               print_lock(p->held_locks + i);
-> >       }
-> >  }
->
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
