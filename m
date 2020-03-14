@@ -2,124 +2,257 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 358281856D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:30:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8E481856AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:29:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbgCOBaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 21:30:08 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:20685 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726979AbgCOBaH (ORCPT
+        id S1726655AbgCOB25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 21:28:57 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:17674 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726610AbgCOB24 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 21:30:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584235804;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VrADU/PINzBsLrlwn0rNGO/SJpZ9lJsqfzDpikUYU20=;
-        b=gT7wIDcpCqMUlmG7QrCF0AUczxLxt1XOU2AnwtM1FpivvviVITbDB5+nuNFQCQK9VK7cvH
-        KdvtxhvQeAH/7cCTaKFjmiFlPBZ6nFLRWGwwn3A1TSgGn5gaVKoYxlvPA22B7ZoepJmVKH
-        bvHNIdFRHPQ23fyxhbiaENLkZ91S4ZY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-492-RM77OEpTPjauMLoiGcXSRA-1; Sat, 14 Mar 2020 10:23:40 -0400
-X-MC-Unique: RM77OEpTPjauMLoiGcXSRA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Sat, 14 Mar 2020 21:28:56 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1584235736; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=jonzZp63L40u3yfPOPtIkP2E/IYQDyZzE0IebztJjEc=; b=SxUh369TJOJjgxgzWN+dWfN7eeZEdml8uUTMvHvULq+92J8baWNku+PEghcgEw5ifqVJdDJY
+ h8mUvQfD9oqMLO2XOgsnUHxvX6W/81GLe1tWISxGa8Qx1jW0osnUoM77QvCw6wIKDlxIQMoB
+ /YrasljTyuwYGqzLZo5/uDaDAhU=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e6d24ea.7f90155e8ae8-smtp-out-n01;
+ Sat, 14 Mar 2020 18:39:38 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id C1996C433D2; Sat, 14 Mar 2020 18:39:36 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 84481800D4E;
-        Sat, 14 Mar 2020 14:23:38 +0000 (UTC)
-Received: from krava (ovpn-204-34.brq.redhat.com [10.40.204.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4E5995C1B0;
-        Sat, 14 Mar 2020 14:23:35 +0000 (UTC)
-Date:   Sat, 14 Mar 2020 15:23:32 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf mem2node: avoid double free related to realloc
-Message-ID: <20200314142332.GB492969@krava>
-References: <20200314042826.166953-1-irogers@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200314042826.166953-1-irogers@google.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 38668C43636;
+        Sat, 14 Mar 2020 18:39:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 38668C43636
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v6 3/3] clk: qcom: Add modem clock controller driver for SC7180
+Date:   Sun, 15 Mar 2020 00:09:07 +0530
+Message-Id: <1584211147-5570-4-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1584211147-5570-1-git-send-email-tdas@codeaurora.org>
+References: <1584211147-5570-1-git-send-email-tdas@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 09:28:26PM -0700, Ian Rogers wrote:
-> Realloc of size zero is a free not an error, avoid this causing a double
-> free. Caught by clang's address sanitizer:
-> 
-> ==2634==ERROR: AddressSanitizer: attempting double-free on 0x6020000015f0 in thread T0:
->     #0 0x5649659297fd in free llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:123:3
->     #1 0x5649659e9251 in __zfree tools/lib/zalloc.c:13:2
->     #2 0x564965c0f92c in mem2node__exit tools/perf/util/mem2node.c:114:2
->     #3 0x564965a08b4c in perf_c2c__report tools/perf/builtin-c2c.c:2867:2
->     #4 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
->     #5 0x564965944348 in run_builtin tools/perf/perf.c:312:11
->     #6 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
->     #7 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
->     #8 0x564965942e41 in main tools/perf/perf.c:538:3
-> 
-> 0x6020000015f0 is located 0 bytes inside of 1-byte region [0x6020000015f0,0x6020000015f1)
-> freed by thread T0 here:
->     #0 0x564965929da3 in realloc third_party/llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:164:3
->     #1 0x564965c0f55e in mem2node__init tools/perf/util/mem2node.c:97:16
->     #2 0x564965a08956 in perf_c2c__report tools/perf/builtin-c2c.c:2803:8
->     #3 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
->     #4 0x564965944348 in run_builtin tools/perf/perf.c:312:11
->     #5 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
->     #6 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
->     #7 0x564965942e41 in main tools/perf/perf.c:538:3
-> 
-> previously allocated by thread T0 here:
->     #0 0x564965929c42 in calloc third_party/llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:154:3
->     #1 0x5649659e9220 in zalloc tools/lib/zalloc.c:8:9
->     #2 0x564965c0f32d in mem2node__init tools/perf/util/mem2node.c:61:12
->     #3 0x564965a08956 in perf_c2c__report tools/perf/builtin-c2c.c:2803:8
->     #4 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
->     #5 0x564965944348 in run_builtin tools/perf/perf.c:312:11
->     #6 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
->     #7 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
->     #8 0x564965942e41 in main tools/perf/perf.c:538:3
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/mem2node.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/mem2node.c b/tools/perf/util/mem2node.c
-> index 797d86a1ab09..7f97aa69eb65 100644
-> --- a/tools/perf/util/mem2node.c
-> +++ b/tools/perf/util/mem2node.c
-> @@ -95,7 +95,7 @@ int mem2node__init(struct mem2node *map, struct perf_env *env)
->  
->  	/* Cut unused entries, due to merging. */
->  	tmp_entries = realloc(entries, sizeof(*entries) * j);
-> -	if (tmp_entries)
-> +	if (j == 0 || tmp_entries)
+Add support for the modem clock controller found on SC7180
+based devices. This would allow modem drivers to probe and
+control their clocks.
 
-nice catch.. I wonder if we should fail in here, or at least
-warn that there're no entris.. which is really strange ;-)
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/Kconfig      |   9 +++
+ drivers/clk/qcom/Makefile     |   1 +
+ drivers/clk/qcom/mss-sc7180.c | 143 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 153 insertions(+)
+ create mode 100644 drivers/clk/qcom/mss-sc7180.c
 
-thanks,
-jirka
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 15cdcdc..4225f86 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -280,6 +280,15 @@ config SC_GPUCC_7180
+ 	  Say Y if you want to support graphics controller devices and
+ 	  functionality such as 3D graphics.
 
->  		entries = tmp_entries;
->  
->  	for (i = 0; i < j; i++) {
-> -- 
-> 2.25.1.481.gfbce0eb801-goog
-> 
-
++config SC_MSS_7180
++	tristate "SC7180 Modem Clock Controller"
++	select SC_GCC_7180
++	help
++	  Support for the Modem Subsystem clock controller on Qualcomm
++	  Technologies, Inc on SC7180 devices.
++	  Say Y if you want to use the Modem branch clocks of the Modem
++	  subsystem clock controller to reset the MSS subsystem.
++
+ config SC_VIDEOCC_7180
+ 	tristate "SC7180 Video Clock Controller"
+ 	select SC_GCC_7180
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 656a87e..9135592 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -50,6 +50,7 @@ obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
+ obj-$(CONFIG_SC_DISPCC_7180) += dispcc-sc7180.o
+ obj-$(CONFIG_SC_GCC_7180) += gcc-sc7180.o
+ obj-$(CONFIG_SC_GPUCC_7180) += gpucc-sc7180.o
++obj-$(CONFIG_SC_MSS_7180) += mss-sc7180.o
+ obj-$(CONFIG_SC_VIDEOCC_7180) += videocc-sc7180.o
+ obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
+ obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
+diff --git a/drivers/clk/qcom/mss-sc7180.c b/drivers/clk/qcom/mss-sc7180.c
+new file mode 100644
+index 0000000..673fa1a
+--- /dev/null
++++ b/drivers/clk/qcom/mss-sc7180.c
+@@ -0,0 +1,143 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2020, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++#include <linux/module.h>
++#include <linux/pm_clock.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
++
++#include <dt-bindings/clock/qcom,mss-sc7180.h>
++
++#include "clk-regmap.h"
++#include "clk-branch.h"
++#include "common.h"
++
++static struct clk_branch mss_axi_nav_clk = {
++	.halt_reg = 0x20bc,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x20bc,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "mss_axi_nav_clk",
++			.parent_data = &(const struct clk_parent_data){
++				.fw_name = "gcc_mss_nav_axi",
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch mss_axi_crypto_clk = {
++	.halt_reg = 0x20cc,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x20cc,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "mss_axi_crypto_clk",
++			.parent_data = &(const struct clk_parent_data){
++				.fw_name = "gcc_mss_mfab_axis",
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static const struct regmap_config mss_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.fast_io	= true,
++	.max_register	= 0x41aa0cc,
++};
++
++static struct clk_regmap *mss_sc7180_clocks[] = {
++	[MSS_AXI_CRYPTO_CLK] = &mss_axi_crypto_clk.clkr,
++	[MSS_AXI_NAV_CLK] = &mss_axi_nav_clk.clkr,
++};
++
++static const struct qcom_cc_desc mss_sc7180_desc = {
++	.config = &mss_regmap_config,
++	.clks = mss_sc7180_clocks,
++	.num_clks = ARRAY_SIZE(mss_sc7180_clocks),
++};
++
++static int mss_sc7180_probe(struct platform_device *pdev)
++{
++	int ret;
++
++	pm_runtime_enable(&pdev->dev);
++	ret = pm_clk_create(&pdev->dev);
++	if (ret)
++		goto disable_pm_runtime;
++
++	ret = pm_clk_add(&pdev->dev, "cfg_ahb");
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to acquire iface clock\n");
++		goto destroy_pm_clk;
++	}
++
++	ret = qcom_cc_probe(pdev, &mss_sc7180_desc);
++	if (ret < 0)
++		goto destroy_pm_clk;
++
++	return 0;
++
++destroy_pm_clk:
++	pm_clk_destroy(&pdev->dev);
++
++disable_pm_runtime:
++	pm_runtime_disable(&pdev->dev);
++
++	return ret;
++}
++
++static int mss_sc7180_remove(struct platform_device *pdev)
++{
++	pm_clk_destroy(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++
++	return 0;
++}
++
++static const struct dev_pm_ops mss_sc7180_pm_ops = {
++	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
++};
++
++static const struct of_device_id mss_sc7180_match_table[] = {
++	{ .compatible = "qcom,sc7180-mss" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, mss_sc7180_match_table);
++
++static struct platform_driver mss_sc7180_driver = {
++	.probe		= mss_sc7180_probe,
++	.remove		= mss_sc7180_remove,
++	.driver		= {
++		.name		= "sc7180-mss",
++		.of_match_table = mss_sc7180_match_table,
++		.pm = &mss_sc7180_pm_ops,
++	},
++};
++
++static int __init mss_sc7180_init(void)
++{
++	return platform_driver_register(&mss_sc7180_driver);
++}
++subsys_initcall(mss_sc7180_init);
++
++static void __exit mss_sc7180_exit(void)
++{
++	platform_driver_unregister(&mss_sc7180_driver);
++}
++module_exit(mss_sc7180_exit);
++
++MODULE_DESCRIPTION("QTI MSS SC7180 Driver");
++MODULE_LICENSE("GPL v2");
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
