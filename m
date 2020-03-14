@@ -2,87 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE25718542D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 04:16:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99510185432
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Mar 2020 04:16:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbgCNDQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Mar 2020 23:16:12 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:1714 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726593AbgCNDQL (ORCPT
+        id S1727020AbgCNDQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Mar 2020 23:16:21 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56496 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726559AbgCNDQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Mar 2020 23:16:11 -0400
-X-UUID: f93f8aedbd494ea2b73b31f75a61258e-20200314
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=C2K4Cop7Wb0RFGven4yS2g1JnnYfQ0FnAQYy/7x6fJg=;
-        b=B3sbXdyotBQj1L/y27wG3lh0Uksf7RPvHiB0QpCGs4q653rsbekwFx6g73ucZGZ2NLQojzCC4zqmcK4pZKKEFP1IxvAzXQOUy8LsSbKUOJH2rjNO+1/Da/+pvVKEN3fL65nAEdj++G6jMt7M5zXQWYtGP+XJItSkw3EvAH34OYc=;
-X-UUID: f93f8aedbd494ea2b73b31f75a61258e-20200314
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1937859533; Sat, 14 Mar 2020 11:16:04 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sat, 14 Mar 2020 11:13:12 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sat, 14 Mar 2020 11:15:58 +0800
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
-        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
-        <jejb@linux.ibm.com>
-CC:     <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
-        <cang@codeaurora.org>, <matthias.bgg@gmail.com>,
-        <bvanassche@acm.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
-        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
-        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH v1 2/2] scsi: ufs-mediatek: add error recovery for suspend and resume
-Date:   Sat, 14 Mar 2020 11:16:00 +0800
-Message-ID: <20200314031600.10616-3-stanley.chu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20200314031600.10616-1-stanley.chu@mediatek.com>
-References: <20200314031600.10616-1-stanley.chu@mediatek.com>
+        Fri, 13 Mar 2020 23:16:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584155778;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fI88XePUQN+uUZ01EplG9/auBZ7QVWbUBp6D0ERPqls=;
+        b=KTltM+d+kOwiAhegLv5TmIhCmNNDq1DzP5JG9YL9gb5xgJWACAWJGnDbk3tI/oAUvySmgW
+        SwST/u1ZQDT/I2LvjI7+AEnduFyqFwkW7woXgwFc1sL1g3vy6rn6Hmo/XM87U0Tm8deyk0
+        h2OxWCRnzDGIawQefi85Xazxj+sH6I4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-467-k2kwX0RMNju8mGzyGHuJzQ-1; Fri, 13 Mar 2020 23:16:14 -0400
+X-MC-Unique: k2kwX0RMNju8mGzyGHuJzQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F070F100550E;
+        Sat, 14 Mar 2020 03:16:12 +0000 (UTC)
+Received: from mail (ovpn-121-125.rdu2.redhat.com [10.10.121.125])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 12B0873864;
+        Sat, 14 Mar 2020 03:16:10 +0000 (UTC)
+Date:   Fri, 13 Mar 2020 23:16:09 -0400
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Will Deacon <will@kernel.org>, Rafael Aquini <aquini@redhat.com>,
+        Mark Salter <msalter@redhat.com>,
+        Jon Masters <jcm@jonmasters.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        Michal Hocko <mhocko@kernel.org>, QI Fuli <qi.fuli@fujitsu.com>
+Subject: Re: [PATCH 3/3] arm64: tlb: skip tlbi broadcast
+Message-ID: <20200314031609.GB2250@redhat.com>
+References: <20200223192520.20808-1-aarcange@redhat.com>
+ <20200223192520.20808-4-aarcange@redhat.com>
+ <20200309112242.GB2487@mbp>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 5F831230383B796E830BE403768E4242EE53CFA2BA907BF921702FA6DC027FB22000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200309112242.GB2487@mbp>
+User-Agent: Mutt/1.13.4 (2020-02-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T25jZSBmYWlsIGhhcHBlbnMgZHVyaW5nIHN1c3BlbmQgYW5kIHJlc3VtZSBmbG93IGlmIHRoZSBk
-ZXNpcmVkIGxvdw0KcG93ZXIgbGluayBzdGF0ZSBpcyBIOCwgbGluayByZWNvdmVyeSBpcyByZXF1
-aXJlZCBmb3IgTWVkaWFUZWsgVUZTDQpjb250cm9sbGVyLg0KDQpGb3IgcmVzdW1lIGZsb3csIHNp
-bmNlIHBvd2VyIGFuZCBjbG9ja3MgYXJlIGFscmVhZHkgZW5hYmxlZCBiZWZvcmUNCmludm9raW5n
-IHZlbmRvcidzIHJlc3VtZSBjYWxsYmFjaywgc2ltcGx5IHVzaW5nIHVmc2hjZF9saW5rX3JlY292
-ZXJ5KCkNCmluc2lkZSBjYWxsYmFjayBpcyBmaW5lLg0KDQpGb3Igc3VzcGVuZCBmbG93LCB0aGUg
-ZGV2aWNlIHBvd2VyIGVudGVycyBsb3cgcG93ZXIgbW9kZSBvciBpcyBkaXNhYmxlZA0KYmVmb3Jl
-IHN1c3BlbmQgY2FsbGJhY2ssIHRodXMgdWZzaGNkX2xpbmtfcmVjb3ZlcnkoKSBjYW4gbm90IGJl
-IGRpcmVjdGx5DQp1c2VkIGluIGNhbGxiYWNrLiBUbyBsZXZlcmFnZSBob3N0IHJlc2V0IGZsb3cg
-ZHVyaW5nIHVmc2hjZF9zdXNwZW5kKCksDQpzZXQgbGluayBhcyBvZmYgc3RhdGUgZW5mb3JjZWRs
-eSB0byBsZXQgdWZzaGNkX2hvc3RfcmVzZXRfYW5kX3Jlc3RvcmUoKQ0KYmUgZXhlY3V0ZWQgYnkg
-dWZzaGNkX3N1c3BlbmQoKS4NCg0KU2lnbmVkLW9mZi1ieTogU3RhbmxleSBDaHUgPHN0YW5sZXku
-Y2h1QG1lZGlhdGVrLmNvbT4NCi0tLQ0KIGRyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmMg
-fCAxMiArKysrKysrKysrLS0NCiAxIGZpbGUgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgMiBk
-ZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVr
-LmMgYi9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jDQppbmRleCBjMGZkN2QyZTRkMGQu
-LmYxOWU5YTY0ZDQ5MCAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVr
-LmMNCisrKyBiL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmMNCkBAIC00OTksOCArNDk5
-LDE0IEBAIHN0YXRpYyBpbnQgdWZzX210a19zdXNwZW5kKHN0cnVjdCB1ZnNfaGJhICpoYmEsIGVu
-dW0gdWZzX3BtX29wIHBtX29wKQ0KIA0KIAlpZiAodWZzaGNkX2lzX2xpbmtfaGliZXJuOChoYmEp
-KSB7DQogCQllcnIgPSB1ZnNfbXRrX2xpbmtfc2V0X2xwbShoYmEpOw0KLQkJaWYgKGVycikNCisJ
-CWlmIChlcnIpIHsNCisJCQkvKiBTZXQgbGluayBhcyBvZmYgc3RhdGUgZW5mb3JjZWRseSB0byB0
-cmlnZ2VyDQorCQkJICogdWZzaGNkX2hvc3RfcmVzZXRfYW5kX3Jlc3RvcmUoKSBpbiB1ZnNoY2Rf
-c3VzcGVuZCgpDQorCQkJICogZm9yIGNvbXBsZXRlZCBob3N0IHJlc2V0Lg0KKwkJCSAqLw0KKwkJ
-CXVmc2hjZF9zZXRfbGlua19vZmYoaGJhKTsNCiAJCQlyZXR1cm4gLUVBR0FJTjsNCisJCX0NCiAJ
-fQ0KIA0KIAlpZiAoIXVmc2hjZF9pc19saW5rX2FjdGl2ZShoYmEpKQ0KQEAgLTUxOSw4ICs1MjUs
-MTAgQEAgc3RhdGljIGludCB1ZnNfbXRrX3Jlc3VtZShzdHJ1Y3QgdWZzX2hiYSAqaGJhLCBlbnVt
-IHVmc19wbV9vcCBwbV9vcCkNCiANCiAJaWYgKHVmc2hjZF9pc19saW5rX2hpYmVybjgoaGJhKSkg
-ew0KIAkJZXJyID0gdWZzX210a19saW5rX3NldF9ocG0oaGJhKTsNCi0JCWlmIChlcnIpDQorCQlp
-ZiAoZXJyKSB7DQorCQkJZXJyID0gdWZzaGNkX2xpbmtfcmVjb3ZlcnkoaGJhKTsNCiAJCQlyZXR1
-cm4gZXJyOw0KKwkJfQ0KIAl9DQogDQogCXJldHVybiAwOw0KLS0gDQoyLjE4LjANCg==
+Hi Catalin,
+
+On Mon, Mar 09, 2020 at 11:22:42AM +0000, Catalin Marinas wrote:
+> IIUC, nr_active_mm keeps track of how many instances of the current pgd
+> (TTBR0_EL1) are active.
+
+Correct.
+
+> And this code here can assume that if nr_active_mm <= 1, no broadcast is
+> necessary.
+
+Yes.
+
+> One concern I have is the ordering between TTBR0_EL1 update in
+> cpu_do_switch_mm() and the nr_active_mm, both on a different CPU. We
+> only have an ISB for context synchronisation on that CPU but I don't
+> think the architecture guarantees any relation between sysreg access and
+> the memory update. We have a DSB but that's further down in switch_to().
+
+There are several cpu_do_switch_mm updating TTBR0_EL1 and nr_active_mm
+updates that can happen on different CPUs simultaneously. It's hard to
+see exactly which one you refer to.
+
+Overall the idea here is that even if a speculative tlb lookup happens
+in between those updates while the "mm" is going away and
+atomic_dec(&mm->nr_active_mm) is being called on the mm, it doesn't
+matter because no userland software can use such stale tlb anymore
+until local_flush_tlb_asid() gets rid of it.
+
+The v1 patch (before I posted the incremental mm_count check) had
+issues with speculatively loaded stale tlb entries only because they
+weren't guaranteed to be flushed when the kernel thread switched back
+to an userland process. So it relied on the CPU not to speculatively
+load random pagetables while the kernel thread was running in lazy tlb
+mode, but here the flush is guaranteed and in turn the CPU can always
+load any TLB it wants at any given time.
+
+> However, what worries me more is that you can now potentially do a TLB
+> shootdown without clearing the intermediate (e.g. VA to pte) walk caches
+> from the TLB. Even if the corresponding pgd and ASID are no longer
+> active on other CPUs, I'm not sure it's entirely safe to free (and
+> re-allocate) pages belonging to a pgtable without first flushing the
+
+With regard to not doing a tlbi broadcast, nothing fundamentally
+changed between v1 (single threaded using mm_users) and the latest
+version (multhtreaded introducing nr_active_mm).
+
+The v1 only skipped the tlbi broadcast in remote CPUs that run the
+asid of a single threaded process before a CPU migration, but the
+pages could already be reallocated from the point of view of the
+remote CPUs.
+
+In the current version the page can be reallocated even from the point
+of view of the current CPU. However the fact the window has been
+enlarged significantly should be a good thing, so if there would have
+been something wrong with it, it would have been far easier to
+reproduce it.
+
+This concern is still a corollary of the previous paragraph: it's
+still about stale tlb entries being left in an asid that can't ever be
+used through the current asid.
+
+> TLB. All the architecture spec states is that the software must first
+> clear the entry followed by TLBI (the break-before-make rules).
+
+The "break" in "break-before-make" is still guaranteed or it wouldn't
+boot: however it's not implemented with the tlbi broadcast anymore.
+
+The break is implemented by enforcing no stale tlb entry of such asid
+exists in the TLB while any userland code runs.
+
+X86 specs supposed an OS would allocate a TSS per-process and you
+would do a context switch by using a task gate. I recall the first
+Linux version I used had a TSS per process as envisioned by the
+specs. Later the TSS become per-CPU and the esp0 pointer was updated
+instead (native_load_sp0) and the stack was switched by hand.
+
+I guess reading the specs may result confusing after such a software
+change, that doesn't mean the software shouldn't optimize things
+behind the specs if it's safe to do and it's not explicitly forbidden.
+
+The page being reused by another virtual address in another CPU isn't
+necessarily an invalid scenario from the point of view of the CPU. It
+looks invalid if you assume the page is freed. You can think of it
+like a MAP_SHARED page that gets one more mapping associated to it
+(the reuse of the page) from another CPU it may look more legit. The
+fact there's an old mapping left on the MAP_SHARED pagecache
+indefinitely doesn't mean the CPU with such old mapping left in the
+TLB is allowed to change the content of the page if the software never
+writes to such virtual address through the old mapping. The important
+thing is that the content of the page must not change unless the
+software running in the CPU explicitly writes through the virtual
+address that corresponds to the stale TLB entry (and it's guaranteed
+the software won't write to it). The stale TLB of such asid eventually
+is flushed either through a bumb of the asid generation or through a
+local asid flush.
+
+> That said, the benchmark numbers are not very encouraging. Around 1%
+> improvement in a single run, it can as well be noise. Also something
+> like hackbench may also show a slight impact on the context switch path.
+
+I recall I tested hackbench and it appeared faster with processes,
+otherwise it was within measurement error.
+
+hackbench with processes is fork heavy so it gets some benefit because
+all those copy-on-write post fork will trigger tlbi broadcasts on all
+CPUs to flush the wrprotected tlb entry. Specifically the one
+converted to local tlb flush is ptep_clear_flush_notify in
+wp_page_copy() and there's one for each page being modified by parent
+or child.
+
+> Maybe with a true NUMA machine with hundreds of CPUs we may see a
+> difference, but it depends on how well the TLBI is implemented.
+
+The numbers in the commit header were not in a single run. perf stat
+-r 10 -e dummy runs it 10 times and then shows the stdev along the
+number too so you can what the noise was. It wasn't only a 1%
+improvement either. Overall there's no noise in the measurement.
+
+tcmalloc_large_heap_fragmentation_unittest simulating dealing with
+small objects by many different containers at the same time, was 9.4%
+faster (%stdev 0.36% 0.29%), with 32 CPUs and no NUMA.
+
+256 times parallel run of 32 `sort` in a row, was 10.3% faster (%stdev
+0.77% 0.38%), with 32 CPUs and no NUMA.
+
+The multithreaded microbenchmark runs x16 times faster, but that's not
+meaningful by itself, it's still a good hint some real life workload
+(especially those with frequent MADV_DONTNEED) will run faster and
+they did (and a verification that now also multithreaded apps can be
+optimized).
+
+Rafael already posted a benchmark specifically stressing the context
+switch.
+
+It's reasonable to expect any multi-socket NUMA to show more benefit
+from the optimization than the 32 CPU non NUMA used for the current
+benchmarks.
+
+Thanks,
+Andrea
 
