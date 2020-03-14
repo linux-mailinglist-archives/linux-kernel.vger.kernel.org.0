@@ -2,92 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C313A1858CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:23:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 227F8185859
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:04:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbgCOCXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 22:23:53 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:35291 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727222AbgCOCXw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:23:52 -0400
-Received: by mail-il1-f196.google.com with SMTP id v6so1926964ilq.2;
-        Sat, 14 Mar 2020 19:23:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bolGqQxhWdWgpU69XRMnXiz0W60KCuDWQ2z7xXlvj8E=;
-        b=B8W0+FWWYJN6WqgwttmprjGZlMBoY9aBQyq3jJHauz+tUTSsJhMYccjD+haAXovvGZ
-         uYXGReUyVM1xMUHz3ikiugYUTqM/xfrZ7UL0yCorZWLbFGaH1aDbuLd42pj/acAqqMB3
-         +eyDeQGvDxDBAdHnGnSwSzVdxtyO6/Qy0AXC4tzz8LhVC7Am4Xx0/oUj9yy1JVdgwa+7
-         +2QuCA5Ui1x6YchRfuADgUBNsIM//sAEWH+2qGt6yybMQkivhoWBT9qJtu4qrPx99D2V
-         rEomakD2K2od0Yj6D2pmWeA7JINHnwt6y3bumHe65bYWQFO7MLY2xnoJSt3/nIt0y3zh
-         AXCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bolGqQxhWdWgpU69XRMnXiz0W60KCuDWQ2z7xXlvj8E=;
-        b=HjKgulUOENWpZZq+XviiRaQl7WV+JHPQFznUdb6hhmCx5THRDmdTuetzcZh9NTyGDV
-         V0Vz5AgTsj7GdGYjGQ/oOoDby2I11DxhBdNAJo7gQudYqpKYUQrsBnvGhQTgnhCfUEMN
-         Ux3LnZ/IQ+AWytnXzbAtiyqeZA1zWplVQKS1VPEJxRBjUenMd/hX0qbStDVzKuNc++mg
-         nAxLJyYLdT7cK3puT3hE3iOV6MVm94gaj4N6UUFxAE/9333B3jkp2etyUWWhr2RQCJGj
-         fR3QLYdVEJns3e511VGY97GUkxGHuVRN9EI0gmgQlZzCAJeuPcyuDne3R2Cs863Mr/Fe
-         S8DQ==
-X-Gm-Message-State: ANhLgQ3KuhoxN682wS6XUZ936V28UtF8XiGj15gxW/vJXAflm1MM0HQl
-        R74NePzBv72r+8uU4KZ/1VjtAUO5
-X-Google-Smtp-Source: ADFU+vv29Ok1TmkzoC9UWO3LDApVs8zw0AH3uafkrwoNY+zDHYFb5jJpLgUc2dBlZokjE3JuF1U5yg==
-X-Received: by 2002:a63:f243:: with SMTP id d3mr16185919pgk.254.1584163628426;
-        Fri, 13 Mar 2020 22:27:08 -0700 (PDT)
-Received: from localhost ([216.24.188.11])
-        by smtp.gmail.com with ESMTPSA id z20sm29316118pge.62.2020.03.13.22.27.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 13 Mar 2020 22:27:08 -0700 (PDT)
-From:   Dejin Zheng <zhengdejin5@gmail.com>
-To:     gregkh@linuxfoundation.org, rafael@kernel.org, hminas@synopsys.com,
-        mathias.nyman@intel.com, bgolaszewski@baylibre.com, arnd@arndb.de,
-        geert@linux-m68k.org, mchehab+samsung@kernel.org,
-        treding@nvidia.com, tglx@linutronix.de, suzuki.poulose@arm.com,
-        hdegoede@redhat.com, linux-usb@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Dejin Zheng <zhengdejin5@gmail.com>
-Subject: [PATCH v2 4/4] usb: dwc2: convert to devm_platform_ioremap_and_get_resource
-Date:   Sat, 14 Mar 2020 13:26:38 +0800
-Message-Id: <20200314052638.6008-5-zhengdejin5@gmail.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200314052638.6008-1-zhengdejin5@gmail.com>
-References: <20200314052638.6008-1-zhengdejin5@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727514AbgCOCEo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:04:44 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:60384 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726130AbgCOCEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Mar 2020 22:04:44 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6951520155F;
+        Sat, 14 Mar 2020 08:17:49 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 12B13201561;
+        Sat, 14 Mar 2020 08:17:45 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8931D402A5;
+        Sat, 14 Mar 2020 15:17:39 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     srinivas.kandagatla@linaro.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] nvmem: mxs-ocotp: Use devm_add_action_or_reset() for cleanup
+Date:   Sat, 14 Mar 2020 15:11:11 +0800
+Message-Id: <1584169871-418-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_and_get_resource() to simplify code, which
-contains platform_get_resource() and devm_ioremap_resource(), it also
-get the resource for use by the following code.
+Use devm_add_action_or_reset() for cleanup to call clk_unprepare(),
+which can simplify the error handling in .probe, and .remove callback
+can be dropped.
 
-Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/usb/dwc2/platform.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/nvmem/mxs-ocotp.c | 30 +++++++++++-------------------
+ 1 file changed, 11 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
-index 3c6ce09a6db5..56eec2b95eaf 100644
---- a/drivers/usb/dwc2/platform.c
-+++ b/drivers/usb/dwc2/platform.c
-@@ -392,8 +392,7 @@ static int dwc2_driver_probe(struct platform_device *dev)
- 		return retval;
+diff --git a/drivers/nvmem/mxs-ocotp.c b/drivers/nvmem/mxs-ocotp.c
+index 8e4898d..588ab56 100644
+--- a/drivers/nvmem/mxs-ocotp.c
++++ b/drivers/nvmem/mxs-ocotp.c
+@@ -130,6 +130,11 @@ static const struct of_device_id mxs_ocotp_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, mxs_ocotp_match);
+ 
++static void mxs_ocotp_action(void *data)
++{
++	clk_unprepare(data);
++}
++
+ static int mxs_ocotp_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -160,39 +165,26 @@ static int mxs_ocotp_probe(struct platform_device *pdev)
+ 		return ret;
  	}
  
--	res = platform_get_resource(dev, IORESOURCE_MEM, 0);
--	hsotg->regs = devm_ioremap_resource(&dev->dev, res);
-+	hsotg->regs = devm_platform_ioremap_and_get_resource(dev, 0, &res);
- 	if (IS_ERR(hsotg->regs))
- 		return PTR_ERR(hsotg->regs);
++	ret = devm_add_action_or_reset(&pdev->dev, mxs_ocotp_action, otp->clk);
++	if (ret)
++		return ret;
++
+ 	data = match->data;
  
+ 	ocotp_config.size = data->size;
+ 	ocotp_config.priv = otp;
+ 	ocotp_config.dev = dev;
+ 	otp->nvmem = devm_nvmem_register(dev, &ocotp_config);
+-	if (IS_ERR(otp->nvmem)) {
+-		ret = PTR_ERR(otp->nvmem);
+-		goto err_clk;
+-	}
++	if (IS_ERR(otp->nvmem))
++		return PTR_ERR(otp->nvmem);
+ 
+ 	platform_set_drvdata(pdev, otp);
+ 
+ 	return 0;
+-
+-err_clk:
+-	clk_unprepare(otp->clk);
+-
+-	return ret;
+-}
+-
+-static int mxs_ocotp_remove(struct platform_device *pdev)
+-{
+-	struct mxs_ocotp *otp = platform_get_drvdata(pdev);
+-
+-	clk_unprepare(otp->clk);
+-
+-	return 0;
+ }
+ 
+ static struct platform_driver mxs_ocotp_driver = {
+ 	.probe = mxs_ocotp_probe,
+-	.remove = mxs_ocotp_remove,
+ 	.driver = {
+ 		.name = "mxs-ocotp",
+ 		.of_match_table = mxs_ocotp_match,
 -- 
-2.25.0
+2.7.4
 
