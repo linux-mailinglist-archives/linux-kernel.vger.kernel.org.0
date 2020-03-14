@@ -2,111 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 227B51859C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 04:40:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D920C1859DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 04:51:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727430AbgCODkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 23:40:12 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24398 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726668AbgCODkL (ORCPT
+        id S1727753AbgCODvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 23:51:38 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:32953 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbgCODvi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 23:40:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584243610;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7mUmgqOIFOdKgmbkoQ0zespckuiZdF8ycwVxiswURFM=;
-        b=cuhKXD2JoWMcCLwfw5DqmA6ZZvk1QBAp0wZrhs4q2gkrPjV/ObUMLEjeWEiY+LaHsQ0v84
-        RlgxXKYrIS8Rp0nkg+BcsCO+2YLdRhwJJEQJvyQ69gclcHE1Rgftfk4jnvNIr2xB4se6kN
-        jXSfQBliixw0AcywWJmRCYXAkUqqCaY=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-156-Pw3YuW3APQWkuirTtbakpw-1; Sat, 14 Mar 2020 07:37:44 -0400
-X-MC-Unique: Pw3YuW3APQWkuirTtbakpw-1
-Received: by mail-wr1-f69.google.com with SMTP id u12so3382473wrw.10
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 04:37:44 -0700 (PDT)
+        Sat, 14 Mar 2020 23:51:38 -0400
+Received: by mail-pf1-f193.google.com with SMTP id n7so7798645pfn.0;
+        Sat, 14 Mar 2020 20:51:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Uim4AzYBCm6V2z3QF09x5PPcRE01qrMuLypTdVFHimA=;
+        b=jE9cFqMIPYofiNcH+xERYgJ9saPt+Kj9OIakPPW3wROVmtHc2kEDMOO04aTSlsYSEm
+         AhJstHD5b6Y7Ka9JrfO/E/kIThMLUYmVc3DvSzHvFFsAnVPZbe/ug+yhHMJk2+DgRA8V
+         a9TzqqNb3H4w7M4EgiU+rUGvAtVUXTXr3r7+/2sqgNTCvKwLZ96PyfvDjWYqprG5+fH+
+         U19nzB0FSdOwDpDlDXi5bGp2k+i8bwk6k0woWuOPQcf7pEanHQyxMkcAT8ELObqiuTsL
+         fKSvK/EYwUN1H3eS6ez+aSRZA7ZO+8LphankfmBcTWpWDePWZUtI51qE/iIqcW0uIbao
+         zJgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7mUmgqOIFOdKgmbkoQ0zespckuiZdF8ycwVxiswURFM=;
-        b=UNWq+U1vxabWfBv98hiapV9uQIIBj6lNk/PkTpWmnZhRxBpAhCgWcALKaiapKy+i6f
-         Ycimovx++pP1XuNdqfdWLVaPGe1shCiJeym+C/o5vnUPbiUisUs26bjVn7xUqoJ6r8cM
-         LXg4rqkJBVKPRfX4opqNC3Re3bnwJBwwqmuBVgeFQLkTPoIPcpz29cppJKQWHLSWv3rr
-         qB+zY6elsL3SqQzy8ndxhzQkr/w8ZVpagUp0YCfmNTW/0QxvO4n/OGpUpnF0y5hSqNNL
-         SNpjBXDUAwYa4erFrrgfgMBUuC+E7lGiLZXAou1APIRERZYD3vH40Rrvyhm8BEupZYv5
-         T03A==
-X-Gm-Message-State: ANhLgQ2dr1e7fjkU6G3Ww8EEFaQ+bZZcfCUuCfqs9gGsKyvTqn1qLuZ9
-        O+ZbADSYgKCzo/SsPJb1UM/NHhRmjVOtaAXXIafPfcC105vjNxsSYWVXRodpSL21/eI9t8HqGQQ
-        jZOsiAk6PA2i9dR79Ifu/z32M
-X-Received: by 2002:a5d:6a0e:: with SMTP id m14mr24146631wru.202.1584185863205;
-        Sat, 14 Mar 2020 04:37:43 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vtNGoRby/wRfjauVrobYr5jBC5s8q6oSM+F2dujPpEvIkjrwFi5vDmCl73ddSAQ4SsdWa43Zw==
-X-Received: by 2002:a5d:6a0e:: with SMTP id m14mr24146612wru.202.1584185862992;
-        Sat, 14 Mar 2020 04:37:42 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:7de8:5d90:2370:d1ac? ([2001:b07:6468:f312:7de8:5d90:2370:d1ac])
-        by smtp.gmail.com with ESMTPSA id f17sm76798128wrj.28.2020.03.14.04.37.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Mar 2020 04:37:42 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] kvm: selftests: Introduce TEST_FAIL and convert
-To:     Wainer dos Santos Moschetta <wainersm@redhat.com>,
-        kvm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        sean.j.christopherson@intel.com, shuah@kernel.org,
-        tglx@linutronix.de, thuth@redhat.com
-References: <20200310025059.9301-1-wainersm@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <61b30d46-316c-5ef6-179f-fc394d352766@redhat.com>
-Date:   Sat, 14 Mar 2020 12:37:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Uim4AzYBCm6V2z3QF09x5PPcRE01qrMuLypTdVFHimA=;
+        b=hiD5eVW10hiXZpLdyi4lYwiorm+HAzm+gMFpFn4gSUPqZgwU1pLF5JmIqWdKZpooQY
+         tcfYp7bqVZrFh7ofI2gpYWVqI+aUg3Mi4qvzHdGXqrQ0vy7RXEZXDaF1HuwD5SaDoaZi
+         wazQXN7nz48pDcbZre6z20tIEe/06Y2HkCRu1jKM++8a6YlnAQZ5CWJBsMjub6kgvYWQ
+         yzA7vwqLWjTFvpwvszVrr3esJBiB74nmmXSfaPNWs/k51Y17P2xsGxD+tHgY5ZmSiA+7
+         WKl3rixRJl9Oh+TMc2BuJOUCvR1GUlddkm/V9pLBFQROCfL0yosWCWNSJNdFrxBFfNxq
+         f3HA==
+X-Gm-Message-State: ANhLgQ3Iw95L1lLdvXMq7h1oyB3/QsfC9m0w01kdVBNJbcRBvuh/1uL6
+        AF59WqCDSc/7N0WSWrxNdYHoiem/MkM=
+X-Google-Smtp-Source: ADFU+vsAFNYY+qMaVOBxLw+qtltM33BNN6phFUmxCHU630aJrU4CWVFiR6zHzz/Y0D1cSUuGio/2wQ==
+X-Received: by 2002:a63:6101:: with SMTP id v1mr17235961pgb.318.1584186170624;
+        Sat, 14 Mar 2020 04:42:50 -0700 (PDT)
+Received: from localhost ([106.51.232.35])
+        by smtp.gmail.com with ESMTPSA id y131sm17983125pfg.25.2020.03.14.04.42.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 14 Mar 2020 04:42:49 -0700 (PDT)
+Date:   Sat, 14 Mar 2020 17:12:47 +0530
+From:   afzal mohammed <afzal.mohd.ma@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Keguang Zhang <keguang.zhang@gmail.com>,
+        Huacai Chen <chenhc@lemote.com>,
+        John Crispin <john@phrozen.org>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: Re: [PATCH v4] MIPS: Replace setup_irq() by request_irq()
+Message-ID: <20200314114247.GA5577@afzalpc>
+References: <20200304203144.GA4323@alpha.franken.de>
+ <20200305115759.3186-1-afzal.mohd.ma@gmail.com>
+ <20200313164751.GA30134@roeck-us.net>
+ <20200314010744.GA5494@afzalpc>
+ <204ac322-4214-fc83-e0b9-14473f855b0a@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <20200310025059.9301-1-wainersm@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <204ac322-4214-fc83-e0b9-14473f855b0a@roeck-us.net>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/03/20 03:50, Wainer dos Santos Moschetta wrote:
-> Introduce the TEST_FAIL macro and change the tests/utilities
-> to use it.
-> 
-> v1 -> v2:
-> - Completed the conversion to TEST_FAIL.
-> 
-> v1:
-> - [RFC PATCH 0/1] kvm: selftests: Add TEST_FAIL macro
->   https://lore.kernel.org/kvm/20200305172532.9360-1-wainersm@redhat.com/
-> 
-> Wainer dos Santos Moschetta (2):
->   selftests: kvm: Introduce the TEST_FAIL macro
->   selftests: kvm: Uses TEST_FAIL in tests/utilities
-> 
->  tools/testing/selftests/kvm/dirty_log_test.c  |  7 +++----
->  .../testing/selftests/kvm/include/test_util.h |  3 +++
->  .../selftests/kvm/lib/aarch64/processor.c     | 17 +++++++--------
->  .../testing/selftests/kvm/lib/aarch64/ucall.c |  2 +-
->  tools/testing/selftests/kvm/lib/io.c          | 12 +++++------
->  tools/testing/selftests/kvm/lib/kvm_util.c    | 21 ++++++++-----------
->  .../selftests/kvm/lib/x86_64/processor.c      |  5 ++---
->  .../kvm/x86_64/cr4_cpuid_sync_test.c          |  4 ++--
->  .../testing/selftests/kvm/x86_64/evmcs_test.c |  6 +++---
->  .../testing/selftests/kvm/x86_64/state_test.c |  6 +++---
->  .../selftests/kvm/x86_64/svm_vmcall_test.c    |  6 ++----
->  .../kvm/x86_64/vmx_close_while_nested_test.c  |  4 ++--
->  .../selftests/kvm/x86_64/vmx_dirty_log_test.c |  6 +++---
->  .../kvm/x86_64/vmx_tsc_adjust_test.c          |  4 ++--
->  14 files changed, 49 insertions(+), 54 deletions(-)
-> 
+On Sat, Mar 14, 2020 at 03:28:53AM -0700, Guenter Roeck wrote:
+> On 3/13/20 6:07 PM, afzal mohammed wrote:
 
-Queued, thanks.
+> > Can you please apply,
+> > 
+> > https://lkml.kernel.org/r/20200311152751.GA5044@afzalpc,
+> > 
+> > on top of this patch & see if it fixes the issue.
 
-Paolo
+> I have not tested all configurations, but a quick check suggests
+> that it does indeed fix the problem.
 
+Thanks Guenter for checking,
+
+i have sent a newer version [1] of that patch based on the feedback
+from Thomas.
+
+REgards
+afzal
+
+[1] https://lkml.kernel.org/r/20200314081312.GA4948@afzalpc
