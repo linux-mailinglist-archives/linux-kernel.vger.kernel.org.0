@@ -2,119 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAD6318589C
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:14:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3519185854
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:03:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbgCOCOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 22:14:42 -0400
-Received: from mail-oi1-f201.google.com ([209.85.167.201]:51342 "EHLO
-        mail-oi1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbgCOCOl (ORCPT
+        id S1727654AbgCOCD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:03:28 -0400
+Received: from st43p00im-ztdg10063201.me.com ([17.58.63.182]:54000 "EHLO
+        st43p00im-ztdg10063201.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727566AbgCOCDV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:14:41 -0400
-Received: by mail-oi1-f201.google.com with SMTP id 16so8333389oii.18
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 19:14:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=OdlDyP22xWR3iukZ6BIAXqjFyoG87PPBI1OEHmhmYzg=;
-        b=N7nblpYKFSWiHR4C7o2uBIQ0yrDCqVY7JzbxwILu5MSzDlQpa176KvICe4UFvqGjTp
-         4zjA8Z4OD7fsI1cEHxVpAxllS6ZaQH7E1o4jaD+IqnnJw7M9PY0uhX4jYOheFA1HuWJ7
-         lByKB7zbxlmsY06LfbHpK0PertOtJfngT6JPW+w3+a04kHdfKO9oHyaEEGZ3NSPT9gSg
-         2Ir7OZG51xSn5q8DXQYirEr+MGNdX5GZ2wEC/vWm4aZs5Ur/qv2Gt5XPTk9EGBksPtvf
-         mRjj212EJMKNa/ImfBSyZw7OHAjiU70EJ8fZB7dbFsTnnuhU1qfNuvXnc2I6Zcx8ANLE
-         E4kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=OdlDyP22xWR3iukZ6BIAXqjFyoG87PPBI1OEHmhmYzg=;
-        b=rVBYaRnSkQjl1K1v/EJELh4sxFKguUBSg722MamYsEmErp2fvU+VQFm41eFtwWhFO6
-         7Irb95wTIfYOQOLEYopHFX8lgAxDk/wvN8Bfga8HBQhYDIgXC+7gDJkNNnrTAv3zcTYR
-         eXR8rIjNy1AVwEIiOEEr85hnUzpkfPrF/e0F/AZ9MnAESxVyAwAqUwbv5U8uLFn1Zaht
-         Ft1HwzA87a1QKiHHXS8Si6eiI5M9cPBhAh0dYeFLYTkPfHUo6QlUhbKe2nc+UrzRoLgg
-         9ozPUfWTkb2BnZ9YV8YJhBKbDgCfF+FkkdGyn7hniNytzjDRdg1XWq5MiETt7Uyf1xlI
-         bqpg==
-X-Gm-Message-State: ANhLgQ2fK3vb071kAHB5dUHCF+OA6u5q4BIU7ZzOAED4N9H+/YZU/krm
-        hOqn4p8NJSdmv1jCDHdeBgvVBxmVrGqv
-X-Google-Smtp-Source: ADFU+vuvgvEpt/9FO1yYRPr4PH2UMVclGaCFAYMBofq2DdoRP87MR/9gc9z+N1Zb0WJnwZSK8HqIWz+D+y0j
-X-Received: by 2002:a17:90a:e38a:: with SMTP id b10mr5576509pjz.159.1584160110864;
- Fri, 13 Mar 2020 21:28:30 -0700 (PDT)
-Date:   Fri, 13 Mar 2020 21:28:26 -0700
-Message-Id: <20200314042826.166953-1-irogers@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-Subject: [PATCH] perf mem2node: avoid double free related to realloc
-From:   Ian Rogers <irogers@google.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
+        Sat, 14 Mar 2020 22:03:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
+        t=1584161097; bh=F0ITEm+P4Ct+WXI87vsMYO1oTLy/6jkjYUL2jH5Dtcg=;
+        h=From:To:Subject:Date:Message-Id;
+        b=Bo2AxBs68Dx/h+9A3vgSBndA7qvhU1dRFiEPU47w23rEXC7IdgbTsREWP5KpDnemT
+         ME+XwOz4URRM9fCSy24Oa6bUDJgLdj2AZdjUBUJ6w4ReHbvxF5xBqGKvJpCuXoArjL
+         TzIRRbdGTmyd/1rckdjh6PB15XGDiJhciL2S5RJKNNI4dq4WOpKAbhuN+OzUoVFVgh
+         RQWukFarmTtjSA74Gi2bCbatsRW220aeKmvsxKT9eGl7RW+WS+i4vfvY4VDX3TFpNY
+         XLErdBJtP14hSbUrY4lsqspE7xW+yRTjH7I9ZjjcWyc5UKtfwmfAdb+srcjspJRE0f
+         HEb602dSIavxg==
+Received: from shwetrath.localdomain (unknown [66.199.8.131])
+        by st43p00im-ztdg10063201.me.com (Postfix) with ESMTPSA id F25DF54052D;
+        Sat, 14 Mar 2020 04:44:56 +0000 (UTC)
+From:   Vijay Thakkar <vijaythakkar@me.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Vijay Thakkar <vijaythakkar@me.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Kim Phillips <kim.phillips@amd.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Cc:     Stephane Eranian <eranian@google.com>,
-        Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        =?UTF-8?q?Martin=20Li=C5=A1ka?= <mliska@suse.cz>,
+        Jon Grimm <jon.grimm@amd.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+Subject: [PATCH v4 0/3] update to latest PMU events for zen1/zen2
+Date:   Sat, 14 Mar 2020 00:44:50 -0400
+Message-Id: <20200314044453.82554-1-vijaythakkar@me.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2020-03-13_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-2003140024
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Realloc of size zero is a free not an error, avoid this causing a double
-free. Caught by clang's address sanitizer:
+Change summary:
+Patch 1: changes the pmu events mapfile to be more selective for
+the model number rather than blanket detecting all f17h processors to
+have the same events directory. This is required for the later patch
+where we add events for zen2 based processors.
 
-==2634==ERROR: AddressSanitizer: attempting double-free on 0x6020000015f0 in thread T0:
-    #0 0x5649659297fd in free llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:123:3
-    #1 0x5649659e9251 in __zfree tools/lib/zalloc.c:13:2
-    #2 0x564965c0f92c in mem2node__exit tools/perf/util/mem2node.c:114:2
-    #3 0x564965a08b4c in perf_c2c__report tools/perf/builtin-c2c.c:2867:2
-    #4 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
-    #5 0x564965944348 in run_builtin tools/perf/perf.c:312:11
-    #6 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
-    #7 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
-    #8 0x564965942e41 in main tools/perf/perf.c:538:3
+Patch 2: adds the PMU events for zen2.
 
-0x6020000015f0 is located 0 bytes inside of 1-byte region [0x6020000015f0,0x6020000015f1)
-freed by thread T0 here:
-    #0 0x564965929da3 in realloc third_party/llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:164:3
-    #1 0x564965c0f55e in mem2node__init tools/perf/util/mem2node.c:97:16
-    #2 0x564965a08956 in perf_c2c__report tools/perf/builtin-c2c.c:2803:8
-    #3 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
-    #4 0x564965944348 in run_builtin tools/perf/perf.c:312:11
-    #5 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
-    #6 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
-    #7 0x564965942e41 in main tools/perf/perf.c:538:3
+Patch 3: updates the zen1 PMU events to be in accordance
+with the latest PPR version and bumps up the events version to v2,
+mainly adding some events that were previously missing, and
+cleaning up some fpu counters.
 
-previously allocated by thread T0 here:
-    #0 0x564965929c42 in calloc third_party/llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:154:3
-    #1 0x5649659e9220 in zalloc tools/lib/zalloc.c:8:9
-    #2 0x564965c0f32d in mem2node__init tools/perf/util/mem2node.c:61:12
-    #3 0x564965a08956 in perf_c2c__report tools/perf/builtin-c2c.c:2803:8
-    #4 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
-    #5 0x564965944348 in run_builtin tools/perf/perf.c:312:11
-    #6 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
-    #7 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
-    #8 0x564965942e41 in main tools/perf/perf.c:538:3
+Details of what changed between patch revisions is included within the
+commits.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/mem2node.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Vijay Thakkar (3):
+  perf vendor events amd: restrict model detection for zen1 based
+    processors
+  perf vendor events amd: add Zen2 events
+  perf vendor events amd: update Zen1 events to V2
 
-diff --git a/tools/perf/util/mem2node.c b/tools/perf/util/mem2node.c
-index 797d86a1ab09..7f97aa69eb65 100644
---- a/tools/perf/util/mem2node.c
-+++ b/tools/perf/util/mem2node.c
-@@ -95,7 +95,7 @@ int mem2node__init(struct mem2node *map, struct perf_env *env)
- 
- 	/* Cut unused entries, due to merging. */
- 	tmp_entries = realloc(entries, sizeof(*entries) * j);
--	if (tmp_entries)
-+	if (j == 0 || tmp_entries)
- 		entries = tmp_entries;
- 
- 	for (i = 0; i < j; i++) {
+ .../pmu-events/arch/x86/amdfam17h/branch.json |  12 -
+ .../pmu-events/arch/x86/amdfam17h/cache.json  | 329 -----------------
+ .../pmu-events/arch/x86/amdfam17h/other.json  |  65 ----
+ .../pmu-events/arch/x86/amdzen1/branch.json   |  23 ++
+ .../pmu-events/arch/x86/amdzen1/cache.json    | 294 +++++++++++++++
+ .../arch/x86/{amdfam17h => amdzen1}/core.json |  15 +-
+ .../floating-point.json                       |  64 +++-
+ .../x86/{amdfam17h => amdzen1}/memory.json    |  82 +++--
+ .../pmu-events/arch/x86/amdzen1/other.json    |  56 +++
+ .../pmu-events/arch/x86/amdzen2/branch.json   |  52 +++
+ .../pmu-events/arch/x86/amdzen2/cache.json    | 338 +++++++++++++++++
+ .../pmu-events/arch/x86/amdzen2/core.json     | 130 +++++++
+ .../arch/x86/amdzen2/floating-point.json      | 112 ++++++
+ .../pmu-events/arch/x86/amdzen2/memory.json   | 341 ++++++++++++++++++
+ .../pmu-events/arch/x86/amdzen2/other.json    | 115 ++++++
+ tools/perf/pmu-events/arch/x86/mapfile.csv    |   3 +-
+ 16 files changed, 1578 insertions(+), 453 deletions(-)
+ delete mode 100644 tools/perf/pmu-events/arch/x86/amdfam17h/branch.json
+ delete mode 100644 tools/perf/pmu-events/arch/x86/amdfam17h/cache.json
+ delete mode 100644 tools/perf/pmu-events/arch/x86/amdfam17h/other.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen1/branch.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen1/cache.json
+ rename tools/perf/pmu-events/arch/x86/{amdfam17h => amdzen1}/core.json (87%)
+ rename tools/perf/pmu-events/arch/x86/{amdfam17h => amdzen1}/floating-point.json (61%)
+ rename tools/perf/pmu-events/arch/x86/{amdfam17h => amdzen1}/memory.json (63%)
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen1/other.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen2/branch.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen2/cache.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen2/core.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen2/floating-point.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen2/memory.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen2/other.json
+
 -- 
-2.25.1.481.gfbce0eb801-goog
+2.25.1
 
