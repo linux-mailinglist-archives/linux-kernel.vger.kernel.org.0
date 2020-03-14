@@ -2,81 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39984185793
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:41:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E707185828
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:55:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbgCOBlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 21:41:22 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:35551 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbgCOBlV (ORCPT
+        id S1727517AbgCOBzN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 21:55:13 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:54491 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727179AbgCOBzM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 21:41:21 -0400
-Received: by mail-io1-f65.google.com with SMTP id h8so13635511iob.2
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 18:41:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=+/247cTfFPmb6HzvLpP0YBhAOHansbCR7qRIbohrXkI=;
-        b=E/h3JWySV60dxpGI2gxROTmY2mZeLVVOoioeXtEAq5DSRgyFBnAaTzBmVeIOUJNDYl
-         pUNhavjej7XYrSfD7CWWOuCQN17b3T9dPhuBnfOH76BnRFd+wRSYWOVsmliAt0etk6gg
-         DYJ9Nv8nF8GNuZpxgUZhrLeusJaLQzZk3lUmayLRYGH1E/E/grkRjfJTS3je8tzmbuNT
-         Ys2H/0GpAbMCnru4/QcjKJ9ceya9viY3VelMvPMhmkU80VYVbvQPyyt1+sCejng8cLnA
-         uCL0+aT+3hLuQZPQ2jhC27DjOTakBFMCjqAPDGe7DidgAz3Dl9rvTVjknDflOsLeEvbr
-         IbhA==
+        Sat, 14 Mar 2020 21:55:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584237310;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=565avK8xJpAxODlaB/JYpjP9wqhY+h6lHR7kwiIqL2I=;
+        b=Ne6LZ96uzE9fBXsXrH9+379reHWeO+rSjqoaJgsfkVNKWtT+tMuOxrXrU3Wy6Z9wMnJNsc
+        UDwQLOrkkIDYchdGn37ByssPqpPbHh0/zvnHC9E6E06aMuDkPM9heSzkI07yPOKotoMlCX
+        49YqZCDgfFsTthKADHE+SqgWFXsCptI=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-484-zu_EdkH8PuS8Q1kmjhAjTA-1; Sat, 14 Mar 2020 19:53:59 -0400
+X-MC-Unique: zu_EdkH8PuS8Q1kmjhAjTA-1
+Received: by mail-qk1-f197.google.com with SMTP id a21so13069908qkg.6
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 16:53:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+/247cTfFPmb6HzvLpP0YBhAOHansbCR7qRIbohrXkI=;
-        b=dPJO5Hq3FLcKnaVVluSZYcJh2jDlnFNPDNQeLxrLY6OHHYgov5r8iKNlQ2AueMvEpp
-         w7U144MaxYdcmT1Cc1qkBgRpcqAnyG9rQATcIK8PEw5it4MJzVbemJhi4rj91CBUlduv
-         Gr6y8eL6GKq211ShAR/UVmjro2CivfPQe9Y+eWVEE68e2TNcMqSVfeba3i68QQLGoWpk
-         QSL3BLGebjF7BPua3Ny8MX/ZsonXtKJF/l5p1UIDICycaJS4degXicbOsTAsZ7sjxcMy
-         hJWSlu5QK8gfyRn9te/z6pG1EFb/7D7OfY5CAuLAMnj6fvOcHZWhPLCpGF6j2oiuZpIa
-         H71w==
-X-Gm-Message-State: ANhLgQ0F5MHmrMu2W2KAwFfps01xJuCyQrvW8H9dFZWah6jTV8Ry82fL
-        EtC5o9j0QVzH/xkZfIyNMZ+a9RHoNnr9uA==
-X-Google-Smtp-Source: ADFU+vs4bDd5BE7tlACCr4VBGaQq1i1YtcLAWyKDg8BNV4CX7P6+yrkgL79vVx2ZqcEl5BQ5gzfj3w==
-X-Received: by 2002:a63:8b42:: with SMTP id j63mr19006128pge.27.1584226866175;
-        Sat, 14 Mar 2020 16:01:06 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id g6sm12179905pjv.13.2020.03.14.16.01.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Mar 2020 16:01:05 -0700 (PDT)
-Subject: Re: [PATCH 5.6] io_uring: NULL-deref for IOSQE_{ASYNC,DRAIN}
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <3fff749b19ae1c3c2d59e88462a8a5bfc9e6689f.1584127615.git.asml.silence@gmail.com>
- <bc3baf1c-0629-3989-c7c1-bc7c84ac8ae5@gmail.com>
- <6ebc5e8a-7a6c-2537-9050-fe4e5c4f014d@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ade19964-58fa-93fd-312f-cd12b69e3a8b@kernel.dk>
-Date:   Sat, 14 Mar 2020 17:01:03 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=565avK8xJpAxODlaB/JYpjP9wqhY+h6lHR7kwiIqL2I=;
+        b=DaTbCaFquWbd6KKF9ZPKdynqWdal6aDT7wA6S+GVsq4WkZG6DKKau3M0NxMYFMZz/5
+         AVvN2UcA6O+7sWg0Xrd1Hh2mxu5YQHstiyjbl/UPVxgH2N7oSvLX1oprF6yyGsN5CVLf
+         lMt0zEgUuQz6SqFNr5jJc/Q73nMg+2KmimSueDuOuXLBLlkU7ghUlD4Pla6d1jRkKrbK
+         ZbPeHajPxpIHn0DDeOndXj5dL1HkCiI7pU8VlBJ6IzUu26mc2HI3aM4NC4a9bTtzB2aE
+         YjYYKUiE3l66YPXepJ9Q2QiczKJpOo+T4cgJBGxucaBjI2EwdzfbWu2ltYAO8s8JKIcg
+         COFw==
+X-Gm-Message-State: ANhLgQ23Ag48sSV3lJ3+jJB/0vmE4whjbe7ZKlyxNaGR5OftuR3sONT+
+        liYo3HVz6OKh9R1fZpn1CPRqNl1dNWh1TIurq/oq52nvkWq8asm9a/Jx7FakBpIOahLzEYvjop7
+        8FShFEoGi2n6vtooyXM1TIpoi
+X-Received: by 2002:ac8:1c17:: with SMTP id a23mr19463752qtk.239.1584230038863;
+        Sat, 14 Mar 2020 16:53:58 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vukUzf1dliM8+2cni4jqlg65/XNyAkwtLjGkUnrbxTo4ZpZkaT7Pp3AHAKTy/tWVKdcbCmTew==
+X-Received: by 2002:ac8:1c17:: with SMTP id a23mr19463733qtk.239.1584230038493;
+        Sat, 14 Mar 2020 16:53:58 -0700 (PDT)
+Received: from xz-x1 ([2607:9880:19c0:32::2])
+        by smtp.gmail.com with ESMTPSA id 17sm15872064qkm.105.2020.03.14.16.53.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Mar 2020 16:53:57 -0700 (PDT)
+Date:   Sat, 14 Mar 2020 19:53:56 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ming Lei <minlei@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH] x86/vector: Allow to free vector for managed IRQ
+Message-ID: <20200314235356.GD95517@xz-x1>
+References: <20200313151908.GA95517@xz-x1>
+ <87v9n7erq3.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <6ebc5e8a-7a6c-2537-9050-fe4e5c4f014d@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <87v9n7erq3.fsf@nanos.tec.linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/13/20 3:29 PM, Pavel Begunkov wrote:
-> On 13/03/2020 23:28, Pavel Begunkov wrote:
->> Hmm, found unreliably failing the across-fork test. I don't know whether it's
->> this patch specific, but need to take a look there first.
+On Sat, Mar 14, 2020 at 12:54:12AM +0100, Thomas Gleixner wrote:
+> Peter Xu <peterx@redhat.com> writes:
+> > On Fri, Mar 13, 2020 at 03:24:08PM +0100, Thomas Gleixner wrote:
+> >> Peter Xu <peterx@redhat.com> writes:
+> >> What is this backtrace for? It's completly useless as it merily shows
+> >> that the warning triggers. Also even if it'd be useful then it wants to
+> >> be trimmed properly.
+> >
+> > I thought it was a good habit to keep the facts of issues.  Backtrace
+> > is one of them so I kept them.  It could, for example, help people who
+> > spot the same issue in an old/downstream kernel so when they google or
+> > grepping git-log they know the exact issue has been solved by some
+> > commit, even without much knowledge on the internals (because they can
+> > exactly compare the whole dmesg error).
 > 
-> It's good to go, just used outdated tests.
-> The reproducer is attached.
+> This is not really good habit. Changelogs should contain factual
+> information which is relevant to understand the problem. Backtraces are
+> useful when the callchain leading to a bug/warn/oops _is_ relevant for
+> understanding the issue. For things like this where the backtrace is
+> completly out of context it's more of an distraction than of value.
+> 
+> Aside of that your 'spot the same issue' argument is wrong in this
+> context as this does not affect anything old/downstream. The feature was
+> merged during the 5.6 merge window. So it has not reached anything
+> downstream which needs backports. If distro people pick out such a
+> feature and backport it to their frankenkernels before the final release
+> then I really dont care.
+> 
+> One way to preserve the backtrace for google's sake is to write a cover
+> letter and stick the back trace there if it is not useful in the
+> changelog.
+> 
+> Also having 40+ lines of untrimmed backtrace is just a horrible
+> distraction. The timestamps are completely useless and depending on the
+> type of problem most of the other gunk which is emitted by a
+> bug/warn/oops backtrace is useless as well.
+> 
+> Why would you be interested in the register values for this problem or
+> the code or the interrupt flags tracer state? That thing triggered a
+> warning and nothing in the backtrace gives any clue about why that
+> happened, IOW it's pure distraction.
+> 
+> If the call chain is relevant to explain the problem, then a trimmed
+> down version is really sufficient. Here is an example:
+> 
+>      BUG: unable to handle kernel NULL pointer dereference at 0000000000000078
+>      RIP: 0010:apic_ack_edge+0x1e/0x40
+>      Call Trace:
+>        handle_edge_irq+0x7d/0x1e0
+>        generic_handle_irq+0x27/0x30
+>        aer_inject_write+0x53a/0x720
+> 
+> This helps, because it illustrates exactly how this BUG was triggered
+> and it's reduced to exactly the 6 lines because everything else in the
+> original 50+ lines is useless.
 
-I integrated this into the existing read-write in liburing, thanks.
+Fair enough.
+
+> 
+> > However I think I still miss one thing in the puzzle (although it
+> > turns out that we've agreed on removing the warning already, but just
+> > in case I missed something important) - do you mean that offlining all
+> > the non-isolated CPUs in the mask won't trigger this already?  Because
+> > I also saw some similar comment somewhere else...
+> >
+> > Here's my understanding - when offlining, we'll disable the CPU and
+> > reach:
+> >
+> >   - irq_migrate_all_off_this_cpu
+> >     - migrate_one_irq
+> >       - irq_do_set_affinity
+> >         - calculate HK_FLAG_MANAGED_IRQ and so on...
+> >
+> > Then we can still trigger this irq move event even before we bring
+> > another housekeeping cpu online, right?  Or could you guide me on what
+> > I have missed?
+> 
+> The migration when offlining the CPU to which an interrupt is affine
+> does not trigger this because that uses a different mechanism.
+> 
+> It clears the vector on the outgoing CPU brute force simply because this
+> CPU can't handle any interrupts anymore. There is some logic to catch
+> the device interrupt racing against this, but while careful it's not
+> perfect. There is a theoretical hole there which probably could be
+> triggered by carefully orchestrating things, but we can't do anything
+> about it except disabling CPU unplug :)
+
+Ah I haven't thought about the "theoretical hole" and that far...  I
+think I was only focusing on whether set_affinity() would happen, but
+I ignored the fact that x86 __send_cleanup_vector() treated offlining
+CPU in the special way to avoid sending IRQ_MOVE_CLEANUP_VECTOR at
+all.  And that part makes perfect sense since we can't do much with an
+offlined core.
+
+> 
+> So the only two ways to trigger this are the ones I described in the
+> changelog.
+> 
+> Hope that helps.
+
+Definitely.
+
+Thanks for writting this up, Thomas!
 
 -- 
-Jens Axboe
+Peter Xu
 
