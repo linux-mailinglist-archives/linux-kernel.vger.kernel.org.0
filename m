@@ -2,168 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77C0618586F
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:07:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED642185891
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:14:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727700AbgCOCHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 22:07:43 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:63181 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727566AbgCOCHm (ORCPT
+        id S1727867AbgCOCOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:14:07 -0400
+Received: from smtprelay0232.hostedemail.com ([216.40.44.232]:55380 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727757AbgCOCOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:07:42 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584238061; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=lXhkIBcKbtLstxQRyAkgmmBBedPpvtcrGcYCAgn01SQ=; b=Qwv6cirVafXpqEPTFa+xhgNCyEbcIG0Qjzwh9GorOkiVVielSg28LhmK0cq8m9VXReKTn/q9
- wmbsU3tmZ3qbjWm5V0tpIMYeWtiIx9xqp41tbvPKCFzPzpRWokkJ98SAsjs3pWjuNPF2MeIg
- QlieT77aHACnLJYf1PonG8aALug=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6d2775.7fec2d82f6f8-smtp-out-n02;
- Sat, 14 Mar 2020 18:50:29 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id B9F7AC432C2; Sat, 14 Mar 2020 18:50:27 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1153CC433BA;
-        Sat, 14 Mar 2020 18:50:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1153CC433BA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v6 2/3] clk: qcom: gcc: Add support for modem clocks in GCC
-Date:   Sun, 15 Mar 2020 00:19:57 +0530
-Message-Id: <1584211798-10332-3-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584211798-10332-1-git-send-email-tdas@codeaurora.org>
-References: <1584211798-10332-1-git-send-email-tdas@codeaurora.org>
+        Sat, 14 Mar 2020 22:14:06 -0400
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave02.hostedemail.com (Postfix) with ESMTP id 8B93B1802641A
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 19:07:37 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 5666337F1;
+        Sat, 14 Mar 2020 19:07:37 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3351:3865:3866:3867:4321:5007:6119:7903:8957:10004:10400:10848:11658:11914:12297:12346:12555:12679:12760:12986:13069:13311:13357:13439:14181:14659:14721:21080:21451:21627:30012:30054,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: toad24_7ca951af45d3c
+X-Filterd-Recvd-Size: 1375
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 14 Mar 2020 19:07:36 +0000 (UTC)
+Message-ID: <24c572ea7dd0efaa12b6331f78822431a371b12f.camel@perches.com>
+Subject: vim: linux-kernel: Add "fallthrough" as a keyword
+From:   Joe Perches <joe@perches.com>
+To:     Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Date:   Sat, 14 Mar 2020 12:05:51 -0700
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the required modem clocks in global clock controller which are
-required to bring the modem out of reset.
+Add fallthrough as a keyword for source code highlighting as
+fallthrough was added as a pseudo-keyword macro to replace the
+various forms of switch/case /* fallthrough */ comments.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Joe Perches <joe@perches.com>
 ---
- drivers/clk/qcom/gcc-sc7180.c | 72 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 71 insertions(+), 1 deletion(-)
+ plugin/linuxsty.vim | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-index 7f59fb8..6a51b5b 100644
---- a/drivers/clk/qcom/gcc-sc7180.c
-+++ b/drivers/clk/qcom/gcc-sc7180.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
-  */
+diff --git a/plugin/linuxsty.vim b/plugin/linuxsty.vim
+index 18b28..44824 100644
+--- a/plugin/linuxsty.vim
++++ b/plugin/linuxsty.vim
+@@ -69,6 +69,7 @@ function s:LinuxFormatting()
+ endfunction
+ 
+ function s:LinuxKeywords()
++    syn keyword cStatement fallthrough
+     syn keyword cOperator likely unlikely
+     syn keyword cType u8 u16 u32 u64 s8 s16 s32 s64
+     syn keyword cType __u8 __u16 __u32 __u64 __s8 __s16 __s32 __s64
 
- #include <linux/clk-provider.h>
-@@ -2165,6 +2165,71 @@ static struct clk_branch gcc_video_xo_clk = {
- 	},
- };
-
-+static struct clk_branch gcc_mss_cfg_ahb_clk = {
-+	.halt_reg = 0x8a000,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x8a000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_cfg_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_mss_mfab_axis_clk = {
-+	.halt_reg = 0x8a004,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x8a004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_mfab_axis_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_mss_nav_axi_clk = {
-+	.halt_reg = 0x8a00c,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x8a00c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_nav_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_mss_snoc_axi_clk = {
-+	.halt_reg = 0x8a150,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x8a150,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_snoc_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_mss_q6_memnoc_axi_clk = {
-+	.halt_reg = 0x8a154,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x8a154,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_q6_memnoc_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct gdsc ufs_phy_gdsc = {
- 	.gdscr = 0x77004,
- 	.pd = {
-@@ -2336,6 +2401,11 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
- 	[GPLL7] = &gpll7.clkr,
- 	[GPLL4] = &gpll4.clkr,
- 	[GPLL1] = &gpll1.clkr,
-+	[GCC_MSS_CFG_AHB_CLK] = &gcc_mss_cfg_ahb_clk.clkr,
-+	[GCC_MSS_MFAB_AXIS_CLK] = &gcc_mss_mfab_axis_clk.clkr,
-+	[GCC_MSS_NAV_AXI_CLK] = &gcc_mss_nav_axi_clk.clkr,
-+	[GCC_MSS_Q6_MEMNOC_AXI_CLK] = &gcc_mss_q6_memnoc_axi_clk.clkr,
-+	[GCC_MSS_SNOC_AXI_CLK] = &gcc_mss_snoc_axi_clk.clkr,
- };
-
- static const struct qcom_reset_map gcc_sc7180_resets[] = {
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
