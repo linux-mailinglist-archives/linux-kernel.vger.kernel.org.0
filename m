@@ -2,99 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 772B518596B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:53:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABBF9185962
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:49:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbgCOCxO convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 14 Mar 2020 22:53:14 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:38138 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726873AbgCOCxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:53:14 -0400
-Received: from ip5f5a5d2f.dynamic.kabel-deutschland.de ([95.90.93.47] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1jD8Pn-0001Qn-3r; Sat, 14 Mar 2020 16:09:27 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Cc:     linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: rockchip: use DMA channels for UARTs of TinkerBoard
-Date:   Sat, 14 Mar 2020 16:09:26 +0100
-Message-ID: <2930126.sCcUyySgUU@diego>
-In-Reply-To: <20200314142327.25568-1-katsuhiro@katsuster.net>
-References: <20200314142327.25568-1-katsuhiro@katsuster.net>
+        id S1727532AbgCOCtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:49:06 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37333 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726811AbgCOCtF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Mar 2020 22:49:05 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b23so17427398edx.4
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 19:49:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YPgN4l93OeEWMDSYtyHK2xEec1H49aBedq26BrSDmkA=;
+        b=eAS3kn7vfdKKx02/krekDoFV619IUUiDr+1OClPUae5Ij8mqsEA+MjuC5/3521kbs7
+         dxE5vpUPD0EmtOE4s6uxCLkrZDRvo36YV0uzX/AMD4xWRqc6VgorbY3sI9ARwyAXHRcr
+         7ixd9w7pQfxwxGBFVI6FnfuMgRvvfwKxQgyx4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YPgN4l93OeEWMDSYtyHK2xEec1H49aBedq26BrSDmkA=;
+        b=K88v4iC9+VZGh13qYPs4+gsUtXREnl9muHdXtVX4mYKQfrJYksxN11B4z7GPmnxEuq
+         IdEZd00Zqgtzt1UREG2ZlFPmE2PNR5FtbrfbwcFSuztAnNtyiFGatVi0VViY0aJjzTpx
+         Yt6PWcDca6txfUrj+Eglhfu1vyPn5vS/WnJG8HOhvAgio1H5SaXAUcKo0msf0rHW5K9/
+         69dycFsX8Dy58O2+0+69CNRWgnnK/N75+V6FtmS3KzOK68SwtxxMDXs9o52x7qDsTDPU
+         0AQDHrPaosTDNNvwINSHdGnOk0BouG4o/xxtSygeDpWRqREkIj7txeDHSWd/2Nc+XFgf
+         7Kyg==
+X-Gm-Message-State: ANhLgQ0ynfglMLID2/akBfAsVQ0pDIRQkCNosqqj2PeL3vp0Vc2dJmry
+        RjhJ716dp8vtP2VKVLxnv5xirSaplaU=
+X-Google-Smtp-Source: ADFU+vtD+aoGapK2USi68QzXp6dP2USYVZwF0NIn0sNn9e5wumkzLIbgjrdYfVyPVczxsHAluWigIQ==
+X-Received: by 2002:ac2:53b8:: with SMTP id j24mr11718626lfh.79.1584200426093;
+        Sat, 14 Mar 2020 08:40:26 -0700 (PDT)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id h10sm3451859ljg.38.2020.03.14.08.40.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Mar 2020 08:40:25 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id u12so13883656ljo.2
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 08:40:24 -0700 (PDT)
+X-Received: by 2002:a05:651c:555:: with SMTP id q21mr11396356ljp.241.1584200424436;
+ Sat, 14 Mar 2020 08:40:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+References: <20200313174701.148376-1-bigeasy@linutronix.de> <20200313174701.148376-6-bigeasy@linutronix.de>
+In-Reply-To: <20200313174701.148376-6-bigeasy@linutronix.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 14 Mar 2020 08:40:08 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgO1Fn88+1K9V7=mfBNOttkGkFakGxp_QEsokZU2ywUvg@mail.gmail.com>
+Message-ID: <CAHk-=wgO1Fn88+1K9V7=mfBNOttkGkFakGxp_QEsokZU2ywUvg@mail.gmail.com>
+Subject: Re: [PATCH 5/9] completion: Use simple wait queues
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, Mar 13, 2020 at 10:47 AM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> Replace the wait queue in the completion with a simple wait queue (swait),
 
-Am Samstag, 14. März 2020, 15:23:27 CET schrieb Katsuhiro Suzuki:
-> This patch enables to use DMAC for all UARTs that are connected to
-> dmac_peri core for TinkerBoard.
-> 
-> Only uart2 is connected different DMAC (dmac_bus_s) so keep current
-> settings on this patch.
+This is almost certainly completely and utterly wrong.
 
-This belongs in rk3288.dtsi, as this is definitly not board-specific, as
-the dma-uart connection is done inside the soc.
+Every time somebody uses those horrible swait queues, the end result is buggy.
 
-At least on arm64 (rk3328, px30, probably more) we already have the
-uart dmas in the core dtsi without any problems.
+Don't do it.
 
-Is there any reason why you only did add it to the tinker board only?
+And most definitely, don't do it like this, which seems to be entirely
+mindlessly just randomly changing things by some brute force in
+multiple places.
 
+The swait semantics are completely different from the normal
+wait-queue semantics, and generally not in good ways.
 
-Heiko
+There's a *REASON* why the comment at the top of <linux/swait.h> starts with
 
+ * BROKEN wait-queues.
+ *
+ * These "simple" wait-queues are broken garbage, and should never be
+ * used. The comments below claim that they are "similar" to regular
+ * wait-queues, but the semantics are actually completely different, and
+ * every single user we have ever had has been buggy (or pointless).
 
-> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-> ---
->  arch/arm/boot/dts/rk3288-tinker.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/rk3288-tinker.dtsi b/arch/arm/boot/dts/rk3288-tinker.dtsi
-> index 312582c1bd37..6efabeaf3c6d 100644
-> --- a/arch/arm/boot/dts/rk3288-tinker.dtsi
-> +++ b/arch/arm/boot/dts/rk3288-tinker.dtsi
-> @@ -491,10 +491,14 @@ &tsadc {
->  };
->  
->  &uart0 {
-> +	dmas = <&dmac_peri 1>, <&dmac_peri 2>;
-> +	dma-names = "tx", "rx";
->  	status = "okay";
->  };
->  
->  &uart1 {
-> +	dmas = <&dmac_peri 3>, <&dmac_peri 4>;
-> +	dma-names = "tx", "rx";
->  	status = "okay";
->  };
->  
-> @@ -503,10 +507,14 @@ &uart2 {
->  };
->  
->  &uart3 {
-> +	dmas = <&dmac_peri 7>, <&dmac_peri 8>;
-> +	dma-names = "tx", "rx";
->  	status = "okay";
->  };
->  
->  &uart4 {
-> +	dmas = <&dmac_peri 9>, <&dmac_peri 10>;
-> +	dma-names = "tx", "rx";
->  	status = "okay";
->  };
->  
-> 
+and before you do a conversion, you need to spend a _lot_ of time
+thinking about why that is the case.
 
+And _after_ you do the conversion, you damn well need to explain why
+it's safe. Not just state that it's a good idea.
 
+For example, this patch just randomly changes wait events to the swait
+event _exclusive_ waits. With not a single explanation of why that
+would be ok.
 
+I want an explanation for EVERY SINGLE CASE. Because people have done
+this kind of conversion before, and it's been buggy garbage before. I
+want to see that people actually thought about what the semantic
+differences were, and _documented_ that thinking process.
 
+            Linus
