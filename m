@@ -2,77 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54C0A1859F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 05:00:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95CAF1859FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 05:06:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbgCOEAy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 00:00:54 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:35264 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725788AbgCOEAy (ORCPT
+        id S1726541AbgCOEGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 00:06:35 -0400
+Received: from m176148.mail.qiye.163.com ([59.111.176.148]:57439 "EHLO
+        m176148.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725872AbgCOEGf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 00:00:54 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id A700E15AD855B;
-        Sat, 14 Mar 2020 21:00:53 -0700 (PDT)
-Date:   Sat, 14 Mar 2020 21:00:52 -0700 (PDT)
-Message-Id: <20200314.210052.2035605917214699487.davem@davemloft.net>
-To:     mklntf@gmail.com
-Cc:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
-        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        Sun, 15 Mar 2020 00:06:35 -0400
+X-Greylist: delayed 311 seconds by postgrey-1.27 at vger.kernel.org; Sun, 15 Mar 2020 00:06:34 EDT
+Received: from vivo.com (wm-8.qy.internal [127.0.0.1])
+        by m176148.mail.qiye.163.com (Hmail) with ESMTP id 1403C1A3D78;
+        Sun, 15 Mar 2020 12:01:19 +0800 (CST)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <AOoADQCXCJCLyVN7qh-tYqrl.1.1584244879067.Hmail.hankecai@vivo.com>
+To:     catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org,
+        alexios.zavras@intel.com, tglx@linutronix.de, allison@lohutok.net,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: stmmac: platform: Fix misleading interrupt error
- msg
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200312194625.GA6684@DEFRL0001.localdomain>
-References: <20200306163848.5910-1-mklntf@gmail.com>
-        <20200311.230402.1496009558967017193.davem@davemloft.net>
-        <20200312194625.GA6684@DEFRL0001.localdomain>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 14 Mar 2020 21:00:54 -0700 (PDT)
+Cc:     trivial@kernel.org, kernel@vivo.com
+Subject: =?UTF-8?B?W1BBVENIXSBhcm02NDogZml4IHNwZWxsaW5nIG1pc3Rha2UgImNhIG5vdCIgLT4gImNhbm5vdCI=?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
+X-Originating-IP: 58.251.74.227
+MIME-Version: 1.0
+Received: from hankecai@vivo.com( [58.251.74.227) ] by ajax-webmail ( [127.0.0.1] ) ; Sun, 15 Mar 2020 12:01:19 +0800 (GMT+08:00)
+From:   =?UTF-8?B?6Z+p56eR5omN?= <hankecai@vivo.com>
+Date:   Sun, 15 Mar 2020 12:01:19 +0800 (GMT+08:00)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZTlVOS0xCQkJDQkxLS0hKTFlXWShZQU
+        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
+X-HM-Sender-Digest: e1kMHhlZQQ8JDh5XWRIfHhUPWUFZRzo0FDo*KjgjODE4NwItNUwKE1YP
+        IgoJF1VKVUpOQ09JT09DTEJKSEJVMxYaEhdVExoVEB4YGhI7DRINFFUYFBZFWVdZEgtZQVlOQ1VJ
+        TkpVTE9VSUlMWVdZCAFZQUlNSE83Bg++
+X-HM-Tid: 0a70dc5a6ef29394kuws1403c1a3d78
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Fuchs <mklntf@gmail.com>
-Date: Thu, 12 Mar 2020 20:46:25 +0100
-
-> On Wed, Mar 11, 2020 at 11:04:02PM -0700, David Miller wrote:
->> From: Markus Fuchs <mklntf@gmail.com>
->> Date: Fri,  6 Mar 2020 17:38:48 +0100
->> 
->> > Not every stmmac based platform makes use of the eth_wake_irq or eth_lpi
->> > interrupts. Use the platform_get_irq_byname_optional variant for these
->> > interrupts, so no error message is displayed, if they can't be found.
->> > Rather print an information to hint something might be wrong to assist
->> > debugging on platforms which use these interrupts.
->> > 
->> > Signed-off-by: Markus Fuchs <mklntf@gmail.com>
->> 
->> What do you mean the error message is misleading right now?
->> 
->> It isn't printing anything out at the moment in this situation.
-> 
-> Commit 7723f4c5ecdb driver core: platform: Add an error message to 
->     platform_get_irq*()
-> 
-> The above commit added a generic dev_err() output to the platform_get_irq_byname
-> function.
-> 
-> My patch uses the platform_get_irq_byname_optional function, which
-> doesn't print anything and adds the original dev_err output as dev_info output 
-> to the driver.
-> Otherwise there would be no output at all even for platforms in need of these 
-> irqs.
-
-Aha, now I get it, thanks for explaining.
-
-Applied, thank you.
+VGhlcmUgaXMgYSBzcGVsbGluZyBtaXN0YWtlIGluIHRoZSBjb21tZW50LCBGaXggaXQuCgpTaWdu
+ZWQtb2ZmLWJ5OiBoYW5rZWNhaSA8aGFua2VjYWlAYmJrdGVsLmNvbT4KLS0tCiBhcmNoL2FybTY0
+L2xpYi9zdHJjbXAuUyB8IDIgKy0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBk
+ZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvbGliL3N0cmNtcC5TIGIvYXJjaC9h
+cm02NC9saWIvc3RyY21wLlMKaW5kZXggNDc2NzU0MGQxYjk0Li40ZTc5NTY2NzI2YzggMTAwNjQ0
+Ci0tLSBhL2FyY2gvYXJtNjQvbGliL3N0cmNtcC5TCisrKyBiL2FyY2gvYXJtNjQvbGliL3N0cmNt
+cC5TCkBAIC0xODYsNyArMTg2LDcgQEAgQ1BVX0xFKCByZXYJZGF0YTIsIGRhdGEyICkKIAkqIGFz
+IGNhcnJ5LXByb3BhZ2F0aW9uIGNhbiBjb3JydXB0IHRoZSB1cHBlciBiaXRzIGlmIHRoZSB0cmFp
+bGluZwogCSogYnl0ZXMgaW4gdGhlIHN0cmluZyBjb250YWluIDB4MDEuCiAJKiBIb3dldmVyLCBp
+ZiB0aGVyZSBpcyBubyBOVUwgYnl0ZSBpbiB0aGUgZHdvcmQsIHdlIGNhbiBnZW5lcmF0ZQotCSog
+dGhlIHJlc3VsdCBkaXJlY3RseS4gIFdlIGNhIG5vdCBqdXN0IHN1YnRyYWN0IHRoZSBieXRlcyBh
+cyB0aGUKKwkqIHRoZSByZXN1bHQgZGlyZWN0bHkuICBXZSBjYW5ub3QganVzdCBzdWJ0cmFjdCB0
+aGUgYnl0ZXMgYXMgdGhlCiAJKiBNU0IgbWlnaHQgYmUgc2lnbmlmaWNhbnQuCiAJKi8KIENQVV9C
+RSggY2JuegloYXNfbnVsLCAxZiApCi0tIAoyLjIxLjAKCg0KDQo=
