@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0847F185AE5
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 08:15:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 001F8185AE8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 08:17:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbgCOHPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727584AbgCOHPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sun, 15 Mar 2020 03:15:34 -0400
 Received: from bombadil.infradead.org ([198.137.202.133]:49192 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727163AbgCOHPd (ORCPT
+        with ESMTP id S1727223AbgCOHPd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 15 Mar 2020 03:15:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
         To:From:Sender:Reply-To:Content-ID:Content-Description;
-        bh=GNC8Sm1AlFB7BS88maKHyPxziY/VU/zokv/Jjy4PIQ4=; b=XAQtqekKRTzL+RabbcoToO8+Pb
-        3np37/P21Ced4oj36Wl0MV+8yLB1fraYDdERnsakSucNF62N9JhQqt3yx6Ud09mbgDRb+H6QWe6DT
-        bBXo5+mjzZr2S/bhQCNBTYFA0AnVT8qrzUyJLObxctj0vzABBwYIO+2aQjHp0c9XEHT5xzfJbs8VQ
-        rtfcGFAiDuelgNF5rQQ7kCCKXgqPUMS+EfbFxZu825mtGTd+VXUzSnjHBGj/dcXw0eeAcrRcXYTUK
-        TeVfRNtMOLJaWvGtLXjZkM7hKNlnP8iBqFOxsEKnFy3P/Clt7GHEC8B086MFnJizDK02opXuzOcj+
-        7rSoS4+Q==;
+        bh=IqXEYpa5QgkSb9VlNMgtVjJmY+6NusNQBweUhfnvqp0=; b=st8Z+DASEhH4MF2YEy3O7Q3W6m
+        ieV0AF3sEphRQ+YXwVyizUW9BSHyPlTmuG/DzO7MH8nomb+B1zTjDCZSwMvkiLS8Mk8RkVNdAQ71p
+        V7luiwLAvDw+HuTGnjQmE4H/c2kXZjO/pcQf7bj3blBtaJ0yp7vpys1hzD45B1/Ck00vNmgzY0Bt6
+        yafwZtkt191zuX5YXonoA3ibN5E/NwTcqCUsmuPwXQClA1M8wvNN1GZVl2InBCE+f/IXwjPUGM3az
+        9S/aaUKIhT+SyGg0/H/RWEA36kqpaZZG8RQLp24OqUsuSh8nf56D+8lc8isZ0hvLWnptgSP7/fQt9
+        +uvaIZIg==;
 Received: from [2601:1c0:6280:3f0::19c2] (helo=smtpauth.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jDKbG-0003dY-Da; Sun, 15 Mar 2020 04:10:06 +0000
+        id 1jDKbG-0003dY-Rq; Sun, 15 Mar 2020 04:10:06 +0000
 From:   Randy Dunlap <rdunlap@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Randy Dunlap <rdunlap@infradead.org>,
@@ -32,9 +32,9 @@ Cc:     Randy Dunlap <rdunlap@infradead.org>,
         dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
         Antonino Daplas <adaplas@gmail.com>,
         Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Subject: [PATCH 5/6] fbdev: pm[23]fb.c: fix -Wextra build warnings and errors
-Date:   Sat, 14 Mar 2020 21:10:01 -0700
-Message-Id: <20200315041002.24473-6-rdunlap@infradead.org>
+Subject: [PATCH 6/6] fbdev: via: fix -Wextra build warning and format warning
+Date:   Sat, 14 Mar 2020 21:10:02 -0700
+Message-Id: <20200315041002.24473-7-rdunlap@infradead.org>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20200315041002.24473-1-rdunlap@infradead.org>
 References: <20200315041002.24473-1-rdunlap@infradead.org>
@@ -46,22 +46,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When 'DEBUG' is not defined, modify the DPRINTK() macro to use the
-no_printk() macro instead of using <empty>.
-This fixes build warnings when -Wextra is used and provides
+When 'VIAFB_DEBUG' and 'VIAFB_WARN' are not defined, modify the
+DEBUG_MSG() &WARN_MSG() macros to use the no_printk() macro instead of
+using <empty>.
+This fixes a build warning when -Wextra is used and provides
 printk format checking:
 
-../drivers/video/fbdev/pm2fb.c:227:38: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-../drivers/video/fbdev/pm3fb.c:1039:33: warning: suggest braces around empty body in an ‘else’ statement [-Wempty-body]
+../drivers/video/fbdev/via/ioctl.c:88:47: warning: suggest braces around empty body in an ‘else’ statement [-Wempty-body]
 
-Also drop one argument in two DPRINTK() macro uses to provide the
-correct number of arguments and use the correct field in one case
-to fix a build error:
+Also use %lu to print an unsigned long instead of just %l, to fix
+a printk format warning:
 
-../drivers/video/fbdev/pm3fb.c:353:9: error: ‘struct fb_info’ has no member named ‘current_par’
-     info->current_par->depth);
+../drivers/video/fbdev/via/viafbdev.c: In function ‘viafb_dvp0_proc_write’:
+../drivers/video/fbdev/via/viafbdev.c:1148:14: warning: unknown conversion type character ‘]’ in format [-Wformat=]
+    DEBUG_MSG("DVP0:reg_val[%l]=:%x\n", i,
 
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
 Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Cc: dri-devel@lists.freedesktop.org
 Cc: linux-fbdev@vger.kernel.org
@@ -69,49 +70,46 @@ Cc: linux-fbdev@vger.kernel.org
 Alternative: use pr_debug() so that CONFIG_DYNAMIC_DEBUG can be used
 at these sites.
 
- drivers/video/fbdev/pm2fb.c |    2 +-
- drivers/video/fbdev/pm3fb.c |    8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/video/fbdev/via/debug.h    |    6 ++++--
+ drivers/video/fbdev/via/viafbdev.c |    2 +-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
---- linux-next-20200313.orig/drivers/video/fbdev/pm2fb.c
-+++ linux-next-20200313/drivers/video/fbdev/pm2fb.c
-@@ -54,7 +54,7 @@
- #define DPRINTK(a, b...)	\
- 	printk(KERN_DEBUG "pm2fb: %s: " a, __func__ , ## b)
+--- linux-next-20200313.orig/drivers/video/fbdev/via/debug.h
++++ linux-next-20200313/drivers/video/fbdev/via/debug.h
+@@ -7,6 +7,8 @@
+ #ifndef __DEBUG_H__
+ #define __DEBUG_H__
+ 
++#include <linux/printk.h>
++
+ #ifndef VIAFB_DEBUG
+ #define VIAFB_DEBUG 0
+ #endif
+@@ -14,14 +16,14 @@
+ #if VIAFB_DEBUG
+ #define DEBUG_MSG(f, a...)   printk(f, ## a)
  #else
--#define DPRINTK(a, b...)
-+#define DPRINTK(a, b...)	no_printk(a, ##b)
+-#define DEBUG_MSG(f, a...)
++#define DEBUG_MSG(f, a...)   no_printk(f, ## a)
  #endif
  
- #define PM2_PIXMAP_SIZE	(1600 * 4)
---- linux-next-20200313.orig/drivers/video/fbdev/pm3fb.c
-+++ linux-next-20200313/drivers/video/fbdev/pm3fb.c
-@@ -44,7 +44,7 @@
- #define DPRINTK(a, b...)	\
- 	printk(KERN_DEBUG "pm3fb: %s: " a, __func__ , ## b)
+ #define VIAFB_WARN 0
+ #if VIAFB_WARN
+ #define WARN_MSG(f, a...)   printk(f, ## a)
  #else
--#define DPRINTK(a, b...)
-+#define DPRINTK(a, b...)	no_printk(a, ##b)
+-#define WARN_MSG(f, a...)
++#define WARN_MSG(f, a...)   no_printk(f, ## a)
  #endif
  
- #define PM3_PIXMAP_SIZE	(2048 * 4)
-@@ -306,7 +306,7 @@ static void pm3fb_init_engine(struct fb_
- 					   PM3PixelSize_GLOBAL_32BIT);
- 			break;
- 		default:
--			DPRINTK(1, "Unsupported depth %d\n",
-+			DPRINTK("Unsupported depth %d\n",
- 				info->var.bits_per_pixel);
- 			break;
- 		}
-@@ -349,8 +349,8 @@ static void pm3fb_init_engine(struct fb_
- 					   (1 << 10) | (0 << 3));
- 			break;
- 		default:
--			DPRINTK(1, "Unsupported depth %d\n",
--				info->current_par->depth);
-+			DPRINTK("Unsupported depth %d\n",
-+				info->var.bits_per_pixel);
- 			break;
- 		}
- 	}
+ #endif /* __DEBUG_H__ */
+--- linux-next-20200313.orig/drivers/video/fbdev/via/viafbdev.c
++++ linux-next-20200313/drivers/video/fbdev/via/viafbdev.c
+@@ -1144,7 +1144,7 @@ static ssize_t viafb_dvp0_proc_write(str
+ 		if (value != NULL) {
+ 			if (kstrtou8(value, 0, &reg_val) < 0)
+ 				return -EINVAL;
+-			DEBUG_MSG(KERN_INFO "DVP0:reg_val[%l]=:%x\n", i,
++			DEBUG_MSG(KERN_INFO "DVP0:reg_val[%lu]=:%x\n", i,
+ 				  reg_val);
+ 			switch (i) {
+ 			case 0:
