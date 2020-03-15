@@ -2,120 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2D73185B2B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 09:22:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65A90185B31
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 09:33:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbgCOIWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 04:22:21 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:54531 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727756AbgCOIWU (ORCPT
+        id S1727857AbgCOIdF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 04:33:05 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36312 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727646AbgCOIdF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 04:22:20 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 6988921F92;
-        Sun, 15 Mar 2020 04:22:20 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Sun, 15 Mar 2020 04:22:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=yhVD4YjMEGo73j5yyKXYwzhDOUL
-        Ne+T9MsqpqJ23H20=; b=SSvyYEEK7kUmhyt6/NeE6ekB7FNynWoy0q8Ey2ij6qs
-        nyqCsIMtEg6ZmZhZlluyOP+Poxktnz0pV5p1KLcIOBPTsazK6gJeVQCyMvMv4F2v
-        mDO2I/l9aeb1xSfAwPZ2oGznIFBecuX/IPP70XRzLM3NmkSnRCZBgXomQ3PYL4eF
-        BMJIMUWCXbD3FKCfoLuTEtVSrHBuyPp72Bro53a94SqcVbFLXwWdqigm+ZfWIQGl
-        Psq8aS6EDiBZYd37GqFWBYvvABYCM4mgegIaL977+WSeO3NFIqLFcrTwsI0f1OmJ
-        nVv2CsVI0UgTibC9RDMFvjItEiMKmeba69IT+tNSa0w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=yhVD4Y
-        jMEGo73j5yyKXYwzhDOULNe+T9MsqpqJ23H20=; b=CbgkWDc0GVHkme2NCpR0fw
-        rZl9oCXQ+yVStQk5jDix0zWlkbUTxqeRfumg39TLt7N5ZrsnuV8fINdzNlAIfovu
-        t1wL3vqVT4/nILjAU5m0+6P7u/eeX+P8Ib1FOMQHxWwCf55Z9APvKJ5agT+wy/K7
-        p3ANltlZAO0L7440vNdDJY+cOQNBWAQ9Fv8Qiaw6Yc3KRYM8eCYUS4U99p8s63Uv
-        b8WLG4CV5d6V7umKPWG314HHeUUwjdM0jVoFHjJSVvD+6ENcAJYw4CxKLz8TNo84
-        pyTgAqP/mvLU1uT7mS+Ha6kIUEyUrkVbKepLJnZMErentPsoLABMcdIldHo5dJ6w
-        ==
-X-ME-Sender: <xms:vOVtXrK4JePVYAkT-RQQhwp4CMtoAkPFZZdxJtU6ptHzzPo_kL3JtA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudeftddgudduvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfhfgggtuggjsehttd
-    ertddttddvnecuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhm
-    qeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeekfedrkeeirdekledrud
-    dtjeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehg
-    rhgvgheskhhrohgrhhdrtghomh
-X-ME-Proxy: <xmx:vOVtXqrZ5m86tdFgm4Qr-q4xO4sVQUIJklK5UU7eO_s0t-iEwkrFXA>
-    <xmx:vOVtXqusZXF_2G66ZxV_u8btuU93dWaRB5kDfnu2J9vYuZ97vzkXVg>
-    <xmx:vOVtXtUs5ZGpxoQEd4mLLZFRYmLyTDXWXm3rYMEZrrFbSnCO7HZ_gQ>
-    <xmx:vOVtXhXwuh7FWggq1LSChDl2lQWhAn-JX07k1ETxhCZfYwJshendfA>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id F21583060F09;
-        Sun, 15 Mar 2020 04:22:19 -0400 (EDT)
-Date:   Sun, 15 Mar 2020 09:22:18 +0100
-From:   Greg KH <greg@kroah.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     olga.kornievskaia@gmail.com, stable-commits@vger.kernel.org
-Subject: Re: Patch "NFSD fixing possible null pointer derefering in copy
- offload" has been added to the 5.5-stable tree
-Message-ID: <20200315082218.GB132056@kroah.com>
-References: <20200314003523.A4F1B20753@mail.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200314003523.A4F1B20753@mail.kernel.org>
+        Sun, 15 Mar 2020 04:33:05 -0400
+Received: by mail-pg1-f193.google.com with SMTP id z4so1984867pgu.3;
+        Sun, 15 Mar 2020 01:33:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Mc91MOfwvy0Krn8xqZ+9eQ5qoxXVwyTfd8xLMYOaUhA=;
+        b=gUjQj0QaIXIolLufw1MTw01hCZkugAmnahw2dGNurUXkraFV5bat8RP+TeYi1QIzZL
+         mSvJJ8/LRjA8PSZ8duqmQL/aDIDF34HdZgrquYdObEr1R4WgPZu4WSadOSTqAKJcxsE8
+         ErgjJuvy96CEOlsNqNqZqW2thet038HemrXGGZfHDykopdtjJRBVd9IC+fBhO+bHTpRG
+         kx5BkKJCt4YB7DSfAohiADTPfBKk2Kkx8CogvwULf6fK+zSq0N3rK1UuvtBHzwq8Kird
+         7vpiovZpK2myt8Bj0G1VjIa6gXu/ZwjSL8ietEMafWBZTdrPBQH6kR8lvyY7fuD9TDYD
+         TFPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Mc91MOfwvy0Krn8xqZ+9eQ5qoxXVwyTfd8xLMYOaUhA=;
+        b=fTcfTyzczXCeeRAmUdDIx0HseT3zgxlhhA5qP0NVYSxdRJ7QXLAYgiMPwbfVx1JBC+
+         7CqK5PUnXwmBIQbL3/jmZyz5bYhd8q10hDeAXAAAxctEeGq5NaHrLFONqR7DEo31lJMd
+         1veU+wYwZkcMpXNrZlJxdwXGHDlPzQl9+ck4ndZuLcLzO5vHlAjPvwtoPRjP+5lXp8wg
+         uG2FhkYMk8IkQtz56moXGL+9ww6URgKro77UKngmK4Jx9oEnfOB+jEV1DiZIN6u4CuIX
+         wuw4ZuMpJC5pFHkFvLWSF9XwUvo/fWIGqHHJKGzyEyJhfue+5baqUedPlJw446hmSNGG
+         SbAQ==
+X-Gm-Message-State: ANhLgQ1QxZhbIMLwI20LTLCfjX1KiuPlQEYLe66bWwOsMkX4EjhmEkN1
+        lTZ5HPPbqZde5TUn9YdpSAAGwmBbCnTcyQ==
+X-Google-Smtp-Source: ADFU+vtCxwSyuEhkrTP4rZfIOCpK8kOyO8QPh77dTyImimqs3E4RAkEVtdIznCjghWxOgUwXb+vm+g==
+X-Received: by 2002:a63:6c8a:: with SMTP id h132mr19335055pgc.301.1584261181934;
+        Sun, 15 Mar 2020 01:33:01 -0700 (PDT)
+Received: from ubuntu-18.04-x8664 ([128.1.49.85])
+        by smtp.gmail.com with ESMTPSA id c207sm23181609pfb.47.2020.03.15.01.32.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Mar 2020 01:33:01 -0700 (PDT)
+From:   Wenbo Zhang <ethercflow@gmail.com>
+To:     ast@kernel.org, daniel@iogearbox.net
+Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ethercflow@gmail.com
+Subject: [PATCH] bpf: Fix ___bpf_kretprobe_args1(x) macro definition.
+Date:   Sun, 15 Mar 2020 04:32:52 -0400
+Message-Id: <20200315083252.22274-1-ethercflow@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 08:35:22PM -0400, Sasha Levin wrote:
-> This is a note to let you know that I've just added the patch titled
-> 
->     NFSD fixing possible null pointer derefering in copy offload
-> 
-> to the 5.5-stable tree which can be found at:
->     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
-> 
-> The filename of the patch is:
->      nfsd-fixing-possible-null-pointer-derefering-in-copy.patch
-> and it can be found in the queue-5.5 subdirectory.
-> 
-> If you, or anyone else, feels it should not be added to the stable tree,
-> please let <stable@vger.kernel.org> know about it.
-> 
-> 
-> 
-> commit a264e7b209f248f59b4fee0d1ed3fbde014a942e
-> Author: Olga Kornievskaia <olga.kornievskaia@gmail.com>
-> Date:   Wed Dec 4 15:13:54 2019 -0500
-> 
->     NFSD fixing possible null pointer derefering in copy offload
->     
->     [ Upstream commit 2e577f0faca4640348c398cb85d60a1eedac4b1e ]
->     
->     Static checker revealed possible error path leading to possible
->     NULL pointer dereferencing.
->     
->     Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
->     Fixes: e0639dc5805a: ("NFSD introduce async copy feature")
->     Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
->     Signed-off-by: J. Bruce Fields <bfields@redhat.com>
->     Signed-off-by: Sasha Levin <sashal@kernel.org>
-> 
-> diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-> index 4798667af647c..91b64c15556e6 100644
-> --- a/fs/nfsd/nfs4proc.c
-> +++ b/fs/nfsd/nfs4proc.c
-> @@ -1223,7 +1223,8 @@ static void cleanup_async_copy(struct nfsd4_copy *copy)
->  {
->  	nfs4_free_cp_state(copy);
->  	nfsd_file_put(copy->nf_dst);
-> -	nfsd_file_put(copy->nf_src);
-> +	if (copy->cp_intra)
-> +		nfsd_file_put(copy->nf_src);
+Use PT_REGS_RC instead of PT_REGS_RET to get ret currectly.
 
-And shouldn't this patch just be:
-	if (copy->nf_src)
-instead?
+Signed-off-by: Wenbo Zhang <ethercflow@gmail.com>
+---
+ tools/lib/bpf/bpf_tracing.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/lib/bpf/bpf_tracing.h b/tools/lib/bpf/bpf_tracing.h
+index b0c9ae5c73b5..f3f3c3fb98cb 100644
+--- a/tools/lib/bpf/bpf_tracing.h
++++ b/tools/lib/bpf/bpf_tracing.h
+@@ -390,7 +390,7 @@ ____##name(struct pt_regs *ctx, ##args)
+ 
+ #define ___bpf_kretprobe_args0() ctx
+ #define ___bpf_kretprobe_args1(x) \
+-	___bpf_kretprobe_args0(), (void *)PT_REGS_RET(ctx)
++	___bpf_kretprobe_args0(), (void *)PT_REGS_RC(ctx)
+ #define ___bpf_kretprobe_args(args...) \
+ 	___bpf_apply(___bpf_kretprobe_args, ___bpf_narg(args))(args)
+ 
+-- 
+2.17.1
 
