@@ -2,100 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D62EC185ADF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 08:12:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B930C185B05
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 08:21:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbgCOHL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 03:11:58 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36198 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727012AbgCOHL5 (ORCPT
+        id S1727600AbgCOHV0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 03:21:26 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34618 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727163AbgCOHV0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 03:11:57 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k18so14325929oib.3;
-        Sun, 15 Mar 2020 00:11:57 -0700 (PDT)
+        Sun, 15 Mar 2020 03:21:26 -0400
+Received: by mail-ed1-f66.google.com with SMTP id i24so13962450eds.1;
+        Sun, 15 Mar 2020 00:21:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Iv77R9xIf2Zpsv1uSDBTkW8/S6yCOSOT3Zqw79KydcQ=;
-        b=jY85eJ2U5VTlShse99xoMUEpxK9C3/jNRTt4TsSlUV/X/A9mb0yc9Izf++OUtEaXeY
-         aqB0crDjj5kG9Am46iR8uxP4K8MYsc2uVSPxUjJfQZJUTISZPPwy7G0edlrcDMbgtK3L
-         2dEU6jA8WppacltoUkYSR7x9D8b8xKv8pD0nj2++nLlDFFr/1aNIWDnGzLta+xCkfbnU
-         fTwyrRhMMWO+bfBW2fM2T/VAXW4CtkxvdNLdiYgZqj28Zg+IEsy1FaRToVHFvcNkqDf2
-         ygwxG9Z+6SEvS29n4h6JzvVojUA1hqmJ9rmGYA2hdpY/lFZdi7YJhHab2SjcQ8/o/8uE
-         yWTQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=uc3tUPFRMKpOBHISvMn5YQ4zt6tuto3i0ER6vMBt8yA=;
+        b=kTyejLGY2WPpBLC4/mkBzwppvQ0gbvnKLPnUh4tlFKU7VQNZ4DxfGjB1z2kbyR+o3v
+         FN9i9wirp9hu9AeiSwpyqol3haVRchFjCGPvj/se3QmBeTNkJdsi1ut7wabk0dwO+/zH
+         EpMCIC0dzNdAvEgY9sLvFUFsxvNAtM85IRnwYsL71ux4lXpY1svBRRaF7WQLBU+/ev+6
+         5grnvMsxUxIy/EA22XeXM51LwOnDZztyctSa5fpwi2bLNh6q8xG7c1ZBzmrC3hJj2x3A
+         v0iJdE/8/cQuAYHqCKce7CR+wJKHLrH+et1OKbPVIhr4igoZAzRD0IrPqjuhpHf7R71K
+         VghQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Iv77R9xIf2Zpsv1uSDBTkW8/S6yCOSOT3Zqw79KydcQ=;
-        b=EFJUS2pgS0Qo7NJ/WwGsoF0BoXlBo9i5JRFhwSJhs5VMwQbcgIhGm2jokHZPqs41OL
-         N90ONAIWhvR8Avk8RImrX5u5tGIpQSasGbYEZEre8pTvY50kl2pwR4Ywy1amN2oNnRJH
-         oDIPODC7kncnJQGPFFMEH+RdunNGGxnMfYI+eoUOSihPm0P1XPwfuyEu3Mxl2mwd6JIh
-         UCh6R6HNi1yKKmV7YO7hG8KsdVBhkzKZ+MSofSFVsRKiXWsOwrEHpeKmGk6TfLJNqxSh
-         02W15HR+lBlCgeLFfLsqPbaQAODwjpq28l0X6if1V9rfwY7X33tXFD/8wxicQ/2xeXwX
-         84iA==
-X-Gm-Message-State: ANhLgQ0pQxTzjyiaG0Vzx3lB1ckE7/xhIQ5sHEqb0SE4NOvQntQrRA2+
-        f+yQTunzvVoXtvtFBYf9CZ4=
-X-Google-Smtp-Source: ADFU+vueMPfKqmKSQNvPkaQIlyhwfkEvf41MYvMKaO+gzudevYA3ndfvjrWYfnmAmDUtwenU2bslVw==
-X-Received: by 2002:aca:aa55:: with SMTP id t82mr13291293oie.147.1584256316688;
-        Sun, 15 Mar 2020 00:11:56 -0700 (PDT)
-Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id c3sm8649193otl.81.2020.03.15.00.11.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 15 Mar 2020 00:11:56 -0700 (PDT)
-Date:   Sun, 15 Mar 2020 00:11:54 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     afzal mohammed <afzal.mohd.ma@gmail.com>
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Keguang Zhang <keguang.zhang@gmail.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        John Crispin <john@phrozen.org>
-Subject: Re: [PATCH v2] MIPS: pass non-NULL dev_id on shared request_irq()
-Message-ID: <20200315071154.GA31696@ubuntu-m2-xlarge-x86>
-References: <20200304203144.GA4323@alpha.franken.de>
- <20200305115759.3186-1-afzal.mohd.ma@gmail.com>
- <20200311053126.GA48442@ubuntu-m2-xlarge-x86>
- <20200311090308.GA5060@afzalpc>
- <20200311104217.GA10615@alpha.franken.de>
- <20200311131210.GA5115@afzalpc>
- <20200311160307.GA15464@alpha.franken.de>
- <20200311163249.GA4984@afzalpc>
- <20200313121138.GA5985@afzalpc>
- <20200314081312.GA4948@afzalpc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200314081312.GA4948@afzalpc>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uc3tUPFRMKpOBHISvMn5YQ4zt6tuto3i0ER6vMBt8yA=;
+        b=rnxr81lus5fJPHSvcnF8UUy0Wzep6hHQzTFC3XNK0p4xmASTm/KcDfI4vhYmk29E0x
+         qYBVwSmxgf5Sasw4K4JP8NsW7pFJyzzi89R0oYtyJShG95H3b65b6LD8DzWPungdJanR
+         q+XTPQA2o4xI3siPhAqXoe+j/lD0r0zFcumBSVQIb57EOn6pB+DB/IcWoNv+jj0jzaUw
+         jYmxNyEUZcobmUHdiyeILPpq1o4Ih41uge2DqKeG0QHnb/GAMLkRUxDbeSiBIbAV6QU1
+         vKcWTgYcV6eK0vhCrfpxUHTiSlbEkD9rkF7126rdE3hkqOubrDgcryL38SiJTdr5r4cy
+         oGZQ==
+X-Gm-Message-State: ANhLgQ2yq6ncieQnV0ldY6tteJMmGjrkEfGnFLoPhBu7eQ66zgRVCaee
+        w9V85thD4BFxvq1BgWC9F9U=
+X-Google-Smtp-Source: ADFU+vuNwPtaanANlsW3pFS/owgZW33ZS8LHiCmmEX3cDJcX+ZdUwMopIn2grErjKpqQ6uaVWEE5fg==
+X-Received: by 2002:a17:906:7a54:: with SMTP id i20mr18547767ejo.100.1584256884059;
+        Sun, 15 Mar 2020 00:21:24 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2d6c:6c00:888a:952a:33bc:a081])
+        by smtp.gmail.com with ESMTPSA id k8sm119650ejq.36.2020.03.15.00.21.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Mar 2020 00:21:23 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Rob Herring <robh@kernel.org>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        dri-devel@lists.freedesktop.org, Joe Perches <joe@perches.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust to VIVANTE GPU schema conversion
+Date:   Sun, 15 Mar 2020 08:21:09 +0100
+Message-Id: <20200315072109.6815-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 14, 2020 at 01:43:12PM +0530, afzal mohammed wrote:
-> Recently all usages of setup_irq() was replaced by request_irq().
-> request_irq() does a few sanity checks that were not done in
-> setup_irq(), if they fail irq registration will fail. One of the check
-> is to ensure that non-NULL dev_id is passed in the case of shared irq.
-> This caused malta on qemu to hang.
-> 
-> Fix it by passing handler as dev_id to all request_irq()'s that are
-> shared. For sni, instead of passing non-NULL dev_id, remove shared irq
-> flags.
-> 
-> Fixes: ac8fd122e070 ("MIPS: Replace setup_irq() by request_irq()")
-> Reported-by: Nathan Chancellor <natechancellor@gmail.com>
-> Suggested-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+Commit 90aeca875f8a ("dt-bindings: display: Convert etnaviv to
+json-schema") missed to adjust the DRM DRIVERS FOR VIVANTE GPU IP entry
+in MAINTAINERS.
 
-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+Since then, ./scripts/get_maintainer.pl --self-test complains:
+
+  warning: no file matches \
+  F: Documentation/devicetree/bindings/display/etnaviv/
+
+Update MAINTAINERS entry to location of converted schema.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20200313
+
+Benjamin, please ack.
+Rob, please pick this patch (it is not urgent, though)
+
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 77eede976d0f..50a7a6d62e06 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5766,7 +5766,7 @@ L:	dri-devel@lists.freedesktop.org
+ S:	Maintained
+ F:	drivers/gpu/drm/etnaviv/
+ F:	include/uapi/drm/etnaviv_drm.h
+-F:	Documentation/devicetree/bindings/display/etnaviv/
++F:	Documentation/devicetree/bindings/gpu/vivante,gc.yaml
+ 
+ DRM DRIVERS FOR ZTE ZX
+ M:	Shawn Guo <shawnguo@kernel.org>
+-- 
+2.17.1
+
