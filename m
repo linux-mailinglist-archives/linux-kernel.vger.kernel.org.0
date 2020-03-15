@@ -2,93 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FD54185C7B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 13:54:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45816185C6F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 13:49:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728551AbgCOMye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 08:54:34 -0400
-Received: from mx.0dd.nl ([5.2.79.48]:52546 "EHLO mx.0dd.nl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728522AbgCOMye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 08:54:34 -0400
-X-Greylist: delayed 335 seconds by postgrey-1.27 at vger.kernel.org; Sun, 15 Mar 2020 08:54:33 EDT
-Received: from mail.vdorst.com (mail.vdorst.com [IPv6:fd01::250])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1728527AbgCOMtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 08:49:22 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:29908 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728410AbgCOMtW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 08:49:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584276560;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=OSsonxsOiZNbFiJ3BbqH+iAht9WuD/N0Mu4OYGtQOMg=;
+        b=QntT3aAgS0M1p9V7aTj/GTjXQdCO3EcNSmlJywNDUKvl17mR4ggOfa2F2f7Y1SyS293OpR
+        NMPzlDp2n/ThdIU4ZXbPF1lyY8YcbOCAdTPzbWqoG7noDzSUHSa+fq532VtL5aApCmu0tp
+        0bo2Qw76p55MNEIPHyso28eqcgXc+9g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-262-RWYnoOrwMrql9SyLyLw4MQ-1; Sun, 15 Mar 2020 08:49:18 -0400
+X-MC-Unique: RWYnoOrwMrql9SyLyLw4MQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx.0dd.nl (Postfix) with ESMTPS id 32AD15FB19;
-        Sun, 15 Mar 2020 13:48:57 +0100 (CET)
-Authentication-Results: mx.0dd.nl;
-        dkim=pass (2048-bit key; secure) header.d=vdorst.com header.i=@vdorst.com header.b="kOzIRY1m";
-        dkim-atps=neutral
-Received: from www (www.vdorst.com [192.168.2.222])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.vdorst.com (Postfix) with ESMTPSA id CF07623728F;
-        Sun, 15 Mar 2020 13:48:56 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.vdorst.com CF07623728F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vdorst.com;
-        s=default; t=1584276536;
-        bh=Is7T8gsczbAflMtpH86ZF4mhjtkMOqN5/wzv7KlnGtc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=kOzIRY1mr32lMxMDQcEn9401DmXj1RngdTgPhdC+quRwdtSfJ4U9O8lOjpq7cE/2p
-         3V43c43Hpew1vvNU0ooQIx5MDF7VELEPayVuSnXqjBLjRtpHy/9N+nlKPDUh9VVRgk
-         eZPdhvkogRf2Hjz6awee9vdt7z6RJ/KGoezDN1ZijC2tHT8c8zRdxTRzc7d5R9K8YY
-         EhhEMi9vHxETmH647fVSacigU5IL+PU6QCUbctesRtssqCY0IzWriFcibaVS+X2E28
-         ghyEbNG5m1BKMQWjDRu7bG+199F5/HTim2CqP/t6UP3IwVwdhP/iEGEcM0YTxAOnyY
-         or8/9Rj35zovA==
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1]) by
- www.vdorst.com (Horde Framework) with HTTPS; Sun, 15 Mar 2020 12:48:56 +0000
-Date:   Sun, 15 Mar 2020 12:48:56 +0000
-Message-ID: <20200315124856.Horde.FggCAOBKhyXcJ0kuGBpqX_l@www.vdorst.com>
-From:   =?utf-8?b?UmVuw6k=?= van Dorst <opensource@vdorst.com>
-To:     Chuanhong Guo <gch981213@gmail.com>
-Cc:     linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] gpio: mmio: introduce BGPIOF_NO_SET_ON_INPUT
-In-Reply-To: <20200315121338.251362-1-gch981213@gmail.com>
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 328D9107ACC7;
+        Sun, 15 Mar 2020 12:49:17 +0000 (UTC)
+Received: from localhost (ovpn-12-79.pek2.redhat.com [10.72.12.79])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5735C10027AF;
+        Sun, 15 Mar 2020 12:49:16 +0000 (UTC)
+Date:   Sun, 15 Mar 2020 20:49:13 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Wei Yang <richard.weiyang@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+        mhocko@suse.com, akpm@linux-foundation.org
+Subject: Re: [PATCH v2] x86/mm: Remove the redundant conditional check
+Message-ID: <20200315124913.GA3486@MiWiFi-R3L-srv>
+References: <20200311011823.27740-1-bhe@redhat.com>
+ <20200314151006.gnkyf4xpqve6b3wx@master>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200314151006.gnkyf4xpqve6b3wx@master>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Chuanhong Guo <gch981213@gmail.com>:
+On 03/14/20 at 03:10pm, Wei Yang wrote:
+> On Wed, Mar 11, 2020 at 09:18:23AM +0800, Baoquan He wrote:
+> >In commit f70029bbaacb ("mm, memory_hotplug: drop CONFIG_MOVABLE_NODE"),
+> >the dependency on CONFIG_MOVABLE_NODE was removed for N_MEMORY. Before
+> >commit f70029bbaacb, CONFIG_HIGHMEM && !CONFIG_MOVABLE_NODE could make
+> >(N_MEMORY == N_NORMAL_MEMORY) be true. After commit f70029bbaacb, N_MEMORY
+> >doesn't have any chance to be equal to N_NORMAL_MEMORY. So the conditional
+> >check in paging_init() doesn't make sense any more. Let's remove it.
+> >
+> >Signed-off-by: Baoquan He <bhe@redhat.com>
+> 
+> The change looks good. While I have one question, we set default value for
+> N_HIGH_MEMORY. Why we don't clear this too?
 
-> Currently gpio-hog doesn't work on gpio-mt7621 driver. On further
-> debugging, I noticed that set/clear register on this controller
-> only works on output pins. We need to setup pin direction before
-> writing values in bgpio_dir_out for a correct gpio-hog behavior.
-> This patchset introduces a new flag BGPIOF_NO_SET_ON_INPUT for
-> these kind of controller and set this flag for gpio-mt7621.
->
-> Chuanhong Guo (2):
->   gpio: mmio: introduce BGPIOF_NO_SET_ON_INPUT
->   gpio: mt7621: add BGPIOF_NO_SET_ON_INPUT flag
->
->  drivers/gpio/gpio-mmio.c    | 23 +++++++++++++++++++----
->  drivers/gpio/gpio-mt7621.c  |  4 ++--
->  include/linux/gpio/driver.h |  1 +
->  3 files changed, 22 insertions(+), 6 deletions(-)
->
-> --
-> 2.24.1
-Thanks Chuanhong for debugging the problem!
+This is for x86_64 only, there's no node_state for N_HIGH_MEMORY.
 
-With this patch gpio-hog works again.
-
-For the series:
-
-Tested-by: René van Dorst <opensource@vdorst.com>
-
-Greats,
-
-René
+> 
+> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+> 
+> >---
+> >v1->v2:
+> >  Update patch log to make the description clearer per Michal's
+> >  suggestion.
+> >
+> > arch/x86/mm/init_64.c | 3 +--
+> > 1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> >diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> >index abbdecb75fad..0a14711d3a93 100644
+> >--- a/arch/x86/mm/init_64.c
+> >+++ b/arch/x86/mm/init_64.c
+> >@@ -818,8 +818,7 @@ void __init paging_init(void)
+> > 	 *	 will not set it back.
+> > 	 */
+> > 	node_clear_state(0, N_MEMORY);
+> >-	if (N_MEMORY != N_NORMAL_MEMORY)
+> >-		node_clear_state(0, N_NORMAL_MEMORY);
+> >+	node_clear_state(0, N_NORMAL_MEMORY);
+> > 
+> > 	zone_sizes_init();
+> > }
+> >-- 
+> >2.17.2
+> 
+> -- 
+> Wei Yang
+> Help you, Help me
+> 
 
