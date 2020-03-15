@@ -2,88 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D50D8185FB0
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 21:12:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FBBA185FB1
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 21:13:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729100AbgCOUMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 16:12:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:37717 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729081AbgCOUMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 16:12:42 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48gVwS2QKZz9sP7;
-        Mon, 16 Mar 2020 07:12:40 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1584303160;
-        bh=T5p7qsdMSbtIslBz+IZ/R1FX6AlWSXNTZGgfkCMkXnA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=roghQ77Tf/swP68aZN7tG7UG8wcer2zycmAfCgVjDC9W4d1gTh3JIrJdcBuw4syTM
-         n40XKhIpV4dxqVTIuamaCEn4sBakok/XEmCXC+Xm87sV1HaIS1M/FENMxiEsrD0A0a
-         BHFVc/I2NhOLjmhWpeoLRSjPv57gB035JhlbW/tAxom9yMuW5C6Ym9X477HtBpY03F
-         3SE41lic00IkaUhnC2YSP2K0CXsSRsna1Zk+Q/HzJlpACzs4mpUtohyI9NFvLG9xle
-         tuCbcnXT2MQ7K4xOJzUBOiyuzJEPZJ8HzKgNtSR1/BFcl8+6BTuTTQUg8//BctqwPe
-         UwTvTH1eyuDig==
-Date:   Mon, 16 Mar 2020 07:12:34 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: linux-next: Fixes tag needs some work in the usb-gadget tree
-Message-ID: <20200316071234.3e0bce06@canb.auug.org.au>
+        id S1729120AbgCOUNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 16:13:14 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:23877 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729080AbgCOUNO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 16:13:14 -0400
+Received: from localhost.localdomain ([93.22.37.174])
+        by mwinf5d57 with ME
+        id EkD2220093lSDvh03kD3A1; Sun, 15 Mar 2020 21:13:12 +0100
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 15 Mar 2020 21:13:12 +0100
+X-ME-IP: 93.22.37.174
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, mhiramat@kernel.org,
+        allison@lohutok.net, rostedt@goodmis.org, tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] perf probe: Fix an error handling path in 'parse_perf_probe_command()'
+Date:   Sun, 15 Mar 2020 21:12:59 +0100
+Message-Id: <20200315201259.29190-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Xcf=cdoDQKABwzFeZT1ekMP";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Xcf=cdoDQKABwzFeZT1ekMP
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+If a memory allocation fail, we should branch to the error handling path in
+order to free some resources allocated a few lines above.
 
-Hi all,
+Fixes: 15354d546986 ("perf probe: Generate event name with line number")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ tools/perf/util/probe-event.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-In commit
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index eea132f512b0..65a615ee4b4c 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -1683,8 +1683,10 @@ int parse_perf_probe_command(const char *cmd, struct perf_probe_event *pev)
+ 	if (!pev->event && pev->point.function && pev->point.line
+ 			&& !pev->point.lazy_line && !pev->point.offset) {
+ 		if (asprintf(&pev->event, "%s_L%d", pev->point.function,
+-			pev->point.line) < 0)
+-			return -ENOMEM;
++			pev->point.line) < 0) {
++			ret = -ENOMEM;
++			goto out;
++		}
+ 	}
+ 
+ 	/* Copy arguments and ensure return probe has no C argument */
+-- 
+2.20.1
 
-  238d76021654 ("usb: dwc3: meson-g12a: Don't use ret uninitialized in dwc3=
-_meson_g12a_otg_init")
-
-Fixes tag
-
-  Fixes: 729149c53f04 ("usb: dwc3: Add Amlogic A1 DWC3 glue")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Perhaps you meant
-
-Fixes: 1e355f21d3fb ("usb: dwc3: Add Amlogic A1 DWC3 glue")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Xcf=cdoDQKABwzFeZT1ekMP
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5ujDIACgkQAVBC80lX
-0Gz6GAf/eED2aBxU5Am16xpi3iuSkpHZss12ezWsbOyzIt1flEysxgxgysjvhFMc
-B3iLO5kFGBi+4HYcxrQzr/9lYZgzVwpeS3Yp+RikP2sBSmu6DkaK9n8f+mPQPyBM
-9LqPPWMUDgDRxqbcLSzJV+kjM7Jrbm9fCmPwWhWZTyqc5ZRwvSN2Kt6TwzhoGTF7
-d9yq929gJvJ6sNB1K/AUjoPCS74VGp9yqFGVUQ8UHiUN1qQUhWvjP5LH5vcVfKYq
-2jYR892oA8rpc34yQJov2d36D7PKDwqgEnwVTYxV//R3On7lZ/2AeK8P77lzCAeQ
-dChf4boP7W/7TkQhqNFJyDlhO5ZQAQ==
-=nvgy
------END PGP SIGNATURE-----
-
---Sig_/Xcf=cdoDQKABwzFeZT1ekMP--
