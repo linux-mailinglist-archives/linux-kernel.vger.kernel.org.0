@@ -2,113 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FE69186034
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 23:21:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADE43186052
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 23:54:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729292AbgCOWVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 18:21:05 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3021 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729213AbgCOWVF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 18:21:05 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e6eaa200000>; Sun, 15 Mar 2020 15:20:16 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Sun, 15 Mar 2020 15:21:04 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sun, 15 Mar 2020 15:21:04 -0700
-Received: from [10.2.175.141] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 15 Mar
- 2020 22:21:03 +0000
-Subject: Re: [RFC PATCH v4 8/8] arm64: tegra: Add Tegra VI CSI support in
- device tree
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <helen.koike@collabora.com>, <sboyd@kernel.org>
-CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1584236766-24819-1-git-send-email-skomatineni@nvidia.com>
- <1584236766-24819-9-git-send-email-skomatineni@nvidia.com>
- <b4bbcc1d-d38c-14c5-7205-2f7657ab8712@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <80805c85-a6b0-62c4-877c-6af3831bce1d@nvidia.com>
-Date:   Sun, 15 Mar 2020 15:21:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1729303AbgCOWyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 18:54:49 -0400
+Received: from mga02.intel.com ([134.134.136.20]:17724 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729289AbgCOWyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 18:54:49 -0400
+IronPort-SDR: msDA0z2FmERdC0az68Nz6WpGd5J0xNiNXwB7WtiKtl6K/h8fxIG3ZyyDVxwfJWleoOxS7Nh7Mh
+ FCCkIrWzOtUA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2020 15:54:48 -0700
+IronPort-SDR: q2EG/JiCttc6d/8TXdcFTU0FuxuXu0mvEotBumngkuu10QZUpzjeF5b/bxQVvPy1kw8vM3hHHZ
+ gC/MxoxvsYkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,558,1574150400"; 
+   d="scan'208";a="278840400"
+Received: from babayass-mobl.ger.corp.intel.com (HELO localhost) ([10.249.90.210])
+  by fmsmga002.fm.intel.com with ESMTP; 15 Mar 2020 15:54:44 -0700
+Date:   Mon, 16 Mar 2020 00:54:43 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        jmorris@namei.org, dhowells@redhat.com
+Subject: [GIT PULL] tpmdd updates for Linux v5.7
+Message-ID: <20200315225443.GA1413900@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <b4bbcc1d-d38c-14c5-7205-2f7657ab8712@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1584310816; bh=+e0QisX1Z4jXTDX4Ud8ppSbrPDDTZh9nrZyl/tz1gm0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=SdjV7v5ZXAJPdwkJv7XrI0jhiPGdHft7NiD4UZhm5/pqMPz24r8XNJp8Yihv0QJAf
-         QKU2dskuAFdRY63eiMV4yG6PWEnK5NIiKl08W1PsGE0f3LzkLtUF1VNkDGlEZpBZtM
-         Tpc70Jc58zjcsMcAIDyWMPpz1ViDNZSOP8VWfVq6xX1qGJsqykua3J7vHG4u50RLf2
-         JpQr/Sd3x3nQHuIPY2jWU90j7Y7utSNQnkEjJGXEssCUYC4OMMD9JxFdyZi7qBpCq9
-         rojX94Td42GK0Mj7vykmBBrfqP21yQ7HvEoHLmwhKYodalibnrxOHCSgyUNKo8LK8I
-         T/QlxbfzkkzSw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-On 3/15/20 5:54 AM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 15.03.2020 04:46, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> Tegra210 contains VI controller for video input capture from MIPI
->> CSI camera sensors and also supports built-in test pattern generator.
->>
->> CSI ports can be one-to-one mapped to VI channels for capturing from
->> an external sensor or from built-in test pattern generator.
->>
->> This patch adds support for VI and CSI and enables them in Tegra210
->> device tree.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
-> Hello Sowjanya,
->
-> ...
->> +
->> +                     pd_venc: venc {
->> +                             clocks =3D <&tegra_car TEGRA210_CLK_VI>,
->> +                                      <&tegra_car TEGRA210_CLK_CSI>;
->> +                             resets =3D <&tegra_car 20>,
-> What is the clock #20?
+Just a bunch of local fixes here and there.
 
-Hi Dmitry,
+/Jarkko
 
-20 is VI_RST not defined in include/dt-bindings/reset/tegra210-car.h
+The following changes since commit 0d81a3f29c0afb18ba2b1275dcccf21e0dd4da38:
 
-Will add define and will fix to use it.
+  Merge tag 'drm-fixes-2020-03-13' of git://anongit.freedesktop.org/drm/drm (2020-03-12 18:05:19 -0700)
 
+are available in the Git repository at:
 
+  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20200316
 
->> +                                      <&tegra_car TEGRA210_CLK_CSI>,
->> +                                      <&mc TEGRA210_MC_RESET_VI>;
-> Does this order means that memory controller will be reset *after*
-> resetting the CSI/VI hardware? This is incorrect reset sequence.
->
-> The memory controller reset should be kept asserted during of the time
-> of the hardware resetting procedure.
->
-> The correct sequence should be as follows:
->
-> 1. Assert MC
-> 2. Reset VI
-> 3. Deassert MC
-Right, will fix order. Thanks
+for you to fetch changes up to 2e356101e72ab1361821b3af024d64877d9a798d:
+
+  KEYS: reaching the keys quotas correctly (2020-03-15 20:59:50 +0200)
+
+----------------------------------------------------------------
+tpmdd updates for Linux v5.7
+
+----------------------------------------------------------------
+Alexandru Ardelean (1):
+      tpm_tis_spi: use new 'delay' structure for SPI transfer delays
+
+Lukas Bulwahn (1):
+      MAINTAINERS: adjust to trusted keys subsystem creation
+
+Matthew Garrett (1):
+      tpm: Don't make log failures fatal
+
+Sergiu Cuciurean (1):
+      tpm: tpm_tis_spi_cr50: use new structure for SPI transfer delays
+
+Stefan Berger (3):
+      tpm: of: Handle IBM,vtpm20 case when getting log parameters
+      tpm: ibmvtpm: Wait for buffer to be set before proceeding
+      tpm: ibmvtpm: Add support for TPM2
+
+Vasily Averin (2):
+      tpm: tpm1_bios_measurements_next should increase position index
+      tpm: tpm2_bios_measurements_next should increase position index
+
+Yang Xu (1):
+      KEYS: reaching the keys quotas correctly
+
+ MAINTAINERS                         |  4 ++--
+ drivers/char/tpm/eventlog/common.c  | 12 ++++--------
+ drivers/char/tpm/eventlog/of.c      |  3 ++-
+ drivers/char/tpm/eventlog/tpm1.c    |  2 +-
+ drivers/char/tpm/eventlog/tpm2.c    |  2 +-
+ drivers/char/tpm/tpm-chip.c         |  4 +---
+ drivers/char/tpm/tpm.h              |  3 ++-
+ drivers/char/tpm/tpm2-cmd.c         |  2 +-
+ drivers/char/tpm/tpm_ibmvtpm.c      | 17 +++++++++++++++++
+ drivers/char/tpm/tpm_ibmvtpm.h      |  1 +
+ drivers/char/tpm/tpm_tis_spi_cr50.c |  7 ++++++-
+ drivers/char/tpm/tpm_tis_spi_main.c |  3 ++-
+ security/keys/key.c                 |  2 +-
+ security/keys/keyctl.c              |  4 ++--
+ 14 files changed, 43 insertions(+), 23 deletions(-)
