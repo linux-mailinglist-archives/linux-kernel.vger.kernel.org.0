@@ -2,72 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C40A1858A9
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:17:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46AF718585E
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:05:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbgCOCRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 22:17:06 -0400
-Received: from mail-qv1-f71.google.com ([209.85.219.71]:33738 "EHLO
-        mail-qv1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727053AbgCOCRG (ORCPT
+        id S1727662AbgCOCFU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 22:05:20 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45900 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbgCOCFU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:17:06 -0400
-Received: by mail-qv1-f71.google.com with SMTP id m5so11886130qvy.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 19:17:05 -0700 (PDT)
+        Sat, 14 Mar 2020 22:05:20 -0400
+Received: by mail-lj1-f195.google.com with SMTP id e18so14764296ljn.12;
+        Sat, 14 Mar 2020 19:05:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=6QvXfJZlpggMK4ANi6m9pBKzrWALkcbq78l8N8OifPg=;
+        b=OIJzVdRqmII3xpN14/wQN0Vvrs1lDoUVouTfyF1AzzfhS7PAX65NnJmEstFfAwHm0J
+         MEdvf9urGT/J4thuvj9vk11uUp5M1ygunTCQ40PysktE5qk6p49gkKWkoPYa8hbxlpZ+
+         8AHxeLhfVqkUX208e6r8trwKTkIzfc7jZVyFb0j7si5B/e5Q5XglfRDu7Lgva68dRazY
+         t3ksP3zdoG8z1pawPZeocy0I+666FiKRbaFcF5tdQuT+avWEfO4hptk359IUQ52E/0AL
+         Fyhc24SsfBPdJPaus75o3DysidczlxbECY0IAS4F8XJ5ZrpGp0mWMaE2ibqoijxKTHF0
+         TMKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=lcIB99Oc70nccWilUatyGo7bA1aJbKIH0bAnGGmG+HI=;
-        b=eFfmcI9tbhlzlYxWFE7V0FaKYOi1n6WdVOWFEmBubfvOMRUXkrZhobEDjoT3yU47DA
-         qmzedd+kYaZD4fNPZQ31/FVg2rVLXe2Te3GH+iTsRRIvLP3/KPHycdxDi6/XKjC01nDS
-         9SRgnTbme/NGKxmKYnPjY6z7UaJUsrvLxRNVscwMF4WIMfPWse5wAcDldkv3UrEo4rH1
-         dNiEpEPBkiWBouWj1dn2LDH+nGpQUex6dkF/cfTXikXM3oS9jcpx8Ra+7x5EOTAR1xDv
-         FihJZwFBpaERPcgkIoxM8NWgLgpYn1vfJxm52fF/rqus/AZYYvMGU0DH9XFVXLOaHUHm
-         +0MQ==
-X-Gm-Message-State: ANhLgQ00vUq5FFwHPiq7T36WgMpZPo7ui3MY/2VgVvhgqKmKGQI1AUCR
-        kBFam5U9aIkecUXGaHPy4TYpYVFu73VWlE9J6KQbHZ414HlE
-X-Google-Smtp-Source: ADFU+vtPYT6ImrSmn+n/oX5k44+StXAe5BTdqdlYQ14Q6+IFjM7O2EKZuGalsm3dcqRYn0+Y71MHqpN4yJlLeeGrUHswwpKYHgR0
-MIME-Version: 1.0
-X-Received: by 2002:a02:cacc:: with SMTP id f12mr13752376jap.99.1584228542130;
- Sat, 14 Mar 2020 16:29:02 -0700 (PDT)
-Date:   Sat, 14 Mar 2020 16:29:02 -0700
-In-Reply-To: <0000000000001ba488059c65d352@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007f2c5b05a0d8f312@google.com>
-Subject: Re: BUG: corrupted list in __nf_tables_abort
-From:   syzbot <syzbot+437bf61d165c87bd40fb@syzkaller.appspotmail.com>
-To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        johan.hedberg@gmail.com, kadlec@netfilter.org,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        marcel@holtmann.org, max.chou@realtek.com, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=6QvXfJZlpggMK4ANi6m9pBKzrWALkcbq78l8N8OifPg=;
+        b=DvpDYDkZQW5E0JKHHq0vb4oxewJIyQvPWFfQMo/8bD8oXXLgOVOSOL+PE/lTjdehQr
+         V4VC7LazQ5sJhE5W4SGYH3JG2I/FrUtNQYhUx2+C1ES/yF6QpNnwtNqwPutNBsNDn895
+         p3iLvfFNIcFZS2wiM2eXa4dBPZGCoGkQp+cai4WlQGgxp0AktTpH120ACcDuk1pA/6/P
+         x9SJl2sd/L1Yqkf5wqhujO85C9RBOQalq65EpFC5Uw0AJ5t5PcfYQj7p7JkDA4Xpdvnv
+         vpWrQ0ycD3XETabaluWtpVuCxkf4yN53TgaW51Nut+4g6T5O730dosOfPqGFOUVkJ6OJ
+         sHEg==
+X-Gm-Message-State: ANhLgQ0stTElPSOqFS/HY90FHYnOFE+8kKoFTtPcOvZ8ZJLaVg7Iprs0
+        KNhcM5G2lxsZvpyYguDvRqn/Rw7mxR4=
+X-Google-Smtp-Source: ADFU+vsLbPyHg/3H2qHGT2azKEXr7tZwXNK8qhcJh9SO/kwPkfqvtObR5asqoXdlrz1UQKhDfB3WlA==
+X-Received: by 2002:a5d:5290:: with SMTP id c16mr25043929wrv.235.1584230432390;
+        Sat, 14 Mar 2020 17:00:32 -0700 (PDT)
+Received: from localhost.localdomain (p5B3F731E.dip0.t-ipconnect.de. [91.63.115.30])
+        by smtp.gmail.com with ESMTPSA id 7sm11394469wmf.20.2020.03.14.17.00.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Mar 2020 17:00:31 -0700 (PDT)
+From:   Saravanan Sekar <sravanhome@gmail.com>
+To:     lee.jones@linaro.org, robh+dt@kernel.org, jic23@kernel.org,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, sre@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-pm@vger.kernel.org,
+        Saravanan Sekar <sravanhome@gmail.com>
+Subject: [PATCH v2 5/5] MAINTAINERS: Add entry for mp2629 Battery Charger driver
+Date:   Sun, 15 Mar 2020 01:00:13 +0100
+Message-Id: <20200315000013.4440-6-sravanhome@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200315000013.4440-1-sravanhome@gmail.com>
+References: <20200315000013.4440-1-sravanhome@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot suspects this bug was fixed by commit:
+Add MAINTAINERS entry for Monolithic Power Systems mp2629 Charger driver.
 
-commit 34682110abc50ffea7e002b0c2fd7ea9e0000ccc
-Author: Max Chou <max.chou@realtek.com>
-Date:   Wed Nov 27 03:01:07 2019 +0000
+Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+---
+ MAINTAINERS | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-    Bluetooth: btusb: Edit the logical value for Realtek Bluetooth reset
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 32a95d162f06..0f82d5a7a614 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11358,10 +11358,15 @@ F:	drivers/tty/mxser.*
+ MONOLITHIC POWER SYSTEM PMIC DRIVER
+ M:	Saravanan Sekar <sravanhome@gmail.com>
+ S:	Maintained
++F:	Documentation/devicetree/bindings/mfd/mps,mp2629.yaml
+ F:	Documentation/devicetree/bindings/regulator/mps,mp*.yaml
++F:	drivers/iio/adc/mp2629_adc.c
++F:	drivers/mfd/mp2629.c
++F:	drivers/power/supply/mp2629_charger.c
+ F:	drivers/regulator/mp5416.c
+ F:	drivers/regulator/mpq7920.c
+ F:	drivers/regulator/mpq7920.h
++F:	include/linux/mfd/mp2629.h
+ 
+ MR800 AVERMEDIA USB FM RADIO DRIVER
+ M:	Alexey Klimov <klimov.linux@gmail.com>
+-- 
+2.17.1
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=113e9919e00000
-start commit:   d5d359b0 Merge branch 'for-linus' of git://git.kernel.org/..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=83c00afca9cf5153
-dashboard link: https://syzkaller.appspot.com/bug?extid=437bf61d165c87bd40fb
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=168a1611e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=162f0376e00000
-
-If the result looks correct, please mark the bug fixed by replying with:
-
-#syz fix: Bluetooth: btusb: Edit the logical value for Realtek Bluetooth reset
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
