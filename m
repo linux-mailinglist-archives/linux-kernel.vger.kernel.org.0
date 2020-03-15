@@ -2,92 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F250B1856AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:28:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 357C81856BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:29:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbgCOB2l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 21:28:41 -0400
-Received: from mga05.intel.com ([192.55.52.43]:28478 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725783AbgCOB2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 21:28:40 -0400
-IronPort-SDR: OSHhI0BtLsbUJhS4gyun97prmK0J/hx0AYK7hvzgnl4XNfQdfVmrPx/wT7RiuxBcVBeuw2ygkA
- 6hnZsgkxaBjg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2020 18:25:35 -0700
-IronPort-SDR: 7dXMEkMlPBhCsDZMMGbFY2QSBSl03GSPFEkuh4wHq6I0PEu1I9WX6dq7pEhJpxQ+ewL9QtLlQ4
- EAHtV3T75Gow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,554,1574150400"; 
-   d="scan'208";a="278653419"
-Received: from mbenhamu-mobl2.ger.corp.intel.com (HELO localhost) ([10.251.177.145])
-  by fmsmga002.fm.intel.com with ESMTP; 14 Mar 2020 18:25:25 -0700
-Date:   Sun, 15 Mar 2020 03:25:23 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Nathaniel McCallum <npmccallum@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Neil Horman <nhorman@redhat.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
-        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
-        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
-        cedric.xing@intel.com, Patrick Uiterwijk <puiterwijk@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Connor Kuehl <ckuehl@redhat.com>,
-        Harald Hoyer <harald@redhat.com>,
-        Lily Sturmann <lsturman@redhat.com>
-Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-Message-ID: <20200315012523.GC208715@linux.intel.com>
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
- <20200303233609.713348-22-jarkko.sakkinen@linux.intel.com>
- <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        id S1726838AbgCOB3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 21:29:36 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37169 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbgCOB3b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Mar 2020 21:29:31 -0400
+Received: by mail-wm1-f67.google.com with SMTP id a141so14232612wme.2
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 18:29:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=jV5tZ1v/p9xuQRyV8rZQ6DHYjtqoRajw8WCeLW9xLgk=;
+        b=Ggxtvo43ajRmI5XCMihEXXh5QNfPP23IGgGAQofyo4EoerWACwkSgJUcxjU/ijSMWo
+         60T9pSBznVoXwlbAs0KCk1QLA8RCHEhiukgDi9GW5j0nQnAse7PG58dm+HH1MyY9B/iU
+         kzQj+KfJLboan5g4H2QR3ZbMdzCjtccJMnDMyIYlLTjmrETLv11gbCWyHqtvNG9wSdzn
+         LkGxuFsXEPb8X2PWZ17NJCWvfVVwzQGIuiskbmyPUKJLCji+M+Y91B7l645s+2m+7I7Q
+         LTiAWBKL/lnfhv9ZYkVrUX9KJyc53tinFNgyLw0nUD7Xy9tkkV0CRj60MELGerw2iw43
+         SpvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jV5tZ1v/p9xuQRyV8rZQ6DHYjtqoRajw8WCeLW9xLgk=;
+        b=acOGRUFNrA8X7FDmerFT70sSv/z0ktDvf0a4jqmMTc2zpDSzyLw7pmO+m4MFmuuIsR
+         VwgV4baiEw9TKyIVEX/F0Zv61NmFsCCyvWO9CDsggyAosCwdb6VsG3NoTpPH2l/n6VYl
+         JXRRZ7ZKQRMb0Wv8HWAwqKXWt+NdSvHcGP9iDDf7dUA6El8RKpZGky+Y7JA+ItfWSoZi
+         la/TTjYc93zz4Kx7hQVBHNrFk3NyaqGBn7Hv/0auvncbjcceTnk6ieRv5urP2q4hLKg4
+         ffr0WST7vYfuOP3Nx8wbhXlz06yNuUwm4Ct7aDsTAkoXGhRhYBaz0ZXtPFscGUJReuy6
+         XPTg==
+X-Gm-Message-State: ANhLgQ3cat7XnkKgJY2U2ElgZhQ+dj566qqkFhZAGDepEqD+0j74wJVu
+        HM3HeyGkb+aNPzw/kMYr5Tk=
+X-Google-Smtp-Source: ADFU+vsZhRwK0DE+LLHqscVM9gM+lQ91sJTeWm5Zea/fhcv+Vly6TyyRCGkXzfhH1uz8putd0WBPAw==
+X-Received: by 2002:a1c:1b4c:: with SMTP id b73mr18403017wmb.17.1584235769447;
+        Sat, 14 Mar 2020 18:29:29 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id i6sm22802683wru.40.2020.03.14.18.29.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 14 Mar 2020 18:29:28 -0700 (PDT)
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [Patch v2] mm/swap_state.c: use the same way to count page in [add_to|delete_from]_swap_cache
+Date:   Sun, 15 Mar 2020 01:29:20 +0000
+Message-Id: <20200315012920.2687-1-richard.weiyang@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 01:30:07PM -0400, Nathaniel McCallum wrote:
-> Currently, the selftest has a wrapper around
-> __vdso_sgx_enter_enclave() which preserves all x86-64 ABI callee-saved
-> registers (CSRs), though it uses none of them. Then it calls this
-> function which uses %rbx but preserves none of the CSRs. Then it jumps
-> into an enclave which zeroes all these registers before returning.
-> Thus:
-> 
->   1. wrapper saves all CSRs
->   2. wrapper repositions stack arguments
->   3. __vdso_sgx_enter_enclave() modifies, but does not save %rbx
->   4. selftest zeros all CSRs
->   5. wrapper loads all CSRs
-> 
-> I'd like to propose instead that the enclave be responsible for saving
-> and restoring CSRs. So instead of the above we have:
->   1. __vdso_sgx_enter_enclave() saves %rbx
->   2. enclave saves CSRs
->   3. enclave loads CSRs
->   4. __vdso_sgx_enter_enclave() loads %rbx
-> 
-> I know that lots of other stuff happens during enclave transitions,
-> but at the very least we could reduce the number of instructions
-> through this critical path.
+Function add_to_swap_cache() and delete_from_swap_cache() are counter
+parts, while currently they use different way to count page.
 
-What Jethro said and also that it is a good general principle to cut
-down the semantics of any vdso as minimal as possible.
+It doesn't break any thing because we only have two size for PageAnon,
+but this is confusing and not a good practice.
 
-I.e. even if saving RBX would make somehow sense it *can* be left
-out without loss in terms of what can be done with the vDSO.
+This patch corrects it by both using hpage_nr_pages().
 
-/Jarkko
+Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+CC: Matthew Wilcox <willy@infradead.org>
+
+---
+v2: change to hpage_nr_pages() which is opt.
+    suggested by Matthew Wilcox
+---
+ mm/swap_state.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index 8e7ce9a9bc5e..ebed37bbf7a3 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -116,7 +116,7 @@ int add_to_swap_cache(struct page *page, swp_entry_t entry, gfp_t gfp)
+ 	struct address_space *address_space = swap_address_space(entry);
+ 	pgoff_t idx = swp_offset(entry);
+ 	XA_STATE_ORDER(xas, &address_space->i_pages, idx, compound_order(page));
+-	unsigned long i, nr = compound_nr(page);
++	unsigned long i, nr = hpage_nr_pages(page);
+ 
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 	VM_BUG_ON_PAGE(PageSwapCache(page), page);
+-- 
+2.23.0
+
