@@ -2,56 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BA3E1859F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 05:02:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C25941859FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 05:07:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbgCOECr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 00:02:47 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:35276 "EHLO
+        id S1726769AbgCOEHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 00:07:11 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:35310 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbgCOECr (ORCPT
+        with ESMTP id S1725837AbgCOEHL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 00:02:47 -0400
+        Sun, 15 Mar 2020 00:07:11 -0400
 Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id C0CDA15B7526B;
-        Sat, 14 Mar 2020 21:02:46 -0700 (PDT)
-Date:   Sat, 14 Mar 2020 21:02:46 -0700 (PDT)
-Message-Id: <20200314.210246.1281276055973553805.davem@davemloft.net>
-To:     bmeneg@redhat.com
-Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, GLin@suse.com, kuba@kernel.org,
-        ast@kernel.org
-Subject: Re: [PATCH v2] net/bpfilter: fix dprintf usage for /dev/kmsg
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 73A7615B75337;
+        Sat, 14 Mar 2020 21:07:10 -0700 (PDT)
+Date:   Sat, 14 Mar 2020 21:07:09 -0700 (PDT)
+Message-Id: <20200314.210709.1134027873876631073.davem@davemloft.net>
+To:     antoine.tenart@bootlin.com
+Cc:     andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 0/3] net: phy: split the mscc driver
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200312230820.2132069-1-bmeneg@redhat.com>
-References: <20200312230820.2132069-1-bmeneg@redhat.com>
+In-Reply-To: <20200313094802.82863-1-antoine.tenart@bootlin.com>
+References: <20200313094802.82863-1-antoine.tenart@bootlin.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 14 Mar 2020 21:02:47 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 14 Mar 2020 21:07:10 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bruno Meneguele <bmeneg@redhat.com>
-Date: Thu, 12 Mar 2020 20:08:20 -0300
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+Date: Fri, 13 Mar 2020 10:47:59 +0100
 
-> The bpfilter UMH code was recently changed to log its informative messages to
-> /dev/kmsg, however this interface doesn't support SEEK_CUR yet, used by
-> dprintf(). As result dprintf() returns -EINVAL and doesn't log anything.
+> This is a proposal to split the MSCC PHY driver, as its code base grew a
+> lot lately (it's already 3800+ lines). It also supports features
+> requiring a lot of code (MACsec), which would gain in being split from
+> the driver core, for readability and maintenance. This is also done as
+> other features should be coming later, which will also need lots of code
+> addition.
 > 
-> However there already had some discussions about supporting SEEK_CUR into
-> /dev/kmsg interface in the past it wasn't concluded. Since the only user of
-> that from userspace perspective inside the kernel is the bpfilter UMH
-> (userspace) module it's better to correct it here instead waiting a conclusion
-> on the interface.
+> This series shouldn't change the way the driver works.
 > 
-> Fixes: 36c4357c63f3 ("net: bpfilter: print umh messages to /dev/kmsg")
-> Signed-off-by: Bruno Meneguele <bmeneg@redhat.com>
+> I checked, and there were no patch pending on this driver. This change
+> was done on top of all the modifications done on this driver in net-next.
+ ...
 
-Applied, thank you.
+Series applied, thanks Antoine.
