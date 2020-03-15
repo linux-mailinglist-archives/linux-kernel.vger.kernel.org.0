@@ -2,31 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29C86185DF0
+	by mail.lfdr.de (Postfix) with ESMTP id 9586E185DF1
 	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 16:16:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728807AbgCOPQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 11:16:12 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50144 "EHLO
+        id S1728859AbgCOPQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 11:16:27 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50141 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728798AbgCOPQL (ORCPT
+        with ESMTP id S1728743AbgCOPQM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 11:16:11 -0400
+        Sun, 15 Mar 2020 11:16:12 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jDUzq-0001iT-6S; Sun, 15 Mar 2020 16:16:10 +0100
+        id 1jDUzp-0001hs-3L; Sun, 15 Mar 2020 16:16:09 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 458FD1013B3;
-        Sun, 15 Mar 2020 16:16:09 +0100 (CET)
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 2FA7AFFB8B;
+        Sun, 15 Mar 2020 16:16:08 +0100 (CET)
 Date:   Sun, 15 Mar 2020 15:14:38 -0000
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] timers/urgent for 5.6-rc6
-References: <158428527861.14940.12920965330771600615.tglx@nanos.tec.linutronix.de>
-Message-ID: <158428527863.14940.3868391100636020882.tglx@nanos.tec.linutronix.de>
+Subject: [GIT pull] efi/urgent for 5.6-rc6
+Message-ID: <158428527861.14940.12920965330771600615.tglx@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -40,48 +39,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest timers/urgent branch from:
+please pull the latest efi/urgent branch from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-2020-03-15
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-urgent-2020-03-15
 
-up to:  ecc421e05bab: sys/sysinfo: Respect boottime inside time namespace
+up to:  d6c066fda90d: efi: Add a sanity check to efivar_store_raw()
 
+Two EFI fixes:
 
-A single fix adding the missing time namespace adjustment in sys/sysinfo
-which caused sys/sysinfo to be inconsistent with /proc/uptime when read
-from a task inside a time namespace.
+ - Prevent a race and buffer overflow in the sysfs efivars interface which
+   causes kernel memory corruption.
 
+ - Add the missing NULL pointer checks in efivar_store_raw()
 
 Thanks,
 
 	tglx
 
 ------------------>
-Cyril Hrubis (1):
-      sys/sysinfo: Respect boottime inside time namespace
+Vladis Dronov (2):
+      efi: Fix a race and a buffer overflow while reading efivars via sysfs
+      efi: Add a sanity check to efivar_store_raw()
 
 
- kernel/sys.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/firmware/efi/efivars.c | 32 +++++++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/sys.c b/kernel/sys.c
-index f9bc5c303e3f..d325f3ab624a 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -47,6 +47,7 @@
- #include <linux/syscalls.h>
- #include <linux/kprobes.h>
- #include <linux/user_namespace.h>
-+#include <linux/time_namespace.h>
- #include <linux/binfmts.h>
+diff --git a/drivers/firmware/efi/efivars.c b/drivers/firmware/efi/efivars.c
+index 7576450c8254..aff3dfb4d7ba 100644
+--- a/drivers/firmware/efi/efivars.c
++++ b/drivers/firmware/efi/efivars.c
+@@ -83,13 +83,16 @@ static ssize_t
+ efivar_attr_read(struct efivar_entry *entry, char *buf)
+ {
+ 	struct efi_variable *var = &entry->var;
++	unsigned long size = sizeof(var->Data);
+ 	char *str = buf;
++	int ret;
  
- #include <linux/sched.h>
-@@ -2546,6 +2547,7 @@ static int do_sysinfo(struct sysinfo *info)
- 	memset(info, 0, sizeof(struct sysinfo));
+ 	if (!entry || !buf)
+ 		return -EINVAL;
  
- 	ktime_get_boottime_ts64(&tp);
-+	timens_add_boottime(&tp);
- 	info->uptime = tp.tv_sec + (tp.tv_nsec ? 1 : 0);
+-	var->DataSize = 1024;
+-	if (efivar_entry_get(entry, &var->Attributes, &var->DataSize, var->Data))
++	ret = efivar_entry_get(entry, &var->Attributes, &size, var->Data);
++	var->DataSize = size;
++	if (ret)
+ 		return -EIO;
  
- 	get_avenrun(info->loads, 0, SI_LOAD_SHIFT - FSHIFT);
+ 	if (var->Attributes & EFI_VARIABLE_NON_VOLATILE)
+@@ -116,13 +119,16 @@ static ssize_t
+ efivar_size_read(struct efivar_entry *entry, char *buf)
+ {
+ 	struct efi_variable *var = &entry->var;
++	unsigned long size = sizeof(var->Data);
+ 	char *str = buf;
++	int ret;
+ 
+ 	if (!entry || !buf)
+ 		return -EINVAL;
+ 
+-	var->DataSize = 1024;
+-	if (efivar_entry_get(entry, &var->Attributes, &var->DataSize, var->Data))
++	ret = efivar_entry_get(entry, &var->Attributes, &size, var->Data);
++	var->DataSize = size;
++	if (ret)
+ 		return -EIO;
+ 
+ 	str += sprintf(str, "0x%lx\n", var->DataSize);
+@@ -133,12 +139,15 @@ static ssize_t
+ efivar_data_read(struct efivar_entry *entry, char *buf)
+ {
+ 	struct efi_variable *var = &entry->var;
++	unsigned long size = sizeof(var->Data);
++	int ret;
+ 
+ 	if (!entry || !buf)
+ 		return -EINVAL;
+ 
+-	var->DataSize = 1024;
+-	if (efivar_entry_get(entry, &var->Attributes, &var->DataSize, var->Data))
++	ret = efivar_entry_get(entry, &var->Attributes, &size, var->Data);
++	var->DataSize = size;
++	if (ret)
+ 		return -EIO;
+ 
+ 	memcpy(buf, var->Data, var->DataSize);
+@@ -199,6 +208,9 @@ efivar_store_raw(struct efivar_entry *entry, const char *buf, size_t count)
+ 	u8 *data;
+ 	int err;
+ 
++	if (!entry || !buf)
++		return -EINVAL;
++
+ 	if (in_compat_syscall()) {
+ 		struct compat_efi_variable *compat;
+ 
+@@ -250,14 +262,16 @@ efivar_show_raw(struct efivar_entry *entry, char *buf)
+ {
+ 	struct efi_variable *var = &entry->var;
+ 	struct compat_efi_variable *compat;
++	unsigned long datasize = sizeof(var->Data);
+ 	size_t size;
++	int ret;
+ 
+ 	if (!entry || !buf)
+ 		return 0;
+ 
+-	var->DataSize = 1024;
+-	if (efivar_entry_get(entry, &entry->var.Attributes,
+-			     &entry->var.DataSize, entry->var.Data))
++	ret = efivar_entry_get(entry, &var->Attributes, &datasize, var->Data);
++	var->DataSize = datasize;
++	if (ret)
+ 		return -EIO;
+ 
+ 	if (in_compat_syscall()) {
 
