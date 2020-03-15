@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABE97185DEB
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 16:16:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4956185DEE
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 16:16:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728817AbgCOPQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 11:16:12 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50143 "EHLO
+        id S1728845AbgCOPQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 11:16:19 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50154 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728797AbgCOPQM (ORCPT
+        with ESMTP id S1728774AbgCOPQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 11:16:12 -0400
+        Sun, 15 Mar 2020 11:16:17 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jDUzq-0001iS-3F; Sun, 15 Mar 2020 16:16:10 +0100
+        id 1jDUzp-0001hv-BW; Sun, 15 Mar 2020 16:16:09 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 124B81013B2;
-        Sun, 15 Mar 2020 16:16:09 +0100 (CET)
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 6336B101305;
+        Sun, 15 Mar 2020 16:16:08 +0100 (CET)
 Date:   Sun, 15 Mar 2020 15:14:38 -0000
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] ras/urgent for 5.6-rc6
+Subject: [GIT pull] irq/urgent for 5.6-rc6
 References: <158428527861.14940.12920965330771600615.tglx@nanos.tec.linutronix.de>
-Message-ID: <158428527863.14940.15328478809140163159.tglx@nanos.tec.linutronix.de>
+Message-ID: <158428527863.14940.18079500436167505465.tglx@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -40,86 +40,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest ras/urgent branch from:
+please pull the latest irq/urgent branch from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras-urgent-2020-03-15
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-2020-03-15
 
-up to:  59b5809655bd: x86/mce: Fix logic and comments around MSR_PPIN_CTL
+up to:  92c227554c8e: Merge tag 'irqchip-fixes-5.6-2' of git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms into irq/urgent
 
-
-Two RAS related fixes:
-
-  - Shut down the per CPU thermal throttling poll work properly when a CPU
-    goes offline. The missing shutdown caused the poll work to be migrated
-    to a unbound worker which triggered warnings about the usage of
-    smp_processor_id() in preemptible context
-
-  - Fix the PPIN feature initialization which missed to enable the
-    functionality when PPIN_CTL was enabled but the MSR locked against
-    updates.
+A single commit to handle an erratum in Cavium ThunderX to prevent access
+to GIC registers which miss in the implementation.
 
 Thanks,
 
 	tglx
 
 ------------------>
-Thomas Gleixner (1):
-      x86/mce/therm_throt: Undo thermal polling properly on CPU offline
-
-Tony Luck (1):
-      x86/mce: Fix logic and comments around MSR_PPIN_CTL
+Marc Zyngier (1):
+      irqchip/gic-v3: Workaround Cavium erratum 38539 when reading GICD_TYPER2
 
 
- arch/x86/kernel/cpu/mce/intel.c       | 9 +++++----
- arch/x86/kernel/cpu/mce/therm_throt.c | 9 +++++++--
- 2 files changed, 12 insertions(+), 6 deletions(-)
+ Documentation/arm64/silicon-errata.rst |  2 ++
+ drivers/irqchip/irq-gic-v3.c           | 30 +++++++++++++++++++++++++++++-
+ 2 files changed, 31 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/mce/intel.c b/arch/x86/kernel/cpu/mce/intel.c
-index 5627b1091b85..f996ffb887bc 100644
---- a/arch/x86/kernel/cpu/mce/intel.c
-+++ b/arch/x86/kernel/cpu/mce/intel.c
-@@ -493,17 +493,18 @@ static void intel_ppin_init(struct cpuinfo_x86 *c)
- 			return;
+diff --git a/Documentation/arm64/silicon-errata.rst b/Documentation/arm64/silicon-errata.rst
+index 9120e59578dc..2c08c628febd 100644
+--- a/Documentation/arm64/silicon-errata.rst
++++ b/Documentation/arm64/silicon-errata.rst
+@@ -110,6 +110,8 @@ stable kernels.
+ +----------------+-----------------+-----------------+-----------------------------+
+ | Cavium         | ThunderX GICv3  | #23154          | CAVIUM_ERRATUM_23154        |
+ +----------------+-----------------+-----------------+-----------------------------+
++| Cavium         | ThunderX GICv3  | #38539          | N/A                         |
+++----------------+-----------------+-----------------+-----------------------------+
+ | Cavium         | ThunderX Core   | #27456          | CAVIUM_ERRATUM_27456        |
+ +----------------+-----------------+-----------------+-----------------------------+
+ | Cavium         | ThunderX Core   | #30115          | CAVIUM_ERRATUM_30115        |
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index c1f7af9d9ae7..1eec9d4649d5 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -34,6 +34,7 @@
+ #define GICD_INT_NMI_PRI	(GICD_INT_DEF_PRI & ~0x80)
  
- 		if ((val & 3UL) == 1UL) {
--			/* PPIN available but disabled: */
-+			/* PPIN locked in disabled mode */
- 			return;
- 		}
+ #define FLAGS_WORKAROUND_GICR_WAKER_MSM8996	(1ULL << 0)
++#define FLAGS_WORKAROUND_CAVIUM_ERRATUM_38539	(1ULL << 1)
  
--		/* If PPIN is disabled, but not locked, try to enable: */
--		if (!(val & 3UL)) {
-+		/* If PPIN is disabled, try to enable */
-+		if (!(val & 2UL)) {
- 			wrmsrl_safe(MSR_PPIN_CTL,  val | 2UL);
- 			rdmsrl_safe(MSR_PPIN_CTL, &val);
- 		}
- 
--		if ((val & 3UL) == 2UL)
-+		/* Is the enable bit set? */
-+		if (val & 2UL)
- 			set_cpu_cap(c, X86_FEATURE_INTEL_PPIN);
- 	}
+ struct redist_region {
+ 	void __iomem		*redist_base;
+@@ -1464,6 +1465,15 @@ static bool gic_enable_quirk_msm8996(void *data)
+ 	return true;
  }
-diff --git a/arch/x86/kernel/cpu/mce/therm_throt.c b/arch/x86/kernel/cpu/mce/therm_throt.c
-index 58b4ee3cda77..f36dc0742085 100644
---- a/arch/x86/kernel/cpu/mce/therm_throt.c
-+++ b/arch/x86/kernel/cpu/mce/therm_throt.c
-@@ -486,9 +486,14 @@ static int thermal_throttle_offline(unsigned int cpu)
- {
- 	struct thermal_state *state = &per_cpu(thermal_state, cpu);
- 	struct device *dev = get_cpu_device(cpu);
-+	u32 l;
+ 
++static bool gic_enable_quirk_cavium_38539(void *data)
++{
++	struct gic_chip_data *d = data;
 +
-+	/* Mask the thermal vector before draining evtl. pending work */
-+	l = apic_read(APIC_LVTTHMR);
-+	apic_write(APIC_LVTTHMR, l | APIC_LVT_MASKED);
++	d->flags |= FLAGS_WORKAROUND_CAVIUM_ERRATUM_38539;
++
++	return true;
++}
++
+ static bool gic_enable_quirk_hip06_07(void *data)
+ {
+ 	struct gic_chip_data *d = data;
+@@ -1502,6 +1512,19 @@ static const struct gic_quirk gic_quirks[] = {
+ 		.mask	= 0xffffffff,
+ 		.init	= gic_enable_quirk_hip06_07,
+ 	},
++	{
++		/*
++		 * Reserved register accesses generate a Synchronous
++		 * External Abort. This erratum applies to:
++		 * - ThunderX: CN88xx
++		 * - OCTEON TX: CN83xx, CN81xx
++		 * - OCTEON TX2: CN93xx, CN96xx, CN98xx, CNF95xx*
++		 */
++		.desc	= "GICv3: Cavium erratum 38539",
++		.iidr	= 0xa000034c,
++		.mask	= 0xe8f00fff,
++		.init	= gic_enable_quirk_cavium_38539,
++	},
+ 	{
+ 	}
+ };
+@@ -1577,7 +1600,12 @@ static int __init gic_init_bases(void __iomem *dist_base,
+ 	pr_info("%d SPIs implemented\n", GIC_LINE_NR - 32);
+ 	pr_info("%d Extended SPIs implemented\n", GIC_ESPI_NR);
  
--	cancel_delayed_work(&state->package_throttle.therm_work);
--	cancel_delayed_work(&state->core_throttle.therm_work);
-+	cancel_delayed_work_sync(&state->package_throttle.therm_work);
-+	cancel_delayed_work_sync(&state->core_throttle.therm_work);
+-	gic_data.rdists.gicd_typer2 = readl_relaxed(gic_data.dist_base + GICD_TYPER2);
++	/*
++	 * ThunderX1 explodes on reading GICD_TYPER2, in violation of the
++	 * architecture spec (which says that reserved registers are RES0).
++	 */
++	if (!(gic_data.flags & FLAGS_WORKAROUND_CAVIUM_ERRATUM_38539))
++		gic_data.rdists.gicd_typer2 = readl_relaxed(gic_data.dist_base + GICD_TYPER2);
  
- 	state->package_throttle.rate_control_active = false;
- 	state->core_throttle.rate_control_active = false;
+ 	gic_data.domain = irq_domain_create_tree(handle, &gic_irq_domain_ops,
+ 						 &gic_data);
 
