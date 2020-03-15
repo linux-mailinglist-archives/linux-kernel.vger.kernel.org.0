@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA9CD185F58
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 20:17:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFB8B185F5B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 20:17:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbgCOTQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 15:16:44 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:54791 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728608AbgCOTQo (ORCPT
+        id S1729102AbgCOTQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 15:16:49 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:40343 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728608AbgCOTQq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 15:16:44 -0400
-Received: by mail-pj1-f65.google.com with SMTP id np9so296223pjb.4;
-        Sun, 15 Mar 2020 12:16:43 -0700 (PDT)
+        Sun, 15 Mar 2020 15:16:46 -0400
+Received: by mail-pj1-f66.google.com with SMTP id bo3so5862960pjb.5;
+        Sun, 15 Mar 2020 12:16:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5gxpV7JB+0bFUt/kU5rYLHIq/2ry55hJR4QU1nC9mRw=;
-        b=rjbNEwM/XgZEinoND9gGIEJmVXVX0IanV6iiJpzvEKbgkrF/FYCqlwIoWUXcBa2+c/
-         yIYS7nZrQpACubLkCOlWVSzJcvGltPWfy6osRa8MiOCJFO74iwIYa5oAq2deqKWDAgx5
-         vJIwK1bDlkX8vEKx+6vXlGCoz+VaAiKCmyBGkVphf8x4yOueYmEXIfKIxNm16CN5cwv+
-         FN8kwokDMxYMHUGamnUhx3PK1KVr2j2v89KLITk1XOPZNqYqEZhBEkX0hDlHGROA/nV+
-         lztSZKFuoprzHWSvFf7mXNvbijq/sQRLZA2zHQqdbfuCJ8Bgw5MiF1ijls/NIobvhsop
-         riIQ==
+        bh=eovzZ3kqQ8LWP7qRD6GFAmQY5h+MQlshBlGVHRZ0WS4=;
+        b=RRcNDYRssy/5F/i6fSsXIrzZIurGe7f0t/4Mw66MPPKQffthBAgpxwOksDd9+dfgaQ
+         he1hqnwJw8pX6Ae2IXDZ5BqhMoAP75d2X6iQ7XcyCaaxX69+gWFGmBOB0iZeLA0UVMrw
+         hiFXCEsTh5j3aQv5+oe4hbvVchgdBGB3bKSFAQN5Da5ytD5w3yciM18yjVivsQfnPRUd
+         5Jlu8e4+48mHQUELnWlqVAVetxjKJ1J4pDHPgZQVE9XnBtKeAZ5lQjNlgMBAEFQaNZlM
+         Dh5dvjE7eY+FJm9nhWYEe8pkYfHmvZB9mR2zl3De3Tn72c0ffbcD0+cI/o/MG8MxMe8c
+         djdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=5gxpV7JB+0bFUt/kU5rYLHIq/2ry55hJR4QU1nC9mRw=;
-        b=W+RV7u5CisVxIIcte9P+19V2PwsddECqQ0qwHvOEDeMQsU7qP+pcI++K/fOpjUd/GJ
-         TyQ4swGtDXUcNT3ZliN1vLTxNDBgRnOoDa2+v/UjMMQQpIEV0PLj22Q8mFxvNMSPFplH
-         tMboYB4cCgtttHGdcZ2RBPTLohka4Zkgjy9yxqewzLkNBh9sq0U98HTYAPpNlL/awPzQ
-         1rU9EeOhuQmGSTPz+gPbMaQRSIc3krHxv1cOXZMLjO5sruohg3Op6rZLDq+/AtpHPej4
-         yiyqhc5MDPCkjb2FXpTRghF6aKgLeNOt+IU1semP1P+j83s1YKX3DRk1XXLSCRKcVrwv
-         RLkA==
-X-Gm-Message-State: ANhLgQ3VEM7B+NGtmR3SkeSUB0145tXUDvWeLxPgH6iaDaUc2dcyKEQK
-        KLMguxCu3Z2lnbCgXbDJVLs=
-X-Google-Smtp-Source: ADFU+vvPigWemmbDaZCwov3VlDQsV3Pr9WZu55/E9xaVXXoXBXL4qctLgdHRc/GF5GsrKHAcIT2RcA==
-X-Received: by 2002:a17:902:ee93:: with SMTP id a19mr11882497pld.258.1584299802773;
-        Sun, 15 Mar 2020 12:16:42 -0700 (PDT)
+        bh=eovzZ3kqQ8LWP7qRD6GFAmQY5h+MQlshBlGVHRZ0WS4=;
+        b=Xcf237LBEtzWUpz2EzmsK4CyksZoiGYXrKmSI7tJP2pFfnq+PPn4TeXzhX/f9TiRcM
+         +/WW+jWPry9dQKkio9yvcL0aEpDJmwQyemf+oWzUM/WgoCSnIVHEV1gqeZOtI8+nSAEO
+         s8YS3MVh0VGb/odD909ZFsilhrj78Ebe2TOf8e4Pm6bKvMnXF92e+WvExFccaTeIkKGp
+         BdXADx1PM+8yvfVbAoZkLX1q0I0XgcuEZgCrX0fwUwKRFSt+8v7roK/+JmQyaF2Sb2ql
+         +UbYJ2Aa6Olqi7s6oH5DQYVYHzG7B9UPY018E/VaQKLIPhp0YKZHjGmZ8RRUEsHY89hr
+         u/cQ==
+X-Gm-Message-State: ANhLgQ0eQQW9hGd9egvUW/vxWim7lzNTkoe9OkPR81L0Qa+o9Ev22dZj
+        AiUcfKhb1CzWFWqMCtGHiyA=
+X-Google-Smtp-Source: ADFU+vtGG84O3T3lRIFGnx5viv8DsI8lcGdsQ6bREhmqtjVIuQIaYeJAZgzlqOUyH0BhSNIlodiyAQ==
+X-Received: by 2002:a17:902:7c02:: with SMTP id x2mr5325875pll.30.1584299804620;
+        Sun, 15 Mar 2020 12:16:44 -0700 (PDT)
 Received: from taoren-ubuntu-R90MNF91.thefacebook.com (c-24-4-25-55.hsd1.ca.comcast.net. [24.4.25.55])
-        by smtp.gmail.com with ESMTPSA id 13sm61431882pgo.13.2020.03.15.12.16.41
+        by smtp.gmail.com with ESMTPSA id 13sm61431882pgo.13.2020.03.15.12.16.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Mar 2020 12:16:42 -0700 (PDT)
+        Sun, 15 Mar 2020 12:16:44 -0700 (PDT)
 From:   rentao.bupt@gmail.com
 To:     Felipe Balbi <balbi@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -60,9 +60,9 @@ To:     Felipe Balbi <balbi@kernel.org>,
         linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
         taoren@fb.com
 Cc:     Tao Ren <rentao.bupt@gmail.com>
-Subject: [PATCH v2 2/6] usb: gadget: add "usb_validate_langid" function
-Date:   Sun, 15 Mar 2020 12:16:28 -0700
-Message-Id: <20200315191632.12536-3-rentao.bupt@gmail.com>
+Subject: [PATCH v2 3/6] usb: gadget: aspeed: allow to set usb strings in device tree
+Date:   Sun, 15 Mar 2020 12:16:29 -0700
+Message-Id: <20200315191632.12536-4-rentao.bupt@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200315191632.12536-1-rentao.bupt@gmail.com>
 References: <20200315191632.12536-1-rentao.bupt@gmail.com>
@@ -73,98 +73,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tao Ren <rentao.bupt@gmail.com>
 
-The USB LANGID validation code in "check_user_usb_string" function is
-moved to "usb_validate_langid" function which can be used by other usb
-gadget drivers.
+If "vhub,string-descriptor" device tree property is defined, the driver
+will load string descriptors from device tree; otherwise, the default
+string descriptors will be used.
 
 Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
 ---
  No change in v2:
    - the patch is added into the series since v2.
 
- drivers/usb/gadget/configfs.c  | 14 +-------------
- drivers/usb/gadget/usbstring.c | 24 ++++++++++++++++++++++++
- include/linux/usb/gadget.h     |  3 +++
- 3 files changed, 28 insertions(+), 13 deletions(-)
+ drivers/usb/gadget/udc/aspeed-vhub/hub.c | 58 +++++++++++++++++++++++-
+ 1 file changed, 57 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
-index 32b637e3e1fa..822ef0470c5f 100644
---- a/drivers/usb/gadget/configfs.c
-+++ b/drivers/usb/gadget/configfs.c
-@@ -13,8 +13,6 @@
- int check_user_usb_string(const char *name,
- 		struct usb_gadget_strings *stringtab_dev)
- {
--	unsigned primary_lang;
--	unsigned sub_lang;
- 	u16 num;
- 	int ret;
- 
-@@ -22,17 +20,7 @@ int check_user_usb_string(const char *name,
- 	if (ret)
- 		return ret;
- 
--	primary_lang = num & 0x3ff;
--	sub_lang = num >> 10;
--
--	/* simple sanity check for valid langid */
--	switch (primary_lang) {
--	case 0:
--	case 0x62 ... 0xfe:
--	case 0x100 ... 0x3ff:
--		return -EINVAL;
--	}
--	if (!sub_lang)
-+	if (!usb_validate_langid(num))
- 		return -EINVAL;
- 
- 	stringtab_dev->language = num;
-diff --git a/drivers/usb/gadget/usbstring.c b/drivers/usb/gadget/usbstring.c
-index 7c24d1ce1088..58a4d3325090 100644
---- a/drivers/usb/gadget/usbstring.c
-+++ b/drivers/usb/gadget/usbstring.c
-@@ -65,3 +65,27 @@ usb_gadget_get_string (const struct usb_gadget_strings *table, int id, u8 *buf)
- 	return buf [0];
+diff --git a/drivers/usb/gadget/udc/aspeed-vhub/hub.c b/drivers/usb/gadget/udc/aspeed-vhub/hub.c
+index 35edf37553f0..421631d86a17 100644
+--- a/drivers/usb/gadget/udc/aspeed-vhub/hub.c
++++ b/drivers/usb/gadget/udc/aspeed-vhub/hub.c
+@@ -941,9 +941,61 @@ static int ast_vhub_str_alloc_add(struct ast_vhub *vhub,
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(usb_gadget_get_string);
+ 
++static const struct {
++	const char *name;
++	u8 id;
++} str_id_map[] = {
++	{"manufacturer",	AST_VHUB_STR_MANUF},
++	{"product",		AST_VHUB_STR_PRODUCT},
++	{"serial-number",	AST_VHUB_STR_SERIAL},
++	{},
++};
 +
-+/**
-+ * usb_validate_langid - validate usb language identifiers
-+ * @lang: usb language identifier
-+ *
-+ * Returns true for valid language identifier, otherwise false.
-+ */
-+bool usb_validate_langid(u16 langid)
++static int ast_vhub_of_parse_str_desc(struct ast_vhub *vhub,
++				      const struct device_node *desc_np)
 +{
-+	u16 primary_lang = langid & 0x3ff;	/* bit [9:0] */
-+	u16 sub_lang = langid >> 10;		/* bit [15:10] */
++	u32 langid;
++	int ret = 0;
++	int i, offset;
++	const char *str;
++	struct device_node *child;
++	struct usb_string str_array[AST_VHUB_STR_INDEX_MAX];
++	struct usb_gadget_strings lang_str = {
++		.strings = (struct usb_string *)str_array,
++	};
 +
-+	switch (primary_lang) {
-+	case 0:
-+	case 0x62 ... 0xfe:
-+	case 0x100 ... 0x3ff:
-+		return false;
++	for_each_child_of_node(desc_np, child) {
++		if (of_property_read_u32(child, "reg", &langid))
++			continue; /* no language identifier specified */
++
++		if (!usb_validate_langid(langid))
++			continue; /* invalid language identifier */
++
++		lang_str.language = langid;
++		for (i = offset = 0; str_id_map[i].name; i++) {
++			str = of_get_property(child, str_id_map[i].name, NULL);
++			if (str) {
++				str_array[offset].s = str;
++				str_array[offset].id = str_id_map[i].id;
++				offset++;
++			}
++		}
++		str_array[offset].id = 0;
++		str_array[offset].s = NULL;
++
++		ret = ast_vhub_str_alloc_add(vhub, &lang_str);
++		if (ret)
++			break;
 +	}
-+	if (!sub_lang)
-+		return false;
 +
-+	return true;
++	return ret;
 +}
-+EXPORT_SYMBOL_GPL(usb_validate_langid);
-diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
-index 124462d65eac..1a05227bdfae 100644
---- a/include/linux/usb/gadget.h
-+++ b/include/linux/usb/gadget.h
-@@ -773,6 +773,9 @@ struct usb_gadget_string_container {
- /* put descriptor for string with that id into buf (buflen >= 256) */
- int usb_gadget_get_string(const struct usb_gadget_strings *table, int id, u8 *buf);
- 
-+/* check if the given language identifier is valid */
-+bool usb_validate_langid(u16 langid);
 +
- /*-------------------------------------------------------------------------*/
+ static int ast_vhub_init_desc(struct ast_vhub *vhub)
+ {
+ 	int ret;
++	struct device_node *desc_np;
++	const struct device_node *vhub_np = vhub->pdev->dev.of_node;
  
- /* utility to simplify managing config descriptors */
+ 	/* Initialize vhub Device Descriptor. */
+ 	memcpy(&vhub->vhub_dev_desc, &ast_vhub_dev_desc,
+@@ -960,7 +1012,11 @@ static int ast_vhub_init_desc(struct ast_vhub *vhub)
+ 
+ 	/* Initialize vhub String Descriptors. */
+ 	INIT_LIST_HEAD(&vhub->vhub_str_desc);
+-	ret = ast_vhub_str_alloc_add(vhub, &ast_vhub_strings);
++	desc_np = of_get_child_by_name(vhub_np, "vhub-strings");
++	if (desc_np)
++		ret = ast_vhub_of_parse_str_desc(vhub, desc_np);
++	else
++		ret = ast_vhub_str_alloc_add(vhub, &ast_vhub_strings);
+ 
+ 	return ret;
+ }
 -- 
 2.17.1
 
