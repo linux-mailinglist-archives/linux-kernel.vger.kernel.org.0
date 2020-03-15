@@ -2,146 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55226185DEF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 16:16:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5CB7185DF9
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 16:25:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbgCOPQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 11:16:15 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50148 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728798AbgCOPQO (ORCPT
+        id S1728811AbgCOPZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 11:25:11 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:41555 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728794AbgCOPZL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 11:16:14 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jDUzr-0001iW-BA; Sun, 15 Mar 2020 16:16:11 +0100
-Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 7CE87FFB8B;
-        Sun, 15 Mar 2020 16:16:09 +0100 (CET)
-Date:   Sun, 15 Mar 2020 15:14:38 -0000
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] x86/urgent for 5.6-rc6
-References: <158428527861.14940.12920965330771600615.tglx@nanos.tec.linutronix.de>
-Message-ID: <158428527864.14940.16973165028602818491.tglx@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Sun, 15 Mar 2020 11:25:11 -0400
+Received: by mail-il1-f194.google.com with SMTP id l14so13945871ilj.8;
+        Sun, 15 Mar 2020 08:25:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8oElHQLKFLOVtRHqu7xiZ6PSJACuRnWmCrjsIOT03/4=;
+        b=RsMP5ZfF9Kle+rjBS3Bso6AHBFITrbE13HUp2ObAa4PaLpubX0IyO20urbKNQZ8QzO
+         zyawLivUZMOXmEf4KS1gockamB5ifWcK8RDanr4T91XtPkH5uqz3rQkJuTN29cfWqPbo
+         UetMtw8CUEnybaWElSX6cG1rLsDBv9M8fdTLj8NPJFE16pwbaVq9cVWA4uz7b76daa0o
+         JOFelYtJ96GsHGmlh0CnSFIMH+ubQ4nER8Nckilais8GLUoMFOPtDNa0hT5zBIWZUkDE
+         7TeitOReluipDTZmFIWdjKp9FiDr+lWqjIq0utvdsGanqMtRlVOq6xPtcmqtTp0FDcdD
+         QTvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8oElHQLKFLOVtRHqu7xiZ6PSJACuRnWmCrjsIOT03/4=;
+        b=Swtw7IwfnYlS0YRdoyUeCqZ1PTZJmek7FEIwdGAE21fviXzdZArH0txierQFwuYMRc
+         60wE6RINAZN8FtsRaDWtD6gkdBv2e03CyomAnYzguw0shbqwzmvHuGs3QMQuBtJhQCIz
+         RK1oSrvYZQaykzlY+s14ihhLppK11rSLbBUzhjEricvR27NIciv3XjORce7st9g18sp3
+         uLIXIP6FZZr3niuhVLrfIVHzqAJN1uosuk2XYT8xPxaqvvKtH2flxNvznMfPtfZrsrma
+         /ZBm5XtSA/OgxEFhg3Oxz5owAeLt1omQQCALioYSDpwxlBORGEfA97uKujTpXSeabvc5
+         ZB2w==
+X-Gm-Message-State: ANhLgQ0g5/RWH/41UwHrwom49gGvxpyv0jOkE1pGeQwR/f9/wLdggqW9
+        ir7IjnPqemwKdB6wAl5l2EEZGkNRwEfzFj4oAcA=
+X-Google-Smtp-Source: ADFU+vt9/0tLT5TMHQJuvt7jSFZQO9BbU2DRVErpzh0iupQQjp//EFou6F5rBpQO/z0gYMAYYRnt+hMR7/PR6UXiFmE=
+X-Received: by 2002:a92:8f53:: with SMTP id j80mr17379957ild.171.1584285909944;
+ Sun, 15 Mar 2020 08:25:09 -0700 (PDT)
+MIME-Version: 1.0
+References: <1583920112-2680-1-git-send-email-simhavcs@gmail.com> <20200312151752.GA7490@bogus>
+In-Reply-To: <20200312151752.GA7490@bogus>
+From:   Vinay Simha B N <simhavcs@gmail.com>
+Date:   Sun, 15 Mar 2020 20:54:58 +0530
+Message-ID: <CAGWqDJ7DP3DuR7EWT6Ni8YxN3Adg3RgJZut6+AtpAak_HB=QCQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-binding: Add DSI/LVDS tc358775 bridge bindings
+To:     Rob Herring <robh@kernel.org>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+rob,
 
-please pull the latest x86/urgent branch from:
+i do not get the error when running 'make dt_binding_check' in my
+build environment
+Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2020-03-15
+is there any tool available similar to  scripts/checkpatch.pl -f
+<file> , for yaml files?
 
-up to:  469ff207b4c4: x86/vector: Remove warning on managed interrupt migration
+On Thu, Mar 12, 2020 at 8:47 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, 11 Mar 2020 15:18:24 +0530, Vinay Simha BN wrote:
+> > Add yaml documentation for DSI/LVDS tc358775 bridge
+> >
+> > Signed-off-by: Vinay Simha BN <simhavcs@gmail.com>
+> >
+> > ---
+> > v1:
+> >  Initial version
+> > ---
+> >  .../bindings/display/bridge/toshiba-tc358775.yaml  | 174 +++++++++++++++++++++
+> >  1 file changed, 174 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
+> >
+>
+> My bot found errors running 'make dt_binding_check' on your patch:
+>
+> Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml:  while scanning for the next token
+> found character that cannot start any token
+>   in "<unicode string>", line 11, column 1
+> Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.example.dts' failed
+> make[1]: *** [Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.example.dts] Error 1
+> make[1]: *** Waiting for unfinished jobs....
+> warning: no schema found in file: Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml: ignoring, error parsing file
+> Makefile:1262: recipe for target 'dt_binding_check' failed
+> make: *** [dt_binding_check] Error 2
+>
+> See https://patchwork.ozlabs.org/patch/1252753
+> Please check and re-submit.
 
 
-Two fixes for x86:
 
-  - Map EFI runtime service data as encrypted when SEV is enabled otherwise
-    e.g. SMBIOS data cannot be properly decoded by dmidecode.
-
-  - Remove the warning in the vector management code which triggered when a
-    managed interrupt affinity changed outside of a CPU hotplug
-    operation. The warning was correct until the recent core code change
-    that introduced a CPU isolation feature which needs to migrate managed
-    interrupts away from online CPUs under certain conditions to achieve the
-    isolation.
-
-Thanks,
-
-	tglx
-
------------------->
-Peter Xu (1):
-      x86/vector: Remove warning on managed interrupt migration
-
-Tom Lendacky (1):
-      x86/ioremap: Map EFI runtime services data as encrypted for SEV
-
-
- arch/x86/kernel/apic/vector.c | 14 ++++++++------
- arch/x86/mm/ioremap.c         | 18 ++++++++++++++++++
- 2 files changed, 26 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
-index 2c5676b0a6e7..48293d15f1e1 100644
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -838,13 +838,15 @@ static void free_moved_vector(struct apic_chip_data *apicd)
- 	bool managed = apicd->is_managed;
- 
- 	/*
--	 * This should never happen. Managed interrupts are not
--	 * migrated except on CPU down, which does not involve the
--	 * cleanup vector. But try to keep the accounting correct
--	 * nevertheless.
-+	 * Managed interrupts are usually not migrated away
-+	 * from an online CPU, but CPU isolation 'managed_irq'
-+	 * can make that happen.
-+	 * 1) Activation does not take the isolation into account
-+	 *    to keep the code simple
-+	 * 2) Migration away from an isolated CPU can happen when
-+	 *    a non-isolated CPU which is in the calculated
-+	 *    affinity mask comes online.
- 	 */
--	WARN_ON_ONCE(managed);
--
- 	trace_vector_free_moved(apicd->irq, cpu, vector, managed);
- 	irq_matrix_free(vector_matrix, cpu, vector, managed);
- 	per_cpu(vector_irq, cpu)[vector] = VECTOR_UNUSED;
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index 44e4beb4239f..935a91e1fd77 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -106,6 +106,19 @@ static unsigned int __ioremap_check_encrypted(struct resource *res)
- 	return 0;
- }
- 
-+/*
-+ * The EFI runtime services data area is not covered by walk_mem_res(), but must
-+ * be mapped encrypted when SEV is active.
-+ */
-+static void __ioremap_check_other(resource_size_t addr, struct ioremap_desc *desc)
-+{
-+	if (!sev_active())
-+		return;
-+
-+	if (efi_mem_type(addr) == EFI_RUNTIME_SERVICES_DATA)
-+		desc->flags |= IORES_MAP_ENCRYPTED;
-+}
-+
- static int __ioremap_collect_map_flags(struct resource *res, void *arg)
- {
- 	struct ioremap_desc *desc = arg;
-@@ -124,6 +137,9 @@ static int __ioremap_collect_map_flags(struct resource *res, void *arg)
-  * To avoid multiple resource walks, this function walks resources marked as
-  * IORESOURCE_MEM and IORESOURCE_BUSY and looking for system RAM and/or a
-  * resource described not as IORES_DESC_NONE (e.g. IORES_DESC_ACPI_TABLES).
-+ *
-+ * After that, deal with misc other ranges in __ioremap_check_other() which do
-+ * not fall into the above category.
-  */
- static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
- 				struct ioremap_desc *desc)
-@@ -135,6 +151,8 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
- 	memset(desc, 0, sizeof(struct ioremap_desc));
- 
- 	walk_mem_res(start, end, desc, __ioremap_collect_map_flags);
-+
-+	__ioremap_check_other(addr, desc);
- }
- 
- /*
-
+-- 
+regards,
+vinaysimha
