@@ -2,93 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC365185B2D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 09:26:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCE90185B28
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 09:19:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbgCOI0O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 04:26:14 -0400
-Received: from ja.ssi.bg ([178.16.129.10]:44374 "EHLO ja.ssi.bg"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727646AbgCOI0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 04:26:14 -0400
-X-Greylist: delayed 504 seconds by postgrey-1.27 at vger.kernel.org; Sun, 15 Mar 2020 04:26:13 EDT
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-        by ja.ssi.bg (8.15.2/8.15.2) with ESMTP id 02F8HNco007937;
-        Sun, 15 Mar 2020 10:17:23 +0200
-Date:   Sun, 15 Mar 2020 10:17:23 +0200 (EET)
-From:   Julian Anastasov <ja@ssi.bg>
-To:     Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-cc:     Simon Horman <horms@verge.net.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ipvs: optimize tunnel dumps for icmp errors
-In-Reply-To: <1584253087-8316-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
-Message-ID: <alpine.LFD.2.21.2003151003190.3987@ja.home.ssi.bg>
-References: <1584253087-8316-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        id S1727809AbgCOIS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 04:18:59 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55324 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727756AbgCOIS7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 04:18:59 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 6so14278607wmi.5
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Mar 2020 01:18:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bIdO2DD9SS58shQaI+L75kVmCFLCfvHKiwc1M49jAT0=;
+        b=ay+2V4sH5dFVbqHqfzxJ9qOQZ2y3OLeLccxpD0pfwtd9I+pBtYkK0mvCKX8x10Hdbe
+         H7euB4kz2RwOyD2+mNxIl9ZWMXaNnwzjlAB910zZColpVhTHkKA+md8TYVkiY0V3QsOg
+         I7b7BnYV4i5nsvi+qbiWFczXjFJPutx0H3AB41/Ah/XFJ8yKzx+fHV5yR85t1sEL8Fuu
+         xeNco7xZ19VujSR1l980NIFyzw4FozakcEcNYj868N2UrJCOG6kZUjxqsyP2mAffcXbc
+         V2J8iwPIuY7KkDwnXtGNo6frZH4rRcDzZyZ3Oo0BRauk3mZO/1LaEcYxbTXV1uREDBjf
+         G4Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bIdO2DD9SS58shQaI+L75kVmCFLCfvHKiwc1M49jAT0=;
+        b=KeivFb3seFMUHSnPbiYJTiCfBdBtfm1wVFC10Nk+80H9oSqQgwSkTR8wjOcjg44+6N
+         qapCMnuw1UIa0HWiGuy/AS16yc3FvFXukeylPXDZuV/qOVyu6dZSF8mrJoNJSiVDNFG5
+         XvnbxBdGVgWADNpeqtqk17N7Wod/cLN6+3gFvHeN+FgaBN+At3iIZk+0fuLkZGjYzrzl
+         i5tbeNynNe7RkyMuwhQGKcQ7RCR6XXFT1mNZdFf7VBEBeEtnV7/E1av9Ax2zmmqPnZRb
+         O4oRh8YX7o69QxpRf9MqHg1zwzoKs5kImFG6ilaXPA/QEQSIw6tbLfBijaKSfsoKYwyP
+         6Ucg==
+X-Gm-Message-State: ANhLgQ0EY42CEreSjurj4b6H0mpTZC86Fywe2mKqxDqwXyGWXPBnGJo6
+        CFmjHM2YKJyjCB9H15+LVys=
+X-Google-Smtp-Source: ADFU+vumiWAhOGnJquqo1N4StHWr1Li6Q/nrOllp5GIISU6iTtGORSshLBqJc7b7YvGZKUIa8CXUjQ==
+X-Received: by 2002:a1c:b144:: with SMTP id a65mr16208631wmf.54.1584260336166;
+        Sun, 15 Mar 2020 01:18:56 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id b4sm1349519wmj.12.2020.03.15.01.18.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 15 Mar 2020 01:18:55 -0700 (PDT)
+Date:   Sun, 15 Mar 2020 08:18:54 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        Zi Yan <ziy@nvidia.com>, Michal Hocko <mhocko@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: [RFC 2/3] mm: Add a new page flag PageLayzyFree() for MADV_FREE
+Message-ID: <20200315081854.rcqlmfckeqrh7fbt@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20200228033819.3857058-1-ying.huang@intel.com>
+ <20200228033819.3857058-3-ying.huang@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200228033819.3857058-3-ying.huang@intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 28, 2020 at 11:38:18AM +0800, Huang, Ying wrote:
+>From: Huang Ying <ying.huang@intel.com>
+>
+>Now !PageSwapBacked() is used as the flag for the pages freed lazily
+>via MADV_FREE.  This isn't obvious enough.  So Dave suggested to add a
+>new page flag for that to improve the code readability.
 
-	Hello,
+I am confused with the usage of PageSwapBacked().
 
-On Sun, 15 Mar 2020, Haishuang Yan wrote:
+Previously I thought this flag means the page is swapin, set in
+swapin_readahead(). While I found page_add_new_anon_rmap() would set it too.
+This means every anon page would carry this flag. Then what is this flag
+means?
 
-> After strip GRE/UDP tunnel header for icmp errors, it's better to show
-> "ICMP for GRE/UDP" instead of "ICMP for IPIP" in debug message.
-> 
-> Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-> ---
->  net/netfilter/ipvs/ip_vs_core.c | 41 +++++++++++++++++++++++------------------
->  1 file changed, 23 insertions(+), 18 deletions(-)
-> 
-> diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
-> index 512259f..f39ae6b 100644
-> --- a/net/netfilter/ipvs/ip_vs_core.c
-> +++ b/net/netfilter/ipvs/ip_vs_core.c
 
-> @@ -1703,8 +1707,8 @@ static int ipvs_gre_decap(struct netns_ipvs *ipvs, struct sk_buff *skb,
->  		return NF_ACCEPT; /* The packet looks wrong, ignore */
->  	raddr = (union nf_inet_addr *)&cih->daddr;
->  
-> -	/* Special case for errors for IPIP packets */
-> -	ipip = false;
-> +	/* Special case for errors for IPIP/UDP/GRE tunnel packets */
-> +	tunnel = false;
-
-	At this point it is safe to store cih->protocol in some new
-var, eg. outer_proto...
-
-> @@ -1809,17 +1813,18 @@ static int ipvs_gre_decap(struct netns_ipvs *ipvs, struct sk_buff *skb,
->  			u32 mtu = ntohs(ic->un.frag.mtu);
->  			__be16 frag_off = cih->frag_off;
->  
-> -			/* Strip outer IP and ICMP, go to IPIP header */
-> +			/* Strip outer IP and ICMP, go to IPIP/UDP/GRE header */
->  			if (pskb_pull(skb, ihl + sizeof(_icmph)) == NULL)
-> -				goto ignore_ipip;
-> +				goto ignore_tunnel;
->  			offset2 -= ihl + sizeof(_icmph);
->  			skb_reset_network_header(skb);
-> -			IP_VS_DBG(12, "ICMP for IPIP %pI4->%pI4: mtu=%u\n",
-> -				&ip_hdr(skb)->saddr, &ip_hdr(skb)->daddr, mtu);
-> +			IP_VS_DBG(12, "ICMP for %s %pI4->%pI4: mtu=%u\n",
-> +				  ip_vs_proto_name(cih->protocol),
-
-	Because here cih points to the embedded UDP/TCP/SCTP IP header, so
-we can not see GRE here. Or it is even better if we do not add more code 
-to ip_vs_proto_name(), just use char *outer_proto and assign it with 
-"IPIP" (where ipip was set) and "UDP"/"GRE" (where ulen was set) and print
-outer_proto here.
-
-> +				  &ip_hdr(skb)->saddr, &ip_hdr(skb)->daddr, mtu);
-
-Regards
-
---
-Julian Anastasov <ja@ssi.bg>
+-- 
+Wei Yang
+Help you, Help me
