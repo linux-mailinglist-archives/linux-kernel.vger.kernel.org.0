@@ -2,122 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1110D185B7A
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 10:29:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2914D185B80
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 10:30:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbgCOJ26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 05:28:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40708 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbgCOJ26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 05:28:58 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728138AbgCOJa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 05:30:27 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:37553 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726521AbgCOJa1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 05:30:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584264625;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rNFz5DYWHgexHyJt056VriaIF9paJuhnZXXnkdcdqbg=;
+        b=TzL2mRYJKAgXMfNkumr72/yUVM9jkNg8ca4qTRUeRNaZqDYEWaFeqlhuBt5dpVK5jVFt1T
+        uYLVuO6BM7/jv2IqhfgdRNMSlcE6N93R7CQX6AQgvR1tpYZDhleqKwSu7sdwXwjNdGgR+f
+        lkym10VwmfyPJ8af6z07X20tRFZvHVA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-460-1ULkcQfGN8SlH9l2u-WY7w-1; Sun, 15 Mar 2020 05:30:21 -0400
+X-MC-Unique: 1ULkcQfGN8SlH9l2u-WY7w-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 201A6206B1;
-        Sun, 15 Mar 2020 09:28:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584264537;
-        bh=a3TDzGbEzkSLeXinw82ULYy0g3/qKx/I5ol4xjHP/jo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FfBA9KivPcq2i/xkl3X4fU7JAbz8h0yxx+oZqKHJQ5x7jhklsgxMuE/2WvFgDiDBF
-         o7pdSPWOsANpZFUiHJvKEQwTSbzIyjb1W1C4fGD8h5sY3pHDt+HBI+v9WXsl+WrQ9x
-         ZyIDeRFLkXWNBlDSNIV+zjywyMF69vj0Bi3mF12w=
-Date:   Sun, 15 Mar 2020 09:28:52 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Artur Rojek <contact@artur-rojek.eu>
-Cc:     Rob Herring <robh@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Heiko Stuebner <heiko@sntech.de>, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org
-Subject: Re: [PATCH v4 4/5] dt-bindings: input: Add docs for ADC driven
- joystick.
-Message-ID: <20200315092852.2d2ecebb@archlinux>
-In-Reply-To: <bb188a58f29dfedcf56bb420f07a6813@artur-rojek.eu>
-References: <20200307211412.44148-1-contact@artur-rojek.eu>
-        <20200307211412.44148-4-contact@artur-rojek.eu>
-        <20200309203814.GA29255@bogus>
-        <bb188a58f29dfedcf56bb420f07a6813@artur-rojek.eu>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9F24B107ACC7;
+        Sun, 15 Mar 2020 09:30:19 +0000 (UTC)
+Received: from krava (ovpn-204-71.brq.redhat.com [10.40.204.71])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7D467907F7;
+        Sun, 15 Mar 2020 09:30:16 +0000 (UTC)
+Date:   Sun, 15 Mar 2020 10:30:13 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Ian Rogers <irogers@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] perf mem2node: avoid double free related to realloc
+Message-ID: <20200315093013.GC492969@krava>
+References: <20200314042826.166953-1-irogers@google.com>
+ <20200314142332.GB492969@krava>
+ <CAP-5=fXZJidxHYeCqHcNPBArMe_aYwP0+u2dxiTD+V1fammK_Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAP-5=fXZJidxHYeCqHcNPBArMe_aYwP0+u2dxiTD+V1fammK_Q@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 09 Mar 2020 22:41:00 +0100
-Artur Rojek <contact@artur-rojek.eu> wrote:
-
-> Hi Rob,
+On Sat, Mar 14, 2020 at 09:49:37AM -0700, Ian Rogers wrote:
+> On Sat, Mar 14, 2020 at 7:23 AM Jiri Olsa <jolsa@redhat.com> wrote:
+> >
+> > On Fri, Mar 13, 2020 at 09:28:26PM -0700, Ian Rogers wrote:
+> > > Realloc of size zero is a free not an error, avoid this causing a double
+> > > free. Caught by clang's address sanitizer:
+> > >
+> > > ==2634==ERROR: AddressSanitizer: attempting double-free on 0x6020000015f0 in thread T0:
+> > >     #0 0x5649659297fd in free llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:123:3
+> > >     #1 0x5649659e9251 in __zfree tools/lib/zalloc.c:13:2
+> > >     #2 0x564965c0f92c in mem2node__exit tools/perf/util/mem2node.c:114:2
+> > >     #3 0x564965a08b4c in perf_c2c__report tools/perf/builtin-c2c.c:2867:2
+> > >     #4 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
+> > >     #5 0x564965944348 in run_builtin tools/perf/perf.c:312:11
+> > >     #6 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
+> > >     #7 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
+> > >     #8 0x564965942e41 in main tools/perf/perf.c:538:3
+> > >
+> > > 0x6020000015f0 is located 0 bytes inside of 1-byte region [0x6020000015f0,0x6020000015f1)
+> > > freed by thread T0 here:
+> > >     #0 0x564965929da3 in realloc third_party/llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:164:3
+> > >     #1 0x564965c0f55e in mem2node__init tools/perf/util/mem2node.c:97:16
+> > >     #2 0x564965a08956 in perf_c2c__report tools/perf/builtin-c2c.c:2803:8
+> > >     #3 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
+> > >     #4 0x564965944348 in run_builtin tools/perf/perf.c:312:11
+> > >     #5 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
+> > >     #6 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
+> > >     #7 0x564965942e41 in main tools/perf/perf.c:538:3
+> > >
+> > > previously allocated by thread T0 here:
+> > >     #0 0x564965929c42 in calloc third_party/llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:154:3
+> > >     #1 0x5649659e9220 in zalloc tools/lib/zalloc.c:8:9
+> > >     #2 0x564965c0f32d in mem2node__init tools/perf/util/mem2node.c:61:12
+> > >     #3 0x564965a08956 in perf_c2c__report tools/perf/builtin-c2c.c:2803:8
+> > >     #4 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
+> > >     #5 0x564965944348 in run_builtin tools/perf/perf.c:312:11
+> > >     #6 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
+> > >     #7 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
+> > >     #8 0x564965942e41 in main tools/perf/perf.c:538:3
+> > >
+> > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > ---
+> > >  tools/perf/util/mem2node.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/tools/perf/util/mem2node.c b/tools/perf/util/mem2node.c
+> > > index 797d86a1ab09..7f97aa69eb65 100644
+> > > --- a/tools/perf/util/mem2node.c
+> > > +++ b/tools/perf/util/mem2node.c
+> > > @@ -95,7 +95,7 @@ int mem2node__init(struct mem2node *map, struct perf_env *env)
+> > >
+> > >       /* Cut unused entries, due to merging. */
+> > >       tmp_entries = realloc(entries, sizeof(*entries) * j);
+> > > -     if (tmp_entries)
+> > > +     if (j == 0 || tmp_entries)
+> >
+> > nice catch.. I wonder if we should fail in here, or at least
+> > warn that there're no entris.. which is really strange ;-)
 > 
-> On 2020-03-09 21:38, Rob Herring wrote:
-> > On Sat,  7 Mar 2020 22:14:11 +0100, Artur Rojek wrote:  
-> >> Add documentation for the adc-joystick driver, used to provide support
-> >> for joysticks connected over ADC.
-> >> 
-> >> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
-> >> Tested-by: Paul Cercueil <paul@crapouillou.net>
-> >> ---
-> >> 
-> >>  Changes:
-> >> 
-> >>  v2: - Add `reg` property to axis subnode in order to enumerate the 
-> >> axes,
-> >>      - rename `linux,abs-code` property to `linux,code`,
-> >>      - drop `linux,` prefix from the remaining properties of axis 
-> >> subnode
-> >> 
-> >>  v3: no change
-> >> 
-> >>  v4: - remove "bindings" from the unique identifier string,
-> >>      - replace `|` with `>` for all description properties,
-> >>      - specify the number of items for `io-channels`,
-> >>      - correct the regex pattern of `axis` property,
-> >>      - specify the value range of `reg` property for each axis,
-> >>      - put `abs-range` properties under `allOf`
-> >> 
-> >>  .../bindings/input/adc-joystick.yaml          | 121 
-> >> ++++++++++++++++++
-> >>  1 file changed, 121 insertions(+)
-> >>  create mode 100644 
-> >> Documentation/devicetree/bindings/input/adc-joystick.yaml
-> >>   
-> > 
-> > My bot found errors running 'make dt_binding_check' on your patch:  
-> Like with the previous versions of this patch set, the DTS example 
-> requires that
-> patch [2/5] is applied first. When that is done, the DT check does 
-> succeed here.
+> The workload was the stream benchmark with perf c2c, but stream isn't
+> particularly long running. Not sure how j became 0, there's 2
+> possibilities in the code. The worry with a warning is the spam, so I
+> just wanted to make the code correct.
 
-Fair enough as far as I am concerned.   There were enough comments
-from Rob in the previous version though that I'd definitely like
-him to take another look before I pick this series up.
+I was wondering if we should fail completely,
+but we might break some c2c expected behaviour
 
-Thanks,
+how about just WARN_ONCE pn j == 0, and then
+the lookup will fail already with:
 
-Jonathan
+        if (WARN_ONCE(node < 0, "WARNING: failed to find node\n"))
+                return;
+
+just get enough hints ;-)
+
+jirka
 
 > 
-> Regards,
-> Artur
-> > 
-> > Error:
-> > Documentation/devicetree/bindings/input/adc-joystick.example.dts:22.31-32
-> > syntax error
-> > FATAL ERROR: Unable to parse input tree
-> > scripts/Makefile.lib:311: recipe for target
-> > 'Documentation/devicetree/bindings/input/adc-joystick.example.dt.yaml'
-> > failed
-> > make[1]: ***
-> > [Documentation/devicetree/bindings/input/adc-joystick.example.dt.yaml]
-> > Error 1
-> > Makefile:1262: recipe for target 'dt_binding_check' failed
-> > make: *** [dt_binding_check] Error 2
-> > 
-> > See https://patchwork.ozlabs.org/patch/1250951
-> > Please check and re-submit.  
+> Thanks,
+> Ian
+> 
+> > thanks,
+> > jirka
+> >
+> > >               entries = tmp_entries;
+> > >
+> > >       for (i = 0; i < j; i++) {
+> > > --
+> > > 2.25.1.481.gfbce0eb801-goog
+> > >
+> >
+> 
 
