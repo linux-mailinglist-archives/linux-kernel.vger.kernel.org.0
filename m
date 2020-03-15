@@ -2,154 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B008D185B7C
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 10:29:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEBA0185B71
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 10:28:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbgCOJ3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 05:29:07 -0400
-Received: from m17617.mail.qiye.163.com ([59.111.176.17]:9692 "EHLO
-        m17617.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbgCOJ3G (ORCPT
+        id S1728141AbgCOJ2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 05:28:14 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39287 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbgCOJ2N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 05:29:06 -0400
-Received: from ubuntu.localdomain (unknown [58.251.74.226])
-        by m17617.mail.qiye.163.com (Hmail) with ESMTPA id 75D892614CB;
-        Sun, 15 Mar 2020 17:28:56 +0800 (CST)
-From:   Wang Wenhu <wenhu.wang@vivo.com>
-To:     Jonathan Corbet <corbet@lwn.net>, Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Harry Wei <harryxiyou@gmail.com>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Wang Wenhu <wenhu.wang@vivo.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org,
-        "Tobin C. Harding" <tobin@kernel.org>
-Cc:     kernel@vivo.com
-Subject: [PATCH 2/2] doc: zh_CN: add translation for virtiofs
-Date:   Sun, 15 Mar 2020 02:28:00 -0700
-Message-Id: <20200315092810.87008-3-wenhu.wang@vivo.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200315092810.87008-1-wenhu.wang@vivo.com>
-References: <20200315092810.87008-1-wenhu.wang@vivo.com>
+        Sun, 15 Mar 2020 05:28:13 -0400
+Received: by mail-lj1-f193.google.com with SMTP id f10so15240062ljn.6;
+        Sun, 15 Mar 2020 02:28:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=k0MY7Bqf584jeU9PbEpBAMYhk0hnAtxUjrOw1PNGQHQ=;
+        b=Sx43VyZaq2psJT9xqIVidcHL3h96etCE7IVZacPBNdfwm1ykQfiCokV3MGbXASTucf
+         d9kaMtFyylnFJ3xX2f/J5w5/35NG6F+ZeaHxZt0Sadpwbvume2jt3NPzVZ9g1cZY/HBB
+         rtH5q3SMNBhds3/yLS4ny21+ruxPDH1i4tqAPqBqVirMMOW3+4LThDiAs5+MjWMBad8o
+         isY3i/ywS97tlSH3hzgOD+3FKgzGiewOx+CByrS6E4BnVmKrNfa+ajysQa3xBErDNr5s
+         SL0FywuSsdV1EfufhjaE/34EnTd1G0IhAj99w3QVYlYPsSzIEcmT+NIGFV2Xqbujl+gh
+         0qOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :date:message-id:mime-version;
+        bh=k0MY7Bqf584jeU9PbEpBAMYhk0hnAtxUjrOw1PNGQHQ=;
+        b=SElnOu5HNOA+9Ll4XI3x56EDoIFrynVoxC0B87OxlUPYiCGxMXdDNORlpP8XxlalHT
+         EDQ3yFqtBpW32Rg3qMisGGKZQIbc+ZUCzfAmG2dD38z2fWoNPmul9zCaWjJEkV8luBej
+         S4g/ZF0ZRPFukxGxYwPWwQE8+0hbZ9jwS2/6nX8p77BubfolF2dZXlhyZRlOENWh3NId
+         oUr1LOox/zm20zI4vfYnCZnSrfyp9n/k/Kznt7oRVZDX+9V/CvdkxLoSaF/2Uw3S8x4D
+         iJAxRw9QV11mdJb7A0aA+7XxMmGFYEf6e91lysJURKsXSF0dlCpSqmFi/Qk25NXyrG8p
+         UV1Q==
+X-Gm-Message-State: ANhLgQ2ymQQZm4teb/j4SHTGWYSL9fR3sYYZPGszDdtwYxyuDiWhrBfi
+        k8sZTQRAEIXZqaxebDBJLFdTM7jt2E8cyA==
+X-Google-Smtp-Source: ADFU+vvXjsjBwXRjg6blDRN9dWbFmFP0x6cQKEKKsY3Lzbg80fvZNanN8fszf7hNtH4/g9dBOm89Jw==
+X-Received: by 2002:a2e:891a:: with SMTP id d26mr12762955lji.182.1584264490463;
+        Sun, 15 Mar 2020 02:28:10 -0700 (PDT)
+Received: from saruman (88-113-215-213.elisa-laajakaista.fi. [88.113.215.213])
+        by smtp.gmail.com with ESMTPSA id f23sm1708531lja.42.2020.03.15.02.28.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 15 Mar 2020 02:28:09 -0700 (PDT)
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Anand Moon <linux.amoon@gmail.com>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 1/3] devicetree: bindings: exynos: Add new compatible for Exynos5420 dwc3 clocks support
+In-Reply-To: <20200301212019.2248-2-linux.amoon@gmail.com>
+References: <20200301212019.2248-1-linux.amoon@gmail.com> <20200301212019.2248-2-linux.amoon@gmail.com>
+Date:   Sun, 15 Mar 2020 11:28:05 +0200
+Message-ID: <871rpuezmi.fsf@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZSFVCT0pCQkJCSklJTUpCTVlXWShZQU
-        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mgg6GDo5EjgzDjcOLEg#HDEp
-        KigKFC9VSlVKTkNPSU1PTk9JSUpLVTMWGhIXVQweFRMOVQwaFRw7DRINFFUYFBZFWVdZEgtZQVlO
-        Q1VJTkpVTE9VSUlNWVdZCAFZQU1PTE43Bg++
-X-HM-Tid: 0a70dd8663dd9375kuws75d892614cb
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Translate virtiofs.rst in Documentation/filesystems/ into Chinese.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Wang Wenhu <wenhu.wang@vivo.com>
----
- Documentation/filesystems/virtiofs.rst        |  2 +
- .../translations/zh_CN/filesystems/index.rst  |  2 +
- .../zh_CN/filesystems/virtiofs.rst            | 62 +++++++++++++++++++
- 3 files changed, 66 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/filesystems/virtiofs.rst
+Anand Moon <linux.amoon@gmail.com> writes:
 
-diff --git a/Documentation/filesystems/virtiofs.rst b/Documentation/filesystems/virtiofs.rst
-index 4f338e3cb3f7..7c4301d962f8 100644
---- a/Documentation/filesystems/virtiofs.rst
-+++ b/Documentation/filesystems/virtiofs.rst
-@@ -1,3 +1,5 @@
-+.. _virtiofs_index:
-+
- .. SPDX-License-Identifier: GPL-2.0
- 
- ===================================================
-diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
-index a47dd86d6196..205680ec790d 100644
---- a/Documentation/translations/zh_CN/filesystems/index.rst
-+++ b/Documentation/translations/zh_CN/filesystems/index.rst
-@@ -25,3 +25,5 @@ Linux Kernel中的文件系统
- 
- .. toctree::
-    :maxdepth: 2
-+
-+   virtiofs
-diff --git a/Documentation/translations/zh_CN/filesystems/virtiofs.rst b/Documentation/translations/zh_CN/filesystems/virtiofs.rst
-new file mode 100644
-index 000000000000..2a36cd417f8b
---- /dev/null
-+++ b/Documentation/translations/zh_CN/filesystems/virtiofs.rst
-@@ -0,0 +1,62 @@
-+.. raw:: latex
-+
-+	\renewcommand\thesection*
-+	\renewcommand\thesubsection*
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: :ref:`Documentation/filesystems/virtiofs.rst <virtiofs_index>`
-+
-+译者
-+::
-+
-+	中文版维护者： 王文虎 Wang Wenhu <wenhu.wang@vivo.com>
-+	中文版翻译者： 王文虎 Wang Wenhu <wenhu.wang@vivo.com>
-+	中文版校译者:  王文虎 Wang Wenhu <wenhu.wang@vivo.com>
-+
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===========================================
-+virtiofs: virtio-fs 主机<->客机共享文件系统
-+===========================================
-+
-+- Copyright (C) 2019 Red Hat, Inc. （译者注：英文版版权信息）
-+
-+介绍
-+====
-+Linux的virtiofs文件系统实现了一个半虚拟化VIRTIO类型“virtio-fs”设备的驱动，通过该\
-+类型设备实现客机<->主机文件系统共享。它允许客机挂载一个已经导出到主机的目录。
-+
-+客机通常需要访问主机或者远程系统上的文件。使用场景包括：在新客机安装时让文件对其\
-+可见；从主机上的根文件系统启动；对无状态或临时客机提供持久存储和在客机之间共享目录。
-+
-+尽管在某些任务可能通过使用已有的网络文件系统完成，但是却需要非常难以自动化的配置\
-+步骤，且将存储网络暴露给客机。而virtio-fs设备通过提供不经过网络的文件系统访问文件\
-+的设计方式解决了这些问题。
-+
-+另外，virto-fs设备发挥了主客机共存的优点提高了性能，并且提供了网络文件系统所不具备
-+的一些语义功能。
-+
-+用法
-+====
-+以``myfs``标签将文件系统挂载到``/mnt``:
-+
-+.. code-block:: sh
-+
-+  guest# mount -t virtiofs myfs /mnt
-+
-+请查阅 https://virtio-fs.gitlab.io/ 了解配置QEMU和virtiofsd守护程序的详细信息。
-+
-+内幕
-+====
-+由于virtio-fs设备将FUSE协议用于文件系统请求，因此Linux的virtiofs文件系统与FUSE文\
-+件系统客户端紧密集成在一起。客机充当FUSE客户端而主机充当FUSE服务器，内核与用户空\
-+间之间的/dev/fuse接口由virtio-fs设备接口代替。
-+
-+FUSE请求被置于虚拟队列中由主机处理。主机填充缓冲区中的响应部分，而客机处理请求的完成部分。
-+
-+将/dev/fuse映射到虚拟队列需要解决/dev/fuse和虚拟队列之间语义上的差异。每次读取\
-+/dev/fuse设备时，FUSE客户端都可以选择要传输的请求，从而可以使某些请求优先于其他\
-+请求。虚拟队列有其队列语义，无法更改已入队请求的顺序。在虚拟队列已满的情况下尤
-+其关键，因为此时不可能加入高优先级的请求。为了解决此差异，virtio-fs设备采用“hiprio”\
-+（高优先级）虚拟队列，专门用于有别于普通请求的高优先级请求。
--- 
-2.17.1
+> This patch adds the new compatible string for Exynos5422 DWC3
+> to support enable/disable of core and suspend clk by DWC3 driver.
+> Also updated the clock names for compatible samsung,exynos5420-dwusb3.
+>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 
+doesn't apply:
+
+checking file Documentation/devicetree/bindings/usb/exynos-usb.txt
+Hunk #2 FAILED at 84.
+1 out of 2 hunks FAILED
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl5t9SUACgkQzL64meEa
+mQYm8xAA3I2/YauH6uYkFBQvDNCN3vk3Y9Nd7A0OQ7+zhusbeqhl93In7+YgQ+3r
+gvXux2DHyL121EUbI7Fj398cescSm4FBgnhlVx8qhKQFn85vPBWtCjI8vvS+PIxn
+S6+emDEeVhj0FF8mfuVV844SqIrz7UcIg9hS9PMsrZLvh31cFbgJhAKhR84ak4lr
+jku+TUy2tf9ZJr8DU8DUH8dRWccCRZJ+RXFyNAfaMZ3aNJuI6CS5bGTp1LBL4alh
+i4G3NgBIk4JStBxezp3AZuJ5yYz3yHcgk2paMSKiuZoLJ+12KiLwxIlY70Mo984P
+8XI9oP6xVTreGY1KGR3I819s4qAjCley7q1/2eFiO2i7B4JMbn4724lExPUpEaPy
+qBtoiOmN4cYBPaF75RGCJEZmgM/+yt/CQHWEowEQRHSaoQ6iqUBmyOjZhAh03fA3
+8Bg6Mfs2cJXntvjNSLneHTzbOXbh1F57UCh+cWJNk7QOag/O95kd5N4IZJ55CWD6
+BnAc4yMsl9aOGNLYqwX173WqeOUHm7r6MQ+vXxp24ZlBT0Z9x9OfPmN6BGXPXJyA
+OFgkjJacY7L6pTWhVMPDReQ0SkXpTvqBZVGxYaxAROVPg/+Do71j8tiUwESQg19A
+1k/AH25xxfy/4OvcBqCwpphqRwzxuOvc6/+NEwXFiBY+oJdTnQ4=
+=uud3
+-----END PGP SIGNATURE-----
+--=-=-=--
