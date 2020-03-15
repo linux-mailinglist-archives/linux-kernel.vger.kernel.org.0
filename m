@@ -2,137 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE00E185AFB
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 08:17:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92F00185AEF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 08:17:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727965AbgCOHQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 03:16:02 -0400
+        id S1727821AbgCOHPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 03:15:37 -0400
 Received: from bombadil.infradead.org ([198.137.202.133]:49192 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727674AbgCOHPf (ORCPT
+        with ESMTP id S1727670AbgCOHPf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 15 Mar 2020 03:15:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=wAfYh2xdWxAPIQJMB0mxlXqUYNASxsyPuzu7mvOnmEc=; b=AU/XB7mVJWInyKEADhOo52OrCP
-        mHHs4FpGwJVFsaEJIkwKB7GPlSxFxK5wb8lY/h7k1B2HI8/TEkr5nu6+qzH+meQbqOy+RBLbLEzMk
-        9fYmB10Qv6zwHhHdlZUG9O6k8w5IYi/7TpGJuqYkAqVdyyT0bjQ6ygAnsKRb9gPfM5sRlcnTnPCbK
-        2iYLwNUNb8rV7WJLCE/o74fQ9dC9we5VzowkOyE++PUmAj8V16Z1EeO6ce6YjYBTThvu3AlG55kgl
-        96pb4yEWavmHxUe1+6udBFG6cZbW2IQZohTgCBHmFUUSJ/hKXIntwyV8/kQhr2nyk0+BVsgcfEUMH
-        RyPc/nhQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jDKEa-00050h-44; Sun, 15 Mar 2020 03:46:40 +0000
-Date:   Sat, 14 Mar 2020 20:46:40 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Eric Sandeen <sandeen@redhat.com>
-Subject: Re: [PATCH 00/11] fs/dcache: Limit # of negative dentries
-Message-ID: <20200315034640.GV22433@bombadil.infradead.org>
-References: <20200226161404.14136-1-longman@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200226161404.14136-1-longman@redhat.com>
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=M43Fclutcops3LTjLdBwRIG7fc6qs+/SivGL6t7wtcQ=; b=lVXJbQWZKeohEKZYCbB4VhDVV/
+        XsMhxq3ZNhrJcH+HIjJOQHNOsyeBe6gyt/qf17MIyA30PaqWRrm5Vdf7f8V0BLXsHIMfNCUAwWOfX
+        Hdv6oCUPEO/gWtLLMSrlPwujR4mKGfHvDB9Th85vsLEPxrICNf428R4H+9NcuNKn1cXLuVn8DBQYr
+        PAKt5dFeWs/7RigXJ6QKkltkEKahOwGjNOKiF33VFufb5+yh6yGONB+L8n5sjZWUPF4pihtmPa/Bl
+        PgfmRJNOnrkswUYLJn9gG7nD5o31pDXVK1s1qG1KXOHs3Y9QTWvqVhE7CGYAFSl9SPVAgZE8rnGVH
+        Ya3xZTQw==;
+Received: from [2601:1c0:6280:3f0::19c2] (helo=smtpauth.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jDKbE-0003dY-6j; Sun, 15 Mar 2020 04:10:04 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        Antonino Daplas <adaplas@gmail.com>,
+        Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Subject: fbdev: fix -Wextra build warnings
+Date:   Sat, 14 Mar 2020 21:09:56 -0700
+Message-Id: <20200315041002.24473-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 11:13:53AM -0500, Waiman Long wrote:
-> As there is no limit for negative dentries, it is possible that a sizeable
-> portion of system memory can be tied up in dentry cache slabs. Dentry slabs
-> are generally recalimable if the dentries are in the LRUs. Still having
-> too much memory used up by dentries can be problematic:
-> 
->  1) When a filesystem with too many negative dentries is being unmounted,
->     the process of draining the dentries associated with the filesystem
->     can take some time. To users, the system may seem to hang for
->     a while.  The long wait may also cause unexpected timeout error or
->     other warnings.  This can happen when a long running container with
->     many negative dentries is being destroyed, for instance.
-> 
->  2) Tying up too much memory in unused negative dentries means there
->     are less memory available for other use. Even though the kernel is
->     able to reclaim unused dentries when running out of free memory,
->     it will still introduce additional latency to the application
->     reducing its performance.
+This patch series fixes warnings in fbdev that are found when
+-Wextra is used. In fixing these, there were a few other build
+errors discovered (mostly caused by bitrot) and fixed.
 
-There's a third problem, which is that having a lot of negative dentries
-can clog the hash chains.  I tried to quantify this, and found a weird result:
+[PATCH 1/6] fbdev: fbmon: fix -Wextra build warnings
+[PATCH 2/6] fbdev: aty: fix -Wextra build warning
+[PATCH 3/6] fbdev: matrox: fix -Wextra build warnings
+[PATCH 4/6] fbdev: savage: fix -Wextra build warning
+[PATCH 5/6] fbdev: pm[23]fb.c: fix -Wextra build warnings and errors
+[PATCH 6/6] fbdev: via: fix -Wextra build warning and format warning
 
-root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
-real	0m5.402s
-user	0m4.361s
-sys	0m1.230s
-root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
-real	0m5.572s
-user	0m4.337s
-sys	0m1.407s
-root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
-real	0m5.607s
-user	0m4.522s
-sys	0m1.342s
-root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
-real	0m5.599s
-user	0m4.472s
-sys	0m1.369s
-root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
-real	0m5.574s
-user	0m4.498s
-sys	0m1.300s
-
-Pretty consistent system time, between about 1.3 and 1.4 seconds.
-
-root@bobo-kvm:~# grep dentry /proc/slabinfo 
-dentry             20394  21735    192   21    1 : tunables    0    0    0 : slabdata   1035   1035      0
-root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
-real	0m5.515s
-user	0m4.353s
-sys	0m1.359s
-
-At this point, we have 20k dentries allocated.
-
-Now, pollute the dcache with names that don't exist:
-
-root@bobo-kvm:~# for i in `seq 1 100000`; do cat /dev/null$i >/dev/zero; done 2>/dev/null
-root@bobo-kvm:~# grep dentry /proc/slabinfo 
-dentry             20605  21735    192   21    1 : tunables    0    0    0 : slabdata   1035   1035      0
-
-Huh.  We've kept the number of dentries pretty constant.  Still, maybe the
-bad dentries have pushed out the good ones.
-
-root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
-real	0m6.644s
-user	0m4.921s
-sys	0m1.946s
-root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
-real	0m6.676s
-user	0m5.004s
-sys	0m1.909s
-root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
-real	0m6.662s
-user	0m4.980s
-sys	0m1.916s
-root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
-real	0m6.714s
-user	0m4.973s
-sys	0m1.986s
-
-Well, we certainly made it suck.  Up to a pretty consistent 1.9-2.0 seconds
-of kernel time, or 50% worse.  We've also made user time worse, somehow.
-
-Anyhow, I should write a proper C program to measure this.  But I thought
-I'd share this raw data with you now to demonstrate that dcache pollution
-is a real problem today, even on a machine with 2GB.
+ drivers/video/fbdev/aty/atyfb_base.c       |    2 +-
+ drivers/video/fbdev/core/fbmon.c           |    2 +-
+ drivers/video/fbdev/matrox/matroxfb_base.h |    2 +-
+ drivers/video/fbdev/pm2fb.c                |    2 +-
+ drivers/video/fbdev/pm3fb.c                |    8 ++++----
+ drivers/video/fbdev/savage/savagefb.h      |    2 +-
+ drivers/video/fbdev/via/debug.h            |    6 ++++--
+ drivers/video/fbdev/via/viafbdev.c         |    2 +-
+ 8 files changed, 14 insertions(+), 12 deletions(-)
