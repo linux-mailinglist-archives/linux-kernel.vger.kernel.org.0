@@ -2,66 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 936DE185A26
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 06:15:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C854185A43
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 06:23:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbgCOFPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 01:15:17 -0400
-Received: from mail-pj1-f70.google.com ([209.85.216.70]:52406 "EHLO
-        mail-pj1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726425AbgCOFPQ (ORCPT
+        id S1727911AbgCOFXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 01:23:51 -0400
+Received: from Chamillionaire.breakpoint.cc ([193.142.43.52]:41332 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727875AbgCOFXv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 01:15:16 -0400
-Received: by mail-pj1-f70.google.com with SMTP id hg14so4542712pjb.2
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 22:15:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=/CZuM0+mbO6NyqR+mLDX0oKlbyLZj3NtZHFhJDcGVng=;
-        b=HGgcsCquxH8cxMR4OGyivFDVMm+XTBlYjrq/iGY6nt5DRop4mPDZyt7NZRIy+3VZdw
-         l4o4cdwAo2w7fdtIMhURwhSXRC3nisBlwi4Bz/Mo+KR5/xpFaw08tO6j9nZioSW29KhT
-         4Pmi+yeFWu5fOo+HS52rbHKrAKzqaEuI3SzriaEy5z6KDQP2d6ipflTj1EQlXl3w2gyi
-         zfp4m++/6jWUyQg5+lO196NVbjJ9hel7p+5vlBM2urEHs5bmwVwawZfO2FhJihmZV3qZ
-         u1x/RujylRCHylf+hJ3qy4RkbROvJOndhpQHl4Q3/ebR/DqW+PmjAWL5V/HAfLZ8s8dm
-         YlnQ==
-X-Gm-Message-State: ANhLgQ2ksD1Zj194mz2ZZ1XZ1/C6MGUNQyIl5oNhp5OuKq0XKkETQcp4
-        O3b9JLapxAJtz3zZufE3DPNOTjvsLfFpJ7z53goZmejsYbCW
-X-Google-Smtp-Source: ADFU+vsd7B6zM7k661+N9RLASlT7wDY115i+NOnn4ChlOdfINGGNLgluD9/L+k0eJ+9HakWUkF332HYt3wzwxnDAhQKyCHW7keRq
+        Sun, 15 Mar 2020 01:23:51 -0400
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+        (envelope-from <fw@strlen.de>)
+        id 1jDGyy-0003hV-Vn; Sun, 15 Mar 2020 01:18:21 +0100
+Date:   Sun, 15 Mar 2020 01:18:20 +0100
+From:   Florian Westphal <fw@strlen.de>
+To:     syzbot <syzbot+437bf61d165c87bd40fb@syzkaller.appspotmail.com>
+Cc:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        johan.hedberg@gmail.com, kadlec@netfilter.org,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        marcel@holtmann.org, max.chou@realtek.com, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: BUG: corrupted list in __nf_tables_abort
+Message-ID: <20200315001820.GD979@breakpoint.cc>
+References: <0000000000001ba488059c65d352@google.com>
+ <0000000000007f2c5b05a0d8f312@google.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:79cf:: with SMTP id u198mr2189717ilc.23.1584158642104;
- Fri, 13 Mar 2020 21:04:02 -0700 (PDT)
-Date:   Fri, 13 Mar 2020 21:04:02 -0700
-In-Reply-To: <CADG63jCSHu7dQ118GEuhXBi0H4CW3cBqB5F2qKiyeVzNb0U+wg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000021721505a0c8ad76@google.com>
-Subject: Re: WARNING: refcount bug in sctp_wfree
-From:   syzbot <syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com>
-To:     anenbupt@gmail.com, davem@davemloft.net, kuba@kernel.org,
-        linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org,
-        marcelo.leitner@gmail.com, netdev@vger.kernel.org,
-        nhorman@tuxdriver.com, syzkaller-bugs@googlegroups.com,
-        vyasevich@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000007f2c5b05a0d8f312@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+syzbot <syzbot+437bf61d165c87bd40fb@syzkaller.appspotmail.com> wrote:
+> syzbot suspects this bug was fixed by commit:
+> 
+> commit 34682110abc50ffea7e002b0c2fd7ea9e0000ccc
+> Author: Max Chou <max.chou@realtek.com>
+> Date:   Wed Nov 27 03:01:07 2019 +0000
+> 
+>     Bluetooth: btusb: Edit the logical value for Realtek Bluetooth reset
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=113e9919e00000
+> start commit:   d5d359b0 Merge branch 'for-linus' of git://git.kernel.org/..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=83c00afca9cf5153
+> dashboard link: https://syzkaller.appspot.com/bug?extid=437bf61d165c87bd40fb
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=168a1611e00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=162f0376e00000
+> 
+> If the result looks correct, please mark the bug fixed by replying with:
 
-syzbot tried to test the proposed patch but build/boot failed:
+Looks wrong, better candidate:
 
-failed to checkout kernel repo https://github.com/hqj/hqjagain_test.git/scup_wfree: failed to run ["git" "fetch" "https://github.com/hqj/hqjagain_test.git" "scup_wfree"]: exit status 128
-fatal: couldn't find remote ref scup_wfree
-
-
-
-Tested on:
-
-commit:         [unknown 
-git tree:       https://github.com/hqj/hqjagain_test.git scup_wfree
-dashboard link: https://syzkaller.appspot.com/bug?extid=cea71eec5d6de256d54d
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-
+#syz fix: netfilter: nf_tables: autoload modules from the abort path
