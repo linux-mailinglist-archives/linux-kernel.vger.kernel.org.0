@@ -2,106 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 673C2185FFF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 22:27:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31C7E186008
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 22:30:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729239AbgCOV1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 17:27:42 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:44776 "EHLO
+        id S1729242AbgCOV37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 17:29:59 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:56789 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729181AbgCOV1m (ORCPT
+        by vger.kernel.org with ESMTP id S1729166AbgCOV37 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 17:27:42 -0400
+        Sun, 15 Mar 2020 17:29:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584307660;
+        s=mimecast20190719; t=1584307798;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=UrI29gnK2Fgk/ugrno8dGJOP/2UGa5/L2T729KrGlw4=;
-        b=XzswtoS3NQxAvt0jmvHq9vmA1Bff0Pyi2OozmSyD/7a0U7HeAPPLvRYF3ICOg2yNKiqS/L
-        9NGqiaUCcOzQQFXae1DbHoucjjXBPDRljxs21oSvjRfrNpUYP+yFNQT9yTEOwFeWrY/Jt1
-        lHanMXeV2QXyvjhkr7zj6SKFeh4y2vc=
+        bh=nCZjjXhZtIZTco2GVuY9U8dtD4rKbgr/KTIhT3OsK/I=;
+        b=MTniCmoK8te0pj45YyeqTCV3YSQ5yLUYxEuonWQv263mTR4lQv+A9e28nIRp49NFs02EsV
+        4oHNqPvN4AhVRUmESBZEiGQXEOp1gDEC65jg8Vizu8Ypt4sm7W/9Ff8cqTM1DAnkTYcT+n
+        bHibl88nLQlYqmTS3K0huKNTihQFD34=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-236-_5NmTzabMsewadlTWehCAA-1; Sun, 15 Mar 2020 17:27:39 -0400
-X-MC-Unique: _5NmTzabMsewadlTWehCAA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-476-4bSSCoquNZ2P3989GY5_Pg-1; Sun, 15 Mar 2020 17:29:54 -0400
+X-MC-Unique: 4bSSCoquNZ2P3989GY5_Pg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A9221107ACC4;
-        Sun, 15 Mar 2020 21:27:37 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E82BA800D50;
+        Sun, 15 Mar 2020 21:29:52 +0000 (UTC)
 Received: from elisabeth (ovpn-200-18.brq.redhat.com [10.40.200.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 81D8810027A7;
-        Sun, 15 Mar 2020 21:27:32 +0000 (UTC)
-Date:   Sun, 15 Mar 2020 22:27:23 +0100
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B737B60BFB;
+        Sun, 15 Mar 2020 21:29:46 +0000 (UTC)
+Date:   Sun, 15 Mar 2020 22:29:38 +0100
 From:   Stefano Brivio <sbrivio@redhat.com>
 To:     Shreeya Patel <shreeya.patel23498@gmail.com>
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com,
-        daniel.baluta@gmail.com, nramas@linux.microsoft.com,
-        hverkuil@xs4all.nl, Larry.Finger@lwfinger.net
-Subject: Re: [Outreachy kernel] [PATCH v2] Staging: rtl8723bs: rtw_mlme:
- Remove unnecessary conditions
-Message-ID: <20200315222723.666470f7@elisabeth>
-In-Reply-To: <20200313102912.17218-1-shreeya.patel23498@gmail.com>
-References: <20200313102912.17218-1-shreeya.patel23498@gmail.com>
+Cc:     adham.abozaeid@microchip.com, ajay.kathat@microchip.com,
+        linux-wireless@vger.kernel.org, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com, daniel.baluta@gmail.com,
+        nramas@linux.microsoft.com, hverkuil@xs4all.nl
+Subject: Re: [Outreachy kernel] [PATCH] Staging: wilc1000: cfg80211: Use
+ kmemdup instead of kmalloc and memcpy
+Message-ID: <20200315222938.23a9faec@elisabeth>
+In-Reply-To: <20200313112451.25610-1-shreeya.patel23498@gmail.com>
+References: <20200313112451.25610-1-shreeya.patel23498@gmail.com>
 Organization: Red Hat
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Mar 2020 15:59:12 +0530
+On Fri, 13 Mar 2020 16:54:51 +0530
 Shreeya Patel <shreeya.patel23498@gmail.com> wrote:
 
-> Remove unnecessary if and else conditions since both are leading to the
-> initialization of "phtpriv->ampdu_enable" with the same value.
-> Also, remove the unnecessary else-if condition since it does nothing.
+> Replace calls to kmalloc followed by a memcpy with a direct call to
+> kmemdup.
+> 
+> The Coccinelle semantic patch used to make this change is as follows:
+> @@
+> expression from,to,size,flag;
+> statement S;
+> @@
+> 
+> -  to = \(kmalloc\|kzalloc\)(size,flag);
+> +  to = kmemdup(from,size,flag);
+>    if (to==NULL || ...) S
+> -  memcpy(to, from, size);
 > 
 > Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
-> ---
-> 
-> Changes in v2
->   - Remove unnecessary comments
->   - Remove unnecessary else-if condition which does nothing.
-> 
->  drivers/staging/rtl8723bs/core/rtw_mlme.c | 11 +----------
->  1 file changed, 1 insertion(+), 10 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> index 71fcb466019a..d7a58af76ea0 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> @@ -2772,16 +2772,7 @@ void rtw_update_ht_cap(struct adapter *padapter, u8 *pie, uint ie_len, u8 channe
->  
->  	/* maybe needs check if ap supports rx ampdu. */
->  	if (!(phtpriv->ampdu_enable) && pregistrypriv->ampdu_enable == 1) {
-> -		if (pregistrypriv->wifi_spec == 1) {
-> -			/* remove this part because testbed AP should disable RX AMPDU */
-> -			/* phtpriv->ampdu_enable = false; */
-> -			phtpriv->ampdu_enable = true;
-> -		} else {
-> -			phtpriv->ampdu_enable = true;
-> -		}
-> -	} else if (pregistrypriv->ampdu_enable == 2) {
-> -		/* remove this part because testbed AP should disable RX AMPDU */
-> -		/* phtpriv->ampdu_enable = true; */
-> +		phtpriv->ampdu_enable = true;
-
-I suspect this is actually a bug, that is:
-
-os_dep/os_intfs.c:74:static int rtw_ampdu_enable = 1;/* for enable tx_ampdu ,0: disable, 0x1:enable (but wifi_spec should be 0), 0x2: force enable (don't care wifi_spec) */
-
-and that seems to actually map to the ampdu_enable field in
-pregistrypriv.
-
-However, I wouldn't change this without testing it on the actual
-hardware, change looks good to me and doesn't affect functionality,
 
 Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
 
