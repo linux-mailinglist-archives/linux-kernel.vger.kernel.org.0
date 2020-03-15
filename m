@@ -2,248 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6885185F1D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 19:38:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1441185F18
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 19:38:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728869AbgCOSiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 14:38:13 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:55459 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728289AbgCOSiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728799AbgCOSiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sun, 15 Mar 2020 14:38:09 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:41303 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728240AbgCOSiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 14:38:08 -0400
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 48gSqK6Mdqzbq;
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 48gSqK4CXKzGL;
         Sun, 15 Mar 2020 19:38:05 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1584297485; bh=MJTn0lcfvVPSV/6tZkl0DGQ5CeVVGsRFlug7TcXYwhM=;
+        t=1584297485; bh=CAFOEm2WaB/haVTq2zYXbsRhA0UJ8vG//Br7kVvfJ1A=;
         h=Date:In-Reply-To:References:From:Subject:To:Cc:From;
-        b=nPUN6tjwxUfc/G0d8ELKNQOnz/bHQEtFm8oaTwhzfmKIydvgcgVh0abcF+jOAL0I2
-         AkTlgYnsf7hRmARjQxZIhITrGNFw8XJ6l5bwaCyuFC5Le19EoJbC0KDUsZGS/VnYVH
-         a3EufXtihS1vZ/HQyfSRjpw1xkMaTeDeixzyn2DPavxroAcdr4Ed/w45HfIxQmLH6f
-         voXI8Kl8H4dyjKJ1ISkUcNmlmWorkRgesEccAv6FuAqnz7yVJ+fGUaO5bZUINWqwCm
-         5TNLWwV79EEeNhitG7HRpWvNIVnigC9iSvu/apJtiMKUunBDQG4g6+2mze/pWt8hw5
-         GqbBSdI2PdtyA==
+        b=W5/egsWRagkV2SzBPAUvlXgrvvybdT4KNbc9X6n0EF4dcGqWSV820XOY7je78U3TL
+         wd5/Pk0QBVkhUvk6+38kVX5W5jn6/EOYJ0WCmSF/Joc4O+epVtquwJSLMziYLLwWZb
+         h+igPJ29u/nAuM0v1Be4LnIhjG55lh5OCYyivRlj6XTi1ZZp4U3uVRqDjlPlHcnDKb
+         wVBOkXYyPZXH23KOswge9gfpZvvNnI1oYjdnxidBb2R1HzGXlOZq3ZT2RTORaMrSaa
+         JbCsL4BrUdyIoUt568T/zHyuYq/XSOUuk34CaijCAfQ4AANIdLCuW/AvrjFq6K6CV+
+         yUkdZYxEbcEoA==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.102.2 at mail
 Date:   Sun, 15 Mar 2020 19:38:05 +0100
-Message-Id: <aacbd1264cdc66437dd5d3074d35422dd4ad80fd.1584296940.git.mirq-linux@rere.qmqm.pl>
+Message-Id: <744f7b9da075e63ebc4400125cebfe63fabe3d2e.1584296940.git.mirq-linux@rere.qmqm.pl>
 In-Reply-To: <cover.1584296940.git.mirq-linux@rere.qmqm.pl>
 References: <cover.1584296940.git.mirq-linux@rere.qmqm.pl>
 From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH 2/3] clk: at91: allow setting PCKx parent via DT
+Subject: [PATCH 1/3] clk: at91: optimize pmc data allocation
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stephen Boyd <sboyd@kernel.org>
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This exposes PROGx clocks for use in assigned-clocks DeviceTree property
-for selecting PCKx parent clock.
+Alloc whole data structure in one block. This makes the code shorter,
+more efficient and easier to extend in following patch.
 
 Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 ---
- drivers/clk/at91/at91sam9260.c   |  5 ++++-
- drivers/clk/at91/at91sam9rl.c    |  4 +++-
- drivers/clk/at91/at91sam9x5.c    |  4 +++-
- drivers/clk/at91/pmc.c           | 12 ++++++++++--
- drivers/clk/at91/pmc.h           |  5 ++++-
- drivers/clk/at91/sama5d2.c       |  4 +++-
- drivers/clk/at91/sama5d4.c       |  4 +++-
- include/dt-bindings/clock/at91.h |  1 +
- 8 files changed, 31 insertions(+), 8 deletions(-)
+ drivers/clk/at91/at91sam9260.c |  2 +-
+ drivers/clk/at91/at91sam9rl.c  |  2 +-
+ drivers/clk/at91/at91sam9x5.c  |  2 +-
+ drivers/clk/at91/pmc.c         | 34 ++++++++--------------------------
+ drivers/clk/at91/pmc.h         |  3 ++-
+ drivers/clk/at91/sama5d2.c     |  2 +-
+ drivers/clk/at91/sama5d4.c     |  2 +-
+ 7 files changed, 15 insertions(+), 32 deletions(-)
 
 diff --git a/drivers/clk/at91/at91sam9260.c b/drivers/clk/at91/at91sam9260.c
-index 946f03a09858..7e5ff252fffc 100644
+index a9d4234758d7..946f03a09858 100644
 --- a/drivers/clk/at91/at91sam9260.c
 +++ b/drivers/clk/at91/at91sam9260.c
-@@ -354,7 +354,8 @@ static void __init at91sam926x_pmc_setup(struct device_node *np,
+@@ -462,7 +462,7 @@ static void __init at91sam926x_pmc_setup(struct device_node *np,
+ 	return;
  
- 	at91sam9260_pmc = pmc_data_allocate(PMC_MAIN + 1,
- 					    ndck(data->sck, data->num_sck),
--					    ndck(data->pck, data->num_pck), 0);
-+					    ndck(data->pck, data->num_pck),
-+					    0, data->num_progck);
- 	if (!at91sam9260_pmc)
- 		return;
+ err_free:
+-	pmc_data_free(at91sam9260_pmc);
++	kfree(at91sam9260_pmc);
+ }
  
-@@ -434,6 +435,8 @@ static void __init at91sam926x_pmc_setup(struct device_node *np,
- 						    &at91rm9200_programmable_layout);
- 		if (IS_ERR(hw))
- 			goto err_free;
-+
-+		at91sam9260_pmc->pchws[i] = hw;
- 	}
- 
- 	for (i = 0; i < data->num_sck; i++) {
+ static void __init at91sam9260_pmc_setup(struct device_node *np)
 diff --git a/drivers/clk/at91/at91sam9rl.c b/drivers/clk/at91/at91sam9rl.c
-index cc739d214ae3..bcf07f6a0e0e 100644
+index 77fe83a73bf4..cc739d214ae3 100644
 --- a/drivers/clk/at91/at91sam9rl.c
 +++ b/drivers/clk/at91/at91sam9rl.c
-@@ -89,7 +89,7 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
+@@ -166,6 +166,6 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
+ 	return;
  
- 	at91sam9rl_pmc = pmc_data_allocate(PMC_MAIN + 1,
- 					   nck(at91sam9rl_systemck),
--					   nck(at91sam9rl_periphck), 0);
-+					   nck(at91sam9rl_periphck), 0, 2);
- 	if (!at91sam9rl_pmc)
- 		return;
- 
-@@ -138,6 +138,8 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
- 						    &at91rm9200_programmable_layout);
- 		if (IS_ERR(hw))
- 			goto err_free;
-+
-+		at91sam9rl_pmc->pchws[i] = hw;
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(at91sam9rl_systemck); i++) {
+ err_free:
+-	pmc_data_free(at91sam9rl_pmc);
++	kfree(at91sam9rl_pmc);
+ }
+ CLK_OF_DECLARE_DRIVER(at91sam9rl_pmc, "atmel,at91sam9rl-pmc", at91sam9rl_pmc_setup);
 diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
-index aac99d699568..f13756b407e2 100644
+index 086cf0b4955c..aac99d699568 100644
 --- a/drivers/clk/at91/at91sam9x5.c
 +++ b/drivers/clk/at91/at91sam9x5.c
-@@ -151,7 +151,7 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
- 		return;
+@@ -278,7 +278,7 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
+ 	return;
  
- 	at91sam9x5_pmc = pmc_data_allocate(PMC_MAIN + 1,
--					   nck(at91sam9x5_systemck), 31, 0);
-+					   nck(at91sam9x5_systemck), 31, 0, 2);
- 	if (!at91sam9x5_pmc)
- 		return;
+ err_free:
+-	pmc_data_free(at91sam9x5_pmc);
++	kfree(at91sam9x5_pmc);
+ }
  
-@@ -227,6 +227,8 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
- 						    &at91sam9x5_programmable_layout);
- 		if (IS_ERR(hw))
- 			goto err_free;
-+
-+		at91sam9x5_pmc->pchws[i] = hw;
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(at91sam9x5_systemck); i++) {
+ static void __init at91sam9g15_pmc_setup(struct device_node *np)
 diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index fe788512fcc0..874385c981f7 100644
+index b71515acdec1..fe788512fcc0 100644
 --- a/drivers/clk/at91/pmc.c
 +++ b/drivers/clk/at91/pmc.c
-@@ -67,6 +67,10 @@ struct clk_hw *of_clk_hw_pmc_get(struct of_phandle_args *clkspec, void *data)
- 		if (idx < pmc_data->ngck)
- 			return pmc_data->ghws[idx];
- 		break;
-+	case PMC_TYPE_PROGRAMMABLE:
-+		if (idx < pmc_data->npck)
-+			return pmc_data->pchws[idx];
-+		break;
- 	default:
- 		break;
- 	}
-@@ -77,9 +81,10 @@ struct clk_hw *of_clk_hw_pmc_get(struct of_phandle_args *clkspec, void *data)
+@@ -76,48 +76,30 @@ struct clk_hw *of_clk_hw_pmc_get(struct of_phandle_args *clkspec, void *data)
+ 	return ERR_PTR(-EINVAL);
  }
  
+-void pmc_data_free(struct pmc_data *pmc_data)
+-{
+-	kfree(pmc_data->chws);
+-	kfree(pmc_data->shws);
+-	kfree(pmc_data->phws);
+-	kfree(pmc_data->ghws);
+-}
+-
  struct pmc_data *pmc_data_allocate(unsigned int ncore, unsigned int nsystem,
--				   unsigned int nperiph, unsigned int ngck)
-+				   unsigned int nperiph, unsigned int ngck,
-+				   unsigned int npck)
+ 				   unsigned int nperiph, unsigned int ngck)
  {
--	unsigned int num_clks = ncore + nsystem + nperiph + ngck;
-+	unsigned int num_clks = ncore + nsystem + nperiph + ngck + npck;
- 	struct pmc_data *pmc_data;
+-	struct pmc_data *pmc_data = kzalloc(sizeof(*pmc_data), GFP_KERNEL);
++	unsigned int num_clks = ncore + nsystem + nperiph + ngck;
++	struct pmc_data *pmc_data;
  
- 	pmc_data = kzalloc(sizeof(*pmc_data) + num_clks * sizeof(struct clk_hw *),
-@@ -99,6 +104,9 @@ struct pmc_data *pmc_data_allocate(unsigned int ncore, unsigned int nsystem,
++	pmc_data = kzalloc(sizeof(*pmc_data) + num_clks * sizeof(struct clk_hw *),
++			   GFP_KERNEL);
+ 	if (!pmc_data)
+ 		return NULL;
+ 
+ 	pmc_data->ncore = ncore;
+-	pmc_data->chws = kcalloc(ncore, sizeof(struct clk_hw *), GFP_KERNEL);
+-	if (!pmc_data->chws)
+-		goto err;
++	pmc_data->chws = pmc_data->hwtable;
+ 
+ 	pmc_data->nsystem = nsystem;
+-	pmc_data->shws = kcalloc(nsystem, sizeof(struct clk_hw *), GFP_KERNEL);
+-	if (!pmc_data->shws)
+-		goto err;
++	pmc_data->shws = pmc_data->chws + ncore;
+ 
+ 	pmc_data->nperiph = nperiph;
+-	pmc_data->phws = kcalloc(nperiph, sizeof(struct clk_hw *), GFP_KERNEL);
+-	if (!pmc_data->phws)
+-		goto err;
++	pmc_data->phws = pmc_data->shws + nsystem;
+ 
  	pmc_data->ngck = ngck;
- 	pmc_data->ghws = pmc_data->phws + nperiph;
+-	pmc_data->ghws = kcalloc(ngck, sizeof(struct clk_hw *), GFP_KERNEL);
+-	if (!pmc_data->ghws)
+-		goto err;
++	pmc_data->ghws = pmc_data->phws + nperiph;
  
-+	pmc_data->npck = npck;
-+	pmc_data->pchws = pmc_data->ghws + ngck;
-+
  	return pmc_data;
+-
+-err:
+-	pmc_data_free(pmc_data);
+-
+-	return NULL;
  }
  
+ #ifdef CONFIG_PM
 diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 49cc3d67b98e..bf44ee5d1b79 100644
+index 9b8db9cdcda5..49cc3d67b98e 100644
 --- a/drivers/clk/at91/pmc.h
 +++ b/drivers/clk/at91/pmc.h
 @@ -24,6 +24,8 @@ struct pmc_data {
  	struct clk_hw **phws;
  	unsigned int ngck;
  	struct clk_hw **ghws;
-+	unsigned int npck;
-+	struct clk_hw **pchws;
- 
- 	struct clk_hw *hwtable[0];
++
++	struct clk_hw *hwtable[0];
  };
-@@ -96,7 +98,8 @@ struct clk_pcr_layout {
- #define ndck(a, s) (a[s - 1].id + 1)
+ 
+ struct clk_range {
+@@ -95,7 +97,6 @@ struct clk_pcr_layout {
  #define nck(a) (a[ARRAY_SIZE(a) - 1].id + 1)
  struct pmc_data *pmc_data_allocate(unsigned int ncore, unsigned int nsystem,
--				   unsigned int nperiph, unsigned int ngck);
-+				   unsigned int nperiph, unsigned int ngck,
-+				   unsigned int npck);
+ 				   unsigned int nperiph, unsigned int ngck);
+-void pmc_data_free(struct pmc_data *pmc_data);
  
  int of_at91_get_clk_range(struct device_node *np, const char *propname,
  			  struct clk_range *range);
 diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-index b2560670e5af..ae5e83cadb3d 100644
+index ff7e3f727082..b2560670e5af 100644
 --- a/drivers/clk/at91/sama5d2.c
 +++ b/drivers/clk/at91/sama5d2.c
-@@ -169,7 +169,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 	sama5d2_pmc = pmc_data_allocate(PMC_I2S1_MUX + 1,
- 					nck(sama5d2_systemck),
- 					nck(sama5d2_periph32ck),
--					nck(sama5d2_gck));
-+					nck(sama5d2_gck), 3);
- 	if (!sama5d2_pmc)
- 		return;
+@@ -350,6 +350,6 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 	return;
  
-@@ -267,6 +267,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 						    &sama5d2_programmable_layout);
- 		if (IS_ERR(hw))
- 			goto err_free;
-+
-+		sama5d2_pmc->pchws[i] = hw;
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(sama5d2_systemck); i++) {
+ err_free:
+-	pmc_data_free(sama5d2_pmc);
++	kfree(sama5d2_pmc);
+ }
+ CLK_OF_DECLARE_DRIVER(sama5d2_pmc, "atmel,sama5d2-pmc", sama5d2_pmc_setup);
 diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
-index 4ca9a4619500..80692902b4e4 100644
+index a6dee4a3b6e4..4ca9a4619500 100644
 --- a/drivers/clk/at91/sama5d4.c
 +++ b/drivers/clk/at91/sama5d4.c
-@@ -142,7 +142,7 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
+@@ -267,6 +267,6 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
+ 	return;
  
- 	sama5d4_pmc = pmc_data_allocate(PMC_MCK2 + 1,
- 					nck(sama5d4_systemck),
--					nck(sama5d4_periph32ck), 0);
-+					nck(sama5d4_periph32ck), 0, 3);
- 	if (!sama5d4_pmc)
- 		return;
- 
-@@ -224,6 +224,8 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
- 						    &at91sam9x5_programmable_layout);
- 		if (IS_ERR(hw))
- 			goto err_free;
-+
-+		sama5d4_pmc->pchws[i] = hw;
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(sama5d4_systemck); i++) {
-diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
-index 38b5554153c8..c3f4aa6a2d29 100644
---- a/include/dt-bindings/clock/at91.h
-+++ b/include/dt-bindings/clock/at91.h
-@@ -12,6 +12,7 @@
- #define PMC_TYPE_SYSTEM		1
- #define PMC_TYPE_PERIPHERAL	2
- #define PMC_TYPE_GCK		3
-+#define PMC_TYPE_PROGRAMMABLE	4
- 
- #define PMC_SLOW		0
- #define PMC_MCK			1
+ err_free:
+-	pmc_data_free(sama5d4_pmc);
++	kfree(sama5d4_pmc);
+ }
+ CLK_OF_DECLARE_DRIVER(sama5d4_pmc, "atmel,sama5d4-pmc", sama5d4_pmc_setup);
 -- 
 2.20.1
 
