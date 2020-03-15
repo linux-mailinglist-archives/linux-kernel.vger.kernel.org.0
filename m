@@ -2,76 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9816B1857E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:49:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A0D218572D
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:32:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbgCOBtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 21:49:22 -0400
-Received: from mga04.intel.com ([192.55.52.120]:26789 "EHLO mga04.intel.com"
+        id S1727074AbgCOBce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 21:32:34 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:60934 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726628AbgCOBtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 21:49:21 -0400
-IronPort-SDR: YaUreDnd0I1VR/dU7zKQ12apw1SgOSuE96kD1DFzTZip26genzsHH/0XhXWGFCw1Z83xuokpSC
- CgKyA8z4XypA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2020 17:27:45 -0700
-IronPort-SDR: 8yK2ll5Tu4V2XpSyStMwsKuKMJf0wdmFBl8nTiWCOzNbqbUn8nz0p9qbL1AUV4PRL72Z+dYBQx
- 6skQKLPj9qVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,554,1574150400"; 
-   d="scan'208";a="442852835"
-Received: from mbenhamu-mobl2.ger.corp.intel.com (HELO localhost) ([10.251.177.145])
-  by fmsmga005.fm.intel.com with ESMTP; 14 Mar 2020 17:27:33 -0700
-Date:   Sun, 15 Mar 2020 02:27:32 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-mm@kvack.org, Ismo Puustinen <ismo.puustinen@intel.com>,
-        Mark Shanahan <mark.shanahan@intel.com>,
-        Mikko Ylinen <mikko.ylinen@intel.com>,
-        Derek Bombien <derek.bombien@intel.com>
-Subject: Re: [PATCH v28 16/22] x86/sgx: Add a page reclaimer
-Message-ID: <20200315002732.GA208715@linux.intel.com>
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
- <20200303233609.713348-17-jarkko.sakkinen@linux.intel.com>
- <20200305190354.GK11500@linux.intel.com>
- <20200306184702.GD7472@linux.intel.com>
- <20200312183824.GB26453@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200312183824.GB26453@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        id S1725962AbgCOBcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Mar 2020 21:32:33 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ABDD61A015F;
+        Sun, 15 Mar 2020 01:54:20 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ACE841A0170;
+        Sun, 15 Mar 2020 01:54:17 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 27880402B1;
+        Sun, 15 Mar 2020 08:54:14 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] rtc: snvs: remove redundant error message
+Date:   Sun, 15 Mar 2020 08:47:44 +0800
+Message-Id: <1584233264-26025-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 11:38:24AM -0700, Sean Christopherson wrote:
-> On Fri, Mar 06, 2020 at 08:47:02PM +0200, Jarkko Sakkinen wrote:
-> > On Thu, Mar 05, 2020 at 11:03:54AM -0800, Sean Christopherson wrote:
-> > > We've also discussed taking a file descriptor to hold the backing, but
-> > > unless I'm misreading the pagecache code, that doesn't solve the incorrect
-> > > accounting problem because the current task, i.e. evicting task, would be
-> > > charged.  In other words, whether the backing is kernel or user controlled
-> > > is purely an ABI question.
-> > 
-> > Even if the file is owned by a different process the account happens
-> > to "current"?
-> 
-> Yes.  Which makes sense as files do not have a 1:1 association with tasks.
+The RTC core already has error message for registration failure,
+no need to have error message in the driver again.
 
-Yeah, that makes sense. Looking at mm/memory.c.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/rtc/rtc-snvs.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Looking at finish_fault/alloc_set_pte/inc_mm_counter_fast code path that
-is also what happens.
+diff --git a/drivers/rtc/rtc-snvs.c b/drivers/rtc/rtc-snvs.c
+index 319ed1d..36f4961 100644
+--- a/drivers/rtc/rtc-snvs.c
++++ b/drivers/rtc/rtc-snvs.c
+@@ -354,8 +354,6 @@ static int snvs_rtc_probe(struct platform_device *pdev)
+ 	data->rtc->ops = &snvs_rtc_ops;
+ 	data->rtc->range_max = U32_MAX;
+ 	ret = rtc_register_device(data->rtc);
+-	if (ret)
+-		dev_err(&pdev->dev, "failed to register rtc: %d\n", ret);
+ 
+ 	return ret;
+ }
+-- 
+2.7.4
 
-/Jarkko
