@@ -2,106 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9894F185B67
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 10:25:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83D6B185B75
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 10:28:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbgCOJZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 05:25:31 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:43712 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728065AbgCOJZa (ORCPT
+        id S1728152AbgCOJ2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 05:28:37 -0400
+Received: from m17617.mail.qiye.163.com ([59.111.176.17]:4452 "EHLO
+        m17617.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbgCOJ2h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 05:25:30 -0400
-Received: by mail-il1-f195.google.com with SMTP id d14so12956503ilq.10;
-        Sun, 15 Mar 2020 02:25:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eDLn6hcaUGXN1ifnm89fP3KORlDlYvpz0bkA0oBIYGM=;
-        b=Vp92DRfDmGLIM/NPFDj32KHbGd5+v54Y8Qx53JAOAD18STaqvCL7NqF8E/KfcDTr1N
-         RTh37uMH8CGBwXi7s3YU7A9AqUdrD6fmecuUReY3uJ5yex7vhm+o2hnTXMKjuFBsXo8J
-         FRimVp9eYRS/Og97n7VrlGVV9giH2n3V/9MUXWgW6I3wwjkOIFXXfG78J9tNal3iQrA3
-         gO1CPPERPk/E+tzgHAp8X6rm6y76Q8xQ5fK5NSKoqHMy3CoWgMdhVBy0f55UMQT2l9Yo
-         PjFoGSXUOecROOqHn58hc8Ztnv48FZYFeTL64uCDFp58FTA2TSs3iokQUVSnB3mnnWY+
-         nyaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eDLn6hcaUGXN1ifnm89fP3KORlDlYvpz0bkA0oBIYGM=;
-        b=JzzcXQjSt1PiPSI277ANzrOxaWzBw8yXSgve7kyUdTFlXWUXO/+OAJvzlZmGkuxHHQ
-         ibSsqUYObdJYFpsPshMn5OFjqbYaWYLdr6T6KsTre++kN9OkDsKoH2U05lkP62z1PjBk
-         jqTtV88GU8chciFlXcqjaminV1rDIgglzut0+fxV9jCzEyi1XOyFJzL7ZMEjkMx8YEFh
-         4Ym6Pqs7FtO6h9gVSg/QHpagYE6hjeAA2FBZs1x6sTSdzKne5Qeq9f6CsCWpub8KFIbI
-         K02rz5lCAcfXGDzHybJXF6AjeWZoVu1c0TjYzCAs7NMkAa6+QfzdfnRFMBVPJhzIKn7Y
-         ia+w==
-X-Gm-Message-State: ANhLgQ2zJ5ujUn//8LzGY7Hs4R1Add0w68Q68f4kX0tP49vsvCby03qT
-        Q4qfoyn5s39SosV6h30FOiRoLdTrDoap0xipwBQ=
-X-Google-Smtp-Source: ADFU+vu2O/lxp6WbokN0oJhMae6LPLe+vhCCs071Xl1gPKo6khFDdWen7oB+9dJAe4A09kgfcbJwwxr26vMrqKvBJwk=
-X-Received: by 2002:a92:d843:: with SMTP id h3mr8319415ilq.246.1584264329583;
- Sun, 15 Mar 2020 02:25:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200310194854.831-1-linux.amoon@gmail.com> <20200310194854.831-2-linux.amoon@gmail.com>
- <87lfo2f0k9.fsf@kernel.org>
-In-Reply-To: <87lfo2f0k9.fsf@kernel.org>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Sun, 15 Mar 2020 14:55:19 +0530
-Message-ID: <CANAwSgQgLm623szgs5Lba-NQKySiGw5fRfjyxjfdfHxQxhri7g@mail.gmail.com>
-Subject: Re: [PATCHv3 1/5] devicetree: bindings: exynos: Add new compatible
- for Exynos5420 dwc3 clocks support
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 15 Mar 2020 05:28:37 -0400
+Received: from ubuntu.localdomain (unknown [58.251.74.226])
+        by m17617.mail.qiye.163.com (Hmail) with ESMTPA id 0C3E82613D7;
+        Sun, 15 Mar 2020 17:28:29 +0800 (CST)
+From:   Wang Wenhu <wenhu.wang@vivo.com>
+To:     Jonathan Corbet <corbet@lwn.net>, Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Harry Wei <harryxiyou@gmail.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Wang Wenhu <wenhu.wang@vivo.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     kernel@vivo.com
+Subject: [PATCH 0/2] doc: zh_CN: facilitate translation for filesystems
+Date:   Sun, 15 Mar 2020 02:27:58 -0700
+Message-Id: <20200315092810.87008-1-wenhu.wang@vivo.com>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZTlVIT0tCQkJNS0hJTEpPQ1lXWShZQU
+        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MTo6Pzo5KDg6ODcYLEgOK1Y#
+        PjRPCh1VSlVKTkNPSU1PTkpKTUJJVTMWGhIXVQweFRMOVQwaFRw7DRINFFUYFBZFWVdZEgtZQVlO
+        Q1VJTkpVTE9VSUlNWVdZCAFZQUlDQ0k3Bg++
+X-HM-Tid: 0a70dd85f8929375kuws0c3e82613d7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Felipe,
+This patch series set up the basic facility for the translation work
+of the docs residing on filesystems into Chinese, indexing the filesystems
+directory and adding one indexed translation into it. The virtiofs.rst
+added is not only a translation itself but also an simple example that
+future developers would take.
 
-On Sun, 15 Mar 2020 at 14:37, Felipe Balbi <balbi@kernel.org> wrote:
->
->
-> Hi,
->
-> Anand Moon <linux.amoon@gmail.com> writes:
->
-> > Add the new compatible string for Exynos5422 DWC3 to support
-> > enable/disable of core and suspend clk by DWC3 driver.
-> > Also updated the clock names for compatible samsung,exynos5420-dwusb3.
-> >
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->
-> What is the dependency here?
->
-> checking file Documentation/devicetree/bindings/usb/exynos-usb.txt
-> Hunk #2 FAILED at 84.
-> 1 out of 2 hunks FAILED
->
-> Applying on top of v5.6-rc5
->
-> --
-> balbi
+The detailed diff info also shows the basic essential markups of
+the toctree and reStructuredText, at least for the most simple occasions.
+More translations of filesystems are on their way, and futher,
+of more subsystems.
 
-These patch were made on top linux next-20200306,
-And with new updates in the clk driver configuration.
-I will update these patchs later, plz drop these changes for now.
+---
+Wang Wenhu (2):
+  doc: zh_CN: index files in filesystems subdirectory
+  doc: zh_CN: add translation for virtiofs
 
--Anand
+ Documentation/filesystems/index.rst           |  2 +
+ Documentation/filesystems/virtiofs.rst        |  2 +
+ .../translations/zh_CN/filesystems/index.rst  | 29 +++++++++
+ .../zh_CN/filesystems/virtiofs.rst            | 62 +++++++++++++++++++
+ Documentation/translations/zh_CN/index.rst    |  1 +
+ 5 files changed, 96 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/filesystems/index.rst
+ create mode 100644 Documentation/translations/zh_CN/filesystems/virtiofs.rst
+
+-- 
+2.17.1
+
