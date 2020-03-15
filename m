@@ -2,92 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B11B21856C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:29:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F250B1856AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:28:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbgCOB3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 21:29:45 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54712 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726916AbgCOB3k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 21:29:40 -0400
-Received: by mail-wm1-f65.google.com with SMTP id n8so13872053wmc.4
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 18:29:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uRfG0mwZMLjMl4FPHbusrIQaUL5wynktLP8666hh0Ic=;
-        b=q3u295yaWvJtyF0nX+itH6MgcSpzhi/WW183Rq9wGLBRLMK9E1D9n+YozKtG8wr/cW
-         prWRdLnb5KqNYxGwbMr9NT1YXCcGu+szlyiWm3eF1GxPkmszRZ18gO9IH9tgVp4xnEHl
-         scK3h4clMAHm72HKMPZn1BizqC782jmNPtEXG1D4qfrS9CitoHmvo7uLkih+M323gton
-         nO57LOy9ng7Dlbj9WkBQ3/La2796jyVvUbYmYQKdMUxXLySTdoqmzQ9A61v8r/5qr4zm
-         NPI6P9Hm96BHEFikcg2n9El7/tXtLB0Fv20UfC/MYXkAjVYXE3ib9ukBOvtb0Hicd8lN
-         ow8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uRfG0mwZMLjMl4FPHbusrIQaUL5wynktLP8666hh0Ic=;
-        b=Vyj8atNhJcPA4tfhziISSaLLkKUZWgSJ32mjDh1yj6yjxINUiTLNnneXTu0pidvZga
-         xea4F+XBieOOHwX/+Xk8HzGynNqwsgmzuwdKA/GWTxElXAiGw6YF7nHkDoGmPSDMPMz0
-         6sQ3qXwjlj54VU3dIKaqYriD5FNOJce99f+v1LWybase7j4S+3jJ1qICg8U/CpxXn4gk
-         DFUdRa1HBsKastgXe5221VJt6QZ15t5Joe9xLsK9x7DpZnaBLwrVkSuJ4YXVbrA1XWKt
-         pKdZQSZtmS0bfCvs4/qaFEvtzv4jh++Trfsk70dqQ74LT6I/IJFxVQ4qThjySRJ7oyOX
-         igxg==
-X-Gm-Message-State: ANhLgQ29N9d7Hd7v9F9ZaVCkNA/FKgk2Tl7yckY+siAoBc6WRNoAAdEC
-        P57roWhIS0ZSTT1eTsbgrFpNH3iy
-X-Google-Smtp-Source: ADFU+vusw/MooirDZ5px6QSB4Q7IrKYKrBAJeE9hSb0Jn2vYN866yAQB9P7y0dj2KFOY68fFzrfwmg==
-X-Received: by 2002:a1c:b4c1:: with SMTP id d184mr19096815wmf.160.1584235440708;
-        Sat, 14 Mar 2020 18:24:00 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id h18sm22200107wmm.6.2020.03.14.18.23.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 14 Mar 2020 18:24:00 -0700 (PDT)
-Date:   Sun, 15 Mar 2020 01:23:59 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Wei Yang <richard.weiyang@gmail.com>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/swap_state.c: use the same way to count page in
- [add_to|delete_from]_swap_cache
-Message-ID: <20200315012359.uebl54wauvcpd5j4@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20200314215912.1554-1-richard.weiyang@gmail.com>
- <20200315002101.GT22433@bombadil.infradead.org>
+        id S1726607AbgCOB2l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 21:28:41 -0400
+Received: from mga05.intel.com ([192.55.52.43]:28478 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725783AbgCOB2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Mar 2020 21:28:40 -0400
+IronPort-SDR: OSHhI0BtLsbUJhS4gyun97prmK0J/hx0AYK7hvzgnl4XNfQdfVmrPx/wT7RiuxBcVBeuw2ygkA
+ 6hnZsgkxaBjg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2020 18:25:35 -0700
+IronPort-SDR: 7dXMEkMlPBhCsDZMMGbFY2QSBSl03GSPFEkuh4wHq6I0PEu1I9WX6dq7pEhJpxQ+ewL9QtLlQ4
+ EAHtV3T75Gow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,554,1574150400"; 
+   d="scan'208";a="278653419"
+Received: from mbenhamu-mobl2.ger.corp.intel.com (HELO localhost) ([10.251.177.145])
+  by fmsmga002.fm.intel.com with ESMTP; 14 Mar 2020 18:25:25 -0700
+Date:   Sun, 15 Mar 2020 03:25:23 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Nathaniel McCallum <npmccallum@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Neil Horman <nhorman@redhat.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
+        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
+        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
+        cedric.xing@intel.com, Patrick Uiterwijk <puiterwijk@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Connor Kuehl <ckuehl@redhat.com>,
+        Harald Hoyer <harald@redhat.com>,
+        Lily Sturmann <lsturman@redhat.com>
+Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
+ enclave call
+Message-ID: <20200315012523.GC208715@linux.intel.com>
+References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
+ <20200303233609.713348-22-jarkko.sakkinen@linux.intel.com>
+ <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200315002101.GT22433@bombadil.infradead.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 14, 2020 at 05:21:01PM -0700, Matthew Wilcox wrote:
->On Sat, Mar 14, 2020 at 09:59:12PM +0000, Wei Yang wrote:
->> Function add_to_swap_cache() and delete_from_swap_cache() are counter
->> parts, while currently they use different way to count page.
->> 
->> It doesn't break any thing because we only have two size for PageAnon,
->> but this is confusing and not a good practice.
->> 
->> This patch corrects it by both using compound_nr().
->
->You're converting in the wrong direction.  hpage_nr_pages() is optimised
->away when CONFIG_TRANSPARENT_HUGEPAGE is undefined, whereas compound_nr()
->is not.
+On Wed, Mar 11, 2020 at 01:30:07PM -0400, Nathaniel McCallum wrote:
+> Currently, the selftest has a wrapper around
+> __vdso_sgx_enter_enclave() which preserves all x86-64 ABI callee-saved
+> registers (CSRs), though it uses none of them. Then it calls this
+> function which uses %rbx but preserves none of the CSRs. Then it jumps
+> into an enclave which zeroes all these registers before returning.
+> Thus:
+> 
+>   1. wrapper saves all CSRs
+>   2. wrapper repositions stack arguments
+>   3. __vdso_sgx_enter_enclave() modifies, but does not save %rbx
+>   4. selftest zeros all CSRs
+>   5. wrapper loads all CSRs
+> 
+> I'd like to propose instead that the enclave be responsible for saving
+> and restoring CSRs. So instead of the above we have:
+>   1. __vdso_sgx_enter_enclave() saves %rbx
+>   2. enclave saves CSRs
+>   3. enclave loads CSRs
+>   4. __vdso_sgx_enter_enclave() loads %rbx
+> 
+> I know that lots of other stuff happens during enclave transitions,
+> but at the very least we could reduce the number of instructions
+> through this critical path.
 
-Ok, I didn't think about the optimisation.
+What Jethro said and also that it is a good general principle to cut
+down the semantics of any vdso as minimal as possible.
 
-Will use hpage_nr_pages() in v2.
+I.e. even if saving RBX would make somehow sense it *can* be left
+out without loss in terms of what can be done with the vDSO.
 
->
->I also have this patch pending:
->http://git.infradead.org/users/willy/linux-dax.git/commitdiff/192b635b428ae74f680574cdcc3d5e9d213fcb64
-
--- 
-Wei Yang
-Help you, Help me
+/Jarkko
