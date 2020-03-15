@@ -2,111 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3286185BB6
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 10:52:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89654185B8C
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 10:35:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbgCOJwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 05:52:21 -0400
-Received: from mga17.intel.com ([192.55.52.151]:35235 "EHLO mga17.intel.com"
+        id S1728193AbgCOJfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 05:35:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728216AbgCOJwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 05:52:20 -0400
-IronPort-SDR: 3FhIF57IeQ1GUbr0RUlfWAorz1B9/Tf5M5T24QJQtxWq2yA7Kjas6jlbga4/Uw/erZFoqiBsG1
- OLZTsFkaa7WQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2020 02:52:20 -0700
-IronPort-SDR: JpQOzDZRbO3fy47qbbqN5NnJJLo+3ecnApXfgUlxWX1PTLQ0/rUCjW8BEU7YgqVZAn6vAQQxJe
- u7JJs6/duXnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,556,1574150400"; 
-   d="scan'208";a="416800351"
-Received: from lxy-clx-4s.sh.intel.com ([10.239.43.160])
-  by orsmga005.jf.intel.com with ESMTP; 15 Mar 2020 02:52:18 -0700
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-To:     Shuah Khan <shuah@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     Xiaoyao Li <xiaoyao.li@intel.com>
-Subject: [PATCH 2/2] selftests: export INSTALL_HDR_PATH if using "O" to specify output dir
-Date:   Sun, 15 Mar 2020 17:34:25 +0800
-Message-Id: <20200315093425.33600-3-xiaoyao.li@intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200315093425.33600-1-xiaoyao.li@intel.com>
-References: <20200315093425.33600-1-xiaoyao.li@intel.com>
+        id S1728128AbgCOJfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 05:35:54 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52A38206BE;
+        Sun, 15 Mar 2020 09:35:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584264954;
+        bh=bydZt1msrAZyMXtqxKfMHkV2PUIlKeyA7eIC50CIB/M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=TBHxriSWt3P/WyyWLaDJyymqjhCzixdbSC6Kom2zz+dKvOk44zqBI4xFqNgxzw0Wy
+         Ec1OcZMiugGyij6LFyACRIo89VS8P5sckaeq5a0n/cowSIEVh/iA3WeJIKg6KgFvoH
+         Qv81sHhcA288CvhJUJKfSFmqxzysIMSHEP4Ff1Yg=
+Date:   Sun, 15 Mar 2020 09:35:49 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc:     Olivier Moysan <olivier.moysan@st.com>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>, <alexandre.torgue@st.com>,
+        <benjamin.gaignard@st.com>, <linux-iio@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] iio: adc: stm32-adc: fix sleep in atomic context
+Message-ID: <20200315093549.20764470@archlinux>
+In-Reply-To: <288fb604-16c6-da52-533f-7f1440ed9daa@st.com>
+References: <20200309100212.16499-1-olivier.moysan@st.com>
+        <288fb604-16c6-da52-533f-7f1440ed9daa@st.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When build kvm selftests in tools/testing/selftests directory with
+On Mon, 9 Mar 2020 11:39:17 +0100
+Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
 
-	make O=~/kselftests TARGETS=kvm
+> On 3/9/20 11:02 AM, Olivier Moysan wrote:
+> > This commit fixes the following error:
+> > "BUG: sleeping function called from invalid context at kernel/irq/chip.c"
+> > 
+> > In DMA mode suppress the trigger irq handler, and make the buffer
+> > transfers directly in DMA callback, instead.
+> > 
+> > Fixes: 2763ea0585c9 ("iio: adc: stm32: add optional dma support")
+> > 
+> > Signed-off-by: Olivier Moysan <olivier.moysan@st.com>  
+> 
+> Hi Olivier,
+> 
+> Acked-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Thanks.  Queued up locally but not pushed out just yet as I have a pull
+request out to Greg.  Also marked for stable.
 
-it fails building some kvm test binaries due to lack of header files,
-e.g.,
+thanks,
 
-x86_64/vmx_set_nested_state_test.c: In function ‘set_default_vmx_state’:
-x86_64/vmx_set_nested_state_test.c:85:7: error: ‘struct
-kvm_nested_state’ has no member named ‘hdr’
-  state->hdr.vmx.vmxon_pa = 0x1000;
+Jonathan
 
-kvm's Makefile unconditionally thinks kernel headers are installed
-in the "kernel-src/usr" with "INSTALL_HDR_PATH = $(top_srcdir)/usr".
-However, with "O" is specified, it also takes effect on
-"make headers_install", that causes no header files generated in
-"kernel-src/usr".
-
-Export INSTALL_HDR_PATH when "O" is specified, so that kvm get the right
-kernel headers by checking if INSTALL_HDR_PATH is defined.
-
-Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
----
- tools/testing/selftests/Makefile     | 6 +++++-
- tools/testing/selftests/kvm/Makefile | 2 +-
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 6ec503912bea..5fd72d955e24 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -116,6 +116,10 @@ ARCH           ?= $(SUBARCH)
- export KSFT_KHDR_INSTALL_DONE := 1
- export BUILD
- 
-+ifneq (1,$(DEFAULT_INSTALL_HDR_PATH))
-+export	INSTALL_HDR_PATH := $(BUILD)/usr
-+endif
-+
- # build and run gpio when output directory is the src dir.
- # gpio has dependency on tools/gpio and builds tools/gpio
- # objects in the src directory in all cases making the src
-@@ -148,7 +152,7 @@ khdr:
- ifeq (1,$(DEFAULT_INSTALL_HDR_PATH))
- 	$(MAKE) --no-builtin-rules ARCH=$(ARCH) -C $(top_srcdir) headers_install
- else
--	$(MAKE) --no-builtin-rules INSTALL_HDR_PATH=$$BUILD/usr \
-+	$(MAKE) --no-builtin-rules INSTALL_HDR_PATH=$(INSTALL_HDR_PATH) \
- 		ARCH=$(ARCH) -C $(top_srcdir) headers_install
- endif
- 
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index 86797e0242d4..c14d23c978d5 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -44,7 +44,7 @@ TEST_GEN_PROGS_s390x += kvm_create_max_vcpus
- TEST_GEN_PROGS += $(TEST_GEN_PROGS_$(UNAME_M))
- LIBKVM += $(LIBKVM_$(UNAME_M))
- 
--INSTALL_HDR_PATH = $(top_srcdir)/usr
-+INSTALL_HDR_PATH ?= $(top_srcdir)/usr
- LINUX_HDR_PATH = $(INSTALL_HDR_PATH)/include/
- LINUX_TOOL_INCLUDE = $(top_srcdir)/tools/include
- LINUX_TOOL_ARCH_INCLUDE = $(top_srcdir)/tools/arch/x86/include
--- 
-2.20.1
+> 
+> Thanks,
+> Fabrice
+> 
+> > ---
+> > Changes in v2:
+> > - Add "Fixes" tag in commit message
+> > 
+> > This solution has been already discussed in the thread
+> > https://lkml.org/lkml/2019/3/30/171, and applied in STM32 DFSDM driver:
+> > e19ac9d9a978 ("iio: adc: stm32-dfsdm: fix sleep in atomic context")
+> > ---
+> >  drivers/iio/adc/stm32-adc.c | 31 ++++++++++++++++++++++++++++---
+> >  1 file changed, 28 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/iio/adc/stm32-adc.c b/drivers/iio/adc/stm32-adc.c
+> > index 80c3f963527b..ae622ee6d08c 100644
+> > --- a/drivers/iio/adc/stm32-adc.c
+> > +++ b/drivers/iio/adc/stm32-adc.c
+> > @@ -1418,8 +1418,30 @@ static unsigned int stm32_adc_dma_residue(struct stm32_adc *adc)
+> >  static void stm32_adc_dma_buffer_done(void *data)
+> >  {
+> >  	struct iio_dev *indio_dev = data;
+> > +	struct stm32_adc *adc = iio_priv(indio_dev);
+> > +	int residue = stm32_adc_dma_residue(adc);
+> > +
+> > +	/*
+> > +	 * In DMA mode the trigger services of IIO are not used
+> > +	 * (e.g. no call to iio_trigger_poll).
+> > +	 * Calling irq handler associated to the hardware trigger is not
+> > +	 * relevant as the conversions have already been done. Data
+> > +	 * transfers are performed directly in DMA callback instead.
+> > +	 * This implementation avoids to call trigger irq handler that
+> > +	 * may sleep, in an atomic context (DMA irq handler context).
+> > +	 */
+> > +	dev_dbg(&indio_dev->dev, "%s bufi=%d\n", __func__, adc->bufi);
+> >  
+> > -	iio_trigger_poll_chained(indio_dev->trig);
+> > +	while (residue >= indio_dev->scan_bytes) {
+> > +		u16 *buffer = (u16 *)&adc->rx_buf[adc->bufi];
+> > +
+> > +		iio_push_to_buffers(indio_dev, buffer);
+> > +
+> > +		residue -= indio_dev->scan_bytes;
+> > +		adc->bufi += indio_dev->scan_bytes;
+> > +		if (adc->bufi >= adc->rx_buf_sz)
+> > +			adc->bufi = 0;
+> > +	}
+> >  }
+> >  
+> >  static int stm32_adc_dma_start(struct iio_dev *indio_dev)
+> > @@ -1845,6 +1867,7 @@ static int stm32_adc_probe(struct platform_device *pdev)
+> >  {
+> >  	struct iio_dev *indio_dev;
+> >  	struct device *dev = &pdev->dev;
+> > +	irqreturn_t (*handler)(int irq, void *p) = NULL;
+> >  	struct stm32_adc *adc;
+> >  	int ret;
+> >  
+> > @@ -1911,9 +1934,11 @@ static int stm32_adc_probe(struct platform_device *pdev)
+> >  	if (ret < 0)
+> >  		return ret;
+> >  
+> > +	if (!adc->dma_chan)
+> > +		handler = &stm32_adc_trigger_handler;
+> > +
+> >  	ret = iio_triggered_buffer_setup(indio_dev,
+> > -					 &iio_pollfunc_store_time,
+> > -					 &stm32_adc_trigger_handler,
+> > +					 &iio_pollfunc_store_time, handler,
+> >  					 &stm32_adc_buffer_setup_ops);
+> >  	if (ret) {
+> >  		dev_err(&pdev->dev, "buffer setup failed\n");
+> >   
 
