@@ -2,97 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE5FE185BAC
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 10:51:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67312185BBC
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 10:55:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbgCOJv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 05:51:29 -0400
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:63561 "EHLO
-        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728108AbgCOJv3 (ORCPT
+        id S1728209AbgCOJzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 05:55:01 -0400
+Received: from mailoutvs50.siol.net ([185.57.226.241]:55161 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728159AbgCOJzB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 05:51:29 -0400
-Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 02F9pKNh006446;
-        Sun, 15 Mar 2020 18:51:20 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Received: from www1102.sakura.ne.jp (219.94.129.142)
- by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav302.sakura.ne.jp);
- Sun, 15 Mar 2020 18:51:19 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav302.sakura.ne.jp)
-Received: from localhost.localdomain (121.252.232.153.ap.dti.ne.jp [153.232.252.121])
-        (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 02F9pHI8006433
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sun, 15 Mar 2020 18:51:19 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
-To:     Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Subject: [PATCH] ARM: dts: rockchip: use DMA channels for UARTs for RK3288
-Date:   Sun, 15 Mar 2020 18:51:15 +0900
-Message-Id: <20200315095115.10106-1-katsuhiro@katsuster.net>
+        Sun, 15 Mar 2020 05:55:01 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 245EC521C76;
+        Sun, 15 Mar 2020 10:54:58 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id m-yTtJ4oR4UU; Sun, 15 Mar 2020 10:54:57 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id D192F521D2C;
+        Sun, 15 Mar 2020 10:54:57 +0100 (CET)
+Received: from localhost.localdomain (cpe-194-152-20-232.static.triera.net [194.152.20.232])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPSA id 16ACC521C76;
+        Sun, 15 Mar 2020 10:54:55 +0100 (CET)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     mripard@kernel.org, paul.kocialkowski@bootlin.com
+Cc:     mchehab@kernel.org, gregkh@linuxfoundation.org, wens@csie.org,
+        hverkuil-cisco@xs4all.nl, jernej.skrabec@siol.net,
+        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: cedrus: h264: Fix 4K decoding on H6
+Date:   Sun, 15 Mar 2020 10:54:46 +0100
+Message-Id: <20200315095446.454882-1-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables to use DMAC for all UARTs that are connected to
-dmac_peri core for Rochchip RK3288.
+Due to unknown reason, H6 needs larger intraprediction buffer for 4K
+videos than other SoCs. This was discovered by playing 4096x2304 video,
+which is maximum what H6 VPU is supposed to support.
 
-Only uart2 is connected different DMAC (dmac_bus_s) so keep current
-settings on this patch.
-
-Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Fixes: 03e612e701a6 ("media: cedrus: Fix H264 4k support")
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/arm/boot/dts/rk3288.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/staging/media/sunxi/cedrus/cedrus_h264.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 8bcb4a51682e..e9f8a44f5f2a 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -420,6 +420,8 @@ uart0: serial@ff180000 {
- 		reg-io-width = <4>;
- 		clocks = <&cru SCLK_UART0>, <&cru PCLK_UART0>;
- 		clock-names = "baudclk", "apb_pclk";
-+		dmas = <&dmac_peri 1>, <&dmac_peri 2>;
-+		dma-names = "tx", "rx";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&uart0_xfer>;
- 		status = "disabled";
-@@ -433,6 +435,8 @@ uart1: serial@ff190000 {
- 		reg-io-width = <4>;
- 		clocks = <&cru SCLK_UART1>, <&cru PCLK_UART1>;
- 		clock-names = "baudclk", "apb_pclk";
-+		dmas = <&dmac_peri 3>, <&dmac_peri 4>;
-+		dma-names = "tx", "rx";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&uart1_xfer>;
- 		status = "disabled";
-@@ -459,6 +463,8 @@ uart3: serial@ff1b0000 {
- 		reg-io-width = <4>;
- 		clocks = <&cru SCLK_UART3>, <&cru PCLK_UART3>;
- 		clock-names = "baudclk", "apb_pclk";
-+		dmas = <&dmac_peri 7>, <&dmac_peri 8>;
-+		dma-names = "tx", "rx";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&uart3_xfer>;
- 		status = "disabled";
-@@ -472,6 +478,8 @@ uart4: serial@ff1c0000 {
- 		reg-io-width = <4>;
- 		clocks = <&cru SCLK_UART4>, <&cru PCLK_UART4>;
- 		clock-names = "baudclk", "apb_pclk";
-+		dmas = <&dmac_peri 9>, <&dmac_peri 10>;
-+		dma-names = "tx", "rx";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&uart4_xfer>;
- 		status = "disabled";
--- 
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_h264.c b/drivers/s=
+taging/media/sunxi/cedrus/cedrus_h264.c
+index bfb4a4820a67..54ee2aa423e2 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
+@@ -610,8 +610,12 @@ static int cedrus_h264_start(struct cedrus_ctx *ctx)
+ 			goto err_mv_col_buf;
+ 		}
+=20
++		/*
++		 * NOTE: Multiplying by two deviates from CedarX logic, but it
++		 * is for some unknown reason needed for H264 4K decoding on H6.
++		 */
+ 		ctx->codec.h264.intra_pred_buf_size =3D
+-			ALIGN(ctx->src_fmt.width, 64) * 5;
++			ALIGN(ctx->src_fmt.width, 64) * 5 * 2;
+ 		ctx->codec.h264.intra_pred_buf =3D
+ 			dma_alloc_coherent(dev->dev,
+ 					   ctx->codec.h264.intra_pred_buf_size,
+--=20
 2.25.1
 
