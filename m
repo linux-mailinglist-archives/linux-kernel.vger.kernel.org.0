@@ -2,74 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3A5C185915
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:31:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA71C185954
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 03:47:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727818AbgCOCb4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 22:31:56 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:39009 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727412AbgCOCb4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:31:56 -0400
-Received: by mail-vs1-f66.google.com with SMTP id p7so6750739vso.6
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 19:31:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=SdOYsMZFDHe9vqNvSdxRkcSwQBXCi2657j9Xa2tK9oA=;
-        b=xgAlfPF/jH19mCf3oilauqnvertvFGN4reqpz1II3RvLTUdEG1XjtuLT8GB+7rw/DG
-         ZzU1/5ECQCzgWimMdZiq5PqAGKOk28z0eOks95Ksf0BVFzH+8qujmfqN9KJ3Cl4iKO3h
-         5Ca0xO2QG14yS0E6801I5dT6odvBnpqmEDYRU6fZC0ZwEvPRNrxJ5vG+99jI/DBYxSUN
-         KdG2cWMcoWd6plprhdjoQZD4Y0jM9jZFSvU73u33d7mEyvCpLxv3pOSAL9tRBVI8E1DK
-         hZ3Lwvu41Jm6NJsEL8pA/aqJsnZwC3AenvE05fCvwm+llph+hEg+oC7T4/CjW8PzaiY1
-         +6vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SdOYsMZFDHe9vqNvSdxRkcSwQBXCi2657j9Xa2tK9oA=;
-        b=CCEphJP/u16SeV5YQebSbkTvaONJVh1VY4B3O+FRuW/J8Q5FnK6arixEeCgMCxnpKt
-         NRPHyctgHE4tnWcVK3DxMFzZcwMYN6yFzgmbcBYLlhn8J5bunfSfDO2bdTGJe+wpnDVr
-         CeIV2Icwjyr18q2r1grkjWgi0Tb00/P34wN59Ab2ZBZ7j4yVhnluSBCAJRFBqfsYOU6R
-         FQn25ZJ7XiAYimcWZjScSBot0vVbv/QIzXNNlJdIVR275pfH/Ie6lVq6wXOlvo0iGqEV
-         yrWqPZV1wdPbI9mYAAYGL2u5kamEUa5tnIo0RR42A5iPdzMUPOdBGvrFJKO+L9W/bnIq
-         aVYQ==
-X-Gm-Message-State: ANhLgQ3E8WtkYTtGwwPCq80UTk4rY0a7DnS0CHktjZTIDxa0lnbovCdx
-        mq0sR+6urk3eDW+82LNsxQPmtjLgGlozEA==
-X-Google-Smtp-Source: ADFU+vv8d06cooYnEyYmyLwJ5MAPGncbMbhQYSytgYgCc67JuVz17NdDF+7aY/joqlDV2aEOjDBwZw==
-X-Received: by 2002:a17:902:2e:: with SMTP id 43mr20495125pla.326.1584227898541;
-        Sat, 14 Mar 2020 16:18:18 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id u3sm15469459pjv.32.2020.03.14.16.18.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Mar 2020 16:18:18 -0700 (PDT)
-Subject: Re: [PATCH 0/3] support hashing for linked requests
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1584130466.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a6af1ae2-dfdc-00b3-4b33-f6d5a2f63f0c@kernel.dk>
-Date:   Sat, 14 Mar 2020 17:18:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <cover.1584130466.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727398AbgCOCrD convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 14 Mar 2020 22:47:03 -0400
+Received: from smtps5.netim.net ([185.26.104.183]:49268 "EHLO smtps5.netim.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726902AbgCOCrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Mar 2020 22:47:02 -0400
+X-Greylist: delayed 454 seconds by postgrey-1.27 at vger.kernel.org; Sat, 14 Mar 2020 22:47:02 EDT
+Received: from mail.spamora.net (unknown [185.26.106.213])
+        by smtps5.netim.net (Postfix) with ESMTP id 31858A043A
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Mar 2020 03:39:27 +0100 (CET)
+Received: from [192.168.1.3] (static-csq-cds-048065.business.bouyguestelecom.com [164.177.48.65])
+        (Authenticated sender: info@amerits.best)
+        by mail.spamora.net (Postfix) with ESMTPA id A036F1A0092
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Mar 2020 03:39:24 +0100 (CET)
+Message-Id: <qqmAuwNAGsWNM9fUAKa1eGu4am0dgt9TBNtF8dCXkBNK@gmail.com>
+Mime-Version: 1.0
+From:   Theresa Albert <theresalbt4@gmail.com>
+To:     "linux-kernel" <linux-kernel@vger.kernel.org>
+Reply-To: alb488004@gmail.com
+Subject: =?iso-8859-1?Q?S=E4rskilt_meddelande_fr=E5n_Theresa_Albert?=
+Date:   Sun, 15 Mar 2020 02:39:25 GMT
+X-Bounce-Tracking-Info: <bGludXgta2VybmVsCQkJbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZwlTw6Ryc2tpbHQgbWVkZGVsYW5kZSBmcsOlbiBUaGVyZXNhIEFsYmVydAkxNDkJCTEwMDAwCWJvdW5jZQlubwlubw==>
+Content-type: text/plain; charset=iso-8859-1; format=flowed
+Content-transfer-encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/13/20 3:31 PM, Pavel Begunkov wrote:
-> That's it, honour hashing for dependant works in io-wq.
+Hälsningar till dig,
 
-Looks good to me, applied for 5.7, thanks.
+Jag är Theresa, som du kanske vet, jag är en cancerpatient och på grund av min försämrade hälsa skriver jag om mina planer på att donera till minne av min avlidne make Herr Phillip Albert, jag vill donera till utbildning och mindre privilegierad och be om hjälp.
 
--- 
-Jens Axboe
+Under hans år betonade min man vikten av utbildning. Jag känner att det här är vad han skulle ha velat mig göra med de pengar som han lämnade för välgörenhet. Dessa tjänster ger så mycket glädje åt barnen. Tillsammans förvandlar vi liv och bygger ljusare framtid - men utan dig skulle det inte vara möjligt.
+
+
+Tack för att du hjälper mig att hedra hans minne på detta sätt. Om det här kan vara av intresse för dig, kom tillbaka till mig.
+
+Varma hälsningar,
+
+Theresa
+
 
