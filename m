@@ -2,134 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 101E2185C64
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 13:39:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FD54185C7B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 13:54:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728525AbgCOMjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 08:39:01 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:52964 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728467AbgCOMjA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 08:39:00 -0400
-Received: by mail-pj1-f67.google.com with SMTP id f15so6585111pjq.2;
-        Sun, 15 Mar 2020 05:38:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/JmdDH59rdv7DEibIPWZ7GdWNI7WIfFiOZu+jrSl3Oo=;
-        b=hJURvzgKdvmu7/uyg0oRe/r8CLRcXnIgKllpmpoFa99OWuAKm8jhXBZxwDLnkp4DTE
-         ohZcs0tlnPz68VlOjPFjmje+IZ2rf79qKIBxN/NMwTxN0l3xM0ReA57Mv8rmQRJrVhXj
-         /vkSqg6o3ZB6XazQsltgb7aT1XEStd1/lnF3mDyKyT9r9gcv+qATu2YjzJXUSJmWPczQ
-         aAqis9mSpbpqaKwMin/LA/zdun1yQj0OGZz6v5cbLLSyn7ppXiVbA3xmy7w/q52I00Dn
-         AjpiU4Snl40bxt1LumJwzrXYOaKDIwfQz5V4uohUVoiYPd8pYbgMqu5WjQeobe2uhYfg
-         4RvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/JmdDH59rdv7DEibIPWZ7GdWNI7WIfFiOZu+jrSl3Oo=;
-        b=D4ClCgacC7rUXmTp2NRhdu8vkxIFqHDWQrGDXL0atOMWyyE/SxggDkd12Bu2veZp5d
-         NTHuhjh/kHZA+WEgOjtJr1yosOJF5Fba6LJNIH7VFtC2Vo54rFvaUQdNSkgGZxv+nTXQ
-         aYLt3lFJue0tP0oItWJvmLwB/7edT6msSjc87D+WLTAjickKgFUme1K56EQ2CFPJMFbG
-         7Mmi4JCFv8LE3/UcMuo4U4Glh3SnzbG1hrlepIcu9PTeKoFWRqHQiGGqE03n29YGNL9W
-         3MQ0QmcltrjnmOhWPU2EOGVpznBI941RgkqRhSH1494U1fSlHvTcSoi1VW6qP1MSLmKs
-         dALA==
-X-Gm-Message-State: ANhLgQ3nz3zUFndpA2/GCtva7hDFmpeq7VPURIy671aS4p9woOg+woXv
-        SLwcMsr3ZAsaxgQDUhpZOJM0Q8ck
-X-Google-Smtp-Source: ADFU+vsB37XDNXWbOdHD+OhqBvUd1lvACOl/Q+1+zDsqZgrBCVnbY2Rza6J50PYzNWWemVYVQR8aBQ==
-X-Received: by 2002:a17:90a:a483:: with SMTP id z3mr20596769pjp.43.1584275938122;
-        Sun, 15 Mar 2020 05:38:58 -0700 (PDT)
-Received: from localhost (216.24.188.11.16clouds.com. [216.24.188.11])
-        by smtp.gmail.com with ESMTPSA id w205sm7718352pfc.75.2020.03.15.05.38.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 15 Mar 2020 05:38:57 -0700 (PDT)
-Date:   Sun, 15 Mar 2020 20:38:55 +0800
-From:   Dejin Zheng <zhengdejin5@gmail.com>
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org, hminas@synopsys.com,
-        mathias.nyman@intel.com, bgolaszewski@baylibre.com, arnd@arndb.de,
-        geert@linux-m68k.org, mchehab+samsung@kernel.org,
-        treding@nvidia.com, tglx@linutronix.de, suzuki.poulose@arm.com,
-        hdegoede@redhat.com, linux-usb@vger.kernel.org,
+        id S1728551AbgCOMye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 08:54:34 -0400
+Received: from mx.0dd.nl ([5.2.79.48]:52546 "EHLO mx.0dd.nl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728522AbgCOMye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 08:54:34 -0400
+X-Greylist: delayed 335 seconds by postgrey-1.27 at vger.kernel.org; Sun, 15 Mar 2020 08:54:33 EDT
+Received: from mail.vdorst.com (mail.vdorst.com [IPv6:fd01::250])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mx.0dd.nl (Postfix) with ESMTPS id 32AD15FB19;
+        Sun, 15 Mar 2020 13:48:57 +0100 (CET)
+Authentication-Results: mx.0dd.nl;
+        dkim=pass (2048-bit key; secure) header.d=vdorst.com header.i=@vdorst.com header.b="kOzIRY1m";
+        dkim-atps=neutral
+Received: from www (www.vdorst.com [192.168.2.222])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.vdorst.com (Postfix) with ESMTPSA id CF07623728F;
+        Sun, 15 Mar 2020 13:48:56 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.vdorst.com CF07623728F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vdorst.com;
+        s=default; t=1584276536;
+        bh=Is7T8gsczbAflMtpH86ZF4mhjtkMOqN5/wzv7KlnGtc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=kOzIRY1mr32lMxMDQcEn9401DmXj1RngdTgPhdC+quRwdtSfJ4U9O8lOjpq7cE/2p
+         3V43c43Hpew1vvNU0ooQIx5MDF7VELEPayVuSnXqjBLjRtpHy/9N+nlKPDUh9VVRgk
+         eZPdhvkogRf2Hjz6awee9vdt7z6RJ/KGoezDN1ZijC2tHT8c8zRdxTRzc7d5R9K8YY
+         EhhEMi9vHxETmH647fVSacigU5IL+PU6QCUbctesRtssqCY0IzWriFcibaVS+X2E28
+         ghyEbNG5m1BKMQWjDRu7bG+199F5/HTim2CqP/t6UP3IwVwdhP/iEGEcM0YTxAOnyY
+         or8/9Rj35zovA==
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1]) by
+ www.vdorst.com (Horde Framework) with HTTPS; Sun, 15 Mar 2020 12:48:56 +0000
+Date:   Sun, 15 Mar 2020 12:48:56 +0000
+Message-ID: <20200315124856.Horde.FggCAOBKhyXcJ0kuGBpqX_l@www.vdorst.com>
+From:   =?utf-8?b?UmVuw6k=?= van Dorst <opensource@vdorst.com>
+To:     Chuanhong Guo <gch981213@gmail.com>
+Cc:     linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] drivers: provide
- devm_platform_ioremap_and_get_resource()
-Message-ID: <20200315123855.GB13262@nuc8i5>
-References: <20200314052638.6008-1-zhengdejin5@gmail.com>
- <20200314052638.6008-2-zhengdejin5@gmail.com>
- <a7cbeabf-a7c3-b960-7aca-e124e98f9c7f@cogentembedded.com>
+Subject: Re: [PATCH 0/2] gpio: mmio: introduce BGPIOF_NO_SET_ON_INPUT
+In-Reply-To: <20200315121338.251362-1-gch981213@gmail.com>
+User-Agent: Horde Application Framework 5
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a7cbeabf-a7c3-b960-7aca-e124e98f9c7f@cogentembedded.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 15, 2020 at 01:01:14PM +0300, Sergei Shtylyov wrote:
-> Hello!
-> 
-> On 14.03.2020 8:26, Dejin Zheng wrote:
-> 
-> > Since commit "drivers: provide devm_platform_ioremap_resource()",
-> > It was wrap platform_get_resource() and devm_ioremap_resource() as
->   ^^ it
-Ok and Thanks!
+Quoting Chuanhong Guo <gch981213@gmail.com>:
 
-> 
-> > single helper devm_platform_ioremap_resource(). but now, many drivers
-> > still used platform_get_resource() and devm_ioremap_resource()
-> > together in the kernel tree. The reason can not be replaced is they
-> > still need use the resource variables obtained by platform_get_resource().
-> > so provide this helper.
-> 
->    Not really sure that's worth the effort...
+> Currently gpio-hog doesn't work on gpio-mt7621 driver. On further
+> debugging, I noticed that set/clear register on this controller
+> only works on output pins. We need to setup pin direction before
+> writing values in bgpio_dir_out for a correct gpio-hog behavior.
+> This patchset introduces a new flag BGPIOF_NO_SET_ON_INPUT for
+> these kind of controller and set this flag for gpio-mt7621.
 >
-Many drivers using platform_get_resource() and devm_ioremap_resource() together
-in the kernel tree. if use this helper, have one function call less.
+> Chuanhong Guo (2):
+>   gpio: mmio: introduce BGPIOF_NO_SET_ON_INPUT
+>   gpio: mt7621: add BGPIOF_NO_SET_ON_INPUT flag
+>
+>  drivers/gpio/gpio-mmio.c    | 23 +++++++++++++++++++----
+>  drivers/gpio/gpio-mt7621.c  |  4 ++--
+>  include/linux/gpio/driver.h |  1 +
+>  3 files changed, 22 insertions(+), 6 deletions(-)
+>
+> --
+> 2.24.1
+Thanks Chuanhong for debugging the problem!
 
-> > Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
-> > ---
-> >   drivers/base/platform.c         | 18 ++++++++++++++++++
-> >   include/linux/platform_device.h |  3 +++
-> >   2 files changed, 21 insertions(+)
-> > 
-> > diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> > index 7fa654f1288b..b3e2409effae 100644
-> > --- a/drivers/base/platform.c
-> > +++ b/drivers/base/platform.c
-> > @@ -62,6 +62,24 @@ struct resource *platform_get_resource(struct platform_device *dev,
-> >   EXPORT_SYMBOL_GPL(platform_get_resource);
-> >   #ifdef CONFIG_HAS_IOMEM
-> > +/**
-> > + * devm_platform_ioremap_and_get_resource - call devm_ioremap_resource() for a
-> > + *					    platform device and get resource
-> > + *
-> > + * @pdev: platform device to use both for memory resource lookup as well as
-> > + *        resource management
-> > + * @index: resource index
-> > + * @res: get the resource
-> > + */
-> > +void __iomem *
-> > +devm_platform_ioremap_and_get_resource(struct platform_device *pdev,
-> > +				unsigned int index, struct resource **res)
-> > +{
-> > +	*res = platform_get_resource(pdev, IORESOURCE_MEM, index);
-> > +	return devm_ioremap_resource(&pdev->dev, *res);
-> > +}
-> > +EXPORT_SYMBOL_GPL(devm_platform_ioremap_and_get_resource);
-> 
->    That looks more like devm_platform_get_and_ioremap_resource().
-> 
-Thanks for your suggestions. I will do it.
+With this patch gpio-hog works again.
 
-> [...]
-> 
-> MBR, Sergei
+For the series:
 
-BR,
-Dejin
+Tested-by: René van Dorst <opensource@vdorst.com>
+
+Greats,
+
+René
+
