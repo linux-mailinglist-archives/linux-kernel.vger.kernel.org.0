@@ -2,235 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 380B71856E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:30:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D3B61856FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 02:31:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbgCOBac (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Mar 2020 21:30:32 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:44445 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727227AbgCOBac (ORCPT
+        id S1727317AbgCOBba (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Mar 2020 21:31:30 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:37143 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbgCOBba (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Mar 2020 21:30:32 -0400
-Received: by mail-qk1-f194.google.com with SMTP id j4so3360658qkc.11
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 18:30:31 -0700 (PDT)
+        Sat, 14 Mar 2020 21:31:30 -0400
+Received: by mail-oi1-f194.google.com with SMTP id w13so13920583oih.4;
+        Sat, 14 Mar 2020 18:31:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pinTi/t1yYoUNm8IVr+xW1d/79zVLYYM3Ifu/x4kb6g=;
-        b=qP2ixFBWouQwucdaAze/oC0Kc9fOqSEKLCfl4tAnRKyKgvvivoBb1y7t9cSpyY4QlN
-         R3mYYc/VRLHf5QiZyk0KDXJ8//akfLXe8Z2se7q1X50v5E+IsNEZZAHlU1vCNk1Ma7Ay
-         pCCds55bcoTlzTnz+VNLLaf9+dRD5arJfiRPE=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=VXyJJa4oBQQ+uT+JNHNMnu1aQ1PPRYgU53MpHacnB7c=;
+        b=IT3icGRKBm9ic21ACgD6K3BR5Ki512PXjI8zdm9gI1P5+KExSZzXQwsWDYK7nAlbqa
+         7cux/ZEByz8CaAhEWvMekA+85IBKIpdk5vj5sdjmK3jXeHSS4LBH97AOMtXA9uFgaC9p
+         6vzFN2lflyUQDb00gvVNW8TrM14naGifClbL1duQZVSbGBZwfjyuGwV66JUbdlmepzjY
+         uhwhCMbRDPk47o1/bo/wzkqtIl3e8OGEnoUWonrlMHZ1oA4AdOiQ0XTRp+bC3KMixUrN
+         lF/VVFIW8nXvleXSYeegLD14+G0uZq0E62vhAJlevFlG9CrASB6HwVx/P0iqG9B/jW9z
+         8Dxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pinTi/t1yYoUNm8IVr+xW1d/79zVLYYM3Ifu/x4kb6g=;
-        b=pPfvaWh7mwM3ej7lh1LzkOqvQ/tFCgbCbvw5lBVU+PPhJfFozb8N5ZKdrP5AZXtkV2
-         E3Ua3MSEdezy9ng2hS1yY7//7wL2GDa61QaIvk+YYcmqwe587x/MCLnjUAZ/TwVJLmSU
-         OlTgIiDA46dQO2bL17RrdRqtC3TuvJ4kcrn/RTGPbAqCx775PiGE6lvc9wjgcQlEY1KT
-         EkkTyznRmwHw6SBnBjNVlP1uiTYQrpSEmmB1XtGkrqfO1Q+LpXHYSZ62JumRhdTbMjE6
-         3q8DplrhONZLk6N8Ewd6TImS1taCucBeho3IDEQP17gviVQq3zuDw4/hRQoBiSxE+/eF
-         4lfw==
-X-Gm-Message-State: ANhLgQ03l1hqNfDtSqbNrgiI0jqPrEVofL3iyl6Nbmt7VnLlil+Y7X+k
-        SV5OvMuvDuRFYN3DGKCO8KPbA1lWQbE=
-X-Google-Smtp-Source: ADFU+vudb0sNgUmAbbvIyvQmEohGmf5qtoxYEyDVJyFIlPlr/TyiQb3JX0PnvQfsx1hFemqXPUZJ2w==
-X-Received: by 2002:ae9:f80a:: with SMTP id x10mr3474931qkh.43.1584234264685;
-        Sat, 14 Mar 2020 18:04:24 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id v12sm31293227qti.84.2020.03.14.18.04.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Mar 2020 18:04:24 -0700 (PDT)
-Date:   Sat, 14 Mar 2020 21:04:22 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
-        rcu@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        Qian Cai <cai@lca.pw>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] locking/lockdep: Avoid recursion in
- lockdep_count_{for,back}ward_deps()
-Message-ID: <20200315010422.GA134626@google.com>
-References: <20200312151258.128036-1-boqun.feng@gmail.com>
- <20200313093325.GW12561@hirez.programming.kicks-ass.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=VXyJJa4oBQQ+uT+JNHNMnu1aQ1PPRYgU53MpHacnB7c=;
+        b=ofMxecK8TXi8pvAgpcU4437k4dI/KdSqiUz2Ck3cSaZzicIczcwj3YmxRRiPCWIFsg
+         92UNIcus/qMNby1f3ygGXf3U0bgKlqb2sqtlLtvacKRS7CCYsa4osPfdF+gwJ63MLejF
+         ePCX2BjzBdJEE8+KEDyjbghvH47l6iIbA3kXjW7246h0qqz6IX95L6ZArsKAwiXuvAA/
+         /zzV25n/HcsycYb+DkqL1ZWoBmVdmXoHinfKRXppPuX3v9h8hgfz94DiJuWp9SthDK5F
+         oLCUpha76DGWOqAPJVp9HzvmlNATwrvDzCWkjWKjA6KXyYXk+reVXlurhVusVudF5Gwf
+         apXg==
+X-Gm-Message-State: ANhLgQ2/lx0P1oPF52yh1wjbiGZpHnzVx7s6r8tKtAk5nkB04qvFjMCp
+        IoR89fqg4fyn9cWmnLu0nn37DaC84hoiSQbqukeDDVwng5s=
+X-Google-Smtp-Source: ADFU+vtg+w1KKGgnLsXrURgTNcshIGy36gF0ch/IG3LaOgW1UuDSzmI1mtZ3NDBJUL3AozKVHuZTjqhsLxytZoBjUls=
+X-Received: by 2002:aca:3f09:: with SMTP id m9mr11970001oia.55.1584234462459;
+ Sat, 14 Mar 2020 18:07:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200313093325.GW12561@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+References: <20200304164700.11574-1-tony.fischetti@gmail.com>
+ <6c58685f039d329615d84e2df1cd2a155db73c61.camel@archlinux.org>
+ <CAOMV6SVxL=DLP6yWa+jHzu5A+PUJTJi4bk_1ZW-kXXwnaCBT5Q@mail.gmail.com> <nycvar.YFH.7.76.2003131222470.19500@cbobk.fhfr.pm>
+In-Reply-To: <nycvar.YFH.7.76.2003131222470.19500@cbobk.fhfr.pm>
+From:   Tony Fischetti <tony.fischetti@gmail.com>
+Date:   Sat, 14 Mar 2020 21:07:31 -0400
+Message-ID: <CAOMV6SV-_A_vAXQ7y=vZheE9A6+Aye0xjst_Zdwk6Y--W3JEmA@mail.gmail.com>
+Subject: Re: [PATCH] add ALWAYS_POLL quirk to lenovo pixart mouse
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     =?UTF-8?Q?Filipe_La=C3=ADns?= <lains@archlinux.org>,
+        benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 10:33:25AM +0100, Peter Zijlstra wrote:
-> On Thu, Mar 12, 2020 at 11:12:55PM +0800, Boqun Feng wrote:
-> 
-> Thanks!
+Before I got your email, I sent the patch again, separately.
+I'm terribly sorry but I'm new to kernel development=E2=80=94how do I send =
+it
+instead as a followup patch? Do you mean just responding to this
+thread with the new patch?
 
-Thanks Peter and Boqun, the below patch makes sense to me. Just had some nits
-below, otherwise:
+On Fri, Mar 13, 2020 at 7:23 AM Jiri Kosina <jikos@kernel.org> wrote:
+>
+> On Thu, 12 Mar 2020, Tony Fischetti wrote:
+>
+> > Thanks for the feedback, y'all.
+> > I will rename the device and add the signed-off field and resubmit.
+> > Thanks again
+>
+> Please do it as a followup patch on top of your previous one, as I've
+> already pushed that one out and we are generally not rebasing live
+> branches in hid.git.
+>
+> Thanks,
+>
+> --
+> Jiri Kosina
+> SUSE Labs
+>
 
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-> > diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> > index 32406ef0d6a2..5142a6b11bf5 100644
-> > --- a/kernel/locking/lockdep.c
-> > +++ b/kernel/locking/lockdep.c
-> > @@ -1719,9 +1719,11 @@ unsigned long lockdep_count_forward_deps(struct lock_class *class)
-> >  	this.class = class;
-> >  
-> >  	raw_local_irq_save(flags);
-> > +	current->lockdep_recursion = 1;
-> >  	arch_spin_lock(&lockdep_lock);
-> >  	ret = __lockdep_count_forward_deps(&this);
-> >  	arch_spin_unlock(&lockdep_lock);
-> > +	current->lockdep_recursion = 0;
-> >  	raw_local_irq_restore(flags);
-> >  
-> >  	return ret;
-> > @@ -1746,9 +1748,11 @@ unsigned long lockdep_count_backward_deps(struct lock_class *class)
-> >  	this.class = class;
-> >  
-> >  	raw_local_irq_save(flags);
-> > +	current->lockdep_recursion = 1;
-> >  	arch_spin_lock(&lockdep_lock);
-> >  	ret = __lockdep_count_backward_deps(&this);
-> >  	arch_spin_unlock(&lockdep_lock);
-> > +	current->lockdep_recursion = 0;
-> >  	raw_local_irq_restore(flags);
-> >  
-> >  	return ret;
-> 
-> This copies a bad pattern though; all the sites that do not check
-> lockdep_recursion_count first really should be using ++/-- instead. But
-> I just found there are indeed already a few sites that violate this.
-> 
-> I've taken this patch and done a general fixup on top.
-> 
-> ---
-> Subject: locking/lockdep: Fix bad recursion pattern
-> From: Peter Zijlstra <peterz@infradead.org>
-> Date: Fri Mar 13 09:56:38 CET 2020
-> 
-> There were two patterns for lockdep_recursion:
-> 
-> Pattern-A:
-> 	if (current->lockdep_recursion)
-> 		return
-> 
-> 	current->lockdep_recursion = 1;
-> 	/* do stuff */
-> 	current->lockdep_recursion = 0;
-> 
-> Pattern-B:
-> 	current->lockdep_recursion++;
-> 	/* do stuff */
-> 	current->lockdep_recursion--;
-> 
-> But a third pattern has emerged:
-> 
-> Pattern-C:
-> 	current->lockdep_recursion = 1;
-> 	/* do stuff */
-> 	current->lockdep_recursion = 0;
-> 
-> And while this isn't broken per-se, it is highly dangerous because it
-> doesn't nest properly.
-> 
-> Get rid of all Pattern-C instances and shore up Pattern-A with a
-> warning.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  kernel/locking/lockdep.c |   74 +++++++++++++++++++++++++----------------------
->  1 file changed, 40 insertions(+), 34 deletions(-)
-> 
-> --- a/kernel/locking/lockdep.c
-> +++ b/kernel/locking/lockdep.c
-> @@ -389,6 +389,12 @@ void lockdep_on(void)
->  }
->  EXPORT_SYMBOL(lockdep_on);
->  
-> +static inline void lockdep_recursion_finish(void)
-> +{
-> +	if (WARN_ON_ONCE(--current->lockdep_recursion))
-> +		current->lockdep_recursion = 0;
-> +}
-> +
->  void lockdep_set_selftest_task(struct task_struct *task)
->  {
->  	lockdep_selftest_task_struct = task;
-> @@ -1719,11 +1725,11 @@ unsigned long lockdep_count_forward_deps
->  	this.class = class;
->  
->  	raw_local_irq_save(flags);
-> -	current->lockdep_recursion = 1;
-> +	current->lockdep_recursion++;
->  	arch_spin_lock(&lockdep_lock);
->  	ret = __lockdep_count_forward_deps(&this);
->  	arch_spin_unlock(&lockdep_lock);
-> -	current->lockdep_recursion = 0;
-> +	current->lockdep_recursion--;
-
-This doesn't look like it should recurse. Why not just use the
-lockdep_recursion_finish() helper here?
-
->  	raw_local_irq_restore(flags);
->  
->  	return ret;
-> @@ -1748,11 +1754,11 @@ unsigned long lockdep_count_backward_dep
->  	this.class = class;
->  
->  	raw_local_irq_save(flags);
-> -	current->lockdep_recursion = 1;
-> +	current->lockdep_recursion++;
->  	arch_spin_lock(&lockdep_lock);
->  	ret = __lockdep_count_backward_deps(&this);
->  	arch_spin_unlock(&lockdep_lock);
-> -	current->lockdep_recursion = 0;
-> +	current->lockdep_recursion--;
-
-And here.
-
-> @@ -4963,7 +4969,7 @@ static void free_zapped_rcu(struct rcu_h
->  
->  	raw_local_irq_save(flags);
->  	arch_spin_lock(&lockdep_lock);
-> -	current->lockdep_recursion = 1;
-> +	current->lockdep_recursion++;
->  
->  	/* closed head */
->  	pf = delayed_free.pf + (delayed_free.index ^ 1);
-> @@ -4975,7 +4981,7 @@ static void free_zapped_rcu(struct rcu_h
->  	 */
->  	call_rcu_zapped(delayed_free.pf + delayed_free.index);
->  
-> -	current->lockdep_recursion = 0;
-> +	current->lockdep_recursion--;
-
-And here also if it applies.
-
->  	arch_spin_unlock(&lockdep_lock);
->  	raw_local_irq_restore(flags);
->  }
-> @@ -5022,11 +5028,11 @@ static void lockdep_free_key_range_reg(v
->  
->  	raw_local_irq_save(flags);
->  	arch_spin_lock(&lockdep_lock);
-> -	current->lockdep_recursion = 1;
-> +	current->lockdep_recursion++;
->  	pf = get_pending_free();
->  	__lockdep_free_key_range(pf, start, size);
->  	call_rcu_zapped(pf);
-> -	current->lockdep_recursion = 0;
-> +	current->lockdep_recursion--;
-
-And here also if it applies.
-
-thanks!
-
- - Joel
-
+--=20
+--
+Tony Fischetti
+tony.fischetti@gmail.com
+(718) 431-4597
