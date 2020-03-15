@@ -2,146 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53A17185A18
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 05:40:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A41F185A13
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 05:35:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbgCOEka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 00:40:30 -0400
-Received: from mout.gmx.net ([212.227.17.21]:58303 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725789AbgCOEk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 00:40:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1584247228;
-        bh=C8oAC+ephMsyHFHAO7X3i49cAhiXb0eeDtczwsGpuBY=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=RrfIQ6xwOlS8zSsQCOXADu/M5QbPSLZZlbmyyR4+vmOYxHWycy7o239Y6W6Oc/WUC
-         DOhT7y11KDzgR0pwnooSX1ZpWDAd8a2oa6ONrZE+7x0hDseuA50Uiowzmiu3TLjGhN
-         +6Sfzynh+bBOW0H9AaRmkOlgBWT+TmD0XNXuKZB4=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from ubuntu ([83.52.229.196]) by mail.gmx.com (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MIMbU-1j7aRo3fVc-00EOx6; Sat, 14
- Mar 2020 16:06:25 +0100
-Date:   Sat, 14 Mar 2020 16:06:13 +0100
-From:   Oscar Carter <oscar.carter@gmx.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Malcolm Priestley <tvboxspy@gmail.com>, devel@driverdev.osuosl.org,
-        Colin Ian King <colin.king@canonical.com>,
-        Forest Bond <forest@alittletooquiet.net>,
-        Gabriela Bittencourt <gabrielabittencourt00@gmail.com>,
-        linux-kernel@vger.kernel.org, Oscar Carter <oscar.carter@gmx.com>
-Subject: Re: [PATCH] staging: vt6656: Use BIT_ULL() macro instead of bit
- shift operation
-Message-ID: <20200314150612.GA3153@ubuntu>
-References: <20200307104929.7710-1-oscar.carter@gmx.com>
- <20200308065538.GF3983392@kroah.com>
- <20200308161047.GA3285@ubuntu>
- <561bc968-f88c-40e3-f53c-5c03f74f75ea@gmail.com>
- <20200310095011.GC2516963@kroah.com>
+        id S1726587AbgCOEeR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 00:34:17 -0400
+Received: from smtprelay0212.hostedemail.com ([216.40.44.212]:33592 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726136AbgCOEeR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 00:34:17 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 8B2AC837F24C;
+        Sun, 15 Mar 2020 04:34:16 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:968:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:4321:5007:10004:10400:10848:11232:11658:11914:12048:12297:12740:12760:12895:13069:13255:13311:13357:13439:13972:14096:14097:14659:14721:21080:21627:21990:30054:30056:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: blood54_7c668a58d7328
+X-Filterd-Recvd-Size: 1907
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 15 Mar 2020 04:34:14 +0000 (UTC)
+Message-ID: <1c31f0e1a0fe8ee268f27289f6f820c7e48596d5.camel@perches.com>
+Subject: Re: [Outreachy kernel] [PATCH v2] Staging: rtl8723bs: rtw_mlme:
+ Remove unnecessary conditions
+From:   Joe Perches <joe@perches.com>
+To:     Shreeya Patel <shreeya.patel23498@gmail.com>,
+        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com,
+        sbrivio@redhat.com, daniel.baluta@gmail.com,
+        nramas@linux.microsoft.com, hverkuil@xs4all.nl,
+        Larry.Finger@lwfinger.net
+Date:   Sat, 14 Mar 2020 21:32:29 -0700
+In-Reply-To: <4deeaef8f8e0f23a9adbfd7d98840624e2994cf2.camel@gmail.com>
+References: <20200313102912.17218-1-shreeya.patel23498@gmail.com>
+         <25a1aca2c993ecb70ba7cd9c9e38bce9170a98b0.camel@perches.com>
+         <4deeaef8f8e0f23a9adbfd7d98840624e2994cf2.camel@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200310095011.GC2516963@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:G+I101FTrb9L8V0q7JzFuevV31mO2bV7RWoMbDwOukp6UUeCKq9
- +tlYqu3jGMXEhMHEHIEsXsbz4IdRepEVTgZIvRVn9cpSusRzjJ78TveUhvQJBDdeWOoa4ig
- ToC3HrPK54JvPJ/AEIj+o1XYeNy7M2DtvAJMw0kLgZz1Gd96la3yOBsEARVrGE1DF7/36LJ
- I/aA6sB1JwFyTZq4kYyiA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:G4YWjPqouOA=:+IXRzJUuKnIGMgxyc1li3n
- GaRDptOweB1B58embF3bCQNQ2nvkAY6cqmwqCFtUh2JTfIgf8pdpAitl8xVe55JT7jb4yDiFn
- PCQ1Ml72wed+H8IA+QABLN0h71wGoBrVOizjy3+EUY+qWYeOhGFCYxYmExsBCTSc4aE/EzTkL
- 6Y5SYxvh39OzNZhHEL2p6RKgzPXS9+2IiGwPjQauZ5Ch/97phu//uHwqr18VkOtt9A3HWCPX8
- 43gIbRU5Re68IpTxnpV8rSSzFm6jBVA/MZLHaKyR88k8YMezbOVoS9RF0m41amQ2JM7XO8M1B
- 7mjYpRE8b8qifWdmnTE7KpT1+VhYb0LU7TgXC2fIZC2Um+gXq0iYyjp4TmWGg+9/bNH0Zpv86
- WXa7e7byNyP/8IdxJL8WsxTT3viUc/iVkfBc6Y//vqdbGsmRW2j//AzIfTJnbE1CMUaQrRRGb
- PFTqRHJL+CTX2v/zlhxMtixD//fWrr+4a6VX8wgJ9gay1lvTvBdJfrmakzaICFiX3aZJCI+mf
- WqrR8kbD5ewwnrB4mK/BF4IvwDz6Tiu7Q1FBRax5S/q2TCvRk8LfcgJtgeuJIIiHQdYhd+kiq
- 3zr70O0pq9I/jnecqvaW3+FE7GRiocLDKRwd7FbvhsNLWCPZKIUKzWRmP4oNkCucOTawI5U/N
- nPim6HuSjQCXxXEo28s9FlmN/mKrDKxPwhXM3MAqfcKtI6hwB4IYDcIwuw7+sdR4FDz4BPpAB
- vqJau9PUf9GTbXumrdEDSwByTNEco9h2Pn/p1wy5WVK58bO8qKkPx0h+1Vew4gxm9/r1Swnoj
- ucDgqvZzP4Qx0LlE/CplbqZ/xtl9cfxh7RLNKVkyxhcOrI7JjGnVt/Fxv43YAXJZc2HMZaUnV
- XCQpqJvWWbjWcV4Z57vXMrCPw5l4qOVWAZBmbqgeEJCKwR66l7e5nXJJ+BxUuXLG2YJUAoGt/
- X4pS3BTQcb3O3UVkuG6FEZpx8CzdcxfMbxeyOyW8Nwp4aiRXWodSeNQOvpM5OKDwct/qeR+CH
- t+4BTrJYCSzSW8QqByveXzk3mQ/CgpNqvYA2SKqlDnD6xlTbSTZESk1Y9r93/PVN/RGITwRtV
- 0usW3ZLRWzuFjqKSTedg77to31bnFt3Wmpx+Gi8j7L1Z4FU4RnsIH45DKDHM6whrR1Vc2yLYV
- h9Lb52fY7jPO/AId4PTDgycJklZNsPSnemecYjIhD3UQ9qVV4XBCAH9vKip2NaBXoZLCfBxbV
- jw5GkXdQbMDHodC9u
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 10:50:11AM +0100, Greg Kroah-Hartman wrote:
-> On Sun, Mar 08, 2020 at 07:22:07PM +0000, Malcolm Priestley wrote:
-> > >>>   */
-> > >>>  #undef __NO_VERSION__
-> > >>>
-> > >>> +#include <linux/bits.h>
-> > >>>  #include <linux/etherdevice.h>
-> > >>>  #include <linux/file.h>
-> > >>>  #include "device.h"
-> > >>> @@ -802,8 +803,7 @@ static u64 vnt_prepare_multicast(struct ieee80=
-211_hw *hw,
-> > >>>
-> > >>>  	netdev_hw_addr_list_for_each(ha, mc_list) {
-> > >>>  		bit_nr =3D ether_crc(ETH_ALEN, ha->addr) >> 26;
-> > >>> -
-> > >>> -		mc_filter |=3D 1ULL << (bit_nr & 0x3f);
-> > >>> +		mc_filter |=3D BIT_ULL(bit_nr);
-> > >>
-> > >> Are you sure this does the same thing?  You are not masking off bit=
-_nr
-> > >> anymore, why not?
-> > >
-> > > My reasons are exposed below:
-> > >
-> > > The ether_crc function returns an u32 type (unsigned of 32 bits). Th=
-en the right
-> > > shift operand discards the 26 lsb bits (the bits shifted off the rig=
-ht side are
-> > > discarded). The 6 msb bits of the u32 returned by the ether_crc func=
-tion are
-> > > positioned in bit 5 to bit 0 of the variable bit_nr. Due to the righ=
-t shift
-> > > happens over an unsigned type, the 26 new bits added on the left sid=
-e will be 0.
-> > >
-> > > In summary, after the right bit shift operation we obtain in the var=
-iable bit_nr
-> > > (unsigned of 32 bits) the value represented by the 6 msb bits of the=
- value
-> > > returned by the ether_crc function. So, only the 6 lsb bits of the v=
-ariable
-> > > bit_nr are important. The 26 msb bits of this variable are 0.
-> > >
-> > > In this situation, the "and" operation with the mask 0x3f (mask of 6=
- lsb bits)
-> > > is unnecessary due to its purpose is to reset (set to 0 value) the 2=
-6 msb bits
-> > > that are yet 0.
-> >
-> > The mask is only there out of legacy originally it was 31(0x1f) and th=
-e
-> > bit_nr spread across two mc_filter u32 arrays.
-> >
-> > The mask is not needed now it is u64.
-> >
-> > The patch is fine.
->
-> Ok, then the changelog needs to be fixed up to explain all of this and
-> resent.
+On Sat, 2020-03-14 at 16:58 +0530, Shreeya Patel wrote:
+> This could be:
+> >  	if ((!(phtpriv->ampdu_enable) && pregistrypriv->ampdu_enable ==
+> > 1)) ||
+> > 	    pregistrypriv->ampdu_enable == 2)
+> > 		phtpriv->ampdu_enable = true;
+> > 
+> > Though it is probably more sensible to just set
+> > phtpriv->ampdu_enable without testing whether or
+> > not it's already set:
+> > 
+> > 	if (pregistrypriv->ampdu_enable == 1 ||
+> > 	    pregistrypriv->ampdu_enable == 2)
+> > 		phtpriv->ampdu_enable = true;
+> 
+> But the else-if block which I removed in v2 of this patch had nothing
+> in the block.
+> It was not assigning any value to "phtpriv->ampdu_enable". ( basically
+> it was empty and useless)
 
-Ok, I will create a new version patch with all of this information and I w=
-ill
-resend it.
+Right, I misread the deletions from patch.
 
->
-> thanks,
->
-> greg k-h
 
-thanks,
-
-Oscar
