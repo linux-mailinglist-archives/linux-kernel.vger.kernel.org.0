@@ -2,110 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEBA0185B71
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 10:28:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1110D185B7A
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 10:29:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728141AbgCOJ2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 05:28:14 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39287 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbgCOJ2N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 05:28:13 -0400
-Received: by mail-lj1-f193.google.com with SMTP id f10so15240062ljn.6;
-        Sun, 15 Mar 2020 02:28:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=k0MY7Bqf584jeU9PbEpBAMYhk0hnAtxUjrOw1PNGQHQ=;
-        b=Sx43VyZaq2psJT9xqIVidcHL3h96etCE7IVZacPBNdfwm1ykQfiCokV3MGbXASTucf
-         d9kaMtFyylnFJ3xX2f/J5w5/35NG6F+ZeaHxZt0Sadpwbvume2jt3NPzVZ9g1cZY/HBB
-         rtH5q3SMNBhds3/yLS4ny21+ruxPDH1i4tqAPqBqVirMMOW3+4LThDiAs5+MjWMBad8o
-         isY3i/ywS97tlSH3hzgOD+3FKgzGiewOx+CByrS6E4BnVmKrNfa+ajysQa3xBErDNr5s
-         SL0FywuSsdV1EfufhjaE/34EnTd1G0IhAj99w3QVYlYPsSzIEcmT+NIGFV2Xqbujl+gh
-         0qOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :date:message-id:mime-version;
-        bh=k0MY7Bqf584jeU9PbEpBAMYhk0hnAtxUjrOw1PNGQHQ=;
-        b=SElnOu5HNOA+9Ll4XI3x56EDoIFrynVoxC0B87OxlUPYiCGxMXdDNORlpP8XxlalHT
-         EDQ3yFqtBpW32Rg3qMisGGKZQIbc+ZUCzfAmG2dD38z2fWoNPmul9zCaWjJEkV8luBej
-         S4g/ZF0ZRPFukxGxYwPWwQE8+0hbZ9jwS2/6nX8p77BubfolF2dZXlhyZRlOENWh3NId
-         oUr1LOox/zm20zI4vfYnCZnSrfyp9n/k/Kznt7oRVZDX+9V/CvdkxLoSaF/2Uw3S8x4D
-         iJAxRw9QV11mdJb7A0aA+7XxMmGFYEf6e91lysJURKsXSF0dlCpSqmFi/Qk25NXyrG8p
-         UV1Q==
-X-Gm-Message-State: ANhLgQ2ymQQZm4teb/j4SHTGWYSL9fR3sYYZPGszDdtwYxyuDiWhrBfi
-        k8sZTQRAEIXZqaxebDBJLFdTM7jt2E8cyA==
-X-Google-Smtp-Source: ADFU+vvXjsjBwXRjg6blDRN9dWbFmFP0x6cQKEKKsY3Lzbg80fvZNanN8fszf7hNtH4/g9dBOm89Jw==
-X-Received: by 2002:a2e:891a:: with SMTP id d26mr12762955lji.182.1584264490463;
-        Sun, 15 Mar 2020 02:28:10 -0700 (PDT)
-Received: from saruman (88-113-215-213.elisa-laajakaista.fi. [88.113.215.213])
-        by smtp.gmail.com with ESMTPSA id f23sm1708531lja.42.2020.03.15.02.28.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 15 Mar 2020 02:28:09 -0700 (PDT)
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Anand Moon <linux.amoon@gmail.com>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 1/3] devicetree: bindings: exynos: Add new compatible for Exynos5420 dwc3 clocks support
-In-Reply-To: <20200301212019.2248-2-linux.amoon@gmail.com>
-References: <20200301212019.2248-1-linux.amoon@gmail.com> <20200301212019.2248-2-linux.amoon@gmail.com>
-Date:   Sun, 15 Mar 2020 11:28:05 +0200
-Message-ID: <871rpuezmi.fsf@kernel.org>
+        id S1728177AbgCOJ26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 05:28:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40708 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726521AbgCOJ26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 05:28:58 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 201A6206B1;
+        Sun, 15 Mar 2020 09:28:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584264537;
+        bh=a3TDzGbEzkSLeXinw82ULYy0g3/qKx/I5ol4xjHP/jo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FfBA9KivPcq2i/xkl3X4fU7JAbz8h0yxx+oZqKHJQ5x7jhklsgxMuE/2WvFgDiDBF
+         o7pdSPWOsANpZFUiHJvKEQwTSbzIyjb1W1C4fGD8h5sY3pHDt+HBI+v9WXsl+WrQ9x
+         ZyIDeRFLkXWNBlDSNIV+zjywyMF69vj0Bi3mF12w=
+Date:   Sun, 15 Mar 2020 09:28:52 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Artur Rojek <contact@artur-rojek.eu>
+Cc:     Rob Herring <robh@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Heiko Stuebner <heiko@sntech.de>, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org
+Subject: Re: [PATCH v4 4/5] dt-bindings: input: Add docs for ADC driven
+ joystick.
+Message-ID: <20200315092852.2d2ecebb@archlinux>
+In-Reply-To: <bb188a58f29dfedcf56bb420f07a6813@artur-rojek.eu>
+References: <20200307211412.44148-1-contact@artur-rojek.eu>
+        <20200307211412.44148-4-contact@artur-rojek.eu>
+        <20200309203814.GA29255@bogus>
+        <bb188a58f29dfedcf56bb420f07a6813@artur-rojek.eu>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Mon, 09 Mar 2020 22:41:00 +0100
+Artur Rojek <contact@artur-rojek.eu> wrote:
 
-Anand Moon <linux.amoon@gmail.com> writes:
+> Hi Rob,
+> 
+> On 2020-03-09 21:38, Rob Herring wrote:
+> > On Sat,  7 Mar 2020 22:14:11 +0100, Artur Rojek wrote:  
+> >> Add documentation for the adc-joystick driver, used to provide support
+> >> for joysticks connected over ADC.
+> >> 
+> >> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
+> >> Tested-by: Paul Cercueil <paul@crapouillou.net>
+> >> ---
+> >> 
+> >>  Changes:
+> >> 
+> >>  v2: - Add `reg` property to axis subnode in order to enumerate the 
+> >> axes,
+> >>      - rename `linux,abs-code` property to `linux,code`,
+> >>      - drop `linux,` prefix from the remaining properties of axis 
+> >> subnode
+> >> 
+> >>  v3: no change
+> >> 
+> >>  v4: - remove "bindings" from the unique identifier string,
+> >>      - replace `|` with `>` for all description properties,
+> >>      - specify the number of items for `io-channels`,
+> >>      - correct the regex pattern of `axis` property,
+> >>      - specify the value range of `reg` property for each axis,
+> >>      - put `abs-range` properties under `allOf`
+> >> 
+> >>  .../bindings/input/adc-joystick.yaml          | 121 
+> >> ++++++++++++++++++
+> >>  1 file changed, 121 insertions(+)
+> >>  create mode 100644 
+> >> Documentation/devicetree/bindings/input/adc-joystick.yaml
+> >>   
+> > 
+> > My bot found errors running 'make dt_binding_check' on your patch:  
+> Like with the previous versions of this patch set, the DTS example 
+> requires that
+> patch [2/5] is applied first. When that is done, the DT check does 
+> succeed here.
 
-> This patch adds the new compatible string for Exynos5422 DWC3
-> to support enable/disable of core and suspend clk by DWC3 driver.
-> Also updated the clock names for compatible samsung,exynos5420-dwusb3.
->
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+Fair enough as far as I am concerned.   There were enough comments
+from Rob in the previous version though that I'd definitely like
+him to take another look before I pick this series up.
 
-doesn't apply:
+Thanks,
 
-checking file Documentation/devicetree/bindings/usb/exynos-usb.txt
-Hunk #2 FAILED at 84.
-1 out of 2 hunks FAILED
+Jonathan
 
-=2D-=20
-balbi
+> 
+> Regards,
+> Artur
+> > 
+> > Error:
+> > Documentation/devicetree/bindings/input/adc-joystick.example.dts:22.31-32
+> > syntax error
+> > FATAL ERROR: Unable to parse input tree
+> > scripts/Makefile.lib:311: recipe for target
+> > 'Documentation/devicetree/bindings/input/adc-joystick.example.dt.yaml'
+> > failed
+> > make[1]: ***
+> > [Documentation/devicetree/bindings/input/adc-joystick.example.dt.yaml]
+> > Error 1
+> > Makefile:1262: recipe for target 'dt_binding_check' failed
+> > make: *** [dt_binding_check] Error 2
+> > 
+> > See https://patchwork.ozlabs.org/patch/1250951
+> > Please check and re-submit.  
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl5t9SUACgkQzL64meEa
-mQYm8xAA3I2/YauH6uYkFBQvDNCN3vk3Y9Nd7A0OQ7+zhusbeqhl93In7+YgQ+3r
-gvXux2DHyL121EUbI7Fj398cescSm4FBgnhlVx8qhKQFn85vPBWtCjI8vvS+PIxn
-S6+emDEeVhj0FF8mfuVV844SqIrz7UcIg9hS9PMsrZLvh31cFbgJhAKhR84ak4lr
-jku+TUy2tf9ZJr8DU8DUH8dRWccCRZJ+RXFyNAfaMZ3aNJuI6CS5bGTp1LBL4alh
-i4G3NgBIk4JStBxezp3AZuJ5yYz3yHcgk2paMSKiuZoLJ+12KiLwxIlY70Mo984P
-8XI9oP6xVTreGY1KGR3I819s4qAjCley7q1/2eFiO2i7B4JMbn4724lExPUpEaPy
-qBtoiOmN4cYBPaF75RGCJEZmgM/+yt/CQHWEowEQRHSaoQ6iqUBmyOjZhAh03fA3
-8Bg6Mfs2cJXntvjNSLneHTzbOXbh1F57UCh+cWJNk7QOag/O95kd5N4IZJ55CWD6
-BnAc4yMsl9aOGNLYqwX173WqeOUHm7r6MQ+vXxp24ZlBT0Z9x9OfPmN6BGXPXJyA
-OFgkjJacY7L6pTWhVMPDReQ0SkXpTvqBZVGxYaxAROVPg/+Do71j8tiUwESQg19A
-1k/AH25xxfy/4OvcBqCwpphqRwzxuOvc6/+NEwXFiBY+oJdTnQ4=
-=uud3
------END PGP SIGNATURE-----
---=-=-=--
