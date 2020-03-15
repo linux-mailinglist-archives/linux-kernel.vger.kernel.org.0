@@ -2,98 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25D62185A41
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 06:23:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FDD8185AAB
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 06:49:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbgCOFXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 01:23:45 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37916 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727447AbgCOFXn (ORCPT
+        id S1727187AbgCOFtF convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 15 Mar 2020 01:49:05 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:51808 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbgCOFtE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 01:23:43 -0400
-Received: by mail-pg1-f194.google.com with SMTP id x7so7583412pgh.5
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 22:23:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wR8nFRPEBNLxmIrRh2XX942TMuucAJ5R0/7i6Fo9p5k=;
-        b=rT4FsdqjKQBVFo3+uu3fzLfB762MuezwSN1LOBD3ukiXZTdXlSwwQK0uPYMfrGKpBw
-         HStP0LAwyHUgCf+9x10UYRCF9UJunuqcsp28aLez8GE2hFDyi0ofXM8Dr154ZCspaaDE
-         VtH1KqHCF1ohopOvbBe7ipKJhL7UEUPpzwYNws75GT7CW6MhGKCWLuE60W0BotyCDLvo
-         r4veXdZGi+c7XAXXCQaraojq3143FgIV7X78c33GlZQNlXCKwXQtmByc8TvqoSmTlHRH
-         Cgon8IVWrL7L1XDgxXdvlKuzPupzlbR94v3hnlq4+LXltc9bPmrXUZb2Ky4pFUwuc1FI
-         26Tw==
+        Sun, 15 Mar 2020 01:49:04 -0400
+Received: by mail-io1-f69.google.com with SMTP id d1so6529379iod.18
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Mar 2020 22:49:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wR8nFRPEBNLxmIrRh2XX942TMuucAJ5R0/7i6Fo9p5k=;
-        b=c9+29s5E3tU+JyPYm7FVQBbxiRCNDLJyLwJB9+/2qWhOP2cVF2mF73y6gaI/2o7CT3
-         z/4jQLH+fFFYuXHZDw+JofzTiHOHcA9SyXTBTQXc9+/VSLvAvZEFU9y68jJgoXc6kv1P
-         6yqYgxdGEhw88vBIxU+vlPmMP+jdKTvLvlE6VNRLWdYKnnaKg/1e6o8jT3vy+qd3MsUx
-         rPKrXj+ZXWedAjzM0CcmFYBZkrY1fpdJPLDgxDXNWZP5wFq7yOkMyr6Gy9xk4aZqt6Tj
-         MTyFZBPFTmtjFTN4fQgp2Azatg8kAkIvYm7cbc1bORPX7skvwk+eoiMlqL0JnYoYQTFP
-         2g7g==
-X-Gm-Message-State: ANhLgQ1Hd/Vqc1PUoNZo0HFpcts8cxGk5Ctulq6nGLaDPskl9Ss2zoH5
-        aV29qKf1mNbtyuQXGhJpfYal8g==
-X-Google-Smtp-Source: ADFU+vs5W6pKhDasxst/A96FZNjz5ZlLsLbn4MZHDngTRdMpMnXsBjfTrhf9HXmupeey+hIoU1207w==
-X-Received: by 2002:a63:514f:: with SMTP id r15mr20218986pgl.432.1584249822088;
-        Sat, 14 Mar 2020 22:23:42 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id s12sm33303143pgi.38.2020.03.14.22.23.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Mar 2020 22:23:41 -0700 (PDT)
-Date:   Sat, 14 Mar 2020 22:23:39 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] arm64: dts: qcom: sdm845: add audio support
-Message-ID: <20200315052339.GH1098305@builder>
-References: <20200312143024.11059-1-srinivas.kandagatla@linaro.org>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to:content-transfer-encoding;
+        bh=FJOATGVgF+RB8AvqptT57xQBCVKN+MlPkIh/jxrUb5Y=;
+        b=SInUapzi5iw/pQxDGvnSsU56HR+xJPD494dR7fh192giL9f+xXQPAR7qcW9oRTzdc6
+         9ereuZ92HmZb9Jvp3V0+uXJofhcsACST3/E9TImUN4/SxD/mwkLq5f2uMRu4KF2OhB6t
+         61qWS7ki0/w1JYhQYgxe0fMgJoF56G+r+TdDWIM6zR798HTXjozTdVP0ybDj1yLPmCkk
+         gYWvzfs+i/wZwTO/8YHxw2Uw/aJD0XDS2M/ZU0RVfv+hLKwKNW5L3KtUVVYXeMU/B47r
+         N2qIMX61NzVpZSKZ4ywjKArJh98TgrJ7RfvWPX/7KmQel6JsOV23sdWBLywf4KrCetDu
+         Yrdg==
+X-Gm-Message-State: ANhLgQ3Yn1hyN3Mj43pDeVGhil7E5KA0lfN5IFmZHviAHaWupzq3HBRL
+        1vTfA8JINI7YhN2z0yAZqLv+jaoaQjeL4N5akoPO2eAaG8BR
+X-Google-Smtp-Source: ADFU+vtjWrHuYWHmtJ+7R/F21gT5LEveKjWUsRf8UObsGMOlzh5S+x+bzsUNrMqUqBppbPPWer/sA+tMDrmnP8e3gzLvu8ysJS2P
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200312143024.11059-1-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-Received: by 2002:a92:5e14:: with SMTP id s20mr101812ilb.101.1584251342473;
+ Sat, 14 Mar 2020 22:49:02 -0700 (PDT)
+Date:   Sat, 14 Mar 2020 22:49:02 -0700
+In-Reply-To: <000000000000e0ab4c059c79f014@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000080d06405a0de4277@google.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in bitmap_port_ext_cleanup
+From:   syzbot <syzbot+7b6206fb525c1f5ec3f8@syzkaller.appspotmail.com>
+To:     a@unstable.cc, andrew@lunn.ch, b.a.t.m.a.n@lists.open-mesh.org,
+        coreteam@netfilter.org, davem@davemloft.net,
+        florent.fourcot@wifirst.fr, fw@strlen.de, grygorii.strashko@ti.com,
+        j-keerthy@ti.com, jeremy@azazel.net, johannes.berg@intel.com,
+        kadlec@blackhole.kfki.hu, kadlec@netfilter.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        mareklindner@neomailbox.ch, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        sw@simonwunderlich.de, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 12 Mar 07:30 PDT 2020, Srinivas Kandagatla wrote:
+syzbot suspects this bug was fixed by commit:
 
-> This patchset adds analog audio support for sdm845 based boards.
-> 
-> 
-> Changes since v1:
-> 	- various trival cleanups done as suggested by Bjorn
-> 	- added compressed audio dai for db845c
-> 
+commit 32c72165dbd0e246e69d16a3ad348a4851afd415
+Author: Kadlecsik József <kadlec@blackhole.kfki.hu>
+Date:   Sun Jan 19 21:06:49 2020 +0000
 
-Thanks Srini!
+    netfilter: ipset: use bitmap infrastructure completely
 
-I fixed up the sort order per Vinod's feedback and applied these, with
-Vinod's acks.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=122e7c1de00000
+start commit:   d5d359b0 Merge branch 'for-linus' of git://git.kernel.org/..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cf8e288883e40aba
+dashboard link: https://syzkaller.appspot.com/bug?extid=7b6206fb525c1f5ec3f8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15909f21e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=141a1611e00000
 
-Regards,
-Bjorn
+If the result looks correct, please mark the bug fixed by replying with:
 
-> Srinivas Kandagatla (5):
->   arm64: dts: qcom: sdm845: add slimbus nodes
->   arm64: dts: qcom: sdm845: add apr nodes
->   arm64: dts: qcom: c630: Enable audio support
->   arm64: dts: qcom: sdm845: add pinctrl nodes for quat i2s
->   arm64: dts: qcom: db845c: add analog audio support
-> 
->  arch/arm64/boot/dts/qcom/sdm845-db845c.dts    | 159 ++++++++++
->  arch/arm64/boot/dts/qcom/sdm845.dtsi          | 281 ++++++++++++++++++
->  .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts | 113 +++++++
->  3 files changed, 553 insertions(+)
-> 
-> -- 
-> 2.21.0
-> 
+#syz fix: netfilter: ipset: use bitmap infrastructure completely
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
