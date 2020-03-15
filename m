@@ -2,110 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AA4C185C76
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 13:54:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CCBB185C7F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 13:57:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbgCOMyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 08:54:06 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39512 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728522AbgCOMyG (ORCPT
+        id S1728548AbgCOM54 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 08:57:56 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:47258 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728521AbgCOM54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 08:54:06 -0400
-Received: by mail-lf1-f66.google.com with SMTP id j15so11681414lfk.6;
-        Sun, 15 Mar 2020 05:54:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1MwTYDSMkQGM4p1A9KGg+VT/DsDNrrQYfUwwT/ZLztU=;
-        b=PVW4lwLpvpoZzOqZEqmL2rZNklnr+mBEBTHrm1U2oQCXugYZUXMn73hg0zr7nZEt6Q
-         sa3RQTuWbDvP0p0KvC1A7Gs5Yxz+w2LZndSmver+ZGSD+6U8QK94OOo3Zo9sQahuheqp
-         xR0j1sNV3Fx/WHx2Hv0HHhtcMnfTLI2ys7PhowwjQseAHffjF8gG499vHraH5AMvGp/N
-         SPsYkIl+fr8LQywgtxdCjfRXRmzWQY21RunzhrW2Jt6y5NlZob96SiCUy8omR/uhKOl+
-         saj+Ox1dwqeHNc83t87f3Wk++i2PZcgAGKDCPGfNcxvjht9KUu+NgnkYS+FVHX7NXSbZ
-         LKzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1MwTYDSMkQGM4p1A9KGg+VT/DsDNrrQYfUwwT/ZLztU=;
-        b=VRvmw7AMeQP8woYrKSwTUYQHC6aDTcShej1h0JLCVRGbWgF9TmaC32JECSru5FjGq0
-         stHRPt41mfnWJnfaWgZHhczhHsqngqiLOL1Af+ajLcvV1IS7Ov01mwSfJAShwsAV8s4R
-         tXozW+AZTBwNnDRJPz5tlYypuALPEqZA9St/YXBbe+ssdL++mUNM10l2+7EMOnOy1amG
-         1CqXHPPbTAvB6eNAXusWn4OOxSBe0dHcESeS1Q72jcPjUvKgExo/TiUK/gdVAnAQgVIT
-         oQgIgjwZjOBr64qA1uVX5GesHslNjsovGz78qV4NidsnHKOfMh+/B9g/AsfIsomNi+07
-         O/hg==
-X-Gm-Message-State: ANhLgQ1VKqR7NEoAkkzmRpkqt/71xXPocwKdyD8CL02cpx+l7My+0BUL
-        /ln5SudCxU5akGD/o8pgVgXcrIx2
-X-Google-Smtp-Source: ADFU+vuEFH5q0NH5MzntAYyZmI1FtKlcUtANyZyUjRv2GKKy4RBWpfNo0pevPKgB8YDmuRJlHyHK/A==
-X-Received: by 2002:a19:cbd5:: with SMTP id b204mr608821lfg.203.1584276843012;
-        Sun, 15 Mar 2020 05:54:03 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.googlemail.com with ESMTPSA id v200sm4187853lfa.48.2020.03.15.05.54.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Mar 2020 05:54:02 -0700 (PDT)
-Subject: Re: [RFC PATCH v4 8/8] arm64: tegra: Add Tegra VI CSI support in
- device tree
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        hverkuil@xs4all.nl, helen.koike@collabora.com, sboyd@kernel.org
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1584236766-24819-1-git-send-email-skomatineni@nvidia.com>
- <1584236766-24819-9-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b4bbcc1d-d38c-14c5-7205-2f7657ab8712@gmail.com>
-Date:   Sun, 15 Mar 2020 15:54:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Sun, 15 Mar 2020 08:57:56 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 60B0B2D6;
+        Sun, 15 Mar 2020 13:57:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1584277074;
+        bh=E2pgR3NfJCMiqQdqlWm+CZBOWjacnfLUtHs9QxoDukM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bPQ9s8QpqmDcThQ2+8ALydiMBkt5HBz2jYJPafy8PEZus24M69Lr2NwdgzpwBnyle
+         uJb6aBbHb/vkaxNP9++fPgn8cTQGVzNpZ9DaT+J2UOZa9SEJ+2JyMf1CHsM/MeSIWg
+         T6XI2Ny4US+uh8NLgpsgLt1RXGp02i8jy1uAx1bo=
+Date:   Sun, 15 Mar 2020 14:57:50 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Niklas <niklas.soderlund@ragnatech.se>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 2/2] media: rcar-csi2: Let the driver handle fwnode
+ matching using match_custom callback
+Message-ID: <20200315125750.GD4732@pendragon.ideasonboard.com>
+References: <20200315102724.26850-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200315102724.26850-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200315102956.GA4732@pendragon.ideasonboard.com>
+ <CA+V-a8sYT+okN_WKY-FEcgD7Znyvh3JeMyuZgBxwPLiseiP_1A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1584236766-24819-9-git-send-email-skomatineni@nvidia.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <CA+V-a8sYT+okN_WKY-FEcgD7Znyvh3JeMyuZgBxwPLiseiP_1A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-15.03.2020 04:46, Sowjanya Komatineni пишет:
-> Tegra210 contains VI controller for video input capture from MIPI
-> CSI camera sensors and also supports built-in test pattern generator.
+Hi Prabhakar,
+
+On Sun, Mar 15, 2020 at 12:10:14PM +0000, Lad, Prabhakar wrote:
+> On Sun, Mar 15, 2020 at 10:30 AM Laurent Pinchart wrote:
+> > On Sun, Mar 15, 2020 at 10:27:24AM +0000, Lad Prabhakar wrote:
+> > > The rcar-csi2 driver uses the v4l2-async framework to do endpoint matching
+> > > instead of node matching. This is needed as it needs to work with the
+> > > adv748x driver which register it self in v4l2-async using endpoints
+> > > instead of nodes. The reason for this is that from a single DT node it
+> > > creates multiple subdevices, one for each endpoint.
+> > >
+> > > But when using subdevs which register itself in v4l2-async using nodes,
+> > > the rcar-csi2 driver failed to find the matching endpoint because the
+> > > match.fwnode was pointing to remote endpoint instead of remote parent
+> > > port.
+> > >
+> > > This commit adds support in rcar-csi2 driver to handle both the cases
+> > > where subdev registers in v4l2-async using endpoints/nodes, by using
+> > > match_type as V4L2_ASYNC_MATCH_CUSTOM and implementing the match()
+> > > callback to compare the fwnode of either remote/parent.
+> >
+> > This is not the way to go. The v4l2-async framework needs to be fixed
+> > instead, so that fwnode match will do the right thing automatically
+> > regardless of whether the node is a device node or and endpoint node.
+>
+> OK, so moving forward should the v4l2-async do strictly endpoint
+> matching only or both nodes/endpoints. fwnode in all the bridge
+> drivers be replaced to remote endpoints ?
+
+Long term I think everything should use endpoint matching, but to get
+there we shouldn't transition all drivers in one go. I've submitted a
+patch to v4l2-async that I believe will fix your problem and allow for a
+smooth transition. Could you give it a try ?
+
+> Looking at the adv7604 its registered as node to v4l2-async which can
+> have upto 3 endpoints, adv748x is the single driver which registers
+> itself as endpoint to v4l2-async, and rest of the other subdevices
+> have single endpoint and are registered as node to v4l2-async. How
+> would you suggest to handle these cases.
 > 
-> CSI ports can be one-to-one mapped to VI channels for capturing from
-> an external sensor or from built-in test pattern generator.
-> 
-> This patch adds support for VI and CSI and enables them in Tegra210
-> device tree.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > ---
+> > >  drivers/media/platform/rcar-vin/rcar-csi2.c | 46 +++++++++++++++++++--
+> > >  1 file changed, 43 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > > index faa9fb23a2e9..1bbf05e9f025 100644
+> > > --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > > +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > > @@ -808,6 +808,46 @@ static int rcsi2_parse_v4l2(struct rcar_csi2 *priv,
+> > >       return 0;
+> > >  }
+> > >
+> > > +static bool rcsi2_asd_match(struct v4l2_subdev *sd,
+> > > +                         struct v4l2_async_subdev *asd)
+> > > +{
+> > > +     struct rcar_csi2 *priv = (struct rcar_csi2 *)asd->match.custom.priv;
+> > > +     struct fwnode_handle *remote_endpoint;
+> > > +     struct fwnode_handle *subdev_endpoint;
+> > > +     struct device_node *np;
+> > > +     bool matched = false;
+> > > +
+> > > +     np = of_graph_get_endpoint_by_regs(priv->dev->of_node, 0, 0);
+> > > +     if (!np) {
+> > > +             dev_err(priv->dev, "Not connected to subdevice\n");
+> > > +             return matched;
+> > > +     }
+> > > +
+> > > +     remote_endpoint =
+> > > +             fwnode_graph_get_remote_endpoint(of_fwnode_handle(np));
+> > > +     if (!remote_endpoint) {
+> > > +             dev_err(priv->dev, "Failed to get remote endpoint\n");
+> > > +             of_node_put(np);
+> > > +             return matched;
+> > > +     }
+> > > +     of_node_put(np);
+> > > +
+> > > +     if (sd->fwnode != dev_fwnode(sd->dev)) {
+> > > +             if (remote_endpoint == sd->fwnode)
+> > > +                     matched = true;
+> > > +     } else {
+> > > +             subdev_endpoint =
+> > > +                   fwnode_graph_get_next_endpoint(dev_fwnode(sd->dev), NULL);
+> > > +             if (remote_endpoint == subdev_endpoint)
+> > > +                     matched = true;
+> > > +             fwnode_handle_put(subdev_endpoint);
+> > > +     }
+> > > +
+> > > +     fwnode_handle_put(remote_endpoint);
+> > > +
+> > > +     return matched;
+> > > +}
+> > > +
+> > >  static int rcsi2_parse_dt(struct rcar_csi2 *priv)
+> > >  {
+> > >       struct device_node *ep;
+> > > @@ -833,9 +873,9 @@ static int rcsi2_parse_dt(struct rcar_csi2 *priv)
+> > >               return ret;
+> > >       }
+> > >
+> > > -     priv->asd.match.fwnode =
+> > > -             fwnode_graph_get_remote_endpoint(of_fwnode_handle(ep));
+> > > -     priv->asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
+> > > +     priv->asd.match.custom.match = &rcsi2_asd_match;
+> > > +     priv->asd.match.custom.priv = priv;
+> > > +     priv->asd.match_type = V4L2_ASYNC_MATCH_CUSTOM;
+> > >
+> > >       of_node_put(ep);
+> > >
 
-Hello Sowjanya,
+-- 
+Regards,
 
-...
-> +
-> +			pd_venc: venc {
-> +				clocks = <&tegra_car TEGRA210_CLK_VI>,
-> +					 <&tegra_car TEGRA210_CLK_CSI>;
-> +				resets = <&tegra_car 20>,
-
-What is the clock #20?
-
-> +					 <&tegra_car TEGRA210_CLK_CSI>,
-> +					 <&mc TEGRA210_MC_RESET_VI>;
-
-Does this order means that memory controller will be reset *after*
-resetting the CSI/VI hardware? This is incorrect reset sequence.
-
-The memory controller reset should be kept asserted during of the time
-of the hardware resetting procedure.
-
-The correct sequence should be as follows:
-
-1. Assert MC
-2. Reset VI
-3. Deassert MC
+Laurent Pinchart
