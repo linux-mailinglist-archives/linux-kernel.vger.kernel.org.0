@@ -2,126 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D7A3185B82
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 10:31:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5EB0185BAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Mar 2020 10:52:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbgCOJbI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 05:31:08 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47864 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726521AbgCOJbI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 05:31:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584264667;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=NskdIeesjzIp9l2WHfY+vsEAmi7voX22LG95jDKnurM=;
-        b=PNI4nE8erd2/nl8vpNvxbLkJKKIyjbO58q7Qk91/rt1FKqG2NMINSrxUbEdvyooc33OsZV
-        vcEI1rkkUTGk5lD5pd2pE6bbh75oEX3gp4/XeldykSNhZtnvA9pjKffx2gtaw+/wpq/GsN
-        NYa1Wyhu1vhzPpeT/9rhuFCESYXZnl8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-366-opja8U-XMLS4so4aBi8vrQ-1; Sun, 15 Mar 2020 05:31:03 -0400
-X-MC-Unique: opja8U-XMLS4so4aBi8vrQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3D2E98017CC;
-        Sun, 15 Mar 2020 09:31:01 +0000 (UTC)
-Received: from krava (ovpn-204-71.brq.redhat.com [10.40.204.71])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 205785DA76;
-        Sun, 15 Mar 2020 09:30:57 +0000 (UTC)
-Date:   Sun, 15 Mar 2020 10:30:55 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Leo Yan <leo.yan@linaro.org>, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH v2] perf parse-events: fix 3 use after frees
-Message-ID: <20200315093055.GD492969@krava>
-References: <20200314170356.62914-1-irogers@google.com>
+        id S1728211AbgCOJwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 05:52:17 -0400
+Received: from mga17.intel.com ([192.55.52.151]:35235 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728108AbgCOJwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 05:52:17 -0400
+IronPort-SDR: HChpFelIJng41hdn2vxch5buzBS3a9o6bVvl3+U2mcGDDvesItcWJkwaWkQ4yoC8aTkzjMIBHy
+ /3BMTf11vVgA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2020 02:52:16 -0700
+IronPort-SDR: cuxcG9ERSYwCjvd61maY4zMtxSP5zttqBeHAybX768mImW+t4oxgyWF4bz4w1dRLN2ujMXQQnc
+ l5XF4a8P1Abg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,556,1574150400"; 
+   d="scan'208";a="416800326"
+Received: from lxy-clx-4s.sh.intel.com ([10.239.43.160])
+  by orsmga005.jf.intel.com with ESMTP; 15 Mar 2020 02:52:15 -0700
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+To:     Shuah Khan <shuah@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: [PATCH 0/2] Fix errors when try to build kvm selftests on
+Date:   Sun, 15 Mar 2020 17:34:23 +0800
+Message-Id: <20200315093425.33600-1-xiaoyao.li@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200314170356.62914-1-irogers@google.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 14, 2020 at 10:03:56AM -0700, Ian Rogers wrote:
-> Reproducible with a clang asan build and then running perf test in
-> particular 'Parse event definition strings'.
-> 
-> v2 frees the evsel->pmu_name avoiding a memory leak.
+I attempted to build KVM selftests on a specified dir, unfortunately
+neither	"make O=~/mydir TARGETS=kvm" in tools/testing/selftests, nor
+"make OUTPUT=~/mydir" in tools/testing/selftests/kvm work.
 
-Acked-by: Jiri Olsa <jolsa@redhat.com>
+This series aims to make both work.
 
-thanks,
-jirka
+Xiaoyao Li (2):
+  kvm: selftests: Fix no directory error when OUTPUT specified
+  selftests: export INSTALL_HDR_PATH if using "O" to specify output dir
 
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/evsel.c        | 1 +
->  tools/perf/util/parse-events.c | 6 +++---
->  2 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index 816d930d774e..15ccd193483f 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -1287,6 +1287,7 @@ void perf_evsel__exit(struct evsel *evsel)
->  	perf_thread_map__put(evsel->core.threads);
->  	zfree(&evsel->group_name);
->  	zfree(&evsel->name);
-> +	zfree(&evsel->pmu_name);
->  	perf_evsel__object.fini(evsel);
->  }
->  
-> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-> index a14995835d85..593b6b03785d 100644
-> --- a/tools/perf/util/parse-events.c
-> +++ b/tools/perf/util/parse-events.c
-> @@ -1449,7 +1449,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
->  		evsel = __add_event(list, &parse_state->idx, &attr, NULL, pmu, NULL,
->  				    auto_merge_stats, NULL);
->  		if (evsel) {
-> -			evsel->pmu_name = name;
-> +			evsel->pmu_name = name ? strdup(name) : NULL;
->  			evsel->use_uncore_alias = use_uncore_alias;
->  			return 0;
->  		} else {
-> @@ -1497,7 +1497,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
->  		evsel->snapshot = info.snapshot;
->  		evsel->metric_expr = info.metric_expr;
->  		evsel->metric_name = info.metric_name;
-> -		evsel->pmu_name = name;
-> +		evsel->pmu_name = name ? strdup(name) : NULL;
->  		evsel->use_uncore_alias = use_uncore_alias;
->  		evsel->percore = config_term_percore(&evsel->config_terms);
->  	}
-> @@ -1547,7 +1547,7 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
->  				if (!parse_events_add_pmu(parse_state, list,
->  							  pmu->name, head,
->  							  true, true)) {
-> -					pr_debug("%s -> %s/%s/\n", config,
-> +					pr_debug("%s -> %s/%s/\n", str,
->  						 pmu->name, alias->str);
->  					ok++;
->  				}
-> -- 
-> 2.25.1.481.gfbce0eb801-goog
-> 
+ tools/testing/selftests/Makefile     | 6 +++++-
+ tools/testing/selftests/kvm/Makefile | 3 ++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+-- 
+2.20.1
 
