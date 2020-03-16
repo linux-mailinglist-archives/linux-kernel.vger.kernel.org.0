@@ -2,28 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9874418AE18
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:10:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 136A218ADFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:09:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbgCSIJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 04:09:59 -0400
-Received: from mout-p-102.mailbox.org ([80.241.56.152]:43918 "EHLO
+        id S1726913AbgCSIJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 04:09:10 -0400
+Received: from mout-p-102.mailbox.org ([80.241.56.152]:43886 "EHLO
         mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726658AbgCSIJ4 (ORCPT
+        with ESMTP id S1726603AbgCSIJJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 04:09:56 -0400
-Received: by mout-p-102.mailbox.org (Postfix, from userid 51)
-        id 48jfhd5MvxzKmds; Thu, 19 Mar 2020 09:09:27 +0100 (CET)
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        Thu, 19 Mar 2020 04:09:09 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 48gz4W18xTzKmRB;
-        Mon, 16 Mar 2020 15:21:15 +0100 (CET)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 48hc9w6B0pzKmds
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 16:13:08 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp2.mailbox.org ([80.241.60.241])
         by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id iCfejkjpJ5ez; Mon, 16 Mar 2020 15:21:11 +0100 (CET)
-Date:   Tue, 17 Mar 2020 01:20:57 +1100
+        with ESMTP id VmV0JvK_pR0d for <linux-kernel@vger.kernel.org>;
+        Tue, 17 Mar 2020 16:13:06 +0100 (CET)
+Date:   Tue, 17 Mar 2020 01:21:11 +1100
 From:   Aleksa Sarai <cyphar@cyphar.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Stefan Metzmacher <metze@samba.org>,
@@ -55,79 +54,71 @@ References: <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.u
  <20200313095901.tdv4vl7envypgqfz@yavin>
  <20200313182844.GO23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4df6bjmhtolysrje"
-Content-Disposition: inline
 In-Reply-To: <20200313182844.GO23230@ZenIV.linux.org.uk>
+X-TUID: e/MLe+hCS29J
+Content-Type: multipart/encrypted;
+        protocol="application/pgp-encrypted";
+        boundary="1584368685/518741/20472/localhost"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is a MIME-encapsulated message.
 
---4df6bjmhtolysrje
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--1584368685/518741/20472/localhost
+Content-Type: application/pgp-encrypted
+Content-Disposition: attachment
 
-On 2020-03-13, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Fri, Mar 13, 2020 at 08:59:01PM +1100, Aleksa Sarai wrote:
-> > On 2020-03-12, Stefan Metzmacher <metze@samba.org> wrote:
-> > > Am 12.03.20 um 17:24 schrieb Linus Torvalds:
-> > > > But yes, if we have a major package like samba use it, then by all
-> > > > means let's add linkat2(). How many things are we talking about? We
-> > > > have a number of system calls that do *not* take flags, but do do
-> > > > pathname walking. I'm thinking things like "mkdirat()"?)
-> > >=20
-> > > I haven't looked them up in detail yet.
-> > > Jeremy can you provide a list?
-> > >=20
-> > > Do you think we could route some of them like mkdirat() and mknodat()
-> > > via openat2() instead of creating new syscalls?
-> >=20
-> > I have heard some folks asking for a way to create a directory and get a
-> > handle to it atomically -- so arguably this is something that could be
-> > inside openat2()'s feature set (O_MKDIR?). But I'm not sure how popular
-> > of an idea this is.
->=20
-> For fuck sake, *NO*!
->=20
-> We don't need any more multiplexors from hell.  mkdir() and open() have
-> deeply different interpretation of pathnames (and anyone who asks for
-> e.g. traversals of dangling symlinks on mkdir() is insane).  Don't try to
-> mix those; even O_TMPFILE had been a mistake.
+Version: 1
 
-I agree that O_TMPFILE is a mess, and you're right that it wouldn't be a
-good idea to fold it into open*(). But what is your opinion on a
-hypothetical mkdirat2() which would let you get an fd to the directory
-that was just created?
+--1584368685/518741/20472/localhost
+Content-Type: application/octet-stream
+Content-Disposition: inline; filename="msg.asc"
 
-> We really don't need openat2() turning into another one.  Syscall table
-> slots are not in a short supply, and the level of review one gets from
-> "new syscall added" is higher than from "make fubar(2) recognize a new
-> member in options->union_full_of_crap if it has RESOLVE_TO_WANK_WITH_RIGH=
-T_HAND
-> set in options->flags, affecting its behaviour in some odd ways".
-> Which is a good thing, damnit.
+-----BEGIN PGP MESSAGE-----
 
-You're quite right, and I don't intend openat2() to become another
-ioctl-but-with-even-more-fun-semantics.
+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
+=aDWU
+-----END PGP MESSAGE-----
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---4df6bjmhtolysrje
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXm+LRgAKCRCdlLljIbnQ
-ElaGAP9fIzu4LXSjbBKEZbs6rG1neKLKVE2Rsq9L4OP4o/amMgD+PgF9GjE/nolu
-40b4nj09uWyhqFo1UO9AbuIefV4TJQo=
-=iIAL
------END PGP SIGNATURE-----
-
---4df6bjmhtolysrje--
+--1584368685/518741/20472/localhost--
