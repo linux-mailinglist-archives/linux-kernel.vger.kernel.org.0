@@ -2,93 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0DC3187232
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 19:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F28D718723A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 19:23:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732349AbgCPSWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 14:22:12 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38476 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732312AbgCPSWL (ORCPT
+        id S1732318AbgCPSXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 14:23:11 -0400
+Received: from www381.your-server.de ([78.46.137.84]:39600 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732242AbgCPSXK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 14:22:11 -0400
-Received: by mail-qt1-f195.google.com with SMTP id e20so15106866qto.5
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 11:22:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cQsSz1COC2dmrRLkEbIXNT1K1qMVZomosRljDS+mD6A=;
-        b=Hcy3ISR98V336uyttxciTMkX9Vxh+ToWZwB2MTvljw2GGRX7UhN6dSY0+Bf8CMNAi2
-         5XcIvIPZfGJOlLs7US4IKc/1TnB+l1NHz4udv3vpv1joRNk2BpvAVR33TrfPC2wJaAoG
-         z91Z2zN9R6wZ8bnGtvQAiDx3FfuSqUqv8PoI77kZeqJTBLiJERZNwHGU/TJ3jSQpoiqa
-         rEeHSY06RRLLCdRK0ZlOvFlczZawVj5VNnHI6uF1saQU/ymPf3DMbh953pZAGCM3VWjh
-         8IptN7djd2P/Hcm+OtbHKsqUYA/2gaxbbmGJi584m0Xxzs89ytE96l4wLBAn7+8enjdg
-         DJTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cQsSz1COC2dmrRLkEbIXNT1K1qMVZomosRljDS+mD6A=;
-        b=k9LIJVVmBDx69YZKSJszm7wnl6W1iecZRCSK7yi/iPTaoQrR62rUxpwVncWrtu8G60
-         K3qupHnM8dmXSMFirdQhZgsHONFxZoLwKAbZTafq4ICb+T9Jq6XtUjRBMg+ZR0fYp1HG
-         06lIWkVw1ZIGxA+mieHRf1p/oKBOei8moq0bsiHuHYwu+AK6Rj1CwjizID0EsjfNIh/M
-         9MRfeXNIEqLSe2ByB9COQURO/ntt7hPVmgQSDY7xB9JNk5U424l1LlI7a4o5SEbtcYLN
-         MWZ5wqME/vbq6c4A+NQlivHJ8XLlocmZkp5FZwh1CJHNojL/GkO9/KUzWQguHPDlDyZw
-         /GfA==
-X-Gm-Message-State: ANhLgQ2h3r3J/rpbxzcL1fdhhwTKH+SepfXs1zBLVNIAabHhEHFfjQNK
-        0p4EJCR99i3h7yn+tY2ocfU=
-X-Google-Smtp-Source: ADFU+vuf6391otwGeeRyeXLdjSItwv9GfNIidsoLI3ySW06B1xx+1t3vlJw4o7NSK+1i2rdkY808Rg==
-X-Received: by 2002:ac8:7a8a:: with SMTP id x10mr1424432qtr.77.1584382930479;
-        Mon, 16 Mar 2020 11:22:10 -0700 (PDT)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id z43sm352647qtb.92.2020.03.16.11.22.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2020 11:22:10 -0700 (PDT)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Mon, 16 Mar 2020 14:22:08 -0400
-To:     Sergei Trofimovich <slyfox@gentoo.org>
-Cc:     linux-kernel@vger.kernel.org, Jakub Jelinek <jakub@redhat.com>,
+        Mon, 16 Mar 2020 14:23:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=metafoo.de;
+         s=default2002; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=M7ml/Y4gDZjel4sRH32iDPtQppbmjBMK4zkw++HJBF0=; b=U81rN3TZfipi2EFc5vAjnlQVfp
+        avCVc4cUmvOv8fSdHFTPVEj2qrOpx7JJUlVTvVLwoxNwbUY/4t0fqn2dqVKPoelH/L54y7Ij6Sli9
+        Nv5D+IsLVpcC8zcjoOsbs0hiGF8VEg3XxcCICM1zEh8ipt2TsGhLUZjSb8aoBAcAZdhgw0Ybjh7AN
+        nWeNJhkJrIA90f/6vHBB84wWkLBBmKL3miWDYU5/eNo0Cw0D+0QnfwAFZnahXBkfr/4tifX/r82SJ
+        hiGIXjs6Rsy9IWSGoJoDgdp1ntAIj8TCRBnkOpcu2fvczOP8DbbSdmeluHKTatYfZKkTgZcEjd+Tt
+        ltBCRERg==;
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+        by www381.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <lars@metafoo.de>)
+        id 1jDuOF-0004KC-09; Mon, 16 Mar 2020 19:23:03 +0100
+Received: from [93.104.121.61] (helo=[192.168.178.20])
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <lars@metafoo.de>)
+        id 1jDuOE-000HJ7-Lf; Mon, 16 Mar 2020 19:23:02 +0100
+Subject: Re: [PATCH v2 3/4] iio: vcnl4000: Export near level property for
+ proximity sensor
+To:     =?UTF-8?Q?Guido_G=c3=bcnther?= <agx@sigxcpu.org>,
+        Tomas Novotny <tomas@novotny.cz>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Marco Felsch <m.felsch@pengutronix.de>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>, x86@kernel.org
-Subject: Re: [PATCH] x86: fix early boot crash on gcc-10
-Message-ID: <20200316182206.GA354531@rani.riverdale.lan>
-References: <20200314164451.346497-1-slyfox@gentoo.org>
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <cover.1584380360.git.agx@sigxcpu.org>
+ <5566fe01df933d3281f058666e2147cb97b38126.1584380360.git.agx@sigxcpu.org>
+From:   Lars-Peter Clausen <lars@metafoo.de>
+Message-ID: <c787921f-c412-4986-14ea-e31b531d3d5b@metafoo.de>
+Date:   Mon, 16 Mar 2020 19:23:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200314164451.346497-1-slyfox@gentoo.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5566fe01df933d3281f058666e2147cb97b38126.1584380360.git.agx@sigxcpu.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Authenticated-Sender: lars@metafoo.de
+X-Virus-Scanned: Clear (ClamAV 0.102.2/25753/Mon Mar 16 14:05:55 2020)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 14, 2020 at 04:44:51PM +0000, Sergei Trofimovich wrote:
->  arch/x86/kernel/Makefile | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-> index 9b294c13809a..da9f4ea9bf4c 100644
-> --- a/arch/x86/kernel/Makefile
-> +++ b/arch/x86/kernel/Makefile
-> @@ -11,6 +11,12 @@ extra-y	+= vmlinux.lds
->  
->  CPPFLAGS_vmlinux.lds += -U$(UTS_MACHINE)
->  
-> +# smpboot's init_secondary initializes stack canary.
-	       ^^^^ should be start_secondary?
-> +# Make sure we don't emit stack checks before it's
-> +# initialized.
-> +nostackp := $(call cc-option, -fno-stack-protector)
-> +CFLAGS_smpboot.o := $(nostackp)
+On 3/16/20 6:46 PM, Guido Günther wrote:
+> [...]
+> +static ssize_t vcnl4000_read_near_level(struct iio_dev *indio_dev,
+> +					uintptr_t priv,
+> +					const struct iio_chan_spec *chan,
+> +					char *buf)
+> +{
+> +	struct vcnl4000_data *data = iio_priv(indio_dev);
 > +
->  ifdef CONFIG_FUNCTION_TRACER
->  # Do not profile debug and lowlevel utilities
->  CFLAGS_REMOVE_tsc.o = -pg
-> -- 
-> 2.25.1
-> 
+> +	return sprintf(buf, "%u\n", data->near_level);
+> +}
+> +
+> +static const struct iio_chan_spec_ext_info vcnl4000_ext_info[] = {
+> +	{
+> +		.name = "near_level",
+
+Generally having properties with a underscore in them breaks generic 
+parsing of the property name by userspace applications. This is because 
+we use underscores to separate different components (type, modifier, 
+etc.) of the attribute from each other.
+
+Do you think calling this "nearlevel" would work?
+
+I know there are existing bad examples of properties that use an 
+underscore, but we should try to limit introducing new ones.
+
+> +		.shared = IIO_SEPARATE,
+> +		.read = vcnl4000_read_near_level,
+> +	},
+> +	{ /* sentinel */ }
+> +};
+> +
+>   static const struct iio_chan_spec vcnl4000_channels[] = {
+>   	{
+>   		.type = IIO_LIGHT,
+> @@ -350,6 +371,7 @@ static const struct iio_chan_spec vcnl4000_channels[] = {
+>   	}, {
+>   		.type = IIO_PROXIMITY,
+>   		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> +		.ext_info = vcnl4000_ext_info,
+>   	}
+>   };
+>   
+> @@ -439,6 +461,10 @@ static int vcnl4000_probe(struct i2c_client *client,
+>   	dev_dbg(&client->dev, "%s Ambient light/proximity sensor, Rev: %02x\n",
+>   		data->chip_spec->prod, data->rev);
+>   
+> +	if (device_property_read_u32(&client->dev, "near-level",
+> +				     &data->near_level) < 0)
+> +		data->near_level = 0;
+> +
+>   	indio_dev->dev.parent = &client->dev;
+>   	indio_dev->info = &vcnl4000_info;
+>   	indio_dev->channels = vcnl4000_channels;
+
+
