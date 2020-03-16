@@ -2,110 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF257186397
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 04:15:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AA3F18638D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 04:10:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729704AbgCPDPx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 23:15:53 -0400
-Received: from mail-eopbgr20058.outbound.protection.outlook.com ([40.107.2.58]:41862
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729655AbgCPDPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 23:15:53 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fFErWGu852fv//9sgQIpLbZNgLE8Cdw9SOj/l2fdCNF0FVkCLIRAHQijCrWhTo+jjKBwxQNCllxagSuoclL5XmklekVpwAUkdtpEqCKCBJ+o40CE2XfeCwjZdqHEJe87XuThTtg5icu6H2mtaRlVCSasatH1jdUsnn1it2nmwMNnRLY8KV4TH8YFjL3AtxsgHYEhFvQao4RJLF+HtwYxH2p9uq+mib8kXoUUq6aFCXklnTLOLbx6BHqxSZXDMFkB1puXKRhoOxyVbVFGEZ2Tl0O63AcvrvzK7/J6oYoCgdqwjRUnEpnasgMaPVuEWJTVN5IRtnTHO7FFAEhkLhEe+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CFpcJfWftyCyHL3ntM+JubuiOiojkiOMfrs1o5LdxuE=;
- b=aXQ3sIL7VfHIAam2uqHLUF12lFLbHIrEufM62v+HXo/DvPoogRs0Et4hgPp84kHy4qzJSqJRf26ZTVikr0vy3gGI7rdpYA/hXbcWXUSTfOqP0YsZ1zdbQ3KBLPKrkR/D11Uv5ptg8l6bqvJdMZlJKklwLU/R4+WYCfjKdwvDhDsTHeyiZoCtlPvbOg2ywpNngXUKUduNelKJQ5fCNOdp6xeDIO/L4Ygr0lnbPC8XtXZnvLMOrPU5dHOh5C96wQAG13HTuX6+8ZiIzoY5ohyfmrbIQvTIbXU04SS7BkyC2O5Ca0JwE45kXWTgbQx1hO+a8meD2CZOHujlFgA+UAlRgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CFpcJfWftyCyHL3ntM+JubuiOiojkiOMfrs1o5LdxuE=;
- b=hEyqCr1FD+GF6YOU6/fuJfr/vAULhERjWYO+fAUHPqY9MOb6Iy2NQOCXmtfd/PJ2VgKfHWobLLWLYhOEbvW9ec/XPOonG60JjsXagmK1AhlQicp1jJnv4Lr1V4Jcp//1cfK4OPVp7Lv8o2GIM73v1KfWXuGr89tvSy89FCfTlf8=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB4225.eurprd04.prod.outlook.com (52.134.91.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.21; Mon, 16 Mar 2020 03:15:49 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::ad44:6b0d:205d:f8fc]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::ad44:6b0d:205d:f8fc%7]) with mapi id 15.20.2814.019; Mon, 16 Mar 2020
- 03:15:49 +0000
-From:   peng.fan@nxp.com
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] soc: imx: drop COMPILE_TEST for IMX_SCU_SOC
-Date:   Mon, 16 Mar 2020 11:09:02 +0800
-Message-Id: <1584328142-11810-1-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-Content-Type: text/plain
-X-ClientProxiedBy: SGBP274CA0013.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::25)
- To AM0PR04MB4481.eurprd04.prod.outlook.com (2603:10a6:208:70::15)
+        id S1729617AbgCPDKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 23:10:14 -0400
+Received: from ozlabs.org ([203.11.71.1]:34271 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729384AbgCPDKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 23:10:13 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48ghB93YrQz9sPk;
+        Mon, 16 Mar 2020 14:10:09 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1584328210;
+        bh=Knue5rqiLe1nXMX+fyKsUbWZ2mKqB6wfYMP000sIv20=;
+        h=Date:From:To:Cc:Subject:From;
+        b=PXb2qVMM+akhCIquVAFaSr4kIb4zPZUKQL6a0o07ytAj19YJ/qEgE9Pp2jZm+yKFF
+         RaFDFzQqhgvnsURV63OOMs4OLErI6MVMAfM6NZzUuflXDN01s2PeBrlEjY2Xixesxe
+         LBMzFRqe9d1gioFkNbM4/wSvz98I3UToGLfmfFn/t8tzfrdh8TywEXRNkNypKQZVLS
+         tCNtJkukowZaw3pYFeZBlAOyKOAxEelqMrWAQA97DyCoeqaLmtQJnYVD5rpjvPLY1A
+         AT59uyoJ7mgBz0PoPli0bK2bjDMRziXErni/RUH62rgPWNltJqu5e3rcO2WGaxQVml
+         WTLUvMHQ2+S3A==
+Date:   Mon, 16 Mar 2020 14:10:04 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>, Colin Cross <ccross@android.com>,
+        Olof Johansson <olof@lixom.net>,
+        Thierry Reding <treding@nvidia.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nagarjuna Kristam <nkristam@nvidia.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: linux-next: build failure after merge of the usb tree
+Message-ID: <20200316141004.171649a5@canb.auug.org.au>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SGBP274CA0013.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2814.16 via Frontend Transport; Mon, 16 Mar 2020 03:15:46 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: b60b472a-ae99-4789-d3ed-08d7c958537a
-X-MS-TrafficTypeDiagnostic: AM0PR04MB4225:|AM0PR04MB4225:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB42253903013F267F80A6D59788F90@AM0PR04MB4225.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1775;
-X-Forefront-PRVS: 03449D5DD1
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(376002)(396003)(136003)(346002)(199004)(2906002)(2616005)(69590400007)(4326008)(6666004)(4744005)(66946007)(478600001)(86362001)(66556008)(66476007)(956004)(26005)(316002)(6506007)(186003)(36756003)(6486002)(5660300002)(52116002)(6512007)(8936002)(9686003)(16526019)(8676002)(81166006)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4225;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: YyAMpjpe1W5ka7bQxpUjbVPj2uAcpfzLaOKT/69CI/9KYe80gY87rOSmuj5RmzXrBix6hi5bmI09bMZCKtwwEbMSclaCVdSA9LlFardm0PuShbZpHOHuVg8yRsMJDaR3zg3FrnA8pFfAipRju/pPC8iMLQYrbnfm8rxEJlde7qyPMQ/rB1iMmJqDiOepJwOrNGgxXDFUAM4xGyXevX4h8T2zs2JZMb7YmGP5y/k96WcoVAge5GgvtNE8YdIGJ3af4NJMA3Vce6N5/qNj7WdLTyk7dRfV9CmAO5tXArSikHpjxCyf8pdmE8TQRZpYX3s97hgsJQ2u2Cqdb5dlk+3mha692LUZB/DCujdgbDtvUz9JDjy8T9gtQ2VH+dIX0h0e+XIFIO3278BK18c4tF9C/Jgvg/DSEoa288BBwjD3QCECGfiKm4mqk7jEn/kKCMDmwrqqidHoGncuZfxDbucM6s3MGxgRAPyJu80gqXwgl+63tvmc0M23iHywdSiOyB0o
-X-MS-Exchange-AntiSpam-MessageData: FvgLiG0KB60DusRGQ3RcraBisx9woOQVu7TWb2kDkv30DhGOGarwmzBUiYCQTLBHIi9t09B3RWcIF9Kk2oomSozBIXET8dDW0sIVZW4zjzqc0PGZIUZ+hH1oE1vXRFB6alXg7yY9AbcqmPQi6Gau+A==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b60b472a-ae99-4789-d3ed-08d7c958537a
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2020 03:15:49.5285
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YigBz5+szbxTznNEoja8FLF1lIZ9DRg1kvHhyrY0BDmeU4WLEzXDJ3DmMQgKvB54MWNcZmqp0KSldTZ1CaqkwQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4225
+Content-Type: multipart/signed; boundary="Sig_/j=EfkFvgnu7ybbMgR4aLewO";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+--Sig_/j=EfkFvgnu7ybbMgR4aLewO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-With COMPILE_TEST, there will be build error, because IMX_SCU
-might be set to n, so drop COMPILE_TEST.
+Hi all,
 
-Suggested-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
+After merging the usb tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
+
+drivers/phy/tegra/xusb.c: In function 'tegra_xusb_setup_usb_role_switch':
+drivers/phy/tegra/xusb.c:641:10: error: initialization of 'int (*)(struct u=
+sb_role_switch *, enum usb_role)' from incompatible pointer type 'int (*)(s=
+truct device *, enum usb_role)' [-Werror=3Dincompatible-pointer-types]
+  641 |   .set =3D tegra_xusb_role_sw_set,
+      |          ^~~~~~~~~~~~~~~~~~~~~~
+drivers/phy/tegra/xusb.c:641:10: note: (near initialization for 'role_sx_de=
+sc.set')
+
+Caused by commit
+
+  bce3052f0c16 ("usb: roles: Provide the switch drivers handle to the switc=
+h in the API")
+
+interacting with commit
+
+  5a00c7c7604f ("phy: tegra: xusb: Add usb-role-switch support")
+
+from the tegra tree.
+
+I have added this merge fix patch (which may need more work):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 16 Mar 2020 14:04:20 +1100
+Subject: [PATCH] phy: tegra: fix up for set_role API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/soc/imx/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/phy/tegra/xusb.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/soc/imx/Kconfig b/drivers/soc/imx/Kconfig
-index 0b69024296d5..b18271e99d4f 100644
---- a/drivers/soc/imx/Kconfig
-+++ b/drivers/soc/imx/Kconfig
-@@ -10,7 +10,7 @@ config IMX_GPCV2_PM_DOMAINS
- 
- config IMX_SCU_SOC
- 	bool "i.MX System Controller Unit SoC info support"
--	depends on IMX_SCU || COMPILE_TEST
-+	depends on IMX_SCU
- 	select SOC_BUS
- 	help
- 	  If you say yes here you get support for the NXP i.MX System
--- 
-2.16.4
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index d907f03bf282..25223c350e66 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -596,11 +596,12 @@ static void tegra_xusb_usb_phy_work(struct work_struc=
+t *work)
+ 	atomic_notifier_call_chain(&port->usb_phy.notifier, 0, &port->usb_phy);
+ }
+=20
+-static int tegra_xusb_role_sw_set(struct device *dev, enum usb_role role)
++static int tegra_xusb_role_sw_set(struct usb_role_switch *sw,
++				  enum usb_role role)
+ {
+-	struct tegra_xusb_port *port =3D dev_get_drvdata(dev);
++	struct tegra_xusb_port *port =3D usb_role_switch_get_drvdata(sw);
+=20
+-	dev_dbg(dev, "%s(): role %s\n", __func__, usb_roles[role]);
++	dev_dbg(&port->dev, "%s(): role %s\n", __func__, usb_roles[role]);
+=20
+ 	schedule_work(&port->usb_phy_work);
+=20
+--=20
+2.25.0
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/j=EfkFvgnu7ybbMgR4aLewO
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5u7gwACgkQAVBC80lX
+0Gzbnwf/Vpdc0s7iO1BA2KP7C4N8nNGMt2T70e+tG3Dd98koC7/AwQh39vtfB+BY
+c6RGutLRKu/43ZCJDSHVUPJeJ/oGN2ErmiffqoBGs0S8iWQ7b1bwnRoRF7iYhseC
+OducQfFHb6NYGKud6y07DArvoyrspHL5qIAGEyCvekSGkUbfgXXeAoKCEsRUaCmM
+uKjpH6M/lZf9klQz7/1FzD5XDKI3SzLk1U1/XuH5yLVW0ZlfwcJil0JL7kdYewHp
+boCYWRv8Z4Gtxy+JxsnQLQcMbvJIurFjiODQO0Sgd2GtyoPS4vht27noZyeNqfg/
+ZkzI/VrsT6CP+KRZhB2jPuqWyRmPgA==
+=0thF
+-----END PGP SIGNATURE-----
+
+--Sig_/j=EfkFvgnu7ybbMgR4aLewO--
