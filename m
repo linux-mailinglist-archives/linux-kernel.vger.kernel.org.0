@@ -2,236 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7910C187456
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 21:58:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CD3D18745A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 21:59:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732636AbgCPU61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 16:58:27 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:49320 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732601AbgCPU6Y (ORCPT
+        id S1732611AbgCPU7Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 16:59:24 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36862 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732571AbgCPU7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 16:58:24 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02GKqxgr126209;
-        Mon, 16 Mar 2020 20:58:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2020-01-29;
- bh=NtRhG2aMedRsirVNJ3WGkvDdMSsjRU1kN0E8Hrk6XSM=;
- b=Cusif3Lh3InmjFd/Ias/jitOWJzqQXxCljoCQziA6JmZ37+tRJ/5jeKa38JPDpKGdVuR
- FuQpFarsOpSspXymvMtrfRfeVgVZQc/h/L3B7l9VPKWEUki1QkwoM8WrfkW38vP0VKYw
- 3hP9ipo4rr/Ix4HLAkZrdDUmpnKXPFc7U0wrfzU/u4RON5WRALYHDna3tpcVimDeuWQm
- Sx2X5y8CpXMPDrOPE+K/qS0BnW3CTw4rMQzX0sC35eGMyvldFuuaIwfhwABxM845fbre
- MSjUBwCjca5yWYUr7Elw4cgbbBiURarXJ7y2D76BnNQQcug1gNz0pP9+ZwkZF/D7Y45/ RQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2yrppr1bfx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 16 Mar 2020 20:58:11 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02GKqkKa005273;
-        Mon, 16 Mar 2020 20:58:11 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2ys8tqe3n4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 16 Mar 2020 20:58:10 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02GKw9j0031299;
-        Mon, 16 Mar 2020 20:58:09 GMT
-Received: from monkey.oracle.com (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 16 Mar 2020 13:58:09 -0700
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     Michal Hocko <mhocko@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH v2 2/2] hugetlbfs: Use i_mmap_rwsem to address page fault/truncate race
-Date:   Mon, 16 Mar 2020 13:57:56 -0700
-Message-Id: <20200316205756.146666-3-mike.kravetz@oracle.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200316205756.146666-1-mike.kravetz@oracle.com>
-References: <20200316205756.146666-1-mike.kravetz@oracle.com>
+        Mon, 16 Mar 2020 16:59:23 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g2so6050466plo.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 13:59:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DqGyMQCkH44ncWYB9fVh87Q38XfHyDtqZOeFKJMjzzk=;
+        b=O8RO/kM9S9Y/fmLtN9APDn4tOgwGV0gGBD7wxYbP4vh9xLGEyKdF5FnixinkbH7T0o
+         jSb1i/vzTsRzyDaMrYxFaUbfBNjcwQIPoLoMbIpvwrw8tqUKk7lnHj9/N+2W/D4NV//H
+         4yMQCNmz2M3PJ0pOkzsx68WUk1n6cwJ9iTzXapMyDOn7B3IOQ8RXotac3WdIwl6bRY+m
+         rAAuclUHZSjSY9YSmQ7s5vVcEQPlYdsphKH9ya3zbatTA22jyJfggAq4ENNGw0oRL5ps
+         cZwM5lHXn2lJZ89dtiyDX8iQUvkifHZtPYpW5apBtX0K14mDHzmIaOccRq5fDmnbq6JZ
+         w63w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DqGyMQCkH44ncWYB9fVh87Q38XfHyDtqZOeFKJMjzzk=;
+        b=YZSCiVTLEul+0lS4SIiz7krBfCWUWzfre2uHNFysapF2eTpfokNMnxvFvtSuSuaNf5
+         2Xkymq6KRpa/fwQcJ3kJa/IFXhnGCC+QAU3TrR11ssZgdMY4VbQgPua5X026BsGZyEFD
+         ExmZ9UiHTISKSO75kkaNGnJQv7wMmz7uZmCy9AfqgbNG0cVyXJYSz8uk3MXzspUGwoNY
+         o9Jdr3caYBu6KI6/P82VybS4scA6kJFWkYTrlL3KC0TvqNwcMoaUq/jjOi2Nwwz4MRC6
+         rCics6y9tYhAeFexS/ecCwVluamG2j/NmKYref63ysZ8DUiWxPwsl26OsGpUyygX70z6
+         O9RQ==
+X-Gm-Message-State: ANhLgQ19MAhs66IhOymaBvMykcUQHKS0eMBwanyBvXHMmVTS1zEXzUlv
+        5xhS+hybz1T1m6mK1070D/tDkRrlxpIvXyftzaGjolGR
+X-Google-Smtp-Source: ADFU+vtOhtdLPnf3QskjqwAJnfSjdwvgunRrzxYqApkMwBOXbFeTIIQoGpYLvXt2hH/0JyDgDr+9WJiX8dFOplL7YiI=
+X-Received: by 2002:a17:902:8a88:: with SMTP id p8mr974318plo.179.1584392362078;
+ Mon, 16 Mar 2020 13:59:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9562 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 mlxscore=0
- malwarescore=0 suspectscore=0 mlxlogscore=999 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003160087
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9562 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0
- suspectscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 clxscore=1015
- impostorscore=0 priorityscore=1501 spamscore=0 mlxlogscore=999 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003160087
+References: <20200316204855.15611-1-natechancellor@gmail.com>
+In-Reply-To: <20200316204855.15611-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 16 Mar 2020 13:59:09 -0700
+Message-ID: <CAKwvOd=wUtvRK8LEz6Xm5qnvfRy8G5XTWbXHTdgPwWhh39N9MA@mail.gmail.com>
+Subject: Re: [PATCH] soc: qcom: pdr: Avoid uninitialized use of found in pdr_indication_cb
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hugetlbfs page faults can race with truncate and hole punch operations.
-Current code in the page fault path attempts to handle this by 'backing
-out' operations if we encounter the race.  One obvious omission in the
-current code is removing a page newly added to the page cache.  This is
-pretty straight forward to address, but there is a more subtle and
-difficult issue of backing out hugetlb reservations.  To handle this
-correctly, the 'reservation state' before page allocation needs to be
-noted so that it can be properly backed out.  There are four distinct
-possibilities for reservation state: shared/reserved, shared/no-resv,
-private/reserved and private/no-resv.  Backing out a reservation may
-require memory allocation which could fail so that needs to be taken
-into account as well.
+On Mon, Mar 16, 2020 at 1:49 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> Clang warns:
+>
+> ../drivers/soc/qcom/pdr_interface.c:316:2: warning: variable 'found' is
+> used uninitialized whenever 'for' loop exits because its condition is
+> false [-Wsometimes-uninitialized]
+>         list_for_each_entry(pds, &pdr->lookups, node) {
+>         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ../include/linux/list.h:624:7: note: expanded from macro
+> 'list_for_each_entry'
+>              &pos->member != (head);
+>              ^~~~~~~~~~~~~~~~~~~~~~
+> ../drivers/soc/qcom/pdr_interface.c:325:7: note: uninitialized use
+> occurs here
+>         if (!found)
+>              ^~~~~
+> ../drivers/soc/qcom/pdr_interface.c:316:2: note: remove the condition if
+> it is always true
+>         list_for_each_entry(pds, &pdr->lookups, node) {
+>         ^
+> ../include/linux/list.h:624:7: note: expanded from macro
+> 'list_for_each_entry'
+>              &pos->member != (head);
+>              ^
+> ../drivers/soc/qcom/pdr_interface.c:309:12: note: initialize the
+> variable 'found' to silence this warning
+>         bool found;
+>                   ^
+>                    = 0
+> 1 warning generated.
+>
+> Initialize found to false to fix this warning.
+>
+> Fixes: fbe639b44a82 ("soc: qcom: Introduce Protection Domain Restart helpers")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/933
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
-Instead of writing the required complicated code for this rare
-occurrence, just eliminate the race.  i_mmap_rwsem is now held in read
-mode for the duration of page fault processing.  Hold i_mmap_rwsem in
-write mode when modifying i_size.  In this way, truncation can not
-proceed when page faults are being processed.  In addition, i_size
-will not change during fault processing so a single check can be made
-to ensure faults are not beyond (proposed) end of file.  Faults can
-still race with hole punch, but that race is handled by existing code
-and the use of hugetlb_fault_mutex.
+Yep, thanks for the patch!
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-With this modification, checks for races with truncation in the page
-fault path can be simplified and removed.  remove_inode_hugepages no
-longer needs to take hugetlb_fault_mutex in the case of truncation.
-Comments are expanded to explain reasoning behind locking.
+> ---
+>  drivers/soc/qcom/pdr_interface.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/soc/qcom/pdr_interface.c b/drivers/soc/qcom/pdr_interface.c
+> index 7ee088b9cc7c..17ad3b8698e1 100644
+> --- a/drivers/soc/qcom/pdr_interface.c
+> +++ b/drivers/soc/qcom/pdr_interface.c
+> @@ -306,7 +306,7 @@ static void pdr_indication_cb(struct qmi_handle *qmi,
+>         const struct servreg_state_updated_ind *ind_msg = data;
+>         struct pdr_list_node *ind;
+>         struct pdr_service *pds;
+> -       bool found;
+> +       bool found = false;
+>
+>         if (!ind_msg || !ind_msg->service_path[0] ||
+>             strlen(ind_msg->service_path) > SERVREG_NAME_LENGTH)
+> --
+> 2.26.0.rc1
+>
+> --
+> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20200316204855.15611-1-natechancellor%40gmail.com.
 
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
----
-v2 - Fixed compiler warnings in remove_inode_hugepages
 
- fs/hugetlbfs/inode.c | 28 ++++++++++++++++++++--------
- mm/hugetlb.c         | 23 +++++++++++------------
- 2 files changed, 31 insertions(+), 20 deletions(-)
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index ce9d354ea5c2..991c60c7ffe0 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -393,10 +393,9 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end)
-  *	In this case, we first scan the range and release found pages.
-  *	After releasing pages, hugetlb_unreserve_pages cleans up region/reserv
-  *	maps and global counts.  Page faults can not race with truncation
-- *	in this routine.  hugetlb_no_page() prevents page faults in the
-- *	truncated range.  It checks i_size before allocation, and again after
-- *	with the page table lock for the page held.  The same lock must be
-- *	acquired to unmap a page.
-+ *	in this routine.  hugetlb_no_page() holds i_mmap_rwsem and prevents
-+ *	page faults in the truncated range by checking i_size.  i_size is
-+ *	modified while holding i_mmap_rwsem.
-  * hole punch is indicated if end is not LLONG_MAX
-  *	In the hole punch case we scan the range and release found pages.
-  *	Only when releasing a page is the associated region/reserv map
-@@ -436,7 +435,15 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
- 
- 			index = page->index;
- 			hash = hugetlb_fault_mutex_hash(mapping, index);
--			mutex_lock(&hugetlb_fault_mutex_table[hash]);
-+			if (!truncate_op) {
-+				/*
-+				 * Only need to hold the fault mutex in the
-+				 * hole punch case.  This prevents races with
-+				 * page faults.  Races are not possible in the
-+				 * case of truncation.
-+				 */
-+				mutex_lock(&hugetlb_fault_mutex_table[hash]);
-+			}
- 
- 			/*
- 			 * If page is mapped, it was faulted in after being
-@@ -479,7 +486,8 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
- 			}
- 
- 			unlock_page(page);
--			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
-+			if (!truncate_op)
-+				mutex_unlock(&hugetlb_fault_mutex_table[hash]);
- 		}
- 		huge_pagevec_release(&pvec);
- 		cond_resched();
-@@ -517,8 +525,8 @@ static int hugetlb_vmtruncate(struct inode *inode, loff_t offset)
- 	BUG_ON(offset & ~huge_page_mask(h));
- 	pgoff = offset >> PAGE_SHIFT;
- 
--	i_size_write(inode, offset);
- 	i_mmap_lock_write(mapping);
-+	i_size_write(inode, offset);
- 	if (!RB_EMPTY_ROOT(&mapping->i_mmap.rb_root))
- 		hugetlb_vmdelete_list(&mapping->i_mmap, pgoff, 0);
- 	i_mmap_unlock_write(mapping);
-@@ -640,7 +648,11 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
- 		/* addr is the offset within the file (zero based) */
- 		addr = index * hpage_size;
- 
--		/* mutex taken here, fault path and hole punch */
-+		/*
-+		 * fault mutex taken here, protects against fault path
-+		 * and hole punch.  inode_lock previously taken protects
-+		 * against truncation.
-+		 */
- 		hash = hugetlb_fault_mutex_hash(mapping, index);
- 		mutex_lock(&hugetlb_fault_mutex_table[hash]);
- 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 1709fbfd6b4e..d43e20652616 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4203,16 +4203,17 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
- 	}
- 
- 	/*
--	 * Use page lock to guard against racing truncation
--	 * before we get page_table_lock.
-+	 * We can not race with truncation due to holding i_mmap_rwsem.
-+	 * i_size is modified when holding i_mmap_rwsem, so check here
-+	 * once for faults beyond end of file.
- 	 */
-+	size = i_size_read(mapping->host) >> huge_page_shift(h);
-+	if (idx >= size)
-+		goto out;
-+
- retry:
- 	page = find_lock_page(mapping, idx);
- 	if (!page) {
--		size = i_size_read(mapping->host) >> huge_page_shift(h);
--		if (idx >= size)
--			goto out;
--
- 		/*
- 		 * Check for page in userfault range
- 		 */
-@@ -4318,10 +4319,6 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
- 	}
- 
- 	ptl = huge_pte_lock(h, mm, ptep);
--	size = i_size_read(mapping->host) >> huge_page_shift(h);
--	if (idx >= size)
--		goto backout;
--
- 	ret = 0;
- 	if (!huge_pte_none(huge_ptep_get(ptep)))
- 		goto backout;
-@@ -4425,8 +4422,10 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 
- 	/*
- 	 * Acquire i_mmap_rwsem before calling huge_pte_alloc and hold
--	 * until finished with ptep.  This prevents huge_pmd_unshare from
--	 * being called elsewhere and making the ptep no longer valid.
-+	 * until finished with ptep.  This serves two purposes:
-+	 * 1) It prevents huge_pmd_unshare from being called elsewhere
-+	 *    and making the ptep no longer valid.
-+	 * 2) It synchronizes us with i_size modifications during truncation.
- 	 *
- 	 * ptep could have already be assigned via huge_pte_offset.  That
- 	 * is OK, as huge_pte_alloc will return the same value unless
 -- 
-2.24.1
-
+Thanks,
+~Nick Desaulniers
