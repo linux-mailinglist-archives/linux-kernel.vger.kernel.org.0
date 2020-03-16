@@ -2,75 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C80FC1874BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 22:32:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 487DF1874BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 22:32:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732702AbgCPVcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 17:32:07 -0400
-Received: from mga01.intel.com ([192.55.52.88]:42901 "EHLO mga01.intel.com"
+        id S1732717AbgCPVcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 17:32:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732567AbgCPVcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 17:32:07 -0400
-IronPort-SDR: BI6mbEcmNQGlbKFaWDHke0cGXJezZn25IKnf/yVzi6MSa20aZ2vlzAt+NzFw87NBPkD9MdlbDA
- sxc4rVL8pIPw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 14:32:07 -0700
-IronPort-SDR: wNJfGrDR8FMZpt0WsJCTaiAL5mYOWrUGAELduYzhXGYJ/9Zklk75fV4srJXrHTT2IqiHHjLy+a
- ODW+nGj0dC7g==
-X-IronPort-AV: E=Sophos;i="5.70,561,1574150400"; 
-   d="scan'208";a="236143000"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 14:32:07 -0700
-From:   ira.weiny@intel.com
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Ira Weiny <ira.weiny@intel.com>, Christoph Hellwig <hch@lst.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [RESEND] memremap: Remove stale comments
-Date:   Mon, 16 Mar 2020 14:32:05 -0700
-Message-Id: <20200316213205.145333-1-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.23.0
+        id S1732672AbgCPVcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 17:32:23 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E820020679;
+        Mon, 16 Mar 2020 21:32:20 +0000 (UTC)
+Date:   Mon, 16 Mar 2020 17:32:19 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>, rcu <rcu@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "kernel-team@fb.com," <kernel-team@fb.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        dipankar <dipankar@in.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH RFC tip/core/rcu 09/16] rcu-tasks: Add an RCU-tasks rude
+ variant
+Message-ID: <20200316173219.1f8b7443@gandalf.local.home>
+In-Reply-To: <20200316203241.GB3199@paulmck-ThinkPad-P72>
+References: <20200312181618.GA21271@paulmck-ThinkPad-P72>
+        <20200312181702.8443-9-paulmck@kernel.org>
+        <20200316194754.GA172196@google.com>
+        <CAEXW_YREzQ8hMP_vGiQFiNAtwxPn_C0TG6mH68QaS8cES-Jr3Q@mail.gmail.com>
+        <20200316203241.GB3199@paulmck-ThinkPad-P72>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+On Mon, 16 Mar 2020 13:32:41 -0700
+"Paul E. McKenney" <paulmck@kernel.org> wrote:
 
-Fixes: 80a72d0af05a ("memremap: remove the data field in struct dev_pagemap")
-Fixes: fdc029b19dfd ("memremap: remove the dev field in struct dev_pagemap")
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > Just curious, why is the "rude" version better than SRCU? Seems the
+> > schedule_on_each_cpu() would be much slower than SRCU especially if
+> > there are 1000s of CPUs involved. Is there any reason that is a better
+> > alternative?  
+> 
+> The rude version has much faster readers, and the story I hear is that
+> there are not expected to be all that many concurrent updaters.
+> 
+> But to get more detail, why not ask Steven why he chose not to use SRCU?
+> (I know the story for the BPF guys, and it is because of SRCU's read-side
+> overhead.)
 
----
-Resending to Andrew as Jason wanted him to take this:
+Same for the function side (if not even more so). This would require adding
+a srcu_read_lock() to all functions that can be traced! That would be a huge
+kill in performance. Probably to the point no one would bother even using
+function tracer.
 
-https://lore.kernel.org/lkml/20200316182121.GL20941@ziepe.ca/
-
-Thanks,
-Ira
-
- include/linux/memremap.h | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-index 6fefb09af7c3..edfd1ec6c165 100644
---- a/include/linux/memremap.h
-+++ b/include/linux/memremap.h
-@@ -98,8 +98,6 @@ struct dev_pagemap_ops {
-  * @ref: reference count that pins the devm_memremap_pages() mapping
-  * @internal_ref: internal reference if @ref is not provided by the caller
-  * @done: completion for @internal_ref
-- * @dev: host device of the mapping for debug
-- * @data: private data pointer for page_free()
-  * @type: memory type: see MEMORY_* in memory_hotplug.h
-  * @flags: PGMAP_* flags to specify defailed behavior
-  * @ops: method table
--- 
-2.23.0
-
+-- Steve
