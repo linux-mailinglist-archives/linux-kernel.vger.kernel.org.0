@@ -2,131 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1E2F186505
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 07:32:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 085D5186558
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 08:00:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729662AbgCPGc4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 02:32:56 -0400
-Received: from scp8.hosting.reg.ru ([31.31.196.44]:54968 "EHLO
-        scp8.hosting.reg.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729593AbgCPGc4 (ORCPT
+        id S1729916AbgCPHAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 03:00:10 -0400
+Received: from labrats.qualcomm.com ([199.106.110.90]:14037 "EHLO
+        labrats.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729722AbgCPHAK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 02:32:56 -0400
-X-Greylist: delayed 2456 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Mar 2020 02:32:54 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=marinkevich.ru; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ICtt14DdKbzX+OLuDobayzCZUyiOY0nTOBAzHCBfqGE=; b=cCn4gbh0tjfZhaAf2FLyfea68j
-        gl+Es6KUTaf5V8E5Fl7F9B8MTUcDsPUPpMOOlHnqm/enLQzYaVC5VvClwbtMPp7LveOEJw4e01gjE
-        vfA8m6R7bEw+osghsGWL386vbR3Un5frZtYzIbjk3144DNFPIEFIKVqwPyKfJCbuYld3GOVe0usWJ
-        TbWjAN3BWHl7ZLdybrGMTyDqQGfjKVyerzI3oFpmO13zwXJ34UAa8zZ55Rz33Xo0CxWDJYiiC2TrW
-        YvR4LI2frniFi99val7SVRMV6MMs2w/UaYr5bBhJo5m26AuSV7dsOKdTk5umPxOfWkraqljQQbYlV
-        jiOnX7EA==;
-Received: from mail.eltex.org ([92.125.152.58]:46582 helo=GRayJob)
-        by scp8.hosting.reg.ru with esmtpa (Exim 4.92)
-        (envelope-from <s@marinkevich.ru>)
-        id 1jDifM-0002YW-H1; Mon, 16 Mar 2020 08:51:56 +0300
-Date:   Mon, 16 Mar 2020 12:51:56 +0700
-From:   Sergey Marinkevich <s@marinkevich.ru>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] netfilter: nft_masq: add range specified flag setting
-Message-ID: <20200316055156.GA3822@GRayJob>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - scp8.hosting.reg.ru
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - marinkevich.ru
-X-Get-Message-Sender-Via: scp8.hosting.reg.ru: authenticated_id: s@marinkevich.ru
-X-Authenticated-Sender: scp8.hosting.reg.ru: s@marinkevich.ru
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Mon, 16 Mar 2020 03:00:10 -0400
+IronPort-SDR: V9+lcIGj8fAWHhmms8a2GKflCIdZk6RdrPSbVpQer0CkLu+pZfAAiwBaJEBgdKQBNIWI3RHqJf
+ zvLWS3H5+pE9cACVYLU5Kh2v+HeddUaUZ4qGnjNZl0jq33I4A7j1Dgsl6kse3LFTsjoz6QqkhX
+ QWW3vbpdAWmFf7KMH+nQ25NMy+nS1/x6AIIh6NDmTbAVTkmjBhbjbNn7ZuQhMjSPIROwLkRD33
+ 5EVxHTtTvmoT1q0Wewa8aoMw+odxmpBLQAU5KdOOwheXNKV8m3YBunhP+CH6syitsc4Qrt9xWt
+ bck=
+X-IronPort-AV: E=Sophos;i="5.70,559,1574150400"; 
+   d="scan'208";a="28594804"
+Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
+  by labrats.qualcomm.com with ESMTP; 15 Mar 2020 23:21:04 -0700
+Received: from pacamara-linux.qualcomm.com ([192.168.140.135])
+  by ironmsg04-sd.qualcomm.com with ESMTP; 15 Mar 2020 23:21:03 -0700
+Received: by pacamara-linux.qualcomm.com (Postfix, from userid 359480)
+        id 1F1AD3A61; Sun, 15 Mar 2020 23:21:03 -0700 (PDT)
+From:   Can Guo <cang@codeaurora.org>
+To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        hongwus@codeaurora.org, rnayak@codeaurora.org,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
+Cc:     Subhash Jadavani <subhashj@codeaurora.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/2] scsi: ufs: Clean up ufshcd_scale_clks() and clock scaling error out path
+Date:   Sun, 15 Mar 2020 23:20:51 -0700
+Message-Id: <1584339655-20337-2-git-send-email-cang@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1584339655-20337-1-git-send-email-cang@codeaurora.org>
+References: <1584339655-20337-1-git-send-email-cang@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With nf_tables it is not possible to use port range for masquerading.
-Masquerade statement has option "to [:port-port]" which give no effect
-to translation behavior. But it must change source port of packet to
-one from ":port-port" range.
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-My network:
+This change introduces a func ufshcd_set_clk_freq() to explicitly
+set clock frequency so that it can be used in reset_and_resotre path and
+in ufshcd_scale_clks(). Meanwhile, this change cleans up the clock scaling
+error out path.
 
-	+-----------------------------+
-	|   ROUTER                    |
-	|                             |
-	|                   Masquerade|
-	| 10.0.0.1            1.1.1.1 |
-	| +------+           +------+ |
-	| | eth1 |           | eth2 | |
-	+-+--^---+-----------+---^--+-+
-	     |                   |
-	     |                   |
-	+----v------+     +------v----+
-	|           |     |           |
-	| 10.0.0.2  |     |  1.1.1.2  |
-	|           |     |           |
-	|PC1        |     |PC2        |
-	+-----------+     +-----------+
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
 
-For testing i used rule like this:
-
-	rule ip nat POSTROUTING oifname eth2 masquerade to :666
-
-Run netcat for 1.1.1.2 667(UDP) and get dump from PC2:
-
-	15:22:25.591567 a8:f9:4b:aa:08:44 > a8:f9:4b:ac:e7:8f, ethertype IPv4 (0x0800), length 60: 1.1.1.1.34466 > 1.1.1.2.667: UDP, length 1
-
-Address translation works fine, but source port are not belongs to
-specified range.
-
-I see in similar source code (i.e. nft_redir.c, nft_nat.c) that
-there is setting NF_NAT_RANGE_PROTO_SPECIFIED flag. After adding this,
-repeat test for kernel with this patch, and get dump:
-
-	16:16:22.324710 a8:f9:4b:aa:08:44 > a8:f9:4b:ac:e7:8f, ethertype IPv4 (0x0800), length 60: 1.1.1.1.666 > 1.1.1.2.667: UDP, length 1
-
-Now it is works fine.
-
-Signed-off-by: Sergey Marinkevich <s@marinkevich.ru>
----
- net/netfilter/nft_masq.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/net/netfilter/nft_masq.c b/net/netfilter/nft_masq.c
-index bc9fd98c5d6d..448376e59074 100644
---- a/net/netfilter/nft_masq.c
-+++ b/net/netfilter/nft_masq.c
-@@ -113,6 +113,7 @@ static void nft_masq_ipv4_eval(const struct nft_expr *expr,
- 			&regs->data[priv->sreg_proto_min]);
- 		range.max_proto.all = (__force __be16)nft_reg_load16(
- 			&regs->data[priv->sreg_proto_max]);
-+		range.flags |= NF_NAT_RANGE_PROTO_SPECIFIED;
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 2a2a63b..63aaa88f 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -855,28 +855,29 @@ static bool ufshcd_is_unipro_pa_params_tuning_req(struct ufs_hba *hba)
+ 		return false;
+ }
+ 
+-static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
++/**
++ * ufshcd_set_clk_freq - set UFS controller clock frequencies
++ * @hba: per adapter instance
++ * @scale_up: If True, set max possible frequency othewise set low frequency
++ *
++ * Returns 0 if successful
++ * Returns < 0 for any other errors
++ */
++static int ufshcd_set_clk_freq(struct ufs_hba *hba, bool scale_up)
+ {
+ 	int ret = 0;
+ 	struct ufs_clk_info *clki;
+ 	struct list_head *head = &hba->clk_list_head;
+-	ktime_t start = ktime_get();
+-	bool clk_state_changed = false;
+ 
+ 	if (list_empty(head))
+ 		goto out;
+ 
+-	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, PRE_CHANGE);
+-	if (ret)
+-		return ret;
+-
+ 	list_for_each_entry(clki, head, list) {
+ 		if (!IS_ERR_OR_NULL(clki->clk)) {
+ 			if (scale_up && clki->max_freq) {
+ 				if (clki->curr_freq == clki->max_freq)
+ 					continue;
+ 
+-				clk_state_changed = true;
+ 				ret = clk_set_rate(clki->clk, clki->max_freq);
+ 				if (ret) {
+ 					dev_err(hba->dev, "%s: %s clk set rate(%dHz) failed, %d\n",
+@@ -895,7 +896,6 @@ static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
+ 				if (clki->curr_freq == clki->min_freq)
+ 					continue;
+ 
+-				clk_state_changed = true;
+ 				ret = clk_set_rate(clki->clk, clki->min_freq);
+ 				if (ret) {
+ 					dev_err(hba->dev, "%s: %s clk set rate(%dHz) failed, %d\n",
+@@ -914,13 +914,36 @@ static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
+ 				clki->name, clk_get_rate(clki->clk));
  	}
- 	regs->verdict.code = nf_nat_masquerade_ipv4(pkt->skb, nft_hook(pkt),
- 						    &range, nft_out(pkt));
-@@ -159,6 +160,7 @@ static void nft_masq_ipv6_eval(const struct nft_expr *expr,
- 			&regs->data[priv->sreg_proto_min]);
- 		range.max_proto.all = (__force __be16)nft_reg_load16(
- 			&regs->data[priv->sreg_proto_max]);
-+		range.flags |= NF_NAT_RANGE_PROTO_SPECIFIED;
+ 
++out:
++	return ret;
++}
++
++/**
++ * ufshcd_scale_clks - scale up or scale down UFS controller clocks
++ * @hba: per adapter instance
++ * @scale_up: True if scaling up and false if scaling down
++ *
++ * Returns 0 if successful
++ * Returns < 0 for any other errors
++ */
++static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
++{
++	int ret = 0;
++
++	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, PRE_CHANGE);
++	if (ret)
++		return ret;
++
++	ret = ufshcd_set_clk_freq(hba, scale_up);
++	if (ret)
++		return ret;
++
+ 	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, POST_CHANGE);
++	if (ret) {
++		ufshcd_set_clk_freq(hba, !scale_up);
++		return ret;
++	}
+ 
+-out:
+-	if (clk_state_changed)
+-		trace_ufshcd_profile_clk_scaling(dev_name(hba->dev),
+-			(scale_up ? "up" : "down"),
+-			ktime_to_us(ktime_sub(ktime_get(), start)), ret);
+ 	return ret;
+ }
+ 
+@@ -1106,35 +1129,36 @@ static int ufshcd_devfreq_scale(struct ufs_hba *hba, bool scale_up)
+ 
+ 	ret = ufshcd_clock_scaling_prepare(hba);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	/* scale down the gear before scaling down clocks */
+ 	if (!scale_up) {
+ 		ret = ufshcd_scale_gear(hba, false);
+ 		if (ret)
+-			goto out;
++			goto clk_scaling_unprepare;
  	}
- 	regs->verdict.code = nf_nat_masquerade_ipv6(pkt->skb, &range,
- 						    nft_out(pkt));
+ 
+ 	ret = ufshcd_scale_clks(hba, scale_up);
+-	if (ret) {
+-		if (!scale_up)
+-			ufshcd_scale_gear(hba, true);
+-		goto out;
+-	}
++	if (ret)
++		goto scale_up_gear;
+ 
+ 	/* scale up the gear after scaling up clocks */
+ 	if (scale_up) {
+ 		ret = ufshcd_scale_gear(hba, true);
+ 		if (ret) {
+ 			ufshcd_scale_clks(hba, false);
+-			goto out;
++			goto clk_scaling_unprepare;
+ 		}
+ 	}
+ 
+-	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, POST_CHANGE);
++	goto clk_scaling_unprepare;
+ 
+-out:
++scale_up_gear:
++	if (!scale_up)
++		ufshcd_scale_gear(hba, true);
++clk_scaling_unprepare:
+ 	ufshcd_clock_scaling_unprepare(hba);
++out:
+ 	ufshcd_release(hba);
+ 	return ret;
+ }
+@@ -6251,7 +6275,7 @@ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
+ 	spin_unlock_irqrestore(hba->host->host_lock, flags);
+ 
+ 	/* scale up clocks to max frequency before full reinitialization */
+-	ufshcd_scale_clks(hba, true);
++	ufshcd_set_clk_freq(hba, true);
+ 
+ 	err = ufshcd_hba_enable(hba);
+ 	if (err)
 -- 
-2.21.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
