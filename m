@@ -2,81 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20BC0187500
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 22:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2D1218750C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 22:46:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732767AbgCPVow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 17:44:52 -0400
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:39348 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732652AbgCPVow (ORCPT
+        id S1732806AbgCPVpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 17:45:53 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:46358 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732691AbgCPVpx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 17:44:52 -0400
-Received: by mail-pj1-f68.google.com with SMTP id d8so9373007pje.4
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 14:44:51 -0700 (PDT)
+        Mon, 16 Mar 2020 17:45:53 -0400
+Received: by mail-il1-f196.google.com with SMTP id e8so18080601ilc.13
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 14:45:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=D3D+qRAc+7oS8J6Sb2B1Mz4hpBLBqFH8O13t3FcfVa4=;
-        b=n7TUMxfS05q1sAGxhXfS9KBXthw4r/gV1wXyY3/HpwXnOs+Yf4tGf5oszH9qukZVML
-         Woma4yNpxC5KWOU6oTIBDHv/5/ZOV5plbE8NVxCxOmEAK+nVWI0W/MmSWVPVSwDdtLha
-         skblwS0q9kA8z6T7FDwQcwTZJI1UofMPLd8rpqDlQPEwCp5TdX+CJh3xxCQGkTKFDLX6
-         lxXaJPjSxD8mLnFCjTOTifmCJ5qyABOPd/kHcOZDE077fAGrmFbdZD5eUu/aC8F8FGMq
-         cLG3FOnrfaRSlMtmlqvG0zr4Wtew6oQhNzY8Xm3csG5EPY3Fn56nbQAhcKNGnt+WVg7g
-         inrA==
+        d=joelfernandes.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=25oGfnAMapreWVrdW3M5TiwQKc3mxX8/6TlU8vJbmXY=;
+        b=L/6FcIuAdA5FvZRHhSn5Hmz/voiJetply/Li6W/jrmoJ6MmOIl/qHIksuqlw09vo1o
+         4Ca3KeXkbU5Cewvrdxfl7lm8jcJCoTDx/F/1L1XS1Vs8WpDU6UBQlGkcJdSF38/VMNSI
+         /sKXgpeHPbSeDfS3FyGo+OGtmYMoL2VPrh3XE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=D3D+qRAc+7oS8J6Sb2B1Mz4hpBLBqFH8O13t3FcfVa4=;
-        b=RCZsvzRWgLhMVAbnWeYVsv+eEhMRxwXQ1SEHI3jtemNVsbI6i8rt9PTvPwBR0oT6v/
-         SwmcLh98k/fu+z690kzEJxywGxQzBKa3NxW/vW3TFvGvpf8ZwhEE7feLR63O1IBeJx/h
-         1OEQckKsn5FLRIxoaurljv0O8ndpg7RYPM69Lxc4c0pFIJlOqLAQ61zRJwZMEoQwPrMY
-         oCQ3Dr8TIUa6iJqkgT1VVDg5J4I6T+ly7XzBuDFE5szpsXKLNo2YMe9J0esNZW6D3WrZ
-         izyS54jcQ0UjaqqtRT9L4zlBKeEdqY3KSzmuWsohbBTfmibvxJ/G1v5jOiWX4caGRse7
-         s7JA==
-X-Gm-Message-State: ANhLgQ1MwWy46aHGNFL/E5NevJE7SwhhPo8T/GvPCUcBkDa/ReChNSzD
-        W+snIboXAztoSEMrIgW2EDIQvOtO
-X-Google-Smtp-Source: ADFU+vs60R8/j/ZW6FCkLMviIra7UhFL+U4BLcl8OYqLfjSUIx79EqZSX89WiGJDT2CyWWVnFVsKfg==
-X-Received: by 2002:a17:902:b118:: with SMTP id q24mr1265410plr.0.1584395091130;
-        Mon, 16 Mar 2020 14:44:51 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id j1sm812274pfg.64.2020.03.16.14.44.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Mar 2020 14:44:51 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 14:45:06 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     robin.murphy@arm.com, m.szyprowski@samsung.com,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: Re: [RFC][PATCH] dma-mapping: align default segment_boundary_mask
- with dma_mask
-Message-ID: <20200316214506.GC18970@Asurada-Nvidia.nvidia.com>
-References: <20200314000007.13778-1-nicoleotsuka@gmail.com>
- <20200316124850.GB17386@lst.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=25oGfnAMapreWVrdW3M5TiwQKc3mxX8/6TlU8vJbmXY=;
+        b=jfud/Ry74GPOIlepBAIUKv9vWImPgVxgU5G2SaPRDnIetaGTTCrcE2SFTlus+8CkFX
+         Q9aS3vOYMCTlYJtw7HxrzWtTybP17W1LRGH1Idygdk2CRdIMxEwoqtQL4uzdWt/Z7UXz
+         I05j2rFnd0YErueX/TKzmnUs253hWq31UFJYOXguRkFuEUaDAXIIZvP0YNKEaCucDnxc
+         4DbT8JiFvKBFmwzNaW20qoBfpGGFlfZLAWRsXyUTX/D2oBKOSExLNwzeS4HrbDdGByB4
+         QDezbq/W1ng0AT+698SIoXxXOR6AyPwY1ClAlPAHe4lLE6MFfJ3zHW3uyUJjl2ptet3G
+         tJ7Q==
+X-Gm-Message-State: ANhLgQ0cSMWI39yQbcAD3JBkyUYXQEKDoCp7B4rBAfTmxHqhusgxKSeT
+        XAVp417kJIkr8T7eJAtRJ7nYh/TgD7pYz/ZCqJY3pw==
+X-Google-Smtp-Source: ADFU+vvUmmAwXlq13f181KZrcmyIEcAbNlQA2abcn+CqTyyjy3PKFII5C9B/RBr+2C2iYegyQFmxTWP9r7FqOY+XAVc=
+X-Received: by 2002:a92:8901:: with SMTP id n1mr2043465ild.176.1584395152003;
+ Mon, 16 Mar 2020 14:45:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200316124850.GB17386@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200312181618.GA21271@paulmck-ThinkPad-P72> <20200312181702.8443-9-paulmck@kernel.org>
+ <20200316194754.GA172196@google.com> <CAEXW_YREzQ8hMP_vGiQFiNAtwxPn_C0TG6mH68QaS8cES-Jr3Q@mail.gmail.com>
+ <20200316203241.GB3199@paulmck-ThinkPad-P72> <20200316173219.1f8b7443@gandalf.local.home>
+In-Reply-To: <20200316173219.1f8b7443@gandalf.local.home>
+From:   Joel Fernandes <joel@joelfernandes.org>
+Date:   Mon, 16 Mar 2020 17:45:40 -0400
+Message-ID: <CAEXW_YRtGhiaz+86pTL2WTyx5tqrpjB-bgQbnMLXjSQXPCmYfw@mail.gmail.com>
+Subject: Re: [PATCH RFC tip/core/rcu 09/16] rcu-tasks: Add an RCU-tasks rude variant
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>, rcu <rcu@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "kernel-team@fb.com," <kernel-team@fb.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        dipankar <dipankar@in.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+On Mon, Mar 16, 2020 at 5:32 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Mon, 16 Mar 2020 13:32:41 -0700
+> "Paul E. McKenney" <paulmck@kernel.org> wrote:
+>
+> > > Just curious, why is the "rude" version better than SRCU? Seems the
+> > > schedule_on_each_cpu() would be much slower than SRCU especially if
+> > > there are 1000s of CPUs involved. Is there any reason that is a better
+> > > alternative?
+> >
+> > The rude version has much faster readers, and the story I hear is that
+> > there are not expected to be all that many concurrent updaters.
+> >
+> > But to get more detail, why not ask Steven why he chose not to use SRCU?
+> > (I know the story for the BPF guys, and it is because of SRCU's read-side
+> > overhead.)
+>
+> Same for the function side (if not even more so). This would require adding
+> a srcu_read_lock() to all functions that can be traced! That would be a huge
+> kill in performance. Probably to the point no one would bother even using
+> function tracer.
 
-On Mon, Mar 16, 2020 at 01:48:50PM +0100, Christoph Hellwig wrote:
-> On Fri, Mar 13, 2020 at 05:00:07PM -0700, Nicolin Chen wrote:
-> > @@ -736,7 +736,7 @@ static inline unsigned long dma_get_seg_boundary(struct device *dev)
-> >  {
-> >  	if (dev->dma_parms && dev->dma_parms->segment_boundary_mask)
-> >  		return dev->dma_parms->segment_boundary_mask;
-> > -	return DMA_BIT_MASK(32);
-> > +	return (unsigned long)dma_get_mask(dev);
-> 
-> Just thinking out loud after my reply - shouldn't we just return ULONG_MAX
-> by default here to mark this as no limit?
+Point well taken! Thanks,
 
-Yea, ULONG_MAX (saying no limit) sounds good to me.
+  -Joel
