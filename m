@@ -2,147 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B18E7186BD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:09:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09AD6186BD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:14:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731130AbgCPNJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 09:09:14 -0400
-Received: from mga04.intel.com ([192.55.52.120]:25949 "EHLO mga04.intel.com"
+        id S1731160AbgCPNO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 09:14:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731094AbgCPNJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 09:09:14 -0400
-IronPort-SDR: VGinNkE0QJ8atWsdctpYzrxADn6puc7SHHqn32XUPbATYHrzEcvnQZKrARR0Imv1fq5ghv6r+E
- dq/2VlThmd7g==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 06:09:13 -0700
-IronPort-SDR: 0CeY80JCmqMRFF8PRRwqjCJTuc1Tu7GsgKQr52YKi11iJStA/m1bmE/80Ik3TgXwgODzGweN8w
- O4YWoKhrBOMg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,560,1574150400"; 
-   d="scan'208";a="247451195"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.87]) ([10.237.72.87])
-  by orsmga006.jf.intel.com with ESMTP; 16 Mar 2020 06:09:11 -0700
-Subject: Re: [RESEND PATCH 1/3] mmc: host: Introduce the request_atomic() for
- the host
-To:     Baolin Wang <baolin.wang7@gmail.com>, ulf.hansson@linaro.org
-Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, arnd@arndb.de,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1583307441.git.baolin.wang7@gmail.com>
- <ace53bca354e2846f19684bd33a9c0f3c2ee2c44.1583307441.git.baolin.wang7@gmail.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <dd44e606-3eb5-f7fc-5995-021705a9b5d9@intel.com>
-Date:   Mon, 16 Mar 2020 15:08:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1731025AbgCPNO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 09:14:27 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29AFC20663;
+        Mon, 16 Mar 2020 13:14:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584364466;
+        bh=LmU7P8pTU610kxZnULxwK7dksMsqCbNn4F4inI+WiXs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=bOc05CrcR9Emny6/CLjvQzRP6g4e7lV/jF56WxstnkltZOCNUUkZMHM4ezxPC6/XB
+         pFyzosK7RWC9Nm1suRt1xMatiaj4HXL03w0CC+Xngzdu5ETKQmrCCbXM/UuMPbzQA8
+         HLZSWtZY/WDD/PJ9Kux3Dr7pWtJjlrB/Qk666CdI=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1jDpZY-00D5AE-EW; Mon, 16 Mar 2020 13:14:24 +0000
 MIME-Version: 1.0
-In-Reply-To: <ace53bca354e2846f19684bd33a9c0f3c2ee2c44.1583307441.git.baolin.wang7@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Mon, 16 Mar 2020 13:14:24 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     John Garry <john.garry@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        chenxiang <chenxiang66@hisilicon.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>, luojiaxing@huawei.com
+Subject: Re: [PATCH v3 2/2] irqchip/gic-v3-its: Balance initial LPI affinity
+ across CPUs
+In-Reply-To: <2c367508-f81b-342e-eb05-8bbd1b056279@huawei.com>
+References: <20200316115433.9017-1-maz@kernel.org>
+ <20200316115433.9017-3-maz@kernel.org>
+ <2c367508-f81b-342e-eb05-8bbd1b056279@huawei.com>
+Message-ID: <9ce0b23455a06d92161c5302ac28152e@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.10
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: john.garry@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, chenxiang66@hisilicon.com, wangzhou1@hisilicon.com, ming.lei@redhat.com, jason@lakedaemon.net, tglx@linutronix.de, luojiaxing@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/03/20 9:42 am, Baolin Wang wrote:
-> The SD host controller can process one request in the atomic context if
-> the card is nonremovable, which means we can submit next request in the
-> irq hard handler when using the MMC software queue to reduce the latency.
-> Thus this patch adds a new API request_atomic() for the host controller
-> and implement it for the SD host controller.
-> 
-> Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
-> Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
-> ---
->  drivers/mmc/host/sdhci.c | 27 +++++++++++++++++++--------
->  drivers/mmc/host/sdhci.h |  1 +
->  include/linux/mmc/host.h |  3 +++
->  3 files changed, 23 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 9c37451..4febbcb 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -2016,17 +2016,12 @@ void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
->   *                                                                           *
->  \*****************************************************************************/
->  
-> -void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
-> +static void sdhci_start_request(struct mmc_host *mmc, struct mmc_request *mrq,
-> +				int present)
->  {
-> -	struct sdhci_host *host;
-> -	int present;
-> +	struct sdhci_host *host = mmc_priv(mmc);
->  	unsigned long flags;
->  
-> -	host = mmc_priv(mmc);
-> -
-> -	/* Firstly check card presence */
-> -	present = mmc->ops->get_cd(mmc);
-> -
->  	spin_lock_irqsave(&host->lock, flags);
->  
->  	sdhci_led_activate(host);
-> @@ -2043,6 +2038,22 @@ void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
->  
->  	spin_unlock_irqrestore(&host->lock, flags);
->  }
-> +
-> +void sdhci_request_atomic(struct mmc_host *mmc, struct mmc_request *mrq)
-> +{
-> +	sdhci_start_request(mmc, mrq, 1);
-> +}
-> +EXPORT_SYMBOL_GPL(sdhci_request_atomic);
-> +
-> +void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
-> +{
-> +	int present;
-> +
-> +	/* Firstly check card presence */
-> +	present = mmc->ops->get_cd(mmc);
-> +
-> +	sdhci_start_request(mmc, mrq, present);
-> +}
->  EXPORT_SYMBOL_GPL(sdhci_request);
->  
->  void sdhci_set_bus_width(struct sdhci_host *host, int width)
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index cac2d97..5507a73 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -775,6 +775,7 @@ void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
->  void sdhci_set_power_noreg(struct sdhci_host *host, unsigned char mode,
->  			   unsigned short vdd);
->  void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq);
-> +void sdhci_request_atomic(struct mmc_host *mmc, struct mmc_request *mrq);
->  void sdhci_set_bus_width(struct sdhci_host *host, int width);
->  void sdhci_reset(struct sdhci_host *host, u8 mask);
->  void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
-> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-> index 562ed06..db5e59c 100644
-> --- a/include/linux/mmc/host.h
-> +++ b/include/linux/mmc/host.h
-> @@ -92,6 +92,9 @@ struct mmc_host_ops {
->  			    int err);
->  	void	(*pre_req)(struct mmc_host *host, struct mmc_request *req);
->  	void	(*request)(struct mmc_host *host, struct mmc_request *req);
-> +	/* Submit one request to host in atomic context. */
-> +	void	(*request_atomic)(struct mmc_host *host,
-> +				  struct mmc_request *req);
+On 2020-03-16 13:02, John Garry wrote:
 
-This doesn't have the flexibility to return "busy".  For example,
-sdhci_send_command() will potentially wait quite some time if the inhibit
-bits are set.  That is not good in interrupt context.  It would be better to
-return immediately in that case and have the caller fall back to a
-non-atomic context.  Thoughts?
+Hi John,
 
->  
->  	/*
->  	 * Avoid calling the next three functions too often or in a "fast
+> Hi Marc,
 > 
+>> +		int this_count = its_read_lpi_count(d, tmp);
+> 
+> Not sure if it's intentional, but now there seems to be a subtle
+> difference to what Thomas described for non-managed interrupts - for
+> non-managed interrupts, x86 selects the CPU based on the total
+> interrupt load per CPU (or, more specifically, lowest vector
+> allocation count), and not just the non-managed load. Or maybe I
+> misread it.
 
+So far, I'm trying to keep the two allocation paths separate, as the
+two systems I have access to have very different behaviours: D05 has
+no managed interrupts to speak of, and my top-secret work machine
+has almost no unmanaged interrupts, so the two sets are almost
+completely disjoint.
+
+Also, it all depends on the interrupt allocation order, and whether
+something will rebalance the non-managed interrupts at a later time.
+At least, these two patches make it easy to alter the placement policy
+(the behaviour you describe above is a 2 line change).
+
+> Anyway, we can test this now for NVMe with its managed interrupts.
+
+Looking forward to hearing from you!
+
+         M.
+-- 
+Jazz is not dead. It just smells funny...
