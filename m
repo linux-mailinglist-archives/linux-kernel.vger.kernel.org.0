@@ -2,125 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDA65186B25
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 13:38:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8669186B04
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 13:36:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731218AbgCPMh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 08:37:56 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:7673 "EHLO pegase1.c-s.fr"
+        id S1731213AbgCPMgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 08:36:17 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:41784 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731145AbgCPMgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 08:36:08 -0400
+        id S1731097AbgCPMgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 08:36:10 -0400
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48gwl615Gbz9v02h;
-        Mon, 16 Mar 2020 13:36:02 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 48gwl70hH3z9v02j;
+        Mon, 16 Mar 2020 13:36:03 +0100 (CET)
 Authentication-Results: localhost; dkim=pass
         reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=B/PhvFjR; dkim-adsp=pass;
+        header.d=c-s.fr header.i=@c-s.fr header.b=QnRoKj1r; dkim-adsp=pass;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 48D5OFzLj0p6; Mon, 16 Mar 2020 13:36:02 +0100 (CET)
+        with ESMTP id WTVz0pAtFMFa; Mon, 16 Mar 2020 13:36:03 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48gwl602rkz9v02f;
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48gwl66nlsz9v02f;
         Mon, 16 Mar 2020 13:36:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1584362162; bh=ICMxCBMNGcTfz0cst3VWC9Qy4LnOx0ZwiA0OhAg96c8=;
+        t=1584362162; bh=VtBkhQVm3tmFTz//V+0xvWujDtcu4f8ETZZXj7iTBdc=;
         h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=B/PhvFjRA2bt7iIWvGy0579aw2F8jGDilok+ZGqJxG2UjMCjs0wC3YZBwEFJl2PM+
-         PIVhaheQfSnzfCVKK//Ew970wImOkdN+EMFeC/kZ09gpLvEcSF92KKAS5VaJoTcemj
-         g5JWsspmKirAXXoVsGEuCUCPKJ42jHiym/CM6WhI=
+        b=QnRoKj1rDsLBuV2+ZR4yDBvJwEE5Yamzbn64Ne2f/snZ3St8VTPolhjmDJctdCoYk
+         NakrM5qRErG5NEmXR5xLhz+msmalkGJA/MexsaAr1clCvRQB2c6rgef3a8qMZVNe0d
+         qzW4sncZ7avXQioHcL1rP109LI07ENITNPpmiL1E=
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id F210A8B7D2;
-        Mon, 16 Mar 2020 13:36:06 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E0D9E8B7D0;
+        Mon, 16 Mar 2020 13:36:07 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id NJWxDvuUzYcX; Mon, 16 Mar 2020 13:36:06 +0100 (CET)
+        with ESMTP id IlkwfWy3KBRF; Mon, 16 Mar 2020 13:36:07 +0100 (CET)
 Received: from pc16570vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.100])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A61CF8B7CB;
-        Mon, 16 Mar 2020 13:36:06 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B39D38B7CB;
+        Mon, 16 Mar 2020 13:36:07 +0100 (CET)
 Received: by pc16570vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 9C2C365595; Mon, 16 Mar 2020 12:36:06 +0000 (UTC)
-Message-Id: <8b0e2f8614261e6565f8345341a563aa3f99c270.1584360344.git.christophe.leroy@c-s.fr>
+        id A2C3065595; Mon, 16 Mar 2020 12:36:07 +0000 (UTC)
+Message-Id: <cdea4918655420059d2badd5ddb4d0b540a6563e.1584360344.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1584360343.git.christophe.leroy@c-s.fr>
 References: <cover.1584360343.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v1 21/46] powerpc/mm: Standardise
- __ptep_test_and_clear_young() params between PPC32 and PPC64
+Subject: [PATCH v1 22/46] powerpc/mm: Standardise pte_update() prototype
+ between PPC32 and PPC64
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon, 16 Mar 2020 12:36:06 +0000 (UTC)
+Date:   Mon, 16 Mar 2020 12:36:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On PPC32, __ptep_test_and_clear_young() takes the mm->context.id
+PPC64 takes 3 additional parameters compared to PPC32:
+- mm
+- address
+- huge
 
-In preparation of standardising pte_update() params between PPC32 and
-PPC64, __ptep_test_and_clear_young() need mm instead of mm->context.id
+These 3 parameters will be needed in order to perform different
+action depending on the page size on the 8xx.
 
-Replace context param by mm.
+Make pte_update() prototype identical for PPC32 and PPC64.
+
+This allows dropping an #ifdef in huge_ptep_get_and_clear().
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/book3s/32/pgtable.h | 7 ++++---
- arch/powerpc/include/asm/nohash/32/pgtable.h | 5 +++--
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ arch/powerpc/include/asm/book3s/32/pgtable.h | 15 ++++++++-------
+ arch/powerpc/include/asm/hugetlb.h           |  4 ----
+ arch/powerpc/include/asm/nohash/32/pgtable.h | 13 +++++++------
+ 3 files changed, 15 insertions(+), 17 deletions(-)
 
 diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
-index d1108d25e2e5..8122f0b55d21 100644
+index 8122f0b55d21..f5eab98c4e41 100644
 --- a/arch/powerpc/include/asm/book3s/32/pgtable.h
 +++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
-@@ -288,18 +288,19 @@ static inline pte_basic_t pte_update(pte_t *p, unsigned long clr, unsigned long
-  * for our hash-based implementation, we fix that up here.
+@@ -218,7 +218,7 @@ int map_kernel_page(unsigned long va, phys_addr_t pa, pgprot_t prot);
   */
- #define __HAVE_ARCH_PTEP_TEST_AND_CLEAR_YOUNG
--static inline int __ptep_test_and_clear_young(unsigned int context, unsigned long addr, pte_t *ptep)
-+static inline int __ptep_test_and_clear_young(struct mm_struct *mm,
-+					      unsigned long addr, pte_t *ptep)
+ 
+ #define pte_clear(mm, addr, ptep) \
+-	do { pte_update(ptep, ~_PAGE_HASHPTE, 0); } while (0)
++	do { pte_update(mm, addr, ptep, ~_PAGE_HASHPTE, 0, 0); } while (0)
+ 
+ #define pmd_none(pmd)		(!pmd_val(pmd))
+ #define	pmd_bad(pmd)		(pmd_val(pmd) & _PMD_BAD)
+@@ -254,7 +254,8 @@ extern void flush_hash_entry(struct mm_struct *mm, pte_t *ptep,
+  * when using atomic updates, only the low part of the PTE is
+  * accessed atomically.
+  */
+-static inline pte_basic_t pte_update(pte_t *p, unsigned long clr, unsigned long set)
++static inline pte_basic_t pte_update(struct mm_struct *mm, unsigned long addr, pte_t *p,
++				     unsigned long clr, unsigned long set, int huge)
+ {
+ 	pte_basic_t old;
+ 	unsigned long tmp;
+@@ -292,7 +293,7 @@ static inline int __ptep_test_and_clear_young(struct mm_struct *mm,
+ 					      unsigned long addr, pte_t *ptep)
  {
  	unsigned long old;
- 	old = pte_update(ptep, _PAGE_ACCESSED, 0);
+-	old = pte_update(ptep, _PAGE_ACCESSED, 0);
++	old = pte_update(mm, addr, ptep, _PAGE_ACCESSED, 0, 0);
  	if (old & _PAGE_HASHPTE) {
  		unsigned long ptephys = __pa(ptep) & PAGE_MASK;
--		flush_hash_pages(context, addr, ptephys, 1);
-+		flush_hash_pages(mm->context.id, addr, ptephys, 1);
- 	}
- 	return (old & _PAGE_ACCESSED) != 0;
- }
- #define ptep_test_and_clear_young(__vma, __addr, __ptep) \
--	__ptep_test_and_clear_young((__vma)->vm_mm->context.id, __addr, __ptep)
-+	__ptep_test_and_clear_young((__vma)->vm_mm, __addr, __ptep)
- 
- #define __HAVE_ARCH_PTEP_GET_AND_CLEAR
+ 		flush_hash_pages(mm->context.id, addr, ptephys, 1);
+@@ -306,14 +307,14 @@ static inline int __ptep_test_and_clear_young(struct mm_struct *mm,
  static inline pte_t ptep_get_and_clear(struct mm_struct *mm, unsigned long addr,
+ 				       pte_t *ptep)
+ {
+-	return __pte(pte_update(ptep, ~_PAGE_HASHPTE, 0));
++	return __pte(pte_update(mm, addr, ptep, ~_PAGE_HASHPTE, 0, 0));
+ }
+ 
+ #define __HAVE_ARCH_PTEP_SET_WRPROTECT
+ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
+ 				      pte_t *ptep)
+ {
+-	pte_update(ptep, _PAGE_RW, 0);
++	pte_update(mm, addr, ptep, _PAGE_RW, 0, 0);
+ }
+ 
+ static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
+@@ -324,7 +325,7 @@ static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
+ 	unsigned long set = pte_val(entry) &
+ 		(_PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_RW | _PAGE_EXEC);
+ 
+-	pte_update(ptep, 0, set);
++	pte_update(vma->vm_mm, address, ptep, 0, set, 0);
+ 
+ 	flush_tlb_page(vma, address);
+ }
+@@ -522,7 +523,7 @@ static inline void __set_pte_at(struct mm_struct *mm, unsigned long addr,
+ 		*ptep = __pte((pte_val(*ptep) & _PAGE_HASHPTE)
+ 			      | (pte_val(pte) & ~_PAGE_HASHPTE));
+ 	else
+-		pte_update(ptep, ~_PAGE_HASHPTE, pte_val(pte));
++		pte_update(mm, addr, ptep, ~_PAGE_HASHPTE, pte_val(pte), 0);
+ 
+ #elif defined(CONFIG_PTE_64BIT)
+ 	/* Second case is 32-bit with 64-bit PTE.  In this case, we
+diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
+index bd6504c28c2f..e4276af034e9 100644
+--- a/arch/powerpc/include/asm/hugetlb.h
++++ b/arch/powerpc/include/asm/hugetlb.h
+@@ -40,11 +40,7 @@ void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
+ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ 					    unsigned long addr, pte_t *ptep)
+ {
+-#ifdef CONFIG_PPC64
+ 	return __pte(pte_update(mm, addr, ptep, ~0UL, 0, 1));
+-#else
+-	return __pte(pte_update(ptep, ~0UL, 0));
+-#endif
+ }
+ 
+ #define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
 diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index 9eaf386a747b..ddf681ceb860 100644
+index ddf681ceb860..75880eb1cb91 100644
 --- a/arch/powerpc/include/asm/nohash/32/pgtable.h
 +++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -256,14 +256,15 @@ static inline pte_basic_t pte_update(pte_t *p, unsigned long clr, unsigned long
- }
+@@ -166,7 +166,7 @@ int map_kernel_page(unsigned long va, phys_addr_t pa, pgprot_t prot);
+ #ifndef __ASSEMBLY__
  
- #define __HAVE_ARCH_PTEP_TEST_AND_CLEAR_YOUNG
--static inline int __ptep_test_and_clear_young(unsigned int context, unsigned long addr, pte_t *ptep)
-+static inline int __ptep_test_and_clear_young(struct mm_struct *mm,
-+					      unsigned long addr, pte_t *ptep)
+ #define pte_clear(mm, addr, ptep) \
+-	do { pte_update(ptep, ~0, 0); } while (0)
++	do { pte_update(mm, addr, ptep, ~0, 0, 0); } while (0)
+ 
+ #ifndef pte_mkwrite
+ static inline pte_t pte_mkwrite(pte_t pte)
+@@ -222,7 +222,8 @@ static inline void pmd_clear(pmd_t *pmdp)
+  * to properly flush the virtually tagged instruction cache of
+  * those implementations.
+  */
+-static inline pte_basic_t pte_update(pte_t *p, unsigned long clr, unsigned long set)
++static inline pte_basic_t pte_update(struct mm_struct *mm, unsigned long addr, pte_t *p,
++				     unsigned long clr, unsigned long set, int huge)
+ {
+ #if defined(PTE_ATOMIC_UPDATES) && !defined(CONFIG_PTE_64BIT)
+ 	unsigned long old, tmp;
+@@ -260,7 +261,7 @@ static inline int __ptep_test_and_clear_young(struct mm_struct *mm,
+ 					      unsigned long addr, pte_t *ptep)
  {
  	unsigned long old;
- 	old = pte_update(ptep, _PAGE_ACCESSED, 0);
+-	old = pte_update(ptep, _PAGE_ACCESSED, 0);
++	old = pte_update(mm, addr, ptep, _PAGE_ACCESSED, 0, 0);
  	return (old & _PAGE_ACCESSED) != 0;
  }
  #define ptep_test_and_clear_young(__vma, __addr, __ptep) \
--	__ptep_test_and_clear_young((__vma)->vm_mm->context.id, __addr, __ptep)
-+	__ptep_test_and_clear_young((__vma)->vm_mm, __addr, __ptep)
- 
- #define __HAVE_ARCH_PTEP_GET_AND_CLEAR
+@@ -270,7 +271,7 @@ static inline int __ptep_test_and_clear_young(struct mm_struct *mm,
  static inline pte_t ptep_get_and_clear(struct mm_struct *mm, unsigned long addr,
+ 				       pte_t *ptep)
+ {
+-	return __pte(pte_update(ptep, ~0, 0));
++	return __pte(pte_update(mm, addr, ptep, ~0, 0, 0));
+ }
+ 
+ #define __HAVE_ARCH_PTEP_SET_WRPROTECT
+@@ -280,7 +281,7 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
+ 	unsigned long clr = ~pte_val(pte_wrprotect(__pte(~0)));
+ 	unsigned long set = pte_val(pte_wrprotect(__pte(0)));
+ 
+-	pte_update(ptep, clr, set);
++	pte_update(mm, addr, ptep, clr, set, 0);
+ }
+ 
+ static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
+@@ -293,7 +294,7 @@ static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
+ 	unsigned long set = pte_val(entry) & pte_val(pte_set);
+ 	unsigned long clr = ~pte_val(entry) & ~pte_val(pte_clr);
+ 
+-	pte_update(ptep, clr, set);
++	pte_update(vma->vm_mm, address, ptep, clr, set, 0);
+ 
+ 	flush_tlb_page(vma, address);
+ }
 -- 
 2.25.0
 
