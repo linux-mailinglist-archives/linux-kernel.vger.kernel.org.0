@@ -2,246 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73ECA1869EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 12:20:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56BBD186A06
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 12:25:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730841AbgCPLUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 07:20:13 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:60612 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730794AbgCPLUN (ORCPT
+        id S1730829AbgCPLZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 07:25:24 -0400
+Received: from smtprelay-out1.synopsys.com ([149.117.73.133]:54000 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730738AbgCPLZY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 07:20:13 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02GBK45I029053;
-        Mon, 16 Mar 2020 06:20:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584357604;
-        bh=S90JAhlN4faoJ5qHTsybTrVGu0IAkKpAgsGHTgZVwc8=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=JiCAb93nzryjm1AwrWd0qJDMxtsiR9ROMcHU08H2q8mxjLhgaEO1yR81GFoE1WE2m
-         hGSyEPq2coJWWXgS0p8JdLG6bC0FvevXVUwOFLk9+PLJR2cV8uIP5SGXSTZxHrotvh
-         lwUWC82SHQcXU5CTGf7+BdeUbiPQhmL75n12O5IE=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02GBK325001761;
-        Mon, 16 Mar 2020 06:20:04 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 16
- Mar 2020 06:20:03 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 16 Mar 2020 06:20:03 -0500
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02GBJiU2049775;
-        Mon, 16 Mar 2020 06:20:00 -0500
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Murray <amurray@thegoodpenguin.co.uk>,
-        Alan Mikhak <alan.mikhak@sifive.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Tom Joseph <tjoseph@cadence.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH v3 5/5] misc: pci_endpoint_test: Add support to get DMA option from userspace
-Date:   Mon, 16 Mar 2020 16:54:24 +0530
-Message-ID: <20200316112424.25295-6-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200316112424.25295-1-kishon@ti.com>
-References: <20200316112424.25295-1-kishon@ti.com>
+        Mon, 16 Mar 2020 07:25:24 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 43CA243B4A;
+        Mon, 16 Mar 2020 11:25:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1584357923; bh=9kqwUFTVykdq41YKf9JuOJHOlrQqWcymz/r9vr3SsOo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=c8RzpxQixAtzfR/7fALxwWaktuPQ7m0knkNAAQQh1OtCKS9iOHPGPysBP4Zynpx73
+         jzC6JZc4ppeEec2l4TC2SFkaCpWrYWi/6egCPWBRIBVzfM2E0Aaz4ZTGGl0ViDodSp
+         FMoI7I35h/qkPMPN7RG7lap5vRMtqU9M5RYQ6Hu4o+6H8D5xm0QOY/JYWC+kceHLOx
+         fQ5IFNJwhKUrg1heKQouizyhSI9Y2eal6r+39CY1ax/4yFuLXhDbjtTNBdDRRnJgFG
+         GrAeSpcO4ZRJMu1ZG4Zci5TrnfaXAWsmvqNCrZgd+UQDS/XIP5yZ64ZFl4AjgLJwUx
+         c4ttMXi7iLq0w==
+Received: from paltsev-e7480.internal.synopsys.com (unknown [10.121.8.79])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 3C42FA005B;
+        Mon, 16 Mar 2020 11:25:21 +0000 (UTC)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     Masahiro Yamada <masahiroy@kernel.org>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH v2] initramfs: restore default compression behavior
+Date:   Mon, 16 Mar 2020 14:25:19 +0300
+Message-Id: <20200316112519.4375-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'pcitest' utility now uses '-d' option to allow the user to test DMA.
-Add support to parse option to use DMA from userspace application.
+Even though INITRAMFS_SOURCE kconfig option isn't set in most of
+defconfigs it is used (set) extensively by various build systems.
+Commit f26661e12765 ("initramfs: make initramfs compression choice
+non-optional") has changed default compression mode. Previously we
+compress initramfs using available compression algorithm. Now
+we don't use any compression at all by default.
+It significantly increases the image size in case of build system
+chooses embedded initramfs. Initially I faced with this issue while
+using buildroot.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Tested-by: Alan Mikhak <alan.mikhak@sifive.com>
+As of today it's not possible to set preferred compression mode
+in target defconfig as this option depends on INITRAMFS_SOURCE
+being set. Modification of all build systems either doesn't look
+like good option.
+
+Let's instead rewrite initramfs compression mode choices list
+the way that "INITRAMFS_COMPRESSION_NONE" will be the last option
+in the list. In that case it will be chosen only if all other
+options (which implements any compression) are not available.
+
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 ---
- drivers/misc/pci_endpoint_test.c | 65 ++++++++++++++++++++++++++++++--
- 1 file changed, 62 insertions(+), 3 deletions(-)
+ usr/Kconfig | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 5998df1c84e9..8682867ac14a 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -17,6 +17,7 @@
- #include <linux/mutex.h>
- #include <linux/random.h>
- #include <linux/slab.h>
-+#include <linux/uaccess.h>
- #include <linux/pci.h>
- #include <linux/pci_ids.h>
+diff --git a/usr/Kconfig b/usr/Kconfig
+index bdf5bbd40727..96afb03b65f9 100644
+--- a/usr/Kconfig
++++ b/usr/Kconfig
+@@ -124,17 +124,6 @@ choice
  
-@@ -52,6 +53,7 @@
- #define STATUS_SRC_ADDR_INVALID			BIT(7)
- #define STATUS_DST_ADDR_INVALID			BIT(8)
+ 	  If in doubt, select 'None'
  
-+#define PCI_ENDPOINT_TEST_STATUS		0x8
- #define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0x0c
- #define PCI_ENDPOINT_TEST_UPPER_SRC_ADDR	0x10
+-config INITRAMFS_COMPRESSION_NONE
+-	bool "None"
+-	help
+-	  Do not compress the built-in initramfs at all. This may sound wasteful
+-	  in space, but, you should be aware that the built-in initramfs will be
+-	  compressed at a later stage anyways along with the rest of the kernel,
+-	  on those architectures that support this. However, not compressing the
+-	  initramfs may lead to slightly higher memory consumption during a
+-	  short time at boot, while both the cpio image and the unpacked
+-	  filesystem image will be present in memory simultaneously
+-
+ config INITRAMFS_COMPRESSION_GZIP
+ 	bool "Gzip"
+ 	depends on RD_GZIP
+@@ -207,4 +196,15 @@ config INITRAMFS_COMPRESSION_LZ4
+ 	  If you choose this, keep in mind that most distros don't provide lz4
+ 	  by default which could cause a build failure.
  
-@@ -64,6 +66,9 @@
- #define PCI_ENDPOINT_TEST_IRQ_TYPE		0x24
- #define PCI_ENDPOINT_TEST_IRQ_NUMBER		0x28
- 
-+#define PCI_ENDPOINT_TEST_FLAGS			0x2c
-+#define FLAG_USE_DMA				BIT(0)
++config INITRAMFS_COMPRESSION_NONE
++	bool "None"
++	help
++	  Do not compress the built-in initramfs at all. This may sound wasteful
++	  in space, but, you should be aware that the built-in initramfs will be
++	  compressed at a later stage anyways along with the rest of the kernel,
++	  on those architectures that support this. However, not compressing the
++	  initramfs may lead to slightly higher memory consumption during a
++	  short time at boot, while both the cpio image and the unpacked
++	  filesystem image will be present in memory simultaneously
 +
- #define PCI_DEVICE_ID_TI_AM654			0xb00c
- 
- #define is_am654_pci_dev(pdev)		\
-@@ -315,11 +320,16 @@ static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
- 	return false;
- }
- 
--static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
-+static bool pci_endpoint_test_copy(struct pci_endpoint_test *test,
-+				   unsigned long arg)
- {
-+	struct pci_endpoint_test_xfer_param param;
- 	bool ret = false;
- 	void *src_addr;
- 	void *dst_addr;
-+	u32 flags = 0;
-+	bool use_dma;
-+	size_t size;
- 	dma_addr_t src_phys_addr;
- 	dma_addr_t dst_phys_addr;
- 	struct pci_dev *pdev = test->pdev;
-@@ -332,10 +342,22 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
- 	size_t alignment = test->alignment;
- 	u32 src_crc32;
- 	u32 dst_crc32;
-+	int err;
-+
-+	err = copy_from_user(&param, (void __user *)arg, sizeof(param));
-+	if (err) {
-+		dev_err(dev, "Failed to get transfer param\n");
-+		return false;
-+	}
- 
-+	size = param.size;
- 	if (size > SIZE_MAX - alignment)
- 		goto err;
- 
-+	use_dma = !!(param.flags & PCITEST_FLAGS_USE_DMA);
-+	if (use_dma)
-+		flags |= FLAG_USE_DMA;
-+
- 	if (irq_type < IRQ_TYPE_LEGACY || irq_type > IRQ_TYPE_MSIX) {
- 		dev_err(dev, "Invalid IRQ type option\n");
- 		goto err;
-@@ -406,6 +428,7 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE,
- 				 size);
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_FLAGS, flags);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
-@@ -434,9 +457,13 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
- 	return ret;
- }
- 
--static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
-+static bool pci_endpoint_test_write(struct pci_endpoint_test *test,
-+				    unsigned long arg)
- {
-+	struct pci_endpoint_test_xfer_param param;
- 	bool ret = false;
-+	u32 flags = 0;
-+	bool use_dma;
- 	u32 reg;
- 	void *addr;
- 	dma_addr_t phys_addr;
-@@ -446,11 +473,24 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
- 	dma_addr_t orig_phys_addr;
- 	size_t offset;
- 	size_t alignment = test->alignment;
-+	size_t size;
- 	u32 crc32;
-+	int err;
- 
-+	err = copy_from_user(&param, (void __user *)arg, sizeof(param));
-+	if (err != 0) {
-+		dev_err(dev, "Failed to get transfer param\n");
-+		return false;
-+	}
-+
-+	size = param.size;
- 	if (size > SIZE_MAX - alignment)
- 		goto err;
- 
-+	use_dma = !!(param.flags & PCITEST_FLAGS_USE_DMA);
-+	if (use_dma)
-+		flags |= FLAG_USE_DMA;
-+
- 	if (irq_type < IRQ_TYPE_LEGACY || irq_type > IRQ_TYPE_MSIX) {
- 		dev_err(dev, "Invalid IRQ type option\n");
- 		goto err;
-@@ -493,6 +533,7 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
- 
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_FLAGS, flags);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
-@@ -514,9 +555,14 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
- 	return ret;
- }
- 
--static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
-+static bool pci_endpoint_test_read(struct pci_endpoint_test *test,
-+				   unsigned long arg)
- {
-+	struct pci_endpoint_test_xfer_param param;
- 	bool ret = false;
-+	u32 flags = 0;
-+	bool use_dma;
-+	size_t size;
- 	void *addr;
- 	dma_addr_t phys_addr;
- 	struct pci_dev *pdev = test->pdev;
-@@ -526,10 +572,22 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
- 	size_t offset;
- 	size_t alignment = test->alignment;
- 	u32 crc32;
-+	int err;
- 
-+	err = copy_from_user(&param, (void __user *)arg, sizeof(param));
-+	if (err) {
-+		dev_err(dev, "Failed to get transfer param\n");
-+		return false;
-+	}
-+
-+	size = param.size;
- 	if (size > SIZE_MAX - alignment)
- 		goto err;
- 
-+	use_dma = !!(param.flags & PCITEST_FLAGS_USE_DMA);
-+	if (use_dma)
-+		flags |= FLAG_USE_DMA;
-+
- 	if (irq_type < IRQ_TYPE_LEGACY || irq_type > IRQ_TYPE_MSIX) {
- 		dev_err(dev, "Invalid IRQ type option\n");
- 		goto err;
-@@ -566,6 +624,7 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
- 
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_FLAGS, flags);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
+ endchoice
 -- 
-2.17.1
+2.21.1
 
