@@ -2,115 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4231A1874FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 22:44:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28653187501
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 22:45:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732724AbgCPVot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 17:44:49 -0400
-Received: from ozlabs.org ([203.11.71.1]:44917 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732652AbgCPVos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 17:44:48 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48h8wF0L0dz9sPF;
-        Tue, 17 Mar 2020 08:44:45 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1584395086;
-        bh=qbTFgV14ckkB7rAIrq9ihJqPBeXY8LPVtrjwzECDf6s=;
-        h=Date:From:To:Cc:Subject:From;
-        b=snUnay4XdoM7ctIBRTBGerBxFzvnSAjGWtGtOWNzKcc6e4jHO4FY9nIP+FlN9xNK5
-         3Vj/oo6p+4Pvs8kZeeF6AjK8qykqCmAEqfvl5svmyy0I6SL0SR8m6nfRNsOZR5rqpV
-         55p7fmjt9HRDz+3X+GVucbv+3UTKdAH3dpRso9TKfRE7sbCVlWAiNkyRz+bzB4OBt1
-         0efYUzIG+TyS43EmPNgbjFOGcM3kKNiTi8brXeCKSzsdi5InrZL/yMN7VYKzngk8kN
-         y43FLgrFszoyi7wXEXLcA75ydkSZ+BsR8TTIBSqB+ZBMSe8g6ORzlVnzYRLhJxfF0m
-         UHa4wQKIUOMAQ==
-Date:   Tue, 17 Mar 2020 08:44:41 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Li Yang <leoyang.li@nxp.com>
-Subject: linux-next: manual merge of the imx-mxs tree with Linus' tree
-Message-ID: <20200317084441.1f59756d@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/=E/+sR8xhTsjJ0D4koT7qa6";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1732775AbgCPVpX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 17:45:23 -0400
+Received: from mail-wr1-f45.google.com ([209.85.221.45]:34940 "EHLO
+        mail-wr1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732652AbgCPVpX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 17:45:23 -0400
+Received: by mail-wr1-f45.google.com with SMTP id h4so2539986wru.2;
+        Mon, 16 Mar 2020 14:45:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=FfPpdz9J4skN4p3S/CS6XKQcAy2N9kTf5vI/j49UlgQ=;
+        b=GAaQ7sIzdom1zPFBKBJ0qramzcEWfAyH6wS9FE+ctO79AA5zuhWW7MRnREov6Kktwu
+         /mHnCpJeGC75drCn3e/Q8Dtb9Mzf14q3VDmZezYiY4I+93u6imbwa7wbTrUlLJTj5SQJ
+         cQoHbDCNDSTgHyHM0EGIxzcYozCqYzIspCEl09cswre1F/5K9j/ytSnaI+KdtXc9EYqY
+         TWvu0HpUd0XPrVZvBHvD1Xc1JAT7o5CmGuxChluOBhoDO68/5eW4mss5VHCyONINDDs0
+         C/TENN3J48NEdjfWD1p6qDRqZg5EWvFAC13Jqjb+7awmdL/1uJKyZcENWgX31PY69q+m
+         cTGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FfPpdz9J4skN4p3S/CS6XKQcAy2N9kTf5vI/j49UlgQ=;
+        b=LypnkhnfhRtSlTg9rAkNy5W1q9dq2gIFUWabEZvmk7ofT0Gk0Q3zXc4p9kMSXt+nOp
+         KWK5d4Vqo/MXnz2aW0oatXcjA+zFxKkjlV5iwEry/2XZUpTxa4vaSCE7cs1jt8/jCZbm
+         BhayW3XNq92w0McU9lk8uE8Qcx3qozr6X2m/YXMDsdf1bhpA0xZDBVdZvlF55gVlikE9
+         2HjeVI+GXwg/qQcKT/2qtMDgaq1k/69idZThwtlrMSVkPzSTBdrVlcSuVLng0QZNuFx3
+         fbCYNBYWN7qO8hV5Wanm1drqd7uZticM+hwbAX3Hv8g00NXGZDxUS0xNul8TyLCEdM+A
+         sMNQ==
+X-Gm-Message-State: ANhLgQ12diOX8drcmC1/SUUAviSUAH4luVdnLqt9QzM1/Cu75wtS7LYN
+        KpaXGKSu3XdYHIKtdzgn6Rc=
+X-Google-Smtp-Source: ADFU+vuMlY3kwzXXs69D6CZI4m87gdH5XYJab7g0mZaWj3MEXEhiTPue0pxPxGqNDw2y4S0PE1VxXw==
+X-Received: by 2002:a5d:5741:: with SMTP id q1mr1394313wrw.169.1584395121578;
+        Mon, 16 Mar 2020 14:45:21 -0700 (PDT)
+Received: from stbirv-lnx-3.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id a13sm1625676wrh.80.2020.03.16.14.45.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 16 Mar 2020 14:45:21 -0700 (PDT)
+From:   Doug Berger <opendmb@gmail.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Doug Berger <opendmb@gmail.com>
+Subject: [PATCH net 0/2] net: bcmgenet: revisit MAC reset
+Date:   Mon, 16 Mar 2020 14:44:54 -0700
+Message-Id: <1584395096-41674-1-git-send-email-opendmb@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/=E/+sR8xhTsjJ0D4koT7qa6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Commit 3a55402c9387 ("net: bcmgenet: use RGMII loopback for MAC 
+reset") was intended to resolve issues with reseting the UniMAC
+core within the GENET block by providing better control over the
+clocks used by the UniMAC core. Unfortunately, it is not
+compatible with all of the supported system configurations so an
+alternative method must be applied.
 
-Hi all,
+This commit set provides such an alternative. The first commit
+reverts the previous change and the second commit provides the
+alternative reset sequence that addresses the concerns observed
+with the previous implementation.
 
-Today's linux-next merge of the imx-mxs tree got a conflict in:
+This replacement implementation should be applied to the stable
+branches wherever commit 3a55402c9387 ("net: bcmgenet: use RGMII 
+loopback for MAC reset") has been applied.
 
-  arch/arm64/configs/defconfig
+Unfortunately, reverting that commit may conflict with some
+restructuring changes introduced by commit 4f8d81b77e66 ("net: 
+bcmgenet: Refactor register access in bcmgenet_mii_config").
+The first commit in this set has been manually edited to
+resolve the conflict on net/master. I would be happy to help
+stable maintainers with resolving any such conflicts if they
+occur. However, I do not expect that commit to have been
+backported to stable branch so hopefully the revert can be
+applied cleanly.
 
-between commits:
+Doug Berger (2):
+  Revert "net: bcmgenet: use RGMII loopback for MAC reset"
+  net: bcmgenet: keep MAC in reset until PHY is up
 
-  4a453ccf87d5 ("arm64: defconfig: Enable CONFIG_SUN8I_THERMAL")
-  d5888c8e5586 ("arm64: defconfig: Replace ARCH_R8A7796 by ARCH_R8A77960")
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c     | 10 +++---
+ drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c |  6 +++-
+ drivers/net/ethernet/broadcom/genet/bcmmii.c       | 40 ++++------------------
+ 3 files changed, 16 insertions(+), 40 deletions(-)
 
-from Linus' tree and commits:
+-- 
+2.7.4
 
-  34e46ed80df6 ("arm64: defconfig: add i.MX system controller thermal suppo=
-rt")
-  63cccc8401c2 ("arm64: defconfig: Enable CONFIG_IMX8MM_THERMAL as module")
-  3fbd82f9af29 ("arm64: defconfig: run through savedefconfig for ordering")
-
-from the imx-mxs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/configs/defconfig
-index 4db223dbc549,0c110182497a..000000000000
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@@ -452,7 -485,8 +485,9 @@@ CONFIG_THERMAL_GOV_POWER_ALLOCATOR=3D
-  CONFIG_CPU_THERMAL=3Dy
-  CONFIG_THERMAL_EMULATION=3Dy
-  CONFIG_QORIQ_THERMAL=3Dm
- +CONFIG_SUN8I_THERMAL=3Dy
-+ CONFIG_IMX_SC_THERMAL=3Dm
-+ CONFIG_IMX8MM_THERMAL=3Dm
-  CONFIG_ROCKCHIP_THERMAL=3Dm
-  CONFIG_RCAR_THERMAL=3Dy
-  CONFIG_RCAR_GEN3_THERMAL=3Dy
-
---Sig_/=E/+sR8xhTsjJ0D4koT7qa6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5v80kACgkQAVBC80lX
-0GyE+wf/X2Ly3SBmOM/aVObHrHk1NmULalkPmlYP8kSL7g/RCtwV2tW21fT0xsJW
-FY+QG+UZYeyWuK9V3OsgNIfmn6TfSRWUe83it3xrGeA9JC031MV7V6Q1v64gpTsf
-o5YzFlpUHPb2OD/4o7JmBJS4HqONxzEf7bv0bQ01+D3zmcTzu2DnmLdZkEwjvqTu
-bLcgkxmL6U4t6Mnczc4h4WmObPRrTh3mtso6TWN2+feuUtdpEmz264mbGmULh90c
-uw/F4+f5neldgTXjEVa6JQtvfWJoq0nwE4RBpfNG/ecOd7zQNXdjbcyQdhFdX0mq
-Qz+cBvMSU/HQzGOoPqOTBNPlzjVKuw==
-=/xXn
------END PGP SIGNATURE-----
-
---Sig_/=E/+sR8xhTsjJ0D4koT7qa6--
