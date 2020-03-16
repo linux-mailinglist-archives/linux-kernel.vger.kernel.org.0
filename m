@@ -2,79 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B7A2187141
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 18:35:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B410187152
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 18:40:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732230AbgCPRe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 13:34:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38388 "EHLO mail.kernel.org"
+        id S1732044AbgCPRkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 13:40:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33108 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730437AbgCPRez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 13:34:55 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5F9C20679;
-        Mon, 16 Mar 2020 17:34:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584380095;
-        bh=lyqtCLrXofPu1yk6ZcsGZsEyWjI2a4e9/XBHX5Zq6q4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=n8UoKjdoIDI6ChF//n1vH7Vo+upcGiZTjnvna1N5R/5XNisi06EikoTZd6SHAW5by
-         Y6LHWXEDvRRgrzqTPF+98vPzJ16s5sHHFnDr3qF1bnQT+/gh3lBChNEDzE2cY1Givp
-         EsTvoKbePvYNf5ZLc+BXySWENSH1KwR51xBDCVO8=
-Message-ID: <414d5d568ed3aad086e56bfc2e27c17d9865b504.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: fix snapshot directory timestamps
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     Marc Roos <M.Roos@f1-outsourcing.eu>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 16 Mar 2020 13:34:53 -0400
-In-Reply-To: <20200311110538.GB58729@suse.com>
-References: <20200311110538.GB58729@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        id S1730437AbgCPRkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 13:40:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 9AB4BAF00;
+        Mon, 16 Mar 2020 17:40:02 +0000 (UTC)
+Subject: Re: [PATCH 2/2] mm: swap: use smp_mb__after_atomic() to order LRU bit
+ set
+To:     Yang Shi <yang.shi@linux.alibaba.com>, shakeelb@google.com,
+        akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1584124476-76534-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1584124476-76534-2-git-send-email-yang.shi@linux.alibaba.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <3c13c484-8fbf-3c3a-fbe1-a40434869e55@suse.cz>
+Date:   Mon, 16 Mar 2020 18:40:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
+In-Reply-To: <1584124476-76534-2-git-send-email-yang.shi@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-03-11 at 11:05 +0000, Luis Henriques wrote:
-> The .snap directory timestamps are kept at 0 (1970-01-01 00:00), which
-> isn't consistent with what the fuse client does.  This patch makes the
-> behaviour consistent, by setting these timestamps (atime, btime, ctime,
-> mtime) to those of the parent directory.
+On 3/13/20 7:34 PM, Yang Shi wrote:
+> Memory barrier is needed after setting LRU bit, but smp_mb() is too
+> strong.  Some architectures, i.e. x86, imply memory barrier with atomic
+> operations, so replacing it with smp_mb__after_atomic() sounds better,
+> which is nop on strong ordered machines, and full memory barriers on
+> others.  With this change the vm-calability cases would perform better
+> on x86, I saw total 6% improvement with this patch and previous inline
+> fix.
 > 
-> Cc: Marc Roos <M.Roos@f1-outsourcing.eu>
-> Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> ---
->  fs/ceph/inode.c | 4 ++++
->  1 file changed, 4 insertions(+)
+> The test data (lru-file-readtwice throughput) against v5.6-rc4:
+> 	mainline	w/ inline fix	w/ both (adding this)
+> 	150MB		154MB		159MB
 > 
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index d01710a16a4a..968d55ca898d 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -82,10 +82,14 @@ struct inode *ceph_get_snapdir(struct inode *parent)
->  	inode->i_mode = parent->i_mode;
->  	inode->i_uid = parent->i_uid;
->  	inode->i_gid = parent->i_gid;
-> +	inode->i_mtime = parent->i_mtime;
-> +	inode->i_ctime = parent->i_ctime;
-> +	inode->i_atime = parent->i_atime;
->  	inode->i_op = &ceph_snapdir_iops;
->  	inode->i_fop = &ceph_snapdir_fops;
->  	ci->i_snap_caps = CEPH_CAP_PIN; /* so we can open */
->  	ci->i_rbytes = 0;
-> +	ci->i_btime = ceph_inode(parent)->i_btime;
->  
->  	if (inode->i_state & I_NEW)
->  		unlock_new_inode(inode);
+> Fixes: 9c4e6b1a7027 ("mm, mlock, vmscan: no more skipping pagevecs")
+> Cc: Shakeel Butt <shakeelb@google.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 
-Merged into testing branch -- thanks for the patch!
--- 
-Jeff Layton <jlayton@kernel.org>
+According to my understanding of Documentation/memory_barriers.txt this would be
+correct (but it might not say much :)
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+But i have some suggestions...
+
+> ---
+>  mm/swap.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/swap.c b/mm/swap.c
+> index cf39d24..118bac4 100644
+> --- a/mm/swap.c
+> +++ b/mm/swap.c
+> @@ -945,20 +945,20 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
+>  	 * #0: __pagevec_lru_add_fn		#1: clear_page_mlock
+>  	 *
+>  	 * SetPageLRU()				TestClearPageMlocked()
+> -	 * smp_mb() // explicit ordering	// above provides strict
+> +	 * MB() 	// explicit ordering	// above provides strict
+
+Why MB()? That would be the first appareance of 'MB()' in the whole tree. I
+think it's fine keeping smp_mb()...
+
+>  	 *					// ordering
+>  	 * PageMlocked()			PageLRU()
+>  	 *
+>  	 *
+>  	 * if '#1' does not observe setting of PG_lru by '#0' and fails
+>  	 * isolation, the explicit barrier will make sure that page_evictable
+> -	 * check will put the page in correct LRU. Without smp_mb(), SetPageLRU
+> +	 * check will put the page in correct LRU. Without MB(), SetPageLRU
+
+... same here ...
+
+>  	 * can be reordered after PageMlocked check and can make '#1' to fail
+>  	 * the isolation of the page whose Mlocked bit is cleared (#0 is also
+>  	 * looking at the same page) and the evictable page will be stranded
+>  	 * in an unevictable LRU.
+
+Only here I would note that SetPageLRU() is an atomic bitop so we can use the
+__after_atomic() variant. And I would move the actual SetPageLRU() call from
+above the comment here right before the barrier.
+
+>  	 */
+> -	smp_mb();
+> +	smp_mb__after_atomic();
+
+Thanks.
+
+>  
+>  	if (page_evictable(page)) {
+>  		lru = page_lru(page);
+> 
 
