@@ -2,78 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27006187021
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:36:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9E9918702E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:37:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732153AbgCPQgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 12:36:47 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35924 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732109AbgCPQgr (ORCPT
+        id S1732175AbgCPQha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 12:37:30 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:44510 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732198AbgCPQh3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 12:36:47 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z72so206103pgz.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 09:36:45 -0700 (PDT)
+        Mon, 16 Mar 2020 12:37:29 -0400
+Received: by mail-oi1-f194.google.com with SMTP id d62so18413158oia.11;
+        Mon, 16 Mar 2020 09:37:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=KkJ9BnhYk/HajXNXxuOjIzsUkQMklV19EP7QhHmBLp8=;
-        b=oDcg/c24mMcUeBjQQMh9AiJP4ybO1A/zCQx7APejdiexTnF3qsz0/mkn/oFKSttXua
-         sHRSR4mMQOUu4IhbLUuO2O6qGclfBFOIg6oSNByxaLEeqB5dgK4nkHTaB+JnrVM1GPUw
-         Byymm05q0BmS2JLAMtCyLpqexNAb31NQBgv5m+MCNadcyxthMcIN0ixrCwm8QTH98Vis
-         048ZkMr7v6qbsLpYNEsbDINHIOXmN7/0UMBA+tBrIvDTbiwAeC72BLI5YH3/NwRQkWIC
-         /vkLGDn3JcvphZXiRUsNwS48aJEA4wF9IcFK19cGkQAX6reB8HvYfuSC6OalZp0/kiI2
-         HVUg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3+hUQzi8rSGcD861hLFiFZxEV8fS8e2CK6IX3o7vpd0=;
+        b=oau0fH9kC3YB34GLThPRDlnyCEnY6HDOha1KcXiOv3qrdIVzUHzJRk9k1OOR6Ka6yL
+         j88oQRJF2i5wYbwRGZcnenshtLZH1ISiJwrl70x5A76vF9F3vopXkZUtH5eXKc3vo6W7
+         EnwaCSCPwicuLe+Vi/SX+LWJsVhIM5upRWWrlLDHo4wE0/9HzT5RwKGgK+WSCgA0palu
+         xjZzmcpf9tnyRBOc8dznz+tkLsIa9aehGS09LOYRKexCGokM+a6/uYxTMQtWWE9usIsY
+         bYdoTkyHqHG994k1w1/Ni+/MjJyK9pl2TlfLMGWFXGHp+5IxIog7kRNv39WxEqavY58V
+         AuIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=KkJ9BnhYk/HajXNXxuOjIzsUkQMklV19EP7QhHmBLp8=;
-        b=NnzYaM71JliIaDtlR9oeYfXAHxI7OVDh3ExjC7q3QQzF05Pk6NNW2rm2lSmBlR5cjb
-         IEbRxj/3kQoySvP/VMNBvH5NO09ty9GKnNxyJs07qoBSS3icChf2Fmptof11tqTL/Pfz
-         iX+peGc9yS0ZeNmN0bOG5OvJTtDvwtOmyoZaqjTFVTX+3z0d0rsclSCrI+G7hccaBqIX
-         U4ub8fLuDhcqSA0W9L1RIq7CWP4JbVriGxpGqWZQ/LUuDTZNLNT59m4YgE0mY9gl5CLY
-         tX3YsgbDsapRbOy6Rr00AnyTvZun9eh2xOLMnQradkGGzRtdN8Aw9lhIIoCzWxix7H3r
-         T/lA==
-X-Gm-Message-State: ANhLgQ3Ibltq7TDmGoXbd8VjYarBPf9ktAnYh2KqtBDLOCLJNxiywsUx
-        0wmu8n5UzdFQK5Em0omz4roP5A==
-X-Google-Smtp-Source: ADFU+vsnDU0kNyNu7bXSOxb3qeKHSd2QhwQJDm7Wj7JSzaOFa60zGw8tmrmt6d6868XiIqOT9Y1DIA==
-X-Received: by 2002:a65:5a8a:: with SMTP id c10mr678539pgt.315.1584376604453;
-        Mon, 16 Mar 2020 09:36:44 -0700 (PDT)
-Received: from localhost ([2601:602:9200:a1a5:dcc4:2a10:1b38:3edc])
-        by smtp.gmail.com with ESMTPSA id h198sm411587pfe.76.2020.03.16.09.36.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Mar 2020 09:36:43 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Christian Hewitt <christianshewitt@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Christian Hewitt <christianshewitt@gmail.com>,
-        Andreas =?utf-8?Q?F?= =?utf-8?Q?=C3=A4rber?= <afaerber@suse.de>,
-        =?utf-8?Q?Jer=C3=B4me?= Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH v7 3/3] arm64: dts: meson: add support for the SmartLabs SML-5442TW
-In-Reply-To: <1583987886-6288-4-git-send-email-christianshewitt@gmail.com>
-References: <1583987886-6288-1-git-send-email-christianshewitt@gmail.com> <1583987886-6288-4-git-send-email-christianshewitt@gmail.com>
-Date:   Mon, 16 Mar 2020 09:36:43 -0700
-Message-ID: <7ha74gw92c.fsf@baylibre.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3+hUQzi8rSGcD861hLFiFZxEV8fS8e2CK6IX3o7vpd0=;
+        b=DTJ+9R7/qVT/NsMMg/3oEW2g92unksIZSVuLpZdUVaat+yKiRGz12hq1Wj6SH8AN+R
+         A2RzpJWu/yPcBNxrViBO3A9wZxrx68lp4Q7zwvxH2h9/d6QQkRAMzWu2ZoDeVtqfQtmu
+         FKGAxV+piqi33Yb1UQWaQ07DCQNeXZifO7rutoIOxuXkWfF38xRH6rhWMiguqwLgyLcX
+         62FEGkiRO0eEugcvTFDwAAck9HlolOrAtkBcAJZaPSayw+cHPN2ON2VSXhH/YkqTuUQ4
+         3JMcrSk7y6LgphVD1f82KYS5z+QgDy9uq9N2nTR71TihfjlZKMQpZTFOOzzbS0HNTP3c
+         uBng==
+X-Gm-Message-State: ANhLgQ1Ww8xVnZkKQxrDpu1itPSXJie5XNcP3WXqqS6127/b4ewV+JfF
+        T7tOYkADzjUHOjXddss1/vg=
+X-Google-Smtp-Source: ADFU+vtFGB4+FIEYm6YYVa7xkL80tUjCTX2OzlmzKkjvbd4GxJ+Ve1IzVjgR7/PoVO7kUAS6E7uKZw==
+X-Received: by 2002:aca:1913:: with SMTP id l19mr269031oii.47.1584376648382;
+        Mon, 16 Mar 2020 09:37:28 -0700 (PDT)
+Received: from localhost.members.linode.com ([2600:3c00::f03c:91ff:fe99:7fe5])
+        by smtp.gmail.com with ESMTPSA id l20sm115101oih.40.2020.03.16.09.37.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Mar 2020 09:37:27 -0700 (PDT)
+From:   Anton Protopopov <a.s.protopopov@gmail.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, linux-kernel@vger.kernel.org
+Cc:     Anton Protopopov <a.s.protopopov@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>, bpf@vger.kernel.org
+Subject: [PATCH] seccomp: allow BPF_MOD ALU instructions
+Date:   Mon, 16 Mar 2020 16:36:46 +0000
+Message-Id: <20200316163646.2465-1-a.s.protopopov@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Hewitt <christianshewitt@gmail.com> writes:
+The BPF_MOD ALU instructions could be utilized by seccomp classic BPF filters,
+but were missing from the explicit list of allowed calls since its introduction
+in the original e2cfabdfd075 ("seccomp: add system call filtering using BPF")
+commit.  Add support for these instructions by adding them to the allowed list
+in the seccomp_check_filter function.
 
-> The SmartLabs SML-5442TW is broadly similar to the P231 reference design
-> but with the following differences:
+Signed-off-by: Anton Protopopov <a.s.protopopov@gmail.com>
+---
+ kernel/seccomp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Can you can create a P231 .dtsi that can be shared between the two?
-
-I'd really like to keep all of these designs that are based on Amlogic
-ref designs using shared .dtsi whereever possible.
-
-Kevin
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index b6ea3dcb57bf..cae7561b44d4 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -206,6 +206,8 @@ static int seccomp_check_filter(struct sock_filter *filter, unsigned int flen)
+ 		case BPF_ALU | BPF_MUL | BPF_X:
+ 		case BPF_ALU | BPF_DIV | BPF_K:
+ 		case BPF_ALU | BPF_DIV | BPF_X:
++		case BPF_ALU | BPF_MOD | BPF_K:
++		case BPF_ALU | BPF_MOD | BPF_X:
+ 		case BPF_ALU | BPF_AND | BPF_K:
+ 		case BPF_ALU | BPF_AND | BPF_X:
+ 		case BPF_ALU | BPF_OR | BPF_K:
+-- 
+2.19.1
