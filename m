@@ -2,75 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47103186A5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 12:51:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 500A0186A6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 12:54:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730911AbgCPLvA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 07:51:00 -0400
-Received: from foss.arm.com ([217.140.110.172]:46802 "EHLO foss.arm.com"
+        id S1730923AbgCPLyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 07:54:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730882AbgCPLvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 07:51:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD1D330E;
-        Mon, 16 Mar 2020 04:50:59 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5FF693F52E;
-        Mon, 16 Mar 2020 04:50:59 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 11:50:57 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-spi@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.5 01/41] spi: spi-omap2-mcspi: Handle DMA size
- restriction on AM65x
-Message-ID: <20200316115057.GB5010@sirena.org.uk>
-References: <20200316023319.749-1-sashal@kernel.org>
+        id S1730907AbgCPLyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 07:54:49 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BDE0205ED;
+        Mon, 16 Mar 2020 11:54:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584359688;
+        bh=24D2nmoA1PD2UDbWlzqD/g16A8HBhZbRXBxFqrR2eX4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=woKdUbjOhCrnilC3sCEt3y39EL5CZdCI72qTnRuL8MQi6XfOyOVAr9pfK77lb5S0g
+         bf0iUMADXGl0lmeO6obpAiBf7pymdUTcYXQfMlCDj2kS28OlnDyY2cql+Dol1Ed3oH
+         wE0B6RAxBU67RGkqB8soNjQ3f7LaTISLTdX+JYDA=
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1jDoKU-00D45x-VP; Mon, 16 Mar 2020 11:54:47 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     John Garry <john.garry@huawei.com>,
+        chenxiang <chenxiang66@hisilicon.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v3 0/2] irqchip/gic-v3-its: Balance LPI affinity across CPUs
+Date:   Mon, 16 Mar 2020 11:54:31 +0000
+Message-Id: <20200316115433.9017-1-maz@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mxv5cy4qt+RJ9ypb"
-Content-Disposition: inline
-In-Reply-To: <20200316023319.749-1-sashal@kernel.org>
-X-Cookie: I thought YOU silenced the guard!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, john.garry@huawei.com, chenxiang66@hisilicon.com, wangzhou1@hisilicon.com, ming.lei@redhat.com, jason@lakedaemon.net, tglx@linutronix.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When mapping a LPI, the ITS driver picks the first possible
+affinity, which is in most cases CPU0, assuming that if
+that's not suitable, someone will come and set the affinity
+to something more interesting.
 
---mxv5cy4qt+RJ9ypb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It apparently isn't the case, and people complain of poor
+performance when many interrupts are glued to the same CPU.
+So let's place the interrupts by finding the "least loaded"
+CPU (that is, the one that has the fewer LPIs mapped to it).
+So called 'managed' interrupts are an interesting case where
+the affinity is actually dictated by the kernel itself, and
+we should honor this.
 
-On Sun, Mar 15, 2020 at 10:32:39PM -0400, Sasha Levin wrote:
-> From: Vignesh Raghavendra <vigneshr@ti.com>
->=20
-> [ Upstream commit e4e8276a4f652be2c7bb783a0155d4adb85f5d7d ]
->=20
-> On AM654, McSPI can only support 4K - 1 bytes per transfer when DMA is
-> enabled. Therefore populate master->max_transfer_size callback to
-> inform client drivers of this restriction when DMA channels are
-> available.
+* From v2:
+  - Split accounting from CPU selection
+  - Track managed and unmanaged interrupts separately
 
-As ever this only provides information to other drivers which may be
-buggy.
+Marc Zyngier (2):
+  irqchip/gic-v3-its: Track LPI distribution on a per CPU basis
+  irqchip/gic-v3-its: Balance initial LPI affinity across CPUs
 
---mxv5cy4qt+RJ9ypb
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/irqchip/irq-gic-v3-its.c | 153 +++++++++++++++++++++++++------
+ 1 file changed, 127 insertions(+), 26 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.20.1
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5vaCEACgkQJNaLcl1U
-h9Dyuwf/fRi4iGdV1A9vW0+wTm8Pznka9n9+PoM5TuqyP0qrul8iIK7h/H6xS7bF
-wRQVfQDzo/SfuONZlUUZOvtQXevqHPOtFl2x3Qe1sVnE39byJc6qu/EDsrNYVLgg
-DLzo+493Fh+HQgfAb+b80kh9XbZ4rN0qSsyPpt7Ygqj8EpG/so3qCir1BtkKBYAx
-nVN/HglbGLu0VosqwfRzpUSgPp0mQlVVhrBX3eyL62c3GQ3+R2Fk9namhq4GYNDv
-rcKj4Fi/WhkKOIzmjwPtep6I4uY5ZnM6XVFxa1KuM2p7NVMWlvSZhdn2wvWR0kOr
-+dB4D+JEBdndXoBkq3Ywisrppx4JNQ==
-=73L/
------END PGP SIGNATURE-----
-
---mxv5cy4qt+RJ9ypb--
