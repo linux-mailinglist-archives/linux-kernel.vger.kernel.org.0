@@ -2,94 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25434186148
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 02:21:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 464E3186155
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 02:33:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729401AbgCPBVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 21:21:39 -0400
-Received: from mga11.intel.com ([192.55.52.93]:9713 "EHLO mga11.intel.com"
+        id S1729414AbgCPBd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 21:33:28 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:57108 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729300AbgCPBVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 21:21:39 -0400
-IronPort-SDR: 4EyZJ+cxFBdJDAAOU34OBUABX19u56JYAw7yyJB5QklT+6mIRLv1/53yjIdMjHYbQcyg1R6aFv
- of3bLCotttNA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2020 18:21:38 -0700
-IronPort-SDR: ZXwYIRpgEy8sv4KL07auN1zyi9Gi7bYlBzkAlfgyM+k1GnTAs/2Eo9/TLYOv9K/BJ3bbFKNaSr
- zP5X/m2uCAcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,558,1574150400"; 
-   d="scan'208";a="390540021"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.159.23])
-  by orsmga004.jf.intel.com with ESMTP; 15 Mar 2020 18:21:34 -0700
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Wei Yang <richard.weiyang@gmail.com>
-Cc:     Mika Penttil?? <mika.penttila@nextfour.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        "Mel Gorman" <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Zi Yan <ziy@nvidia.com>, Michal Hocko <mhocko@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: [RFC 2/3] mm: Add a new page flag PageLayzyFree() for MADV_FREE
-References: <20200228033819.3857058-1-ying.huang@intel.com>
-        <20200228033819.3857058-3-ying.huang@intel.com>
-        <20200315081854.rcqlmfckeqrh7fbt@master>
-        <92d4b0fe-f592-8da6-0282-2ea8a015b247@nextfour.com>
-        <20200315122217.45mioaxzuulwvx2f@master>
-Date:   Mon, 16 Mar 2020 09:21:34 +0800
-In-Reply-To: <20200315122217.45mioaxzuulwvx2f@master> (Wei Yang's message of
-        "Sun, 15 Mar 2020 12:22:17 +0000")
-Message-ID: <87pnddrt5t.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+        id S1729334AbgCPBd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 21:33:27 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2C8C01A079D;
+        Mon, 16 Mar 2020 02:33:26 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8212F1A07B1;
+        Mon, 16 Mar 2020 02:33:19 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 69D1B402A5;
+        Mon, 16 Mar 2020 09:33:11 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        abel.vesa@nxp.com, leonard.crestez@nxp.com, daniel.baluta@nxp.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2 1/2] arm64: dts: imx8qxp-mek: Sort labels alphabetically
+Date:   Mon, 16 Mar 2020 09:26:32 +0800
+Message-Id: <1584321993-8642-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wei Yang <richard.weiyang@gmail.com> writes:
+Sort the labels alphabetically for consistency.
 
-> On Sun, Mar 15, 2020 at 10:54:03AM +0200, Mika Penttil?? wrote:
->>
->>
->>On 15.3.2020 10.18, Wei Yang wrote:
->>> On Fri, Feb 28, 2020 at 11:38:18AM +0800, Huang, Ying wrote:
->>> > From: Huang Ying <ying.huang@intel.com>
->>> > 
->>> > Now !PageSwapBacked() is used as the flag for the pages freed lazily
->>> > via MADV_FREE.  This isn't obvious enough.  So Dave suggested to add a
->>> > new page flag for that to improve the code readability.
->>> I am confused with the usage of PageSwapBacked().
->>> 
->>> Previously I thought this flag means the page is swapin, set in
->>> swapin_readahead(). While I found page_add_new_anon_rmap() would set it too.
->>> This means every anon page would carry this flag. Then what is this flag
->>> means?
->>> 
->>> 
->>
->>But not all PageSwapBacked() pages are anon, like shmem.
->>
->
-> Yes, while it looks shmem is the only exception.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+Changes since V1:
+	- Rebase to latest branch, no code change.
+---
+ arch/arm64/boot/dts/freescale/imx8qxp-mek.dts | 50 ++++++++++++++++-----------
+ 1 file changed, 30 insertions(+), 20 deletions(-)
 
-Another exception is the pages freed lazily via MADV_FREE.
+diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts b/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
+index d3d26cc..b1befdb 100644
+--- a/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
++++ b/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
+@@ -30,18 +30,7 @@
+ 	};
+ };
+ 
+-&adma_lpuart0 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_lpuart0>;
+-	status = "okay";
+-};
+-
+-&fec1 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_fec1>;
+-	phy-mode = "rgmii-id";
+-	phy-handle = <&ethphy0>;
+-	fsl,magic-packet;
++&adma_dsp {
+ 	status = "okay";
+ 
+ 	mdio {
+@@ -136,6 +125,35 @@
+ 	};
+ };
+ 
++&adma_lpuart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_lpuart0>;
++	status = "okay";
++};
++
++&fec1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_fec1>;
++	phy-mode = "rgmii-id";
++	phy-handle = <&ethphy0>;
++	fsl,magic-packet;
++	status = "okay";
++
++	mdio {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ethphy0: ethernet-phy@0 {
++			compatible = "ethernet-phy-ieee802.3-c22";
++			reg = <0>;
++		};
++	};
++};
++
++&scu_key {
++	status = "okay";
++};
++
+ &usdhc1 {
+ 	assigned-clocks = <&clk IMX_CONN_SDHC0_CLK>;
+ 	assigned-clock-rates = <200000000>;
+@@ -234,11 +252,3 @@
+ 		>;
+ 	};
+ };
+-
+-&adma_dsp {
+-	status = "okay";
+-};
+-
+-&scu_key {
+-	status = "okay";
+-};
+-- 
+2.7.4
 
-> I am still struggling to understand the meaning of this flag.
-
-You can use `git blame` to find out the commit which introduces this
-flag.  Which describes why this flag is introduced.
-
-Best Regards,
-Huang, Ying
-
->>
->>--Mika
