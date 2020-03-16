@@ -2,481 +2,334 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B376B186D13
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 15:30:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F6F3186D17
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 15:32:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731551AbgCPOaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 10:30:39 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45946 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731483AbgCPOaj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 10:30:39 -0400
-Received: by mail-wr1-f68.google.com with SMTP id t2so11445067wrx.12
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 07:30:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=malat-biz.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=g/dhNA3aNRvuvEsXtbiSUvtrpS+S/9UD1UxqNBwuDcQ=;
-        b=qxWtyq5MBRY8apb3t42+Iz7Gi0OU//4zkGhKbYC3S7i3E+iMpkhz/+tevkHXnaLAJ3
-         5OMYowQkZap9gx6HcHygIryfYSd+qlj4GtW3/tciVRS+3g3r/ZmVsxSXWv7w4au8YBUn
-         VEqX2m2A8RgvaxPHddsmJIiubtKXXrR4GCvkxB3fNKARkkJxrPm1EjdQbf4a0HXuFWtJ
-         dZVv1Slir3cGguBRz4dir3EQsAszPZK7r5BfdzxUBVGG7Hoz2vUq0zAQfJFvzHN7Pjow
-         mcGSZN/5oRB3WSFYcCEZ559aG7caEKcrctOB1g7XcRv1zm0VinMHLfOim2vz2zzfXzpJ
-         gWug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=g/dhNA3aNRvuvEsXtbiSUvtrpS+S/9UD1UxqNBwuDcQ=;
-        b=LLfEVln28mY4uB/fMJtYpqxqaBFYlzl3NJHZIyaZgunfD4pTIzX4NwceLndad9GWXT
-         Ss/C54UbxaZVc9YNNfAlp71wlHup/jfV5+qebjqfrEVWXhE53NXHVWOk5avQnYvrFLxu
-         cAc+XLEE6gcX09n3/VVe5Obdg23VsmbY8uD50KRng41Oqb7mgmzxhYkbHdjsxF3gMYFo
-         8mC8TB2DHC2C2F7FDGI2PJ1+LxOPfb78Yh6ABHM8S4c/8wr3n5+bL6Q8tK0pbWs9boX0
-         ZsJZCxsKRX+otZLXKNo0Cz2YmI8WfAA5p8BzfQ9nN9rP9lFhOoVgio2pflT82J2yBXQ/
-         ZDSA==
-X-Gm-Message-State: ANhLgQ1XYkHoklcyL3cjcEdHTSVU29iNgYYt2/r2coZPZBiVlPI/l82b
-        sjNHSpbbLVTFECmsnNnXLAE7tg==
-X-Google-Smtp-Source: ADFU+vvIOSAB0AsdRcUD6ucE8HedXZ2Nt6Bl7Qv1h5oNrkDS7C4cqzz+e40W4meA3nr+XOSYId967w==
-X-Received: by 2002:adf:e502:: with SMTP id j2mr16993870wrm.259.1584369032776;
-        Mon, 16 Mar 2020 07:30:32 -0700 (PDT)
-Received: from ntb.Speedport_W_921V_1_46_000 (p57AF9474.dip0.t-ipconnect.de. [87.175.148.116])
-        by smtp.googlemail.com with ESMTPSA id z129sm31344330wmb.7.2020.03.16.07.30.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2020 07:30:31 -0700 (PDT)
-From:   Petr Malat <oss@malat.biz>
-To:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-Cc:     terrelln@fb.com, clm@fb.com, gregkh@linuxfoundation.org,
-        keescook@chromium.org, Petr Malat <oss@malat.biz>
-Subject: [PATCH v2 1/2] lib: add support for ZSTD-compressed kernel
-Date:   Mon, 16 Mar 2020 15:30:16 +0100
-Message-Id: <20200316143018.1366-1-oss@malat.biz>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200316140745.GB4041840@kroah.com>
-References: <20200316140745.GB4041840@kroah.com>
+        id S1731569AbgCPOcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 10:32:04 -0400
+Received: from smtp2.ustc.edu.cn ([202.38.64.46]:44741 "EHLO ustc.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731465AbgCPOcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 10:32:03 -0400
+Received: from xhacker (unknown [101.86.20.80])
+        by newmailweb.ustc.edu.cn (Coremail) with SMTP id LkAmygA3PZHdjW9eWEBPAA--.20080S2;
+        Mon, 16 Mar 2020 22:31:58 +0800 (CST)
+Date:   Mon, 16 Mar 2020 22:30:20 +0800
+From:   Jisheng Zhang <jszhang3@mail.ustc.edu.cn>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v2 2/4] regulator: add support for MP8869 regulator
+Message-ID: <20200316223020.1a6d92ae@xhacker>
+In-Reply-To: <20200316222808.6453d849@xhacker>
+References: <20200316222808.6453d849@xhacker>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LkAmygA3PZHdjW9eWEBPAA--.20080S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3XryUuFyrGw4fAFW3uFWkCrg_yoW3ZrWxpF
+        45GFy3Cr48ZFWfGFWxCF9Fk3WYqws2g34xAryfGw4avanxtFyfZF1DZryavF95Gr95CF1U
+        tayUCayxuF47X3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUyFb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
+        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
+        jxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwV
+        C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+        0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr
+        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI48JMxC20s02
+        6xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_Jr
+        I_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v2
+        6r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj4
+        0_Gr0_Zr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8
+        JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8DxhJUUUUU==
+X-CM-SenderInfo: xmv2xttqjtqzxdloh3xvwfhvlgxou0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for extracting ZSTD-compressed kernel images, as well as
-ZSTD-compressed initramfs.
+From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 
-ZSTD compression ratio is roughly 10% worst than xz, but the
-decompression is 10x faster. Currently, this is one of the optimal
-algorithms available in the kernel, as there isn't an algorithm,
-which would provide a better compression ratio and a shorter
-decompression time.
+The MP8869 from Monolithic Power Systems is a single output DC/DC
+converter. The voltage can be controlled via I2C.
 
-Signed-off-by: Petr Malat <oss@malat.biz>
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 ---
- include/linux/decompress/unzstd.h |  12 +++
- init/Kconfig                      |  15 ++-
- lib/Kconfig                       |   4 +
- lib/Makefile                      |   1 +
- lib/decompress.c                  |   5 +
- lib/decompress_unzstd.c           | 159 ++++++++++++++++++++++++++++++
- lib/zstd/decompress.c             |   2 +
- lib/zstd/fse_decompress.c         |   4 +-
- scripts/Makefile.lib              |   3 +
- usr/Kconfig                       |  24 +++++
- 10 files changed, 227 insertions(+), 2 deletions(-)
- create mode 100644 include/linux/decompress/unzstd.h
- create mode 100644 lib/decompress_unzstd.c
+ drivers/regulator/Kconfig  |   7 ++
+ drivers/regulator/Makefile |   1 +
+ drivers/regulator/mp886x.c | 230 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 238 insertions(+)
+ create mode 100644 drivers/regulator/mp886x.c
 
-diff --git a/include/linux/decompress/unzstd.h b/include/linux/decompress/unzstd.h
-new file mode 100644
-index 000000000000..dd2c49d47456
---- /dev/null
-+++ b/include/linux/decompress/unzstd.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef DECOMPRESS_UNZSTD_H
-+#define DECOMPRESS_UNZSTD_H
-+
-+int unzstd(unsigned char *inbuf, long len,
-+	long (*fill)(void*, unsigned long),
-+	long (*flush)(void*, unsigned long),
-+	unsigned char *output,
-+	long *pos,
-+	void (*error)(char *x));
-+#endif
-+
-diff --git a/init/Kconfig b/init/Kconfig
-index a34064a031a5..628eb3c290a2 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -172,13 +172,16 @@ config HAVE_KERNEL_LZO
- config HAVE_KERNEL_LZ4
- 	bool
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 64a39f34ef37..f4b72cb098ef 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -635,6 +635,13 @@ config REGULATOR_MP8859
+ 	  Say M here if you want to include support for the regulator as a
+ 	  module. The module will be named "mp8859".
  
-+config HAVE_KERNEL_ZSTD
-+	bool
-+
- config HAVE_KERNEL_UNCOMPRESSED
- 	bool
- 
- choice
- 	prompt "Kernel compression mode"
- 	default KERNEL_GZIP
--	depends on HAVE_KERNEL_GZIP || HAVE_KERNEL_BZIP2 || HAVE_KERNEL_LZMA || HAVE_KERNEL_XZ || HAVE_KERNEL_LZO || HAVE_KERNEL_LZ4 || HAVE_KERNEL_UNCOMPRESSED
-+	depends on HAVE_KERNEL_GZIP || HAVE_KERNEL_BZIP2 || HAVE_KERNEL_LZMA || HAVE_KERNEL_XZ || HAVE_KERNEL_LZO || HAVE_KERNEL_LZ4 || HAVE_KERNEL_ZSTD || HAVE_KERNEL_UNCOMPRESSED
- 	help
- 	  The linux kernel is a kind of self-extracting executable.
- 	  Several compression algorithms are available, which differ
-@@ -257,6 +260,16 @@ config KERNEL_LZ4
- 	  is about 8% bigger than LZO. But the decompression speed is
- 	  faster than LZO.
- 
-+config KERNEL_ZSTD
-+	bool "ZSTD"
-+	depends on HAVE_KERNEL_ZSTD
++config REGULATOR_MP886X
++	tristate "MPS MP8869 regulator driver"
++	depends on I2C && (OF || COMPILE_TEST)
++	select REGMAP_I2C
 +	help
-+	  Its compression ratio is roughly 10% worst than xz, but the
-+	  decompression is 10x faster. Currently, this is one of the optimal
-+	  algorithms available in the kernel, as there isn't an algorithm,
-+	  which would provide a better compression ratio and a shorter
-+	  decompression time.
++	  This driver supports the MP8869 voltage regulator.
 +
- config KERNEL_UNCOMPRESSED
- 	bool "None"
- 	depends on HAVE_KERNEL_UNCOMPRESSED
-diff --git a/lib/Kconfig b/lib/Kconfig
-index 6e790dc55c5b..df301bd888d7 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -329,6 +329,10 @@ config DECOMPRESS_LZ4
- 	select LZ4_DECOMPRESS
- 	tristate
- 
-+config DECOMPRESS_ZSTD
-+	select ZSTD_DECOMPRESS
-+	tristate
-+
- #
- # Generic allocator support is selected if needed
- #
-diff --git a/lib/Makefile b/lib/Makefile
-index 93217d44237f..3ab9f4c31f8b 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -158,6 +158,7 @@ lib-$(CONFIG_DECOMPRESS_LZMA) += decompress_unlzma.o
- lib-$(CONFIG_DECOMPRESS_XZ) += decompress_unxz.o
- lib-$(CONFIG_DECOMPRESS_LZO) += decompress_unlzo.o
- lib-$(CONFIG_DECOMPRESS_LZ4) += decompress_unlz4.o
-+lib-$(CONFIG_DECOMPRESS_ZSTD) += decompress_unzstd.o
- 
- obj-$(CONFIG_TEXTSEARCH) += textsearch.o
- obj-$(CONFIG_TEXTSEARCH_KMP) += ts_kmp.o
-diff --git a/lib/decompress.c b/lib/decompress.c
-index 857ab1af1ef3..ab3fc90ffc64 100644
---- a/lib/decompress.c
-+++ b/lib/decompress.c
-@@ -13,6 +13,7 @@
- #include <linux/decompress/inflate.h>
- #include <linux/decompress/unlzo.h>
- #include <linux/decompress/unlz4.h>
-+#include <linux/decompress/unzstd.h>
- 
- #include <linux/types.h>
- #include <linux/string.h>
-@@ -37,6 +38,9 @@
- #ifndef CONFIG_DECOMPRESS_LZ4
- # define unlz4 NULL
- #endif
-+#ifndef CONFIG_DECOMPRESS_ZSTD
-+# define unzstd NULL
-+#endif
- 
- struct compress_format {
- 	unsigned char magic[2];
-@@ -52,6 +56,7 @@ static const struct compress_format compressed_formats[] __initconst = {
- 	{ {0xfd, 0x37}, "xz", unxz },
- 	{ {0x89, 0x4c}, "lzo", unlzo },
- 	{ {0x02, 0x21}, "lz4", unlz4 },
-+	{ {0x28, 0xb5}, "zstd", unzstd },
- 	{ {0, 0}, NULL, NULL }
- };
- 
-diff --git a/lib/decompress_unzstd.c b/lib/decompress_unzstd.c
+ config REGULATOR_MPQ7920
+ 	tristate "Monolithic MPQ7920 PMIC"
+ 	depends on I2C && OF
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index bc69d6481646..6610ee001d9a 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -80,6 +80,7 @@ obj-$(CONFIG_REGULATOR_MC13XXX_CORE) +=  mc13xxx-regulator-core.o
+ obj-$(CONFIG_REGULATOR_MCP16502) += mcp16502.o
+ obj-$(CONFIG_REGULATOR_MP5416) += mp5416.o
+ obj-$(CONFIG_REGULATOR_MP8859) += mp8859.o
++obj-$(CONFIG_REGULATOR_MP886X) += mp886x.o
+ obj-$(CONFIG_REGULATOR_MPQ7920) += mpq7920.o
+ obj-$(CONFIG_REGULATOR_MT6311) += mt6311-regulator.o
+ obj-$(CONFIG_REGULATOR_MT6323)	+= mt6323-regulator.o
+diff --git a/drivers/regulator/mp886x.c b/drivers/regulator/mp886x.c
 new file mode 100644
-index 000000000000..b8be89250033
+index 000000000000..f77321a449ca
 --- /dev/null
-+++ b/lib/decompress_unzstd.c
-@@ -0,0 +1,159 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Wrapper for decompressing ZSTD-compressed kernel, initramfs, and initrd
-+ * Based on decompress_unlz4.c
-+ *
-+ * Copyright (C) 2020, Petr Malat <oss@malat.biz>
-+ */
++++ b/drivers/regulator/mp886x.c
+@@ -0,0 +1,230 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// MP8869 regulator driver
++//
++// Copyright (C) 2020 Synaptics Incorporated
++//
++// Author: Jisheng Zhang <jszhang@kernel.org>
 +
-+#ifdef STATIC
-+#define PREBOOT
-+#include "zstd/zstd_internal.h"
-+#include "zstd/huf_decompress.c"
-+#include "zstd/entropy_common.c"
-+#include "zstd/fse_decompress.c"
-+#include "zstd/zstd_common.c"
-+#include "zstd/decompress.c"
-+#include "xxhash.c"
-+#else
-+#include <linux/decompress/unzstd.h>
-+#include <linux/zstd.h>
-+#endif
-+#include <linux/types.h>
-+#include <linux/decompress/mm.h>
-+#include <linux/compiler.h>
++#include <linux/gpio/consumer.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/regmap.h>
++#include <linux/regulator/driver.h>
++#include <linux/regulator/of_regulator.h>
 +
-+STATIC inline int INIT unzstd(u8 *input, long in_len,
-+				long (*fill)(void *, unsigned long),
-+				long (*flush)(void *, unsigned long),
-+				u8 *output, long *posp,
-+				void (*error)(char *x))
++#define MP886X_VSEL		0x00
++#define  MP886X_V_BOOT		(1 << 7)
++#define MP886X_SYSCNTLREG1	0x01
++#define  MP886X_MODE		(1 << 0)
++#define  MP886X_GO		(1 << 6)
++#define  MP886X_EN		(1 << 7)
++
++struct mp886x_device_info {
++	struct device *dev;
++	struct regulator_desc desc;
++	struct regulator_init_data *regulator;
++	struct gpio_desc *en_gpio;
++	u32 r[2];
++	unsigned int sel;
++};
++
++static int mp886x_set_mode(struct regulator_dev *rdev, unsigned int mode)
 +{
-+	int ret = -1, ws = 1 << ZSTD_WINDOWLOG_MAX;
-+	u8 *inp, *outp;
-+	ZSTD_DStream *zstd;
-+	void *workspace;
-+	size_t workspace_size;
-+	ZSTD_outBuffer out;
-+	ZSTD_inBuffer in;
-+	unsigned long out_len;
-+	unsigned long pos;
-+
-+	if (output) {
-+		out_len = ULONG_MAX; // Caller knows data will fit
-+		outp = output;
-+	} else if (!flush) {
-+		error("NULL output pointer and no flush function provided");
-+		goto exit_0;
-+	} else {
-+		out_len = ZSTD_DStreamOutSize();
-+		outp = large_malloc(out_len);
-+		if (!outp) {
-+			error("Could not allocate output buffer");
-+			goto exit_0;
-+		}
++	switch (mode) {
++	case REGULATOR_MODE_FAST:
++		regmap_update_bits(rdev->regmap, MP886X_SYSCNTLREG1,
++				   MP886X_MODE, MP886X_MODE);
++		break;
++	case REGULATOR_MODE_NORMAL:
++		regmap_update_bits(rdev->regmap, MP886X_SYSCNTLREG1,
++				   MP886X_MODE, 0);
++		break;
++	default:
++		return -EINVAL;
 +	}
-+
-+	if (input && fill) {
-+		error("Both input pointer and fill function provided,");
-+		goto exit_1;
-+	} else if (input) {
-+		ZSTD_frameParams p;
-+
-+		inp = input;
-+		if (!ZSTD_getFrameParams(&p, input, in_len))
-+			ws = p.windowSize;
-+	} else if (!fill) {
-+		error("NULL input pointer and missing fill function");
-+		goto exit_1;
-+	} else {
-+		in_len = ZSTD_DStreamInSize();
-+		inp = large_malloc(in_len);
-+		if (!inp) {
-+			error("Could not allocate input buffer");
-+			goto exit_1;
-+		}
-+	}
-+
-+	workspace_size = ZSTD_DStreamWorkspaceBound(ws);
-+	workspace = large_malloc(workspace_size);
-+	if (!workspace) {
-+		error("Could not allocate workspace");
-+		goto exit_2;
-+	}
-+
-+	zstd = ZSTD_initDStream(ws, workspace, workspace_size);
-+	if (!zstd) {
-+		error("Could not initialize ZSTD");
-+		goto exit_3;
-+	}
-+
-+	in.src = inp;
-+	in.size = in_len;
-+	in.pos = 0;
-+	if (posp)
-+		*posp = 0;
-+
-+	for (;;) {
-+		if (fill) {
-+			in.size = fill(inp, in_len);
-+			if (in.size == 0)
-+				break;
-+		} else if (in.size == in.pos) {
-+			break;
-+		}
-+init:		out.dst = outp;
-+		out.size = out_len;
-+		out.pos = 0;
-+		pos = in.pos;
-+
-+		ret = ZSTD_decompressStream(zstd, &out, &in);
-+		if (posp)
-+			*posp += in.pos - pos;
-+		if (ZSTD_isError(ret)) {
-+			error("Decompression failed");
-+			ret = -EIO;
-+			goto exit_3;
-+		}
-+
-+		if (flush && out.pos) {
-+			if (flush(out.dst, out.pos) != out.pos) {
-+				ret = -EIO;
-+				goto exit_3;
-+			}
-+			goto init;
-+		}
-+
-+		if (ret == 0) {
-+			ret = ZSTD_resetDStream(zstd);
-+			if (ZSTD_isError(ret)) {
-+				ret = -EIO;
-+				goto exit_3;
-+			}
-+		}
-+		if (in.pos < in.size)
-+			goto init;
-+	}
-+
-+	ret = 0;
-+
-+exit_3:	large_free(workspace);
-+exit_2:	if (!input)
-+		large_free(inp);
-+exit_1:	if (!output)
-+		large_free(outp);
-+exit_0:	return ret;
++	return 0;
 +}
 +
-+#ifdef PREBOOT
-+STATIC int INIT __decompress(unsigned char *buf, long in_len,
-+			      long (*fill)(void*, unsigned long),
-+			      long (*flush)(void*, unsigned long),
-+			      unsigned char *output, long out_len,
-+			      long *posp,
-+			      void (*error)(char *x)
-+	)
++static unsigned int mp886x_get_mode(struct regulator_dev *rdev)
 +{
-+	return unzstd(buf, in_len, fill, flush, output, posp, error);
++	u32 val;
++	int ret;
++
++	ret = regmap_read(rdev->regmap, MP886X_SYSCNTLREG1, &val);
++	if (ret < 0)
++		return ret;
++	if (val & MP886X_MODE)
++		return REGULATOR_MODE_FAST;
++	else
++		return REGULATOR_MODE_NORMAL;
 +}
-+#endif
-diff --git a/lib/zstd/decompress.c b/lib/zstd/decompress.c
-index 269ee9a796c1..6a5e1ce22719 100644
---- a/lib/zstd/decompress.c
-+++ b/lib/zstd/decompress.c
-@@ -42,9 +42,11 @@
- /*-*************************************
- *  Macros
- ***************************************/
-+#ifndef PREBOOT
- #define ZSTD_isError ERR_isError /* for inlining */
- #define FSE_isError ERR_isError
- #define HUF_isError ERR_isError
-+#endif
- 
- /*_*******************************************************
- *  Memory operations
-diff --git a/lib/zstd/fse_decompress.c b/lib/zstd/fse_decompress.c
-index a84300e5a013..bd4e9c891d96 100644
---- a/lib/zstd/fse_decompress.c
-+++ b/lib/zstd/fse_decompress.c
-@@ -54,12 +54,13 @@
- /* **************************************************************
- *  Error Management
- ****************************************************************/
--#define FSE_isError ERR_isError
- #define FSE_STATIC_ASSERT(c)                                   \
- 	{                                                      \
- 		enum { FSE_static_assert = 1 / (int)(!!(c)) }; \
- 	} /* use only *after* variable declarations */
- 
-+#ifndef PREBOOT
-+#define FSE_isError ERR_isError
- /* check and forward error code */
- #define CHECK_F(f)                  \
- 	{                           \
-@@ -67,6 +68,7 @@
- 		if (FSE_isError(e)) \
- 			return e;   \
- 	}
-+#endif
- 
- /* **************************************************************
- *  Templates
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 3fa32f83b2d7..1c2f2dc528dc 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -337,6 +337,9 @@ quiet_cmd_lz4 = LZ4     $@
-       cmd_lz4 = { cat $(real-prereqs) | lz4c -l -c1 stdin stdout; \
-                   $(size_append); } > $@
- 
-+quiet_cmd_zstd = ZSTD    $@
-+      cmd_zstd = { cat $(real-prereqs) | zstd -19 --zstd=wlog=21; $(size_append); } > $@
 +
- # U-Boot mkimage
- # ---------------------------------------------------------------------------
- 
-diff --git a/usr/Kconfig b/usr/Kconfig
-index a6b68503d177..892eb15957db 100644
---- a/usr/Kconfig
-+++ b/usr/Kconfig
-@@ -106,6 +106,15 @@ config RD_LZ4
- 	  Support loading of a LZ4 encoded initial ramdisk or cpio buffer
- 	  If unsure, say N.
- 
-+config RD_ZSTD
-+	bool "Support initial ramdisk/ramfs compressed using ZSTD"
-+	default y
-+	depends on BLK_DEV_INITRD
-+	select DECOMPRESS_ZSTD
-+	help
-+	  Support loading of a ZSTD encoded initial ramdisk or cpio buffer
-+	  If unsure, say N.
++static int mp8869_set_voltage_sel(struct regulator_dev *rdev, unsigned int sel)
++{
++	int ret;
 +
- choice
- 	prompt "Built-in initramfs compression mode"
- 	depends on INITRAMFS_SOURCE!=""
-@@ -214,6 +223,19 @@ config INITRAMFS_COMPRESSION_LZ4
- 	  If you choose this, keep in mind that most distros don't provide lz4
- 	  by default which could cause a build failure.
- 
-+config INITRAMFS_COMPRESSION_ZSTD
-+	bool "ZSTD"
-+	depends on RD_ZSTD
-+	help
-+	  Its compression ratio is roughly 10% worst than xz, but the
-+	  decompression is 10x faster. Currently, this is one of the optimal
-+	  algorithms available in the kernel, as there isn't an algorithm,
-+	  which would provide a better compression ratio and a shorter
-+	  decompression time.
++	ret = regmap_update_bits(rdev->regmap, MP886X_SYSCNTLREG1,
++				 MP886X_GO, MP886X_GO);
++	if (ret < 0)
++		return ret;
 +
-+	  If you choose this, keep in mind that you may need to install the zstd
-+	  tool to be able to compress the initram.
++	sel <<= ffs(rdev->desc->vsel_mask) - 1;
++	return regmap_update_bits(rdev->regmap, rdev->desc->vsel_reg,
++				  MP886X_V_BOOT | rdev->desc->vsel_mask, sel);
++}
 +
- endchoice
- 
- config INITRAMFS_COMPRESSION
-@@ -226,10 +248,12 @@ config INITRAMFS_COMPRESSION
- 	default ".xz"   if INITRAMFS_COMPRESSION_XZ
- 	default ".lzo"  if INITRAMFS_COMPRESSION_LZO
- 	default ".lz4"  if INITRAMFS_COMPRESSION_LZ4
-+	default ".zst"  if INITRAMFS_COMPRESSION_ZSTD
- 	default ".gz"   if RD_GZIP
- 	default ".lz4"  if RD_LZ4
- 	default ".lzo"  if RD_LZO
- 	default ".xz"   if RD_XZ
- 	default ".lzma" if RD_LZMA
- 	default ".bz2"  if RD_BZIP2
-+	default ".zst"  if RD_ZSTD
- 	default ""
++static inline unsigned int mp8869_scale(unsigned int uv, u32 r1, u32 r2)
++{
++	u32 tmp = uv * r1 / r2;
++
++	return uv + tmp;
++}
++
++static int mp8869_get_voltage_sel(struct regulator_dev *rdev)
++{
++	struct mp886x_device_info *di = rdev_get_drvdata(rdev);
++	int ret, uv;
++	unsigned int val;
++	bool fbloop;
++
++	ret = regmap_read(rdev->regmap, rdev->desc->vsel_reg, &val);
++	if (ret)
++		return ret;
++
++	fbloop = val & MP886X_V_BOOT;
++	if (fbloop) {
++		uv = rdev->desc->min_uV;
++		uv = mp8869_scale(uv, di->r[0], di->r[1]);
++		return regulator_map_voltage_linear(rdev, uv, uv);
++	}
++
++	val &= rdev->desc->vsel_mask;
++	val >>= ffs(rdev->desc->vsel_mask) - 1;
++
++	return val;
++}
++
++static const struct regulator_ops mp8869_regulator_ops = {
++	.set_voltage_sel = mp8869_set_voltage_sel,
++	.get_voltage_sel = mp8869_get_voltage_sel,
++	.set_voltage_time_sel = regulator_set_voltage_time_sel,
++	.map_voltage = regulator_map_voltage_linear,
++	.list_voltage = regulator_list_voltage_linear,
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.set_mode = mp886x_set_mode,
++	.get_mode = mp886x_get_mode,
++};
++
++static int mp886x_regulator_register(struct mp886x_device_info *di,
++				     struct regulator_config *config)
++{
++	struct regulator_desc *rdesc = &di->desc;
++	struct regulator_dev *rdev;
++
++	rdesc->name = "mp886x-reg";
++	rdesc->supply_name = "vin";
++	rdesc->ops = of_device_get_match_data(di->dev);
++	rdesc->type = REGULATOR_VOLTAGE;
++	rdesc->n_voltages = 128;
++	rdesc->enable_reg = MP886X_SYSCNTLREG1;
++	rdesc->enable_mask = MP886X_EN;
++	rdesc->min_uV = 600000;
++	rdesc->uV_step = 10000;
++	rdesc->vsel_reg = MP886X_VSEL;
++	rdesc->vsel_mask = 0x3f;
++	rdesc->owner = THIS_MODULE;
++
++	rdev = devm_regulator_register(di->dev, &di->desc, config);
++	if (IS_ERR(rdev))
++		return PTR_ERR(rdev);
++	di->sel = rdesc->ops->get_voltage_sel(rdev);
++	return 0;
++}
++
++static const struct regmap_config mp886x_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++};
++
++static int mp886x_i2c_probe(struct i2c_client *client,
++			    const struct i2c_device_id *id)
++{
++	struct device *dev = &client->dev;
++	struct device_node *np = dev->of_node;
++	struct mp886x_device_info *di;
++	struct regulator_config config = { };
++	struct regmap *regmap;
++	int ret;
++
++	di = devm_kzalloc(dev, sizeof(struct mp886x_device_info), GFP_KERNEL);
++	if (!di)
++		return -ENOMEM;
++
++	di->regulator = of_get_regulator_init_data(dev, np, &di->desc);
++	if (!di->regulator) {
++		dev_err(dev, "Platform data not found!\n");
++		return -EINVAL;
++	}
++
++	ret = of_property_read_u32_array(np, "mps,fb-voltage-divider",
++					 di->r, 2);
++	if (ret)
++		return ret;
++
++	di->en_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_HIGH);
++	if (IS_ERR(di->en_gpio))
++		return PTR_ERR(di->en_gpio);
++
++	di->dev = dev;
++
++	regmap = devm_regmap_init_i2c(client, &mp886x_regmap_config);
++	if (IS_ERR(regmap)) {
++		dev_err(dev, "Failed to allocate regmap!\n");
++		return PTR_ERR(regmap);
++	}
++	i2c_set_clientdata(client, di);
++
++	config.dev = di->dev;
++	config.init_data = di->regulator;
++	config.regmap = regmap;
++	config.driver_data = di;
++	config.of_node = np;
++
++	ret = mp886x_regulator_register(di, &config);
++	if (ret < 0)
++		dev_err(dev, "Failed to register regulator!\n");
++	return ret;
++}
++
++static const struct of_device_id mp886x_dt_ids[] = {
++	{
++		.compatible = "mps,mp8869",
++		.data = &mp8869_regulator_ops
++	},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, mp886x_dt_ids);
++
++static const struct i2c_device_id mp886x_id[] = {
++	{ "mp886x", },
++	{ },
++};
++MODULE_DEVICE_TABLE(i2c, mp886x_id);
++
++static struct i2c_driver mp886x_regulator_driver = {
++	.driver = {
++		.name = "mp886x-regulator",
++		.of_match_table = of_match_ptr(mp886x_dt_ids),
++	},
++	.probe = mp886x_i2c_probe,
++	.id_table = mp886x_id,
++};
++module_i2c_driver(mp886x_regulator_driver);
++
++MODULE_AUTHOR("Jisheng Zhang <jszhang@kernel.org>");
++MODULE_DESCRIPTION("MP886x regulator driver");
++MODULE_LICENSE("GPL v2");
 -- 
-2.20.1
+2.24.0
+
 
