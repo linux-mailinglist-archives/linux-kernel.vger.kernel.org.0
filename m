@@ -2,105 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDBAE1868FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:28:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BD7A186908
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:29:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730637AbgCPK2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 06:28:19 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:39289 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730550AbgCPK2T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 06:28:19 -0400
-Received: by mail-il1-f196.google.com with SMTP id w15so8590618ilq.6
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 03:28:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TxPRfk6sibY6hpJglSupQUWB4+HiT17NTnwoa76dgxM=;
-        b=NS8QyZzH0cEZAFqfqWtUf3zJCYnpsnhJjKa5s3AUlVWCrMS2r7XYcDufh6I1YFVumW
-         m7Zp0uUr+kFRhuKC2BDSDlFXQK/chRvliVzCKQ+nvCDYDyL/fcgNfgPuyroJRHceRZHw
-         mQgHMR+kpAaA2GSHPEiI6IFtgIWPYuZq0SEIPhAu8vFNcWoJEIwQt2tibUWQ8+73SHuA
-         GU5Mrzd4DvirYUXKFM3Pay0gwYbTUwOvECoWWYu94azUBXk+a/jkbhyWUMGOFOilyA9k
-         TqbbBbQzW8N1ot7huNmMyKI5GF9YGRYXmT93bXOsnNcV6d9WPmjmpoBmR63a+MP32Scr
-         Y7gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TxPRfk6sibY6hpJglSupQUWB4+HiT17NTnwoa76dgxM=;
-        b=qQYKrOUaAq02+NTYd0xlLvC7HLpukJrDnea3bK9NMO1njXKcuyiu8sXGdXJDpkeubD
-         KLfxEWunE2n1N5fpf3SOYVEn234xDZsqqfDoRZIQoFzuqVJKrcf9rX+P5Nee1xPzmlwE
-         nu70XBYdjgC9tfsydeQHyRsAw9Z9bzW6YNRkrVEWzLhsQB4weMWrLrPc0JzVmgoGoXQi
-         piNZr8aX5PKvDCKm+TUIGaZJHXQym0T2lctPEaDw9VroouVDGeQ+FbyDjtU5Rnjs5CKx
-         0XqLU9+2KvLrabf3KAL3tD0s4WYjh8QO570rvgLxL+KC2JxsZ9l7sQeJ74pv8l6TNnS8
-         YKkw==
-X-Gm-Message-State: ANhLgQ0YBZApp5Y4kurDbMofiELsYb4earoHKJpiu7iDSeEFUX2YFe70
-        IN2a5hJw+IG8h6dDhXbu4roWJUJASv+nmliHsVrjfw==
-X-Google-Smtp-Source: ADFU+vsGVHx5bpn0+ubycNUe48ocy51bgN7prtIEKTgKxls3K76EhhgDAeT/EfgqdKb2LN6no63jMXRb45trrW4Gu/Y=
-X-Received: by 2002:a92:8c42:: with SMTP id o63mr25215708ild.189.1584354496594;
- Mon, 16 Mar 2020 03:28:16 -0700 (PDT)
+        id S1730654AbgCPK2x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 06:28:53 -0400
+Received: from foss.arm.com ([217.140.110.172]:45564 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730550AbgCPK2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 06:28:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82B61FEC;
+        Mon, 16 Mar 2020 03:28:51 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D1143F85E;
+        Mon, 16 Mar 2020 03:28:48 -0700 (PDT)
+Date:   Mon, 16 Mar 2020 10:28:46 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        clang-built-linux@googlegroups.com, x86@kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Collingbourne <pcc@google.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v3 21/26] arm64: Introduce asm/vdso/arch_timer.h
+Message-ID: <20200316102845.GB5746@lakrids.cambridge.arm.com>
+References: <20200313154345.56760-1-vincenzo.frascino@arm.com>
+ <20200313154345.56760-22-vincenzo.frascino@arm.com>
 MIME-Version: 1.0
-References: <64270a8cc4bfca77ef4e280e5ab4623f4525ff39.1584290011.git.mirq-linux@rere.qmqm.pl>
-In-Reply-To: <64270a8cc4bfca77ef4e280e5ab4623f4525ff39.1584290011.git.mirq-linux@rere.qmqm.pl>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 16 Mar 2020 11:28:05 +0100
-Message-ID: <CAMRc=Me8ceOfP2cH-35qTsVSQq0tTKgW8+kW0u7WOhwWs4sAfQ@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: gpio_name_to_desc: factor out !name check
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200313154345.56760-22-vincenzo.frascino@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-niedz., 15 mar 2020 o 17:34 Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm=
-.pl>
-napisa=C5=82(a):
->
-> Since name =3D=3D NULL can't ever match, move the check out of
-> IRQ-disabled region.
->
-> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+Hi Vincenzo,
+
+On Fri, Mar 13, 2020 at 03:43:40PM +0000, Vincenzo Frascino wrote:
+> The vDSO library should only include the necessary headers required for
+> a userspace library (UAPI and a minimal set of kernel headers). To make
+> this possible it is necessary to isolate from the kernel headers the
+> common parts that are strictly necessary to build the library.
+> 
+> Introduce asm/vdso/arch_timer.h to contain all the arm64 specific
+> code. This allows to replace the second isb() in __arch_get_hw_counter()
+> with a fake dependent stack read of the counter which improves the vdso
+> library peformances of ~4.5%. Below the results of vdsotest [1] ran for
+> 100 iterations.
+> 
+> Before the patch:
+> =================
+> clock-gettime-monotonic: syscall: 771 nsec/call
+> clock-gettime-monotonic:    libc: 130 nsec/call
+> clock-gettime-monotonic:    vdso: 111 nsec/call
+> ...
+> clock-gettime-realtime: syscall: 762 nsec/call
+> clock-gettime-realtime:    libc: 130 nsec/call
+> clock-gettime-realtime:    vdso: 111 nsec/call
+> 
+> After the patch:
+> ================
+> clock-gettime-monotonic: syscall: 792 nsec/call
+> clock-gettime-monotonic:    libc: 124 nsec/call
+> clock-gettime-monotonic:    vdso: 106 nsec/call
+> ...
+> clock-gettime-realtime: syscall: 776 nsec/call
+> clock-gettime-realtime:    libc: 124 nsec/call
+> clock-gettime-realtime:    vdso: 106 nsec/call
+> 
+> [1] https://github.com/nathanlynch/vdsotest
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Mark Rutland <Mark.Rutland@arm.com>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 > ---
->  drivers/gpio/gpiolib.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 175c6363cf61..20fbeffbdd91 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -301,6 +301,9 @@ static struct gpio_desc *gpio_name_to_desc(const char=
- * const name)
->         struct gpio_device *gdev;
->         unsigned long flags;
->
-> +       if (!name)
-> +               return NULL;
+>  arch/arm64/include/asm/arch_timer.h        | 29 ++++---------------
+>  arch/arm64/include/asm/vdso/arch_timer.h   | 33 ++++++++++++++++++++++
+>  arch/arm64/include/asm/vdso/gettimeofday.h |  7 +++--
+>  3 files changed, 42 insertions(+), 27 deletions(-)
+>  create mode 100644 arch/arm64/include/asm/vdso/arch_timer.h
+> 
+> diff --git a/arch/arm64/include/asm/arch_timer.h b/arch/arm64/include/asm/arch_timer.h
+> index 7ae54d7d333a..7f22cd00ad45 100644
+> --- a/arch/arm64/include/asm/arch_timer.h
+> +++ b/arch/arm64/include/asm/arch_timer.h
+> @@ -164,24 +164,7 @@ static inline void arch_timer_set_cntkctl(u32 cntkctl)
+>  	isb();
+>  }
+>  
+> -/*
+> - * Ensure that reads of the counter are treated the same as memory reads
+> - * for the purposes of ordering by subsequent memory barriers.
+> - *
+> - * This insanity brought to you by speculative system register reads,
+> - * out-of-order memory accesses, sequence locks and Thomas Gleixner.
+> - *
+> - * http://lists.infradead.org/pipermail/linux-arm-kernel/2019-February/631195.html
+> - */
+> -#define arch_counter_enforce_ordering(val) do {				\
+> -	u64 tmp, _val = (val);						\
+> -									\
+> -	asm volatile(							\
+> -	"	eor	%0, %1, %1\n"					\
+> -	"	add	%0, sp, %0\n"					\
+> -	"	ldr	xzr, [%0]"					\
+> -	: "=r" (tmp) : "r" (_val));					\
+> -} while (0)
+> +#include <asm/vdso/arch_timer.h>
+>  
+>  static __always_inline u64 __arch_counter_get_cntpct_stable(void)
+>  {
+> @@ -189,7 +172,7 @@ static __always_inline u64 __arch_counter_get_cntpct_stable(void)
+>  
+>  	isb();
+>  	cnt = arch_timer_reg_read_stable(cntpct_el0);
+> -	arch_counter_enforce_ordering(cnt);
+> +	cnt = arch_counter_enforce_ordering(cnt);
+>  	return cnt;
+
+Why have you changed the structure of arch_counter_enforce_ordering() to
+return a value? The commit message has no rationale for that.
+
+If there is a reason to change that, I'd prefer the driver change as one
+patch, before moving the definition.
+
+[...]
+
+> +/*
+> + * Ensure that reads of the counter are treated the same as memory reads
+> + * for the purposes of ordering by subsequent memory barriers.
+> + *
+> + * This insanity brought to you by speculative system register reads,
+> + * out-of-order memory accesses, sequence locks and Thomas Gleixner.
+> + *
+> + * http://lists.infradead.org/pipermail/linux-arm-kernel/2019-February/631195.html
+> + *
+> + */
+> +static u64 arch_counter_enforce_ordering(u64 val)
+> +{
+> +	u64 tmp, _val = (val);
 > +
->         spin_lock_irqsave(&gpio_lock, flags);
->
->         list_for_each_entry(gdev, &gpio_devices, list) {
-> @@ -309,7 +312,7 @@ static struct gpio_desc *gpio_name_to_desc(const char=
- * const name)
->                 for (i =3D 0; i !=3D gdev->ngpio; ++i) {
->                         struct gpio_desc *desc =3D &gdev->descs[i];
->
-> -                       if (!desc->name || !name)
-> +                       if (!desc->name)
->                                 continue;
->
->                         if (!strcmp(desc->name, name)) {
-> --
-> 2.20.1
->
+> +	asm volatile(
+> +	"	eor	%0, %1, %1\n"
+> +	"	add	%0, sp, %0\n"
+> +	"	ldr	xzr, [%0]"
+> +	: "=r" (tmp) : "r" (_val));
+> +
+> +	return _val;
+> +}
 
-Patch applied, thanks!
+This change has no functional effect. Since `_val` is only passed in as
+an input parameter, the compiler can assume the assembly has no effect
+on it.
 
-Bartosz
+As above, what is the rationale for changing this?
+
+> @@ -82,10 +83,10 @@ static __always_inline u64 __arch_get_hw_counter(s32 clock_mode)
+>  	isb();
+>  	asm volatile("mrs %0, cntvct_el0" : "=r" (res) :: "memory");
+>  	/*
+> -	 * This isb() is required to prevent that the seq lock is
+> -	 * speculated.#
+> +	 * arch_counter_enforce_ordering() is required to prevent that
+> +	 * the seq lock is speculated.
+>  	 */
+> -	isb();
+> +	res = arch_counter_enforce_ordering(res);
+
+Can we delete the comment entirely? We don't bother in <asm/arch_timer.h>.
+
+Even better, can we factor out __arch_counter_get_cntvct(), and use
+that?
+
+Thanks,
+Mark.
