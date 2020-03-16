@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA4D318643C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 05:37:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 378E918643D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 05:37:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729676AbgCPEgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 00:36:37 -0400
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:32777 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729423AbgCPEgh (ORCPT
+        id S1729719AbgCPEgn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 00:36:43 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40449 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729423AbgCPEgn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 00:36:37 -0400
-Received: by mail-pj1-f66.google.com with SMTP id dw20so3577090pjb.0
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Mar 2020 21:36:36 -0700 (PDT)
+        Mon, 16 Mar 2020 00:36:43 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t24so8990703pgj.7
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Mar 2020 21:36:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=fsI1XEPfE/anfkLEVKGW8+YR1eBwmOuLro1LuQ5D+DY=;
-        b=lY78JmHvz9cs070waBtw18dVt/JAt1JesCwcF86+QyxzR24E+YBrxUXkR/AK2qLJvP
-         Gly4wGAIMmEX/DPr0ss4mghlm9pEQY8aQ7XLR3FpBNBXTvMk9LEh82wdwpP60IezSkiQ
-         ozO2Z3LJzup6BX1xKCI70IFlsuQvq9xPgppJT6iSjQ0nAiFiVSwYzYTJBw/9gZvxLu/a
-         C4HKd3s/riXihuFhxygEj2EIvgheh8XnlIVEDpDp3AbucwuOkJAJGfrPft0hUdqcHWHc
-         nT07koP4VVT3QRn85cIOLvVQiAyUkrF4rb2LNMeTXeksIQSA4N8AqXkbD0wRXseQWYXn
-         kddw==
+        bh=x2aIrmW9cjK3AgpyGIiS7LfjEbJ0vHmekSq11XjW84U=;
+        b=uHezxfB6KVcV9YYBFik9200F1Q4y/ehcQzB5jf54vlptqSWdZ3jJLn4xNpPBYgwIlK
+         vmSD8ooYCjlXZloxDZHYtzylV1gGJ7By8PpRCjRyUT4PNvfQMXKI6Tgv2pAYhFtIyGdV
+         lfhXu66n8BEGPws4QUjrFyfabLS8vrI4UTvtS0Dpu5RYuZBWgFsN+tumWcL0cj9eMwP1
+         lQXV2zUL0UF78XXWQ8nqlc9Y9FAIN6u4gCw/N+4NGEi8kfcvzzU7BADywDAeRhFXu89d
+         sKs8K0FFI9UeKscyTdBCyTIqN0HHULytKd8fplktKMe4unwI7B7lmFLOacuvBVqkPh4V
+         rpNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=fsI1XEPfE/anfkLEVKGW8+YR1eBwmOuLro1LuQ5D+DY=;
-        b=i9lSaKdURhYpfCTDMA67TzBf8HOn5EWO1yr82qORcoLFUSvZc8tg6afxbtUCJD6Zef
-         8YwaW2x3pA2BCAHvsBTUNxwaXla1eHoBzaF/L+4Y9dQFFXIHkCaFcr+/aD6hD63RnEtL
-         dAzXOAxsGgvkmpz2ILCgMTwwY8UxXW74DeKA4auYG7mgfPo97B3wDmtUBLXaOnuUq6XN
-         v3xJDhs3ysybMb2tY2ea5HINbYB1hhQQI8FTThCWBw/LUUHNdzEJ7BBEYaZ9kuzBqjxM
-         /zaAtxBfeOLBfNlTVcEWuzQSQleW1VpfA9qqYhhV/jNF5i4SHB6J0m+qB5/Ks1VtdFCx
-         Zp9A==
-X-Gm-Message-State: ANhLgQ2u9JR9rjS9dXv7Da76fIFlbp7Vzul4fg1lrH8q7lQNGu3zbjoY
-        0KRR5c6ChsD6OZcmMchJYA==
-X-Google-Smtp-Source: ADFU+vulhz01sa+o+LgPj7GJ2sEvA2tjhDbL8mGwGMZalaeaW7dwYM8zUJLj3g0jTqZYwlIjEohU0Q==
-X-Received: by 2002:a17:90a:2:: with SMTP id 2mr23785492pja.16.1584333396201;
-        Sun, 15 Mar 2020 21:36:36 -0700 (PDT)
+        bh=x2aIrmW9cjK3AgpyGIiS7LfjEbJ0vHmekSq11XjW84U=;
+        b=FZvF52uX4RkrbXko2gOVh4lEeaQDCnIN8rAuk/M5b9up7AhM8v6VYOtldqFfX9Gci0
+         nQR9J24Qtr7XdkO4oFm8FUasT0/9V4XVlywpRx/yM/2l0L/65d9C9oBM3ccKAdXXiEDZ
+         qgRThYg+TbjdPKoKCX8BaRX61cp+BtZGm8GMommTb/01cuFGZiLd9YNSWC2pH5KHWb0x
+         11IC7/nmHt2RsArJMKITGbatMoqURXT7qMbeeZ0YA7z8zF8LiJGM5h2KIHdpUgxqmTac
+         ZAcR48Y7OlEqQRanFNjDwBwyE4SLppWhXxaqlfz+6vBmehYOacGnGRAHArRzIHAR2Yx+
+         qvdA==
+X-Gm-Message-State: ANhLgQ0S0KMrmWTQz0cfUG197cD1KdZCiYAQC4Q18egdnZ3rZGsit3ht
+        xHQhbRZXttSQp6IXO7yyaQ==
+X-Google-Smtp-Source: ADFU+vvD7ZY12Fv5AuWSMX8HBSYi+c/pA6BWamHOhmpp3/wxLvuyqf0jdFOYO2rfworbjAz/j+AM9w==
+X-Received: by 2002:a63:5859:: with SMTP id i25mr24389370pgm.74.1584333402141;
+        Sun, 15 Mar 2020 21:36:42 -0700 (PDT)
 Received: from mylaptop.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id d6sm18544296pjz.39.2020.03.15.21.36.30
+        by smtp.gmail.com with ESMTPSA id d6sm18544296pjz.39.2020.03.15.21.36.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 15 Mar 2020 21:36:35 -0700 (PDT)
+        Sun, 15 Mar 2020 21:36:41 -0700 (PDT)
 From:   Pingfan Liu <kernelfans@gmail.com>
 To:     linux-mm@kvack.org
 Cc:     Pingfan Liu <kernelfans@gmail.com>,
@@ -55,11 +55,12 @@ Cc:     Pingfan Liu <kernelfans@gmail.com>,
         John Hubbard <jhubbard@nvidia.com>,
         "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
         Christoph Hellwig <hch@infradead.org>,
-        Shuah Khan <shuah@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCHv6 2/3] mm/gup: fix omission of check on FOLL_LONGTERM in gup fast path
-Date:   Mon, 16 Mar 2020 12:34:03 +0800
-Message-Id: <1584333244-10480-3-git-send-email-kernelfans@gmail.com>
+Subject: [PATCHv6 3/3] mm/gup_benchemark: add LONGTERM_BENCHMARK test in gup fast path
+Date:   Mon, 16 Mar 2020 12:34:04 +0800
+Message-Id: <1584333244-10480-4-git-send-email-kernelfans@gmail.com>
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1584333244-10480-1-git-send-email-kernelfans@gmail.com>
 References: <1584333244-10480-1-git-send-email-kernelfans@gmail.com>
@@ -68,24 +69,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FOLL_LONGTERM is a special case of FOLL_PIN. It suggests a pin which is
-going to be given to hardware and can't move. It would truncate CMA
-permanently and should be excluded.
-
-In gup slow path, slow path, where
-__gup_longterm_locked->check_and_migrate_cma_pages() handles FOLL_LONGTERM,
-but in fast path, there lacks such a check, which means a possible leak of
-CMA page to longterm pinned.
-
-Place a check in try_grab_compound_head() in the fast path to fix the leak,
-and if FOLL_LONGTERM happens on CMA, it will fall back to slow path to
-migrate the page.
-
-Some note about the check:
-Huge page's subpages have the same migrate type due to either
-allocation from a free_list[] or alloc_contig_range() with param
-MIGRATE_MOVABLE. So it is enough to check on a single subpage
-by is_migrate_cma_page(subpage)
+Introduce a PIN_FAST_LONGTERM_BENCHMARK ioctl to test longterm pin in gup fast
+path.
 
 Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
 Cc: Ira Weiny <ira.weiny@intel.com>
@@ -97,33 +82,77 @@ Cc: John Hubbard <jhubbard@nvidia.com>
 Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
 Cc: Christoph Hellwig <hch@infradead.org>
 Cc: Shuah Khan <shuah@kernel.org>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Duyck <alexander.duyck@gmail.com>
 To: linux-mm@kvack.org
 Cc: linux-kernel@vger.kernel.org
 ---
- mm/gup.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ mm/gup_benchmark.c                         | 7 +++++++
+ tools/testing/selftests/vm/gup_benchmark.c | 6 +++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 9df77b1..78132cf 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -89,6 +89,15 @@ static __maybe_unused struct page *try_grab_compound_head(struct page *page,
- 		int orig_refs = refs;
+diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
+index be690fa..09fba20 100644
+--- a/mm/gup_benchmark.c
++++ b/mm/gup_benchmark.c
+@@ -10,6 +10,7 @@
+ #define GUP_BENCHMARK		_IOWR('g', 3, struct gup_benchmark)
+ #define PIN_FAST_BENCHMARK	_IOWR('g', 4, struct gup_benchmark)
+ #define PIN_BENCHMARK		_IOWR('g', 5, struct gup_benchmark)
++#define PIN_FAST_LONGTERM_BENCHMARK	_IOWR('g', 6, struct gup_benchmark)
 
- 		/*
-+		 * Huge page's subpages have the same migrate type due to either
-+		 * allocation from a free_list[] or alloc_contig_range() with
-+		 * param MIGRATE_MOVABLE. So it is enough to check on a subpage.
-+		 */
-+		if (unlikely(flags & FOLL_LONGTERM) &&
-+			is_migrate_cma_page(page))
-+			return NULL;
-+
-+		/*
- 		 * When pinning a compound page of order > 1 (which is what
- 		 * hpage_pincount_available() checks for), use an exact count to
- 		 * track it, via hpage_pincount_add/_sub().
+ struct gup_benchmark {
+ 	__u64 get_delta_usec;
+@@ -101,6 +102,11 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
+ 			nr = get_user_pages_fast(addr, nr, gup->flags,
+ 						 pages + i);
+ 			break;
++		case PIN_FAST_LONGTERM_BENCHMARK:
++			nr = get_user_pages_fast(addr, nr,
++					gup->flags | FOLL_LONGTERM,
++					pages + i);
++			break;
+ 		case GUP_LONGTERM_BENCHMARK:
+ 			nr = get_user_pages(addr, nr,
+ 					    gup->flags | FOLL_LONGTERM,
+@@ -166,6 +172,7 @@ static long gup_benchmark_ioctl(struct file *filep, unsigned int cmd,
+ 	case GUP_BENCHMARK:
+ 	case PIN_FAST_BENCHMARK:
+ 	case PIN_BENCHMARK:
++	case PIN_FAST_LONGTERM_BENCHMARK:
+ 		break;
+ 	default:
+ 		return -EINVAL;
+diff --git a/tools/testing/selftests/vm/gup_benchmark.c b/tools/testing/selftests/vm/gup_benchmark.c
+index 43b4dfe..f024ff3 100644
+--- a/tools/testing/selftests/vm/gup_benchmark.c
++++ b/tools/testing/selftests/vm/gup_benchmark.c
+@@ -21,6 +21,7 @@
+ /* Similar to above, but use FOLL_PIN instead of FOLL_GET. */
+ #define PIN_FAST_BENCHMARK	_IOWR('g', 4, struct gup_benchmark)
+ #define PIN_BENCHMARK		_IOWR('g', 5, struct gup_benchmark)
++#define PIN_FAST_LONGTERM_BENCHMARK	_IOWR('g', 6, struct gup_benchmark)
+
+ /* Just the flags we need, copied from mm.h: */
+ #define FOLL_WRITE	0x01	/* check pte is writable */
+@@ -44,7 +45,7 @@ int main(int argc, char **argv)
+ 	char *file = "/dev/zero";
+ 	char *p;
+
+-	while ((opt = getopt(argc, argv, "m:r:n:f:abtTLUuwSH")) != -1) {
++	while ((opt = getopt(argc, argv, "m:r:n:f:abtTlLUuwSH")) != -1) {
+ 		switch (opt) {
+ 		case 'a':
+ 			cmd = PIN_FAST_BENCHMARK;
+@@ -67,6 +68,9 @@ int main(int argc, char **argv)
+ 		case 'T':
+ 			thp = 0;
+ 			break;
++		case 'l':
++			cmd = PIN_FAST_LONGTERM_BENCHMARK;
++			break;
+ 		case 'L':
+ 			cmd = GUP_LONGTERM_BENCHMARK;
+ 			break;
 --
 2.7.5
 
