@@ -2,80 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C48B2186FE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:20:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EDC0186FFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:26:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732109AbgCPQUa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 12:20:30 -0400
-Received: from mail.fudan.edu.cn ([202.120.224.73]:34171 "EHLO fudan.edu.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732011AbgCPQU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 12:20:29 -0400
-Received: from localhost.localdomain (unknown [61.129.42.58])
-        by app2 (Coremail) with SMTP id XQUFCgCHjpo_p29e3RxJBQ--.3638S3;
-        Tue, 17 Mar 2020 00:20:16 +0800 (CST)
-From:   Xiyu Yang <xiyuyang19@fudan.edu.cn>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Xiyu Yang <xiyuyang19@fudan.edu.cn>,
-        Xin Tan <tanxin.ctf@gmail.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Cc:     yuanxzhang@fudan.edu.cn, kjlu@umn.edu
-Subject: [PATCH] VMCI: Fix dereference before NULL-check of context ptr
-Date:   Tue, 17 Mar 2020 00:18:33 +0800
-Message-Id: <1584375516-10729-1-git-send-email-xiyuyang19@fudan.edu.cn>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: XQUFCgCHjpo_p29e3RxJBQ--.3638S3
-X-Coremail-Antispam: 1UD129KBjvdXoWruFy3Gry8Wr13KF4UZw17GFg_yoWfWrc_Wa
-        45WFsrArWYkFnF9wnrCrnxZryFyFWfZr1xGan293y3JFZI9w43JF1qvFy3JF43urZrKrnr
-        Jr4DCa4Iy34xKjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbTAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-        A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
-        3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-        1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMc
-        vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-        4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc2xSY4AK67AK6r1l42xK82IYc2Ij64vIr41l4I
-        8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-        xVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-        AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
-        cIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
-        v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU1NtxUUUUU
-X-CM-SenderInfo: irzsiiysuqikmy6i3vldqovvfxof0/
+        id S1732144AbgCPQ0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 12:26:11 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:20898 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731950AbgCPQ0L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 12:26:11 -0400
+X-Greylist: delayed 309 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Mar 2020 12:26:10 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584375970;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=QsohC5NdJJ5zDtE0SOF+eo4QhwaKwX3h4pprMB28X5Q=;
+        b=E5/C/eVX68ulzHqrpKgaFwgNf5lswG/krOFKeLhQ61RTcYN1ZoAPXjHuobFAjunzkY9Xiy
+        SoC0H+MiZTOt6WoCxZpqGXXUbQ0EMN2Vaq/g41if0mtSgATSD7AKYYWTmSbzGS3uYhJ4VL
+        vNay5HsJhNO+FW6Uf2913oVOCus0c1Q=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-285-IzJrVBllPJ-BGiD1AR_Pjg-1; Mon, 16 Mar 2020 12:19:08 -0400
+X-MC-Unique: IzJrVBllPJ-BGiD1AR_Pjg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 32D6319E3D05;
+        Mon, 16 Mar 2020 16:19:07 +0000 (UTC)
+Received: from treble (ovpn-120-135.rdu2.redhat.com [10.10.120.135])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8B3201001DC2;
+        Mon, 16 Mar 2020 16:19:06 +0000 (UTC)
+Date:   Mon, 16 Mar 2020 11:19:04 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [RFC][PATCH 15/16] objtool: Implement noinstr validation
+Message-ID: <20200316161904.zouwkwup6vwsmxgp@treble>
+References: <20200312134107.700205216@infradead.org>
+ <20200312135042.288201372@infradead.org>
+ <20200315180320.cgy2ealklbjlx4g7@treble>
+ <20200316132419.GF12521@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200316132419.GF12521@hirez.programming.kicks-ass.net>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A NULL pointer can be returned by vmci_ctx_get(). Thus add a
-corresponding check so that a NULL pointer dereference will
-be avoided in vmci_ctx_put().
+On Mon, Mar 16, 2020 at 02:24:19PM +0100, Peter Zijlstra wrote:
+> > And "read_instr_hints" reads as "read_instruction_hints()".
+> > 
+> > Can we come up with a more readable name?  Why not just "notrace"?
+> > 
+> > The trace begin/end annotations could be
+> > 
+> >   trace_allow_begin()
+> >   trace_allow_end()
+> 
+> notrace already exists and we didn't want to confuse things further.
 
-Signed-off-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
-Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
----
- drivers/misc/vmw_vmci/vmci_queue_pair.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Um, why would it confuse things to call a section of notrace code
+".notrace.text"???
 
-diff --git a/drivers/misc/vmw_vmci/vmci_queue_pair.c b/drivers/misc/vmw_vmci/vmci_queue_pair.c
-index 032617101ebc..b6ba00ad9ec8 100644
---- a/drivers/misc/vmw_vmci/vmci_queue_pair.c
-+++ b/drivers/misc/vmw_vmci/vmci_queue_pair.c
-@@ -1808,7 +1808,8 @@ static int qp_alloc_host_work(struct vmci_handle *handle,
- 		pr_devel("queue pair broker failed to alloc (result=%d)\n",
- 			 result);
- 	}
--	vmci_ctx_put(context);
-+	if (context)
-+		vmci_ctx_put(context);
- 	return result;
- }
- 
+> > Also -- what happens when a function belongs in both .notrace.text and
+> > in one of the other special-purpose sections like .sched.text,
+> > .meminit.text or .entry.text?
+> 
+> Hasn't happened yet, initially we were thinking of using .entry.text for
+> this as a whole, but decided against that due to how .entry.text is
+> special for PTI (although exposing most of this code really wouldn't
+> matter).
+> 
+> The thing with .sched.text is that we really should never call into
+> scheduling from these contexts anyway. We've not ran into meminit yet.
+> (all this finicky entry code is ran with IRQs disabled).
+> 
+> The one that could potentially interfere is .cpuidle.text.
+> 
+> > Maybe storing pointers to the functions, like NOKPROBE_SYMBOL does,
+> > would be better than putting the functions in a separate section.
+> 
+> Thing is, I really _hate_ that annotation style.
+
+I do too, but I get the feeling this "put everything in its own section"
+thing is going to bite us.
+
+> > Also, maybe we can just hard-code the fact that vmlinux.o is always
+> > noinstr-only.  Over time we'll probably need to move more per-.o
+> > functionalities to vmlinux.o and I think we should avoid creating a
+> > bunch of cmdline options.
+> 
+> but you're ruining things here, see, for a regular x86_64 config, we'd
+> run this with:
+> 
+> 	objtool check -fail vmlinux.o
+>
+> And I was hoping to get vmlinux.o objtool clean, surprisingly there
+> really aren't that many complaints. But the -i thing makes it run
+> significantly faster without duplicating all the bits we've already
+> checked.
+
+My suggestion is that the "-i" option would be hard-coded (for now).  So
+nothing extra would get checked.
+
 -- 
-2.7.4
+Josh
 
