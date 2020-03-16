@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2768D186C32
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:36:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C754186C38
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:37:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731385AbgCPNgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 09:36:02 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:59114 "EHLO hermes.aosc.io"
+        id S1731388AbgCPNhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 09:37:23 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:59170 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731330AbgCPNgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 09:36:01 -0400
+        id S1731340AbgCPNhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 09:37:22 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 565904C196;
-        Mon, 16 Mar 2020 13:35:45 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 4124F4C196;
+        Mon, 16 Mar 2020 13:37:10 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Sam Ravnborg <sam@ravnborg.org>,
@@ -23,51 +23,95 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 1/5] dt-bindings: vendor-prefixes: Add Xingbangda
-Date:   Mon, 16 Mar 2020 21:34:59 +0800
-Message-Id: <20200316133503.144650-2-icenowy@aosc.io>
+Subject: [PATCH v2 2/5] dt-bindings: panel: add binding for Xingbangda XBD599 panel
+Date:   Mon, 16 Mar 2020 21:35:00 +0800
+Message-Id: <20200316133503.144650-3-icenowy@aosc.io>
 In-Reply-To: <20200316133503.144650-1-icenowy@aosc.io>
 References: <20200316133503.144650-1-icenowy@aosc.io>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aosc.io; s=dkim;
-        t=1584365761;
+        t=1584365841;
         h=from:subject:date:message-id:to:cc:mime-version:content-transfer-encoding:in-reply-to:references;
-        bh=0HfFUPjqEgQwk282TtGVjN57mA1btMaLRbIZ6w6p3rA=;
-        b=REDQumeYtu2hFfNE/0noLkFBnWLBO0K+j+7Cl1oibcFre31634hVU28mtpy55VHq7hemb5
-        9Y/h3REpWyNd//ndafhD4+trF+cFKYr8mxOkJEW8BtetEuX3kI1XpnvOLWBbguNyciZFV+
-        +hPgrwK9gX+BZf947U0jZ34pe2LBgAc=
+        bh=k5dZsJ/q6rrXyDSO2nmOTWqvPhDI4C+8rut25MFD+Sk=;
+        b=OUlaYo/FyQ18QC+9N7l4EKPc9OYtnaEJ6rHTTmw5vWDG6bE4z3Dc0JryPNmmzGXHubXOqg
+        vnAixztTiQggjBI+b2WQ1uKGq0JCKJczHDkbgeZsFMqH3T47xzNMNhu6qv5Xdi+haGzyNU
+        I+cG4IhCqhUW5fahJroACP3Tm5imnHs=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Shenzhen Xingbangda Display Technology Co., Ltd is a company which
-produces LCD modules. It supplies the LCD panels of the PinePhone series
-(the developers' kit and the final phone).
+Xingbangda XBD599 is a 5.99" 720x1440 MIPI-DSI LCD panel.
 
-Add the vendor prefix of it.
+Add its device tree binding.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
-No changes in v2.
+Changes in v2:
+- Example fix.
+- Format fix.
 
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ .../display/panel/xingbangda,xbd599.yaml      | 50 +++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/xingbangda,xbd599.yaml
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 23ca95bee298..0d9e966eff19 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -1106,6 +1106,8 @@ patternProperties:
-     description: Xiaomi Technology Co., Ltd.
-   "^xillybus,.*":
-     description: Xillybus Ltd.
-+  "^xingbangda,.*":
-+    description: Shenzhen Xingbangda Display Technology Co., Ltd
-   "^xinpeng,.*":
-     description: Shenzhen Xinpeng Technology Co., Ltd
-   "^xlnx,.*":
+diff --git a/Documentation/devicetree/bindings/display/panel/xingbangda,xbd599.yaml b/Documentation/devicetree/bindings/display/panel/xingbangda,xbd599.yaml
+new file mode 100644
+index 000000000000..b27bcf11198f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/xingbangda,xbd599.yaml
+@@ -0,0 +1,50 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/panel/xingbangda,xbd599.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Xingbangda XBD599 5.99in MIPI-DSI LCD panel
++
++maintainers:
++  - Icenowy Zheng <icenowy@aosc.io>
++
++allOf:
++  - $ref: panel-common.yaml#
++
++properties:
++  compatible:
++    const: xingbangda,xbd599
++  reg: true
++  backlight: true
++  reset-gpios: true
++  vcc-supply:
++    description: regulator that supplies the VCC voltage
++  iovcc-supply:
++    description: regulator that supplies the IOVCC voltage
++
++required:
++  - compatible
++  - reg
++  - backlight
++  - vcc-supply
++  - iovcc-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    dsi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        panel@0 {
++            compatible = "xingbangda,xbd599";
++            reg = <0>;
++            backlight = <&backlight>;
++            iovcc-supply = <&reg_dldo2>;
++            vcc-supply = <&reg_ldo_io0>;
++        };
++    };
++
++...
 -- 
 2.24.1
 
