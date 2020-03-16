@@ -2,63 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 949C4186D55
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 15:40:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC7B4186D87
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 15:42:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731660AbgCPOkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 10:40:21 -0400
-Received: from mga05.intel.com ([192.55.52.43]:27653 "EHLO mga05.intel.com"
+        id S1731897AbgCPOm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 10:42:26 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:18186 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731572AbgCPOkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 10:40:20 -0400
-IronPort-SDR: vSOJE6taa8UyrczVPRa0OBrubDNnRZXxLfMQExXBS8lGIaOSuw9P0w9YVKXMqoIAhx+OcHUJly
- wAQzikzp8kiA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 07:40:19 -0700
-IronPort-SDR: bMGLbIcmGqh2S0p47k+nya3eXYfE//Kvn6GKONNjdyiMMbyURlK86sVpLFQtzK1qyYp+VzZyIV
- jVXsvGUxysKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,560,1574150400"; 
-   d="scan'208";a="445141887"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Mar 2020 07:40:18 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jDqui-00A5YZ-Ez; Mon, 16 Mar 2020 16:40:20 +0200
-Date:   Mon, 16 Mar 2020 16:40:20 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Martin Kepplinger <martin.kepplinger@puri.sm>
-Cc:     dmitry.torokhov@gmail.com, m.felsch@pengutronix.de,
-        mylene.josserand@bootlin.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: edt-ft5x06 - add fw_version debugfs file to read
-Message-ID: <20200316144020.GN1922688@smile.fi.intel.com>
-References: <20200316142756.25344-1-martin.kepplinger@puri.sm>
+        id S1731642AbgCPOmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 10:42:25 -0400
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 48gzXt6JwWzw;
+        Mon, 16 Mar 2020 15:42:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1584369742; bh=2ns96Yjlk6CyI7sqauauOfnPPcjHEnd9dp1VnEEEGnE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qt3qSv5IYlp/Ocv0e40GrF1C6d694xdlijScCOwP5wJDVawaNXcIyoo6FY7xBw8Qy
+         kZHJYWEFCkBxj3jSSO5CwtfHRYwbQC7euEpKWVLYZ279skYgO/wRqUhyy9xDiCcF4+
+         9EIviLxKjOgDlEQOB5FW6llnpqMzJ0n/E5+/ajjijLwE5HNV5sSNI+a+0fD9ihzU1Y
+         iJYn00O9QTf2Kf56fpFgGDtpBmFfT6m/olxis71OwdWDxjQkrgNvcj2Pfp8EzkGq4v
+         JKY6Nv8ElRdlDXsobPnYKT3QOLe+VzNyrtUFbp9PVuhEnXEX9/i45NrYjJkWfCvt2r
+         swobIPU3b6OUg==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.102.2 at mail
+Date:   Mon, 16 Mar 2020 15:42:21 +0100
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: at91: support atomic write xfer
+Message-ID: <20200316144221.GC19141@qmqm.qmqm.pl>
+References: <c05f76f74cd6a7ec2735c96861f9d5933631c112.1584296795.git.mirq-linux@rere.qmqm.pl>
+ <9924dd54-dd8b-d130-9607-2bbbc65675d5@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200316142756.25344-1-martin.kepplinger@puri.sm>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <9924dd54-dd8b-d130-9607-2bbbc65675d5@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 03:27:56PM +0100, Martin Kepplinger wrote:
-> Add simple fw_version file in debugfs to read the value from 0xa6
-> which is the firmware version.
+On Sun, Mar 15, 2020 at 11:46:33PM +0300, Dmitry Osipenko wrote:
+> 15.03.2020 21:27, Michał Mirosław пишет:
+> > Implement basic support for atomic write - enough to get a simple
+> > write to PMIC on shutdown. Only for chips having ALT_CMD register,
+> > eg. SAMA5D2.
+> > 
+> > Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+> > ---
+> 
+> Hello Michał,
+> 
+> ...
+> > +	ret = pm_runtime_get_sync(dev->dev);
+> > +	if (ret < 0)
+> > +		goto out;
+> 
+> Runtime PM can't be used while interrupts are disabled, unless
+> pm_runtime_irq_safe() is used and driver's RPM callback is IRQ-safe.
 
+I didn't get any warnings from lockdep and friends, but I'll double
+check if this is by luck.
 
-If you switch to regmap I�C API you will get this for free for all defined
-registers.
+> ...
+> > +	timeout = jiffies + (2 + msg->len) * HZ/1000;
+> > +	for (;;) {
+> > +		stat = at91_twi_read(dev, AT91_TWI_SR);
+> > +		if (stat & AT91_TWI_TXCOMP)
+> > +			break;
+> > +		if (time_after(jiffies, timeout)) {
+> > +			ret = -ETIMEDOUT;
+> > +			goto out;
+> > +		}
+> > +		udelay(100);
+> > +	}
+> 
+> Jiffies can't be used with the disabled interrupts because jiffies are
+> updated by timer's interrupt.
+> 
+> Either ktime() API or iterator-based loop should be used.
 
-So, I highly recommend to consider above.
+Thanks for the pointers. In my use-case power is cut from the CPU at this
+point so it didn't matter that the loop was infinite.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Best Regards
+Michał Mirosław
