@@ -2,90 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D01F186BD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:13:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 246B4186BBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:05:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731144AbgCPNNT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 09:13:19 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11702 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731025AbgCPNNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 09:13:19 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 8D0A22A0B1305EC4C0D3;
-        Mon, 16 Mar 2020 21:13:14 +0800 (CST)
-Received: from huawei.com (10.175.113.25) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.487.0; Mon, 16 Mar 2020
- 21:13:04 +0800
-From:   Zheng Zengkai <zhengzengkai@huawei.com>
-To:     <davem@davemloft.net>, <aelior@marvell.com>,
-        <GR-everest-linux-l2@marvell.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <zhengzengkai@huawei.com>
-Subject: [PATCH net-next] qede: remove some unused code in function qede_selftest_receive_traffic
-Date:   Mon, 16 Mar 2020 21:05:24 +0800
-Message-ID: <20200316130524.140421-1-zhengzengkai@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1731147AbgCPNFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 09:05:41 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37776 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730974AbgCPNFl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 09:05:41 -0400
+Received: by mail-pf1-f196.google.com with SMTP id 3so2051714pff.4
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 06:05:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=axtens.net; s=google;
+        h=from:to:subject:in-reply-to:references:date:message-id:mime-version;
+        bh=S3ylSoSVkSVtheK/F1qvWvf0XZ/cN1+4cUsuDfSQPrg=;
+        b=HC5iw9nsPFCCHJIQ4FigojhiQRRfcdyb6Qpgcbl9eWbw97vM6ByH1GNo0POUcLpnq8
+         W2526eX+MuNa5a/YiPRQpKhHy989nZbvMYd0iQ068YzwHi/XfEMOAHswjNqJkdwQO/xa
+         W0/LGixqd91m0pYY9vhfsXQG0Fssoiruwz8xI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=S3ylSoSVkSVtheK/F1qvWvf0XZ/cN1+4cUsuDfSQPrg=;
+        b=gnbFSZ20YHXaOnKWCp9mjwaacTf/k+vtibvm3zgdsRsqdBCzVbNNeheY9XcYHS6lxq
+         yarESRbEe4uR6+jvvUzdF5motOD+hEObmnJiXXGr668c9vNJF2zkKIIbP68pnkUBPmQu
+         a/cbApbg+uMjuw5CCO7hPQGoR9BT9nX1+ZwsLBrHSLEoVKvCZpJrAdeW3qveKvSKjJiu
+         MHVD7UrlITA+zKKWJOtRfSso0VIvcCcZMjBFZriSW9lZCLAN4oG3OmGOlpaXENy8TmAO
+         a94v39kKuT82itzkpjaYWdnuuSrXyRh/bKjRJ10pyUTaeLM7VLCBAFZiLsZg4IpZ1ZHa
+         xTqA==
+X-Gm-Message-State: ANhLgQ0WlYxDDeL+oEE8x7L5R2buUxAeKdPTUFmEPcgJNkRSX6WlJ4Jp
+        crz/L5XVDT0vOKicvnTP4pWzIg==
+X-Google-Smtp-Source: ADFU+vte8YprRXpiosPh6oK8UzgBCXexYDX8dInWwsIZfEzpUDJTBrqtjf9QP5Ukzx4PTdYLK6yJpw==
+X-Received: by 2002:a63:5506:: with SMTP id j6mr26894163pgb.43.1584363939827;
+        Mon, 16 Mar 2020 06:05:39 -0700 (PDT)
+Received: from localhost (2001-44b8-1113-6700-789d-cd2c-42e1-23af.static.ipv6.internode.on.net. [2001:44b8:1113:6700:789d:cd2c:42e1:23af])
+        by smtp.gmail.com with ESMTPSA id z15sm32281786pfg.152.2020.03.16.06.05.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Mar 2020 06:05:38 -0700 (PDT)
+From:   Daniel Axtens <dja@axtens.net>
+To:     Pratik Rajesh Sampat <psampat@linux.ibm.com>,
+        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, psampat@linux.ibm.com,
+        pratik.r.sampat@gmail.com, ego@linux.vnet.ibm.com
+Subject: Re: [PATCH] Fixes: 227942809b52 ("cpufreq: powernv: Restore cpu frequency to policy->cur on unthrottling")
+In-Reply-To: <20200306110549.25517-1-psampat@linux.ibm.com>
+References: <20200306110549.25517-1-psampat@linux.ibm.com>
+Date:   Tue, 17 Mar 2020 00:05:35 +1100
+Message-ID: <87v9n4o3fk.fsf@dja-thinkpad.axtens.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove set but not used variables 'sw_comp_cons' and 'hw_comp_cons'
-to fix gcc '-Wunused-but-set-variable' warning:
+Hi Pratik,
 
-drivers/net/ethernet/qlogic/qede/qede_ethtool.c: In function qede_selftest_receive_traffic:
-drivers/net/ethernet/qlogic/qede/qede_ethtool.c:1569:20:
- warning: variable sw_comp_cons set but not used [-Wunused-but-set-variable]
-drivers/net/ethernet/qlogic/qede/qede_ethtool.c: In function qede_selftest_receive_traffic:
-drivers/net/ethernet/qlogic/qede/qede_ethtool.c:1569:6:
- warning: variable hw_comp_cons set but not used [-Wunused-but-set-variable]
+Please could you resend this with a more meaningful subject line and
+move the Fixes: line to immediately above your signed-off-by?
 
-After removing 'hw_comp_cons',the memory barrier 'rmb()' and its comments become useless,
-so remove them as well.
+Thanks!
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
----
- drivers/net/ethernet/qlogic/qede/qede_ethtool.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+Regards,
+Daniel
 
-diff --git a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
-index 8a426afb6a55..f5141d1f19bf 100644
---- a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
-+++ b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
-@@ -1566,7 +1566,7 @@ static int qede_selftest_transmit_traffic(struct qede_dev *edev,
- 
- static int qede_selftest_receive_traffic(struct qede_dev *edev)
- {
--	u16 hw_comp_cons, sw_comp_cons, sw_rx_index, len;
-+	u16 sw_rx_index, len;
- 	struct eth_fast_path_rx_reg_cqe *fp_cqe;
- 	struct qede_rx_queue *rxq = NULL;
- 	struct sw_rx_data *sw_rx_data;
-@@ -1596,17 +1596,6 @@ static int qede_selftest_receive_traffic(struct qede_dev *edev)
- 			continue;
- 		}
- 
--		hw_comp_cons = le16_to_cpu(*rxq->hw_cons_ptr);
--		sw_comp_cons = qed_chain_get_cons_idx(&rxq->rx_comp_ring);
--
--		/* Memory barrier to prevent the CPU from doing speculative
--		 * reads of CQE/BD before reading hw_comp_cons. If the CQE is
--		 * read before it is written by FW, then FW writes CQE and SB,
--		 * and then the CPU reads the hw_comp_cons, it will use an old
--		 * CQE.
--		 */
--		rmb();
--
- 		/* Get the CQE from the completion ring */
- 		cqe = (union eth_rx_cqe *)qed_chain_consume(&rxq->rx_comp_ring);
- 
--- 
-2.20.1
-
+> The patch avoids allocating cpufreq_policy on stack hence fixing frame
+> size overflow in 'powernv_cpufreq_work_fn'
+>
+> Signed-off-by: Pratik Rajesh Sampat <psampat@linux.ibm.com>
+> ---
+>  drivers/cpufreq/powernv-cpufreq.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
+> index 56f4bc0d209e..20ee0661555a 100644
+> --- a/drivers/cpufreq/powernv-cpufreq.c
+> +++ b/drivers/cpufreq/powernv-cpufreq.c
+> @@ -902,6 +902,7 @@ static struct notifier_block powernv_cpufreq_reboot_nb = {
+>  void powernv_cpufreq_work_fn(struct work_struct *work)
+>  {
+>  	struct chip *chip = container_of(work, struct chip, throttle);
+> +	struct cpufreq_policy *policy;
+>  	unsigned int cpu;
+>  	cpumask_t mask;
+>  
+> @@ -916,12 +917,14 @@ void powernv_cpufreq_work_fn(struct work_struct *work)
+>  	chip->restore = false;
+>  	for_each_cpu(cpu, &mask) {
+>  		int index;
+> -		struct cpufreq_policy policy;
+>  
+> -		cpufreq_get_policy(&policy, cpu);
+> -		index = cpufreq_table_find_index_c(&policy, policy.cur);
+> -		powernv_cpufreq_target_index(&policy, index);
+> -		cpumask_andnot(&mask, &mask, policy.cpus);
+> +		policy = cpufreq_cpu_get(cpu);
+> +		if (!policy)
+> +			continue;
+> +		index = cpufreq_table_find_index_c(policy, policy->cur);
+> +		powernv_cpufreq_target_index(policy, index);
+> +		cpumask_andnot(&mask, &mask, policy->cpus);
+> +		cpufreq_cpu_put(policy);
+>  	}
+>  out:
+>  	put_online_cpus();
+> -- 
+> 2.17.1
