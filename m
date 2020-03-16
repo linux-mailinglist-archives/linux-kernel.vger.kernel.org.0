@@ -2,240 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6776186BAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:01:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8182D186BB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:03:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731104AbgCPNBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 09:01:55 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41826 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730974AbgCPNBy (ORCPT
+        id S1731136AbgCPNCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 09:02:53 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:37558 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731062AbgCPNCx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 09:01:54 -0400
-Received: by mail-wr1-f67.google.com with SMTP id f11so4323149wrp.8;
-        Mon, 16 Mar 2020 06:01:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8lPqGQkzYXIZixlU4/SVfz2TE5wMXf/RCUgZUuhdULg=;
-        b=IgbPfftONkRv6WPIreACR2bk+m/5ncOUmuYz1FvSoWv3IFdKPqesEQtF3AmjfufF3v
-         KDUos8UEtbyvmGiS+cg/wZW122KWo6t3aEyEbZbOg80r5i9QxXQgIeFuGjEeuy4gpGms
-         dWOw6VercaCWMVyoQNGqkBHFe/UcmN0Jdues4qJGMUXR1FtbnT04eOQ32HKU0a3zsHyg
-         KsxUfEDHHsSQANoDRP55V6A508zSugh+ch0LAFVdXPjSeB4kH86f0BC+JCQEHPdlIhM1
-         wl/k5D6tS4AslEHtrweKPBrYsJjykMZR6KyJnkiFqsGBMIMtDyoNHuNiC0jkSKshEXmi
-         nJ1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8lPqGQkzYXIZixlU4/SVfz2TE5wMXf/RCUgZUuhdULg=;
-        b=pssrTURjgpfo64BKyuQAur7XJhSNgaUMEHtlsqGTuHFJ1rbLqrPw4pse7hMQoTHwG6
-         jBU9QocR6sAQvnQurKfd36W6laIxVrFYBrgRupqtWfUo5GHQCe1GjeLiynDVljxILEkm
-         ULNZwNW1pKV5agHOEaGJ0RImrMEtiZHsbmfi1k1OS/vDUtWlLQKc6Pq5bABl5Emo35mI
-         5JKNySGNezzjUT8CnWjykLKZqqhmVuxF5zjx0yjd5eETr/hRR87j/ze7/VlnAdOlLykW
-         SiwMVLjXlbZ0iC2R/ztXJiFOaXfgiBHoT8pEJFpf8GUzQD8I46Z0NfUTFy2OVpbMWi3c
-         /LwQ==
-X-Gm-Message-State: ANhLgQ2zdwiunTjXSDnQSOvn7bgXsjjgZHrmNwOye3efnzOVgN48tsza
-        CkfGnom9oQjUxsVC5vtJGzdTzc1zPizaUclacC0=
-X-Google-Smtp-Source: ADFU+vv3todfLH0S9K1XiDE5C05k1QyRLPyjalBazFAliB47u26zAl+u/TDY/X5WKA04HAeVbCo967LdsqPd6PTKHdA=
-X-Received: by 2002:adf:de84:: with SMTP id w4mr36663540wrl.350.1584363712015;
- Mon, 16 Mar 2020 06:01:52 -0700 (PDT)
+        Mon, 16 Mar 2020 09:02:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584363772;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LLQsyKzFI2FWMsfb3WnnDbhofXGcpSrAYcxTSH7lcYc=;
+        b=TG2pE5vAZL9AMj9b2S4oQAmmVKvtMcY1AoTXTMcIWD5TyZNHgaXoQBvQSyfYbtJfczDqRL
+        LUrYN/YX/veQ6fNWtaneuWxq4jj3bS84ceJMJuaSk+JVDIJs9YVwhVGuaUZL4k1DcShcfE
+        cOCj5SXcebXF2W73VLkYs8kal89FvOs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-472-qiNL0Hy_PamcS1YiC1ZLyw-1; Mon, 16 Mar 2020 09:02:44 -0400
+X-MC-Unique: qiNL0Hy_PamcS1YiC1ZLyw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 722D81005516;
+        Mon, 16 Mar 2020 13:02:43 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-121-211.rdu2.redhat.com [10.10.121.211])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AC04C92D0C;
+        Mon, 16 Mar 2020 13:02:34 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 1FFCA2234E4; Mon, 16 Mar 2020 09:02:34 -0400 (EDT)
+Date:   Mon, 16 Mar 2020 09:02:34 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Patrick Ohly <patrick.ohly@intel.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
+        stefanha@redhat.com, dgilbert@redhat.com, mst@redhat.com
+Subject: Re: [PATCH 00/20] virtiofs: Add DAX support
+Message-ID: <20200316130234.GA4013@redhat.com>
+References: <20200304165845.3081-1-vgoyal@redhat.com>
+ <yrjh1rpzggg4.fsf@pohly-mobl1.fritz.box>
 MIME-Version: 1.0
-References: <20200306111353.12906-1-daniel.baluta@oss.nxp.com>
- <20200306111353.12906-2-daniel.baluta@oss.nxp.com> <20200312202306.GA18767@bogus>
-In-Reply-To: <20200312202306.GA18767@bogus>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Mon, 16 Mar 2020 15:01:40 +0200
-Message-ID: <CAEnQRZCLa+NAk=3M84MxjgOzYQdJXGY9S84dU6HO8GG64Lm_mQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: sound: Add FSL CPU DAI bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     Daniel Baluta <daniel.baluta@oss.nxp.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>, Takashi Iwai <tiwai@suse.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        sound-open-firmware@alsa-project.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yrjh1rpzggg4.fsf@pohly-mobl1.fritz.box>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Rob for review. See my comments inline:
+On Wed, Mar 11, 2020 at 02:38:03PM +0100, Patrick Ohly wrote:
+> Vivek Goyal <vgoyal@redhat.com> writes:
+> > This patch series adds DAX support to virtiofs filesystem. This allows
+> > bypassing guest page cache and allows mapping host page cache directly
+> > in guest address space.
+> >
+> > When a page of file is needed, guest sends a request to map that page
+> > (in host page cache) in qemu address space. Inside guest this is
+> > a physical memory range controlled by virtiofs device. And guest
+> > directly maps this physical address range using DAX and hence gets
+> > access to file data on host.
+> >
+> > This can speed up things considerably in many situations. Also this
+> > can result in substantial memory savings as file data does not have
+> > to be copied in guest and it is directly accessed from host page
+> > cache.
+> 
+> As a potential user of this, let me make sure I understand the expected
+> outcome: is the goal to let virtiofs use DAX (for increased performance,
+> etc.) or also let applications that use virtiofs use DAX?
+> 
+> You are mentioning using the host's page cache, so it's probably the
+> former and MAP_SYNC on virtiofs will continue to be rejected, right?
 
-<snip>
+Hi Patrick,
 
-> > +# SPDX-License-Identifier: GPL-2.0
->
-> Dual license new bindings please:
->
-> (GPL-2.0-only OR BSD-2-Clause)
+You are right. Its the former. That is we want virtiofs to be able to
+make use of DAX to bypass guest page cache. But there is no persistent
+memory so no persistent memory programming semantics available to user
+space. For that I guess we have virtio-pmem.
 
-Ok, will do.
+We expect users will issue fsync/msync like a regular filesystem to
+make changes persistent. So in that aspect, rejecting MAP_SYNC
+makes sense. I will test and see if current code is rejecting MAP_SYNC
+or not.
 
->
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/sound/fsl,dai.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Generic CPU FSL DAI driver for resource management
->
-> Bindings are for h/w devices, not drivers.
+Thanks
+Vivek
 
-Indeed. I think I will change it to something like this.
-
-title: 'FSL CPU DAI for resource management'
-
-The explanation are already in patch 2/2 of this series but let e
-explain again what I'm
-trying to do here and let me know if this makes sense to you.
-
-Digital Audio Interface device (DAI) are configured by the firmware
-running on the DSP. The only
-trouble we have is that we cannot easily handle 'resources' like:
-clocks, pinctrl, power domains from
-firmware.
-
-This is because our architecture is like this:
-
-M core [running System Controller Firmware]
-            |
-            |
-A core [Linux]<----> DSP core [SOF firmware]
-
-In theory, it is possible for DSP core to communicate with M core, but
-this needs a huge
-amount of work in order to make it work. We have this on our plans for
-the future,
-but we are now trying to do resource management from A core because
-the infrastructure is already in place.
-
-So, the curent driver introduced in this series acts like a Generic
-resource driver for DAI device. We can
-have multiple types of DAIs but most of them need the same types of
-resources (clocks, pinctrl, pm) sof
-for this reason I made it generic.
-
-
->
-> > +
-> > +maintainers:
-> > +  - Daniel Baluta <daniel.baluta@nxp.com>
-> > +
-> > +description: |
-> > +  On platforms with a DSP we need to split the resource handling between
-> > +  Application Processor (AP) and DSP. On platforms where the DSP doesn't
-> > +  have an easy access to resources, the AP will take care of
-> > +  configuring them. Resources handled by this generic driver are: clocks,
-> > +  power domains, pinctrl.
->
-> The DT should define a DSP node with resources that are part of the
-> DSP. What setup the AP has to do should be implied by the compatible
-> string and possibly what resources are described.
-
-We already have a DSP node: Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-but I thought that the resources attached to DAIs are separated from
-the resources
-attached to the DSP device.
-
-In the great scheme of ALSA we usually have things like this:
-
-FE         <----->       BE
-
-In the SOF world FE are defined by topology framework. Back ends are
-defined by the machine driver:
-
-On the BE side we have:
-- codec  -> this is the specific code
-- platform -> this is the DSP
-- cpu -> this is our Generic DAI device
-
-Now, I'm wondering if we can get rid of cpu here and make platform
-node (dsp) take care of every
-resource (this looks not natural).
-
-Perhaps Mark, Liam or Pierre can help me with this.
-
-
->
-> Or maybe the audio portion of the DSP is a child node...
->
-> > +
-> > +properties:
-> > +  '#sound-dai-cells':
-> > +    const: 0
-> > +
-> > +  compatible:
-> > +    enum:
-> > +      - fsl,esai-dai
-> > +      - fsl,sai-dai
->
-> Not very specific. There's only 2 versions of the DSP and ways it is
-> integrated?
-
-As I said above this is not about the DSP, but about the Digital Audio
-Intraface. On i.MX
-NXP boards we have two types of DAIs: SAI and ESAI.
-
-<snip>
-
-> > +  pinctrl-0:
-> > +    description: Should specify pin control groups used for this controller.
-> > +
-> > +  pinctrl-names:
-> > +    const: default
->
-> pinctrl properties are implicitly allowed an don't have to be listed
-> here.
-
-Great.
-
->
-> > +
-> > +  power-domains:
-> > +    $ref: '/schemas/types.yaml#/definitions/phandle-array'
->
-> Don't need a type.
->
-> > +    description:
-> > +      List of phandles and PM domain specifiers, as defined by bindings of the
-> > +      PM domain provider.
->
-> Don't need to re-define common properties.
->
-> You do need to say how many power domains (maxItems: 1?).
-
-We support multiple power domains, so technically there is no upper
-limit. What should I put here in this case?
->
-> > +
-> > +  fsl,dai-index:
-> > +    $ref: '/schemas/types.yaml#/definitions/uint32'
-> > +    description: Physical DAI index, must match the index from topology file
->
-> Sorry, we don't do indexes in DT.
->
-> What's a topology file?
-
-Topology files are binary blobs that contain the description of an
-audio pipeline. They are built
-are written in a specific format and compiled with alsa-tplg tools in userspace.
-
-Then loaded via firmware interface inside the kernel.
-
-https://www.alsa-project.org/wiki/ALSA_topology
-
-
-thanks,
-Daniel.
