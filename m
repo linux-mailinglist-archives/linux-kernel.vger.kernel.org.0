@@ -2,141 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 859FC186250
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 03:38:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EED6B186281
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 03:38:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730318AbgCPCgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 22:36:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40892 "EHLO mail.kernel.org"
+        id S1730383AbgCPChk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 22:37:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730304AbgCPCf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 22:35:58 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1730120AbgCPChg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 22:37:36 -0400
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5847F20738;
-        Mon, 16 Mar 2020 02:35:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39590206E9;
+        Mon, 16 Mar 2020 02:37:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584326157;
-        bh=Wk5vG2jvv3zKm1H8ZHIEKdgfGVZnA91k1WpdRvzFCCI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tTc4k651n6DQHfGlWThK/1AlucqLIdkaD5gOcF0qgjE/Dm9q3D3otOLz8ds21UpIS
-         dQz9j3yntUld39le7mjr++fVuspcN4tfMJrmFetxbpYMgJGmYY2PiDhWKiCn4nBtPv
-         jlv6OK7/PFcPGP8DhMO6WKLl1Bp5CzP/BHF/wCKg=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Axtens <dja@axtens.net>,
-        "Igor M. Liplianin" <liplianin@netup.ru>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 7/7] altera-stapl: altera_get_note: prevent write beyond end of 'key'
-Date:   Sun, 15 Mar 2020 22:35:47 -0400
-Message-Id: <20200316023548.2347-7-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200316023548.2347-1-sashal@kernel.org>
-References: <20200316023548.2347-1-sashal@kernel.org>
+        s=default; t=1584326255;
+        bh=XrwwTekwQ2HDHfKOkxj8tKgmnEkC52AJfRIvVSYZKFg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dABnWIbR5/3oZQlzrowP1QyTOPSxORhSDtsEK8hZvL4Nc67uSpOKc6RsT3uE98oCW
+         B0xS2L53xF8PfXWwLWe5Op99hOVf17jmIsq1BttwDt54T17mStUcf3bgp5wDRZdQDk
+         hjNIH3A3Mi4TgU1pSVdrdpfyM8zn9OAhSDnisf64=
+Date:   Mon, 16 Mar 2020 10:37:28 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Igor Opaniuk <igor.opaniuk@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Max Krummenacher <max.krummenacher@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] ARM: dts: colibri: introduce dts with UHS-I
+ support enabled
+Message-ID: <20200316023727.GX17221@dragon>
+References: <20200312185113.2504-1-igor.opaniuk@gmail.com>
+ <20200312185113.2504-2-igor.opaniuk@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200312185113.2504-2-igor.opaniuk@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Axtens <dja@axtens.net>
+On Thu, Mar 12, 2020 at 08:51:13PM +0200, Igor Opaniuk wrote:
+> From: Igor Opaniuk <igor.opaniuk@toradex.com>
+> 
+> Introduce DTS for Colibri iMX6S/DL V1.1x re-design, where UHS-I support was
+> added. Provide proper configuration for VGEN3, which allows that rail to
+> be automatically switched to 1.8 volts for proper UHS-I operation mode.
+> 
+> Signed-off-by: Igor Opaniuk <igor.opaniuk@toradex.com>
+> 
+> ---
+> 
+> v4:
+> - Document Colibri iMX6S/DL V1.1x re-design devicetree binding [Shawn Guo]
+> - wakeup-source property fix [Shawn Guo]
+> 
+> v3:
+> - change hierarchy according to Marco's suggestions [Marco Felsch]
+> - adjust compatible string adding v1.1 [Stefan Agner]
+> 
+> v2:
+> - rework hierarchy of dts files, and a separate dtsi for Colibri
+>   iMX6S/DL V1.1x re-design, where UHS-I was added [Marcel Ziswiler]
+> - add comments about vgen3 power rail [Marcel Ziswiler]
+> - fix other minor issues, addressing Marcel's comments. [Marcel Ziswiler]
+> 
+>  arch/arm/boot/dts/Makefile                    |  1 +
+>  .../boot/dts/imx6dl-colibri-v1_1-eval-v3.dts  | 59 +++++++++++++++++++
+>  arch/arm/boot/dts/imx6qdl-colibri.dtsi        | 11 +++-
+>  3 files changed, 70 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/boot/dts/imx6dl-colibri-v1_1-eval-v3.dts
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index d6546d2676b9..97da51be1de6 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -412,6 +412,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+>  	imx6dl-aristainetos2_4.dtb \
+>  	imx6dl-aristainetos2_7.dtb \
+>  	imx6dl-colibri-eval-v3.dtb \
+> +	imx6dl-colibri-v1_1-eval-v3.dtb \
+>  	imx6dl-cubox-i.dtb \
+>  	imx6dl-cubox-i-emmc-som-v15.dtb \
+>  	imx6dl-cubox-i-som-v15.dtb \
+> diff --git a/arch/arm/boot/dts/imx6dl-colibri-v1_1-eval-v3.dts b/arch/arm/boot/dts/imx6dl-colibri-v1_1-eval-v3.dts
+> new file mode 100644
+> index 000000000000..fced7d99f5d5
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6dl-colibri-v1_1-eval-v3.dts
+> @@ -0,0 +1,59 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR X11
+> +/*
+> + * Copyright 2019 Toradex AG
+> + */
 
-[ Upstream commit 3745488e9d599916a0b40d45d3f30e3d4720288e ]
+Shouldn't this follow what you just updated for other Toradex boards?
 
-altera_get_note is called from altera_init, where key is kzalloc(33).
+Shawn
 
-When the allocation functions are annotated to allow the compiler to see
-the sizes of objects, and with FORTIFY_SOURCE, we see:
-
-In file included from drivers/misc/altera-stapl/altera.c:14:0:
-In function ‘strlcpy’,
-    inlined from ‘altera_init’ at drivers/misc/altera-stapl/altera.c:2189:5:
-include/linux/string.h:378:4: error: call to ‘__write_overflow’ declared with attribute error: detected write beyond size of object passed as 1st parameter
-    __write_overflow();
-    ^~~~~~~~~~~~~~~~~~
-
-That refers to this code in altera_get_note:
-
-    if (key != NULL)
-            strlcpy(key, &p[note_strings +
-                            get_unaligned_be32(
-                            &p[note_table + (8 * i)])],
-                    length);
-
-The error triggers because the length of 'key' is 33, but the copy
-uses length supplied as the 'length' parameter, which is always
-256. Split the size parameter into key_len and val_len, and use the
-appropriate length depending on what is being copied.
-
-Detected by compiler error, only compile-tested.
-
-Cc: "Igor M. Liplianin" <liplianin@netup.ru>
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Link: https://lore.kernel.org/r/20200120074344.504-2-dja@axtens.net
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Link: https://lore.kernel.org/r/202002251042.D898E67AC@keescook
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/misc/altera-stapl/altera.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/misc/altera-stapl/altera.c b/drivers/misc/altera-stapl/altera.c
-index 494e263daa748..b7ee8043a133e 100644
---- a/drivers/misc/altera-stapl/altera.c
-+++ b/drivers/misc/altera-stapl/altera.c
-@@ -2126,8 +2126,8 @@ static int altera_execute(struct altera_state *astate,
- 	return status;
- }
- 
--static int altera_get_note(u8 *p, s32 program_size,
--			s32 *offset, char *key, char *value, int length)
-+static int altera_get_note(u8 *p, s32 program_size, s32 *offset,
-+			   char *key, char *value, int keylen, int vallen)
- /*
-  * Gets key and value of NOTE fields in the JBC file.
-  * Can be called in two modes:  if offset pointer is NULL,
-@@ -2184,7 +2184,7 @@ static int altera_get_note(u8 *p, s32 program_size,
- 						&p[note_table + (8 * i) + 4])];
- 
- 				if (value != NULL)
--					strlcpy(value, value_ptr, length);
-+					strlcpy(value, value_ptr, vallen);
- 
- 			}
- 		}
-@@ -2203,13 +2203,13 @@ static int altera_get_note(u8 *p, s32 program_size,
- 				strlcpy(key, &p[note_strings +
- 						get_unaligned_be32(
- 						&p[note_table + (8 * i)])],
--					length);
-+					keylen);
- 
- 			if (value != NULL)
- 				strlcpy(value, &p[note_strings +
- 						get_unaligned_be32(
- 						&p[note_table + (8 * i) + 4])],
--					length);
-+					vallen);
- 
- 			*offset = i + 1;
- 		}
-@@ -2463,7 +2463,7 @@ int altera_init(struct altera_config *config, const struct firmware *fw)
- 			__func__, (format_version == 2) ? "Jam STAPL" :
- 						"pre-standardized Jam 1.1");
- 		while (altera_get_note((u8 *)fw->data, fw->size,
--					&offset, key, value, 256) == 0)
-+					&offset, key, value, 32, 256) == 0)
- 			printk(KERN_INFO "%s: NOTE \"%s\" = \"%s\"\n",
- 					__func__, key, value);
- 	}
--- 
-2.20.1
-
+> +
+> +/dts-v1/;
+> +
+> +#include "imx6dl-colibri-eval-v3.dts"
+> +
+> +/ {
+> +	model = "Toradex Colibri iMX6DL/S V1.1 on Colibri Evaluation Board V3";
+> +	compatible = "toradex,colibri_imx6dl-v1_1-eval-v3",
+> +		     "toradex,colibri_imx6dl-v1_1",
+> +		     "toradex,colibri_imx6dl-eval-v3",
+> +		     "toradex,colibri_imx6dl",
+> +		     "fsl,imx6dl";
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl_usdhc1_100mhz: usdhc1grp100mhz {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_SD1_CMD__SD1_CMD    0x170b1
+> +			MX6QDL_PAD_SD1_CLK__SD1_CLK    0x100b1
+> +			MX6QDL_PAD_SD1_DAT0__SD1_DATA0 0x170b1
+> +			MX6QDL_PAD_SD1_DAT1__SD1_DATA1 0x170b1
+> +			MX6QDL_PAD_SD1_DAT2__SD1_DATA2 0x170b1
+> +			MX6QDL_PAD_SD1_DAT3__SD1_DATA3 0x170b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc1_200mhz: usdhc1grp200mhz {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_SD1_CMD__SD1_CMD    0x170f1
+> +			MX6QDL_PAD_SD1_CLK__SD1_CLK    0x100f1
+> +			MX6QDL_PAD_SD1_DAT0__SD1_DATA0 0x170f1
+> +			MX6QDL_PAD_SD1_DAT1__SD1_DATA1 0x170f1
+> +			MX6QDL_PAD_SD1_DAT2__SD1_DATA2 0x170f1
+> +			MX6QDL_PAD_SD1_DAT3__SD1_DATA3 0x170f1
+> +		>;
+> +	};
+> +};
+> +
+> +/* Colibri MMC */
+> +&usdhc1 {
+> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+> +	pinctrl-0 = <&pinctrl_usdhc1 &pinctrl_mmc_cd>;
+> +	pinctrl-1 = <&pinctrl_usdhc1_100mhz &pinctrl_mmc_cd>;
+> +	pinctrl-2 = <&pinctrl_usdhc1_200mhz &pinctrl_mmc_cd>;
+> +	vmmc-supply = <&reg_module_3v3>;
+> +	vqmmc-supply = <&vgen3_reg>;
+> +	wakeup-source;
+> +	keep-power-in-suspend;
+> +	sd-uhs-sdr12;
+> +	sd-uhs-sdr25;
+> +	sd-uhs-sdr50;
+> +	sd-uhs-sdr104;
+> +	status = "okay";
+> +	/delete-property/no-1-8-v;
+> +};
+> diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+> index d03dff23863d..e85a41e84fd4 100644
+> --- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+> @@ -229,7 +229,16 @@
+>  				regulator-always-on;
+>  			};
+>  
+> -			/* vgen3: unused */
+> +			/*
+> +			 * +V3.3_1.8_SD1 coming off VGEN3 and supplying
+> +			 * the i.MX 6 NVCC_SD1.
+> +			 */
+> +			vgen3_reg: vgen3 {
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+>  
+>  			vgen4_reg: vgen4 {
+>  				regulator-min-microvolt = <1800000>;
+> -- 
+> 2.17.1
+> 
