@@ -2,109 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D99B7186E42
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 16:07:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DAAC186E4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 16:08:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731778AbgCPPHT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 11:07:19 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:55500 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731636AbgCPPHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 11:07:19 -0400
-Received: from zn.tnic (p200300EC2F06AB00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:ab00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F0CFA1EC0CD0;
-        Mon, 16 Mar 2020 16:07:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1584371237;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=GD2Ahrn2R5rUUvAa4JTLz4UOPMAsrHi8CDaz4s4yJSI=;
-        b=SHXWde4fDvWxBfVwik+iIXFlwqSwyFi9wb8Ysb5mMzITlhOyWeBCsXaD4rXksEukZi4a+N
-        alU2DEpPFyp2ipQRe5IX8a2/gP3yuxmLbgNH0PFR9q0lXEJ3ma6j3kleNaYAj8VHtRxPMX
-        mCwclVqLEcimypLTbgvdcqbReUybTew=
-From:   Borislav Petkov <bp@alien8.de>
-To:     X86 ML <x86@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Michal Kubecek <mkubecek@suse.cz>,
-        Yazen Ghannam <yazen.ghannam@amd.com>
-Subject: [PATCH] x86/amd_nb, char/amd64-agp: Use amd_nb_num() accessor
-Date:   Mon, 16 Mar 2020 16:07:25 +0100
-Message-Id: <20200316150725.925-1-bp@alien8.de>
-X-Mailer: git-send-email 2.21.0
+        id S1731789AbgCPPIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 11:08:11 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:52565 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731688AbgCPPIK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 11:08:10 -0400
+Received: by mail-pj1-f67.google.com with SMTP id ng8so1521416pjb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 08:08:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SueAxX5eGkVwaiqNpop9oq5H6n/zweDvWrtavlfgylY=;
+        b=OK0QZP+iaxu4V61Q+ur02KwyU6iEqC36paQ8AvV6u8bQ5aiakL8fpQeZym9hJ+TxEG
+         yF2h9LjKGAtvRG4XmZtFKVGsxprDgxXFcb/fq3SL1bfTPtfbhAvwSe066pLBWvJ97MkI
+         Orh2ySIDEQcvdIcbk5bx8E74isNPevMyu3RUMnyayyHH1rxnF8h4AUdGMjW4MpwNTD5y
+         0F6qieajinziIRvT+08kjw0mnH79Sk4YiWcvR+ZUd5Rs7KUj/Ezjhyn5KGe+z31wPGjM
+         SAL2OvCGdtMxn7ssOqCFsFelS7l2mNAKlAJ8m5dntO2LOfLWucMbVdJ9eFJdisfa1mTx
+         ClVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SueAxX5eGkVwaiqNpop9oq5H6n/zweDvWrtavlfgylY=;
+        b=nhvmVlIaIJziWXz6v2PNO7wvUAmeOQOYKkJ7LBpN9EEfDYKD7cQEiMLrtsCMD7X7Di
+         5xUs2ndSUDxD+QKm5XgnuyDrLRq/7tG4n/7AG/tezJc4sqdh3gC9TBAuL/LaGBcR8Yi8
+         jIZQsYGasn4jmG8zjCxK1EDL2cyk1bRQKyAoUVAoraXuX/HyCnZFZMEgBdfDpSf14xiJ
+         g6vBRF2Qzpx9LaV0WX7kn09tTyEvEAQqzBWtcQEsIPO6mrhOTGm+W70HJRqVJyUJVuL4
+         Hd81byao1r0R9EF93shRIZFnr+bhXEY75TDP76BbimEYSiFqUHrpbLx1aj4ePYm3BpdH
+         x6oA==
+X-Gm-Message-State: ANhLgQ2KKg91NsoEB0dOpON5df0NDVmlBTCEZs4SqgmGG/EME0bL25kH
+        Broj/rbqzhC1o3g4bXzkAH+Hkw==
+X-Google-Smtp-Source: ADFU+vtG3XzehIqqMBGu/eDH7NBJ2L35kdPeTQgmGBiEeCXw8j9V44Fw4/LJnEx/j/HnLSnNs5lJSw==
+X-Received: by 2002:a17:902:421:: with SMTP id 30mr5034500ple.271.1584371289283;
+        Mon, 16 Mar 2020 08:08:09 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id a18sm238701pfr.109.2020.03.16.08.08.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Mar 2020 08:08:08 -0700 (PDT)
+Subject: Re: [GIT PULL] Floppy cleanups for next
+To:     efremov@linux.com
+Cc:     linux-block <linux-block@vger.kernel.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>
+References: <57ce0ee0-839c-a889-0bc0-ec46985e76d3@linux.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6f4fd061-a47e-7de5-df6e-c3002beedee0@kernel.dk>
+Date:   Mon, 16 Mar 2020 09:08:07 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <57ce0ee0-839c-a889-0bc0-ec46985e76d3@linux.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+On 3/16/20 4:47 AM, Denis Efremov wrote:
+> Hi Jens,
+> 
+> The following changes since commit 5d50c8f405bf91d9d9a48628fde0f2f4ff069d7b:
+> 
+>   Merge branch 'for-5.7/io_uring' into for-next (2020-03-14 17:20:45 -0600)
+> 
+> are available in the Git repository at:
+> 
+>   https://github.com/evdenis/linux-floppy tags/floppy-for-5.7
+> 
+> Please pull
+> 
+> ----------------------------------------------------------------
+> Floppy patches for 5.7
+> 
+> Cleanups from Willy Tarreau:
+>   - expansion of macros referencing global or local variables with
+>     equivalent code
+>   - removal of incomplete support for second FDC from ARM code
+>   - renaming the "fdc" global variable to "current_fdc" to differ
+>     between global and local context
+> 
+> Changes were compile tested on arm, x86 arches. Changes introduce
+> no binary difference on x86 arch (before and after the patches).
+> On arm, incomplete support for second FDC removed. This set of
+> patches with commit 2e90ca68 ("floppy: check FDC index for errors
+> before assigning it") was tested with syzkaller and simple
+> write/read/format tests for no new issues.
+> 
+> Signed-off-by: Denis Efremov <efremov@linux.com>
 
-... to find whether there are northbridges present on the system.
-This converts the last forgotten user and therefore, unexport
-amd_nb_misc_ids[] too.
+Thanks - I hand applied the series, my for-next branch isn't really
+stable, only the parent branches are.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Michal Kubecek <mkubecek@suse.cz>
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>
----
- arch/x86/include/asm/amd_nb.h | 1 -
- arch/x86/kernel/amd_nb.c      | 4 +---
- drivers/char/agp/amd64-agp.c  | 2 +-
- 3 files changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/include/asm/amd_nb.h b/arch/x86/include/asm/amd_nb.h
-index 1ae4e5791afa..c7df20e78b09 100644
---- a/arch/x86/include/asm/amd_nb.h
-+++ b/arch/x86/include/asm/amd_nb.h
-@@ -12,7 +12,6 @@ struct amd_nb_bus_dev_range {
- 	u8 dev_limit;
- };
- 
--extern const struct pci_device_id amd_nb_misc_ids[];
- extern const struct amd_nb_bus_dev_range amd_nb_bus_dev_ranges[];
- 
- extern bool early_is_amd_nb(u32 value);
-diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
-index 69aed0ebbdfc..b6b3297851f3 100644
---- a/arch/x86/kernel/amd_nb.c
-+++ b/arch/x86/kernel/amd_nb.c
-@@ -36,10 +36,9 @@ static const struct pci_device_id amd_root_ids[] = {
- 	{}
- };
- 
--
- #define PCI_DEVICE_ID_AMD_CNB17H_F4     0x1704
- 
--const struct pci_device_id amd_nb_misc_ids[] = {
-+static const struct pci_device_id amd_nb_misc_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_K8_NB_MISC) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_10H_NB_MISC) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_15H_NB_F3) },
-@@ -56,7 +55,6 @@ const struct pci_device_id amd_nb_misc_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_19H_DF_F3) },
- 	{}
- };
--EXPORT_SYMBOL_GPL(amd_nb_misc_ids);
- 
- static const struct pci_device_id amd_nb_link_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_15H_NB_F4) },
-diff --git a/drivers/char/agp/amd64-agp.c b/drivers/char/agp/amd64-agp.c
-index 594aee281977..b40edae32817 100644
---- a/drivers/char/agp/amd64-agp.c
-+++ b/drivers/char/agp/amd64-agp.c
-@@ -775,7 +775,7 @@ int __init agp_amd64_init(void)
- 		}
- 
- 		/* First check that we have at least one AMD64 NB */
--		if (!pci_dev_present(amd_nb_misc_ids)) {
-+		if (!amd_nb_num()) {
- 			pci_unregister_driver(&agp_amd64_pci_driver);
- 			return -ENODEV;
- 		}
 -- 
-2.21.0
+Jens Axboe
 
