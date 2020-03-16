@@ -2,107 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A856E186ED5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 16:43:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0130186F50
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 16:52:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731848AbgCPPnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 11:43:10 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37500 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731744AbgCPPnJ (ORCPT
+        id S1732142AbgCPPvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 11:51:38 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:23791 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731863AbgCPPvF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 11:43:09 -0400
-Received: by mail-wr1-f68.google.com with SMTP id 6so21825210wre.4
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 08:43:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DdvuxQV8MUJ3DF0txatG/PoeJXobhfl8uAplHUnRQXw=;
-        b=gEq8/ZMBwfLkBD9tGRHGjZfTd20HP1xHo/lJCYGOxGAYI7JgVG9jMowKPQSyqmQoJH
-         Q9ZbaY7SOKJp8K4eyLHZOG5BXM7bIz0LDg0iLZ0C7XwnSZgO4Q7ql/grJgyu+f0XKKiZ
-         8hj2Hl5fh1i6wP+q7uq/YnEi3K13FYNSMiMBiMDb9rTjtVKuKwTX2bq22JmdTliOTXP2
-         K+5zCU0/1lWFBSvTXbDx9fEkSA/zS7i5vKY3n2XrAijwrJW7uI1+D+Ab8wO+LOpxCjFg
-         cLiZ+CoMaM/7tmWRw/RxFAOt/xBIBCD8p1Ekq22vHH0ospnbZ5362hTq6dFil73T5VxH
-         cAwg==
+        Mon, 16 Mar 2020 11:51:05 -0400
+X-Greylist: delayed 303 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Mar 2020 11:51:04 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584373864;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fUuCYueA3lMuDwdeZICwCc8xpvqxEIl0C/2eLY4HFss=;
+        b=VQs1LV8UQt4mqJs2Ff+lpyxud4KmVWxiJtLx0tWgWBs0e8TwkrztCWo5qp355ly65f3Y0b
+        XFwX4eSuf8cK9/681YPalr2e8S4QH3/I+auL4VqyKWqqt7IfvL4smi52SJzl4Dy504mBqr
+        TAwCdYxDb1l2m8YiwnawMgX8jFLyHKg=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-306-NN9phlT3PpOlT1xU1OBBXw-1; Mon, 16 Mar 2020 11:44:50 -0400
+X-MC-Unique: NN9phlT3PpOlT1xU1OBBXw-1
+Received: by mail-wr1-f71.google.com with SMTP id c6so1414513wro.7
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 08:44:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DdvuxQV8MUJ3DF0txatG/PoeJXobhfl8uAplHUnRQXw=;
-        b=XpPGxm3gqRFQ/eji6RqU9OK2CyFJiyaZb/kf++o1sQKEXPOSypxqfFU47a6pWkCvVB
-         DITcReVP1G910dSRGdnHoJpzGPiu28gRTccxOCeLUL1qn4izSr0Fai0aWiX0/9LB6ncb
-         eJlPuJe15MqrHo9ST4PhVzKocadeChX7mesOz7tOhpgPeZUmdD9L0+5yf1ChfA6nr1DN
-         75ebyCa0Hk9CKiRH52CxhzKBlcmkSzrYXGGW8x17HJhw+H847M+kuPyruu+8+BMVmm23
-         TtzRWR84yDqTjhUD8i5IC81WBiKJj/+xuyuHq18rrtMINpAFMDa3hFGIm6tl49cMQk2I
-         9Hjw==
-X-Gm-Message-State: ANhLgQ2yNy1GwYAupWx3PA8aVX8tJ6xYOCjydwpFZ0vE58lqmjCBB/1F
-        jqUL5hiqZiMHnXeZaoylXjULEw==
-X-Google-Smtp-Source: ADFU+vukGMBSU+PIquYB6P7V4T5BWKneai54XgateQmlyq1EDcQ3i3rP1F+AK6w2nNtuc0TA4HUjIw==
-X-Received: by 2002:a5d:43cc:: with SMTP id v12mr35844297wrr.125.1584373387505;
-        Mon, 16 Mar 2020 08:43:07 -0700 (PDT)
-Received: from myrica ([2001:171b:226b:54a0:116c:c27a:3e7f:5eaf])
-        by smtp.gmail.com with ESMTPSA id h13sm433117wrv.39.2020.03.16.08.43.06
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=fUuCYueA3lMuDwdeZICwCc8xpvqxEIl0C/2eLY4HFss=;
+        b=IG8owVawSoIyD//bYXoJzQOjh8xaBVBavwlmaJ810NhdQYcEAV+o5RjK3YpqfNNlAc
+         vS9FgJHQeQJzdrUgi3odEDQScQwJxt5YACNBT6trh6GNy85KlPZSPDmnAqaYFfqYWRNt
+         82bRd1IAb8mg0lgvT7soiLIjFu0se7AxKvDeShufxlWpeDuYCQMJ4AYZ/ebvn9HOvYEB
+         CLmh+qONsKGdVry6DNDS6pZGm04BrhitdHczBtTsgfIxcTSC/VB1XUhtzH3q6x5KTMDN
+         RTYzSoPJTX7Pihxj7H6gAlG08ETvZjCryWWcDWM7kqzgbhB8TY3HPH47NU+HYOXHQdMT
+         bzag==
+X-Gm-Message-State: ANhLgQ2IqQslc34ym1LtyMWu47fXG2KpZ/h9xp6nkbud8eftNkpVpSPm
+        rqoLFoaPA+BTPeF2thtHoxGVm0Z4Rr2rGWJDbS3g3MOGHmPbM7tmkIXuVtws6xzXsYfxlxm7j1d
+        jzh0XP6l3rV3yPkPsfRq3pbkG
+X-Received: by 2002:a1c:e442:: with SMTP id b63mr29201207wmh.174.1584373489102;
+        Mon, 16 Mar 2020 08:44:49 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vsm0twtuBMCOFO0oksSJxj4VZxA6HrZ3ItbOIShmzBDz85OEDCbgoiXWzoQkLGleoeOgMTbZA==
+X-Received: by 2002:a1c:e442:: with SMTP id b63mr29201190wmh.174.1584373488897;
+        Mon, 16 Mar 2020 08:44:48 -0700 (PDT)
+Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
+        by smtp.gmail.com with ESMTPSA id 98sm412922wrk.52.2020.03.16.08.44.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2020 08:43:07 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 16:42:59 +0100
-From:   Jean-Philippe Brucker <jean-philippe@linaro.org>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH 04/15] iommu/tegra-gart: Remove direct access of
- dev->iommu_fwspec
-Message-ID: <20200316154259.GE304669@myrica>
-References: <20200310091229.29830-1-joro@8bytes.org>
- <20200310091229.29830-5-joro@8bytes.org>
+        Mon, 16 Mar 2020 08:44:48 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, linmiaohe@huawei.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH] KVM: X86: correct meaningless kvm_apicv_activated() check
+In-Reply-To: <20200316152650.GD24267@linux.intel.com>
+References: <1584185480-3556-1-git-send-email-pbonzini@redhat.com> <878sk0n1g1.fsf@vitty.brq.redhat.com> <20200316152650.GD24267@linux.intel.com>
+Date:   Mon, 16 Mar 2020 16:44:47 +0100
+Message-ID: <87zhcgl2xc.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200310091229.29830-5-joro@8bytes.org>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 10:12:18AM +0100, Joerg Roedel wrote:
-> From: Joerg Roedel <jroedel@suse.de>
-> 
-> Use the accessor functions instead of directly dereferencing
-> dev->iommu_fwspec.
-> 
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-Reviewed-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> On Mon, Mar 16, 2020 at 09:33:50AM +0100, Vitaly Kuznetsov wrote:
+>> Paolo Bonzini <pbonzini@redhat.com> writes:
+>> > +	if ((old == 0) == (new == 0))
+>> > +		return;
+>> 
+>> This is a very laconic expression I personally find hard to read :-)
+>> 
+>> 	/* Check if WE actually changed APICv state */
+>>         if ((!old && !new) || (old && new))
+>> 		return;
+>> 
+>> would be my preference (not strong though, I read yours several times
+>> and now I feel like I understand it just fine :-)
+>
+> Or maybe this to avoid so many equals signs?
+>
+> 	if (!old == !new)
+> 		return;
+>
 
-> ---
->  drivers/iommu/tegra-gart.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-> index 3fb7ba72507d..db6559e8336f 100644
-> --- a/drivers/iommu/tegra-gart.c
-> +++ b/drivers/iommu/tegra-gart.c
-> @@ -247,7 +247,7 @@ static int gart_iommu_add_device(struct device *dev)
->  {
->  	struct iommu_group *group;
->  
-> -	if (!dev->iommu_fwspec)
-> +	if (!dev_iommu_fwspec_get(dev))
->  		return -ENODEV;
->  
->  	group = iommu_group_get_for_dev(dev);
-> -- 
-> 2.17.1
-> 
+	if (!!old == !!new)
+		return;
+
+to make it clear we're converting them to 1/0 :-)
+
+-- 
+Vitaly
+
