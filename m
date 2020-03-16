@@ -2,137 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DBDC186AC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 13:20:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 765C5186ACA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 13:23:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731007AbgCPMUB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 08:20:01 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39273 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730957AbgCPMUB (ORCPT
+        id S1730977AbgCPMXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 08:23:52 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:52740 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730878AbgCPMXw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 08:20:01 -0400
-Received: by mail-lf1-f67.google.com with SMTP id j15so13865751lfk.6
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 05:19:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=J8YUTClzRgvng0fzkDnAw6wm4bet3cBK2RMWpNTw50E=;
-        b=OHwtUxkeYyduPn5JOxhuQR6L/s5Rpj50a+jiGUkG+EcQB/+vKpyNFpTgnwR4AKIbP4
-         TLWmj2PcNh6QFPo1YymyBhqrd/0wVX3C5vU/H9Z0a8bxfDpJQzSMJmRiaW+c7WPinTc0
-         yFKj4SJah/mRy9NJK5SnSDz2AlttQJgrsO7tEcehbWeWQTw8Ce1bQpYp93Sx7nfUTpQ/
-         dRsK2yY1dyNjg3cx6PybicSXjMIvS5oA2PGusg4UfMRiSL//+RxWmabACi45OPXmW5Sh
-         096RJdC2OtLBjLIru6TJgzTpymavrdzXxeqBkFXa50VJyyz1XzvajZmHJW6W6u0nqAW7
-         5fqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=J8YUTClzRgvng0fzkDnAw6wm4bet3cBK2RMWpNTw50E=;
-        b=oLZc4SBTDCBsXPlA5Zk89wFcz/e/Z+I6M2RIeEY9xwlmJM0nc5fkxmz9nlAHkfIZKa
-         skRIIkMomJMjPiVawKCk7cdX7BKlqk5nikIcGsQ77IEv7Co0i8PQTxzXZ7zsWgsVDy0/
-         2lXTnkZfYNfAcJyxbESj2jVqJGVQijzrTx+LPndK7RPu/5KPxO3ZgBDAzRt1KdW9Pg95
-         RryDjK3LS9YCuLx+hKYjR7fCb4SutIn6jnx4+M58eb2dTVzjV+C4FM4Hq/k0VnEnIQQX
-         +Wms5VGsb4alk6uDhZzQnxoiK0zt1Ee91gHLw+tvSM6VrrPNxNUeWBH4a6s3wfsApOX4
-         HD/Q==
-X-Gm-Message-State: ANhLgQ28BJkZ5JTaiUXcpWtKbb4ZM/hTfNJkv2ekaNguDpU/vk4KV9pI
-        TfMua+C/kMFh2pUuGWNXAOu7Sw==
-X-Google-Smtp-Source: ADFU+vtYrnwB4BW815GverT2AqJB2YjKH7It9G4GEeOtBlqCITjbpOAvpuGmle+K2+n6HRxArZuPrg==
-X-Received: by 2002:a19:4f07:: with SMTP id d7mr97465lfb.30.1584361196442;
-        Mon, 16 Mar 2020 05:19:56 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id c20sm29388070lfb.60.2020.03.16.05.19.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2020 05:19:55 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id D3FE0102588; Mon, 16 Mar 2020 15:19:55 +0300 (+03)
-Date:   Mon, 16 Mar 2020 15:19:55 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Cannon Matthews <cannonmatthews@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        Salman Qazi <sqazi@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] mm: clear 1G pages with streaming stores on x86
-Message-ID: <20200316121955.tqmhu57evzafc2cl@box>
-References: <20200307010353.172991-1-cannonmatthews@google.com>
- <20200309000820.f37opzmppm67g6et@box>
- <20200309090630.GC8447@dhcp22.suse.cz>
- <20200309153831.GK1454533@tassilo.jf.intel.com>
- <20200309183704.GA1573@bombadil.infradead.org>
- <CAJfu=UfPKZwqjGR5AdhFRo_je7X5q2=zpBSBQkrbh2KhYrOJiA@mail.gmail.com>
- <20200311005447.jkpsaghrpk3c4rwu@box>
- <20200316101856.GH11482@dhcp22.suse.cz>
+        Mon, 16 Mar 2020 08:23:52 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02GCNWG8055256;
+        Mon, 16 Mar 2020 07:23:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584361412;
+        bh=/axxTSN4rOjW8bh6Kbh93WtVu/tmmhKSGynWOWCPzuY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=vSg0a1+QKByxeZQ7KBTjfgkxDI9IEY9zlUWk/fQEdnbGDiw7iS+KNJxMY7pblqv91
+         xcRc9iE/EmWBlfMtFx29z1Q7oLaJDwW3ojWz/gBihLpbblaWUvjPcymhZ6fkd6lTnK
+         L6gF9F4A/jU3aB+ibd8fH0XVfsLOOvs8npPetIlU=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02GCNWpJ082049;
+        Mon, 16 Mar 2020 07:23:32 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 16
+ Mar 2020 07:23:32 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 16 Mar 2020 07:23:32 -0500
+Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02GCNS4R121266;
+        Mon, 16 Mar 2020 07:23:29 -0500
+Subject: Re: [PATCH] kthread: Mark timer used by delayed kthread works as IRQ
+ safe
+To:     Tejun Heo <tj@kernel.org>, Petr Mladek <pmladek@suse.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        <linux-rt-users@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>
+References: <20200217120709.1974-1-pmladek@suse.com>
+ <20200219152248.GC698990@mtj.thefacebook.com>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <6a4c07df-8971-8637-5251-ce177c3a08ce@ti.com>
+Date:   Mon, 16 Mar 2020 14:23:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200316101856.GH11482@dhcp22.suse.cz>
+In-Reply-To: <20200219152248.GC698990@mtj.thefacebook.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 11:18:56AM +0100, Michal Hocko wrote:
-> On Wed 11-03-20 03:54:47, Kirill A. Shutemov wrote:
-> > On Tue, Mar 10, 2020 at 05:21:30PM -0700, Cannon Matthews wrote:
-> > > On Mon, Mar 9, 2020 at 11:37 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > > >
-> > > > On Mon, Mar 09, 2020 at 08:38:31AM -0700, Andi Kleen wrote:
-> > > > > > Gigantic huge pages are a bit different. They are much less dynamic from
-> > > > > > the usage POV in my experience. Micro-optimizations for the first access
-> > > > > > tends to not matter at all as it is usually pre-allocation scenario. On
-> > > > > > the other hand, speeding up the initialization sounds like a good thing
-> > > > > > in general. It will be a single time benefit but if the additional code
-> > > > > > is not hard to maintain then I would be inclined to take it even with
-> > > > > > "artificial" numbers state above. There really shouldn't be other downsides
-> > > > > > except for the code maintenance, right?
-> > > > >
-> > > > > There's a cautious tale of the old crappy RAID5 XOR assembler functions which
-> > > > > were optimized a long time ago for the Pentium1, and stayed around,
-> > > > > even though the compiler could actually do a better job.
-> > > > >
-> > > > > String instructions are constantly improving in performance (Broadwell is
-> > > > > very old at this point) Most likely over time (and maybe even today
-> > > > > on newer CPUs) you would need much more sophisticated unrolled MOVNTI variants
-> > > > > (or maybe even AVX-*) to be competitive.
-> > > >
-> > > > Presumably you have access to current and maybe even some unreleased
-> > > > CPUs ... I mean, he's posted the patches, so you can test this hypothesis.
-> > > 
-> > > I don't have the data at hand, but could reproduce it if strongly
-> > > desired, but I've also tested this on skylake and  cascade lake, and
-> > > we've had success running with this for a while now.
-> > > 
-> > > When developing this originally, I tested all of this compared with
-> > > AVX-* instructions as well as the string ops, they all seemed to be
-> > > functionally equivalent, and all were beat out by this MOVNTI thing for
-> > > large regions of 1G pages.
-> > > 
-> > > There is probably room to further optimize the MOVNTI stuff with better
-> > > loop unrolling or optimizations, if anyone has specific suggestions I'm
-> > > happy to try to incorporate them, but this has shown to be effective as
-> > > written so far, and I think I lack that assembly expertise to micro
-> > > optimize further on my own.
-> > 
-> > Andi's point is that string instructions might be a better bet in a long
-> > run. You may win something with MOVNTI on current CPUs, but it may become
-> > a burden on newer microarchitectures when string instructions improves.
-> > Nobody realistically would re-validate if MOVNTI microoptimazation still
-> > make sense for every new microarchitecture.
-> 
-> While this might be true, isn't that easily solveable by the existing
-> ALTERNATIVE and cpu features framework. Can we have a feature bit to
-> tell that movnti is worthwile for large data copy routines. Probably
-> something for x86 maintainers.
+Hi Petr,
 
-It still need somody to test which approach is better for the CPU.
-See X86_FEATURE_REP_GOOD.
+On 19/02/2020 17:22, Tejun Heo wrote:
+> On Mon, Feb 17, 2020 at 01:07:09PM +0100, Petr Mladek wrote:
+>> The timer used by delayed kthread works are IRQ safe because the used
+>> kthread_delayed_work_timer_fn() is IRQ safe.
+>>
+>> It is properly marked when initialized by KTHREAD_DELAYED_WORK_INIT().
+>> But TIMER_IRQSAFE flag is missing when initialized by
+>> kthread_init_delayed_work().
+>>
+>> The missing flag might trigger invalid warning from del_timer_sync()
+>> when kthread_mod_delayed_work() is called with interrupts disabled.
+>>
+>> Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>> Signed-off-by: Petr Mladek <pmladek@suse.com>
+>> Tested-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> 
+> Acked-by: Tejun Heo <tj@kernel.org>
+
+I'm worry shouldn't this patch have "fixes" tag?
 
 -- 
- Kirill A. Shutemov
+Best regards,
+grygorii
