@@ -2,114 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EDC0186FFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:26:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DD17186FDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:19:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732144AbgCPQ0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 12:26:11 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:20898 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731950AbgCPQ0L (ORCPT
+        id S1732098AbgCPQTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 12:19:10 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:34903 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732021AbgCPQTK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 12:26:11 -0400
-X-Greylist: delayed 309 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Mar 2020 12:26:10 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584375970;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QsohC5NdJJ5zDtE0SOF+eo4QhwaKwX3h4pprMB28X5Q=;
-        b=E5/C/eVX68ulzHqrpKgaFwgNf5lswG/krOFKeLhQ61RTcYN1ZoAPXjHuobFAjunzkY9Xiy
-        SoC0H+MiZTOt6WoCxZpqGXXUbQ0EMN2Vaq/g41if0mtSgATSD7AKYYWTmSbzGS3uYhJ4VL
-        vNay5HsJhNO+FW6Uf2913oVOCus0c1Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-285-IzJrVBllPJ-BGiD1AR_Pjg-1; Mon, 16 Mar 2020 12:19:08 -0400
-X-MC-Unique: IzJrVBllPJ-BGiD1AR_Pjg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 32D6319E3D05;
-        Mon, 16 Mar 2020 16:19:07 +0000 (UTC)
-Received: from treble (ovpn-120-135.rdu2.redhat.com [10.10.120.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8B3201001DC2;
-        Mon, 16 Mar 2020 16:19:06 +0000 (UTC)
-Date:   Mon, 16 Mar 2020 11:19:04 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [RFC][PATCH 15/16] objtool: Implement noinstr validation
-Message-ID: <20200316161904.zouwkwup6vwsmxgp@treble>
-References: <20200312134107.700205216@infradead.org>
- <20200312135042.288201372@infradead.org>
- <20200315180320.cgy2ealklbjlx4g7@treble>
- <20200316132419.GF12521@hirez.programming.kicks-ass.net>
+        Mon, 16 Mar 2020 12:19:10 -0400
+Received: by mail-qt1-f194.google.com with SMTP id v15so14702843qto.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 09:19:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=FGmHo0X0ug88xLxL5VEMvKfeQgO1Bzc/6oEObLpalt0=;
+        b=SHgvwS9ZQXVqWJj5Zg/whvmP0uVvCvk7nB+wXhoy06AICUCarPw4d95BS7CJvG67UU
+         NX8wP9DEQJ0mgCrwGOWKtNK59MMqvFI00+RHuh0T+yO1RTHxBEtxCbEK2FT8r+V2tB9h
+         Mk1bzFa1SvwjUcS6Q7GSk61qqUhraymSLxN7La1EGmsw+Qxumbbns6Wb1kYMHPlLtkxe
+         9JEk6yL6bHZszcytqNRZZSfQAp498YTvNeyQjFBVRM6Ckt1osk3zGZvEMoaGp9qkKZvP
+         0ILeErzkPHYfFxCPj9zcFZL6pVv34cuxBMBtFOMl/RegHfvHd5bpoXm8eLeqMpNhP21R
+         C0Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=FGmHo0X0ug88xLxL5VEMvKfeQgO1Bzc/6oEObLpalt0=;
+        b=RA/7Z7Eth5PRw+RAUcMUoEbb1C/ZEMoo5PGpVHSvxMZjameb0sYTytzRHI+iwzooLw
+         XYwzzKBCkU9yR1YPbgYf0Muye8toR8vH88XcubIZViNINp+xQ/aSvcJayar7nv4WCAq9
+         +64KNaIke5Z68L0k45BH9Y+Y5T49K18VvKqlua2fYVihkizOjFABDNMg3yezCXCj/122
+         9k7rbnttfxtW2PgE13LRGt/YeQxw1OEcPhJVLUPDBbYlyBkYunTBz2ErUBmrQdAAzJAl
+         m5Ol5DySATDUgPBQwHf4G2Fb1AL1x4GzwAonoJ5lZGfKawz7nwc1zNd+7HIbdkKs5KNA
+         HAxg==
+X-Gm-Message-State: ANhLgQ2kFQPDXVIi6aEoZ7k7eBYef+nYsPJXIM325Mp24AO1QCtFLIIQ
+        TW1XwLMhYLba3su+eDRUwmRPYg==
+X-Google-Smtp-Source: ADFU+vtx+zMj7eTBogu7AvmwKKGLCsGJnyGIB45kgyVWQ3gEMMOGIIAyfVwsIK6AVGNouJNqa0oo9g==
+X-Received: by 2002:ac8:18f3:: with SMTP id o48mr897399qtk.368.1584375549434;
+        Mon, 16 Mar 2020 09:19:09 -0700 (PDT)
+Received: from localhost (70.44.39.90.res-cmts.bus.ptd.net. [70.44.39.90])
+        by smtp.gmail.com with ESMTPSA id y17sm108505qth.59.2020.03.16.09.19.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Mar 2020 09:19:08 -0700 (PDT)
+Date:   Mon, 16 Mar 2020 12:19:07 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Chris Down <chris@chrisdown.name>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 1/2] mm, memcg: Fix corruption on 64-bit divisor in
+ memory.high throttling
+Message-ID: <20200316161907.GE67986@cmpxchg.org>
+References: <80780887060514967d414b3cd91f9a316a16ab98.1584036142.git.chris@chrisdown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200316132419.GF12521@hirez.programming.kicks-ass.net>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <80780887060514967d414b3cd91f9a316a16ab98.1584036142.git.chris@chrisdown.name>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 02:24:19PM +0100, Peter Zijlstra wrote:
-> > And "read_instr_hints" reads as "read_instruction_hints()".
-> > 
-> > Can we come up with a more readable name?  Why not just "notrace"?
-> > 
-> > The trace begin/end annotations could be
-> > 
-> >   trace_allow_begin()
-> >   trace_allow_end()
+On Thu, Mar 12, 2020 at 06:02:54PM +0000, Chris Down wrote:
+> 0e4b01df8659 had a bunch of fixups to use the right division method.
+> However, it seems that after all that it still wasn't right -- div_u64
+> takes a 32-bit divisor.
 > 
-> notrace already exists and we didn't want to confuse things further.
+> The headroom is still large (2^32 pages), so on mundane systems you
+> won't hit this, but this should definitely be fixed.
+> 
+> Fixes: 0e4b01df8659 ("mm, memcg: throttle allocators when failing reclaim over memory.high")
+> Reported-by: Johannes Weiner <hannes@cmpxchg.org>
+> Signed-off-by: Chris Down <chris@chrisdown.name>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: linux-mm@kvack.org
+> Cc: cgroups@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: kernel-team@fb.com
+> Cc: stable@vger.kernel.org # 5.4.x
 
-Um, why would it confuse things to call a section of notrace code
-".notrace.text"???
+div_u64 versus div64_u64 is really a handgrenade. We just fixed a
+bunch of those in psi as well.
 
-> > Also -- what happens when a function belongs in both .notrace.text and
-> > in one of the other special-purpose sections like .sched.text,
-> > .meminit.text or .entry.text?
-> 
-> Hasn't happened yet, initially we were thinking of using .entry.text for
-> this as a whole, but decided against that due to how .entry.text is
-> special for PTI (although exposing most of this code really wouldn't
-> matter).
-> 
-> The thing with .sched.text is that we really should never call into
-> scheduling from these contexts anyway. We've not ran into meminit yet.
-> (all this finicky entry code is ran with IRQs disabled).
-> 
-> The one that could potentially interfere is .cpuidle.text.
-> 
-> > Maybe storing pointers to the functions, like NOKPROBE_SYMBOL does,
-> > would be better than putting the functions in a separate section.
-> 
-> Thing is, I really _hate_ that annotation style.
-
-I do too, but I get the feeling this "put everything in its own section"
-thing is going to bite us.
-
-> > Also, maybe we can just hard-code the fact that vmlinux.o is always
-> > noinstr-only.  Over time we'll probably need to move more per-.o
-> > functionalities to vmlinux.o and I think we should avoid creating a
-> > bunch of cmdline options.
-> 
-> but you're ruining things here, see, for a regular x86_64 config, we'd
-> run this with:
-> 
-> 	objtool check -fail vmlinux.o
->
-> And I was hoping to get vmlinux.o objtool clean, surprisingly there
-> really aren't that many complaints. But the -i thing makes it run
-> significantly faster without duplicating all the bits we've already
-> checked.
-
-My suggestion is that the "-i" option would be hard-coded (for now).  So
-nothing extra would get checked.
-
--- 
-Josh
-
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
