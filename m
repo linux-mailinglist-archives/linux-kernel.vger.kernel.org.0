@@ -2,110 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 215611868F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:26:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA6C91868FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:27:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730602AbgCPK0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 06:26:33 -0400
-Received: from foss.arm.com ([217.140.110.172]:45454 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730574AbgCPK0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 06:26:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D936F1FB;
-        Mon, 16 Mar 2020 03:26:31 -0700 (PDT)
-Received: from mbp (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AD0423F534;
-        Mon, 16 Mar 2020 03:26:28 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 10:26:22 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        clang-built-linux@googlegroups.com, x86@kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Burton <paul.burton@mips.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Collingbourne <pcc@google.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v3 18/26] arm64: Introduce asm/vdso/processor.h
-Message-ID: <20200316102621.GC3005@mbp>
-References: <20200313154345.56760-1-vincenzo.frascino@arm.com>
- <20200313154345.56760-19-vincenzo.frascino@arm.com>
- <20200315182950.GB32205@mbp>
- <c2c0157a-107a-debf-100f-0d97781add7c@arm.com>
- <20200316102214.GA5746@lakrids.cambridge.arm.com>
+        id S1730624AbgCPK1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 06:27:47 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:37436 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730550AbgCPK1r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 06:27:47 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02GARc2X015637;
+        Mon, 16 Mar 2020 05:27:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584354458;
+        bh=cM3M0WhMJb1kHAJscz665SQ5kqkj1mspK4tHy4EMD1A=;
+        h=From:To:CC:Subject:Date;
+        b=bn0D8HiP6PPr9ULgYGQwSixr07CWkBFxpuskovMMSGZ4+Gm9/5RF+ZcmwqyfjFpgR
+         Hy/ylBE+iBt8EPRNZJbXQBi47yN9GFuhuubUHA0S6ueJpv2/OuVoV4B30w4o75Gf3T
+         bbE8D0Zwntw9XRGVRfnxeLA87wBqYWgtSB5/JxZA=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02GARcrZ060549;
+        Mon, 16 Mar 2020 05:27:38 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 16
+ Mar 2020 05:27:38 -0500
+Received: from localhost.localdomain (10.64.41.19) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 16 Mar 2020 05:27:38 -0500
+Received: from lta0400828a.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 02GARWNu121191;
+        Mon, 16 Mar 2020 05:27:33 -0500
+From:   Roger Quadros <rogerq@ti.com>
+To:     <tony@atomide.com>
+CC:     <hch@lst.de>, <robin.murphy@arm.com>, <robh+dt@kernel.org>,
+        <nm@ti.com>, <t-kristo@ti.com>, <nsekhar@ti.com>,
+        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>,
+        <stable@kernel.org>
+Subject: [PATCH] ARM: dts: omap5: Add bus_dma_limit for L3 bus
+Date:   Mon, 16 Mar 2020 12:27:31 +0200
+Message-ID: <20200316102731.15467-1-rogerq@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200316102214.GA5746@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 10:22:15AM +0000, Mark Rutland wrote:
-> On Mon, Mar 16, 2020 at 09:42:32AM +0000, Vincenzo Frascino wrote:
-> > On 3/15/20 6:30 PM, Catalin Marinas wrote:
-> > > On Fri, Mar 13, 2020 at 03:43:37PM +0000, Vincenzo Frascino wrote:
-> > >> --- /dev/null
-> > >> +++ b/arch/arm64/include/asm/vdso/processor.h
-> > >> @@ -0,0 +1,31 @@
-> > >> +/* SPDX-License-Identifier: GPL-2.0-only */
-> > >> +/*
-> > >> + * Copyright (C) 2020 ARM Ltd.
-> > >> + */
-> > >> +#ifndef __ASM_VDSO_PROCESSOR_H
-> > >> +#define __ASM_VDSO_PROCESSOR_H
-> > >> +
-> > >> +#ifndef __ASSEMBLY__
-> > >> +
-> > >> +#include <asm/page-def.h>
-> > >> +
-> > >> +#ifdef CONFIG_COMPAT
-> > >> +#if defined(CONFIG_ARM64_64K_PAGES) && defined(CONFIG_KUSER_HELPERS)
-> > >> +/*
-> > >> + * With CONFIG_ARM64_64K_PAGES enabled, the last page is occupied
-> > >> + * by the compat vectors page.
-> > >> + */
-> > >> +#define TASK_SIZE_32		UL(0x100000000)
-> > >> +#else
-> > >> +#define TASK_SIZE_32		(UL(0x100000000) - PAGE_SIZE)
-> > >> +#endif /* CONFIG_ARM64_64K_PAGES */
-> > >> +#endif /* CONFIG_COMPAT */
-> > > 
-> > > Just curious, what's TASK_SIZE_32 used for in the vDSO code? You don't
-> > > seem to move TASK_SIZE.
-> > > 
-> > 
-> > I tried to fine grain the headers as much as I could in order to avoid
-> > unneeded/unwanted inclusions:
-> >  * TASK_SIZE_32 is used to verify ABI consistency on vdso32 (please refer to
-> >    arch/arm64/kernel/vdso32/vgettimeofday.c).
-> >  * TASK_SIZE is not required by the vdso library hence it is not present in
-> >    these headers.
-> 
-> It would be worth noting the former point in the commit message, since
-> it can be surprising.
-> 
-> I also think it's worth keeping the definitions together if that's easy,
-> as it makes it easier to navigate the codebase, even if TASK_SIZE isn't
-> necessary for the VDSO itself.
+The L3 interconnect's memory map is from 0x0 to
+0xffffffff. Out of this, System memory (SDRAM) can be
+accessed from 0x80000000 to 0xffffffff (2GB)
 
-It won't work as TASK_SIZE requires (on arm64) test_thread_flag() which
-can't be made available to the vDSO.
+OMAP5 does support 4GB of SDRAM but upper 2GB can only be
+accessed by the MPU subsystem.
 
+Add the dma-ranges property to reflect the physical address limit
+of the L3 bus.
+
+Cc: stable@kernel.org
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+---
+ arch/arm/boot/dts/omap5.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/omap5.dtsi b/arch/arm/boot/dts/omap5.dtsi
+index d0ecf54d5a23..a7562d3deb1a 100644
+--- a/arch/arm/boot/dts/omap5.dtsi
++++ b/arch/arm/boot/dts/omap5.dtsi
+@@ -143,6 +143,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges = <0 0 0 0xc0000000>;
++		dma-ranges = <0x80000000 0x0 0x80000000 0x80000000>;
+ 		ti,hwmods = "l3_main_1", "l3_main_2", "l3_main_3";
+ 		reg = <0 0x44000000 0 0x2000>,
+ 		      <0 0x44800000 0 0x3000>,
 -- 
-Catalin
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
