@@ -2,133 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 426AE1869DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 12:18:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D65A1869EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 12:20:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730812AbgCPLSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 07:18:03 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39144 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730685AbgCPLSC (ORCPT
+        id S1730851AbgCPLUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 07:20:16 -0400
+Received: from m177129.mail.qiye.163.com ([123.58.177.129]:41333 "EHLO
+        m177129.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730560AbgCPLUP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 07:18:02 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h6so347039wrs.6
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 04:18:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tkzased074+2YtAr5hFJ/daEFNhyLZu+M7n1STZCoBQ=;
-        b=PuviygU2AAmP2GYX+19eXOd4AbKmQEvTvBAqVTKc7w9rRAFSTEm0NG5JfeGXiZlN47
-         CamCokt1G4OvKPqDvDl3RrUCmiJQgLKim3xrQkFaayVEh4iIWCY14ZRWscp6Uc8gYH/B
-         5WuEvcJgYeGcoItq30X3xr98ryw51RZztMC4GWmZX4/hnuBFAG4rIxCq3Q+CuEDJtblB
-         vyZJ9K51xs267yZZwCBeCXyq7TOvH/yEfKMtDr8j9VZJMVnvAGttyNQbvXsbb5+t4Lg9
-         4lrTcZRMwrfRcrNOmtDT6d844jb4g8Xobe5FBexitdnjw4gbnJrbYm3hhR2UKsEgYRZD
-         VpGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tkzased074+2YtAr5hFJ/daEFNhyLZu+M7n1STZCoBQ=;
-        b=dKffKkgRtM3Q7Ba2UkhGRwvc6PTRu163mDN5upiQNmGshazix4KcN8PBn045rzri/m
-         bT8UENy6pwJRQ+EldIbidB/lzCliYu1pNY9s9ZaAsdYxnwIBrdK0PN18Z0NQvUVZ6suL
-         ScqLHO4CNv7QbckLmjx3ntgPBUzNpWUKgWmLPoxKPLVmLm3X1RlmuTxDvwd/ohV7QMl4
-         cc1wW5K2UccKlG7OnoEXlBF5V40IBziYjbEQnGZAWLf1WEqRENtiGahycz1k19+hznKU
-         g8GaiP+qjrD5DO7a74n1B7XUYPcKrPsRBfUqPRUwbWL7u7WIJHroyG6UzQ9xHYoyL/Sa
-         BpSA==
-X-Gm-Message-State: ANhLgQ0KvHrHI3bUCgHuoJrryscjZ78TkwCVTHgrIhJmti8gDtzkX7xs
-        cksIxwqXwoPLUcYqYJuqlpl/wJBTDWgvEVl7wngJXfI11kE=
-X-Google-Smtp-Source: ADFU+vtLcva0bE/nXI4bTW8PFsxRpyI9ov7T+F6+EGCZKFCf0U1B9Nd91Nf05H+MgIUj46mpauaunKTh4F/HQrzJakE=
-X-Received: by 2002:adf:cc85:: with SMTP id p5mr35015005wrj.196.1584357480753;
- Mon, 16 Mar 2020 04:18:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200316102150.16487-1-bhe@redhat.com>
-In-Reply-To: <20200316102150.16487-1-bhe@redhat.com>
-From:   Pankaj Gupta <pankaj.gupta.linux@gmail.com>
-Date:   Mon, 16 Mar 2020 12:17:49 +0100
-Message-ID: <CAM9Jb+iow40dCvrC8xoKAv5di2J_TDxvAkzKkHk5a0OXNaq3Yg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] mm/sparse.c: Use kvmalloc/kvfree to alloc/free
- memmap for the classic sparse
-To:     Baoquan He <bhe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>, willy@infradead.org,
-        richard.weiyang@gmail.com, Vlastimil Babka <vbabka@suse.cz>
+        Mon, 16 Mar 2020 07:20:15 -0400
+Received: from vivo.com (wm-2.qy.internal [127.0.0.1])
+        by m177129.mail.qiye.163.com (Hmail) with ESMTP id A7DED5C3187;
+        Mon, 16 Mar 2020 19:20:05 +0800 (CST)
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <AJUA5gAVCMaMlIkPsaTC0KqL.3.1584357605616.Hmail.wenhu.wang@vivo.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Allison Randal <allison@lohutok.net>,
+        Richard Fontana <rfontana@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        trivial@kernel.org, kernel@vivo.com,
+        stable <stable@vger.kernel.org>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2M10gcG93ZXJwYy9mc2wtODV4eDogZml4IGNvbXBpbGUgZXJyb3I=?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
+X-Originating-IP: 58.251.74.226
+In-Reply-To: <875zf4r613.fsf@mpe.ellerman.id.au>
+MIME-Version: 1.0
+Received: from wenhu.wang@vivo.com( [58.251.74.226) ] by ajax-webmail ( [127.0.0.1] ) ; Mon, 16 Mar 2020 19:20:05 +0800 (GMT+08:00)
+From:   =?UTF-8?B?546L5paH6JmO?= <wenhu.wang@vivo.com>
+Date:   Mon, 16 Mar 2020 19:20:05 +0800 (GMT+08:00)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZT1VCQktCQkJNQkNNSENCSVlXWShZQU
+        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
+X-HM-Sender-Digest: e1kJHlYWEh9ZQUhNTEpOQ0NKTE9NN1dZDB4ZWUEPCQ4eV1kSHx4VD1lB
+        WUc6MS46Thw6LTg2GjYXMhArCBovOEswCjdVSFVKTkNPSE5MTUtMQkJMVTMWGhIXVQweFRMOVQwa
+        FRw7DRINFFUYFBZFWVdZEgtZQVlOQ1VJTkpVTE9VSUlNWVdZCAFZQU5IQ0o3Bg++
+X-HM-Tid: 0a70e31281416447kursa7ded5c3187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> This change makes populate_section_memmap()/depopulate_section_memmap
-> much simpler.
->
-> Suggested-by: Michal Hocko <mhocko@kernel.org>
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> ---
-> v3->v4:
->   Split the old v3 into two patches, to carve out the using 'nid'
->   as preferred node to allocate memmap into a separate patch. This
->   is suggested by Michal, and the carving out is put in patch 2.
->
-> v2->v3:
->   Remove __GFP_NOWARN and use array_size when calling kvmalloc_node()
->   per Matthew's comments.
-> http://lkml.kernel.org/r/20200312141749.GL27711@MiWiFi-R3L-srv
->
->  mm/sparse.c | 27 +++------------------------
->  1 file changed, 3 insertions(+), 24 deletions(-)
->
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index e747a238a860..d01d09cc7d99 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -719,35 +719,14 @@ static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
->  struct page * __meminit populate_section_memmap(unsigned long pfn,
->                 unsigned long nr_pages, int nid, struct vmem_altmap *altmap)
->  {
-> -       struct page *page, *ret;
-> -       unsigned long memmap_size = sizeof(struct page) * PAGES_PER_SECTION;
-> -
-> -       page = alloc_pages(GFP_KERNEL|__GFP_NOWARN, get_order(memmap_size));
-> -       if (page)
-> -               goto got_map_page;
-> -
-> -       ret = vmalloc(memmap_size);
-> -       if (ret)
-> -               goto got_map_ptr;
-> -
-> -       return NULL;
-> -got_map_page:
-> -       ret = (struct page *)pfn_to_kaddr(page_to_pfn(page));
-> -got_map_ptr:
-> -
-> -       return ret;
-> +       return kvmalloc(array_size(sizeof(struct page),
-> +                       PAGES_PER_SECTION), GFP_KERNEL);
->  }
->
->  static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
->                 struct vmem_altmap *altmap)
->  {
-> -       struct page *memmap = pfn_to_page(pfn);
-> -
-> -       if (is_vmalloc_addr(memmap))
-> -               vfree(memmap);
-> -       else
-> -               free_pages((unsigned long)memmap,
-> -                          get_order(sizeof(struct page) * PAGES_PER_SECTION));
-> +       kvfree(pfn_to_page(pfn));
->  }
->
->  static void free_map_bootmem(struct page *memmap)
-> --
-> 2.17.2
-
-With David's indentation suggestion:
-Reviewed-by: Pankaj Gupta <pankaj.gupta.linux@gmail.com>
-
->
->
+RnJvbTogTWljaGFlbCBFbGxlcm1hbiA8bXBlQGVsbGVybWFuLmlkLmF1PgogRGF0ZTogMjAyMC0w
+My0xNiAxNzo0MToxMgpUbzpXQU5HIFdlbmh1IDx3ZW5odS53YW5nQHZpdm8uY29tPixCZW5qYW1p
+biBIZXJyZW5zY2htaWR0IDxiZW5oQGtlcm5lbC5jcmFzaGluZy5vcmc+LFBhdWwgTWFja2VycmFz
+IDxwYXVsdXNAc2FtYmEub3JnPixXQU5HIFdlbmh1IDx3ZW5odS53YW5nQHZpdm8uY29tPixBbGxp
+c29uIFJhbmRhbCA8YWxsaXNvbkBsb2h1dG9rLm5ldD4sUmljaGFyZCBGb250YW5hIDxyZm9udGFu
+YUByZWRoYXQuY29tPixHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24u
+b3JnPixUaG9tYXMgR2xlaXhuZXIgPHRnbHhAbGludXRyb25peC5kZT4sbGludXhwcGMtZGV2QGxp
+c3RzLm96bGFicy5vcmcsbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZwogY2M6IHRyaXZpYWxA
+a2VybmVsLm9yZyxrZXJuZWxAdml2by5jb20sc3RhYmxlIDxzdGFibGVAdmdlci5rZXJuZWwub3Jn
+PgpTdWJqZWN0OiBSZTogW1BBVENIIHYzXSBwb3dlcnBjL2ZzbC04NXh4OiBmaXggY29tcGlsZSBl
+cnJvcj5XQU5HIFdlbmh1IDx3ZW5odS53YW5nQHZpdm8uY29tPiB3cml0ZXM6Cj4+IEluY2x1ZGUg
+ImxpbnV4L29mX2FkZHJlc3MuaCIgdG8gZml4IHRoZSBjb21waWxlIGVycm9yIGZvcgo+PiBtcGM4
+NXh4X2wyY3Rscl9vZl9wcm9iZSgpIHdoZW4gY29tcGlsaW5nIGZzbF84NXh4X2NhY2hlX3NyYW0u
+Yy4KPj4KPj4gICBDQyAgICAgIGFyY2gvcG93ZXJwYy9zeXNkZXYvZnNsXzg1eHhfbDJjdGxyLm8K
+Pj4gYXJjaC9wb3dlcnBjL3N5c2Rldi9mc2xfODV4eF9sMmN0bHIuYzogSW4gZnVuY3Rpb24g4oCY
+bXBjODV4eF9sMmN0bHJfb2ZfcHJvYmXigJk6Cj4+IGFyY2gvcG93ZXJwYy9zeXNkZXYvZnNsXzg1
+eHhfbDJjdGxyLmM6OTA6MTE6IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlv
+biDigJhvZl9pb21hcOKAmTsgZGlkIHlvdSBtZWFuIOKAmHBjaV9pb21hcOKAmT8gWy1XZXJyb3I9
+aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFyYXRpb25dCj4+ICAgbDJjdGxyID0gb2ZfaW9tYXAoZGV2
+LT5kZXYub2Zfbm9kZSwgMCk7Cj4+ICAgICAgICAgICAgXn5+fn5+fn4KPj4gICAgICAgICAgICBw
+Y2lfaW9tYXAKPj4gYXJjaC9wb3dlcnBjL3N5c2Rldi9mc2xfODV4eF9sMmN0bHIuYzo5MDo5OiBl
+cnJvcjogYXNzaWdubWVudCBtYWtlcyBwb2ludGVyIGZyb20gaW50ZWdlciB3aXRob3V0IGEgY2Fz
+dCBbLVdlcnJvcj1pbnQtY29udmVyc2lvbl0KPj4gICBsMmN0bHIgPSBvZl9pb21hcChkZXYtPmRl
+di5vZl9ub2RlLCAwKTsKPj4gICAgICAgICAgXgo+PiBjYzE6IGFsbCB3YXJuaW5ncyBiZWluZyB0
+cmVhdGVkIGFzIGVycm9ycwo+PiBzY3JpcHRzL01ha2VmaWxlLmJ1aWxkOjI2NzogcmVjaXBlIGZv
+ciB0YXJnZXQgJ2FyY2gvcG93ZXJwYy9zeXNkZXYvZnNsXzg1eHhfbDJjdGxyLm8nIGZhaWxlZAo+
+PiBtYWtlWzJdOiAqKiogW2FyY2gvcG93ZXJwYy9zeXNkZXYvZnNsXzg1eHhfbDJjdGxyLm9dIEVy
+cm9yIDEKPj4KPj4gRml4ZXM6IGNvbW1pdCA2ZGI5MmNjOWQwN2QgKCJwb3dlcnBjLzg1eHg6IGFk
+ZCBjYWNoZS1zcmFtIHN1cHBvcnQiKQo+Cj5UaGUgc3ludGF4IGlzOgo+Cj5GaXhlczogNmRiOTJj
+YzlkMDdkICgicG93ZXJwYy84NXh4OiBhZGQgY2FjaGUtc3JhbSBzdXBwb3J0IikKPgo+PiBDYzog
+c3RhYmxlIDxzdGFibGVAdmdlci5rZXJuZWwub3JnPgo+Cj5UaGUgY29tbWl0IGFib3ZlIHdlbnQg
+aW50byB2Mi42LjM3Lgo+Cj5TbyBubyBvbmUgaGFzIG5vdGljZWQgdGhpcyBidWcgc2luY2UgdGhl
+biwgaG93PyBPciBkaWQgc29tZXRoaW5nIGVsc2UKPmNoYW5nZSB0byBleHBvc2UgdGhlIHByb2Js
+ZW0/CgpBY3R1YWxseSBhIGhhcmQgcXVlc3Rpb24gdG8gYW5zd2VyIGNhdXNlIGl0IGFsc28gbGVm
+dCBtZSBzY3JhdGNoaW5nIGZvciBsb25nLgpIb3dldmVyLCBJIGNhbiBub3QgZmluZCByaWdodCBv
+ciBkZWZpbml0ZSBhbnN3ZXIuCgpBIGNvbnZpbmNpbmcgZXhwbGFuYXRpb24gaXMgdGhlIGRyaXZl
+ciBoYXMgbm90IGJlZW4gaW4gdXNlIHNpbmNlIHYyLjYuMzcsCmJ1dCBzb21laG93LCB3ZSBhcmUg
+dG8gdXNlIGl0IHJlY2VudGx5LgpBbnl3YXksIGl0J3MgYmV0dGVyIGZvciBtZSBhcyB3ZWxsIGFz
+IG5vIGhhcm0gdG8gYW55b25lIHRvIGZpeCBpdCBldmVuIHRob3VnaC4KClRoYW5rcywgV2VuaHUK
+Pgo+Y2hlZXJzCg0KDQo=
