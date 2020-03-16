@@ -2,52 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A047A187656
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 00:47:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B339187659
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 00:47:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732945AbgCPXrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 19:47:07 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38502 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732900AbgCPXrH (ORCPT
+        id S1732982AbgCPXr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 19:47:29 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43961 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732900AbgCPXr3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 19:47:07 -0400
-Received: by mail-ot1-f67.google.com with SMTP id t28so17165310ott.5
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 16:47:06 -0700 (PDT)
+        Mon, 16 Mar 2020 19:47:29 -0400
+Received: by mail-oi1-f194.google.com with SMTP id p125so19807699oif.10
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 16:47:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=aVXf02gC+H4hnLytwgf022jEbvbc1T3drxGD+ZV/fXY=;
-        b=CognDl138DrQV5mRCWSZeKD5h8R45GijjA7lHIVKHSd3M2gwoWTuh1CcWFxzJggwT9
-         +mbFzZina4y6S4NrXLQtdNputZ25VHTvUZvB7PuH8rhkzW+olXLws4Z5JEsrXpgZfghh
-         Q5ewT2IWI6/Qc4K8qvjubZSvWQN7lfmzEv3dch7MOqipMe7tm/IgsUgUSKKPoW1pTniu
-         CaxxmKPSIIxvIj3Q/XUIfSEDQhibdE0swIgP8XyaUOWD4Exih2jFC98zL4qtxgiqWHxZ
-         ufbESvKXQ695ue4yzniVnGXSGcrOVedTcuuISqN6pfzXeBMLpy3wjLO4n5wgoeUzdTWF
-         la3g==
+        bh=mttFfSWICKfg0VDWFFFpM6bA1x4vo0nhvLSocXypSiE=;
+        b=VJRDb5WO8N3vm52u9Y7VxkYqd/KhwpCssTVF/UwGUFlYgdoiGLRlnTUYkU9oIQoMQk
+         m8j0d0lURsNmVvD3V1Z1Aoq8rlugoZwTRKdpUND6SgGvq4CnIajRHPg6bsOL1/XgkKzD
+         Pk1/Zs30aVEax2sFOkLTEMZiUf4NPPZSy8ta9mhmquYZB0c9pSUphzMiiEREtt77WooC
+         6Sr7l50eJdZBYCK2hIN3ti+zO0Nw5bYwmDfBDPpcWq9zfUUnJwtHc7duN2CeM48dCKCn
+         oqF1nho6Yy7VEJIKNvggGf8WA9JuYp9O86nhacVnnp0Y5lIcN5VLRAVlwvZBy8mojr/l
+         pqWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=aVXf02gC+H4hnLytwgf022jEbvbc1T3drxGD+ZV/fXY=;
-        b=FaUOulssSeJOqvBLSdq8Kn5+Izp582ihVS/jkqrLssz0MmYxf5FfZ9ljKsiQUVfTxX
-         Tgw0MZE9fu60GzC9BXuyb31rQqRx29dwkHtNuFZu/ThifX7T5QfUXyy/F6+MIzq8gwr8
-         I5X/mIQdYMEgvbi95VwyIH30r0BzMr1tOfSC2BGpGU7SQft4mRReKuDrw2fRenceTycH
-         QAOVgRGkUOwGvviQLmK5WcyU7rrLZhDeEW22e5e+FHNgZyAJTjEJCatYBn/XhZJZIld+
-         /dCZvczGtpZ0S1CHIRqGan714xp3jPgYSG81kGBBs/M3jPScIlMQ5icLptlnj6gtybTt
-         fgqQ==
-X-Gm-Message-State: ANhLgQ1SfcWazP+2OfQdDTuvht8yDjQuxyidL8+hT0SacZeBaBFITqBO
-        Ko+mCUGGibIbCfBfP6qwQrHL1AoCGkUX2gLk4/hO96CbHcY=
-X-Google-Smtp-Source: ADFU+vtLX9oIptyOrpGbEjvdyuNKgTeAthRn4FGLayQM9052N1kUTixf37hS0KhTcqxCa/Be6gmO09gRriEIpnqMuwI=
-X-Received: by 2002:a9d:6c99:: with SMTP id c25mr1407317otr.124.1584402425776;
- Mon, 16 Mar 2020 16:47:05 -0700 (PDT)
+        bh=mttFfSWICKfg0VDWFFFpM6bA1x4vo0nhvLSocXypSiE=;
+        b=GODdS8u/DDjkVdIB0tM/ROcJjhyN+8tksq0yw+L2sZyorC/IZg+7eyFuPJ8GVyCZdk
+         /6CkN0AB/dz44Q5fnSM5QOlMkENUhpIRrLjDJ+I/G0eNUmKrNnNF75VkuVy//2WK0mzU
+         o11RBG43M0WryzSXpbtJ6iOKyWH1YrdDTmPrnmYONuCpBfirrclBcKi8c6Q33PrHvIso
+         FtWqIlfcsbxhbUprQdQvpj1lrKlcC/NlXhOtnoT3Q+Q53oFdXaU2jiovPH8AfzlFiwOr
+         ZvbgvX6B5EzToEtpGdTwY1Ki4shAMpZodEI09i0EkR8o1src+ld+108sik90AOP/n957
+         4coQ==
+X-Gm-Message-State: ANhLgQ2gSUDyMqV4b0YjZ+wLoQtsB4HPUeqahT1iTkSLiYI19c4cNoge
+        Yznqpg1kMJPvo4+QIXI1pdSnzs6x/x+96FcvDnHp3A==
+X-Google-Smtp-Source: ADFU+vvf58lvIOAfydJM85FoH4fCfYl73Pwkpod8CRWAMB79NSEFG3mZJIsM7IndHf4CMxqGHbsvsMyMno0Is2Ju4oc=
+X-Received: by 2002:aca:4b56:: with SMTP id y83mr1554187oia.142.1584402448153;
+ Mon, 16 Mar 2020 16:47:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <1584397455-28701-1-git-send-email-yang.shi@linux.alibaba.com>
-In-Reply-To: <1584397455-28701-1-git-send-email-yang.shi@linux.alibaba.com>
+References: <1584397455-28701-1-git-send-email-yang.shi@linux.alibaba.com> <1584397455-28701-2-git-send-email-yang.shi@linux.alibaba.com>
+In-Reply-To: <1584397455-28701-2-git-send-email-yang.shi@linux.alibaba.com>
 From:   Shakeel Butt <shakeelb@google.com>
-Date:   Mon, 16 Mar 2020 16:46:54 -0700
-Message-ID: <CALvZod72O-9Qm5bvr2MWKPRiDV3oFCmujawr28DnsSdJx+PmjQ@mail.gmail.com>
-Subject: Re: [v2 PATCH 1/2] mm: swap: make page_evictable() inline
+Date:   Mon, 16 Mar 2020 16:47:15 -0700
+Message-ID: <CALvZod4pn1XJN7EVV9w6t2cYkHWG++GB6pJdBzBJO+w4k8aEEw@mail.gmail.com>
+Subject: Re: [v2 PATCH 2/2] mm: swap: use smp_mb__after_atomic() to order LRU
+ bit set
 To:     Yang Shi <yang.shi@linux.alibaba.com>
 Cc:     Vlastimil Babka <vbabka@suse.cz>,
         Matthew Wilcox <willy@infradead.org>,
@@ -62,57 +63,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Mar 16, 2020 at 3:24 PM Yang Shi <yang.shi@linux.alibaba.com> wrote:
 >
-> When backporting commit 9c4e6b1a7027 ("mm, mlock, vmscan: no more
-> skipping pagevecs") to our 4.9 kernel, our test bench noticed around 10%
-> down with a couple of vm-scalability's test cases (lru-file-readonce,
-> lru-file-readtwice and lru-file-mmap-read).  I didn't see that much down
-> on my VM (32c-64g-2nodes).  It might be caused by the test configuration,
-> which is 32c-256g with NUMA disabled and the tests were run in root memcg,
-> so the tests actually stress only one inactive and active lru.  It
-> sounds not very usual in mordern production environment.
+> Memory barrier is needed after setting LRU bit, but smp_mb() is too
+> strong.  Some architectures, i.e. x86, imply memory barrier with atomic
+> operations, so replacing it with smp_mb__after_atomic() sounds better,
+> which is nop on strong ordered machines, and full memory barriers on
+> others.  With this change the vm-calability cases would perform better
+> on x86, I saw total 6% improvement with this patch and previous inline
+> fix.
 >
-> That commit did two major changes:
-> 1. Call page_evictable()
-> 2. Use smp_mb to force the PG_lru set visible
->
-> It looks they contribute the most overhead.  The page_evictable() is a
-> function which does function prologue and epilogue, and that was used by
-> page reclaim path only.  However, lru add is a very hot path, so it
-> sounds better to make it inline.  However, it calls page_mapping() which
-> is not inlined either, but the disassemble shows it doesn't do push and
-> pop operations and it sounds not very straightforward to inline it.
->
-> Other than this, it sounds smp_mb() is not necessary for x86 since
-> SetPageLRU is atomic which enforces memory barrier already, replace it
-> with smp_mb__after_atomic() in the following patch.
->
-> With the two fixes applied, the tests can get back around 5% on that
-> test bench and get back normal on my VM.  Since the test bench
-> configuration is not that usual and I also saw around 6% up on the
-> latest upstream, so it sounds good enough IMHO.
->
-> The below is test data (lru-file-readtwice throughput) against the v5.6-rc4:
->         mainline        w/ inline fix
->           150MB            154MB
->
-> With this patch the throughput gets 2.67% up.  The data with using
-> smp_mb__after_atomic() is showed in the following patch.
+> The test data (lru-file-readtwice throughput) against v5.6-rc4:
+>         mainline        w/ inline fix   w/ both (adding this)
+>         150MB           154MB           159MB
 >
 > Fixes: 9c4e6b1a7027 ("mm, mlock, vmscan: no more skipping pagevecs")
 > Cc: Shakeel Butt <shakeelb@google.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Matthew Wilcox <willy@infradead.org>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
 > Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-
-
-So, I tested on a real machine with limiting the 'dd' on a single node
-and reading 100 GiB sparse file (less than a single node). I just ran
-a single instance to not cause the lru lock contention. The cmd I used
-is "dd if=file-100GiB of=/dev/null bs=4k". I ran the cmd 10 times with
-drop_caches in between and measured the time it took.
-
-Without patch: 56.64143 +- 0.672 sec
-
-With patches: 56.10 +- 0.21 sec
 
 Reviewed-and-Tested-by: Shakeel Butt <shakeelb@google.com>
