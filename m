@@ -2,120 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBEA0186C44
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:38:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 483D9186C2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:34:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731417AbgCPNiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 09:38:10 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:59264 "EHLO hermes.aosc.io"
+        id S1731364AbgCPNe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 09:34:56 -0400
+Received: from foss.arm.com ([217.140.110.172]:48402 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731330AbgCPNiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 09:38:10 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 718DE4CA5E;
-        Mon, 16 Mar 2020 13:38:00 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Ondrej Jirman <megous@megous.com>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 5/5] arm64: allwinner: dts: a64: add LCD-related device nodes for PinePhone
-Date:   Mon, 16 Mar 2020 21:35:03 +0800
-Message-Id: <20200316133503.144650-6-icenowy@aosc.io>
-In-Reply-To: <20200316133503.144650-1-icenowy@aosc.io>
-References: <20200316133503.144650-1-icenowy@aosc.io>
+        id S1731351AbgCPNe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 09:34:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31D61FEC;
+        Mon, 16 Mar 2020 06:34:55 -0700 (PDT)
+Received: from [10.37.9.38] (unknown [10.37.9.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E9C093F52E;
+        Mon, 16 Mar 2020 06:34:49 -0700 (PDT)
+Subject: Re: [PATCH v3 18/26] arm64: Introduce asm/vdso/processor.h
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        clang-built-linux@googlegroups.com, x86@kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Collingbourne <pcc@google.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Will Deacon <will@kernel.org>
+References: <20200313154345.56760-1-vincenzo.frascino@arm.com>
+ <20200313154345.56760-19-vincenzo.frascino@arm.com>
+ <20200315182950.GB32205@mbp> <c2c0157a-107a-debf-100f-0d97781add7c@arm.com>
+ <20200316103437.GD3005@mbp> <77a2e91a-58f4-3ba3-9eef-42d6a8faf859@arm.com>
+ <20200316112205.GE3005@mbp>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <9a0a9285-8a45-4f65-3a83-813cabd0f0d3@arm.com>
+Date:   Mon, 16 Mar 2020 13:35:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aosc.io; s=dkim;
-        t=1584365889;
-        h=from:subject:date:message-id:to:cc:mime-version:content-transfer-encoding:in-reply-to:references;
-        bh=vdJB1xaYREfjx8A1fc+UP5D7fCK/5ZczA3DRbH+hq08=;
-        b=gvv4Mt/ppP1U5dpUHA5n8qTEzN2afgaBkT+M0HHnD2QpiRBO0b4PVtnd5WiFOkLgnHm3Cm
-        uS+WljMpibhdzup+UJWKXGt9n3IFyflFgVAqemHSAFN5h+VJ1vskMjGMiiu1teCs1nUAhP
-        zGvHhAcI1EY4J2t587DsvuxH/d6lNFs=
+In-Reply-To: <20200316112205.GE3005@mbp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PinePhone uses PWM backlight and a XBD599 LCD panel over DSI for
-display.
+Hi Catalin,
 
-Add its device nodes.
+On 3/16/20 11:22 AM, Catalin Marinas wrote:
+> On Mon, Mar 16, 2020 at 10:55:00AM +0000, Vincenzo Frascino wrote:
+>> On 3/16/20 10:34 AM, Catalin Marinas wrote:
+[...]
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-No changes in v2.
 
- .../dts/allwinner/sun50i-a64-pinephone.dtsi   | 37 +++++++++++++++++++
- 1 file changed, 37 insertions(+)
+> 
+> As I said above, I don't see how removing 'if ((u32)ts >= (1UL << 32))'
+> makes any difference. This check was likely removed by the compiler
+> already.
+> 
+> Also, userspace doesn't have a trivial way to figure out TASK_SIZE and I
+> can't see anything that tests this in the vdsotest (though I haven't
+> spent that much time looking). If it's hard-coded, note that arm32
+> TASK_SIZE is different from TASK_SIZE_32 on arm64.
+> 
+> Can you tell what actually is failing in vdsotest if you remove the
+> TASK_SIZE_32 checks in the arm64 compat vdso?
+> 
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-index cefda145c3c9..96d9150423e0 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-@@ -16,6 +16,15 @@ aliases {
- 		serial0 = &uart0;
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
-+		brightness-levels = <0 16 18 20 22 24 26 29 32 35 38 42 46 51 56 62 68 75 83 91 100>;
-+		default-brightness-level = <15>;
-+		enable-gpios = <&pio 7 10 GPIO_ACTIVE_HIGH>; /* PH10 */
-+		power-supply = <&reg_ldo_io0>;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-@@ -84,6 +93,30 @@ &dai {
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
-+&dphy {
-+	status = "okay";
-+};
-+
-+&dsi {
-+	vcc-dsi-supply = <&reg_dldo1>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "xingbangda,xbd599";
-+		reg = <0>;
-+		reset-gpios = <&pio 3 23 GPIO_ACTIVE_LOW>; /* PD23 */
-+		iovcc-supply = <&reg_dldo2>;
-+		vcc-supply = <&reg_ldo_io0>;
-+		backlight = <&backlight>;
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -188,6 +221,10 @@ &r_pio {
- 	 */
- };
- 
-+&r_pwm {
-+	status = "okay";
-+};
-+
- &r_rsb {
- 	status = "okay";
- 
+To me does not seem optimized out. Which version of the compiler are you using?
+
+Please find below the list of errors for clock_gettime (similar for the other):
+
+passing UINTPTR_MAX to clock_gettime (VDSO): terminated by unexpected signal 7
+clock-gettime-monotonic/abi: 1 failures/inconsistencies encountered
+
+passing UINTPTR_MAX to clock_gettime (VDSO): terminated by unexpected signal 7
+clock-gettime-monotonic-coarse/abi: 1 failures/inconsistencies encountered
+
+passing UINTPTR_MAX to clock_gettime (VDSO): terminated by unexpected signal 7
+clock-gettime-realtime/abi: 1 failures/inconsistencies encountered
+
+passing UINTPTR_MAX to clock_gettime (VDSO): terminated by unexpected signal 7
+clock-gettime-realtime-coarse/abi: 1 failures/inconsistencies encountered
+
+Please refer to [1] for more details on the test.
+
+[1]
+https://github.com/nlynch-mentor/vdsotest/blob/master/src/clock_gettime_template.c
+
 -- 
-2.24.1
-
+Regards,
+Vincenzo
