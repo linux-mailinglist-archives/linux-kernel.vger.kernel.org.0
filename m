@@ -2,106 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FEC918CF99
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:58:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E9F918D095
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:25:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbgCTN6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 09:58:12 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36254 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726801AbgCTN6M (ORCPT
+        id S1727778AbgCTOYw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 10:24:52 -0400
+Received: from labrats.qualcomm.com ([199.106.110.90]:9007 "EHLO
+        labrats.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727128AbgCTOYv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 09:58:12 -0400
-Received: by mail-lj1-f195.google.com with SMTP id g12so6514924ljj.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 06:58:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7r1qxHQegnboauCIg3jTRpS+zMkxV7bRKkMIfeKjijk=;
-        b=J6/Jt1Y2epfdGVLsQdjgnnkBP/tUkdHgxZ8WnxTFvNIxfPzElWcaSNYET38cGsTawF
-         TiHN32voBTNIqCfndaBu85e8411XQ2F3c9Ed6kVGcGNTe+5vR3gXLk/LL6TtC5qxQ7Gv
-         cGuXVxl2WY5SERovfF2peuo82Rw521aP4GMPIMLOEbJKsZ+ob3m2H4krAkZ/bjy7zHJR
-         0B0vFFZMtxsJPdidT5G8QHkJ3FvWda78MAJDxRRV7krXlgznFxr+tXS0+8dwu00TFRGe
-         hLNweMhimMzKPgaV4FJ1F2nj4xVUUTFYLA1eVnqjRk0hhbANoCExFXgqZNQeN9b/gyMm
-         OAdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7r1qxHQegnboauCIg3jTRpS+zMkxV7bRKkMIfeKjijk=;
-        b=U/OsXdV/OzIGw1O5AslQJhfBJZ8U4m6mDZPDWDpCmWTYEW9lz4e0I0MLiIXaEispKh
-         7yhGPIecZGc0/9TEbQCgG61vCvDe1w7E/SC6NaO/YXgq310A/yVV8YVfaGkS5/GJJ+FS
-         rre+SH1xS780S/wFR9EE9vQsVwKI8Yym7nrHgSlUk7E2UpzO1+t+a94KidOhoH4O5rYm
-         ZNz8O7+GydZ00bZS8/hYGr6MB005yBFC+l2u5VNBAextYW5MEdKSrIXh9dlOpP+yT5Zp
-         kCDxgqvW03+zBxbbKpC5ohEiYjUAqVzyTGVMQ/BIDKMPpICEx/G9MwxOgaxteSi5svF1
-         P+AA==
-X-Gm-Message-State: ANhLgQ2OsslfW5OmwWOhTo6tDgU8y+mIUjPqF8OyftvQDC2rNZ6jw5ga
-        zSRdSpUfWO+WGD6eGsPKhPlxK6zwBS7e7vOvYBQMBg==
-X-Google-Smtp-Source: ADFU+vsE6Vs5c/V4TTfZzJZBdNnU4Q9miHz5oGEtzI0KxzH/6VfYinOrqfHlbgo2S6Kmj61vIfHg/1lEx1b1lrEuOKw=
-X-Received: by 2002:a2e:8790:: with SMTP id n16mr5470666lji.4.1584712689711;
- Fri, 20 Mar 2020 06:58:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <1584710495-308969-1-git-send-email-vincent.donnefort@arm.com> <e400d0b1-173f-bcfd-40c0-2e473e14e7ae@arm.com>
-In-Reply-To: <e400d0b1-173f-bcfd-40c0-2e473e14e7ae@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 20 Mar 2020 14:57:57 +0100
-Message-ID: <CAKfTPtAiFpAd7NnQorNajQZn4FV+Nn01yv_KNJcgd+MFLnH1sw@mail.gmail.com>
-Subject: Re: [PATCH] sched: Remove unused last_load_update_tick rq member
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Vincent Donnefort <vincent.donnefort@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Valentin Schneider <valentin.schneider@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 20 Mar 2020 10:24:51 -0400
+IronPort-SDR: KXdCz/c+E28b++i04tbA1hUhmr2u6IKKr5IZwp6u4IxBjC473fkiz0MWcWHndlUWrI1e79BTHc
+ UyXOqZCo8OVhVBxaD6+c3QIMD4BliWknc5YczJ8vcYt3GkOpy3eLgwam1RPjwhIAVrkdUE5OIu
+ z1KK5bIlt4MBTP3Titq9LF3yidFqqRxXgWRTps3LoeyMJpilLocIsB+tHWPNoUH+ZUtu6xeGVl
+ AjUOokmAvdm4ZNsT2LyHtV1Bd52TPOximN2EtsP2d5NjRGIrQhHhc5vFV6mRx5biMjqr7FTqq8
+ ZCY=
+X-IronPort-AV: E=Sophos;i="5.70,559,1574150400"; 
+   d="scan'208";a="28594805"
+Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
+  by labrats.qualcomm.com with ESMTP; 15 Mar 2020 23:21:12 -0700
+Received: from pacamara-linux.qualcomm.com ([192.168.140.135])
+  by ironmsg05-sd.qualcomm.com with ESMTP; 15 Mar 2020 23:21:11 -0700
+Received: by pacamara-linux.qualcomm.com (Postfix, from userid 359480)
+        id A00EA3A61; Sun, 15 Mar 2020 23:21:11 -0700 (PDT)
+From:   Can Guo <cang@codeaurora.org>
+To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        hongwus@codeaurora.org, rnayak@codeaurora.org,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 2/2] scsi: ufs: Do not rely on prefetched data
+Date:   Sun, 15 Mar 2020 23:20:52 -0700
+Message-Id: <1584339655-20337-3-git-send-email-cang@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1584339655-20337-1-git-send-email-cang@codeaurora.org>
+References: <1584339655-20337-1-git-send-email-cang@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Mar 2020 at 14:44, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
->
-> + Vincent Guittot
+We were setting bActiveICCLevel attribute for UFS device only once but
+type of this attribute has changed from persistent to volatile since UFS
+device specification v2.1. This attribute is set to the default value after
+power cycle or hardware reset event. It isn't safe to rely on prefetched
+data (only used for bActiveICCLevel attribute now). Hence this change
+removes the code related to data prefetching and set this parameter on
+every attempt to probe the UFS device.
 
-Thanks Dietmar
+Signed-off-by: Can Guo <cang@codeaurora.org>
 
->
-> On 20.03.20 14:21, vincent.donnefort@arm.com wrote:
-> > From: Vincent Donnefort <vincent.donnefort@arm.com>
-> >
-> > The commit 5e83eafbfd3b ("sched/fair: Remove the rq->cpu_load[] update
-> > code") eliminated the use case for rq->last_load_update_tick. Removing
-> > it.
-> >
-> > Signed-off-by: Vincent Donnefort <vincent.donnefort@arm.com>
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 63aaa88f..99c7fca 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -6458,11 +6458,12 @@ static u32 ufshcd_find_max_sup_active_icc_level(struct ufs_hba *hba,
+ 	return icc_level;
+ }
+ 
+-static void ufshcd_init_icc_levels(struct ufs_hba *hba)
++static void ufshcd_set_active_icc_lvl(struct ufs_hba *hba)
+ {
+ 	int ret;
+ 	int buff_len = hba->desc_size.pwr_desc;
+ 	u8 *desc_buf;
++	u32 icc_level;
+ 
+ 	desc_buf = kmalloc(buff_len, GFP_KERNEL);
+ 	if (!desc_buf)
+@@ -6477,20 +6478,17 @@ static void ufshcd_init_icc_levels(struct ufs_hba *hba)
+ 		goto out;
+ 	}
+ 
+-	hba->init_prefetch_data.icc_level =
+-			ufshcd_find_max_sup_active_icc_level(hba,
+-			desc_buf, buff_len);
+-	dev_dbg(hba->dev, "%s: setting icc_level 0x%x",
+-			__func__, hba->init_prefetch_data.icc_level);
++	icc_level = ufshcd_find_max_sup_active_icc_level(hba, desc_buf,
++							 buff_len);
++	dev_dbg(hba->dev, "%s: setting icc_level 0x%x", __func__, icc_level);
+ 
+ 	ret = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
+-		QUERY_ATTR_IDN_ACTIVE_ICC_LVL, 0, 0,
+-		&hba->init_prefetch_data.icc_level);
++		QUERY_ATTR_IDN_ACTIVE_ICC_LVL, 0, 0, &icc_level);
+ 
+ 	if (ret)
+ 		dev_err(hba->dev,
+ 			"%s: Failed configuring bActiveICCLevel = %d ret = %d",
+-			__func__, hba->init_prefetch_data.icc_level , ret);
++			__func__, icc_level, ret);
+ 
+ out:
+ 	kfree(desc_buf);
+@@ -6996,8 +6994,6 @@ static int ufshcd_add_lus(struct ufs_hba *hba)
+ {
+ 	int ret;
+ 
+-	ufshcd_init_icc_levels(hba);
+-
+ 	/* Add required well known logical units to scsi mid layer */
+ 	ret = ufshcd_scsi_add_wlus(hba);
+ 	if (ret)
+@@ -7095,6 +7091,14 @@ static int ufshcd_probe_hba(struct ufs_hba *hba, bool async)
+ 		}
+ 	}
+ 
++	/*
++	 * bActiveICCLevel is volatile for UFS device (as per latest v2.1 spec)
++	 * and for removable UFS card as well, hence always set the parameter.
++	 * Note: Error handler may issue the device reset hence resetting
++	 *       bActiveICCLevel as well so it is always safe to set this here.
++	 */
++	ufshcd_set_active_icc_lvl(hba);
++
+ 	/* set the state as operational after switching to desired gear */
+ 	hba->ufshcd_state = UFSHCD_STATE_OPERATIONAL;
+ 
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index d45a044..5652d39 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -404,15 +404,6 @@ struct ufs_clk_scaling {
+ 	bool is_suspended;
+ };
+ 
+-/**
+- * struct ufs_init_prefetch - contains data that is pre-fetched once during
+- * initialization
+- * @icc_level: icc level which was read during initialization
+- */
+-struct ufs_init_prefetch {
+-	u32 icc_level;
+-};
+-
+ #define UFS_ERR_REG_HIST_LENGTH 8
+ /**
+  * struct ufs_err_reg_hist - keeps history of errors
+@@ -544,7 +535,6 @@ enum ufshcd_quirks {
+  * @intr_mask: Interrupt Mask Bits
+  * @ee_ctrl_mask: Exception event control mask
+  * @is_powered: flag to check if HBA is powered
+- * @init_prefetch_data: data pre-fetched during initialization
+  * @eh_work: Worker to handle UFS errors that require s/w attention
+  * @eeh_work: Worker to handle exception events
+  * @errors: HBA errors
+@@ -632,7 +622,6 @@ struct ufs_hba {
+ 	u32 intr_mask;
+ 	u16 ee_ctrl_mask;
+ 	bool is_powered;
+-	struct ufs_init_prefetch init_prefetch_data;
+ 
+ 	/* Work Queues */
+ 	struct work_struct eh_work;
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-
-> >
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index 1a9983d..c41ee26 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -6685,7 +6685,6 @@ void __init sched_init(void)
-> >
-> >               rq_attach_root(rq, &def_root_domain);
-> >  #ifdef CONFIG_NO_HZ_COMMON
-> > -             rq->last_load_update_tick = jiffies;
-> >               rq->last_blocked_load_update_tick = jiffies;
-> >               atomic_set(&rq->nohz_flags, 0);
-> >  #endif
-> > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> > index 9ea6478..6e14fad 100644
-> > --- a/kernel/sched/sched.h
-> > +++ b/kernel/sched/sched.h
-> > @@ -860,7 +860,6 @@ struct rq {
-> >  #endif
-> >  #ifdef CONFIG_NO_HZ_COMMON
-> >  #ifdef CONFIG_SMP
-> > -     unsigned long           last_load_update_tick;
-> >       unsigned long           last_blocked_load_update_tick;
-> >       unsigned int            has_blocked_load;
-> >  #endif /* CONFIG_SMP */
->
-> Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
