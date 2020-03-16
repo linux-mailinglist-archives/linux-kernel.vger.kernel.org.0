@@ -2,103 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F03D3187162
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 18:44:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96217187130
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 18:33:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731967AbgCPRor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 13:44:47 -0400
-Received: from stcim.de ([78.46.90.227]:58902 "EHLO stcim.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730437AbgCPRor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 13:44:47 -0400
-X-Greylist: delayed 1475 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Mar 2020 13:44:46 EDT
-Received: from [2001:4dd7:15f0:0:a288:b4ff:fee5:f5cc] (helo=porty)
-        by stcim with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <contact@stefanchrist.eu>)
-        id 1jDtPI-00011x-JQ; Mon, 16 Mar 2020 18:20:04 +0100
-Date:   Mon, 16 Mar 2020 18:20:03 +0100
-From:   Stefan Lengfeld <contact@stefanchrist.eu>
-To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marco Felsch <m.felsch@pengutronix.de>
-Subject: Re: [PATCH] i2c: at91: support atomic write xfer
-Message-ID: <20200316172003.lguso2fczz5imh6g@porty>
-References: <c05f76f74cd6a7ec2735c96861f9d5933631c112.1584296795.git.mirq-linux@rere.qmqm.pl>
- <9924dd54-dd8b-d130-9607-2bbbc65675d5@gmail.com>
- <20200316144221.GC19141@qmqm.qmqm.pl>
+        id S1732068AbgCPRdc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 13:33:32 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39781 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732008AbgCPRdc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 13:33:32 -0400
+Received: by mail-lf1-f65.google.com with SMTP id j15so14833169lfk.6
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 10:33:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7PTWvIyjfvgfI+AbbkM8uGjoiifhnlvV3GafuV1Cqc8=;
+        b=RZOkHoG6bG5PRXDItscgc46suq4mTsbo6XPWhssqKTvVMozW8s73T/8weflqCoPnVx
+         C8H0wKeZkrSpnte2xq3Tsr4CPOzNfEwBOJoITgL7KLHhVHVo5nXZqWFHvfIOvkmjRiXo
+         tq5QazNudSYv+mfvtxTGlkoupzplWXGDDix6M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7PTWvIyjfvgfI+AbbkM8uGjoiifhnlvV3GafuV1Cqc8=;
+        b=h+dW+teXJC6k2AhMyST5uhxfNFB820DEwpuoLGcAC2P9M02FXlRblJLJeF8RGqRjHr
+         tZ+u7ScLBIyDEOnUsNFaDkE/gznNW+8XlEZnNRt9o9DnMsJLzNWaDxlNZfIR7BW2czVE
+         pFLeHUMb8GuVn0qD1g3d073Vx0bsuINlDUyQRLt74oUSjyXEv7CYq2oaygSNgLWjgWhs
+         57/aJopH1A9XGLz5vdkGDfcif0624REy4Shh5rhJMz+4HhRm/Xr3185OD+J5aqejxF2l
+         lSWlzyZ1adMGL3Ice3BaU0dEyIyyoK4Jk2lwwJ7HbOtWw1gGQErgvpWiIQFjEjYwQpyX
+         uvpQ==
+X-Gm-Message-State: ANhLgQ2+oymd54DkC30E5a0wq4+uWXERBsh/Av5IdWluV69P2qjMVYt4
+        cCG1HiLWhu7dAN/4gMUGg/gRaENfQ7w=
+X-Google-Smtp-Source: ADFU+vs/4qcFL+LVTCtAlz2NjTYmsbdTKDdGmhTGaY+3HbTYzPaEnO4r5lRSUNXh5N1edssPZntRww==
+X-Received: by 2002:a19:4cc2:: with SMTP id z185mr314829lfa.0.1584380008824;
+        Mon, 16 Mar 2020 10:33:28 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id l22sm319600ljc.32.2020.03.16.10.33.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Mar 2020 10:33:27 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id b13so14788329lfb.12
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 10:33:27 -0700 (PDT)
+X-Received: by 2002:a19:c7:: with SMTP id 190mr316101lfa.30.1584380007220;
+ Mon, 16 Mar 2020 10:33:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200316144221.GC19141@qmqm.qmqm.pl>
-X-PGP-Key: https://stefanchrist.eu/personal/Stefan_Lengfeld_0xE44A23B289092311.asc
-User-Agent: NeoMutt/20180716
+References: <1973193.1584373757@warthog.procyon.org.uk>
+In-Reply-To: <1973193.1584373757@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 16 Mar 2020 10:33:10 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wih0Uq8CB+wk1heOobmS3Yuehnp5bqx=4fj=chzAHJoLw@mail.gmail.com>
+Message-ID: <CAHk-=wih0Uq8CB+wk1heOobmS3Yuehnp5bqx=4fj=chzAHJoLw@mail.gmail.com>
+Subject: Re: To split or not to split a syscall implementation from its wireup?
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michał,
+On Mon, Mar 16, 2020 at 8:49 AM David Howells <dhowells@redhat.com> wrote:
+>
+> When it comes to creating a new system call, do you have a preference as to
+> whether the system call implementation should be in the same patch as the
+> wire-up or is it preferable that the two be split into separate patches?
 
-On Mon, Mar 16, 2020 at 03:42:21PM +0100, Michał Mirosław wrote:
-> On Sun, Mar 15, 2020 at 11:46:33PM +0300, Dmitry Osipenko wrote:
-> > 15.03.2020 21:27, Michał Mirosław пишет:
-> > > Implement basic support for atomic write - enough to get a simple
-> > > write to PMIC on shutdown. Only for chips having ALT_CMD register,
-> > > eg. SAMA5D2.
-> > > 
-> > > Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-> > > ---
-> > 
-> > Hello Michał,
-> > 
-> > ...
-> > > +	ret = pm_runtime_get_sync(dev->dev);
-> > > +	if (ret < 0)
-> > > +		goto out;
-> > 
-> > Runtime PM can't be used while interrupts are disabled, unless
-> > pm_runtime_irq_safe() is used and driver's RPM callback is IRQ-safe.
-> 
-> I didn't get any warnings from lockdep and friends, but I'll double
-> check if this is by luck.
+It depends.
 
-You can have a look at the I2C atomic patch for the imx-driver. See
+If it's "new code that has no other use than the system call", then
+splitting it up is pointless: you'll just have a commit with dead code
+first and no test coverage, and then a commit that adds the system
+call. If it results in the problems, the new system call commit is the
+one that gets fingered as the problematic one, but it doesn't actually
+really _do_ anything.
 
-   https://patchwork.ozlabs.org/patch/1225802/
+However, if adding a new system call is preceded by first
+re-organizing existing code so that you have the infrastructure set up
+for the new system call, then that re-organization should be done
+separately, and then one commit that just adds the new system call
+that uses the newly organized code.  In fact, in that case if the new
+organization is at all subtle, I'd prefer not just splitting it, but
+waiting a bit before adding the new system call - because if the
+changes cause problems, then the reord may be fundamentally broken and
+maybe the new system call isn't even worth the pain at all.
 
-In that patch Marco Felsch is using clk_enable() and clk_disable() calls.
+So the difference is that in that second case, testing the
+re-organized code on its own is meaningful (and arguably more
+important than the new system call, since it's a potential for
+regression on its own).
 
-> 
-> > ...
-> > > +	timeout = jiffies + (2 + msg->len) * HZ/1000;
-> > > +	for (;;) {
-> > > +		stat = at91_twi_read(dev, AT91_TWI_SR);
-> > > +		if (stat & AT91_TWI_TXCOMP)
-> > > +			break;
-> > > +		if (time_after(jiffies, timeout)) {
-> > > +			ret = -ETIMEDOUT;
-> > > +			goto out;
-> > > +		}
-> > > +		udelay(100);
-> > > +	}
-> > 
-> > Jiffies can't be used with the disabled interrupts because jiffies are
-> > updated by timer's interrupt.
-> > 
-> > Either ktime() API or iterator-based loop should be used.
-> 
-> Thanks for the pointers. In my use-case power is cut from the CPU at this
-> point so it didn't matter that the loop was infinite.
-
-Here again you can have a look at Marco Felsch's patch. He used the
-function readb_poll_timeout_atomic(). So the loop can potentially
-replaced by a single line.
-
-Kind regards,
-Stefan
+            Linus
