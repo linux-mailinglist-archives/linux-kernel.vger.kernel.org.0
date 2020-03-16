@@ -2,83 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A854186BB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:04:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D01F186BD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:13:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731128AbgCPNEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 09:04:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58246 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730974AbgCPNEV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 09:04:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XYP4eLWlmurw/yjHmjNfN5IFqsjDCm9io3qRKcZbPcU=; b=J1gGejFzBgU3ABPLGZfeahlXVA
-        zICDn6wUZjBvXMTn1D5zLCm4wnGBns+fC2OyK+s03CmqmOcPjuqkRd/DqyhgqYCDT69VMy6dcdnP3
-        0ajKpBhHRv7s6v+9kodIxjs51HfoX/KmdkO6orXQB6UIGtELw8rsXgyJZea2el3rAH0m8TiJy5s2x
-        SwZNZPlwcVr7RWlf6fmw7XXWmPNfph2iiLl38jtf9OjD9Y5WCXDpGVmjjEb49nQTfZ5flsuzGl9B8
-        wNUbZTVWCTXRFPeaRY1rNGPfbbNRsQJzVParhzZqWoJfUV5kv2qstm3qB7aY4E7AgA63UgOZ6Eudz
-        gjrvHiVA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jDpPk-0001Zo-Ro; Mon, 16 Mar 2020 13:04:17 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6CE3D30138D;
-        Mon, 16 Mar 2020 14:04:14 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 570E220B151F4; Mon, 16 Mar 2020 14:04:14 +0100 (CET)
-Date:   Mon, 16 Mar 2020 14:04:14 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Sergei Trofimovich <slyfox@gentoo.org>
-Cc:     linux-kernel@vger.kernel.org, Jakub Jelinek <jakub@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>, x86@kernel.org
-Subject: Re: [PATCH] x86: fix early boot crash on gcc-10
-Message-ID: <20200316130414.GC12561@hirez.programming.kicks-ass.net>
-References: <20200314164451.346497-1-slyfox@gentoo.org>
+        id S1731144AbgCPNNT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 09:13:19 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11702 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731025AbgCPNNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 09:13:19 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8D0A22A0B1305EC4C0D3;
+        Mon, 16 Mar 2020 21:13:14 +0800 (CST)
+Received: from huawei.com (10.175.113.25) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.487.0; Mon, 16 Mar 2020
+ 21:13:04 +0800
+From:   Zheng Zengkai <zhengzengkai@huawei.com>
+To:     <davem@davemloft.net>, <aelior@marvell.com>,
+        <GR-everest-linux-l2@marvell.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <zhengzengkai@huawei.com>
+Subject: [PATCH net-next] qede: remove some unused code in function qede_selftest_receive_traffic
+Date:   Mon, 16 Mar 2020 21:05:24 +0800
+Message-ID: <20200316130524.140421-1-zhengzengkai@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200314164451.346497-1-slyfox@gentoo.org>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 14, 2020 at 04:44:51PM +0000, Sergei Trofimovich wrote:
-> The change fixes boot failure on physical machine where kernel
-> is built with gcc-10 with stack-protector enabled by default:
+Remove set but not used variables 'sw_comp_cons' and 'hw_comp_cons'
+to fix gcc '-Wunused-but-set-variable' warning:
 
-> This happens because `start_secondary()` is responsible for setting
-> up initial stack canary value in `smpboot.c`, but nothing prevents
-> gcc from inserting stack canary into `start_secondary()` itself
-> before `boot_init_stack_canary()` call.
+drivers/net/ethernet/qlogic/qede/qede_ethtool.c: In function qede_selftest_receive_traffic:
+drivers/net/ethernet/qlogic/qede/qede_ethtool.c:1569:20:
+ warning: variable sw_comp_cons set but not used [-Wunused-but-set-variable]
+drivers/net/ethernet/qlogic/qede/qede_ethtool.c: In function qede_selftest_receive_traffic:
+drivers/net/ethernet/qlogic/qede/qede_ethtool.c:1569:6:
+ warning: variable hw_comp_cons set but not used [-Wunused-but-set-variable]
 
-> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-> index 9b294c13809a..da9f4ea9bf4c 100644
-> --- a/arch/x86/kernel/Makefile
-> +++ b/arch/x86/kernel/Makefile
-> @@ -11,6 +11,12 @@ extra-y	+= vmlinux.lds
->  
->  CPPFLAGS_vmlinux.lds += -U$(UTS_MACHINE)
->  
-> +# smpboot's init_secondary initializes stack canary.
-> +# Make sure we don't emit stack checks before it's
-> +# initialized.
-> +nostackp := $(call cc-option, -fno-stack-protector)
-> +CFLAGS_smpboot.o := $(nostackp)
+After removing 'hw_comp_cons',the memory barrier 'rmb()' and its comments become useless,
+so remove them as well.
 
-What makes GCC10 insert this while GCC9 does not. Also, I would much
-rather GCC10 add a function attrbute to kill this:
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+---
+ drivers/net/ethernet/qlogic/qede/qede_ethtool.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-  __attribute__((no_stack_protect))
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
+index 8a426afb6a55..f5141d1f19bf 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
+@@ -1566,7 +1566,7 @@ static int qede_selftest_transmit_traffic(struct qede_dev *edev,
+ 
+ static int qede_selftest_receive_traffic(struct qede_dev *edev)
+ {
+-	u16 hw_comp_cons, sw_comp_cons, sw_rx_index, len;
++	u16 sw_rx_index, len;
+ 	struct eth_fast_path_rx_reg_cqe *fp_cqe;
+ 	struct qede_rx_queue *rxq = NULL;
+ 	struct sw_rx_data *sw_rx_data;
+@@ -1596,17 +1596,6 @@ static int qede_selftest_receive_traffic(struct qede_dev *edev)
+ 			continue;
+ 		}
+ 
+-		hw_comp_cons = le16_to_cpu(*rxq->hw_cons_ptr);
+-		sw_comp_cons = qed_chain_get_cons_idx(&rxq->rx_comp_ring);
+-
+-		/* Memory barrier to prevent the CPU from doing speculative
+-		 * reads of CQE/BD before reading hw_comp_cons. If the CQE is
+-		 * read before it is written by FW, then FW writes CQE and SB,
+-		 * and then the CPU reads the hw_comp_cons, it will use an old
+-		 * CQE.
+-		 */
+-		rmb();
+-
+ 		/* Get the CQE from the completion ring */
+ 		cqe = (union eth_rx_cqe *)qed_chain_consume(&rxq->rx_comp_ring);
+ 
+-- 
+2.20.1
 
-Then we can explicitly clear this one function and keep it on for the
-rest of the file.
