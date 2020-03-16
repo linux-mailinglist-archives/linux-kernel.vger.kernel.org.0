@@ -2,80 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE74D186F07
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 16:48:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CC5D186F0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 16:49:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731961AbgCPPsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 11:48:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48700 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731685AbgCPPsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 11:48:42 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731978AbgCPPtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 11:49:04 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:21997 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731868AbgCPPtD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 11:49:03 -0400
+X-Greylist: delayed 1912 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Mar 2020 11:49:02 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584373742;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=aJCci1JpnVafZT1pCNJDWw/c8ajwNjmH5zsDBnK+wN4=;
+        b=HB8VYvhhKSBZQDZTgRsBLlN6cgdYp8lXzvulhywykeYT+PMB/4KfpDWlnNpHhgYgAGmZ+d
+        hUxY4Y7fWzIy0JNNeaXGpzGFrYHp40iq+rdna9U5VrEQiUfxBMV05zFG96uGBLZEFz7T4m
+        7d6BrPUtFkiqlh7LD9IZarvnOJxV18o=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-42-K1fzh2o9PiCg1bNXJzv67w-1; Mon, 16 Mar 2020 11:48:56 -0400
+X-MC-Unique: K1fzh2o9PiCg1bNXJzv67w-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D217C2051A;
-        Mon, 16 Mar 2020 15:48:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584373721;
-        bh=hgo1mJoERylQnqXK/Qzm4LRDUpgAiG0+pmKFSvZomaQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Za6mh7KDdv9dR38PI076BNUhiopaZCf0+hr79++iIoZYWraYO/CUHmaixd7xgv8Le
-         yueJN2TPyLFVFJfjUaPpJyEFNje6v5oiYHwgY2t9gCshrsIrjDkyUmxmvBOzDxW5dQ
-         h2cofCD3g2K0Xmafbqbs+gf8bKMoav5gNbUAF3/g=
-Date:   Mon, 16 Mar 2020 15:48:35 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-        linux-doc@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [PATCH 0/3] docs: a few improvements for atomic_ops.rst
-Message-ID: <20200316154835.GA13004@willie-the-truck>
-References: <20200308195618.22768-1-j.neuschaefer@gmx.net>
- <20200309090650.GF12561@hirez.programming.kicks-ass.net>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7BEFB1196B20;
+        Mon, 16 Mar 2020 15:48:39 +0000 (UTC)
+Received: from [10.36.118.207] (ovpn-118-207.ams2.redhat.com [10.36.118.207])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4216E5DA7B;
+        Mon, 16 Mar 2020 15:48:37 +0000 (UTC)
+Subject: Re: [PATCH v1 5/5] mm/memory_hotplug: allow to specify a default
+ online_type
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Baoquan He <bhe@redhat.com>,
+        Wei Yang <richard.weiyang@gmail.com>
+References: <20200311123026.16071-1-david@redhat.com>
+ <20200311123026.16071-6-david@redhat.com>
+ <20200316153131.GW11482@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <5ed312d3-bc2d-38da-166e-452ae3df9e81@redhat.com>
+Date:   Mon, 16 Mar 2020 16:48:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200309090650.GF12561@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200316153131.GW11482@dhcp22.suse.cz>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 10:06:50AM +0100, Peter Zijlstra wrote:
-> On Sun, Mar 08, 2020 at 08:56:15PM +0100, Jonathan Neuschäfer wrote:
-> > Hi,
-> > 
-> > this is a short series of unrelated fixes that make the atomic
-> > operations documentation look and read a bit better.
-> > 
-> > Jonathan Neuschäfer (3):
-> >   docs: atomic_ops: Remove colons where they don't make sense
-> >   docs: atomic_ops: Move two paragraphs into the warning block above
-> >   docs: atomic_ops: Steer readers towards using refcount_t for reference
-> >     counts
-> > 
-> >  Documentation/core-api/atomic_ops.rst         | 24 ++++++++++++-------
-> 
-> FWIW, I consider this a dead document. I've written
-> Documentation/atomic_t.txt and Documentation/atomic_bitops.txt as a
-> replacement. If there is anything in atomic_ops you feel is missing from
-> those two, please tell as I'm planing to delete atomic_ops soon.
+On 16.03.20 16:31, Michal Hocko wrote:
+> On Wed 11-03-20 13:30:26, David Hildenbrand wrote:
+>> For now, distributions implement advanced udev rules to essentially
+>> - Don't online any hotplugged memory (s390x)
+>> - Online all memory to ZONE_NORMAL (e.g., most virt environments like
+>>   hyperv)
+>> - Online all memory to ZONE_MOVABLE in case the zone imbalance is take=
+n
+>>   care of (e.g., bare metal, special virt environments)
+>>
+>> In summary: All memory is usually onlined the same way, however, the
+>> kernel always has to ask userspace to come up with the same answer.
+>> E.g., HyperV always waits for a memory block to get onlined before
+>> continuing, otherwise it might end up adding memory faster than
+>> hotplugging it, which can result in strange OOM situations.
+>>
+>> Let's allow to specify a default online_type, not just "online" and
+>> "offline". This allows distributions to configure the default online_t=
+ype
+>> when booting up and be done with it.
+>>
+>> We can now specify "offline", "online", "online_movable" and
+>> "online_kernel" via
+>> - "memhp_default_state=3D" on the kernel cmdline
+>> - /sys/devices/systemn/memory/auto_online_blocks
+>> just like we are able to specify for a single memory block via
+>> /sys/devices/systemn/memory/memoryX/state
+>=20
+> I still strongly believe that the whole interface is wrong. This is jus=
+t
+> adding more lipstick on the pig. On the other hand I recognize that the
+> event based onlining is a PITA as well. The proper interface would
+> somehow communicate the type of the memory via the event or other sysfs
+> attribute and then the FW/HV could tell that this is an offline memory,
+> hotplugable memory or just an additional memory that doesn't need to
+> support hotremove by the consumer. The userspace or the kernel could
+> handle the hotadd request much more easier that way.
 
-For the deletion:
+Yeah, and I proposed patches like that which were not well received [1] [=
+2].
 
-Acked-by: Will Deacon <will@kernel.org>
+But then, user space usually wants to online all memory the same way
+right now. Also, HyperV and virtio-mem don't want to wait for onlining
+to happen in user space, because it slows down the whole "add a hole
+bunch of memory" process.
 
-Will
+>=20
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>> Cc: Oscar Salvador <osalvador@suse.de>
+>> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+>> Cc: Baoquan He <bhe@redhat.com>
+>> Cc: Wei Yang <richard.weiyang@gmail.com>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>=20
+> That being said, I will not object to this patch. I simply gave up
+> fighting this interface. So if it works for consumers and it doesn't
+> break the existing userspace (which is shouldn't AFAICS) then go ahead.
+
+As it solves a real problem and makes the interface to auto online
+usable, I don't think anything speaks against it.
+
+Thanks!
+
+[1] https://spinics.net/lists/linux-driver-devel/msg118337.html
+[2]
+https://www.mail-archive.com/xen-devel@lists.xenproject.org/msg32420.html
+
+--=20
+Thanks,
+
+David / dhildenb
+
