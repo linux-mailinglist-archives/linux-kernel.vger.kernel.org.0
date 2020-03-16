@@ -2,91 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62B63186FE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:21:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6B86187008
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:30:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732128AbgCPQVb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 12:21:31 -0400
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:39321 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731545AbgCPQVa (ORCPT
+        id S1732109AbgCPQaJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 12:30:09 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:53835 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731950AbgCPQaJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 12:21:30 -0400
-Received: by mail-qv1-f65.google.com with SMTP id v38so5125262qvf.6
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 09:21:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=9klmvsCDbXb5UYRZlQllkDdUD0lGfzdSvUkSWWRacQo=;
-        b=BIdRz1p8gE7zQuk9C9oV2HUNArw5x43uMFazoWlkrlXCvsSeUsivCaSdXGEbbFTYjy
-         nVHA9sJZ7eETinHItrBU4wkyITu/QJh0Hk7+Zg4PL5xep7s0jQVsZRD4ZWsnd5ipJD9v
-         sapWytPkQe7cpFo/rwKJ+7zg+T6UXo8doO5npkHb/HZMK7ZCgLKDLWa4AJ94FFjM+cx2
-         RbztSybf9OHQoAu+GbPdpNc0d7bgoYECl7ZfwdX1uisQIF3JKgd5exWrQzIH8FwYxLvK
-         7LoFUX9bkY1j/teBAy37KVGtZTsTa3q/X6cjYnD7zY79l6KnHy70ahkT8I/rVjcAcc1z
-         pwiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9klmvsCDbXb5UYRZlQllkDdUD0lGfzdSvUkSWWRacQo=;
-        b=gHEjUGRhH87+V0Fru79SeXXXBn9E+Fv0z0q1XkQ6YX/CHVhFNUPM54tEdLcaBMMv5O
-         OJO2c+RUOuoFjQM/pQX10X/nXhLz0pBlKUt/XIMTtvVtn0rcLS97Vyn/Oc2iJG9Ocvgb
-         TYWiIIJxeT0IEistXpmx7QJfZuLcxnXGbqMlOMCTqcbxr0EkWfj4dFENajvD+eyQhy47
-         6CRO6NpbliBRSMO/PV9IdeswPlIt6/ZJvy998ml/wTpUd6BLuZa24kwr/pTQazd/2wsm
-         WHPZnOWzXH82IlfXNYV1KM4MT7otaotM7+9YU0zjFIWkm49yc3tOF3hSWrL/GbyW0gzY
-         RMEA==
-X-Gm-Message-State: ANhLgQ13UrfmCE/0NqJKkwCtH90PjGdsmZW62TaV9qgq32CBxlXSFkhu
-        CSBdzKMttkvc1j47PoUoT92b/A==
-X-Google-Smtp-Source: ADFU+vt/P7ZURa36l2KZQ/dCMCuB9sP/P1NIhNUnoYuUrITCwV6n9U2JPEM6tTD4GaQXZXYkNktwxw==
-X-Received: by 2002:ad4:57a8:: with SMTP id g8mr584591qvx.78.1584375689499;
-        Mon, 16 Mar 2020 09:21:29 -0700 (PDT)
-Received: from localhost (70.44.39.90.res-cmts.bus.ptd.net. [70.44.39.90])
-        by smtp.gmail.com with ESMTPSA id z19sm85599qts.86.2020.03.16.09.21.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2020 09:21:28 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 12:21:28 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Chris Down <chris@chrisdown.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 2/2] mm, memcg: Throttle allocators based on ancestral
- memory.high
-Message-ID: <20200316162128.GF67986@cmpxchg.org>
-References: <80780887060514967d414b3cd91f9a316a16ab98.1584036142.git.chris@chrisdown.name>
- <8cd132f84bd7e16cdb8fde3378cdbf05ba00d387.1584036142.git.chris@chrisdown.name>
+        Mon, 16 Mar 2020 12:30:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584376208;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ol3uttBRJ37x7dv7ttuM2uxzIa+QLAkpS77LLTrAwcI=;
+        b=ipb6E7LoulaV2yxQwHCv/Vv8Nt+Jlp1gx0khc/lGvdKuWVgrA+wCPJbvUrVIXgER5RsBVc
+        c8LbZArjYXyo5mlOHHs0AkXMyNCwAi+bAAIQ6DINZKTvZToOfXkZX4EbW5t+TmVsOAwCW0
+        jb6VUmbwMpeX1PVQyp7B9RMBRV9eadU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-108-Lvl71snpP2mM_I4z-vqjGA-1; Mon, 16 Mar 2020 12:21:53 -0400
+X-MC-Unique: Lvl71snpP2mM_I4z-vqjGA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AC1378DF792;
+        Mon, 16 Mar 2020 16:21:51 +0000 (UTC)
+Received: from treble (ovpn-120-135.rdu2.redhat.com [10.10.120.135])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6D1EB19C58;
+        Mon, 16 Mar 2020 16:21:50 +0000 (UTC)
+Date:   Mon, 16 Mar 2020 11:21:47 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [RFC][PATCH 15/16] objtool: Implement noinstr validation
+Message-ID: <20200316162147.xufxhddz5ztqq5q3@treble>
+References: <20200312134107.700205216@infradead.org>
+ <20200312135042.288201372@infradead.org>
+ <20200315180320.cgy2ealklbjlx4g7@treble>
+ <20200316132419.GF12521@hirez.programming.kicks-ass.net>
+ <20200316161904.zouwkwup6vwsmxgp@treble>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <8cd132f84bd7e16cdb8fde3378cdbf05ba00d387.1584036142.git.chris@chrisdown.name>
+In-Reply-To: <20200316161904.zouwkwup6vwsmxgp@treble>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 06:03:04PM +0000, Chris Down wrote:
-> Prior to this commit, we only directly check the affected cgroup's
-> memory.high against its usage. However, it's possible that we are being
-> reclaimed as a result of hitting an ancestor memory.high and should be
-> penalised based on that, instead.
+On Mon, Mar 16, 2020 at 11:19:07AM -0500, Josh Poimboeuf wrote:
+> > And I was hoping to get vmlinux.o objtool clean, surprisingly there
+> > really aren't that many complaints. But the -i thing makes it run
+> > significantly faster without duplicating all the bits we've already
+> > checked.
 > 
-> This patch changes memory.high overage throttling to use the largest
-> overage in its ancestors when considering how many penalty jiffies to
-> charge. This makes sure that we penalise poorly behaving cgroups in the
-> same way regardless of at what level of the hierarchy memory.high was
-> breached.
-> 
-> Fixes: 0e4b01df8659 ("mm, memcg: throttle allocators when failing reclaim over memory.high")
-> Reported-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Chris Down <chris@chrisdown.name>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: linux-mm@kvack.org
-> Cc: cgroups@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: kernel-team@fb.com
-> Cc: stable@vger.kernel.org # 5.4.x
+> My suggestion is that the "-i" option would be hard-coded (for now).  So
+> nothing extra would get checked.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+If that wasn't clear, I mean that for vmlinux.o we'd only do the
+instr-checking.  For individual .o's we'd do everything else.
+
+-- 
+Josh
+
