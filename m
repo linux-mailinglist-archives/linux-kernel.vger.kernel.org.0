@@ -2,56 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27D4D186B40
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 13:41:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50328186B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 13:41:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731133AbgCPMky convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 16 Mar 2020 08:40:54 -0400
-Received: from poy.remlab.net ([94.23.215.26]:34276 "EHLO
-        ns207790.ip-94-23-215.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731109AbgCPMkx (ORCPT
+        id S1731154AbgCPMlJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 08:41:09 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23870 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730878AbgCPMlJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 08:40:53 -0400
-Received: from basile.remlab.net (87-92-31-51.bb.dnainternet.fi [87.92.31.51])
-        (Authenticated sender: remi)
-        by ns207790.ip-94-23-215.eu (Postfix) with ESMTPSA id 72F825FD9C;
-        Mon, 16 Mar 2020 13:40:50 +0100 (CET)
-From:   =?ISO-8859-1?Q?R=E9mi?= Denis-Courmont <remi@remlab.net>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
-Subject: [PATCHv2 0/3] arm64: clean up trampoline alignment
-Date:   Mon, 16 Mar 2020 14:40:49 +0200
-Message-ID: <4064091.qgymGCTE6G@basile.remlab.net>
-Organization: Remlab
+        Mon, 16 Mar 2020 08:41:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584362468;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fcAZwGWS+0RpVKIFFUi8FSdQbOhSVmHnkXWx/lxohog=;
+        b=gZDlfug2vxTmpHrN2/hGQyQWGMHqtNkCMC6FObi4EiInWGBEWJjT0AKYG87k6j1icK0zLH
+        jPb+pGuTAbFH6BaMDuJgYXqd63pB7X8dhlwoN3E71kARYsRzc6V+15U8QW5XHcOTwbwwWq
+        Tp5PgHsLP9vONSJ/qsnx0cPiBxpGj6o=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-151-ewh3LtoUOzC0UL7GGYiLqg-1; Mon, 16 Mar 2020 08:41:02 -0400
+X-MC-Unique: ewh3LtoUOzC0UL7GGYiLqg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B71038017DF;
+        Mon, 16 Mar 2020 12:41:00 +0000 (UTC)
+Received: from localhost (ovpn-12-129.pek2.redhat.com [10.72.12.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 23B387A411;
+        Mon, 16 Mar 2020 12:40:57 +0000 (UTC)
+Date:   Mon, 16 Mar 2020 20:40:54 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
+        akpm@linux-foundation.org, willy@infradead.org,
+        richard.weiyang@gmail.com, vbabka@suse.cz
+Subject: Re: [PATCH v4 1/2] mm/sparse.c: Use kvmalloc/kvfree to alloc/free
+ memmap for the classic sparse
+Message-ID: <20200316124054.GF3486@MiWiFi-R3L-srv>
+References: <20200316102150.16487-1-bhe@redhat.com>
+ <1f5b22ac-283e-3b69-f443-528f09edaf60@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f5b22ac-283e-3b69-f443-528f09edaf60@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-The KPTI and SDE trampolines each load a pointer from the same fixmap data 
-page. This reduces the data alignment to the useful value, and tries to 
-clarify the assembler code.
-
-----------------------------------------------------------------
-Rémi Denis-Courmont (3):
-      arm64: clean up trampoline vector loads
-      arm64/sdei: gather trampolines' .rodata
-      arm64: reduce trampoline data alignment
-
- arch/arm64/kernel/entry.S | 23 ++++++++++-------------
- arch/arm64/mm/mmu.c       |  5 ++---
- 2 files changed, 12 insertions(+), 16 deletions(-)
-
--- 
-雷米‧德尼-库尔蒙
-http://www.remlab.net/
-
-
+On 03/16/20 at 12:00pm, David Hildenbrand wrote:
+> On 16.03.20 11:21, Baoquan He wrote:
+> > This change makes populate_section_memmap()/depopulate_section_memmap
+> > much simpler.
+> > 
+> > Suggested-by: Michal Hocko <mhocko@kernel.org>
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > Reviewed-by: David Hildenbrand <david@redhat.com>
+> > Acked-by: Michal Hocko <mhocko@suse.com>
+> > ---
+> > v3->v4:
+> >   Split the old v3 into two patches, to carve out the using 'nid'
+> >   as preferred node to allocate memmap into a separate patch. This
+> >   is suggested by Michal, and the carving out is put in patch 2.
+> > 
+> > v2->v3:
+> >   Remove __GFP_NOWARN and use array_size when calling kvmalloc_node()
+> >   per Matthew's comments.
+> > http://lkml.kernel.org/r/20200312141749.GL27711@MiWiFi-R3L-srv
+> > 
+> >  mm/sparse.c | 27 +++------------------------
+> >  1 file changed, 3 insertions(+), 24 deletions(-)
+> > 
+> > diff --git a/mm/sparse.c b/mm/sparse.c
+> > index e747a238a860..d01d09cc7d99 100644
+> > --- a/mm/sparse.c
+> > +++ b/mm/sparse.c
+> > @@ -719,35 +719,14 @@ static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
+> >  struct page * __meminit populate_section_memmap(unsigned long pfn,
+> >  		unsigned long nr_pages, int nid, struct vmem_altmap *altmap)
+> >  {
+> > -	struct page *page, *ret;
+> > -	unsigned long memmap_size = sizeof(struct page) * PAGES_PER_SECTION;
+> > -
+> > -	page = alloc_pages(GFP_KERNEL|__GFP_NOWARN, get_order(memmap_size));
+> > -	if (page)
+> > -		goto got_map_page;
+> > -
+> > -	ret = vmalloc(memmap_size);
+> > -	if (ret)
+> > -		goto got_map_ptr;
+> > -
+> > -	return NULL;
+> > -got_map_page:
+> > -	ret = (struct page *)pfn_to_kaddr(page_to_pfn(page));
+> > -got_map_ptr:
+> > -
+> > -	return ret;
+> > +	return kvmalloc(array_size(sizeof(struct page),
+> > +			PAGES_PER_SECTION), GFP_KERNEL);
+> 
+> FWIW, this is what I meant:
+> 
+>         return kvmalloc(array_size(sizeof(struct page),
+>                                    PAGES_PER_SECTION), GFP_KERNEL);
+Since there's another parameter, I didn't indent it with sizeof. But
+Pankaj and Matthew have added other two votes on this, I will change it,
+thanks.
 
