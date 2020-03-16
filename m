@@ -2,180 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3C5F186729
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 09:57:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3BCE18674F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 10:02:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730236AbgCPI5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 04:57:10 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:61987 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730075AbgCPI5J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 04:57:09 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584349028; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=ijq3uor9SMJb3ExZBsPo87hwudJNjl8YhdOh+sCNnWA=;
- b=rHQ1H3WqpyqR2AHkpKUUqcdN/LSDcCh7aj6kR4E8hzBzkpF1KO4U7OLH96BBjsKFxrf0eprn
- qIfhutMJownkC5Hzv5pOjOfyd01/ByouYtfLguX3yDjYefw3LrfmF178rly1XMIOqzYB0Y2w
- /F52GNsPReD1cEtHmU+S3ff6kRY=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6f3f56.7fe344735f80-smtp-out-n04;
- Mon, 16 Mar 2020 08:56:54 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 6E05EC4478F; Mon, 16 Mar 2020 08:56:52 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 37B92C433CB;
-        Mon, 16 Mar 2020 08:56:51 +0000 (UTC)
+        id S1730280AbgCPJCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 05:02:40 -0400
+Received: from mail-eopbgr140088.outbound.protection.outlook.com ([40.107.14.88]:23307
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730152AbgCPJCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 05:02:39 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lgq/Sa2/ffztvPXhoQr+mcp2/tUTZ+GMAseQSNvjm0yLS6B8erAlsFzvb10oworc146FGmu0cAwjWdvctUqRo8U3RG9UDtFD+RsxZ6lVS6px9bTP9ifUH6pvW45KC8IBHHbKV/K73YsHo1PJzA0nM+7Sz2hREpmV1f3AMA7fP5IHpg8uIBLMr5o0Zr5HnjGSyy5x+30N23Zr+3ZsEJrsfUI1aGOkm7w2wRADojNz1ptUx8Soaq5Cv1Hs3EmiV88d5nsZFGlAVduPi8PJ8q59nFwncRs1IRFRDIX41xxnFkiCrHtjR7LYedq7l233huNCQM9ptGZ4+C9SGibrJ0EcKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Qpd9L9SgSY1N3Zm6JZQ454retwPpG5K8MbfRs+j/FuY=;
+ b=R023f4xHzUbNO/0Y1VdiZSzy/cFI/qi7hDi5xCEpkkn3ikbOyAJ3ZzKtgjZrB0+oP7gkCEBMHPmeW/wteV/bksul8SwQx4R9iLQKQzynkN9n9gOFd77Hpf/m1OEA/1y9EasoR/4Ld20e+yHRsLIOfukimSR7EpshaWW2isIKU+Gy1ggRQgbQ0rulAPnbyNlG2sYLnqv49JrDzoJz12oGxyUm6+YbVdOE9WcgZ+krZuMS1mR1s7Mxgmkes0+ARCGxTkOeSyuu+K0Df0mzhTZl3+74DxHJuor9FnzAO7GqqNY/OFZNI4IEbiXpr6z674iZTgbMzM9bk8gHi8R95SwM+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Qpd9L9SgSY1N3Zm6JZQ454retwPpG5K8MbfRs+j/FuY=;
+ b=NIjuoNhna9xJCfOQhDizp8hL1MYks+dQhvKD/U0apdLbYldc1Pluooq4R79o+of08L6isk9ugW9sfM3rLAjhtNmz+63TeT7/Ny0FGt+Zr3GZGyNNJiQeN7NnH41KnLi/HG4GWKgcvodJIFWR/w6eBoLyZqVrWcAqlpOZvB0RaT0=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB7169.eurprd04.prod.outlook.com (10.186.130.88) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.14; Mon, 16 Mar 2020 09:02:35 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc%7]) with mapi id 15.20.2814.019; Mon, 16 Mar 2020
+ 09:02:35 +0000
+From:   peng.fan@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, robh+dt@kernel.org
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        Anson.Huang@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V3 0/4] ARM: imx7ulp: support HSRUN mode
+Date:   Mon, 16 Mar 2020 16:55:40 +0800
+Message-Id: <1584348944-19633-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR06CA0126.apcprd06.prod.outlook.com
+ (2603:1096:1:1d::28) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 16 Mar 2020 16:56:51 +0800
-From:   Can Guo <cang@codeaurora.org>
-To:     Stanley Chu <stanley.chu@mediatek.com>
-Cc:     linux-scsi@vger.kernel.org, martin.peter~sen@oracle.com,
-        avri.altman@wdc.com, alim.akhtar@samsung.com, jejb@linux.ibm.com,
-        beanhuo@micron.com, asutoshd@codeaurora.org,
-        matthias.bgg@gmail.com, bvanassche@acm.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kuohong.wang@mediatek.com, peter.wang@mediatek.com,
-        chun-hung.wu@mediatek.com, andy.teng@mediatek.com
-Subject: Re: [PATCH v6 3/7] scsi: ufs: introduce common delay function
-In-Reply-To: <20200316085303.20350-4-stanley.chu@mediatek.com>
-References: <20200316085303.20350-1-stanley.chu@mediatek.com>
- <20200316085303.20350-4-stanley.chu@mediatek.com>
-Message-ID: <19f7e050d992c67e363d6d582393c5a0@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR06CA0126.apcprd06.prod.outlook.com (2603:1096:1:1d::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2814.18 via Frontend Transport; Mon, 16 Mar 2020 09:02:31 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: b632aa70-847c-4022-a731-08d7c988c48f
+X-MS-TrafficTypeDiagnostic: AM0PR04MB7169:|AM0PR04MB7169:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB716949DCF5AFE2B1BD39B9C088F90@AM0PR04MB7169.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
+X-Forefront-PRVS: 03449D5DD1
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(346002)(396003)(376002)(39860400002)(199004)(9686003)(6512007)(4326008)(16526019)(8936002)(81156014)(81166006)(8676002)(2906002)(86362001)(316002)(26005)(186003)(956004)(2616005)(69590400007)(6666004)(36756003)(4744005)(6506007)(66946007)(66556008)(66476007)(478600001)(966005)(5660300002)(52116002)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB7169;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 5U+lBGTBdnXM/g33M1YNLpVc0O3okTjM813cg4FIqcrPcupVPbFE1FPMIhKPjyCQKIZyGeufFo+IAzHTELjvJCI+Wx0gfNxbgsTDe87IT/PhgqKJWarT15vy4C7GDqpPl10HeDiOerGe4xATOzZRPnPAYOzGj6MIux2TobKGmvPMwzHMobeeg9Rw1h7QpafgI9OZk3tchKkAns2pVX6Fr1ZUkDH+EJBEy85WQWv/fLZaS4T5reMOyJu738YlpHX/TuB/ckWbiERUfqOioYyytdLJw/hIPYqqRkQgXzwFu2WYZxhJN+EVfR5VbjflKenhwcbywWEm8iMsR7SLjgjpk39/UGc1LDcWNRUHGfCbbs/15wGvdlSnyWAQjO8ljyl/dI3mEmUTUcwAa5Qs+Kg3gLBe3gb32kHQNGxlp0HcXCcuIZH/T2VkbqqkQquhALuE1kl7w30JFXzp9tNUYAC4O51Czs3RP+sfvcAGt+FgFsgiIZ44yqUBlYb7Dziu+kvEuk5gYyJ4k+goqZ+mHSIFTJNYK3R3l+wH26AbiA3ogv73wplCrnOhSOQGkQWpwunFA8Nxg6tK1tu6Or+zhd0qRA==
+X-MS-Exchange-AntiSpam-MessageData: fUIn+BwH9ZDk0DuRYFaeGbFcLI6X+Vphwdx0wIXcaBUPm2425lkJZeYXAm608rYqCi0K0Lm5LY9hj0JeMteWV42GG4uYx00oIbRDuSTvcUr/fR0adGqLPGt3UDI7yXZbn1IdJGMm2MydFiXbO5byWA==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b632aa70-847c-4022-a731-08d7c988c48f
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2020 09:02:35.0016
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EXyfJexwOW2brU/+gXztr9VtRckGFAeQstLzgxeiCyVYpaXZfvEzaK8LTnozKy9rF1ILPGI8jS04UAWiCYUEIg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7169
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-03-16 16:52, Stanley Chu wrote:
-> Introduce common delay function to collect all delay requirements
-> to simplify driver and take choices of udelay and usleep_range into
-> consideration.
-> 
-> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-> Reviewed-by: Avri Altman <avri.altman@wdc.com>
+From: Peng Fan <peng.fan@nxp.com>
 
-Reviewed-by: Can Guo <cang@codeaurora.org>
+This is a splitted part from V2: 
+ARM: imx7ulp: add cpufreq using cpufreq-dt
+https://patchwork.kernel.org/cover/11390589/
+Nothing changed
 
-> ---
->  drivers/scsi/ufs/ufshcd.c | 27 ++++++++++++++++++---------
->  drivers/scsi/ufs/ufshcd.h |  1 +
->  2 files changed, 19 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 314e808b0d4e..9fea346f7d22 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -597,6 +597,18 @@ static void ufshcd_print_pwr_info(struct ufs_hba 
-> *hba)
->  		 hba->pwr_info.hs_rate);
->  }
-> 
-> +void ufshcd_wait_us(unsigned long us, unsigned long tolerance, bool 
-> can_sleep)
-> +{
-> +	if (!us)
-> +		return;
-> +
-> +	if (us < 10 || !can_sleep)
-> +		udelay(us);
-> +	else
-> +		usleep_range(us, us + tolerance);
-> +}
-> +EXPORT_SYMBOL_GPL(ufshcd_wait_us);
-> +
->  /*
->   * ufshcd_wait_for_register - wait for register value to change
->   * @hba - per-adapter interface
-> @@ -620,10 +632,7 @@ int ufshcd_wait_for_register(struct ufs_hba *hba,
-> u32 reg, u32 mask,
->  	val = val & mask;
-> 
->  	while ((ufshcd_readl(hba, reg) & mask) != val) {
-> -		if (can_sleep)
-> -			usleep_range(interval_us, interval_us + 50);
-> -		else
-> -			udelay(interval_us);
-> +		ufshcd_wait_us(interval_us, 50, can_sleep);
->  		if (time_after(jiffies, timeout)) {
->  			if ((ufshcd_readl(hba, reg) & mask) != val)
->  				err = -ETIMEDOUT;
-> @@ -3565,7 +3574,7 @@ static inline void
-> ufshcd_add_delay_before_dme_cmd(struct ufs_hba *hba)
->  	}
-> 
->  	/* allow sleep for extra 50us if needed */
-> -	usleep_range(min_sleep_time_us, min_sleep_time_us + 50);
-> +	ufshcd_wait_us(min_sleep_time_us, 50, true);
->  }
-> 
->  /**
-> @@ -4289,7 +4298,7 @@ int ufshcd_hba_enable(struct ufs_hba *hba)
->  	 * instruction might be read back.
->  	 * This delay can be changed based on the controller.
->  	 */
-> -	usleep_range(1000, 1100);
-> +	ufshcd_wait_us(1000, 100, true);
-> 
->  	/* wait for the host controller to complete initialization */
->  	retry = 10;
-> @@ -4301,7 +4310,7 @@ int ufshcd_hba_enable(struct ufs_hba *hba)
->  				"Controller enable failed\n");
->  			return -EIO;
->  		}
-> -		usleep_range(5000, 5100);
-> +		ufshcd_wait_us(5000, 100, true);
->  	}
-> 
->  	/* enable UIC related interrupts */
-> @@ -6224,7 +6233,7 @@ static int ufshcd_abort(struct scsi_cmnd *cmd)
->  			reg = ufshcd_readl(hba, REG_UTP_TRANSFER_REQ_DOOR_BELL);
->  			if (reg & (1 << tag)) {
->  				/* sleep for max. 200us to stabilize */
-> -				usleep_range(100, 200);
-> +				ufshcd_wait_us(100, 100, true);
->  				continue;
->  			}
->  			/* command completed already */
-> @@ -7786,7 +7795,7 @@ static void ufshcd_vreg_set_lpm(struct ufs_hba 
-> *hba)
->  	 */
->  	if (!ufshcd_is_link_active(hba) &&
->  	    hba->dev_quirks & UFS_DEVICE_QUIRK_DELAY_BEFORE_LPM)
-> -		usleep_range(2000, 2100);
-> +		ufshcd_wait_us(2000, 100, true);
-> 
->  	/*
->  	 * If UFS device is either in UFS_Sleep turn off VCC rail to save 
-> some
-> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-> index 52425371082a..842f0223f5e5 100644
-> --- a/drivers/scsi/ufs/ufshcd.h
-> +++ b/drivers/scsi/ufs/ufshcd.h
-> @@ -792,6 +792,7 @@ int ufshcd_init(struct ufs_hba * , void __iomem *
-> , unsigned int);
->  int ufshcd_make_hba_operational(struct ufs_hba *hba);
->  void ufshcd_remove(struct ufs_hba *);
->  int ufshcd_uic_hibern8_exit(struct ufs_hba *hba);
-> +void ufshcd_wait_us(unsigned long us, unsigned long tolerance, bool 
-> can_sleep);
->  int ufshcd_wait_for_register(struct ufs_hba *hba, u32 reg, u32 mask,
->  				u32 val, unsigned long interval_us,
->  				unsigned long timeout_ms, bool can_sleep);
+
+The original V2 patchset is to support i.MX7ULP cpufreq,
+still waiting the virtual clk being accepted. so to decouple,
+this patchset only takes the run mode part.
+
+
+Peng Fan (4):
+  dt-bindings: fsl: add i.MX7ULP PMC binding doc
+  ARM: dts: imx7ulp: add pmc node
+  ARM: imx: imx7ulp: support HSRUN mode
+  ARM: imx: cpuidle-imx7ulp: Stop mode disallowed when HSRUN
+
+ .../bindings/arm/freescale/imx7ulp_pmc.yaml        | 32 ++++++++++++++++++++++
+ arch/arm/boot/dts/imx7ulp.dtsi                     | 10 +++++++
+ arch/arm/mach-imx/common.h                         |  1 +
+ arch/arm/mach-imx/cpuidle-imx7ulp.c                | 14 ++++++++--
+ arch/arm/mach-imx/pm-imx7ulp.c                     | 25 +++++++++++++++++
+ 5 files changed, 79 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/freescale/imx7ulp_pmc.yaml
+
+-- 
+2.16.4
+
