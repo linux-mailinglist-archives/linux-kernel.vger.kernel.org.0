@@ -2,154 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42D9118651B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 07:38:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F881186529
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 07:43:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729694AbgCPGih (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 02:38:37 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51369 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729435AbgCPGih (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 02:38:37 -0400
-Received: by mail-wm1-f65.google.com with SMTP id a132so16297756wme.1;
-        Sun, 15 Mar 2020 23:38:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=L/hVm9PFFup3qS7IkAWx1YNVvGEF1kg6IBxXb7BSSz4=;
-        b=oV5obvJhF2zMHd+Irf8W7beSFHNQS3maE+DsmjzgTJs2mHRFBFyHd1yk+Sxy7D1Q+6
-         Myt3Yjx8/H6vKJoIn/KFmSTQpy61x7eiYN/fTf4q6ra4y32X473TTno8q2s5jCwqKioz
-         URWwp//aiBG2LLITeZK8kjFTrgEWk/i/mjYqo5PYQQZ+Ks/wGb+jLatkSAUgiCD9Z+Fa
-         HTx6Jt0mXa4MKA7VkRxyPR4nRV/AHg4euVGTcW5Hy36B+q/p+Bw0PI7y0Cxby2HKPPy5
-         Tv/UakuW9NxYu/qPMXO7M+K6QAt4w3R3Uijv1eJ9orcMHysmSf1a+50co0tzB+sO1hx5
-         kZ5Q==
-X-Gm-Message-State: ANhLgQ1t00nuoyP1qqCCJERxUiwDuk82p8WduEe+SUX95Kq8fsGm3O7S
-        g9ZV4D+HYIwooN9925c9rcdhFBB9
-X-Google-Smtp-Source: ADFU+vslDcUQeSCwZ7u/5/zXeSvaSUK8YUvibE0DUSA2CdPPk5TwiMHhfiR9C8IryrwYPhZLRD+XRw==
-X-Received: by 2002:a1c:9658:: with SMTP id y85mr16958701wmd.63.1584340714724;
-        Sun, 15 Mar 2020 23:38:34 -0700 (PDT)
-Received: from ?IPv6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
-        by smtp.gmail.com with ESMTPSA id i12sm330803wro.46.2020.03.15.23.38.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Mar 2020 23:38:34 -0700 (PDT)
-Subject: Re: linux-next: manual merge of the tty tree with Linus' tree
-To:     Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200310144013.6df85b46@canb.auug.org.au>
- <20200310090422.GB2445065@kroah.com>
-From:   Jiri Slaby <jslaby@suse.cz>
-Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
- mQINBE6S54YBEACzzjLwDUbU5elY4GTg/NdotjA0jyyJtYI86wdKraekbNE0bC4zV+ryvH4j
- rrcDwGs6tFVrAHvdHeIdI07s1iIx5R/ndcHwt4fvI8CL5PzPmn5J+h0WERR5rFprRh6axhOk
- rSD5CwQl19fm4AJCS6A9GJtOoiLpWn2/IbogPc71jQVrupZYYx51rAaHZ0D2KYK/uhfc6neJ
- i0WqPlbtIlIrpvWxckucNu6ZwXjFY0f3qIRg3Vqh5QxPkojGsq9tXVFVLEkSVz6FoqCHrUTx
- wr+aw6qqQVgvT/McQtsI0S66uIkQjzPUrgAEtWUv76rM4ekqL9stHyvTGw0Fjsualwb0Gwdx
- ReTZzMgheAyoy/umIOKrSEpWouVoBt5FFSZUyjuDdlPPYyPav+hpI6ggmCTld3u2hyiHji2H
- cDpcLM2LMhlHBipu80s9anNeZhCANDhbC5E+NZmuwgzHBcan8WC7xsPXPaiZSIm7TKaVoOcL
- 9tE5aN3jQmIlrT7ZUX52Ff/hSdx/JKDP3YMNtt4B0cH6ejIjtqTd+Ge8sSttsnNM0CQUkXps
- w98jwz+Lxw/bKMr3NSnnFpUZaxwji3BC9vYyxKMAwNelBCHEgS/OAa3EJoTfuYOK6wT6nadm
- YqYjwYbZE5V/SwzMbpWu7Jwlvuwyfo5mh7w5iMfnZE+vHFwp/wARAQABtBtKaXJpIFNsYWJ5
- IDxqc2xhYnlAc3VzZS5jej6JAjgEEwECACIFAk6S6NgCGwMGCwkIBwMCBhUIAgkKCwQWAgMB
- Ah4BAheAAAoJEL0lsQQGtHBJgDsP/j9wh0vzWXsOPO3rDpHjeC3BT5DKwjVN/KtP7uZttlkB
- duReCYMTZGzSrmK27QhCflZ7Tw0Naq4FtmQSH8dkqVFugirhlCOGSnDYiZAAubjTrNLTqf7e
- 5poQxE8mmniH/Asg4KufD9bpxSIi7gYIzaY3hqvYbVF1vYwaMTujojlixvesf0AFlE4x8WKs
- wpk43fmo0ZLcwObTnC3Hl1JBsPujCVY8t4E7zmLm7kOB+8EHaHiRZ4fFDWweuTzRDIJtVmrH
- LWvRDAYg+IH3SoxtdJe28xD9KoJw4jOX1URuzIU6dklQAnsKVqxz/rpp1+UVV6Ky6OBEFuoR
- 613qxHCFuPbkRdpKmHyE0UzmniJgMif3v0zm/+1A/VIxpyN74cgwxjhxhj/XZWN/LnFuER1W
- zTHcwaQNjq/I62AiPec5KgxtDeV+VllpKmFOtJ194nm9QM9oDSRBMzrG/2AY/6GgOdZ0+qe+
- 4BpXyt8TmqkWHIsVpE7I5zVDgKE/YTyhDuqYUaWMoI19bUlBBUQfdgdgSKRMJX4vE72dl8BZ
- +/ONKWECTQ0hYntShkmdczcUEsWjtIwZvFOqgGDbev46skyakWyod6vSbOJtEHmEq04NegUD
- al3W7Y/FKSO8NqcfrsRNFWHZ3bZ2Q5X0tR6fc6gnZkNEtOm5fcWLY+NVz4HLaKrJuQINBE6S
- 54YBEADPnA1iy/lr3PXC4QNjl2f4DJruzW2Co37YdVMjrgXeXpiDvneEXxTNNlxUyLeDMcIQ
- K8obCkEHAOIkDZXZG8nr4mKzyloy040V0+XA9paVs6/ice5l+yJ1eSTs9UKvj/pyVmCAY1Co
- SNN7sfPaefAmIpduGacp9heXF+1Pop2PJSSAcCzwZ3PWdAJ/w1Z1Dg/tMCHGFZ2QCg4iFzg5
- Bqk4N34WcG24vigIbRzxTNnxsNlU1H+tiB81fngUp2pszzgXNV7CWCkaNxRzXi7kvH+MFHu2
- 1m/TuujzxSv0ZHqjV+mpJBQX/VX62da0xCgMidrqn9RCNaJWJxDZOPtNCAWvgWrxkPFFvXRl
- t52z637jleVFL257EkMI+u6UnawUKopa+Tf+R/c+1Qg0NHYbiTbbw0pU39olBQaoJN7JpZ99
- T1GIlT6zD9FeI2tIvarTv0wdNa0308l00bas+d6juXRrGIpYiTuWlJofLMFaaLYCuP+e4d8x
- rGlzvTxoJ5wHanilSE2hUy2NSEoPj7W+CqJYojo6wTJkFEiVbZFFzKwjAnrjwxh6O9/V3O+Z
- XB5RrjN8hAf/4bSo8qa2y3i39cuMT8k3nhec4P9M7UWTSmYnIBJsclDQRx5wSh0Mc9Y/psx9
- B42WbV4xrtiiydfBtO6tH6c9mT5Ng+d1sN/VTSPyfQARAQABiQIfBBgBAgAJBQJOkueGAhsM
- AAoJEL0lsQQGtHBJN7UQAIDvgxaW8iGuEZZ36XFtewH56WYvVUefs6+Pep9ox/9ZXcETv0vk
- DUgPKnQAajG/ViOATWqADYHINAEuNvTKtLWmlipAI5JBgE+5g9UOT4i69OmP/is3a/dHlFZ3
- qjNk1EEGyvioeycJhla0RjakKw5PoETbypxsBTXk5EyrSdD/I2Hez9YGW/RcI/WC8Y4Z/7FS
- ITZhASwaCOzy/vX2yC6iTx4AMFt+a6Z6uH/xGE8pG5NbGtd02r+m7SfuEDoG3Hs1iMGecPyV
- XxCVvSV6dwRQFc0UOZ1a6ywwCWfGOYqFnJvfSbUiCMV8bfRSWhnNQYLIuSv/nckyi8CzCYIg
- c21cfBvnwiSfWLZTTj1oWyj5a0PPgGOdgGoIvVjYXul3yXYeYOqbYjiC5t99JpEeIFupxIGV
- ciMk6t3pDrq7n7Vi/faqT+c4vnjazJi0UMfYnnAzYBa9+NkfW0w5W9Uy7kW/v7SffH/2yFiK
- 9HKkJqkN9xYEYaxtfl5pelF8idoxMZpTvCZY7jhnl2IemZCBMs6s338wS12Qro5WEAxV6cjD
- VSdmcD5l9plhKGLmgVNCTe8DPv81oDn9s0cIRLg9wNnDtj8aIiH8lBHwfUkpn32iv0uMV6Ae
- sLxhDWfOR4N+wu1gzXWgLel4drkCJcuYK5IL1qaZDcuGR8RPo3jbFO7Y
-Message-ID: <b518b4d6-b959-525f-1425-cdcb1277958f@suse.cz>
-Date:   Mon, 16 Mar 2020 07:38:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <20200310090422.GB2445065@kroah.com>
-Content-Type: text/plain; charset=iso-8859-2
+        id S1729605AbgCPGnf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 02:43:35 -0400
+Received: from mail-eopbgr130073.outbound.protection.outlook.com ([40.107.13.73]:64774
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729319AbgCPGne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 02:43:34 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hrBGoGYv7AeqbOFMegiZXabALinjADW6K/yrLrzNtyrN0MdiJXF+jFcdSJ/kYtqg6SYmUPDB1FDtV16lAIifN9s5XoE1LdOlKx6my4B79z6mmy3QeU8BKw2c/B/bZRwgU/eTNDgMm3UyO3Pt1PfKE8y4Y5ta6OSWNwQulLcDHkVNOZ8d0kE+/Klqr7jVWxt1MU7rSEKkqkXs4r7DTuNtQtGF/IiPZnmBZuDwnwhKHi6SGqBZZ10zwcnXCA4H8E33LU8lQeGUe+YST3BylhxtfwxrtTuitaaCauMGJTtsxjIW24SeKwyx7rkP42sk6UrdpYjcHlfXJqHhkKkuc2wVLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6tUT8u13HhTH9jOxk35JdRIjQ0WXw0R52eqxASu4Ql0=;
+ b=bp4Vk+gMMU1rYVSq+vcC/kXEqNxkrGnLyuRc94rt9orjsX/L6Yz8oDThnUbhhH7tMrWlmBI49NMPcRj2NHraQwly5i44QX8JNoV3pNO6IrOLpHDVz8kalOVx7MLKLVouISx7PYThTNH4qFlyW8owKPMUUBaSG9fekmmn7t8DrIOJR1MEC54QJ9I8euwisBgb8m6T4IJ87c9QHJUv8lASF6GUxkMbKfwv+hrraG6o4zWfN4Lfkn5LqC9fI7iyUozjntl+hvcB5YTE2fxU9jbsHte2XKxyuLcLxkDimimex3e8kqzutN4NotfH5eUTKhTTnLpiI3nkPVLsMm7grntoGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6tUT8u13HhTH9jOxk35JdRIjQ0WXw0R52eqxASu4Ql0=;
+ b=B3oQ2vKTWOs4lNV8tdFkp06ViX+64cm8DFWXWE/oTnpSiYHcFEO3jKONkVVEajHziZ1VvXRUyYzoJI3gS64t7fEL3x8RLvIBtCy99Sa7ah05fRk9VX16e1H4jV/gqs26BT7GSE148R7mKSYgCYzMdc3P6b8OB4LgN7MlAlc/OHE=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4802.eurprd04.prod.outlook.com (20.176.215.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.22; Mon, 16 Mar 2020 06:43:25 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc%7]) with mapi id 15.20.2814.019; Mon, 16 Mar 2020
+ 06:43:25 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Aisheng Dong <aisheng.dong@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 3/3] soc: imx: select ARM_GIC_V3 for i.MX8M
+Thread-Topic: [PATCH 3/3] soc: imx: select ARM_GIC_V3 for i.MX8M
+Thread-Index: AQHV+OhCoWIlKfRHBEqAZhv4+QN6jahGTaKAgAR8rgA=
+Date:   Mon, 16 Mar 2020 06:43:25 +0000
+Message-ID: <AM0PR04MB4481E7BC1DF01CFC975577A088F90@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1584070036-26447-1-git-send-email-peng.fan@nxp.com>
+ <1584070036-26447-4-git-send-email-peng.fan@nxp.com>
+ <CAK8P3a14BU5uHEqkVyWkeFVmxA1hJifQE+GkXFgmn59s_TL+Rw@mail.gmail.com>
+In-Reply-To: <CAK8P3a14BU5uHEqkVyWkeFVmxA1hJifQE+GkXFgmn59s_TL+Rw@mail.gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [121.239.103.67]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 2f66d9a5-719b-4f4f-e045-08d7c97553f7
+x-ms-traffictypediagnostic: AM0PR04MB4802:|AM0PR04MB4802:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB4802FEAA1BD5E9CEA372654288F90@AM0PR04MB4802.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 03449D5DD1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(366004)(346002)(136003)(376002)(199004)(478600001)(81166006)(6916009)(45080400002)(81156014)(966005)(8676002)(26005)(186003)(55016002)(8936002)(4326008)(7416002)(7696005)(52536014)(9686003)(44832011)(5660300002)(71200400001)(54906003)(33656002)(86362001)(53546011)(66556008)(66446008)(76116006)(64756008)(6506007)(66476007)(66946007)(316002)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4802;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 2gOjBEGztxxhLc7iJTKK6kEJwdWQcYYWZ6oOL8sCtfxrcIZWFjtf2ACMxvyvaz7cRoV7CGnLoaUfXuFW4xJWoH468bwdY+JeiO3Y8Ueb8XDexde0/+9G6LUM8f/ugKMT6PWN9ofBlXv1Ea2ZsJ0eZCZ2SMM4+8ja27Q6OOxXbaM9c1IeBtTa/SCY+M9Q0BxFq19noBU9v2rEMCQ2N3RUg2dG5EYChKq+XXz6WXr0pS5gf4Y82F7xmSY2fRbtVyIY5MQEosNEHue5bceAptJIV583w+Q5HG5JpVv6CFMKNBzV7HU3Jy6SM0tVxmpDTlF0qN9yVs/IW29MIedRle6BXZsls9Ma8bmb1j115amEJUIv5g/e3aibsFqDAU8pBYRnSWqtqtURbRnF097ZRQXG4mabY0mnMrqwTbNHXhU+9mQL6zUX5KHv5HbBJrbHnT3SrQ/Rwx/FmK/z6AF03g+qJYX0mQa2/dnpnRcIos542JJj0i6ChKkGjz4wPv9OBNzSOb2o6jXICuhQb90dXKPLQQ==
+x-ms-exchange-antispam-messagedata: q6QSlzDH9UqiMLHtOfMpUf6NWPnRn4euaCQg02LSWkgDSbdk5fQ1t//Y6JeMehuNEQ6rdTvKz1TtL2pTq8HfwelYaq5I7cPH7+/+9/jd8xJiR5j+QrPiXA1YYPRwebd8j00yG1GJqJFLX4aRgHF8vA==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f66d9a5-719b-4f4f-e045-08d7c97553f7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Mar 2020 06:43:25.2705
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: L0xxozl3MjT3NFFOm89MGOOosGZXT2PvWRku34WJxp6WE7lYJUTFCE1zlbm88KLHhggm2tZ5xogE/k9UH8AH4w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4802
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10. 03. 20, 10:04, Greg KH wrote:
-> On Tue, Mar 10, 2020 at 02:40:13PM +1100, Stephen Rothwell wrote:
->> Hi all,
->>
->> Today's linux-next merge of the tty tree got a conflict in:
->>
->>   drivers/tty/vt/selection.c
->>
->> between commits:
->>
->>   4b70dd57a15d ("vt: selection, push console lock down")
->>   e8c75a30a23c ("vt: selection, push sel_lock up")
->>
->> from Linus' tree and commits:
->>
->>   9256d09f1da1 ("vt: selection, create struct from console selection globals")
->>   bc80932cc25a ("vt: selection, indent switch-case properly")
->>
->> from the tty tree.
->>
->> I fixed it up (I think - see below) and can carry the fix as necessary.
->> This is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
-> 
-> Thank you for this, I hadn't gotten to it yet.
-> 
-> Your merge looks the same as mine, and I've pushed out the merge
-> resolution in my tree.
+Hi Arnd,
 
-Ah, the two merges differ, actually.
+> Subject: Re: [PATCH 3/3] soc: imx: select ARM_GIC_V3 for i.MX8M
+>=20
+> On Fri, Mar 13, 2020 at 4:34 AM <peng.fan@nxp.com> wrote:
+> >
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > Select ARM_GIC_V3, then it is able to use gic v3 driver in aarch32
+> > mode linux on aarch64 hardware. For aarch64 mode, it not hurts to
+> > select ARM_GIC_V3.
+> >
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+>=20
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+>=20
+> > diff --git a/drivers/soc/imx/Kconfig b/drivers/soc/imx/Kconfig index
+> > 70019cefa617..0b69024296d5 100644
+> > --- a/drivers/soc/imx/Kconfig
+> > +++ b/drivers/soc/imx/Kconfig
+> > @@ -21,6 +21,7 @@ config SOC_IMX8M
+> >         bool "i.MX8M SoC family support"
+> >         depends on ARCH_MXC || COMPILE_TEST
+> >         default ARCH_MXC && ARM64
+> > +       select ARM_GIC_V3
+>=20
+> It would seem sensible to also drop the dependency on the 'default'
 
-Stepen's (cdc26c076ff):
+If drop default, we need enable this config option in ARM64 defconfig,
+I would leave it as is for now.
 
--       if (sel_cons != vc_cons[fg_console].d) {
- -      mutex_lock(&vc_sel.lock);
-+       if (vc_sel.cons != vc_cons[fg_console].d) {
+Thanks,
+Peng.
 
-
-Yours (cb05c6c82fb0):
- -      if (sel_cons != vc_cons[fg_console].d) {
- +      mutex_lock(&vc_sel.lock);
- +      if (vc_sel.cons != vc_cons[fg_console].d) {
-
-> Jiri, can you double-check to verify that the merge is correct in my
-> tree?
-
-So this is now a tty tree problem. Will send a patch in a minute.
-
-thanks,
--- 
-js
-suse labs
+>=20
+>       Arnd
+>=20
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Flists.=
+infr
+> adead.org%2Fmailman%2Flistinfo%2Flinux-arm-kernel&amp;data=3D02%7C01
+> %7Cpeng.fan%40nxp.com%7Ca28680bc024f478a8c4008d7c736ef64%7C686
+> ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637196911074143592&a
+> mp;sdata=3DjNEcrVlci7UEAhAftKBNSVc4b6%2F0Sm2aOYPIA9ajZl8%3D&amp;re
+> served=3D0
