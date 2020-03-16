@@ -2,162 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A79C18675B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 10:03:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A38BC18673B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 10:00:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730432AbgCPJCy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 05:02:54 -0400
-Received: from mail-eopbgr70081.outbound.protection.outlook.com ([40.107.7.81]:41344
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730152AbgCPJCy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 05:02:54 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KnBMJdjVDNKzHBJvd0DtPxJmyGeoDU4dY3h+S7Rx38L0MTY+B8tXa8a/ZF8WQqDWTPWpbrExhRk/s1CzInBhE/eeiEF3gTGwImrlmbHY54OxGdJviQaU0H6JIPdjesD6TDcD9ms2vG1PupjdOsMphrT0pvGrykaNj8mDWPIBg4v99WbSMNqnZNTRUazgAiQIkl5EpJ7kCV4WVY1G3MykCpXl0ymvyCEtCESkRQm+UpbnqApwgS55qrjLf/cnd6VaC4z11o5fsCRaqs8Z2rEKj+rZdaU+rKZHLa+NWi4zL9VIvGxM35EH5FvlRjzdAEaAk/tgjW/zzeFlv+0cUJBucw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/N3jlyXvxOlDecD/ueX61aTQqPGAd8m1kZmTdqIbWfY=;
- b=aGrwvWKVcuvTr915ZuzZQygYEHhu6bMAi5ymSktg3dyoZtxu0lDsoQyTD7hKMTBThJD/TLkbx3EUL1cV0NFOeItwBjLyGna6h5MrXSave8sXl1X+QE0D74Wxwq4Pc6M+IhtF93FC/UO1LSI9+lUGz0TSDY3WuPt4vRPMyokUq1tGxCeYKX749kGuuhOT6gbwUBKD/hoL5dTcv48OX5xBcAhlAQ4Yx7J/YS3x4Yxy/FcCYf+HaGJZ8PoUJfTjbwVur79AWpxFy4y1jroqYXaDtE9gPBVdSCQQ1eJ6EZcztPSYYPkLepSuQ5a409xExlXQLjlv3uS+rFVAzStnlnIKDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/N3jlyXvxOlDecD/ueX61aTQqPGAd8m1kZmTdqIbWfY=;
- b=J3cgiWiPrX2qWAGTGf0k3GQlIrbtYabkjYCpzTKuxDaGUIrJ80gP+UwqLI9Z+T+CLhiq12yksizqceVLFcU8W7NgPRIUdOr3xTAzXl92CQecYDi5X+0lxh+gEJ6eqG2FYis3LL23vBHBhSKyi1aI6gLkxZyyGK1kkcNjyuqaEqU=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB7169.eurprd04.prod.outlook.com (10.186.130.88) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.14; Mon, 16 Mar 2020 09:02:51 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::ad44:6b0d:205d:f8fc]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::ad44:6b0d:205d:f8fc%7]) with mapi id 15.20.2814.019; Mon, 16 Mar 2020
- 09:02:51 +0000
-From:   peng.fan@nxp.com
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, robh+dt@kernel.org
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        Anson.Huang@nxp.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V3 4/4] ARM: imx: cpuidle-imx7ulp: Stop mode disallowed when HSRUN
-Date:   Mon, 16 Mar 2020 16:55:44 +0800
-Message-Id: <1584348944-19633-5-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584348944-19633-1-git-send-email-peng.fan@nxp.com>
-References: <1584348944-19633-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR06CA0126.apcprd06.prod.outlook.com
- (2603:1096:1:1d::28) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
+        id S1730278AbgCPJAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 05:00:33 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38893 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730236AbgCPJAd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 05:00:33 -0400
+Received: by mail-pl1-f196.google.com with SMTP id w3so7705226plz.5
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 02:00:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QZ7hDgG7xaUMBSl15kgzbILgCIelqn1XdtcbiGvErdo=;
+        b=I4MVl719v08NW4ohcPKEQmf1U2ZUlSIR669LIJDZZCoZorRBCfHvvJvqq9SDBunBtM
+         mBOMJk9Xd1LyAK8FKko6RK80vczEHl/D7HPdrxICnnPSRa/sRUKDaENUpKD8udCHpaSn
+         +seVeRGvHcFoJS7Ad1zDsCh67l3H36sLX/oeI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QZ7hDgG7xaUMBSl15kgzbILgCIelqn1XdtcbiGvErdo=;
+        b=Q3CyoVmo1xppc943kIr0PNezSj8OH4Ajv/1YKkh58MXD2Xd28MyqEdLy4tklYDSIAC
+         Te7l6aBsdSDLISrDvWn33fKQKQTe6M7y8SOvVsEfhLb09UWtPTJA0NQ4+OHm3NXD0fdb
+         bIGmvQRVrvvzWv4gPwaep9ld/V9w9OyxyzP6fCZGzCfSpE9fR3jJ0/DuXyj9eR1+Dnl/
+         ltg2+Mg0tys5pV+Yy4KcVwgpXwfYum50SFVNd1P3U1WME3NrX2IPKq/LPHxdYQ84tQpF
+         Cg3kfDsFgwYvtNMPQ8n6YGTsaNHIxAya1IeHVcKCl/DK+VbNMQhBiB3IOk12LB2EnAtB
+         QI7Q==
+X-Gm-Message-State: ANhLgQ1zhIuvCGxZtG5vm33tr2wlrG6+9J/X3K/hT7VUv0pRQUVSdW8E
+        IpKJ45tYPZ2i+CjsQnm+KtBtesMtFno=
+X-Google-Smtp-Source: ADFU+vuvXlvegJAMxrnQ5HpySf4UCCZnv+xOf3E95nOR9fmoH/44E05gxBq61/j9B19Jt7HmZv9BNw==
+X-Received: by 2002:a17:902:eacb:: with SMTP id p11mr26005911pld.39.1584349230937;
+        Mon, 16 Mar 2020 02:00:30 -0700 (PDT)
+Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:476b:691:abc3:38db])
+        by smtp.gmail.com with ESMTPSA id d3sm65040080pfn.113.2020.03.16.02.00.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Mar 2020 02:00:30 -0700 (PDT)
+From:   Prashant Malani <pmalani@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Prashant Malani <pmalani@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v5 0/4] platform/chrome: Add Type C connector class driver
+Date:   Mon, 16 Mar 2020 02:00:13 -0700
+Message-Id: <20200316090021.52148-1-pmalani@chromium.org>
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR06CA0126.apcprd06.prod.outlook.com (2603:1096:1:1d::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2814.18 via Frontend Transport; Mon, 16 Mar 2020 09:02:47 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: fc1537d1-7fad-4502-ab36-08d7c988ce33
-X-MS-TrafficTypeDiagnostic: AM0PR04MB7169:|AM0PR04MB7169:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB71696C3F1C8F183EABF9A30F88F90@AM0PR04MB7169.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:64;
-X-Forefront-PRVS: 03449D5DD1
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(346002)(396003)(376002)(39860400002)(199004)(9686003)(6512007)(4326008)(16526019)(8936002)(81156014)(81166006)(8676002)(2906002)(86362001)(316002)(26005)(186003)(956004)(2616005)(69590400007)(6666004)(36756003)(6506007)(66946007)(66556008)(66476007)(478600001)(5660300002)(52116002)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB7169;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: K2fqTUGX9fgt7HQdfIpyfTS+H6L812TcO0uYvDueygW2vxIPJXjclib8Tt76eE1lMHmle/Vmhlj/+HYegMHdIg0QlSSHBjImRuCg1zc4UGhQQ6OWcKDToKORzS6wlypTMzHJVJOSemXeavoCJ1/q9azFcakntQYnYpssMLFy9ZWW0egITsTiKjDiLuvvzTAYYY8vAbtpp624PIyh0doTn3Pdd1uxdo27jjxtOxrfq03CRFh3y983ePIgdwRrE6qMg5EJ30kOap5BYG3trdcF/wuX4zDlR8Jsar4Hrgr0xzo0B1IxlZU3daIuNAh8LPKBliNqCGVlMkDDEyuPqGCQJOTlmEY8Y/TLLVyr+P3cTiBWwq3ytQ7Q0EvhsgJvbU+Zs62xyA0blDC4cH0+NjYoJ3uu934z+VDxxWroYpCAGiLyHzp5LEEfh3m7yxB2CuoLiHq/daa3r/pOzW4w9VQaOdqIhNxKyUHizQ3kA6R+Dr7G67SBEPCV8vzsF7SH+ppn
-X-MS-Exchange-AntiSpam-MessageData: UcpVY8bcwQ9bspqcqgs9EaNezEpp0MSPs/rOzGM4hfV7OdOPaJGsTblRiwm7Af5zzpJ9rW2ScEJ8So2KbiFkxCIvat0MVCvptWwsTxKyaE+h8nUuHpLYQOUuSZ46yzi/DD1fJJ4n96x/P+ts4Jil9Q==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc1537d1-7fad-4502-ab36-08d7c988ce33
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2020 09:02:51.0241
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tSHS4Y+FDv3J/EqnrDHDY36mKf+7YUPRnKtdRVgI166cTOWsoJqS9Cb3ZQMTb3LL7TWJOkNU5VxbaBQOry3tpg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7169
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+The following series introduces a Type C port driver for Chrome OS
+devices that have an EC (Embedded Controller). It derives port
+information from ACPI or DT entries. This patch series adds basic
+support, including registering ports, and setting certain basic
+attributes.
 
-When cpu runs in HSRUN mode, cpuidle is not allowed to run into
-Stop mode. So add imx7ulp_get_mode to get thr cpu run mode,
-and use WAIT mode instead, when cpu in HSRUN mode.
+v4: https://lkml.org/lkml/2020/3/12/1120
+v3: https://lkml.org/lkml/2020/2/19/1230
+v2: https://lkml.org/lkml/2020/2/7/646
+v1: https://lkml.org/lkml/2020/2/5/676
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- arch/arm/mach-imx/common.h          |  1 +
- arch/arm/mach-imx/cpuidle-imx7ulp.c | 14 +++++++++++---
- arch/arm/mach-imx/pm-imx7ulp.c      | 10 ++++++++++
- 3 files changed, 22 insertions(+), 3 deletions(-)
+Changes in v5:
+- Updated DT binding license identifier.
+- Updated DT binding to have full example.
+- Added missing Reviewed-by tag to Patch 2/4.
 
-diff --git a/arch/arm/mach-imx/common.h b/arch/arm/mach-imx/common.h
-index 72c3fcc32910..707ac650f1c2 100644
---- a/arch/arm/mach-imx/common.h
-+++ b/arch/arm/mach-imx/common.h
-@@ -103,6 +103,7 @@ void imx6_set_int_mem_clk_lpm(bool enable);
- void imx6sl_set_wait_clk(bool enter);
- int imx_mmdc_get_ddr_type(void);
- int imx7ulp_set_lpm(enum ulp_cpu_pwr_mode mode);
-+u32 imx7ulp_get_mode(void);
- 
- void imx_cpu_die(unsigned int cpu);
- int imx_cpu_kill(unsigned int cpu);
-diff --git a/arch/arm/mach-imx/cpuidle-imx7ulp.c b/arch/arm/mach-imx/cpuidle-imx7ulp.c
-index ca86c967d19e..e7009d10b331 100644
---- a/arch/arm/mach-imx/cpuidle-imx7ulp.c
-+++ b/arch/arm/mach-imx/cpuidle-imx7ulp.c
-@@ -15,10 +15,18 @@
- static int imx7ulp_enter_wait(struct cpuidle_device *dev,
- 			    struct cpuidle_driver *drv, int index)
- {
--	if (index == 1)
-+	u32 mode;
-+
-+	if (index == 1) {
- 		imx7ulp_set_lpm(ULP_PM_WAIT);
--	else
--		imx7ulp_set_lpm(ULP_PM_STOP);
-+	} else {
-+		mode = imx7ulp_get_mode();
-+
-+		if (mode == 3)
-+			imx7ulp_set_lpm(ULP_PM_WAIT);
-+		else
-+			imx7ulp_set_lpm(ULP_PM_STOP);
-+	}
- 
- 	cpu_do_idle();
- 
-diff --git a/arch/arm/mach-imx/pm-imx7ulp.c b/arch/arm/mach-imx/pm-imx7ulp.c
-index 393faf1e8382..1410ccfc71bd 100644
---- a/arch/arm/mach-imx/pm-imx7ulp.c
-+++ b/arch/arm/mach-imx/pm-imx7ulp.c
-@@ -63,6 +63,16 @@ int imx7ulp_set_lpm(enum ulp_cpu_pwr_mode mode)
- 	return 0;
- }
- 
-+u32 imx7ulp_get_mode(void)
-+{
-+	u32 mode;
-+
-+	mode = readl_relaxed(smc1_base + SMC_PMCTRL) & BM_PMCTRL_RUNM;
-+	mode >>= BP_PMCTRL_RUNM;
-+
-+	return mode;
-+}
-+
- void __init imx7ulp_pm_init(void)
- {
- 	struct device_node *np;
+Prashant Malani (4):
+  dt-bindings: Add cros-ec Type C port driver
+  platform/chrome: Add Type C connector class driver
+  platform/chrome: typec: Get PD_CONTROL cmd version
+  platform/chrome: typec: Update port info from EC
+
+ .../bindings/chrome/google,cros-ec-typec.yaml |  54 +++
+ drivers/platform/chrome/Kconfig               |  11 +
+ drivers/platform/chrome/Makefile              |   1 +
+ drivers/platform/chrome/cros_ec_typec.c       | 357 ++++++++++++++++++
+ 4 files changed, 423 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
+ create mode 100644 drivers/platform/chrome/cros_ec_typec.c
+
 -- 
-2.16.4
+2.25.1.481.gfbce0eb801-goog
 
