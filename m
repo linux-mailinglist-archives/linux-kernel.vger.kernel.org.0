@@ -2,194 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F4B1187273
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 19:36:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FF81187278
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 19:38:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732380AbgCPSgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 14:36:18 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42548 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732352AbgCPSgS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 14:36:18 -0400
-Received: by mail-wr1-f67.google.com with SMTP id v11so22581667wrm.9;
-        Mon, 16 Mar 2020 11:36:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7lQB6wlaubvH8er670BlOGAtKZd5K8M7/RFgJn2RRsI=;
-        b=RjiJVMdYSpn/mOBVFkY7sfHUf59hBKS1NHVDvCUOGM/Z2BtnSId+ILjYYi1NG57ZF9
-         v37aTx1oMIyZ2QTQBAQcrVJFKW4X76tG9U27JN5iM0P4fB+GWXiDLyQ40RDOrieyXTlA
-         M0XsgBUAWX0A1WllmPP6pgjJOBQKvxQLGlsYdbByWt5PRcgjYEJcqGvfn6DxN4Mu43fw
-         5Uaz+QbeUvB3EForZG54e4TQxZhgH7ogwHUskWFfvcWkV4LLWnZoT0t2k9ZiqbH8yjkY
-         ZOGj/+3SQLjp397gklGrcqtCjQqNEGt4IjfeVSTWzPTulHBSCPhV9vzn1z0r2t5EBU49
-         bhkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=7lQB6wlaubvH8er670BlOGAtKZd5K8M7/RFgJn2RRsI=;
-        b=sEDAA3spHh2wced00YtUICZgrGf/f4SJ3dkfCl4N3KTAsHWCubqQxU5AHZPEJMNJkG
-         zFpKwqznrq0UwDkKJCeSthXe2PxOn10oAsdXNq1ykxrRIweRD0+KIihNkKmJ5pzJOVOi
-         DM4abbCMVHw/ZvFnIw9u9xRgu9XEWG1MPj3e5boQK/0SAwm637uVLtm+WwuRslYXznKj
-         jhPxPQEHLq3aXxdTvy1Sh2g3RR03rCuRK45lGUk13JkDxnLt+DPQCd7Y2wf6it7+dUF8
-         /KAtF2e3i3wutqJHNsUYmvsWhCrwhZZXGeBvYU5vWP2Y2S8e1B5nkFXRVE0VtnpmE476
-         0U5w==
-X-Gm-Message-State: ANhLgQ09RtqU1mItwRdC60cy+SfXTQ/g8DQUtXEvh8OdusUL0AaNj0a/
-        mHxJsYNC6jYHolZAXWCuQmE9RgFv
-X-Google-Smtp-Source: ADFU+vv4CMz8qJXj/rZhte7/jbYyuyB8K0G9PFxaBRncASD067lLXRBWHh5rkk5Z9dPls3e6DV35+w==
-X-Received: by 2002:adf:904a:: with SMTP id h68mr630046wrh.291.1584383775118;
-        Mon, 16 Mar 2020 11:36:15 -0700 (PDT)
-Received: from [192.168.1.23] (acek158.neoplus.adsl.tpnet.pl. [83.9.186.158])
-        by smtp.gmail.com with ESMTPSA id f17sm1088889wrj.28.2020.03.16.11.36.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Mar 2020 11:36:14 -0700 (PDT)
-Subject: Re: [PATCH v3 2/3] leds: pwm: add support for default-state device
- property
-To:     Denis Osterland-Heim <denis.osterland@diehl.com>,
-        "dmurphy@ti.com" <dmurphy@ti.com>, "pavel@ucw.cz" <pavel@ucw.cz>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <20200316124851.6303-1-Denis.Osterland@diehl.com>
- <20200316124851.6303-3-Denis.Osterland@diehl.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <bee4d31f-1f00-c621-f93c-f49207e406d6@gmail.com>
-Date:   Mon, 16 Mar 2020 19:36:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1732383AbgCPShz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 14:37:55 -0400
+Received: from mga14.intel.com ([192.55.52.115]:38017 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732294AbgCPShz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 14:37:55 -0400
+IronPort-SDR: 7/lba+NGC5h9Gto00I92tEIfX76hdhl0EnBVUzLH5w6wJW/fYFko3yocx97LxTKxQpPmtpFA8i
+ 3gP8tD8y0Bsw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 11:37:54 -0700
+IronPort-SDR: KJT01j4/cj0PAG9jf5wdckPSQVyMJOWVoYCCscoM4RpPoeo7zdKJjuWSP8sINvpluwcG3BgvdQ
+ viJJJTKq9J7Q==
+X-IronPort-AV: E=Sophos;i="5.70,561,1574150400"; 
+   d="scan'208";a="390794166"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.254.77.132]) ([10.254.77.132])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 11:37:54 -0700
+Subject: Re: [PATCH 07/10] x86/resctrl: Add arch_needs_linear to explain
+ AMD/Intel MBA difference
+To:     James Morse <james.morse@arm.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>
+References: <20200214182401.39008-1-james.morse@arm.com>
+ <20200214182401.39008-8-james.morse@arm.com>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <bab1dd35-bf60-c106-a023-8cbd5e64e03d@intel.com>
+Date:   Mon, 16 Mar 2020 11:37:53 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <20200316124851.6303-3-Denis.Osterland@diehl.com>
+In-Reply-To: <20200214182401.39008-8-james.morse@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Denis,
+Hi James,
 
-On 3/16/20 1:53 PM, Denis Osterland-Heim wrote:
-> This patch adds support for "default-state" devicetree property, which
-> allows to defer pwm init to first use of led.
+On 2/14/2020 10:23 AM, James Morse wrote:
+> The configuration values user-space provides to the resctrl filesystem
+> are ABI. To make this work on another architecture we want to move all
+> the ABI bits out of /arch/x86 and under /fs.
 > 
-> This allows to configure the PWM early in bootloader to let the LED
-> blink until an application in Linux userspace sets something different.
+> To do this, the differences between AMD and Intel CPUs needs to be
+> explained to resctrl via resource properties, instead of function
+> pointers that let the arch code accept subtly different values on
+> different platforms/architectures.
 > 
-> Signed-off-by: Denis Osterland-Heim <Denis.Osterland@diehl.com>
+> For MBA, Intel CPUs reject configuration attempts for non-linear
+> resources, whereas AMD ignore this field as its MBA resource is never
+> linear. To merge the parse/validate functions we need to explain
+> this difference.
+> 
+> Add arch_needs_linear to indicate the arch code needs the linear
+> property to be true to configure this resource. AMD can set this
+> and delay_linear to false. Intel can set arch_needs_linear
+> to true to keep the existing "No support for non-linear MB domains"
+> error message for affected platforms.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
 > ---
->  drivers/leds/leds-pwm.c | 34 ++++++++++++++++++++++++++++++++--
->  1 file changed, 32 insertions(+), 2 deletions(-)
+>  arch/x86/kernel/cpu/resctrl/core.c        | 3 +++
+>  arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 8 +++++++-
+>  arch/x86/kernel/cpu/resctrl/internal.h    | 2 ++
+>  3 files changed, 12 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-> index 5f69b6571595..fce7969e7918 100644
-> --- a/drivers/leds/leds-pwm.c
-> +++ b/drivers/leds/leds-pwm.c
-> @@ -18,11 +18,16 @@
->  #include <linux/pwm.h>
->  #include <linux/slab.h>
+> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+> index 7d295ae620bb..f022dc823c53 100644
+> --- a/arch/x86/kernel/cpu/resctrl/core.c
+> +++ b/arch/x86/kernel/cpu/resctrl/core.c
+> @@ -260,6 +260,7 @@ static bool __get_mem_config_intel(struct rdt_resource *r)
+>  	r->num_closid = edx.split.cos_max + 1;
+>  	max_delay = eax.split.max_delay + 1;
+>  	r->default_ctrl = MAX_MBA_BW;
+> +	r->membw.arch_needs_linear = true;
+>  	if (ecx & MBA_IS_LINEAR) {
+>  		r->membw.delay_linear = true;
+>  		r->membw.min_bw = MAX_MBA_BW - max_delay;
+> @@ -267,6 +268,7 @@ static bool __get_mem_config_intel(struct rdt_resource *r)
+>  	} else {
+>  		if (!rdt_get_mb_table(r))
+>  			return false;
+> +		r->membw.arch_needs_linear = false;
+>  	}
+>  	r->data_width = 3;
 >  
-> +#define LEDS_PWM_DEFSTATE_OFF	0
-> +#define LEDS_PWM_DEFSTATE_ON	1
-> +#define LEDS_PWM_DEFSTATE_KEEP	2
+> @@ -288,6 +290,7 @@ static bool __rdt_get_mem_config_amd(struct rdt_resource *r)
+>  
+>  	/* AMD does not use delay */
+>  	r->membw.delay_linear = false;
+> +	r->membw.arch_needs_linear = false;
+>  
+>  	r->membw.min_bw = 0;
+>  	r->membw.bw_gran = 1;
+> diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+> index 055c8613b531..db8e6c0cadb1 100644
+> --- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+> +++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+> @@ -33,6 +33,12 @@ static bool bw_validate_amd(char *buf, unsigned long *data,
+>  	unsigned long bw;
+>  	int ret;
+>  
+> +	/* temporary: always false on AMD */
+> +	if (!r->membw.delay_linear && r->membw.arch_needs_linear) {
+> +		rdt_last_cmd_puts("No support for non-linear MB domains\n");
+> +		return false;
+> +	}
 > +
->  struct led_pwm {
->  	const char	*name;
->  	const char	*default_trigger;
->  	unsigned int	pwm_id __deprecated;
->  	u8		active_low;
-> +	u8		default_state;
->  	unsigned int	max_brightness;
->  	unsigned int	pwm_period_ns;
+>  	ret = kstrtoul(buf, 10, &bw);
+>  	if (ret) {
+>  		rdt_last_cmd_printf("Non-decimal digit in MB value %s\n", buf);
+> @@ -82,7 +88,7 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
+>  	/*
+>  	 * Only linear delay values is supported for current Intel SKUs.
+>  	 */
+> -	if (!r->membw.delay_linear) {
+> +	if (!r->membw.delay_linear && r->membw.arch_needs_linear) {
+>  		rdt_last_cmd_puts("No support for non-linear MB domains\n");
+>  		return false;
+>  	}
+> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+> index 3e3ba85843c4..1fa692c54e15 100644
+> --- a/arch/x86/kernel/cpu/resctrl/internal.h
+> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+> @@ -363,6 +363,7 @@ struct rdt_cache {
+>   * struct rdt_membw - Memory bandwidth allocation related data
+>   * @min_bw:		Minimum memory bandwidth percentage user can request
+>   * @bw_gran:		Granularity at which the memory bandwidth is allocated
+> + * @arch_needs_linear:  True if we can't configure non-linear resources
+>   * @delay_linear:	True if memory B/W delay is in linear scale
+>   * @mba_sc:		True if MBA software controller(mba_sc) is enabled
+>   * @mb_map:		Mapping of memory B/W percentage to memory B/W delay
+
+This area uses tab for spacing.
+
+> @@ -371,6 +372,7 @@ struct rdt_membw {
+>  	u32		min_bw;
+>  	u32		bw_gran;
+>  	u32		delay_linear;
+> +	bool		arch_needs_linear;
+>  	bool		mba_sc;
+>  	u32		*mb_map;
 >  };
-> @@ -72,7 +77,6 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
->  	led_data->active_low = led->active_low;
->  	led_data->cdev.name = led->name;
->  	led_data->cdev.default_trigger = led->default_trigger;
-> -	led_data->cdev.brightness = LED_OFF;
->  	led_data->cdev.max_brightness = led->max_brightness;
->  	led_data->cdev.flags = LED_CORE_SUSPENDRESUME;
->  
-> @@ -92,13 +96,27 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
->  
->  	pwm_init_state(led_data->pwm, &led_data->pwmstate);
->  
-> +	if (led->default_state == LEDS_PWM_DEFSTATE_ON)
-> +		led_data->cdev.brightness = led->max_brightness;
-> +	else if (led->default_state == LEDS_PWM_DEFSTATE_KEEP) {
-> +		uint64_t brightness;
-> +
-> +		pwm_get_state(led_data->pwm, &led_data->pwmstate);
+> 
 
-This seems to not be reading the device state, i.e. what you tried
-to address by direct call to pwm->chip->ops->get_state() before.
+Babu may want to take a look.
 
-Am I missing something?
+Just the one small comment from my side, apart from that it looks good
+to me.
 
--- 
-Best regards,
-Jacek Anaszewski
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+
+Thank you
+
+Reinette
