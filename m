@@ -2,111 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E93C3187498
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 22:15:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B54318749F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 22:17:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732683AbgCPVPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 17:15:32 -0400
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:33262 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732652AbgCPVPb (ORCPT
+        id S1732699AbgCPVRE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 17:17:04 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36468 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732636AbgCPVRE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 17:15:31 -0400
-Received: by mail-pj1-f66.google.com with SMTP id dw20so4371381pjb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 14:15:30 -0700 (PDT)
+        Mon, 16 Mar 2020 17:17:04 -0400
+Received: by mail-qt1-f195.google.com with SMTP id m33so15627405qtb.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 14:17:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KaK149mcvHpJfMxye3tXJbFCoSJn6xDOGuQiZnEv0Kw=;
-        b=oJl+8nZd+9LHzT40nJyJpJtsqNnnWAFfqgFRQndl19IpKUIGbqNdVNhBE9WEOnIV2g
-         2c7b3BSJ2ogdeQ7VuOP3OiFyCQhSdVd4J4VA/4APGFx+yohktiZTEaRER/oQ6B/d0NfX
-         sDTXa9db3Gn1XzHA6McRVnzpwTMdcs05FxmGYBXr8VfyQLCCTQ3TcSRAwCg/f18wya2n
-         eAgUrOvBOl8xxzXeFDzOJCdbveNC4EF1CJOXWlfSmn30fGKE489oQw+ZujOzTAuarzRF
-         Sm/4j7xsi8YJ3N+3bw6oHU/rDwv9zoCOgyZScV7WUyLnnsFloGsOpmt05pPwfivRg5h6
-         3oow==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6FuZZoVTFoFF+1kD/gUu0wVHL7she4RE1ISWVv5X9/Y=;
+        b=vS3P/SI72Ul6DR1lMgGssHto6g2grnX9qlthgAH3MQfmuXC8X32mBEV5vRMILYFoOq
+         4onAUSdTQuBwhU0RuSci5/PTf1r4JBaUP8Pw0DyYOWja6pAkXMATZKnLyjyFZEGi+GA/
+         eCDQlvBCRoEzFSHEzjyIod/Hajg3WiKRzy1Y3Ojd8TGeVi2RTyLkv2JxJXW+vsx5GDYY
+         WNg2Xvb6E7w7rb+ylM+6oO9aGCkI3rJhKrXAXeRNMiFn7ivrSzDCkzvRnvwc/qzEBWn0
+         IBtQ02xNfhoR+D4fAsK7NATVfiG+qj8CTzFQe2nPxlmTI1GBmzEoljvP0picHIgld4qx
+         JMkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KaK149mcvHpJfMxye3tXJbFCoSJn6xDOGuQiZnEv0Kw=;
-        b=EfkHzzKq7gCjmxPgE5Cj9ZrR+b7zp/uAmtaHfq3YMDSA5xgeBQ9C/QMce+ZfUB/Svg
-         z/XxHvbJlldNxq/W8YDUyrs2Xw797SAE6pFyqbcN+BOcBJX0g/S8odu/Nv2OSPcZv9OK
-         6qQbUqKL5//KM9F3wDMZEDVpa+Nf0l7T76O897lG/BrQtIbegAEDHD6bsPVo3yN62pjq
-         /78pAPiYpd90YR6YcbxTiGaQ/3M9XebbQxS31QBweF/TOqENQ/2df9u2u4BcBxK/ojkZ
-         uWvWWQ4AJK8TyCMXf93ZkE02XaQGRqOO7Q7heeYMIvdIPC5yr1XKLrkj+2oAfGNVZcc1
-         RQZQ==
-X-Gm-Message-State: ANhLgQ3lpwNgyod+XrGVjK/IXJ4MroKkvZFYW88idPfRIJR4tgM/bmJh
-        8wPlPKsBI8KJsyW1i8U3BSllUqACy24MkFl7x5zTgA==
-X-Google-Smtp-Source: ADFU+vsLMv4vfYgKJM3UACye15ScgavNMy5rn/D4RIYctClFBjL2Holw5IElKcomCXFXEdmQBRVk31RXNl8gfxVrZiI=
-X-Received: by 2002:a17:90b:311:: with SMTP id ay17mr1531492pjb.27.1584393329930;
- Mon, 16 Mar 2020 14:15:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6FuZZoVTFoFF+1kD/gUu0wVHL7she4RE1ISWVv5X9/Y=;
+        b=todTUXSikuT5uvwwyw6aoOlAXbkO85qaqVIc5YoUYfNrFExAF6IKF7oPmSBYFHG/j8
+         RfbFEFeQbk6b4rAyHrNYrGrFUZkM+sfNcVlkMXCyCudHy0xFQz1SM+gsPEHJsiPfeAg9
+         RapAp1+rB1IPiqNA/fxX2EXAqcKy1YN7ah9X7jH8aKTmxPGQY2dMfKDomMdvFZcCygX6
+         2xjlOnKSWS2dpRhvIZpMIHDDGL7HpAZIe54uLQwMvVv2KyWxdwcRnWc5G6bOKHhnbJR4
+         5DPGzMLDyEK0HdvgBiTL/2Phvdz0n+VMXtQuuHyc4ZeQ+HmgN2gM9/b1jl0p4DtCMuwg
+         puDw==
+X-Gm-Message-State: ANhLgQ3k5f0e51KuFNGW3mK5EOoT0kyHyMvfXFkzCmWEkGWPVnRrCqNg
+        E03XNhTYMHwlKP+AWBc+utE=
+X-Google-Smtp-Source: ADFU+vvhoV+Um0FzZrMDfLcuJCaJUEsDuGqA2Mhz9ejyhF6zsDn0DKV3vmnWwROYKPClMo1LTYQOsA==
+X-Received: by 2002:ac8:481a:: with SMTP id g26mr2174747qtq.267.1584393423506;
+        Mon, 16 Mar 2020 14:17:03 -0700 (PDT)
+Received: from localhost.localdomain ([179.159.236.147])
+        by smtp.googlemail.com with ESMTPSA id p23sm579055qkm.39.2020.03.16.14.17.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Mar 2020 14:17:02 -0700 (PDT)
+From:   Igor Matheus Andrade Torrente <igormtorrente@gmail.com>
+To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        sean@poorly.run, airlied@linux.ie, daniel@ffwll.ch,
+        sumit.semwal@linaro.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Cc:     Igor Matheus Andrade Torrente <igormtorrente@gmail.com>,
+        Rodrigo.Siqueira@amd.com, rodrigosiqueiramelo@gmail.com,
+        andrealmeid@collabora.com
+Subject: [PATCH] Staging: drm_gem: Fix a misaligned comment block
+Date:   Mon, 16 Mar 2020 18:15:53 -0300
+Message-Id: <20200316211553.2506-1-igormtorrente@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200130015905.18610-1-natechancellor@gmail.com> <20200211142431.243E6C433A2@smtp.codeaurora.org>
-In-Reply-To: <20200211142431.243E6C433A2@smtp.codeaurora.org>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 16 Mar 2020 14:15:17 -0700
-Message-ID: <CAKwvOdkcT6jdFu2Mj5ZKErKmm+MyGAoJ=R_0LatR+_A0j7OtYw@mail.gmail.com>
-Subject: Re: [PATCH] ath11k: Silence clang -Wsometimes-uninitialized in ath11k_update_per_peer_stats_from_txcompl
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        CI Notify <ci_notify@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kalle, I still see this warning in KernelCI builds of linux-next.
-Is ath-next flowing into linux-next?  I just want to triple check that
-this fix gets sent along.
+Fix a checkpatch warning caused by a misaligned comment block.
 
-On Tue, Feb 11, 2020 at 6:24 AM Kalle Valo <kvalo@codeaurora.org> wrote:
->
-> Nathan Chancellor <natechancellor@gmail.com> wrote:
->
-> > Clang warns a few times (trimmed for brevity):
-> >
-> > ../drivers/net/wireless/ath/ath11k/debugfs_sta.c:185:7: warning:
-> > variable 'rate_idx' is used uninitialized whenever 'if' condition is
-> > false [-Wsometimes-uninitialized]
-> >
-> > It is not wrong, rate_idx is only initialized in the first if block.
-> > However, this is not necessarily an issue in practice because rate_idx
-> > will only be used when initialized because
-> > ath11k_accumulate_per_peer_tx_stats only uses rate_idx when flags is not
-> > set to RATE_INFO_FLAGS_HE_MCS, RATE_INFO_FLAGS_VHT_MCS, or
-> > RATE_INFO_FLAGS_MCS. Still, it is not good to stick uninitialized values
-> > into another function so initialize it to zero to prevent any issues
-> > down the line.
-> >
-> > Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/832
-> > Reported-by: ci_notify@linaro.org
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> > Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
->
-> Patch applied to ath-next branch of ath.git, thanks.
->
-> df57acc415b1 ath11k: Silence clang -Wsometimes-uninitialized in ath11k_update_per_peer_stats_from_txcompl
->
-> --
-> https://patchwork.kernel.org/patch/11357331/
->
-> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20200211142431.243E6C433A2%40smtp.codeaurora.org.
+Signed-off-by: Igor Matheus Andrade Torrente <igormtorrente@gmail.com>
+---
+ drivers/gpu/drm/drm_gem.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-
-
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index 000fa4a1899f..6e960d57371e 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -222,10 +222,10 @@ drm_gem_object_handle_put_unlocked(struct drm_gem_object *obj)
+ 		return;
+ 
+ 	/*
+-	* Must bump handle count first as this may be the last
+-	* ref, in which case the object would disappear before we
+-	* checked for a name
+-	*/
++	 * Must bump handle count first as this may be the last
++	 * ref, in which case the object would disappear before we
++	 * checked for a name
++	 */
+ 
+ 	mutex_lock(&dev->object_name_lock);
+ 	if (--obj->handle_count == 0) {
 -- 
-Thanks,
-~Nick Desaulniers
+2.20.1
+
