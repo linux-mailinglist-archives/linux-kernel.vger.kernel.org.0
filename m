@@ -2,99 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3362187658
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 00:47:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EE0F18765E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 00:50:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732970AbgCPXrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 19:47:20 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:45999 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732900AbgCPXrT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 19:47:19 -0400
-Received: by mail-il1-f199.google.com with SMTP id h12so15341883ils.12
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 16:47:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=NlyCPiQeeXe46SWO6vOpnbLfRJ41bBQJbSHfng0kaHk=;
-        b=oiRd9nd8F7+loa+mez/5jznuBzO4jLtRSzatzVS6Lc9/wYKuaiV3Tn2I2261tWDfPj
-         buyARkRYMfrAP71cz8nY5TbDHKWU+aeSC1K9hH4LKOLT1UXooWgn1hgQhLO1cNWbW+Uu
-         s2lqLahrdmgmwVg0VVWcTRG6HDO0ZwbCeJuxIuMWl/yfyTyN3olRlmnS2nbGOd98IT9I
-         uXVunMLG/d9B/gYyL4/9OjfWTiASoil2/ouClt+vL0gr3KcmHvShiGPJbs2kq63yv+N+
-         Yes4vd0PpBYT9Qc7xuItmTrWTb7KkG04GoPi1G3NRYBtnerBN+zOgpOo6t0xhwUtn6Mw
-         0xGA==
-X-Gm-Message-State: ANhLgQ1erggx1PyJAmIiGHY8q6VPOHzj+TIUtNt1cij3ZVhtk5VoACTF
-        fsUa68Pcx3Jx+E67FaWBUTTrkpejevUKPoWMfXgc9+BM+/nQ
-X-Google-Smtp-Source: ADFU+vsryNBcEg/zB8G6qOT+eYg/7l8gp78N4VCAXM42eZb7GFS9/j+AUdUkUK+g4/94bj3W1buRUJ4+QlmxMTwAn6TFwRWpsCA0
+        id S1732934AbgCPXua (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 19:50:30 -0400
+Received: from mga11.intel.com ([192.55.52.93]:48604 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732880AbgCPXua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 19:50:30 -0400
+IronPort-SDR: a0VW147DNNTPEJ9pBmK1H3FA88R5wWrGFORlDgFtDafmfZsnhCu1PO/vX7qzUHbinDpGFVWTZp
+ 8cufbfXuivTA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 16:50:29 -0700
+IronPort-SDR: q1sPZdqkQk97Glbiq8/TcTPYanScaycXSHVMTujifIDlFbwviaBLGG5ggXttyLHvGZ4ABUsBst
+ DJyQzTV4eXiA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,562,1574150400"; 
+   d="scan'208";a="244307367"
+Received: from bxing-mobl.amr.corp.intel.com (HELO [10.135.8.145]) ([10.135.8.145])
+  by orsmga003.jf.intel.com with ESMTP; 16 Mar 2020 16:50:26 -0700
+Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
+ enclave call
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, Neil Horman <nhorman@redhat.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
+        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
+        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Connor Kuehl <ckuehl@redhat.com>,
+        Harald Hoyer <harald@redhat.com>,
+        Lily Sturmann <lsturman@redhat.com>
+References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
+ <20200303233609.713348-22-jarkko.sakkinen@linux.intel.com>
+ <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
+ <20200315012523.GC208715@linux.intel.com>
+ <CAOASepP9GeTEqs1DSfPiSm9ER0whj9qwSc46ZiNj_K4dMekOfQ@mail.gmail.com>
+ <94ce05323c4de721c4a6347223885f2ad9f541af.camel@linux.intel.com>
+ <CAOASepM1pp1emPwSdFcaRkZfFm6sNmwPCJH+iFMiaJpFjU0VxQ@mail.gmail.com>
+ <5dc2ec4bc9433f9beae824759f411c32b45d4b74.camel@linux.intel.com>
+ <20200316225322.GJ24267@linux.intel.com>
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+Message-ID: <fa773504-4cc1-5cbd-c018-890f7a5d3152@intel.com>
+Date:   Mon, 16 Mar 2020 16:50:26 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:6a10:: with SMTP id f16mr2392363ilc.113.1584402437253;
- Mon, 16 Mar 2020 16:47:17 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 16:47:17 -0700
-In-Reply-To: <000000000000b380de059f5ff6aa@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000742e9e05a10170bc@google.com>
-Subject: Re: WARNING: ODEBUG bug in tcindex_destroy_work (3)
-From:   syzbot <syzbot+46f513c3033d592409d2@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, jhs@mojatatu.com, jiri@resnulli.us,
-        kuba@kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200316225322.GJ24267@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
-
-HEAD commit:    74522e7b net: sched: set the hw_stats_type in pedit loop
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c85173e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b5acf5ac38a50651
-dashboard link: https://syzkaller.appspot.com/bug?extid=46f513c3033d592409d2
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17bfff65e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+46f513c3033d592409d2@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-ODEBUG: free active (active state 0) object type: work_struct hint: tcindex_destroy_rexts_work+0x0/0x20 net/sched/cls_tcindex.c:143
-WARNING: CPU: 1 PID: 7 at lib/debugobjects.c:485 debug_print_object+0x160/0x250 lib/debugobjects.c:485
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 7 Comm: kworker/u4:0 Not tainted 5.6.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: tc_filter_workqueue tcindex_destroy_work
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x188/0x20d lib/dump_stack.c:118
- panic+0x2e3/0x75c kernel/panic.c:221
- __warn.cold+0x2f/0x35 kernel/panic.c:582
- report_bug+0x27b/0x2f0 lib/bug.c:195
- fixup_bug arch/x86/kernel/traps.c:174 [inline]
- fixup_bug arch/x86/kernel/traps.c:169 [inline]
- do_error_trap+0x12b/0x220 arch/x86/kernel/traps.c:267
- do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:286
- invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-RIP: 0010:debug_print_object+0x160/0x250 lib/debugobjects.c:485
-Code: dd c0 fa 51 88 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 bf 00 00 00 48 8b 14 dd c0 fa 51 88 48 c7 c7 20 f0 51 88 e8 a8 bd b1 fd <0f> 0b 83 05 8b cf d3 06 01 48 83 c4 20 5b 5d 41 5c 41 5d c3 48 89
-RSP: 0018:ffffc90000cdfc40 EFLAGS: 00010082
-RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff815bfe61 RDI: fffff5200019bf7a
-RBP: 0000000000000001 R08: ffff8880a95de1c0 R09: ffffed1015ce45c9
-R10: ffffed1015ce45c8 R11: ffff8880ae722e43 R12: ffffffff8977aba0
-R13: ffffffff814a9360 R14: ffff88807e278f98 R15: ffff88809835c6c8
- __debug_check_no_obj_freed lib/debugobjects.c:967 [inline]
- debug_check_no_obj_freed+0x2e1/0x445 lib/debugobjects.c:998
- kfree+0xf6/0x2b0 mm/slab.c:3756
- tcindex_destroy_work+0x2e/0x70 net/sched/cls_tcindex.c:231
- process_one_work+0x94b/0x1690 kernel/workqueue.c:2266
- worker_thread+0x96/0xe20 kernel/workqueue.c:2412
- kthread+0x357/0x430 kernel/kthread.c:255
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
+On 3/16/2020 3:53 PM, Sean Christopherson wrote:
+> On Mon, Mar 16, 2020 at 11:38:24PM +0200, Jarkko Sakkinen wrote:
+>> On Mon, 2020-03-16 at 10:01 -0400, Nathaniel McCallum wrote:
+>>> On Mon, Mar 16, 2020 at 9:56 AM Jarkko Sakkinen
+>>> <jarkko.sakkinen@linux.intel.com> wrote:
+>>>> On Sun, 2020-03-15 at 13:53 -0400, Nathaniel McCallum wrote:
+>>>>> On Sat, Mar 14, 2020 at 9:25 PM Jarkko Sakkinen
+>>>>> <jarkko.sakkinen@linux.intel.com> wrote:
+>>>>>> On Wed, Mar 11, 2020 at 01:30:07PM -0400, Nathaniel McCallum wrote:
+>>>>>>> Currently, the selftest has a wrapper around
+>>>>>>> __vdso_sgx_enter_enclave() which preserves all x86-64 ABI callee-saved
+>>>>>>> registers (CSRs), though it uses none of them. Then it calls this
+>>>>>>> function which uses %rbx but preserves none of the CSRs. Then it jumps
+>>>>>>> into an enclave which zeroes all these registers before returning.
+>>>>>>> Thus:
+>>>>>>>
+>>>>>>>    1. wrapper saves all CSRs
+>>>>>>>    2. wrapper repositions stack arguments
+>>>>>>>    3. __vdso_sgx_enter_enclave() modifies, but does not save %rbx
+>>>>>>>    4. selftest zeros all CSRs
+>>>>>>>    5. wrapper loads all CSRs
+>>>>>>>
+>>>>>>> I'd like to propose instead that the enclave be responsible for saving
+>>>>>>> and restoring CSRs. So instead of the above we have:
+>>>>>>>    1. __vdso_sgx_enter_enclave() saves %rbx
+>>>>>>>    2. enclave saves CSRs
+>>>>>>>    3. enclave loads CSRs
+>>>>>>>    4. __vdso_sgx_enter_enclave() loads %rbx
+>>>>>>>
+>>>>>>> I know that lots of other stuff happens during enclave transitions,
+>>>>>>> but at the very least we could reduce the number of instructions
+>>>>>>> through this critical path.
+>>>>>>
+>>>>>> What Jethro said and also that it is a good general principle to cut
+>>>>>> down the semantics of any vdso as minimal as possible.
+>>>>>>
+>>>>>> I.e. even if saving RBX would make somehow sense it *can* be left
+>>>>>> out without loss in terms of what can be done with the vDSO.
+>>>>>
+>>>>> Please read the rest of the thread. Sean and I have hammered out some
+>>>>> sensible and effective changes.
+>>>>
+>>>> Have skimmed through that discussion but it comes down how much you get
+>>>> by obviously degrading some of the robustness. Complexity of the calling
+>>>> pattern is not something that should be emphasized as that is something
+>>>> that is anyway hidden inside the runtime.
+>>>
+>>> My suggestions explicitly maintained robustness, and in fact increased
+>>> it. If you think we've lost capability, please speak with specificity
+>>> rather than in vague generalities. Under my suggestions we can:
+>>> 1. call the vDSO from C
+>>> 2. pass context to the handler
+>>> 3. have additional stack manipulation options in the handler
+>>>
+>>> The cost for this is a net 2 additional instructions. No existing
+>>> capability is lost.
+>>
+>> My vague generality in this case is just that the whole design
+>> approach so far has been to minimize the amount of wrapping to
+>> EENTER.
+> 
+> Yes and no.   If we wanted to minimize the amount of wrapping around the
+> vDSO's ENCLU then we wouldn't have the exit handler shenanigans in the
+> first place.  The whole process has been about balancing the wants of each
+> use case against the overall quality of the API and code.
+> 
+The design of this vDSO API was NOT to minimize wrapping, but to allow 
+maximal flexibility. More specifically, we strove not to restrict how 
+info was exchanged between the enclave and its host process. After all, 
+calling convention is compiler specific - i.e. the enclave could be 
+built by a different compiler (e.g. MSVC) that doesn't share the same 
+list of CSRs as the host process. Therefore, the API has been 
+implemented to pass through virtually all registers except those used by 
+EENTER itself. Similarly, all registers are passed back from enclave to 
+the caller (or the exit handler) except those used by EEXIT. %rbp is an 
+exception because the vDSO API has to anchor the stack, using either 
+%rsp or %rbp. We picked %rbp to allow the enclave to allocate space on 
+the stack.
