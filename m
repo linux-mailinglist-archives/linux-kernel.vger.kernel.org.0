@@ -2,96 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D09781869F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 12:22:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE0941869FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 12:22:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730801AbgCPLWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 07:22:13 -0400
-Received: from foss.arm.com ([217.140.110.172]:46470 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730734AbgCPLWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 07:22:12 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A8FC430E;
-        Mon, 16 Mar 2020 04:22:11 -0700 (PDT)
-Received: from mbp (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8238C3F52E;
-        Mon, 16 Mar 2020 04:22:08 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 11:22:06 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        clang-built-linux@googlegroups.com, x86@kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Burton <paul.burton@mips.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Collingbourne <pcc@google.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v3 18/26] arm64: Introduce asm/vdso/processor.h
-Message-ID: <20200316112205.GE3005@mbp>
-References: <20200313154345.56760-1-vincenzo.frascino@arm.com>
- <20200313154345.56760-19-vincenzo.frascino@arm.com>
- <20200315182950.GB32205@mbp>
- <c2c0157a-107a-debf-100f-0d97781add7c@arm.com>
- <20200316103437.GD3005@mbp>
- <77a2e91a-58f4-3ba3-9eef-42d6a8faf859@arm.com>
+        id S1730837AbgCPLW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 07:22:58 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:44526 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730734AbgCPLW6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 07:22:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584357777;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wZZ2dippKQdWRoE3jMgjrBrkll2rLCagVzHWW7VSO5s=;
+        b=hZ+Tl7GotrDSQJbBmc0hYAa8VG8Pj9RDAAUGYBJTaModiu950rdcY0B/GQnbbHkQPb/irT
+        O8gNwHhvgPj3CpToNl6Os6xyGB1vT8g/ZNZIVGKJeSK1MptjsWpTk5ZukvCegitgr6gDn8
+        4HMpgta1SBW6zf44puC71jp1GnEBLPw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-153-saTImSekPXiARTvR7zgBlw-1; Mon, 16 Mar 2020 07:22:54 -0400
+X-MC-Unique: saTImSekPXiARTvR7zgBlw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4BCBB107ACC4;
+        Mon, 16 Mar 2020 11:22:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AE3077388E;
+        Mon, 16 Mar 2020 11:22:45 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200315212706.GE224162@linux.intel.com>
+References: <20200315212706.GE224162@linux.intel.com> <20200313152102.1707-1-longman@redhat.com> <20200313152102.1707-2-longman@redhat.com> <20200315192104.GD224162@linux.intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     dhowells@redhat.com, Waiman Long <longman@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Chris von Recklinghausen <crecklin@redhat.com>
+Subject: Re: [PATCH v3 1/3] KEYS: Don't write out to userspace while holding key semaphore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77a2e91a-58f4-3ba3-9eef-42d6a8faf859@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1793252.1584357764.1@warthog.procyon.org.uk>
+Date:   Mon, 16 Mar 2020 11:22:44 +0000
+Message-ID: <1793253.1584357764@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 10:55:00AM +0000, Vincenzo Frascino wrote:
-> On 3/16/20 10:34 AM, Catalin Marinas wrote:
-> >> I tried to fine grain the headers as much as I could in order to avoid
-> >> unneeded/unwanted inclusions:
-> >>  * TASK_SIZE_32 is used to verify ABI consistency on vdso32 (please refer to
-> >>    arch/arm64/kernel/vdso32/vgettimeofday.c).
-> > 
-> > I see. But the test is probably useless. With 4K pages, TASK_SIZE_32 is
-> > 1UL << 32, so you can't have a u32 greater than this. So I'd argue that
-> > the ABI compatibility here doesn't matter.
-> > 
-> > With 16K or 64K pages, TASK_SIZE_32 is slightly smaller but arm32 never
-> > supported it.
-> > 
-> > What's the side-effect of dropping this check altogether?
-> 
-> The main side-effect is that arm32 and arm64 compat have a different behavior,
-> that it is what we want to avoid.
-> 
-> The vdsotest [1] I am using, verifies all the side conditions with respect to
-> the ABI, which we are now compatible with. Removing those checks would break
-> this condition.
+Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
 
-As I said above, I don't see how removing 'if ((u32)ts >= (1UL << 32))'
-makes any difference. This check was likely removed by the compiler
-already.
+> I guess we cannot sanely define fixes tag for this one, can we?
 
-Also, userspace doesn't have a trivial way to figure out TASK_SIZE and I
-can't see anything that tests this in the vdsotest (though I haven't
-spent that much time looking). If it's hard-coded, note that arm32
-TASK_SIZE is different from TASK_SIZE_32 on arm64.
+Use:
 
-Can you tell what actually is failing in vdsotest if you remove the
-TASK_SIZE_32 checks in the arm64 compat vdso?
+	Fixes: ^1da177e4c3f4 ("Linux-2.6.12-rc2")
 
--- 
-Catalin
+David
+
