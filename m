@@ -2,91 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1550918749B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 22:16:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAFA21874A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 22:19:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732691AbgCPVQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 17:16:49 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:48872 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732634AbgCPVQt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 17:16:49 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02GLGk5I053421;
-        Mon, 16 Mar 2020 16:16:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584393406;
-        bh=auIeyhTBM5VkG3uumINphWmH9dle8E51uTezycsVdfw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=AW2GJDjDqJALwoiACZrVEaZ547mHy7rGecQNGU7yiSaOnmjRGQXae6HVSf3WZLgqh
-         p/vEpeiN9SwW7v/0GRuIBepJQP0m+/OnaaaveMWGhcXE/NrEpSXaxe1622zZn2q8Jf
-         Jc3UpgovJzlR0msqclGmu5V8oOF+fWC9ITLliKe8=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02GLGkP3032895
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 16 Mar 2020 16:16:46 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 16
- Mar 2020 16:16:45 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 16 Mar 2020 16:16:46 -0500
-Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02GLGgmi060747;
-        Mon, 16 Mar 2020 16:16:43 -0500
-Subject: Re: [for-next PATCH v2 1/5] phy: ti: gmii-sel: simplify config
- dependencies between net drivers and gmii phy
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-CC:     Murali Karicheri <m-karicheri2@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sekhar Nori <nsekhar@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        netdev <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200303160029.345-1-grygorii.strashko@ti.com>
- <20200303160029.345-2-grygorii.strashko@ti.com>
- <20200316140859.GA30922@a0393678ub>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <128961a1-8437-741d-96cc-ed24b790cabf@ti.com>
-Date:   Mon, 16 Mar 2020 23:16:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20200316140859.GA30922@a0393678ub>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        id S1732676AbgCPVTJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 17:19:09 -0400
+Received: from mail-eopbgr70051.outbound.protection.outlook.com ([40.107.7.51]:21138
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732567AbgCPVTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 17:19:09 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DC++W2T3HnG2jOAGEf8aYzuSjtE6ruz0KoJhw/GK7zVCCB++onwSYH2DXjfnHqfK314W24GxNVWFE3Mx/hW2zTs3XGRISdP8W0T2sfaf8UmnoVYDiA9uVOP1B7QoR2lmef8ziRDieAEMum4Hog0l7N9r8c8omNtljankGfPSB9GI45F/muTzkJwgIQugzCLINaETLqpgutNMsGtmqOYA4jY7XApBWJZddJD6j4DipiI1AtEbOSDTfbjbtC/K8IPnepT4lJT3shSGVpCm1cC2cvciFxy997Q2mtYVZcDEOfiZGSdcAxtB57boi8txsKZqisCInFJ1UCNaf2OMG8ykOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1mHpFbhKjLPCe2gTl73mXkphR6XLMS7I7gQxSFBVRRg=;
+ b=VqoqmCA4bnYtnrbCpoyuN3+r7xDbjNHciSC7t9AY1T6TsYU8bBDixxzprQK/PVS0n03JcGjWpajRgWjPW+9Bu/S+PMmClFT57peqkjQyhkyUkb4jAzrPRRG9LDngVgKBCrov2h0v5j0y33nU/CwkqVQPZcwKC1RVkNV7YQP0XqLr5KHiL7iVrEbR3QK4yjnaIAdFL06SIqRF6h+m87hSY/7kRHwqLUknHNi+KDUVhp/xWgSUEGSgdYFGZnyUcRViXhXR0kawFqXcg9J0zdlclEjahAgA19OMJv6CuHjHumCnpu+B/VXSwrp0hBS9sz9s24qFVISgLofH51sOoq85qA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1mHpFbhKjLPCe2gTl73mXkphR6XLMS7I7gQxSFBVRRg=;
+ b=W3QBmfns9h/NDx/pJrNS4JPqEya1+iuAg/557sD+ll8LVv5dUtsgOy/74Gg733uO0CdYu4Q8fOQMFyXzh2w8kQE0WZRAfuOLd6P6Bp2VHyHgLs/SphHTKZO8A2J1JM+efcS7iWaa63kk5ZhmEKSjvvQrPhuMfJymF0hQdpPz+7w=
+Received: from VI1PR05MB5102.eurprd05.prod.outlook.com (20.177.51.151) by
+ VI1PR05MB4926.eurprd05.prod.outlook.com (20.177.52.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.22; Mon, 16 Mar 2020 21:19:05 +0000
+Received: from VI1PR05MB5102.eurprd05.prod.outlook.com
+ ([fe80::8cea:6c66:19fe:fbc2]) by VI1PR05MB5102.eurprd05.prod.outlook.com
+ ([fe80::8cea:6c66:19fe:fbc2%7]) with mapi id 15.20.2793.023; Mon, 16 Mar 2020
+ 21:19:05 +0000
+From:   Saeed Mahameed <saeedm@mellanox.com>
+To:     "yuehaibing@huawei.com" <yuehaibing@huawei.com>,
+        Jiri Pirko <jiri@mellanox.com>, Roi Dayan <roid@mellanox.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Oz Shlomo <ozsh@mellanox.com>,
+        "leon@kernel.org" <leon@kernel.org>,
+        Paul Blakey <paulb@mellanox.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] net/mlx5e: CT: remove set but not used variable
+ 'unnew'
+Thread-Topic: [PATCH net-next] net/mlx5e: CT: remove set but not used variable
+ 'unnew'
+Thread-Index: AQHV+e4JaUSaLigfdEmB/1IwmiaykKhLvRgA
+Date:   Mon, 16 Mar 2020 21:19:05 +0000
+Message-ID: <d5acf4f27a5438d40ba5f53ec9cb498742202576.camel@mellanox.com>
+References: <20200314104446.54364-1-yuehaibing@huawei.com>
+In-Reply-To: <20200314104446.54364-1-yuehaibing@huawei.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=saeedm@mellanox.com; 
+x-originating-ip: [73.15.39.150]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 0ab72745-7533-417e-16a6-08d7c9efa88a
+x-ms-traffictypediagnostic: VI1PR05MB4926:|VI1PR05MB4926:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR05MB49264AA2279B5DD71D3E5FA6BEF90@VI1PR05MB4926.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1148;
+x-forefront-prvs: 03449D5DD1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(346002)(376002)(136003)(366004)(199004)(76116006)(110136005)(6486002)(2906002)(4744005)(5660300002)(54906003)(8676002)(81156014)(81166006)(6636002)(478600001)(8936002)(91956017)(316002)(36756003)(66946007)(186003)(66476007)(86362001)(26005)(71200400001)(6506007)(66446008)(4326008)(64756008)(66556008)(6512007)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB4926;H:VI1PR05MB5102.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: +OjH6zUnz4hmohebetZWjAGrr5snuq2HExLnfh4ttFdIUiOhlv/G6WWdoRjzxnmKNmXGBQiD591twyEmoyibpKBNy6qMJOHQ6sE6PnnGtahxd0asrvj8GOe8JW7CiADGAYWJGszvqmEqeGwJZiZ5De1zcP5npKzJrcaNRz54as2EAvPtr6RP0c8nFH53urFX9PYL6dg1lvyNXgx+eB2mMCdyigSIWyk+NVI+1zVzdfchvRaSmq3r9EggmQPQ05WRKolIWWfnNqFt9b/SN6Vs66JMLNKHjffYCrybauGOB5DrXpv+TsQ8leiGngPYmHuUuqmclcfOk/8oevyu3XjX0MYnnrbf2Iy+LK4MhmVl7WYCLWMMrTHNf+P0XNIJ1xWnaNiy7j59SdiY8iS9W8gRgs8mvSBJrqtHkjEEdPa4ewoH38c2k78hEYySqknjhvsX
+x-ms-exchange-antispam-messagedata: MHfDNXeXdb51WkXBYHUIPwxqvzMwNAwIVctr0npTM0FFdGx9xNjwLCB2A9kPbujJGaIxaewABe958asXctH0G0clbBrS8vdqhw18K1gLfF4UKd+scj81KInyQiL7/IpvShEv1w0l1EI0Jn6m8SSWPQ==
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <512337F70B95A048AD76561F50EDE3B7@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ab72745-7533-417e-16a6-08d7c9efa88a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Mar 2020 21:19:05.6894
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: M9T4tHtCuvy8PeWURs2eWFlhfZZ7GGo613t43Wu7Iw23gwU1/j1PXKWY96q5pQxVU2tkjRr7kEbZZbxNf6vSFg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB4926
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 16/03/2020 16:08, Kishon Vijay Abraham I wrote:
-> On Tue, Mar 03, 2020 at 06:00:25PM +0200, Grygorii Strashko wrote:
->> The phy-gmii-sel can be only auto selected in Kconfig and now the pretty
->> complex Kconfig dependencies are defined for phy-gmii-sel driver, which
->> also need to be updated every time phy-gmii-sel is re-used for any new
->> networking driver.
->>
->> Simplify Kconfig definition for phy-gmii-sel PHY driver - drop all
->> dependencies and from networking drivers and rely on using 'imply
->> PHY_TI_GMII_SEL' in Kconfig definitions for networking drivers instead.
->>
->> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> 
-> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
-
-Thanks you, Kishon.
-
-I'll include this patch in next version of my series to
-add networking support for k3 am65x/j721e soc.
-
--- 
-Best regards,
-grygorii
+T24gU2F0LCAyMDIwLTAzLTE0IGF0IDE4OjQ0ICswODAwLCBZdWVIYWliaW5nIHdyb3RlOg0KPiBk
+cml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZW4vdGNfY3QuYzoNCj4gIElu
+IGZ1bmN0aW9uIG1seDVfdGNfY3RfcGFyc2VfbWF0Y2g6DQo+IGRyaXZlcnMvbmV0L2V0aGVybmV0
+L21lbGxhbm94L21seDUvY29yZS9lbi90Y19jdC5jOjY5OTozNjogd2FybmluZzoNCj4gIHZhcmlh
+YmxlIHVubmV3IHNldCBidXQgbm90IHVzZWQgWy1XdW51c2VkLWJ1dC1zZXQtdmFyaWFibGVdDQo+
+IA0KPiBjb21taXQgNGMzODQ0ZDllOTdlICgibmV0L21seDVlOiBDVDogSW50cm9kdWNlIGNvbm5l
+Y3Rpb24gdHJhY2tpbmciKQ0KPiBpbnZvbGVkIHRoaXMgdW51c2VkIHZhcmlhYmxlLCByZW1vdmUg
+aXQuDQo+IA0KDQpJIHRvb2sgdGhlIGxpYmVydHkgdG8gZml4IHRoaXMgdG8gYSBwcm9wZXIgIkZp
+eGVzOiIgdGFnLg0KDQpBcHBsaWVkIHRvIG5ldC1uZXh0LW1seDUNCg0KVGhhbmtzLA0KU2FlZWQu
+DQoNCg==
