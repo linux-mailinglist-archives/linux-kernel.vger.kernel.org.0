@@ -2,106 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2520F186F98
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:04:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D44E186FD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:16:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731977AbgCPQE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 12:04:56 -0400
-Received: from foss.arm.com ([217.140.110.172]:51308 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731674AbgCPQEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 12:04:55 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE4C71FB;
-        Mon, 16 Mar 2020 09:04:54 -0700 (PDT)
-Received: from [10.37.9.38] (unknown [10.37.9.38])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D35C33F534;
-        Mon, 16 Mar 2020 09:04:49 -0700 (PDT)
-Subject: Re: [PATCH v3 18/26] arm64: Introduce asm/vdso/processor.h
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        clang-built-linux@googlegroups.com, x86@kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Burton <paul.burton@mips.com>,
+        id S1732101AbgCPQQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 12:16:42 -0400
+Received: from mail.fudan.edu.cn ([202.120.224.73]:55131 "EHLO fudan.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732009AbgCPQQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 12:16:42 -0400
+X-Greylist: delayed 409 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Mar 2020 12:16:40 EDT
+Received: from localhost.localdomain (unknown [61.129.42.58])
+        by app2 (Coremail) with SMTP id XQUFCgAnLTmzpG9egfZIBQ--.6846S3;
+        Tue, 17 Mar 2020 00:09:24 +0800 (CST)
+From:   Xiyu Yang <xiyuyang19@fudan.edu.cn>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Xiyu Yang <xiyuyang19@fudan.edu.cn>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Collingbourne <pcc@google.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Will Deacon <will@kernel.org>
-References: <20200313154345.56760-1-vincenzo.frascino@arm.com>
- <20200313154345.56760-19-vincenzo.frascino@arm.com>
- <20200315182950.GB32205@mbp> <c2c0157a-107a-debf-100f-0d97781add7c@arm.com>
- <20200316103437.GD3005@mbp> <77a2e91a-58f4-3ba3-9eef-42d6a8faf859@arm.com>
- <20200316112205.GE3005@mbp> <9a0a9285-8a45-4f65-3a83-813cabd0f0d3@arm.com>
- <20200316144346.GF3005@mbp> <427064ee-45df-233c-0281-69e3d62ba784@arm.com>
- <20200316154930.GG3005@mbp>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <53eb7809-9da8-33e5-540f-7546de51b53d@arm.com>
-Date:   Mon, 16 Mar 2020 16:05:17 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200316154930.GG3005@mbp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        linux-kernel@vger.kernel.org
+Cc:     yuanxzhang@fudan.edu.cn, kjlu@umn.edu,
+        Xin Tan <tanxin.ctf@gmail.com>
+Subject: [PATCH] VMCI: Fix dereference before NULL-check of context ptr
+Date:   Tue, 17 Mar 2020 00:05:51 +0800
+Message-Id: <1584374754-9515-1-git-send-email-xiyuyang19@fudan.edu.cn>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: XQUFCgAnLTmzpG9egfZIBQ--.6846S3
+X-Coremail-Antispam: 1UD129KBjvdXoWruFy3Gry8Wr13KF4UZw17GFg_yoWfGFc_Wa
+        45WFsrJr4FkFnI9wnrArnxZryrtFZ3Zr1xG3Wq9343JFW29w13JF1qvr9xJr43urZrtFnr
+        Jr4qka4Sy3y2kjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbTkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
+        3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+        1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
+        vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
+        4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc2xSY4AK67AK6r1l42xK82IYc2Ij64vIr41l4I
+        8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
+        xVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
+        AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
+        cIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
+        0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU0_M3UUUUU=
+X-CM-SenderInfo: irzsiiysuqikmy6i3vldqovvfxof0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/16/20 3:49 PM, Catalin Marinas wrote:
-> On Mon, Mar 16, 2020 at 03:33:30PM +0000, Vincenzo Frascino wrote:
->> On 3/16/20 2:43 PM, Catalin Marinas wrote[...]
-[...]
-> 
->> To make it more explicit we could make COMPAT_VDSO on arm64 depend on
->> ARM64_4K_PAGES. What do you think?
-> 
-> No, I don't see why we should add this limitation.
-> 
+A NULL pointer can be returned by vmci_ctx_get(). Thus add a
+corresponding check so that a NULL pointer dereference will
+be avoided in vmci_ctx_put().
 
-Fine by me.
+Signed-off-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
+Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
+---
+ drivers/misc/vmw_vmci/vmci_queue_pair.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
->>>> Please find below the list of errors for clock_gettime (similar for the other):
->>>>
->>>> passing UINTPTR_MAX to clock_gettime (VDSO): terminated by unexpected signal 7
->>>> clock-gettime-monotonic/abi: 1 failures/inconsistencies encountered
->>>
->>> Ah, so it uses UINTPTR_MAX in the test. Fair enough but I don't think
->>> the arm64 check is entirely useful. On arm32, the check was meant to
->>> return -EFAULT for addresses beyond TASK_SIZE that may enter into the
->>> kernel or module space. On arm64 compat, the kernel space is well above
->>> the reach of the 32-bit code.
->>>
->>> If you want to preserve some compatibility for this specific test, what
->>> about checking for wrapping around 0, I think it would make more sense.
->>> Something like:
->>>
->>> 	if ((u32)ts > UINTPTR_MAX - sizeof(*ts) + 1)
->>
->> Ok, sounds good to me. But it is something that this patch series inherited,
->> hence I would prefer to send a separate patch that introduces what you are
->> proposing and removes TASK_SIZE_32 from the headers. How does it sound?
-> 
-> I'd rather avoid moving TASK_SIZE_32 unnecessarily. Just add a
-> preparatory patch to your series for arm64 compat vdso and follow with
-> the rest without moving TASK_SIZE_32 around.
-> 
-
-Ok, sounds good. I will test it and repost.
-
+diff --git a/drivers/misc/vmw_vmci/vmci_queue_pair.c b/drivers/misc/vmw_vmci/vmci_queue_pair.c
+index 8531ae781195..032617101ebc 100644
+--- a/drivers/misc/vmw_vmci/vmci_queue_pair.c
++++ b/drivers/misc/vmw_vmci/vmci_queue_pair.c
+@@ -1859,7 +1859,8 @@ static int qp_detatch_host_work(struct vmci_handle handle)
+ 
+ 	result = vmci_qp_broker_detach(handle, context);
+ 
+-	vmci_ctx_put(context);
++	if (context)
++		vmci_ctx_put(context);
+ 	return result;
+ }
+ 
 -- 
-Regards,
-Vincenzo
+2.7.4
+
