@@ -2,78 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B23218694D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:43:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0F35186955
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:45:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730685AbgCPKnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 06:43:53 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:44858 "EHLO mail.skyhub.de"
+        id S1730712AbgCPKpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 06:45:30 -0400
+Received: from verein.lst.de ([213.95.11.211]:53699 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730582AbgCPKnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 06:43:53 -0400
-Received: from zn.tnic (p200300EC2F06AB0069F33882ABEAD541.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:ab00:69f3:3882:abea:d541])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 98ED41EC0CC5;
-        Mon, 16 Mar 2020 11:43:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1584355431;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=vWCrpYpiEQlq/JlZoyOrf+wSGtGepOt385jU76a55Tk=;
-        b=M/QdTmpKfwlKaOhV5MQf0U5wXe4mam+nTnLNBgPer82TzkrRcs6jgk1CCTEA0ckoDN+GAm
-        ff5wie5Aq+vu9IC7nrnlJuJfxrCj/UKqXC4LJNtIqBnFKDDKs6Fc9MxdTXhUHl5oo4YZcz
-        DDqwcSzpGvpqg+tl/sPhpNmLUu+cqKI=
-Date:   Mon, 16 Mar 2020 11:43:56 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sherry Sun <sherry.sun@nxp.com>
-Cc:     "mchehab@kernel.org" <mchehab@kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "rrichter@marvell.com" <rrichter@marvell.com>,
-        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        "manish.narani@xilinx.com" <manish.narani@xilinx.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>, Frank Li <frank.li@nxp.com>
-Subject: Re: [PATCH v2] EDAC: synopsys: Fix the wrong call of pinf->col
- parameter
-Message-ID: <20200316104356.GH26126@zn.tnic>
-References: <1582856183-5007-1-git-send-email-sherry.sun@nxp.com>
- <20200315195024.GB10926@zn.tnic>
- <AM6PR04MB658495A13744517A6E263D2292F90@AM6PR04MB6584.eurprd04.prod.outlook.com>
+        id S1730478AbgCPKpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 06:45:30 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 7B75168CEC; Mon, 16 Mar 2020 11:45:27 +0100 (CET)
+Date:   Mon, 16 Mar 2020 11:45:27 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     robin.murphy@arm.com, m.szyprowski@samsung.com, hch@lst.de,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: Re: [RFC][PATCH] dma-mapping: align default segment_boundary_mask
+ with dma_mask
+Message-ID: <20200316104526.GA14735@lst.de>
+References: <20200314000007.13778-1-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AM6PR04MB658495A13744517A6E263D2292F90@AM6PR04MB6584.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200314000007.13778-1-nicoleotsuka@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 01:30:39AM +0000, Sherry Sun wrote:
-> Maybe you misunderstood the handle_error(), this function has already 
-> distinguished between Zynq and ZynqMP through priv->p_data->quirks.
-> And what I am doing in this patch is to remove the useless pinf->col in ZynqMP
-> part, which won't break the Zynq part.
-
-Ok, I see it now, thanks for clarifying.
-
-Now, in your v2 pls fix this check in handle_error():
-
-	if (!priv->p_data->quirks) {
-
-to *actually* *explicitly* check that the platform for which
-this function is called, really supports interrupts, i.e.,
-DDR_ECC_INTR_SUPPORT, and not that the ->quirks thing is != 0. Like the
-rest of the code does.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+I'm tempted to apply this, athough we it has the risk of introducing
+regression.  Robin, Mark: any comments?
