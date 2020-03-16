@@ -2,106 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A88318650E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 07:35:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EA74186536
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 07:49:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729711AbgCPGfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 02:35:02 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:58198 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729504AbgCPGfC (ORCPT
+        id S1729772AbgCPGtf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 02:49:35 -0400
+Received: from aliyun-cloud.icoremail.net ([47.90.88.91]:42139 "HELO
+        aliyun-sdnproxy-2.icoremail.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with SMTP id S1729319AbgCPGtf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 02:35:02 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584340501; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=OwErceFW23ZNn6eud/cydjRhiFjDFARC1CNzkO9VKPQ=;
- b=w94OkOe6xBHmWWiCNK0Jg9jWgIa/qne4ilK8uX/GsJt2iO6NfAbsFvCPYSnzTckTJEtuQVrn
- 7+PRcCbZ7IhTo1oCDYJNAVrSyZnTn8/Bv09JM2bDQozCH3R4tE+0FVCxkpmxbuF/nRuqQfcV
- WAd7s4AFKiyp30tgfK0K1FKNr4E=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6f1e09.7f229e20b3b0-smtp-out-n05;
- Mon, 16 Mar 2020 06:34:49 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 6ECA7C44791; Mon, 16 Mar 2020 06:34:48 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id F0662C433D2;
-        Mon, 16 Mar 2020 06:34:41 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 16 Mar 2020 14:34:41 +0800
-From:   Can Guo <cang@codeaurora.org>
-To:     Stanley Chu <stanley.chu@mediatek.com>
-Cc:     linux-scsi@vger.kernel.org, martin.peter~sen@oracle.com,
-        avri.altman@wdc.com, alim.akhtar@samsung.com, jejb@linux.ibm.com,
-        beanhuo@micron.com, asutoshd@codeaurora.org,
-        matthias.bgg@gmail.com, bvanassche@acm.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kuohong.wang@mediatek.com, peter.wang@mediatek.com,
-        chun-hung.wu@mediatek.com, andy.teng@mediatek.com
-Subject: Re: [PATCH v5 7/8] scsi: ufs: make HCE polling more compact to
- improve initialization latency
-In-Reply-To: <20200316034218.11914-8-stanley.chu@mediatek.com>
-References: <20200316034218.11914-1-stanley.chu@mediatek.com>
- <20200316034218.11914-8-stanley.chu@mediatek.com>
-Message-ID: <b25d211adfe0f14c729dbf4e6eb5e159@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+        Mon, 16 Mar 2020 02:49:35 -0400
+X-Greylist: delayed 359 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Mar 2020 02:49:33 EDT
+Received: from 137.localdomain (unknown [218.107.205.216])
+        by app1 (Coremail) with SMTP id xjNnewDn7Q1cHm9ew20FAA--.217S2;
+        Mon, 16 Mar 2020 14:36:13 +0800 (CST)
+From:   Pengcheng Yang <yangpc@wangsu.com>
+To:     edumazet@google.com, ncardwell@google.com, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Pengcheng Yang <yangpc@wangsu.com>
+Subject: [PATCH RESEND net-next v2 0/5] tcp: fix stretch ACK bugs in congestion control modules
+Date:   Mon, 16 Mar 2020 14:35:06 +0800
+Message-Id: <1584340511-9870-1-git-send-email-yangpc@wangsu.com>
+X-Mailer: git-send-email 1.8.3.1
+X-CM-TRANSID: xjNnewDn7Q1cHm9ew20FAA--.217S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZF1fuF1kWry8GF4rXrW3Awb_yoWDKFbEyF
+        92ga98Gr1UXFWDXayIkrn8Ar90yrWjyr1UXF4Dt3yDt347t34UGr4DtrW8urn7Xa1q9Fy8
+        WrnxtrW8Aw47JjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbO8Fc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wA2ocxC64kI
+        II0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7
+        xvwVC0I7IYx2IY6xkF7I0E14v26rxl6s0DM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84AC
+        jcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrV
+        ACY4xI64kE6c02F40Ex7xfMcIj6x8ErcxFaVAv8VW8GwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
+        F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8AwCF04
+        k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r48MxC20s026xCaFVCjc4AY6r1j6r4U
+        MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67
+        AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0
+        cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcV
+        C2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kfnx
+        nUUI43ZEXa7VU00PfPUUUUU==
+X-CM-SenderInfo: p1dqw1nf6zt0xjvxhudrp/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-03-16 11:42, Stanley Chu wrote:
-> Reduce the waiting period between each HCE (Host Controller Enable)
-> polling from 5 ms to 1 ms. In the same time, increase the maximum 
-> polling
-> times to make "total polling time" unchanged approximately.
-> 
-> This change could make HCE initializatoin faster to improve latency of
-> ufshcd initialization, error recovery, and resume behaviors.
-> 
-> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-> Reviewed-by: Avri Altman <avri.altman@wdc.com>
+"stretch ACKs" (caused by LRO, GRO, delayed ACKs or middleboxes)
+can cause serious performance shortfalls in common congestion
+control algorithms. Neal Cardwell submitted a series of patches
+starting with commit e73ebb0881ea ("tcp: stretch ACK fixes prep")
+to handle stretch ACKs and fixed stretch ACK bugs in Reno and
+CUBIC congestion control algorithms.
 
-Reviewed-by: Can Guo <cang@codeaurora.org>
+This patch series continues to fix bic, scalable, veno and yeah
+congestion control algorithms to handle stretch ACKs.
 
-> ---
->  drivers/scsi/ufs/ufshcd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index dcbf45d547d8..cd33d07c56cf 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -4301,7 +4301,7 @@ int ufshcd_hba_enable(struct ufs_hba *hba)
->  	ufshcd_wait_us(hba->hba_enable_delay_us, 100, true);
-> 
->  	/* wait for the host controller to complete initialization */
-> -	retry = 10;
-> +	retry = 50;
->  	while (ufshcd_is_hba_active(hba)) {
->  		if (retry) {
->  			retry--;
-> @@ -4310,7 +4310,7 @@ int ufshcd_hba_enable(struct ufs_hba *hba)
->  				"Controller enable failed\n");
->  			return -EIO;
->  		}
-> -		ufshcd_wait_us(5000, 100, true);
-> +		ufshcd_wait_us(1000, 100, true);
->  	}
-> 
->  	/* enable UIC related interrupts */
+Changes in v2:
+- Provide [PATCH 0/N] to describe the modifications of this patch series
+
+Pengcheng Yang (5):
+  tcp: fix stretch ACK bugs in BIC
+  tcp: fix stretch ACK bugs in Scalable
+  tcp: stretch ACK fixes in Veno prep
+  tcp: fix stretch ACK bugs in Veno
+  tcp: fix stretch ACK bugs in Yeah
+
+ net/ipv4/tcp_bic.c      | 11 ++++++-----
+ net/ipv4/tcp_scalable.c | 17 +++++++++--------
+ net/ipv4/tcp_veno.c     | 47 +++++++++++++++++++++++++----------------------
+ net/ipv4/tcp_yeah.c     | 41 +++++++++++------------------------------
+ 4 files changed, 51 insertions(+), 65 deletions(-)
+
+-- 
+1.8.3.1
+
