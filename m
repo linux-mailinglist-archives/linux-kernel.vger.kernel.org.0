@@ -2,122 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32670186508
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 07:33:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF973186520
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 07:40:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729690AbgCPGdj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 02:33:39 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:32883 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729407AbgCPGdj (ORCPT
+        id S1729652AbgCPGkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 02:40:04 -0400
+Received: from jax4mhfb02.myregisteredsite.com ([64.69.218.95]:50964 "EHLO
+        jax4mhfb02.myregisteredsite.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729471AbgCPGkE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 02:33:39 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R981e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TshR7Hp_1584340410;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TshR7Hp_1584340410)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 16 Mar 2020 14:33:31 +0800
-Subject: Re: [PATCH] sched: avoid scale real weight down to zero
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        "open list:SCHEDULER" <linux-kernel@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-References: <bb14528b-08c3-c4c0-5bcf-4bec1d75227a@linux.alibaba.com>
-Message-ID: <b9f775cf-f26a-c76b-681c-126783270ad3@linux.alibaba.com>
-Date:   Mon, 16 Mar 2020 14:33:30 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
- Gecko/20100101 Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <bb14528b-08c3-c4c0-5bcf-4bec1d75227a@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Mon, 16 Mar 2020 02:40:04 -0400
+X-Greylist: delayed 339 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Mar 2020 02:40:02 EDT
+Received: from jax4mhob24.registeredsite.com (jax4mhob24.registeredsite.com [64.69.218.112])
+        by jax4mhfb02.myregisteredsite.com (8.14.4/8.14.4) with ESMTP id 02G6YNt6028187
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 02:34:23 -0400
+Received: from mailpod.hostingplatform.com ([10.30.71.205])
+        by jax4mhob24.registeredsite.com (8.14.4/8.14.4) with ESMTP id 02G6YJ5Y024843
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 02:34:19 -0400
+Received: (qmail 16028 invoked by uid 0); 16 Mar 2020 06:34:19 -0000
+X-TCPREMOTEIP: 83.128.90.119
+X-Authenticated-UID: mike@milosoftware.com
+Received: from unknown (HELO phenom.domain?not?set.invalid) (mike@milosoftware.com@83.128.90.119)
+  by 0 with ESMTPA; 16 Mar 2020 06:34:19 -0000
+From:   Mike Looijmans <mike.looijmans@topic.nl>
+To:     jic23@kernel.org, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        hns@goldelico.com, rui.silva@linaro.org,
+        Mike Looijmans <mike.looijmans@topic.nl>
+Subject: [PATCH] iio/gyro/bmg160: Add support for BMI088 chip
+Date:   Mon, 16 Mar 2020 07:34:03 +0100
+Message-Id: <20200316063403.3094-1-mike.looijmans@topic.nl>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Peter
+The BMI088 is pin-compatible with the BMI055, and provides
+both gyro and accel functions. The gyro part is similar to
+the BMI055 and this adds the chip to the list of supported
+devices for the gyro part.
 
-I've done more complicated testing with share 2 and every thing looks fine.
+The accel part of the chip is not compatible with anything
+existing already.
 
-Should we apply this? or is there any concern?
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+---
+ Documentation/devicetree/bindings/iio/gyroscope/bmg160.txt | 2 +-
+ drivers/iio/gyro/Kconfig                                   | 2 +-
+ drivers/iio/gyro/bmg160_i2c.c                              | 2 ++
+ drivers/iio/gyro/bmg160_spi.c                              | 1 +
+ 4 files changed, 5 insertions(+), 2 deletions(-)
 
-Regards,
-Michael Wang
+diff --git a/Documentation/devicetree/bindings/iio/gyroscope/bmg160.txt b/Documentation/devicetree/bindings/iio/gyroscope/bmg160.txt
+index 78e18a1e9c1d..bb43d1ad9c9f 100644
+--- a/Documentation/devicetree/bindings/iio/gyroscope/bmg160.txt
++++ b/Documentation/devicetree/bindings/iio/gyroscope/bmg160.txt
+@@ -2,7 +2,7 @@
+ 
+ Required properties:
+ 
+-  - compatible : should be "bosch,bmg160" or "bosch,bmi055_gyro"
++  - compatible : should be "bosch,bmg160", "bosch,bmi055_gyro" or "bosch,bmi088_gyro"
+   - reg : the I2C address of the sensor (0x69)
+ 
+ Optional properties:
+diff --git a/drivers/iio/gyro/Kconfig b/drivers/iio/gyro/Kconfig
+index 7eaf77707b0b..6daeddf37f60 100644
+--- a/drivers/iio/gyro/Kconfig
++++ b/drivers/iio/gyro/Kconfig
+@@ -61,7 +61,7 @@ config BMG160
+ 	help
+ 	  Say yes here to build support for BOSCH BMG160 Tri-axis Gyro Sensor
+ 	  driver connected via I2C or SPI. This driver also supports BMI055
+-	  gyroscope.
++	  and BMI088 gyroscope.
+ 
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called bmg160_i2c or bmg160_spi.
+diff --git a/drivers/iio/gyro/bmg160_i2c.c b/drivers/iio/gyro/bmg160_i2c.c
+index 4fc9c6a3321f..de15c6fc3381 100644
+--- a/drivers/iio/gyro/bmg160_i2c.c
++++ b/drivers/iio/gyro/bmg160_i2c.c
+@@ -42,6 +42,7 @@ static int bmg160_i2c_remove(struct i2c_client *client)
+ static const struct acpi_device_id bmg160_acpi_match[] = {
+ 	{"BMG0160", 0},
+ 	{"BMI055B", 0},
++	{"BMI088B", 0},
+ 	{},
+ };
+ 
+@@ -50,6 +51,7 @@ MODULE_DEVICE_TABLE(acpi, bmg160_acpi_match);
+ static const struct i2c_device_id bmg160_i2c_id[] = {
+ 	{"bmg160", 0},
+ 	{"bmi055_gyro", 0},
++	{"bmi088_gyro", 0},
+ 	{}
+ };
+ 
+diff --git a/drivers/iio/gyro/bmg160_spi.c b/drivers/iio/gyro/bmg160_spi.c
+index 182a59c42507..03e80bb2601a 100644
+--- a/drivers/iio/gyro/bmg160_spi.c
++++ b/drivers/iio/gyro/bmg160_spi.c
+@@ -37,6 +37,7 @@ static int bmg160_spi_remove(struct spi_device *spi)
+ static const struct spi_device_id bmg160_spi_id[] = {
+ 	{"bmg160", 0},
+ 	{"bmi055_gyro", 0},
++	{"bmi088_gyro", 0},
+ 	{}
+ };
+ 
+-- 
+2.17.1
 
-On 2020/3/5 上午10:57, 王贇 wrote:
-> During our testing, we found a case that shares no longer
-> working correctly, the cgroup topology is like:
-> 
->   /sys/fs/cgroup/cpu/A		(shares=102400)
->   /sys/fs/cgroup/cpu/A/B	(shares=2)
->   /sys/fs/cgroup/cpu/A/B/C	(shares=1024)
-> 
->   /sys/fs/cgroup/cpu/D		(shares=1024)
->   /sys/fs/cgroup/cpu/D/E	(shares=1024)
->   /sys/fs/cgroup/cpu/D/E/F	(shares=1024)
-> 
-> The same benchmark is running in group C & F, no other tasks are
-> running, the benchmark is capable to consumed all the CPUs.
-> 
-> We suppose the group C will win more CPU resources since it could
-> enjoy all the shares of group A, but it's F who wins much more.
-> 
-> The reason is because we have group B with shares as 2, since
-> A->cfs_rq.load.weight == B->se.load.weight == B->shares/nr_cpus,
-> so A->cfs_rq.load.weight become very small.
-> 
-> And in calc_group_shares() we calculate shares as:
-> 
->   load = max(scale_load_down(cfs_rq->load.weight), cfs_rq->avg.load_avg);
->   shares = (tg_shares * load) / tg_weight;
-> 
-> Since the 'cfs_rq->load.weight' is too small, the load become 0
-> after scale down, although 'tg_shares' is 102400, shares of the se
-> which stand for group A on root cfs_rq become 2.
-> 
-> While the se of D on root cfs_rq is far more bigger than 2, so it
-> wins the battle.
-> 
-> Thus when scale_load_down() scale real weight down to 0, it's no
-> longer telling the real story, the caller will have the wrong
-> information and the calculation will be buggy.
-> 
-> This patch add check in scale_load_down(), so the real weight will
-> be >= MIN_SHARES after scale, after applied the group C wins as
-> expected.
-> 
-> Cc: Ben Segall <bsegall@google.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
-> ---
->  kernel/sched/sched.h | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 2a0caf394dd4..75c283f22256 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -118,7 +118,13 @@ extern long calc_load_fold_active(struct rq *this_rq, long adjust);
->  #ifdef CONFIG_64BIT
->  # define NICE_0_LOAD_SHIFT	(SCHED_FIXEDPOINT_SHIFT + SCHED_FIXEDPOINT_SHIFT)
->  # define scale_load(w)		((w) << SCHED_FIXEDPOINT_SHIFT)
-> -# define scale_load_down(w)	((w) >> SCHED_FIXEDPOINT_SHIFT)
-> +# define scale_load_down(w) \
-> +({ \
-> +	unsigned long __w = (w); \
-> +	if (__w) \
-> +		__w = max(MIN_SHARES, __w >> SCHED_FIXEDPOINT_SHIFT); \
-> +	__w; \
-> +})
->  #else
->  # define NICE_0_LOAD_SHIFT	(SCHED_FIXEDPOINT_SHIFT)
->  # define scale_load(w)		(w)
-> 
