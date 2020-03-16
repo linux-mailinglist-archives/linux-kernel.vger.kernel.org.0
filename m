@@ -2,75 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE87C1861AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 03:33:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2741218618C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 03:33:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729607AbgCPCdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 22:33:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36350 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729563AbgCPCdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 22:33:36 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0DD0206E9;
-        Mon, 16 Mar 2020 02:33:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584326015;
-        bh=+YZAPcAAS0q81TrNb09xZY/jNelvp3jwoe0bSJrRCdE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z2A8ia+tPcRFGnL5qtCDS6AQsrZpvIQiAUTCt1paioi3/XoUARuIqGNPu0uovoW+4
-         vUOtsl29pWiAzOElpxYsQTLNsbKnVI6d28IMJwkGYmuwqqjsYWKdNr8feKJ8PaqkMd
-         S6iU1A4WjRf81zUQIjdOD56QGXMkZuW98dJL7vBs=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Steve French <stfrench@microsoft.com>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org
-Subject: [PATCH AUTOSEL 5.5 13/41] cifs: add missing mount option to /proc/mounts
-Date:   Sun, 15 Mar 2020 22:32:51 -0400
-Message-Id: <20200316023319.749-13-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200316023319.749-1-sashal@kernel.org>
-References: <20200316023319.749-1-sashal@kernel.org>
+        id S1729430AbgCPCdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 22:33:01 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:55362 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729329AbgCPCdA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 22:33:00 -0400
+Received: by mail-pj1-f65.google.com with SMTP id mj6so7281149pjb.5;
+        Sun, 15 Mar 2020 19:32:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LdMG7Y+xU0eu7euegCHI14a27CukttOQVa2zPD7qKFg=;
+        b=qaD+nGz+4req7pisApL3TUgA0bDYUAFYBmMwL+17JsqmYhf05/TQgGkvVW5BleOaVN
+         J/ArPj8zJhtN5OBrAcb/uch4u4bsxOR8JqLHkChDE0m25vx07AYeKrZFaF2O9GjiOWhg
+         hfFwu9EFCbArdNKVZexcfOTlhp9/a/qBSUinhX/YSyraqkhfFulgcR7Pd5bCwR0pO28+
+         nu73c/DvxBaxr/vmey0ww+UOL18TLJ3AFX3k/jonOGvydHwMpqQGER0OlZOKVN7jzFjA
+         mgR+3Y7GiyGKn1ZGiFaXwHuPkpDMYNeR+WmKGPTHtRNQZ0BnbV03/ZGkSi0N4zqokKDG
+         JtGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LdMG7Y+xU0eu7euegCHI14a27CukttOQVa2zPD7qKFg=;
+        b=QEHQd+6zhUH1VGOJ8HCqWQy1Ii70+SziG8FUVB51ImjJouGi1TBjmHgcWVGkbz0ZdX
+         vYyJm0ZbLbyXRPbfA4ryLUfEand4p2/e/fQ8t+0YJCMAQA08M9Wl6V42EzQw9fF6Zcz5
+         b86Wb5UyySV1mZJNnoJrhcPQmUcHhy0fIxTemv3v0CRQn/QVXZ7KNHBmJR1z4lI/fMmU
+         pU2KGscrt6T5u5yaTw9X1eiZ4wB7elEdatXPtL4Gf4LuT8DaRzJypMZcqaqSjFUXsEvp
+         htvoypVpl9QCKih9NgbRlgGR2F4OQKNr74zLnRJQBuHukBjtVaV13/PjPB/W8YtEh3Bq
+         0e2g==
+X-Gm-Message-State: ANhLgQ3T8JujcMZlF+R5Hzxm6qNzL64u7B/wUftzzci1yXepClKT691O
+        iz6gWiXuYA0H7+gh9YMM93Q=
+X-Google-Smtp-Source: ADFU+vvefGbRI50sNUTTuCEtd9NhIpfisHMiyldT0aZLPmtS2/VO55W4NpqcF4zc7qkrvptmGtG9fw==
+X-Received: by 2002:a17:902:b710:: with SMTP id d16mr22228351pls.293.1584325979094;
+        Sun, 15 Mar 2020 19:32:59 -0700 (PDT)
+Received: from localhost (216.24.188.11.16clouds.com. [216.24.188.11])
+        by smtp.gmail.com with ESMTPSA id l1sm14949598pje.9.2020.03.15.19.32.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 15 Mar 2020 19:32:58 -0700 (PDT)
+From:   Dejin Zheng <zhengdejin5@gmail.com>
+To:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        joabreu@synopsys.com, davem@davemloft.net,
+        mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com, andrew@lunn.ch
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dejin Zheng <zhengdejin5@gmail.com>
+Subject: [PATCH net-next v3 0/2] net: stmmac: Use readl_poll_timeout() to simplify the code
+Date:   Mon, 16 Mar 2020 10:32:52 +0800
+Message-Id: <20200316023254.13201-1-zhengdejin5@gmail.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve French <stfrench@microsoft.com>
+This patch sets just for replace the open-coded loop to the
+readl_poll_timeout() helper macro for simplify the code in
+stmmac driver.
 
-[ Upstream commit ec57010acd03428a749d2600bf09bd537eaae993 ]
+v2 -> v3:
+	- return whatever error code by readl_poll_timeout() returned.
+v1 -> v2:
+	- no changed. I am a newbie and sent this patch a month
+	  ago (February 6th). So far, I have not received any comments or
+	  suggestion. I think it may be lost somewhere in the world, so
+	  resend it.
 
-We were not displaying the mount option "signloosely" in /proc/mounts
-for cifs mounts which some users found confusing recently
+Dejin Zheng (2):
+  net: stmmac: use readl_poll_timeout() function in init_systime()
+  net: stmmac: use readl_poll_timeout() function in dwmac4_dma_reset()
 
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/cifs/cifsfs.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c  | 15 ++++-----------
+ .../net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c | 15 ++++-----------
+ 2 files changed, 8 insertions(+), 22 deletions(-)
 
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index 92b9c8221f078..7659286954d3a 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -530,6 +530,8 @@ cifs_show_options(struct seq_file *s, struct dentry *root)
- 
- 	if (tcon->seal)
- 		seq_puts(s, ",seal");
-+	else if (tcon->ses->server->ignore_signature)
-+		seq_puts(s, ",signloosely");
- 	if (tcon->nocase)
- 		seq_puts(s, ",nocase");
- 	if (tcon->local_lease)
 -- 
-2.20.1
+2.25.0
 
