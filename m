@@ -2,93 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 581FC18726E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 19:35:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AB33187277
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 19:37:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732353AbgCPSfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 14:35:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33180 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731967AbgCPSfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 14:35:21 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C38620674;
-        Mon, 16 Mar 2020 18:35:19 +0000 (UTC)
-Date:   Mon, 16 Mar 2020 14:35:17 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Eugeniu Rosca <roscaeugeniu@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: Re: [RFC PATCH 0/3] Fix quiet console in pre-panic scenarios
-Message-ID: <20200316143517.651abbeb@gandalf.local.home>
-In-Reply-To: <20200315170903.17393-1-erosca@de.adit-jv.com>
-References: <20200315170903.17393-1-erosca@de.adit-jv.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1732357AbgCPShf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 14:37:35 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41614 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731967AbgCPShf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 14:37:35 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jDua6-00CwUo-Nf; Mon, 16 Mar 2020 18:35:18 +0000
+Date:   Mon, 16 Mar 2020 18:35:18 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ling Ma <ling.ma.program@gmail.com>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, "ling.ma" <ling.ml@antfin.com>
+Subject: Re: [RFC PATCH] locks:Remove spinlock in unshare_files
+Message-ID: <20200316183518.GZ23230@ZenIV.linux.org.uk>
+References: <20200313031017.71090-1-ling.ma.program@gmail.com>
+ <CAOGi=dNniSgkUtJPfaYLAbR+_8DMFdU59mx7hf8Otj_VjDF_dQ@mail.gmail.com>
+ <20200316133916.GD12561@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200316133916.GD12561@hirez.programming.kicks-ass.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 15 Mar 2020 18:09:00 +0100
-Eugeniu Rosca <roscaeugeniu@gmail.com> wrote:
+On Mon, Mar 16, 2020 at 02:39:16PM +0100, Peter Zijlstra wrote:
 
-> Dear community,
+> > > diff --git a/kernel/fork.c b/kernel/fork.c
+> > > index 60a1295..fe54600 100644
+> > > --- a/kernel/fork.c
+> > > +++ b/kernel/fork.c
+> > > @@ -3041,9 +3041,7 @@ int unshare_files(struct files_struct **displaced)
+> > >                 return error;
+> > >         }
+> > >         *displaced = task->files;
+> > > -       task_lock(task);
+> > > -       task->files = copy;
+> > > -       task_unlock(task);
+> > > +       WRITE_ONCE(task->files, copy);
+> > >         return 0;
+> > >  }
 > 
-> The motivation behind this seris is to save days/weeks, if not months,
-> of debugging efforts for users who:
+> AFAICT this is completely and utterly buggered.
 > 
->  * experience an issue like softlockup/hardlockup/hung task/oom, whose
->    reproduction is not clear and whose occurrence rate is very low
->  * are constrained to use a low loglevel value (1,2,3) in production
->  * mostly rely on console logs to debug the issue post-mortem
->    (e.g. saved to persistent storage via e.g. pstore)
-> 
-> As pointed out in the last patch from this series, under the above
-> circumstances, users might simply lack any relevant logs during
-> post-mortem analysis.
-> 
-> Why this series is marked as RFC is because:
->  * There are several possible approaches to turn console verbosity on
->    and off. Current series employs the 'ignore_loglevel' functionality,
->    but an alternative way is to use the 'console_loglevel' variable. The
->    latter is more intrusive, hence the former has been chosen as v1.
->  * Manipulating 'ignore_loglevel' might be seen as an abuse, especially
->    because it breaks the expectation of users who assume the system to
->    be dead silent after passing loglevel=0 on kernel command line.
-> 
-> Thank you for your comments!
+> IFF task->files was lockless, like say RCU, then you'd still need
+> smp_store_release(). But if we look at fs/file.c then everything uses
+> task_lock() and removing it like the above is actively broken.
 
-I don't see any issues with this patch set. What do others think?
+The problem is not fs/file.c; it's the code that does (read-only)
+access to *other* threads' ->files.  procfs, SAK, some cgroup
+shite (pardon the redundancy)...  All of those rely upon task_lock.
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+FWIW, having just grepped around, I'm worried about the crap io_uring
+is pulling off - interplay with unshare(2) could be unpleasant.
 
-[ Note, I only acked, and did not give a deep review of it ]
+In any case - task_lock in the code that assigns to ->files (and it's
+not just unshare_files()) serves to protect the 3rd-party readers
+(including get_files_struct()) from having the fucker taken apart
+under them.  It's not just freeing the thing - it's the entire
+close_files().
 
--- Steve
+And no, we do *NOT* want to convert everything to get_files_struct() +
+being clever in it.  I would rather have get_files_struct() taken
+out and shot, TBH - the only real reason it hadn't been killed years
+ago is the loop in proc_readfd_common()...
 
-> 
-> Eugeniu Rosca (3):
->   printk: convert ignore_loglevel to atomic_t
->   printk: add console_verbose_{start,end}
->   watchdog: Turn console verbosity on when reporting softlockup
-> 
->  include/linux/printk.h | 10 ++++++++++
->  kernel/printk/printk.c | 30 ++++++++++++++++++++++++++----
->  kernel/watchdog.c      |  4 ++++
->  3 files changed, 40 insertions(+), 4 deletions(-)
-> 
-
+I'd prefer to have 3rd-party readers indicate their interest
+in a way that would be distinguishable from normal references,
+with close_files() waiting until all of those are gone.  One way
+to do that would be
+	* secondary counter in files_struct
+	* rcu-delayed freeing of actual structure (not a problem)
+	* rcu_read_lock in 3rd-party readers (among other things
+it means that proc_readfd_common() would need to be rearchitected
+a bit)
+	* close_files() starting with subtraction of large constant
+from the secondary counter and then spinning until it gets to
+-<large constant>
+	* 3rd-party readers (under rcu_read_lock()) fetching task->files,
+bumping the secondary counter unless it's negative, doing their thing,
+then decrementing the counter.
