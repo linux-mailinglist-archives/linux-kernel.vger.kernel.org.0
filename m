@@ -2,148 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABCCD186AEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 13:33:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBB2A186AF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 13:35:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731013AbgCPMdk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 08:33:40 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41858 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730956AbgCPMdk (ORCPT
+        id S1731020AbgCPMfP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 08:35:15 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35695 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730878AbgCPMfP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 08:33:40 -0400
-Received: by mail-ot1-f67.google.com with SMTP id s15so17615216otq.8;
-        Mon, 16 Mar 2020 05:33:39 -0700 (PDT)
+        Mon, 16 Mar 2020 08:35:15 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h4so373123wru.2;
+        Mon, 16 Mar 2020 05:35:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iU3FB0SyhngQVmNrB57sk80xf7jnFSDISDtNBOMq4Po=;
-        b=Ho0aqwmb57ckxndR0nOlrJQQHdA2mJXB5YlwQQJnhKoJXqfcCp/6i4urvKVTyqUldz
-         YbwtSkfbmHa2xl1j+qFKiM91ZBRZFyhjhBCe6r6LOMQ8BiL6PEDO+hHk8HlOQfTPnkch
-         PfwZ4LoeKANmdvkQ87t5uFKZPMfXDxOsY8wpt2rdYr4zyt1KLSI2J3zFgWHpQaoD2gE4
-         3xoE349tRVoJbH4NH8iqDyBEWdbxpGRp5jDY7EwAqIVIG8uMmXhR3T95mbtgBsJlGaOW
-         lREaLGHlkUH+o9KybZIh3UGZw+I9Z+TFpELjB5Hc/dXxVC43ew+jXucZoJ87CxVYAgUE
-         doww==
+        h=date:from:to:cc:message-id:in-reply-to:references:subject
+         :mime-version:content-transfer-encoding;
+        bh=mli3LATmq+tFwnP+8wWyRQBvASbiDCrn7g0yvxiqGEM=;
+        b=qwBQX/AvaM4WuENy/l9OVAIvMREaTwowHyXP2qUkfKSxWkLwA7pgDo5EsqULYQ3h6P
+         zKqVvtvlJY7gBnKIZRPD4SftZxNw7fK3PW6XHOioqTEpCJLl3zC6/zULHQvfHlKuDoez
+         P0+2q7S/8Rz4gQrvOr/xc2RzVOEwmAxBbsHVmkSdDOxUDP6ip59GU84uZ4nZ2zmkzzpL
+         zl7vzuV7ig182VLbQbClF1gWDMwwIWq/hZ8JB0kdnO2PzdNkvzBbV3i4Sma+oxNvTDPi
+         0rD5ttY2ltCVNjYtcl8+FDBikVqqaGnstjAbtF7mO+We07muT1FNiQ8Obaqi9/hDdrO5
+         /ldQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iU3FB0SyhngQVmNrB57sk80xf7jnFSDISDtNBOMq4Po=;
-        b=MVbCgZQScB8A4sPhuAFT06XLUvevSFv5KGgI8QOK7TOIwf5UwGBUcD+KPH4Sp8cZpJ
-         ubXU6B5fo/PjXjFfcpHrPrO9OSPLXl+nYiZSLUhlYp+G950EbvIU39nMXNtEdKnm6Iw+
-         6j61oSQCsUsigEN/Zli3lAIV2J5KwdI26gytqCAt7MHGxnoktbonLqDXXypb/YKZw9IB
-         uQD05RyF0e+2stGO26wq/g6hc6oteIFLO/434D2qzy+GNAej+GadLD7FJQlIeIKPA7xI
-         ocRh+mEq5AvPv1PjEJWXZkUTVHrFwcsbqwcAP0yqSaB+qoc5KoWwWMrUAE5P94/prMHg
-         eI4A==
-X-Gm-Message-State: ANhLgQ2OFpKQFL3lkVtELo99TsEGVqCeP2bSKkHlq+hfwv7GPnLuuvcV
-        vJKxcdRAQHIbtkck8ooKnjwkmQUsy1xZ/QS951c=
-X-Google-Smtp-Source: ADFU+vunioe+QWKw8j1Bl+f35z1EgNbIWiFK9X1ZpyeZAg5Og09WtiPgTXrhXd8gSYgqrBjQUh+ilgczIyEUJvIUgog=
-X-Received: by 2002:a05:6830:20c9:: with SMTP id z9mr22360874otq.44.1584362018759;
- Mon, 16 Mar 2020 05:33:38 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:message-id:in-reply-to
+         :references:subject:mime-version:content-transfer-encoding;
+        bh=mli3LATmq+tFwnP+8wWyRQBvASbiDCrn7g0yvxiqGEM=;
+        b=Pz8prVnBBECdkFLv/LYklIaLI7OwQ7tAHaDrytu/Ln4cKhXu5xTqMGG7W3OPwCbHcy
+         TjX4vvyr02ZCB2RxxodDb7at/Pct66lMqA3viMT2TBTQujgylhgUpkMQ7trFxGTcNcm+
+         5zHMmb64GTb2qbVKJOhz/Oh8rprxiJ8QHaVt44A9q14dDyFlSe4eNz58RpCud/RbmmmV
+         alWd1Bltlq4dw9jHwyq07BxQG6F5CdwhsE5+CHcOOCGC6kxx22OPuSO8DTQQxADoVlsg
+         pkut6c+qMnp7qvCZUuF8RprR2Io2Vq6NGTqnVjn4kx1XypllXS5+EybSF8HPJoHs+InG
+         6pcw==
+X-Gm-Message-State: ANhLgQ34an4dup1z199nn6Qq9q0HTh6ta3egjHGxIOW7mTGw3SIFSMlX
+        mfqHzk6QdICT6SGsSf2W2W8gDIQZstkuig==
+X-Google-Smtp-Source: ADFU+vsHDnRP7JNKklpe0mDZqdlh4tIegobsZzOI6NOa5tscYI8VO/tOfbj17EQIQ3lOecUh05XLEQ==
+X-Received: by 2002:a5d:522f:: with SMTP id i15mr34617007wra.231.1584362112960;
+        Mon, 16 Mar 2020 05:35:12 -0700 (PDT)
+Received: from [127.0.0.1] ([79.115.60.40])
+        by smtp.gmail.com with ESMTPSA id g127sm31266941wmf.10.2020.03.16.05.35.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 16 Mar 2020 05:35:12 -0700 (PDT)
+Date:   Mon, 16 Mar 2020 12:35:04 +0000 (UTC)
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     broonie@kernel.org
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, eha@deif.com, angelo@sysam.it,
+        andrew.smirnov@gmail.com, gustavo@embeddedor.com, weic@nvidia.com,
+        mhosny@nvidia.com, michael@walle.cc, peng.ma@nxp.com
+Message-ID: <0ed0f4c8-5901-4d0f-b6e0-d641b3299e64@localhost>
+In-Reply-To: <20200314224340.1544-6-olteanv@gmail.com>
+References: <20200314224340.1544-1-olteanv@gmail.com> <20200314224340.1544-6-olteanv@gmail.com>
+Subject: Re: [PATCH v3 05/12] spi: spi-fsl-dspi: Protect against races on
+ dspi->words_in_flight
 MIME-Version: 1.0
-References: <20200228154122.14164-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CA+V-a8vchrpa-1N1J+yVdo6-3zouOHX6=G4epWm68yirPirzag@mail.gmail.com> <20200316121859.GB5043@e121166-lin.cambridge.arm.com>
-In-Reply-To: <20200316121859.GB5043@e121166-lin.cambridge.arm.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Mon, 16 Mar 2020 12:33:12 +0000
-Message-ID: <CA+V-a8tEty80_XsU2qhmxLVWXnsfv3PE+ZiVfw+jrcOJXTwr6A@mail.gmail.com>
-Subject: Re: [PATCH v5 0/7] Add support for PCIe controller to work in
- endpoint mode on R-Car SoCs
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Correlation-ID: <0ed0f4c8-5901-4d0f-b6e0-d641b3299e64@localhost>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
+Mar 15, 2020 12:44:02 AM Vladimir Oltean <olteanv@gmail.com>:
 
-On Mon, Mar 16, 2020 at 12:19 PM Lorenzo Pieralisi
-<lorenzo.pieralisi@arm.com> wrote:
+> From: Vladimir Oltean <vladimir.oltean@nxp.com>
 >
-> On Fri, Mar 13, 2020 at 03:46:42PM +0000, Lad, Prabhakar wrote:
-> > Hi Bjorn/Kishon,
-> >
-> > On Fri, Feb 28, 2020 at 3:41 PM Lad Prabhakar
-> > <prabhakar.csengg@gmail.com> wrote:
-> > >
-> > > This patch series adds support for PCIe controller on rcar to work in
-> > > endpoint mode, this also extends the epf framework to handle base region
-> > > for mapping PCI address locally.
-> > >
-> > > Note:
-> > > The cadence/rockchip/designware endpoint drivers are build tested only.
-> > >
-> > > Changes for v5:
-> > > 1] Rebased the patches on next branch of https://git.kernel.org/pub/scm/
-> > >    linux/kernel/git/helgaas/pci.git
-> > > 2] Fixed review comments reported by Kishon while fetching the matching
-> > >    window in function pci_epc_get_matching_window()
-> > > 3] Fixed review comments reported by Bjorn
-> > >    a] Split patch up first patch so that its easier to review and incremental
-> > >    b] Fixed typos
-> > > 4] Included Reviewed tag from Rob for the dt-binding patch
-> > > 5] Fixed issue reported by Nathan for assigning variable to itself
-> > >
-> > > Changes for v4:
-> > > 1] Fixed dtb_check error reported by Rob
-> > > 2] Fixed review comments reported by Kishon
-> > >    a] Dropped pci_epc_find_best_fit_window()
-> > >    b] Fixed initializing mem ptr in __pci_epc_mem_init()
-> > >    c] Dropped map_size from pci_epc_mem_window structure
-> > >
-> > > Changes for v3:
-> > > 1] Fixed review comments from Bjorn and Kishon.
-> > > 3] Converted to DT schema
-> > >
-> > > Changes for v2:
-> > > 1] Fixed review comments from Biju for dt-bindings to include an example
-> > >    for a tested platform.
-> > > 2] Fixed review comments from Kishon to extend the features of outbound
-> > >    regions in epf framework.
-> > > 3] Added support to parse outbound-ranges in OF.
-> > >
-> > > Lad Prabhakar (7):
-> > >   PCI: rcar: Rename pcie-rcar.c to pcie-rcar-host.c
-> > >   PCI: rcar: Move shareable code to a common file
-> > >   PCI: rcar: Fix calculating mask for PCIEPAMR register
-> > >   PCI: endpoint: Add support to handle multiple base for mapping
-> > >     outbound memory
-> > >   dt-bindings: PCI: rcar: Add bindings for R-Car PCIe endpoint
-> > >     controller
-> > >   PCI: rcar: Add support for rcar PCIe controller in endpoint mode
-> > >   misc: pci_endpoint_test: Add Device ID for RZ/G2E PCIe controller
-> > >
-> > Gentle ping.
+> dspi->words_in_flight is a variable populated in the *_write functions
+> and used in the dspi_fifo_read function. It is also used in
+> dspi_fifo_write, immediately after transmission, to update the
+> message->actual_length variable used by higher layers such as spi-mem
+> for integrity checking.
 >
-> You should ask the R-CAR maintainers first to have a look at your
-> code and ACK accordingly.
+> But it may happen that the IRQ which calls dspi_fifo_read to be
+> triggered before the updating of message->actual_length takes place. In
+> that case, dspi_fifo_read will decrement dspi->words_in_flight to -1,
+> and that will cause an invalid modification of message->actual_length.
 >
-Thanks I have pinged the R-CAR maintainers to do the needy.
+> Make the simplest fix possible: don't decrement the actual shared
+> variable in dspi->words_in_flight from dspi_fifo_read, but actually a
+> copy of it which is on stack.
+>
+> Suggested-by: Michael Walle <michael@walle.cc>
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> ---
+> Changes in v4:
+> Patch is new.
+>
+> drivers/spi/spi-fsl-dspi.c | 4 +++-
+> 1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+> index 51224b772680..3ac004aa2abd 100644
+> --- a/drivers/spi/spi-fsl-dspi.c
+> +++ b/drivers/spi/spi-fsl-dspi.c
+> @@ -765,8 +765,10 @@ static u32 dspi_popr_read(struct fsl_dspi *dspi)
+>
+> static void dspi_fifo_read(struct fsl_dspi *dspi)
+> {
+> + int num_fifo_entries = dspi->words_in_flight;
+> +
+> /* Read one FIFO entry and push to rx buffer */
+> - while (dspi->words_in_flight--)
+> + while (num_fifo_entries--)
+> dspi_push_rx(dspi, dspi_popr_read(dspi));
+> }
+>
+> --
+> 2.17.1
+>
+>
 
-Cheers,
---Prabhakar
+Fixes: d59c90a2400f ("spi: spi-fsl-dspi: Convert TCFQ users to XSPI FIFO mode")
+
+Patchwork should know to pick up this tag.
+
+Thanks,
+-Vladimir
+
+
+
