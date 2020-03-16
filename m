@@ -2,77 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9852C186EB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 16:39:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F93F186EA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 16:33:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731768AbgCPPjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 11:39:23 -0400
-Received: from elvis.franken.de ([193.175.24.41]:44987 "EHLO elvis.franken.de"
+        id S1731703AbgCPPdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 11:33:07 -0400
+Received: from mga02.intel.com ([134.134.136.20]:21338 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731703AbgCPPjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 11:39:22 -0400
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1jDrpX-0008Kq-01; Mon, 16 Mar 2020 16:39:03 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 79690C107B; Mon, 16 Mar 2020 16:32:02 +0100 (CET)
-Date:   Mon, 16 Mar 2020 16:32:02 +0100
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     afzal mohammed <afzal.mohd.ma@gmail.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Keguang Zhang <keguang.zhang@gmail.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        John Crispin <john@phrozen.org>
-Subject: Re: [PATCH v2] MIPS: pass non-NULL dev_id on shared request_irq()
-Message-ID: <20200316153202.GB13674@alpha.franken.de>
-References: <20200304203144.GA4323@alpha.franken.de>
- <20200305115759.3186-1-afzal.mohd.ma@gmail.com>
- <20200311053126.GA48442@ubuntu-m2-xlarge-x86>
- <20200311090308.GA5060@afzalpc>
- <20200311104217.GA10615@alpha.franken.de>
- <20200311131210.GA5115@afzalpc>
- <20200311160307.GA15464@alpha.franken.de>
- <20200311163249.GA4984@afzalpc>
- <20200313121138.GA5985@afzalpc>
- <20200314081312.GA4948@afzalpc>
+        id S1731505AbgCPPdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 11:33:07 -0400
+IronPort-SDR: UEXN8bZw49xlQIP0ehCoWOiJRsYu+ZNv0AxZ+v8vHLhWo3/vlt1LiReuv+Sr+QHUq4ePzWDR6o
+ dp2PG4fmva7w==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 08:33:06 -0700
+IronPort-SDR: iITveEGsB4PM/qGADp4pXTOILr3PlYoZBRaDxL2M2sonmhpy4W1Khrjrb5ebjKAGrgLHTJLQlO
+ 4S+ARju9YjGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,560,1574150400"; 
+   d="scan'208";a="417177457"
+Received: from um.fi.intel.com (HELO um) ([10.237.72.57])
+  by orsmga005.jf.intel.com with ESMTP; 16 Mar 2020 08:33:02 -0700
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        alsa-devel@alsa-project.org, alexander.shishkin@linux.intel.com
+Subject: Re: [PATCH v3 0/9] x86: Easy way of detecting MS Surface 3
+In-Reply-To: <20200122112306.64598-1-andriy.shevchenko@linux.intel.com>
+References: <20200122112306.64598-1-andriy.shevchenko@linux.intel.com>
+Date:   Mon, 16 Mar 2020 17:33:02 +0200
+Message-ID: <871rps9uxd.fsf@ashishki-desk.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200314081312.GA4948@afzalpc>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 14, 2020 at 01:43:12PM +0530, afzal mohammed wrote:
-> Recently all usages of setup_irq() was replaced by request_irq().
-> request_irq() does a few sanity checks that were not done in
-> setup_irq(), if they fail irq registration will fail. One of the check
-> is to ensure that non-NULL dev_id is passed in the case of shared irq.
-> This caused malta on qemu to hang.
-> 
-> Fix it by passing handler as dev_id to all request_irq()'s that are
-> shared. For sni, instead of passing non-NULL dev_id, remove shared irq
-> flags.
-> 
-> Fixes: ac8fd122e070 ("MIPS: Replace setup_irq() by request_irq()")
-> Reported-by: Nathan Chancellor <natechancellor@gmail.com>
-> Suggested-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
 
-thank you, applied to mips-next.
+> While working on RTC regression, I noticed that we are using the same DMI check
+> over and over in the drivers for MS Surface 3 platform. This series dedicated
+> for making it easier in the same way how it's done for Apple machines.
 
-Thomas.
+[...]
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+>   x86/quirks: Introduce hpet_dev_print_force_hpet_address() helper
+>   x86/quirks: Join string literals back
+
+These two don't seem to be related to the Surface 3 cause of the rest of
+the patchset, or am I missing something?
+
+Regards,
+--
+Alex
