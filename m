@@ -2,77 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C30C186CA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:55:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D52D7186CAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:56:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731461AbgCPNzN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 09:55:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48928 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731110AbgCPNzN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 09:55:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=WEBG3nIg5bRO/ndpNpdjvppQegv8JGgyyt7RDg3n9BA=; b=G42P68L1AVx/huDT3DLmA5JN+R
-        T9nK0j8g2tIhO+d+7Kq90Oabd+k2yKREMXg4WYN1OrgaB7okGszUsGuSn/OEjIFY2Qf6qAsnr4lHE
-        gnut877TQ4yK4893v0WhkXkigpKr2NlBpIZygt/mmbGcKoMnsiXHnk+hFHrO6XG0WzmVhWcKkL/mD
-        klD0+jzJF4ttIx932LKWpLPPRNswCysyDAD6vr/tZ3uDWqw1UaO58gK7k93FAU6IK7JfE93lpcPTt
-        2CcZGdh+piCS5+Uf/3xe5N/TNWjbtPH1EdD7jnlFmnht8D33wSrnAm6UKjgF1bsLmsfSJ5sgLVMaA
-        vqrRm3GQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jDqCz-0007ub-Qa; Mon, 16 Mar 2020 13:55:09 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id F3B7530138D;
-        Mon, 16 Mar 2020 14:55:07 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DE7B820B16492; Mon, 16 Mar 2020 14:55:07 +0100 (CET)
-Date:   Mon, 16 Mar 2020 14:55:07 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
-        rcu@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        Qian Cai <cai@lca.pw>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] locking/lockdep: Avoid recursion in
- lockdep_count_{for,back}ward_deps()
-Message-ID: <20200316135507.GF12561@hirez.programming.kicks-ass.net>
-References: <20200312151258.128036-1-boqun.feng@gmail.com>
- <20200313093325.GW12561@hirez.programming.kicks-ass.net>
- <20200315010422.GA134626@google.com>
+        id S1731440AbgCPN4r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 09:56:47 -0400
+Received: from mga06.intel.com ([134.134.136.31]:4449 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731110AbgCPN4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 09:56:47 -0400
+IronPort-SDR: X3aBeBnVSKtzArek4ILMPFhHlM2wm6lzGJGa4wjiFnxxeu7nW5nnQrxmw9dHkiwjSA29eaPlAn
+ GjnGvm4LRFCQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 06:56:46 -0700
+IronPort-SDR: /SUHAXr9ZbR3tCMwpyjXlQOI9q2Src6Jid+g9z5mmueuqmBQgyXAsG0Xkqdmizj0DuQTtuc0XH
+ oahoNkjdbz7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,560,1574150400"; 
+   d="scan'208";a="443347986"
+Received: from zidelson-mobl1.ger.corp.intel.com ([10.251.163.156])
+  by fmsmga005.fm.intel.com with ESMTP; 16 Mar 2020 06:56:32 -0700
+Message-ID: <94ce05323c4de721c4a6347223885f2ad9f541af.camel@linux.intel.com>
+Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
+ enclave call
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Nathaniel McCallum <npmccallum@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Neil Horman <nhorman@redhat.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
+        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
+        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
+        cedric.xing@intel.com, Patrick Uiterwijk <puiterwijk@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Connor Kuehl <ckuehl@redhat.com>,
+        Harald Hoyer <harald@redhat.com>,
+        Lily Sturmann <lsturman@redhat.com>
+Date:   Mon, 16 Mar 2020 15:56:30 +0200
+In-Reply-To: <CAOASepP9GeTEqs1DSfPiSm9ER0whj9qwSc46ZiNj_K4dMekOfQ@mail.gmail.com>
+References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
+         <20200303233609.713348-22-jarkko.sakkinen@linux.intel.com>
+         <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
+         <20200315012523.GC208715@linux.intel.com>
+         <CAOASepP9GeTEqs1DSfPiSm9ER0whj9qwSc46ZiNj_K4dMekOfQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.35.92-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200315010422.GA134626@google.com>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 14, 2020 at 09:04:22PM -0400, Joel Fernandes wrote:
-> On Fri, Mar 13, 2020 at 10:33:25AM +0100, Peter Zijlstra wrote:
-
-> Thanks Peter and Boqun, the below patch makes sense to me. Just had some nits
-> below, otherwise:
-> > @@ -1719,11 +1725,11 @@ unsigned long lockdep_count_forward_deps
-> >  	this.class = class;
-> >  
-> >  	raw_local_irq_save(flags);
-> > -	current->lockdep_recursion = 1;
-> > +	current->lockdep_recursion++;
-> >  	arch_spin_lock(&lockdep_lock);
-> >  	ret = __lockdep_count_forward_deps(&this);
-> >  	arch_spin_unlock(&lockdep_lock);
-> > -	current->lockdep_recursion = 0;
-> > +	current->lockdep_recursion--;
+On Sun, 2020-03-15 at 13:53 -0400, Nathaniel McCallum wrote:
+> On Sat, Mar 14, 2020 at 9:25 PM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> > On Wed, Mar 11, 2020 at 01:30:07PM -0400, Nathaniel McCallum wrote:
+> > > Currently, the selftest has a wrapper around
+> > > __vdso_sgx_enter_enclave() which preserves all x86-64 ABI callee-saved
+> > > registers (CSRs), though it uses none of them. Then it calls this
+> > > function which uses %rbx but preserves none of the CSRs. Then it jumps
+> > > into an enclave which zeroes all these registers before returning.
+> > > Thus:
+> > > 
+> > >   1. wrapper saves all CSRs
+> > >   2. wrapper repositions stack arguments
+> > >   3. __vdso_sgx_enter_enclave() modifies, but does not save %rbx
+> > >   4. selftest zeros all CSRs
+> > >   5. wrapper loads all CSRs
+> > > 
+> > > I'd like to propose instead that the enclave be responsible for saving
+> > > and restoring CSRs. So instead of the above we have:
+> > >   1. __vdso_sgx_enter_enclave() saves %rbx
+> > >   2. enclave saves CSRs
+> > >   3. enclave loads CSRs
+> > >   4. __vdso_sgx_enter_enclave() loads %rbx
+> > > 
+> > > I know that lots of other stuff happens during enclave transitions,
+> > > but at the very least we could reduce the number of instructions
+> > > through this critical path.
+> > 
+> > What Jethro said and also that it is a good general principle to cut
+> > down the semantics of any vdso as minimal as possible.
+> > 
+> > I.e. even if saving RBX would make somehow sense it *can* be left
+> > out without loss in terms of what can be done with the vDSO.
 > 
-> This doesn't look like it should recurse. Why not just use the
-> lockdep_recursion_finish() helper here?
+> Please read the rest of the thread. Sean and I have hammered out some
+> sensible and effective changes.
 
-I chose to only add that to the sites that check recursion on entry.
+Have skimmed through that discussion but it comes down how much you get
+by obviously degrading some of the robustness. Complexity of the calling
+pattern is not something that should be emphasized as that is something
+that is anyway hidden inside the runtime.
+
+/Jarkko
+
