@@ -2,163 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D832186E62
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 16:14:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA3F0186E70
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 16:23:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731819AbgCPPO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 11:14:26 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38561 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731740AbgCPPOZ (ORCPT
+        id S1731571AbgCPPX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 11:23:27 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:55994 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731483AbgCPPX0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 11:14:25 -0400
-Received: by mail-qt1-f195.google.com with SMTP id e20so14472238qto.5;
-        Mon, 16 Mar 2020 08:14:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ixSqifDu9ZEefUiTiNVPd6ssEpIkNW/tDU5FVkyvqtI=;
-        b=jODSjjQ0stgdcIWw5FmNkmjAJbTA++R+6bwpB71tEMevOeCcXd6xRVARjGV6eA0CIi
-         ff/X0cqc3mG5P8xo3ALlOOD9yIN1eKOZnl+XS/gir3lTYF6EHyDVA05tqdoM6knnVx4v
-         4rqF4mQv2EsNdCTTlmer+lofMTczcxeWTk9EWJszdxQxitwWB+JzL1s/INbWDK+pVd9K
-         O3//Ds8qzs5cZbx9oW6HTLeEP45LAAhcYTX2WDK1/mYZTi+h/Ck95PmuDg9/CEaZ3m2p
-         BSKg7H8zJVrxufhYNbUJEFK+QPj5SmObaORY5xRgPytcv17CrRenHsis4z5cBxO8yxF4
-         5zCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ixSqifDu9ZEefUiTiNVPd6ssEpIkNW/tDU5FVkyvqtI=;
-        b=o3Jjli9GSVx/tll2kaP4ErsfHyr42HWHh2L7q1EU+xwSRvdCgi3zRZ3QELCwM6dNY0
-         z2qv1xQQqhGBkJlbtPYrOR7P78WDcDWcAYu9tscvTBUcirqImigtZU0cyda1xrrTSAza
-         MrVXg+2zHI2AhQlRVeG74fzcvaGLfCeI6WVCYxdjy3vewO4kV8pA7Be0ZJQVOuFENq9R
-         ILzxYJAuBdFmoajw4RYLPSCOLqNT50vpCl+9Vvb7ydASkmbRrr0RAIPWi+sM5fd9RaJd
-         IiGCdHVCJP2gssUJg5MKMvT4yMY2CvfWmMpzrPNLvgldxU9tX/zP4jxjOrWvdnj8VR7v
-         L4YA==
-X-Gm-Message-State: ANhLgQ0SjnM9A+Vt5YSgDx+7bfqWWNWOAUTHkBszrH5hcUcc1/FpPeup
-        ePkA5rlnA57jwiG+Fxn3S4MPlnQZs9QgKBzBoPE=
-X-Google-Smtp-Source: ADFU+vtaag5GWTvm5ae+UqCD8pDJpDkpGX5U8Xx5cRDVwrLRbKT5Gb0dsxv/L7NnGU4/QwOiZhjTd9NsL1SQAbY2uyA=
-X-Received: by 2002:ac8:683:: with SMTP id f3mr540411qth.356.1584371664321;
- Mon, 16 Mar 2020 08:14:24 -0700 (PDT)
+        Mon, 16 Mar 2020 11:23:26 -0400
+X-Greylist: delayed 304 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Mar 2020 11:23:25 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584372205;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=E8ywiGSlA2NyxsfZmZ1h8kdDQN92vhA26ZvHqYMVdBE=;
+        b=VfeYeehc3u45DH0W4iuXAt8YkmG24O46g9dyd7WCm1BqYllFtcNVrXY+fnw2B8V/hbbWzF
+        C5tn6yoxbEkiXZrK1Yt7VknQqIuahGUT+ZgIn8SgRbNrWQRk1KGySdN3nvJFCydSvAFyr4
+        rXOqly3GaNrR8DQKWrzhIsQGBawyrYw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-490-sr1We4SCOau5EHR5pyhM9w-1; Mon, 16 Mar 2020 11:17:07 -0400
+X-MC-Unique: sr1We4SCOau5EHR5pyhM9w-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 41FAD10FB82D;
+        Mon, 16 Mar 2020 15:17:05 +0000 (UTC)
+Received: from [10.36.118.207] (ovpn-118-207.ams2.redhat.com [10.36.118.207])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E95C45C1B2;
+        Mon, 16 Mar 2020 15:17:02 +0000 (UTC)
+Subject: Re: [PATCH v1 1/5] drivers/base/memory: rename MMOP_ONLINE_KEEP to
+ MMOP_ONLINE
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Baoquan He <bhe@redhat.com>,
+        Wei Yang <richard.weiyang@gmail.com>
+References: <20200311123026.16071-1-david@redhat.com>
+ <20200311123026.16071-2-david@redhat.com>
+ <20200316151223.GS11482@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <add54ef9-dfab-a589-0f00-0b2338779373@redhat.com>
+Date:   Mon, 16 Mar 2020 16:17:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200316090021.52148-1-pmalani@chromium.org> <20200316090021.52148-2-pmalani@chromium.org>
-In-Reply-To: <20200316090021.52148-2-pmalani@chromium.org>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Mon, 16 Mar 2020 16:14:13 +0100
-Message-ID: <CAFqH_50eGjYu7dHFW82CY4-EyDtq+AF+6tHCAjKbaAjW5_7WYA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] dt-bindings: Add cros-ec Type C port driver
-To:     Prashant Malani <pmalani@chromium.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200316151223.GS11482@dhcp22.suse.cz>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Prashant,
+On 16.03.20 16:12, Michal Hocko wrote:
+> On Wed 11-03-20 13:30:22, David Hildenbrand wrote:
+>> The name is misleading. Let's just name it like the online_type name we
+>> expose to user space ("online").
+> 
+> I would disagree the name is misleading. It just says that you want to
+> online and keep the zone type. Nothing I would insist on though.
 
-Missatge de Prashant Malani <pmalani@chromium.org> del dia dl., 16 de
-mar=C3=A7 2020 a les 10:02:
->
-> Some Chrome OS devices with Embedded Controllers (EC) can read and
-> modify Type C port state.
->
-> Add an entry in the DT Bindings documentation that lists out the logical
-> device and describes the relevant port information, to be used by the
-> corresponding driver.
->
-> Signed-off-by: Prashant Malani <pmalani@chromium.org>
+"online and keep the zone type" - that's not what's happening.
 
-After Rob review, it can go together with the other patches through
-the chrome-platform tree. From my side:
+-- 
+Thanks,
 
-Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+David / dhildenb
 
-> ---
->
-> Changes in v5:
-> - Updated License identifier.
-> - Updated DT example to be a full example.
->
-> Changes in v4:
-> - Rebased on top of usb-connector.yaml, so the connector property now
->   directly references the usb-connector DT binding.
->
->  .../bindings/chrome/google,cros-ec-typec.yaml | 54 +++++++++++++++++++
->  1 file changed, 54 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/chrome/google,cros-=
-ec-typec.yaml
->
-> diff --git a/Documentation/devicetree/bindings/chrome/google,cros-ec-type=
-c.yaml b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
-> new file mode 100644
-> index 0000000000000..6d7396ab8beec
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
-> @@ -0,0 +1,54 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/chrome/google,cros-ec-typec.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Google Chrome OS EC(Embedded Controller) Type C port driver.
-> +
-> +maintainers:
-> +  - Benson Leung <bleung@chromium.org>
-> +  - Prashant Malani <pmalani@chromium.org>
-> +
-> +description:
-> +  Chrome OS devices have an Embedded Controller(EC) which has access to
-> +  Type C port state. This node is intended to allow the host to read and
-> +  control the Type C ports. The node for this device should be under a
-> +  cros-ec node like google,cros-ec-spi.
-> +
-> +properties:
-> +  compatible:
-> +    const: google,cros-ec-typec
-> +
-> +  connector:
-> +    $ref: /schemas/connector/usb-connector.yaml#
-> +
-> +required:
-> +  - compatible
-> +
-> +examples:
-> +  - |+
-> +    spi0 {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <0>;
-> +
-> +      cros_ec: ec@0 {
-> +        compatible =3D "google,cros-ec-spi";
-> +        reg =3D <0>;
-> +
-> +        typec {
-> +          compatible =3D "google,cros-ec-typec";
-> +
-> +          #address-cells =3D <1>;
-> +          #size-cells =3D <0>;
-> +
-> +          connector@0 {
-> +            compatible =3D "usb-c-connector";
-> +            reg =3D <0>;
-> +            power-role =3D "dual";
-> +            data-role =3D "dual";
-> +            try-power-role =3D "source";
-> +          };
-> +        };
-> +      };
-> +    };
-> --
-> 2.25.1.481.gfbce0eb801-goog
->
