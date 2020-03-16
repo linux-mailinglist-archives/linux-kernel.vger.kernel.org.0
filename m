@@ -2,165 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44CEA1864FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 07:25:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1E2F186505
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 07:32:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729554AbgCPGZg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 02:25:36 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:25485 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729455AbgCPGZg (ORCPT
+        id S1729662AbgCPGc4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 02:32:56 -0400
+Received: from scp8.hosting.reg.ru ([31.31.196.44]:54968 "EHLO
+        scp8.hosting.reg.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729593AbgCPGc4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 02:25:36 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584339935; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=UyuhZmeVdghEkFGq1LyGqfP9NwpUlzrusHvbYNXKk6I=;
- b=o3xuur4ysC/sooWt65toZNBn58nss0YrmXesoHxfJjL1U9eThLW1njrB731pd/1SBl5pNg1V
- nVtDTls9VeNw3I+ty84kCxZ/QSwtmI2xT9b4C49GWtb/AY7nWTZ6J0w1zAkyUZ/eKfP888Y+
- nrFrFbmhLtbfHnG/pcnS9CtbKLc=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6f1bde.7f142f8219d0-smtp-out-n01;
- Mon, 16 Mar 2020 06:25:34 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id E502CC43637; Mon, 16 Mar 2020 06:25:32 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 83A43C433CB;
-        Mon, 16 Mar 2020 06:25:31 +0000 (UTC)
+        Mon, 16 Mar 2020 02:32:56 -0400
+X-Greylist: delayed 2456 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Mar 2020 02:32:54 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=marinkevich.ru; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ICtt14DdKbzX+OLuDobayzCZUyiOY0nTOBAzHCBfqGE=; b=cCn4gbh0tjfZhaAf2FLyfea68j
+        gl+Es6KUTaf5V8E5Fl7F9B8MTUcDsPUPpMOOlHnqm/enLQzYaVC5VvClwbtMPp7LveOEJw4e01gjE
+        vfA8m6R7bEw+osghsGWL386vbR3Un5frZtYzIbjk3144DNFPIEFIKVqwPyKfJCbuYld3GOVe0usWJ
+        TbWjAN3BWHl7ZLdybrGMTyDqQGfjKVyerzI3oFpmO13zwXJ34UAa8zZ55Rz33Xo0CxWDJYiiC2TrW
+        YvR4LI2frniFi99val7SVRMV6MMs2w/UaYr5bBhJo5m26AuSV7dsOKdTk5umPxOfWkraqljQQbYlV
+        jiOnX7EA==;
+Received: from mail.eltex.org ([92.125.152.58]:46582 helo=GRayJob)
+        by scp8.hosting.reg.ru with esmtpa (Exim 4.92)
+        (envelope-from <s@marinkevich.ru>)
+        id 1jDifM-0002YW-H1; Mon, 16 Mar 2020 08:51:56 +0300
+Date:   Mon, 16 Mar 2020 12:51:56 +0700
+From:   Sergey Marinkevich <s@marinkevich.ru>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] netfilter: nft_masq: add range specified flag setting
+Message-ID: <20200316055156.GA3822@GRayJob>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 16 Mar 2020 14:25:31 +0800
-From:   Can Guo <cang@codeaurora.org>
-To:     Stanley Chu <stanley.chu@mediatek.com>
-Cc:     linux-scsi@vger.kernel.org, martin.peter~sen@oracle.com,
-        avri.altman@wdc.com, alim.akhtar@samsung.com, jejb@linux.ibm.com,
-        beanhuo@micron.com, asutoshd@codeaurora.org,
-        matthias.bgg@gmail.com, bvanassche@acm.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kuohong.wang@mediatek.com, peter.wang@mediatek.com,
-        chun-hung.wu@mediatek.com, andy.teng@mediatek.com
-Subject: Re: [PATCH v5 2/8] scsi: ufs: remove init_prefetch_data in struct
- ufs_hba
-In-Reply-To: <20200316034218.11914-3-stanley.chu@mediatek.com>
-References: <20200316034218.11914-1-stanley.chu@mediatek.com>
- <20200316034218.11914-3-stanley.chu@mediatek.com>
-Message-ID: <51fde835f4f03fcca6e83ba6d3579f2e@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - scp8.hosting.reg.ru
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - marinkevich.ru
+X-Get-Message-Sender-Via: scp8.hosting.reg.ru: authenticated_id: s@marinkevich.ru
+X-Authenticated-Sender: scp8.hosting.reg.ru: s@marinkevich.ru
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-03-16 11:42, Stanley Chu wrote:
-> Struct init_prefetch_data currently is used privately in
-> ufshcd_init_icc_levels(), thus it can be removed from struct ufs_hba.
-> 
-> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-> Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
-> Reviewed-by: Avri Altman <avri.altman@wdc.com>
+With nf_tables it is not possible to use port range for masquerading.
+Masquerade statement has option "to [:port-port]" which give no effect
+to translation behavior. But it must change source port of packet to
+one from ":port-port" range.
 
-Hi Stanley,
+My network:
 
-Earlier, I have one similar patch for this, but it does more than this.
-Please check the mail I just sent.
+	+-----------------------------+
+	|   ROUTER                    |
+	|                             |
+	|                   Masquerade|
+	| 10.0.0.1            1.1.1.1 |
+	| +------+           +------+ |
+	| | eth1 |           | eth2 | |
+	+-+--^---+-----------+---^--+-+
+	     |                   |
+	     |                   |
+	+----v------+     +------v----+
+	|           |     |           |
+	| 10.0.0.2  |     |  1.1.1.2  |
+	|           |     |           |
+	|PC1        |     |PC2        |
+	+-----------+     +-----------+
 
-Thanks,
-Can Guo.
+For testing i used rule like this:
 
-> ---
->  drivers/scsi/ufs/ufshcd.c | 15 ++++++---------
->  drivers/scsi/ufs/ufshcd.h | 11 -----------
->  2 files changed, 6 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 314e808b0d4e..b4988b9ee36c 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -6501,6 +6501,7 @@ static void ufshcd_init_icc_levels(struct ufs_hba 
-> *hba)
->  {
->  	int ret;
->  	int buff_len = hba->desc_size.pwr_desc;
-> +	u32 icc_level;
->  	u8 *desc_buf;
-> 
->  	desc_buf = kmalloc(buff_len, GFP_KERNEL);
-> @@ -6516,21 +6517,17 @@ static void ufshcd_init_icc_levels(struct 
-> ufs_hba *hba)
->  		goto out;
->  	}
-> 
-> -	hba->init_prefetch_data.icc_level =
-> -			ufshcd_find_max_sup_active_icc_level(hba,
-> -			desc_buf, buff_len);
-> -	dev_dbg(hba->dev, "%s: setting icc_level 0x%x",
-> -			__func__, hba->init_prefetch_data.icc_level);
-> +	icc_level =
-> +		ufshcd_find_max_sup_active_icc_level(hba, desc_buf, buff_len);
-> +	dev_dbg(hba->dev, "%s: setting icc_level 0x%x",	__func__, icc_level);
-> 
->  	ret = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
-> -		QUERY_ATTR_IDN_ACTIVE_ICC_LVL, 0, 0,
-> -		&hba->init_prefetch_data.icc_level);
-> +		QUERY_ATTR_IDN_ACTIVE_ICC_LVL, 0, 0, &icc_level);
-> 
->  	if (ret)
->  		dev_err(hba->dev,
->  			"%s: Failed configuring bActiveICCLevel = %d ret = %d",
-> -			__func__, hba->init_prefetch_data.icc_level , ret);
-> -
-> +			__func__, icc_level, ret);
->  out:
->  	kfree(desc_buf);
->  }
-> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-> index 5c10777154fc..5cf79d2319a6 100644
-> --- a/drivers/scsi/ufs/ufshcd.h
-> +++ b/drivers/scsi/ufs/ufshcd.h
-> @@ -402,15 +402,6 @@ struct ufs_clk_scaling {
->  	bool is_suspended;
->  };
-> 
-> -/**
-> - * struct ufs_init_prefetch - contains data that is pre-fetched once 
-> during
-> - * initialization
-> - * @icc_level: icc level which was read during initialization
-> - */
-> -struct ufs_init_prefetch {
-> -	u32 icc_level;
-> -};
-> -
->  #define UFS_ERR_REG_HIST_LENGTH 8
->  /**
->   * struct ufs_err_reg_hist - keeps history of errors
-> @@ -541,7 +532,6 @@ enum ufshcd_quirks {
->   * @intr_mask: Interrupt Mask Bits
->   * @ee_ctrl_mask: Exception event control mask
->   * @is_powered: flag to check if HBA is powered
-> - * @init_prefetch_data: data pre-fetched during initialization
->   * @eh_work: Worker to handle UFS errors that require s/w attention
->   * @eeh_work: Worker to handle exception events
->   * @errors: HBA errors
-> @@ -627,7 +617,6 @@ struct ufs_hba {
->  	u32 intr_mask;
->  	u16 ee_ctrl_mask;
->  	bool is_powered;
-> -	struct ufs_init_prefetch init_prefetch_data;
-> 
->  	/* Work Queues */
->  	struct work_struct eh_work;
+	rule ip nat POSTROUTING oifname eth2 masquerade to :666
+
+Run netcat for 1.1.1.2 667(UDP) and get dump from PC2:
+
+	15:22:25.591567 a8:f9:4b:aa:08:44 > a8:f9:4b:ac:e7:8f, ethertype IPv4 (0x0800), length 60: 1.1.1.1.34466 > 1.1.1.2.667: UDP, length 1
+
+Address translation works fine, but source port are not belongs to
+specified range.
+
+I see in similar source code (i.e. nft_redir.c, nft_nat.c) that
+there is setting NF_NAT_RANGE_PROTO_SPECIFIED flag. After adding this,
+repeat test for kernel with this patch, and get dump:
+
+	16:16:22.324710 a8:f9:4b:aa:08:44 > a8:f9:4b:ac:e7:8f, ethertype IPv4 (0x0800), length 60: 1.1.1.1.666 > 1.1.1.2.667: UDP, length 1
+
+Now it is works fine.
+
+Signed-off-by: Sergey Marinkevich <s@marinkevich.ru>
+---
+ net/netfilter/nft_masq.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/net/netfilter/nft_masq.c b/net/netfilter/nft_masq.c
+index bc9fd98c5d6d..448376e59074 100644
+--- a/net/netfilter/nft_masq.c
++++ b/net/netfilter/nft_masq.c
+@@ -113,6 +113,7 @@ static void nft_masq_ipv4_eval(const struct nft_expr *expr,
+ 			&regs->data[priv->sreg_proto_min]);
+ 		range.max_proto.all = (__force __be16)nft_reg_load16(
+ 			&regs->data[priv->sreg_proto_max]);
++		range.flags |= NF_NAT_RANGE_PROTO_SPECIFIED;
+ 	}
+ 	regs->verdict.code = nf_nat_masquerade_ipv4(pkt->skb, nft_hook(pkt),
+ 						    &range, nft_out(pkt));
+@@ -159,6 +160,7 @@ static void nft_masq_ipv6_eval(const struct nft_expr *expr,
+ 			&regs->data[priv->sreg_proto_min]);
+ 		range.max_proto.all = (__force __be16)nft_reg_load16(
+ 			&regs->data[priv->sreg_proto_max]);
++		range.flags |= NF_NAT_RANGE_PROTO_SPECIFIED;
+ 	}
+ 	regs->verdict.code = nf_nat_masquerade_ipv6(pkt->skb, &range,
+ 						    nft_out(pkt));
+-- 
+2.21.0
+
