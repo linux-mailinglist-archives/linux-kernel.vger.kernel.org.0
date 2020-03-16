@@ -2,144 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7F3418A204
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:59:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E20918A241
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 19:22:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbgCRR7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 13:59:02 -0400
-Received: from smtprelay0200.hostedemail.com ([216.40.44.200]:45808 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726506AbgCRR7C (ORCPT
+        id S1727002AbgCRSWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 14:22:16 -0400
+Received: from labrats.qualcomm.com ([199.106.110.90]:11629 "EHLO
+        labrats.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726735AbgCRSWQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 13:59:02 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 7007F180295A5;
-        Wed, 18 Mar 2020 17:59:01 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:69:355:379:599:960:969:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1461:1515:1516:1518:1534:1543:1593:1594:1711:1730:1747:1777:1792:1981:2194:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3355:3622:3865:3866:3867:3868:3871:3873:4321:5007:8957:9592:10004:10400:10848:11026:11232:11473:11658:11914:12043:12295:12296:12297:12438:12555:12683:12740:12760:12895:13161:13229:13439:14659:14721:21063:21080:21627:21990:30029:30054:30056:30070:30083:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: hate21_3184fa5e40703
-X-Filterd-Recvd-Size: 4340
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf14.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 18 Mar 2020 17:59:00 +0000 (UTC)
-Message-ID: <a421ed974d7c675a7d41405d483c7645004d4125.camel@perches.com>
-Subject: Re: [PATCH 2/2] staging: rtl8192u: Corrects 'Avoid CamelCase' for
- variables
-From:   Joe Perches <joe@perches.com>
-To:     Camylla Cantanheide <c.cantanheide@gmail.com>,
-        dan.carpenter@oracle.com
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>,
-        lkcamp@lists.libreplanetbr.org
-Date:   Wed, 18 Mar 2020 10:57:11 -0700
-In-Reply-To: <CAG3pEr+9tuSYw==qgp3J8r--SdAd8DBMNQqSHCZQc-mkVVuE6w@mail.gmail.com>
-References: <20200317085130.21213-1-c.cantanheide@gmail.com>
-         <20200317085130.21213-2-c.cantanheide@gmail.com>
-         <20200317134329.GC4650@kadam>
-         <ee182711405229e85b5b5a44c683d5a2609b5ba3.camel@perches.com>
-         <CAG3pEr+9tuSYw==qgp3J8r--SdAd8DBMNQqSHCZQc-mkVVuE6w@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 18 Mar 2020 14:22:16 -0400
+IronPort-SDR: PtQYAqYmSU0V13VozZJzT3/D/k3Aw4DWrLHK9jvJkfDjc7Uk3homh3/D233H7+zWukP/i0yQKL
+ wp/+b68cT7IFCY38LwOmf1gwPpR8cnMHcgIzjLAbe//7kaVpbnS4xtArEuE7JhZZaX9g2rYbtx
+ cOZWUXGZkvFoFmSfrF2hQi7wRmUwSTcNsIB28g9c9J9L/Dekjuu0TSwiqAb6HuutnC5F6qW3iU
+ yHzocVmXAsSGvKRiqwL15u0/S+I1fN0VxBbaPPBmP5TV64ejczCwQ47DCSau5WTT/Ra6MkYzcu
+ /Z0=
+X-IronPort-AV: E=Sophos;i="5.70,559,1574150400"; 
+   d="scan'208";a="46713605"
+Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
+  by labrats.qualcomm.com with ESMTP; 16 Mar 2020 00:06:27 -0700
+Received: from pacamara-linux.qualcomm.com ([192.168.140.135])
+  by ironmsg01-sd.qualcomm.com with ESMTP; 16 Mar 2020 00:06:25 -0700
+Received: by pacamara-linux.qualcomm.com (Postfix, from userid 359480)
+        id CC1EC3A63; Mon, 16 Mar 2020 00:06:25 -0700 (PDT)
+From:   Can Guo <cang@codeaurora.org>
+To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        hongwus@codeaurora.org, rnayak@codeaurora.org,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
+Cc:     Subhash Jadavani <subhashj@codeaurora.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/2] scsi: ufs: Clean up ufshcd_scale_clks() and clock scaling error out path
+Date:   Mon, 16 Mar 2020 00:06:10 -0700
+Message-Id: <1584342373-10282-2-git-send-email-cang@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1584342373-10282-1-git-send-email-cang@codeaurora.org>
+References: <1584342373-10282-1-git-send-email-cang@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-03-18 at 14:31 -0300, Camylla Cantanheide wrote:
-> Dear Dan Carpenter and Joe Perches,
-> 
-> Thank you very much for the suggestions, I found the evaluation of both
-> very significant. Now, I have another perspective on variables.
-> 
-> I solved the problem for the *setKey *function, however, when executing the
-> checkpatch, more *Checks* of the same type appeared.
-> 
-> Should I send the second version of the patch, only to the *setKey*
-> function or do I resolve all *Checks* for the entire file?
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-A single patch refactoring the function would be fine.
+This change introduces a func ufshcd_set_clk_freq() to explicitly
+set clock frequency so that it can be used in reset_and_resotre path and
+in ufshcd_scale_clks(). Meanwhile, this change cleans up the clock scaling
+error out path.
 
-Also perhaps a name change as a separate patch later as
-setKey is a relatively generic name and not obviously
-specific to the rtl8192u..
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
 
-Perhaps a first refactoring patch like the below
-then a renaming one.
-
-(untested)
----
- drivers/staging/rtl8192u/r8192U_core.c | 50 ++++++++++++++++------------------
- 1 file changed, 23 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index 89dd1fb..0c0cb08 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -4880,7 +4880,7 @@ void EnableHWSecurityConfig8192(struct net_device *dev)
- void setKey(struct net_device *dev, u8 EntryNo, u8 KeyIndex, u16 KeyType,
- 	    u8 *MacAddr, u8 DefaultKey, u32 *KeyContent)
- {
--	u32 TargetCommand = 0;
-+	u32 TargetCommand = CAM_CONTENT_COUNT * EntryNo |  BIT(31) | BIT(16);
- 	u32 TargetContent = 0;
- 	u16 usConfig = 0;
- 	u8 i;
-@@ -4897,32 +4897,28 @@ void setKey(struct net_device *dev, u8 EntryNo, u8 KeyIndex, u16 KeyType,
- 	else
- 		usConfig |= BIT(15) | (KeyType << 2) | KeyIndex;
- 
--	for (i = 0; i < CAM_CONTENT_COUNT; i++) {
--		TargetCommand  = i + CAM_CONTENT_COUNT * EntryNo;
--		TargetCommand |= BIT(31) | BIT(16);
--
--		if (i == 0) { /* MAC|Config */
--			TargetContent = (u32)(*(MacAddr + 0)) << 16 |
--					(u32)(*(MacAddr + 1)) << 24 |
--					(u32)usConfig;
--
--			write_nic_dword(dev, WCAMI, TargetContent);
--			write_nic_dword(dev, RWCAM, TargetCommand);
--		} else if (i == 1) { /* MAC */
--			TargetContent = (u32)(*(MacAddr + 2))	 |
--					(u32)(*(MacAddr + 3)) <<  8 |
--					(u32)(*(MacAddr + 4)) << 16 |
--					(u32)(*(MacAddr + 5)) << 24;
--			write_nic_dword(dev, WCAMI, TargetContent);
--			write_nic_dword(dev, RWCAM, TargetCommand);
--		} else {
--			/* Key Material */
--			if (KeyContent) {
--				write_nic_dword(dev, WCAMI,
--						*(KeyContent + i - 2));
--				write_nic_dword(dev, RWCAM, TargetCommand);
--			}
--		}
-+	TargetContent = MacAddr[0] << 16 |
-+			MacAddr[0] << 24 |
-+			(u32)usConfig;
-+
-+	write_nic_dword(dev, WCAMI, TargetContent);
-+	write_nic_dword(dev, RWCAM, TargetCommand++);
-+
-+	 /* MAC */
-+	TargetContent = MacAddr[2]	 |
-+			MacAddr[3] <<  8 |
-+			MacAddr[4] << 16 |
-+			MacAddr[5] << 24;
-+	write_nic_dword(dev, WCAMI, TargetContent);
-+	write_nic_dword(dev, RWCAM, TargetCommand++);
-+
-+	/* Key Material */
-+	if (!KeyContent)
-+		return;
-+
-+	for (i = 2; i < CAM_CONTENT_COUNT; i++) {
-+		write_nic_dword(dev, WCAMI, *KeyContent++);
-+		write_nic_dword(dev, RWCAM, TargetCommand++);
- 	}
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 2a2a63b..63aaa88f 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -855,28 +855,29 @@ static bool ufshcd_is_unipro_pa_params_tuning_req(struct ufs_hba *hba)
+ 		return false;
  }
  
+-static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
++/**
++ * ufshcd_set_clk_freq - set UFS controller clock frequencies
++ * @hba: per adapter instance
++ * @scale_up: If True, set max possible frequency othewise set low frequency
++ *
++ * Returns 0 if successful
++ * Returns < 0 for any other errors
++ */
++static int ufshcd_set_clk_freq(struct ufs_hba *hba, bool scale_up)
+ {
+ 	int ret = 0;
+ 	struct ufs_clk_info *clki;
+ 	struct list_head *head = &hba->clk_list_head;
+-	ktime_t start = ktime_get();
+-	bool clk_state_changed = false;
+ 
+ 	if (list_empty(head))
+ 		goto out;
+ 
+-	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, PRE_CHANGE);
+-	if (ret)
+-		return ret;
+-
+ 	list_for_each_entry(clki, head, list) {
+ 		if (!IS_ERR_OR_NULL(clki->clk)) {
+ 			if (scale_up && clki->max_freq) {
+ 				if (clki->curr_freq == clki->max_freq)
+ 					continue;
+ 
+-				clk_state_changed = true;
+ 				ret = clk_set_rate(clki->clk, clki->max_freq);
+ 				if (ret) {
+ 					dev_err(hba->dev, "%s: %s clk set rate(%dHz) failed, %d\n",
+@@ -895,7 +896,6 @@ static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
+ 				if (clki->curr_freq == clki->min_freq)
+ 					continue;
+ 
+-				clk_state_changed = true;
+ 				ret = clk_set_rate(clki->clk, clki->min_freq);
+ 				if (ret) {
+ 					dev_err(hba->dev, "%s: %s clk set rate(%dHz) failed, %d\n",
+@@ -914,13 +914,36 @@ static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
+ 				clki->name, clk_get_rate(clki->clk));
+ 	}
+ 
++out:
++	return ret;
++}
++
++/**
++ * ufshcd_scale_clks - scale up or scale down UFS controller clocks
++ * @hba: per adapter instance
++ * @scale_up: True if scaling up and false if scaling down
++ *
++ * Returns 0 if successful
++ * Returns < 0 for any other errors
++ */
++static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
++{
++	int ret = 0;
++
++	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, PRE_CHANGE);
++	if (ret)
++		return ret;
++
++	ret = ufshcd_set_clk_freq(hba, scale_up);
++	if (ret)
++		return ret;
++
+ 	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, POST_CHANGE);
++	if (ret) {
++		ufshcd_set_clk_freq(hba, !scale_up);
++		return ret;
++	}
+ 
+-out:
+-	if (clk_state_changed)
+-		trace_ufshcd_profile_clk_scaling(dev_name(hba->dev),
+-			(scale_up ? "up" : "down"),
+-			ktime_to_us(ktime_sub(ktime_get(), start)), ret);
+ 	return ret;
+ }
+ 
+@@ -1106,35 +1129,36 @@ static int ufshcd_devfreq_scale(struct ufs_hba *hba, bool scale_up)
+ 
+ 	ret = ufshcd_clock_scaling_prepare(hba);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	/* scale down the gear before scaling down clocks */
+ 	if (!scale_up) {
+ 		ret = ufshcd_scale_gear(hba, false);
+ 		if (ret)
+-			goto out;
++			goto clk_scaling_unprepare;
+ 	}
+ 
+ 	ret = ufshcd_scale_clks(hba, scale_up);
+-	if (ret) {
+-		if (!scale_up)
+-			ufshcd_scale_gear(hba, true);
+-		goto out;
+-	}
++	if (ret)
++		goto scale_up_gear;
+ 
+ 	/* scale up the gear after scaling up clocks */
+ 	if (scale_up) {
+ 		ret = ufshcd_scale_gear(hba, true);
+ 		if (ret) {
+ 			ufshcd_scale_clks(hba, false);
+-			goto out;
++			goto clk_scaling_unprepare;
+ 		}
+ 	}
+ 
+-	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, POST_CHANGE);
++	goto clk_scaling_unprepare;
+ 
+-out:
++scale_up_gear:
++	if (!scale_up)
++		ufshcd_scale_gear(hba, true);
++clk_scaling_unprepare:
+ 	ufshcd_clock_scaling_unprepare(hba);
++out:
+ 	ufshcd_release(hba);
+ 	return ret;
+ }
+@@ -6251,7 +6275,7 @@ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
+ 	spin_unlock_irqrestore(hba->host->host_lock, flags);
+ 
+ 	/* scale up clocks to max frequency before full reinitialization */
+-	ufshcd_scale_clks(hba, true);
++	ufshcd_set_clk_freq(hba, true);
+ 
+ 	err = ufshcd_hba_enable(hba);
+ 	if (err)
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
