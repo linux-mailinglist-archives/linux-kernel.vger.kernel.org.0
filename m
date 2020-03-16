@@ -2,114 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FCAF186555
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 08:00:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E610B186562
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 08:04:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729897AbgCPG7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 02:59:53 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:35345 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729723AbgCPG7x (ORCPT
+        id S1729811AbgCPHEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 03:04:36 -0400
+Received: from aliyun-cloud.icoremail.net ([47.90.88.95]:34886 "HELO
+        aliyun-sdnproxy-1.icoremail.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with SMTP id S1729723AbgCPHEg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 02:59:53 -0400
-Received: by mail-pj1-f67.google.com with SMTP id mq3so8121050pjb.0;
-        Sun, 15 Mar 2020 23:59:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=eYiMJvzhgU8cefu9p/MQZ5kiTc4aQrMez5IEQVm5JBQ=;
-        b=TRfm9/B4gRFAcCC55jE5RaVV0vmnjxrYFvjtTjkrmgerr/XbVypOdOi6wnkZhUIFd7
-         JnIjaywX0wnTUsBgsph4ZFny1zoArct+omSuqJYexPFVNNvcaA3PsHiSkvGyJzOaoE5b
-         BOtJhvlWEHMpRzz0kBK/6uR2ErJXZ4w4ekkwzQ8yXBT+a7LGnxBIh6HDLuXD7KJdDA8S
-         265wqayBZ1aRhMNOerV4XS9rX0pyFAx6nTO0NeyXePiIyIDSxJ+KkapXdq8Ymt7AP9LA
-         SE5wPIo8xkdV44XSmr8FqL25QAWUEYf1LxPoizMsBE0OmiATrjbxSC6LT4vTTbNfgHj2
-         HJEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=eYiMJvzhgU8cefu9p/MQZ5kiTc4aQrMez5IEQVm5JBQ=;
-        b=gqkeu/dvJw9l/4F7UUVvVGG4bIGAuiKdfiG4vhZcr0nFkyH9tHYUJwmvNX3e08Pswl
-         zROTWLsxwnGznVCQvrrMpu7rLW8shOUnvGS6gUxrXqqgskvaFh3kN4zD0A3Yn8erQ0de
-         sPRjGd9vUu/PeatRNlGJuqXVbb9ENN196AY9QSXn3EGUYDDsAjRe+vQ+vWHm9uLP1AXg
-         KiWrdxE7y+T6jbI9wSiQVRMlqnt/3nsuOevZETaajjlouKJ7YPVv2LprAozte0alP8tS
-         Z4m7wIBTmMnISQAuRA+Aj7qD6xyxcFDzIMvL5rkrvUfxRf4L9W2Ea2BD7leMAKMQagQ+
-         UstQ==
-X-Gm-Message-State: ANhLgQ1oMuq05ATPB4frcDln2AYYhmxgp9r5LlYoIFnYQFX+gC6+felN
-        zbHgbNQAmyMrymAEGb/QuBA=
-X-Google-Smtp-Source: ADFU+vs4k0yrj7Ym3y5Tl5ybhCCG7hiX4pdR2mu8G0rZbALQoIBX9Pplw0st5yHEoVLU+nrrBSb4wA==
-X-Received: by 2002:a17:902:421:: with SMTP id 30mr3282708ple.271.1584341992275;
-        Sun, 15 Mar 2020 23:59:52 -0700 (PDT)
-Received: from VM_0_35_centos.localdomain ([150.109.62.251])
-        by smtp.gmail.com with ESMTPSA id x70sm54634841pgd.37.2020.03.15.23.59.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 15 Mar 2020 23:59:51 -0700 (PDT)
-From:   Qiujun Huang <hqjagain@gmail.com>
-To:     vyasevich@gmail.com, nhorman@tuxdriver.com,
-        marcelo.leitner@gmail.com, davem@davemloft.net, kuba@kernel.org
-Cc:     linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Qiujun Huang <hqjagain@gmail.com>
-Subject: [PATCH] drm/lease: fix potential race in fill_object_idr
-Date:   Mon, 16 Mar 2020 14:59:43 +0800
-Message-Id: <1584341983-11245-1-git-send-email-hqjagain@gmail.com>
+        Mon, 16 Mar 2020 03:04:36 -0400
+Received: from 137.localdomain (unknown [218.107.205.216])
+        by app1 (Coremail) with SMTP id xjNnewDn7Q1cHm9ew20FAA--.217S4;
+        Mon, 16 Mar 2020 14:36:24 +0800 (CST)
+From:   Pengcheng Yang <yangpc@wangsu.com>
+To:     edumazet@google.com, ncardwell@google.com, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Pengcheng Yang <yangpc@wangsu.com>
+Subject: [PATCH RESEND net-next v2 2/5] tcp: fix stretch ACK bugs in Scalable
+Date:   Mon, 16 Mar 2020 14:35:08 +0800
+Message-Id: <1584340511-9870-3-git-send-email-yangpc@wangsu.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1584340511-9870-1-git-send-email-yangpc@wangsu.com>
+References: <1584340511-9870-1-git-send-email-yangpc@wangsu.com>
+X-CM-TRANSID: xjNnewDn7Q1cHm9ew20FAA--.217S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw4rWryDXr1xJr4furyDJrb_yoW8XFWUpF
+        s8Gw1Fkr45WrySgayS9Fy5JF15GwsavFy7Gry2krn3Aws8Gr93tF1kt3y5tFWUA3yxC39I
+        krWj93WxWF9YyrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUgI1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l8cAvFVAK
+        0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4
+        x0Y4vE2Ix0cI8IcVCY1x0267AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28E
+        F7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F4
+        0EFcxC0VAKzVAqx4xG6I80ewAv7VCjz48v1sIEY20_Gr4lOx8S6xCaFVCjc4AY6r1j6r4U
+        M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_GF1l42
+        xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8GwCFx2IqxVCFs4IE7xkEbVWUJVW8
+        JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1V
+        AFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xII
+        jxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4
+        A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU
+        0xZFpf9x0Jj2-eOUUUUU=
+X-CM-SenderInfo: p1dqw1nf6zt0xjvxhudrp/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should hold idr_mutex for idr_alloc.
+Change Scalable to properly handle stretch ACKs in additive
+increase mode by passing in the count of ACKed packets to
+tcp_cong_avoid_ai().
 
-Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+In addition, because we are now precisely accounting for
+stretch ACKs, including delayed ACKs, we can now change
+TCP_SCALABLE_AI_CNT to 100.
+
+Signed-off-by: Pengcheng Yang <yangpc@wangsu.com>
 ---
- drivers/gpu/drm/drm_lease.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ net/ipv4/tcp_scalable.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
-index b481caf..427ee21 100644
---- a/drivers/gpu/drm/drm_lease.c
-+++ b/drivers/gpu/drm/drm_lease.c
-@@ -418,6 +418,7 @@ static int fill_object_idr(struct drm_device *dev,
- 		goto out_free_objects;
- 	}
+diff --git a/net/ipv4/tcp_scalable.c b/net/ipv4/tcp_scalable.c
+index 471571e..6cebf41 100644
+--- a/net/ipv4/tcp_scalable.c
++++ b/net/ipv4/tcp_scalable.c
+@@ -10,10 +10,9 @@
+ #include <net/tcp.h>
  
-+	mutex_lock(&dev->mode_config.idr_mutex);
- 	/* add their IDs to the lease request - taking into account
- 	   universal planes */
- 	for (o = 0; o < object_count; o++) {
-@@ -437,7 +438,7 @@ static int fill_object_idr(struct drm_device *dev,
- 		if (ret < 0) {
- 			DRM_DEBUG_LEASE("Object %d cannot be inserted into leases (%d)\n",
- 					object_id, ret);
--			goto out_free_objects;
-+			goto out_unlock;
- 		}
- 		if (obj->type == DRM_MODE_OBJECT_CRTC && !universal_planes) {
- 			struct drm_crtc *crtc = obj_to_crtc(obj);
-@@ -445,20 +446,22 @@ static int fill_object_idr(struct drm_device *dev,
- 			if (ret < 0) {
- 				DRM_DEBUG_LEASE("Object primary plane %d cannot be inserted into leases (%d)\n",
- 						object_id, ret);
--				goto out_free_objects;
-+				goto out_unlock;
- 			}
- 			if (crtc->cursor) {
- 				ret = idr_alloc(leases, &drm_lease_idr_object, crtc->cursor->base.id, crtc->cursor->base.id + 1, GFP_KERNEL);
- 				if (ret < 0) {
- 					DRM_DEBUG_LEASE("Object cursor plane %d cannot be inserted into leases (%d)\n",
- 							object_id, ret);
--					goto out_free_objects;
-+					goto out_unlock;
- 				}
- 			}
- 		}
- 	}
+ /* These factors derived from the recommended values in the aer:
+- * .01 and and 7/8. We use 50 instead of 100 to account for
+- * delayed ack.
++ * .01 and and 7/8.
+  */
+-#define TCP_SCALABLE_AI_CNT	50U
++#define TCP_SCALABLE_AI_CNT	100U
+ #define TCP_SCALABLE_MD_SCALE	3
  
- 	ret = 0;
-+out_unlock:
-+	mutex_unlock(&dev->mode_config.idr_mutex);
- out_free_objects:
- 	for (o = 0; o < object_count; o++) {
- 		if (objects[o])
+ static void tcp_scalable_cong_avoid(struct sock *sk, u32 ack, u32 acked)
+@@ -23,11 +22,13 @@ static void tcp_scalable_cong_avoid(struct sock *sk, u32 ack, u32 acked)
+ 	if (!tcp_is_cwnd_limited(sk))
+ 		return;
+ 
+-	if (tcp_in_slow_start(tp))
+-		tcp_slow_start(tp, acked);
+-	else
+-		tcp_cong_avoid_ai(tp, min(tp->snd_cwnd, TCP_SCALABLE_AI_CNT),
+-				  1);
++	if (tcp_in_slow_start(tp)) {
++		acked = tcp_slow_start(tp, acked);
++		if (!acked)
++			return;
++	}
++	tcp_cong_avoid_ai(tp, min(tp->snd_cwnd, TCP_SCALABLE_AI_CNT),
++			  acked);
+ }
+ 
+ static u32 tcp_scalable_ssthresh(struct sock *sk)
 -- 
 1.8.3.1
 
