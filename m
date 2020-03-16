@@ -2,96 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A19DA18692F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:35:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 202D618693A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:37:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730676AbgCPKe5 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 16 Mar 2020 06:34:57 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:51394 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730604AbgCPKe5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 06:34:57 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1jDn5C-0004bb-2E; Mon, 16 Mar 2020 11:34:54 +0100
-Date:   Mon, 16 Mar 2020 11:34:54 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 1/9] Documentation: Add lock ordering and nesting
- documentation
-Message-ID: <20200316103454.iodi65uzbpat4kv5@linutronix.de>
-References: <20200313174701.148376-1-bigeasy@linutronix.de>
- <20200313174701.148376-2-bigeasy@linutronix.de>
- <2e0912cc-6780-18e9-4e4c-7cc60da6709f@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <2e0912cc-6780-18e9-4e4c-7cc60da6709f@infradead.org>
+        id S1730679AbgCPKhr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 06:37:47 -0400
+Received: from mga09.intel.com ([134.134.136.24]:26973 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730497AbgCPKhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 06:37:47 -0400
+IronPort-SDR: UDXvqxzMYB9NxNXWpvn2DKcZho46AVjHu6oaeTgTqmnUR10AKQtvRHpn/6A7AYeHRpfxAO/31y
+ 4ejUP5b89vYA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 03:37:46 -0700
+IronPort-SDR: +yOYCpQQmAvMHWv5T76iAjArCJkMt3v+Ysd1H3lDGIxbjJtH7agzPOV0ZaHsTNar5jZ9kKJ5aW
+ V3/C8uFaf3dQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,560,1574150400"; 
+   d="scan'208";a="267522683"
+Received: from wwanmoha-ilbpg2.png.intel.com ([10.88.227.42])
+  by fmsmga004.fm.intel.com with ESMTP; 16 Mar 2020 03:37:44 -0700
+From:   Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>
+To:     kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        wan.ahmad.zainie.wan.mohamad@intel.com
+Subject: [PATCH 0/2] phy: intel: Add Keem Bay eMMC PHY support
+Date:   Mon, 16 Mar 2020 18:37:24 +0800
+Message-Id: <20200316103726.16339-1-wan.ahmad.zainie.wan.mohamad@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-03-14 15:57:24 [-0700], Randy Dunlap wrote:
-> Hi,
-Hi Randy,
+Hi.
 
-> A few comments for your consideration:
+The first part is to document DT bindings for Keem Bay eMMC PHY.
 
-I merged all of you comments but two:
+The second is the driver file, loosely based on phy-rockchip-emmc.c
+and phy-intel-emmc.c. The latter is not being reused as there are
+quite a number of differences i.e. registers offset, supported clock
+rates, bitfield to set.
 
-> On 3/13/20 10:46 AM, Sebastian Andrzej Siewior wrote:
-…
-> > +rwlock_t and PREEMPT_RT
-> > +-----------------------
-> > +
-> > +On a PREEMPT_RT enabled kernel rwlock_t is mapped to a separate
-> > +implementation based on rt_mutex which changes the semantics:
-> > +
-> > + - Same changes as for spinlock_t
-> > +
-> > + - The implementation is not fair and can cause writer starvation under
-> > +   certain circumstances. The reason for this is that a writer cannot
-> > +   inherit its priority to multiple readers. Readers which are blocked
-> 
->       ^^^^^^^ I think this is backwards. Maybe more like so:
->                                                          a writer cannot
->       bequeath or grant or bestow or pass down    ...    its priority to
+The patch was tested with Keem Bay evaluation module board.
 
-So the term "inherit" is the problem. The protocol is officially called
-PI which is short for Priority Inheritance. Other documentation,
-RT-mutex for instance, is also using this term when it is referring to
-altering the priority of a task. For that reason I prefer to keep using
-this term.
+Thank you.
 
-> > +   on a writer fully support the priority inheritance protocol.
-…
-> > +raw_spinlock_t
-> > +--------------
-> > +
-> > +As raw_spinlock_t locking disables preemption and eventually interrupts the
-> > +code inside the critical region has to be careful to avoid calls into code
-> 
-> Can I buy a comma in there somewhere, please?
-> I don't get it as is.
+Best regards,
+Zainie
 
-What about
 
-| As raw_spinlock_t locking disables preemption, and eventually interrupts, the
-| code inside the critical region has to be careful to avoid calls into code
+Wan Ahmad Zainie (2):
+  dt-bindings: phy: intel: Add documentation for Keem Bay eMMC PHY
+  phy: intel: Add Keem Bay eMMC PHY support
 
-any better?
+ .../bindings/phy/intel,keembay-emmc-phy.yaml  |  57 +++++
+ drivers/phy/intel/Kconfig                     |   7 +
+ drivers/phy/intel/Makefile                    |   1 +
+ drivers/phy/intel/phy-keembay-emmc.c          | 231 ++++++++++++++++++
+ 4 files changed, 296 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/intel,keembay-emmc-phy.yaml
+ create mode 100644 drivers/phy/intel/phy-keembay-emmc.c
 
-…
+-- 
+2.17.1
 
-Sebastian
