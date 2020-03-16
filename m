@@ -2,109 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 747F618711D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 18:27:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 692FD18713F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 18:35:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731745AbgCPR1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 13:27:21 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41710 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731136AbgCPR1V (ORCPT
+        id S1732197AbgCPRey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 13:34:54 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:44726 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730437AbgCPRex (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 13:27:21 -0400
-Received: by mail-lj1-f196.google.com with SMTP id o10so19599879ljc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 10:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DMMGwqm11i++eOrcoQ51CLKjc9B8b60ZGiRJoVHy98E=;
-        b=MJ9Q/HYw+ovlaE/zZJRh9JpRhaw6V6SXu5XO1Fqqu6ZGU01dZu/JLzEnPevXgP4zYB
-         fn3GePVRLo5oklQpIogzLt9PPFM4dRyaGtnemw6mxcBTBnDjLUI1HuYPUqH98zL/Dqq5
-         uadBDvnI/AUR6Dw/rt2wU0UlVVYE8g2lIyAVg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DMMGwqm11i++eOrcoQ51CLKjc9B8b60ZGiRJoVHy98E=;
-        b=MrCOA6pjyb2FLX9zqkQBwqzMgvS9pz2/8tJKFPBJpxzCDfDVuBXdxVzwPwcgsb/e1b
-         y0bh3kJfv1q4q+8F0Ig2+bX/pQ72kZ1pMGYbtpufHMpTELP+tt5T61B7bgGZue3si/ii
-         noyYmsIoi4Af9IqwfUqjDqFrWx8ojuIrvoBxyHqGLtAwXHh0ApwaSbdiNW4rKffAxvDl
-         yCTlVJtoXdZa0gFKqPnKY4HTyiRScK9OYW8llBBpWK64wNiaM/PJZLjVJKQ3zAFQaTjh
-         SohhnY2tVDZV5Z7kdIppgfzbwH1VJlo07xaIjV9/IPHkw+2Biqd4JYN27muBCzgeN1uK
-         MuvQ==
-X-Gm-Message-State: ANhLgQ29q4+3Q6E0hlKymnyeqZFJsvTaNIigbNAqPHARvuUuqR0OjJQl
-        diJjsCnLrmkTAIWiOrIqYBEl5Xqc5d8=
-X-Google-Smtp-Source: ADFU+vs4/Wz2QyQREY+hmCMGffc6j4ceG3eK/j2SWkwTX8B4pHDGNFBWH8/FcnXTDzM13b6SUwipNA==
-X-Received: by 2002:a2e:868b:: with SMTP id l11mr212434lji.69.1584379637779;
-        Mon, 16 Mar 2020 10:27:17 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id m16sm355035lfb.59.2020.03.16.10.27.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Mar 2020 10:27:16 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id j15so14815691lfk.6
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 10:27:16 -0700 (PDT)
-X-Received: by 2002:ac2:5508:: with SMTP id j8mr273495lfk.31.1584379635940;
- Mon, 16 Mar 2020 10:27:15 -0700 (PDT)
+        Mon, 16 Mar 2020 13:34:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584380091;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1P9Nk1ZdLZSesaSGCEClbdSWJfHJa0QYY/vWnJS45h8=;
+        b=KDBhK0auV4amUPON3mJIcN6NbOzuVCr0ecmIPYHEr/T6/AkZv9ygWtaXJbMBpVeuJYTuED
+        Pxpp8ft7PfcLX4rvlxcOxgzGYDLoPloI1VoxQc882YGQjJYI+7A/GihDlZ7AcmcmfmbBT+
+        U1z1I4if4ZygmqwKB2GjM0H6iakMIh0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-55-N6pR0s2hNOmDLHZVF9tbvg-1; Mon, 16 Mar 2020 13:34:50 -0400
+X-MC-Unique: N6pR0s2hNOmDLHZVF9tbvg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 55CC21804541;
+        Mon, 16 Mar 2020 17:10:26 +0000 (UTC)
+Received: from [10.36.118.12] (ovpn-118-12.ams2.redhat.com [10.36.118.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 47AE060BE2;
+        Mon, 16 Mar 2020 17:10:20 +0000 (UTC)
+Subject: Re: [PATCH v5 08/23] irqchip/gic-v4.1: Plumb skeletal VSGI irqchip
+To:     Marc Zyngier <maz@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Robert Richter <rrichter@marvell.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+References: <20200304203330.4967-1-maz@kernel.org>
+ <20200304203330.4967-9-maz@kernel.org>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <67a863c1-1d68-458a-39b1-6c43b8730d60@redhat.com>
+Date:   Mon, 16 Mar 2020 18:10:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20200308140314.GQ5972@shao2-debian> <1bfba96b4bf0d3ca9a18a2bced3ef3a2a7b44dad.camel@kernel.org>
- <87blp5urwq.fsf@notabene.neil.brown.name> <41c83d34ae4c166f48e7969b2b71e43a0f69028d.camel@kernel.org>
- <ed73fb5d-ddd5-fefd-67ae-2d786e68544a@huawei.com> <923487db2c9396c79f8e8dd4f846b2b1762635c8.camel@kernel.org>
- <36c58a6d07b67aac751fca27a4938dc1759d9267.camel@kernel.org>
- <878sk7vs8q.fsf@notabene.neil.brown.name> <c4ef31a663fbf7a3de349696e9f00f2f5c4ec89a.camel@kernel.org>
- <875zfbvrbm.fsf@notabene.neil.brown.name> <CAHk-=wg8N4fDRC3M21QJokoU+TQrdnv7HqoaFW-Z-ZT8z_Bi7Q@mail.gmail.com>
- <0066a9f150a55c13fcc750f6e657deae4ebdef97.camel@kernel.org>
- <CAHk-=whUgeZGcs5YAfZa07BYKNDCNO=xr4wT6JLATJTpX0bjGg@mail.gmail.com>
- <87v9nattul.fsf@notabene.neil.brown.name> <CAHk-=wiNoAk8v3GrbK3=q6KRBrhLrTafTmWmAo6-up6Ce9fp6A@mail.gmail.com>
- <87o8t2tc9s.fsf@notabene.neil.brown.name> <CAHk-=wj5jOYxjZSUNu_jdJ0zafRS66wcD-4H0vpQS=a14rS8jw@mail.gmail.com>
- <f000e352d9e103b3ade3506aac225920420d2323.camel@kernel.org>
- <877dznu0pk.fsf@notabene.neil.brown.name> <CAHk-=whYQqtW6B7oPmPr9-PXwyqUneF4sSFE+o3=7QcENstE-g@mail.gmail.com>
- <b5a1bb4c4494a370f915af479bcdf8b3b351eb6d.camel@kernel.org>
- <87pndcsxc6.fsf@notabene.neil.brown.name> <ce48ed9e48eda3c0f27d2f417314bd00cb1a68db.camel@kernel.org>
-In-Reply-To: <ce48ed9e48eda3c0f27d2f417314bd00cb1a68db.camel@kernel.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 16 Mar 2020 10:26:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whnqDS0NJtAaArVeYQz3hcU=4Ja3auB1Jvs42eADfUgMQ@mail.gmail.com>
-Message-ID: <CAHk-=whnqDS0NJtAaArVeYQz3hcU=4Ja3auB1Jvs42eADfUgMQ@mail.gmail.com>
-Subject: Re: [locks] 6d390e4b5d: will-it-scale.per_process_ops -96.6% regression
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     NeilBrown <neilb@suse.de>, yangerkun <yangerkun@huawei.com>,
-        kernel test robot <rong.a.chen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        Bruce Fields <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200304203330.4967-9-maz@kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 4:07 AM Jeff Layton <jlayton@kernel.org> wrote:
->
->
-> +       /*
-> +        * If fl_blocker is NULL, it won't be set again as this thread "owns"
-> +        * the lock and is the only one that might try to claim the lock.
-> +        * Because fl_blocker is explicitly set last during a delete, it's
-> +        * safe to locklessly test to see if it's NULL. If it is, then we know
-> +        * that no new locks can be inserted into its fl_blocked_requests list,
-> +        * and we can therefore avoid doing anything further as long as that
-> +        * list is empty.
-> +        */
-> +       if (!smp_load_acquire(&waiter->fl_blocker) &&
-> +           list_empty(&waiter->fl_blocked_requests))
-> +               return status;
+Hi Marc,
 
-Ack. This looks sane to me now.
+On 3/4/20 9:33 PM, Marc Zyngier wrote:
+> Since GICv4.1 has the capability to inject 16 SGIs into each VPE,
+> and that I'm keen not to invent too many specific interfaces to
+> manipulate these interrupts, let's pretend that each of these SGIs
+> is an actual Linux interrupt.
+> 
+> For that matter, let's introduce a minimal irqchip and irqdomain
+> setup that will get fleshed up in the following patches.
+> 
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
+> ---
+>  drivers/irqchip/irq-gic-v3-its.c   | 68 +++++++++++++++++++++++++++++-
+>  drivers/irqchip/irq-gic-v4.c       |  8 +++-
+>  include/linux/irqchip/arm-gic-v4.h |  9 +++-
+>  3 files changed, 81 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index 54d6fdf7a28e..112b452fcb40 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -3870,6 +3870,67 @@ static struct irq_chip its_vpe_4_1_irq_chip = {
+>  	.irq_set_vcpu_affinity	= its_vpe_4_1_set_vcpu_affinity,
+>  };
+>  
+> +static int its_sgi_set_affinity(struct irq_data *d,
+> +				const struct cpumask *mask_val,
+> +				bool force)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +static struct irq_chip its_sgi_irq_chip = {
+> +	.name			= "GICv4.1-sgi",
+> +	.irq_set_affinity	= its_sgi_set_affinity,
+> +};
+nit: const?
+> +
+> +static int its_sgi_irq_domain_alloc(struct irq_domain *domain,
+> +				    unsigned int virq, unsigned int nr_irqs,
+> +				    void *args)
+> +{
+> +	struct its_vpe *vpe = args;
+> +	int i;
+> +
+> +	/* Yes, we do want 16 SGIs */
+> +	WARN_ON(nr_irqs != 16);
+> +
+> +	for (i = 0; i < 16; i++) {
+> +		vpe->sgi_config[i].priority = 0;
+> +		vpe->sgi_config[i].enabled = false;
+> +		vpe->sgi_config[i].group = false;
+> +
+> +		irq_domain_set_hwirq_and_chip(domain, virq + i, i,
+> +					      &its_sgi_irq_chip, vpe);
+> +		irq_set_status_flags(virq + i, IRQ_DISABLE_UNLAZY);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void its_sgi_irq_domain_free(struct irq_domain *domain,
+> +				    unsigned int virq,
+> +				    unsigned int nr_irqs)
+> +{
+> +	/* Nothing to do */
+> +}
+> +
+> +static int its_sgi_irq_domain_activate(struct irq_domain *domain,
+> +				       struct irq_data *d, bool reserve)
+> +{
+> +	return 0;
+> +}
+> +
+> +static void its_sgi_irq_domain_deactivate(struct irq_domain *domain,
+> +					  struct irq_data *d)
+> +{
+> +	/* Nothing to do */
+> +}
+> +
+> +static struct irq_domain_ops its_sgi_domain_ops = {
+> +	.alloc		= its_sgi_irq_domain_alloc,
+> +	.free		= its_sgi_irq_domain_free,
+> +	.activate	= its_sgi_irq_domain_activate,
+> +	.deactivate	= its_sgi_irq_domain_deactivate,
+> +};
+nit: const?
+> +
+>  static int its_vpe_id_alloc(void)
+>  {
+>  	return ida_simple_get(&its_vpeid_ida, 0, ITS_MAX_VPEID, GFP_KERNEL);
+> @@ -4912,8 +4973,13 @@ int __init its_init(struct fwnode_handle *handle, struct rdists *rdists,
+>  		rdists->has_rvpeid = false;
+>  
+>  	if (has_v4 & rdists->has_vlpis) {
+> +		struct irq_domain_ops *sgi_ops = NULL;
+> +
+> +		if (has_v4_1)
+> +			sgi_ops = &its_sgi_domain_ops;
+> +
+>  		if (its_init_vpe_domain() ||
+> -		    its_init_v4(parent_domain, &its_vpe_domain_ops)) {
+> +		    its_init_v4(parent_domain, &its_vpe_domain_ops, sgi_ops)) {
+>  			rdists->has_vlpis = false;
+>  			pr_err("ITS: Disabling GICv4 support\n");
+>  		}
+> diff --git a/drivers/irqchip/irq-gic-v4.c b/drivers/irqchip/irq-gic-v4.c
+> index 45969927cc81..c01910d53f9e 100644
+> --- a/drivers/irqchip/irq-gic-v4.c
+> +++ b/drivers/irqchip/irq-gic-v4.c
+> @@ -85,6 +85,7 @@
+>  
+>  static struct irq_domain *gic_domain;
+>  static const struct irq_domain_ops *vpe_domain_ops;
+> +static const struct irq_domain_ops *sgi_domain_ops;
+>  
+>  int its_alloc_vcpu_irqs(struct its_vm *vm)
+>  {
+> @@ -216,12 +217,15 @@ int its_prop_update_vlpi(int irq, u8 config, bool inv)
+>  	return irq_set_vcpu_affinity(irq, &info);
+>  }
+>  
+> -int its_init_v4(struct irq_domain *domain, const struct irq_domain_ops *ops)
+> +int its_init_v4(struct irq_domain *domain,
+> +		const struct irq_domain_ops *vpe_ops,
+> +		const struct irq_domain_ops *sgi_ops)
+>  {
+>  	if (domain) {
+>  		pr_info("ITS: Enabling GICv4 support\n");
+>  		gic_domain = domain;
+> -		vpe_domain_ops = ops;
+> +		vpe_domain_ops = vpe_ops;
+> +		sgi_domain_ops = sgi_ops;
+>  		return 0;
+>  	}
+>  
+> diff --git a/include/linux/irqchip/arm-gic-v4.h b/include/linux/irqchip/arm-gic-v4.h
+> index 439963f4c66a..44e8c19e3d56 100644
+> --- a/include/linux/irqchip/arm-gic-v4.h
+> +++ b/include/linux/irqchip/arm-gic-v4.h
+> @@ -49,6 +49,11 @@ struct its_vpe {
+>  		};
+>  		/* GICv4.1 implementations */
+>  		struct {
+> +			struct {
+> +				u8	priority;
+> +				bool	enabled;
+> +				bool	group;
+> +			}			sgi_config[16];
+>  			atomic_t vmapp_count;
+>  		};
+>  	};
+> @@ -123,6 +128,8 @@ int its_unmap_vlpi(int irq);
+>  int its_prop_update_vlpi(int irq, u8 config, bool inv);
+>  
+>  struct irq_domain_ops;
+> -int its_init_v4(struct irq_domain *domain, const struct irq_domain_ops *ops);
+> +int its_init_v4(struct irq_domain *domain,
+> +		const struct irq_domain_ops *vpe_ops,
+> +		const struct irq_domain_ops *sgi_ops);
+>  
+>  #endif
+> 
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-yangerkun - how did you find the original problem?
+Thanks
 
-Would you mind using whatever stress test that caused commit
-6d390e4b5d48 ("locks: fix a potential use-after-free problem when
-wakeup a waiter") with this patch? And if you did it analytically,
-you're a champ and should look at this patch too!
+Eric
 
-Thanks,
-
-              Linus
