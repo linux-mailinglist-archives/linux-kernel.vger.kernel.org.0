@@ -2,113 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86C9D187011
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:32:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49425187048
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:42:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732175AbgCPQcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 12:32:43 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40959 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732157AbgCPQch (ORCPT
+        id S1732172AbgCPQmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 12:42:54 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:49497 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732098AbgCPQmy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 12:32:37 -0400
-Received: by mail-qt1-f196.google.com with SMTP id n5so14738732qtv.7
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 09:32:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MS9t2iNEb4PB+lJw794GmMD2vsMG+E5GyTEPZil/bNo=;
-        b=spKZul4E9ghWYJLYXGAXmc5aUIfKjBxesU7eG6/OrD8I3Ea6yP+POQQizAT5DR9TmS
-         vN3QpCb2r0BbXbLTeuU7i+04biHMIE5d+GDzGkAJYffAS2qO60Dye0fGnLtBLYDI1+3v
-         5PpmYKt4nUAQ/xvC5wSDEbmL+Z4IZ5aZ8oYy0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MS9t2iNEb4PB+lJw794GmMD2vsMG+E5GyTEPZil/bNo=;
-        b=MwWyF+dqZtCgGWltICUGU6hwZzN4mPyNraztbNZOtKg5dC1sMaLgfJkJ1nzptprN0e
-         NCwWnpZDgBaEJ8l8v3RBNBRgcvkRUKWmlWBldl734GWu16U6QNAMYl8LjWAiS6wVAFzK
-         J+IZ2EiQHrAXCnJady77640iqSnw/vK/jpbeXzP1oJcQJnerdwBu7PVBzW0BAPWTQ6Kt
-         LzPV9BwTZYugfLjF4ZBMSuCUyQJwJR1wzTaLErYYSwClF4wPOs/W5bryR+31rO7xWWJ/
-         v1RbDsFzVKJiCrmrIxq32adXxEOvVuqnwpWbnJaX3uPc57ewt4kduoqJ3w46RkZWWW4Q
-         ySbA==
-X-Gm-Message-State: ANhLgQ3g5HHbVNYVBs8dQ4zzWJvSq/m64CCUb6VySYp7a+EHW523w+Wa
-        D3gZJc99FxwJkG6BvuLCdPVj01fi/RM=
-X-Google-Smtp-Source: ADFU+vt7bNr8SiK9bno7vp1EaeHQg9Cz/e4b46LVAFks6Bap41A9ThJRP3j8Gke2/RMbnATTb4gwtw==
-X-Received: by 2002:ac8:7319:: with SMTP id x25mr906277qto.96.1584376355937;
-        Mon, 16 Mar 2020 09:32:35 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id y127sm84139qkb.76.2020.03.16.09.32.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2020 09:32:35 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>, urezki@gmail.com
-Subject: [PATCH v2 rcu-dev 3/3] rcu/tree: Count number of batched kfree_rcu() locklessly
-Date:   Mon, 16 Mar 2020 12:32:28 -0400
-Message-Id: <20200316163228.62068-3-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-In-Reply-To: <20200316163228.62068-1-joel@joelfernandes.org>
-References: <20200316163228.62068-1-joel@joelfernandes.org>
+        Mon, 16 Mar 2020 12:42:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584376973;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jC00Z6qh/Tdo08cJHrlqWaLr117ZyFvx6URUV4dogZI=;
+        b=Zoc5xfK6wF5wEcuyhZs1WwJoGpXbQpoPb4o9S3ZzxRMNr16LG/+5Vqe7hLMhic7pPo/cll
+        VtHNMTEUBIgzCvXv7xxmsLrZ0DfTdnqwO7WZ+MEZGwiK3dAy+l2xqC5XtmXs+Z8vcU1nzf
+        dxo1QulfjDavM4+783jqWeSf0H5UewM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-422-LWQ5OmvLM5qkW_o2seEmAA-1; Mon, 16 Mar 2020 12:42:49 -0400
+X-MC-Unique: LWQ5OmvLM5qkW_o2seEmAA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6669518A8CBA;
+        Mon, 16 Mar 2020 16:33:20 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-118-249.phx2.redhat.com [10.3.118.249])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A0AE660BE2;
+        Mon, 16 Mar 2020 16:33:17 +0000 (UTC)
+Subject: Re: [PATCH v3 1/3] KEYS: Don't write out to userspace while holding
+ key semaphore
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        David Howells <dhowells@redhat.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Chris von Recklinghausen <crecklin@redhat.com>
+References: <20200315212706.GE224162@linux.intel.com>
+ <20200313152102.1707-1-longman@redhat.com>
+ <20200313152102.1707-2-longman@redhat.com>
+ <20200315192104.GD224162@linux.intel.com>
+ <1793253.1584357764@warthog.procyon.org.uk>
+ <c1138c83619553d018970a4b2d95f38fccebc99c.camel@linux.intel.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <6f00132d-2ed8-fcbc-a1c3-54151a582aa1@redhat.com>
+Date:   Mon, 16 Mar 2020 12:33:17 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <c1138c83619553d018970a4b2d95f38fccebc99c.camel@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can relax the correctness of counting of number of queued objects in
-favor of not hurting performance, by locklessly sampling per-cpu
-counters. This should be Ok since under high memory pressure, it should not
-matter if we are off by a few objects while counting. The shrinker will
-still do the reclaim.
+On 3/16/20 9:53 AM, Jarkko Sakkinen wrote:
+> On Mon, 2020-03-16 at 11:22 +0000, David Howells wrote:
+>> Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+>>
+>>> I guess we cannot sanely define fixes tag for this one, can we?
+>> Use:
+>>
+>> 	Fixes: ^1da177e4c3f4 ("Linux-2.6.12-rc2")
+>>
+>> David
+> Longmao, please include this to the next version.
+>
+> /Jarkko
+>
+Sure, will do.
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-
----
- kernel/rcu/tree.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index dc570dff68d7b..875e7162ddcce 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2916,7 +2916,7 @@ static inline bool queue_kfree_rcu_work(struct kfree_rcu_cpu *krcp)
- 				krcp->head = NULL;
- 			}
- 
--			krcp->count = 0;
-+			WRITE_ONCE(krcp->count, 0);
- 
- 			/*
- 			 * One work is per one batch, so there are two "free channels",
-@@ -3054,7 +3054,7 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
- 		krcp->head = head;
- 	}
- 
--	krcp->count++;
-+	WRITE_ONCE(krcp->count, krcp->count + 1);
- 
- 	// Set timer to drain after KFREE_DRAIN_JIFFIES.
- 	if (rcu_scheduler_active == RCU_SCHEDULER_RUNNING &&
-@@ -3080,9 +3080,7 @@ kfree_rcu_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
- 	for_each_online_cpu(cpu) {
- 		struct kfree_rcu_cpu *krcp = per_cpu_ptr(&krc, cpu);
- 
--		spin_lock_irqsave(&krcp->lock, flags);
--		count += krcp->count;
--		spin_unlock_irqrestore(&krcp->lock, flags);
-+		count += READ_ONCE(krcp->count);
- 	}
- 
- 	return count;
--- 
-2.25.1.481.gfbce0eb801-goog
+Cheers,
+Longman
 
