@@ -2,79 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 491ED18703F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:39:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2546187060
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:49:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732228AbgCPQjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 12:39:18 -0400
-Received: from sauhun.de ([88.99.104.3]:54480 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732183AbgCPQjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 12:39:14 -0400
-Received: from localhost (p54B334BA.dip0.t-ipconnect.de [84.179.52.186])
-        by pokefinder.org (Postfix) with ESMTPSA id 7F4EC2C1F53;
-        Mon, 16 Mar 2020 17:39:12 +0100 (CET)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm: encoder_slave: use new I2C API
-Date:   Mon, 16 Mar 2020 17:39:07 +0100
-Message-Id: <20200316163907.13709-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200316163907.13709-1-wsa+renesas@sang-engineering.com>
-References: <20200316163907.13709-1-wsa+renesas@sang-engineering.com>
+        id S1732138AbgCPQtA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 12:49:00 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:44740 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731665AbgCPQs7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 12:48:59 -0400
+X-Greylist: delayed 557 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Mar 2020 12:48:59 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584377338;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qJ0Dh7UwY9/JBhA8PMSrlRvaVmrVnOei0kD1wp+5Gzw=;
+        b=gdL0v/ZWNl1KsPa6+NNqOiaNdOGQl8mZ3NArBj9l3A3pN7P3HCHlJkS0RvkCBpCxJZ2Whi
+        mhUJeSPpijLKsyEg2Ws12XOvTHR9ZRnktKTpMW6CXzQQJGK8mNaJtQA+2AzfTu2kKmdWzH
+        5Dm0NxjHEHV8DNm/G3JKz5jCm+JyYXs=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-50-mIG9uFeXNB6uEn8bMyH3eA-1; Mon, 16 Mar 2020 12:39:39 -0400
+X-MC-Unique: mIG9uFeXNB6uEn8bMyH3eA-1
+Received: by mail-wm1-f71.google.com with SMTP id p18so2002070wmk.9
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 09:39:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qJ0Dh7UwY9/JBhA8PMSrlRvaVmrVnOei0kD1wp+5Gzw=;
+        b=DMgqYa0Mpesas5pRHt+nPhBvYN8J6cXWwPCJw3t2suzGTsMS5FqQfDwMay55Cyccv8
+         hEw89g1pTsBw0CBIYWy9RnGbo9pTVZQOxF+YnpfQrYfOoiy3q17koAiNEP3QJpRWLxU+
+         AVRYfXfinTBIGeZSU/hy2u9W0UDa9O7+Y/bLd81K9yVZmTGIE752xVTjG9yBc/mr7Uec
+         ldkpcGhNZeh4cVBl0FRBvcriTQd+HmnsnOFBATSSYTQHuPM+C+i9HfE6ypbRdQhtXe4K
+         Au6QLKnqrtZ04TRPxC/uSs3KyQWHKlxtj1f0hGiDhKtA7lZBI3s35CccR0vIjkNASUZq
+         xtLQ==
+X-Gm-Message-State: ANhLgQ1JNRA5SACNlB3cZ73osDA4l5Xa3TUWmkTQFW0dJ+YxJhRGxzMP
+        AGePoISTtub0DxiKqwKh+OX2Z4Wxrp1/u09Fgmf/+yK/eFLojqES4JM5e2DRHAm8DQnHu8r5lYj
+        teHE+c2Jc7vD+EHYaN+k1AB6i
+X-Received: by 2002:adf:9307:: with SMTP id 7mr198223wro.171.1584376778098;
+        Mon, 16 Mar 2020 09:39:38 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vuKIEKBn5OJ0vxo6JLB1xdXH+6qMUW1IHmoNonOU1p4vkVSNPtTBCf6jdRflKCnpsGtQo6veg==
+X-Received: by 2002:adf:9307:: with SMTP id 7mr198208wro.171.1584376777886;
+        Mon, 16 Mar 2020 09:39:37 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:7de8:5d90:2370:d1ac? ([2001:b07:6468:f312:7de8:5d90:2370:d1ac])
+        by smtp.gmail.com with ESMTPSA id n10sm694062wro.14.2020.03.16.09.39.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Mar 2020 09:39:37 -0700 (PDT)
+Subject: Re: [PATCH] KVM: X86: correct meaningless kvm_apicv_activated() check
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     linmiaohe@huawei.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+References: <1584185480-3556-1-git-send-email-pbonzini@redhat.com>
+ <878sk0n1g1.fsf@vitty.brq.redhat.com>
+ <20200316152650.GD24267@linux.intel.com>
+ <87zhcgl2xc.fsf@vitty.brq.redhat.com>
+ <20200316155911.GE24267@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <eb1037c8-fdb5-4f4c-4641-915c0e3d01bc@redhat.com>
+Date:   Mon, 16 Mar 2020 17:39:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200316155911.GE24267@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i2c_new_client() is deprecated, use the replacement
-i2c_new_client_device(). Also, we have a helper to check if a driver is
-bound. Use it to simplify the code. Note that this changes the errno for
-a failed device creation from ENOMEM to ENODEV. No callers currently
-interpret this errno, though, so we use this condensed error check.
+On 16/03/20 16:59, Sean Christopherson wrote:
+>>>
+>> 	if (!!old == !!new)
+>> 		return;
+>>
+>> to make it clear we're converting them to 1/0 :-)
+>
+> All I can think of now is the Onion article regarding razor blades...
+> 
+> 	if (!!!!old == !!!!new)
+> 		return;
+> 
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/gpu/drm/drm_encoder_slave.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+That would be !!!!!, but seriously I'll go with two.
 
-diff --git a/drivers/gpu/drm/drm_encoder_slave.c b/drivers/gpu/drm/drm_encoder_slave.c
-index d50a7884e69e..e464429d32df 100644
---- a/drivers/gpu/drm/drm_encoder_slave.c
-+++ b/drivers/gpu/drm/drm_encoder_slave.c
-@@ -61,13 +61,8 @@ int drm_i2c_encoder_init(struct drm_device *dev,
- 
- 	request_module("%s%s", I2C_MODULE_PREFIX, info->type);
- 
--	client = i2c_new_device(adap, info);
--	if (!client) {
--		err = -ENOMEM;
--		goto fail;
--	}
--
--	if (!client->dev.driver) {
-+	client = i2c_new_client_device(adap, info);
-+	if (!i2c_client_has_driver(client)) {
- 		err = -ENODEV;
- 		goto fail_unregister;
- 	}
-@@ -96,7 +91,6 @@ int drm_i2c_encoder_init(struct drm_device *dev,
- 	module_put(module);
- fail_unregister:
- 	i2c_unregister_device(client);
--fail:
- 	return err;
- }
- EXPORT_SYMBOL(drm_i2c_encoder_init);
--- 
-2.20.1
+(Thanks for giving me a chuckle, it's sorely needed these days).
+
+Paolo
 
