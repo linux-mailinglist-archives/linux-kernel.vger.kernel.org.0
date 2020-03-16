@@ -2,100 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3245D1867C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 10:22:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93C111867A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 10:17:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730373AbgCPJWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 05:22:24 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:46819 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730152AbgCPJWX (ORCPT
+        id S1730403AbgCPJQ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 05:16:58 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56309 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730025AbgCPJQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 05:22:23 -0400
-Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id F1229240035;
-        Mon, 16 Mar 2020 09:15:41 +0000 (UTC)
-Date:   Mon, 16 Mar 2020 10:15:41 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "amit.kucheria@verdurent.com" <amit.kucheria@verdurent.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux@rempel-privat.de" <linux@rempel-privat.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "m.felsch@pengutronix.de" <m.felsch@pengutronix.de>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "ronald@innovation.ch" <ronald@innovation.ch>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V3 1/7] firmware: imx: Add stubs for !CONFIG_IMX_SCU case
-Message-ID: <20200316091541.GI4518@piout.net>
-References: <20200316005219.GD17221@dragon>
- <AM0PR04MB44819E4A9E027F1555C33D0B88F90@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <20200316030744.GC17221@dragon>
- <AM0PR04MB44817A48746601EADA4E06BC88F90@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <20200316033447.GE17221@dragon>
- <DB3PR0402MB3916DA9F0F175B9D2E9E684FF5F90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <20200316084056.GG4518@piout.net>
- <DB3PR0402MB391663DB37A8D241092AD708F5F90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <20200316090053.GH4518@piout.net>
- <DB3PR0402MB391683A05820920158DFDA77F5F90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+        Mon, 16 Mar 2020 05:16:57 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1jDlrh-0006T8-Od; Mon, 16 Mar 2020 09:16:53 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dmaengine: fix spelling mistake "exceds" -> "exceeds"
+Date:   Mon, 16 Mar 2020 09:16:53 +0000
+Message-Id: <20200316091653.110984-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB3PR0402MB391683A05820920158DFDA77F5F90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/03/2020 09:08:53+0000, Anson Huang wrote:
-> > Why do you absolutely need to compile them independently? From a code
-> > coverage point of view, having:
-> > 
-> > COMPILE_TEST=y
-> > CONFIG_IMX_SCU=y
-> > 
-> > is enough to select and compile the remaining drivers.
-> 
-> What I meant is for below case, like using other arch config which does NOT have
-> CONFIG_IMX_SCU selected, ONLY with COMPILE_TEST selected, adding stubs for
-> IMX_SCU APIs can fix such scenario.
-> 
-> COMPILE_TEST=y
-> CONFIG_IMX_SCU=n
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Why is that an issue? If they don't have IMX_SCU selected, then the
-other SCU driver are not selected either, having stubs doesn't change
-that you will have to select at least one option. Please explain what is
-the issue that is not solved here.
+There are a couple of spelling mistakes in dev_err error messages.
+Fix them.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/dma/sh/rcar-dmac.c  | 2 +-
+ drivers/dma/sh/shdma-base.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index f06016d38a05..59b36ab5d684 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1219,7 +1219,7 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr,
+ 	sg_len = buf_len / period_len;
+ 	if (sg_len > RCAR_DMAC_MAX_SG_LEN) {
+ 		dev_err(chan->device->dev,
+-			"chan%u: sg length %d exceds limit %d",
++			"chan%u: sg length %d exceeds limit %d",
+ 			rchan->index, sg_len, RCAR_DMAC_MAX_SG_LEN);
+ 		return NULL;
+ 	}
+diff --git a/drivers/dma/sh/shdma-base.c b/drivers/dma/sh/shdma-base.c
+index c51de498b5b4..2deeaab078a4 100644
+--- a/drivers/dma/sh/shdma-base.c
++++ b/drivers/dma/sh/shdma-base.c
+@@ -709,7 +709,7 @@ static struct dma_async_tx_descriptor *shdma_prep_dma_cyclic(
+ 	BUG_ON(!schan->desc_num);
+ 
+ 	if (sg_len > SHDMA_MAX_SG_LEN) {
+-		dev_err(schan->dev, "sg length %d exceds limit %d",
++		dev_err(schan->dev, "sg length %d exceeds limit %d",
+ 				sg_len, SHDMA_MAX_SG_LEN);
+ 		return NULL;
+ 	}
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.25.1
+
