@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F4B8186B3D
+	by mail.lfdr.de (Postfix) with ESMTP id 8A786186B3E
 	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 13:40:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731048AbgCPMkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 08:40:49 -0400
-Received: from poy.remlab.net ([94.23.215.26]:34254 "EHLO
+        id S1731072AbgCPMku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 08:40:50 -0400
+Received: from poy.remlab.net ([94.23.215.26]:34260 "EHLO
         ns207790.ip-94-23-215.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731003AbgCPMks (ORCPT
+        with ESMTP id S1730985AbgCPMkt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 08:40:48 -0400
+        Mon, 16 Mar 2020 08:40:49 -0400
 Received: from basile.remlab.net (ip6-localhost [IPv6:::1])
-        by ns207790.ip-94-23-215.eu (Postfix) with ESMTP id BEBCD5FAC8;
-        Mon, 16 Mar 2020 13:40:46 +0100 (CET)
+        by ns207790.ip-94-23-215.eu (Postfix) with ESMTP id 3F9035FD10;
+        Mon, 16 Mar 2020 13:40:47 +0100 (CET)
 From:   =?UTF-8?q?R=C3=A9mi=20Denis-Courmont?= <remi@remlab.net>
 To:     catalin.marinas@arm.com, will@kernel.org,
         linux-arm-kernel@lists.infradead.org
 Cc:     mark.rutland@arm.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] arm64: clean up trampoline vector loads
-Date:   Mon, 16 Mar 2020 14:40:44 +0200
-Message-Id: <20200316124046.103844-1-remi@remlab.net>
+Subject: [PATCH 2/3] arm64/sdei: gather trampolines' .rodata
+Date:   Mon, 16 Mar 2020 14:40:45 +0200
+Message-Id: <20200316124046.103844-2-remi@remlab.net>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -33,45 +33,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rémi Denis-Courmont <remi.denis.courmont@huawei.com>
 
-This switches from custom instruction patterns to the regular large
-memory model sequence with ADRP and LDR. In doing so, the ADD
-instruction can be eliminated in the SDEI handler, and the code no
-longer assumes that the trampoline vectors and the vectors address both
-start on a page boundary.
+This gathers the two bits of data together for clarity.
 
 Signed-off-by: Rémi Denis-Courmont <remi.denis.courmont@huawei.com>
 ---
- arch/arm64/kernel/entry.S | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ arch/arm64/kernel/entry.S | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
 diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index e5d4e30ee242..24f828739696 100644
+index 24f828739696..af17fcb4aaea 100644
 --- a/arch/arm64/kernel/entry.S
 +++ b/arch/arm64/kernel/entry.S
-@@ -805,9 +805,9 @@ alternative_else_nop_endif
- 2:
- 	tramp_map_kernel	x30
+@@ -859,6 +859,11 @@ SYM_CODE_END(tramp_exit_compat)
  #ifdef CONFIG_RANDOMIZE_BASE
--	adr	x30, tramp_vectors + PAGE_SIZE
-+	adrp	x30, tramp_vectors + PAGE_SIZE
- alternative_insn isb, nop, ARM64_WORKAROUND_QCOM_FALKOR_E1003
--	ldr	x30, [x30]
-+	ldr	x30, [x30, #:lo12:__entry_tramp_data_start]
- #else
- 	ldr	x30, =vectors
- #endif
-@@ -953,9 +953,8 @@ SYM_CODE_START(__sdei_asm_entry_trampoline)
- 1:	str	x4, [x1, #(SDEI_EVENT_INTREGS + S_ORIG_ADDR_LIMIT)]
+ 	.pushsection ".rodata", "a"
+ 	.align PAGE_SHIFT
++#ifdef CONFIG_ARM_SDE_INTERFACE
++SYM_DATA_START(__sdei_asm_trampoline_next_handler)
++	.quad	__sdei_asm_handler
++SYM_DATA_END(__sdei_asm_trampoline_next_handler)
++#endif
+ SYM_DATA_START(__entry_tramp_data_start)
+ 	.quad	vectors
+ SYM_DATA_END(__entry_tramp_data_start)
+@@ -980,13 +985,6 @@ SYM_CODE_END(__sdei_asm_exit_trampoline)
+ NOKPROBE(__sdei_asm_exit_trampoline)
+ 	.ltorg
+ .popsection		// .entry.tramp.text
+-#ifdef CONFIG_RANDOMIZE_BASE
+-.pushsection ".rodata", "a"
+-SYM_DATA_START(__sdei_asm_trampoline_next_handler)
+-	.quad	__sdei_asm_handler
+-SYM_DATA_END(__sdei_asm_trampoline_next_handler)
+-.popsection		// .rodata
+-#endif /* CONFIG_RANDOMIZE_BASE */
+ #endif /* CONFIG_UNMAP_KERNEL_AT_EL0 */
  
- #ifdef CONFIG_RANDOMIZE_BASE
--	adr	x4, tramp_vectors + PAGE_SIZE
--	add	x4, x4, #:lo12:__sdei_asm_trampoline_next_handler
--	ldr	x4, [x4]
-+	adrp	x4, tramp_vectors + PAGE_SIZE
-+	ldr	x4, [x4, #:lo12:__sdei_asm_trampoline_next_handler]
- #else
- 	ldr	x4, =__sdei_asm_handler
- #endif
+ /*
 -- 
 2.25.1
 
