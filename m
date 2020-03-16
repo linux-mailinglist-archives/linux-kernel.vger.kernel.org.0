@@ -2,107 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D2D61868E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:22:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F14A1868E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:25:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730614AbgCPKW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 06:22:28 -0400
-Received: from foss.arm.com ([217.140.110.172]:45350 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730599AbgCPKW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 06:22:28 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D70DD1FB;
-        Mon, 16 Mar 2020 03:22:27 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF3333F534;
-        Mon, 16 Mar 2020 03:22:24 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 10:22:15 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        clang-built-linux@googlegroups.com, x86@kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Burton <paul.burton@mips.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Collingbourne <pcc@google.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v3 18/26] arm64: Introduce asm/vdso/processor.h
-Message-ID: <20200316102214.GA5746@lakrids.cambridge.arm.com>
-References: <20200313154345.56760-1-vincenzo.frascino@arm.com>
- <20200313154345.56760-19-vincenzo.frascino@arm.com>
- <20200315182950.GB32205@mbp>
- <c2c0157a-107a-debf-100f-0d97781add7c@arm.com>
+        id S1730565AbgCPKZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 06:25:39 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36476 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730527AbgCPKZi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 06:25:38 -0400
+Received: by mail-io1-f67.google.com with SMTP id d15so16549953iog.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 03:25:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=tpmIyBo12nrP1tBg/wecEtdXibz9pb4rS8i496BQMJs=;
+        b=ZhKcdS18Tk9rExEWS1ZuRJHLXAu44I4rFZAVrxB5tWHfTQV0n6yGaFpa+w06p8kKZc
+         Mtz3RLrp1voSrVWMM3WmoqWK+xF2KFPydsy+uxe0DzL6uPIdnGk8G/wksd2GO53Le7Ac
+         mUZMnLs28tTR97TFRlV9IVknQ7tdeSIDB6nPDjJhaXRdBqgwnM4V3cXZ/nuGhJ+EbOsI
+         fPOwLHIX5z7QAtVLvB/aXIohGWiiiI7U63pfENrUPv/hkZ/VK2PxD78fgzjSEQibwLMZ
+         HxbonaUZors9b/zvoDSkrtad2dZntutlLQtOM/LmJqUBpSc9nHiSnDY8SKuzhR57Z62k
+         V/5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=tpmIyBo12nrP1tBg/wecEtdXibz9pb4rS8i496BQMJs=;
+        b=TC9y49Y8BUAnWkpH5YJyh8Z9t2nooddAZJpSaaP87YKoBX7Ry0YqKwSoUEbUIvVGvE
+         b4lzorC7nQM7b34vk63LqskvrsUB0suRozttIPqnjPYCBIasBj2AVhz6KdcRDlGRJ3Kt
+         dwZxVh5vj8tQzBJw15xQC+vyWLzd232tz+N4+ZWj8DdCKhQbJ5lXpMFpHekMd2Tk/HPX
+         rjlMkk6shddB6Ofnkric2vIZJtEda2hvo12+pKYEtS3CjRz0dRX1j5tLaZUcSV4hWgek
+         l4UtlHuw1+hdyas5bASrPwFjk1HD3jzgAon4IZLR8xy54jf3lor/GQ7Ls6xFNf0XjISd
+         1zWA==
+X-Gm-Message-State: ANhLgQ3cZrF/1p52NYGQy10viF0yG84SDMhgz1PHu4jr46QbUCddA/qc
+        OnZ9TfL9TIMXqCgqj923qDyXZ2AGr3WO7pYxw3s=
+X-Google-Smtp-Source: ADFU+vvjVlcBrlHLKgqAcR/DlyOQjG0PwQE+ngCyUJ+x5E49sZjmUL0aFh7gV4SSMUhhKDaCjkPxra8wBMCGdrf3Y5M=
+X-Received: by 2002:a02:950d:: with SMTP id y13mr24850106jah.139.1584354337774;
+ Mon, 16 Mar 2020 03:25:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c2c0157a-107a-debf-100f-0d97781add7c@arm.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Received: by 2002:a02:7647:0:0:0:0:0 with HTTP; Mon, 16 Mar 2020 03:25:37
+ -0700 (PDT)
+Reply-To: mrspatriciawilson45@gmail.com
+From:   MIROSOFT <ferry27223@gmail.com>
+Date:   Mon, 16 Mar 2020 11:25:37 +0100
+Message-ID: <CAJhPiHvBbqKYgRTC1q3tF_Ac9F1u2PCd2vmA4-YVcG9mJHkpFw@mail.gmail.com>
+Subject: =?UTF-8?B?2LnYstmK2LLZiiDZhdin2YTZgyDYp9mE2KjYsdmK2K8g2KfZhNil2YTZg9iq2LHZiNmG?=
+        =?UTF-8?B?2YogLyDYp9mE2YXYs9iq2YHZitivINmF2YYg2KfZhNi12YbYr9mI2YIg2Iw=?=
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincenzo,
-
-On Mon, Mar 16, 2020 at 09:42:32AM +0000, Vincenzo Frascino wrote:
-> On 3/15/20 6:30 PM, Catalin Marinas wrote:
-> > On Fri, Mar 13, 2020 at 03:43:37PM +0000, Vincenzo Frascino wrote:
-> >> --- /dev/null
-> >> +++ b/arch/arm64/include/asm/vdso/processor.h
-> >> @@ -0,0 +1,31 @@
-> >> +/* SPDX-License-Identifier: GPL-2.0-only */
-> >> +/*
-> >> + * Copyright (C) 2020 ARM Ltd.
-> >> + */
-> >> +#ifndef __ASM_VDSO_PROCESSOR_H
-> >> +#define __ASM_VDSO_PROCESSOR_H
-> >> +
-> >> +#ifndef __ASSEMBLY__
-> >> +
-> >> +#include <asm/page-def.h>
-> >> +
-> >> +#ifdef CONFIG_COMPAT
-> >> +#if defined(CONFIG_ARM64_64K_PAGES) && defined(CONFIG_KUSER_HELPERS)
-> >> +/*
-> >> + * With CONFIG_ARM64_64K_PAGES enabled, the last page is occupied
-> >> + * by the compat vectors page.
-> >> + */
-> >> +#define TASK_SIZE_32		UL(0x100000000)
-> >> +#else
-> >> +#define TASK_SIZE_32		(UL(0x100000000) - PAGE_SIZE)
-> >> +#endif /* CONFIG_ARM64_64K_PAGES */
-> >> +#endif /* CONFIG_COMPAT */
-> > 
-> > Just curious, what's TASK_SIZE_32 used for in the vDSO code? You don't
-> > seem to move TASK_SIZE.
-> > 
-> 
-> I tried to fine grain the headers as much as I could in order to avoid
-> unneeded/unwanted inclusions:
->  * TASK_SIZE_32 is used to verify ABI consistency on vdso32 (please refer to
->    arch/arm64/kernel/vdso32/vgettimeofday.c).
->  * TASK_SIZE is not required by the vdso library hence it is not present in
->    these headers.
-
-It would be worth noting the former point in the commit message, since
-it can be surprising.
-
-I also think it's worth keeping the definitions together if that's easy,
-as it makes it easier to navigate the codebase, even if TASK_SIZE isn't
-necessary for the VDSO itself.
-
-Thanks,
-Mark.
+2LnYstmK2LLZiiDZhdin2YTZgyDYp9mE2KjYsdmK2K8g2KfZhNil2YTZg9iq2LHZiNmG2YogLyDY
+p9mE2YXYs9iq2YHZitivINmF2YYg2KfZhNi12YbYr9mI2YIg2IwNCg0K2YTZgtivINij2LHYs9mE
+2Kog2KXZhNmK2YMg2YfYsNmHINin2YTYsdiz2KfZhNipINmC2KjZhCDYtNmH2LEg2Iwg2YTZg9mG
+2YbZiiDZhNmFINij2LPZhdi5INmF2YbZgyDYjCDZhNiz2Kog2YXYqtij2YPYr9mL2KcNCtmF2YXY
+pyDYpdiw2Kcg2YPZhtiqINmC2K8g2KrZhNmC2YrYqtmH2Kcg2Iwg2YjZhNmH2LDYpyDYp9mE2LPY
+qNioINij2LHYs9mE2KrZh9inINmF2LHYqSDYo9iu2LHZiSDYjCDYo9mI2YTYp9mLINiMINij2YbY
+pw0K2KfZhNiz2YrYr9ipINio2KfYqtix2YrYtNmK2Kcg2YjZitmE2LPZiNmGINiMINin2YTZhdiv
+2YrYsSDZhdiv2YrYsdipINmI2LHYptmK2LPYqSDYtdmG2K/ZiNmCINin2YTZhtmC2K8g2KfZhNiv
+2YjZhNmKLg0KDQrZhNmC2K8g2YLZhdmG2Kcg2KjZhdix2KfYrNi52Kkg2KzZhdmK2Lkg2KfZhNi5
+2YLYqNin2Kog2YjYp9mE2YXYtNmD2YTYp9iqINin2YTYqtmKINiq2K3Ziti3INio2YXYudin2YXZ
+hNin2KrZgyDYutmK2LENCtin2YTZhdmD2KrZhdmE2Kkg2YjYudiv2YUg2YLYr9ix2KrZgyDYudmE
+2Ykg2KrZhNio2YrYqSDYsdiz2YjZhSDYp9mE2KrYrdmI2YrZhCDYp9mE2YXZgdix2YjYttipINi5
+2YTZitmDINiMINio2KfZhNmG2LPYqNipDQrZhNiu2YrYp9ix2KfYqiDYp9mE2YbZgtmEINin2YTY
+s9in2KjZgtipINiMINmC2YUg2KjYudix2LYg2YXZiNmC2LnZhtinINmE2KrYo9mD2YrYr9mDIDM4
+IMKwIDUz4oCyNTYg4oCzINi02YXYp9mEIDc3IMKwDQoy4oCyMzkg4oCzINiv2KjZhNmK2YgNCg0K
+2YbYrdmGINmF2KzZhNizINil2K/Yp9ix2Kkg2KfZhNio2YbZgyDYp9mE2K/ZiNmE2Yog2YjYtdmG
+2K/ZiNmCINin2YTZhtmC2K8g2KfZhNiv2YjZhNmKIChJTUYpINmI2KfYtNmG2LfZhiDYp9mE2LnY
+p9i12YXYqQ0K2KjYp9mE2KrYstin2YXZhiDZhdi5INin2YTZiNmE2KfZitin2Kog2KfZhNmF2KrY
+rdiv2KkuDQoNCti32YTYqNiqINmI2LLYp9ix2Kkg2KfZhNiu2LLYp9mG2Kkg2YjYqNi52LYg2YjZ
+g9in2YTYp9iqINin2YTYqtit2YLZitmCINin2YTYo9iu2LHZiSDYsNin2Kog2KfZhNi12YTYqSDZ
+h9mG2Kcg2YHZig0K2KfZhNmI2YTYp9mK2KfYqiDYp9mE2YXYqtit2K/YqSDYp9mE2KPZhdix2YrZ
+g9mK2Kkg2KfZhNmF2K/ZgdmI2LnYp9iqINin2YTYrtin2LHYrNmK2KkNCg0K2YjYrdiv2Kkg2KfZ
+hNiq2K3ZiNmK2YTYp9iqINiMINin2YTYqNmG2YMg2KfZhNmF2KrYrdivINmE2KPZgdix2YrZgtmK
+2Kcg2Iwg2YTYpdi12K/Yp9ixINio2LfYp9mC2Kkg2YHZitiy2Kcg2Iwg2K3ZitirINiz2YrYqtmF
+DQrYqtit2YXZitmEINin2YTYo9mF2YjYp9mEINin2YTYrtin2LXYqSDYqNmDIDgwMNiMMDAwLjAw
+INiv2YjZhNin2LEg2KPZhdix2YrZg9mKINiMINmE2LPYrdioINmF2LLZitivINmF2YYg2KfZhNij
+2YXZiNin2YQNCtin2YTYrtin2LXYqSDYqNmDLg0KDQrYo9ir2YbYp9ihINin2YTYqtit2YLZitmC
+INiMINin2YPYqti02YHZhtinINio2KfYs9iq2YrYp9ihINij2YYg2K/Zgdi52KrZgyDZg9in2YbY
+qiDYutmK2LEg2LbYsdmI2LHZitipDQoNCtiq2KPYrtixINmF2YYg2YLYqNmEINin2YTZhdiz2KTZ
+iNmE2YrZhiDYp9mE2YHYp9iz2K/ZitmGINmB2Yog2KfZhNio2YbZgyDYp9mE2LDZitmGINmK2K3Y
+p9mI2YTZiNmGINiq2K3ZiNmK2YQg2KPZhdmI2KfZhNmDINil2YTZiQ0K2K3Ys9in2KjYp9iq2YfZ
+hSDYp9mE2K7Yp9i12KkuDQoNCtin2KrYtdmEINin2YTYotmGINio2LPZg9ix2KrZitix2Kkg2YXZ
+g9iq2Kgg2LHYptmK2LMgVUJBINmI2KfYs9mF2YfYpyDYp9mE2LPZitiv2Kkg2YjZitmE2LPZiNmG
+INio2KfYqtix2YrYtNmK2Kcg2IwNCtin2YTYqNix2YrYryDYp9mE2KXZhNmD2KrYsdmI2YbZijog
+KG1yc3BhdHJpY2lhd2lsc29uNDVAZ21haWwuY29tKQ0KDQrYo9ix2LPZhCDZhNmH2Kcg2KfZhNmF
+2LnZhNmI2YXYp9iqINin2YTYqtin2YTZitipINmE2KrYs9mE2YrZhSDYqNi32KfZgtipINmB2YrY
+stinIEFUTSDYp9mE2YXYudiq2YXYr9ipINil2YTZiSDYudmG2YjYp9mG2YMuDQrYqNi32KfZgtip
+IEFUTWNhcmQg2YXZhiDYrtmE2KfZhCDYudmG2YjYp9mG2YMg2KfZhNio2LHZitiv2YouDQrYp9iz
+2YXZgyDYp9mE2YPYp9mF2YQgPT09PT09PT09PT09PT09PT09PT09PQ0K2KfZhNio2YTYryA9PT09
+PT09PT09PT09PT09PT09PT09PT09PT0NCti52YbZiNin2YYg2KfZhNmF2YbYstmEID09PT09PT09
+PT09PT09PT09PT09PT0NCtix2YLZhSDZh9in2KrZgdmDID09PT09PT09PT09PT09PT09PQ0K2YjY
+p9mE2LHZhdiyINin2YTYqNix2YrYr9mKINin2YTYrtin2LUg2KjZgyA9PT09PT09PT09PT09PT09
+PT09DQrZhtiz2K7YqSDZhdmGINmH2YjZitiq2YM6ID09PT09PT09PT09DQoNCtiq2K3Zitin2KrZ
+iiDZhNmE2YXYr9mK2LEg2KfZhNiz2YrYryDYoti02YrZhNmKINmI2YrZhNmK2KfZhtiyDQrYudmF
+2YTZitipLiDYqNmG2YMgVUJBIC4uDQo=
