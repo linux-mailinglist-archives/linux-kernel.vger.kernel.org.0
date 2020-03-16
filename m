@@ -2,114 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B214D186B81
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 13:54:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C447A186B8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 13:54:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731114AbgCPMyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 08:54:06 -0400
-Received: from enterprise02.smtp.diehl.com ([193.201.238.220]:39077 "EHLO
-        enterprise02.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731016AbgCPMyE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 08:54:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=diehl.com; i=@diehl.com; q=dns/txt; s=default;
-  t=1584363243; x=1615899243;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=rAtuuWpp7vXQDSFUAnzPLYg0D3MrIJfjY3pxuv+eRv8=;
-  b=Wfjjsf0tCIb4U5InDHxP68izG+Oz7cDJNUXYBjhrMOvEbCQbVG3mCAuv
-   jR2chZ5SoPrf+UYcahhK0DVQxPQ17+DN7HcP8SWOa8MdLapMye/gj5cNH
-   1K1hUvmFqg8YdDJbsZXKuwz9l3cZesVlCJp7cfuPzf60voWi5oo/JfGm8
-   vkUibKlEnaScYDNmIohQwr8WztDtJsx7kFWxStWpOTa4DyqKTwO510jc1
-   WJerZsI60GEIOG2PpieQ8y723Ki3OQddiRX8hb5TC3S6rJ5hZFh+4wZET
-   F33QCUsRsDZ3Gm6ReE/I0cwxGYVS3JtJLdbOGdAV5BN2DtAfm7O4SYU9d
-   g==;
-IronPort-SDR: YL++mGW5MIhCl8QqcRVtXOqw6Magis0N9ifDONAmOPYR0wD+XN5C/62B28D1IRVPhZHRFU6kan
- qt8sZKHR82Ow==
-From:   Denis Osterland-Heim <denis.osterland@diehl.com>
-To:     "dmurphy@ti.com" <dmurphy@ti.com>, "pavel@ucw.cz" <pavel@ucw.cz>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Denis Osterland-Heim" <denis.osterland@diehl.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: [PATCH v3 3/3] leds: pwm: add reference to common leds for
- default-state
-Thread-Topic: [PATCH v3 3/3] leds: pwm: add reference to common leds for
- default-state
-Thread-Index: AQHV+5H2vrmXdpP7vk6zewDoYGUoug==
-Date:   Mon, 16 Mar 2020 12:54:00 +0000
-Message-ID: <20200316124851.6303-4-Denis.Osterland@diehl.com>
-References: <20200316124851.6303-1-Denis.Osterland@diehl.com>
-In-Reply-To: <20200316124851.6303-1-Denis.Osterland@diehl.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-x-ms-exchange-messagesentrepresentingtype: 1
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1731145AbgCPMyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 08:54:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36122 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730878AbgCPMyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 08:54:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 6C502AB64;
+        Mon, 16 Mar 2020 12:54:31 +0000 (UTC)
+Message-ID: <9d8e1679b755940d85c95d5df8714d4bb3505cdc.camel@suse.de>
+Subject: Re: [PATCH 86/89] drm/vc4: hdmi: Adjust HSM clock rate depending on
+ pixel rate
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Maxime Ripard <maxime@cerno.tech>, Eric Anholt <eric@anholt.net>
+Cc:     Tim Gover <tim.gover@raspberrypi.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        Phil Elwell <phil@raspberrypi.com>,
+        linux-arm-kernel@lists.infradead.org
+Date:   Mon, 16 Mar 2020 13:54:29 +0100
+In-Reply-To: <abf64b907cd23488e06d2aca4991ac1be216ec8f.1582533919.git-series.maxime@cerno.tech>
+References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
+         <abf64b907cd23488e06d2aca4991ac1be216ec8f.1582533919.git-series.maxime@cerno.tech>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-2Nhzgdng4j8pr0d0VEie"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-X-TrailerSkip: 1
-X-GBS-PROC: 415AWy8o668fDtCxszluz0usJCarfP6B29so9zGpOBDCCPbVOIEMRavJCXLNsob3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The default-state is now supported for PWM leds.
 
-Signed-off-by: Denis Osterland-Heim <Denis.Osterland@diehl.com>
----
- Documentation/devicetree/bindings/leds/leds-pwm.txt | 2 ++
- 1 file changed, 2 insertions(+)
+--=-2Nhzgdng4j8pr0d0VEie
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-pwm.txt b/Docume=
-ntation/devicetree/bindings/leds/leds-pwm.txt
-index 6c6583c35f2f..d0f489680594 100644
---- a/Documentation/devicetree/bindings/leds/leds-pwm.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-pwm.txt
-@@ -19,6 +19,8 @@ LED sub-node properties:
-   see Documentation/devicetree/bindings/leds/common.txt
- - linux,default-trigger :  (optional)
-   see Documentation/devicetree/bindings/leds/common.txt
-+- default-state : (optional)
-+  see Documentation/devicetree/bindings/leds/common.yaml
-=20
- Example:
-=20
---=20
-2.25.1
+Hi Maxime,
+On Mon, 2020-02-24 at 10:07 +0100, Maxime Ripard wrote:
+> @@ -1460,6 +1456,7 @@ static int vc4_hdmi_dev_remove(struct platform_devi=
+ce
+> *pdev)
+>  }
+> =20
+>  struct vc4_hdmi_variant bcm2835_variant =3D {
+> +	.max_pixel_clock	=3D 148500000,
+
+Just a reminder this might change in the close future:
+https://www.spinics.net/lists/arm-kernel/msg793013.html
+
+Regards,
+Nicolas
+j
+>  	.audio_available	=3D true,
+>  	.cec_available		=3D true,
+>  	.registers		=3D vc4_hdmi_fields,
+> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.h b/drivers/gpu/drm/vc4/vc4_hdm=
+i.h
+> index cbb1d3ab85d7..ee9753255b68 100644
+> --- a/drivers/gpu/drm/vc4/vc4_hdmi.h
+> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.h
+> @@ -38,6 +38,9 @@ struct vc4_hdmi_variant {
+>  	/* Set to true when the CEC support is available */
+>  	bool cec_available;
+> =20
+> +	/* Maximum pixel clock supported by the controller (in Hz) */
+> +	unsigned long long max_pixel_clock;
+> +
+>  	/* List of the registers available on that variant */
+>  	const struct vc4_hdmi_register *registers;
+> =20
 
 
+--=-2Nhzgdng4j8pr0d0VEie
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-Diehl Connectivity Solutions GmbH
-Gesch=E4ftsf=FChrung: Horst Leonberger
-Sitz der Gesellschaft: N=FCrnberg - Registergericht: Amtsgericht
-N=FCrnberg: HRB 32315
-_________________________________________________________________________=
-__________________________
+-----BEGIN PGP SIGNATURE-----
 
-Der Inhalt der vorstehenden E-Mail ist nicht rechtlich bindend. Diese E-M=
-ail enthaelt vertrauliche und/oder rechtlich geschuetzte Informationen.
-Informieren Sie uns bitte, wenn Sie diese E-Mail faelschlicherweise erhal=
-ten haben. Bitte loeschen Sie in diesem Fall die Nachricht.
-Jede unerlaubte Form der Reproduktion, Bekanntgabe, Aenderung, Verteilung=
- und/oder Publikation dieser E-Mail ist strengstens untersagt.
-- Informationen zum Datenschutz, insbesondere zu Ihren Rechten, erhalten =
-Sie unter https://www.diehl.com/group/de/transparenz-und-informationspfli=
-chten/
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5vdwUACgkQlfZmHno8
+x/5Emwf/c9TYjBffVgvOA41mykLV4Nr8lGqYlbGeCSqOkIJClpTw0XDG/Sam289n
+NVS5OpnsEXJWm2HMrWgVqYqZHb3E609pjVeibMyMUhBIvounfpp5kiGI0ZUfCm68
++JarBt0WtkW+731jvBxEnmfWB5j8FpHiZrSJkU5Eo7C7OhIHEAXvU+ZH6TdPqll6
+Zjic3+8SBELK0JfFzgB6qkVWFT4UBVpxQ53sokDF+NGROgOEdUkHWxivw9SGvFsg
+ewD3v2fbRdUNVTXI/9htZH4I/lupf3byyRQRnx8IWrzI/1U3NzY1xiHU3qEKUW3Q
+DQNY46wnSbAgfaRuOCuI0lgcGztljw==
+=xZA/
+-----END PGP SIGNATURE-----
 
-The contents of the above mentioned e-mail is not legally binding. This e=
--mail contains confidential and/or legally protected information. Please =
-inform us if you have received this e-mail by
-mistake and delete it in such a case. Each unauthorized reproduction, dis=
-closure, alteration, distribution and/or publication of this e-mail is st=
-rictly prohibited.=20
-- For general information on data protection and your respective rights p=
-lease visit https://www.diehl.com/group/en/transparency-and-information-o=
-bligations/
+--=-2Nhzgdng4j8pr0d0VEie--
+
