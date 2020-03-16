@@ -2,118 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00875186ABF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 13:19:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 988B3186AC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 13:20:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731011AbgCPMTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 08:19:05 -0400
-Received: from foss.arm.com ([217.140.110.172]:47258 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730902AbgCPMTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 08:19:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACEBA30E;
-        Mon, 16 Mar 2020 05:19:04 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB8C83F52E;
-        Mon, 16 Mar 2020 05:19:01 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 12:18:59 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v5 0/7] Add support for PCIe controller to work in
- endpoint mode on R-Car SoCs
-Message-ID: <20200316121859.GB5043@e121166-lin.cambridge.arm.com>
-References: <20200228154122.14164-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CA+V-a8vchrpa-1N1J+yVdo6-3zouOHX6=G4epWm68yirPirzag@mail.gmail.com>
+        id S1731023AbgCPMUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 08:20:08 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11651 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730949AbgCPMUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 08:20:08 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id DF309E461F1EDD361A1F;
+        Mon, 16 Mar 2020 20:19:52 +0800 (CST)
+Received: from [127.0.0.1] (10.173.221.195) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.487.0; Mon, 16 Mar 2020
+ 20:19:46 +0800
+Subject: Re: [PATCH v4 0/6] implement KASLR for powerpc/fsl_booke/64
+To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
+        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
+        <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <npiggin@gmail.com>, <keescook@chromium.org>,
+        <kernel-hardening@lists.openwall.com>, <oss@buserror.net>
+CC:     <linux-kernel@vger.kernel.org>, <zhaohongjiang@huawei.com>,
+        <dja@axtens.net>
+References: <20200306064033.3398-1-yanaijie@huawei.com>
+From:   Jason Yan <yanaijie@huawei.com>
+Message-ID: <9e70dcc1-647a-f9a8-2262-87e7528523d2@huawei.com>
+Date:   Mon, 16 Mar 2020 20:19:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+V-a8vchrpa-1N1J+yVdo6-3zouOHX6=G4epWm68yirPirzag@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200306064033.3398-1-yanaijie@huawei.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.173.221.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 03:46:42PM +0000, Lad, Prabhakar wrote:
-> Hi Bjorn/Kishon,
+ping...
+
+ÔÚ 2020/3/6 14:40, Jason Yan Ð´µÀ:
+> This is a try to implement KASLR for Freescale BookE64 which is based on
+> my earlier implementation for Freescale BookE32:
+> https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=131718&state=*
 > 
-> On Fri, Feb 28, 2020 at 3:41 PM Lad Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> >
-> > This patch series adds support for PCIe controller on rcar to work in
-> > endpoint mode, this also extends the epf framework to handle base region
-> > for mapping PCI address locally.
-> >
-> > Note:
-> > The cadence/rockchip/designware endpoint drivers are build tested only.
-> >
-> > Changes for v5:
-> > 1] Rebased the patches on next branch of https://git.kernel.org/pub/scm/
-> >    linux/kernel/git/helgaas/pci.git
-> > 2] Fixed review comments reported by Kishon while fetching the matching
-> >    window in function pci_epc_get_matching_window()
-> > 3] Fixed review comments reported by Bjorn
-> >    a] Split patch up first patch so that its easier to review and incremental
-> >    b] Fixed typos
-> > 4] Included Reviewed tag from Rob for the dt-binding patch
-> > 5] Fixed issue reported by Nathan for assigning variable to itself
-> >
-> > Changes for v4:
-> > 1] Fixed dtb_check error reported by Rob
-> > 2] Fixed review comments reported by Kishon
-> >    a] Dropped pci_epc_find_best_fit_window()
-> >    b] Fixed initializing mem ptr in __pci_epc_mem_init()
-> >    c] Dropped map_size from pci_epc_mem_window structure
-> >
-> > Changes for v3:
-> > 1] Fixed review comments from Bjorn and Kishon.
-> > 3] Converted to DT schema
-> >
-> > Changes for v2:
-> > 1] Fixed review comments from Biju for dt-bindings to include an example
-> >    for a tested platform.
-> > 2] Fixed review comments from Kishon to extend the features of outbound
-> >    regions in epf framework.
-> > 3] Added support to parse outbound-ranges in OF.
-> >
-> > Lad Prabhakar (7):
-> >   PCI: rcar: Rename pcie-rcar.c to pcie-rcar-host.c
-> >   PCI: rcar: Move shareable code to a common file
-> >   PCI: rcar: Fix calculating mask for PCIEPAMR register
-> >   PCI: endpoint: Add support to handle multiple base for mapping
-> >     outbound memory
-> >   dt-bindings: PCI: rcar: Add bindings for R-Car PCIe endpoint
-> >     controller
-> >   PCI: rcar: Add support for rcar PCIe controller in endpoint mode
-> >   misc: pci_endpoint_test: Add Device ID for RZ/G2E PCIe controller
-> >
-> Gentle ping.
+> The implementation for Freescale BookE64 is similar as BookE32. One
+> difference is that Freescale BookE64 set up a TLB mapping of 1G during
+> booting. Another difference is that ppc64 needs the kernel to be
+> 64K-aligned. So we can randomize the kernel in this 1G mapping and make
+> it 64K-aligned. This can save some code to creat another TLB map at
+> early boot. The disadvantage is that we only have about 1G/64K = 16384
+> slots to put the kernel in.
+> 
+>      KERNELBASE
+> 
+>            64K                     |--> kernel <--|
+>             |                      |              |
+>          +--+--+--+    +--+--+--+--+--+--+--+--+--+    +--+--+
+>          |  |  |  |....|  |  |  |  |  |  |  |  |  |....|  |  |
+>          +--+--+--+    +--+--+--+--+--+--+--+--+--+    +--+--+
+>          |                         |                        1G
+>          |----->   offset    <-----|
+> 
+>                                kernstart_virt_addr
+> 
+> I'm not sure if the slot numbers is enough or the design has any
+> defects. If you have some better ideas, I would be happy to hear that.
+> 
+> Thank you all.
+> 
+> v3->v4:
+>    Do not define __kaslr_offset as a fixed symbol. Reference __run_at_load and
+>      __kaslr_offset by symbol instead of magic offsets.
+>    Use IS_ENABLED(CONFIG_PPC32) instead of #ifdef CONFIG_PPC32.
+>    Change kaslr-booke32 to kaslr-booke in index.rst
+>    Switch some instructions to 64-bit.
+> v2->v3:
+>    Fix build error when KASLR is disabled.
+> v1->v2:
+>    Add __kaslr_offset for the secondary cpu boot up.
+> 
+> Jason Yan (6):
+>    powerpc/fsl_booke/kaslr: refactor kaslr_legal_offset() and
+>      kaslr_early_init()
+>    powerpc/fsl_booke/64: introduce reloc_kernel_entry() helper
+>    powerpc/fsl_booke/64: implement KASLR for fsl_booke64
+>    powerpc/fsl_booke/64: do not clear the BSS for the second pass
+>    powerpc/fsl_booke/64: clear the original kernel if randomized
+>    powerpc/fsl_booke/kaslr: rename kaslr-booke32.rst to kaslr-booke.rst
+>      and add 64bit part
+> 
+>   Documentation/powerpc/index.rst               |  2 +-
+>   .../{kaslr-booke32.rst => kaslr-booke.rst}    | 35 +++++++-
+>   arch/powerpc/Kconfig                          |  2 +-
+>   arch/powerpc/kernel/exceptions-64e.S          | 23 +++++
+>   arch/powerpc/kernel/head_64.S                 | 13 +++
+>   arch/powerpc/kernel/setup_64.c                |  3 +
+>   arch/powerpc/mm/mmu_decl.h                    | 23 ++---
+>   arch/powerpc/mm/nohash/kaslr_booke.c          | 88 +++++++++++++------
+>   8 files changed, 144 insertions(+), 45 deletions(-)
+>   rename Documentation/powerpc/{kaslr-booke32.rst => kaslr-booke.rst} (59%)
+> 
 
-You should ask the R-CAR maintainers first to have a look at your
-code and ACK accordingly.
-
-Lorenzo
