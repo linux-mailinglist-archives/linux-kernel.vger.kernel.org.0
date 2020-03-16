@@ -2,94 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 186A9186910
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:29:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1A60186903
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:28:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730661AbgCPK3y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 06:29:54 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:43853 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730550AbgCPK3y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 06:29:54 -0400
-Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 74FA720003B;
-        Mon, 16 Mar 2020 10:29:05 +0000 (UTC)
-Date:   Mon, 16 Mar 2020 11:29:05 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Mohit Aggarwal <maggarwa@codeaurora.org>
-Cc:     a.zummo@towertech.it, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc-pm8xxx: Clear Alarm register on resume
-Message-ID: <20200316102905.GN4518@piout.net>
-References: <1584342688-14035-1-git-send-email-maggarwa@codeaurora.org>
+        id S1730642AbgCPK2v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 06:28:51 -0400
+Received: from foss.arm.com ([217.140.110.172]:45530 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730550AbgCPK2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 06:28:51 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 236D31FB;
+        Mon, 16 Mar 2020 03:28:50 -0700 (PDT)
+Received: from [10.37.9.38] (unknown [10.37.9.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E38D43F534;
+        Mon, 16 Mar 2020 03:28:45 -0700 (PDT)
+Subject: Re: [PATCH v3 18/26] arm64: Introduce asm/vdso/processor.h
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        clang-built-linux@googlegroups.com, x86@kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Collingbourne <pcc@google.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>
+References: <20200313154345.56760-1-vincenzo.frascino@arm.com>
+ <20200313154345.56760-19-vincenzo.frascino@arm.com>
+ <20200315182950.GB32205@mbp> <c2c0157a-107a-debf-100f-0d97781add7c@arm.com>
+ <20200316102214.GA5746@lakrids.cambridge.arm.com>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <c1ebab37-4df5-a763-129c-bb088cc0b151@arm.com>
+Date:   Mon, 16 Mar 2020 10:29:13 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1584342688-14035-1-git-send-email-maggarwa@codeaurora.org>
+In-Reply-To: <20200316102214.GA5746@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 16/03/2020 12:41:28+0530, Mohit Aggarwal wrote:
-> Currently, alarm register is not cleared on resume
-> leading to reboot during power off charging mode.
+On 3/16/20 10:22 AM, Mark Rutland wrote:
+> Hi Vincenzo,
 > 
-> Change-Id: Ie2e6bbab8aa46e4e9b9cc984181ffab557cbbdae
-
-No Change-Id upstream please.
-
-> Signed-off-by: Mohit Aggarwal <maggarwa@codeaurora.org>
-> ---
->  drivers/rtc/rtc-pm8xxx.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+> On Mon, Mar 16, 2020 at 09:42:32AM +0000, Vincenzo Frascino wrote:
+>> On 3/15/20 6:30 PM, Catalin Marinas wrote:
+>>> On Fri, Mar 13, 2020 at 03:43:37PM +0000, Vincenzo Frascino wrote:
+>>>> --- /dev/null
+>>>> +++ b/arch/arm64/include/asm/vdso/processor.h
+>>>> @@ -0,0 +1,31 @@
+>>>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>>>> +/*
+>>>> + * Copyright (C) 2020 ARM Ltd.
+>>>> + */
+>>>> +#ifndef __ASM_VDSO_PROCESSOR_H
+>>>> +#define __ASM_VDSO_PROCESSOR_H
+>>>> +
+>>>> +#ifndef __ASSEMBLY__
+>>>> +
+>>>> +#include <asm/page-def.h>
+>>>> +
+>>>> +#ifdef CONFIG_COMPAT
+>>>> +#if defined(CONFIG_ARM64_64K_PAGES) && defined(CONFIG_KUSER_HELPERS)
+>>>> +/*
+>>>> + * With CONFIG_ARM64_64K_PAGES enabled, the last page is occupied
+>>>> + * by the compat vectors page.
+>>>> + */
+>>>> +#define TASK_SIZE_32		UL(0x100000000)
+>>>> +#else
+>>>> +#define TASK_SIZE_32		(UL(0x100000000) - PAGE_SIZE)
+>>>> +#endif /* CONFIG_ARM64_64K_PAGES */
+>>>> +#endif /* CONFIG_COMPAT */
+>>>
+>>> Just curious, what's TASK_SIZE_32 used for in the vDSO code? You don't
+>>> seem to move TASK_SIZE.
+>>>
+>>
+>> I tried to fine grain the headers as much as I could in order to avoid
+>> unneeded/unwanted inclusions:
+>>  * TASK_SIZE_32 is used to verify ABI consistency on vdso32 (please refer to
+>>    arch/arm64/kernel/vdso32/vgettimeofday.c).
+>>  * TASK_SIZE is not required by the vdso library hence it is not present in
+>>    these headers.
 > 
-> diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
-> index bbe013f..96e7985 100644
-> --- a/drivers/rtc/rtc-pm8xxx.c
-> +++ b/drivers/rtc/rtc-pm8xxx.c
-> @@ -1,5 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -/* Copyright (c) 2010-2011, 2019, The Linux Foundation. All rights reserved. */
-> +/* Copyright (c) 2010-2011, 2019-2020, The Linux Foundation. All rights reserved. */
->  
->  #include <linux/of.h>
->  #include <linux/module.h>
-> @@ -301,6 +301,7 @@ static int pm8xxx_rtc_alarm_irq_enable(struct device *dev, unsigned int enable)
->  	struct pm8xxx_rtc *rtc_dd = dev_get_drvdata(dev);
->  	const struct pm8xxx_rtc_regs *regs = rtc_dd->regs;
->  	unsigned int ctrl_reg;
-> +	u8 value[NUM_8_BIT_RTC_REGS] = {0};
->  
->  	spin_lock_irqsave(&rtc_dd->ctrl_reg_lock, irq_flags);
->  
-> @@ -319,6 +320,16 @@ static int pm8xxx_rtc_alarm_irq_enable(struct device *dev, unsigned int enable)
->  		goto rtc_rw_fail;
->  	}
->  
-> +	/* Clear Alarm register */
-> +	if (!enable) {
-> +		rc = regmap_bulk_write(rtc_dd->regmap, regs->alarm_rw, value,
-> +					sizeof(value));
+> It would be worth noting the former point in the commit message, since
+> it can be surprising.
+>
 
-This is not properly aligned.
+Sure it is a good point, I will add this to the commit message.
 
-> +		if (rc) {
-> +			dev_err(dev, "Write to RTC ALARM register failed\n");
+> I also think it's worth keeping the definitions together if that's easy,
+> as it makes it easier to navigate the codebase, even if TASK_SIZE isn't
+> necessary for the VDSO itself.
 
-Is that error message necessary? What would be the user action after
-seeing that in the logs? Will the logs actually be seen?
+This can't be done because TASK_SIZE on arm64 requires test_thread_flag() with
+is not suited for vDSO. In other words can cause the same problem we are trying
+to solve.
 
-> +			goto rtc_rw_fail;
-> +		}
-> +	}
-> +
+> 
+> Thanks,
+> Mark.
+> 
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Regards,
+Vincenzo
