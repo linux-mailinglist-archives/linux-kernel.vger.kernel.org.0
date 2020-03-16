@@ -2,56 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CCA1186F20
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 16:50:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BF39186F4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 16:52:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731951AbgCPPuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 11:50:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41330 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731890AbgCPPuc (ORCPT
+        id S1732033AbgCPPu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 11:50:58 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46758 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731952AbgCPPu4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 11:50:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=4Fcs/ravGQBzEwV+PwLN/3FuduA8sqVcdSOOMqzyw+E=; b=cZVHtxGt+DHwY530inZn5uaoAd
-        NKYBLQCYm+jTGzzEtxEZZcghNZyQz3KZrzDd7pz5fIwHj8M1443PQzUVnDLn/hazE65KuoyeFpX4q
-        SlRMMnPERZ+98066ISJv8PqhvKadqBvfmDLO8yR9v9I62OoyIKC9HSVz650f2PtsxYapCWFVbdZ5R
-        f4Zrx1W+r/vsU+FwAD8cKpo9ZL8NyEpgdqr6xqK9E2SS96UpdcX+0mbPNpmGzTlROypcTsbmMtJ+v
-        SIN/U5JGq9qiN3Kzq85xwDB29JrmkRYMtCWIIZ3wmAhwo4vIys/n0ZiMZfOMz5rdYneOW+8wr8bIu
-        p6c7BDsw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jDs0a-0004dZ-Nu; Mon, 16 Mar 2020 15:50:28 +0000
-Date:   Mon, 16 Mar 2020 08:50:28 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org, joro@8bytes.org,
-        ohad@wizery.com, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        agross@kernel.org
-Subject: Re: [PATCH 0/3] Request direct mapping for modem firmware subdevice
-Message-ID: <20200316155028.GB18704@infradead.org>
-References: <20200309182255.20142-1-sibis@codeaurora.org>
+        Mon, 16 Mar 2020 11:50:56 -0400
+Received: by mail-wr1-f68.google.com with SMTP id w16so5444170wrv.13;
+        Mon, 16 Mar 2020 08:50:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Sc+ZcHvv4+8Y0JehjCkVMYBTnshyW1dRffEc1sDr2kY=;
+        b=dTDLtXVydfEWfNwQPdHS/TVXS8K4X5b2dyAgi+PH83Yy1orjNvReI6XewzPcpM9F4Z
+         leif+mmesRlNXmcGW1SQBHx9V55uFWBhV2dmkRyNi3BilFufwnCNcIqETbXLbrIBtwSe
+         qk/IVL3F0z37sBFDrOFnBkWX29Ngwv7zrMtPjhH+HuC1XI04osdwaJfLWhzgd5YII1sX
+         7S1DQZ7PvMKEVr1Dm11WNTNmwKPWIWclMU2OnlCaS5s/TPpdHH0lhxL6t1VcAUNPWBCf
+         3Y5o02Masm+xUNZmVfLGKrmsVK9SX8JCX5tGH/D32m0/yra6slQO8La0oPj4WA3yegU1
+         dVYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Sc+ZcHvv4+8Y0JehjCkVMYBTnshyW1dRffEc1sDr2kY=;
+        b=Mb85z0+DDJNNxuOZ7Vjxww8sYfWjMga2NXwxw9jke2HNDm4b5PXBpqy0Fb5xLsEKI7
+         4l6ckAMtILueSiFNpIt+SENa0rhi6tBuadjBEWsFEw1upMNJ02Fd7wooSDTyUvSDwca5
+         WfzY3+s7ZSYyqOwP3dqxAK47ih1vG0h5GcUic/Vq2dXmgz8zvZzXEKjez/AGuk5VZ6pp
+         7Q2ctrHa0Zu6acZRJrnF1GN2QacT5h5NFq6u3qeKXQoDN0D9PlI5pFiHWr30xWlUcxa2
+         U8XS0BtSCBduOdavW5bVaniNw3a8ZZBenYHXwJdgBJkhXF5jIEpq5BHdbAiFx3ygQHdH
+         u7lw==
+X-Gm-Message-State: ANhLgQ3/8TRlhcVoer9IbJNS7DpYfWUfqt6LwXcN1uW9Bpipx+3DjFqJ
+        8WRi4k0L0El0wntn3bIoJVDjoozX
+X-Google-Smtp-Source: ADFU+vsUuW/mW+LXvQ6EtgDJhs7hvA0yq36iEyxmu9lHhYAL0Mh+a/fvtn5Xr3CYJEYL/zfrBz9Ofg==
+X-Received: by 2002:adf:80af:: with SMTP id 44mr37122427wrl.241.1584373852848;
+        Mon, 16 Mar 2020 08:50:52 -0700 (PDT)
+Received: from saturn.lan ([188.26.73.247])
+        by smtp.gmail.com with ESMTPSA id n14sm153558wmi.19.2020.03.16.08.50.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Mar 2020 08:50:52 -0700 (PDT)
+From:   Alexandru Ardelean <ardeleanalex@gmail.com>
+X-Google-Original-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     jic23@kernel.org, robh+dt@kernel.org, Laszlo.Nagy@analog.com,
+        Andrei.Grozav@analog.com, Michael.Hennerich@analog.com,
+        Istvan.Csomortani@analog.com, Adrian.Costina@analog.com,
+        Dragos.Bogdan@analog.com,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Moritz Fischer <mdf@kernel.org>
+Subject: [PATCH v10 1/8] include: fpga: adi-axi-common.h: fixup whitespace tab -> space
+Date:   Mon, 16 Mar 2020 17:50:28 +0200
+Message-Id: <20200316155035.25500-2-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200316155035.25500-1-alexandru.ardelean@analog.com>
+References: <20200316155035.25500-1-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200309182255.20142-1-sibis@codeaurora.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 11:52:52PM +0530, Sibi Sankar wrote:
-> The Q6 modem sub-system has direct access to DDR through memnoc and
-> an indirect access routed through a SMMU which MSS CE (crypto engine
-> sub-component of MSS) uses during out of reset sequence. Request direct
-> mapping for the modem-firmware subdevice since smmu is not expected
-> to provide access control/translation for these SIDs (sandboxing of the
-> modem is achieved through XPUs engaged using SMC calls).
+The initial version use a tab between '#define' & 'ADI_AXI_REG_VERSION'.
+This changes it to space. The change is purely cosmetic.
 
-Please fix your device tree so that the device isn't bound to an
-IOMMU.
+Acked-by: Moritz Fischer <mdf@kernel.org>
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+---
+ include/linux/fpga/adi-axi-common.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/fpga/adi-axi-common.h b/include/linux/fpga/adi-axi-common.h
+index 7fc95d5c95bb..ebd4e07ae3d8 100644
+--- a/include/linux/fpga/adi-axi-common.h
++++ b/include/linux/fpga/adi-axi-common.h
+@@ -11,7 +11,7 @@
+ #ifndef ADI_AXI_COMMON_H_
+ #define ADI_AXI_COMMON_H_
+ 
+-#define	ADI_AXI_REG_VERSION			0x0000
++#define ADI_AXI_REG_VERSION			0x0000
+ 
+ #define ADI_AXI_PCORE_VER(major, minor, patch)	\
+ 	(((major) << 16) | ((minor) << 8) | (patch))
+-- 
+2.20.1
+
