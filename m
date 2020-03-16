@@ -2,155 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5EE6186852
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 10:57:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A16A1868A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:05:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730509AbgCPJ4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 05:56:55 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43670 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730438AbgCPJ4y (ORCPT
+        id S1730582AbgCPKF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 06:05:58 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:37275 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730491AbgCPKF5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 05:56:54 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b2so14088827wrj.10
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 02:56:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=4uFjuIar5NrPLcBZJPObOsb7IgzEi+xWM2W1XFlAhG0=;
-        b=MKnh4eqiajGVxiWBSEZMhJK78EufIWCaAajO2U8EZBruc02ewFnzmSll3FPGSyz4Hk
-         xPq8uLRmHc0q0D4U9xamBCevqwUDOHipFL6D5kF9zcnF8d7pv6w3+C3wGNepqSZVK7sA
-         1GiLkSHxkP0/BmZATcbxmT7B1ucb7SosFQg/0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to;
-        bh=4uFjuIar5NrPLcBZJPObOsb7IgzEi+xWM2W1XFlAhG0=;
-        b=YE5SWRD0UVhF8Kqi8sVxDmkhFZFuKQbdOCVA7OvmB7AxufO8sEAPeQus4lJ03ovrDs
-         L27CufzGW+dOKlaB6onJh4XA5gX265EV3HRj20yey9ozapfo+2EEvGtMufuZcu1xDPdB
-         vMjma7Ph/Bh9Mt3m163xFI8VHSvUEbAjv/e28BMFByTL/33hl/wWHu7XqCos12wWELji
-         aMjfBn7RhPuXMOW9ByzsDq2ZG5ITzIcE3a+BJR+QOwBRSGp2nsnwETak0xfvw7HRGzaH
-         sIuh+JqqdD1sm/kELJvwhycuYYZLo+mBINTxSYBNjy8Wmcytxi1c72ZFTqpPkqJMFIU0
-         d1Tw==
-X-Gm-Message-State: ANhLgQ1RnYksdNr+QH/XeVFIx2U+q0cd8n6eksfdaM7XQYYlCVluLVRR
-        iDPcsQt+6V2+5LKu0tZKS/1nIOEaXaw2DYDi
-X-Google-Smtp-Source: ADFU+vtMt31tP7+bdrL8Xnvjkbvor50IyCbDn+WnCnsbJXMAyj9Melvbj6Mpc4exxa3r1An2EKb0dg==
-X-Received: by 2002:a5d:6150:: with SMTP id y16mr35501106wrt.352.1584352611440;
-        Mon, 16 Mar 2020 02:56:51 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id i6sm29154761wru.40.2020.03.16.02.56.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2020 02:56:50 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 10:56:49 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Joe Perches <joe@perches.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Sebastian Duda <sebastian.duda@fau.de>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        linux-media@vger.kernel.org
-Subject: Re: [Intel-gfx] [PATCH] MAINTAINERS: adjust to reservation.h renaming
-Message-ID: <20200316095649.GK2363188@phenom.ffwll.local>
-Mail-Followup-To: Joe Perches <joe@perches.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Sebastian Duda <sebastian.duda@fau.de>,
-        Sumit Semwal <sumit.semwal@linaro.org>, linux-media@vger.kernel.org
-References: <20200304120711.12117-1-lukas.bulwahn@gmail.com>
- <b0296e3a-31f8-635a-f26d-8b0bc490aae3@amd.com>
- <20200306103946.GT2363188@phenom.ffwll.local>
- <155f99baffe11836fc9d794ff297bdcee7831050.camel@perches.com>
- <20200316095007.GI2363188@phenom.ffwll.local>
+        Mon, 16 Mar 2020 06:05:57 -0400
+Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 34E39240037;
+        Mon, 16 Mar 2020 10:00:17 +0000 (UTC)
+Date:   Mon, 16 Mar 2020 11:00:17 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "amit.kucheria@verdurent.com" <amit.kucheria@verdurent.com>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux@rempel-privat.de" <linux@rempel-privat.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "m.felsch@pengutronix.de" <m.felsch@pengutronix.de>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "ronald@innovation.ch" <ronald@innovation.ch>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V3 1/7] firmware: imx: Add stubs for !CONFIG_IMX_SCU case
+Message-ID: <20200316100017.GM4518@piout.net>
+References: <20200316030744.GC17221@dragon>
+ <AM0PR04MB44817A48746601EADA4E06BC88F90@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <20200316033447.GE17221@dragon>
+ <DB3PR0402MB3916DA9F0F175B9D2E9E684FF5F90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <20200316084056.GG4518@piout.net>
+ <DB3PR0402MB391663DB37A8D241092AD708F5F90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <20200316090053.GH4518@piout.net>
+ <DB3PR0402MB391683A05820920158DFDA77F5F90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <20200316091541.GI4518@piout.net>
+ <DB3PR0402MB39169528B3FF39E23C7A90FCF5F90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200316095007.GI2363188@phenom.ffwll.local>
-X-Operating-System: Linux phenom 5.3.0-3-amd64 
+In-Reply-To: <DB3PR0402MB39169528B3FF39E23C7A90FCF5F90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 10:50:07AM +0100, Daniel Vetter wrote:
-> On Fri, Mar 06, 2020 at 02:56:06AM -0800, Joe Perches wrote:
-> > On Fri, 2020-03-06 at 11:39 +0100, Daniel Vetter wrote:
-> > > On Wed, Mar 04, 2020 at 01:08:32PM +0100, Christian König wrote:
-> > > > Am 04.03.20 um 13:07 schrieb Lukas Bulwahn:
-> > > > > Commit 52791eeec1d9 ("dma-buf: rename reservation_object to dma_resv")
-> > > > > renamed include/linux/reservation.h to include/linux/dma-resv.h, but
-> > > > > missed the reference in the MAINTAINERS entry.
-> > > > > 
-> > > > > Since then, ./scripts/get_maintainer.pl --self-test complains:
-> > > > > 
-> > > > >    warning: no file matches F: include/linux/reservation.h
-> > > > > 
-> > > > > Adjust the DMA BUFFER SHARING FRAMEWORK entry in MAINTAINERS.
-> > > > > 
-> > > > > Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
-> > > > > Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
-> > > > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > > > 
-> > > > Reviewed-by: Christian König <christian.koenig@amd.com>
-> > > 
-> > > You'll push this too?
-> > > -Daniel
-> > > 
-> > > > > ---
-> > > > > Christian, please pick this patch.
-> > > > > applies cleanly on current master and next-20200303
-> > > > > 
-> > > > >   MAINTAINERS | 2 +-
-> > > > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > > index 6158a143a13e..3d6cb2789c9e 100644
-> > > > > --- a/MAINTAINERS
-> > > > > +++ b/MAINTAINERS
-> > > > > @@ -5022,7 +5022,7 @@ L:	dri-devel@lists.freedesktop.org
-> > > > >   L:	linaro-mm-sig@lists.linaro.org (moderated for non-subscribers)
-> > > > >   F:	drivers/dma-buf/
-> > > > >   F:	include/linux/dma-buf*
-> > > > > -F:	include/linux/reservation.h
-> > > > > +F:	include/linux/dma-resv.h
-> > > > >   F:	include/linux/*fence.h
-> > > > >   F:	Documentation/driver-api/dma-buf.rst
-> > > > >   K:	dma_(buf|fence|resv)
-> > 
-> > Slightly unrelated:
-> > 
-> > The K: entry matches a lot of other things
-> > and may have a lot of false positive matches
-> > like any variable named dma_buffer
-> > 
-> > This should also use (?:...) to avoid a perl
-> > capture group.
-> > 
-> > Perhaps:
-> > 
-> > K:	'\bdma_(?:buf|fence|resv)\b'
+On 16/03/2020 09:40:52+0000, Anson Huang wrote:
+> > Why is that an issue? If they don't have IMX_SCU selected, then the other
+> > SCU driver are not selected either, having stubs doesn't change that you will
+> > have to select at least one option. Please explain what is the issue that is not
+> > solved here.
 > 
-> Hm either people aren't using get_maintainers.pl consistently, or it
-> doesn't seem to be a real world problem. I'm not seeing any unrelated
-> patches on dri-devel at least.
+> OK, what I thought is even without IMX_SCU selected, other SCU drivers still can be
+> selected for build test after adding "COMPILE_TEST" to the kconfig, like below, if
+> without IMX_SCU API stubs, the "COMPILE_TEST" can NOT be added to SCU drivers
+> to enable build test, so I think the IMX_SCU API stubs should be added?
 > 
-> But happy to merge such a patch if it shows up ofc, it's definitely the
-> more correct thing :-)
 
-Ofc as usual if you lean out the window you immediately get to eat your
-hat, right after sending this I got a mail from syzbot about some random
-stuff because of this :-)
+No they shouldn't because there is not point adding COMPILE_TEST to the
+SCU drivers. We don't add COMPILE_TEST to all the drivers and add stubs
+to all the subsystems. E.g there is no point trying to compile an I2C
+driver if the I2C core is not enabled. 
 
-I'm gonna do the patch now ...
--Daniel
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
