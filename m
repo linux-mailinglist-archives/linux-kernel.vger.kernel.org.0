@@ -2,125 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA956186386
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 04:08:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF257186397
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 04:15:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729588AbgCPDIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 23:08:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729384AbgCPDIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 23:08:00 -0400
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B83B420409;
-        Mon, 16 Mar 2020 03:07:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584328079;
-        bh=Ta/7YQGMbWyIGTwkBfx9j6N2DjoHmcD3pjam5ZHomYo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YuPz9BDeEmfsDued5suhi+F0CzjEaeD6rv51BFRYQ1JaiZD34V1qqxHrXeYsPG8zj
-         XJXVKJ1sBrjUt3Ir53ZsoMrcqk/HSbkX4EXZp3wKxeD2iUNhqlSKLac+Dt3aXcpzLA
-         Kjjwq/qCLJvbt4xwZRgKKwRuuvh3evpEwRSh3zWY=
-Date:   Mon, 16 Mar 2020 11:07:45 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     Anson Huang <anson.huang@nxp.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "amit.kucheria@verdurent.com" <amit.kucheria@verdurent.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux@rempel-privat.de" <linux@rempel-privat.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "m.felsch@pengutronix.de" <m.felsch@pengutronix.de>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "ronald@innovation.ch" <ronald@innovation.ch>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V3 1/7] firmware: imx: Add stubs for !CONFIG_IMX_SCU case
-Message-ID: <20200316030744.GC17221@dragon>
-References: <1583714300-19085-1-git-send-email-Anson.Huang@nxp.com>
- <AM0PR04MB4481F087AC3CDA691300710288FE0@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <20200316005219.GD17221@dragon>
- <AM0PR04MB44819E4A9E027F1555C33D0B88F90@AM0PR04MB4481.eurprd04.prod.outlook.com>
+        id S1729704AbgCPDPx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 23:15:53 -0400
+Received: from mail-eopbgr20058.outbound.protection.outlook.com ([40.107.2.58]:41862
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729655AbgCPDPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 23:15:53 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fFErWGu852fv//9sgQIpLbZNgLE8Cdw9SOj/l2fdCNF0FVkCLIRAHQijCrWhTo+jjKBwxQNCllxagSuoclL5XmklekVpwAUkdtpEqCKCBJ+o40CE2XfeCwjZdqHEJe87XuThTtg5icu6H2mtaRlVCSasatH1jdUsnn1it2nmwMNnRLY8KV4TH8YFjL3AtxsgHYEhFvQao4RJLF+HtwYxH2p9uq+mib8kXoUUq6aFCXklnTLOLbx6BHqxSZXDMFkB1puXKRhoOxyVbVFGEZ2Tl0O63AcvrvzK7/J6oYoCgdqwjRUnEpnasgMaPVuEWJTVN5IRtnTHO7FFAEhkLhEe+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CFpcJfWftyCyHL3ntM+JubuiOiojkiOMfrs1o5LdxuE=;
+ b=aXQ3sIL7VfHIAam2uqHLUF12lFLbHIrEufM62v+HXo/DvPoogRs0Et4hgPp84kHy4qzJSqJRf26ZTVikr0vy3gGI7rdpYA/hXbcWXUSTfOqP0YsZ1zdbQ3KBLPKrkR/D11Uv5ptg8l6bqvJdMZlJKklwLU/R4+WYCfjKdwvDhDsTHeyiZoCtlPvbOg2ywpNngXUKUduNelKJQ5fCNOdp6xeDIO/L4Ygr0lnbPC8XtXZnvLMOrPU5dHOh5C96wQAG13HTuX6+8ZiIzoY5ohyfmrbIQvTIbXU04SS7BkyC2O5Ca0JwE45kXWTgbQx1hO+a8meD2CZOHujlFgA+UAlRgA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CFpcJfWftyCyHL3ntM+JubuiOiojkiOMfrs1o5LdxuE=;
+ b=hEyqCr1FD+GF6YOU6/fuJfr/vAULhERjWYO+fAUHPqY9MOb6Iy2NQOCXmtfd/PJ2VgKfHWobLLWLYhOEbvW9ec/XPOonG60JjsXagmK1AhlQicp1jJnv4Lr1V4Jcp//1cfK4OPVp7Lv8o2GIM73v1KfWXuGr89tvSy89FCfTlf8=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4225.eurprd04.prod.outlook.com (52.134.91.154) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.21; Mon, 16 Mar 2020 03:15:49 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc%7]) with mapi id 15.20.2814.019; Mon, 16 Mar 2020
+ 03:15:49 +0000
+From:   peng.fan@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] soc: imx: drop COMPILE_TEST for IMX_SCU_SOC
+Date:   Mon, 16 Mar 2020 11:09:02 +0800
+Message-Id: <1584328142-11810-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: SGBP274CA0013.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::25)
+ To AM0PR04MB4481.eurprd04.prod.outlook.com (2603:10a6:208:70::15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM0PR04MB44819E4A9E027F1555C33D0B88F90@AM0PR04MB4481.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SGBP274CA0013.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2814.16 via Frontend Transport; Mon, 16 Mar 2020 03:15:46 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: b60b472a-ae99-4789-d3ed-08d7c958537a
+X-MS-TrafficTypeDiagnostic: AM0PR04MB4225:|AM0PR04MB4225:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB42253903013F267F80A6D59788F90@AM0PR04MB4225.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1775;
+X-Forefront-PRVS: 03449D5DD1
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(376002)(396003)(136003)(346002)(199004)(2906002)(2616005)(69590400007)(4326008)(6666004)(4744005)(66946007)(478600001)(86362001)(66556008)(66476007)(956004)(26005)(316002)(6506007)(186003)(36756003)(6486002)(5660300002)(52116002)(6512007)(8936002)(9686003)(16526019)(8676002)(81166006)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4225;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: YyAMpjpe1W5ka7bQxpUjbVPj2uAcpfzLaOKT/69CI/9KYe80gY87rOSmuj5RmzXrBix6hi5bmI09bMZCKtwwEbMSclaCVdSA9LlFardm0PuShbZpHOHuVg8yRsMJDaR3zg3FrnA8pFfAipRju/pPC8iMLQYrbnfm8rxEJlde7qyPMQ/rB1iMmJqDiOepJwOrNGgxXDFUAM4xGyXevX4h8T2zs2JZMb7YmGP5y/k96WcoVAge5GgvtNE8YdIGJ3af4NJMA3Vce6N5/qNj7WdLTyk7dRfV9CmAO5tXArSikHpjxCyf8pdmE8TQRZpYX3s97hgsJQ2u2Cqdb5dlk+3mha692LUZB/DCujdgbDtvUz9JDjy8T9gtQ2VH+dIX0h0e+XIFIO3278BK18c4tF9C/Jgvg/DSEoa288BBwjD3QCECGfiKm4mqk7jEn/kKCMDmwrqqidHoGncuZfxDbucM6s3MGxgRAPyJu80gqXwgl+63tvmc0M23iHywdSiOyB0o
+X-MS-Exchange-AntiSpam-MessageData: FvgLiG0KB60DusRGQ3RcraBisx9woOQVu7TWb2kDkv30DhGOGarwmzBUiYCQTLBHIi9t09B3RWcIF9Kk2oomSozBIXET8dDW0sIVZW4zjzqc0PGZIUZ+hH1oE1vXRFB6alXg7yY9AbcqmPQi6Gau+A==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b60b472a-ae99-4789-d3ed-08d7c958537a
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2020 03:15:49.5285
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YigBz5+szbxTznNEoja8FLF1lIZ9DRg1kvHhyrY0BDmeU4WLEzXDJ3DmMQgKvB54MWNcZmqp0KSldTZ1CaqkwQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4225
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 02:51:47AM +0000, Peng Fan wrote:
-> Hi Shawn,
-> 
-> > Subject: Re: [PATCH V3 1/7] firmware: imx: Add stubs for !CONFIG_IMX_SCU
-> > case
-> > 
-> > On Mon, Mar 09, 2020 at 01:40:18PM +0000, Peng Fan wrote:
-> > > > Subject: [PATCH V3 1/7] firmware: imx: Add stubs for !CONFIG_IMX_SCU
-> > > > case
-> > >
-> > > I have one patch pending reviewing.
-> > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatc
-> > >
-> > hwork.kernel.org%2Fpatch%2F11395247%2F&amp;data=02%7C01%7Cpeng.f
-> > an%40n
-> > >
-> > xp.com%7C995815002e2b490791e008d7c9445133%7C686ea1d3bc2b4c6fa9
-> > 2cd99c5c
-> > >
-> > 301635%7C0%7C0%7C637199167574579419&amp;sdata=RM4Mtwl8LZ3ft9
-> > 3uL3FQPcHT
-> > > 9lPHSqBOgugozkcLvag%3D&amp;reserved=0
-> > 
-> > I dropped that patch from my queue and picked patch #2 from this series as
-> > the favor.
-> 
-> I think dropping that patch might cause Linux-next build fail as previously showed,
-> because IMX_SCU_SOC depends on COMPILE_TEST. If you drop that patch,
-> also need to drop COMPILE_TEST from IMX_SCU_SOC.
-> 
->  ld: drivers/soc/imx/soc-imx-scu.o: in function `.imx_scu_soc_probe':
->  soc-imx-scu.c:(.text.imx_scu_soc_probe+0x44): undefined reference to 
-> `.imx_scu_get_handle'
->  ld: soc-imx-scu.c:(.text.imx_scu_soc_probe+0x134): undefined reference 
->  to `.imx_scu_call_rpc'
->  ld: soc-imx-scu.c:(.text.imx_scu_soc_probe+0x20c): undefined reference 
->  to `.imx_scu_call_rpc'
->  
->  Caused by commit
->  
->    68c189e3a93c ("soc: imx: increase build coverage for imx8m soc 
->  driver")
-> 
-> What do you prefer? I personally think dummy functions would be good.
+From: Peng Fan <peng.fan@nxp.com>
 
-I would rather drop COMPILE_TEST from IMX_SCU_SOC.  Could you send a
-patch for that shortly?
+With COMPILE_TEST, there will be build error, because IMX_SCU
+might be set to n, so drop COMPILE_TEST.
 
-Shawn
+Suggested-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/soc/imx/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/soc/imx/Kconfig b/drivers/soc/imx/Kconfig
+index 0b69024296d5..b18271e99d4f 100644
+--- a/drivers/soc/imx/Kconfig
++++ b/drivers/soc/imx/Kconfig
+@@ -10,7 +10,7 @@ config IMX_GPCV2_PM_DOMAINS
+ 
+ config IMX_SCU_SOC
+ 	bool "i.MX System Controller Unit SoC info support"
+-	depends on IMX_SCU || COMPILE_TEST
++	depends on IMX_SCU
+ 	select SOC_BUS
+ 	help
+ 	  If you say yes here you get support for the NXP i.MX System
+-- 
+2.16.4
+
