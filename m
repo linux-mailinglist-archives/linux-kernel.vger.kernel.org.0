@@ -2,88 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60EC01869AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 12:02:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ACB41869B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 12:04:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730820AbgCPLCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 07:02:24 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:33626 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730811AbgCPLCX (ORCPT
+        id S1730787AbgCPLEf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 07:04:35 -0400
+Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:27575 "EHLO
+        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730678AbgCPLEe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 07:02:23 -0400
-Received: by mail-vs1-f67.google.com with SMTP id y138so3138627vsy.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 04:02:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HYXCjPHfs8dDfhMy2nCW/5veOTWbVHj4w+BgbYglN9w=;
-        b=Zem311Tm82+PW9OL0vHqTxopdfny3jc3ZE+5GcIB/k1E6y26PuHdotm31jnVEgAu2b
-         yYWBSFnKG1yumWYVwPsTOthW1KXvZzj8qOFYZn8U/LSQPeQvBWgSEzaWyUl29RslaE22
-         OoDm8bwT1CbaIQ4FEs8oahpIjPMC5ERkBHvsM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HYXCjPHfs8dDfhMy2nCW/5veOTWbVHj4w+BgbYglN9w=;
-        b=c+0gwoWbdld8ZW3hu5akkcQK7sq8xzsI592kW3ZrsWsheYtzP+swahpsXnyfkD8Z/3
-         gah6vTtatf5eZc9TojgkKIul+f1RUdP6HVjTZwCSYNzX/svHF/J7T9HnyBKfoiLFmVU9
-         0irF8SnBg1dOdyp2IURxEqk24kglWCWF0OpeNmaxPR6WAgmzN97mMvk+NdKjqMUZcYuK
-         gJtQHaUz38+LSp2XnwZL7+ux8dNjZaF7ofjobQzpoNEk4pI4Qk20qvaMeS6f6CW3atpJ
-         9ma3enkFxRBl5yh97Mk/2VUMBVtP8Yz1d18Xc31cPhzWwLo0CwfOtBOA9NShJKdc9w27
-         bhNg==
-X-Gm-Message-State: ANhLgQ0HBR17rg/1kLIxZ1XvtptWhrIrIy8Y2TLAUbYMP9FM6gg72JTv
-        vmXJrBgD5SEqZ3/aIcU/SrGoMUr/oPTL9uPx+u600h0fkcY=
-X-Google-Smtp-Source: ADFU+vslL7SUJTVlPVk2d8S7a0jEhOnlOTTT7KU8Dg+Uf7BqOBjcuL5F5OWDFxyBWnAFO5VFRqBRQWH6xWxqn5a3M3c=
-X-Received: by 2002:a05:6102:392:: with SMTP id m18mr15598517vsq.79.1584356542437;
- Mon, 16 Mar 2020 04:02:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <1584345050-3738-1-git-send-email-hanks.chen@mediatek.com>
-In-Reply-To: <1584345050-3738-1-git-send-email-hanks.chen@mediatek.com>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Mon, 16 Mar 2020 19:02:11 +0800
-Message-ID: <CANMq1KA1ngYhr7XO0k3xb0h7L-DX+TjiekvnGGOTRqz=BQPREA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] dt-bindings: cpu: Add a support cpu type for cortex-a75
-To:     Hanks Chen <hanks.chen@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>, wsd_upstream@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 16 Mar 2020 07:04:34 -0400
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 16 Mar 2020 16:33:03 +0530
+Received: from mkrishn-linux.qualcomm.com ([10.204.66.35])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 16 Mar 2020 16:32:44 +0530
+Received: by mkrishn-linux.qualcomm.com (Postfix, from userid 438394)
+        id E451444DD; Mon, 16 Mar 2020 16:32:43 +0530 (IST)
+From:   Krishna Manikandan <mkrishn@codeaurora.org>
+To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     Krishna Manikandan <mkrishn@codeaurora.org>,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        kalyan_t@codeaurora.org, nganji@codeaurora.org
+Subject: [v2] arm64: dts: sc7180: modify assigned clocks for sc7180 target
+Date:   Mon, 16 Mar 2020 16:32:42 +0530
+Message-Id: <1584356562-13181-1-git-send-email-mkrishn@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 3:51 PM Hanks Chen <hanks.chen@mediatek.com> wrote:
->
-> Add arm cpu type cortex-a75.
+Add DISP_CC_MDSS_ROT_CLK and DISP_CC_MDSS_AHB_CLK
+in the assigned clocks list for sc7180 target.
 
-Already in Rob's tree here:
-https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git/commit/?h=dt/next&id=5c2614e995de07b41eb355155eb5e0e3d593718b
+Signed-off-by: Krishna Manikandan <mkrishn@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/sc7180.dtsi | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-> Signed-off-by: Hanks Chen <hanks.chen@mediatek.com>
-> ---
->  Documentation/devicetree/bindings/arm/cpus.yaml |    1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
-> index c23c24f..51b75f7 100644
-> --- a/Documentation/devicetree/bindings/arm/cpus.yaml
-> +++ b/Documentation/devicetree/bindings/arm/cpus.yaml
-> @@ -128,6 +128,7 @@ properties:
->        - arm,cortex-a57
->        - arm,cortex-a72
->        - arm,cortex-a73
-> +      - arm,cortex-a75
->        - arm,cortex-m0
->        - arm,cortex-m0+
->        - arm,cortex-m1
-> --
-> 1.7.9.5
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index 998f101..e3b60f1 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -1544,8 +1544,12 @@
+ 				clock-names = "iface", "rot", "lut", "core",
+ 					      "vsync";
+ 				assigned-clocks = <&dispcc DISP_CC_MDSS_MDP_CLK>,
+-						  <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
++						  <&dispcc DISP_CC_MDSS_VSYNC_CLK>,
++						  <&dispcc DISP_CC_MDSS_ROT_CLK>,
++						  <&dispcc DISP_CC_MDSS_AHB_CLK>;
+ 				assigned-clock-rates = <300000000>,
++						       <19200000>,
++						       <19200000>,
+ 						       <19200000>;
+ 
+ 				interrupt-parent = <&mdss>;
+-- 
+1.9.1
+
