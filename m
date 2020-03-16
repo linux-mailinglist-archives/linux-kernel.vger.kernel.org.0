@@ -2,74 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58FEC186899
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:05:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90AAE186894
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:05:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730576AbgCPKFK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 06:05:10 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:50332 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730557AbgCPKFK (ORCPT
+        id S1730553AbgCPKE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 06:04:59 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36217 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730509AbgCPKE7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 06:05:10 -0400
-Received: from fsav109.sakura.ne.jp (fsav109.sakura.ne.jp [27.133.134.236])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 02GA4og3062365;
-        Mon, 16 Mar 2020 19:04:50 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav109.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav109.sakura.ne.jp);
- Mon, 16 Mar 2020 19:04:50 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav109.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 02GA4jQd062348
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 16 Mar 2020 19:04:50 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [patch] mm, oom: prevent soft lockup on memcg oom for UP systems
-To:     Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <993e7783-60e9-ba03-b512-c829b9e833fd@i-love.sakura.ne.jp>
- <alpine.DEB.2.21.2003111513180.195367@chino.kir.corp.google.com>
- <202003120012.02C0CEUB043533@www262.sakura.ne.jp>
- <alpine.DEB.2.21.2003121101030.158939@chino.kir.corp.google.com>
- <20200312153238.c8d25ea6994b54a2c4d5ae1f@linux-foundation.org>
- <20200316093152.GE11482@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <3be371a0-5b1e-7115-8659-186612ad5fb0@i-love.sakura.ne.jp>
-Date:   Mon, 16 Mar 2020 19:04:44 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Mon, 16 Mar 2020 06:04:59 -0400
+Received: by mail-pl1-f193.google.com with SMTP id g2so5272813plo.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 03:04:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=toQgd/BbAOWzQ6Hdl5KAXkvOW9lbMbuLWlPhhtalYGk=;
+        b=f41sEjEB+y2IG0xdX/DwIlC6BIbrkZh5KXOzOhpzK9UCegfBjHwO0fy4/rC1LsRZB7
+         +Njk1vkOspxNFoKI3lLPGZoGMn5vHTudgsvrqRvL4dAOawhpg3ChbBmLdRxHorsWdfZ7
+         +56vp7fxHWBfay9G1fCA8De3Ea/g/h/fz/5kJ05ygDC5ZxiQERGXFHXmC50oo1gLBiKt
+         LBUFYR2HDEOcv2YQdTvc0A73CuMl+uHrcgLxqexcQEMKOdrlLkAXswkr8/TvNOarBohE
+         GJPDBuYWEzasbxeVTfeGSPtsm7bG9A7CpGdhHAGHv8qvqDJuv+vK5FMke4YH9v4ITB4W
+         308w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=toQgd/BbAOWzQ6Hdl5KAXkvOW9lbMbuLWlPhhtalYGk=;
+        b=jbkl1q9fMxoHGc+RCryaLKigWjYwfiWmVu2ncwh/UYCSFK9kwcB5z1ALeLLQ+llmwy
+         SHIafAiwPqZxno+cUSrXlCkDlmZf2XwCKQfZqLbyRmo2/TjV1+UaG6GnQH9V+Zzbb9LI
+         TkBuKjRxj8aAHYV8gt0WN5z7XAVDGcNKMrd9bpS6oyT1rHf/WcoPFi4bWpp487wNaEp/
+         nmXuzJeaHLVj73lUhYX/nfS51pDGYJuQNVhibAIUgVcYjtgyMAZOOSiygAVjKjBQWROq
+         eg9IHQGU4JwcmDY4o7rfsYXyR0HhkmZkmtnvLZlXVTYoY02AAyhlevprOjTCR69RinLF
+         65Zw==
+X-Gm-Message-State: ANhLgQ3mUy+fh1AZT5acfsHorcW6fLsqly/af3ALTM5vlMJhrd+ikdYW
+        iOF3AYd3cbakDFrrv0yeDT/byNVICAFgDj601v4=
+X-Google-Smtp-Source: ADFU+vtKYCY+F45EunpS/YfEznovC2Zf3TArve8ETCPmWHL2/PhXwNaq4E9WpqtW1eigzJhprhOxQ9o6MSnf7qXQDGU=
+X-Received: by 2002:a17:90a:930e:: with SMTP id p14mr787425pjo.159.1584353097287;
+ Mon, 16 Mar 2020 03:04:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200316093152.GE11482@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Reply-To: sebastient766@gmail.com
+Received: by 2002:a17:90a:6c97:0:0:0:0 with HTTP; Mon, 16 Mar 2020 03:04:54
+ -0700 (PDT)
+From:   =?UTF-8?B?TXIuU8OpYmFzdGllbiBUb25p?= <sebastient766@gmail.com>
+Date:   Mon, 16 Mar 2020 03:04:54 -0700
+X-Google-Sender-Auth: 9cheeGuxu2qwm2OP3-3jDE2HMTs
+Message-ID: <CADQawC1P-i5=k5bf9HVu9UaiFZuUDmqJPVh16yAS_6_-8kE+1A@mail.gmail.com>
+Subject: VERY URGENT
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/03/16 18:31, Michal Hocko wrote:
->> What happens if the allocator has SCHED_FIFO?
-> 
-> The same thing as a SCHED_FIFO running in a tight loop in the userspace.
-> 
-> As long as a high priority context depends on a resource held by a low
-> priority task then we have a priority inversion problem and the page
-> allocator is no real exception here. But I do not see the allocator
-> is much different from any other code in the kernel. We do not add
-> random sleeps here and there to push a high priority FIFO or RT tasks
-> out of the execution context. We do cond_resched to help !PREEMPT
-> kernels but priority related issues are really out of scope of that
-> facility.
-> 
+FROM MR.S=C3=89BASTIEN TONI
+AUDIT& ACCOUNT MANAGER
+BANK OF AFRICA (B.O.A)
+OUAGADOUGOU BURKINA FASO
+WEST AFRICA.
 
-Spinning with realtime priority in userspace is a userspace's bug.
-Spinning with realtime priority in kernelspace until watchdog fires is
-a kernel's bug. We are not responsible for userspace's bug, and I'm
-asking whether the memory allocator kernel code can give enough CPU
-time to other threads even if current thread has realtime priority.
+Dear Friend,
+
+With due respect, I have decided to contact you on
+abusinesstransaction  that will be beneficial to both of us. At the
+bank last account and  auditing evaluation, my staffs came across an
+old account which was being maintained by a foreign client who we
+learn was among the deceased passengers of motor accident on
+November.2003, the deceased was unable to run this account since his
+death. Theaccount has  remained dormant without the knowledge of his
+family since it was put in a  safe deposit account in the bank for
+future investment by the client.
+
+Since his demise, even the members of his family haven't applied for
+claims  over this fund and it has been in the safe deposit account
+until I  discovered that it cannot be claimed since our client
+isaforeign national and we are sure that he has no next of kin here to
+file claims over the money. As the director of the department, this
+discovery was brought to my office so as to decide what is to bedone.I
+ decided to seek ways through which to transfer this money out of the
+bank  and
+out of the country too.
+
+The total amount in the account is 18.6 million with my positions as
+staffs  of the bank, I am handicapped because I cannot operate foreign
+accounts and  cannot lay bonafide claim over this money. The client
+was a foreign  national and you will only be asked to act as his next
+of kin and I will  supply you with all the necessary information and
+bank data to assist you in being able to transfer this money to any
+bank of your  choice where this money could be transferred into.The
+total sum will be shared as follows: 50% for me, 50% for you and
+expenses incidental occur  during the transfer will be incur by both
+of us. The transfer is risk free on both sides hence you are going to
+follow my instruction till the fund  transfer to your account. Since I
+work in this bank that is why you should  be confident in the success
+of this transaction because you will be updated with information as at
+when desired.
+
+I will wish you to keep this transaction secret and confidential as I
+am  hoping to retire with my share of this money at the end of
+transaction  which will be when this money is safety in your account.
+I will then come over to your country for sharing according to the
+previously agreed percentages. You might even have to advise me on
+possibilities of investment in your country or elsewhere of our
+choice. May  God help you to help me to a restive retirement,Amen,And
+You have to  contact me through my private e-mail
+at(sebastient766@gmail.com)Please for further information and inquires
+feel free to contact me back immediately for more explanation and
+better  understanding I want you to assure me your capability of
+handling this  project with trust by providing me your following
+information details such as:
+
+(1)NAME..............
+(2)AGE:................
+(3)SEX:.....................
+(4)PHONE NUMBER:.................
+(5)OCCUPATION:.....................
+(6)YOUR COUNTRY:.....................
+
+Yours sincerely,
+Mr.S=C3=A9bastien Toni
