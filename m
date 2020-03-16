@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB19218643A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 05:37:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4922718643B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 05:37:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729580AbgCPEg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 00:36:26 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46042 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729423AbgCPEgZ (ORCPT
+        id S1729636AbgCPEgd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 00:36:33 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:40623 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729423AbgCPEgd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 00:36:25 -0400
-Received: by mail-pl1-f193.google.com with SMTP id b22so7388164pls.12
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Mar 2020 21:36:25 -0700 (PDT)
+        Mon, 16 Mar 2020 00:36:33 -0400
+Received: by mail-pj1-f67.google.com with SMTP id bo3so6489701pjb.5
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Mar 2020 21:36:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=lXdwJTvT1iuUgFQw8gaQa71v7GEvPOebjKf9KF4NkGk=;
-        b=m+YssmEXSmxxKpanK0Py/G1CD7THoku3KfWUEjhQ64ywgxFx7K04VJsvqUa+zQ0TJc
-         oQGIJTQNoxlz648QVzrDfVhfmWtUddCXWRwvi3t6xgBqFmXTieRwvYMdNy8M7FaPF/ni
-         KCzrOyNBMhpqfMkIe7jlupVWTfS1MMYDjzlRkvNDti3/Xat/AGwOEWu51eS3kpX02CKZ
-         PocLODYkwiIxKgvNuPAcEPl0q7O9zRoe3fKZ9BbBIucQIanw7PN3J9c03G1uEkDfAMQ7
-         2FozxnrOiPBOO2gy4lLkF/BSqL8kbH7jp5bqqT5q4EeNh5xcYqmwkQ+EMwtTOw/h8sw/
-         by0w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=j66a3s2vP+w20zjNn6qkww1MfEJEICNJLq9xqeevnk8=;
+        b=GgMs7KE+x7u8c2D1GUcSwQOaBOyBlSMcZh5+Zn/Cql877d/Xa4BZnVC74rImQcQiza
+         Pjnrm00Yp6zqwWC3w2/H1a0x2TlmcFf6UZI5ojLNAK2eP9KZZRMpTOtr5OMS+LI/DD0F
+         Fbl+zMVmgP1Xq/QUOsChOQ09GEFcvynpnHOfFBjXpt7Ou38fRLiO6IPtSBF+3R0W2lJG
+         KOxjEbXfq8L92hrL0DGarzOrB2FewqwrgURQDjTMF8EIo/L186+MMzbRmWVVF5ShYPT8
+         8r+fvm8XYIPuIHf6lrJQnrh/ODW7LBhBISWzabqdzXHnZhnvh37WMl+J1YB9lEGqYheY
+         ox+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lXdwJTvT1iuUgFQw8gaQa71v7GEvPOebjKf9KF4NkGk=;
-        b=tVLX5Bc9yBCTyGbvRIul7MWF+fO/JlNBEbZwLeGTM/I+spjaTfYI4DR6KbuG30BqnS
-         evJN6PA2Mx00NXgTuOFlI2VRQ8D7A3CUO8IXxGhi/B0F+5QtoWAVG6pyNKPQtwtR7OMA
-         E5tBkr2dWE6o6I6THzZYCd4XVmlaQ/DkhM1dN0ttTLRroIBp6Zxa5YaI8MKhz72cPeA1
-         umSVRS/WBvuEjd1vBN95+nDMK0A1txds/DzFFHxQazIr8umgh0HvCb/+QAfT0xyCpCB6
-         o7LbGKfcz0ZqOJk2pqkiih3qvkLPEEuc0drxX2ccOc7PVbh1HyEV1nzrjihD095YC7la
-         /0Mg==
-X-Gm-Message-State: ANhLgQ3AJagpzGuyAi73XJQKL0dhK7cgT8I2qRIyNC8nkUwFRRntSwFP
-        ClhyPOmrbp8Mn7I44NNjMA==
-X-Google-Smtp-Source: ADFU+vtpikXbG80LUhDgL6M5gaBDKvXS9P9nuWps703VcR0eojTmUjTTdQ2WJ8FmAdERUj0r3IvO8Q==
-X-Received: by 2002:a17:90a:654a:: with SMTP id f10mr23563849pjs.50.1584333384681;
-        Sun, 15 Mar 2020 21:36:24 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=j66a3s2vP+w20zjNn6qkww1MfEJEICNJLq9xqeevnk8=;
+        b=eTLj8xReAFX9XYCpX2nTirefJpoPCkAfvEATRnnM/E91784yHNDMrwg1BdVGJRnwgi
+         3kS26TcHkphe860+2Kw6Y1/N8wxBkxRMtggyl+z9/Ydy8BGog4O4OkTByAkrheb27bJO
+         JtoSlo7BP9DtxvQ+qNMqeyify2duOPK6B55y65Oyye/kayAj2rCosvorWO100MSZY8if
+         67xMq188y5PiDk/OyRlCSj5qLkjV3bTz8v7nuCFHZoNpa8CRX2NfPgmHPk6FHs/yCQe6
+         djr4qIG5zd6ItKOZ/c0SRLg0OYRYxaYC+MLxPY1c+O0krhbNP/sA1wI/hUotU/Saej6I
+         vM4Q==
+X-Gm-Message-State: ANhLgQ2UbGbET/JmTlBaNBtNJDmVvZp0XuTP9cOSb7Ve127WDstZq1Uz
+        7KvHRwrBOAHZqERPoYIIDQ==
+X-Google-Smtp-Source: ADFU+vvGDBK8fWBoL3X1P0FaYHUxoUZzuCudaoA1ladHgo5FilHiD0ikM2kIDkWllOEGq+RSBlKZ+Q==
+X-Received: by 2002:a17:902:ab95:: with SMTP id f21mr22712206plr.188.1584333390348;
+        Sun, 15 Mar 2020 21:36:30 -0700 (PDT)
 Received: from mylaptop.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id d6sm18544296pjz.39.2020.03.15.21.36.19
+        by smtp.gmail.com with ESMTPSA id d6sm18544296pjz.39.2020.03.15.21.36.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 15 Mar 2020 21:36:24 -0700 (PDT)
+        Sun, 15 Mar 2020 21:36:29 -0700 (PDT)
 From:   Pingfan Liu <kernelfans@gmail.com>
 To:     linux-mm@kvack.org
 Cc:     Pingfan Liu <kernelfans@gmail.com>,
@@ -54,25 +55,22 @@ Cc:     Pingfan Liu <kernelfans@gmail.com>,
         John Hubbard <jhubbard@nvidia.com>,
         "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
         Christoph Hellwig <hch@infradead.org>,
-        Shuah Khan <shuah@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCHv6 0/3] fix omission of check on FOLL_LONGTERM in gup fast path
-Date:   Mon, 16 Mar 2020 12:34:01 +0800
-Message-Id: <1584333244-10480-1-git-send-email-kernelfans@gmail.com>
+        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCHv6 1/3] mm/gup: rename nr as nr_pinned in get_user_pages_fast()
+Date:   Mon, 16 Mar 2020 12:34:02 +0800
+Message-Id: <1584333244-10480-2-git-send-email-kernelfans@gmail.com>
 X-Mailer: git-send-email 2.7.5
+In-Reply-To: <1584333244-10480-1-git-send-email-kernelfans@gmail.com>
+References: <1584333244-10480-1-git-send-email-kernelfans@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v5 -> v6:
-  rebase code to latest linux-mm git tree
+To better reflect the held state of pages and make code self-explaining,
+rename nr as nr_pinned.
 
-  improve commit log
-
-  [3/3], rename GUP_FAST_LONGTERM_BENCHMARK as PIN_FAST_LONGTERM_BENCHMARK due
-  to LONGTERM should be a special case of pin page.
-
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
 Cc: Ira Weiny <ira.weiny@intel.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Mike Rapoport <rppt@linux.ibm.com>
@@ -82,19 +80,59 @@ Cc: John Hubbard <jhubbard@nvidia.com>
 Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
 Cc: Christoph Hellwig <hch@infradead.org>
 Cc: Shuah Khan <shuah@kernel.org>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
 To: linux-mm@kvack.org
 Cc: linux-kernel@vger.kernel.org
+---
+ mm/gup.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-Pingfan Liu (3):
-  mm/gup: rename nr as nr_pinned in get_user_pages_fast()
-  mm/gup: fix omission of check on FOLL_LONGTERM in gup fast path
-  mm/gup_benchemark: add LONGTERM_BENCHMARK test in gup fast path
+diff --git a/mm/gup.c b/mm/gup.c
+index e8aaa40..9df77b1 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2735,7 +2735,7 @@ static int internal_get_user_pages_fast(unsigned long start, int nr_pages,
+ 					struct page **pages)
+ {
+ 	unsigned long addr, len, end;
+-	int nr = 0, ret = 0;
++	int nr_pinned = 0, ret = 0;
 
- mm/gup.c                                   | 29 +++++++++++++++++++----------
- mm/gup_benchmark.c                         |  7 +++++++
- tools/testing/selftests/vm/gup_benchmark.c |  6 +++++-
- 3 files changed, 31 insertions(+), 11 deletions(-)
+ 	if (WARN_ON_ONCE(gup_flags & ~(FOLL_WRITE | FOLL_LONGTERM |
+ 				       FOLL_FORCE | FOLL_PIN | FOLL_GET)))
+@@ -2754,25 +2754,25 @@ static int internal_get_user_pages_fast(unsigned long start, int nr_pages,
+ 	if (IS_ENABLED(CONFIG_HAVE_FAST_GUP) &&
+ 	    gup_fast_permitted(start, end)) {
+ 		local_irq_disable();
+-		gup_pgd_range(addr, end, gup_flags, pages, &nr);
++		gup_pgd_range(addr, end, gup_flags, pages, &nr_pinned);
+ 		local_irq_enable();
+-		ret = nr;
++		ret = nr_pinned;
+ 	}
+
+-	if (nr < nr_pages) {
++	if (nr_pinned < nr_pages) {
+ 		/* Try to get the remaining pages with get_user_pages */
+-		start += nr << PAGE_SHIFT;
+-		pages += nr;
++		start += nr_pinned << PAGE_SHIFT;
++		pages += nr_pinned;
+
+-		ret = __gup_longterm_unlocked(start, nr_pages - nr,
++		ret = __gup_longterm_unlocked(start, nr_pages - nr_pinned,
+ 					      gup_flags, pages);
+
+ 		/* Have to be a bit careful with return values */
+-		if (nr > 0) {
++		if (nr_pinned > 0) {
+ 			if (ret < 0)
+-				ret = nr;
++				ret = nr_pinned;
+ 			else
+-				ret += nr;
++				ret += nr_pinned;
+ 		}
+ 	}
 
 --
 2.7.5
