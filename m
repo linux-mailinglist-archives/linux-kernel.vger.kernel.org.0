@@ -2,74 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4810187666
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 00:54:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 059FC18766B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 00:56:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732955AbgCPXyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 19:54:18 -0400
-Received: from mail.uic.edu.hk ([61.143.62.86]:2433 "EHLO umgp.uic.edu.hk"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732880AbgCPXyS (ORCPT <rfc822;Linux-Kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 19:54:18 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="17219137"
-Received: from unknown (HELO zpmail.uic.edu.hk) ([192.168.111.249])
-  by umgp.uic.edu.hk with ESMTP; 17 Mar 2020 07:54:15 +0800
-Received: from zpmail.uic.edu.hk (localhost [127.0.0.1])
-        by zpmail.uic.edu.hk (Postfix) with ESMTPS id 24D8D41C0DD9;
-        Tue, 17 Mar 2020 07:54:15 +0800 (CST)
-Received: from localhost (localhost [127.0.0.1])
-        by zpmail.uic.edu.hk (Postfix) with ESMTP id AD15241C0DD5;
-        Tue, 17 Mar 2020 07:54:13 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zpmail.uic.edu.hk AD15241C0DD5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uic.edu.hk;
-        s=6465647E-9D7B-11E8-B17B-42130C7FA3B9; t=1584402854;
-        bh=Wn2BcVyAdGxyDvB/5AnVfCr/iJTzisyuX4dwKssec6E=;
-        h=Date:From:Message-ID:MIME-Version;
-        b=XCnoRlAHY624dOojHSnbwUpWY0zhgxi8NjcdV+pvL2trCSJHfXfuafRTPTKv81GsP
-         2zuMhZHbZoHAVxTMhhysA5AcWxNCtpQS/RElppJ67jM630jIBUeDupUvwcYy2hoVQY
-         +GijEsRuqUlVdcxc2HbInk+rftNPBu/9CjlE9c+V8dx7HdzjtS8Ze1TwA1f+ny+AcS
-         wmciUoHefUVIBPdHckmnCd+tDBBp2ZCdHbDF4DVrlZnvwKPiRyozG7gKFQpVNOVBs+
-         Aar06q21wKYw0LVyVQ6f9KWaZa9JTrr3b8aATEc3VL+yrk5udQxCyabmnwNxRc/tYE
-         jUGORTnCnxLqw==
-Received: from zpmail.uic.edu.hk ([127.0.0.1])
-        by localhost (zpmail.uic.edu.hk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id l1a2ncOwV2yj; Tue, 17 Mar 2020 07:54:13 +0800 (CST)
-Received: from zpmail.uic.edu.hk (zpmail.uic.edu.hk [192.168.111.249])
-        by zpmail.uic.edu.hk (Postfix) with ESMTP id 2625B41C0598;
-        Tue, 17 Mar 2020 07:54:07 +0800 (CST)
-Date:   Tue, 17 Mar 2020 07:54:07 +0800 (CST)
-From:   David Ibe <ylawrence@uic.edu.hk>
-Reply-To: David Ibe <davidibe718@gmail.com>
-Message-ID: <197937394.63585441.1584402847074.JavaMail.zimbra@uic.edu.hk>
-Subject: 
+        id S1732934AbgCPX4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 19:56:45 -0400
+Received: from mga11.intel.com ([192.55.52.93]:49033 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732977AbgCPX4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 19:56:45 -0400
+IronPort-SDR: eKRMza+1TLqcIExZrXkqF3lTUnWDDGkoInq4knORL7F5DQlchGBGOmVOlopSK7sn04nrFR5Yyr
+ 5cA+h8I8AOyw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 16:56:45 -0700
+IronPort-SDR: uECgVr6/klVPAgp+iMzMUAOBIA0UfpBRAfaKDaluds/TyUrFHHfnKiGX00ZNVE8vJ/fuqtmLhx
+ B6/0vT6Qqkpg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,562,1574150400"; 
+   d="scan'208";a="244308878"
+Received: from bxing-mobl.amr.corp.intel.com (HELO [10.135.8.145]) ([10.135.8.145])
+  by orsmga003.jf.intel.com with ESMTP; 16 Mar 2020 16:56:42 -0700
+Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
+ enclave call
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>
+Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, Neil Horman <nhorman@redhat.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
+        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
+        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Connor Kuehl <ckuehl@redhat.com>,
+        Harald Hoyer <harald@redhat.com>,
+        Lily Sturmann <lsturman@redhat.com>
+References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
+ <20200303233609.713348-22-jarkko.sakkinen@linux.intel.com>
+ <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
+ <20200315012523.GC208715@linux.intel.com>
+ <CAOASepP9GeTEqs1DSfPiSm9ER0whj9qwSc46ZiNj_K4dMekOfQ@mail.gmail.com>
+ <7f9f2efe-e9af-44da-6719-040600f5b351@fortanix.com>
+ <20200316225534.GK24267@linux.intel.com>
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+Message-ID: <7634c48d-a8e2-7366-6f04-06a27f8e5eaf@intel.com>
+Date:   Mon, 16 Mar 2020 16:56:42 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200316225534.GK24267@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.111.160]
-X-Mailer: Zimbra 8.8.15_GA_3829 (ZimbraWebClient - GC80 (Win)/8.8.15_GA_3829)
-Thread-Index: lmmGcMr+8dfo6JuIOWK9IfCh9ETmGg==
-Thread-Topic: 
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Good Day,                
-
-I am Mr. David Ibe, I work with the International Standards on Auditing, I have seen on records, that several times people has divert your funds into their own personal accounts.
-
-Now I am writing to you in respect of the amount which I have been able to send to you through our International United Nations accredited and approved Diplomat, who has arrived Africa, I want you to know that the diplomat would deliver the funds which I have packaged as a diplomatic compensation to you and the amount in the consignment is  $10,000,000.00 United State Dollars.
-
-I did not disclose the contents to the diplomat, but I told him that it is your compensation from the Auditing Corporate Governance and Stewardship, Auditing and Assurance Standards Board. I want you to know that these funds would help with your financial status as I have seen in records that you have spent a lot trying to receive these funds and I am not demanding so much from you but only 30% for my stress and logistics.
-
-I would like you to get back to me with your personal contact details, so that I can give you the contact information's of the diplomat who has arrived Africa and has been waiting to get your details so that he can proceed with the delivery to you.
-
-Yours Sincerely,
-Kindly forward your details to: mrdavidibe966@gmail.com
-Mr. David Ibe
-International Auditor,
-Corporate Governance and Stewardship
+On 3/16/2020 3:55 PM, Sean Christopherson wrote:
+> On Mon, Mar 16, 2020 at 02:31:36PM +0100, Jethro Beekman wrote:
+>> Can someone remind me why we're not passing TCS in RBX but on the stack?
+> 
+> I finally remembered why.  It's pulled off the stack and passed into the
+> exit handler.  I'm pretty sure the vDSO could take it in %rbx and manually
+> save it on the stack, but I'd rather keep the current behavior so that the
+> vDSO is callable from C (assuming @leaf is changed to be passed via %rcx).
+> 
+The idea is that the caller of this vDSO API is C callable, hence it 
+cannot receive TCS in %rbx anyway. Then it has to either MOV to %rbx or 
+PUSH to stack. Either way the complexity is the same. The vDSO API 
+however has to always save it on stack for exit handler. So receiving it 
+via stack ends up in simplest code.
