@@ -2,79 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8A84186A02
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 12:24:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21F451869E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 12:19:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730815AbgCPLYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 07:24:17 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:49842 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730734AbgCPLYR (ORCPT
+        id S1730773AbgCPLT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 07:19:56 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:42716 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730560AbgCPLT4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 07:24:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=y8G04rfoWKUYzwsoZKQ5OhBejLp6XViSQs7CrSOGTTM=; b=faw7oWA9PeRP5tE0NxZu6Ae69
-        ALbTYfZYMc/tDDu7yWb2uKEGnzTwABdSYzR7JInOVhXdKmP1u4ZlaVgFYI/Ebe1GBaWzwsK3RIOwN
-        CzsPoCLYHOAWPiqKy67VxvfyJxJoMsV0mG8ycjXH2Cegk75D6qilj0DJatUzt1RIIEGnQZbT+4lty
-        XGWzg+PXBEU08Tc7xPKkaoTM8YzESxwh0UKhzrgpYi8t0+41dZPtLPK3aNKqr9Pg1/ENqyD/YZA8r
-        Sc5Q02sRfSdjuWfol0uBSOHQA0ZCwu+hMVgBN81KZL+7QvccD01s1rhw9Jt+bERARCTpJztK2p4sk
-        kHuEXGswQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37186)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1jDnqp-0000e3-Ef; Mon, 16 Mar 2020 11:24:07 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1jDnqn-0001mN-BG; Mon, 16 Mar 2020 11:24:05 +0000
-Date:   Mon, 16 Mar 2020 11:24:05 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Eddie Huang <eddie.huang@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-rtc@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] rtc: mt2712: fix build without PM_SLEEP
-Message-ID: <20200316112405.GN25745@shell.armlinux.org.uk>
-References: <20200316104701.209293-1-alexandre.belloni@bootlin.com>
+        Mon, 16 Mar 2020 07:19:56 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02GBJm3l028209;
+        Mon, 16 Mar 2020 06:19:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584357588;
+        bh=TXweXkc9bYpRJKgOX6VT1UgIdPViLnWUJ/3d12z4TYk=;
+        h=From:To:CC:Subject:Date;
+        b=dRbqlykoCzvt57Xyq4ghTZLa5+yImu5vg55rsFK2IKoWxfXI13rghioExpmlHArin
+         +hGOjbanvCdDglVcfAhsu0SMAPab2rZxUxbTZWHGBMVfs+EkydBUA9Y8f5Y2vW0wPi
+         dBBPSAw+G8AfUcb4vV+V61FjikgdCYda4f/FBYxs=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02GBJmXv017161
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 16 Mar 2020 06:19:48 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 16
+ Mar 2020 06:19:47 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 16 Mar 2020 06:19:47 -0500
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02GBJiTv049775;
+        Mon, 16 Mar 2020 06:19:44 -0500
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Andrew Murray <amurray@thegoodpenguin.co.uk>,
+        Alan Mikhak <alan.mikhak@sifive.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Tom Joseph <tjoseph@cadence.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH v3 0/5]  PCI: functions/pci-epf-test: Add DMA data transfer
+Date:   Mon, 16 Mar 2020 16:54:19 +0530
+Message-ID: <20200316112424.25295-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200316104701.209293-1-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 11:47:00AM +0100, Alexandre Belloni wrote:
-> Move SIMPLE_DEV_PM_OPS out of #ifdef to fix build issues when PM_SLEEP is
-> not selected.
-> 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  drivers/rtc/rtc-mt2712.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rtc/rtc-mt2712.c b/drivers/rtc/rtc-mt2712.c
-> index 432df9b0a3ac..c2709c1602f0 100644
-> --- a/drivers/rtc/rtc-mt2712.c
-> +++ b/drivers/rtc/rtc-mt2712.c
-> @@ -394,10 +394,10 @@ static int mt2712_rtc_resume(struct device *dev)
->  
->  	return 0;
->  }
-> +#endif
+Patch series uses dma engine APIs in pci-epf-test to transfer data using
+DMA. It also adds an option "-d" in pcitest for the user to indicate
+whether DMA has to be used for data transfer. This also prints
+throughput information for data transfer.
 
-Maybe use __maybe_unused for these, so they can still be compile-tested
-rather than #if'd out?
+Changes from v2:
+*) Removed use of "bool" in uapi/linux/pcitest.h as that seems to fail
+   for certain configs (header should be self contained). It was failing
+   for "x86_64 allmodconfig".
+*) Modified function comments added before DMA transfer functions.
+
+Changes from v1:
+*) Fixed some of the function names from pci_epf_* to pci_epf_test_*
+since the DMA support is now been moved to pci-epf-test.c
+
+Kishon Vijay Abraham I (5):
+  PCI: endpoint: functions/pci-epf-test: Add DMA support to transfer
+    data
+  PCI: endpoint: functions/pci-epf-test: Print throughput information
+  misc: pci_endpoint_test: Use streaming DMA APIs for buffer allocation
+  tools: PCI: Add 'd' command line option to support DMA
+  misc: pci_endpoint_test: Add support to get DMA option from userspace
+
+ drivers/misc/pci_endpoint_test.c              | 165 ++++++++++--
+ drivers/pci/endpoint/functions/pci-epf-test.c | 253 +++++++++++++++++-
+ include/uapi/linux/pcitest.h                  |   7 +
+ tools/pci/pcitest.c                           |  23 +-
+ 4 files changed, 417 insertions(+), 31 deletions(-)
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
+2.17.1
+
