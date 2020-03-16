@@ -2,158 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A190F18750A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 22:46:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20BC0187500
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 22:45:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732798AbgCPVpj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 17:45:39 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40566 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732652AbgCPVpi (ORCPT
+        id S1732767AbgCPVow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 17:44:52 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:39348 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732652AbgCPVow (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 17:45:38 -0400
-Received: by mail-wm1-f66.google.com with SMTP id z12so10596530wmf.5;
-        Mon, 16 Mar 2020 14:45:37 -0700 (PDT)
+        Mon, 16 Mar 2020 17:44:52 -0400
+Received: by mail-pj1-f68.google.com with SMTP id d8so9373007pje.4
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 14:44:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gUYCoVIK7PUThY294EuhqAEoLozrAWHRv6lYNhypBQQ=;
-        b=dAeG3w3oxBuut2H7TIufA82cgtu3W1EU6e4ZemxMlR+8EmoftRI3wJYfw+tof9aUoZ
-         5Ut7/mnOTY0nL5t1ipEuNEe1v6Dj0LXriMgMU3XuFgyyaheZMeFWyz5i/gTG4TL5QYFb
-         1vN6TcX9BCqBeGvCsZYE1qzwjnRTw0IBeWaQZpb/FDE85P5bIlVMvw/Gy3qbaP2s72Gw
-         iUexmrc8HvAAGfWJUYxxGNsH25JRTV4yEDVCyyZ3Q2pB/aWQKHYnzIO7qm/eGFoiQusl
-         56gnqA/cR7qCO4mi4ffA3OD9+UKDXou68hI/d30arK1N7Y18m6mpenHLwX5mXi4Rfnbz
-         OtJA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=D3D+qRAc+7oS8J6Sb2B1Mz4hpBLBqFH8O13t3FcfVa4=;
+        b=n7TUMxfS05q1sAGxhXfS9KBXthw4r/gV1wXyY3/HpwXnOs+Yf4tGf5oszH9qukZVML
+         Woma4yNpxC5KWOU6oTIBDHv/5/ZOV5plbE8NVxCxOmEAK+nVWI0W/MmSWVPVSwDdtLha
+         skblwS0q9kA8z6T7FDwQcwTZJI1UofMPLd8rpqDlQPEwCp5TdX+CJh3xxCQGkTKFDLX6
+         lxXaJPjSxD8mLnFCjTOTifmCJ5qyABOPd/kHcOZDE077fAGrmFbdZD5eUu/aC8F8FGMq
+         cLG3FOnrfaRSlMtmlqvG0zr4Wtew6oQhNzY8Xm3csG5EPY3Fn56nbQAhcKNGnt+WVg7g
+         inrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=gUYCoVIK7PUThY294EuhqAEoLozrAWHRv6lYNhypBQQ=;
-        b=inK/I0JlaZU1+5x1/wMRAsdwJEyMKLvw1Q1EqFkFlKzgiWgsE5tKAJ4RW0JWhgChUU
-         g1cDdZZ9xoKyzG2PayjZK95JEB2slkrHBB3yuXwU2UfKFLWbxwblrelm7t9HzW+oNKvS
-         zfjC57LK/Llm9KTT+qKyXxxudvQj2LNlZEtRDbg3RhOnDX7x2JIt95A9F38WhV9+qoQR
-         9q5eTzUUtD1mKUFg5A4FVUmLeBt1c9uPAsD8E4/eJstbn+fzlW/hRPOeJtFK5bA3WfZn
-         8SYRSBxDU3ZqikvI81aWKL3YM9denGb0FdFMcdm90q4pCjPvG3rW+KYKpVH9vFMPZ/3Y
-         mo1w==
-X-Gm-Message-State: ANhLgQ10yV92P1fXRrmrU8ag48kYnshoEV7MiWGlYZ7B+KNbSQJenVlW
-        IsLKHNhDiHqiElJQoIMNaIc=
-X-Google-Smtp-Source: ADFU+vuALlmus4BUW5lH/Cx3UCTXUJJmfDy/g42T98ajHxmY3epNem8Zp0I2Ziz2JWsPHQZVuLgFjw==
-X-Received: by 2002:a1c:1f14:: with SMTP id f20mr1145977wmf.61.1584395136813;
-        Mon, 16 Mar 2020 14:45:36 -0700 (PDT)
-Received: from stbirv-lnx-3.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id a13sm1625676wrh.80.2020.03.16.14.45.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 16 Mar 2020 14:45:36 -0700 (PDT)
-From:   Doug Berger <opendmb@gmail.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Doug Berger <opendmb@gmail.com>
-Subject: [PATCH net 2/2] net: bcmgenet: keep MAC in reset until PHY is up
-Date:   Mon, 16 Mar 2020 14:44:56 -0700
-Message-Id: <1584395096-41674-3-git-send-email-opendmb@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584395096-41674-1-git-send-email-opendmb@gmail.com>
-References: <1584395096-41674-1-git-send-email-opendmb@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=D3D+qRAc+7oS8J6Sb2B1Mz4hpBLBqFH8O13t3FcfVa4=;
+        b=RCZsvzRWgLhMVAbnWeYVsv+eEhMRxwXQ1SEHI3jtemNVsbI6i8rt9PTvPwBR0oT6v/
+         SwmcLh98k/fu+z690kzEJxywGxQzBKa3NxW/vW3TFvGvpf8ZwhEE7feLR63O1IBeJx/h
+         1OEQckKsn5FLRIxoaurljv0O8ndpg7RYPM69Lxc4c0pFIJlOqLAQ61zRJwZMEoQwPrMY
+         oCQ3Dr8TIUa6iJqkgT1VVDg5J4I6T+ly7XzBuDFE5szpsXKLNo2YMe9J0esNZW6D3WrZ
+         izyS54jcQ0UjaqqtRT9L4zlBKeEdqY3KSzmuWsohbBTfmibvxJ/G1v5jOiWX4caGRse7
+         s7JA==
+X-Gm-Message-State: ANhLgQ1MwWy46aHGNFL/E5NevJE7SwhhPo8T/GvPCUcBkDa/ReChNSzD
+        W+snIboXAztoSEMrIgW2EDIQvOtO
+X-Google-Smtp-Source: ADFU+vs60R8/j/ZW6FCkLMviIra7UhFL+U4BLcl8OYqLfjSUIx79EqZSX89WiGJDT2CyWWVnFVsKfg==
+X-Received: by 2002:a17:902:b118:: with SMTP id q24mr1265410plr.0.1584395091130;
+        Mon, 16 Mar 2020 14:44:51 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id j1sm812274pfg.64.2020.03.16.14.44.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Mar 2020 14:44:51 -0700 (PDT)
+Date:   Mon, 16 Mar 2020 14:45:06 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     robin.murphy@arm.com, m.szyprowski@samsung.com,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: Re: [RFC][PATCH] dma-mapping: align default segment_boundary_mask
+ with dma_mask
+Message-ID: <20200316214506.GC18970@Asurada-Nvidia.nvidia.com>
+References: <20200314000007.13778-1-nicoleotsuka@gmail.com>
+ <20200316124850.GB17386@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200316124850.GB17386@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As noted in commit 28c2d1a7a0bf ("net: bcmgenet: enable loopback
-during UniMAC sw_reset") the UniMAC must be clocked at least 5
-cycles while the sw_reset is asserted to ensure a clean reset.
+Hi Christoph,
 
-That commit enabled local loopback to provide an Rx clock from the
-GENET sourced Tx clk. However, when connected in MII mode the Tx
-clk is sourced by the PHY so if an EPHY is not supplying clocks
-(e.g. when the link is down) the UniMAC does not receive the
-necessary clocks.
+On Mon, Mar 16, 2020 at 01:48:50PM +0100, Christoph Hellwig wrote:
+> On Fri, Mar 13, 2020 at 05:00:07PM -0700, Nicolin Chen wrote:
+> > @@ -736,7 +736,7 @@ static inline unsigned long dma_get_seg_boundary(struct device *dev)
+> >  {
+> >  	if (dev->dma_parms && dev->dma_parms->segment_boundary_mask)
+> >  		return dev->dma_parms->segment_boundary_mask;
+> > -	return DMA_BIT_MASK(32);
+> > +	return (unsigned long)dma_get_mask(dev);
+> 
+> Just thinking out loud after my reply - shouldn't we just return ULONG_MAX
+> by default here to mark this as no limit?
 
-This commit extends the sw_reset window until the PHY reports that
-the link is up thereby ensuring that the clocks are being provided
-to the MAC to produce a clean reset.
-
-One consequence is that if the system attempts to enter a Wake on
-LAN suspend state when the PHY link has not been active the MAC
-may not have had a chance to initialize cleanly. In this case, we
-remove the sw_reset and enable the WoL reception path as normal
-with the hope that the PHY will provide the necessary clocks to
-drive the WoL blocks if the link becomes active after the system
-has entered suspend.
-
-Fixes: 1c1008c793fa ("net: bcmgenet: add main driver file")
-Signed-off-by: Doug Berger <opendmb@gmail.com>
----
- drivers/net/ethernet/broadcom/genet/bcmgenet.c     | 10 ++++------
- drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c |  6 +++++-
- drivers/net/ethernet/broadcom/genet/bcmmii.c       |  6 ++++++
- 3 files changed, 15 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-index c8ac2d83208f..ce64b4e47feb 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-@@ -1965,6 +1965,8 @@ static void umac_enable_set(struct bcmgenet_priv *priv, u32 mask, bool enable)
- 	u32 reg;
- 
- 	reg = bcmgenet_umac_readl(priv, UMAC_CMD);
-+	if (reg & CMD_SW_RESET)
-+		return;
- 	if (enable)
- 		reg |= mask;
- 	else
-@@ -1984,13 +1986,9 @@ static void reset_umac(struct bcmgenet_priv *priv)
- 	bcmgenet_rbuf_ctrl_set(priv, 0);
- 	udelay(10);
- 
--	/* disable MAC while updating its registers */
--	bcmgenet_umac_writel(priv, 0, UMAC_CMD);
--
--	/* issue soft reset with (rg)mii loopback to ensure a stable rxclk */
--	bcmgenet_umac_writel(priv, CMD_SW_RESET | CMD_LCL_LOOP_EN, UMAC_CMD);
-+	/* issue soft reset and disable MAC while updating its registers */
-+	bcmgenet_umac_writel(priv, CMD_SW_RESET, UMAC_CMD);
- 	udelay(2);
--	bcmgenet_umac_writel(priv, 0, UMAC_CMD);
- }
- 
- static void bcmgenet_intr_disable(struct bcmgenet_priv *priv)
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c b/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c
-index ea20d94bd050..c9a43695b182 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c
-@@ -132,8 +132,12 @@ int bcmgenet_wol_power_down_cfg(struct bcmgenet_priv *priv,
- 		return -EINVAL;
- 	}
- 
--	/* disable RX */
-+	/* Can't suspend with WoL if MAC is still in reset */
- 	reg = bcmgenet_umac_readl(priv, UMAC_CMD);
-+	if (reg & CMD_SW_RESET)
-+		reg &= ~CMD_SW_RESET;
-+
-+	/* disable RX */
- 	reg &= ~CMD_RX_EN;
- 	bcmgenet_umac_writel(priv, reg, UMAC_CMD);
- 	mdelay(10);
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmmii.c b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-index 69e80fb6e039..b5930f80039d 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-@@ -95,6 +95,12 @@ void bcmgenet_mii_setup(struct net_device *dev)
- 			       CMD_HD_EN |
- 			       CMD_RX_PAUSE_IGNORE | CMD_TX_PAUSE_IGNORE);
- 		reg |= cmd_bits;
-+		if (reg & CMD_SW_RESET) {
-+			reg &= ~CMD_SW_RESET;
-+			bcmgenet_umac_writel(priv, reg, UMAC_CMD);
-+			udelay(2);
-+			reg |= CMD_TX_EN | CMD_RX_EN;
-+		}
- 		bcmgenet_umac_writel(priv, reg, UMAC_CMD);
- 	} else {
- 		/* done if nothing has changed */
--- 
-2.7.4
-
+Yea, ULONG_MAX (saying no limit) sounds good to me.
