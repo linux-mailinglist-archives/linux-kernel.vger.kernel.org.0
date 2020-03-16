@@ -2,94 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A16A1868A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:05:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 797B5186862
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:01:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730582AbgCPKF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 06:05:58 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:37275 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730491AbgCPKF5 (ORCPT
+        id S1730500AbgCPKBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 06:01:40 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46396 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730399AbgCPKBk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 06:05:57 -0400
-Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 34E39240037;
-        Mon, 16 Mar 2020 10:00:17 +0000 (UTC)
-Date:   Mon, 16 Mar 2020 11:00:17 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "amit.kucheria@verdurent.com" <amit.kucheria@verdurent.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux@rempel-privat.de" <linux@rempel-privat.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "m.felsch@pengutronix.de" <m.felsch@pengutronix.de>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "ronald@innovation.ch" <ronald@innovation.ch>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V3 1/7] firmware: imx: Add stubs for !CONFIG_IMX_SCU case
-Message-ID: <20200316100017.GM4518@piout.net>
-References: <20200316030744.GC17221@dragon>
- <AM0PR04MB44817A48746601EADA4E06BC88F90@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <20200316033447.GE17221@dragon>
- <DB3PR0402MB3916DA9F0F175B9D2E9E684FF5F90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <20200316084056.GG4518@piout.net>
- <DB3PR0402MB391663DB37A8D241092AD708F5F90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <20200316090053.GH4518@piout.net>
- <DB3PR0402MB391683A05820920158DFDA77F5F90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <20200316091541.GI4518@piout.net>
- <DB3PR0402MB39169528B3FF39E23C7A90FCF5F90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB3PR0402MB39169528B3FF39E23C7A90FCF5F90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+        Mon, 16 Mar 2020 06:01:40 -0400
+Received: by mail-pf1-f193.google.com with SMTP id c19so9630722pfo.13;
+        Mon, 16 Mar 2020 03:01:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ro97S81NR4iEY3FTCqC1SAZxpYSVOetJ8waF14o+rO0=;
+        b=aMi+kbBQ6zLBSLEhtm4cHSCIgdWBBP1AXocoRztyhfNGUKNw8TWk7S4o6rSK9SN8lq
+         O7fQC8bQ390gM/3b6FqZmywyz66Z/HfazUEEf9a1C+3HmfK46M7r+BvlTNUpELSWSyN4
+         GtZE/S7UC7Gg/Wr/C/SDNPGnFa9kkGbXZ+iEpmj4GvO5a23h5DAZCfnSJtxLJmKkuqFy
+         iMXQ1SGhQcVli6NPc2MGnjURbp6VjbtTy+xC7omctGMm2jAtlM7FR08YzqR4eROfx2Sg
+         QL7AioXzH78p9eZElznBnF2LNvV+kNX5Ty77x2O20Y/ARSwiT7Fb5LmPKYaoW3gq1pT5
+         rSEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ro97S81NR4iEY3FTCqC1SAZxpYSVOetJ8waF14o+rO0=;
+        b=Us4WIEShze7MRIoH1TrV51YuRACUgJht+9aOjqADr0VsBZyyNC8AE5Km8CrmRYm/MW
+         9XmozO2XTkzcUEf+iXzn4GhqrgZD0uieigs+er9E+pKh/x5geOog9pPihC/BBveRp0yS
+         twKVehWdlTp/sL7scT/Irm94qDW2ZkalOV+8TSCmky/ELVJg7dxa6z2G6Hbtk9XX65EO
+         EoDCIPBlC+4ZXlT2D183AQCeDrAY6SQOc4nEiaoG/PYPaplWWLCRjweoY88Ms60wuf+b
+         f311CbJK19oS0ZK61iDiF0y6GrFRffWXzFlG3jKiVFZ4zwoaZDnVpzlj+LxiyVSpsIXq
+         V+Ow==
+X-Gm-Message-State: ANhLgQ3Y1cHhqBq0wp9IW4cKwMIwdyRNRSTZrTdu8lt82G5Uqo8H2WoL
+        gK8X5aOwU3YlbpY7o0AboQkWfYjD
+X-Google-Smtp-Source: ADFU+vs4lEU6M8Ai/sE/F2p9HuhWB5j/uTJXWiwaO7E5BoojoPRFMeB+XKivuD8ylE8CM5x2nsEkPg==
+X-Received: by 2002:a62:e211:: with SMTP id a17mr29022646pfi.198.1584352898844;
+        Mon, 16 Mar 2020 03:01:38 -0700 (PDT)
+Received: from sh03840pcu.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id 136sm63970411pgh.26.2020.03.16.03.01.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 16 Mar 2020 03:01:38 -0700 (PDT)
+From:   Baolin Wang <baolin.wang7@gmail.com>
+To:     axboe@kernel.dk, paolo.valente@linaro.org, ulf.hansson@linaro.org,
+        adrian.hunter@intel.com
+Cc:     ming.lei@redhat.com, arnd@arndb.de, linus.walleij@linaro.org,
+        baolin.wang7@gmail.com, orsonzhai@gmail.com, zhang.lyra@gmail.com,
+        linux-mmc@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND RFC PATCH 0/8] Add MMC packed request support
+Date:   Mon, 16 Mar 2020 18:01:17 +0800
+Message-Id: <cover.1584350380.git.baolin.wang7@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/03/2020 09:40:52+0000, Anson Huang wrote:
-> > Why is that an issue? If they don't have IMX_SCU selected, then the other
-> > SCU driver are not selected either, having stubs doesn't change that you will
-> > have to select at least one option. Please explain what is the issue that is not
-> > solved here.
-> 
-> OK, what I thought is even without IMX_SCU selected, other SCU drivers still can be
-> selected for build test after adding "COMPILE_TEST" to the kconfig, like below, if
-> without IMX_SCU API stubs, the "COMPILE_TEST" can NOT be added to SCU drivers
-> to enable build test, so I think the IMX_SCU API stubs should be added?
-> 
+Hi All,
 
-No they shouldn't because there is not point adding COMPILE_TEST to the
-SCU drivers. We don't add COMPILE_TEST to all the drivers and add stubs
-to all the subsystems. E.g there is no point trying to compile an I2C
-driver if the I2C core is not enabled. 
+Now some SD/MMC controllers can support packed command or packed request,
+that means it can package multiple requests to host controller to be handled
+at one time, which can improve the I/O performence. Thus this patch set
+tries to add the MMC packed request function to support packed request or
+packed command.
+
+In this patch set, I changed the dispatch_request() interface to allow
+dispatching a batch of requests to hardware and expanded the MMC software
+queue to support packed request. I also implemented the SD host ADMA3
+transfer mode to support packed request. The ADMA3 transfer mode can process
+a multi-block data transfer by using a pair of command descriptor and ADMA2
+descriptor. In future we can easily expand the MMC packed function to support
+packed command.
+
+Below are some comparison data between packed request and non-packed request
+with fio tool. The fio command I used is like below with changing the
+'--rw' parameter and enabling the direct IO flag to measure the actual hardware
+transfer speed. I tested 5 times for each case and output a average speed.
+
+./fio --filename=/dev/mmcblk0p30 --direct=1 --iodepth=20 --rw=read --bs=4K --size=512M --group_reporting --numjobs=20 --name=test_read
+
+My eMMC card working at HS400 Enhanced strobe mode:
+[    2.229856] mmc0: new HS400 Enhanced strobe MMC card at address 0001
+[    2.237566] mmcblk0: mmc0:0001 HBG4a2 29.1 GiB 
+[    2.242621] mmcblk0boot0: mmc0:0001 HBG4a2 partition 1 4.00 MiB
+[    2.249110] mmcblk0boot1: mmc0:0001 HBG4a2 partition 2 4.00 MiB
+[    2.255307] mmcblk0rpmb: mmc0:0001 HBG4a2 partition 3 4.00 MiB, chardev (248:0)
+
+1. Non-packed request
+1) Sequential read:
+Speed: 59.2MiB/s, 60.4MiB/s, 63.6MiB/s, 60.3MiB/s, 59.9MiB/s
+Average speed: 60.68MiB/s
+
+2) Random read:
+Speed: 31.3MiB/s, 31.4MiB/s, 31.5MiB/s, 31.3MiB/s, 31.3MiB/s
+Average speed: 31.36MiB/s
+
+3) Sequential write:
+Speed: 71MiB/s, 71.8MiB/s, 72.3MiB/s, 72.2MiB/s, 71MiB/s
+Average speed: 71.66MiB/s
+
+4) Random write:
+Speed: 68.9MiB/s, 68.7MiB/s, 68.8MiB/s, 68.6MiB/s, 68.8MiB/s
+Average speed: 68.76MiB/s
+
+2. Packed request
+1) Sequential read:
+Speed: 230MiB/s, 230MiB/s, 229MiB/s, 230MiB/s, 229MiB/s
+Average speed: 229.6MiB/s
+
+2) Random read:
+Speed: 181MiB/s, 181MiB/s, 181MiB/s, 180MiB/s, 181MiB/s
+Average speed: 180.8MiB/s
+
+3) Sequential write:
+Speed: 175MiB/s, 171MiB/s, 171MiB/s, 172MiB/s, 171MiB/s
+Average speed: 172MiB/s
+
+4) Random write:
+Speed: 169MiB/s, 169MiB/s, 171MiB/s, 167MiB/s, 170MiB/s
+Average speed: 169.2MiB/s
+
+From above data, we can see the packed request can improve the performance
+greatly. Any comments are welcome. Thanks a lot.
+
+Baolin Wang (8):
+  block: Change the dispatch_request() API to support batch requests
+  block: Allow sending a batch of requests from the scheduler to
+    hardware
+  mmc: Add MMC packed request support for MMC software queue
+  mmc: host: sdhci: Introduce ADMA3 transfer mode
+  mmc: host: sdhci: Factor out the command configuration
+  mmc: host: sdhci: Remove redundant sg_count member of struct
+    sdhci_host
+  mmc: host: sdhci: Add MMC packed request support
+  mmc: host: sdhci-sprd: Add MMC packed request support
+
+ block/bfq-iosched.c           |  38 +++-
+ block/blk-mq-sched.c          |  15 +-
+ block/blk-mq.c                |   2 -
+ block/blk-settings.c          |  13 ++
+ block/kyber-iosched.c         |  80 ++++---
+ block/mq-deadline.c           |  26 ++-
+ drivers/mmc/core/block.c      |  35 ++-
+ drivers/mmc/core/block.h      |   3 +-
+ drivers/mmc/core/core.c       |  26 +++
+ drivers/mmc/core/core.h       |   2 +
+ drivers/mmc/core/queue.c      |  22 +-
+ drivers/mmc/host/mmc_hsq.c    | 271 ++++++++++++++++++++---
+ drivers/mmc/host/mmc_hsq.h    |  25 ++-
+ drivers/mmc/host/sdhci-sprd.c |  30 ++-
+ drivers/mmc/host/sdhci.c      | 499 ++++++++++++++++++++++++++++++++++++------
+ drivers/mmc/host/sdhci.h      |  61 +++++-
+ include/linux/blkdev.h        |   8 +
+ include/linux/elevator.h      |   2 +-
+ include/linux/mmc/core.h      |   6 +
+ include/linux/mmc/host.h      |   9 +
+ 20 files changed, 991 insertions(+), 182 deletions(-)
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+1.9.1
+
