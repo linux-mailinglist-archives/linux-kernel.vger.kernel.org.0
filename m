@@ -2,106 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 483D9186C2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:34:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 817D0186C4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:39:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731364AbgCPNe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 09:34:56 -0400
-Received: from foss.arm.com ([217.140.110.172]:48402 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731351AbgCPNe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 09:34:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31D61FEC;
-        Mon, 16 Mar 2020 06:34:55 -0700 (PDT)
-Received: from [10.37.9.38] (unknown [10.37.9.38])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E9C093F52E;
-        Mon, 16 Mar 2020 06:34:49 -0700 (PDT)
-Subject: Re: [PATCH v3 18/26] arm64: Introduce asm/vdso/processor.h
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        clang-built-linux@googlegroups.com, x86@kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Burton <paul.burton@mips.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Collingbourne <pcc@google.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Will Deacon <will@kernel.org>
-References: <20200313154345.56760-1-vincenzo.frascino@arm.com>
- <20200313154345.56760-19-vincenzo.frascino@arm.com>
- <20200315182950.GB32205@mbp> <c2c0157a-107a-debf-100f-0d97781add7c@arm.com>
- <20200316103437.GD3005@mbp> <77a2e91a-58f4-3ba3-9eef-42d6a8faf859@arm.com>
- <20200316112205.GE3005@mbp>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <9a0a9285-8a45-4f65-3a83-813cabd0f0d3@arm.com>
-Date:   Mon, 16 Mar 2020 13:35:17 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1731378AbgCPNjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 09:39:24 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51750 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731330AbgCPNjY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 09:39:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=BaRGNKQoR/jrhx6/KSsGNdhrEF6jcrpsPC4IKGlhMFI=; b=WPUvthuEug6gpm35QMMqVvEc1P
+        DOFr3Fi3AI9FzBrXgn9aseRLFv1dkD8MwN4Bnruv9vw0VRZVnozJfIpCpRcJ2g4gD48zWpT4FFo+6
+        0/8vk36awSocJEidgtN/yxqmxOY56+3rhq4N5/+EAlA6gGtqVAFKSxqvlHPVj63cNEmw01IQ2Vmv9
+        wNVdyHKuXDUe0L6I5OOR0hsLqeaQB1ar9Tm34kmIOTm07SW2pySxJduV6Qyz7o7PTBdFDzDZ06/Sy
+        7VzsmR9kxGluYjdTaI12N7QGXIH+C3opbggU+kP0ORXWzVahSF2NOLpe8zV11iUPFvqYDXpVemHWE
+        XlSrNZOA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jDpxe-0006hA-El; Mon, 16 Mar 2020 13:39:18 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 49A8330110E;
+        Mon, 16 Mar 2020 14:39:17 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id F2A4D20B151F2; Mon, 16 Mar 2020 14:39:16 +0100 (CET)
+Date:   Mon, 16 Mar 2020 14:39:16 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ling Ma <ling.ma.program@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        "ling.ma" <ling.ml@antfin.com>, viro@zeniv.linux.org.uk
+Subject: Re: [RFC PATCH] locks:Remove spinlock in unshare_files
+Message-ID: <20200316133916.GD12561@hirez.programming.kicks-ass.net>
+References: <20200313031017.71090-1-ling.ma.program@gmail.com>
+ <CAOGi=dNniSgkUtJPfaYLAbR+_8DMFdU59mx7hf8Otj_VjDF_dQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200316112205.GE3005@mbp>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOGi=dNniSgkUtJPfaYLAbR+_8DMFdU59mx7hf8Otj_VjDF_dQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Catalin,
+On Mon, Mar 16, 2020 at 09:25:42PM +0800, Ling Ma wrote:
+> Any comments ?
 
-On 3/16/20 11:22 AM, Catalin Marinas wrote:
-> On Mon, Mar 16, 2020 at 10:55:00AM +0000, Vincenzo Frascino wrote:
->> On 3/16/20 10:34 AM, Catalin Marinas wrote:
-[...]
+A: Because it messes up the order in which people normally read text.
+Q: Why is top-posting such a bad thing?
+A: Top-posting.
+Q: What is the most annoying thing in e-mail?
 
+Also, it probably helps to Cc the right people.
 
-> 
-> As I said above, I don't see how removing 'if ((u32)ts >= (1UL << 32))'
-> makes any difference. This check was likely removed by the compiler
-> already.
-> 
-> Also, userspace doesn't have a trivial way to figure out TASK_SIZE and I
-> can't see anything that tests this in the vdsotest (though I haven't
-> spent that much time looking). If it's hard-coded, note that arm32
-> TASK_SIZE is different from TASK_SIZE_32 on arm64.
-> 
-> Can you tell what actually is failing in vdsotest if you remove the
-> TASK_SIZE_32 checks in the arm64 compat vdso?
-> 
+> <ling.ma.program@gmail.com> 于2020年3月13日周五 上午11:09写道：
+> >
+> > From: Ma Ling <ling.ml@antfin.com>
+> >
+> > Processor support atomic operation for long/int/short/char type,
+> > we use the feature to avoid spinlock, which cost hundreds cycles.
+> >
+> > Appreciate your comments
+> > Ling
+> >
+> > Signed-off-by: Ma Ling <ling.ml@antfin.com>
+> > ---
+> >  kernel/fork.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> >
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index 60a1295..fe54600 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -3041,9 +3041,7 @@ int unshare_files(struct files_struct **displaced)
+> >                 return error;
+> >         }
+> >         *displaced = task->files;
+> > -       task_lock(task);
+> > -       task->files = copy;
+> > -       task_unlock(task);
+> > +       WRITE_ONCE(task->files, copy);
+> >         return 0;
+> >  }
 
-To me does not seem optimized out. Which version of the compiler are you using?
+AFAICT this is completely and utterly buggered.
 
-Please find below the list of errors for clock_gettime (similar for the other):
+IFF task->files was lockless, like say RCU, then you'd still need
+smp_store_release(). But if we look at fs/file.c then everything uses
+task_lock() and removing it like the above is actively broken.
 
-passing UINTPTR_MAX to clock_gettime (VDSO): terminated by unexpected signal 7
-clock-gettime-monotonic/abi: 1 failures/inconsistencies encountered
-
-passing UINTPTR_MAX to clock_gettime (VDSO): terminated by unexpected signal 7
-clock-gettime-monotonic-coarse/abi: 1 failures/inconsistencies encountered
-
-passing UINTPTR_MAX to clock_gettime (VDSO): terminated by unexpected signal 7
-clock-gettime-realtime/abi: 1 failures/inconsistencies encountered
-
-passing UINTPTR_MAX to clock_gettime (VDSO): terminated by unexpected signal 7
-clock-gettime-realtime-coarse/abi: 1 failures/inconsistencies encountered
-
-Please refer to [1] for more details on the test.
-
-[1]
-https://github.com/nlynch-mentor/vdsotest/blob/master/src/clock_gettime_template.c
-
--- 
-Regards,
-Vincenzo
