@@ -2,53 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2EBC186C94
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:53:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CD88186C96
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 14:53:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731433AbgCPNxH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 09:53:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55556 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731331AbgCPNxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 09:53:07 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17B0E2051A;
-        Mon, 16 Mar 2020 13:53:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584366787;
-        bh=jn9DQLmhvMfNUXlsfJreWd0dGysvpMQDHepheL0R1TQ=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=O9kxdVIoMmZ6+sx70kPcmm9vDWQisTaT21RiteVADlWLPIwcJwkoIeR3f8LU+BRWr
-         ikPCZSbvo77V3IBzE4r80i0SyyQOmlxQj907k0L12xoyeC+tRWBr3agAnJibvjb1Wp
-         PUktWrYnzk49lF2fVKuv+3Bf32NF3e4+WBrz9wdQ=
-Date:   Mon, 16 Mar 2020 14:53:03 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Chen-Tsung Hsieh <chentsung@chromium.org>
-cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, drinkcat@chromium.org
-Subject: Re: [PATCH] HID: google: add moonball USB id
-In-Reply-To: <20200316072419.65274-1-chentsung@chromium.org>
-Message-ID: <nycvar.YFH.7.76.2003161452520.19500@cbobk.fhfr.pm>
-References: <20200316072419.65274-1-chentsung@chromium.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1731445AbgCPNxX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 09:53:23 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46743 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731331AbgCPNxW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 09:53:22 -0400
+Received: by mail-wr1-f65.google.com with SMTP id w16so4911165wrv.13;
+        Mon, 16 Mar 2020 06:53:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zz+VUSWNCDs2sQPAELxMFVMHL5mAksbtoTViuL2HD+g=;
+        b=OccARGXrypOX9pQ0w3HKRvuuWLqJ++L0Dv2Tvn9pEsWij0cX2i3W+HKTs/fF5OC/KW
+         9sdXw+ZZqcTzq0eRCgb5RuIJjx6foLgVQTSarHfGTPawCDfVHCG3UPCELr8yrZXOF/Nt
+         YzK30be1UuTwUggKivog1qW4bCcOOAr0zP6qjBmFrSmtJcdgvDAjRmdBJfXLmqsyJLZl
+         fWFzH3Z6x+9/SwdzHV2aESQr2DUXNNyMEYqzVECq4OSS7BVgpbYt6y/QaVdHMgT55kKL
+         4F1arAIUc/zqHPJ6JzrlMZ6XDfII8rMNwhzrhlaE3LdNDmicC7FrmuRTnHKKT4oOl0T2
+         6tbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zz+VUSWNCDs2sQPAELxMFVMHL5mAksbtoTViuL2HD+g=;
+        b=MoOEuXXw9m/8lJxyFGR5X+tCyR1J/YbBejfjD5uyG91O1WpK14FdoCcNOyfK8xxu9V
+         La5/EEydrm8dtom4mHI1aFllCyZKAyAXp5CTF+3meRRzVr3bKGo2ZO4QCGiix0NsordL
+         Ea2z5kAuJqUGJIP9e3MPan+CMF1yKj9QlbfbPmRIr+54KUU62YbXh0s5GiRvrKEkeV+7
+         EfgsXeSBhtqncJjQX0hwrZalJt1z+DdgtPg92Ujlhta650ex2Fd5/FyFjfgZC49jgcfb
+         aMLZJfkKE5NemFU1DC4TbLUxeNVmeHZ/oXABV3URvv6e3fJqFPny/O3KQewJbkCfEum2
+         UIQg==
+X-Gm-Message-State: ANhLgQ2e8NcOg7QK6cfMm2YWsWYSWAj4Vga5dOe+zz4FeiVc7dtAoDcC
+        /fTIg4rGXPU4ASYYidlqp2q0402I
+X-Google-Smtp-Source: ADFU+vvwLSvB6JlHnivEFRq8ttan08vIgV77aIBH8Bz7u8qpc5GznHQ1xr/G5WW8OuWzwVqD4NbxHQ==
+X-Received: by 2002:adf:8023:: with SMTP id 32mr26014359wrk.189.1584366800438;
+        Mon, 16 Mar 2020 06:53:20 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id z6sm24277216wrp.95.2020.03.16.06.53.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Mar 2020 06:53:19 -0700 (PDT)
+Date:   Mon, 16 Mar 2020 14:53:18 +0100
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     peterz@infradead.org, herbert@gondor.apana.org.au,
+        viro@zeniv.linux.org.uk, mingo@redhat.com, dvhart@infradead.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: BUG: cryptsetup benchmark stuck
+Message-ID: <20200316135318.GA29789@Red>
+References: <20200315145214.GA9576@Red>
+ <877dzkem9z.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877dzkem9z.fsf@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Mar 2020, Chen-Tsung Hsieh wrote:
-
-> Add 1 additional hammer-like device.
+On Mon, Mar 16, 2020 at 09:28:40AM +0100, Thomas Gleixner wrote:
+> Corentin,
 > 
-> Signed-off-by: Chen-Tsung Hsieh <chentsung@chromium.org>
+> Corentin Labbe <clabbe.montjoie@gmail.com> writes:
+> > On next-20200313, running cryptsetup benchmark is stuck.
+> > I have bisected this problem twice and the result is the same:
+> >
+> > git bisect bad 8019ad13ef7f64be44d4f892af9c840179009254
+> > # first bad commit: [8019ad13ef7f64be44d4f892af9c840179009254] futex: Fix inode life-time issue
+> >
+> > Since the two bisect lead to the same commit, I think it should be
+> > right one even if I dont find anything related to my problem.
+> 
+> I'm as puzzled as you.
+> 
+> > But reverting this patch is impossible, so I cannot test to try
+> > without it.
+> 
+> You need to revert two:
+> 
+> 8d67743653dc ("futex: Unbreak futex hashing")
+> 8019ad13ef7f ("futex: Fix inode life-time issue")
+> 
 
-Applied, thanks.
+On next-20200313, there are no "futex: Unbreak futex hashing".
+And it seems to fix my issue, I have updated to next-20200316 (which have it) and the issue is not present anymore.
 
--- 
-Jiri Kosina
-SUSE Labs
-
+Thanks
+Regards
