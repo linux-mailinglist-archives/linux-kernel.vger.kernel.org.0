@@ -2,52 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 685791860D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 01:45:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61C581860E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 01:48:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729308AbgCPApi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 20:45:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51214 "EHLO mail.kernel.org"
+        id S1729317AbgCPArz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 20:47:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729294AbgCPApi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 20:45:38 -0400
+        id S1729294AbgCPAry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 20:47:54 -0400
 Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6220F205C9;
-        Mon, 16 Mar 2020 00:45:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 482C5205C9;
+        Mon, 16 Mar 2020 00:47:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584319537;
-        bh=Wu9LeSZgFzjN0nGIZAax5SqyNp3n8Rq3XY7vQH34stw=;
+        s=default; t=1584319674;
+        bh=s6CPDhXjtVNGRU8In3e3kagDf6tr13gZhiw5JX4K0CE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WUrmiMok0WFUSi/wlfVItgHEJUtL3v6QhkrSq+NLzphELasni6hvzQhkMxwdRYBeJ
-         /mW1OuY/7IzH65go+9UaQWnxYxIjlMy4fWyfUjOC0PjRql2heJ/4g2sx5kWYTplztp
-         bFVFcTxanMsJsSl08dcevo7ml6usWdhsI/jM7mL0=
-Date:   Mon, 16 Mar 2020 08:45:29 +0800
+        b=PrS1n0O2hE5xdVizU0WiA0Sw+DkXi1c4YNJff2vFXIO2Xj7F7wQRLvdFP35Vwh243
+         qLoTQivc06Fq14FXUG+O+Dmrwv6xNzEQ7CWo39tJ74VCwtH0x4E8Wr6NyzbY5fGz9W
+         RCy6SNICzkZb75Fp1K0ug7Kd5x5Rymmfl2PweuHo=
+Date:   Mon, 16 Mar 2020 08:47:46 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, leonard.crestez@nxp.com,
-        daniel.baluta@nxp.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH] arm64: dts: imx8mn: Add CPU thermal zone support
-Message-ID: <20200316004528.GA17221@dragon>
-References: <1583650721-7912-1-git-send-email-Anson.Huang@nxp.com>
+To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Cc:     linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Enrico Weigelt <info@metux.net>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: gate2: Fix a few typos
+Message-ID: <20200316004745.GB17221@dragon>
+References: <20200308214927.16688-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1583650721-7912-1-git-send-email-Anson.Huang@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200308214927.16688-1-j.neuschaefer@gmx.net>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 08, 2020 at 02:58:41PM +0800, Anson Huang wrote:
-> i.MX8MN shares same thermal sensor with i.MX8MM, add thermal zone
-> support for i.MX8MN.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+On Sun, Mar 08, 2020 at 10:49:26PM +0100, Jonathan Neuschäfer wrote:
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 
-Applied, thanks.
+Sorry.  We do not take patch with empty commit log.
+
+Shawn
+
+> ---
+>  drivers/clk/imx/clk-gate2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk-gate2.c b/drivers/clk/imx/clk-gate2.c
+> index 7d44ce814806..a1230cc215c4 100644
+> --- a/drivers/clk/imx/clk-gate2.c
+> +++ b/drivers/clk/imx/clk-gate2.c
+> @@ -15,7 +15,7 @@
+>  #include "clk.h"
+> 
+>  /**
+> - * DOC: basic gatable clock which can gate and ungate it's ouput
+> + * DOC: basic gateable clock which can gate and ungate its output
+>   *
+>   * Traits of this clock:
+>   * prepare - clk_(un)prepare only ensures parent is (un)prepared
+> --
+> 2.20.1
+> 
