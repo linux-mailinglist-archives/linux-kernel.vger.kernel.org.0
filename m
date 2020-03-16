@@ -2,156 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6CBF186D1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 15:33:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27525186D18
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 15:32:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731586AbgCPOdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 10:33:10 -0400
-Received: from smtp2.ustc.edu.cn ([202.38.64.46]:45413 "EHLO ustc.edu.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731535AbgCPOdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 10:33:10 -0400
-Received: from xhacker (unknown [101.86.20.80])
-        by newmailweb.ustc.edu.cn (Coremail) with SMTP id LkAmygBnbZEgjm9esEFPAA--.20107S2;
-        Mon, 16 Mar 2020 22:33:05 +0800 (CST)
-Date:   Mon, 16 Mar 2020 22:31:27 +0800
-From:   Jisheng Zhang <jszhang3@mail.ustc.edu.cn>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v2 4/4] regulator: mp886x: add MP8867 support
-Message-ID: <20200316223127.4b1ecc92@xhacker>
-In-Reply-To: <20200316222808.6453d849@xhacker>
-References: <20200316222808.6453d849@xhacker>
+        id S1731575AbgCPOc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 10:32:29 -0400
+Received: from mga09.intel.com ([134.134.136.24]:43228 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731465AbgCPOc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 10:32:29 -0400
+IronPort-SDR: 4D2uMYzM8nmuI8rBDYjMT5yecU2h9BXNT2UcI7D4BqgxAbpW3RydRbZ9dPO+yyWYf9yk9+FhFe
+ t/87Vh3GkJOw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 07:32:28 -0700
+IronPort-SDR: CN9to3jq/4ZxD3XYzeg27v4u37TrxQpSX4BMaSP8df9UUzdYmr8MrP8Vira8Tb5aMX1nXcCiPg
+ kw3fstlFotdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,560,1574150400"; 
+   d="scan'208";a="443361048"
+Received: from mylly.fi.intel.com (HELO mylly.fi.intel.com.) ([10.237.72.51])
+  by fmsmga005.fm.intel.com with ESMTP; 16 Mar 2020 07:32:27 -0700
+From:   Jarkko Nikula <jarkko.nikula@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Subject: [PATCH] mfd: intel-lpss: Fix Intel Elkhart Lake LPSS I2C input clock
+Date:   Mon, 16 Mar 2020 16:32:24 +0200
+Message-Id: <20200316143224.234432-1-jarkko.nikula@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LkAmygBnbZEgjm9esEFPAA--.20107S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWry5Wr1ruF1ftw4fKF4xtFb_yoW5Aw45pF
-        W5WFsIkrWkXa4xGF4xCFya93Wa9wn7K3s7ZryIkw4av3ZxJF4xXFn7ZFySvFyrCrWkJF1j
-        yayUCFW09F4UJrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUyFb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
-        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
-        jxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwV
-        C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-        0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr
-        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI48JMxC20s02
-        6xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_Jr
-        I_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v2
-        6r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj4
-        0_Gr0_Zr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8
-        JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8TCJPUUUUU==
-X-CM-SenderInfo: xmv2xttqjtqzxdloh3xvwfhvlgxou0/
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Intel Elkhart Lake LPSS I2C has 100 MHz input clock instead of 133 MHz
+that was our preliminary information. This will result slower I2C bus
+clock when driver calculates its timing parameters in case ACPI tables
+don't provide them.
 
-MP8867 is an I2C-controlled adjustable voltage regulator made by
-Monolithic Power Systems. The difference between MP8867 and MP8869
-are:
-1.If V_BOOT, the vref of MP8869 is fixed at 600mv while vref of
-MP8867 is determined by the I2C control.
-2.For MP8867, when setting voltage, if the step is within 5, we
-need to manually set the GO BIT to 0.
+Slower I2C bus clock is allowed but let's fix this to match with
+reality.
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+While at it, keep the same default I2C device properties as Intel
+Broxton since it is not known do they need any update.
+
+Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 ---
- drivers/regulator/mp886x.c | 62 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 61 insertions(+), 1 deletion(-)
+For normal development cycle.
+---
+ drivers/mfd/intel-lpss-pci.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/regulator/mp886x.c b/drivers/regulator/mp886x.c
-index f77321a449ca..1786f7162019 100644
---- a/drivers/regulator/mp886x.c
-+++ b/drivers/regulator/mp886x.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- //
--// MP8869 regulator driver
-+// MP8867/MP8869 regulator driver
- //
- // Copyright (C) 2020 Synaptics Incorporated
- //
-@@ -119,6 +119,62 @@ static const struct regulator_ops mp8869_regulator_ops = {
- 	.get_mode = mp886x_get_mode,
+diff --git a/drivers/mfd/intel-lpss-pci.c b/drivers/mfd/intel-lpss-pci.c
+index c40a6c7d0cf8..e48f00448551 100644
+--- a/drivers/mfd/intel-lpss-pci.c
++++ b/drivers/mfd/intel-lpss-pci.c
+@@ -139,6 +139,11 @@ static const struct intel_lpss_platform_info cnl_i2c_info = {
+ 	.properties = spt_i2c_properties,
  };
  
-+static int mp8867_set_voltage_sel(struct regulator_dev *rdev, unsigned int sel)
-+{
-+	struct mp886x_device_info *di = rdev_get_drvdata(rdev);
-+	int ret, delta;
-+
-+	ret = mp8869_set_voltage_sel(rdev, sel);
-+	if (ret < 0)
-+		return ret;
-+
-+	delta = di->sel - sel;
-+	if (abs(delta) <= 5)
-+		ret = regmap_update_bits(rdev->regmap, MP886X_SYSCNTLREG1,
-+					 MP886X_GO, 0);
-+	di->sel = sel;
-+
-+	return ret;
-+}
-+
-+static int mp8867_get_voltage_sel(struct regulator_dev *rdev)
-+{
-+	struct mp886x_device_info *di = rdev_get_drvdata(rdev);
-+	int ret, uv;
-+	unsigned int val;
-+	bool fbloop;
-+
-+	ret = regmap_read(rdev->regmap, rdev->desc->vsel_reg, &val);
-+	if (ret)
-+		return ret;
-+
-+	fbloop = val & MP886X_V_BOOT;
-+
-+	val &= rdev->desc->vsel_mask;
-+	val >>= ffs(rdev->desc->vsel_mask) - 1;
-+
-+	if (fbloop) {
-+		uv = regulator_list_voltage_linear(rdev, val);
-+		uv = mp8869_scale(uv, di->r[0], di->r[1]);
-+		return regulator_map_voltage_linear(rdev, uv, uv);
-+	}
-+
-+	return val;
-+}
-+
-+static const struct regulator_ops mp8867_regulator_ops = {
-+	.set_voltage_sel = mp8867_set_voltage_sel,
-+	.get_voltage_sel = mp8867_get_voltage_sel,
-+	.set_voltage_time_sel = regulator_set_voltage_time_sel,
-+	.map_voltage = regulator_map_voltage_linear,
-+	.list_voltage = regulator_list_voltage_linear,
-+	.enable = regulator_enable_regmap,
-+	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.set_mode = mp886x_set_mode,
-+	.get_mode = mp886x_get_mode,
++static const struct intel_lpss_platform_info ehl_i2c_info = {
++	.clk_rate = 100000000,
++	.properties = bxt_i2c_properties,
 +};
 +
- static int mp886x_regulator_register(struct mp886x_device_info *di,
- 				     struct regulator_config *config)
- {
-@@ -201,6 +257,10 @@ static int mp886x_i2c_probe(struct i2c_client *client,
- }
- 
- static const struct of_device_id mp886x_dt_ids[] = {
-+	{
-+		.compatible = "mps,mp8867",
-+		.data = &mp8867_regulator_ops
-+	},
- 	{
- 		.compatible = "mps,mp8869",
- 		.data = &mp8869_regulator_ops
+ static const struct pci_device_id intel_lpss_pci_ids[] = {
+ 	/* CML-LP */
+ 	{ PCI_VDEVICE(INTEL, 0x02a8), (kernel_ulong_t)&spt_uart_info },
+@@ -231,15 +236,15 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
+ 	{ PCI_VDEVICE(INTEL, 0x4b2a), (kernel_ulong_t)&bxt_info },
+ 	{ PCI_VDEVICE(INTEL, 0x4b2b), (kernel_ulong_t)&bxt_info },
+ 	{ PCI_VDEVICE(INTEL, 0x4b37), (kernel_ulong_t)&bxt_info },
+-	{ PCI_VDEVICE(INTEL, 0x4b44), (kernel_ulong_t)&bxt_i2c_info },
+-	{ PCI_VDEVICE(INTEL, 0x4b45), (kernel_ulong_t)&bxt_i2c_info },
+-	{ PCI_VDEVICE(INTEL, 0x4b4b), (kernel_ulong_t)&bxt_i2c_info },
+-	{ PCI_VDEVICE(INTEL, 0x4b4c), (kernel_ulong_t)&bxt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x4b44), (kernel_ulong_t)&ehl_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x4b45), (kernel_ulong_t)&ehl_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x4b4b), (kernel_ulong_t)&ehl_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x4b4c), (kernel_ulong_t)&ehl_i2c_info },
+ 	{ PCI_VDEVICE(INTEL, 0x4b4d), (kernel_ulong_t)&bxt_uart_info },
+-	{ PCI_VDEVICE(INTEL, 0x4b78), (kernel_ulong_t)&bxt_i2c_info },
+-	{ PCI_VDEVICE(INTEL, 0x4b79), (kernel_ulong_t)&bxt_i2c_info },
+-	{ PCI_VDEVICE(INTEL, 0x4b7a), (kernel_ulong_t)&bxt_i2c_info },
+-	{ PCI_VDEVICE(INTEL, 0x4b7b), (kernel_ulong_t)&bxt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x4b78), (kernel_ulong_t)&ehl_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x4b79), (kernel_ulong_t)&ehl_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x4b7a), (kernel_ulong_t)&ehl_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x4b7b), (kernel_ulong_t)&ehl_i2c_info },
+ 	/* JSL */
+ 	{ PCI_VDEVICE(INTEL, 0x4da8), (kernel_ulong_t)&spt_uart_info },
+ 	{ PCI_VDEVICE(INTEL, 0x4da9), (kernel_ulong_t)&spt_uart_info },
 -- 
-2.24.0
-
+2.25.1
 
