@@ -2,142 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73D2E18687E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:02:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39AC518686D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 11:01:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730632AbgCPKCM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 06:02:12 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45016 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730534AbgCPKCJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 06:02:09 -0400
-Received: by mail-pl1-f193.google.com with SMTP id d9so7762499plo.11;
-        Mon, 16 Mar 2020 03:02:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=zVsXEMQ2cvDxi1JSi+7AbphOA0QjROre8VLRlUq3vMI=;
-        b=gJ0wj7QE4LJ/lVMZEDr7b6mqq5iHAVeEw621yxmOe5eoW5GOKHH6hEO/5GH3Zc9ptd
-         p5G7l1lmL7KQed6+O0bxjMYWd/4Pi2LZQXD13nrJMcruN6CaXSPfYh93f16O5YVX13F5
-         95tCItZ5ZT7afSEMUDzpb1VwidhfVQW9sD3ViCD9G99pDFTigo5yehXgJyN7Z7jjW5cq
-         8AL7fT4TeWYsYPYpxc4M7xzVt90edBEyTssMbLeTrZXiuLx4KbZMCCR29m84CqXptPqO
-         4eUJH7W2F1YXX6ADHjipzc6a6KLFil1xyX+yDMtEvPrygtb3u8Q+d/0L6sJb3p9MQN0a
-         nT5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=zVsXEMQ2cvDxi1JSi+7AbphOA0QjROre8VLRlUq3vMI=;
-        b=gpSkQZfnuo8V3totvwcWULIsa7a861gG2bwA2uL+zGQOHLFw7+rcZ9jNIy13XtPsus
-         HOBL5luhccs65BEKk6fhE87rEPGN94M1iZWiVEsEl86eCATmD5tyHMckwpDvjpkxFd/M
-         FfnEcAaeqr3ZGk72JsU51pA+u4Jz+XDuYWoO7Cn9dUBU3sHzGnaiZzQ1aoPOo7ALdbkr
-         1MbToat8zTj47hrrNqATGHs8bjF55M/VQ1wHXRe2Bu1doXTsRqdCa1TM5cXLx/T5eC6M
-         6AknjtXacN/4wveAHVeAAp0UaQzpOIiskcdoDNRpNC/gpJqR5khHMjC+vD2YokxrAO9n
-         4nfw==
-X-Gm-Message-State: ANhLgQ2BPP5b3AGsZQrHIgXxr/rFG7LOVYYbh2EZ/4JfkROqEOmynk6E
-        +7jJek+vqpxT/lQiTx3BHFg=
-X-Google-Smtp-Source: ADFU+vuwddfeOJxssCBTiAilwq4VXdcEO12xHfGzz1b4kKNTo02ClU1t1DL+tBP+ytkEmiiBga1oAQ==
-X-Received: by 2002:a17:902:740b:: with SMTP id g11mr12870239pll.166.1584352929118;
-        Mon, 16 Mar 2020 03:02:09 -0700 (PDT)
-Received: from sh03840pcu.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id 136sm63970411pgh.26.2020.03.16.03.02.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 16 Mar 2020 03:02:08 -0700 (PDT)
-From:   Baolin Wang <baolin.wang7@gmail.com>
-To:     axboe@kernel.dk, paolo.valente@linaro.org, ulf.hansson@linaro.org,
-        adrian.hunter@intel.com
-Cc:     ming.lei@redhat.com, arnd@arndb.de, linus.walleij@linaro.org,
-        baolin.wang7@gmail.com, orsonzhai@gmail.com, zhang.lyra@gmail.com,
-        linux-mmc@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND RFC PATCH 8/8] mmc: host: sdhci-sprd: Add MMC packed request support
-Date:   Mon, 16 Mar 2020 18:01:25 +0800
-Message-Id: <060083eadc085cc93149475f3259cf2eb9d81d83.1584350380.git.baolin.wang7@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1584350380.git.baolin.wang7@gmail.com>
-References: <cover.1584350380.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1584350380.git.baolin.wang7@gmail.com>
-References: <cover.1584350380.git.baolin.wang7@gmail.com>
+        id S1730572AbgCPKBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 06:01:55 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:38530 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730558AbgCPKBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 06:01:53 -0400
+Received: from zn.tnic (p200300EC2F06AB0069F33882ABEAD541.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:ab00:69f3:3882:abea:d541])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8A0C71EC0CC5;
+        Mon, 16 Mar 2020 11:01:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1584352911;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=eo6Lnj2n6Gi2H5HDTW21SG50NWmPM4Kj2koyWSbmyHk=;
+        b=I1X2Qv5g4XkDQqYw0Ot/gY9xVZEMZp9A8BVdRVlbUjBa8yWiz4CCunDQB6i+262pWm/OEO
+        PffIe6vhAaI/VD5qH+s6VO+4I2Pt1n1bcJqAWvrNt/Lw1+ccNpGOW3WyhBmXaiOZiwGL1X
+        A7wVN8cFLSC4qadSNKjbDI20tRyMaNU=
+Date:   Mon, 16 Mar 2020 11:02:02 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jian-Hong Pan <jian-hong@endlessm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>, x86@kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-efi@vger.kernel.org,
+        Linux Upstreaming Team <linux@endlessm.com>
+Subject: Re: [PATCH] Revert "x86/reboot, efi: Use EFI reboot for Acer
+ TravelMate X514-51T"
+Message-ID: <20200316100201.GG26126@zn.tnic>
+References: <20200312083341.9365-1-jian-hong@endlessm.com>
+ <20200312104643.GA15619@zn.tnic>
+ <CAPpJ_eetjhmPwXXXn2y-vibRCK6rrKsFZgC+YGzxO4fMrCKpuQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAPpJ_eetjhmPwXXXn2y-vibRCK6rrKsFZgC+YGzxO4fMrCKpuQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the ADMA3 transfer mode as well as adding packed operations
-to support MMC packed requests to improve IO performance.
+On Mon, Mar 16, 2020 at 05:17:56PM +0800, Jian-Hong Pan wrote:
+> But, that will raise another question:  Since the original quirk works
+> for all Acer X514-51T and the quirk cannot be removed for older BIOS.
+> Why not keep only original matching items for all Acer X514-51T
+> laptops?
 
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
----
- drivers/mmc/host/sdhci-sprd.c | 30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+What does the "original matching items" mean?
 
-diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-index 49afe1c..daa38ed 100644
---- a/drivers/mmc/host/sdhci-sprd.c
-+++ b/drivers/mmc/host/sdhci-sprd.c
-@@ -390,6 +390,12 @@ static void sdhci_sprd_request_done(struct sdhci_host *host,
- 	 mmc_request_done(host->mmc, mrq);
- }
- 
-+static void sdhci_sprd_packed_request_done(struct sdhci_host *host,
-+					   struct mmc_packed_request *prq)
-+{
-+	mmc_hsq_finalize_packed_request(host->mmc, prq);
-+}
-+
- static struct sdhci_ops sdhci_sprd_ops = {
- 	.read_l = sdhci_sprd_readl,
- 	.write_l = sdhci_sprd_writel,
-@@ -404,6 +410,7 @@ static void sdhci_sprd_request_done(struct sdhci_host *host,
- 	.get_max_timeout_count = sdhci_sprd_get_max_timeout_count,
- 	.get_ro = sdhci_sprd_get_ro,
- 	.request_done = sdhci_sprd_request_done,
-+	.packed_request_done = sdhci_sprd_packed_request_done,
- };
- 
- static void sdhci_sprd_request(struct mmc_host *mmc, struct mmc_request *mrq)
-@@ -546,10 +553,18 @@ static void sdhci_sprd_phy_param_parse(struct sdhci_sprd_host *sprd_host,
- 		  SDHCI_QUIRK_MISSING_CAPS,
- 	.quirks2 = SDHCI_QUIRK2_BROKEN_HS200 |
- 		   SDHCI_QUIRK2_USE_32BIT_BLK_CNT |
--		   SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-+		   SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-+		   SDHCI_QUIRK2_USE_ADMA3_SUPPORT,
- 	.ops = &sdhci_sprd_ops,
- };
- 
-+static const struct hsq_packed_ops packed_ops = {
-+	.packed_algo = mmc_hsq_packed_algo_rw,
-+	.prepare_hardware = sdhci_prepare_packed,
-+	.unprepare_hardware = sdhci_unprepare_packed,
-+	.packed_request = sdhci_packed_request,
-+};
-+
- static int sdhci_sprd_probe(struct platform_device *pdev)
- {
- 	struct sdhci_host *host;
-@@ -676,7 +691,18 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
- 		goto err_cleanup_host;
- 	}
- 
--	ret = mmc_hsq_init(hsq, host->mmc, NULL, 0);
-+	/*
-+	 * If the host controller can support ADMA3 mode, we can enable the
-+	 * packed request mode to improve the read/write performance.
-+	 *
-+	 * Considering the maximum ADMA3 entries (default is 16) and the request
-+	 * latency, we set the default maximum packed requests number is 8.
-+	 */
-+	if (host->flags & SDHCI_USE_ADMA3)
-+		ret = mmc_hsq_init(hsq, host->mmc, &packed_ops,
-+				   SDHCI_MAX_ADMA3_ENTRIES / 2);
-+	else
-+		ret = mmc_hsq_init(hsq, host->mmc, NULL, 0);
- 	if (ret)
- 		goto err_cleanup_host;
- 
+> I am not sure which option is better.  Any comment?
+
+If you mean, "let's not do anything and fix it only when there's really
+a need to fix anything", then yes, I agree.
+
 -- 
-1.9.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
