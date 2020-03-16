@@ -2,261 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E051418655C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 08:01:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2956186565
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 08:05:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729818AbgCPHBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 03:01:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728302AbgCPHBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 03:01:22 -0400
-Received: from coco.lan (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7605F20575;
-        Mon, 16 Mar 2020 07:01:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584342080;
-        bh=2/M2ChLBW/nP2NSP8Nh1OoS3EnGuZZl0K6fHDHNZxmA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=1+0hX8F0yt6lAze4g2CFbmdYa1MEj3AKccddPQzDW2+iDFMzP9fBijTq8uhAaj14j
-         jtxuyDMUhznPtLBeQ1CJCqkxNgDuv78g7d8yUmoWIGuTOP/J4ArBsTRI/2MdM4WWlB
-         iCtiIGYFo1kRr1+BPrKm3iEIH+0USEaAA4BAAXVs=
-Date:   Mon, 16 Mar 2020 08:01:09 +0100
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Wang Wenhu <wenhu.wang@vivo.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Jonathan Corbet <corbet@lwn.net>, Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Harry Wei <harryxiyou@gmail.com>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        Christian Brauner <christian@brauner.io>,
-        Eric Biggers <ebiggers@google.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, kernel@vivo.com
-Subject: Re: [PATCH v2,2/2] doc: zh_CN: add translation for virtiofs
-Message-ID: <20200316080109.5ea05868@coco.lan>
-In-Reply-To: <20200315155258.91725-2-wenhu.wang@vivo.com>
-References: <20200315092810.87008-1-wenhu.wang@vivo.com>
-        <20200315155258.91725-1-wenhu.wang@vivo.com>
-        <20200315155258.91725-2-wenhu.wang@vivo.com>
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1729874AbgCPHFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 03:05:19 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46731 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728302AbgCPHFT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 03:05:19 -0400
+Received: by mail-lj1-f193.google.com with SMTP id d23so17295764ljg.13;
+        Mon, 16 Mar 2020 00:05:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=uBZWUAhDtllCgzUKbsfgOq5XO1bRfHYmWfHJLRmvGhI=;
+        b=G47QD5SLJGT3j1JEedQjgXDMILOxrXG0wgKWNCqvfz/HWI2rSsXH7IIOgvkj0D4G2m
+         MiHfvmANvpwgXtxLzOVWWv42bnNJ+JFzkBGBtH+3EeLHpI2EtKRy88Bjg5dL8i7kTmmG
+         wDtH0tnIzRj9SqtVZMC3nTC2vvnP2qxllaPlP7JvhEiffBEPEWSn5Hjx+4MOBvMW1914
+         vagvolKGlPG1O3ondxPy3H6e08Ll5OAHoMauURVktnUEeKUfR9p8TCCt2ppGaee/DUDs
+         sHkVPvjCA4aflTVcJrjxEPm9gs1DMeRtw5AFHU+mtV9RxEjE8URxxrplOE7syVIxF/dk
+         3FFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :date:message-id:mime-version;
+        bh=uBZWUAhDtllCgzUKbsfgOq5XO1bRfHYmWfHJLRmvGhI=;
+        b=SUKIv0/vigxP04l44E6LUNlT4U3YT9Qr+YuXen0qVnQKgb5f6qKQ9qpfXgrd/DV2jD
+         rlRECB8Eo+HubcjqRHF796caOsXuFbw1JrhdisSt38DuBO4yYZVmVLzmCIr8KMVbQTxh
+         tf53STGAZ2fwMv77aUiYFjqVZbgWuxGNxEW0ltq2C5CrkcHAeTShn2RlNrodEHWTmjmq
+         pFYj/fgCp7v4COV6ajsla5Sw/X0NibNkanYt2bxDpDLosIZFRZgWv3sfpj6SY158v0vt
+         /DHUJ4Nmci/tUe6L4y/kpll1RouIu7Nhi0HTuS0eYadFUQjjcj6j2I0D+NRFmseqL/cd
+         yunA==
+X-Gm-Message-State: ANhLgQ2MoFluWkEzf5SHq2gEC2Z/J7koIazjdMBG7KQ5YnmT3RNVq0zW
+        Tbp+S7YKLO44Y1AoE2Zq82KK538FZG8=
+X-Google-Smtp-Source: ADFU+vvu55HC7GzeAR9KkU065p9OIPALb8genbCq3kvbmbZRS5JPXHniAqVwx/BFg4J8aOBOTFcbDA==
+X-Received: by 2002:a2e:2415:: with SMTP id k21mr1096063ljk.9.1584342317222;
+        Mon, 16 Mar 2020 00:05:17 -0700 (PDT)
+Received: from saruman (88-113-215-213.elisa-laajakaista.fi. [88.113.215.213])
+        by smtp.gmail.com with ESMTPSA id p5sm20967403ljn.48.2020.03.16.00.05.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Mar 2020 00:05:16 -0700 (PDT)
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Masahiro Yamada <masahiroy@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Johan Hovold <johan@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: Re: [PATCH] usb: get rid of 'choice' for legacy gadget drivers
+In-Reply-To: <20200315154948.26569-1-masahiroy@kernel.org>
+References: <20200315154948.26569-1-masahiroy@kernel.org>
+Date:   Mon, 16 Mar 2020 09:05:12 +0200
+Message-ID: <875zf42313.fsf@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Sun, 15 Mar 2020 08:52:39 -0700
-Wang Wenhu <wenhu.wang@vivo.com> escreveu:
-
-> Translate virtiofs.rst in Documentation/filesystems/ into Chinese.
->=20
-> Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
-> Signed-off-by: Wang Wenhu <wenhu.wang@vivo.com>
-> ---
-> Changelog v2:
->  - add a blank line in the end of index.rst to index virtiofs.rst
->  - Asked-by Stefan Hajnoczi
->  - added SPDX header and Copyright info
-> ---
->  Documentation/filesystems/virtiofs.rst        |  2 +
->  .../translations/zh_CN/filesystems/index.rst  |  2 +
->  .../zh_CN/filesystems/virtiofs.rst            | 61 +++++++++++++++++++
->  3 files changed, 65 insertions(+)
->  create mode 100644 Documentation/translations/zh_CN/filesystems/virtiofs=
-.rst
->=20
-> diff --git a/Documentation/filesystems/virtiofs.rst b/Documentation/files=
-ystems/virtiofs.rst
-> index 4f338e3cb3f7..7c4301d962f8 100644
-> --- a/Documentation/filesystems/virtiofs.rst
-> +++ b/Documentation/filesystems/virtiofs.rst
-> @@ -1,3 +1,5 @@
-> +.. _virtiofs_index:
-> +
->  .. SPDX-License-Identifier: GPL-2.0
-
-Please place the SPDX as the first line, e. g.:
-
-	.. SPDX-License-Identifier: GPL-2.0
-	+
-	+.. _virtiofs_index:
-
-After doing such change:
-
-Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-
-(In time: I'm not reviewing the translation - as I don't speak Mandarin)
-
-> =20
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Doc=
-umentation/translations/zh_CN/filesystems/index.rst
-> index 0a2cabfeaf7b..fd3700a4db6d 100644
-> --- a/Documentation/translations/zh_CN/filesystems/index.rst
-> +++ b/Documentation/translations/zh_CN/filesystems/index.rst
-> @@ -27,3 +27,5 @@ Linux Kernel=E4=B8=AD=E7=9A=84=E6=96=87=E4=BB=B6=E7=B3=
-=BB=E7=BB=9F
->  .. toctree::
->     :maxdepth: 2
-> =20
-> +   virtiofs
-> +
-> diff --git a/Documentation/translations/zh_CN/filesystems/virtiofs.rst b/=
-Documentation/translations/zh_CN/filesystems/virtiofs.rst
-> new file mode 100644
-> index 000000000000..cd836a9b2ac4
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/filesystems/virtiofs.rst
-> @@ -0,0 +1,61 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +.. raw:: latex
-> +
-> +	\renewcommand\thesection*
-> +	\renewcommand\thesubsection*
-
-Same note as on the previous patch: please check if this works with
-1.7.9 and latest Sphinx versions
-
-Regards,
-Mauro
-
-> +
-> +.. include:: ../disclaimer-zh_CN.rst
-> +
-> +:Original: :ref:`Documentation/filesystems/virtiofs.rst <virtiofs_index>`
-> +
-> +=E8=AF=91=E8=80=85
-> +::
-> +
-> +	=E4=B8=AD=E6=96=87=E7=89=88=E7=BB=B4=E6=8A=A4=E8=80=85=EF=BC=9A =E7=8E=
-=8B=E6=96=87=E8=99=8E Wang Wenhu <wenhu.wang@vivo.com>
-> +	=E4=B8=AD=E6=96=87=E7=89=88=E7=BF=BB=E8=AF=91=E8=80=85=EF=BC=9A =E7=8E=
-=8B=E6=96=87=E8=99=8E Wang Wenhu <wenhu.wang@vivo.com>
-> +	=E4=B8=AD=E6=96=87=E7=89=88=E6=A0=A1=E8=AF=91=E8=80=85:  =E7=8E=8B=E6=
-=96=87=E8=99=8E Wang Wenhu <wenhu.wang@vivo.com>
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +virtiofs: virtio-fs =E4=B8=BB=E6=9C=BA<->=E5=AE=A2=E6=9C=BA=E5=85=B1=E4=
-=BA=AB=E6=96=87=E4=BB=B6=E7=B3=BB=E7=BB=9F
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +- Copyright (C) 2020 Vivo Communication Technology Co. Ltd.
-> +
-> +=E4=BB=8B=E7=BB=8D
-> +=3D=3D=3D=3D
-> +Linux=E7=9A=84virtiofs=E6=96=87=E4=BB=B6=E7=B3=BB=E7=BB=9F=E5=AE=9E=E7=
-=8E=B0=E4=BA=86=E4=B8=80=E4=B8=AA=E5=8D=8A=E8=99=9A=E6=8B=9F=E5=8C=96VIRTIO=
-=E7=B1=BB=E5=9E=8B=E2=80=9Cvirtio-fs=E2=80=9D=E8=AE=BE=E5=A4=87=E7=9A=84=E9=
-=A9=B1=E5=8A=A8=EF=BC=8C=E9=80=9A=E8=BF=87=E8=AF=A5\
-> +=E7=B1=BB=E5=9E=8B=E8=AE=BE=E5=A4=87=E5=AE=9E=E7=8E=B0=E5=AE=A2=E6=9C=BA=
-<->=E4=B8=BB=E6=9C=BA=E6=96=87=E4=BB=B6=E7=B3=BB=E7=BB=9F=E5=85=B1=E4=BA=AB=
-=E3=80=82=E5=AE=83=E5=85=81=E8=AE=B8=E5=AE=A2=E6=9C=BA=E6=8C=82=E8=BD=BD=E4=
-=B8=80=E4=B8=AA=E5=B7=B2=E7=BB=8F=E5=AF=BC=E5=87=BA=E5=88=B0=E4=B8=BB=E6=9C=
-=BA=E7=9A=84=E7=9B=AE=E5=BD=95=E3=80=82
-> +
-> +=E5=AE=A2=E6=9C=BA=E9=80=9A=E5=B8=B8=E9=9C=80=E8=A6=81=E8=AE=BF=E9=97=AE=
-=E4=B8=BB=E6=9C=BA=E6=88=96=E8=80=85=E8=BF=9C=E7=A8=8B=E7=B3=BB=E7=BB=9F=E4=
-=B8=8A=E7=9A=84=E6=96=87=E4=BB=B6=E3=80=82=E4=BD=BF=E7=94=A8=E5=9C=BA=E6=99=
-=AF=E5=8C=85=E6=8B=AC=EF=BC=9A=E5=9C=A8=E6=96=B0=E5=AE=A2=E6=9C=BA=E5=AE=89=
-=E8=A3=85=E6=97=B6=E8=AE=A9=E6=96=87=E4=BB=B6=E5=AF=B9=E5=85=B6\
-> +=E5=8F=AF=E8=A7=81=EF=BC=9B=E4=BB=8E=E4=B8=BB=E6=9C=BA=E4=B8=8A=E7=9A=84=
-=E6=A0=B9=E6=96=87=E4=BB=B6=E7=B3=BB=E7=BB=9F=E5=90=AF=E5=8A=A8=EF=BC=9B=E5=
-=AF=B9=E6=97=A0=E7=8A=B6=E6=80=81=E6=88=96=E4=B8=B4=E6=97=B6=E5=AE=A2=E6=9C=
-=BA=E6=8F=90=E4=BE=9B=E6=8C=81=E4=B9=85=E5=AD=98=E5=82=A8=E5=92=8C=E5=9C=A8=
-=E5=AE=A2=E6=9C=BA=E4=B9=8B=E9=97=B4=E5=85=B1=E4=BA=AB=E7=9B=AE=E5=BD=95=E3=
-=80=82
-> +
-> +=E5=B0=BD=E7=AE=A1=E5=9C=A8=E6=9F=90=E4=BA=9B=E4=BB=BB=E5=8A=A1=E5=8F=AF=
-=E8=83=BD=E9=80=9A=E8=BF=87=E4=BD=BF=E7=94=A8=E5=B7=B2=E6=9C=89=E7=9A=84=E7=
-=BD=91=E7=BB=9C=E6=96=87=E4=BB=B6=E7=B3=BB=E7=BB=9F=E5=AE=8C=E6=88=90=EF=BC=
-=8C=E4=BD=86=E6=98=AF=E5=8D=B4=E9=9C=80=E8=A6=81=E9=9D=9E=E5=B8=B8=E9=9A=BE=
-=E4=BB=A5=E8=87=AA=E5=8A=A8=E5=8C=96=E7=9A=84=E9=85=8D=E7=BD=AE\
-> +=E6=AD=A5=E9=AA=A4=EF=BC=8C=E4=B8=94=E5=B0=86=E5=AD=98=E5=82=A8=E7=BD=91=
-=E7=BB=9C=E6=9A=B4=E9=9C=B2=E7=BB=99=E5=AE=A2=E6=9C=BA=E3=80=82=E8=80=8Cvir=
-tio-fs=E8=AE=BE=E5=A4=87=E9=80=9A=E8=BF=87=E6=8F=90=E4=BE=9B=E4=B8=8D=E7=BB=
-=8F=E8=BF=87=E7=BD=91=E7=BB=9C=E7=9A=84=E6=96=87=E4=BB=B6=E7=B3=BB=E7=BB=9F=
-=E8=AE=BF=E9=97=AE=E6=96=87=E4=BB=B6\
-> +=E7=9A=84=E8=AE=BE=E8=AE=A1=E6=96=B9=E5=BC=8F=E8=A7=A3=E5=86=B3=E4=BA=86=
-=E8=BF=99=E4=BA=9B=E9=97=AE=E9=A2=98=E3=80=82
-> +
-> +=E5=8F=A6=E5=A4=96=EF=BC=8Cvirto-fs=E8=AE=BE=E5=A4=87=E5=8F=91=E6=8C=A5=
-=E4=BA=86=E4=B8=BB=E5=AE=A2=E6=9C=BA=E5=85=B1=E5=AD=98=E7=9A=84=E4=BC=98=E7=
-=82=B9=E6=8F=90=E9=AB=98=E4=BA=86=E6=80=A7=E8=83=BD=EF=BC=8C=E5=B9=B6=E4=B8=
-=94=E6=8F=90=E4=BE=9B=E4=BA=86=E7=BD=91=E7=BB=9C=E6=96=87=E4=BB=B6=E7=B3=BB=
-=E7=BB=9F=E6=89=80=E4=B8=8D=E5=85=B7=E5=A4=87
-> +=E7=9A=84=E4=B8=80=E4=BA=9B=E8=AF=AD=E4=B9=89=E5=8A=9F=E8=83=BD=E3=80=82
-> +
-> +=E7=94=A8=E6=B3=95
-> +=3D=3D=3D=3D
-> +=E4=BB=A5``myfs``=E6=A0=87=E7=AD=BE=E5=B0=86=E6=96=87=E4=BB=B6=E7=B3=BB=
-=E7=BB=9F=E6=8C=82=E8=BD=BD=E5=88=B0``/mnt``:
-> +
-> +.. code-block:: sh
-> +
-> +  guest# mount -t virtiofs myfs /mnt
-> +
-> +=E8=AF=B7=E6=9F=A5=E9=98=85 https://virtio-fs.gitlab.io/ =E4=BA=86=E8=A7=
-=A3=E9=85=8D=E7=BD=AEQEMU=E5=92=8Cvirtiofsd=E5=AE=88=E6=8A=A4=E7=A8=8B=E5=
-=BA=8F=E7=9A=84=E8=AF=A6=E7=BB=86=E4=BF=A1=E6=81=AF=E3=80=82
-> +
-> +=E5=86=85=E5=B9=95
-> +=3D=3D=3D=3D
-> +=E7=94=B1=E4=BA=8Evirtio-fs=E8=AE=BE=E5=A4=87=E5=B0=86FUSE=E5=8D=8F=E8=
-=AE=AE=E7=94=A8=E4=BA=8E=E6=96=87=E4=BB=B6=E7=B3=BB=E7=BB=9F=E8=AF=B7=E6=B1=
-=82=EF=BC=8C=E5=9B=A0=E6=AD=A4Linux=E7=9A=84virtiofs=E6=96=87=E4=BB=B6=E7=
-=B3=BB=E7=BB=9F=E4=B8=8EFUSE=E6=96=87\
-> +=E4=BB=B6=E7=B3=BB=E7=BB=9F=E5=AE=A2=E6=88=B7=E7=AB=AF=E7=B4=A7=E5=AF=86=
-=E9=9B=86=E6=88=90=E5=9C=A8=E4=B8=80=E8=B5=B7=E3=80=82=E5=AE=A2=E6=9C=BA=E5=
-=85=85=E5=BD=93FUSE=E5=AE=A2=E6=88=B7=E7=AB=AF=E8=80=8C=E4=B8=BB=E6=9C=BA=
-=E5=85=85=E5=BD=93FUSE=E6=9C=8D=E5=8A=A1=E5=99=A8=EF=BC=8C=E5=86=85=E6=A0=
-=B8=E4=B8=8E=E7=94=A8=E6=88=B7=E7=A9=BA\
-> +=E9=97=B4=E4=B9=8B=E9=97=B4=E7=9A=84/dev/fuse=E6=8E=A5=E5=8F=A3=E7=94=B1=
-virtio-fs=E8=AE=BE=E5=A4=87=E6=8E=A5=E5=8F=A3=E4=BB=A3=E6=9B=BF=E3=80=82
-> +
-> +FUSE=E8=AF=B7=E6=B1=82=E8=A2=AB=E7=BD=AE=E4=BA=8E=E8=99=9A=E6=8B=9F=E9=
-=98=9F=E5=88=97=E4=B8=AD=E7=94=B1=E4=B8=BB=E6=9C=BA=E5=A4=84=E7=90=86=E3=80=
-=82=E4=B8=BB=E6=9C=BA=E5=A1=AB=E5=85=85=E7=BC=93=E5=86=B2=E5=8C=BA=E4=B8=AD=
-=E7=9A=84=E5=93=8D=E5=BA=94=E9=83=A8=E5=88=86=EF=BC=8C=E8=80=8C=E5=AE=A2=E6=
-=9C=BA=E5=A4=84=E7=90=86=E8=AF=B7=E6=B1=82=E7=9A=84=E5=AE=8C=E6=88=90=E9=83=
-=A8=E5=88=86=E3=80=82
-> +
-> +=E5=B0=86/dev/fuse=E6=98=A0=E5=B0=84=E5=88=B0=E8=99=9A=E6=8B=9F=E9=98=9F=
-=E5=88=97=E9=9C=80=E8=A6=81=E8=A7=A3=E5=86=B3/dev/fuse=E5=92=8C=E8=99=9A=E6=
-=8B=9F=E9=98=9F=E5=88=97=E4=B9=8B=E9=97=B4=E8=AF=AD=E4=B9=89=E4=B8=8A=E7=9A=
-=84=E5=B7=AE=E5=BC=82=E3=80=82=E6=AF=8F=E6=AC=A1=E8=AF=BB=E5=8F=96\
-> +/dev/fuse=E8=AE=BE=E5=A4=87=E6=97=B6=EF=BC=8CFUSE=E5=AE=A2=E6=88=B7=E7=
-=AB=AF=E9=83=BD=E5=8F=AF=E4=BB=A5=E9=80=89=E6=8B=A9=E8=A6=81=E4=BC=A0=E8=BE=
-=93=E7=9A=84=E8=AF=B7=E6=B1=82=EF=BC=8C=E4=BB=8E=E8=80=8C=E5=8F=AF=E4=BB=A5=
-=E4=BD=BF=E6=9F=90=E4=BA=9B=E8=AF=B7=E6=B1=82=E4=BC=98=E5=85=88=E4=BA=8E=E5=
-=85=B6=E4=BB=96\
-> +=E8=AF=B7=E6=B1=82=E3=80=82=E8=99=9A=E6=8B=9F=E9=98=9F=E5=88=97=E6=9C=89=
-=E5=85=B6=E9=98=9F=E5=88=97=E8=AF=AD=E4=B9=89=EF=BC=8C=E6=97=A0=E6=B3=95=E6=
-=9B=B4=E6=94=B9=E5=B7=B2=E5=85=A5=E9=98=9F=E8=AF=B7=E6=B1=82=E7=9A=84=E9=A1=
-=BA=E5=BA=8F=E3=80=82=E5=9C=A8=E8=99=9A=E6=8B=9F=E9=98=9F=E5=88=97=E5=B7=B2=
-=E6=BB=A1=E7=9A=84=E6=83=85=E5=86=B5=E4=B8=8B=E5=B0=A4
-> +=E5=85=B6=E5=85=B3=E9=94=AE=EF=BC=8C=E5=9B=A0=E4=B8=BA=E6=AD=A4=E6=97=B6=
-=E4=B8=8D=E5=8F=AF=E8=83=BD=E5=8A=A0=E5=85=A5=E9=AB=98=E4=BC=98=E5=85=88=E7=
-=BA=A7=E7=9A=84=E8=AF=B7=E6=B1=82=E3=80=82=E4=B8=BA=E4=BA=86=E8=A7=A3=E5=86=
-=B3=E6=AD=A4=E5=B7=AE=E5=BC=82=EF=BC=8Cvirtio-fs=E8=AE=BE=E5=A4=87=E9=87=87=
-=E7=94=A8=E2=80=9Chiprio=E2=80=9D\
-> +=EF=BC=88=E9=AB=98=E4=BC=98=E5=85=88=E7=BA=A7=EF=BC=89=E8=99=9A=E6=8B=9F=
-=E9=98=9F=E5=88=97=EF=BC=8C=E4=B8=93=E9=97=A8=E7=94=A8=E4=BA=8E=E6=9C=89=E5=
-=88=AB=E4=BA=8E=E6=99=AE=E9=80=9A=E8=AF=B7=E6=B1=82=E7=9A=84=E9=AB=98=E4=BC=
-=98=E5=85=88=E7=BA=A7=E8=AF=B7=E6=B1=82=E3=80=82
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
 
+Hi,
 
-Thanks,
-Mauro
+Masahiro Yamada <masahiroy@kernel.org> writes:
+> drivers/usb/gadget/legacy/Kconfig creates a 'choice' inside another
+> 'choice'.
+>
+> The outer choice: line 17 "USB Gadget precomposed configurations"
+> The inner choice: line 484 "EHCI Debug Device mode"
+>
+> I wondered why the whole legacy gadget drivers reside in such a big
+> choice block.
+>
+> This dates back to 2003, "[PATCH] USB: fix for multiple definition of
+> `usb_gadget_get_string'". [1]
+>
+> At that time, the global function, usb_gadget_get_string(), was linked
+> into multiple drivers. That was why only one driver was able to become
+> built-in at the same time.
+>
+> Later, commit a84d9e5361bc ("usb: gadget: start with libcomposite")
+> moved usb_gadget_get_string() to a separate module, libcomposite.ko
+> instead of including usbstring.c from multiple modules.
+>
+> More and more refactoring was done, and after commit 1bcce939478f
+> ("usb: gadget: multi: convert to new interface of f_mass_storage"),
+> you can link multiple gadget drivers into vmlinux without causing
+> multiple definition error.
+>
+> This is the only user of the nested choice structure ever. Removing
+> this mess will make some Kconfig cleanups possible.
+>
+> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/=
+commit/?id=3Dfee4cf49a81381e072c063571d1aadbb29207408
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+
+Greg, if you want to pick this for v5.7, please go ahead:
+
+Acked-by: Felipe Balbi <balbi@kernel.org>
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl5vJSgACgkQzL64meEa
+mQYUDxAAxrr84ybEsxCRQlX01AkdCUFtaPtwzAr4q6cuouUdEHHNWSCKqbDCVWPa
+Fxm0aPllomMAbASyuDahGoEjcg+84lVl9ieclsaNCXMDqtdNTo7bpJwrA+TjzhQb
+z1c4EZlO4KR/7MY4rPRNR1v+8T+Qy7cHyxAOxOHH7uDVjbGtzq7L1ETievoRWO1k
+yzY42zfEyvj7z3xfSnRN6I8FbXTEKLi4L0otRjxVe3vcO/Qvw8xp9kupDTY/twsJ
+o2L+E6Z+UC1Zr/jexOQm5B9eFtUQnNSNA/eH1ez4Q/yeTJjesIeHhAJnS/C9cuTk
+lFHah0K12ggH8K81thYyt3/4x8khs+rNP6kTcpGxZffM0T6Ph/o1tSmfbK2OH/Te
+aHEll1S8fgKJG2t0o1TQRY2WwR3Vz3ClUtrxXSx5+uixWSU+96k/lW1o7ggXYORe
+3HJS3jruc93zWKr+DkFvIW6xUrgez2enrGWXxpzdGXv4RK1tK7+WO1d46AEPYxBV
+ha6kSmJ5bbYYDhFbVuA/LufmDZS56wUqRox1onDwSity1BKNzkmhHrfqGH+ncyFr
+2RjfeCw2zvh1qZ2W03yRqeXA1EC+uvYBWDD1mGIjPh7i/8sboHh9HCVaOUyuZ4pp
+/hIco7nCWbnw/t+OI6szV+g/tEodbJqQ1mIKuWrMo+7Ozh4S3Ms=
+=bQ+k
+-----END PGP SIGNATURE-----
+--=-=-=--
