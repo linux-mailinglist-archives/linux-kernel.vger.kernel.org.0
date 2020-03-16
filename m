@@ -2,147 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9378B18714C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 18:37:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F03D3187162
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 18:44:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731985AbgCPRhr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 13:37:47 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:44874 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731731AbgCPRhr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 13:37:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584380266;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=msg6kUjRhvxAi8DnVd/GQrZEQ8stJK5YC+wnR0yoRxI=;
-        b=SLsCS8I+R19NJslzj1b5ZqtPNDk42Ra+KuHkXCMs/2p5/mygJqP19KcdMr+zZ+k734K+TO
-        zs0sTz0Y7fdX8R0KK6yNJTEdS2mDNbvgCtUE8WyUvGxFSZXEqDUk2eXxv2HVhsGRKNEkTj
-        iNZQZV7YoG6naeGd0jtj9m2Tw5QHZac=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-215-RNprkJGONFC63U9Ydr7DQQ-1; Mon, 16 Mar 2020 13:27:27 -0400
-X-MC-Unique: RNprkJGONFC63U9Ydr7DQQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 84060915510;
-        Mon, 16 Mar 2020 17:10:29 +0000 (UTC)
-Received: from [10.36.118.12] (ovpn-118-12.ams2.redhat.com [10.36.118.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E26CB9B900;
-        Mon, 16 Mar 2020 17:10:25 +0000 (UTC)
-Subject: Re: [PATCH v5 06/23] irqchip/gic-v4.1: Advertise support v4.1 to KVM
-To:     Marc Zyngier <maz@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Robert Richter <rrichter@marvell.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-References: <20200304203330.4967-1-maz@kernel.org>
- <20200304203330.4967-7-maz@kernel.org>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <12d3a655-1caf-39c0-7d80-f43b0d90677c@redhat.com>
-Date:   Mon, 16 Mar 2020 18:10:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1731967AbgCPRor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 13:44:47 -0400
+Received: from stcim.de ([78.46.90.227]:58902 "EHLO stcim.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730437AbgCPRor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 13:44:47 -0400
+X-Greylist: delayed 1475 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Mar 2020 13:44:46 EDT
+Received: from [2001:4dd7:15f0:0:a288:b4ff:fee5:f5cc] (helo=porty)
+        by stcim with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <contact@stefanchrist.eu>)
+        id 1jDtPI-00011x-JQ; Mon, 16 Mar 2020 18:20:04 +0100
+Date:   Mon, 16 Mar 2020 18:20:03 +0100
+From:   Stefan Lengfeld <contact@stefanchrist.eu>
+To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marco Felsch <m.felsch@pengutronix.de>
+Subject: Re: [PATCH] i2c: at91: support atomic write xfer
+Message-ID: <20200316172003.lguso2fczz5imh6g@porty>
+References: <c05f76f74cd6a7ec2735c96861f9d5933631c112.1584296795.git.mirq-linux@rere.qmqm.pl>
+ <9924dd54-dd8b-d130-9607-2bbbc65675d5@gmail.com>
+ <20200316144221.GC19141@qmqm.qmqm.pl>
 MIME-Version: 1.0
-In-Reply-To: <20200304203330.4967-7-maz@kernel.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200316144221.GC19141@qmqm.qmqm.pl>
+X-PGP-Key: https://stefanchrist.eu/personal/Stefan_Lengfeld_0xE44A23B289092311.asc
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+Hi Michał,
 
-On 3/4/20 9:33 PM, Marc Zyngier wrote:
-> Tell KVM that we support v4.1. Nothing uses this information so far.
+On Mon, Mar 16, 2020 at 03:42:21PM +0100, Michał Mirosław wrote:
+> On Sun, Mar 15, 2020 at 11:46:33PM +0300, Dmitry Osipenko wrote:
+> > 15.03.2020 21:27, Michał Mirosław пишет:
+> > > Implement basic support for atomic write - enough to get a simple
+> > > write to PMIC on shutdown. Only for chips having ALT_CMD register,
+> > > eg. SAMA5D2.
+> > > 
+> > > Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+> > > ---
+> > 
+> > Hello Michał,
+> > 
+> > ...
+> > > +	ret = pm_runtime_get_sync(dev->dev);
+> > > +	if (ret < 0)
+> > > +		goto out;
+> > 
+> > Runtime PM can't be used while interrupts are disabled, unless
+> > pm_runtime_irq_safe() is used and driver's RPM callback is IRQ-safe.
 > 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+> I didn't get any warnings from lockdep and friends, but I'll double
+> check if this is by luck.
 
-Thanks
+You can have a look at the I2C atomic patch for the imx-driver. See
 
-Eric
+   https://patchwork.ozlabs.org/patch/1225802/
 
-> ---
->  drivers/irqchip/irq-gic-v3-its.c       | 9 ++++++++-
->  drivers/irqchip/irq-gic-v3.c           | 2 ++
->  include/linux/irqchip/arm-gic-common.h | 2 ++
->  3 files changed, 12 insertions(+), 1 deletion(-)
+In that patch Marco Felsch is using clk_enable() and clk_disable() calls.
+
 > 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index fc5788584df7..bcc1a0957cda 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -4870,6 +4870,7 @@ int __init its_init(struct fwnode_handle *handle, struct rdists *rdists,
->  	struct device_node *of_node;
->  	struct its_node *its;
->  	bool has_v4 = false;
-> +	bool has_v4_1 = false;
->  	int err;
->  
->  	gic_rdists = rdists;
-> @@ -4890,8 +4891,14 @@ int __init its_init(struct fwnode_handle *handle, struct rdists *rdists,
->  	if (err)
->  		return err;
->  
-> -	list_for_each_entry(its, &its_nodes, entry)
-> +	list_for_each_entry(its, &its_nodes, entry) {
->  		has_v4 |= is_v4(its);
-> +		has_v4_1 |= is_v4_1(its);
-> +	}
-> +
-> +	/* Don't bother with inconsistent systems */
-> +	if (WARN_ON(!has_v4_1 && rdists->has_rvpeid))
-> +		rdists->has_rvpeid = false;
->  
->  	if (has_v4 & rdists->has_vlpis) {
->  		if (its_init_vpe_domain() ||
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index ba405becab53..03e4eadefb00 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -1785,6 +1785,7 @@ static void __init gic_of_setup_kvm_info(struct device_node *node)
->  		gic_v3_kvm_info.vcpu = r;
->  
->  	gic_v3_kvm_info.has_v4 = gic_data.rdists.has_vlpis;
-> +	gic_v3_kvm_info.has_v4_1 = gic_data.rdists.has_rvpeid;
->  	gic_set_kvm_info(&gic_v3_kvm_info);
->  }
->  
-> @@ -2100,6 +2101,7 @@ static void __init gic_acpi_setup_kvm_info(void)
->  	}
->  
->  	gic_v3_kvm_info.has_v4 = gic_data.rdists.has_vlpis;
-> +	gic_v3_kvm_info.has_v4_1 = gic_data.rdists.has_rvpeid;
->  	gic_set_kvm_info(&gic_v3_kvm_info);
->  }
->  
-> diff --git a/include/linux/irqchip/arm-gic-common.h b/include/linux/irqchip/arm-gic-common.h
-> index b9850f5f1906..fa8c0455c352 100644
-> --- a/include/linux/irqchip/arm-gic-common.h
-> +++ b/include/linux/irqchip/arm-gic-common.h
-> @@ -32,6 +32,8 @@ struct gic_kvm_info {
->  	struct resource vctrl;
->  	/* vlpi support */
->  	bool		has_v4;
-> +	/* rvpeid support */
-> +	bool		has_v4_1;
->  };
->  
->  const struct gic_kvm_info *gic_get_kvm_info(void);
+> > ...
+> > > +	timeout = jiffies + (2 + msg->len) * HZ/1000;
+> > > +	for (;;) {
+> > > +		stat = at91_twi_read(dev, AT91_TWI_SR);
+> > > +		if (stat & AT91_TWI_TXCOMP)
+> > > +			break;
+> > > +		if (time_after(jiffies, timeout)) {
+> > > +			ret = -ETIMEDOUT;
+> > > +			goto out;
+> > > +		}
+> > > +		udelay(100);
+> > > +	}
+> > 
+> > Jiffies can't be used with the disabled interrupts because jiffies are
+> > updated by timer's interrupt.
+> > 
+> > Either ktime() API or iterator-based loop should be used.
 > 
+> Thanks for the pointers. In my use-case power is cut from the CPU at this
+> point so it didn't matter that the loop was infinite.
 
+Here again you can have a look at Marco Felsch's patch. He used the
+function readb_poll_timeout_atomic(). So the loop can potentially
+replaced by a single line.
+
+Kind regards,
+Stefan
