@@ -2,92 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49425187048
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:42:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27006187021
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 17:36:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732172AbgCPQmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 12:42:54 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:49497 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732098AbgCPQmy (ORCPT
+        id S1732153AbgCPQgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 12:36:47 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35924 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732109AbgCPQgr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 12:42:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584376973;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jC00Z6qh/Tdo08cJHrlqWaLr117ZyFvx6URUV4dogZI=;
-        b=Zoc5xfK6wF5wEcuyhZs1WwJoGpXbQpoPb4o9S3ZzxRMNr16LG/+5Vqe7hLMhic7pPo/cll
-        VtHNMTEUBIgzCvXv7xxmsLrZ0DfTdnqwO7WZ+MEZGwiK3dAy+l2xqC5XtmXs+Z8vcU1nzf
-        dxo1QulfjDavM4+783jqWeSf0H5UewM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-422-LWQ5OmvLM5qkW_o2seEmAA-1; Mon, 16 Mar 2020 12:42:49 -0400
-X-MC-Unique: LWQ5OmvLM5qkW_o2seEmAA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6669518A8CBA;
-        Mon, 16 Mar 2020 16:33:20 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-118-249.phx2.redhat.com [10.3.118.249])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A0AE660BE2;
-        Mon, 16 Mar 2020 16:33:17 +0000 (UTC)
-Subject: Re: [PATCH v3 1/3] KEYS: Don't write out to userspace while holding
- key semaphore
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-References: <20200315212706.GE224162@linux.intel.com>
- <20200313152102.1707-1-longman@redhat.com>
- <20200313152102.1707-2-longman@redhat.com>
- <20200315192104.GD224162@linux.intel.com>
- <1793253.1584357764@warthog.procyon.org.uk>
- <c1138c83619553d018970a4b2d95f38fccebc99c.camel@linux.intel.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <6f00132d-2ed8-fcbc-a1c3-54151a582aa1@redhat.com>
-Date:   Mon, 16 Mar 2020 12:33:17 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Mon, 16 Mar 2020 12:36:47 -0400
+Received: by mail-pg1-f193.google.com with SMTP id z72so206103pgz.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 09:36:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=KkJ9BnhYk/HajXNXxuOjIzsUkQMklV19EP7QhHmBLp8=;
+        b=oDcg/c24mMcUeBjQQMh9AiJP4ybO1A/zCQx7APejdiexTnF3qsz0/mkn/oFKSttXua
+         sHRSR4mMQOUu4IhbLUuO2O6qGclfBFOIg6oSNByxaLEeqB5dgK4nkHTaB+JnrVM1GPUw
+         Byymm05q0BmS2JLAMtCyLpqexNAb31NQBgv5m+MCNadcyxthMcIN0ixrCwm8QTH98Vis
+         048ZkMr7v6qbsLpYNEsbDINHIOXmN7/0UMBA+tBrIvDTbiwAeC72BLI5YH3/NwRQkWIC
+         /vkLGDn3JcvphZXiRUsNwS48aJEA4wF9IcFK19cGkQAX6reB8HvYfuSC6OalZp0/kiI2
+         HVUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=KkJ9BnhYk/HajXNXxuOjIzsUkQMklV19EP7QhHmBLp8=;
+        b=NnzYaM71JliIaDtlR9oeYfXAHxI7OVDh3ExjC7q3QQzF05Pk6NNW2rm2lSmBlR5cjb
+         IEbRxj/3kQoySvP/VMNBvH5NO09ty9GKnNxyJs07qoBSS3icChf2Fmptof11tqTL/Pfz
+         iX+peGc9yS0ZeNmN0bOG5OvJTtDvwtOmyoZaqjTFVTX+3z0d0rsclSCrI+G7hccaBqIX
+         U4ub8fLuDhcqSA0W9L1RIq7CWP4JbVriGxpGqWZQ/LUuDTZNLNT59m4YgE0mY9gl5CLY
+         tX3YsgbDsapRbOy6Rr00AnyTvZun9eh2xOLMnQradkGGzRtdN8Aw9lhIIoCzWxix7H3r
+         T/lA==
+X-Gm-Message-State: ANhLgQ3Ibltq7TDmGoXbd8VjYarBPf9ktAnYh2KqtBDLOCLJNxiywsUx
+        0wmu8n5UzdFQK5Em0omz4roP5A==
+X-Google-Smtp-Source: ADFU+vsnDU0kNyNu7bXSOxb3qeKHSd2QhwQJDm7Wj7JSzaOFa60zGw8tmrmt6d6868XiIqOT9Y1DIA==
+X-Received: by 2002:a65:5a8a:: with SMTP id c10mr678539pgt.315.1584376604453;
+        Mon, 16 Mar 2020 09:36:44 -0700 (PDT)
+Received: from localhost ([2601:602:9200:a1a5:dcc4:2a10:1b38:3edc])
+        by smtp.gmail.com with ESMTPSA id h198sm411587pfe.76.2020.03.16.09.36.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Mar 2020 09:36:43 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Christian Hewitt <christianshewitt@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Christian Hewitt <christianshewitt@gmail.com>,
+        Andreas =?utf-8?Q?F?= =?utf-8?Q?=C3=A4rber?= <afaerber@suse.de>,
+        =?utf-8?Q?Jer=C3=B4me?= Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH v7 3/3] arm64: dts: meson: add support for the SmartLabs SML-5442TW
+In-Reply-To: <1583987886-6288-4-git-send-email-christianshewitt@gmail.com>
+References: <1583987886-6288-1-git-send-email-christianshewitt@gmail.com> <1583987886-6288-4-git-send-email-christianshewitt@gmail.com>
+Date:   Mon, 16 Mar 2020 09:36:43 -0700
+Message-ID: <7ha74gw92c.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <c1138c83619553d018970a4b2d95f38fccebc99c.camel@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/16/20 9:53 AM, Jarkko Sakkinen wrote:
-> On Mon, 2020-03-16 at 11:22 +0000, David Howells wrote:
->> Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
->>
->>> I guess we cannot sanely define fixes tag for this one, can we?
->> Use:
->>
->> 	Fixes: ^1da177e4c3f4 ("Linux-2.6.12-rc2")
->>
->> David
-> Longmao, please include this to the next version.
->
-> /Jarkko
->
-Sure, will do.
+Christian Hewitt <christianshewitt@gmail.com> writes:
 
-Cheers,
-Longman
+> The SmartLabs SML-5442TW is broadly similar to the P231 reference design
+> but with the following differences:
 
+Can you can create a P231 .dtsi that can be shared between the two?
+
+I'd really like to keep all of these designs that are based on Amlogic
+ref designs using shared .dtsi whereever possible.
+
+Kevin
