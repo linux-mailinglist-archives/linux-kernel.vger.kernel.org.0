@@ -2,91 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FDCB186808
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 10:40:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A2DD18680F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 10:41:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730430AbgCPJks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 05:40:48 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:35356 "EHLO mail.skyhub.de"
+        id S1730506AbgCPJlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 05:41:15 -0400
+Received: from ozlabs.org ([203.11.71.1]:60373 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730231AbgCPJkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 05:40:47 -0400
-Received: from zn.tnic (p200300EC2F06AB0069F33882ABEAD541.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:ab00:69f3:3882:abea:d541])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730231AbgCPJlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 05:41:14 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3B4DF1EC0A9C;
-        Mon, 16 Mar 2020 10:40:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1584351646;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=B0X3DBaS6qk8U10kushsnt8gYgIx6lDYZA9ypH96C7g=;
-        b=S3xXXVDE6hI4IP9RQYpC2DUkHRUUfqYM/65m/u+9ZHrTyW1w3ot9dFOfwwlx48wOJrNHmf
-        txLaOYi5PWSMNRGk2csJ5UQ2m8Jtd3+s2dSdPXLyst0H3QIMf5HIsgZhhg9iwUJLiBIWPl
-        ZF1r4dflPNIOUsbYb9jtilF9Fclop/0=
-Date:   Mon, 16 Mar 2020 10:40:56 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Robert Richter <rrichter@marvell.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Aristeu Rozanski <aris@redhat.com>, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/11] EDAC/ghes: Implement DIMM mapping table for SMBIOS
- handles
-Message-ID: <20200316094056.GC26126@zn.tnic>
-References: <20200306151318.17422-1-rrichter@marvell.com>
- <20200306151318.17422-10-rrichter@marvell.com>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48grsM6VkJz9sP7;
+        Mon, 16 Mar 2020 20:41:11 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1584351672;
+        bh=0BJ3FURw+fjw50wR+e6LRkf2Tx726H888JVrSKrls5Y=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=DOf+CeQIRr9jP+zd801bgQ9LbD/TE+CByjPvWQvxtr5O+4o/uK2xFlU76UoHQRM1m
+         PO1UW4Vu9Tn3ovq5neZhqoNPTofTuJvlkJdzuw73af6U6+M6OMMYOV5ATseJFLag1d
+         eGFHtLkuRRd+l35uigGkppduH+zZfcCp+HEH5Ox0Lg6H5WOFmqhf3yKgYxTeypdh6d
+         pHOnjPqwfPWJAnn4ZvO9glKgXR9NoACQZilm7+8n5WjERuDRAAt+e7zzdFJLFgKXIV
+         CQsDHCnCtxvsQrpIyuKhAC4GTZJHC7VD8yOytmTWWGwHrRvIQ8hGEOiumZJOhsfWn+
+         luLNejYRjYIaQ==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     WANG Wenhu <wenhu.wang@vivo.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        WANG Wenhu <wenhu.wang@vivo.com>,
+        Allison Randal <allison@lohutok.net>,
+        Richard Fontana <rfontana@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     trivial@kernel.org, kernel@vivo.com,
+        stable <stable@vger.kernel.org>
+Subject: Re: [PATCH v3] powerpc/fsl-85xx: fix compile error
+In-Reply-To: <20200314051035.64552-1-wenhu.wang@vivo.com>
+References: <20200314051035.64552-1-wenhu.wang@vivo.com>
+Date:   Mon, 16 Mar 2020 20:41:12 +1100
+Message-ID: <875zf4r613.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200306151318.17422-10-rrichter@marvell.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 04:13:16PM +0100, Robert Richter wrote:
-> GHES uses SMBIOS handles to identify the DIMM that was causing a hw
-> error. Currently this is stored in smbios_handle of struct dimm_info.
-> This implementation has several drawbacks. The information is private
-> to the ghes driver, but struct dimm_info is for general use. The DIMMs
-> are tied to a *mci struct, which makes a lockup inefficient. It is
+WANG Wenhu <wenhu.wang@vivo.com> writes:
+> Include "linux/of_address.h" to fix the compile error for
+> mpc85xx_l2ctlr_of_probe() when compiling fsl_85xx_cache_sram.c.
+>
+>   CC      arch/powerpc/sysdev/fsl_85xx_l2ctlr.o
+> arch/powerpc/sysdev/fsl_85xx_l2ctlr.c: In function =E2=80=98mpc85xx_l2ctl=
+r_of_probe=E2=80=99:
+> arch/powerpc/sysdev/fsl_85xx_l2ctlr.c:90:11: error: implicit declaration =
+of function =E2=80=98of_iomap=E2=80=99; did you mean =E2=80=98pci_iomap=E2=
+=80=99? [-Werror=3Dimplicit-function-declaration]
+>   l2ctlr =3D of_iomap(dev->dev.of_node, 0);
+>            ^~~~~~~~
+>            pci_iomap
+> arch/powerpc/sysdev/fsl_85xx_l2ctlr.c:90:9: error: assignment makes point=
+er from integer without a cast [-Werror=3Dint-conversion]
+>   l2ctlr =3D of_iomap(dev->dev.of_node, 0);
+>          ^
+> cc1: all warnings being treated as errors
+> scripts/Makefile.build:267: recipe for target 'arch/powerpc/sysdev/fsl_85=
+xx_l2ctlr.o' failed
+> make[2]: *** [arch/powerpc/sysdev/fsl_85xx_l2ctlr.o] Error 1
+>
+> Fixes: commit 6db92cc9d07d ("powerpc/85xx: add cache-sram support")
 
-"lookup"
+The syntax is:
 
-> hard to dynamically allocate DIMMs and also to meet locking
-> constraints when adding or removing them. This becomes even more
-> challenging when having multiple MC instances that group a set of
-> DIMMs, so the change is needed also to later support multiple MC
-> instances.
+Fixes: 6db92cc9d07d ("powerpc/85xx: add cache-sram support")
 
-Err, I don't understand: normally a bunch of DIMMs belong to a memory
-controller and that gives you the hierarchy automatically. Why is that a
-problem?
+> Cc: stable <stable@vger.kernel.org>
 
-And normally you allocate the DIMM representations on MC init and
-deallocate them when removing the MC.
+The commit above went into v2.6.37.
 
-So what is the problem here?
+So no one has noticed this bug since then, how? Or did something else
+change to expose the problem?
 
-...
-
-...
-> @@ -72,6 +79,52 @@ struct memdev_dmi_entry {
->  	u16 conf_mem_clk_speed;
->  } __attribute__((__packed__));
->  
-> +/* ghes_reg_mutex must be held. */
-
-lockdep_assert_held()
-
-...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+cheers
