@@ -2,121 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 773FA18722C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 19:21:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0308E187223
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 19:20:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732324AbgCPSVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 14:21:49 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:29176 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731967AbgCPSVt (ORCPT
+        id S1732269AbgCPSUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 14:20:04 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:44780 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732236AbgCPSUD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 14:21:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584382907;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VJKpl0rDZzg6gkXBWfuB1lB9uS4rYX4lRTgcaLzb37w=;
-        b=QrgpYio40KFqlMQUCEjrLcUlUoGlDVaVCdOU1FwIbUI4E4UCk0MMj13sBjC2ZNOn2Xzbmb
-        E/xzeS1IKsElj098dVwARMYnJ6DJsbO5RH/NlcgO+5xJAEw1QOIrYejMp7LuDVzO3xOUsi
-        F1aohfnLVoQNyX2gvZV42zqK4gMxnQE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-363-JPjx595BP4a7LmyWorbVlg-1; Mon, 16 Mar 2020 14:21:44 -0400
-X-MC-Unique: JPjx595BP4a7LmyWorbVlg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4624914ECEB;
-        Mon, 16 Mar 2020 18:15:58 +0000 (UTC)
-Received: from [10.36.118.12] (ovpn-118-12.ams2.redhat.com [10.36.118.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0147810027A7;
-        Mon, 16 Mar 2020 18:15:52 +0000 (UTC)
-Subject: Re: [PATCH v5 10/23] irqchip/gic-v4.1: Plumb mask/unmask SGI
- callbacks
-To:     Marc Zyngier <maz@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Robert Richter <rrichter@marvell.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-References: <20200304203330.4967-1-maz@kernel.org>
- <20200304203330.4967-11-maz@kernel.org>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <c6bfa8bb-d311-153f-ef72-b1f9759ccf6e@redhat.com>
-Date:   Mon, 16 Mar 2020 19:15:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 16 Mar 2020 14:20:03 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h16so15073452qtr.11
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 11:20:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KKFZzAhZQvtZ0ajIaQdWvUFb/RVZsTqaSdNCIFm2bao=;
+        b=Z1EbTPZvjSbUTzInKlQ3ySCYhajxIyyyUeRxcNt/UtHDB8fhtPVLH3HbFPcxj9lmRr
+         aQAMksOrY2R+WNj9Y2wMs9jz819yimoo9vv0FOyHAr3u8up3NmVVjeKO1b13yxLu4HbP
+         cIQoAmzVi2BVZOb0YlM1XMAIb9AXU2uz6tuE+T1mfdGjOZPp3IVvOGASm+INvZjMX1o7
+         QFu3d6E/Zta85NL0yLj4DlCMiRtnoPMnylDAM0v3de6Syk8xeyjkmoMyZF1NZp7rvQuN
+         eb1pTYjEzPMHDrWvr6aItwgPasKTcJUQXvCD7FetJ+z30O6uNIhaVYum/NDmunfN5r+u
+         SSMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KKFZzAhZQvtZ0ajIaQdWvUFb/RVZsTqaSdNCIFm2bao=;
+        b=rniBERISoQR/lf/qVfO9FPwkKvNSVL1/tzXRoAYUFnFbj8SyBqGUQFt/OM+a26sT7X
+         R7+wtxZjqwbcf/8oJMw5ESC4t0n2abUPKxJZAMwl5cM6UGJCODWxIRlLsFl+3tlpqgc/
+         Bpj6pjcihoiYsyYRtfQjH5uDuUq+xXJi6sx1cVALqvFa9ogLN581CLnGrZDLTrOLISKF
+         FO8O70luVkPNxc/Dw+/WUDgNBJM4vpFwM+tScqU/ZCpAFqYsbeorLOjNtfoKd0L1UL2e
+         GbDHaV4sxZ2u5PVdHkVijAdRnbNH2BGzhFrRQqc2dYlp/TZflInH5orYvO8rpeiSaWrY
+         7a1g==
+X-Gm-Message-State: ANhLgQ07kAdM3hJZXUpryEwn0GTCtbIwkzSswr+FUV+RE4U0cXNiKD9j
+        fhI3oVKkBpsqkZcO2Qg8BKo=
+X-Google-Smtp-Source: ADFU+vut8+lk8h6DghsGF9vXWwJyd0Q9FTHyY9s/hrhAU/14scaEcUy0d31RwT+XbbfJ4twZkjo9Jg==
+X-Received: by 2002:aed:36a5:: with SMTP id f34mr1369065qtb.57.1584382802448;
+        Mon, 16 Mar 2020 11:20:02 -0700 (PDT)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id z18sm365473qtz.77.2020.03.16.11.20.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Mar 2020 11:20:01 -0700 (PDT)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Mon, 16 Mar 2020 14:20:00 -0400
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Jakub Jelinek <jakub@redhat.com>,
+        Sergei Trofimovich <slyfox@gentoo.org>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>, x86@kernel.org
+Subject: Re: [PATCH] x86: fix early boot crash on gcc-10
+Message-ID: <20200316181957.GA348193@rani.riverdale.lan>
+References: <20200314164451.346497-1-slyfox@gentoo.org>
+ <20200316130414.GC12561@hirez.programming.kicks-ass.net>
+ <20200316132648.GM2156@tucnak>
+ <20200316134234.GE12561@hirez.programming.kicks-ass.net>
+ <20200316175450.GO26126@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <20200304203330.4967-11-maz@kernel.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200316175450.GO26126@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 3/4/20 9:33 PM, Marc Zyngier wrote:
-> Implement mask/unmask for virtual SGIs by calling into the
-> configuration helper.
+On Mon, Mar 16, 2020 at 06:54:50PM +0100, Borislav Petkov wrote:
+> On Mon, Mar 16, 2020 at 02:42:34PM +0100, Peter Zijlstra wrote:
+> > Right I know, I looked for it recently :/ But since this is new in 10
+> > and 10 isn't released yet, I figured someone can add the attribute
+> > before it does get released.
 > 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
-> ---
->  drivers/irqchip/irq-gic-v3-its.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+> Yes, that would be a good solution.
 > 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index e0db3f906f87..c93f178914ee 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -3939,6 +3939,22 @@ static void its_configure_sgi(struct irq_data *d, bool clear)
->  	its_send_single_vcommand(find_4_1_its(), its_build_vsgi_cmd, &desc);
->  }
->  
-> +static void its_sgi_mask_irq(struct irq_data *d)
-> +{
-> +	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
-> +
-> +	vpe->sgi_config[d->hwirq].enabled = false;
-> +	its_configure_sgi(d, false);
-> +}
-> +
-> +static void its_sgi_unmask_irq(struct irq_data *d)
-> +{
-> +	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
-> +
-> +	vpe->sgi_config[d->hwirq].enabled = true;
-> +	its_configure_sgi(d, false);
-> +}
-> +
->  static int its_sgi_set_affinity(struct irq_data *d,
->  				const struct cpumask *mask_val,
->  				bool force)
-> @@ -3948,6 +3964,8 @@ static int its_sgi_set_affinity(struct irq_data *d,
->  
->  static struct irq_chip its_sgi_irq_chip = {
->  	.name			= "GICv4.1-sgi",
-> +	.irq_mask		= its_sgi_mask_irq,
-> +	.irq_unmask		= its_sgi_unmask_irq,
->  	.irq_set_affinity	= its_sgi_set_affinity,
->  };
->  
+> I looked at what happens briefly after building gcc10 from git and IINM,
+> the function in question - start_secondary() - already gets the stack
+> canary asm glue added so it checks for a stack canary.
 > 
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+> However, the stack canary value itself gets set later in that same
+> function:
+> 
+>         /* to prevent fake stack check failure in clock setup */
+>         boot_init_stack_canary();
+> 
+> so the asm glue which checks for it would need to reload the newly
+> computed canary value (it is 0 before we compute it and thus the
+> mismatch).
+> 
+> So having a way to state "do not add stack canary checking to this
+> particular function" would be optimal. And since you already have the
+> "stack_protect" function attribute I figure adding a "no_stack_protect"
+> one should be easy...
+> 
+> > > Or of course you could add noinline attribute to whatever got inlined
+> > > and contains some array or addressable variable that whatever
+> > > -fstack-protector* mode kernel uses triggers it.  With -fstack-protector-all
+> > > it would never work even in the past I believe.
+> > 
+> > I don't think the kernel supports -fstack-protector-all, but I could be
+> > mistaken.
+> 
+> The other thing I was thinking was to carve out only that function into
+> a separate compilation unit and disable stack protector only for it.
+> 
+> All IMHO of course.
+> 
+> Thx.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
 
-Thanks
+With STACKPROTECTOR_STRONG, gcc9 (at least gentoo's version, not sure if
+they have some patches that affect it) already adds stack canary into
+start_secondary. Not sure why it doesn't panic already with gcc9?
 
-Eric
-
+00000000000008f0 <start_secondary>:
+     8f0:       53                      push   %rbx
+     8f1:       48 83 ec 10             sub    $0x10,%rsp
+     8f5:       65 48 8b 04 25 28 00    mov    %gs:0x28,%rax
+     8fc:       00 00
+     8fe:       48 89 44 24 08          mov    %rax,0x8(%rsp)
+     903:       31 c0                   xor    %eax,%eax
+...
+     a2e:       e8 00 00 00 00          callq  a33 <start_secondary+0x143>
+                        a2f: R_X86_64_PLT32     cpu_startup_entry-0x4
+     a33:       48 8b 44 24 08          mov    0x8(%rsp),%rax
+     a38:       65 48 33 04 25 28 00    xor    %gs:0x28,%rax
+     a3f:       00 00 
+     a41:       75 12                   jne    a55 <start_secondary+0x165>
+     a43:       48 83 c4 10             add    $0x10,%rsp
+     a47:       5b                      pop    %rbx
+     a48:       c3                      retq   
+     a49:       0f 01 1d 00 00 00 00    lidt   0x0(%rip)        # a50 <start_secondary+0x160>
+                        a4c: R_X86_64_PC32      debug_idt_descr-0x4
+     a50:       e9 cb fe ff ff          jmpq   920 <start_secondary+0x30>
+     a55:       e8 00 00 00 00          callq  a5a <start_secondary+0x16a>
+                        a56: R_X86_64_PLT32     __stack_chk_fail-0x4
