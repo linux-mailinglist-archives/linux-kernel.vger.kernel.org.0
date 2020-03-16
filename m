@@ -2,95 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AA1E186E0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 16:01:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44926186E1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 16:02:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731820AbgCPPBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 11:01:17 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45517 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731775AbgCPPBN (ORCPT
+        id S1731704AbgCPPCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 11:02:47 -0400
+Received: from mail-qv1-f43.google.com ([209.85.219.43]:42890 "EHLO
+        mail-qv1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731638AbgCPPCr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 11:01:13 -0400
-Received: by mail-qt1-f195.google.com with SMTP id z8so11024185qto.12
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 08:01:12 -0700 (PDT)
+        Mon, 16 Mar 2020 11:02:47 -0400
+Received: by mail-qv1-f43.google.com with SMTP id ca9so8990973qvb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 08:02:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=toDgRxGkv3Au9QraZzaLZxhTcUG6A8OuNPWq31a+tWs=;
-        b=PkRwHenXC1sh5P6YofjVaT7LKOVV8z7J1aDn/2jT4HDuyut32E5bKrUkalswF9IRuP
-         /lDL2EZQf6DQkgFTHHe7Dl/RD25L+sXC24B9tSug/pKtzfmNJKOnkEDBrXpfVkXM0xaC
-         WI03IfjTn8z5GM0o++tlHYVIrFjP7nGJdThsQ=
+        bh=9iR9aVxqFWALXbZGYM4qU/9Y4ykwQCi7s/EbS0dZA1M=;
+        b=HSkFJFxaXNH4QkJ1bWKHSm6sHyY+0HbGQ/8p8+IalzkVh1rCtx3tIX1zvNqOl3viFI
+         mEEtsyZTeytYkTQHEZE9cOwsNj239K2BWGgOboV1T39/MSCcg8RGD8QKDe730PSjbDsI
+         0ZxfOlHd8J8eWIOLVLsM1ttLdRA5VzGg6+ogI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=toDgRxGkv3Au9QraZzaLZxhTcUG6A8OuNPWq31a+tWs=;
-        b=ZtF4YrEZGoLe+0Se1hI+xYvGdBwTJu6KyTQH7GwPYr/HJZpziq6AlwS5GSr+UZerFN
-         2HKZocPexM/k9cckihmoUDwICJvwD0S1d/aZDoWNZsE9Up9/EnGVXpjuHJ7RZYY0g6hn
-         d1swh1HIoRa9lA5E0iGQcx9wayz5scCP2RvRMWG+C7cH+fuZtTrpaRxazpmREknAkGKD
-         9HlFKZ3sqdhQjCPe9pheQevQF9qyUN1bC31U/Nw9zJ7oS84UviZv8Co/E2uUtUt6txM2
-         ZgIgpaesxUaqKmmMCdUyTY8kAgVTWiBgoyMEnmV9CjfsQtAARvWLnqCJoHVxSImcOZZn
-         F39w==
-X-Gm-Message-State: ANhLgQ3TulVwwMP5ncwbcHsw/Q81dPw/ikHQgIz8To5bhcNXdnzcn8E8
-        iOatNFHxRwIP0oeLt2CdmNRymA==
-X-Google-Smtp-Source: ADFU+vvJFwFt9cBgLtR8fCszl78b95Z+5RabLU2VNLX1UaPszxBnI0lJnRSvBlXkhyGKePUrD4aU/g==
-X-Received: by 2002:ac8:2f23:: with SMTP id j32mr514513qta.120.1584370871758;
-        Mon, 16 Mar 2020 08:01:11 -0700 (PDT)
+        bh=9iR9aVxqFWALXbZGYM4qU/9Y4ykwQCi7s/EbS0dZA1M=;
+        b=VxfGjCrizs259O8pJe/KomTM1SyFsSwYwn6I/CTnwEZ5clZpgbami5a25D6NLqRlr1
+         HFfgEoEiXrvYDk70dE/p1hs85d+Z+4ogtUEUDFwIN7xIstoJV/m4vjCSsJEVAOuTtjwq
+         MlnlDBoy5sRi1Z4FN3G8Ofgzbmvg5ajEiuvXzeY5/nHBnLIwTBVGeUIbnEWSHTDKXVuW
+         9qvI6Us54kcYreT4eXPsDlyIRv4n3vNOMOfJimDZXDL/KSw1rH31H7RV/N6J3tds5oaq
+         8wBWtZETYqReZIdCak27A8FMCjNaodYBqe561izpy1gDLBNbABPJ4BG0twC0NEg/tI2C
+         NJ+Q==
+X-Gm-Message-State: ANhLgQ0fG0yj2t++HevFyuhbUFEh8z47l0kPRC1vp9td9EtUu96BYMth
+        JFRJ5dhOUntEgBMAmr2eh8b4fA==
+X-Google-Smtp-Source: ADFU+vvR77h4xXyAbp8e+YyP9x0ZBikm2Q0Hs1DtOojGpMfwXOKkTUJ2U/LnMIZXGrPC6CA5sLKvsw==
+X-Received: by 2002:a0c:80a5:: with SMTP id 34mr219438qvb.184.1584370964604;
+        Mon, 16 Mar 2020 08:02:44 -0700 (PDT)
 Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id d72sm15615874qkc.88.2020.03.16.08.01.10
+        by smtp.gmail.com with ESMTPSA id d28sm9941426qkl.99.2020.03.16.08.02.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2020 08:01:11 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 11:01:10 -0400
+        Mon, 16 Mar 2020 08:02:42 -0700 (PDT)
+Date:   Mon, 16 Mar 2020 11:02:42 -0400
 From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
-        rcu@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        Qian Cai <cai@lca.pw>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] locking/lockdep: Avoid recursion in
- lockdep_count_{for,back}ward_deps()
-Message-ID: <20200316150110.GB134626@google.com>
-References: <20200312151258.128036-1-boqun.feng@gmail.com>
- <20200313093325.GW12561@hirez.programming.kicks-ass.net>
- <20200315010422.GA134626@google.com>
- <20200316135507.GF12561@hirez.programming.kicks-ass.net>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>
+Subject: Re: Instrumentation and RCU
+Message-ID: <20200316150242.GC134626@google.com>
+References: <87mu8p797b.fsf@nanos.tec.linutronix.de>
+ <20200309141546.5b574908@gandalf.local.home>
+ <CAEXW_YQJ=vGxn5P=OtdkJT4NwE9+P0rAPEEQFdAUtyZ9Ck=qug@mail.gmail.com>
+ <20200309150709.204bd306@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200316135507.GF12561@hirez.programming.kicks-ass.net>
+In-Reply-To: <20200309150709.204bd306@gandalf.local.home>
 User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 02:55:07PM +0100, Peter Zijlstra wrote:
-> On Sat, Mar 14, 2020 at 09:04:22PM -0400, Joel Fernandes wrote:
-> > On Fri, Mar 13, 2020 at 10:33:25AM +0100, Peter Zijlstra wrote:
+On Mon, Mar 09, 2020 at 03:07:09PM -0400, Steven Rostedt wrote:
+> On Mon, 9 Mar 2020 11:42:28 -0700
+> Joel Fernandes <joel@joelfernandes.org> wrote:
 > 
-> > Thanks Peter and Boqun, the below patch makes sense to me. Just had some nits
-> > below, otherwise:
-> > > @@ -1719,11 +1725,11 @@ unsigned long lockdep_count_forward_deps
-> > >  	this.class = class;
-> > >  
-> > >  	raw_local_irq_save(flags);
-> > > -	current->lockdep_recursion = 1;
-> > > +	current->lockdep_recursion++;
-> > >  	arch_spin_lock(&lockdep_lock);
-> > >  	ret = __lockdep_count_forward_deps(&this);
-> > >  	arch_spin_unlock(&lockdep_lock);
-> > > -	current->lockdep_recursion = 0;
-> > > +	current->lockdep_recursion--;
-> > 
-> > This doesn't look like it should recurse. Why not just use the
-> > lockdep_recursion_finish() helper here?
+> > Just started a vacation here and will be back on January 12th. Will
+> > take a detailed look at Thomas's email at that time.
 > 
-> I chose to only add that to the sites that check recursion on entry.
+> January 12th! Wow! Enjoy your sabbatical and see you next year! ;-)
 
-Makes sense, thank you Peter.
+Haha, I am seriously getting picked on for that. But anyway, I am back now
+because I missed you guys :-D
+
+(Just kidding, obviously I meant March 12th).
+
+thanks,
 
  - Joel
 
