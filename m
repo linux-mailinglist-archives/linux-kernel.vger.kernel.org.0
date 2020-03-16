@@ -2,78 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3A221872BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 19:52:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADDDB1872C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 19:52:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732379AbgCPSwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 14:52:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39846 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732298AbgCPSwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 14:52:01 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC37920658;
-        Mon, 16 Mar 2020 18:52:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584384720;
-        bh=2ucCiq+vrp0FXX3LIhi0+Y+3BKE6y3mqtF0yHFzPsK8=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=NNzYNXxxeBlVaq4hnG3GZNrsfbmO6VSq/FLBewk7zKcjkBrhK0jeQMYvzxF4Gw2ol
-         pYZsihRQ0VZ3ezW8AV+kCoCfHylYeniiggXZEY+9tg2pyXz2LvEhffzBY2tFQfr+Oi
-         yOLEfEA6gKenZ0YdP5Cl5iWfxtiiBqFS794WQriM=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 557863522DE1; Mon, 16 Mar 2020 11:52:00 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 11:52:00 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        rcu <rcu@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        dipankar <dipankar@in.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        fweisbec <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>
-Subject: Re: [PATCH RFC tip/core/rcu 0/16] Prototype RCU usable from idle,
- exception, offline
-Message-ID: <20200316185200.GZ3199@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200312181618.GA21271@paulmck-ThinkPad-P72>
- <20200313144145.GA31604@lenoir>
- <20200313154243.GU3199@paulmck-ThinkPad-P72>
- <2062731308.28584.1584294305768.JavaMail.zimbra@efficios.com>
- <20200315175921.GT3199@paulmck-ThinkPad-P72>
- <20200316143606.605ddd68@gandalf.local.home>
+        id S1732398AbgCPSwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 14:52:35 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:52668 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732298AbgCPSwf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 14:52:35 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jDuqT-0003hb-PO; Mon, 16 Mar 2020 19:52:13 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id EB5B21013B2; Mon, 16 Mar 2020 19:52:12 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Subject: Re: [PATCH 3/9] pci/switchtec: Don't abuse completion wait queue for poll
+In-Reply-To: <9213d617-207e-da4e-094a-45ae587fdc98@deltatee.com>
+References: <20200313174701.148376-1-bigeasy@linutronix.de> <20200313174701.148376-4-bigeasy@linutronix.de> <4d3a997d-ced4-3dbe-d766-0b1e9fc35b29@deltatee.com> <87sgibeqcs.fsf@nanos.tec.linutronix.de> <9213d617-207e-da4e-094a-45ae587fdc98@deltatee.com>
+Date:   Mon, 16 Mar 2020 19:52:12 +0100
+Message-ID: <871rpsdter.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200316143606.605ddd68@gandalf.local.home>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 02:36:06PM -0400, Steven Rostedt wrote:
-> On Sun, 15 Mar 2020 10:59:21 -0700
-> "Paul E. McKenney" <paulmck@kernel.org> wrote:
-> 
-> > Nothing survives real life
-> 
->   #coronavirus!
+Logan Gunthorpe <logang@deltatee.com> writes:
+> On 2020-03-13 6:23 p.m., Thomas Gleixner wrote:
+> I'm in awe at the lack of professionalism in your emails. If you
+> bothered to edit out the ad hominems, you might have noticed that nobody
+> has yet described how the poll interface fails here (with
+> EPOLLEXCLUSIVE) or how replacing one wait queue for another fixes the
+> purported problem.
 
-Heh!
+I merily stated an opinion, but if you consider this an ad hominem
+attack, then let me ensure you this wasn't my intention and accept my
+apology.
 
-But something will eventually do coronavirus in.  Hopefully one of those
-things is my immune system.  :-/
+Thanks,
 
-							Thanx, Paul
+        tglx
