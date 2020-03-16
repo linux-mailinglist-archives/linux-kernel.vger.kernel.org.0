@@ -2,122 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88C8118618F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 03:33:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D08581862DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Mar 2020 03:42:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbgCPCdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Mar 2020 22:33:07 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:32808 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729329AbgCPCdG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Mar 2020 22:33:06 -0400
-Received: by mail-pf1-f194.google.com with SMTP id n7so9085507pfn.0;
-        Sun, 15 Mar 2020 19:33:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=xb6eGJlkZ3RraRHjQRFPyKktg2A5qqYgiyd1407X5EA=;
-        b=Pohao3v5ffnYH82Bpcrje8LKI2euQ7YrSlftyPJ4Jc8Ec8NGvKWcpvmRoeKHikOb3r
-         837gsq8lUXizljokzz8H5PbW+/TMjuq5HHwLgIX9GMuTOAdR/bSTcNds2bavWHp3xtpn
-         Z6Alq41OV466QZ0ADWh0RCa9Nmw+00oHWfTiktPK/HxXYCe87p8hGVoInDwkiqoRul9q
-         ztYtexo7kVkl10voUg3TbX6aUdZXncEGICG/ETcp2Uo4UAOP1MCM9xTymmbVdwvj07ns
-         x/d7VCj7LY8DKxVUDClu2udaKd7lVnY+dTSNUKrxFswTxdPFU61qjwu5kf1FiwKL1gKH
-         vOaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=xb6eGJlkZ3RraRHjQRFPyKktg2A5qqYgiyd1407X5EA=;
-        b=oKOUw59R62ocb09p92yrywO2lQEA9NtHt76Fjxyh3SK81Z3i4//IMc32Ra70PKXpaA
-         rXPaH8TxxM+u0QBMSaIytlnAsVpXJ4K80UKjob8xxmpy5lYo023lHF4fSqSultwq3Sff
-         +PyvE7/T7zGnupbeKzW9/ej7fZE0b3NVeJe3PqJd1NHmFcjm+z2U/h6samvkqDDVmrbJ
-         KrzWO6lJdHXL0FGuI2upwrLhPCalbXeA8dHCVCPlZluHlP2tXs8KIviUAykmJwHaH+Lc
-         xfErivBKWgfnXegmcDdsd+yCB13eo1lpDerr7YE4uw4vgzILHhanEwDGh0CxgAv/UpKP
-         jR/g==
-X-Gm-Message-State: ANhLgQ0ceZw4o2zwemAWUJloQfPTks7g3tSIHJEgLNUfBWtNLTbtYDLa
-        Cvxk+rEE9VYm2dzxVBuA0MQ=
-X-Google-Smtp-Source: ADFU+vsxw9h2MVwPsE6eZQTxRHk3CCZ6ymGRtR278/lnLeTe6Ya8bd+1lmtqV6ceAlKNVHLfVDeY6w==
-X-Received: by 2002:aa7:9307:: with SMTP id 7mr22826246pfj.273.1584325983934;
-        Sun, 15 Mar 2020 19:33:03 -0700 (PDT)
-Received: from localhost (216.24.188.11.16clouds.com. [216.24.188.11])
-        by smtp.gmail.com with ESMTPSA id f19sm54950752pgf.33.2020.03.15.19.33.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 15 Mar 2020 19:33:03 -0700 (PDT)
-From:   Dejin Zheng <zhengdejin5@gmail.com>
-To:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, davem@davemloft.net,
-        mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, andrew@lunn.ch
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dejin Zheng <zhengdejin5@gmail.com>
-Subject: [PATCH net-next v3 1/2] net: stmmac: use readl_poll_timeout() function in init_systime()
-Date:   Mon, 16 Mar 2020 10:32:53 +0800
-Message-Id: <20200316023254.13201-2-zhengdejin5@gmail.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200316023254.13201-1-zhengdejin5@gmail.com>
-References: <20200316023254.13201-1-zhengdejin5@gmail.com>
+        id S1729621AbgCPCdp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Mar 2020 22:33:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36422 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729577AbgCPCdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Mar 2020 22:33:39 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15D6520724;
+        Mon, 16 Mar 2020 02:33:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584326017;
+        bh=Kp7cGM0B3OtQxFLtBbwdZXKte8DH6Gpfo+yfsvS2ha0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GXXMeuimJVc29PZaT2g+m3pQRyNjcMJfAWYu54nudVP77cGd5TDUieTDDlb3pQbDG
+         N+rdkGMLxEUkK5KPIFlcrEF84viCyQlhjGXvIP2bBQqB7HFtcQdfXF1kz6U0r+56rH
+         lk4k7F3PAc0UJpDrRv8THEJpQePsofQFUUM/o0+E=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Evan Green <evgreen@chromium.org>, Rajat Jain <rajatja@google.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 15/41] spi: pxa2xx: Add CS control clock quirk
+Date:   Sun, 15 Mar 2020 22:32:53 -0400
+Message-Id: <20200316023319.749-15-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200316023319.749-1-sashal@kernel.org>
+References: <20200316023319.749-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The init_systime() function use an open coded of readl_poll_timeout().
-Replace the open coded handling with the proper function.
+From: Evan Green <evgreen@chromium.org>
 
-Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
+[ Upstream commit 683f65ded66a9a7ff01ed7280804d2132ebfdf7e ]
+
+In some circumstances on Intel LPSS controllers, toggling the LPSS
+CS control register doesn't actually cause the CS line to toggle.
+This seems to be failure of dynamic clock gating that occurs after
+going through a suspend/resume transition, where the controller
+is sent through a reset transition. This ruins SPI transactions
+that either rely on delay_usecs, or toggle the CS line without
+sending data.
+
+Whenever CS is toggled, momentarily set the clock gating register
+to "Force On" to poke the controller into acting on CS.
+
+Signed-off-by: Rajat Jain <rajatja@google.com>
+Signed-off-by: Evan Green <evgreen@chromium.org>
+Link: https://lore.kernel.org/r/20200211223700.110252-1-rajatja@google.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-v2 -> v3:
-	- return whatever error code by readl_poll_timeout() returned.
-v1 -> v2:
-	- no changed.
+ drivers/spi/spi-pxa2xx.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
- .../net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
-index 020159622559..fcf080243a0f 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
-@@ -10,6 +10,7 @@
- *******************************************************************************/
+diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
+index 9071333ebdd86..cabd1a85d71e3 100644
+--- a/drivers/spi/spi-pxa2xx.c
++++ b/drivers/spi/spi-pxa2xx.c
+@@ -70,6 +70,10 @@ MODULE_ALIAS("platform:pxa2xx-spi");
+ #define LPSS_CAPS_CS_EN_SHIFT			9
+ #define LPSS_CAPS_CS_EN_MASK			(0xf << LPSS_CAPS_CS_EN_SHIFT)
  
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/delay.h>
- #include "common.h"
- #include "stmmac_ptp.h"
-@@ -53,7 +54,6 @@ static void config_sub_second_increment(void __iomem *ioaddr,
++#define LPSS_PRIV_CLOCK_GATE 0x38
++#define LPSS_PRIV_CLOCK_GATE_CLK_CTL_MASK 0x3
++#define LPSS_PRIV_CLOCK_GATE_CLK_CTL_FORCE_ON 0x3
++
+ struct lpss_config {
+ 	/* LPSS offset from drv_data->ioaddr */
+ 	unsigned offset;
+@@ -86,6 +90,8 @@ struct lpss_config {
+ 	unsigned cs_sel_shift;
+ 	unsigned cs_sel_mask;
+ 	unsigned cs_num;
++	/* Quirks */
++	unsigned cs_clk_stays_gated : 1;
+ };
  
- static int init_systime(void __iomem *ioaddr, u32 sec, u32 nsec)
- {
--	int limit;
- 	u32 value;
+ /* Keep these sorted with enum pxa_ssp_type */
+@@ -156,6 +162,7 @@ static const struct lpss_config lpss_platforms[] = {
+ 		.tx_threshold_hi = 56,
+ 		.cs_sel_shift = 8,
+ 		.cs_sel_mask = 3 << 8,
++		.cs_clk_stays_gated = true,
+ 	},
+ };
  
- 	writel(sec, ioaddr + PTP_STSUR);
-@@ -64,16 +64,9 @@ static int init_systime(void __iomem *ioaddr, u32 sec, u32 nsec)
- 	writel(value, ioaddr + PTP_TCR);
- 
- 	/* wait for present system time initialize to complete */
--	limit = 10;
--	while (limit--) {
--		if (!(readl(ioaddr + PTP_TCR) & PTP_TCR_TSINIT))
--			break;
--		mdelay(10);
--	}
--	if (limit < 0)
--		return -EBUSY;
--
--	return 0;
-+	return readl_poll_timeout(ioaddr + PTP_TCR, value,
-+				 !(value & PTP_TCR_TSINIT),
-+				 10000, 100000);
+@@ -383,6 +390,22 @@ static void lpss_ssp_cs_control(struct spi_device *spi, bool enable)
+ 	else
+ 		value |= LPSS_CS_CONTROL_CS_HIGH;
+ 	__lpss_ssp_write_priv(drv_data, config->reg_cs_ctrl, value);
++	if (config->cs_clk_stays_gated) {
++		u32 clkgate;
++
++		/*
++		 * Changing CS alone when dynamic clock gating is on won't
++		 * actually flip CS at that time. This ruins SPI transfers
++		 * that specify delays, or have no data. Toggle the clock mode
++		 * to force on briefly to poke the CS pin to move.
++		 */
++		clkgate = __lpss_ssp_read_priv(drv_data, LPSS_PRIV_CLOCK_GATE);
++		value = (clkgate & ~LPSS_PRIV_CLOCK_GATE_CLK_CTL_MASK) |
++			LPSS_PRIV_CLOCK_GATE_CLK_CTL_FORCE_ON;
++
++		__lpss_ssp_write_priv(drv_data, LPSS_PRIV_CLOCK_GATE, value);
++		__lpss_ssp_write_priv(drv_data, LPSS_PRIV_CLOCK_GATE, clkgate);
++	}
  }
  
- static int config_addend(void __iomem *ioaddr, u32 addend)
+ static void cs_assert(struct spi_device *spi)
 -- 
-2.25.0
+2.20.1
 
