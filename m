@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C8E4187FB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:04:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AE8E18821C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:22:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbgCQLED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:04:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44082 "EHLO mail.kernel.org"
+        id S1727624AbgCQLWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:22:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727564AbgCQLEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:04:00 -0400
+        id S1726667AbgCQK4f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:56:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 905DA2071C;
-        Tue, 17 Mar 2020 11:03:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C646020724;
+        Tue, 17 Mar 2020 10:56:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443040;
-        bh=tU1sCskEZyRGbiY69yQ86F1d2qmqMz4UIRtAJdbj7Bs=;
+        s=default; t=1584442595;
+        bh=X2e/lvBOOe65WYirmqSixR1W7xvyvNrvziM4TprWNck=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P75Hh8v8ShYPLsQhTfCo7vfh6bX+UN2rwoYAhrp6f/8cL6N8mwtkqaODYrq6gso11
-         KFTn9x8qCk6BT2GgPVaKCFNbdMSeLSJZxf099LD8HNlv1X/N/SEzLVSXpFCIo5Zi69
-         PUFakC9LUeGuppWhq5and0p1Y8rTmdKijT5d9/Ko=
+        b=lPCtBpsJNzSlqF0vplyTFSqcOSZWQL5zOomucxdOK37ALyo3yt3UJo9+iiZfg6f3H
+         lHKZZVYPupREfzslsfl4smOERKh/AgLPyzQj4YZwnLd1gnPykjIn+KYZNGfKMyQ+xe
+         wxQCvqU8wX2XWhompdVD4KFv0ufhZ+NYemWqBP1o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 038/123] fib: add missing attribute validation for tun_id
-Date:   Tue, 17 Mar 2020 11:54:25 +0100
-Message-Id: <20200317103311.793996925@linuxfoundation.org>
+Subject: [PATCH 4.19 17/89] net: systemport: fix index check to avoid an array out of bounds access
+Date:   Tue, 17 Mar 2020 11:54:26 +0100
+Message-Id: <20200317103301.952446186@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
-References: <20200317103307.343627747@linuxfoundation.org>
+In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
+References: <20200317103259.744774526@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,30 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <kuba@kernel.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 4c16d64ea04056f1b1b324ab6916019f6a064114 ]
+[ Upstream commit c0368595c1639947839c0db8294ee96aca0b3b86 ]
 
-Add missing netlink policy entry for FRA_TUN_ID.
+Currently the bounds check on index is off by one and can lead to
+an out of bounds access on array priv->filters_loc when index is
+RXCHK_BRCM_TAG_MAX.
 
-Fixes: e7030878fc84 ("fib: Add fib rule match on tunnel id")
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Reviewed-by: David Ahern <dsahern@gmail.com>
+Fixes: bb9051a2b230 ("net: systemport: Add support for WAKE_FILTER")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/fib_rules.h |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/broadcom/bcmsysport.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/net/fib_rules.h
-+++ b/include/net/fib_rules.h
-@@ -108,6 +108,7 @@ struct fib_rule_notifier_info {
- 	[FRA_OIFNAME]	= { .type = NLA_STRING, .len = IFNAMSIZ - 1 }, \
- 	[FRA_PRIORITY]	= { .type = NLA_U32 }, \
- 	[FRA_FWMARK]	= { .type = NLA_U32 }, \
-+	[FRA_TUN_ID]	= { .type = NLA_U64 }, \
- 	[FRA_FWMASK]	= { .type = NLA_U32 }, \
- 	[FRA_TABLE]     = { .type = NLA_U32 }, \
- 	[FRA_SUPPRESS_PREFIXLEN] = { .type = NLA_U32 }, \
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -2168,7 +2168,7 @@ static int bcm_sysport_rule_set(struct b
+ 		return -ENOSPC;
+ 
+ 	index = find_first_zero_bit(priv->filters, RXCHK_BRCM_TAG_MAX);
+-	if (index > RXCHK_BRCM_TAG_MAX)
++	if (index >= RXCHK_BRCM_TAG_MAX)
+ 		return -ENOSPC;
+ 
+ 	/* Location is the classification ID, and index is the position
 
 
