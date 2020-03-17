@@ -2,660 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F01F81889E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 17:10:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 000FA1889EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 17:12:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbgCQQKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 12:10:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726016AbgCQQKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 12:10:33 -0400
-Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8460020735;
-        Tue, 17 Mar 2020 16:10:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584461432;
-        bh=8jPO70DOb82oskot9NH6Jvpt5vl3zZB6ctwcA/2nY38=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JZxUsTKsqZ3t5yQXoWA9SDFVkRU6mvY3TAQJNwrTAQrtal0gXazdjMCS368zx2qcq
-         /O+OJr+XSQ5XeiYPmInnEJVMcrDsABCw2YC2U6Xh2K1cGU2b/ikiVDmIxrhumPH8l1
-         DGF1aHw9Ya64iG/BT9QhA57w2F3xvrFLA3/gsbJQ=
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     linux-clk@vger.kernel.org
-Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com
-Subject: [PATCHv3 5/5] clk: socfpga: agilex: add clock driver for the Agilex platform
-Date:   Tue, 17 Mar 2020 11:10:22 -0500
-Message-Id: <20200317161022.11181-6-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317161022.11181-1-dinguyen@kernel.org>
-References: <20200317161022.11181-1-dinguyen@kernel.org>
+        id S1726759AbgCQQMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 12:12:06 -0400
+Received: from mail-dm6nam10on2098.outbound.protection.outlook.com ([40.107.93.98]:13344
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726016AbgCQQMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 12:12:05 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UoeDrT6vN1CHhIz6X3psptKQXBiFCRwNWVwqh1FZ7xxPdgTpu9vzX7bzkK7ROxORyCZqthrfXORgEjdC/8Sg3f7qz/hlalHJJQswaeoobfkBUQwXupma6TGyTk9LpuYewkMf+vGkxrWAHAdRl4oW07PG7S81w0qiZL5vUOCu/p9fUkTMZqYqEkdpFpT4CJ2qAYsx4ropDj9yOwZ288RAH62yysupT77gUT00sfk+oc5FyHsXiHM+PV6x7e6XjZXEzmrMSgYVO4tLOdH+It64jmiwleNkr+//Vq5/IspCYknP2rJKAFF0Ca4JAisQI58vUSx3/ui4DHVBW5v8YCILbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b8lX1p6PA2LfRaH7VmL749b+c7h0OnQWeNtLNE+E4hE=;
+ b=JLLwI+u0D8lUfa9QVpKn22QN/lHQH2oA2zjDBiYQiHEdaqCXN7vVnfN3w9vquBO02CAxajffOl7TNpakCKyDfgHjp/LtPQbto/RUi5MfvEu4voQtwNU0TZ1fvnYG/kkWJQwXzUV4LFrvsgwIN/DSZ1F6vf3qektIQaX3mImsc++n0xMw+Q/h8h6Je7WE5SIQOWJTrGcjbfc3r+cfF85BH53w9xRxGiziZU+DHvIjnTFRC5PI30sbMigL076IOTtO0AZiSsky0fm1upd6pvyLpBSokeEN4f6ULF/sWBu12/Q4Xs8rBr70Ib13zlUit/FDz/YzxJ+OO3lAJr6kT0OyXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hammerspace.com; dmarc=pass action=none
+ header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b8lX1p6PA2LfRaH7VmL749b+c7h0OnQWeNtLNE+E4hE=;
+ b=fAUIs8OlFjz4mMCmVCUTYXhb4ZianVQvGMzDHAsoSjoLqcdW/+IwTmX7ueKt/hYE5PmjUnUvuw+YaibcnPAsGNupSrW7D5J+TcV0wxv2CVmYE5/EpCKDZ2DqBm45D89Dx9ODnS1w7KS6XhF6AjTzITd5qOrwSiZXof0ann2WS7Q=
+Received: from CH2PR13MB3398.namprd13.prod.outlook.com (2603:10b6:610:2a::33)
+ by CH2PR13MB3525.namprd13.prod.outlook.com (2603:10b6:610:21::29) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.12; Tue, 17 Mar
+ 2020 16:12:01 +0000
+Received: from CH2PR13MB3398.namprd13.prod.outlook.com
+ ([fe80::9570:c1b8:9eb3:1c36]) by CH2PR13MB3398.namprd13.prod.outlook.com
+ ([fe80::9570:c1b8:9eb3:1c36%7]) with mapi id 15.20.2835.013; Tue, 17 Mar 2020
+ 16:12:01 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "smayhew@redhat.com" <smayhew@redhat.com>
+CC:     "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "paul@paul-moore.com" <paul@paul-moore.com>
+Subject: Re: linux-next: manual merge of the selinux tree with the nfs tree
+Thread-Topic: linux-next: manual merge of the selinux tree with the nfs tree
+Thread-Index: AQHV/GCdCTUQjWouDEyc7fMKz7N8wqhM5d6AgAAO84A=
+Date:   Tue, 17 Mar 2020 16:12:01 +0000
+Message-ID: <c28fe5dc9bd58388ce413f30878fd35ef0f1eb1b.camel@hammerspace.com>
+References: <20200317133117.4569cc6a@canb.auug.org.au>
+         <bb623275e936c026cc425904e6c1cee0cbe85f28.camel@hammerspace.com>
+         <20200317151829.GA4442@aion.usersys.redhat.com>
+In-Reply-To: <20200317151829.GA4442@aion.usersys.redhat.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=trondmy@hammerspace.com; 
+x-originating-ip: [68.40.189.247]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3f76fec3-f7d1-461e-17be-08d7ca8ded65
+x-ms-traffictypediagnostic: CH2PR13MB3525:
+x-microsoft-antispam-prvs: <CH2PR13MB35256E73953194A183D5D994B8F60@CH2PR13MB3525.namprd13.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0345CFD558
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(39830400003)(376002)(346002)(396003)(199004)(6512007)(5660300002)(8936002)(81166006)(81156014)(36756003)(478600001)(8676002)(6506007)(2906002)(6486002)(91956017)(76116006)(316002)(66946007)(66476007)(6916009)(2616005)(186003)(86362001)(66446008)(54906003)(26005)(4326008)(71200400001)(64756008)(66556008);DIR:OUT;SFP:1102;SCL:1;SRVR:CH2PR13MB3525;H:CH2PR13MB3398.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: hammerspace.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: EbWnLpiZuYzDx82WnQ58MEpC2b2XzufR0hdTjzJQ0DrCuw2cxRfgVIsof/MHmsNh7Gc7RxsrjodyO4ol3UaSwO+jr/A3RkFP67SmJAKayKhQ4K5/OG2h3TnioCg9kpjlCaSFwCzQeUdLr9zINTG9Xs90G9OJ+ESAd0tgvmYagF0Yt7YeBXM9gGXqNObQ7Dkya0mbTffaF7mFfrkPHJfnuFHEUloUGi7uS/f11PUGO0Y1KKb9JAxlkJA3iZKD8ZGmwe9meIgbU2Dch5sfUDAkh9MsxHHgwniC9DtRaat1REy7W6DVc+JfC7LCtdA97+xkUGyVam4QUjcvvErOn3+xnNmLzupvDa0fAa+3MGoZkbu82GCiDATKavoj5Q9jqWloHeXerryNVlNc1De8hQvLjkF6R2Lf4OeB5oKqW44DPJ1HeQSidG/gGUnVaKy5QcLw
+x-ms-exchange-antispam-messagedata: nP0BdOv+aNgUK4La6ndL+Q37wHHWDIdmuSUkC4qYihDgacsd0QY7GUyVqgAvNJJoK1T99LjFTUVPAtkFZfteDLfiPIuQE3b1eebTrMekHVxZlphppoUVjFfSDfCIq8hLuV/i+TrW/W0Qqq8oP7Aj2g==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E7A56A8B941BB24CA621EAB0F6C83153@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f76fec3-f7d1-461e-17be-08d7ca8ded65
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2020 16:12:01.6680
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: MdRD8xCass2ePuI1LVPNAhDp7FHgFTu+a2SG0lMZEtrRff3/uB+4x52P6/RcMMJUzzQTN0qQitQlIZQgg9v1Ng==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR13MB3525
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the most part the Agilex clock structure is very similar to
-Stratix10, so we re-use most of the Stratix10 clock driver.
-
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v3: Address Stephen Boyd's comments
-v2: update to use clk_parent_data
----
- drivers/clk/Makefile                |   3 +-
- drivers/clk/socfpga/Makefile        |   2 +
- drivers/clk/socfpga/clk-agilex.c    | 454 ++++++++++++++++++++++++++++
- drivers/clk/socfpga/clk-pll-s10.c   |  68 +++++
- drivers/clk/socfpga/stratix10-clk.h |   2 +
- 5 files changed, 528 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/socfpga/clk-agilex.c
-
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index f4169cc2fd31..a178e4b6001f 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -104,10 +104,11 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
- obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
- obj-$(CONFIG_ARCH_SIRF)			+= sirf/
- obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
-+obj-$(CONFIG_ARCH_AGILEX)		+= socfpga/
-+obj-$(CONFIG_ARCH_STRATIX10)		+= socfpga/
- obj-$(CONFIG_PLAT_SPEAR)		+= spear/
- obj-$(CONFIG_ARCH_SPRD)			+= sprd/
- obj-$(CONFIG_ARCH_STI)			+= st/
--obj-$(CONFIG_ARCH_STRATIX10)		+= socfpga/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
- obj-$(CONFIG_SUNXI_CCU)			+= sunxi-ng/
- obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
-diff --git a/drivers/clk/socfpga/Makefile b/drivers/clk/socfpga/Makefile
-index ce5aa7802eb8..bf736f8d201a 100644
---- a/drivers/clk/socfpga/Makefile
-+++ b/drivers/clk/socfpga/Makefile
-@@ -3,3 +3,5 @@ obj-$(CONFIG_ARCH_SOCFPGA) += clk.o clk-gate.o clk-pll.o clk-periph.o
- obj-$(CONFIG_ARCH_SOCFPGA) += clk-pll-a10.o clk-periph-a10.o clk-gate-a10.o
- obj-$(CONFIG_ARCH_STRATIX10) += clk-s10.o
- obj-$(CONFIG_ARCH_STRATIX10) += clk-pll-s10.o clk-periph-s10.o clk-gate-s10.o
-+obj-$(CONFIG_ARCH_AGILEX) += clk-agilex.o
-+obj-$(CONFIG_ARCH_AGILEX) += clk-pll-s10.o clk-periph-s10.o clk-gate-s10.o
-diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-agilex.c
-new file mode 100644
-index 000000000000..699527f7e764
---- /dev/null
-+++ b/drivers/clk/socfpga/clk-agilex.c
-@@ -0,0 +1,454 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019, Intel Corporation
-+ */
-+#include <linux/slab.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of_device.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+
-+#include <dt-bindings/clock/agilex-clock.h>
-+
-+#include "stratix10-clk.h"
-+
-+static const struct clk_parent_data pll_mux[] = {
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data cntr_mux[] = {
-+	{ .fw_name = "main_pll",
-+	  .name = "main_pll", },
-+	{ .fw_name = "periph_pll",
-+	  .name = "periph_pll", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data boot_mux[] = {
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+};
-+
-+static const struct clk_parent_data mpu_free_mux[] = {
-+	{ .fw_name = "main_pll_c0",
-+	  .name = "main_pll_c0", },
-+	{ .fw_name = "peri_pll_c0",
-+	  .name = "peri_pll_c0", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data noc_free_mux[] = {
-+	{ .fw_name = "main_pll_c1",
-+	  .name = "main_pll_c1", },
-+	{ .fw_name = "peri_pll_c1",
-+	  .name = "peri_pll_c1", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data emaca_free_mux[] = {
-+	{ .fw_name = "main_pll_c2",
-+	  .name = "main_pll_c2", },
-+	{ .fw_name = "peri_pll_c2",
-+	  .name = "peri_pll_c2", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data emacb_free_mux[] = {
-+	{ .fw_name = "main_pll_c3",
-+	  .name = "main_pll_c3", },
-+	{ .fw_name = "peri_pll_c3",
-+	  .name = "peri_pll_c3", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data emac_ptp_free_mux[] = {
-+	{ .fw_name = "main_pll_c3",
-+	  .name = "main_pll_c3", },
-+	{ .fw_name = "peri_pll_c3",
-+	  .name = "peri_pll_c3", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data gpio_db_free_mux[] = {
-+	{ .fw_name = "main_pll_c3",
-+	  .name = "main_pll_c3", },
-+	{ .fw_name = "peri_pll_c3",
-+	  .name = "peri_pll_c3", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data psi_ref_free_mux[] = {
-+	{ .fw_name = "main_pll_c3",
-+	  .name = "main_pll_c3", },
-+	{ .fw_name = "peri_pll_c3",
-+	  .name = "peri_pll_c3", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data sdmmc_free_mux[] = {
-+	{ .fw_name = "main_pll_c3",
-+	  .name = "main_pll_c3", },
-+	{ .fw_name = "peri_pll_c3",
-+	  .name = "peri_pll_c3", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data s2f_usr0_free_mux[] = {
-+	{ .fw_name = "main_pll_c2",
-+	  .name = "main_pll_c2", },
-+	{ .fw_name = "peri_pll_c2",
-+	  .name = "peri_pll_c2", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data s2f_usr1_free_mux[] = {
-+	{ .fw_name = "main_pll_c2",
-+	  .name = "main_pll_c2", },
-+	{ .fw_name = "peri_pll_c2",
-+	  .name = "peri_pll_c2", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data mpu_mux[] = {
-+	{ .fw_name = "mpu_free_clk",
-+	  .name = "mpu_free_clk", },
-+	{ .fw_name = "boot_clk",
-+	  .name = "boot_clk", },
-+};
-+
-+static const struct clk_parent_data s2f_usr0_mux[] = {
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+	{ .fw_name = "boot_clk",
-+	  .name = "boot_clk", },
-+};
-+
-+static const struct clk_parent_data emac_mux[] = {
-+	{ .fw_name = "emaca_free_clk",
-+	  .name = "emaca_free_clk", },
-+	{ .fw_name = "emacb_free_clk",
-+	  .name = "emacb_free_clk", },
-+};
-+
-+static const struct clk_parent_data noc_mux[] = {
-+	{ .fw_name = "noc_free_clk",
-+	  .name = "noc_free_clk", },
-+	{ .fw_name = "boot_clk",
-+	  .name = "boot_clk", },
-+};
-+
-+/* clocks in AO (always on) controller */
-+static const struct stratix10_pll_clock agilex_pll_clks[] = {
-+	{ AGILEX_BOOT_CLK, "boot_clk", boot_mux, ARRAY_SIZE(boot_mux), 0,
-+	  0x0},
-+	{ AGILEX_MAIN_PLL_CLK, "main_pll", pll_mux, ARRAY_SIZE(pll_mux),
-+	  0, 0x48},
-+	{ AGILEX_PERIPH_PLL_CLK, "periph_pll", pll_mux, ARRAY_SIZE(pll_mux),
-+	  0, 0x9c},
-+};
-+
-+static const struct stratix10_perip_c_clock agilex_main_perip_c_clks[] = {
-+	{ AGILEX_MAIN_PLL_C0_CLK, "main_pll_c0", "main_pll", NULL, 1, 0, 0x58},
-+	{ AGILEX_MAIN_PLL_C1_CLK, "main_pll_c1", "main_pll", NULL, 1, 0, 0x5C},
-+	{ AGILEX_MAIN_PLL_C2_CLK, "main_pll_c2", "main_pll", NULL, 1, 0, 0x64},
-+	{ AGILEX_MAIN_PLL_C3_CLK, "main_pll_c3", "main_pll", NULL, 1, 0, 0x68},
-+	{ AGILEX_PERIPH_PLL_C0_CLK, "peri_pll_c0", "periph_pll", NULL, 1, 0, 0xAC},
-+	{ AGILEX_PERIPH_PLL_C1_CLK, "peri_pll_c1", "periph_pll", NULL, 1, 0, 0xB0},
-+	{ AGILEX_PERIPH_PLL_C2_CLK, "peri_pll_c2", "periph_pll", NULL, 1, 0, 0xB8},
-+	{ AGILEX_PERIPH_PLL_C3_CLK, "peri_pll_c3", "periph_pll", NULL, 1, 0, 0xBC},
-+};
-+
-+static const struct stratix10_perip_cnt_clock agilex_main_perip_cnt_clks[] = {
-+	{ AGILEX_MPU_FREE_CLK, "mpu_free_clk", NULL, mpu_free_mux, ARRAY_SIZE(mpu_free_mux),
-+	   0, 0x3C, 0, 0, 0},
-+	{ AGILEX_NOC_FREE_CLK, "noc_free_clk", NULL, noc_free_mux, ARRAY_SIZE(noc_free_mux),
-+	  0, 0x40, 0, 0, 1},
-+	{ AGILEX_L4_SYS_FREE_CLK, "l4_sys_free_clk", "noc_free_clk", NULL, 1, 0,
-+	  0, 4, 0, 0},
-+	{ AGILEX_NOC_CLK, "noc_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux),
-+	  0, 0, 0, 0x30, 1},
-+	{ AGILEX_EMAC_A_FREE_CLK, "emaca_free_clk", NULL, emaca_free_mux, ARRAY_SIZE(emaca_free_mux),
-+	  0, 0xD4, 0, 0x88, 0},
-+	{ AGILEX_EMAC_B_FREE_CLK, "emacb_free_clk", NULL, emacb_free_mux, ARRAY_SIZE(emacb_free_mux),
-+	  0, 0xD8, 0, 0x88, 1},
-+	{ AGILEX_EMAC_PTP_FREE_CLK, "emac_ptp_free_clk", NULL, emac_ptp_free_mux,
-+	  ARRAY_SIZE(emac_ptp_free_mux), 0, 0xDC, 0, 0x88, 2},
-+	{ AGILEX_GPIO_DB_FREE_CLK, "gpio_db_free_clk", NULL, gpio_db_free_mux,
-+	  ARRAY_SIZE(gpio_db_free_mux), 0, 0xE0, 0, 0x88, 3},
-+	{ AGILEX_SDMMC_FREE_CLK, "sdmmc_free_clk", NULL, sdmmc_free_mux,
-+	  ARRAY_SIZE(sdmmc_free_mux), 0, 0xE4, 0, 0x88, 4},
-+	{ AGILEX_S2F_USER0_FREE_CLK, "s2f_user0_free_clk", NULL, s2f_usr0_free_mux,
-+	  ARRAY_SIZE(s2f_usr0_free_mux), 0, 0xE8, 0, 0, 0},
-+	{ AGILEX_S2F_USER1_FREE_CLK, "s2f_user1_free_clk", NULL, s2f_usr1_free_mux,
-+	  ARRAY_SIZE(s2f_usr1_free_mux), 0, 0xEC, 0, 0x88, 5},
-+	{ AGILEX_PSI_REF_FREE_CLK, "psi_ref_free_clk", NULL, psi_ref_free_mux,
-+	  ARRAY_SIZE(psi_ref_free_mux), 0, 0xF0, 0, 0x88, 6},
-+};
-+
-+static const struct stratix10_gate_clock agilex_gate_clks[] = {
-+	{ AGILEX_MPU_CLK, "mpu_clk", NULL, mpu_mux, ARRAY_SIZE(mpu_mux), 0, 0x24,
-+	  0, 0, 0, 0, 0x30, 0, 0},
-+	{ AGILEX_MPU_PERIPH_CLK, "mpu_periph_clk", "mpu_clk", NULL, 1, 0, 0x24,
-+	  0, 0, 0, 0, 0, 0, 4},
-+	{ AGILEX_MPU_L2RAM_CLK, "mpu_l2ram_clk", "mpu_clk", NULL, 1, 0, 0x24,
-+	  0, 0, 0, 0, 0, 0, 2},
-+	{ AGILEX_L4_MAIN_CLK, "l4_main_clk", "noc_clk", NULL, 1, 0, 0x24,
-+	  1, 0x44, 0, 2, 0, 0, 0},
-+	{ AGILEX_L4_MP_CLK, "l4_mp_clk", "noc_clk", NULL, 1, 0, 0x24,
-+	  2, 0x44, 8, 2, 0, 0, 0},
-+	/*
-+	 * The l4_sp_clk feeds a 100 MHz clock to various peripherals, one of them
-+	 * being the SP timers, thus cannot get gated.
-+	 */
-+	{ AGILEX_L4_SP_CLK, "l4_sp_clk", "noc_clk", NULL, 1, CLK_IS_CRITICAL, 0x24,
-+	  3, 0x44, 16, 2, 0, 0, 0},
-+	{ AGILEX_CS_AT_CLK, "cs_at_clk", "noc_clk", NULL, 1, 0, 0x24,
-+	  4, 0x44, 24, 2, 0, 0, 0},
-+	{ AGILEX_CS_TRACE_CLK, "cs_trace_clk", "noc_clk", NULL, 1, 0, 0x24,
-+	  4, 0x44, 26, 2, 0, 0, 0},
-+	{ AGILEX_CS_PDBG_CLK, "cs_pdbg_clk", "cs_at_clk", NULL, 1, 0, 0x24,
-+	  4, 0x44, 28, 1, 0, 0, 0},
-+	{ AGILEX_CS_TIMER_CLK, "cs_timer_clk", "noc_clk", NULL, 1, 0, 0x24,
-+	  5, 0, 0, 0, 0, 0, 0},
-+	{ AGILEX_S2F_USER0_CLK, "s2f_user0_clk", NULL, s2f_usr0_mux, ARRAY_SIZE(s2f_usr0_mux), 0, 0x24,
-+	  6, 0, 0, 0, 0, 0, 0},
-+	{ AGILEX_EMAC0_CLK, "emac0_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux), 0, 0x7C,
-+	  0, 0, 0, 0, 0x94, 26, 0},
-+	{ AGILEX_EMAC1_CLK, "emac1_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux), 0, 0x7C,
-+	  1, 0, 0, 0, 0x94, 27, 0},
-+	{ AGILEX_EMAC2_CLK, "emac2_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux), 0, 0x7C,
-+	  2, 0, 0, 0, 0x94, 28, 0},
-+	{ AGILEX_EMAC_PTP_CLK, "emac_ptp_clk", "emac_ptp_free_clk", NULL, 1, 0, 0x7C,
-+	  3, 0, 0, 0, 0, 0, 0},
-+	{ AGILEX_GPIO_DB_CLK, "gpio_db_clk", "gpio_db_free_clk", NULL, 1, 0, 0x7C,
-+	  4, 0x98, 0, 16, 0, 0, 0},
-+	{ AGILEX_SDMMC_CLK, "sdmmc_clk", "sdmmc_free_clk", NULL, 1, 0, 0x7C,
-+	  5, 0, 0, 0, 0, 0, 4},
-+	{ AGILEX_S2F_USER1_CLK, "s2f_user1_clk", "s2f_user1_free_clk", NULL, 1, 0, 0x7C,
-+	  6, 0, 0, 0, 0, 0, 0},
-+	{ AGILEX_PSI_REF_CLK, "psi_ref_clk", "psi_ref_free_clk", NULL, 1, 0, 0x7C,
-+	  7, 0, 0, 0, 0, 0, 0},
-+	{ AGILEX_USB_CLK, "usb_clk", "l4_mp_clk", NULL, 1, 0, 0x7C,
-+	  8, 0, 0, 0, 0, 0, 0},
-+	{ AGILEX_SPI_M_CLK, "spi_m_clk", "l4_mp_clk", NULL, 1, 0, 0x7C,
-+	  9, 0, 0, 0, 0, 0, 0},
-+	{ AGILEX_NAND_CLK, "nand_clk", "l4_main_clk", NULL, 1, 0, 0x7C,
-+	  10, 0, 0, 0, 0, 0, 0},
-+};
-+
-+static int agilex_clk_register_c_perip(const struct stratix10_perip_c_clock *clks,
-+				       int nums, struct stratix10_clock_data *data)
-+{
-+	struct clk *clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		clk = s10_register_periph(&clks[i], base);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: failed to register clock %s\n",
-+			       __func__, clks[i].name);
-+			continue;
-+		}
-+		data->clk_data.clks[clks[i].id] = clk;
-+	}
-+	return 0;
-+}
-+
-+static int agilex_clk_register_cnt_perip(const struct stratix10_perip_cnt_clock *clks,
-+					 int nums, struct stratix10_clock_data *data)
-+{
-+	struct clk *clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		clk = s10_register_cnt_periph(&clks[i], base);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: failed to register clock %s\n",
-+			       __func__, clks[i].name);
-+			continue;
-+		}
-+		data->clk_data.clks[clks[i].id] = clk;
-+	}
-+
-+	return 0;
-+}
-+
-+static int agilex_clk_register_gate(const struct stratix10_gate_clock *clks,					    int nums, struct stratix10_clock_data *data)
-+{
-+	struct clk *clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		clk = s10_register_gate(&clks[i], base);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: failed to register clock %s\n",
-+			       __func__, clks[i].name);
-+			continue;
-+		}
-+		data->clk_data.clks[clks[i].id] = clk;
-+	}
-+
-+	return 0;
-+}
-+
-+static int agilex_clk_register_pll(const struct stratix10_pll_clock *clks,
-+				 int nums, struct stratix10_clock_data *data)
-+{
-+	struct clk *clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		clk = agilex_register_pll(&clks[i], base);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: failed to register clock %s\n",
-+			       __func__, clks[i].name);
-+			continue;
-+		}
-+		data->clk_data.clks[clks[i].id] = clk;
-+	}
-+
-+	return 0;
-+}
-+
-+static struct stratix10_clock_data *__socfpga_agilex_clk_init(struct platform_device *pdev,
-+						    int nr_clks)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
-+	struct stratix10_clock_data *clk_data;
-+	struct clk **clk_table;
-+	struct resource *res;
-+	void __iomem *base;
-+	int ret;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return ERR_CAST(base);
-+
-+	clk_data = devm_kzalloc(dev, sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return ERR_PTR(-ENOMEM);
-+
-+	clk_data->base = base;
-+	clk_table = devm_kcalloc(dev, nr_clks, sizeof(*clk_table), GFP_KERNEL);
-+	if (!clk_table)
-+		return ERR_PTR(-ENOMEM);
-+
-+	clk_data->clk_data.clks = clk_table;
-+	clk_data->clk_data.clk_num = nr_clks;
-+	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return clk_data;
-+}
-+
-+static int agilex_clkmgr_probe(struct platform_device *pdev)
-+{
-+	struct stratix10_clock_data *clk_data;
-+
-+	clk_data = __socfpga_agilex_clk_init(pdev, AGILEX_NUM_CLKS);
-+	if (IS_ERR(clk_data))
-+		return PTR_ERR(clk_data);
-+
-+	agilex_clk_register_pll(agilex_pll_clks, ARRAY_SIZE(agilex_pll_clks), clk_data);
-+
-+	agilex_clk_register_c_perip(agilex_main_perip_c_clks,
-+				 ARRAY_SIZE(agilex_main_perip_c_clks), clk_data);
-+
-+	agilex_clk_register_cnt_perip(agilex_main_perip_cnt_clks,
-+				   ARRAY_SIZE(agilex_main_perip_cnt_clks),
-+				   clk_data);
-+
-+	agilex_clk_register_gate(agilex_gate_clks, ARRAY_SIZE(agilex_gate_clks),
-+			      clk_data);
-+	return 0;
-+}
-+
-+static const struct of_device_id agilex_clkmgr_match_table[] = {
-+	{ .compatible = "intel,agilex-clkmgr",
-+	  .data = agilex_clkmgr_probe },
-+	{ }
-+};
-+
-+static struct platform_driver agilex_clkmgr_driver = {
-+	.probe		= agilex_clkmgr_probe,
-+	.driver		= {
-+		.name	= "agilex-clkmgr",
-+		.suppress_bind_attrs = true,
-+		.of_match_table = agilex_clkmgr_match_table,
-+	},
-+};
-+
-+static int __init agilex_clk_init(void)
-+{
-+	return platform_driver_register(&agilex_clkmgr_driver);
-+}
-+core_initcall(agilex_clk_init);
-diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-index 5c3e1ee44f6b..4e268953b7da 100644
---- a/drivers/clk/socfpga/clk-pll-s10.c
-+++ b/drivers/clk/socfpga/clk-pll-s10.c
-@@ -18,8 +18,12 @@
- #define SOCFPGA_PLL_RESET_MASK		0x2
- #define SOCFPGA_PLL_REFDIV_MASK		0x00003F00
- #define SOCFPGA_PLL_REFDIV_SHIFT	8
-+#define SOCFPGA_PLL_AREFDIV_MASK	0x00000F00
-+#define SOCFPGA_PLL_DREFDIV_MASK	0x00003000
-+#define SOCFPGA_PLL_DREFDIV_SHIFT	12
- #define SOCFPGA_PLL_MDIV_MASK		0xFF000000
- #define SOCFPGA_PLL_MDIV_SHIFT		24
-+#define SOCFPGA_AGILEX_PLL_MDIV_MASK	0x000003FF
- #define SWCTRLBTCLKSEL_MASK		0x200
- #define SWCTRLBTCLKSEL_SHIFT		9
- 
-@@ -27,6 +31,27 @@
- 
- #define to_socfpga_clk(p) container_of(p, struct socfpga_pll, hw.hw)
- 
-+static unsigned long agilex_clk_pll_recalc_rate(struct clk_hw *hwclk,
-+						unsigned long parent_rate)
-+{
-+	struct socfpga_pll *socfpgaclk = to_socfpga_clk(hwclk);
-+	unsigned long arefdiv, reg, mdiv;
-+	unsigned long long vco_freq;
-+
-+	/* read VCO1 reg for numerator and denominator */
-+	reg = readl(socfpgaclk->hw.reg);
-+	arefdiv = (reg & SOCFPGA_PLL_AREFDIV_MASK) >> SOCFPGA_PLL_REFDIV_SHIFT;
-+
-+	vco_freq = (unsigned long long)parent_rate / arefdiv;
-+
-+	/* Read mdiv and fdiv from the fdbck register */
-+	reg = readl(socfpgaclk->hw.reg + 0x24);
-+	mdiv = reg & SOCFPGA_AGILEX_PLL_MDIV_MASK;
-+
-+	vco_freq = (unsigned long long)vco_freq * mdiv;
-+	return (unsigned long)vco_freq;
-+}
-+
- static unsigned long clk_pll_recalc_rate(struct clk_hw *hwclk,
- 					 unsigned long parent_rate)
- {
-@@ -98,6 +123,12 @@ static int clk_pll_prepare(struct clk_hw *hwclk)
- 	return 0;
- }
- 
-+static const struct clk_ops agilex_clk_pll_ops = {
-+	.recalc_rate = agilex_clk_pll_recalc_rate,
-+	.get_parent = clk_pll_get_parent,
-+	.prepare = clk_pll_prepare,
-+};
-+
- static const struct clk_ops clk_pll_ops = {
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.get_parent = clk_pll_get_parent,
-@@ -146,3 +177,40 @@ struct clk *s10_register_pll(const struct stratix10_pll_clock *clks,
- 	}
- 	return clk;
- }
-+
-+struct clk *agilex_register_pll(const struct stratix10_pll_clock *clks,
-+				void __iomem *reg)
-+{
-+	struct clk *clk;
-+	struct socfpga_pll *pll_clk;
-+	struct clk_init_data init;
-+	const char *name = clks->name;
-+
-+	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
-+	if (WARN_ON(!pll_clk))
-+		return NULL;
-+
-+	pll_clk->hw.reg = reg + clks->offset;
-+
-+	if (streq(name, SOCFPGA_BOOT_CLK))
-+		init.ops = &clk_boot_ops;
-+	else
-+		init.ops = &agilex_clk_pll_ops;
-+
-+	init.name = name;
-+	init.flags = clks->flags;
-+
-+	init.num_parents = clks->num_parents;
-+	init.parent_names = NULL;
-+	init.parent_data = clks->parent_data;
-+	pll_clk->hw.hw.init = &init;
-+
-+	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
-+
-+	clk = clk_register(NULL, &pll_clk->hw.hw);
-+	if (WARN_ON(IS_ERR(clk))) {
-+		kfree(pll_clk);
-+		return NULL;
-+	}
-+	return clk;
-+}
-diff --git a/drivers/clk/socfpga/stratix10-clk.h b/drivers/clk/socfpga/stratix10-clk.h
-index ffbd1fb2c8ef..f9d5d724c694 100644
---- a/drivers/clk/socfpga/stratix10-clk.h
-+++ b/drivers/clk/socfpga/stratix10-clk.h
-@@ -62,6 +62,8 @@ struct stratix10_gate_clock {
- 
- struct clk *s10_register_pll(const struct stratix10_pll_clock *,
- 			     void __iomem *);
-+struct clk *agilex_register_pll(const struct stratix10_pll_clock *,
-+				void __iomem *);
- struct clk *s10_register_periph(const struct stratix10_perip_c_clock *,
- 				void __iomem *);
- struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *,
--- 
-2.25.1
-
+T24gVHVlLCAyMDIwLTAzLTE3IGF0IDExOjE4IC0wNDAwLCBTY290dCBNYXloZXcgd3JvdGU6DQo+
+IE9uIFR1ZSwgMTcgTWFyIDIwMjAsIFRyb25kIE15a2xlYnVzdCB3cm90ZToNCj4gDQo+ID4gT24g
+VHVlLCAyMDIwLTAzLTE3IGF0IDEzOjMxICsxMTAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3RlOg0K
+PiA+ID4gSGkgYWxsLA0KPiA+ID4gDQo+ID4gPiBUb2RheSdzIGxpbnV4LW5leHQgbWVyZ2Ugb2Yg
+dGhlIHNlbGludXggdHJlZSBnb3QgYSBjb25mbGljdCBpbjoNCj4gPiA+IA0KPiA+ID4gICBmcy9u
+ZnMvZ2V0cm9vdC5jDQo+ID4gPiANCj4gPiA+IGJldHdlZW4gY29tbWl0Og0KPiA+ID4gDQo+ID4g
+PiAgIGU4MjEzZmZjMmFlYyAoIk5GUzogRW5zdXJlIHNlY3VyaXR5IGxhYmVsIGlzIHNldCBmb3Ig
+cm9vdA0KPiA+ID4gaW5vZGUiKQ0KPiA+ID4gDQo+ID4gPiBmcm9tIHRoZSBuZnMgdHJlZSBhbmQg
+Y29tbWl0Og0KPiA+ID4gDQo+ID4gPiAgIDI4ZDRkMGUxNmYwOSAoIldoZW4gdXNpbmcgTkZTdjQu
+MiwgdGhlIHNlY3VyaXR5IGxhYmVsIGZvciB0aGUNCj4gPiA+IHJvb3QNCj4gPiA+IGlub2RlIHNo
+b3VsZCBiZSBzZXQgdmlhIGEgY2FsbCB0byBuZnNfc2V0c2VjdXJpdHkoKSBkdXJpbmcgdGhlDQo+
+ID4gPiBtb3VudA0KPiA+ID4gcHJvY2Vzcywgb3RoZXJ3aXNlIHRoZSBpbm9kZSB3aWxsIGFwcGVh
+ciBhcyB1bmxhYmVsZWQgZm9yIHVwIHRvDQo+ID4gPiBhY2Rpcm1pbiBzZWNvbmRzLiAgQ3VycmVu
+dGx5IHRoZSBsYWJlbCBmb3IgdGhlIHJvb3QgaW5vZGUgaXMNCj4gPiA+IGFsbG9jYXRlZCwgcmV0
+cmlldmVkLCBhbmQgZnJlZWQgZW50aXJlbHkgd2l0aW4NCj4gPiA+IG5mczRfcHJvY19nZXRfcm9v
+dCgpLiIpDQo+ID4gPiANCj4gPiA+IGZyb20gdGhlIHNlbGludXggdHJlZS4NCj4gPiA+IA0KPiA+
+ID4gVGhlc2UgYXJlIGJhc2ljYWxseSB0aGUgc2FtZSBwYXRjaCB3aXRoIHNsaWdodCBmb3JtYXR0
+aW5nDQo+ID4gPiBkaWZmZXJlbmNlcy4NCj4gPiA+IA0KPiA+ID4gSSBmaXhlZCBpdCB1cCAoSSB1
+c2VkIHRoZSBsYXR0ZXIpIGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcw0KPiA+ID4gbmVjZXNzYXJ5
+Lg0KPiA+ID4gVGhpcyBpcyBub3cgZml4ZWQgYXMgZmFyIGFzIGxpbnV4LW5leHQgaXMgY29uY2Vy
+bmVkLCBidXQgYW55IG5vbg0KPiA+ID4gdHJpdmlhbA0KPiA+ID4gY29uZmxpY3RzIHNob3VsZCBi
+ZSBtZW50aW9uZWQgdG8geW91ciB1cHN0cmVhbSBtYWludGFpbmVyIHdoZW4NCj4gPiA+IHlvdXIN
+Cj4gPiA+IHRyZWUNCj4gPiA+IGlzIHN1Ym1pdHRlZCBmb3IgbWVyZ2luZy4gIFlvdSBtYXkgYWxz
+byB3YW50IHRvIGNvbnNpZGVyDQo+ID4gPiBjb29wZXJhdGluZw0KPiA+ID4gd2l0aCB0aGUgbWFp
+bnRhaW5lciBvZiB0aGUgY29uZmxpY3RpbmcgdHJlZSB0byBtaW5pbWlzZSBhbnkNCj4gPiA+IHBh
+cnRpY3VsYXJseQ0KPiA+ID4gY29tcGxleCBjb25mbGljdHMuDQo+ID4gPiANCj4gPiBPSy4uLiBX
+aHkgaXMgdGhpcyBiZWluZyBwdXNoZWQgdGhyb3VnaCB0aGUgc2VsaW51eCB0cmVlPyBXYXMgdGhh
+dA0KPiA+IHlvdXINCj4gPiBpbnRlbnRpb24gU2NvdHQ/DQo+IA0KPiBOb3QgcmVhbGx5Li4uIEkg
+YWRkcmVzc2VkIHRoZSBwYXRjaCB0byB5b3UgYW5kIEFubmEsIGFmdGVyIGFsbC4gIE9uDQo+IHRo
+ZQ0KPiBvdGhlciBoYW5kLCBJIGRpZG4ndCBvYmplY3Qgd2hlbiBQYXVsIHBpY2tlZCB1cCB0aGUg
+cGF0Y2ggaW4gaGlzDQo+IHRyZWUuDQo+IEknbSBndWVzc2luZyBJIHNob3VsZCBoYXZlIHNwb2tl
+biB1cC4gIFNvcnJ5IGFib3V0IHRoYXQuDQo+IA0KDQpPSy4gV2VsbCB0aGVyZSBkb2Vzbid0IHNl
+ZW0gdG8gYmUgYW55dGhpbmcgZWxzZSB0b3VjaGluZyB0aGUgTkZTIG1vdW50DQpjb2RlIGluIHRo
+aXMgZGV2IGN5Y2xlLCBzbyBJIGRvbid0IGV4cGVjdCBhbnkgaW50ZWdyYXRpb24gaXNzdWVzIGF0
+DQp0aGlzIHBvaW50LiBJJ20gdGhlcmVmb3JlIE9LIHdpdGggaXQgZ29pbmcgdGhyb3VnaCB0aGUg
+c2VsaW51eCB0cmVlLg0KDQpJJ2xsIHRoZXJlZm9yZSBkcm9wIHRoZSBwYXRjaCBmcm9tIHRoZSBO
+RlMgdHJlZSwgYXNzdW1pbmcgeW91IHN0aWxsDQpoYXZlIGl0IGluIHRoZSBzZWxpbnV4IHRyZWUs
+IFBhdWwuDQoNCi0tIA0KVHJvbmQgTXlrbGVidXN0DQpMaW51eCBORlMgY2xpZW50IG1haW50YWlu
+ZXIsIEhhbW1lcnNwYWNlDQp0cm9uZC5teWtsZWJ1c3RAaGFtbWVyc3BhY2UuY29tDQoNCg0K
