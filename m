@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5291187F7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:02:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BEBE18805A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:09:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727222AbgCQLBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:01:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41286 "EHLO mail.kernel.org"
+        id S1728784AbgCQLJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:09:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727535AbgCQLBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:01:46 -0400
+        id S1728485AbgCQLJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:09:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3B9420719;
-        Tue, 17 Mar 2020 11:01:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 935D420719;
+        Tue, 17 Mar 2020 11:09:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442905;
-        bh=gmTjiyzq7oG89aivUwhhWxL805v+c68/WPu0CmxB7ps=;
+        s=default; t=1584443366;
+        bh=toUJospFKHCDBgdJcP24mpKKTFxNDIZmUVwYJxmwMRc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ysLg1wdpTs5dKOPVrcQe+OYLC5MlfkwxrB6fvQOCq3uNM4rAvINdYswY+1i9JW7ME
-         NkNVK+I4OvYSocW46CYzd3Zq9za8wJ5Q1NCKHqIAjPrAHpROK7PfYFYExHXPfysEd1
-         J37J+29eDgrcydgMf+4KdAlbOMQ5pJRAcgZg6sbM=
+        b=yifPcVDtYPJwvtORcdFtX6A8RTJpFFEMHLhx0LHcg3gXhdS23raLDtKLAVztTNVHn
+         pCFdJvAk3MOAWNpTglS5bmqvPE61mfQbcfFb7P4X0HdyKNd37SWslPcP+eyDkqmWGp
+         wTcJgk0gHZ2qk4ESTYlHZrJuJVaMP54K6B2q4lrE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.4 003/123] ALSA: hda/realtek - Add Headset Mic supported for HP cPC
-Date:   Tue, 17 Mar 2020 11:53:50 +0100
-Message-Id: <20200317103307.771412586@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Bogdanov <dbogdanov@marvell.com>,
+        Mark Starovoytov <mstarovoitov@marvell.com>,
+        Igor Russkikh <irusskikh@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.5 021/151] net: macsec: update SCI upon MAC address change.
+Date:   Tue, 17 Mar 2020 11:53:51 +0100
+Message-Id: <20200317103328.314813629@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
-References: <20200317103307.343627747@linuxfoundation.org>
+In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
+References: <20200317103326.593639086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,94 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kailang Yang <kailang@realtek.com>
+From: Dmitry Bogdanov <dbogdanov@marvell.com>
 
-commit 5af29028fd6db9438b5584ab7179710a0a22569d upstream.
+[ Upstream commit 6fc498bc82929ee23aa2f35a828c6178dfd3f823 ]
 
-HP ALC671 need to support Headset Mic.
+SCI should be updated, because it contains MAC in its first 6 octets.
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Link: https://lore.kernel.org/r/06a9d2b176e14706976d6584cbe2d92a@realtek.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: c09440f7dcb3 ("macsec: introduce IEEE 802.1AE driver")
+Signed-off-by: Dmitry Bogdanov <dbogdanov@marvell.com>
+Signed-off-by: Mark Starovoytov <mstarovoitov@marvell.com>
+Signed-off-by: Igor Russkikh <irusskikh@marvell.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/pci/hda/patch_realtek.c |   44 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ drivers/net/macsec.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -8542,6 +8542,29 @@ static void alc662_fixup_aspire_ethos_hp
- 	}
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -532,6 +532,11 @@ static struct macsec_eth_header *macsec_
+ 	return (struct macsec_eth_header *)skb_mac_header(skb);
  }
  
-+static void alc671_fixup_hp_headset_mic2(struct hda_codec *codec,
-+					     const struct hda_fixup *fix, int action)
++static sci_t dev_to_sci(struct net_device *dev, __be16 port)
 +{
-+	struct alc_spec *spec = codec->spec;
-+
-+	static const struct hda_pintbl pincfgs[] = {
-+		{ 0x19, 0x02a11040 }, /* use as headset mic, with its own jack detect */
-+		{ 0x1b, 0x0181304f },
-+		{ }
-+	};
-+
-+	switch (action) {
-+	case HDA_FIXUP_ACT_PRE_PROBE:
-+		spec->gen.mixer_nid = 0;
-+		spec->parse_flags |= HDA_PINCFG_HEADSET_MIC;
-+		snd_hda_apply_pincfgs(codec, pincfgs);
-+		break;
-+	case HDA_FIXUP_ACT_INIT:
-+		alc_write_coef_idx(codec, 0x19, 0xa054);
-+		break;
-+	}
++	return make_sci(dev->dev_addr, port);
 +}
 +
- static const struct coef_fw alc668_coefs[] = {
- 	WRITE_COEF(0x01, 0xbebe), WRITE_COEF(0x02, 0xaaaa), WRITE_COEF(0x03,    0x0),
- 	WRITE_COEF(0x04, 0x0180), WRITE_COEF(0x06,    0x0), WRITE_COEF(0x07, 0x0f80),
-@@ -8615,6 +8638,7 @@ enum {
- 	ALC662_FIXUP_LENOVO_MULTI_CODECS,
- 	ALC669_FIXUP_ACER_ASPIRE_ETHOS,
- 	ALC669_FIXUP_ACER_ASPIRE_ETHOS_HEADSET,
-+	ALC671_FIXUP_HP_HEADSET_MIC2,
- };
+ static u32 tx_sa_update_pn(struct macsec_tx_sa *tx_sa, struct macsec_secy *secy)
+ {
+ 	u32 pn;
+@@ -2903,6 +2908,7 @@ static int macsec_set_mac_address(struct
  
- static const struct hda_fixup alc662_fixups[] = {
-@@ -8956,6 +8980,10 @@ static const struct hda_fixup alc662_fix
- 		.chained = true,
- 		.chain_id = ALC669_FIXUP_ACER_ASPIRE_ETHOS_HEADSET
- 	},
-+	[ALC671_FIXUP_HP_HEADSET_MIC2] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = alc671_fixup_hp_headset_mic2,
-+	},
- };
+ out:
+ 	ether_addr_copy(dev->dev_addr, addr->sa_data);
++	macsec->secy.sci = dev_to_sci(dev, MACSEC_PORT_ES);
+ 	return 0;
+ }
  
- static const struct snd_pci_quirk alc662_fixup_tbl[] = {
-@@ -9138,6 +9166,22 @@ static const struct snd_hda_pin_quirk al
- 		{0x12, 0x90a60130},
- 		{0x14, 0x90170110},
- 		{0x15, 0x0321101f}),
-+	SND_HDA_PIN_QUIRK(0x10ec0671, 0x103c, "HP cPC", ALC671_FIXUP_HP_HEADSET_MIC2,
-+		{0x14, 0x01014010},
-+		{0x17, 0x90170150},
-+		{0x1b, 0x01813030},
-+		{0x21, 0x02211020}),
-+	SND_HDA_PIN_QUIRK(0x10ec0671, 0x103c, "HP cPC", ALC671_FIXUP_HP_HEADSET_MIC2,
-+		{0x14, 0x01014010},
-+		{0x18, 0x01a19040},
-+		{0x1b, 0x01813030},
-+		{0x21, 0x02211020}),
-+	SND_HDA_PIN_QUIRK(0x10ec0671, 0x103c, "HP cPC", ALC671_FIXUP_HP_HEADSET_MIC2,
-+		{0x14, 0x01014020},
-+		{0x17, 0x90170110},
-+		{0x18, 0x01a19050},
-+		{0x1b, 0x01813040},
-+		{0x21, 0x02211030}),
- 	{}
- };
+@@ -3176,11 +3182,6 @@ static bool sci_exists(struct net_device
+ 	return false;
+ }
  
+-static sci_t dev_to_sci(struct net_device *dev, __be16 port)
+-{
+-	return make_sci(dev->dev_addr, port);
+-}
+-
+ static int macsec_add_dev(struct net_device *dev, sci_t sci, u8 icv_len)
+ {
+ 	struct macsec_dev *macsec = macsec_priv(dev);
 
 
