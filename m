@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65A26187FEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:05:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5A911880FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:15:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbgCQLFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:05:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46432 "EHLO mail.kernel.org"
+        id S1729476AbgCQLMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:12:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726947AbgCQLFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:05:36 -0400
+        id S1729460AbgCQLMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:12:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2418620714;
-        Tue, 17 Mar 2020 11:05:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A64F206EC;
+        Tue, 17 Mar 2020 11:12:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443135;
-        bh=H0rW0vMvQM2DtkjsZ50Ys26s3AYXpZbX2s0A4tQT7rA=;
+        s=default; t=1584443565;
+        bh=6Ht9hRcQ3x8A/4aWNjgCjoKSWvdw+u4LLN81XdYlhHE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U3pW7xWlxFvYlklw2qyoFrKQZ+j3botmhyS+syiBk4mykmqaTSkbwCbbg08zVIRPG
-         PF08OCl4Xmqy+KUcFkR2/bAwlVVucamNfvFRLSFJX8UxicKtkTCfQ+7A5XKZtQ+6uz
-         8QYb966geRouiUsJ+pAFE5d6qhPdVqufq8ThFfe4=
+        b=f299bMb9V4brqm3+uLvbwMIwENok/KBD8/wcm6zOo9IJBLKP1lmHJDrk88IeC9hst
+         6HL/xZsrk0+LxdwbainhxsEzNHAcy/aU5Dvg+9S21PniQYuP5BG0fiTe+wGzcPDKU9
+         qUczR5MBywForF8sltRD2eowijZ7ObIcyKxj6HtU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Hamish Martin <hamish.martin@alliedtelesis.co.nz>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 5.4 107/123] i2c: gpio: suppress error on probe defer
+        syzbot+a98f2016f40b9cd3818a@syzkaller.appspotmail.com,
+        syzbot+ac36b6a33c28a491e929@syzkaller.appspotmail.com,
+        Sven Eckelmann <sven@narfation.org>,
+        Hillf Danton <hdanton@sina.com>,
+        Simon Wunderlich <sw@simonwunderlich.de>
+Subject: [PATCH 5.5 124/151] batman-adv: Dont schedule OGM for disabled interface
 Date:   Tue, 17 Mar 2020 11:55:34 +0100
-Message-Id: <20200317103318.464725027@linuxfoundation.org>
+Message-Id: <20200317103335.262073922@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
-References: <20200317103307.343627747@linuxfoundation.org>
+In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
+References: <20200317103326.593639086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +47,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
+From: Sven Eckelmann <sven@narfation.org>
 
-commit 3747cd2efe7ecb9604972285ab3f60c96cb753a8 upstream.
+commit 8e8ce08198de193e3d21d42e96945216e3d9ac7f upstream.
 
-If a GPIO we are trying to use is not available and we are deferring
-the probe, don't output an error message.
-This seems to have been the intent of commit 05c74778858d
-("i2c: gpio: Add support for named gpios in DT") but the error was
-still output due to not checking the updated 'retdesc'.
+A transmission scheduling for an interface which is currently dropped by
+batadv_iv_ogm_iface_disable could still be in progress. The B.A.T.M.A.N. V
+is simply cancelling the workqueue item in an synchronous way but this is
+not possible with B.A.T.M.A.N. IV because the OGM submissions are
+intertwined.
 
-Fixes: 05c74778858d ("i2c: gpio: Add support for named gpios in DT")
-Signed-off-by: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Instead it has to stop submitting the OGM when it detect that the buffer
+pointer is set to NULL.
+
+Reported-by: syzbot+a98f2016f40b9cd3818a@syzkaller.appspotmail.com
+Reported-by: syzbot+ac36b6a33c28a491e929@syzkaller.appspotmail.com
+Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Cc: Hillf Danton <hdanton@sina.com>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-gpio.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/batman-adv/bat_iv_ogm.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/i2c/busses/i2c-gpio.c
-+++ b/drivers/i2c/busses/i2c-gpio.c
-@@ -348,7 +348,7 @@ static struct gpio_desc *i2c_gpio_get_de
- 	if (ret == -ENOENT)
- 		retdesc = ERR_PTR(-EPROBE_DEFER);
+--- a/net/batman-adv/bat_iv_ogm.c
++++ b/net/batman-adv/bat_iv_ogm.c
+@@ -789,6 +789,10 @@ static void batadv_iv_ogm_schedule_buff(
  
--	if (ret != -EPROBE_DEFER)
-+	if (PTR_ERR(retdesc) != -EPROBE_DEFER)
- 		dev_err(dev, "error trying to get descriptor: %d\n", ret);
+ 	lockdep_assert_held(&hard_iface->bat_iv.ogm_buff_mutex);
  
- 	return retdesc;
++	/* interface already disabled by batadv_iv_ogm_iface_disable */
++	if (!*ogm_buff)
++		return;
++
+ 	/* the interface gets activated here to avoid race conditions between
+ 	 * the moment of activating the interface in
+ 	 * hardif_activate_interface() where the originator mac is set and
 
 
