@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A8FA188A58
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 17:34:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62466188A5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 17:35:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbgCQQeZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 12:34:25 -0400
+        id S1726795AbgCQQe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 12:34:26 -0400
 Received: from mga06.intel.com ([134.134.136.31]:47605 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726752AbgCQQeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 12:34:21 -0400
-IronPort-SDR: yOzlTiYgBPuQUxRUsaNtI6YXZYE6ofXFFD4BXXUHNBrZZociOvXDjZhhNB5oz+p1JWvptIuEoa
- hsTl/JOWq7IQ==
+        id S1726762AbgCQQeY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 12:34:24 -0400
+IronPort-SDR: mlQyItaJDxvXpG/gUlGmpY6yaTjn6yJvkewwbd/zBoTTvwOoqRsSmDUTtpOcwwGo2xiprlhV6U
+ 4MQbHZ0qm8+g==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 09:34:21 -0700
-IronPort-SDR: 6BIqOOvma6RNOLMRBAepKDE3VHAk0ldRPdykOIJX1x6dIeKrvLlh1AehpMC98LGpRL7925f+XI
- gpaTr407/LuQ==
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 09:34:24 -0700
+IronPort-SDR: EvGcPCRaHvMLRJWlBcqHnLpKZh+3Q+CvG+L67zvrllcDBDb/KiR7P1WA5K5FVodLbrnbIJ9WUL
+ sXX0x/UQz+ng==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,565,1574150400"; 
-   d="scan'208";a="244533168"
+   d="scan'208";a="244533182"
 Received: from aavila-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.255.36.39])
-  by orsmga003.jf.intel.com with ESMTP; 17 Mar 2020 09:34:19 -0700
+  by orsmga003.jf.intel.com with ESMTP; 17 Mar 2020 09:34:21 -0700
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -33,12 +33,11 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Rander Wang <rander.wang@linux.intel.com>,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
         Hui Wang <hui.wang@canonical.com>,
-        Rander Wang <rander.wang@intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH v2 06/17] soundwire: cadence: fix a io timeout issue in S3 test
-Date:   Tue, 17 Mar 2020 11:33:18 -0500
-Message-Id: <20200317163329.25501-7-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v2 07/17] soundwire: cadence: mask Slave interrupt before stopping clock
+Date:   Tue, 17 Mar 2020 11:33:19 -0500
+Message-Id: <20200317163329.25501-8-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200317163329.25501-1-pierre-louis.bossart@linux.intel.com>
 References: <20200317163329.25501-1-pierre-louis.bossart@linux.intel.com>
@@ -49,40 +48,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rander Wang <rander.wang@intel.com>
+Intel QA reported a very rare case, possibly hardware-dependent, where
+a Slave can become UNATTACHED during a clock stop sequence, which
+leads to timeouts and failed suspend sequences.
 
-After system resumes from S3, io timeout occurs when setting one
-unused master on Comet Lake platform. In this case, the master is
-reset to default state, and FIFOLEVEL is reset to default value,
-but msg_count used for tracing FIFOLEVEL is still with old value,
-so FIFOLEVEL will not be set if a new msg FIFO usage is equal to
-the old msg_count.
+This patch suppresses the handling of all Slave events while this
+transition happens. The two cases that matter are:
 
-This patch updates msg_count to default value of FIFOLEVEL when
-resetting master.
+a) alerts: if the Slave wants to signal an alert condition, it can do
+so using the in-band wake, so there's almost no impact with this
+patch.
 
-Tested on Comet Lake platform.
+b) sync loss or imp-def reset: in those cases, bringing back the Slave
+to functional state requires a complete re-enumeration. It's better to
+just ignore this case and restart cleanly, rather than attempt a
+'clean' suspend.
 
-Signed-off-by: Rander Wang <rander.wang@intel.com>
+Validation results show the timeouts no longer visible with this patch.
+
+GitHub issue: https://github.com/thesofproject/linux/issues/1678
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/cadence_master.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/soundwire/cadence_master.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
 diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-index dc29556eaf94..37e16199933c 100644
+index 37e16199933c..613c63359413 100644
 --- a/drivers/soundwire/cadence_master.c
 +++ b/drivers/soundwire/cadence_master.c
-@@ -1068,6 +1068,9 @@ int sdw_cdns_init(struct sdw_cdns *cdns)
- 	cdns_writel(cdns, CDNS_MCP_SSP_CTRL0, CDNS_DEFAULT_SSP_INTERVAL);
- 	cdns_writel(cdns, CDNS_MCP_SSP_CTRL1, CDNS_DEFAULT_SSP_INTERVAL);
+@@ -865,6 +865,24 @@ int sdw_cdns_exit_reset(struct sdw_cdns *cdns)
+ }
+ EXPORT_SYMBOL(sdw_cdns_exit_reset);
  
-+	/* reset msg_count to default value of FIFOLEVEL */
-+	cdns->msg_count = cdns_readl(cdns, CDNS_MCP_FIFOLEVEL);
++/**
++ * sdw_cdns_enable_slave_interrupt() - Enable SDW slave interrupts
++ * @cdns: Cadence instance
++ * @state: boolean for true/false
++ */
++static void cdns_enable_slave_interrupts(struct sdw_cdns *cdns, bool state)
++{
++	u32 mask;
 +
- 	/* flush command FIFOs */
- 	cdns_updatel(cdns, CDNS_MCP_CONTROL, CDNS_MCP_CONTROL_CMD_RST,
- 		     CDNS_MCP_CONTROL_CMD_RST);
++	mask = cdns_readl(cdns, CDNS_MCP_INTMASK);
++	if (state)
++		mask |= CDNS_MCP_INT_SLAVE_MASK;
++	else
++		mask &= ~CDNS_MCP_INT_SLAVE_MASK;
++
++	cdns_writel(cdns, CDNS_MCP_INTMASK, mask);
++}
++
+ /**
+  * sdw_cdns_enable_interrupt() - Enable SDW interrupts
+  * @cdns: Cadence instance
+@@ -1262,6 +1280,13 @@ int sdw_cdns_clock_stop(struct sdw_cdns *cdns, bool block_wake)
+ 		return 0;
+ 	}
+ 
++	/*
++	 * Before entering clock stop we mask the Slave
++	 * interrupts. This helps avoid having to deal with e.g. a
++	 * Slave becoming UNATTACHED while the clock is being stopped
++	 */
++	cdns_enable_slave_interrupts(cdns, false);
++
+ 	/*
+ 	 * For specific platforms, it is required to be able to put
+ 	 * master into a state in which it ignores wake-up trials
+@@ -1339,6 +1364,9 @@ int sdw_cdns_clock_restart(struct sdw_cdns *cdns, bool bus_reset)
+ {
+ 	int ret;
+ 
++	/* unmask Slave interrupts that were masked when stopping the clock */
++	cdns_enable_slave_interrupts(cdns, true);
++
+ 	ret = cdns_clear_bit(cdns, CDNS_MCP_CONTROL,
+ 			     CDNS_MCP_CONTROL_CLK_STOP_CLR);
+ 	if (ret < 0) {
 -- 
 2.20.1
 
