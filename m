@@ -2,105 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F03B189068
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:31:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D76718905B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:31:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbgCQVbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 17:31:45 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:30505 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726998AbgCQVbp (ORCPT
+        id S1726967AbgCQVbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 17:31:12 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51551 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbgCQVbL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 17:31:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584480704;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:in-reply-to:
-         references:references:references;
-        bh=Dn6sIsdtAuch7CTmAzfJGMEaJ+gns0OrsWF3VvHlKAg=;
-        b=WGANP3qx6lMZVdd5RUtSWoYTgO9CHWzpn7NI3Gy6Ha6HlkhnZI/H2bpcnFqTVFUD4AgwX7
-        MXoiV622LD3bmyeuGcHmjjl0ULTHULRquTPjzEtAxnNkbMSJnl74V5ANqiRXKkVNIil+eL
-        NaGF9xrafScIaq/pYDLhF2OtB86EQ68=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-90-_Yj3YFsHPAyodqWv-jgGdA-1; Tue, 17 Mar 2020 17:31:41 -0400
-X-MC-Unique: _Yj3YFsHPAyodqWv-jgGdA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A60DFDB22;
-        Tue, 17 Mar 2020 21:31:39 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.36.110.5])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D506F19C4F;
-        Tue, 17 Mar 2020 21:31:33 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netfilter-devel@vger.kernel.org
-Cc:     Paul Moore <paul@paul-moore.com>, sgrubb@redhat.com,
-        omosnace@redhat.com, fw@strlen.de, twoerner@redhat.com,
-        eparis@parisplace.org, ebiederm@xmission.com, tgraf@infradead.org,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghak25 v3 3/3] audit: add subj creds to NETFILTER_CFG record to cover async unregister
-Date:   Tue, 17 Mar 2020 17:30:24 -0400
-Message-Id: <13ef49b2f111723106d71c1bdeedae09d9b300d8.1584480281.git.rgb@redhat.com>
-In-Reply-To: <cover.1584480281.git.rgb@redhat.com>
-References: <cover.1584480281.git.rgb@redhat.com>
-In-Reply-To: <cover.1584480281.git.rgb@redhat.com>
-References: <cover.1584480281.git.rgb@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+        Tue, 17 Mar 2020 17:31:11 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1jEJnd-0005vE-6Z; Tue, 17 Mar 2020 22:30:57 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1jEJnc-0004oR-3H; Tue, 17 Mar 2020 22:30:56 +0100
+Date:   Tue, 17 Mar 2020 22:30:56 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Paul Barker <pbarker@konsulko.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/7] dt-bindings: pwm: document the PWM polarity flag
+Message-ID: <20200317213056.futfiwn4qgr2njye@pengutronix.de>
+References: <20200317123231.2843297-1-oleksandr.suvorov@toradex.com>
+ <20200317123231.2843297-3-oleksandr.suvorov@toradex.com>
+ <20200317174344.GB1464607@ulmo>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200317174344.GB1464607@ulmo>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some table unregister actions seem to be initiated by the kernel to
-garbage collect unused tables that are not initiated by any userspace
-actions.  It was found to be necessary to add the subject credentials to
-cover this case to reveal the source of these actions.  A sample record:
+Hello Thierry,
 
-  type=NETFILTER_CFG msg=audit(2020-03-11 21:25:21.491:269) : table=nat family=bridge entries=0 op=unregister pid=153 uid=root auid=unset tty=(none) ses=unset subj=system_u:system_r:kernel_t:s0 comm=kworker/u4:2 exe=(null)
+On Tue, Mar 17, 2020 at 06:43:44PM +0100, Thierry Reding wrote:
+> On Tue, Mar 17, 2020 at 02:32:26PM +0200, Oleksandr Suvorov wrote:
+> > Add the description of PWM_POLARITY_NORMAL flag.
+> > 
+> > Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+> > ---
+> > 
+> >  Documentation/devicetree/bindings/pwm/pwm.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pwm/pwm.txt b/Documentation/devicetree/bindings/pwm/pwm.txt
+> > index 084886bd721e..440c6b9a6a4e 100644
+> > --- a/Documentation/devicetree/bindings/pwm/pwm.txt
+> > +++ b/Documentation/devicetree/bindings/pwm/pwm.txt
+> > @@ -46,6 +46,7 @@ period in nanoseconds.
+> >  Optionally, the pwm-specifier can encode a number of flags (defined in
+> >  <dt-bindings/pwm/pwm.h>) in a third cell:
+> >  - PWM_POLARITY_INVERTED: invert the PWM signal polarity
+> > +- PWM_POLARITY_NORMAL: don't invert the PWM signal polarity
+> 
+> This doesn't make sense. PWM_POLARITY_NORMAL is not part of the DT ABI.
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- kernel/auditsc.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+"is not part of the DT ABI" is hardly a good reason. If it's sensible to
+be used, it is sensible to define it.
 
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index dbb056feccb9..6c233076dfb7 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2557,12 +2557,30 @@ void __audit_log_nfcfg(const char *name, u8 af, unsigned int nentries,
- 		       enum audit_nfcfgop op)
- {
- 	struct audit_buffer *ab;
-+	const struct cred *cred;
-+	struct tty_struct *tty;
-+	char comm[sizeof(current->comm)];
- 
- 	ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_NETFILTER_CFG);
- 	if (!ab)
- 		return;
- 	audit_log_format(ab, "table=%s family=%u entries=%u op=%s",
- 			 name, af, nentries, audit_nfcfgs[op].s);
-+
-+	cred = current_cred();
-+	tty = audit_get_tty();
-+	audit_log_format(ab, " pid=%u uid=%u auid=%u tty=%s ses=%u",
-+			 task_pid_nr(current),
-+			 from_kuid(&init_user_ns, cred->uid),
-+			 from_kuid(&init_user_ns, audit_get_loginuid(current)),
-+			 tty ? tty_name(tty) : "(none)",
-+			 audit_get_sessionid(current));
-+	audit_put_tty(tty);
-+	audit_log_task_context(ab); /* subj= */
-+	audit_log_format(ab, " comm=");
-+	audit_log_untrustedstring(ab, get_task_comm(comm, current));
-+	audit_log_d_path_exe(ab, current->mm); /* exe= */
-+
- 	audit_log_end(ab);
- }
- EXPORT_SYMBOL_GPL(__audit_log_nfcfg);
+(And as far as I understand it, the term PWM_POLARITY_INVERTED isn't
+part of the DT ABI either. Only the value 1 has a meaning (for some PWM
+controlers).)
+
+> The third cell of the specifier is a bitmask of flags.
+> 
+> PWM_POLARITY_NORMAL is an enumeration value that evaluates to 0, so it
+> makes absolutely no sense as a flag.
+
+Using 0 or PWM_POLARITY_NORMAL doesn't have an effect on the compiled
+device tree, that's true. But having the term PWM_POLARITY_NORMAL (in
+contrast to a plain 0) in a dts file is useful in my eyes for human
+readers.
+
+> PWM signals are considered to be "normal" by default, so no flag is
+> necessary to specify that.
+
+GPIOs are considered to be active high by default, still there is
+GPIO_ACTIVE_HIGH (which also evaluates to 0). Also there is
+IRQ_TYPE_NONE.
+
+Best regards
+Uwe
+
 -- 
-1.8.3.1
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
