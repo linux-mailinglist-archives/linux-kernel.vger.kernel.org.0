@@ -2,117 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 442781882E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 13:05:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 482C11882FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 13:08:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbgCQMFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 08:05:41 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:49552 "EHLO honk.sigxcpu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725962AbgCQMFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 08:05:40 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 17C74FB03;
-        Tue, 17 Mar 2020 13:05:38 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id LQVffm-bFDdy; Tue, 17 Mar 2020 13:05:36 +0100 (CET)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 0B565412BE; Tue, 17 Mar 2020 13:05:35 +0100 (CET)
-Date:   Tue, 17 Mar 2020 13:05:35 +0100
-From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To:     Lars-Peter Clausen <lars@metafoo.de>
-Cc:     Tomas Novotny <tomas@novotny.cz>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] iio: vcnl4000: Export near level property for
- proximity sensor
-Message-ID: <20200317120535.GA16807@bogon.m.sigxcpu.org>
-References: <cover.1584380360.git.agx@sigxcpu.org>
- <5566fe01df933d3281f058666e2147cb97b38126.1584380360.git.agx@sigxcpu.org>
- <c787921f-c412-4986-14ea-e31b531d3d5b@metafoo.de>
+        id S1726863AbgCQMH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 08:07:57 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:54345 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbgCQMHy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 08:07:54 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jEB0Y-0000Ej-PC; Tue, 17 Mar 2020 13:07:42 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2E7951C228E;
+        Tue, 17 Mar 2020 13:07:42 +0100 (CET)
+Date:   Tue, 17 Mar 2020 12:07:41 -0000
+From:   "tip-bot2 for Kim Phillips" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf/amd/uncore: Add support for Family 19h L3 PMU
+Cc:     Kim Phillips <kim.phillips@amd.com>, Borislav Petkov <bp@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200313231024.17601-3-kim.phillips@amd.com>
+References: <20200313231024.17601-3-kim.phillips@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c787921f-c412-4986-14ea-e31b531d3d5b@metafoo.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <158444686182.28353.8090928318657769294.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Mon, Mar 16, 2020 at 07:23:01PM +0100, Lars-Peter Clausen wrote:
-> On 3/16/20 6:46 PM, Guido Günther wrote:
-> > [...]
-> > +static ssize_t vcnl4000_read_near_level(struct iio_dev *indio_dev,
-> > +					uintptr_t priv,
-> > +					const struct iio_chan_spec *chan,
-> > +					char *buf)
-> > +{
-> > +	struct vcnl4000_data *data = iio_priv(indio_dev);
-> > +
-> > +	return sprintf(buf, "%u\n", data->near_level);
-> > +}
-> > +
-> > +static const struct iio_chan_spec_ext_info vcnl4000_ext_info[] = {
-> > +	{
-> > +		.name = "near_level",
-> 
-> Generally having properties with a underscore in them breaks generic parsing
-> of the property name by userspace applications. This is because we use
-> underscores to separate different components (type, modifier, etc.) of the
-> attribute from each other.
-> 
-> Do you think calling this "nearlevel" would work?
+The following commit has been merged into the perf/core branch of tip:
 
-That works as well. I'll change that for v3.
+Commit-ID:     e48667b865480d8bf0f1171a8b474ffc785b9ace
+Gitweb:        https://git.kernel.org/tip/e48667b865480d8bf0f1171a8b474ffc785b9ace
+Author:        Kim Phillips <kim.phillips@amd.com>
+AuthorDate:    Fri, 13 Mar 2020 18:10:24 -05:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Tue, 17 Mar 2020 13:01:03 +01:00
 
-For my education: Is the type, modifier policy written down somewhere
-(similar to
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/leds/leds-class.rst#n44
-)?
+perf/amd/uncore: Add support for Family 19h L3 PMU
 
-Cheers,
- -- Guido
+Family 19h introduces change in slice, core and thread specification in
+its L3 Performance Event Select (ChL3PmcCfg) h/w register. The change is
+incompatible with Family 17h's version of the register.
 
-> 
-> I know there are existing bad examples of properties that use an underscore,
-> but we should try to limit introducing new ones.
-> 
-> > +		.shared = IIO_SEPARATE,
-> > +		.read = vcnl4000_read_near_level,
-> > +	},
-> > +	{ /* sentinel */ }
-> > +};
-> > +
-> >   static const struct iio_chan_spec vcnl4000_channels[] = {
-> >   	{
-> >   		.type = IIO_LIGHT,
-> > @@ -350,6 +371,7 @@ static const struct iio_chan_spec vcnl4000_channels[] = {
-> >   	}, {
-> >   		.type = IIO_PROXIMITY,
-> >   		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > +		.ext_info = vcnl4000_ext_info,
-> >   	}
-> >   };
-> > @@ -439,6 +461,10 @@ static int vcnl4000_probe(struct i2c_client *client,
-> >   	dev_dbg(&client->dev, "%s Ambient light/proximity sensor, Rev: %02x\n",
-> >   		data->chip_spec->prod, data->rev);
-> > +	if (device_property_read_u32(&client->dev, "near-level",
-> > +				     &data->near_level) < 0)
-> > +		data->near_level = 0;
-> > +
-> >   	indio_dev->dev.parent = &client->dev;
-> >   	indio_dev->info = &vcnl4000_info;
-> >   	indio_dev->channels = vcnl4000_channels;
-> 
-> 
+Introduce a new path in l3_thread_slice_mask() to do things differently
+for Family 19h vs. Family 17h, otherwise the new hardware doesn't get
+programmed correctly.
+
+Instead of a linear core--thread bitmask, Family 19h takes an encoded
+core number, and a separate thread mask. There are new bits that are set
+for all cores and all slices, of which only the latter is used, since
+the driver counts events for all slices on behalf of the specified CPU.
+
+Also update amd_uncore_init() to base its L2/NB vs. L3/Data Fabric mode
+decision based on Family 17h or above, not just 17h and 18h: the Family
+19h Data Fabric PMC is compatible with the Family 17h DF PMC.
+
+ [ bp: Touchups. ]
+
+Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20200313231024.17601-3-kim.phillips@amd.com
+---
+ arch/x86/events/amd/uncore.c      | 20 ++++++++++++++------
+ arch/x86/include/asm/perf_event.h | 15 +++++++++++++--
+ 2 files changed, 27 insertions(+), 8 deletions(-)
+
+diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+index 07af497..46018e5 100644
+--- a/arch/x86/events/amd/uncore.c
++++ b/arch/x86/events/amd/uncore.c
+@@ -191,10 +191,18 @@ static u64 l3_thread_slice_mask(int cpu)
+ 	if (topology_smt_supported() && !topology_is_primary_thread(cpu))
+ 		thread = 1;
+ 
+-	shift = AMD64_L3_THREAD_SHIFT + 2 * (core % 4) + thread;
++	if (boot_cpu_data.x86 <= 0x18) {
++		shift = AMD64_L3_THREAD_SHIFT + 2 * (core % 4) + thread;
++		thread_mask = BIT_ULL(shift);
++
++		return AMD64_L3_SLICE_MASK | thread_mask;
++	}
++
++	core = (core << AMD64_L3_COREID_SHIFT) & AMD64_L3_COREID_MASK;
++	shift = AMD64_L3_THREAD_SHIFT + thread;
+ 	thread_mask = BIT_ULL(shift);
+ 
+-	return AMD64_L3_SLICE_MASK | thread_mask;
++	return AMD64_L3_EN_ALL_SLICES | core | thread_mask;
+ }
+ 
+ static int amd_uncore_event_init(struct perf_event *event)
+@@ -223,8 +231,8 @@ static int amd_uncore_event_init(struct perf_event *event)
+ 		return -EINVAL;
+ 
+ 	/*
+-	 * SliceMask and ThreadMask need to be set for certain L3 events in
+-	 * Family 17h. For other events, the two fields do not affect the count.
++	 * SliceMask and ThreadMask need to be set for certain L3 events.
++	 * For other events, the two fields do not affect the count.
+ 	 */
+ 	if (l3_mask && is_llc_event(event))
+ 		hwc->config |= l3_thread_slice_mask(event->cpu);
+@@ -533,9 +541,9 @@ static int __init amd_uncore_init(void)
+ 	if (!boot_cpu_has(X86_FEATURE_TOPOEXT))
+ 		return -ENODEV;
+ 
+-	if (boot_cpu_data.x86 == 0x17 || boot_cpu_data.x86 == 0x18) {
++	if (boot_cpu_data.x86 >= 0x17) {
+ 		/*
+-		 * For F17h or F18h, the Northbridge counters are
++		 * For F17h and above, the Northbridge counters are
+ 		 * repurposed as Data Fabric counters. Also, L3
+ 		 * counters are supported too. The PMUs are exported
+ 		 * based on family as either L2 or L3 and NB or DF.
+diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+index 29964b0..e855e9c 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -50,11 +50,22 @@
+ 
+ #define AMD64_L3_SLICE_SHIFT				48
+ #define AMD64_L3_SLICE_MASK				\
+-	((0xFULL) << AMD64_L3_SLICE_SHIFT)
++	(0xFULL << AMD64_L3_SLICE_SHIFT)
++#define AMD64_L3_SLICEID_MASK				\
++	(0x7ULL << AMD64_L3_SLICE_SHIFT)
+ 
+ #define AMD64_L3_THREAD_SHIFT				56
+ #define AMD64_L3_THREAD_MASK				\
+-	((0xFFULL) << AMD64_L3_THREAD_SHIFT)
++	(0xFFULL << AMD64_L3_THREAD_SHIFT)
++#define AMD64_L3_F19H_THREAD_MASK			\
++	(0x3ULL << AMD64_L3_THREAD_SHIFT)
++
++#define AMD64_L3_EN_ALL_CORES				BIT_ULL(47)
++#define AMD64_L3_EN_ALL_SLICES				BIT_ULL(46)
++
++#define AMD64_L3_COREID_SHIFT				42
++#define AMD64_L3_COREID_MASK				\
++	(0x7ULL << AMD64_L3_COREID_SHIFT)
+ 
+ #define X86_RAW_EVENT_MASK		\
+ 	(ARCH_PERFMON_EVENTSEL_EVENT |	\
