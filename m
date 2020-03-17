@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8131F18810F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:15:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 520B4188191
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:20:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729370AbgCQLML (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:12:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55686 "EHLO mail.kernel.org"
+        id S1728354AbgCQLFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:05:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728415AbgCQLMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:12:06 -0400
+        id S1728344AbgCQLE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:04:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 463D92071C;
-        Tue, 17 Mar 2020 11:12:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB88720771;
+        Tue, 17 Mar 2020 11:04:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443525;
-        bh=z4bfa8hZ8/4gypOjATA/W96jKijPpT9z5KWSPWrzcXU=;
+        s=default; t=1584443097;
+        bh=bqm0Y8tO/dFhUHmulnxoCqYXix/ToV0sUlKmOmGJm5M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ccQ55FvJzvqSZVIkbfbFajLjN4c97XPfIDrbyoW39KMOcAL3PvvUZN9Yd3Uf11lTQ
-         S5qY5akw5rXjb+JBLZoEOdNXwNM8twHVeTDReaqhFpr38QWCrhhO47YrpO/qVbFMtd
-         0rXlYM25F6oLM+Q8YKsv8DfEpw77MPDmTtKX7UrY=
+        b=Aj4f8b3xiFeDE/2s5XGsJ/5b4ReGhfjfcv1jrgoY4F7R0lDMQEXONDCDjuBWgSgLl
+         DivMX+k0+uwSX1u8heg64nkPY5niWqt1izMvpTSjMBWCnBmblgL+ACPN9CTT4rCjKx
+         txjfV2bqm2rZ6n/I4VmRHV0EbPsHJNWs2ZIrxgUk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-        Borislav Petkov <bp@suse.de>, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 5.5 112/151] x86/ioremap: Map EFI runtime services data as encrypted for SEV
+        stable@vger.kernel.org,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        Amol Grover <frextrite@gmail.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 5.4 095/123] iommu/vt-d: Fix RCU list debugging warnings
 Date:   Tue, 17 Mar 2020 11:55:22 +0100
-Message-Id: <20200317103334.414287301@linuxfoundation.org>
+Message-Id: <20200317103317.500427525@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
-References: <20200317103326.593639086@linuxfoundation.org>
+In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
+References: <20200317103307.343627747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,80 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Lendacky <thomas.lendacky@amd.com>
+From: Amol Grover <frextrite@gmail.com>
 
-commit 985e537a4082b4635754a57f4f95430790afee6a upstream.
+commit 02d715b4a8182f4887d82df82a7b83aced647760 upstream.
 
-The dmidecode program fails to properly decode the SMBIOS data supplied
-by OVMF/UEFI when running in an SEV guest. The SMBIOS area, under SEV, is
-encrypted and resides in reserved memory that is marked as EFI runtime
-services data.
+dmar_drhd_units is traversed using list_for_each_entry_rcu()
+outside of an RCU read side critical section but under the
+protection of dmar_global_lock. Hence add corresponding lockdep
+expression to silence the following false-positive warnings:
 
-As a result, when memremap() is attempted for the SMBIOS data, it
-can't be mapped as regular RAM (through try_ram_remap()) and, since
-the address isn't part of the iomem resources list, it isn't mapped
-encrypted through the fallback ioremap().
+[    1.603975] =============================
+[    1.603976] WARNING: suspicious RCU usage
+[    1.603977] 5.5.4-stable #17 Not tainted
+[    1.603978] -----------------------------
+[    1.603980] drivers/iommu/intel-iommu.c:4769 RCU-list traversed in non-reader section!!
 
-Add a new __ioremap_check_other() to deal with memory types like
-EFI_RUNTIME_SERVICES_DATA which are not covered by the resource ranges.
+[    1.603869] =============================
+[    1.603870] WARNING: suspicious RCU usage
+[    1.603872] 5.5.4-stable #17 Not tainted
+[    1.603874] -----------------------------
+[    1.603875] drivers/iommu/dmar.c:293 RCU-list traversed in non-reader section!!
 
-This allows any runtime services data which has been created encrypted,
-to be mapped encrypted too.
-
- [ bp: Move functionality to a separate function. ]
-
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Joerg Roedel <jroedel@suse.de>
-Tested-by: Joerg Roedel <jroedel@suse.de>
-Cc: <stable@vger.kernel.org> # 5.3
-Link: https://lkml.kernel.org/r/2d9e16eb5b53dc82665c95c6764b7407719df7a0.1582645327.git.thomas.lendacky@amd.com
+Tested-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+Cc: stable@vger.kernel.org
+Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/ioremap.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ include/linux/dmar.h |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -106,6 +106,19 @@ static unsigned int __ioremap_check_encr
- 	return 0;
- }
+--- a/include/linux/dmar.h
++++ b/include/linux/dmar.h
+@@ -69,8 +69,9 @@ struct dmar_pci_notify_info {
+ extern struct rw_semaphore dmar_global_lock;
+ extern struct list_head dmar_drhd_units;
  
-+/*
-+ * The EFI runtime services data area is not covered by walk_mem_res(), but must
-+ * be mapped encrypted when SEV is active.
-+ */
-+static void __ioremap_check_other(resource_size_t addr, struct ioremap_desc *desc)
-+{
-+	if (!sev_active())
-+		return;
-+
-+	if (efi_mem_type(addr) == EFI_RUNTIME_SERVICES_DATA)
-+		desc->flags |= IORES_MAP_ENCRYPTED;
-+}
-+
- static int __ioremap_collect_map_flags(struct resource *res, void *arg)
- {
- 	struct ioremap_desc *desc = arg;
-@@ -124,6 +137,9 @@ static int __ioremap_collect_map_flags(s
-  * To avoid multiple resource walks, this function walks resources marked as
-  * IORESOURCE_MEM and IORESOURCE_BUSY and looking for system RAM and/or a
-  * resource described not as IORES_DESC_NONE (e.g. IORES_DESC_ACPI_TABLES).
-+ *
-+ * After that, deal with misc other ranges in __ioremap_check_other() which do
-+ * not fall into the above category.
-  */
- static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
- 				struct ioremap_desc *desc)
-@@ -135,6 +151,8 @@ static void __ioremap_check_mem(resource
- 	memset(desc, 0, sizeof(struct ioremap_desc));
+-#define for_each_drhd_unit(drhd) \
+-	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list)
++#define for_each_drhd_unit(drhd)					\
++	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list,		\
++				dmar_rcu_check())
  
- 	walk_mem_res(start, end, desc, __ioremap_collect_map_flags);
-+
-+	__ioremap_check_other(addr, desc);
- }
+ #define for_each_active_drhd_unit(drhd)					\
+ 	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list)		\
+@@ -81,7 +82,8 @@ extern struct list_head dmar_drhd_units;
+ 		if (i=drhd->iommu, drhd->ignored) {} else
  
- /*
+ #define for_each_iommu(i, drhd)						\
+-	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list)		\
++	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list,		\
++				dmar_rcu_check())			\
+ 		if (i=drhd->iommu, 0) {} else 
+ 
+ static inline bool dmar_rcu_check(void)
 
 
