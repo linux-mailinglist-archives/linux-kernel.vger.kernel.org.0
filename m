@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96D2A187FAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:03:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FEB7188079
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:10:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727783AbgCQLDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:03:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43470 "EHLO mail.kernel.org"
+        id S1727669AbgCQLKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:10:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728113AbgCQLD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:03:27 -0400
+        id S1729095AbgCQLKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:10:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 877D420658;
-        Tue, 17 Mar 2020 11:03:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38882206EC;
+        Tue, 17 Mar 2020 11:10:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443007;
-        bh=yfZlrWQM7Q5UXqWR4WSIxJyzLFS2OHtF2DfjtMz1FEg=;
+        s=default; t=1584443429;
+        bh=27sp3JF+1DsO3P0UarlbwTlhuFaECf9l/w11Uzak+ls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NB+6F1BwFobV68dmV4+EujW4O9nWd0bG7YxUXk1ohPu8tcma9X7PO6nc9JRr5jL4D
-         7BuhKbBf+2KIAlaPJXcgJ+wpdiu7o11wZLI2GxTTk76K2eKxnMWKYvOZ4kmQOpCUGp
-         0HYnvgGJi4l+F5yrypMkQHRr4sSL43zv0pFri8J8=
+        b=L0UXoOy2m5vdgk2PJxZmmXpe7aC+AT69TwzF7jb8BvAamivdkvKE/TG3TztDXVfRA
+         tI+d1QzJnDXO4oaAwuJVoQld5h5mkUSUpprUiz12/n3/Br3aolPtjvCyVSCDuuYEPR
+         lD8QO5BvPi2B6uOLlbrXN7oK5TZ+EEFxyt8s0wAI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 5.4 063/123] iommu/vt-d: quirk_ioat_snb_local_iommu: replace WARN_TAINT with pr_warn + add_taint
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 5.5 080/151] netfilter: synproxy: synproxy_cpu_seq_next should increase position index
 Date:   Tue, 17 Mar 2020 11:54:50 +0100
-Message-Id: <20200317103314.040716840@linuxfoundation.org>
+Message-Id: <20200317103332.153314734@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
-References: <20200317103307.343627747@linuxfoundation.org>
+In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
+References: <20200317103326.593639086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 81ee85d0462410de8eeeec1b9761941fd6ed8c7b upstream.
+commit bb71f846a0002239f7058c84f1496648ff4a5c20 upstream.
 
-Quoting from the comment describing the WARN functions in
-include/asm-generic/bug.h:
+If .next function does not change position index,
+following .show function will repeat output related
+to current position index.
 
- * WARN(), WARN_ON(), WARN_ON_ONCE, and so on can be used to report
- * significant kernel issues that need prompt attention if they should ever
- * appear at runtime.
- *
- * Do not use these macros when checking for invalid external inputs
-
-The (buggy) firmware tables which the dmar code was calling WARN_TAINT
-for really are invalid external inputs. They are not under the kernel's
-control and the issues in them cannot be fixed by a kernel update.
-So logging a backtrace, which invites bug reports to be filed about this,
-is not helpful.
-
-Fixes: 556ab45f9a77 ("ioat2: catch and recover from broken vtd configurations v6")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
-Link: https://lore.kernel.org/r/20200309182510.373875-1-hdegoede@redhat.com
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=701847
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Cc: stable@vger.kernel.org
+Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code ...")
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=206283
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/intel-iommu.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/netfilter/nf_synproxy_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -4129,10 +4129,11 @@ static void quirk_ioat_snb_local_iommu(s
- 
- 	/* we know that the this iommu should be at offset 0xa000 from vtbar */
- 	drhd = dmar_find_matched_drhd_unit(pdev);
--	if (WARN_TAINT_ONCE(!drhd || drhd->reg_base_addr - vtbar != 0xa000,
--			    TAINT_FIRMWARE_WORKAROUND,
--			    "BIOS assigned incorrect VT-d unit for Intel(R) QuickData Technology device\n"))
-+	if (!drhd || drhd->reg_base_addr - vtbar != 0xa000) {
-+		pr_warn_once(FW_BUG "BIOS assigned incorrect VT-d unit for Intel(R) QuickData Technology device\n");
-+		add_taint(TAINT_FIRMWARE_WORKAROUND, LOCKDEP_STILL_OK);
- 		pdev->dev.archdata.iommu = DUMMY_DEVICE_DOMAIN_INFO;
-+	}
+--- a/net/netfilter/nf_synproxy_core.c
++++ b/net/netfilter/nf_synproxy_core.c
+@@ -267,7 +267,7 @@ static void *synproxy_cpu_seq_next(struc
+ 		*pos = cpu + 1;
+ 		return per_cpu_ptr(snet->stats, cpu);
+ 	}
+-
++	(*pos)++;
+ 	return NULL;
  }
- DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_IOAT_SNB, quirk_ioat_snb_local_iommu);
  
 
 
