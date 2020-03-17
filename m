@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6D39189089
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:35:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D56A18908C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:36:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbgCQVeQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 17:34:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53226 "EHLO mail.kernel.org"
+        id S1727382AbgCQVeW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 17:34:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727317AbgCQVeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 17:34:15 -0400
+        id S1727337AbgCQVeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 17:34:17 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.37.151])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B319C20767;
-        Tue, 17 Mar 2020 21:34:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87D3120775;
+        Tue, 17 Mar 2020 21:34:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584480854;
-        bh=jRochO9dp6rK7UrPY9y5TKOSBUYKxKhCXW8qQv2A1OY=;
+        s=default; t=1584480857;
+        bh=TGPhnr5mY8Vj1ckf0GoDpXrsvJyl+8f5dLtUZCHvYkM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RAQ464pPc9S4DKPxMlJSvsqUaWOEeZovdC9VoszIgka6u7fX3MQYlmBmoW1K7BQoy
-         EKp4/Dex0/GDIP+XNfj+w7FW2VHBwahtkESyqIPwHyErjiAxGuMgBxLC0tmaXDJHUd
-         RfbocbSGaHOI9hrnEWUuA0TP5KvK2yDP8dKriU54=
+        b=vpVd6AYmTkzy8bVMb6uhnZncXrcUteBsQXc3RFeH/VBKZ6mXN8nZqQMo5q/xi4XFM
+         oubcRTmIWUih4YE/8FLoCLhgC9bb+xNLnD+S26Z4POVeNQWXN+KBwQyO678F3m7pOZ
+         cppNXn58rCJOotogPD01LIYCcNnQcaSmUBroSPcQ=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Michael Petlan <mpetlan@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Benjamin Salon <bsalon@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>
-Subject: [PATCH 18/23] perf scripting perl: Add common_callchain to fix argument order
-Date:   Tue, 17 Mar 2020 18:32:54 -0300
-Message-Id: <20200317213259.15494-19-acme@kernel.org>
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 19/23] perf record: Fix binding of AIO user space buffers to nodes
+Date:   Tue, 17 Mar 2020 18:32:55 -0300
+Message-Id: <20200317213259.15494-20-acme@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200317213259.15494-1-acme@kernel.org>
 References: <20200317213259.15494-1-acme@kernel.org>
@@ -46,260 +47,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Petlan <mpetlan@redhat.com>
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
 
-Since common_callchain has been added to the argument array, we need to
-reflect it in perl-based scripts, because otherwise the following args
-would be shifted and thus incorrect. E.g. rw-by-pid and calculation of
-read and written bytes:
+Correct maxnode parameter value passed to mbind() syscall to be the
+amount of node mask bits to analyze plus 1. Dynamically allocate node
+mask memory depending on the index of node of cpu being profiled.
 
-Before:
-
-  read counts by pid:
-     pid                  comm     # reads  bytes_requested  bytes_read
-  ------  --------------------  -----------  ----------  ----------
-   19301  dd                             4  424510450039736           0
-
-After:
-
-  read counts by pid:
-     pid                  comm     # reads  bytes_requested  bytes_read
-  ------  --------------------  -----------  ----------  ----------
-   19301  dd                             4        9536             4341
-
-Committer testing:
-
-To see before after first do:
-
-  # perf script record rw-by-pid
-  ^C
-
-Now you'll have a perf.data file to report on, then do before and after
-using:
-
-  # perf script report rw-by-pid
-
-Anbd notice the bytes_request/bytes_read, as above.
-
-Signed-off-by: Michael Petlan <mpetlan@redhat.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Benjamin Salon <bsalon@redhat.com>
+Fixes: c44a8b44ca9f ("perf record: Bind the AIO user space buffers to nodes")
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-LPU-Reference: 20200311132836.12693-1-mpetlan@redhat.com
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lore.kernel.org/lkml/c7ea8ffe-1357-bf9e-3a89-1da1d8e9b75b@linux.intel.com
+[ Remove leftover nr_bits + 1 comment in mbind() call ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/scripts/perl/check-perf-trace.pl |  6 +++---
- tools/perf/scripts/perl/failed-syscalls.pl  |  2 +-
- tools/perf/scripts/perl/rw-by-file.pl       |  6 +++---
- tools/perf/scripts/perl/rw-by-pid.pl        | 10 +++++-----
- tools/perf/scripts/perl/rwtop.pl            | 10 +++++-----
- tools/perf/scripts/perl/wakeup-latency.pl   |  6 +++---
- 6 files changed, 20 insertions(+), 20 deletions(-)
+ tools/perf/util/mmap.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/scripts/perl/check-perf-trace.pl b/tools/perf/scripts/perl/check-perf-trace.pl
-index 4e7076c20616..d307ce8fd6ed 100644
---- a/tools/perf/scripts/perl/check-perf-trace.pl
-+++ b/tools/perf/scripts/perl/check-perf-trace.pl
-@@ -28,7 +28,7 @@ sub trace_end
- sub irq::softirq_entry
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index 3b664fa673a6..ab7108d22428 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -98,20 +98,29 @@ static int perf_mmap__aio_bind(struct mmap *map, int idx, int cpu, int affinity)
  {
- 	my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	    $common_pid, $common_comm,
-+	    $common_pid, $common_comm, $common_callchain,
- 	    $vec) = @_;
+ 	void *data;
+ 	size_t mmap_len;
+-	unsigned long node_mask;
++	unsigned long *node_mask;
++	unsigned long node_index;
++	int err = 0;
  
- 	print_header($event_name, $common_cpu, $common_secs, $common_nsecs,
-@@ -43,7 +43,7 @@ sub irq::softirq_entry
- sub kmem::kmalloc
- {
- 	my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	    $common_pid, $common_comm,
-+	    $common_pid, $common_comm, $common_callchain,
- 	    $call_site, $ptr, $bytes_req, $bytes_alloc,
- 	    $gfp_flags) = @_;
+ 	if (affinity != PERF_AFFINITY_SYS && cpu__max_node() > 1) {
+ 		data = map->aio.data[idx];
+ 		mmap_len = mmap__mmap_len(map);
+-		node_mask = 1UL << cpu__get_node(cpu);
+-		if (mbind(data, mmap_len, MPOL_BIND, &node_mask, 1, 0)) {
+-			pr_err("Failed to bind [%p-%p] AIO buffer to node %d: error %m\n",
+-				data, data + mmap_len, cpu__get_node(cpu));
++		node_index = cpu__get_node(cpu);
++		node_mask = bitmap_alloc(node_index + 1);
++		if (!node_mask) {
++			pr_err("Failed to allocate node mask for mbind: error %m\n");
+ 			return -1;
+ 		}
++		set_bit(node_index, node_mask);
++		if (mbind(data, mmap_len, MPOL_BIND, node_mask, node_index + 1 + 1, 0)) {
++			pr_err("Failed to bind [%p-%p] AIO buffer to node %lu: error %m\n",
++				data, data + mmap_len, node_index);
++			err = -1;
++		}
++		bitmap_free(node_mask);
+ 	}
  
-@@ -92,7 +92,7 @@ sub print_unhandled
- sub trace_unhandled
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm) = @_;
-+	$common_pid, $common_comm, $common_callchain) = @_;
- 
-     $unhandled{$event_name}++;
+-	return 0;
++	return err;
  }
-diff --git a/tools/perf/scripts/perl/failed-syscalls.pl b/tools/perf/scripts/perl/failed-syscalls.pl
-index 55e7ae4c5c88..05954a8f363a 100644
---- a/tools/perf/scripts/perl/failed-syscalls.pl
-+++ b/tools/perf/scripts/perl/failed-syscalls.pl
-@@ -18,7 +18,7 @@ my %failed_syscalls;
- sub raw_syscalls::sys_exit
- {
- 	my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	    $common_pid, $common_comm,
-+	    $common_pid, $common_comm, $common_callchain,
- 	    $id, $ret) = @_;
- 
- 	if ($ret < 0) {
-diff --git a/tools/perf/scripts/perl/rw-by-file.pl b/tools/perf/scripts/perl/rw-by-file.pl
-index 168fa5e94b44..92a750b8552b 100644
---- a/tools/perf/scripts/perl/rw-by-file.pl
-+++ b/tools/perf/scripts/perl/rw-by-file.pl
-@@ -28,7 +28,7 @@ my %writes;
- sub syscalls::sys_enter_read
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm, $nr, $fd, $buf, $count) = @_;
-+	$common_pid, $common_comm, $common_callchain, $nr, $fd, $buf, $count) = @_;
- 
-     if ($common_comm eq $for_comm) {
- 	$reads{$fd}{bytes_requested} += $count;
-@@ -39,7 +39,7 @@ sub syscalls::sys_enter_read
- sub syscalls::sys_enter_write
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm, $nr, $fd, $buf, $count) = @_;
-+	$common_pid, $common_comm, $common_callchain, $nr, $fd, $buf, $count) = @_;
- 
-     if ($common_comm eq $for_comm) {
- 	$writes{$fd}{bytes_written} += $count;
-@@ -98,7 +98,7 @@ sub print_unhandled
- sub trace_unhandled
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm) = @_;
-+	$common_pid, $common_comm, $common_callchain) = @_;
- 
-     $unhandled{$event_name}++;
- }
-diff --git a/tools/perf/scripts/perl/rw-by-pid.pl b/tools/perf/scripts/perl/rw-by-pid.pl
-index 495698250b2f..d789fe39caab 100644
---- a/tools/perf/scripts/perl/rw-by-pid.pl
-+++ b/tools/perf/scripts/perl/rw-by-pid.pl
-@@ -24,7 +24,7 @@ my %writes;
- sub syscalls::sys_exit_read
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm,
-+	$common_pid, $common_comm, $common_callchain,
- 	$nr, $ret) = @_;
- 
-     if ($ret > 0) {
-@@ -40,7 +40,7 @@ sub syscalls::sys_exit_read
- sub syscalls::sys_enter_read
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm,
-+	$common_pid, $common_comm, $common_callchain,
- 	$nr, $fd, $buf, $count) = @_;
- 
-     $reads{$common_pid}{bytes_requested} += $count;
-@@ -51,7 +51,7 @@ sub syscalls::sys_enter_read
- sub syscalls::sys_exit_write
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm,
-+	$common_pid, $common_comm, $common_callchain,
- 	$nr, $ret) = @_;
- 
-     if ($ret <= 0) {
-@@ -62,7 +62,7 @@ sub syscalls::sys_exit_write
- sub syscalls::sys_enter_write
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm,
-+	$common_pid, $common_comm, $common_callchain,
- 	$nr, $fd, $buf, $count) = @_;
- 
-     $writes{$common_pid}{bytes_written} += $count;
-@@ -178,7 +178,7 @@ sub print_unhandled
- sub trace_unhandled
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm) = @_;
-+	$common_pid, $common_comm, $common_callchain) = @_;
- 
-     $unhandled{$event_name}++;
- }
-diff --git a/tools/perf/scripts/perl/rwtop.pl b/tools/perf/scripts/perl/rwtop.pl
-index 6473442568a2..eba4df67af6b 100644
---- a/tools/perf/scripts/perl/rwtop.pl
-+++ b/tools/perf/scripts/perl/rwtop.pl
-@@ -35,7 +35,7 @@ if (!$interval) {
- sub syscalls::sys_exit_read
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm,
-+	$common_pid, $common_comm, $common_callchain,
- 	$nr, $ret) = @_;
- 
-     print_check();
-@@ -53,7 +53,7 @@ sub syscalls::sys_exit_read
- sub syscalls::sys_enter_read
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm,
-+	$common_pid, $common_comm, $common_callchain,
- 	$nr, $fd, $buf, $count) = @_;
- 
-     print_check();
-@@ -66,7 +66,7 @@ sub syscalls::sys_enter_read
- sub syscalls::sys_exit_write
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm,
-+	$common_pid, $common_comm, $common_callchain,
- 	$nr, $ret) = @_;
- 
-     print_check();
-@@ -79,7 +79,7 @@ sub syscalls::sys_exit_write
- sub syscalls::sys_enter_write
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm,
-+	$common_pid, $common_comm, $common_callchain,
- 	$nr, $fd, $buf, $count) = @_;
- 
-     print_check();
-@@ -197,7 +197,7 @@ sub print_unhandled
- sub trace_unhandled
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm) = @_;
-+	$common_pid, $common_comm, $common_callchain) = @_;
- 
-     $unhandled{$event_name}++;
- }
-diff --git a/tools/perf/scripts/perl/wakeup-latency.pl b/tools/perf/scripts/perl/wakeup-latency.pl
-index efcfec5e347a..53444ff4ec7f 100644
---- a/tools/perf/scripts/perl/wakeup-latency.pl
-+++ b/tools/perf/scripts/perl/wakeup-latency.pl
-@@ -28,7 +28,7 @@ my $total_wakeups = 0;
- sub sched::sched_switch
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm,
-+	$common_pid, $common_comm, $common_callchain,
- 	$prev_comm, $prev_pid, $prev_prio, $prev_state, $next_comm, $next_pid,
- 	$next_prio) = @_;
- 
-@@ -51,7 +51,7 @@ sub sched::sched_switch
- sub sched::sched_wakeup
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm,
-+	$common_pid, $common_comm, $common_callchain,
- 	$comm, $pid, $prio, $success, $target_cpu) = @_;
- 
-     $last_wakeup{$target_cpu}{ts} = nsecs($common_secs, $common_nsecs);
-@@ -101,7 +101,7 @@ sub print_unhandled
- sub trace_unhandled
- {
-     my ($event_name, $context, $common_cpu, $common_secs, $common_nsecs,
--	$common_pid, $common_comm) = @_;
-+	$common_pid, $common_comm, $common_callchain) = @_;
- 
-     $unhandled{$event_name}++;
- }
+ #else /* !HAVE_LIBNUMA_SUPPORT */
+ static int perf_mmap__aio_alloc(struct mmap *map, int idx)
 -- 
 2.21.1
 
