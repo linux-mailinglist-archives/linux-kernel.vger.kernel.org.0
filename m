@@ -2,268 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0DE51880E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:14:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9A2818812A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:16:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729406AbgCQLOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:14:34 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:56716 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729052AbgCQLO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:14:26 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48hVtQ5ppyz9v0xK;
-        Tue, 17 Mar 2020 12:14:22 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=cCQpZUj0; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id Rz4HNBhm-l3C; Tue, 17 Mar 2020 12:14:22 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48hVtQ3lwhz9v0xF;
-        Tue, 17 Mar 2020 12:14:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1584443662; bh=BZ0LYBWWFO9urZQIr4mGJkiXKv895B7QODHRrvOV2AU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cCQpZUj0Sk/tvj0qZdyMJ/s5V8UQYcITTFhrQyV+46r4pDhdwWfE5E9owV2m4s4ey
-         78Zs9E7G+xi2BcM0YhflUcW5Uw3BLZpXBSqJJx943v0W9lyZsBX4LFLu/756PEtxK+
-         J3yCNF6OSmTIF5c3lLrHUW/Te6vDVy3K8cJSRD2E=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 330C88B785;
-        Tue, 17 Mar 2020 12:14:23 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id AfLjiEvarbtM; Tue, 17 Mar 2020 12:14:22 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E1B088B787;
-        Tue, 17 Mar 2020 12:14:17 +0100 (CET)
-Subject: Re: [PATCH 15/15] powerpc/watchpoint/xmon: Support 2nd dawr
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>, mpe@ellerman.id.au,
-        mikey@neuling.org
-Cc:     apopple@linux.ibm.com, paulus@samba.org, npiggin@gmail.com,
-        naveen.n.rao@linux.vnet.ibm.com, peterz@infradead.org,
-        jolsa@kernel.org, oleg@redhat.com, fweisbec@gmail.com,
-        mingo@kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <20200309085806.155823-1-ravi.bangoria@linux.ibm.com>
- <20200309085806.155823-16-ravi.bangoria@linux.ibm.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <dabb2823-783a-6a3f-4f04-f3200a1086fc@c-s.fr>
-Date:   Tue, 17 Mar 2020 12:14:10 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+        id S1728525AbgCQLQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:16:10 -0400
+Received: from mail-am6eur05on2086.outbound.protection.outlook.com ([40.107.22.86]:14145
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727972AbgCQLQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:16:09 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=W1cRa+d3TORftexyCHyPPzRQKgOxSBT3WNJFjAnwV9+dPbL8zurcyHKTupsPf6SKjf107XOxCJHJKXxCgW+ZKpMdrP5zj+BdGmxMhHOuq5UJ73yM5wzOY7e5xNhP7k6o52lp+MJtLaq0w/eKVRNsZeqpgJqB3Wn9sc8OFNr+RHq1xpf+OJE7WslL9Uxlv/aBOH8VLPmphfEH+7tuRlN2zfF7PPum5azB7PyhNLM0vJ3IkRKXHf53vcqL/WLgUiPJw+9ctcCBRRf6JBvfH+PvmTg+W56A1dGY0j61b4kv736kw5klEr3w9lOugWAbnQOzwMFY0lYjEd4UOE+S8c+5Hw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NmeRkQuCq9+A+TIda6mzShgBGTQl68Lo/ND2lXY/xhg=;
+ b=Imeav3lkBiFQxXl91Sn0S8UK5NPycL9KLKPjAHUP75rVEr0U6qrv0g3DoPoDA80iKU4HtPPT7+xhe/AmEwiU5bAmUMjEz3u4ATqPSZ9wDUvGt9nfExRkuZq7yXvkpSsdlVXbdkEO9cAgeCj/4Lb6vCZuESUAO35cV0Lw5JfD38mmFWTpFEYyJnJ/nNTUhPTUoyXVPO1kVUCm4tBf2uKDrK1LejcWZ5LJikAZ4gJAKqwK3Oyu8cS7sff0tMic1XMkXeWBUegw7blX5MnlrcqUCbRjUHxTfhEDaCPoJwNdJ3zLCfaZ0QkMkfiJPB/ew4OlE97uW/qAJrjPOTGsTKKWvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NmeRkQuCq9+A+TIda6mzShgBGTQl68Lo/ND2lXY/xhg=;
+ b=Qh461vG+YsxPUH0CxSnr5gXHN+4LZWBgAEYb3OZ+C80QrXJCm1dNa6sg1H9+WIB3+KEbe+4/WEbrlrz1RXgIbUaoe8ASoDomAHemXrCwY7bDS1eLp9qlNzc9ElMU6JyrUQXjEEUS4s4QQA/LEGI9FWdVMES9JHgG0Vb1n6HuKKg=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3373.eurprd04.prod.outlook.com (52.134.5.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.22; Tue, 17 Mar 2020 11:16:05 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::751e:7e8d:ed4:ef5f]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::751e:7e8d:ed4:ef5f%7]) with mapi id 15.20.2814.021; Tue, 17 Mar 2020
+ 11:16:04 +0000
+Subject: Re: [PATCH v8 0/8] enable CAAM's HWRNG as default
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+Cc:     Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+References: <20200316150047.30828-1-andrew.smirnov@gmail.com>
+From:   =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>
+Message-ID: <1a416e7c-3175-6e42-5034-1228e99b283f@nxp.com>
+Date:   Tue, 17 Mar 2020 13:16:01 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
+In-Reply-To: <20200316150047.30828-1-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM0PR10CA0006.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:208:17c::16) To VI1PR0402MB3485.eurprd04.prod.outlook.com
+ (2603:10a6:803:7::25)
 MIME-Version: 1.0
-In-Reply-To: <20200309085806.155823-16-ravi.bangoria@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.0.129] (84.117.251.185) by AM0PR10CA0006.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:17c::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.18 via Frontend Transport; Tue, 17 Mar 2020 11:16:03 +0000
+X-Originating-IP: [84.117.251.185]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 3ebe45fb-bdcd-463e-9803-08d7ca649523
+X-MS-TrafficTypeDiagnostic: VI1PR0402MB3373:|VI1PR0402MB3373:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR0402MB337332CE74DDE6520D8F587498F60@VI1PR0402MB3373.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Forefront-PRVS: 0345CFD558
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(39860400002)(136003)(366004)(396003)(376002)(199004)(26005)(186003)(8936002)(16526019)(8676002)(81156014)(45080400002)(2906002)(81166006)(66476007)(5660300002)(31686004)(66946007)(66556008)(4744005)(6486002)(31696002)(53546011)(52116002)(966005)(478600001)(86362001)(316002)(54906003)(2616005)(4326008)(16576012)(956004)(36756003)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3373;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: vl0jT9wTDgfQd00hOnZwoZ2qr6rmm2dKDcwUssiWvpre000Hxd3pjjxbSvFhVXC1XYWMA2wSIsZXj+G3rVpCS6sj6bhTB0scfwhDoS/Lr/1G/VGblhv0AqmYYgxk3siA9MNJmFlBZnlc1SswwMmI86A2I0ESSBBNj1BdNDGNxL4mFWEjB06M1rOJVFAYWIl9GIMYc8Lz1S8SqTKClT4MkoehCgmqALzVV95A9YaTUtwmkIBv5Ep8wUkX3XldtsQtnxYA6Slss7UhpkX1gXyZaSdiqV9EY+sPdiMpV+aj3ZLRS5a2OLnY4JjM5pnpKjIZLCcFt15ay7X9qPMg7Fr7H5TKJzKasfpa/5T45JUIEvxXHj2mQd+iHyCrHqYceeTIIppvpQBiOssr+WBbbQl+x5sUyQKb9P1bbxmlhZd4tX5uMFGFLVtgPpP6neAKP1pg19kY/tx/HdXbPCvGK1CXDoLa8wq6qC4rIg4IwGrEAV1jbVd1XLer5sYcwo+JGRIiQRz8bsMvnFe7uNwbDd0i6g==
+X-MS-Exchange-AntiSpam-MessageData: AE6QyhJXZ6c+iizLrosSSlXpVq+AKSWPtBt97LlQJK29g5Nq4nuwLGyITdxMfXCwhsyXiEFy3rMLQbN7JcfwKFOPT3XxyWv++XNrAoAD3GeR2D6Eh3T4cyxM4o+//1+BvIXnrsSCBn0yzPM5b2+1GA==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ebe45fb-bdcd-463e-9803-08d7ca649523
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2020 11:16:04.7510
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qmyH0yxwAFvAjlhudT/U5PAp2CQbxCXbEsOH0EhM7bCrE9oOA7i+8vdCRi74vRpLtQLjSzBfEmDPca/Nm1RVUQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3373
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 09/03/2020 à 09:58, Ravi Bangoria a écrit :
-> Add support for 2nd DAWR in xmon. With this, we can have two
-> simultaneous breakpoints from xmon.
+On 3/16/2020 5:01 PM, Andrey Smirnov wrote:
+> Feedback is welcome!
 > 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> ---
->   arch/powerpc/xmon/xmon.c | 101 ++++++++++++++++++++++++++-------------
->   1 file changed, 69 insertions(+), 32 deletions(-)
-> 
-> diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-> index ac18fe3e4295..20adc83404c8 100644
-> --- a/arch/powerpc/xmon/xmon.c
-> +++ b/arch/powerpc/xmon/xmon.c
-> @@ -110,7 +110,7 @@ struct bpt {
->   
->   #define NBPTS	256
->   static struct bpt bpts[NBPTS];
-> -static struct bpt dabr;
-> +static struct bpt dabr[HBP_NUM_MAX];
->   static struct bpt *iabr;
->   static unsigned bpinstr = 0x7fe00008;	/* trap */
->   
-> @@ -786,10 +786,17 @@ static int xmon_sstep(struct pt_regs *regs)
->   
->   static int xmon_break_match(struct pt_regs *regs)
->   {
-> +	int i;
-> +
->   	if ((regs->msr & (MSR_IR|MSR_PR|MSR_64BIT)) != (MSR_IR|MSR_64BIT))
->   		return 0;
-> -	if (dabr.enabled == 0)
-> -		return 0;
-> +	for (i = 0; i < nr_wp_slots(); i++) {
-> +		if (dabr[i].enabled)
-> +			goto found;
-> +	}
-> +	return 0;
-> +
-> +found:
->   	xmon_core(regs, 0);
->   	return 1;
->   }
-> @@ -928,13 +935,16 @@ static void insert_bpts(void)
->   
->   static void insert_cpu_bpts(void)
->   {
-> +	int i;
->   	struct arch_hw_breakpoint brk;
->   
-> -	if (dabr.enabled) {
-> -		brk.address = dabr.address;
-> -		brk.type = (dabr.enabled & HW_BRK_TYPE_DABR) | HW_BRK_TYPE_PRIV_ALL;
-> -		brk.len = DABR_MAX_LEN;
-> -		__set_breakpoint(&brk, 0);
-> +	for (i = 0; i < nr_wp_slots(); i++) {
-> +		if (dabr[i].enabled) {
-> +			brk.address = dabr[i].address;
-> +			brk.type = (dabr[i].enabled & HW_BRK_TYPE_DABR) | HW_BRK_TYPE_PRIV_ALL;
-> +			brk.len = 8;
-> +			__set_breakpoint(&brk, i);
-> +		}
->   	}
->   
->   	if (iabr)
-> @@ -1348,6 +1358,35 @@ static long check_bp_loc(unsigned long addr)
->   	return 1;
->   }
->   
-> +static int free_data_bpt(void)
+The patch set does not compile.
 
-This names suggests the function frees a breakpoint.
-I guess it should be find_free_data_bpt()
+Patch "bus: fsl-mc: add api to retrieve mc version"
+https://patchwork.kernel.org/patch/11352493/
+was not applied, the plan being to merge it via cryptodev-2.6 tree,
+see my comment here:
+https://lore.kernel.org/linux-arm-kernel/VI1PR0402MB3485DB40CE1C1631D920EE7598040@VI1PR0402MB3485.eurprd04.prod.outlook.com/
 
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < nr_wp_slots(); i++) {
-> +		if (!dabr[i].enabled)
-> +			return i;
-> +	}
-> +	printf("Couldn't find free breakpoint register\n");
-> +	return -1;
-> +}
-> +
-> +static void print_data_bpts(void)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < nr_wp_slots(); i++) {
-> +		if (!dabr[i].enabled)
-> +			continue;
-> +
-> +		printf("   data   "REG"  [", dabr[i].address);
-> +		if (dabr[i].enabled & 1)
-> +			printf("r");
-> +		if (dabr[i].enabled & 2)
-> +			printf("w");
-> +		printf("]\n");
-> +	}
-> +}
-> +
->   static char *breakpoint_help_string =
->       "Breakpoint command usage:\n"
->       "b                show breakpoints\n"
-> @@ -1381,10 +1420,9 @@ bpt_cmds(void)
->   			printf("Hardware data breakpoint not supported on this cpu\n");
->   			break;
->   		}
-> -		if (dabr.enabled) {
-> -			printf("Couldn't find free breakpoint register\n");
-> +		i = free_data_bpt();
-> +		if (i < 0)
->   			break;
-> -		}
->   		mode = 7;
->   		cmd = inchar();
->   		if (cmd == 'r')
-> @@ -1393,15 +1431,15 @@ bpt_cmds(void)
->   			mode = 6;
->   		else
->   			termch = cmd;
-> -		dabr.address = 0;
-> -		dabr.enabled = 0;
-> -		if (scanhex(&dabr.address)) {
-> -			if (!is_kernel_addr(dabr.address)) {
-> +		dabr[i].address = 0;
-> +		dabr[i].enabled = 0;
-> +		if (scanhex(&dabr[i].address)) {
-> +			if (!is_kernel_addr(dabr[i].address)) {
->   				printf(badaddr);
->   				break;
->   			}
-> -			dabr.address &= ~HW_BRK_TYPE_DABR;
-> -			dabr.enabled = mode | BP_DABR;
-> +			dabr[i].address &= ~HW_BRK_TYPE_DABR;
-> +			dabr[i].enabled = mode | BP_DABR;
->   		}
->   
->   		force_enable_xmon();
-> @@ -1440,7 +1478,9 @@ bpt_cmds(void)
->   			for (i = 0; i < NBPTS; ++i)
->   				bpts[i].enabled = 0;
->   			iabr = NULL;
-> -			dabr.enabled = 0;
-> +			for (i = 0; i < nr_wp_slots(); i++)
-> +				dabr[i].enabled = 0;
-> +
->   			printf("All breakpoints cleared\n");
->   			break;
->   		}
-> @@ -1474,14 +1514,7 @@ bpt_cmds(void)
->   		if (xmon_is_ro || !scanhex(&a)) {
->   			/* print all breakpoints */
->   			printf("   type            address\n");
-> -			if (dabr.enabled) {
-> -				printf("   data   "REG"  [", dabr.address);
-> -				if (dabr.enabled & 1)
-> -					printf("r");
-> -				if (dabr.enabled & 2)
-> -					printf("w");
-> -				printf("]\n");
-> -			}
-> +			print_data_bpts();
->   			for (bp = bpts; bp < &bpts[NBPTS]; ++bp) {
->   				if (!bp->enabled)
->   					continue;
-> @@ -1941,8 +1974,13 @@ static void dump_207_sprs(void)
->   
->   	printf("hfscr  = %.16lx  dhdes = %.16lx rpr    = %.16lx\n",
->   		mfspr(SPRN_HFSCR), mfspr(SPRN_DHDES), mfspr(SPRN_RPR));
-> -	printf("dawr   = %.16lx  dawrx = %.16lx ciabr  = %.16lx\n",
-> -		mfspr(SPRN_DAWR0), mfspr(SPRN_DAWRX0), mfspr(SPRN_CIABR));
-> +	printf("dawr0  = %.16lx dawrx0 = %.16lx\n",
-> +		mfspr(SPRN_DAWR0), mfspr(SPRN_DAWRX0));
-> +	if (nr_wp_slots() > 1) {
-> +		printf("dawr1  = %.16lx dawrx1 = %.16lx\n",
-> +			mfspr(SPRN_DAWR1), mfspr(SPRN_DAWRX1));
-> +	}
-> +	printf("ciabr  = %.16lx\n", mfspr(SPRN_CIABR));
->   #endif
->   }
->   
-> @@ -3862,10 +3900,9 @@ static void clear_all_bpt(void)
->   		bpts[i].enabled = 0;
->   
->   	/* Clear any data or iabr breakpoints */
-> -	if (iabr || dabr.enabled) {
-> -		iabr = NULL;
-> -		dabr.enabled = 0;
-> -	}
-> +	iabr = NULL;
-> +	for (i = 0; i < nr_wp_slots(); i++)
-> +		dabr[i].enabled = 0;
->   }
->   
->   #ifdef CONFIG_DEBUG_FS
-> 
+I think it needs to be formally included in the patch set.
 
-Christophe
+Thanks,
+Horia
