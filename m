@@ -2,149 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BA9818789C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 05:51:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DC2918789E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 05:53:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbgCQEvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 00:51:03 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:12648 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726699AbgCQEvC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 00:51:02 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584420662; h=Content-Transfer-Encoding: Content-Type:
- MIME-Version: Message-ID: Date: Subject: In-Reply-To: References: Cc:
- To: From: Sender; bh=J/JPm4PINDbtMVQYCL+rGOKx+ztstEStWYv9Lgc9YJ8=; b=Nfo/HdMy8kWPDgdjEuBZHCrcFJRqajA+WYu+Xwz8bLYSb9qFLc6NS0XWaLn+ohfilSoY9y6E
- kPO8DItc1u9eH8/0pH6nI8al4uJ1CYZ+jCmygliD8bOIUrtLR/5wrBkXzfTVFuDYS0csSqpD
- OnKcCLVOsU3rWtdWTjjUj8qtHRs=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e705723.7f76a55e8a08-smtp-out-n04;
- Tue, 17 Mar 2020 04:50:43 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 31108C432C2; Tue, 17 Mar 2020 04:50:42 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from MAGGARWA (unknown [183.83.138.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: maggarwa)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0EA76C433D2;
-        Tue, 17 Mar 2020 04:50:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0EA76C433D2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=maggarwa@codeaurora.org
-From:   <maggarwa@codeaurora.org>
-To:     "'Alexandre Belloni'" <alexandre.belloni@bootlin.com>
-Cc:     <a.zummo@towertech.it>, <linux-rtc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1584342688-14035-1-git-send-email-maggarwa@codeaurora.org> <20200316102905.GN4518@piout.net>
-In-Reply-To: <20200316102905.GN4518@piout.net>
-Subject: RE: [PATCH] rtc-pm8xxx: Clear Alarm register on resume
-Date:   Tue, 17 Mar 2020 10:20:36 +0530
-Message-ID: <000001d5fc17$9c327ee0$d4977ca0$@codeaurora.org>
+        id S1726776AbgCQExJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 00:53:09 -0400
+Received: from mga04.intel.com ([192.55.52.120]:34097 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726760AbgCQExJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 00:53:09 -0400
+IronPort-SDR: 3yMsGf9fnBLKMNiJZMyP47GgCyn6MAoSw/UWZu/xMiC3mNUecYCZwn5Y45T0dXkr+nPD3Omnb8
+ uhypt6e7pMiw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 21:53:08 -0700
+IronPort-SDR: 3d28gK09PMBZ/J6yoSLgUKx3BNuzPShPJW+mwrgsT39SAcjuYY+Tl3QNShLTXf+TVPN7TXI5f3
+ Ihjjsqj0XpqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,563,1574150400"; 
+   d="scan'208";a="355252721"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by fmsmga001.fm.intel.com with ESMTP; 16 Mar 2020 21:53:08 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ben Gardon <bgardon@google.com>,
+        Junaid Shahid <junaids@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        John Haxby <john.haxby@oracle.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Subject: [PATCH v2 00/32] KVM: x86: TLB flushing fixes and enhancements
+Date:   Mon, 16 Mar 2020 21:52:06 -0700
+Message-Id: <20200317045238.30434-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGOsd3LdOay4LNIsG2VCVcgDm4GSQFDNT2fqNCw0MA=
-Content-Language: en-us
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This is "v2" of the VMX TLB flushing cleanup series, but over 70% of the
+patches are new in v2.  The new growth stems from two related revelations:
 
-Comments inline.
+  1) Nested VMX doesn't properly flush all ASIDs/contexts on system events,
+     e.g. on mmu_notifier invalidate all contexts for L1 *and* L2 need to
+     be invalidated, but KVM generally only flushes L1 or L2 (or just L1).
+
+  2) #1 is largely benign because nested VMX always flushes the new
+     context on nested VM-Entry/VM-Exit.
+
+High level overview:
+
+  a) Fix the main TLB flushing bug with a big hammer.
+
+  b) Fix a few other flushing related bugs.
+
+  c) Clean up vmx_tlb_flush(), i.e. what was v1 of this series.
+
+  d) Reintroduce current-ASID/context flushing to regain some of the
+     precision that got blasted away by the big hammer in #1.
+
+  e) Fix random code paths that unnecessarily trigger TLB flushes on
+     nested VMX transitions.
+
+  f) Stop flushing on every nested VMX transition.
 
 
-Thanks & Regards,
-Mohit
+v2:
+  - Basically a new series.
 
------Original Message-----
-From: Alexandre Belloni <alexandre.belloni@bootlin.com> 
-Sent: Monday, March 16, 2020 3:59 PM
-To: Mohit Aggarwal <maggarwa@codeaurora.org>
-Cc: a.zummo@towertech.it; linux-rtc@vger.kernel.org;
-linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc-pm8xxx: Clear Alarm register on resume
+v1:
+  - https://patchwork.kernel.org/cover/11394987/
 
-Hi,
+Junaid Shahid (2):
+  KVM: nVMX: Invalidate all L2 roots when emulating INVVPID without EPT
+  KVM: x86: Sync SPTEs when injecting page/EPT fault into L1
 
-On 16/03/2020 12:41:28+0530, Mohit Aggarwal wrote:
-> Currently, alarm register is not cleared on resume leading to reboot 
-> during power off charging mode.
-> 
-> Change-Id: Ie2e6bbab8aa46e4e9b9cc984181ffab557cbbdae
+Sean Christopherson (30):
+  KVM: VMX: Flush all EPTP/VPID contexts on remote TLB flush
+  KVM: nVMX: Validate the EPTP when emulating INVEPT(EXTENT_CONTEXT)
+  KVM: nVMX: Invalidate all EPTP contexts when emulating INVEPT for L1
+  KVM: x86: Export kvm_propagate_fault() (as
+    kvm_inject_emulated_page_fault)
+  KVM: x86: Consolidate logic for injecting page faults to L1
+  KVM: VMX: Skip global INVVPID fallback if vpid==0 in
+    vpid_sync_context()
+  KVM: VMX: Use vpid_sync_context() directly when possible
+  KVM: VMX: Move vpid_sync_vcpu_addr() down a few lines
+  KVM: VMX: Handle INVVPID fallback logic in vpid_sync_vcpu_addr()
+  KVM: VMX: Drop redundant capability checks in low level INVVPID
+    helpers
+  KVM: nVMX: Use vpid_sync_vcpu_addr() to emulate INVVPID with address
+  KVM: x86: Move "flush guest's TLB" logic to separate kvm_x86_ops hook
+  KVM: VMX: Clean up vmx_flush_tlb_gva()
+  KVM: x86: Drop @invalidate_gpa param from kvm_x86_ops' tlb_flush()
+  KVM: SVM: Wire up ->tlb_flush_guest() directly to svm_flush_tlb()
+  KVM: VMX: Move vmx_flush_tlb() to vmx.c
+  KVM: nVMX: Move nested_get_vpid02() to vmx/nested.h
+  KVM: VMX: Introduce vmx_flush_tlb_current()
+  KVM: SVM: Document the ASID logic in svm_flush_tlb()
+  KVM: x86: Rename ->tlb_flush() to ->tlb_flush_all()
+  KVM: nVMX: Add helper to handle TLB flushes on nested VM-Enter/VM-Exit
+  KVM: x86: Introduce KVM_REQ_TLB_FLUSH_CURRENT to flush current ASID
+  KVM: x86/mmu: Use KVM_REQ_TLB_FLUSH_CURRENT for MMU specific flushes
+  KVM: nVMX: Selectively use TLB_FLUSH_CURRENT for nested
+    VM-Enter/VM-Exit
+  KVM: nVMX: Reload APIC access page on nested VM-Exit only if necessary
+  KVM: VMX: Retrieve APIC access page HPA only when necessary
+  KVM: VMX: Don't reload APIC access page if its control is disabled
+  KVM: x86/mmu: Add module param to force TLB flush on root reuse
+  KVM: nVMX: Don't flush TLB on nested VM transition with EPT enabled
+  KVM: nVMX: Free only the affected contexts when emulating INVEPT
 
-No Change-Id upstream please.
-[Mohit]: Will fix in next patch.
+ arch/x86/include/asm/kvm_host.h |  16 ++-
+ arch/x86/kvm/mmu/mmu.c          |  26 ++--
+ arch/x86/kvm/mmu/paging_tmpl.h  |   2 +-
+ arch/x86/kvm/svm.c              |  19 ++-
+ arch/x86/kvm/vmx/nested.c       | 202 ++++++++++++++++++++------------
+ arch/x86/kvm/vmx/nested.h       |   7 ++
+ arch/x86/kvm/vmx/ops.h          |  32 +++--
+ arch/x86/kvm/vmx/vmx.c          | 110 ++++++++++++++---
+ arch/x86/kvm/vmx/vmx.h          |  19 +--
+ arch/x86/kvm/x86.c              |  65 ++++++----
+ arch/x86/kvm/x86.h              |   6 +
+ 11 files changed, 334 insertions(+), 170 deletions(-)
 
-> Signed-off-by: Mohit Aggarwal <maggarwa@codeaurora.org>
-> ---
->  drivers/rtc/rtc-pm8xxx.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c index 
-> bbe013f..96e7985 100644
-> --- a/drivers/rtc/rtc-pm8xxx.c
-> +++ b/drivers/rtc/rtc-pm8xxx.c
-> @@ -1,5 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -/* Copyright (c) 2010-2011, 2019, The Linux Foundation. All rights 
-> reserved. */
-> +/* Copyright (c) 2010-2011, 2019-2020, The Linux Foundation. All 
-> +rights reserved. */
->  
->  #include <linux/of.h>
->  #include <linux/module.h>
-> @@ -301,6 +301,7 @@ static int pm8xxx_rtc_alarm_irq_enable(struct device
-*dev, unsigned int enable)
->  	struct pm8xxx_rtc *rtc_dd = dev_get_drvdata(dev);
->  	const struct pm8xxx_rtc_regs *regs = rtc_dd->regs;
->  	unsigned int ctrl_reg;
-> +	u8 value[NUM_8_BIT_RTC_REGS] = {0};
->  
->  	spin_lock_irqsave(&rtc_dd->ctrl_reg_lock, irq_flags);
->  
-> @@ -319,6 +320,16 @@ static int pm8xxx_rtc_alarm_irq_enable(struct device
-*dev, unsigned int enable)
->  		goto rtc_rw_fail;
->  	}
->  
-> +	/* Clear Alarm register */
-> +	if (!enable) {
-> +		rc = regmap_bulk_write(rtc_dd->regmap, regs->alarm_rw,
-value,
-> +					sizeof(value));
+-- 
+2.24.1
 
-This is not properly aligned.
-[Mohit]: I don't see any alignment issue at my end. I can see proper tabs
-are present.
-
-> +		if (rc) {
-> +			dev_err(dev, "Write to RTC ALARM register
-failed\n");
-
-Is that error message necessary? What would be the user action after seeing
-that in the logs? Will the logs actually be seen?
-[Mohit]: In case issue in question reproduces even after this change then
-for debugging purposes user can look out for this error log in kernel logs
-which can help to triage the issue.
-
-> +			goto rtc_rw_fail;
-> +		}
-> +	}
-> +
-
---
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
