@@ -2,156 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19AA1188A7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 17:38:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC899188A98
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 17:41:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbgCQQiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 12:38:11 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:24776 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726549AbgCQQiK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 12:38:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584463089;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1cmo9yvmEUOjZCY2QATmsaxzi5lWYanxsFcnQm9/fag=;
-        b=IETX7sTeoraQTvKexvlfbCHjFkgsrYiA2PRE6LnJrj2RblUElzNaFIkPcz7513yUblrJ9v
-        tvRYG+kiTCRpZS3sol5IWmK87ulkqUFK/Dd0XY0v7Qk4kM82EembdOccoveRXyadlfHy6f
-        isFp3Uvji5YtzZb+WhbSaIb6jLqQgbs=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-427-F5Usw7kcMkOyVjCVFh85Kw-1; Tue, 17 Mar 2020 12:38:06 -0400
-X-MC-Unique: F5Usw7kcMkOyVjCVFh85Kw-1
-Received: by mail-io1-f69.google.com with SMTP id c7so14530279iog.13
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 09:38:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1cmo9yvmEUOjZCY2QATmsaxzi5lWYanxsFcnQm9/fag=;
-        b=S/ntu6PnbkafLyVBofOdgbKl/5ppRryuPacbyQ8noRmNTsMC4U8BKFw3dG8RUwNHS2
-         tdpjVodSqe6Tdn43czrR1NiklroE2kTZKLcmL2au682LpSry6js1exTN4WtTti/jEfbQ
-         L1foeE10o9SoqQ2V1DQ4rWpEufWvFIWX+cgXgr/DFweShMaF6b8MGm4Te/Hs7YQoeojc
-         S4XWryJFx/kVSl8NkTCHYz+0LpeAc5Jp/A0zYBL/Uog8WbpVSHngJHDa74piwMFp/KMN
-         VDJlUT0SdVM5s/Yc3Dj0Gz+ZFi0oHLQQhw3vIp8tB6M8vcNJva5tOHyP58JqbuCTKs+J
-         U/vA==
-X-Gm-Message-State: ANhLgQ3mqu9HXd0IcYpafCny1Kyo5TRXzAKtNevsUMPgQ1wpditcBtI7
-        3++PKA1onl5MDf/CCr6znIKh4NixGiS4WrK1zbPKxu/oW3+DcEM/ZXvEJnKwEx6/eyXePyvf7A/
-        415Uq0o1HPue6JVpaI+fNXf+rFJRPJ/aMhlf3Y50s
-X-Received: by 2002:a02:86:: with SMTP id 128mr195326jaa.3.1584463085791;
-        Tue, 17 Mar 2020 09:38:05 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vtaDELQPtZX9WKJ1+skbJrbn1BKu58HWv6Zj5HtMcnUzSOIzNHw/Ku3ZCqVS5xSXt8qf7dpVnbQ3f3/xI+1kTM=
-X-Received: by 2002:a02:86:: with SMTP id 128mr195293jaa.3.1584463085470; Tue,
- 17 Mar 2020 09:38:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
- <20200315012523.GC208715@linux.intel.com> <CAOASepP9GeTEqs1DSfPiSm9ER0whj9qwSc46ZiNj_K4dMekOfQ@mail.gmail.com>
- <94ce05323c4de721c4a6347223885f2ad9f541af.camel@linux.intel.com>
- <CAOASepM1pp1emPwSdFcaRkZfFm6sNmwPCJH+iFMiaJpFjU0VxQ@mail.gmail.com>
- <5dc2ec4bc9433f9beae824759f411c32b45d4b74.camel@linux.intel.com>
- <20200316225322.GJ24267@linux.intel.com> <fa773504-4cc1-5cbd-c018-890f7a5d3152@intel.com>
- <20200316235934.GM24267@linux.intel.com> <ca2c9ac0-b717-ee96-c7df-4e39f03a9193@intel.com>
- <20200317002706.GN24267@linux.intel.com>
-In-Reply-To: <20200317002706.GN24267@linux.intel.com>
-From:   Nathaniel McCallum <npmccallum@redhat.com>
-Date:   Tue, 17 Mar 2020 12:37:54 -0400
-Message-ID: <CAOASepN8wdSL22+YodZW-8as7uGNCBqt3BdtgWBi9d0XD5xkJw@mail.gmail.com>
-Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, Neil Horman <nhorman@redhat.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
-        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
-        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Connor Kuehl <ckuehl@redhat.com>,
-        Harald Hoyer <harald@redhat.com>,
-        Lily Sturmann <lsturman@redhat.com>
+        id S1726664AbgCQQlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 12:41:01 -0400
+Received: from mail-eopbgr80092.outbound.protection.outlook.com ([40.107.8.92]:51215
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726130AbgCQQlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 12:41:01 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mrvvEqP2ygVb+Sd0YTwao/vWLbzJGQWL01F0VwUM1XQdNghGuIhfKBa6eXHje/eP6z1wsAP0E+MQox2YP4a//kQcATTduGfZzMYkUIhkyi+a3AX+4wV+vAB55VzXGb07bXFRemJ3eqhZk9Oqlfp+71NqVDmopUZbIvx6LFrk/okwpQ7JcxOTvijIrubpFmAtMkXdpQj/TXb6sftsBGP238c9Fn5ufR9d2UebaQCAPvm+VGyfnJ6MNNyjciPB94/YZcfejUrEaeD2VyYSbZ5bd1CB/t8l45rNy+4bTpLIrnRZY46r8C93Nr1x8cA6H3gqQbm/aCNTIRUHxd/JtSg+Dw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Gm6ch8xR8b3H1sbgs0W8m2O59cJyjN8XfUoPDBtfv7w=;
+ b=O4y0g0MRXbJl2AkAE17pnwznX25xU6lSF91G+rB4/JZmo40rDb/ObCBraJhzpCPiRPQSFVpsCjLpsCNMh6pchdePBgJtl8d8jMNTDhaL11v0jsrmST/5xjWNhm6fpNC4qa6feovaBMJvY0FQqcXoFLNIgWeJJQiCjae7gekciOO02P1ZgAP+ZF4S5biFwLzSN7XRUQK/e3blQGUuLF9qko/YQOoL+55h44enn8fG66qAa/XzuVZg+9x5Ocz94SHvHDqhzUe/0m+Zwc9FQNIpovAt6ogwJ6Cu8hw61yp33g9rPNN39PdGtTW2h5lXMY1bIodBkU9RG+eR/3oJZm2VJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toradex.com; dmarc=pass action=none header.from=toradex.com;
+ dkim=pass header.d=toradex.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Gm6ch8xR8b3H1sbgs0W8m2O59cJyjN8XfUoPDBtfv7w=;
+ b=CZnXsEPPC1j7crjvgwSuh0B0u8sCzbMPoIlCRc7SuySkxI3zFW411zkDGg0kpneFRTEB9eBlzEAiD2MYVi1N3v+k9DiZX0eMDSFTWlkIN+eFLqeZ87dDjELcQC1ihdParMqlJ1frxB7h/ZBeo5FHLilUmy2nKh7fZ9gLjhQpKSI=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=oleksandr.suvorov@toradex.com; 
+Received: from VI1PR05MB3279.eurprd05.prod.outlook.com (10.170.238.24) by
+ VI1PR05MB7101.eurprd05.prod.outlook.com (10.141.234.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.21; Tue, 17 Mar 2020 16:40:17 +0000
+Received: from VI1PR05MB3279.eurprd05.prod.outlook.com
+ ([fe80::7cdd:4feb:a8b6:a6d2]) by VI1PR05MB3279.eurprd05.prod.outlook.com
+ ([fe80::7cdd:4feb:a8b6:a6d2%7]) with mapi id 15.20.2814.021; Tue, 17 Mar 2020
+ 16:40:17 +0000
+X-Gm-Message-State: ANhLgQ2UDUmCImpKz+G1wvx2PfnsmodoXgrbSmtRzzIAUloDLXZvK/ar
+        5r8VjTqNFGhKTjojz4I9TXO6OUfATlOcsHiMwTc=
+X-Google-Smtp-Source: ADFU+vs5IiH5xOxAVk1tazaO0nIxfpUiMfX+F2pIOjfJJXHSK1Aww98AZOBwwAUZz85BhDppVfRRsQImlnrWq2Voyv0=
+X-Received: by 2002:a0c:c389:: with SMTP id o9mr5577qvi.232.1584463209922;
+ Tue, 17 Mar 2020 09:40:09 -0700 (PDT)
+References: <20200317123231.2843297-1-oleksandr.suvorov@toradex.com>
+ <20200317123231.2843297-2-oleksandr.suvorov@toradex.com> <f281a6a0-a150-514d-ef02-4e51192031d7@microchip.com>
+In-Reply-To: <f281a6a0-a150-514d-ef02-4e51192031d7@microchip.com>
+From:   Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+Date:   Tue, 17 Mar 2020 18:39:58 +0200
+X-Gmail-Original-Message-ID: <CAGgjyvE9+fHDKiua=BWBaTRGaChsOvnUnG6RGA9Q4V4uPuPEhQ@mail.gmail.com>
+Message-ID: <CAGgjyvE9+fHDKiua=BWBaTRGaChsOvnUnG6RGA9Q4V4uPuPEhQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/7] pwm: rename the PWM_POLARITY_INVERSED enum
+To:     Claudiu.Beznea@microchip.com
+Cc:     devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Paul Barker <pbarker@konsulko.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        alexandre.belloni@bootlin.com, wens@csie.org,
+        Fabio Estevam <festevam@gmail.com>, f.fainelli@gmail.com,
+        heiko@sntech.de, khilman@baylibre.com,
+        Ludovic.Desroches@microchip.com, mripard@kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nicolas.Ferre@microchip.com, palmer@dabbelt.com,
+        paul@crapouillou.net, paul.walmsley@sifive.com,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        rjui@broadcom.com, Sascha Hauer <s.hauer@pengutronix.de>,
+        sbranden@broadcom.com, Shawn Guo <shawnguo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux@prisktech.co.nz, bcm-kernel-feedback-list@broadcom.com,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+X-ClientProxiedBy: MN2PR11CA0013.namprd11.prod.outlook.com
+ (2603:10b6:208:23b::18) To VI1PR05MB3279.eurprd05.prod.outlook.com
+ (2603:10a6:802:1c::24)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from mail-qv1-f52.google.com (209.85.219.52) by MN2PR11CA0013.namprd11.prod.outlook.com (2603:10b6:208:23b::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.15 via Frontend Transport; Tue, 17 Mar 2020 16:40:14 +0000
+Received: by mail-qv1-f52.google.com with SMTP id a10so11202300qvq.8;        Tue, 17 Mar 2020 09:40:14 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ2UDUmCImpKz+G1wvx2PfnsmodoXgrbSmtRzzIAUloDLXZvK/ar
+        5r8VjTqNFGhKTjojz4I9TXO6OUfATlOcsHiMwTc=
+X-Google-Smtp-Source: ADFU+vs5IiH5xOxAVk1tazaO0nIxfpUiMfX+F2pIOjfJJXHSK1Aww98AZOBwwAUZz85BhDppVfRRsQImlnrWq2Voyv0=
+X-Received: by 2002:a0c:c389:: with SMTP id o9mr5577qvi.232.1584463209922;
+ Tue, 17 Mar 2020 09:40:09 -0700 (PDT)
+X-Gmail-Original-Message-ID: <CAGgjyvE9+fHDKiua=BWBaTRGaChsOvnUnG6RGA9Q4V4uPuPEhQ@mail.gmail.com>
+X-Originating-IP: [209.85.219.52]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2b32262c-ff35-40e3-18d5-08d7ca91de3a
+X-MS-TrafficTypeDiagnostic: VI1PR05MB7101:
+X-Microsoft-Antispam-PRVS: <VI1PR05MB71016734F68EB3F2E7B76F18F9F60@VI1PR05MB7101.eurprd05.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-Forefront-PRVS: 0345CFD558
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(366004)(39850400004)(136003)(396003)(376002)(199004)(478600001)(5660300002)(54906003)(53546011)(55236004)(2906002)(186003)(8676002)(4326008)(9686003)(450100002)(34206002)(52116002)(66476007)(42186006)(81156014)(81166006)(66556008)(55446002)(8936002)(66946007)(316002)(26005)(4744005)(86362001)(6666004)(44832011)(107886003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR05MB7101;H:VI1PR05MB3279.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: zKonuMXz290BY/UAKJq1oktF/Sh42olr7dwIOB900dPUAE97wYMFkcwAE9hTksr6NQRTHE8f3Zq5pJsC7v2qu8JdSExxN0icQt3syG869ZU3WcXf7eZzZ6HIPTY057dIkrvlri4mCVbA8Rx2Rpt47O24bnkccUarL9/t1XI0ZsaWp1RecHqZcXUf5k62fKUYe+hYOmIFIGLNYIknunn/cqFEqceGoIXeQzNcJd1s+oscuOfToqYBsTpCcma4GsUJlhsezGsiHQz18jnBvDEk0+1lG0+edflK+bhtGNeUasHnhtyqcWRU9tqk8V3hrxjYfihedRaSPmTku9IkM4s3b0hHlMVM2dJI7aK7iWSvk1OBrQU+gNmbs8H4lMKql1bTFrVIF0XoGmIEJsubpt6c9nIUX4577bn+zzMZYQlS7ajsVWw1Ls4rvaCDBs1HUV8h
+X-MS-Exchange-AntiSpam-MessageData: 06hGgKckLzQdv2qssAkipI6IqTjRAqBpLIi2NrVZCwnI6XJervvvaa1QlGtaSVX5IBPxlFC0Qfuo4LpnWt9K4wprIM0K2zP4Z7ql2PBmiTZnuwb+dcZvf4x1XzTaCSv4tOuDJUwSRvWciuIcO/vfNQ==
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b32262c-ff35-40e3-18d5-08d7ca91de3a
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2020 16:40:14.5231
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2B8kwDZoLDKWVoyukFtVS0S9wg4dewXtpJCt932lxOvp9CGsc5t5HGAqMGocBpqDv3fywqT5lf6A9yzeE7grjvzI+glpaDy+pR1fBQlyciA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB7101
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 8:27 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
+On Tue, Mar 17, 2020 at 6:27 PM <Claudiu.Beznea@microchip.com> wrote:
 >
-> On Mon, Mar 16, 2020 at 05:18:14PM -0700, Xing, Cedric wrote:
-> > On 3/16/2020 4:59 PM, Sean Christopherson wrote:
-> > >On Mon, Mar 16, 2020 at 04:50:26PM -0700, Xing, Cedric wrote:
-> > >>On 3/16/2020 3:53 PM, Sean Christopherson wrote:
-> > >>>On Mon, Mar 16, 2020 at 11:38:24PM +0200, Jarkko Sakkinen wrote:
-> > >>>>>My suggestions explicitly maintained robustness, and in fact increased
-> > >>>>>it. If you think we've lost capability, please speak with specificity
-> > >>>>>rather than in vague generalities. Under my suggestions we can:
-> > >>>>>1. call the vDSO from C
-> > >>>>>2. pass context to the handler
-> > >>>>>3. have additional stack manipulation options in the handler
-> > >>>>>
-> > >>>>>The cost for this is a net 2 additional instructions. No existing
-> > >>>>>capability is lost.
-> > >>>>
-> > >>>>My vague generality in this case is just that the whole design
-> > >>>>approach so far has been to minimize the amount of wrapping to
-> > >>>>EENTER.
-> > >>>
-> > >>>Yes and no.   If we wanted to minimize the amount of wrapping around the
-> > >>>vDSO's ENCLU then we wouldn't have the exit handler shenanigans in the
-> > >>>first place.  The whole process has been about balancing the wants of each
-> > >>>use case against the overall quality of the API and code.
-> > >>>
-> > >>The design of this vDSO API was NOT to minimize wrapping, but to allow
-> > >>maximal flexibility. More specifically, we strove not to restrict how info
-> > >>was exchanged between the enclave and its host process. After all, calling
-> > >>convention is compiler specific - i.e. the enclave could be built by a
-> > >>different compiler (e.g. MSVC) that doesn't share the same list of CSRs as
-> > >>the host process. Therefore, the API has been implemented to pass through
-> > >>virtually all registers except those used by EENTER itself. Similarly, all
-> > >>registers are passed back from enclave to the caller (or the exit handler)
-> > >>except those used by EEXIT. %rbp is an exception because the vDSO API has to
-> > >>anchor the stack, using either %rsp or %rbp. We picked %rbp to allow the
-> > >>enclave to allocate space on the stack.
-> > >
-> > >And unless I'm missing something, using %rcx to pass @leaf would still
-> > >satisfy the above, correct?  Ditto for saving/restoring %rbx.
-> > >
-> > >I.e. a runtime that's designed to work with enclave's using a different
-> > >calling convention wouldn't be able to take advantage of being able to call
-> > >the vDSO from C, but neither would it take on any meaningful burden.
-> > >
-> > Not exactly.
-> >
-> > If called directly from C code, the caller would expect CSRs to be
-> > preserved. Then who should preserve CSRs? It can't be the enclave because it
-> > may not follow the same calling convention. Moreover, the enclave may run
-> > into an exception, in which case it doesn't have the ability to restore
-> > CSRs. So it has to be done by the vDSO API. That means CSRs will be
-> > overwritten upon enclave exits, which violates the goal of "passing all
-> > registers back to the caller except those used by EEXIT".
 >
-> IIUC, Nathaniel's use case is to run only enclaves that are compatible
-> with Linux's calling convention and to handle enclave exceptions in the
-> exit handler.
 >
-> As I qualified above, there would certainly be runtimes and use cases that
-> would find no advantage in passing @leaf via %rcx and preserving %rbx.  I'm
-> well aware the Intel SDK falls into that bucket.  But again, the cost to
-> such runtimes is precisely one reg->reg MOV instruction.
+> On 17.03.2020 14:32, Oleksandr Suvorov wrote:
+> > @@ -187,7 +187,7 @@ static ssize_t polarity_store(struct device *child,
+> >         if (sysfs_streq(buf, "normal"))
+> >                 polarity = PWM_POLARITY_NORMAL;
+> >         else if (sysfs_streq(buf, "inversed"))
+>
+> You may also consider this string     ^
 
-It seems to me that some think my proposal represents a shift in
-strategic direction. I do not see it that way. I affirm the existing
-strategic direction. My proposal only represents a specific
-optimization of that strategic direction that benefits certain use
-cases without significant cost to all other use cases.
+Thanks for the feedback, Claudiu.
 
+I thought about it and decided not to change the ABI, as this change
+can impact lots of user-land applications.
+As a minimum, I can push this change as a separate patch to be able to
+revert the change of ABI only.
+What do you think?
+
+> > -               polarity = PWM_POLARITY_INVERSED;
+> > +               polarity = PWM_POLARITY_INVERTED;
+
+
+
+-- 
+Best regards
+Oleksandr Suvorov
+
+Toradex AG
+Ebenaustrasse 10 | 6048 Horw | Switzerland | T: +41 41 500 48 00
