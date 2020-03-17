@@ -2,132 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7792218786F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 05:21:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCEEF187873
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 05:25:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbgCQEV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 00:21:56 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:43387 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725536AbgCQEVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 00:21:55 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48hKkS2T8lz9sR4;
-        Tue, 17 Mar 2020 15:21:52 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1584418913;
-        bh=RKizELq7+yJhhSQqciMLy1s3drq2vyDrZAPXBp7AUwU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=I+6r/pEQFQJY3/w5V1gMgeKqcrc3atyQ9isB3PujllSUyo5yfOmy7gs3Test/f0SK
-         SM2N+Gs1hHgWAJ4tvHHZnzlDbqkVB+J/PTpU3mLq4LiPWDf6rxOH2e3+ptirAxTEk6
-         d/fEZxJnEZNqeXyOCubPpEjKew0OI4DXXBV3eo6Evf2ZhkLvzbTsFMQyTpiouTiR8p
-         obvVgYdxEMH+LssiiPThkHO+wJQM4w/oeN4A0YTd6szDLRRjbD7/HhP1+0luoC2YLK
-         GlFfqDbiCJZmwTTiKftpunwa/aS8TtN5vNTvfcJR28LNFIKqWDa0e7PLfaeNkROl/R
-         ZpmLenanE5lxw==
-Date:   Tue, 17 Mar 2020 15:21:49 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Rob Herring <robherring2@gmail.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Prashant Malani <pmalani@chromium.org>,
-        John Stultz <john.stultz@linaro.org>
-Subject: Re: linux-next: manual merge of the usb-gadget tree with the
- devicetree tree
-Message-ID: <20200317152149.3fd4db28@canb.auug.org.au>
-In-Reply-To: <20200316141436.2113f68c@canb.auug.org.au>
-References: <20200316141436.2113f68c@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/iz78cqsaLHjNqxnrr_JEJc3";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1726655AbgCQEZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 00:25:10 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46974 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbgCQEZK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 00:25:10 -0400
+Received: by mail-wr1-f68.google.com with SMTP id w16so7469271wrv.13
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 21:25:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=E17silW7K4zE4aUnYxC29i6t6YyS9hQDZKzsoHaks7E=;
+        b=ZSU+aYcZKv7IYzrKBs+ASvuHnrUYTdfHPm8BNUUEHLI6/7Lh89YNbDIQJL64cDrFLd
+         QISmRdyZZQg9B4UzREcKPO/O5gJ3B+kADfb0wIrnF4j6XIiECnJQ1SwSGjfR+zlQhZkN
+         WnaF9QqKVCynUrgCl7xMSL9qY+zzGnT0rk0R4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=E17silW7K4zE4aUnYxC29i6t6YyS9hQDZKzsoHaks7E=;
+        b=UNB/02s/IgGZluyehyg/aYwQaCUeikVOrZHGTmlsDZ/JOH6HMPsSXWVEEEuPFU/36S
+         rJ5EXcGjiIdy/q3vaTMuIvNGek7CSfss6kUSQHTi06WPUE6HR20o8BBIlZNtupvYqzh5
+         8wToAyeJBnJt0eSPsIuciHw232FpjI0rNBf9lh6kVQYaxAH9G9bxpcKrR3LXwkMYtpUo
+         Us/DrYxU7RSmLl12puHzKOY4vSZ9uLN88rzN/MN/vjST+5xGcNAkOG8Mt07f9WeYim6H
+         H65+Dr5e2c2N/0Szvf1bQRpABC+PBbfr/uLCzYooJwaTbSPyPuyCHG6PRWbdQlZ3spqj
+         kaQQ==
+X-Gm-Message-State: ANhLgQ21uI13jj4n4YaG0I1d9Yr4jIw3afgPXSGd+hIlLMwQfaDSB08h
+        nxRiMlmKhaOJxxkyhxY/6ZanBQ==
+X-Google-Smtp-Source: ADFU+vsk8VRY9NBdsUlZQQBCTy3qkF/okNsH3uEnITtS3yEWbGFAfOiuPk//jxBHBJUY7dZAl1w5jw==
+X-Received: by 2002:adf:e98c:: with SMTP id h12mr3370624wrm.345.1584419108218;
+        Mon, 16 Mar 2020 21:25:08 -0700 (PDT)
+Received: from rayagonda.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id q4sm2841396wro.56.2020.03.16.21.25.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Mar 2020 21:25:07 -0700 (PDT)
+From:   Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
+Cc:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Subject: [PATCH v1 1/1] maillbox: bcm-flexrm-mailbox: handle cmpl_pool dma allocation failure
+Date:   Tue, 17 Mar 2020 09:52:16 +0530
+Message-Id: <20200317042216.20623-1-rayagonda.kokatanur@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/iz78cqsaLHjNqxnrr_JEJc3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Handle 'cmpl_pool' dma memory allocation failure.
 
-Hi all,
+Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+---
+ drivers/mailbox/bcm-flexrm-mailbox.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On Mon, 16 Mar 2020 14:14:36 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Hi all,
->=20
-> Today's linux-next merge of the usb-gadget tree got a conflict in:
->=20
->   Documentation/devicetree/bindings/usb/generic.txt
->=20
-> between commit:
->=20
->   431a30b7d495 ("dt-bindings: Convert usb-connector to YAML format.")
->=20
-> from the devicetree tree and commit:
->=20
->   dd2d0d1fac2b ("dt-bindings: usb: generic: Add role-switch-default-mode =
-binding")
->=20
-> from the usb-gadget tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc Documentation/devicetree/bindings/usb/generic.txt
-> index 474e74c06522,67c51759a642..000000000000
-> --- a/Documentation/devicetree/bindings/usb/generic.txt
-> +++ b/Documentation/devicetree/bindings/usb/generic.txt
-> @@@ -34,7 -34,13 +34,13 @@@ Optional properties
->    - usb-role-switch: boolean, indicates that the device is capable of as=
-signing
->   			the USB data role (USB host or USB device) for a given
->   			USB connector, such as Type-C, Type-B(micro).
->  -			see connector/usb-connector.txt.
->  +			see connector/usb-connector.yaml.
-> +  - role-switch-default-mode: indicating if usb-role-switch is enabled, =
-the
-> + 			device default operation mode of controller while usb
-> + 			role is USB_ROLE_NONE. Valid arguments are "host" and
-> + 			"peripheral". Defaults to "peripheral" if not
-> + 			specified.
-> +=20
->  =20
->   This is an attribute to a USB controller such as:
->  =20
+diff --git a/drivers/mailbox/bcm-flexrm-mailbox.c b/drivers/mailbox/bcm-flexrm-mailbox.c
+index 8ee9db274802..bee33abb5308 100644
+--- a/drivers/mailbox/bcm-flexrm-mailbox.c
++++ b/drivers/mailbox/bcm-flexrm-mailbox.c
+@@ -1599,6 +1599,7 @@ static int flexrm_mbox_probe(struct platform_device *pdev)
+ 					  1 << RING_CMPL_ALIGN_ORDER, 0);
+ 	if (!mbox->cmpl_pool) {
+ 		ret = -ENOMEM;
++		goto fail_destroy_bd_pool;
+ 	}
+ 
+ 	/* Allocate platform MSIs for each ring */
+@@ -1661,6 +1662,7 @@ static int flexrm_mbox_probe(struct platform_device *pdev)
+ 	platform_msi_domain_free_irqs(dev);
+ fail_destroy_cmpl_pool:
+ 	dma_pool_destroy(mbox->cmpl_pool);
++fail_destroy_bd_pool:
+ 	dma_pool_destroy(mbox->bd_pool);
+ fail:
+ 	return ret;
+-- 
+2.17.1
 
-This is now a conflict between the usb tree and the devicetree tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/iz78cqsaLHjNqxnrr_JEJc3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5wUF0ACgkQAVBC80lX
-0Gx06Qf/QRzhPFQwQOaDLY3laMHmeBdggzpkdsPFLHpmoV2lGREsZh1zAuqzbG85
-dmk/SmeP2xFDzNW2kf3hEBPFdgUAP1bXrKze/TqKdMngYgiOrZ+i2PcxRx8McTJu
-rDOpmvr7VoBS14h9bq8mlUw3KroXsQ5XQQ+2t2muFsWU9C54fEXmVCIoWPuNgPZI
-rqrEJTrj/pmU9r23HiOmZ6dXAgSgSGjK3YRTLc0/BvysauGS5S9ZGjzUdMbhqeGY
-a9n+JhQdIyOml2+RAGtJQIAAhozHRqQ/WgweWpHKTpMizjhH1Igyc52qTuoMeRva
-lmGpF6tKY3MBKq030U5eDGMwHrQwOA==
-=rYA6
------END PGP SIGNATURE-----
-
---Sig_/iz78cqsaLHjNqxnrr_JEJc3--
