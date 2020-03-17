@@ -2,144 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0794F187ABE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:00:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C36F2187ABA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 08:58:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726334AbgCQIAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 04:00:20 -0400
-Received: from mga01.intel.com ([192.55.52.88]:20397 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725536AbgCQIAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 04:00:20 -0400
-IronPort-SDR: zoY88/N6vC3PcT7G+BSLGtZ32nMK650P1nmyNK7Dw+GDBQU6WZtv8HR1uDHhwa2B877s0UoPWL
- vEm+VyeHUx0Q==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 01:00:19 -0700
-IronPort-SDR: 9R7l+2HCScjNEkQGsEtQT2xSVjo+c9fucFo7R7IR0BTPLRB0NGE5b+tIeH5iQzv+v2eQ/CBXBM
- ug/XQlKc/0ug==
-X-IronPort-AV: E=Sophos;i="5.70,563,1574150400"; 
-   d="scan'208";a="417462225"
-Received: from likexu-mobl1.ccr.corp.intel.com (HELO [10.238.4.82]) ([10.238.4.82])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 01:00:16 -0700
-Subject: Re: [PATCH] kvm/x86: Reduce counter period change overhead and delay
- the effective time
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Eric Hankland <ehankland@google.com>,
-        Wanpeng Li <wanpengli@tencent.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200317075315.70933-1-like.xu@linux.intel.com>
-From:   Like Xu <like.xu@linux.intel.com>
-Organization: Intel OTC
-Message-ID: <cfc35223-2a8c-e995-ef2c-a85b44b5fea7@linux.intel.com>
-Date:   Tue, 17 Mar 2020 16:00:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726278AbgCQH60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 03:58:26 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41099 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbgCQH6Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 03:58:25 -0400
+Received: by mail-lj1-f195.google.com with SMTP id o10so21657298ljc.8;
+        Tue, 17 Mar 2020 00:58:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=zllu9dyob3KR6mqd5D9YEgxS//bxCCQ/mmmNOs5S+jY=;
+        b=kE3/Af4s7Np2SGnO2kk/xC9qG1nv/Blz1B5vv5vafcCUYNEUNkH3UIsjN6bfQZ2trH
+         faYAwkZ73guJVi58YtaXhfBabRHe+UYXAcdiRwyUlKqkLrCvDgORFFCq4UCVTsCmkf8r
+         cFsj6Op1Fjd+wJiFdragkc6fK6bVe9jdBXBLeBNsH0mhICIKvJrAwKvl0DoOdrG4OfZB
+         sG43dSApb5zORjBJi8e7Ve3M4JtX47oOmn39es+GYGLAg+S7/Zy/7BZzmVtOlXpUP7C2
+         hej0d2XoVfgeKAHC+4ZSl5YJGrDmvWY3Nq2iiiB1sql0jXWxNvwbHYyMx1b/5NOSKHQg
+         O5ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=zllu9dyob3KR6mqd5D9YEgxS//bxCCQ/mmmNOs5S+jY=;
+        b=VShOqiPgn25nr/dtIzwmtJ+A5jDp/h/afvBL56hO8ZLLJYXBxMelVNc58lZTziX3A5
+         1ouxLgVjQ9g9vCX60EwHZ4dwKzhevGRWQaLK2cxexhUMxXQvNlYYdgb4Dgub58CoJ5R4
+         76gokdRtYIw2D396N3XARxGEMdrwPb5rtrcLpTLyhaHPvhT1qp14Tst51SzsyqMkDN0H
+         4jl6Ev+sQgAktAIF1Pjj/3aYftSvYOvEs7R8cjWmA0U1baD0JcYmaZarXXTulAhcZJnI
+         vvdhs3xGgBtyDF09NZS3m1bC1p9StKFQ/Icu02Pig+kAnF6TzJ+cSlnkikxdBngArtR1
+         OiDQ==
+X-Gm-Message-State: ANhLgQ25ICuLxR/olDHBcs5w1Yi2NEL/T35jGHYPUaCEk95vQChJY8wP
+        ByH5Dt5uttBlpDUbtiP6L9NTBzPY
+X-Google-Smtp-Source: ADFU+vsrCJIN5MM8IPzGQvIGA4jCAxyZ9ZjipnpLKf1O7P8hDyvknoCAYHD5D4uxP4IhXvfS/eA1VQ==
+X-Received: by 2002:a2e:3c01:: with SMTP id j1mr1991421lja.175.1584431902850;
+        Tue, 17 Mar 2020 00:58:22 -0700 (PDT)
+Received: from gmail.com (94-255-169-249.cust.bredband2.com. [94.255.169.249])
+        by smtp.gmail.com with ESMTPSA id q4sm2045458lfp.18.2020.03.17.00.58.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2020 00:58:22 -0700 (PDT)
+Date:   Tue, 17 Mar 2020 09:01:35 +0100
+From:   Marcus Folkesson <marcus.folkesson@gmail.com>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lad Prabhakar <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH v4 0/3] media: i2c: imx219: Feature enhancements
+Message-ID: <20200317080135.GA138007@gmail.com>
+References: <1583846229-6799-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20200317075315.70933-1-like.xu@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1583846229-6799-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/3/17 15:53, Like Xu wrote:
-> The cost of perf_event_period() is unstable, and when the guest samples
-> multiple events, the overhead increases dramatically (5378 ns on E5-2699).
-> 
-> For a non-running counter, the effective time of the new period is when
-> its corresponding enable bit is enabled. Calling perf_event_period()
-> in advance is superfluous. For a running counter, it's safe to delay the
-> effective time until the KVM_REQ_PMU event is handled. If there are
-> multiple perf_event_period() calls before handling KVM_REQ_PMU,
-> it helps to reduce the total cost.
-> 
-> Signed-off-by: Like Xu <like.xu@linux.intel.com>
-> 
-> ---
->   arch/x86/kvm/pmu.c           | 11 -----------
->   arch/x86/kvm/pmu.h           | 11 +++++++++++
->   arch/x86/kvm/vmx/pmu_intel.c | 10 ++++------
->   3 files changed, 15 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-> index d1f8ca57d354..527a8bb85080 100644
-> --- a/arch/x86/kvm/pmu.c
-> +++ b/arch/x86/kvm/pmu.c
-> @@ -437,17 +437,6 @@ void kvm_pmu_init(struct kvm_vcpu *vcpu)
->   	kvm_pmu_refresh(vcpu);
->   }
->   
-> -static inline bool pmc_speculative_in_use(struct kvm_pmc *pmc)
-> -{
-> -	struct kvm_pmu *pmu = pmc_to_pmu(pmc);
-> -
-> -	if (pmc_is_fixed(pmc))
-> -		return fixed_ctrl_field(pmu->fixed_ctr_ctrl,
-> -			pmc->idx - INTEL_PMC_IDX_FIXED) & 0x3;
-> -
-> -	return pmc->eventsel & ARCH_PERFMON_EVENTSEL_ENABLE;
-> -}
-> -
->   /* Release perf_events for vPMCs that have been unused for a full time slice.  */
->   void kvm_pmu_cleanup(struct kvm_vcpu *vcpu)
->   {
-> diff --git a/arch/x86/kvm/pmu.h b/arch/x86/kvm/pmu.h
-> index d7da2b9e0755..cd112e825d2c 100644
-> --- a/arch/x86/kvm/pmu.h
-> +++ b/arch/x86/kvm/pmu.h
-> @@ -138,6 +138,17 @@ static inline u64 get_sample_period(struct kvm_pmc *pmc, u64 counter_value)
->   	return sample_period;
->   }
->   
-> +static inline bool pmc_speculative_in_use(struct kvm_pmc *pmc)
-> +{
-> +	struct kvm_pmu *pmu = pmc_to_pmu(pmc);
-> +
-> +	if (pmc_is_fixed(pmc))
-> +		return fixed_ctrl_field(pmu->fixed_ctr_ctrl,
-> +			pmc->idx - INTEL_PMC_IDX_FIXED) & 0x3;
-> +
-> +	return pmc->eventsel & ARCH_PERFMON_EVENTSEL_ENABLE;
-> +}
-> +
->   void reprogram_gp_counter(struct kvm_pmc *pmc, u64 eventsel);
->   void reprogram_fixed_counter(struct kvm_pmc *pmc, u8 ctrl, int fixed_idx);
->   void reprogram_counter(struct kvm_pmu *pmu, int pmc_idx);
-> diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
-> index 7c857737b438..4e689273eb05 100644
-> --- a/arch/x86/kvm/vmx/pmu_intel.c
-> +++ b/arch/x86/kvm/vmx/pmu_intel.c
-> @@ -263,15 +263,13 @@ static int intel_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->   			if (!msr_info->host_initiated)
->   				data = (s64)(s32)data;
->   			pmc->counter += data - pmc_read_counter(pmc);
-> -			if (pmc->perf_event)
-> -				perf_event_period(pmc->perf_event,
-> -						  get_sample_period(pmc, data));
-> +			if (pmc_speculative_in_use(pmc)) {
+Hi,
 
-Oops, the "{" is a shameful mistake.
+To which tree does this patchset apply?
 
-> +				kvm_make_request(KVM_REQ_PMU, pmc->vcpu);
->   			return 0;
->   		} else if ((pmc = get_fixed_pmc(pmu, msr))) {
->   			pmc->counter += data - pmc_read_counter(pmc);
-> -			if (pmc->perf_event)
-> -				perf_event_period(pmc->perf_event,
-> -						  get_sample_period(pmc, data));
-> +			if (pmc_speculative_in_use(pmc)) {
+On Tue, Mar 10, 2020 at 01:17:06PM +0000, Lad Prabhakar wrote:
+> This patch series does the following:
+> 1: Makes sure the sensor is LP11 state on power up
+> 2: Adds support for RAW8
+> 3: Adds support for 640x480 resolution
+>=20
+> Changes for v4:
+> 1: Fixed review comments for patch 2/2 as request by Sakari.
+>=20
+> Changes for v3:
+> 1: Only patch 3/3 was posted for review.
+>=20
+> Changes for v2:
+> 1: Dropped setting the format in probe to coax the sensor to enter LP11
+>    state.
+> 2: Fixed switching between RAW8/RAW10 modes.
+> 3: Fixed fps setting for 640x480 and switched to auto mode.
+>=20
+> Lad Prabhakar (3):
+>   media: i2c: imx219: Fix power sequence
+>   media: i2c: imx219: Add support for RAW8 bit bayer format
+>   media: i2c: imx219: Add support for cropped 640x480 resolution
+>=20
+>  drivers/media/i2c/imx219.c | 235 ++++++++++++++++++++++++++++++++++++++-=
+------
+>  1 file changed, 202 insertions(+), 33 deletions(-)
+>=20
+> --=20
+> 2.7.4
+>=20
 
-> +				kvm_make_request(KVM_REQ_PMU, pmc->vcpu);
->   			return 0;
->   		} else if ((pmc = get_gp_pmc(pmu, msr, MSR_P6_EVNTSEL0))) {
->   			if (data == pmc->eventsel)
-> 
 
+Thanks,
+Marcus Folkesson
