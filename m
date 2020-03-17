@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14877188007
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:06:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19D761881AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:20:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbgCQLGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:06:33 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11710 "EHLO huawei.com"
+        id S1727540AbgCQLST (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:18:19 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11713 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728610AbgCQLGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:06:30 -0400
+        id S1728631AbgCQLGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:06:33 -0400
 Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 7822B3339D68EAD5AD6B;
+        by Forcepoint Email with ESMTP id 908F797E1D8A3139C2F5;
         Tue, 17 Mar 2020 19:06:28 +0800 (CST)
 Received: from localhost.localdomain (10.69.192.58) by
  DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
@@ -24,9 +24,9 @@ To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
 CC:     <will@kernel.org>, <ak@linux.intel.com>, <linuxarm@huawei.com>,
         <linux-kernel@vger.kernel.org>, <james.clark@arm.com>,
         <qiangqing.zhang@nxp.com>, John Garry <john.garry@huawei.com>
-Subject: [PATCH v2 2/7] perf jevents: Support test events folder
-Date:   Tue, 17 Mar 2020 19:02:14 +0800
-Message-ID: <1584442939-8911-3-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v2 3/7] perf pmu: Refactor pmu_add_cpu_aliases()
+Date:   Tue, 17 Mar 2020 19:02:15 +0800
+Message-ID: <1584442939-8911-4-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1584442939-8911-1-git-send-email-john.garry@huawei.com>
 References: <1584442939-8911-1-git-send-email-john.garry@huawei.com>
@@ -39,143 +39,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the goal of supporting pmu-events test case, introduce support for a
-test events folder.
-
-These test events can be used for testing generation of pmu-event tables
-and alias creation for any arch.
-
-When running the pmu-events test case, these test events will be used
-as the platform-agnostic events, so aliases can be created per-PMU and
-validated against known expected values.
-
-To support the test events, add a "testcpu" entry in pmu_events_map[].
-The pmu-events test will be able to lookup the events map for "testcpu",
-to verify the generated tables against expected values.
-
-The resultant generated pmu-events.c will now look like the following:
-
-struct pmu_event pme_ampere_emag[] = {
-{
-	.name = "ldrex_spec",
-	.event = "event=0x6c",
-	.desc = "Exclusive operation spe...",
-	.topic = "intrinsic",
-	.long_desc = "Exclusive operation ...",
-},
-...
-};
-
-struct pmu_event pme_test_cpu[] = {
-{
-	.name = "uncore_hisi_ddrc.flux_wcmd",
-	.event = "event=0x2",
-	.desc = "DDRC write commands. Unit: hisi_sccl,ddrc ",
-	.topic = "uncore",
-	.long_desc = "DDRC write commands",
-	.pmu = "hisi_sccl,ddrc",
-},
-{
-	.name = "unc_cbo_xsnp_response.miss_eviction",
-	.event = "umask=0x81,event=0x22",
-	.desc = "Unit: uncore_cbox A cross-core snoop resulted ...",
-	.topic = "uncore",
-	.long_desc = "A cross-core snoop resulted from L3 ...",
-	.pmu = "uncore_cbox",
-},
-{
-	.name = "eist_trans",
-	.event = "umask=0x0,period=200000,event=0x3a",
-	.desc = "Number of Enhanced Intel SpeedStep(R) ...",
-	.topic = "other",
-},
-{
-	.name = 0,
-},
-};
-
-struct pmu_events_map pmu_events_map[] = {
-...
-{
-	.cpuid = "0x00000000500f0000",
-	.version = "v1",
-	.type = "core",
-	.table = pme_ampere_emag
-},
-...
-{
-	.cpuid = "testcpu",
-	.version = "v1",
-	.type = "core",
-	.table = pme_test_cpu,
-},
-{
-	.cpuid = 0,
-	.version = 0,
-	.type = 0,
-	.table = 0,
-},
-};
+Create pmu_add_cpu_aliases_map() from pmu_add_cpu_aliases(), so the caller
+can pass the map; the pmu-events test would use this since there would
+be no CPUID matching to a mapfile there.
 
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- tools/perf/pmu-events/jevents.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ tools/perf/util/pmu.c | 21 +++++++++++++--------
+ tools/perf/util/pmu.h |  3 +++
+ 2 files changed, 16 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-index 27b4da80f751..3343ba27271b 100644
---- a/tools/perf/pmu-events/jevents.c
-+++ b/tools/perf/pmu-events/jevents.c
-@@ -764,6 +764,19 @@ static void print_mapping_table_suffix(FILE *outfp)
- 	fprintf(outfp, "};\n");
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 8b99fd312aae..c616a06a34a8 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -21,7 +21,6 @@
+ #include "pmu.h"
+ #include "parse-events.h"
+ #include "header.h"
+-#include "pmu-events/pmu-events.h"
+ #include "string2.h"
+ #include "strbuf.h"
+ #include "fncache.h"
+@@ -744,16 +743,11 @@ static bool pmu_uncore_alias_match(const char *pmu_name, const char *name)
+  * to the current running CPU. Then, add all PMU events from that table
+  * as aliases.
+  */
+-static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
++void pmu_add_cpu_aliases_map(struct list_head *head, struct perf_pmu *pmu,
++			     struct pmu_events_map *map)
+ {
+ 	int i;
+-	struct pmu_events_map *map;
+ 	const char *name = pmu->name;
+-
+-	map = perf_pmu__find_map(pmu);
+-	if (!map)
+-		return;
+-
+ 	/*
+ 	 * Found a matching PMU events table. Create aliases
+ 	 */
+@@ -788,6 +782,17 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
+ 	}
  }
  
-+static void print_mapping_test_table(FILE *outfp)
++static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
 +{
-+	/*
-+	 * Print the terminating, NULL entry.
-+	 */
-+	fprintf(outfp, "{\n");
-+	fprintf(outfp, "\t.cpuid = \"testcpu\",\n");
-+	fprintf(outfp, "\t.version = \"v1\",\n");
-+	fprintf(outfp, "\t.type = \"core\",\n");
-+	fprintf(outfp, "\t.table = pme_test_cpu,\n");
-+	fprintf(outfp, "},\n");
++	struct pmu_events_map *map;
++
++	map = perf_pmu__find_map(pmu);
++	if (!map)
++		return;
++
++	pmu_add_cpu_aliases_map(head, pmu, map);
 +}
 +
- static int process_mapfile(FILE *outfp, char *fpath)
+ struct perf_event_attr * __weak
+ perf_pmu__get_default_config(struct perf_pmu *pmu __maybe_unused)
  {
- 	int n = 16384;
-@@ -841,6 +854,7 @@ static int process_mapfile(FILE *outfp, char *fpath)
- 	}
+diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
+index 6737e3d5d568..0b4a0efae38e 100644
+--- a/tools/perf/util/pmu.h
++++ b/tools/perf/util/pmu.h
+@@ -7,6 +7,7 @@
+ #include <linux/perf_event.h>
+ #include <stdbool.h>
+ #include "parse-events.h"
++#include "pmu-events/pmu-events.h"
  
- out:
-+	print_mapping_test_table(outfp);
- 	print_mapping_table_suffix(outfp);
- 	fclose(mapfp);
- 	free(line);
-@@ -1161,6 +1175,22 @@ int main(int argc, char *argv[])
- 		goto empty_map;
- 	}
+ struct perf_evsel_config_term;
  
-+	sprintf(ldirname, "%s/test", start_dirname);
-+
-+	rc = nftw(ldirname, process_one_file, maxfds, 0);
-+	if (rc && verbose) {
-+		pr_info("%s: Error walking file tree %s rc=%d for test\n",
-+			prog, ldirname, rc);
-+		goto empty_map;
-+	} else if (rc < 0) {
-+		/* Make build fail */
-+		free_arch_std_events();
-+		ret = 1;
-+		goto out_free_mapfile;
-+	} else if (rc) {
-+		goto empty_map;
-+	}
-+
- 	if (close_table)
- 		print_events_table_suffix(eventsfp);
+@@ -97,6 +98,8 @@ int perf_pmu__scan_file(struct perf_pmu *pmu, const char *name, const char *fmt,
+ int perf_pmu__test(void);
+ 
+ struct perf_event_attr *perf_pmu__get_default_config(struct perf_pmu *pmu);
++void pmu_add_cpu_aliases_map(struct list_head *head, struct perf_pmu *pmu,
++			     struct pmu_events_map *map);
+ 
+ struct pmu_events_map *perf_pmu__find_map(struct perf_pmu *pmu);
  
 -- 
 2.12.3
