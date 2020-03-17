@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5055188061
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:09:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 897991881EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:22:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbgCQLJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:09:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51994 "EHLO mail.kernel.org"
+        id S1726679AbgCQK4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:56:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728957AbgCQLJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:09:36 -0400
+        id S1726574AbgCQK4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:56:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AB8D20719;
-        Tue, 17 Mar 2020 11:09:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50C4B20719;
+        Tue, 17 Mar 2020 10:56:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443376;
-        bh=OYEWaCPqZTDX9qCgwnlLOmEk8osMuwE31g8YAdQZNzE=;
+        s=default; t=1584442592;
+        bh=ETFrA/e9LYaR6+n3BQdUrrbh5mvc9XG/eiCN+ei6OAo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OGycsFf/0f42aFqBE2ds6LTnhkkbB+lJ9B75TrLdbI9eWDD1sY8vIvRAU6Otk0H4r
-         eB7w+cgM8nOVIYGzogu+HUJkdS0muf2ZlLOdiibb2vNekCEB9nAtUE75Pc+lPaN9AU
-         QxrJtUCfTjnwn6r06y2y/pWu1bPIviS2qdbnPeVw=
+        b=sBkC6qS//8D82tHJCz8OwwRPwhu02sIWuNKCN+aa6wYsmMAOvjvue9jT3cpIRs7ON
+         rvUAR5+4qf3eBrXGdud4zcofM51DrLOrzfrptDeJMkTZpEc6GAAVN6qfBcNXVEAGO2
+         Lrxz1Y5BOu9xGxXnqCtNgKVHSNhHntJW4GZehZ6c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        stable@vger.kernel.org, Remi Pommarel <repk@triplefau.lt>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 055/151] net: taprio: add missing attribute validation for txtime delay
+Subject: [PATCH 4.19 16/89] net: stmmac: dwmac1000: Disable ACS if enhanced descs are not used
 Date:   Tue, 17 Mar 2020 11:54:25 +0100
-Message-Id: <20200317103330.474024503@linuxfoundation.org>
+Message-Id: <20200317103301.835538422@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
-References: <20200317103326.593639086@linuxfoundation.org>
+In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
+References: <20200317103259.744774526@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,31 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <kuba@kernel.org>
+From: Remi Pommarel <repk@triplefau.lt>
 
-[ Upstream commit e13aaa0643da10006ec35715954e7f92a62899a5 ]
+[ Upstream commit b723bd933980f4956dabc8a8d84b3e83be8d094c ]
 
-Add missing attribute validation for TCA_TAPRIO_ATTR_TXTIME_DELAY
-to the netlink policy.
+ACS (auto PAD/FCS stripping) removes FCS off 802.3 packets (LLC) so that
+there is no need to manually strip it for such packets. The enhanced DMA
+descriptors allow to flag LLC packets so that the receiving callback can
+use that to strip FCS manually or not. On the other hand, normal
+descriptors do not support that.
 
-Fixes: 4cfd5779bd6e ("taprio: Add support for txtime-assist mode")
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Reviewed-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Thus in order to not truncate LLC packet ACS should be disabled when
+using normal DMA descriptors.
+
+Fixes: 47dd7a540b8a0 ("net: add support for STMicroelectronics Ethernet controllers.")
+Signed-off-by: Remi Pommarel <repk@triplefau.lt>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_taprio.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/sched/sch_taprio.c
-+++ b/net/sched/sch_taprio.c
-@@ -774,6 +774,7 @@ static const struct nla_policy taprio_po
- 	[TCA_TAPRIO_ATTR_SCHED_CYCLE_TIME]           = { .type = NLA_S64 },
- 	[TCA_TAPRIO_ATTR_SCHED_CYCLE_TIME_EXTENSION] = { .type = NLA_S64 },
- 	[TCA_TAPRIO_ATTR_FLAGS]                      = { .type = NLA_U32 },
-+	[TCA_TAPRIO_ATTR_TXTIME_DELAY]		     = { .type = NLA_U32 },
- };
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
+@@ -34,6 +34,7 @@
+ static void dwmac1000_core_init(struct mac_device_info *hw,
+ 				struct net_device *dev)
+ {
++	struct stmmac_priv *priv = netdev_priv(dev);
+ 	void __iomem *ioaddr = hw->pcsr;
+ 	u32 value = readl(ioaddr + GMAC_CONTROL);
+ 	int mtu = dev->mtu;
+@@ -45,7 +46,7 @@ static void dwmac1000_core_init(struct m
+ 	 * Broadcom tags can look like invalid LLC/SNAP packets and cause the
+ 	 * hardware to truncate packets on reception.
+ 	 */
+-	if (netdev_uses_dsa(dev))
++	if (netdev_uses_dsa(dev) || !priv->plat->enh_desc)
+ 		value &= ~GMAC_CONTROL_ACS;
  
- static int fill_sched_entry(struct nlattr **tb, struct sched_entry *entry,
+ 	if (mtu > 1500)
 
 
