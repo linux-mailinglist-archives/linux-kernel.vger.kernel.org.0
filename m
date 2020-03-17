@@ -2,142 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 169FD18884B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:55:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 950B9188814
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:52:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbgCQOzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 10:55:10 -0400
-Received: from mail-eopbgr140050.outbound.protection.outlook.com ([40.107.14.50]:52838
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727228AbgCQOzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 10:55:08 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cIFsnR/oSAyllJQ52n1rMHH5zr7v0z7yP6h+UryNp11dIlM8ol7GY1HDTrj8LpeahKPZVX1XmP/73LnRYA1n+RftyWCvKHd0ktIExVL/ZusIEqdL4Gr2pSAkdRwKJVjZUQIoIE3B5vQOsEigRaDNtdjqMzVznTK28D58t/AnoJXdNAf5qsbW3Oj2hcBLLfmsux9erc33oXMhyj14VpmLe0OLY7/ooEf68MoZmgObplydgXQpYa3N9udoz5J7KTSLHO3Sm7msxVpx58Kkk1MUTbXk+O3ROIcyMcozBLtl1TpLyLRPfpeekVDRQUjytdMV39DQHmK2t1YCuwjt+8a0Nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qh7zFP7BOUuaYb1xjZcSU6NEYVfZZ6JyKWOYMVSoqiA=;
- b=imywYZyj8gm4Rs2dXhO/O4EGcdJdWOYvuA7voQCIWiZSyQtddaTmD2mc+LV0lC1cSZd9t16GPxIeBOJH5bOW2WrHx/8G/nXtpOnIehEaJuHV/xgideufIY5A0RNZ1tKrqol9mICo+tESCxgtl/lpKnLYOa5/a0TCALQ2ud69RPvSq+zMfMfcisJ/AXcMbbvP4OUCDLvxA/1PvEJQ9sJid0rMrT6zN0KawJrRnuubUgiM9L5O9R6xzPn6UBxQc5LqX5sVXBs4T9W9eRIAeepmY0ZtFsayM5L5zDgBi0pa48ad2EHnDgbri+eOvC/cz/si+RWmuJibaHDx+uvET5Yu4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qh7zFP7BOUuaYb1xjZcSU6NEYVfZZ6JyKWOYMVSoqiA=;
- b=J48iYt2odxzrJHwbmV7zMiv3OGEOI55udYSHmX1dLANRxrXogDvc4fOcujnpC6LumRUd2w+u9OptqjFoQHdK5OkpNp9CP8IBYp25E2q17wYEmDGa84B6km1yy6bXDJQxHekRIP24/PFlMVlN8dZh373DtASRDwiktSXL6etLUtQ=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=zhiqiang.hou@nxp.com; 
-Received: from DB8PR04MB6747.eurprd04.prod.outlook.com (20.179.250.159) by
- DB8PR04MB5931.eurprd04.prod.outlook.com (20.179.11.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.18; Tue, 17 Mar 2020 14:55:03 +0000
-Received: from DB8PR04MB6747.eurprd04.prod.outlook.com
- ([fe80::4528:6120:94a4:ce1e]) by DB8PR04MB6747.eurprd04.prod.outlook.com
- ([fe80::4528:6120:94a4:ce1e%5]) with mapi id 15.20.2814.016; Tue, 17 Mar 2020
- 14:55:03 +0000
-From:   Zhiqiang Hou <Zhiqiang.Hou@nxp.com>
-To:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lorenzo.pieralisi@arm.com, amurray@thegoodpenguin.co.uk,
-        bhelgaas@google.com
-Cc:     Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Subject: [PATCH] PCI: mobiveil: fix different address space warnings of sparse
-Date:   Tue, 17 Mar 2020 22:51:25 +0800
-Message-Id: <20200317145125.3682-1-Zhiqiang.Hou@nxp.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR06CA0126.apcprd06.prod.outlook.com
- (2603:1096:1:1d::28) To DB8PR04MB6747.eurprd04.prod.outlook.com
- (2603:10a6:10:10b::31)
+        id S1726836AbgCQOwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 10:52:18 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37903 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbgCQOwS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 10:52:18 -0400
+Received: by mail-oi1-f195.google.com with SMTP id k21so22021290oij.5;
+        Tue, 17 Mar 2020 07:52:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ecR1Q8eBSDGpmsPXI5s5h5OW1t7Z861Vgx2tdv3FnXk=;
+        b=M73VUuxgxkAIX/ocDUVEUTlCgJ8KHTL6VWjeH54w4zFFZDtkniU3HZmsXZ8cRjx9SZ
+         iMVnldkfezJpuyIXdNUZs1deTLMHrwUENRf832zkxpCzawDTcrwBvI5caGFIB419DJKZ
+         HIJdVwv+ROFcmPkSmViyNyn+B6OzpRr3SqvxJO9WpQYvJyhbg06+VjTBCqxa/ksZpTn/
+         vPnVmQCiCyphkzpb1SclHw1OtQWGWDjuroBAtH+aSnnxZ1+WQLnm7ykFLShSOn3gUFpq
+         pECcMoWKMeBxIIIPEdmLTbnO8Xfcn8peASfRgLeawPjPJrzRBT6Ls5R/EEuy17cizVqW
+         kNTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ecR1Q8eBSDGpmsPXI5s5h5OW1t7Z861Vgx2tdv3FnXk=;
+        b=qtsFFYXGMkhDQezIGnHg2yxKGky4y7TtAzL9MyToV4p3+GsAT+llUwgatz6okHtrwu
+         lZr2z4ZlsPOsqtwNRHW3HeFhFRLyODNk+hyRZI08gsE+easlwfB3CTzudqmIt/iuMin+
+         3u2IdX7o+4SwKdRrKN7jY6h5OI2LCxraeBadbT3RqVYBO9uzO1Zq5kUgeGwBpWuxgNgl
+         C7PeKSJtzjtT1BhiOj1gS1VkTyVrCU2adzww0XRk4ur9WEBPVT4/T97H7gBO5Pttotrg
+         CTA+JKnky9CLZV6nD6WSge/DeW9UiLdaN6HMP2hX2wF6ZUm07RmgYqQbTVYJluK89rzm
+         pZJg==
+X-Gm-Message-State: ANhLgQ2THtvcaIEqD8FvWFxyjZXdDmSBrjVB7Am70EAF++RguORFVKJU
+        0daS8Dnr5fvT9QHJXGjmWQL7LVTv
+X-Google-Smtp-Source: ADFU+vsIaoTFpOvKki2DRF5YUDh4a0WfOkHZ9PIMSzhF/46X4oNIYN6IERXbjZ52QimF6y2g84nWZw==
+X-Received: by 2002:aca:52d0:: with SMTP id g199mr3824119oib.59.1584456736636;
+        Tue, 17 Mar 2020 07:52:16 -0700 (PDT)
+Received: from [192.168.1.120] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id 60sm1121917ott.17.2020.03.17.07.52.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Mar 2020 07:52:16 -0700 (PDT)
+Subject: Re: PROBLEM: 5.6.0-rc6 + Realtek RTL8188CUS wifi dongle: 8051 reset
+ failed!
+To:     AC <achirvasub@gmail.com>, Ping-Ke Shih <pkshih@realtek.com>,
+        Jes Sorensen <Jes.Sorensen@gmail.com>,
+        linux-wireless@vger.kernel.org
+Cc:     kernel list <linux-kernel@vger.kernel.org>
+References: <C9F34A4B-E3F3-4D7A-B870-058C8D4871B9@gmail.com>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <9ae33061-1595-4387-5767-79437b2ff2ae@lwfinger.net>
+Date:   Tue, 17 Mar 2020 09:52:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.73) by SG2PR06CA0126.apcprd06.prod.outlook.com (2603:1096:1:1d::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.18 via Frontend Transport; Tue, 17 Mar 2020 14:55:00 +0000
-X-Mailer: git-send-email 2.17.1
-X-Originating-IP: [119.31.174.73]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: e152645a-cc0b-4654-6df4-08d7ca832c52
-X-MS-TrafficTypeDiagnostic: DB8PR04MB5931:|DB8PR04MB5931:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DB8PR04MB5931B1C31496CF619B274EA784F60@DB8PR04MB5931.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:126;
-X-Forefront-PRVS: 0345CFD558
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(346002)(39860400002)(366004)(376002)(199004)(66556008)(66476007)(81166006)(66946007)(8676002)(2906002)(81156014)(36756003)(2616005)(6506007)(6512007)(16526019)(6486002)(5660300002)(69590400007)(478600001)(956004)(316002)(52116002)(6666004)(4326008)(86362001)(8936002)(186003)(26005)(1076003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB8PR04MB5931;H:DB8PR04MB6747.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: zzYTD064Hg6ZoMzsTD4CpOmoDlZZgbcV5znO0nYRZGTgQWrNV9OtHNfN9PQ9GTTH4sUP8E40PvFvUdOdKQXWAYxqmTpPgsrR+oEKHlsGUwVQN2R2ZsVAQyuQm34deQj5e68umkuuPEBYQ71PzuvScBNMQUYda0ByNzYdPUNkd9/jkS0iql1HVitreuLd7Gs4BfkqUGws2+1QBqY23B3Il8u0A2S62lRqNwQU7BehkYGY6ctHkzknpfsgfwac+yunAXcyRsidjRBe30MilvPpV2rkgFA1m7u6Y/WKXAt4lzVyzW3NZO1f36O01Pe9RSBkCF6etwfpDzenfu8TQiOkSTs4IKGKadaU2AZ3S/RYKp3LthBSPG+pLjfQYOpCHIl1RcFdgLu64M6RIprExajeDPIckgQl/c0RvB7vvzlEiuAspuisPAd9syQkgm30Ei/VPl0keBwtrxrrdfhdBR7Jj2wUzM3vgt/NfbXB6cIajhdEAFf0Eu7P1PkGlcCTD173
-X-MS-Exchange-AntiSpam-MessageData: dVcodJ4XOYpecMKtwZE1Dbs+fGvqCldQeJH4/AXOF08K04YJY8pLPraRajoTDGCDyM6I7DADX5AvKWMQfKo88YjvGfJI130HiE7qtpoTUoHSoyfqjUlE1CnJJc4HQWK4t6VrlYl1ZWJCjC4AxlYTWA==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e152645a-cc0b-4654-6df4-08d7ca832c52
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2020 14:55:03.2219
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /zHQuVI9JpDV/lRM6MBeJtyQ9KFOuimkZfbBfsyGdzCgNWlbkQkk2QVEAP2awhGybh6J4SnqeLh8hs8LoZR2Fg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB5931
+In-Reply-To: <C9F34A4B-E3F3-4D7A-B870-058C8D4871B9@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-
-Fix the sparse warnings below:
-
-drivers/pci/controller/mobiveil/pcie-mobiveil.c:44:49: warning: incorrect type in return expression (different address spaces)
-drivers/pci/controller/mobiveil/pcie-mobiveil.c:44:49:    expected void *
-drivers/pci/controller/mobiveil/pcie-mobiveil.c:44:49:    got void [noderef] <asn:2> *
-drivers/pci/controller/mobiveil/pcie-mobiveil.c:48:41: warning: incorrect type in return expression (different address spaces)
-drivers/pci/controller/mobiveil/pcie-mobiveil.c:48:41:    expected void *
-drivers/pci/controller/mobiveil/pcie-mobiveil.c:48:41:    got void [noderef] <asn:2> *
-drivers/pci/controller/mobiveil/pcie-mobiveil.c:106:34: warning: incorrect type in argument 1 (different address spaces)
-drivers/pci/controller/mobiveil/pcie-mobiveil.c:106:34:    expected void [noderef] <asn:2> *addr
-drivers/pci/controller/mobiveil/pcie-mobiveil.c:106:34:    got void *[assigned] addr
-drivers/pci/controller/mobiveil/pcie-mobiveil.c:121:35: warning: incorrect type in argument 1 (different address spaces)
-drivers/pci/controller/mobiveil/pcie-mobiveil.c:121:35:    expected void [noderef] <asn:2> *addr
-drivers/pci/controller/mobiveil/pcie-mobiveil.c:121:35:    got void *[assigned] addr
-
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Reported-by: kbuild test robot <lkp@intel.com>
----
- drivers/pci/controller/mobiveil/pcie-mobiveil.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil.c b/drivers/pci/controller/mobiveil/pcie-mobiveil.c
-index 23ab904989ea..62ecbaeb0a60 100644
---- a/drivers/pci/controller/mobiveil/pcie-mobiveil.c
-+++ b/drivers/pci/controller/mobiveil/pcie-mobiveil.c
-@@ -36,7 +36,8 @@ static void mobiveil_pcie_sel_page(struct mobiveil_pcie *pcie, u8 pg_idx)
- 	writel(val, pcie->csr_axi_slave_base + PAB_CTRL);
- }
- 
--static void *mobiveil_pcie_comp_addr(struct mobiveil_pcie *pcie, u32 off)
-+static void __iomem *mobiveil_pcie_comp_addr(struct mobiveil_pcie *pcie,
-+					     u32 off)
- {
- 	if (off < PAGED_ADDR_BNDRY) {
- 		/* For directly accessed registers, clear the pg_sel field */
-@@ -97,7 +98,7 @@ static int mobiveil_pcie_write(void __iomem *addr, int size, u32 val)
- 
- u32 mobiveil_csr_read(struct mobiveil_pcie *pcie, u32 off, size_t size)
- {
--	void *addr;
-+	void __iomem *addr;
- 	u32 val;
- 	int ret;
- 
-@@ -113,7 +114,7 @@ u32 mobiveil_csr_read(struct mobiveil_pcie *pcie, u32 off, size_t size)
- void mobiveil_csr_write(struct mobiveil_pcie *pcie, u32 val, u32 off,
- 			       size_t size)
- {
--	void *addr;
-+	void __iomem *addr;
- 	int ret;
- 
- 	addr = mobiveil_pcie_comp_addr(pcie, off);
--- 
-2.17.1
-
+T24gMy8xNy8yMCAxOjQ0IEFNLCBBQyB3cm90ZToNCj4gSSBhbSBvbiBEZWJpYW4gMTAuMyBz
+dGFibGUgaTM4NiwgcnVubmluZyBhIGN1c3RvbS1jb21waWxlZCBrZXJuZWwgKEkgY29tcGls
+ZSB3ZWVrbHksIHdoZW4gbmV3IHJjIHJlbGVhc2VzIGRyb3ApLg0KPiANCj4gSSBrZWVwIHRo
+ZSBmb2xsb3dpbmcgVVNCIHdpZmkgZG9uZ2xlIGNvbm5lY3RlZCB0byB0aGlzIG1hY2hpbmU6
+DQo+IA0KPiBJRCAwNTBkOjExMDIgQmVsa2luIENvbXBvbmVudHMgRjdEMTEwMiBOMTUwL1N1
+cmYgTWljcm8gV2lyZWxlc3MgQWRhcHRlciB2MTAwMCBbUmVhbHRlayBSVEw4MTg4Q1VTXQ0K
+PiANCj4gDQo+IC0tLQ0KPiANCj4gVGhlIHByb2JsZW06DQo+IA0KPiBBcyBvZiA1LjYuMC1y
+YzYsIGJvb3RpbmcgdXAgd2l0aCB0aGUgZG9uZ2xlIGNvbm5lY3RlZCByZXR1cm5zIGEgbnVt
+YmVyIG9mIGRtZXNnIGNvbXBsYWludHM6DQo+IA0KPiAtLS0gY3V0IGhlcmUgLS0tDQo+IA0K
+PiBbICAgIDkuNDQ4MzM3XSBydGw4MTkyY3U6IE1BQyBhdXRvIE9OIG9rYXkhICAgICAgICAg
+IFsgICAgOS41NzkwMjVdIHJ0bDgxOTJjdTogVHggcXVldWUgc2VsZWN0OiAweDA1ICAgICAg
+WyAgIDEwLjQ3NTMwOF0gcnRsODE5MmNfY29tbW9uOiBQb2xsaW5nIEZXIHJlYWR5IGZhaWwh
+IFJFR19NQ1VGV0RMOjB4MDAwMzAwMDYuICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsg
+ICAxMC40NzgyMTNdIHJ0bDgxOTJjX2NvbW1vbjogRmlybXdhcmUgaXMgbm90IHJlYWR5IHRv
+IHJ1biEgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBbICAg
+MTAuOTYwMDkzXSBydGw4MTkyY3U6IDgwNTEgcmVzZXQgZmFpbGVkIS4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4uLi4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgWyAgIDEw
+Ljk3MTAyN10gcnRsODE5MmN1OiBNQUMgYXV0byBPTiBva2F5ISAgICAgICAgICBbICAgMTEu
+MTAxNjkxXSBydGw4MTkyY3U6IFR4IHF1ZXVlIHNlbGVjdDogMHgwNQ0KPiANCj4gLS0tIGVu
+ZCAtLS0NCj4gDQo+IE9jY2FzaW9uYWxseSwgdGhpcyByZXN1bHRzIGluIGEgdGltZW91dCB3
+aGlsZSB0cnlpbmcgdG8gcmVhY2ggbmV0d29yay50YXJnZXQgKHN5c3RlbWQpLg0KPiANCj4g
+QWZ0ZXJ3YXJkcywgdGhlcmUncyBlbmRsZXNzIGRtZXNnIG5vaXNlIFJlOiBydGw4MTkyY3U6
+DQo+IA0KPiAtLS0gY3V0IGhlcmUgLS0tDQo+IA0KPiBbMTEzOTEuMjA0NTU1XSBydGw4MTky
+Y3U6IFR4IHF1ZXVlIHNlbGVjdDogMHgwNSAgICAgIFsxMTcwNy4wNTA0ODBdIHJ0bDgxOTJj
+dTogTUFDIGF1dG8gT04gb2theSEgICAgICAgICAgWzExNzA3LjE4MTExOF0gcnRsODE5MmN1
+OiBUeCBxdWV1ZSBzZWxlY3Q6IDB4MDUgICAgICBbMTIwMjMuMDU3MDU2XSBydGw4MTkyY3U6
+IE1BQyBhdXRvIE9OIG9rYXkhICAgICAgICAgIFsxMjAyMy4xODc3MjddIHJ0bDgxOTJjdTog
+VHggcXVldWUgc2VsZWN0OiAweDA1DQo+IFsxMjMzOS4wNjAxODNdIHJ0bDgxOTJjdTogTUFD
+IGF1dG8gT04gb2theSEgICAgICAgICAgWzEyMzM5LjE5OTMxNl0gcnRsODE5MmN1OiBUeCBx
+dWV1ZSBzZWxlY3Q6IDB4MDUgICAgICBbMTI2NTUuMDU0MTQwXSBydGw4MTkyY3U6IE1BQyBh
+dXRvIE9OIG9rYXkhICAgICAgICAgIFsxMjY1NS4xODQ3ODldIHJ0bDgxOTJjdTogVHggcXVl
+dWUgc2VsZWN0OiAweDA1ICAgICAgWzEyOTcxLjA1Mzk0OF0gcnRsODE5MmN1OiBNQUMgYXV0
+byBPTiBva2F5ISAgICAgICAgICBbMTI5NzEuMTg0NjAwXSBydGw4MTkyY3U6IFR4IHF1ZXVl
+IHNlbGVjdDogMHgwNSAgICAgIFsxMzI4Ny4wNjI3MTJdIHJ0bDgxOTJjdTogTUFDIGF1dG8g
+T04gb2theSEgICAgICAgICAgWzEzMjg3LjE5MzM2M10gcnRsODE5MmN1OiBUeCBxdWV1ZSBz
+ZWxlY3Q6IDB4MDUgICAgICBbMTM2MDMuMDY1OTg3XSBydGw4MTkyY3U6IE1BQyBhdXRvIE9O
+IG9rYXkhICAgICAgICAgIFsxMzYwMy4xOTY2NDFdIHJ0bDgxOTJjdTogVHggcXVldWUgc2Vs
+ZWN0OiAweDA1ICAgICAgWzEzOTE5LjA2NjYxN10gcnRsODE5MmN1OiBNQUMgYXV0byBPTiBv
+a2F5ISAgICAgICAgICBbMTM5MTkuMTk3MjcwXSBydGw4MTkyY3U6IFR4IHF1ZXVlIHNlbGVj
+dDogMHgwNSAgICAgIFsxNDIzNS4wNjA2MjFdIHJ0bDgxOTJjdTogTUFDIGF1dG8gT04gb2th
+eSEgICAgICAgICAgWzE0MjM1LjE5MTI3N10gcnRsODE5MmN1OiBUeCBxdWV1ZSBzZWxlY3Q6
+IDB4MDUgICAgICBbMTQ1NTEuMDU1MTA0XSBydGw4MTkyY3U6IE1BQyBhdXRvIE9OIG9rYXkh
+ICAgICAgICAgIFsxNDU1MS4xODU3NDFdIHJ0bDgxOTJjdTogVHggcXVldWUgc2VsZWN0OiAw
+eDA1ICAgICAgWzE0ODY3LjA1MTc5OV0gcnRsODE5MmN1OiBNQUMgYXV0byBPTiBva2F5ISAg
+ICAgICAgICBbMTQ4NjcuMTgyNDUxXSBydGw4MTkyY3U6IFR4IHF1ZXVlIHNlbGVjdDogMHgw
+NSAgICAgIFsxNDg3OC44NTUwNzBdIHBlcmY6IGludGVycnVwdCB0b29rIHRvbyBsb25nICg3
+ODk3ID4gNzg5NiksIGxvd2VyaW5nIGtlcm5lbC5wZXJmX2V2ZW50X21heF9zYW1wbGVfcmF0
+ZSB0byAyNTI1MA0KDQpQbGVhc2UgYmlzZWN0IHRoaXMgcHJvYmxlbS4gTm8gb25lIGVsc2Ug
+aGFzIHJlcG9ydGVkIGl0LCB0aHVzIGl0IG1heSBkZXBlbmQgb24gDQpzb21lIHNwZWNpZmlj
+IGNvbmZpZ3VyYXRpb24gb2YgeW91ciBzeXN0ZW0uDQoNCldhcyA1LjYuMC1yYzUgT0s/DQoN
+CkxhcnJ5DQoNCg==
