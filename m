@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FBBE188038
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:08:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ACBD187F6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:01:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbgCQLIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:08:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50062 "EHLO mail.kernel.org"
+        id S1727735AbgCQLBV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:01:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728816AbgCQLIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:08:13 -0400
+        id S1726819AbgCQLBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:01:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5DEC620735;
-        Tue, 17 Mar 2020 11:08:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BEAA20714;
+        Tue, 17 Mar 2020 11:01:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443292;
-        bh=JIdyo+37I2+6TGmwXEWLR/ub0pIGz6sZ9Z5rPS9o31I=;
+        s=default; t=1584442878;
+        bh=DLZr9X0dUzjdBDR77VJICOcHsghNExY8GdcrmKIiK/U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SA67FONQ1QmLeVrdZKaPN4QoDYg5A/dsDNTd7WfNhRgKUoqR8QprbS9//ADTne6Ib
-         0Pb/8aZG8I+VGPVVDCIrKdiLQSotMviNOVM1L0z2+tem8n9ZR6YSVlfo+BuMvVGrZI
-         QHSQMnUi5aLm4/Vo3C71bewcSifXSx+OHmrSClkE=
+        b=cBBQZH4sodVkrYoQuLksRS9HjpqLIm/1N3ZoI3wcq7EVrWd1bnn625RohMAFyQhID
+         srIB6rpowjceTrKNgzzw7Y2BsESkddV4vOZ6SVmwa/F3PTPladLw2QstgxtAROJds6
+         CEU8+pnO6UjUAV5ZpwpGHyAAW9wwfLE9TzX7GnGY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shakeel Butt <shakeelb@google.com>,
-        Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 037/151] net: memcg: late association of sock to memcg
-Date:   Tue, 17 Mar 2020 11:54:07 +0100
-Message-Id: <20200317103329.274213369@linuxfoundation.org>
+Subject: [PATCH 5.4 021/123] net: nfc: fix bounds checking bugs on "pipe"
+Date:   Tue, 17 Mar 2020 11:54:08 +0100
+Message-Id: <20200317103309.934897194@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
-References: <20200317103326.593639086@linuxfoundation.org>
+In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
+References: <20200317103307.343627747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,99 +43,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shakeel Butt <shakeelb@google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit d752a4986532cb6305dfd5290a614cde8072769d ]
+[ Upstream commit a3aefbfe45751bf7b338c181b97608e276b5bb73 ]
 
-If a TCP socket is allocated in IRQ context or cloned from unassociated
-(i.e. not associated to a memcg) in IRQ context then it will remain
-unassociated for its whole life. Almost half of the TCPs created on the
-system are created in IRQ context, so, memory used by such sockets will
-not be accounted by the memcg.
+This is similar to commit 674d9de02aa7 ("NFC: Fix possible memory
+corruption when handling SHDLC I-Frame commands") and commit d7ee81ad09f0
+("NFC: nci: Add some bounds checking in nci_hci_cmd_received()") which
+added range checks on "pipe".
 
-This issue is more widespread in cgroup v1 where network memory
-accounting is opt-in but it can happen in cgroup v2 if the source socket
-for the cloning was created in root memcg.
+The "pipe" variable comes skb->data[0] in nfc_hci_msg_rx_work().
+It's in the 0-255 range.  We're using it as the array index into the
+hdev->pipes[] array which has NFC_HCI_MAX_PIPES (128) members.
 
-To fix the issue, just do the association of the sockets at the accept()
-time in the process context and then force charge the memory buffer
-already used and reserved by the socket.
-
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Fixes: 118278f20aa8 ("NFC: hci: Add pipes table to reference them with a tuple {gate, host}")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/memcontrol.c                 |   14 --------------
- net/core/sock.c                 |    5 ++++-
- net/ipv4/inet_connection_sock.c |   20 ++++++++++++++++++++
- 3 files changed, 24 insertions(+), 15 deletions(-)
+ net/nfc/hci/core.c |   19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -6683,20 +6683,6 @@ void mem_cgroup_sk_alloc(struct sock *sk
- 	if (!mem_cgroup_sockets_enabled)
- 		return;
+--- a/net/nfc/hci/core.c
++++ b/net/nfc/hci/core.c
+@@ -181,13 +181,20 @@ exit:
+ void nfc_hci_cmd_received(struct nfc_hci_dev *hdev, u8 pipe, u8 cmd,
+ 			  struct sk_buff *skb)
+ {
+-	u8 gate = hdev->pipes[pipe].gate;
+ 	u8 status = NFC_HCI_ANY_OK;
+ 	struct hci_create_pipe_resp *create_info;
+ 	struct hci_delete_pipe_noti *delete_info;
+ 	struct hci_all_pipe_cleared_noti *cleared_info;
++	u8 gate;
  
--	/*
--	 * Socket cloning can throw us here with sk_memcg already
--	 * filled. It won't however, necessarily happen from
--	 * process context. So the test for root memcg given
--	 * the current task's memcg won't help us in this case.
--	 *
--	 * Respecting the original socket's memcg is a better
--	 * decision in this case.
--	 */
--	if (sk->sk_memcg) {
--		css_get(&sk->sk_memcg->css);
--		return;
--	}
--
- 	/* Do not associate the sock with unrelated interrupted task's memcg. */
- 	if (in_interrupt())
- 		return;
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -1830,7 +1830,10 @@ struct sock *sk_clone_lock(const struct
- 		atomic_set(&newsk->sk_zckey, 0);
- 
- 		sock_reset_flag(newsk, SOCK_DONE);
--		mem_cgroup_sk_alloc(newsk);
+-	pr_debug("from gate %x pipe %x cmd %x\n", gate, pipe, cmd);
++	pr_debug("from pipe %x cmd %x\n", pipe, cmd);
 +
-+		/* sk->sk_memcg will be populated at accept() time */
-+		newsk->sk_memcg = NULL;
-+
- 		cgroup_sk_alloc(&newsk->sk_cgrp_data);
- 
- 		rcu_read_lock();
---- a/net/ipv4/inet_connection_sock.c
-+++ b/net/ipv4/inet_connection_sock.c
-@@ -482,6 +482,26 @@ struct sock *inet_csk_accept(struct sock
- 		}
- 		spin_unlock_bh(&queue->fastopenq.lock);
- 	}
-+
-+	if (mem_cgroup_sockets_enabled) {
-+		int amt;
-+
-+		/* atomically get the memory usage, set and charge the
-+		 * sk->sk_memcg.
-+		 */
-+		lock_sock(newsk);
-+
-+		/* The sk has not been accepted yet, no need to look at
-+		 * sk->sk_wmem_queued.
-+		 */
-+		amt = sk_mem_pages(newsk->sk_forward_alloc +
-+				   atomic_read(&sk->sk_rmem_alloc));
-+		mem_cgroup_sk_alloc(newsk);
-+		if (newsk->sk_memcg && amt)
-+			mem_cgroup_charge_skmem(newsk->sk_memcg, amt);
-+
-+		release_sock(newsk);
++	if (pipe >= NFC_HCI_MAX_PIPES) {
++		status = NFC_HCI_ANY_E_NOK;
++		goto exit;
 +	}
- out:
- 	release_sock(sk);
- 	if (req)
++
++	gate = hdev->pipes[pipe].gate;
+ 
+ 	switch (cmd) {
+ 	case NFC_HCI_ADM_NOTIFY_PIPE_CREATED:
+@@ -375,8 +382,14 @@ void nfc_hci_event_received(struct nfc_h
+ 			    struct sk_buff *skb)
+ {
+ 	int r = 0;
+-	u8 gate = hdev->pipes[pipe].gate;
++	u8 gate;
++
++	if (pipe >= NFC_HCI_MAX_PIPES) {
++		pr_err("Discarded event %x to invalid pipe %x\n", event, pipe);
++		goto exit;
++	}
+ 
++	gate = hdev->pipes[pipe].gate;
+ 	if (gate == NFC_HCI_INVALID_GATE) {
+ 		pr_err("Discarded event %x to unopened pipe %x\n", event, pipe);
+ 		goto exit;
 
 
