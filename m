@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E40318807E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:10:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8A1E188083
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:10:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729113AbgCQLKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:10:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53494 "EHLO mail.kernel.org"
+        id S1727800AbgCQLKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:10:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbgCQLKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:10:36 -0400
+        id S1729109AbgCQLKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:10:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC6F6206EC;
-        Tue, 17 Mar 2020 11:10:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6166520658;
+        Tue, 17 Mar 2020 11:10:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443436;
-        bh=xeDGOU2FzIkIfmHeFajp1/GXc4arIXOD6z80Adr3VcY=;
+        s=default; t=1584443438;
+        bh=LOwO1tNMBcdQgjkXNiDY+TMnSmzF8tRAF1qDoS8uw5Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QDNrUBv1XyhRuT82cfstd/M1Dlk8tMXFqUeX/Z6D5cqAZzbgT7RnPH2mXElQVSqdm
-         ecvxv+PGhYA92R3vg4w2xtM2QOoZR3uoz6kVhOk6RcFrnUpXWRiVMC12HlZa9DULG3
-         fDw0VqaAvBy8cApxQUvADEgctV3s5j5OPxhz5QUY=
+        b=HEpaiBZynaNf7O+YDhTkU+QRJxq+dojkryw/Cr/TLX5Zo7/xmAfZwq6AXZsnjLo9m
+         Ba3QE/OT3Lp4bWXrz5P/DG8Q7BTQNYvW3GwVIjQVLhCvB9qIJetm0w/1PGMEEKSByY
+         zK+AiooRu+EKE6RGjqOsfdotGqfFrzBDdUsZe154=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.5 082/151] netfilter: x_tables: xt_mttg_seq_next should increase position index
-Date:   Tue, 17 Mar 2020 11:54:52 +0100
-Message-Id: <20200317103332.287954009@linuxfoundation.org>
+        stable@vger.kernel.org, Hillf Danton <hdanton@sina.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Tejun Heo <tj@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [PATCH 5.5 083/151] workqueue: dont use wq_select_unbound_cpu() for bound works
+Date:   Tue, 17 Mar 2020 11:54:53 +0100
+Message-Id: <20200317103332.354594035@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
 References: <20200317103326.593639086@linuxfoundation.org>
@@ -43,69 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Hillf Danton <hdanton@sina.com>
 
-commit ee84f19cbbe9cf7cba2958acb03163fed3ecbb0f upstream.
+commit aa202f1f56960c60e7befaa0f49c72b8fa11b0a8 upstream.
 
-If .next function does not change position index,
-following .show function will repeat output related
-to current position index.
+wq_select_unbound_cpu() is designed for unbound workqueues only, but
+it's wrongly called when using a bound workqueue too.
 
-Without patch:
- # dd if=/proc/net/ip_tables_matches  # original file output
- conntrack
- conntrack
- conntrack
- recent
- recent
- icmp
- udplite
- udp
- tcp
- 0+1 records in
- 0+1 records out
- 65 bytes copied, 5.4074e-05 s, 1.2 MB/s
+Fixing this ensures work queued to a bound workqueue with
+cpu=WORK_CPU_UNBOUND always runs on the local CPU.
 
- # dd if=/proc/net/ip_tables_matches bs=62 skip=1
- dd: /proc/net/ip_tables_matches: cannot skip to specified offset
- cp   <<< end of  last line
- tcp  <<< and then unexpected whole last line once again
- 0+1 records in
- 0+1 records out
- 7 bytes copied, 0.000102447 s, 68.3 kB/s
+Before, that would happen only if wq_unbound_cpumask happened to include
+it (likely almost always the case), or was empty, or we got lucky with
+forced round-robin placement.  So restricting
+/sys/devices/virtual/workqueue/cpumask to a small subset of a machine's
+CPUs would cause some bound work items to run unexpectedly there.
 
-Cc: stable@vger.kernel.org
-Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code ...")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206283
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: ef557180447f ("workqueue: schedule WORK_CPU_UNBOUND work on wq_unbound_cpumask CPUs")
+Cc: stable@vger.kernel.org # v4.5+
+Signed-off-by: Hillf Danton <hdanton@sina.com>
+[dj: massage changelog]
+Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/x_tables.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/workqueue.c |   14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -1551,6 +1551,9 @@ static void *xt_mttg_seq_next(struct seq
- 	uint8_t nfproto = (unsigned long)PDE_DATA(file_inode(seq->file));
- 	struct nf_mttg_trav *trav = seq->private;
- 
-+	if (ppos != NULL)
-+		++(*ppos);
-+
- 	switch (trav->class) {
- 	case MTTG_TRAV_INIT:
- 		trav->class = MTTG_TRAV_NFP_UNSPEC;
-@@ -1576,9 +1579,6 @@ static void *xt_mttg_seq_next(struct seq
- 	default:
- 		return NULL;
- 	}
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -1411,14 +1411,16 @@ static void __queue_work(int cpu, struct
+ 		return;
+ 	rcu_read_lock();
+ retry:
+-	if (req_cpu == WORK_CPU_UNBOUND)
+-		cpu = wq_select_unbound_cpu(raw_smp_processor_id());
 -
--	if (ppos != NULL)
--		++*ppos;
- 	return trav;
- }
+ 	/* pwq which will be used unless @work is executing elsewhere */
+-	if (!(wq->flags & WQ_UNBOUND))
+-		pwq = per_cpu_ptr(wq->cpu_pwqs, cpu);
+-	else
++	if (wq->flags & WQ_UNBOUND) {
++		if (req_cpu == WORK_CPU_UNBOUND)
++			cpu = wq_select_unbound_cpu(raw_smp_processor_id());
+ 		pwq = unbound_pwq_by_node(wq, cpu_to_node(cpu));
++	} else {
++		if (req_cpu == WORK_CPU_UNBOUND)
++			cpu = raw_smp_processor_id();
++		pwq = per_cpu_ptr(wq->cpu_pwqs, cpu);
++	}
  
+ 	/*
+ 	 * If @work was previously on a different pool, it might still be
 
 
