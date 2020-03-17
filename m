@@ -2,76 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B7BA188314
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 13:09:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8564188367
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 13:12:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbgCQMJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 08:09:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49024 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726705AbgCQMJi (ORCPT
+        id S1727052AbgCQMMI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 08:12:08 -0400
+Received: from sonic308-2.consmr.mail.ne1.yahoo.com ([66.163.187.121]:33552
+        "EHLO sonic308-2.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727005AbgCQMMH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 08:09:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=q/GK4+6m5lw1qmSosNNukTctCn2OhFMDvaxhnUz5s/E=; b=TUVADCLrKEE8VyknwEYEQ0UYdT
-        u9A/5XJjJrnMqqk+qjL1RIZthjoUtX+eBU+A7CfInYWhqGjFymvbMciO2wZSoVjMxQAdUD8OH4THK
-        0AkBL1KPEfz+2CzB8rMplaOk9iP8TFZ2VpEfCJiFY7ybjLpoza7xNmXcvXuPeibzE+BHKF4y8K4mN
-        ZF1fUAxQPe49+lYj1MZm/5nsJPwZkmcHV4niOD1KJk12OyykwGR1CmTbgTBNfOv2wpeHpPwSA8j/Z
-        IGScVWlfuQlVUMJbxVwvZJ3NRR93X8yz0NBQqDmLmTCRKYUrcS3MfMPt/tAZe1K7oOI3cnVDZf0Yu
-        zdbk9eVw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jEB2I-0000M8-F7; Tue, 17 Mar 2020 12:09:30 +0000
-Date:   Tue, 17 Mar 2020 05:09:30 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     linux-mm@kvack.org, Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Shuah Khan <shuah@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv7 2/3] mm/gup: fix omission of check on FOLL_LONGTERM in
- gup fast path
-Message-ID: <20200317120930.GA435@infradead.org>
-References: <1584333244-10480-3-git-send-email-kernelfans@gmail.com>
- <1584445652-30064-1-git-send-email-kernelfans@gmail.com>
+        Tue, 17 Mar 2020 08:12:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1584447126; bh=kcevCRoll2+Bsa3FDERpIV72LVcB1A4YV1b5N2AWYBk=; h=Date:From:Reply-To:Subject:References:From:Subject; b=NYCb94fS3wzfRKtWy644HTesSI8IjQzMsblWFpJTYYXuTt9rcUHt18ZgVioI/NXet/fY8SAq+fAhZC5iqfT8mOYocM5nxjEixe6V2WdNJfQIZyX+6jE5K+as7CrfQ+Ux7bmM2apeIjzkOXtI9thNL7+t6aATp9VCAaucXVpdqA4dR3OLsia/qo8V/NSozfuIgHc+phEYPjPwuFiaUR8KfKEUSr8lLpfJQAGCw0aT4SuF8jk08cR1b4zNwwDV0Ri9Xp3/TXYmLnYONGhUCRynHw6WHZMJ+aV7unuLpNZHznI8c2dWULGaYJuDwHlDMukb1L6U+i3bCeM+cRtgNwsmZA==
+X-YMail-OSG: khjlJNIVM1lQSvc20NlSV_u2jnd0qmE3gUZVQrpYE7ugpBlTzmdoWAmydHLsjOn
+ v35WtMF5S5Z6e2xLPAqmOWE5bXZaWj1.2fxcoKt.f426tAE6xmfAxkfWB1oc766TO5Mf.whmqQhy
+ H3VC_3oXasMfp46r0fLG.ynQ.smEEO2DnWdBAdTCj1._0gyehQYQtvG4djT22x5nNY1RpGhCnyLh
+ X3cGTsriGS5gQti5UQXYc8C.GhxXCQOkmUhsIrcp4IF7i9xhpcoEUbKYO4mm5MtfzA37o5gSa3Nc
+ 9x9_4Bz5olQxo3ej.IBY3Rjl8H_V.sY1OC.olnUFOe_GETcbxS_feutVR.bF_l3tPTTPlIdyhs9I
+ Md8I9Btml1_N6de8csgr5YKBiKap43gRW272lKNKoRyuHOEOj.iYditEiEosSYzE.5nepb90AScU
+ ba1lCnXYoecsSLSmL4J9ZKCnR9mIhLA4_KpTKCCPUCRtf2JN7nrJHdnSZm_B1jGsOhILSMsYvG2Q
+ .XwzlgF6RAZu.JfzGT8gKvQlkfxXL4sna0a9BT.25cKJTpu1fY8qOJ092YQ9sT4UkWhMD.93gIQo
+ ifVVIWYh8rrYXPXALyevhZgJrjrGIVDBvBFa_CkbKdL5elpxmMUXN8yGslledahAQVBiaRTEfmlN
+ 1A12U6Rad5dIs1bSMTHbcXMcZPqA3o1jTKIGCaLyw.N.otbiUhOSNyX59ozCJ1TeuVtNbg4rZgfl
+ 6sLWDx0AdjLkcx7Ru9qh3A82_qVjlWO6lh8WyT4V_fX3qLl2LDmx_EndcCk2VyKvbb.7tITTWVMm
+ Fi0ovw4DRxSwI_Lz5mMe25AY1vf5MZOo.W9yPjT6Fb8bpQN4Ct2ZYwnoff9RMvIdLdz6LLQ2eQoF
+ mTb5ep8lclN9Tr4zMyc1FGXtX7.0lNGOKuTri1V9Rch8iKjupTGiGqjdBavSot4MC80w99BP6g93
+ _XPpOp1ooow.GcLgdgoBXDqBOikUI0Fjw1F7pXbeYVMzFPBY.FmuU5HGphAbomZipXfNRZII6YJM
+ CDGTYacPmFjGxL_rSDrmzpfinRWDTRgcIfgldo6TNDW2z8Vv9bfNKOxEpaY_Iv2NcGRFUM0ODrds
+ _oumWGAGcl6HB92B_dqhzlXVkAFW2WLPFtVpzLpSKgwC5QtKM97Mck19wZT6qdlsxKhXbAS5cgx.
+ 2eZKcVPeklXBZDF0AHzZSaTXIhTA2fZezsg2KQBnr36WQ32Hqqh6Pbb9_Mk5D8yoGC2VfbhMuX_S
+ zTMQFTY_lac1F0MdlLOXdBlhuaJyuV7b.oczGGGq8mM2tDt5s6zNxsxqpqz0azNJ3sHoDeLpThuP
+ W_hp5fbuo0WSAU_zIA445LehoVxmXclWg
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 17 Mar 2020 12:12:06 +0000
+Date:   Tue, 17 Mar 2020 12:10:05 +0000 (UTC)
+From:   Stephen Li <stenn6@gabg.net>
+Reply-To: stephli947701@gmail.com
+Message-ID: <1707692409.1824590.1584447005739@mail.yahoo.com>
+Subject: REF
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1584445652-30064-1-git-send-email-kernelfans@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <1707692409.1824590.1584447005739.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.15342 YMailNodin Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 07:47:32PM +0800, Pingfan Liu wrote:
-> FOLL_LONGTERM is a special case of FOLL_PIN. It suggests a pin which is
-> going to be given to hardware and can't move. It would truncate CMA
-> permanently and should be excluded.
-> 
-> In gup slow path, slow path, where
-> __gup_longterm_locked->check_and_migrate_cma_pages() handles FOLL_LONGTERM,
-> but in fast path, there lacks such a check, which means a possible leak of
-> CMA page to longterm pinned.
-> 
-> Place a check in try_grab_compound_head() in the fast path to fix the leak,
-> and if FOLL_LONGTERM happens on CMA, it will fall back to slow path to
-> migrate the page.
-> 
-> Some note about the check:
-> Huge page's subpages have the same migrate type due to either
-> allocation from a free_list[] or alloc_contig_range() with param
-> MIGRATE_MOVABLE. So it is enough to check on a single subpage
-> by is_migrate_cma_page(subpage)
 
-Looks good,
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Greetings,
+I was searching through a local business directory when I found your
+profile. I am Soliciting On-Behalf of my private client who is
+interested in having a serious business investment in your country. If
+you have a valid business, investment or project he can invest
+back to me for more details. Your swift response is highly needed.
+Sincerely
+Stephen Li
+Please response back to me with is my private email below for more details
+stephli947701@gmail.com
