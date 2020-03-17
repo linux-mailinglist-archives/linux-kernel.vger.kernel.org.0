@@ -2,45 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A10511887FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:45:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DE16188807
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:49:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbgCQOpd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 10:45:33 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60888 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbgCQOnp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 10:43:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=S6NdTWibk79+YugWFTSLV3fGTXeAxQI8N46whgDUO3c=; b=Cni3IHCz/BEbBcs7bSSGQn3Guj
-        3SLR4Fwdl6HMHn2vmXaKFOSKBvatq/MpRvt1QNhS9UXk5/ACO4wAxVd8QR9djzoiAZNT55VjXD6gR
-        NfGS/AAR0rk1iHGWGiZH6hdWuDsZoeU56NdVzk1mH2lM24QqEL+K8nVLsLZKgnB2eUPVZPzK0mUHS
-        qN05y0Zd6LZE8qZseYi6Nr66OBtIWPAQwiMl4nPu/THHbRhqhNoI2L3Sc/PBYQ2+nh1NO7rvkNgEE
-        QJ15s8ln7aDj+EONSM30Y8rlTpUC/D+e88IyRMAIawn8sMMmOT/vESepCT8HjoxDzM38eEFPuv+Bk
-        JubQnSwA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jEDRY-0006FO-0X; Tue, 17 Mar 2020 14:43:44 +0000
-Date:   Tue, 17 Mar 2020 07:43:43 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     sathyanarayanan.kuppuswamy@linux.intel.com
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ashok.raj@intel.com
-Subject: Re: [PATCH v17 10/12] PCI/DPC: Export DPC error recovery functions
-Message-ID: <20200317144343.GF23471@infradead.org>
-References: <cover.1583286655.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <ac8816d4d41d0894720660f9b51dbeac0842869d.1583286655.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+        id S1726643AbgCQOtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 10:49:41 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:36778 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726189AbgCQOtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 10:49:41 -0400
+Received: from zn.tnic (p200300EC2F0C9600080652A9D2B77226.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:9600:806:52a9:d2b7:7226])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E0FE11EC023E;
+        Tue, 17 Mar 2020 15:49:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1584456580;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=tkKlfKN8wNeUINPgpvJm8j9GVsp+dcrzB7iyyg4e4UQ=;
+        b=oA4YhiHKxAgrqVpJ7c9C5AIF3sfB7GX289kjBJjxoDxnM1DE3/ScEUnq8kOJ1oUC930rvz
+        48zTxN9XoZBvcES4G9LJHAC9VJfV/q59EbQ2dKuhwzaEO0QiTsVnVQBbJTRkGfx3YXg05o
+        34fla+jAy//k77iK088FoCTuYVkTbO8=
+Date:   Tue, 17 Mar 2020 15:49:42 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jakub Jelinek <jakub@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Sergei Trofimovich <slyfox@gentoo.org>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
+        Michael Matz <matz@suse.de>
+Subject: Re: [PATCH] x86: fix early boot crash on gcc-10
+Message-ID: <20200317144942.GE15609@zn.tnic>
+References: <20200314164451.346497-1-slyfox@gentoo.org>
+ <20200316130414.GC12561@hirez.programming.kicks-ass.net>
+ <20200316132648.GM2156@tucnak>
+ <20200316134234.GE12561@hirez.programming.kicks-ass.net>
+ <20200316175450.GO26126@zn.tnic>
+ <20200316180303.GR2156@tucnak>
+ <20200317143602.GC15609@zn.tnic>
+ <20200317143914.GI2156@tucnak>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ac8816d4d41d0894720660f9b51dbeac0842869d.1583286655.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200317143914.GI2156@tucnak>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nothing is actually exported here (fortunately!).
+On Tue, Mar 17, 2020 at 03:39:14PM +0100, Jakub Jelinek wrote:
+> That is because the option is called -fno-stack-protector, so one needs to
+> use __attribute__((optimize("no-stack-protector")))
+
+Ha, that works even! :-)
+
+And my guest boots.
+
+I guess we can do that then. Looks like the optimal solution to me.
+
+Also, I'm assuming older gccs will simply ignore unknown optimize
+options?
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
