@@ -2,156 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCD23188A00
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 17:16:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A42991889AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 17:01:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726817AbgCQQQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 12:16:41 -0400
-Received: from ns3.fnarfbargle.com ([103.4.19.87]:49418 "EHLO
-        ns3.fnarfbargle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726756AbgCQQQk (ORCPT
+        id S1726905AbgCQQAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 12:00:53 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45597 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726019AbgCQQAx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 12:16:40 -0400
-X-Greylist: delayed 1454 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Mar 2020 12:16:38 EDT
-Received: from [10.8.0.1] (helo=srv.home ident=heh29112)
-        by ns3.fnarfbargle.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <brad@fnarfbargle.com>)
-        id 1jEEVc-0000jZ-V0; Tue, 17 Mar 2020 23:52:01 +0800
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fnarfbargle.com; s=mail;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject; bh=uFJ75ZP6ogQzqlLVM5kRMZ/OeGhF72Gu5uduYLklNJo=;
-        b=EacHN/gj9+7CXrtc6+GuUamMdi3ZDXpwzXHOXXTGj8feDNWyU4VEgC9fiSJvjtlzv0UlQeF0d4VUKb1vfe4ZKC0roQLp2umjspdI+8BZqPd5F35XzJpJjMn2a6r6A1PW9kZ9JvXWargCBk9DYIWxVCO5gRsVcIVutISYFWW8cWI=;
-Subject: Re: Regression: hibernation is broken since
- e6bc9de714972cac34daa1dc1567ee48a47a9342
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pm@vger.kernel.org
-References: <20200213172351.GA6747@dumbo> <20200213175753.GS6874@magnolia>
- <20200213183515.GA8798@dumbo> <20200213193410.GB6868@magnolia>
- <20200213194135.GF6870@magnolia> <20200214211523.GA32637@dumbo>
- <20200222002319.GK9504@magnolia> <20200223190311.GA26811@dumbo>
- <20200225202632.GE6748@magnolia>
-From:   Brad Campbell <brad@fnarfbargle.com>
-Message-ID: <f9fe045d-3613-7443-f634-f17e5630ded3@fnarfbargle.com>
-Date:   Tue, 17 Mar 2020 23:51:58 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Tue, 17 Mar 2020 12:00:53 -0400
+Received: by mail-wr1-f67.google.com with SMTP id t2so16340114wrx.12
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 09:00:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=eAhbBL0CBHwTEuoSCE5w0pXR4TY8wKBETG1SIbtR2Sc=;
+        b=UxEcJbE5USWqkkP6abztBR0xn4UoB+3HaAmS+SR+DIlY9cmQmxOjfghKLVcS/MgD93
+         B+XCDiVXBXMX9b9CkkhYZ+KpTEXpGyoP/ojxfia8bG7x1+vwExQwKqW6YVXY8Jl7k0R8
+         Zcz8Q2+0ypoeyzHSOUXHWPHFeOkWYd99k3dVN4vuJcfzskzemmHst9Nlz+44lyETb4HD
+         z9zB2P+Dj6smTjN3gNJDV+rd88DPnrtThNakEXkci3fYxvAMOiO9YcWlwnPmP3HBeMod
+         R7d4lgn+WROybjInFFnQo9ov2H+TH0F5SxgcVPpXXcLIdvpZE7GLcIhuGbtOGGLEqZgr
+         HATg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=eAhbBL0CBHwTEuoSCE5w0pXR4TY8wKBETG1SIbtR2Sc=;
+        b=DFkw22+YGYHGgu5Yv+uz3n13AJZbno3Ay0Qvi1BS1/y6vaf8MYPgBAQyfeNwr++DaJ
+         tKOR0taiywB8RIrXbuiXGJDYY8UE2dkjWjlzQ/bZwO4o6v9QAftkZreTgCCYr5scXNRv
+         X+hU4OQqLf2TwhxXMAjrnptHxVn0R5l7oEcl79qs8pKMzroyLCLRT/MuqNEsLZ/2bMav
+         F9NXImmnIqBEEuevL32ABux0A3w9Hds8zlZUSN3hTJ0oP6Q7hq/gHw3ssPsgqxpxFVdb
+         k/MMAYUpXnfJZFCBdg72P8iDmnpUuv5urOH5YcGh98Z1LbF44SRuEC9iFEgJVjRoWS29
+         RkFA==
+X-Gm-Message-State: ANhLgQ2+n+/rj3pdALFlr/8Hlv58IR8802bDvMg51bJcQObY2PNtNvZI
+        JDnSxVQjrVIzJXakxyBBSGy1DA==
+X-Google-Smtp-Source: ADFU+vuSGY1rxMfHc3NrftXxtpVnp2ezWprgxCqud+GfK3PjqX6VcALoQ37M7N3wtgxUqDljjFptUA==
+X-Received: by 2002:adf:b245:: with SMTP id y5mr6492408wra.136.1584460851735;
+        Tue, 17 Mar 2020 09:00:51 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id x17sm4434916wmi.28.2020.03.17.09.00.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2020 09:00:50 -0700 (PDT)
+Date:   Tue, 17 Mar 2020 16:00:49 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Dmitry Safonov <dima@arista.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Douglas Anderson <dianders@chromium.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCHv2 47/50] kdb: Don't play with console_loglevel
+Message-ID: <20200317160049.b2t52oaqifhmcv23@holly.lan>
+References: <20200316143916.195608-1-dima@arista.com>
+ <20200316143916.195608-48-dima@arista.com>
 MIME-Version: 1.0
-In-Reply-To: <20200225202632.GE6748@magnolia>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200316143916.195608-48-dima@arista.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/2/20 4:26 am, Darrick J. Wong wrote:
-> On Sun, Feb 23, 2020 at 08:03:11PM +0100, Domenico Andreoli wrote:
->> On Fri, Feb 21, 2020 at 04:23:19PM -0800, Darrick J. Wong wrote:
->>>
->>> Ok, third try.  Does the following work?  This is a little more
->>> selective in that it only disables the write protection on the swap
->>> device/file that uswusp is going to write to.
->>
->> Yes it works but also verified that once the S_SWAPFILE bit is cleared
->> it's never restored, therefore the protecton is gone after the first
->> hibernation.
+On Mon, Mar 16, 2020 at 02:39:13PM +0000, Dmitry Safonov wrote:
+> Print the stack trace with KERN_EMERG - it should be always visible.
 > 
-> Ok, good.  Now can you try the third part, which ought to re-apply
-> S_SWAPFILE after a successful resume, please?  Assuming this works, I
-> think we're ready with a fixpatch.
+> Playing with console_loglevel is a bad idea as there may be more
+> messages printed than wanted. Also the stack trace might be not printed
+> at all if printk() was deferred and console_loglevel was raised back
+> before the trace got flushed.
 > 
-
-I just bumped up against it upgrading from 5.2 to 5.5 & a long bisection results in apparently the same point :
-# first bad commit: [dc617f29dbe5ef0c8ced65ce62c464af1daaab3d] vfs: don't allow writes to swap files
-
-Tested-By: Brad Campbell <lists2009@fnarfbargle.com>
-
-> --D
+> Unfortunately, after rebasing on commit 2277b492582d ("kdb: Fix stack
+> crawling on 'running' CPUs that aren't the master"), kdb_show_stack()
+> uses now kdb_dump_stack_on_cpu(), which for now won't be converted as it
+> uses dump_stack() instead of show_stack().
 > 
-> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> index 1e99f7ac1d7e..add93e205850 100644
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -458,6 +458,7 @@ extern void swap_free(swp_entry_t);
->   extern void swapcache_free_entries(swp_entry_t *entries, int n);
->   extern int free_swap_and_cache(swp_entry_t);
->   extern int swap_type_of(dev_t, sector_t, struct block_device **);
-> +extern void swap_relockall(void);
->   extern unsigned int count_swap_pages(int, int);
->   extern sector_t map_swap_page(struct page *, struct block_device **);
->   extern sector_t swapdev_block(int, pgoff_t);
-> diff --git a/kernel/power/user.c b/kernel/power/user.c
-> index 77438954cc2b..b11f7037ce5e 100644
-> --- a/kernel/power/user.c
-> +++ b/kernel/power/user.c
-> @@ -271,6 +271,8 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
->   			break;
->   		}
->   		error = hibernation_restore(data->platform_support);
-> +		if (!error)
-> +			swap_relockall();
->   		break;
->   
->   	case SNAPSHOT_FREE:
-> @@ -372,10 +374,17 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
->   			 */
->   			swdev = new_decode_dev(swap_area.dev);
->   			if (swdev) {
-> +				struct block_device *bd;
+> Convert for now the branch that uses show_stack() and remove
+> console_loglevel exercise from that case.
+> 
+> Cc: Daniel Thompson <daniel.thompson@linaro.org>
+> Cc: Douglas Anderson <dianders@chromium.org>
+> Cc: Jason Wessel <jason.wessel@windriver.com>
+> Cc: kgdb-bugreport@lists.sourceforge.net
+> Signed-off-by: Dmitry Safonov <dima@arista.com>
+
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+
+
+> ---
+>  kernel/debug/kdb/kdb_bt.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/kernel/debug/kdb/kdb_bt.c b/kernel/debug/kdb/kdb_bt.c
+> index 3de0cc780c16..43f5dcd2b9ac 100644
+> --- a/kernel/debug/kdb/kdb_bt.c
+> +++ b/kernel/debug/kdb/kdb_bt.c
+> @@ -21,17 +21,18 @@
+>  
+>  static void kdb_show_stack(struct task_struct *p, void *addr)
+>  {
+> -	int old_lvl = console_loglevel;
+> -
+> -	console_loglevel = CONSOLE_LOGLEVEL_MOTORMOUTH;
+>  	kdb_trap_printk++;
+>  
+> -	if (!addr && kdb_task_has_cpu(p))
+> +	if (!addr && kdb_task_has_cpu(p)) {
+> +		int old_lvl = console_loglevel;
 > +
->   				offset = swap_area.offset;
-> -				data->swap = swap_type_of(swdev, offset, NULL);
-> +				data->swap = swap_type_of(swdev, offset, &bd);
->   				if (data->swap < 0)
->   					error = -ENODEV;
-> +
-> +				inode_lock(bd->bd_inode);
-> +				bd->bd_inode->i_flags &= ~S_SWAPFILE;
-> +				inode_unlock(bd->bd_inode);
-> +				bdput(bd);
->   			} else {
->   				data->swap = -1;
->   				error = -EINVAL;
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index b2a2e45c9a36..a64dcba10db6 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -1799,6 +1799,32 @@ int swap_type_of(dev_t device, sector_t offset, struct block_device **bdev_p)
->   	return -ENODEV;
->   }
->   
-> +/* Re-lock swap devices after resuming from userspace suspend. */
-> +void swap_relockall(void)
-> +{
-> +	int type;
-> +
-> +	spin_lock(&swap_lock);
-> +	for (type = 0; type < nr_swapfiles; type++) {
-> +		struct swap_info_struct *sis = swap_info[type];
-> +		struct block_device *bdev = bdgrab(sis->bdev);
-> +
-> +		/*
-> +		 * uswsusp only knows how to suspend to block devices, so we
-> +		 * can skip swap files.
-> +		 */
-> +		if (!(sis->flags & SWP_WRITEOK) ||
-> +		    !(sis->flags & SWP_BLKDEV))
-> +			continue;
-> +
-> +		inode_lock(bd->bd_inode);
-> +		bd->bd_inode->i_flags |= S_SWAPFILE;
-> +		inode_unlock(bd->bd_inode);
-> +		bdput(bd);
+> +		console_loglevel = CONSOLE_LOGLEVEL_MOTORMOUTH;
+>  		kdb_dump_stack_on_cpu(kdb_process_cpu(p));
+> -	else
+> -		show_stack(p, addr);
+> +		console_loglevel = old_lvl;
+> +	} else {
+> +		show_stack_loglvl(p, addr, KERN_EMERG);
 > +	}
-> +	spin_unlock(&swap_lock);
-> +}
-> +
->   /*
->    * Get the (PAGE_SIZE) block corresponding to given offset on the swapdev
->    * corresponding to given index in swap_info (swap type).
+>  
+> -	console_loglevel = old_lvl;
+>  	kdb_trap_printk--;
+>  }
+>  
+> -- 
+> 2.25.1
 > 
-
