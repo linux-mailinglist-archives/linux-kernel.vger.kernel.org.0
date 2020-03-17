@@ -2,265 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 993A31877F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 04:01:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67EF61877F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 04:05:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbgCQDBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 23:01:05 -0400
-Received: from mga03.intel.com ([134.134.136.65]:48591 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbgCQDBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 23:01:05 -0400
-IronPort-SDR: 1G6E0KJOY1K29soAUEidneoARmPSipB+36UetuQ/9ecVxqg9BITAfuWBxE5hoDIxnFq983h1zJ
- CALCVvFOfKEA==
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 20:01:04 -0700
-IronPort-SDR: gZdJn0yhBCbYSEUqfp9TOk67JguwuX5+HX9duaTD5R79WrCPIIbE9+k+a5DTg4kh+Vp9DO4Hj/
- UBgbv6Nu3pfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,562,1574150400"; 
-   d="gz'50?scan'50,208,50";a="236204861"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 16 Mar 2020 20:01:01 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1jE2TU-000CJ9-W0; Tue, 17 Mar 2020 11:01:00 +0800
-Date:   Tue, 17 Mar 2020 11:00:32 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     kbuild-all@lists.01.org, shakeelb@google.com, vbabka@suse.cz,
-        willy@infradead.org, akpm@linux-foundation.org,
-        yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH 1/2] mm: swap: make page_evictable() inline
-Message-ID: <202003171004.Kg80NfWn%lkp@intel.com>
-References: <1584397455-28701-1-git-send-email-yang.shi@linux.alibaba.com>
+        id S1726821AbgCQDFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 23:05:03 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:35805 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbgCQDFC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 23:05:02 -0400
+Received: by mail-oi1-f193.google.com with SMTP id k8so18803531oik.2;
+        Mon, 16 Mar 2020 20:05:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=sbAutxY+MMd/SQjeY5/YKMt12lMLdCJAf1DdUAYR8Tg=;
+        b=t2hO8/RpTKCYZNJeAmfbV2hv6YWpYYQLcETN7xVnmRBZuNenDPRZ8zi/otwjz1EMeo
+         Ouyk940BY2UA0VIHU4DptOg2b7SVQII9MMCKJ1kgWJTDXBlN/S0Zy1ZAO5mXGfNcHV5t
+         4L2x3oSTaoyEBWletjG0C+wXp6MNN4kOLVsox2Q8E4La8OsJpN8gAFZZ8KyATWsKNwDy
+         8hGVamUUpsEo5d6+WskhntXJxD527QzZwTEQmUBPi6cPLZJCEDRQ7ZLJG3Lszs6h9vU2
+         7PMu2q6McZSvSHQhdY6wMWTr02Mun6Ex8GRV56rZgORy/2IZcP5FhT438qYhEMqIUE/j
+         CpFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=sbAutxY+MMd/SQjeY5/YKMt12lMLdCJAf1DdUAYR8Tg=;
+        b=jMRnmyTnJGQZag7xMWie3cl5eZNWIPSm+P+GDVbBRUl403kYqlbix+Bsx/8hqRXbjF
+         1kTE+rCImaipHt1oCPH8ga9xbSmftWGrZt+QxPEQX2N9fXUcNLIx/8OmLsGbijMnaWaa
+         53aQXcWapjNhb/eqxjroIwIbS0ZXy/2pnTC19kLe2Qo/AseHzyf8XDXJjQl7fiGj7CIl
+         nFm1WPQYn44qAvARvTofcMug5xiKcORqlz28GHaCprpexSTJ8sGJnd4t0Wz1tv8qbO4H
+         fjSGVGKw4hEH1DzqAjl06M763go8TAFYHjdoYlpmmc1gvWcMaJ5UMRigcgPp/jLw/J6D
+         SNCA==
+X-Gm-Message-State: ANhLgQ2q8rvEErvVmVedzytlELbcI+nTnzsimCMvUdKfwKlKspTSPjSq
+        tJErk34Q/socQuclvKJzgjFlzLURFoVNaPII0cMls9oKWt0=
+X-Google-Smtp-Source: ADFU+vtjeeGC8+hlNw5uVS8yJznnDKurgL1PzzKIqIYqcStJ22twI296KX1QNxWNO3M+6DfYrLQpNvce7kc6+p5/U3M=
+X-Received: by 2002:aca:54ca:: with SMTP id i193mr1945950oib.163.1584414301757;
+ Mon, 16 Mar 2020 20:05:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="2oS5YaxWCcQjTEyO"
-Content-Disposition: inline
-In-Reply-To: <1584397455-28701-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CGME20200311034454epcas1p2ef0c0081971dd82282583559398e58b2@epcas1p2.samsung.com>
+ <20200311034441.23243-1-jaewon31.kim@samsung.com> <af4ace34-0db2-dd17-351f-eaa806f0a6ac@suse.cz>
+ <20200313174827.GA67638@unreal> <5E6EFB6C.7050105@samsung.com> <20200316083154.GF8510@unreal>
+In-Reply-To: <20200316083154.GF8510@unreal>
+From:   Jaewon Kim <jaewon31.kim@gmail.com>
+Date:   Tue, 17 Mar 2020 12:04:46 +0900
+Message-ID: <CAJrd-UvttDDSL=q1RXC6Z+jvZAGsN2iM8C8xOSrpJFdLb0e-3g@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] meminfo: introduce extra meminfo
+To:     Leon Romanovsky <leon@kernel.org>
+Cc:     Jaewon Kim <jaewon31.kim@samsung.com>,
+        Vlastimil Babka <vbabka@suse.cz>, adobriyan@gmail.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>, minchan@kernel.org,
+        ngupta@vflare.org, sergey.senozhatsky.work@gmail.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2020=EB=85=84 3=EC=9B=94 16=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 5:32, L=
+eon Romanovsky <leon@kernel.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> On Mon, Mar 16, 2020 at 01:07:08PM +0900, Jaewon Kim wrote:
+> >
+> >
+> > On 2020=EB=85=84 03=EC=9B=94 14=EC=9D=BC 02:48, Leon Romanovsky wrote:
+> > > On Fri, Mar 13, 2020 at 04:19:36PM +0100, Vlastimil Babka wrote:
+> > >> +CC linux-api, please include in future versions as well
+> > >>
+> > >> On 3/11/20 4:44 AM, Jaewon Kim wrote:
+> > >>> /proc/meminfo or show_free_areas does not show full system wide mem=
+ory
+> > >>> usage status. There seems to be huge hidden memory especially on
+> > >>> embedded Android system. Because it usually have some HW IP which d=
+o not
+> > >>> have internal memory and use common DRAM memory.
+> > >>>
+> > >>> In Android system, most of those hidden memory seems to be vmalloc =
+pages
+> > >>> , ion system heap memory, graphics memory, and memory for DRAM base=
+d
+> > >>> compressed swap storage. They may be shown in other node but it see=
+ms to
+> > >>> useful if /proc/meminfo shows all those extra memory information. A=
+nd
+> > >>> show_mem also need to print the info in oom situation.
+> > >>>
+> > >>> Fortunately vmalloc pages is alread shown by commit 97105f0ab7b8
+> > >>> ("mm: vmalloc: show number of vmalloc pages in /proc/meminfo"). Swa=
+p
+> > >>> memory using zsmalloc can be seen through vmstat by commit 91537fee=
+0013
+> > >>> ("mm: add NR_ZSMALLOC to vmstat") but not on /proc/meminfo.
+> > >>>
+> > >>> Memory usage of specific driver can be various so that showing the =
+usage
+> > >>> through upstream meminfo.c is not easy. To print the extra memory u=
+sage
+> > >>> of a driver, introduce following APIs. Each driver needs to count a=
+s
+> > >>> atomic_long_t.
+> > >>>
+> > >>> int register_extra_meminfo(atomic_long_t *val, int shift,
+> > >>>                      const char *name);
+> > >>> int unregister_extra_meminfo(atomic_long_t *val);
+> > >>>
+> > >>> Currently register ION system heap allocator and zsmalloc pages.
+> > >>> Additionally tested on local graphics driver.
+> > >>>
+> > >>> i.e) cat /proc/meminfo | tail -3
+> > >>> IonSystemHeap:    242620 kB
+> > >>> ZsPages:          203860 kB
+> > >>> GraphicDriver:    196576 kB
+> > >>>
+> > >>> i.e.) show_mem on oom
+> > >>> <6>[  420.856428]  Mem-Info:
+> > >>> <6>[  420.856433]  IonSystemHeap:32813kB ZsPages:44114kB GraphicDri=
+ver::13091kB
+> > >>> <6>[  420.856450]  active_anon:957205 inactive_anon:159383 isolated=
+_anon:0
+> > >> I like the idea and the dynamic nature of this, so that drivers not =
+present
+> > >> wouldn't add lots of useless zeroes to the output.
+> > >> It also makes simpler the decisions of "what is important enough to =
+need its own
+> > >> meminfo entry".
+> > >>
+> > >> The suggestion for hunting per-driver /sys files would only work if =
+there was a
+> > >> common name to such files so once can find(1) them easily.
+> > >> It also doesn't work for the oom/failed alloc warning output.
+> > > Of course there is a need to have a stable name for such an output, t=
+his
+> > > is why driver/core should be responsible for that and not drivers aut=
+hors.
+> > >
+> > > The use case which I had in mind slightly different than to look afte=
+r OOM.
+> > >
+> > > I'm interested to optimize our drivers in their memory footprint to
+> > > allow better scale in SR-IOV mode where one device creates many separ=
+ate
+> > > copies of itself. Those copies easily can take gigabytes of RAM due t=
+o
+> > > the need to optimize for high-performance networking. Sometimes the
+> > > amount of memory and not HW is actually limits the scale factor.
+> > >
+> > > So I would imagine this feature being used as an aid for the driver
+> > > developers and not for the runtime decisions.
+> > >
+> > > My 2-cents.
+> > >
+> > > Thanks
+> > >
+> > >
+> > Thank you for your comment.
+> > My idea, I think, may be able to help each driver developer to see thei=
+r memory usage.
+> > But I'd like to see overall memory usage through the one node.
+>
+> It is more than enough :).
+>
+> >
+> > Let me know if you have more comment.
+> > I am planning to move my logic to be shown on a new node, /proc/meminfo=
+_extra at v2.
+>
+> Can you please help me to understand how that file will look like once
+> many drivers will start to use this interface? Will I see multiple
+> lines?
+>
+> Something like:
+> driver1 ....
+> driver2 ....
+> driver3 ....
+> ...
+> driver1000 ....
+>
+> How can we extend it to support subsystems core code?
 
---2oS5YaxWCcQjTEyO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I do not have a plan to support subsystem core.
 
-Hi Yang,
+I just want the /proc/meminfo_extra to show size of alloc_pages APIs
+rather than slub size. It is to show hidden huge memory.
+I think most of drivers do not need to register its size to
+/proc/meminfo_extra because
+drivers usually use slub APIs and rather than alloc_pages APIs.
+/proc/slabinfo helps for slub size in detail.
 
-Thank you for the patch! Yet something to improve:
+As a candidate of /proc/meminfo_extra, I hope only few drivers using
+huge memory like over 100 MB got from alloc_pages APIs.
 
-[auto build test ERROR on mmotm/master]
-[also build test ERROR on linus/master v5.6-rc6 next-20200316]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+As you say, if there is a static node on /sys for each driver, it may
+be used for all the drivers.
+I think sysfs class way may be better to show categorized sum size.
+But /proc/meminfo_extra can be another way to show those hidden huge memory=
+.
+I mean your idea and my idea is not exclusive.
 
-url:    https://github.com/0day-ci/linux/commits/Yang-Shi/mm-swap-make-page_evictable-inline/20200317-094836
-base:   git://git.cmpxchg.org/linux-mmotm.git master
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.5.0-5) 7.5.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
-
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/suspend.h:5:0,
-                    from arch/x86/kernel/asm-offsets.c:13:
-   include/linux/swap.h: In function 'page_evictable':
->> include/linux/swap.h:395:9: error: implicit declaration of function 'mapping_unevictable'; did you mean 'mapping_deny_writable'? [-Werror=implicit-function-declaration]
-     ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
-            ^~~~~~~~~~~~~~~~~~~
-            mapping_deny_writable
-   cc1: some warnings being treated as errors
-   make[2]: *** [scripts/Makefile.build:99: arch/x86/kernel/asm-offsets.s] Error 1
-   make[2]: Target '__build' not remade because of errors.
-   make[1]: *** [Makefile:1139: prepare0] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:179: sub-make] Error 2
-   11 real  4 user  5 sys  89.51% cpu 	make prepare
-
-vim +395 include/linux/swap.h
-
-   376	
-   377	/**
-   378	 * page_evictable - test whether a page is evictable
-   379	 * @page: the page to test
-   380	 *
-   381	 * Test whether page is evictable--i.e., should be placed on active/inactive
-   382	 * lists vs unevictable list.
-   383	 *
-   384	 * Reasons page might not be evictable:
-   385	 * (1) page's mapping marked unevictable
-   386	 * (2) page is part of an mlocked VMA
-   387	 *
-   388	 */
-   389	static inline bool page_evictable(struct page *page)
-   390	{
-   391		bool ret;
-   392	
-   393		/* Prevent address_space of inode and swap cache from being freed */
-   394		rcu_read_lock();
- > 395		ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
-   396		rcu_read_unlock();
-   397		return ret;
-   398	}
-   399	
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
-
---2oS5YaxWCcQjTEyO
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-
---2oS5YaxWCcQjTEyO--
+Thank you
+>
+> Thanks
+>
+> >
+> > Thank you
+> > Jaewon Kim
