@@ -2,107 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7DB3187674
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 00:59:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD9F6187678
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 01:01:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733041AbgCPX7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 19:59:35 -0400
-Received: from mga06.intel.com ([134.134.136.31]:48081 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732932AbgCPX7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 19:59:35 -0400
-IronPort-SDR: rzKtaOE/4Ri3zXuy263VksSdMeBJ7wjvonGcL1F1CV5OHOJxe8PWrHXFrIK8CWZnTSkkO+L0HX
- nOI9CzZdDlLQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 16:59:34 -0700
-IronPort-SDR: EXC5OOzw7kiXij0nmleAvE4HV7gl1QOatOdI+iOuUlgq374R5zeDr8XW1LmjOeNWMBJmjRY+II
- 7ydyTJgBvJ/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,562,1574150400"; 
-   d="scan'208";a="233334574"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga007.jf.intel.com with ESMTP; 16 Mar 2020 16:59:34 -0700
-Date:   Mon, 16 Mar 2020 16:59:34 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, Neil Horman <nhorman@redhat.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
-        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
-        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Connor Kuehl <ckuehl@redhat.com>,
-        Harald Hoyer <harald@redhat.com>,
-        Lily Sturmann <lsturman@redhat.com>
-Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-Message-ID: <20200316235934.GM24267@linux.intel.com>
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
- <20200303233609.713348-22-jarkko.sakkinen@linux.intel.com>
- <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
- <20200315012523.GC208715@linux.intel.com>
- <CAOASepP9GeTEqs1DSfPiSm9ER0whj9qwSc46ZiNj_K4dMekOfQ@mail.gmail.com>
- <94ce05323c4de721c4a6347223885f2ad9f541af.camel@linux.intel.com>
- <CAOASepM1pp1emPwSdFcaRkZfFm6sNmwPCJH+iFMiaJpFjU0VxQ@mail.gmail.com>
- <5dc2ec4bc9433f9beae824759f411c32b45d4b74.camel@linux.intel.com>
- <20200316225322.GJ24267@linux.intel.com>
- <fa773504-4cc1-5cbd-c018-890f7a5d3152@intel.com>
+        id S1732990AbgCQABK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 20:01:10 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45606 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732932AbgCQABK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 20:01:10 -0400
+Received: by mail-pg1-f193.google.com with SMTP id m15so10657209pgv.12
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 17:01:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pxhrdycLqRcl8yZff8EnF0nl6QUAsSQr4n1zOEszaCY=;
+        b=hGpp5MKNrLkuVxANrcMITjU27Tdvqc3/M1B6yJhPIhrzb96wsFQn7k0MH8NlDeU5iw
+         WMerX/ldZvWsQ4/hUYNJfmjG2mXU0t26LUSqZgdb+HLcHwoTrPovBW7SzykSPOz9Ipac
+         RoM6uinpJk4FsyX6BAM3ms31dSgNn1e2qkI24GKFaDfZi4NvXpXlWLTqOLsdP/sOhxDq
+         LfbMFjihhafmZNBGZuF/s8E4ft3KpWpA4oOvwKX9OW04Oz0GiGxFck3ZosNQB/Vj3hIE
+         xMh1PlPk7oGt24pwKvW9ml6nSDdYa034I8zuT3UFoJCeeoieDzjRAlazAnXVNiqGt3Yc
+         Qv8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pxhrdycLqRcl8yZff8EnF0nl6QUAsSQr4n1zOEszaCY=;
+        b=O4w5Ts7xrCBSX+gNVFgYXNZPYQzV/B+v0DlbaCNAyeAu9zomPZjCqeGej6GjRoP6WA
+         IE2rlqy1cNOPigjLstNg94KtfUWYn3TEkQNnmA+auHnUAMpe0iNE9o5f7LLRqAzAh6ym
+         IwxIgdHE4iwqTiqe9CG8r4jteO0tg21UEmSE6uBZLNPNT13sGT/GjXKQIq9bmbYAoBmN
+         tGu3fdSubnNBI85/AxEVk7GCMb/DFOGL2rmcVFDy5DH4YRYrlFR8GwGSJXMWk0aEbc5n
+         z7G4y29iXuMAC9AKAqbe5SiZz+UN2w7Q2X0k8vbwaKbpQA1wqFCL6KPjLct2UlAm1lpM
+         qCzg==
+X-Gm-Message-State: ANhLgQ1eif4ZOBJ+mILf6+YxWweaptVdGJAKSZkbNhxd0KyeKPl8ACqk
+        s8b/71HLX0uVseiZLAzaWNCMWHRiP2K9oyF6QUgNKg==
+X-Google-Smtp-Source: ADFU+vv9AtJkgZLCZ1s4+2h7aCl6Dr9hKC9TPsDL0u4RkJ+TzVVPfEcn6f6bdRh8QyFFOH51PmZUbrPOwUpGb4mKEEw=
+X-Received: by 2002:a63:4e22:: with SMTP id c34mr2321252pgb.263.1584403269224;
+ Mon, 16 Mar 2020 17:01:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fa773504-4cc1-5cbd-c018-890f7a5d3152@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <cd74f11eaee5d8fe3599280eb1e3812ce577c835.1582849064.git.stefan@agner.ch>
+In-Reply-To: <cd74f11eaee5d8fe3599280eb1e3812ce577c835.1582849064.git.stefan@agner.ch>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 16 Mar 2020 17:00:57 -0700
+Message-ID: <CAKwvOdneF5nXgx3Rh6=NhPK+q93VRhs7mDCcK2eGY0e2rOqqnQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: warn if pre-UAL assembler syntax is used
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Jian Cai <jiancai@google.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 04:50:26PM -0700, Xing, Cedric wrote:
-> On 3/16/2020 3:53 PM, Sean Christopherson wrote:
-> >On Mon, Mar 16, 2020 at 11:38:24PM +0200, Jarkko Sakkinen wrote:
-> >>>My suggestions explicitly maintained robustness, and in fact increased
-> >>>it. If you think we've lost capability, please speak with specificity
-> >>>rather than in vague generalities. Under my suggestions we can:
-> >>>1. call the vDSO from C
-> >>>2. pass context to the handler
-> >>>3. have additional stack manipulation options in the handler
-> >>>
-> >>>The cost for this is a net 2 additional instructions. No existing
-> >>>capability is lost.
-> >>
-> >>My vague generality in this case is just that the whole design
-> >>approach so far has been to minimize the amount of wrapping to
-> >>EENTER.
-> >
-> >Yes and no.   If we wanted to minimize the amount of wrapping around the
-> >vDSO's ENCLU then we wouldn't have the exit handler shenanigans in the
-> >first place.  The whole process has been about balancing the wants of each
-> >use case against the overall quality of the API and code.
-> >
-> The design of this vDSO API was NOT to minimize wrapping, but to allow
-> maximal flexibility. More specifically, we strove not to restrict how info
-> was exchanged between the enclave and its host process. After all, calling
-> convention is compiler specific - i.e. the enclave could be built by a
-> different compiler (e.g. MSVC) that doesn't share the same list of CSRs as
-> the host process. Therefore, the API has been implemented to pass through
-> virtually all registers except those used by EENTER itself. Similarly, all
-> registers are passed back from enclave to the caller (or the exit handler)
-> except those used by EEXIT. %rbp is an exception because the vDSO API has to
-> anchor the stack, using either %rsp or %rbp. We picked %rbp to allow the
-> enclave to allocate space on the stack.
+Revert "ARM: 8846/1: warn if divided syntax assembler is used"On Thu,
+Feb 27, 2020 at 4:19 PM Stefan Agner <stefan@agner.ch> wrote:
+>
+> Remove the -mno-warn-deprecated assembler flag for GCC versions newer
+> than 5.1 to make sure the GNU assembler warns in case non-unified
+> syntax is used.
 
-And unless I'm missing something, using %rcx to pass @leaf would still
-satisfy the above, correct?  Ditto for saving/restoring %rbx.
+Hi Stefan, sorry for the late reply from me; digging out my backlog.
+Do you happen to have a godbolt link perhaps that demonstrates this?
+It sounds like GCC itself is emitting pre-UAL?
 
-I.e. a runtime that's designed to work with enclave's using a different
-calling convention wouldn't be able to take advantage of being able to call
-the vDSO from C, but neither would it take on any meaningful burden. 
+>
+> This also prevents a warning when building with Clang and enabling
+> its integrated assembler:
+> clang-10: error: unsupported argument '-mno-warn-deprecated' to option 'Wa,'
+>
+> This is a second attempt of commit e8c24bbda7d5 ("ARM: 8846/1: warn if
+> divided syntax assembler is used").
+
+Would it be helpful to also make note of
+commit b752bb405a13 ("Revert "ARM: 8846/1: warn if divided syntax
+assembler is used"")?
+
+
+>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  arch/arm/Makefile | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+> index db857d07114f..a6c8c9f39185 100644
+> --- a/arch/arm/Makefile
+> +++ b/arch/arm/Makefile
+> @@ -119,21 +119,25 @@ ifeq ($(CONFIG_CC_IS_CLANG),y)
+>  CFLAGS_ABI     += -meabi gnu
+>  endif
+>
+> -# Accept old syntax despite ".syntax unified"
+> -AFLAGS_NOWARN  :=$(call as-option,-Wa$(comma)-mno-warn-deprecated,-Wa$(comma)-W)
+
+This existing code is quite bad for Clang, which doesn't support
+`-Wa,-mno-warn-deprecated`, so this falls back to `-Wa,-W`, which
+disables all warnings from the assembler, which we definitely do not
+want.  That alone is worth putting in the GCC guard.  But I would like
+more info about GCC above before signing off.
+
+> -
+>  ifeq ($(CONFIG_THUMB2_KERNEL),y)
+> -CFLAGS_ISA     :=-mthumb -Wa,-mimplicit-it=always $(AFLAGS_NOWARN)
+> +CFLAGS_ISA     :=-mthumb -Wa,-mimplicit-it=always
+>  AFLAGS_ISA     :=$(CFLAGS_ISA) -Wa$(comma)-mthumb
+>  # Work around buggy relocation from gas if requested:
+>  ifeq ($(CONFIG_THUMB2_AVOID_R_ARM_THM_JUMP11),y)
+>  KBUILD_CFLAGS_MODULE   +=-fno-optimize-sibling-calls
+>  endif
+>  else
+> -CFLAGS_ISA     :=$(call cc-option,-marm,) $(AFLAGS_NOWARN)
+> +CFLAGS_ISA     :=$(call cc-option,-marm,)
+>  AFLAGS_ISA     :=$(CFLAGS_ISA)
+>  endif
+>
+> +ifeq ($(CONFIG_CC_IS_GCC),y)
+> +ifeq ($(call cc-ifversion, -lt, 0501, y), y)
+> +# GCC <5.1 emits pre-UAL code and causes assembler warnings, suppress them
+> +CFLAGS_ISA     +=$(call as-option,-Wa$(comma)-mno-warn-deprecated,-Wa$(comma)-W)
+> +endif
+> +endif
+> +
+>  # Need -Uarm for gcc < 3.x
+>  KBUILD_CFLAGS  +=$(CFLAGS_ABI) $(CFLAGS_ISA) $(arch-y) $(tune-y) $(call cc-option,-mshort-load-bytes,$(call cc-option,-malignment-traps,)) -msoft-float -Uarm
+>  KBUILD_AFLAGS  +=$(CFLAGS_ABI) $(AFLAGS_ISA) $(arch-y) $(tune-y) -include asm/unified.h -msoft-float
+> --
+
+-- 
+Thanks,
+~Nick Desaulniers
