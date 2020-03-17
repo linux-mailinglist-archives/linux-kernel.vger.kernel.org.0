@@ -2,144 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E049188B79
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:02:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47559188BCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:13:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbgCQRCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 13:02:49 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36872 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbgCQRCt (ORCPT
+        id S1727032AbgCQRMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 13:12:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46220 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbgCQRMC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 13:02:49 -0400
-Received: by mail-wm1-f65.google.com with SMTP id a141so72389wme.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 10:02:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Fba/U9otc2Taw+dP1ayFE6PdkE156208ze8hBWbP5a0=;
-        b=Cnt9unexUh7DiO8/+NFCYWS6n4xihEaetGa9wprZioX0B5ztpZhNHZa1z+2KRnvfWc
-         WowDv3qSzyU+n5zlmaxOryg9osqcQL8P6I1u7bpW2c1aOrs+kq5fUBlulwSd/TX2Cf7Y
-         GE1nPLfhIjXMkIp+5+Wgpw/iv+wn0WIGofvNE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=Fba/U9otc2Taw+dP1ayFE6PdkE156208ze8hBWbP5a0=;
-        b=PokCWv0rdahjs20/j3nSAsxs+4b/RRcWspqzaAgJveUbRs7+Rm9+tr53B5Di/RK6eu
-         Q+7aM89XqYYWueqEjNm2cRQNdYidxN4NRmGx7EhEl2hAJhPOuSX+F+JUQE5w52aml6Qd
-         IL4i2cVvHdhIFst/ly3bgWA5fQz9OB8h4/yfAgMpdPcTy6DcawIM1Nz5Pkrsb4ErZx7G
-         8WcQVCy0m5aG+lHH+1XGyTVS9roSZX1z89YtLTl7+9ei08dj9RhfYgy5kz8tv8y8t2rc
-         fIVY6mNwAe1djeC3WuynKo9z8Y9qRvlNIlPF/slI1ZuYRCld04OgDeUE7ZJu3XW1UhIM
-         hw+A==
-X-Gm-Message-State: ANhLgQ2hp7HDJEhnSWXEk8fxZdmAajRypicc9fpbBLY+cJnPRN8RoH/a
-        yvA99YniJx/g93RCHI1cipE6bg==
-X-Google-Smtp-Source: ADFU+vtWZkm5YFA2wKbGqBsADcieSlIQinWEBnhNpwFvx09DRAxMcKI1mmVSAsGI36f/KlGOMFUewQ==
-X-Received: by 2002:a7b:c3ca:: with SMTP id t10mr231733wmj.69.1584464566676;
-        Tue, 17 Mar 2020 10:02:46 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id n14sm63632wmi.19.2020.03.17.10.02.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2020 10:02:45 -0700 (PDT)
-Date:   Tue, 17 Mar 2020 18:02:43 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Qiujun Huang <hqjagain@gmail.com>
-Cc:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] drm/lease: fix potential race in fill_object_idr
-Message-ID: <20200317170243.GR2363188@phenom.ffwll.local>
-Mail-Followup-To: Qiujun Huang <hqjagain@gmail.com>,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <1584343103-13896-1-git-send-email-hqjagain@gmail.com>
+        Tue, 17 Mar 2020 13:12:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To;
+        bh=I+xjW8SmjuSc3NcehLz1xs8WhtELcrND9tPUxiTJy1I=; b=rj1/+tdVMy+dy1yAtLE+qHRoCx
+        fnyWUpiIQNdd0joI6c50WL4gJmHrxEN8BAI61yPLChC+HqTRRmiQPAZrCiid1MiDOpUgRJx5kVTBH
+        KWiBY0atYWQr759AZ7F0IACm6VHQLppRImA+xWloUDKN3rNVyXF2X0Uyekm7/ALLJnwdVahm1DFZ2
+        XPo98mb8sypEARDNtuv/SFdhSYXvIfWOoF2rdf1+E9d7eH5OEgssBhAnSfIkvTaqKQ8zOxqNrTPb9
+        hwyEKK3a1rIjyZDN3hBvPlgRCdoTLqoE0OVBgrXVHiazG+ZDtdVO22wEgLauzjpyUZTRzJ2bkEu3M
+        fvIuuczg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jEFkz-0002r9-Vu; Tue, 17 Mar 2020 17:11:58 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 08FA53070F4;
+        Tue, 17 Mar 2020 18:11:55 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id EC92A20B16493; Tue, 17 Mar 2020 18:11:54 +0100 (CET)
+Message-Id: <20200317170910.356432759@infradead.org>
+User-Agent: quilt/0.65
+Date:   Tue, 17 Mar 2020 18:02:44 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     tglx@linutronix.de, jpoimboe@redhat.com
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org,
+        mhiramat@kernel.org, mbenes@suse.cz, brgerst@gmail.com
+Subject: [PATCH v2 10/19] objtool: Rename find_containing_func()
+References: <20200317170234.897520633@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1584343103-13896-1-git-send-email-hqjagain@gmail.com>
-X-Operating-System: Linux phenom 5.3.0-3-amd64 
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 03:18:23PM +0800, Qiujun Huang wrote:
-> We should hold idr_mutex for idr_alloc.
-> 
-> Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+For consistency; we have:
 
-I've not seen the first version of this anywhere in my inbox, not sure
-where that got lost.
+  find_symbol_by_offset() / find_symbol_containing()
+  find_func_by_offset()   / find_containing_func()
 
-Anyway, this seems like a false positive - I'm assuming this was caught
-with KCSAN. The commit message really should mention that.
+fix that.
 
-fill_object_idr creates the idr, which yes is only access later on under
-the idr_mutex. But here it's not yet visible to any other thread, and
-hence lockless access is safe and correct.
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ tools/objtool/elf.c  |    2 +-
+ tools/objtool/elf.h  |    2 +-
+ tools/objtool/warn.h |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-No idea what the KCSAN complains about safe access like this best practice
-is.
--Daniel
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -187,7 +187,7 @@ struct symbol *find_symbol_containing(st
+ 	return NULL;
+ }
+ 
+-struct symbol *find_containing_func(struct section *sec, unsigned long offset)
++struct symbol *find_func_containing(struct section *sec, unsigned long offset)
+ {
+ 	struct rb_node *node;
+ 
+--- a/tools/objtool/elf.h
++++ b/tools/objtool/elf.h
+@@ -91,7 +91,7 @@ struct symbol *find_symbol_containing(st
+ struct rela *find_rela_by_dest(struct section *sec, unsigned long offset);
+ struct rela *find_rela_by_dest_range(struct section *sec, unsigned long offset,
+ 				     unsigned int len);
+-struct symbol *find_containing_func(struct section *sec, unsigned long offset);
++struct symbol *find_func_containing(struct section *sec, unsigned long offset);
+ struct section *elf_create_section(struct elf *elf, const char *name, size_t
+ 				   entsize, int nr);
+ struct section *elf_create_rela_section(struct elf *elf, struct section *base);
+--- a/tools/objtool/warn.h
++++ b/tools/objtool/warn.h
+@@ -21,7 +21,7 @@ static inline char *offstr(struct sectio
+ 	char *name, *str;
+ 	unsigned long name_off;
+ 
+-	func = find_containing_func(sec, offset);
++	func = find_func_containing(sec, offset);
+ 	if (func) {
+ 		name = func->name;
+ 		name_off = offset - func->offset;
 
-> ---
->  drivers/gpu/drm/drm_lease.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
-> index b481caf..427ee21 100644
-> --- a/drivers/gpu/drm/drm_lease.c
-> +++ b/drivers/gpu/drm/drm_lease.c
-> @@ -418,6 +418,7 @@ static int fill_object_idr(struct drm_device *dev,
->  		goto out_free_objects;
->  	}
->  
-> +	mutex_lock(&dev->mode_config.idr_mutex);
->  	/* add their IDs to the lease request - taking into account
->  	   universal planes */
->  	for (o = 0; o < object_count; o++) {
-> @@ -437,7 +438,7 @@ static int fill_object_idr(struct drm_device *dev,
->  		if (ret < 0) {
->  			DRM_DEBUG_LEASE("Object %d cannot be inserted into leases (%d)\n",
->  					object_id, ret);
-> -			goto out_free_objects;
-> +			goto out_unlock;
->  		}
->  		if (obj->type == DRM_MODE_OBJECT_CRTC && !universal_planes) {
->  			struct drm_crtc *crtc = obj_to_crtc(obj);
-> @@ -445,20 +446,22 @@ static int fill_object_idr(struct drm_device *dev,
->  			if (ret < 0) {
->  				DRM_DEBUG_LEASE("Object primary plane %d cannot be inserted into leases (%d)\n",
->  						object_id, ret);
-> -				goto out_free_objects;
-> +				goto out_unlock;
->  			}
->  			if (crtc->cursor) {
->  				ret = idr_alloc(leases, &drm_lease_idr_object, crtc->cursor->base.id, crtc->cursor->base.id + 1, GFP_KERNEL);
->  				if (ret < 0) {
->  					DRM_DEBUG_LEASE("Object cursor plane %d cannot be inserted into leases (%d)\n",
->  							object_id, ret);
-> -					goto out_free_objects;
-> +					goto out_unlock;
->  				}
->  			}
->  		}
->  	}
->  
->  	ret = 0;
-> +out_unlock:
-> +	mutex_unlock(&dev->mode_config.idr_mutex);
->  out_free_objects:
->  	for (o = 0; o < object_count; o++) {
->  		if (objects[o])
-> -- 
-> 1.8.3.1
-> 
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
