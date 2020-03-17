@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA143187F62
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:01:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03238187F64
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:01:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbgCQLA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:00:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40256 "EHLO mail.kernel.org"
+        id S1727693AbgCQLBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:01:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727296AbgCQLAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:00:54 -0400
+        id S1727296AbgCQLA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:00:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A39B520736;
-        Tue, 17 Mar 2020 11:00:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B51DE20735;
+        Tue, 17 Mar 2020 11:00:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442854;
-        bh=xGL/aX6wK11vFz52iETWlJWAKLw5QhtLoH9fTvi27bA=;
+        s=default; t=1584442858;
+        bh=ORNsf8ifWYNyfXskgtLojG9pXI7P4qlT0Mdcgsoa344=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZRSe5jLUnq5RBnH6lm1pOuDE1CmJovRzQNboTZRkIk/IS53pKh8hxEyMhfZFJR1vr
-         JBGPLhNtFeR0cU/LVjMnAqq2Xc6HErvKzGzNMjnA0tu2iPZAHiWnxyBXtMRLxtpas9
-         kTysbBxHVkbdeQYx36+Bl9I9GosH9rWZwE9JXuiU=
+        b=XDuK1qxfdRIH+bFRs3DcZjeSpbXCvI1Zv0WT2icqR3w2Mn27eAvxRIv5KVs7dyzzJ
+         6w4DqPT8TYtz5qBMwgA5zR/rGaVX2RX5ldTw8fq+U3ZGwnyAVsOlgoVd5K1F/3yuG9
+         gvDskzxxdWm87cU4UipXfzffInEJg1pTFHB5gCMs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>,
+        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        Fugang Duan <fugang.duan@nxp.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 015/123] net: dsa: mv88e6xxx: fix lockup on warm boot
-Date:   Tue, 17 Mar 2020 11:54:02 +0100
-Message-Id: <20200317103309.275983809@linuxfoundation.org>
+Subject: [PATCH 5.4 016/123] net: fec: validate the new settings in fec_enet_set_coalesce()
+Date:   Tue, 17 Mar 2020 11:54:03 +0100
+Message-Id: <20200317103309.387625321@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
 References: <20200317103307.343627747@linuxfoundation.org>
@@ -44,53 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Jakub Kicinski <kuba@kernel.org>
 
-[ Upstream commit 0395823b8d9a4d87bd1bf74359123461c2ae801b ]
+[ Upstream commit ab14961d10d02d20767612c78ce148f6eb85bd58 ]
 
-If the switch is not hardware reset on a warm boot, interrupts can be
-left enabled, and possibly pending. This will cause us to enter an
-infinite loop trying to service an interrupt we are unable to handle,
-thereby preventing the kernel from booting.
+fec_enet_set_coalesce() validates the previously set params
+and if they are within range proceeds to apply the new ones.
+The new ones, however, are not validated. This seems backwards,
+probably a copy-paste error?
 
-Ensure that the global 2 interrupt sources are disabled before we claim
-the parent interrupt.
+Compile tested only.
 
-Observed on the ZII development revision B and C platforms with
-reworked serdes support, and using reboot -f to reboot the platform.
-
-Fixes: dc30c35be720 ("net: dsa: mv88e6xxx: Implement interrupt support.")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Fixes: d851b47b22fc ("net: fec: add interrupt coalescence feature support")
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Acked-by: Fugang Duan <fugang.duan@nxp.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/dsa/mv88e6xxx/global2.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/fec_main.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/dsa/mv88e6xxx/global2.c
-+++ b/drivers/net/dsa/mv88e6xxx/global2.c
-@@ -1083,6 +1083,13 @@ int mv88e6xxx_g2_irq_setup(struct mv88e6
- {
- 	int err, irq, virq;
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -2529,15 +2529,15 @@ fec_enet_set_coalesce(struct net_device
+ 		return -EINVAL;
+ 	}
  
-+	chip->g2_irq.masked = ~0;
-+	mv88e6xxx_reg_lock(chip);
-+	err = mv88e6xxx_g2_int_mask(chip, ~chip->g2_irq.masked);
-+	mv88e6xxx_reg_unlock(chip);
-+	if (err)
-+		return err;
-+
- 	chip->g2_irq.domain = irq_domain_add_simple(
- 		chip->dev->of_node, 16, 0, &mv88e6xxx_g2_irq_domain_ops, chip);
- 	if (!chip->g2_irq.domain)
-@@ -1092,7 +1099,6 @@ int mv88e6xxx_g2_irq_setup(struct mv88e6
- 		irq_create_mapping(chip->g2_irq.domain, irq);
+-	cycle = fec_enet_us_to_itr_clock(ndev, fep->rx_time_itr);
++	cycle = fec_enet_us_to_itr_clock(ndev, ec->rx_coalesce_usecs);
+ 	if (cycle > 0xFFFF) {
+ 		dev_err(dev, "Rx coalesced usec exceed hardware limitation\n");
+ 		return -EINVAL;
+ 	}
  
- 	chip->g2_irq.chip = mv88e6xxx_g2_irq_chip;
--	chip->g2_irq.masked = ~0;
+-	cycle = fec_enet_us_to_itr_clock(ndev, fep->tx_time_itr);
++	cycle = fec_enet_us_to_itr_clock(ndev, ec->tx_coalesce_usecs);
+ 	if (cycle > 0xFFFF) {
+-		dev_err(dev, "Rx coalesced usec exceed hardware limitation\n");
++		dev_err(dev, "Tx coalesced usec exceed hardware limitation\n");
+ 		return -EINVAL;
+ 	}
  
- 	chip->device_irq = irq_find_mapping(chip->g1_irq.domain,
- 					    MV88E6XXX_G1_STS_IRQ_DEVICE);
 
 
