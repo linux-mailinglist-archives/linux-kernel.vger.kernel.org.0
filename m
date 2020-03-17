@@ -2,125 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 355C718890D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 16:20:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24A83188914
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 16:22:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbgCQPUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 11:20:35 -0400
-Received: from mail-eopbgr30084.outbound.protection.outlook.com ([40.107.3.84]:54862
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726112AbgCQPUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 11:20:34 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kWGhleVQKixQjRIlLP7Zl6xdKs700J+XwSIIj+bkTf2dwi3rrWVRZflhsUPMGRXVFeMjMhmeVoOf0munXwC568EZHrDQTqhy5bu74xsW3ZYG0Od/bE1SWd1LmqQOdK1FI9ETcTNIsNIeY6MXOMm+0dVNgYEHQu7HUn7Ff/DV4mRxi5y2KKKmmJxUGQApHFLAZWu5QWZy38Z/oGoKytXmTzP44yosszUoTfgH2eMEaRMhmK8t/03LWqZz0v5aG72azpcJk9Z+1gv7zr+nez/MXJTLZED1XIVsGH7dd1h/JaL6j9fKJjUmB92cWNjTl0bdx3fHE2oeHCps6lASTbU46A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FA+yvm5/VeCBm7iaBf9sK2VCaUk/AG6zRNlxLqGc0Tc=;
- b=UkoOguopL82cwgiIpq0B8rMtJX/XnywrOY2Ofx2UjkRrpul9dmDlCpdJJtTgqnLiBmBYJXlcvPAj5+UvCoTKL5BxwyTFDQYknroz+S9cK5aKmJuqmZoiDc9Gi9IOUDGLtGSeYbr6Hi1BCDVhgBevm4vcC87c0aGpJLxFMYuUl6aVIiD4ghtTny2gPJN1R5I4geuO2o8lieuCSGY1oOprqbOxMlUaDMKOqplN/V/IcPrUJnT8tLhtBNsf/Lna7BWSz9pdFv9kDssI7ux7AUaGfHZ4ihb0J+awSBZqtrmVDrrdcP1eZvunbWxjvQFB20OZpFMoanc8+6qcnO+3U5wMEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FA+yvm5/VeCBm7iaBf9sK2VCaUk/AG6zRNlxLqGc0Tc=;
- b=EiYqybCPl9WCAwqjb+0HpI7QLLTzJbCKHvMyYBcnoTws66rv6BD5ypKHWpS9HGnz3wAKgnIN/OinHlICgA/3mB+GDCFEr+YCorm2dOQKkU3u3ytrLNEJS+4ZuPx/k+fgh3wl9zf5icYp+JtoH2lulq33GKg8HH/aYZXyJSNR0xk=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3582.eurprd04.prod.outlook.com (52.134.4.155) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.16; Tue, 17 Mar 2020 15:20:29 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::751e:7e8d:ed4:ef5f]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::751e:7e8d:ed4:ef5f%7]) with mapi id 15.20.2814.021; Tue, 17 Mar 2020
- 15:20:29 +0000
-Subject: Re: [PATCH v7 1/9] crypto: caam - allocate RNG instantiation
- descriptor with GFP_DMA
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20200127165646.19806-1-andrew.smirnov@gmail.com>
- <20200127165646.19806-2-andrew.smirnov@gmail.com>
- <VI1PR0402MB3485FF5402B8C0FFF48FBF2298030@VI1PR0402MB3485.eurprd04.prod.outlook.com>
- <CAHQ1cqGZP5RKTsc4+jikyPVggt-mGViRtKNvyOx9FGkYW9pgmg@mail.gmail.com>
-From:   =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>
-Message-ID: <ce541b0c-7ddb-ed4d-9529-c1d48a38b6a6@nxp.com>
-Date:   Tue, 17 Mar 2020 17:20:25 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-In-Reply-To: <CAHQ1cqGZP5RKTsc4+jikyPVggt-mGViRtKNvyOx9FGkYW9pgmg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR02CA0044.eurprd02.prod.outlook.com
- (2603:10a6:208:d2::21) To VI1PR0402MB3485.eurprd04.prod.outlook.com
- (2603:10a6:803:7::25)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.0.129] (84.117.251.185) by AM0PR02CA0044.eurprd02.prod.outlook.com (2603:10a6:208:d2::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.22 via Frontend Transport; Tue, 17 Mar 2020 15:20:27 +0000
-X-Originating-IP: [84.117.251.185]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 4acfeacd-3358-4a30-766f-08d7ca86b9c9
-X-MS-TrafficTypeDiagnostic: VI1PR0402MB3582:|VI1PR0402MB3582:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <VI1PR0402MB3582F0186EFF5FA0AE21290098F60@VI1PR0402MB3582.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
-X-Forefront-PRVS: 0345CFD558
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(39860400002)(346002)(376002)(136003)(199004)(2906002)(31696002)(31686004)(8676002)(81166006)(5660300002)(52116002)(81156014)(86362001)(8936002)(53546011)(66556008)(36756003)(66476007)(316002)(66946007)(54906003)(6486002)(956004)(966005)(2616005)(6916009)(186003)(26005)(4326008)(478600001)(16526019)(16576012);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3582;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XHJGji+0oO9jsz/EFsFluvHiYek4cMhYevOjbRDfCNs2PSir1wpaUcIfnBL3vEQG3x2mvJ6GVnAoAmWnZS04rKlv3EYL0jGSZac7F8BCSygFoKoxPiqJvIW8h+h7v+oZ7+xtYP83+14oSN66Inm4TdT2GPlnbTdbhkN1/YAq/JVCOwQ6KffDRYHa1X0Tg5J7ID6hegn6rt76+Blcife/vYSZPfUB/yk/GYeGY4VgnPdi11Rcap/1brE145qBRWZoRALfO325/BgByJQZ7cuSZ/ixWWHuXl3cAQ2fixXEo0l4fCIkvB68ReCX/DTc+2enFHSHln7BULKKMzG7ap+uReThWzTi6iTZU3dQJNT0HfATzEQ+fY/IB+G9JW781mc/5MPDLFny6e3ldsRDRLeqomrJ5cpugyLUEqlLs780xmxNhw62BORO+tvGWJz9ImANtFCMraaTLmDPubQ7/CoHCwTbbCsdyU8YZ4J8PTpvH/Db0HWowOSyl4eoUweeY80NM0dlDJlM70JWjnYDckcm1A==
-X-MS-Exchange-AntiSpam-MessageData: a3D6FVQzAYitnCb6XhI2/ltgMnh1UYCz1qcJsy77sr1UyruV9z8HLDYl8fzmqCwG/UHgy7TxpYj5+pqloX7347estsC+3ZEkR2f9XDaktsqV7GfXOO2qb9DpZfDjKqW8owDoxZySC2dH1wzWZId2oQ==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4acfeacd-3358-4a30-766f-08d7ca86b9c9
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2020 15:20:29.3007
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: F3cqS6p3gBhmLKBtYui6fmQbdjqfpW7DCoCefUnutQafMyM0mqReTOMx7NqNeiyAlFOXDsLj2sw/2I6J4GqD6A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3582
+        id S1726879AbgCQPWQ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 17 Mar 2020 11:22:16 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64408 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726680AbgCQPWQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 11:22:16 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02HFLkLV193080
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 11:22:15 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yrt356w5y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 11:22:14 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <sachinp@linux.vnet.ibm.com>;
+        Tue, 17 Mar 2020 15:22:11 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 17 Mar 2020 15:22:07 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02HFM6cq58523826
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Mar 2020 15:22:06 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 924EEAE064;
+        Tue, 17 Mar 2020 15:22:06 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D933EAE051;
+        Tue, 17 Mar 2020 15:22:04 +0000 (GMT)
+Received: from [9.199.40.234] (unknown [9.199.40.234])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 17 Mar 2020 15:22:04 +0000 (GMT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH] tpm2: Export tpm2_get_cc_attrs_tbl for ibmvtpm driver as
+ module
+From:   Sachin Sant <sachinp@linux.vnet.ibm.com>
+In-Reply-To: <20200317130819.720318-1-stefanb@linux.vnet.ibm.com>
+Date:   Tue, 17 Mar 2020 20:52:03 +0530
+Cc:     jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
+        Stefan Berger <stefanb@linux.ibm.com>
+Content-Transfer-Encoding: 8BIT
+References: <20200317130819.720318-1-stefanb@linux.vnet.ibm.com>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
+X-Mailer: Apple Mail (2.3445.104.11)
+X-TM-AS-GCONF: 00
+x-cbid: 20031715-4275-0000-0000-000003ADDF12
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20031715-4276-0000-0000-000038C30858
+Message-Id: <03C24A2B-643D-4CDB-99FA-F5321684EEE4@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-17_05:2020-03-17,2020-03-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 mlxscore=0 spamscore=0 bulkscore=0 phishscore=0
+ lowpriorityscore=0 suspectscore=0 clxscore=1015 impostorscore=0
+ malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2003020000 definitions=main-2003170062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/16/2020 6:15 AM, Andrey Smirnov wrote:
-> On Tue, Feb 4, 2020 at 6:08 AM Horia Geanta <horia.geanta@nxp.com> wrote:
->>
->> On 1/27/2020 6:57 PM, Andrey Smirnov wrote:
->>> Be consistent with the rest of the codebase and use GFP_DMA when
->>> allocating memory for a CAAM JR descriptor.
->>>
->> Please use GFP_DMA32 instead.
->> Device is not limited to less than 32 bits of addressing
->> in any of its incarnations.
->>
->> s/GFP_DMA/GFP_DMA32 should be performed throughout caam driver.
->> (But of course, I wouldn't include this change in current patch series).
->>
-> 
-> Hmm, I am triggering
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/slub.c?h=v5.6-rc6#n1721
-> by using GFP_DMA32. AFAICT, GFP_DMA32 can't be used in SLUB/SLAB
-> allocated memory:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/internal.h?h=v5.6-rc6#n32
-> 
-Indeed.
 
-> I'll stick with GFP_DMA for now, unless you have a different preference.
+> On 17-Mar-2020, at 6:38 PM, Stefan Berger <stefanb@linux.vnet.ibm.com> wrote:
 > 
-I'm ok with this, will deal with memory allocation separately.
+> From: Stefan Berger <stefanb@linux.ibm.com>
+> 
+> This patch fixes the following problem when the ibmvtpm driver
+> is built as a module:
+> 
+> ERROR: modpost: "tpm2_get_cc_attrs_tbl" [drivers/char/tpm/tpm_ibmvtpm.ko] undefined!
+> make[1]: *** [scripts/Makefile.modpost:94: __modpost] Error 1
+> make: *** [Makefile:1298: modules] Error 2
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 
-Thanks,
-Horia
+Reported-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
+Tested-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
+
+Thanks
+-Sachin
+
