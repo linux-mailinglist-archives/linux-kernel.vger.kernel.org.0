@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99F451881B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:20:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4690618800A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:06:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728631AbgCQLSb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:18:31 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11707 "EHLO huawei.com"
+        id S1728657AbgCQLGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:06:41 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11709 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728607AbgCQLGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:06:31 -0400
+        id S1728609AbgCQLGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:06:33 -0400
 Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 612FFC122464A3917050;
+        by Forcepoint Email with ESMTP id 70C3D6135936AD5E2AAE;
         Tue, 17 Mar 2020 19:06:28 +0800 (CST)
 Received: from localhost.localdomain (10.69.192.58) by
  DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
@@ -24,10 +24,12 @@ To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
 CC:     <will@kernel.org>, <ak@linux.intel.com>, <linuxarm@huawei.com>,
         <linux-kernel@vger.kernel.org>, <james.clark@arm.com>,
         <qiangqing.zhang@nxp.com>, John Garry <john.garry@huawei.com>
-Subject: [PATCH v2 0/7] perf test pmu-events case
-Date:   Tue, 17 Mar 2020 19:02:12 +0800
-Message-ID: <1584442939-8911-1-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v2 1/7] perf jevents: Add some test events
+Date:   Tue, 17 Mar 2020 19:02:13 +0800
+Message-ID: <1584442939-8911-2-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
+In-Reply-To: <1584442939-8911-1-git-send-email-john.garry@huawei.com>
+References: <1584442939-8911-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.69.192.58]
@@ -37,87 +39,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series introduces a basic pmu-events test case.
+Add some test PMU events. The events are randomly chosen from x86 and
+arm64 JSONs. The events include CPU and uncore events.
 
-The test works in two steps:
-- Verifies events in generated pmu-events.c are as expected for some test
-  events
-- Verifies correctly created aliases for those test events for the HW PMUs
-  in the host system
-
-The test events are invented, and are (mostly) arch agnostic (even though
-I copied these events from pre-existing x86 and arm64 JSONs).
-
-In the test, core and uncore events are treated slightly differently for
-testing aliases. For core test events, all events are matched. However,
-for uncore test events, these have "Unit" property, so can only be matched
-when the corresponding HW PMU exists in the host sytem.
-
-A test run looks like this on my x86 dev box:
-
-$ tools/perf/perf test -vv 10
-
-10: PMU events                                            :
---- start ---
-test child forked, pid 26610
-testing event table bp_l1_btb_correct: pass
-testing event table bp_l2_btb_correct: pass
-testing event table segment_reg_loads.any: pass
-testing event table dispatch_blocked.any: pass
-testing event table eist_trans: pass
-testing event table uncore_hisi_ddrc.flux_wcmd: pass
-testing event table unc_cbo_xsnp_response.miss_eviction: pass
-Using CPUID GenuineIntel-6-3D-4
-intel_pt default config: tsc,pt,branch
-skipping testing PMU breakpoint
-testing aliases PMU uncore_cbox_1: matched event unc_cbo_xsnp_response.miss_eviction
-testing PMU uncore_cbox_1 aliases: pass
-testing aliases PMU cpu: matched event bp_l1_btb_correct
-testing aliases PMU cpu: matched event bp_l2_btb_correct
-testing aliases PMU cpu: matched event segment_reg_loads.any
-testing aliases PMU cpu: matched event dispatch_blocked.any
-testing aliases PMU cpu: matched event eist_trans
-testing PMU cpu aliases: pass
-skipping testing PMU software
-skipping testing PMU intel_bts
-testing aliases PMU uncore_cbox_0: matched event unc_cbo_xsnp_response.miss_eviction
-testing PMU uncore_cbox_0 aliases: pass
-skipping testing PMU tracepoint
-test child finished with 0
----- end ----
-PMU events: Ok
-
-
-Changes since v1:
-- Verify event table in generated pmu-events.c, in addition to verifying
-  aliases
-- Don't create separate table for test events, but include as a "testcpu"
-
-John Garry (7):
-  perf jevents: Add some test events
-  perf jevents: Support test events folder
-  perf pmu: Refactor pmu_add_cpu_aliases()
-  perf test: Add pmu-events test
-  perf pmu: Add is_pmu_core()
-  perf pmu: Make pmu_uncore_alias_match() public
-  perf test: Test pmu-events aliases
-
- .../perf/pmu-events/arch/test/test_cpu/branch.json |  12 +
- .../perf/pmu-events/arch/test/test_cpu/other.json  |  26 ++
- .../perf/pmu-events/arch/test/test_cpu/uncore.json |  21 ++
- tools/perf/pmu-events/jevents.c                    |  30 ++
- tools/perf/tests/Build                             |   1 +
- tools/perf/tests/builtin-test.c                    |   4 +
- tools/perf/tests/pmu-events.c                      | 373 +++++++++++++++++++++
- tools/perf/tests/tests.h                           |   1 +
- tools/perf/util/pmu.c                              |  28 +-
- tools/perf/util/pmu.h                              |   5 +
- 10 files changed, 492 insertions(+), 9 deletions(-)
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+ .../perf/pmu-events/arch/test/test_cpu/branch.json | 12 ++++++++++
+ .../perf/pmu-events/arch/test/test_cpu/other.json  | 26 ++++++++++++++++++++++
+ .../perf/pmu-events/arch/test/test_cpu/uncore.json | 21 +++++++++++++++++
+ 3 files changed, 59 insertions(+)
  create mode 100644 tools/perf/pmu-events/arch/test/test_cpu/branch.json
  create mode 100644 tools/perf/pmu-events/arch/test/test_cpu/other.json
  create mode 100644 tools/perf/pmu-events/arch/test/test_cpu/uncore.json
- create mode 100644 tools/perf/tests/pmu-events.c
 
+diff --git a/tools/perf/pmu-events/arch/test/test_cpu/branch.json b/tools/perf/pmu-events/arch/test/test_cpu/branch.json
+new file mode 100644
+index 000000000000..93ddfd8053ca
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/test/test_cpu/branch.json
+@@ -0,0 +1,12 @@
++[
++  {
++    "EventName": "bp_l1_btb_correct",
++    "EventCode": "0x8a",
++    "BriefDescription": "L1 BTB Correction."
++  },
++  {
++    "EventName": "bp_l2_btb_correct",
++    "EventCode": "0x8b",
++    "BriefDescription": "L2 BTB Correction."
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/test/test_cpu/other.json b/tools/perf/pmu-events/arch/test/test_cpu/other.json
+new file mode 100644
+index 000000000000..7d53d7ecd723
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/test/test_cpu/other.json
+@@ -0,0 +1,26 @@
++[
++    {
++        "EventCode": "0x6",
++        "Counter": "0,1",
++        "UMask": "0x80",
++        "EventName": "SEGMENT_REG_LOADS.ANY",
++        "SampleAfterValue": "200000",
++        "BriefDescription": "Number of segment register loads."
++    },
++    {
++        "EventCode": "0x9",
++        "Counter": "0,1",
++        "UMask": "0x20",
++        "EventName": "DISPATCH_BLOCKED.ANY",
++        "SampleAfterValue": "200000",
++        "BriefDescription": "Memory cluster signals to block micro-op dispatch for any reason"
++    },
++    {
++        "EventCode": "0x3A",
++        "Counter": "0,1",
++        "UMask": "0x0",
++        "EventName": "EIST_TRANS",
++        "SampleAfterValue": "200000",
++        "BriefDescription": "Number of Enhanced Intel SpeedStep(R) Technology (EIST) transitions"
++    }
++]
+\ No newline at end of file
+diff --git a/tools/perf/pmu-events/arch/test/test_cpu/uncore.json b/tools/perf/pmu-events/arch/test/test_cpu/uncore.json
+new file mode 100644
+index 000000000000..d0a890cc814d
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/test/test_cpu/uncore.json
+@@ -0,0 +1,21 @@
++[
++ {
++	    "EventCode": "0x02",
++	    "EventName": "uncore_hisi_ddrc.flux_wcmd",
++	    "BriefDescription": "DDRC write commands",
++	    "PublicDescription": "DDRC write commands",
++	    "Unit": "hisi_sccl,ddrc"
++   },
++   {
++	    "Unit": "CBO",
++	    "EventCode": "0x22",
++	    "UMask": "0x81",
++	    "EventName": "UNC_CBO_XSNP_RESPONSE.MISS_EVICTION",
++	    "BriefDescription": "A cross-core snoop resulted from L3 Eviction which misses in some processor core.",
++	    "PublicDescription": "A cross-core snoop resulted from L3 Eviction which misses in some processor core.",
++	    "Counter": "0,1",
++	    "CounterMask": "0",
++	    "Invert": "0",
++	    "EdgeDetect": "0"
++  }
++]
 -- 
 2.12.3
 
