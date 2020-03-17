@@ -2,145 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C021A188865
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:57:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B61A0188861
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:57:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbgCQO5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 10:57:30 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58040 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726781AbgCQO53 (ORCPT
+        id S1726765AbgCQO5C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 10:57:02 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:43052 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726484AbgCQO5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 10:57:29 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02HEv6wU121755;
-        Tue, 17 Mar 2020 10:57:10 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ytb21j7js-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 17 Mar 2020 10:57:10 -0400
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 02HEv89R121841;
-        Tue, 17 Mar 2020 10:57:08 -0400
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ytb21j7ef-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 17 Mar 2020 10:57:08 -0400
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02HEsKfH020816;
-        Tue, 17 Mar 2020 14:56:00 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma05wdc.us.ibm.com with ESMTP id 2yrpw68xw6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 17 Mar 2020 14:56:00 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02HEu0SO48628190
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Mar 2020 14:56:00 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 43BF9112063;
-        Tue, 17 Mar 2020 14:56:00 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 21BA3112061;
-        Tue, 17 Mar 2020 14:55:58 +0000 (GMT)
-Received: from jarvis.ext.hansenpartnership.com (unknown [9.85.150.164])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 17 Mar 2020 14:55:57 +0000 (GMT)
-Message-ID: <1584456957.4545.7.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 03/27] ata: make SATA_PMP option selectable only if
- any SATA host driver is enabled
-From:   James Bottomley <jejb@linux.ibm.com>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Date:   Tue, 17 Mar 2020 07:55:57 -0700
-In-Reply-To: <20200317144333.2904-4-b.zolnierkie@samsung.com>
-References: <20200317144333.2904-1-b.zolnierkie@samsung.com>
-         <CGME20200317144342eucas1p2d73deadcdb4cee860dd610f9f8e26bda@eucas1p2.samsung.com>
-         <20200317144333.2904-4-b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-17_05:2020-03-17,2020-03-17 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 mlxlogscore=999 phishscore=0 impostorscore=0 bulkscore=0
- clxscore=1011 malwarescore=0 priorityscore=1501 suspectscore=0
- adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003170061
+        Tue, 17 Mar 2020 10:57:02 -0400
+Received: from [192.168.4.242] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1jEDeL-0005u8-Rs; Tue, 17 Mar 2020 14:56:57 +0000
+Received: from ben by deadeye with local (Exim 4.93)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1jEDeL-00CpNa-FG; Tue, 17 Mar 2020 14:56:57 +0000
+Message-ID: <18622dc08c49e7d4304f221e378137ecde09ba61.camel@decadent.org.uk>
+Subject: Re: [PATCH] genirq: fix reference leaks on irq affinity notifiers
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Edward Cree <ecree@solarflare.com>, tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, psodagud@codeaurora.org
+Date:   Tue, 17 Mar 2020 14:56:46 +0000
+In-Reply-To: <a527a4bb-fdc4-815d-8852-674767b9dd1d@solarflare.com>
+References: <24f5983f-2ab5-e83a-44ee-a45b5f9300f5@solarflare.com>
+         <17c4273e4f72ebdf1ca838d75fc6ed93fcdc7287.camel@decadent.org.uk>
+         <a527a4bb-fdc4-815d-8852-674767b9dd1d@solarflare.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-8Dsb++f6nhTcgfY8y8C/"
+User-Agent: Evolution 3.34.1-4 
+MIME-Version: 1.0
+X-SA-Exim-Connect-IP: 192.168.4.242
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-03-17 at 15:43 +0100, Bartlomiej Zolnierkiewicz wrote:
-> There is no reason to expose SATA_PMP config option when no SATA
-> host drivers are enabled. To fix it add SATA_HOST config option,
-> make all SATA host drivers select it and finally make SATA_PMP
-> config options depend on it.
-> 
-> This also serves as preparation for the future changes which
-> optimize libata core code size on PATA only setups.
-> 
-> CC: "James E.J. Bottomley" <jejb@linux.ibm.com>
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com> # for
-> SCSI bits
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  drivers/ata/Kconfig         | 40
-> +++++++++++++++++++++++++++++++++++++
->  drivers/scsi/Kconfig        |  1 +
->  drivers/scsi/libsas/Kconfig |  1 +
->  3 files changed, 42 insertions(+)
-> 
-> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-> index a6beb2c5a692..ad7760656f71 100644
-> --- a/drivers/ata/Kconfig
-> +++ b/drivers/ata/Kconfig
-> @@ -34,6 +34,9 @@ if ATA
->  config ATA_NONSTANDARD
->         bool
->  
-> +config SATA_HOST
-> +	bool
-> +
->  config ATA_VERBOSE_ERROR
->  	bool "Verbose ATA error reporting"
->  	default y
-> @@ -73,6 +76,7 @@ config SATA_ZPODD
->  
->  config SATA_PMP
->  	bool "SATA Port Multiplier support"
-> +	depends on SATA_HOST
->  	default y
->  	help
->  	  This option adds support for SATA Port Multipliers
-> @@ -85,6 +89,7 @@ comment "Controllers with non-SFF native interface"
->  config SATA_AHCI
->  	tristate "AHCI SATA support"
->  	depends on PCI
-> +	select SATA_HOST
->  	help
->  	  This option enables support for AHCI Serial ATA.
 
-This is a bit fragile and not the way Kconfig should be done.  The
-fragility comes because anyone adding a new host has also to remember
-to add the select, and there will be no real consequences for not doing
-so.  The way to get rid of the fragility is to make SATA_HOST a
-menuconfig option enclosing all the hosts, which makes the patch much
-smaller as well.  The hint implies you want to separate out all the
-PATA drivers, which also makes a menuconfig sound like the better
-option.
+--=-8Dsb++f6nhTcgfY8y8C/
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I've also got to say that the problem doesn't seem to be one ... even
-if some raving lunatic disables all SATA hosts and then enables PMP it
-doesn't cause any problems does it?
+On Tue, 2020-03-17 at 10:58 +0000, Edward Cree wrote:
+> On 15/03/2020 20:29, Ben Hutchings wrote:
+> > ...since the pending work item holds a reference to the notification
+> > state, it's still not clear to me why or whether "genirq: Prevent use-
+> > after-free and work list corruption" was needed.
+> Yeah, I think that commit was bogus.  The email thread[1] doesn't
+>  exactly inspire confidence either.  I think the submitter just didn't
+>  realise that there was a ref corresponding to the work; AFAICT there's
+>  no way the alleged "work list corruption" could happen.
+>=20
+> > If it's reasonable to cancel_work_sync() when removing a notifier, I
+> > think we can remove the kref and call the release function directly.
+> I'd prefer to stick to the smaller fix for -rc and stable.  But if you
+>  want to remove the kref for -next, I'd be happy to Ack that patch.
 
-James
+OK, then you can add:
 
+Acked-by: Ben Hutchings <ben@decadent.org.uk>
+
+to this one.
+
+> Btw, we (sfc linux team) think there's still a use-after-free issue in
+>  the cpu_rmap lib, as follows:
+> 1) irq_cpu_rmap_add creates a glue and notifier, adds glue to rmap->obj
+> 2) someone else does irq_set_affinity_notifier.
+>    This causes cpu_rmap's notifier (old_notify) to get released, and so
+>    irq_cpu_rmap_release kfrees glue.  But it's still in rmap->obj
+> 3) free_irq_cpu_rmap loops over obj, finds the glue, tries to clear its
+>    notifier.
+> Now one could say that this UAF is academic, since having two bits of
+>  code trying to register notifiers for the same IRQ is broken anyway
+>  (in this case, the rmap would stop getting updated, because the
+>  "someone else" stole the notifier).
+
+So far as I can remember, my thinking was that only non-shared IRQs
+will have notifiers and only the current user of the IRQ will set the
+notifier.  The doc comment for irq_set_affinity_notifier() implies the
+latter restriction, but it might be worth spelling this out explicitly.
+
+Ben.
+
+> But I thought I'd bring it up in case it's halfway relevant.
+>=20
+> -ed
+>=20
+> [1] https://lore.kernel.org/lkml/1553119211-29761-1-git-send-email-psodag=
+ud@codeaurora.org/T/#u
+--=20
+Ben Hutchings
+For every complex problem
+there is a solution that is simple, neat, and wrong.
+
+
+--=-8Dsb++f6nhTcgfY8y8C/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAl5w5S8ACgkQ57/I7JWG
+EQmZBxAAucg9e7dBvW7zXPn9pe7tgtrQ/iR7i+Y5zGDNAYYHM2wafoFJ25eivyb5
+PkGWjBx2COU6U9aoXR3AFlrl1kx4iDmcdVo82WNa1el2RDntfVIytoDh65O31h2P
+yquPzfsBAd2appE2kFhOeVb/YXT27AcFBhsgOT0ltCKUiulci9u9B1IQbqE30oxu
+Hwqd+tFXnCzdo0gryx3tW1EaNgIYa+Cytlnu9NhCEypD0EaNc5NGIEYG2u7wTtGy
+dlPlxaINKKsW0tf6w8YPV2oRbd5EH4v2hqLBl5ey3znHw8ZJ5TiOyyxxm4BM9q4w
+4oZS4K1f5tO2EKOevlcuEXLsNQlUYgRWKCMQBgMGVx6oBwZiOfr7nMQTR0qWHLj8
+oqw4HVfaJpRCSEN0VA9ch64Xxyy2mkCOIXV9oCsFP0NMO2uXyEMeoMrtAmJ5Fbs5
+vqsPXEJLG1ks/+bemebK6BLvBh7ZJJytyp0G8XDKI1ogJnTTR51wQNaqAfgU/M6t
+jIo1kKWWoVw72xYDZbl4tlFb5ZvXeGvWPfF89MH9nkjYFyHk+JT9anr0KTyIYtjc
+DfBZ8Vqibne43wKUTjRHZFtLbDnZGxH6rePxYrPoCyiLC+rpgingUoVfgAAYuK6K
+lTMr9qOiSTSBhHR7XvytOvlS1CJbSgfSIK+09V35nW/kl+EnfC4=
+=78Yv
+-----END PGP SIGNATURE-----
+
+--=-8Dsb++f6nhTcgfY8y8C/--
