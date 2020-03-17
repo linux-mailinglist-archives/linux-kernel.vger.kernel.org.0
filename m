@@ -2,129 +2,304 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3825188C5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:43:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A09A1188C62
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:44:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbgCQRnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 13:43:49 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54431 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbgCQRns (ORCPT
+        id S1726801AbgCQRoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 13:44:20 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33695 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbgCQRoT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 13:43:48 -0400
-Received: by mail-wm1-f65.google.com with SMTP id n8so214616wmc.4;
-        Tue, 17 Mar 2020 10:43:47 -0700 (PDT)
+        Tue, 17 Mar 2020 13:44:19 -0400
+Received: by mail-ot1-f65.google.com with SMTP id x26so5549278otk.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 10:44:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/isKkk3O5jXZ9+kUxg3p2hySrqn/Bwb/DdfR4A2Wb90=;
-        b=ZKy8274IfldCksD2FfPDScwFpZqJL9Uhnw8J2EyjYc7jRDW3iOnoxUXfcKJdExzlgq
-         h8ninzBt8aBXx3GRNWNxv8Vo8mpthJ6avVQwps9WFepgi6REPgGewbmLSC6UeDvTt3K7
-         3T5H1wGZfNxZ8chAWKFEZLD+F3c5V0npkLRzUCaUEA+hT+xhqP5QFuHq1Y5qmxRhDQbY
-         1+0qg+16stwmUlTw3SHmrezF7SFj3KJ9qgijzGkwEhYhZTXyU0w1ZRaf8/Of4Mr83ErG
-         SlWiw+G2PXmTv138MGK2ZakhlvPgigEVd3xA7AXWfIbDXtWjVVO0C8GUkHBXj4b9UZP4
-         srbg==
+        d=gateworks-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HFObV0SspXma1gLo5gg6wz6AEKM5WgviBnCNdKtRKgU=;
+        b=ne+bVIFRKWbvsEFwYhkf7+KIi+MANbz/V+ZJeByU8P2/DmFk2G4m83PxdKxp14ZcyZ
+         zpwcxW3Q/0jmHunemkBhZeEPnLWnDHgffP+YxHm5MkqUx4TxPhzxRkGStLVz3DvPpdNB
+         dwmc58QWAwjatkC+hkCLDQC8XLreSV1Hlay2BRDjaFXacT1hvgKONvUPE37D7idzZkRI
+         F6m6NaZmFEw/Um4fSpLT/yA30FyLmtbJvMvIcFAsjkflCF0WJsKXcFwO+qfw0n3hzJJd
+         3oZs9wrI7l5TRThsC9zKWUtQM37zdpS32x5ieEgBUMAJdGFtZiY7INTl8fohCEaDHjKk
+         YtWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/isKkk3O5jXZ9+kUxg3p2hySrqn/Bwb/DdfR4A2Wb90=;
-        b=nwn3Z1NaCq9TfJjNwAfjzfoKRNuwCGzCy0HxfyJUvzqFzoaxyA3y40VC5hqRFfptS0
-         TFm3ku2IfqacVvYvBIUmwiGfEMb03HqgS+UPs+4QI18kv8NKdtvs+Ri+XbCIWh0UWAEA
-         o2Z3EfY/8yYxAj1R4REuzICcR4NRUIvlPRYdooAtFT5OQVUXqFhLjLb5J26mtpRMKd4t
-         Hs4kAtm5Sx7ySrlTjxX1FrxiPMr4TfX31ZYCvYo8Rlrp81TFHLU41ivADbuuwDp8DmQM
-         AfHrPOPBySPpdIi1MKVUMIVNZE8pmiokMQJFKsD4rNvHJRG3TBrA37pKHt+UddlxaVAT
-         +Hmw==
-X-Gm-Message-State: ANhLgQ3iardYz5mnRbM/ewNsKkFHawD/nDq2vDBU8HeuUCOCxD//k35c
-        CCz+VVrrwZemTGYe+FsMf6g=
-X-Google-Smtp-Source: ADFU+vtWMTV3NJW9DuUit/s4CW52s8HaNylmRzpnQxlGQzAzqr8zjGwViTgYsDSfx6SV+HKl1Lq4Fg==
-X-Received: by 2002:a05:600c:2f01:: with SMTP id r1mr146089wmn.31.1584467026503;
-        Tue, 17 Mar 2020 10:43:46 -0700 (PDT)
-Received: from localhost (pD9E516A9.dip0.t-ipconnect.de. [217.229.22.169])
-        by smtp.gmail.com with ESMTPSA id l5sm5424360wro.15.2020.03.17.10.43.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2020 10:43:45 -0700 (PDT)
-Date:   Tue, 17 Mar 2020 18:43:44 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-Cc:     devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Paul Barker <pbarker@konsulko.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Igor Opaniuk <igor.opaniuk@toradex.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/7] dt-bindings: pwm: document the PWM polarity flag
-Message-ID: <20200317174344.GB1464607@ulmo>
-References: <20200317123231.2843297-1-oleksandr.suvorov@toradex.com>
- <20200317123231.2843297-3-oleksandr.suvorov@toradex.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HFObV0SspXma1gLo5gg6wz6AEKM5WgviBnCNdKtRKgU=;
+        b=C90SVqMoeUM7gXxQQzYAld2qEgSb18yL6VET2ApCCXUWufqVTPm5J6M5iyX+N759P4
+         667/TFnC/5fUIFyfV/LcIiIOaukXIKAoBmPlWlKoocRKo6T914ehDB6F7Q3uhrrUP7Uz
+         3hpZl3JQfmBxJYzNPyyoAWPbWWr5qRtuHSxrFAtq6xZ9d89QOz+y/DGRWvsAGV+jxIvA
+         RAMV0RWmdDWf1hIdBlE6MY1jqUMnPn5An1CZuRfxqDZ/S6GxTHTzKuccZ4BLi6sjY0eT
+         yCYgbgfUsNKeTipvy7dM3Gl1amKV/aMcwqaGA1eCWCerfs0v+VTMrnRydVTfmg8IWuo8
+         XjIA==
+X-Gm-Message-State: ANhLgQ1j179bz3neeMpe3A2E0DoiynEF99H6QOO8MvSNO+i/pDqE9fMb
+        2xuN2ai25FpKhKDFU0S88p1zWNq7XTrATslcIBT/Pw==
+X-Google-Smtp-Source: ADFU+vvTUir1AUne+7NEC2On9ZdgUJLPHpEJZX9GlK21WrFda8uHLpjtU7BW6sdX6h575+/z1dUqSCMKlnsKqda5gNg=
+X-Received: by 2002:a05:6830:1e06:: with SMTP id s6mr385357otr.28.1584467057819;
+ Tue, 17 Mar 2020 10:44:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i9LlY+UWpKt15+FH"
-Content-Disposition: inline
-In-Reply-To: <20200317123231.2843297-3-oleksandr.suvorov@toradex.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+References: <1584464453-28200-1-git-send-email-tharvey@gateworks.com>
+ <1584464453-28200-4-git-send-email-tharvey@gateworks.com> <8570eb47-d446-9fcb-1033-682114c9ca59@roeck-us.net>
+In-Reply-To: <8570eb47-d446-9fcb-1033-682114c9ca59@roeck-us.net>
+From:   Tim Harvey <tharvey@gateworks.com>
+Date:   Tue, 17 Mar 2020 10:44:06 -0700
+Message-ID: <CAJ+vNU0oc17q-Ajgh29hAZRNeTa+CeRfKjz22-33XqHOdYwQyA@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] hwmon: add Gateworks System Controller support
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Lee Jones <lee.jones@linaro.org>, Jean Delvare <jdelvare@suse.com>,
+        Linux HWMON List <linux-hwmon@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Robert Jones <rjones@gateworks.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Mar 17, 2020 at 10:18 AM Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On 3/17/20 10:00 AM, Tim Harvey wrote:
+> > The Gateworks System Controller has a hwmon sub-component that exposes
+> > up to 16 ADC's, some of which are temperature sensors, others which are
+> > voltage inputs. The ADC configuration (register mapping and name) is
+> > configured via device-tree and varies board to board.
+> >
+> > Cc: Guenter Roeck <linux@roeck-us.net>
+> > Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> > ---
+> > v6:
+> > - fix size of info field
+> > - improve pwm output control documentation
+> > - include unit suffix in divider and offset
+> > - change adc subnode name to gsc-adc
+> > - change fan base to fan subnode
+> > - change adc type to mode
+> > - fix voltage offset scaling
+> >
+> > v5:
+> > - fix various checkpatch issues
+> > - correct gsc-hwmon.rst in MAINTAINERS
+> > - encorporate Gunter's feedback:
+> >  - switch to SENSOR_DEVICE_ATTR_{RW,RO}
+> >  - use tmp value to avoid excessive pointer deference
+> >  - simplify shift operation
+> >  - scale voffset once
+> >  - simplify is_visible function
+> >  - remove empty line at end of file
+> >
+> > v4:
+> > - adjust for uV offset from device-tree
+> > - remove unnecessary optional write function
+> > - remove register range check
+> > - change dev_err prints to use gsc dev
+> > - hard-code resolution/scaling for raw adcs
+> > - describe units of ADC resolution
+> > - move to using pwm<n>_auto_point<m>_{pwm,temp} for FAN PWM
+> > - ensure space before/after operators
+> > - remove unnecessary parens
+> > - remove more debugging
+> > - add default case and comment for type_voltage
+> > - remove unnecessary index bounds checks for channel
+> > - remove unnecessary clearing of struct fields
+> > - added Documentation/hwmon/gsc-hwmon.rst
+> >
+> > v3:
+> > - add voltage_raw input type and supporting fields
+> > - add channel validation to is_visible function
+> > - remove unnecessary channel validation from read/write functions
+> >
+> > v2:
+> > - change license comment style
+> > - remove DEBUG
+> > - simplify regmap_bulk_read err check
+> > - remove break after returns in switch statement
+> > - fix fan setpoint buffer address
+> > - remove unnecessary parens
+> > - consistently use struct device *dev pointer
+> > - change license/comment block
+> > - add validation for hwmon child node props
+> > - move parsing of of to own function
+> > - use strlcpy to ensure null termination
+> > - fix static array sizes and removed unnecessary initializers
+> > - dynamically allocate channels
+> > - fix fan input label
+> > - support platform data
+> > - fixed whitespace issues
+> > ---
+> >  Documentation/hwmon/gsc-hwmon.rst       |  53 +++++
+> >  Documentation/hwmon/index.rst           |   1 +
+> >  MAINTAINERS                             |   3 +
+> >  drivers/hwmon/Kconfig                   |   9 +
+> >  drivers/hwmon/Makefile                  |   1 +
+> >  drivers/hwmon/gsc-hwmon.c               | 372 ++++++++++++++++++++++++++++++++
+> >  include/linux/platform_data/gsc_hwmon.h |  44 ++++
+> >  7 files changed, 483 insertions(+)
+> >  create mode 100644 Documentation/hwmon/gsc-hwmon.rst
+> >  create mode 100644 drivers/hwmon/gsc-hwmon.c
+> >  create mode 100644 include/linux/platform_data/gsc_hwmon.h
+> >
+> > diff --git a/Documentation/hwmon/gsc-hwmon.rst b/Documentation/hwmon/gsc-hwmon.rst
+> > new file mode 100644
+> > index 00000000..ffac392
+> > --- /dev/null
+> > +++ b/Documentation/hwmon/gsc-hwmon.rst
+> > @@ -0,0 +1,53 @@
+> > +.. SPDX-License-Identifier: GPL-2.0
+> > +
+> > +Kernel driver gsc-hwmon
+> > +=======================
+> > +
+> > +Supported chips: Gateworks GSC
+> > +Datasheet: http://trac.gateworks.com/wiki/gsc
+> > +Author: Tim Harvey <tharvey@gateworks.com>
+> > +
+> > +Description:
+> > +------------
+> > +
+> > +This driver supports hardware monitoring for the temperature sensor,
+> > +various ADC's connected to the GSC, and optional FAN controller available
+> > +on some boards.
+> > +
+> > +
+> > +Voltage Monitoring
+> > +------------------
+> > +
+> > +The voltage inputs are scaled either internally or by the driver depending
+> > +on the GSC version and firmware. The values returned by the driver do not need
+> > +further scaling. The voltage input labels provide the voltage rail name:
+> > +
+> > +inX_input                  Measured voltage (mV).
+> > +inX_label                  Name of voltage rail.
+> > +
+> > +
+> > +Temperature Monitoring
+> > +----------------------
+> > +
+> > +Temperatures are measured with 12-bit or 10-bit resolution and are scaled
+> > +either internally or by the driver depending on the GSC version and firmware.
+> > +The values returned by the driver reflect millidegree Celcius:
+> > +
+> > +tempX_input                Measured temperature.
+> > +tempX_label                Name of temperature input.
+> > +
+> > +
+> > +PWM Output Control
+> > +------------------
+> > +
+> > +The GSC features 1 PWM output that operates in automatic mode where the
+> > +PWM value will be scalled depending on 6 temperature boundaries.
+> > +The tempeature boundaries are read-write and in millidegree Celcius and the
+> > +read-only PWM values range from 0 (off) to 255 (full speed).
+> > +Fan speed will be set to minimum (off) when the temperature sensor reads
+> > +less than pwm1_auto_point1_temp and maximum when the temperature sensor
+> > +equals or exceeds pwm1_auto_point6_temp.
+> > +
+> > +pwm1_auto_point[1-6]_pwm       PWM value.
+> > +pwm1_auto_point[1-6]_temp      Temperature boundary.
+> > +
+> > diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
+> > index 43cc605..a4fab69 100644
+> > --- a/Documentation/hwmon/index.rst
+> > +++ b/Documentation/hwmon/index.rst
+> > @@ -58,6 +58,7 @@ Hardware Monitoring Kernel Drivers
+> >     ftsteutates
+> >     g760a
+> >     g762
+> > +   gsc-hwmon
+> >     gl518sm
+> >     hih6130
+> >     ibmaem
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index bb79b60..3f15542 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -6846,6 +6846,9 @@ S:      Maintained
+> >  F:   Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml
+> >  F:   drivers/mfd/gateworks-gsc.c
+> >  F:   include/linux/mfd/gsc.h
+> > +F:   Documentation/hwmon/gsc-hwmon.rst
+> > +F:   drivers/hwmon/gsc-hwmon.c
+> > +F:   include/linux/platform_data/gsc_hwmon.h
+> >
+> >  GCC PLUGINS
+> >  M:   Kees Cook <keescook@chromium.org>
+> > diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+> > index 23dfe84..99dae13 100644
+> > --- a/drivers/hwmon/Kconfig
+> > +++ b/drivers/hwmon/Kconfig
+> > @@ -494,6 +494,15 @@ config SENSORS_F75375S
+> >         This driver can also be built as a module. If so, the module
+> >         will be called f75375s.
+> >
+> > +config SENSORS_GSC
+> > +        tristate "Gateworks System Controller ADC"
+> > +        depends on MFD_GATEWORKS_GSC
+> > +        help
+> > +          Support for the Gateworks System Controller A/D converters.
+> > +
+> > +       To compile this driver as a module, choose M here:
+> > +       the module will be called gsc-hwmon.
+> > +
+> >  config SENSORS_MC13783_ADC
+> >          tristate "Freescale MC13783/MC13892 ADC"
+> >          depends on MFD_MC13XXX
+> > diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
+> > index 6db5db9..259cba7 100644
+> > --- a/drivers/hwmon/Makefile
+> > +++ b/drivers/hwmon/Makefile
+> > @@ -71,6 +71,7 @@ obj-$(CONFIG_SENSORS_G760A) += g760a.o
+> >  obj-$(CONFIG_SENSORS_G762)   += g762.o
+> >  obj-$(CONFIG_SENSORS_GL518SM)        += gl518sm.o
+> >  obj-$(CONFIG_SENSORS_GL520SM)        += gl520sm.o
+> > +obj-$(CONFIG_SENSORS_GSC)    += gsc-hwmon.o
+> >  obj-$(CONFIG_SENSORS_GPIO_FAN)       += gpio-fan.o
+> >  obj-$(CONFIG_SENSORS_HIH6130)        += hih6130.o
+> >  obj-$(CONFIG_SENSORS_ULTRA45)        += ultra45_env.o
+> > diff --git a/drivers/hwmon/gsc-hwmon.c b/drivers/hwmon/gsc-hwmon.c
+> > new file mode 100644
+> > index 00000000..c498786
+> > --- /dev/null
+> > +++ b/drivers/hwmon/gsc-hwmon.c
+> > @@ -0,0 +1,372 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Driver for Gateworks System Controller Hardware Monitor module
+> > + *
+> > + * Copyright (C) 2020 Gateworks Corporation
+> > + */
+> > +#include <linux/hwmon.h>
+> > +#include <linux/hwmon-sysfs.h>
+> > +#include <linux/mfd/gsc.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/regmap.h>
+> > +#include <linux/slab.h>
+> > +
+> > +#include <linux/platform_data/gsc_hwmon.h>
+> > +
+> > +#define GSC_HWMON_MAX_TEMP_CH        16
+> > +#define GSC_HWMON_MAX_IN_CH  16
+> > +
+> > +#define GSC_HWMON_RESOLUTION 12
+> > +#define GSC_HWMON_VREF               2500
+> > +
+> > +struct gsc_hwmon_data {
+> > +     struct gsc_dev *gsc;
+> > +     struct device *dev;
+>
+> What is 'dev' used for ? I don't think it is necessary.
+>
 
---i9LlY+UWpKt15+FH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Agreed - will remove.
 
-On Tue, Mar 17, 2020 at 02:32:26PM +0200, Oleksandr Suvorov wrote:
-> Add the description of PWM_POLARITY_NORMAL flag.
->=20
-> Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-> ---
->=20
->  Documentation/devicetree/bindings/pwm/pwm.txt | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm.txt b/Documentatio=
-n/devicetree/bindings/pwm/pwm.txt
-> index 084886bd721e..440c6b9a6a4e 100644
-> --- a/Documentation/devicetree/bindings/pwm/pwm.txt
-> +++ b/Documentation/devicetree/bindings/pwm/pwm.txt
-> @@ -46,6 +46,7 @@ period in nanoseconds.
->  Optionally, the pwm-specifier can encode a number of flags (defined in
->  <dt-bindings/pwm/pwm.h>) in a third cell:
->  - PWM_POLARITY_INVERTED: invert the PWM signal polarity
-> +- PWM_POLARITY_NORMAL: don't invert the PWM signal polarity
+Thanks!
 
-This doesn't make sense. PWM_POLARITY_NORMAL is not part of the DT ABI.
-The third cell of the specifier is a bitmask of flags.
-
-PWM_POLARITY_NORMAL is an enumeration value that evaluates to 0, so it
-makes absolutely no sense as a flag. PWM signals are considered to be
-"normal" by default, so no flag is necessary to specify that.
-
-Thierry
-
---i9LlY+UWpKt15+FH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5xDFAACgkQ3SOs138+
-s6Hc2BAAoZZlHyfYsr0Ak2f2q9OT3sqed38ZxCtTlrr7nV0EMRX9lArVOG/WYqZU
-j6UFpsHK5VeEVd7g0+AmwlGNMuCSkh8Fago7cFqKwIWgrYlk0P4MAOdrt1CLf5ky
-KO2B+YLCLiV3Jc9TYFridWcCAR1XCU9xkvVVBs2DM6j7FqSG3zLXe1OklBM1mnTL
-ha6UdP8Nr46AodyfFh9H+1xEzNf+BGnycoN+c3k0AfI2QEvntJywgb+v+V6ELIUd
-nf22MsydZCIRYbrl74154RESKQ8wPtDtz/XaXAiGxJAd76K5+PBFNIEY8TJHXdQm
-uEQVC7g3OUNANYaTdDLtn8EmmK41UqZOK9T8Hc9zr14zh1asoPkALoPQv/6aY7At
-19uamsnrxupfTmneh7K064G7InxbeecxPo9H20aS2QVYNegA5ZvCYLjcjASOfesj
-AGxze1cMvK38uD0Ujq8n7hLerMBGZ4IBH4S9Kt68iCbClF5XwWZQy5yhVywqtEs+
-1D2HpCWtcImoEnBywcAiA8eE8Bp6ByZkz0PscumS03TOiy1xI/IRbqCaUMnNkYC2
-cKnkghSEsn+Ilg9rzXNS9gvNVj4v3e+2GBFaF7rHUBs8+TOzn1dcB5iubq+55RLW
-Y8uyGklJGKA8NyVXF+0u4At8XhYGzCR1296yga0NPv3GzHEyqlo=
-=+U+H
------END PGP SIGNATURE-----
-
---i9LlY+UWpKt15+FH--
+Tim
