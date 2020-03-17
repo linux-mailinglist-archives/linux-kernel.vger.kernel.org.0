@@ -2,84 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43E901889FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 17:16:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF9FC188A24
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 17:25:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbgCQQQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 12:16:32 -0400
-Received: from mga17.intel.com ([192.55.52.151]:59753 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726207AbgCQQQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 12:16:32 -0400
-IronPort-SDR: xJQ+Vmtlchge0JD+BcE/SzVeKT5EAt38iMN1Cd0KMF5ELMRam2wYTB8v4HXGgMz1C1tm3Funm8
- fg/Xh1+FAgPw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 09:16:31 -0700
-IronPort-SDR: TisHc35JxXWWsW++YHglStF/q1Qs5t2M3hs6ClvW8soMNHMx7VvTmnR2igC8zIgyr7R6S+2DGj
- mx/rlfdhjiLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,565,1574150400"; 
-   d="scan'208";a="247871726"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga006.jf.intel.com with ESMTP; 17 Mar 2020 09:16:31 -0700
-Date:   Tue, 17 Mar 2020 09:16:31 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
-Subject: Re: [PATCH 01/10] KVM: nVMX: Move reflection check into
- nested_vmx_reflect_vmexit()
-Message-ID: <20200317161631.GD12526@linux.intel.com>
-References: <20200312184521.24579-1-sean.j.christopherson@intel.com>
- <20200312184521.24579-2-sean.j.christopherson@intel.com>
- <87k13opi6m.fsf@vitty.brq.redhat.com>
- <20200317053327.GR24267@linux.intel.com>
+        id S1726682AbgCQQZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 12:25:05 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:55980 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726207AbgCQQZF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 12:25:05 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02HGOnQN073884;
+        Tue, 17 Mar 2020 11:24:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584462289;
+        bh=FMEfVF/Y6JC0PmkJEu3lBXtB/Eyjcxja+1xNFplvEe8=;
+        h=From:To:CC:Subject:Date;
+        b=hsRpF3SMUwPAnHVRLPldS3DwA4UAevCJY/DWuq6M+FnadUTjcz4u0mOlUdHaGIxFm
+         dHZVIeUJbYHsKqyLWXF6Ao5Qhdt4dxC5m2UJC83zJ4glVT5Bq3VmS9GpQDMpegp7UC
+         uAN8gYA4IG66Yuds/yjn8wY7bSxecK8fHdfxgro8=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02HGOnMR091951
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 17 Mar 2020 11:24:49 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
+ Mar 2020 11:24:48 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 17 Mar 2020 11:24:48 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02HGOm1H100261;
+        Tue, 17 Mar 2020 11:24:48 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <linux-doc@vger.kernel.org>
+CC:     <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-can@vger.kernel.org>, <robh+dt@kernel.org>,
+        <davem@davemloft.net>, <mkl@pengutronix.de>, <wg@grandegger.com>,
+        <corbet@lwn.net>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH] docs: dt: Fix m_can.txt reference in tcan4x5x.txt
+Date:   Tue, 17 Mar 2020 11:19:00 -0500
+Message-ID: <20200317161900.14380-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200317053327.GR24267@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 10:33:27PM -0700, Sean Christopherson wrote:
-> On Fri, Mar 13, 2020 at 01:12:33PM +0100, Vitaly Kuznetsov wrote:
-> > Sean Christopherson <sean.j.christopherson@intel.com> writes:
-> > 
-> > > -static inline int nested_vmx_reflect_vmexit(struct kvm_vcpu *vcpu,
-> > > -					    u32 exit_reason)
-> > > +static inline bool nested_vmx_reflect_vmexit(struct kvm_vcpu *vcpu,
-> > > +					     u32 exit_reason)
-> > >  {
-> > > -	u32 exit_intr_info = vmcs_read32(VM_EXIT_INTR_INFO);
-> > > +	u32 exit_intr_info;
-> > > +
-> > > +	if (!nested_vmx_exit_reflected(vcpu, exit_reason))
-> > > +		return false;
-> > 
-> > (unrelated to your patch)
-> > 
-> > It's probably just me but 'nested_vmx_exit_reflected()' name always
-> > makes me thinkg 'the vmexit WAS [already] reflected' and not 'the vmexit
-> > NEEDS to be reflected'. 'nested_vmx_exit_needs_reflecting()' maybe?
-> 
-> Not just you.  It'd be nice if the name some how reflected (ha) that the
-> logic is mostly based on whether or not L1 expects the exit, with a few
-> exceptions.  E.g. something like
-> 
-> 	if (!l1_expects_vmexit(...) && !is_system_vmexit(...))
-> 		return false;
+Fix the m_can.txt reference to point to the bosch,m_can.yaml.
 
-Doh, the system VM-Exit logic is backwards, it should be
+Fixes: 824674b59f72 ("dt-bindings: net: can: Convert M_CAN to json-schema")
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ Documentation/devicetree/bindings/net/can/tcan4x5x.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	if (!l1_expects_vmexit(...) || is_system_vmexit(...))
-		return false;
-> 
-> The downside of that is the logic is split, which is probably a net loss?
+diff --git a/Documentation/devicetree/bindings/net/can/tcan4x5x.txt b/Documentation/devicetree/bindings/net/can/tcan4x5x.txt
+index 6bdcc3f84bd3..3613c2c8f75d 100644
+--- a/Documentation/devicetree/bindings/net/can/tcan4x5x.txt
++++ b/Documentation/devicetree/bindings/net/can/tcan4x5x.txt
+@@ -14,7 +14,7 @@ Required properties:
+                     the interrupt.
+ 	- interrupts: interrupt specification for data-ready.
+ 
+-See Documentation/devicetree/bindings/net/can/m_can.txt for additional
++See Documentation/devicetree/bindings/net/can/bosch,m_can.yaml for additional
+ required property details.
+ 
+ Optional properties:
+-- 
+2.25.1
+
