@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1780B18806E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:10:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71D9F187FA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:03:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbgCQLKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:10:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52794 "EHLO mail.kernel.org"
+        id S1726840AbgCQLDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:03:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727766AbgCQLKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:10:05 -0400
+        id S1727684AbgCQLDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:03:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D33A6205ED;
-        Tue, 17 Mar 2020 11:10:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6CA2205ED;
+        Tue, 17 Mar 2020 11:03:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443405;
-        bh=vbM1ab9MOzUQ7RvdFb1lG1mzaZA/Gi5HLNjFhLPiMrU=;
+        s=default; t=1584442984;
+        bh=tZZMnHIqT8ARNbWOY9+ZUdErgifyM5I8DObl5dgItgA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AtfMoOMJMizxU/p/WQI20Z7eX/a8sc+4udYFBGYdLX8tfOwJ5UXLCRLUaDIfUoHJK
-         mC56e0ZR1+xICMk4VSqJLTLJyINSV4bRMmq6QhBKafk1MDumk3W6vWnimFt1vQ4iGu
-         wZVj1hqi6RW8ifmS2TWyl7rA2l/Vf7pNf+/VIo+0=
+        b=rifxZvQP6X+DtueuVGrlswDpcNXK0jfKpXwpmKaJVfmUQoBplEEWEHbaIhSdoFh47
+         WJoPaI/dRaRM/oxrmSNPuoWbJNhSmOWr1tGnIc8zXhOwK2ViCchZT/SusCcswTC7PU
+         WfD/0mmE4ENuVlVtFXgya4zCK/pgM4RwytN/gi/g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 5.5 073/151] cgroup: cgroup_procs_next should increase position index
+        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 056/123] net: dsa: Dont instantiate phylink for CPU/DSA ports unless needed
 Date:   Tue, 17 Mar 2020 11:54:43 +0100
-Message-Id: <20200317103331.670890249@linuxfoundation.org>
+Message-Id: <20200317103313.418148269@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
-References: <20200317103326.593639086@linuxfoundation.org>
+In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
+References: <20200317103307.343627747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,85 +43,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Andrew Lunn <andrew@lunn.ch>
 
-commit 2d4ecb030dcc90fb725ecbfc82ce5d6c37906e0e upstream.
+[ Upstream commit a20f997010c4ec76eaa55b8cc047d76dcac69f70 ]
 
-If seq_file .next fuction does not change position index,
-read after some lseek can generate unexpected output:
+By default, DSA drivers should configure CPU and DSA ports to their
+maximum speed. In many configurations this is sufficient to make the
+link work.
 
-1) dd bs=1 skip output of each 2nd elements
-$ dd if=/sys/fs/cgroup/cgroup.procs bs=8 count=1
-2
-3
-4
-5
-1+0 records in
-1+0 records out
-8 bytes copied, 0,000267297 s, 29,9 kB/s
-[test@localhost ~]$ dd if=/sys/fs/cgroup/cgroup.procs bs=1 count=8
-2
-4 <<< NB! 3 was skipped
-6 <<<    ... and 5 too
-8 <<<    ... and 7
-8+0 records in
-8+0 records out
-8 bytes copied, 5,2123e-05 s, 153 kB/s
+In some cases it is necessary to configure the link to run slower,
+e.g. because of limitations of the SoC it is connected to. Or back to
+back PHYs are used and the PHY needs to be driven in order to
+establish link. In this case, phylink is used.
 
- This happen because __cgroup_procs_start() makes an extra
- extra cgroup_procs_next() call
+Only instantiate phylink if it is required. If there is no PHY, or no
+fixed link properties, phylink can upset a link which works in the
+default configuration.
 
-2) read after lseek beyond end of file generates whole last line.
-3) read after lseek into middle of last line generates
-expected rest of last line and unexpected whole line once again.
-
-Additionally patch removes an extra position index changes in
-__cgroup_procs_start()
-
-Cc: stable@vger.kernel.org
-https://bugzilla.kernel.org/show_bug.cgi?id=206283
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: 0e27921816ad ("net: dsa: Use PHYLINK for the CPU/DSA ports")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/cgroup/cgroup.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ net/dsa/port.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -4600,6 +4600,9 @@ static void *cgroup_procs_next(struct se
- 	struct kernfs_open_file *of = s->private;
- 	struct css_task_iter *it = of->priv;
+--- a/net/dsa/port.c
++++ b/net/dsa/port.c
+@@ -649,9 +649,14 @@ err_phy_connect:
+ int dsa_port_link_register_of(struct dsa_port *dp)
+ {
+ 	struct dsa_switch *ds = dp->ds;
++	struct device_node *phy_np;
  
-+	if (pos)
-+		(*pos)++;
-+
- 	return css_task_iter_next(it);
- }
+-	if (!ds->ops->adjust_link)
+-		return dsa_port_phylink_register(dp);
++	if (!ds->ops->adjust_link) {
++		phy_np = of_parse_phandle(dp->dn, "phy-handle", 0);
++		if (of_phy_is_fixed_link(dp->dn) || phy_np)
++			return dsa_port_phylink_register(dp);
++		return 0;
++	}
  
-@@ -4615,7 +4618,7 @@ static void *__cgroup_procs_start(struct
- 	 * from position 0, so we can simply keep iterating on !0 *pos.
- 	 */
- 	if (!it) {
--		if (WARN_ON_ONCE((*pos)++))
-+		if (WARN_ON_ONCE((*pos)))
- 			return ERR_PTR(-EINVAL);
+ 	dev_warn(ds->dev,
+ 		 "Using legacy PHYLIB callbacks. Please migrate to PHYLINK!\n");
+@@ -666,11 +671,12 @@ void dsa_port_link_unregister_of(struct
+ {
+ 	struct dsa_switch *ds = dp->ds;
  
- 		it = kzalloc(sizeof(*it), GFP_KERNEL);
-@@ -4623,10 +4626,11 @@ static void *__cgroup_procs_start(struct
- 			return ERR_PTR(-ENOMEM);
- 		of->priv = it;
- 		css_task_iter_start(&cgrp->self, iter_flags, it);
--	} else if (!(*pos)++) {
-+	} else if (!(*pos)) {
- 		css_task_iter_end(it);
- 		css_task_iter_start(&cgrp->self, iter_flags, it);
--	}
-+	} else
-+		return it->cur_task;
+-	if (!ds->ops->adjust_link) {
++	if (!ds->ops->adjust_link && dp->pl) {
+ 		rtnl_lock();
+ 		phylink_disconnect_phy(dp->pl);
+ 		rtnl_unlock();
+ 		phylink_destroy(dp->pl);
++		dp->pl = NULL;
+ 		return;
+ 	}
  
- 	return cgroup_procs_next(s, NULL, NULL);
- }
 
 
