@@ -2,115 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB0D318821B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:22:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE528188222
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:25:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbgCQLWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:22:20 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:49131 "EHLO ozlabs.org"
+        id S1726574AbgCQLYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:24:18 -0400
+Received: from mga04.intel.com ([192.55.52.120]:60184 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726713AbgCQLWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:22:18 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48hW3W3wNXzB3t3;
-        Tue, 17 Mar 2020 22:22:14 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1584444136;
-        bh=7m6xTV6ORC9fimP591QotV0DExi6ArwAslaYAD6a8gE=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=R3suC07yLLownGnMiQtBzYlWQBjC2Y2Mr1fjgaMhi7I03Tw6ufjZw4WoaZXiqoW7X
-         9w7zSb2LsfkCq8qcUn9o6JDfZtIASBH4sFz8ntWfjzvCQz05fGey3e+m483q7aENNl
-         WTjER2R9FHM0pwErCXzPUaOlqszJZ/dyxvLAY/7h0QKpfmECwhSvG1su6e0j9+Ibat
-         SXe0q3bo4rMn5DbePzxlsRagSr8oOu986j8OGuQrkaCUhpM00HGe9unpetpD+aO/eV
-         wcdxLe1dn62eA00W63BAXp3KDbgrdVnAh5ByL/QW192YlMk3FeRuzPn7et6TB3Nz1X
-         57yXL6Iyl5JEg==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     =?utf-8?B?546L5paH6JmO?= <wenhu.wang@vivo.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Allison Randal <allison@lohutok.net>,
-        Richard Fontana <rfontana@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        trivial@kernel.org, kernel@vivo.com,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH v3] powerpc/fsl-85xx: fix compile error
-In-Reply-To: <AJUA5gAVCMaMlIkPsaTC0KqL.3.1584357605616.Hmail.wenhu.wang@vivo.com>
-References: <AJUA5gAVCMaMlIkPsaTC0KqL.3.1584357605616.Hmail.wenhu.wang@vivo.com>
-Date:   Tue, 17 Mar 2020 22:22:13 +1100
-Message-ID: <878sjzfcpm.fsf@mpe.ellerman.id.au>
+        id S1726005AbgCQLYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:24:17 -0400
+IronPort-SDR: igUf7PrRvcVZYtrBcC7AldeQFQT/WF7NOy1PKKXTvLrTL5V6owCXz9ZdgRu3Zy5tjQc6gur0nm
+ MAYFTrEkiuYg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 04:24:17 -0700
+IronPort-SDR: ym6w+YD+WLAOsiXsFcvr5v46k0vFcKq96Aou1QarGV9ROUv4IsFiEbJRpjHzHKHaKO5BzHhBCO
+ Z1NOXwKA/GeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,564,1574150400"; 
+   d="scan'208";a="244448946"
+Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.255.31.237]) ([10.255.31.237])
+  by orsmga003.jf.intel.com with ESMTP; 17 Mar 2020 04:24:13 -0700
+Subject: Re: [PATCH] KVM: X86: correct meaningless kvm_apicv_activated() check
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     linmiaohe@huawei.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+References: <1584185480-3556-1-git-send-email-pbonzini@redhat.com>
+ <878sk0n1g1.fsf@vitty.brq.redhat.com>
+ <20200316152650.GD24267@linux.intel.com>
+ <87zhcgl2xc.fsf@vitty.brq.redhat.com>
+ <20200316155911.GE24267@linux.intel.com>
+ <eb1037c8-fdb5-4f4c-4641-915c0e3d01bc@redhat.com>
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+Message-ID: <b2d0a1ec-d305-f03e-3063-d324bf8b1d19@intel.com>
+Date:   Tue, 17 Mar 2020 19:24:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <eb1037c8-fdb5-4f4c-4641-915c0e3d01bc@redhat.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=E7=8E=8B=E6=96=87=E8=99=8E <wenhu.wang@vivo.com> writes:
-> From: Michael Ellerman <mpe@ellerman.id.au>
->  Date: 2020-03-16 17:41:12
-> To:WANG Wenhu <wenhu.wang@vivo.com>,Benjamin Herrenschmidt <benh@kernel.c=
-rashing.org>,Paul Mackerras <paulus@samba.org>,WANG Wenhu <wenhu.wang@vivo.=
-com>,Allison Randal <allison@lohutok.net>,Richard Fontana <rfontana@redhat.=
-com>,Greg Kroah-Hartman <gregkh@linuxfoundation.org>,Thomas Gleixner <tglx@=
-linutronix.de>,linuxppc-dev@lists.ozlabs.org,linux-kernel@vger.kernel.org
->  cc: trivial@kernel.org,kernel@vivo.com,stable <stable@vger.kernel.org>
-> Subject: Re: [PATCH v3] powerpc/fsl-85xx: fix compile error>WANG Wenhu <w=
-enhu.wang@vivo.com> writes:
->>> Include "linux/of_address.h" to fix the compile error for
->>> mpc85xx_l2ctlr_of_probe() when compiling fsl_85xx_cache_sram.c.
+On 3/17/2020 12:39 AM, Paolo Bonzini wrote:
+> On 16/03/20 16:59, Sean Christopherson wrote:
+>>>>
+>>> 	if (!!old == !!new)
+>>> 		return;
 >>>
->>>   CC      arch/powerpc/sysdev/fsl_85xx_l2ctlr.o
->>> arch/powerpc/sysdev/fsl_85xx_l2ctlr.c: In function =E2=80=98mpc85xx_l2c=
-tlr_of_probe=E2=80=99:
->>> arch/powerpc/sysdev/fsl_85xx_l2ctlr.c:90:11: error: implicit declaratio=
-n of function =E2=80=98of_iomap=E2=80=99; did you mean =E2=80=98pci_iomap=
-=E2=80=99? [-Werror=3Dimplicit-function-declaration]
->>>   l2ctlr =3D of_iomap(dev->dev.of_node, 0);
->>>            ^~~~~~~~
->>>            pci_iomap
->>> arch/powerpc/sysdev/fsl_85xx_l2ctlr.c:90:9: error: assignment makes poi=
-nter from integer without a cast [-Werror=3Dint-conversion]
->>>   l2ctlr =3D of_iomap(dev->dev.of_node, 0);
->>>          ^
->>> cc1: all warnings being treated as errors
->>> scripts/Makefile.build:267: recipe for target 'arch/powerpc/sysdev/fsl_=
-85xx_l2ctlr.o' failed
->>> make[2]: *** [arch/powerpc/sysdev/fsl_85xx_l2ctlr.o] Error 1
->>>
->>> Fixes: commit 6db92cc9d07d ("powerpc/85xx: add cache-sram support")
+>>> to make it clear we're converting them to 1/0 :-)
 >>
->>The syntax is:
+>> All I can think of now is the Onion article regarding razor blades...
 >>
->>Fixes: 6db92cc9d07d ("powerpc/85xx: add cache-sram support")
+>> 	if (!!!!old == !!!!new)
+>> 		return;
 >>
->>> Cc: stable <stable@vger.kernel.org>
->>
->>The commit above went into v2.6.37.
->>
->>So no one has noticed this bug since then, how? Or did something else
->>change to expose the problem?
->
-> Actually a hard question to answer cause it also left me scratching for l=
-ong.
-> However, I can not find right or definite answer.
+> 
+> That would be !!!!!, but seriously I'll go with two.
+> 
+> (Thanks for giving me a chuckle, it's sorely needed these days).
 
-Oh, actually it's fairly straight forward, the code can't be built at
-all in upstream because CONFIG_FSL_85XX_CACHE_SRAM is not selectable or
-selected by anything.
+Take care, Paolo.
 
-You sent a patch previously to make it selectable, which Scott thought
-was a bad idea.
+I have been staying at home for two months in Wuhan, China, and things 
+are going better now. I believe all the world can defeat Coronavirus 
+eventually.
 
-So this whole file is dead code as far as I'm concerned, so patches for
-it definitely do not need to go to stable.
+> Paolo
+> 
 
-If you want to add a user for it then please send a series doing that,
-and this commit can be the first.
-
-cheers
