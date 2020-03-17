@@ -2,106 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4499E187B5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:33:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D01E5187B4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:30:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbgCQIdm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 04:33:42 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:34599 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725906AbgCQIdl (ORCPT
+        id S1726410AbgCQIag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 04:30:36 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:35189 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbgCQIag (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 04:33:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584434019;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=foL6JJOYZrFK3mSnjY6WUeWsSQCHtrDfHzZTVEx4CZc=;
-        b=LAr2du4uzQ4PaTkoxzLpOxTBhCapU7UWAtXES01nxCukiCVDcmUWpO01zGaX99CmGkYUmn
-        Kh2JaiNjsRkMDXeQbrRBtOHQ/ZWHWE+pYYhUAFN8JS4gCz7UiNODuDewZEXgRHgz3fTAr4
-        zxaan2alxa7W9tXF5dhmPcTnysLvZOE=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-279-iPbavoGyPQKomN5YBW4trg-1; Tue, 17 Mar 2020 04:27:23 -0400
-X-MC-Unique: iPbavoGyPQKomN5YBW4trg-1
-Received: by mail-wm1-f72.google.com with SMTP id f185so1638371wmf.8
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 01:27:23 -0700 (PDT)
+        Tue, 17 Mar 2020 04:30:36 -0400
+Received: by mail-pj1-f68.google.com with SMTP id mq3so10182443pjb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 01:30:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=vWKGYsWLR1STHAG1GKHscN8Y99AToSvTAe2k4bSTdaM=;
+        b=uOPgc3UDOEq50RlmiXosUbNRevpArFt4gocrkZOsZbw1F9SqgsoQWExkZ1v3bEvtnD
+         lz7cHVpyyV9a7y6BJJ4oY4tIyPVdIlmUmHUAIjf+grInerwi7M9EEyx1y/0ZcJS5OO6L
+         GNdnR+PHcvO+0wU7vEpiWrIGFxKF+wQl7H2V289TxRv1dtL1esuiEf7dEVtoeHr61HwJ
+         YQrJvMYIMgM/89801c8Tk3HuW6JZv5t7nQVtPwIpQej3NlwBbh0P5tY6/JGZhtIRqKdW
+         ixUez/uUt8rVrFxnnz95bOjIJ7cMsYQNwA8nvsY9wh/dA9TP65rcHCEXaJbJUhL3d7Sv
+         9EZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=foL6JJOYZrFK3mSnjY6WUeWsSQCHtrDfHzZTVEx4CZc=;
-        b=nmjtHZ6I8d3fhalC+4ZJaO9seyCsy9eheD/g2UeBTmWE41GMEPLbLugnqrVKytROCX
-         AaniTEGEZc0GSIFfcEdwaE6D6f8FlF2s24Z74p433V7iRX/c1Kc7/+bzfyjbvCNyl/yv
-         evv5kM3OEPcKAje44wsB7WTMdgJk12AH4+SR+bZbw1W8e+CKsbfe9CAwOVqn1Lquzjhi
-         9L2tHBQae4BxexnM2w+5igqkm4PGNAMBPub4+mA5GP9LdMfmFKK9Uvqz0/7BDi8BRBql
-         LVCfrt/vqmVaOT1VISJOkUAOVOK6ZtousQPy5cdF5Flhd/m2hPs+Za9OVJZvvkNWLgyE
-         mWHg==
-X-Gm-Message-State: ANhLgQ1cOTlrI82ZyMBP34fYNFUPkiwKhWOinb1rfKFOiNtoZNEGw6A+
-        jTBsVAOfUJkcvzumAWEALdJu+9VRzs2SW417HsGDtKMvBw0Iq8mJjXrYmuM7TGmxRebxpP0U0X/
-        jTAmMLoCy0kNe/cWfkBIEzsP3
-X-Received: by 2002:adf:f8cf:: with SMTP id f15mr4550927wrq.79.1584433642581;
-        Tue, 17 Mar 2020 01:27:22 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vtzsfYZvt8nfYEYXfZXarAl3GIPsJCUzStTnjN3KlFioXLSxKAYt9rYm3Jvv7s4DtIWPmCwQQ==
-X-Received: by 2002:adf:f8cf:: with SMTP id f15mr4550890wrq.79.1584433642260;
-        Tue, 17 Mar 2020 01:27:22 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:24d8:ed40:c82a:8a01? ([2001:b07:6468:f312:24d8:ed40:c82a:8a01])
-        by smtp.gmail.com with ESMTPSA id t5sm2922781wmi.34.2020.03.17.01.27.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Mar 2020 01:27:21 -0700 (PDT)
-Subject: Re: [PATCH] KVM: x86: Expose AVX512 VP2INTERSECT in cpuid for TGL
-To:     Zhenyu Wang <zhenyuw@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Zhong, Yang" <yang.zhong@intel.com>
-References: <20200317065553.64790-1-zhenyuw@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <dcc9899c-f5af-9a4f-3ac2-f37fd8b930f7@redhat.com>
-Date:   Tue, 17 Mar 2020 09:27:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=vWKGYsWLR1STHAG1GKHscN8Y99AToSvTAe2k4bSTdaM=;
+        b=QsRoRIhsQGEz9bidPhOfXTGiZePd4UnQ4KVWl9+0j87QTx+t8nD4+8jRzV1siep6uU
+         hleqto9NfUJ0NYZVw3/P8d705oFL8dt9ZGbTsmyCMmuOdkfnzDFFuGLgnVrwhPaEsgaw
+         2iB/UIPfXRT/pd8yBXslmxHMh2RvduU5NDQnj6K+73r5Vx4Dzt8atx0GstlGE0/qNf13
+         MUQdoeCEmBZiFErchzj/cCvuYczBlFIgzHjW6XWrOhwnLtKaLEPZ6l3IUkfrnJ1Z50CA
+         ijn0WGilnWdkblKt+AZdCLI/Sz4bvB0akeaPy735kVS6Fg0mAZiRCMux/r0eX6Ewdt6m
+         vWTQ==
+X-Gm-Message-State: ANhLgQ2Y3d8OudfQ5Uie02LCW6jPHA3X4gZdYMVdsu3vf8J+WENYXb3/
+        ZhiAhURBZJrIKc34Rm8PocukTg==
+X-Google-Smtp-Source: ADFU+vsFCy4Hl8cA7bTKABqclIVa6ikykCl2RTiTBe19VlK4hbeZjmH/loNpce/kyvIRBQObMNokgQ==
+X-Received: by 2002:a17:90a:d997:: with SMTP id d23mr3896918pjv.187.1584433834564;
+        Tue, 17 Mar 2020 01:30:34 -0700 (PDT)
+Received: from starnight.local ([150.116.255.181])
+        by smtp.googlemail.com with ESMTPSA id m68sm21095679pjb.0.2020.03.17.01.30.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2020 01:30:34 -0700 (PDT)
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+To:     Takashi Iwai <tiwai@suse.com>
+Cc:     Kailang Yang <kailang@realtek.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux@endlessm.com,
+        Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH 2/2] ALSA: hda/realtek - Enable the headset of Acer N50-600 with ALC662
+Date:   Tue, 17 Mar 2020 16:28:09 +0800
+Message-Id: <20200317082806.73194-3-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200317082806.73194-1-jian-hong@endlessm.com>
+References: <20200317082806.73194-1-jian-hong@endlessm.com>
 MIME-Version: 1.0
-In-Reply-To: <20200317065553.64790-1-zhenyuw@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/03/20 07:55, Zhenyu Wang wrote:
-> On Tigerlake new AVX512 VP2INTERSECT feature is available.
-> This would expose it for KVM supported cpuid.
-> 
-> Cc: "Zhong, Yang" <yang.zhong@intel.com>
-> Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
-> ---
->  arch/x86/kvm/cpuid.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index b1c469446b07..b4e25ff6ab0a 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -374,7 +374,7 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry, int index)
->  	const u32 kvm_cpuid_7_0_edx_x86_features =
->  		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) |
->  		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) | F(INTEL_STIBP) |
-> -		F(MD_CLEAR);
-> +		F(MD_CLEAR) | F(AVX512_VP2INTERSECT);
->  
->  	/* cpuid 7.1.eax */
->  	const u32 kvm_cpuid_7_1_eax_x86_features =
-> 
+A headset on the desktop like Acer N50-600 does not work, until quirk
+ALC662_FIXUP_ACER_NITRO_HEADSET_MODE is applied.
 
-Hi Zhenyu,
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+---
+ sound/pci/hda/patch_realtek.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-please rebase - the CPUID mechanism is completely rewritten in kvm/queue.
-
-Thanks,
-
-Paolo
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index bb29c25f4567..0fa79eaa0b0b 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -8611,6 +8611,7 @@ enum {
+ 	ALC669_FIXUP_ACER_ASPIRE_ETHOS_HEADSET,
+ 	ALC671_FIXUP_HP_HEADSET_MIC2,
+ 	ALC662_FIXUP_ACER_X2660G_HEADSET_MODE,
++	ALC662_FIXUP_ACER_NITRO_HEADSET_MODE,
+ };
+ 
+ static const struct hda_fixup alc662_fixups[] = {
+@@ -8965,6 +8966,16 @@ static const struct hda_fixup alc662_fixups[] = {
+ 		.chained = true,
+ 		.chain_id = ALC662_FIXUP_USI_FUNC
+ 	},
++	[ALC662_FIXUP_ACER_NITRO_HEADSET_MODE] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x1a, 0x01a11140 }, /* use as headset mic, without its own jack detect */
++			{ 0x1b, 0x0221144f },
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC662_FIXUP_USI_FUNC
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc662_fixup_tbl[] = {
+@@ -8976,6 +8987,7 @@ static const struct snd_pci_quirk alc662_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1025, 0x0349, "eMachines eM250", ALC662_FIXUP_INV_DMIC),
+ 	SND_PCI_QUIRK(0x1025, 0x034a, "Gateway LT27", ALC662_FIXUP_INV_DMIC),
+ 	SND_PCI_QUIRK(0x1025, 0x038b, "Acer Aspire 8943G", ALC662_FIXUP_ASPIRE),
++	SND_PCI_QUIRK(0x1025, 0x123c, "Acer Nitro N50-600", ALC662_FIXUP_ACER_NITRO_HEADSET_MODE),
+ 	SND_PCI_QUIRK(0x1025, 0x124e, "Acer 2660G", ALC662_FIXUP_ACER_X2660G_HEADSET_MODE),
+ 	SND_PCI_QUIRK(0x1028, 0x05d8, "Dell", ALC668_FIXUP_DELL_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x05db, "Dell", ALC668_FIXUP_DELL_MIC_NO_PRESENCE),
+-- 
+2.25.1
 
