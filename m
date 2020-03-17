@@ -2,98 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0BF918882D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:54:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC1EA18885F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:55:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbgCQOyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 10:54:39 -0400
-Received: from mail-wm1-f73.google.com ([209.85.128.73]:52597 "EHLO
-        mail-wm1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727080AbgCQOyh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 10:54:37 -0400
-Received: by mail-wm1-f73.google.com with SMTP id z16so1932252wmi.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 07:54:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=YnO147Q8BfuYNBKiEQsszIXKG8E9VejO4ffbcq8Gn6s=;
-        b=rb7245Ras6C7y9qgw0zRxUstsDae6mXfHrz3F0GCcwWusok6lOSl/FLtbSXIBAlfAG
-         pU/Gc01TdHjEAD4RfQa/mEescGcs/dwrVlhAnEPTrur54OVdeD9V/IPqXQltBDrIQcAq
-         w5v2wYv0hqb6T+pGK/4MoPsHM2iKQUTFPPDlAjc58y6ffDaiF7ZLFM2RsEHZUuf6TV3y
-         v/cxYLxN3MhtmcqrOWqQIdPF0F4Ryn42SoLljX47Z474bt+Zub1SNNH/dbIRzaEAJTAS
-         clot3+jzM4JYF2HrHvCZTpgXRO97oyhUoguzWKDL/nbP8jQFTPsEnjANlJYJBmR8SHF/
-         1v6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=YnO147Q8BfuYNBKiEQsszIXKG8E9VejO4ffbcq8Gn6s=;
-        b=gT6Uouk2o30BcfZ5B3qSSL7iBTXZcgNorjKOHEJunYi2nv1VmYTIUbjatQzHNkbJ9g
-         Q8e9kuKNSiT5Jd73q00fAj00Mwpq2r/Kb+Axlm2IAWT3KC2x5Q7wWpcl8UdFBL6h66P/
-         n1vDn3mzF8nRD1uD88WwYAFNaS7FXp9ADVwucejsS0HZJBSYa0MGttlgELpSjr+Md6dt
-         d2ChCW43a/PdkaOghD3KJLgc84kMJM+z3KW3s06utjNUPAx+VFpu/112gufURBe8ItkF
-         T0J+tY7KOyJJErc8HoSNlAmKbdGbiX6jmaWjOsuyP2+f1HRJDaMQKk9b4RJVp9afnbv2
-         Ub0A==
-X-Gm-Message-State: ANhLgQ0fkd1IQ4L5GpvF7Qn9xC27v2yrVFD6rusrHdsRTeF25rL+pyxS
-        ez5h+5C7QtIhv09VUdSdM/Ly/w4MY3sFvkXj
-X-Google-Smtp-Source: ADFU+vuk+Yi3YFMcAI8MRlwoyHn7t0KCazaq6gRywdKYSzsiW1YSWh93dqA033BnLe0hih5cIW9z1npcTigPA9W1
-X-Received: by 2002:a05:6000:12c5:: with SMTP id l5mr6163103wrx.134.1584456876192;
- Tue, 17 Mar 2020 07:54:36 -0700 (PDT)
-Date:   Tue, 17 Mar 2020 15:54:31 +0100
-Message-Id: <6206b80b3810f95bfe1d452de45596609a07b6ea.1584456779.git.andreyknvl@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-Subject: [PATCH USB] usb: raw_gadget: fix compilation warnings in uapi headers
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Felipe Balbi <balbi@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        "kernelci . org bot" <bot@kernelci.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727024AbgCQOzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 10:55:49 -0400
+Received: from mga18.intel.com ([134.134.136.126]:9571 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726478AbgCQOzs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 10:55:48 -0400
+IronPort-SDR: +AwL8ns/o1/Mi2avIUrvyYesrQ6bf35Jcjor/Dk2Yv/Bc+GwVFGjPb52eGb02hbpO0nzxPx1SA
+ HaNjDUb/CwXA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 07:55:48 -0700
+IronPort-SDR: F5WVtNGoovVCH4D/0UgxTfl963XCSHxim8CK/sXKmp/Jf2OYVLWSwk7NHZYjnmI/0eCdZ3WZhU
+ U1PQTRo1T8xA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,564,1574150400"; 
+   d="scan'208";a="247843647"
+Received: from mnagar-mobl.amr.corp.intel.com (HELO [10.254.66.68]) ([10.254.66.68])
+  by orsmga006.jf.intel.com with ESMTP; 17 Mar 2020 07:55:47 -0700
+Subject: Re: [PATCH v17 05/12] PCI: portdrv: remove reset_link member from
+ pcie_port_service_driver
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ashok.raj@intel.com
+References: <cover.1583286655.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <13d4866abf46f034f706f255287258cda99fadb4.1583286655.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20200317144143.GD23471@infradead.org>
+From:   "Kuppuswamy, Sathyanarayanan" 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Message-ID: <496e07cf-2bdb-b1a5-c246-246103740ca1@linux.intel.com>
+Date:   Tue, 17 Mar 2020 07:55:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200317144143.GD23471@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark usb_raw_io_flags_valid() and usb_raw_io_flags_zero() as inline to
-fix the following warnings:
+Hi,
 
-./usr/include/linux/usb/raw_gadget.h:69:12: warning: unused function 'usb_raw_io_flags_valid' [-Wunused-function]
-./usr/include/linux/usb/raw_gadget.h:74:12: warning: unused function 'usb_raw_io_flags_zero' [-Wunused-function]
+On 3/17/20 7:41 AM, Christoph Hellwig wrote:
+> On Tue, Mar 03, 2020 at 06:36:28PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+it.
+> 
+> This should be folded into
+> "PCI/ERR: Remove service dependency in pcie_do_recovery()"
+I think Bjorn already folded them together. Please check.
+https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/commit/?h=review/edr&id=7a18dc6506f108db3dc40f5cd779bc15270c4183
 
-Reported-by: kernelci.org bot <bot@kernelci.org>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- include/uapi/linux/usb/raw_gadget.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/uapi/linux/usb/raw_gadget.h b/include/uapi/linux/usb/raw_gadget.h
-index 00cbded71061..ea375082b3ac 100644
---- a/include/uapi/linux/usb/raw_gadget.h
-+++ b/include/uapi/linux/usb/raw_gadget.h
-@@ -66,12 +66,12 @@ struct usb_raw_event {
- #define USB_RAW_IO_FLAGS_ZERO	0x0001
- #define USB_RAW_IO_FLAGS_MASK	0x0001
- 
--static int usb_raw_io_flags_valid(__u16 flags)
-+static inline int usb_raw_io_flags_valid(__u16 flags)
- {
- 	return (flags & ~USB_RAW_IO_FLAGS_MASK) == 0;
- }
- 
--static int usb_raw_io_flags_zero(__u16 flags)
-+static inline int usb_raw_io_flags_zero(__u16 flags)
- {
- 	return (flags & USB_RAW_IO_FLAGS_ZERO);
- }
--- 
-2.25.1.481.gfbce0eb801-goog
-
+> 
