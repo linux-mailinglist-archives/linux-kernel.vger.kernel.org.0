@@ -2,233 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 142E4187B58
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:33:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A323D187B53
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:32:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726494AbgCQIc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 04:32:59 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:42498 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726082AbgCQIc7 (ORCPT
+        id S1726189AbgCQIcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 04:32:35 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:40933 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726082AbgCQIcd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 04:32:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584433977;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LnTpb9OQdM3L6h0z4phaAe+x7LNhQqoqwFEnWzNKd4s=;
-        b=SY8v3/6esEzzPCHR3LVYZeGztG/KOayjp+SjTmbGp/qZ4U56Zp89d+F7O/KaJKzyH9jsWp
-        q3L5Y8PZfHE+tvBG7wexGYFBC3Tj4MRKFkb/Mygn3hZyWN1vz4PqtqpXSKg1YsMO2KZh7p
-        Xrokahfk1gzwLEqVrYv2VrpPZDpOGzg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-174-4CuMaePIOaah8csJytRpZw-1; Tue, 17 Mar 2020 04:32:56 -0400
-X-MC-Unique: 4CuMaePIOaah8csJytRpZw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 571A3100550D;
-        Tue, 17 Mar 2020 08:32:54 +0000 (UTC)
-Received: from dcbz.redhat.com (ovpn-112-179.ams2.redhat.com [10.36.112.179])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C932F60BF3;
-        Tue, 17 Mar 2020 08:32:51 +0000 (UTC)
-From:   Adrian Reber <areber@redhat.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Adrian Reber <areber@redhat.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4/4] selftests: add clone3() in time namespace test
-Date:   Tue, 17 Mar 2020 09:30:44 +0100
-Message-Id: <20200317083043.226593-5-areber@redhat.com>
-In-Reply-To: <20200317083043.226593-1-areber@redhat.com>
-References: <20200317083043.226593-1-areber@redhat.com>
+        Tue, 17 Mar 2020 04:32:33 -0400
+Received: by mail-io1-f67.google.com with SMTP id d8so20044769ion.7
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 01:32:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=antmicro.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=S/xn2plA996CBuz8fNTsQFvTz+x1vxgYWj19xP/2JoI=;
+        b=B6zNlUZaje7yn8WOECf9nOmrVokHu0nwyb70nNUdoHHnvOTC3AYr84t88lHk1ZHPuD
+         L0hRZtW+1ETKe9rIRDW23bA3drVA8QfRajrwykuvuZwjq5B0ZKzY6/Qr6v1hJuCOopTM
+         2d6clWvNreERpL+caCMTigob7Lb5VGTVAI52A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=S/xn2plA996CBuz8fNTsQFvTz+x1vxgYWj19xP/2JoI=;
+        b=JBagGKhQqzBFmdVdtIYA4htYgMucPzpg/AAtJDLm9FbwCCH8OSNfs8b47mwC8Dt+jC
+         hoYk6kIRmoXF4XFv3Ilesi3b9mfnpZh263eVCWJVWoiZEPo9qKhUJKevS+ZhsdlKm6Z6
+         vzjlo2G3okaJfRY3a/tDNLoqDHxEhcKojKyRtCGAgVwXk8D9ZKqWqzw6bHo7c5rgPA09
+         DbldV/IyAR5826tBEgt3JFTmXISn4+jryzvRcbEGiXi+1An/YcRecMzVEymqKyGT/i/L
+         iy4PaEsnLU0JY/fiQdALXhjqE66L28pzx6YBLUsmXLkm4fGd0c7pNbMxSZ3Ps6k/AE/Y
+         Gatg==
+X-Gm-Message-State: ANhLgQ0vAg1WVugQ4JiGGJTjTHudS0I3zD68U6NxbzynVpCz8E9WvHCS
+        Rxos2pwpa2bbyFB0PxV1HA3drFagjOKUbMls4mtSSw==
+X-Google-Smtp-Source: ADFU+vuwgJ63PydvmMkvfAPukN0HBfPURkphAQ8Fr0g6T/pnVNRT0ZBZlqvaPwgDIPmP8AZ3ndzLGh+g2mcNzEiC0ZA=
+X-Received: by 2002:a05:6638:a9b:: with SMTP id 27mr4116136jas.70.1584433952862;
+ Tue, 17 Mar 2020 01:32:32 -0700 (PDT)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-Content-Transfer-Encoding: quoted-printable
+References: <20200225094437.4170502-0-mholenko@antmicro.com>
+ <20200225094437.4170502-2-mholenko@antmicro.com> <20200225165750.GA15779@bogus>
+In-Reply-To: <20200225165750.GA15779@bogus>
+From:   Mateusz Holenko <mholenko@antmicro.com>
+Date:   Tue, 17 Mar 2020 09:32:21 +0100
+Message-ID: <CAPk366Qg-U8xUsvTjeMfzYs8tg_m4wO5Ghg0FseRgbdOfV8FCA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] dt-bindings: soc: document LiteX SoC Controller bindings
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, devicetree@vger.kernel.org,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Stafford Horne <shorne@gmail.com>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Filip Kokosinski <fkokosinski@antmicro.com>,
+        Pawel Czarnecki <pczarnecki@internships.antmicro.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a test to use clone3() with CLONE_NEWTIME. The test tries to
-set CLOCK_BOOTTIME to 1 in the new process in the new time namespace and
-CLOCK_MONOTONIC to +10000.
+On Tue, Feb 25, 2020 at 5:57 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Tue, 25 Feb 2020 09:46:45 +0100, Mateusz Holenko wrote:
+> > From: Pawel Czarnecki <pczarnecki@internships.antmicro.com>
+> >
+> > Add documentation for LiteX SoC Controller bindings.
+> >
+> > Signed-off-by: Pawel Czarnecki <pczarnecki@internships.antmicro.com>
+> > Signed-off-by: Mateusz Holenko <mholenko@antmicro.com>
+> > ---
+> >
+> > Notes:
+> >     This commit has been introduced in v3 of the patchset.
+> >
+> >  .../soc/litex/litex,soc_controller.yaml       | 46 +++++++++++++++++++
+> >  MAINTAINERS                                   |  6 +++
+> >  2 files changed, 52 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/soc/litex/litex,soc_controller.yaml
+> >
+>
+> My bot found errors running 'make dt_binding_check' on your patch:
+>
+> warning: no schema found in file: Documentation/devicetree/bindings/soc/litex/litex,soc_controller.yaml
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/soc/litex/litex,soc_controller.yaml: ignoring, error parsing file
+> Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
+> Traceback (most recent call last):
+>   File "/usr/local/bin/dt-doc-validate", line 35, in check_doc
+>     testtree = dtschema.load(filename, line_number=line_number, duplicate_keys=False)
+>   File "/usr/local/lib/python3.6/dist-packages/dtschema/lib.py", line 513, in load
+>     return yaml.load(f.read())
+>   File "/usr/local/lib/python3.6/dist-packages/ruamel/yaml/main.py", line 343, in load
+>     return constructor.get_single_data()
+>   File "/usr/local/lib/python3.6/dist-packages/ruamel/yaml/constructor.py", line 111, in get_single_data
+>     node = self.composer.get_single_node()
+>   File "_ruamel_yaml.pyx", line 718, in _ruamel_yaml.CParser.get_single_node
+> ruamel.yaml.composer.ComposerError: expected a single document in the stream
+>   in "<unicode string>", line 1, column 1
+> but found another document
+>   in "<unicode string>", line 2, column 1
+>
+> During handling of the above exception, another exception occurred:
+>
+> Traceback (most recent call last):
+>   File "/usr/local/bin/dt-doc-validate", line 74, in <module>
+>     ret = check_doc(args.yamldt)
+>   File "/usr/local/bin/dt-doc-validate", line 40, in check_doc
+>     print(filename + ":", exc.path[-1], exc.message)
+> AttributeError: 'ComposerError' object has no attribute 'path'
+> Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/soc/litex/litex,soc_controller.example.dts' failed
+> make[1]: *** [Documentation/devicetree/bindings/soc/litex/litex,soc_controller.example.dts] Error 1
+> Makefile:1263: recipe for target 'dt_binding_check' failed
+> make: *** [dt_binding_check] Error 2
+>
+> See https://patchwork.ozlabs.org/patch/1243930
+> Please check and re-submit.
 
-Signed-off-by: Adrian Reber <areber@redhat.com>
----
- tools/testing/selftests/timens/Makefile |   4 +-
- tools/testing/selftests/timens/clone3.c | 134 ++++++++++++++++++++++++
- 2 files changed, 136 insertions(+), 2 deletions(-)
- create mode 100644 tools/testing/selftests/timens/clone3.c
+Thanks for spotting this.
 
-diff --git a/tools/testing/selftests/timens/Makefile b/tools/testing/self=
-tests/timens/Makefile
-index b4fd9a934654..4a50c326bdab 100644
---- a/tools/testing/selftests/timens/Makefile
-+++ b/tools/testing/selftests/timens/Makefile
-@@ -1,7 +1,7 @@
--TEST_GEN_PROGS :=3D timens timerfd timer clock_nanosleep procfs exec
-+TEST_GEN_PROGS :=3D timens timerfd timer clock_nanosleep procfs exec clo=
-ne3
- TEST_GEN_PROGS_EXTENDED :=3D gettime_perf
-=20
--CFLAGS :=3D -Wall -Werror -pthread
-+CFLAGS :=3D -Wall -Werror -pthread -I../../../../usr/include/
- LDLIBS :=3D -lrt -ldl
-=20
- include ../lib.mk
-diff --git a/tools/testing/selftests/timens/clone3.c b/tools/testing/self=
-tests/timens/clone3.c
-new file mode 100644
-index 000000000000..212b35d43fa5
---- /dev/null
-+++ b/tools/testing/selftests/timens/clone3.c
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
-+#include <linux/sched.h>
-+#include <linux/types.h>
-+#include <sched.h>
-+#include <stdint.h>
-+#include <string.h>
-+#include <sys/syscall.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <time.h>
-+#include <unistd.h>
-+
-+#include "log.h"
-+#include "timens.h"
-+
-+#define ptr_to_u64(ptr) ((__u64)((uintptr_t)(ptr)))
-+
-+struct set_timens_offset {
-+	int clockid;
-+	struct timespec val;
-+};
-+
-+static void child_exit(int ret)
-+{
-+	fflush(stdout);
-+	fflush(stderr);
-+	_exit(ret);
-+}
-+
-+static pid_t sys_clone3(struct clone_args *args, size_t size)
-+{
-+	fflush(stdout);
-+	fflush(stderr);
-+	return syscall(__NR_clone3, args, size);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct set_timens_offset timens_offset[2];
-+	struct timespec monotonic;
-+	struct timespec boottime;
-+	pid_t pid =3D -1;
-+	int ret =3D 0;
-+	int status;
-+
-+	struct clone_args args =3D {
-+		.flags =3D CLONE_NEWTIME,
-+		.exit_signal =3D SIGCHLD,
-+	};
-+
-+	nscheck();
-+
-+	ksft_set_plan(1);
-+
-+	ret =3D clock_gettime(CLOCK_MONOTONIC, &monotonic);
-+	if (ret)
-+		goto out;
-+
-+	ret =3D clock_gettime(CLOCK_BOOTTIME, &boottime);
-+	if (ret)
-+		goto out;
-+
-+	/* Set CLOCK_BOOTTIME to be 1 (sec). */
-+	timens_offset[0].clockid =3D CLOCK_BOOTTIME;
-+	timens_offset[0].val.tv_sec =3D -boottime.tv_sec + 1;
-+	timens_offset[0].val.tv_nsec =3D 42;
-+	/* Set CLOCK_MONOTONIC to be 10000 (sec) larger than current. */
-+	timens_offset[1].clockid =3D CLOCK_MONOTONIC;
-+	timens_offset[1].val.tv_sec =3D 10000;
-+	timens_offset[1].val.tv_nsec =3D 37;
-+
-+	args.timens_offset_size =3D 2;
-+	args.timens_offset =3D ptr_to_u64(timens_offset);
-+
-+	pid =3D sys_clone3(&args, sizeof(struct clone_args));
-+	if (pid < 0) {
-+		ksft_print_msg("%s - Failed to create new process\n",
-+			       strerror(errno));
-+		ret =3D -errno;
-+		goto out;
-+	}
-+
-+	if (pid =3D=3D 0) {
-+		struct timespec monotonic_in_ns;
-+		struct timespec boottime_in_ns;
-+
-+		ksft_print_msg("I am the child, my PID is %d\n", getpid());
-+		if (clock_gettime(CLOCK_MONOTONIC, &monotonic_in_ns))
-+			return -1;
-+
-+		if (clock_gettime(CLOCK_BOOTTIME, &boottime_in_ns))
-+			return -1;
-+
-+		/*
-+		 * CLOCK_BOOTTIME has been set to such an offset to
-+		 * be 1 in the time namespace after clone3().
-+		 */
-+		if (boottime_in_ns.tv_sec > 5)
-+			child_exit(EXIT_FAILURE);
-+		ksft_print_msg("CLOCK_BOOTTIME %ld\n", boottime_in_ns.tv_sec);
-+		if (monotonic_in_ns.tv_sec <=3D monotonic.tv_sec + 9998)
-+			child_exit(EXIT_FAILURE);
-+		ksft_print_msg("CLOCK_MONOTONIC %ld\n", monotonic_in_ns.tv_sec);
-+		child_exit(EXIT_SUCCESS);
-+	}
-+
-+	if (waitpid(pid, &status, 0) < 0) {
-+		ksft_print_msg("Child returned %s\n", strerror(errno));
-+		ret =3D -errno;
-+		goto out;
-+	}
-+
-+	if (!WIFEXITED(status)) {
-+		ret =3D -1;
-+		ksft_test_result_fail("Child clocks in time NS are wrong\n");
-+		goto out;
-+	}
-+
-+	if (WEXITSTATUS(status)) {
-+		ret =3D -1;
-+		ksft_test_result_fail("Child clocks in time NS are wrong\n");
-+		goto out;
-+	}
-+
-+	ret =3D 0;
-+	ksft_test_result_pass("Clocks set successfully with clone3()\n");
-+out:
-+	if (ret)
-+		ksft_exit_fail();
-+
-+	ksft_exit_pass();
-+	return !!ret;
-+}
---=20
-2.24.1
+It looks like the first line of the document is broken - it should be
+a comment with a license descriptor, but the initial characters are
+missing.
 
+I'll fix this and resubmit the whole patchset after addressing all
+other remarks.
+
+
+-- 
+Mateusz Holenko
+Antmicro Ltd | www.antmicro.com
+Roosevelta 22, 60-829 Poznan, Poland
