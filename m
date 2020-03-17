@@ -2,111 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFDB9188BF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:27:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAFDF188BF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:27:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbgCQR1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 13:27:10 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37388 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbgCQR1K (ORCPT
+        id S1726747AbgCQR1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 13:27:22 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:32409 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbgCQR1V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 13:27:10 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02HHJ4f2127061;
-        Tue, 17 Mar 2020 17:26:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=tmM036UedKoKmLv+RPQrJy6cg5QxGe0RJ3PRxmL1/ps=;
- b=vbIGY2kWpY9S82HDJ80TFO83/u93b2u2CKhJ6USynQnjbj427qLOKpp4/wup0FEN5k7t
- VMpH8ZQuWMW4DbsP+UAW9Ky2QV8hCzdDyAfT1jXG9t5uC676B82x7jrI5MbmhAXIvw+W
- xpEHH81IsBZgndFGmLF9mqUAt9tV2M8DtT+FUeNhHI8ENhipFbe54WHbydD1rKK9upep
- /Mc1epa6dE1vl+p++Nnu7OHptbJcCwJJu4T6r1rdlFHthOh7QClqvPfPCiY3+V4nMvN0
- U5sHnzbhT4jekpXh6pw164sQms6UBXlQmIdmE4NZTo8hQL76QuprbG0LaA5P2HIY4ctO NA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2yrq7kx88b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Mar 2020 17:26:52 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02HHKjsl185935;
-        Tue, 17 Mar 2020 17:24:52 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2ys8ts7c9s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Mar 2020 17:24:51 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02HHOokm014044;
-        Tue, 17 Mar 2020 17:24:51 GMT
-Received: from [192.168.1.206] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Mar 2020 10:24:50 -0700
-Subject: Re: [PATCH] mm/hugetlb: Fix build failure with HUGETLB_PAGE but not
- HUGEBTLBFS
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nishanth Aravamudan <nacc@us.ibm.com>,
-        Nick Piggin <npiggin@suse.de>, Adam Litke <agl@us.ibm.com>,
-        Andi Kleen <ak@suse.de>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org
-References: <7e8c3a3c9a587b9cd8a2f146df32a421b961f3a2.1584432148.git.christophe.leroy@c-s.fr>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <671b00e8-2a7a-6c19-b55b-ba2d6d0f5ad8@oracle.com>
-Date:   Tue, 17 Mar 2020 10:24:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Tue, 17 Mar 2020 13:27:21 -0400
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id 02HHR1sP025060
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 02:27:02 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 02HHR1sP025060
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1584466022;
+        bh=KE22OfskZjd5vE5dPHURGA/IBqPekBZi9gfXTzufvbI=;
+        h=From:Date:Subject:To:Cc:From;
+        b=MQdm6wE0XYeYvVcXR7RcGU5vAvNGLkrXECUiqgh4HFMRQPPiCbVtTFVe0mOyU6tCP
+         rD7CwWw+ibnDtLReWnMnQgKskBFckY8CjRi0ZLNOtWgmI+acpiNstswDkr11TK/FPH
+         jdZUQg+9btEll4fBsuddfetnA4vQExGBjC7zD9IbGdQZUL8XPzd+oeMW75NrEBIV6m
+         Us7fiZwoN4Q3R33U6Lv5mnysZwPFkaMn+e2RqTBJILQHW0Vaqx8Ib+76WoSgp3XeOw
+         PouUpqmjWkmj/CClJbS07HVAj/buqai6wDwSVNedGh44egqPplcCkYa87K76jgi/sG
+         jDdEVsjlHcnkA==
+X-Nifty-SrcIP: [209.85.217.54]
+Received: by mail-vs1-f54.google.com with SMTP id e138so8571436vsc.11
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 10:27:01 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ1/Hhald4shGee8Z6dCkh9W/sZOqTWMC0ByoqEJR7SktZpeEt80
+        PujH7y0ph0Y6FRPHcEBtnbjJ0FzkWdpIXcYD6rU=
+X-Google-Smtp-Source: ADFU+vubTUpqtaivmHWe3D2yWqtuuxkGL/Nx3ogaJy6wwOrcos6V3IHJWr0KPtRS9EP0E3hzsf4J64iSZ6L0rhqRbGg=
+X-Received: by 2002:a67:8745:: with SMTP id j66mr4425184vsd.181.1584466020438;
+ Tue, 17 Mar 2020 10:27:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <7e8c3a3c9a587b9cd8a2f146df32a421b961f3a2.1584432148.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9563 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 mlxscore=0
- malwarescore=0 suspectscore=0 mlxlogscore=999 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003170069
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9563 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
- adultscore=0 bulkscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015
- malwarescore=0 mlxscore=0 phishscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003170069
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 18 Mar 2020 02:26:23 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASMD-zqNfG02WhU1LeAJevnjBv=oT2N_7y6C8w7kryotQ@mail.gmail.com>
+Message-ID: <CAK7LNASMD-zqNfG02WhU1LeAJevnjBv=oT2N_7y6C8w7kryotQ@mail.gmail.com>
+Subject: [GIT PULL] arm64: dts: uniphier: UniPhier DT updates for v5.7
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        soc@kernel.org
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/17/20 1:04 AM, Christophe Leroy wrote:
-> When CONFIG_HUGETLB_PAGE is set but not CONFIG_HUGETLBFS, the
-> following build failure is encoutered:
-> 
-> In file included from arch/powerpc/mm/fault.c:33:0:
-> ./include/linux/hugetlb.h: In function 'hstate_inode':
-> ./include/linux/hugetlb.h:477:9: error: implicit declaration of function 'HUGETLBFS_SB' [-Werror=implicit-function-declaration]
->   return HUGETLBFS_SB(i->i_sb)->hstate;
->          ^
-> ./include/linux/hugetlb.h:477:30: error: invalid type argument of '->' (have 'int')
->   return HUGETLBFS_SB(i->i_sb)->hstate;
->                               ^
-> 
-> Gate hstate_inode() with CONFIG_HUGETLBFS instead of CONFIG_HUGETLB_PAGE.
-> 
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Link: https://patchwork.ozlabs.org/patch/1255548/#2386036
-> Fixes: a137e1cc6d6e ("hugetlbfs: per mount huge page sizes")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Hi Olof, Arnd,
 
-As hugetlb.h evolved over time, I suspect nobody imagined a configuration
-with CONFIG_HUGETLB_PAGE and not CONFIG_HUGETLBFS.  This patch does address
-the build issues.  So,
+Here are UniPhier DT (64bit) updates for the v5.7 merge window.
 
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+Please pull!
 
-However, there are many definitions in that file not behind #ifdef
-CONFIG_HUGETLBFS that make no sense unless CONFIG_HUGETLBFS is defined.
-Such cleanup is way beyond the scope of this patch/effort.  I will add
-it to the list of hugetlb/hugetlbfs things that can be cleaned up.
+
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
+
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
+tags/uniphier-dt64-v5.7
+
+for you to fetch changes up to fdf9c17b51910d19113dd85d6b3b2dce0b88d7f0:
+
+  arm64: dts: uniphier: Set SCSSI clock and reset IDs for each channel
+(2020-03-17 00:01:27 +0900)
+
+----------------------------------------------------------------
+UniPhier ARM64 SoC DT updates for v5.7
+
+- Rename nodes to avoid dt-schema warnings
+
+- Enable SPI for PXs3 reference board
+
+- Enable thermal monitor for PXs3 SoC
+
+- Fix clock and reset of SPI nodes
+
+----------------------------------------------------------------
+Kunihiko Hayashi (3):
+      arm64: dts: uniphier: Enable spi node for PXs3 reference board
+      arm64: dts: uniphier: Add nodes of thermal monitor and thermal
+zone for PXs3
+      arm64: dts: uniphier: Set SCSSI clock and reset IDs for each channel
+
+Masahiro Yamada (3):
+      arm64: dts: uniphier: change SD/eMMC node names to follow json-schema
+      arm64: dts: uniphier: rename aidet node names to follow json-schema
+      arm64: dts: uniphier: rename NAND node names to follow json-schema
+
+ arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi    | 10 +++----
+ arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi    | 20 ++++++-------
+ arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts | 10 +++++++
+ arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi    | 55
+++++++++++++++++++++++++++++++++----
+ 4 files changed, 74 insertions(+), 21 deletions(-)
+
+
 -- 
-Mike Kravetz
+Best Regards
+Masahiro Yamada
