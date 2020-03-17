@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D1EC1880BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:13:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 633A8187FE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:05:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729463AbgCQLMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:12:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56436 "EHLO mail.kernel.org"
+        id S1728449AbgCQLFe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:05:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728574AbgCQLMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:12:43 -0400
+        id S1726947AbgCQLFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:05:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7529205ED;
-        Tue, 17 Mar 2020 11:12:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D9D120714;
+        Tue, 17 Mar 2020 11:05:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443563;
-        bh=XSGhuHNI/VPGE2vptRiHyZduoAI3jkFtGWogOwnJSq4=;
+        s=default; t=1584443132;
+        bh=2Es2x8F4ndjoVOQ0H+k7WmfpKbG/6r8wz6oEvR92m5I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I3YDJDjS3K4uttkoifDjb0bA1r88Qkk68Uge2O+8F+agTXXJ77zt+0ohis8c/nLNj
-         G5hAW6KnT1J81iX+nIexpjBccV+L8hdT8DrKaTbT/JmEaZNFaNLOCVo9xA5QJfoUBA
-         WubdDhZwM63UiC+wvILFN2bxfvCJlkHU1dWSSYDk=
+        b=whxvImbOu7KUeZHeePnaqPzjwPLo+lgd+UqU3qiuL+J0dSVPW7oePyNvvtHkz/3G4
+         le7IQrn9FvqaSY4dM0QGnmU2sUdTBYuvNz1wP3r008StyXcHyz6ZfveBiXXlvICJjG
+         2jj7HyqPVBxkLBjblL36xfYFc+XxFI9fzURmmTsg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        Yonghyun Hwang <yonghyun@google.com>,
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 5.5 123/151] iommu/vt-d: Fix a bug in intel_iommu_iova_to_phys() for huge page
+Subject: [PATCH 5.4 106/123] iommu/vt-d: Fix RCU-list bugs in intel_iommu_init()
 Date:   Tue, 17 Mar 2020 11:55:33 +0100
-Message-Id: <20200317103335.194886838@linuxfoundation.org>
+Message-Id: <20200317103318.386788238@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
-References: <20200317103326.593639086@linuxfoundation.org>
+In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
+References: <20200317103307.343627747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +44,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonghyun Hwang <yonghyun@google.com>
+From: Qian Cai <cai@lca.pw>
 
-commit 77a1bce84bba01f3f143d77127b72e872b573795 upstream.
+commit 2d48ea0efb8887ebba3e3720bb5b738aced4e574 upstream.
 
-intel_iommu_iova_to_phys() has a bug when it translates an IOVA for a huge
-page onto its corresponding physical address. This commit fixes the bug by
-accomodating the level of page entry for the IOVA and adds IOVA's lower
-address to the physical address.
+There are several places traverse RCU-list without holding any lock in
+intel_iommu_init(). Fix them by acquiring dmar_global_lock.
 
-Cc: <stable@vger.kernel.org>
+ WARNING: suspicious RCU usage
+ -----------------------------
+ drivers/iommu/intel-iommu.c:5216 RCU-list traversed in non-reader section!!
+
+ other info that might help us debug this:
+
+ rcu_scheduler_active = 2, debug_locks = 1
+ no locks held by swapper/0/1.
+
+ Call Trace:
+  dump_stack+0xa0/0xea
+  lockdep_rcu_suspicious+0x102/0x10b
+  intel_iommu_init+0x947/0xb13
+  pci_iommu_init+0x26/0x62
+  do_one_initcall+0xfe/0x500
+  kernel_init_freeable+0x45a/0x4f8
+  kernel_init+0x11/0x139
+  ret_from_fork+0x3a/0x50
+ DMAR: Intel(R) Virtualization Technology for Directed I/O
+
+Fixes: d8190dc63886 ("iommu/vt-d: Enable DMA remapping after rmrr mapped")
+Signed-off-by: Qian Cai <cai@lca.pw>
 Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Moritz Fischer <mdf@kernel.org>
-Signed-off-by: Yonghyun Hwang <yonghyun@google.com>
-Fixes: 3871794642579 ("VT-d: Changes to support KVM")
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/intel-iommu.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/iommu/intel-iommu.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -5568,8 +5568,10 @@ static phys_addr_t intel_iommu_iova_to_p
- 	u64 phys = 0;
+@@ -5024,6 +5024,7 @@ int __init intel_iommu_init(void)
  
- 	pte = pfn_to_dma_pte(dmar_domain, iova >> VTD_PAGE_SHIFT, &level);
--	if (pte)
--		phys = dma_pte_addr(pte);
-+	if (pte && dma_pte_present(pte))
-+		phys = dma_pte_addr(pte) +
-+			(iova & (BIT_MASK(level_to_offset_bits(level) +
-+						VTD_PAGE_SHIFT) - 1));
+ 	init_iommu_pm_ops();
  
- 	return phys;
- }
++	down_read(&dmar_global_lock);
+ 	for_each_active_iommu(iommu, drhd) {
+ 		iommu_device_sysfs_add(&iommu->iommu, NULL,
+ 				       intel_iommu_groups,
+@@ -5031,6 +5032,7 @@ int __init intel_iommu_init(void)
+ 		iommu_device_set_ops(&iommu->iommu, &intel_iommu_ops);
+ 		iommu_device_register(&iommu->iommu);
+ 	}
++	up_read(&dmar_global_lock);
+ 
+ 	bus_set_iommu(&pci_bus_type, &intel_iommu_ops);
+ 	if (si_domain && !hw_pass_through)
+@@ -5041,7 +5043,6 @@ int __init intel_iommu_init(void)
+ 	down_read(&dmar_global_lock);
+ 	if (probe_acpi_namespace_devices())
+ 		pr_warn("ACPI name space devices didn't probe correctly\n");
+-	up_read(&dmar_global_lock);
+ 
+ 	/* Finally, we enable the DMA remapping hardware. */
+ 	for_each_iommu(iommu, drhd) {
+@@ -5050,6 +5051,8 @@ int __init intel_iommu_init(void)
+ 
+ 		iommu_disable_protect_mem_regions(iommu);
+ 	}
++	up_read(&dmar_global_lock);
++
+ 	pr_info("Intel(R) Virtualization Technology for Directed I/O\n");
+ 
+ 	intel_iommu_enabled = 1;
 
 
