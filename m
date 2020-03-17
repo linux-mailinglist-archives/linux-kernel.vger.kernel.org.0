@@ -2,212 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C31A8188C65
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:44:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0E1E188C5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:44:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbgCQRof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 13:44:35 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40789 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbgCQRoe (ORCPT
+        id S1726738AbgCQRoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 13:44:16 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41179 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbgCQRoQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 13:44:34 -0400
-Received: by mail-oi1-f195.google.com with SMTP id y71so22681994oia.7
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 10:44:34 -0700 (PDT)
+        Tue, 17 Mar 2020 13:44:16 -0400
+Received: by mail-wr1-f67.google.com with SMTP id f11so10071321wrp.8
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 10:44:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=uny09Ikq2gRYtvFRYVAmcVvvtWssTyutAcTyjFY40Jo=;
-        b=DThUjTgTucOr18Wp1UZD/1cFdTWwBV8uIN+p5KUTJ6I7KA3P2xEqTPyVWmWILig+Bh
-         rF1zTEcnnwsfKDTTcR3rjykCe/bleoEgnMVYafYFwToOJEUhu2ETKajbEj6928d/zcNl
-         fpBIUevyhrdCmz8J+Y+btMJamG/FEN274FxubxbqJZ4/Wl+FK9i5Eh3D5yhCBLkC+ukj
-         LtUQrXxASXbYVly5jRtYEVH/+ZFZx0ZgrNAWDcCF0+ih2ktrGTE4EWhZu24+HmWSHchI
-         v21Px0nOWOTIopmfH02YUusP+/m60gKxgtncucev2farv9B80Jh9BXdHv2iBVYwiT6tp
-         Uugw==
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=EK44VVG+KH3H5aTC5J1cCQvH2q7GwAk+V56is7JfZuk=;
+        b=H85KDwXxBy/l7uVQR3C0nhnQtw6t9GpvnSEIj4NDmpPN2qMo8J5MuMjgPqVX+EPS3E
+         aYqsbBK1P0vpDMn3/M4kgI6s+i9h/RoWoJWH3TnafA98qecvDQL6RSSnQj0kHETYqNzZ
+         4uPCroFPty21y4riolZ4PXrDO9qfg8rUcYwSrmaQ63i49EAIH4n0Bl/gFNGJ7TLbapb5
+         jahqAJrnsYFnbXFdM1zOzdqVTHjiZLjr1kLGJvxlh6cm8R22lB2JvLKFe7KUHSsfyx0Z
+         6zFKTro6eoPDTl9IPLR6or+3uLWHTsTwABimwBhHnQv5yn3HtqXBGwQfbBPsMPBiHna7
+         ji8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=uny09Ikq2gRYtvFRYVAmcVvvtWssTyutAcTyjFY40Jo=;
-        b=Qikb69GdiEW592IdF7Wj9hj1cDULwr3E2luhESCY1Eu5SZ2k9l38PLHEW+zs6RiAc5
-         JW7wvwNg06Tqi3RakVKh3mXuEQUjo1NTaWnOyaZnvUDyf+AYDc7FCumuv1HFV75FgkXO
-         n4qoevJu2Hs50jevI53mP+o4obKn6XvibhLZfQyQOrDR3RwYo48+BfY3w+4Eq+5JP+MZ
-         MTYAhINgANqx2RPWjno0IMNMuxJJ2dr2ev1+n/Dv4jbP2v7RRVWrqaHVOhwJICubM0qn
-         12GlYD7YoxTA1+VfrBcvO8aUJbgHhMsxJiEkYt9vTM8B3a5FCh0KKtOwu5BuVMqbJsln
-         tdTg==
-X-Gm-Message-State: ANhLgQ3VdngH317WhC0G5neLy0Fs62MnDSbPNnTe1CCDk8Gunv83dI1i
-        DtcXmPT1r3Tk/ekfJTNuZCJ7ZfbMNK3/l00vYQrLOw==
-X-Google-Smtp-Source: ADFU+vsA2Sf5DwSLtvYCdJwkzVDeFYXHjoDvJ7ubh8/S00O5M/rsBeMhZZYuAswAai/e3PR6C5hIFMm32sYBh02ZRps=
-X-Received: by 2002:aca:f541:: with SMTP id t62mr14021oih.172.1584467073577;
- Tue, 17 Mar 2020 10:44:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200309190359.GA5822@paulmck-ThinkPad-P72> <20200309190420.6100-27-paulmck@kernel.org>
- <20200312180328.GA4772@paulmck-ThinkPad-P72> <20200312180414.GA8024@paulmck-ThinkPad-P72>
- <CANpmjNOqmsm69vfdCAVGhLzTV-oB3E5saRbjzwrkbO-6nGgTYw@mail.gmail.com>
- <CANpmjNO=jGNNd4J0hBhz4ORLdw_+EHQDvyoQRikRCOsuMAcXYg@mail.gmail.com>
- <20200316154535.GX3199@paulmck-ThinkPad-P72> <CANpmjNOsLeiD6hYXeD4g8fA=Ti6EiUsbtiv4VshRGg+oG1ct-g@mail.gmail.com>
- <20200317171320.GI3199@paulmck-ThinkPad-P72>
-In-Reply-To: <20200317171320.GI3199@paulmck-ThinkPad-P72>
-From:   Marco Elver <elver@google.com>
-Date:   Tue, 17 Mar 2020 18:44:21 +0100
-Message-ID: <CANpmjNMN0DTxCXVL+OOPRaDiZUMGn5EsdyEQ==w_=5MOXc8J4Q@mail.gmail.com>
-Subject: Re: [PATCH kcsan 27/32] kcsan: Add option to allow watcher interruptions
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>, kernel-team@fb.com,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, Qian Cai <cai@lca.pw>,
-        Boqun Feng <boqun.feng@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=EK44VVG+KH3H5aTC5J1cCQvH2q7GwAk+V56is7JfZuk=;
+        b=XT4aFvfvw/XuJ9csc6mfUSyMfVaFqd+X/aPBAOEBmdteN+gDXHpgAGdZqCWGX+vPu0
+         T0FZsnU0B0EuOzVrKCuui5jBLFORKsc1yezxjvXJv4q8oTffhe9yzw2O8oVAqrC08ySK
+         N7qoaHWL+f3BfawvrD9SAI4Mq9nJzfyun2oPxHWaAIirFiObiMo26SCqfXLlFleELiKc
+         CH2YR/C9Cuql1QTRSFGfqZPZGs/brT+lLG9IQ1CkHwCbhJPf1KR81sMpkABXKPfZG4Wc
+         Pv9F8aMRB2n9smX/84AbkERkGkDf5+JK3dxTTrXKqMX0jB8oAwam6l1cr46DaTwHLUtr
+         C+ew==
+X-Gm-Message-State: ANhLgQ2UpC5Q4qo6ckHc2irOpZaEOOCJseerS5ENzTwtNVIjTGDLcP8L
+        /q28h/WD6Wjvm194RSlBLrhclQ==
+X-Google-Smtp-Source: ADFU+vt2EuzK91aDVK9jtj8xz4riGmHPAywnuGetgvwFeJwinrUHU6cNn1ahKgSDGuj9xjuBwWgqSQ==
+X-Received: by 2002:adf:e68b:: with SMTP id r11mr154168wrm.138.1584467053475;
+        Tue, 17 Mar 2020 10:44:13 -0700 (PDT)
+Received: from [192.168.0.105] (84-33-72-137.dyn.eolo.it. [84.33.72.137])
+        by smtp.gmail.com with ESMTPSA id t124sm197919wmg.13.2020.03.17.10.44.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Mar 2020 10:44:12 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH] block, bfq: fix use-after-free in
+ bfq_idle_slice_timer_body
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <6c0d0b36-751b-a63a-418b-888a88ce58f4@huawei.com>
+Date:   Tue, 17 Mar 2020 18:44:48 +0100
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mingfangsen <mingfangsen@huawei.com>,
+        Yanxiaodan <yanxiaodan@huawei.com>,
+        "wubo (T)" <wubo40@huawei.com>, renxudong <renxudong1@huawei.com>,
+        Louhongxiang <louhongxiang@huawei.com>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <C69604D5-CBB7-4A5F-AD73-7A9C0B6B3360@linaro.org>
+References: <6c0d0b36-751b-a63a-418b-888a88ce58f4@huawei.com>
+To:     Zhiqiang Liu <liuzhiqiang26@huawei.com>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Mar 2020 at 18:13, Paul E. McKenney <paulmck@kernel.org> wrote:
->
-> On Mon, Mar 16, 2020 at 05:22:34PM +0100, Marco Elver wrote:
-> > On Mon, 16 Mar 2020 at 16:45, Paul E. McKenney <paulmck@kernel.org> wro=
-te:
-> > >
-> > > On Mon, Mar 16, 2020 at 02:56:38PM +0100, Marco Elver wrote:
-> > > > On Fri, 13 Mar 2020 at 16:28, Marco Elver <elver@google.com> wrote:
-> > > > >
-> > > > > On Thu, 12 Mar 2020 at 19:04, Paul E. McKenney <paulmck@kernel.or=
-g> wrote:
-> > > > > >
-> > > > > > On Thu, Mar 12, 2020 at 11:03:28AM -0700, Paul E. McKenney wrot=
-e:
-> > > > > > > On Mon, Mar 09, 2020 at 12:04:15PM -0700, paulmck@kernel.org =
-wrote:
-> > > > > > > > From: Marco Elver <elver@google.com>
-> > > > > > > >
-> > > > > > > > Add option to allow interrupts while a watchpoint is set up=
-. This can be
-> > > > > > > > enabled either via CONFIG_KCSAN_INTERRUPT_WATCHER or via th=
-e boot
-> > > > > > > > parameter 'kcsan.interrupt_watcher=3D1'.
-> > > > > > > >
-> > > > > > > > Note that, currently not all safe per-CPU access primitives=
- and patterns
-> > > > > > > > are accounted for, which could result in false positives. F=
-or example,
-> > > > > > > > asm-generic/percpu.h uses plain operations, which by defaul=
-t are
-> > > > > > > > instrumented. On interrupts and subsequent accesses to the =
-same
-> > > > > > > > variable, KCSAN would currently report a data race with thi=
-s option.
-> > > > > > > >
-> > > > > > > > Therefore, this option should currently remain disabled by =
-default, but
-> > > > > > > > may be enabled for specific test scenarios.
-> > > > > > > >
-> > > > > > > > To avoid new warnings, changes all uses of smp_processor_id=
-() to use the
-> > > > > > > > raw version (as already done in kcsan_found_watchpoint()). =
-The exact SMP
-> > > > > > > > processor id is for informational purposes in the report, a=
-nd
-> > > > > > > > correctness is not affected.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Marco Elver <elver@google.com>
-> > > > > > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > > > > > >
-> > > > > > > And I get silent hangs that bisect to this patch when running=
- the
-> > > > > > > following rcutorture command, run in the kernel source tree o=
-n a
-> > > > > > > 12-hardware-thread laptop:
-> > > > > > >
-> > > > > > > bash tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 12 =
---duration 10 --kconfig "CONFIG_DEBUG_INFO=3Dy CONFIG_KCSAN=3Dy CONFIG_KCSA=
-N_ASSUME_PLAIN_WRITES_ATOMIC=3Dn CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=3Dn =
-CONFIG_KCSAN_REPORT_ONCE_IN_MS=3D100000 CONFIG_KCSAN_VERBOSE=3Dy CONFIG_KCS=
-AN_INTERRUPT_WATCHER=3Dy" --configs TREE03
-> > > > > > >
-> > > > > > > It works fine on some (but not all) of the other rcutorture t=
-est
-> > > > > > > scenarios.  It fails on TREE01, TREE02, TREE03, TREE09.  The =
-common thread
-> > > > > > > is that these are the TREE scenarios are all PREEMPT=3Dy.  So=
- are RUDE01,
-> > > > > > > SRCU-P, TASKS01, and TASKS03, but these scenarios are not ham=
-mering
-> > > > > > > on Tree RCU, and thus have far less interrupt activity and th=
-e like.
-> > > > > > > Given that it is an interrupt-related feature being added by =
-this commit,
-> > > > > > > this seems like expected (mis)behavior.
-> > > > > > >
-> > > > > > > Can you reproduce this?  If not, are there any diagnostics I =
-can add to
-> > > > > > > my testing?  Or a diagnostic patch I could apply?
-> > > > >
-> > > > > I think I can reproduce it.  Let me debug some more, so far I hav=
-en't
-> > > > > found anything yet.
-> > > > >
-> > > > > What I do know is that it's related to reporting. Turning kcsan_r=
-eport
-> > > > > into a noop makes the test run to completion.
-> > > > >
-> > > > > > I should hasten to add that this feature was quite helpful in r=
-ecent work!
-> > > > >
-> > > > > Good to know. :-)  We can probably keep this patch, since the def=
-ault
-> > > > > config doesn't turn this on. But I will try to see what's up with=
- the
-> > > > > hangs, and hopefully find a fix.
-> > > >
-> > > > So this one turned out to be quite interesting. We can get deadlock=
-s
-> > > > if we can set up multiple watchpoints per task in case it's
-> > > > interrupted and the interrupt sets up another watchpoint, and there
-> > > > are many concurrent races happening; because the other_info struct =
-in
-> > > > report.c may never be released if an interrupt blocks the consumer =
-due
-> > > > to waiting for other_info to become released.
-> > >
-> > > Been there, done that!  ;-)
-> > >
-> > > > Give me another day or 2 to come up with a decent fix.
-> > >
-> > > My thought is to send a pull request for the commits up to but not
-> > > including this patch, allowing ample development and testing time for
-> > > the fix.  My concern with sending this, even with a fix, is that any
-> > > further bugs might cast a shadow on the whole series, further slowing
-> > > acceptance into mainline.
-> > >
-> > > Fair enough?
-> >
-> > That's fine. I think the features changes can stay on -rcu/kcsan-dev
-> > for now, but the documentation updates don't depend on them.
-> > If it'd be useful, the updated documentation could be moved before
-> > this patch to -rcu/kcsan, so we'd have
-> >
-> >  kcsan: Add current->state to implicitly atomic accesses
-> >  kcsan: Add option for verbose reporting
-> >  kcsan: Add option to allow watcher interruptions
-> > -- cut --
-> >  kcsan: Update API documentation in kcsan-checks.h
-> >  kcsan: Update Documentation/dev-tools/kcsan.rst
-> >  kcsan: Fix a typo in a comment
-> > .. rest of series ..
-> >
-> > Although I'm fine with either.
->
-> Given my churn with a recent merge window, I am more reluctant than
-> I might otherwise be to do that sort of rearrangement.  Sorry to be
-> so cowardly!
 
-No problem. This should be fine either way.
 
-Thank you!
--- Marco
+> Il giorno 17 mar 2020, alle ore 15:06, Zhiqiang Liu =
+<liuzhiqiang26@huawei.com> ha scritto:
+>=20
+> In bfq_idle_slice_timer func, bfqq =3D bfqd->in_service_queue is
+> not in bfqd-lock critical section. The bfqq, which is not
+> equal to NULL in bfq_idle_slice_timer, may be freed after passing
+> to bfq_idle_slice_timer_body. So we will access the freed memory.
+>=20
+> KASAN log is given as follows:
+> [13058.354613] =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [13058.354640] BUG: KASAN: use-after-free in =
+bfq_idle_slice_timer+0xac/0x290
+> [13058.354644] Read of size 8 at addr ffffa02cf3e63f78 by task =
+fork13/19767
+> [13058.354646]
+> [13058.354655] CPU: 96 PID: 19767 Comm: fork13
+> [13058.354661] Call trace:
+> [13058.354667]  dump_backtrace+0x0/0x310
+> [13058.354672]  show_stack+0x28/0x38
+> [13058.354681]  dump_stack+0xd8/0x108
+> [13058.354687]  print_address_description+0x68/0x2d0
+> [13058.354690]  kasan_report+0x124/0x2e0
+> [13058.354697]  __asan_load8+0x88/0xb0
+> [13058.354702]  bfq_idle_slice_timer+0xac/0x290
+> [13058.354707]  __hrtimer_run_queues+0x298/0x8b8
+> [13058.354710]  hrtimer_interrupt+0x1b8/0x678
+> [13058.354716]  arch_timer_handler_phys+0x4c/0x78
+> [13058.354722]  handle_percpu_devid_irq+0xf0/0x558
+> [13058.354731]  generic_handle_irq+0x50/0x70
+> [13058.354735]  __handle_domain_irq+0x94/0x110
+> [13058.354739]  gic_handle_irq+0x8c/0x1b0
+> [13058.354742]  el1_irq+0xb8/0x140
+> [13058.354748]  do_wp_page+0x260/0xe28
+> [13058.354752]  __handle_mm_fault+0x8ec/0x9b0
+> [13058.354756]  handle_mm_fault+0x280/0x460
+> [13058.354762]  do_page_fault+0x3ec/0x890
+> [13058.354765]  do_mem_abort+0xc0/0x1b0
+> [13058.354768]  el0_da+0x24/0x28
+> [13058.354770]
+> [13058.354773] Allocated by task 19731:
+> [13058.354780]  kasan_kmalloc+0xe0/0x190
+> [13058.354784]  kasan_slab_alloc+0x14/0x20
+> [13058.354788]  kmem_cache_alloc_node+0x130/0x440
+> [13058.354793]  bfq_get_queue+0x138/0x858
+> [13058.354797]  bfq_get_bfqq_handle_split+0xd4/0x328
+> [13058.354801]  bfq_init_rq+0x1f4/0x1180
+> [13058.354806]  bfq_insert_requests+0x264/0x1c98
+> [13058.354811]  blk_mq_sched_insert_requests+0x1c4/0x488
+> [13058.354818]  blk_mq_flush_plug_list+0x2d4/0x6e0
+> [13058.354826]  blk_flush_plug_list+0x230/0x548
+> [13058.354830]  blk_finish_plug+0x60/0x80
+> [13058.354838]  read_pages+0xec/0x2c0
+> [13058.354842]  __do_page_cache_readahead+0x374/0x438
+> [13058.354846]  ondemand_readahead+0x24c/0x6b0
+> [13058.354851]  page_cache_sync_readahead+0x17c/0x2f8
+> [13058.354858]  generic_file_buffered_read+0x588/0xc58
+> [13058.354862]  generic_file_read_iter+0x1b4/0x278
+> [13058.354965]  ext4_file_read_iter+0xa8/0x1d8 [ext4]
+> [13058.354972]  __vfs_read+0x238/0x320
+> [13058.354976]  vfs_read+0xbc/0x1c0
+> [13058.354980]  ksys_read+0xdc/0x1b8
+> [13058.354984]  __arm64_sys_read+0x50/0x60
+> [13058.354990]  el0_svc_common+0xb4/0x1d8
+> [13058.354994]  el0_svc_handler+0x50/0xa8
+> [13058.354998]  el0_svc+0x8/0xc
+> [13058.354999]
+> [13058.355001] Freed by task 19731:
+> [13058.355007]  __kasan_slab_free+0x120/0x228
+> [13058.355010]  kasan_slab_free+0x10/0x18
+> [13058.355014]  kmem_cache_free+0x288/0x3f0
+> [13058.355018]  bfq_put_queue+0x134/0x208
+> [13058.355022]  bfq_exit_icq_bfqq+0x164/0x348
+> [13058.355026]  bfq_exit_icq+0x28/0x40
+> [13058.355030]  ioc_exit_icq+0xa0/0x150
+> [13058.355035]  put_io_context_active+0x250/0x438
+> [13058.355038]  exit_io_context+0xd0/0x138
+> [13058.355045]  do_exit+0x734/0xc58
+> [13058.355050]  do_group_exit+0x78/0x220
+> [13058.355054]  __wake_up_parent+0x0/0x50
+> [13058.355058]  el0_svc_common+0xb4/0x1d8
+> [13058.355062]  el0_svc_handler+0x50/0xa8
+> [13058.355066]  el0_svc+0x8/0xc
+> [13058.355067]
+> [13058.355071] The buggy address belongs to the object at =
+ffffa02cf3e63e70#012 which belongs to the cache bfq_queue of size 464
+> [13058.355075] The buggy address is located 264 bytes inside of#012 =
+464-byte region [ffffa02cf3e63e70, ffffa02cf3e64040)
+> [13058.355077] The buggy address belongs to the page:
+> [13058.355083] page:ffff7e80b3cf9800 count:1 mapcount:0 =
+mapping:ffff802db5c90780 index:0xffffa02cf3e606f0 compound_mapcount: 0
+> [13058.366175] flags: 0x2ffffe0000008100(slab|head)
+> [13058.370781] raw: 2ffffe0000008100 ffff7e80b53b1408 ffffa02d730c1c90 =
+ffff802db5c90780
+> [13058.370787] raw: ffffa02cf3e606f0 0000000000370023 00000001ffffffff =
+0000000000000000
+> [13058.370789] page dumped because: kasan: bad access detected
+> [13058.370791]
+> [13058.370792] Memory state around the buggy address:
+> [13058.370797]  ffffa02cf3e63e00: fc fc fc fc fc fc fc fc fc fc fc fc =
+fc fc fb fb
+> [13058.370801]  ffffa02cf3e63e80: fb fb fb fb fb fb fb fb fb fb fb fb =
+fb fb fb fb
+> [13058.370805] >ffffa02cf3e63f00: fb fb fb fb fb fb fb fb fb fb fb fb =
+fb fb fb fb
+> [13058.370808]                                                         =
+        ^
+> [13058.370811]  ffffa02cf3e63f80: fb fb fb fb fb fb fb fb fb fb fb fb =
+fb fb fb fb
+> [13058.370815]  ffffa02cf3e64000: fb fb fb fb fb fb fb fb fc fc fc fc =
+fc fc fc fc
+> [13058.370817] =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [13058.370820] Disabling lock debugging due to kernel taint
+>=20
+> Here, we directly pass the bfqd to bfq_idle_slice_timer_body func.
+>=20
+> Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+> Signed-off-by: Feilong Lin <linfeilong@huawei.com>
+> ---
+> block/bfq-iosched.c | 10 +++++-----
+> 1 file changed, 5 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+> index 8c436abfaf14..f470b9daa98b 100644
+> --- a/block/bfq-iosched.c
+> +++ b/block/bfq-iosched.c
+> @@ -6215,20 +6215,20 @@ static struct bfq_queue *bfq_init_rq(struct =
+request *rq)
+> 	return bfqq;
+> }
+>=20
+> -static void bfq_idle_slice_timer_body(struct bfq_queue *bfqq)
+> +static void
+> +bfq_idle_slice_timer_body(struct bfq_data *bfqd, struct bfq_queue =
+*bfqq)
+> {
+> -	struct bfq_data *bfqd =3D bfqq->bfqd;
+> 	enum bfqq_expiration reason;
+> 	unsigned long flags;
+>=20
+> 	spin_lock_irqsave(&bfqd->lock, flags);
+> -	bfq_clear_bfqq_wait_request(bfqq);
+> -
+> 	if (bfqq !=3D bfqd->in_service_queue) {
+> 		spin_unlock_irqrestore(&bfqd->lock, flags);
+> 		return;
+> 	}
+>=20
+> +	bfq_clear_bfqq_wait_request(bfqq);
+> +
+
+Please add a comment on why you (correctly) clear this flag only if bfqq =
+is in service.
+
+For the rest, seems ok to me.
+
+Thank you very much for spotting and fixing this bug,
+Paolo
+
+> 	if (bfq_bfqq_budget_timeout(bfqq))
+> 		/*
+> 		 * Also here the queue can be safely expired
+> @@ -6273,7 +6273,7 @@ static enum hrtimer_restart =
+bfq_idle_slice_timer(struct hrtimer *timer)
+> 	 * early.
+> 	 */
+> 	if (bfqq)
+> -		bfq_idle_slice_timer_body(bfqq);
+> +		bfq_idle_slice_timer_body(bfqd, bfqq);
+>=20
+> 	return HRTIMER_NORESTART;
+> }
+> --=20
+> 2.19.1
+>=20
+>=20
+
