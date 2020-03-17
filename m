@@ -2,101 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23EFB1880BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:13:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 321B1188099
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:11:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729175AbgCQLK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:10:58 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:46442 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726777AbgCQLK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:10:56 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48hVpQ3gWvz9tyNL;
-        Tue, 17 Mar 2020 12:10:54 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=S2qnvktO; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id tw69ROBWa6CW; Tue, 17 Mar 2020 12:10:54 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48hVpQ2R82z9tyNJ;
-        Tue, 17 Mar 2020 12:10:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1584443454; bh=5ZVaxgAPu7tRLwzrgx0YFwBG2He1G66cpQN69Xz0K3I=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=S2qnvktOMP0HeIE4yDIfvL8NtDojuzvqd6Yono4mp4tlyid+D2eqdC6uNj7eRj0wX
-         FHOC+zMWLqjaAGqnuE6tHE824l/AcsFlrF5NTK4eYimJ4TADfjMOC7LIMWoIaVbqU3
-         KBCSot4jqb+oEXLpaQSdetJWRycgM8DaB8UQoGGI=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 654358B785;
-        Tue, 17 Mar 2020 12:10:54 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id emwlBXj-XvrU; Tue, 17 Mar 2020 12:10:54 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7E44B8B787;
-        Tue, 17 Mar 2020 12:10:46 +0100 (CET)
-Subject: Re: [PATCH 14/15] powerpc/watchpoint/xmon: Don't allow breakpoint
- overwriting
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>, mpe@ellerman.id.au,
-        mikey@neuling.org
-Cc:     apopple@linux.ibm.com, paulus@samba.org, npiggin@gmail.com,
-        naveen.n.rao@linux.vnet.ibm.com, peterz@infradead.org,
-        jolsa@kernel.org, oleg@redhat.com, fweisbec@gmail.com,
-        mingo@kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <20200309085806.155823-1-ravi.bangoria@linux.ibm.com>
- <20200309085806.155823-15-ravi.bangoria@linux.ibm.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <b6892b22-c521-207e-e5fd-ca66c774b314@c-s.fr>
-Date:   Tue, 17 Mar 2020 12:10:39 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1729306AbgCQLLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:11:35 -0400
+Received: from mail-eopbgr1410115.outbound.protection.outlook.com ([40.107.141.115]:2849
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729281AbgCQLLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:11:33 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nzmpT585cAMwbD8i6XHhJrUYDM0hp281C7glwyXKfu0xv2lgAv3Ku4LTkPFX5sq9GVbWgmRYXIFTFywY1xoIk3pGTZXuurFwhO+7bmVrORFa/gV7QhbSPKPUB9XNH8AIJD9dPyYtBN8h18nlzucXR7azMz3zSzY8Ee7jzWnzBUeqh1kLP4OdKlp68B17DhbbsmCvvZa2bHD2S6Y3HIIIK8LFUoWeSHlAwd9E1HMpMSJDQGNWCzJJrF4CRE/BB1NYikmcVEbMyxzm6PJrFg9iD4mQg1A6KsZbilKosRkEaPVaxRmRW1m+BEK9ZnmWcHiOjb7bP4IpL4J6Zs8KTwisPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sb2eK4tdzXwFizdYNKLsOoW+5BUoMONAlwS5QSoazNk=;
+ b=kB3eUXNUH5EOwMH8D5tQqaYtArmo3l09t9Tq6SDCouzr3y8jV0+QEVeOJgHfNmLR0gSrcT578/1spj4Fa84xWXYLP2Pzj3dgZS2GbEmabwg7qPcVWgjY5dOwK9H5jPyX/PtvIj5TC2YATjhOl8+cz/aoRX4BUgVhpNrXuJX87g1xPf5qwVJJ5AP7FYrem3E/GP7oSv0w9lnEXjYPj0UFTGGqfergBvwkMDUhIJAD1FF4PySoyC3tLj6T3OWpgN/IXEEyVyKUq7pt6zAFjrMF5T1DXbQblTLhdg6FkpCZ+i7WfYtEHPeUEKIq1ZEbyaKJ9d4+P2vIci1SF9G/PIM3nQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sb2eK4tdzXwFizdYNKLsOoW+5BUoMONAlwS5QSoazNk=;
+ b=fwnmVIQAxOqOwdx+uG6X9xsSDQUR9xO4D0o7Fwme7okKdaLdthr7AxcsUt0DXhhlZIxKdSjT/MK+SASTF7k8ZyGxzgRjyhcEnA9gBLU6pk3bOvTspe6/P55ikAIf2v8Y1lb8DmusXE3D3YKg0mzenXUMqB8X7AETNs4xZ53oqcM=
+Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com (20.179.175.203) by
+ TYAPR01MB5277.jpnprd01.prod.outlook.com (20.178.138.87) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.13; Tue, 17 Mar 2020 11:11:28 +0000
+Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com
+ ([fe80::ed7f:1268:55a9:fc06]) by TYAPR01MB4544.jpnprd01.prod.outlook.com
+ ([fe80::ed7f:1268:55a9:fc06%4]) with mapi id 15.20.2814.021; Tue, 17 Mar 2020
+ 11:11:28 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.csengg@gmail.com>
+CC:     Andrew Murray <andrew.murray@arm.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: RE: [PATCH v5 5/7] dt-bindings: PCI: rcar: Add bindings for R-Car
+ PCIe endpoint controller
+Thread-Topic: [PATCH v5 5/7] dt-bindings: PCI: rcar: Add bindings for R-Car
+ PCIe endpoint controller
+Thread-Index: AQHV7k2mHX0IeWzmbUuqL/cidPXc16hMjZhwgAAghACAAA0gMA==
+Date:   Tue, 17 Mar 2020 11:11:28 +0000
+Message-ID: <TYAPR01MB454402897EA1C1334A7EF5C9D8F60@TYAPR01MB4544.jpnprd01.prod.outlook.com>
+References: <20200228154122.14164-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200228154122.14164-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <TYAPR01MB454466B8451E3115D8A7DFB7D8F60@TYAPR01MB4544.jpnprd01.prod.outlook.com>
+ <OSBPR01MB3590F13134F6E9BD106EC506AAF60@OSBPR01MB3590.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB3590F13134F6E9BD106EC506AAF60@OSBPR01MB3590.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
+x-originating-ip: [124.210.22.195]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 127690c5-e293-4488-98d4-08d7ca63f0c1
+x-ms-traffictypediagnostic: TYAPR01MB5277:|TYAPR01MB5277:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <TYAPR01MB527756263BEBFBF476043DC9D8F60@TYAPR01MB5277.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 0345CFD558
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(39860400002)(136003)(396003)(366004)(346002)(199004)(66946007)(71200400001)(66446008)(64756008)(66476007)(66556008)(2906002)(5660300002)(7416002)(9686003)(4326008)(52536014)(4744005)(33656002)(76116006)(7696005)(110136005)(54906003)(81166006)(8676002)(81156014)(55016002)(316002)(6506007)(55236004)(186003)(26005)(8936002)(86362001)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB5277;H:TYAPR01MB4544.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: RhXkg89RFmaVxRvYMByvI99uFELunUob1vkXOXqQepaGdbuaNuoRoobAflKrMimGej+gK52NjoV9sgCjzsK1X0k/UEYYWms7D1wxVKw6Nr8bvp2AdJPe4Hr+mLEw14fDF9+x0OYVZEgAjTPPWYY0Eesh23B3jMWy4LgoXabO5x3qG5nlVPL/7dwb6m89UYAxwxFJuxg3480cFdcetKGhg0Ie2UsY0I0DrKXQr+TqjeBvIEGhnjRjMWz7GDwDpsGPYShMXAbjrOWksxl648m4vz9uYz9R1tPG1NhYFf8XRo3x97oFAIWC5hQzF75UbSQ82YNZtsmUJY4FDeh5JOP4imqOclLc0eAaWnzI7oa5z1Nw67a+gOjAjLiMZSMGYnKhxRApBViHS7wwtC+jyJLadwfaT0vzmU6qfF57THuzYF30baXfPAjAdHTaHjkGkBVR
+x-ms-exchange-antispam-messagedata: 4BGqTl6hLUDX9ohnhyye2U0u2s3FAnHjdfCt3iSg6yL+8f88mGpUGrmsuD0xJem8tqeYJY/WrXEoQJjkaqQtKnMn8IKLGgNnb0xW6DrrKCJag/zZTcif2OPTTsDDE0sT4H/YwJ3IlUqEDSAT95MEaA==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20200309085806.155823-15-ravi.bangoria@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 127690c5-e293-4488-98d4-08d7ca63f0c1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2020 11:11:28.4058
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ubKLgSGuMkFFf5knlYIWIk/IwV8yYZw0wHdxKxXVBYoRMSmtGrZhmJ2GL0rLZMSjUUAC84Sy4H4cciwdpmtyaRdhuihVEYntwCglQQFqCgCpeWnjm59npZaj7o1zU+Oj
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB5277
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Prabhakar-san,
 
+> From: Prabhakar Mahadev Lad, Sent: Tuesday, March 17, 2020 7:18 PM
+<snip>
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-
+> > lad.rj@bp.renesas.com>
+> > > Reviewed-by: Rob Herring <robh@kernel.org>
+> >
+> > Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> >
+> Thank you for the review. Shall I add this file under "PCI DRIVER FOR REN=
+ESAS R-CAR"
+> In MAINTAINERS file as a separate patch ?
 
-Le 09/03/2020 à 09:58, Ravi Bangoria a écrit :
-> Xmon allows overwriting breakpoints because it's supported by only
-> one dawr. But with multiple dawrs, overwriting becomes ambiguous
-> or unnecessary complicated. So let's not allow it.
+That's a nice idea! I think we should add the following like for dt-binding=
+:
 
-Could we drop this completely (I mean the functionnality, not the patch).
+F:	Documentation/devicetree/bindings/pci/*rcar*
 
-Christophe
+Best regards,
+Yoshihiro Shimoda
 
-> 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> ---
->   arch/powerpc/xmon/xmon.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-> index 0ca0d29f99c6..ac18fe3e4295 100644
-> --- a/arch/powerpc/xmon/xmon.c
-> +++ b/arch/powerpc/xmon/xmon.c
-> @@ -1381,6 +1381,10 @@ bpt_cmds(void)
->   			printf("Hardware data breakpoint not supported on this cpu\n");
->   			break;
->   		}
-> +		if (dabr.enabled) {
-> +			printf("Couldn't find free breakpoint register\n");
-> +			break;
-> +		}
->   		mode = 7;
->   		cmd = inchar();
->   		if (cmd == 'r')
-> 
+> Cheers,
+> --Prabhakar
+>=20
+> > Best regards,
+> > Yoshihiro Shimoda
+
