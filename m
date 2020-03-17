@@ -2,97 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEFDF1882F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 13:08:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B7BA188314
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 13:09:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgCQMHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 08:07:53 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:54342 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbgCQMHw (ORCPT
+        id S1726898AbgCQMJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 08:09:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49024 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726705AbgCQMJi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 08:07:52 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jEB0Y-0000Ek-Tp; Tue, 17 Mar 2020 13:07:43 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9037C1C2290;
-        Tue, 17 Mar 2020 13:07:42 +0100 (CET)
-Date:   Tue, 17 Mar 2020 12:07:42 -0000
-From:   "tip-bot2 for Kim Phillips" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/amd/uncore: Make L3 thread mask code more readable
-Cc:     Kim Phillips <kim.phillips@amd.com>, Borislav Petkov <bp@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200313231024.17601-2-kim.phillips@amd.com>
-References: <20200313231024.17601-2-kim.phillips@amd.com>
+        Tue, 17 Mar 2020 08:09:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=q/GK4+6m5lw1qmSosNNukTctCn2OhFMDvaxhnUz5s/E=; b=TUVADCLrKEE8VyknwEYEQ0UYdT
+        u9A/5XJjJrnMqqk+qjL1RIZthjoUtX+eBU+A7CfInYWhqGjFymvbMciO2wZSoVjMxQAdUD8OH4THK
+        0AkBL1KPEfz+2CzB8rMplaOk9iP8TFZ2VpEfCJiFY7ybjLpoza7xNmXcvXuPeibzE+BHKF4y8K4mN
+        ZF1fUAxQPe49+lYj1MZm/5nsJPwZkmcHV4niOD1KJk12OyykwGR1CmTbgTBNfOv2wpeHpPwSA8j/Z
+        IGScVWlfuQlVUMJbxVwvZJ3NRR93X8yz0NBQqDmLmTCRKYUrcS3MfMPt/tAZe1K7oOI3cnVDZf0Yu
+        zdbk9eVw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jEB2I-0000M8-F7; Tue, 17 Mar 2020 12:09:30 +0000
+Date:   Tue, 17 Mar 2020 05:09:30 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-mm@kvack.org, Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Shuah Khan <shuah@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv7 2/3] mm/gup: fix omission of check on FOLL_LONGTERM in
+ gup fast path
+Message-ID: <20200317120930.GA435@infradead.org>
+References: <1584333244-10480-3-git-send-email-kernelfans@gmail.com>
+ <1584445652-30064-1-git-send-email-kernelfans@gmail.com>
 MIME-Version: 1.0
-Message-ID: <158444686229.28353.2736088400656740915.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1584445652-30064-1-git-send-email-kernelfans@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/core branch of tip:
+On Tue, Mar 17, 2020 at 07:47:32PM +0800, Pingfan Liu wrote:
+> FOLL_LONGTERM is a special case of FOLL_PIN. It suggests a pin which is
+> going to be given to hardware and can't move. It would truncate CMA
+> permanently and should be excluded.
+> 
+> In gup slow path, slow path, where
+> __gup_longterm_locked->check_and_migrate_cma_pages() handles FOLL_LONGTERM,
+> but in fast path, there lacks such a check, which means a possible leak of
+> CMA page to longterm pinned.
+> 
+> Place a check in try_grab_compound_head() in the fast path to fix the leak,
+> and if FOLL_LONGTERM happens on CMA, it will fall back to slow path to
+> migrate the page.
+> 
+> Some note about the check:
+> Huge page's subpages have the same migrate type due to either
+> allocation from a free_list[] or alloc_contig_range() with param
+> MIGRATE_MOVABLE. So it is enough to check on a single subpage
+> by is_migrate_cma_page(subpage)
 
-Commit-ID:     9689dbbeaea884d19e3085439c6a247ef986b2af
-Gitweb:        https://git.kernel.org/tip/9689dbbeaea884d19e3085439c6a247ef986b2af
-Author:        Kim Phillips <kim.phillips@amd.com>
-AuthorDate:    Fri, 13 Mar 2020 18:10:23 -05:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Tue, 17 Mar 2020 13:00:49 +01:00
+Looks good,
 
-perf/amd/uncore: Make L3 thread mask code more readable
-
-Convert the l3_thread_slice_mask() function to use the more readable
-topology_* helper functions, more intuitive variable names like shift
-and thread_mask, and BIT_ULL().
-
-No functional changes.
-
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20200313231024.17601-2-kim.phillips@amd.com
----
- arch/x86/events/amd/uncore.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
-index 2abcb1a..07af497 100644
---- a/arch/x86/events/amd/uncore.c
-+++ b/arch/x86/events/amd/uncore.c
-@@ -185,13 +185,16 @@ static void amd_uncore_del(struct perf_event *event, int flags)
-  */
- static u64 l3_thread_slice_mask(int cpu)
- {
--	int thread = 2 * (cpu_data(cpu).cpu_core_id % 4);
-+	u64 thread_mask, core = topology_core_id(cpu);
-+	unsigned int shift, thread = 0;
- 
--	if (smp_num_siblings > 1)
--		thread += cpu_data(cpu).apicid & 1;
-+	if (topology_smt_supported() && !topology_is_primary_thread(cpu))
-+		thread = 1;
- 
--	return (1ULL << (AMD64_L3_THREAD_SHIFT + thread) &
--		AMD64_L3_THREAD_MASK) | AMD64_L3_SLICE_MASK;
-+	shift = AMD64_L3_THREAD_SHIFT + 2 * (core % 4) + thread;
-+	thread_mask = BIT_ULL(shift);
-+
-+	return AMD64_L3_SLICE_MASK | thread_mask;
- }
- 
- static int amd_uncore_event_init(struct perf_event *event)
+Reviewed-by: Christoph Hellwig <hch@lst.de>
