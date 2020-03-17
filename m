@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEF04187FBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:04:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC3F91881F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:22:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbgCQLEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:04:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44244 "EHLO mail.kernel.org"
+        id S1726987AbgCQK5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:57:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728232AbgCQLEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:04:09 -0400
+        id S1726112AbgCQK52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:57:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 704E920658;
-        Tue, 17 Mar 2020 11:04:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7A582076E;
+        Tue, 17 Mar 2020 10:57:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443048;
-        bh=87iGYbUFYnXZn/jfFHK/iZmHuyFDjhO8WQ4ifoPD9mk=;
+        s=default; t=1584442648;
+        bh=Xm8Z014pk2x8VwaGlzsmRLXltETeKcYWHoTM1dlIbYE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f1e3laMlXUTghUZhbmw1YYnyLSrzHOzQShmjElXQuKGEVY3SNuhcaCUXCfCfaMvhv
-         OzM0sACRmgjRlcV16YtbmFXjyccsRs1/HvZBIdQI01nBVCPhM9EoOaQA9mI43kChMk
-         PVJGAiTHcQuDvhpgxsKuJnHG1AWDcvQleQ80Azmo=
+        b=Xr4ltx8jzj0L45Phr5DOiv++uY/GwYwezFlNV12Vw87lF96TAZzgjbqyZurJAnk03
+         2tykZtAtvO2Su3ReaHWbCsvI/hsBTMoV56K0b9ocdLyoOJlmB/9NQ8uE0OD5HNcnMt
+         PqGXDLmbIc6kBatPx88zKD+TvuSIWTzBXjY0DcZg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Mahesh Bandewar <maheshb@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 031/123] bnxt_en: reinitialize IRQs when MTU is modified
+Subject: [PATCH 4.19 09/89] ipvlan: do not use cond_resched_rcu() in ipvlan_process_multicast()
 Date:   Tue, 17 Mar 2020 11:54:18 +0100
-Message-Id: <20200317103311.071012717@linuxfoundation.org>
+Message-Id: <20200317103300.940961121@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
-References: <20200317103307.343627747@linuxfoundation.org>
+In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
+References: <20200317103259.744774526@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit a9b952d267e59a3b405e644930f46d252cea7122 ]
+[ Upstream commit afe207d80a61e4d6e7cfa0611a4af46d0ba95628 ]
 
-MTU changes may affect the number of IRQs so we must call
-bnxt_close_nic()/bnxt_open_nic() with the irq_re_init parameter
-set to true.  The reason is that a larger MTU may require
-aggregation rings not needed with smaller MTU.  We may not be
-able to allocate the required number of aggregation rings and
-so we reduce the number of channels which will change the number
-of IRQs.  Without this patch, it may crash eventually in
-pci_disable_msix() when the IRQs are not properly unwound.
+Commit e18b353f102e ("ipvlan: add cond_resched_rcu() while
+processing muticast backlog") added a cond_resched_rcu() in a loop
+using rcu protection to iterate over slaves.
 
-Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
-Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+This is breaking rcu rules, so lets instead use cond_resched()
+at a point we can reschedule
+
+Fixes: e18b353f102e ("ipvlan: add cond_resched_rcu() while processing muticast backlog")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Mahesh Bandewar <maheshb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ipvlan/ipvlan_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -10891,13 +10891,13 @@ static int bnxt_change_mtu(struct net_de
- 	struct bnxt *bp = netdev_priv(dev);
+--- a/drivers/net/ipvlan/ipvlan_core.c
++++ b/drivers/net/ipvlan/ipvlan_core.c
+@@ -282,7 +282,6 @@ void ipvlan_process_multicast(struct wor
+ 			}
+ 			ipvlan_count_rx(ipvlan, len, ret == NET_RX_SUCCESS, true);
+ 			local_bh_enable();
+-			cond_resched_rcu();
+ 		}
+ 		rcu_read_unlock();
  
- 	if (netif_running(dev))
--		bnxt_close_nic(bp, false, false);
-+		bnxt_close_nic(bp, true, false);
- 
- 	dev->mtu = new_mtu;
- 	bnxt_set_ring_params(bp);
- 
- 	if (netif_running(dev))
--		return bnxt_open_nic(bp, false, false);
-+		return bnxt_open_nic(bp, true, false);
- 
- 	return 0;
+@@ -299,6 +298,7 @@ void ipvlan_process_multicast(struct wor
+ 		}
+ 		if (dev)
+ 			dev_put(dev);
++		cond_resched();
+ 	}
  }
+ 
 
 
