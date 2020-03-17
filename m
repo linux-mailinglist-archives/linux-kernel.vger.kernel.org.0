@@ -2,153 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47F94189082
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:35:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E673189071
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:33:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbgCQVd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 17:33:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52702 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727064AbgCQVdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 17:33:55 -0400
-Received: from quaco.ghostprotocols.net (unknown [179.97.37.151])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D296E20714;
-        Tue, 17 Mar 2020 21:33:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584480834;
-        bh=9kx0bjseCZd6aYyxdHYKCohfu23NKwAgTnfR8yH1ZMs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u7fPlRgy8fG6kNfbZNkH+gRTIhbtjUoSvlZ3GLSoLOqB6sy8p8MsOXe99vVAIBy3e
-         jx/RqnxcGWBLwS1ahcqRDhBNaRyo5TmJyp/GiiaOd5wspxjWz/z69Ynfluq6K/sLMU
-         OWH+EOprWKokf728V1yXJZdiPuFGO6/l9X5mMhoo=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Leo Yan <leo.yan@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Suzuki Poulouse <suzuki.poulose@arm.com>,
-        coresight ml <coresight@lists.linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 12/23] perf cs-etm: Optimize copying last branches
-Date:   Tue, 17 Mar 2020 18:32:48 -0300
-Message-Id: <20200317213259.15494-13-acme@kernel.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200317213259.15494-1-acme@kernel.org>
-References: <20200317213259.15494-1-acme@kernel.org>
+        id S1727121AbgCQVdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 17:33:25 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45287 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727093AbgCQVdW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 17:33:22 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1jEJpd-0005zP-8Q; Tue, 17 Mar 2020 22:33:01 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1jEJpQ-0004oj-E1; Tue, 17 Mar 2020 22:32:48 +0100
+Date:   Tue, 17 Mar 2020 22:32:48 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Paul Barker <pbarker@konsulko.com>
+Cc:     Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Ray Jui <rjui@broadcom.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Scott Branden <sbranden@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tony Prisk <linux@prisktech.co.nz>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [RFC PATCH 1/7] pwm: rename the PWM_POLARITY_INVERSED enum
+Message-ID: <20200317213248.mmh2t6jgncq3tqp3@pengutronix.de>
+References: <20200317123231.2843297-1-oleksandr.suvorov@toradex.com>
+ <20200317123231.2843297-2-oleksandr.suvorov@toradex.com>
+ <20200317133450.58c25bcb@ub1910>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200317133450.58c25bcb@ub1910>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leo Yan <leo.yan@linaro.org>
+On Tue, Mar 17, 2020 at 01:34:50PM +0000, Paul Barker wrote:
+> On Tue, 17 Mar 2020 14:32:25 +0200
+> Oleksandr Suvorov <oleksandr.suvorov@toradex.com> wrote:
+> 
+> > The polarity enum definition PWM_POLARITY_INVERSED is misspelled.
+> > Rename it to PWM_POLARITY_INVERTED.
+> > 
+> > Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+> 
+> Looks good. PWM_POLARITY_INVERSED confused me when I was working in this area
+> recently.
 
-If an instruction range packet can generate multiple instruction
-samples, these samples share the same last branches; it's not necessary
-to copy the same last branches repeatedly for these samples within the
-same packet.
+Same for me.
 
-This patch moves out the last branches copying from function
-cs_etm__synth_instruction_sample(), and execute it prior to generating
-instruction samples.
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Reviewed-by: Mike Leach <mike.leach@linaro.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Robert Walker <robert.walker@arm.com>
-Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
-Cc: coresight ml <coresight@lists.linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lore.kernel.org/lkml/20200219021811.20067-5-leo.yan@linaro.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/cs-etm.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+Best regards
+Uwe
 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 1ddcc67e13dd..87d9943177bc 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -1151,10 +1151,8 @@ static int cs_etm__synth_instruction_sample(struct cs_etm_queue *etmq,
- 
- 	cs_etm__copy_insn(etmq, tidq->trace_chan_id, tidq->packet, &sample);
- 
--	if (etm->synth_opts.last_branch) {
--		cs_etm__copy_last_branch_rb(etmq, tidq);
-+	if (etm->synth_opts.last_branch)
- 		sample.branch_stack = tidq->last_branch;
--	}
- 
- 	if (etm->synth_opts.inject) {
- 		ret = cs_etm__inject_event(event, &sample,
-@@ -1431,6 +1429,10 @@ static int cs_etm__sample(struct cs_etm_queue *etmq,
- 		u64 offset = etm->instructions_sample_period - instrs_prev;
- 		u64 addr;
- 
-+		/* Prepare last branches for instruction sample */
-+		if (etm->synth_opts.last_branch)
-+			cs_etm__copy_last_branch_rb(etmq, tidq);
-+
- 		while (tidq->period_instructions >=
- 				etm->instructions_sample_period) {
- 			/*
-@@ -1508,6 +1510,11 @@ static int cs_etm__flush(struct cs_etm_queue *etmq,
- 
- 	if (etmq->etm->synth_opts.last_branch &&
- 	    tidq->prev_packet->sample_type == CS_ETM_RANGE) {
-+		u64 addr;
-+
-+		/* Prepare last branches for instruction sample */
-+		cs_etm__copy_last_branch_rb(etmq, tidq);
-+
- 		/*
- 		 * Generate a last branch event for the branches left in the
- 		 * circular buffer at the end of the trace.
-@@ -1515,7 +1522,7 @@ static int cs_etm__flush(struct cs_etm_queue *etmq,
- 		 * Use the address of the end of the last reported execution
- 		 * range
- 		 */
--		u64 addr = cs_etm__last_executed_instr(tidq->prev_packet);
-+		addr = cs_etm__last_executed_instr(tidq->prev_packet);
- 
- 		err = cs_etm__synth_instruction_sample(
- 			etmq, tidq, addr,
-@@ -1560,11 +1567,16 @@ static int cs_etm__end_block(struct cs_etm_queue *etmq,
- 	 */
- 	if (etmq->etm->synth_opts.last_branch &&
- 	    tidq->prev_packet->sample_type == CS_ETM_RANGE) {
-+		u64 addr;
-+
-+		/* Prepare last branches for instruction sample */
-+		cs_etm__copy_last_branch_rb(etmq, tidq);
-+
- 		/*
- 		 * Use the address of the end of the last reported execution
- 		 * range.
- 		 */
--		u64 addr = cs_etm__last_executed_instr(tidq->prev_packet);
-+		addr = cs_etm__last_executed_instr(tidq->prev_packet);
- 
- 		err = cs_etm__synth_instruction_sample(
- 			etmq, tidq, addr,
 -- 
-2.21.1
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
