@@ -2,101 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03E98187E3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:26:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F35B7187E48
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:28:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726084AbgCQK0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 06:26:10 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:36781 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725730AbgCQK0K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 06:26:10 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id AC5B75C0179;
-        Tue, 17 Mar 2020 06:26:08 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 17 Mar 2020 06:26:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=yKu34zzDB36bqTbEJuWtIcXkWMU
-        gLDc3YXuL+xK/EjY=; b=hN+pJN6GdLBdWREs0yAMCWimSYvPFMrroTQSXm8Vc1N
-        E91RJekkJeSxlGipTdk7filjDUcx8M1nstsZg6IYbDKQ4ndI7LRaUJYiVUqE9KX4
-        q0mRkzNdEO4tYkndUYhBI8mYUZyPZzU9f/d+2eLgE+8K+QRtqC5xhuJAIyDDxbi1
-        h12/0d2oGRz1rdK/pXNqIm0myqgyrvkbBuSTcTsjF3jVnQTnNdbJ79qqa8SGKEm5
-        6HleL7VA9TGv1mfh4ZoGTiIpghokwS/Qydv9YMoJLfiW1PBoXOF2ti8kYRo9eMvH
-        2xUHmyr4OUlL09YJVNPTlFGMYezcvEdcDmtbFg7vuow==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=yKu34z
-        zDB36bqTbEJuWtIcXkWMUgLDc3YXuL+xK/EjY=; b=RGuS/kzGXJrMpP6CC1/hTZ
-        EW0jTHtyqf4Q3sDYU79kK+7utGESasZ5MsamvZo3XRj7uUnaWDkm4HhQbCu/Wr7c
-        i6MJtjOeDOX33zf2I1mOv5QyyXTGomiDrbDQuCHrs4s6sI/Fznpw32mH6xqY79CF
-        Tu3hbWp4T7C8jHce7IgP6UzCMBahLU6yh2gKuxi3JZdClzj/Tzp3D0/1RmmzhtsU
-        Qywn4d+vzq9VZ4bcF24vZ+VdgeBzI6aQo1uWDQVok4wFhsMfGOI1tskT5EHp1BEa
-        HmGQPE8S5sk0NvJy9jHe7Wnjbyd6pT0hakygVjuHD4s28MPoI3xRERJkAra/3W9A
-        ==
-X-ME-Sender: <xms:vqVwXkJyG0AHvhcZdYt3-FERQy6VFhgFSwxxxoRW1-HjSC7WDmTAWQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudefhedgudduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
-    ejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhr
-    vghgsehkrhhorghhrdgtohhm
-X-ME-Proxy: <xmx:vqVwXsBoESAveUvZXcfjEOfs1roBlYBUtux1w8EyAMN0Z2IPyXwDYw>
-    <xmx:vqVwXqoy9b_98nBQ0VCgisLLAYD6w-uZ1t8WCyAUzz5xTSRIwLVwGQ>
-    <xmx:vqVwXlAtt_jEPPnRVkbIluz5M-xUKNQ8PD-CHRbNK8RPyfU5XU-ILA>
-    <xmx:wKVwXgOZTwrdXZ2fhyHSbTKrbeNjq372jeE3lTGfstg3THdBF4E90Q>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5EEB03280067;
-        Tue, 17 Mar 2020 06:26:06 -0400 (EDT)
-Date:   Tue, 17 Mar 2020 11:26:04 +0100
-From:   Greg KH <greg@kroah.com>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Wen Gong <wgong@codeaurora.org>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, ath11k@lists.infradead.org,
-        David Miller <davem@davemloft.net>
-Subject: Re: [PATCH v2] net: qrtr: fix len of skb_put_padto in
- qrtr_node_enqueue
-Message-ID: <20200317102604.GD1130294@kroah.com>
-References: <20200103045016.12459-1-wgong@codeaurora.org>
- <20200105.144704.221506192255563950.davem@davemloft.net>
- <CAD=FV=WiceRwLUS1sdL_W=ELKYZ9zKE13e8vx9SO0+tRvX74QQ@mail.gmail.com>
+        id S1726248AbgCQK24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:28:56 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:56656 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725730AbgCQK24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:28:56 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48hTsx4kRvz9txwD;
+        Tue, 17 Mar 2020 11:28:53 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=s34Ws2n+; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 1MLmsFFXHKBK; Tue, 17 Mar 2020 11:28:53 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48hTsx3PgWz9txw9;
+        Tue, 17 Mar 2020 11:28:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1584440933; bh=n7zhjFxCZRHn8t4Hedzu4/bFDGQ0O6dip4EkpsHHtKM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=s34Ws2n+7HtV0TSE9jNlAcGcAwSnIXtby1gWD+g6kw+Cy5nlzfPbjijj9SYt6U4Lh
+         26hc/eEwhvUhp5X6XNrn6FkwEDM6pgigoLxWpEL9CtjP3Rdk4BTW70WrOroACu34HD
+         Zi4pvSfzpJxpSjQN3xpiSeH7q7vtcYBjADaiENTw=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8D9978B786;
+        Tue, 17 Mar 2020 11:28:54 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id gOyhT9wAG_pI; Tue, 17 Mar 2020 11:28:54 +0100 (CET)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D45648B785;
+        Tue, 17 Mar 2020 11:28:52 +0100 (CET)
+Subject: Re: [PATCH 05/15] powerpc/watchpoint: Provide DAWR number to set_dawr
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>, mpe@ellerman.id.au,
+        mikey@neuling.org
+Cc:     apopple@linux.ibm.com, paulus@samba.org, npiggin@gmail.com,
+        naveen.n.rao@linux.vnet.ibm.com, peterz@infradead.org,
+        jolsa@kernel.org, oleg@redhat.com, fweisbec@gmail.com,
+        mingo@kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+References: <20200309085806.155823-1-ravi.bangoria@linux.ibm.com>
+ <20200309085806.155823-6-ravi.bangoria@linux.ibm.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <4704ba5d-2bc3-38f6-8097-b8a850592461@c-s.fr>
+Date:   Tue, 17 Mar 2020 11:28:51 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=WiceRwLUS1sdL_W=ELKYZ9zKE13e8vx9SO0+tRvX74QQ@mail.gmail.com>
+In-Reply-To: <20200309085806.155823-6-ravi.bangoria@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 02:52:24PM -0800, Doug Anderson wrote:
-> Hi,
-> 
-> 
-> On Sun, Jan 5, 2020 at 2:47 PM David Miller <davem@davemloft.net> wrote:
-> >
-> > From: Wen Gong <wgong@codeaurora.org>
-> > Date: Fri,  3 Jan 2020 12:50:16 +0800
-> >
-> > > The len used for skb_put_padto is wrong, it need to add len of hdr.
-> >
-> > Thanks, applied.
-> 
-> I noticed this patch is in mainline now as:
-> 
-> ce57785bf91b net: qrtr: fix len of skb_put_padto in qrtr_node_enqueue
-> 
-> Though I'm not an expert on the code, it feels like a stable candidate
-> unless someone objects.
 
-Stable candidate for what tree(s)?
 
-thanks,
+Le 09/03/2020 à 09:57, Ravi Bangoria a écrit :
+> Introduce new parameter 'nr' to set_dawr() which indicates which DAWR
+> should be programed.
 
-greg k-h
+While we are at it (In another patch I think), we should do the same to 
+set_dabr() so that we can use both DABR and DABR2
+
+Christophe
