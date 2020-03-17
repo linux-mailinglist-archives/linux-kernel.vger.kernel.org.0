@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96FDB187F1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:58:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CDA3187F1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:58:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbgCQK6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 06:58:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36844 "EHLO mail.kernel.org"
+        id S1726913AbgCQK6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:58:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726564AbgCQK6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 06:58:39 -0400
+        id S1726895AbgCQK6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:58:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37E9420735;
-        Tue, 17 Mar 2020 10:58:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3228220658;
+        Tue, 17 Mar 2020 10:58:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442718;
-        bh=66/bLf6Hi1EaCyAFrklBvcq42gI8ICTXvyQYaCRAOkY=;
+        s=default; t=1584442723;
+        bh=3ycDTyYxwd9o60qmSo4rqdbhWA24xLo12HZR6LR5HMk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FE+jM8ZcjBAlrTvqtbepqjb/7gbPHJr920Bf0T/Eic8P7WUdo2f2JOGj2TScgyfPx
-         cAy6irT3AaI/9v5No/yC2UKsW2s150bgNByN/gEtqOkqHup/7CCIldOyZ7Rvs7DEPd
-         TZN7BZoGu6n15KAfDK/zr2u8dBN2AhDjR2SqXG2s=
+        b=J8wCwNOXLsBFoqJjzhyq9aKG6Eoz+a7oCTVLCzljNeAK9NydB5BRqm+ruCpvnpYnC
+         vQf0QoO3WFOem9/GVuI+fZDFXtueZRRgF12nmJFZ8pplmoPCtes51VuwdnAuCkwkQz
+         SMcItbG+iehng3r13ZH4sq8seP1UvnRJ+7UyYzng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 57/89] ktest: Add timeout for ssh sync testing
-Date:   Tue, 17 Mar 2020 11:55:06 +0100
-Message-Id: <20200317103306.457163324@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        stable@kernel.org
+Subject: [PATCH 4.19 58/89] cifs_atomic_open(): fix double-put on late allocation failure
+Date:   Tue, 17 Mar 2020 11:55:07 +0100
+Message-Id: <20200317103306.570296679@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
 References: <20200317103259.744774526@linuxfoundation.org>
@@ -43,36 +43,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 4d00fc477a2ce8b6d2b09fb34ef9fe9918e7d434 upstream.
+commit d9a9f4849fe0c9d560851ab22a85a666cddfdd24 upstream.
 
-Before rebooting the box, a "ssh sync" is called to the test machine to see
-if it is alive or not. But if the test machine is in a partial state, that
-ssh may never actually finish, and the ktest test hangs.
+several iterations of ->atomic_open() calling conventions ago, we
+used to need fput() if ->atomic_open() failed at some point after
+successful finish_open().  Now (since 2016) it's not needed -
+struct file carries enough state to make fput() work regardless
+of the point in struct file lifecycle and discarding it on
+failure exits in open() got unified.  Unfortunately, I'd missed
+the fact that we had an instance of ->atomic_open() (cifs one)
+that used to need that fput(), as well as the stale comment in
+finish_open() demanding such late failure handling.  Trivially
+fixed...
 
-Add a 10 second timeout to the sync test, which will fail after 10 seconds
-and then cause the test to reboot the test machine.
-
-Cc: stable@vger.kernel.org
-Fixes: 6474ace999edd ("ktest.pl: Powercycle the box on reboot if no connection can be made")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: fe9ec8291fca "do_last(): take fput() on error after opening to out:"
+Cc: stable@kernel.org # v4.7+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/ktest/ktest.pl |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/filesystems/porting |    7 +++++++
+ fs/cifs/dir.c                     |    1 -
+ fs/open.c                         |    3 ---
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
---- a/tools/testing/ktest/ktest.pl
-+++ b/tools/testing/ktest/ktest.pl
-@@ -1372,7 +1372,7 @@ sub reboot {
+--- a/Documentation/filesystems/porting
++++ b/Documentation/filesystems/porting
+@@ -627,3 +627,10 @@ in your dentry operations instead.
+ 	DCACHE_RCUACCESS is gone; having an RCU delay on dentry freeing is the
+ 	default.  DCACHE_NORCU opts out, and only d_alloc_pseudo() has any
+ 	business doing so.
++--
++[mandatory]
++
++	[should've been added in 2016] stale comment in finish_open()
++	nonwithstanding, failure exits in ->atomic_open() instances should
++	*NOT* fput() the file, no matter what.  Everything is handled by the
++	caller.
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@ -561,7 +561,6 @@ cifs_atomic_open(struct inode *inode, st
+ 		if (server->ops->close)
+ 			server->ops->close(xid, tcon, &fid);
+ 		cifs_del_pending_open(&open);
+-		fput(file);
+ 		rc = -ENOMEM;
+ 	}
  
-     } else {
- 	# Make sure everything has been written to disk
--	run_ssh("sync");
-+	run_ssh("sync", 10);
- 
- 	if (defined($time)) {
- 	    start_monitor;
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -851,9 +851,6 @@ cleanup_file:
+  * the return value of d_splice_alias(), then the caller needs to perform dput()
+  * on it after finish_open().
+  *
+- * On successful return @file is a fully instantiated open file.  After this, if
+- * an error occurs in ->atomic_open(), it needs to clean up with fput().
+- *
+  * Returns zero on success or -errno if the open failed.
+  */
+ int finish_open(struct file *file, struct dentry *dentry,
 
 
