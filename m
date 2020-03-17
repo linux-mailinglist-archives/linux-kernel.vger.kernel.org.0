@@ -2,57 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBDE118770E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 01:48:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBAB2187717
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 01:52:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733182AbgCQAsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 20:48:37 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:50358 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733005AbgCQAsh (ORCPT
+        id S1733201AbgCQAwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 20:52:22 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:49313 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733122AbgCQAwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 20:48:37 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 9CCDA1579A147;
-        Mon, 16 Mar 2020 17:48:36 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 17:48:36 -0700 (PDT)
-Message-Id: <20200316.174836.1008034012256551916.davem@davemloft.net>
-To:     masahiroy@kernel.org
-Cc:     linux-kbuild@vger.kernel.org, sparclinux@vger.kernel.org,
-        clang-built-linux@googlegroups.com, viro@zeniv.linux.org.uk,
-        ndesaulniers@google.com, ilie.halip@gmail.com,
-        natechancellor@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] sparc: revive __HAVE_ARCH_STRLEN for 32bit sparc
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200311223725.27662-1-masahiroy@kernel.org>
-References: <20200311223725.27662-1-masahiroy@kernel.org>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 16 Mar 2020 17:48:37 -0700 (PDT)
+        Mon, 16 Mar 2020 20:52:21 -0400
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id 02H0qATW015723
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 09:52:11 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 02H0qATW015723
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1584406331;
+        bh=bTisUi+CZu/g6bO8aAotHn/SP8Hi7R+MiDzAL3ZUAfI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ji2It9v1H6SycySh6Tfb8fZBnkrKpkX6+Aqs5NFA/+Y5ti2Azoy6+wuAhqJdEUfeJ
+         e439Ti3fs0IUKDa2rcJHn8FrKT93uNvDXtf7W1SRwPa5tCKLwsZAgN3FX+6YFXkP1z
+         rWJXKKJA2VUE65KMiz48ZUaU/N5fRgIxZFgodYraFfknGKre8+qnzRQ74VRpOA3/4V
+         Ui9+XXWyENLpz4CzMw8fxuC9/qZP0lJNe9ESVpInJCvjM8YDLQtNgRm2sRA/VQdv6a
+         ytyLh+B2mIpmAPpTKTm+Q9sNOzVIDGGqigEpJRDw7kuqFP8tV8ZBtHxJqLRZlMhIp5
+         VRyTCPiIaxrvg==
+X-Nifty-SrcIP: [209.85.217.52]
+Received: by mail-vs1-f52.google.com with SMTP id m25so3904043vsa.7
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 17:52:10 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ39JH2J2E4B70gHSzSgO97btuRfn3AK6pUp1FCzsmsqzIQI8NBK
+        lzTfYEFZBQa6vUmZ8bXnwGktZKcfj1IYK4rZvBw=
+X-Google-Smtp-Source: ADFU+vuYWhTKUDP6HaM3wuCYIV2TyqZ3Q6nfU58hUxaICMBE++bLTwLXAhjLlI1bkSpqjl4rONmhLJUtIcpDgx2iSMk=
+X-Received: by 2002:a67:8745:: with SMTP id j66mr1824203vsd.181.1584406329863;
+ Mon, 16 Mar 2020 17:52:09 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200316112519.4375-1-Eugeniy.Paltsev@synopsys.com>
+In-Reply-To: <20200316112519.4375-1-Eugeniy.Paltsev@synopsys.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Tue, 17 Mar 2020 09:51:34 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATL1wApAN4uta_YQsdHmOAvRg1z7P1fun9Y8t0QjwBYxQ@mail.gmail.com>
+Message-ID: <CAK7LNATL1wApAN4uta_YQsdHmOAvRg1z7P1fun9Y8t0QjwBYxQ@mail.gmail.com>
+Subject: Re: [PATCH v2] initramfs: restore default compression behavior
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 12 Mar 2020 07:37:24 +0900
+On Mon, Mar 16, 2020 at 8:25 PM Eugeniy Paltsev
+<Eugeniy.Paltsev@synopsys.com> wrote:
+>
+> Even though INITRAMFS_SOURCE kconfig option isn't set in most of
+> defconfigs it is used (set) extensively by various build systems.
+> Commit f26661e12765 ("initramfs: make initramfs compression choice
+> non-optional") has changed default compression mode. Previously we
+> compress initramfs using available compression algorithm. Now
+> we don't use any compression at all by default.
+> It significantly increases the image size in case of build system
+> chooses embedded initramfs. Initially I faced with this issue while
+> using buildroot.
+>
+> As of today it's not possible to set preferred compression mode
+> in target defconfig as this option depends on INITRAMFS_SOURCE
+> being set. Modification of all build systems either doesn't look
+> like good option.
+>
+> Let's instead rewrite initramfs compression mode choices list
+> the way that "INITRAMFS_COMPRESSION_NONE" will be the last option
+> in the list. In that case it will be chosen only if all other
+> options (which implements any compression) are not available.
+>
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-> Prior to commit 70a6fcf3283a ("[sparc] unify 32bit and 64bit string.h"),
-> __HAVE_ARCH_STRLEN was defined in both of string_32.h and string_64.h
-> 
-> It did not unify __HAVE_ARCH_STRLEN, but deleted it from string_32.h
-> 
-> This issue was reported by the kbuild test robot in the trial of
-> forcible linking of $(lib-y) to vmlinux.
-> 
-> Fixes: 70a6fcf3283a ("[sparc] unify 32bit and 64bit string.h")
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-Acked-by: David S. Miller <davem@davemloft.net>
+Applied to linux-kbuild.
+Thanks.
+
+
+
+> ---
+>  usr/Kconfig | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+>
+> diff --git a/usr/Kconfig b/usr/Kconfig
+> index bdf5bbd40727..96afb03b65f9 100644
+> --- a/usr/Kconfig
+> +++ b/usr/Kconfig
+> @@ -124,17 +124,6 @@ choice
+>
+>           If in doubt, select 'None'
+>
+> -config INITRAMFS_COMPRESSION_NONE
+> -       bool "None"
+> -       help
+> -         Do not compress the built-in initramfs at all. This may sound wasteful
+> -         in space, but, you should be aware that the built-in initramfs will be
+> -         compressed at a later stage anyways along with the rest of the kernel,
+> -         on those architectures that support this. However, not compressing the
+> -         initramfs may lead to slightly higher memory consumption during a
+> -         short time at boot, while both the cpio image and the unpacked
+> -         filesystem image will be present in memory simultaneously
+> -
+>  config INITRAMFS_COMPRESSION_GZIP
+>         bool "Gzip"
+>         depends on RD_GZIP
+> @@ -207,4 +196,15 @@ config INITRAMFS_COMPRESSION_LZ4
+>           If you choose this, keep in mind that most distros don't provide lz4
+>           by default which could cause a build failure.
+>
+> +config INITRAMFS_COMPRESSION_NONE
+> +       bool "None"
+> +       help
+> +         Do not compress the built-in initramfs at all. This may sound wasteful
+> +         in space, but, you should be aware that the built-in initramfs will be
+> +         compressed at a later stage anyways along with the rest of the kernel,
+> +         on those architectures that support this. However, not compressing the
+> +         initramfs may lead to slightly higher memory consumption during a
+> +         short time at boot, while both the cpio image and the unpacked
+> +         filesystem image will be present in memory simultaneously
+> +
+>  endchoice
+> --
+> 2.21.1
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
