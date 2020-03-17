@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B192187E15
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:20:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B4C1187E18
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:20:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbgCQKUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 06:20:12 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40500 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbgCQKUM (ORCPT
+        id S1726484AbgCQKUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:20:17 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37474 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbgCQKUM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 17 Mar 2020 06:20:12 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 19so22083569ljj.7;
-        Tue, 17 Mar 2020 03:20:10 -0700 (PDT)
+Received: by mail-lj1-f193.google.com with SMTP id r24so22171847ljd.4;
+        Tue, 17 Mar 2020 03:20:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=is8tu01oI9bVkgZplXk42aSakxSz6rAJ1WcVx3M2ffk=;
-        b=Lh4VSc3+3zY/FWLvCzmh0TQNEJUxlEFOlhn1AHPyztxgmZdQxYdF3Apjj2bnBQqdaX
-         kbMJHjvAgJ4lcLzKANUoDsCdQjLuIzWAOCPxj6SlInXyrgpjKcQlkeQ3pVJTsE6X924i
-         vfN5pUd+8raD956VQCFmvv4ps5PeMcmZtiZQ0cDwQTsTYR8gXoX9dEJAOBsp853q9MuF
-         Y6EQjriogTV3pBQz7F1PlQdPKh5YoEGIyvgSaEtn/rnsGdlp/UySXWhrJzzuSbDc4VGb
-         v8Te7WkzyfqfAPkLRRuLR7zdMVjuwiTflK1AmT9DYFqQK+PdI1JG/LuvVD7f8gDLKJtJ
-         oh5Q==
+        bh=TGItJuz5W+h2gk6C+B6NIbPkvJZ2cZOlOG/P+lQP9D0=;
+        b=JFZQuTgf0ix5GURciyxJzWH0sf14opuwqmkI7yvs/F5Adnfkifh53/Erfv3MQTmy9/
+         9GQY7KikuoGDq/yCVcBDkdMFy3/kh7ZhPUiHw2lGonWtoSOaIFA2KhsqhfzSlN2rPWfG
+         IlXWiOriBmkqXsDsZNrFxijHgX2FRmzOEdxtc1ijrDL2F2M2s4ulfcWlt2AN0AC3diI1
+         s5rjK2JxOg8XUC9PJybzYaqxvBKFukvPzQH/pjfB1j83zku/E8mskdc33c8vCKAr4aW3
+         inpShlE9qeQPQIWCfAZmUMCh8N/1dztWnZmGKEvsohgeY2GjsUB/kdzujVEVzcqlx22+
+         fqug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=is8tu01oI9bVkgZplXk42aSakxSz6rAJ1WcVx3M2ffk=;
-        b=YbMh5u+mjQk8MhV6IpieV5B4zPVWxwf44g35rKWQiWT+1ghI3CR4ZOC7Zafhc63DxG
-         81RSRjunNOYynxcltgY1Hea3orexkxoSPQLg3wrVwfWco5n8eIHVV2e2hGGNQ977dwml
-         K/770NTRBBUsGg1I86xnxhkldIH8cmkfNwrYH6kQoWMtpF3duM7ikoKCnPt/dd3h7tic
-         rE3FX47wHt6LJ3RIKFXPGIiSUD/pSAMMmUrpZJVjQGOK49LGIa/zq4MivuSdhBwYTXG3
-         z3MprftUmRCVfqr8+/rcD1tydfO6lytTbcr3Zg4OZkHJo1PK1PzJjtSD/mobVKCgPXOp
-         3orQ==
-X-Gm-Message-State: ANhLgQ3rJP0IZEiGXomi7ESFnTqFD9M5gAg+4F/CeJFblvG/XQrHbtDa
-        0DQutY4YQHG976M7Tn33fpE=
-X-Google-Smtp-Source: ADFU+vu+oVgM5dB35uttw31MKLJJ+4OpDjdkJkebw92io41NHd3XzDdmhOFlBJyapkSiQSd+Wp2Pqw==
-X-Received: by 2002:a2e:7806:: with SMTP id t6mr2326054ljc.292.1584440409165;
-        Tue, 17 Mar 2020 03:20:09 -0700 (PDT)
+        bh=TGItJuz5W+h2gk6C+B6NIbPkvJZ2cZOlOG/P+lQP9D0=;
+        b=pRlI8iDs6zOLA37RwfCzEUFVOvcgD1In9nz7Rf3fQtQZjO4/Q5Kr8PYk8TzE6ww234
+         ZJaQA+8hSShRH4Ejb3qaGLDpaJX58OcnCeQQgMRkrL9wilG/LBMcEHkfzVt+Ck62HkcS
+         GQbnMAel5TS+9lVZ8Be/d99i7n2j+7oaUgk5P8dyVN5kkfyxLSNxyiHa3e1keka8KN28
+         xfjpC7yKhDcmnPvAPM6vcYfDkGaAivzJknt++Q8ShPjZ6l4t8QP9bAZeaUfm6nAc3t48
+         aze5etRThvTCa3MDfxkhf5aEaIIrKC6grNazHakYg8tnHekL9PvNfbAVqWwRkeYZx5Su
+         fTvg==
+X-Gm-Message-State: ANhLgQ25ArdZoLW8dgd1snQ7Gdt7PE8fOIiMoDC6ixSEdqmaDQ4HtWTF
+        G9iDw8uDT26sPSRGJhNuMYk=
+X-Google-Smtp-Source: ADFU+vslGfTWII4zYbs4+SWZVmzcm1asQXYP0xCVtUNvJ3fqgQvjprHgGlIsriWG0xbiU7Nx1gBO4A==
+X-Received: by 2002:a05:651c:1058:: with SMTP id x24mr2423894ljm.248.1584440410561;
+        Tue, 17 Mar 2020 03:20:10 -0700 (PDT)
 Received: from localhost (host-176-37-176-139.la.net.ua. [176.37.176.139])
-        by smtp.gmail.com with ESMTPSA id t207sm2422878lff.72.2020.03.17.03.20.08
+        by smtp.gmail.com with ESMTPSA id m18sm1956945ljj.52.2020.03.17.03.20.09
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Mar 2020 03:20:08 -0700 (PDT)
+        Tue, 17 Mar 2020 03:20:10 -0700 (PDT)
 From:   Igor Opaniuk <igor.opaniuk@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Max Krummenacher <max.krummenacher@toradex.com>,
@@ -53,21 +53,12 @@ Cc:     Max Krummenacher <max.krummenacher@toradex.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
         Igor Opaniuk <igor.opaniuk@toradex.com>,
-        Allison Randal <allison@lohutok.net>,
-        Enrico Weigelt <info@metux.net>,
-        Fabio Estevam <festevam@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v1 2/5] ARM: dt-bindings: clock: imx6: Dual license adding MIT
-Date:   Tue, 17 Mar 2020 12:19:44 +0200
-Message-Id: <20200317101947.27250-2-igor.opaniuk@gmail.com>
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v1 3/5] dt-bindings: gpio: Dual license file adding MIT
+Date:   Tue, 17 Mar 2020 12:19:45 +0200
+Message-Id: <20200317101947.27250-3-igor.opaniuk@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200317101947.27250-1-igor.opaniuk@gmail.com>
 References: <20200317101947.27250-1-igor.opaniuk@gmail.com>
@@ -84,19 +75,19 @@ bindings and dependent device tree sources in other non-GPL OSS projects.
 Signed-off-by: Igor Opaniuk <igor.opaniuk@toradex.com>
 ---
 
- include/dt-bindings/clock/imx6qdl-clock.h | 2 +-
+ include/dt-bindings/gpio/gpio.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
-index e20c43cc36f6..e73b4b329c1e 100644
---- a/include/dt-bindings/clock/imx6qdl-clock.h
-+++ b/include/dt-bindings/clock/imx6qdl-clock.h
+diff --git a/include/dt-bindings/gpio/gpio.h b/include/dt-bindings/gpio/gpio.h
+index c029467e828b..01c528708208 100644
+--- a/include/dt-bindings/gpio/gpio.h
++++ b/include/dt-bindings/gpio/gpio.h
 @@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
-+/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+-/* SPDX-License-Identifier: GPL-2.0 */
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
  /*
-  * Copyright 2014 Freescale Semiconductor, Inc.
-  */
+  * This header provides constants for most GPIO bindings.
+  *
 -- 
 2.17.1
 
