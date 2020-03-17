@@ -2,85 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44AE9189059
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:31:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 279FD18908A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:35:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbgCQVbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 17:31:10 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:40906 "EHLO mail.skyhub.de"
+        id S1727357AbgCQVeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 17:34:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726494AbgCQVbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 17:31:09 -0400
-Received: from zn.tnic (p200300EC2F0C960029779DE4AAC583E4.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:9600:2977:9de4:aac5:83e4])
+        id S1727332AbgCQVeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 17:34:17 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 58AE31EC0C68;
-        Tue, 17 Mar 2020 22:31:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1584480668;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=RMKAealFBjjSPHlKH7zxedK6Vy5tkttV34MQFS3HmiQ=;
-        b=LjpQr+GlX3iH9rEkBWb84N4Q1ycXhEIq9TvynjyGe4TTrcJjq+Fn4WVqy1q6xvjSVFjVR5
-        QLXkqznZ/G8JHEBkbIojedr2YcdSwmzZdn/FjtptrhJZyyAdnmnnK/8ZMln+7fi4kGNysY
-        VZaz4YQQKq3EP6FINuFyeolQaLrbBug=
-Date:   Tue, 17 Mar 2020 22:31:14 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        "Schofield, Alison" <alison.schofield@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
+        by mail.kernel.org (Postfix) with ESMTPSA id E57A920754;
+        Tue, 17 Mar 2020 21:34:16 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.93)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1jEJqp-000EUz-MS; Tue, 17 Mar 2020 17:34:15 -0400
+Message-Id: <20200317213222.421100128@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Tue, 17 Mar 2020 17:32:22 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "Shutemov, Kirill" <kirill.shutemov@intel.com>
-Subject: Re: [PATCH] treewide: Rename "unencrypted" to "decrypted"
-Message-ID: <20200317213100.GH15609@zn.tnic>
-References: <20200317111822.GA15609@zn.tnic>
- <2cb4a8ae-3b13-67bd-c021-aee47fdf58c5@intel.com>
- <20200317210602.GG15609@zn.tnic>
- <f3e520c6-f455-9c82-abfc-d014ca63eeb5@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f3e520c6-f455-9c82-abfc-d014ca63eeb5@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Peter Wu <peter@lekensteyn.nl>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Tom Zanussi <zanussi@kernel.org>
+Subject: [RFC][PATCH 00/11] ring-buffer/tracing: Remove disabling of ring buffer while reading trace file
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 02:24:59PM -0700, Dave Hansen wrote:
-> No, there are just two states.  I just think the "!encrypted" case
-> should not be called "decrypted".
+When the ring buffer was first written for ftrace, there was two
+human readable files to read it. One was a standard "producer/consumer"
+file (trace_pipe), which would consume data from the ring buffer as
+it read it, and the other was a "static iterator" that would not
+consume the events, such that the file could be read multiple times
+and return the same output each time.
 
-Yeah, we suck at naming - news at 11! :-)
+The "static iterator" was never meant to be read while there was an
+active writer to the ring buffer. If writing was enabled, then it
+would disable the writer when the trace file was opened.
 
-I believe we even considered things like "encrypted" vs "clear" but
-that sucked too. ;-\
+There has been some complaints about this by the BPF folks, that did
+not realize this little bit of information and it was requested that
+the "trace" file does not stop the writing to the ring buffer.
 
-In any case, that ship has sailed now and having two as differently as
-possible looking words to denote the two "states" should be good enough
-for our purposes...
+This patch series attempts to satisfy that request, by creating a
+temporary buffer in each of the per cpu iterators to place the
+read event into, such that it can be passed to users without worrying
+about a writer to corrupt the event while it was being written out.
+It also uses the fact that the ring buffer is broken up into pages,
+where each page has its own timestamp that gets updated when a
+writer crosses over to it. By copying it to the temp buffer, and
+doing a "before and after" test of the time stamp with memory barriers,
+can allow the events to be saved.
 
-Oh well.
 
--- 
-Regards/Gruss,
-    Boris.
+Steven Rostedt (VMware) (11):
+      tracing: Save off entry when peeking at next entry
+      ring-buffer: Have ring_buffer_empty() not depend on tracing stopped
+      ring-buffer: Rename ring_buffer_read() to read_buffer_iter_advance()
+      ring-buffer: Add page_stamp to iterator for synchronization
+      ring-buffer: Have rb_iter_head_event() handle concurrent writer
+      ring-buffer: Do not die if rb_iter_peek() fails more than thrice
+      ring-buffer: Optimize rb_iter_head_event()
+      ring-buffer: Do not disable recording when there is an iterator
+      tracing: Do not disable tracing when reading the trace file
+      ring-buffer/tracing: Have iterator acknowledge dropped events
+      tracing: Have the document reflect that the trace file keeps tracing enabled
 
-https://people.kernel.org/tglx/notes-about-netiquette
+----
+ Documentation/trace/ftrace.rst       |  13 +--
+ include/linux/ring_buffer.h          |   4 +-
+ include/linux/trace_events.h         |   2 +
+ kernel/trace/ring_buffer.c           | 194 +++++++++++++++++++++++++----------
+ kernel/trace/trace.c                 |  55 +++++++---
+ kernel/trace/trace_functions_graph.c |   2 +-
+ kernel/trace/trace_output.c          |  15 ++-
+ 7 files changed, 195 insertions(+), 90 deletions(-)
