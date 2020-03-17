@@ -2,83 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE0DC188573
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 14:25:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A78A188567
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 14:25:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbgCQNZs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 09:25:48 -0400
-Received: from mga12.intel.com ([192.55.52.136]:19749 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726598AbgCQNZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 09:25:47 -0400
-IronPort-SDR: ue1rbw7J6dlN0MKVJ8tC/i7b9daFjn9iMkxUOg/PBvySRYZYs7IrAThp9/R8i/19DX+M7ohNkM
- r9n1XTudgvow==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 06:25:46 -0700
-IronPort-SDR: L28m/kiwhYUy/mfnSa8h9loV0UoWrxrfnkyDYHyqd3wPWXkLjk7UEfYgIBStmQe/HZfHyQJlK7
- T0gq/Gov4yQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,564,1574150400"; 
-   d="scan'208";a="244476497"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.87]) ([10.237.72.87])
-  by orsmga003.jf.intel.com with ESMTP; 17 Mar 2020 06:25:44 -0700
-Subject: Re: [PATCH v2 0/3] Introduce the request_atomic() for the host
-To:     Baolin Wang <baolin.wang7@gmail.com>, ulf.hansson@linaro.org
-Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, arnd@arndb.de,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1584428736.git.baolin.wang7@gmail.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <7866e519-80ad-8678-6708-7726a53ea4f5@intel.com>
-Date:   Tue, 17 Mar 2020 15:25:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726556AbgCQNZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 09:25:31 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39844 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725872AbgCQNZa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 09:25:30 -0400
+Received: by mail-pg1-f194.google.com with SMTP id b22so5748972pgb.6;
+        Tue, 17 Mar 2020 06:25:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=agG+dITcuAm3KPc+VwzNwpsgr+i8A6gZOBf/aTNCeRE=;
+        b=iG0Wk+45lpTMF6Qs9ptAuWGLvyCn/OdTa5ZWDJ7CrFZLWBOV7vQsaN+wETj/Ypzo8/
+         5+g1gwgRhqIIDY7bAGP+7sSPXhCqYE4CGiDNG4stIeOKHgHdZ0QP1OGU7Mbs40zcsfbd
+         meweTxGdlZ5pVXW01Jm7BAPxgUXoZJmWOUBe6phYUM+5z3aMhyT+o4bxug8EPSi+boGg
+         UrnhKwlf+VofnjUMkhdoGkZP8+AcA5ISstIsrVYoxsmwqBcOswUUdDyH0noKSLa+fHHa
+         h38JHOEbcLeP4ZLetyy9xB9qAR2zNOWSgw/ioSS9FLWRk31/bFWmMB3rtKU8226evWBI
+         cNTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=agG+dITcuAm3KPc+VwzNwpsgr+i8A6gZOBf/aTNCeRE=;
+        b=UNsKLiyqkroO8ZcDUx/WQWZXdVXvl8KeuuN+WY7UjCm77zGPDcHgZcoFr53nduiqOI
+         GgZ2r9bgIhW9cMcAspiLOL4Jlu6XGVEW65EFiNoz4wXC5j71WEdpnrC11jfsybhoVm5z
+         iIKe7YC8kqLY1LxBAJ2u10T5L+GGSLv51KGoRqIWqiFsfUe9p+ECm55y0UPumLCrZT2x
+         M0T2+G9OvwvZ6OV24bGOKuAxPIOG3Agy6YZvLQyxfQQ+Wy+VIcgufXEARvzKmFuWZkn3
+         WzTKZf3kdTe68uSotX/v0DADzjD2Fh0Hr29yROgjqsmPooUNNCANzoGRhSFsmt77nsLN
+         wzfQ==
+X-Gm-Message-State: ANhLgQ3FYdyO5vrKfhuZZNoK/P9WZ5b7Y/Iu1VpES0Da3qrTWsU6T7I6
+        TjNAR86RJhN9IoJDrv4QZSQ=
+X-Google-Smtp-Source: ADFU+vsLRcmJ2YKpbw2In4/U3k6OYkKkfv94ONyzhv0jHQQnV+sSmfb3hOtExDusuMk9QBCfjQ4QnA==
+X-Received: by 2002:a63:348b:: with SMTP id b133mr5272049pga.372.1584451529546;
+        Tue, 17 Mar 2020 06:25:29 -0700 (PDT)
+Received: from localhost.corp.microsoft.com ([167.220.2.210])
+        by smtp.googlemail.com with ESMTPSA id e30sm2910902pga.6.2020.03.17.06.25.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Mar 2020 06:25:28 -0700 (PDT)
+From:   ltykernel@gmail.com
+X-Google-Original-From: Tianyu.Lan@microsoft.com
+To:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        liuwe@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        michael.h.kelley@microsoft.com
+Cc:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkuznets@redhat.com
+Subject: [PATCH 0/4] x86/Hyper-V: Panic code path fixes
+Date:   Tue, 17 Mar 2020 06:25:19 -0700
+Message-Id: <20200317132523.1508-1-Tianyu.Lan@microsoft.com>
+X-Mailer: git-send-email 2.14.5
 MIME-Version: 1.0
-In-Reply-To: <cover.1584428736.git.baolin.wang7@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/03/20 12:14 pm, Baolin Wang wrote:
-> This patch set introduces a new request_atomic() interface for the
-> MMC host controller, which is used to submit a request to host in
-> the atomic context, such as in the irq hard handler, to reduce the
-> request latency.
-> 
-> Any comments are welcome. Thanks.
-> 
-> Note: Adrian pointed out that it is not good if moving the polling of
-> inhibit bits in sdhci_send_command() into the interrupt context, but
-> now I have not found a better way to address Adrian's concern. Moveover
-> this is an unusual abnormal case and the original code has the same
-> problem, so I plan to create another patch set to talk about and fix
-> this issue.
+From: Tianyu Lan <Tianyu.Lan@microsoft.com>
 
-I tend to think the API requires the possibility for host controllers to
-return "busy", so that should be sorted out first.
+This patchset fixes some issues in the Hyper-V panic code path.
+Patch 1 resolves issue that panic system still responses network
+packets.
+Patch 2-3 resolves crash enlightenment issues.
+Patch 4 is to set crash_kexec_post_notifiers to true for Hyper-V
+VM in order to report crash data or kmsg to host before running
+kdump kernel.
 
-> 
-> Changes from v1:
->  - Re-split the changes to make them more clear suggested by Ulf.
->  - Factor out the auto CMD23 checking into a separate function.
-> 
-> Baolin Wang (3):
->   mmc: host: Introduce the request_atomic() for the host
->   mmc: host: sdhci: Implement the request_atomic() API
->   mmc: host: sdhci-sprd: Implement the request_atomic() API
-> 
->  drivers/mmc/host/mmc_hsq.c    |  5 ++++-
->  drivers/mmc/host/sdhci-sprd.c | 23 ++++++++++++++++++++---
->  drivers/mmc/host/sdhci.c      | 27 +++++++++++++++++++--------
->  drivers/mmc/host/sdhci.h      |  1 +
->  include/linux/mmc/host.h      |  3 +++
->  5 files changed, 47 insertions(+), 12 deletions(-)
-> 
+Tianyu Lan (4):
+  x86/Hyper-V: Unload vmbus channel in hv panic callback
+  x86/Hyper-V: Free hv_panic_page when fail to register kmsg dump
+  x86/Hyper-V: Trigger crash enlightenment only once during  system
+    crash.
+  x86/Hyper-V: Report crash register data or ksmg before running crash
+    kernel
+
+ arch/x86/kernel/cpu/mshyperv.c | 10 ++++++++++
+ drivers/hv/channel_mgmt.c      |  5 +++++
+ drivers/hv/vmbus_drv.c         | 35 +++++++++++++++++++++++++----------
+ 3 files changed, 40 insertions(+), 10 deletions(-)
+
+-- 
+2.14.5
 
