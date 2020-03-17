@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 671E51881BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:20:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6D631880A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:12:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728471AbgCQLTJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:19:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45236 "EHLO mail.kernel.org"
+        id S1729109AbgCQLMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:12:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726863AbgCQLEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:04:46 -0400
+        id S1729133AbgCQLMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:12:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6E9220736;
-        Tue, 17 Mar 2020 11:04:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5072520658;
+        Tue, 17 Mar 2020 11:11:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443086;
-        bh=/u62k7k4XbFRbH1vWPs3YBXWUG0u2KF4TDGcXKapG9g=;
+        s=default; t=1584443517;
+        bh=PjE1O1D4TXCkuEAVRYTD0lo95CU/BJbQobYhAMV1hdg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YA5Jfn+KZDwdnaVuKioAZaxl74CQw/dgdCNKbVsO9oQ1sN/DgcaNQnOXWfHxb+TDM
-         Y+/ODLF/AmwNfrKNyTQiXPIxZX9/s8feTRiPf3jiEck56jdHFGF4DKLYO7y3I3LZEQ
-         qa+Xhy3K4m4oy/56s88nJgZkNvn0wXTJXueEoBnk=
+        b=q/imGYDpZCzRKwCgWlAfW2Kc5AIaxpe4nZ7un2qVsWA83mzqjoq376btTvRsC3cfY
+         yLcM7VjkESHsVlMFc8aw2oXq57lt6/sPepiKlYXhqeYLvMZjhPsW7v0bXMR6kUaJqS
+         ErRIkpFSgDCkivtsTdYTvDsr0QQe0PBhd4jcoiSI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
-        Borislav Petkov <bp@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 5.4 091/123] perf/amd/uncore: Replace manual sampling check with CAP_NO_INTERRUPT flag
-Date:   Tue, 17 Mar 2020 11:55:18 +0100
-Message-Id: <20200317103317.014033256@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>
+Subject: [PATCH 5.5 109/151] fscrypt: dont evict dirty inodes after removing key
+Date:   Tue, 17 Mar 2020 11:55:19 +0100
+Message-Id: <20200317103334.199840852@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
-References: <20200317103307.343627747@linuxfoundation.org>
+In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
+References: <20200317103326.593639086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,80 +42,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kim Phillips <kim.phillips@amd.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit f967140dfb7442e2db0868b03b961f9c59418a1b upstream.
+commit 2b4eae95c7361e0a147b838715c8baa1380a428f upstream.
 
-Enable the sampling check in kernel/events/core.c::perf_event_open(),
-which returns the more appropriate -EOPNOTSUPP.
+After FS_IOC_REMOVE_ENCRYPTION_KEY removes a key, it syncs the
+filesystem and tries to get and put all inodes that were unlocked by the
+key so that unused inodes get evicted via fscrypt_drop_inode().
+Normally, the inodes are all clean due to the sync.
 
-BEFORE:
+However, after the filesystem is sync'ed, userspace can modify and close
+one of the files.  (Userspace is *supposed* to close the files before
+removing the key.  But it doesn't always happen, and the kernel can't
+assume it.)  This causes the inode to be dirtied and have i_count == 0.
+Then, fscrypt_drop_inode() failed to consider this case and indicated
+that the inode can be dropped, causing the write to be lost.
 
-  $ sudo perf record -a -e instructions,l3_request_g1.caching_l3_cache_accesses true
-  Error:
-  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (l3_request_g1.caching_l3_cache_accesses).
-  /bin/dmesg | grep -i perf may provide additional information.
+On f2fs, other problems such as a filesystem freeze could occur due to
+the inode being freed while still on f2fs's dirty inode list.
 
-With nothing relevant in dmesg.
+Fix this bug by making fscrypt_drop_inode() only drop clean inodes.
 
-AFTER:
+I've written an xfstest which detects this bug on ext4, f2fs, and ubifs.
 
-  $ sudo perf record -a -e instructions,l3_request_g1.caching_l3_cache_accesses true
-  Error:
-  l3_request_g1.caching_l3_cache_accesses: PMU Hardware doesn't support sampling/overflow-interrupts. Try 'perf stat'
-
-Fixes: c43ca5091a37 ("perf/x86/amd: Add support for AMD NB and L2I "uncore" counters")
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20200311191323.13124-1-kim.phillips@amd.com
+Fixes: b1c0ec3599f4 ("fscrypt: add FS_IOC_REMOVE_ENCRYPTION_KEY ioctl")
+Cc: <stable@vger.kernel.org> # v5.4+
+Link: https://lore.kernel.org/r/20200305084138.653498-1-ebiggers@kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/amd/uncore.c |   17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ fs/crypto/keysetup.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/x86/events/amd/uncore.c
-+++ b/arch/x86/events/amd/uncore.c
-@@ -190,15 +190,12 @@ static int amd_uncore_event_init(struct
+--- a/fs/crypto/keysetup.c
++++ b/fs/crypto/keysetup.c
+@@ -515,6 +515,15 @@ int fscrypt_drop_inode(struct inode *ino
+ 	mk = ci->ci_master_key->payload.data[0];
  
  	/*
- 	 * NB and Last level cache counters (MSRs) are shared across all cores
--	 * that share the same NB / Last level cache. Interrupts can be directed
--	 * to a single target core, however, event counts generated by processes
--	 * running on other cores cannot be masked out. So we do not support
--	 * sampling and per-thread events.
-+	 * that share the same NB / Last level cache.  On family 16h and below,
-+	 * Interrupts can be directed to a single target core, however, event
-+	 * counts generated by processes running on other cores cannot be masked
-+	 * out. So we do not support sampling and per-thread events via
-+	 * CAP_NO_INTERRUPT, and we do not enable counter overflow interrupts:
- 	 */
--	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
--		return -EINVAL;
--
--	/* and we do not enable counter overflow interrupts */
- 	hwc->config = event->attr.config & AMD64_RAW_EVENT_MASK_NB;
- 	hwc->idx = -1;
- 
-@@ -306,7 +303,7 @@ static struct pmu amd_nb_pmu = {
- 	.start		= amd_uncore_start,
- 	.stop		= amd_uncore_stop,
- 	.read		= amd_uncore_read,
--	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
-+	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE | PERF_PMU_CAP_NO_INTERRUPT,
- };
- 
- static struct pmu amd_llc_pmu = {
-@@ -317,7 +314,7 @@ static struct pmu amd_llc_pmu = {
- 	.start		= amd_uncore_start,
- 	.stop		= amd_uncore_stop,
- 	.read		= amd_uncore_read,
--	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
-+	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE | PERF_PMU_CAP_NO_INTERRUPT,
- };
- 
- static struct amd_uncore *amd_uncore_alloc(unsigned int cpu)
++	 * With proper, non-racy use of FS_IOC_REMOVE_ENCRYPTION_KEY, all inodes
++	 * protected by the key were cleaned by sync_filesystem().  But if
++	 * userspace is still using the files, inodes can be dirtied between
++	 * then and now.  We mustn't lose any writes, so skip dirty inodes here.
++	 */
++	if (inode->i_state & I_DIRTY_ALL)
++		return 0;
++
++	/*
+ 	 * Note: since we aren't holding ->mk_secret_sem, the result here can
+ 	 * immediately become outdated.  But there's no correctness problem with
+ 	 * unnecessarily evicting.  Nor is there a correctness problem with not
 
 
