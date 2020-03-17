@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6D631880A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:12:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6964187FD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:05:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729109AbgCQLMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:12:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55526 "EHLO mail.kernel.org"
+        id S1727943AbgCQLEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:04:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729133AbgCQLMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:12:00 -0400
+        id S1727233AbgCQLEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:04:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5072520658;
-        Tue, 17 Mar 2020 11:11:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4C0A2073E;
+        Tue, 17 Mar 2020 11:04:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443517;
-        bh=PjE1O1D4TXCkuEAVRYTD0lo95CU/BJbQobYhAMV1hdg=;
+        s=default; t=1584443089;
+        bh=xAOwVkY62m9tSTCLIiQRMuwYlf5KeSKDckQa4+Litu0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q/imGYDpZCzRKwCgWlAfW2Kc5AIaxpe4nZ7un2qVsWA83mzqjoq376btTvRsC3cfY
-         yLcM7VjkESHsVlMFc8aw2oXq57lt6/sPepiKlYXhqeYLvMZjhPsW7v0bXMR6kUaJqS
-         ErRIkpFSgDCkivtsTdYTvDsr0QQe0PBhd4jcoiSI=
+        b=dUvgPxmp5rpqLpiXdGNVgWopJaZ0M8by/nOCXobkg01eOygOjZbFAcseqTc/YnF3s
+         trPxOrY9dBLKc19vQmxuTx9BNOnR3a5kLRRGD6khgk1CGXrlEdubwWQ9cu4P3+QHME
+         woHCzFMTvva0VjLmCrv/SWJihzDLUBwuPeZyirtI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>
-Subject: [PATCH 5.5 109/151] fscrypt: dont evict dirty inodes after removing key
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH 5.4 092/123] x86/mce: Fix logic and comments around MSR_PPIN_CTL
 Date:   Tue, 17 Mar 2020 11:55:19 +0100
-Message-Id: <20200317103334.199840852@linuxfoundation.org>
+Message-Id: <20200317103317.093943679@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
-References: <20200317103326.593639086@linuxfoundation.org>
+In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
+References: <20200317103307.343627747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,56 +43,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Tony Luck <tony.luck@intel.com>
 
-commit 2b4eae95c7361e0a147b838715c8baa1380a428f upstream.
+commit 59b5809655bdafb0767d3fd00a3e41711aab07e6 upstream.
 
-After FS_IOC_REMOVE_ENCRYPTION_KEY removes a key, it syncs the
-filesystem and tries to get and put all inodes that were unlocked by the
-key so that unused inodes get evicted via fscrypt_drop_inode().
-Normally, the inodes are all clean due to the sync.
+There are two implemented bits in the PPIN_CTL MSR:
 
-However, after the filesystem is sync'ed, userspace can modify and close
-one of the files.  (Userspace is *supposed* to close the files before
-removing the key.  But it doesn't always happen, and the kernel can't
-assume it.)  This causes the inode to be dirtied and have i_count == 0.
-Then, fscrypt_drop_inode() failed to consider this case and indicated
-that the inode can be dropped, causing the write to be lost.
+Bit 0: LockOut (R/WO)
+      Set 1 to prevent further writes to MSR_PPIN_CTL.
 
-On f2fs, other problems such as a filesystem freeze could occur due to
-the inode being freed while still on f2fs's dirty inode list.
+Bit 1: Enable_PPIN (R/W)
+       If 1, enables MSR_PPIN to be accessible using RDMSR.
+       If 0, an attempt to read MSR_PPIN will cause #GP.
 
-Fix this bug by making fscrypt_drop_inode() only drop clean inodes.
+So there are four defined values:
+	0: PPIN is disabled, PPIN_CTL may be updated
+	1: PPIN is disabled. PPIN_CTL is locked against updates
+	2: PPIN is enabled. PPIN_CTL may be updated
+	3: PPIN is enabled. PPIN_CTL is locked against updates
 
-I've written an xfstest which detects this bug on ext4, f2fs, and ubifs.
+Code would only enable the X86_FEATURE_INTEL_PPIN feature for case "2".
+When it should have done so for both case "2" and case "3".
 
-Fixes: b1c0ec3599f4 ("fscrypt: add FS_IOC_REMOVE_ENCRYPTION_KEY ioctl")
-Cc: <stable@vger.kernel.org> # v5.4+
-Link: https://lore.kernel.org/r/20200305084138.653498-1-ebiggers@kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Fix the final test to just check for the enable bit. Also fix some of
+the other comments in this function.
+
+Fixes: 3f5a7896a509 ("x86/mce: Include the PPIN in MCE records when available")
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20200226011737.9958-1-tony.luck@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/crypto/keysetup.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/x86/kernel/cpu/mce/intel.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/fs/crypto/keysetup.c
-+++ b/fs/crypto/keysetup.c
-@@ -515,6 +515,15 @@ int fscrypt_drop_inode(struct inode *ino
- 	mk = ci->ci_master_key->payload.data[0];
+--- a/arch/x86/kernel/cpu/mce/intel.c
++++ b/arch/x86/kernel/cpu/mce/intel.c
+@@ -489,17 +489,18 @@ static void intel_ppin_init(struct cpuin
+ 			return;
  
- 	/*
-+	 * With proper, non-racy use of FS_IOC_REMOVE_ENCRYPTION_KEY, all inodes
-+	 * protected by the key were cleaned by sync_filesystem().  But if
-+	 * userspace is still using the files, inodes can be dirtied between
-+	 * then and now.  We mustn't lose any writes, so skip dirty inodes here.
-+	 */
-+	if (inode->i_state & I_DIRTY_ALL)
-+		return 0;
-+
-+	/*
- 	 * Note: since we aren't holding ->mk_secret_sem, the result here can
- 	 * immediately become outdated.  But there's no correctness problem with
- 	 * unnecessarily evicting.  Nor is there a correctness problem with not
+ 		if ((val & 3UL) == 1UL) {
+-			/* PPIN available but disabled: */
++			/* PPIN locked in disabled mode */
+ 			return;
+ 		}
+ 
+-		/* If PPIN is disabled, but not locked, try to enable: */
+-		if (!(val & 3UL)) {
++		/* If PPIN is disabled, try to enable */
++		if (!(val & 2UL)) {
+ 			wrmsrl_safe(MSR_PPIN_CTL,  val | 2UL);
+ 			rdmsrl_safe(MSR_PPIN_CTL, &val);
+ 		}
+ 
+-		if ((val & 3UL) == 2UL)
++		/* Is the enable bit set? */
++		if (val & 2UL)
+ 			set_cpu_cap(c, X86_FEATURE_INTEL_PPIN);
+ 	}
+ }
 
 
