@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C226E187F4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:00:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 439A5187F50
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:00:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbgCQLAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:00:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39362 "EHLO mail.kernel.org"
+        id S1727594AbgCQLAX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:00:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727576AbgCQLAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:00:16 -0400
+        id S1727241AbgCQLAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:00:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FA8920719;
-        Tue, 17 Mar 2020 11:00:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FFD020719;
+        Tue, 17 Mar 2020 11:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442816;
-        bh=vNR8UdTpnd+MdKXM3RRc5qpDJLFIBrFnvSXpXWI3GSo=;
+        s=default; t=1584442819;
+        bh=Qug1L98ZOVgs7A3T9Nz4VumZo9JX5os4V3ilimJkW8o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rYkj1VU/ZvdZUDiSayLCwd3w49cLl/9khTxIryx9tL6eDfk2rg7qdeBGo+0+fOdrH
-         +OhfTlPfUionjBpzgCTxAXFjeT+vSM3tXWVNb/Zvez4u5va079RpDku0dYu/2e8QhU
-         aqXR5YDihGkpG7NYNtQ9/IEG5g37FnSaBWXSbt6w=
+        b=WsnoQEhvF3ZDDsmIMDEo6cspP+VRy+jBOKPEHjgqOn4K6wlDKBuIPzeUPyIeffcDW
+         vO1jEnZFF5IsNRo9P9/OsqfBauBRt1Ipo6Imq4hYX7z0P7SJPWxgnBWTKkc3chuNfU
+         rAR0ZMG4TUe4Has5RcxCQ6s43s4l2ikVALcw+rrE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.19 72/89] pinctrl: core: Remove extra kref_get which blocks hogs being freed
-Date:   Tue, 17 Mar 2020 11:55:21 +0100
-Message-Id: <20200317103308.238331165@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Xu <colin.xu@intel.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>
+Subject: [PATCH 4.19 73/89] drm/i915/gvt: Fix unnecessary schedule timer when no vGPU exits
+Date:   Tue, 17 Mar 2020 11:55:22 +0100
+Message-Id: <20200317103308.351704597@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
 References: <20200317103259.744774526@linuxfoundation.org>
@@ -44,34 +43,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Zhenyu Wang <zhenyuw@linux.intel.com>
 
-commit aafd56fc79041bf36f97712d4b35208cbe07db90 upstream.
+commit 04d6067f1f19e70a418f92fa3170cf7fe53b7fdf upstream.
 
-kref_init starts with the reference count at 1, which will be balanced
-by the pinctrl_put in pinctrl_unregister. The additional kref_get in
-pinctrl_claim_hogs will increase this count to 2 and cause the hogs to
-not get freed when pinctrl_unregister is called.
+>From commit f25a49ab8ab9 ("drm/i915/gvt: Use vgpu_lock to protect per
+vgpu access") the vgpu idr destroy is moved later than vgpu resource
+destroy, then it would fail to stop timer for schedule policy clean
+which to check vgpu idr for any left vGPU. So this trys to destroy
+vgpu idr earlier.
 
-Fixes: 6118714275f0 ("pinctrl: core: Fix pinctrl_register_and_init() with pinctrl_enable()")
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Link: https://lore.kernel.org/r/20200228154142.13860-1-ckeepax@opensource.cirrus.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Cc: Colin Xu <colin.xu@intel.com>
+Fixes: f25a49ab8ab9 ("drm/i915/gvt: Use vgpu_lock to protect per vgpu access")
+Acked-by: Colin Xu <colin.xu@intel.com>
+Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/20200229055445.31481-1-zhenyuw@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/core.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/i915/gvt/vgpu.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -2008,7 +2008,6 @@ static int pinctrl_claim_hogs(struct pin
- 		return PTR_ERR(pctldev->p);
- 	}
+--- a/drivers/gpu/drm/i915/gvt/vgpu.c
++++ b/drivers/gpu/drm/i915/gvt/vgpu.c
+@@ -272,10 +272,17 @@ void intel_gvt_destroy_vgpu(struct intel
+ {
+ 	struct intel_gvt *gvt = vgpu->gvt;
  
--	kref_get(&pctldev->p->users);
- 	pctldev->hog_default =
- 		pinctrl_lookup_state(pctldev->p, PINCTRL_STATE_DEFAULT);
- 	if (IS_ERR(pctldev->hog_default)) {
+-	mutex_lock(&vgpu->vgpu_lock);
+-
+ 	WARN(vgpu->active, "vGPU is still active!\n");
+ 
++	/*
++	 * remove idr first so later clean can judge if need to stop
++	 * service if no active vgpu.
++	 */
++	mutex_lock(&gvt->lock);
++	idr_remove(&gvt->vgpu_idr, vgpu->id);
++	mutex_unlock(&gvt->lock);
++
++	mutex_lock(&vgpu->vgpu_lock);
+ 	intel_gvt_debugfs_remove_vgpu(vgpu);
+ 	intel_vgpu_clean_sched_policy(vgpu);
+ 	intel_vgpu_clean_submission(vgpu);
+@@ -290,7 +297,6 @@ void intel_gvt_destroy_vgpu(struct intel
+ 	mutex_unlock(&vgpu->vgpu_lock);
+ 
+ 	mutex_lock(&gvt->lock);
+-	idr_remove(&gvt->vgpu_idr, vgpu->id);
+ 	if (idr_is_empty(&gvt->vgpu_idr))
+ 		intel_gvt_clean_irq(gvt);
+ 	intel_gvt_update_vgpu_types(gvt);
 
 
