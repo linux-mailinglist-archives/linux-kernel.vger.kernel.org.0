@@ -2,88 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB5F9189132
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 23:17:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E8DA189137
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 23:18:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbgCQWRt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 18:17:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33490 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726476AbgCQWRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 18:17:49 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15A73206EC;
-        Tue, 17 Mar 2020 22:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584483468;
-        bh=sY4cOhcMEMawFpaLftRkDuoAZYkzfT6Iq/pDMIVQ+QM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0QGP7zI9fM58OdTLqDxjLIcR2NDM+WwQ4MBisE/1SCYXBDjdNnC+PTF/305E5GyST
-         kIqZVvbLlzYcUqBHggnCaCPlwSH7VtJqmiU8YuCYpkjEJG1LvNZnpjOCI11ZdmF4Ey
-         0175SzJkfPb8KuTVROY2dRPony8hRwWy9EPhI0ys=
-Date:   Tue, 17 Mar 2020 22:17:43 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Torsten Duwe <duwe@lst.de>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, ardb@kernel.org
-Subject: Re: [Patch][Fix] crypto: arm{,64} neon: memzero_explicit aes-cbc key
-Message-ID: <20200317221743.GD20788@willie-the-truck>
-References: <20200313110258.94A0668C4E@verein.lst.de>
+        id S1727065AbgCQWSG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 18:18:06 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56032 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726735AbgCQWSF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 18:18:05 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jEKX7-0001Cb-AX; Tue, 17 Mar 2020 23:17:57 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id F06D71C2295;
+        Tue, 17 Mar 2020 23:17:56 +0100 (CET)
+Date:   Tue, 17 Mar 2020 22:17:56 -0000
+From:   "tip-bot2 for Hans de Goede" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/kdump] x86/purgatory: Disable various profiling and
+ sanitizing options
+Cc:     Hans de Goede <hdegoede@redhat.com>, Borislav Petkov <bp@suse.de>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200317130841.290418-1-hdegoede@redhat.com>
+References: <20200317130841.290418-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200313110258.94A0668C4E@verein.lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <158448347670.28353.10536465598206779588.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+Ard]
+The following commit has been merged into the x86/kdump branch of tip:
 
-On Fri, Mar 13, 2020 at 12:02:58PM +0100, Torsten Duwe wrote:
-> From: Torsten Duwe <duwe@suse.de>
-> 
-> At function exit, do not leave the expanded key in the rk struct
-> which got allocated on the stack.
-> 
-> Signed-off-by: Torsten Duwe <duwe@suse.de>
-> ---
-> Another small fix from our FIPS evaluation. I hope you don't mind I merged
-> arm32 and arm64 into one patch -- this is really simple.
-> --- a/arch/arm/crypto/aes-neonbs-glue.c
-> +++ b/arch/arm/crypto/aes-neonbs-glue.c
-> @@ -138,6 +138,7 @@ static int aesbs_cbc_setkey(struct crypto_skcipher *tfm, const u8 *in_key,
->  	kernel_neon_begin();
->  	aesbs_convert_key(ctx->key.rk, rk.key_enc, ctx->key.rounds);
->  	kernel_neon_end();
-> +	memzero_explicit(&rk, sizeof(rk));
->  
->  	return crypto_cipher_setkey(ctx->enc_tfm, in_key, key_len);
->  }
-> diff --git a/arch/arm64/crypto/aes-neonbs-glue.c b/arch/arm64/crypto/aes-neonbs-glue.c
-> index e3e27349a9fe..c0b980503643 100644
-> --- a/arch/arm64/crypto/aes-neonbs-glue.c
-> +++ b/arch/arm64/crypto/aes-neonbs-glue.c
-> @@ -151,6 +151,7 @@ static int aesbs_cbc_setkey(struct crypto_skcipher *tfm, const u8 *in_key,
->  	kernel_neon_begin();
->  	aesbs_convert_key(ctx->key.rk, rk.key_enc, ctx->key.rounds);
->  	kernel_neon_end();
-> +	memzero_explicit(&rk, sizeof(rk));
->  
->  	return 0;
->  }
+Commit-ID:     e2ac07c06058ae2d58b45bbf2a2a352771d76fcb
+Gitweb:        https://git.kernel.org/tip/e2ac07c06058ae2d58b45bbf2a2a352771d76fcb
+Author:        Hans de Goede <hdegoede@redhat.com>
+AuthorDate:    Tue, 17 Mar 2020 14:08:40 +01:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Tue, 17 Mar 2020 15:57:19 +01:00
 
-I'm certainly not a crypto person, but this looks sensible to me and I
-couldn't find any other similar stack variable usage under
-arch/arm64/crypto/ at a quick glance.
+x86/purgatory: Disable various profiling and sanitizing options
 
-Acked-by: Will Deacon <will@kernel.org>
+Since the purgatory is a special stand-alone binary, various profiling
+and sanitizing options must be disabled. Having these options enabled
+typically will cause dependencies on various special symbols exported by
+special libs / stubs used by these frameworks. Since the purgatory is
+special, it is not linked against these stubs causing missing symbols in
+the purgatory if these options are not disabled.
 
-Will
+Sync the set of disabled profiling and sanitizing options with that from
+drivers/firmware/efi/libstub/Makefile, adding
+-DDISABLE_BRANCH_PROFILING to the CFLAGS and setting:
+
+  GCOV_PROFILE                    := n
+  UBSAN_SANITIZE                  := n
+
+This fixes broken references to ftrace_likely_update() when
+CONFIG_TRACE_BRANCH_PROFILING is enabled and to __gcov_init() and
+__gcov_exit() when CONFIG_GCOV_KERNEL is enabled.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/20200317130841.290418-1-hdegoede@redhat.com
+---
+ arch/x86/purgatory/Makefile | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
+index fb4ee54..9733d1c 100644
+--- a/arch/x86/purgatory/Makefile
++++ b/arch/x86/purgatory/Makefile
+@@ -17,7 +17,10 @@ CFLAGS_sha256.o := -D__DISABLE_EXPORTS
+ LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
+ targets += purgatory.ro
+ 
++# Sanitizer, etc. runtimes are unavailable and cannot be linked here.
++GCOV_PROFILE	:= n
+ KASAN_SANITIZE	:= n
++UBSAN_SANITIZE	:= n
+ KCOV_INSTRUMENT := n
+ 
+ # These are adjustments to the compiler flags used for objects that
+@@ -25,7 +28,7 @@ KCOV_INSTRUMENT := n
+ 
+ PURGATORY_CFLAGS_REMOVE := -mcmodel=kernel
+ PURGATORY_CFLAGS := -mcmodel=large -ffreestanding -fno-zero-initialized-in-bss
+-PURGATORY_CFLAGS += $(DISABLE_STACKLEAK_PLUGIN)
++PURGATORY_CFLAGS += $(DISABLE_STACKLEAK_PLUGIN) -DDISABLE_BRANCH_PROFILING
+ 
+ # Default KBUILD_CFLAGS can have -pg option set when FTRACE is enabled. That
+ # in turn leaves some undefined symbols like __fentry__ in purgatory and not
