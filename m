@@ -2,124 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B1921888B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 16:11:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 279671888CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 16:13:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbgCQPLC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 11:11:02 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:55932 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726478AbgCQPLC (ORCPT
+        id S1727148AbgCQPNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 11:13:25 -0400
+Received: from out28-170.mail.aliyun.com ([115.124.28.170]:42579 "EHLO
+        out28-170.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726553AbgCQPNY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 11:11:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584457861;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=W5HQAvbPU4U3uMqTwVbtXlufV8kjT1jXd8mJ+pSamK4=;
-        b=dq+RSNrVVfgmdkMj/1djImhaKfO4ZAaNDtbihfWo2vWDt8ZVv4ahmSxxZoXdCdN9nPyVjX
-        YXqmi/nrA9GP4Sj3+o8AH/d8YCW6ZbCZxD2DRyFrCnPrJkn6qbEsGatAsLIa++wMEcKTHn
-        lrNHMgvJgGH04G85szykRZ+WPhHboY0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-479-kEnLFVR7PCuI3hiVy5LX1g-1; Tue, 17 Mar 2020 11:11:00 -0400
-X-MC-Unique: kEnLFVR7PCuI3hiVy5LX1g-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B4D28107ACC4;
-        Tue, 17 Mar 2020 15:10:56 +0000 (UTC)
-Received: from krava (unknown [10.40.195.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7BE4073865;
-        Tue, 17 Mar 2020 15:10:50 +0000 (UTC)
-Date:   Tue, 17 Mar 2020 16:10:47 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Kajol Jain <kjain@linux.ibm.com>
-Cc:     acme@kernel.org, linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
-        sukadev@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, anju@linux.vnet.ibm.com,
-        maddy@linux.vnet.ibm.com, ravi.bangoria@linux.ibm.com,
-        peterz@infradead.org, yao.jin@linux.intel.com, ak@linux.intel.com,
-        jolsa@kernel.org, kan.liang@linux.intel.com, jmario@redhat.com,
-        alexander.shishkin@linux.intel.com, mingo@kernel.org,
-        paulus@ozlabs.org, namhyung@kernel.org, mpetlan@redhat.com,
-        gregkh@linuxfoundation.org, benh@kernel.crashing.org,
-        mamatha4@linux.vnet.ibm.com, mark.rutland@arm.com,
-        tglx@linutronix.de
-Subject: Re: [PATCH v5 09/11] perf/tools: Enhance JSON/metric infrastructure
- to handle "?"
-Message-ID: <20200317151047.GF757893@krava>
-References: <20200317062333.14555-1-kjain@linux.ibm.com>
- <20200317062333.14555-10-kjain@linux.ibm.com>
+        Tue, 17 Mar 2020 11:13:24 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2770793|-1;CH=green;DM=||false|;DS=CONTINUE|ham_system_inform|0.390991-0.00620451-0.602804;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03268;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=9;RT=9;SR=0;TI=SMTPD_---.H0zKH5l_1584457917;
+Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.H0zKH5l_1584457917)
+          by smtp.aliyun-inc.com(10.147.42.241);
+          Tue, 17 Mar 2020 23:13:12 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, paul@crapouillou.net,
+        dongsheng.qiu@ingenic.com, yanfei.li@ingenic.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
+Subject: Add support for TCU of X1000.
+Date:   Tue, 17 Mar 2020 23:11:31 +0800
+Message-Id: <1584457893-40418-1-git-send-email-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200317062333.14555-10-kjain@linux.ibm.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 11:53:31AM +0530, Kajol Jain wrote:
-
-SBIP
-
-> +static int metricgroup__add_metric_runtime_param(struct strbuf *events,
-> +			struct list_head *group_list, struct pmu_event *pe)
-> +{
-> +	int i, count;
-> +	int ret = -EINVAL;
-> +
-> +	count = arch_get_runtimeparam();
-> +
-> +	/* This loop is added to create multiple
-> +	 * events depend on count value and add
-> +	 * those events to group_list.
-> +	 */
-> +
-> +	for (i = 0; i < count; i++) {
-> +		const char **ids;
-> +		int idnum;
-> +		struct egroup *eg;
-> +		char value[PATH_MAX];
-> +
-> +		if (expr__find_other(pe->metric_expr, NULL, &ids, &idnum, i) < 0)
-> +			return ret;
-> +
-> +		if (events->len > 0)
-> +			strbuf_addf(events, ",");
-> +
-> +		if (metricgroup__has_constraint(pe))
-> +			metricgroup__add_metric_non_group(events, ids, idnum);
-> +		else
-> +			metricgroup__add_metric_weak_group(events, ids, idnum);
-> +
-> +		eg = malloc(sizeof(*eg));
-> +		if (!eg) {
-> +			ret = -ENOMEM;
-> +			return ret;
-> +		}
-> +
-> +		sprintf(value, "%s%c%d", pe->metric_name, '_', i);
-> +		eg->ids = ids;
-> +		eg->idnum = idnum;
-> +		eg->metric_name = strdup(value);
-> +		if (!eg->metric_name) {
-> +			ret = -ENOMEM;
-> +			return ret;
-> +		}
-> +
-> +		eg->metric_expr = pe->metric_expr;
-> +		eg->metric_unit = pe->unit;
-> +		list_add_tail(&eg->nd, group_list);
-> +		ret = 0;
-> +
-> +		if (ret != 0)
-> +			break;
-
-again, this is part of metricgroup__add_metric_param no? why not use it?
-
-jirka
+Add support for TCU of X1000 from Ingenic. X1000 has a different TCU,
+since X1000 OST has been independent of TCU. This patch is add TCU
+support of X1000, and prepare for later OST driver.
 
