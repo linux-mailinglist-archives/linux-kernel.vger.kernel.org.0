@@ -2,88 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ACFB1885E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 14:35:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E94BC1885F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 14:36:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbgCQNfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 09:35:12 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:40640 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726278AbgCQNfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 09:35:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=anIHw2n42gE6MXhrin5xBUs2z5QKKPkI+0ps7BpcDdY=; b=OhRXDthl1+sN8WRo7eAAByndba
-        abhPyWUTzNovC4kxG+p32sA/ZwV54N1LYR2oRgGD7LZAUPqc+g1iAGFIXm8FMVYiGNR9wIVoH+apU
-        sF10D4A7yT/Nd/Wduv+e997fzZOfzIloJMbHia1AzEcAGXFTTV1Ojuz/qHPRRAjOmceo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1jECMy-0006YW-7F; Tue, 17 Mar 2020 14:34:56 +0100
-Date:   Tue, 17 Mar 2020 14:34:56 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Brown <broonie@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 11/28] ARM: dts: berlin*: Fix up the SDHCI node names
-Message-ID: <20200317133456.GM24270@lunn.ch>
-References: <20200317093922.20785-1-lkundrak@v3.sk>
- <20200317093922.20785-12-lkundrak@v3.sk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200317093922.20785-12-lkundrak@v3.sk>
+        id S1726853AbgCQNgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 09:36:20 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41437 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbgCQNgT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 09:36:19 -0400
+Received: by mail-pl1-f194.google.com with SMTP id t16so2612681plr.8
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 06:36:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=YXH/xNjxfleJEOV9byMjccsKxIs9a6z9OWbDdfpz6zc=;
+        b=JWAyEiNuawTbzorI83x8So0gmfsgpwNOs6jttV8hfKCHYkRXRBaT+C+hh87XItsDBm
+         vPgKo0OZ3oIVlb6gTgvnxKtV1zz3tRx5tzYAU5gs0JfLy/xBcGXBsBPWRZzBLEEaXfIV
+         28uEueo9T1tDm+axDqubcH/w1zJYyTpnbaXJeUiDY1FSKtQxmULUN4ZaUSmDr+O6rr83
+         lt/F5WUbANR/ANSEw/aNW2OVy233bGggVheNCdEls8PSMuwWinSVvwxKx5yhYWGsQC5T
+         coCaY+Sr/nSPn9lWGHCO5W5ehx3hv6xphbd1kR0WTalMsf0zPMUA55xRRc/977aj4zU6
+         B9QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=YXH/xNjxfleJEOV9byMjccsKxIs9a6z9OWbDdfpz6zc=;
+        b=swUwsHFZVn1PRB8+a4dYDu5jfOPKX+J2cbYOcMciAkC/uYt5u5sOFpBQbJ384AKTdQ
+         VgLv92N21DPx6qaqtUZy5xPEq1z0sGbyC88OcllhwEOTiPzrk2RqZJyf+4mIr4RFWswY
+         aYxXDNoqe7+6YfAgs2FWMk01/O9CSIgfQkgY5pQLmvD+F4IpTSQkTtDx88zsNtr4quB7
+         RwMcoMwUJYGtwPWUMXxl9LahTpDYLDpATCHzl2+hQt2hTCyySWyLohiLn1ECL6eoJpWd
+         LbgFezJXNpGtrETvivdaoHMiT07hgqs/jJDmpnQVSzJQuMLkMrG1ufCTwtYPuu6Ex721
+         olVw==
+X-Gm-Message-State: ANhLgQ1jr4gSDl5Emi4T5n9RzV8A+zxA92EqC2mtiqNkkYJIl7c9Ngzu
+        YwMiWoqdhgUchEOHGIRtlSaufvEZ
+X-Google-Smtp-Source: ADFU+vsdKkZOSbYKYTdaP996gRlC8ZEsAXNNtMSQ+NHtfA057RJVAxylFVonGmibsVEfMno0CouzLw==
+X-Received: by 2002:a17:90a:3a8c:: with SMTP id b12mr5498911pjc.48.1584452178849;
+        Tue, 17 Mar 2020 06:36:18 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id s125sm2853594pgc.53.2020.03.17.06.36.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Mar 2020 06:36:17 -0700 (PDT)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Subject: [PATCH] lib/test_lockup: Rename disable_irq to fix build error
+Date:   Tue, 17 Mar 2020 06:36:14 -0700
+Message-Id: <20200317133614.23152-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 10:39:05AM +0100, Lubomir Rintel wrote:
-> The node name preferred by mmc-controller.yaml binding spec is "mmc":
-> 
->   berlin2-sony-nsz-gs7.dt.yaml: sdhci@ab0000: $nodename:0:
->       'sdhci@ab0000' does not match '^mmc(@.*)?$'
->   berlin2-sony-nsz-gs7.dt.yaml: sdhci@ab0800: $nodename:0:
->       'sdhci@ab0800' does not match '^mmc(@.*)?$'
->   berlin2-sony-nsz-gs7.dt.yaml: sdhci@ab1000: $nodename:0:
->       'sdhci@ab1000' does not match '^mmc(@.*)?$'
->   berlin2cd-google-chromecast.dt.yaml: sdhci@ab0000: $nodename:0:
->       'sdhci@ab0000' does not match '^mmc(@.*)?$'
->   berlin2cd-valve-steamlink.dt.yaml: sdhci@ab0000: $nodename:0:
->       'sdhci@ab0000' does not match '^mmc(@.*)?$'
->   berlin2q-marvell-dmp.dt.yaml: sdhci@ab0000: $nodename:0:
->       'sdhci@ab0000' does not match '^mmc(@.*)?$'
->   berlin2q-marvell-dmp.dt.yaml: sdhci@ab0800: $nodename:0:
->       'sdhci@ab0800' does not match '^mmc(@.*)?$'
->   berlin2q-marvell-dmp.dt.yaml: sdhci@ab1000: $nodename:0:
->       'sdhci@ab1000' does not match '^mmc(@.*)?$'
-> 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+mips:allmodconfig fails to build.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+lib/test_lockup.c:87:13: error:
+	'disable_irq' redeclared as different kind of symbol
+   87 | static bool disable_irq;
+      |             ^~~~~~~~~~~
+In file included from arch/mips/include/asm/highmem.h:24,
+                 from arch/mips/include/asm/pgtable-32.h:22,
+                 from arch/mips/include/asm/pgtable.h:14,
+                 from include/linux/mm.h:95,
+                 from lib/test_lockup.c:15:
+include/linux/interrupt.h:237:13: note:
+	previous declaration of 'disable_irq' was here
+  237 | extern void disable_irq(unsigned int irq);
 
-    Andrew
+Rename the variable to fix the problem.
+
+Fixes: 0e86238873f3 ("lib/test_lockup: test module to generate lockups")
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ lib/test_lockup.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/lib/test_lockup.c b/lib/test_lockup.c
+index b45afd3ad7cb..83683ec1f429 100644
+--- a/lib/test_lockup.c
++++ b/lib/test_lockup.c
+@@ -84,8 +84,8 @@ static unsigned long lock_wait_threshold = ULONG_MAX;
+ module_param(lock_wait_threshold, ulong, 0400);
+ MODULE_PARM_DESC(lock_wait_threshold, "print lock wait time longer than this in nanoseconds, default off");
+ 
+-static bool disable_irq;
+-module_param(disable_irq, bool, 0400);
++static bool test_disable_irq;
++module_param_named(disable_irq, test_disable_irq, bool, 0400);
+ MODULE_PARM_DESC(disable_irq, "disable interrupts: generate hard-lockups");
+ 
+ static bool disable_softirq;
+@@ -179,7 +179,7 @@ static void test_lock(bool master, bool verbose)
+ 			down_write(&main_task->mm->mmap_sem);
+ 	}
+ 
+-	if (disable_irq)
++	if (test_disable_irq)
+ 		local_irq_disable();
+ 
+ 	if (disable_softirq)
+@@ -252,7 +252,7 @@ static void test_unlock(bool master, bool verbose)
+ 	if (disable_softirq)
+ 		local_bh_enable();
+ 
+-	if (disable_irq)
++	if (test_disable_irq)
+ 		local_irq_enable();
+ 
+ 	if (lock_mmap_sem && master) {
+@@ -479,8 +479,8 @@ static int __init test_lockup_init(void)
+ 	if ((wait_state != TASK_RUNNING ||
+ 	     (call_cond_resched && !reacquire_locks) ||
+ 	     (alloc_pages_nr && gfpflags_allow_blocking(alloc_pages_gfp))) &&
+-	    (disable_irq || disable_softirq || disable_preempt || lock_rcu ||
+-	     lock_spinlock_ptr || lock_rwlock_ptr)) {
++	    (test_disable_irq || disable_softirq || disable_preempt ||
++	     lock_rcu || lock_spinlock_ptr || lock_rwlock_ptr)) {
+ 		pr_err("refuse to sleep in atomic context\n");
+ 		return -EINVAL;
+ 	}
+@@ -495,7 +495,7 @@ static int __init test_lockup_init(void)
+ 		  cooldown_secs, cooldown_nsecs, iterations, state,
+ 		  all_cpus ? "all_cpus " : "",
+ 		  iowait ? "iowait " : "",
+-		  disable_irq ? "disable_irq " : "",
++		  test_disable_irq ? "disable_irq " : "",
+ 		  disable_softirq ? "disable_softirq " : "",
+ 		  disable_preempt ? "disable_preempt " : "",
+ 		  lock_rcu ? "lock_rcu " : "",
+-- 
+2.17.1
+
