@@ -2,116 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F71A188693
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 14:58:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B9881886AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 14:59:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbgCQN6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 09:58:05 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42729 "EHLO
+        id S1726474AbgCQN7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 09:59:40 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46192 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726881AbgCQN6C (ORCPT
+        with ESMTP id S1726148AbgCQN7j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 09:58:02 -0400
-Received: by mail-wr1-f66.google.com with SMTP id v11so25846549wrm.9
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 06:58:00 -0700 (PDT)
+        Tue, 17 Mar 2020 09:59:39 -0400
+Received: by mail-wr1-f66.google.com with SMTP id w16so9401304wrv.13
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 06:59:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UppQrsnlpe86U1iJ2vxLuqmcwC6nQrjDuqLHzwr9eq8=;
-        b=n6l/WllNY7yB9vdu0o78Kevuih0X0jlKF33Qac5TIulVecbJJhn04M3bXa5FVZ2Ayj
-         nMdI2M0fpHFdBWRa0BhPJzsNtf74iIzJYsfnN/E1j7ud159TZCGIsrMb4PANiVBt/4LX
-         JDIvbOBhvc0l5ps5YEzy+FSZY670na89VlTNkUBEPnAT4m+/pqKZCSCBGpNcv48E88W0
-         sG19qv8z6WQT4MsCry1difL47JM6xzqgNIUayos0WV1rsSJ3xwsFJb9ciVilyB624Sp5
-         OzHf51degqnW+xr8gcVWrV//eDELr22o9g1plb1Y699FSbPxS61/1fq8hycr0Gr9+fK0
-         cazQ==
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=qIq9a6Fn1Cn6B1fIV3Y7/gdRMGnfDz0F2bZxevfg/uA=;
+        b=XBjasDU3W02s4HEZFC152YDltmIV6hbTlvz0/XobFQsViYBaOMNS0/bFzv58OmDdGm
+         fhtBMD5MO1pItXUMy+BvV+FLO/pOhMkFhnqdCFoM6UelvU9O/GodYeWAvrTynfc46TTw
+         wvTv4AExdeqM6eNapvb9IhxyDTC0QERMSsgs/wkC0YTfKepbrdukMxNP04Vr4EHqkNFz
+         myohIZFU7PzgodCW9/qqRRzNDaug43Gmln7UoIG8HuhB3NygKmv/n1zEg6o/fsg2/65Z
+         pSElYFsoIm//Zop1d1vLF9y33fs1qdHhvffZHbixcDcdUlJstIwNw4Wc/4s777oCxDVB
+         5d/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UppQrsnlpe86U1iJ2vxLuqmcwC6nQrjDuqLHzwr9eq8=;
-        b=pR82aQ/JFF0hFBsaU9c33QHjWgI3sTV+c6gBw6CWRwGvYBdoFuUy03cZG5Aovuulpl
-         3i2/a3gBE/ias5/8dKBxB+hjqmEhQfueWPtY1AenKvnkFk64vMbHuemk73KPpykbXQdK
-         mirV+4zlwkdmcO9QYlWNTdgXcblU3IgiPG5ZzSe+tZsTxsD7oacsLk79RPzExTdVYSoh
-         ZB8QlYOn7YhaLmgIHffWUckt9ez9IAruAipxZZmGpJFw5A9c7AzDqAzljM3yqxA2kYeU
-         YakPrMQNBW6nfMLJPUGQA9ZIlnvDAwCK3RBQlQsZ1tCTl7W5sFdGpKnc5/4jEaWXCbqT
-         89mQ==
-X-Gm-Message-State: ANhLgQ24IHDTQVCAlMNoijykoBtyeuZJvksKWUeUEd556cIei9nu+pk1
-        nfgblGhYrI5OvOgIFRsQr45C4g==
-X-Google-Smtp-Source: ADFU+vuB83bdRe3honSZVhDGSTt2YdioMyqclnLEVfdMeETbDf0ejd9vEKSvzBHwoB0XWvgcu6GtAg==
-X-Received: by 2002:adf:a348:: with SMTP id d8mr6276482wrb.83.1584453479320;
-        Tue, 17 Mar 2020 06:57:59 -0700 (PDT)
-Received: from xps7590.local ([2a02:2450:102f:13b8:84f7:5c25:a9d8:81a1])
-        by smtp.gmail.com with ESMTPSA id r3sm2976558wrn.35.2020.03.17.06.57.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2020 06:57:58 -0700 (PDT)
-From:   Robert Foss <robert.foss@linaro.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, catalin.marinas@arm.com, will@kernel.org,
-        shawnguo@kernel.org, olof@lixom.net, maxime@cerno.tech,
-        Anson.Huang@nxp.com, dinguyen@kernel.org, leonard.crestez@nxp.com,
-        marcin.juszkiewicz@linaro.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Loic Poulain <loic.poulain@linaro.org>
-Cc:     Robert Foss <robert.foss@linaro.org>
-Subject: [v2 6/6] arm64: defconfig: Enable QCOM CAMCC, CAMSS and CCI drivers
-Date:   Tue, 17 Mar 2020 14:57:40 +0100
-Message-Id: <20200317135740.19412-7-robert.foss@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200317135740.19412-1-robert.foss@linaro.org>
-References: <20200317135740.19412-1-robert.foss@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=qIq9a6Fn1Cn6B1fIV3Y7/gdRMGnfDz0F2bZxevfg/uA=;
+        b=Uqu0z6BbHznaxJKWmRK/3QnK+95edcqROo6Ebd3qSn2BiK88PGOBmt3Rl0W7xnoIoU
+         vhAbfpvydBakwSuN0LXMw02YqNxyL42+NNPCwFqJa0ysH7PeFT62MzkJrbqxJ/lSM8+v
+         mugGPsvMfWXEa5YgLO3DvGIexcUXwB/jfXzz1/xgkwGwSi7TbldksfN/kin2hD94vc4e
+         guBiOBGdDCy/BKiqam1wzGEwEWE+zan1N5yMoV+fZSX28uc02PUuAR7oAwyoTd16c2Tm
+         tHzr4xosS200huh8qdDpz28iRYHSDn9DA8wM+XiEazozSQQliEsqPH8ofeEUEvRk8KrW
+         AGEA==
+X-Gm-Message-State: ANhLgQ28Q7jPVZHv7ngrEcLy8R+8h0bawnrRGfF30r0ObPh/8vRvQpSO
+        h4FPNHpKmBcJbCH54Ymozcw7J9RTgXA=
+X-Google-Smtp-Source: ADFU+vsgRjDwsBSL+urTbwZJedPob+M2UMdfXbJSFFyhGCM9w7rdUP7IFwSpNftAMSyp1Vtnj4DJXQ==
+X-Received: by 2002:a05:6000:370:: with SMTP id f16mr6394456wrf.9.1584453577424;
+        Tue, 17 Mar 2020 06:59:37 -0700 (PDT)
+Received: from ?IPv6:2a01:e34:ed2f:f020:817f:1d16:730:fbfb? ([2a01:e34:ed2f:f020:817f:1d16:730:fbfb])
+        by smtp.googlemail.com with ESMTPSA id x5sm4626644wrv.67.2020.03.17.06.59.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Mar 2020 06:59:36 -0700 (PDT)
+Subject: Re: [PATCH V2] sched: fair: Use the earliest break even
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com,
+        linux-kernel@vger.kernel.org, qais.yousef@arm.com
+References: <20200311202625.13629-1-daniel.lezcano@linaro.org>
+ <jhjy2rzntbo.mognet@arm.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <0b174f13-c4d4-2be4-8d15-c6a3c0beac3b@linaro.org>
+Date:   Tue, 17 Mar 2020 14:59:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
+In-Reply-To: <jhjy2rzntbo.mognet@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Build camera clock, isp and controller drivers as modules.
+On 17/03/2020 11:56, Valentin Schneider wrote:
+> 
+> Hi Daniel,
+> 
+> One more comment on the break even itself, ignoring the rest:
+> 
+> On Wed, Mar 11 2020, Daniel Lezcano wrote:
+>> diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+>> index b743bf38f08f..3342e7bae072 100644
+>> --- a/kernel/sched/idle.c
+>> +++ b/kernel/sched/idle.c
+>> @@ -19,7 +19,13 @@ extern char __cpuidle_text_start[], __cpuidle_text_end[];
+>>   */
+>>  void sched_idle_set_state(struct cpuidle_state *idle_state)
+>>  {
+>> -	idle_set_state(this_rq(), idle_state);
+>> +	struct rq *rq = this_rq();
+>> +
+>> +	idle_set_state(rq, idle_state);
+>> +
+>> +	if (idle_state)
+>> +		idle_set_break_even(rq, ktime_get_ns() +
+>> +				    idle_state->exit_latency_ns);
+> 
+> I'm not sure I follow why we go for entry time + exit latency. If this
+> is based on the minimum residency, shouldn't this be something depending
+> on the entry latency? i.e. something like
+> 
+>   break_even = now + entry_latency + idling_time
+>                      \_________________________/
+>                             min-residency
+> 
+> or am I missing something?
+Oh, no it is a stupid mistake from me. Thanks for pointing this out!
 
-Signed-off-by: Robert Foss <robert.foss@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- arch/arm64/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+It should be:
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4db223dbc549..7cb6989249ab 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -376,6 +376,7 @@ CONFIG_I2C_MESON=y
- CONFIG_I2C_MV64XXX=y
- CONFIG_I2C_OWL=y
- CONFIG_I2C_PXA=y
-+CONFIG_I2C_QCOM_CCI=m
- CONFIG_I2C_QCOM_GENI=m
- CONFIG_I2C_QUP=y
- CONFIG_I2C_RK3X=y
-@@ -530,6 +531,7 @@ CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
- CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
- CONFIG_VIDEO_RENESAS_FCP=m
- CONFIG_VIDEO_RENESAS_VSP1=m
-+CONFIG_VIDEO_QCOM_CAMSS=m
- CONFIG_DRM=m
- CONFIG_DRM_I2C_NXP_TDA998X=m
- CONFIG_DRM_NOUVEAU=m
-@@ -732,6 +734,7 @@ CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
- CONFIG_MSM_GCC_8998=y
- CONFIG_QCS_GCC_404=y
-+CONFIG_SDM_CAMCC_845=m
- CONFIG_SDM_GCC_845=y
- CONFIG_SM_GCC_8150=y
- CONFIG_QCOM_HFPLL=y
-@@ -762,6 +765,7 @@ CONFIG_QCOM_COMMAND_DB=y
- CONFIG_QCOM_GENI_SE=y
- CONFIG_QCOM_GLINK_SSR=m
- CONFIG_QCOM_RMTFS_MEM=m
-+CONFIG_SDM_CAMCC_845=m
- CONFIG_QCOM_RPMH=y
- CONFIG_QCOM_RPMHPD=y
- CONFIG_QCOM_SMEM=y
+	break_even = now + idle_state->target_residency_ns;
+
+ - Documentation/devicetree/bindings/arm/idle-states.yaml
+
+* min-residency: Minimum period, including preparation and entry, for a
+given idle state to be worthwhile energywise.
+
+(target_residency_ns == min-residency).
+
+> 
+>>  }
+>>
+>>  static int __read_mostly cpu_idle_force_poll;
+
+
 -- 
-2.20.1
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
