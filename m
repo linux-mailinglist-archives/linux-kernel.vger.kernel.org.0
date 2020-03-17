@@ -2,285 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9F43189053
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:29:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C232D18905C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:31:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbgCQV3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 17:29:16 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39767 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726549AbgCQV3Q (ORCPT
+        id S1726984AbgCQVbT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 17:31:19 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:43867 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726971AbgCQVbT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 17:29:16 -0400
-Received: by mail-pf1-f195.google.com with SMTP id d25so4647288pfn.6
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 14:29:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/sMRI0VauACLkjZfQ1o3jN9W5PKGT8cUGk4UrrBBSoY=;
-        b=d0FzwdKBK/YLXE8t1dRwjWvwQAKoJA3Rdt0dlgdhOYEpbdmU1Sr8kMU8PlYHslXyrN
-         Dl7axC2i8WKhmyeYVweidZW/Rhhiu7O+SOdo+V4jZ/KBu0vMK/RecBtvJWAODcHUR0sj
-         Rcg+ZMWAbCYCbJ1Wl7lTadlUjov4RrFpki+jg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/sMRI0VauACLkjZfQ1o3jN9W5PKGT8cUGk4UrrBBSoY=;
-        b=DpmRn97bHhE3XvXWFIj916lsvD85/5Vhk0kaM+QAtyh6R8bhoxOR/KjJCVXU+kA86x
-         sUTNynJ3mUMbZTmDu/YwKhd94wiUK4H7ZhHL/hsAvM8ytg2ldTi7FMVzWa7XXutYeA7o
-         cNyGuUO0q+lI3nfjUrmxeQ8v0Z+AiYNYWY22j3pKu3MTcRrwpco0dBZGFVATCj7ehJit
-         idEb2lewSAHO4VzFdXc+jk1JDYG64D2xJA8dUWcM869IU1rlm9qIcI9IYqRnG3Bf+FTo
-         PqFH22mzudArMoKLKA1P3hm6o02A8Ss3ZXyWOwVXPAR/Pcf4ArRxPwVwu5Po/0MFz8C3
-         H5mw==
-X-Gm-Message-State: ANhLgQ1rwMNInqAfvNOy1HsHr5n4Klrt9oBIJ0yerRcOXSV9FpMirbTe
-        8ALIRa9PX2Q1y5UtY7wJnVDuRw==
-X-Google-Smtp-Source: ADFU+vsdTrJfNhFNSnd9VpKTXB8MOOw8+ctzgV60WPiq4OrJkGbsOrygehOkVlGSrUBxYLy/u8L+rw==
-X-Received: by 2002:aa7:8709:: with SMTP id b9mr814465pfo.138.1584480554898;
-        Tue, 17 Mar 2020 14:29:14 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id gn11sm286309pjb.42.2020.03.17.14.29.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2020 14:29:13 -0700 (PDT)
-Date:   Tue, 17 Mar 2020 14:29:12 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>
-Subject: Re: [RFC] kernel/sysctl: support setting sysctl parameters from
- kernel command line
-Message-ID: <202003171421.5DCADF51@keescook>
-References: <20200317132105.24555-1-vbabka@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200317132105.24555-1-vbabka@suse.cz>
+        Tue, 17 Mar 2020 17:31:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584480678;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=2WVvdeTWNDlkBf1UYF7ufANAKZfT3CWdgizs+joyuIg=;
+        b=dFpf16B8LGsFUT12EXAyNxjQXhwQtYpirb3l7C7uOmXA75Be9vpUy1KFFUx1U6fDP1qi/V
+        uJbv7ih0K0ITRLd/fcpTszoI9CcCvAaY2pbjr/4JdvJoFQ/82bQhj+InlITLfzVFd/YnBp
+        Ou6ET91YhsLc8w9ftjP0FWrTY3MHbBk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-15-1LYPfGhpNeeDHQCKnLc0Jw-1; Tue, 17 Mar 2020 17:31:14 -0400
+X-MC-Unique: 1LYPfGhpNeeDHQCKnLc0Jw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 063B218B647D;
+        Tue, 17 Mar 2020 21:31:13 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.36.110.5])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 28DB619C58;
+        Tue, 17 Mar 2020 21:31:00 +0000 (UTC)
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org
+Cc:     Paul Moore <paul@paul-moore.com>, sgrubb@redhat.com,
+        omosnace@redhat.com, fw@strlen.de, twoerner@redhat.com,
+        eparis@parisplace.org, ebiederm@xmission.com, tgraf@infradead.org,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH ghak25 v3 0/3] Address NETFILTER_CFG issues
+Date:   Tue, 17 Mar 2020 17:30:21 -0400
+Message-Id: <cover.1584480281.git.rgb@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 02:21:05PM +0100, Vlastimil Babka wrote:
-> A recently proposed patch to add vm_swappiness command line parameter in
-> addition to existing sysctl [1] made me wonder why we don't have a general
-> support for passing sysctl parameters via command line. Googling found only
-> somebody else wondering the same [2], but I haven't found any prior discussion
-> with reasons why not to do this.
+There were questions about the presence and cause of unsolicited syscall events
+in the logs containing NETFILTER_CFG records and sometimes unaccompanied
+NETFILTER_CFG records.
 
-I'd like to see stuff like this (as you say, you've found some
-redundancies here which could be cleaned up a bit). I think the reason
-it hasn't happened before is that the answers have mostly revolved
-around "just set it in your initramfs". :P
+During testing at least the following list of events trigger NETFILTER_CFG
+records and the syscalls related (There may be more events that will trigger
+this message type.):
+	init_module, finit_module: modprobe
+	delete_module: rmmod
+	setsockopt: iptables-restore, ip6tables-restore, ebtables-restore
+	unshare: (h?)ostnamed, updatedb
+	clone: libvirtd
+	kernel threads garbage collecting empty ebtables
 
-> [...]
-> Hence, this patch adds a new parse_args() pass that looks for parameters
-> prefixed by 'sysctl.' and searches for them in the sysctl ctl_tables. When
-> found, the respective proc handler is invoked. The search is just a naive
-> linear one, to avoid using the whole procfs layer. It should be acceptable,
-> as the cost depends on number of sysctl. parameters passed.
+The syscall events unsolicited by any audit rule were found to be caused by a
+missing !audit_dummy_context() check before issuing a NETFILTER_CFG
+record.  In fact, since this is a configuration change it is required,
+and we always want the accompanying syscall record even with no rules
+present, so this has been addressed by ghak120.
 
-I think this needs reconsidering: this RFC only searches 1 level deep,
-but sysctls are a tree. For example:
+The vast majority of unaccompanied records are caused by the fedora default
+rule: "-a never,task" and the occasional early startup one is I believe caused
+by the iptables filter table module hard linked into the kernel rather than a
+loadable module.
 
-kernel.yama.ptrace_scope
-mm.transparent_hugepage.enabled
-net.ipv4.conf.default.rp_filter
-...etc
+A couple of other factors should help eliminate unaccompanied records
+which include commit cb74ed278f80 ("audit: always enable syscall
+auditing when supported and audit is enabled") which makes sure that
+when audit is enabled, so automatically is syscall auditing, and ghak66
+which addressed initializing audit before PID 1.
 
-If this goes in, it'll need to do full traversal.
+Ebtables module initialization to register tables doesn't generate records
+because it was never hooked in to audit.  Recommend adding audit hooks to log
+this covered by ghak43 covered by patch 1.
 
-> The main limitation of avoiding the procfs layer is however that sysctls
-> dynamically registered by register_sysctl_table() or register_sysctl_paths()
-> cannot be set by this method.
+Table unregistration was never logged, which is now covered by ghak44 in
+patch 2.  Unaccompanied records were caused by kernel threads
+automatically unregistering empty ebtables, which necessitates adding
+subject credentials covered in patch 3.
 
-Correct. And I like what you've done in the code: announce any unhandled
-sysctls.
+Seemingly duplicate records are not actually exact duplicates that are caused
+by netfilter table initialization in different network namespaces from the same
+syscall.  Recommend adding the network namespace ID (proc inode and dev)
+to the record to make this obvious (address later with ghak79 after nsid
+patches).
 
-> The processing is hooked right before the init process is loaded, as some
-> handlers might be more complicated than simple setters and might need some
-> subsystems to be initialized. At the moment the init process can be started and
-> eventually execute a process writing to /proc/sys/ then it should be also fine
-> to do that from the kernel.
+See: https://github.com/linux-audit/audit-kernel/issues/25
+See: https://github.com/linux-audit/audit-kernel/issues/35
+See: https://github.com/linux-audit/audit-kernel/issues/43
+See: https://github.com/linux-audit/audit-kernel/issues/44
 
-I agree about placement.
+Changelog:
+v3
+- rebase on v5.6-rc1 audit/next
+- change audit_nf_cfg to audit_log_nfcfg
+- squash 2,3,4,5 to 1 and update patch descriptions
+- add subject credentials to cover garbage collecting kernel threads
 
-> 
-> [1] https://lore.kernel.org/linux-doc/BL0PR02MB560167492CA4094C91589930E9FC0@BL0PR02MB5601.namprd02.prod.outlook.com/
-> [2] https://unix.stackexchange.com/questions/558802/how-to-set-sysctl-using-kernel-command-line-parameter
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
-> Hi,
-> 
-> this is an early RFC so I can get feedback whether to pursue this idea further,
-> before trying the more complicated stuff with dynamically registered sysctls.
-> For those I have some unanswered questions:
-> - Support them at all?
+v2
+- Rebase (audit/next 5.5-rc1) to get audit_context access and ebt_register_table ret code
+- Split x_tables and ebtables updates
+- Check audit_dummy_context
+- Store struct audit_nfcfg params in audit_context, abstract to audit_nf_cfg() call
+- Restore back to "table, family, entries" from "family, table, entries"
+- Log unregistration of tables
+- Add "op=" at the end of the AUDIT_NETFILTER_CFG record
+- Defer nsid patch (ghak79) to once nsid patchset upstreamed (ghak32)
+- Add ghak refs
+- Ditch NETFILTER_CFGSOLO record
 
-Maybe? It seems excessive for the initial version.
+Richard Guy Briggs (3):
+  audit: tidy and extend netfilter_cfg x_tables and ebtables logging
+  netfilter: add audit table unregister actions
+  audit: add subj creds to NETFILTER_CFG record to cover async
+    unregister
 
-> - Do so by an internal procfs mount again, that was removed by 61a47c1ad3a4 ?
->   Or try to keep it simple.
-
-I think you can walk the registered sysctl structures themselves, yes?
-
-> - If sysctls are dynamically registered at module load, process the command
->   line sysctl arguments again? - this would be rather complicated I guess.
-
-If it does get supported, perhaps saving them somewhere for
-register_sysctl_table() to walk when it gets called?
-
-I like the idea if just for having to build less boiler plate for
-supporting things that I've had to plumb to both boot_params and sysctl.
-:)
-
--Kees
-
-> 
-> Vlastimil
-> 
->  include/linux/sysctl.h |  1 +
->  init/main.c            | 21 ++++++++++++++
->  kernel/sysctl.c        | 66 ++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 88 insertions(+)
-> 
-> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-> index 02fa84493f23..62ae963a5c0c 100644
-> --- a/include/linux/sysctl.h
-> +++ b/include/linux/sysctl.h
-> @@ -206,6 +206,7 @@ struct ctl_table_header *register_sysctl_paths(const struct ctl_path *path,
->  void unregister_sysctl_table(struct ctl_table_header * table);
->  
->  extern int sysctl_init(void);
-> +int process_sysctl_arg(char *param, char *val, const char *unused, void *arg);
->  
->  extern struct ctl_table sysctl_mount_point[];
->  
-> diff --git a/init/main.c b/init/main.c
-> index ee4947af823f..74a094c6b8b9 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -1345,6 +1345,25 @@ void __weak free_initmem(void)
->  	free_initmem_default(POISON_FREE_INITMEM);
->  }
->  
-> +static void do_sysctl_args(void)
-> +{
-> +#ifdef CONFIG_SYSCTL
-> +	size_t len = strlen(saved_command_line) + 1;
-> +	char *command_line;
-> +
-> +	command_line = kzalloc(len, GFP_KERNEL);
-> +	if (!command_line)
-> +		panic("%s: Failed to allocate %zu bytes\n", __func__, len);
-> +
-> +	strcpy(command_line, saved_command_line);
-> +
-> +	parse_args("Setting sysctl args", command_line,
-> +		   NULL, 0, -1, -1, NULL, process_sysctl_arg);
-> +
-> +	kfree(command_line);
-> +#endif
-> +}
-> +
->  static int __ref kernel_init(void *unused)
->  {
->  	int ret;
-> @@ -1367,6 +1386,8 @@ static int __ref kernel_init(void *unused)
->  
->  	rcu_end_inkernel_boot();
->  
-> +	do_sysctl_args();
-> +
->  	if (ramdisk_execute_command) {
->  		ret = run_init_process(ramdisk_execute_command);
->  		if (!ret)
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index ad5b88a53c5a..0444656c259d 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -1980,6 +1980,72 @@ int __init sysctl_init(void)
->  	return 0;
->  }
->  
-> +/* Set sysctl value passed on kernel command line. */
-> +int process_sysctl_arg(char *param, char *val,
-> +			       const char *unused, void *arg)
-> +{
-> +	size_t count;
-> +	char *tmp;
-> +	int err;
-> +	loff_t ppos = 0;
-> +	struct ctl_table *base, *child = NULL, *found = NULL;
-> +
-> +	if (strncmp(param, "sysctl.", sizeof("sysctl.") - 1))
-> +		return 0;
-> +
-> +	param += (sizeof("sysctl.") - 1);
-> +
-> +	tmp = strchr(param, '.');
-> +	if (!tmp) {
-> +		pr_warn("Invalid sysctl param '%s' on command line", param);
-> +		return 0;
-> +	}
-> +
-> +	*tmp = '\0';
-> +
-> +	for (base = &sysctl_base_table[0]; base->procname != 0; base++) {
-> +		if (strcmp(param, base->procname) == 0) {
-> +			child = base->child;
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (!child) {
-> +		pr_warn("Unknown sysctl prefix '%s' on command line", param);
-> +		return 0;
-> +	}
-> +
-> +	tmp++;
-> +
-> +	for (; child->procname != 0; child++) {
-> +		if (strcmp(tmp, child->procname) == 0) {
-> +			found = child;
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (!found) {
-> +		pr_warn("Unknown sysctl param '%s.%s' on command line", param, tmp);
-> +		return 0;
-> +	}
-> +
-> +	if (!(found->mode & 0200)) {
-> +		pr_warn("Cannot set sysctl '%s.%s=%s' from command line - not writable",
-> +			param, tmp, val);
-> +		return 0;
-> +	}
-> +
-> +
-> +	count = strlen(val);
-> +	err = found->proc_handler(found, 1, val, &count, &ppos);
-> +
-> +	if (err)
-> +		pr_warn("Error %d setting sysctl '%s.%s=%s' from command line",
-> +			err, param, tmp, val);
-> +
-> +	return 0;
-> +}
-> +
->  #endif /* CONFIG_SYSCTL */
->  
->  /*
-> -- 
-> 2.25.1
-> 
+ include/linux/audit.h           | 20 +++++++++++++++++++
+ kernel/auditsc.c                | 43 +++++++++++++++++++++++++++++++++++++++++
+ net/bridge/netfilter/ebtables.c | 14 ++++++--------
+ net/netfilter/x_tables.c        | 14 +++++---------
+ 4 files changed, 74 insertions(+), 17 deletions(-)
 
 -- 
-Kees Cook
+1.8.3.1
+
