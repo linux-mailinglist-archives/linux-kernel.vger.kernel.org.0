@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05FB2187FB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:04:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 098BF187FB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:04:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbgCQLDl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:03:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43656 "EHLO mail.kernel.org"
+        id S1728178AbgCQLDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:03:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727316AbgCQLDi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:03:38 -0400
+        id S1728145AbgCQLDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:03:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FDB120658;
-        Tue, 17 Mar 2020 11:03:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FBB620719;
+        Tue, 17 Mar 2020 11:03:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443017;
-        bh=bBpGPos69Thu6EJ26LCcd+T/LeCR33KtKG7HV9kYExA=;
+        s=default; t=1584443020;
+        bh=xeDGOU2FzIkIfmHeFajp1/GXc4arIXOD6z80Adr3VcY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GXDNMg0gmOP6Bd22ytHbVH/zLbSzcnYkgUYWDEyXOzteaEnH+WlyFrgBJaTZwBsSZ
-         vXL5j7NvXEbjvjxh1J15rCuEDH8A6zLp4jty/QuFArxuvN2D1dOLjqZ8svwggx2zkg
-         CXttLjBqXg2fxobT3G9ZE5hD7Wf8ag8AzEmfMKig=
+        b=XWH3rJ6coFEf8i9Ao7qbZt6Pssn4Hg/pmz/9KR2M+EgADSz150daS5svIbm4zIy4v
+         jC72pDyuohMzRpGjE/51zHJV08C7bAdFbIaoY5quonijgyHV81eLNfGkLjw6eqleyN
+         Mg3WQwezvg9kVlKbtQWpzv9tWyfHlhc5fsBEBmfU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
         Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.4 066/123] netfilter: xt_recent: recent_seq_next should increase position index
-Date:   Tue, 17 Mar 2020 11:54:53 +0100
-Message-Id: <20200317103314.304968436@linuxfoundation.org>
+Subject: [PATCH 5.4 067/123] netfilter: x_tables: xt_mttg_seq_next should increase position index
+Date:   Tue, 17 Mar 2020 11:54:54 +0100
+Message-Id: <20200317103314.396389019@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
 References: <20200317103307.343627747@linuxfoundation.org>
@@ -45,32 +45,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vasily Averin <vvs@virtuozzo.com>
 
-commit db25517a550926f609c63054b12ea9ad515e1a10 upstream.
+commit ee84f19cbbe9cf7cba2958acb03163fed3ecbb0f upstream.
 
 If .next function does not change position index,
 following .show function will repeat output related
 to current position index.
 
-Without the patch:
- # dd if=/proc/net/xt_recent/SSH # original file outpt
- src=127.0.0.4 ttl: 0 last_seen: 6275444819 oldest_pkt: 1 6275444819
- src=127.0.0.2 ttl: 0 last_seen: 6275438906 oldest_pkt: 1 6275438906
- src=127.0.0.3 ttl: 0 last_seen: 6275441953 oldest_pkt: 1 6275441953
+Without patch:
+ # dd if=/proc/net/ip_tables_matches  # original file output
+ conntrack
+ conntrack
+ conntrack
+ recent
+ recent
+ icmp
+ udplite
+ udp
+ tcp
  0+1 records in
  0+1 records out
- 204 bytes copied, 6.1332e-05 s, 3.3 MB/s
+ 65 bytes copied, 5.4074e-05 s, 1.2 MB/s
 
-Read after lseek into middle of last line (offset 140 in example below)
-generates expected end of last line and then unexpected whole last line
-once again
-
- # dd if=/proc/net/xt_recent/SSH bs=140 skip=1
- dd: /proc/net/xt_recent/SSH: cannot skip to specified offset
- 127.0.0.3 ttl: 0 last_seen: 6275441953 oldest_pkt: 1 6275441953
- src=127.0.0.3 ttl: 0 last_seen: 6275441953 oldest_pkt: 1 6275441953
+ # dd if=/proc/net/ip_tables_matches bs=62 skip=1
+ dd: /proc/net/ip_tables_matches: cannot skip to specified offset
+ cp   <<< end of  last line
+ tcp  <<< and then unexpected whole last line once again
  0+1 records in
  0+1 records out
- 132 bytes copied, 6.2487e-05 s, 2.1 MB/s
+ 7 bytes copied, 0.000102447 s, 68.3 kB/s
 
 Cc: stable@vger.kernel.org
 Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code ...")
@@ -80,23 +82,29 @@ Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/xt_recent.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/x_tables.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/netfilter/xt_recent.c
-+++ b/net/netfilter/xt_recent.c
-@@ -492,12 +492,12 @@ static void *recent_seq_next(struct seq_
- 	const struct recent_entry *e = v;
- 	const struct list_head *head = e->list.next;
+--- a/net/netfilter/x_tables.c
++++ b/net/netfilter/x_tables.c
+@@ -1551,6 +1551,9 @@ static void *xt_mttg_seq_next(struct seq
+ 	uint8_t nfproto = (unsigned long)PDE_DATA(file_inode(seq->file));
+ 	struct nf_mttg_trav *trav = seq->private;
  
-+	(*pos)++;
- 	while (head == &t->iphash[st->bucket]) {
- 		if (++st->bucket >= ip_list_hash_size)
- 			return NULL;
- 		head = t->iphash[st->bucket].next;
++	if (ppos != NULL)
++		++(*ppos);
++
+ 	switch (trav->class) {
+ 	case MTTG_TRAV_INIT:
+ 		trav->class = MTTG_TRAV_NFP_UNSPEC;
+@@ -1576,9 +1579,6 @@ static void *xt_mttg_seq_next(struct seq
+ 	default:
+ 		return NULL;
  	}
--	(*pos)++;
- 	return list_entry(head, struct recent_entry, list);
+-
+-	if (ppos != NULL)
+-		++*ppos;
+ 	return trav;
  }
  
 
