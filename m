@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1597187F1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:58:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96FDB187F1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:58:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbgCQK6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 06:58:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36658 "EHLO mail.kernel.org"
+        id S1727291AbgCQK6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:58:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727241AbgCQK63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 06:58:29 -0400
+        id S1726564AbgCQK6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:58:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60C8C20719;
-        Tue, 17 Mar 2020 10:58:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37E9420735;
+        Tue, 17 Mar 2020 10:58:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442708;
-        bh=kICxU/gC+MYWUitD2LqlLjc4HyHeI4qjKrKsHJYo6gQ=;
+        s=default; t=1584442718;
+        bh=66/bLf6Hi1EaCyAFrklBvcq42gI8ICTXvyQYaCRAOkY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WQ4MxTLO6QmSceQb30K1ZmJo1wPZHmW2I/MFjvK1B1D1x/+yCvpLhHRwcPiz+62Hu
-         eCW2cRyu2NX2SfAEByn1GrSz9Rj6MgGoZogEN4k0efH6K7LCeRjzbID+Ocdvj1d2Vz
-         FvOi4Q4AvApgvPcib1JoTgQ5o+nqJ1Xf74vAtxyM=
+        b=FE+jM8ZcjBAlrTvqtbepqjb/7gbPHJr920Bf0T/Eic8P7WUdo2f2JOGj2TScgyfPx
+         cAy6irT3AaI/9v5No/yC2UKsW2s150bgNByN/gEtqOkqHup/7CCIldOyZ7Rvs7DEPd
+         TZN7BZoGu6n15KAfDK/zr2u8dBN2AhDjR2SqXG2s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.19 54/89] netfilter: x_tables: xt_mttg_seq_next should increase position index
-Date:   Tue, 17 Mar 2020 11:55:03 +0100
-Message-Id: <20200317103306.135395178@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.19 57/89] ktest: Add timeout for ssh sync testing
+Date:   Tue, 17 Mar 2020 11:55:06 +0100
+Message-Id: <20200317103306.457163324@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
 References: <20200317103259.744774526@linuxfoundation.org>
@@ -43,69 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit ee84f19cbbe9cf7cba2958acb03163fed3ecbb0f upstream.
+commit 4d00fc477a2ce8b6d2b09fb34ef9fe9918e7d434 upstream.
 
-If .next function does not change position index,
-following .show function will repeat output related
-to current position index.
+Before rebooting the box, a "ssh sync" is called to the test machine to see
+if it is alive or not. But if the test machine is in a partial state, that
+ssh may never actually finish, and the ktest test hangs.
 
-Without patch:
- # dd if=/proc/net/ip_tables_matches  # original file output
- conntrack
- conntrack
- conntrack
- recent
- recent
- icmp
- udplite
- udp
- tcp
- 0+1 records in
- 0+1 records out
- 65 bytes copied, 5.4074e-05 s, 1.2 MB/s
-
- # dd if=/proc/net/ip_tables_matches bs=62 skip=1
- dd: /proc/net/ip_tables_matches: cannot skip to specified offset
- cp   <<< end of  last line
- tcp  <<< and then unexpected whole last line once again
- 0+1 records in
- 0+1 records out
- 7 bytes copied, 0.000102447 s, 68.3 kB/s
+Add a 10 second timeout to the sync test, which will fail after 10 seconds
+and then cause the test to reboot the test machine.
 
 Cc: stable@vger.kernel.org
-Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code ...")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206283
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 6474ace999edd ("ktest.pl: Powercycle the box on reboot if no connection can be made")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/x_tables.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/testing/ktest/ktest.pl |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -1556,6 +1556,9 @@ static void *xt_mttg_seq_next(struct seq
- 	uint8_t nfproto = (unsigned long)PDE_DATA(file_inode(seq->file));
- 	struct nf_mttg_trav *trav = seq->private;
+--- a/tools/testing/ktest/ktest.pl
++++ b/tools/testing/ktest/ktest.pl
+@@ -1372,7 +1372,7 @@ sub reboot {
  
-+	if (ppos != NULL)
-+		++(*ppos);
-+
- 	switch (trav->class) {
- 	case MTTG_TRAV_INIT:
- 		trav->class = MTTG_TRAV_NFP_UNSPEC;
-@@ -1581,9 +1584,6 @@ static void *xt_mttg_seq_next(struct seq
- 	default:
- 		return NULL;
- 	}
--
--	if (ppos != NULL)
--		++*ppos;
- 	return trav;
- }
+     } else {
+ 	# Make sure everything has been written to disk
+-	run_ssh("sync");
++	run_ssh("sync", 10);
  
+ 	if (defined($time)) {
+ 	    start_monitor;
 
 
