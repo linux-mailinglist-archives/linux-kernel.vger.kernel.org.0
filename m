@@ -2,55 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0F4A18829B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:55:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F02618829F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:55:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbgCQLzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:55:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33474 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbgCQLzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:55:03 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1877FAC5B;
-        Tue, 17 Mar 2020 11:55:02 +0000 (UTC)
-Date:   Tue, 17 Mar 2020 12:55:01 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     tglx@linutronix.de, jpoimboe@redhat.com,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [RFC][PATCH 05/16] objtool: Optimize find_symbol_by_index()
-In-Reply-To: <20200312135041.699859794@infradead.org>
-Message-ID: <alpine.LSU.2.21.2003171253180.2339@pobox.suse.cz>
-References: <20200312134107.700205216@infradead.org> <20200312135041.699859794@infradead.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1726785AbgCQLz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:55:26 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:48139 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725794AbgCQLz0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:55:26 -0400
+X-Originating-IP: 86.202.105.35
+Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 3BBF820003;
+        Tue, 17 Mar 2020 11:55:24 +0000 (UTC)
+Date:   Tue, 17 Mar 2020 12:55:23 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     maggarwa@codeaurora.org
+Cc:     a.zummo@towertech.it, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc-pm8xxx: Clear Alarm register on resume
+Message-ID: <20200317115523.GB3448@piout.net>
+References: <1584342688-14035-1-git-send-email-maggarwa@codeaurora.org>
+ <20200316102905.GN4518@piout.net>
+ <000001d5fc17$9c327ee0$d4977ca0$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000001d5fc17$9c327ee0$d4977ca0$@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> --- a/tools/objtool/elf.h
-> +++ b/tools/objtool/elf.h
-> @@ -27,7 +27,6 @@ struct section {
->  	struct list_head list;
->  	GElf_Shdr sh;
->  	struct list_head symbol_list;
-> -	DECLARE_HASHTABLE(symbol_hash, 8);
->  	struct list_head rela_list;
->  	DECLARE_HASHTABLE(rela_hash, 16);
->  	struct section *base, *rela;
-> @@ -71,7 +70,7 @@ struct elf {
->  	int fd;
->  	char *name;
->  	struct list_head sections;
-> -	DECLARE_HASHTABLE(rela_hash, 16);
-> +	DECLARE_HASHTABLE(symbol_hash, 20);
->  };
+On 17/03/2020 10:20:36+0530, maggarwa@codeaurora.org wrote:
+> Hi,
+> 
+> Comments inline.
+> 
+> 
+> Thanks & Regards,
+> Mohit
+> 
+> -----Original Message-----
+> From: Alexandre Belloni <alexandre.belloni@bootlin.com> 
+> Sent: Monday, March 16, 2020 3:59 PM
+> To: Mohit Aggarwal <maggarwa@codeaurora.org>
+> Cc: a.zummo@towertech.it; linux-rtc@vger.kernel.org;
+> linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH] rtc-pm8xxx: Clear Alarm register on resume
+> 
+> Hi,
+> 
+> On 16/03/2020 12:41:28+0530, Mohit Aggarwal wrote:
+> > Currently, alarm register is not cleared on resume leading to reboot 
+> > during power off charging mode.
+> > 
+> > Change-Id: Ie2e6bbab8aa46e4e9b9cc984181ffab557cbbdae
+> 
+> No Change-Id upstream please.
+> [Mohit]: Will fix in next patch.
+> 
+> > Signed-off-by: Mohit Aggarwal <maggarwa@codeaurora.org>
+> > ---
+> >  drivers/rtc/rtc-pm8xxx.c | 13 ++++++++++++-
+> >  1 file changed, 12 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c index 
+> > bbe013f..96e7985 100644
+> > --- a/drivers/rtc/rtc-pm8xxx.c
+> > +++ b/drivers/rtc/rtc-pm8xxx.c
+> > @@ -1,5 +1,5 @@
+> >  // SPDX-License-Identifier: GPL-2.0-only
+> > -/* Copyright (c) 2010-2011, 2019, The Linux Foundation. All rights 
+> > reserved. */
+> > +/* Copyright (c) 2010-2011, 2019-2020, The Linux Foundation. All 
+> > +rights reserved. */
+> >  
+> >  #include <linux/of.h>
+> >  #include <linux/module.h>
+> > @@ -301,6 +301,7 @@ static int pm8xxx_rtc_alarm_irq_enable(struct device
+> *dev, unsigned int enable)
+> >  	struct pm8xxx_rtc *rtc_dd = dev_get_drvdata(dev);
+> >  	const struct pm8xxx_rtc_regs *regs = rtc_dd->regs;
+> >  	unsigned int ctrl_reg;
+> > +	u8 value[NUM_8_BIT_RTC_REGS] = {0};
+> >  
+> >  	spin_lock_irqsave(&rtc_dd->ctrl_reg_lock, irq_flags);
+> >  
+> > @@ -319,6 +320,16 @@ static int pm8xxx_rtc_alarm_irq_enable(struct device
+> *dev, unsigned int enable)
+> >  		goto rtc_rw_fail;
+> >  	}
+> >  
+> > +	/* Clear Alarm register */
+> > +	if (!enable) {
+> > +		rc = regmap_bulk_write(rtc_dd->regmap, regs->alarm_rw,
+> value,
+> > +					sizeof(value));
+> 
+> This is not properly aligned.
+> [Mohit]: I don't see any alignment issue at my end. I can see proper tabs
+> are present.
+> 
 
-Not that it really matters, but what was rela_hash in struct elf for 
-before this?
+The alignment should match the opening parenthesis.
 
-Miroslav
+> > +		if (rc) {
+> > +			dev_err(dev, "Write to RTC ALARM register
+> failed\n");
+> 
+> Is that error message necessary? What would be the user action after seeing
+> that in the logs? Will the logs actually be seen?
+> [Mohit]: In case issue in question reproduces even after this change then
+> for debugging purposes user can look out for this error log in kernel logs
+> which can help to triage the issue.
+> 
+
+Who in the field on the final product will see this error message? For
+debugging purposes, regmap already provides plenty of tracing
+facilities.
+
+
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
