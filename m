@@ -2,131 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AEE2189134
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 23:18:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1246A189143
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 23:22:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbgCQWSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 18:18:01 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56028 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726735AbgCQWSB (ORCPT
+        id S1726897AbgCQWW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 18:22:26 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:37297 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbgCQWWZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 18:18:01 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jEKX7-0001CZ-5K; Tue, 17 Mar 2020 23:17:57 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 94A571C2294;
-        Tue, 17 Mar 2020 23:17:56 +0100 (CET)
-Date:   Tue, 17 Mar 2020 22:17:56 -0000
-From:   "tip-bot2 for Hans de Goede" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/kdump] x86/purgatory: Fail the build if purgatory.ro has
- missing symbols
-Cc:     Hans de Goede <hdegoede@redhat.com>, Borislav Petkov <bp@suse.de>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200317130841.290418-2-hdegoede@redhat.com>
-References: <20200317130841.290418-2-hdegoede@redhat.com>
+        Tue, 17 Mar 2020 18:22:25 -0400
+Received: from mail-qk1-f176.google.com ([209.85.222.176]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MGQSj-1j4C7m1XeH-00GsXo; Tue, 17 Mar 2020 23:22:23 +0100
+Received: by mail-qk1-f176.google.com with SMTP id e11so35446552qkg.9;
+        Tue, 17 Mar 2020 15:22:22 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ3Z+cE2UlhegvMC+4op4TlWtons67C2+xtwMg4aYQr0b250oJE1
+        VBtYzKtmIFh8+c44kefTCn1XtjTvokgfh1YJZJA=
+X-Google-Smtp-Source: ADFU+vuxipXRJd9I8d072RV0faI/2rGMZOyH3YUhR2vlAYRex9FyUKKPvFQbFe6jrqVgUczzNOMVCwrC8sbHYMYQGws=
+X-Received: by 2002:a37:6285:: with SMTP id w127mr1193686qkb.138.1584483741962;
+ Tue, 17 Mar 2020 15:22:21 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <158448347626.28353.9586222649550261454.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <cover.1584473399.git.gurus@codeaurora.org> <587f9ccae68ad7e1ce97fa8da6037292af1a5095.1584473399.git.gurus@codeaurora.org>
+In-Reply-To: <587f9ccae68ad7e1ce97fa8da6037292af1a5095.1584473399.git.gurus@codeaurora.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 17 Mar 2020 23:22:06 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2Hi_AoRC3g7qKth4e_Y1jZrbBDhWUb3YPZm10FWMu-ig@mail.gmail.com>
+Message-ID: <CAK8P3a2Hi_AoRC3g7qKth4e_Y1jZrbBDhWUb3YPZm10FWMu-ig@mail.gmail.com>
+Subject: Re: [PATCH v9 04/11] pwm: clps711x: Use 64-bit division macro
+To:     Guru Das Srinagesh <gurus@codeaurora.org>
+Cc:     Linux PWM List <linux-pwm@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <uwe@kleine-koenig.org>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexander Shiyan <shc_work@mail.ru>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:Z2eQotCVF8o3msDNOL1omdrkIssexNriZavBiBKYnLbXPOlYLjS
+ yWsZ5Vg/PtxAIVZ0TZ1Acx5vB0D5fMushsdrIOPSH03HAgQlRZauJEJ+SqX1mC+KiigjAnC
+ DIv6OTPqJgU6hMaqbfkmQCTaqQX7rbr5ZSLz1t7U9iN0F2iWr6p7OpSitoJYzuIpKZiP/hq
+ nw/SvRh9cdM1Lj11CP1BA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:yhdO/01Lugw=:oUbccFLRFu4gnR3zyBIUDW
+ pCej3EO2GN4QSQRMjmFzJD7JrEyhqAYVqZH3pYm3rWaMJeTjer/GrZsIxZEREA9aONIG3G9fs
+ r7ft+XXFBXKRtzIZ9VxKcmaMBjxjzihVTgQKzJFvBx2JQj/Fzn9iffD6vwix3sFvGY94EEXrA
+ ZbB1s8XwebU5zRTNGM2nvOfEqNnO5R8ZEPID5pvveGyW3MT6N/H2QXPneeaCYVqQa20SwCnsJ
+ BGlNTi0ErJvC6VL2UkYO6I5EQtsnZxfnxjXarwg0mSdTsyrpJMyBQ6qjylPpaJOcbw2I44pnr
+ lVBMdZB1FK5PNqd9lSs0qoBsELIxsONEPkFmGa2x+dwmktptQAcJlbAueQHFi3sx9w3okMBcc
+ Y4VjVA9DQNm+1AYoUcPULPBbpAX5RiLK1GNVRpbUZhAkQ9qnUZIL0pQvc3BWiZapsAX1kVJxh
+ 3Tm1qBzYmrrqF+g0jEu9MuUHL4T75gEoIQgmMvMD2xjiyb1b+5KHiRKtP3ikGgvxr4UUAKcRr
+ iIyIV3deurH0jaSLjvcOGxPGoz92BhIGmGvTtA8hXCwybhNNLrzx/eGLhArSx2Ux/F5R+C80D
+ hrn6YkT4flCjpGj/I2VtkNYmx1BrA3ygu41xXHjXxSRoUqKrH8//X4fTgKBP+OwqF3MIuHiSJ
+ FlPy7ryuPWVnDUVBPKUa7rfLCtx/6ptJ2Ev5dTl5r/LQaMpwL+0r/eFH6sp7vsifK8QeTvqmB
+ Z6j38FwrWjnSsKbdbCXL8Y7fPgTrD2MkQOJyLdDVOTET2iwjC6y8cXJtESvRLHon7SaJ9AX5N
+ v29Xf9BymEYOUHL11zuKN6W99oi1d/sa9YY52rzNTcdV7feQjI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/kdump branch of tip:
+On Tue, Mar 17, 2020 at 9:05 PM Guru Das Srinagesh <gurus@codeaurora.org> wrote:
+>
+> Since the PWM framework is switching struct pwm_args.period's datatype
+> to u64, prepare for this transition by using DIV64_U64_ROUND_CLOSEST to
+> handle a 64-bit divisor.
+>
+> Cc: Alexander Shiyan <shc_work@mail.ru>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+>
+> Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
+> ---
+>  drivers/pwm/pwm-clps711x.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pwm/pwm-clps711x.c b/drivers/pwm/pwm-clps711x.c
+> index 924d39a..ba9500a 100644
+> --- a/drivers/pwm/pwm-clps711x.c
+> +++ b/drivers/pwm/pwm-clps711x.c
+> @@ -43,7 +43,7 @@ static void clps711x_pwm_update_val(struct clps711x_chip *priv, u32 n, u32 v)
+>  static unsigned int clps711x_get_duty(struct pwm_device *pwm, unsigned int v)
+>  {
+>         /* Duty cycle 0..15 max */
+> -       return DIV_ROUND_CLOSEST(v * 0xf, pwm->args.period);
+> +       return DIV64_U64_ROUND_CLOSEST(v * 0xf, pwm->args.period);
+>  }
 
-Commit-ID:     e4160b2e4b02377c67f8ecd05786811598f39acd
-Gitweb:        https://git.kernel.org/tip/e4160b2e4b02377c67f8ecd05786811598f39acd
-Author:        Hans de Goede <hdegoede@redhat.com>
-AuthorDate:    Tue, 17 Mar 2020 14:08:41 +01:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Tue, 17 Mar 2020 15:59:12 +01:00
+Is it actually going to exceed U32_MAX? If not, a type cast may be
+more appropriate here than the expensive 64-bit division.
 
-x86/purgatory: Fail the build if purgatory.ro has missing symbols
-
-Linking purgatory.ro with -r enables "incremental linking"; this means
-no checks for unresolved symbols are done while linking purgatory.ro.
-
-A change to the sha256 code has caused the purgatory in 5.4-rc1 to have
-a missing symbol on memzero_explicit(), yet things still happily build.
-
-Add an extra check for unresolved symbols by calling ld without -r
-before running bin2c to generate kexec-purgatory.c.
-
-This causes a build of 5.4-rc1 with this patch added to fail as it should:
-
-    CHK     arch/x86/purgatory/purgatory.ro
-  ld: arch/x86/purgatory/purgatory.ro: in function `sha256_transform':
-  sha256.c:(.text+0x1c0c): undefined reference to `memzero_explicit'
-  make[2]: *** [arch/x86/purgatory/Makefile:72:
-      arch/x86/purgatory/kexec-purgatory.c] Error 1
-  make[1]: *** [scripts/Makefile.build:509: arch/x86/purgatory] Error 2
-  make: *** [Makefile:1650: arch/x86] Error 2
-
-Also remove --no-undefined from LDFLAGS_purgatory.ro as that has no
-effect.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20200317130841.290418-2-hdegoede@redhat.com
----
- arch/x86/purgatory/.gitignore |  1 +
- arch/x86/purgatory/Makefile   | 13 ++++++++++---
- 2 files changed, 11 insertions(+), 3 deletions(-)
- create mode 100644 arch/x86/purgatory/.gitignore
-
-diff --git a/arch/x86/purgatory/.gitignore b/arch/x86/purgatory/.gitignore
-new file mode 100644
-index 0000000..d2be150
---- /dev/null
-+++ b/arch/x86/purgatory/.gitignore
-@@ -0,0 +1 @@
-+purgatory.chk
-diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-index 9733d1c..54aadbb 100644
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -14,8 +14,12 @@ $(obj)/sha256.o: $(srctree)/lib/crypto/sha256.c FORCE
- 
- CFLAGS_sha256.o := -D__DISABLE_EXPORTS
- 
--LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
--targets += purgatory.ro
-+# When linking purgatory.ro with -r unresolved symbols are not checked,
-+# also link a purgatory.chk binary without -r to check for unresolved symbols.
-+PURGATORY_LDFLAGS := -e purgatory_start -nostdlib -z nodefaultlib
-+LDFLAGS_purgatory.ro := -r $(PURGATORY_LDFLAGS)
-+LDFLAGS_purgatory.chk := $(PURGATORY_LDFLAGS)
-+targets += purgatory.ro purgatory.chk
- 
- # Sanitizer, etc. runtimes are unavailable and cannot be linked here.
- GCOV_PROFILE	:= n
-@@ -61,12 +65,15 @@ CFLAGS_string.o			+= $(PURGATORY_CFLAGS)
- $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
- 		$(call if_changed,ld)
- 
-+$(obj)/purgatory.chk: $(obj)/purgatory.ro FORCE
-+		$(call if_changed,ld)
-+
- targets += kexec-purgatory.c
- 
- quiet_cmd_bin2c = BIN2C   $@
-       cmd_bin2c = $(objtree)/scripts/bin2c kexec_purgatory < $< > $@
- 
--$(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
-+$(obj)/kexec-purgatory.c: $(obj)/purgatory.ro $(obj)/purgatory.chk FORCE
- 	$(call if_changed,bin2c)
- 
- obj-$(CONFIG_KEXEC_FILE)	+= kexec-purgatory.o
+       Arnd
