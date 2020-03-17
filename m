@@ -2,91 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB29E18900B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:06:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4120189007
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:05:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbgCQVGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 17:06:05 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:36397 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbgCQVGD (ORCPT
+        id S1726834AbgCQVFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 17:05:11 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:26017 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726549AbgCQVFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 17:06:03 -0400
-Received: by mail-qk1-f196.google.com with SMTP id u25so35176674qkk.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 14:06:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vdiK/K3dvfcLjdBU9Aq5+NpRaZi8TfMUsERWtzgU2PQ=;
-        b=rDrvcQttb28q0tTTlvqT69dEpcKnrP7/n43mH+rN34dBE4N4qT0eI0FVg+3A8n8L4D
-         5nB+dUQMnllx+AJb0sukZ4ybEFYmr+yostsv8qfCOuyeE3a/+JX+qDtEmMhjzfH7dqsM
-         mhrwy6kQw51dU41GgWWIDaj1IlIu4JgKT/pFTFdtUKUzAQwsjiOiTffAR2UTSPgdiTeF
-         SGRSWCfq5sZUd2QYY+8fZ+CknAsiGkJ+urq5zZnf/LY3uplcbaBjJ/JeMh9AEEN0BV+s
-         LqnesuLCrUt6/VHkNobWJqzeUlergomSx+hICPFDCatLACtXeyONlb5HrY8VwCKRGlIB
-         1xcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vdiK/K3dvfcLjdBU9Aq5+NpRaZi8TfMUsERWtzgU2PQ=;
-        b=F4S5ksqW7+piSYqtsfV1C7rTGOHiwGlVrJA62YOakZl2D8at8Fzwv7Sf6jJKev7FAU
-         FUDP4MaVyHo4n7Jw+uFtMrQxwpS8amdwQyxHgUdaOLSC8z/XsP6ZtRS37W9FaWjxQogE
-         YZt8PWMXmAOVhHRgknJpN0SnglCAt5XXxD9+bivew5GeMRHGngaM69dI78ujivl2NXCD
-         BjhGzO0S64XFhAqPcJyF9XNbkc3HzV+yKkZW5CnxMomfH2ZNZWl336bTdcpQSYec2I6r
-         kjZH4Ia7IjIgZJVKIiLhRl0MGLLQocTJjEFYwDsMRH3VIJQ0coDzrW3QWCx+V1nBXMdH
-         YYmQ==
-X-Gm-Message-State: ANhLgQ2a9fvOIDsXLffPs9zJvxsia8Lu2zi0WcolM4QSe+MhSLfQl9Eo
-        8d0evxSlJZn0ubf2V8jWk9E=
-X-Google-Smtp-Source: ADFU+vu/MfSxDYIvdrPpn7R600MIh8U0c6YMpF/wV+Xeg2HAChVwbBbQ9wbloHp5NOw/pGzR8JUxmw==
-X-Received: by 2002:a05:620a:124d:: with SMTP id a13mr867875qkl.278.1584479162648;
-        Tue, 17 Mar 2020 14:06:02 -0700 (PDT)
-Received: from localhost.localdomain ([179.159.236.147])
-        by smtp.googlemail.com with ESMTPSA id s195sm2696891qke.25.2020.03.17.14.05.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2020 14:06:01 -0700 (PDT)
-From:   Igor Matheus Andrade Torrente <igormtorrente@gmail.com>
-To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        sean@poorly.run, airlied@linux.ie, daniel@ffwll.ch,
-        sumit.semwal@linaro.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Cc:     Rodrigo.Siqueira@amd.com, rodrigosiqueiramelo@gmail.com,
-        andrealmeid@collabora.com,
-        Igor Matheus Andrade Torrente <igormtorrente@gmail.com>
-Subject: [PATCH v2] drm: Correct a typo in a function comment
-Date:   Tue, 17 Mar 2020 18:03:39 -0300
-Message-Id: <20200317210339.2669-1-igormtorrente@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 17 Mar 2020 17:05:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584479110;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=iVSU/hUq+Q3tc0+RYvpp3aUN70WGubCDMx/lLb546d4=;
+        b=Sg2AKlnPlkzIwDBUeREAJuC+CDFIkS2pDBEnond62PanrxiE+vB/BBV2Q89G4kFB/eTAo2
+        UsJRGre/2jSVDMq3Gyp59NaumiHRdxIoRX594f1dZaOfJR7NoSTN19g9yz1cyDubCWrnps
+        Xr/wG44CcKkLteauLvTt1S2PKUZixYM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-311-25fmtZKbOd-CrmzGLmuV3Q-1; Tue, 17 Mar 2020 17:05:09 -0400
+X-MC-Unique: 25fmtZKbOd-CrmzGLmuV3Q-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A137F1137853;
+        Tue, 17 Mar 2020 21:05:07 +0000 (UTC)
+Received: from treble (unknown [10.10.110.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3A30890811;
+        Tue, 17 Mar 2020 21:05:06 +0000 (UTC)
+Date:   Tue, 17 Mar 2020 16:05:03 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org,
+        mhiramat@kernel.org, mbenes@suse.cz, brgerst@gmail.com
+Subject: Re: [PATCH v2 00/19] objtool: vmlinux.o and noinstr validation
+Message-ID: <20200317210503.a4ic2yd43bbu5ge2@treble>
+References: <20200317170234.897520633@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200317170234.897520633@infradead.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace "pionter" with "pointer" in the drm_gem_handle_create description.
+On Tue, Mar 17, 2020 at 06:02:34PM +0100, Peter Zijlstra wrote:
+> Hi all,
+> 
+> Moar patches. This implements the proposed objtool validation for the
+> 
+>   noinstr -- function attribute
+>   instr_{begin,end}() -- annotation
+> 
+> Who's purpose is to annotate such code that has constraints on instrumentation
+> -- such as early exception code. Specifically it makes it very hard to
+> accidentally add code to such regions.
+> 
+> I've left the whole noinstr naming in place, we'll bike-shed on that later.
+> 
+> This should address all feedback from RFC/v1.
 
-Changes in v2:
-- Change subject text
+Looks good to me, other than a few minor comments on patch 16.
 
-Signed-off-by: Igor Matheus Andrade Torrente <igormtorrente@gmail.com>
----
- drivers/gpu/drm/drm_gem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
-diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-index 6e960d57371e..c356379f5e97 100644
---- a/drivers/gpu/drm/drm_gem.c
-+++ b/drivers/gpu/drm/drm_gem.c
-@@ -432,7 +432,7 @@ drm_gem_handle_create_tail(struct drm_file *file_priv,
-  * drm_gem_handle_create - create a gem handle for an object
-  * @file_priv: drm file-private structure to register the handle for
-  * @obj: object to register
-- * @handlep: pionter to return the created handle to the caller
-+ * @handlep: pointer to return the created handle to the caller
-  *
-  * Create a handle for this object. This adds a handle reference to the object,
-  * which includes a regular reference count. Callers will likely want to
 -- 
-2.20.1
+Josh
 
