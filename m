@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A190C187EE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:57:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C130187EF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:57:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbgCQK5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 06:57:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34920 "EHLO mail.kernel.org"
+        id S1727020AbgCQK5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:57:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726867AbgCQK5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 06:57:08 -0400
+        id S1726704AbgCQK5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:57:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE75B2073E;
-        Tue, 17 Mar 2020 10:57:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFB7520738;
+        Tue, 17 Mar 2020 10:57:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442628;
-        bh=tIDuFIuCHpKAC0CNL2sqNH/zangInW0CyT/NEaHTTQY=;
+        s=default; t=1584442653;
+        bh=wDd3r7LxR7N9t+4wfc5nCP7or8WBo0XPakCwLcF0A5s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VB5BFk/ltKgYLc7J/fwozDbN124dCYmZez7gRu4n84RY/VObBJYe10LS9WIyvc/7p
-         wSMKMHb/5DElF4S9cv4GnTLbWjzh5oBqyDBFnQPpB0pxMo2DM05ik9yqd7YJw5SA29
-         N/1L7zNYM/sda6jkr72s/5NspOwN6gB3jMDljcwM=
+        b=kFOShmN6VAw60OsICExML8vqJCix6EGjmTJshwiQFrkAn0ab06VZ85qgcK73Uqwwc
+         Aqj53vTUpKe/iHDFLpeq/w8l3zdBcq7DAWV3iWkuomTPF7yzOS6z4246qqfqlbR8gH
+         Fv8YEkWG7C0vzAtmpDxb+BRe7ywMm5dwkn7l76+Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 27/89] nl802154: add missing attribute validation for dev_type
-Date:   Tue, 17 Mar 2020 11:54:36 +0100
-Message-Id: <20200317103303.021442576@linuxfoundation.org>
+Subject: [PATCH 4.19 29/89] macsec: add missing attribute validation for port
+Date:   Tue, 17 Mar 2020 11:54:38 +0100
+Message-Id: <20200317103303.232045378@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
 References: <20200317103259.744774526@linuxfoundation.org>
@@ -46,29 +45,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jakub Kicinski <kuba@kernel.org>
 
-[ Upstream commit b60673c4c418bef7550d02faf53c34fbfeb366bf ]
+[ Upstream commit 31d9a1c524964bac77b7f9d0a1ac140dc6b57461 ]
 
-Add missing attribute type validation for IEEE802154_ATTR_DEV_TYPE
+Add missing attribute validation for IFLA_MACSEC_PORT
 to the netlink policy.
 
-Fixes: 90c049b2c6ae ("ieee802154: interface type to be added")
+Fixes: c09440f7dcb3 ("macsec: introduce IEEE 802.1AE driver")
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Acked-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ieee802154/nl_policy.c |    1 +
+ drivers/net/macsec.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/net/ieee802154/nl_policy.c
-+++ b/net/ieee802154/nl_policy.c
-@@ -36,6 +36,7 @@ const struct nla_policy ieee802154_polic
- 	[IEEE802154_ATTR_BAT_EXT] = { .type = NLA_U8, },
- 	[IEEE802154_ATTR_COORD_REALIGN] = { .type = NLA_U8, },
- 	[IEEE802154_ATTR_PAGE] = { .type = NLA_U8, },
-+	[IEEE802154_ATTR_DEV_TYPE] = { .type = NLA_U8, },
- 	[IEEE802154_ATTR_COORD_SHORT_ADDR] = { .type = NLA_U16, },
- 	[IEEE802154_ATTR_COORD_HW_ADDR] = { .type = NLA_HW_ADDR, },
- 	[IEEE802154_ATTR_COORD_PAN_ID] = { .type = NLA_U16, },
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -2995,6 +2995,7 @@ static const struct device_type macsec_t
+ 
+ static const struct nla_policy macsec_rtnl_policy[IFLA_MACSEC_MAX + 1] = {
+ 	[IFLA_MACSEC_SCI] = { .type = NLA_U64 },
++	[IFLA_MACSEC_PORT] = { .type = NLA_U16 },
+ 	[IFLA_MACSEC_ICV_LEN] = { .type = NLA_U8 },
+ 	[IFLA_MACSEC_CIPHER_SUITE] = { .type = NLA_U64 },
+ 	[IFLA_MACSEC_WINDOW] = { .type = NLA_U32 },
 
 
