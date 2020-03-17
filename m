@@ -2,128 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D720D1887BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:43:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAD0E1887C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:43:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbgCQOnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 10:43:16 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:17886 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726112AbgCQOnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 10:43:15 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48hbWL0ktTz9txKB;
-        Tue, 17 Mar 2020 15:43:10 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=jX0aVra6; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id RNzJeTCS2zXw; Tue, 17 Mar 2020 15:43:10 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48hbWK6nWSz9txK6;
-        Tue, 17 Mar 2020 15:43:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1584456189; bh=aysZJ0oAlGihBmkcbuVURApboUV6znAXwjAIXT1Fqb8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=jX0aVra6NpHJierLO2o6lej5QYe1IaZKYnRs2FNd365bgNplX5De1a5dQnmFKTZB1
-         Mq4ydcqQ5laEyLsojIL0ZaS2RjK3iBP0+ymOI65V92f2XrPaoP8UtuwawB+5xqoesW
-         WVjcds2rtOcejkeAvSdEX44eW4FrLMIv3bzHOPsk=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 59EF88B7BB;
-        Tue, 17 Mar 2020 15:43:11 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id fqTBFZC1M03R; Tue, 17 Mar 2020 15:43:11 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 99B298B7B7;
-        Tue, 17 Mar 2020 15:43:10 +0100 (CET)
-Subject: Re: [PATCH v1 39/46] powerpc/8xx: Add a function to early map kernel
- via huge pages
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <abaf66aaebfd988d835dc9520bccedd546ee95c4.1584360344.git.christophe.leroy@c-s.fr>
- <202003170938.Z0IuUore%lkp@intel.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <22bc0bba-533f-548b-8eec-a3392acc8e3d@c-s.fr>
-Date:   Tue, 17 Mar 2020 15:43:01 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726802AbgCQOnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 10:43:43 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:40323 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726478AbgCQOnm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 10:43:42 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200317144341euoutp02b49208dd17df3f633e33d06d4dbf719e~9HonL1xUG1583015830euoutp02y
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 14:43:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200317144341euoutp02b49208dd17df3f633e33d06d4dbf719e~9HonL1xUG1583015830euoutp02y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1584456221;
+        bh=W2Rq6UA2YQEI4QPV01/ZXtRXjTEO+v2ZZCZnfGt01Ss=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=KardV7tUREnhoR3wTwOPtKIbIz7vEJaOEPsZUS/luyINQiFqWtbCyP3uzowLbjobt
+         U68XkmYLkB9oMWeTGQt0EupS7IpqUapGkt1PpZWLCNc0BIRyZrR2XDYsgX99zJh8ZB
+         2AGGGrempTkfDVTryyGbTw8qnuOIXSadfu3/CcEk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200317144340eucas1p20968cc46ccb6bed30c5c3d26e7a7b1af~9Hom85WiB0560805608eucas1p2D;
+        Tue, 17 Mar 2020 14:43:40 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 3B.E1.60679.C12E07E5; Tue, 17
+        Mar 2020 14:43:40 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200317144340eucas1p1f6f7a6fbd27cbfeaab2ea97fbccb2836~9HomvBKoS1085210852eucas1p1B;
+        Tue, 17 Mar 2020 14:43:40 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200317144340eusmtrp20f7f8ff3c8a66b5898077f04f100e0d1~9HomuXNho0147801478eusmtrp2r;
+        Tue, 17 Mar 2020 14:43:40 +0000 (GMT)
+X-AuditID: cbfec7f4-0e5ff7000001ed07-2f-5e70e21cab6d
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 84.23.07950.C12E07E5; Tue, 17
+        Mar 2020 14:43:40 +0000 (GMT)
+Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200317144340eusmtip186b60297aff3ef5e594bf739736b86b0~9HomSJR550390803908eusmtip1k;
+        Tue, 17 Mar 2020 14:43:40 +0000 (GMT)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        b.zolnierkie@samsung.com
+Subject: [PATCH v4 00/27] ata: optimize core code size on PATA only setups
+Date:   Tue, 17 Mar 2020 15:43:06 +0100
+Message-Id: <20200317144333.2904-1-b.zolnierkie@samsung.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <202003170938.Z0IuUore%lkp@intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: fr
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNKsWRmVeSWpSXmKPExsWy7djP87oyjwriDPr+GFisvtvPZrFxxnpW
+        i2e39jJZrFx9lMni2I5HTBaXd81hs1j+ZC2zxdzW6ewOHB47Z91l97h8ttTj0OEORo+Trd9Y
+        PHbfbGDz6NuyitHj8ya5APYoLpuU1JzMstQifbsEroz+H7/YCl4bVNxad4CpgfGZehcjJ4eE
+        gInE4Vv97F2MXBxCAisYJTr/z2OGcL4wSvQdXMQE4XxmlFj+cx4rTMvmozfYQGwhgeWMEk/u
+        asF1XPjzkxEkwSZgJTGxfRWYLSKgINHzeyUbSBGzwHtGiRWT9rKAJIQFvCT+fO4AmsrBwSKg
+        KvFjCzOIyStgI/F4ogrELnmJrd8+ge3lFRCUODnzCVgnM1C8eetssEslBPrZJSZOeA51nIvE
+        +9U9LBC2sMSr41vYIWwZif875zNBNKxjlPjb8QKqezvQa5P/sUFUWUvcOfeLDeQKZgFNifW7
+        9CHCjhIPFq5mBwlLCPBJ3HgrCHEEn8SkbdOZIcK8Eh1tQhDVahIblm1gg1nbtXMlM4TtIfFh
+        yhOwciGBWInjt1knMCrMQvLZLCSfzUI4YQEj8ypG8dTS4tz01GKjvNRyveLE3OLSvHS95Pzc
+        TYzAJHT63/EvOxh3/Uk6xCjAwajEw8uxoSBOiDWxrLgy9xCjBAezkgjv4sL8OCHelMTKqtSi
+        /Pii0pzU4kOM0hwsSuK8xotexgoJpCeWpGanphakFsFkmTg4pRoY1ybP3n9T6UC6Y+qvCL9d
+        GWXpNzl+yc565LvMavbkd+uq5oSqWHNLLOqcMkUt1t/nlI2X/L5nnVt5veYu9pv/OId75ZuV
+        c303vShQXOKxpujUrhtLW7MyLu34sLhw4s3OVTf2r3q51/NM8rslsh++6Rltf33g5p8rs8/3
+        MfPlHE03C+52io2Ye0uJpTgj0VCLuag4EQDDiPcTPgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkkeLIzCtJLcpLzFFi42I5/e/4XV2ZRwVxBuvuKFqsvtvPZrFxxnpW
+        i2e39jJZrFx9lMni2I5HTBaXd81hs1j+ZC2zxdzW6ewOHB47Z91l97h8ttTj0OEORo+Trd9Y
+        PHbfbGDz6NuyitHj8ya5APYoPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9
+        O5uU1JzMstQifbsEvYz+H7/YCl4bVNxad4CpgfGZehcjJ4eEgInE5qM32LoYuTiEBJYySiz5
+        dIS1i5EDKCEjcXx9GUSNsMSfa11QNZ8YJU5f7mMHSbAJWElMbF/FCGKLCChI9PxeCVbELPCV
+        UWLppG5mkISwgJfEn88dYENZBFQlfmxhBjF5BWwkHk9UgZgvL7H12ydWEJtXQFDi5MwnLCA2
+        M1C8eets5gmMfLOQpGYhSS1gZFrFKJJaWpybnltspFecmFtcmpeul5yfu4kRGPzbjv3csoOx
+        613wIUYBDkYlHl6ODQVxQqyJZcWVuYcYJTiYlUR4FxfmxwnxpiRWVqUW5ccXleakFh9iNAU6
+        dSKzlGhyPjAy80riDU0NzS0sDc2NzY3NLJTEeTsEDsYICaQnlqRmp6YWpBbB9DFxcEo1MDLK
+        +zdclF5S1ClwfNmvi2nTtY0P3fYze73p25o7fznTBI3yTxYX/s1zndMXv4hpNlNOvNC1fJ+r
+        y56cs+kx3Cf/TH/HkQuXtWbI/5vybekru+mWV3LuCHYV1H+f5zq3doa+NtPf2y77Z/Fnme43
+        //wnx3QCw0VR32MRsc0Hsh5cTRfcl9YfaKfEUpyRaKjFXFScCABsCeNDlAIAAA==
+X-CMS-MailID: 20200317144340eucas1p1f6f7a6fbd27cbfeaab2ea97fbccb2836
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200317144340eucas1p1f6f7a6fbd27cbfeaab2ea97fbccb2836
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200317144340eucas1p1f6f7a6fbd27cbfeaab2ea97fbccb2836
+References: <CGME20200317144340eucas1p1f6f7a6fbd27cbfeaab2ea97fbccb2836@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
+There have been reports in the past of libata core code size
+being a problem in migration from deprecated IDE subsystem on
+legacy PATA only systems, i.e.:
+
+https://lore.kernel.org/linux-ide/db2838b7-4862-785b-3a1d-3bf09811340a@gmail.com/
+
+This patchset re-organizes libata core code to exclude SATA
+specific code from being built for PATA only setups.
+
+The end result is up to 24% (by 23949 bytes, from 101769 bytes to
+77820 bytes) smaller libata core code size (as measured for m68k
+arch using modified atari_defconfig) on affected setups.
+
+I've tested this patchset using pata_falcon driver under ARAnyM
+emulator.
 
 
-Le 17/03/2020 à 02:39, kbuild test robot a écrit :
-> Hi Christophe,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on next-20200316]
-> [cannot apply to powerpc/next v5.6-rc6 v5.6-rc5 v5.6-rc4 v5.6-rc6]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Christophe-Leroy/Use-hugepages-to-map-kernel-mem-on-8xx/20200317-065610
-> base:    8548fd2f20ed19b0e8c0585b71fdfde1ae00ae3c
-> config: powerpc-tqm8xx_defconfig (attached as .config)
-> compiler: powerpc-linux-gcc (GCC) 9.2.0
-> reproduce:
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # save the attached .config to linux build tree
->          GCC_VERSION=9.2.0 make.cross ARCH=powerpc
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> All errors (new ones prefixed by >>):
-> 
->     In file included from arch/powerpc/mm/fault.c:33:
->     include/linux/hugetlb.h: In function 'hstate_inode':
->>> include/linux/hugetlb.h:522:9: error: implicit declaration of function 'HUGETLBFS_SB'; did you mean 'HUGETLBFS_MAGIC'? [-Werror=implicit-function-declaration]
->       522 |  return HUGETLBFS_SB(i->i_sb)->hstate;
->           |         ^~~~~~~~~~~~
->           |         HUGETLBFS_MAGIC
->>> include/linux/hugetlb.h:522:30: error: invalid type argument of '->' (have 'int')
->       522 |  return HUGETLBFS_SB(i->i_sb)->hstate;
->           |                              ^~
->     cc1: all warnings being treated as errors
+patches #1-11 are general fixes/cleanups done in the process of
+making the patchset (there should be no inter-dependencies between
+them except patch #10 which depends on patch #9)
 
-hstate_inode() shouldn't use HUGETLBFS_SB() which CONFIG_HUGETLBFS is 
-not set.
+patch #12 separates PATA timings code to libata-pata-timings.c file
 
-Proposed fix at https://patchwork.ozlabs.org/patch/1256108/
+patches #13-15 let compiler optimize out SATA specific code on
+non-SATA hosts by adding !IS_ENABLED(CONFIG_SATA_HOST) instances
 
-[...]
+patches #16-22 separate SATA only code from libata-core.c file to
+libata-sata.c one
+
+patches #23-24 separate SATA only code from libata-scsi.c file to
+libata-sata.c one
+
+patches #25-26 separate SATA only code from libata-eh.c file to
+libata-sata.c one
+
+patch #27 makes "libata.force" kernel parameter optional
 
 
->>> include/linux/hugetlb.h:522:30: error: invalid type argument of '->' (have 'int')
->       522 |  return HUGETLBFS_SB(i->i_sb)->hstate;
->           |                              ^~
->     At top level:
->     arch/powerpc//mm/nohash/8xx.c:73:18: error: '__early_map_kernel_hugepage' defined but not used [-Werror=unused-function]
->        73 | static int __ref __early_map_kernel_hugepage(unsigned long va, phys_addr_t pa,
->           |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->     cc1: all warnings being treated as errors
+Changes since v3
+(https://lore.kernel.org/linux-ide/20200227182226.19188-1-b.zolnierkie@samsung.com/):
+- rebased on top of next-20200317
+- fixed sdev_attrs initializer entry defined twice issue found by
+  kbuild-test-robot/sparse in "ata: expose ncq_enable_prio sysfs
+  attribute only on NCQ capable hosts" patch
 
-This patch is a preparation patch. The function is not used yet, that's 
-normal. Ok, it breaks bisectability. Should it be squashed with the 
-first user of the function ?
+Changes since v2
+(https://lore.kernel.org/linux-ide/20200207142734.8431-1-b.zolnierkie@samsung.com/):
+- rebased on top of next-20200227
+- added "ata: optimize ata_scsi_rbuf[] size" patch
 
-Christophe
+Changes since v1
+(https://lore.kernel.org/linux-ide/20200128133343.29905-1-b.zolnierkie@samsung.com/):
+- added Acked-by: tag from Tejun to "ata: remove stale maintainership
+  information from core code" patch
+- added Reviewed-by: tag from Martin to "ata: make SATA_PMP option
+  selectable only if any SATA host driver is enabled" patch
+- added Reviewed-by: tag from Christoph to following patches:
+  - "ata: simplify ata_scsiop_inq_89()"
+  - "ata: use COMMAND_LINE_SIZE for ata_force_param_buf[] size"
+  - "ata: optimize struct ata_force_param size"
+  - "ata: move EXPORT_SYMBOL_GPL()s close to exported code"
+  - "ata: remove EXPORT_SYMBOL_GPL()s not used by modules"
+- converted "ata: add CONFIG_SATA_HOST=n version of ata_ncq_enabled()"
+  patch to use IS_ENABLED()
+- added "ata: let compiler optimize out ata_dev_config_ncq() on
+  non-SATA hosts" and "ata: let compiler optimize out ata_eh_set_lpm()
+  on non-SATA hosts" patches
+- moved "ata: move sata_scr_*() to libata-core-sata.c" patch just
+  after "ata: start separating SATA specific code from libata-core.c"
+  one
+- dropped no longer needed patches (code savings <= 8 bytes):
+  - "ata: move ata_do_link_spd_horkage() to libata-core-sata.c"
+  - "ata: move ata_dev_config_ncq*() to libata-core-sata.c"
+  - "ata: move sata_print_link_status() to libata-core-sata.c"
+  - "ata: move sata_down_spd_limit() to libata-core-sata.c"
+  - "ata: move sata_link_init_spd() to libata-core-sata.c"
+  - "ata: move ata_eh_set_lpm() to libata-core-sata.c"
+- removed superfluos ifdefs
+- dropped file names in top of file headers
+- merged libata-scsi-sata.c and libata-eh-sata.c into libata-sata.c
+- emphasised in patch descriptions that atari_defconfig used for
+  measurements has been modified (original one is still using
+  deprecated IDE subsystem)
+- added "ata: make "libata.force" kernel parameter optional" patch
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (27):
+  ata: remove stale maintainership information from core code
+  ata: expose ncq_enable_prio sysfs attribute only on NCQ capable hosts
+  ata: make SATA_PMP option selectable only if any SATA host driver is
+    enabled
+  sata_promise: use ata_cable_sata()
+  ata: simplify ata_scsiop_inq_89()
+  ata: use COMMAND_LINE_SIZE for ata_force_param_buf[] size
+  ata: optimize struct ata_force_param size
+  ata: optimize ata_scsi_rbuf[] size
+  ata: move EXPORT_SYMBOL_GPL()s close to exported code
+  ata: remove EXPORT_SYMBOL_GPL()s not used by modules
+  ata: fix CodingStyle issues in PATA timings code
+  ata: separate PATA timings code from libata-core.c
+  ata: add CONFIG_SATA_HOST=n version of ata_ncq_enabled()
+  ata: let compiler optimize out ata_dev_config_ncq() on non-SATA hosts
+  ata: let compiler optimize out ata_eh_set_lpm() on non-SATA hosts
+  ata: start separating SATA specific code from libata-core.c
+  ata: move sata_scr_*() to libata-sata.c
+  ata: move *sata_set_spd*() to libata-sata.c
+  ata: move sata_link_{debounce,resume}() to libata-sata.c
+  ata: move sata_link_hardreset() to libata-sata.c
+  ata: move ata_qc_complete_multiple() to libata-sata.c
+  ata: move sata_deb_timing_*() to libata-sata.c
+  ata: start separating SATA specific code from libata-scsi.c
+  ata: move ata_sas_*() to libata-sata.c
+  ata: start separating SATA specific code from libata-eh.c
+  ata: move ata_eh_analyze_ncq_error() & co. to libata-sata.c
+  ata: make "libata.force" kernel parameter optional
+
+ drivers/ata/Kconfig               |   77 ++
+ drivers/ata/Makefile              |    2 +
+ drivers/ata/libata-core.c         | 1229 +++---------------------
+ drivers/ata/libata-eh.c           |  224 +----
+ drivers/ata/libata-pata-timings.c |  192 ++++
+ drivers/ata/libata-sata.c         | 1480 +++++++++++++++++++++++++++++
+ drivers/ata/libata-scsi.c         |  544 +----------
+ drivers/ata/libata-sff.c          |    4 -
+ drivers/ata/libata.h              |   25 +-
+ drivers/ata/sata_promise.c        |    8 +-
+ drivers/scsi/Kconfig              |    1 +
+ drivers/scsi/libsas/Kconfig       |    1 +
+ include/linux/libata.h            |  174 ++--
+ 13 files changed, 2066 insertions(+), 1895 deletions(-)
+ create mode 100644 drivers/ata/libata-pata-timings.c
+ create mode 100644 drivers/ata/libata-sata.c
+
+-- 
+2.24.1
+
