@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE7F9187F37
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:59:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40977187F4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:00:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbgCQK7g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 06:59:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38084 "EHLO mail.kernel.org"
+        id S1727049AbgCQLAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:00:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726484AbgCQK7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 06:59:33 -0400
+        id S1727545AbgCQLAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:00:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F71F2071C;
-        Tue, 17 Mar 2020 10:59:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C962420735;
+        Tue, 17 Mar 2020 11:00:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442772;
-        bh=W7m8I0W5QGkkJExlg6OH8ER9RwjZ/AsI4j8yc/030EY=;
+        s=default; t=1584442805;
+        bh=cTVYqttNEkjaDmWhfICp2OkP3PlrRJyx3/vSbF1scVo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UVlpwHHzP0YRd0PCaqCf6hLfQwnIK3MdL807nTx3u49EFBeAGxHVD2+nIogGbozfA
-         SqCoBUn96PqcnQV4lVUxuFm+sDewO08b48yf1nMZnC6MYAPQdL1Nzay5ORviGhMUOV
-         4cGXNFrrCLySNphezsu0kUVOFNOoyG0wSGQDRTdo=
+        b=YxB1R66+ABrXfsux4P/bmpZ5Lo4KKc5qkb5q+TZo8ARbR9JSmqXzBfuVGuBNj2Kvb
+         oGcSHeQLGFaoH5AeOv7MEeZ8QG7CFqH9uNUrEQquA+s27L74Ua61X1ZvjuOdJDFCV8
+         TaFaFUMfiLTADOhkfK3e/A8axFUIb9hTsKz1geFQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        Yonghyun Hwang <yonghyun@google.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.19 69/89] iommu/vt-d: Fix a bug in intel_iommu_iova_to_phys() for huge page
-Date:   Tue, 17 Mar 2020 11:55:18 +0100
-Message-Id: <20200317103307.898438830@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+a98f2016f40b9cd3818a@syzkaller.appspotmail.com,
+        syzbot+ac36b6a33c28a491e929@syzkaller.appspotmail.com,
+        Sven Eckelmann <sven@narfation.org>,
+        Hillf Danton <hdanton@sina.com>,
+        Simon Wunderlich <sw@simonwunderlich.de>
+Subject: [PATCH 4.19 70/89] batman-adv: Dont schedule OGM for disabled interface
+Date:   Tue, 17 Mar 2020 11:55:19 +0100
+Message-Id: <20200317103308.008137404@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
 References: <20200317103259.744774526@linuxfoundation.org>
@@ -45,41 +47,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonghyun Hwang <yonghyun@google.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-commit 77a1bce84bba01f3f143d77127b72e872b573795 upstream.
+commit 8e8ce08198de193e3d21d42e96945216e3d9ac7f upstream.
 
-intel_iommu_iova_to_phys() has a bug when it translates an IOVA for a huge
-page onto its corresponding physical address. This commit fixes the bug by
-accomodating the level of page entry for the IOVA and adds IOVA's lower
-address to the physical address.
+A transmission scheduling for an interface which is currently dropped by
+batadv_iv_ogm_iface_disable could still be in progress. The B.A.T.M.A.N. V
+is simply cancelling the workqueue item in an synchronous way but this is
+not possible with B.A.T.M.A.N. IV because the OGM submissions are
+intertwined.
 
-Cc: <stable@vger.kernel.org>
-Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Moritz Fischer <mdf@kernel.org>
-Signed-off-by: Yonghyun Hwang <yonghyun@google.com>
-Fixes: 3871794642579 ("VT-d: Changes to support KVM")
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Instead it has to stop submitting the OGM when it detect that the buffer
+pointer is set to NULL.
+
+Reported-by: syzbot+a98f2016f40b9cd3818a@syzkaller.appspotmail.com
+Reported-by: syzbot+ac36b6a33c28a491e929@syzkaller.appspotmail.com
+Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Cc: Hillf Danton <hdanton@sina.com>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/intel-iommu.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/batman-adv/bat_iv_ogm.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5144,8 +5144,10 @@ static phys_addr_t intel_iommu_iova_to_p
- 	u64 phys = 0;
+--- a/net/batman-adv/bat_iv_ogm.c
++++ b/net/batman-adv/bat_iv_ogm.c
+@@ -970,6 +970,10 @@ static void batadv_iv_ogm_schedule_buff(
  
- 	pte = pfn_to_dma_pte(dmar_domain, iova >> VTD_PAGE_SHIFT, &level);
--	if (pte)
--		phys = dma_pte_addr(pte);
-+	if (pte && dma_pte_present(pte))
-+		phys = dma_pte_addr(pte) +
-+			(iova & (BIT_MASK(level_to_offset_bits(level) +
-+						VTD_PAGE_SHIFT) - 1));
+ 	lockdep_assert_held(&hard_iface->bat_iv.ogm_buff_mutex);
  
- 	return phys;
- }
++	/* interface already disabled by batadv_iv_ogm_iface_disable */
++	if (!*ogm_buff)
++		return;
++
+ 	/* the interface gets activated here to avoid race conditions between
+ 	 * the moment of activating the interface in
+ 	 * hardif_activate_interface() where the originator mac is set and
 
 
