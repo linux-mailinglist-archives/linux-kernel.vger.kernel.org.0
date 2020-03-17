@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D54B188855
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:55:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FFBE188834
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:54:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbgCQOyb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 10:54:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43428 "EHLO mail.kernel.org"
+        id S1726988AbgCQOyc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 10:54:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726783AbgCQOya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 10:54:30 -0400
+        id S1726784AbgCQOyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 10:54:31 -0400
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F90F20724;
+        by mail.kernel.org (Postfix) with ESMTPSA id 5254620735;
         Tue, 17 Mar 2020 14:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1584456870;
-        bh=EQt8XNF67n6Qz/qYgjsQ6OrZnV8PGeVV9kM2E6Xo1RM=;
+        bh=lCdLEJ5w0ZRwfZb7Xc7NwaWoCZT37OUHOWlWSj57v6g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RueX3oIjzReC6mbi0x8E5FbR4B6JmuuosRjGYhQfoJP6FUW5I1d87YHLzroI3VqHr
-         aTlyextonkTgWKILznM0gPhOolMhHWhoCwjS4lmyZRoAF6OcqNFTe24gxlNj44gMMY
-         nLp9fwI1zZvq+RkAkB/vMntVV6cEiLmBE7xn/ETw=
+        b=Djw9jFOmPVxugYNlt7C0HBMWT+aNtPhjpQIY7HubEC1HmKNR2QVXCfav5TZcdI21d
+         MHQRonO5QctE4EIaQ93hoVZIqzEuDSKIFY7/q11VB9V+nNIYRpm4RTp3qnuOEHeme/
+         iaJDADaRIHzNun8GSiXS2ZcLmFAmkQl8YUKWsR/o=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1jEDbw-000AMH-Bc; Tue, 17 Mar 2020 15:54:28 +0100
+        id 1jEDbw-000AML-CZ; Tue, 17 Mar 2020 15:54:28 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
@@ -33,9 +33,9 @@ Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 01/17] docs: amu: supress some Sphinx warnings
-Date:   Tue, 17 Mar 2020 15:54:10 +0100
-Message-Id: <d12f2ee809ee078c1e5e6d6da6dd9465f35109e2.1584456635.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 02/17] docs: arm64: booting.rst: get rid of some warnings
+Date:   Tue, 17 Mar 2020 15:54:11 +0100
+Message-Id: <7f4f13e03c2d0c5a30db4eb209eaa5aef339de94.1584456635.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.1584456635.git.mchehab+huawei@kernel.org>
 References: <cover.1584456635.git.mchehab+huawei@kernel.org>
@@ -46,63 +46,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add extra blank lines on some places, in order to avoid those
-warnings when building the docs:
+Get rid of those warnings:
 
-    Documentation/arm64/amu.rst:26: WARNING: Unexpected indentation.
-    Documentation/arm64/amu.rst:60: WARNING: Unexpected indentation.
-    Documentation/arm64/amu.rst:81: WARNING: Unexpected indentation.
-    Documentation/arm64/amu.rst:108: WARNING: Unexpected indentation.
+    Documentation/arm64/booting.rst:253: WARNING: Unexpected indentation.
+    Documentation/arm64/booting.rst:259: WARNING: Block quote ends without a blank line; unexpected unindent.
+
+By adding an extra blank lines where needed.
+
+While here, use list markups on some places, as otherwise Sphinx
+will consider the next lines as continuation of the privious ones.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/arm64/amu.rst | 5 +++++
- 1 file changed, 5 insertions(+)
+ Documentation/arm64/booting.rst | 36 ++++++++++++++++++++-------------
+ 1 file changed, 22 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/arm64/amu.rst b/Documentation/arm64/amu.rst
-index 5057b11100ed..452ec8b115c2 100644
---- a/Documentation/arm64/amu.rst
-+++ b/Documentation/arm64/amu.rst
-@@ -23,6 +23,7 @@ optional external memory-mapped interface.
+diff --git a/Documentation/arm64/booting.rst b/Documentation/arm64/booting.rst
+index a3f1a47b6f1c..e50186092948 100644
+--- a/Documentation/arm64/booting.rst
++++ b/Documentation/arm64/booting.rst
+@@ -173,7 +173,9 @@ Before jumping into the kernel, the following conditions must be met:
+ - Caches, MMUs
  
- Version 1 of the Activity Monitors architecture implements a counter group
- of four fixed and architecturally defined 64-bit event counters.
+   The MMU must be off.
 +
-   - CPU cycle counter: increments at the frequency of the CPU.
-   - Constant counter: increments at the fixed frequency of the system
-     clock.
-@@ -57,6 +58,7 @@ counters, only the presence of the extension.
- 
- Firmware (code running at higher exception levels, e.g. arm-tf) support is
- needed to:
+   Instruction cache may be on or off.
 +
-  - Enable access for lower exception levels (EL2 and EL1) to the AMU
-    registers.
-  - Enable the counters. If not enabled these will read as 0.
-@@ -78,6 +80,7 @@ are not trapped in EL2/EL3.
+   The address range corresponding to the loaded kernel image must be
+   cleaned to the PoC. In the presence of a system cache or other
+   coherent masters with caches enabled, this will typically require
+@@ -238,6 +240,7 @@ Before jumping into the kernel, the following conditions must be met:
+   - The DT or ACPI tables must describe a GICv2 interrupt controller.
  
- The fixed counters of AMUv1 are accessible though the following system
- register definitions:
+   For CPUs with pointer authentication functionality:
 +
-  - SYS_AMEVCNTR0_CORE_EL0
-  - SYS_AMEVCNTR0_CONST_EL0
-  - SYS_AMEVCNTR0_INST_RET_EL0
-@@ -93,6 +96,7 @@ Userspace access
- ----------------
+   - If EL3 is present:
  
- Currently, access from userspace to the AMU registers is disabled due to:
+     - SCR_EL3.APK (bit 16) must be initialised to 0b1
+@@ -249,18 +252,22 @@ Before jumping into the kernel, the following conditions must be met:
+     - HCR_EL2.API (bit 41) must be initialised to 0b1
+ 
+   For CPUs with Activity Monitors Unit v1 (AMUv1) extension present:
 +
-  - Security reasons: they might expose information about code executed in
-    secure mode.
-  - Purpose: AMU counters are intended for system management use.
-@@ -105,6 +109,7 @@ Virtualization
- 
- Currently, access from userspace (EL0) and kernelspace (EL1) on the KVM
- guest side is disabled due to:
+   - If EL3 is present:
+-    CPTR_EL3.TAM (bit 30) must be initialised to 0b0
+-    CPTR_EL2.TAM (bit 30) must be initialised to 0b0
+-    AMCNTENSET0_EL0 must be initialised to 0b1111
+-    AMCNTENSET1_EL0 must be initialised to a platform specific value
+-    having 0b1 set for the corresponding bit for each of the auxiliary
+-    counters present.
 +
-  - Security reasons: they might expose information about code executed
-    by other guests or the host.
++    - CPTR_EL3.TAM (bit 30) must be initialised to 0b0
++    - CPTR_EL2.TAM (bit 30) must be initialised to 0b0
++    - AMCNTENSET0_EL0 must be initialised to 0b1111
++    - AMCNTENSET1_EL0 must be initialised to a platform specific value
++      having 0b1 set for the corresponding bit for each of the auxiliary
++      counters present.
++
+   - If the kernel is entered at EL1:
+-    AMCNTENSET0_EL0 must be initialised to 0b1111
+-    AMCNTENSET1_EL0 must be initialised to a platform specific value
+-    having 0b1 set for the corresponding bit for each of the auxiliary
+-    counters present.
++
++    - AMCNTENSET0_EL0 must be initialised to 0b1111
++    - AMCNTENSET1_EL0 must be initialised to a platform specific value
++      having 0b1 set for the corresponding bit for each of the auxiliary
++      counters present.
  
+ The requirements described above for CPU mode, caches, MMUs, architected
+ timers, coherency and system registers apply to all CPUs.  All CPUs must
+@@ -304,7 +311,8 @@ following manner:
+   Documentation/devicetree/bindings/arm/psci.yaml.
+ 
+ - Secondary CPU general-purpose register settings
+-  x0 = 0 (reserved for future use)
+-  x1 = 0 (reserved for future use)
+-  x2 = 0 (reserved for future use)
+-  x3 = 0 (reserved for future use)
++
++  - x0 = 0 (reserved for future use)
++  - x1 = 0 (reserved for future use)
++  - x2 = 0 (reserved for future use)
++  - x3 = 0 (reserved for future use)
 -- 
 2.24.1
 
