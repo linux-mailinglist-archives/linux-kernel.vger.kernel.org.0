@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56B24188003
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:06:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 016D018819D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:20:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728602AbgCQLG0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:06:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47562 "EHLO mail.kernel.org"
+        id S1728618AbgCQLGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:06:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726596AbgCQLGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:06:24 -0400
+        id S1726596AbgCQLG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:06:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E22F20658;
-        Tue, 17 Mar 2020 11:06:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B49E820658;
+        Tue, 17 Mar 2020 11:06:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443183;
-        bh=BzV1Hk4+TCda+cm8PDvDZzplYkCHdjRvG+dQ6nC0zuM=;
+        s=default; t=1584443186;
+        bh=hOU8ZuvyR2Io/lI9o8Aqs0ag8ypx4zG/pxoZrYHsiks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LTyg5dePoqw+wSopZY+zyAKNZES0khASQgsOFcLXc4nkyUCyGwYc/5nqjN2orC/ps
-         ogNNJeSFNWadZGhEysZTjzdZEKqMRb5Hw59E5a0xLiwHuZLO7ZlIWoLYvYZK5FFvcB
-         eHxagrxLifTrHOQScy0tF23rLm8GuTEjmzqRwjx0=
+        b=T49Y/m2vSJON3wm9QUVTvzmT5tNwYQqUPRrY5fuS+WyRdCA2ZuvHSCOEuM5MLTdeZ
+         xHo35pxq2+TppBhCTdCgwmfuJHnfPHwgdjPj3HmELdiWmh5X14nxuvmWRLXexYNeR6
+         NMcnRUPciDqtv9SU0PDdc9MgxbbXem/6mnbxwemw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.4 114/123] netfilter: nft_tunnel: add missing attribute validation for tunnels
-Date:   Tue, 17 Mar 2020 11:55:41 +0100
-Message-Id: <20200317103319.059454481@linuxfoundation.org>
+        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 5.4 115/123] netfilter: nf_tables: dump NFTA_CHAIN_FLAGS attribute
+Date:   Tue, 17 Mar 2020 11:55:42 +0100
+Message-Id: <20200317103319.139981553@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
 References: <20200317103307.343627747@linuxfoundation.org>
@@ -43,32 +42,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <kuba@kernel.org>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-commit 88a637719a1570705c02cacb3297af164b1714e7 upstream.
+commit d78008de6103c708171baff9650a7862645d23b0 upstream.
 
-Add missing attribute validation for tunnel source and
-destination ports to the netlink policy.
+Missing NFTA_CHAIN_FLAGS netlink attribute when dumping basechain
+definitions.
 
-Fixes: af308b94a2a4 ("netfilter: nf_tables: add tunnel support")
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Fixes: c9626a2cbdb2 ("netfilter: nf_tables: add hardware offload support")
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nft_tunnel.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/netfilter/nf_tables_api.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/netfilter/nft_tunnel.c
-+++ b/net/netfilter/nft_tunnel.c
-@@ -339,6 +339,8 @@ static const struct nla_policy nft_tunne
- 	[NFTA_TUNNEL_KEY_FLAGS]	= { .type = NLA_U32, },
- 	[NFTA_TUNNEL_KEY_TOS]	= { .type = NLA_U8, },
- 	[NFTA_TUNNEL_KEY_TTL]	= { .type = NLA_U8, },
-+	[NFTA_TUNNEL_KEY_SPORT]	= { .type = NLA_U16, },
-+	[NFTA_TUNNEL_KEY_DPORT]	= { .type = NLA_U16, },
- 	[NFTA_TUNNEL_KEY_OPTS]	= { .type = NLA_NESTED, },
- };
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -1309,6 +1309,11 @@ static int nf_tables_fill_chain_info(str
+ 					      lockdep_commit_lock_is_held(net));
+ 		if (nft_dump_stats(skb, stats))
+ 			goto nla_put_failure;
++
++		if ((chain->flags & NFT_CHAIN_HW_OFFLOAD) &&
++		    nla_put_be32(skb, NFTA_CHAIN_FLAGS,
++				 htonl(NFT_CHAIN_HW_OFFLOAD)))
++			goto nla_put_failure;
+ 	}
  
+ 	if (nla_put_be32(skb, NFTA_CHAIN_USE, htonl(chain->use)))
 
 
