@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3277E187ECD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:56:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45A1D187EDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:57:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726130AbgCQK4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 06:56:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33652 "EHLO mail.kernel.org"
+        id S1726754AbgCQK4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:56:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725916AbgCQK4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 06:56:14 -0400
+        id S1726717AbgCQK4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:56:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46CF220714;
-        Tue, 17 Mar 2020 10:56:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34DFE20658;
+        Tue, 17 Mar 2020 10:56:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442573;
-        bh=3s+7XsyloAUsmHodKZGkHSPBfDLX5+udWxEX9S0g9h0=;
+        s=default; t=1584442603;
+        bh=Qllv0735Xvs+NmyTdZDg/yT7lhojP9oxMEi+Es5JoYM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P2OlCdjx/ELTPDVTfm4ASH8r94ERo2oZP0OkLgMKafg/LdKtjVThPyNoBMNDvkXht
-         42R5YsjXtYBb0o2c3QmWgtpPw8/isPugs5Ak30ltSfmQQ/u3DcN10hkvWgYbqSjmrq
-         3X+IPnp85nrWef/u3OnDDRa+R1xWxRflLOaouVc0=
+        b=ihkGblEau35JB+QZfUD/eZJ686JxJPThQSnntDPuddqXPO9FjS/rfwXoEHrd0Ub6+
+         OgNkeSZmzAtlNe3rpQGdb3qwRjC19W3Fs+PnihoDD2NdxAaE6SMCK/Xmy35DbMnHGL
+         vU4pO2WXtJwo2b9/jJteCPKJZ2B8x4WEL3DhWw7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 01/89] phy: Revert toggling reset changes.
-Date:   Tue, 17 Mar 2020 11:54:10 +0100
-Message-Id: <20200317103259.926774121@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 02/89] net: phy: Avoid multiple suspends
+Date:   Tue, 17 Mar 2020 11:54:11 +0100
+Message-Id: <20200317103300.047788201@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
 References: <20200317103259.744774526@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -44,68 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David S. Miller <davem@davemloft.net>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-commit 7b566f70e1bf65b189b66eb3de6f431c30f7dff2 upstream.
+commit 503ba7c6961034ff0047707685644cad9287c226 upstream.
 
-This reverts:
+It is currently possible for a PHY device to be suspended as part of a
+network device driver's suspend call while it is still being attached to
+that net_device, either via phy_suspend() or implicitly via phy_stop().
 
-ef1b5bf506b1 ("net: phy: Fix not to call phy_resume() if PHY is not attached")
-8c85f4b81296 ("net: phy: micrel: add toggling phy reset if PHY is not  attached")
+Later on, when the MDIO bus controller get suspended, we would attempt
+to suspend again the PHY because it is still attached to a network
+device.
 
-Andrew Lunn informs me that there are alternative efforts
-underway to fix this more properly.
+This is both a waste of time and creates an opportunity for improper
+clock/power management bugs to creep in.
 
+Fixes: 803dd9c77ac3 ("net: phy: avoid suspending twice a PHY")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-[just take the ef1b5bf506b1 revert - gregkh]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/phy/phy_device.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/net/phy/phy_device.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 --- a/drivers/net/phy/phy_device.c
 +++ b/drivers/net/phy/phy_device.c
-@@ -76,7 +76,7 @@ static LIST_HEAD(phy_fixup_list);
- static DEFINE_MUTEX(phy_fixup_lock);
- 
- #ifdef CONFIG_PM
--static bool mdio_bus_phy_may_suspend(struct phy_device *phydev, bool suspend)
-+static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
- {
- 	struct device_driver *drv = phydev->mdio.dev.driver;
- 	struct phy_driver *phydrv = to_phy_driver(drv);
-@@ -88,11 +88,10 @@ static bool mdio_bus_phy_may_suspend(str
- 	/* PHY not attached? May suspend if the PHY has not already been
- 	 * suspended as part of a prior call to phy_disconnect() ->
- 	 * phy_detach() -> phy_suspend() because the parent netdev might be the
--	 * MDIO bus driver and clock gated at this point. Also may resume if
--	 * PHY is not attached.
-+	 * MDIO bus driver and clock gated at this point.
+@@ -91,7 +91,7 @@ static bool mdio_bus_phy_may_suspend(str
+ 	 * MDIO bus driver and clock gated at this point.
  	 */
  	if (!netdev)
--		return suspend ? !phydev->suspended : phydev->suspended;
-+		return !phydev->suspended;
+-		return !phydev->suspended;
++		goto out;
  
  	if (netdev->wol_enabled)
  		return false;
-@@ -127,7 +126,7 @@ static int mdio_bus_phy_suspend(struct d
- 	if (phydev->attached_dev && phydev->adjust_link)
- 		phy_stop_machine(phydev);
+@@ -111,7 +111,8 @@ static bool mdio_bus_phy_may_suspend(str
+ 	if (device_may_wakeup(&netdev->dev))
+ 		return false;
  
--	if (!mdio_bus_phy_may_suspend(phydev, true))
-+	if (!mdio_bus_phy_may_suspend(phydev))
- 		return 0;
+-	return true;
++out:
++	return !phydev->suspended;
+ }
  
- 	return phy_suspend(phydev);
-@@ -138,7 +137,7 @@ static int mdio_bus_phy_resume(struct de
- 	struct phy_device *phydev = to_phy_device(dev);
- 	int ret;
- 
--	if (!mdio_bus_phy_may_suspend(phydev, false))
-+	if (!mdio_bus_phy_may_suspend(phydev))
- 		goto no_resume;
- 
- 	ret = phy_resume(phydev);
+ static int mdio_bus_phy_suspend(struct device *dev)
 
 
