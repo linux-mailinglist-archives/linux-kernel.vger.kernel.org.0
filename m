@@ -2,121 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD9E1879F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 07:55:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0046F187A03
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 07:56:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbgCQGzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 02:55:19 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:33932 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbgCQGzS (ORCPT
+        id S1726626AbgCQGzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 02:55:55 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:44904 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbgCQGzy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 02:55:18 -0400
-Received: by mail-pl1-f201.google.com with SMTP id j8so11939913plk.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 23:55:17 -0700 (PDT)
+        Tue, 17 Mar 2020 02:55:54 -0400
+Received: by mail-io1-f66.google.com with SMTP id v3so9702442iot.11;
+        Mon, 16 Mar 2020 23:55:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=pBzGjleoRDABxMsluExcps57eD2wDVloI24KvIbaURE=;
-        b=UledzLdGZZjZgCktwDrReM83P2/tmN5F4Qnd1xTlFNMGgY4exTx7PpUlYpVJcYkHn2
-         qOqSDPrlyo1Tg8E7TNmeCbcaRvzN8X/3p3klGc1pbS5gp4joG2QV+m7zPocAKbdG/djV
-         mjbSeXmumJlZpNyD2H16Tr4UjjvSjJ9VFvp84bYCSC8nAKD0ptzQmWlkEpmb2H+YyfEx
-         Q5CmFKr/pxFMWAzVJsJwrAUZbJgxAjQUKhVZinz2cSSZ3AoAfMo2MvYj7YHTC2PK7FYy
-         y7OzDTmhrmK/3gX546uw6Y/xdIMPy5ZSM/4+vdG2TJbkV4Jqx4cGvW2bLV42+qET+yvr
-         zeNA==
+        bh=xWR9GR9zXt7FMFLwHnM9DNzADB3xyA+rYdWNj2AqhMs=;
+        b=I1UzqDi1CI7BgLIIpE9p97OJKAijExbglYmN6z+rzZ+aGvdTYh1gw27m8JTkITzPxT
+         Rilz8tMl3pOmagIK5plERd6lxmTFAtxgBRCz41ZDo/k0lfz/7mO6m6k/4hYhut0HhyXd
+         cDIA4BqZ+8+i3tYMVWtC8e7WgWFF2/7IPXft4JrXPm+SFW8cPUe2NSkyIwAPd0u0UZZs
+         FTRYP2iMLHSLfQEAn+MqzefPVG7v4E+zNbzK6HlRzc1Qw9o/YnazXDt/JNuyO3jlPOWk
+         RipUqhWIyVOhokA39kwlbbAcfJXbAuAtFEpF6dgFz8Q0irkAJoR/ui8mXoLWqo7me+7S
+         +vqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=pBzGjleoRDABxMsluExcps57eD2wDVloI24KvIbaURE=;
-        b=GL1J4SXyDU4b6wljk8FhheSYSJvaQUqIENREwwA/kbxhaaBgByIlXvi0kSnW8KTGmL
-         OK8Mf+BKPKDVzfOyK9jHGqHOonBuFBV4uvmq5KCquzMn+9WJ4PD3MQ5nNvmw+43V+jSE
-         2fuXCy4pv3pG+LJ8/rY7q4FdN8xqwriJC5MNShRuSzvREaKI6jF8UvRR7sPZjzghk+Wq
-         3CQgGp/lRr/BHEBH8cQERqSuhWzSut8yXaJXWMYSAenZNpZoxlPy3TntdVdwSPrdw9HN
-         m3kpc+v2iaVujgyAre0JIwh4wz6Ih3upontnJNjuaes/ZJD9pgeBIYMZxeWYAi2jkWJa
-         G3XA==
-X-Gm-Message-State: ANhLgQ03yeP46jS5i4Tpb1M0aZrOL0927I1dfj1IeQiJh06GhPpuiT54
-        LEmmjU8S1dqKj/C5BkYT7TF3J/HTaM6N2ys=
-X-Google-Smtp-Source: ADFU+vsI46mjOrzK35IlZFKtn+I16f/ZJ36YpcLgiFZqwRzWEH2bTScx3tkAxfqOUW2oCR5e/5W0bdip3gPKHnQ=
-X-Received: by 2002:a17:90a:178e:: with SMTP id q14mr3975908pja.132.1584428117265;
- Mon, 16 Mar 2020 23:55:17 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 23:54:52 -0700
-In-Reply-To: <20200317065452.236670-1-saravanak@google.com>
-Message-Id: <20200317065452.236670-7-saravanak@google.com>
-Mime-Version: 1.0
-References: <20200317065452.236670-1-saravanak@google.com>
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-Subject: [PATCH v1 6/6] driver core: Fix creation of device links with
- PM-runtime flags
-From:   Saravana Kannan <saravanak@google.com>
-To:     stable@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Saravana Kannan <saravanak@google.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel-team@android.com,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xWR9GR9zXt7FMFLwHnM9DNzADB3xyA+rYdWNj2AqhMs=;
+        b=Wh9ObjqheFVYDUIpoqszLPsdNQ7K1/Nly9V2TcCi/90WVYcSWHKkmtfbfln2D66RpC
+         eftU35bOkIAgKhvERHzGW2d5ot5+fMf5+OvekUS+YGSDHRoLh17f7N6UMNxMxj1i/0zF
+         uMOEDuqiqspccmC8uVBpRlOMR9kLhKRd2EefWKnTkMPvl3QerBCN1UhcZckmrWQFF5V0
+         FhwUFUMTGu5TqNm+VQxvoRwe6NdPd89oaJuJ8EySPTm1tnYwwNSWcq7fijzJorDxc6+x
+         Q4fccUsOf2lbLCDEx5CvracPm6vMOwm5lMY6VGblPSA/OkgM0fjKaWD9FhgG1DqPPVnH
+         RIhQ==
+X-Gm-Message-State: ANhLgQ03+GPy7rqmDwVuRcPx60bN1kQbTEWGfoM25/eSTRYmHorxIisM
+        HBQ5Zl66HZVqORLYR/zF6bBI9o+uN0Ol0Aun00Q=
+X-Google-Smtp-Source: ADFU+vsXQb/pFKtMWJ3JxvgCpZZOO72lwsnc1rP4K5qxjjSEXrdkUflkKDvQQlk2khti5gYEuUfJLY5cws3XT4bGDto=
+X-Received: by 2002:a05:6638:f01:: with SMTP id h1mr3578763jas.36.1584428153800;
+ Mon, 16 Mar 2020 23:55:53 -0700 (PDT)
+MIME-Version: 1.0
+References: <1583920112-2680-1-git-send-email-simhavcs@gmail.com>
+ <20200312151752.GA7490@bogus> <CAGWqDJ7DP3DuR7EWT6Ni8YxN3Adg3RgJZut6+AtpAak_HB=QCQ@mail.gmail.com>
+In-Reply-To: <CAGWqDJ7DP3DuR7EWT6Ni8YxN3Adg3RgJZut6+AtpAak_HB=QCQ@mail.gmail.com>
+From:   Vinay Simha B N <simhavcs@gmail.com>
+Date:   Tue, 17 Mar 2020 12:25:42 +0530
+Message-ID: <CAGWqDJ4cAU98_xMk6f-bsT5LF5cD2JJk8_JCykwM=cd6CCfWtw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-binding: Add DSI/LVDS tc358775 bridge bindings
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+sam,
 
-After commit 515db266a9da ("driver core: Remove device link creation
-limitation"), if PM-runtime flags are passed to device_link_add(), it
-will fail (returning NULL) due to an overly restrictive flags check
-introduced by that commit.
+i need some inputs on the below  error. I had created this file
+Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
+by using vim editor. Do we have any tool to create yaml file?
 
-Fix this issue by extending the check in question to cover the
-PM-runtime flags too.
+i do not get the error when running 'make dt_binding_check' in my
+build environment
+Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
 
-Fixes: 515db266a9da ("driver core: Remove device link creation limitation")
-Reported-by: Dmitry Osipenko <digetx@gmail.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Link: https://lore.kernel.org/r/7674989.cD04D8YV3U@kreacher
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(cherry picked from commit fb583c8eeeb1fd57e24ef41ed94c9112067aeac9)
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
- drivers/base/core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+is there any tool available similar to  scripts/checkpatch.pl -f
+<file> , for yaml files?
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 31007af4cb79..928fc1532a70 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -213,6 +213,9 @@ void device_pm_move_to_tail(struct device *dev)
- 			       DL_FLAG_AUTOREMOVE_SUPPLIER | \
- 			       DL_FLAG_AUTOPROBE_CONSUMER)
- 
-+#define DL_ADD_VALID_FLAGS (DL_MANAGED_LINK_FLAGS | DL_FLAG_STATELESS | \
-+			    DL_FLAG_PM_RUNTIME | DL_FLAG_RPM_ACTIVE)
-+
- /**
-  * device_link_add - Create a link between two devices.
-  * @consumer: Consumer end of the link.
-@@ -274,8 +277,7 @@ struct device_link *device_link_add(struct device *consumer,
- {
- 	struct device_link *link;
- 
--	if (!consumer || !supplier ||
--	    (flags & ~(DL_FLAG_STATELESS | DL_MANAGED_LINK_FLAGS)) ||
-+	if (!consumer || !supplier || flags & ~DL_ADD_VALID_FLAGS ||
- 	    (flags & DL_FLAG_STATELESS && flags & DL_MANAGED_LINK_FLAGS) ||
- 	    (flags & DL_FLAG_AUTOPROBE_CONSUMER &&
- 	     flags & (DL_FLAG_AUTOREMOVE_CONSUMER |
+On Sun, Mar 15, 2020 at 8:54 PM Vinay Simha B N <simhavcs@gmail.com> wrote:
+>
+> rob,
+>
+> i do not get the error when running 'make dt_binding_check' in my
+> build environment
+> Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
+>
+> is there any tool available similar to  scripts/checkpatch.pl -f
+> <file> , for yaml files?
+>
+> On Thu, Mar 12, 2020 at 8:47 PM Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Wed, 11 Mar 2020 15:18:24 +0530, Vinay Simha BN wrote:
+> > > Add yaml documentation for DSI/LVDS tc358775 bridge
+> > >
+> > > Signed-off-by: Vinay Simha BN <simhavcs@gmail.com>
+> > >
+> > > ---
+> > > v1:
+> > >  Initial version
+> > > ---
+> > >  .../bindings/display/bridge/toshiba-tc358775.yaml  | 174 +++++++++++++++++++++
+> > >  1 file changed, 174 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
+> > >
+> >
+> > My bot found errors running 'make dt_binding_check' on your patch:
+> >
+> > Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml:  while scanning for the next token
+> > found character that cannot start any token
+> >   in "<unicode string>", line 11, column 1
+> > Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.example.dts' failed
+> > make[1]: *** [Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.example.dts] Error 1
+> > make[1]: *** Waiting for unfinished jobs....
+> > warning: no schema found in file: Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
+> > /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml: ignoring, error parsing file
+> > Makefile:1262: recipe for target 'dt_binding_check' failed
+> > make: *** [dt_binding_check] Error 2
+> >
+> > See https://patchwork.ozlabs.org/patch/1252753
+> > Please check and re-submit.
+>
+>
+>
+> --
+> regards,
+> vinaysimha
+
+
+
 -- 
-2.25.1.481.gfbce0eb801-goog
-
+regards,
+vinaysimha
