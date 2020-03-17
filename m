@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E27E187F3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:59:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34D64187F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:00:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbgCQK7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 06:59:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38448 "EHLO mail.kernel.org"
+        id S1727513AbgCQLAA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:00:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726619AbgCQK7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 06:59:50 -0400
+        id S1726599AbgCQK76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:59:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A07F20658;
-        Tue, 17 Mar 2020 10:59:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01AFD20714;
+        Tue, 17 Mar 2020 10:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442789;
-        bh=UDa2qWXHYHGSlYmI++u0oX+jPfDfyrUcCkVb2ISSQnM=;
+        s=default; t=1584442798;
+        bh=Py3dPnos9L4ZGzR7x/NNU1dN+JqJ2GhNExW76DDVTWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v4U4mfRLgv3/mlyL+G2U2cLqKdRR14HjtEQXyWK4wGhzS6nWexwW04SxP4IFIRqSV
-         /HbOcLkyOb35aA8aU+km9uxD7AswgFEYXhpgxI6vnJQ95NqMlaGv5jwtrxAJph2gGK
-         ZLumCiFKotPT9rx2p0gEevgIBd0WATQpIqJCw5qo=
+        b=fGR2lcLY4vbsSjoVqQ8tuXnf5CWN0hQhdQi/jAv7lkZ84zsFGQgKdu8zjngUPBoh/
+         dAj8UN0npRCVXUibZnl/0wKP4DD8hZ+KLov2Fse4RczMcb5j7E0aMEjtnUwij6BVVT
+         ktHfAS2WPPLT5NKI2I60pZYSgN1NqcGMt71+lfMk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.19 83/89] iommu/vt-d: Ignore devices with out-of-spec domain number
-Date:   Tue, 17 Mar 2020 11:55:32 +0100
-Message-Id: <20200317103309.636095095@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+84484ccebdd4e5451d91@syzkaller.appspotmail.com,
+        Karsten Graul <kgraul@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 86/89] net/smc: check for valid ib_client_data
+Date:   Tue, 17 Mar 2020 11:55:35 +0100
+Message-Id: <20200317103309.966442397@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
 References: <20200317103259.744774526@linuxfoundation.org>
@@ -44,67 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Drake <drake@endlessm.com>
+From: Karsten Graul <kgraul@linux.ibm.com>
 
-commit da72a379b2ec0bad3eb265787f7008bead0b040c upstream.
+commit a2f2ef4a54c0d97aa6a8386f4ff23f36ebb488cf upstream.
 
-VMD subdevices are created with a PCI domain ID of 0x10000 or
-higher.
+In smc_ib_remove_dev() check if the provided ib device was actually
+initialized for SMC before.
 
-These subdevices are also handled like all other PCI devices by
-dmar_pci_bus_notifier().
-
-However, when dmar_alloc_pci_notify_info() take records of such devices,
-it will truncate the domain ID to a u16 value (in info->seg).
-The device at (e.g.) 10000:00:02.0 is then treated by the DMAR code as if
-it is 0000:00:02.0.
-
-In the unlucky event that a real device also exists at 0000:00:02.0 and
-also has a device-specific entry in the DMAR table,
-dmar_insert_dev_scope() will crash on:
-   BUG_ON(i >= devices_cnt);
-
-That's basically a sanity check that only one PCI device matches a
-single DMAR entry; in this case we seem to have two matching devices.
-
-Fix this by ignoring devices that have a domain number higher than
-what can be looked up in the DMAR table.
-
-This problem was carefully diagnosed by Jian-Hong Pan.
-
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Fixes: 59ce0515cdaf3 ("iommu/vt-d: Update DRHD/RMRR/ATSR device scope caches when PCI hotplug happens")
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Reported-by: syzbot+84484ccebdd4e5451d91@syzkaller.appspotmail.com
+Fixes: a4cf0443c414 ("smc: introduce SMC as an IB-client")
+Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/dmar.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ net/smc/smc_ib.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -39,6 +39,7 @@
- #include <linux/dmi.h>
- #include <linux/slab.h>
- #include <linux/iommu.h>
-+#include <linux/limits.h>
- #include <asm/irq_remapping.h>
- #include <asm/iommu_table.h>
+--- a/net/smc/smc_ib.c
++++ b/net/smc/smc_ib.c
+@@ -552,6 +552,8 @@ static void smc_ib_remove_dev(struct ib_
+ 	struct smc_ib_device *smcibdev;
  
-@@ -139,6 +140,13 @@ dmar_alloc_pci_notify_info(struct pci_de
- 
- 	BUG_ON(dev->is_virtfn);
- 
-+	/*
-+	 * Ignore devices that have a domain number higher than what can
-+	 * be looked up in DMAR, e.g. VMD subdevices with domain 0x10000
-+	 */
-+	if (pci_domain_nr(dev->bus) > U16_MAX)
-+		return NULL;
-+
- 	/* Only generate path[] for device addition event */
- 	if (event == BUS_NOTIFY_ADD_DEVICE)
- 		for (tmp = dev; tmp; tmp = tmp->bus->self)
+ 	smcibdev = ib_get_client_data(ibdev, &smc_ib_client);
++	if (!smcibdev || smcibdev->ibdev != ibdev)
++		return;
+ 	ib_set_client_data(ibdev, &smc_ib_client, NULL);
+ 	spin_lock(&smc_ib_devices.lock);
+ 	list_del_init(&smcibdev->list); /* remove from smc_ib_devices */
 
 
