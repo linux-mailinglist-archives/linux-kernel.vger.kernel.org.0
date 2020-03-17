@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84999187F5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:00:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7307F187F61
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:01:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbgCQLAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:00:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40120 "EHLO mail.kernel.org"
+        id S1727227AbgCQLAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:00:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727667AbgCQLAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:00:47 -0400
+        id S1727673AbgCQLAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:00:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 148C320752;
-        Tue, 17 Mar 2020 11:00:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B43420735;
+        Tue, 17 Mar 2020 11:00:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442847;
-        bh=HloH5/S8q8Fps7+NuGRfK8R+tEnCdAPq8XIMLUqLL74=;
+        s=default; t=1584442851;
+        bh=HRRrl/gxVhH1ZfxEt4j/7UewEaU43uaSVp+a8r/n95c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GHnacMnfdaIAdnKfFM7okCxD8b6JFR4noUlDEcoAI8gDEVRSA40N60jCAuSWEmqK6
-         DstzxPvEzUBhdGh0jx/FsqHkKn6w1Wvcc8qHTlFCSz8hoh3oCBzXX1Rx9ZtKCsC3KK
-         +n9t/w+4epFZM3LJUeYC/QGfiirMf8pfRrnq6CnQ=
+        b=E8k91v7gmMkfeAbp4w422WHUekeGAaH4TB8IbdNR6rKwMtWoLd+9816+lxTnLg6kh
+         yOKfiuRdi7ORsu9KazhLGH5ANv3c4FMIkbqgxg+gw+rbPNk+TykAkWe8dZUlDZniX5
+         jRTmKgKlF4eZR5usZyi/uUNLezMmI6PWXXnBq3zw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mahesh Bandewar <maheshb@google.com>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 013/123] macvlan: add cond_resched() during multicast processing
-Date:   Tue, 17 Mar 2020 11:54:00 +0100
-Message-Id: <20200317103309.057346010@linuxfoundation.org>
+Subject: [PATCH 5.4 014/123] net: dsa: fix phylink_start()/phylink_stop() calls
+Date:   Tue, 17 Mar 2020 11:54:01 +0100
+Message-Id: <20200317103309.165012071@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
 References: <20200317103307.343627747@linuxfoundation.org>
@@ -43,40 +44,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mahesh Bandewar <maheshb@google.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit ce9a4186f9ac475c415ffd20348176a4ea366670 ]
+[ Upstream commit 8640f8dc6d657ebfb4e67c202ad32c5457858a13 ]
 
-The Rx bound multicast packets are deferred to a workqueue and
-macvlan can also suffer from the same attack that was discovered
-by Syzbot for IPvlan. This solution is not as effective as in
-IPvlan. IPvlan defers all (Tx and Rx) multicast packet processing
-to a workqueue while macvlan does this way only for the Rx. This
-fix should address the Rx codition to certain extent.
+Place phylink_start()/phylink_stop() inside dsa_port_enable() and
+dsa_port_disable(), which ensures that we call phylink_stop() before
+tearing down phylink - which is a documented requirement.  Failure
+to do so can cause use-after-free bugs.
 
-Tx is still suseptible. Tx multicast processing happens when
-.ndo_start_xmit is called, hence we cannot add cond_resched().
-However, it's not that severe since the user which is generating
- / flooding will be affected the most.
-
-Fixes: 412ca1550cbe ("macvlan: Move broadcasts into a work queue")
-Signed-off-by: Mahesh Bandewar <maheshb@google.com>
+Fixes: 0e27921816ad ("net: dsa: Use PHYLINK for the CPU/DSA ports")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/macvlan.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/dsa/dsa_priv.h |    2 ++
+ net/dsa/port.c     |   32 ++++++++++++++++++++++++++------
+ net/dsa/slave.c    |    8 ++------
+ 3 files changed, 30 insertions(+), 12 deletions(-)
 
---- a/drivers/net/macvlan.c
-+++ b/drivers/net/macvlan.c
-@@ -334,6 +334,8 @@ static void macvlan_process_broadcast(st
- 		if (src)
- 			dev_put(src->dev);
- 		consume_skb(skb);
-+
-+		cond_resched();
- 	}
+--- a/net/dsa/dsa_priv.h
++++ b/net/dsa/dsa_priv.h
+@@ -128,7 +128,9 @@ static inline struct net_device *dsa_mas
+ /* port.c */
+ int dsa_port_set_state(struct dsa_port *dp, u8 state,
+ 		       struct switchdev_trans *trans);
++int dsa_port_enable_rt(struct dsa_port *dp, struct phy_device *phy);
+ int dsa_port_enable(struct dsa_port *dp, struct phy_device *phy);
++void dsa_port_disable_rt(struct dsa_port *dp);
+ void dsa_port_disable(struct dsa_port *dp);
+ int dsa_port_bridge_join(struct dsa_port *dp, struct net_device *br);
+ void dsa_port_bridge_leave(struct dsa_port *dp, struct net_device *br);
+--- a/net/dsa/port.c
++++ b/net/dsa/port.c
+@@ -63,7 +63,7 @@ static void dsa_port_set_state_now(struc
+ 		pr_err("DSA: failed to set STP state %u (%d)\n", state, err);
  }
  
+-int dsa_port_enable(struct dsa_port *dp, struct phy_device *phy)
++int dsa_port_enable_rt(struct dsa_port *dp, struct phy_device *phy)
+ {
+ 	struct dsa_switch *ds = dp->ds;
+ 	int port = dp->index;
+@@ -78,14 +78,31 @@ int dsa_port_enable(struct dsa_port *dp,
+ 	if (!dp->bridge_dev)
+ 		dsa_port_set_state_now(dp, BR_STATE_FORWARDING);
+ 
++	if (dp->pl)
++		phylink_start(dp->pl);
++
+ 	return 0;
+ }
+ 
+-void dsa_port_disable(struct dsa_port *dp)
++int dsa_port_enable(struct dsa_port *dp, struct phy_device *phy)
++{
++	int err;
++
++	rtnl_lock();
++	err = dsa_port_enable_rt(dp, phy);
++	rtnl_unlock();
++
++	return err;
++}
++
++void dsa_port_disable_rt(struct dsa_port *dp)
+ {
+ 	struct dsa_switch *ds = dp->ds;
+ 	int port = dp->index;
+ 
++	if (dp->pl)
++		phylink_stop(dp->pl);
++
+ 	if (!dp->bridge_dev)
+ 		dsa_port_set_state_now(dp, BR_STATE_DISABLED);
+ 
+@@ -93,6 +110,13 @@ void dsa_port_disable(struct dsa_port *d
+ 		ds->ops->port_disable(ds, port);
+ }
+ 
++void dsa_port_disable(struct dsa_port *dp)
++{
++	rtnl_lock();
++	dsa_port_disable_rt(dp);
++	rtnl_unlock();
++}
++
+ int dsa_port_bridge_join(struct dsa_port *dp, struct net_device *br)
+ {
+ 	struct dsa_notifier_bridge_info info = {
+@@ -615,10 +639,6 @@ static int dsa_port_phylink_register(str
+ 		goto err_phy_connect;
+ 	}
+ 
+-	rtnl_lock();
+-	phylink_start(dp->pl);
+-	rtnl_unlock();
+-
+ 	return 0;
+ 
+ err_phy_connect:
+--- a/net/dsa/slave.c
++++ b/net/dsa/slave.c
+@@ -90,12 +90,10 @@ static int dsa_slave_open(struct net_dev
+ 			goto clear_allmulti;
+ 	}
+ 
+-	err = dsa_port_enable(dp, dev->phydev);
++	err = dsa_port_enable_rt(dp, dev->phydev);
+ 	if (err)
+ 		goto clear_promisc;
+ 
+-	phylink_start(dp->pl);
+-
+ 	return 0;
+ 
+ clear_promisc:
+@@ -119,9 +117,7 @@ static int dsa_slave_close(struct net_de
+ 	cancel_work_sync(&dp->xmit_work);
+ 	skb_queue_purge(&dp->xmit_queue);
+ 
+-	phylink_stop(dp->pl);
+-
+-	dsa_port_disable(dp);
++	dsa_port_disable_rt(dp);
+ 
+ 	dev_mc_unsync(master, dev);
+ 	dev_uc_unsync(master, dev);
 
 
