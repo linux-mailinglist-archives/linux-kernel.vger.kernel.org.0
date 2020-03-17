@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2AA5187988
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 07:22:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29F3C187989
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 07:22:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726396AbgCQGWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 02:22:40 -0400
+        id S1726452AbgCQGWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 02:22:41 -0400
 Received: from mga12.intel.com ([192.55.52.136]:53584 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725536AbgCQGWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 02:22:39 -0400
-IronPort-SDR: DpaV5u2OSmdapHp/CZZP/Btrt02wodnv/vIuTfeeF2dmbusMy7V9t9U3VV1TbyKZiwLdUUR3JH
- QaeQSAuVjYUQ==
+        id S1726399AbgCQGWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 02:22:40 -0400
+IronPort-SDR: kYrrwdzL0L6S7C72DeR3nlhyu3whj4NhoYeJfoZ8SmEtmZQ8SXc/SSPYpU6riLDb/UOoiHrJ31
+ hzilha/CGHOg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 23:22:38 -0700
-IronPort-SDR: 2aYydfiHbIhwgRb2+ek13+5IMFLe0FFyLk8CnmDD0/L771+Z+jfImD/0UVx0raO4fNPINbwLs2
- 11qFWHaVRYqA==
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 23:22:40 -0700
+IronPort-SDR: J4plOpkVXSuwaaBljT4MbkXKzSRokxtbrXEyAQmoKdgfD1VpMJRlCTjgR2hXAtYqyGJgzqr5jM
+ qcSWtvEG4b7Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,563,1574150400"; 
-   d="scan'208";a="445390317"
+   d="scan'208";a="445390322"
 Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Mar 2020 23:22:37 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 16 Mar 2020 23:22:39 -0700
 From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        stable@vger.kernel.org
-Subject: [GIT PULL 2/6] stm class: sys-t: Fix the use of time_after()
-Date:   Tue, 17 Mar 2020 08:22:11 +0200
-Message-Id: <20200317062215.15598-3-alexander.shishkin@linux.intel.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [GIT PULL 3/6] intel_th: msu: Make stopping the trace optional
+Date:   Tue, 17 Mar 2020 08:22:12 +0200
+Message-Id: <20200317062215.15598-4-alexander.shishkin@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317062215.15598-1-alexander.shishkin@linux.intel.com>
 References: <20200317062215.15598-1-alexander.shishkin@linux.intel.com>
@@ -43,42 +42,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The operands of time_after() are in a wrong order in both instances in
-the sys-t driver. Fix that.
+Some use cases prefer to keep collecting the trace data into the last
+available window while the other windows are being offloaded instead of
+stopping the trace. In this scenario, the window switch happens
+automatically when the next window becomes available again.
+
+Add an option to allow this and a sysfs attribute to enable it.
 
 Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Fixes: 39f10239df75 ("stm class: p_sys-t: Add support for CLOCKSYNC packets")
-Fixes: d69d5e83110f ("stm class: Add MIPI SyS-T protocol support")
-Cc: stable@vger.kernel.org # v4.20+
 ---
- drivers/hwtracing/stm/p_sys-t.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../testing/sysfs-bus-intel_th-devices-msc    |  8 ++++
+ drivers/hwtracing/intel_th/msu.c              | 37 ++++++++++++++++++-
+ 2 files changed, 44 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hwtracing/stm/p_sys-t.c b/drivers/hwtracing/stm/p_sys-t.c
-index b178a5495b67..360b5c03df95 100644
---- a/drivers/hwtracing/stm/p_sys-t.c
-+++ b/drivers/hwtracing/stm/p_sys-t.c
-@@ -238,7 +238,7 @@ static struct configfs_attribute *sys_t_policy_attrs[] = {
- static inline bool sys_t_need_ts(struct sys_t_output *op)
- {
- 	if (op->node.ts_interval &&
--	    time_after(op->ts_jiffies + op->node.ts_interval, jiffies)) {
-+	    time_after(jiffies, op->ts_jiffies + op->node.ts_interval)) {
- 		op->ts_jiffies = jiffies;
+diff --git a/Documentation/ABI/testing/sysfs-bus-intel_th-devices-msc b/Documentation/ABI/testing/sysfs-bus-intel_th-devices-msc
+index 456cb62b384c..7fd2601c2831 100644
+--- a/Documentation/ABI/testing/sysfs-bus-intel_th-devices-msc
++++ b/Documentation/ABI/testing/sysfs-bus-intel_th-devices-msc
+@@ -40,3 +40,11 @@ Description:	(RW) Trigger window switch for the MSC's buffer, in
+ 		triggering a window switch for the buffer. Returns an error in any
+ 		other operating mode or attempts to write something other than "1".
  
- 		return true;
-@@ -250,8 +250,8 @@ static inline bool sys_t_need_ts(struct sys_t_output *op)
- static bool sys_t_need_clock_sync(struct sys_t_output *op)
- {
- 	if (op->node.clocksync_interval &&
--	    time_after(op->clocksync_jiffies + op->node.clocksync_interval,
--		       jiffies)) {
-+	    time_after(jiffies,
-+		       op->clocksync_jiffies + op->node.clocksync_interval)) {
- 		op->clocksync_jiffies = jiffies;
++What:		/sys/bus/intel_th/devices/<intel_th_id>-msc<msc-id>/stop_on_full
++Date:		March 2020
++KernelVersion:	5.7
++Contact:	Alexander Shishkin <alexander.shishkin@linux.intel.com>
++Description:	(RW) Configure whether trace stops when the last available window
++		becomes full (1/y/Y) or wraps around and continues until the next
++		window becomes available again (0/n/N).
++
+diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
+index 6e118b790d83..45916b48bcf0 100644
+--- a/drivers/hwtracing/intel_th/msu.c
++++ b/drivers/hwtracing/intel_th/msu.c
+@@ -138,6 +138,7 @@ struct msc {
+ 	struct list_head	win_list;
+ 	struct sg_table		single_sgt;
+ 	struct msc_window	*cur_win;
++	struct msc_window	*switch_on_unlock;
+ 	unsigned long		nr_pages;
+ 	unsigned long		single_sz;
+ 	unsigned int		single_wrap : 1;
+@@ -154,6 +155,8 @@ struct msc {
  
- 		return true;
+ 	struct list_head	iter_list;
+ 
++	bool			stop_on_full;
++
+ 	/* config */
+ 	unsigned int		enabled : 1,
+ 				wrap	: 1,
+@@ -1717,6 +1720,10 @@ void intel_th_msc_window_unlock(struct device *dev, struct sg_table *sgt)
+ 		return;
+ 
+ 	msc_win_set_lockout(win, WIN_LOCKED, WIN_READY);
++	if (msc->switch_on_unlock == win) {
++		msc->switch_on_unlock = NULL;
++		msc_win_switch(msc);
++	}
+ }
+ EXPORT_SYMBOL_GPL(intel_th_msc_window_unlock);
+ 
+@@ -1757,7 +1764,11 @@ static irqreturn_t intel_th_msc_interrupt(struct intel_th_device *thdev)
+ 
+ 	/* next window: if READY, proceed, if LOCKED, stop the trace */
+ 	if (msc_win_set_lockout(next_win, WIN_READY, WIN_INUSE)) {
+-		schedule_work(&msc->work);
++		if (msc->stop_on_full)
++			schedule_work(&msc->work);
++		else
++			msc->switch_on_unlock = next_win;
++
+ 		return IRQ_HANDLED;
+ 	}
+ 
+@@ -2050,11 +2061,35 @@ win_switch_store(struct device *dev, struct device_attribute *attr,
+ 
+ static DEVICE_ATTR_WO(win_switch);
+ 
++static ssize_t stop_on_full_show(struct device *dev,
++				 struct device_attribute *attr, char *buf)
++{
++	struct msc *msc = dev_get_drvdata(dev);
++
++	return scnprintf(buf, PAGE_SIZE, "%d\n", msc->stop_on_full);
++}
++
++static ssize_t stop_on_full_store(struct device *dev,
++				  struct device_attribute *attr,
++				  const char *buf, size_t size)
++{
++	struct msc *msc = dev_get_drvdata(dev);
++	unsigned long val;
++	int ret;
++
++	ret = kstrtobool(buf, &msc->stop_on_full);
++
++	return ret ? ret : size;
++}
++
++static DEVICE_ATTR_RW(stop_on_full);
++
+ static struct attribute *msc_output_attrs[] = {
+ 	&dev_attr_wrap.attr,
+ 	&dev_attr_mode.attr,
+ 	&dev_attr_nr_pages.attr,
+ 	&dev_attr_win_switch.attr,
++	&dev_attr_stop_on_full.attr,
+ 	NULL,
+ };
+ 
 -- 
 2.25.1
 
