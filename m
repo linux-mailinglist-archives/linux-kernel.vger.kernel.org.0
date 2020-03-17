@@ -2,71 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9946188338
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 13:11:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E34BD188375
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 13:16:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbgCQMKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 08:10:55 -0400
-Received: from foss.arm.com ([217.140.110.172]:36328 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726634AbgCQMKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 08:10:54 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52B6A30E;
-        Tue, 17 Mar 2020 05:10:54 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E6613F534;
-        Tue, 17 Mar 2020 05:10:53 -0700 (PDT)
-Date:   Tue, 17 Mar 2020 12:10:51 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Hongbo Yao <yaohongbo@huawei.com>
-Cc:     will@kernel.org, broonie@kernel.org, linux-kernel@vger.kernel.org,
-        catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH] arm64: fix the missing ktpi= cmdline check in
- arm64_kernel_unmapped_at_el0()
-Message-ID: <20200317121050.GH8831@lakrids.cambridge.arm.com>
-References: <20200317114708.109283-1-yaohongbo@huawei.com>
+        id S1726552AbgCQMOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 08:14:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34602 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbgCQMOh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 08:14:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=+Ey7nc3Xwn+RHDnAhkb2QTzFDpMtlF+8imW4XG/pP40=; b=XYU1URAk9H9cVZdK3E6YU35U8A
+        Su8vsVEV3kMqBbDQOvw2d61EPqeBQTqxQt6Aad8a7WhkbVq0Vqe06GqzZFe5KdtjU8CXX2Klobupz
+        AtTEObV6MZXNjMA/HK1Mh0yDPs4u1DDZ7JDpirL/xH9vLtlcONcJjJd4VfiCsGkBXvlbJAm0Bd0sN
+        lmfB6tJdSdm+M1pqCHCbqfO3poBhbFt1Jk5s0yVHv6B0fGmXwyE3kEe/OfyZQpr7eiiWc5NoWe0aY
+        GoDExRbTaQpuOC+P1k47qv15qKig0y23H9iX/v3NO9XTaiynrlMByWcaS6dMd7R1nH7k8PK2UDe8N
+        efI8SCiw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jEB79-0005WV-Ne; Tue, 17 Mar 2020 12:14:31 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D0B2830110E;
+        Tue, 17 Mar 2020 13:14:28 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B699D20C4A235; Tue, 17 Mar 2020 13:14:28 +0100 (CET)
+Date:   Tue, 17 Mar 2020 13:14:28 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     tglx@linutronix.de, jpoimboe@redhat.com,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [RFC][PATCH 00/16] objtool: vmlinux.o and noinstr validation
+Message-ID: <20200317121428.GI12521@hirez.programming.kicks-ass.net>
+References: <20200312134107.700205216@infradead.org>
+ <20200312162337.GU12561@hirez.programming.kicks-ass.net>
+ <20200317095628.4f3690afe24e059a146a4b6f@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200317114708.109283-1-yaohongbo@huawei.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <20200317095628.4f3690afe24e059a146a4b6f@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Adding Catalin and LAKML]
+On Tue, Mar 17, 2020 at 09:56:28AM +0900, Masami Hiramatsu wrote:
+> On Thu, 12 Mar 2020 17:23:37 +0100
+> Peter Zijlstra <peterz@infradead.org> wrote:
 
-Mark.
+> > So one of the problem i've ran into while playing with this and Thomas'
+> > patches is that it is 'difficult' to deal with indirect function calls.
+> > 
+> > objtool basically gives up instantly.
+> 
+> Can we introduce a "safe-call" wrapper function instead of indirect
+> call, and if objtool found an indirect call without safe-call function,
+> it can make it an error?
+> 
+> static int __noinstr safe_indirect_callback(int (*fn)(...), real-args)
+> {
+> 	if (!is_instr_text(fn))
+> 		return -ERANGE;
+> 	return fn(real-args)
+> }
 
-On Tue, Mar 17, 2020 at 07:47:08PM +0800, Hongbo Yao wrote:
-> Kpti cannot be disabled from the kernel cmdline after the commit
-> 09e3c22a("arm64: Use a variable to store non-global mappings decision").
-> 
-> Bring back the missing check of kpti= command-line option to fix the
-> case where the SPE driver complains the missing "kpti-off" even it has
-> already been set.
-> 
-> Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
-> ---
->  arch/arm64/include/asm/mmu.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
-> index 3c9533322558..ebbc0d3ac2f7 100644
-> --- a/arch/arm64/include/asm/mmu.h
-> +++ b/arch/arm64/include/asm/mmu.h
-> @@ -34,7 +34,8 @@ extern bool arm64_use_ng_mappings;
->  
->  static inline bool arm64_kernel_unmapped_at_el0(void)
->  {
-> -	return arm64_use_ng_mappings;
-> +	return arm64_use_ng_mappings &&
-> +		cpus_have_const_cap(ARM64_UNMAP_KERNEL_AT_EL0);
->  }
->  
->  typedef void (*bp_hardening_cb_t)(void);
-> -- 
-> 2.20.1
-> 
+That is a runtime test and as such susceptible to code coverage issues.
+
+I could probably frob a few cases manually in objtool; so far I've
+managed to just make them go away.
+
+> BTW, out of curiously, if BUG*() or WARN*() cases happens in the noinstr
+> section, do we also need to move them (register dump, stack unwinding,
+> printk, console output, etc.) all into noinstr section?
+
+Since BUG/WARN should not happen, we've added instr_begin()/instr_end()
+to their slow path. If those trigger, we've got bigger issues.
+
