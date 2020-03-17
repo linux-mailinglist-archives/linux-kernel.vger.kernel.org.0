@@ -2,85 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7CBA188C33
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:35:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93A69188C47
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:38:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbgCQRfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 13:35:01 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:41020 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbgCQRfA (ORCPT
+        id S1726775AbgCQRic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 13:38:32 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38624 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbgCQRia (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 13:35:00 -0400
-Received: by mail-oi1-f195.google.com with SMTP id b17so7713947oic.8
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 10:35:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=32N5kM8wn4tDAmjs6gedFa/sANcD7GCBYoh5b7duodg=;
-        b=E7/PuPojEcN00+7o57owhlRnsJgcbwlFFc3V2M1Eqo3KTf2sDWkBQDH0Bk9/6murg/
-         EqrgV+pRniu/EmQ24cYhdtRGEwPw/o0TKpeYy0ozj5KWvBb+bv1mNYEa+MmlpmaSgmF+
-         VYUNve1/9bS/0SlC4hgHE//iIhVQ7u3a1gqJ2E5jDWFXQC90gSsu2FkmQ9iMNc+klK7b
-         SQSFqZDMXOQxMLmZnrTPaL+dZh71UgMvDuh7oO8U080ShIju1cwhDxz7T1ZMOS7R1Uhp
-         niBTyCUASpgJoW6gKXubPZ0GNOZ8hNOWnaVINp2093j0DXZFXjjhT2DKFHXxOGGNlaXT
-         7uQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=32N5kM8wn4tDAmjs6gedFa/sANcD7GCBYoh5b7duodg=;
-        b=KPTOjWASCeuUgcKTG0zmk6fqAq2XiYlSwuMh4UdcaRTUv7fvh++2mOyOlUJbO2Nl/F
-         zJFbPyziVoTOnkxUjOCSo+oD19wCGpPo6NeScblTJ/KGFF90SHhA9rWBigCTinTEErXL
-         Kph3rP0wOM8iVW/ygx/1Abvkq6FZV5w+2Vw4pSzBN18lr4XFvKMtxJmu5rxv96ZazYmd
-         2MiiRTdVpWuoMWxO+Vbg0QKj8OqTxhM8iD7tYPQjdtpv7onsR2elbW7gS67Wq46izodr
-         36FmjtLcea5/xmYPCZqGtRBI4D6QJiwdVgHWScfFXZO7jbv+EWnqAZ0EIRivbIw7INaY
-         99hw==
-X-Gm-Message-State: ANhLgQ3UsbqQpuYxb8xp20qyl8sb0wQ9Zj8P91NCDy+k+zURt9OSy/iy
-        RSw3MoFbdDw7hPZbK3LKk+m2O/xT1wjjO+YpeDKU/vCiI3k=
-X-Google-Smtp-Source: ADFU+vtKUOyY/n5MZWbhQpMLm27X+KBPsGUNtLxdhT2Fk9bGhFCI5PQnOf/a6tkQBL4/TXn9s+2FBVt/vHx8rUs++9M=
-X-Received: by 2002:a54:418a:: with SMTP id 10mr365540oiy.105.1584466499710;
- Tue, 17 Mar 2020 10:34:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200317061522.12685-1-rayagonda.kokatanur@broadcom.com> <20200317061522.12685-2-rayagonda.kokatanur@broadcom.com>
-In-Reply-To: <20200317061522.12685-2-rayagonda.kokatanur@broadcom.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 17 Mar 2020 10:34:48 -0700
-Message-ID: <CAPcyv4i17m6qDQtbNfPs+hVGF7CCdR59x04T5UdOwosTB5=OiQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] async_tx: return error instead of BUG_ON
-To:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Allison Randal <allison@lohutok.net>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 17 Mar 2020 13:38:30 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02HHHqVk056217;
+        Tue, 17 Mar 2020 17:38:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2020-01-29;
+ bh=HhYQtNzT7W8ofZ1VIhf3mFuaTo9RNACqiUJRCIPqvIw=;
+ b=lMYrLx5QWiZ+xiLWVnB/bSb6CnfNPhPAbqlPt4I+93thcy4JFREQZV+KJm/EUJTbewk8
+ dyjRdONeiG9pWWmQjOtsW+OkFv8qyqJU3oeM5TPBPf4EMKv/nYRfTbrm2/4M+1Ib4UDr
+ FPm1wJkMB2AcVfxw455pwwi/PDXs9Rea0H4bWDt0tK3AFhZBF1XlosVYYDhY23m+iQnS
+ y7K0z4Dvu9sV1IZX6evOOfEswKHvZrVsJIqPB0B/JR7HJJd6dP3orqOHm2Bhi5dMY/uH
+ DLazI99Wrpa1t+Q+k5vLXbXfrh+o+yztN1rcq5BGUOK7gl2OLgyOtbS9ROrsnM0Db8B4 ag== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2yrqwn671a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Mar 2020 17:38:00 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02HHJjBa102500;
+        Tue, 17 Mar 2020 17:35:59 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2ys92dmrug-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Mar 2020 17:35:59 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02HHZrdG015128;
+        Tue, 17 Mar 2020 17:35:53 GMT
+Received: from dhcp-10-175-196-233.vpn.oracle.com (/10.175.196.233)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 17 Mar 2020 10:35:53 -0700
+From:   Alan Maguire <alan.maguire@oracle.com>
+To:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
+        alex.dewar@gmx.co.uk, erelx.geron@intel.com,
+        johannes.berg@intel.com, arnd@arndb.de,
+        linux-um@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, brendanhiggins@google.com,
+        Alan Maguire <alan.maguire@oracle.com>
+Subject: [PATCH] arch/um: falloc.h needs to be directly included for older libc
+Date:   Tue, 17 Mar 2020 17:35:34 +0000
+Message-Id: <1584466534-13248-1-git-send-email-alan.maguire@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9563 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=686
+ mlxscore=0 spamscore=0 bulkscore=0 adultscore=82 suspectscore=3
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003170069
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9563 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 mlxlogscore=748
+ mlxscore=0 bulkscore=0 phishscore=0 spamscore=0 suspectscore=3
+ malwarescore=0 priorityscore=1501 clxscore=1011 adultscore=45
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003170069
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 11:16 PM Rayagonda Kokatanur
-<rayagonda.kokatanur@broadcom.com> wrote:
->
-> Return error upon failure instead of using BUG_ON().
-> BUG_ON() will crash the kernel.
->
-> Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+When building UML with glibc 2.17 installed, compilation
+of arch/um/os-Linux/file.c fails due to failure to find
+FALLOC_FL_PUNCH_HOLE and FALLOC_FL_KEEP_SIZE definitions.
 
-I don't think this patch is worth it, it has 2 problems:
+It appears that /usr/include/bits/fcntl-linux.h (indirectly
+included by /usr/include/fcntl.h) does not include falloc.h
+with an older glibc, whereas a more up-to-date version
+does.
 
-- These conversions are buggy. Upper layers assume that the calls will
-fall back to synchronous operation internally if they return NULL.
+Adding the direct include to file.c resolves the issue
+and does not cause problems for more recent glibc.
 
-- These assertions indicate a major programming error that should not
-be silently ignored. They need to be WARN_ON_ONCE() at a minimum, but
-only if the above issue is solved.
+Fixes: 50109b5a03b4 ("um: Add support for DISCARD in the UBD Driver")
+Cc: Brendan Higgins <brendanhiggins@google.com>
+Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
+---
+ arch/um/os-Linux/file.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-These assertions are validating the raid implementation in raid5.c
-which has been correctly handling this path for several years. The
-risk of the code reorganization to "fix" this is higher than the
-benefit given zero reports of these actually triggering in production.
+diff --git a/arch/um/os-Linux/file.c b/arch/um/os-Linux/file.c
+index fbda105..5c819f8 100644
+--- a/arch/um/os-Linux/file.c
++++ b/arch/um/os-Linux/file.c
+@@ -8,6 +8,7 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <signal.h>
++#include <linux/falloc.h>
+ #include <sys/ioctl.h>
+ #include <sys/mount.h>
+ #include <sys/socket.h>
+-- 
+1.8.3.1
+
