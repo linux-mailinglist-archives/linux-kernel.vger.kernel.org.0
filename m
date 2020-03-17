@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60C10187FEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:06:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 289E91881FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:22:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727916AbgCQLFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:05:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46674 "EHLO mail.kernel.org"
+        id S1727257AbgCQK6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:58:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728467AbgCQLFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:05:46 -0400
+        id S1726827AbgCQK60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:58:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DFB2206EC;
-        Tue, 17 Mar 2020 11:05:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E43D020724;
+        Tue, 17 Mar 2020 10:58:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443146;
-        bh=+UBB+1hNmuQGnON9NCZSrMy5So0HNMpOQydiZAV8IAE=;
+        s=default; t=1584442706;
+        bh=K/bdzkzeh1qRPK264I+1ky5PKNqHMQE9Nl4FVD1QJSc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xjJIqrYDJpHKG0tmh7v7gKTg6mZuGmBZbs5wHTDZimF9jciu7ozWB6HwyiWDFfRS6
-         awrxPaBNfYICnYivomyrfITaPGzWtUZ5ANqzbiF3mi5EA3BeXWWbzg+XTMuRb8hJkD
-         Nv6aZwTJ2yKv83L8KsH6kUSNpixvNy91oVWqCH38=
+        b=RzXjNxYzsN/upmQbf6oqN17/aL3geCqC3Q3/KclOJ9Mi7yOPl7FyqF4kgQ5bI6efU
+         /nci7nqUzEHfqtZVMxire5aiIPODuZRZ3JqpjZY+vLuxV0bdyKs/fyNiXgEJp7+rft
+         hkHQY5Wf9g9J23AB+wKrkv5f2LteFyQ/CT3qDZ+c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        stable@kernel.org
-Subject: [PATCH 5.4 075/123] cifs_atomic_open(): fix double-put on late allocation failure
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.19 53/89] netfilter: xt_recent: recent_seq_next should increase position index
 Date:   Tue, 17 Mar 2020 11:55:02 +0100
-Message-Id: <20200317103315.147642018@linuxfoundation.org>
+Message-Id: <20200317103306.027529324@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
-References: <20200317103307.343627747@linuxfoundation.org>
+In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
+References: <20200317103259.744774526@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,67 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit d9a9f4849fe0c9d560851ab22a85a666cddfdd24 upstream.
+commit db25517a550926f609c63054b12ea9ad515e1a10 upstream.
 
-several iterations of ->atomic_open() calling conventions ago, we
-used to need fput() if ->atomic_open() failed at some point after
-successful finish_open().  Now (since 2016) it's not needed -
-struct file carries enough state to make fput() work regardless
-of the point in struct file lifecycle and discarding it on
-failure exits in open() got unified.  Unfortunately, I'd missed
-the fact that we had an instance of ->atomic_open() (cifs one)
-that used to need that fput(), as well as the stale comment in
-finish_open() demanding such late failure handling.  Trivially
-fixed...
+If .next function does not change position index,
+following .show function will repeat output related
+to current position index.
 
-Fixes: fe9ec8291fca "do_last(): take fput() on error after opening to out:"
-Cc: stable@kernel.org # v4.7+
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Without the patch:
+ # dd if=/proc/net/xt_recent/SSH # original file outpt
+ src=127.0.0.4 ttl: 0 last_seen: 6275444819 oldest_pkt: 1 6275444819
+ src=127.0.0.2 ttl: 0 last_seen: 6275438906 oldest_pkt: 1 6275438906
+ src=127.0.0.3 ttl: 0 last_seen: 6275441953 oldest_pkt: 1 6275441953
+ 0+1 records in
+ 0+1 records out
+ 204 bytes copied, 6.1332e-05 s, 3.3 MB/s
+
+Read after lseek into middle of last line (offset 140 in example below)
+generates expected end of last line and then unexpected whole last line
+once again
+
+ # dd if=/proc/net/xt_recent/SSH bs=140 skip=1
+ dd: /proc/net/xt_recent/SSH: cannot skip to specified offset
+ 127.0.0.3 ttl: 0 last_seen: 6275441953 oldest_pkt: 1 6275441953
+ src=127.0.0.3 ttl: 0 last_seen: 6275441953 oldest_pkt: 1 6275441953
+ 0+1 records in
+ 0+1 records out
+ 132 bytes copied, 6.2487e-05 s, 2.1 MB/s
+
+Cc: stable@vger.kernel.org
+Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code ...")
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=206283
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/filesystems/porting.rst |    8 ++++++++
- fs/cifs/dir.c                         |    1 -
- fs/open.c                             |    3 ---
- 3 files changed, 8 insertions(+), 4 deletions(-)
+ net/netfilter/xt_recent.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -850,3 +850,11 @@ business doing so.
- d_alloc_pseudo() is internal-only; uses outside of alloc_file_pseudo() are
- very suspect (and won't work in modules).  Such uses are very likely to
- be misspelled d_alloc_anon().
-+
-+---
-+
-+**mandatory**
-+
-+[should've been added in 2016] stale comment in finish_open() nonwithstanding,
-+failure exits in ->atomic_open() instances should *NOT* fput() the file,
-+no matter what.  Everything is handled by the caller.
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -560,7 +560,6 @@ cifs_atomic_open(struct inode *inode, st
- 		if (server->ops->close)
- 			server->ops->close(xid, tcon, &fid);
- 		cifs_del_pending_open(&open);
--		fput(file);
- 		rc = -ENOMEM;
- 	}
+--- a/net/netfilter/xt_recent.c
++++ b/net/netfilter/xt_recent.c
+@@ -497,12 +497,12 @@ static void *recent_seq_next(struct seq_
+ 	const struct recent_entry *e = v;
+ 	const struct list_head *head = e->list.next;
  
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -860,9 +860,6 @@ cleanup_file:
-  * the return value of d_splice_alias(), then the caller needs to perform dput()
-  * on it after finish_open().
-  *
-- * On successful return @file is a fully instantiated open file.  After this, if
-- * an error occurs in ->atomic_open(), it needs to clean up with fput().
-- *
-  * Returns zero on success or -errno if the open failed.
-  */
- int finish_open(struct file *file, struct dentry *dentry,
++	(*pos)++;
+ 	while (head == &t->iphash[st->bucket]) {
+ 		if (++st->bucket >= ip_list_hash_size)
+ 			return NULL;
+ 		head = t->iphash[st->bucket].next;
+ 	}
+-	(*pos)++;
+ 	return list_entry(head, struct recent_entry, list);
+ }
+ 
 
 
