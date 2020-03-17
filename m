@@ -2,132 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C65D187B08
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:17:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3C71187B0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:18:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbgCQIRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 04:17:31 -0400
-Received: from mga11.intel.com ([192.55.52.93]:17620 "EHLO mga11.intel.com"
+        id S1726408AbgCQISG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 04:18:06 -0400
+Received: from mga11.intel.com ([192.55.52.93]:17694 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725536AbgCQIRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 04:17:30 -0400
-IronPort-SDR: JWpHzikvSX4FPH3+JvEfRalfolr5JXzm/ewvSdi61VKpicIbCcgt6CQHzPNDv1oJpKq/XdR1Oq
- s2g0FZz6rOnA==
+        id S1725536AbgCQISG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 04:18:06 -0400
+IronPort-SDR: 7WlmVo2EjHtlr7/gehbOxTqHUTwcd8LEWZlkhPeZHY8xr7xM337aFXtadJgzID3jn+Q0s9HYt5
+ yzeKLEYiWlIQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 01:17:30 -0700
-IronPort-SDR: PogRVo52L4c/bHJT8ZMdD3bunGoSsLhHQc/kjfz1lqeJ2kBhfpOnK+G1yBjX10VJVMqJyVoXWX
- HHJzp5nQh2ig==
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 01:18:05 -0700
+IronPort-SDR: 8EI90Sa/Fl8A8OtrjnDeo/65QBPfPQaXLft94/WT65VrNZbsN3ntTX8TazKrkktJRaag3j25Ex
+ B+G400bZ+sBw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,563,1574150400"; 
-   d="scan'208";a="445419123"
-Received: from sqa-gate.sh.intel.com (HELO clx-ap-likexu.tsp.org) ([10.239.48.212])
-  by fmsmga006.fm.intel.com with ESMTP; 17 Mar 2020 01:17:27 -0700
-From:   Like Xu <like.xu@linux.intel.com>
-To:     pbonzini@redhat.com, like.xu@linux.intel.com
-Cc:     ehankland@google.com, jmattson@google.com, joro@8bytes.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sean.j.christopherson@intel.com, vkuznets@redhat.com,
-        wanpengli@tencent.com
-Subject: [PATCH v2] KVM: x86/pmu: Reduce counter period change overhead and delay the effective time
-Date:   Tue, 17 Mar 2020 16:14:58 +0800
-Message-Id: <20200317081458.88714-1-like.xu@linux.intel.com>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200317075315.70933-1-like.xu@linux.intel.com>
-References: <20200317075315.70933-1-like.xu@linux.intel.com>
+   d="scan'208";a="443671941"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.87]) ([10.237.72.87])
+  by fmsmga005.fm.intel.com with ESMTP; 17 Mar 2020 01:18:04 -0700
+Subject: Re: [RFC PATCH v2 3/6] mmc: host: Add UHS-II support in host layer
+To:     Ben Chuang <benchuanggli@gmail.com>, ulf.hansson@linaro.org
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        greg.tu@genesyslogic.com.tw, ben.chuang@genesyslogic.com.tw
+References: <cover.1578560282.git.benchuanggli@gmail.com>
+ <9f861920380df9d7a6d52c905fc47643eb25f33f.1578560282.git.benchuanggli@gmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <add27a04-e018-d050-4d42-4fb5c532df8c@intel.com>
+Date:   Tue, 17 Mar 2020 10:17:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <9f861920380df9d7a6d52c905fc47643eb25f33f.1578560282.git.benchuanggli@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cost of perf_event_period() is unstable, and when the guest samples
-multiple events, the overhead increases dramatically (5378 ns on E5-2699).
+On 9/01/20 11:14 am, Ben Chuang wrote:
+> From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> 
+> Add UHS-II support in host layer
 
-For a non-running counter, the effective time of the new period is when
-its corresponding enable bit is enabled. Calling perf_event_period()
-in advance is superfluous. For a running counter, it's safe to delay the
-effective time until the KVM_REQ_PMU event is handled. If there are
-multiple perf_event_period() calls before handling KVM_REQ_PMU,
-it helps to reduce the total cost.
+Split host layer changes from sdhci changes.
 
-Signed-off-by: Like Xu <like.xu@linux.intel.com>
----
- arch/x86/kvm/pmu.c           | 11 -----------
- arch/x86/kvm/pmu.h           | 11 +++++++++++
- arch/x86/kvm/vmx/pmu_intel.c | 10 ++++------
- 3 files changed, 15 insertions(+), 17 deletions(-)
+> 
+> Reported-by: kbuild test robot <lkp@intel.com>
 
-diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-index d1f8ca57d354..527a8bb85080 100644
---- a/arch/x86/kvm/pmu.c
-+++ b/arch/x86/kvm/pmu.c
-@@ -437,17 +437,6 @@ void kvm_pmu_init(struct kvm_vcpu *vcpu)
- 	kvm_pmu_refresh(vcpu);
- }
- 
--static inline bool pmc_speculative_in_use(struct kvm_pmc *pmc)
--{
--	struct kvm_pmu *pmu = pmc_to_pmu(pmc);
--
--	if (pmc_is_fixed(pmc))
--		return fixed_ctrl_field(pmu->fixed_ctr_ctrl,
--			pmc->idx - INTEL_PMC_IDX_FIXED) & 0x3;
--
--	return pmc->eventsel & ARCH_PERFMON_EVENTSEL_ENABLE;
--}
--
- /* Release perf_events for vPMCs that have been unused for a full time slice.  */
- void kvm_pmu_cleanup(struct kvm_vcpu *vcpu)
- {
-diff --git a/arch/x86/kvm/pmu.h b/arch/x86/kvm/pmu.h
-index d7da2b9e0755..cd112e825d2c 100644
---- a/arch/x86/kvm/pmu.h
-+++ b/arch/x86/kvm/pmu.h
-@@ -138,6 +138,17 @@ static inline u64 get_sample_period(struct kvm_pmc *pmc, u64 counter_value)
- 	return sample_period;
- }
- 
-+static inline bool pmc_speculative_in_use(struct kvm_pmc *pmc)
-+{
-+	struct kvm_pmu *pmu = pmc_to_pmu(pmc);
-+
-+	if (pmc_is_fixed(pmc))
-+		return fixed_ctrl_field(pmu->fixed_ctr_ctrl,
-+			pmc->idx - INTEL_PMC_IDX_FIXED) & 0x3;
-+
-+	return pmc->eventsel & ARCH_PERFMON_EVENTSEL_ENABLE;
-+}
-+
- void reprogram_gp_counter(struct kvm_pmc *pmc, u64 eventsel);
- void reprogram_fixed_counter(struct kvm_pmc *pmc, u8 ctrl, int fixed_idx);
- void reprogram_counter(struct kvm_pmu *pmu, int pmc_idx);
-diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
-index 7c857737b438..20f654a0c09b 100644
---- a/arch/x86/kvm/vmx/pmu_intel.c
-+++ b/arch/x86/kvm/vmx/pmu_intel.c
-@@ -263,15 +263,13 @@ static int intel_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 			if (!msr_info->host_initiated)
- 				data = (s64)(s32)data;
- 			pmc->counter += data - pmc_read_counter(pmc);
--			if (pmc->perf_event)
--				perf_event_period(pmc->perf_event,
--						  get_sample_period(pmc, data));
-+			if (pmc_speculative_in_use(pmc))
-+				kvm_make_request(KVM_REQ_PMU, vcpu);
- 			return 0;
- 		} else if ((pmc = get_fixed_pmc(pmu, msr))) {
- 			pmc->counter += data - pmc_read_counter(pmc);
--			if (pmc->perf_event)
--				perf_event_period(pmc->perf_event,
--						  get_sample_period(pmc, data));
-+			if (pmc_speculative_in_use(pmc))
-+				kvm_make_request(KVM_REQ_PMU, vcpu);
- 			return 0;
- 		} else if ((pmc = get_gp_pmc(pmu, msr, MSR_P6_EVNTSEL0))) {
- 			if (data == pmc->eventsel)
--- 
-2.21.1
+Drop "Reported-by: kbuild test robot <lkp@intel.com>"
 
+> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> ---
+>  drivers/mmc/host/Makefile                  |   1 +
+>  drivers/mmc/host/{sdhci.c => sdhci-core.c} | 276 ++++++--
+>  drivers/mmc/host/sdhci-milbeaut.c          |   4 +-
+>  drivers/mmc/host/sdhci-of-arasan.c         |   4 +-
+>  drivers/mmc/host/sdhci-of-at91.c           |   4 +-
+>  drivers/mmc/host/sdhci-omap.c              |   2 +-
+>  drivers/mmc/host/sdhci-pci-core.c          |   4 +-
+>  drivers/mmc/host/sdhci-pxav3.c             |   4 +-
+>  drivers/mmc/host/sdhci-uhs2.c              | 751 +++++++++++++++++++++
+>  drivers/mmc/host/sdhci-uhs2.h              |  34 +
+>  drivers/mmc/host/sdhci-xenon.c             |   4 +-
+>  drivers/mmc/host/sdhci.h                   | 284 +++++++-
+>  drivers/mmc/host/sdhci_am654.c             |   4 +-
+>  include/linux/mmc/uhs2.h                   | 270 ++++++++
+>  14 files changed, 1583 insertions(+), 63 deletions(-)
+>  rename drivers/mmc/host/{sdhci.c => sdhci-core.c} (94%)
+>  create mode 100644 drivers/mmc/host/sdhci-uhs2.c
+>  create mode 100644 drivers/mmc/host/sdhci-uhs2.h
+>  create mode 100644 include/linux/mmc/uhs2.h
+
+Please make sdhci-uhs2 a module and do not rename sdhci.c.
+
+References in sdhci.c to sdhci-uhs2.c will need to be enclosed by
+#if IS_REACHABLE(CONFIG_SDHCI_UHS2)
+
+Move all UHS-II definitions into sdhci-uhs2.h.  Things that are for V4 but
+not necessarily UHS-II can be in sdhci.h
+
+Make the set_power parameter change into a separate patch
+
+Fix all spelling mistakes
+
+Make comment style correct.
+
+Review all checkpatch warnings and checks (i.e. --strict option)
+
+If possible provide a link to a tree that contains the patches.
+
+Re-base on Ulf's next branch
+
+The patch set could use an overview of how UHS-II is different from regular SD.
+
+In other patches there are a bunch of memory allocations on the I/O path.
+That is a problem.  Memory needed should be allocated in advance.
