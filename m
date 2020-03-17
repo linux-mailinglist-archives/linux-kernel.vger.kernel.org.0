@@ -2,77 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21342188700
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:14:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D3DA188703
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:14:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbgCQOON (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 10:14:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45998 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726207AbgCQOOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 10:14:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C223EABDC;
-        Tue, 17 Mar 2020 14:14:10 +0000 (UTC)
-Date:   Tue, 17 Mar 2020 15:14:09 +0100
-From:   Jean Delvare <jdelvare@suse.de>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: VAIO EEPROM support in at24
-Message-ID: <20200317151409.7940926c@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1726597AbgCQOOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 10:14:45 -0400
+Received: from mail-pl1-f178.google.com ([209.85.214.178]:40333 "EHLO
+        mail-pl1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726545AbgCQOOp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 10:14:45 -0400
+Received: by mail-pl1-f178.google.com with SMTP id h11so9678276plk.7
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 07:14:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=31VV2BqTErBArS0YJh+/kwMKKPUy69GTM5G6BUFt0o8=;
+        b=el88eL3ttItPXOZmoChKflujOeJuPZoTvdJMRMouBnw+PMgRw7saoAx4YucsHjJaQX
+         KpwUX3+MruiksVzK+NkglGtMeEmCX1ceLT6A6fg5YAxgEExW4822BNv8JPogFhTMirkE
+         3mzS7ior9gw3KH8Fu4NjoxuO2HHhRuEg2mJH2i2tH6XT6SuswKNZr+yS/p4/PNPqORFV
+         joKUYQgzuS0EVLMtV56jzCYoXy0QOBOvOIeg2A5McNFqkl3euMhB3Zd2nro1Gd4zEKg3
+         IvhHvg+0VHeuV26N+HzyuoilCdzd2ra8xEavX2mKKNY1Vjfo7zanF7xnO9g0AayYun1n
+         kkvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=31VV2BqTErBArS0YJh+/kwMKKPUy69GTM5G6BUFt0o8=;
+        b=A33uqTttlwGQtUuZEMgYwtFL6YdkMJSSRRYv+sYj3LYBDpnQjM/vG/U/8AY2yGMCjW
+         /MrpHAK03NjXipZunyxipNzVxhzobY0tJKDl55i+KKntGiNJ5bxCg1Wm8bMYKutDw6qu
+         4ZrmCtJzl9IeLLsKs3rSZlPLaN4LDnYdXKqtd1g8mRUDrLyd8WArLw25Cq5e+8fbTaFy
+         Prz80sDtE7GmYhz2bsjylNa/FWWxT0lQop8FETOvjIr8voBcVIiToJQ5xezqbmd5hIQJ
+         Onb+7LcWE1iIdACBvt1aybExrLAvzfPcvvP+mmoi4R8+AEe6fgRWA7RlzsX6uX+tGrhH
+         sQ7g==
+X-Gm-Message-State: ANhLgQ22fa1OFCoKjAS+0/FYmpi9Hqdj99OwXvevujRq+w23+Am/NWEb
+        JwIJmtQufKfYya+7/5afRzQtQ3UbBYTTnqRLRDY=
+X-Google-Smtp-Source: ADFU+vswN9MyUdq2sicd8v6c3nDmZGZxCFgdwrk1Gft3pp+2iX0xhaMx+dUBnkAnpp/A378fdur3le0C+F5hrnb1IlQ=
+X-Received: by 2002:a17:90b:3711:: with SMTP id mg17mr5610616pjb.73.1584454484241;
+ Tue, 17 Mar 2020 07:14:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a17:90b:951:0:0:0:0 with HTTP; Tue, 17 Mar 2020 07:14:43
+ -0700 (PDT)
+From:   Esther Gabriel <esthergebrael22@gmail.com>
+Date:   Tue, 17 Mar 2020 15:14:43 +0100
+X-Google-Sender-Auth: F6ks37blP--2cD5IkjbXxLk-H5c
+Message-ID: <CAF5HdHgoFF35vx9bpGc_6o0CrRMiyUFpBuOXmn20cptQBFjLTw@mail.gmail.com>
+Subject: FROM MRS ESTHER GABRIEL
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Greeting to you my Dearest,
 
-As the legacy eeprom driver is being phased out, I am reviewing all its
-use cases to ensure that the at24 driver will be a suitable replacement.
+Please I need your help and Assistance. Permit me to inform you of my
+desire of going into business relationship with you. I am Miss.Esther
+Gabriel, the only Daughter of late Mr. and Mrs.Gabriel Kadjo. My
+father was a very wealthy cocoa merchant in Abidjan; the economic
+capital of Ivory Coast, my father was poisoned to death by his
+business associates on one of their outings on a business trip.
 
-One issue I have found is the handling of specific EEPROMs found on the
-SMBus of some Sony VAIO laptops. The legacy eeprom driver would expose
-them to user-space, read-only for all users. It would also recognize
-them as VAIO EEPROMs and would hide some bytes from non-root users
-because these bytes contain the BIOS password in a lightly encoded form.
+My mother died when I was a baby and since then my father took me so
+special. Before the death of my father in a private hospital here in
+Abidjan he secretly called me on his bed side and told me that he has
+the sum of SIXTY FIVE Million United State Dollars (USD.$65.000,000)
+deposited in one of the largest security company here in Abidjan, that
+he used my name as his only Daughter for the next of Kin in depositing
+of the fund to the security company.
 
-In order to keep the same level of functionality, we would have to offer
-the same with the at24 driver. At this time, the user has to
-instantiate a "24c02" device manually from user-space. By default this
-device has permissions 600, which is insufficient for users, and
-dangerous for root, so a quick chmod 444 is needed.
+He also explained to me that it was because of this wealth that he was
+poisoned by his business associates. That I should seek for a look
+foreign partner in a country of my choice who will assist me for
+investment purpose. And the money is in six 6 trunk boxes there in the
+security company now.
 
-Without the password issue, I would just document the procedure and
-live with it. However in order to protect the password from being read
-by random users, the driver itself needs to know that it is dealing
-with a specific type of EEPROM. It seems that we need to introduce a
-new device flavor to the at24 driver for this purpose.
+I am deeply here seeking your assistance in the following ways:
 
-I see that we already have a number of specific flags (AT24_FLAG_SERIAL
-and AT24_FLAG_MAC) so I suppose we could add something similar for
-these VAIO EEPROMs. Something like:
+(1) To stand as my late father's foreign partner before the security
+company for them to deliver the 6 six trunk boxes that contain the
+found to you in your country.
 
-/* Some Sony VAIO laptops have a 24c02 at 0x57 with product info */
-AT24_CHIP_DATA(at24_data_sony_vaio, 2048 / 8,
-	AT24_FLAG_READONLY | AT24_FLAG_IRUGO | AT24_FLAG_SONY_VAIO);
+(2) To serve as a guardian of this fund in the trunk box and invest
+them into a good business investments that can benefit you and me
+since I am only 24 years old girl, I do not have any idea of any
+business investment!
 
-Then I suppose it's only a matter of conditionally zeroing a selected
-range in at24_read() before it returns, to hide the password from
-non-root users.
+(3) To make arrangement for me to come over to your country to further
+my education/study and to secure a resident permit and my travelling
+Visa to come over and stay in your country.
 
-Before I start implementing the idea above, I would like to know if
-anyone objects to it, or has a better idea?
+Moreover, I am willing to offer you 20% percent of the total sum as
+compensation for your effort/input after the successful delivering  of
+the trunk boxes from the security company While 80% percent will be
+for me and my Education in your country.
 
-Thanks,
--- 
-Jean Delvare
-SUSE L3 Support
+Furthermore, please indicate your interest off helping me out for I
+believe that this transaction would be concluded within fourteen (14)
+days from the day you signify your interest to assist me.
+
+Anticipating to hearing from you soon.
+
+Tanks.
+Best regards,
+
+Miss.Esther.
