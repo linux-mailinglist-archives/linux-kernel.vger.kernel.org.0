@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C03691880AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:12:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B12AC188210
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:22:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728987AbgCQLMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:12:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55754 "EHLO mail.kernel.org"
+        id S1727315AbgCQLVb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:21:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729377AbgCQLMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:12:10 -0400
+        id S1727266AbgCQK6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:58:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D1FD20735;
-        Tue, 17 Mar 2020 11:12:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B55EB20719;
+        Tue, 17 Mar 2020 10:58:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443529;
-        bh=UWFV8+U9wMHUFK72MiBkyIfm7IytvMt4ap0HCa0loR0=;
+        s=default; t=1584442715;
+        bh=Lets9yH3P5twM0NTw/q9oANDVOhsQvUIg2oFpyqIBbE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DbN/+Bjx6ujMzh3rMaACpJobhu0Ci47IYaZng/9ep9pC2uot/+60fOV2WN6VRR2BY
-         SepkRuUCxHp6mxXySmdJD3qxm9fTtBc9ExLu/7VTizAYjMoJ9h0Gw8S1MzXsV++c84
-         EN5vTigq8oSRZrPEkrXFeTFwh1paUED7r0WBkruk=
+        b=Qv8FsQ5Yca+boV+O3wqgax/1Xw84RTFSAj2kvCdvJyzq1FLore9OEIwpyjbMtP5XR
+         /aEdbQcNQmgILQpS9GYxnUp6CEhD09qzkRoacvybx/M0iandXuusthF30aVf79xDRj
+         jeiND2u6dSL0wcYdkPGTP6EsJ+iAqR5VAVlrrDVU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.5 095/151] block: Fix partition support for host aware zoned block devices
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        nobuhiro1.iwamatsu@toshiba.co.jp
+Subject: [PATCH 4.19 56/89] drm/amd/display: remove duplicated assignment to grph_obj_type
 Date:   Tue, 17 Mar 2020 11:55:05 +0100
-Message-Id: <20200317103333.201614552@linuxfoundation.org>
+Message-Id: <20200317103306.349791002@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
-References: <20200317103326.593639086@linuxfoundation.org>
+In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
+References: <20200317103259.744774526@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,109 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit b53df2e7442c73a932fb74228147fb946e531585 upstream.
+commit d785476c608c621b345dd9396e8b21e90375cb0e upstream.
 
-Commit b72053072c0b ("block: allow partitions on host aware zone
-devices") introduced the helper function disk_has_partitions() to check
-if a given disk has valid partitions. However, since this function result
-directly depends on the disk partition table length rather than the
-actual existence of valid partitions in the table, it returns true even
-after all partitions are removed from the disk. For host aware zoned
-block devices, this results in zone management support to be kept
-disabled even after removing all partitions.
+Variable grph_obj_type is being assigned twice, one of these is
+redundant so remove it.
 
-Fix this by changing disk_has_partitions() to walk through the partition
-table entries and return true if and only if a valid non-zero size
-partition is found.
-
-Fixes: b72053072c0b ("block: allow partitions on host aware zone devices")
-Cc: stable@vger.kernel.org # 5.5
-Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Addresses-Coverity: ("Evaluation order violation")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: <nobuhiro1.iwamatsu@toshiba.co.jp>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-diff --git a/block/genhd.c b/block/genhd.c
-index ff6268970ddc..9c2e13ce0d19 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -301,6 +301,42 @@ struct hd_struct *disk_map_sector_rcu(struct gendisk *disk, sector_t sector)
- }
- EXPORT_SYMBOL_GPL(disk_map_sector_rcu);
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c
+@@ -364,8 +364,7 @@ bool amdgpu_atombios_get_connector_info_
+ 			router.ddc_valid = false;
+ 			router.cd_valid = false;
+ 			for (j = 0; j < ((le16_to_cpu(path->usSize) - 8) / 2); j++) {
+-				uint8_t grph_obj_type=
+-				grph_obj_type =
++				uint8_t grph_obj_type =
+ 				    (le16_to_cpu(path->usGraphicObjIds[j]) &
+ 				     OBJECT_TYPE_MASK) >> OBJECT_TYPE_SHIFT;
  
-+/**
-+ * disk_has_partitions
-+ * @disk: gendisk of interest
-+ *
-+ * Walk through the partition table and check if valid partition exists.
-+ *
-+ * CONTEXT:
-+ * Don't care.
-+ *
-+ * RETURNS:
-+ * True if the gendisk has at least one valid non-zero size partition.
-+ * Otherwise false.
-+ */
-+bool disk_has_partitions(struct gendisk *disk)
-+{
-+	struct disk_part_tbl *ptbl;
-+	int i;
-+	bool ret = false;
-+
-+	rcu_read_lock();
-+	ptbl = rcu_dereference(disk->part_tbl);
-+
-+	/* Iterate partitions skipping the whole device at index 0 */
-+	for (i = 1; i < ptbl->len; i++) {
-+		if (rcu_dereference(ptbl->part[i])) {
-+			ret = true;
-+			break;
-+		}
-+	}
-+
-+	rcu_read_unlock();
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(disk_has_partitions);
-+
- /*
-  * Can be deleted altogether. Later.
-  *
-diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index 6fbe58538ad6..07dc91835b98 100644
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -245,18 +245,6 @@ static inline bool disk_part_scan_enabled(struct gendisk *disk)
- 		!(disk->flags & GENHD_FL_NO_PART_SCAN);
- }
- 
--static inline bool disk_has_partitions(struct gendisk *disk)
--{
--	bool ret = false;
--
--	rcu_read_lock();
--	if (rcu_dereference(disk->part_tbl)->len > 1)
--		ret = true;
--	rcu_read_unlock();
--
--	return ret;
--}
--
- static inline dev_t disk_devt(struct gendisk *disk)
- {
- 	return MKDEV(disk->major, disk->first_minor);
-@@ -298,6 +286,7 @@ extern void disk_part_iter_exit(struct disk_part_iter *piter);
- 
- extern struct hd_struct *disk_map_sector_rcu(struct gendisk *disk,
- 					     sector_t sector);
-+bool disk_has_partitions(struct gendisk *disk);
- 
- /*
-  * Macros to operate on percpu disk statistics:
 
 
