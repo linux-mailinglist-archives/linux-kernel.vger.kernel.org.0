@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 541B1187F3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:59:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 492F7187F3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:59:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727494AbgCQK7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 06:59:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38230 "EHLO mail.kernel.org"
+        id S1727480AbgCQK7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:59:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbgCQK7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 06:59:39 -0400
+        id S1727492AbgCQK7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:59:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E8B820738;
-        Tue, 17 Mar 2020 10:59:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1F7E20719;
+        Tue, 17 Mar 2020 10:59:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442778;
-        bh=ejMRu3aS/4pofWaMrcA0MmFkQDlqQYgMfvlabfE57HQ=;
+        s=default; t=1584442781;
+        bh=l+SslzW3aQwnBAb6lpZwBPLpDvnhkZu8HaV802HbA1M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hhgjnnztBs/mHxAdn6YJpKp8H0jgtZ4HepcAD5jIyGaZsXLdkDj0f4EmQj3sSmlLh
-         B2yc4ULKfrXsbh49pPqNmqTSnSg+7kA4kqAMljrTgA9sXWgDpDiMXpxDj5Mje0u39h
-         LCs9EGUEP+qwRsWeyYTSYy3Jl7AMIb+Kg3YBX2IE=
+        b=u93NxWjgwz+2IKJN7s747Jdb/flRFEXmkjfp+YWEQTkYkX+sxTKIHO2dWEI1BZFya
+         NdncF+8LJQJYQYly1XVWconnGkD6r+x9kwKCT6uzbWfIZivvHjmUxV5j1rQ2E/3YD4
+         NRUCw2WTICoHlnOohh7sD+kQD5Co1da2pXkMzGDA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
         Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.19 79/89] netfilter: cthelper: add missing attribute validation for cthelper
-Date:   Tue, 17 Mar 2020 11:55:28 +0100
-Message-Id: <20200317103309.170815985@linuxfoundation.org>
+Subject: [PATCH 4.19 80/89] netfilter: nft_payload: add missing attribute validation for payload csum flags
+Date:   Tue, 17 Mar 2020 11:55:29 +0100
+Message-Id: <20200317103309.288976534@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
 References: <20200317103259.744774526@linuxfoundation.org>
@@ -45,30 +45,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jakub Kicinski <kuba@kernel.org>
 
-commit c049b3450072b8e3998053490e025839fecfef31 upstream.
+commit 9d6effb2f1523eb84516e44213c00f2fd9e6afff upstream.
 
-Add missing attribute validation for cthelper
+Add missing attribute validation for NFTA_PAYLOAD_CSUM_FLAGS
 to the netlink policy.
 
-Fixes: 12f7a505331e ("netfilter: add user-space connection tracking helper infrastructure")
+Fixes: 1814096980bb ("netfilter: nft_payload: layer 4 checksum adjustment for pseudoheader fields")
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nfnetlink_cthelper.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/netfilter/nft_payload.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/netfilter/nfnetlink_cthelper.c
-+++ b/net/netfilter/nfnetlink_cthelper.c
-@@ -744,6 +744,8 @@ static const struct nla_policy nfnl_cthe
- 	[NFCTH_NAME] = { .type = NLA_NUL_STRING,
- 			 .len = NF_CT_HELPER_NAME_LEN-1 },
- 	[NFCTH_QUEUE_NUM] = { .type = NLA_U32, },
-+	[NFCTH_PRIV_DATA_LEN] = { .type = NLA_U32, },
-+	[NFCTH_STATUS] = { .type = NLA_U32, },
+--- a/net/netfilter/nft_payload.c
++++ b/net/netfilter/nft_payload.c
+@@ -121,6 +121,7 @@ static const struct nla_policy nft_paylo
+ 	[NFTA_PAYLOAD_LEN]		= { .type = NLA_U32 },
+ 	[NFTA_PAYLOAD_CSUM_TYPE]	= { .type = NLA_U32 },
+ 	[NFTA_PAYLOAD_CSUM_OFFSET]	= { .type = NLA_U32 },
++	[NFTA_PAYLOAD_CSUM_FLAGS]	= { .type = NLA_U32 },
  };
  
- static const struct nfnl_callback nfnl_cthelper_cb[NFNL_MSG_CTHELPER_MAX] = {
+ static int nft_payload_init(const struct nft_ctx *ctx,
 
 
