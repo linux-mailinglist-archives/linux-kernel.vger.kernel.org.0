@@ -2,92 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D5591878C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 05:54:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D77A1878CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 05:55:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbgCQEyv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 00:54:51 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37070 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726669AbgCQEyu (ORCPT
+        id S1726874AbgCQEzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 00:55:09 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:37040 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726016AbgCQEzI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 00:54:50 -0400
-Received: by mail-wm1-f65.google.com with SMTP id a141so20416048wme.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 21:54:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Z/pLHqEymmI8qdYZpx02WBRLipjnKwZXZVqV8m8MSSY=;
-        b=Hu9yeveSk7lvKAgkYqMZGbJjupqBFlO1hDJJn/f26IzkoN9kOnt+c1715OgLvVXhX6
-         SIXcVljSb2WE4ejla8A/dMxdUYQiO1PDZlEEa1fiKMEqWZho5cMEJYzTCs2sbjlRn+bg
-         0AQ/kJixJH546JWh2HbJ63TNz4z5jQgMIAvwk=
+        Tue, 17 Mar 2020 00:55:08 -0400
+Received: from mr1.cc.vt.edu (mr1.cc.vt.edu [IPv6:2607:b400:92:8300:0:31:1732:8aa4])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 02H4t78C021316
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 00:55:07 -0400
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+        by mr1.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 02H4t23B007662
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 00:55:07 -0400
+Received: by mail-qv1-f69.google.com with SMTP id m5so18710426qvy.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 21:55:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Z/pLHqEymmI8qdYZpx02WBRLipjnKwZXZVqV8m8MSSY=;
-        b=uHEm9+YKzMddGLEe/5oNXQSXXFz4i3H9QtT7jnGiW+myfH5877KU5HvC68Xs9/RPUh
-         BFzlTPt8729gi0DDRkuwYg3zIu4ESiYn6DEmirF5/n3qvxSTJsctJ096vgPxuhBhw0G4
-         XALMuTvzf7463h0DCDUwJTNHfyturYjFJ1rWfzgWnaNyIcm+W3Pbf4izBN7rOJtrK3RJ
-         KK5j5z+h+0HnCA9qRJC4m8HPnlEZiH6huxBVbZml8KxzBMPsCEFQb3UqgJ/9kU2i1peZ
-         9ate/vUd9p0W6sKjSQ28j/ZzrSu/JFAUMw+kjur7JCc2gJnQTkczSVA824FxzhKl76Wl
-         OlnQ==
-X-Gm-Message-State: ANhLgQ3NT84DZBmZ/QCsJgYZlbMgzi2Yz6Gkc8NwA/azqkbXEUXKuSVD
-        Kw54pkxwLxunkxnU9ROdJWp1Ug==
-X-Google-Smtp-Source: ADFU+vtloprSXesJvtRnEjLPOoV7EqcOa08m/oOOJVTgeOAFV+HVZ4G4S3W0WCB1yQtt7cfGvfhQRA==
-X-Received: by 2002:a1c:7207:: with SMTP id n7mr2819390wmc.138.1584420888626;
-        Mon, 16 Mar 2020 21:54:48 -0700 (PDT)
-Received: from rayagonda.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id i67sm2874498wri.50.2020.03.16.21.54.43
+        h=x-gm-message-state:sender:from:to:cc:subject:mime-version:date
+         :message-id;
+        bh=Y91b1uFvN0HdY0iOBxMABqgP7XI6TzW5dwQDX8YUsV0=;
+        b=ooBWZOXegjRo3ewRuXf8Gp8rJr7XJI1HOCzf0TqVrBKdqVipO8tzV4qr9KI3p/mtTS
+         iGPiSNflDPYXgE45TdfsGLfrwKF/e6DZrfKhQGPRBiGVciHz08uoWAp1KipkBJz/Oabg
+         y2HoFcuMWWsKmqa4w+vxUyOnMtuNvTD2uFnXvtCmkpXTQkSL8avpHnFoPtHFnkJAO2zE
+         qWwJfUUQiM+IHWl39VuXH/r5WRC7jlWR5t5wbkNo8GDGppQ/+a/Xnqce2Og+C5XY/6Da
+         z6EG8sDrcaF2/aG/i9doJj1weOK3zwk5rB+CezJhtbWaYHPOSETsyEZ2bx4wnyW9SHIE
+         wlMQ==
+X-Gm-Message-State: ANhLgQ2GC/2ZLWBspawVkM2RiNM6OObXNx6G5Rl+wp9RRgLzDr/GAQ74
+        4ylfTGtfIQHKmmdknKGHws4AQ/hPjDUf4G38AHyu04BlzRDvjJDsRWwFaQ775Q/g1TyfsZ9U+4W
+        pXZQh7YfGLEGgPe0G52wTgFlKOwRuvaANRXU=
+X-Received: by 2002:ae9:eb12:: with SMTP id b18mr3285575qkg.168.1584420902119;
+        Mon, 16 Mar 2020 21:55:02 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vtUDl88z4JRPHz2zyJmbf9sHj2p29cr0lvKwcAfBTOfcp5n1kViR0e7V1WWDMMM/h35D2RbEw==
+X-Received: by 2002:ae9:eb12:: with SMTP id b18mr3285560qkg.168.1584420901793;
+        Mon, 16 Mar 2020 21:55:01 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:c9e1::359])
+        by smtp.gmail.com with ESMTPSA id 73sm1264022qkf.82.2020.03.16.21.54.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2020 21:54:47 -0700 (PDT)
-From:   Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>, davem@davemloft.net,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Arun Parameswaran <arun.parameswaran@broadcom.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-Subject: [PATCH v1 1/1] net: phy: mdio-mux-bcm-iproc: check clk_prepare_enable() return value
-Date:   Tue, 17 Mar 2020 10:24:35 +0530
-Message-Id: <20200317045435.29975-1-rayagonda.kokatanur@broadcom.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 16 Mar 2020 21:55:00 -0700 (PDT)
+From:   "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Marco Felsch <m.felsch@pengutronix.de>
+cc:     Support Opensource <support.opensource@diasemi.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: da9062: Fix include path
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Date:   Tue, 17 Mar 2020 00:54:59 -0400
+Message-ID: <773115.1584420899@turing-police>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check clk_prepare_enable() return value.
+Found during a allmodconfig build on ARM on an RPi4:
 
-Fixes: 2c7230446bc9 ("net: phy: Add pm support to Broadcom iProc mdio mux driver")
-Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
----
- drivers/net/phy/mdio-mux-bcm-iproc.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+  CC      drivers/pinctrl/pinctrl-da9062.o
+drivers/pinctrl/pinctrl-da9062.c:28:10: fatal error: ../gpio/gpiolib.h: No such file or directory
+ #include <../gpio/gpiolib.h>
+          ^~~~~~~~~~~~~~~~~~~
+compilation terminated.
 
-diff --git a/drivers/net/phy/mdio-mux-bcm-iproc.c b/drivers/net/phy/mdio-mux-bcm-iproc.c
-index 88d409e48c1f..aad6809ebe39 100644
---- a/drivers/net/phy/mdio-mux-bcm-iproc.c
-+++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
-@@ -288,8 +288,13 @@ static int mdio_mux_iproc_suspend(struct device *dev)
- static int mdio_mux_iproc_resume(struct device *dev)
- {
- 	struct iproc_mdiomux_desc *md = dev_get_drvdata(dev);
-+	int rc;
+So... fix the errant include.
+
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Fixes: 56cc3af4e8c8e ("pinctrl: da9062: add driver support")
+
+diff --git a/drivers/pinctrl/pinctrl-da9062.c b/drivers/pinctrl/pinctrl-da9062.c
+index f704ee0b2fd9..cfbe529e66c3 100644
+--- a/drivers/pinctrl/pinctrl-da9062.c
++++ b/drivers/pinctrl/pinctrl-da9062.c
+@@ -25,7 +25,7 @@
+  * We need this get the gpio_desc from a <gpio_chip,offset> tuple to decide if
+  * the gpio is active low without a vendor specific dt-binding.
+  */
+-#include <../gpio/gpiolib.h>
++#include <../drivers/gpio/gpiolib.h>
  
--	clk_prepare_enable(md->core_clk);
-+	rc = clk_prepare_enable(md->core_clk);
-+	if (rc) {
-+		dev_err(md->dev, "failed to enable core clk\n");
-+		return rc;
-+	}
- 	mdio_mux_iproc_config(md);
- 
- 	return 0;
--- 
-2.17.1
+ #define DA9062_TYPE(offset)		(4 * (offset % 2))
+ #define DA9062_PIN_SHIFT(offset)	(4 * (offset % 2))
 
