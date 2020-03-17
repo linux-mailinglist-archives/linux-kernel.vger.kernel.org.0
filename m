@@ -2,66 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B942B18847F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 13:51:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C834C188483
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 13:52:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbgCQMvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 08:51:18 -0400
-Received: from smtprelay0066.hostedemail.com ([216.40.44.66]:50722 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725794AbgCQMvR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 08:51:17 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id ABC6718024A45;
-        Tue, 17 Mar 2020 12:51:16 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3350:3622:3865:3870:3872:3873:3874:4321:5007:6119:10004:10400:10848:11232:11658:11914:12043:12297:12740:12760:12895:13069:13160:13229:13311:13357:13439:14181:14659:14721:21080:21433:21451:21627:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: list89_453106e984b38
-X-Filterd-Recvd-Size: 1573
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf19.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 17 Mar 2020 12:51:15 +0000 (UTC)
-Message-ID: <52f737a95e0e50d3f556f8ebf3677f99683ee70b.camel@perches.com>
-Subject: Re: [PATCH] MAINTAINERS: Better regex for dma_buf|fence|resv
-From:   Joe Perches <joe@perches.com>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Date:   Tue, 17 Mar 2020 05:49:27 -0700
-In-Reply-To: <20200317071547.1008622-1-daniel.vetter@ffwll.ch>
-References: <20200317071547.1008622-1-daniel.vetter@ffwll.ch>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1726192AbgCQMwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 08:52:24 -0400
+Received: from mga18.intel.com ([134.134.136.126]:64540 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725794AbgCQMwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 08:52:23 -0400
+IronPort-SDR: HhErm2z9RVL1gIquMreT5oktdmOuTdb5Ulq7e/WakwBHfwEFCtgYLtU13kD87rLs8sei3WuC3N
+ Z++00FWGYRdA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 05:52:22 -0700
+IronPort-SDR: agMZD3CRjW1p6dDuFc80F0YaKgfJXV7/sAUsP04jLr1wQHbR/NzTkOFYRfFj/SpiZGhURdfcqz
+ puLd4E60LzjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,564,1574150400"; 
+   d="scan'208";a="236318784"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga007.fm.intel.com with ESMTP; 17 Mar 2020 05:52:21 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jEBhn-00ASUo-Gs; Tue, 17 Mar 2020 14:52:23 +0200
+Date:   Tue, 17 Mar 2020 14:52:23 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Alexandru Ardelean <ardeleanalex@gmail.com>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jic23@kernel.org, lars@metafoo.de,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: Re: [PATCH] iio: buffer: re-introduce bitmap_zalloc() for trialmask
+Message-ID: <20200317125223.GC1922688@smile.fi.intel.com>
+References: <20200317123621.27722-1-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200317123621.27722-1-alexandru.ardelean@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-03-17 at 08:15 +0100, Daniel Vetter wrote:
-> We're getting some random other stuff that we're not relly interested
-> in, so match only word boundaries. Also avoid the capture group while
-> at it.
-[]
-> diff --git a/MAINTAINERS b/MAINTAINERS
-[]
-> @@ -5025,7 +5025,7 @@ F:	include/linux/dma-buf*
->  F:	include/linux/reservation.h
->  F:	include/linux/*fence.h
->  F:	Documentation/driver-api/dma-buf.rst
-> -K:	dma_(buf|fence|resv)
-> +K:	'\bdma_(?:buf|fence|resv)\b'
+On Tue, Mar 17, 2020 at 02:36:21PM +0200, Alexandru Ardelean wrote:
+> Commit 3862828a903d3 ("iio: buffer: Switch to bitmap_zalloc()") introduced
+> bitmap_alloc(), but commit 20ea39ef9f2f9 ("iio: Fix scan mask selection")
+> reverted it.
+> 
+> This change adds it back. The only difference is that it's adding
+> bitmap_zalloc(). There might be some changes later that would require
+> initializing it to zero. In any case, now it's already zero-ing the
+> trialmask.
 
-You don't want the single quotes in the K: entry
+FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-K:	\bdma_(?:buf|fence|resv)\b
+> 
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> ---
+>  drivers/iio/industrialio-buffer.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+> index 4ada5592aa2b..5ff34ce8b6a2 100644
+> --- a/drivers/iio/industrialio-buffer.c
+> +++ b/drivers/iio/industrialio-buffer.c
+> @@ -316,8 +316,7 @@ static int iio_scan_mask_set(struct iio_dev *indio_dev,
+>  	const unsigned long *mask;
+>  	unsigned long *trialmask;
+>  
+> -	trialmask = kcalloc(BITS_TO_LONGS(indio_dev->masklength),
+> -			    sizeof(*trialmask), GFP_KERNEL);
+> +	trialmask = bitmap_zalloc(indio_dev->masklength, GFP_KERNEL);
+>  	if (trialmask == NULL)
+>  		return -ENOMEM;
+>  	if (!indio_dev->masklength) {
+> -- 
+> 2.20.1
+> 
 
-My mistake for adding them in the initial suggestion.
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
