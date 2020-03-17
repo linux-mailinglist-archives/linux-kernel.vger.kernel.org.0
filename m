@@ -2,172 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5645B188887
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 16:05:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 041D1188876
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 16:01:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbgCQPE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 11:04:59 -0400
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:33496 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726388AbgCQPE6 (ORCPT
+        id S1726740AbgCQPBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 11:01:00 -0400
+Received: from mail-pl1-f182.google.com ([209.85.214.182]:33476 "EHLO
+        mail-pl1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726478AbgCQPBA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 11:04:58 -0400
-Received: from pps.filterd (m0098781.ppops.net [127.0.0.1])
-        by mx0a-00010702.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02HDbxfW000726;
-        Tue, 17 Mar 2020 08:57:04 -0500
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2176.outbound.protection.outlook.com [104.47.57.176])
-        by mx0a-00010702.pphosted.com with ESMTP id 2yrua11mn8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 17 Mar 2020 08:57:03 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=k1pBipBnvbXZzFvibq/IrkVaxt2PFGWENETVSRxelzwulketE6ATcNrW8aT/UB06DrAvPgjpulZQHOb071g1Rea/F9E2B38lAnEjvULQmknzplNy3Vs4D0AXNPsIjvZ5Eny4pAkuLMFEcGvgyz3a+AwU3d8/6h/zc+IcOcQ4wGW9k8WQV7Xzcdrye+6yMIDhNv6HgGl6XUxcB/px4xH9OGVKkozv9lnq666WaJcFdNPSKZH1+y6v1uUi0SyVqccX4YUAx1436MUYH/nUlOaQl3BVNAJHgfOnqOkQ2Fd16C7dfmh78PCAlJ9ZWR2AFUU0DQ2xasAsLexKebcYw+xK4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pTc1M08uh4ajhnLJSGyCpHmDMmV/ESEmtH376gDBt14=;
- b=GyYef7Sus5xe2kxqd6CJBd3coLOOTvNRtbJH34Xa5JjMGg+rT0+2OPcYJMcQh704dYBAeiPmLYDLV0IzxYmO0D/eXvTc3QZmtzYzObnwgoXAE131UWMdDoHl+oLRW0rAhmVAsw6G+7505/ApRp5jhb6Z0d5BGgx70iReMse1ArA5jO+nNyzPhPTPD0nT1OdfU6Bsfsw1U6DODU8KWoMUv9+E7Ap2HxvyG6aAhvorWN7qYR4G+5A1i+5QKLk/aKM93Q6ZoDP0FpuX0e66p3zI59Sui8Vo0GZcBYI6Qy8S47c4/2kgTHywF6PGk4NvBSdD1tb0l4dCmXhl0YMRXprdrw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ni.com; dmarc=pass action=none header.from=ni.com; dkim=pass
- header.d=ni.com; arc=none
+        Tue, 17 Mar 2020 11:01:00 -0400
+Received: by mail-pl1-f182.google.com with SMTP id ay11so9747615plb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 08:00:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=nio365.onmicrosoft.com; s=selector2-nio365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pTc1M08uh4ajhnLJSGyCpHmDMmV/ESEmtH376gDBt14=;
- b=B7tejMTZoe8MrP5Sj+tUxCQ8j1gqScsb8hK7Mkyzg99sbzabyKnSoBmzkMBBOMFuH2AYB4h/3CFP8v8K60pyRONAFGHXkK5U+uDdfdy6bsG87vFKCoZ8vdmh/gsz4lOpaMSLDDIiXnDRYcdGzRFDb4N0Rjze5g9dvw1RbV7mJVc=
-Received: from SN4PR0401MB3646.namprd04.prod.outlook.com
- (2603:10b6:803:4b::29) by SN4PR0401MB3567.namprd04.prod.outlook.com
- (2603:10b6:803:4b::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.17; Tue, 17 Mar
- 2020 13:57:01 +0000
-Received: from SN4PR0401MB3646.namprd04.prod.outlook.com
- ([fe80::d05b:1953:4111:38e4]) by SN4PR0401MB3646.namprd04.prod.outlook.com
- ([fe80::d05b:1953:4111:38e4%5]) with mapi id 15.20.2793.023; Tue, 17 Mar 2020
- 13:57:01 +0000
-From:   Michael Auchter <michael.auchter@ni.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Michael Auchter <michael.auchter@ni.com>,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] dt-bindings: iio: adc: ad7291: add binding
-Date:   Tue, 17 Mar 2020 08:56:49 -0500
-Message-Id: <20200317135649.8876-2-michael.auchter@ni.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200317135649.8876-1-michael.auchter@ni.com>
-References: <20200317135649.8876-1-michael.auchter@ni.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SN4PR0401CA0034.namprd04.prod.outlook.com
- (2603:10b6:803:2a::20) To SN4PR0401MB3646.namprd04.prod.outlook.com
- (2603:10b6:803:4b::29)
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vfSoAVJlByohpySolMWfb+lAbCe6QR2JwcgA3eLHp8k=;
+        b=Yr7bXDAjHvpERe5gNP7DKJVrpgmoZtqpYYfjAX+Ve79pomZJlKPGBG1KqYfkzXXV4/
+         YU+mnGOKksoOhyt6t3j+y4EtEbsHUNvCzvLA1DklrigBAULWUGyO2T4dJRDR9X0lrOnb
+         RQ7m87LlJuDdekWSSo0GmPvusnYxhEbuN+Ae3wTyXIMwcjKtywVIprXeJvb+XCvcx1A9
+         bjFSt3C5rUbUtRO7AMOhJgPfreUCfQNmpj9vyJKB79EjWGYpnxA909FagV4kxJ547QXp
+         /NDQ4iv8nvDajf/gI0QieYcfNXD6IFGHaNoQy95WM9sWBXHo2IpFH/JkGNE5gQERDoeL
+         Mo6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vfSoAVJlByohpySolMWfb+lAbCe6QR2JwcgA3eLHp8k=;
+        b=PficZGg5WjRjI5TAvsl3wGmb93wWYHCdTnH/1a2IxXTNT4rhG1i1KSs/wKTGaWvIMJ
+         zkKxT8jnpVBWF0O3CNxr0vtvBg45l39oBnhpW1NwxBvK6YZbOxolxZXWQpezrNxbhJ2T
+         3kH0WlJ3Sxj3Bn/9sZsfMTwscskgKG1a4QOrKt793WnJPldd62AGcsAHMX3W1dUBHwBP
+         maflROrk7pbn0+gtpOO58NqirvL57zQZUHVKFuEDgBHZflINW5kLEmiFgdRguP7HPcES
+         kKojbq2jwipZJCV35kALTtt9QNJ+4lSwXgy0n13Irq6z0bsdMfI86TxNY/xGOOWz7sUG
+         Cpcw==
+X-Gm-Message-State: ANhLgQ0iEHJ3pe/EeDee7J0Uh2uHNeYkMLX2IdfnEkZiF7iohF4WzEt1
+        h281gIpGWh3eWWbo8hYhhoo=
+X-Google-Smtp-Source: ADFU+vsSMRYG+5Cr2foBfrD9eVKu86uVo7HHockEOoT/ujyxOB6x5/FjJ1fmLdLJ39mUyEtNaCIFtw==
+X-Received: by 2002:a17:90a:feb:: with SMTP id 98mr5798277pjz.72.1584457258142;
+        Tue, 17 Mar 2020 08:00:58 -0700 (PDT)
+Received: from google.com ([2620:15c:211:1:3e01:2939:5992:52da])
+        by smtp.gmail.com with ESMTPSA id d1sm3437488pfc.3.2020.03.17.08.00.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2020 08:00:56 -0700 (PDT)
+Date:   Tue, 17 Mar 2020 08:00:55 -0700
+From:   Minchan Kim <minchan@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Jann Horn <jannh@google.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: interaction of MADV_PAGEOUT with CoW anonymous mappings?
+Message-ID: <20200317150055.GC73302@google.com>
+References: <CAG48ez0G3JkMq61gUmyQAaCq=_TwHbi1XKzWRooxZkv08PQKuw@mail.gmail.com>
+ <20200312082248.GS23944@dhcp22.suse.cz>
+ <20200312201602.GA68817@google.com>
+ <20200312204155.GE23944@dhcp22.suse.cz>
+ <20200313020851.GD68817@google.com>
+ <20200313080546.GA21007@dhcp22.suse.cz>
+ <20200313205941.GA78185@google.com>
+ <20200316092052.GD11482@dhcp22.suse.cz>
+ <20200317014340.GA73302@google.com>
+ <20200317071239.GB26018@dhcp22.suse.cz>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from xaphan.phire.org (66.90.216.181) by SN4PR0401CA0034.namprd04.prod.outlook.com (2603:10b6:803:2a::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.18 via Frontend Transport; Tue, 17 Mar 2020 13:57:01 +0000
-X-Mailer: git-send-email 2.24.1
-X-Originating-IP: [66.90.216.181]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 71534422-479e-48a5-f597-08d7ca7b1128
-X-MS-TrafficTypeDiagnostic: SN4PR0401MB3567:|SN4PR0401MB3567:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <SN4PR0401MB35672C9A560BDCDE14C5BBE587F60@SN4PR0401MB3567.namprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1388;
-X-Forefront-PRVS: 0345CFD558
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(39860400002)(366004)(346002)(136003)(396003)(199004)(6666004)(110136005)(966005)(2906002)(6512007)(186003)(66476007)(2616005)(956004)(44832011)(6506007)(5660300002)(478600001)(52116002)(4326008)(316002)(26005)(1076003)(16526019)(66556008)(36756003)(81156014)(81166006)(8936002)(8676002)(6486002)(66946007)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN4PR0401MB3567;H:SN4PR0401MB3646.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: ni.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: aMxMguFKxcGNw4yiYPqhXXMCmY1oMZIq6hTf/ORCfV76p9SzpXT08t88GsfzVZfffyQOH7JAMb9KNFCpPqbMrC/z+Xl5kW4C1ybEAMzTjheIORuaKCk+T3+EaC4t/pUE+ToUZlu3mfLMgDS8Cqs3/UmAULpY+NjRQZuOmEu0b0B5Ho1R4sUhAlBREhb1mDVn/4MORwPwwn0JTLhL1G1NgTzB+sVZudZJpPSZRa2nh1TndexA7I5RzInTiQwdX9ChajNPt7QHiJCjpe1adeDq4PTvvJTANfEilXCMie9XN51kFJ0vuTLbr1jLqEvLS+jpKCagFpsEmtNKffORt3JxuwFLETsk2LZi87+DJBhJOpmcOZIXWY29t7EYFaA0xRRTrLdg5z9G0Zp1Tpm67V0o9BEn3V5w3OZFPxybLNZhFYQcjfiwq09kw1OSYKKDVWI5730oZH2ayLphTJBeGUR+Q3//XDuS6kW9xeN15dBIZxLVnilh/fuk4EiD76o/ic/znorg7nlJoKxGmOnl9cwO4g==
-X-MS-Exchange-AntiSpam-MessageData: DyP3RspsG2/j4W3atibpwwzRWQRS4ikfLHMqkjnfzm3p7dnk2TVSBtoKsSwLO5hJIfSxQITCIf/2za9fVS2WeBTHWP+UNvYuf+jRHbyvlhrWLvMU2NHJ0hJFdpQhytIp+gZkFyTqUTtIjbE74M3F1w==
-X-OriginatorOrg: ni.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71534422-479e-48a5-f597-08d7ca7b1128
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2020 13:57:01.5668
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KRWlkJAheJfHYDs5ZY96yxK2u4Oq+dw0gCyfcpkutLtmXBggG732Qlq3tZWhmP6In5Fxf/4MEJG1xW+WOsKpaw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3567
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-17_05:2020-03-17,2020-03-17 signatures=0
-X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30 impostorscore=0
- malwarescore=0 mlxscore=0 lowpriorityscore=0 clxscore=1015
- priorityscore=1501 adultscore=0 phishscore=0 suspectscore=0 bulkscore=0
- mlxlogscore=999 spamscore=0 classifier=spam adjust=30 reason=mlx
- scancount=1 engine=8.12.0-2003020000 definitions=main-2003170060
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200317071239.GB26018@dhcp22.suse.cz>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device-tree binding for ADI AD7291 ADC.
+On Tue, Mar 17, 2020 at 08:12:39AM +0100, Michal Hocko wrote:
+> On Mon 16-03-20 18:43:40, Minchan Kim wrote:
+> > On Mon, Mar 16, 2020 at 10:20:52AM +0100, Michal Hocko wrote:
+> > > On Fri 13-03-20 13:59:41, Minchan Kim wrote:
+> > > > On Fri, Mar 13, 2020 at 09:05:46AM +0100, Michal Hocko wrote:
+> > > > > On Thu 12-03-20 19:08:51, Minchan Kim wrote:
+> > > > > > On Thu, Mar 12, 2020 at 09:41:55PM +0100, Michal Hocko wrote:
+> > > > > > > On Thu 12-03-20 13:16:02, Minchan Kim wrote:
+> > > > > > > > On Thu, Mar 12, 2020 at 09:22:48AM +0100, Michal Hocko wrote:
+> > > > > > > [...]
+> > > > > > > > > From eca97990372679c097a88164ff4b3d7879b0e127 Mon Sep 17 00:00:00 2001
+> > > > > > > > > From: Michal Hocko <mhocko@suse.com>
+> > > > > > > > > Date: Thu, 12 Mar 2020 09:04:35 +0100
+> > > > > > > > > Subject: [PATCH] mm: do not allow MADV_PAGEOUT for CoW pages
+> > > > > > > > > 
+> > > > > > > > > Jann has brought up a very interesting point [1]. While shared pages are
+> > > > > > > > > excluded from MADV_PAGEOUT normally, CoW pages can be easily reclaimed
+> > > > > > > > > that way. This can lead to all sorts of hard to debug problems. E.g.
+> > > > > > > > > performance problems outlined by Daniel [2]. There are runtime
+> > > > > > > > > environments where there is a substantial memory shared among security
+> > > > > > > > > domains via CoW memory and a easy to reclaim way of that memory, which
+> > > > > > > > > MADV_{COLD,PAGEOUT} offers, can lead to either performance degradation
+> > > > > > > > > in for the parent process which might be more privileged or even open
+> > > > > > > > > side channel attacks. The feasibility of the later is not really clear
+> > > > > > > > 
+> > > > > > > > I am not sure it's a good idea to mention performance stuff because
+> > > > > > > > it's rather arguble. You and Johannes already pointed it out when I sbumit
+> > > > > > > > early draft which had shared page filtering out logic due to performance
+> > > > > > > > reason. You guys suggested the shared pages has higher chance to be touched
+> > > > > > > > so that if it's really hot pages, that whould keep in the memory. I agree.
+> > > > > > > 
+> > > > > > > Yes, the hot memory is likely to be referenced but the point was an
+> > > > > > > unexpected latency because of the major fault. I have to say that I have
+> > > > > > 
+> > > > > > I don't understand your point here. If it's likely to be referenced
+> > > > > > among several processes, it doesn't have the major fault latency.
+> > > > > > What's your point here?
+> > > > > 
+> > > > > a) the particular CoW page might be cold enough to be reclaimed and b)
+> > > > 
+> > > > If it is, that means it's *cold* so it's really worth to be reclaimed.
+> > > > 
+> > > > > nothing really prevents the MADV_PAGEOUT to be called faster than the
+> > > > > reference bit being readded.
+> > > > 
+> > > > Yeb, that's undesirable. I should admit it was not intended when I implemented
+> > > > PAGEOUT. The thing is page_check_references clears access bit of pte for every
+> > > > process are sharing the page so that two times MADV_PAGEOUT from a process could
+> > > > evict the page. That's the really bug.
+> > > 
+> > > I do not really think this is a bug. This is a side effect of the
+> > > reclaim process and we do not really want MADV_{PAGEOUT,COLD} behave
+> > 
+> > No, that's the bug since we didn't consider the side effect.
+> > 
+> > > differently here because then the behavior would be even harder to
+> > 
+> > No, I do want to have difference because it's per-process hint. IOW,
+> > what he know is for only his context, not others so it shouldn't clean
+> > others' pte. That makes difference between LRU aging and the hint.
+> 
+> Just to make it clear, are you really suggesting to special case
+> page_check_references for madvise path?
+> 
 
-Signed-off-by: Michael Auchter <michael.auchter@ni.com>
----
- .../bindings/iio/adc/adi,ad7291.yaml          | 50 +++++++++++++++++++
- 1 file changed, 50 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7291.yaml
-
-diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7291.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7291.yaml
-new file mode 100644
-index 000000000000..93aa29413049
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7291.yaml
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/adc/adi,ad7291.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: AD7291 8-Channel, I2C, 12-Bit SAR ADC with Temperature Sensor
-+
-+maintainers:
-+  - Michael Auchter <michael.auchter@ni.com>
-+
-+description: |
-+  Analog Devices AD7291 8-Channel I2C 12-Bit SAR ADC with Temperature Sensor
-+  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7291.pdf
-+
-+properties:
-+  compatible:
-+    enum:
-+      - adi,ad7291
-+
-+  reg:
-+    maxItems: 1
-+
-+  vref-supply:
-+    description: |
-+      The regulator supply for ADC reference voltage.
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+
-+examples:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      ad7291: adc@0 {
-+        compatible = "adi,ad7291";
-+        reg = <0>;
-+        vref-supply = <&adc_vref>;
-+      };
-+    };
-+
--- 
-2.24.1
-
+No, (page_mapcount() >  1) checks *effectively* fixes the performance
+bug as well as vulnerability issue.
