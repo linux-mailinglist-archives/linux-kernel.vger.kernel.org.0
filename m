@@ -2,71 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D559188FEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:00:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87D61188FF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:00:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbgCQVAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 17:00:07 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:45111 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbgCQVAG (ORCPT
+        id S1726901AbgCQVAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 17:00:35 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:53102 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726761AbgCQVAd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 17:00:06 -0400
-Received: by mail-io1-f69.google.com with SMTP id h76so9292551iof.12
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 14:00:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=jOHQtkE+j+BwIkremLXMAym3S1dSOKIG4OvqLs6ZU6s=;
-        b=rQdaPJyxRe6l8EaHDFZsYOqKO2WA/V8GfHQi6lZoGgEB7EgI6ERu5XklwP8spNkIcJ
-         HJAoQ5+Hd9MOIcGUrpA+Xo5cf4e9CgSLkRJtUzoiDELSfSeaVuHfTCtz3/l2GrlHIFEB
-         9HWcwOx3au6NpYyWoon57u+2A/SbHl87BPQWLXrar9xFh7j6d29Vw1xtAFsoCVN6IZl5
-         HEVI2ofg6R5o4/8oZR4UQNE+AaNhdqBkMLPKMWC1FoqgMBuXhrTL5A+Lcude7Bgvzz2n
-         b3VI0GQ0lpPho2S2DNsHSLfyj4T8UusvIeqne3ya1V8GF8NJHCDAAQf+gIm5jEosRUh6
-         7oLA==
-X-Gm-Message-State: ANhLgQ1Z/4Rm9YFxqGHFeqH1LnZ9GgJEZ6x63nzMsTYMMvpYlpzZmI6s
-        7NKB2BpbKGGaUj4VSxsud+80gijd0g1xXrKMAlXkSCSVoLH+
-X-Google-Smtp-Source: ADFU+vvjZYbx7yw6D42qU49X2AdYKRb+wwE/boG6wr6tdhE57By27JNVOyvqOTfhPYLqsPqBjiMMmM8UOmZHaQdMVGzs1UGN1xRV
+        Tue, 17 Mar 2020 17:00:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584478833;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=g4lv1khPzgvPepOXblNxUbTvMHk/cb3nmCWzuqrFCSw=;
+        b=af13D/JnjY2M/523sDplLK3xHIjeL+trvK1IAAhSN/R3+vginVOF0K1zYuuaGMKLOvVryY
+        iaydG0z+HAO6/SQuHdn9F/DsZaNkR3xuubjATDwLZxkaoVy6hS632zYVFQuxZOF2oKKgic
+        OLsbCE+enbYy23MEzwbl0PoIHStzXxs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-204-GoyOgvPJPqq27qbNUBul1Q-1; Tue, 17 Mar 2020 17:00:28 -0400
+X-MC-Unique: GoyOgvPJPqq27qbNUBul1Q-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B8CAD8CA0AC;
+        Tue, 17 Mar 2020 21:00:12 +0000 (UTC)
+Received: from treble (unknown [10.10.110.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9755710027AB;
+        Tue, 17 Mar 2020 21:00:10 +0000 (UTC)
+Date:   Tue, 17 Mar 2020 16:00:08 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org,
+        mhiramat@kernel.org, mbenes@suse.cz, brgerst@gmail.com
+Subject: Re: [PATCH v2 16/19] objtool: Implement noinstr validation
+Message-ID: <20200317210008.bda4c542b5lu7juf@treble>
+References: <20200317170234.897520633@infradead.org>
+ <20200317170910.730949374@infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:a99:: with SMTP id 25mr1264995jas.37.1584478803965;
- Tue, 17 Mar 2020 14:00:03 -0700 (PDT)
-Date:   Tue, 17 Mar 2020 14:00:03 -0700
-In-Reply-To: <000000000000f3b11305a0879723@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000043c5e505a11338e0@google.com>
-Subject: Re: WARNING in kfree (2)
-From:   syzbot <syzbot+50ef5e5e5ea5f812f0c2@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, jhs@mojatatu.com, jiri@resnulli.us,
-        kuba@kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200317170910.730949374@infradead.org>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On Tue, Mar 17, 2020 at 06:02:50PM +0100, Peter Zijlstra wrote:
+> Validate that any call out of .noinstr.text is in between
+> instr_begin() and instr_end() annotations.
+> 
+> This annotation is useful to ensure correct behaviour wrt tracing
+> sensitive code like entry/exit and idle code. When we run code in a
+> sensitive context we want a guarantee no unknown code is ran.
+> 
+> Since this validation relies on knowing the section of call
+> destination symbols, we must run it on vmlinux.o instead of on
+> individual object files.
+> 
+> Add two options:
+> 
+>  -d/--duplicate "duplicate validation for vmlinux"
+>  -l/--vmlinux "vmlinux.o validation"
 
-commit 599be01ee567b61f4471ee8078870847d0a11e8e
-Author: Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Mon Feb 3 05:14:35 2020 +0000
+I'm not sure I see the point of the --vmlinux option, when it will be
+autodetected anyway?
 
-    net_sched: fix an OOB access in cls_tcindex
+> @@ -46,5 +49,9 @@ int cmd_check(int argc, const char **arg
+>  
+>  	objname = argv[0];
+>  
+> +	s = strstr(objname, "vmlinux.o");
+> +	if (s && !s[9])
+> +		vmlinux = true;
+> +
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13257803e00000
-start commit:   2c523b34 Linux 5.6-rc5
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=10a57803e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17257803e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c2e311dba9a02ba9
-dashboard link: https://syzkaller.appspot.com/bug?extid=50ef5e5e5ea5f812f0c2
-userspace arch: i386
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d8ae91e00000
+I think this would be slightly cleaner:
 
-Reported-by: syzbot+50ef5e5e5ea5f812f0c2@syzkaller.appspotmail.com
-Fixes: 599be01ee567 ("net_sched: fix an OOB access in cls_tcindex")
+	if (!strcmp(basename(objname), "vmlinux.o"))
+		vmlinux = true;
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+Josh
+
