@@ -2,74 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81E26187695
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 01:11:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 620A71876AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 01:13:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733090AbgCQALo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 20:11:44 -0400
-Received: from mail.uic.edu.hk ([61.143.62.86]:48979 "EHLO umgp.uic.edu.hk"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733047AbgCQALn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 20:11:43 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="17243176"
-Received: from unknown (HELO zpmail.uic.edu.hk) ([192.168.111.249])
-  by umgp.uic.edu.hk with ESMTP; 17 Mar 2020 08:11:35 +0800
-Received: from zpmail.uic.edu.hk (localhost [127.0.0.1])
-        by zpmail.uic.edu.hk (Postfix) with ESMTPS id D96D941C05A3;
-        Tue, 17 Mar 2020 08:11:32 +0800 (CST)
-Received: from localhost (localhost [127.0.0.1])
-        by zpmail.uic.edu.hk (Postfix) with ESMTP id D554341C0957;
-        Tue, 17 Mar 2020 08:11:31 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zpmail.uic.edu.hk D554341C0957
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uic.edu.hk;
-        s=6465647E-9D7B-11E8-B17B-42130C7FA3B9; t=1584403892;
-        bh=Wn2BcVyAdGxyDvB/5AnVfCr/iJTzisyuX4dwKssec6E=;
-        h=Date:From:Message-ID:MIME-Version;
-        b=N1pNhkd2l8zz69kDtEsPH5n7SDL70Ak/Rgb/NYqC0+ZCBZFg/G0QkldxXmMRPmztz
-         HwkJ6HHAibMur3rytYhnqKeG349hpGDQCbhvoJdZWkvkFCa93STWbitRqMynzR+Wj5
-         wLEdN7i9CyVDDhspocQMykx6lSGq645dTckJSCrsFHg+uR95rTW6kz2/3F5tST7+Uo
-         ELvvW8oTRw+C3DdE82L8ao85KfwNAx6BRhhB+sNBssPbo3CqQ69/PO1/J9gy3aGO+s
-         FwDrxpCEm2RIo68N7oaYrAjY/FUGCbKk/MsqrV+VDqizldOqfTDFamlvQc82rVkjYy
-         rx6v80NBgwdtg==
-Received: from zpmail.uic.edu.hk ([127.0.0.1])
-        by localhost (zpmail.uic.edu.hk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id gCmMIXxwS0HE; Tue, 17 Mar 2020 08:11:31 +0800 (CST)
-Received: from zpmail.uic.edu.hk (zpmail.uic.edu.hk [192.168.111.249])
-        by zpmail.uic.edu.hk (Postfix) with ESMTP id 1549641C058D;
-        Tue, 17 Mar 2020 08:11:27 +0800 (CST)
-Date:   Tue, 17 Mar 2020 08:11:26 +0800 (CST)
-From:   David Ibe <ylawrence@uic.edu.hk>
-Reply-To: David Ibe <davidibe718@gmail.com>
-Message-ID: <2065446646.63699156.1584403886963.JavaMail.zimbra@uic.edu.hk>
-Subject: 
+        id S1733009AbgCQAN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 20:13:29 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:24743 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1732903AbgCQAN3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 20:13:29 -0400
+X-UUID: 965275f38fbf4bd08c530516fa436e58-20200317
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=W+YxZrewsPC94bGX9s1zMTtlOh2HNyq7RcFZc5Ak/vI=;
+        b=OsL1OUM/wSGfM5bRbDuArwjRpkxUZ54mI8AMhdQx6W2E9OHEc4uN+RGryclBwMV2KdE/+Emr8ENjkny7R+Qsca9LqCXp8CK85wni+PfkAGcEMnVuUkXoXnXyihNbSL0xSpgpQhE3yXVZ+TyA5eeuQL+wPw3iy/VUqfSYBp65/9k=;
+X-UUID: 965275f38fbf4bd08c530516fa436e58-20200317
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1499061908; Tue, 17 Mar 2020 08:13:22 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 17 Mar 2020 08:12:56 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 17 Mar 2020 08:12:38 +0800
+Message-ID: <1584404000.14250.28.camel@mtksdccf07>
+Subject: Re: [PATCH v6 3/7] scsi: ufs: introduce common delay function
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     Bart Van Assche <bvanassche@acm.org>
+CC:     <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
+        <jejb@linux.ibm.com>, <beanhuo@micron.com>,
+        <asutoshd@codeaurora.org>, <cang@codeaurora.org>,
+        <matthias.bgg@gmail.com>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
+        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
+        <andy.teng@mediatek.com>
+Date:   Tue, 17 Mar 2020 08:13:20 +0800
+In-Reply-To: <fdf91490-9c7d-df34-1c1f-e03e12855378@acm.org>
+References: <20200316085303.20350-1-stanley.chu@mediatek.com>
+         <20200316085303.20350-4-stanley.chu@mediatek.com>
+         <fdf91490-9c7d-df34-1c1f-e03e12855378@acm.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.111.160]
-X-Mailer: Zimbra 8.8.15_GA_3829 (ZimbraWebClient - GC80 (Win)/8.8.15_GA_3829)
-Thread-Index: 8IMjdxPQWBZshE+F+QJEttpRaFVxcQ==
-Thread-Topic: 
-To:     unlisted-recipients:; (no To-header on input)
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+SGkgQmFydCwNCg0KT24gTW9uLCAyMDIwLTAzLTE2IGF0IDA5OjIzIC0wNzAwLCBCYXJ0IFZhbiBB
+c3NjaGUgd3JvdGU6DQo+IE9uIDMvMTYvMjAgMTo1MiBBTSwgU3RhbmxleSBDaHUgd3JvdGU6DQo+
+ID4gK3ZvaWQgdWZzaGNkX3dhaXRfdXModW5zaWduZWQgbG9uZyB1cywgdW5zaWduZWQgbG9uZyB0
+b2xlcmFuY2UsIGJvb2wgY2FuX3NsZWVwKQ0KPiA+ICt7DQo+ID4gKwlpZiAoIXVzKQ0KPiA+ICsJ
+CXJldHVybjsNCj4gPiArDQo+ID4gKwlpZiAodXMgPCAxMCB8fCAhY2FuX3NsZWVwKQ0KPiA+ICsJ
+CXVkZWxheSh1cyk7DQo+ID4gKwllbHNlDQo+ID4gKwkJdXNsZWVwX3JhbmdlKHVzLCB1cyArIHRv
+bGVyYW5jZSk7DQo+ID4gK30NCj4gPiArRVhQT1JUX1NZTUJPTF9HUEwodWZzaGNkX3dhaXRfdXMp
+Ow0KPiANCj4gSSBkb24ndCBsaWtlIHRoaXMgZnVuY3Rpb24gYmVjYXVzZSBJIHRoaW5rIGl0IG1h
+a2VzIHRoZSBVRlMgY29kZSBoYXJkZXIgDQo+IHRvIHJlYWQgaW5zdGVhZCBvZiBlYXNpZXIuIFRo
+ZSAnY2FuX3NsZWVwJyBhcmd1bWVudCBpcyBvbmx5IHNldCBieSBvbmUgDQo+IGNhbGxlciB3aGlj
+aCBJIHRoaW5rIGlzIGEgc3Ryb25nIGFyZ3VtZW50IHRvIHJlbW92ZSB0aGF0IGFyZ3VtZW50IGFn
+YWluIA0KPiBhbmQgdG8gbW92ZSB0aGUgY29kZSB0aGF0IGRlcGVuZHMgb24gdGhhdCBhcmd1bWVu
+dCBmcm9tIHRoZSBhYm92ZSANCj4gZnVuY3Rpb24gaW50byB0aGUgY2FsbGVyLiBBZGRpdGlvbmFs
+bHksIGl0IGlzIG5vdCBwb3NzaWJsZSB0byBjb21wcmVoZW5kIA0KPiB3aGF0IGEgdWZzaGNkX3dh
+aXRfdXMoKSBjYWxsIGRvZXMgd2l0aG91dCBsb29raW5nIHVwIHRoZSBmdW5jdGlvbiANCj4gZGVm
+aW5pdGlvbiB0byBzZWUgd2hhdCB0aGUgbWVhbmluZyBvZiB0aGUgdGhpcmQgYXJndW1lbnQgaXMu
+DQo+IA0KPiBQbGVhc2UgZHJvcCB0aGlzIHBhdGNoLg0KDQpUaGFua3MgZm9yIHlvdXIgcmV2aWV3
+IGFuZCBjb21tZW50cy4NCg0KSWYgdGhlIHByb2JsZW0gaXMgdGhlIHRoaXJkIGFyZ3VtZW50ICdj
+YW5fc2xlZXAnIHdoaWNoIG1ha2VzIHRoZSBjb2RlDQpub3QgYmUgZWFzaWx5IGNvbXByZWhlbnNp
+YmxlLCBob3cgYWJvdXQganVzdCByZW1vdmluZyAnY2FuX3NsZWVwJyBmcm9tDQp0aGlzIGZ1bmN0
+aW9uIGFuZCBrZWVwaW5nIGxlZnQgcGFydHMgYmVjYXVzZSB0aGlzIGZ1bmN0aW9uIHByb3ZpZGVz
+IGdvb2QNCmZsZXhpYmlsaXR5IHRvIHVzZXJzIHRvIGNob29zZSB1ZGVsYXkgb3IgdXNsZWVwX3Jh
+bmdlIGFjY29yZGluZyB0byB0aGUNCid1cycgYXJndW1lbnQ/DQoNClRoYW5rcywNClN0YW5sZXkg
+Q2h1DQoNCg0KPiANCj4gVGhhbmtzLA0KPiANCj4gQmFydC4NCj4gDQoNCg==
 
-
-Good Day,                
-
-I am Mr. David Ibe, I work with the International Standards on Auditing, I have seen on records, that several times people has divert your funds into their own personal accounts.
-
-Now I am writing to you in respect of the amount which I have been able to send to you through our International United Nations accredited and approved Diplomat, who has arrived Africa, I want you to know that the diplomat would deliver the funds which I have packaged as a diplomatic compensation to you and the amount in the consignment is  $10,000,000.00 United State Dollars.
-
-I did not disclose the contents to the diplomat, but I told him that it is your compensation from the Auditing Corporate Governance and Stewardship, Auditing and Assurance Standards Board. I want you to know that these funds would help with your financial status as I have seen in records that you have spent a lot trying to receive these funds and I am not demanding so much from you but only 30% for my stress and logistics.
-
-I would like you to get back to me with your personal contact details, so that I can give you the contact information's of the diplomat who has arrived Africa and has been waiting to get your details so that he can proceed with the delivery to you.
-
-Yours Sincerely,
-Kindly forward your details to: mrdavidibe966@gmail.com
-Mr. David Ibe
-International Auditor,
-Corporate Governance and Stewardship
