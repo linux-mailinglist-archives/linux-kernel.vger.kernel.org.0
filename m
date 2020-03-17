@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C0391880BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:13:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCCE7187FF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:06:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729320AbgCQLMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:12:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56540 "EHLO mail.kernel.org"
+        id S1728590AbgCQLGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:06:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728574AbgCQLMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:12:49 -0400
+        id S1728437AbgCQLFl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:05:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2694B20658;
-        Tue, 17 Mar 2020 11:12:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 515EF20714;
+        Tue, 17 Mar 2020 11:05:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443568;
-        bh=eQo3vOkdx+gbyH57SiasHpKgrg8xrYXjhCMuRy2WDGY=;
+        s=default; t=1584443140;
+        bh=vr34iW1Lped7GFTjkm1+omk3htk2we9zxuSzW2rNpB0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ri+xfrN5R0aAOu6TlvDQnidXQUUsINAJqORsMquMV9kGg1aZZGos7bPevW5dBbVSk
-         mk0ycdYj5eVRnO16uG2P27oem40a7fs2LpoVrtTvLhkDdaWcuBoZ2R9iqlT3gzgTg2
-         xZAugZ9fDewwY0/tHPrafLMeoe3hZwYTCIcH3N2Q=
+        b=eUtfZPG/ZH5yKXIawIQ/jZgo+v1swi0NB/cKFlavK0kYJWIxu8Y93c+KW2vCI1qZ9
+         9c8txJYQq4vLV9cX7Sl40FNPC7zhagOQHiXdTgeEAQQQjiNHNHXhe2M6Glr2JOBvj1
+         UzNLZrJDhJ3Xi729Sqq5BxmtOpD0YPMVql7PNQSk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH 5.5 125/151] clk: imx8mn: Fix incorrect clock defines
-Date:   Tue, 17 Mar 2020 11:55:35 +0100
-Message-Id: <20200317103335.328916902@linuxfoundation.org>
+        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 5.4 109/123] nl80211: add missing attribute validation for beacon report scanning
+Date:   Tue, 17 Mar 2020 11:55:36 +0100
+Message-Id: <20200317103318.635560084@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
-References: <20200317103326.593639086@linuxfoundation.org>
+In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
+References: <20200317103307.343627747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Jakub Kicinski <kuba@kernel.org>
 
-commit 5eb40257047fb11085d582b7b9ccd0bffe900726 upstream.
+commit 056e9375e1f3c4bf2fd49b70258c7daf788ecd9d upstream.
 
-IMX8MN_CLK_I2C4 and IMX8MN_CLK_UART1's index definitions are incorrect,
-fix them.
+Add missing attribute validation for beacon report scanning
+to the netlink policy.
 
-Fixes: 1e80936a42e1 ("dt-bindings: imx: Add clock binding doc for i.MX8MN")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Fixes: 1d76250bd34a ("nl80211: support beacon report scanning")
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Link: https://lore.kernel.org/r/20200303051058.4089398-3-kuba@kernel.org
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/dt-bindings/clock/imx8mn-clock.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/wireless/nl80211.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/include/dt-bindings/clock/imx8mn-clock.h
-+++ b/include/dt-bindings/clock/imx8mn-clock.h
-@@ -122,8 +122,8 @@
- #define IMX8MN_CLK_I2C1				105
- #define IMX8MN_CLK_I2C2				106
- #define IMX8MN_CLK_I2C3				107
--#define IMX8MN_CLK_I2C4				118
--#define IMX8MN_CLK_UART1			119
-+#define IMX8MN_CLK_I2C4				108
-+#define IMX8MN_CLK_UART1			109
- #define IMX8MN_CLK_UART2			110
- #define IMX8MN_CLK_UART3			111
- #define IMX8MN_CLK_UART4			112
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -469,6 +469,8 @@ const struct nla_policy nl80211_policy[N
+ 	[NL80211_ATTR_WOWLAN_TRIGGERS] = { .type = NLA_NESTED },
+ 	[NL80211_ATTR_STA_PLINK_STATE] =
+ 		NLA_POLICY_MAX(NLA_U8, NUM_NL80211_PLINK_STATES - 1),
++	[NL80211_ATTR_MEASUREMENT_DURATION] = { .type = NLA_U16 },
++	[NL80211_ATTR_MEASUREMENT_DURATION_MANDATORY] = { .type = NLA_FLAG },
+ 	[NL80211_ATTR_MESH_PEER_AID] =
+ 		NLA_POLICY_RANGE(NLA_U16, 1, IEEE80211_MAX_AID),
+ 	[NL80211_ATTR_SCHED_SCAN_INTERVAL] = { .type = NLA_U32 },
 
 
