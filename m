@@ -2,87 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42A31188F4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 21:50:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35292188FDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 21:55:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbgCQUug (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 16:50:36 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:38983 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726388AbgCQUug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 16:50:36 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726986AbgCQUxr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 16:53:47 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:14828 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726801AbgCQUxp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 16:53:45 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1584478425; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=0FuWCaiIeZ+dC3cNZQsIBNBHz1QAlcLwuEg7g1HMh0o=; b=hjLlpwZmNFBa6bkfCdPk8V3tGtTER20fqxi9j40oO55uLKEGvw+cb0Iw7CA2wk+FgIOdWuH0
+ rKD36c1zn529X1kFi4EqcSxNd84j+Y+YdzyuBEv5QWc2RqN+58VC9lieeO++qzVl/JXqQ8nf
+ dyw+DUvJ7A80BFxKoIp9iRKRp7M=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e7138d2.7f859b99af80-smtp-out-n02;
+ Tue, 17 Mar 2020 20:53:38 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 39C36C44788; Tue, 17 Mar 2020 20:53:38 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from wcheng-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48hlgG1Vjtz9sPJ;
-        Wed, 18 Mar 2020 07:50:34 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1584478234;
-        bh=YxislPlYDcOrbEnlAds6A8PAKFcAav8LkLzt+kSz4SY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=oYcqLL7NgrNuGaIMJIrjz1kdu9lxBVyn43gSCqFN80uOwmt3h3dFJWeJVg5yGfZqo
-         JspQwD4mJxoAXSV6uIt5LEa5G/mjF2/JB5D/KMrIk9EQPZouY8EMjJbTI+9ngQNHqK
-         ig8/rJ1c+OAA5n9mvoDDX999ip5IhJnHQ33mKAOCBU5nZG5dMU9Y+D4AwkVykCp6Et
-         GRvttE26L+szGybMwyNpOyJxWaNxDKCusjgdpMvM6UcYqGwSov9ldsvu+E4tBj/qn/
-         E1WlMe7Z7ZIQ+VtoijFfdzva3PpGhcUQqiB8rQ/LICBpIeTt6gS3IgEsYVQXGZ0zdI
-         G6rx2QvY/0YJQ==
-Date:   Wed, 18 Mar 2020 07:50:33 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: linux-next: Fixes tag needs some work in the hmm tree
-Message-ID: <20200318075033.4d06b1be@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ZRJgaeRkzV8__XxmSCxCH7T";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        (Authenticated sender: wcheng)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 51595C433D2;
+        Tue, 17 Mar 2020 20:53:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 51595C433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=wcheng@codeaurora.org
+From:   Wesley Cheng <wcheng@codeaurora.org>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Wesley Cheng <wcheng@codeaurora.org>
+Subject: [PATCH v2 0/2] Enable SS/HS USB support on SM8150
+Date:   Tue, 17 Mar 2020 13:53:30 -0700
+Message-Id: <1584478412-7798-1-git-send-email-wcheng@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ZRJgaeRkzV8__XxmSCxCH7T
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Add required device tree nodes to enable the USB SS and HS
+paths on the primary USB controller on SM8150.  In addition,
+implement missing resources from the SM8150 GCC driver, which
+includes the USB GDSC and the USB PIPE clocks.
 
-Hi all,
+Changes in v2:
+ - Combine GDSC and USB PIPE clock changes.
+ - Re-order DTS nodes based on address
 
-In commit
+Jack Pham (1):
+  arm64: dts: qcom: sm8150: Add USB and PHY device nodes
 
-  ee37d9e6e474 ("mm/hmm: don't handle the non-fault case in hmm_vma_walk_ho=
-le_()")
+Wesley Cheng (1):
+  clk: qcom: gcc: Add USB3 PIPE clock and GDSC for SM8150
 
-Fixes tag
+ arch/arm64/boot/dts/qcom/sm8150-mtp.dts     | 17 ++++++
+ arch/arm64/boot/dts/qcom/sm8150.dtsi        | 92 +++++++++++++++++++++++++++++
+ drivers/clk/qcom/gcc-sm8150.c               | 52 ++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sm8150.h |  4 ++
+ 4 files changed, 165 insertions(+)
 
-  Fixes: 2aee09d ("mm/hmm: change hmm_vma_fault() to allow write fault on p=
-age basis")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ZRJgaeRkzV8__XxmSCxCH7T
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5xOBkACgkQAVBC80lX
-0GxN3ggAhjiTiQKbNQ2Wi3SP1s4/L9Q3XyLBFZAKeK7lZrCQ49QTqOlFqJY9AiF3
-dxFcwat9O7l3hX6ZwJyimPWCVEWjeB9L7bYaIyrj/6+Zha6dg4BrxifcPmuIukKC
-LZQR4tgjET+VOYKH+wJpD2Ac9vAC2pOkGx39NuYohh3nSDPc193J5gLECKoMDnIJ
-TtZ5Y8U6MhVL5O+SdAJ6I1NdNsRUKQtemw7Kz2fYeq55LhAkKfmQTv7ts67LMFGH
-rD7TYIJWQzp7YhK4l1QFz0pgDIhBZZEtM+XDQ/oT0HoUUzWLLkpykEJ0vvLrzwcS
-79tGbnt4q1U+tBwUE+UOfO14jC9z3g==
-=/FGJ
------END PGP SIGNATURE-----
-
---Sig_/ZRJgaeRkzV8__XxmSCxCH7T--
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
