@@ -2,93 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1E0F1884C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 14:09:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D6391884C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 14:08:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbgCQNJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 09:09:41 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:29880 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725872AbgCQNJk (ORCPT
+        id S1726765AbgCQNIr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 09:08:47 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:37297 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726530AbgCQNIr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 09:09:40 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02HD4bKK062147;
-        Tue, 17 Mar 2020 09:08:25 -0400
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ytuqr6w52-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 17 Mar 2020 09:08:25 -0400
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02HD3eBe005980;
-        Tue, 17 Mar 2020 13:08:24 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma02wdc.us.ibm.com with ESMTP id 2yrpw6r7j3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 17 Mar 2020 13:08:24 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02HD8OpJ16253868
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Mar 2020 13:08:24 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1FD40112062;
-        Tue, 17 Mar 2020 13:08:24 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 08468112061;
-        Tue, 17 Mar 2020 13:08:24 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 17 Mar 2020 13:08:23 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, sachinp@linux.vnet.ibm.com,
-        mpe@ellerman.id.au, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH] tpm2: Export tpm2_get_cc_attrs_tbl for ibmvtpm driver as module
-Date:   Tue, 17 Mar 2020 09:08:19 -0400
-Message-Id: <20200317130819.720318-1-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.24.1
+        Tue, 17 Mar 2020 09:08:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584450525;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=gTW6T5TxiZ2w06AMn3cxcvzt8yOIHUmc0wdV4dyBwN4=;
+        b=iu9j9MIIB8q6yZ9YNYbYm083edPp/dNQv4scUHeX/tS9tAtp9Ptc8fWsT68vDMjbWpQhUK
+        U4w0GGudqcZUG1YY4c6meBpTbQbfPUf8Vlo/nYPPN7VgXODKmm+XSxHnBmnRfXJs7ELsGP
+        3L5Lc2/7AfZoXqBxQQ5f1ibIYUEbjhI=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-423-5i45v5mTMTa4K0z6m1NLQg-1; Tue, 17 Mar 2020 09:08:42 -0400
+X-MC-Unique: 5i45v5mTMTa4K0z6m1NLQg-1
+Received: by mail-wr1-f69.google.com with SMTP id h17so987647wru.16
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 06:08:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gTW6T5TxiZ2w06AMn3cxcvzt8yOIHUmc0wdV4dyBwN4=;
+        b=Mgv6vbGegJqZYyJr2o6WWb4Hfgsi1HWAvOA1XLiutD1KnWtR8G3baPSgTW97ysdf9i
+         hDVSgrV6ZO8zQJuGRnZmrtjJ1lrIjil0auOFGtebBwK2Fs2s0YJ7eCEhc20rbt4lI/W8
+         ig+8m4m8Pb5wAuREZoGqMlz4VA9iarFe40Vlm4o84+EHyIFIcsJIDuvLF8QtPX0oaGZp
+         VsyzIt3OS59uYnXt+56KagkNsDPa7BL6GXFLk9IUtvyFJ8lUtKna7HK+S7mJNPViKzEW
+         ZtiGEZcxnl7A2y/oRgjKw4ANRXOKgQK+RQJZ6lIf42i7Yt8fmM2Bev1TtFI0PYp7sryk
+         bLqw==
+X-Gm-Message-State: ANhLgQ2RAX0jL0mT9o5MxNgKV9KsS/9hzOIk3mpI+1qmB2jgmt3Hg2sf
+        ZOAkCqTXgt9cuxQsVOCXW9grRFENpRTKnh225MiHi1SgzS1JIywSZ5AtmPBD00LOVRSm1i56ij3
+        +2g6VtBO8goC3r1WgnVYJyV5I
+X-Received: by 2002:adf:a285:: with SMTP id s5mr6375119wra.118.1584450520502;
+        Tue, 17 Mar 2020 06:08:40 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vvukE9TuGFMVvx92iKdGpCIM4J5ocm16YibpYHueIsBilciiqPioFrCH092XLesRfAMw4vOSw==
+X-Received: by 2002:adf:a285:: with SMTP id s5mr6375104wra.118.1584450520318;
+        Tue, 17 Mar 2020 06:08:40 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-fc7e-fd47-85c1-1ab3.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:fc7e:fd47:85c1:1ab3])
+        by smtp.gmail.com with ESMTPSA id l8sm3981010wmj.2.2020.03.17.06.08.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Mar 2020 06:08:39 -0700 (PDT)
+Subject: Re: [PATCH v5 1/2] x86/purgatory: Disable various profiling and
+ sanitizing options
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200312114951.56009-1-hdegoede@redhat.com>
+ <20200313182815.GF8142@zn.tnic>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <aee4ff4d-05f0-9d55-eb19-1d8df520e6c9@redhat.com>
+Date:   Tue, 17 Mar 2020 14:08:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-17_04:2020-03-17,2020-03-17 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- phishscore=0 impostorscore=0 clxscore=1011 priorityscore=1501
- suspectscore=0 malwarescore=0 lowpriorityscore=0 bulkscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2003020000 definitions=main-2003170056
+In-Reply-To: <20200313182815.GF8142@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+Hi,
 
-This patch fixes the following problem when the ibmvtpm driver
-is built as a module:
+On 3/13/20 7:28 PM, Borislav Petkov wrote:
+> On Thu, Mar 12, 2020 at 12:49:50PM +0100, Hans de Goede wrote:
+>> Since the purgatory is a special stand-alone binary, we need to disable
+> 
+> Pls use passive voice in your commit message: no "we" or "I", etc, and
+> describe your changes in imperative mood.
+> 
+> Also, pls read section "2) Describe your changes" in
+> Documentation/process/submitting-patches.rst for more details.
 
-ERROR: modpost: "tpm2_get_cc_attrs_tbl" [drivers/char/tpm/tpm_ibmvtpm.ko] undefined!
-make[1]: *** [scripts/Makefile.modpost:94: __modpost] Error 1
-make: *** [Makefile:1298: modules] Error 2
+Ok, fixed for v6 and I've also rebased the series on tip/master for v6.
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- drivers/char/tpm/tpm2-cmd.c | 1 +
- 1 file changed, 1 insertion(+)
+Regards,
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 76f67b155bd5..eff1f12d981a 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -681,6 +681,7 @@ int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip)
- 		rc = -ENODEV;
- 	return rc;
- }
-+EXPORT_SYMBOL_GPL(tpm2_get_cc_attrs_tbl);
- 
- /**
-  * tpm2_startup - turn on the TPM
--- 
-2.23.0
+Hans
+
+
+
+> 
+>> various profiling and sanitizing options. Having these options enabled
+>> typically will cause dependency on various special symbols exported by
+>> special libs / stubs used by these frameworks. Since the purgatory is
+>> special we do not link against these stubs causing missing symbols in
+>> the purgatory if we do not disable these options.
+>>
+>> This commit syncs the set of disabled profiling and sanitizing options
+> 
+> Avoid having "This patch" or "This commit" in the commit message. It is
+> tautologically useless.
+> 
+> Also, do
+> 
+> $ git grep 'This patch' Documentation/process
+> 
+> for more details.
+> 
+> Those two review comments apply to patch 2's commit message too, pls fix
+> them there too.
+> 
+>> with that from drivers/firmware/efi/libstub/Makefile, adding
+>> -DDISABLE_BRANCH_PROFILING to the CFLAGS and setting:
+>>
+>> GCOV_PROFILE                    := n
+>> UBSAN_SANITIZE                  := n
+>>
+>> This fixes broken references to ftrace_likely_update when
+>> CONFIG_TRACE_BRANCH_PROFILING is enabled and to __gcov_init and
+>> __gcov_exit when CONFIG_GCOV_KERNEL is enabled.
+>>
+>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>> ---
+>> Changes in v5:
+>> -Not only add -DDISABLE_BRANCH_PROFILING to the CFLAGS but also set:
+>>   GCOV_PROFILE                    := n
+>>   UBSAN_SANITIZE                  := n
+>>
+>> Changes in v4:
+>> -This is a new patch in v4 of this series
+>> ---
+>>   arch/x86/purgatory/Makefile | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> $ test-apply.sh -g /tmp/01-x86-purgatory-disable_various_profiling_and_sanitizing_options.patch
+> checking file arch/x86/purgatory/Makefile
+> Hunk #1 FAILED at 17.
+> Hunk #2 succeeded at 27 (offset 2 lines).
+> 1 out of 2 hunks FAILED
+> 
+> This happens because tip/master already has KCSAN merged in and it adds
+> 
+> KCSAN_SANITIZE  := n
+> 
+> there.
+> 
+> Please redo the patches against current tip/master.
+> 
+> Thx.
+> 
 
