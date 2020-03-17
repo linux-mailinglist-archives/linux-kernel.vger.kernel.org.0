@@ -2,94 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C62891891B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 00:01:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C4E51891C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 00:09:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbgCQXBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 19:01:22 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33790 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbgCQXBV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 19:01:21 -0400
-Received: by mail-pf1-f196.google.com with SMTP id n7so12792053pfn.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 16:01:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=CLAXJR/m1S5mvbxDH/gOJKQ31fTpJSMrQ/dm5IseVLo=;
-        b=nHn8XPpjogArRYq/pgvsanPOK+4o4O576oiPZS+njOPe1Iyb2CbZK5pOPlCvHz+Erq
-         ycjuE3lMYgppqAWBDcD1CzbbzRU1NJ+lLGqwcVY1M/ynuQLTbpDg/KVTErnY8WshjnKQ
-         dLlK6CXABUAwVSNrHVBjY4SoDTh8u6qiXtVM0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CLAXJR/m1S5mvbxDH/gOJKQ31fTpJSMrQ/dm5IseVLo=;
-        b=WXh5Qd8HJyrhz/q+LhTPbDtd1R7dkfBhaG/U99aq5OzB62Yei++HVeKI89Gk8LbRd6
-         5gj9+DDXWDcnDNzrfb5YWyxTzfRhupBfAKu2bzKiYqMrPGL6iZrIwxd1lKtaeUBUJjEw
-         /X27pOkbJAkSvzDSODm4IvVoy3NHUFUOL27pSHSG9oQOwPu/6ifT2E6zduEWG3cUvt+u
-         pj2rlBqFoUkppTOr4y7aqLWbsFoV7yk4xIl/KhnJMFLh5wVF4QF3znfbrWG7OpJa6ojR
-         edq5vWfIUOYgoiD56aYzdTkm5HIvcApM16YNYadvQdhIYIacybacJ7EXenmvp5GY8S/U
-         u7Uw==
-X-Gm-Message-State: ANhLgQ24fiozGMv9xwnCRvnUiolIDFhG7yEeOgLvHvnwcxszFiN/rveD
-        h0agnpQwQtwRuwdh9nU4xd+nKQ==
-X-Google-Smtp-Source: ADFU+vvg0MZXI74SVi2HiksDnjxAGYalVyFBX2Irz0ufLm1PbI7PXP1Iee6C/syJdSKNKPaBtFiibQ==
-X-Received: by 2002:a63:1245:: with SMTP id 5mr1481307pgs.55.1584486078671;
-        Tue, 17 Mar 2020 16:01:18 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w15sm1772273pfj.28.2020.03.17.16.01.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2020 16:01:17 -0700 (PDT)
-Date:   Tue, 17 Mar 2020 16:01:16 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Borislav Petkov <bp@suse.de>, "H.J. Lu" <hjl.tools@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Collingbourne <pcc@google.com>,
-        James Morse <james.morse@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <masahiroy@kernel.org>, x86@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, clang-built-linux@googlegroups.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/9] arm64/build: Warn on orphan section placement
-Message-ID: <202003171558.7E1D46AED6@keescook>
-References: <20200228002244.15240-1-keescook@chromium.org>
- <20200228002244.15240-8-keescook@chromium.org>
- <20200317215614.GB20788@willie-the-truck>
-MIME-Version: 1.0
+        id S1727023AbgCQXI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 19:08:57 -0400
+Received: from mail-eopbgr70072.outbound.protection.outlook.com ([40.107.7.72]:7335
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726564AbgCQXI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 19:08:57 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AHHLOxgTZ9osNtl13qHdM5Z9KckCIUmyZRIo7RfDJwkiJ7bfaQQ7LKoo4ctz+XrfOoBVY3LCNDT/SlQuPtfQ46DM5mkZbveWP8ecwqu8tiOfGdwwdCvIqGg4PpWWb/JkJmMhh7iP+8s8upskm3YSAuB3zVEpHCQMAHXX5ro/MuW4BjOJaxAMdS2/fy+fdbDdtQm/NuqRKjDPXtt6R+7WCKRCBLRy70n7qUlpNnE+QFBQEwyPOVlePxjgzplvexinUuXCKegsfoNYxdJrrdWJkTkm62Gh0lLXIhilB/dbhl7UXxZkU+UXJzCpUoz5uMUhEVIxIX4ryOuCvdvZTSroIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/kIQOG/Nvz7fSiNMeqDevp9eAESKDUfoimHXRWkvmTE=;
+ b=Up5mu2MCFEBJ57dAvBohlCc5Kybe7DuQjzHenjnOztmVkZC6/61on8lmT384K8/4DRbMwCseMzFbMwRhfofSHpX/0OE1S4O7kWyFknDimUwGot4dQHsJXqRkG5UITOqkmnzcPbGVA6neNX+xPdpCPhoGZQCnGLKI+1wNUyHRahzrtRi9s4TSwYUYwv5dHS7UMNCxDM7VQ5e+T1vtvj+sosy98p3FSGH0BWxiuZwEfoa0Mi0BYzZQ/W5XK6g2aVQv8CMCB06lLdGfbjMSRfPlbTkIPz8uuoEZWR4TK0Y6KzRwe7aJ1nqbwJppiUv2e2ndiZity2WhkoJdkckYfuaJkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/kIQOG/Nvz7fSiNMeqDevp9eAESKDUfoimHXRWkvmTE=;
+ b=Of7bWqEY0/oQim1ykK0IJpxAhvWpVwhTNqIOkjCOqszL2XycAOswMwgWuR6TEOw+FhocLyE5EyPGOg+/1Ljy47XFefOvedMpTnoev1tf39Qzf2y54yZ4IAYnphH0rWdCmuY0zBd6kkl28Vu33gUDDaToDp4wJ2yErttMwwrNB9U=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (52.133.14.15) by
+ VI1PR05MB6286.eurprd05.prod.outlook.com (20.179.24.86) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.19; Tue, 17 Mar 2020 23:08:50 +0000
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::18d2:a9ea:519:add3]) by VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::18d2:a9ea:519:add3%7]) with mapi id 15.20.2814.021; Tue, 17 Mar 2020
+ 23:08:50 +0000
+Date:   Tue, 17 Mar 2020 20:08:47 -0300
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: Fixes tag needs some work in the hmm tree
+Message-ID: <20200317230847.GB13183@mellanox.com>
+References: <20200318075033.4d06b1be@canb.auug.org.au>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200317215614.GB20788@willie-the-truck>
+In-Reply-To: <20200318075033.4d06b1be@canb.auug.org.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: MN2PR19CA0015.namprd19.prod.outlook.com
+ (2603:10b6:208:178::28) To VI1PR05MB4141.eurprd05.prod.outlook.com
+ (2603:10a6:803:44::15)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from mlx.ziepe.ca (142.68.57.212) by MN2PR19CA0015.namprd19.prod.outlook.com (2603:10b6:208:178::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.19 via Frontend Transport; Tue, 17 Mar 2020 23:08:50 +0000
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)     (envelope-from <jgg@mellanox.com>)      id 1jELKJ-0007sv-6j; Tue, 17 Mar 2020 20:08:47 -0300
+X-Originating-IP: [142.68.57.212]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 122d8ce8-f9fb-47ce-fe87-08d7cac8279a
+X-MS-TrafficTypeDiagnostic: VI1PR05MB6286:
+X-Microsoft-Antispam-PRVS: <VI1PR05MB62868A124DA4D3EDFDA3268BCFF60@VI1PR05MB6286.eurprd05.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:335;
+X-Forefront-PRVS: 0345CFD558
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(366004)(39860400002)(136003)(396003)(199004)(478600001)(2616005)(6916009)(86362001)(36756003)(1076003)(8676002)(81166006)(186003)(4744005)(81156014)(2906002)(33656002)(26005)(66946007)(66556008)(8936002)(54906003)(5660300002)(52116002)(9786002)(9746002)(4326008)(316002)(66476007)(24400500001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB6286;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: nT0aGwSPrHfJ62QgFPm3Yd3MeFDdE+gRcsIaqDaTaD+Ntuprne7qUERVGsOd1f0+cM7pIEw/kQGnYTG8ON5oH6QL3HmwwIzOfFKY8e7qh+GFZfc/9hGgwgWh40bQpoyjOrWuVCZbFSqhzOMpapICbvgFMLmqWnL+76GReBo43gCSQ5TSrfF4eLRQDiKcRlM4gfW5V8uqC3i30vIJS1m5zK0gssf4AiGwsaHDjIijWcFN9KFBHHSCjg1WL5m7Dh0NGlgnQkYoJWgrBmoIzHGKkBE7FHaFyn6QOeXAyFbqN82q1uqV3+4Dajacu9k978EULg+zNcZJkzmqGKyyPwuo9SkmXVY5n4GUIoCBXqnrovf6f+MPIIBAU8pGD3RUIoUgotSV4ewNSUv3IlfZi5ewlNLnAziQbsQx/tVjNbsiFHhXPBynk8rQnuO+T6Rj25ZsXfqhJ4e6nxf0xWhVxdjO2IRNfkjbrgzBHcJZYSPhDQERHvvi2NVSrY6JGHpcZugU
+X-MS-Exchange-AntiSpam-MessageData: p00qTaYFJuhwn1XcaziPu/2+FR+zh/5YhINEGfqf+uuXqNHUlt+wGwBKlaK+G5sp8XT+ZjkdD0GYz7Y3BN+HYKy5KYSPTrY3pKpBj0x/ru+CHeQ0KGlTAXXmvNPIpsHYxy3iAyYt6KKYxP7bmKVSfw==
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 122d8ce8-f9fb-47ce-fe87-08d7cac8279a
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2020 23:08:50.4932
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7MCR9yjUe9NooJUOXGD3T79RaeQDUH8erMz4UnEruvgMl5UY2KyJERKqhp+L8UIC9UBI8svuKNyKdHNAw9YpCw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB6286
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 09:56:14PM +0000, Will Deacon wrote:
-> On Thu, Feb 27, 2020 at 04:22:42PM -0800, Kees Cook wrote:
-> > We don't want to depend on the linker's orphan section placement
-> > heuristics as these can vary between linkers, and may change between
-> > versions. All sections need to be explicitly named in the linker
-> > script.
-> > 
-> > Explicitly include debug sections when they're present. Add .eh_frame*
-> > to discard as it seems that these are still generated even though
-> > -fno-asynchronous-unwind-tables is being specified. Add .plt and
-> > .data.rel.ro to discards as they are not actually used. Add .got.plt
-> > to the image as it does appear to be mapped near .data. Finally enable
-> > orphan section warnings.
+On Wed, Mar 18, 2020 at 07:50:33AM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Hmm, I don't understand what .got.plt is doing here. Please can you
-> elaborate?
+> In commit
+> 
+>   ee37d9e6e474 ("mm/hmm: don't handle the non-fault case in hmm_vma_walk_hole_()")
+> 
+> Fixes tag
+> 
+>   Fixes: 2aee09d ("mm/hmm: change hmm_vma_fault() to allow write fault on page basis")
 
-I didn't track it down, but it seems to have been present (and merged
-into the kernel .data) for a while now. I can try to track this down if
-you want?
+Fixed, and really confused how it happened :\
 
--- 
-Kees Cook
+Thanks,
+Jason
