@@ -2,136 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDCE918789D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 05:52:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D5591878C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 05:54:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbgCQEww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 00:52:52 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42053 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbgCQEww (ORCPT
+        id S1727228AbgCQEyv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 00:54:51 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37070 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726669AbgCQEyu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 00:52:52 -0400
-Received: by mail-qt1-f195.google.com with SMTP id g16so16368650qtp.9
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 21:52:52 -0700 (PDT)
+        Tue, 17 Mar 2020 00:54:50 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a141so20416048wme.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 21:54:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=HmNBZ2Fb6XAr6Ve5H1ieEf9RVZQcVNun5fBa1AuybTA=;
-        b=RzRs3ha+V9ZJfk/lfquDxIObbYW7Ye830mzWa4TgY+JG0vg/QVno6YT0tVj7Ny2ciw
-         yTV3CpcXfx0yBGgUjhZm4hsg6xVS41DLPvKsRhIquBtlxDAO0zjcOZMtBa7fqrbxiuN0
-         6Wl3ZtcO/OGJXTQOorrIkGm1OQdtSIEF4i4LlBvS5AGMVK9aLwZ/ouNh/dfzOn4CMknk
-         fPXqePjtL8nJSfYs/vGDZRA1g5ROivtPrQ9vOtX/pGvSUKOL3Hp/Nn3pEGzzRMmxFbRL
-         BRFnolx0GL6zW6/sLP5fMkjdkO7K8fFYxS3kfGdLvhUPyGTOijCPMRPkGDnPxz4HPfzd
-         OcfQ==
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Z/pLHqEymmI8qdYZpx02WBRLipjnKwZXZVqV8m8MSSY=;
+        b=Hu9yeveSk7lvKAgkYqMZGbJjupqBFlO1hDJJn/f26IzkoN9kOnt+c1715OgLvVXhX6
+         SIXcVljSb2WE4ejla8A/dMxdUYQiO1PDZlEEa1fiKMEqWZho5cMEJYzTCs2sbjlRn+bg
+         0AQ/kJixJH546JWh2HbJ63TNz4z5jQgMIAvwk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=HmNBZ2Fb6XAr6Ve5H1ieEf9RVZQcVNun5fBa1AuybTA=;
-        b=mSfY03N/lROAdLxtZ9PIY+VId65Crv+qSHbZAR4owDNaGydlBO2/ODWNULHlceofXL
-         lOEzunrjODkTD/pXerqy2ArJUwfh3HU7npXo1A+QfEZbDlQ1noYqQ+zBQ3wpRqDDev1o
-         F6seTMQlQ7EpwhKp2rdbjmYktV/40sMuVink4qbixi4DGjiaYdHdRNnTOxyQxhFe98zM
-         50dSgbH9epKkWPWOonp0jXNNtZM8fZgCrZitjpcjb1XPNyiPNXqO/ibeUz8K322XLP72
-         L+N/TuLfMdss6zL3yMTgZrAivJAUtqAag+vhc6MGljEPaL5l80lHS4vO769jNmlOmUBY
-         RhBw==
-X-Gm-Message-State: ANhLgQ0YyBRMfV8qTXZ1b2HrJb0xaC0CbcV0RE4tGubMDLzPaLaopKxt
-        VGyF1wN8H+Tj/TlY3M9YA8H9mAvXT0b4kO55uLw=
-X-Google-Smtp-Source: ADFU+vvpXxTgkHktukI3njVQwYIA+0aosdP4+TCG0/z1yf3lf29Xcigey0ElHXy5Kyj4rR2X1a84WG94Y4FH9A0CQus=
-X-Received: by 2002:aed:3346:: with SMTP id u64mr3395904qtd.333.1584420771409;
- Mon, 16 Mar 2020 21:52:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <1582175513-22601-1-git-send-email-iamjoonsoo.kim@lge.com>
- <1582175513-22601-3-git-send-email-iamjoonsoo.kim@lge.com>
- <20200312151423.GH29835@cmpxchg.org> <CAAmzW4Mpm6PyZp1jXUo__S-OZ2=MKPuyTA+gpL0X8cW+H0ps4Q@mail.gmail.com>
- <20200313195510.GA67986@cmpxchg.org> <CAAmzW4PgTeRsr6jZZpvgb85e1xVBa8g17kvVFQGm7=WPXwHK_g@mail.gmail.com>
- <20200316161208.GB67986@cmpxchg.org>
-In-Reply-To: <20200316161208.GB67986@cmpxchg.org>
-From:   Joonsoo Kim <js1304@gmail.com>
-Date:   Tue, 17 Mar 2020 13:52:40 +0900
-Message-ID: <CAAmzW4NZ1vBPFDv7CkbCXBjyNbT1HKHEJo1Np-Uop0kf+buN8w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/9] mm/vmscan: protect the workingset on anonymous LRU
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>, kernel-team@lge.com,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Z/pLHqEymmI8qdYZpx02WBRLipjnKwZXZVqV8m8MSSY=;
+        b=uHEm9+YKzMddGLEe/5oNXQSXXFz4i3H9QtT7jnGiW+myfH5877KU5HvC68Xs9/RPUh
+         BFzlTPt8729gi0DDRkuwYg3zIu4ESiYn6DEmirF5/n3qvxSTJsctJ096vgPxuhBhw0G4
+         XALMuTvzf7463h0DCDUwJTNHfyturYjFJ1rWfzgWnaNyIcm+W3Pbf4izBN7rOJtrK3RJ
+         KK5j5z+h+0HnCA9qRJC4m8HPnlEZiH6huxBVbZml8KxzBMPsCEFQb3UqgJ/9kU2i1peZ
+         9ate/vUd9p0W6sKjSQ28j/ZzrSu/JFAUMw+kjur7JCc2gJnQTkczSVA824FxzhKl76Wl
+         OlnQ==
+X-Gm-Message-State: ANhLgQ3NT84DZBmZ/QCsJgYZlbMgzi2Yz6Gkc8NwA/azqkbXEUXKuSVD
+        Kw54pkxwLxunkxnU9ROdJWp1Ug==
+X-Google-Smtp-Source: ADFU+vtloprSXesJvtRnEjLPOoV7EqcOa08m/oOOJVTgeOAFV+HVZ4G4S3W0WCB1yQtt7cfGvfhQRA==
+X-Received: by 2002:a1c:7207:: with SMTP id n7mr2819390wmc.138.1584420888626;
+        Mon, 16 Mar 2020 21:54:48 -0700 (PDT)
+Received: from rayagonda.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id i67sm2874498wri.50.2020.03.16.21.54.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Mar 2020 21:54:47 -0700 (PDT)
+From:   Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>, davem@davemloft.net,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Arun Parameswaran <arun.parameswaran@broadcom.com>,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Subject: [PATCH v1 1/1] net: phy: mdio-mux-bcm-iproc: check clk_prepare_enable() return value
+Date:   Tue, 17 Mar 2020 10:24:35 +0530
+Message-Id: <20200317045435.29975-1-rayagonda.kokatanur@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2020=EB=85=84 3=EC=9B=94 17=EC=9D=BC (=ED=99=94) =EC=98=A4=EC=A0=84 1:12, J=
-ohannes Weiner <hannes@cmpxchg.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> On Mon, Mar 16, 2020 at 04:05:30PM +0900, Joonsoo Kim wrote:
-> > 2020=EB=85=84 3=EC=9B=94 14=EC=9D=BC (=ED=86=A0) =EC=98=A4=EC=A0=84 4:5=
-5, Johannes Weiner <hannes@cmpxchg.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=
-=B1:
-> > > The problem with executables is that when they are referenced, they
-> > > get a *lot* of references compared to data pages. Think about an
-> > > instruction stream and how many of those instructions result in data
-> > > references. So when you see an executable page that is being accessed=
-,
-> > > it's likely being accessed at a high rate. They're much hotter, and
-> > > that's why reference bits from VM_EXEC mappings carry more weight.
-> >
-> > Sound reasonable.
-> >
-> > But, now, I have another thought about it. I think that the root of the=
- reason
-> > of this check is that there are two different reference tracking models
-> > on file LRU. If we assume that all file pages are mapped ones, this spe=
-cial
-> > check isn't needed. If executable pages are accessed more frequently th=
-an
-> > others, reference can be found more for them at LRU cycle. No need for =
-this
-> > special check.
-> >
-> > However, file pages includes syscall-ed pages and mapped pages, and,
-> > reference tracking models for mapped page has a disadvantage to
-> > one for syscall-ed page. Several references for mapped page would be
-> > considered as one at LRU cycle. I think that this check is to mitigate
-> > this disadvantage, at least, for executable file mapped page.
->
-> Hm, I don't quite understand this reasoning. Yes, there are two models
-> for unmapped and mapped file pages. But both types of pages get
-> activated with two or more references: for unmapped it's tracked
-> through mark_page_accessed(), and for mapped it's the two LRU cycles
-> with the referenced bit set (unmapped pages don't get that extra trip
-> around the LRU with one reference). With that alone, mapped pages and
-> unmapped pages should have equal chances, no?
->
+Check clk_prepare_enable() return value.
 
-Think about following example.
+Fixes: 2c7230446bc9 ("net: phy: Add pm support to Broadcom iProc mdio mux driver")
+Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+---
+ drivers/net/phy/mdio-mux-bcm-iproc.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Assume that the size of inactive list for file page is 100.
+diff --git a/drivers/net/phy/mdio-mux-bcm-iproc.c b/drivers/net/phy/mdio-mux-bcm-iproc.c
+index 88d409e48c1f..aad6809ebe39 100644
+--- a/drivers/net/phy/mdio-mux-bcm-iproc.c
++++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
+@@ -288,8 +288,13 @@ static int mdio_mux_iproc_suspend(struct device *dev)
+ static int mdio_mux_iproc_resume(struct device *dev)
+ {
+ 	struct iproc_mdiomux_desc *md = dev_get_drvdata(dev);
++	int rc;
+ 
+-	clk_prepare_enable(md->core_clk);
++	rc = clk_prepare_enable(md->core_clk);
++	if (rc) {
++		dev_err(md->dev, "failed to enable core clk\n");
++		return rc;
++	}
+ 	mdio_mux_iproc_config(md);
+ 
+ 	return 0;
+-- 
+2.17.1
 
-1. start the new page, A, and access to A happens
-2. 50 inactive pages are reclaimed due to 50 new pages
-3. second access to A happens
-4. 50 inactive pages are reclaimed due to 50 new pages
-5. 100 inactive pages are reclaimed due to 100 new pages
-
-If A is:
-unmapped page: the page is activated at #3 and lives after #5
-mapped page: the page reference is checked at #4 and re-attached
-to the inactive list with PageReferenced() but is eventually reclaimed at #=
-5
-
-Even they are referenced by the same pattern, mapped page is reclaimed
-but unmapped isn't. This is, what I said before, the disadvantage of
-the mapped page than unmapped page. My guess is that to mitigate this
-disadvantage on mapped file page, VM_EXEC test is needed since
-VM_EXEC is the most important case for mapped file page.
-
-Thanks.
