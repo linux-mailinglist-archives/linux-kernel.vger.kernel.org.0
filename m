@@ -2,62 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC1EA18885F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:55:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C021A188865
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:57:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbgCQOzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 10:55:49 -0400
-Received: from mga18.intel.com ([134.134.136.126]:9571 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726478AbgCQOzs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 10:55:48 -0400
-IronPort-SDR: +AwL8ns/o1/Mi2avIUrvyYesrQ6bf35Jcjor/Dk2Yv/Bc+GwVFGjPb52eGb02hbpO0nzxPx1SA
- HaNjDUb/CwXA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 07:55:48 -0700
-IronPort-SDR: F5WVtNGoovVCH4D/0UgxTfl963XCSHxim8CK/sXKmp/Jf2OYVLWSwk7NHZYjnmI/0eCdZ3WZhU
- U1PQTRo1T8xA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,564,1574150400"; 
-   d="scan'208";a="247843647"
-Received: from mnagar-mobl.amr.corp.intel.com (HELO [10.254.66.68]) ([10.254.66.68])
-  by orsmga006.jf.intel.com with ESMTP; 17 Mar 2020 07:55:47 -0700
-Subject: Re: [PATCH v17 05/12] PCI: portdrv: remove reset_link member from
- pcie_port_service_driver
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ashok.raj@intel.com
-References: <cover.1583286655.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <13d4866abf46f034f706f255287258cda99fadb4.1583286655.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <20200317144143.GD23471@infradead.org>
-From:   "Kuppuswamy, Sathyanarayanan" 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Message-ID: <496e07cf-2bdb-b1a5-c246-246103740ca1@linux.intel.com>
-Date:   Tue, 17 Mar 2020 07:55:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200317144143.GD23471@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        id S1726916AbgCQO5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 10:57:30 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58040 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726781AbgCQO53 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 10:57:29 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02HEv6wU121755;
+        Tue, 17 Mar 2020 10:57:10 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ytb21j7js-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 17 Mar 2020 10:57:10 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 02HEv89R121841;
+        Tue, 17 Mar 2020 10:57:08 -0400
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ytb21j7ef-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 17 Mar 2020 10:57:08 -0400
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02HEsKfH020816;
+        Tue, 17 Mar 2020 14:56:00 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma05wdc.us.ibm.com with ESMTP id 2yrpw68xw6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 17 Mar 2020 14:56:00 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02HEu0SO48628190
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Mar 2020 14:56:00 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 43BF9112063;
+        Tue, 17 Mar 2020 14:56:00 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 21BA3112061;
+        Tue, 17 Mar 2020 14:55:58 +0000 (GMT)
+Received: from jarvis.ext.hansenpartnership.com (unknown [9.85.150.164])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 17 Mar 2020 14:55:57 +0000 (GMT)
+Message-ID: <1584456957.4545.7.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 03/27] ata: make SATA_PMP option selectable only if
+ any SATA host driver is enabled
+From:   James Bottomley <jejb@linux.ibm.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Date:   Tue, 17 Mar 2020 07:55:57 -0700
+In-Reply-To: <20200317144333.2904-4-b.zolnierkie@samsung.com>
+References: <20200317144333.2904-1-b.zolnierkie@samsung.com>
+         <CGME20200317144342eucas1p2d73deadcdb4cee860dd610f9f8e26bda@eucas1p2.samsung.com>
+         <20200317144333.2904-4-b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-17_05:2020-03-17,2020-03-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 mlxlogscore=999 phishscore=0 impostorscore=0 bulkscore=0
+ clxscore=1011 malwarescore=0 priorityscore=1501 suspectscore=0
+ adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003170061
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 3/17/20 7:41 AM, Christoph Hellwig wrote:
-> On Tue, Mar 03, 2020 at 06:36:28PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
->> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-it.
+On Tue, 2020-03-17 at 15:43 +0100, Bartlomiej Zolnierkiewicz wrote:
+> There is no reason to expose SATA_PMP config option when no SATA
+> host drivers are enabled. To fix it add SATA_HOST config option,
+> make all SATA host drivers select it and finally make SATA_PMP
+> config options depend on it.
 > 
-> This should be folded into
-> "PCI/ERR: Remove service dependency in pcie_do_recovery()"
-I think Bjorn already folded them together. Please check.
-https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/commit/?h=review/edr&id=7a18dc6506f108db3dc40f5cd779bc15270c4183
-
+> This also serves as preparation for the future changes which
+> optimize libata core code size on PATA only setups.
 > 
+> CC: "James E.J. Bottomley" <jejb@linux.ibm.com>
+> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com> # for
+> SCSI bits
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/ata/Kconfig         | 40
+> +++++++++++++++++++++++++++++++++++++
+>  drivers/scsi/Kconfig        |  1 +
+>  drivers/scsi/libsas/Kconfig |  1 +
+>  3 files changed, 42 insertions(+)
+> 
+> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+> index a6beb2c5a692..ad7760656f71 100644
+> --- a/drivers/ata/Kconfig
+> +++ b/drivers/ata/Kconfig
+> @@ -34,6 +34,9 @@ if ATA
+>  config ATA_NONSTANDARD
+>         bool
+>  
+> +config SATA_HOST
+> +	bool
+> +
+>  config ATA_VERBOSE_ERROR
+>  	bool "Verbose ATA error reporting"
+>  	default y
+> @@ -73,6 +76,7 @@ config SATA_ZPODD
+>  
+>  config SATA_PMP
+>  	bool "SATA Port Multiplier support"
+> +	depends on SATA_HOST
+>  	default y
+>  	help
+>  	  This option adds support for SATA Port Multipliers
+> @@ -85,6 +89,7 @@ comment "Controllers with non-SFF native interface"
+>  config SATA_AHCI
+>  	tristate "AHCI SATA support"
+>  	depends on PCI
+> +	select SATA_HOST
+>  	help
+>  	  This option enables support for AHCI Serial ATA.
+
+This is a bit fragile and not the way Kconfig should be done.  The
+fragility comes because anyone adding a new host has also to remember
+to add the select, and there will be no real consequences for not doing
+so.  The way to get rid of the fragility is to make SATA_HOST a
+menuconfig option enclosing all the hosts, which makes the patch much
+smaller as well.  The hint implies you want to separate out all the
+PATA drivers, which also makes a menuconfig sound like the better
+option.
+
+I've also got to say that the problem doesn't seem to be one ... even
+if some raving lunatic disables all SATA hosts and then enables PMP it
+doesn't cause any problems does it?
+
+James
+
