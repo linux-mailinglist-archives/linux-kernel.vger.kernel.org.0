@@ -2,73 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 538A3187B32
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:27:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F14BC187B37
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:29:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726082AbgCQI1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 04:27:51 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43972 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbgCQI1v (ORCPT
+        id S1726407AbgCQI3D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 04:29:03 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46048 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbgCQI3C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 04:27:51 -0400
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jE7Zj-0005z9-NS; Tue, 17 Mar 2020 08:27:47 +0000
-Date:   Tue, 17 Mar 2020 09:27:46 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Hridya Valsaraju <hridya@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Todd Kjos <tkjos@android.com>,
-        LKML <linux-kernel@vger.kernel.org>, ard.biesheuvel@linaro.org,
-        ardb@kernel.org,
-        Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        linux-kselftest@vger.kernel.org, Martijn Coenen <maco@android.com>,
-        naresh.kamboju@linaro.org, shuah@kernel.org
-Subject: Re: [PATCH v2 3/3] binderfs: add stress test for binderfs binder
- devices
-Message-ID: <20200317082746.boc247ieui6cxvsz@wittgenstein>
-References: <20200312131531.3615556-1-christian.brauner@ubuntu.com>
- <20200313152420.138777-1-christian.brauner@ubuntu.com>
- <20200313152420.138777-3-christian.brauner@ubuntu.com>
- <202003131608.DA96ECE4D@keescook>
- <CA+wgaPNETmZHeiTeV4q1YkJU=yNXfN4hap5KS_cdR7YLJHnF5w@mail.gmail.com>
+        Tue, 17 Mar 2020 04:29:02 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b22so9290023pls.12
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 01:29:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wp49eG+mgt94Sf8OotuurBq01cQ7kmd6Td3YpYWcZnY=;
+        b=aSNejnASf5mtNy+7z5yy1Ul5UP6XqQ246NFpAeHvn9PFhcUV8DSwR3FwPahRoqPBMN
+         eikDVrHtDyogY6R0VE2RhdQA+Sm6dBjaWmYgJi6XoQg6J3KL25J9Aqxn8b+tyW33efEO
+         zM7EXFptBn3W6f9T6t1m/Gcr+ZsMiuLjchNm6PX9FSBGroSdP3NratVkmfl9s78vbUUE
+         Rhbgtt0KHQUxFBxccGfIoP3TPvOQVbx3Xh6MHiqHL60CcEqocAvSlJ3Ygy19BpnvTNn+
+         WYJ0CdGKX3QUtsoZEeMB51yALEal8/Vuozt17JHdCOom4s8aVqbW3MKnyWXxq72Y9pQe
+         cg6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wp49eG+mgt94Sf8OotuurBq01cQ7kmd6Td3YpYWcZnY=;
+        b=PjOKR0BSmD4EvAqPEFOzGsFKH7thidmhKPzMQMh2dANvzR6cf8jGrH5TmxTL4tu0Ue
+         UpXVIL4sBXmjtc0cLD8DQiS4AIGlNZVBXH8eUeDyz3685CH3BJOas+uIiP40U7gzis8L
+         nvr2yMgz+XvmqGG3Sn4RcDLqPFfMkm0gGOQ1namuGGhUaFvSgIfU03DG1dbf1ekrGTuH
+         fgTT7uUjPyMK8zp2RR+e7mapW75ETN13099+HH9ZZvuep5ab9hfI2G/MmWAif0GGv51z
+         8dCWCMZx7C5fFUwuz82zRUpMODdbLEYd3wF+6Nfu12pVqMqUs40oKtYeHaDYtG6JgLc7
+         Mnxw==
+X-Gm-Message-State: ANhLgQ1FJvhnhmlCOf4AOcidAGGILsy/LkEZSm1KaaH9h8WBw7I82IL6
+        humC61LocmtqglKWRHg7a8Rp0w==
+X-Google-Smtp-Source: ADFU+vuyGkQvDdcATxD0OMwlD0qwZwgEt45StAjnv6dNA1hgaFMp3uWeOX/5JY4BV3CS1ecWSQo/xQ==
+X-Received: by 2002:a17:90a:2503:: with SMTP id j3mr4205128pje.83.1584433739386;
+        Tue, 17 Mar 2020 01:28:59 -0700 (PDT)
+Received: from starnight.local ([150.116.255.181])
+        by smtp.googlemail.com with ESMTPSA id m68sm21095679pjb.0.2020.03.17.01.28.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2020 01:28:58 -0700 (PDT)
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+To:     Takashi Iwai <tiwai@suse.com>
+Cc:     Kailang Yang <kailang@realtek.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux@endlessm.com,
+        Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH 0/2] ALSA: hda/realtek: Enable headset for Acer desktops with ALC662
+Date:   Tue, 17 Mar 2020 16:28:05 +0800
+Message-Id: <20200317082806.73194-1-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CA+wgaPNETmZHeiTeV4q1YkJU=yNXfN4hap5KS_cdR7YLJHnF5w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 03:44:44PM -0700, Hridya Valsaraju wrote:
-> On Fri, Mar 13, 2020 at 4:08 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Fri, Mar 13, 2020 at 04:24:20PM +0100, Christian Brauner wrote:
-> > > This adds a stress test that should hopefully help us catch regressions
-> > > for [1], [2], and [3].
-> > >
-> > > [1]: 2669b8b0c798 ("binder: prevent UAF for binderfs devices")
-> > > [2]: f0fe2c0f050d ("binder: prevent UAF for binderfs devices II")
-> > > [3]: 211b64e4b5b6 ("binderfs: use refcount for binder control devices too")
-> > > Cc: Kees Cook <keescook@chromium.org>:
-> > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> >
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> >
-> > -Kees
-> >
-> 
-> Thank you for creating these tests Christian! I was able to get them
-> running on the cuttlefish platform with the ACK android-mainline
-> branch.
+This series enables the headset on Acer X2660G and N50-600 desktops with
+ALC662.
 
-Thank you, Hridya!
-Christian
+Jian-Hong Pan (2):
+  ALSA: hda/realtek - Enable headset mic of Acer X2660G with ALC662
+  ALSA: hda/realtek - Enable the headset of Acer N50-600 with ALC662
+
+ sound/pci/hda/patch_realtek.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+-- 
+2.25.1
+
