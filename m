@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6140C188BC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:13:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1D0A188BC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:13:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbgCQRMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 13:12:34 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45276 "EHLO
+        id S1726958AbgCQRMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 13:12:21 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45304 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726781AbgCQRME (ORCPT
+        with ESMTP id S1726797AbgCQRMF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 13:12:04 -0400
+        Tue, 17 Mar 2020 13:12:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=0f5ju+NTHnF9em3bX6jKZGjJjWejDNJLAl87ZEKr/L0=; b=cv8nrh6lNdHhzE3jgSSTOoc8i2
-        V4Cuz/xQFo0TkWQ2M4ppt8QCO38ovP3VBCeECgR8WmKqR9FpFprQ/nlivI5JeMU0S0vhH4BxyiD7w
-        wJGsOyvtdhoXfqU6noEM39IoBDQoSXE9+JlQqMvYqg0ykEn6/j5ssXSpJwbd43Q1uJSkYbFUI1GqQ
-        zkK+kPkunGNEgf922yh74B1HpoItWEez+neF7Xix4Wzy8aIDLIZF0v61LbOKgOcWTOWLi0SB7N+jQ
-        duXOVbYbEon3rh/Y3XthjoFftOR+GYKaoNhWFMrD6PvoPco4yMlQeREiwyZnvPiFph2ntXRIDGyU3
-        61p5CASg==;
+        bh=dU6va6Aq91cC4fGM3ILR0OQEEO08jQnCWNDmjMCoTSk=; b=IhIJ7aPSEFb+QonQ/TDU7zmeuK
+        8N446oQ6mv1NoHQVsYKfl4E8qA10gjTfwD1Nv34IC7DoleR4iT2Fm46UNqEkcoQZM8mnyTypWhumO
+        PH7+I1ITTrH4RQcONKTs/QfxgNqiK2qBXU7jXtIpe6YDCKLhUyMGOKCZ2JS2PIdgOcHjQUhZce+cI
+        jRiv6gKc5PZ8w0kDbvxQUgO0Tio25gqM0ZJbIwdbiwpvygf+mcaeuUYThZRBZvMg4/lACBT+G+QXQ
+        dmMFxIqpKrG5i/PsQgP18AzZ/hLdN8i9yZk6Ne/5Kd9h4HCii+7r0+O/jHVU0RE24fvupRtW7FjBE
+        4+7ibIcQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jEFl1-0003jO-CF; Tue, 17 Mar 2020 17:11:59 +0000
+        id 1jEFl1-0003ja-TJ; Tue, 17 Mar 2020 17:12:00 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3CDAE30743E;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 43D1A30744D;
         Tue, 17 Mar 2020 18:11:55 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 2EA54264FDB00; Tue, 17 Mar 2020 18:11:55 +0100 (CET)
-Message-Id: <20200317170910.901367876@infradead.org>
+        id 35FA5264FDB16; Tue, 17 Mar 2020 18:11:55 +0100 (CET)
+Message-Id: <20200317170910.983729109@infradead.org>
 User-Agent: quilt/0.65
-Date:   Tue, 17 Mar 2020 18:02:52 +0100
+Date:   Tue, 17 Mar 2020 18:02:53 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, jpoimboe@redhat.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org,
         mhiramat@kernel.org, mbenes@suse.cz, brgerst@gmail.com
-Subject: [PATCH v2 18/19] objtool: Use sec_offset_hash() for insn_hash
+Subject: [PATCH v2 19/19] objtool: Detect loading function pointers across noinstr
 References: <20200317170234.897520633@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,42 +48,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for find_insn_containing(), change insn_hash to use
-sec_offset_hash().
-
-This actually reduces runtime; probably because mixing in the section
-index reduces the collisions due to text sections all starting their
-instructions at offset 0.
-
-Runtime on vmlinux.o from 3.1 to 2.5 seconds.
+Detect if noinstr text loads functions pointers from regular text,
+doing so is a definite sign that indirect function calls are unsafe.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- tools/objtool/check.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ tools/objtool/arch.h  |    2 +
+ tools/objtool/check.c |   68 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/objtool/check.h |    2 -
+ 3 files changed, 71 insertions(+), 1 deletion(-)
 
+--- a/tools/objtool/arch.h
++++ b/tools/objtool/arch.h
+@@ -75,4 +75,6 @@ int arch_decode_instruction(struct elf *
+ 
+ bool arch_callee_saved_reg(unsigned char reg);
+ 
++#define MAX_INSN_SIZE 15
++
+ #endif /* _ARCH_H */
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -34,9 +34,10 @@ struct instruction *find_insn(struct obj
- {
- 	struct instruction *insn;
- 
--	hash_for_each_possible(file->insn_hash, insn, hash, offset)
-+	hash_for_each_possible(file->insn_hash, insn, hash, sec_offset_hash(sec, offset)) {
- 		if (insn->sec == sec && insn->offset == offset)
- 			return insn;
-+	}
- 
+@@ -42,6 +42,25 @@ struct instruction *find_insn(struct obj
  	return NULL;
  }
-@@ -276,7 +277,7 @@ static int decode_instructions(struct ob
- 			if (ret)
- 				goto err;
  
--			hash_add(file->insn_hash, &insn->hash, insn->offset);
-+			hash_add(file->insn_hash, &insn->hash, sec_offset_hash(sec, insn->offset));
- 			list_add_tail(&insn->list, &file->insn_list);
- 			nr_insns++;
++static struct instruction *find_insn_containing(struct objtool_file *file, struct section *sec,
++					 unsigned long offset)
++{
++	struct instruction *insn;
++	unsigned long o;
++
++	for_offset_range(o, offset - MAX_INSN_SIZE - 1, offset) {
++		hash_for_each_possible(file->insn_hash, insn, hash, sec_offset_hash(sec, o)) {
++			if (insn->sec != sec)
++				continue;
++
++			if (insn->offset <= offset && insn->offset + insn->len > offset)
++				return insn;
++		}
++	}
++
++	return NULL;
++}
++
+ static struct instruction *next_insn_same_sec(struct objtool_file *file,
+ 					      struct instruction *insn)
+ {
+@@ -2102,6 +2121,29 @@ static int validate_return(struct symbol
+ 	return 0;
+ }
+ 
++static int validate_rela(struct instruction *insn, struct insn_state *state)
++{
++	/*
++	 * Assume that any text rela that's not a CALL or JMP is a load of a
++	 * function pointer.
++	 */
++
++	switch (insn->type) {
++	case INSN_CALL:
++	case INSN_CALL_DYNAMIC:
++	case INSN_JUMP_CONDITIONAL:
++	case INSN_JUMP_UNCONDITIONAL:
++		return 0;
++	}
++
++	if (state->noinstr && state->instr <= 0 && insn->has_text_rela) {
++		WARN_FUNC("loading non-noinstr function pointer", insn->sec, insn->offset);
++		return 1;
++	}
++
++	return 0;
++}
++
+ /*
+  * Follow the branch starting at the given instruction, and recursively follow
+  * any other branches (jumps).  Meanwhile, track the frame pointer state at
+@@ -2217,6 +2259,10 @@ static int validate_branch(struct objtoo
+ 				return 0;
  		}
+ 
++		ret = validate_rela(insn, &state);
++		if (ret)
++			return ret;
++
+ 		switch (insn->type) {
+ 
+ 		case INSN_RETURN:
+@@ -2485,6 +2531,25 @@ static bool ignore_unreachable_insn(stru
+ 	return false;
+ }
+ 
++static void prepare_insn_rela(struct objtool_file *file, struct section *sec)
++{
++	struct instruction *insn;
++	struct rela *rela;
++
++	if (!sec->rela)
++		return;
++
++	list_for_each_entry(rela, &sec->rela->rela_list, list) {
++		insn = find_insn_containing(file, sec, rela->offset);
++		if (!insn)
++			continue;
++
++		insn->has_text_rela = rela->sym && rela->sym->sec &&
++				      rela->sym->sec->text &&
++				      !rela->sym->sec->noinstr;
++	}
++}
++
+ static int validate_sec_functions(struct objtool_file *file, struct section *sec)
+ {
+ 	struct symbol *func;
+@@ -2507,6 +2572,9 @@ static int validate_sec_functions(struct
+ 	if (vmlinux)
+ 		state.noinstr = sec->noinstr;
+ 
++	if (state.noinstr)
++		prepare_insn_rela(file, sec);
++
+ 	list_for_each_entry(func, &sec->symbol_list, list) {
+ 		if (func->type != STT_FUNC)
+ 			continue;
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -36,7 +36,7 @@ struct instruction {
+ 	enum insn_type type;
+ 	unsigned long immediate;
+ 	bool alt_group, dead_end, ignore, hint, save, restore, ignore_alts;
+-	bool retpoline_safe;
++	bool retpoline_safe, has_text_rela;
+ 	s8 instr;
+ 	u8 visited;
+ 	struct symbol *call_dest;
 
 
