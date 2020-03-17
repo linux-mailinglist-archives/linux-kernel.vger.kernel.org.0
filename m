@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FEB7188079
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:10:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CF7B187FB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:04:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727669AbgCQLKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:10:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53342 "EHLO mail.kernel.org"
+        id S1728164AbgCQLDp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:03:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729095AbgCQLKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:10:30 -0400
+        id S1727764AbgCQLDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:03:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38882206EC;
-        Tue, 17 Mar 2020 11:10:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCFA920658;
+        Tue, 17 Mar 2020 11:03:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443429;
-        bh=27sp3JF+1DsO3P0UarlbwTlhuFaECf9l/w11Uzak+ls=;
+        s=default; t=1584443011;
+        bh=OOSINW/hyFAGnHO/xbPruDAzEoRO0OuNE9KOW1QvA0w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L0UXoOy2m5vdgk2PJxZmmXpe7aC+AT69TwzF7jb8BvAamivdkvKE/TG3TztDXVfRA
-         tI+d1QzJnDXO4oaAwuJVoQld5h5mkUSUpprUiz12/n3/Br3aolPtjvCyVSCDuuYEPR
-         lD8QO5BvPi2B6uOLlbrXN7oK5TZ+EEFxyt8s0wAI=
+        b=ffgVd89BHKqmY+L4L0bVoCJDWdATKh+zVRKtLE91tHoWBLM9s4/0ZEqCttJ+fuVa5
+         n6kPPVjB9sHxO/dvnm7EsaphRWm3mKNXQptuGdedC+rtHvZKSAY+lt62E1hhUu1vwJ
+         orOoTFMzkYKPE3EXvoXodJwwCwpDGb9I2hCGgJeI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
         Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.5 080/151] netfilter: synproxy: synproxy_cpu_seq_next should increase position index
-Date:   Tue, 17 Mar 2020 11:54:50 +0100
-Message-Id: <20200317103332.153314734@linuxfoundation.org>
+Subject: [PATCH 5.4 064/123] netfilter: nf_conntrack: ct_cpu_seq_next should increase position index
+Date:   Tue, 17 Mar 2020 11:54:51 +0100
+Message-Id: <20200317103314.124953256@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
-References: <20200317103326.593639086@linuxfoundation.org>
+In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
+References: <20200317103307.343627747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,7 +45,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vasily Averin <vvs@virtuozzo.com>
 
-commit bb71f846a0002239f7058c84f1496648ff4a5c20 upstream.
+commit dc15af8e9dbd039ebb06336597d2c491ef46ab74 upstream.
 
 If .next function does not change position index,
 following .show function will repeat output related
@@ -59,14 +59,14 @@ Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_synproxy_core.c |    2 +-
+ net/netfilter/nf_conntrack_standalone.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/nf_synproxy_core.c
-+++ b/net/netfilter/nf_synproxy_core.c
-@@ -267,7 +267,7 @@ static void *synproxy_cpu_seq_next(struc
+--- a/net/netfilter/nf_conntrack_standalone.c
++++ b/net/netfilter/nf_conntrack_standalone.c
+@@ -411,7 +411,7 @@ static void *ct_cpu_seq_next(struct seq_
  		*pos = cpu + 1;
- 		return per_cpu_ptr(snet->stats, cpu);
+ 		return per_cpu_ptr(net->ct.stat, cpu);
  	}
 -
 +	(*pos)++;
