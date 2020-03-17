@@ -2,202 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75E931890D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:55:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53A0B1890DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:55:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbgCQVz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 17:55:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58142 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726983AbgCQVzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 17:55:14 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 589342076D;
-        Tue, 17 Mar 2020 21:55:14 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.93)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1jEKB7-000Evr-86; Tue, 17 Mar 2020 17:55:13 -0400
-Message-Id: <20200317215513.130223852@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Tue, 17 Mar 2020 17:55:00 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yiwei Zhang <zzyiwei@google.com>
-Subject: [for-next][PATCH 5/5] gpu/trace: add a gpu total memory usage tracepoint
-References: <20200317215455.885042360@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+        id S1727152AbgCQVzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 17:55:35 -0400
+Received: from mail-pj1-f73.google.com ([209.85.216.73]:58717 "EHLO
+        mail-pj1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727136AbgCQVze (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 17:55:34 -0400
+Received: by mail-pj1-f73.google.com with SMTP id r42so582690pjb.8
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 14:55:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=WT+AG0Sk/ZjsbVAj6df3wOLFgqAmNIj4Zm/1cV4P1Vo=;
+        b=f/XQqAF7rikS+kq72JE96CoyURVBBkA9s+VD784GcFuscAQMEqT8BZsDvwgn2K72z+
+         70QiXn9KQ4vrw+pm00jqwgc5PY2bzKMS79F7+Vr/r7QXpYNYlaQdXdu4MSn52eIlFuiv
+         tAra9AVXCtfla+Q3fOoOE398G9fl6X9D6pBOrxoyVs2RpASinrNAPptpnFDU0yHqD8bX
+         7hjwr5PQzajDODElLYdAxENT2Ei+qL0rYOQrBLqjLknkIyPVCIVCCCQ6jLK9ofrG5sdn
+         DmcVPFHpRGVQwzUT6rFeW86Le6CHm32yNUjyl0/pxOzRhTV5wfsNJxCm8nY4IYhMX+O4
+         GuHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=WT+AG0Sk/ZjsbVAj6df3wOLFgqAmNIj4Zm/1cV4P1Vo=;
+        b=AVcQ8omEUjij0b+YefrlY1ZfLP6CS8qNzQIUsDkG83r2WJ+P/yQjhvF6hOz1CRt4my
+         9ntkXI/L2folyzDPeI2/ubTyuxCBgQz77mrfxu690ruawvNPc2B9rtTl863zU43/44qt
+         BKXnOzpCHIL1WaHH8niHMYXQ/2Zc1/O5LAEabprLNQVZvCh8RT0cP0oxhnbtCpFbK2Ri
+         05c7cnAvI1/L1aq9PiedLOX8QwKwIdtcxweR//qPu+9JbrbDZnYu1QlNVkR2RUltzRke
+         kZtmj10nH3EQixbWxyns+BlYq1l2yAVuihmbkAK24rBGtiA91Sj4SX4H8Z94NnM4Y+W5
+         +bNg==
+X-Gm-Message-State: ANhLgQ0w4DBbkZ+tiplKU6aBMKf5Dupu7wfCmTPNhYYUb0ja2MspLQwu
+        0P8RctNyHWFCiLDl2Rj2mrpqUfgBYPc+hDeqO64=
+X-Google-Smtp-Source: ADFU+vuS0xWonKi4Fp4I1Q3iMtryayPwyc0mg4labRC0loGqDWERH8FWGZK3rp+BQl1e2GOre8x2IEv+J54qqrZK0/A=
+X-Received: by 2002:a17:90a:a511:: with SMTP id a17mr1330073pjq.178.1584482133186;
+ Tue, 17 Mar 2020 14:55:33 -0700 (PDT)
+Date:   Tue, 17 Mar 2020 14:55:15 -0700
+In-Reply-To: <20200317202404.GA20746@ubuntu-m2-xlarge-x86>
+Message-Id: <20200317215515.226917-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+References: <20200317202404.GA20746@ubuntu-m2-xlarge-x86>
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+Subject: [PATCH v2] Makefile.llvm: simplify LLVM build
+From:   Nick Desaulniers <ndesaulniers@google.com>
+To:     masahiroy@kernel.org, natechancellor@gmail.com
+Cc:     clang-built-linux@googlegroups.com, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yiwei Zhang <zzyiwei@google.com>
+Prior to this patch, building the Linux kernel with Clang
+looked like:
 
-This change adds the below gpu memory tracepoint:
-gpu_mem/gpu_mem_total: track global or proc gpu memory total usages
+$ make CC=clang
 
-Per process tracking of total gpu memory usage in the gem layer is not
-appropriate and hard to implement with trivial overhead. So for the gfx
-device driver layer to track total gpu memory usage both globally and
-per process in an easy and uniform way is to integrate the tracepoint in
-this patch to the underlying varied implementations of gpu memory
-tracking system from vendors.
+or when cross compiling:
 
-Putting this tracepoint in the common trace events can not only help
-wean the gfx drivers off of debugfs but also greatly help the downstream
-Android gpu vendors because debugfs is to be deprecated in the upcoming
-Android release. Then the gpu memory tracking of both Android kernel and
-the upstream linux kernel can stay closely, which can benefit the whole
-kernel eco-system in the long term.
+$ ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- make CC=clang
 
-Link: http://lkml.kernel.org/r/20200302235044.59163-1-zzyiwei@google.com
+which got very verbose and unwieldy when using all of LLVM's substitutes
+for GNU binutils:
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Yiwei Zhang <zzyiwei@google.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+$ ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- make CC=clang AS=clang \
+  LD=ld.lld AR=llvm-ar NM=llvm-nm STRIP=llvm-strip \
+  OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump OBJSIZE=llvm-objsize \
+  READELF=llvm-readelf HOSTCC=clang HOSTCXX=clang++ HOSTAR=llvm-ar \
+  HOSTLD=ld.lld
+
+This change adds a new Makefile under scripts/ which will be included in
+the top level Makefile AFTER CC and friends are set, in order to make
+the use of LLVM utilities when building a Linux kernel more ergonomic.
+
+With this patch, the above now looks like:
+
+$ ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- make LLVM=y
+
+Then you can "opt out" of certain LLVM utilities explicitly:
+
+$ ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- make LLVM=y AS=as
+
+will instead invoke arm-linux-gnueabihf-as in place of clang for AS.
+
+Or when not cross compiling:
+
+$ make LLVM=y AS=as
+
+This would make it more verbose to opt into just one tool from LLVM, but
+this patch doesn't actually break the old style; just leave off LLVM=y.
+Also, LLVM=y CC=clang would wind up prefixing clang with $CROSS_COMPILE.
+In that case, it's recommended to just drop LLVM=y and use the old
+style. So LLVM=y can be thought of as default to LLVM with explicit opt
+ins for GNU, vs the current case of default to GNU and opt in for LLVM.
+
+A key part of the design of this patch is to be minimally invasive to
+the top level Makefile and not break existing workflows. We could get
+more aggressive, but I'd prefer to save larger refactorings for another
+day.
+
+Finally, some linux distributions package specific versions of LLVM
+utilities with naming conventions that use the version as a suffix, ie.
+clang-11.  In that case, you can use LLVM=<number> and that number will
+be used as a suffix. Example:
+
+$ make LLVM=11
+
+will invoke clang-11, ld.lld-11, llvm-objcopy-11, etc.
+
+About the script:
+The pattern used in the script is in the form:
+
+ifeq "$(origin $(CC))" "file"
+$(CC) := $(clang)
+else
+override $(CC) := $(CROSS_COMPILE)$(CC)
+endif
+
+"Metaprogramming" (eval) is used to template the above to make it more
+concise for specifying all of the substitutions.
+
+The "origin" of a variable tracks whether a variable was explicitly set
+via "command line", "environment", was defined earlier via Makefile
+"file", was provided by "default", or was "undefined".
+
+Variable assignment in GNU Make has some special and complicated rules.
+
+If the variable was set earlier explicitly in the Makefile, we can
+simply reassign a new value to it. If a variable was unspecified, then
+earlier assignments were executed and change the origin to file.
+Otherwise, the variable was explicitly specified.
+
+If a variable's "origin" was "command line" or "environment",
+non-"override" assignments are not executed. The "override" directive
+forces the assignment regardless of "origin".
+
+Some tips I found useful for debugging for future travelers:
+
+$(info $$origin of $$CC is $(origin CC))
+
+at the start of the new script for all of the variables can help you
+understand "default" vs "undefined" variable origins.
+
+$(info $$CC is [${CC}])
+
+in the top level Makefile after including the new script, for all of the
+variables can help you check that they're being set as expected.
+
+Link: https://www.gnu.org/software/make/manual/html_node/Eval-Function.html
+Link: https://www.gnu.org/software/make/manual/html_node/Origin-Function.html
+Link: https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
+Link: https://www.gnu.org/software/make/manual/html_node/Override-Directive.html
+Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 ---
- drivers/Kconfig                   |  2 ++
- drivers/gpu/Makefile              |  1 +
- drivers/gpu/trace/Kconfig         |  4 +++
- drivers/gpu/trace/Makefile        |  3 ++
- drivers/gpu/trace/trace_gpu_mem.c | 13 +++++++
- include/trace/events/gpu_mem.h    | 57 +++++++++++++++++++++++++++++++
- 6 files changed, 80 insertions(+)
- create mode 100644 drivers/gpu/trace/Kconfig
- create mode 100644 drivers/gpu/trace/Makefile
- create mode 100644 drivers/gpu/trace/trace_gpu_mem.c
- create mode 100644 include/trace/events/gpu_mem.h
+Changes V1 -> V2:
+* Rather than LLVM=1, use LLVM=y to enable all.
+* LLVM=<anything other than y> becomes a suffix, LLVM_SUFFIX.
+* strip has to be used on the LLVM_SUFFIX to avoid an extra whitespace.
 
-diff --git a/drivers/Kconfig b/drivers/Kconfig
-index 8befa53f43be..e0eda1a5c3f9 100644
---- a/drivers/Kconfig
-+++ b/drivers/Kconfig
-@@ -200,6 +200,8 @@ source "drivers/thunderbolt/Kconfig"
+
+ Makefile              |  4 ++++
+ scripts/Makefile.llvm | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
+ create mode 100644 scripts/Makefile.llvm
+
+diff --git a/Makefile b/Makefile
+index 402f276da062..72ec9dfea15e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -475,6 +475,10 @@ KBUILD_LDFLAGS :=
+ GCC_PLUGINS_CFLAGS :=
+ CLANG_FLAGS :=
  
- source "drivers/android/Kconfig"
- 
-+source "drivers/gpu/trace/Kconfig"
++ifneq ($(LLVM),)
++include scripts/Makefile.llvm
++endif
 +
- source "drivers/nvdimm/Kconfig"
- 
- source "drivers/dax/Kconfig"
-diff --git a/drivers/gpu/Makefile b/drivers/gpu/Makefile
-index f17d01f076c7..835c88318cec 100644
---- a/drivers/gpu/Makefile
-+++ b/drivers/gpu/Makefile
-@@ -5,3 +5,4 @@
- obj-$(CONFIG_TEGRA_HOST1X)	+= host1x/
- obj-y			+= drm/ vga/
- obj-$(CONFIG_IMX_IPUV3_CORE)	+= ipu-v3/
-+obj-$(CONFIG_TRACE_GPU_MEM)		+= trace/
-diff --git a/drivers/gpu/trace/Kconfig b/drivers/gpu/trace/Kconfig
+ export ARCH SRCARCH CONFIG_SHELL BASH HOSTCC KBUILD_HOSTCFLAGS CROSS_COMPILE AS LD CC
+ export CPP AR NM STRIP OBJCOPY OBJDUMP OBJSIZE READELF PAHOLE LEX YACC AWK INSTALLKERNEL
+ export PERL PYTHON PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
+diff --git a/scripts/Makefile.llvm b/scripts/Makefile.llvm
 new file mode 100644
-index 000000000000..c24e9edd022e
+index 000000000000..0bab45a100a3
 --- /dev/null
-+++ b/drivers/gpu/trace/Kconfig
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0-only
++++ b/scripts/Makefile.llvm
+@@ -0,0 +1,30 @@
++LLVM_SUFFIX=
 +
-+config TRACE_GPU_MEM
-+	bool
-diff --git a/drivers/gpu/trace/Makefile b/drivers/gpu/trace/Makefile
-new file mode 100644
-index 000000000000..b70fbdc5847f
---- /dev/null
-+++ b/drivers/gpu/trace/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
++ifneq ($(LLVM),y)
++LLVM_SUFFIX += -$(LLVM)
++endif
 +
-+obj-$(CONFIG_TRACE_GPU_MEM) += trace_gpu_mem.o
-diff --git a/drivers/gpu/trace/trace_gpu_mem.c b/drivers/gpu/trace/trace_gpu_mem.c
-new file mode 100644
-index 000000000000..01e855897b6d
---- /dev/null
-+++ b/drivers/gpu/trace/trace_gpu_mem.c
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * GPU memory trace points
-+ *
-+ * Copyright (C) 2020 Google, Inc.
-+ */
++define META_set =
++ifeq "$(origin $(1))" "file"
++$(1) := $(2)$(strip $(LLVM_SUFFIX))
++else
++override $(1) := $(CROSS_COMPILE)$($(1))
++endif
++endef
 +
-+#include <linux/module.h>
++$(eval $(call META_set,CC,clang))
++$(eval $(call META_set,AS,clang))
++$(eval $(call META_set,LD,ld.lld))
++$(eval $(call META_set,AR,llvm-ar))
++$(eval $(call META_set,NM,llvm-nm))
++$(eval $(call META_set,STRIP,llvm-strip))
++$(eval $(call META_set,OBJCOPY,llvm-objcopy))
++$(eval $(call META_set,OBJDUMP,llvm-objdump))
++$(eval $(call META_set,OBJSIZE,llvm-objsize))
++$(eval $(call META_set,READELF,llvm-readelf))
++$(eval $(call META_set,HOSTCC,clang))
++$(eval $(call META_set,HOSTCXX,clang++))
++$(eval $(call META_set,HOSTAR,llvm-ar))
++$(eval $(call META_set,HOSTLD,ld.lld))
 +
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/gpu_mem.h>
-+
-+EXPORT_TRACEPOINT_SYMBOL(gpu_mem_total);
-diff --git a/include/trace/events/gpu_mem.h b/include/trace/events/gpu_mem.h
-new file mode 100644
-index 000000000000..1897822a9150
---- /dev/null
-+++ b/include/trace/events/gpu_mem.h
-@@ -0,0 +1,57 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * GPU memory trace points
-+ *
-+ * Copyright (C) 2020 Google, Inc.
-+ */
-+
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM gpu_mem
-+
-+#if !defined(_TRACE_GPU_MEM_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_GPU_MEM_H
-+
-+#include <linux/tracepoint.h>
-+
-+/*
-+ * The gpu_memory_total event indicates that there's an update to either the
-+ * global or process total gpu memory counters.
-+ *
-+ * This event should be emitted whenever the kernel device driver allocates,
-+ * frees, imports, unimports memory in the GPU addressable space.
-+ *
-+ * @gpu_id: This is the gpu id.
-+ *
-+ * @pid: Put 0 for global total, while positive pid for process total.
-+ *
-+ * @size: Virtual size of the allocation in bytes.
-+ *
-+ */
-+TRACE_EVENT(gpu_mem_total,
-+
-+	TP_PROTO(uint32_t gpu_id, uint32_t pid, uint64_t size),
-+
-+	TP_ARGS(gpu_id, pid, size),
-+
-+	TP_STRUCT__entry(
-+		__field(uint32_t, gpu_id)
-+		__field(uint32_t, pid)
-+		__field(uint64_t, size)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->gpu_id = gpu_id;
-+		__entry->pid = pid;
-+		__entry->size = size;
-+	),
-+
-+	TP_printk("gpu_id=%u pid=%u size=%llu",
-+		__entry->gpu_id,
-+		__entry->pid,
-+		__entry->size)
-+);
-+
-+#endif /* _TRACE_GPU_MEM_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
++## TODO: HOSTAR, HOSTLD in tools/objtool/Makefile
 -- 
-2.25.1
-
+2.25.1.481.gfbce0eb801-goog
 
