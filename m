@@ -2,55 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA12C188516
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 14:15:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C44A188512
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 14:14:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbgCQNPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 09:15:10 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:38307 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726597AbgCQNPK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 09:15:10 -0400
-Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 0231E10001E;
-        Tue, 17 Mar 2020 13:14:46 +0000 (UTC)
-Date:   Tue, 17 Mar 2020 14:14:45 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Eddie Huang <eddie.huang@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-rtc@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] rtc: mt2712: fix build without PM_SLEEP
-Message-ID: <20200317131445.GC3448@piout.net>
-References: <20200316104701.209293-1-alexandre.belloni@bootlin.com>
- <CAMuHMdVy6J1G5P6BQ14D65=pRu-q=+kcN3RV8mjtaZcwBooZyw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVy6J1G5P6BQ14D65=pRu-q=+kcN3RV8mjtaZcwBooZyw@mail.gmail.com>
+        id S1726802AbgCQNOv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 09:14:51 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:41397 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726084AbgCQNOv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 09:14:51 -0400
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 48hYYP2Xwpz9sSW; Wed, 18 Mar 2020 00:14:49 +1100 (AEDT)
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: a4037d1f1fc4e92b69d7196d4568c33078d465ea
+In-Reply-To: <20200303085604.24952-1-yuehaibing@huawei.com>
+To:     YueHaibing <yuehaibing@huawei.com>, <benh@kernel.crashing.org>,
+        <paulus@samba.org>, <christophe.leroy@c-s.fr>
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc:     YueHaibing <yuehaibing@huawei.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 -next] powerpc/pmac/smp: drop unnecessary volatile qualifier
+Message-Id: <48hYYP2Xwpz9sSW@ozlabs.org>
+Date:   Wed, 18 Mar 2020 00:14:49 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/03/2020 13:30:10+0100, Geert Uytterhoeven wrote:
-> >  static SIMPLE_DEV_PM_OPS(mt2712_pm_ops, mt2712_rtc_suspend,
-> >                          mt2712_rtc_resume);
+On Tue, 2020-03-03 at 08:56:04 UTC, YueHaibing wrote:
+> core99_l2_cache/core99_l3_cache no need to mark as volatile,
+> just remove it.
 > 
-> That's 23 more unused pointers in your kernel image.
-> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-This is true but, of the about 900 drivers setting pm callbacks, there
-are only 39 doing that conditionally depending on CONFIG_PM or
-CONFIG_PM_SLEEP. Interestingly, 9 of them are mediatek related.
+Applied to powerpc next, thanks.
 
+https://git.kernel.org/powerpc/c/a4037d1f1fc4e92b69d7196d4568c33078d465ea
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+cheers
