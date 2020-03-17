@@ -2,106 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E37BB1882C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:59:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 483B41882D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 13:04:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbgCQL71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:59:27 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:24510 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726859AbgCQL7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:59:19 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 48hWtF5WkCz11M;
-        Tue, 17 Mar 2020 12:59:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1584446357; bh=Yunblq+vBjk2n/Nm/+xygbmnnJtFlxULaGDCihYlQNY=;
-        h=Date:In-Reply-To:References:From:Subject:To:Cc:From;
-        b=iaeYiusKm9WYTGNPr/jn3qnnh1GlXlIqlnuq977dxBFDslnJT1K45A68pa1CRsgZ8
-         kz2h+4B9GgqyE8cFme/T0DyUYWbRSccDP6IY6TwHQiPfXlHOI53yLZ16NPW7vzdSB/
-         ueR8bHlnvK8MHN+AdvdVfqZqgmONRntCx6I40p5BVyQ7XEtcEu4OeVyItcsJkuOuke
-         FW++KCEFnRnl8udcPmb8mDEyXJsSWDTAN9goBTMqH7ZRqNTdm5o2R+gAozoS3aRDQn
-         l8dsPtwqWNPbkVJwZi/qW1C/MNpoTHDcYoZADGsJDQEYtg+W4HfqYvLyTzyVXUPvgX
-         GHMaqzs//nbag==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.2 at mail
-Date:   Tue, 17 Mar 2020 12:59:17 +0100
-Message-Id: <16dc3d1ec8af924ea6d274225574993d68faf8d3.1584446053.git.mirq-linux@rere.qmqm.pl>
-In-Reply-To: <cover.1584446053.git.mirq-linux@rere.qmqm.pl>
-References: <cover.1584446053.git.mirq-linux@rere.qmqm.pl>
-From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2 3/3] clk: at91: sama5d2: allow setting all PMC clock parents
- via DT
+        id S1726707AbgCQMEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 08:04:05 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:47366 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbgCQMEF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 08:04:05 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02HC1j8I000556;
+        Tue, 17 Mar 2020 07:01:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584446505;
+        bh=wjn4Q51nWQESg+W49NEoLzwZmi+vaAV5Ld0LLIhWlMU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=KNL1OXo9R7zP4eMivWB4YnLEg888FaJWaGkzMD5YYZcsng8pfehS7k6fR7PvpulCz
+         ZjYhiCPs7bBFO6fdxT0GWADv1bDM5eKivS1hatnQNu3sosUujTF+qlvEc5qqKdv7wc
+         9SRMgnYWYt4NvxqtEC4khpx4utYWlHORTpjYAxoA=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02HC1j8g024334
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 17 Mar 2020 07:01:45 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
+ Mar 2020 07:01:45 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 17 Mar 2020 07:01:45 -0500
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02HC1ggs013068;
+        Tue, 17 Mar 2020 07:01:43 -0500
+Subject: Re: [PATCH] arm: dts: ti: k3-am654-main: Update otap-del-sel values
+To:     Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <mark.rutland@arm.com>, <robh+dt@kernel.org>, <nm@ti.com>
+References: <20200109085152.10573-1-faiz_abbas@ti.com>
+ <5dc0bca0-502d-01b8-554b-4c4bc06688a8@ti.com>
+ <54c5abfd-7ac5-92ba-e89b-aeae9ee4e275@ti.com>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <3b721020-7ef2-410f-325c-6e17bdffc4a6@ti.com>
+Date:   Tue, 17 Mar 2020 14:01:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To:     Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <54c5abfd-7ac5-92ba-e89b-aeae9ee4e275@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need to have clocks accessible via phandle to select them
-as peripheral clock parent using assigned-clock-parents in DT.
-PLLACK and AUDIOPLLCK were missing for sama5d2. Add them.
+On 09/03/2020 09:11, Faiz Abbas wrote:
+> Tero,
+> 
+> On 17/01/20 1:38 pm, Tero Kristo wrote:
+>> On 09/01/2020 10:51, Faiz Abbas wrote:
+>>> According to the latest AM65x Data Manual[1], a different output tap
+>>> delay value is optimum for a given speed mode. Update these values.
+>>>
+>>> [1] http://www.ti.com/lit/gpn/am6526
+>>>
+>>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+>>
+>> I believe this patch is going to be updated, as the dt binding has
+>> received comments. As such, going to ignore this for now.
+>>
+> 
+> Those other series are merged now so you should be able to pick this up.
 
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
----
-v2: rebase to clk/clk-at91 branch
----
- drivers/clk/at91/sama5d2.c       | 6 +++++-
- include/dt-bindings/clock/at91.h | 2 ++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+There were no changes to the DT binding?
 
-diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-index ae5e83cadb3d..b3fa2291ccd8 100644
---- a/drivers/clk/at91/sama5d2.c
-+++ b/drivers/clk/at91/sama5d2.c
-@@ -166,7 +166,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 	if (IS_ERR(regmap))
- 		return;
- 
--	sama5d2_pmc = pmc_data_allocate(PMC_I2S1_MUX + 1,
-+	sama5d2_pmc = pmc_data_allocate(PMC_AUDIOPLLCK + 1,
- 					nck(sama5d2_systemck),
- 					nck(sama5d2_periph32ck),
- 					nck(sama5d2_gck), 3);
-@@ -202,6 +202,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
-+	sama5d2_pmc->chws[PMC_PLLACK] = hw;
-+
- 	hw = at91_clk_register_audio_pll_frac(regmap, "audiopll_fracck",
- 					      "mainck");
- 	if (IS_ERR(hw))
-@@ -217,6 +219,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
-+	sama5d2_pmc->chws[PMC_AUDIOPLLCK] = hw;
-+
- 	regmap_sfr = syscon_regmap_lookup_by_compatible("atmel,sama5d2-sfr");
- 	if (IS_ERR(regmap_sfr))
- 		regmap_sfr = NULL;
-diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
-index c3f4aa6a2d29..e57362e98129 100644
---- a/include/dt-bindings/clock/at91.h
-+++ b/include/dt-bindings/clock/at91.h
-@@ -21,6 +21,8 @@
- #define PMC_MCK2		4
- #define PMC_I2S0_MUX		5
- #define PMC_I2S1_MUX		6
-+#define PMC_PLLACK		7
-+#define PMC_AUDIOPLLCK		8
- 
- #ifndef AT91_PMC_MOSCS
- #define AT91_PMC_MOSCS		0		/* MOSCS Flag */
--- 
-2.20.1
+Can you resend the DTS patch, and refer to the merged dt-binding? I 
+deleted the whole series from my inbox already based on above.
 
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
