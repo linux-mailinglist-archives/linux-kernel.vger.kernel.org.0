@@ -2,172 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FE4D187B4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:30:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4499E187B5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:33:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbgCQIaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 04:30:10 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37429 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbgCQIaJ (ORCPT
+        id S1726329AbgCQIdm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 04:33:42 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:34599 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725906AbgCQIdl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 04:30:09 -0400
-Received: by mail-io1-f68.google.com with SMTP id q9so109540iod.4
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 01:30:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=antmicro.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jyDCPfs8KzQ6V9GNlBy3Iu/4R6G5EhS/k3t/Fwg1hEI=;
-        b=c2DNi1WYbLLOwQlnk496EBc46hHCbpcGgzkJhdPeh+6ID51gwq5Jj/tOQI2UYMpf/n
-         vnfERJoln5g5y2c0NWtui4fSc5SfruZjtXx0RN1rTF/T5KZCJVYq57TvhIk87PE+YaHO
-         N4tzhqg/VE4XzV57jM7rqCpA6vHTAaOhnG5ZU=
+        Tue, 17 Mar 2020 04:33:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584434019;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=foL6JJOYZrFK3mSnjY6WUeWsSQCHtrDfHzZTVEx4CZc=;
+        b=LAr2du4uzQ4PaTkoxzLpOxTBhCapU7UWAtXES01nxCukiCVDcmUWpO01zGaX99CmGkYUmn
+        Kh2JaiNjsRkMDXeQbrRBtOHQ/ZWHWE+pYYhUAFN8JS4gCz7UiNODuDewZEXgRHgz3fTAr4
+        zxaan2alxa7W9tXF5dhmPcTnysLvZOE=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-279-iPbavoGyPQKomN5YBW4trg-1; Tue, 17 Mar 2020 04:27:23 -0400
+X-MC-Unique: iPbavoGyPQKomN5YBW4trg-1
+Received: by mail-wm1-f72.google.com with SMTP id f185so1638371wmf.8
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 01:27:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jyDCPfs8KzQ6V9GNlBy3Iu/4R6G5EhS/k3t/Fwg1hEI=;
-        b=n/Lrl2m4pmj9H9B4epinEQSEKmJf8ikxeUyiyvAPvCIi2nG7vynIQn9fE/4G8Xl2B9
-         u/pi8kwDGrR0d4tPSAGaZ7xbVAlXghx6Zr6+bKZvUEcJFKOesp8t2JMkgm6C5ZxpKfsb
-         hNO6KaTW0ZZd2jhmXVqDDXFGm1fEvIrwvyDIbSZpHKFoLybjodBG8ESTi8Jh+XvKpSOY
-         5KPRs4EZRXd1WAej63Brtdgqm5YcmCcWa84vgz89NWPXbxMtKEsQNOQIcmfsc3FPRh0w
-         XYlqJKvZBMXS/39MKqyw3XpVL7BKgPGp5X88FdAlEkV0ib+fO4MGeglC5w3SzZSd//G6
-         uUeQ==
-X-Gm-Message-State: ANhLgQ1NfzuzdlQFh4YOLscbhZyto8mPJQFM/tT+uhB4JSzi97tPSJj0
-        wrQKP+EYeyVQp+r3ypDotIytfBCTaeDGkg893mG9KQ==
-X-Google-Smtp-Source: ADFU+vsmUU61jePkqUhV9101lLple16cpG72xhffs/pv3VGzuG9vSytaE1R6wvK2rDvh0OMxsd/cWfOD7XaF60KVv4A=
-X-Received: by 2002:a02:1d44:: with SMTP id 65mr4200166jaj.6.1584433808056;
- Tue, 17 Mar 2020 01:30:08 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=foL6JJOYZrFK3mSnjY6WUeWsSQCHtrDfHzZTVEx4CZc=;
+        b=nmjtHZ6I8d3fhalC+4ZJaO9seyCsy9eheD/g2UeBTmWE41GMEPLbLugnqrVKytROCX
+         AaniTEGEZc0GSIFfcEdwaE6D6f8FlF2s24Z74p433V7iRX/c1Kc7/+bzfyjbvCNyl/yv
+         evv5kM3OEPcKAje44wsB7WTMdgJk12AH4+SR+bZbw1W8e+CKsbfe9CAwOVqn1Lquzjhi
+         9L2tHBQae4BxexnM2w+5igqkm4PGNAMBPub4+mA5GP9LdMfmFKK9Uvqz0/7BDi8BRBql
+         LVCfrt/vqmVaOT1VISJOkUAOVOK6ZtousQPy5cdF5Flhd/m2hPs+Za9OVJZvvkNWLgyE
+         mWHg==
+X-Gm-Message-State: ANhLgQ1cOTlrI82ZyMBP34fYNFUPkiwKhWOinb1rfKFOiNtoZNEGw6A+
+        jTBsVAOfUJkcvzumAWEALdJu+9VRzs2SW417HsGDtKMvBw0Iq8mJjXrYmuM7TGmxRebxpP0U0X/
+        jTAmMLoCy0kNe/cWfkBIEzsP3
+X-Received: by 2002:adf:f8cf:: with SMTP id f15mr4550927wrq.79.1584433642581;
+        Tue, 17 Mar 2020 01:27:22 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vtzsfYZvt8nfYEYXfZXarAl3GIPsJCUzStTnjN3KlFioXLSxKAYt9rYm3Jvv7s4DtIWPmCwQQ==
+X-Received: by 2002:adf:f8cf:: with SMTP id f15mr4550890wrq.79.1584433642260;
+        Tue, 17 Mar 2020 01:27:22 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:24d8:ed40:c82a:8a01? ([2001:b07:6468:f312:24d8:ed40:c82a:8a01])
+        by smtp.gmail.com with ESMTPSA id t5sm2922781wmi.34.2020.03.17.01.27.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Mar 2020 01:27:21 -0700 (PDT)
+Subject: Re: [PATCH] KVM: x86: Expose AVX512 VP2INTERSECT in cpuid for TGL
+To:     Zhenyu Wang <zhenyuw@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Zhong, Yang" <yang.zhong@intel.com>
+References: <20200317065553.64790-1-zhenyuw@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <dcc9899c-f5af-9a4f-3ac2-f37fd8b930f7@redhat.com>
+Date:   Tue, 17 Mar 2020 09:27:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200225094437.4170502-0-mholenko@antmicro.com>
- <20200225094437.4170502-2-mholenko@antmicro.com> <20200225091055.ubm5r3p6r4ydchyh@gilmour.lan>
-In-Reply-To: <20200225091055.ubm5r3p6r4ydchyh@gilmour.lan>
-From:   Mateusz Holenko <mholenko@antmicro.com>
-Date:   Tue, 17 Mar 2020 09:29:56 +0100
-Message-ID: <CAPk366ReVDbWEESC0WRBs-JD0jdG3gV9st679g-cBrzxYWd1bg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] dt-bindings: soc: document LiteX SoC Controller bindings
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, devicetree@vger.kernel.org,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Stafford Horne <shorne@gmail.com>,
-        Karol Gugala <kgugala@antmicro.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Filip Kokosinski <fkokosinski@antmicro.com>,
-        Pawel Czarnecki <pczarnecki@internships.antmicro.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200317065553.64790-1-zhenyuw@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
+On 17/03/20 07:55, Zhenyu Wang wrote:
+> On Tigerlake new AVX512 VP2INTERSECT feature is available.
+> This would expose it for KVM supported cpuid.
+> 
+> Cc: "Zhong, Yang" <yang.zhong@intel.com>
+> Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+> ---
+>  arch/x86/kvm/cpuid.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index b1c469446b07..b4e25ff6ab0a 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -374,7 +374,7 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry, int index)
+>  	const u32 kvm_cpuid_7_0_edx_x86_features =
+>  		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) |
+>  		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) | F(INTEL_STIBP) |
+> -		F(MD_CLEAR);
+> +		F(MD_CLEAR) | F(AVX512_VP2INTERSECT);
+>  
+>  	/* cpuid 7.1.eax */
+>  	const u32 kvm_cpuid_7_1_eax_x86_features =
+> 
 
-On Tue, Feb 25, 2020 at 10:11 AM Maxime Ripard <maxime@cerno.tech> wrote:
->
-> Hi Mateusz,
->
-> On Tue, Feb 25, 2020 at 09:46:45AM +0100, Mateusz Holenko wrote:
-> > From: Pawel Czarnecki <pczarnecki@internships.antmicro.com>
-> >
-> > Add documentation for LiteX SoC Controller bindings.
-> >
-> > Signed-off-by: Pawel Czarnecki <pczarnecki@internships.antmicro.com>
-> > Signed-off-by: Mateusz Holenko <mholenko@antmicro.com>
-> > ---
-> >
-> > Notes:
-> >     This commit has been introduced in v3 of the patchset.
-> >
-> >  .../soc/litex/litex,soc_controller.yaml       | 46 +++++++++++++++++++
-> >  MAINTAINERS                                   |  6 +++
-> >  2 files changed, 52 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/soc/litex/litex,soc_controller.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/soc/litex/litex,soc_controller.yaml b/Documentation/devicetree/bindings/soc/litex/litex,soc_controller.yaml
-> > new file mode 100644
-> > index 000000000000..039894265319
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/soc/litex/litex,soc_controller.yaml
-> > @@ -0,0 +1,46 @@
-> > +PDX-License-Identifier: GPL-2.0
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/soc/litex/litex,soc_controller.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: LiteX SoC Controller driver
-> > +
-> > +description: |
-> > +  This is the SoC Controller driver for the LiteX SoC Builder.
-> > +  It's purpose is to verify LiteX CSR (Control&Status Register) access
-> > +  operations and provide function for other drivers to read/write CSRs
-> > +  and to check if those accessors are ready to use.
-> > +
-> > +maintainers:
-> > +  - Karol Gugala <kgugala@antmicro.com>
-> > +  - Mateusz Holenko <mholenko@antmicro.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: litex,soc_controller
->
-> Usually compatible will use dash as separators, not underscores.
->
-> > +  reg:
-> > +    description: Base address and length of the register space
->
-> This is usually removed since it's what's expected from the property
-> anyway. However, what you should really test for in the number of
-> address/size couples being set, and you can do that using maxItems: 1
->
-> > +  status:
-> > +    description: |
-> > +      disables or enables node
-> > +
-> > +    const: "okay"
->
-> This is added automatically by the tooling, so you can leave it out.
->
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - status
->
-> And in general, status is not required. Leaving status out is
-> equivalent to status = "okay"
->
-> > +examples:
-> > +  - |
-> > +
-> > +  soc_ctrl0: soc_controller@f0000000 {
-> > +                     compatible = "litex,soc_controller";
-> > +                     reg = <0x0 0xf0000000 0x0 0xC>;
-> > +                     status = "okay";
-> > +  };
->
-> The indentation looks weird here?
->
-> Maxime
+Hi Zhenyu,
 
-Thanks for all the comments!
+please rebase - the CPUID mechanism is completely rewritten in kvm/queue.
 
-I'll fix this file and resubmit the whole patchset after addressing
-other remarks.
+Thanks,
 
---
-Mateusz Holenko
-Antmicro Ltd | www.antmicro.com
-Roosevelta 22, 60-829 Poznan, Poland
+Paolo
+
