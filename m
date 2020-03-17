@@ -2,58 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F14BC187B37
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:29:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24D15187B48
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:30:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbgCQI3D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 04:29:03 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46048 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbgCQI3C (ORCPT
+        id S1726651AbgCQIaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 04:30:03 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40494 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726019AbgCQIaC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 04:29:02 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b22so9290023pls.12
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 01:29:00 -0700 (PDT)
+        Tue, 17 Mar 2020 04:30:02 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t24so11314326pgj.7
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 01:30:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wp49eG+mgt94Sf8OotuurBq01cQ7kmd6Td3YpYWcZnY=;
-        b=aSNejnASf5mtNy+7z5yy1Ul5UP6XqQ246NFpAeHvn9PFhcUV8DSwR3FwPahRoqPBMN
-         eikDVrHtDyogY6R0VE2RhdQA+Sm6dBjaWmYgJi6XoQg6J3KL25J9Aqxn8b+tyW33efEO
-         zM7EXFptBn3W6f9T6t1m/Gcr+ZsMiuLjchNm6PX9FSBGroSdP3NratVkmfl9s78vbUUE
-         Rhbgtt0KHQUxFBxccGfIoP3TPvOQVbx3Xh6MHiqHL60CcEqocAvSlJ3Ygy19BpnvTNn+
-         WYJ0CdGKX3QUtsoZEeMB51yALEal8/Vuozt17JHdCOom4s8aVqbW3MKnyWXxq72Y9pQe
-         cg6w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=gZuIwtZ+2hf7pTqEUWqw1JVhU89MyFlE8Sqn8Fq++lU=;
+        b=kqYfXL1Ip04HSNa8KkPDkDcYn9wmErZYNjZYbNvEgOyOvNcKeM6PnUSsd63PcWQ4cE
+         ffmMU1uEnPka286OXda1tk8F4bTmOJTGkxiSkayEbrknb1/F1jxXabXASpWuC1zXLvHk
+         lUiAfATamDJucgdSejqSv2xOcEeuROXpdQBR5g2y6Sx/xsMOoWMvt7sXCWmgFI0PncXD
+         T/XHlwOeZHYjHem5INobJ54nKD/SllrBAwAJGQTzEqz7z7SG61QQA0Yd7Mux51uw5lGO
+         6YS4qXeFVzCFAxBO89ViyIi9uXKzUbXAf3YBI4lnzPkA/2TzGG0H9IUq6Zt1Xr6XyoIB
+         TdVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wp49eG+mgt94Sf8OotuurBq01cQ7kmd6Td3YpYWcZnY=;
-        b=PjOKR0BSmD4EvAqPEFOzGsFKH7thidmhKPzMQMh2dANvzR6cf8jGrH5TmxTL4tu0Ue
-         UpXVIL4sBXmjtc0cLD8DQiS4AIGlNZVBXH8eUeDyz3685CH3BJOas+uIiP40U7gzis8L
-         nvr2yMgz+XvmqGG3Sn4RcDLqPFfMkm0gGOQ1namuGGhUaFvSgIfU03DG1dbf1ekrGTuH
-         fgTT7uUjPyMK8zp2RR+e7mapW75ETN13099+HH9ZZvuep5ab9hfI2G/MmWAif0GGv51z
-         8dCWCMZx7C5fFUwuz82zRUpMODdbLEYd3wF+6Nfu12pVqMqUs40oKtYeHaDYtG6JgLc7
-         Mnxw==
-X-Gm-Message-State: ANhLgQ1FJvhnhmlCOf4AOcidAGGILsy/LkEZSm1KaaH9h8WBw7I82IL6
-        humC61LocmtqglKWRHg7a8Rp0w==
-X-Google-Smtp-Source: ADFU+vuyGkQvDdcATxD0OMwlD0qwZwgEt45StAjnv6dNA1hgaFMp3uWeOX/5JY4BV3CS1ecWSQo/xQ==
-X-Received: by 2002:a17:90a:2503:: with SMTP id j3mr4205128pje.83.1584433739386;
-        Tue, 17 Mar 2020 01:28:59 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=gZuIwtZ+2hf7pTqEUWqw1JVhU89MyFlE8Sqn8Fq++lU=;
+        b=JQgKOJbnLj/K68EJi7ACHCbf0DiDaROT9QujE+1QbVmYPTp9zPabhoCpNTs93lZREu
+         sQGEBgrAZAPLZWnCs7//AMZ9WULn5jwwVjK8kZtz8kTCrQklS0iYbtnge4bgP5EnBAdV
+         9bNE6UmmJ4ngDqlWedP7EXbsfGpOPQbvfrtNq2AFFjmDv28HnXzLJYhqWcSwZnihsYM/
+         FCRePnkV161L55UbluVV5HWEU/7Z36ZMSVzQJHi643I2oPUuXeZ3uwz++lOqxafzu2Cm
+         4jn8bDwGZTCqUcyt/JRA/xZdi78L8aivV7gf88rgFwHHRbvrrokOZZ8MTczxRcqfbyal
+         S3fg==
+X-Gm-Message-State: ANhLgQ39DJPGErvIolVj175o9oEj7kKZCjZjXGDGtOaYJHQ/2kiX0Lli
+        zP9haBG5jwTa2lx4DBOSkkOyzQ==
+X-Google-Smtp-Source: ADFU+vuuKNJsNdUjh+PEtFFc4KNbme2kHZkfB9E0YtDtV8C5w+Ed+TLaDuX5RWPZPS0rV5JHuMXVIg==
+X-Received: by 2002:a63:e053:: with SMTP id n19mr4100628pgj.64.1584433799881;
+        Tue, 17 Mar 2020 01:29:59 -0700 (PDT)
 Received: from starnight.local ([150.116.255.181])
-        by smtp.googlemail.com with ESMTPSA id m68sm21095679pjb.0.2020.03.17.01.28.57
+        by smtp.googlemail.com with ESMTPSA id m68sm21095679pjb.0.2020.03.17.01.29.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2020 01:28:58 -0700 (PDT)
+        Tue, 17 Mar 2020 01:29:59 -0700 (PDT)
 From:   Jian-Hong Pan <jian-hong@endlessm.com>
 To:     Takashi Iwai <tiwai@suse.com>
 Cc:     Kailang Yang <kailang@realtek.com>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, linux@endlessm.com,
         Jian-Hong Pan <jian-hong@endlessm.com>
-Subject: [PATCH 0/2] ALSA: hda/realtek: Enable headset for Acer desktops with ALC662
-Date:   Tue, 17 Mar 2020 16:28:05 +0800
-Message-Id: <20200317082806.73194-1-jian-hong@endlessm.com>
+Subject: [PATCH 1/2] ALSA: hda/realtek - Enable headset mic of Acer X2660G with ALC662
+Date:   Tue, 17 Mar 2020 16:28:07 +0800
+Message-Id: <20200317082806.73194-2-jian-hong@endlessm.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200317082806.73194-1-jian-hong@endlessm.com>
+References: <20200317082806.73194-1-jian-hong@endlessm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,16 +63,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series enables the headset on Acer X2660G and N50-600 desktops with
-ALC662.
+The Acer desktop X2660G with ALC662 can't detect the headset microphone
+until ALC662_FIXUP_ACER_X2660G_HEADSET_MODE quirk applied.
 
-Jian-Hong Pan (2):
-  ALSA: hda/realtek - Enable headset mic of Acer X2660G with ALC662
-  ALSA: hda/realtek - Enable the headset of Acer N50-600 with ALC662
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+---
+ sound/pci/hda/patch_realtek.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
- sound/pci/hda/patch_realtek.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 0ac06ff1a17c..bb29c25f4567 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -8610,6 +8610,7 @@ enum {
+ 	ALC669_FIXUP_ACER_ASPIRE_ETHOS,
+ 	ALC669_FIXUP_ACER_ASPIRE_ETHOS_HEADSET,
+ 	ALC671_FIXUP_HP_HEADSET_MIC2,
++	ALC662_FIXUP_ACER_X2660G_HEADSET_MODE,
+ };
+ 
+ static const struct hda_fixup alc662_fixups[] = {
+@@ -8955,6 +8956,15 @@ static const struct hda_fixup alc662_fixups[] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc671_fixup_hp_headset_mic2,
+ 	},
++	[ALC662_FIXUP_ACER_X2660G_HEADSET_MODE] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x1a, 0x02a1113c }, /* use as headset mic, without its own jack detect */
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC662_FIXUP_USI_FUNC
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc662_fixup_tbl[] = {
+@@ -8966,6 +8976,7 @@ static const struct snd_pci_quirk alc662_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1025, 0x0349, "eMachines eM250", ALC662_FIXUP_INV_DMIC),
+ 	SND_PCI_QUIRK(0x1025, 0x034a, "Gateway LT27", ALC662_FIXUP_INV_DMIC),
+ 	SND_PCI_QUIRK(0x1025, 0x038b, "Acer Aspire 8943G", ALC662_FIXUP_ASPIRE),
++	SND_PCI_QUIRK(0x1025, 0x124e, "Acer 2660G", ALC662_FIXUP_ACER_X2660G_HEADSET_MODE),
+ 	SND_PCI_QUIRK(0x1028, 0x05d8, "Dell", ALC668_FIXUP_DELL_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x05db, "Dell", ALC668_FIXUP_DELL_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x05fe, "Dell XPS 15", ALC668_FIXUP_DELL_XPS13),
 -- 
 2.25.1
 
