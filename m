@@ -2,123 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEB0A188240
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:32:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE23C188252
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:37:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726597AbgCQLcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:32:46 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42291 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbgCQLcq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:32:46 -0400
-Received: by mail-ot1-f66.google.com with SMTP id a2so362818otq.9;
-        Tue, 17 Mar 2020 04:32:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yETyFwQ9Htl1KGbLhFFP34JxwM+8all8kt5P2BYv2cs=;
-        b=fFmWaGRP50iLWykmVJMdnEKnpISzEjo9Sn0f1FwWkcW/b+/a2QQhFmVdPlvbFS3WaH
-         yGlVd6Qj9wfuOK4rAOCEqjh345Vk63nTpOHsyckuJO4luM5x8giHWlbjhe45f3pY62xy
-         hE5+fUPtfuuRv3TNobMIeVOCgAVVMmDf6oDKmbj6vZtdC7iF+sv7+aluMJgBjD9+q9zy
-         E2ij2P3iO73fiIUpJk8y9ENCsA+MR8qOFAbZ3L40pIW57E+irTeiA0QwDHjPYiwyxtbS
-         Ha10zX+5EJ7qoJZBnEqlR2enM9jM7VbUkflNLtZKooC95MJeh27URlNMY10VnvJbVKRS
-         thmA==
-X-Gm-Message-State: ANhLgQ0xU5/AaCkxHNeIDFuPw7wxuPKBc6+R4U3TlZha5Rn1fTePRvk1
-        mXCElEIonS1sEGkrUdElq6jKMgOkmfG9QyTH3VE=
-X-Google-Smtp-Source: ADFU+vvQTAgcQxsOpqflnHCgzX47yo6RoUnPbT1ipGmHWNBjNYcXjsyzilFOOHau23AhLSA/+Thi1PZ5zI/u0X1X+7w=
-X-Received: by 2002:a9d:1708:: with SMTP id i8mr3337224ota.250.1584444762958;
- Tue, 17 Mar 2020 04:32:42 -0700 (PDT)
+        id S1726555AbgCQLhI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:37:08 -0400
+Received: from mail-vi1eur05on2089.outbound.protection.outlook.com ([40.107.21.89]:43744
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725794AbgCQLhI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:37:08 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XnCnIkMRl3E7z0eTDUxrJsKjo3V1aiBHX0UWxDz1NxGosum1xyruWOX3fwSRJga7XiDOexl9z6yOc8G5D6Edbq3sK5qqZGwBzdxdLiztyxsKm7F0B+ufJcSPXGC21flhk4/nrI8wno9eHIq7asuhCvbPGR2kQ0vCBA/f+RMUUBJq31TDfVnSqdOk63ckXVHcXJc2luRkmj+GUx7eHC4QWPbh7xnjgwX8m6dkobZbG3l53i/ac0P/kAl0s1ePnCTNZxe/+7uNe8YVwp0GxpNuboCZt0T43kGG9ua4mg8KQoRi+b8XFDsFQrh8c1hJH8yHalkrI8G86t/j36FGLCuStA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zQQJmgoDYJbWuBxC9YO0ZQG5YzULXKJ0XyD9y0sVRVU=;
+ b=hMxuwYNgjTov2hISfgskotussrnNwXV+TWptSPslwQvU3Vu/2jV3BNVzplsybQH8zXnx37ol1GGwu66zsjImSRwSvCjC7Y9waJ4XmG3+MteFAM5Dqv5vJ2R09UOl/e/RMmrC5w2Z5P4trVUELGCE8M/Zfe1OKh2Xf7+xOzjLUrLYcoEp8TuHP+OW5QgfW8uQ4IZn4ty6cwyr8xT5fHWlSx+s7VzHHD9j7qjI0tYA91bIkOdZab6DRs8gk0tX4/Ho/WejJ0XYHDabJJMa7cv27ZvfgOjl5vIGnelIEgaJD/AVF3gGIJ0i1yaIxc9fIYbF16qWg91n8AJ8rzptmc7c/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zQQJmgoDYJbWuBxC9YO0ZQG5YzULXKJ0XyD9y0sVRVU=;
+ b=XONFGi7lU465OsxyURNJYVKi0WBJPuqnTUoOJQOOG6Ozkjog+2s+ieoyehSQu7FisOtaOrm+cHwovQB2Ngdhp4csNUebYKeiC/Hn4FPJAZbimyhlPSIZuamjfLBNwk90uni9O8HeqtJYts5O7cE0+fyr4R5PEOoQ03dw0AB3CnI=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=calvin.johnson@oss.nxp.com; 
+Received: from AM0PR04MB5636.eurprd04.prod.outlook.com (20.178.202.86) by
+ AM0PR04MB7153.eurprd04.prod.outlook.com (10.186.131.204) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.14; Tue, 17 Mar 2020 11:37:02 +0000
+Received: from AM0PR04MB5636.eurprd04.prod.outlook.com
+ ([fe80::1b4:31d2:1485:6e07]) by AM0PR04MB5636.eurprd04.prod.outlook.com
+ ([fe80::1b4:31d2:1485:6e07%7]) with mapi id 15.20.2814.021; Tue, 17 Mar 2020
+ 11:37:02 +0000
+Date:   Tue, 17 Mar 2020 17:06:50 +0530
+From:   Calvin Johnson <calvin.johnson@oss.nxp.com>
+To:     Jeremy Linton <jeremy.linton@arm.com>
+Cc:     linux.cj@gmail.com, Jon Nettleton <jon@solid-run.com>,
+        linux@armlinux.org.uk, Makarand Pawagi <makarand.pawagi@nxp.com>,
+        cristian.sovaiala@nxp.com, laurentiu.tudor@nxp.com,
+        ioana.ciornei@nxp.com, V.Sethi@nxp.com, pankaj.bansal@nxp.com,
+        "Rajesh V . Bikkina" <rajesh.bikkina@nxp.com>,
+        Marcin Wojtas <mw@semihalf.com>, Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v1 1/7] mdio_bus: Introduce fwnode MDIO helpers
+Message-ID: <20200317113650.GA6016@lsv03152.swis.in-blr01.nxp.com>
+References: <20200131153440.20870-1-calvin.johnson@nxp.com>
+ <20200131153440.20870-2-calvin.johnson@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200131153440.20870-2-calvin.johnson@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: SG2PR06CA0189.apcprd06.prod.outlook.com (2603:1096:4:1::21)
+ To AM0PR04MB5636.eurprd04.prod.outlook.com (2603:10a6:208:130::22)
 MIME-Version: 1.0
-References: <20200218151812.7816-1-geert+renesas@glider.be> <20200218151812.7816-4-geert+renesas@glider.be>
-In-Reply-To: <20200218151812.7816-4-geert+renesas@glider.be>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 17 Mar 2020 12:32:31 +0100
-Message-ID: <CAMuHMdWXJKdD7j6QiRb4fL+fFsyDKpc7aGK-nER=CZd7bxGyPg@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] gpio: Add GPIO Aggregator
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from lsv03152.swis.in-blr01.nxp.com (14.142.151.118) by SG2PR06CA0189.apcprd06.prod.outlook.com (2603:1096:4:1::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.15 via Frontend Transport; Tue, 17 Mar 2020 11:36:57 +0000
+X-Originating-IP: [14.142.151.118]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 06da80fb-3b50-4769-bd85-08d7ca6782d6
+X-MS-TrafficTypeDiagnostic: AM0PR04MB7153:|AM0PR04MB7153:
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB715309A3175C5F3108D8304DD2F60@AM0PR04MB7153.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 0345CFD558
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(376002)(396003)(39860400002)(346002)(199004)(186003)(16526019)(5660300002)(316002)(44832011)(86362001)(54906003)(956004)(66946007)(66556008)(66476007)(478600001)(33656002)(4326008)(1076003)(8676002)(9686003)(81156014)(81166006)(8936002)(55016002)(6666004)(1006002)(7696005)(52116002)(6506007)(2906002)(7416002)(6916009)(26005)(55236004)(110426005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB7153;H:AM0PR04MB5636.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;
+Received-SPF: None (protection.outlook.com: oss.nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Agx+6WwlUZMvMwY5+xvkIOeHOd/QHNIWUm+eoeWxHNsmNmSwjCLVOmG3PUsv0F8XkMaRe7CtERUUBC9OPi1sCv6+zFFtD/midMlERCSSjySuAHHF09le2QUSLxNM0UWOcEcEbY5jhlMYVX1aKZeuIoO1oV4G3K8IrSZ2CQ5jxDjCpUfdPpyE6rSvQ7SI61N0L4vGP+9DYQQDfxUkOf9uuJQPOR1k2ZgqOlyj4nWt98MA4RUXQNwCyCzi2cqOD/aFTjhI61B4QrBDtKF4Py+zWh2gz5TetW8WclWgR99DQt/VAR1jANCPjpWHUsBd+4472BFZdjRbH8gq2o4fTsKvwHNsYy5XlHw5tkNi3T4QL0AKyzRS6fJogEHZDv+wp8tPdlvCXELkIscUc8e7mAYzLjpITGMPH6EdQ1+P1MPtF8fYBmfcy7U/4CZ4lhyZBbQ8LS0AQtyVHGwjdNwS1XEKzkVrYfHhBIyK8Zm6gI+ityPMH0+z9Z00uZo0rALv9djd
+X-MS-Exchange-AntiSpam-MessageData: 3rfCOvF5xfeRXsvW2FnBpwFnosPqguOSzFU2zW8bBpdIEJ2/d1ZnA9IJIBUICQPyFGdsR9KC1cluct24VpLwx8EHcBUfsKsapC+w2+n04Pzm2T+RyZWWDrEzmIr9o4ISnz9bRlppuR58tMyEA+xA1g==
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06da80fb-3b50-4769-bd85-08d7ca6782d6
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2020 11:37:02.6285
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WqnHT2gOro7JKPiaWFCyl9vhpJB1JR82GWkXCLX5eDnn5DyBo/ihJu5i2pcePJ7fSHpNYFjAhXWZSux+GkebXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 4:18 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> GPIO controllers are exported to userspace using /dev/gpiochip*
-> character devices.  Access control to these devices is provided by
-> standard UNIX file system permissions, on an all-or-nothing basis:
-> either a GPIO controller is accessible for a user, or it is not.
-> Currently no mechanism exists to control access to individual GPIOs.
->
-> Hence add a GPIO driver to aggregate existing GPIOs, and expose them as
-> a new gpiochip.
->
-> This supports the following use cases:
->   - Aggregating GPIOs using Sysfs
->     This is useful for implementing access control, and assigning a set
->     of GPIOs to a specific user or virtual machine.
->   - Generic GPIO Driver
->     This is useful for industrial control, where it can provide
->     userspace access to a simple GPIO-operated device described in DT,
->     cfr. e.g. spidev for SPI-operated devices.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi,
 
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-aggregator.c
+On Fri, Jan 31, 2020 at 09:04:34PM +0530, Calvin Johnson wrote:
 
-> +static int gpio_fwd_set_config(struct gpio_chip *chip, unsigned int offset,
-> +                              unsigned long config)
+<snip>
+
+> +/**
+> + * fwnode_mdiobus_child_is_phy - Return true if the child is a PHY node.
+> + * It must either:
+> + * o Compatible string of "ethernet-phy-ieee802.3-c45"
+> + * o Compatible string of "ethernet-phy-ieee802.3-c22"
+> + * Checking "compatible" property is done, in order to follow the DT binding.
+> + */
+> +static bool fwnode_mdiobus_child_is_phy(struct fwnode_handle *child)
 > +{
-> +       struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
+> +	int ret;
 > +
-> +       chip = fwd->descs[offset]->gdev->chip;
-> +       if (chip->set_config)
+> +	ret = fwnode_property_match_string(child, "compatible",
+> +					   "ethernet-phy-ieee802.3-c45");
+> +	if (!ret)
+> +		return true;
+> +
+> +	ret = fwnode_property_match_string(child, "compatible",
+> +					   "ethernet-phy-ieee802.3-c22");
+> +	if (!ret)
+> +		return true;
+> +
+> +	if (!fwnode_property_present(child, "compatible"))
+> +		return true;
+> +
+> +	return false;
+> +}
 
--       chip = fwd->descs[offset]->gdev->chip;
--       if (chip->set_config)
-+       chip = gpiod_to_chip(fwd->descs[offset]);
-+       if (chip && chip->set_config)
+Can we use _CID in ACPI to get the compatible string? Is there any other method
+to handle this kind of situation where we would like to pass C45 or C22 info to
+the mdiobus driver?
 
-> +               return chip->set_config(chip, offset, config);
-
-This is not correct: offset should be translated, too, i.e.
-
-    offset = gpio_chip_hwgpio(fwd->descs[offset]);
-
-Which adds a new dependency on "gpiolib.h"...
-
-Is there a better alternative, than providing a public gpiod_set_config()
-helper?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks
+Calvin
