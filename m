@@ -2,86 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A199E1888AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 16:09:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E1D51888B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 16:10:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbgCQPJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 11:09:39 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:36619 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726478AbgCQPJi (ORCPT
+        id S1727079AbgCQPJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 11:09:58 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:25769 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726704AbgCQPJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 11:09:38 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584457778; h=Content-Transfer-Encoding: MIME-Version:
- References: In-Reply-To: Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=UrmrOXjGTq5RxGy42q7tGcOyFhDO4TM3w0P3Bv5qeeU=; b=FAwlqkkJwCBJ+ujsxc8g5lckLlfQ2Vc7mPAwDwiLk8CBoOkNXQyiYdWzatxQRJ1lXSjlVgxv
- lhA/GlDal8B+haNK2oM7gUQjAkEApwe/OuNKwMggrBcOYq6OdNX2aHPfBFViUQNT1eVMi1WZ
- VGewf2WBGWZLMQMu3g5BXNia36A=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e70e831.7fcbb8ab2b90-smtp-out-n02;
- Tue, 17 Mar 2020 15:09:37 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 61A8EC44791; Tue, 17 Mar 2020 15:09:37 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Tue, 17 Mar 2020 11:09:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584457797;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=f8iILvFH/Hh45WwWd2Tll4O2HS3c9EOcQluJDAT1Tvs=;
+        b=WwePlZ2mdEftUcL3KKvHGj6t24XAlgOwRbIoHz02rEnBQyVrYOC9N7igAbzURDcnC711G+
+        n0685M8BUMIIyggbwkdqeoYEMabHd+ODifQUc5SQiOrW/o0YkRSsvkb5U1kcHhBTnUYr6l
+        dFDDa0v8htZAscdBLOdv8eegR7RAG+s=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-198-umzcRsxPNaGg6J9B0q9hpA-1; Tue, 17 Mar 2020 11:09:56 -0400
+X-MC-Unique: umzcRsxPNaGg6J9B0q9hpA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E053EC433CB;
-        Tue, 17 Mar 2020 15:09:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E053EC433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org, robh+dt@kernel.org, joro@8bytes.org,
-        robin.murphy@arm.com
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-remoteproc@vger.kernel.org, ohad@wizery.com,
-        agross@kernel.org, dianders@chromium.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 3/3] arm64: dts: qcom: sdm845-cheza: Add iommus property
-Date:   Tue, 17 Mar 2020 20:39:10 +0530
-Message-Id: <20200317150910.26053-4-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200317150910.26053-1-sibis@codeaurora.org>
-References: <20200317150910.26053-1-sibis@codeaurora.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1C8E0A1366;
+        Tue, 17 Mar 2020 15:09:53 +0000 (UTC)
+Received: from krava (unknown [10.40.195.82])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1138D5D9E5;
+        Tue, 17 Mar 2020 15:09:47 +0000 (UTC)
+Date:   Tue, 17 Mar 2020 16:09:45 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Kajol Jain <kjain@linux.ibm.com>
+Cc:     acme@kernel.org, linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
+        sukadev@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, anju@linux.vnet.ibm.com,
+        maddy@linux.vnet.ibm.com, ravi.bangoria@linux.ibm.com,
+        peterz@infradead.org, yao.jin@linux.intel.com, ak@linux.intel.com,
+        jolsa@kernel.org, kan.liang@linux.intel.com, jmario@redhat.com,
+        alexander.shishkin@linux.intel.com, mingo@kernel.org,
+        paulus@ozlabs.org, namhyung@kernel.org, mpetlan@redhat.com,
+        gregkh@linuxfoundation.org, benh@kernel.crashing.org,
+        mamatha4@linux.vnet.ibm.com, mark.rutland@arm.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH v5 08/11] perf/tools: Refactoring metricgroup__add_metric
+ function
+Message-ID: <20200317150945.GC757893@krava>
+References: <20200317062333.14555-1-kjain@linux.ibm.com>
+ <20200317062333.14555-9-kjain@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200317062333.14555-9-kjain@linux.ibm.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add iommus property to remoteproc modem node.
+On Tue, Mar 17, 2020 at 11:53:30AM +0530, Kajol Jain wrote:
+> This patch refactor metricgroup__add_metric function where
+> some part of it move to function metricgroup__add_metric_param.
+> No logic change.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+can't compile this change:
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
-index 8d16d016efec1..01c7d7cc95c2d 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
-@@ -626,6 +626,10 @@ &mdss_mdp {
- 	status = "okay";
- };
- 
-+&mss_pil {
-+	iommus = <&apps_smmu 0x780 0x1>;
-+};
-+
- &pm8998_pwrkey {
- 	status = "disabled";
- };
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+[jolsa@krava perf]$ make JOBS=3D1
+  BUILD:   Doing 'make -j1' parallel build
+  CC       util/metricgroup.o
+util/metricgroup.c: In function =E2=80=98metricgroup__add_metric_param=E2=
+=80=99:
+util/metricgroup.c:486:6: error: too many arguments to function =E2=80=98=
+expr__find_other=E2=80=99
+  486 |  if (expr__find_other(pe->metric_expr, NULL, &ids, &idnum, 1) < 0=
+)
+      |      ^~~~~~~~~~~~~~~~
+In file included from util/metricgroup.c:14:
+util/expr.h:25:5: note: declared here
+   25 | int expr__find_other(const char *expr, const char *one, const cha=
+r ***other,
+      |     ^~~~~~~~~~~~~~~~
+mv: cannot stat 'util/.metricgroup.o.tmp': No such file or directory
+make[4]: *** [/home/jolsa/kernel/linux-perf/tools/build/Makefile.build:97=
+: util/metricgroup.o] Error 1
+make[3]: *** [/home/jolsa/kernel/linux-perf/tools/build/Makefile.build:13=
+9: util] Error 2
+make[2]: *** [Makefile.perf:616: perf-in.o] Error 2
+make[1]: *** [Makefile.perf:225: sub-make] Error 2
+make: *** [Makefile:70: all] Error 2
+
+jirka
+
+>=20
+> Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
+> ---
+>  tools/perf/util/metricgroup.c | 63 +++++++++++++++++++++--------------
+>  1 file changed, 38 insertions(+), 25 deletions(-)
+>=20
+> diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgrou=
+p.c
+> index c3a8c701609a..b4919bcfbd8b 100644
+> --- a/tools/perf/util/metricgroup.c
+> +++ b/tools/perf/util/metricgroup.c
+> @@ -474,6 +474,41 @@ static bool metricgroup__has_constraint(struct pmu=
+_event *pe)
+>  	return false;
+>  }
+> =20
+> +static int metricgroup__add_metric_param(struct strbuf *events,
+> +			struct list_head *group_list, struct pmu_event *pe)
+> +{
+> +
+> +	const char **ids;
+> +	int idnum;
+> +	struct egroup *eg;
+> +	int ret =3D -EINVAL;
+> +
+> +	if (expr__find_other(pe->metric_expr, NULL, &ids, &idnum, 1) < 0)
+> +		return ret;
+> +
+> +	if (events->len > 0)
+> +		strbuf_addf(events, ",");
+> +
+> +	if (metricgroup__has_constraint(pe))
+> +		metricgroup__add_metric_non_group(events, ids, idnum);
+> +	else
+> +		metricgroup__add_metric_weak_group(events, ids, idnum);
+> +
+> +	eg =3D malloc(sizeof(*eg));
+> +	if (!eg)
+> +		ret =3D -ENOMEM;
+> +
+> +	eg->ids =3D ids;
+> +	eg->idnum =3D idnum;
+> +	eg->metric_name =3D pe->metric_name;
+> +	eg->metric_expr =3D pe->metric_expr;
+> +	eg->metric_unit =3D pe->unit;
+> +	list_add_tail(&eg->nd, group_list);
+> +	ret =3D 0;
+> +
+> +	return ret;
+> +}
+> +
+>  static int metricgroup__add_metric(const char *metric, struct strbuf *=
+events,
+>  				   struct list_head *group_list)
+>  {
+> @@ -493,35 +528,13 @@ static int metricgroup__add_metric(const char *me=
+tric, struct strbuf *events,
+>  			continue;
+>  		if (match_metric(pe->metric_group, metric) ||
+>  		    match_metric(pe->metric_name, metric)) {
+> -			const char **ids;
+> -			int idnum;
+> -			struct egroup *eg;
+> =20
+>  			pr_debug("metric expr %s for %s\n", pe->metric_expr, pe->metric_nam=
+e);
+> =20
+> -			if (expr__find_other(pe->metric_expr,
+> -					     NULL, &ids, &idnum) < 0)
+> +			ret =3D metricgroup__add_metric_param(events,
+> +							group_list, pe);
+> +			if (ret =3D=3D -EINVAL)
+>  				continue;
+> -			if (events->len > 0)
+> -				strbuf_addf(events, ",");
+> -
+> -			if (metricgroup__has_constraint(pe))
+> -				metricgroup__add_metric_non_group(events, ids, idnum);
+> -			else
+> -				metricgroup__add_metric_weak_group(events, ids, idnum);
+> -
+> -			eg =3D malloc(sizeof(struct egroup));
+> -			if (!eg) {
+> -				ret =3D -ENOMEM;
+> -				break;
+> -			}
+> -			eg->ids =3D ids;
+> -			eg->idnum =3D idnum;
+> -			eg->metric_name =3D pe->metric_name;
+> -			eg->metric_expr =3D pe->metric_expr;
+> -			eg->metric_unit =3D pe->unit;
+> -			list_add_tail(&eg->nd, group_list);
+> -			ret =3D 0;
+>  		}
+>  	}
+>  	return ret;
+> --=20
+> 2.18.1
+>=20
+
