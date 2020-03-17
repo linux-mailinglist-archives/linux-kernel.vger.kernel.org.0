@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFBB418818E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:20:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82CD518810D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:15:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbgCQLEz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:04:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45390 "EHLO mail.kernel.org"
+        id S1728990AbgCQLMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:12:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727233AbgCQLEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:04:52 -0400
+        id S1727923AbgCQLMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:12:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61CF420736;
-        Tue, 17 Mar 2020 11:04:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A5C12071C;
+        Tue, 17 Mar 2020 11:12:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443091;
-        bh=5PijdFmFRebM4/faTYYTKN8nsbI9NjTNSpFpwjImLTQ=;
+        s=default; t=1584443520;
+        bh=OBlJkf5LEBooOxz/pRfGnBAjEMUlZH/6MyYD1wLrYug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bJLwl4vkw7lyB9ziofYtfq+eNwZgFVMr+C5sllT/cr/+r0t3JuVjGjlHFaFpmB0f9
-         vRFWMMox1hJQzz9vcM3BljVRyEbaHBl+aA00NF9+jOSKPHWGWW/ZfjE4TmMtO4pGc0
-         XWk+Q93dpw4T5mswjb43q1hjdeueHvOW9A/3yVkk=
+        b=vQUbnzGXU8oOrfP24p8wzmk7UD35Osk+OP65LOLGk8NnJKVzvX5c++QL1q3Z5IJeF
+         KL54XeERSzo0Hq4gMQCkFLP7JH1DZ90L7dX2pv+96qmHjkkQ87BiLFN6sCq2RKXEgi
+         67G6bBPtsO4C5u1YqOT9Qp4K+VV2yC8/Jvkl4Wzk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>, Will Deacon <will@kernel.org>
-Subject: [PATCH 5.4 093/123] iommu/dma: Fix MSI reservation allocation
+        stable@vger.kernel.org, Corey Minyard <cminyard@mvista.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Adrian Reber <areber@redhat.com>
+Subject: [PATCH 5.5 110/151] pid: Fix error return value in some cases
 Date:   Tue, 17 Mar 2020 11:55:20 +0100
-Message-Id: <20200317103317.347165671@linuxfoundation.org>
+Message-Id: <20200317103334.271538396@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
-References: <20200317103307.343627747@linuxfoundation.org>
+In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
+References: <20200317103326.593639086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,66 +47,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Zyngier <maz@kernel.org>
+From: Corey Minyard <cminyard@mvista.com>
 
-commit 65ac74f1de3334852fb7d9b1b430fa5a06524276 upstream.
+commit b26ebfe12f34f372cf041c6f801fa49c3fb382c5 upstream.
 
-The way cookie_init_hw_msi_region() allocates the iommu_dma_msi_page
-structures doesn't match the way iommu_put_dma_cookie() frees them.
+Recent changes to alloc_pid() allow the pid number to be specified on
+the command line.  If set_tid_size is set, then the code scanning the
+levels will hard-set retval to -EPERM, overriding it's previous -ENOMEM
+value.
 
-The former performs a single allocation of all the required structures,
-while the latter tries to free them one at a time. It doesn't quite
-work for the main use case (the GICv3 ITS where the range is 64kB)
-when the base granule size is 4kB.
+After the code scanning the levels, there are error returns that do not
+set retval, assuming it is still set to -ENOMEM.
 
-This leads to a nice slab corruption on teardown, which is easily
-observable by simply creating a VF on a SRIOV-capable device, and
-tearing it down immediately (no need to even make use of it).
-Fortunately, this only affects systems where the ITS isn't translated
-by the SMMU, which are both rare and non-standard.
+So set retval back to -ENOMEM after scanning the levels.
 
-Fix it by allocating iommu_dma_msi_page structures one at a time.
-
-Fixes: 7c1b058c8b5a3 ("iommu/dma: Handle IOMMU API reserved regions")
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Will Deacon <will@kernel.org>
-Cc: stable@vger.kernel.org
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: 49cb2fc42ce4 ("fork: extend clone3() to support setting a PID")
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: Andrei Vagin <avagin@gmail.com>
+Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Adrian Reber <areber@redhat.com>
+Cc: <stable@vger.kernel.org> # 5.5
+Link: https://lore.kernel.org/r/20200306172314.12232-1-minyard@acm.org
+[christian.brauner@ubuntu.com: fixup commit message]
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/dma-iommu.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ kernel/pid.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -176,15 +176,15 @@ static int cookie_init_hw_msi_region(str
- 	start -= iova_offset(iovad, start);
- 	num_pages = iova_align(iovad, end - start) >> iova_shift(iovad);
- 
--	msi_page = kcalloc(num_pages, sizeof(*msi_page), GFP_KERNEL);
--	if (!msi_page)
--		return -ENOMEM;
--
- 	for (i = 0; i < num_pages; i++) {
--		msi_page[i].phys = start;
--		msi_page[i].iova = start;
--		INIT_LIST_HEAD(&msi_page[i].list);
--		list_add(&msi_page[i].list, &cookie->msi_page_list);
-+		msi_page = kmalloc(sizeof(*msi_page), GFP_KERNEL);
-+		if (!msi_page)
-+			return -ENOMEM;
-+
-+		msi_page->phys = start;
-+		msi_page->iova = start;
-+		INIT_LIST_HEAD(&msi_page->list);
-+		list_add(&msi_page->list, &cookie->msi_page_list);
- 		start += iovad->granule;
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -247,6 +247,8 @@ struct pid *alloc_pid(struct pid_namespa
+ 		tmp = tmp->parent;
  	}
  
++	retval = -ENOMEM;
++
+ 	if (unlikely(is_child_reaper(pid))) {
+ 		if (pid_ns_prepare_proc(ns))
+ 			goto out_free;
 
 
