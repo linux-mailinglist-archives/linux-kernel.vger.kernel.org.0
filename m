@@ -2,76 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 165921888CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 16:13:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC0151888C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 16:12:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbgCQPNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 11:13:22 -0400
-Received: from out28-217.mail.aliyun.com ([115.124.28.217]:35288 "EHLO
-        out28-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727026AbgCQPNV (ORCPT
+        id S1726825AbgCQPMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 11:12:47 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:40362 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726478AbgCQPMq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 11:13:21 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2359753|-1;CH=green;DM=||false|;DS=CONTINUE|ham_system_inform|0.00824287-0.00013658-0.991621;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03291;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=9;RT=9;SR=0;TI=SMTPD_---.H0zKH5l_1584457917;
-Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.H0zKH5l_1584457917)
-          by smtp.aliyun-inc.com(10.147.42.241);
-          Tue, 17 Mar 2020 23:13:13 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, paul@crapouillou.net,
-        dongsheng.qiu@ingenic.com, yanfei.li@ingenic.com,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
-Subject: [PATCH RESEND] clk: Ingenic: Add support for TCU of X1000.
-Date:   Tue, 17 Mar 2020 23:11:33 +0800
-Message-Id: <1584457893-40418-3-git-send-email-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584457893-40418-1-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1584457893-40418-1-git-send-email-zhouyanjie@wanyeetech.com>
+        Tue, 17 Mar 2020 11:12:46 -0400
+Received: by mail-vs1-f68.google.com with SMTP id m25so5275140vsa.7
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 08:12:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TMnGNLtemyYfK63VsKtAIUfhYRVvGpYyUyZZJL3pFE8=;
+        b=krPP7HlJbr5Dn8feHiKoBw/GYprYC3TKDcwhHNekL+6MG5CG72nWF0fp/Z4WONtZmZ
+         nsaZLia3aLvc4Yasfn60ZXH0MF3i2iGNSVmiZ0TyUUkfTG9D1u2h30TH8V9R3Y/Ji6va
+         ckIB9FCfSyqIcJL+IfFmAKzRjwm+b9IPUk8eU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TMnGNLtemyYfK63VsKtAIUfhYRVvGpYyUyZZJL3pFE8=;
+        b=SCKfHRZInfcx3MeKTNYjasM4HsDKfSfRNvv59ls+cLkjXwEZU3htn7KHUTfL+0GnW6
+         qPwygwu6iTsixrCSu4qth8/l4keqC3uCJK9+gzqj7+CRNLLoIbXfZz39p35moxojnPvg
+         tYV28FpH2lc3VNPZTDfAU7+KCH9dUhZrNovYFwHab4LUJQ9fYM2p+LKwm520pjeL414A
+         Xzm9z4DV4LCVqwiSHcXs20SOe919bfYwbWi1d68aQor4uKR+TVvUUDlTng+E8DLh5d2z
+         B+QslSjcrQgm4MLTC9V3BQY/IHol72aYdIrVoPzp7RVblmG0QGr2fUEegI4NOIFHr/ss
+         qflg==
+X-Gm-Message-State: ANhLgQ38tOKd8gkfiNgNH/MwlpKdAwibzICYkPUSVgdx8zObWcZIZQPx
+        lG8oTK9WLKy/MvJQDkplqMidSAIYPnM=
+X-Google-Smtp-Source: ADFU+vtUFePAnpMfpLcNJ+f9xV7U2FpDFdZAj2g2qaCR5ccbYqwIUf2NCI9FufSXY3r2Xv9SvjOlPA==
+X-Received: by 2002:a67:b85:: with SMTP id 127mr4295527vsl.62.1584457964532;
+        Tue, 17 Mar 2020 08:12:44 -0700 (PDT)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
+        by smtp.gmail.com with ESMTPSA id w8sm1450835vkw.46.2020.03.17.08.12.42
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Mar 2020 08:12:43 -0700 (PDT)
+Received: by mail-vs1-f51.google.com with SMTP id x82so14076132vsc.12
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 08:12:42 -0700 (PDT)
+X-Received: by 2002:a05:6102:7c7:: with SMTP id y7mr4207665vsg.198.1584457962249;
+ Tue, 17 Mar 2020 08:12:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20200316151939.1.I752ebdcfd5e8bf0de06d66e767b8974932b3620e@changeid>
+ <20200317121018.GB3971@sirena.org.uk>
+In-Reply-To: <20200317121018.GB3971@sirena.org.uk>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 17 Mar 2020 08:12:30 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VAeOYAG-R6aeAAoo7TsuvDBgNnqxn3XE2Mw3hwL1H7Ew@mail.gmail.com>
+Message-ID: <CAD=FV=VAeOYAG-R6aeAAoo7TsuvDBgNnqxn3XE2Mw3hwL1H7Ew@mail.gmail.com>
+Subject: Re: [PATCH] spi: spi-geni-qcom: Speculative fix of "nobody cared"
+ about interrupt
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Alok Chauhan <alokc@codeaurora.org>,
+        Dilip Kota <dkota@codeaurora.org>, skakit@codeaurora.org,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-X1000 has a different TCU, since X1000 OST has been independent of TCU.
-This patch is add TCU support of X1000, and prepare for later OST driver.
+Hi,
 
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
----
- drivers/clk/ingenic/tcu.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Tue, Mar 17, 2020 at 5:10 AM Mark Brown <broonie@kernel.org> wrote:
+>
+> On Mon, Mar 16, 2020 at 03:20:01PM -0700, Douglas Anderson wrote:
+>
+> > +     /*
+> > +      * We don't expect to hit this, but if we do we should try our best
+> > +      * to clear the interrupts and return so we don't just get called
+> > +      * again.
+> > +      */
+> > +     if (mas->cur_mcmd == CMD_NONE)
+> > +             goto exit;
+> > +
+>
+> Does this mean that there was an actual concrete message of type
+> CMD_NONE or does it mean that there was no message waiting?  If there
+> was no message then isn't the interrupt spurious?
 
-diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
-index ad7daa4..8799907 100644
---- a/drivers/clk/ingenic/tcu.c
-+++ b/drivers/clk/ingenic/tcu.c
-@@ -317,10 +317,17 @@ static const struct ingenic_soc_info jz4770_soc_info = {
- 	.has_tcu_clk = false,
- };
- 
-+static const struct ingenic_soc_info x1000_soc_info = {
-+	.num_channels = 8,
-+	.has_ost = false, /* X1000 has OST, but it not belong TCU */
-+	.has_tcu_clk = false,
-+};
-+
- static const struct of_device_id ingenic_tcu_of_match[] __initconst = {
- 	{ .compatible = "ingenic,jz4740-tcu", .data = &jz4740_soc_info, },
- 	{ .compatible = "ingenic,jz4725b-tcu", .data = &jz4725b_soc_info, },
- 	{ .compatible = "ingenic,jz4770-tcu", .data = &jz4770_soc_info, },
-+	{ .compatible = "ingenic,x1000-tcu", .data = &x1000_soc_info, },
- 	{ /* sentinel */ }
- };
- 
-@@ -471,3 +478,4 @@ static void __init ingenic_tcu_init(struct device_node *np)
- CLK_OF_DECLARE_DRIVER(jz4740_cgu, "ingenic,jz4740-tcu", ingenic_tcu_init);
- CLK_OF_DECLARE_DRIVER(jz4725b_cgu, "ingenic,jz4725b-tcu", ingenic_tcu_init);
- CLK_OF_DECLARE_DRIVER(jz4770_cgu, "ingenic,jz4770-tcu", ingenic_tcu_init);
-+CLK_OF_DECLARE_DRIVER(x1000_cgu, "ingenic,x1000-tcu", ingenic_tcu_init);
--- 
-2.7.4
+There is no message of type "CMD_NONE".  The "cur_mcmd" field is
+basically where in the software state machine we're at:
 
+* CMD_NONE - Software thinks that the controller should be idle.
+* CMD_XFER - Software has started a transfer.
+* CMD_CS - Software has started a chip select change.
+* CMD_CANCEL - Software sent a "cancel".
+
+...so certainly if we see "cur_mcmd == CMD_NONE" in the interrupt
+handler we're in an unexpected situation.  We don't expect interrupts
+while idle.  I wouldn't necessarily say it was a spurious interrupt,
+though.  To say that I'd rather look at the result of this line in the
+IRQ handler:
+
+    m_irq = readl(se->base + SE_GENI_M_IRQ_STATUS);
+
+...if that line returns 0 then I would be willing to say it is a
+spurious interrupt.
+
+
+So there is really more than one issue at hand, I guess.
+
+A) Why did we get an interrupt when we had "cur_mcmd == CMD_NONE"?
+IMO this is due to weakly ordered memory and not enough locking.
+
+B) If we do see an interrupt when "cur_mcmd == CMD_NONE" (even after
+we fix the locking), what should we do?  IMO we should still try to
+Ack it.  I can add a "pr_warn()" if it's helpful?
+
+C) Do we care to try to detect spurious interrupts (by checking
+SE_GENI_M_IRQ_STATUS) and return IRQ_NONE?  Right now a spurious
+interrupt will be harmless because all of the logic in geni_spi_isr()
+doesn't do anything if SE_GENI_M_IRQ_STATUS has no bits set.  ...but
+it will still return IRQ_HANDLED.  I can't imagine anyone ever putting
+this device on a shared interrupt, but if it's important I can detect
+this and return IRQ_NONE in this case in a v2 of this patch.
+
+-Doug
