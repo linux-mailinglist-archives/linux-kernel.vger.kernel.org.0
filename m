@@ -2,53 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44830187A9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 08:43:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CA3F187AA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 08:51:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726222AbgCQHnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 03:43:03 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:57300 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbgCQHnD (ORCPT
+        id S1726132AbgCQHvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 03:51:01 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:47444 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbgCQHvA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 03:43:03 -0400
+        Tue, 17 Mar 2020 03:51:00 -0400
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02H7gsAX067054;
-        Tue, 17 Mar 2020 02:42:54 -0500
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02H7ouEY068091;
+        Tue, 17 Mar 2020 02:50:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584430974;
-        bh=7JK5jurkiOzB4xeZ63mZpS0c84gUOTRe8SmMmit+kWg=;
-        h=From:To:CC:Subject:Date;
-        b=U7REZ17/GAzBO2tifO8dcluceWeBq+xj+idXeg68v2ToKSq3hJcJvfFf6zSooAGST
-         4oXDiTW4RiYH0o74KCqn3iGEPhd1iqUYzmlE+UQpXLZ68xUor4zskRLQST2zfieOv6
-         ucq3r0TV46wWchn1U9dgmx/P8RsF7QfTYAHXvwzI=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02H7gsKk091655;
-        Tue, 17 Mar 2020 02:42:54 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+        s=ti-com-17Q1; t=1584431456;
+        bh=NOP/2vAOC5LFpFfqytL3Gc0eN0Oq0HRszM6WcFzGB4M=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Pd48EvGweGloD+VNaJj77H+QF5gJ2irwl5dBd3E5Y2NoK6ASl97izMAGvhaZiO0mq
+         HW8YD9+ldz9N/epvFvCC81PTK1/wD7IadjC+3G1kXC98eASKnqk9QuOWmATiMKQmD9
+         H1XMGRDzU9gkDKr6MyafAVAXS2UMnsV7eaiIw+Dc=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02H7ouTS101201;
+        Tue, 17 Mar 2020 02:50:56 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
- Mar 2020 02:42:54 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ Mar 2020 02:50:56 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 17 Mar 2020 02:42:54 -0500
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02H7gpax019783;
-        Tue, 17 Mar 2020 02:42:52 -0500
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Murray <amurray@thegoodpenguin.co.uk>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Vidya Sagar <vidyas@nvidia.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH] PCI: endpoint: functions/pci-epf-test: Fix compiler error
-Date:   Tue, 17 Mar 2020 13:17:19 +0530
-Message-ID: <20200317074719.10668-1-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
+ Frontend Transport; Tue, 17 Mar 2020 02:50:56 -0500
+Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02H7orCX032532;
+        Tue, 17 Mar 2020 02:50:54 -0500
+Subject: Re: [PATCH] dmaengine: ti: k3-udma: Fix an error handling path in
+ 'k3_udma_glue_cfg_rx_flow()'
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        <vkoul@kernel.org>, <dan.j.williams@intel.com>
+CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20200315155015.27303-1-christophe.jaillet@wanadoo.fr>
+ <49a35126-3cc6-0cbb-e632-42a237ef353e@ti.com>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <e1d2d6af-7dc3-6e90-28d3-05d9b293cba9@ti.com>
+Date:   Tue, 17 Mar 2020 09:50:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <49a35126-3cc6-0cbb-e632-42a237ef353e@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,44 +61,161 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 812828eb5072 ("PCI: endpoint: Fix ->set_msix() to take BIR
-and offset as arguments") was created before adding deferred
-core initialization support in commit 5e50ee27d4a5 ("PCI: pci-epf-test:
-Add support to defer core initialization").
-However since deferred core initialization was merged before
-re-designing MSI-X support, it caused the following compiler error.
+Hi Christophe,
 
-drivers/pci/endpoint/functions/pci-epf-test.c:697:12: error: ‘epf_test’ undeclared (first use in this function);
+On 16/03/2020 09:20, Peter Ujfalusi wrote:
+> Hi Christophe,
+> 
+> On 15/03/2020 17.50, Christophe JAILLET wrote:
+>> All but one error handling paths in the 'k3_udma_glue_cfg_rx_flow()'
+>> function 'goto err' and call 'k3_udma_glue_release_rx_flow()'.
+>>
+>> This not correct because this function has a 'channel->flows_ready--;' at
+>> the end, but 'flows_ready' has not been incremented here, when we branch to
+>> the error handling path.
+>>
+>> In order to keep a correct value in 'flows_ready', un-roll
+>> 'k3_udma_glue_release_rx_flow()', simplify it, add some labels and branch
+>> at the correct places when an error is detected.
+> 
+> Good catch!
+> 
+>> Doing so, we also NULLify 'flow->udma_rflow' in a path that was lacking it.
+> 
+> Even better catch ;)
+> 
+>> Fixes: d70241913413 ("dmaengine: ti: k3-udma: Add glue layer for non DMAengine user")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Not sure that the last point of the description is correct. Maybe, the
+>> 'xudma_rflow_put / return -ENODEV;' should be kept in order not to
+>> override 'flow->udma_rflow'.
+>> ---
+>>   drivers/dma/ti/k3-udma-glue.c | 30 ++++++++++++++++++++----------
+>>   1 file changed, 20 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/dma/ti/k3-udma-glue.c b/drivers/dma/ti/k3-udma-glue.c
+>> index dbccdc7c0ed5..890573eb1625 100644
+>> --- a/drivers/dma/ti/k3-udma-glue.c
+>> +++ b/drivers/dma/ti/k3-udma-glue.c
+>> @@ -578,12 +578,12 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+>>   	if (IS_ERR(flow->udma_rflow)) {
+>>   		ret = PTR_ERR(flow->udma_rflow);
+>>   		dev_err(dev, "UDMAX rflow get err %d\n", ret);
+>> -		goto err;
+>> +		goto err_return;
+> 
+> return err; ?
+> 
+>>   	}
+> 
+> Optionally you could have moved the
+> 	rx_chn->flows_ready++;
+> here and
 
-Fix the compilation error here.
+Thank you for your patch.
 
-Fixes: 812828eb5072 ("PCI: endpoint: Fix ->set_msix() to take BIR and offset as arguments")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
-Lorenzo,
+I tend to agree with Peter here - just may be with comment that it will be dec in
+k3_udma_glue_release_rx_flow().
+All clean ups were moved in standalone function intentionally to avoid
+code duplication in err and normal channel release path, and avoid common errors
+when normal path is fixed, but err path missed.
 
-This patch can be squashed with
-"PCI: endpoint: Fix ->set_msix() to take BIR and offset as arguments"
 
-Thanks
-Kishon
 
- drivers/pci/endpoint/functions/pci-epf-test.c | 1 +
- 1 file changed, 1 insertion(+)
+> 
+>>   
+>>   	if (flow->udma_rflow_id != xudma_rflow_get_id(flow->udma_rflow)) {
+>> -		xudma_rflow_put(rx_chn->common.udmax, flow->udma_rflow);
+>> -		return -ENODEV;
+>> +		ret = -ENODEV;
+>> +		goto err_rflow_put;
+> 
+> goto err;
+> 
+>>   	}
+>>   
+>>   	/* request and cfg rings */
+>> @@ -592,7 +592,7 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+>>   	if (!flow->ringrx) {
+>>   		ret = -ENODEV;
+>>   		dev_err(dev, "Failed to get RX ring\n");
+>> -		goto err;
+>> +		goto err_rflow_put;
+>>   	}
+>>   
+>>   	flow->ringrxfdq = k3_ringacc_request_ring(rx_chn->common.ringacc,
+>> @@ -600,19 +600,19 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+>>   	if (!flow->ringrxfdq) {
+>>   		ret = -ENODEV;
+>>   		dev_err(dev, "Failed to get RXFDQ ring\n");
+>> -		goto err;
+>> +		goto err_ringrx_free;
+>>   	}
+>>   
+>>   	ret = k3_ringacc_ring_cfg(flow->ringrx, &flow_cfg->rx_cfg);
+>>   	if (ret) {
+>>   		dev_err(dev, "Failed to cfg ringrx %d\n", ret);
+>> -		goto err;
+>> +		goto err_ringrxfdq_free;
+>>   	}
+>>   
+>>   	ret = k3_ringacc_ring_cfg(flow->ringrxfdq, &flow_cfg->rxfdq_cfg);
+>>   	if (ret) {
+>>   		dev_err(dev, "Failed to cfg ringrxfdq %d\n", ret);
+>> -		goto err;
+>> +		goto err_ringrxfdq_free;
+>>   	}
+>>   
+>>   	if (rx_chn->remote) {
+>> @@ -662,7 +662,7 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+>>   	if (ret) {
+>>   		dev_err(dev, "flow%d config failed: %d\n", flow->udma_rflow_id,
+>>   			ret);
+>> -		goto err;
+>> +		goto err_ringrxfdq_free;
+>>   	}
+>>   
+>>   	rx_chn->flows_ready++;
+>> @@ -670,8 +670,18 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+>>   		flow->udma_rflow_id, rx_chn->flows_ready);
+>>   
+>>   	return 0;
+>> -err:
+>> -	k3_udma_glue_release_rx_flow(rx_chn, flow_idx);
+>> +
+>> +err_ringrxfdq_free:
+>> +	k3_ringacc_ring_free(flow->ringrxfdq);
+>> +
+>> +err_ringrx_free:
+>> +	k3_ringacc_ring_free(flow->ringrx);
+>> +
+>> +err_rflow_put:
+>> +	xudma_rflow_put(rx_chn->common.udmax, flow->udma_rflow);
+>> +	flow->udma_rflow = NULL;
+>> +
+>> +err_return:
+> 
+> You could have kept the single err label and just copy the
+> release_rx_flow() without the rx_chn->flows_ready--;
+> 
+> I don't have anything against multiple labels as such, but a single one
+> might be easier to follow?
+> 
+> and you don't need the err_return, just return in place when you would
+> jump to it.
+> 
+>>   	return ret;
+>>   }
+>>   
+>>
+> 
+> - Péter
+> 
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 
 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index eaf192be02bb..3b4cf7e2bc60 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -660,6 +660,7 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
- 
- static int pci_epf_test_core_init(struct pci_epf *epf)
- {
-+	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
- 	struct pci_epf_header *header = epf->header;
- 	const struct pci_epc_features *epc_features;
- 	struct pci_epc *epc = epf->epc;
 -- 
-2.17.1
-
+Best regards,
+grygorii
