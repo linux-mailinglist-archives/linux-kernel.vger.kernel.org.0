@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9376D187FE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:05:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D05E18808F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:11:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728414AbgCQLFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:05:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46016 "EHLO mail.kernel.org"
+        id S1728611AbgCQLLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:11:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727320AbgCQLFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:05:15 -0400
+        id S1729011AbgCQLLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:11:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64D78206EC;
-        Tue, 17 Mar 2020 11:05:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8968620658;
+        Tue, 17 Mar 2020 11:11:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443114;
-        bh=S5G1KHBEaEL4NDBxq8BafkUPfEetq4PzQnKJ/q0Y/ds=;
+        s=default; t=1584443475;
+        bh=YeOkMtyWLIEoF9MWDXRDRMp7xN/CAzz3pEq7S4IaUVE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JFFigtD/ps9dZ5+wU/HCj8w9iDTm3cSl+z4dQ+JkaA8EKPvjWErLRKq0z3ABBu27l
-         PncrKNCbPXQ2Kf71K+DSU++9MZmANwydoZVg3iptri6sg8QRbEsBVe7sfXz8JuRQ+m
-         ChvYM2RkgaUeooht/fvw2nh43dt4Lb/Li9zj/uug=
+        b=05o4OMxSAzZj/AH9tQBMJ5vNOJjmEFV1tlguRh9ka8yZZa3vNB95ybun8spH8Dp2y
+         wfXSGYCWZjIC73JY6XJqDyMyIx9bmKI2jhNtVLWoHs9bP6SPnM/pqo7FwIR3iC+tTB
+         zxW72aufD+mMgPUIZr9bbJY+Q8IXBE6Q1KSQqQ20=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 5.4 074/123] ktest: Add timeout for ssh sync testing
-Date:   Tue, 17 Mar 2020 11:55:01 +0100
-Message-Id: <20200317103315.057778302@linuxfoundation.org>
+        stable@vger.kernel.org, Mathias Kresin <dev@kresin.me>,
+        Thomas Langer <thomas.langer@intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 5.5 092/151] pinctrl: falcon: fix syntax error
+Date:   Tue, 17 Mar 2020 11:55:02 +0100
+Message-Id: <20200317103332.985921436@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
-References: <20200317103307.343627747@linuxfoundation.org>
+In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
+References: <20200317103326.593639086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,36 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Mathias Kresin <dev@kresin.me>
 
-commit 4d00fc477a2ce8b6d2b09fb34ef9fe9918e7d434 upstream.
+commit d62e7fbea4951c124a24176da0c7bf3003ec53d4 upstream.
 
-Before rebooting the box, a "ssh sync" is called to the test machine to see
-if it is alive or not. But if the test machine is in a partial state, that
-ssh may never actually finish, and the ktest test hangs.
+Add the missing semicolon after of_node_put to get the file compiled.
 
-Add a 10 second timeout to the sync test, which will fail after 10 seconds
-and then cause the test to reboot the test machine.
-
-Cc: stable@vger.kernel.org
-Fixes: 6474ace999edd ("ktest.pl: Powercycle the box on reboot if no connection can be made")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: f17d2f54d36d ("pinctrl: falcon: Add of_node_put() before return")
+Cc: stable@vger.kernel.org # v5.4+
+Signed-off-by: Mathias Kresin <dev@kresin.me>
+Link: https://lore.kernel.org/r/20200305182245.9636-1-dev@kresin.me
+Acked-by: Thomas Langer <thomas.langer@intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/ktest/ktest.pl |    2 +-
+ drivers/pinctrl/pinctrl-falcon.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/testing/ktest/ktest.pl
-+++ b/tools/testing/ktest/ktest.pl
-@@ -1383,7 +1383,7 @@ sub reboot {
- 
-     } else {
- 	# Make sure everything has been written to disk
--	run_ssh("sync");
-+	run_ssh("sync", 10);
- 
- 	if (defined($time)) {
- 	    start_monitor;
+--- a/drivers/pinctrl/pinctrl-falcon.c
++++ b/drivers/pinctrl/pinctrl-falcon.c
+@@ -451,7 +451,7 @@ static int pinctrl_falcon_probe(struct p
+ 		falcon_info.clk[*bank] = clk_get(&ppdev->dev, NULL);
+ 		if (IS_ERR(falcon_info.clk[*bank])) {
+ 			dev_err(&ppdev->dev, "failed to get clock\n");
+-			of_node_put(np)
++			of_node_put(np);
+ 			return PTR_ERR(falcon_info.clk[*bank]);
+ 		}
+ 		falcon_info.membase[*bank] = devm_ioremap_resource(&pdev->dev,
 
 
