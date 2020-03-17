@@ -2,92 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9075F187E19
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:20:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AFC0187E28
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:21:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbgCQKUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 06:20:18 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36745 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbgCQKUQ (ORCPT
+        id S1726386AbgCQKVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:21:38 -0400
+Received: from paleale.coelho.fi ([176.9.41.70]:34442 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725730AbgCQKVi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 06:20:16 -0400
-Received: by mail-lj1-f193.google.com with SMTP id g12so22149101ljj.3;
-        Tue, 17 Mar 2020 03:20:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2bvQoM7fTBjp0klcuiM54Wdtln7AcxQr31yym9z34dg=;
-        b=MZDRgS4BaT0SU4IYSBvCwUz5CUebXUPcrF+pOqrlQ1nhj3L6353fbCQP8jVC8mCPoM
-         If2LSZ8A1bUp6I1JalHYrMfCENCwipMZawDM3C9DxuEvV2bOreSnHD4oq5016l48hXvd
-         YBEq1jmeL7JcsMdn1Aiel7r7H6xkrbU4IoBKDGPRfUcNbWF5dpCJXyge6KD889Qvzcog
-         feNv988Lw6Fj7ZZ1AqjZQ/hRPBcmFU+WvZ+OiyVIdU8yYLhyCE8KAsp8KJSBdZL0JiZ4
-         gNwDURP5LVtLbziVRCqlTW+LOJPwTJVmDHi++ePSEnUbwOEOdMbJtFOa/h7wiAXm41Ux
-         GeHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=2bvQoM7fTBjp0klcuiM54Wdtln7AcxQr31yym9z34dg=;
-        b=oqz9q7TsVX8ClG9rVUO6zjnMQFEx68OcULKohhUgaHsSzLBLIULQmIJdzLvA0989zW
-         uZJcmclAwTJUjehQNm8AGYZ49GPMKPGHTqKd9Mf2rjzD1MDu7kQobzdaBzOJ+BvS5wTp
-         J0ehO30DDq2Eyzz1H6tl4FFMJIOJOKgRCi2toLDlVF0Axrr13ptCmrMng/WgEv+KZuau
-         aObzfRHsgbOLZBfAGDrA8d9LHDrHK2R79gR3tn7Oduf5CKPwu/rMBtulrrwyBB9E7RN6
-         fZclOY0O/Jo3V2fHYN5d7kD2PmVvD0zf7V3SCTpf3fc4225wbW8W0ue09pvTyt735grP
-         lJsw==
-X-Gm-Message-State: ANhLgQ1RQ1GieUyHt0PopgEYvldXXklcc5EIoLQgRllkJMxahkDl6FcO
-        50SHwU4taBXuqJ9QFRqp51s=
-X-Google-Smtp-Source: ADFU+vvszzeoWJVd3TcHDvI8WAFElfYnQkMXm+roHZR329HPbNexz7N9xlKt3WDG1FhhpHxuuB7jgA==
-X-Received: by 2002:a2e:5844:: with SMTP id x4mr2279916ljd.40.1584440413435;
-        Tue, 17 Mar 2020 03:20:13 -0700 (PDT)
-Received: from localhost (host-176-37-176-139.la.net.ua. [176.37.176.139])
-        by smtp.gmail.com with ESMTPSA id c20sm2189438lfb.60.2020.03.17.03.20.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Mar 2020 03:20:12 -0700 (PDT)
-From:   Igor Opaniuk <igor.opaniuk@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Max Krummenacher <max.krummenacher@toradex.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        Igor Opaniuk <igor.opaniuk@toradex.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v1 5/5] input: Dual license file adding MIT
-Date:   Tue, 17 Mar 2020 12:19:47 +0200
-Message-Id: <20200317101947.27250-5-igor.opaniuk@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200317101947.27250-1-igor.opaniuk@gmail.com>
-References: <20200317101947.27250-1-igor.opaniuk@gmail.com>
+        Tue, 17 Mar 2020 06:21:38 -0400
+Received: from 91-156-6-193.elisa-laajakaista.fi ([91.156.6.193] helo=redipa)
+        by farmhouse.coelho.fi with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.92.2)
+        (envelope-from <luca@coelho.fi>)
+        id 1jE9Lq-0003Wc-Sl; Tue, 17 Mar 2020 12:21:35 +0200
+Message-ID: <88e116237ccfb75e0e37f0659448a099df2be7c2.camel@coelho.fi>
+From:   Luca Coelho <luca@coelho.fi>
+To:     Jonathan McDowell <noodles@earth.li>,
+        linux-wireless@vger.kernel.org
+Cc:     Intel Linux Wireless <linuxwifi@intel.com>,
+        Ihab Zhaika <ihab.zhaika@intel.com>, johannes.berg@intel.com,
+        emmanuel.grumbach@intel.com, linux-kernel@vger.kernel.org
+Date:   Tue, 17 Mar 2020 12:21:33 +0200
+In-Reply-To: <20200314105700.GM311@earth.li>
+References: <20200314105700.GM311@earth.li>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-4 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on farmhouse.coelho.fi
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        TVD_RCVD_IP,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.2
+Subject: Re: [PATCH] iwlwifi: mvm: Avoid use of GEO_TX_POWER_LIMIT when not
+ supported
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Igor Opaniuk <igor.opaniuk@toradex.com>
+On Sat, 2020-03-14 at 10:57 +0000, Jonathan McDowell wrote:
+> Commit 39c1a9728f93 refactored the SAR table support and inadvertently
+> added a call to GEO_TX_POWER_LIMIT without checking that the firmware
+> supported it. This caused a regression for device + firmware
+> combinations lacking the support. Add a check in iwl_mvm_sar_init to
+> prevent this.
+> 
+> Fixes: 39c1a9728f93 (iwlwifi: refactor the SAR tables from mvm to acpi)
+> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=206395
+> Cc: stable@vger.kernel.org # 5.5
+> Signed-Off-By: Jonathan McDowell <noodles@earth.li>
+> 
+> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+> index 54c094e88474..4a8a4cb2c553 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+> @@ -1007,6 +1007,13 @@ static int iwl_mvm_sar_init(struct iwl_mvm *mvm)
+>  	if (ret == -ENOENT)
+>  		return 1;
+>  
+> +	/*
+> +	 * If our firmware doesn't support GEO_TX_POWER_LIMIT then skip trying
+> +	 * to use it.
+> +	 */
+> +	if (!iwl_sar_geo_support(&mvm->fwrt))
+> +		return 1;
+> +
+>  	return ret;
+>  }
 
-Dual license file adding MIT license, which will permit to re-use
-bindings and dependent device tree sources (that include this file
-directly or indirectly via dt-bindings) in other non-GPL OSS projects.
+Thanks, Jonathan! We already have an internal patch that fixes this 
+(also fixes another symptom of the same bug).  I'll send it out now.
 
-Signed-off-by: Igor Opaniuk <igor.opaniuk@toradex.com>
----
-
- include/uapi/linux/input-event-codes.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
-index 0f1db1cccc3f..2f86c4554721 100644
---- a/include/uapi/linux/input-event-codes.h
-+++ b/include/uapi/linux/input-event-codes.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note OR MIT */
- /*
-  * Input event codes
-  *
--- 
-2.17.1
+--
+Cheers,
+Luca.
 
