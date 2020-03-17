@@ -2,43 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F5FE188837
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:54:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC5DD188847
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:55:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbgCQOyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 10:54:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43610 "EHLO mail.kernel.org"
+        id S1727227AbgCQOzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 10:55:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbgCQOyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 10:54:32 -0400
+        id S1726909AbgCQOyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 10:54:31 -0400
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEFE620771;
+        by mail.kernel.org (Postfix) with ESMTPSA id A7F0C2076E;
         Tue, 17 Mar 2020 14:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1584456870;
-        bh=Gk5qf4hB4gnv1cWBDx2LF6Mu9BelQFfn604dLX08vG8=;
+        bh=+tWg3awZHYeUlHfuDttl7kdQdrVI80/B6dM9qQLuAfQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xe/z//7Tia2g/X7nNL/gT4qKAVAohBljfmtJtV/2WUI1b4xeziDf0pZGNjS3WwQag
-         +lGBKv+TzbsvhwuYO1Jj1EfIoGnUOe8+J7eGr6DKIVSUN68T3O2t5DBUVRvstGahUM
-         rpp3nyeBTt7Efl4D1Gbb7vEuRN0l3hLRtLeZmZfI=
+        b=YAg2rDen4aRhFDMEsTITiVwvtPHMSyu6taTbqxTNSY7YOMPe9RVndlS48lKL7HKBo
+         7ik04EKJab7YjYL6Oq8cmbfsA4JLb+2OnrQWVrHG+2N32myl5Ov1RYlAm9YASYytXP
+         Ywf2jHO1WUgqxdzRE4xE+g81bGS1vtCo3hQ9tpRo=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1jEDbw-000AMq-Lg; Tue, 17 Mar 2020 15:54:28 +0100
+        id 1jEDbw-000AMu-NE; Tue, 17 Mar 2020 15:54:28 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
-Subject: [PATCH 09/17] rcu: update.c: get rid of some doc warnings
-Date:   Tue, 17 Mar 2020 15:54:18 +0100
-Message-Id: <c69a85d13717c2aec563f702bffd7cd1e3be6a88.1584456635.git.mchehab+huawei@kernel.org>
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: [PATCH 10/17] net: phy: sfp-bus.c: get rid of docs warnings
+Date:   Tue, 17 Mar 2020 15:54:19 +0100
+Message-Id: <0d4835042a03ecda3514c1de0254d30134b0e8e0.1584456635.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.1584456635.git.mchehab+huawei@kernel.org>
 References: <cover.1584456635.git.mchehab+huawei@kernel.org>
@@ -49,48 +48,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need to escape *ret, as otherwise the documentation system
-thinks that this is an incomplete emphasis block:
+The indentation for the returned values are weird, causing those
+warnings:
 
-	./kernel/rcu/update.c:65: WARNING: Inline emphasis start-string without end-string.
-	./kernel/rcu/update.c:65: WARNING: Inline emphasis start-string without end-string.
-	./kernel/rcu/update.c:70: WARNING: Inline emphasis start-string without end-string.
-	./kernel/rcu/update.c:82: WARNING: Inline emphasis start-string without end-string.
+	./drivers/net/phy/sfp-bus.c:579: WARNING: Unexpected indentation.
+	./drivers/net/phy/sfp-bus.c:619: WARNING: Unexpected indentation.
+
+Use a list and change the identation for it to be properly
+parsed by the documentation toolchain.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- kernel/rcu/update.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/phy/sfp-bus.c | 32 ++++++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
 
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index b1fa519e5890..16058a5e6da4 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -63,12 +63,12 @@ module_param(rcu_normal_after_boot, int, 0);
-  * rcu_read_lock_held_common() - might we be in RCU-sched read-side critical section?
-  * @ret:	Best guess answer if lockdep cannot be relied on
+diff --git a/drivers/net/phy/sfp-bus.c b/drivers/net/phy/sfp-bus.c
+index d949ea7b4f8c..6900c68260e0 100644
+--- a/drivers/net/phy/sfp-bus.c
++++ b/drivers/net/phy/sfp-bus.c
+@@ -572,13 +572,15 @@ static void sfp_upstream_clear(struct sfp_bus *bus)
+  * the sfp_bus structure, incrementing its reference count.  This must
+  * be put via sfp_bus_put() when done.
   *
-- * Returns true if lockdep must be ignored, in which case *ret contains
-+ * Returns true if lockdep must be ignored, in which case ``*ret`` contains
-  * the best guess described below.  Otherwise returns false, in which
-- * case *ret tells the caller nothing and the caller should instead
-+ * case ``*ret`` tells the caller nothing and the caller should instead
-  * consult lockdep.
+- * Returns: on success, a pointer to the sfp_bus structure,
+- *	    %NULL if no SFP is specified,
+- * 	    on failure, an error pointer value:
+- * 		corresponding to the errors detailed for
+- * 		fwnode_property_get_reference_args().
+- * 	        %-ENOMEM if we failed to allocate the bus.
+- *		an error from the upstream's connect_phy() method.
++ * Returns:
++ * 	    - on success, a pointer to the sfp_bus structure,
++ *	    - %NULL if no SFP is specified,
++ * 	    - on failure, an error pointer value:
++ *
++ * 	      - corresponding to the errors detailed for
++ * 	        fwnode_property_get_reference_args().
++ * 	      - %-ENOMEM if we failed to allocate the bus.
++ *	      - an error from the upstream's connect_phy() method.
+  */
+ struct sfp_bus *sfp_bus_find_fwnode(struct fwnode_handle *fwnode)
+ {
+@@ -612,13 +614,15 @@ EXPORT_SYMBOL_GPL(sfp_bus_find_fwnode);
+  * the SFP bus using sfp_register_upstream().  This takes a reference on the
+  * bus, so it is safe to put the bus after this call.
   *
-- * If CONFIG_DEBUG_LOCK_ALLOC is selected, set *ret to nonzero iff in an
-+ * If CONFIG_DEBUG_LOCK_ALLOC is selected, set ``*ret`` to nonzero iff in an
-  * RCU-sched read-side critical section.  In absence of
-  * CONFIG_DEBUG_LOCK_ALLOC, this assumes we are in an RCU-sched read-side
-  * critical section unless it can prove otherwise.  Note that disabling
-@@ -82,7 +82,7 @@ module_param(rcu_normal_after_boot, int, 0);
-  *
-  * Note that if the CPU is in the idle loop from an RCU point of view (ie:
-  * that we are in the section between rcu_idle_enter() and rcu_idle_exit())
-- * then rcu_read_lock_held() sets *ret to false even if the CPU did an
-+ * then rcu_read_lock_held() sets ``*ret`` to false even if the CPU did an
-  * rcu_read_lock().  The reason for this is that RCU ignores CPUs that are
-  * in such a section, considering these as in extended quiescent state,
-  * so such a CPU is effectively never in an RCU read-side critical section
+- * Returns: on success, a pointer to the sfp_bus structure,
+- *	    %NULL if no SFP is specified,
+- * 	    on failure, an error pointer value:
+- * 		corresponding to the errors detailed for
+- * 		fwnode_property_get_reference_args().
+- * 	        %-ENOMEM if we failed to allocate the bus.
+- *		an error from the upstream's connect_phy() method.
++ * Returns:
++ * 	    - on success, a pointer to the sfp_bus structure,
++ *	    - %NULL if no SFP is specified,
++ * 	    - on failure, an error pointer value:
++ *
++ * 	      - corresponding to the errors detailed for
++ * 	        fwnode_property_get_reference_args().
++ * 	      - %-ENOMEM if we failed to allocate the bus.
++ *	      - an error from the upstream's connect_phy() method.
+  */
+ int sfp_bus_add_upstream(struct sfp_bus *bus, void *upstream,
+ 			 const struct sfp_upstream_ops *ops)
 -- 
 2.24.1
 
