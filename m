@@ -2,196 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3C62188B92
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:06:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A02D188B9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:07:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbgCQRGL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 13:06:11 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38923 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726207AbgCQRGL (ORCPT
+        id S1726783AbgCQRHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 13:07:05 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:30361 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726207AbgCQRHD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 13:06:11 -0400
-Received: by mail-wm1-f68.google.com with SMTP id f7so69079wml.4
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 10:06:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=X6QHkzV5BBkFfgyNZs6t/GKJbiMk0jnjw8C1dAu/YqA=;
-        b=hxJgJ/CsEzZ4gWXbhwVkCscaWC4g9ZHYHHOoCzpnECMslLCAGScgK7zGzJV3JxKcgy
-         0nqrSDECdp4yCB6zMNDu+pqFodd+/KOYXXn/AyCcEAmjnSzChD6YexgVL9wDssuvgft0
-         G5LXQyTe0arN/FwTIgny0CU7fk+c4HU+frngE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=X6QHkzV5BBkFfgyNZs6t/GKJbiMk0jnjw8C1dAu/YqA=;
-        b=UQARtpk6FjIjfCv6vMIrMs3grJsZAo9L9tx8fm+me78vhKsTXZBW8HaAZXNJQkVe2F
-         n/xc0j9YLjNG56R32/NruXcIZzLe5xnEj/AiRWdw14ahfPz7yw0AMbkgePPRZipEWP1n
-         Z6NGn7ar8Z+e38swFN4Cq7N4QxK3Qc1I8QKtgX2dN6ohy7FQG8JFlbPetS0TAd3NB/fz
-         +hzNSz94M2WagGBqnXzWusCQ5cK8GjukXlIP6Z7fMmz05sxxC7IRwJb6QdpInMutfa4i
-         kv5+vQPh6DDR04CFi1i1EgcSCCNXLPGeKnHQ1mecKPZWsSwTyKBqjvQVFWI4m4M9Teng
-         pINw==
-X-Gm-Message-State: ANhLgQ2NJ3Dn1JjgXeIuzcs2UhW8oe1E6vwzkElEKQkpsNAZv0O/cVBN
-        Yft5i/7x4CZFyEKSZvuDAL34o87fGmd5L+WV
-X-Google-Smtp-Source: ADFU+vtEgUB27vopeq8X2Q5eJtXEH8LMvVllU0OTEgK/JvAgmr4x4sQcJhvU6XRVrE6Zq2zfHcOSww==
-X-Received: by 2002:a05:600c:2105:: with SMTP id u5mr220153wml.163.1584464768185;
-        Tue, 17 Mar 2020 10:06:08 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id x17sm61790wmi.28.2020.03.17.10.06.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2020 10:06:07 -0700 (PDT)
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, Joe Perches <joe@perches.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: [PATCH] MAINTAINERS: Better regex for dma_buf|fence|resv
-Date:   Tue, 17 Mar 2020 18:06:02 +0100
-Message-Id: <20200317170602.1021982-1-daniel.vetter@ffwll.ch>
-X-Mailer: git-send-email 2.25.1
+        Tue, 17 Mar 2020 13:07:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584464822;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DtMQ752kWSoLyMfx0zJhLWBQJ+KAxziM+SQA+3+EK0c=;
+        b=iVlGe0eQCH+p3R6NwSfYwhxCY1xGBHAiVs/o9IAGiRqGdfhFGVNv8MwCqpbchz917a9Z8z
+        VstHosjmSozvUEGtSIdhDHIfnp314XK5ridaoEs7vN5sHcLcGiMEyxhUAfqZOWK2INAwrX
+        yLTY6B2t+9y6GPshbrIaOsW5TRu8W5Q=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-32-Hao-DTm-M8msT4ZUSzaqiA-1; Tue, 17 Mar 2020 13:06:58 -0400
+X-MC-Unique: Hao-DTm-M8msT4ZUSzaqiA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 321ED107ACCA;
+        Tue, 17 Mar 2020 17:06:54 +0000 (UTC)
+Received: from krava (unknown [10.40.195.82])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1969D9B918;
+        Tue, 17 Mar 2020 17:06:47 +0000 (UTC)
+Date:   Tue, 17 Mar 2020 18:06:45 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, will@kernel.org, ak@linux.intel.com,
+        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
+        james.clark@arm.com, qiangqing.zhang@nxp.com
+Subject: Re: [PATCH v2 2/7] perf jevents: Support test events folder
+Message-ID: <20200317170645.GE759708@krava>
+References: <1584442939-8911-1-git-send-email-john.garry@huawei.com>
+ <1584442939-8911-3-git-send-email-john.garry@huawei.com>
+ <20200317162052.GD759708@krava>
+ <de5b58ee-980e-973a-16db-73f23c3edfef@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <de5b58ee-980e-973a-16db-73f23c3edfef@huawei.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We're getting some random other stuff that we're not relly interested
-in, so match only word boundaries. Also avoid the capture group while
-at it.
+On Tue, Mar 17, 2020 at 04:25:32PM +0000, John Garry wrote:
+> On 17/03/2020 16:20, Jiri Olsa wrote:
+> > On Tue, Mar 17, 2020 at 07:02:14PM +0800, John Garry wrote:
+> > > With the goal of supporting pmu-events test case, introduce support=
+ for a
+> > > test events folder.
+> > >=20
+> > > These test events can be used for testing generation of pmu-event t=
+ables
+> > > and alias creation for any arch.
+> > >=20
+> > > When running the pmu-events test case, these test events will be us=
+ed
+> > > as the platform-agnostic events, so aliases can be created per-PMU =
+and
+> > > validated against known expected values.
+> > >=20
+> > > To support the test events, add a "testcpu" entry in pmu_events_map=
+[].
+> > > The pmu-events test will be able to lookup the events map for "test=
+cpu",
+> > > to verify the generated tables against expected values.
+> > >=20
+> > > The resultant generated pmu-events.c will now look like the followi=
+ng:
+> >=20
+> > can't compile this one:
+> >=20
+> >    HOSTCC   pmu-events/jevents.o
+> > pmu-events/jevents.c: In function =E2=80=98main=E2=80=99:
+> > pmu-events/jevents.c:1195:3: error: =E2=80=98ret=E2=80=99 undeclared =
+(first use in this function)
+> >   1195 |   ret =3D 1;
+> >        |   ^~~
+> > pmu-events/jevents.c:1195:3: note: each undeclared identifier is repo=
+rted only once for each function it appears in
+> > pmu-events/jevents.c:1196:3: error: label =E2=80=98out_free_mapfile=E2=
+=80=99 used but not defined
+> >   1196 |   goto out_free_mapfile;
+> >        |   ^~~~
+> > mv: cannot stat 'pmu-events/.jevents.o.tmp': No such file or director=
+y
+> > make[3]: *** [/home/jolsa/kernel/linux-perf/tools/build/Makefile.buil=
+d:97: pmu-events/jevents.o] Error 1
+> > make[2]: *** [Makefile.perf:619: pmu-events/jevents-in.o] Error 2
+> > make[1]: *** [Makefile.perf:225: sub-make] Error 2
+> > make: *** [Makefile:70: all] Error 2
+>=20
+> Hi jirka,
+>=20
+> What baseline are you using? I used v5.6-rc6. The patches are here:
 
-Suggested by Joe Perches.
+I applied your patches on Arnaldo's perf/core
 
-Cc: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: linaro-mm-sig@lists.linaro.org
-Cc: Joe Perches <joe@perches.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
----
-v2: No single quotes in MAINTAINERS (Joe)
----
- MAINTAINERS                   |  2 +-
- drivers/gpu/drm/drm_managed.c | 27 +++++++++++++++++----------
- include/drm/drm_managed.h     |  2 +-
- 3 files changed, 19 insertions(+), 12 deletions(-)
+>=20
+> https://github.com/hisilicon/kernel-dev/commits/private-topic-perf-5.6-=
+pmu-events-test-upstream-v2
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3005be638c2c..ed6088a01bfe 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5025,7 +5025,7 @@ F:	include/linux/dma-buf*
- F:	include/linux/reservation.h
- F:	include/linux/*fence.h
- F:	Documentation/driver-api/dma-buf.rst
--K:	dma_(buf|fence|resv)
-+K:	\bdma_(?:buf|fence|resv)\b
- T:	git git://anongit.freedesktop.org/drm/drm-misc
- 
- DMA-BUF HEAPS FRAMEWORK
-diff --git a/drivers/gpu/drm/drm_managed.c b/drivers/gpu/drm/drm_managed.c
-index 5148ef786c3b..c256c9679eb5 100644
---- a/drivers/gpu/drm/drm_managed.c
-+++ b/drivers/gpu/drm/drm_managed.c
-@@ -52,6 +52,12 @@ struct drmres {
- 	u8 __aligned(ARCH_KMALLOC_MINALIGN) data[];
- };
- 
-+static void free_dr(struct drmres *dr)
-+{
-+	kfree_const(dr->node.name);
-+	kfree(dr);
-+}
-+
- void drm_managed_release(struct drm_device *dev)
- {
- 	struct drmres *dr, *tmp;
-@@ -65,13 +71,13 @@ void drm_managed_release(struct drm_device *dev)
- 			dr->node.release(dev, dr->node.size ? *(void **)&dr->data : NULL);
- 
- 		list_del(&dr->node.entry);
--		kfree(dr);
-+		free_dr(dr);
- 	}
- 	drm_dbg_drmres(dev, "drmres release end\n");
- }
- 
- /*
-- * Always inline so that kmallc_track_caller tracks the actual interesting
-+ * Always inline so that kmalloc_track_caller tracks the actual interesting
-  * caller outside of drm_managed.c.
-  */
- static __always_inline struct drmres * alloc_dr(drmres_release_t release,
-@@ -120,7 +126,7 @@ static void add_dr(struct drm_device *dev, struct drmres *dr)
- /**
-  * drmm_add_final_kfree - add release action for the final kfree()
-  * @dev: DRM device
-- * @parent: pointer to the kmalloc allocation containing @dev
-+ * @container: pointer to the kmalloc allocation containing @dev
-  *
-  * Since the allocation containing the struct &drm_device must be allocated
-  * before it can be initialized with drm_dev_init() there's no way to allocate
-@@ -129,12 +135,13 @@ static void add_dr(struct drm_device *dev, struct drmres *dr)
-  * will be released in the final drm_dev_put() for @dev, after all other release
-  * actions installed through drmm_add_action() have been processed.
-  */
--void drmm_add_final_kfree(struct drm_device *dev, void *parent)
-+void drmm_add_final_kfree(struct drm_device *dev, void *container)
- {
- 	WARN_ON(dev->managed.final_kfree);
--	WARN_ON(dev < (struct drm_device *) parent);
--	WARN_ON(dev + 1 >= (struct drm_device *) (parent + ksize(parent)));
--	dev->managed.final_kfree = parent;
-+	WARN_ON(dev < (struct drm_device *) container);
-+	WARN_ON(dev + 1 >=
-+		(struct drm_device *) (container + ksize(container)));
-+	dev->managed.final_kfree = container;
- }
- EXPORT_SYMBOL(drmm_add_final_kfree);
- 
-@@ -154,7 +161,7 @@ int __drmm_add_action(struct drm_device *dev,
- 		return -ENOMEM;
- 	}
- 
--	dr->node.name = name;
-+	dr->node.name = kstrdup_const(name, GFP_KERNEL);
- 	if (data) {
- 		void_ptr = (void **)&dr->data;
- 		*void_ptr = data;
-@@ -212,7 +219,7 @@ void drmm_remove_action(struct drm_device *dev,
- 	if (WARN_ON(!dr))
- 		return;
- 
--	kfree(dr);
-+	free_dr(dr);
- }
- EXPORT_SYMBOL(drmm_remove_action);
- 
-@@ -300,6 +307,6 @@ void drmm_kfree(struct drm_device *dev, void *data)
- 	if (WARN_ON(!dr_match))
- 		return;
- 
--	kfree(dr_match);
-+	free_dr(dr_match);
- }
- EXPORT_SYMBOL(drmm_kfree);
-diff --git a/include/drm/drm_managed.h b/include/drm/drm_managed.h
-index af152cfb173c..e4021484c78d 100644
---- a/include/drm/drm_managed.h
-+++ b/include/drm/drm_managed.h
-@@ -51,7 +51,7 @@ void drmm_remove_action(struct drm_device *dev,
- 			drmres_release_t action,
- 			void *data);
- 
--void drmm_add_final_kfree(struct drm_device *dev, void *parent);
-+void drmm_add_final_kfree(struct drm_device *dev, void *container);
- 
- void *drmm_kmalloc(struct drm_device *dev, size_t size, gfp_t gfp) __malloc;
- 
--- 
-2.25.1
+ok, will check
+
+jirka
 
