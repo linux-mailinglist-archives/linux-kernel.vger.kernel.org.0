@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29330187F42
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:00:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E27E187F3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:59:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbgCQK7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 06:59:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38418 "EHLO mail.kernel.org"
+        id S1727517AbgCQK7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:59:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727501AbgCQK7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 06:59:47 -0400
+        id S1726619AbgCQK7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:59:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0106B20658;
-        Tue, 17 Mar 2020 10:59:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A07F20658;
+        Tue, 17 Mar 2020 10:59:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442787;
-        bh=2vhibI530la2nXP38czFOi1Gon/TlBG9XWRRNIpIJCA=;
+        s=default; t=1584442789;
+        bh=UDa2qWXHYHGSlYmI++u0oX+jPfDfyrUcCkVb2ISSQnM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bu/ZPr3CMJIQf26lsF9NAPiH3dYNbxc337arX2ijaeeAQQ/0g3TFsA2XGcK9kxgRH
-         sp/jkI9tEyZmugeinMk9VuwnsvWBZbxC+VSD+e60YWPtcJJ4t04prfciGwder/pEoR
-         sbw513YDPdd/o2v5IEeIlg0om/mT3tDmF1pcpy3A=
+        b=v4U4mfRLgv3/mlyL+G2U2cLqKdRR14HjtEQXyWK4wGhzS6nWexwW04SxP4IFIRqSV
+         /HbOcLkyOb35aA8aU+km9uxD7AswgFEYXhpgxI6vnJQ95NqMlaGv5jwtrxAJph2gGK
+         ZLumCiFKotPT9rx2p0gEevgIBd0WATQpIqJCw5qo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
-        Zhenzhong Duan <zhenzhong.duan@gmail.com>,
+        Daniel Drake <drake@endlessm.com>,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.19 82/89] iommu/vt-d: Fix the wrong printing in RHSA parsing
-Date:   Tue, 17 Mar 2020 11:55:31 +0100
-Message-Id: <20200317103309.528602707@linuxfoundation.org>
+Subject: [PATCH 4.19 83/89] iommu/vt-d: Ignore devices with out-of-spec domain number
+Date:   Tue, 17 Mar 2020 11:55:32 +0100
+Message-Id: <20200317103309.636095095@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
 References: <20200317103259.744774526@linuxfoundation.org>
@@ -44,36 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhenzhong Duan <zhenzhong.duan@gmail.com>
+From: Daniel Drake <drake@endlessm.com>
 
-commit b0bb0c22c4db623f2e7b1a471596fbf1c22c6dc5 upstream.
+commit da72a379b2ec0bad3eb265787f7008bead0b040c upstream.
 
-When base address in RHSA structure doesn't match base address in
-each DRHD structure, the base address in last DRHD is printed out.
+VMD subdevices are created with a PCI domain ID of 0x10000 or
+higher.
 
-This doesn't make sense when there are multiple DRHD units, fix it
-by printing the buggy RHSA's base address.
+These subdevices are also handled like all other PCI devices by
+dmar_pci_bus_notifier().
+
+However, when dmar_alloc_pci_notify_info() take records of such devices,
+it will truncate the domain ID to a u16 value (in info->seg).
+The device at (e.g.) 10000:00:02.0 is then treated by the DMAR code as if
+it is 0000:00:02.0.
+
+In the unlucky event that a real device also exists at 0000:00:02.0 and
+also has a device-specific entry in the DMAR table,
+dmar_insert_dev_scope() will crash on:
+   BUG_ON(i >= devices_cnt);
+
+That's basically a sanity check that only one PCI device matches a
+single DMAR entry; in this case we seem to have two matching devices.
+
+Fix this by ignoring devices that have a domain number higher than
+what can be looked up in the DMAR table.
+
+This problem was carefully diagnosed by Jian-Hong Pan.
 
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@gmail.com>
-Fixes: fd0c8894893cb ("intel-iommu: Set a more specific taint flag for invalid BIOS DMAR tables")
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Fixes: 59ce0515cdaf3 ("iommu/vt-d: Update DRHD/RMRR/ATSR device scope caches when PCI hotplug happens")
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/dmar.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/dmar.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 --- a/drivers/iommu/dmar.c
 +++ b/drivers/iommu/dmar.c
-@@ -486,7 +486,7 @@ static int dmar_parse_one_rhsa(struct ac
- 	pr_warn(FW_BUG
- 		"Your BIOS is broken; RHSA refers to non-existent DMAR unit at %llx\n"
- 		"BIOS vendor: %s; Ver: %s; Product Version: %s\n",
--		drhd->reg_base_addr,
-+		rhsa->base_address,
- 		dmi_get_system_info(DMI_BIOS_VENDOR),
- 		dmi_get_system_info(DMI_BIOS_VERSION),
- 		dmi_get_system_info(DMI_PRODUCT_VERSION));
+@@ -39,6 +39,7 @@
+ #include <linux/dmi.h>
+ #include <linux/slab.h>
+ #include <linux/iommu.h>
++#include <linux/limits.h>
+ #include <asm/irq_remapping.h>
+ #include <asm/iommu_table.h>
+ 
+@@ -139,6 +140,13 @@ dmar_alloc_pci_notify_info(struct pci_de
+ 
+ 	BUG_ON(dev->is_virtfn);
+ 
++	/*
++	 * Ignore devices that have a domain number higher than what can
++	 * be looked up in DMAR, e.g. VMD subdevices with domain 0x10000
++	 */
++	if (pci_domain_nr(dev->bus) > U16_MAX)
++		return NULL;
++
+ 	/* Only generate path[] for device addition event */
+ 	if (event == BUS_NOTIFY_ADD_DEVICE)
+ 		for (tmp = dev; tmp; tmp = tmp->bus->self)
 
 
