@@ -2,154 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D723187A81
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 08:31:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5725187A8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 08:33:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbgCQHba (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 03:31:30 -0400
-Received: from mail-eopbgr1410135.outbound.protection.outlook.com ([40.107.141.135]:6170
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725962AbgCQHb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 03:31:29 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=J3WijfjHKXnm7peRdfXNelNkUVLkmnZNOexY1sYi19o98P5+Ebxkj3SSNUqg5vBTbR5HJ5Rkp7OkwXWf7NdG3aNcXCQQ6Lh2ZBZQx1gMo38Xb9wXA7Xnl2GbWAcWuewm1kVV3aDjdxlaBm+OICWx4z64uSMnw+EjwGSwFun6u9LJCV6u07cjqX5gGN4B4pM9UY4waNfJI1r3ZtSiVjYfflwmSPDyX0VT5j5vy0gev4ALuSP8v9bfJN2k8dS/QCemYHjpjavKbALSC6YzZBpWE0Af5XnE44Rl5+wphW9J4aBfJFdaG2DRw8VBG0FkAxQOUfxCpa/aDEjt48a0NYvKRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KZlu8doWsEAtzvwPUT6qKWOCHIjBTQpDhp2z+v4aUTQ=;
- b=TS9v0lTfPjHNNJkDwRzBMWpS5YD6eGKMXSE8NYGoueaVJpGTsaBmsoQMdnAfjY/cNdtWOXvN8jWrlma+CotglkPYdTwX+V9wdmCboyqZx1W8ShjjtNfoazGaTaFARuL1CHgfuvkID2MwlLer3Z6TldK7ivFF6Iz2ELJDwEHFjoCiljvGssbWV0i94cT7iusfWD1tYyqeaf9vQITyCyIfnYyjRNDEQZ5ZtsSY8sTT4T0ui29TxoU4XoT8inwBgtw1lO/ONEDXKCOBZQbC5/0MIysP03bh/nfa9jpGKxEmRrHoZUg1k3WaBebJ13o1KuLKOZxBVfsRhrLJuQYH4ZzpMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KZlu8doWsEAtzvwPUT6qKWOCHIjBTQpDhp2z+v4aUTQ=;
- b=B2fO/9KeggWBRwbDX2ChAGrWY7UntMWGJoz+KD/9msTMif4OHRWYL/9mciXOCw8lRq4JFWGYPLvFAoZTX7poSnW44lvZd/GC+8M+Q1b5ta3wzjZjULfC+GFKBJmz6Y0MT/bwvcLkj+DXvWFQjQU+gh+U1ba3LetaPL6OYRJGMlI=
-Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com (20.179.175.203) by
- TYAPR01MB2925.jpnprd01.prod.outlook.com (20.177.103.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2793.17; Tue, 17 Mar 2020 07:31:25 +0000
-Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com
- ([fe80::ed7f:1268:55a9:fc06]) by TYAPR01MB4544.jpnprd01.prod.outlook.com
- ([fe80::ed7f:1268:55a9:fc06%4]) with mapi id 15.20.2814.021; Tue, 17 Mar 2020
- 07:31:25 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Lad Prabhakar <prabhakar.csengg@gmail.com>
-CC:     Andrew Murray <andrew.murray@arm.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        id S1726444AbgCQHc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 03:32:58 -0400
+Received: from mga14.intel.com ([192.55.52.115]:28533 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725957AbgCQHc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 03:32:58 -0400
+IronPort-SDR: BZ8ke6cDQvmw0R29DCVMJ5yxlsBjYe8k9ggI5hX+ijxxgUF/1RuWJSOpPv+SME2Y8SFXO4jjCh
+ I8RHz4SFCriQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 00:32:58 -0700
+IronPort-SDR: NA6fcj7hlzikUGXB/cbpVaqc5np2tQ3ndb4jl8/G7w+k5Snd2uTF+YddDkTjmRFkALd9YY+A5V
+ hBndeU7tgJ+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,563,1574150400"; 
+   d="scan'208";a="443660878"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.87]) ([10.237.72.87])
+  by fmsmga005.fm.intel.com with ESMTP; 17 Mar 2020 00:32:56 -0700
+Subject: Re: [RESEND PATCH 1/3] mmc: host: Introduce the request_atomic() for
+ the host
+To:     Baolin Wang <baolin.wang7@gmail.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
         Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: RE: [PATCH v5 3/7] PCI: rcar: Fix calculating mask for PCIEPAMR
- register
-Thread-Topic: [PATCH v5 3/7] PCI: rcar: Fix calculating mask for PCIEPAMR
- register
-Thread-Index: AQHV7k2hxh1UWQe7gUC78mciysp7oahMfYuA
-Date:   Tue, 17 Mar 2020 07:31:24 +0000
-Message-ID: <TYAPR01MB454464006DE4D6547EB19443D8F60@TYAPR01MB4544.jpnprd01.prod.outlook.com>
-References: <20200228154122.14164-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200228154122.14164-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20200228154122.14164-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
-x-originating-ip: [124.210.22.195]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: c40bab91-4a24-4186-b97f-08d7ca4532d5
-x-ms-traffictypediagnostic: TYAPR01MB2925:|TYAPR01MB2925:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <TYAPR01MB292560A71E0E75850070EDEFD8F60@TYAPR01MB2925.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4941;
-x-forefront-prvs: 0345CFD558
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(136003)(396003)(376002)(346002)(366004)(199004)(26005)(186003)(7696005)(55236004)(478600001)(33656002)(316002)(6916009)(4326008)(7416002)(71200400001)(8936002)(81166006)(81156014)(8676002)(54906003)(6506007)(86362001)(66556008)(76116006)(9686003)(52536014)(2906002)(66446008)(5660300002)(55016002)(64756008)(66476007)(66946007);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB2925;H:TYAPR01MB4544.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: QItKDRMGxxJk/LzRWxzMgXvpyNefoyeUESI3YRid/1Dqjw9RlnHHzXqC5rOgcHZQQkleKMgHRJEjf2a+m2oEkUzl5GoK2G0pleG8kStZDJuuJiUE/CkqIipJFg1VNJXj3A5qb+pTe8kfSxy41VQAIDMs/sgXsGSjBJMjX3dF8lnDnlOsudliMozoAF5N++RskZoMtZgG6i5SNvMH1Ru6V/5wVBGhU7yzc7KCZU22dB3W1XY3MhGh+g4jaUTtufvIu4LkAa3SMEgh/gssN83iRkx2D9itzXc6ECBivTXBks6V2vzbl9PW5OQGD+JWpNrxV7eQhAoteVayypCN1QFuqs8KpzU7JZYhXFPy/AbxHNWvouljPJsEjG9cT+Jtqz3w/yFMp2cbLP+sxPMHkImOhwut58nP8Zp31bm7kJyz9nDbS9jApJHknHqqAXD+Z9gq
-x-ms-exchange-antispam-messagedata: U6uhQRPXIFlJp0xF8xlzCnIMEhjQAhmwL71dXH2r1313wHMPfb2OtZajpmTiUqPvB/WRPEjD80RCc9EToVqyPJOK/VvRK+x4TI/BSUaJEIGmmeoJyVC+sVSPS/KxK5uo/PnzkdCZ5pJFFLcMMYLr2Q==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <cover.1583307441.git.baolin.wang7@gmail.com>
+ <ace53bca354e2846f19684bd33a9c0f3c2ee2c44.1583307441.git.baolin.wang7@gmail.com>
+ <dd44e606-3eb5-f7fc-5995-021705a9b5d9@intel.com>
+ <CADBw62ojVB7nvwE9OM8-A_HfVBBXz7tuaxfqDCmQ39b1YiDBag@mail.gmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <ea70f7a4-78cb-25b4-4363-c6493d885795@intel.com>
+Date:   Tue, 17 Mar 2020 09:32:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c40bab91-4a24-4186-b97f-08d7ca4532d5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2020 07:31:24.8647
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: NAYgwXmL1WkFsRrf5ujGtVCPSIsda+cvEvzlwFgc/4zzyLJudp3qP/5pKN9NUwHw63OXcO110dL6KIOUOrah547JL5sgdvWNQ6JmWv9mAGsBjC57aKfwmdW4gc35Ru84
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2925
+In-Reply-To: <CADBw62ojVB7nvwE9OM8-A_HfVBBXz7tuaxfqDCmQ39b1YiDBag@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Prabhakar-san,
+On 17/03/20 5:36 am, Baolin Wang wrote:
+> On Mon, Mar 16, 2020 at 9:09 PM Adrian Hunter <adrian.hunter@intel.com> wrote:
+>>
+>> On 4/03/20 9:42 am, Baolin Wang wrote:
+>>> The SD host controller can process one request in the atomic context if
+>>> the card is nonremovable, which means we can submit next request in the
+>>> irq hard handler when using the MMC software queue to reduce the latency.
+>>> Thus this patch adds a new API request_atomic() for the host controller
+>>> and implement it for the SD host controller.
+>>>
+>>> Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
+>>> Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+>>> ---
+>>>  drivers/mmc/host/sdhci.c | 27 +++++++++++++++++++--------
+>>>  drivers/mmc/host/sdhci.h |  1 +
+>>>  include/linux/mmc/host.h |  3 +++
+>>>  3 files changed, 23 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>> index 9c37451..4febbcb 100644
+>>> --- a/drivers/mmc/host/sdhci.c
+>>> +++ b/drivers/mmc/host/sdhci.c
+>>> @@ -2016,17 +2016,12 @@ void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
+>>>   *                                                                           *
+>>>  \*****************************************************************************/
+>>>
+>>> -void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>>> +static void sdhci_start_request(struct mmc_host *mmc, struct mmc_request *mrq,
+>>> +                             int present)
+>>>  {
+>>> -     struct sdhci_host *host;
+>>> -     int present;
+>>> +     struct sdhci_host *host = mmc_priv(mmc);
+>>>       unsigned long flags;
+>>>
+>>> -     host = mmc_priv(mmc);
+>>> -
+>>> -     /* Firstly check card presence */
+>>> -     present = mmc->ops->get_cd(mmc);
+>>> -
+>>>       spin_lock_irqsave(&host->lock, flags);
+>>>
+>>>       sdhci_led_activate(host);
+>>> @@ -2043,6 +2038,22 @@ void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>>>
+>>>       spin_unlock_irqrestore(&host->lock, flags);
+>>>  }
+>>> +
+>>> +void sdhci_request_atomic(struct mmc_host *mmc, struct mmc_request *mrq)
+>>> +{
+>>> +     sdhci_start_request(mmc, mrq, 1);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(sdhci_request_atomic);
+>>> +
+>>> +void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>>> +{
+>>> +     int present;
+>>> +
+>>> +     /* Firstly check card presence */
+>>> +     present = mmc->ops->get_cd(mmc);
+>>> +
+>>> +     sdhci_start_request(mmc, mrq, present);
+>>> +}
+>>>  EXPORT_SYMBOL_GPL(sdhci_request);
+>>>
+>>>  void sdhci_set_bus_width(struct sdhci_host *host, int width)
+>>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+>>> index cac2d97..5507a73 100644
+>>> --- a/drivers/mmc/host/sdhci.h
+>>> +++ b/drivers/mmc/host/sdhci.h
+>>> @@ -775,6 +775,7 @@ void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
+>>>  void sdhci_set_power_noreg(struct sdhci_host *host, unsigned char mode,
+>>>                          unsigned short vdd);
+>>>  void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq);
+>>> +void sdhci_request_atomic(struct mmc_host *mmc, struct mmc_request *mrq);
+>>>  void sdhci_set_bus_width(struct sdhci_host *host, int width);
+>>>  void sdhci_reset(struct sdhci_host *host, u8 mask);
+>>>  void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
+>>> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+>>> index 562ed06..db5e59c 100644
+>>> --- a/include/linux/mmc/host.h
+>>> +++ b/include/linux/mmc/host.h
+>>> @@ -92,6 +92,9 @@ struct mmc_host_ops {
+>>>                           int err);
+>>>       void    (*pre_req)(struct mmc_host *host, struct mmc_request *req);
+>>>       void    (*request)(struct mmc_host *host, struct mmc_request *req);
+>>> +     /* Submit one request to host in atomic context. */
+>>> +     void    (*request_atomic)(struct mmc_host *host,
+>>> +                               struct mmc_request *req);
+>>
+>> This doesn't have the flexibility to return "busy".  For example,
+>> sdhci_send_command() will potentially wait quite some time if the inhibit
+>> bits are set.  That is not good in interrupt context.  It would be better to
+>> return immediately in that case and have the caller fall back to a
+>> non-atomic context.  Thoughts?
+> 
+> Yes, I unserstood your concern. But the sdhci_send_command() is
+> already under the spin_lock_irqsave() protection, which will also
+> disable the interrupt for some time if the inhibit bits are set. That
+> is same with moving it in interrupt context.
 
-Thank you for the patch!
+It is, but I would like to fix that too.
 
-> From: Lad Prabhakar, Sent: Saturday, February 29, 2020 12:41 AM
->=20
-> The mask value was calculated incorrectly for PCIEPAMR register if the
-> size was less than 128 bytes. Fix this issue by adding a check on size.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  drivers/pci/controller/pcie-rcar.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/=
-pcie-rcar.c
-> index 41275f9..90d47b21 100644
-> --- a/drivers/pci/controller/pcie-rcar.c
-> +++ b/drivers/pci/controller/pcie-rcar.c
-> @@ -75,7 +75,10 @@ void rcar_pcie_set_outbound(int win, void __iomem *bas=
-e,
->  	 * keeps things pretty simple.
->  	 */
->  	size =3D resource_size(res);
-> -	mask =3D (roundup_pow_of_two(size) / SZ_128) - 1;
-> +	if (size > 128)
-> +		mask =3D (roundup_pow_of_two(size) / SZ_128) - 1;
-> +	else
-> +		mask =3D 0x0;
->  	rcar_pci_write_reg(base, mask << 7, PCIEPAMR(win));
+> 
+> Moreover, if the previous command complete interrupt and transfer
+> complete interrupt are normal, we should not meet this issue of
+> polling inhibit bits (I have not met this issue on my platform). So I
+> think we can remove the polling here? If the inhibit bits are set, I
+> think the command complete interrupt or the transfer complete
+> interrupt have been abnormal, so we can just return the error here.
+> What do you think? Thanks.
+> 
 
-This patch seems OK. I think rebasing is needed though. Anyway,
-
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Best regards,
-Yoshihiro Shimoda
-
->  	if (res->flags & IORESOURCE_IO)
-> --
-> 2.7.4
+I suspect the inhibit polling might be needed for some host controllers in
+some situations.  ie. taking it out would likely break things.
 
