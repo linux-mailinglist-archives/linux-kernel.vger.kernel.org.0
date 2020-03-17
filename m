@@ -2,78 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E896188C46
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:38:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3DAD188C49
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:40:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbgCQRi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 13:38:29 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:43771 "EHLO
+        id S1726555AbgCQRkp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 13:40:45 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:36582 "EHLO
         us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726189AbgCQRi2 (ORCPT
+        by vger.kernel.org with ESMTP id S1726130AbgCQRko (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 13:38:28 -0400
+        Tue, 17 Mar 2020 13:40:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584466707;
+        s=mimecast20190719; t=1584466843;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=KqXznweBlwjgjbqOmCj0t1wRnXCMMt9Q5oGndDgHqKw=;
-        b=Ia2aMF4Tm8eocrFe4OQXmSbA9FRlHffG1AnEBAP0WMtAVZv0ip7fsTiYGJBwKQIXK+PKO+
-        XhPGSnuwR5XdYrxW52X5aHtGO6PbVABM5ZnI+cjCgjQj9suquxKwB8v1FPerrjfmawJGT1
-        17zTro9Vem3GSE+zb7Fwbq05KQVDAy0=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-426-YRTtiqN_MXOTgvLOissZSQ-1; Tue, 17 Mar 2020 13:38:23 -0400
-X-MC-Unique: YRTtiqN_MXOTgvLOissZSQ-1
-Received: by mail-wm1-f70.google.com with SMTP id z16so59476wmi.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 10:38:23 -0700 (PDT)
+        bh=3YlvCm1lBNLjiNpS/n2yOjJThq/QHDMua9Olu9Cwy6g=;
+        b=OcS5SJSkUIKWxtsFEL/OIcElz8KLEB4/bS3qcffss86Q5hB2yQqKya8nCUtH9k0cv0Cwr1
+        Mm0TpPmMvqIkFwOFqeG4shbw7D8yk61jWfJwOFsQOxwIZLNiMcK9iyrjX4H9ZYftAkZP2b
+        aWy65svJE1RoFfBhzxdsCwOSg0GKmzI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-83-stm4TEUkPEq7AxQjkzI8rA-1; Tue, 17 Mar 2020 13:40:41 -0400
+X-MC-Unique: stm4TEUkPEq7AxQjkzI8rA-1
+Received: by mail-wm1-f71.google.com with SMTP id 20so64375wmk.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 10:40:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=KqXznweBlwjgjbqOmCj0t1wRnXCMMt9Q5oGndDgHqKw=;
-        b=bc6MKOTFFsfZHY8J0WaJOH3SqyWaT7gAuD6zRdDJ8dkjfYOXdJqR5pC2O6yXwDgrii
-         xJ8AzCSb8VB8b5Fw2KTsuw5NLnvzotBdDLrnCEbfhGgCZwy0j39HYGWqi++8a1b63K0g
-         bI0xOxhL/Ou+kqKJ2u+7rp1Tu5We1lr2+DSQJ06UYtvaLOmcyz5DjJHIHgmsibrNPDrA
-         GFndWB9rxTkNokb0LHY8+TQ/6yxMB2ghwTJd69Jbtx/j/UmHyhOWIacmWtWEvhX5BF+i
-         poO3/bCFiOjAghsVRC01b6jJmF2f2LashFqjLsyp/+TwrqKefXh2Wrr6SsuEeypnqHR6
-         oLFg==
-X-Gm-Message-State: ANhLgQ1tWMa2RKMmWIY0zyNrM0TeovHrDbVNGw/bEu1uEsAgpr7OEGOg
-        cVF1hSOo2XWexuj/hRyOoGhN1gC1JTQDEemSo2/z/Kq69XrXDMjB5U5kA+7RM1jWNnb8iOCr/IW
-        k0kPkBXDfoY/t4pe5kgf2MS8e
-X-Received: by 2002:a5d:698c:: with SMTP id g12mr109548wru.382.1584466702583;
-        Tue, 17 Mar 2020 10:38:22 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vv2+A6tWc5nG/r5JkQ3oWBizSODgSFk5DmsHpehp4pOI8egGtrWh/hnLDHQmJahsWLHxSYI6A==
-X-Received: by 2002:a5d:698c:: with SMTP id g12mr109524wru.382.1584466702334;
-        Tue, 17 Mar 2020 10:38:22 -0700 (PDT)
+        bh=3YlvCm1lBNLjiNpS/n2yOjJThq/QHDMua9Olu9Cwy6g=;
+        b=UlLMMc7/2QlcY83ckvy37zrCeqpCFl7SAAVFGIvWZnCisNGnER6Swgk59jT5a1qCDI
+         Nj/LH+RIqQuQH2SbSum3Wz/0qGHzxlIMFfCR3LcoS5oWcL7aYwUC+DhmbvfenTT8bU/8
+         ULdhT+73y2pwVpu4cmIqV/Z4UoqJ1EMT3BazbhhEE/v6hTvy19SIvPI6DSCjJESHvFIT
+         Md35JTWiwjPRp35Ofg8UqYUb1hTC3P+5tE851k/HVivWLyUYDQPtiDgfNRyl8Q8UTtlM
+         aO5Vggf+VuuLKlnJvlqK5TGgYEobxRd7BlsLqWuOOG6WzIj5MZ/CCPgbzvRJJOn3E4Q5
+         wReg==
+X-Gm-Message-State: ANhLgQ0Z6JF31rrdaUwPuE1qx0fNZjwAAoeej/gMaMDe3UyLzQR3Qs2M
+        rMVRM/kmh2xJENY6v5QWNl8DyHxzn5lrPn+VSHQgcVhsaiiODe0it5WJaEu0AZmAOLxGx0JanAk
+        /IVqXsRDUtqsGOIat60YpbEpr
+X-Received: by 2002:a1c:1b4c:: with SMTP id b73mr140312wmb.17.1584466840408;
+        Tue, 17 Mar 2020 10:40:40 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vs92iD8sXBzTaC2wszHXrLF6Lp91CBQvFML4Ry1JpAZwSbj6GU/EyKGYKgxJ+6i26ac5kJdBQ==
+X-Received: by 2002:a1c:1b4c:: with SMTP id b73mr140298wmb.17.1584466840157;
+        Tue, 17 Mar 2020 10:40:40 -0700 (PDT)
 Received: from [192.168.178.58] ([151.21.15.227])
-        by smtp.gmail.com with ESMTPSA id k9sm5609036wrd.74.2020.03.17.10.38.21
+        by smtp.gmail.com with ESMTPSA id d21sm5274133wrb.51.2020.03.17.10.40.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Mar 2020 10:38:21 -0700 (PDT)
-Subject: Re: [PATCH 01/10] KVM: nVMX: Move reflection check into
- nested_vmx_reflect_vmexit()
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
+        Tue, 17 Mar 2020 10:40:39 -0700 (PDT)
+Subject: Re: [PATCH 06/10] KVM: nVMX: Convert local exit_reason to u16 in
+ ...enter_non_root_mode()
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
 Cc:     Wanpeng Li <wanpengli@tencent.com>,
         Jim Mattson <jmattson@google.com>,
         Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
 References: <20200312184521.24579-1-sean.j.christopherson@intel.com>
- <20200312184521.24579-2-sean.j.christopherson@intel.com>
- <87k13opi6m.fsf@vitty.brq.redhat.com>
- <20200317053327.GR24267@linux.intel.com>
- <20200317161631.GD12526@linux.intel.com>
- <874kum533c.fsf@vitty.brq.redhat.com>
+ <20200312184521.24579-7-sean.j.christopherson@intel.com>
+ <87pndgnyud.fsf@vitty.brq.redhat.com>
+ <20200317052922.GQ24267@linux.intel.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <bd3fec03-c7c3-6c80-2dce-688340a1ae72@redhat.com>
-Date:   Tue, 17 Mar 2020 18:38:20 +0100
+Message-ID: <a6ad902e-f2ce-2df6-5f48-c9eb6e5c75d8@redhat.com>
+Date:   Tue, 17 Mar 2020 18:40:38 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <874kum533c.fsf@vitty.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200317052922.GQ24267@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -81,16 +79,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/03/20 18:00, Vitaly Kuznetsov wrote:
+On 17/03/20 06:29, Sean Christopherson wrote:
+>>>  
+>>>  	load_vmcs12_host_state(vcpu, vmcs12);
+>>> -	vmcs12->vm_exit_reason = exit_reason | VMX_EXIT_REASONS_FAILED_VMENTRY;
+>>> +	vmcs12->vm_exit_reason = VMX_EXIT_REASONS_FAILED_VMENTRY | exit_reason;
+>> My personal preference would be to do
+>>  (u32)exit_reason | VMX_EXIT_REASONS_FAILED_VMENTRY 
+>> instead but maybe I'm just not in love with implicit type convertion in C.
+> Either way works for me.  Paolo?
 > 
-> On the other hand, I'm a great fan of splitting checkers ('pure'
-> functions) from actors (functions with 'side-effects') and
-> nested_vmx_exit_reflected() while looking like a checker does a lot of
-> 'acting': nested_mark_vmcs12_pages_dirty(), trace printk.
 
-Good idea (trace_printk is not a big deal, but
-nested_mark_vmcs12_pages_dirty should be done outside).  I'll send a
-patch, just to show that I can still write KVM code. :)
+Flip a coin? :)  I think your version is fine.
 
 Paolo
 
