@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB04818818C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:20:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E040B187F58
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:00:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbgCQLEq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:04:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45038 "EHLO mail.kernel.org"
+        id S1727376AbgCQLAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:00:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727940AbgCQLEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:04:40 -0400
+        id S1727618AbgCQLAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:00:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A80EA20736;
-        Tue, 17 Mar 2020 11:04:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64C1B205ED;
+        Tue, 17 Mar 2020 11:00:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443080;
-        bh=9NoQVqoZS1Vz2ny1kBlQ6fnhup0i0q5dtmWUnuZaFbA=;
+        s=default; t=1584442833;
+        bh=oGOCtuhQfQRHFJ3n4c6pTX5DYZGesr/STagxVkOFJAQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lCCrKGMhOhLx20RIRGgpmWrYklPvqe7IBPLda/hSWfr51VBpqT8GhGfSZk5VmKT/v
-         52jX1lBYSVsZ924s1B/8Bqf4K/H2iz7ip5WBcX4UpCMZELuA6wsYGiGKP3SZy2TdnU
-         CDHYzGICrMfxAf0o7YyRkGENMZ+Cep5SQw3CJNcA=
+        b=E630D/IuBCA1c5ewHPOhDIHgiA972VmsfuavPetjaYZQDTUzQgCSN2eWLo9uwuKbB
+         L90S2qsNMd3LRM39g6xqYr5w/lMsDrVsnate9c6M14Icw7NSje6k19QTb1vXUBDWi+
+         3Yv7ZszuiWuTz5XVEkZzw4dNienhHfL+JYMLGlRE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.4 090/123] mt76: fix array overflow on receiving too many fragments for a packet
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 4.19 68/89] iommu/vt-d: dmar: replace WARN_TAINT with pr_warn + add_taint
 Date:   Tue, 17 Mar 2020 11:55:17 +0100
-Message-Id: <20200317103316.934745037@linuxfoundation.org>
+Message-Id: <20200317103307.781236425@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
-References: <20200317103307.343627747@linuxfoundation.org>
+In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
+References: <20200317103259.744774526@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +44,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit b102f0c522cf668c8382c56a4f771b37d011cda2 upstream.
+commit 59833696442c674acbbd297772ba89e7ad8c753d upstream.
 
-If the hardware receives an oversized packet with too many rx fragments,
-skb_shinfo(skb)->frags can overflow and corrupt memory of adjacent pages.
-This becomes especially visible if it corrupts the freelist pointer of
-a slab page.
+Quoting from the comment describing the WARN functions in
+include/asm-generic/bug.h:
 
+ * WARN(), WARN_ON(), WARN_ON_ONCE, and so on can be used to report
+ * significant kernel issues that need prompt attention if they should ever
+ * appear at runtime.
+ *
+ * Do not use these macros when checking for invalid external inputs
+
+The (buggy) firmware tables which the dmar code was calling WARN_TAINT
+for really are invalid external inputs. They are not under the kernel's
+control and the issues in them cannot be fixed by a kernel update.
+So logging a backtrace, which invites bug reports to be filed about this,
+is not helpful.
+
+Some distros, e.g. Fedora, have tools watching for the kernel backtraces
+logged by the WARN macros and offer the user an option to file a bug for
+this when these are encountered. The WARN_TAINT in warn_invalid_dmar()
++ another iommu WARN_TAINT, addressed in another patch, have lead to over
+a 100 bugs being filed this way.
+
+This commit replaces the WARN_TAINT("...") calls, with
+pr_warn(FW_BUG "...") + add_taint(TAINT_FIRMWARE_WORKAROUND, ...) calls
+avoiding the backtrace and thus also avoiding bug-reports being filed
+about this against the kernel.
+
+Fixes: fd0c8894893c ("intel-iommu: Set a more specific taint flag for invalid BIOS DMAR tables")
+Fixes: e625b4a95d50 ("iommu/vt-d: Parse ANDD records")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Link: https://lore.kernel.org/r/20200309140138.3753-2-hdegoede@redhat.com
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1564895
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/mediatek/mt76/dma.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/iommu/dmar.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/net/wireless/mediatek/mt76/dma.c
-+++ b/drivers/net/wireless/mediatek/mt76/dma.c
-@@ -448,10 +448,13 @@ mt76_add_fragment(struct mt76_dev *dev,
- 	struct page *page = virt_to_head_page(data);
- 	int offset = data - page_address(page);
- 	struct sk_buff *skb = q->rx_head;
-+	struct skb_shared_info *shinfo = skb_shinfo(skb);
+--- a/drivers/iommu/dmar.c
++++ b/drivers/iommu/dmar.c
+@@ -451,12 +451,13 @@ static int __init dmar_parse_one_andd(st
  
--	offset += q->buf_offset;
--	skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, page, offset, len,
--			q->buf_size);
-+	if (shinfo->nr_frags < ARRAY_SIZE(shinfo->frags)) {
-+		offset += q->buf_offset;
-+		skb_add_rx_frag(skb, shinfo->nr_frags, page, offset, len,
-+				q->buf_size);
-+	}
+ 	/* Check for NUL termination within the designated length */
+ 	if (strnlen(andd->device_name, header->length - 8) == header->length - 8) {
+-		WARN_TAINT(1, TAINT_FIRMWARE_WORKAROUND,
++		pr_warn(FW_BUG
+ 			   "Your BIOS is broken; ANDD object name is not NUL-terminated\n"
+ 			   "BIOS vendor: %s; Ver: %s; Product Version: %s\n",
+ 			   dmi_get_system_info(DMI_BIOS_VENDOR),
+ 			   dmi_get_system_info(DMI_BIOS_VERSION),
+ 			   dmi_get_system_info(DMI_PRODUCT_VERSION));
++		add_taint(TAINT_FIRMWARE_WORKAROUND, LOCKDEP_STILL_OK);
+ 		return -EINVAL;
+ 	}
+ 	pr_info("ANDD device: %x name: %s\n", andd->device_number,
+@@ -482,14 +483,14 @@ static int dmar_parse_one_rhsa(struct ac
+ 			return 0;
+ 		}
+ 	}
+-	WARN_TAINT(
+-		1, TAINT_FIRMWARE_WORKAROUND,
++	pr_warn(FW_BUG
+ 		"Your BIOS is broken; RHSA refers to non-existent DMAR unit at %llx\n"
+ 		"BIOS vendor: %s; Ver: %s; Product Version: %s\n",
+ 		drhd->reg_base_addr,
+ 		dmi_get_system_info(DMI_BIOS_VENDOR),
+ 		dmi_get_system_info(DMI_BIOS_VERSION),
+ 		dmi_get_system_info(DMI_PRODUCT_VERSION));
++	add_taint(TAINT_FIRMWARE_WORKAROUND, LOCKDEP_STILL_OK);
  
- 	if (more)
- 		return;
+ 	return 0;
+ }
+@@ -838,14 +839,14 @@ int __init dmar_table_init(void)
+ 
+ static void warn_invalid_dmar(u64 addr, const char *message)
+ {
+-	WARN_TAINT_ONCE(
+-		1, TAINT_FIRMWARE_WORKAROUND,
++	pr_warn_once(FW_BUG
+ 		"Your BIOS is broken; DMAR reported at address %llx%s!\n"
+ 		"BIOS vendor: %s; Ver: %s; Product Version: %s\n",
+ 		addr, message,
+ 		dmi_get_system_info(DMI_BIOS_VENDOR),
+ 		dmi_get_system_info(DMI_BIOS_VERSION),
+ 		dmi_get_system_info(DMI_PRODUCT_VERSION));
++	add_taint(TAINT_FIRMWARE_WORKAROUND, LOCKDEP_STILL_OK);
+ }
+ 
+ static int __ref
 
 
