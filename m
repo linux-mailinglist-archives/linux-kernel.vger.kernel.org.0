@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83E2D187F89
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:02:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9C9B18804A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:09:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727909AbgCQLCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:02:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41846 "EHLO mail.kernel.org"
+        id S1728712AbgCQLJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:09:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727896AbgCQLCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:02:14 -0400
+        id S1727135AbgCQLI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:08:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68ABF20736;
-        Tue, 17 Mar 2020 11:02:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EAFC205ED;
+        Tue, 17 Mar 2020 11:08:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442933;
-        bh=PwiHKutSpB8ifpl393RjPw0c84tOC8R4SP595+LBHcU=;
+        s=default; t=1584443338;
+        bh=QQ129eu6WhXBVL86aVphaEF5TJnd8BZqbt1aZgE+7Ac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aet/bxZpduSP8wObm7vTvJKR18rjKHt5G7NoVaudSPDxTCktrlxeU/pB+AsqmEeTA
-         IgVUL62+LL9tpTUou+BMzBD6E1eSi+kO+tDEkfvcvAP1LDaj2y79scT4mX5CrJwIzm
-         dxrn6y2wMDNQp5EQGXN6al8NEPNQ4C0KZ2j6xymI=
+        b=dwIUT1EHax54WbwYDk8H4BFjdiUoXQ6YE+IaM0Je2AiKN1M8s9gnych1TyAWUsS+U
+         HU/UPB4eyw2I+a+HiQLlqiIibU7djD9HxOhEfMqpz05L9kwY8XiVwXqBAgdI4DLvRR
+         a8il07+p02KDMi2kh+iNhKM9JQis9AWPshHnuKm4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Edwin Peer <edwin.peer@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
+        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 032/123] bnxt_en: fix error handling when flashing from file
+Subject: [PATCH 5.5 049/151] nl802154: add missing attribute validation
 Date:   Tue, 17 Mar 2020 11:54:19 +0100
-Message-Id: <20200317103311.171436934@linuxfoundation.org>
+Message-Id: <20200317103330.075068394@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
-References: <20200317103307.343627747@linuxfoundation.org>
+In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
+References: <20200317103326.593639086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,93 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Edwin Peer <edwin.peer@broadcom.com>
+From: Jakub Kicinski <kuba@kernel.org>
 
-[ Upstream commit 22630e28f9c2b55abd217869cc0696def89f2284 ]
+[ Upstream commit 9322cd7c4af2ccc7fe7c5f01adb53f4f77949e92 ]
 
-After bnxt_hwrm_do_send_message() was updated to return standard error
-codes in a recent commit, a regression in bnxt_flash_package_from_file()
-was introduced.  The return value does not properly reflect all
-possible firmware errors when calling firmware to flash the package.
+Add missing attribute validation for several u8 types.
 
-Fix it by consolidating all errors in one local variable rc instead
-of having 2 variables for different errors.
-
-Fixes: d4f1420d3656 ("bnxt_en: Convert error code in firmware message response to standard code.")
-Signed-off-by: Edwin Peer <edwin.peer@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Fixes: 2c21d11518b6 ("net: add NL802154 interface for configuration of 802.15.4 devices")
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Acked-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c |   24 ++++++++++------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ net/ieee802154/nl_policy.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-@@ -2005,8 +2005,8 @@ static int bnxt_flash_package_from_file(
- 	struct hwrm_nvm_install_update_output *resp = bp->hwrm_cmd_resp_addr;
- 	struct hwrm_nvm_install_update_input install = {0};
- 	const struct firmware *fw;
--	int rc, hwrm_err = 0;
- 	u32 item_len;
-+	int rc = 0;
- 	u16 index;
- 
- 	bnxt_hwrm_fw_set_time(bp);
-@@ -2050,15 +2050,14 @@ static int bnxt_flash_package_from_file(
- 			memcpy(kmem, fw->data, fw->size);
- 			modify.host_src_addr = cpu_to_le64(dma_handle);
- 
--			hwrm_err = hwrm_send_message(bp, &modify,
--						     sizeof(modify),
--						     FLASH_PACKAGE_TIMEOUT);
-+			rc = hwrm_send_message(bp, &modify, sizeof(modify),
-+					       FLASH_PACKAGE_TIMEOUT);
- 			dma_free_coherent(&bp->pdev->dev, fw->size, kmem,
- 					  dma_handle);
- 		}
- 	}
- 	release_firmware(fw);
--	if (rc || hwrm_err)
-+	if (rc)
- 		goto err_exit;
- 
- 	if ((install_type & 0xffff) == 0)
-@@ -2067,20 +2066,19 @@ static int bnxt_flash_package_from_file(
- 	install.install_type = cpu_to_le32(install_type);
- 
- 	mutex_lock(&bp->hwrm_cmd_lock);
--	hwrm_err = _hwrm_send_message(bp, &install, sizeof(install),
--				      INSTALL_PACKAGE_TIMEOUT);
--	if (hwrm_err) {
-+	rc = _hwrm_send_message(bp, &install, sizeof(install),
-+				INSTALL_PACKAGE_TIMEOUT);
-+	if (rc) {
- 		u8 error_code = ((struct hwrm_err_output *)resp)->cmd_err;
- 
- 		if (resp->error_code && error_code ==
- 		    NVM_INSTALL_UPDATE_CMD_ERR_CODE_FRAG_ERR) {
- 			install.flags |= cpu_to_le16(
- 			       NVM_INSTALL_UPDATE_REQ_FLAGS_ALLOWED_TO_DEFRAG);
--			hwrm_err = _hwrm_send_message(bp, &install,
--						      sizeof(install),
--						      INSTALL_PACKAGE_TIMEOUT);
-+			rc = _hwrm_send_message(bp, &install, sizeof(install),
-+						INSTALL_PACKAGE_TIMEOUT);
- 		}
--		if (hwrm_err)
-+		if (rc)
- 			goto flash_pkg_exit;
- 	}
- 
-@@ -2092,7 +2090,7 @@ static int bnxt_flash_package_from_file(
- flash_pkg_exit:
- 	mutex_unlock(&bp->hwrm_cmd_lock);
- err_exit:
--	if (hwrm_err == -EACCES)
-+	if (rc == -EACCES)
- 		bnxt_print_admin_err(bp);
- 	return rc;
- }
+--- a/net/ieee802154/nl_policy.c
++++ b/net/ieee802154/nl_policy.c
+@@ -21,6 +21,11 @@ const struct nla_policy ieee802154_polic
+ 	[IEEE802154_ATTR_HW_ADDR] = { .type = NLA_HW_ADDR, },
+ 	[IEEE802154_ATTR_PAN_ID] = { .type = NLA_U16, },
+ 	[IEEE802154_ATTR_CHANNEL] = { .type = NLA_U8, },
++	[IEEE802154_ATTR_BCN_ORD] = { .type = NLA_U8, },
++	[IEEE802154_ATTR_SF_ORD] = { .type = NLA_U8, },
++	[IEEE802154_ATTR_PAN_COORD] = { .type = NLA_U8, },
++	[IEEE802154_ATTR_BAT_EXT] = { .type = NLA_U8, },
++	[IEEE802154_ATTR_COORD_REALIGN] = { .type = NLA_U8, },
+ 	[IEEE802154_ATTR_PAGE] = { .type = NLA_U8, },
+ 	[IEEE802154_ATTR_COORD_SHORT_ADDR] = { .type = NLA_U16, },
+ 	[IEEE802154_ATTR_COORD_HW_ADDR] = { .type = NLA_HW_ADDR, },
 
 
