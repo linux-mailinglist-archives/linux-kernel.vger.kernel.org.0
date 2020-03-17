@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF995187F56
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:00:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66A851880B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:12:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbgCQLAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:00:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39748 "EHLO mail.kernel.org"
+        id S1729416AbgCQLMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:12:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727066AbgCQLAb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:00:31 -0400
+        id S1728826AbgCQLMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:12:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEDBA205ED;
-        Tue, 17 Mar 2020 11:00:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6123205ED;
+        Tue, 17 Mar 2020 11:12:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442831;
-        bh=8b0ZBgMgQJ6qDLoGvfDUyJ1jvRvYX3DhahpXDQTgdk0=;
+        s=default; t=1584443543;
+        bh=/u62k7k4XbFRbH1vWPs3YBXWUG0u2KF4TDGcXKapG9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2jW6hPiR7D4+7M5M57kZDp3INEJXHrmdiIpC2clKiHgDUNhPrAHWLXSzn3Z2j4fsm
-         4fZDYKxVQUfUDgH+cAX6GbOXYsABH+cxe/sFa4eCVeYn3+TtI13W1Z4fsARCDcqBpR
-         iZwotPgWDkxTPKsuU33ysWBewCXAnBgZL5LMqUhU=
+        b=WSE3GJ9pJaooz1G0YSoS6s/DFEyhvJCXlZWccOEI3qVPWQ+EbtyihyxdvyElSwuix
+         ME7XKCnxVnXj+G25wHhECK0x3xAjgfwVNL4Msyxf5AxuZAQMf7WVLP183kVTvlOzKn
+         GOIX4p7IkfgjpRYHZRa+FQbCq47lVtdek7Zu3/IU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.19 77/89] nl80211: add missing attribute validation for channel switch
-Date:   Tue, 17 Mar 2020 11:55:26 +0100
-Message-Id: <20200317103308.974836577@linuxfoundation.org>
+        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 5.5 117/151] perf/amd/uncore: Replace manual sampling check with CAP_NO_INTERRUPT flag
+Date:   Tue, 17 Mar 2020 11:55:27 +0100
+Message-Id: <20200317103334.785564361@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
-References: <20200317103259.744774526@linuxfoundation.org>
+In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
+References: <20200317103326.593639086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,32 +44,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <kuba@kernel.org>
+From: Kim Phillips <kim.phillips@amd.com>
 
-commit 5cde05c61cbe13cbb3fa66d52b9ae84f7975e5e6 upstream.
+commit f967140dfb7442e2db0868b03b961f9c59418a1b upstream.
 
-Add missing attribute validation for NL80211_ATTR_OPER_CLASS
-to the netlink policy.
+Enable the sampling check in kernel/events/core.c::perf_event_open(),
+which returns the more appropriate -EOPNOTSUPP.
 
-Fixes: 1057d35ede5d ("cfg80211: introduce TDLS channel switch commands")
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Link: https://lore.kernel.org/r/20200303051058.4089398-4-kuba@kernel.org
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+BEFORE:
+
+  $ sudo perf record -a -e instructions,l3_request_g1.caching_l3_cache_accesses true
+  Error:
+  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (l3_request_g1.caching_l3_cache_accesses).
+  /bin/dmesg | grep -i perf may provide additional information.
+
+With nothing relevant in dmesg.
+
+AFTER:
+
+  $ sudo perf record -a -e instructions,l3_request_g1.caching_l3_cache_accesses true
+  Error:
+  l3_request_g1.caching_l3_cache_accesses: PMU Hardware doesn't support sampling/overflow-interrupts. Try 'perf stat'
+
+Fixes: c43ca5091a37 ("perf/x86/amd: Add support for AMD NB and L2I "uncore" counters")
+Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20200311191323.13124-1-kim.phillips@amd.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/wireless/nl80211.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/events/amd/uncore.c |   17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -426,6 +426,7 @@ static const struct nla_policy nl80211_p
- 	[NL80211_ATTR_USER_PRIO] = { .type = NLA_U8 },
- 	[NL80211_ATTR_ADMITTED_TIME] = { .type = NLA_U16 },
- 	[NL80211_ATTR_SMPS_MODE] = { .type = NLA_U8 },
-+	[NL80211_ATTR_OPER_CLASS] = { .type = NLA_U8 },
- 	[NL80211_ATTR_MAC_MASK] = { .len = ETH_ALEN },
- 	[NL80211_ATTR_WIPHY_SELF_MANAGED_REG] = { .type = NLA_FLAG },
- 	[NL80211_ATTR_NETNS_FD] = { .type = NLA_U32 },
+--- a/arch/x86/events/amd/uncore.c
++++ b/arch/x86/events/amd/uncore.c
+@@ -190,15 +190,12 @@ static int amd_uncore_event_init(struct
+ 
+ 	/*
+ 	 * NB and Last level cache counters (MSRs) are shared across all cores
+-	 * that share the same NB / Last level cache. Interrupts can be directed
+-	 * to a single target core, however, event counts generated by processes
+-	 * running on other cores cannot be masked out. So we do not support
+-	 * sampling and per-thread events.
++	 * that share the same NB / Last level cache.  On family 16h and below,
++	 * Interrupts can be directed to a single target core, however, event
++	 * counts generated by processes running on other cores cannot be masked
++	 * out. So we do not support sampling and per-thread events via
++	 * CAP_NO_INTERRUPT, and we do not enable counter overflow interrupts:
+ 	 */
+-	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
+-		return -EINVAL;
+-
+-	/* and we do not enable counter overflow interrupts */
+ 	hwc->config = event->attr.config & AMD64_RAW_EVENT_MASK_NB;
+ 	hwc->idx = -1;
+ 
+@@ -306,7 +303,7 @@ static struct pmu amd_nb_pmu = {
+ 	.start		= amd_uncore_start,
+ 	.stop		= amd_uncore_stop,
+ 	.read		= amd_uncore_read,
+-	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
++	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE | PERF_PMU_CAP_NO_INTERRUPT,
+ };
+ 
+ static struct pmu amd_llc_pmu = {
+@@ -317,7 +314,7 @@ static struct pmu amd_llc_pmu = {
+ 	.start		= amd_uncore_start,
+ 	.stop		= amd_uncore_stop,
+ 	.read		= amd_uncore_read,
+-	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
++	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE | PERF_PMU_CAP_NO_INTERRUPT,
+ };
+ 
+ static struct amd_uncore *amd_uncore_alloc(unsigned int cpu)
 
 
