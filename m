@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98E61188065
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:09:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0413187F97
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:03:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbgCQLJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:09:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52300 "EHLO mail.kernel.org"
+        id S1728001AbgCQLCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:02:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728980AbgCQLJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:09:46 -0400
+        id S1727985AbgCQLCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:02:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3B78205ED;
-        Tue, 17 Mar 2020 11:09:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF265205ED;
+        Tue, 17 Mar 2020 11:02:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443386;
-        bh=7dx3zFjLp/kz4Eo9FTGgZ8jdAx4ycmo7KZ3UhlG8kLI=;
+        s=default; t=1584442964;
+        bh=h/kIjDv2xTNpT4MgTWA/Bf85z2gj7vvs8SRL/Gxd+Ek=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=USRB3LjC+YwAn5Inn1EGPNI+Nk3XQ2Wbt4+rhRi8RfTotb6++82BekRW/FY1KDgo5
-         ZUj8yFpRd/b2KG1Db1op51jYffDE43+TDmgbJ8ionuV2jEiumHUewet6mmu3ege0Ve
-         toWXEE3lkSdxYZ3E2q6QnQcGHwUZLKJuadOgjybo=
+        b=NkpS5Z3WE28AdW/u+GN92D+GmFOivtzuAXSyz59StZCGT0Myba6GVN6IPO8C0Dcj6
+         ZKJaq6Hb86LCigxcSO+ZCtiI8v0dYMBPePOVIVlQghRuXVsj775N6slq7EftJ1eS9h
+         /nugLjqJCtWI8O7S5gtmzC6vWsFfr5w0r2jZ1lxg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 067/151] s390/qeth: dont reset default_out_queue
+Subject: [PATCH 5.4 050/123] nfc: add missing attribute validation for vendor subcommand
 Date:   Tue, 17 Mar 2020 11:54:37 +0100
-Message-Id: <20200317103331.268594801@linuxfoundation.org>
+Message-Id: <20200317103312.843540178@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
-References: <20200317103326.593639086@linuxfoundation.org>
+In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
+References: <20200317103307.343627747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,38 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Jakub Kicinski <kuba@kernel.org>
 
-[ Upstream commit 240c1948491b81cfe40f84ea040a8f2a4966f101 ]
+[ Upstream commit 6ba3da446551f2150fadbf8c7788edcb977683d3 ]
 
-When an OSA device in prio-queue setup is reduced to 1 TX queue due to
-HW restrictions, we reset its the default_out_queue to 0.
+Add missing attribute validation for vendor subcommand attributes
+to the netlink policy.
 
-In the old code this was needed so that qeth_get_priority_queue() gets
-the queue selection right. But with proper multiqueue support we already
-reduced dev->real_num_tx_queues to 1, and so the stack puts all traffic
-on txq 0 without even calling .ndo_select_queue.
-
-Thus we can preserve the user's configuration, and apply it if the OSA
-device later re-gains support for multiple TX queues.
-
-Fixes: 73dc2daf110f ("s390/qeth: add TX multiqueue support for OSA devices")
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Fixes: 9e58095f9660 ("NFC: netlink: Implement vendor command support")
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core_main.c |    1 -
- 1 file changed, 1 deletion(-)
+ net/nfc/netlink.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -1244,7 +1244,6 @@ static int qeth_osa_set_output_queues(st
- 	if (count == 1)
- 		dev_info(&card->gdev->dev, "Priority Queueing not supported\n");
+--- a/net/nfc/netlink.c
++++ b/net/nfc/netlink.c
+@@ -46,6 +46,8 @@ static const struct nla_policy nfc_genl_
+ 				     .len = NFC_FIRMWARE_NAME_MAXSIZE },
+ 	[NFC_ATTR_SE_INDEX] = { .type = NLA_U32 },
+ 	[NFC_ATTR_SE_APDU] = { .type = NLA_BINARY },
++	[NFC_ATTR_VENDOR_ID] = { .type = NLA_U32 },
++	[NFC_ATTR_VENDOR_SUBCMD] = { .type = NLA_U32 },
+ 	[NFC_ATTR_VENDOR_DATA] = { .type = NLA_BINARY },
  
--	card->qdio.default_out_queue = single ? 0 : QETH_DEFAULT_QUEUE;
- 	card->qdio.no_out_queues = count;
- 	return 0;
- }
+ };
 
 
