@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EC681880D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:13:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A31F31880DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:14:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729511AbgCQLNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:13:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57470 "EHLO mail.kernel.org"
+        id S1728424AbgCQLOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:14:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729240AbgCQLNd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:13:33 -0400
+        id S1727710AbgCQLOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:14:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A430205ED;
-        Tue, 17 Mar 2020 11:13:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E98512071C;
+        Tue, 17 Mar 2020 11:14:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443613;
-        bh=/nWrJblcpqnurc3UxqK8I4QcofZIKkRdBaCizCQSezk=;
+        s=default; t=1584443642;
+        bh=H0rW0vMvQM2DtkjsZ50Ys26s3AYXpZbX2s0A4tQT7rA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o204dmFhH6OaUSK93nJjBpTp5uDpNtxGV7YjOTZltlX2m2IbAozGdV3/YZgC1FnnX
-         DRSPFqem+pLDIYGlEWDSWv3Ct4oJaoc/umfHBAZ0oyIl4cutHdixzjSIkd281OOXy1
-         YwAOkUNEXz6RWNjkJZxe2OlZtjHH2geNuqiND9k4=
+        b=jVo0UEUogb7xnM+u72yo5f+qzHwmsYy3dBYRy6juMNcNy0AwLOMkcoBqrXTFeiLoE
+         f6Je/C5/jxXdjPhRWcD3xzKVFO31MlQkifPurshlVI+uwWDIQkltiGH5EhepAjJ3io
+         uDMKXSYpHuYx2HKyTMzURndrbvY0AS0IVCprl9eg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 5.5 134/151] iommu/vt-d: Fix RCU-list bugs in intel_iommu_init()
-Date:   Tue, 17 Mar 2020 11:55:44 +0100
-Message-Id: <20200317103335.954284242@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Hamish Martin <hamish.martin@alliedtelesis.co.nz>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 5.5 135/151] i2c: gpio: suppress error on probe defer
+Date:   Tue, 17 Mar 2020 11:55:45 +0100
+Message-Id: <20200317103336.021229669@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
 References: <20200317103326.593639086@linuxfoundation.org>
@@ -44,77 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+From: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
 
-commit 2d48ea0efb8887ebba3e3720bb5b738aced4e574 upstream.
+commit 3747cd2efe7ecb9604972285ab3f60c96cb753a8 upstream.
 
-There are several places traverse RCU-list without holding any lock in
-intel_iommu_init(). Fix them by acquiring dmar_global_lock.
+If a GPIO we are trying to use is not available and we are deferring
+the probe, don't output an error message.
+This seems to have been the intent of commit 05c74778858d
+("i2c: gpio: Add support for named gpios in DT") but the error was
+still output due to not checking the updated 'retdesc'.
 
- WARNING: suspicious RCU usage
- -----------------------------
- drivers/iommu/intel-iommu.c:5216 RCU-list traversed in non-reader section!!
-
- other info that might help us debug this:
-
- rcu_scheduler_active = 2, debug_locks = 1
- no locks held by swapper/0/1.
-
- Call Trace:
-  dump_stack+0xa0/0xea
-  lockdep_rcu_suspicious+0x102/0x10b
-  intel_iommu_init+0x947/0xb13
-  pci_iommu_init+0x26/0x62
-  do_one_initcall+0xfe/0x500
-  kernel_init_freeable+0x45a/0x4f8
-  kernel_init+0x11/0x139
-  ret_from_fork+0x3a/0x50
- DMAR: Intel(R) Virtualization Technology for Directed I/O
-
-Fixes: d8190dc63886 ("iommu/vt-d: Enable DMA remapping after rmrr mapped")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: 05c74778858d ("i2c: gpio: Add support for named gpios in DT")
+Signed-off-by: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/intel-iommu.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-gpio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5068,6 +5068,7 @@ int __init intel_iommu_init(void)
+--- a/drivers/i2c/busses/i2c-gpio.c
++++ b/drivers/i2c/busses/i2c-gpio.c
+@@ -348,7 +348,7 @@ static struct gpio_desc *i2c_gpio_get_de
+ 	if (ret == -ENOENT)
+ 		retdesc = ERR_PTR(-EPROBE_DEFER);
  
- 	init_iommu_pm_ops();
+-	if (ret != -EPROBE_DEFER)
++	if (PTR_ERR(retdesc) != -EPROBE_DEFER)
+ 		dev_err(dev, "error trying to get descriptor: %d\n", ret);
  
-+	down_read(&dmar_global_lock);
- 	for_each_active_iommu(iommu, drhd) {
- 		iommu_device_sysfs_add(&iommu->iommu, NULL,
- 				       intel_iommu_groups,
-@@ -5075,6 +5076,7 @@ int __init intel_iommu_init(void)
- 		iommu_device_set_ops(&iommu->iommu, &intel_iommu_ops);
- 		iommu_device_register(&iommu->iommu);
- 	}
-+	up_read(&dmar_global_lock);
- 
- 	bus_set_iommu(&pci_bus_type, &intel_iommu_ops);
- 	if (si_domain && !hw_pass_through)
-@@ -5085,7 +5087,6 @@ int __init intel_iommu_init(void)
- 	down_read(&dmar_global_lock);
- 	if (probe_acpi_namespace_devices())
- 		pr_warn("ACPI name space devices didn't probe correctly\n");
--	up_read(&dmar_global_lock);
- 
- 	/* Finally, we enable the DMA remapping hardware. */
- 	for_each_iommu(iommu, drhd) {
-@@ -5094,6 +5095,8 @@ int __init intel_iommu_init(void)
- 
- 		iommu_disable_protect_mem_regions(iommu);
- 	}
-+	up_read(&dmar_global_lock);
-+
- 	pr_info("Intel(R) Virtualization Technology for Directed I/O\n");
- 
- 	intel_iommu_enabled = 1;
+ 	return retdesc;
 
 
