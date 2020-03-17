@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E6A3188216
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:22:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D642187FB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:04:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbgCQLVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:21:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36074 "EHLO mail.kernel.org"
+        id S1728191AbgCQLDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:03:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727138AbgCQK6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 06:58:03 -0400
+        id S1728173AbgCQLDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:03:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA1F120658;
-        Tue, 17 Mar 2020 10:58:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06B252071C;
+        Tue, 17 Mar 2020 11:03:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442682;
-        bh=wIKrjDsv/V0PV3E06w+tebiW4Y2CZAqF2DUudpdvii4=;
+        s=default; t=1584443029;
+        bh=ybqz6l9Pn0+Ca0VsicFx4luxj8cHQTqRwj67ijp3NkE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hvAJBIYKVcaAYwypbMZ7i9QiQC2CoFaUph055tP4qsaPs7xGRpP8EPNLveG4hv3Ut
-         o4dvyfzOwffMRwrhkKUizOS6ryxOl3D/bRYYY6mu/RgI4jwtMlRQp44l1BfJAZ2stG
-         VSzuw3VhDi9O/XsvJlQJipyS5XT8wNlhhbc/nHfo=
+        b=VnyW16ZS/c8IqWrN6hnO1DbeVtMxGBpEVxGfMFStROYUMNu0qME/F1LU35KmTbdkT
+         cs57TjgpfMGNnXoKwjP5QPBKayDH/UHKbPpagR1tb9RiFG1FKwOGOINN9iCAOimMkH
+         h5qiTDkhWMJOaV4KtfGeJ8TOYZwAdaNfjD3E1xZc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>,
-        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.19 47/89] cgroup: Iterate tasks that did not finish do_exit()
-Date:   Tue, 17 Mar 2020 11:54:56 +0100
-Message-Id: <20200317103305.365142889@linuxfoundation.org>
+        stable@vger.kernel.org, Matthew Auld <matthew.auld@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 5.4 070/123] drm/i915: be more solid in checking the alignment
+Date:   Tue, 17 Mar 2020 11:54:57 +0100
+Message-Id: <20200317103314.666440211@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
-References: <20200317103259.744774526@linuxfoundation.org>
+In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
+References: <20200317103307.343627747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,97 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Koutný <mkoutny@suse.com>
+From: Matthew Auld <matthew.auld@intel.com>
 
-commit 9c974c77246460fa6a92c18554c3311c8c83c160 upstream.
+commit 1d61c5d711a2dc0b978ae905535edee9601f9449 upstream.
 
-PF_EXITING is set earlier than actual removal from css_set when a task
-is exitting. This can confuse cgroup.procs readers who see no PF_EXITING
-tasks, however, rmdir is checking against css_set membership so it can
-transitionally fail with EBUSY.
+The alignment is u64, and yet is_power_of_2() assumes unsigned long,
+which might give different results between 32b and 64b kernel.
 
-Fix this by listing tasks that weren't unlinked from css_set active
-lists.
-It may happen that other users of the task iterator (without
-CSS_TASK_ITER_PROCS) spot a PF_EXITING task before cgroup_exit(). This
-is equal to the state before commit c03cd7738a83 ("cgroup: Include dying
-leaders with live threads in PROCS iterations") but it may be reviewed
-later.
-
-Reported-by: Suren Baghdasaryan <surenb@google.com>
-Fixes: c03cd7738a83 ("cgroup: Include dying leaders with live threads in PROCS iterations")
-Signed-off-by: Michal Koutný <mkoutny@suse.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Matthew Auld <matthew.auld@intel.com>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Link: https://patchwork.freedesktop.org/patch/msgid/20200305203534.210466-1-matthew.auld@intel.com
+Cc: stable@vger.kernel.org
+(cherry picked from commit 2920516b2f719546f55079bc39a7fe409d9e80ab)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/cgroup.h |    1 +
- kernel/cgroup/cgroup.c |   23 ++++++++++++++++-------
- 2 files changed, 17 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c |    3 ++-
+ drivers/gpu/drm/i915/i915_utils.h              |    5 +++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
---- a/include/linux/cgroup.h
-+++ b/include/linux/cgroup.h
-@@ -62,6 +62,7 @@ struct css_task_iter {
- 	struct list_head		*mg_tasks_head;
- 	struct list_head		*dying_tasks_head;
+--- a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
+@@ -439,7 +439,8 @@ eb_validate_vma(struct i915_execbuffer *
+ 	if (unlikely(entry->flags & eb->invalid_flags))
+ 		return -EINVAL;
  
-+	struct list_head		*cur_tasks_head;
- 	struct css_set			*cur_cset;
- 	struct css_set			*cur_dcset;
- 	struct task_struct		*cur_task;
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -4157,12 +4157,16 @@ static void css_task_iter_advance_css_se
- 		}
- 	} while (!css_set_populated(cset) && list_empty(&cset->dying_tasks));
+-	if (unlikely(entry->alignment && !is_power_of_2(entry->alignment)))
++	if (unlikely(entry->alignment &&
++		     !is_power_of_2_u64(entry->alignment)))
+ 		return -EINVAL;
  
--	if (!list_empty(&cset->tasks))
-+	if (!list_empty(&cset->tasks)) {
- 		it->task_pos = cset->tasks.next;
--	else if (!list_empty(&cset->mg_tasks))
-+		it->cur_tasks_head = &cset->tasks;
-+	} else if (!list_empty(&cset->mg_tasks)) {
- 		it->task_pos = cset->mg_tasks.next;
--	else
-+		it->cur_tasks_head = &cset->mg_tasks;
-+	} else {
- 		it->task_pos = cset->dying_tasks.next;
-+		it->cur_tasks_head = &cset->dying_tasks;
-+	}
+ 	/*
+--- a/drivers/gpu/drm/i915/i915_utils.h
++++ b/drivers/gpu/drm/i915/i915_utils.h
+@@ -233,6 +233,11 @@ static inline u64 ptr_to_u64(const void
+ 	__idx;								\
+ })
  
- 	it->tasks_head = &cset->tasks;
- 	it->mg_tasks_head = &cset->mg_tasks;
-@@ -4220,10 +4224,14 @@ repeat:
- 		else
- 			it->task_pos = it->task_pos->next;
- 
--		if (it->task_pos == it->tasks_head)
-+		if (it->task_pos == it->tasks_head) {
- 			it->task_pos = it->mg_tasks_head->next;
--		if (it->task_pos == it->mg_tasks_head)
-+			it->cur_tasks_head = it->mg_tasks_head;
-+		}
-+		if (it->task_pos == it->mg_tasks_head) {
- 			it->task_pos = it->dying_tasks_head->next;
-+			it->cur_tasks_head = it->dying_tasks_head;
-+		}
- 		if (it->task_pos == it->dying_tasks_head)
- 			css_task_iter_advance_css_set(it);
- 	} else {
-@@ -4242,11 +4250,12 @@ repeat:
- 			goto repeat;
- 
- 		/* and dying leaders w/o live member threads */
--		if (!atomic_read(&task->signal->live))
-+		if (it->cur_tasks_head == it->dying_tasks_head &&
-+		    !atomic_read(&task->signal->live))
- 			goto repeat;
- 	} else {
- 		/* skip all dying ones */
--		if (task->flags & PF_EXITING)
-+		if (it->cur_tasks_head == it->dying_tasks_head)
- 			goto repeat;
- 	}
- }
++static inline bool is_power_of_2_u64(u64 n)
++{
++	return (n != 0 && ((n & (n - 1)) == 0));
++}
++
+ static inline void __list_del_many(struct list_head *head,
+ 				   struct list_head *first)
+ {
 
 
