@@ -2,97 +2,339 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DC0A1877A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 03:03:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDEA81877AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 03:05:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbgCQCDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 22:03:30 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45390 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbgCQCDa (ORCPT
+        id S1726535AbgCQCFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 22:05:03 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44463 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbgCQCFD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 22:03:30 -0400
-Received: by mail-pl1-f193.google.com with SMTP id b22so8875004pls.12;
-        Mon, 16 Mar 2020 19:03:29 -0700 (PDT)
+        Mon, 16 Mar 2020 22:05:03 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 37so10814587pgm.11
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 19:05:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TLPZH8MSQUe0XEeOtXK0u5bxsOUqet47Nx1B3C0W6qY=;
-        b=BpeRPbZYeNLe7kYaSNNe54at4OHeQCTJ44acqyG9l3H9tIuuOLgu8uv6DXh7o+0bja
-         GTvyRS9si0B9cNEonRQFccuj7DA1trwZOzBcKzQ0v8OvbkFBGGIRW0laWyd07eLb+/I7
-         IH5OsJtCcnAm+9PrGlbu6rqwXtQCMM+pXk5MgQUTvDjUtibz/aFeGqBoIKhwwmF8vhqy
-         om4XR1fhsi85DeUw1BLESWIEzUjEQEeUvR+GgJhcNOsKq6GrJj/9rIR1WY6aKXBlcWuT
-         mUSx3vy4RFBOdWUJ6lnKVxhzRh44kf9AQ8KyFcWBbGjH23rI6H0ZigOfWCGH15jAIxCp
-         tZ3Q==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:cc:to:date:message-id:user-agent;
+        bh=PuBdq3oKN6OnDZlNnTpz84hQODfvkLuOr1GrjfvRoNo=;
+        b=fXfCB/uNg4P7vdsO+ICsSKnxSGeTlEBgYp5wdqpH+UNJu9AOd6nkkncqQGjZ7c0p3/
+         DbrSFqtxIRvVHx/tz72fQ96bEF7DRORNGQdEGZshq+4wxoYH3I8lhKGa5bNjPVDU/gzl
+         OgYnMUiHWLDTmLLDSAjlprvahWqt0t2oD76W4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TLPZH8MSQUe0XEeOtXK0u5bxsOUqet47Nx1B3C0W6qY=;
-        b=bu9cSy1p+MeJ3BZ5Q6/8vet4PYtaaRcavqGqkfSDVch5ZHPNyk4EeRbpOQfmXV4e30
-         woiO4QqiZQIRSdF4XXGOIxbY6BDVa66D1a48/EMCk2FWvdZOIViep7xwXsz5znVt+gji
-         Lur5LHTycIfcBmDdNK9w1/YYDm/NFqRq503sguLuqx62C9k6dX31H8UOWl8mOunSRpu+
-         yx9l1IiD74yH414o+ybj7oKn0r0cPldLH7dUxaVuDcAY83zDaLBaySDRsCNVehqI0b1p
-         yeRH8cLlx5qd7Sosay10fm+7K/Rn1+7dZWp00RT8Rw4DYlDkq0n5RHFJx4sRJE9deAyF
-         DAkA==
-X-Gm-Message-State: ANhLgQ1Uwv2Ijk/kruKC9LNWaYPDAyYDTd/ld9KM51xBjb9oCjFNki4T
-        +Jn8RZm3bEYupfqx+LID/uY=
-X-Google-Smtp-Source: ADFU+vvwzo/8YvgEgtuE9/4viAFrN4X+4tnzlYKbLJ1+Aazp6UPQLHcMBpvHiumskpE8ueCc/sYYDw==
-X-Received: by 2002:a17:902:d691:: with SMTP id v17mr63145ply.199.1584410608881;
-        Mon, 16 Mar 2020 19:03:28 -0700 (PDT)
-Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id s125sm670210pgc.53.2020.03.16.19.03.27
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:cc:to:date:message-id
+         :user-agent;
+        bh=PuBdq3oKN6OnDZlNnTpz84hQODfvkLuOr1GrjfvRoNo=;
+        b=EYP03uCePtwIlzYX+JM+K3C/4kHKqQnvlyju7eEWYpMEG79mz4AvQ7JtNDhOIWf3k3
+         WBLXcIY6OnvmxA2BD5d6lCKvb0aZufVdFt8VJQU9jk8Hw3IoWDU0JRMLq5Ve3Po5e+op
+         ez3Hargz49JDRRLKDi0DV5l9B9kSLarQZ2aTR3xZpE1xaaldlPzwndghj9oy/HS6sVgu
+         28OXjXsYUfbtS6IjvDb8Z8t2mohThfBvKN6tiICk02Kr7k0Z7cKL5Jv/e0QyNjVEga8c
+         FOnnTpRrJT5Z0oMKzh5hB6emKUv25MtohfhKxNqC3Q1tdCkClWmwze/2VndI8V8mRgs/
+         vZ3w==
+X-Gm-Message-State: ANhLgQ0x+7d2wKgwO3k0mjoXMJ0TVgw7LV3VApNS0vSLw92P7jFd7kcB
+        /OP+kYxFlj5tDCTf+ni5AHWSuWDG8/0=
+X-Google-Smtp-Source: ADFU+vsscTpTdrgGt+1cXZufoHXkM2hen7VX1wxFsMqY6IO7147+K39ihq9PTr+z1WpeLozkE86tbA==
+X-Received: by 2002:a62:820e:: with SMTP id w14mr2700704pfd.59.1584410700857;
+        Mon, 16 Mar 2020 19:05:00 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id e9sm1074372pfl.179.2020.03.16.19.04.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2020 19:03:28 -0700 (PDT)
-Date:   Tue, 17 Mar 2020 11:03:26 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Bruno Meneguele <bmeneg@redhat.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        pmladek@suse.com, sergey.senozhatsky@gmail.com, rostedt@goodmis.org
-Subject: Re: [PATCH] kernel/printk: add kmsg SEEK_CUR handling
-Message-ID: <20200317020326.GC219881@google.com>
-References: <20200313003533.2203429-1-bmeneg@redhat.com>
- <20200313073425.GA219881@google.com>
- <20200313110229.GI13406@glitch>
+        Mon, 16 Mar 2020 19:05:00 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200313110229.GI13406@glitch>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1584019379-12085-2-git-send-email-mkshah@codeaurora.org>
+References: <1584019379-12085-1-git-send-email-mkshah@codeaurora.org> <1584019379-12085-2-git-send-email-mkshah@codeaurora.org>
+Subject: Re: [RFC v2] irqchip: qcom: pdc: Introduce irq_set_wake call
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        agross@kernel.org, linus.walleij@linaro.org, tglx@linutronix.de,
+        maz@kernel.org, jason@lakedaemon.net, dianders@chromium.org,
+        rnayak@codeaurora.org, ilina@codeaurora.org, lsrao@codeaurora.org,
+        Maulik Shah <mkshah@codeaurora.org>
+To:     Maulik Shah <mkshah@codeaurora.org>, bjorn.andersson@linaro.org,
+        evgreen@chromium.org, mka@chromium.org
+Date:   Mon, 16 Mar 2020 19:04:59 -0700
+Message-ID: <158441069917.88485.95270915247150166@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/03/13 08:02), Bruno Meneguele wrote:
-> Ok, I poorly expressed the notion of "documentantion". The userspace
-> doesn't tell about returning -ESPIPE, but to the functions work properly
-> they watch for -ESPIPE returning from the syscall. For instance, gblic
-> dprintf() implementation:
-> 
-> dprintf:
->   __vdprintf_internal:
->     _IO_new_file_attach:
-> 
->   if (_IO_SEEKOFF (fp, (off64_t)0, _IO_seek_cur, _IOS_INPUT|_IOS_OUTPUT)
->       == _IO_pos_BAD && errno != ESPIPE)
->     return NULL;
-> 
-> With that, if the seek fails, but return anything other than ESPIPE the
-> dprintf() will also fail returning -EINVAL to dprintf() caller. While if
-> ESPIPE is returned, it's "ignored" and the call still works. The way we
-> have today make kmsg an exception case among the rest of the system
-> files where you can open with dprintf.
-> 
-> One of the things I could agree with is removing the SEEK call from
-> dprintf, since fprintf basically follows the same steps, but doesn't
-> seek anything.  But at the same time, IMO it makes sense to make kmsg
-> interface complaint with the errno return values.
+Quoting Maulik Shah (2020-03-12 06:22:59)
+> Change the way interrupts get enabled at wakeup capable PDC irq chip.
+>=20
+> Introduce irq_set_wake call which lets interrupts enabled at PDC with
+> enable_irq_wake and disabled with disable_irq_wake with certain
+> conditions.
+>=20
+> Interrupt will get enabled in HW at PDC and its parent GIC if they are
+> either enabled is SW or marked as wake up capable.
 
-The code in questions is very old. So let's add the missing bit to the
-kernel. At the same time, we probably can have a slightly more detailed
-documentation / code comment.
+Shouldn't we only enable in PDC and GIC if it's marked wakeup capable
+and we're entering suspend? Otherwise we should let the hardware enable
+state follow the software irq enable state?
 
-	-ss
+>=20
+> interrupt will get disabled in HW at PDC and its parent GIC only if its
+> disabled in SW and also marked as non-wake up capable.
+>=20
+> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+> ---
+>  drivers/irqchip/qcom-pdc.c | 124 +++++++++++++++++++++++++++++++++++++++=
++++---
+>  1 file changed, 117 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
+> index 6ae9e1f..d698cec 100644
+> --- a/drivers/irqchip/qcom-pdc.c
+> +++ b/drivers/irqchip/qcom-pdc.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+> - * Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2017-2020, The Linux Foundation. All rights reserved.
+>   */
+> =20
+>  #include <linux/err.h>
+> @@ -30,6 +30,9 @@
+> =20
+>  #define PDC_NO_PARENT_IRQ      ~0UL
+> =20
+> +DECLARE_BITMAP(pdc_wake_irqs, PDC_MAX_IRQS);
+> +DECLARE_BITMAP(pdc_enabled_irqs, PDC_MAX_IRQS);
+
+Please add static on both of these.
+
+> +
+>  struct pdc_pin_region {
+>         u32 pin_base;
+>         u32 parent_base;
+> @@ -80,20 +83,32 @@ static void pdc_enable_intr(struct irq_data *d, bool =
+on)
+>         index =3D pin_out / 32;
+>         mask =3D pin_out % 32;
+> =20
+> -       raw_spin_lock(&pdc_lock);
+>         enable =3D pdc_reg_read(IRQ_ENABLE_BANK, index);
+>         enable =3D on ? ENABLE_INTR(enable, mask) : CLEAR_INTR(enable, ma=
+sk);
+>         pdc_reg_write(IRQ_ENABLE_BANK, index, enable);
+> -       raw_spin_unlock(&pdc_lock);
+>  }
+> =20
+>  static void qcom_pdc_gic_disable(struct irq_data *d)
+>  {
+> +       bool wake_status;
+
+This name is not good. Why not 'wakeup_enabled'?
+
+> +
+>         if (d->hwirq =3D=3D GPIO_NO_WAKE_IRQ)
+>                 return;
+> =20
+> -       pdc_enable_intr(d, false);
+> -       irq_chip_disable_parent(d);
+> +       raw_spin_lock(&pdc_lock);
+> +
+> +       clear_bit(d->hwirq, pdc_enabled_irqs);
+
+clear_bit() is atomic, so why inside the lock?
+
+> +       wake_status =3D test_bit(d->hwirq, pdc_wake_irqs);
+> +
+> +       /* Disable at PDC HW if wake_status also says same */
+> +       if (!wake_status)
+
+Should read as "if not wakeup_enabled".
+
+> +               pdc_enable_intr(d, false);
+> +
+> +       raw_spin_unlock(&pdc_lock);
+> +
+> +       /* Disable at GIC HW if wake_status also says same */
+> +       if (!wake_status)
+
+This happens outside the lock, so I'm confused why any locking is needed
+in this function.
+
+> +               irq_chip_disable_parent(d);
+>  }
+> =20
+>  static void qcom_pdc_gic_enable(struct irq_data *d)
+> @@ -101,7 +116,16 @@ static void qcom_pdc_gic_enable(struct irq_data *d)
+>         if (d->hwirq =3D=3D GPIO_NO_WAKE_IRQ)
+>                 return;
+> =20
+> +       raw_spin_lock(&pdc_lock);
+> +
+> +       set_bit(d->hwirq, pdc_enabled_irqs);
+> +
+> +       /* We can blindly enable at PDC HW as we are already in enable pa=
+th */
+>         pdc_enable_intr(d, true);
+> +
+> +       raw_spin_unlock(&pdc_lock);
+> +
+> +       /* We can blindly enable at GIC HW as we are already in enable pa=
+th */
+>         irq_chip_enable_parent(d);
+>  }
+> =20
+> @@ -121,6 +145,92 @@ static void qcom_pdc_gic_unmask(struct irq_data *d)
+>         irq_chip_unmask_parent(d);
+>  }
+> =20
+> +/**
+> + * qcom_pdc_gic_set_wake: Enables/Disables interrupt at PDC and parent G=
+IC
+> + *
+> + * @d: the interrupt data
+> + * @on: enable or disable wakeup capability
+> + *
+> + * The SW expects that an irq that's disabled with disable_irq()
+> + * can still wake the system from sleep states such as "suspend to RAM",
+> + * if it has been marked for wakeup.
+> + *
+> + * While the SW may choose to differ status for "wake" and "enabled"
+> + * interrupts, its not the case with HW. There is no dedicated
+> + * configuration in HW to differ "wake" and "enabled". Same is
+> + * case for PDC's parent irq_chip (ARM GIC) which has only GICD_ISENABLER
+> + * to indicate "enabled" or "disabled" status and also there is no .irq_=
+set_wake
+> + * implemented in parent GIC irq_chip.
+> + *
+> + * So, the HW ONLY understands either "enabled" or "disabled".
+> + *
+> + * This function is introduced to handle cases where drivers may invoke
+> + * below during suspend in SW on their irq, and expect to wake up from t=
+his
+> + * interrupt.
+> + *
+> + * 1. enable_irq_wake()
+> + * 2. disable_irq()
+> + *
+> + * and below during resume
+> + *
+> + * 3. disable_irq_wake()
+> + * 4. enable_irq()
+> + *
+> + * if (2) is invoked in end and just before suspend, it currently leaves
+
+We shouldn't document the currently broken state of the code. Please
+reword this.
+
+> + * interrupt "disabled" at HW and hence not leading to resume.
+> + *
+> + * Note that the order of invoking (1) & (2) may interchange and similar=
+ly
+> + * it can interchange for (3) & (4) as per driver's wish.
+> + *
+> + * if the driver call .irq_set_wake first it will enable at HW but later
+
+s/if/If/
+
+> + * call with .irq_disable will disable at HW. so final result is again
+
+s/so/So/
+
+> + * "disabled" at HW whereas the HW expectection is to keep it "enabled"
+
+s/expectection/expectation/
+
+> + * since it understands only "enabled" or "disabled".
+> + *
+> + * Hence .irq_set_wake can not just go ahead and  "enable" or "disable"
+> + * at HW blindly, it needs to take in account status of currently "enabl=
+e"
+
+s/in/into/
+
+> + * or "disable" as well.
+
+"status of currently enable or disable as well" doesn't make any sense
+to me. Is this "take into account if the interrupt is enabled or
+disableed"?
+
+> + *
+> + * Introduce .irq_set_wake in PDC irq_chip to handle above issue.
+> + * The final status in HW should be an "OR" of "enable" and "wake" calls.
+> + * (i.e. same as below table)
+> + * -------------------------------------------------|
+> + * ENABLE in SW | WAKE in SW | PDC & GIC HW Status  |
+
+Presumably 'PDC & GIC HW status' means enabled in PDC and GIC hardware?
+
+> + *      0       |     0      |     0               |
+> + *      0      |     1      |     1                |
+> + *     1       |     0      |     1                |
+> + *     1       |     1      |     1                |
+> + *--------------------------------------------------|
+
+Are there tabs in here? Probably better to just use spaces everywhere or
+drop the OR table because it's literally just two variables.
+
+ irq enable | irq wake =3D=3D PDC & GIC hardware irq enabled
+
+> + */
+> +
+> +static int qcom_pdc_gic_set_wake(struct irq_data *d, unsigned int on)
+> +{
+> +       bool enabled_status;
+> +
+> +       if (d->hwirq =3D=3D GPIO_NO_WAKE_IRQ)
+> +               return 0;
+> +
+> +       raw_spin_lock(&pdc_lock);
+> +       enabled_status =3D test_bit(d->hwirq, pdc_enabled_irqs);
+> +       if (on) {
+> +               set_bit(d->hwirq, pdc_wake_irqs);
+> +               pdc_enable_intr(d, true);
+> +       } else {
+> +               clear_bit(d->hwirq, pdc_wake_irqs);
+> +               pdc_enable_intr(d, enabled_status);
+> +       }
+> +
+> +       raw_spin_unlock(&pdc_lock);
+> +
+> +       /* Either "wake" or "enabled" need same status at parent as well =
+*/
+> +       if (on || enabled_status)
+> +               irq_chip_enable_parent(d);
+> +       else
+> +               irq_chip_disable_parent(d);
+
+What happens if irq is "disabled" in software, because this is the first
+function called on the irq, and we aren't in suspend yet. Then we get
+the irq. Won't we be interrupting the CPU because we've enabled in PDC
+and GIC hardware? Why doesn't this function update the wake bit and then
+leave the force on irq logic to suspend entry? Will we miss an interrupt
+while entering suspend because of that?
+
+Otherwise, I wonder why the code can't be:
+
+	if (on)
+		set_bit(d->hwirq, pdc_wake_irqs);
+	else
+		clear_bit(d->hwirq, pdc_wake_irqs);
+=09
+	pdc_enable_intr(d, on);
+
+Then we can leave the lock inside the pdc_enable_intr() function and
+test for both bitmasks there and or in whatever software is asking for?
+It would be nice to simplify the callers and make the code that actually
+writes the hardware do a small bit test and set operation.
+
+> +
+> +       return irq_chip_set_wake_parent(d, on);
+> +}
+> +
+>  /*
+>   * GIC does not handle falling edge or active low. To allow falling edge=
+ and
+>   * active low interrupts to be handled at GIC, PDC has an inverter that =
+inverts
