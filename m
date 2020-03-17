@@ -2,90 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72320189093
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:36:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5892C1890A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:36:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbgCQVej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 17:34:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54414 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727334AbgCQVeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 17:34:36 -0400
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AFF120774
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 21:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584480875;
-        bh=FU6/YhzHCy5DWzCb2Jjd6xpKYKIlYfn0Nkn8S0an218=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=aaAKrQvr1UPKXoqSl2Xez3aX9YvAC2YlC+m1eLZNTBLgDh8s1vRjXMcwG3x4vnBM5
-         TTa5g/gdhOFRAZ1DFOxjMw7JMMKwzmTdHJS3CXSqETyMXBoHn2YbAFrjzXNVBR7bjQ
-         lFXC0+JRfZOZDujzOCrU1X4Iz1w2OacosqTLJYCg=
-Received: by mail-wr1-f47.google.com with SMTP id b2so21443907wrj.10
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 14:34:35 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ2FJ8OiP2oRizON9mTnbKuHuPTwzd8qUu0RnGG8FUq6TC+woFyi
-        VtPQp5pEtOkFnbef7ZbZ5BaUdkSFjEmPazZDQALNBQ==
-X-Google-Smtp-Source: ADFU+vtGXARxy1KWOouUhaZnISUK705uJFt7DrOok2Eu+G2fu4TjnS61RAdWYoQTjxk7jomgV/TRyqL9G7ZtF7EGMwA=
-X-Received: by 2002:adf:9dc6:: with SMTP id q6mr1062310wre.70.1584480873869;
- Tue, 17 Mar 2020 14:34:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200211135256.24617-1-joro@8bytes.org> <20200211135256.24617-39-joro@8bytes.org>
- <CALCETrVRmg88xY0s4a2CONXQ3fgvCKXpW2eYJRJGhqQLneoGqQ@mail.gmail.com> <20200313091221.GA16378@suse.de>
-In-Reply-To: <20200313091221.GA16378@suse.de>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 17 Mar 2020 14:34:22 -0700
-X-Gmail-Original-Message-ID: <CALCETrX74dJEXd7OxZZ=2sPy8nOjqO5Lzjt04VrxP0TYgTXnUg@mail.gmail.com>
-Message-ID: <CALCETrX74dJEXd7OxZZ=2sPy8nOjqO5Lzjt04VrxP0TYgTXnUg@mail.gmail.com>
-Subject: Re: [PATCH 38/62] x86/sev-es: Handle instruction fetches from user-space
-To:     Joerg Roedel <jroedel@suse.de>
-Cc:     Andy Lutomirski <luto@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        id S1727175AbgCQVgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 17:36:24 -0400
+Received: from smtprelay0229.hostedemail.com ([216.40.44.229]:48396 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726789AbgCQVgX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 17:36:23 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 0B53645A8;
+        Tue, 17 Mar 2020 21:36:22 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3167:3353:3622:3865:3866:3867:3868:3871:3872:3873:3874:4250:4321:5007:6742:6743:10004:10400:10848:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14096:14097:14659:14721:21080:21433:21451:21627:30012:30029:30045:30054:30079:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: tax31_8e64a60b0ff18
+X-Filterd-Recvd-Size: 3175
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 17 Mar 2020 21:36:18 +0000 (UTC)
+Message-ID: <1e52a8441a319e55b913376ad47c6b18843742cd.camel@perches.com>
+Subject: Re: [PATCH] treewide: Rename "unencrypted" to "decrypted"
+From:   Joe Perches <joe@perches.com>
+To:     Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>
+Cc:     Borislav Petkov <bp@suse.de>, lkml <linux-kernel@vger.kernel.org>,
+        "Schofield, Alison" <alison.schofield@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
         Tom Lendacky <thomas.lendacky@amd.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Shutemov, Kirill" <kirill.shutemov@intel.com>
+Date:   Tue, 17 Mar 2020 14:34:30 -0700
+In-Reply-To: <f3e520c6-f455-9c82-abfc-d014ca63eeb5@intel.com>
+References: <20200317111822.GA15609@zn.tnic>
+         <2cb4a8ae-3b13-67bd-c021-aee47fdf58c5@intel.com>
+         <20200317210602.GG15609@zn.tnic>
+         <f3e520c6-f455-9c82-abfc-d014ca63eeb5@intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 2:12 AM Joerg Roedel <jroedel@suse.de> wrote:
->
-> On Wed, Feb 12, 2020 at 01:42:48PM -0800, Andy Lutomirski wrote:
-> > I realize that this is a somewhat arbitrary point in the series to
-> > complain about this, but: the kernel already has infrastructure to
-> > decode and fix up an instruction-based exception.  See
-> > fixup_umip_exception().  Please refactor code so that you can share
-> > the same infrastructure rather than creating an entirely new thing.
->
-> Okay, but 'infrastructure' is a bold word for the call path down
-> fixup_umip_exception().
+On Tue, 2020-03-17 at 14:24 -0700, Dave Hansen wrote:
+> On 3/17/20 2:06 PM, Borislav Petkov wrote:
+> > On Tue, Mar 17, 2020 at 01:35:12PM -0700, Dave Hansen wrote:
+> > > On 3/17/20 4:18 AM, Borislav Petkov wrote:
+> > > > Back then when the whole SME machinery started getting mainlined, it
+> > > > was agreed that for simplicity, clarity and sanity's sake, the terms
+> > > > denoting encrypted and not-encrypted memory should be "encrypted" and
+> > > > "decrypted". And the majority of the code sticks to that convention
+> > > > except those two. So rename them.
+> > > Don't "unencrypted" and "decrypted" mean different things?
+> > > 
+> > > Unencrypted to me means "encryption was never used for this data".
+> > > 
+> > > Decrypted means "this was/is encrypted but here is a plaintext copy".
+> > Maybe but linguistical semantics is not the point here.
+> > 
+> > The idea is to represent a "binary" concept of memory being encrypted
+> > or memory being not encrypted. And at the time we decided to use
+> > "encrypted" and "decrypted" for those two things.
+> 
+> Yeah, agreed.  We're basically trying to name "!encrypted".
+> 
+> > Do you see the need to differentiate a third "state", so to speak, of
+> > memory which was never encrypted?
+> 
+> No, there are just two states.  I just think the "!encrypted" case
+> should not be called "decrypted".
 
-I won't argue with that.
+Nor do I, it's completely misleading.
 
-> It uses the in-kernel instruction decoder, which
-> I already use in my patch-set. But I agree that some code in this
-> patch-set is duplicated and already present in the instruction decoder,
-> and that fixup_umip_exception() has more robust instruction decoding.
->
-> I factor the instruction decoding part out and make is usable for the
-> #VC handler too and remove the code that is already present in the
-> instruction decoder.
 
-Thanks!
-
->
-> Regards,
->
->         Joerg
->
