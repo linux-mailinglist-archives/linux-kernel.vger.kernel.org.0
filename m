@@ -2,102 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93A69188C47
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:38:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87249188C36
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:36:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbgCQRic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 13:38:32 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:38624 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbgCQRia (ORCPT
+        id S1726623AbgCQRf7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 13:35:59 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35488 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgCQRf7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 13:38:30 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02HHHqVk056217;
-        Tue, 17 Mar 2020 17:38:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2020-01-29;
- bh=HhYQtNzT7W8ofZ1VIhf3mFuaTo9RNACqiUJRCIPqvIw=;
- b=lMYrLx5QWiZ+xiLWVnB/bSb6CnfNPhPAbqlPt4I+93thcy4JFREQZV+KJm/EUJTbewk8
- dyjRdONeiG9pWWmQjOtsW+OkFv8qyqJU3oeM5TPBPf4EMKv/nYRfTbrm2/4M+1Ib4UDr
- FPm1wJkMB2AcVfxw455pwwi/PDXs9Rea0H4bWDt0tK3AFhZBF1XlosVYYDhY23m+iQnS
- y7K0z4Dvu9sV1IZX6evOOfEswKHvZrVsJIqPB0B/JR7HJJd6dP3orqOHm2Bhi5dMY/uH
- DLazI99Wrpa1t+Q+k5vLXbXfrh+o+yztN1rcq5BGUOK7gl2OLgyOtbS9ROrsnM0Db8B4 ag== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2yrqwn671a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Mar 2020 17:38:00 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02HHJjBa102500;
-        Tue, 17 Mar 2020 17:35:59 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2ys92dmrug-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Mar 2020 17:35:59 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02HHZrdG015128;
-        Tue, 17 Mar 2020 17:35:53 GMT
-Received: from dhcp-10-175-196-233.vpn.oracle.com (/10.175.196.233)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Mar 2020 10:35:53 -0700
-From:   Alan Maguire <alan.maguire@oracle.com>
-To:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
-        alex.dewar@gmx.co.uk, erelx.geron@intel.com,
-        johannes.berg@intel.com, arnd@arndb.de,
-        linux-um@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, brendanhiggins@google.com,
-        Alan Maguire <alan.maguire@oracle.com>
-Subject: [PATCH] arch/um: falloc.h needs to be directly included for older libc
-Date:   Tue, 17 Mar 2020 17:35:34 +0000
-Message-Id: <1584466534-13248-1-git-send-email-alan.maguire@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9563 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=686
- mlxscore=0 spamscore=0 bulkscore=0 adultscore=82 suspectscore=3
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003170069
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9563 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 mlxlogscore=748
- mlxscore=0 bulkscore=0 phishscore=0 spamscore=0 suspectscore=3
- malwarescore=0 priorityscore=1501 clxscore=1011 adultscore=45
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003170069
+        Tue, 17 Mar 2020 13:35:59 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h4so6208747wru.2;
+        Tue, 17 Mar 2020 10:35:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=z1FYoq7S+h9Cgu9l0oBNg+vW7ywbgvdSrh8VbOK3SfM=;
+        b=oxAW0Nup0YR+8xX8Qb6Xa8HlTGx9A0Saxe8Ip00Qg/yqT1QSrV54/VHC1D7GNayV5s
+         HIUbwydozvc4P9qL+fnYkCDW+PY1i40QB67XA1VRt08FJUlnOAIB3Kdynosj+tPOLQ8n
+         zo7gXef6ziu4mCirKdyvuqx7ImBLXXZyGNkOb/nVP+aIduGy7lADrrwNiKokaQaDyy0k
+         u/p2y86uzL55Ra568u914P95nh9rd80n+4En4F0eFl31TIkSfgDD1n7vBNGhnNPUKMWe
+         VveZZvRvrBwqs5cDz7c5zgA87p+JUkNoXots1pQtT0pdtOr7NVJ/qz1M+C1m4B+emIg2
+         Si0g==
+X-Gm-Message-State: ANhLgQ1HVwWj4aBX189zvpNX0CDUiOv0vxv82V5MBIrUeLxWuXl27LZK
+        YHWame/q+rjc9lIzOaNW8sg=
+X-Google-Smtp-Source: ADFU+vsRnkfec8PavottvdVxNiDc4mWmBjPI9jouBKRRcnyVA5ONRdkNDrTETtUY3kl/zdcooYiSvQ==
+X-Received: by 2002:adf:a313:: with SMTP id c19mr58403wrb.411.1584466556747;
+        Tue, 17 Mar 2020 10:35:56 -0700 (PDT)
+Received: from debian (41.142.6.51.dyn.plus.net. [51.6.142.41])
+        by smtp.gmail.com with ESMTPSA id g2sm5779960wrs.42.2020.03.17.10.35.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2020 10:35:56 -0700 (PDT)
+Date:   Tue, 17 Mar 2020 17:35:53 +0000
+From:   Wei Liu <wei.liu@kernel.org>
+To:     ltykernel@gmail.com
+Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        liuwe@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        michael.h.kelley@microsoft.com,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkuznets@redhat.com, Wei Liu <wei.liu@kernel.org>
+Subject: Re: [PATCH 0/4] x86/Hyper-V: Unload vmbus channel in hv panic
+ callback
+Message-ID: <20200317173553.jerf6gjtaotqjbac@debian>
+References: <20200317132523.1508-1-Tianyu.Lan@microsoft.com>
+ <20200317132523.1508-2-Tianyu.Lan@microsoft.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200317132523.1508-2-Tianyu.Lan@microsoft.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building UML with glibc 2.17 installed, compilation
-of arch/um/os-Linux/file.c fails due to failure to find
-FALLOC_FL_PUNCH_HOLE and FALLOC_FL_KEEP_SIZE definitions.
+On Tue, Mar 17, 2020 at 06:25:20AM -0700, ltykernel@gmail.com wrote:
+> From: Tianyu Lan <Tianyu.Lan@microsoft.com>
+> 
+> Customer reported Hyper-V VM still responded network traffic
+> ack packets after kernel panic with kernel parameter "panic=0”.
+> This becauses vmbus driver interrupt handler still works
+> on the panic cpu after kernel panic. Panic cpu falls into
+> infinite loop of panic() with interrupt enabled at that point.
+> Vmbus driver can still handle network traffic.
+> 
+> This confuses remote service that the panic system is still
+> alive when it gets ack packets. Unload vmbus channel in hv panic
+> callback and fix it.
+> 
+> vmbus_initiate_unload() maybe double called during panic process
+> (e.g, hyperv_panic_event() and hv_crash_handler()). So check
+> and set connection state in vmbus_initiate_unload() to resolve
+> reenter issue.
+> 
+> Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
+> ---
+>  drivers/hv/channel_mgmt.c |  5 +++++
+>  drivers/hv/vmbus_drv.c    | 17 +++++++++--------
+>  2 files changed, 14 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
+> index 0370364169c4..893493f2b420 100644
+> --- a/drivers/hv/channel_mgmt.c
+> +++ b/drivers/hv/channel_mgmt.c
+> @@ -839,6 +839,9 @@ void vmbus_initiate_unload(bool crash)
+>  {
+>  	struct vmbus_channel_message_header hdr;
+>  
+> +	if (vmbus_connection.conn_state == DISCONNECTED)
+> +		return;
+> +
+>  	/* Pre-Win2012R2 hosts don't support reconnect */
+>  	if (vmbus_proto_version < VERSION_WIN8_1)
+>  		return;
+> @@ -857,6 +860,8 @@ void vmbus_initiate_unload(bool crash)
+>  		wait_for_completion(&vmbus_connection.unload_event);
+>  	else
+>  		vmbus_wait_for_unload();
+> +
+> +	vmbus_connection.conn_state = DISCONNECTED;
 
-It appears that /usr/include/bits/fcntl-linux.h (indirectly
-included by /usr/include/fcntl.h) does not include falloc.h
-with an older glibc, whereas a more up-to-date version
-does.
+This is only set at the end of the function.  I don't see how this solve
+the re-entrant issue with the check at the beginning. Do I miss anything
+here?
 
-Adding the direct include to file.c resolves the issue
-and does not cause problems for more recent glibc.
+Maybe this function should check and set the state to
+DISCONNECTING/DISCONNECTED at the beginning of this function?
 
-Fixes: 50109b5a03b4 ("um: Add support for DISCARD in the UBD Driver")
-Cc: Brendan Higgins <brendanhiggins@google.com>
-Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
----
- arch/um/os-Linux/file.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/um/os-Linux/file.c b/arch/um/os-Linux/file.c
-index fbda105..5c819f8 100644
---- a/arch/um/os-Linux/file.c
-+++ b/arch/um/os-Linux/file.c
-@@ -8,6 +8,7 @@
- #include <errno.h>
- #include <fcntl.h>
- #include <signal.h>
-+#include <linux/falloc.h>
- #include <sys/ioctl.h>
- #include <sys/mount.h>
- #include <sys/socket.h>
--- 
-1.8.3.1
-
+Wei.
