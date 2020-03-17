@@ -2,70 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64985189162
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 23:29:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FA7218916A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 23:29:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbgCQW2x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 18:28:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726735AbgCQW2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 18:28:52 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81733206EC;
-        Tue, 17 Mar 2020 22:28:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584484132;
-        bh=in+uEnnBEamuibMWNP0r+YUcEQtvIxVwoH3U6yBNP6Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Gi2J3WnXgD8B4p2Kyem8oTOZItr0QLzI9kbT+N65BetNa6uVg/24vYUtKEXcpFsG/
-         IzRddKiKI8RgtGh1fZdl2MZL0RmKRRm7H5+eM5aKDhBgWEAoz8HEC24r8daJFM+lFj
-         Hak5A/tkoSY7q3pw8u3maFQ8gtgZPvaw5ACgfCpk=
-Date:   Tue, 17 Mar 2020 22:28:47 +0000
-From:   Will Deacon <will@kernel.org>
-To:     =?utf-8?B?6Z+p56eR5omN?= <hankecai@vivo.com>
-Cc:     catalin.marinas@arm.com, broonie@kernel.org,
-        alexios.zavras@intel.com, tglx@linutronix.de, allison@lohutok.net,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@vivo.com, trivial@kernel.org
-Subject: Re: [PATCH] arm64: fix spelling mistake "ca not" -> "cannot"
-Message-ID: <20200317222846.GI20788@willie-the-truck>
-References: <AOoADQCXCJCLyVN7qh-tYqrl.1.1584244879067.Hmail.hankecai@vivo.com>
+        id S1727226AbgCQW3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 18:29:15 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37645 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726735AbgCQW3O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 18:29:14 -0400
+Received: by mail-io1-f67.google.com with SMTP id q9so2922269iod.4
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 15:29:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+bEIoiMS77J8OafdTSe8ka9CicGNma8msO19PpTMGGU=;
+        b=XsH2EWdlmo2FWYBvtVzOdR0HVND74GUX1SiRcRc2SzJBbtTrGbjYewhWERHT/9VuYy
+         A4XNY27GZ1DVtb9WRskC+VR05HY0eczzAetwxDGll+aZksKxI+TWbg9aX1VWhkpqpfsH
+         m6gidwY8k1vpxeamp1ZZcJD6NUuk+8sCIUkRDPu+r3RemGAoJZjuHSKST3v730/AWWFC
+         K9x+A4dB7auiUS6/lQtdr7jg4wboz4ax4v7qxCuFcf9ipmsLLV4+KaQjSzEpcLPohI7h
+         LUFX+r7dRDYMBqgdgxgz4P7DCg3piPX685dY1iSXONS0d7/Jr+NOTax5HoUTvl0lqIWo
+         nsVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+bEIoiMS77J8OafdTSe8ka9CicGNma8msO19PpTMGGU=;
+        b=b5j0C0GigMBRanKyg03eOmG4pCkBggb8oLtIfgrtRsvifF48RdImtdseBtLLvPKGlf
+         PktDIOfK4A11xQ5m6lOYUS6Ubxg21VfmcBZwwZe/vHgc+E/mLQcGa6TCDLHkd1UXdzvz
+         kPKQU9e6rHmyMmFi1B7SKPoMRf++yPng4/SbinUkj95kR4/YZHR04arZun0TD3GMD+CL
+         eK/xJp81rOnRUAFUMXbsBhqtigoYSQUn+utQkUQusuxTqz3Bi5hrLEMJqYeVtcjKV7cg
+         QltHYxMRisehLNr3yJZVXpoqL05Cy9CUoNZKB+2a5JPuBvGh8tR3kSJhUD8YlebDtQU9
+         hnKQ==
+X-Gm-Message-State: ANhLgQ3LidetTuW9Sralsq20ilyY4r6bk4gFOKDzs0GaO+1LgTiyAYl+
+        puSukwoWyMsUfQ7xDTS0MB6EHBJxh0KIYYcBIQA=
+X-Google-Smtp-Source: ADFU+vtNbNfEr3+QnFalp8JMjl/uIHuqwXCiBCpCEK2xYevFvN/okNzd5s4kPzmvSxDuzzEFr+gjCKEqyEH7G34pjaA=
+X-Received: by 2002:a02:9f90:: with SMTP id a16mr1501965jam.61.1584484152847;
+ Tue, 17 Mar 2020 15:29:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AOoADQCXCJCLyVN7qh-tYqrl.1.1584244879067.Hmail.hankecai@vivo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1584329768-16119-1-git-send-email-hqjagain@gmail.com> <20200317165729.GQ2363188@phenom.ffwll.local>
+In-Reply-To: <20200317165729.GQ2363188@phenom.ffwll.local>
+From:   Qiujun Huang <hqjagain@gmail.com>
+Date:   Wed, 18 Mar 2020 06:29:02 +0800
+Message-ID: <CAJRQjod6JD8AGtBRxpsGJV3ACd0QLO_UvNDeM1rMuZPioAqB4A@mail.gmail.com>
+Subject: Re: [PATCH] drm/lease: fix WARNING in idr_destroy
+To:     Qiujun Huang <hqjagain@gmail.com>,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 15, 2020 at 12:01:19PM +0800, 韩科才 wrote:
-> There is a spelling mistake in the comment, Fix it.
-> 
-> Signed-off-by: hankecai <hankecai@bbktel.com>
-> ---
->  arch/arm64/lib/strcmp.S | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/lib/strcmp.S b/arch/arm64/lib/strcmp.S
-> index 4767540d1b94..4e79566726c8 100644
-> --- a/arch/arm64/lib/strcmp.S
-> +++ b/arch/arm64/lib/strcmp.S
-> @@ -186,7 +186,7 @@ CPU_LE( rev	data2, data2 )
->  	* as carry-propagation can corrupt the upper bits if the trailing
->  	* bytes in the string contain 0x01.
->  	* However, if there is no NUL byte in the dword, we can generate
-> -	* the result directly.  We ca not just subtract the bytes as the
-> +	* the result directly.  We cannot just subtract the bytes as the
->  	* MSB might be significant.
->  	*/
->  CPU_BE( cbnz	has_nul, 1f )
+On Wed, Mar 18, 2020 at 12:57 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+>
+> On Mon, Mar 16, 2020 at 11:36:08AM +0800, Qiujun Huang wrote:
+> > leases has been destroyed:
+> > drm_master_put
+> >     ->drm_master_destroy
+> >             ->idr_destroy
+> >
+> > so the "out_lessee" needn't to call idr_destroy again.
+> >
+> > Reported-and-tested-by: syzbot+05835159fe322770fe3d@syzkaller.appspotmail.com
+> > Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+> > ---
+> >  drivers/gpu/drm/drm_lease.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
+> > index b481caf..54506c2 100644
+> > --- a/drivers/gpu/drm/drm_lease.c
+> > +++ b/drivers/gpu/drm/drm_lease.c
+> > @@ -577,11 +577,14 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
+> >
+> >  out_lessee:
+> >       drm_master_put(&lessee);
+> > +     goto err_exit;
+>
+> I think this is correct, but also confusioning and inconsistent with the
+> existing style. Most error cases before drm_lease_create explicit destroy
+> the idr, except the one for drm_lease_create.
+Yeah, it is.
 
-Acked-by: Will Deacon <will@kernel.org>
+>
+> Instead of your patch I'd
+> - remove the idr_destry from the error unrolling here
+> - add it the to drm_lease_create error case
+> - add a comment above the call to drm_lease_crete that it takes ownership
+>   of the lease idr
+>
+> Can you pls respin and retest to make sure that patch is still correct?
+I get that, thanks.
 
-Will
+>
+> Thanks, Daniel
+>
+> >
+> >  out_leases:
+> > -     put_unused_fd(fd);
+> >       idr_destroy(&leases);
+> >
+> > +err_exit:
+> > +     put_unused_fd(fd);
+> > +
+> >       DRM_DEBUG_LEASE("drm_mode_create_lease_ioctl failed: %d\n", ret);
+> >       return ret;
+> >  }
+> > --
+> > 1.8.3.1
+> >
+>
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
