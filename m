@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C299718885B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:55:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A1A218882B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:54:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbgCQOz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 10:55:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43590 "EHLO mail.kernel.org"
+        id S1727074AbgCQOyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 10:54:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726908AbgCQOyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 10:54:31 -0400
+        id S1726971AbgCQOyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 10:54:32 -0400
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7BCD2076D;
+        by mail.kernel.org (Postfix) with ESMTPSA id D12D520777;
         Tue, 17 Mar 2020 14:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584456870;
-        bh=7uUf4ls1frgYC0YC7nGl7q8HJwlLjSoEjGcFoFzYh6M=;
+        s=default; t=1584456871;
+        bh=ngm8KfEWZ1w1B8xThy9DYpYXuh5kAXswdWClIoD/HIs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c0iz7+p2FjXdEzZ4NMy7+vG9MSSy1NrTujtgV8+mFlQd9qGyvfGAmJmgzoBAaLNRz
-         44afYt+cfm5LmFXzqvTK0lwdAHgSf82tunHruQ4sJaiNMUOf3JWfzsekCvlSOmt3FU
-         d20WpQNBY2DFHVBi2cU4ey87RCcusKFQU0MyYUf0=
+        b=IcOYly3Lf5sMWTt1SHqcQCOJ2be+l+7v1x0lR+oNLOJZnoULSXxqC+d66FN1D4ruH
+         78PPoWLcuYlSFhXtouM3t1+NbSltrOM0gVu0GRxGxNhfQcLJVW9Zf3qZelH8QFjXDL
+         0xe9Zj3ptq5C4DCqEQjZXx3Prb9vnUaWp95ZTNE8=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1jEDbw-000ANB-RV; Tue, 17 Mar 2020 15:54:28 +0100
+        id 1jEDbw-000ANF-T2; Tue, 17 Mar 2020 15:54:28 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
-Subject: [PATCH 13/17] i2c: include/linux/i2c.h: fix a doc warning
-Date:   Tue, 17 Mar 2020 15:54:22 +0100
-Message-Id: <24cbf9166b21531186e5b6d37a3f9201f957abef.1584456635.git.mchehab+huawei@kernel.org>
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Subject: [PATCH 14/17] infiniband: pa_vnic_encap.h: get rid of a warning
+Date:   Tue, 17 Mar 2020 15:54:23 +0100
+Message-Id: <9dce702510505556d75a13d9641e09218a4b4a65.1584456635.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.1584456635.git.mchehab+huawei@kernel.org>
 References: <cover.1584456635.git.mchehab+huawei@kernel.org>
@@ -44,38 +47,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't let non-letters inside a literal block without escaping it, as
-the toolchain would mis-interpret it:
+The right markup for a variable is @foo, and not @foo[].
 
-./include/linux/i2c.h:518: WARNING: Inline strong start-string without end-string.
+Using a wrong markup caused this warning:
+
+	./drivers/infiniband/ulp/opa_vnic/opa_vnic_encap.h:243: WARNING: Inline strong start-string without end-string.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- include/linux/i2c.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/ulp/opa_vnic/opa_vnic_encap.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index f834687989f7..f6b942150631 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -506,7 +506,7 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
-  * @smbus_xfer_atomic: same as @smbus_xfer. Yet, only using atomic context
-  *   so e.g. PMICs can be accessed very late before shutdown. Optional.
-  * @functionality: Return the flags that this algorithm/adapter pair supports
-- *   from the I2C_FUNC_* flags.
-+ *   from the ``I2C_FUNC_*`` flags.
-  * @reg_slave: Register given client to I2C slave mode of this adapter
-  * @unreg_slave: Unregister given client from I2C slave mode of this adapter
+diff --git a/drivers/infiniband/ulp/opa_vnic/opa_vnic_encap.h b/drivers/infiniband/ulp/opa_vnic/opa_vnic_encap.h
+index 0b3570dc606d..d324312a373c 100644
+--- a/drivers/infiniband/ulp/opa_vnic/opa_vnic_encap.h
++++ b/drivers/infiniband/ulp/opa_vnic/opa_vnic_encap.h
+@@ -239,7 +239,7 @@ struct opa_veswport_mactable_entry {
+  * @offset: mac table starting offset
+  * @num_entries: Number of entries to get or set
+  * @mac_tbl_digest: mac table digest
+- * @tbl_entries[]: Array of table entries
++ * @tbl_entries: Array of table entries
   *
-@@ -515,7 +515,7 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
-  * be addressed using the same bus algorithms - i.e. bit-banging or the PCF8584
-  * to name two of the most common.
-  *
-- * The return codes from the @master_xfer{_atomic} fields should indicate the
-+ * The return codes from the ``master_xfer{_atomic}`` fields should indicate the
-  * type of error code that occurred during the transfer, as documented in the
-  * Kernel Documentation file Documentation/i2c/fault-codes.rst.
-  */
+  * The EM sends down this structure in a MAD indicating
+  * the starting offset in the forwarding table that this
 -- 
 2.24.1
 
