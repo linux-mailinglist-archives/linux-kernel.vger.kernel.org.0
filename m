@@ -2,106 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C36F2187ABA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 08:58:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A142187AC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:03:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbgCQH60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 03:58:26 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41099 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbgCQH6Z (ORCPT
+        id S1726082AbgCQIDp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 04:03:45 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:56203 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725794AbgCQIDp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 03:58:25 -0400
-Received: by mail-lj1-f195.google.com with SMTP id o10so21657298ljc.8;
-        Tue, 17 Mar 2020 00:58:23 -0700 (PDT)
+        Tue, 17 Mar 2020 04:03:45 -0400
+Received: by mail-pj1-f67.google.com with SMTP id mj6so9631680pjb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 01:03:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=zllu9dyob3KR6mqd5D9YEgxS//bxCCQ/mmmNOs5S+jY=;
-        b=kE3/Af4s7Np2SGnO2kk/xC9qG1nv/Blz1B5vv5vafcCUYNEUNkH3UIsjN6bfQZ2trH
-         faYAwkZ73guJVi58YtaXhfBabRHe+UYXAcdiRwyUlKqkLrCvDgORFFCq4UCVTsCmkf8r
-         cFsj6Op1Fjd+wJiFdragkc6fK6bVe9jdBXBLeBNsH0mhICIKvJrAwKvl0DoOdrG4OfZB
-         sG43dSApb5zORjBJi8e7Ve3M4JtX47oOmn39es+GYGLAg+S7/Zy/7BZzmVtOlXpUP7C2
-         hej0d2XoVfgeKAHC+4ZSl5YJGrDmvWY3Nq2iiiB1sql0jXWxNvwbHYyMx1b/5NOSKHQg
-         O5ig==
+         :content-disposition:in-reply-to:user-agent;
+        bh=wJzj+NhO+lX1yEtnXWO3HvgiRxvAHYyMwldXylz/g50=;
+        b=uaNAUErhn8Wd3uexgimEazU8oaz2CrrpINTw3zlsRrv70YFqLvop1Mm4dr5cHY2TQ+
+         tlguxrHlr1t/Tf56J59gXfrDqU5q9OIq9C36XMKu6hosdc97qIwiKaEtHCX8r3eitpRw
+         6nolpgswSdHtVLtNa8s2ZTGzXh8VLzxbaO1YF/y1LwNmupkZSALAA9mwcIULIpaneNn1
+         Hvv83kSpGXCFlzl1aWtp8CLaeWqU1oF8cjKFmz0w7kHptEP7AL4uY7HS+7v6K1AoLD7m
+         hZaTc8HFgSVpBeOI2GtB+TXNiUZzc3bz5jk7aIlhIvGStQdBiGJukG8s/BGUbsL/VR70
+         OZng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=zllu9dyob3KR6mqd5D9YEgxS//bxCCQ/mmmNOs5S+jY=;
-        b=VShOqiPgn25nr/dtIzwmtJ+A5jDp/h/afvBL56hO8ZLLJYXBxMelVNc58lZTziX3A5
-         1ouxLgVjQ9g9vCX60EwHZ4dwKzhevGRWQaLK2cxexhUMxXQvNlYYdgb4Dgub58CoJ5R4
-         76gokdRtYIw2D396N3XARxGEMdrwPb5rtrcLpTLyhaHPvhT1qp14Tst51SzsyqMkDN0H
-         4jl6Ev+sQgAktAIF1Pjj/3aYftSvYOvEs7R8cjWmA0U1baD0JcYmaZarXXTulAhcZJnI
-         vvdhs3xGgBtyDF09NZS3m1bC1p9StKFQ/Icu02Pig+kAnF6TzJ+cSlnkikxdBngArtR1
-         OiDQ==
-X-Gm-Message-State: ANhLgQ25ICuLxR/olDHBcs5w1Yi2NEL/T35jGHYPUaCEk95vQChJY8wP
-        ByH5Dt5uttBlpDUbtiP6L9NTBzPY
-X-Google-Smtp-Source: ADFU+vsrCJIN5MM8IPzGQvIGA4jCAxyZ9ZjipnpLKf1O7P8hDyvknoCAYHD5D4uxP4IhXvfS/eA1VQ==
-X-Received: by 2002:a2e:3c01:: with SMTP id j1mr1991421lja.175.1584431902850;
-        Tue, 17 Mar 2020 00:58:22 -0700 (PDT)
-Received: from gmail.com (94-255-169-249.cust.bredband2.com. [94.255.169.249])
-        by smtp.gmail.com with ESMTPSA id q4sm2045458lfp.18.2020.03.17.00.58.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2020 00:58:22 -0700 (PDT)
-Date:   Tue, 17 Mar 2020 09:01:35 +0100
-From:   Marcus Folkesson <marcus.folkesson@gmail.com>
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lad Prabhakar <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH v4 0/3] media: i2c: imx219: Feature enhancements
-Message-ID: <20200317080135.GA138007@gmail.com>
-References: <1583846229-6799-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wJzj+NhO+lX1yEtnXWO3HvgiRxvAHYyMwldXylz/g50=;
+        b=ArL/d7q12DKn1vzph5HCu7sH3FtMElr9WB4rW3YFoRD9HsVLTsFRQ1/da+Ieu7hl3d
+         Yfewcunezz1ix4oZO/pjoT9/GpxqifnESjsc+jhZgCRtLbnEzX+bPb/WzyXljw2dpZVJ
+         WmzGVhC7VqIh9v42+Ey4GYs55/e9Mt2uwmVHMSfPbsiR0nPRLCp38bOqGs8ppYeXMgAB
+         yFeOILoNJ63/7UKcib7qkcRHeKrgzyMtMoOFDppA5G22FZE7sVjIpEd7g5kohUgYtQhS
+         viTOWAK3iRwRh1sKyzInBzVfAAhcidrH2mbdhTfdvO36btW5d6CEmqvpEmKJEYKH9jDO
+         vr5Q==
+X-Gm-Message-State: ANhLgQ0dkzfYsT41XCpT23swCJ+ur0EG2ZbR+qXZL8s2qHiu8Qe0KWN7
+        ElRqOWiFcShzONT/sZfXypzj9Q==
+X-Google-Smtp-Source: ADFU+vsA93AKpo6rZVnei/jHWtpv1Oy0bklJm2y9V7JgrzPTTmeqgzvFd+SAx1MK0x6Lnj2Ha34y2w==
+X-Received: by 2002:a17:902:9a45:: with SMTP id x5mr3005594plv.296.1584432223464;
+        Tue, 17 Mar 2020 01:03:43 -0700 (PDT)
+Received: from localhost ([122.171.122.128])
+        by smtp.gmail.com with ESMTPSA id j19sm2106447pfe.102.2020.03.17.01.03.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Mar 2020 01:03:42 -0700 (PDT)
+Date:   Tue, 17 Mar 2020 13:33:40 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     rjw@rjwysocki.net, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH] cpufreq: imx6q-cpufreq: Improve the logic of
+ -EPROBE_DEFER handling
+Message-ID: <20200317080340.475xamakfosykrro@vireshk-i7>
+References: <1584419934-2303-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1583846229-6799-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1584419934-2303-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 17-03-20, 12:38, Anson Huang wrote:
+> Improve the -EPROBE_DEFER handling logic to simplify the code.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/cpufreq/imx6q-cpufreq.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+> index 285b8e9..fdb2fff 100644
+> --- a/drivers/cpufreq/imx6q-cpufreq.c
+> +++ b/drivers/cpufreq/imx6q-cpufreq.c
+> @@ -400,11 +400,9 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
+>  		ret = imx6q_opp_check_speed_grading(cpu_dev);
+>  	}
+>  	if (ret) {
+> -		if (ret == -EPROBE_DEFER)
+> -			goto out_free_opp;
+> -
+> -		dev_err(cpu_dev, "failed to read ocotp: %d\n",
+> -			ret);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(cpu_dev, "failed to read ocotp: %d\n",
+> +				ret);
+>  		goto out_free_opp;
+>  	}
 
-To which tree does this patchset apply?
-
-On Tue, Mar 10, 2020 at 01:17:06PM +0000, Lad Prabhakar wrote:
-> This patch series does the following:
-> 1: Makes sure the sensor is LP11 state on power up
-> 2: Adds support for RAW8
-> 3: Adds support for 640x480 resolution
->=20
-> Changes for v4:
-> 1: Fixed review comments for patch 2/2 as request by Sakari.
->=20
-> Changes for v3:
-> 1: Only patch 3/3 was posted for review.
->=20
-> Changes for v2:
-> 1: Dropped setting the format in probe to coax the sensor to enter LP11
->    state.
-> 2: Fixed switching between RAW8/RAW10 modes.
-> 3: Fixed fps setting for 640x480 and switched to auto mode.
->=20
-> Lad Prabhakar (3):
->   media: i2c: imx219: Fix power sequence
->   media: i2c: imx219: Add support for RAW8 bit bayer format
->   media: i2c: imx219: Add support for cropped 640x480 resolution
->=20
->  drivers/media/i2c/imx219.c | 235 ++++++++++++++++++++++++++++++++++++++-=
-------
->  1 file changed, 202 insertions(+), 33 deletions(-)
->=20
-> --=20
-> 2.7.4
->=20
+Applied. Thanks.
 
 
-Thanks,
-Marcus Folkesson
+-- 
+viresh
