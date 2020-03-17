@@ -2,51 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1E0D187992
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 07:24:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C41B1879A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 07:29:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725957AbgCQGYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 02:24:14 -0400
-Received: from foss.arm.com ([217.140.110.172]:60996 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725536AbgCQGYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 02:24:14 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D68841FB;
-        Mon, 16 Mar 2020 23:24:13 -0700 (PDT)
-Received: from e107533-lin.cambridge.arm.com (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B57633F52E;
-        Mon, 16 Mar 2020 23:28:12 -0700 (PDT)
-Date:   Tue, 17 Mar 2020 06:24:00 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc:     linux-kernel@vger.kernel.org, anders.roxell@linaro.org,
-        arnd@arndb.de, sboyd@kernel.org, gregkh@linuxfoundation.org,
-        naresh.kamboju@linaro.org, daniel.lezcano@linaro.org,
-        Basil.Eljuse@arm.com, mturquette@baylibre.com,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] arch_topology: Fix putting invalid cpu clk
-Message-ID: <20200317062348.GA12791@e107533-lin.cambridge.arm.com>
-References: <20200317001829.29516-1-jeffy.chen@rock-chips.com>
+        id S1726016AbgCQG26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 02:28:58 -0400
+Received: from aclms3.advantech.com.tw ([125.252.70.86]:25134 "EHLO
+        ACLMS3.advantech.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbgCQG26 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 02:28:58 -0400
+Received: from taipei08.ADVANTECH.CORP (unverified [172.20.0.235]) by ACLMS3.advantech.com.tw
+ (Clearswift SMTPRS 5.6.0) with ESMTP id <Tddf54e8336ac1401c8808@ACLMS3.advantech.com.tw>;
+ Tue, 17 Mar 2020 14:28:55 +0800
+Received: from ADVANTECH.CORP (172.17.10.74) by taipei08.ADVANTECH.CORP
+ (172.20.0.235) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 17 Mar
+ 2020 14:28:54 +0800
+From:   <Amy.Shih@advantech.com.tw>
+To:     <she90122@gmail.com>
+CC:     Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rrichter@marvell.com>,
+        <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <amy.shih@advantech.com.tw>, <oakley.ding@advantech.com.tw>
+Subject: [v1,1/1] EDAC: (pnd2) Fix the log level for message "Failed to register device with error %d"
+Date:   Tue, 17 Mar 2020 06:28:28 +0000
+Message-ID: <20200317062828.18807-1-Amy.Shih@advantech.com.tw>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200317001829.29516-1-jeffy.chen@rock-chips.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [172.17.10.74]
+X-ClientProxiedBy: ACLDAG.ADVANTECH.CORP (172.20.2.88) To
+ taipei08.ADVANTECH.CORP (172.20.0.235)
+X-StopIT: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 08:18:29AM +0800, Jeffy Chen wrote:
-> Add a sanity check before putting the cpu clk.
-> 
-> Fixes: 2a6d1c6bcd1f (“arch_topology: Adjust initial CPU capacities with current freq")
+From: Amy Shih <amy.shih@advantech.com.tw>
 
-Fixing a non-existent commit ?
+Fix the log level from "KERN_ERR" to "KERN_INFO" for message "Failed to
+register device with error %d", since it is not the error message but
+the information to notice the user.
 
---
-Regards,
-Sudeep
+Signed-off-by: Amy Shih <amy.shih@advantech.com.tw>
+---
+ drivers/edac/pnd2_edac.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/edac/pnd2_edac.c b/drivers/edac/pnd2_edac.c
+index 933f772..f15d3b4 100644
+--- a/drivers/edac/pnd2_edac.c
++++ b/drivers/edac/pnd2_edac.c
+@@ -1572,7 +1572,8 @@ static int __init pnd2_init(void)
+ 
+ 	rc = pnd2_probe();
+ 	if (rc < 0) {
+-		pnd2_printk(KERN_ERR, "Failed to register device with error %d.\n", rc);
++		pnd2_printk(KERN_INFO,
++			    "Failed to register device with error %d.\n", rc);
+ 		return rc;
+ 	}
+ 
+-- 
+1.8.3.1
+
