@@ -2,83 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 311C8188910
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 16:22:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09DB1188917
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 16:22:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbgCQPWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 11:22:07 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42595 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726484AbgCQPWH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 11:22:07 -0400
-Received: by mail-ed1-f66.google.com with SMTP id b21so16636248edy.9
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 08:22:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FN6nZxGnOaw3deJgrYU1nB+eySU41aqfgMOvG0B3T1g=;
-        b=CXjlKsP5/eG3tZJGw8EPbB69nbC3nO4ZZQfYtvvX5o2sdeR2vVbOAPJd8ufv4NCETI
-         02I170hMx6kVh1sjzn69urnNbgExvQeSlkitbDxdyl/uvNwpdojqNN32J5e8ycULPU4L
-         s1HVoS9+wzcMbmrKjBXEtZ2cHoqkq7dRot6Mf/ehXoxd28r12XO9VcMG2gMJCDc5tw1h
-         gBLJlU/Ptq2it9/Xlo5utCg0XqxXmvkPr+n+vcJg1ARiA9tCg2Mex3p5UBXkQb8pCrgt
-         BLAzadrLVthZNCuciVdMd848fwy0bpmh3KryGSNikiM31ny7IGOyUM1ebjPETz6xnQ9d
-         IK/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FN6nZxGnOaw3deJgrYU1nB+eySU41aqfgMOvG0B3T1g=;
-        b=Tkq/Sx0sQixNvFx1yP/YEdon7iYxG3FFJhG5bWl7VdENQ/UN/cOwA8zYhBvkCYCwRS
-         l8W4nF2bZ/3g2VAZp7hFJt9hIlX6xx7MOgwiWgcgWiPuyL0h6LUW/i0OXe1XmFakdIiu
-         xzWtTfpZRd2IEWNIOmJejdO3wuC77J6dmLzFrduv7p0ScFnBwX1bSGKGraznoxySj726
-         A5eNhn+TqRYQqifRtQ+Im3ZVDp/vgRmz58WGuaQJ0IOHMV++tR75uRwolJKsQfeYcqm0
-         peC9bhkiGyh7n3rVixFnBoAYCkZQamQVTkOKVJrAZ61HrlQ1fP/6OPL01ZGiSHxU/1RX
-         qSSA==
-X-Gm-Message-State: ANhLgQ3McobpwWAmvWtwNycIaz11bTTqvZcvg9FN8/rLtpGdJfJKJert
-        bDWB/a8zNkL3Mc5WMXiA4FNJXA==
-X-Google-Smtp-Source: ADFU+vsI46bucXrS6vRC98i/tyZ5FW2KRCRZlYWtRXZUfYzkhSt7l9XxjzONQxNkkNmWOvcZUFuTfA==
-X-Received: by 2002:a05:6402:180e:: with SMTP id g14mr6060137edy.66.1584458524977;
-        Tue, 17 Mar 2020 08:22:04 -0700 (PDT)
-Received: from [192.168.0.38] ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id bc23sm227198edb.31.2020.03.17.08.22.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Mar 2020 08:22:04 -0700 (PDT)
-Subject: Re: [PATCH 7/7] usb: dwc3: qcom: Enable gpio-usb-conn based
- role-switching
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     balbi@kernel.org, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jackp@codeaurora.org,
-        robh@kernel.org, Andy Gross <agross@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-References: <20200311191501.8165-1-bryan.odonoghue@linaro.org>
- <20200311191501.8165-8-bryan.odonoghue@linaro.org>
- <20200317063101.GA2778164@ripper>
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Message-ID: <ec573486-155d-c6f9-7645-496e85721a69@linaro.org>
-Date:   Tue, 17 Mar 2020 15:22:22 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+        id S1726924AbgCQPWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 11:22:42 -0400
+Received: from mail-eopbgr80071.outbound.protection.outlook.com ([40.107.8.71]:28037
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726680AbgCQPWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 11:22:42 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Edpz9KS+zRQI4ZXY6TwIxeedLZ2hTjIDrI6Po/Pw+/7wr/ERiQQDwY0q/lXUjb9CtTKDNvFy9ah8dZbXW1D9eVRfrLXVJGiZ4xhKUMsBZyZoJ6/tp/bqlehHH3nBXYcxsexNBkJ2uDZ9fnmhwopw2oXaP2Z9wFSkFIJpSKFr3M7EW75asJRiwGgSnkmmpuLQhmQiweyATRYw0Q4EpBu19wyZfBXdLU06lO8ri8DvSUDqR4POZTe3QqmWMH+/kigjN3EeoYZ8Ffd1fe5FqitbB5qnfPjTQD3iywY14O4PuJFW5puGZ4CZAxuYvqJXN1cSVFkm45Tg8DtQrj9+bj5lRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CtvoUSFKYiSSLyg+97nlOXBduv+T7HOVM/TzbzbpeU0=;
+ b=K5jgTAkfn66GyYZodd9YGr1By1ItqoFP3sPio4DemVb4GPOiU+7FA6R4fivIaEsWKiLL45n8IGT9QVLO1JUC1ZkklKERn+x2fESc/uY2ml1Q/fbnjC42K2mLMIiA4qwpfdiGPh9K7jh3MhUYeXKZSpcmmUHX5WDRXy8bexfQhOXuHpTmz8iEZq0GyRtib1H4HPIQ6g6k4JFo0/6UTt2a6rMVqhakPnCzu9ijZUoHCOX++3k7mOjnEFNM2vF9awGfIVOmUXxs6ss5uNcW9YcO8MybExDofW/ZQiiLUjlhwcs7hjKVeLJJeFcv1wbAQWvF2Gp5WDwQ2D69POi5nl0sNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CtvoUSFKYiSSLyg+97nlOXBduv+T7HOVM/TzbzbpeU0=;
+ b=i+pMiLx9/6qLRgbh3v/xDGewvUBM873Owmsj6Pgxtb6Ek8AU1S5NGRG9E8CqTHgqlvt0R3BSElutG/1ZcEv8ugWfN4rPHqO44DI3LwdLQZMno3aX/yADZq6L503iAB1f/I3wxJEyC+bRbOe9soyqBrmKIXofTPUD8XP5Sez8cek=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3855.eurprd04.prod.outlook.com (52.134.17.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.16; Tue, 17 Mar 2020 15:22:37 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::751e:7e8d:ed4:ef5f]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::751e:7e8d:ed4:ef5f%7]) with mapi id 15.20.2814.021; Tue, 17 Mar 2020
+ 15:22:37 +0000
+Subject: Re: [PATCH v8 1/8] crypto: caam - allocate RNG instantiation
+ descriptor with GFP_DMA
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+Cc:     Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20200316150047.30828-1-andrew.smirnov@gmail.com>
+ <20200316150047.30828-2-andrew.smirnov@gmail.com>
+From:   =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>
+Message-ID: <97b01e42-41f1-e0e8-59ba-9df957392ede@nxp.com>
+Date:   Tue, 17 Mar 2020 17:22:34 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <20200317063101.GA2778164@ripper>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200316150047.30828-2-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM0PR06CA0071.eurprd06.prod.outlook.com
+ (2603:10a6:208:aa::48) To VI1PR0402MB3485.eurprd04.prod.outlook.com
+ (2603:10a6:803:7::25)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.0.129] (84.117.251.185) by AM0PR06CA0071.eurprd06.prod.outlook.com (2603:10a6:208:aa::48) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.21 via Frontend Transport; Tue, 17 Mar 2020 15:22:36 +0000
+X-Originating-IP: [84.117.251.185]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: a6eb5b7c-4df2-4fdd-c05b-08d7ca87062e
+X-MS-TrafficTypeDiagnostic: VI1PR0402MB3855:|VI1PR0402MB3855:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR0402MB3855263B451312439A51596698F60@VI1PR0402MB3855.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
+X-Forefront-PRVS: 0345CFD558
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(346002)(39860400002)(396003)(366004)(199004)(110136005)(6486002)(956004)(2616005)(316002)(16576012)(54906003)(66946007)(26005)(478600001)(4326008)(16526019)(186003)(31686004)(2906002)(31696002)(66476007)(66556008)(5660300002)(53546011)(8676002)(81166006)(86362001)(36756003)(52116002)(81156014)(8936002)(4744005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3855;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: aeIwTretd2k7eFZzCg7OYv8zvSBYvVT+doc+sLDtgBLf6Z5CqZzBAF2MyMaPkOseKYV9VjdqqJEBfhSwxKrHvyOf729/Xl2WmGBNRgtHIJNMnNBQMEX+rCWARaCWcY4o9uG768AF8l+rmLDFHXhZ8ov6aj7UxNl9tKkhkXPgFULnyZ1HyGD/qe6FiU8WtNoOS6RfFMz5wlyIcEG2bhCXu9xFN8Tp0IW5+88m1CK70dCPV68gPnPKiH7ljhwcroAYNJ/p+KFfI5N5Zsqg46uf3OuJX3gNOfH6e8Ex9JFJTf/GS+OQuSu+GoZ9wmmGZT4YzwIbLRZ4irlBLKKOHymN1G9is2hZ7UlL7TxP+E8Two40spy8Kf2La5hjhtkezsL1G1+VIAUV3JrAah9eB6JzjUjMWqM3OvbzK8GYsZ/JdD5H7fYUjovXE11b8jr7Ny9R
+X-MS-Exchange-AntiSpam-MessageData: 4OCxu7VQwi2UiqLuCDQ0xCKFMGrFPD+9rEJ62bwXFqZeqfbfmk/j1UiqszQMOEmGZfhrWpg4/sfA/YZUcQPXy/sOZO5mfslU09JlNNt3oX88af25UPIqPL40wjfKvDImzDeZExgfFjWIVyvYFCxjrw==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6eb5b7c-4df2-4fdd-c05b-08d7ca87062e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2020 15:22:37.1006
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GPzjTZPCWZIUistiM+XWbpkZnT1iXPWqvb5MSIT33mMVfuaXerE9FC2omMKg8Jo0Rkn/6YbAzg5SJFCK0qv0og==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3855
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/03/2020 06:31, Bjorn Andersson wrote:
-> I don't yet have a sane suggestion on how to redesign the dependency
-> between the two drivers in order to avoid this, but it's at least not
-> possible to access the child's state data from dwc3_qcom_probe().
+On 3/16/2020 5:01 PM, Andrey Smirnov wrote:
+> Be consistent with the rest of the codebase and use GFP_DMA when
+> allocating memory for a CAAM JR descriptor.
+> 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Horia Geantă <horia.geanta@nxp.com>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
+> Cc: linux-imx@nxp.com
+> Cc: linux-crypto@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
 
-yep, this should be modeled as the dwc3 registering with the parent 
-role-switch, like gpio-usb-conn does with dwc3.
-
-I have an idea for a patch, I'll v2 this.
+Thanks,
+Horia
