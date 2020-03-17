@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD98E187F3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:59:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29330187F42
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:00:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbgCQK7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 06:59:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38374 "EHLO mail.kernel.org"
+        id S1727526AbgCQK7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:59:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727142AbgCQK7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 06:59:45 -0400
+        id S1727501AbgCQK7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:59:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7703920719;
-        Tue, 17 Mar 2020 10:59:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0106B20658;
+        Tue, 17 Mar 2020 10:59:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442784;
-        bh=6OAPODGHlydMxlTJQhMFh7RSov14BShXd1deVo9pNGA=;
+        s=default; t=1584442787;
+        bh=2vhibI530la2nXP38czFOi1Gon/TlBG9XWRRNIpIJCA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m8h8DIdz2bByCWItKoTdSqchrWzKtgEhk6Q1FI/+rYn5amm0KEOgU8dWywwHbfn0R
-         e0anLyCKEIHUChPwdG+HhFIvuj4bVYQEqj0g+4QCn/P713tcACCZeebi2m16opoMuj
-         6wyRQFkFGZIVK2NfncrLntnnqBRpzwd4YXTpgyxQ=
+        b=bu/ZPr3CMJIQf26lsF9NAPiH3dYNbxc337arX2ijaeeAQQ/0g3TFsA2XGcK9kxgRH
+         sp/jkI9tEyZmugeinMk9VuwnsvWBZbxC+VSD+e60YWPtcJJ4t04prfciGwder/pEoR
+         sbw513YDPdd/o2v5IEeIlg0om/mT3tDmF1pcpy3A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.19 81/89] netfilter: nft_tunnel: add missing attribute validation for tunnels
-Date:   Tue, 17 Mar 2020 11:55:30 +0100
-Message-Id: <20200317103309.406869995@linuxfoundation.org>
+        stable@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
+        Zhenzhong Duan <zhenzhong.duan@gmail.com>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 4.19 82/89] iommu/vt-d: Fix the wrong printing in RHSA parsing
+Date:   Tue, 17 Mar 2020 11:55:31 +0100
+Message-Id: <20200317103309.528602707@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
 References: <20200317103259.744774526@linuxfoundation.org>
@@ -43,32 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <kuba@kernel.org>
+From: Zhenzhong Duan <zhenzhong.duan@gmail.com>
 
-commit 88a637719a1570705c02cacb3297af164b1714e7 upstream.
+commit b0bb0c22c4db623f2e7b1a471596fbf1c22c6dc5 upstream.
 
-Add missing attribute validation for tunnel source and
-destination ports to the netlink policy.
+When base address in RHSA structure doesn't match base address in
+each DRHD structure, the base address in last DRHD is printed out.
 
-Fixes: af308b94a2a4 ("netfilter: nf_tables: add tunnel support")
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+This doesn't make sense when there are multiple DRHD units, fix it
+by printing the buggy RHSA's base address.
+
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@gmail.com>
+Fixes: fd0c8894893cb ("intel-iommu: Set a more specific taint flag for invalid BIOS DMAR tables")
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nft_tunnel.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/iommu/dmar.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/nft_tunnel.c
-+++ b/net/netfilter/nft_tunnel.c
-@@ -308,6 +308,8 @@ static const struct nla_policy nft_tunne
- 	[NFTA_TUNNEL_KEY_FLAGS]	= { .type = NLA_U32, },
- 	[NFTA_TUNNEL_KEY_TOS]	= { .type = NLA_U8, },
- 	[NFTA_TUNNEL_KEY_TTL]	= { .type = NLA_U8, },
-+	[NFTA_TUNNEL_KEY_SPORT]	= { .type = NLA_U16, },
-+	[NFTA_TUNNEL_KEY_DPORT]	= { .type = NLA_U16, },
- 	[NFTA_TUNNEL_KEY_OPTS]	= { .type = NLA_NESTED, },
- };
- 
+--- a/drivers/iommu/dmar.c
++++ b/drivers/iommu/dmar.c
+@@ -486,7 +486,7 @@ static int dmar_parse_one_rhsa(struct ac
+ 	pr_warn(FW_BUG
+ 		"Your BIOS is broken; RHSA refers to non-existent DMAR unit at %llx\n"
+ 		"BIOS vendor: %s; Ver: %s; Product Version: %s\n",
+-		drhd->reg_base_addr,
++		rhsa->base_address,
+ 		dmi_get_system_info(DMI_BIOS_VENDOR),
+ 		dmi_get_system_info(DMI_BIOS_VERSION),
+ 		dmi_get_system_info(DMI_PRODUCT_VERSION));
 
 
