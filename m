@@ -2,175 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91162188B23
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 17:50:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7810F188B2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 17:51:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbgCQQu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 12:50:26 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:49438 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726934AbgCQQuZ (ORCPT
+        id S1726946AbgCQQvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 12:51:15 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:46799 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbgCQQvP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 12:50:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584463823;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BnQjMX3riXTqLuP61/bkfPEBMDRDn7tr+gKn5UnCig0=;
-        b=VYu1cTfXocT6UKsJHOh6GtkuCRkmVQ9hfGIGYdtOXoVZ5r911DtmMFFLRVQ0WYcF1ERFMj
-        vPKZ+YCvHL99jJOx5pwLDR/usGgj7UE4Cqe32v+BwDy3I4v2PJ9yvLvHskyfefKl2ZCgjm
-        fLbNleuHQRmcN8ggpXGGddV7OjAlL+s=
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
- [209.85.166.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-369-ggyRTRbWM_6oAUAmNv5SAw-1; Tue, 17 Mar 2020 12:50:21 -0400
-X-MC-Unique: ggyRTRbWM_6oAUAmNv5SAw-1
-Received: by mail-io1-f72.google.com with SMTP id q22so6254594ioj.5
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 09:50:21 -0700 (PDT)
+        Tue, 17 Mar 2020 12:51:15 -0400
+Received: by mail-vs1-f67.google.com with SMTP id z125so14348339vsb.13
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 09:51:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5+4aJa7IpjGZCPI3Fh6cthpiIv4IQ9AsMliiqsg2mts=;
+        b=YkGBAuYA3wpjmbt2VnCUIMI0xJVISAM2HQ+4vpw4N5qYFuYvkK/XDLG95zf96seDTj
+         JLTzADnRCAjLkajykdhv5TBY+UyCAAt4Fg0/W1SluewltWU9Q42ysjJuhoOH4sDheabF
+         gAhRDlrX3PZyU1wGBAo+zTG5FaY2a1pPsQWXA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=BnQjMX3riXTqLuP61/bkfPEBMDRDn7tr+gKn5UnCig0=;
-        b=GFFS/1v2owraJwJyxo00DHMZbdHioumh4VnvX/MtFI9Bw5n0Is4XdWPJFf+DjZm15h
-         4/HAuwfcq2bPuok5L+Z63F/N905kdDArnIpf1TyfqxDO2W0oFaqReF6vq6FE1gAcjgUW
-         0VRh957PKIPN/qFZs8u9+V25fPkUSVIwo6kr7MZ2zkq/gbYLQoVb3U385U+dsX4eXDEA
-         TcnMsUBFj8od4kBlI20oSK/XgBEKN5Egsidcjvu030Fd2fPKbqQIGYXY3HyMNeE242cr
-         M3iT1MK7LE9Pum4CS8uHQM8SHdh/irnKmbAzlWI8D/LcRcxFY103ZeHj3bZcghp4bVUm
-         Wwjg==
-X-Gm-Message-State: ANhLgQ3SvTM/B/y1xLDFenAakWo1YCMZbeVR5KSqxliPLaj6m7y0IUZn
-        WOa8G7wtRj4VSqik4cD/RG7fCMvkHxRBu2OWGLvtzXx9gI68RwKvW/ewogNrzyhUWOuIhPvmZTD
-        VR1nsYdkeGNrOjB2aLIfoMFzXwMDw3RoHpR1yLTcj
-X-Received: by 2002:a92:c841:: with SMTP id b1mr2523700ilq.116.1584463820735;
-        Tue, 17 Mar 2020 09:50:20 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vuUGpVkJwtMHPGqE1iBtLPCrgEboZp3yvc7d4nU4uFAWhb4ybA3lVwDdeIK2rTgOxNdiYyT9yhdB527oV9KI1Y=
-X-Received: by 2002:a92:c841:: with SMTP id b1mr2523652ilq.116.1584463820374;
- Tue, 17 Mar 2020 09:50:20 -0700 (PDT)
+        bh=5+4aJa7IpjGZCPI3Fh6cthpiIv4IQ9AsMliiqsg2mts=;
+        b=B2TbDsAEObz6IiQtMBplE1kstKK5h2Ze4NuPMGc6EuMsTVbcc9p/NTdYuqi6HV7DNu
+         8JH0zomoVK6avJfezTVIIdMGe8L5DG6O5Ns3xR8QBu+Qp++UGnbw8o27sc/0I7qV5DcV
+         7owHe+ik+sKc2jq4nTz+2W38BoCM9y8clouJGoBz5jIEc1OxFUFrjeV8JAEOJoowF3uK
+         +j1LeWWFyD58O1A2Ldas5rzpM4jcP3H5uv66cpISoxDSxDivmQz4ec9t0Mp2lRYXjZH7
+         6gc9DsTfTSPqQlLt0ShYHdtMArDb8+2BfBIskaKy8r5F1rXzhpOA9ocxuKSp2sWBTdGg
+         vKbA==
+X-Gm-Message-State: ANhLgQ0VnEfxSyal4Zub+Y/jcVB7MWExBpsvQC6fbyJS6U2lMTaSA3nX
+        V7gefAYuBkSVm+8QQ1ihGy+QxL7bx0M=
+X-Google-Smtp-Source: ADFU+vuArJ1kz4XZIHB/khjtglVh8V9C8jKUovxSVqB2TeBCvYgSjwbrMr5+tq2yptWcJQpODK5igA==
+X-Received: by 2002:a67:d104:: with SMTP id u4mr4692770vsi.33.1584463873031;
+        Tue, 17 Mar 2020 09:51:13 -0700 (PDT)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
+        by smtp.gmail.com with ESMTPSA id m184sm1588885vkb.41.2020.03.17.09.51.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Mar 2020 09:51:12 -0700 (PDT)
+Received: by mail-vk1-f169.google.com with SMTP id t3so6167721vkm.10
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 09:51:12 -0700 (PDT)
+X-Received: by 2002:a1f:2305:: with SMTP id j5mr155171vkj.40.1584463871622;
+ Tue, 17 Mar 2020 09:51:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
- <20200303233609.713348-22-jarkko.sakkinen@linux.intel.com>
- <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
- <20200315012523.GC208715@linux.intel.com> <CAOASepP9GeTEqs1DSfPiSm9ER0whj9qwSc46ZiNj_K4dMekOfQ@mail.gmail.com>
- <94ce05323c4de721c4a6347223885f2ad9f541af.camel@linux.intel.com>
- <CAOASepM1pp1emPwSdFcaRkZfFm6sNmwPCJH+iFMiaJpFjU0VxQ@mail.gmail.com>
- <5dc2ec4bc9433f9beae824759f411c32b45d4b74.camel@linux.intel.com>
- <20200316225322.GJ24267@linux.intel.com> <fa773504-4cc1-5cbd-c018-890f7a5d3152@intel.com>
- <20200316235934.GM24267@linux.intel.com> <ca2c9ac0-b717-ee96-c7df-4e39f03a9193@intel.com>
-In-Reply-To: <ca2c9ac0-b717-ee96-c7df-4e39f03a9193@intel.com>
-From:   Nathaniel McCallum <npmccallum@redhat.com>
-Date:   Tue, 17 Mar 2020 12:50:09 -0400
-Message-ID: <CAOASepN7n1XUGPQHwk2Vcu-dyyBJ7dwhM_mF_RcJa71PcNiLmA@mail.gmail.com>
-Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-To:     "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, Neil Horman <nhorman@redhat.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
-        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
-        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Connor Kuehl <ckuehl@redhat.com>,
-        Harald Hoyer <harald@redhat.com>,
-        Lily Sturmann <lsturman@redhat.com>
+References: <1584430804-8343-1-git-send-email-rkambl@codeaurora.org>
+In-Reply-To: <1584430804-8343-1-git-send-email-rkambl@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 17 Mar 2020 09:50:59 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VLZ4RQQuji=1kKE5EnqrpY0M=U_G8XigAWAaZ8mxc=eg@mail.gmail.com>
+Message-ID: <CAD=FV=VLZ4RQQuji=1kKE5EnqrpY0M=U_G8XigAWAaZ8mxc=eg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: qcom: sc7180: Changed polling-delay in
+ Thermal-zones node
+To:     Rajeshwari <rkambl@codeaurora.org>
+Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        sivaa@codeaurora.org, Sandeep Maheswaram <sanm@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 8:18 PM Xing, Cedric <cedric.xing@intel.com> wrote:
+Hi,
+
+On Tue, Mar 17, 2020 at 12:42 AM Rajeshwari <rkambl@codeaurora.org> wrote:
 >
-> On 3/16/2020 4:59 PM, Sean Christopherson wrote:
-> > On Mon, Mar 16, 2020 at 04:50:26PM -0700, Xing, Cedric wrote:
-> >> On 3/16/2020 3:53 PM, Sean Christopherson wrote:
-> >>> On Mon, Mar 16, 2020 at 11:38:24PM +0200, Jarkko Sakkinen wrote:
-> >>>>> My suggestions explicitly maintained robustness, and in fact increased
-> >>>>> it. If you think we've lost capability, please speak with specificity
-> >>>>> rather than in vague generalities. Under my suggestions we can:
-> >>>>> 1. call the vDSO from C
-> >>>>> 2. pass context to the handler
-> >>>>> 3. have additional stack manipulation options in the handler
-> >>>>>
-> >>>>> The cost for this is a net 2 additional instructions. No existing
-> >>>>> capability is lost.
-> >>>>
-> >>>> My vague generality in this case is just that the whole design
-> >>>> approach so far has been to minimize the amount of wrapping to
-> >>>> EENTER.
-> >>>
-> >>> Yes and no.   If we wanted to minimize the amount of wrapping around the
-> >>> vDSO's ENCLU then we wouldn't have the exit handler shenanigans in the
-> >>> first place.  The whole process has been about balancing the wants of each
-> >>> use case against the overall quality of the API and code.
-> >>>
-> >> The design of this vDSO API was NOT to minimize wrapping, but to allow
-> >> maximal flexibility. More specifically, we strove not to restrict how info
-> >> was exchanged between the enclave and its host process. After all, calling
-> >> convention is compiler specific - i.e. the enclave could be built by a
-> >> different compiler (e.g. MSVC) that doesn't share the same list of CSRs as
-> >> the host process. Therefore, the API has been implemented to pass through
-> >> virtually all registers except those used by EENTER itself. Similarly, all
-> >> registers are passed back from enclave to the caller (or the exit handler)
-> >> except those used by EEXIT. %rbp is an exception because the vDSO API has to
-> >> anchor the stack, using either %rsp or %rbp. We picked %rbp to allow the
-> >> enclave to allocate space on the stack.
-> >
-> > And unless I'm missing something, using %rcx to pass @leaf would still
-> > satisfy the above, correct?  Ditto for saving/restoring %rbx.
-> >
-> > I.e. a runtime that's designed to work with enclave's using a different
-> > calling convention wouldn't be able to take advantage of being able to call
-> > the vDSO from C, but neither would it take on any meaningful burden.
-> >
-> Not exactly.
+> Changed polling-delay and polling-delay-passive to zero as per
+> the requirement.
 >
-> If called directly from C code, the caller would expect CSRs to be
-> preserved.
+> Signed-off-by: Rajeshwari <rkambl@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 100 +++++++++++++++++------------------
+>  1 file changed, 50 insertions(+), 50 deletions(-)
 
-Correct. This requires collaboration between the caller of the vDSO
-and the enclave.
+It probably wouldn't hurt to mention in the commit message that this
+is because the thermal sensor interrupts are all hooked up and thus
+the polling is not a useful thing to do.  ...but other than that:
 
-> Then who should preserve CSRs?
-
-The enclave.
-
-> It can't be the enclave
-> because it may not follow the same calling convention.
-
-This is incorrect. You are presuming there is not tight integration
-between the caller of the vDSO and the enclave. In my case, the
-integration is total and complete. We have working code today that
-does this.
-
-> Moreover, the
-> enclave may run into an exception, in which case it doesn't have the
-> ability to restore CSRs.
-
-There are two solutions to this:
-1. Write the handler in assembly and don't return to C on AEX.
-2. The caller can simply preserve the registers. Nothing stops that.
-
-We have implemented #1.
-
-> So it has to be done by the vDSO API.
-
-Nope. See above.
-
-> That
-> means CSRs will be overwritten upon enclave exits, which violates the
-> goal of "passing all registers back to the caller except those used by
-> EEXIT".
-
-All registers get passed to the handler in this scenario, not the caller.
-
-The approach is as follows: the vDSO is callable by C so long as the
-enclave respects the ABI *OR* the handler patches up any enclave
-deviation from the ABI.
-
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
