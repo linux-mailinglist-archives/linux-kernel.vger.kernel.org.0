@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C48A188067
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:09:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4329618806A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:10:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbgCQLJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:09:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52398 "EHLO mail.kernel.org"
+        id S1729014AbgCQLJ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:09:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728825AbgCQLJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:09:50 -0400
+        id S1728997AbgCQLJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:09:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F440205ED;
-        Tue, 17 Mar 2020 11:09:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D689C205ED;
+        Tue, 17 Mar 2020 11:09:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443389;
-        bh=3f+xAsZglAs3nw2pTn20rB9JZ3gYLL6Fy0LGgfxbCME=;
+        s=default; t=1584443392;
+        bh=nmnAmAtfwbc4F9EFKZ40OhfJ5P1Y5hVQU9+FDlSpypo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yBXOIu4g5ri2N0aW9y9rrXFcmJ3s09ahWjfn2tgecZQAXIx+pNbEm2RIurLTqO111
-         hs14xKhkpd/83t2bCoMFj8PZiAoAi/e5QD91ohj2DWuPIKaXzPgU8oMTXzC0erCPU+
-         VUFQlz2GCLx3Bo5quLsdql6z1UU4MrP9HI9IEiGU=
+        b=zR/lg+tZ48Npz7kipqpJZyiS6OV2BnRjPDqsUVxFjASIecLpU3zM0qIo3KwtKV2yw
+         E1c0TIcqoxhedrVs5oK2WrMvFE6auVD37US7lpDYS2jWlblDRca46bV6UMESg573u2
+         8ODoX+vhulEC0AQMK4ZzVH3djs1GF8nSOdvz4nco=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 068/151] s390/qeth: handle error when backing RX buffer
-Date:   Tue, 17 Mar 2020 11:54:38 +0100
-Message-Id: <20200317103331.335479893@linuxfoundation.org>
+Subject: [PATCH 5.5 069/151] net: dsa: Dont instantiate phylink for CPU/DSA ports unless needed
+Date:   Tue, 17 Mar 2020 11:54:39 +0100
+Message-Id: <20200317103331.400454009@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
 References: <20200317103326.593639086@linuxfoundation.org>
@@ -43,56 +43,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Andrew Lunn <andrew@lunn.ch>
 
-[ Upstream commit 17413852804d7e86e6f0576cca32c1541817800e ]
+[ Upstream commit a20f997010c4ec76eaa55b8cc047d76dcac69f70 ]
 
-qeth_init_qdio_queues() fills the RX ring with an initial set of
-RX buffers. If qeth_init_input_buffer() fails to back one of the RX
-buffers with memory, we need to bail out and report the error.
+By default, DSA drivers should configure CPU and DSA ports to their
+maximum speed. In many configurations this is sufficient to make the
+link work.
 
-Fixes: 4a71df50047f ("qeth: new qeth device driver")
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+In some cases it is necessary to configure the link to run slower,
+e.g. because of limitations of the SoC it is connected to. Or back to
+back PHYs are used and the PHY needs to be driven in order to
+establish link. In this case, phylink is used.
+
+Only instantiate phylink if it is required. If there is no PHY, or no
+fixed link properties, phylink can upset a link which works in the
+default configuration.
+
+Fixes: 0e27921816ad ("net: dsa: Use PHYLINK for the CPU/DSA ports")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core_main.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ net/dsa/port.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -2633,12 +2633,12 @@ static int qeth_init_input_buffer(struct
- 		buf->rx_skb = netdev_alloc_skb(card->dev,
- 					       QETH_RX_PULL_LEN + ETH_HLEN);
- 		if (!buf->rx_skb)
--			return 1;
-+			return -ENOMEM;
+--- a/net/dsa/port.c
++++ b/net/dsa/port.c
+@@ -653,9 +653,14 @@ err_phy_connect:
+ int dsa_port_link_register_of(struct dsa_port *dp)
+ {
+ 	struct dsa_switch *ds = dp->ds;
++	struct device_node *phy_np;
+ 
+-	if (!ds->ops->adjust_link)
+-		return dsa_port_phylink_register(dp);
++	if (!ds->ops->adjust_link) {
++		phy_np = of_parse_phandle(dp->dn, "phy-handle", 0);
++		if (of_phy_is_fixed_link(dp->dn) || phy_np)
++			return dsa_port_phylink_register(dp);
++		return 0;
++	}
+ 
+ 	dev_warn(ds->dev,
+ 		 "Using legacy PHYLIB callbacks. Please migrate to PHYLINK!\n");
+@@ -670,11 +675,12 @@ void dsa_port_link_unregister_of(struct
+ {
+ 	struct dsa_switch *ds = dp->ds;
+ 
+-	if (!ds->ops->adjust_link) {
++	if (!ds->ops->adjust_link && dp->pl) {
+ 		rtnl_lock();
+ 		phylink_disconnect_phy(dp->pl);
+ 		rtnl_unlock();
+ 		phylink_destroy(dp->pl);
++		dp->pl = NULL;
+ 		return;
  	}
  
- 	pool_entry = qeth_find_free_buffer_pool_entry(card);
- 	if (!pool_entry)
--		return 1;
-+		return -ENOBUFS;
- 
- 	/*
- 	 * since the buffer is accessed only from the input_tasklet
-@@ -2682,10 +2682,15 @@ int qeth_init_qdio_queues(struct qeth_ca
- 	/* inbound queue */
- 	qdio_reset_buffers(card->qdio.in_q->qdio_bufs, QDIO_MAX_BUFFERS_PER_Q);
- 	memset(&card->rx, 0, sizeof(struct qeth_rx));
-+
- 	qeth_initialize_working_pool_list(card);
- 	/*give only as many buffers to hardware as we have buffer pool entries*/
--	for (i = 0; i < card->qdio.in_buf_pool.buf_count - 1; ++i)
--		qeth_init_input_buffer(card, &card->qdio.in_q->bufs[i]);
-+	for (i = 0; i < card->qdio.in_buf_pool.buf_count - 1; i++) {
-+		rc = qeth_init_input_buffer(card, &card->qdio.in_q->bufs[i]);
-+		if (rc)
-+			return rc;
-+	}
-+
- 	card->qdio.in_q->next_buf_to_init =
- 		card->qdio.in_buf_pool.buf_count - 1;
- 	rc = do_QDIO(CARD_DDEV(card), QDIO_FLAG_SYNC_INPUT, 0, 0,
 
 
