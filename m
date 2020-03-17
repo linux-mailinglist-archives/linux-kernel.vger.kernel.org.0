@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 229B81880B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:12:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92870187FE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:05:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729422AbgCQLM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:12:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56100 "EHLO mail.kernel.org"
+        id S1728109AbgCQLFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:05:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729417AbgCQLM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:12:26 -0400
+        id S1728415AbgCQLFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:05:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67B7620719;
-        Tue, 17 Mar 2020 11:12:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82D0A20658;
+        Tue, 17 Mar 2020 11:05:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443545;
-        bh=Jrq8GnAH/sFA0KIqg2gX0t78NK+wSKSmi/KkF5Q9Dbo=;
+        s=default; t=1584443120;
+        bh=7AeRdUFqB8nXUpeMqPPG48ncKguSxkwesFV4prQw9Ak=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ws1QBIojnFf1c1ZF9Mzk/lyKmm1NpOBmiVEeqApNDrA12UCq0U80vXE3PFon12kRv
-         WngW7nYqo82uYlEndoEpNjLDkWN1xro8njn7tzYX0pYT58dNfY3/QdSHEsXcGb5T5z
-         yRj6gZ/xqoVhzn2a/T4OsRn3Fmcd4GIw8RCXecxM=
+        b=gyItrkkr8+M4BEqS4HNi8AH97o5T14aSqIfXDiZE86zX442ynmBJ/nYgaD+Fcz4Nv
+         +l9K0SGGGNhpF539NAZ95juHhWhPb3i49uTDCNytuBjsQ/SmH1uBo0n3AlqxmdYOlB
+         yoqLmFQSfW4j9fN/0sPHakfmiRABB/WYgiao2jgo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@suse.de>
-Subject: [PATCH 5.5 118/151] x86/mce: Fix logic and comments around MSR_PPIN_CTL
-Date:   Tue, 17 Mar 2020 11:55:28 +0100
-Message-Id: <20200317103334.854857043@linuxfoundation.org>
+        stable@vger.kernel.org, Tina Zhang <tina.zhang@intel.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 5.4 102/123] drm/i915/gvt: Fix dma-buf display blur issue on CFL
+Date:   Tue, 17 Mar 2020 11:55:29 +0100
+Message-Id: <20200317103318.045252448@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
-References: <20200317103326.593639086@linuxfoundation.org>
+In-Reply-To: <20200317103307.343627747@linuxfoundation.org>
+References: <20200317103307.343627747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,66 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Luck <tony.luck@intel.com>
+From: Tina Zhang <tina.zhang@intel.com>
 
-commit 59b5809655bdafb0767d3fd00a3e41711aab07e6 upstream.
+commit 259170cb4c84f4165a36c0b05811eb74c495412c upstream.
 
-There are two implemented bits in the PPIN_CTL MSR:
+Commit c3b5a8430daad ("drm/i915/gvt: Enable gfx virtualiztion for CFL")
+added the support on CFL. The vgpu emulation hotplug support on CFL was
+supposed to be included in that patch. Without the vgpu emulation
+hotplug support, the dma-buf based display gives us a blur face.
 
-Bit 0: LockOut (R/WO)
-      Set 1 to prevent further writes to MSR_PPIN_CTL.
+So fix this issue by adding the vgpu emulation hotplug support on CFL.
 
-Bit 1: Enable_PPIN (R/W)
-       If 1, enables MSR_PPIN to be accessible using RDMSR.
-       If 0, an attempt to read MSR_PPIN will cause #GP.
-
-So there are four defined values:
-	0: PPIN is disabled, PPIN_CTL may be updated
-	1: PPIN is disabled. PPIN_CTL is locked against updates
-	2: PPIN is enabled. PPIN_CTL may be updated
-	3: PPIN is enabled. PPIN_CTL is locked against updates
-
-Code would only enable the X86_FEATURE_INTEL_PPIN feature for case "2".
-When it should have done so for both case "2" and case "3".
-
-Fix the final test to just check for the enable bit. Also fix some of
-the other comments in this function.
-
-Fixes: 3f5a7896a509 ("x86/mce: Include the PPIN in MCE records when available")
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20200226011737.9958-1-tony.luck@intel.com
+Fixes: c3b5a8430daad ("drm/i915/gvt: Enable gfx virtualiztion for CFL")
+Signed-off-by: Tina Zhang <tina.zhang@intel.com>
+Acked-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/20200227010041.32248-1-tina.zhang@intel.com
+(cherry picked from commit 135dde8853c7e00f6002e710f7e4787ed8585c0e)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/mce/intel.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/i915/gvt/display.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/mce/intel.c
-+++ b/arch/x86/kernel/cpu/mce/intel.c
-@@ -492,17 +492,18 @@ static void intel_ppin_init(struct cpuin
- 			return;
+--- a/drivers/gpu/drm/i915/gvt/display.c
++++ b/drivers/gpu/drm/i915/gvt/display.c
+@@ -457,7 +457,8 @@ void intel_vgpu_emulate_hotplug(struct i
+ 	struct drm_i915_private *dev_priv = vgpu->gvt->dev_priv;
  
- 		if ((val & 3UL) == 1UL) {
--			/* PPIN available but disabled: */
-+			/* PPIN locked in disabled mode */
- 			return;
- 		}
- 
--		/* If PPIN is disabled, but not locked, try to enable: */
--		if (!(val & 3UL)) {
-+		/* If PPIN is disabled, try to enable */
-+		if (!(val & 2UL)) {
- 			wrmsrl_safe(MSR_PPIN_CTL,  val | 2UL);
- 			rdmsrl_safe(MSR_PPIN_CTL, &val);
- 		}
- 
--		if ((val & 3UL) == 2UL)
-+		/* Is the enable bit set? */
-+		if (val & 2UL)
- 			set_cpu_cap(c, X86_FEATURE_INTEL_PPIN);
- 	}
- }
+ 	/* TODO: add more platforms support */
+-	if (IS_SKYLAKE(dev_priv) || IS_KABYLAKE(dev_priv)) {
++	if (IS_SKYLAKE(dev_priv) || IS_KABYLAKE(dev_priv) ||
++		IS_COFFEELAKE(dev_priv)) {
+ 		if (connected) {
+ 			vgpu_vreg_t(vgpu, SFUSE_STRAP) |=
+ 				SFUSE_STRAP_DDID_DETECTED;
 
 
