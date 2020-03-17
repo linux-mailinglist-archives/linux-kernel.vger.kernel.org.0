@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54A3918884F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:55:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C299718885B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 15:55:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbgCQOzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 10:55:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43612 "EHLO mail.kernel.org"
+        id S1727283AbgCQOz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 10:55:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726922AbgCQOyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726908AbgCQOyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 17 Mar 2020 10:54:31 -0400
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B232320774;
+        by mail.kernel.org (Postfix) with ESMTPSA id A7BCD2076D;
         Tue, 17 Mar 2020 14:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1584456870;
-        bh=0AuL5ik1PkjJ+CosUbhOjV9BkLKR6KOQzFJir/RXkZg=;
+        bh=7uUf4ls1frgYC0YC7nGl7q8HJwlLjSoEjGcFoFzYh6M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m8ldmA9DU/iSxsfnETccdctspko9w3ZRBbUmLw54wnHXP3hLUrbXj27KYlCBcQIGu
-         wPbAvFJvAaPuUKtwJqRau9wtNa4BUEE8ed5Y1Rz+z25ju6vnRvr7mAT0GHq8mh3cvX
-         zK8bmMlESnTs+4IeG7gojw74UawFtBD5ikVvjA2k=
+        b=c0iz7+p2FjXdEzZ4NMy7+vG9MSSy1NrTujtgV8+mFlQd9qGyvfGAmJmgzoBAaLNRz
+         44afYt+cfm5LmFXzqvTK0lwdAHgSf82tunHruQ4sJaiNMUOf3JWfzsekCvlSOmt3FU
+         d20WpQNBY2DFHVBi2cU4ey87RCcusKFQU0MyYUf0=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1jEDbw-000AN5-Px; Tue, 17 Mar 2020 15:54:28 +0100
+        id 1jEDbw-000ANB-RV; Tue, 17 Mar 2020 15:54:28 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH 12/17] gpio: gpiolib.c: fix a doc warning
-Date:   Tue, 17 Mar 2020 15:54:21 +0100
-Message-Id: <51197e3568f073e22c280f0584bfa20b44436708.1584456635.git.mchehab+huawei@kernel.org>
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+Subject: [PATCH 13/17] i2c: include/linux/i2c.h: fix a doc warning
+Date:   Tue, 17 Mar 2020 15:54:22 +0100
+Message-Id: <24cbf9166b21531186e5b6d37a3f9201f957abef.1584456635.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.1584456635.git.mchehab+huawei@kernel.org>
 References: <cover.1584456635.git.mchehab+huawei@kernel.org>
@@ -46,33 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use a different markup for the ERR_PTR, as %FOO doesn't work
-if there are parenthesis. So, use, instead:
+Don't let non-letters inside a literal block without escaping it, as
+the toolchain would mis-interpret it:
 
-	``ERR_PTR(-EINVAL)``
-
-This fixes the following warning:
-
-	./drivers/gpio/gpiolib.c:139: WARNING: Inline literal start-string without end-string.
+./include/linux/i2c.h:518: WARNING: Inline strong start-string without end-string.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/i2c.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index f31b1d46599e..74d8973025da 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -136,7 +136,7 @@ EXPORT_SYMBOL_GPL(gpio_to_desc);
-  * @hwnum: hardware number of the GPIO for this chip
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index f834687989f7..f6b942150631 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -506,7 +506,7 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
+  * @smbus_xfer_atomic: same as @smbus_xfer. Yet, only using atomic context
+  *   so e.g. PMICs can be accessed very late before shutdown. Optional.
+  * @functionality: Return the flags that this algorithm/adapter pair supports
+- *   from the I2C_FUNC_* flags.
++ *   from the ``I2C_FUNC_*`` flags.
+  * @reg_slave: Register given client to I2C slave mode of this adapter
+  * @unreg_slave: Unregister given client from I2C slave mode of this adapter
   *
-  * Returns:
-- * A pointer to the GPIO descriptor or %ERR_PTR(-EINVAL) if no GPIO exists
-+ * A pointer to the GPIO descriptor or ``ERR_PTR(-EINVAL)`` if no GPIO exists
-  * in the given chip for the specified hardware number.
+@@ -515,7 +515,7 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
+  * be addressed using the same bus algorithms - i.e. bit-banging or the PCF8584
+  * to name two of the most common.
+  *
+- * The return codes from the @master_xfer{_atomic} fields should indicate the
++ * The return codes from the ``master_xfer{_atomic}`` fields should indicate the
+  * type of error code that occurred during the transfer, as documented in the
+  * Kernel Documentation file Documentation/i2c/fault-codes.rst.
   */
- struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
 -- 
 2.24.1
 
