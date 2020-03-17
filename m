@@ -2,145 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20352187791
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 02:43:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A74A5187795
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 02:45:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbgCQBnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 21:43:46 -0400
-Received: from mail-pg1-f181.google.com ([209.85.215.181]:33132 "EHLO
-        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbgCQBnq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 21:43:46 -0400
-Received: by mail-pg1-f181.google.com with SMTP id m5so10814568pgg.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 18:43:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YPrE3TC9cvR5eow6UPNLAi081AyK8g0VypG98zq/3rI=;
-        b=Qs7KHkvGrxolIHTiAhyQGd2igPK8/UgI2BqNWe8908q+A6DbfydjZ89uzH8KvnLNG7
-         bxKuwqDsn/gl0UbTRoIEIZgf6ViRSq9GQRIrCNibxeR52oKm7yVGsTqWvBckF5PHJ5Hw
-         WjfnQU+Q+v973TV+wdXPdsOtge82uAMlVNlwqb0OqohYOi47Kht7dzaKMteRyAVcRBSp
-         868NkrAAF0c8BBzyHhbBv8B12BDOldVVIZCDBQwFK5mmln13hICY8/+hhp5dHjlgoRnM
-         ezqNu3oeHGObMUlKU2uaEYQ+soCYl5bKQt2P0xnFoSM5k6hTgmmCYfVgrhlulFRMqIFD
-         rWRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YPrE3TC9cvR5eow6UPNLAi081AyK8g0VypG98zq/3rI=;
-        b=NAQNbXSOwLtCVhOrhdgl3bmx7740KXObwVncn6Z2R64Xyzpl0BXCSyb+mgpbfRTzVw
-         0y1MaTzFdtSxT9fzaERsttokmrU2r2HceYRsdDa3U9yOFJMAq5frLwOfuMtlCevTILhF
-         lkDw7hDK6HDrXGGx3cnQIwm/6/d5CpXf8i3ovNJr0o0huZzjyY3OESGLFU9SMiEHAO3Z
-         PKTxPtG+r0VpGfPenbzEpAv89bM6GtjoJZwtl1cykhzmpej6/qcQybUhQm2AkNizV+Gt
-         Pql5/2WI2TUn6fg4d7Jrd1R5Jt9Pfd0RRo+WnL9lAQbjnCsJwnb8D9HoPbLiUVb3mVxj
-         zusw==
-X-Gm-Message-State: ANhLgQ3jtCFiBiuEQNPD9GleCcxbF3C4T2wI6q1jNNhvZVKWbSdP6Ygx
-        3xFdxffqsGxEmmGxGjgduwM=
-X-Google-Smtp-Source: ADFU+vuLfSSQxDO7LSW23UwCfFLT6vWrf39N6cgbnHenoukHb5KoqNoLNE7b8ejtHEZzZijNiDuTFw==
-X-Received: by 2002:a63:1f58:: with SMTP id q24mr2755192pgm.334.1584409424318;
-        Mon, 16 Mar 2020 18:43:44 -0700 (PDT)
-Received: from google.com ([2620:15c:211:1:3e01:2939:5992:52da])
-        by smtp.gmail.com with ESMTPSA id d84sm1031512pfd.197.2020.03.16.18.43.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2020 18:43:42 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 18:43:40 -0700
-From:   Minchan Kim <minchan@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Jann Horn <jannh@google.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: interaction of MADV_PAGEOUT with CoW anonymous mappings?
-Message-ID: <20200317014340.GA73302@google.com>
-References: <CAG48ez0G3JkMq61gUmyQAaCq=_TwHbi1XKzWRooxZkv08PQKuw@mail.gmail.com>
- <20200312082248.GS23944@dhcp22.suse.cz>
- <20200312201602.GA68817@google.com>
- <20200312204155.GE23944@dhcp22.suse.cz>
- <20200313020851.GD68817@google.com>
- <20200313080546.GA21007@dhcp22.suse.cz>
- <20200313205941.GA78185@google.com>
- <20200316092052.GD11482@dhcp22.suse.cz>
+        id S1726720AbgCQBpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 21:45:14 -0400
+Received: from mail-eopbgr70083.outbound.protection.outlook.com ([40.107.7.83]:41686
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726559AbgCQBpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 21:45:14 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JD0Xpsy4OhE7/CyIklzMVJhdU2AgoIym9mGGJMAY01f5NCBt7b7AO0+ivqGOeKyBdQBNCE0Hsad9ApQnZdrB9GId7KVfy0FxwniNNaHD0OZ3sECwY9pzyWpFfwmCeaETqorOVV1qf1rDXF2BLmKBrLsLLvkYOhxRcgM/Cr/2zsgYEhCxHqWz1vHDF5NdLeaeK3Ds0LeAHuTymUX4hDOAEqwgBeszz9RPJMxhFtP6olK9cxJX1qjXXHMs5XWn9V+91yg+GTyMUzPzIcAyOm8jB+Xe+BlcEUnnwwckqXbx2bNbI2zbnqEOB8SwM7PQsn9Rtds+6gdtr+AYq9jPUHVCNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zW3+Odaf1iLEWM8kf5EuD3yQ7/qEMdSYqWfQUdRU1xQ=;
+ b=lb2s3z6LBPLNhxYY0uiLJNZbbZ3dtGQSOitQ0xMBl1/eid5y3fH4Yq+mKqFIjpPD8py6wsV77i7JLD9CRxzDyJCLUCb5kadyMSRKxfEDtyBFEvYH7y8qWvf7MDr2mL2LVIoQLcbwMw/BSEHGgP/no0YgmiZB7dsGuMd8F+h/BARYiPnYIEXY7c9tTgfAVffrdI/R8ZcCMxI3s4tCnBcLNxNVH6rIBkaOv6DeGOvdKOk1DNHarKDNz23zvELT4a72Qx1sXXQtXesyGuFgSfO0F9/qFQZt+jh0lh93l1VSRQi+0l+WgyRZy0fcwIFSCJrHAYEriKIQniJuF1QPOaXaFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zW3+Odaf1iLEWM8kf5EuD3yQ7/qEMdSYqWfQUdRU1xQ=;
+ b=mCn2bYSIv0mrR4ezVFon1in31+uj6Yfa0mKGKphRtPAPobwZH9r2s3kKwKfFk/rB1bWxqM1ruoTZwX+sbs8lcRn40vKXEc8oRUdIqDY4c16PnsIE9XNnIh0UKNwgTUxd6ZNmx5hS1neM41rJ5Ip+2DcrvlNMw6tR2yBC6y0fKk8=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5124.eurprd04.prod.outlook.com (20.177.40.95) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.16; Tue, 17 Mar 2020 01:44:30 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc%7]) with mapi id 15.20.2814.021; Tue, 17 Mar 2020
+ 01:44:30 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH] ARM: dts: Makefile: build arm64 device tree
+Thread-Topic: [PATCH] ARM: dts: Makefile: build arm64 device tree
+Thread-Index: AQHV+OjclUu1XSl6U0KqPUg7uT17oKhGURQAgAAk21CABZMmQA==
+Date:   Tue, 17 Mar 2020 01:44:30 +0000
+Message-ID: <AM0PR04MB44812054118E892BEFFACD7F88F60@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1584070314-26495-1-git-send-email-peng.fan@nxp.com>
+ <CAK8P3a0r1stgYw2DGtsHpMWdBN7GM9miAsUo20NaJxwasQy4iA@mail.gmail.com>
+ <AM0PR04MB4481CD81915F8A9FB115A97788FA0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB4481CD81915F8A9FB115A97788FA0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 149ca1ee-b85e-48e9-6cd8-08d7ca14bc57
+x-ms-traffictypediagnostic: AM0PR04MB5124:|AM0PR04MB5124:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB5124F5176D52F8278EE9A31788F60@AM0PR04MB5124.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0345CFD558
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(136003)(396003)(376002)(346002)(199004)(71200400001)(9686003)(6916009)(8936002)(33656002)(26005)(8676002)(81156014)(186003)(4326008)(54906003)(55016002)(53546011)(86362001)(6506007)(81166006)(44832011)(316002)(7696005)(66446008)(66476007)(66556008)(64756008)(66946007)(76116006)(5660300002)(52536014)(2906002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5124;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: tBCaNNAGI8LNLNXbIhTgCPf7d+UJVyUAyWPYk6n/3Hq7cSAegzf80yUOFhwaJKQQZjco5iwKql1GzL3tsK0ZXvDTBlqFWZx8eIAG87j81u0gT2jEbXELYcEFln87jfspYR2aT+nVn/9XWN0pzw00zQ5Zu69gwIOW+1Qd+hpOTabs9s42WcqEF0guWa1awRdMJ7urYbhznGaOrAjUzfQXlIKmv1z9zcZ0porOk5/lfaaLmmDtc+A1eN8Z3KP0pGr0on8WACDYDMRnHcXBrnomTMvJTpmTjlnwffarNBLID0PmaVKSZoN201HtEdNcnqTxFZlZQoje7n2byQERvHfi+4FVQi6l4bLVAm4IjlPo32Te5QW8GE6+HeZPhb6/ohakLTpyKLzjghIvnCBvoGXBUxPmZu2sdMZxrkQSRzlXmgEvM+scfF601p+K6Zn4js5L
+x-ms-exchange-antispam-messagedata: 9jVoL6gT8AD84g13+gp2DPhVjhKI7fucVXXk6GxVksI9Z1yxOf+1zZ7K/KWvag2/s4DTvOw8mAApkphh4j6Vqv5cUOp6Wvpf4AHZqYSJdpTKJgYxNlvGT5WhwRDTcz38CCTMi3JVmGzg81cYtz2X+g==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200316092052.GD11482@dhcp22.suse.cz>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 149ca1ee-b85e-48e9-6cd8-08d7ca14bc57
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2020 01:44:30.3457
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hhxjnV6Qy3VPG2CavLjkSM1F1uZ1forFR0DHad3InXR017HXLoMuH5ghv2veIKnHbTa5ptxRq58OxM5E1eKRDA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5124
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 10:20:52AM +0100, Michal Hocko wrote:
-> On Fri 13-03-20 13:59:41, Minchan Kim wrote:
-> > On Fri, Mar 13, 2020 at 09:05:46AM +0100, Michal Hocko wrote:
-> > > On Thu 12-03-20 19:08:51, Minchan Kim wrote:
-> > > > On Thu, Mar 12, 2020 at 09:41:55PM +0100, Michal Hocko wrote:
-> > > > > On Thu 12-03-20 13:16:02, Minchan Kim wrote:
-> > > > > > On Thu, Mar 12, 2020 at 09:22:48AM +0100, Michal Hocko wrote:
-> > > > > [...]
-> > > > > > > From eca97990372679c097a88164ff4b3d7879b0e127 Mon Sep 17 00:00:00 2001
-> > > > > > > From: Michal Hocko <mhocko@suse.com>
-> > > > > > > Date: Thu, 12 Mar 2020 09:04:35 +0100
-> > > > > > > Subject: [PATCH] mm: do not allow MADV_PAGEOUT for CoW pages
-> > > > > > > 
-> > > > > > > Jann has brought up a very interesting point [1]. While shared pages are
-> > > > > > > excluded from MADV_PAGEOUT normally, CoW pages can be easily reclaimed
-> > > > > > > that way. This can lead to all sorts of hard to debug problems. E.g.
-> > > > > > > performance problems outlined by Daniel [2]. There are runtime
-> > > > > > > environments where there is a substantial memory shared among security
-> > > > > > > domains via CoW memory and a easy to reclaim way of that memory, which
-> > > > > > > MADV_{COLD,PAGEOUT} offers, can lead to either performance degradation
-> > > > > > > in for the parent process which might be more privileged or even open
-> > > > > > > side channel attacks. The feasibility of the later is not really clear
-> > > > > > 
-> > > > > > I am not sure it's a good idea to mention performance stuff because
-> > > > > > it's rather arguble. You and Johannes already pointed it out when I sbumit
-> > > > > > early draft which had shared page filtering out logic due to performance
-> > > > > > reason. You guys suggested the shared pages has higher chance to be touched
-> > > > > > so that if it's really hot pages, that whould keep in the memory. I agree.
-> > > > > 
-> > > > > Yes, the hot memory is likely to be referenced but the point was an
-> > > > > unexpected latency because of the major fault. I have to say that I have
-> > > > 
-> > > > I don't understand your point here. If it's likely to be referenced
-> > > > among several processes, it doesn't have the major fault latency.
-> > > > What's your point here?
-> > > 
-> > > a) the particular CoW page might be cold enough to be reclaimed and b)
-> > 
-> > If it is, that means it's *cold* so it's really worth to be reclaimed.
-> > 
-> > > nothing really prevents the MADV_PAGEOUT to be called faster than the
-> > > reference bit being readded.
-> > 
-> > Yeb, that's undesirable. I should admit it was not intended when I implemented
-> > PAGEOUT. The thing is page_check_references clears access bit of pte for every
-> > process are sharing the page so that two times MADV_PAGEOUT from a process could
-> > evict the page. That's the really bug.
-> 
-> I do not really think this is a bug. This is a side effect of the
-> reclaim process and we do not really want MADV_{PAGEOUT,COLD} behave
-
-No, that's the bug since we didn't consider the side effect.
-
-> differently here because then the behavior would be even harder to
-
-No, I do want to have difference because it's per-process hint. IOW,
-what he know is for only his context, not others so it shouldn't clean
-others' pte. That makes difference between LRU aging and the hint.
-
-> understand.
-
-It's not hard to understand.. MADV_PAGEOUT should consider only his
-context since it's per-process hint(Even, he couldn't know others'
-context) so it shouldn't bother others.
-
-Actually, Dave's suggestion is correct to fix the issue if there
-was no isse with side channel attack. However, due to the attack
-issue, page_mapcount could prevent the problem effectively.
-That's why I am not against of the patch now since it fixes
-the bug as well as vulnerability.
+SGkgQXJuZCwNCg0KPiBTdWJqZWN0OiBSRTogW1BBVENIXSBBUk06IGR0czogTWFrZWZpbGU6IGJ1
+aWxkIGFybTY0IGRldmljZSB0cmVlDQo+IA0KPiBIaSBBcm5kLA0KPiANCj4gPiBTdWJqZWN0OiBS
+ZTogW1BBVENIXSBBUk06IGR0czogTWFrZWZpbGU6IGJ1aWxkIGFybTY0IGRldmljZSB0cmVlDQo+
+ID4NCj4gPiBPbiBGcmksIE1hciAxMywgMjAyMCBhdCA0OjM4IEFNIDxwZW5nLmZhbkBueHAuY29t
+PiB3cm90ZToNCj4gPiA+DQo+ID4gPiBGcm9tOiBQZW5nIEZhbiA8cGVuZy5mYW5AbnhwLmNvbT4N
+Cj4gPiA+DQo+ID4gPiBUbyBzdXBwb3J0IGFhcmNoMzIgbW9kZSBsaW51eCBvbiBhYXJjaDY0IGhh
+cmR3YXJlLCB3ZSBuZWVkIGJ1aWxkIHRoZQ0KPiA+ID4gZGV2aWNlIHRyZWUsIHNvIGluY2x1ZGUg
+dGhlIGFybTY0IGRldmljZSB0cmVlIHBhdGguDQo+ID4gPg0KPiA+ID4gU2lnbmVkLW9mZi1ieTog
+UGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+DQo+ID4gPiAtLS0NCj4gPg0KPiA+IFRoZXJlIGFy
+ZSBhIGZldyBvdGhlciBwbGF0Zm9ybXMgd2l0aCBzaW1pbGFyIHJlcXVpcmVtZW50cywgaW4NCj4g
+PiBwYXJ0aWN1bGFyIGJjbTI4MzcsIHNvIG1heWJlIHRyeSBkb2luZyBpdCB0aGUgc2FtZSB3YXkg
+dGhleSBkbywgc2VlDQo+ID4gYXJjaC9hcm02NC9ib290L2R0cy9icm9hZGNvbS9iY20yODM3LXJw
+aS0zLWIuZHRzDQo+ID4NCj4gPiA+IFYxOg0KPiA+ID4gIFRoaXMgaXMganVzdCB0aGUgZGV2aWNl
+IHRyZWUgcGFydC4gQmVzaWRlcyB0aGlzLCAgSSBhbSBub3Qgc3VyZQ0KPiA+ID4gd2hldGhlciBu
+ZWVkIHRvIGNyZWF0ZSBhIHN0YW5kYWxvbmUgZGVmY29uZmlnIHVuZGVyIGFybTMyICBmb3INCj4g
+PiA+IGFhcmNoMzIgbW9kZSBsaW51eCBvbiBhYXJjaDY0IGhhcmR3YXJlLCBvciB1c2UgbXVsdGlf
+djdfZGVmY29uZmlnLg0KPiA+ID4gIG11bHRpX3Y3X2RlZmNvbmZpZyBzaG91bGQgYmUgb2ssIG5l
+ZWQgdG8gaW5jbHVkZSBMUEFFIGNvbmZpZy4NCj4gPg0KPiA+IEknZCByYXRoZXIgbm90IGhhdmUg
+YSBzdGFuZGFsb25lIGRlZmNvbmZpZyBmb3IgaXQsIGdpdmVuIHRoYXQgd2UgaGF2ZQ0KPiA+IGEg
+c2luZ2xlIGRlZmNvbmZpZyBmb3IgYWxsIGFybXY2L2FybXY3L2FybXY3aGYgaS5teCBtYWNoaW5l
+cy4NCj4gPg0KPiA+IFRoZXJlIHdhcyBhIHN1Z2dlc3Rpb24gdG8gdXNlIGEgZnJhZ21lbnQgZm9y
+IGVuYWJsaW5nIGFuIExQQUUNCj4gPiBtdWx0aV92N19kZWZjb25maWcgcmVjZW50bHksIHdoaWNo
+IEkgdGhpbmsgaXMgc3RpbGwgdW5kZXIgZGlzY3Vzc2lvbg0KPiA+IGJ1dCBzaG91bGQgYWxzbyBo
+ZWxwIGhlcmUsIGJvdGggd2l0aCBpbXhfdjZfdjdfZGVmY29uZmlnIGFuZA0KPiBtdWx0aV92N19k
+ZWZjb25maWcuDQo+ID4NCj4gPiBDYW4geW91IHJlbWluZCB1cyB3aHkgdGhpcyBwbGF0Zm9ybSBu
+ZWVkcyBMUEFFPyBJcyBpdCBvbmx5IG5lZWRlZCB0bw0KPiA+IHN1cHBvcnQgbW9yZSB0aGFuIDRH
+QiBvZiBSQU0sIG9yIHNvbWV0aGluZyBlbHNlIG9uIHRvcCBvZiB0aGF0Pw0KPiANCj4gQ3VycmVu
+dGx5IEkgb25seSB0ZXN0ZWQgTFBBRSBlbmFibGVkIGFybTMyIGtlcm5lbCwgSSdsbCBnaXZlIGEg
+dHJ5IHdpdGggTFBBRQ0KPiBkaXNhYmxlZCBsYXRlci4NCg0KVGVzdGVkIHdpdGggaW14X3Y2X3Y3
+X2RlZmNvbmZpZyB3aXRob3V0IExQQUUsIHNtcCBib290cyB1cCB3aXRoIG5mc3Jvb3QuDQoNClRo
+YW5rcywNClBlbmcuDQoNCj4gDQo+IFRoYW5rcywNCj4gUGVuZy4NCj4gPiBOb3RlIHRoYXQgdXNl
+cnMgdGhhdCBhY3R1YWxseSBoYXZlIDRHQiBvciBtb3JlIG9uIGkubXg4IHNob3VsZCByZWFsbHkN
+Cj4gPiBydW4gYSA2NC1iaXQga2VybmVsIGFueXdheSwgZXZlbiBpZiB0aGV5IHByZWZlciB1c2lu
+ZyAzMi1iaXQgdXNlciBzcGFjZS4NCj4gPg0KPiA+IFR1cm5pbmcgb24gTFBBRSBub3Qgb25seSBk
+aXNhYmxlcyBpbXgzIGFuZCBpbXg1IGJ1dCBhbHNvIHRoZSBDb3J0ZXgtQTkNCj4gPiBiYXNlZA0K
+PiA+IGlteDYgdmFyaWFudHMuDQo+ID4NCj4gPiAgICAgICBBcm5kDQo=
