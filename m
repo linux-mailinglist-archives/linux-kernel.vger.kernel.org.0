@@ -2,49 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B486A188511
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 14:14:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA12C188516
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 14:15:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbgCQNOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 09:14:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:38941 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726084AbgCQNOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 09:14:42 -0400
-Received: by ozlabs.org (Postfix, from userid 1034)
-        id 48hYYB6CJzz9sPF; Wed, 18 Mar 2020 00:14:38 +1100 (AEDT)
-X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: aa4113340ae6c2811e046f08c2bc21011d20a072
-In-Reply-To: <20200123111914.2565-1-laurentiu.tudor@nxp.com>
-To:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        "oss@buserror.net" <oss@buserror.net>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Diana Madalina Craciun <diana.craciun@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: Re: [PATCH] powerpc/fsl_booke: avoid creating duplicate tlb1 entry
-Message-Id: <48hYYB6CJzz9sPF@ozlabs.org>
-Date:   Wed, 18 Mar 2020 00:14:38 +1100 (AEDT)
+        id S1726857AbgCQNPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 09:15:10 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:38307 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726597AbgCQNPK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 09:15:10 -0400
+Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 0231E10001E;
+        Tue, 17 Mar 2020 13:14:46 +0000 (UTC)
+Date:   Tue, 17 Mar 2020 14:14:45 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Eddie Huang <eddie.huang@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-rtc@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] rtc: mt2712: fix build without PM_SLEEP
+Message-ID: <20200317131445.GC3448@piout.net>
+References: <20200316104701.209293-1-alexandre.belloni@bootlin.com>
+ <CAMuHMdVy6J1G5P6BQ14D65=pRu-q=+kcN3RV8mjtaZcwBooZyw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVy6J1G5P6BQ14D65=pRu-q=+kcN3RV8mjtaZcwBooZyw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-01-23 at 11:19:25 UTC, Laurentiu Tudor wrote:
-> In the current implementation, the call to loadcam_multi() is wrapped
-> between switch_to_as1() and restore_to_as0() calls so, when it tries
-> to create its own temporary AS=3D1 TLB1 entry, it ends up duplicating the
-> existing one created by switch_to_as1(). Add a check to skip creating
-> the temporary entry if already running in AS=3D1.
+On 17/03/2020 13:30:10+0100, Geert Uytterhoeven wrote:
+> >  static SIMPLE_DEV_PM_OPS(mt2712_pm_ops, mt2712_rtc_suspend,
+> >                          mt2712_rtc_resume);
 > 
-> Fixes: d9e1831a4202 ("powerpc/85xx: Load all early TLB entries at once")
-> Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-> Cc: stable@vger.kernel.org
+> That's 23 more unused pointers in your kernel image.
+> 
 
-Applied to powerpc next, thanks.
+This is true but, of the about 900 drivers setting pm callbacks, there
+are only 39 doing that conditionally depending on CONFIG_PM or
+CONFIG_PM_SLEEP. Interestingly, 9 of them are mediatek related.
 
-https://git.kernel.org/powerpc/c/aa4113340ae6c2811e046f08c2bc21011d20a072
 
-cheers
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
