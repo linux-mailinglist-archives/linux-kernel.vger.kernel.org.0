@@ -2,133 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0046F187A03
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 07:56:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 878301879EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 07:55:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726626AbgCQGzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 02:55:55 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44904 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbgCQGzy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 02:55:54 -0400
-Received: by mail-io1-f66.google.com with SMTP id v3so9702442iot.11;
-        Mon, 16 Mar 2020 23:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xWR9GR9zXt7FMFLwHnM9DNzADB3xyA+rYdWNj2AqhMs=;
-        b=I1UzqDi1CI7BgLIIpE9p97OJKAijExbglYmN6z+rzZ+aGvdTYh1gw27m8JTkITzPxT
-         Rilz8tMl3pOmagIK5plERd6lxmTFAtxgBRCz41ZDo/k0lfz/7mO6m6k/4hYhut0HhyXd
-         cDIA4BqZ+8+i3tYMVWtC8e7WgWFF2/7IPXft4JrXPm+SFW8cPUe2NSkyIwAPd0u0UZZs
-         FTRYP2iMLHSLfQEAn+MqzefPVG7v4E+zNbzK6HlRzc1Qw9o/YnazXDt/JNuyO3jlPOWk
-         RipUqhWIyVOhokA39kwlbbAcfJXbAuAtFEpF6dgFz8Q0irkAJoR/ui8mXoLWqo7me+7S
-         +vqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xWR9GR9zXt7FMFLwHnM9DNzADB3xyA+rYdWNj2AqhMs=;
-        b=Wh9ObjqheFVYDUIpoqszLPsdNQ7K1/Nly9V2TcCi/90WVYcSWHKkmtfbfln2D66RpC
-         eftU35bOkIAgKhvERHzGW2d5ot5+fMf5+OvekUS+YGSDHRoLh17f7N6UMNxMxj1i/0zF
-         uMOEDuqiqspccmC8uVBpRlOMR9kLhKRd2EefWKnTkMPvl3QerBCN1UhcZckmrWQFF5V0
-         FhwUFUMTGu5TqNm+VQxvoRwe6NdPd89oaJuJ8EySPTm1tnYwwNSWcq7fijzJorDxc6+x
-         Q4fccUsOf2lbLCDEx5CvracPm6vMOwm5lMY6VGblPSA/OkgM0fjKaWD9FhgG1DqPPVnH
-         RIhQ==
-X-Gm-Message-State: ANhLgQ03+GPy7rqmDwVuRcPx60bN1kQbTEWGfoM25/eSTRYmHorxIisM
-        HBQ5Zl66HZVqORLYR/zF6bBI9o+uN0Ol0Aun00Q=
-X-Google-Smtp-Source: ADFU+vsXQb/pFKtMWJ3JxvgCpZZOO72lwsnc1rP4K5qxjjSEXrdkUflkKDvQQlk2khti5gYEuUfJLY5cws3XT4bGDto=
-X-Received: by 2002:a05:6638:f01:: with SMTP id h1mr3578763jas.36.1584428153800;
- Mon, 16 Mar 2020 23:55:53 -0700 (PDT)
+        id S1726334AbgCQGzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 02:55:06 -0400
+Received: from mga14.intel.com ([192.55.52.115]:25817 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726207AbgCQGzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 02:55:05 -0400
+IronPort-SDR: 9URtp7CndDTfHErMEtxwd6mIexQMGiaZub9bvI7xpo62rRn3SrBAeLdJgXZaJvkNmOSFlIMzlV
+ r8RsRuZ7xuyg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 23:55:05 -0700
+IronPort-SDR: Ks2lyFR4oQi+/qPyHNM8E+gog2qCtpLm5wZsCX9HHOT8ta1lsCwXUxodY71dHg89zhK5itHWIN
+ FBE4ui/9eucg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,563,1574150400"; 
+   d="scan'208";a="233412448"
+Received: from debian-skl.sh.intel.com ([10.239.160.44])
+  by orsmga007.jf.intel.com with ESMTP; 16 Mar 2020 23:55:03 -0700
+From:   Zhenyu Wang <zhenyuw@linux.intel.com>
+To:     pbonzini@redhat.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Zhong, Yang" <yang.zhong@intel.com>
+Subject: [PATCH] KVM: x86: Expose AVX512 VP2INTERSECT in cpuid for TGL
+Date:   Tue, 17 Mar 2020 14:55:53 +0800
+Message-Id: <20200317065553.64790-1-zhenyuw@linux.intel.com>
+X-Mailer: git-send-email 2.25.0.rc2
 MIME-Version: 1.0
-References: <1583920112-2680-1-git-send-email-simhavcs@gmail.com>
- <20200312151752.GA7490@bogus> <CAGWqDJ7DP3DuR7EWT6Ni8YxN3Adg3RgJZut6+AtpAak_HB=QCQ@mail.gmail.com>
-In-Reply-To: <CAGWqDJ7DP3DuR7EWT6Ni8YxN3Adg3RgJZut6+AtpAak_HB=QCQ@mail.gmail.com>
-From:   Vinay Simha B N <simhavcs@gmail.com>
-Date:   Tue, 17 Mar 2020 12:25:42 +0530
-Message-ID: <CAGWqDJ4cAU98_xMk6f-bsT5LF5cD2JJk8_JCykwM=cd6CCfWtw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-binding: Add DSI/LVDS tc358775 bridge bindings
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sam,
+On Tigerlake new AVX512 VP2INTERSECT feature is available.
+This would expose it for KVM supported cpuid.
 
-i need some inputs on the below  error. I had created this file
-Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
-by using vim editor. Do we have any tool to create yaml file?
+Cc: "Zhong, Yang" <yang.zhong@intel.com>
+Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+---
+ arch/x86/kvm/cpuid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-i do not get the error when running 'make dt_binding_check' in my
-build environment
-Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
-
-is there any tool available similar to  scripts/checkpatch.pl -f
-<file> , for yaml files?
-
-On Sun, Mar 15, 2020 at 8:54 PM Vinay Simha B N <simhavcs@gmail.com> wrote:
->
-> rob,
->
-> i do not get the error when running 'make dt_binding_check' in my
-> build environment
-> Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
->
-> is there any tool available similar to  scripts/checkpatch.pl -f
-> <file> , for yaml files?
->
-> On Thu, Mar 12, 2020 at 8:47 PM Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Wed, 11 Mar 2020 15:18:24 +0530, Vinay Simha BN wrote:
-> > > Add yaml documentation for DSI/LVDS tc358775 bridge
-> > >
-> > > Signed-off-by: Vinay Simha BN <simhavcs@gmail.com>
-> > >
-> > > ---
-> > > v1:
-> > >  Initial version
-> > > ---
-> > >  .../bindings/display/bridge/toshiba-tc358775.yaml  | 174 +++++++++++++++++++++
-> > >  1 file changed, 174 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
-> > >
-> >
-> > My bot found errors running 'make dt_binding_check' on your patch:
-> >
-> > Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml:  while scanning for the next token
-> > found character that cannot start any token
-> >   in "<unicode string>", line 11, column 1
-> > Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.example.dts' failed
-> > make[1]: *** [Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.example.dts] Error 1
-> > make[1]: *** Waiting for unfinished jobs....
-> > warning: no schema found in file: Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml
-> > /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/bridge/toshiba-tc358775.yaml: ignoring, error parsing file
-> > Makefile:1262: recipe for target 'dt_binding_check' failed
-> > make: *** [dt_binding_check] Error 2
-> >
-> > See https://patchwork.ozlabs.org/patch/1252753
-> > Please check and re-submit.
->
->
->
-> --
-> regards,
-> vinaysimha
-
-
-
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index b1c469446b07..b4e25ff6ab0a 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -374,7 +374,7 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry, int index)
+ 	const u32 kvm_cpuid_7_0_edx_x86_features =
+ 		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) |
+ 		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) | F(INTEL_STIBP) |
+-		F(MD_CLEAR);
++		F(MD_CLEAR) | F(AVX512_VP2INTERSECT);
+ 
+ 	/* cpuid 7.1.eax */
+ 	const u32 kvm_cpuid_7_1_eax_x86_features =
 -- 
-regards,
-vinaysimha
+2.25.0.rc2
+
