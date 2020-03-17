@@ -2,155 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DD12187B8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:51:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63B54187B9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:56:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbgCQIvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 04:51:44 -0400
-Received: from mail-qv1-f67.google.com ([209.85.219.67]:44639 "EHLO
-        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbgCQIvn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 04:51:43 -0400
-Received: by mail-qv1-f67.google.com with SMTP id w5so10398611qvp.11
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 01:51:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=INqhK7Tn9oxQPBAc7BD8ij5pQ/ONv1O3XGwD9BE+Z9w=;
-        b=YBB4BI63VmgXBGwknUi+l/UnuhFHAmxziyw5LWEGE+I+r2mfw4Q1hMXXTS0Z/eMes1
-         9/67uhRS7+tgxeAonxh+FJ9zVhokwRmmBqrLVgR6Wx+jJrDl9OMVX90Tpy2sVyQUwb3H
-         fLY1ui5Voy9IQwPYdToPVAernh6dcDYc9+hF0FQwQhJB1LM3jDgB6sG3bPW2ZmSV4msp
-         5PH+qntCQ9AghfFU0veJXJOHxVMiD6/6HWPi7b6D5WOz9dMDRMumwjM+9BO1YrvEtcUK
-         R0mGzuLBO5rVH17y4yeekdQBgqNrQSi0pU3dM1e40qpvFJd3MfZdxmXwvzU8YwZq1nXX
-         xpUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=INqhK7Tn9oxQPBAc7BD8ij5pQ/ONv1O3XGwD9BE+Z9w=;
-        b=K5/pdKire6hNZ4T9+U+ORjgyNU8JHFAw6zCh8QsuXOBe4IW9ynCHEyAv+bYAWaT/K8
-         9OaFG+X2VoSer6oRtYZu+R8n/MwPrsBzNXbU5Ya0AYhMDo/DTO4WIk5oXXGd6rydlRbF
-         exI0pfF46aD+0KvTr8oZKVuUO9Xu6p4XpTRkh49HN799vR3v2kiC0kK2q82VnMnSJD4e
-         M53cIPiuwhxYYi4lZWE2x2MI0tVr0doWn0Y9otSXcQQDDQnLklJv+sv6kU6wW8pNTlBQ
-         iMWSFs+CNUtKyAumvvq67NEuE+6lxlQUXUfcgggBsJ8fEeZjihSwNbRIIakKM2FALaSQ
-         9p1g==
-X-Gm-Message-State: ANhLgQ2l2uFeEb0S6hrjWmOAQ3Epr65xmCCTA7XAcnfDrTKNQQTFF/bT
-        9oU0yirbZVm+zfoWfY2vyTE=
-X-Google-Smtp-Source: ADFU+vtx16r3AcVpqLf2rctzR7/WHQ2N5K0LRyGWfhAEQo+pLWj5aDNdNqlOk2On1kNVCS3K5a3J8w==
-X-Received: by 2002:a0c:f601:: with SMTP id r1mr3744281qvm.91.1584435102383;
-        Tue, 17 Mar 2020 01:51:42 -0700 (PDT)
-Received: from localhost.localdomain (179.186.61.135.dynamic.adsl.gvt.net.br. [179.186.61.135])
-        by smtp.gmail.com with ESMTPSA id s4sm1884404qte.36.2020.03.17.01.51.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2020 01:51:42 -0700 (PDT)
-From:   Camylla Goncalves Cantanheide <c.cantanheide@gmail.com>
-To:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org
-Subject: [PATCH 2/2] staging: rtl8192u: Corrects 'Avoid CamelCase' for variables
-Date:   Tue, 17 Mar 2020 08:51:30 +0000
-Message-Id: <20200317085130.21213-2-c.cantanheide@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200317085130.21213-1-c.cantanheide@gmail.com>
-References: <20200317085130.21213-1-c.cantanheide@gmail.com>
+        id S1726039AbgCQI4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 04:56:23 -0400
+Received: from mail-eopbgr50058.outbound.protection.outlook.com ([40.107.5.58]:20355
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725536AbgCQI4W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 04:56:22 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZD37Ht1ULx8DxYVFLsAuG1GuXdptmgp7lK01VPZgqwyBD8I7e0EiVgr7l/ognnb7RtE7A6pdOeK8jy1VQk7j/6ihu1i56LE0kndEyLidfqGtwL8ZD7sFf3Me4WEZ81JnbF2ZR0qp0y/TtTHD5KGIP2wPu0edpR62BuXLwennzJUpEuLmAfJbTjtCtJE7ADOVvpXppuwG2wKjYGyQgccVkbRmCukFFAWAmtZLnXb1J+/jBcZnqLyRz0KKb38eWvAWjREV+U7Hcvp4SqwGQP5+AWIXeqnCPs2xs/l9gQyM+ALEKHqVpDkCJNlemxxgKgtIY7USnwi5XbR+ZmQxUlr/rA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NUwk74+bJFeLafMQBjpLQkYQnkx6+DwDjioK6mgjbLA=;
+ b=C41pfnWrxvVrG4nlQ9xqFDzi6SwXznsJbAPBYxTLUA9nOjP+T5ClgwaLaJQzKL8mku8x+FGdHb5qWN/jiGjrP9MO5gVWS5PC3vLE3t+1suEq9Brkm86W3QtOmByUMblpxEzWdkmeORNDftYnf+C+nE7S3s7oIf2bt0dgnkVdXN6KULArF06jh9b26DfHXLkXvPjSbIUn1gzhXHY/BqfrB4pABbwuZEhaBRjqT2JlEjfob16oI1B2j7YsjmLzRWL1oMSJsD6C1NcdXukKVTuQwuHBga+pIoKBmbW2KmksRJ/lycOS0nWjmtIE/LBIzUDFsv+q9NM/OhXLvpn7esVCKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NUwk74+bJFeLafMQBjpLQkYQnkx6+DwDjioK6mgjbLA=;
+ b=azb1qjUS8EtGERkLWHr3EpNMiITb70bolZabrHqXLvM6+wV5eomNudrsFCdstC71c2V4Lvm++1YO4qUrjlLIDZiYjNCq3p/i3yadkDKl6oAvy3/dXQOKMF+1p98wbGlVBFJT8WxPNFNgZR/MYEAXUzU6nhkbq+aU+iaxsLQ7sxw=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.ma@nxp.com; 
+Received: from AM7PR04MB7016.eurprd04.prod.outlook.com (52.135.58.214) by
+ AM7PR04MB7109.eurprd04.prod.outlook.com (52.135.57.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.18; Tue, 17 Mar 2020 08:56:19 +0000
+Received: from AM7PR04MB7016.eurprd04.prod.outlook.com
+ ([fe80::14c2:8800:1248:ddfa]) by AM7PR04MB7016.eurprd04.prod.outlook.com
+ ([fe80::14c2:8800:1248:ddfa%7]) with mapi id 15.20.2814.021; Tue, 17 Mar 2020
+ 08:56:19 +0000
+From:   Peng Ma <peng.ma@nxp.com>
+To:     axboe@kernel.dk
+Cc:     leoyang.li@nxp.com, andy.tang@nxp.com, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Udit Kumar <udit.kumar@nxp.com>,
+        Peng Ma <peng.ma@nxp.com>
+Subject: [PATCH] ahci_qoriq: enable acpi support in qoriq ahci driver
+Date:   Tue, 17 Mar 2020 16:52:54 +0800
+Message-Id: <20200317085254.40795-1-peng.ma@nxp.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0104.apcprd01.prod.exchangelabs.com
+ (2603:1096:3:15::30) To AM7PR04MB7016.eurprd04.prod.outlook.com
+ (2603:10a6:20b:11e::22)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.73) by SG2PR01CA0104.apcprd01.prod.exchangelabs.com (2603:1096:3:15::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.16 via Frontend Transport; Tue, 17 Mar 2020 08:56:16 +0000
+X-Mailer: git-send-email 2.17.1
+X-Originating-IP: [119.31.174.73]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 0bf27c23-a18d-446b-709c-08d7ca510f11
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7109:|AM7PR04MB7109:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM7PR04MB71092A8FF47343A36AA88EC7EDF60@AM7PR04MB7109.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:299;
+X-Forefront-PRVS: 0345CFD558
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(136003)(396003)(366004)(39860400002)(199004)(6506007)(4326008)(52116002)(69590400007)(6512007)(66946007)(6666004)(66476007)(66556008)(1076003)(36756003)(2616005)(956004)(81166006)(44832011)(6486002)(54906003)(478600001)(2906002)(86362001)(16526019)(186003)(81156014)(8936002)(6916009)(8676002)(5660300002)(26005)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM7PR04MB7109;H:AM7PR04MB7016.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: kyLzg0+UKp6ZPz31FD6sky+QvAsneZko+1f9Voh7OOwbm9GMruJBJ8mgGZVBD5zcZOgKr1XvDXy5OICcZwi3Djp6eVwE/j+nvz+ukpN716P20gzmSTk6mxnX00v4YmzvBsJi4skzcyxYQBYQhqrTRi3Ez7t3akRMiVyL9DqZxC/uQK4Tj3a7w5M1n41OtRTSn5rBOomIooP5ApoA676sff7CQRAb+1tVtwPifZAgYbDwj//QEjGrwQ9vDpGzYhQ7fm7vjnJYwRngkYnOj/taRD7jm45+Tch/ZZjQteljfH2szJF06Wh6Uuk8FTunpDyIusSce5ceszPSdhvaCbTESMWiZtlGtj7nq2hYsbfaQzpwTZoJPrzx540qOAze+oAp2pIHcAJ0u9fDqYIgVPFiILaRwpJ26lsYnUZXRsRqWIqyTJ/djz9Y/w3/KBGU/3Nd8Hen/V1Oel8pWgP02fZH7+6G8QvpJVYF1l6uHRy1HutXgrmt8HG4zZyZJF13O/ih
+X-MS-Exchange-AntiSpam-MessageData: kJUCIILO+ACGkpLHBYDk3O/roTXF5OrR9GTfLQcQUsgqF5qlwxWOa5Rg0yvOmXSlqHN9udn0Zel6e4W/tnfyN+Uc12ywRGvvcr0LRa4j54XE+6z2uCbOHixzfIM5rNJtR7PI15DC6LpKuEBKHcs6Tg==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0bf27c23-a18d-446b-709c-08d7ca510f11
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2020 08:56:19.2467
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yltehquZr5N7FULKU2SgFaZIAMe586CNszG3n/+zUcz092XVvzDHBsaPrq87ejUa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB7109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The variables of function setKey triggered a 'Avoid CamelCase'
-warning from checkpatch.pl. This patch renames these
-variables to correct this warning.
+From: Udit Kumar <udit.kumar@nxp.com>
 
-Signed-off-by: Camylla Goncalves Cantanheide <c.cantanheide@gmail.com>
+This patch enables ACPI support in qoriq ahci driver.
+
+Signed-off-by: Udit Kumar <udit.kumar@nxp.com>
+Signed-off-by: Peng Ma <peng.ma@nxp.com>
 ---
- drivers/staging/rtl8192u/r8192U_core.c | 52 +++++++++++++-------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+ drivers/ata/ahci_qoriq.c | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index 93a15d57e..fcfb9024a 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -4877,50 +4877,50 @@ void EnableHWSecurityConfig8192(struct net_device *dev)
- 	write_nic_byte(dev, SECR,  SECR_value);
- }
+diff --git a/drivers/ata/ahci_qoriq.c b/drivers/ata/ahci_qoriq.c
+index a330307..f0f7723 100644
+--- a/drivers/ata/ahci_qoriq.c
++++ b/drivers/ata/ahci_qoriq.c
+@@ -6,6 +6,7 @@
+  *   Tang Yuantian <Yuantian.Tang@freescale.com>
+  */
  
--void setKey(struct net_device *dev, u8 EntryNo, u8 KeyIndex, u16 KeyType,
--	    u8 *MacAddr, u8 DefaultKey, u32 *KeyContent)
-+void setKey(struct net_device *dev, u8 entryno, u8 keyindex, u16 keytype,
-+	    u8 *macaddr, u8 defaultkey, u32 *keycontent)
++#include <linux/acpi.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/pm.h>
+@@ -80,6 +81,12 @@ static const struct of_device_id ahci_qoriq_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, ahci_qoriq_of_match);
+ 
++static const struct acpi_device_id ahci_qoriq_acpi_match[] = {
++	{"NXP0004", .driver_data = (kernel_ulong_t)AHCI_LX2160A},
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, ahci_qoriq_acpi_match);
++
+ static int ahci_qoriq_hardreset(struct ata_link *link, unsigned int *class,
+ 			  unsigned long deadline)
  {
--	u32 TargetCommand = 0;
--	u32 TargetContent = 0;
--	u16 usConfig = 0;
-+	u32 target_command = 0;
-+	u32 target_content = 0;
-+	u16 us_config = 0;
- 	u8 i;
+@@ -261,25 +268,28 @@ static int ahci_qoriq_probe(struct platform_device *pdev)
+ 	const struct of_device_id *of_id;
+ 	struct resource *res;
+ 	int rc;
++	const struct acpi_device_id *acpi_id;
  
--	if (EntryNo >= TOTAL_CAM_ENTRY)
-+	if (entryno >= TOTAL_CAM_ENTRY)
- 		RT_TRACE(COMP_ERR, "cam entry exceeds in %s\n", __func__);
+ 	hpriv = ahci_platform_get_resources(pdev, 0);
+ 	if (IS_ERR(hpriv))
+ 		return PTR_ERR(hpriv);
  
- 	RT_TRACE(COMP_SEC,
- 		 "====>to %s, dev:%p, EntryNo:%d, KeyIndex:%d, KeyType:%d, MacAddr%pM\n",
--		 __func__, dev, EntryNo, KeyIndex, KeyType, MacAddr);
-+		 __func__, dev, entryno, keyindex, keytype, macaddr);
+ 	of_id = of_match_node(ahci_qoriq_of_match, np);
+-	if (!of_id)
++	acpi_id = acpi_match_device(ahci_qoriq_acpi_match, &pdev->dev);
++	if (!(of_id || acpi_id))
+ 		return -ENODEV;
  
--	if (DefaultKey)
--		usConfig |= BIT(15) | (KeyType << 2);
-+	if (defaultkey)
-+		us_config |= BIT(15) | (keytype << 2);
- 	else
--		usConfig |= BIT(15) | (KeyType << 2) | KeyIndex;
-+		us_config |= BIT(15) | (keytype << 2) | keyindex;
+ 	qoriq_priv = devm_kzalloc(dev, sizeof(*qoriq_priv), GFP_KERNEL);
+ 	if (!qoriq_priv)
+ 		return -ENOMEM;
  
- 	for (i = 0; i < CAM_CONTENT_COUNT; i++) {
--		TargetCommand  = i + CAM_CONTENT_COUNT * EntryNo;
--		TargetCommand |= BIT(31) | BIT(16);
-+		target_command  = i + CAM_CONTENT_COUNT * entryno;
-+		target_command |= BIT(31) | BIT(16);
+-	qoriq_priv->type = (enum ahci_qoriq_type)of_id->data;
++	if (of_id)
++		qoriq_priv->type = (enum ahci_qoriq_type)of_id->data;
++	else
++		qoriq_priv->type = (enum ahci_qoriq_type)acpi_id->driver_data;
  
- 		if (i == 0) { /* MAC|Config */
--			TargetContent = (u32)(*(MacAddr + 0)) << 16 |
--					(u32)(*(MacAddr + 1)) << 24 |
--					(u32)usConfig;
-+			target_content = (u32)(*(macaddr + 0)) << 16 |
-+					(u32)(*(macaddr + 1)) << 24 |
-+					(u32)us_config;
- 
--			write_nic_dword(dev, WCAMI, TargetContent);
--			write_nic_dword(dev, RWCAM, TargetCommand);
-+			write_nic_dword(dev, WCAMI, target_content);
-+			write_nic_dword(dev, RWCAM, target_command);
- 		} else if (i == 1) { /* MAC */
--			TargetContent = (u32)(*(MacAddr + 2))	 |
--					(u32)(*(MacAddr + 3)) <<  8 |
--					(u32)(*(MacAddr + 4)) << 16 |
--					(u32)(*(MacAddr + 5)) << 24;
--			write_nic_dword(dev, WCAMI, TargetContent);
--			write_nic_dword(dev, RWCAM, TargetCommand);
-+			target_content = (u32)(*(macaddr + 2))	 |
-+					(u32)(*(macaddr + 3)) <<  8 |
-+					(u32)(*(macaddr + 4)) << 16 |
-+					(u32)(*(macaddr + 5)) << 24;
-+			write_nic_dword(dev, WCAMI, target_content);
-+			write_nic_dword(dev, RWCAM, target_command);
- 		} else {
- 			/* Key Material */
--			if (KeyContent) {
-+			if (keycontent) {
- 				write_nic_dword(dev, WCAMI,
--						*(KeyContent + i - 2));
--				write_nic_dword(dev, RWCAM, TargetCommand);
-+						*(keycontent + i - 2));
-+				write_nic_dword(dev, RWCAM, target_command);
- 			}
+ 	if (unlikely(!ecc_initialized)) {
+-		res = platform_get_resource_byname(pdev,
+-						   IORESOURCE_MEM,
+-						   "sata-ecc");
++		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 		if (res) {
+ 			qoriq_priv->ecc_addr =
+ 				devm_ioremap_resource(dev, res);
+@@ -288,7 +298,8 @@ static int ahci_qoriq_probe(struct platform_device *pdev)
  		}
  	}
+ 
+-	qoriq_priv->is_dmacoherent = of_dma_is_coherent(np);
++	if (device_get_dma_attr(&pdev->dev) == DEV_DMA_COHERENT)
++		qoriq_priv->is_dmacoherent = true;
+ 
+ 	rc = ahci_platform_enable_resources(hpriv);
+ 	if (rc)
+@@ -354,6 +365,7 @@ static struct platform_driver ahci_qoriq_driver = {
+ 	.driver = {
+ 		.name = DRV_NAME,
+ 		.of_match_table = ahci_qoriq_of_match,
++		.acpi_match_table = ahci_qoriq_acpi_match,
+ 		.pm = &ahci_qoriq_pm_ops,
+ 	},
+ };
 -- 
-2.20.1
+2.9.5
 
