@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A239718804E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:09:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68EE118804C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:09:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728472AbgCQLJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:09:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51110 "EHLO mail.kernel.org"
+        id S1728573AbgCQLJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:09:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728912AbgCQLJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:09:04 -0400
+        id S1728547AbgCQLJG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:09:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 173A6205ED;
-        Tue, 17 Mar 2020 11:09:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BD1F2071C;
+        Tue, 17 Mar 2020 11:09:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443343;
-        bh=9HK5uQds0fKQgS11ZT/CoSN65Hm3Jm7/jecpwJYLWfs=;
+        s=default; t=1584443346;
+        bh=vHKEC9mhEm8qFf8Q8T+sfKKtpiK0KxK4jHXwJdiTetU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aXTAaW3Xqydf3sK0KWKYrWQEHxvyntdSI97cWqX2e2/J1y/Yb0+ud+nLQpwd9u1Tj
-         E8pyaBljVCXCYUA84+64aUY86f2tDrqNwe2/D6Lyqbr45LqvEUttc8lZIo3cM0KsYb
-         u0tZHnGd8ehaU3EXPleAQ4X0Tcjc1Fa5Xy3sN4F4=
+        b=vsjSIE33e5uGiyvz7hQd8CrVLCjqGnU3I4BbV7vdoT2iDnds641119n3jAvwmkBxC
+         vMUralcRf0L0NZEnaBHdxbsB238ba/ktyHnu32prffgSS9A9UaYNivjS7lEbwsXjgE
+         +hQQhDRLOGfpHRxgvlGBBMC+1IN4V+FLUuZJaqXE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 051/151] can: add missing attribute validation for termination
-Date:   Tue, 17 Mar 2020 11:54:21 +0100
-Message-Id: <20200317103330.207773226@linuxfoundation.org>
+Subject: [PATCH 5.5 052/151] macsec: add missing attribute validation for port
+Date:   Tue, 17 Mar 2020 11:54:22 +0100
+Message-Id: <20200317103330.275041495@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
 References: <20200317103326.593639086@linuxfoundation.org>
@@ -46,29 +45,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jakub Kicinski <kuba@kernel.org>
 
-[ Upstream commit ab02ad660586b94f5d08912a3952b939cf4c4430 ]
+[ Upstream commit 31d9a1c524964bac77b7f9d0a1ac140dc6b57461 ]
 
-Add missing attribute validation for IFLA_CAN_TERMINATION
+Add missing attribute validation for IFLA_MACSEC_PORT
 to the netlink policy.
 
-Fixes: 12a6075cabc0 ("can: dev: add CAN interface termination API")
+Fixes: c09440f7dcb3 ("macsec: introduce IEEE 802.1AE driver")
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/can/dev.c |    1 +
+ drivers/net/macsec.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/drivers/net/can/dev.c
-+++ b/drivers/net/can/dev.c
-@@ -883,6 +883,7 @@ static const struct nla_policy can_polic
- 				= { .len = sizeof(struct can_bittiming) },
- 	[IFLA_CAN_DATA_BITTIMING_CONST]
- 				= { .len = sizeof(struct can_bittiming_const) },
-+	[IFLA_CAN_TERMINATION]	= { .type = NLA_U16 },
- };
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -2983,6 +2983,7 @@ static const struct device_type macsec_t
  
- static int can_validate(struct nlattr *tb[], struct nlattr *data[],
+ static const struct nla_policy macsec_rtnl_policy[IFLA_MACSEC_MAX + 1] = {
+ 	[IFLA_MACSEC_SCI] = { .type = NLA_U64 },
++	[IFLA_MACSEC_PORT] = { .type = NLA_U16 },
+ 	[IFLA_MACSEC_ICV_LEN] = { .type = NLA_U8 },
+ 	[IFLA_MACSEC_CIPHER_SUITE] = { .type = NLA_U64 },
+ 	[IFLA_MACSEC_WINDOW] = { .type = NLA_U32 },
 
 
