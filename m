@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13C37187ED9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:56:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43592187EDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 11:57:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbgCQK4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 06:56:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34342 "EHLO mail.kernel.org"
+        id S1726771AbgCQK4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:56:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726717AbgCQK4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 06:56:41 -0400
+        id S1726717AbgCQK4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:56:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2EE020714;
-        Tue, 17 Mar 2020 10:56:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE0E920658;
+        Tue, 17 Mar 2020 10:56:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584442601;
-        bh=6X+dE0s3Uhj3MWvT0gqsoucge8B0jrRWkk1cMybRikE=;
+        s=default; t=1584442606;
+        bh=0j2JV9/OuKp6+xyp5BEnQ4P1BlZoBZG0cQMrlzBcIQk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yDu5s3I00T5S3+VBx84dBupZzkMYWWiuU0rXWSo46tD6tmP6hpjDpcfAi2pKzsKRf
-         STW/Szc3nvdrGraglM0Q2olbYf7JILsaWMqC02x2JgzFgz2an3WQ15XUGv2WKk6tTI
-         ngkh+MgeBgrqTXim+A7xcF26p8lenywOslm08DpQ=
+        b=1tgdVpBuNurCpL2gKdXGADdBJv9cpjwagc27G92iCnjuqoZ1CEtWtRX4cFLyu1MtK
+         8ocL40hirHh+AQaY9gjudGzbqjoyZkYQpuhKU2n+Pew2SUFvu+doQnaWajxDUfTqIm
+         CO1835muiZuj6Fh/B84htrcS8NyyAjDY8IxpYoGA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Derek Shute <Derek.Shute@stratus.com>,
-        Edward Cree <ecree@solarflare.com>,
+        stable@vger.kernel.org,
+        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 19/89] sfc: detach from cb_page in efx_copy_channel()
-Date:   Tue, 17 Mar 2020 11:54:28 +0100
-Message-Id: <20200317103302.233148840@linuxfoundation.org>
+Subject: [PATCH 4.19 20/89] bnxt_en: reinitialize IRQs when MTU is modified
+Date:   Tue, 17 Mar 2020 11:54:29 +0100
+Message-Id: <20200317103302.334604093@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317103259.744774526@linuxfoundation.org>
 References: <20200317103259.744774526@linuxfoundation.org>
@@ -44,37 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Edward Cree <ecree@solarflare.com>
+From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
 
-[ Upstream commit 4b1bd9db078f7d5332c8601a2f5bd43cf0458fd4 ]
+[ Upstream commit a9b952d267e59a3b405e644930f46d252cea7122 ]
 
-It's a resource, not a parameter, so we can't copy it into the new
- channel's TX queues, otherwise aliasing will lead to resource-
- management bugs if the channel is subsequently torn down without
- being initialised.
+MTU changes may affect the number of IRQs so we must call
+bnxt_close_nic()/bnxt_open_nic() with the irq_re_init parameter
+set to true.  The reason is that a larger MTU may require
+aggregation rings not needed with smaller MTU.  We may not be
+able to allocate the required number of aggregation rings and
+so we reduce the number of channels which will change the number
+of IRQs.  Without this patch, it may crash eventually in
+pci_disable_msix() when the IRQs are not properly unwound.
 
-Before the Fixes:-tagged commit there was a similar bug with
- tsoh_page, but I'm not sure it's worth doing another fix for such
- old kernels.
-
-Fixes: e9117e5099ea ("sfc: Firmware-Assisted TSO version 2")
-Suggested-by: Derek Shute <Derek.Shute@stratus.com>
-Signed-off-by: Edward Cree <ecree@solarflare.com>
+Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
+Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/sfc/efx.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/sfc/efx.c
-+++ b/drivers/net/ethernet/sfc/efx.c
-@@ -522,6 +522,7 @@ efx_copy_channel(const struct efx_channe
- 		if (tx_queue->channel)
- 			tx_queue->channel = channel;
- 		tx_queue->buffer = NULL;
-+		tx_queue->cb_page = NULL;
- 		memset(&tx_queue->txd, 0, sizeof(tx_queue->txd));
- 	}
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -8097,13 +8097,13 @@ static int bnxt_change_mtu(struct net_de
+ 	struct bnxt *bp = netdev_priv(dev);
  
+ 	if (netif_running(dev))
+-		bnxt_close_nic(bp, false, false);
++		bnxt_close_nic(bp, true, false);
+ 
+ 	dev->mtu = new_mtu;
+ 	bnxt_set_ring_params(bp);
+ 
+ 	if (netif_running(dev))
+-		return bnxt_open_nic(bp, false, false);
++		return bnxt_open_nic(bp, true, false);
+ 
+ 	return 0;
+ }
 
 
