@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E77F18906F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:33:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F384189072
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 22:33:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbgCQVdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 17:33:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51852 "EHLO mail.kernel.org"
+        id S1727134AbgCQVd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 17:33:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727065AbgCQVdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 17:33:20 -0400
+        id S1727100AbgCQVdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 17:33:24 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.37.151])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6F1020768;
-        Tue, 17 Mar 2020 21:33:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 375452076B;
+        Tue, 17 Mar 2020 21:33:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584480799;
-        bh=m0xo/W6GOQNpk/WU67K9ND/4DuO1vrli3QMy0AnI3rY=;
+        s=default; t=1584480803;
+        bh=su52XWFF8UH6g072MxyqtlspnzEH2awu4GRvuUVclFM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cVjthmkeUp+Npw2YbI/EIWB5YPh/7mToFSe/G2yGuui/wxNHiTJl/PjoLVr8yQtET
-         HrFpINaq+LT/duio+1JrdHN5V1hslfiavNr/7tcoqmlYcfsoakxRchtT9SzcY6jBCb
-         DSBwOgLzjLLZq3nxZ4SG0rXWfMIJXYLlBZVtwbcY=
+        b=tGNdYjdmHBw8UzV86+1wULvXGyTPoP9AOwUz09KDBz9JxSjxJYkEb6SaQQeyQei7U
+         PuY30uy0wX+F4VVuLaq0fd1NiX84CxVJK3mepSoGzqZnCVPfvqK/M0ntuolTOJZjvT
+         4rsOTKeQk125Llj90MF3Ysx24votUu9s12YjCAlk=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -30,15 +30,15 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Kan Liang <kan.liang@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
         Jin Yao <yao.jin@linux.intel.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 03/23] perf metricgroup: Factor out metricgroup__add_metric_weak_group()
-Date:   Tue, 17 Mar 2020 18:32:39 -0300
-Message-Id: <20200317213259.15494-4-acme@kernel.org>
+Subject: [PATCH 04/23] perf util: Factor out sysctl__nmi_watchdog_enabled()
+Date:   Tue, 17 Mar 2020 18:32:40 -0300
+Message-Id: <20200317213259.15494-5-acme@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200317213259.15494-1-acme@kernel.org>
 References: <20200317213259.15494-1-acme@kernel.org>
@@ -51,10 +51,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-Factor out metricgroup__add_metric_weak_group() which add metrics into a
-weak group. The change can improve code readability. Because following
-patch will introduce a function which add standalone metrics.
+The NMI watchdog status is required for metric group constraint
+examination.  Factor out sysctl__nmi_watchdog_enabled() to retrieve the
+NMI watchdog status.
 
+Users may count more than one metric group each time. If so, the NMI
+watchdog status may be retrieved several times. To reduce the overhead,
+cache the NMI watchdog status.
+
+Replace the NMI watchdog status checking in print_footer() by
+sysctl__nmi_watchdog_enabled().
+
+Suggested-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Acked-by: Jiri Olsa <jolsa@redhat.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -63,99 +71,87 @@ Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Link: http://lore.kernel.org/lkml/1582581564-184429-3-git-send-email-kan.liang@linux.intel.com
+Link: http://lore.kernel.org/lkml/1582581564-184429-4-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/metricgroup.c | 57 ++++++++++++++++++++---------------
- 1 file changed, 33 insertions(+), 24 deletions(-)
+ tools/perf/util/stat-display.c |  6 ++----
+ tools/perf/util/util.c         | 18 ++++++++++++++++++
+ tools/perf/util/util.h         |  2 ++
+ 3 files changed, 22 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
-index 02aee946b6c1..1cd042cb262e 100644
---- a/tools/perf/util/metricgroup.c
-+++ b/tools/perf/util/metricgroup.c
-@@ -399,13 +399,42 @@ void metricgroup__print(bool metrics, bool metricgroups, char *filter,
- 	strlist__delete(metriclist);
+diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+index d89cb0da90f8..76c6052b12e2 100644
+--- a/tools/perf/util/stat-display.c
++++ b/tools/perf/util/stat-display.c
+@@ -16,6 +16,7 @@
+ #include <linux/ctype.h>
+ #include "cgroup.h"
+ #include <api/fs/fs.h>
++#include "util.h"
+ 
+ #define CNTR_NOT_SUPPORTED	"<not supported>"
+ #define CNTR_NOT_COUNTED	"<not counted>"
+@@ -1097,7 +1098,6 @@ static void print_footer(struct perf_stat_config *config)
+ {
+ 	double avg = avg_stats(config->walltime_nsecs_stats) / NSEC_PER_SEC;
+ 	FILE *output = config->output;
+-	int n;
+ 
+ 	if (!config->null_run)
+ 		fprintf(output, "\n");
+@@ -1131,9 +1131,7 @@ static void print_footer(struct perf_stat_config *config)
+ 	}
+ 	fprintf(output, "\n\n");
+ 
+-	if (config->print_free_counters_hint &&
+-	    sysctl__read_int("kernel/nmi_watchdog", &n) >= 0 &&
+-	    n > 0)
++	if (config->print_free_counters_hint && sysctl__nmi_watchdog_enabled())
+ 		fprintf(output,
+ "Some events weren't counted. Try disabling the NMI watchdog:\n"
+ "	echo 0 > /proc/sys/kernel/nmi_watchdog\n"
+diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+index 969ae560dad9..d707c9624dd9 100644
+--- a/tools/perf/util/util.c
++++ b/tools/perf/util/util.c
+@@ -55,6 +55,24 @@ int sysctl__max_stack(void)
+ 	return sysctl_perf_event_max_stack;
  }
  
-+static void metricgroup__add_metric_weak_group(struct strbuf *events,
-+					       const char **ids,
-+					       int idnum)
++bool sysctl__nmi_watchdog_enabled(void)
 +{
-+	bool no_group = false;
-+	int i;
++	static bool cached;
++	static bool nmi_watchdog;
++	int value;
 +
-+	for (i = 0; i < idnum; i++) {
-+		pr_debug("found event %s\n", ids[i]);
-+		/*
-+		 * Duration time maps to a software event and can make
-+		 * groups not count. Always use it outside a
-+		 * group.
-+		 */
-+		if (!strcmp(ids[i], "duration_time")) {
-+			if (i > 0)
-+				strbuf_addf(events, "}:W,");
-+			strbuf_addf(events, "duration_time");
-+			no_group = true;
-+			continue;
-+		}
-+		strbuf_addf(events, "%s%s",
-+			i == 0 || no_group ? "{" : ",",
-+			ids[i]);
-+		no_group = false;
-+	}
-+	if (!no_group)
-+		strbuf_addf(events, "}:W");
++	if (cached)
++		return nmi_watchdog;
++
++	if (sysctl__read_int("kernel/nmi_watchdog", &value) < 0)
++		return false;
++
++	nmi_watchdog = (value > 0) ? true : false;
++	cached = true;
++
++	return nmi_watchdog;
 +}
 +
- static int metricgroup__add_metric(const char *metric, struct strbuf *events,
- 				   struct list_head *group_list)
- {
- 	struct pmu_events_map *map = perf_pmu__find_map(NULL);
- 	struct pmu_event *pe;
--	int ret = -EINVAL;
--	int i, j;
-+	int i, ret = -EINVAL;
+ bool test_attr__enabled;
  
- 	if (!map)
- 		return 0;
-@@ -422,7 +451,6 @@ static int metricgroup__add_metric(const char *metric, struct strbuf *events,
- 			const char **ids;
- 			int idnum;
- 			struct egroup *eg;
--			bool no_group = false;
+ bool perf_host  = true;
+diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
+index 9969b8b46f7c..f486fdd3a538 100644
+--- a/tools/perf/util/util.h
++++ b/tools/perf/util/util.h
+@@ -29,6 +29,8 @@ size_t hex_width(u64 v);
  
- 			pr_debug("metric expr %s for %s\n", pe->metric_expr, pe->metric_name);
+ int sysctl__max_stack(void);
  
-@@ -431,27 +459,8 @@ static int metricgroup__add_metric(const char *metric, struct strbuf *events,
- 				continue;
- 			if (events->len > 0)
- 				strbuf_addf(events, ",");
--			for (j = 0; j < idnum; j++) {
--				pr_debug("found event %s\n", ids[j]);
--				/*
--				 * Duration time maps to a software event and can make
--				 * groups not count. Always use it outside a
--				 * group.
--				 */
--				if (!strcmp(ids[j], "duration_time")) {
--					if (j > 0)
--						strbuf_addf(events, "}:W,");
--					strbuf_addf(events, "duration_time");
--					no_group = true;
--					continue;
--				}
--				strbuf_addf(events, "%s%s",
--					j == 0 || no_group ? "{" : ",",
--					ids[j]);
--				no_group = false;
--			}
--			if (!no_group)
--				strbuf_addf(events, "}:W");
++bool sysctl__nmi_watchdog_enabled(void);
 +
-+			metricgroup__add_metric_weak_group(events, ids, idnum);
- 
- 			eg = malloc(sizeof(struct egroup));
- 			if (!eg) {
+ int fetch_kernel_version(unsigned int *puint,
+ 			 char *str, size_t str_sz);
+ #define KVER_VERSION(x)		(((x) >> 16) & 0xff)
 -- 
 2.21.1
 
