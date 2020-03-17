@@ -2,85 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 712511889B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 17:04:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BAC71889CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 17:07:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbgCQQDy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 12:03:54 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43660 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726019AbgCQQDx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 12:03:53 -0400
-Received: by mail-qt1-f195.google.com with SMTP id l13so17850247qtv.10;
-        Tue, 17 Mar 2020 09:03:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=1cq61pMKrXnE/8ZgHPZoRI5nasAc/Gz5oZHWr1Wic8E=;
-        b=sCqQM4hmv6145mTEPmet3o0Tv8fHUfT2SJ2jUgYxjyqHesDKwMrZMju/OqsGJ0KkUy
-         Zb8goI+G07BzcmChJSPGxgc0JO1adCIwbLtyLmrdlfP+y69SolfWTYipGyNYJWZngUgo
-         9/fFLBnjNH+njW6YDJY4ELS80/jIqjhJircFhujElwB6HiuMs/UJgZzrDyw90jrMNgyV
-         72LtRXZvRNBQLqAzZbwUBqPrxAI4hHj2pbSEzixtYzJfJF7ntJ3zDWg3GxEhDE5wOges
-         DMuWktybl8vpQKEWR25hXv2ITdLUyW2kck/j2ahjPVwdeWs9RM1Bu4bbe8v8HWhRBf5d
-         sxyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=1cq61pMKrXnE/8ZgHPZoRI5nasAc/Gz5oZHWr1Wic8E=;
-        b=g4wriJL2WGl97qBIJJ2UbFu5NpMo/Q9wfuMuRDyw6m0bxB2PwhnPHDQvX8PwKXcgSu
-         /nlDshhLdG8dXgJFL0xb/cTHsTJ5fkYUqIPtF0BgD2Rb4DcKs2vRnvzyOKDwM8fCx2OR
-         YhcBV5S2jgz7T87D3pxNoaHl1KYntNCaVkQywiO2bzayOcV03hd6kyCIXQIyuVjUDhgm
-         fAytFwz7/tBoDsOzqcJcx7zqac99Mxbo28Qz9NbX/SidZxEcIoixlfPWasmae9yBPXAa
-         hSODuYAOjUu7aJ6HtaZAOMHNQmS9mqV+lVozSyxdgJBhutXmWtMTlrL039FLvRyxSQYD
-         QihA==
-X-Gm-Message-State: ANhLgQ1qoOQVZyn86uSOztWxSopYQOISeRkC50oRSZW9qFSu73kLeHBH
-        KUmdYBmCPe0a9QRHhZzAzCA=
-X-Google-Smtp-Source: ADFU+vt7FKNB0A6TEbsFTVfek3+MsRk98Sx7N8uZNFeebxxE9XulpOQvjLTKwJGXOtQ+xV1zLn8qEQ==
-X-Received: by 2002:ac8:3671:: with SMTP id n46mr6298448qtb.33.1584461031859;
-        Tue, 17 Mar 2020 09:03:51 -0700 (PDT)
-Received: from ?IPv6:2620:cc:8000:1c83:c194:7ea1:d9a4:fef8? ([2620:cc:8000:1c83:c194:7ea1:d9a4:fef8])
-        by smtp.gmail.com with ESMTPSA id 31sm2418634qta.56.2020.03.17.09.03.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Mar 2020 09:03:51 -0700 (PDT)
-Date:   Tue, 17 Mar 2020 12:03:48 -0400
-User-Agent: K-9 Mail for Android
-In-Reply-To: <9ae33061-1595-4387-5767-79437b2ff2ae@lwfinger.net>
-References: <C9F34A4B-E3F3-4D7A-B870-058C8D4871B9@gmail.com> <9ae33061-1595-4387-5767-79437b2ff2ae@lwfinger.net>
+        id S1726730AbgCQQHT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 12:07:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35024 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726016AbgCQQHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 12:07:18 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99C0F20724;
+        Tue, 17 Mar 2020 16:07:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584461237;
+        bh=C3nxCVtOojJI1EE4i/01qvjqY8WR/WwWo9EvGceJqnI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=t/XMMiB9rQREmqVkw/QrW6v3HXkY9doFIrtVESl/NbmeLU7cdm8nwvzgvml0lTsbX
+         3WAV8yKh2nVv1w28jzMqwj65b7yXkSmc/474gx6Eq6Ak3QKNQWH9l2LfQxwXDuNSoX
+         d/0BWBoWrgITzbPO6hh2HTHUs9ASUSmAItXmRe4g=
+Message-ID: <61d6b91e9387969f5dfaba192aee366cc9b310f0.camel@kernel.org>
+Subject: Re: [locks] 6d390e4b5d: will-it-scale.per_process_ops -96.6%
+ regression
+From:   Jeff Layton <jlayton@kernel.org>
+To:     yangerkun <yangerkun@huawei.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     NeilBrown <neilb@suse.de>,
+        kernel test robot <rong.a.chen@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
+        Bruce Fields <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Date:   Tue, 17 Mar 2020 12:07:15 -0400
+In-Reply-To: <6df79609-90eb-2f59-7e86-3532ac309a7a@huawei.com>
+References: <20200308140314.GQ5972@shao2-debian>
+         <875zfbvrbm.fsf@notabene.neil.brown.name>
+         <CAHk-=wg8N4fDRC3M21QJokoU+TQrdnv7HqoaFW-Z-ZT8z_Bi7Q@mail.gmail.com>
+         <0066a9f150a55c13fcc750f6e657deae4ebdef97.camel@kernel.org>
+         <CAHk-=whUgeZGcs5YAfZa07BYKNDCNO=xr4wT6JLATJTpX0bjGg@mail.gmail.com>
+         <87v9nattul.fsf@notabene.neil.brown.name>
+         <CAHk-=wiNoAk8v3GrbK3=q6KRBrhLrTafTmWmAo6-up6Ce9fp6A@mail.gmail.com>
+         <87o8t2tc9s.fsf@notabene.neil.brown.name>
+         <CAHk-=wj5jOYxjZSUNu_jdJ0zafRS66wcD-4H0vpQS=a14rS8jw@mail.gmail.com>
+         <f000e352d9e103b3ade3506aac225920420d2323.camel@kernel.org>
+         <877dznu0pk.fsf@notabene.neil.brown.name>
+         <CAHk-=whYQqtW6B7oPmPr9-PXwyqUneF4sSFE+o3=7QcENstE-g@mail.gmail.com>
+         <b5a1bb4c4494a370f915af479bcdf8b3b351eb6d.camel@kernel.org>
+         <87pndcsxc6.fsf@notabene.neil.brown.name>
+         <ce48ed9e48eda3c0f27d2f417314bd00cb1a68db.camel@kernel.org>
+         <CAHk-=whnqDS0NJtAaArVeYQz3hcU=4Ja3auB1Jvs42eADfUgMQ@mail.gmail.com>
+         <7c8d3752-6573-ab83-d0af-f3dd4fc373f5@huawei.com>
+         <6df79609-90eb-2f59-7e86-3532ac309a7a@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: PROBLEM: 5.6.0-rc6 + Realtek RTL8188CUS wifi dongle: 8051 reset failed!
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Jes Sorensen <Jes.Sorensen@gmail.com>,
-        linux-wireless@vger.kernel.org
-CC:     kernel list <linux-kernel@vger.kernel.org>
-From:   AC <achirvasub@gmail.com>
-Message-ID: <0B600F12-BD49-446B-9B4B-F6E873FB91B0@gmail.com>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 2020-03-17 at 22:05 +0800, yangerkun wrote:
+> 
+> On 2020/3/17 9:41, yangerkun wrote:
+> > 
+> > On 2020/3/17 1:26, Linus Torvalds wrote:
+> > > On Mon, Mar 16, 2020 at 4:07 AM Jeff Layton <jlayton@kernel.org> wrote:
+> > > > 
+> > > > +       /*
+> > > > +        * If fl_blocker is NULL, it won't be set again as this 
+> > > > thread "owns"
+> > > > +        * the lock and is the only one that might try to claim the 
+> > > > lock.
+> > > > +        * Because fl_blocker is explicitly set last during a delete, 
+> > > > it's
+> > > > +        * safe to locklessly test to see if it's NULL. If it is, 
+> > > > then we know
+> > > > +        * that no new locks can be inserted into its 
+> > > > fl_blocked_requests list,
+> > > > +        * and we can therefore avoid doing anything further as long 
+> > > > as that
+> > > > +        * list is empty.
+> > > > +        */
+> > > > +       if (!smp_load_acquire(&waiter->fl_blocker) &&
+> > > > +           list_empty(&waiter->fl_blocked_requests))
+> > > > +               return status;
+> > > 
+> > > Ack. This looks sane to me now.
+> > > 
+> > > yangerkun - how did you find the original problem?\
+> > 
+> > While try to fix CVE-2019-19769, add some log in __locks_wake_up_blocks 
+> > help me to rebuild the problem soon. This help me to discern the problem 
+> > soon.
+> > 
+> > > Would you mind using whatever stress test that caused commit
+> > > 6d390e4b5d48 ("locks: fix a potential use-after-free problem when
+> > > wakeup a waiter") with this patch? And if you did it analytically,
+> > > you're a champ and should look at this patch too!
+> > 
+> > I will try to understand this patch, and if it's looks good to me, will 
+> > do the performance test!
+> 
+> This patch looks good to me, with this patch, the bug '6d390e4b5d48 
+> ("locks: fix a potential use-after-free problem when wakeup a waiter")' 
+> describes won't happen again. Actually, I find that syzkaller has report 
+> this bug before[1], and the log of it can help us to reproduce it with 
+> some latency in __locks_wake_up_blocks!
+> 
+> Also, some ltp testcases describes in [2] pass too with the patch!
+> 
+> For performance test, I have try to understand will-it-scale/lkp, but it 
+> seem a little complex to me, and may need some more time. So, Rong Chen, 
+> can you help to do this? Or the results may come a little later...
+> 
+> Thanks,
+> ----
+> [1] https://syzkaller.appspot.com/bug?extid=922689db06e57b69c240
+> [2] https://lkml.org/lkml/2020/3/11/578
 
+Thanks yangerkun. Let me know if you want to add your Reviewed-by tag.
 
-On March 17, 2020 10:52:14 AM EDT, Larry Finger <Larry=2EFinger@lwfinger=
-=2Enet> wrote:
->
->Please bisect this problem=2E No one else has reported it, thus it may
->depend on=20
->some specific configuration of your system=2E
->
-
-I will try=2E
-
->Was 5=2E6=2E0-rc5 OK?
->
-
-rc5 showed the same dmesg noise=2E
+Cheers,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
