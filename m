@@ -2,72 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CA9D188534
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 14:20:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6C8D188543
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 14:21:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbgCQNUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 09:20:33 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42864 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbgCQNUd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 09:20:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XvzyhaFk/wu7skK/5j6uwYlT+ZJkYaLS7Iej2CpX2yI=; b=QW2VmaGzcPNbAM0cpTRfclXlIy
-        dOyw2GWUIcqv9bO9vI+4WYLEeyBx0PY04xYG+ZM6PmYLvMPWOIhPPcqp2kqFUT5JssJxyZ5id7qgn
-        EYdU43apJV2k/VVcfrVd4Drha7iaa0Q1/Ig9V51k0XqeXgBx9lH8mgYkOgR8DQfPikCgKLT2UDluT
-        uCAm47h316v3IXPEQ33SkyWLSbKeR68GYo3fJG7Ng3cmwqSIAKGS5TAUMza4aMWHF9G2wvSTySgso
-        Pdnt/J5kJIpFdJE681LWl67wzH4aSzCsTOX1pgB0X9R6sh+tLQqUfkkAN1l8uKyGQHcg3Nk/5OM9W
-        Q+CZKxYw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jEC91-00080e-P0; Tue, 17 Mar 2020 13:20:31 +0000
-Date:   Tue, 17 Mar 2020 06:20:31 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jordan Crouse <jcrouse@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org, smasetty@codeaurora.org,
-        John Stultz <john.stultz@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        freedreno@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v5 2/2] drm/msm/a6xx: Use the DMA API for GMU memory
- objects
-Message-ID: <20200317132031.GA8125@infradead.org>
-References: <1583767066-1555-1-git-send-email-jcrouse@codeaurora.org>
- <1583767066-1555-3-git-send-email-jcrouse@codeaurora.org>
+        id S1726890AbgCQNU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 09:20:59 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:40338 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726294AbgCQNU6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 09:20:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=TgAp2FI4doAOZmYxMD6M7NUX/sE5KInty0tF41tWBFc=; b=rx6J7eu2vDVcl6mpk5/WjBgCFF
+        9I3hCCnlpL5J1BG2aQhTbJeEpUjZBQtmlW2Ta7AYH39lRUwZ5RIoT+H2ryMlUolbsC6Uyx5Sod99u
+        PnInsBU1s2KVThRuGW3Gl7A7YSQiL8oVmSD35W33SqUFy30uti15whJaSKzJODAOsO1o=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1jEC92-0006Pa-Lc; Tue, 17 Mar 2020 14:20:32 +0100
+Date:   Tue, 17 Mar 2020 14:20:32 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 02/28] ARM: dts: dove: Fix interrupt controller node name
+Message-ID: <20200317132032.GC24270@lunn.ch>
+References: <20200317093922.20785-1-lkundrak@v3.sk>
+ <20200317093922.20785-3-lkundrak@v3.sk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1583767066-1555-3-git-send-email-jcrouse@codeaurora.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200317093922.20785-3-lkundrak@v3.sk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> @@ -942,7 +932,6 @@ static struct a6xx_gmu_bo *a6xx_gmu_memory_alloc(struct a6xx_gmu *gmu,
->  		size_t size)
->  {
->  	struct a6xx_gmu_bo *bo;
-> -	int ret, count, i;
->  
->  	bo = kzalloc(sizeof(*bo), GFP_KERNEL);
->  	if (!bo)
-> @@ -950,86 +939,14 @@ static struct a6xx_gmu_bo *a6xx_gmu_memory_alloc(struct a6xx_gmu *gmu,
->  
->  	bo->size = PAGE_ALIGN(size);
->  
-> -	count = bo->size >> PAGE_SHIFT;
-> +	bo->virt = dma_alloc_wc(gmu->dev, bo->size, &bo->iova, GFP_KERNEL);
+On Tue, Mar 17, 2020 at 10:38:56AM +0100, Lubomir Rintel wrote:
+> The current ones makes validation unhappy:
+> 
+>   dove-d3plug.dt.yaml: main-interrupt-ctrl@20200: $nodename:0:
+>       'main-interrupt-ctrl@20200' does not match
+>       '^interrupt-controller(@[0-9a-f,]+)*$'
+> 
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-No really new in this patch, but why do you need the a6xx_gmu_bo,
-and even more so, why does it need to be allocated dynamically?
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Also please check for errors when setting the dma mask
+    Andrew
