@@ -2,104 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33D96187729
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 01:56:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F716187732
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 01:58:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733271AbgCQA4d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 20:56:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56386 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733119AbgCQA4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 20:56:33 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A7A120679;
-        Tue, 17 Mar 2020 00:56:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584406592;
-        bh=iMkAmgNXieAuOOkhf4wwje4T8Wth45+DAToJLEuzCUs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fKjYTXlV/1dxFeHGm6qtdbW/F2boTLOVlEJj9Aci5wK4DWLWT+QOJXvEPQ3YGPox5
-         rC3/f2KDJ0BUh+mKn19GmqBZl7Iq0gviINKq+7MKGNIEQpDrPgYxiMacAUBbhGVYtS
-         /lUNyw5XPf6Npm7amT58XVIE+/f9rYzyxVh1Hadk=
-Date:   Tue, 17 Mar 2020 09:56:28 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     tglx@linutronix.de, jpoimboe@redhat.com,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [RFC][PATCH 00/16] objtool: vmlinux.o and noinstr validation
-Message-Id: <20200317095628.4f3690afe24e059a146a4b6f@kernel.org>
-In-Reply-To: <20200312162337.GU12561@hirez.programming.kicks-ass.net>
-References: <20200312134107.700205216@infradead.org>
-        <20200312162337.GU12561@hirez.programming.kicks-ass.net>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1733305AbgCQA6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 20:58:20 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:63909 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733274AbgCQA6T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Mar 2020 20:58:19 -0400
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id 02H0wA3G018076
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 09:58:11 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 02H0wA3G018076
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1584406691;
+        bh=+VzaV5sFRtxKAoH7rppPTz7vYTx/ptvPFYNX1JZhr8I=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GiCnmEy7O3U4VXa+yfMjIQmZAPzU4/Ct1ZwiT6pnC+/5xY3EEiJ80n63iZBpCIYPp
+         +L/hDvKxtVjfs3I6C6tuEEl0j9kWZuF7L6sqzO9A9YWhYw4aK3C6w6TWMzSY0noU/s
+         Y00VJjswqHfczNpIyce/5eQ8ryhBk1+bl1B+WdFlm20ZlT65KEW8WEUfoPHlMEzP9W
+         Hk0wfP714TUEi+SziukauXYljnwJBW5n/nt8EB2hVuQIxDUwqKkysXyNUm4/ylLN+q
+         jWExfKOYHXwzZaI2MDns3toWx/a/EpdXxk9F7mPbgB4LafM3nJrbDckREk9kKMV7Cf
+         2AKV0kFsSokNA==
+X-Nifty-SrcIP: [209.85.222.54]
+Received: by mail-ua1-f54.google.com with SMTP id 9so6852935uav.12
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Mar 2020 17:58:11 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ0tG7Sol8QnWHXQVFThAKL6TeLZK3zkYeg5eQFbUN0+ma5m9a7H
+        KBX6zLRhg5uXbn5ONDcZFC1/n3u4ovk3UvLfrvI=
+X-Google-Smtp-Source: ADFU+vuBMyABnImUl6b7dOsBe/MmCPk6aP5Z95Lob+zvXfebQ+cT0BPcRz9rBKi3g9swgrYAnym5uBEh+XpBuHhH+wc=
+X-Received: by 2002:ab0:28d8:: with SMTP id g24mr1921244uaq.121.1584406689827;
+ Mon, 16 Mar 2020 17:58:09 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200311102217.25170-1-Eugeniy.Paltsev@synopsys.com>
+ <CAK7LNARSNBOMK9+s9pmVsVtnzr2qqFxHNr+GhJd_BnbgNW4SSQ@mail.gmail.com> <BY5PR12MB4034829B9DC8EC77C5164439DEF90@BY5PR12MB4034.namprd12.prod.outlook.com>
+In-Reply-To: <BY5PR12MB4034829B9DC8EC77C5164439DEF90@BY5PR12MB4034.namprd12.prod.outlook.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Tue, 17 Mar 2020 09:57:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATj_p0PaTiuY2q3+AA-Hf87bG2YFoqfxCAfaXWqhRZA+w@mail.gmail.com>
+Message-ID: <CAK7LNATj_p0PaTiuY2q3+AA-Hf87bG2YFoqfxCAfaXWqhRZA+w@mail.gmail.com>
+Subject: Re: [PATCH] initramfs: restore default compression behaviour
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Mar 2020 17:23:37 +0100
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Mon, Mar 16, 2020 at 8:22 PM Eugeniy Paltsev
+<Eugeniy.Paltsev@synopsys.com> wrote:
+>
+> Hi Masahiro,
+>
+> >From: Masahiro Yamada <masahiroy@kernel.org>
+> >Sent: Wednesday, March 11, 2020 23:12
+> >To: Eugeniy Paltsev
+> >Cc: Linux Kernel Mailing List; arcml; Vineet Gupta; Alexey Brodkin
+> >Subject: Re: [PATCH] initramfs: restore default compression behaviour
+> >
+> >Hi Eugeniy.
+> >
+> >On Wed, Mar 11, 2020 at 7:22 PM Eugeniy Paltsev
+> ><Eugeniy.Paltsev@synopsys.com> wrote:
+> >>
+> >> Even though INITRAMFS_SOURCE kconfig option isn't set in most of
+> >> defconfigs it is used (set) extensively by various build systems.
+> >> Commit f26661e12765 ("initramfs: make initramfs compression choice
+> >> non-optional") has changed default compression mode. Previously we
+> >> compress initramfs using available compression algorithm. Now
+> >> we don't use any compression at all by default.
+> >> It significantly increases the image size in case of build system
+> >> chooses embedded initramfs. Initially I faced with this issue while
+> >> using buildroot.
+> >>
+> >> As of today it's not possible to set preferred compression mode
+> >> in target defconfig as this option depends on INITRAMFS_SOURCE
+> >> being set.
+> >> Modification of build systems doesn't look like good option in this
+> >> case as it requires to check against kernel version when setting
+> >> compression mode. The reason for this is that kconfig options
+> >> describing compression mode was renamed (in same patch series)
+> >
+> >Which commit?
+> >
+> >I do not remember the renaming of kconfig options
+> >with this regard.
+>
+> Ok, I've checked it again - looks like I was confused a bit by
+> "CONFIG_INITRAMFS_COMPRESSION" option
+> as in v5.5 kernel I have in ".config":
+> CONFIG_INITRAMFS_COMPRESSION=".gz"
+>
+> And for v5.6-rc1 I have in ".config":
+> CONFIG_INITRAMFS_COMPRESSION_GZIP=y
+>
+> But they are different options actually...
 
-> On Thu, Mar 12, 2020 at 02:41:07PM +0100, Peter Zijlstra wrote:
-> > Hi all,
-> > 
-> > These patches extend objtool to be able to run on vmlinux.o and validate
-> > Thomas's proposed noinstr annotation:
-> > 
-> >   https://lkml.kernel.org/r/20200310170951.87c29e9c1cfbddd93ccd92b3@kernel.org
-> > 
-> >  "That's why we want the sections and the annotation. If something calls
-> >   out of a noinstr section into a regular text section and the call is not
-> >   annotated at the call site, then objtool can complain and tell you. What
-> >   Peter and I came up with looks like this:
-> > 
-> >   noinstr foo()
-> > 	do_protected(); <- Safe because in the noinstr section
-> > 	instr_begin();  <- Marks the begin of a safe region, ignored
-> > 			   by objtool
-> > 	do_stuff();     <- All good
-> > 	instr_end();    <- End of the safe region. objtool starts
-> > 			   looking again
-> > 	do_other_stuff();  <- Unsafe because do_other_stuff() is
-> > 			      not protected
-> > 
-> >   and:
-> > 
-> >   noinstr do_protected()
-> > 	bar();          <- objtool will complain here
-> >   "
-> > 
-> > It should be accompanied by something like the below; which you'll find in a
-> > series by Thomas.
-> > 
-> 
-> So one of the problem i've ran into while playing with this and Thomas'
-> patches is that it is 'difficult' to deal with indirect function calls.
-> 
-> objtool basically gives up instantly.
 
-Can we introduce a "safe-call" wrapper function instead of indirect
-call, and if objtool found an indirect call without safe-call function,
-it can make it an error?
+Right.
 
-static int __noinstr safe_indirect_callback(int (*fn)(...), real-args)
-{
-	if (!is_instr_text(fn))
-		return -ERANGE;
-	return fn(real-args)
-}
+There is no prompt for CONFIG_INITRAMFS_COMPRESSION.
+So, users have no control of it.
 
-BTW, out of curiously, if BUG*() or WARN*() cases happens in the noinstr
-section, do we also need to move them (register dump, stack unwinding,
-printk, console output, etc.) all into noinstr section?
+Because this is just a matter of the file extension,
+commit 65e00e04e5aea34 moved the logic to Makefile.
 
-Thank you,
+
+
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Best Regards
+Masahiro Yamada
