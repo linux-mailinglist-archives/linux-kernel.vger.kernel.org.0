@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 846FF187B5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:34:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 617E2187B55
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:32:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726410AbgCQIeE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 04:34:04 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:44932 "EHLO
+        id S1726334AbgCQIcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 04:32:52 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:45275 "EHLO
         us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725995AbgCQIeE (ORCPT
+        by vger.kernel.org with ESMTP id S1726082AbgCQIcw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 04:34:04 -0400
+        Tue, 17 Mar 2020 04:32:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584434042;
+        s=mimecast20190719; t=1584433971;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7PSv8VeOYJuoOz6tIXCbXt0QkRfe/tTdz8LKpb1tyPY=;
-        b=NDfdJkOlKHkVBYenoCUCehQHsqo/1kI25VPI17YGzA4KV0o/ch43WQI0eXBVJe2GGHjoFu
-        ZgR5OGNiXnMlHHFd3IcK2IT7ny5XmunwkCBqER+X2AYhZzlzNviku9gy+pMDZ9g0gBsdTX
-        1xaZkbpxgh9PLhvBIH0cYu84F916WIc=
+        bh=B30EhhKM5AsSI9qMebkF/7kWnysbBmtvN7O1KfNWzpI=;
+        b=X/btNyd4GgxB79jgQs81VHBL/LEqRLnuBEGfXrUuxTL3tKJ2eufPdA/xtljVTQR1ku3T3+
+        1ELKzeSF2fJ1LCpJeYWy84SpUIicIWAqvGk3nNLUzPH8IG8R+yTCFZLQJNC6BmlmLqdqPS
+        wff3ZjD3upS+UVMjhOjfyF7L4qI2Agk=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-175-eMGhW-TZP5WTbc6WXXwR9A-1; Tue, 17 Mar 2020 04:32:38 -0400
-X-MC-Unique: eMGhW-TZP5WTbc6WXXwR9A-1
+ us-mta-296-1oI6Dtg6N9-SsQIhHNpniQ-1; Tue, 17 Mar 2020 04:32:46 -0400
+X-MC-Unique: 1oI6Dtg6N9-SsQIhHNpniQ-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BABD48010C7;
-        Tue, 17 Mar 2020 08:32:35 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EE58C1B2C981;
+        Tue, 17 Mar 2020 08:32:44 +0000 (UTC)
 Received: from dcbz.redhat.com (ovpn-112-179.ams2.redhat.com [10.36.112.179])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2B49260BF3;
-        Tue, 17 Mar 2020 08:32:33 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BCF4C60BF3;
+        Tue, 17 Mar 2020 08:32:39 +0000 (UTC)
 From:   Adrian Reber <areber@redhat.com>
 To:     Christian Brauner <christian.brauner@ubuntu.com>,
         Eric Biederman <ebiederm@xmission.com>,
@@ -48,9 +48,9 @@ Cc:     linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
         Arnd Bergmann <arnd@arndb.de>,
         Cyrill Gorcunov <gorcunov@openvz.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 1/4] ns: prepare time namespace for clone3()
-Date:   Tue, 17 Mar 2020 09:30:41 +0100
-Message-Id: <20200317083043.226593-2-areber@redhat.com>
+Subject: [PATCH 2/4] clone3: allow creation of time namespace with offset
+Date:   Tue, 17 Mar 2020 09:30:42 +0100
+Message-Id: <20200317083043.226593-3-areber@redhat.com>
 In-Reply-To: <20200317083043.226593-1-areber@redhat.com>
 References: <20200317083043.226593-1-areber@redhat.com>
 MIME-Version: 1.0
@@ -61,244 +61,370 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To enable clone3()ing a process directly into a new time namespace with
-a clock offset, this changes the time namespace code by renaming the
-variable proc_timens_offset (which was used to set a timens offset via
-/proc) to set_timens_offset to avoid confusion why it will be used in
-clone3() without being related to /proc.
+This extends clone3() to support the time namespace via CLONE_NEWTIME.
+In addition to creating a new process in a new time namespace this
+allows setting the clock offset in the newly created time namspace.
 
-This also moves out the code of actually setting the clock offsets to
-its own function to be later used via clone3().
+The time namespace allows to set an offset for two clocks.
+CLOCK_MONOTONIC and CLOCK_BOOTTIME.
+
+This clone3() extension also offers setting both offsets through the
+newly introduced clone_args members timens_offset and
+timens_offset_size.
+
+timens_offset:      Pointer to an array of clock offsets for the
+                    newly created process in a time namespaces.
+                    This requires that a new time namespace has been
+                    requested via CLONE_NEWTIME. It is only possible
+                    to set an offset for CLOCK_MONOTONIC and
+                    CLOCK_BOOTTIME. The array can therefore never
+                    have more than two elements.
+                    clone3() expects the array to contain the
+                    following struct:
+                    struct set_timens_offset {
+                            int clockid;
+                            struct timespec val;
+                    };
+
+timens_offset_size: This defines the size of the array referenced
+                    in timens_offset. Currently this is limited
+                    to two elements.
+
+To create a new process using clone3() in a new time namespace with
+clock offsets, something like this can be used:
+
+  struct set_timens_offset timens_offset[2];
+
+  timens_offset[0].clockid =3D CLOCK_BOOTTIME;
+  timens_offset[0].val.tv_sec =3D -1000;
+  timens_offset[0].val.tv_nsec =3D 42;
+  timens_offset[1].clockid =3D CLOCK_MONOTONIC;
+  timens_offset[1].val.tv_sec =3D 1000000;
+  timens_offset[1].val.tv_nsec =3D 37;
+
+  struct _clone_args args =3D {
+    .flags =3D CLONE_NEWTIME,
+    .timens_offset =3D ptr_to_u64(timens_offset),
+    .timens_offset_size =3D 2;
+  };
+
+Although the command-line tool unshare only supports setting the offset
+in seconds and not nanoseconds, it is possible to set nanoseconds using
+the /proc interface of the time namespace. Therefore (and for CRIU) it
+probably makes sense to offer nanoseconds also via clone3().
+
+The main motivation for the clone3() integration is to enable CRIU to
+restore time namespaces. Not sure how useful the restoration of the
+nanosecond value for CRIU is, as during the time the process is paused
+by CRIU the clock will continue to run, so that the nanosecond value
+will not be the same as when the process has been paused. Between
+pausing the process and reading all time namespace information for all
+paused process the nanosecond value will change, so that CRIU will never
+be able to restore a process with exactly the same nanosecond value the
+process had when it was paused. It will make sure, however, that the
+nanosecond value will not jump back. So maybe it is useful for CRIU in
+the end.
 
 Signed-off-by: Adrian Reber <areber@redhat.com>
 ---
- fs/proc/base.c                 |   4 +-
- include/linux/time_namespace.h |  16 +++--
- kernel/time/namespace.c        | 126 +++++++++++++++++----------------
- 3 files changed, 78 insertions(+), 68 deletions(-)
+ include/linux/nsproxy.h          |  4 +++-
+ include/linux/sched/task.h       |  3 +++
+ include/linux/time_namespace.h   |  7 +++++--
+ include/uapi/linux/sched.h       | 19 +++++++++++++++++
+ kernel/fork.c                    | 35 ++++++++++++++++++++++++++++++--
+ kernel/nsproxy.c                 |  5 +++--
+ kernel/time/namespace.c          | 11 +++++++++-
+ tools/include/uapi/linux/sched.h |  1 +
+ 8 files changed, 77 insertions(+), 8 deletions(-)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index c7c64272b0fa..2ca68f11ff0e 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1554,7 +1554,7 @@ static ssize_t timens_offsets_write(struct file *fi=
-le, const char __user *buf,
- 				    size_t count, loff_t *ppos)
- {
- 	struct inode *inode =3D file_inode(file);
--	struct proc_timens_offset offsets[2];
-+	struct set_timens_offset offsets[2];
- 	char *kbuf =3D NULL, *pos, *next_line;
- 	struct task_struct *p;
- 	int ret, noffsets;
-@@ -1572,7 +1572,7 @@ static ssize_t timens_offsets_write(struct file *fi=
-le, const char __user *buf,
- 	ret =3D -EINVAL;
- 	noffsets =3D 0;
- 	for (pos =3D kbuf; pos; pos =3D next_line) {
--		struct proc_timens_offset *off =3D &offsets[noffsets];
-+		struct set_timens_offset *off =3D &offsets[noffsets];
- 		int err;
+diff --git a/include/linux/nsproxy.h b/include/linux/nsproxy.h
+index 074f395b9ad2..3c032bf7758a 100644
+--- a/include/linux/nsproxy.h
++++ b/include/linux/nsproxy.h
+@@ -11,6 +11,7 @@ struct ipc_namespace;
+ struct pid_namespace;
+ struct cgroup_namespace;
+ struct fs_struct;
++struct set_timens_offset;
 =20
- 		/* Find the end of line and ensure we don't look past it */
+ /*
+  * A structure to contain pointers to all per-process
+@@ -67,7 +68,8 @@ extern struct nsproxy init_nsproxy;
+  *
+  */
+=20
+-int copy_namespaces(unsigned long flags, struct task_struct *tsk);
++int copy_namespaces(unsigned long flags, struct task_struct *tsk,
++	struct set_timens_offset *offsets, int noffsets);
+ void exit_task_namespaces(struct task_struct *tsk);
+ void switch_task_namespaces(struct task_struct *tsk, struct nsproxy *new=
+);
+ void free_nsproxy(struct nsproxy *ns);
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index f1879884238e..45c0e83d52ec 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -9,6 +9,7 @@
+=20
+ #include <linux/sched.h>
+ #include <linux/uaccess.h>
++#include <linux/time.h>
+=20
+ struct task_struct;
+ struct rusage;
+@@ -29,6 +30,8 @@ struct kernel_clone_args {
+ 	pid_t *set_tid;
+ 	/* Number of elements in *set_tid */
+ 	size_t set_tid_size;
++	struct set_timens_offset *timens_offset;
++	size_t timens_offset_size;
+ };
+=20
+ /*
 diff --git a/include/linux/time_namespace.h b/include/linux/time_namespac=
 e.h
-index 824d54e057eb..fb4ca4402a2a 100644
+index fb4ca4402a2a..9261ca1070c9 100644
 --- a/include/linux/time_namespace.h
 +++ b/include/linux/time_namespace.h
-@@ -30,6 +30,15 @@ struct time_namespace {
+@@ -53,7 +53,8 @@ struct time_namespace *copy_time_ns(unsigned long flags=
+,
+ 				    struct user_namespace *user_ns,
+ 				    struct time_namespace *old_ns);
+ void free_time_ns(struct kref *kref);
+-int timens_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk);
++int timens_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk,
++		   struct set_timens_offset *offsets, int noffsets);
+ struct vdso_data *arch_get_vdso_data(void *vvar_page);
 =20
- extern struct time_namespace init_time_ns;
+ static inline void put_time_ns(struct time_namespace *ns)
+@@ -121,7 +122,9 @@ struct time_namespace *copy_time_ns(unsigned long fla=
+gs,
+ }
 =20
-+/*
-+ * This structure is used to set the time namespace offset
-+ * via /proc as well as via clone3().
-+ */
-+struct set_timens_offset {
-+	int			clockid;
-+	struct timespec64	val;
-+};
-+
- #ifdef CONFIG_TIME_NS
- extern int vdso_join_timens(struct task_struct *task,
- 			    struct time_namespace *ns);
-@@ -54,13 +63,8 @@ static inline void put_time_ns(struct time_namespace *=
-ns)
-=20
- void proc_timens_show_offsets(struct task_struct *p, struct seq_file *m)=
-;
-=20
--struct proc_timens_offset {
--	int			clockid;
--	struct timespec64	val;
--};
--
- int proc_timens_set_offset(struct file *file, struct task_struct *p,
--			   struct proc_timens_offset *offsets, int n);
-+			   struct set_timens_offset *offsets, int n);
-=20
- static inline void timens_add_monotonic(struct timespec64 *ts)
+ static inline int timens_on_fork(struct nsproxy *nsproxy,
+-				 struct task_struct *tsk)
++				 struct task_struct *tsk,
++				 struct set_timens_offset *offsets,
++				 int noffsets)
  {
-diff --git a/kernel/time/namespace.c b/kernel/time/namespace.c
-index 12858507d75a..839efa7c6886 100644
---- a/kernel/time/namespace.c
-+++ b/kernel/time/namespace.c
-@@ -307,6 +307,69 @@ static int timens_install(struct nsproxy *nsproxy, s=
-truct ns_common *new)
  	return 0;
  }
+diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
+index 2e3bc22c6f20..c9b36ef647cc 100644
+--- a/include/uapi/linux/sched.h
++++ b/include/uapi/linux/sched.h
+@@ -81,6 +81,22 @@
+  * @set_tid_size: This defines the size of the array referenced
+  *                in @set_tid. This cannot be larger than the
+  *                kernel's limit of nested PID namespaces.
++ * @timens_offset:      Pointer to an array of clock offsets for the
++ *                      newly created process in a time namespaces.
++ *                      This requires that a new time namespace has been
++ *                      requested via CLONE_NEWTIME. It is only possible
++ *                      to set an offset for CLOCK_MONOTONIC and
++ *                      CLOCK_BOOTTIME. The array can therefore never
++ *                      have more than two elements.
++ *                      clone3() expects the array to contain the
++ *                      following struct:
++ *                      struct set_timens_offset {
++ *                              int clockid;
++ *                              struct timespec val;
++ *                      };
++ * @timens_offset_size: This defines the size of the array referenced
++ *                      in @timens_offset. Currently this is limited
++ *                      to two elements.
+  *
+  * The structure is versioned by size and thus extensible.
+  * New struct members must go at the end of the struct and
+@@ -97,11 +113,14 @@ struct clone_args {
+ 	__aligned_u64 tls;
+ 	__aligned_u64 set_tid;
+ 	__aligned_u64 set_tid_size;
++	__aligned_u64 timens_offset;
++	__aligned_u64 timens_offset_size;
+ };
+ #endif
 =20
-+static int timens_set_offset(struct task_struct *p, struct time_namespac=
-e *ns,
+ #define CLONE_ARGS_SIZE_VER0 64 /* sizeof first published struct */
+ #define CLONE_ARGS_SIZE_VER1 80 /* sizeof second published struct */
++#define CLONE_ARGS_SIZE_VER2 96 /* sizeof third published struct */
+=20
+ /*
+  * Scheduling policies
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 60a1295f4384..f80aca79d263 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -94,6 +94,7 @@
+ #include <linux/thread_info.h>
+ #include <linux/stackleak.h>
+ #include <linux/kasan.h>
++#include <linux/time_namespace.h>
+=20
+ #include <asm/pgtable.h>
+ #include <asm/pgalloc.h>
+@@ -2081,7 +2082,8 @@ static __latent_entropy struct task_struct *copy_pr=
+ocess(
+ 	retval =3D copy_mm(clone_flags, p);
+ 	if (retval)
+ 		goto bad_fork_cleanup_signal;
+-	retval =3D copy_namespaces(clone_flags, p);
++	retval =3D copy_namespaces(clone_flags, p, args->timens_offset,
++			args->timens_offset_size);
+ 	if (retval)
+ 		goto bad_fork_cleanup_mm;
+ 	retval =3D copy_io(clone_flags, p);
+@@ -2604,6 +2606,7 @@ noinline static int copy_clone_args_from_user(struc=
+t kernel_clone_args *kargs,
+ 	int err;
+ 	struct clone_args args;
+ 	pid_t *kset_tid =3D kargs->set_tid;
++	struct set_timens_offset *ktimens_offset =3D kargs->timens_offset;
+=20
+ 	if (unlikely(usize > PAGE_SIZE))
+ 		return -E2BIG;
+@@ -2623,6 +2626,23 @@ noinline static int copy_clone_args_from_user(stru=
+ct kernel_clone_args *kargs,
+ 	if (unlikely(args.set_tid && args.set_tid_size =3D=3D 0))
+ 		return -EINVAL;
+=20
++	/*
++	 * Currently the time namespace supports setting two clocks:
++	 * CLOCK_MONOTONIC and CLOCK_BOOTTIME
++	 */
++	if (unlikely(args.timens_offset_size > 2))
++		return -EINVAL;
++
++	if (unlikely(!args.timens_offset && args.timens_offset_size > 0))
++		return -EINVAL;
++
++	if (unlikely(args.timens_offset && args.timens_offset_size =3D=3D 0))
++		return -EINVAL;
++
++	if (unlikely((args.timens_offset && args.timens_offset_size)
++				&& !(args.flags & CLONE_NEWTIME)))
++		return -EINVAL;
++
+ 	/*
+ 	 * Verify that higher 32bits of exit_signal are unset and that
+ 	 * it is a valid signal
+@@ -2641,6 +2661,7 @@ noinline static int copy_clone_args_from_user(struc=
+t kernel_clone_args *kargs,
+ 		.stack_size	=3D args.stack_size,
+ 		.tls		=3D args.tls,
+ 		.set_tid_size	=3D args.set_tid_size,
++		.timens_offset_size =3D args.timens_offset_size,
+ 	};
+=20
+ 	if (args.set_tid &&
+@@ -2648,7 +2669,15 @@ noinline static int copy_clone_args_from_user(stru=
+ct kernel_clone_args *kargs,
+ 			(kargs->set_tid_size * sizeof(pid_t))))
+ 		return -EFAULT;
+=20
++	if (args.timens_offset &&
++		copy_from_user(ktimens_offset,
++			u64_to_user_ptr(args.timens_offset),
++			(kargs->timens_offset_size *
++			 sizeof(struct set_timens_offset))))
++		return -EFAULT;
++
+ 	kargs->set_tid =3D kset_tid;
++	kargs->timens_offset =3D ktimens_offset;
+=20
+ 	return 0;
+ }
+@@ -2691,7 +2720,7 @@ static bool clone3_args_valid(struct kernel_clone_a=
+rgs *kargs)
+ 	 * - make the CLONE_DETACHED bit reuseable for clone3
+ 	 * - make the CSIGNAL bits reuseable for clone3
+ 	 */
+-	if (kargs->flags & (CLONE_DETACHED | CSIGNAL))
++	if (kargs->flags & ((CLONE_DETACHED | CSIGNAL) & ~CLONE_NEWTIME))
+ 		return false;
+=20
+ 	if ((kargs->flags & (CLONE_SIGHAND | CLONE_CLEAR_SIGHAND)) =3D=3D
+@@ -2725,8 +2754,10 @@ SYSCALL_DEFINE2(clone3, struct clone_args __user *=
+, uargs, size_t, size)
+=20
+ 	struct kernel_clone_args kargs;
+ 	pid_t set_tid[MAX_PID_NS_LEVEL];
++	struct set_timens_offset timens_offset[2];
+=20
+ 	kargs.set_tid =3D set_tid;
++	kargs.timens_offset =3D timens_offset;
+=20
+ 	err =3D copy_clone_args_from_user(&kargs, uargs, size);
+ 	if (err)
+diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+index ed9882108cd2..0f041ae3313a 100644
+--- a/kernel/nsproxy.c
++++ b/kernel/nsproxy.c
+@@ -146,7 +146,8 @@ static struct nsproxy *create_new_namespaces(unsigned=
+ long flags,
+  * called from clone.  This now handles copy for nsproxy and all
+  * namespaces therein.
+  */
+-int copy_namespaces(unsigned long flags, struct task_struct *tsk)
++int copy_namespaces(unsigned long flags, struct task_struct *tsk,
 +		struct set_timens_offset *offsets, int noffsets)
-+{
-+	struct timespec64 tp;
-+	int i, err;
-+
-+	for (i =3D 0; i < noffsets; i++) {
-+		struct set_timens_offset *off =3D &offsets[i];
-+
-+		switch (off->clockid) {
-+		case CLOCK_MONOTONIC:
-+			ktime_get_ts64(&tp);
-+			break;
-+		case CLOCK_BOOTTIME:
-+			ktime_get_boottime_ts64(&tp);
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+
-+		if (off->val.tv_sec > KTIME_SEC_MAX ||
-+		    off->val.tv_sec < -KTIME_SEC_MAX)
-+			return -ERANGE;
-+
-+		tp =3D timespec64_add(tp, off->val);
-+		/*
-+		 * KTIME_SEC_MAX is divided by 2 to be sure that KTIME_MAX is
-+		 * still unreachable.
-+		 */
-+		if (tp.tv_sec < 0 || tp.tv_sec > KTIME_SEC_MAX / 2)
-+			return -ERANGE;
-+	}
-+
-+	mutex_lock(&offset_lock);
-+	if (ns->frozen_offsets) {
-+		err =3D -EACCES;
-+		goto out_unlock;
-+	}
-+
-+	err =3D 0;
-+	/* Don't report errors after this line */
-+	for (i =3D 0; i < noffsets; i++) {
-+		struct set_timens_offset *off =3D &offsets[i];
-+		struct timespec64 *offset =3D NULL;
-+
-+		switch (off->clockid) {
-+		case CLOCK_MONOTONIC:
-+			offset =3D &ns->offsets.monotonic;
-+			break;
-+		case CLOCK_BOOTTIME:
-+			offset =3D &ns->offsets.boottime;
-+			break;
-+		}
-+
-+		*offset =3D off->val;
-+	}
-+
-+out_unlock:
-+	mutex_unlock(&offset_lock);
-+
-+	return err;
-+}
-+
- int timens_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk)
  {
- 	struct ns_common *nsc =3D &nsproxy->time_ns_for_children->ns;
-@@ -356,12 +419,11 @@ void proc_timens_show_offsets(struct task_struct *p=
-, struct seq_file *m)
+ 	struct nsproxy *old_ns =3D tsk->nsproxy;
+ 	struct user_namespace *user_ns =3D task_cred_xxx(tsk, user_ns);
+@@ -178,7 +179,7 @@ int copy_namespaces(unsigned long flags, struct task_=
+struct *tsk)
+ 	if (IS_ERR(new_ns))
+ 		return  PTR_ERR(new_ns);
+=20
+-	ret =3D timens_on_fork(new_ns, tsk);
++	ret =3D timens_on_fork(new_ns, tsk, offsets, noffsets);
+ 	if (ret) {
+ 		free_nsproxy(new_ns);
+ 		return ret;
+diff --git a/kernel/time/namespace.c b/kernel/time/namespace.c
+index 839efa7c6886..f4fdf9b0b411 100644
+--- a/kernel/time/namespace.c
++++ b/kernel/time/namespace.c
+@@ -370,7 +370,8 @@ static int timens_set_offset(struct task_struct *p, s=
+truct time_namespace *ns,
+ 	return err;
  }
 =20
- int proc_timens_set_offset(struct file *file, struct task_struct *p,
--			   struct proc_timens_offset *offsets, int noffsets)
-+			   struct set_timens_offset *offsets, int noffsets)
+-int timens_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk)
++int timens_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk,
++		struct set_timens_offset *offsets, int noffsets)
  {
- 	struct ns_common *ns;
- 	struct time_namespace *time_ns;
--	struct timespec64 tp;
--	int i, err;
-+	int err;
+ 	struct ns_common *nsc =3D &nsproxy->time_ns_for_children->ns;
+ 	struct time_namespace *ns =3D to_time_ns(nsc);
+@@ -380,6 +381,14 @@ int timens_on_fork(struct nsproxy *nsproxy, struct t=
+ask_struct *tsk)
+ 	if (nsproxy->time_ns =3D=3D nsproxy->time_ns_for_children)
+ 		return 0;
 =20
- 	ns =3D timens_for_children_get(p);
- 	if (!ns)
-@@ -373,63 +435,7 @@ int proc_timens_set_offset(struct file *file, struct=
- task_struct *p,
- 		return -EPERM;
- 	}
++	if (noffsets) {
++		if (!ns_capable(ns->user_ns, CAP_SYS_TIME))
++			return -EPERM;
++		err =3D timens_set_offset(tsk, ns, offsets, noffsets);
++		if (err)
++			return err;
++	}
++
+ 	timens_set_vvar_page(tsk, ns);
 =20
--	for (i =3D 0; i < noffsets; i++) {
--		struct proc_timens_offset *off =3D &offsets[i];
--
--		switch (off->clockid) {
--		case CLOCK_MONOTONIC:
--			ktime_get_ts64(&tp);
--			break;
--		case CLOCK_BOOTTIME:
--			ktime_get_boottime_ts64(&tp);
--			break;
--		default:
--			err =3D -EINVAL;
--			goto out;
--		}
--
--		err =3D -ERANGE;
--
--		if (off->val.tv_sec > KTIME_SEC_MAX ||
--		    off->val.tv_sec < -KTIME_SEC_MAX)
--			goto out;
--
--		tp =3D timespec64_add(tp, off->val);
--		/*
--		 * KTIME_SEC_MAX is divided by 2 to be sure that KTIME_MAX is
--		 * still unreachable.
--		 */
--		if (tp.tv_sec < 0 || tp.tv_sec > KTIME_SEC_MAX / 2)
--			goto out;
--	}
--
--	mutex_lock(&offset_lock);
--	if (time_ns->frozen_offsets) {
--		err =3D -EACCES;
--		goto out_unlock;
--	}
--
--	err =3D 0;
--	/* Don't report errors after this line */
--	for (i =3D 0; i < noffsets; i++) {
--		struct proc_timens_offset *off =3D &offsets[i];
--		struct timespec64 *offset =3D NULL;
--
--		switch (off->clockid) {
--		case CLOCK_MONOTONIC:
--			offset =3D &time_ns->offsets.monotonic;
--			break;
--		case CLOCK_BOOTTIME:
--			offset =3D &time_ns->offsets.boottime;
--			break;
--		}
--
--		*offset =3D off->val;
--	}
--
--out_unlock:
--	mutex_unlock(&offset_lock);
--out:
-+	err =3D timens_set_offset(p, time_ns, offsets, noffsets);
- 	put_time_ns(time_ns);
+ 	err =3D vdso_join_timens(tsk, ns);
+diff --git a/tools/include/uapi/linux/sched.h b/tools/include/uapi/linux/=
+sched.h
+index 2e3bc22c6f20..501b44e6be97 100644
+--- a/tools/include/uapi/linux/sched.h
++++ b/tools/include/uapi/linux/sched.h
+@@ -102,6 +102,7 @@ struct clone_args {
 =20
- 	return err;
-
-base-commit: 8b614cb8f1dcac8ca77cf4dd85f46ef3055f8238
+ #define CLONE_ARGS_SIZE_VER0 64 /* sizeof first published struct */
+ #define CLONE_ARGS_SIZE_VER1 80 /* sizeof second published struct */
++#define CLONE_ARGS_SIZE_VER2 96 /* sizeof third published struct */
+=20
+ /*
+  * Scheduling policies
 --=20
 2.24.1
 
