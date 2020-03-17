@@ -2,121 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC281188BB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:10:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EEF3188BAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 18:09:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbgCQRKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 13:10:12 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52654 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgCQRKL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 13:10:11 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02HH8rSW103617;
-        Tue, 17 Mar 2020 17:09:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=MUKPIBA0PDdbrvWj4pjo/RZXdu0E5DptRou2F8z9uCo=;
- b=e0QELHa5F5vIaddPdvy3zHozX4NFti7jKHgwf+w1aIL9JfSl6xUwcLanY87VwkB/WleD
- Q8kC42HPY0CRHittaWie/sal6gpWmUyFDJtKHIgNEFd8W/Yp1lTrSNC3FEMD5nxeKr+D
- K68XEpL2Vn4o52d9MrSIS1kfqEjHJxVLLP1T+HL7LDxMaoKJr6g+wWaedI8DWeCHdzIf
- +ciogrQc8nAkfa3/FotzsSWwCm96RtqUybrEii87q7TR9O7fMEtINtsNcanK4xofl10l
- Py08khscEwk8Xp2EFitV+TjdsdpBlF1SpD8vSRjhLxDEm1Eu43Ou69SwH1ny4T3IlLw4 Mg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2yrppr68ct-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Mar 2020 17:09:52 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02HGofcR015199;
-        Tue, 17 Mar 2020 17:07:51 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2ys8rf9ew4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Mar 2020 17:07:51 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02HH7ocw005107;
-        Tue, 17 Mar 2020 17:07:50 GMT
-Received: from [192.168.1.206] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Mar 2020 10:07:50 -0700
-Subject: Re: [PATCH] mm/hugetlb: Fix build failure with HUGETLB_PAGE but not
- HUGEBTLBFS
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Baoquan He <bhe@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Nishanth Aravamudan <nacc@us.ibm.com>,
-        Nick Piggin <npiggin@suse.de>, Adam Litke <agl@us.ibm.com>,
-        Andi Kleen <ak@suse.de>, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org
-References: <7e8c3a3c9a587b9cd8a2f146df32a421b961f3a2.1584432148.git.christophe.leroy@c-s.fr>
- <20200317082550.GA3375@MiWiFi-R3L-srv>
- <60117fd7-46ff-326b-34f1-0c7087111ca7@c-s.fr>
- <a31c86c9-2f86-4f40-a367-5953037ee137@oracle.com>
- <ff480af2-d376-3b99-ba9e-36397ecde232@c-s.fr>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <dae98f9c-9233-a5b8-a824-1a26c7ad9e48@oracle.com>
-Date:   Tue, 17 Mar 2020 10:07:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+        id S1726541AbgCQRJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 13:09:09 -0400
+Received: from mail-eopbgr80081.outbound.protection.outlook.com ([40.107.8.81]:35908
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726082AbgCQRJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 13:09:09 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bcJDcsmMG0ZaEO8RWqdO6nsyFOla4N5LaLA4wF97P2IDOP0JMpWzn8hNjpzxagGvPrtw0/gWr2rGUS3CANVy25fqYyIGruPL6SmeAswyWHeI5m2+h55ewbO4k279COXts8nTDVnpMPCMwHL0A+VE/+aEf9AkUE/m4U22pQEwc0R2/sO95HNN8MMd1d7/TXAvNmtOlYDsDuXX5seEV29dzsds0qv2vNaihGJu9YE9sc3Bcl8ZrQdwatQ/Qembfg5IBL6uHACEssSScv/mGCvtKibTOnbjw2zskb3j1j+mx+q/RkYyBNkkFohZ4D17txxaGoAgLRQPlf9/5ByzPEzI2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=awz/rUGFQMyKcoeVFkhlqae4AOKR48qP9rRKCtUa+F8=;
+ b=PTpuf9+5pWXWKHkM8sT5sFI05OLCWBGNImdcS8h9v8dJCSqqVdX5PNSC0er/j8trLaFfalpaoglEoW0hZ3rYtMoovXvwJGcMR1m3WdJWg8jJ8Bc+BYgq6enNPWNU7mw7qaasdtzVSRcgZO20HrKFqh5u8IJ2U7RU5KWJ9A/5W3Hdo0m4z48H7pNHayvt4Xm660enC3rN8wpA/CNqLAf5dxxoXkFUExu/QKIuHy1RViGmjKllI3lCaDvJbCdO4wbJ9WfKg4w5PNRDzZuNv2x8gzXPfSF6yXqQJg1LP9j7iWrkTx23cfdSD3/apYbzhBjwCI7VPeNVAWeeocspUud+oQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=awz/rUGFQMyKcoeVFkhlqae4AOKR48qP9rRKCtUa+F8=;
+ b=hkR9EnP3ryW2A/MkmjwBSZIveMgyx1tn+lB1qlmiSlVRCVW+oVfDnhhHA4KRrvxB5wVZl6Mz6m94rRjM9tLVl67VuuGav52kHvy6O7lk220m6yz0ZwuZjBhCRIHn9L/5zwQW9Uu83PGSUUSrkEmpZc+9n3zBRI7dGYWFUYZLcOs=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB2798.eurprd04.prod.outlook.com (10.172.255.141) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.14; Tue, 17 Mar 2020 17:09:06 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::751e:7e8d:ed4:ef5f]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::751e:7e8d:ed4:ef5f%7]) with mapi id 15.20.2814.021; Tue, 17 Mar 2020
+ 17:09:06 +0000
+Subject: Re: [PATCH v8 5/8] crypto: caam - check if RNG job failed
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+Cc:     Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+References: <20200316150047.30828-1-andrew.smirnov@gmail.com>
+ <20200316150047.30828-6-andrew.smirnov@gmail.com>
+From:   =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>
+Message-ID: <7d5ad3ca-4ed8-1068-fb9e-4f66da1e3d88@nxp.com>
+Date:   Tue, 17 Mar 2020 19:09:03 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <ff480af2-d376-3b99-ba9e-36397ecde232@c-s.fr>
+In-Reply-To: <20200316150047.30828-6-andrew.smirnov@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9563 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 phishscore=0
- malwarescore=0 mlxscore=0 mlxlogscore=999 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003170068
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9563 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0
- suspectscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 clxscore=1015
- impostorscore=0 priorityscore=1501 spamscore=0 mlxlogscore=999 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003170068
+X-ClientProxiedBy: AM0PR01CA0019.eurprd01.prod.exchangelabs.com
+ (2603:10a6:208:69::32) To VI1PR0402MB3485.eurprd04.prod.outlook.com
+ (2603:10a6:803:7::25)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.0.129] (84.117.251.185) by AM0PR01CA0019.eurprd01.prod.exchangelabs.com (2603:10a6:208:69::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.15 via Frontend Transport; Tue, 17 Mar 2020 17:09:05 +0000
+X-Originating-IP: [84.117.251.185]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 893182c6-2c98-4fef-643e-08d7ca95e65f
+X-MS-TrafficTypeDiagnostic: VI1PR0402MB2798:|VI1PR0402MB2798:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR0402MB279885E979246E9A73EE158098F60@VI1PR0402MB2798.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4125;
+X-Forefront-PRVS: 0345CFD558
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(366004)(346002)(396003)(39860400002)(199004)(31696002)(4326008)(26005)(186003)(2906002)(86362001)(16576012)(81166006)(8676002)(54906003)(316002)(8936002)(110136005)(81156014)(16526019)(2616005)(31686004)(4744005)(36756003)(478600001)(53546011)(66946007)(66556008)(66476007)(5660300002)(52116002)(6486002)(956004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2798;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: QNjXbIuh+h0L/ol79+ftCoSfSNw7tBYD7/zdgChBqe+qfXyYqFQY6qs8iQ/47BqCsX0yWOgExBhDUQVVFXbzRcRKe1zHaMlzBlM3QTg0lbBpZXjitVON2CnNarxhYJZZYUsJvFrJVeoyjOXjatJ7Q72EdXB9AmBYMyGtjOUJ5NZbyDx8cR4lERmPoi9Ch0iuXfVC6e68gPWwptkSNXeDUGakuIyD4oSyDIuvh7YBstD7ZqqXiE7lISa8sVHXxH123DHV07PNBxGcLVv+XV00FnI+PzgRBsrVIvDoC874B5AE3GTdX0pVsrX+QHaJpGkz4HFL/3Nv2AQmWfuhKOa67M9DTAvJewXXokdSgKpswY6N3WbZqQSckadnDZYEEctB+OBQJIsoaDGxn2FIDB/fcVsegRja7Ovl0UhyPWKsG0dbBSt4M52YGAuKtwfYrca9
+X-MS-Exchange-AntiSpam-MessageData: gSDmML0ffua1AD6/5cuflGDjeZpq52nNSwcXhaf33Al4icpoVMBVt9RhUYDCPMRhHCVXIXJiuzEz8YW0IXs0TB34f6fRJvwT5yY05Mg4HTkW9k1MZncWY4n+sOM2XVKMWzBw8aUWM5i8RuztWyaFBg==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 893182c6-2c98-4fef-643e-08d7ca95e65f
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2020 17:09:06.2482
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: w7hIfeV5jWD5nHMXnn2sQb6izHgkdQ42nF11OaymJTxNWvb3des8KqXA1m2io9z5foyHPWMb99Qe+yu0FYxeMQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2798
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/17/20 9:47 AM, Christophe Leroy wrote:
+On 3/16/2020 5:01 PM, Andrey Smirnov wrote:
+> We shouldn't stay silent if RNG job fails. Add appropriate code to
+> check for that case and propagate error code up appropriately.
 > 
-> 
-> Le 17/03/2020 à 17:40, Mike Kravetz a écrit :
->> On 3/17/20 1:43 AM, Christophe Leroy wrote:
->>>
->>>
->>> Le 17/03/2020 à 09:25, Baoquan He a écrit :
->>>> On 03/17/20 at 08:04am, Christophe Leroy wrote:
->>>>> When CONFIG_HUGETLB_PAGE is set but not CONFIG_HUGETLBFS, the
->>>>> following build failure is encoutered:
->>>>
->>>>   From the definition of HUGETLB_PAGE, isn't it relying on HUGETLBFS?
->>>> I could misunderstand the def_bool, please correct me if I am wrong.
->>>
->>> AFAIU, it means that HUGETLBFS rely on HUGETLB_PAGE, by default HUGETLB_PAGE is not selected when HUGETLBFS is not. But it is still possible for an arch to select HUGETLB_PAGE without selecting HUGETLBFS when it uses huge pages for other purpose than hugetlb file system.
->>>
->>
->> Hi Christophe,
->>
->> Do you actually have a use case/example of using hugetlb pages without
->> hugetlbfs?  I can understand that there are some use cases which never
->> use the filesystem interface.  However, hugetlb support is so intertwined
->> with hugetlbfs, I am thinking there would be issues trying to use them
->> separately.  I will look into this further.
->>
-> 
-> Hi Mike,
-> 
-> Series https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=164620
-> 
-> And especially patch 39 to 41.
-> 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Horia Geantă <horia.geanta@nxp.com>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
+> Cc: linux-crypto@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-imx@nxp.com
+Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
 
-Ah, ok.  You are simply using a few interfaces in the hugetlb header files.
-The huge pages created in your mappings are not PageHuge() pages.
-
--- 
-Mike Kravetz
+Thanks,
+Horia
