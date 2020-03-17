@@ -2,62 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC2301876F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 01:38:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED381187702
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 01:45:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733161AbgCQAib (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Mar 2020 20:38:31 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:50258 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733017AbgCQAia (ORCPT
+        id S1733119AbgCQApU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Mar 2020 20:45:20 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:53784 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733005AbgCQApU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Mar 2020 20:38:30 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id EB55315796815;
-        Mon, 16 Mar 2020 17:38:28 -0700 (PDT)
-Date:   Mon, 16 Mar 2020 17:38:28 -0700 (PDT)
-Message-Id: <20200316.173828.1870893600981787445.davem@davemloft.net>
-To:     elder@linaro.org
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        linux-remoteproc@vger.kernel.org, netdev@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] remoteproc: clean up notification config
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200316225121.29905-1-elder@linaro.org>
-References: <20200316225121.29905-1-elder@linaro.org>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 16 Mar 2020 17:38:29 -0700 (PDT)
+        Mon, 16 Mar 2020 20:45:20 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id D46C72711FF
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     jdike@addtoit.com
+Cc:     richard@nod.at, anton.ivanov@cambridgegreys.com,
+        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel@collabora.com
+Subject: [PATCH 0/2] fixes to the hypervisor ubd thread
+Date:   Mon, 16 Mar 2020 20:45:05 -0400
+Message-Id: <20200317004507.1513370-1-krisman@collabora.com>
+X-Mailer: git-send-email 2.25.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Elder <elder@linaro.org>
-Date: Mon, 16 Mar 2020 17:51:21 -0500
+Hi,
 
-> Rearrange the config files for remoteproc and IPA to fix their
-> interdependencies.
-> 
-> First, have CONFIG_QCOM_Q6V5_MSS select QCOM_Q6V5_IPA_NOTIFY so the
-> notification code is built regardless of whether IPA needs it.
-> 
-> Next, represent QCOM_IPA as being dependent on QCOM_Q6V5_MSS rather
-> than setting its value to match QCOM_Q6V5_COMMON (which is selected
-> by QCOM_Q6V5_MSS).
-> 
-> Drop all dependencies from QCOM_Q6V5_IPA_NOTIFY.  The notification
-> code will be built whenever QCOM_Q6V5_MSS is set, and it has no other
-> dependencies.
-> 
-> Signed-off-by: Alex Elder <elder@linaro.org>
-> ---
-> v2: - Fix subject line
->     - Incorporate a change I thought I had already squashed
+While debugging a somewhat related issue, I ran into two issues I
+believe can cause the hypervisor to write garbage to the pipe.
 
-Applied to net-next, thanks.
+This was find by visual inspection and is only slightly tested.  It
+seems to partially some the problems my test case shows.
+
+Please, let me know what you think
+
+Gabriel Krisman Bertazi (2):
+  um: ubd: Prevent buffer overrun on command completion
+  um: ubd: Retry buffer read on any kind of error
+
+ arch/um/drivers/ubd_kern.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+-- 
+2.25.0
+
