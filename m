@@ -2,85 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70C0C187B6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:42:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA7AC187B73
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:43:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbgCQImm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 04:42:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53064 "EHLO mail.kernel.org"
+        id S1726421AbgCQInb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 04:43:31 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:6915 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbgCQImm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 04:42:42 -0400
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6628D20663;
-        Tue, 17 Mar 2020 08:42:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584434561;
-        bh=IoKaoS48Cjqtz3EXvPpCxL1bx5OpzH2wv2pbrlqhO4E=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=pNhHb5ZOklzJIBs+Mk30HLDVvQoyI0ikIuQlr7KdQcqcluM8Thc1qv+SrFtFCG6sN
-         4IQh2DLpQJp/vtcOlOOASHb/3rQ60/mqNkaD/zaZh7ZJ/r8hIEN9Rhk+sXx/9KA/2B
-         tVat7vG6pnEfRdPbSM5o6jfrb0mMZsFtsX+rCvIo=
-Received: by mail-lj1-f182.google.com with SMTP id y17so573318ljk.12;
-        Tue, 17 Mar 2020 01:42:41 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ3R6x589eVO9vcSRM11HwfMGfmiH1vrpujBL/VkubC/yalGWwVT
-        8K7pITN+oKqBhU1jmxIoEUYcriO7rmgFqVrHR5E=
-X-Google-Smtp-Source: ADFU+vsGw4leJ6Uf5P8becHc7znYz444/oKgydCNUix8TbemuH4A0iD/laSXCKIUp9XD4ychGSVZOvtwIIC+U/Mg5Ks=
-X-Received: by 2002:a05:651c:29c:: with SMTP id b28mr2143355ljo.201.1584434559542;
- Tue, 17 Mar 2020 01:42:39 -0700 (PDT)
+        id S1725862AbgCQIna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 04:43:30 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48hRXH56xJz9tyF8;
+        Tue, 17 Mar 2020 09:43:27 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=pv8MzjDt; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id jJ7QbpjNsTiX; Tue, 17 Mar 2020 09:43:27 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48hRXH435dz9tyF7;
+        Tue, 17 Mar 2020 09:43:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1584434607; bh=1bMuDk15/zuaGXBlkTCqaPwZYzG0RpwgAfWjBHT6CaM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=pv8MzjDtC/3V1DSFohSmacKIE/GQE1Ng5gTPItAOnv2k8QI1GSinRQSPAQdUSBfjF
+         C8HFBnMWvhtFw5Z/ODEpXgnSIenQwHj0gwJaIYl6GjIHYcyvlX/hUNYhtbeKBLCLw5
+         sEHRv7DnuR90if+soeH1ODt0XhhP+unK3Ej1uqfc=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 761A18B786;
+        Tue, 17 Mar 2020 09:43:28 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id sGIbwQtVgw9w; Tue, 17 Mar 2020 09:43:28 +0100 (CET)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D4CC58B782;
+        Tue, 17 Mar 2020 09:43:26 +0100 (CET)
+Subject: Re: [PATCH] mm/hugetlb: Fix build failure with HUGETLB_PAGE but not
+ HUGEBTLBFS
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nishanth Aravamudan <nacc@us.ibm.com>,
+        Nick Piggin <npiggin@suse.de>, Adam Litke <agl@us.ibm.com>,
+        Andi Kleen <ak@suse.de>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org
+References: <7e8c3a3c9a587b9cd8a2f146df32a421b961f3a2.1584432148.git.christophe.leroy@c-s.fr>
+ <20200317082550.GA3375@MiWiFi-R3L-srv>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <60117fd7-46ff-326b-34f1-0c7087111ca7@c-s.fr>
+Date:   Tue, 17 Mar 2020 09:43:20 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200310194854.831-1-linux.amoon@gmail.com> <20200310194854.831-2-linux.amoon@gmail.com>
- <87lfo2f0k9.fsf@kernel.org>
-In-Reply-To: <87lfo2f0k9.fsf@kernel.org>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 17 Mar 2020 09:42:28 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPf1GQmukWv16ydxY=78k=szTLnwM08R0wGoRNhHXgkCzA@mail.gmail.com>
-Message-ID: <CAJKOXPf1GQmukWv16ydxY=78k=szTLnwM08R0wGoRNhHXgkCzA@mail.gmail.com>
-Subject: Re: [PATCHv3 1/5] devicetree: bindings: exynos: Add new compatible
- for Exynos5420 dwc3 clocks support
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     Anand Moon <linux.amoon@gmail.com>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200317082550.GA3375@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 15 Mar 2020 at 10:08, Felipe Balbi <balbi@kernel.org> wrote:
->
->
-> Hi,
->
-> Anand Moon <linux.amoon@gmail.com> writes:
->
-> > Add the new compatible string for Exynos5422 DWC3 to support
-> > enable/disable of core and suspend clk by DWC3 driver.
-> > Also updated the clock names for compatible samsung,exynos5420-dwusb3.
-> >
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->
-> What is the dependency here?
 
-Felipe,
 
-This patchset should not be applied. As of now, it is not needed and
-not justified.
+Le 17/03/2020 à 09:25, Baoquan He a écrit :
+> On 03/17/20 at 08:04am, Christophe Leroy wrote:
+>> When CONFIG_HUGETLB_PAGE is set but not CONFIG_HUGETLBFS, the
+>> following build failure is encoutered:
+> 
+>  From the definition of HUGETLB_PAGE, isn't it relying on HUGETLBFS?
+> I could misunderstand the def_bool, please correct me if I am wrong.
 
-Best regards,
-Krzysztof
+AFAIU, it means that HUGETLBFS rely on HUGETLB_PAGE, by default 
+HUGETLB_PAGE is not selected when HUGETLBFS is not. But it is still 
+possible for an arch to select HUGETLB_PAGE without selecting HUGETLBFS 
+when it uses huge pages for other purpose than hugetlb file system.
+
+Christophe
+
+> 
+> config HUGETLB_PAGE
+>          def_bool HUGETLBFS
+> 
+>>
+>> In file included from arch/powerpc/mm/fault.c:33:0:
+>> ./include/linux/hugetlb.h: In function 'hstate_inode':
+>> ./include/linux/hugetlb.h:477:9: error: implicit declaration of function 'HUGETLBFS_SB' [-Werror=implicit-function-declaration]
+>>    return HUGETLBFS_SB(i->i_sb)->hstate;
+>>           ^
+>> ./include/linux/hugetlb.h:477:30: error: invalid type argument of '->' (have 'int')
+>>    return HUGETLBFS_SB(i->i_sb)->hstate;
+>>                                ^
+>>
+>> Gate hstate_inode() with CONFIG_HUGETLBFS instead of CONFIG_HUGETLB_PAGE.
+>>
+>> Reported-by: kbuild test robot <lkp@intel.com>
+>> Link: https://patchwork.ozlabs.org/patch/1255548/#2386036
+>> Fixes: a137e1cc6d6e ("hugetlbfs: per mount huge page sizes")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   include/linux/hugetlb.h | 19 ++++++++-----------
+>>   1 file changed, 8 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+>> index 1e897e4168ac..dafb3d70ff81 100644
+>> --- a/include/linux/hugetlb.h
+>> +++ b/include/linux/hugetlb.h
+>> @@ -390,7 +390,10 @@ static inline bool is_file_hugepages(struct file *file)
+>>   	return is_file_shm_hugepages(file);
+>>   }
+>>   
+>> -
+>> +static inline struct hstate *hstate_inode(struct inode *i)
+>> +{
+>> +	return HUGETLBFS_SB(i->i_sb)->hstate;
+>> +}
+>>   #else /* !CONFIG_HUGETLBFS */
+>>   
+>>   #define is_file_hugepages(file)			false
+>> @@ -402,6 +405,10 @@ hugetlb_file_setup(const char *name, size_t size, vm_flags_t acctflag,
+>>   	return ERR_PTR(-ENOSYS);
+>>   }
+>>   
+>> +static inline struct hstate *hstate_inode(struct inode *i)
+>> +{
+>> +	return NULL;
+>> +}
+>>   #endif /* !CONFIG_HUGETLBFS */
+>>   
+>>   #ifdef HAVE_ARCH_HUGETLB_UNMAPPED_AREA
+>> @@ -472,11 +479,6 @@ extern unsigned int default_hstate_idx;
+>>   
+>>   #define default_hstate (hstates[default_hstate_idx])
+>>   
+>> -static inline struct hstate *hstate_inode(struct inode *i)
+>> -{
+>> -	return HUGETLBFS_SB(i->i_sb)->hstate;
+>> -}
+>> -
+>>   static inline struct hstate *hstate_file(struct file *f)
+>>   {
+>>   	return hstate_inode(file_inode(f));
+>> @@ -729,11 +731,6 @@ static inline struct hstate *hstate_vma(struct vm_area_struct *vma)
+>>   	return NULL;
+>>   }
+>>   
+>> -static inline struct hstate *hstate_inode(struct inode *i)
+>> -{
+>> -	return NULL;
+>> -}
+>> -
+>>   static inline struct hstate *page_hstate(struct page *page)
+>>   {
+>>   	return NULL;
+>> -- 
+>> 2.25.0
+>>
+>>
