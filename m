@@ -2,99 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27C93187ACE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:05:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5C9C187AD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:10:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726039AbgCQIFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 04:05:06 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:29127 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725536AbgCQIFG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 04:05:06 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584432305; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=Rq46QNsjxgxfwewDcZ407dX0IB+0d3ABIku8fCN0K48=; b=fmCrtBZlnVLEIkQ1Xxs8gLz4msc45hVEsLKwAo8ffoSajdw/bCbjjdgNMV3BePN02yQoL7Hs
- 7DNw9dqfjDHVUq+j96XivQVYWMgFHszaxeFoc0u44dQWoqqTEpPapFYMG/a+xVzeknC60GIn
- Yw6Zals5P1kwHVw43zUKW4URSaw=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e7084a3.7f311cef2dc0-smtp-out-n02;
- Tue, 17 Mar 2020 08:04:51 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 93F51C43636; Tue, 17 Mar 2020 08:04:51 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from maggarwa-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: maggarwa)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 41017C433CB;
-        Tue, 17 Mar 2020 08:04:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 41017C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=maggarwa@codeaurora.org
-From:   Mohit Aggarwal <maggarwa@codeaurora.org>
-To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com
-Cc:     Mohit Aggarwal <maggarwa@codeaurora.org>,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rtc-pm8xxx: Clear Alarm register on resume
-Date:   Tue, 17 Mar 2020 13:34:19 +0530
-Message-Id: <1584432259-28687-1-git-send-email-maggarwa@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S1726084AbgCQIKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 04:10:37 -0400
+Received: from mga18.intel.com ([134.134.136.126]:46845 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725536AbgCQIKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 04:10:37 -0400
+IronPort-SDR: mytqB5Eott+JlRVvCMg/6juDbVpJTbkD7nJ9csY4gidfhlV1O0Agoz1vfSJOH33STI9HM5Tleo
+ 3denp2i8aHXA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 01:10:36 -0700
+IronPort-SDR: K2hESqp48NSCqGFGaKbO3ciySRYdVROgOrIRP4l7rCNs+3TAxWjTlBB5/yV5NiEbmvgBlQSO2b
+ P63UR/LO6fXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,563,1574150400"; 
+   d="scan'208";a="262954250"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.159.23])
+  by orsmga002.jf.intel.com with ESMTP; 17 Mar 2020 01:10:32 -0700
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mel Gorman <mgorman@suse.de>, Minchan Kim <minchan@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH -V2] mm: Code cleanup for MADV_FREE
+References: <20200316063740.2542014-1-ying.huang@intel.com>
+        <b328ac30-6c4e-0dfb-c771-cb09c6346c75@suse.cz>
+Date:   Tue, 17 Mar 2020 16:10:30 +0800
+In-Reply-To: <b328ac30-6c4e-0dfb-c771-cb09c6346c75@suse.cz> (Vlastimil Babka's
+        message of "Mon, 16 Mar 2020 18:17:23 +0100")
+Message-ID: <87v9n3qu4p.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, alarm register is not cleared on resume
-leading to reboot during power off charging mode.
+Vlastimil Babka <vbabka@suse.cz> writes:
 
-Signed-off-by: Mohit Aggarwal <maggarwa@codeaurora.org>
----
- drivers/rtc/rtc-pm8xxx.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+> On 3/16/20 7:37 AM, Huang, Ying wrote:
+>> From: Huang Ying <ying.huang@intel.com>
+>> 
+>> Some comments for MADV_FREE is revised and added to help people understand the
+>> MADV_FREE code, especially the page flag, PG_swapbacked.  This makes
+>> page_is_file_cache() isn't consistent with its comments.  So the function is
+>> renamed to page_is_file_lru() to make them consistent again.  All these are put
+>> in one patch as one logical change.
+>> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+>> Suggested-by: David Hildenbrand <david@redhat.com>
+>> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+>> Suggested-and-acked-by: David Rientjes <rientjes@google.com>
+>> Acked-by: Michal Hocko <mhocko@kernel.org>
+>> Acked-by: Pankaj Gupta <pankaj.gupta.linux@gmail.com>
+>> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+>> Cc: Mel Gorman <mgorman@suse.de>
+>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>> Cc: Minchan Kim <minchan@kernel.org>
+>> Cc: Hugh Dickins <hughd@google.com>
+>> Cc: Rik van Riel <riel@surriel.com>
+>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+>
+> Thanks! A grammar nit below:
+>
+>> --- a/include/linux/mm_inline.h
+>> +++ b/include/linux/mm_inline.h
+>> @@ -6,19 +6,20 @@
+>>  #include <linux/swap.h>
+>>  
+>>  /**
+>> - * page_is_file_cache - should the page be on a file LRU or anon LRU?
+>> + * page_is_file_lru - should the page be on a file LRU or anon LRU?
+>>   * @page: the page to test
+>>   *
+>> - * Returns 1 if @page is page cache page backed by a regular filesystem,
+>> - * or 0 if @page is anonymous, tmpfs or otherwise ram or swap backed.
+>> - * Used by functions that manipulate the LRU lists, to sort a page
+>> - * onto the right LRU list.
+>> + * Returns 1 if @page is page cache page backed by a regular filesystem or
+>> + * anonymous page lazily freed (e.g. via MADV_FREE).  Returns 0 if @page is
+>
+>       a lazily freed anonymous page (e.g. ...
 
-diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
-index bbe013f..96e7985 100644
---- a/drivers/rtc/rtc-pm8xxx.c
-+++ b/drivers/rtc/rtc-pm8xxx.c
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0-only
--/* Copyright (c) 2010-2011, 2019, The Linux Foundation. All rights reserved. */
-+/* Copyright (c) 2010-2011, 2019-2020, The Linux Foundation. All rights reserved. */
- 
- #include <linux/of.h>
- #include <linux/module.h>
-@@ -301,6 +301,7 @@ static int pm8xxx_rtc_alarm_irq_enable(struct device *dev, unsigned int enable)
- 	struct pm8xxx_rtc *rtc_dd = dev_get_drvdata(dev);
- 	const struct pm8xxx_rtc_regs *regs = rtc_dd->regs;
- 	unsigned int ctrl_reg;
-+	u8 value[NUM_8_BIT_RTC_REGS] = {0};
- 
- 	spin_lock_irqsave(&rtc_dd->ctrl_reg_lock, irq_flags);
- 
-@@ -319,6 +320,16 @@ static int pm8xxx_rtc_alarm_irq_enable(struct device *dev, unsigned int enable)
- 		goto rtc_rw_fail;
- 	}
- 
-+	/* Clear Alarm register */
-+	if (!enable) {
-+		rc = regmap_bulk_write(rtc_dd->regmap, regs->alarm_rw, value,
-+					sizeof(value));
-+		if (rc) {
-+			dev_err(dev, "Write to RTC ALARM register failed\n");
-+			goto rtc_rw_fail;
-+		}
-+	}
-+
- rtc_rw_fail:
- 	spin_unlock_irqrestore(&rtc_dd->ctrl_reg_lock, irq_flags);
- 	return rc;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thought again.  Should we make the 2 sub-clauses consistent?  That is,
+either
+
+if @page is page cache page backed by a regular filesystem or anonymous
+page freed lazily
+
+or
+
+if @page is a regular filesystem backed page cache page or a lazily
+freed anonymous page
+
+But I know that my English grammar isn't good enough :-(
+
+Best Regards,
+Huang, Ying
+
+>> + * normal anonymous page, tmpfs or otherwise ram or swap backed.  Used by
+>> + * functions that manipulate the LRU lists, to sort a page onto the right LRU
+>> + * list.
+>>   *
+>>   * We would like to get this info without a page flag, but the state
+>>   * needs to survive until the page is last deleted from the LRU, which
+>>   * could be as far down as __page_cache_release.
+>>   */
+>> -static inline int page_is_file_cache(struct page *page)
+>> +static inline int page_is_file_lru(struct page *page)
+>>  {
+>>  	return !PageSwapBacked(page);
+>>  }
