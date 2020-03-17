@@ -2,56 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E93C0187B35
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:28:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C2E2187B39
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 09:29:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726250AbgCQI2c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 04:28:32 -0400
-Received: from mga06.intel.com ([134.134.136.31]:15232 "EHLO mga06.intel.com"
+        id S1726452AbgCQI3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 04:29:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbgCQI2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 04:28:31 -0400
-IronPort-SDR: L+wOpw7Il/Ya190YYDNNlQMOn7UllIZCQ8dXXTUlYPe3aOJvRLEPp+nCvVvfVW8o1pDmZk+WWu
- 1O6JNQhljKXA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 01:28:31 -0700
-IronPort-SDR: healM5eFWf/Kw6gBx4FVqQaJZugrClmjQKDXhbzYDs3BBjEOxoAnAMbVR9ke5InzTm6fiaOhDa
- EEpQ9MKjRDYw==
-X-IronPort-AV: E=Sophos;i="5.70,563,1574150400"; 
-   d="scan'208";a="390985809"
-Received: from bquerbac-mobl1.amr.corp.intel.com (HELO localhost) ([10.135.40.52])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 01:28:28 -0700
-From:   "Patrick Ohly" <patrick.ohly@intel.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
-        stefanha@redhat.com, dgilbert@redhat.com, mst@redhat.com
-Subject: Re: [PATCH 00/20] virtiofs: Add DAX support
-In-Reply-To: <20200316130234.GA4013@redhat.com>
-Organization: Intel GmbH, Dornacher Strasse 1, D-85622 Feldkirchen/Munich
-References: <20200304165845.3081-1-vgoyal@redhat.com> <yrjh1rpzggg4.fsf@pohly-mobl1.fritz.box> <20200316130234.GA4013@redhat.com>
-Date:   Tue, 17 Mar 2020 09:28:26 +0100
-Message-ID: <yrjhlfnzcrmd.fsf@pohly-mobl1.fritz.box>
+        id S1726039AbgCQI3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 04:29:14 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA28E205ED;
+        Tue, 17 Mar 2020 08:29:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584433754;
+        bh=2WT19PmoSgn1gbaCPBHuh8j2hU+YYvbYMVaBBYTbuJ8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DYJdFepvuwK7WXbswP6UaKoHadSVJZYbmVJ+0otsGBM/ur0pKMLC6W6kPMSTGjkYS
+         1oHUKMMykE5jQilMICWfonmCux+gBo59njjHpAPBphYqcl8vAa9bx9uQZd8gAw69zV
+         yd1XlvJdVeXmGJAcXVHAzDU7xrvgwlTS8DBvMKMY=
+Date:   Tue, 17 Mar 2020 09:29:10 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     linux- stable <stable@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Todd Kjos <tkjos@google.com>, Shuah Khan <shuah@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, tkjos@android.com,
+        ardb@kernel.org, Kees Cook <keescook@chromium.org>,
+        lkft-triage@lists.linaro.org, Basil Eljuse <Basil.Eljuse@arm.com>,
+        YongQin Liu <yongqin.liu@linaro.org>
+Subject: Re: [stable-rc-5.4 and 5.5 ] WARNING: CPU: 3 PID: 2548 at
+ /usr/src/kernel/lib/refcount.c:28 refcount_warn_saturate
+Message-ID: <20200317082910.GB1063543@kroah.com>
+References: <CA+G9fYu06RPexAK-4huCSwYC4=FkuH2QduVpxOgG43ojX2jyBA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYu06RPexAK-4huCSwYC4=FkuH2QduVpxOgG43ojX2jyBA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vivek Goyal <vgoyal@redhat.com> writes:
-> We expect users will issue fsync/msync like a regular filesystem to
-> make changes persistent. So in that aspect, rejecting MAP_SYNC
-> makes sense. I will test and see if current code is rejecting MAP_SYNC
-> or not.
+On Tue, Mar 17, 2020 at 01:15:40PM +0530, Naresh Kamboju wrote:
+> While running selftests binderfs_test on stable rc 5.4 and 5.5
+> branches the following
+> warning on arm64, arm, x86_64 and i386.
+> 
+> This warning was noticed on Linus's tree and reported [1] and then
+> Christian Brauner investigated this problem.
+> 
+> FYI, We are running selftests source from stable rc 5.5 branch.
 
-Last time I checked, it did. Here's the test program that I wrote for
-that:
-https://github.com/intel/pmem-csi/blob/ee3200794a1ade49a02df6f359a134115b409e90/test/cmd/pmem-dax-check/main.go
+There is a fix in my tree that will go to Linus for this this week.
 
--- 
-Best Regards
+thanks,
 
-Patrick Ohly
+greg k-h
