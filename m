@@ -2,76 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD7C21880F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:14:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8E831881FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:22:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729421AbgCQLOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:14:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728756AbgCQLOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:14:00 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D50820663;
-        Tue, 17 Mar 2020 11:13:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584443639;
-        bh=FeeCtJYHWjRxHTGLQxSNDsMnhcPlVxM8eF3G5iJk+Lg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mzhcDRNaxU66RONAp7i8vX0Kd+guiApPCi/wBOFAeFIiSE49ptnr+LbluhhtJXRwg
-         Heip79mCoBhM9Al7mMXRbgnOHTQ7xRsgIXf5yL8J0v7KOYiLLjtjvrK9vCxZCiaov5
-         wuXd4/7zY9TDyXDZtKq0w+J+pd9NAg/K0b8aR5uc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+84484ccebdd4e5451d91@syzkaller.appspotmail.com,
-        Karsten Graul <kgraul@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 151/151] net/smc: check for valid ib_client_data
-Date:   Tue, 17 Mar 2020 11:56:01 +0100
-Message-Id: <20200317103337.434858198@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200317103326.593639086@linuxfoundation.org>
-References: <20200317103326.593639086@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727232AbgCQK61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 06:58:27 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34318 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726559AbgCQK6X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 06:58:23 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z15so24988560wrl.1;
+        Tue, 17 Mar 2020 03:58:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=GMaxJmgHFs3UkzWKRUJIGAMAuAis9ucYU7WNuhbnrM0=;
+        b=EV+NFq2tk5VjP3/+8I+LUS8cx+kdgaiY2lQ8Wdkjidaw9tTCeZfX0mj/IOm/HFIpHN
+         aeQBZV1k9AiiD4LYe3DwpLGhYwLeDIWeMXK2VSu1XM9ZwZD3qwg5dRhCY9z5c3fQ8Rrp
+         MeCZpu5PuH+UIetO/FxfZb/4VeIt7wAQjbxVSjV/k361b7ooXGV8tP603Bh0PgR0GJOn
+         o2/8+7hJBGyqyUZT/0IrMi+4TLrSHvmLNq+6h7zOm83ur+rAUNrak8cMeRg9ftx3AgG8
+         okHeXyNqM+w569z58GFNjmPpyLKfug9nQxKBG3bCsKDIfw1FJTlxEg8+5vsWvsR9xQ7G
+         nioA==
+X-Gm-Message-State: ANhLgQ0R3BoYJpXFDxxOlgAAx1TtpPbVPj1gbvZZSfwzC4MwStzrT9HQ
+        PRPcBvMJYI2kX2A4JB8HVVc=
+X-Google-Smtp-Source: ADFU+vuwMUcRYGkxYv04ItK19Y8hWebnnNI8rNDKcJ7IZEFzRgxAHrUzVDn0iHSETvqcL5o3Rxedng==
+X-Received: by 2002:a05:6000:1186:: with SMTP id g6mr5358405wrx.331.1584442700152;
+        Tue, 17 Mar 2020 03:58:20 -0700 (PDT)
+Received: from localhost (ip-37-188-255-121.eurotel.cz. [37.188.255.121])
+        by smtp.gmail.com with ESMTPSA id y189sm3615478wmb.26.2020.03.17.03.58.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2020 03:58:19 -0700 (PDT)
+Date:   Tue, 17 Mar 2020 11:58:18 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Baoquan He <bhe@redhat.com>,
+        Wei Yang <richard.weiyang@gmail.com>
+Subject: Re: [PATCH v2 4/8] powernv/memtrace: always online added memory
+ blocks
+Message-ID: <20200317105818.GK26018@dhcp22.suse.cz>
+References: <20200317104942.11178-1-david@redhat.com>
+ <20200317104942.11178-5-david@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200317104942.11178-5-david@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Karsten Graul <kgraul@linux.ibm.com>
+On Tue 17-03-20 11:49:38, David Hildenbrand wrote:
+> Let's always try to online the re-added memory blocks. In case add_memory()
+> already onlined the added memory blocks, the first device_online() call
+> will fail and stop processing the remaining memory blocks.
+> 
+> This avoids manually having to check memhp_auto_online.
+> 
+> Note: PPC always onlines all hotplugged memory directly from the kernel
+> as well - something that is handled by user space on other
+> architectures.
+> 
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: Wei Yang <richard.weiyang@gmail.com>
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-commit a2f2ef4a54c0d97aa6a8386f4ff23f36ebb488cf upstream.
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-In smc_ib_remove_dev() check if the provided ib device was actually
-initialized for SMC before.
+> ---
+>  arch/powerpc/platforms/powernv/memtrace.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/powernv/memtrace.c b/arch/powerpc/platforms/powernv/memtrace.c
+> index d6d64f8718e6..13b369d2cc45 100644
+> --- a/arch/powerpc/platforms/powernv/memtrace.c
+> +++ b/arch/powerpc/platforms/powernv/memtrace.c
+> @@ -231,16 +231,10 @@ static int memtrace_online(void)
+>  			continue;
+>  		}
+>  
+> -		/*
+> -		 * If kernel isn't compiled with the auto online option
+> -		 * we need to online the memory ourselves.
+> -		 */
+> -		if (!memhp_auto_online) {
+> -			lock_device_hotplug();
+> -			walk_memory_blocks(ent->start, ent->size, NULL,
+> -					   online_mem_block);
+> -			unlock_device_hotplug();
+> -		}
+> +		lock_device_hotplug();
+> +		walk_memory_blocks(ent->start, ent->size, NULL,
+> +				   online_mem_block);
+> +		unlock_device_hotplug();
+>  
+>  		/*
+>  		 * Memory was added successfully so clean up references to it
+> -- 
+> 2.24.1
 
-Reported-by: syzbot+84484ccebdd4e5451d91@syzkaller.appspotmail.com
-Fixes: a4cf0443c414 ("smc: introduce SMC as an IB-client")
-Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- net/smc/smc_ib.c |    2 ++
- 1 file changed, 2 insertions(+)
-
---- a/net/smc/smc_ib.c
-+++ b/net/smc/smc_ib.c
-@@ -573,6 +573,8 @@ static void smc_ib_remove_dev(struct ib_
- 	struct smc_ib_device *smcibdev;
- 
- 	smcibdev = ib_get_client_data(ibdev, &smc_ib_client);
-+	if (!smcibdev || smcibdev->ibdev != ibdev)
-+		return;
- 	ib_set_client_data(ibdev, &smc_ib_client, NULL);
- 	spin_lock(&smc_ib_devices.lock);
- 	list_del_init(&smcibdev->list); /* remove from smc_ib_devices */
-
-
+-- 
+Michal Hocko
+SUSE Labs
