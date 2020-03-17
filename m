@@ -2,124 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0634A188CB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 19:00:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14444188CB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 19:01:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbgCQSAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 14:00:04 -0400
-Received: from mail-eopbgr130087.outbound.protection.outlook.com ([40.107.13.87]:22244
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726189AbgCQSAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 14:00:04 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Lm82Sdyz08yKSH7aweA/tfk0URzncasemay/w2XB+oBLTT8578m/KHFHO7hzF1R2C8LDzvpwmbqTnnSfjpbeMfdd14JLfhGBlnhk4SdYAYkkHkLLWoErpPmsqEwsWfqgsfYE1XuI19a398GR4ux2CK+NyMKq2tIsJAZUWKbGv4iWOdROWjnZ0W176TP49MbHw36oDishQkiRFBCQ3eHLcLwNIq9GEz+CqLUzVg0eu7bgmVNbmiDimfVm7gIi7d+sO4dqxuK05aZZCkKiryCRZk7ktjV5/UvAxqXXEpn6Tf79x0MuxNQCdL3RXVAHkmSz88aAm7BuEbUQSrLWEOK5fQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aTMe45VDREcnKLzoEYUYLXtPyyecLT47F4c8s2ZoP5E=;
- b=aRB2QdaqJjWRcqYhNPdNrjWqR492KDzeWAPQyDYSNTRfbSlZJ/dopFix7p/duwETpayJDI3sjraVM7e2od5gSnZAKSOAG5QOqPpNP7ntEJB5cGxaAPfTAB83TqKXap1B7yIZseV3RFohRqx4kzBgz0wwYfi/7TlkICu6xkk8CvpOti+8fGj4VfHMYE2A33wf2Yau4dVFYXCLaEoRBvDJjmDKV0mwjZGg3Mpdk2XFrBzbHwNEV1iS0WFJwJdAe8jzf7hRiZX8cPj9DMDO+TRGYdHMF1FwJoXxBuzb6Jd+EF98zcHA+7VqhEublvXqlsEkBI4k+0WDhOIiEoKRC5QCSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aTMe45VDREcnKLzoEYUYLXtPyyecLT47F4c8s2ZoP5E=;
- b=ofQMSxU/SzQFFt99RY0jiyyKBwwUdbOf3K5ciD9eTAkld931s7fAjavqnEzbwFOiYdjrNHbMEYhytKctKWLLJFYheEiRLCw37oa17XEaqk3I+BDcViYmOSS3s/3yjEMLbm85iMz/Uc4xEfSOdw6IzD5YcSqiZYCXYyx1zrR8luU=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3389.eurprd04.prod.outlook.com (52.134.5.155) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.16; Tue, 17 Mar 2020 17:59:57 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::751e:7e8d:ed4:ef5f]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::751e:7e8d:ed4:ef5f%7]) with mapi id 15.20.2814.021; Tue, 17 Mar 2020
- 17:59:56 +0000
-Subject: Re: [PATCH v8 7/8] crypto: caam - enable prediction resistance in
- HRWNG
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
-Cc:     Andrei Botila <andrei.botila@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-References: <20200316150047.30828-1-andrew.smirnov@gmail.com>
- <20200316150047.30828-8-andrew.smirnov@gmail.com>
-From:   =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>
-Message-ID: <3b4178a7-f410-b5fd-d154-9682f1acb29e@nxp.com>
-Date:   Tue, 17 Mar 2020 19:59:53 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-In-Reply-To: <20200316150047.30828-8-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM3PR07CA0083.eurprd07.prod.outlook.com
- (2603:10a6:207:6::17) To VI1PR0402MB3485.eurprd04.prod.outlook.com
- (2603:10a6:803:7::25)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.0.129] (84.117.251.185) by AM3PR07CA0083.eurprd07.prod.outlook.com (2603:10a6:207:6::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.10 via Frontend Transport; Tue, 17 Mar 2020 17:59:55 +0000
-X-Originating-IP: [84.117.251.185]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 88184432-9f5c-4058-da4a-08d7ca9d00a6
-X-MS-TrafficTypeDiagnostic: VI1PR0402MB3389:|VI1PR0402MB3389:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <VI1PR0402MB338973C496F20120B520546498F60@VI1PR0402MB3389.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3173;
-X-Forefront-PRVS: 0345CFD558
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(136003)(39860400002)(346002)(376002)(199004)(36756003)(4326008)(2616005)(478600001)(2906002)(956004)(86362001)(31686004)(31696002)(66946007)(66556008)(66476007)(8936002)(81166006)(81156014)(4744005)(8676002)(53546011)(186003)(16526019)(6486002)(110136005)(26005)(5660300002)(16576012)(316002)(52116002)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3389;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HQ0PDDfUAwJrYs4gmSKEzMd7YQu6FuUD4HMloIRn/tw99DIVUfV0i239jG86GcM6z9mBOhyUzMVzY/DlI1J8+DyPNpDseekamKR7G5PQrA8ZZUsdRZBrg5F8GXDJLPM2C/ze3qbUY88dmjUgJiueaJd0KjSk+m1ZyyYDYJLk3yCgZ5ddEWUpV0khPFdHnwAsR1Zz5vUVHYDwMMQHPmbrBQeOsXCFDz3h02RM5HE6qDXaiEj0vnrfXLQU596QqRrzKkzyKlQ1uSFNlYzLAHqjieZzeCno+9QGasaehJk7k9Fn23ABT2pj54ResepVWJxf7ZUpyGEEct5q0wtmKAGMbh2m66B0lp3Fo5EueBUU9D6mdR8RHqTNLrC7dhKovuMDdE44LAbqr1sanLkbZ6OBlhicYMYTFR1VP+/0UgTh4vcWqYdvpmZYdlDEp0Jd8KbD
-X-MS-Exchange-AntiSpam-MessageData: BrTohAq/oot5bApf0ujQotStiGflCmu3hHMEEz1HNUpz4v6fPja/4gT8SqSMBLfOh6jTyl/IWf9cbn0wnPp0JgenztXeh2bdoHAH2gcTxcGnbhUXH1s6Vo66YuzND511oG4F5Id3yAAhYzp16KuthQ==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88184432-9f5c-4058-da4a-08d7ca9d00a6
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2020 17:59:56.8514
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zqUE9myPVriBybdVZO0V+y5MZF+Vke5u7bmSv3nOrjUSvszJ/DxPGEiBwAVr0zU+O6BWNCG0yxb67fn0SwKsSg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3389
+        id S1726763AbgCQSBJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 14:01:09 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38269 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726278AbgCQSBI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 14:01:08 -0400
+Received: by mail-wm1-f68.google.com with SMTP id t13so278690wmi.3;
+        Tue, 17 Mar 2020 11:01:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=T32itqq2iG4R5xS3SgZFa5iW2a5HV4efCuB1zt7pHvc=;
+        b=lzLaNmkppxWDxmNZQ5aCmmzdE6ZG+qKLm+AhRSLlpp5qilmm1HBdRI8dHLwrCc2a7W
+         dl8Af4rsjAmG4zMHhS1/8xMtyuOAYQOP6NmYRxsV16FV+tqgshQwUge9Xhw82Kym+deb
+         uSq856n67xzcF1GRNnLoR6yHYqfSxaOUWbPnFaPCgcLuURldLm1TwChTH1dYRRjWRY11
+         TjKkghMQ/3dS1qyHwCKjpy3V4kpgg5WOy3Ez7bqq8iKa5m1ipM2U2LtPGFgXOTk9dezm
+         WovKDgMsAin2jESSMlq1FNryLUkl4FdAQlAzhQZ9V55pdHIyJVKOMW+VnAoLcNDPx0G7
+         O5SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=T32itqq2iG4R5xS3SgZFa5iW2a5HV4efCuB1zt7pHvc=;
+        b=tazGW23eQ7ldr4jhnPlH9k0yGmfd+8E9Xc/GUXYEu9HTJKXHuN7zR3q5hff7fKBv8B
+         KLSFjD6apgs1PffiWIBeYwt6nOwVdY/D80BxLTp43RCVKfM/s0EXL7ooOoToUvMgjqP1
+         zwUMnKT4RQjG4IxotMf6vL3Si8Add+iMwN0F7smoFB1NdjaebREnZZyl76Dtx7WiucMG
+         ll99ByP+sYzZ/o15Wo8a/j3guhe8McdPIl9w8ghdeN5UKdoi5Vu5Hv6Ssfz3Lqoby4JP
+         svWnEXAMSL2Mc8H1Ad0w30tYDO7p/dWrydJCS3W0wfRR4ZQWx5dnafRY1j5zm+EudNut
+         chzg==
+X-Gm-Message-State: ANhLgQ0uD4AYna2JTQF+Of5uUd86d+8ZMJdiNc5tfj4pI0n2GWvB5h7E
+        6nm3Q19KMo32CXn3d/9upyDaxhLb
+X-Google-Smtp-Source: ADFU+vt3RGoK8s2yNUjqUV+NqdyImargYWiitWSLtlUNk1uRN2/kGm+q/TY2uiVncgJvOTLctkSeTg==
+X-Received: by 2002:a05:600c:2c06:: with SMTP id q6mr246073wmg.52.1584468065931;
+        Tue, 17 Mar 2020 11:01:05 -0700 (PDT)
+Received: from 640k.localdomain.com ([93.56.174.5])
+        by smtp.gmail.com with ESMTPSA id j39sm5955220wre.11.2020.03.17.11.01.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Mar 2020 11:01:04 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     vkuznets@redhat.com, sean.j.christopherson@intel.com
+Subject: [PATCH] KVM: nVMX: remove side effects from nested_vmx_exit_reflected
+Date:   Tue, 17 Mar 2020 19:00:59 +0100
+Message-Id: <1584468059-3585-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/16/2020 5:01 PM, Andrey Smirnov wrote:
-> @@ -564,6 +579,26 @@ static void caam_remove_debugfs(void *root)
->  }
->  #endif
->  
-> +#ifdef CONFIG_FSL_MC_BUS
-> +static bool check_version(struct fsl_mc_version *mc_version, u32 major,
-> +			  u32 minor, u32 revision)
-> +{
-> +	if (mc_version->major > major)
-> +		return true;
-> +
-> +	if (mc_version->major == major) {
-> +		if (mc_version->minor > minor)
-> +			return true;
-> +
-> +		if (mc_version->minor == minor && mc_version->revision > 0)
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +#endif
-> +
-> +
-Nitpick - checkpatch complains here:
-CHECK: Please don't use multiple blank lines
+The name of nested_vmx_exit_reflected suggests that it's purely
+a test, but it actually marks VMCS12 pages as dirty.  Move this to
+vmx_handle_exit, observing that the initial nested_run_pending check in
+nested_vmx_exit_reflected is pointless---nested_run_pending has just
+been cleared in vmx_vcpu_run and won't be set until handle_vmlaunch
+or handle_vmresume.
 
-Horia
+Suggested-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/vmx/nested.c | 18 ++----------------
+ arch/x86/kvm/vmx/nested.h |  1 +
+ arch/x86/kvm/vmx/vmx.c    | 19 +++++++++++++++++--
+ 3 files changed, 20 insertions(+), 18 deletions(-)
+
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 8578513907d7..4ff859c99946 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -3527,7 +3527,7 @@ static void vmcs12_save_pending_event(struct kvm_vcpu *vcpu,
+ }
+ 
+ 
+-static void nested_mark_vmcs12_pages_dirty(struct kvm_vcpu *vcpu)
++void nested_mark_vmcs12_pages_dirty(struct kvm_vcpu *vcpu)
+ {
+ 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+ 	gfn_t gfn;
+@@ -5543,8 +5543,7 @@ bool nested_vmx_exit_reflected(struct kvm_vcpu *vcpu, u32 exit_reason)
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+ 
+-	if (vmx->nested.nested_run_pending)
+-		return false;
++	WARN_ON_ONCE(vmx->nested.nested_run_pending);
+ 
+ 	if (unlikely(vmx->fail)) {
+ 		trace_kvm_nested_vmenter_failed(
+@@ -5553,19 +5552,6 @@ bool nested_vmx_exit_reflected(struct kvm_vcpu *vcpu, u32 exit_reason)
+ 		return true;
+ 	}
+ 
+-	/*
+-	 * The host physical addresses of some pages of guest memory
+-	 * are loaded into the vmcs02 (e.g. vmcs12's Virtual APIC
+-	 * Page). The CPU may write to these pages via their host
+-	 * physical address while L2 is running, bypassing any
+-	 * address-translation-based dirty tracking (e.g. EPT write
+-	 * protection).
+-	 *
+-	 * Mark them dirty on every exit from L2 to prevent them from
+-	 * getting out of sync with dirty tracking.
+-	 */
+-	nested_mark_vmcs12_pages_dirty(vcpu);
+-
+ 	trace_kvm_nested_vmexit(kvm_rip_read(vcpu), exit_reason,
+ 				vmcs_readl(EXIT_QUALIFICATION),
+ 				vmx->idt_vectoring_info,
+diff --git a/arch/x86/kvm/vmx/nested.h b/arch/x86/kvm/vmx/nested.h
+index 21d36652f213..f70968b76d33 100644
+--- a/arch/x86/kvm/vmx/nested.h
++++ b/arch/x86/kvm/vmx/nested.h
+@@ -33,6 +33,7 @@ void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
+ int get_vmx_mem_address(struct kvm_vcpu *vcpu, unsigned long exit_qualification,
+ 			u32 vmx_instruction_info, bool wr, int len, gva_t *ret);
+ void nested_vmx_pmu_entry_exit_ctls_update(struct kvm_vcpu *vcpu);
++void nested_mark_vmcs12_pages_dirty(struct kvm_vcpu *vcpu);
+ bool nested_vmx_check_io_bitmaps(struct kvm_vcpu *vcpu, unsigned int port,
+ 				 int size);
+ 
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index b447d66f44e6..07299a957d4a 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -5851,8 +5851,23 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu,
+ 	if (vmx->emulation_required)
+ 		return handle_invalid_guest_state(vcpu);
+ 
+-	if (is_guest_mode(vcpu) && nested_vmx_exit_reflected(vcpu, exit_reason))
+-		return nested_vmx_reflect_vmexit(vcpu, exit_reason);
++	if (is_guest_mode(vcpu)) {
++		/*
++		 * The host physical addresses of some pages of guest memory
++		 * are loaded into the vmcs02 (e.g. vmcs12's Virtual APIC
++		 * Page). The CPU may write to these pages via their host
++		 * physical address while L2 is running, bypassing any
++		 * address-translation-based dirty tracking (e.g. EPT write
++		 * protection).
++		 *
++		 * Mark them dirty on every exit from L2 to prevent them from
++		 * getting out of sync with dirty tracking.
++		 */
++		nested_mark_vmcs12_pages_dirty(vcpu);
++
++		if (nested_vmx_exit_reflected(vcpu, exit_reason))
++			return nested_vmx_reflect_vmexit(vcpu, exit_reason);
++	}
+ 
+ 	if (exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY) {
+ 		dump_vmcs();
+-- 
+1.8.3.1
+
