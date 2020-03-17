@@ -2,58 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0F82188068
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:09:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E542188084
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Mar 2020 12:10:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728817AbgCQLJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 07:09:55 -0400
-Received: from mga05.intel.com ([192.55.52.43]:55398 "EHLO mga05.intel.com"
+        id S1729127AbgCQLKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 07:10:42 -0400
+Received: from mga09.intel.com ([134.134.136.24]:1480 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728995AbgCQLJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 07:09:52 -0400
-IronPort-SDR: upN4Lle8p1HOnoqErtBg1gA/yI16yPnmw9SpYIGQI8dtS9jL0KclTBefYkABBFWl26Ou28JMeu
- ikB3QwrVjnCA==
+        id S1728069AbgCQLKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:10:36 -0400
+IronPort-SDR: 4QgzKK/1+0Z0WTZZY8dMjBTFpnVMxVmYbQnlVVcCnpaTYaM3fLUCJvfLqnDhUrP3WwCy1HZM9F
+ lopsuTMCxQiA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 04:09:52 -0700
-IronPort-SDR: DcubFaa8G9/CwOKUQ6thFIpoZ8Jo8KEl50diC5OSde67LgFhejYj16g5WhC20KhC/iW6SocgkM
- ZH7vkdC3zl5g==
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 04:10:35 -0700
+IronPort-SDR: sVQKvxbQe9sOZGKHSB7RHRSk0PG1hS7mfqR62mo/5CjOwX3N5niTvK/52RBOL6q2+QqBxTSdCW
+ i2gCnGIuzoIA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,564,1574150400"; 
-   d="scan'208";a="355330981"
+   d="scan'208";a="355331166"
 Received: from kuha.fi.intel.com ([10.237.72.162])
-  by fmsmga001.fm.intel.com with SMTP; 17 Mar 2020 04:09:49 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 17 Mar 2020 13:09:49 +0200
-Date:   Tue, 17 Mar 2020 13:09:49 +0200
+  by fmsmga001.fm.intel.com with SMTP; 17 Mar 2020 04:10:32 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 17 Mar 2020 13:10:31 +0200
+Date:   Tue, 17 Mar 2020 13:10:31 +0200
 From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
 To:     Prashant Malani <pmalani@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, Benson Leung <bleung@chromium.org>,
+Cc:     linux-kernel@vger.kernel.org, Jon Flatley <jflat@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>,
         Guenter Roeck <groeck@chromium.org>
-Subject: Re: [PATCH v5 3/4] platform/chrome: typec: Get PD_CONTROL cmd version
-Message-ID: <20200317110949.GB3015886@kuha.fi.intel.com>
+Subject: Re: [PATCH v5 4/4] platform/chrome: typec: Update port info from EC
+Message-ID: <20200317111031.GC3015886@kuha.fi.intel.com>
 References: <20200316090021.52148-1-pmalani@chromium.org>
- <20200316090021.52148-4-pmalani@chromium.org>
+ <20200316090021.52148-5-pmalani@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200316090021.52148-4-pmalani@chromium.org>
+In-Reply-To: <20200316090021.52148-5-pmalani@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 02:00:19AM -0700, Prashant Malani wrote:
-> Query the EC to determine the version number of the PD_CONTROL
-> command which is supported by the EC. Also store this value in the Type
-> C data struct since it will be used to determine how to parse the
-> response to queries for port information from the EC.
+On Mon, Mar 16, 2020 at 02:00:21AM -0700, Prashant Malani wrote:
+> After registering the ports at probe, get the current port information
+> from EC and update the Type C connector class ports accordingly.
 > 
+> Co-developed-by: Jon Flatley <jflat@chromium.org>
 > Signed-off-by: Prashant Malani <pmalani@chromium.org>
-
-In case there is v6, please consider merging this into patch 4/4. I
-don't think this needs separate patch. Otherwise, FWIW:
 
 Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
@@ -66,72 +63,129 @@ Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 > - No changes
 > 
 > Changes in v3:
-> - Moved if statement check in the end of probe() from this patch to a
->   previous patch.
+> - No changes.
 > 
 > Changes in v2:
 > - No changes.
 > 
->  drivers/platform/chrome/cros_ec_typec.c | 32 +++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
+>  drivers/platform/chrome/cros_ec_typec.c | 89 ++++++++++++++++++++++++-
+>  1 file changed, 88 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-> index 02e6d5cbbbf7a..9f692eb78b322 100644
+> index 9f692eb78b322..874269c070739 100644
 > --- a/drivers/platform/chrome/cros_ec_typec.c
 > +++ b/drivers/platform/chrome/cros_ec_typec.c
-> @@ -21,6 +21,7 @@ struct cros_typec_data {
->  	struct device *dev;
->  	struct cros_ec_device *ec;
->  	int num_ports;
-> +	unsigned int cmd_ver;
->  	/* Array of ports, indexed by port number. */
->  	struct typec_port *ports[EC_USB_PD_MAX_PORTS];
->  	/* Initial capabilities for each port. */
-> @@ -171,6 +172,31 @@ static int cros_typec_ec_command(struct cros_typec_data *typec,
+> @@ -172,6 +172,81 @@ static int cros_typec_ec_command(struct cros_typec_data *typec,
 >  	return ret;
 >  }
 >  
-> +static int cros_typec_get_cmd_version(struct cros_typec_data *typec)
+> +static void cros_typec_set_port_params_v0(struct cros_typec_data *typec,
+> +		int port_num, struct ec_response_usb_pd_control *resp)
 > +{
-> +	struct ec_params_get_cmd_versions_v1 req_v1;
-> +	struct ec_response_get_cmd_versions resp;
+> +	struct typec_port *port = typec->ports[port_num];
+> +	enum typec_orientation polarity;
+> +
+> +	if (!resp->enabled)
+> +		polarity = TYPEC_ORIENTATION_NONE;
+> +	else if (!resp->polarity)
+> +		polarity = TYPEC_ORIENTATION_NORMAL;
+> +	else
+> +		polarity = TYPEC_ORIENTATION_REVERSE;
+> +
+> +	typec_set_pwr_role(port, resp->role ? TYPEC_SOURCE : TYPEC_SINK);
+> +	typec_set_orientation(port, polarity);
+> +}
+> +
+> +static void cros_typec_set_port_params_v1(struct cros_typec_data *typec,
+> +		int port_num, struct ec_response_usb_pd_control_v1 *resp)
+> +{
+> +	struct typec_port *port = typec->ports[port_num];
+> +	enum typec_orientation polarity;
+> +
+> +	if (!(resp->enabled & PD_CTRL_RESP_ENABLED_CONNECTED))
+> +		polarity = TYPEC_ORIENTATION_NONE;
+> +	else if (!resp->polarity)
+> +		polarity = TYPEC_ORIENTATION_NORMAL;
+> +	else
+> +		polarity = TYPEC_ORIENTATION_REVERSE;
+> +	typec_set_orientation(port, polarity);
+> +	typec_set_data_role(port, resp->role & PD_CTRL_RESP_ROLE_DATA ?
+> +			TYPEC_HOST : TYPEC_DEVICE);
+> +	typec_set_pwr_role(port, resp->role & PD_CTRL_RESP_ROLE_POWER ?
+> +			TYPEC_SOURCE : TYPEC_SINK);
+> +	typec_set_vconn_role(port, resp->role & PD_CTRL_RESP_ROLE_VCONN ?
+> +			TYPEC_SOURCE : TYPEC_SINK);
+> +}
+> +
+> +static int cros_typec_port_update(struct cros_typec_data *typec, int port_num)
+> +{
+> +	struct ec_params_usb_pd_control req;
+> +	struct ec_response_usb_pd_control_v1 resp;
 > +	int ret;
 > +
-> +	/* We're interested in the PD control command version. */
-> +	req_v1.cmd = EC_CMD_USB_PD_CONTROL;
-> +	ret = cros_typec_ec_command(typec, 1, EC_CMD_GET_CMD_VERSIONS,
-> +				    &req_v1, sizeof(req_v1), &resp,
-> +				    sizeof(resp));
+> +	if (port_num < 0 || port_num >= typec->num_ports) {
+> +		dev_err(typec->dev, "cannot get status for invalid port %d\n",
+> +			port_num);
+> +		return -EINVAL;
+> +	}
+> +
+> +	req.port = port_num;
+> +	req.role = USB_PD_CTRL_ROLE_NO_CHANGE;
+> +	req.mux = USB_PD_CTRL_MUX_NO_CHANGE;
+> +	req.swap = USB_PD_CTRL_SWAP_NONE;
+> +
+> +	ret = cros_typec_ec_command(typec, typec->cmd_ver,
+> +				    EC_CMD_USB_PD_CONTROL, &req, sizeof(req),
+> +				    &resp, sizeof(resp));
 > +	if (ret < 0)
 > +		return ret;
 > +
-> +	if (resp.version_mask & EC_VER_MASK(1))
-> +		typec->cmd_ver = 1;
-> +	else
-> +		typec->cmd_ver = 0;
+> +	dev_dbg(typec->dev, "Enabled %d: 0x%hhx\n", port_num, resp.enabled);
+> +	dev_dbg(typec->dev, "Role %d: 0x%hhx\n", port_num, resp.role);
+> +	dev_dbg(typec->dev, "Polarity %d: 0x%hhx\n", port_num, resp.polarity);
+> +	dev_dbg(typec->dev, "State %d: %s\n", port_num, resp.state);
 > +
-> +	dev_dbg(typec->dev, "PD Control has version mask 0x%hhx\n",
-> +		typec->cmd_ver);
+> +	if (typec->cmd_ver == 1)
+> +		cros_typec_set_port_params_v1(typec, port_num, &resp);
+> +	else
+> +		cros_typec_set_port_params_v0(typec, port_num,
+> +			(struct ec_response_usb_pd_control *) &resp);
 > +
 > +	return 0;
 > +}
 > +
->  #ifdef CONFIG_ACPI
->  static const struct acpi_device_id cros_typec_acpi_id[] = {
->  	{ "GOOG0014", 0 },
-> @@ -202,6 +228,12 @@ static int cros_typec_probe(struct platform_device *pdev)
->  	typec->ec = dev_get_drvdata(pdev->dev.parent);
->  	platform_set_drvdata(pdev, typec);
+>  static int cros_typec_get_cmd_version(struct cros_typec_data *typec)
+>  {
+>  	struct ec_params_get_cmd_versions_v1 req_v1;
+> @@ -218,7 +293,7 @@ static int cros_typec_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct cros_typec_data *typec;
+>  	struct ec_response_usb_pd_ports resp;
+> -	int ret;
+> +	int ret, i;
 >  
-> +	ret = cros_typec_get_cmd_version(typec);
-> +	if (ret < 0) {
-> +		dev_err(dev, "failed to get PD command version info\n");
-> +		return ret;
+>  	typec = devm_kzalloc(dev, sizeof(*typec), GFP_KERNEL);
+>  	if (!typec)
+> @@ -251,7 +326,19 @@ static int cros_typec_probe(struct platform_device *pdev)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	for (i = 0; i < typec->num_ports; i++) {
+> +		ret = cros_typec_port_update(typec, i);
+> +		if (ret < 0)
+> +			goto unregister_ports;
 > +	}
 > +
->  	ret = cros_typec_ec_command(typec, 0, EC_CMD_USB_PD_PORTS, NULL, 0,
->  				    &resp, sizeof(resp));
->  	if (ret < 0)
+>  	return 0;
+> +
+> +unregister_ports:
+> +	for (i = 0; i < typec->num_ports; i++)
+> +		if (typec->ports[i])
+> +			typec_unregister_port(typec->ports[i]);
+> +	return ret;
+>  }
+>  
+>  static struct platform_driver cros_typec_driver = {
 > -- 
 > 2.25.1.481.gfbce0eb801-goog
 
