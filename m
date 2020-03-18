@@ -2,72 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30E4D189F3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 16:10:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72C38189F2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 16:09:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbgCRPJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 11:09:44 -0400
-Received: from mga03.intel.com ([134.134.136.65]:4178 "EHLO mga03.intel.com"
+        id S1727455AbgCRPJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 11:09:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727240AbgCRPJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 11:09:26 -0400
-IronPort-SDR: SRvoJ1UsaE9GPxsLflTWZEOK7mXfbPjTBADyX4MPs/YO4UwiiFjzwhjSOzkja69d/jHYRx3ae3
- qain5uuH8cYQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 08:09:25 -0700
-IronPort-SDR: QgXPe2zraTvcFJFPzJA53gRwWZDVVY7j8aM1EGopf5bVV+x4ePads7C5BXxBUX3mXm1k6cNcMu
- iS+7+VqwQqPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,568,1574150400"; 
-   d="scan'208";a="263410997"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga002.jf.intel.com with ESMTP; 18 Mar 2020 08:09:23 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jEaJx-00AnHz-KV; Wed, 18 Mar 2020 17:09:25 +0200
-Date:   Wed, 18 Mar 2020 17:09:25 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
-        matwey.kornilov@gmail.com, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: Re: [PATCH 2/7] serial: 8250: add serial_in_poll_timeout helper
-Message-ID: <20200318150925.GM1922688@smile.fi.intel.com>
-References: <20200318142640.982763-1-heiko@sntech.de>
- <20200318142640.982763-3-heiko@sntech.de>
+        id S1727358AbgCRPJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 11:09:32 -0400
+Received: from linux-8ccs (p5B2812F9.dip0.t-ipconnect.de [91.40.18.249])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A023A2077B;
+        Wed, 18 Mar 2020 15:09:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584544172;
+        bh=aHZiDxNtkH9uKX5LTVYuL8uU5FzKPoKE0R7mstLdl4E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mgkYEWvuOawdYAWh84+SpVzCcX/RI3kv0G510cmQjtfBQwf3ypQaLo+KZ6rKe27Fh
+         PZ3iZHeh3XqLrRFtv0i7nslq+nTalrGzxyp3CLSZpuoNOZuoc9t3s1h+PB5xgBq3XU
+         Frxw/nJa6xdFsaOJ/fewWBmSZMaTXNYDtI+JaRnE=
+Date:   Wed, 18 Mar 2020 16:09:26 +0100
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>, stable@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>
+Subject: Re: [PATCH v3 2/5] fs/filesystems.c: downgrade user-reachable
+ WARN_ONCE() to pr_warn_once()
+Message-ID: <20200318150926.GA4144@linux-8ccs>
+References: <20200314213426.134866-3-ebiggers@kernel.org>
+ <20200317223028.6840A20738@mail.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20200318142640.982763-3-heiko@sntech.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200317223028.6840A20738@mail.kernel.org>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.61-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 03:26:35PM +0100, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-> 
-> In cases where a serial register needs to be polled until a specific
-> state, this should have a timeout as noted in the thread bringing em485
-> support to 8250_dw.
-> 
-> To not re-implement timeout handling in each case, add a helper modelled
-> after readx_poll_timeout / regmap_read_poll_timeout to facilitate this.
++++ Sasha Levin [17/03/20 22:30 +0000]:
+>Hi
+>
+>[This is an automated email]
+>
+>This commit has been processed because it contains a -stable tag.
+>The stable tag indicates that it's relevant for the following trees: all
+>
+>The bot has tested the following trees: v5.5.9, v5.4.25, v4.19.109, v4.14.173, v4.9.216, v4.4.216.
+>
+>v5.5.9: Build OK!
+>v5.4.25: Build OK!
+>v4.19.109: Build OK!
+>v4.14.173: Build OK!
+>v4.9.216: Failed to apply! Possible dependencies:
+>    41124db869b7 ("fs: warn in case userspace lied about modprobe return")
+>
+>v4.4.216: Failed to apply! Possible dependencies:
+>    41124db869b7 ("fs: warn in case userspace lied about modprobe return")
+>
+>
+>NOTE: The patch will not be queued to stable trees until it is upstream.
+>
+>How should we proceed with this patch?
 
-> +#define serial_in_poll_timeout(port, offs, val, cond, timeout_us) \
+Since commit 41124db869b7 was introduced v4.13, I guess we should
+change the stable tag to:
 
-This can (re-)use readx_poll_timeout().
-
-Example:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git/commit/?h=testing&id=b0415c224926c6d94c778d72f3d44c83862eb214
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Cc: stable@vger.kernel.org # v4.13+
 
