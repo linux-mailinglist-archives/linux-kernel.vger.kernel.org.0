@@ -2,159 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6225C18987A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 10:50:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D027189888
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 10:53:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbgCRJuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 05:50:24 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:24579 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726786AbgCRJuY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 05:50:24 -0400
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id 02I9oKQL003768;
-        Wed, 18 Mar 2020 18:50:20 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 02I9oKQL003768
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1584525021;
-        bh=chiklVzBctTlLbxGf2Dcd0qlUqvFAB8Y+B4FfJ0EYR8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VCGDYdMO0tYz6eQOpRT7lOOmN+don6FrPMQ7LUkqhlZZRIfOVFfTRE3Klz/yMqj9y
-         7Dx3bTg4/hYPpT1iutfMzHx7nfOY+0nqRRiqjctxE2RMFLbyg8oUjUMYILChPHFPUM
-         JWHcn5/Yae/acuLqnqadMyva9Y99VNhlnI2uKeTMEDZCNDeiUtzyOTqBOf1FJ9TPHT
-         T2PHuVFVGliZXp6qQ0IGsl6vkym8a14J3GfGXxlAgFt9ycPOZiagCS4PIl6/5/ZHTT
-         +aYPJv7qlKgimdPWExK8atFjrp+vL/LDBirJImsDQ6R4+nJgthLz5SIjte5dV8fcoN
-         6xIqWSuenQDRA==
-X-Nifty-SrcIP: [209.85.217.43]
-Received: by mail-vs1-f43.google.com with SMTP id z125so15965087vsb.13;
-        Wed, 18 Mar 2020 02:50:20 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ0qWZftZTWvPbzmzKhD5GM6LcXukZs9co57dkk81fq4cpfMoXNe
-        pHkgMfIEvbtyJmlUy75xOYDo5npeOn87P33TQME=
-X-Google-Smtp-Source: ADFU+vudeX7j1H0dbtItU0YyqPX05lGkToRiAw6PSpkDne2hG2HjXS+0Fd2/2e1rrZ/Caj1eQ0JgUQGVn+ttmDXXUZ0=
-X-Received: by 2002:a67:3201:: with SMTP id y1mr2566856vsy.54.1584525019426;
- Wed, 18 Mar 2020 02:50:19 -0700 (PDT)
+        id S1727569AbgCRJxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 05:53:03 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60706 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726786AbgCRJxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 05:53:02 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D795AB3176922763EE12;
+        Wed, 18 Mar 2020 17:52:22 +0800 (CST)
+Received: from [127.0.0.1] (10.173.220.183) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.487.0; Wed, 18 Mar 2020
+ 17:52:16 +0800
+Subject: Re: [PATCH] block, bfq: fix use-after-free in
+ bfq_idle_slice_timer_body
+To:     Paolo Valente <paolo.valente@linaro.org>
+CC:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mingfangsen <mingfangsen@huawei.com>,
+        Yanxiaodan <yanxiaodan@huawei.com>,
+        "wubo (T)" <wubo40@huawei.com>, renxudong <renxudong1@huawei.com>,
+        Louhongxiang <louhongxiang@huawei.com>
+References: <6c0d0b36-751b-a63a-418b-888a88ce58f4@huawei.com>
+ <C69604D5-CBB7-4A5F-AD73-7A9C0B6B3360@linaro.org>
+ <0a6e190a-3393-53f9-b127-d57d67cdcdc8@huawei.com>
+ <4171EF13-7956-44DA-A5BF-0245E4926436@linaro.org>
+From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Message-ID: <241f9766-bfe6-485a-331c-fdc693738ffc@huawei.com>
+Date:   Wed, 18 Mar 2020 17:52:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <20200316122820.11032-1-yangx.jy@cn.fujitsu.com> <5E702236.8070109@cn.fujitsu.com>
-In-Reply-To: <5E702236.8070109@cn.fujitsu.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Wed, 18 Mar 2020 18:49:43 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARcs_ouquXPWJfKkfpikXV-4t=2YVCjEWeDzaNhFjmaeA@mail.gmail.com>
-Message-ID: <CAK7LNARcs_ouquXPWJfKkfpikXV-4t=2YVCjEWeDzaNhFjmaeA@mail.gmail.com>
-Subject: Re: [PATCH] modpost: Get proper section index by get_secindex()
- instead of st_shndx
-To:     Xiao Yang <yangx.jy@cn.fujitsu.com>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <4171EF13-7956-44DA-A5BF-0245E4926436@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.220.183]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 10:05 AM Xiao Yang <yangx.jy@cn.fujitsu.com> wrote:
->
-> On 2020/3/16 20:28, Xiao Yang wrote:
-
-Thanks for catching this bug.
 
 
-> > (uint16_t) st_shndx is limited to 65535(i.e. SHN_XINDEX) so sym_get_dat=
-a() gets
-> > wrong section index by st_shndx if object file(e.g. vmlinux.o) has more=
- than
-> Hi,
->
-> It seems better to say that sym_get_data() gets wrong section index by
-> st_shndx if requested symbol contains extended section index that is
-> more than 65535.
-
-
-Sounds good to me.
-
-
+On 2020/3/18 16:45, Paolo Valente wrote:
+> 
+> 
+>>>> 	spin_lock_irqsave(&bfqd->lock, flags);
+>>>> -	bfq_clear_bfqq_wait_request(bfqq);
+>>>> -
+>>>> 	if (bfqq != bfqd->in_service_queue) {
+>>>> 		spin_unlock_irqrestore(&bfqd->lock, flags);
+>>>> 		return;
+>>>> 	}
+>>>>
+>>>> +	bfq_clear_bfqq_wait_request(bfqq);
+>>>> +
+>>>
+>>> Please add a comment on why you (correctly) clear this flag only if bfqq is in service.
+>>>
+>>> For the rest, seems ok to me.
+>>>
+>>> Thank you very much for spotting and fixing this bug,
+>>> Paolo
+>>>
+>> Thanks for your reply.
+>> Considering that the bfqq may be in race, we should firstly check whether bfqq is in service before
+>> doing something on it.
+>>
+> 
+> The comment you propose is correct, but the correctness issue I raised
+> is essentially the opposite.  Sorry for not being clear.
+> 
+> Let me put it the other way round: why is it still correct that, if
+> bfqq is not the queue in service, then that flag is not cleared at all?
+> IOW, why is it not a problem that that flag remains untouched is bfqq
+> is not in service?
+> 
 > Thanks,
-> Xiao Yang
-> > 65535 sessions.  In this case, we need to get proper section index by .=
-symtab_shndx
-> > section.
-> >
-> > Module.symvers generated by building kernel with "-ffunction-sections -=
-fdata-sections"
-> > shows the issue(i.e. cannot get 89902 by st_shndx):
-> > -------------------------------------------------------------------
-> > [root@Fedora-30 linux]# file Module.symvers
-> > Module.symvers: data
-> > [root@Fedora-30 linux]# head -n1 Module.symvers
-> > 0x5caf3011      ipv6_chk_custom_prefix  =E2=96=92=E2=96=92=E2=96=92=E2=
-=96=92=E2=96=92=E2=96=92=E2=96=92=E2=96=92        vmlinux EXPORT_SYMBOL
+> Paolo
+> 
+Thanks for your patient.
+As you comment in bfq_idle_slice_timer, there are two race situations as follows,
+a) bfqq is null
+   bfq_idle_slice_timer will not call bfq_idle_slice_timer_body ->no problem
+b) bfqq are not in service
+   1) bfqq is freed
+      it will cause use-after-free problem before calling bfq_clear_bfqq_wait_request
+      in bfq_idle_slice_timer_body. -> use-after-free problem as analyzed in the patch.
+   2) bfqq is not freed
+      it means in_service_queue has been set to a new bfqq. The old bfqq has been expired
+      through __bfq_bfqq_expire func. Then the wait_request flags of old bfqq will be cleared
+      in __bfq_bfqd_reset_in_service func. -> it is no a problem to re-clear the wait_request
+      flags before checking whether bfqq is in service.
 
+In one word, the old bfqq in race has already cleared the wait_request flag when switching in_service_queue.
 
-Could you delete this dump?
-I'd like to avoid garbling where possible.
+Thanks,
+Zhiqiang Liu
 
+>>>>
+>>>
+>>>
+>>> .
+> 
+> 
+> .
+> 
 
-> > ...
-> > [root@Fedora-30 linux]# readelf -s -W vmlinux.o | grep __kstrtabns_ipv6=
-_chk_custom_prefix
-> > 199174: 0000000000032578     1 OBJECT  LOCAL  DEFAULT 89902 __kstrtabns=
-_ipv6_chk_custom_prefix
-> > [root@Fedora-30 linux]# readelf -S -W vmlinux.o | grep 89902
-> >    [89902] __ksymtab_strings PROGBITS        0000000000000000 a94e00 03=
-45a2 00   A  0   0  1
-> > -------------------------------------------------------------------
-> >
-> > Fixes: afa0459daa7b ("modpost: add a helper to get data pointed by a sy=
-mbol")
-
-Strictly speaking, this commit does not introduce any bug.
-
-The CRC bug for MODVERSIONS exists since
-56067812d5b0 ("kbuild: modversions: add infrastructure for emitting
-relative CRCs")
-
-
-> > Fixes: 5545322c86d9 ("modpost: refactor namespace_from_kstrtabns() to n=
-ot hard-code section name")
-
-This commit hash is wrong.
-The correct one is
-
-Fixes: e84f9fbbece1 ("modpost: refactor namespace_from_kstrtabns() to
-not hard-code section name")
-
-
-
-
-
-> > Signed-off-by: Xiao Yang<yangx.jy@cn.fujitsu.com>
-> > ---
-> >   scripts/mod/modpost.c | 3 ++-
-> >   1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> > index d9418c58a8c0..c1fec8cac257 100644
-> > --- a/scripts/mod/modpost.c
-> > +++ b/scripts/mod/modpost.c
-> > @@ -310,7 +310,8 @@ static const char *sec_name(struct elf_info *elf, i=
-nt secindex)
-> >
-> >   static void *sym_get_data(const struct elf_info *info, const Elf_Sym =
-*sym)
-> >   {
-> > -     Elf_Shdr *sechdr =3D&info->sechdrs[sym->st_shndx];
-> > +     unsigned int secindex =3D get_secindex(info, sym);
-> > +     Elf_Shdr *sechdr =3D&info->sechdrs[secindex];
-> >       unsigned long offset;
-> >
-> >       offset =3D sym->st_value;
->
->
->
-
-
---
-Best Regards
-Masahiro Yamada
