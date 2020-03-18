@@ -2,91 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CABC118A037
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 17:12:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F99918A04A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 17:14:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbgCRQL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 12:11:58 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38305 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726733AbgCRQL6 (ORCPT
+        id S1727184AbgCRQOx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 12:14:53 -0400
+Received: from smtprelay0091.hostedemail.com ([216.40.44.91]:37834 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726473AbgCRQOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 12:11:58 -0400
-Received: by mail-pg1-f194.google.com with SMTP id x7so13947099pgh.5;
-        Wed, 18 Mar 2020 09:11:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:date:from:to:cc:subject:mime-version:content-disposition
-         :user-agent;
-        bh=LWuGqqiVZStjA49iRqkB2ECGeP11khRAviVxRIQYens=;
-        b=hJ7/AnymbJqEL9fDuUD1UXa4a8M+PhkAlkiJxpd/HpgvsQN9ycgElBYdD2wF6KqzQi
-         9l4eprE+HBCuCqsilh4rJEN/+DOAhV7icJNaBCoFdX9BLt5s6C9ogqCVmb1jnojQ+NfE
-         oK52vugCG2BeY3o4AR0/dwv0PmmCzV9RhSpYUg0gmAAYnQijiFUck2kqJdGA4jQ7iKtW
-         S0riliFEbzOm5WuHnyI/o9Et9bnZhBB/+/3ZPNYyfhgyhEpTudH6rQJm7WlE3651vlx5
-         93Sb5qubnCm9StZFeETTMrg7ytES7wN5+ZNy/S+XWwc3+32R7lbZKDMXZm0WhJYBRG12
-         kKDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:mime-version
-         :content-disposition:user-agent;
-        bh=LWuGqqiVZStjA49iRqkB2ECGeP11khRAviVxRIQYens=;
-        b=pObCP0KvNXY+c8FOOmD5KFr8Y1K7+BDeMXC5nXO3/DyMe+JOu2YJeKZgbpf+zlC16Z
-         kHyUQRIaxkOyw8SemHz1XslIBDas2/yYB3KLTGW1H1ard8njyF5NlY0K4NEr9n3Un392
-         Ex+aUrssHSkXV09LdE0xUWV0ScAAsEIqr3RyhkkZgzdo6o3jGVhuKQZdsYk1xR8mY3cI
-         Ml2zURscZzMc8p//4nEbjPcvf8XU1UJeQFT9BL16yNI8bnzZTdFsiKxLeXREo52jyjDx
-         6yXyoejdgV3ctWRt0ek172rX18zc2wwIjfmycX6zLSnIJ+rTfo91HUbo6+aWK277GzZ9
-         ptkQ==
-X-Gm-Message-State: ANhLgQ0xesU/dZ/uEw3hp9rrz7dD9MhOfjpv9+pjibMTXV67hUE0cFRi
-        UpiygJ9tw5csH6xgzNP1Bdwf5hvjMoA=
-X-Google-Smtp-Source: ADFU+vsO9tap4oeyRWVuzA9XlsiET4/dRMS4Pk/tQwU5/YnV0jOhKwCBCopromTwiUxlYpEq3zes6A==
-X-Received: by 2002:a63:7c02:: with SMTP id x2mr5576113pgc.236.1584547916442;
-        Wed, 18 Mar 2020 09:11:56 -0700 (PDT)
-Received: from SARKAR ([43.224.157.42])
-        by smtp.gmail.com with ESMTPSA id f19sm6356308pgf.33.2020.03.18.09.11.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 09:11:55 -0700 (PDT)
-Message-ID: <5e72484b.1c69fb81.53f77.5a16@mx.google.com>
-X-Google-Original-Message-ID: <20200318161151.GA31012@rohitsarkar5398@gmail.com>
-Date:   Wed, 18 Mar 2020 21:41:51 +0530
-From:   Rohit Sarkar <rohitsarkar5398@gmail.com>
-To:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: core: Make mlock internal to the iio core
+        Wed, 18 Mar 2020 12:14:53 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 22426181D3030;
+        Wed, 18 Mar 2020 16:14:52 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2525:2565:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:4605:5007:7576:8985:9025:9121:10004:10400:10848:11232:11233:11658:11914:12043:12048:12297:12663:12740:12760:12895:13069:13161:13229:13311:13357:13439:13845:14040:14096:14097:14181:14581:14659:14721:14764:21080:21324:21433:21627:30054:30070:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: size14_d38f1d1e6128
+X-Filterd-Recvd-Size: 2078
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 18 Mar 2020 16:14:50 +0000 (UTC)
+Message-ID: <1bcfc53c523f120a4cf0f19490de506c5704d306.camel@perches.com>
+Subject: Re: [PATCH] bnx2x: fix spelling mistake "pauseable" -> "pausable"
+From:   Joe Perches <joe@perches.com>
+To:     Colin Ian King <colin.king@canonical.com>,
+        Ariel Elior <aelior@marvell.com>,
+        Sudarsana Kalluru <skalluru@marvell.com>,
+        GR-everest-linux-l2@marvell.com,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 18 Mar 2020 09:13:02 -0700
+In-Reply-To: <7ce6d58f-a2d0-7173-0163-f1e3b5f93e65@canonical.com>
+References: <20200317182921.482606-1-colin.king@canonical.com>
+         <8d9544fe6d413cdd600504e48f301e023b99e17b.camel@perches.com>
+         <7ce6d58f-a2d0-7173-0163-f1e3b5f93e65@canonical.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"mlock" should ideally only be used by the iio core. The mlock
-implementation may change in the future which means that no driver
-should be explicitly using mlock.
+On Wed, 2020-03-18 at 09:16 +0000, Colin Ian King wrote:
+> On 18/03/2020 03:37, Joe Perches wrote:
+> > On Tue, 2020-03-17 at 18:29 +0000, Colin King wrote:
+> > > From: Colin Ian King <colin.king@canonical.com>
+> > > 
+> > > Bulk rename of variables and literal strings. No functional
+> > > changes.
+> > 
+> > I'm not sure either spelling is a "real" word and
+> > pauseable seems more intelligible and less likely
+> > to be intended to be a typo of "possible" to me.
+> 
+> It's indeed of marginal benefit. However..
+> 
+> https://www.yourdictionary.com/pausable
 
-Signed-off-by: Rohit Sarkar <rohitsarkar5398@gmail.com>
----
- include/linux/iio/iio.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Then again there's this:
+https://www.spellcheck.net/misspelled-words/pausable
 
-diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
-index eed58ed2f368..e975020abaa6 100644
---- a/include/linux/iio/iio.h
-+++ b/include/linux/iio/iio.h
-@@ -492,7 +492,7 @@ struct iio_buffer_setup_ops {
-  * @buffer:		[DRIVER] any buffer present
-  * @buffer_list:	[INTERN] list of all buffers currently attached
-  * @scan_bytes:		[INTERN] num bytes captured to be fed to buffer demux
-- * @mlock:		[DRIVER] lock used to prevent simultaneous device state
-+ * @mlock:		[INTERN] lock used to prevent simultaneous device state
-  *			changes
-  * @available_scan_masks: [DRIVER] optional array of allowed bitmasks
-  * @masklength:		[INTERN] the length of the mask established from
--- 
-2.23.0.385.gbc12974a89
+Correct spelling for PAUSABLE
+        
+            We think the word pausable is a misspelling.
+
+and
+
+https://www.anagrammer.com/crossword/answer/pausable
+
+The word PAUSABLE is NOT valid in any word game. (Sorry, you cannot play
+PAUSABLE in Scrabble, Words With Friends etc) 
+    
+
+                
+        
 
