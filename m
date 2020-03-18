@@ -2,94 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C51CB18A472
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:54:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2760B18A4A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:55:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbgCRUyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:54:23 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44057 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbgCRUyU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:54:20 -0400
-Received: by mail-qt1-f194.google.com with SMTP id y24so2298142qtv.11
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 13:54:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hy5qm/HoUUr4+Nf3BF/DCL1M5z8PuuCJBXzeH7Xw+kY=;
-        b=N4LnSddqyjrj35FEVCaWDHim03KW+ZMlw6qB2LGHay3tvrKmDKnOjhDE1BDP5LjjQ3
-         FY6hM5XnjpfTcrJgfZwC9eNgRb2L0XbMHVXs32uIu9T7ragvkTHGOyNnU7Yf2eRdCJE4
-         3I34Il+w8b2WlNqaNKTgy+Yz/V7aplf9yBmx8lUj/sa0pndkwQVgTed31zYlC/Jrht0t
-         p52hIjkurSF/WCqgML1XoV0ubBQi5ua4ZdQ67Bb9l8CNm72Iph64ACpCtzJjzKqgCxTy
-         XqZ9eOArX3AGMRBIKcOZIUimcnYMhYUpq4pe8Jxyj1zVeUKecaMY9CRKdllFXWrv3P6B
-         ygcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hy5qm/HoUUr4+Nf3BF/DCL1M5z8PuuCJBXzeH7Xw+kY=;
-        b=eUIdqXMd8c3do/q2CgUF33b2AjilWW+EahDaWA8NnyiHlnoxcFRUV+PEm//Z9jEo27
-         Nu6I0RT3oXLwpeoHE5IqzBVREvA/5nJcoq9oJzWAiJHcD1GQoPhPecuxFY80z8nwE5/1
-         Cl3CKBfzduxW25W+jZs7p17sgCcynnn2IDytwMPebeEUjkWmzpy6nwWW5R5/g3Gvczii
-         5LbvSN5kfhp3Jn7twBVj8cCxS+Fzb4tpn38Ak0rfdpW1t+EV1ynsWX3/PrFZM7Zqevc6
-         QQseA+7hRsEWFcMZ216cWuN6oZIBDUQIoSoekyGDLP7EefGzOQbE24ZI06PzgQ0UDNtG
-         6wmg==
-X-Gm-Message-State: ANhLgQ26eCTwi+aX5AMohAEj0v9mnRE3KEJFpZoq3kVO4aHORMfDYLh2
-        +FgnoQffXYWmIHpFWt7emrRB4Zy2cWQBSMTPt/Y7qw==
-X-Google-Smtp-Source: ADFU+vtmmSWS+aIMzUy5/s+2hhcAShSPdK7KLUDMp6FBmd1LA5Z7u8QejSBWyleiEI9eBwNGxK3e7ELqI7QZGMIbzUo=
-X-Received: by 2002:aed:36a5:: with SMTP id f34mr6299431qtb.57.1584564859557;
- Wed, 18 Mar 2020 13:54:19 -0700 (PDT)
+        id S1728227AbgCRUzN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:55:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55480 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728214AbgCRUzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:55:12 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E25FE208E4;
+        Wed, 18 Mar 2020 20:55:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584564911;
+        bh=V4XcCi4zI+m4Y89ggKKf+m+BzhB6paEjnpHJR1dUQbY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CZLyyrZdXbnBL0Ra4FUCOyjQjnDP85Yv0Ct8ndGon4Y2wEmDEklb7RZjVR0L6vOsi
+         bwL+NcsUzl/x0eeaXefvxoxPP8ecs37DH35KNx85h3pKWRsqCo/p1DgKi9yIXKOMKS
+         OojtKtS/rB8fRygMUml+rZtpOrf5kHsyVKbAsfDM=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Vasily Averin <vvs@virtuozzo.com>, Tejun Heo <tj@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, cgroups@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 01/37] cgroup-v1: cgroup_pidlist_next should update position index
+Date:   Wed, 18 Mar 2020 16:54:33 -0400
+Message-Id: <20200318205509.17053-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <000000000000ae2ab305a123f146@google.com>
-In-Reply-To: <000000000000ae2ab305a123f146@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 18 Mar 2020 21:54:07 +0100
-Message-ID: <CACT4Y+a_d=5TNZth0dPov0B7tB5T9bAzWXBj1HjhXdn-=0KOOg@mail.gmail.com>
-Subject: Re: linux-next build error (8)
-To:     syzbot <syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 5:57 PM syzbot
-<syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    47780d78 Add linux-next specific files for 20200318
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14228745e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b68b7b89ad96c62a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=792dec47d693ccdc05a0
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com
->
-> kernel/rcu/tasks.h:1070:37: error: 'rcu_tasks_rude' undeclared (first use in this function); did you mean 'rcu_tasks_qs'?
+From: Vasily Averin <vvs@virtuozzo.com>
 
-+rcu maintainers
+[ Upstream commit db8dd9697238be70a6b4f9d0284cd89f59c0e070 ]
 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+if seq_file .next fuction does not change position index,
+read after some lseek can generate unexpected output.
+
+ # mount | grep cgroup
+ # dd if=/mnt/cgroup.procs bs=1  # normal output
+...
+1294
+1295
+1296
+1304
+1382
+584+0 records in
+584+0 records out
+584 bytes copied
+
+dd: /mnt/cgroup.procs: cannot skip to specified offset
+83  <<< generates end of last line
+1383  <<< ... and whole last line once again
+0+1 records in
+0+1 records out
+8 bytes copied
+
+dd: /mnt/cgroup.procs: cannot skip to specified offset
+1386  <<< generates last line anyway
+0+1 records in
+0+1 records out
+5 bytes copied
+
+https://bugzilla.kernel.org/show_bug.cgi?id=206283
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ kernel/cgroup/cgroup-v1.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
+index 51063e7a93c28..c9628b9a41d23 100644
+--- a/kernel/cgroup/cgroup-v1.c
++++ b/kernel/cgroup/cgroup-v1.c
+@@ -501,6 +501,7 @@ static void *cgroup_pidlist_next(struct seq_file *s, void *v, loff_t *pos)
+ 	 */
+ 	p++;
+ 	if (p >= end) {
++		(*pos)++;
+ 		return NULL;
+ 	} else {
+ 		*pos = *p;
+-- 
+2.20.1
+
