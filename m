@@ -2,98 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A49E318A557
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:01:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E55B318A577
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:01:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727356AbgCRVAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 17:00:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57374 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727509AbgCRU41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:56:27 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6826A208E0;
-        Wed, 18 Mar 2020 20:56:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564987;
-        bh=iJZPY2XCJJqf+q0YIQZeuGZz/f3L0OnPZZ1p69G+r/4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fjf6RrXZN56TuZQgRGKe73uZm5l7bni/IVHmU/3gOtaz7zgD/apNmyvMr/6m4tjfq
-         2dnYM3CPKdvRh4jRB8miPIS8B5Vw+TPEK+sjsROp9rC74UE+3uZPv8XjuZC1lmdNL0
-         HMsykPgt2rLCJQocMoUacd7ws1GuyMuuK9fygMI8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.14 27/28] iommu/vt-d: quirk_ioat_snb_local_iommu: replace WARN_TAINT with pr_warn + add_taint
-Date:   Wed, 18 Mar 2020 16:55:54 -0400
-Message-Id: <20200318205555.17447-27-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200318205555.17447-1-sashal@kernel.org>
-References: <20200318205555.17447-1-sashal@kernel.org>
+        id S1728197AbgCRVBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 17:01:46 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45241 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728862AbgCRVBk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 17:01:40 -0400
+Received: by mail-ed1-f66.google.com with SMTP id u59so4272154edc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 14:01:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h1JVSDR71Ka3PM04u0ramfobv1CKoUTWgjm5qfW2CV8=;
+        b=m+CruKFqyeFiSzmQCZqiAjkeem718D1Unt4LZxrLyM48zoGD0gDaVn0NlVfCexVTzu
+         wihdula0cgpJNes9gbbbPZGOCr8gmzgfMR1DP2niKlc4/Xbz1RjMvIcZK3QeYS4MTBzR
+         VGVmqZmbPsEQ42JahCXbnk6yopm5byhYxfuE4bMF2/oEIwfi0TIGwhWzo+tUFEv5Mobg
+         xAZqhXW9ZYNPl8K7ISeE3z29hhnh0uDlXFQhZXWxMxod1HlKG5GyxdS8a7Q7I9YuWv4C
+         hEdfpxYwsjziy7uL5etvx6svflsV0+OWDJH1g09o69UnURs0B4B8khAkiIXSB+T2BP9R
+         8WWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h1JVSDR71Ka3PM04u0ramfobv1CKoUTWgjm5qfW2CV8=;
+        b=NSnONfdyxDVNs2Y5HWPY+/HnjCER2W7aq4kfK9tKlM+6Xb6EsW4mEsd+ylFo1kxabi
+         ahV/b3M9DJWbD+htsQeLuwxXB/+ezlqJWm+lVr8hzs/vvMaJa5phtsYqGNnE06pjUO+W
+         lZSiZAy9A6IiHBRVw7KQGgs5wCm8AOImeGm4D7IcKGa7v+uDyZek0LkWgH8Jo0qmY5Q4
+         f6l//Gr7NUnk4vz+nSkuo/oceQrmwKDJb+hMDHhleKMe+gL3aJoDJuq+S22BdVTvzDNU
+         hnHh0ivdVeCDZoeXgf6mHKtZkZ2SXr1rfQoQJMdT/Krt6UU5FsLFItb4xXpvBR4U6MF4
+         896A==
+X-Gm-Message-State: ANhLgQ2xR9qUOqxpT7zyACj6omC+K0Yzkc3L4vIV4Gb9r3zlrZF2QTRt
+        9lAyOC22BBXUTCioz+aFwjakdzIF5nSxrBiEFhs6
+X-Google-Smtp-Source: ADFU+vtjoB1L41gbvG3IfZm3ksBmDTvbqLdnYvpmD27Ya9UPhKm77W68IFm4/AxRz3i7hA2sUofnKwQPP6SAVhHtg78=
+X-Received: by 2002:a05:6402:8c3:: with SMTP id d3mr5966134edz.31.1584565297053;
+ Wed, 18 Mar 2020 14:01:37 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <cover.1577736799.git.rgb@redhat.com> <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
+ <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com>
+ <3142237.YMNxv0uec1@x2> <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
+ <20200312202733.7kli64zsnqc4mrd2@madcap2.tricolour.ca> <CAHC9VhS9DtxJ4gvOfMRnzoo6ccGJVKL+uZYe6qqH+SPqD8r01Q@mail.gmail.com>
+ <20200313192306.wxey3wn2h4htpccm@madcap2.tricolour.ca>
+In-Reply-To: <20200313192306.wxey3wn2h4htpccm@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 18 Mar 2020 17:01:26 -0400
+Message-ID: <CAHC9VhQKOpVWxDg-tWuCWV22QRu8P_NpFKme==0Ot1RQKa_DWA@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
+ the audit daemon
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
+        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+On Fri, Mar 13, 2020 at 3:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-03-13 12:42, Paul Moore wrote:
 
-[ Upstream commit 81ee85d0462410de8eeeec1b9761941fd6ed8c7b ]
+...
 
-Quoting from the comment describing the WARN functions in
-include/asm-generic/bug.h:
+> > The thread has had a lot of starts/stops, so I may be repeating a
+> > previous suggestion, but one idea would be to still emit a "death
+> > record" when the final task in the audit container ID does die, but
+> > block the particular audit container ID from reuse until it the
+> > SIGNAL2 info has been reported.  This gives us the timely ACID death
+> > notification while still preventing confusion and ambiguity caused by
+> > potentially reusing the ACID before the SIGNAL2 record has been sent;
+> > there is a small nit about the ACID being present in the SIGNAL2
+> > *after* its death, but I think that can be easily explained and
+> > understood by admins.
+>
+> Thinking quickly about possible technical solutions to this, maybe it
+> makes sense to have two counters on a contobj so that we know when the
+> last process in that container exits and can issue the death
+> certificate, but we still block reuse of it until all further references
+> to it have been resolved.  This will likely also make it possible to
+> report the full contid chain in SIGNAL2 records.  This will eliminate
+> some of the issues we are discussing with regards to passing a contobj
+> vs a contid to the audit_log_contid function, but won't eliminate them
+> all because there are still some contids that won't have an object
+> associated with them to make it impossible to look them up in the
+> contobj lists.
 
- * WARN(), WARN_ON(), WARN_ON_ONCE, and so on can be used to report
- * significant kernel issues that need prompt attention if they should ever
- * appear at runtime.
- *
- * Do not use these macros when checking for invalid external inputs
+I'm not sure you need a full second counter, I imagine a simple flag
+would be okay.  I think you just something to indicate that this ACID
+object is marked as "dead" but it still being held for sanity reasons
+and should not be reused.
 
-The (buggy) firmware tables which the dmar code was calling WARN_TAINT
-for really are invalid external inputs. They are not under the kernel's
-control and the issues in them cannot be fixed by a kernel update.
-So logging a backtrace, which invites bug reports to be filed about this,
-is not helpful.
-
-Fixes: 556ab45f9a77 ("ioat2: catch and recover from broken vtd configurations v6")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
-Link: https://lore.kernel.org/r/20200309182510.373875-1-hdegoede@redhat.com
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=701847
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/iommu/intel-iommu.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index b48666849dbed..b8aa5e60e4c3c 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -3984,10 +3984,11 @@ static void quirk_ioat_snb_local_iommu(struct pci_dev *pdev)
- 
- 	/* we know that the this iommu should be at offset 0xa000 from vtbar */
- 	drhd = dmar_find_matched_drhd_unit(pdev);
--	if (WARN_TAINT_ONCE(!drhd || drhd->reg_base_addr - vtbar != 0xa000,
--			    TAINT_FIRMWARE_WORKAROUND,
--			    "BIOS assigned incorrect VT-d unit for Intel(R) QuickData Technology device\n"))
-+	if (!drhd || drhd->reg_base_addr - vtbar != 0xa000) {
-+		pr_warn_once(FW_BUG "BIOS assigned incorrect VT-d unit for Intel(R) QuickData Technology device\n");
-+		add_taint(TAINT_FIRMWARE_WORKAROUND, LOCKDEP_STILL_OK);
- 		pdev->dev.archdata.iommu = DUMMY_DEVICE_DOMAIN_INFO;
-+	}
- }
- DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_IOAT_SNB, quirk_ioat_snb_local_iommu);
- 
 -- 
-2.20.1
-
+paul moore
+www.paul-moore.com
