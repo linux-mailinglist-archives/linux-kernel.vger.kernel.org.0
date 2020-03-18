@@ -2,338 +2,273 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 764BE189B56
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:53:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CF4C189B53
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:53:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbgCRLx2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 07:53:28 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38220 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbgCRLx2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 07:53:28 -0400
-Received: by mail-lf1-f67.google.com with SMTP id n13so18276132lfh.5;
-        Wed, 18 Mar 2020 04:53:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BWEh45KCTkBQxAJ2GkHbeU42bZHNdzh5pJ4JOiVlax4=;
-        b=USBAaqGxBj3FxBX0ReTwVZcIKn5M202H2tPsnlmj6Ogezsf5XNsMYWlKWYZx3/GXJE
-         Y4syeAzaYMHmA5mJiHpf75u4Aw13t4mCOrsSCWbBjMYaR7W7MZYn/ObBiJ7QhTntU7uF
-         AvFymSRaEshFVNXG33QtLEjMk6eVO/2QPZ/F0qmoihK75i/twqfWen6mHTzc8o/t20Iu
-         7nvtD1uHeBnWkXr2072Abxd+KQq3jTPiZAUw5vUE5JnTBuON9k/4sksf1KVN/8mRJxhI
-         Cgvw9oa7a5xUjGTe5YPfyhQ6wcar9cNtSUrj9phPA8wYBLMJhFEOtKtOOTquFr+X7PM4
-         tfBQ==
-X-Gm-Message-State: ANhLgQ09Ls98Wk24Hqf3luKsAQ8M5iaDXApF+fe3sWzW4cGed+rt+HRK
-        26tocKdxsVo88mSaBSF9h4s=
-X-Google-Smtp-Source: ADFU+vtf0edk0G9aMCZjj+2f/M4rqGgAKpHtWSN2W2gKYMKdv8yWebMyYKoUTwIKK3lT9VNQc8fNYg==
-X-Received: by 2002:a19:7b18:: with SMTP id w24mr2662929lfc.188.1584532404188;
-        Wed, 18 Mar 2020 04:53:24 -0700 (PDT)
-Received: from localhost.localdomain (dc7t7ryyyyyyyyyyyyybt-3.rev.dnainternet.fi. [2001:14ba:16e1:b700::3])
-        by smtp.gmail.com with ESMTPSA id o16sm4566816ljp.53.2020.03.18.04.53.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 04:53:23 -0700 (PDT)
-Date:   Wed, 18 Mar 2020 13:53:16 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Markus Laine <markus.laine@fi.rohmeurope.com>,
-        Mikko Mutanen <mikko.mutanen@fi.rohmeurope.com>
-Subject: [PATCH v5 6/9] power: supply: bd70528: use linear ranges
-Message-ID: <a074c17fd65bae86e53363a3f27d45f076796de7.1584468798.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1584468798.git.matti.vaittinen@fi.rohmeurope.com>
+        id S1727044AbgCRLxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 07:53:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33836 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbgCRLxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 07:53:21 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43BAC2076D;
+        Wed, 18 Mar 2020 11:53:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584532399;
+        bh=m9FmbwR3S9CLC9zLKu9zuaEdpr6gT37kN2ogRUDA0VI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HQcKfhLwnK+HV659sYu/fUTj2VTa0miJBbFZrmAzGEIQVIaHNUlRakPsGiufzom7Z
+         PdoL34HsBA5gF5fPzIMLBoyJiI/bgzOeFiRyT7XsSimp9Efcy6KS7by7eyU9tfAwMf
+         VTPlix9VHdwO9q8plCNjWhTohMZl64sXq5vUtwWs=
+Date:   Wed, 18 Mar 2020 12:53:17 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Jolly Shah <jolly.shah@xilinx.com>
+Cc:     ard.biesheuvel@linaro.org, mingo@kernel.org,
+        matt@codeblueprint.co.uk, sudeep.holla@arm.com,
+        hkallweit1@gmail.com, keescook@chromium.org,
+        dmitry.torokhov@gmail.com, michal.simek@xilinx.com,
+        rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>,
+        Stefan Krsmanovic <stefan.krsmanovic@aggios.com>,
+        Jolly Shah <jollys@xilinx.com>,
+        Tejas Patel <tejas.patel@xilinx.com>
+Subject: Re: [PATCH v3 23/24] firmware: xilinx: Add sysfs to set shutdown
+ scope
+Message-ID: <20200318115317.GD2472686@kroah.com>
+References: <1583538452-1992-1-git-send-email-jolly.shah@xilinx.com>
+ <1583538452-1992-24-git-send-email-jolly.shah@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1584468798.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <1583538452-1992-24-git-send-email-jolly.shah@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the bd70528 to use common linear_range code instead of
-implementing a copy of it in this driver.
+On Fri, Mar 06, 2020 at 03:47:31PM -0800, Jolly Shah wrote:
+> From: Rajan Vaja <rajan.vaja@xilinx.com>
+> 
+> The Linux shutdown functionality implemented via PSCI system_off does
+> not include an option to set a scope, i.e. which parts of the system to
+> shut down.
+> 
+> This patch creates sysfs that allows to set the shutdown scope for the
+> next shutdown request. When the next shutdown is performed, the platform
+> specific portion of PSCI-system_off can use the chosen shutdown scope.
+> 
+> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> Signed-off-by: Stefan Krsmanovic <stefan.krsmanovic@aggios.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> Signed-off-by: Tejas Patel <tejas.patel@xilinx.com>
+> Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
+> ---
+>  .../ABI/stable/sysfs-driver-firmware-zynqmp        |  32 +++++
+>  drivers/firmware/xilinx/zynqmp.c                   | 150 ++++++++++++++++++++-
+>  include/linux/firmware/xlnx-zynqmp.h               |  12 ++
+>  3 files changed, 193 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/ABI/stable/sysfs-driver-firmware-zynqmp b/Documentation/ABI/stable/sysfs-driver-firmware-zynqmp
+> index 7fd6e70..b46ec0c 100644
+> --- a/Documentation/ABI/stable/sysfs-driver-firmware-zynqmp
+> +++ b/Documentation/ABI/stable/sysfs-driver-firmware-zynqmp
+> @@ -48,3 +48,35 @@ Description:
+>  		# echo 0xFFFFFFFF 0x1234ABCD > /sys/devices/platform/firmware\:zynqmp-firmware/pggs0
+>  
+>  Users:		Xilinx
+> +
+> +What:		/sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
+> +Date:		March 2020
+> +KernelVersion:	5.6
+> +Contact:	"Jolly Shah" <jollys@xilinx.com>
+> +Description:
+> +		This sysfs interface allows to set the shutdown scope for the
+> +		next shutdown request. When the next shutdown is performed, the
+> +		platform specific portion of PSCI-system_off can use the chosen
+> +		shutdown scope.
+> +
+> +		Following are available shutdown scopes(subtypes):
+> +
+> +		subsystem:	Only the APU along with all of its peripherals
+> +				not used by other processing units will be
+> +				shut down. This may result in the FPD power
+> +				domain being shut down provided that no other
+> +				processing unit uses FPD peripherals or DRAM.
+> +		ps_only:	The complete PS will be shut down, including the
+> +				RPU, PMU, etc.  Only the PL domain (FPGA)
+> +				remains untouched.
+> +		system:		The complete system/device is shut down.
+> +
+> +		Usage:
+> +		# cat /sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
+> +		# echo <scope> > /sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
+> +
+> +		Example:
+> +		# cat /sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
+> +		# echo "subsystem" > /sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
+> +
+> +Users:		Xilinx
+> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+> index d3f637b..9caf1cf 100644
+> --- a/drivers/firmware/xilinx/zynqmp.c
+> +++ b/drivers/firmware/xilinx/zynqmp.c
+> @@ -847,6 +847,154 @@ int zynqmp_pm_system_shutdown(const u32 type, const u32 subtype)
+>  }
+>  
+>  /**
+> + * struct zynqmp_pm_shutdown_scope - Struct for shutdown scope
+> + * @subtype:	Shutdown subtype
+> + * @name:	Matching string for scope argument
+> + *
+> + * This struct encapsulates mapping between shutdown scope ID and string.
+> + */
+> +struct zynqmp_pm_shutdown_scope {
+> +	const enum zynqmp_pm_shutdown_subtype subtype;
+> +	const char *name;
+> +};
+> +
+> +static struct zynqmp_pm_shutdown_scope shutdown_scopes[] = {
+> +	[ZYNQMP_PM_SHUTDOWN_SUBTYPE_SUBSYSTEM] = {
+> +		.subtype = ZYNQMP_PM_SHUTDOWN_SUBTYPE_SUBSYSTEM,
+> +		.name = "subsystem",
+> +	},
+> +	[ZYNQMP_PM_SHUTDOWN_SUBTYPE_PS_ONLY] = {
+> +		.subtype = ZYNQMP_PM_SHUTDOWN_SUBTYPE_PS_ONLY,
+> +		.name = "ps_only",
+> +	},
+> +	[ZYNQMP_PM_SHUTDOWN_SUBTYPE_SYSTEM] = {
+> +		.subtype = ZYNQMP_PM_SHUTDOWN_SUBTYPE_SYSTEM,
+> +		.name = "system",
+> +	},
+> +};
+> +
+> +static struct zynqmp_pm_shutdown_scope *selected_scope =
+> +		&shutdown_scopes[ZYNQMP_PM_SHUTDOWN_SUBTYPE_SYSTEM];
+> +
+> +/**
+> + * zynqmp_pm_is_shutdown_scope_valid - Check if shutdown scope string is valid
+> + * @scope_string:	Shutdown scope string
+> + *
+> + * Return:		Return pointer to matching shutdown scope struct from
+> + *			array of available options in system if string is valid,
+> + *			otherwise returns NULL.
+> + */
+> +static struct zynqmp_pm_shutdown_scope*
+> +		zynqmp_pm_is_shutdown_scope_valid(const char *scope_string)
+> +{
+> +	int count;
+> +
+> +	for (count = 0; count < ARRAY_SIZE(shutdown_scopes); count++)
+> +		if (sysfs_streq(scope_string, shutdown_scopes[count].name))
+> +			return &shutdown_scopes[count];
+> +
+> +	return NULL;
+> +}
+> +
+> +/**
+> + * shutdown_scope_show - Show shutdown_scope sysfs attribute
+> + * @device:	Device structure
+> + * @attr:	Device attribute structure
+> + * @buf:	Requested available shutdown_scope attributes string
+> + *
+> + * User-space interface for viewing the available scope options for system
+> + * shutdown. Scope option for next shutdown call is marked with [].
+> + *
+> + * Usage: cat /sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
+> + *
+> + * Return:	Number of bytes printed into the buffer.
+> + */
+> +static ssize_t shutdown_scope_show(struct device *device,
+> +				   struct device_attribute *attr,
+> +				   char *buf)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(shutdown_scopes); i++) {
+> +		if (&shutdown_scopes[i] == selected_scope) {
+> +			strcat(buf, "[");
+> +			strcat(buf, shutdown_scopes[i].name);
+> +			strcat(buf, "]");
+> +		} else {
+> +			strcat(buf, shutdown_scopes[i].name);
+> +		}
+> +		strcat(buf, " ");
+> +	}
+> +	strcat(buf, "\n");
+> +
+> +	return strlen(buf);
+> +}
+> +
+> +/**
+> + * shutdown_scope_store - Store shutdown_scope sysfs attribute
+> + * @device:	Device structure
+> + * @attr:	Device attribute structure
+> + * @buf:	User entered shutdown_scope attribute string
+> + * @count:	Buffer size
+> + *
+> + * User-space interface for setting the scope for the next system shutdown.
+> + * Usage: echo <scope> > /sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
+> + *
+> + * The Linux shutdown functionality implemented via PSCI system_off does not
+> + * include an option to set a scope, i.e. which parts of the system to shut
+> + * down.
+> + *
+> + * This API function allows to set the shutdown scope for the next shutdown
+> + * request by passing it to the ATF running in EL3. When the next shutdown
+> + * is performed, the platform specific portion of PSCI-system_off can use
+> + * the chosen shutdown scope.
+> + *
+> + * subsystem:	Only the APU along with all of its peripherals not used by other
+> + *		processing units will be shut down. This may result in the FPD
+> + *		power domain being shut down provided that no other processing
+> + *		unit uses FPD peripherals or DRAM.
+> + * ps_only:	The complete PS will be shut down, including the RPU, PMU, etc.
+> + *		Only the PL domain (FPGA) remains untouched.
+> + * system:	The complete system/device is shut down.
+> + *
+> + * Return:	count argument if request succeeds, the corresponding error
+> + *		code otherwise
+> + */
+> +static ssize_t shutdown_scope_store(struct device *device,
+> +				    struct device_attribute *attr,
+> +				    const char *buf, size_t count)
+> +{
+> +	int ret;
+> +	struct zynqmp_pm_shutdown_scope *scope;
+> +
+> +	scope = zynqmp_pm_is_shutdown_scope_valid(buf);
+> +	if (!scope)
+> +		return -EINVAL;
+> +
+> +	ret = zynqmp_pm_system_shutdown(ZYNQMP_PM_SHUTDOWN_TYPE_SETSCOPE_ONLY,
+> +					scope->subtype);
+> +	if (ret) {
+> +		pr_err("unable to set shutdown scope %s\n", buf);
+> +		return ret;
+> +	}
+> +
+> +	selected_scope = scope;
+> +
+> +	return count;
+> +}
+> +
+> +static DEVICE_ATTR_RW(shutdown_scope);
+> +
+> +static struct attribute *zynqmp_shutdown_scope_attrs[] = {
+> +	&dev_attr_shutdown_scope.attr,
+> +	NULL,
+> +};
+> +
+> +static const struct attribute_group shutdown_scope_attribute_group = {
+> +	.attrs = zynqmp_shutdown_scope_attrs,
+> +};
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
+ATTRIBUTE_GROUPS()?
 
-No changes since v4
+thanks,
 
- drivers/power/supply/Kconfig           |   1 +
- drivers/power/supply/bd70528-charger.c | 144 ++++++++++---------------
- 2 files changed, 56 insertions(+), 89 deletions(-)
-
-diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-index 9a5591ab90d0..8781c674ed07 100644
---- a/drivers/power/supply/Kconfig
-+++ b/drivers/power/supply/Kconfig
-@@ -695,6 +695,7 @@ config CHARGER_UCS1002
- config CHARGER_BD70528
- 	tristate "ROHM bd70528 charger driver"
- 	depends on MFD_ROHM_BD70528
-+	select LINEAR_RANGES
- 	default n
- 	help
- 	 Say Y here to enable support for getting battery status
-diff --git a/drivers/power/supply/bd70528-charger.c b/drivers/power/supply/bd70528-charger.c
-index 3b820110ecfa..7a805faeee83 100644
---- a/drivers/power/supply/bd70528-charger.c
-+++ b/drivers/power/supply/bd70528-charger.c
-@@ -72,6 +72,7 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/power_supply.h>
-+#include <linux/linear_range.h>
- 
- #define CHG_STAT_SUSPEND	0x0
- #define CHG_STAT_TRICKLE	0x1
-@@ -335,38 +336,37 @@ static int bd70528_get_present(struct bd70528_psy *bdpsy, int *val)
- 	return 0;
- }
- 
--struct bd70528_linear_range {
--	int min;
--	int step;
--	int vals;
--	int low_sel;
--};
--
--static const struct bd70528_linear_range current_limit_ranges[] = {
-+static const struct linear_range current_limit_ranges[] = {
- 	{
- 		.min = 5,
- 		.step = 1,
--		.vals = 36,
--		.low_sel = 0,
-+		.min_sel = 0,
-+		.max_sel = 0x22,
- 	},
- 	{
- 		.min = 40,
- 		.step = 5,
--		.vals = 5,
--		.low_sel = 0x23,
-+		.min_sel = 0x23,
-+		.max_sel = 0x26,
- 	},
- 	{
- 		.min = 60,
- 		.step = 20,
--		.vals = 8,
--		.low_sel = 0x27,
-+		.min_sel = 0x27,
-+		.max_sel = 0x2d,
- 	},
- 	{
- 		.min = 200,
- 		.step = 50,
--		.vals = 7,
--		.low_sel = 0x2e,
--	}
-+		.min_sel = 0x2e,
-+		.max_sel = 0x34,
-+	},
-+	{
-+		.min = 500,
-+		.step = 0,
-+		.min_sel = 0x35,
-+		.max_sel = 0x3f,
-+	},
- };
- 
- /*
-@@ -374,18 +374,18 @@ static const struct bd70528_linear_range current_limit_ranges[] = {
-  * voltage for low temperatures. The driver currently only reads
-  * the charge current at room temperature. We do set both though.
-  */
--static const struct bd70528_linear_range warm_charge_curr[] = {
-+static const struct linear_range warm_charge_curr[] = {
- 	{
- 		.min = 10,
- 		.step = 10,
--		.vals = 20,
--		.low_sel = 0,
-+		.min_sel = 0,
-+		.max_sel = 0x12
- 	},
- 	{
- 		.min = 200,
- 		.step = 25,
--		.vals = 13,
--		.low_sel = 0x13,
-+		.min_sel = 0x13,
-+		.max_sel = 0x1f
- 	},
- };
- 
-@@ -398,56 +398,6 @@ static const struct bd70528_linear_range warm_charge_curr[] = {
- #define MAX_WARM_CHG_CURR_SEL 0x1f
- #define MIN_CHG_CURR_SEL 0x0
- 
--static int find_value_for_selector_low(const struct bd70528_linear_range *r,
--				       int selectors, unsigned int sel,
--				       unsigned int *val)
--{
--	int i;
--
--	for (i = 0; i < selectors; i++) {
--		if (r[i].low_sel <= sel && r[i].low_sel + r[i].vals >= sel) {
--			*val = r[i].min + (sel - r[i].low_sel) * r[i].step;
--			return 0;
--		}
--	}
--	return -EINVAL;
--}
--
--/*
-- * For BD70528 voltage/current limits we happily accept any value which
-- * belongs the range. We could check if value matching the selector is
-- * desired by computing the range min + (sel - sel_low) * range step - but
-- * I guess it is enough if we use voltage/current which is closest (below)
-- * the requested?
-- */
--static int find_selector_for_value_low(const struct bd70528_linear_range *r,
--				       int selectors, unsigned int val,
--				       unsigned int *sel, bool *found)
--{
--	int i;
--	int ret = -EINVAL;
--
--	*found = false;
--	for (i = 0; i < selectors; i++) {
--		if (r[i].min <= val) {
--			if (r[i].min + r[i].step * r[i].vals >= val) {
--				*found = true;
--				*sel = r[i].low_sel + (val - r[i].min) /
--				       r[i].step;
--				ret = 0;
--				break;
--			}
--			/*
--			 * If the range max is smaller than requested
--			 * we can set the max supported value from range
--			 */
--			*sel = r[i].low_sel + r[i].vals;
--			ret = 0;
--		}
--	}
--	return ret;
--}
--
- static int get_charge_current(struct bd70528_psy *bdpsy, int *ma)
- {
- 	unsigned int sel;
-@@ -463,9 +413,9 @@ static int get_charge_current(struct bd70528_psy *bdpsy, int *ma)
- 
- 	sel &= BD70528_MASK_CHG_CHG_CURR;
- 
--	ret = find_value_for_selector_low(&warm_charge_curr[0],
--					  ARRAY_SIZE(warm_charge_curr), sel,
--					  ma);
-+	ret = linear_range_get_value_array(&warm_charge_curr[0],
-+					   ARRAY_SIZE(warm_charge_curr),
-+					   sel, ma);
- 	if (ret) {
- 		dev_err(bdpsy->dev,
- 			"Unknown charge current value 0x%x\n",
-@@ -491,10 +441,9 @@ static int get_current_limit(struct bd70528_psy *bdpsy, int *ma)
- 
- 	sel &= BD70528_MASK_CHG_DCIN_ILIM;
- 
--	ret = find_value_for_selector_low(&current_limit_ranges[0],
--					  ARRAY_SIZE(current_limit_ranges), sel,
--					  ma);
--
-+	ret = linear_range_get_value_array(&current_limit_ranges[0],
-+					   ARRAY_SIZE(current_limit_ranges),
-+					   sel, ma);
- 	if (ret) {
- 		/* Unspecified values mean 500 mA */
- 		*ma = 500;
-@@ -588,15 +537,28 @@ static int set_charge_current(struct bd70528_psy *bdpsy, int ma)
- 		goto set;
- 	}
- 
--	ret = find_selector_for_value_low(&warm_charge_curr[0],
--					  ARRAY_SIZE(warm_charge_curr), ma,
--					  &reg, &found);
-+/*
-+ * For BD70528 voltage/current limits we happily accept any value which
-+ * belongs the range. We could check if value matching the selector is
-+ * desired by computing the range min + (sel - sel_low) * range step - but
-+ * I guess it is enough if we use voltage/current which is closest (below)
-+ * the requested?
-+ */
-+
-+	ret = linear_range_get_selector_low_array(warm_charge_curr,
-+						  ARRAY_SIZE(warm_charge_curr),
-+						  ma, &reg, &found);
- 	if (ret) {
-+		dev_err(bdpsy->dev,
-+			 "Unsupported charge current %u mA\n", ma);
- 		reg = MIN_CHG_CURR_SEL;
- 		goto set;
- 	}
- 	if (!found) {
--		/* There was a gap in supported values and we hit it */
-+		/*
-+		 * There was a gap in supported values and we hit it.
-+		 * Yet a smaller value was found so we use it.
-+		 */
- 		dev_warn(bdpsy->dev,
- 			 "Unsupported charge current %u mA\n", ma);
- 	}
-@@ -648,17 +610,21 @@ static int set_current_limit(struct bd70528_psy *bdpsy, int ma)
- 		goto set;
- 	}
- 
--	ret = find_selector_for_value_low(&current_limit_ranges[0],
--					  ARRAY_SIZE(current_limit_ranges), ma,
--					  &reg, &found);
-+	ret = linear_range_get_selector_low_array(current_limit_ranges,
-+					ARRAY_SIZE(current_limit_ranges),
-+					ma, &reg, &found);
- 	if (ret) {
-+		dev_err(bdpsy->dev, "Unsupported current limit %umA\n", ma);
- 		reg = MIN_CURR_LIMIT_SEL;
- 		goto set;
- 	}
- 	if (!found) {
--		/* There was a gap in supported values and we hit it ?*/
--		dev_warn(bdpsy->dev, "Unsupported current limit %umA\n",
--			 ma);
-+		/*
-+		 * There was a gap in supported values and we hit it.
-+		 * We found a smaller value from ranges and use it.
-+		 * Warn user though.
-+		 */
-+		dev_warn(bdpsy->dev, "Unsupported current limit %umA\n", ma);
- 	}
- 
- set:
--- 
-2.21.0
-
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =] 
+greg k-h
