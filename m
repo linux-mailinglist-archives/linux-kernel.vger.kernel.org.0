@@ -2,97 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6662618A1D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:44:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87B0318A1B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:41:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbgCRRnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 13:43:12 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35736 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727234AbgCRRnK (ORCPT
+        id S1726781AbgCRRlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 13:41:36 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:38381 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbgCRRlg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 13:43:10 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h4so10922217wru.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 10:43:08 -0700 (PDT)
+        Wed, 18 Mar 2020 13:41:36 -0400
+Received: by mail-pj1-f68.google.com with SMTP id m15so1504676pje.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 10:41:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UECOqhVXTO4WTSf9+88d/gPF4iTL0TltzwoS0jurVoE=;
-        b=X3InRhONf0y9chdNCyUrwGPBhyZzqitwLnWsrU8JjKupUxbqtkc7V6VC6HcfCXXOft
-         I0PXA8x/CCtdrIUiVr5p1NsD6Y8+0f8opR11H8+ILfj/m7q8NKrc/y/+JiKrwchtw2xz
-         qVbDcHVYC6ugoTW3Bu0l4I84g0EkoJyKniBXIdiQwNHLQuNyTRdzNgaFkxpnhvZPwhYR
-         hPygVET2zKSerO0oSB5EvdxVR5o6FQcBqz08D6y4ON0f/125tAA6qD6MuUzTEM2F5ZgS
-         oDxlfpl6Bkqt0+hfPY/dTx/p3bVSf1e63/dDsh4l5VhLXt476/lLeCfUGTUsXjOn3NvH
-         D9Zw==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KNn1MyCt2mGwclhH+lTXpL3RrIiuOj8izAxEFcctuh0=;
+        b=DSNlMfPiqlXlQt/MsYetS2BQ6R2wEJ3c1t6KNws2trMZh9SxxamrZ1uHHuhiiO0o4/
+         swt9vPbxpEdVlQxwaUbrf/rlg3t6ooSYAFJp9nxPCmrfk2rCak+nL8C9mUtrM9C3C6UJ
+         D7ibkPeRWNoYuJ5uyJusWbQakk9zkngN1PipE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=UECOqhVXTO4WTSf9+88d/gPF4iTL0TltzwoS0jurVoE=;
-        b=iVd4MfeIIhzVGR2xX+o4gdIxnIIh44wahhHd8ezHOTWGwy16tySChlCp563zX4Gp6E
-         HvmG689cb89D0d7hszcdjEG/jPUSP9Pwl8PJVdgvYXcMtTh5Hqdbbpu9gpm+9jHBPExw
-         0YAw8n8DTrXuWK8jJwY2TepH4SUwy5F9XuALEkoAN8T/BZDqvOgYG+cOpX8MZ+NYBBZk
-         Sz1hUvmp3WnkkeWW6I0CWVKg5d+T8O5WWRhnkGO4J7DNPJz8/SntFKLK7VChfX64tADK
-         L2VA/ptq1VfLG+HjTWyUbGLTMMyavLA69yDNKlyxo+df8KO8nRZ5B0j/rT+TH0l5Egtu
-         E7Ew==
-X-Gm-Message-State: ANhLgQ3TfSfAWwEPMGbXoLqxGdiStJ2wCXKT/Yl0TGTUUN0dZJJa3Wqk
-        t/lcQvMFsKNDLjjWXpnod8WOa0hCRZY=
-X-Google-Smtp-Source: ADFU+vud5NUiK1Xg7GRmepVK9v8BtqMIWNpQAcqBlzhe/pCplTvWGIegZBPVKCyD/aLw2elX5DXkaA==
-X-Received: by 2002:a5d:490e:: with SMTP id x14mr7253568wrq.58.1584553387588;
-        Wed, 18 Mar 2020 10:43:07 -0700 (PDT)
-Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:5d64:ea6:49bd:69d7])
-        by smtp.gmail.com with ESMTPSA id r3sm3787212wrm.35.2020.03.18.10.43.06
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KNn1MyCt2mGwclhH+lTXpL3RrIiuOj8izAxEFcctuh0=;
+        b=YoEzStjiR1uvoM2T5QLqU+jFamdwt7NWaQ+jx69DOAdndWtlcJoi6AsETD39yVB+Hf
+         fh1KfFD0yoA3L2DiLQabV86kF/dfPrO6XiaQ3rO+ehI7lqGNGPuteo/fetQzMhEz4QkT
+         Y7Kcd0EUvKVjaSgOk2wbQytNnQPmQkZ70fQ1esq66fjbRm48WLa2c9wE4kn9kIEAsQvU
+         fiYaxWTZSenMIBUs6A9FcGtUBVXKDE9lN5sP/vPx9FVSkAIP0Sp1d4qhiz1KnAoqDo9f
+         20Ct5+oJng6EvUyAxVe9QnHnbWZIDlGYrsc1Ugzw1G2yRlhiunGqYNbrnD+Lz+zJGz51
+         UjsA==
+X-Gm-Message-State: ANhLgQ0bGLgo+RGitMfiX9SY1l2BKnGDBBkp4UeS/JLdu7dVqPnpszwd
+        1w4J+sAmyEGFeZ76oTlpitJz4A==
+X-Google-Smtp-Source: ADFU+vsCzkaDgLM3wrqCGqMUJ3MoMZKhTWiMKgz5c7yVRtAZN7plOO3+sCkPWlRVDngQgKPxV3NXQQ==
+X-Received: by 2002:a17:90b:1918:: with SMTP id mp24mr4179183pjb.98.1584553294548;
+        Wed, 18 Mar 2020 10:41:34 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id k5sm2934127pju.29.2020.03.18.10.41.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 10:43:07 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org,
-        Saravana Kannan <saravanak@google.com>
-Subject: [PATCH 21/21] clocksource/drivers/timer-probe: Avoid creating dead devices
-Date:   Wed, 18 Mar 2020 18:41:31 +0100
-Message-Id: <20200318174131.20582-21-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200318174131.20582-1-daniel.lezcano@linaro.org>
-References: <e6cd8adf-60df-437a-003f-58e3403e4697@linaro.org>
- <20200318174131.20582-1-daniel.lezcano@linaro.org>
+        Wed, 18 Mar 2020 10:41:33 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: [PATCH v2 0/2] docs: locking: Fix a typo and drop :c:func:
+Date:   Wed, 18 Mar 2020 10:41:31 -0700
+Message-Id: <20200318174133.160206-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Saravana Kannan <saravanak@google.com>
+Fix a typo in the hardirq section where we're missing a word and 
+then drop :c:func: markup throughout.
 
-Timer initialization is done during early boot way before the driver
-core starts processing devices and drivers. Timers initialized during
-this early boot period don't really need or use a struct device.
+Changes from v1:
+ * New patch to drop :c:func:
 
-However, for timers represented as device tree nodes, the struct devices
-are still created and sit around unused and wasting memory. This change
-avoid this by marking the device tree nodes as "populated" if the
-corresponding timer is successfully initialized.
+Stephen Boyd (2):
+  docs: locking: Add 'need' to hardirq section
+  docs: locking: Drop :c:func: throughout
 
-Signed-off-by: Saravana Kannan <saravanak@google.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20200111052125.238212-1-saravanak@google.com
----
- drivers/clocksource/timer-probe.c | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/kernel-hacking/locking.rst | 176 +++++++++++------------
+ 1 file changed, 88 insertions(+), 88 deletions(-)
 
-diff --git a/drivers/clocksource/timer-probe.c b/drivers/clocksource/timer-probe.c
-index ee9574da53c0..a10f28d750a9 100644
---- a/drivers/clocksource/timer-probe.c
-+++ b/drivers/clocksource/timer-probe.c
-@@ -27,8 +27,10 @@ void __init timer_probe(void)
- 
- 		init_func_ret = match->data;
- 
-+		of_node_set_flag(np, OF_POPULATED);
- 		ret = init_func_ret(np);
- 		if (ret) {
-+			of_node_clear_flag(np, OF_POPULATED);
- 			if (ret != -EPROBE_DEFER)
- 				pr_err("Failed to initialize '%pOF': %d\n", np,
- 				       ret);
+
+base-commit: fb33c6510d5595144d585aa194d377cf74d31911
 -- 
-2.17.1
+Sent by a computer, using git, on the internet
 
