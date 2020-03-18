@@ -2,73 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 941D21899AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:41:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51CA618999B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:40:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbgCRKkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 06:40:53 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:42689 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726786AbgCRKk0 (ORCPT
+        id S1727602AbgCRKkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 06:40:24 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:40148 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726933AbgCRKkY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 06:40:26 -0400
-X-UUID: 5978fd2b742e4869b5120814ff692d56-20200318
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Pe2ICmxiDGZfXw8Ju8bu2oy7yN84cTxQ4OAqo9x25H8=;
-        b=XImsuGveFSmHCc5zpKOad/Us27YgUcRuHhs0fTUUsxWfRLR+HWjnhcIZ7lghlMcIrKhXo4DSGo52LGtGnmAgggCvZGXn9L2v/vGdwjYSX1YKfs0KFg0+IP0tCIUGegRpXTbbmGk3wyLOBjYyFgAOFCRO1LnsGZHlPBZSew8K94I=;
-X-UUID: 5978fd2b742e4869b5120814ff692d56-20200318
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1502368353; Wed, 18 Mar 2020 18:40:20 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 18 Mar 2020 18:38:01 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 18 Mar 2020 18:40:30 +0800
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     <linux-scsi@vger.kernel.org>, <martin.peter~sen@oracle.com>,
-        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
-        <jejb@linux.ibm.com>, <bvanassche@acm.org>
-CC:     <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
-        <cang@codeaurora.org>, <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
-        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
-        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH v7 1/7] scsi: ufs: fix uninitialized tx_lanes in ufshcd_disable_tx_lcc()
-Date:   Wed, 18 Mar 2020 18:40:10 +0800
-Message-ID: <20200318104016.28049-2-stanley.chu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20200318104016.28049-1-stanley.chu@mediatek.com>
-References: <20200318104016.28049-1-stanley.chu@mediatek.com>
+        Wed, 18 Mar 2020 06:40:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584528023;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GBdjH8RHRR7Z8mptXmC5pXUdosTe08Yji59vlIq8X/s=;
+        b=ccWO6boCfV/1wYZDv4ZSQUB3vv1DJghOnEUekrb9EQ6lhAM6oThEpVD+l9BMk/2tmwYfjt
+        S51slICuCEbLfrw6DgcYvEMqCNlUnVw11+XMRP6i5GQuxovcpH6n6SCFMYThSWpV+7OAQE
+        YaJPsKJw4XftePJ8IHtruFrJFDKSBuA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-18-oYaycwOzNQeocBb6VQrlzQ-1; Wed, 18 Mar 2020 06:40:19 -0400
+X-MC-Unique: oYaycwOzNQeocBb6VQrlzQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B0B298010D9;
+        Wed, 18 Mar 2020 10:40:16 +0000 (UTC)
+Received: from krava (unknown [10.40.195.82])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C2DE95D9E2;
+        Wed, 18 Mar 2020 10:40:13 +0000 (UTC)
+Date:   Wed, 18 Mar 2020 11:40:11 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Ian Rogers <irogers@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Leo Yan <leo.yan@linaro.org>, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] perf parse-events: fix memory leaks found on parse_events
+Message-ID: <20200318104011.GF821557@krava>
+References: <20200316041431.19607-1-irogers@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200316041431.19607-1-irogers@google.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SW4gdWZzaGNkX2Rpc2FibGVfdHhfbGNjKCksIGlmIHVmc2hjZF9kbWVfZ2V0KCkgb3IgdWZzaGNk
-X2RtZV9wZWVyX2dldCgpDQpnZXQgZmFpbCwgdW5pbml0aWFsaXplZCB2YXJpYWJsZSAidHhfbGFu
-ZXMiIG1heSBiZSB1c2VkIGFzIHVuZXhwZWN0ZWQgbGFuZQ0KSUQgZm9yIERNRSBjb25maWd1cmF0
-aW9uLg0KDQpGaXggdGhpcyBpc3N1ZSBieSBpbml0aWFsaXppbmcgInR4X2xhbmVzIi4NCg0KU2ln
-bmVkLW9mZi1ieTogU3RhbmxleSBDaHUgPHN0YW5sZXkuY2h1QG1lZGlhdGVrLmNvbT4NClJldmll
-d2VkLWJ5OiBBc3V0b3NoIERhcyA8YXN1dG9zaGRAY29kZWF1cm9yYS5vcmc+DQpSZXZpZXdlZC1i
-eTogQXZyaSBBbHRtYW4gPGF2cmkuYWx0bWFuQHdkYy5jb20+DQpSZXZpZXdlZC1ieTogQ2FuIEd1
-byA8Y2FuZ0Bjb2RlYXVyb3JhLm9yZz4NCi0tLQ0KIGRyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmMg
-fCAyICstDQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQoN
-CmRpZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvdWZzL3Vmc2hjZC5jIGIvZHJpdmVycy9zY3NpL3Vm
-cy91ZnNoY2QuYw0KaW5kZXggNTY5OGYxMTY0YTVlLi4zMTRlODA4YjBkNGUgMTAwNjQ0DQotLS0g
-YS9kcml2ZXJzL3Njc2kvdWZzL3Vmc2hjZC5jDQorKysgYi9kcml2ZXJzL3Njc2kvdWZzL3Vmc2hj
-ZC5jDQpAQCAtNDMxNSw3ICs0MzE1LDcgQEAgRVhQT1JUX1NZTUJPTF9HUEwodWZzaGNkX2hiYV9l
-bmFibGUpOw0KIA0KIHN0YXRpYyBpbnQgdWZzaGNkX2Rpc2FibGVfdHhfbGNjKHN0cnVjdCB1ZnNf
-aGJhICpoYmEsIGJvb2wgcGVlcikNCiB7DQotCWludCB0eF9sYW5lcywgaSwgZXJyID0gMDsNCisJ
-aW50IHR4X2xhbmVzID0gMCwgaSwgZXJyID0gMDsNCiANCiAJaWYgKCFwZWVyKQ0KIAkJdWZzaGNk
-X2RtZV9nZXQoaGJhLCBVSUNfQVJHX01JQihQQV9DT05ORUNURURUWERBVEFMQU5FUyksDQotLSAN
-CjIuMTguMA0K
+On Sun, Mar 15, 2020 at 09:14:31PM -0700, Ian Rogers wrote:
+> Memory leaks found by applying LLVM's libfuzzer on the parse_events
+> function.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/lib/perf/evlist.c        | 2 ++
+>  tools/perf/util/parse-events.c | 2 ++
+>  tools/perf/util/parse-events.y | 3 ++-
+>  3 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/lib/perf/evlist.c b/tools/lib/perf/evlist.c
+> index 5b9f2ca50591..6485d1438f75 100644
+> --- a/tools/lib/perf/evlist.c
+> +++ b/tools/lib/perf/evlist.c
+> @@ -125,8 +125,10 @@ static void perf_evlist__purge(struct perf_evlist *evlist)
+>  void perf_evlist__exit(struct perf_evlist *evlist)
+>  {
+>  	perf_cpu_map__put(evlist->cpus);
+> +	perf_cpu_map__put(evlist->all_cpus);
+
+ugh, yes, could you please put it to separate libperf patch?
+
+>  	perf_thread_map__put(evlist->threads);
+>  	evlist->cpus = NULL;
+> +	evlist->all_cpus = NULL;
+
+there's already change adding this waiting on the list:
+  https://lore.kernel.org/lkml/1583665157-349023-1-git-send-email-zhe.he@windriver.com/
+
+>  	evlist->threads = NULL;
+>  	fdarray__exit(&evlist->pollfd);
+>  }
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> index a14995835d85..997862224292 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -1482,6 +1482,8 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
+>  
+>  		list_for_each_entry_safe(pos, tmp, &config_terms, list) {
+>  			list_del_init(&pos->list);
+> +			if (pos->free_str)
+> +				free(pos->val.str);
+
+ack, would be nice to have  perf_evsel__free_config_terms generalized
+to work directly over config terms list, so we'd have only single
+cleanup function
+
+>  			free(pos);
+>  		}
+>  		return -EINVAL;
+> diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+> index 94f8bcd83582..8212cc771667 100644
+> --- a/tools/perf/util/parse-events.y
+> +++ b/tools/perf/util/parse-events.y
+> @@ -44,7 +44,7 @@ static void free_list_evsel(struct list_head* list_evsel)
+>  
+>  	list_for_each_entry_safe(evsel, tmp, list_evsel, core.node) {
+>  		list_del_init(&evsel->core.node);
+> -		perf_evsel__delete(evsel);
+> +		evsel__delete(evsel);
+
+ack
+
+>  	}
+>  	free(list_evsel);
+>  }
+> @@ -326,6 +326,7 @@ PE_NAME opt_pmu_config
+>  	}
+>  	parse_events_terms__delete($2);
+>  	parse_events_terms__delete(orig_terms);
+> +	free(pattern);
+
+ack
+
+could you please send the separate change for libperf?
+and synchronize with that other patch mentioned above
+
+thanks,
+jirka
 
