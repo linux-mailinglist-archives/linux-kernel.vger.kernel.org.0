@@ -2,153 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A179C18A2F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 20:11:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CF6218A2FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 20:13:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbgCRTLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 15:11:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53466 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726623AbgCRTLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 15:11:08 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6795320768;
-        Wed, 18 Mar 2020 19:11:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584558667;
-        bh=i8/4x4L6BzJAkJGRo/v8prKLCHA1ASdllNL4i+xuPoM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Dt0nHeg7Qcu0KW7uQbQ2qwUrNujsVAuLeAiJrrKBfvfGCVCeKWWsB3VlZn9e3qlsd
-         QyqJnS9r2Z3UhO8B52td/QEWvjPisF6g94G9C+MWp7pHHwNHTABvj0mCKpZDUQqGSq
-         HNXZA2KunSE7Uzunjz/1sR2GT5XB7FE8uNPWTvbY=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1jEe5p-00Diha-NV; Wed, 18 Mar 2020 19:11:05 +0000
+        id S1726946AbgCRTNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 15:13:04 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:25980 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726733AbgCRTNE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 15:13:04 -0400
+Received: from localhost.localdomain ([93.22.36.95])
+        by mwinf5d72 with ME
+        id FvCu22009239p2M03vCuqv; Wed, 18 Mar 2020 20:12:57 +0100
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 18 Mar 2020 20:12:57 +0100
+X-ME-IP: 93.22.36.95
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     vkoul@kernel.org, dan.j.williams@intel.com, peter.ujfalusi@ti.com,
+        grygorii.strashko@ti.com
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH V2] dmaengine: ti: k3-udma-glue: Fix an error handling path in 'k3_udma_glue_cfg_rx_flow()'
+Date:   Wed, 18 Mar 2020 20:12:09 +0100
+Message-Id: <20200318191209.1267-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
-Date:   Wed, 18 Mar 2020 19:11:05 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Sungbo Eo <mans0n@gorani.run>
-Cc:     linux-oxnas@groups.io, Linus Walleij <linus.walleij@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH] irqchip/versatile-fpga: Handle chained IRQs properly
-In-Reply-To: <bdb90bd8-ede1-63d5-816c-57f6bf0417a4@gorani.run>
-References: <20200318170904.1461278-1-mans0n@gorani.run>
- <112cdab389aa9cc30189c7aec0baded2@kernel.org>
- <bdb90bd8-ede1-63d5-816c-57f6bf0417a4@gorani.run>
-Message-ID: <002b72cab9896fa5ac76a52e0cb503ff@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.10
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: mans0n@gorani.run, linux-oxnas@groups.io, linus.walleij@linaro.org, tglx@linutronix.de, jason@lakedaemon.net, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, narmstrong@baylibre.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-03-18 18:20, Sungbo Eo wrote:
-> Hi Marc,
-> 
-> On 2020-03-19 02:48, Marc Zyngier wrote:
->> Hi Sungbo,
->> 
->> On 2020-03-18 17:09, Sungbo Eo wrote:
->>> Enclose the chained handler with chained_irq_{enter,exit}(), so that 
->>> the
->>> muxed interrupts get properly acked.
->>> 
->>> This patch also fixes a reboot bug on OX820 SoC, where the jiffies 
->>> timer
->>> interrupt is never acked. The kernel waits a clock tick forever in
->>> calibrate_delay_converge(), which leads to a boot hang.
->> 
->> Nice catch.
->> 
->>> 
->>> Signed-off-by: Sungbo Eo <mans0n@gorani.run>
->>> Cc: Neil Armstrong <narmstrong@baylibre.com>
->>> ---
->>>  drivers/irqchip/irq-versatile-fpga.c | 9 ++++++++-
->>>  1 file changed, 8 insertions(+), 1 deletion(-)
->>> 
->>> diff --git a/drivers/irqchip/irq-versatile-fpga.c
->>> b/drivers/irqchip/irq-versatile-fpga.c
->>> index 928858dada75..08faab2fec3e 100644
->>> --- a/drivers/irqchip/irq-versatile-fpga.c
->>> +++ b/drivers/irqchip/irq-versatile-fpga.c
->>> @@ -6,6 +6,7 @@
->>>  #include <linux/irq.h>
->>>  #include <linux/io.h>
->>>  #include <linux/irqchip.h>
->>> +#include <linux/irqchip/chained_irq.h>
->>>  #include <linux/irqchip/versatile-fpga.h>
->>>  #include <linux/irqdomain.h>
->>>  #include <linux/module.h>
->>> @@ -68,12 +69,15 @@ static void fpga_irq_unmask(struct irq_data *d)
->>> 
->>>  static void fpga_irq_handle(struct irq_desc *desc)
->>>  {
->>> +    struct irq_chip *chip = irq_desc_get_chip(desc);
->>>      struct fpga_irq_data *f = irq_desc_get_handler_data(desc);
->>>      u32 status = readl(f->base + IRQ_STATUS);
->>> 
->>> +    chained_irq_enter(chip, desc);
->>> +
->> 
->> It's probably not a big deal, but I'm not fond of starting talking to
->> the muxing irqchip before having done the chained_irq_enter() call.
->> 
->> Moving that read here would probably be safer.
-> 
-> Oops, I missed it. Thanks for pointing it out.
-> 
->> 
->>>      if (status == 0) {
->>>          do_bad_IRQ(desc);
->>> -        return;
->>> +        goto out;
->>>      }
->>> 
->>>      do {
->>> @@ -82,6 +86,9 @@ static void fpga_irq_handle(struct irq_desc *desc)
->>>          status &= ~(1 << irq);
->>>          generic_handle_irq(irq_find_mapping(f->domain, irq));
->>>      } while (status);
->>> +
->>> +out:
->>> +    chained_irq_exit(chip, desc);
->>>  }
->>> 
->>>  /*
->> 
->> Otherwise looks good. If you send it again with the above fixed
->> and a Fixes: tag, I'll queue it.
-> 
-> It seems the handler had been broken from the very beginning. Could
-> you give me a hint on how the tag should be like?
+All but one error handling paths in the 'k3_udma_glue_cfg_rx_flow()'
+function 'goto err' and call 'k3_udma_glue_release_rx_flow()'.
 
-Indeed, it has been broken forever. I'm tempted to say:
+This not correct because this function has a 'channel->flows_ready--;' at
+the end, but 'flows_ready' has not been incremented here, when we branch to
+the error handling path.
 
-Fixes: c41b16f8c9d9d ("ARM: integrator/versatile: consolidate FPGA IRQ 
-handling code")
+In order to keep a correct value in 'flows_ready', un-roll
+'k3_udma_glue_release_rx_flow()', simplify it, add some labels and branch
+at the correct places when an error is detected.
 
-even if it probably predates the introduction of the chained_irq_enter() 
-helpers.
-This will ensure this gets backported to older kernels...
+Doing so, we also NULLify 'flow->udma_rflow' in a path that was lacking it.
 
-Thanks,
+Fixes: d70241913413 ("dmaengine: ti: k3-udma: Add glue layer for non DMAengine user")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+V2: adjust subject
+    direct return in the first error handling path
+---
+ drivers/dma/ti/k3-udma-glue.c | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-         M.
+diff --git a/drivers/dma/ti/k3-udma-glue.c b/drivers/dma/ti/k3-udma-glue.c
+index dbccdc7c0ed5..890573eb1625 100644
+--- a/drivers/dma/ti/k3-udma-glue.c
++++ b/drivers/dma/ti/k3-udma-glue.c
+@@ -578,12 +578,12 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+ 	if (IS_ERR(flow->udma_rflow)) {
+ 		ret = PTR_ERR(flow->udma_rflow);
+ 		dev_err(dev, "UDMAX rflow get err %d\n", ret);
+-		goto err;
++		return ret;
+ 	}
+ 
+ 	if (flow->udma_rflow_id != xudma_rflow_get_id(flow->udma_rflow)) {
+-		xudma_rflow_put(rx_chn->common.udmax, flow->udma_rflow);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto err_rflow_put;
+ 	}
+ 
+ 	/* request and cfg rings */
+@@ -592,7 +592,7 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+ 	if (!flow->ringrx) {
+ 		ret = -ENODEV;
+ 		dev_err(dev, "Failed to get RX ring\n");
+-		goto err;
++		goto err_rflow_put;
+ 	}
+ 
+ 	flow->ringrxfdq = k3_ringacc_request_ring(rx_chn->common.ringacc,
+@@ -600,19 +600,19 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+ 	if (!flow->ringrxfdq) {
+ 		ret = -ENODEV;
+ 		dev_err(dev, "Failed to get RXFDQ ring\n");
+-		goto err;
++		goto err_ringrx_free;
+ 	}
+ 
+ 	ret = k3_ringacc_ring_cfg(flow->ringrx, &flow_cfg->rx_cfg);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to cfg ringrx %d\n", ret);
+-		goto err;
++		goto err_ringrxfdq_free;
+ 	}
+ 
+ 	ret = k3_ringacc_ring_cfg(flow->ringrxfdq, &flow_cfg->rxfdq_cfg);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to cfg ringrxfdq %d\n", ret);
+-		goto err;
++		goto err_ringrxfdq_free;
+ 	}
+ 
+ 	if (rx_chn->remote) {
+@@ -662,7 +662,7 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+ 	if (ret) {
+ 		dev_err(dev, "flow%d config failed: %d\n", flow->udma_rflow_id,
+ 			ret);
+-		goto err;
++		goto err_ringrxfdq_free;
+ 	}
+ 
+ 	rx_chn->flows_ready++;
+@@ -670,8 +670,17 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+ 		flow->udma_rflow_id, rx_chn->flows_ready);
+ 
+ 	return 0;
+-err:
+-	k3_udma_glue_release_rx_flow(rx_chn, flow_idx);
++
++err_ringrxfdq_free:
++	k3_ringacc_ring_free(flow->ringrxfdq);
++
++err_ringrx_free:
++	k3_ringacc_ring_free(flow->ringrx);
++
++err_rflow_put:
++	xudma_rflow_put(rx_chn->common.udmax, flow->udma_rflow);
++	flow->udma_rflow = NULL;
++
+ 	return ret;
+ }
+ 
 -- 
-Jazz is not dead. It just smells funny...
+2.20.1
+
