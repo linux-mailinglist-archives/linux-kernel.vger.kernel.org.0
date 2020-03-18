@@ -2,137 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E038118A60E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:05:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54DDF18A65D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:07:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728378AbgCRVFe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 17:05:34 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45960 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727616AbgCRVFc (ORCPT
+        id S1728261AbgCRVHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 17:07:52 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39885 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727089AbgCRVHs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 17:05:32 -0400
-Received: by mail-ot1-f68.google.com with SMTP id e9so89952otr.12
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 14:05:31 -0700 (PDT)
+        Wed, 18 Mar 2020 17:07:48 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d25so145374pfn.6
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 14:07:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9HrxoukmfoCKdd5cM13ef2cbkm6CijqM+A0vCb8JlpY=;
-        b=OxWGX5hBoMjCNmEUIRvAzViw6sm7jS/vIvpGQdVy4D5Qxq11sgYIe0kFrojcvNa+Ie
-         DlZvm7nkKcCgY1pZiGwbALqNH+C8Jbmw/Xa72QiUoW0u8EJdKyBtFlMbUxOybbODnH6j
-         2T/z6lR5Clx4kqvTrAnpAd4K//+78+hYKNwK0mKDGFU5Ms0rGpUe11rtn0iGFcRrwi8J
-         cj+AVg/J0XxeH7ltJ7d7H20DvT3bnxKCncd0Jtt7TFlCK856FSl2nyK78I6hJuqM54gO
-         SkuymP98Cu+w+jFoEDydE+qT8EUzF6bBWaZiOvWZ8dEax0qoQgyoCMtIGlsRQfzfxbUh
-         xjkQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UnW3oRxVQHnYvwZ2+HCKUVYxiIim+eBLvaQELpxrRqU=;
+        b=qN4+WX6llXdXg7OP2ngw/tmuSenPNNwNDboXm8R0BqN7TKq6AnxLkKLG8Q99y9IZ6T
+         YDfO8JIUTC9v2tBafpZVOOd0JFYHC0mDB+lxnynMKQQLixMFCn9aOM1p/8pLBMWijDoE
+         rLQazFqDavwllYsf3wPN4aql2BpoZjato+DcTWKqNtpooKdE/nwFO0dcUImcroRCILJO
+         aPVcdVsQK6Yfq1FM6t0YjsW0hhvgLZRy2qsN7Ze0/hX0uJaqnU3valz6jPspG792A5BE
+         UiFdDU6CdJPC5k87CYj8sMC2aAKdppbSCjkh0rgWDLetIMv33zXhdzo2jCnPehDY1cV5
+         BkdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9HrxoukmfoCKdd5cM13ef2cbkm6CijqM+A0vCb8JlpY=;
-        b=dxJ61ezmmPU6u5T7YLbk/sVyCzP943Y1ETPKDmBFT2Fdctip708kG+o8woqw8fDbGd
-         Ps9dtLlhd4lwgnO393VFwqWLwKHEnw3qbj44SHdJDD0UASdtSA+8BUryx/uez2HG7nvE
-         VKK1lHdk0sn9GP+pbXvqgjbvE0fgPRtZJ42FkZGSNebEok4KO1xNcsJZqym3TyYUvkaH
-         wHbXJUbPA4+mp0aPXbmuBuGfCe6aFpsaSKhcaCUZBYF7DqZBTZjNgy5p6uY9mQVj+8Q7
-         Mlwtxt5GahXjbK4/Ti+IOoE8hG5ODlWTTnOOx6cJqmZcYFKFzRxMRnSYwll/KqV8LVNc
-         1Ziw==
-X-Gm-Message-State: ANhLgQ20X9Jr8ZV8CUx1tr0Q8lhQMJt9tLDDdczg+pIDOGgJ8pAUR+/8
-        E4lCtMYlmI+l38HgKojaUzc=
-X-Google-Smtp-Source: ADFU+vv3NUU53aZLuwZTXYPcXO+ZNX43DxBkIqMo6WSd2Kr6F/ivlar/wTzAz9qC/f8rd1H7tHOJTQ==
-X-Received: by 2002:a05:6830:1410:: with SMTP id v16mr5818832otp.315.1584565531513;
-        Wed, 18 Mar 2020 14:05:31 -0700 (PDT)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id 69sm40109otm.60.2020.03.18.14.05.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 14:05:31 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Joe Perches <joe@perches.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH v2] drm/amdgpu: Remove unnecessary variable shadow in gfx_v9_0_rlcg_wreg
-Date:   Wed, 18 Mar 2020 14:04:09 -0700
-Message-Id: <20200318210408.4113-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.26.0.rc1
-In-Reply-To: <20200318002500.52471-1-natechancellor@gmail.com>
-References: <20200318002500.52471-1-natechancellor@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UnW3oRxVQHnYvwZ2+HCKUVYxiIim+eBLvaQELpxrRqU=;
+        b=LeQv+CQR1CA3yBjacjIw8zpclyTBe6zRabo9E/Cg/+m8Ok/qCnXdcaPN6amUc4zzNw
+         9NzTXwTy6+j9mOqTubA2nYwtHhbR52LnEOKl3HzU134hxRAnhRORVYwd81smaSxj40ke
+         gCxad6U73EwkMjyO6NP7sw9Ln2Owj3S07KwjCgMKQQsGEQ7oZvAsnDrVgSElyR+SQrBf
+         +f/yRcIfKlOFfiprhJ55ZI34DwE3P07L54cp5Q8jXZNcpp1X2g2yKWuIP74E2Wi2apOl
+         mLl+uft+JYx7W6zS6uZV0dSYWX6Aw8OxdaiZPpALodB+da3rOdHp/MA51SNum1hxmD1V
+         L1Gw==
+X-Gm-Message-State: ANhLgQ0ma8KqHX8+HlMOaORhMUXoq9us+X8k5NblCvUH2diTXJkmuq7l
+        fAy88TyqdgTpzzQ8knMCGltEgbpuqHXC6vmh/dv2Yg==
+X-Google-Smtp-Source: ADFU+vtrCbWLsD9Kl2sgpRCLWJgG9WETEekWUwb95aIHCLvQp5JpBJCHYMAZGw01/Hcy77aG8jAmyFceFlIcLkd5Les=
+X-Received: by 2002:aa7:8b54:: with SMTP id i20mr215129pfd.39.1584565667463;
+ Wed, 18 Mar 2020 14:07:47 -0700 (PDT)
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+References: <20200318002500.52471-1-natechancellor@gmail.com> <20200318210408.4113-1-natechancellor@gmail.com>
+In-Reply-To: <20200318210408.4113-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 18 Mar 2020 14:07:34 -0700
+Message-ID: <CAKwvOdmjzemFW9jF-CW1RhLJJbMvFO_NrPUeyi=rdLNVZURsfw@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/amdgpu: Remove unnecessary variable shadow in gfx_v9_0_rlcg_wreg
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clang warns:
+On Wed, Mar 18, 2020 at 2:05 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> clang warns:
+>
+> drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:754:6: warning: variable 'shadow'
+> is used uninitialized whenever 'if' condition is
+> false [-Wsometimes-uninitialized]
+>         if (offset == grbm_cntl || offset == grbm_idx)
+>             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:757:6: note: uninitialized use
+> occurs here
+>         if (shadow) {
+>             ^~~~~~
+> drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:754:2: note: remove the 'if' if
+> its condition is always true
+>         if (offset == grbm_cntl || offset == grbm_idx)
+>         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:738:13: note: initialize the
+> variable 'shadow' to silence this warning
+>         bool shadow;
+>                    ^
+>                     = 0
+> 1 warning generated.
+>
+> shadow is only assigned in one condition and used as the condition for
+> another if statement; combine the two if statements and remove shadow
+> to make the code cleaner and resolve this warning.
+>
+> Fixes: 2e0cc4d48b91 ("drm/amdgpu: revise RLCG access path")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/936
+> Suggested-by: Joe Perches <joe@perches.com>
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>
+> v1 -> v2:
+>
+> * Remove shadow altogether, as suggested by Joe Perches.
+> * Add Nick's Reviewed-by, as I assume it still stands.
 
-drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:754:6: warning: variable 'shadow'
-is used uninitialized whenever 'if' condition is
-false [-Wsometimes-uninitialized]
-        if (offset == grbm_cntl || offset == grbm_idx)
-            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:757:6: note: uninitialized use
-occurs here
-        if (shadow) {
-            ^~~~~~
-drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:754:2: note: remove the 'if' if
-its condition is always true
-        if (offset == grbm_cntl || offset == grbm_idx)
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:738:13: note: initialize the
-variable 'shadow' to silence this warning
-        bool shadow;
-                   ^
-                    = 0
-1 warning generated.
+yep, thanks
 
-shadow is only assigned in one condition and used as the condition for
-another if statement; combine the two if statements and remove shadow
-to make the code cleaner and resolve this warning.
+>
+>  drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> index 7bc2486167e7..496b9edca3c3 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> @@ -735,7 +735,6 @@ void gfx_v9_0_rlcg_wreg(struct amdgpu_device *adev, u32 offset, u32 v)
+>         static void *spare_int;
+>         static uint32_t grbm_cntl;
+>         static uint32_t grbm_idx;
+> -       bool shadow;
+>
+>         scratch_reg0 = adev->rmmio + (adev->reg_offset[GC_HWIP][0][mmSCRATCH_REG0_BASE_IDX] + mmSCRATCH_REG0)*4;
+>         scratch_reg1 = adev->rmmio + (adev->reg_offset[GC_HWIP][0][mmSCRATCH_REG1_BASE_IDX] + mmSCRATCH_REG1)*4;
+> @@ -751,10 +750,7 @@ void gfx_v9_0_rlcg_wreg(struct amdgpu_device *adev, u32 offset, u32 v)
+>                 return;
+>         }
+>
+> -       if (offset == grbm_cntl || offset == grbm_idx)
+> -               shadow = true;
+> -
+> -       if (shadow) {
+> +       if (offset == grbm_cntl || offset == grbm_idx) {
+>                 if (offset  == grbm_cntl)
+>                         writel(v, scratch_reg2);
+>                 else if (offset == grbm_idx)
+> --
+> 2.26.0.rc1
+>
 
-Fixes: 2e0cc4d48b91 ("drm/amdgpu: revise RLCG access path")
-Link: https://github.com/ClangBuiltLinux/linux/issues/936
-Suggested-by: Joe Perches <joe@perches.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
 
-v1 -> v2:
-
-* Remove shadow altogether, as suggested by Joe Perches.
-* Add Nick's Reviewed-by, as I assume it still stands.
-
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-index 7bc2486167e7..496b9edca3c3 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-@@ -735,7 +735,6 @@ void gfx_v9_0_rlcg_wreg(struct amdgpu_device *adev, u32 offset, u32 v)
- 	static void *spare_int;
- 	static uint32_t grbm_cntl;
- 	static uint32_t grbm_idx;
--	bool shadow;
- 
- 	scratch_reg0 = adev->rmmio + (adev->reg_offset[GC_HWIP][0][mmSCRATCH_REG0_BASE_IDX] + mmSCRATCH_REG0)*4;
- 	scratch_reg1 = adev->rmmio + (adev->reg_offset[GC_HWIP][0][mmSCRATCH_REG1_BASE_IDX] + mmSCRATCH_REG1)*4;
-@@ -751,10 +750,7 @@ void gfx_v9_0_rlcg_wreg(struct amdgpu_device *adev, u32 offset, u32 v)
- 		return;
- 	}
- 
--	if (offset == grbm_cntl || offset == grbm_idx)
--		shadow = true;
--
--	if (shadow) {
-+	if (offset == grbm_cntl || offset == grbm_idx) {
- 		if (offset  == grbm_cntl)
- 			writel(v, scratch_reg2);
- 		else if (offset == grbm_idx)
 -- 
-2.26.0.rc1
-
+Thanks,
+~Nick Desaulniers
