@@ -2,105 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 219EC189E29
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 15:43:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C47ED189E38
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 15:46:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbgCROnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 10:43:21 -0400
-Received: from mga03.intel.com ([134.134.136.65]:1841 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727069AbgCROnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 10:43:21 -0400
-IronPort-SDR: wup2s6ZvqxSvGEI4TAtd6zzDbKk8ff3By2COm+yvk6zd6OabwlotbbGO5fuNSYto52H5ZQV9Zq
- pGcyJUbB36BQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 07:43:20 -0700
-IronPort-SDR: 1yy0BrLTbQOfTnMarUFSfbBqDMuYmioEEmM2OXOBDPxd12rjmA+jV4B+m86mAMfF7UObMkbhKI
- tfGS1nn2sVZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,568,1574150400"; 
-   d="scan'208";a="291335984"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by FMSMGA003.fm.intel.com with ESMTP; 18 Mar 2020 07:43:18 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jEZui-00AmsZ-JP; Wed, 18 Mar 2020 16:43:20 +0200
-Date:   Wed, 18 Mar 2020 16:43:20 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Heiko Stuebner <heiko@sntech.de>, Lukas Wunner <lukas@wunner.de>
-Cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
-        matwey.kornilov@gmail.com, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] serial: 8250: Add rs485 emulation to 8250_dw
-Message-ID: <20200318144320.GL1922688@smile.fi.intel.com>
-References: <20200318142640.982763-1-heiko@sntech.de>
+        id S1726859AbgCROq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 10:46:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49136 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbgCROq3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 10:46:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=22sVcNbDCzARdRFC3MRVT7FnYchnm76kK5yHdzlXjIo=; b=q/07svVZajs+gu/v8igGPgZbpb
+        cYjBvKo/McnsG3YrnLst9dR2GjXqaL0a2ed/uPoTg/5TQn1WJxmgpbCzTTTDzqvJSHC66CkhyuV1X
+        b/ctGrv+vfF6KzNjM+rG2j9oeXvuTI+hYB6CeQ6jV/bJRHppOIhH1rMPAZFXxNH4WaNQ93eaNDtU4
+        PwRxwv9zUJEluh1weB8o8khCCmCZ1gIUM9prZbpDo81X2M13utKut4SHAuzza2cQQap6eGCqEKNgU
+        IpfQeocX61rd+wD0zxCQZS8rIbTFUITytw9uuA8k3BmHt4idJqeqXpzQ9kRbMvyBkPH1Tygt1VpPE
+        OiS+5sHw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jEZxk-0002I7-NA; Wed, 18 Mar 2020 14:46:28 +0000
+Date:   Wed, 18 Mar 2020 07:46:28 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Subject: Re: [PATCH] fs/namespace: handle mount(MS_BIND|MS_REMOUNT) without
+ locking sb->s_umount
+Message-ID: <20200318144628.GI22433@bombadil.infradead.org>
+References: <158454107541.4470.14819321770893756073.stgit@buzz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200318142640.982763-1-heiko@sntech.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <158454107541.4470.14819321770893756073.stgit@buzz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Cc: Lukas, who did recently some work WRT RS485 support in 8250.
+On Wed, Mar 18, 2020 at 05:17:55PM +0300, Konstantin Khlebnikov wrote:
+> @@ -459,11 +459,11 @@ void mnt_drop_write_file(struct file *file)
+>  }
+>  EXPORT_SYMBOL(mnt_drop_write_file);
+>  
+> +/* mount_lock must be held */
+>  static int mnt_make_readonly(struct mount *mnt)
+>  {
+>  	int ret = 0;
+>  
+> -	lock_mount_hash();
 
-On Wed, Mar 18, 2020 at 03:26:33PM +0100, Heiko Stuebner wrote:
-> This series tries to revive the work of Giulio Benetti from 2018 [0]
-> which seemed to have stalled at that time.
-> 
-> The board I needed that on also had the additional caveat that it
-> uses non-standard pins for DE/RE so needed gpio mctrl layer as well
-> and even more special needed to control the RE pin manually not as
-> part of it being connected to the DE signal as seems to be the standard.
-> 
-> So I've marked the patch doing this as DTR pin as RFC but that patch
-> isn't needed for the other core functionality, so could also be left out.
-
-Thank you, I'll look at them later on.
-
-> Changes from the 2018 submission include:
-> - add timeout when waiting for fifos to clear using a new helper
-> - move on-boot enablement of the rs485 mode to after registering
->   the port. This saves having to copy the em485 struct as done
->   originally, which also ran into spinlock-debug warnings when testing
->   and also makes it actually possible to use the mctrl gpio layer
->   for non-standard gpios.
-> 
-> [0] Link: https://lore.kernel.org/linux-serial/20180601124021.102970-1-giulio.benetti@micronovasrl.com/
-> 
-> Giulio Benetti (4):
->   serial: 8250: Make em485_rts_after_send() set mctrl according to rts
->     state.
->   serial: 8250: Handle case port doesn't have TEMT interrupt using
->     em485.
->   serial: 8250_dw: add em485 support
->   serial: 8250_dw: allow enable rs485 at boot time
-> 
-> Heiko Stuebner (3):
->   serial: 8250: add serial_in_poll_timeout helper
->   serial: 8250: Start rs485 after registering port if rs485 is enabled
->     in probe
->   serial: 8250: handle DTR in rs485 emulation
-> 
->  drivers/tty/serial/8250/8250.h      | 36 ++++++++++++++++++++-
->  drivers/tty/serial/8250/8250_core.c |  9 ++++++
->  drivers/tty/serial/8250/8250_dw.c   | 35 +++++++++++++++++++-
->  drivers/tty/serial/8250/8250_of.c   |  2 +-
->  drivers/tty/serial/8250/8250_omap.c |  2 +-
->  drivers/tty/serial/8250/8250_port.c | 50 +++++++++++++++++++++++------
->  include/linux/serial_8250.h         |  1 +
->  7 files changed, 121 insertions(+), 14 deletions(-)
-> 
-> -- 
-> 2.24.1
-> 
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+I'd rather see
++	lockdep_assert_held_write(&mount_lock);
+than a comment.  Maybe wrapped up into a macro like assert_hash_locked().
 
