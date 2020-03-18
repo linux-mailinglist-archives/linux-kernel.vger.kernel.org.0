@@ -2,91 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AACA18A860
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 23:38:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0124B18A866
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 23:39:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbgCRWiq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 18:38:46 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:35102 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbgCRWiq (ORCPT
+        id S1726961AbgCRWjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 18:39:49 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:50512 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726777AbgCRWjt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 18:38:46 -0400
-Received: by mail-io1-f66.google.com with SMTP id h8so276270iob.2;
-        Wed, 18 Mar 2020 15:38:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hjd4cWdqxb7vqLIGudSEI03tN+skbBZc4IaGVCWe4bE=;
-        b=Zz2jKlW5sJ9GuCj0KoknSaW9kXeZXmeWitNKJ51/MjyeOlt2GrZTXwHaMpcXoQuniB
-         6AhDT4GIah9N8/i9v5hALFgFBE2AiJPzTUf7UtgCTO0sA0lAj2hxF3UKk698ouYK528D
-         QvmH2EuOhNhiki2vdMuqiJV1CIqVbcog1rbOL+tKZ8QiWw1Wx7nIipbovu3bNyOEuWY1
-         VN2m0EFXLz+PTTDbyDcFZdT+d17nKdeOXE9bfOp4Th4KD9c8D+2wKnDH8bbr32jIQ66V
-         mGwgon9KIfrhxOLzREytWyooMFX9RSjrllajzTjV3h+Pa59PsZ1uhPfx0GUrcWke55/B
-         3zrA==
-X-Gm-Message-State: ANhLgQ36v8ENLxxyevqHdsqEE5m3k+DHbcH9IrYvFozwJwvMO+TDZxjj
-        UStz5B/Ic+wcrPjkY0GV9w==
-X-Google-Smtp-Source: ADFU+vuWOZ5C5oLxE9dB/U/jglteCOUaH90nZHmvZdWYJLWdri0o66f9VabHUrjNFihG7WzqU2uzrA==
-X-Received: by 2002:a5d:958f:: with SMTP id a15mr70087ioo.170.1584571125436;
-        Wed, 18 Mar 2020 15:38:45 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id h29sm96397ili.19.2020.03.18.15.38.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 15:38:44 -0700 (PDT)
-Received: (nullmailer pid 31930 invoked by uid 1000);
-        Wed, 18 Mar 2020 22:38:42 -0000
-Date:   Wed, 18 Mar 2020 16:38:42 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Hanks Chen <hanks.chen@mediatek.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Andy Teng <andy.teng@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com
-Subject: Re: [PATCH v3 1/6] dt-bindings: pinctrl: add bindings for MediaTek
- MT6779 SoC
-Message-ID: <20200318223842.GA31707@bogus>
-References: <1584454007-2115-1-git-send-email-hanks.chen@mediatek.com>
- <1584454007-2115-2-git-send-email-hanks.chen@mediatek.com>
+        Wed, 18 Mar 2020 18:39:49 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02IMd6da003668;
+        Wed, 18 Mar 2020 22:39:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=H1MqLvxMQu57KLqvhSHFxWcNzIe9uVH2pzVyel8x3lY=;
+ b=YRFM8a6G/Nlx2vr+v00SsVqX8z+MTuEh6bQcPh317YpuKbvbvW/V1YrZ4GafwKwUWFAM
+ CLTRLGdG/wGJv4fvSn/OIsLtkEOrE1kTK7QLdLjaOPhFHxLExj4mvQNWrxwRUaTodqK9
+ Yu66Qcg0aAbs0n1iKUfXdYUkL/lWY9RSzX635I6NqpyjvMqP23tsyz9CXmmiHVHW+XDv
+ Dpvkszh0PGrln064nj1pqUqZWPmLM94FcgPKTGY0wczu7fBtU89e7l2RIiDXGcwbcY36
+ vT+6bjLnrYqH9P3W09Sh/G4ZPGweC2OG1tYuva0v3txraGIhO3Ko2ocoPmPlwXsDpdc/ Ag== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2yrq7m57nx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Mar 2020 22:39:05 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02IMaggY070076;
+        Wed, 18 Mar 2020 22:39:05 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2ys8tuvjum-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Mar 2020 22:39:05 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02IMctjE013967;
+        Wed, 18 Mar 2020 22:38:56 GMT
+Received: from [192.168.1.206] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 18 Mar 2020 15:38:55 -0700
+Subject: Re: [PATCH 1/4] hugetlbfs: add arch_hugetlb_valid_size
+To:     Will Deacon <will@kernel.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "David S.Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Longpeng <longpeng2@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20200318220634.32100-1-mike.kravetz@oracle.com>
+ <20200318220634.32100-2-mike.kravetz@oracle.com>
+ <20200318220954.GD8477@willie-the-truck>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <43735ae0-f5f6-1e7b-2d0f-a46f9af1627e@oracle.com>
+Date:   Wed, 18 Mar 2020 15:38:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1584454007-2115-2-git-send-email-hanks.chen@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200318220954.GD8477@willie-the-truck>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9564 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 suspectscore=0 mlxlogscore=999 spamscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003180097
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9564 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
+ adultscore=0 bulkscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015
+ malwarescore=0 mlxscore=0 phishscore=0 impostorscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003180097
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Mar 2020 22:06:42 +0800, Hanks Chen wrote:
-> From: Andy Teng <andy.teng@mediatek.com>
+On 3/18/20 3:09 PM, Will Deacon wrote:
+> On Wed, Mar 18, 2020 at 03:06:31PM -0700, Mike Kravetz wrote:
+>> The architecture independent routine hugetlb_default_setup sets up
+>> the default huge pages size.  It has no way to verify if the passed
+>> value is valid, so it accepts it and attempts to validate at a later
+>> time.  This requires undocumented cooperation between the arch specific
+>> and arch independent code.
+>>
+>> For architectures that support more than one huge page size, provide
+>> a routine arch_hugetlb_valid_size to validate a huge page size.
+>> hugetlb_default_setup can use this to validate passed values.
+>>
+>> arch_hugetlb_valid_size will also be used in a subsequent patch to
+>> move processing of the "hugepagesz=" in arch specific code to a common
+>> routine in arch independent code.
+>>
+>> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+>> ---
+>>  arch/arm64/include/asm/hugetlb.h   |  2 ++
+>>  arch/arm64/mm/hugetlbpage.c        | 19 ++++++++++++++-----
+>>  arch/powerpc/include/asm/hugetlb.h |  3 +++
+>>  arch/powerpc/mm/hugetlbpage.c      | 20 +++++++++++++-------
+>>  arch/riscv/include/asm/hugetlb.h   |  3 +++
+>>  arch/riscv/mm/hugetlbpage.c        | 28 ++++++++++++++++++----------
+>>  arch/s390/include/asm/hugetlb.h    |  3 +++
+>>  arch/s390/mm/hugetlbpage.c         | 18 +++++++++++++-----
+>>  arch/sparc/include/asm/hugetlb.h   |  3 +++
+>>  arch/sparc/mm/init_64.c            | 23 ++++++++++++++++-------
+>>  arch/x86/include/asm/hugetlb.h     |  3 +++
+>>  arch/x86/mm/hugetlbpage.c          | 21 +++++++++++++++------
+>>  include/linux/hugetlb.h            |  7 +++++++
+>>  mm/hugetlb.c                       | 16 +++++++++++++---
+>>  14 files changed, 126 insertions(+), 43 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
+>> index 2eb6c234d594..3248f35213ee 100644
+>> --- a/arch/arm64/include/asm/hugetlb.h
+>> +++ b/arch/arm64/include/asm/hugetlb.h
+<snip>
+>> +
+>> +static __init int setup_hugepagesz(char *opt)
+>> +{
+>> +	unsigned long long ps = memparse(opt, &opt);
+>> +
+>> +	if arch_hugetlb_valid_size(ps)) {
 > 
-> Add devicetree bindings for MediaTek MT6779 pinctrl driver.
-> 
-> Change-Id: I92586369564948f2628f70421bcd70668f132c4f
-> Signed-off-by: Andy Teng <andy.teng@mediatek.com>
-> ---
->  .../bindings/pinctrl/mediatek,mt6779-pinctrl.yaml  |  208 ++++++++++++++++++++
->  1 file changed, 208 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
+> Please compile your changes if you're touching multiple architectures. You
+> can get cross-compiler binaries from:
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+My apologies.  I only cross compiled the result of the series on each
+architecture.  The above code is obviously bad.
 
-warning: no schema found in file: Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml: ignoring, error parsing file
-Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml:  while parsing a block collection
-  in "<unicode string>", line 28, column 5
-did not find expected '-' indicator
-  in "<unicode string>", line 29, column 5
-Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.example.dts' failed
-make[1]: *** [Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.example.dts] Error 1
-Makefile:1262: recipe for target 'dt_binding_check' failed
-make: *** [dt_binding_check] Error 2
-
-See https://patchwork.ozlabs.org/patch/1256429
-Please check and re-submit.
+-- 
+Mike Kravetz
