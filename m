@@ -2,113 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77C22189993
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:37:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A99331899AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:41:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbgCRKhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 06:37:02 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:56873 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727576AbgCRKhB (ORCPT
+        id S1727751AbgCRKk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 06:40:28 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:42689 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727683AbgCRKk1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 06:37:01 -0400
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1jEW4F-0007jf-05; Wed, 18 Mar 2020 11:36:55 +0100
-Received: from [IPv6:2a03:f580:87bc:d400:124:7ee3:e89c:2c00] (unknown [IPv6:2a03:f580:87bc:d400:124:7ee3:e89c:2c00])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits)
-         client-signature RSA-PSS (4096 bits))
-        (Client CN "mkl@blackshift.org", Issuer "StartCom Class 1 Client CA" (not verified))
-        (Authenticated sender: mkl@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id EDA824D0528;
-        Wed, 18 Mar 2020 10:36:51 +0000 (UTC)
-Subject: Re: [PATCH] docs: dt: Fix m_can.txt reference in tcan4x5x.txt
-To:     Dan Murphy <dmurphy@ti.com>, linux-doc@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        linux-can@vger.kernel.org, robh+dt@kernel.org, davem@davemloft.net,
-        wg@grandegger.com, corbet@lwn.net, linux-kernel@vger.kernel.org
-References: <20200317161900.14380-1-dmurphy@ti.com>
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
- mQINBFFVq30BEACtnSvtXHoeHJxG6nRULcvlkW6RuNwHKmrqoksispp43X8+nwqIFYgb8UaX
- zu8T6kZP2wEIpM9RjEL3jdBjZNCsjSS6x1qzpc2+2ivjdiJsqeaagIgvy2JWy7vUa4/PyGfx
- QyUeXOxdj59DvLwAx8I6hOgeHx2X/ntKAMUxwawYfPZpP3gwTNKc27dJWSomOLgp+gbmOmgc
- 6U5KwhAxPTEb3CsT5RicsC+uQQFumdl5I6XS+pbeXZndXwnj5t84M+HEj7RN6bUfV2WZO/AB
- Xt5+qFkC/AVUcj/dcHvZwQJlGeZxoi4veCoOT2MYqfR0ax1MmN+LVRvKm29oSyD4Ts/97cbs
- XsZDRxnEG3z/7Winiv0ZanclA7v7CQwrzsbpCv+oj+zokGuKasofzKdpywkjAfSE1zTyF+8K
- nxBAmzwEqeQ3iKqBc3AcCseqSPX53mPqmwvNVS2GqBpnOfY7Mxr1AEmxdEcRYbhG6Xdn+ACq
- Dq0Db3A++3PhMSaOu125uIAIwMXRJIzCXYSqXo8NIeo9tobk0C/9w3fUfMTrBDtSviLHqlp8
- eQEP8+TDSmRP/CwmFHv36jd+XGmBHzW5I7qw0OORRwNFYBeEuiOIgxAfjjbLGHh9SRwEqXAL
- kw+WVTwh0MN1k7I9/CDVlGvc3yIKS0sA+wudYiselXzgLuP5cQARAQABtCZNYXJjIEtsZWlu
- ZS1CdWRkZSA8bWtsQHBlbmd1dHJvbml4LmRlPokCVAQTAQoAPgIbAwIeAQIXgAULCQgHAwUV
- CgkICwUWAgMBABYhBMFAC6CzmJ5vvH1bXCte4hHFiupUBQJcUsSbBQkM366zAAoJECte4hHF
- iupUgkAP/2RdxKPZ3GMqag33jKwKAbn/fRqAFWqUH9TCsRH3h6+/uEPnZdzhkL4a9p/6OeJn
- Z6NXqgsyRAOTZsSFcwlfxLNHVxBWm8pMwrBecdt4lzrjSt/3ws2GqxPsmza1Gs61lEdYvLST
- Ix2vPbB4FAfE0kizKAjRZzlwOyuHOr2ilujDsKTpFtd8lV1nBNNn6HBIBR5ShvJnwyUdzuby
- tOsSt7qJEvF1x3y49bHCy3uy+MmYuoEyG6zo9udUzhVsKe3hHYC2kfB16ZOBjFC3lH2U5An+
- yQYIIPZrSWXUeKjeMaKGvbg6W9Oi4XEtrwpzUGhbewxCZZCIrzAH2hz0dUhacxB201Y/faY6
- BdTS75SPs+zjTYo8yE9Y9eG7x/lB60nQjJiZVNvZ88QDfVuLl/heuIq+fyNajBbqbtBT5CWf
- mOP4Dh4xjm3Vwlz8imWW/drEVJZJrPYqv0HdPbY8jVMpqoe5jDloyVn3prfLdXSbKPexlJaW
- 5tnPd4lj8rqOFShRnLFCibpeHWIumqrIqIkiRA9kFW3XMgtU6JkIrQzhJb6Tc6mZg2wuYW0d
- Wo2qvdziMgPkMFiWJpsxM9xPk9BBVwR+uojNq5LzdCsXQ2seG0dhaOTaaIDWVS8U/V8Nqjrl
- 6bGG2quo5YzJuXKjtKjZ4R6k762pHJ3tnzI/jnlc1sXz
-Message-ID: <8a450951-a28d-dabf-6d52-2c827c5b749e@pengutronix.de>
-Date:   Wed, 18 Mar 2020 11:36:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 18 Mar 2020 06:40:27 -0400
+X-UUID: 058cf9674cca40828d93faa8573bf62e-20200318
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=O++pLXuj0DX/kTHP26oFWY1EQqKvdFA9wne654JlhgA=;
+        b=AxibO5Yfa8I9VFxjXdWY6CyufjZdlPs9mMWGjQ4NGa04SE1IJghvUTitkt7P6mDo91zlQ+Xed68iqBi1tiI1GpY+Lru7RvzX38IXd07jXDGCl1pmyfv4ri9HVsxqEO2Uioac1bkxJQ8XshD9ttSEBRR7PbZ/9qJ8RzUTi1JPkq0=;
+X-UUID: 058cf9674cca40828d93faa8573bf62e-20200318
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 2021600826; Wed, 18 Mar 2020 18:40:20 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 18 Mar 2020 18:37:25 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 18 Mar 2020 18:40:30 +0800
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     <linux-scsi@vger.kernel.org>, <martin.peter~sen@oracle.com>,
+        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
+        <jejb@linux.ibm.com>, <bvanassche@acm.org>
+CC:     <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
+        <cang@codeaurora.org>, <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
+        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
+        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
+Subject: [PATCH v7 0/7] scsi: ufs: some cleanups and make the delay for host enabling customizable
+Date:   Wed, 18 Mar 2020 18:40:09 +0800
+Message-ID: <20200318104016.28049-1-stanley.chu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-In-Reply-To: <20200317161900.14380-1-dmurphy@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-TM-SNTS-SMTP: C898DCF254560EA0341542683F3E0BFC4414FA2D8198C3B73AF12E8E0B47139F2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/17/20 5:19 PM, Dan Murphy wrote:
-> Fix the m_can.txt reference to point to the bosch,m_can.yaml.
-> 
-> Fixes: 824674b59f72 ("dt-bindings: net: can: Convert M_CAN to json-schema")
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+djYgLT4gdjcNCgktIEZpeCBwYXRjaCAjMyAic2NzaTogdWZzOiBpbnRyb2R1Y2UgY29tbW9uIGRl
+bGF5IGZ1bmN0aW9uIiAoQmFydCBWYW4gQXNzY2hlKQ0KCQktIFJlbW92ZSAiY2FuX3NsZWVwIiBy
+ZWxhdGVkIGNoYW5nZXMuDQoJCS0gTGltaXQgdGhlIHVzYWdlIG9mIGNvbW1vbiBkZWxheSBmdW5j
+dGlvbiwgZm9yIGV4YW1wbGUsIGlmIGRlbGF5IHRpbWUNCgkJaXMgZml4ZWQgYW5kIGxhcmdlciB0
+aGFuIDEwIHVzLCB1c2luZyBpbnRyb2R1Y2VkIGNvbW1vbiBkZWxheSBmdW5jdGlvbiBpcyBub3Qg
+cmVxdWlyZWQuDQoJLSBPdGhlciByZWxhdGVkIGNoYW5nZXMgYWNjb3JkaW5nIHRvIHBhdGNoICMz
+IGNoYW5nZXMNCg0KdjUgLT4gdjYNCgktIERyb3AgcGF0Y2ggIzIgInNjc2k6IHVmczogcmVtb3Zl
+IGluaXRfcHJlZmV0Y2hfZGF0YSBpbiBzdHJ1Y3QgdWZzX2hiYSIgaW4gdjUNCgliZWNhdXNlIENh
+biBHdW8gaGFzIHNpbWlsYXIgY2xlYW51cCBlYXJsaWVyIGluIHBhdGNoICJzY3NpOiB1ZnM6IERv
+IG5vdCByZWx5IG9uIHByZWZldGNoZWQgZGF0YSINCg0KdjQgLT4gdjUNCgktIEZpeCBwYXRjaCAj
+NzogRml4IHR5cG8gImluaXRpYWxpemF0b2luIiBpbiB0aXRsZQ0KDQp2MyAtPiB2NA0KCS0gSW4g
+cGF0Y2ggIzgsIGZpeCBpbmNvcnJlY3QgY29uZGl0aW9uIG9mIGN1c3RvbWl6ZWQgZGVsYXkgZm9y
+IGhvc3QgZW5hYmxpbmcNCg0KdjIgLT4gdjMNCgktIFJlbW92ZSAvYXJjaC9hcm02NC9jb25maWdz
+L2RlZmNvbmZpZyBjaG5hZ2UgYmVjYXVzZSBpdCBpcyBmb3IgbG9jYWwgdGVzdCBvbmx5DQoNCnYx
+IC0+IHYyDQoJLSBBZGQgcGF0Y2ggIzEgInNjc2k6IHVmczogZml4IHVuaW5pdGlhbGl6ZWQgdHhf
+bGFuZXMgaW4gdWZzaGNkX2Rpc2FibGVfdHhfbGNjIg0KCS0gUmVtb3ZlIHN0cnVjdCB1ZnNfaW5p
+dF9wcmVmZXRjaCBpbiBwYXRjaCAjMiAic2NzaTogdWZzOiByZW1vdmUgaW5pdF9wcmVmZXRjaF9k
+YXRhIGluIHN0cnVjdCB1ZnNfaGJhIg0KCS0gSW50cm9kdWNlIGNvbW1vbiBkZWxheSBmdW5jdGlv
+biBpbiBwYXRjaCAjNA0KCS0gUmVwbGFjZSBhbGwgZGVsYXkgcGxhY2VzIGJ5IGNvbW1vbiBkZWxh
+eSBmdW5jdGlvbiBpbiB1ZnMtbWVkaWF0ZWsgaW4gcGF0Y2ggIzUNCgktIFVzZSBjb21tb24gZGVs
+YXkgZnVuY3Rpb24gaW5zdGVhZCBmb3IgaG9zdCBlbmFibGluZyBkZWxheSBpbiBwYXRjaCAjNg0K
+CS0gQWRkIHBhdGNoICM3ICJzY3NpOiB1ZnM6IG1ha2UgSENFIHBvbGxpbmcgbW9yZSBjb21wYWN0
+IHRvIGltcHJvdmUgaW5pdGlhbGl6YXRvaW4gbGF0ZW5jeSINCgktIEluIHBhdGNoICM4LCBjdXN0
+b21pemUgdGhlIGRlbGF5IGluIHVmc19tdGtfaGNlX2VuYWJsZV9ub3RpZnkgY2FsbGJhY2sgaW5z
+dGVhZCBvZiB1ZnNfbXRrX2luaXQgKEF2cmkgQWx0bWFuKQ0KDQpTdGFubGV5IENodSAoNyk6DQog
+IHNjc2k6IHVmczogZml4IHVuaW5pdGlhbGl6ZWQgdHhfbGFuZXMgaW4gdWZzaGNkX2Rpc2FibGVf
+dHhfbGNjKCkNCiAgc2NzaTogdWZzOiB1c2UgYW4gZW51bSBmb3IgaG9zdCBjYXBhYmlsaXRpZXMN
+CiAgc2NzaTogdWZzOiBpbnRyb2R1Y2UgY29tbW9uIGFuZCBmbGV4aWJsZSBkZWxheSBmdW5jdGlv
+bg0KICBzY3NpOiB1ZnMtbWVkaWF0ZWs6IHVzZSBjb21tb24gZGVsYXkgZnVuY3Rpb24gZm9yIHJl
+cXVpcmVkIHBsYWNlcw0KICBzY3NpOiB1ZnM6IGFsbG93IGN1c3RvbWl6ZWQgZGVsYXkgZm9yIGhv
+c3QgZW5hYmxpbmcNCiAgc2NzaTogdWZzOiBtYWtlIEhDRSBwb2xsaW5nIG1vcmUgY29tcGFjdCB0
+byBpbXByb3ZlIGluaXRpYWxpemF0aW9uDQogICAgbGF0ZW5jeQ0KICBzY3NpOiB1ZnMtbWVkaWF0
+ZWs6IGN1c3RvbWl6ZSB0aGUgZGVsYXkgZm9yIGhvc3QgZW5hYmxpbmcNCg0KIGRyaXZlcnMvc2Nz
+aS91ZnMvdWZzLW1lZGlhdGVrLmMgfCA1OCArKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tDQog
+ZHJpdmVycy9zY3NpL3Vmcy91ZnMtbWVkaWF0ZWsuaCB8ICAxICsNCiBkcml2ZXJzL3Njc2kvdWZz
+L3Vmc2hjZC5jICAgICAgIHwgMjEgKysrKysrKysrLS0NCiBkcml2ZXJzL3Njc2kvdWZzL3Vmc2hj
+ZC5oICAgICAgIHwgNjcgKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tDQogNCBmaWxl
+cyBjaGFuZ2VkLCA5MyBpbnNlcnRpb25zKCspLCA1NCBkZWxldGlvbnMoLSkNCg0KLS0gDQoyLjE4
+LjANCg==
 
-Mauro Carvalho Chehab has already send a patch. See:
-https://lkml.org/lkml/2020/3/17/843
-
-Feel free to ack that patch.
-
-Marc
-
-> ---
->  Documentation/devicetree/bindings/net/can/tcan4x5x.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/can/tcan4x5x.txt b/Documentation/devicetree/bindings/net/can/tcan4x5x.txt
-> index 6bdcc3f84bd3..3613c2c8f75d 100644
-> --- a/Documentation/devicetree/bindings/net/can/tcan4x5x.txt
-> +++ b/Documentation/devicetree/bindings/net/can/tcan4x5x.txt
-> @@ -14,7 +14,7 @@ Required properties:
->                      the interrupt.
->  	- interrupts: interrupt specification for data-ready.
->  
-> -See Documentation/devicetree/bindings/net/can/m_can.txt for additional
-> +See Documentation/devicetree/bindings/net/can/bosch,m_can.yaml for additional
->  required property details.
->  
->  Optional properties:
-> 
-
-
--- 
-Pengutronix e.K.                 | Marc Kleine-Budde           |
-Embedded Linux                   | https://www.pengutronix.de  |
-Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
