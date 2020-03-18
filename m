@@ -2,144 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AA8318A8EE
+	by mail.lfdr.de (Postfix) with ESMTP id CAD0E18A8EF
 	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 00:06:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727407AbgCRXGT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 19:06:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727132AbgCRXGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 19:06:16 -0400
-Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABD6A208E4;
-        Wed, 18 Mar 2020 23:06:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584572776;
-        bh=ZxxGTjlO7NBT1wg1m3B0rlTJ0Dra1Fpr72IGr/O4DX8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IptXYSXW18xO1/N37NADiTKS5f81MTpgGfRNJSjZwCjf2z/kWyq9eHr1/4qK8nu+6
-         fInDML/N9dD7KW8P17M7Uqkio2B8dZbr8o9Gb9Cm340wt7ExyFXGPzKbCvAt479YiP
-         ZCekIzzPe2HTmAOrEpudt+Ma97Y8D54siaMfF5yk=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        NeilBrown <neilb@suse.com>
-Subject: [PATCH v4 5/5] selftests: kmod: test disabling module autoloading
-Date:   Wed, 18 Mar 2020 16:05:15 -0700
-Message-Id: <20200318230515.171692-6-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200318230515.171692-1-ebiggers@kernel.org>
-References: <20200318230515.171692-1-ebiggers@kernel.org>
+        id S1727431AbgCRXG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 19:06:28 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:32810 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726912AbgCRXG1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 19:06:27 -0400
+Received: by mail-wm1-f68.google.com with SMTP id r7so3437816wmg.0;
+        Wed, 18 Mar 2020 16:06:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eXqEATx1cHCE6b1YUNmz27V8QulAkcDr6NsFEVWEUTs=;
+        b=I6fd3oWk7eCeslO37Pf3NgBc40F0lpZdb8bFpohRDG+92ohbjxeemlC6tnQY68z7W0
+         +iwvd9O8KbJbFl/2cWf/ihcaGZPimfCYtFl1Uvlioh/B2o3FuZz0pX2BEyi/B+end7+s
+         3K0dRLTdskv1kij93NliSjpQDJp0yXVRjTD/bcZ6KoAd60Fs7Erk+5zSmpZ36FVfwkHK
+         9wMv3YWk/NVyjHli6KBwgRJ4ePhEBCW4EWbrWqGENyyzRGntlE5yMT4/r5V16RZkZWH/
+         ChiHdr/YJT2OKsn0rWhI3iLxI+peaT6i3NmhDk8s1STyhmxyra6xn5lN8mx8chYicJRk
+         PRog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eXqEATx1cHCE6b1YUNmz27V8QulAkcDr6NsFEVWEUTs=;
+        b=S1ZnSZb0T3LFdOgrCyGsdf6qedUdNR8SzChvurdJXz/4ucw5//9MgS7balorurl5Or
+         Rmbj4xJ4RWhPt0zMWWD3sW6A2F/pLiA99rgCDoIZAcZ3OpEipRs7TyG9xOOqTjIoenBo
+         UjFpsGwx9ZvH3rt0nYzK4yY3/LJ5+EHLCzYaQUw6Q0bChg5ZZrRF5AGr5vZClze0CXxo
+         m13RyTtNti/nsRuQz4WV10omjC72fKrpLqMlk2yBgxwvgTcN4jCrxokiGlIPcI0+EvsY
+         Yy+2Gzvr9+5BOpWfKy0hrjUafYG6t2xRh4h1DI0yFVFjX0ygis+V2ORVrSOFaZzICfOi
+         vdOA==
+X-Gm-Message-State: ANhLgQ10vOiObwPBHQLFfqN2AZ5N3Y7vwrSNyeuH3nrbM4oh5ay//svh
+        oRgRt3E9ewq6vh6+xy7vZfI=
+X-Google-Smtp-Source: ADFU+vt/J0MYwlO9CPUQgByfWWXH5b7TgrL+z3Wh4tAoRPqpG7gQho9plNNs3gagJ7PuIsG9jNVx7Q==
+X-Received: by 2002:a1c:b4c6:: with SMTP id d189mr46558wmf.132.1584572783705;
+        Wed, 18 Mar 2020 16:06:23 -0700 (PDT)
+Received: from localhost (p2E5BEE6C.dip0.t-ipconnect.de. [46.91.238.108])
+        by smtp.gmail.com with ESMTPSA id l5sm476370wro.15.2020.03.18.16.06.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 16:06:22 -0700 (PDT)
+Date:   Thu, 19 Mar 2020 00:05:39 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Paul Barker <pbarker@konsulko.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/7] dt-bindings: pwm: document the PWM polarity flag
+Message-ID: <20200318230539.GB2874972@ulmo>
+References: <20200317123231.2843297-1-oleksandr.suvorov@toradex.com>
+ <20200317123231.2843297-3-oleksandr.suvorov@toradex.com>
+ <20200317174344.GB1464607@ulmo>
+ <20200317213056.futfiwn4qgr2njye@pengutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="H+4ONPRPur6+Ovig"
+Content-Disposition: inline
+In-Reply-To: <20200317213056.futfiwn4qgr2njye@pengutronix.de>
+User-Agent: Mutt/1.13.1 (2019-12-14)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
 
-Test that request_module() fails with -ENOENT when
-/proc/sys/kernel/modprobe contains (a) a nonexistent path, and (b) an
-empty path.
+--H+4ONPRPur6+Ovig
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Case (b) is a regression test for the patch "kmod: make request_module()
-return an error when autoloading is disabled".
+On Tue, Mar 17, 2020 at 10:30:56PM +0100, Uwe Kleine-K=C3=B6nig wrote:
+> Hello Thierry,
+>=20
+> On Tue, Mar 17, 2020 at 06:43:44PM +0100, Thierry Reding wrote:
+> > On Tue, Mar 17, 2020 at 02:32:26PM +0200, Oleksandr Suvorov wrote:
+> > > Add the description of PWM_POLARITY_NORMAL flag.
+> > >=20
+> > > Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+> > > ---
+> > >=20
+> > >  Documentation/devicetree/bindings/pwm/pwm.txt | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/pwm/pwm.txt b/Document=
+ation/devicetree/bindings/pwm/pwm.txt
+> > > index 084886bd721e..440c6b9a6a4e 100644
+> > > --- a/Documentation/devicetree/bindings/pwm/pwm.txt
+> > > +++ b/Documentation/devicetree/bindings/pwm/pwm.txt
+> > > @@ -46,6 +46,7 @@ period in nanoseconds.
+> > >  Optionally, the pwm-specifier can encode a number of flags (defined =
+in
+> > >  <dt-bindings/pwm/pwm.h>) in a third cell:
+> > >  - PWM_POLARITY_INVERTED: invert the PWM signal polarity
+> > > +- PWM_POLARITY_NORMAL: don't invert the PWM signal polarity
+> >=20
+> > This doesn't make sense. PWM_POLARITY_NORMAL is not part of the DT ABI.
+>=20
+> "is not part of the DT ABI" is hardly a good reason. If it's sensible to
+> be used, it is sensible to define it.
 
-Tested with 'kmod.sh -t 0010 && kmod.sh -t 0011', and also simply with
-'kmod.sh' to run all kmod tests.
+That's exactly it. It's not sensible at all to use it. If you define it
+here it means people are allowed to do stuff like this:
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jeff Vander Stoep <jeffv@google.com>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: NeilBrown <neilb@suse.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- tools/testing/selftests/kmod/kmod.sh | 30 ++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+	pwms =3D <&pwm 1234 PWM_POLARITY_INVERTED | PWM_POLARITY_NORMAL>;
 
-diff --git a/tools/testing/selftests/kmod/kmod.sh b/tools/testing/selftests/kmod/kmod.sh
-index 315a43111e046..3702dbcc90a77 100755
---- a/tools/testing/selftests/kmod/kmod.sh
-+++ b/tools/testing/selftests/kmod/kmod.sh
-@@ -61,6 +61,8 @@ ALL_TESTS="$ALL_TESTS 0006:10:1"
- ALL_TESTS="$ALL_TESTS 0007:5:1"
- ALL_TESTS="$ALL_TESTS 0008:150:1"
- ALL_TESTS="$ALL_TESTS 0009:150:1"
-+ALL_TESTS="$ALL_TESTS 0010:1:1"
-+ALL_TESTS="$ALL_TESTS 0011:1:1"
- 
- # Kselftest framework requirement - SKIP code is 4.
- ksft_skip=4
-@@ -149,6 +151,7 @@ function load_req_mod()
- 
- test_finish()
- {
-+	echo "$MODPROBE" > /proc/sys/kernel/modprobe
- 	echo "Test completed"
- }
- 
-@@ -443,6 +446,30 @@ kmod_test_0009()
- 	config_expect_result ${FUNCNAME[0]} SUCCESS
- }
- 
-+kmod_test_0010()
-+{
-+	kmod_defaults_driver
-+	config_num_threads 1
-+	echo "/KMOD_TEST_NONEXISTENT" > /proc/sys/kernel/modprobe
-+	config_trigger ${FUNCNAME[0]}
-+	config_expect_result ${FUNCNAME[0]} -ENOENT
-+	echo "$MODPROBE" > /proc/sys/kernel/modprobe
-+}
-+
-+kmod_test_0011()
-+{
-+	kmod_defaults_driver
-+	config_num_threads 1
-+	# This causes the kernel to not even try executing modprobe.  The error
-+	# code is still -ENOENT like when modprobe doesn't exist, so we can't
-+	# easily test for the exact difference.  But this still is a useful test
-+	# since there was a bug where request_module() returned 0 in this case.
-+	echo > /proc/sys/kernel/modprobe
-+	config_trigger ${FUNCNAME[0]}
-+	config_expect_result ${FUNCNAME[0]} -ENOENT
-+	echo "$MODPROBE" > /proc/sys/kernel/modprobe
-+}
-+
- list_tests()
- {
- 	echo "Test ID list:"
-@@ -460,6 +487,8 @@ list_tests()
- 	echo "0007 x $(get_test_count 0007) - multithreaded tests with default setup test request_module() and get_fs_type()"
- 	echo "0008 x $(get_test_count 0008) - multithreaded - push kmod_concurrent over max_modprobes for request_module()"
- 	echo "0009 x $(get_test_count 0009) - multithreaded - push kmod_concurrent over max_modprobes for get_fs_type()"
-+	echo "0010 x $(get_test_count 0010) - test nonexistent modprobe path"
-+	echo "0011 x $(get_test_count 0011) - test completely disabling module autoloading"
- }
- 
- usage()
-@@ -616,6 +645,7 @@ test_reqs
- allow_user_defaults
- load_req_mod
- 
-+MODPROBE=$(</proc/sys/kernel/modprobe)
- trap "test_finish" EXIT
- 
- parse_args $@
--- 
-2.25.1
+which doesn't make sense. What's more, it impossible for the code to
+even notice that you're being silly because | PWM_POLARITY_NORMAL is
+just | 0 and that's just a nop.
 
+> (And as far as I understand it, the term PWM_POLARITY_INVERTED isn't
+> part of the DT ABI either. Only the value 1 has a meaning (for some PWM
+> controlers).)
+>=20
+> > The third cell of the specifier is a bitmask of flags.
+> >=20
+> > PWM_POLARITY_NORMAL is an enumeration value that evaluates to 0, so it
+> > makes absolutely no sense as a flag.
+>=20
+> Using 0 or PWM_POLARITY_NORMAL doesn't have an effect on the compiled
+> device tree, that's true. But having the term PWM_POLARITY_NORMAL (in
+> contrast to a plain 0) in a dts file is useful in my eyes for human
+> readers.
+>=20
+> > PWM signals are considered to be "normal" by default, so no flag is
+> > necessary to specify that.
+>=20
+> GPIOs are considered to be active high by default, still there is
+> GPIO_ACTIVE_HIGH (which also evaluates to 0). Also there is
+> IRQ_TYPE_NONE.
+
+I'm aware of those. That doesn't mean that everything needs to have
+symbolic names.
+
+Thierry
+
+--H+4ONPRPur6+Ovig
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5yqUMACgkQ3SOs138+
+s6GPcg/+N73P7VPsn68ABt9OMpT62+RvFprrJJFPeRfRvnxjtQfvnfdV5KblV8Z2
+Cq2KKBVSeFkWWLLXWQHsBZYJ9oXXgkBHfIU4vdlkW55L8DWMyAztCu+0gob8tufk
+u9AoYhvAfZN4hWa03WweDIFpX7jfbqeQCQ5LOygJDAcRb426xowyzNwGtMtXpHo4
+Sl4KI08IN5WUFqG78ywvGIcogQ7Y4YTVYmU/wbPDrN2I65kqEn4YIZLWRes0t2gp
+CF8DaJfUXPMPiutTpCqiq19Tvr95RbrIPaYCAOW9jdH6oo51q148ghg/03WuDuxD
+Q3Q/B7ElsGw5Pw19jBGcVVXVOs60iZbkkMqtRWRGAvM+HKbADDYNyl1dVLH0yG9U
+6Ac912W/rhdGsT6wSgZk3k+ecl4QhKfvxGrDqKzZ9zuVs8qDMYIiUPWzLxLolljG
+bScb9XRW0O2ToPjGSQKZlKJj7vdC9eHwP3EM1/84oetS5AOajIL7DXhPtjtnOhhP
+1T8sI2JT6uLoy9kQ5X9jQRi1yAkGfXGlHH8MyM5lr6kUFkoe2KBrV5hp6wDhi81b
+AvYpL1vUilGov/jpaap4Z5Kx1KupIFvKmWWkGwsxFtCec5Onpvs9dpEOSXU7HWTE
+rpN4N0KeMiUqd+NTCK3OV9R/OidbZMy5ewERSyxPVR7oGL3JpM8=
+=VpZF
+-----END PGP SIGNATURE-----
+
+--H+4ONPRPur6+Ovig--
