@@ -2,246 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F00A189766
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 09:48:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C685D18972E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 09:30:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbgCRIsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 04:48:31 -0400
-Received: from mga03.intel.com ([134.134.136.65]:41491 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726390AbgCRIsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 04:48:30 -0400
-IronPort-SDR: EH15nAsQQfP88mFQTQYmWVkjMCpJxa4eOU94gPSv+t62BXNiswvUO/B256wzxXEm9cS5x4Nan4
- 1Y9iAPdFytew==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 01:48:29 -0700
-IronPort-SDR: iWGgfi8dzcAeXj/O/iJ5mKk0o8Y9y2Vrrkvbizc8NmceTp8Dd5q1+6QjXQOYXWyB+hm2W/QLP4
- 6zGRhvYlpSYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,566,1574150400"; 
-   d="scan'208";a="279669477"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by fmsmga002.fm.intel.com with ESMTP; 18 Mar 2020 01:48:27 -0700
-Date:   Wed, 18 Mar 2020 16:27:23 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Xu Yilun <yilun.xu@intel.com>
-Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>
-Subject: Re: [PATCH v2 3/7] fpga: dfl: introduce interrupt trigger setting API
-Message-ID: <20200318082723.GA15276@hao-dev>
-References: <1584332222-26652-1-git-send-email-yilun.xu@intel.com>
- <1584332222-26652-4-git-send-email-yilun.xu@intel.com>
+        id S1727421AbgCRIap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 04:30:45 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:36046 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbgCRIao (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 04:30:44 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02I8UUaG041006;
+        Wed, 18 Mar 2020 03:30:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584520230;
+        bh=jGa+GktmlDStzmVOTq3HJze3DKU2zZ2qyKfIt2MEWjc=;
+        h=From:To:CC:Subject:Date;
+        b=VIwNlZNtM2IJ9ZRJQeWs07/yGjX+i5jXirzSLjOYuc3xPOFnKdTU2Quiobr4v1YH+
+         dxNW7K3BcaOQGj9JXNer0j/EZ9qTLGI2QsTIMp4TFKlXyM+1Wlncn3uXgoUypwyVfk
+         FStEFSqXt6ALPmqVdR3JRznHwk3wlE+9xESFpipk=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02I8UUMF029778;
+        Wed, 18 Mar 2020 03:30:30 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 18
+ Mar 2020 03:30:30 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 18 Mar 2020 03:30:30 -0500
+Received: from a0393675ula.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02I8UQ8E108598;
+        Wed, 18 Mar 2020 03:30:27 -0500
+From:   Keerthy <j-keerthy@ti.com>
+To:     <rui.zhang@intel.com>, <robh+dt@kernel.org>,
+        <daniel.lezcano@linaro.org>
+CC:     <j-keerthy@ti.com>, <amit.kucheria@verdurent.com>,
+        <t-kristo@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+        <mark.rutland@arm.com>
+Subject: [PATCH v4 0/4] thermal: k3: Add support for bandgap sensors
+Date:   Wed, 18 Mar 2020 14:00:24 +0530
+Message-ID: <20200318083028.9984-1-j-keerthy@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1584332222-26652-4-git-send-email-yilun.xu@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 12:16:58PM +0800, Xu Yilun wrote:
-> FPGA user applications may be interested in interrupts generated by
-> DFL features. For example, users can implement their own FPGA
-> logics with interrupts enabled in AFU (Accelerated Function Unit,
-> dynamic region of DFL based FPGA). So user applications need to be
-> notified to handle these interrupts.
-> 
-> In order to allow userspace applications to monitor interrupts,
-> driver requires userspace to provide eventfds as interrupt
-> notification channels. Applications then poll/select on the eventfds
-> to get notified.
-> 
-> This patch introduces a generic helper function for sub features to
-> do eventfds binding with given interrupts.
-> 
-> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
-> Signed-off-by: Wu Hao <hao.wu@intel.com>
-> Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> ----
-> v2: use unsigned int instead of int for irq array indexes in
->     dfl_fpga_set_irq_triggers()
->     Improves comments for NULL fds param in dfl_fpga_set_irq_triggers()
-> ---
->  drivers/fpga/dfl.c | 95 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/fpga/dfl.h | 11 +++++++
->  2 files changed, 106 insertions(+)
-> 
-> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
-> index 28e2cd8..8dcc4e2 100644
-> --- a/drivers/fpga/dfl.c
-> +++ b/drivers/fpga/dfl.c
-> @@ -535,6 +535,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
->  		int i;
->  
->  		/* save resource information for each feature */
-> +		feature->dev = fdev;
->  		feature->id = finfo->fid;
->  		feature->resource_index = index;
->  		feature->ioaddr = finfo->ioaddr;
-> @@ -1385,6 +1386,100 @@ int dfl_fpga_cdev_config_ports_vf(struct dfl_fpga_cdev *cdev, int num_vfs)
->  }
->  EXPORT_SYMBOL_GPL(dfl_fpga_cdev_config_ports_vf);
->  
-> +static irqreturn_t dfl_irq_handler(int irq, void *arg)
-> +{
-> +	struct eventfd_ctx *trigger = arg;
-> +
-> +	eventfd_signal(trigger, 1);
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int do_set_irq_trigger(struct dfl_feature *feature, unsigned int idx,
-> +			      int fd)
-> +{
-> +	struct platform_device *pdev = feature->dev;
-> +	struct eventfd_ctx *trigger;
-> +	int irq, ret;
-> +
-> +	if (idx >= feature->nr_irqs)
-> +		return -EINVAL;
-> +
-> +	irq = feature->irq_ctx[idx].irq;
-> +
-> +	if (feature->irq_ctx[idx].trigger) {
-> +		free_irq(irq, feature->irq_ctx[idx].trigger);
-> +		kfree(feature->irq_ctx[idx].name);
-> +		eventfd_ctx_put(feature->irq_ctx[idx].trigger);
-> +		feature->irq_ctx[idx].trigger = NULL;
-> +	}
-> +
-> +	if (fd < 0)
-> +		return 0;
-> +
-> +	feature->irq_ctx[idx].name =
-> +		kasprintf(GFP_KERNEL, "fpga-irq[%u](%s-%llx)", idx,
-> +			  dev_name(&pdev->dev),
-> +			  (unsigned long long)feature->id);
-> +	if (!feature->irq_ctx[idx].name)
-> +		return -ENOMEM;
-> +
-> +	trigger = eventfd_ctx_fdget(fd);
-> +	if (IS_ERR(trigger)) {
-> +		ret = PTR_ERR(trigger);
-> +		goto free_name;
-> +	}
-> +
-> +	ret = request_irq(irq, dfl_irq_handler, 0,
-> +			  feature->irq_ctx[idx].name, trigger);
-> +	if (!ret) {
-> +		feature->irq_ctx[idx].trigger = trigger;
-> +		return ret;
-> +	}
-> +
-> +	eventfd_ctx_put(trigger);
-> +free_name:
-> +	kfree(feature->irq_ctx[idx].name);
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * dfl_fpga_set_irq_triggers - set eventfd triggers for dfl feature interrupts
-> + *
-> + * @feature: dfl sub feature.
-> + * @start: start of irq index in this dfl sub feature.
-> + * @count: number of irqs.
-> + * @fds: eventfds to bind with irqs.
-> + *
-> + * Bind given eventfds with irqs in this dfl sub feature. Use NULL or negative
-> + * fds as parameter to unbind irqs.
+Add VTM thermal support. In the Voltage Thermal
+Management Module(VTM), K3 AM654 supplies a voltage
+reference and a temperature sensor feature that are gathered in the band
+gap voltage and temperature sensor (VBGAPTS) module. The band
+gap provides current and voltage reference for its internal
+circuits and other analog IP blocks. The analog-to-digital
+converter (ADC) produces an output value that is proportional
+to the silicon temperature.
 
-It seems that it accepts valid fds and invalid fds (negative) in the same table
-pointed by fds ptr, righ? Could we also add this into description as well?
+Add support for bandgap sensors. Currently reading temperatures
+and trend computing is supported.
 
-> + *
-> + * Return: 0 on success, negative error code otherwise.
-> + */
-> +int dfl_fpga_set_irq_triggers(struct dfl_feature *feature, unsigned int start,
-> +			      unsigned int count, int32_t *fds)
-> +{
-> +	unsigned int i, j;
-> +	int ret = 0;
-> +
-> +	if (start + count < start || start + count > feature->nr_irqs)
-> +		return -EINVAL;
-> +
-> +	for (i = 0, j = start; i < count && !ret; i++, j++) {
-> +		int fd = fds ? fds[i] : -1;
-> +
-> +		ret = do_set_irq_trigger(feature, j, fd);
-> +	}
+Changes in v4:
 
-could we just replace j with start + i?
+  * Fixed comments from Daniel to remove trend function.
+  * Mostly cleaned up all the unused variables.
+  * Driver from bool to tristate.
 
-other places look good to me.
+Changes in v3:
 
-Hao
+  * Fixed errors seen with:
+    dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/thermal/ti,am654-thermal.yaml
 
-> +
-> +	if (ret) {
-> +		for (--j; j >= start; j--)
-> +			do_set_irq_trigger(feature, j, -1);
-> +	}
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(dfl_fpga_set_irq_triggers);
-> +
->  static void __exit dfl_fpga_exit(void)
->  {
->  	dfl_chardev_uinit();
-> diff --git a/drivers/fpga/dfl.h b/drivers/fpga/dfl.h
-> index 6a498cd..6b60077 100644
-> --- a/drivers/fpga/dfl.h
-> +++ b/drivers/fpga/dfl.h
-> @@ -24,6 +24,8 @@
->  #include <linux/slab.h>
->  #include <linux/uuid.h>
->  #include <linux/fpga/fpga-region.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/eventfd.h>
->  
->  /* maximum supported number of ports */
->  #define MAX_DFL_FPGA_PORT_NUM 4
-> @@ -213,14 +215,19 @@ struct dfl_feature_driver {
->   * struct dfl_feature_irq_ctx - dfl private feature interrupt context
->   *
->   * @irq: Linux IRQ number of this interrupt.
-> + * @trigger: eventfd context to signal when interrupt happens.
-> + * @name: irq name needed when requesting irq.
->   */
->  struct dfl_feature_irq_ctx {
->  	int irq;
-> +	struct eventfd_ctx *trigger;
-> +	char *name;
->  };
->  
->  /**
->   * struct dfl_feature - sub feature of the feature devices
->   *
-> + * @dev: ptr to pdev of the feature device which has the sub feature.
->   * @id: sub feature id.
->   * @resource_index: each sub feature has one mmio resource for its registers.
->   *		    this index is used to find its mmio resource from the
-> @@ -231,6 +238,7 @@ struct dfl_feature_irq_ctx {
->   * @ops: ops of this sub feature.
->   */
->  struct dfl_feature {
-> +	struct platform_device *dev;
->  	u64 id;
->  	int resource_index;
->  	void __iomem *ioaddr;
-> @@ -506,4 +514,7 @@ int dfl_fpga_cdev_release_port(struct dfl_fpga_cdev *cdev, int port_id);
->  int dfl_fpga_cdev_assign_port(struct dfl_fpga_cdev *cdev, int port_id);
->  void dfl_fpga_cdev_config_ports_pf(struct dfl_fpga_cdev *cdev);
->  int dfl_fpga_cdev_config_ports_vf(struct dfl_fpga_cdev *cdev, int num_vf);
-> +
-> +int dfl_fpga_set_irq_triggers(struct dfl_feature *feature, unsigned int start,
-> +			      unsigned int count, int32_t *fds);
->  #endif /* __FPGA_DFL_H */
-> -- 
-> 2.7.4
+Changes in v2:
+
+  * Fixed yaml errors
+  * renamed am654-industrial-thermal.dtsi to k3-am654-industrial-thermal.dtsi
+    to follow the convention for k3 family.
+
+Keerthy (4):
+  dt-bindings: thermal: k3: Add VTM bindings documentation
+  thermal: k3: Add support for bandgap sensors
+  arm64: dts: ti: am654: Add thermal zones
+  arm64: dts: ti: am6: Add VTM node
+
+ .../bindings/thermal/ti,am654-thermal.yaml    |  56 ++++
+ arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi    |  11 +
+ .../dts/ti/k3-am654-industrial-thermal.dtsi   |  45 +++
+ drivers/thermal/Kconfig                       |  11 +
+ drivers/thermal/Makefile                      |   1 +
+ drivers/thermal/k3_bandgap.c                  | 288 ++++++++++++++++++
+ 6 files changed, 412 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/ti,am654-thermal.yaml
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am654-industrial-thermal.dtsi
+ create mode 100644 drivers/thermal/k3_bandgap.c
+
+-- 
+2.17.1
+
