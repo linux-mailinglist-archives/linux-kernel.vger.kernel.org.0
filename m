@@ -2,89 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC4B418A107
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:00:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 770DE18A12D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:09:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbgCRRAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 13:00:14 -0400
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:38355 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726638AbgCRRAO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 13:00:14 -0400
-Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 18 Mar 2020 10:00:13 -0700
-Received: from gurus-linux.qualcomm.com ([10.46.162.81])
-  by ironmsg04-sd.qualcomm.com with ESMTP; 18 Mar 2020 10:00:10 -0700
-Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
-        id DDA914BAA; Wed, 18 Mar 2020 10:00:10 -0700 (PDT)
-Date:   Wed, 18 Mar 2020 10:00:10 -0700
-From:   Guru Das Srinagesh <gurus@codeaurora.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linux PWM List <linux-pwm@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexander Shiyan <shc_work@mail.ru>
-Subject: Re: [PATCH v9 04/11] pwm: clps711x: Use 64-bit division macro
-Message-ID: <20200318170010.GA26509@codeaurora.org>
-References: <cover.1584473399.git.gurus@codeaurora.org>
- <587f9ccae68ad7e1ce97fa8da6037292af1a5095.1584473399.git.gurus@codeaurora.org>
- <CAK8P3a2Hi_AoRC3g7qKth4e_Y1jZrbBDhWUb3YPZm10FWMu-ig@mail.gmail.com>
- <20200317233003.GA11350@codeaurora.org>
- <CAK8P3a2a-QEwFfDE5FbFCVdDS+t9jirgbHWJQQv0i5_OMCYXJg@mail.gmail.com>
+        id S1726856AbgCRRJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 13:09:48 -0400
+Received: from mga17.intel.com ([192.55.52.151]:47863 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726638AbgCRRJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 13:09:47 -0400
+IronPort-SDR: OQNm875sGHGJo1GkhcBUt4PmbW5Fu3wp5uKCOlwkTS27mjLV3yK1Uwy2GDYGhTTBfgE0+2jJuh
+ OhNhATXCcVXQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 10:09:47 -0700
+IronPort-SDR: f481HSyPpRKmelyJY/WmmDt+1dK/TzPlXi0k4IiiQ42LSybYx8Elt3v99cWghv3fAev4dnIUPd
+ sqTW+JHWkLTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,568,1574150400"; 
+   d="scan'208";a="418019258"
+Received: from nali1-mobl3.amr.corp.intel.com (HELO [10.255.33.194]) ([10.255.33.194])
+  by orsmga005.jf.intel.com with ESMTP; 18 Mar 2020 10:09:45 -0700
+Subject: Re: [PATCH 1/2] ASoC: qcom: sdm845: handle soundwire stream
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        broonie@kernel.org
+Cc:     alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
+        linux-kernel@vger.kernel.org, vkoul@kernel.org
+References: <20200317095351.15582-1-srinivas.kandagatla@linaro.org>
+ <20200317095351.15582-2-srinivas.kandagatla@linaro.org>
+ <8daeeb26-851b-8311-30f5-5d285ccbc255@linux.intel.com>
+ <69c72f5a-e72e-b7b3-90cb-a7354dcb175d@linaro.org>
+ <cbc6cc9b-24f5-8c2a-b60d-b5dab08c128e@linux.intel.com>
+ <fcf845bd-9803-ab04-d2a9-c258ddfcc972@linaro.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <c8738ecf-727f-2063-8aa0-46fc1c338383@linux.intel.com>
+Date:   Wed, 18 Mar 2020 11:53:59 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a2a-QEwFfDE5FbFCVdDS+t9jirgbHWJQQv0i5_OMCYXJg@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <fcf845bd-9803-ab04-d2a9-c258ddfcc972@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 10:49:34AM +0100, Arnd Bergmann wrote:
-> On Wed, Mar 18, 2020 at 12:30 AM Guru Das Srinagesh
-> <gurus@codeaurora.org> wrote:
-> >
-> > On Tue, Mar 17, 2020 at 11:22:06PM +0100, Arnd Bergmann wrote:
-> > > > diff --git a/drivers/pwm/pwm-clps711x.c b/drivers/pwm/pwm-clps711x.c
-> > > > index 924d39a..ba9500a 100644
-> > > > --- a/drivers/pwm/pwm-clps711x.c
-> > > > +++ b/drivers/pwm/pwm-clps711x.c
-> > > > @@ -43,7 +43,7 @@ static void clps711x_pwm_update_val(struct clps711x_chip *priv, u32 n, u32 v)
-> > > >  static unsigned int clps711x_get_duty(struct pwm_device *pwm, unsigned int v)
-> > > >  {
-> > > >         /* Duty cycle 0..15 max */
-> > > > -       return DIV_ROUND_CLOSEST(v * 0xf, pwm->args.period);
-> > > > +       return DIV64_U64_ROUND_CLOSEST(v * 0xf, pwm->args.period);
-> > > >  }
-> > >
-> > > Is it actually going to exceed U32_MAX? If not, a type cast may be
-> > > more appropriate here than the expensive 64-bit division.
-> >
-> > With the final change in this patch series, the framework will support
-> > periods that exceed U32_MAX. My concern is that using a typecast would
-> > mean that in those cases, this driver will not support > U32_MAX values.
-> > Using DIV64_U64_ROUND_CLOSEST makes the driver future proof and able to
-> > handle > U32_MAX values correctly. What do you think?
+
+
+On 3/18/20 10:57 AM, Srinivas Kandagatla wrote:
 > 
-> Ah, so if the period can actually be larger than U32_MAX, you need to
-> handle that case. However, I see that the divident in this code (v * 0xf)
-> is still a 32-bit number, so a correct and efficient implementation could be
 > 
->    if (pwm->args.period > (UINT_MAX / 0xf))
+> On 18/03/2020 15:26, Pierre-Louis Bossart wrote:
+>>
+>> Same comment, how does the notion of cpu_dai come in the picture for a 
+>> SoundWire dailink?
+>> Would you mind listing what the components of the dailinks are?
+> 
+> dais that I was referring here are all codec dais from backend-dai.
+> 
+> Device tree entries from
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/qcom/sdm845-db845c.dts?h=next-20200318#n538 
+> 
+> 
+> 
+> Frontend-dai:
+>      mm1-dai-link {
+>          link-name = "MultiMedia1";
+>          cpu {
+>              sound-dai = <&q6asmdai  MSM_FRONTEND_DAI_MULTIMEDIA1>;
+>          };
+>      };
+> 
+> Backend-dai:
+>      slim-dai-link {
+>          link-name = "SLIM Playback";
+>          cpu {
+>              sound-dai = <&q6afedai SLIMBUS_0_RX>;
+>          };
+> 
+>          platform {
+>              sound-dai = <&q6routing>;
+>          };
+> 
+>          codec {
+>              sound-dai =  <&left_spkr>, <&right_spkr>, <&swm 0>, 
+> <&wcd9340 0>;
+>          };
 
-Shouldn't the if condition be the following? Or am I missing
-something here?
+Thanks, I didn't realize this and now understand your point.
 
-     if (pwm->args.period > (UINT_MAX / (v * 0xf)))
-     					^^^^^^^^^
+I guess that means we've officially stretched the limits of the DPCM 
+model though, lumping all codec dais from separate devices into the same 
+'backend' doesn't seem like a very good path forward, we'd really need a 
+notion of domain to represent such bridges.
 
->           return 0;
->    return DIV_ROUND_CLOSEST(v * 0xf, (u32)pwm->args.period);
+For now for the series
 
-Thank you.
-
-Guru Das.
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
