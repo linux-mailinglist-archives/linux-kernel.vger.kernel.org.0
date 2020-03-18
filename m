@@ -2,304 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB8F11895C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 07:26:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B4C71895CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 07:27:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727405AbgCRG01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 02:26:27 -0400
-Received: from mail-eopbgr80051.outbound.protection.outlook.com ([40.107.8.51]:55783
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726802AbgCRG00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 02:26:26 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GzEKjDIPHVNtZgIbLr6tT8h+Sdco7g1mg5Rp9E5LGuwxX2ABNsJHVDys9OSmah3aN+OZvPuM7V+sNVuvDGZYCvYXA3Jhe91snUp8b7iIhJH3KmsK3Ss5mzx7DPysEL6x1bs/CvbxRedBQemCicgDrGdWv1x55eQe65Bdm/LcTcGCAdQePJlEw4pt4a2w3uZoWfaNUwv+ybFcLAJXQniluGv9ywXXdA8S156x4EEqE2UqbYRgAoWh3aYZZfLkE8YbMWG3tjcW5k2+0hKtMV9w2bUHAo9DGVfghXa62yBPDwjHJBWQmBr3G+xLibsD+fsLM7jX57hx15fJiAu5Cghtxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uUeCXE/b5GcSXGnsqcIKepsQi3f8ds03ShjQGlK7IY8=;
- b=B4qiCtmnLO0UY77EJ3WTSxVK2x4MLoZ8Jcmc9iaKxx1HUlPyC+pUICyYF2DkV9T+c/PVK2zW9vFnX5NKS3p1XsuVT6QhxIuz6RrnEbSteRn5xaJXwC7Jg0Kaa4Fs9Zu915TKV3YE45qOnLay2eTVAWKYHApyBfkzbjLm+7k6NwiU2N4RZ740SW+DO7u7Fq1rCMWYN6kXKGzdxGECvz9CIK5RvBkGPDWsPV5TN5981jIgGivgZEFPFVv40GUb+QpHuo5puYnnP3Ech7UZmevGn0FLaxQWcwNZA8pf3biU0b6C8b36+dC+VxLuPvF4+t/+UPMJUbmnK7bhIqMNXHDTAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uUeCXE/b5GcSXGnsqcIKepsQi3f8ds03ShjQGlK7IY8=;
- b=AeoxeEJfkT2TNKMVzLP9ZJuf4e6rJzYaFr8VCitFHHr7OSCWMVMzVeNPKOHx4gFFo7ZS0O46n5phW/I2vk8p9KjZkUekKbqYSXZHhzHwWxLwgSc2StLHVrFphOpMmeE5soyu0PGEaadDX08m4Q5LQHg3w+beAeJ8syIfh6QqIEo=
-Received: from VI1PR0402MB3600.eurprd04.prod.outlook.com (52.134.3.146) by
- VI1PR0402MB2925.eurprd04.prod.outlook.com (10.175.24.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2835.18; Wed, 18 Mar 2020 06:26:20 +0000
-Received: from VI1PR0402MB3600.eurprd04.prod.outlook.com
- ([fe80::c991:848b:cc80:2768]) by VI1PR0402MB3600.eurprd04.prod.outlook.com
- ([fe80::c991:848b:cc80:2768%7]) with mapi id 15.20.2814.021; Wed, 18 Mar 2020
- 06:26:20 +0000
-From:   Andy Duan <fugang.duan@nxp.com>
-To:     Martin Fuzzey <martin.fuzzey@flowbird.group>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [EXT] [PATCH 1/4] net: fec: set GPR bit on suspend by DT
- connfiguration.
-Thread-Topic: [EXT] [PATCH 1/4] net: fec: set GPR bit on suspend by DT
- connfiguration.
-Thread-Index: AQHV/Hwf7o5FT7bkakCxQQlLHyLZc6hN4MmA
-Date:   Wed, 18 Mar 2020 06:26:19 +0000
-Message-ID: <VI1PR0402MB3600396A11D0AB39FBF9C54AFFF70@VI1PR0402MB3600.eurprd04.prod.outlook.com>
-References: <1584463806-15788-1-git-send-email-martin.fuzzey@flowbird.group>
- <1584463806-15788-2-git-send-email-martin.fuzzey@flowbird.group>
-In-Reply-To: <1584463806-15788-2-git-send-email-martin.fuzzey@flowbird.group>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fugang.duan@nxp.com; 
-x-originating-ip: [119.31.174.68]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 925f9f2c-b02c-4377-f0d2-08d7cb0545be
-x-ms-traffictypediagnostic: VI1PR0402MB2925:|VI1PR0402MB2925:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR0402MB29258586BDAB00512B553C68FFF70@VI1PR0402MB2925.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2399;
-x-forefront-prvs: 03468CBA43
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(39860400002)(346002)(136003)(376002)(199004)(9686003)(52536014)(2906002)(55016002)(71200400001)(33656002)(15650500001)(5660300002)(186003)(45080400002)(316002)(8676002)(81156014)(54906003)(81166006)(8936002)(4326008)(966005)(110136005)(7696005)(86362001)(76116006)(6506007)(66946007)(66476007)(66556008)(64756008)(66446008)(478600001)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2925;H:VI1PR0402MB3600.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: guNMhHjYbbXAqCTIu1003yawDitO+vpdB2H8mUSq/vQX5L/QIlMNg45WiNaNb39vP6CFk2s6mhp/QxPOrykNjB1v1mLiK82Gwhv9s5ACoqPpfNlmeknnyg3YsYq+o/JPVQ8LNKeQXUsux5i9XbUGAQeN+48cOExWW+zRXc8v16zPSDfEPrLXq0NGlgUDlFJT9e1vx1ULRr71bwHEiyBYZgwb3AeVozPA+Jav6AjXCX9HQsfkIDwsmaOuaZb23uPev2sn3tzwTu/pm1JQC7G4oR5yKiNUcbHprIBefhfsZiqX9cMMpLqJN84l3YmXKmDTf8LmzRiu61aNGNnTkLw7tEgqdkGv45NSC8SDk0M/6gwXoUZatBETZ9CY/Z3BXDWTZwpmEuMz57kpAeSIgexEypEUlT21+RSrzqClzZEkVMEit6slPAh069zPtrgNi6eKRO0L7UC2Ul/Dygm+jxsGWGdZrNJKtN+c9nBUzyPPcdprCAsF35LU8fnIfkSGYJQbQAlyikM8RG0T/9X/9zyiPA==
-x-ms-exchange-antispam-messagedata: zNdKIzWSDTxVL+twvTM/qN9S72u4t/HbvC3pYDqSXFfGi/nE5ScFyh5GKORr/Q4SsRbuc+sQiljoMlCXWHsTt3oPzTax9LqB8YaPAMavfoinedHOzgfZS6L0okBrgqNiKcrAGBL8pQbJJnltUr0waA==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727290AbgCRG1d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 02:27:33 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:32933 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726553AbgCRG1c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 02:27:32 -0400
+Received: by mail-pl1-f194.google.com with SMTP id ay11so10750916plb.0;
+        Tue, 17 Mar 2020 23:27:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=M0jLEpxC4l3IOb+KMA02Q30dEzRvhIJNxnX68azs+4A=;
+        b=QImxNQeUzuTppW30cpuiNPD4z63mXgEyiuPP9OnkZi83y/wsfIVKN2rpttBgdc5U+3
+         ZTWJkXPLNvMp8HH4Bh6MfDqK5dI5gHcaKoLDt4WbSojpxG/mgljzDR2LHHkX2DhX/nS2
+         RuMQS5fPsMV9Y7rK6ImRAp0P9AczCya+u0ErwXL/8kcnjlzRP+F91DKm27TV66hQ7TJT
+         0j3txo5hICGCZSjQAMkc++tcNyziLaBDpV2+AHfGHK1Mhacb34S42YkztdDdXCXz5Ahs
+         P4pHsIikKNfjwlM2qRJU6YJXQqjJLz/4OGOi5Oo3FWqZGrPFHGuhEGxYWuTk7l6YdAzo
+         VCNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=M0jLEpxC4l3IOb+KMA02Q30dEzRvhIJNxnX68azs+4A=;
+        b=mJXtjClbk2O4VvbfkUGJXBpszpOh60tsvGYK7puLnNywO57epVvDKl003JeFZ42nq9
+         2JRj21LKkaY45i2uNzZkX5e2bMoU+fPwQHl2V1TJiMT35gBHSzXV7MNA6tx7Lw+rBqbX
+         2EUhHoUYl+bYuRgNHrCpngT6aGHswZ/oHM6hermrO31ePhF4pAmB7EX1c+AiETatistN
+         GI6r4au1NFNP8NBH5go6FFmBn2Y9unoUi5lYLlCOFtlANtlsLbO2SuW8OApsOCmFF09w
+         SK3fNT36ow6q9yKo3e5blUq7sz0O3wgZ3xuD/YErokldzp3vw8DvAtNPe8VGXeFOGu7t
+         f12g==
+X-Gm-Message-State: ANhLgQ2nxPwZIzCOBbb+GJjkM4Rb4TFwiiGQmm8raD+DkizhaAiZXWjE
+        mlPQ8F1tT4fquvjZSuCgwhEGemW8
+X-Google-Smtp-Source: ADFU+vsUY1qyJ3MM5qkB5boM9kpHmxcYeaba4l01BHYDSgM3lynvyO19aBDRv/DFfRZ4K8mimcw9yg==
+X-Received: by 2002:a17:902:ab95:: with SMTP id f21mr2178201plr.188.1584512849727;
+        Tue, 17 Mar 2020 23:27:29 -0700 (PDT)
+Received: from ?IPv6:2409:4072:6086:470e:bc8d:c185:c429:a95b? ([2409:4072:6086:470e:bc8d:c185:c429:a95b])
+        by smtp.gmail.com with ESMTPSA id b25sm5060850pfp.201.2020.03.17.23.27.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Mar 2020 23:27:29 -0700 (PDT)
+Subject: Re: [PATCH] dt-bindings: iio: tsl2563: convert bindings to YAML
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     robh+dt@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, mark.rutland@arm.com, sre@kernel.org,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200314134237.12187-1-nish.malpani25@gmail.com>
+ <20200315105834.7a5f4475@archlinux>
+From:   Nishant Malpani <nish.malpani25@gmail.com>
+Message-ID: <1cfe5e97-1c0d-8ffe-88f3-90db77e0f03b@gmail.com>
+Date:   Wed, 18 Mar 2020 11:57:20 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 925f9f2c-b02c-4377-f0d2-08d7cb0545be
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2020 06:26:19.8582
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SEsXXbmQW+cqF4d0TjB6mtxeeEzTa9/5NuYdwGGYL6CEkoKpq6VzNphlrk5N36orDHF9ddUPkho9II26cfRJww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2925
+In-Reply-To: <20200315105834.7a5f4475@archlinux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Fuzzey <martin.fuzzey@flowbird.group> Sent: Wednesday, March 1=
-8, 2020 12:50 AM
-> On some SoCs, such as the i.MX6, it is necessary to set a bit in the SoC =
-level
-> GPR register before suspending for wake on lan to work.
->=20
-> The fec platform callback sleep_mode_enable was intended to allow this bu=
-t
-> the platform implementation was NAK'd back in 2015 [1]
->=20
-> This means that, currently, wake on lan is broken on mainline for the i.M=
-X6 at
-> least.
->=20
-> So implement the required bit setting in the fec driver by itself by addi=
-ng a
-> new optional DT property indicating the register and bit to set.
->=20
-> [1]
-> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fwww.s
-> pinics.net%2Flists%2Fnetdev%2Fmsg310922.html&amp;data=3D02%7C01%7Cf
-> ugang.duan%40nxp.com%7Ca9e64936ec9f45edc57108d7ca9340dd%7C686e
-> a1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637200606109625887&am
-> p;sdata=3D%2Bg4NIxZRwNY331k9cq5s6OIm22qD5qstiDIVlSQiL8E%3D&amp;res
-> erved=3D0
->=20
-> Signed-off-by: Martin Fuzzey <martin.fuzzey@flowbird.group>
-> ---
->  drivers/net/ethernet/freescale/fec.h      |  7 +++
->  drivers/net/ethernet/freescale/fec_main.c | 72
-> ++++++++++++++++++++++++++++---
->  2 files changed, 72 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/freescale/fec.h
-> b/drivers/net/ethernet/freescale/fec.h
-> index f79e57f..d89568f 100644
-> --- a/drivers/net/ethernet/freescale/fec.h
-> +++ b/drivers/net/ethernet/freescale/fec.h
-> @@ -488,6 +488,12 @@ struct fec_enet_priv_rx_q {
->         struct  sk_buff *rx_skbuff[RX_RING_SIZE];  };
->=20
-> +struct fec_stop_mode_gpr {
-> +       struct regmap *gpr;
-> +       u8 reg;
-> +       u8 bit;
-> +};
-> +
->  /* The FEC buffer descriptors track the ring buffers.  The rx_bd_base an=
-d
->   * tx_bd_base always point to the base of the buffer descriptors.  The
->   * cur_rx and cur_tx point to the currently available buffer.
-> @@ -562,6 +568,7 @@ struct fec_enet_private {
->         int hwts_tx_en;
->         struct delayed_work time_keep;
->         struct regulator *reg_phy;
-> +       struct fec_stop_mode_gpr stop_gpr;
->=20
->         unsigned int tx_align;
->         unsigned int rx_align;
-> diff --git a/drivers/net/ethernet/freescale/fec_main.c
-> b/drivers/net/ethernet/freescale/fec_main.c
-> index 23c5fef..3c78124 100644
-> --- a/drivers/net/ethernet/freescale/fec_main.c
-> +++ b/drivers/net/ethernet/freescale/fec_main.c
-> @@ -62,6 +62,8 @@
->  #include <linux/if_vlan.h>
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/prefetch.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/regmap.h>
->  #include <soc/imx/cpuidle.h>
->=20
->  #include <asm/cacheflush.h>
-> @@ -1092,11 +1094,28 @@ static void fec_enet_reset_skb(struct
-> net_device *ndev)
->=20
->  }
->=20
-> +static void fec_enet_stop_mode(struct fec_enet_private *fep, bool
-> +enabled) {
-> +       struct fec_platform_data *pdata =3D fep->pdev->dev.platform_data;
-> +       struct fec_stop_mode_gpr *stop_gpr =3D &fep->stop_gpr;
-> +
-> +       if (stop_gpr->gpr) {
-> +               if (enabled)
-> +                       regmap_update_bits(stop_gpr->gpr,
-> stop_gpr->reg,
-> +                                          BIT(stop_gpr->bit),
-> +                                          BIT(stop_gpr->bit));
-> +               else
-> +                       regmap_update_bits(stop_gpr->gpr,
-> stop_gpr->reg,
-> +                                          BIT(stop_gpr->bit), 0);
-> +       } else if (pdata && pdata->sleep_mode_enable) {
-> +               pdata->sleep_mode_enable(enabled);
-> +       }
-> +}
-> +
->  static void
->  fec_stop(struct net_device *ndev)
->  {
->         struct fec_enet_private *fep =3D netdev_priv(ndev);
-> -       struct fec_platform_data *pdata =3D fep->pdev->dev.platform_data;
->         u32 rmii_mode =3D readl(fep->hwp + FEC_R_CNTRL) & (1 << 8);
->         u32 val;
->=20
-> @@ -1125,9 +1144,7 @@ static void fec_enet_reset_skb(struct net_device
-> *ndev)
->                 val =3D readl(fep->hwp + FEC_ECNTRL);
->                 val |=3D (FEC_ECR_MAGICEN | FEC_ECR_SLEEP);
->                 writel(val, fep->hwp + FEC_ECNTRL);
-> -
-> -               if (pdata && pdata->sleep_mode_enable)
-> -                       pdata->sleep_mode_enable(true);
-> +               fec_enet_stop_mode(fep, true);
->         }
->         writel(fep->phy_speed, fep->hwp + FEC_MII_SPEED);
->=20
-> @@ -3397,6 +3414,43 @@ static int fec_enet_get_irq_cnt(struct
-> platform_device *pdev)
->         return irq_cnt;
->  }
->=20
-> +static int fec_enet_of_parse_stop_mode(struct fec_enet_private *fep,
-> +                                      struct device_node *np) {
-> +       static const char prop[] =3D "fsl,stop-mode";
-> +       struct of_phandle_args args;
-> +       int ret;
-> +
-> +       ret =3D of_parse_phandle_with_fixed_args(np, prop, 2, 0, &args);
-To save memory:
+A v3 PATCH [1] was generated taking care of the reviews which can be 
+found inline.
 
-		 ret =3D of_parse_phandle_with_fixed_args(np, "fsl,stop-mode", 2, 0, &arg=
-s);
+[1] https://marc.info/?l=linux-iio&m=158451158827441&w=2
 
-> +       if (ret =3D=3D -ENOENT)
-> +               return 0;
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (args.args_count !=3D 2) {
-> +               dev_err(&fep->pdev->dev,
-> +                       "Bad %s args want gpr offset, bit\n", prop);
-> +               ret =3D -EINVAL;
-> +               goto out;
-> +       }
-> +
-> +       fep->stop_gpr.gpr =3D syscon_node_to_regmap(args.np);
-> +       if (IS_ERR(fep->stop_gpr.gpr)) {
-> +               dev_err(&fep->pdev->dev, "could not find gpr regmap\n");
-> +               ret =3D PTR_ERR(fep->stop_gpr.gpr);
-> +               fep->stop_gpr.gpr =3D NULL;
-> +               goto out;
-> +       }
-> +
-> +       fep->stop_gpr.reg =3D args.args[0];
-> +       fep->stop_gpr.bit =3D args.args[1];
-> +
-> +out:
-> +       of_node_put(args.np);
-> +
-> +       return ret;
-> +}
-> +
->  static int
->  fec_probe(struct platform_device *pdev)  { @@ -3463,6 +3517,10 @@
-> static int fec_enet_get_irq_cnt(struct platform_device *pdev)
->         if (of_get_property(np, "fsl,magic-packet", NULL))
->                 fep->wol_flag |=3D FEC_WOL_HAS_MAGIC_PACKET;
->=20
-> +       ret =3D fec_enet_of_parse_stop_mode(fep, np);
-> +       if (ret)
-> +               goto failed_stop_mode;
-> +
->         phy_node =3D of_parse_phandle(np, "phy-handle", 0);
->         if (!phy_node && of_phy_is_fixed_link(np)) {
->                 ret =3D of_phy_register_fixed_link(np); @@ -3631,6
-> +3689,7 @@ static int fec_enet_get_irq_cnt(struct platform_device *pdev)
->         if (of_phy_is_fixed_link(np))
->                 of_phy_deregister_fixed_link(np);
->         of_node_put(phy_node);
-> +failed_stop_mode:
->  failed_phy:
->         dev_id--;
->  failed_ioremap:
-> @@ -3708,7 +3767,6 @@ static int __maybe_unused fec_resume(struct
-> device *dev)  {
->         struct net_device *ndev =3D dev_get_drvdata(dev);
->         struct fec_enet_private *fep =3D netdev_priv(ndev);
-> -       struct fec_platform_data *pdata =3D fep->pdev->dev.platform_data;
->         int ret;
->         int val;
->=20
-> @@ -3726,8 +3784,8 @@ static int __maybe_unused fec_resume(struct
-> device *dev)
->                         goto failed_clk;
->                 }
->                 if (fep->wol_flag & FEC_WOL_FLAG_ENABLE) {
-> -                       if (pdata && pdata->sleep_mode_enable)
-> -                               pdata->sleep_mode_enable(false);
-> +                       fec_enet_stop_mode(fep, false);
-> +
->                         val =3D readl(fep->hwp + FEC_ECNTRL);
->                         val &=3D ~(FEC_ECR_MAGICEN |
-> FEC_ECR_SLEEP);
->                         writel(val, fep->hwp + FEC_ECNTRL);
-> --
-> 1.9.1
+On 15/03/20 4:28 pm, Jonathan Cameron wrote:
+> On Sat, 14 Mar 2020 19:12:37 +0530
+> Nishant Malpani <nish.malpani25@gmail.com> wrote:
+> 
+>> Convert the TSL2563 device tree bindings to the new YAML format.
+>>
+>> Signed-off-by: Nishant Malpani <nish.malpani25@gmail.com>
+>> ---
+>>
+>> The link for the datasheet is not attached in the binding document
+>> because it was not available on the manufacturer's (AMS) website [1].
+> 
+> Very old part now, though plenty of them in circulation or least there
+> used to be.  I have though not powered up that board for a while.
+> 
+> When doing these conversions, do sanity check them against the driver
+> as the old docs aren't always entirely accurate ; >
+> Jonathan
+> 
+>>
+>> [1] https://ams.com/ambient-light-sensors
+>> ---
+>>   .../devicetree/bindings/iio/light/tsl2563.txt | 19 --------
+>>   .../bindings/iio/light/tsl2563.yaml           | 46 +++++++++++++++++++
+>>   2 files changed, 46 insertions(+), 19 deletions(-)
+>>   delete mode 100644 Documentation/devicetree/bindings/iio/light/tsl2563.txt
+>>   create mode 100644 Documentation/devicetree/bindings/iio/light/tsl2563.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/light/tsl2563.txt b/Documentation/devicetree/bindings/iio/light/tsl2563.txt
+>> deleted file mode 100644
+>> index f91e809e736e..000000000000
+>> --- a/Documentation/devicetree/bindings/iio/light/tsl2563.txt
+>> +++ /dev/null
+>> @@ -1,19 +0,0 @@
+>> -* AMS TAOS TSL2563 ambient light sensor
+>> -
+>> -Required properties:
+>> -
+>> -  - compatible : should be "amstaos,tsl2563"
+>> -  - reg : the I2C address of the sensor
+>> -
+>> -Optional properties:
+>> -
+>> -  - amstaos,cover-comp-gain : integer used as multiplier for gain
+>> -                              compensation (default = 1)
+>> -
+>> -Example:
+>> -
+>> -tsl2563@29 {
+>> -	compatible = "amstaos,tsl2563";
+>> -	reg = <0x29>;
+>> -	amstaos,cover-comp-gain = <16>;
+>> -};
+>> diff --git a/Documentation/devicetree/bindings/iio/light/tsl2563.yaml b/Documentation/devicetree/bindings/iio/light/tsl2563.yaml
+>> new file mode 100644
+>> index 000000000000..2a70b8d62760
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/iio/light/tsl2563.yaml
+>> @@ -0,0 +1,46 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/iio/light/tsl2563.yaml#
+> 
+> Convention is now to name files and this with the manufacturer part
+> as well.
 
+Got it! Taken care of in v3.
+> 
+> light/amstaos,tsl2563.yaml
+> 
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: AMS TAOS TSL2563 ambient light sensor
+>> +
+>> +maintainers:
+>> +  - Sebastian Reichel <sre@kernel.org>
+>> +
+>> +description: |
+>> +  Ambient light sensor with an i2c interface.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - amstaos,tsl2563
+> 
+> The original binding was wrong on this.   Check the driver :)
+> I'm a bit embarrassed I never noticed during review as I have
+> a tsl2561, be it on a board that was never converted to DT.
+> 
+
+You're right. Should have cross-checked with the driver before blindly 
+following the original binding. Corrected in v3.
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  amstaos,cover-comp-gain:
+>> +    description: Multiplier for gain compensation
+>> +    allOf:
+>> +      - $ref: /schemas/types.yaml#/definitions/uint32
+>> +      - enum: [1, 16]
+> 
+> Not sure it's that restricted...  or to be honest what
+> that is for at all.  Superficially it looks like
+> a multiplier to change the 'range' of the the sysfs control.
+> 
+> I wonder if anyone cares or if we can just start ignoring that going
+> forwards?  Sebastian, anyone else?
+> 
+
+ From what I understood while reading the datasheet [2] (Page 4), 
+'amstaos,cover-comp-gain' is used to switch between the low gain and 
+high gain mode which further adjusts the 'Illuminance Responsivity'. 
+Ergo, I've taken it forward even in v3 since the driver also relies on 
+it [3]. Please let me know if my reasoning is erroneous.
+
+[2] 
+https://media.digikey.com/pdf/Data%20Sheets/Austriamicrosystems%20PDFs/TSL2562,63.pdf
+
+[3] 
+https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/tree/drivers/iio/light/tsl2563.c#n494
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +examples:
+>> +  - |
+>> +    i2c {
+>> +
+>> +      #address-cells = <1>;
+>> +      #size-cells = <0>;
+>> +
+>> +      light-sensor@29 {
+>> +        compatible = "amstaos,tsl2563";
+>> +        reg = <0x29>;
+>> +        amstaos,cover-comp-gain = <16>;
+>> +      };
+>> +    };
+>> +...
+> 
+
+With regards,
+Nishant Malpani
