@@ -2,90 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51BEB18A1E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:47:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 242B818A1EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:48:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbgCRRpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 13:45:44 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:33033 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbgCRRpn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 13:45:43 -0400
-Received: by mail-qt1-f194.google.com with SMTP id d22so21510518qtn.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 10:45:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=rl1b6YsGtBJ3kOtNa0WFcM2DTHbfoy2KmOV32IqCN6M=;
-        b=m4IwnX1r7ptkHEQp8cCRIvLRK4qk3fGLYPnHlbCgubUCeCJX02T5YBzaFCQ+dKgRDv
-         3IbSIdwhuzgBII/5GDiJqKNBs/4PHxH0vhLn/ZrmBmZSRQSDPe35udC4jvstH2ONraC5
-         SApIJsEotVmsVQ219uqJRpUfi8e3BjCKd7GY+xWcw5vnv3FmuzJ4GXnEvuwF/IwaaYOD
-         AcfwyyjwWyS1y5fSE4aWBMl6jAOgFMfB3VncDtQWEL+jsk1fdqANIIIJOgj9SPpRlxYf
-         /bbExpzoJxulmE9xqrl303wkC8zXKywiMzWr6Zd2OA3F3KI4SFcS0rK5pwtlF+x5uY4p
-         1c3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=rl1b6YsGtBJ3kOtNa0WFcM2DTHbfoy2KmOV32IqCN6M=;
-        b=WHjACgRX9BdAF3esdKqnn5k67WzEjL4p1L0S6p2lr6bCmT8rARdeAXmvN8VKp3ZiEA
-         VAif/HrmHBpVfi18Fe6KRR8cM5lP/SuWDm7YJq+oYa4O90v7PR95hltSyND4dXQ9G+hy
-         m7SjliklHq6w+rQKET7iomsiZ3BUBuUw5laiAOEswzvsPXtdlBeaJX7pFgnddXhrYo6J
-         YWmShLpixDOZTwpydcDljUmPEHDMUwPvlwXUWnELh3Mq/UPmtqw25yL7Y7MMLoNjxOYp
-         khpCFU5J9qR+h83AKuws8TTEpUjiue0Cpti2eJQpqEWGbmkZj2QawxQUy3a+asy50Avr
-         Xzyg==
-X-Gm-Message-State: ANhLgQ3djxWkPy9i+PBAAZusyk9ggvA039LuSla8BjrXXD2OWIBw07VH
-        3mlauu9BhhK8geUXG1R9WfQ9XQ==
-X-Google-Smtp-Source: ADFU+vsfKn0pQfH0EAmid/5E8Mr64khvU8AUJGk6+wGnA2d81z/i63l57gULHPDlQdBxUYt+INIO+Q==
-X-Received: by 2002:ac8:3488:: with SMTP id w8mr5648485qtb.187.1584553542277;
-        Wed, 18 Mar 2020 10:45:42 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::1:a9a9])
-        by smtp.gmail.com with ESMTPSA id t71sm4678137qke.55.2020.03.18.10.45.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 10:45:41 -0700 (PDT)
-Date:   Wed, 18 Mar 2020 13:45:39 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     js1304@gmail.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>, kernel-team@lge.com,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Subject: Re: [PATCH v3 1/9] mm/vmscan: make active/inactive ratio as 1:1 for
- anon lru
-Message-ID: <20200318174539.GA154135@cmpxchg.org>
-References: <1584423717-3440-1-git-send-email-iamjoonsoo.kim@lge.com>
- <1584423717-3440-2-git-send-email-iamjoonsoo.kim@lge.com>
+        id S1726741AbgCRRsL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 13:48:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726506AbgCRRsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 13:48:10 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACB6B20752;
+        Wed, 18 Mar 2020 17:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584553688;
+        bh=nIRM+WY3P5vmQLvcggYZkzjwW+uq3nchuZAFnsr2gLY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=z2hysmjLTxToxZUAsYP5vyO0cdtXwbm0WB6Hl6cgzLv3k8l0WarkYNMKFynv6FLGk
+         JUru6IgeSJOZhqP5ir8e9kZrVXlgz3wG07V/yYMI9KmgtYxAS+ECM9O2a8WdhAMCC/
+         UKcnQM2rCMOf9pYvpZsAEEwZkxfPZ+vNxBtFaDOI=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1jEcnX-00Dhie-06; Wed, 18 Mar 2020 17:48:07 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1584423717-3440-2-git-send-email-iamjoonsoo.kim@lge.com>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 18 Mar 2020 17:48:06 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Sungbo Eo <mans0n@gorani.run>
+Cc:     linux-oxnas@groups.io, Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH] irqchip/versatile-fpga: Handle chained IRQs properly
+In-Reply-To: <20200318170904.1461278-1-mans0n@gorani.run>
+References: <20200318170904.1461278-1-mans0n@gorani.run>
+Message-ID: <112cdab389aa9cc30189c7aec0baded2@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.10
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: mans0n@gorani.run, linux-oxnas@groups.io, linus.walleij@linaro.org, tglx@linutronix.de, jason@lakedaemon.net, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, narmstrong@baylibre.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 02:41:49PM +0900, js1304@gmail.com wrote:
-> From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> 
-> Current implementation of LRU management for anonymous page has some
-> problems. Most important one is that it doesn't protect the workingset,
-> that is, pages on the active LRU list. Although, this problem will be
-> fixed in the following patchset, the preparation is required and
-> this patch does it.
-> 
-> What following patchset does is to restore workingset protection. In this
-> case, newly created or swap-in pages are started their lifetime on the
-> inactive list. If inactive list is too small, there is not enough chance
-> to be referenced and the page cannot become the workingset.
-> 
-> In order to provide enough chance to the newly anonymous pages, this patch
-> makes active/inactive LRU ratio as 1:1.
-> 
-> Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Hi Sungbo,
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+On 2020-03-18 17:09, Sungbo Eo wrote:
+> Enclose the chained handler with chained_irq_{enter,exit}(), so that 
+> the
+> muxed interrupts get properly acked.
+> 
+> This patch also fixes a reboot bug on OX820 SoC, where the jiffies 
+> timer
+> interrupt is never acked. The kernel waits a clock tick forever in
+> calibrate_delay_converge(), which leads to a boot hang.
+
+Nice catch.
+
+> 
+> Signed-off-by: Sungbo Eo <mans0n@gorani.run>
+> Cc: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/irqchip/irq-versatile-fpga.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/irqchip/irq-versatile-fpga.c
+> b/drivers/irqchip/irq-versatile-fpga.c
+> index 928858dada75..08faab2fec3e 100644
+> --- a/drivers/irqchip/irq-versatile-fpga.c
+> +++ b/drivers/irqchip/irq-versatile-fpga.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/irq.h>
+>  #include <linux/io.h>
+>  #include <linux/irqchip.h>
+> +#include <linux/irqchip/chained_irq.h>
+>  #include <linux/irqchip/versatile-fpga.h>
+>  #include <linux/irqdomain.h>
+>  #include <linux/module.h>
+> @@ -68,12 +69,15 @@ static void fpga_irq_unmask(struct irq_data *d)
+> 
+>  static void fpga_irq_handle(struct irq_desc *desc)
+>  {
+> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+>  	struct fpga_irq_data *f = irq_desc_get_handler_data(desc);
+>  	u32 status = readl(f->base + IRQ_STATUS);
+> 
+> +	chained_irq_enter(chip, desc);
+> +
+
+It's probably not a big deal, but I'm not fond of starting talking to
+the muxing irqchip before having done the chained_irq_enter() call.
+
+Moving that read here would probably be safer.
+
+>  	if (status == 0) {
+>  		do_bad_IRQ(desc);
+> -		return;
+> +		goto out;
+>  	}
+> 
+>  	do {
+> @@ -82,6 +86,9 @@ static void fpga_irq_handle(struct irq_desc *desc)
+>  		status &= ~(1 << irq);
+>  		generic_handle_irq(irq_find_mapping(f->domain, irq));
+>  	} while (status);
+> +
+> +out:
+> +	chained_irq_exit(chip, desc);
+>  }
+> 
+>  /*
+
+Otherwise looks good. If you send it again with the above fixed
+and a Fixes: tag, I'll queue it.
+
+Thanks,
+
+         M.
+-- 
+Jazz is not dead. It just smells funny...
