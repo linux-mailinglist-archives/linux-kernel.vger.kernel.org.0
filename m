@@ -2,116 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD8A5189884
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 10:52:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD061189896
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 10:54:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbgCRJwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 05:52:50 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:48575 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727420AbgCRJwt (ORCPT
+        id S1727502AbgCRJyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 05:54:18 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:52007 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726786AbgCRJyS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 05:52:49 -0400
-Received: from mail-qk1-f180.google.com ([209.85.222.180]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1Mzi3l-1jREuU3oCv-00viKa; Wed, 18 Mar 2020 10:52:48 +0100
-Received: by mail-qk1-f180.google.com with SMTP id f28so37589856qkk.13;
-        Wed, 18 Mar 2020 02:52:47 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ1dGpADYjO5CDo9TpC9sNH0OfvqMLmN9P2f3eZ+mfD8mi7hWdNI
-        bpn+08ayNnGJiug5lJv2ZA0tpBSbNr8b47nBN+4=
-X-Google-Smtp-Source: ADFU+vvPPpkP18ZKfrFNh8gvaXPMHk4SKQCYU0CemL9wvz6IRWOfSh9+2To1NcmRy07HyNQyHflromqOgChlyMVwpd0=
-X-Received: by 2002:a37:6285:: with SMTP id w127mr3096860qkb.138.1584525166497;
- Wed, 18 Mar 2020 02:52:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <1584200119-18594-1-git-send-email-mikelley@microsoft.com>
- <1584200119-18594-6-git-send-email-mikelley@microsoft.com>
- <CAK8P3a2yve3R1w5igBYMy3HSFJ8Xt4BHhXQcaTAkNCdZXZ1v-w@mail.gmail.com> <MW2PR2101MB1052B9C24DAB19FBBD818347D7F70@MW2PR2101MB1052.namprd21.prod.outlook.com>
-In-Reply-To: <MW2PR2101MB1052B9C24DAB19FBBD818347D7F70@MW2PR2101MB1052.namprd21.prod.outlook.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 18 Mar 2020 10:52:30 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a1zm2UH-S6eN4qMO_o1M8b0ieMq+2tQGVKmtC-UKeZUTQ@mail.gmail.com>
-Message-ID: <CAK8P3a1zm2UH-S6eN4qMO_o1M8b0ieMq+2tQGVKmtC-UKeZUTQ@mail.gmail.com>
-Subject: Re: [PATCH v6 05/10] arm64: hyperv: Add interrupt handlers for VMbus
- and stimer
-To:     Michael Kelley <mikelley@microsoft.com>
-Cc:     Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        Andy Whitcroft <apw@canonical.com>,
-        vkuznets <vkuznets@redhat.com>, Jason Wang <jasowang@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Sunil Muthuswamy <sunilmut@microsoft.com>,
-        Boqun Feng <boqun.feng@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:A1KzVya30fjoULLZ+eD2UXAbZC8WJh5Z7ng5J6IZzzlynO993/b
- 0SSCMhfRnGtznaciJzi8JIOE7iMdMixIrToEs0OdUuSdrfRk8mgBlV5NxB5ez5AhLH9KZDH
- wVYoyZn65/gHyak53FLg+4+crg7selqHaskTeFcdIZnLxO5nr9ErvULb5OteTqqnTyjIhMc
- sY2Q2FkvyjWMNOL0UpDew==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:r+xSzRlN+aE=:RJwZ+to3d1F75tXB2EyKPp
- d91UC9VbiX4FD5XucXITiDzp/TaSff9veEDX3y3t/Iq51zAZ/r+rMDkUwTow1F1Ru9C2hnaMB
- KxwnMnKeUKNcZsw9Cfs/nN72U2CKyrVFPwe6FUuRWxMJnwg9kRQhjHphPz95zqox8KHKqJ9Mb
- aPWqg38MSr7eSdWIABpqX4MwG0gcbIRJV68O1YL8ZW+NbfWTRSsGJ4mrNaK2pKdJ2Qh2V0E6g
- zfK1L/SWfY5ts1gMMOb+SsSdqa/IzV6Od5ofklw68YMnwXbWKop+VUk+qOmm/X2Uo4GlK0DAX
- lwWzdmDlaqr3Z6vDF55ON1yhwsyNVHkrb+Jl0PIatqklwFZIJQIYV3KqVThs7sSyDN9SFCbkX
- GL4me4vL00eRXPwHWPk6gXxH6SubqvNmkDNPKsIqDSkTyU4U1jM748iqShAf/MKkXe1e+SA2z
- olaTzmWRFrgFX9OeLzc0trrhPrLKfa5rF9xxlfizVvVwZR0ZLfQz7oXaIBDaTaPVgaV4fVcHX
- nBOYiTX3M0XD1Wtwud+yu8A0EDoECltEKUc3aOCNf8B8VKq9b0WaYcCozJEJmFQ21Yp+PBJgX
- SFs42AZAD5DMITpP4HNPJ7ds91B6PGgG9MzVEq37JVPD1Glpe9ZjqGzVqAlEifFsV3Tywa0fS
- Ihbac3lTsmi9vErTky1ejjcbqOdozls9iwXb5/tdZlnC+CTEW4PxtRFDcz90IY+juMwyxLYPx
- o9LFzJwX2ZboPMW1D3lxQ7GyJWwf6lPhNK2fy998tdpd/+bdII0FFLfu9Fvpd3jstn6wVINuD
- xANBts00pWzhLYlUCRkujWuaPNkrBSh3F2U2MQdSQv3Zc8NoTU=
+        Wed, 18 Mar 2020 05:54:18 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1584525258; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=78NW6MNOkJx39ThDhsqaw3fGUuX3C/kjkgZ8D3avYQo=; b=qnMfDccGOW8FoUMETMxl5mfpWpG0e6zUc3jVsr9ZWy6Sw3w82zxjGRBsTnrstKJ2J6Yvg7S5
+ WoJszD/AWz/FdegZQ/4bdBH1AHDwyH4A307TEICyn38Jvw4iFoWInBV85rd0AFwVKOd8kXuL
+ xPrPzf+O3seE6+k04g2qmbjQIec=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e71efbc.7f1bdb071068-smtp-out-n05;
+ Wed, 18 Mar 2020 09:54:04 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 50DC4C432C2; Wed, 18 Mar 2020 09:54:03 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from maggarwa-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: maggarwa)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E171FC433CB;
+        Wed, 18 Mar 2020 09:54:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E171FC433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=maggarwa@codeaurora.org
+From:   Mohit Aggarwal <maggarwa@codeaurora.org>
+To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com
+Cc:     Mohit Aggarwal <maggarwa@codeaurora.org>,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rtc-pm8xxx: Clear Alarm register on resume
+Date:   Wed, 18 Mar 2020 15:23:38 +0530
+Message-Id: <1584525218-14719-1-git-send-email-maggarwa@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 1:16 AM Michael Kelley <mikelley@microsoft.com> wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> > On Sat, Mar 14, 2020 at 4:36 PM Michael Kelley <mikelley@microsoft.com> wrote:
-> > >
-> > > Add ARM64-specific code to set up and handle the interrupts
-> > > generated by Hyper-V for VMbus messages and for stimer expiration.
-> > >
-> > > This code is architecture dependent and is mostly driven by
-> > > architecture independent code in the VMbus driver and the
-> > > Hyper-V timer clocksource driver.
-> > >
-> > > This code is built only when CONFIG_HYPERV is enabled.
-> > >
-> > > Signed-off-by: Michael Kelley <mikelley@microsoft.com>
-> >
-> > This looks like it should be a nested irqchip driver instead, so your
-> > device drivers can use the normal request_irq() functions etc.
-> >
-> > Is anything preventing you from doing that? If so, please describe
-> > that in the changelog and in a comment in the driver.
-> >
->
-> As mentioned in my reply on Patch 1, Hyper-V offers a limited synthetic
-> interrupt controller managed by Linux code that's been around the last
-> 10 years on the x86 side.   For reasons that pre-date me, it was not written
-> as an irqchip driver.
+Currently, alarm register is not cleared on resume
+leading to reboot during power off charging mode.
 
-I think the reason is just that 10 years ago, we did not have the concept
-of irqchips as device drivers.
+Signed-off-by: Mohit Aggarwal <maggarwa@codeaurora.org>
+---
+ drivers/rtc/rtc-pm8xxx.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-> Modulo the small routines you see in this patch, the code is architecture
-> independent, and it seems we ought to keep the high degree of commonality.
-> Re-architecting the arch independent code to model as an irqchip driver seems
-> to carry some risk to the x86 side that has a lot of real-world usage today, but
-> I'll take a look and see what the risks look like and if it adds any clarity.
-
-How many drivers link against the custom interface? If it's less than 10,
-making it a real driver is probably not too hard to do.
-
-       Arnd
+diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
+index bbe013f..bfcd878 100644
+--- a/drivers/rtc/rtc-pm8xxx.c
++++ b/drivers/rtc/rtc-pm8xxx.c
+@@ -1,5 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+-/* Copyright (c) 2010-2011, 2019, The Linux Foundation. All rights reserved. */
++/* Copyright (c) 2010-2011, 2019-2020, The Linux Foundation. All rights reserved. */
+ 
+ #include <linux/of.h>
+ #include <linux/module.h>
+@@ -301,6 +301,7 @@ static int pm8xxx_rtc_alarm_irq_enable(struct device *dev, unsigned int enable)
+ 	struct pm8xxx_rtc *rtc_dd = dev_get_drvdata(dev);
+ 	const struct pm8xxx_rtc_regs *regs = rtc_dd->regs;
+ 	unsigned int ctrl_reg;
++	u8 value[NUM_8_BIT_RTC_REGS] = {0};
+ 
+ 	spin_lock_irqsave(&rtc_dd->ctrl_reg_lock, irq_flags);
+ 
+@@ -319,6 +320,16 @@ static int pm8xxx_rtc_alarm_irq_enable(struct device *dev, unsigned int enable)
+ 		goto rtc_rw_fail;
+ 	}
+ 
++	/* Clear Alarm register */
++	if (!enable) {
++		     rc = regmap_bulk_write(rtc_dd->regmap, regs->alarm_rw, value,
++					sizeof(value));
++		     if (rc) {
++			     dev_err(dev, "Write to RTC ALARM register failed\n");
++			     goto rtc_rw_fail;
++		     }
++	}
++
+ rtc_rw_fail:
+ 	spin_unlock_irqrestore(&rtc_dd->ctrl_reg_lock, irq_flags);
+ 	return rc;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
