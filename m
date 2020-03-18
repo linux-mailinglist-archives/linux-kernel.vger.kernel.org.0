@@ -2,142 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51CA618999B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:40:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 707421899A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:40:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbgCRKkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 06:40:24 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:40148 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726933AbgCRKkY (ORCPT
+        id S1727785AbgCRKkb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 06:40:31 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:5146 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726933AbgCRKk1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 06:40:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584528023;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GBdjH8RHRR7Z8mptXmC5pXUdosTe08Yji59vlIq8X/s=;
-        b=ccWO6boCfV/1wYZDv4ZSQUB3vv1DJghOnEUekrb9EQ6lhAM6oThEpVD+l9BMk/2tmwYfjt
-        S51slICuCEbLfrw6DgcYvEMqCNlUnVw11+XMRP6i5GQuxovcpH6n6SCFMYThSWpV+7OAQE
-        YaJPsKJw4XftePJ8IHtruFrJFDKSBuA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-18-oYaycwOzNQeocBb6VQrlzQ-1; Wed, 18 Mar 2020 06:40:19 -0400
-X-MC-Unique: oYaycwOzNQeocBb6VQrlzQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B0B298010D9;
-        Wed, 18 Mar 2020 10:40:16 +0000 (UTC)
-Received: from krava (unknown [10.40.195.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C2DE95D9E2;
-        Wed, 18 Mar 2020 10:40:13 +0000 (UTC)
-Date:   Wed, 18 Mar 2020 11:40:11 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Leo Yan <leo.yan@linaro.org>, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf parse-events: fix memory leaks found on parse_events
-Message-ID: <20200318104011.GF821557@krava>
-References: <20200316041431.19607-1-irogers@google.com>
+        Wed, 18 Mar 2020 06:40:27 -0400
+X-UUID: 4e502ca0b35143f3b97080fb925570ed-20200318
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=8CsnDEoht1HR62sbtRaos/Ikmqwn0aOPwl68cKdnFtk=;
+        b=DUrJ08qkdvqofy1Ee+ifC6zrTfvtU883/E187P30p/rnkB3DQJ7xxrpYIiKnpalGnJNFLj7qNgaweaEnpXkNL149r+ZrdimqVvB2Lm+94lq5x3HYDMWLMOXCA7CetwpIyS1Rd9rSZ1a5ZhiL1MHgYnGU1gqMQC+03WP0B+bNhP8=;
+X-UUID: 4e502ca0b35143f3b97080fb925570ed-20200318
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 494315267; Wed, 18 Mar 2020 18:40:20 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 18 Mar 2020 18:37:25 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 18 Mar 2020 18:40:30 +0800
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     <linux-scsi@vger.kernel.org>, <martin.peter~sen@oracle.com>,
+        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
+        <jejb@linux.ibm.com>, <bvanassche@acm.org>
+CC:     <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
+        <cang@codeaurora.org>, <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
+        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
+        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
+Subject: [PATCH v7 2/7] scsi: ufs: use an enum for host capabilities
+Date:   Wed, 18 Mar 2020 18:40:11 +0800
+Message-ID: <20200318104016.28049-3-stanley.chu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20200318104016.28049-1-stanley.chu@mediatek.com>
+References: <20200318104016.28049-1-stanley.chu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200316041431.19607-1-irogers@google.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain
+X-TM-SNTS-SMTP: B5F6A90A8B5F0220DF009EF9DA5A32DEC1080D3166FEEFC9EBC5D1180162BAA52000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 15, 2020 at 09:14:31PM -0700, Ian Rogers wrote:
-> Memory leaks found by applying LLVM's libfuzzer on the parse_events
-> function.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/lib/perf/evlist.c        | 2 ++
->  tools/perf/util/parse-events.c | 2 ++
->  tools/perf/util/parse-events.y | 3 ++-
->  3 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/lib/perf/evlist.c b/tools/lib/perf/evlist.c
-> index 5b9f2ca50591..6485d1438f75 100644
-> --- a/tools/lib/perf/evlist.c
-> +++ b/tools/lib/perf/evlist.c
-> @@ -125,8 +125,10 @@ static void perf_evlist__purge(struct perf_evlist *evlist)
->  void perf_evlist__exit(struct perf_evlist *evlist)
->  {
->  	perf_cpu_map__put(evlist->cpus);
-> +	perf_cpu_map__put(evlist->all_cpus);
-
-ugh, yes, could you please put it to separate libperf patch?
-
->  	perf_thread_map__put(evlist->threads);
->  	evlist->cpus = NULL;
-> +	evlist->all_cpus = NULL;
-
-there's already change adding this waiting on the list:
-  https://lore.kernel.org/lkml/1583665157-349023-1-git-send-email-zhe.he@windriver.com/
-
->  	evlist->threads = NULL;
->  	fdarray__exit(&evlist->pollfd);
->  }
-> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-> index a14995835d85..997862224292 100644
-> --- a/tools/perf/util/parse-events.c
-> +++ b/tools/perf/util/parse-events.c
-> @@ -1482,6 +1482,8 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
->  
->  		list_for_each_entry_safe(pos, tmp, &config_terms, list) {
->  			list_del_init(&pos->list);
-> +			if (pos->free_str)
-> +				free(pos->val.str);
-
-ack, would be nice to have  perf_evsel__free_config_terms generalized
-to work directly over config terms list, so we'd have only single
-cleanup function
-
->  			free(pos);
->  		}
->  		return -EINVAL;
-> diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-> index 94f8bcd83582..8212cc771667 100644
-> --- a/tools/perf/util/parse-events.y
-> +++ b/tools/perf/util/parse-events.y
-> @@ -44,7 +44,7 @@ static void free_list_evsel(struct list_head* list_evsel)
->  
->  	list_for_each_entry_safe(evsel, tmp, list_evsel, core.node) {
->  		list_del_init(&evsel->core.node);
-> -		perf_evsel__delete(evsel);
-> +		evsel__delete(evsel);
-
-ack
-
->  	}
->  	free(list_evsel);
->  }
-> @@ -326,6 +326,7 @@ PE_NAME opt_pmu_config
->  	}
->  	parse_events_terms__delete($2);
->  	parse_events_terms__delete(orig_terms);
-> +	free(pattern);
-
-ack
-
-could you please send the separate change for libperf?
-and synchronize with that other patch mentioned above
-
-thanks,
-jirka
+VXNlIGFuIGVudW0gdG8gc3BlY2lmeSB0aGUgaG9zdCBjYXBhYmlsaXRpZXMgaW5zdGVhZCBvZiAj
+ZGVmaW5lcyBpbnNpZGUgdGhlDQpzdHJ1Y3R1cmUgZGVmaW5pdGlvbi4NCg0KU2lnbmVkLW9mZi1i
+eTogU3RhbmxleSBDaHUgPHN0YW5sZXkuY2h1QG1lZGlhdGVrLmNvbT4NClJldmlld2VkLWJ5OiBB
+c3V0b3NoIERhcyA8YXN1dG9zaGRAY29kZWF1cm9yYS5vcmc+DQpSZXZpZXdlZC1ieTogQXZyaSBB
+bHRtYW4gPGF2cmkuYWx0bWFuQHdkYy5jb20+DQpSZXZpZXdlZC1ieTogQ2FuIEd1byA8Y2FuZ0Bj
+b2RlYXVyb3JhLm9yZz4NCi0tLQ0KIGRyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmggfCA2NSArKysr
+KysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0NCiAxIGZpbGUgY2hhbmdlZCwgMzcg
+aW5zZXJ0aW9ucygrKSwgMjggZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3Nj
+c2kvdWZzL3Vmc2hjZC5oIGIvZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2QuaA0KaW5kZXggNWMxMDc3
+NzE1NGZjLi41MjQyNTM3MTA4MmEgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3Njc2kvdWZzL3Vmc2hj
+ZC5oDQorKysgYi9kcml2ZXJzL3Njc2kvdWZzL3Vmc2hjZC5oDQpAQCAtNTEwLDYgKzUxMCw0MyBA
+QCBlbnVtIHVmc2hjZF9xdWlya3Mgew0KIAlVRlNIQ0RfUVVJUktfQlJPS0VOX1VGU19IQ0lfVkVS
+U0lPTgkJPSAxIDw8IDUsDQogfTsNCiANCitlbnVtIHVmc2hjZF9jYXBzIHsNCisJLyogQWxsb3cg
+ZHluYW1pYyBjbGsgZ2F0aW5nICovDQorCVVGU0hDRF9DQVBfQ0xLX0dBVElORwkJCQk9IDEgPDwg
+MCwNCisNCisJLyogQWxsb3cgaGliZXJiOCB3aXRoIGNsayBnYXRpbmcgKi8NCisJVUZTSENEX0NB
+UF9ISUJFUk44X1dJVEhfQ0xLX0dBVElORwkJPSAxIDw8IDEsDQorDQorCS8qIEFsbG93IGR5bmFt
+aWMgY2xrIHNjYWxpbmcgKi8NCisJVUZTSENEX0NBUF9DTEtfU0NBTElORwkJCQk9IDEgPDwgMiwN
+CisNCisJLyogQWxsb3cgYXV0byBia29wcyB0byBlbmFibGVkIGR1cmluZyBydW50aW1lIHN1c3Bl
+bmQgKi8NCisJVUZTSENEX0NBUF9BVVRPX0JLT1BTX1NVU1BFTkQJCQk9IDEgPDwgMywNCisNCisJ
+LyoNCisJICogVGhpcyBjYXBhYmlsaXR5IGFsbG93cyBob3N0IGNvbnRyb2xsZXIgZHJpdmVyIHRv
+IHVzZSB0aGUgVUZTIEhDSSdzDQorCSAqIGludGVycnVwdCBhZ2dyZWdhdGlvbiBjYXBhYmlsaXR5
+Lg0KKwkgKiBDQVVUSU9OOiBFbmFibGluZyB0aGlzIG1pZ2h0IHJlZHVjZSBvdmVyYWxsIFVGUyB0
+aHJvdWdocHV0Lg0KKwkgKi8NCisJVUZTSENEX0NBUF9JTlRSX0FHR1IJCQkJPSAxIDw8IDQsDQor
+DQorCS8qDQorCSAqIFRoaXMgY2FwYWJpbGl0eSBhbGxvd3MgdGhlIGRldmljZSBhdXRvLWJrb3Bz
+IHRvIGJlIGFsd2F5cyBlbmFibGVkDQorCSAqIGV4Y2VwdCBkdXJpbmcgc3VzcGVuZCAoYm90aCBy
+dW50aW1lIGFuZCBzdXNwZW5kKS4NCisJICogRW5hYmxpbmcgdGhpcyBjYXBhYmlsaXR5IG1lYW5z
+IHRoYXQgZGV2aWNlIHdpbGwgYWx3YXlzIGJlIGFsbG93ZWQNCisJICogdG8gZG8gYmFja2dyb3Vu
+ZCBvcGVyYXRpb24gd2hlbiBpdCdzIGFjdGl2ZSBidXQgaXQgbWlnaHQgZGVncmFkZQ0KKwkgKiB0
+aGUgcGVyZm9ybWFuY2Ugb2Ygb25nb2luZyByZWFkL3dyaXRlIG9wZXJhdGlvbnMuDQorCSAqLw0K
+KwlVRlNIQ0RfQ0FQX0tFRVBfQVVUT19CS09QU19FTkFCTEVEX0VYQ0VQVF9TVVNQRU5EID0gMSA8
+PCA1LA0KKw0KKwkvKg0KKwkgKiBUaGlzIGNhcGFiaWxpdHkgYWxsb3dzIGhvc3QgY29udHJvbGxl
+ciBkcml2ZXIgdG8gYXV0b21hdGljYWxseQ0KKwkgKiBlbmFibGUgcnVudGltZSBwb3dlciBtYW5h
+Z2VtZW50IGJ5IGl0c2VsZiBpbnN0ZWFkIG9mIHdhaXRpbmcNCisJICogZm9yIHVzZXJzcGFjZSB0
+byBjb250cm9sIHRoZSBwb3dlciBtYW5hZ2VtZW50Lg0KKwkgKi8NCisJVUZTSENEX0NBUF9SUE1f
+QVVUT1NVU1BFTkQJCQk9IDEgPDwgNiwNCit9Ow0KKw0KIC8qKg0KICAqIHN0cnVjdCB1ZnNfaGJh
+IC0gcGVyIGFkYXB0ZXIgcHJpdmF0ZSBzdHJ1Y3R1cmUNCiAgKiBAbW1pb19iYXNlOiBVRlNIQ0kg
+YmFzZSByZWdpc3RlciBhZGRyZXNzDQpAQCAtNjY0LDM0ICs3MDEsNiBAQCBzdHJ1Y3QgdWZzX2hi
+YSB7DQogCXN0cnVjdCB1ZnNfY2xrX2dhdGluZyBjbGtfZ2F0aW5nOw0KIAkvKiBDb250cm9sIHRv
+IGVuYWJsZS9kaXNhYmxlIGhvc3QgY2FwYWJpbGl0aWVzICovDQogCXUzMiBjYXBzOw0KLQkvKiBB
+bGxvdyBkeW5hbWljIGNsayBnYXRpbmcgKi8NCi0jZGVmaW5lIFVGU0hDRF9DQVBfQ0xLX0dBVElO
+RwkoMSA8PCAwKQ0KLQkvKiBBbGxvdyBoaWJlcmI4IHdpdGggY2xrIGdhdGluZyAqLw0KLSNkZWZp
+bmUgVUZTSENEX0NBUF9ISUJFUk44X1dJVEhfQ0xLX0dBVElORyAoMSA8PCAxKQ0KLQkvKiBBbGxv
+dyBkeW5hbWljIGNsayBzY2FsaW5nICovDQotI2RlZmluZSBVRlNIQ0RfQ0FQX0NMS19TQ0FMSU5H
+CSgxIDw8IDIpDQotCS8qIEFsbG93IGF1dG8gYmtvcHMgdG8gZW5hYmxlZCBkdXJpbmcgcnVudGlt
+ZSBzdXNwZW5kICovDQotI2RlZmluZSBVRlNIQ0RfQ0FQX0FVVE9fQktPUFNfU1VTUEVORCAoMSA8
+PCAzKQ0KLQkvKg0KLQkgKiBUaGlzIGNhcGFiaWxpdHkgYWxsb3dzIGhvc3QgY29udHJvbGxlciBk
+cml2ZXIgdG8gdXNlIHRoZSBVRlMgSENJJ3MNCi0JICogaW50ZXJydXB0IGFnZ3JlZ2F0aW9uIGNh
+cGFiaWxpdHkuDQotCSAqIENBVVRJT046IEVuYWJsaW5nIHRoaXMgbWlnaHQgcmVkdWNlIG92ZXJh
+bGwgVUZTIHRocm91Z2hwdXQuDQotCSAqLw0KLSNkZWZpbmUgVUZTSENEX0NBUF9JTlRSX0FHR1Ig
+KDEgPDwgNCkNCi0JLyoNCi0JICogVGhpcyBjYXBhYmlsaXR5IGFsbG93cyB0aGUgZGV2aWNlIGF1
+dG8tYmtvcHMgdG8gYmUgYWx3YXlzIGVuYWJsZWQNCi0JICogZXhjZXB0IGR1cmluZyBzdXNwZW5k
+IChib3RoIHJ1bnRpbWUgYW5kIHN1c3BlbmQpLg0KLQkgKiBFbmFibGluZyB0aGlzIGNhcGFiaWxp
+dHkgbWVhbnMgdGhhdCBkZXZpY2Ugd2lsbCBhbHdheXMgYmUgYWxsb3dlZA0KLQkgKiB0byBkbyBi
+YWNrZ3JvdW5kIG9wZXJhdGlvbiB3aGVuIGl0J3MgYWN0aXZlIGJ1dCBpdCBtaWdodCBkZWdyYWRl
+DQotCSAqIHRoZSBwZXJmb3JtYW5jZSBvZiBvbmdvaW5nIHJlYWQvd3JpdGUgb3BlcmF0aW9ucy4N
+Ci0JICovDQotI2RlZmluZSBVRlNIQ0RfQ0FQX0tFRVBfQVVUT19CS09QU19FTkFCTEVEX0VYQ0VQ
+VF9TVVNQRU5EICgxIDw8IDUpDQotCS8qDQotCSAqIFRoaXMgY2FwYWJpbGl0eSBhbGxvd3MgaG9z
+dCBjb250cm9sbGVyIGRyaXZlciB0byBhdXRvbWF0aWNhbGx5DQotCSAqIGVuYWJsZSBydW50aW1l
+IHBvd2VyIG1hbmFnZW1lbnQgYnkgaXRzZWxmIGluc3RlYWQgb2Ygd2FpdGluZw0KLQkgKiBmb3Ig
+dXNlcnNwYWNlIHRvIGNvbnRyb2wgdGhlIHBvd2VyIG1hbmFnZW1lbnQuDQotCSAqLw0KLSNkZWZp
+bmUgVUZTSENEX0NBUF9SUE1fQVVUT1NVU1BFTkQgKDEgPDwgNikNCiANCiAJc3RydWN0IGRldmZy
+ZXEgKmRldmZyZXE7DQogCXN0cnVjdCB1ZnNfY2xrX3NjYWxpbmcgY2xrX3NjYWxpbmc7DQotLSAN
+CjIuMTguMA0K
 
