@@ -2,124 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE8C6189D28
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 14:39:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E0F8189D1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 14:37:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbgCRNjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 09:39:00 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52093 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726730AbgCRNi7 (ORCPT
+        id S1727020AbgCRNhg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 09:37:36 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:32957 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbgCRNhf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 09:38:59 -0400
-Received: by mail-wm1-f67.google.com with SMTP id c187so2117533wme.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 06:38:56 -0700 (PDT)
+        Wed, 18 Mar 2020 09:37:35 -0400
+Received: by mail-wr1-f65.google.com with SMTP id a25so30458927wrd.0;
+        Wed, 18 Mar 2020 06:37:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6R5xf9NqTS0jMDexNFwg03hIQwJWepjqVTqQml3+25g=;
-        b=PmLTKI+jZxj3t3dDPkHpXoEBiwtAI3ewtlXoBbpkAp+ImmLqcN8JC5QH7GPvRKLcPQ
-         +xOBx6iL47cZLqOw1xytvO34OdPn8T8YR3OiTiEnuRpQta9BzxuhKNSukZ9T/BIrdA1N
-         SYdLIlQuiwpi5pfQT+xJTLa+Zh7KNkvRsSHcE=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zuo61nM/MH+S9bbLW2vdQq9bZPHHpW6MvtuVuJlfvWw=;
+        b=W0rWwlJN7lswrFIX9K9PmiIJNNjqcBkwNsVUqRB9cjH2QbEWw//6zD/YxGc22jwzQk
+         MAWmTLj6kNhpytfmLADJPiFwKcto+npBanpNSfEID79+vYWm5JMeuelmWbEiPh/tliXv
+         ytKm8R67Edsbi1I5iUjxQ4uTxA2E9DJxRRyxfkAlKBuE1c613/Za8cKU499CJ/X8fzgE
+         Kz00OCshqp3RBPGRGCBUEPuG8xXMX0KSrdBRlLmtCg4287LtLKiVXd0GrZ7/huOiCikA
+         cokppLLsaoHvsW+40gIh1pXEgD1GiVQkn7fhYFpwoFdpXXk8wU4RiP6TAvZd5GQrw1kP
+         MG3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=6R5xf9NqTS0jMDexNFwg03hIQwJWepjqVTqQml3+25g=;
-        b=iY5e84bR1lQhlcuf3hcDt4L4dKWdj8HC3082eSNHtI5O8f8EjUXXVAuNBBQncknp5d
-         fSiqXwPU/D5mLhaf+eSZNtuZEDBdsviB5+nPGcUJz0o/9ZLRq4w2sqwJ9b0vNNCeBDRj
-         3ZVJrBVO3FIGx8/gEug5pS4wba3mDG7bW+KYtfVJUAo01TbjkJ44LkbAAF0H9D4f+d8V
-         RerDHjPiut8d8RAg366NeosCOPJ/sCw9AH/ym5Exy4mqbaMSF/cktVQaQ1z6CD2AncvS
-         Af8TkBZU/0V2DR6e2ZRuMZAHKsSmWu/WlNf2Amd8aXEcEOQUul5nA0GbhE4FNGazO02V
-         bg9w==
-X-Gm-Message-State: ANhLgQ1Fq8xlGtwxhzzJYdMc5103954qgabQMyJ7QgbZXtggN3wAb3OW
-        XKtkNbb+FF4F36ttyUhQXcb8RQ==
-X-Google-Smtp-Source: ADFU+vuUYj/OYML10zdOHlJ4Njc9aninKsXTvMVWhceXQ6IvYDvu1robtZJWgU11PbUN4ofmJi563Q==
-X-Received: by 2002:a05:600c:2319:: with SMTP id 25mr5364849wmo.106.1584538735341;
-        Wed, 18 Mar 2020 06:38:55 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id j11sm2065580wrt.14.2020.03.18.06.38.54
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zuo61nM/MH+S9bbLW2vdQq9bZPHHpW6MvtuVuJlfvWw=;
+        b=A01t3NrYnXs1jBusxV1RutdDj8Wg8Z0BSEIDD00mqlYt11sw+gkBng0vYOtJzqUrNj
+         o1bBTv+2i9bcaLgT7mIA1kzAYDwDFJbG6QtFETMU5HF3EfHlLcmWD3uzt40Vm36260vT
+         bbUGlgbkcgqs16/7kLvY9KZIa5iQWLWPb2bVoeBdbOQf40NI6NS6RHpOS4Hf7iUJX+CP
+         x39s6ZuWiqIxTjIfKjl2Df3WgVtwX2/ymSyXc8LDy7KV/cOJAbKymeSi5jLBpwZwdwUD
+         81eNgG1UPmbt8oA4VXs2TKJf82wKS8pJXnL0n4atCppGNB9J43uNvrC6MGwPiaagGrwl
+         CgpQ==
+X-Gm-Message-State: ANhLgQ2eGGV0PlSejXJrpS0oZ6Hd5oyCHcwS3CdNeFOEvU4/SfDvxyLc
+        QOnA1bUKeV31BHt36pBm39uhT7z1
+X-Google-Smtp-Source: ADFU+vse8RfhuBxKtnCK1LbbuV7axl1zNf9gCdOSP1kVgxuq0HKCcNdzi/SV/zNTG5Cic8Q0koNREQ==
+X-Received: by 2002:a5d:680f:: with SMTP id w15mr5670860wru.245.1584538653865;
+        Wed, 18 Mar 2020 06:37:33 -0700 (PDT)
+Received: from saturn.lan ([188.26.73.247])
+        by smtp.gmail.com with ESMTPSA id f15sm9444002wru.83.2020.03.18.06.37.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 06:38:54 -0700 (PDT)
-Date:   Wed, 18 Mar 2020 14:38:52 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Qiujun Huang <hqjagain@gmail.com>
-Cc:     daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        anenbupt@gmail.com
-Subject: Re: [PATCH v2] drm/lease: fix WARNING in idr_destroy
-Message-ID: <20200318133852.GU2363188@phenom.ffwll.local>
-Mail-Followup-To: Qiujun Huang <hqjagain@gmail.com>,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, anenbupt@gmail.com
-References: <1584518030-4173-1-git-send-email-hqjagain@gmail.com>
+        Wed, 18 Mar 2020 06:37:32 -0700 (PDT)
+From:   Alexandru Ardelean <ardeleanalex@gmail.com>
+X-Google-Original-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Michael.Hennerich@analog.com, renatogeh@gmail.com, lars@metafoo.de,
+        jic23@kernel.org, mircea.caprioru@analog.com,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH 0/5] ad7780,ad7791,ad7793: localize all IIO channel macro defs
+Date:   Wed, 18 Mar 2020 15:40:37 +0200
+Message-Id: <20200318134042.30133-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1584518030-4173-1-git-send-email-hqjagain@gmail.com>
-X-Operating-System: Linux phenom 5.3.0-3-amd64 
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 03:53:50PM +0800, Qiujun Huang wrote:
-> drm_lease_create takes ownership of leases. And leases will be released
-> by drm_master_put.
-> 
-> drm_master_put
->     ->drm_master_destroy
->             ->idr_destroy
-> 
-> So we needn't call idr_destroy again.
-> 
-> Reported-and-tested-by: syzbot+05835159fe322770fe3d@syzkaller.appspotmail.com
-> Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+This patchset has 2 intents:
+1. We've noticed with newer Sigma-Delta ADCs that the current standard
+   macros (AD_SD_*_CHANNEL()) for defining IIO channels are too rigid when
+   adding new parts that have some slight variations. Two examples that
+   come to mind are AD7124 and AD7192; for the final version of the AD7192
+   one requirement was to set 'IIO_CHAN_INFO_SCALE' to
+   'info_mask_shared_by_type_available', which would require a new
+   AD_SD_*_CHANNEL macro-set
+2. Similarly to AD7192, for the AD7793 driver, there is a AD7797 part that
+   doesn't need 'IIO_CHAN_INFO_SCALE' for
+   'info_mask_shared_by_type_available'. While other parts do need it.
+   But the biggest problem in the AD7793 driver, is that we're getting
+   checkpatch patches that try to fix/break the
+   'in_voltage-voltage_scale_available' sysfs attribute. So, to get that
+   driver away from checkpatch's radar, the read_avail hook is used for
+   AD7793.
 
-Thanks for the respin, and I've also seen the syzbot confirmation, so all
-great.
+This patchset comes with a bit of code duplication, but as it seems, this
+duplication is easier to handle.
 
-Merged to -fixes with a cc: stable.
--Daniel
+Alexandru Ardelean (5):
+  iio: adc: ad7780: define/use own IIO channel macros
+  iio: adc: ad7791: define/use own IIO channel macros
+  iio: adc: ad7793: define/use own IIO channel macros
+  iio: ad_sigma_delta: remove unused IIO channel macros
+  iio: adc: ad7793: use read_avail iio hook for scale available
 
-> ---
->  drivers/gpu/drm/drm_lease.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
-> index b481caf..825abe3 100644
-> --- a/drivers/gpu/drm/drm_lease.c
-> +++ b/drivers/gpu/drm/drm_lease.c
-> @@ -542,10 +542,12 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
->  	}
->  
->  	DRM_DEBUG_LEASE("Creating lease\n");
-> +	/* lessee will take the ownership of leases */
->  	lessee = drm_lease_create(lessor, &leases);
->  
->  	if (IS_ERR(lessee)) {
->  		ret = PTR_ERR(lessee);
-> +		idr_destroy(&leases);
->  		goto out_leases;
->  	}
->  
-> @@ -580,7 +582,6 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
->  
->  out_leases:
->  	put_unused_fd(fd);
-> -	idr_destroy(&leases);
->  
->  	DRM_DEBUG_LEASE("drm_mode_create_lease_ioctl failed: %d\n", ret);
->  	return ret;
-> -- 
-> 1.8.3.1
-> 
+ drivers/iio/adc/ad7780.c               |  27 ++++-
+ drivers/iio/adc/ad7791.c               |  62 +++++++++--
+ drivers/iio/adc/ad7793.c               | 142 ++++++++++++++++++-------
+ include/linux/iio/adc/ad_sigma_delta.h |  58 ----------
+ 4 files changed, 182 insertions(+), 107 deletions(-)
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.20.1
+
