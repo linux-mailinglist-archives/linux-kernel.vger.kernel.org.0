@@ -2,92 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 172B9189BDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 13:21:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85B4E189BE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 13:22:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbgCRMVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 08:21:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36686 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726546AbgCRMVr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 08:21:47 -0400
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jEXhh-00032O-1h; Wed, 18 Mar 2020 12:21:45 +0000
-Date:   Wed, 18 Mar 2020 13:21:44 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Simon Ser <contact@emersion.fr>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "oleg@redhat.com" <oleg@redhat.com>,
-        "christian@brauner.io" <christian@brauner.io>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>
-Subject: Re: SO_PEERCRED and pidfd
-Message-ID: <20200318122144.bzeb647w7ytloetn@wittgenstein>
-References: <go0RLOS7_DdxyAmfrDR38QPUloZuUtiFdXe2Ey3EkGGuvmW7z18Dvt4fY1qZ1k-Y75-YZSxqVWnZpWRGN7TZ6OPbDczfL7HI25bXLIYq1y4=@emersion.fr>
- <20200317181843.iq3jaboqid2xfktv@wittgenstein>
- <WuCKXl7CWZrfvKTWuYiwL6tkPq2YgA_j1lyVVczFB48s8ozWz_setJou9JO-VqsL2kJtRV8r4yOvyQhI5LsdCdIaSKYZpY1_9Bf3DwpQIMg=@emersion.fr>
+        id S1726752AbgCRMWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 08:22:24 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2573 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726619AbgCRMWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 08:22:24 -0400
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id C98881FDEC3ADA6D060B;
+        Wed, 18 Mar 2020 12:22:22 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ LHREML712-CAH.china.huawei.com (10.201.108.35) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 18 Mar 2020 12:22:22 +0000
+Received: from [127.0.0.1] (10.47.11.44) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Wed, 18 Mar
+ 2020 12:22:21 +0000
+Subject: Re: [PATCH v3 2/2] irqchip/gic-v3-its: Balance initial LPI affinity
+ across CPUs
+To:     Marc Zyngier <maz@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     chenxiang <chenxiang66@hisilicon.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "luojiaxing@huawei.com" <luojiaxing@huawei.com>
+References: <20200316115433.9017-1-maz@kernel.org>
+ <20200316115433.9017-3-maz@kernel.org>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <d3a6435b-bc1f-e518-6461-2ebff72bbc59@huawei.com>
+Date:   Wed, 18 Mar 2020 12:22:09 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <WuCKXl7CWZrfvKTWuYiwL6tkPq2YgA_j1lyVVczFB48s8ozWz_setJou9JO-VqsL2kJtRV8r4yOvyQhI5LsdCdIaSKYZpY1_9Bf3DwpQIMg=@emersion.fr>
+In-Reply-To: <20200316115433.9017-3-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.47.11.44]
+X-ClientProxiedBy: lhreml721-chm.china.huawei.com (10.201.108.72) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 10:16:07AM +0000, Simon Ser wrote:
-> On Tuesday, March 17, 2020 7:18 PM, Christian Brauner <christian.brauner@ubuntu.com> wrote:
-> 
-> > On Tue, Mar 17, 2020 at 05:54:47PM +0000, Simon Ser wrote:
-> >
-> > > Hi all,
-> > > I'm a Wayland developer and I've been working on protocol security,
-> > > which involves identifying the process on the other end of a Unix
-> > > socket [1]. This is already done by e.g. D-Bus via the PID, however
-> > > this is racy [2].
-> > > Getting the PID is done via SO_PEERCRED. Would there be interest in
-> > > adding a way to get a pidfd out of a Unix socket to fix the race?
-> >
-> > Puh, I knew this would happen. I've been asked to add this feature by
-> > the systemd people as well and also at a conference last year. And
-> > honestly, I don't know yet. pidfds right now are mostly about
-> > guaranteeing (stable) identity and they come with the necessary
-> > restrictions in place to prevent shenanigans (such as signaling across
-> > pid namespaces a restriction I'd like to lift at some point). But I
-> > have been thinking about attaching some capability like features to
-> > pidfds soon as that has been an even more frequent request. At that
-> > point having them receivable this way might be problematic unless we put
-> > restrictions in place.
-> 
-> Wouldn't this new mechanism just be an atomic getsockopt+pidfd_open?
-> (It would make sure the process is still alive of course.)
+I may have an idea about this:
+irq 196, cpu list 0-31, effective list 82
 
-Yes, it would. My point was rather if pidfds mean something more than
-identity at some point then we just need to make sure that you can only
-get a getsockopt+pidfd_open(pid, 0) equivalent pidfd from it, i.e. one
-without additional abilities (see below).
+Just going back to comment on the code:
 
-> 
-> Can you elaborate wrt. capabilities? I'm not sure I understand what
-> that means.
+> +/*
+> + * As suggested by Thomas Gleixner in:
+> + * https://lore.kernel.org/r/87h80q2aoc.fsf@nanos.tec.linutronix.de
+> + */
+> +static int its_select_cpu(struct irq_data *d,
+> +			  const struct cpumask *aff_mask)
+> +{
+> +	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+> +	cpumask_var_t tmpmask;
+> +	int cpu, node;
+> +
+> +	if (!alloc_cpumask_var(&tmpmask, GFP_KERNEL))
+> +		return -ENOMEM;
+> +
+> +	node = its_dev->its->numa_node;
+> +
+> +	if (!irqd_affinity_is_managed(d)) {
+> +		/* First try the NUMA node */
+> +		if (node != NUMA_NO_NODE) {
+> +			/*
+> +			 * Try the intersection of the affinity mask and the
+> +			 * node mask (and the online mask, just to be safe).
+> +			 */
+> +			cpumask_and(tmpmask, cpumask_of_node(node), aff_mask);
+> +			cpumask_and(tmpmask, tmpmask, cpu_online_mask);
+> +
+> +			/* If that doesn't work, try the nodemask itself */
 
-As a concrete example, think of it as root calling clone3() with e.g. an
-additional flag PIDFD_GETFD which would stash the creds of the calling
-process (in this example root) and when pidfd_getfd() is passed such a
-pidfd it would use the creds of root instead of the calling threads
-cred. This would e.g. allow a process to delegate the ability to
-retrieve file descriptors from another task but nothing else.
+So if tmpmsk is empty...
 
-> 
-> > I would like to go through codepaths for SO_PEERCRED as I don't have
-> > them in my head and so can't really say something definitely about this
-> > just now.
-> > (From the top of my head it seems that if we were to do this it might
-> > need to be a separate SO_* flag? Mainly so people don't suddenly receive
-> > fds they didn't expect.)
-> 
-> Yeah, this would need to be either a separate SO_* flag or a completely
-> different thing to prevent surprises.
+> +			if (cpumask_empty(tmpmask))
+> +				cpumask_and(tmpmask, cpumask_of_node(node), cpu_online_mask);
+
+  now the tmpmask may have no intersection with the aff_mask...
+
+> +
+> +			cpu = cpumask_pick_least_loaded(d, tmpmask);
+> +			if (cpu < nr_cpu_ids)
+> +				goto out;
+> +
+> +			/* If we can't cross sockets, give up */
+> +			if ((its_dev->its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144))
+> +				goto out;
+> +
+> +			/* If the above failed, expand the search */
+> +		}
+
+SNIP
+
+> +out:
+> +	free_cpumask_var(tmpmask);
+> +
+> +	pr_debug("IRQ%d -> %*pbl CPU%d\n", d->irq, cpumask_pr_args(aff_mask), cpu);
+> +	return cpu;
+> +}
+> +
+>   static int its_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
+>   			    bool force)
+>   {
+> -	unsigned int cpu;
+> -	const struct cpumask *cpu_mask = cpu_online_mask;
+>   	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+>   	struct its_collection *target_col;
+>   	u32 id = its_get_event_id(d);
+> +	int cpu;
+>   
+>   	/* A forwarded interrupt should use irq_set_vcpu_affinity */
+>   	if (irqd_is_forwarded_to_vcpu(d))
+>   		return -EINVAL;
+>   
+> -       /* lpi cannot be routed to a redistributor that is on a foreign node */
+> -	if (its_dev->its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144) {
+> -		if (its_dev->its->numa_node >= 0) {
+> -			cpu_mask = cpumask_of_node(its_dev->its->numa_node);
+> -			if (!cpumask_intersects(mask_val, cpu_mask))
+> -				return -EINVAL;
+> -		}
+> -	}
+> -
+> -	cpu = cpumask_any_and(mask_val, cpu_mask);
+> +	if (!force)
+> +		cpu = its_select_cpu(d, mask_val);
+> +	else
+> +		cpu = cpumask_pick_least_loaded(d, mask_val);
+>   
+> -	if (cpu >= nr_cpu_ids)
+> +	if (cpu < 0 || cpu >= nr_cpu_ids)
+>   		return -EINVAL;
+
+Annotate missing code:
+
+	if (cpu < 0 || cpu >= nr_cpu_ids)
+		return -EINVAL;
+
+	if (cpu != its_dev->event_map.col_map[id]) {
+		its_inc_lpi_count(d, cpu);
+		its_dec_lpi_count(d, its_dev->event_map.col_map[id]);
+		target_col = &its_dev->its->collections[cpu];
+		its_send_movi(its_dev, target_col, id);
+		its_dev->event_map.col_map[id] = cpu;
+		irq_data_update_effective_affinity(d, cpumask_of(cpu));
+	}
+
+So cpu may not be a member of mask_val. Hence the inconsistency of the 
+affinity list and effective affinity. We could just drop the AND of the 
+ITS node mask in its_select_cpu().
+
+Anyway, I don't think that this should stop us testing.
+
+Cheers,
+John
